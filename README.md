@@ -1,3 +1,15 @@
+<p align="center">
+  <a href="https://run-mango.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/banner-dark.webp">
+      <source media="(prefers-color-scheme: light)" srcset=".github/assets/banner-light.webp">
+      <img src=".github/assets/banner-light.webp" width="100%" alt="Mango: Newsletters people are glad to get. 100% free, open source alternative to Mailchimp and Klaviyo.">
+    </picture>
+  </a>
+</p>
+
+<p align="center"><a href="https://run-mango.com">run-mango.com</a> · <a href="https://justevery.com">Part of Just Every</a> · <a href="LICENSE">MIT licensed</a></p>
+
 # Mango
 
 Mango is an approval-first newsletter desk. Public source: [just-every/run-mango](https://github.com/just-every/run-mango), version 0.1.0. CONTRACT.md preserves the complete product target; ACCEPTANCE.md separates the current local milestone from release obligations. The default newsletter profile supports operator-authored email with optional commerce, SMS and AI. Wider contract obligations and unverified release gates remain documented in ACCEPTANCE.md.
