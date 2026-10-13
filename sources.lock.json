@@ -744,7 +744,7 @@
       "executable": false
     },
     "AGENTS.md": {
-      "sha256": "48b30c871f5633f0959e7fdaec9fa535a461c0d310c5fbf3a5b1e3a540c617f3",
+      "sha256": "cb19d153695c678f87e7349848fea19af06e415e460fa123448f65245f52ea5f",
       "executable": false
     },
     "base-copies.json": {
@@ -1144,7 +1144,7 @@
       "executable": false
     },
     "RENDERING.md": {
-      "sha256": "47fa1668c2886b0162c7ddaa0bb71b9ed3522614fcf49a9e0c021d6fa3ffb013",
+      "sha256": "e49186b1bb63b14446e2085050a94c1ca81a6a9ca1aab3f946d2e156eb5d7497",
       "executable": false
     },
     "rer-project.json": {
