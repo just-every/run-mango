@@ -1,0 +1,310 @@
+import type { Database } from '@/core/platform/db/client';
+import type { SenderInspection } from '@/core/features/sender-verification/types';
+
+export type Channel = 'email' | 'sms';
+
+export type DeliveryRequest = {
+  recipientStepId: string;
+  idempotencyKey: string;
+  handoffStartedAt: Date;
+  to: string;
+  sender: string;
+  content: {
+    subject?: string;
+    html?: string;
+    text: string;
+    preheader?: string;
+    from?: { name: string; email: string };
+    replyTo?: string;
+    headers?: Record<string, string>;
+  };
+  callbackUrl: string;
+};
+
+export type ProviderHandoff = {
+  providerMessageId: string;
+  disposition: 'accepted' | 'handoff-unknown';
+  providerAcceptedAt?: Date;
+};
+
+export type ProviderFact = {
+  identity: string;
+  providerMessageId?: string;
+  kind: 'accepted' | 'delivered' | 'bounced' | 'complained' | 'suppressed' | 'unsubscribed' | 'failed' | 'sms-reply';
+  occurredAt: Date;
+  payloadDigest: string;
+  detail: Record<string, unknown>;
+};
+
+export type ProviderReconciliation = {
+  facts: ProviderFact[];
+  cursor?: string;
+  exhausted: boolean;
+};
+
+export type SenderCapabilities = {
+  handoffPolicy?: 'single-attempt';
+  configured: boolean;
+  canSendMarketing: boolean;
+  effectiveDeduplication: boolean;
+  effectiveReconciliation: boolean;
+  deduplicationWindowMs: number;
+  reconciliationWindowMs: number;
+  detail: string;
+  provider?: string;
+  authentication?: { spf: boolean; dkim: boolean; dmarc: boolean; aligned: boolean };
+  registeredSenders?: string[];
+  registeredCountries?: string[];
+};
+
+export type SenderValidation = { ready: boolean; detail: string };
+
+export type ProviderTransportFailure = {
+  outcome: 'known-not-accepted';
+  permanent: boolean;
+  code: string;
+  detail: string;
+};
+
+export class ProviderTransportError extends Error {
+  readonly failure: ProviderTransportFailure;
+
+  constructor(failure: ProviderTransportFailure) {
+    super(failure.detail);
+    this.name = 'ProviderTransportError';
+    this.failure = failure;
+  }
+}
+
+export type VerifiedWebhook = {
+  provider?: 'sendgrid';
+  providerEventId?: string;
+  rawBody: string;
+  receivedAt: Date;
+};
+
+export interface SenderAdapter {
+  channel: Channel;
+  capabilities(): Promise<SenderCapabilities>;
+  validateSender(sender: string, jurisdiction: string): Promise<SenderValidation>;
+  inspectSender?(sender: string): Promise<SenderInspection>;
+  send(request: DeliveryRequest): Promise<ProviderHandoff>;
+  reconcile(request: DeliveryRequest, state: { providerMessageId?: string; cursor?: string }): Promise<ProviderReconciliation>;
+  verifyWebhook(request: Request): Promise<VerifiedWebhook>;
+}
+
+export type SourceRecordInput = {
+  sourceType: string;
+  sourceId: string;
+  occurredAt: Date;
+  payload: Record<string, unknown>;
+};
+
+export type VerifiedCommerceWebhook = VerifiedWebhook & {
+  sourceType: string;
+  sourceId: string;
+  occurredAt: Date;
+  payload: Record<string, unknown>;
+};
+
+export interface CommerceStore {
+  capabilities(): { provider?: string; sourceTypes: string[]; detail: string };
+  synchronize(type: string, cursor?: string): Promise<{ records: SourceRecordInput[]; nextCursor?: string }>;
+  verifyWebhook(request: Request): Promise<VerifiedCommerceWebhook>;
+}
+
+export type GroundedGenerationRequest = {
+  instructions: string;
+  evidence: unknown;
+  schema: Record<string, unknown>;
+};
+
+export type AiGenerationResult = {
+  output: unknown;
+  provider: 'openai';
+  model: string;
+  billableUnits: number;
+  reportedCostMicros?: number;
+  currency?: string;
+};
+
+export interface AiProvider {
+  generateGroundedJson(request: GroundedGenerationRequest): Promise<AiGenerationResult>;
+}
+
+export type QueueCommand = {
+  kind: 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync';
+  idempotencyKey: string;
+  payload: Record<string, unknown>;
+};
+
+export interface JobDispatcher {
+  enqueue(command: QueueCommand): Promise<void>;
+  retry(command: QueueCommand, delaySeconds: number): Promise<void>;
+}
+
+export interface BlobStore {
+  get(key: string, options?: R2GetOptions): ReturnType<R2Bucket['get']>;
+  put(key: string, value: ReadableStream | ArrayBuffer | ArrayBufferView | string | Blob, options?: R2PutOptions): ReturnType<R2Bucket['put']>;
+  delete(key: string | string[]): ReturnType<R2Bucket['delete']>;
+  list(options?: R2ListOptions): ReturnType<R2Bucket['list']>;
+}
+
+export type LinkInspection = {
+  ok: boolean;
+  finalUrl?: string;
+  detail: string;
+};
+
+export interface LinkInspector {
+  inspect(url: string): Promise<LinkInspection>;
+}
+
+export type PublicTokenClaims = {
+  id: string;
+  purpose: string;
+  expiresAt: Date;
+};
+
+export interface PublicTokenSigner {
+  issue(claims: PublicTokenClaims): Promise<string>;
+  verify(token: string, purpose: string, now?: Date): Promise<PublicTokenClaims>;
+  digest(token: string): Promise<string>;
+}
+
+export type AppConfig = {
+  /** Set only by the local Worker composition, never from an environment binding. */
+  local?: boolean;
+  sessionSigningKey: string;
+  authSetupToken?: string;
+  mailboxReceiptUrl?: string;
+  mailboxReceiptRecipient?: string;
+  signupTurnstile?: { siteKey: string; secretKey: string };
+  mailProvider?: 'resend' | 'sendgrid';
+  initialOperatorEmails: string[];
+  contactHashSalt: string;
+  modules: {
+    commerce: OptionalModuleConfig<{
+      storeUrl: URL;
+      apiToken: string;
+      webhookSecret: string;
+    }>;
+    sms: OptionalModuleConfig<{
+      providerApiKey: string;
+      webhookSecret: string;
+      confirmationSender: string;
+      testAllowlist: string[];
+      handoffsPerMinute: number;
+    }>;
+    ai: OptionalModuleConfig<{
+      providerApiKey: string;
+      model: string;
+    }>;
+  };
+  mailProviderApiKey: string;
+  mailAuthFrom: string;
+  mailWebhookSecret: string;
+  mailWebhookId: string;
+  publicBaseUrl: URL;
+  appVersion: string;
+  allowedLinkHosts: string[];
+  testEmailAllowlist: string[];
+  providerReconciliationIntervalMinutes: number;
+  unresolvedProviderOutcomeHours: number;
+  emailHandoffsPerMinute: number;
+  deliverabilityReportingWindowDays: number;
+  mailSender: {
+    displayName: string;
+    fromEmail: string;
+    replyToEmail: string;
+    physicalAddress: string;
+  };
+};
+
+export type OptionalModuleConfig<Config> =
+  | {
+      enabled: false;
+      requiredInputs: readonly string[];
+      missingInputs: readonly string[];
+      detail: string;
+    }
+  | {
+      enabled: true;
+      requiredInputs: readonly string[];
+      missingInputs: readonly [];
+      config: Config;
+    };
+
+export interface Platform {
+  database: Database;
+  config: AppConfig;
+  commerce?: CommerceStore;
+  ai?: AiProvider;
+  mailer: SenderAdapter;
+  sms?: SenderAdapter;
+  jobs: JobDispatcher;
+  blobs: BlobStore;
+  linkInspector: LinkInspector;
+  publicTokens: PublicTokenSigner;
+}
+
+export interface AppBindings {
+  MANGO_LOCAL_CONFIG_VERSION?: string;
+  OWNER_EMAIL?: string;
+  SESSION_SECRET?: string;
+  SETUP_TOKEN?: string;
+  AUTH_ORIGIN?: string;
+  AUTH_LOCAL?: string;
+  RER_DEV_ORIGIN?: string;
+  /** Local runtimes only: the checkout's key gate and dev identity switch. Deploy refuses both. */
+  RER_DEV_KEY?: string;
+  RER_DEV_IDENTITY?: string;
+  RER_MANAGEMENT_ORIGIN?: string;
+  RER_INSTALLATION_ID?: string;
+  RER_OWNER_CLAIM_ISSUER?: string;
+  RER_OWNER_CLAIM_PUBLIC_KEYS?: string;
+  /** Owner-controlled maintenance mode: restart all writers before restoring. */
+  MANGO_RESTORE_MODE?: string;
+  RER_DEPLOY_SOURCE?: string;
+  RER_DEPLOY_FINGERPRINT?: string;
+  RER_VERSION?: { id: string };
+  ASSETS: Fetcher;
+  DB: D1Database;
+  ASSETS_BUCKET: R2Bucket;
+  MANGO_JOBS: Queue<QueueCommand>;
+  SESSION_SIGNING_KEY: string;
+  AUTH_SETUP_TOKEN?: string;
+  MAILBOX_RECEIPT_URL?: string;
+  MAILBOX_RECEIPT_RECIPIENT?: string;
+  TURNSTILE_SITE_KEY?: string;
+  TURNSTILE_SECRET_KEY?: string;
+  MAIL_PROVIDER?: 'resend' | 'sendgrid';
+  INITIAL_OPERATOR_EMAILS: string;
+  CONTACT_HASH_SALT: string;
+  MANGO_LOCAL_HASH_AUTHORITY?: string;
+  COMMERCE_STORE_URL?: string;
+  COMMERCE_API_TOKEN?: string;
+  COMMERCE_WEBHOOK_SECRET?: string;
+  AI_PROVIDER_API_KEY?: string;
+  AI_PROVIDER_MODEL?: string;
+  MAIL_PROVIDER_API_KEY: string;
+  MAIL_AUTH_FROM: string;
+  MAIL_WEBHOOK_SECRET: string;
+  MAIL_WEBHOOK_ID: string;
+  SMS_PROVIDER_API_KEY?: string;
+  SMS_WEBHOOK_SECRET?: string;
+  SMS_CONFIRMATION_SENDER?: string;
+  MANGO_PUBLIC_BASE_URL: string;
+  MANGO_APP_VERSION: string;
+  MANGO_ALLOWED_LINK_HOSTS: string;
+  MANGO_TEST_EMAIL_ALLOWLIST: string;
+  MANGO_TEST_SMS_ALLOWLIST?: string;
+  MANGO_RECONCILIATION_INTERVAL_MINUTES: string;
+  MANGO_UNRESOLVED_OUTCOME_HOURS: string;
+  MANGO_EMAIL_HANDOFFS_PER_MINUTE: string;
+  MANGO_SMS_HANDOFFS_PER_MINUTE?: string;
+  MANGO_DELIVERABILITY_WINDOW_DAYS: string;
+  MAIL_SENDER_NAME: string;
+  MAIL_REPLY_TO: string;
+  MAIL_PHYSICAL_ADDRESS: string;
+}

@@ -1,0 +1,46 @@
+/* The landing's spacing, section rhythm and shared headings. Sections sit in the same 1536px column as the header,
+   divided by warm hairlines; headings are Newsreader, body text Outfit. */
+.mango-landing {
+  /* Every section heading, the closing one included, is set at this one size. */
+  --sec-title: max(36px, calc(56 * var(--u)));
+  /* The page's spacing, from the largest to the smallest. */
+  --rhythm: max(80px, calc(112 * var(--u))); /* a section's padding above its heading */
+  --rhythm-end: var(--rhythm); /* a section's padding below its last line: the two together sit between two sections */
+  --split: clamp(40px, 7.2vw, 120px); /* a band's words and its drawing, side by side */
+  --lead-gap: max(36px, calc(56 * var(--u))); /* a heading's sub and what follows it */
+  --list-gap: max(26px, calc(34 * var(--u))); /* one point and the next */
+  --head-gap: max(16px, calc(22 * var(--u))); /* a heading and its sub */
+  --point-gap: max(6px, calc(8 * var(--u))); /* a point's title and its text */
+}
+@media (max-width: 860px) {
+  .mango-landing { --rhythm: 72px; --rhythm-end: 80px; }
+}
+@media (max-width: 600px) {
+  .mango-landing { --rhythm: 60px; --rhythm-end: 68px; --lead-gap: 32px; --head-gap: 14px; }
+}
+
+.mango-landing .band { position: relative; max-width: var(--ms-max); margin: 0 auto; padding: var(--rhythm) var(--ms-gutter) var(--rhythm-end); }
+/* A quiet hairline across the column where the bands begin and again before the closing; between the bands themselves
+   the space alone divides them. */
+.mango-landing :is(.how + .band, .feature-band + .closing)::before { position: absolute; top: 0; right: var(--ms-gutter); left: var(--ms-gutter); height: 1px; background: var(--ms-hairline); content: ''; }
+.mango-landing [id] { scroll-margin-top: 24px; }
+
+.mango-landing .sec-title { font-size: var(--sec-title); letter-spacing: -0.03em; line-height: 1.04; }
+.mango-landing .sec-sub { max-width: 34em; margin-top: var(--head-gap); color: var(--ms-ink-soft); font-size: max(17px, calc(20 * var(--u))); line-height: 1.5; text-wrap: balance; }
+.mango-landing .sec-sub-part { display: inline-block; }
+
+/* A section's points: badge, serif title, one or two calm sentences. */
+.mango-landing .features { display: grid; align-content: start; gap: var(--list-gap); }
+.mango-landing .feature { display: grid; grid-template-columns: max(44px, calc(52 * var(--u))) minmax(0, 1fr); gap: max(16px, calc(24 * var(--u))); align-items: start; }
+.mango-landing .feature-badge { display: grid; place-items: center; width: max(44px, calc(52 * var(--u))); aspect-ratio: 1; border-radius: 50%; background: var(--ms-sun-soft); color: #2a2a1f; }
+.mango-landing .features--leaf .feature-badge { background: var(--ms-leaf-wash); color: var(--ms-leaf-deep); }
+.mango-landing .feature-badge .icon { width: 56%; height: auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.mango-landing .feature-title { margin-top: 4px; font-size: max(19px, calc(21 * var(--u))); letter-spacing: -0.01em; line-height: 1.2; }
+/* One measure for every point, so a sentence that would fit the wide column on one line balances into two like its
+   neighbours rather than running past them. */
+.mango-landing .feature-text { max-width: 26em; margin-top: var(--point-gap); color: var(--ms-muted); font-size: 16px; line-height: 1.6; text-wrap: balance; }
+/* In a narrow column balance leaves three-line points ragged and short; pretty fills the column and still keeps a lone
+   word off the last line. The step text does the same (how.css). */
+@media (max-width: 860px) {
+  .mango-landing .feature-text { text-wrap: pretty; }
+}

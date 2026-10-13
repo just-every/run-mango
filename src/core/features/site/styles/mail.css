@@ -1,0 +1,35 @@
+/* The envelope, its mango stamp and the postmark (shared by the landing and the docs). The stamp and the postmark are their own size containers. */
+
+/* A perforated stamp. The stamp is its own size container; its sheet's mask keeps the face solid and bites a row of
+   half-round holes out of every edge (--t is one perforation's pitch). */
+:is(.mango-site, .mango-app) .stamp { container-type: inline-size; aspect-ratio: 0.88; filter: drop-shadow(0 1px 1.5px rgb(84 64 28 / 0.28)); }
+:is(.mango-site, .mango-app) .stamp-sheet { --t: 9.5cqw; position: absolute; inset: 0; padding: calc(var(--t) * 0.46); background: #fffaf0; -webkit-mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle closest-side, transparent 66%, #000 72%) calc(var(--t) / -2) calc(var(--t) / -2) / var(--t) var(--t) round; mask: linear-gradient(#000 0 0) content-box, radial-gradient(circle closest-side, transparent 66%, #000 72%) calc(var(--t) / -2) calc(var(--t) / -2) / var(--t) var(--t) round; }
+:is(.mango-site, .mango-app) .stamp-print { display: grid; place-items: center; width: 100%; height: 100%; border: 2.4cqw solid #f0b42a; background: radial-gradient(circle at 40% 45%, #fff3c9 0%, #ffe492 70%, #fbd56a 100%); }
+:is(.mango-site, .mango-app) .stamp-fruit { width: 80%; height: auto; }
+
+:is(.mango-site, .mango-app) .waves { overflow: visible; fill: none; stroke: #6c665d; stroke-width: 1.15; stroke-linecap: round; opacity: 0.8; }
+:is(.mango-site, .mango-app) .waves path { vector-effect: non-scaling-stroke; }
+
+:is(.mango-site, .mango-app) .postmark { display: block; container-type: inline-size; aspect-ratio: 1.9; }
+:is(.mango-site, .mango-app) .postmark-ring { position: absolute; top: 0; left: 0; width: 53%; height: auto; overflow: visible; fill: none; stroke: #625c53; stroke-width: 1.4; }
+:is(.mango-site, .mango-app) .postmark-ring circle { vector-effect: non-scaling-stroke; }
+:is(.mango-site, .mango-app) .postmark-inner { stroke-dasharray: 3 1.4; opacity: 0.7; }
+:is(.mango-site, .mango-app) .postmark-rim text { fill: #4f4a43; stroke: none; font-family: var(--ms-sans); font-size: 10.2px; font-weight: 600; }
+:is(.mango-site, .mango-app) .postmark-tick { stroke: #4f4a43; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+:is(.mango-site, .mango-app) .postmark-dot { fill: #625c53; stroke: none; }
+:is(.mango-site, .mango-app) .postmark-label { position: absolute; top: 0; left: 0; display: grid; place-items: center; width: 53%; aspect-ratio: 1; color: #4f4a43; font-size: 13.5cqw; font-weight: 500; letter-spacing: 0.04em; rotate: -8deg; }
+:is(.mango-site, .mango-app) .postmark-waves { position: absolute; top: 26%; left: 49%; width: 51%; height: 48%; }
+/* Mirrored: the ring on the right and its waves trailing to the left. */
+:is(.mango-site, .mango-app) .postmark--mirror .postmark-ring { right: 0; left: auto; }
+:is(.mango-site, .mango-app) .postmark--mirror .postmark-waves { left: 0; scale: -1 1; }
+
+:is(.mango-site, .mango-app) .envelope-paper { width: 100%; height: 100%; }
+:is(.mango-site, .mango-app) .envelope-seams { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: #d9c194; stroke-width: 1; opacity: 0.75; }
+:is(.mango-site, .mango-app) .envelope-seams path { vector-effect: non-scaling-stroke; }
+:is(.mango-site, .mango-app) .envelope-lines { position: absolute; bottom: 21%; left: 13%; display: grid; gap: calc(0.95 * var(--q, 1cqw)); width: 42%; }
+:is(.mango-site, .mango-app) .envelope-lines i { display: block; height: calc(0.42 * var(--q, 1cqw)); border-radius: 1cqw; background: #b4aa98; opacity: 0.75; }
+:is(.mango-site, .mango-app) .envelope-lines i:nth-child(2) { width: 88%; }
+:is(.mango-site, .mango-app) .envelope-lines i:nth-child(3) { width: 72%; }
+:is(.mango-site, .mango-app) .envelope-stamp { position: absolute; top: 6%; right: 5%; width: 18%; rotate: 4deg; }
+:is(.mango-site, .mango-app) .envelope-cancel { position: absolute; top: 18%; right: 19%; width: 22%; height: 17%; }
+:is(.mango-site, .mango-app) .envelope-postmark { position: absolute; top: 47%; right: 6%; width: 41%; }

@@ -1,0 +1,191 @@
+import { summarizeAudienceRules, withDerivedAudience } from './audience-summary';
+import { normalizeAuthoredContent } from './authoring-content';
+import { parseStructuredRules } from '@/core/features/lifecycle/rules';
+import { createDraft } from './create-draft';
+import { asc, eq } from 'drizzle-orm';
+
+import type { Database } from '@/core/platform/db/client';
+
+import type { DraftComposition } from './draft-composition';
+import { campaignReviewSnapshot } from './review-snapshot';
+import {
+  campaignAudiences,
+  campaignAudienceChannelCounts,
+  campaignRevisionLinks,
+  campaignRevisions,
+  campaignSteps,
+} from './campaign-schema';
+
+type MutableRevisionField = Exclude<keyof DraftComposition, 'links' | 'steps'>;
+
+const revisionColumns: Record<MutableRevisionField, string> = {
+  name: 'name',
+  audienceRule: 'audience_rule',
+  emailSubject: 'email_subject',
+  emailBody: 'email_body',
+  emailText: 'email_text',
+  preheader: 'preheader',
+  smsBody: 'sms_body',
+  senderName: 'sender_name',
+  fromEmail: 'from_email',
+  replyToEmail: 'reply_to_email',
+  smsSender: 'sms_sender',
+  physicalAddress: 'physical_address',
+  messageCategory: 'message_category',
+  inclusionRuleJson: 'inclusion_rule_json',
+  exclusionRulesJson: 'exclusion_rules_json',
+  sourceTypesJson: 'source_types_json',
+  trackingEnabled: 'tracking_enabled',
+};
+
+function draftGuard(revisionId: string, savedAt: Date) {
+  return `EXISTS (
+    SELECT 1 FROM campaign_revisions
+    WHERE id = '${revisionId.replaceAll("'", "''")}' AND state = 'draft'
+      AND updated_at = ${savedAt.getTime()}
+  )`;
+}
+
+function revisionUpdate(composition: DraftComposition, updatedAt: Date, revisionId: string, savedAt: Date) {
+  const fields = (Object.keys(revisionColumns) as MutableRevisionField[]).flatMap((field) =>
+    composition[field] === undefined ? [] : [[revisionColumns[field], composition[field]] as const],
+  );
+  const assignments = [...fields.map(([column]) => `${column} = ?`), 'updated_at = MAX(updated_at + 1, ?)'];
+  const values = [...fields.map(([, value]) => value), updatedAt.getTime()];
+  return {
+    sql: `UPDATE campaign_revisions SET ${assignments.join(', ')} WHERE id = ? AND state = 'draft' AND updated_at = ?`,
+    values: [...values, revisionId, savedAt.getTime()],
+  };
+}
+
+export function createCampaignCompositionRepository(database: Database) {
+  async function read(revisionId: string) {
+    const revision = await database.query.campaignRevisions.findFirst({
+      where: eq(campaignRevisions.id, revisionId),
+    });
+    if (!revision) return undefined;
+
+    const [steps, links, audience] = await Promise.all([
+      database
+        .select()
+        .from(campaignSteps)
+        .where(eq(campaignSteps.revisionId, revisionId))
+        .orderBy(asc(campaignSteps.sequence)),
+      database
+        .select()
+        .from(campaignRevisionLinks)
+        .where(eq(campaignRevisionLinks.revisionId, revisionId))
+        .orderBy(asc(campaignRevisionLinks.sequence)),
+      database.query.campaignAudiences.findFirst({
+        where: eq(campaignAudiences.revisionId, revisionId),
+      }),
+    ]);
+    const audienceChannelCounts = audience
+      ? await database
+          .select()
+          .from(campaignAudienceChannelCounts)
+          .where(eq(campaignAudienceChannelCounts.audienceId, audience.id))
+          .orderBy(asc(campaignAudienceChannelCounts.channel))
+      : [];
+
+    return {
+      revision: withDerivedAudience(revision),
+      steps,
+      links,
+      ...campaignReviewSnapshot(revision, steps, audience, audienceChannelCounts),
+    };
+  }
+
+  return {
+    read,
+    createDraft: (composition: DraftComposition, operatorId: string) => createDraft(database, composition, operatorId),
+
+    async saveDraft(id: string, composition: DraftComposition, updatedAt: Date) {
+      const existing = await read(id);
+      if (!existing) return { kind: 'not_found' as const };
+      if (existing.revision.state !== 'draft') return { kind: 'not_draft' as const };
+
+      composition = normalizeAuthoredContent({...composition, emailBody:composition.emailBody ?? existing.revision.emailBody, links:composition.links ?? (composition.emailBody !== undefined ? [] : existing.links.map(({label,destinationUrl})=>({label,destinationUrl})))});
+      // Persist the complete rule pair and its summary in the same guarded update.
+      // Partial edits and concurrent saves must never combine prose with another rule pair.
+      composition.inclusionRuleJson ??= existing.revision.inclusionRuleJson;
+      composition.exclusionRulesJson ??= existing.revision.exclusionRulesJson;
+      const rules = parseStructuredRules(composition.inclusionRuleJson, composition.exclusionRulesJson);
+      if (!rules.ok) throw new Error('Invalid audience rules.');
+      composition.audienceRule = summarizeAudienceRules(composition.inclusionRuleJson, composition.exclusionRulesJson);
+      composition.sourceTypesJson = JSON.stringify(rules.sourceTypes);
+      const guard = draftGuard(id, existing.revision.updatedAt);
+      const statements: D1PreparedStatement[] = [];
+      const prepare = (query: string, ...values: unknown[]) =>
+        statements.push(database.$client.prepare(query).bind(...values));
+
+      // Content now determines fallback usage as well as approval checks.
+      // Every saved edit invalidates the complete review under the draft guard.
+      {
+        prepare(`DELETE FROM campaign_checks WHERE revision_id = ? AND ${guard}`, id);
+        prepare(
+          `DELETE FROM campaign_audience_channel_counts
+           WHERE audience_id IN (
+             SELECT id FROM campaign_audiences WHERE revision_id = ? AND ${guard}
+           )`,
+          id,
+        );
+        prepare(`DELETE FROM campaign_audiences WHERE revision_id = ? AND ${guard}`, id);
+      }
+
+      if (composition.links !== undefined) {
+        prepare(`DELETE FROM campaign_revision_links WHERE revision_id = ? AND ${guard}`, id);
+        for (const [index, link] of composition.links.entries()) {
+          prepare(
+            `INSERT INTO campaign_revision_links
+             (id, revision_id, sequence, label, destination_url, created_at, updated_at)
+             SELECT ?, ?, ?, ?, ?, ?, ? WHERE ${guard}`,
+            crypto.randomUUID(),
+            id,
+            index + 1,
+            link.label,
+            link.destinationUrl,
+            updatedAt.getTime(),
+            updatedAt.getTime(),
+          );
+        }
+      }
+
+      if (composition.steps !== undefined) {
+        prepare(`DELETE FROM campaign_steps WHERE revision_id = ? AND ${guard}`, id);
+        for (const [index, step] of composition.steps.entries()) {
+          prepare(
+            `INSERT INTO campaign_steps
+             (id, revision_id, sequence, channel, timezone, scheduled_at, send_by_at, why_this_time, created_at, updated_at)
+             SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE ${guard}`,
+            crypto.randomUUID(),
+            id,
+            index + 1,
+            step.channel,
+            step.timezone,
+            new Date(step.scheduledAt).getTime(),
+            new Date(step.sendByAt).getTime(),
+            step.whyThisTime,
+            updatedAt.getTime(),
+            updatedAt.getTime(),
+          );
+        }
+      }
+
+      const update = revisionUpdate(composition, updatedAt, id, existing.revision.updatedAt);
+      prepare(update.sql, ...update.values);
+      const results = await database.$client.batch(statements);
+      const updateResult = results.at(-1);
+      if (!updateResult?.meta.changes) {
+        const current = await read(id);
+        return !current ? {kind:'not_found' as const}
+          : current.revision.state !== 'draft' ? {kind:'not_draft' as const}
+          : {kind:'stale_revision' as const};
+      }
+
+      const saved = await read(id);
+      if (!saved) throw new Error(`Draft revision ${id} disappeared after its composition was saved.`);
+      return { kind: 'updated' as const, composition: saved };
+    },
+  };
+}

@@ -1,0 +1,6 @@
+/* The two calls to action: the sunny primary button (dark ink text) and the outlined secondary one. */
+:is(.mango-site, .mango-app) .site-button { display: inline-flex; align-items: center; justify-content: center; gap: max(18px, calc(40 * var(--u))); min-height: max(52px, calc(66 * var(--u))); padding: 0 max(22px, calc(34 * var(--u))); border: 1.5px solid #4a463f; border-radius: 4px; background: rgb(255 253 248 / 0.7); color: var(--ms-ink); font-family: var(--ms-sans); font-size: max(17px, calc(20 * var(--u))); font-weight: 400; line-height: 1.1; white-space: nowrap; transition: background-color 0.18s, border-color 0.18s, box-shadow 0.18s; }
+:is(.mango-site, .mango-app) .site-button:hover { background: var(--ms-paper); box-shadow: 0 6px 16px -10px rgb(70 52 18 / 0.5); }
+:is(.mango-site, .mango-app) .site-button--sun { border-color: var(--ms-sun); background: var(--ms-sun); }
+:is(.mango-site, .mango-app) .site-button--sun:hover { border-color: var(--ms-sun-hover); background: var(--ms-sun-hover); }
+:is(.mango-site, .mango-app) .site-button-arrow { width: 1.3em; height: auto; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }

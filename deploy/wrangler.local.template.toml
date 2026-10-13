@@ -1,0 +1,26 @@
+name = "mango-local"
+main = "./src/core/app/worker.local.ts"
+compatibility_date = "2026-09-08"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mango-local"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations/core"
+
+[[r2_buckets]]
+binding = "ASSETS_BUCKET"
+bucket_name = "mango-local-files"
+
+[[queues.producers]]
+binding = "MANGO_JOBS"
+queue = "mango-local-jobs"
+
+[[queues.consumers]]
+queue = "mango-local-jobs"
+max_batch_size = 10
+max_retries = 5

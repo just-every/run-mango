@@ -1,0 +1,51 @@
+/* How a letter leaves Mango: five steps in a row, a small drawing over each number, joined by pen arrows, each text
+   running the whole width of its step. The row keeps all five across (smaller) down to 1101px, then becomes one list
+   with each drawing beside its step and no arrows: never a part-filled grid, never five cramped columns. From 861px to
+   1100px the list spans the column with larger drawings and a reading-width text; narrower it is capped at 720px. */
+.mango-landing .how { --step-gap: max(28px, calc(48 * var(--u))); --arrow: max(30px, calc(50 * var(--u))); }
+.mango-landing .steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--step-gap); margin-top: var(--lead-gap); }
+.mango-landing .step { position: relative; min-width: 0; }
+.mango-landing .step-art { width: 100%; aspect-ratio: 230 / 185; }
+/* The arrow sits centred in the gap, level with the drawings' middle (a margin's percentage is of the step's width).
+   A step's text is balanced at every width, so it never ends on a word or two, in the row or in the list. */
+.mango-landing .step-arrow { position: absolute; top: 0; right: calc((var(--step-gap) + var(--arrow)) / -2); width: var(--arrow); margin-top: 39%; translate: 0 -50%; }
+.mango-landing .step-title { display: flex; align-items: center; gap: max(12px, calc(16 * var(--u))); margin-top: max(16px, calc(24 * var(--u))); font-size: max(23px, calc(27 * var(--u))); letter-spacing: -0.02em; }
+.mango-landing .step-num { display: grid; flex: none; place-items: center; width: max(34px, calc(38 * var(--u))); aspect-ratio: 1; border-radius: 50%; background: var(--ms-sun-soft); font-family: var(--ms-sans); font-size: max(17px, calc(19 * var(--u))); font-weight: 500; letter-spacing: 0; }
+.mango-landing .step-text { margin-top: max(12px, calc(14 * var(--u))); color: var(--ms-muted); font-size: max(15px, calc(16 * var(--u))); line-height: 1.6; text-wrap: balance; }
+
+@media (max-width: 1180px) {
+  .mango-landing .how { --step-gap: 30px; --arrow: 28px; }
+  .mango-landing .step-title { gap: 10px; font-size: 22px; }
+  .mango-landing .step-num { width: 32px; font-size: 16px; }
+  .mango-landing .step-text { margin-top: 10px; font-size: 15px; }
+}
+
+/* The list: each drawing beside its title and text, which sit centred against it. */
+@media (max-width: 1100px) {
+  .mango-landing .steps { grid-template-columns: minmax(0, 1fr); row-gap: 16px; }
+  .mango-landing .step { display: grid; grid-template-columns: minmax(0, 240px) minmax(0, 560px); grid-template-rows: 1fr auto auto 1fr; column-gap: clamp(40px, 6vw, 64px); }
+  .mango-landing .step-art { grid-row: 1 / -1; }
+  .mango-landing .step-arrow { display: none; }
+  .mango-landing .step-title { grid-row: 2; margin-top: 0; }
+  .mango-landing .step-text { grid-row: 3; }
+}
+
+@media (min-width: 861px) and (max-width: 1100px) {
+  .mango-landing .step-title { font-size: 24px; }
+  .mango-landing .step-text { font-size: 16px; }
+}
+
+@media (max-width: 860px) {
+  .mango-landing .steps { row-gap: 40px; max-width: 720px; }
+  .mango-landing .step { grid-template-columns: minmax(0, 210px) minmax(0, 1fr); column-gap: 40px; }
+}
+
+@media (max-width: 600px) {
+  .mango-landing .steps { row-gap: 36px; }
+  .mango-landing .step { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); column-gap: 20px; }
+}
+
+/* Narrow columns fill out rather than balance, as the feature text does (layout.css). */
+@media (max-width: 860px) {
+  .mango-landing .step-text { text-wrap: pretty; }
+}

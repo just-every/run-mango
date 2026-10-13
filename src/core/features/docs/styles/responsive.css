@@ -1,0 +1,28 @@
+/* Narrower screens. Below 1200px the On this page rail folds into its disclosure above the text; at 860px and below the
+   sidebar gives way to the Contents disclosure and everything is one column; phones get slightly smaller type. */
+@media (min-width: 1200px) {
+  .mango-docs .docs-toc-compact { display: none; }
+}
+@media (max-width: 1199px) {
+  .mango-docs { grid-template-columns: 236px minmax(0, 1fr); }
+  .mango-docs .docs-toc-rail { display: none; }
+}
+@media (max-width: 860px) {
+  .mango-docs { display: block; }
+  .mango-docs .docs-sidebar { display: none; }
+  .mango-docs .docs-menu { display: block; padding-top: 6px; }
+  .mango-docs .docs-main { padding-top: 26px; }
+  .mango-docs .docs-page-head--welcome { grid-template-columns: minmax(0, 1fr) minmax(0, 210px); }
+}
+@media (max-width: 560px) {
+  .mango-docs .docs-page-head--welcome { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .mango-docs .docs-welcome-art { max-width: 210px; }
+  .mango-docs .docs-prose { font-size: 16.5px; }
+  .mango-docs .docs-prose > p:first-child { font-size: 18px; }
+  .mango-docs .docs-code pre { padding: 15px 16px 16px; font-size: 13.5px; }
+  .mango-docs .docs-note .paper-face { padding: 18px 18px 19px; }
+  .mango-docs .docs-note-body { padding-right: 58px; }
+  .mango-docs .docs-note-stamp { top: -12px; right: 14px; width: 52px; }
+  .mango-docs .docs-pager { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .mango-docs .docs-pager-link--next { grid-column: auto; }
+}

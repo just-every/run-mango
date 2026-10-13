@@ -1,0 +1,75 @@
+import { generateKeyPairSync, randomBytes } from 'node:crypto';
+import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
+
+// Test-only network edge. The go-live Worker forwards every request Mango makes
+// to api.sendgrid.com and cloudflare-dns.com here; anything else it refuses.
+// It answers like SendGrid's v3 API and a DNS-over-HTTPS resolver for a sending
+// domain authenticated with SendGrid (SPF via the mail CNAME, two DKIM CNAMEs,
+// a DMARC record). Each mail send is recorded exactly as Mango serialized it.
+export type EdgeSend = { to: string; messageId: string; outcome: 'accepted' | 'lost'; body: Record<string, any> };
+type Answer = { type: number; data: string };
+
+const quoted = (value: string) => (value.match(/.{1,255}/g) ?? []).map(part => JSON.stringify(part)).join(' ');
+const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
+
+export async function providerEdge() {
+  const keys = [dkimKey(), dkimKey()];
+  const sends: EdgeSend[] = [], unexpected: string[] = [], lost = new Set<string>();
+  const domain = { id: 123, user_id: 99, domain: 'example.test', valid: true, automatic_security: true, custom_spf: false, dns: {
+    mail_cname: { valid: true, type: 'cname', host: 'em123.example.test', data: 'u99.wl.sendgrid.net' },
+    dkim1: { valid: true, type: 'cname', host: 's1._domainkey.example.test', data: 's1.domainkey.u99.wl.sendgrid.net' },
+    dkim2: { valid: true, type: 'cname', host: 's2._domainkey.example.test', data: 's2.domainkey.u99.wl.sendgrid.net' } } };
+  const zone: Record<string, Answer[]> = {
+    'em123.example.test': [{ type: 5, data: 'u99.wl.sendgrid.net.' }],
+    'u99.wl.sendgrid.net': [{ type: 16, data: quoted('v=spf1 ip4:192.0.2.1 -all') }],
+    's1._domainkey.example.test': [{ type: 5, data: 's1.domainkey.u99.wl.sendgrid.net.' }],
+    's2._domainkey.example.test': [{ type: 5, data: 's2.domainkey.u99.wl.sendgrid.net.' }],
+    's1.domainkey.u99.wl.sendgrid.net': [{ type: 16, data: quoted(`v=DKIM1; k=rsa; p=${keys[0]}`) }],
+    's2.domainkey.u99.wl.sendgrid.net': [{ type: 16, data: quoted(`v=DKIM1; k=rsa; p=${keys[1]}`) }],
+    '_dmarc.example.test': [{ type: 16, data: quoted('v=DMARC1; p=quarantine; psd=n') }],
+  };
+  const codes: Record<string, number> = { CNAME: 5, TXT: 16, MX: 15 };
+  function resolve(name: string, type: string) {
+    const answers: Array<Answer & { name: string; TTL: number }> = [];
+    let target = name.toLowerCase().replace(/\.$/, '');
+    for (let hops = 0; hops < 8; hops++) {
+      const records = zone[target] ?? [];
+      const alias = records.find(row => row.type === 5);
+      if (alias && type !== 'CNAME') { answers.push({ name: target, TTL: 300, ...alias }); target = alias.data.replace(/\.$/, ''); continue; }
+      answers.push(...records.filter(row => row.type === codes[type]).map(row => ({ name: target, TTL: 300, ...row })));
+      break;
+    }
+    return answers.length ? { Status: 0, Answer: answers }
+      : { Status: 3, Authority: [{ name: 'example.test', type: 6, TTL: 300, data: 'ns.example.test host.example.test 1 300 300 300 300' }] };
+  }
+  const body = async (request: IncomingMessage) => { const chunks: Buffer[] = []; for await (const chunk of request) chunks.push(chunk); return Buffer.concat(chunks).toString('utf8'); };
+  const json = (response: ServerResponse, status: number, value: unknown, headers: Record<string, string> = {}) => {
+    response.writeHead(status, { 'Content-Type': 'application/json', ...headers }); response.end(JSON.stringify(value));
+  };
+  const server = createServer(async (request, response) => {
+    const original = new URL(String(request.headers['x-edge-original-url']));
+    if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+    if (original.hostname === 'api.sendgrid.com') {
+      if (original.pathname === '/v3/whitelabel/domains' && request.method === 'GET') return json(response, 200, original.searchParams.get('offset') === '0' ? [domain] : []);
+      if (original.pathname === '/v3/whitelabel/domains/123' && request.method === 'GET') return json(response, 200, domain);
+      // The Email Activity API is a paid add-on; this account does not have it.
+      if (original.pathname.startsWith('/v3/messages')) return json(response, 403, { errors: [{ message: 'access forbidden' }] });
+      if (original.pathname === '/v3/mail/send' && request.method === 'POST') {
+        const sent = JSON.parse(await body(request)), to = String(sent.personalizations?.[0]?.to?.[0]?.email ?? '');
+        const messageId = randomBytes(11).toString('base64url');
+        // SendGrid accepted it either way; a lost response leaves Mango uncertain.
+        sends.push({ to, messageId, outcome: lost.has(to) ? 'lost' : 'accepted', body: sent });
+        if (lost.has(to)) return response.destroy();
+        response.writeHead(202, { 'X-Message-Id': messageId }); return response.end();
+      }
+    }
+    unexpected.push(`${request.method} ${original.href}`);
+    json(response, 599, { error: 'unexpected edge request' });
+  });
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  const address = server.address();
+  if (!address || typeof address === 'string') throw new Error('Edge server has no port.');
+  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, unexpected,
+    loseResponseFor: (address: string) => lost.add(address),
+    close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
+}

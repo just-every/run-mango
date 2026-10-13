@@ -1,0 +1,16 @@
+/* Motion is optional and plays once on load: the hero's cards settle onto the page one after another, then the APPROVED
+   postmark stamps onto the envelope. CSS only, nothing loops, nothing waits for a script, and
+   with reduced motion (or without this file) every drawing is simply there. Only drawing pieces move, never text. */
+@media (prefers-reduced-motion: no-preference) {
+  .mango-landing .hero-art .h-card, .mango-landing .h-editor-stamp { animation: mango-settle 0.75s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .mango-landing .h-editor { animation-delay: 0.05s; }
+  .mango-landing .h-approved { animation-delay: 0.15s; }
+  .mango-landing .h-envelope { animation-delay: 0.25s; }
+  .mango-landing .h-subscriber { animation-delay: 0.35s; }
+  .mango-landing .h-audience { animation-delay: 0.45s; }
+  .mango-landing .h-delivered { animation-delay: 0.55s; }
+  .mango-landing .h-editor-stamp { animation-delay: 0.7s; }
+  .mango-landing .h-envelope .envelope-postmark { animation: mango-stamp 0.5s 1.15s cubic-bezier(0.3, 0.6, 0.3, 1.2) both; }
+  @keyframes mango-settle { from { opacity: 0; translate: 0 16px; } to { opacity: 1; translate: 0 0; } }
+  @keyframes mango-stamp { 0% { opacity: 0; scale: 1.8; } 60% { opacity: 1; scale: 0.94; } 100% { opacity: 1; scale: 1; } }
+}

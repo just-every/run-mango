@@ -1,0 +1,2 @@
+# Preserve documented CSV fixture bytes, including CRLF line endings.
+tests/audience-import/fixtures/*.csv -text

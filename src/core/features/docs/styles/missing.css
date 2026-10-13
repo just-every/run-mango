@@ -1,0 +1,24 @@
+/* The docs' not-found page (404) inside the shared frame: the note and the two ways back beside an envelope postmarked
+   404. Scoped to `.docs-missing`, which is not a docs page. The note sits in the middle of the space between header and
+   footer. */
+.mango-site main:has(> .docs-missing) { display: flex; flex-direction: column; justify-content: center; }
+.mango-site .docs-missing { display: grid; width: 100%; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); align-items: center; gap: 40px 64px; max-width: var(--ms-max); margin: 0 auto; padding: max(40px, calc(96 * var(--u))) var(--ms-gutter) max(64px, calc(128 * var(--u))); }
+.mango-site .docs-missing-eyebrow { margin-bottom: 12px; color: var(--ms-amber); font-size: 13px; font-weight: 600; letter-spacing: 0.15em; line-height: 1.3; text-transform: uppercase; }
+.mango-site .docs-missing-title { max-width: 12em; font-size: max(42px, calc(72 * var(--u))); letter-spacing: -0.035em; line-height: 1.04; }
+.mango-site .docs-missing-text { max-width: 30em; margin-top: max(18px, calc(26 * var(--u))); color: var(--ms-ink-soft); font-size: max(17px, calc(20 * var(--u))); line-height: 1.55; text-wrap: balance; }
+.mango-site .docs-missing-actions { display: flex; flex-wrap: wrap; gap: 14px 18px; margin-top: max(26px, calc(36 * var(--u))); }
+
+.mango-site .docs-missing-art { width: 100%; aspect-ratio: 440 / 300; }
+.mango-site .docs-missing-art .art-inner > * { top: var(--y); left: var(--x); width: var(--w); height: var(--h, auto); rotate: var(--r, 0deg); }
+.mango-site .dm-envelope { --x: 12%; --y: 13%; --w: 86%; --h: 69%; --r: -4deg; }
+
+@media (max-width: 860px) {
+  .mango-site .docs-missing { grid-template-columns: minmax(0, 1fr); }
+  .mango-site .docs-missing-art { max-width: 360px; }
+  .mango-site .dm-envelope { --x: 4%; }
+}
+
+/* A phone stacks the two ways back full width, as the landing stacks its buttons. */
+@media (max-width: 480px) {
+  .mango-site .docs-missing-actions .site-button { flex: 1 1 auto; }
+}

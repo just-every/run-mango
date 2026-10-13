@@ -1,0 +1,18 @@
+/* The hero at the approved design's proportions: the copy on the left, the paper scene placed beside it and ending at
+   the right gutter. One --u is one pixel of the 1536px-wide design. The hero runs 91 design pixels below
+   the scene, so with How's --rhythm the first section heading has room below it. */
+.mango-landing .hero { position: relative; max-width: var(--ms-max); min-height: calc(800 * var(--u)); margin: 0 auto; padding: calc(126 * var(--u)) var(--ms-gutter) calc(104 * var(--u)); }
+.mango-landing .hero-copy { position: relative; z-index: 1; max-width: max(440px, calc(720 * var(--u))); }
+.mango-landing .hero h1 { font-size: max(46px, calc(90 * var(--u))); font-weight: 400; letter-spacing: -0.04em; line-height: 1.06; }
+.mango-landing .hero-lead { max-width: max(380px, calc(590 * var(--u))); margin-top: max(24px, calc(48 * var(--u))); color: var(--ms-ink-soft); font-size: max(18px, calc(23.5 * var(--u))); line-height: 1.62; text-wrap: pretty; }
+.mango-landing .hero-replaces { margin-top: max(14px, calc(20 * var(--u))); color: var(--ms-muted); font-size: max(14px, calc(16 * var(--u))); text-wrap: pretty; }
+.mango-landing .hero-replaces strong { color: var(--ms-ink-soft); font-weight: 600; }
+.mango-landing .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px max(16px, calc(24 * var(--u))); margin-top: max(32px, calc(56 * var(--u))); }
+.mango-landing .hero-note { margin-top: max(20px, calc(28 * var(--u))); color: var(--ms-muted); font-size: max(14px, calc(16 * var(--u))); text-wrap: pretty; }
+.mango-landing .hero-note-dot { color: var(--ms-faint); }
+
+/* The scene: the 770 x 690 design drawn 684 design pixels wide, its top-left corner 778px in from the hero's left edge.
+   Its rightmost card, the new subscriber, ends on the right gutter, level with the header's last link (1536 - 86 = 1450
+   design pixels), and its left edge leaves paper between the headline and the editor card and between the buttons and
+   the audience card. At 1080px and narrower the scene moves under the copy (responsive.css). */
+.mango-landing .hero-art { position: absolute; top: calc(76 * var(--u)); left: calc(778 * var(--u)); width: calc(684 * var(--u)); aspect-ratio: 770 / 690; }

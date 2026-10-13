@@ -1,0 +1,60 @@
+import {test,expect} from '@playwright/test';
+import {mkdir} from 'node:fs/promises';
+import {join} from 'node:path';
+import {signInAsLocalOperator,expectDocumentToFit} from './browser-checks';
+
+test('AUD-001 CONT-011 operator saves, copies, edits and deletes a segment and reviews a restrictive merge at both widths',async({page,request},info)=>{
+  const folder=process.env.MANGO_CONTROLS_EVIDENCE??info.outputPath('screenshots');await mkdir(folder,{recursive:true});
+  await signInAsLocalOperator(page,request);
+  const origin=new URL(info.project.use.baseURL as string).origin;
+  async function json(path:string,body?:unknown) {const response=body===undefined?await page.request.get(path):await page.request.post(path,{data:body,headers:{Origin:origin}});expect(response.ok(),await response.text()).toBe(true);return response.json();}
+  for(const width of [1440,390]) {
+    await page.setViewportSize({width,height:width===390?844:1000});
+    const name=`Readers ${width}`;
+    await page.goto('/app/audience');
+    await page.getByRole('button',{name:'Create segment',exact:true}).click();
+    await page.getByLabel('Segment name',{exact:true}).fill(name);
+    await page.getByLabel('Include 1 field').selectOption('contact:email');
+    await page.getByLabel('Include 1 comparison').selectOption('contains');
+    await page.getByLabel('Include 1 value',{exact:true}).fill('@example.test');
+    await expect(page.getByLabel('Live audience estimate')).toContainText('candidates');
+    await page.getByRole('button',{name:'Save segment',exact:true}).click();
+    await expect(page.getByRole('button',{name:`Edit ${name}`,exact:true})).toBeVisible();
+    await page.getByRole('button',{name:`Edit ${name}`,exact:true}).click();
+    await expect(page.getByLabel('Live audience estimate')).toContainText('candidates');
+    await page.getByLabel('Segment name',{exact:true}).scrollIntoViewIfNeeded();await expectDocumentToFit(page,width);
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:join(folder,`segment-count-${width}.png`),fullPage:true});
+    const saved=(await json('/api/audience/segments')).segments.find((item:any)=>item.name===name);
+    const campaign=await json('/api/campaigns',{mode:'blank'});
+    await page.goto(`/app/campaigns/${campaign.campaignId}/review`);
+    await page.getByRole('combobox',{name:'Saved segment',exact:true}).selectOption(saved.id);
+    await page.getByRole('button',{name:'Copy segment into draft'}).click();
+    await expect(page.getByLabel('Include 1 value',{exact:true})).toHaveValue('@example.test');
+    await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+    await expect.poll(async()=> (await json(`/api/campaigns/${campaign.campaignId}/review`)).revision.inclusionRuleJson).toBe(saved.inclusionRuleJson);
+    await page.getByRole('combobox',{name:'Saved segment',exact:true}).scrollIntoViewIfNeeded();await expectDocumentToFit(page,width);
+    await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:join(folder,`segment-copied-${width}.png`),fullPage:true});
+    const before=(await json(`/api/campaigns/${campaign.campaignId}/review`)).revision;
+    await page.goto('/app/audience');await page.getByRole('button',{name:`Edit ${name}`,exact:true}).click();
+    await page.getByLabel('Segment name',{exact:true}).fill(`${name} renamed`);await page.getByLabel('Include 1 value',{exact:true}).fill('nobody@example.test');
+    await page.getByRole('button',{name:'Save segment',exact:true}).click();
+    await expect(page.getByRole('button',{name:`Edit ${name} renamed`,exact:true})).toBeVisible();
+    expect((await json(`/api/campaigns/${campaign.campaignId}/review`)).revision).toEqual(before);
+    await page.getByRole('button',{name:`Delete ${name} renamed`,exact:true}).click();
+    await expect(page.getByRole('alertdialog')).toBeVisible();await page.screenshot({path:join(folder,`segment-delete-${width}.png`)});
+    await page.getByRole('button',{name:'Delete segment',exact:true}).click();await expect(page.getByRole('alertdialog')).toHaveCount(0);
+    expect((await json(`/api/campaigns/${campaign.campaignId}/review`)).revision).toEqual(before);
+    const prefix=`merge-ui-${width}`;
+    const preview=await json('/api/audience/import-preview',{files:[{name:'merge.csv',preset:'csv-unsubscribed',csv:`Email Address,First Name\n${prefix}-keep@example.test,Keep contact\n${prefix}-duplicate@example.test,Duplicate contact`} ]});
+    await json('/api/audience/imports',{fingerprint:preview.fingerprint});
+    const contacts=(await json('/api/audience')).contacts;
+    const survivor=contacts.find((item:any)=>item.email===`${prefix}-keep@example.test`),merged=contacts.find((item:any)=>item.email===`${prefix}-duplicate@example.test`);
+    await page.goto(`/app/audience/${merged.id}`);await expect(page.getByRole('button',{name:'Merge into another contact'})).toBeVisible();await expectDocumentToFit(page,width);
+    await page.screenshot({path:join(folder,`merge-control-${width}.png`),fullPage:true});
+    await page.getByRole('button',{name:'Merge into another contact'}).click();await page.getByLabel('Survivor email address').fill(survivor.email);
+    await page.getByRole('button',{name:new RegExp(survivor.email.replaceAll('.','\\.'))}).click();
+    await expect(page.getByRole('alertdialog')).toContainText(/unsubscribed/i);await page.screenshot({path:join(folder,`merge-preview-${width}.png`)});
+    await page.getByRole('button',{name:'Confirm merge',exact:true}).click();await expect(page).toHaveURL(new RegExp(`/app/audience/${survivor.id}$`));
+    await expect(page.getByText(/contact merged/i,{exact:true})).toBeVisible();await expectDocumentToFit(page,width);await page.screenshot({path:join(folder,`merge-result-${width}.png`),fullPage:true});
+  }
+});

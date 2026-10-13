@@ -1,0 +1,43 @@
+/* Form controls, labels, fieldsets and validation. ValidationForm and Field own the logic; this is only their look. */
+:where(.mango-app) :is(input:where(:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"])), select, textarea), .rich-email-editor {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid var(--ms-control);
+  border-radius: var(--ms-radius-control);
+  background: var(--ms-paper);
+  color: var(--ms-ink);
+  font: 400 15px/1.45 var(--ms-sans);
+  transition: border-color .18s, box-shadow .18s;
+}
+@media (pointer: coarse) { :where(.mango-app) :is(input:where(:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"])), select) { min-height: 44px; } }
+:where(.mango-app) :is(input, select, textarea):hover:not(:disabled, [readonly]) { border-color: var(--ms-ink-soft); }
+:where(.mango-app) :is(input, select, textarea):focus-visible { border-color: var(--ms-ink); }
+:where(.mango-app) :is(input, textarea)[readonly] { border-style: dashed; background: var(--ms-paper-deep); }
+:where(.mango-app) :is(input, select, textarea):disabled { background: var(--ms-paper-deep); color: var(--ms-muted); cursor: not-allowed; }
+:where(.mango-app) :is(input, textarea)::placeholder { color: var(--ms-muted); opacity: 1; }
+:where(.mango-app) textarea { min-height: 96px; resize: vertical; }
+:where(.mango-app) select { appearance: none; padding-right: 36px; background: var(--ms-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231d1b17' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center / 12px; cursor: pointer; }
+:where(.mango-app) :is(input[type="checkbox"], input[type="radio"]) { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--ms-leaf-deep); }
+
+:where(.mango-app) label { color: var(--ms-ink-soft); font-size: 14px; font-weight: 500; line-height: 1.35; }
+:where(.mango-app) label small { color: var(--ms-muted); font-size: 13px; font-weight: 400; line-height: 1.45; }
+:where(.mango-app) fieldset { min-width: 0; margin: 0; padding: var(--sp-4); border: 1px solid var(--ms-line); border-radius: var(--ms-radius); }
+:where(.mango-app) legend { padding: 0 6px; color: var(--ms-ink); font-size: 14px; font-weight: 600; line-height: 1.3; }
+
+/* Validation. The invalid edge is 2px without a layout shift; the error text carries a circled "!" so it never relies
+   on colour alone. */
+/* !important: the invalid edge must survive the hover and focus border colours above. */
+:where(.mango-app) [aria-invalid="true"] { border-color: var(--ms-tomato) !important; box-shadow: inset 0 0 0 1px var(--ms-tomato); }
+.field-error { display: flex; gap: 6px; margin-top: 6px; color: var(--ms-tomato-deep); font-size: 14px; font-weight: 500; line-height: 1.45; }
+.field-error::before { flex: none; width: 14px; height: 14px; margin-top: 3px; background: currentColor; content: ''; -webkit-mask: var(--icon-alert) center / contain no-repeat; mask: var(--icon-alert) center / contain no-repeat; }
+.validation-summary { margin-bottom: var(--sp-5); padding: 14px 16px 14px 18px; border: 1px solid var(--ms-tomato-line); border-left: 3px solid var(--ms-tomato); border-radius: var(--ms-radius-control); background: var(--ms-tomato-wash); color: var(--ms-tomato-deep); }
+.validation-summary p { margin: 0 0 6px; font-size: 15px; font-weight: 600; line-height: 1.4; }
+.validation-summary ul { display: grid; gap: 4px; margin: 0; padding-left: 18px; list-style: disc; }
+.validation-summary a { color: var(--ms-ink); text-decoration: underline 1.5px var(--ms-tomato); text-underline-offset: 3px; }
+
+@media (max-width: 680px) {
+  :where(.mango-app) :is(input:where(:not([type="checkbox"], [type="radio"], [type="file"], [type="hidden"])), select, textarea) { font-size: 16px; }
+}

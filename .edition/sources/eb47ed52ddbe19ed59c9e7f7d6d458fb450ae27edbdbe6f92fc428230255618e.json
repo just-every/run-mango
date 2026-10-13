@@ -1,0 +1,20 @@
+{
+  "key": "eb47ed52ddbe19ed59c9e7f7d6d458fb450ae27edbdbe6f92fc428230255618e",
+  "origin": {
+    "repository": "https://github.com/runeditrun/base.git",
+    "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+    "path": ".",
+    "paths": [
+      "modules/editor/src/visual-edits.json"
+    ],
+    "excludeSnapshots": false
+  },
+  "digest": "3a98f789f5e33bd2e0f0b56154cc64be133b38d8abe6410c60cebb7f91d8d068",
+  "files": {
+    "modules/editor/src/visual-edits.json": {
+      "data": "eyJyZXZpc2lvbiI6MCwiZWRpdHMiOltdfQo=",
+      "executable": false
+    }
+  },
+  "dependencies": []
+}

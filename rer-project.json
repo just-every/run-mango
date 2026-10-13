@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "projectId": "just-every/mango",
+  "name": "Mango",
+  "sourceRepository": "https://github.com/just-every/run-mango",
+  "license": "MIT",
+  "deployment": {
+    "target": "cloudflare-workers",
+    "artifactFile": "rer-worker-artifact.json"
+  },
+  "operations": {
+    "setup": "pnpm run deps",
+    "build": "pnpm run build",
+    "verify": "pnpm run verify",
+    "artifact": "node scripts/build-delivery-artifact.mjs",
+    "recovery": "Read OPERATIONS.md: stop writes and scheduled work, preserve exact source, applied migrations and matching private authority; export D1 and R2, restore into fresh resources, compare exports and verify native sessions and publication before routing traffic."
+  },
+  "setup": {
+    "path": "rer-setup.json",
+    "sha256": "36d5e4ca85d45dbeae3dd760cd4119e5802cca5bfdc43a766c281c009668ffb7"
+  }
+}

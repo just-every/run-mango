@@ -1,0 +1,16 @@
+/* The docs shell inside the shared frame, in the header's 1536px column and gutter: the section sidebar, the article
+   and the On this page rail. The sidebar shows from 861px and the rail from 1200px (responsive.css). */
+.mango-docs {
+  --md-measure: 680px;
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr) 216px;
+  column-gap: clamp(36px, 4.4vw, 72px);
+  max-width: var(--ms-max);
+  margin: 0 auto;
+  padding: 0 var(--ms-gutter) clamp(64px, 7vw, 112px);
+}
+.mango-docs .docs-sidebar { grid-column: 1; border-right: 1px solid var(--ms-hairline); }
+.mango-docs .docs-menu { display: none; }
+.mango-docs .docs-main { grid-column: 2; min-width: 0; padding-top: max(14px, calc(26 * var(--u))); }
+.mango-docs .docs-toc-rail { grid-column: 3; border-left: 1px solid var(--ms-hairline); }
+.mango-docs [id] { scroll-margin-top: 24px; }

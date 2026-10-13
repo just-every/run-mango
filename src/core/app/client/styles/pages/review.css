@@ -1,0 +1,203 @@
+/* Review page group: the shared campaign panels (approval checks, audience snapshot, delivery plan, previews) and the
+   draft review: checks across the top, then the editor beside the saved preview. */
+
+/* Page head: the revision line under the title. "Revision 1 · [pill]": the dot is its own item, so the line's gap
+   sits evenly on both its sides. */
+.review-heading__meta { column-gap: var(--sp-2); }
+.saved-audience-summary.notice-note { margin: 0; padding: 12px 16px; font-size: 14px; }
+.saved-audience-summary strong { color: var(--ms-ink); font-weight: 600; }
+
+/* Approval checks: one row per finding, an icon in the tone of its state, then the name, the state word and the detail. */
+.mango-app .approval-checks h2 { margin: 0 0 var(--sp-2); }
+.approval-checks h2 .disclosure-toggle { min-height: 40px; }
+.check-list { display: grid; }
+.check-list__item { --check-tone: var(--ms-tomato); --check-icon: var(--icon-alert); display: grid; grid-template-columns: 18px minmax(9rem, .3fr) 6.5rem minmax(0, 1fr); align-items: baseline; gap: 2px var(--sp-3); margin: 0; padding: var(--sp-3) 0; border-top: 1px solid var(--ms-hairline); font-size: 14px; line-height: 1.45; }
+.check-list__item--passed { --check-tone: var(--ms-leaf); --check-icon: var(--icon-check); }
+.check-list__item--advisory { --check-tone: var(--ms-mango-deep); --check-icon: var(--icon-info); }
+.check-list__item::before { align-self: start; width: 16px; height: 16px; margin-top: 2px; background: var(--check-tone); content: ''; -webkit-mask: var(--check-icon) center / contain no-repeat; mask: var(--check-icon) center / contain no-repeat; }
+.check-list > .check-list__item:first-child, .check-list > .passed-checks:first-child { border-top: 0; }
+.check-list__item > span { display: contents; color: var(--ms-ink-soft); }
+.check-list__item strong { color: var(--ms-ink); font-weight: 500; }
+.check-list__item b { color: var(--ms-tomato-deep); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.check-list__item:not(.check-list__item--passed) b { justify-self: start; padding: 1px 8px; border: 1px solid var(--ms-tomato-line); border-radius: 999px; background: var(--ms-tomato-wash); line-height: 1.5; }
+.check-list__item--passed b { color: var(--ms-leaf-deep); }
+.check-list__item--advisory b { border-color: var(--ms-sun-line); background: var(--ms-sun-wash); color: var(--ms-wait); }
+.check-next-step { grid-column: 4; display: block; color: var(--ms-muted); font-size: 13px; }
+.passed-checks { border-top: 1px solid var(--ms-hairline); }
+.passed-checks > .disclosure-toggle { width: 100%; color: var(--ms-leaf-deep); font-size: 14px; }
+.passed-checks > .disclosure-toggle::before { flex: none; width: 16px; height: 16px; margin-right: var(--sp-1); background: var(--ms-leaf); content: ''; -webkit-mask: var(--icon-check) center / contain no-repeat; mask: var(--icon-check) center / contain no-repeat; }
+.passed-checks > .disclosure-toggle::after { margin-left: auto; }
+.check-list > .muted-copy { margin: var(--sp-2) 0 0; }
+
+/* The review body: the editor beside the saved preview and its facts. */
+.review-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-6); align-items: start; }
+.review-facts { display: grid; gap: var(--sp-6); min-width: 0; }
+.review-previews .section-heading { margin-bottom: var(--sp-4); }
+.review-page, .review-layout > *, .review-page .composition-fieldset { min-width: 0; max-width: 100%; }
+
+/* Send a test: a panel that opens from a full-width toggle. */
+.test-send-panel.panel { padding-block: var(--sp-1); }
+.test-send-panel > .disclosure-toggle { width: 100%; justify-content: space-between; font-size: 16px; }
+.test-send-panel > div { display: grid; gap: var(--sp-3); padding: var(--sp-2) 0 var(--sp-5); }
+.test-send-panel > div > p { margin: 0; color: var(--ms-ink-soft); }
+.test-send-fields { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-3); }
+.test-send-fields label { display: grid; flex: 1 1 12rem; gap: 6px; }
+.test-send-fields label:first-of-type { flex: 0 1 9rem; }
+
+/* The editor: groups divided by hairlines inside one sheet. */
+.editor-panel__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-1) var(--sp-3); margin-bottom: var(--sp-5); }
+.mango-app .editor-panel__head h2, .editor-panel__head p { margin: 0; }
+.draft-fields { display: grid; gap: var(--sp-4); min-width: 0; margin: 0; padding: 0; border: 0; }
+.editor-panel label { display: grid; gap: 6px; }
+.editor-panel textarea { white-space: pre-wrap; }
+/* The saved audience as a read-only field: a label in the fields' manner over the summary inset. */
+.audience-rule-field { display: grid; gap: 6px; }
+.audience-rule-field__label { color: var(--ms-ink-soft); font-size: 14px; font-weight: 500; line-height: 1.35; }
+.audience-rule-summary { margin: 0; color: var(--ms-ink-soft); font-size: 14px; }
+.form-two-up { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); }
+.mango-app .editor-panel .composition-fieldset { display: grid; gap: var(--sp-3); margin: var(--sp-2) 0 0; padding: var(--sp-5) 0 0; border: 0; border-top: 1px solid var(--ms-hairline); border-radius: 0; }
+.mango-app .composition-fieldset > legend { float: left; width: 100%; margin: 0; padding: 0; color: var(--ms-ink); font-size: 16px; font-weight: 600; }
+.composition-fieldset > button.text-link { justify-self: start; }
+.composition-fieldset > .muted-copy { margin: 0; }
+.editor-panel__actions { display: flex; justify-content: flex-end; margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--ms-hairline); }
+
+/* Email body: the mode toggle beside the legend, the formatting bar joined to the writing box. */
+.rich-email-fieldset { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.rich-email-fieldset > :not(legend, .editor-mode) { grid-column: 1 / -1; }
+.rich-email-toolbar { gap: 2px; padding: 4px; border: 1px solid var(--ms-control); border-bottom: 0; border-radius: var(--ms-radius-control) var(--ms-radius-control) 0 0; background: var(--ms-paper-deep); }
+.rich-email-toolbar > .secondary-action { min-height: 32px; padding: 0 10px; border-color: transparent; background: transparent; font-size: 14px; }
+.rich-email-toolbar > .secondary-action:hover:not(:disabled) { border-color: var(--ms-line); background: var(--ms-paper); box-shadow: none; }
+.rich-email-toolbar > :nth-child(1) { font-weight: 700; }
+.rich-email-toolbar > :nth-child(2) { font-style: italic; }
+.rich-email-toolbar + .rich-email-editor { margin-top: calc(-1 * var(--sp-3)); border-top-left-radius: 0; border-top-right-radius: 0; }
+.rich-email-editor { min-height: 220px; padding: var(--sp-4); overflow-wrap: anywhere; }
+.rich-email-editor > :first-child { margin-top: 0; }
+.mango-app .rich-email-editor :is(h1, h2) { font-family: var(--ms-sans); font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+.rich-email-editor table { max-width: 100%; }
+.rich-email-link__fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto; align-items: end; gap: var(--sp-3); margin-top: var(--sp-2); }
+.rich-email-link summary { min-height: 40px; font-size: 14px; }
+
+/* Segmented toggles: the preview width and the editor mode. */
+.preview-controls, .editor-mode { display: inline-flex; flex-wrap: nowrap; gap: 0; width: fit-content; border: 1px solid var(--ms-control); border-radius: var(--ms-radius-control); background: var(--ms-paper); }
+:is(.preview-controls, .editor-mode) > .secondary-action { position: relative; min-height: 36px; padding: 0 14px; border: 0; border-radius: 0; background: transparent; color: var(--ms-ink-soft); font-size: 14px; }
+:is(.preview-controls, .editor-mode) > .secondary-action + .secondary-action { border-left: 1px solid var(--ms-control); }
+:is(.preview-controls, .editor-mode) > .secondary-action:first-child { border-radius: 3px 0 0 3px; }
+:is(.preview-controls, .editor-mode) > .secondary-action:last-child { border-radius: 0 3px 3px 0; }
+:is(.preview-controls, .editor-mode) > .secondary-action:hover:not(:disabled, [aria-pressed="true"]) { background: var(--ms-paper-deep); box-shadow: none; }
+:is(.preview-controls, .editor-mode) > .secondary-action[aria-pressed="true"] { background: var(--ms-sun-wash); box-shadow: inset 0 -2px 0 var(--ms-sun-hover); color: var(--ms-ink); font-weight: 600; }
+:is(.preview-controls, .editor-mode) > .secondary-action:focus-visible { z-index: 1; }
+
+/* Saved links, audience conditions and channel steps. */
+.composition-link { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--ms-hairline); }
+.composition-link > button { grid-column: 1 / -1; justify-self: start; }
+.rule-editor-group { display: grid; gap: var(--sp-2); container-type: inline-size; }
+.rule-editor-group > button { justify-self: start; }
+/* A condition is laid out by the editor's width, not the viewport's: in a narrow editor (beside the previews, or on a
+   phone) the field takes its own row and comparison and value sit two-up; from 40rem the three share one row. */
+.rule-editor-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.rule-editor-row > label { min-width: 0; }
+.rule-editor-row > label:first-child { grid-column: 1 / -1; }
+.rule-editor-row select { text-overflow: ellipsis; }
+@container (min-width: 40rem) {
+  .rule-editor-row { grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); }
+  .rule-editor-row > label:first-child { grid-column: auto; }
+}
+.audience-estimate { display: grid; gap: var(--sp-1); color: var(--ms-ink); font-size: 14px; }
+.audience-estimate > p { margin: 0; }
+/* Blocked: the error notice stands on its own, not inside the inset. */
+.audience-estimate:has(> .inline-error) { padding: 0; background: none; }
+.composition-step { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--ms-hairline); }
+.composition-step > p { grid-column: 1 / -1; margin: 0; }
+.composition-step > :is(label:has(textarea), button) { grid-column: 1 / -1; }
+.composition-step > button { justify-self: start; }
+
+/* Previews. The email is the one drawn sheet: it is the letter. Text, plain text and links are crisp. On campaign detail
+   the previews sit on the columns and gutter of the snapshot-and-plan row above them, so the right column runs in one line. */
+.preview-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); grid-template-rows: auto auto 1fr; gap: var(--sp-4) var(--sp-6); align-items: start; }
+.review-layout .preview-grid { grid-template-columns: minmax(0, 1fr); }
+.message-preview { min-width: 0; padding: var(--sp-5); border: 1px solid var(--ms-line); border-radius: var(--ms-radius); background: var(--ms-paper); overflow-wrap: anywhere; }
+.message-preview--email { grid-row: span 3; padding: 0; border: 0; background: none; }
+.review-layout .message-preview--email { grid-row: auto; }
+.mango-app .email-sheet .paper-face { padding: var(--sp-6) 28px; }
+.email-sheet .muted-copy { margin: 0 0 var(--sp-2); }
+.email-sheet small { display: block; color: var(--ms-muted); }
+.mango-app .message-preview h3 { margin: var(--sp-2) 0 var(--sp-2); font-family: var(--ms-serif); font-size: 28px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.15; overflow-wrap: anywhere; }
+.preview-sender { display: flex; align-items: center; gap: 10px; margin: var(--sp-3) 0 0; color: var(--ms-ink-soft); font-size: 14px; font-weight: 500; }
+.message-preview--sms .preview-sender { margin: 0 0 var(--sp-2); }
+.preview-sender__mark { display: grid; flex: none; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--ms-sun-soft); color: var(--ms-ink); font: 400 16px/1 var(--ms-serif); text-transform: uppercase; }
+.preview-controls { margin: var(--sp-3) 0 0; }
+.email-preview-frame { width: 100%; max-width: 640px; margin: var(--sp-4) auto; overflow: hidden; border: 1px solid var(--ms-line); border-radius: var(--ms-radius); background: #fff; box-shadow: var(--ms-shadow-card); }
+.email-preview-frame--mobile { max-width: 360px; }
+.email-preview-frame iframe { display: block; width: 100%; height: 420px; border: 0; }
+.email-sheet > .paper-face > .secondary-action { margin-bottom: var(--sp-3); }
+.message-preview--sms { border-color: var(--ms-sun-line); background: var(--ms-sun-wash); color: var(--ms-ink); }
+.message-preview--sms > p:last-child { white-space: pre-wrap; }
+.message-preview--plain { border-color: transparent; background: var(--ms-paper-deep); }
+.preview-plain-text { margin: 0; font-size: 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.preview-sms-off { margin: 0; }
+.saved-links { display: grid; margin: 0; padding: 0; list-style: none; }
+.saved-links li { display: grid; gap: 2px; padding: 10px 0; border-top: 1px solid var(--ms-hairline); }
+.saved-links li:first-child { padding-top: 0; border-top: 0; }
+.saved-links strong { font-weight: 500; overflow-wrap: anywhere; }
+.saved-links span { color: var(--ms-muted); font-size: 13px; overflow-wrap: anywhere; }
+
+/* Audience snapshot: its timestamp heading as a quiet sub-heading in every column, metric insets, then hairline rows
+   of counts. The three metrics sit three across where they fit (the stacked form is at the end of this file). */
+.audience-snapshot { container: snapshot / inline-size; }
+.mango-app .audience-snapshot h2 { font: 600 16px/1.35 var(--ms-sans); letter-spacing: 0; }
+.audience-snapshot > p[aria-label] { margin: 0 0 var(--sp-4); color: var(--ms-ink-soft); font-size: 14px; }
+.metric-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-3); margin: 0; }
+.metric-row dt { overflow-wrap: normal; }
+.metric-row > div { display: flex; flex-direction: column; justify-content: space-between; }
+.metric-row dd { margin-top: 6px; }
+.channel-counts, .exclusion-list { display: grid; margin-top: var(--sp-5); }
+.channel-counts__title { margin: 0 0 var(--sp-1); }
+:is(.channel-counts, .exclusion-list) > p:not(.channel-counts__title, .muted-copy) { display: flex; justify-content: space-between; gap: var(--sp-4); margin: 0; padding: 10px 0; border-bottom: 1px solid var(--ms-hairline); color: var(--ms-ink-soft); font-size: 14px; }
+:is(.channel-counts, .exclusion-list) > p:last-child { border-bottom: 0; }
+:is(.channel-counts, .exclusion-list) strong { color: var(--ms-ink); font-variant-numeric: tabular-nums; }
+.fallback-counts p { margin: var(--sp-2) 0 0; color: var(--ms-ink-soft); font-size: 14px; }
+
+/* Delivery plan: one row per step, the channel as a small label beside its time. */
+.delivery-plan { display: grid; }
+.delivery-plan > div { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 2px var(--sp-3); padding: 14px 0; border-top: 1px solid var(--ms-hairline); }
+.delivery-plan > div:first-child { padding-top: 0; border-top: 0; }
+.delivery-plan > .muted-copy { margin: 0; }
+.delivery-plan strong { color: var(--ms-amber); font-size: 12px; font-weight: 600; letter-spacing: .1em; line-height: 1.6; text-transform: uppercase; }
+.delivery-plan time { font-size: 15px; font-weight: 500; }
+.delivery-plan > div > small { grid-column: 2; color: var(--ms-muted); }
+.delivery-plan > div > p { grid-column: 2; margin: var(--sp-1) 0 0; color: var(--ms-ink-soft); font-size: 14px; }
+
+@media (max-width: 1040px) {
+  .review-layout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 900px) {
+  .preview-grid { grid-template-columns: minmax(0, 1fr); }
+  .message-preview--email { grid-row: auto; }
+}
+@media (max-width: 680px) {
+  .check-list__item { grid-template-columns: 18px minmax(0, 1fr); }
+  .check-list__item > span { display: block; grid-column: 2; }
+  .check-list__item b { margin-right: var(--sp-2); }
+  .check-next-step { margin-top: var(--sp-1); }
+  .form-two-up, .composition-link, .composition-step, .rich-email-link__fields { grid-template-columns: minmax(0, 1fr); }
+  .rich-email-link__fields > button { justify-self: start; }
+  .mango-app .email-sheet .paper-face { padding: var(--sp-5) var(--sp-4); }
+  .mango-app .message-preview h3 { font-size: 24px; }
+  .metric-row { gap: var(--sp-2); }
+  .metric-row > div { padding: 10px; }
+  .test-send-fields { align-items: stretch; flex-direction: column; }
+  .test-send-fields label, .test-send-fields label:first-of-type { flex: none; }
+  .editor-panel__actions > * { flex: 1 1 auto; }
+}
+@media (max-width: 400px) {
+  .rich-email-fieldset { grid-template-columns: minmax(0, 1fr); }
+  .rich-email-fieldset > .editor-mode { grid-column: 1; }
+}
+/* A snapshot column too narrow for three tiles stacks them as one inset of label-and-number rows, never two and one. */
+@container snapshot (max-width: 26rem) {
+  .metric-row { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 2px 14px; border-radius: var(--ms-radius-control); background: var(--ms-paper-deep); }
+  .metric-row > div { flex-direction: row; align-items: baseline; justify-content: space-between; gap: var(--sp-4); padding: 10px 0; border-radius: 0; background: none; }
+  .metric-row > div + div { border-top: 1px solid var(--ms-line); }
+  .metric-row dt { font-size: 14px; }
+  .metric-row dd { margin: 0; font-size: 24px; }
+}

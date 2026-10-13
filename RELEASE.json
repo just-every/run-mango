@@ -1,0 +1,228 @@
+{
+  "version": "0.1.0",
+  "date": "2026-10-12",
+  "contractChanges": {
+    "STORE-001": {
+      "change": "added",
+      "summary": "Commerce connection is optional in newsletter profile. Source-dependent rules remain unavailable without it; STORE-002 through STORE-007 are retained for enabled commerce."
+    },
+    "PROP-001": {
+      "change": "added",
+      "summary": "AI proposals are optional and unavailable without configured evidence/providers; no substitute generation or forecasts. PROP-002 through PROP-009 remain obligations when enabled."
+    },
+    "MSG-004": {
+      "change": "added",
+      "summary": "SMS is optional; MSG-004/005, CONT-007 and SEND-002 remain binding whenever SMS is enabled. No absent module is certified satisfied."
+    },
+    "SEND-001": {
+      "change": "added",
+      "summary": "2026-10-07 SendGrid at-most-once handoff; definite nonacceptance is retry-safe, uncertain responses are durably fenced and never automatically retried."
+    },
+    "MSG-005": {
+      "change": "added",
+      "summary": "SMS compliance text remains mandatory whenever SMS is enabled; newsletter does not claim SMS capability."
+    },
+    "OPER-002": {
+      "change": "added",
+      "summary": "Approved Base fixture migration retains keyed token hashes, single use, real native sessions, revocation/version fences and canonical security triggers. Last active owner cannot be removed. Invitations now require fresh email proof from the signed-in operator, preventing a session without that proof from granting access. Settings requests Base's supported same-session confirmation so the operator can confirm and retry; confirmation GET/HEAD remain read-only and proof requires affirmative POST. 2026-10-11: Native rer/outbox Settings journey proves pending and active invitations, explicit confirmation, fresh proof, setup self-only and last-active protection, and foreign-origin rejection."
+    },
+    "CAMP-004": {
+      "change": "added",
+      "summary": "2026-10-07 approved SendGrid single-attempt policy replaces provider deduplication capability gating only for SendGrid. Every consent, content, exact revision and sender-evidence gate remains. Authoring retains all existing negative content/link gates, adds actionable missing-content checks, and normalizes only create/save. 2026-10-12: Merge tags written for another tool (*|TAG|*) are unrecognised personalisation and block approval; Mango does not guess them. Imported content grants no schedule, approval or delivery authority."
+    },
+    "SEND-008": {
+      "change": "added",
+      "summary": "2026-10-07 SendGrid uncertainty remains for operator review. Signed events and available Activity correlate message IDs; no guaranteed unattended reconciliation or blind retry is claimed."
+    },
+    "CAMP-002": {
+      "change": "added",
+      "summary": "2026-10-07 authenticated blank and deployment-signal starters, shared Review and atomic proposal adoption; incomplete drafts persist without approving or enqueueing. Rich authoring and optional preserved HTML. 2026-10-08: displayed and newly saved audience summaries derive from structured inclusion/exclusion rules; authored audience prose is removed, readiness requires valid rules, and legacy approval digests remain bound to the immutable saved revision and rules. 2026-10-12: An archive's emails become read-only imported history with Copy into a new draft, and its templates become draft starters. All imported HTML passes the restricted email HTML policy with a visible list of what was removed."
+    },
+    "CAMP-003": {
+      "change": "added",
+      "summary": "2026-10-07 create/save-managed footer, generated text URLs, saved normalized previews and structured audience controls with current real counts and blocked unavailable sources."
+    },
+    "CAMP-006": {
+      "change": "added",
+      "summary": "2026-10-07 configured store-zone local scheduling, read-only UTC, end-of-local-day deadline, gap/fold rejection including non-hour transitions; explicit resolved callers remain supported."
+    },
+    "CONT-011": {
+      "change": "added",
+      "summary": "2026-10-11: Contact detail adds address search, restrictive per-channel preview and existing-dialog merge confirmation. Links, consent, source activity, suppression and history follow the survivor. Queued recipient identities and frozen approved candidates stay unchanged; dispatch excludes a removed identity as contact-merged. Restrictive aggregate consent cannot be bypassed through a subscribed merged alias."
+    },
+    "CONT-013": {
+      "change": "added",
+      "summary": "Contact erasure is included in the newsletter profile: bounded durable cascade, public row fences, complete affected import/source/original withdrawal, keyed opted-out aliases, anonymous audit/receipt, and approval invalidation when literals are redacted. Historical approval digests, approver and time remain history identifiers and attribution. Public archive cleanup is paged, counted atomically and keeps the receipt pending until every retained copy is removed. Local release evidence qualifies 50,000 fully applied public import rows with 429 original chunks and 5,000 additional history rows: erasure completed in 163,152 ms with at most 858 native D1 statements per request. Exact source bindings remain in external release evidence; full CI is a separate gate. Independent operator identities and already-authorised external handoffs remain separate; downloaded archives/provider copies/backups are outside local custody. Fresh restore requires current erasure authority; hosted restore remains uncertified. 2026-10-12: An R2 object key whose final segment is the erased address plus a file extension (the address followed by .json, under exports/) is erased; ann@x.test.example and xann@x.test are not."
+    },
+    "CONT-003": {
+      "change": "added",
+      "summary": "Reviewed CSV import preserves supplied consent scope, confirmation and source provenance without inferring missing consent from a file name or status. Public capture requires explicit consent."
+    },
+    "CONT-004": {
+      "change": "added",
+      "summary": "Imported restrictive statuses remain authoritative; approval and handoff preserve recorded opt-out and suppression precedence. Public signup writes and the final confirmation-mail handoff claim are atomically guarded against concurrent recorded opt-out, suppression and destination ownership changes. Local credential upgrades preserve the verified effective contact hash authority; unversioned and unknown configurations fail closed until explicitly migrated. 2026-10-12: SendGrid unsubscribe and group_unsubscribe events are email opt-outs recorded before the webhook is acknowledged; the one-click URL handed to the provider unsubscribes before answering 2xx and GET, HEAD, mutated or cross-purpose tokens change nothing (local go-live journey). 2026-10-12 (migration 0035): Each opt-out and suppression reason for an address is its own surviving record. Bounce and delivery reconciliation never overwrite or delete an opt-out, and an address returns to subscribed only when no opt-out and no suppression remains."
+    },
+    "CONT-009": {
+      "change": "added",
+      "summary": "Public confirmation GET and HEAD are read-only; confirmation requires explicit affirmative POST. Atomic D1 reservations enforce five network reservations per UTC hour after parsed-body and challenge validation, three confirmation reservations per destination per UTC day and fifty global confirmation reservations per UTC hour using database reservation time. Failed or concurrent duplicate attempts may consume reservations without refund. Bounded bodies, sender validation and optional paired Turnstile protect public signup."
+    },
+    "CONT-010": {
+      "change": "added",
+      "summary": "Reviewed import plans are chunked to remain within D1 limits and retain per-row outcomes; newsletter exports roundtrip consent and statuses with twelve logical contact fields plus a thirteenth versioned spreadsheet-safe CSV encoding marker column. Additive migration 0021 stores maintained Base import plan/original chunk custody while retaining existing inline and previously chunked records. Large import lifecycle operations target the Workers Paid D1 invocation budget; Free-plan and hosted throughput acceptance are not established. Unverified named vendor selectors are retired in favor of generic mapped CSV; historical provenance and lossless Mango restoration remain unchanged. 2026-10-09: Base import-kit is refreshed with additive migration 0025, retaining older original storage and adding guarded creation snapshots and reversal metadata. 2026-10-11: Move-in guide covers two documented formats with synthetic CSV evidence only; shared generic header aliases suggest actual columns in server and UI. All recognized status columns remain independent restrictions, including when a permissive column is explicitly mapped. Fixture routes exercise preview without contact writes, apply/resume, identical replay, undo and opted-out send exclusion. No real export or named importer is certified. Reviewed imports now support 50,000 rows through public Base normalised streams above the ordinary-plan range. Mango retains exact original files in bounded plan chunks; request limits and D1 invocation bounds remain enforced. 2026-10-12: One whole account export (.zip) is read structurally in the Worker without writing entries to disk; unsafe archives (absolute or .. paths, duplicate names, symbolic links, encryption, truncation, ZIP64, overlap, CRC or size mismatch, entry/size/ratio limits) are refused with a named reason and nothing written, nested archives and gallery files are skipped with counts. Its four audience status files take the matching generic presets with one consent-evidence entry; the most restrictive status wins across files and existing opt-outs stay. One Preview for the whole archive writes nothing. The original archive and every entry's SHA-256 are kept as import custody. Documented format, tested on synthetic files shaped from the published help page, not on a real export; one real export is still unreconciled."
+    },
+    "CONT-005": {
+      "change": "added",
+      "summary": "Public capture has no reconsent route and neither mails nor changes existing subscribed, opted-out or suppressed destinations; an erased address matching a surviving opt-out recreates only an unsubscribed profile without consent or mail. Generic acknowledgements reveal no destination status; genuine explicit logged post-opt-out ledger evidence remains subject to confirmation and suppression resolution. Concurrent public capture cannot overwrite subscribed or restrictive channel status; reused consent evidence must match its recorded contact, destination and scope."
+    },
+    "AUD-001": {
+      "change": "added",
+      "summary": "2026-10-08 \u2014 Review, approval checks, scheduled pages, campaign lists and audience snapshots display a plain-text summary derived from structured inclusion/exclusion rules, including every condition, value and lookback with explicit all/any matching. Legacy revisions are projected without rewriting immutable approval records. 2026-10-11: Named segments reuse campaign rules/editor and the shared campaign review eligibility calculation, including consent exclusion counts."
+    },
+    "CONT-006": {
+      "change": "added",
+      "summary": "Local suppression and surviving opt-out hashes retain their effective authority through explicit legacy session/contact conversion and later authentication credential rotations. New local configurations record contact-salt-v1; unknown or missing authority cannot be inferred. 2026-10-12: Signed soft bounces count toward contact.soft-bounce.v1 and a delivery correlated to a Mango recipient resets the count; uncorrelated signed facts only restrict an address."
+    },
+    "OPER-001": {
+      "change": "added",
+      "summary": "Shared Base installer claims the first local owner through operator-auth, keeps existing private settings and ends at Base development mail outbox. Production requires an explicit MAIL_PROVIDER. First-run sign-in returns to /setup; saved sender identity or valid existing environment identity admits app navigation. Existing session and sender-write authority remain enforced; setup makes no provider request."
+    },
+    "DATA-001": {
+      "change": "added",
+      "summary": "Base portability exports all product D1 records and uploaded R2 assets. Restore into an empty maintenance-mode destination requires matching private contact/link keys and fresh Base authentication; sessions and auth tokens are not restored. Additive migration 0033 audience_segments is discovered by the existing portability inventory and included in local export/restore. 2026-10-12: Locally, an installation with consent, suppressions, a one-click opt-out, delivery facts and approvals restores into an empty installation with its own origin and provider key: rows and approval digests match, a wrong key is refused before any write, the source's sender evidence does not authorize the destination and replayed facts add nothing. Hosted restore remains unverified. 2026-10-12: Additive migration 0036 adds archive custody, the immutable entry list and imported content records; the portability inventory discovers them, and contact erasure withdraws the archive that brought the contact in while keeping its entry hashes. Undo removes only unchanged imported contacts, drafts and history and never erases an opt-out, suppression or send history."
+    },
+    "MGMT-001": {
+      "change": "added",
+      "summary": "Signed installation-bound first-owner claim uses the ordinary Base operator-auth bootstrap transaction; existing installations and replayed claims remain closed."
+    },
+    "MGMT-002": {
+      "change": "added",
+      "summary": "Short native active-owner grants mount the Base editor at the configured management origin, with route-leaf hydration and synchronous logout/session-loss revocation."
+    },
+    "HOME-001": {
+      "change": "added",
+      "summary": "2026-10-09 The public root changes from an owner identity plate to a static, hand-illustrated landing for the newsletter profile (hero, how a letter leaves Mango, consent, approval of the exact letter, scheduling, delivery reports, ownership, closing call to action) around Mango's mark and the owner's configured name, description and optional credit. The feature-tour ban becomes a limit to shipped newsletter capabilities; pricing, testimonials, logos and metrics stay forbidden. No record or session read, no cookie or telemetry, rendered per request, every font, style and favicon same-origin, readable without scripts and with reduced motion. Capability owner-front-door is renamed public-landing. See CONTRACT.md 'Public landing and documentation'."
+    },
+    "DOCS-001": {
+      "change": "added",
+      "summary": "2026-10-09 \u2014 Added. First-party public documentation at /docs and /docs/<slug>, the Markdown that docs/site.json publishes rendered to HTML at build time by a Vite plugin (no Markdown or syntax-highlighting code in the Worker or client bundle), served per request by Start. Cookie-free, same-origin, no session or database read, no source-repository or edit links; every repository Markdown file is published or listed as not published with a reason; pages share the public landing's header, footer, palette and faces, and unknown, miscased and nested slugs answer 404 with a not-found page in that same frame. /docs and /docs/ are declared in seed.json deploy.publicPaths. No rate limiter is claimed. See CONTRACT.md 'Public landing and documentation'."
+    },
+    "AUD-007": {
+      "change": "added",
+      "summary": "Saved segments copy structured inclusion/exclusion rules into drafts. Segment rename, edit and deletion cannot change saved/approved revisions, approval digests or frozen candidate sets."
+    },
+    "OPER-003": {
+      "change": "added",
+      "summary": "Native operator removal revokes open sessions and unused invitation/sign-in links while preserving campaign, approval and audit attribution. Real production approval on the same D1/native session uses provider/DNS/receipt/queue edge substitutes; native development approval remains unavailable."
+    },
+    "SEND-006": {
+      "change": "added",
+      "summary": "2026-10-12: Existing signed Event Webhook receivers may forward unchanged whole requests to Mango. Bounded raw bytes are verified against the configured real public key and original timestamp before strict UTF-8 decoding. Local signed-route checks cover tampering, wrong keys, stale requests, replay and unmatched safety events. Inbound Parse is separate receipt/reply evidence and has no Mango intake. Live receiver access, signed ingestion and normal cron remain unverified. 2026-10-12: Insights lists provider acceptance and each kind of provider event per campaign as separate counts instead of an unwritten table; the deliverability report counts an uncertain hand-off once a provider event proves it. A local go-live journey replays a complete set of signed SendGrid facts with a locally generated key; this is not acceptance by a live provider. 2026-10-12: Archive reports and 'sent' rows stay raw source records; no delivery fact, campaign result, acceptance, delivered or revenue figure is created from an archive."
+    },
+    "MSG-003": {
+      "change": "added",
+      "summary": "2026-10-12: Every marketing message in the local go-live journey carried List-Unsubscribe over HTTPS, List-Unsubscribe-Post and a visible link; test sends are marked and change no contact state. DKIM coverage of these headers by a live provider is not observed."
+    }
+  },
+  "extensionPointChanges": [],
+  "migrations": [
+    {
+      "id": "0013_sender_verification.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0014_sender_verification_reconcile_cursor.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0015_base_operator_auth.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0016_invitation_cancellation.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0017_sender_settings.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0018_audience_import.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0019_base_import_kit.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0020_audience_import_plan_chunks.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0021_base_import_chunk_custody.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0022_local_mail_outbox.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0024_signup_settings.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0025_base_import_preserved_undo.sql",
+      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+    },
+    {
+      "id": "0026_base_portability.sql",
+      "buyerSteps": "Apply after existing migration 0025. Back up matching data and private settings before the first export or restore."
+    },
+    {
+      "id": "0027_operator_attribution.sql",
+      "buyerSteps": "Apply after 0026. Historical Mango profiles retain attribution; Base operator-auth remains the sole login authority."
+    },
+    {
+      "id": "0028_base_owner_claim.sql",
+      "buyerSteps": "Back up matching data/private settings and apply after 0027. Existing operators and bootstrap state remain unchanged; signed admission is available only for an unclaimed installation."
+    },
+    {
+      "id": "0029_base_import_staging.sql",
+      "buyerSteps": "Back up D1 and its matching private settings, then apply in filename order after 0028 before starting the refreshed import runtime. These additive Base schemas preserve prior migration history and product records. Recover by restoring the matching source, D1 and R2 backup together; do not drop new custody tables from an active import."
+    },
+    {
+      "id": "0030_base_import_custody.sql",
+      "buyerSteps": "Back up D1 and its matching private settings, then apply in filename order after 0028 before starting the refreshed import runtime. These additive Base schemas preserve prior migration history and product records. Recover by restoring the matching source, D1 and R2 backup together; do not drop new custody tables from an active import."
+    },
+    {
+      "id": "0031_dev_sessions.sql",
+      "buyerSteps": "Keep the already applied migration unchanged. It preserves existing sessions while allowing key-gated local dev sessions."
+    },
+    {
+      "id": "0032_auth_domain_rules_step_up.sql",
+      "buyerSteps": "Back up D1 and matching private settings, then apply after 0031 before starting the refreshed Base auth runtime. This additive schema supplies domain-rule lookup required by ordinary email sign-in and step-up challenge storage. Existing owners, sessions and product records remain unchanged; recover with the matching source and data backup."
+    },
+    {
+      "id": "0033_saved_segments.sql",
+      "buyerSteps": "Back up matching D1/R2 and private settings, then apply after 0032. The additive segment table preserves existing operators, imports, contacts and saved/approved campaigns. Recover with matching source and data backups."
+    },
+    {
+      "id": "0034_contact_erasure.sql",
+      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0033 before starting this runtime. The additive erasure progress and write-fence schema preserves operators, contacts, imports and saved/approved campaigns. Keep CONTACT_HASH_SALT unchanged. Finish pending erasures through their receipt before other audience work; recover source and data together, never drop pending custody tables. It adds name-history triggers; no existing historical names are invented."
+    },
+    {
+      "id": "0035_opt_out_reasons.sql",
+      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0034 before starting this runtime. It replaces the one-record-per-address opt-out index with one record per address, channel and reason; existing rows are kept unchanged. Recover with the matching source and data backup."
+    },
+    {
+      "id": "0036_archive_move_in.sql",
+      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0035 before starting this runtime. The additive tables hold archive move-in custody, the immutable entry list and imported history and draft starters; existing operators, contacts, imports and saved or approved campaigns are unchanged and the installation signs straight into /app. Recover with the matching source and data backup."
+    },
+    {
+      "id": "0037_import_observation_name.sql",
+      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0036 before starting this runtime. It adds one nullable column that keeps the name a contact had in an imported file; existing observations, contacts and imports are unchanged. Recover with the matching source and data backup."
+    }
+  ],
+  "breaking": true,
+  "agentUpdateInstructions": "Preserve owner customizations, applied migrations and matching D1/R2/private settings backups. Select Node 22.20.0 and pnpm 10.12.4. Use node scripts/rer.mjs install, setup --owner-email EMAIL, dev and verify; dev opens through its private RER_OPEN key link. Use dev --login for native email-link sign-in through the gated outbox, and complete /setup. Preserve saved sender identity; valid existing environment identity is already complete, and apply additive auth migration 0032 with the Base refresh. OPERATIONS.md documents explicit state/credential recovery, confirmed local reset and complete local export/import. Preserve contact authority, consent, suppression evidence, saved revisions and approvals. Apply all additive migrations in filename order. Use the approved SendGrid single-attempt policy and operator-reviewed uncertainty. Configure paired mailbox-receipt and Turnstile inputs together when enabled. Preserve the Mango CSV encoding marker and review imported row outcomes. Refresh source:lock for intentional source changes. The private tag remains unchanged; public publication and production deployment require separate authorization and exact-revision evidence. Managed hosted admission requires the delivery workflow to support the contracted Node version. Routine rer verify emits stage/file timing and retains ordinary safety journeys. The real release producer selects verify:release, which includes routine verification and the unchanged 1001/10000-row capacity workloads; do not replace it with routine-only acceptance. See VERIFYING.md for the intentional adapted producer and verification profiles. Apply additive erasure migration 0034 and preserve the installation contact secret. Keep the cascade declaration and per-row public portability fences together. Contact deletion withdraws whole affected import custody; do not offer its old undo/replay as valid. Supply latest journal authority when testing a fresh old-archive restore; the current CLI has no journal-file option. The unpublished 0034 migration also retains known prior names in existing contact_history on rename/merge. Preserve this provenance in import snapshots and the erasure scope. Erasure admission must check the exact subject/merged identity set and every active merge lock in its pending transaction; lock release clears the pair atomically. Historical names already discarded before adoption cannot be reconstructed. 2026-10-12: No migration. scripts/base-cli and scripts/base-onboarding are byte-exact Base main 446d082 copies (src/vendor/base unchanged); refresh them together with base-copies.json, edition.json and sources.lock.json. LifecycleAudience gains recordSoftBounce and recordProviderDelivery, and ProviderFact gains kind 'unsubscribed'; customized lifecycle adapters must implement both. SenderStatus gains readiness. Insights no longer reads campaign_results. 2026-10-12 (Base adoption): scripts/base-cli and scripts/base-onboarding are byte-exact Base main 9ec15a6 copies (includes 08fc9a2); src/base/static-assets.ts and src/base/deployment-health.ts are Base runtime copies: the Worker fetch calls staticAssetResponse(request, env) first and /health spreads deploymentHealth(env). deploy.json declares Mango's secrets and vars, including MANGO_RESTORE_MODE. Apply migration 0035: code that read one surviving_opt_outs row per address must read every reason. 2026-10-12 (archive move-in): apply additive migration 0036. src/core/features/move-in holds the ZIP reader, classification by folder and header, content import and undo; archive limits are in archive-limits.ts with their measurements in docs/moving-in.md. The archive's audience runs through the ordinary reviewed audience import with the preserve-conflicts reversal policy; keep tool names out of code, presets and seed.json. 2026-10-12 (held contacts and names): apply additive migration 0037. Every audience import, CSV or archive, applies an unsubscribed or cleaned row to a contact another import still holds (applyHeldRestrictions, outside the undo plan) and skips that contact's other rows with a warning. An archive row leaves the name of a contact that existed before it; audience_import_observations.source_display_name keeps the exported name, and ledgers from earlier exports import with it null. 2026-10-13 (undo keeps opt-outs): no migration. The audience import adapter never deletes surviving_opt_outs or contact_suppressions rows: write() only upserts its snapshot's restriction rows and then sets a destination unsubscribed or suppressed when a restriction it does not carry exists (import-restrictions.ts), remove() keeps them, and its guards accept a destination carrying more restrictions than its snapshot. Customized import adapters must keep this. An observation with a null source_display_name is read without that key, so revisions recorded before migration 0037 still match; a revision recorded with the null key is read in that shape. Identities planned by an unfinished import are held by later imports. 2026-10-13 (abandon import): no migration. POST /api/audience/imports/:id/abandon rolls a stopped import back through rollbackD1Import (a stream through its undo) after checking that no contact it wrote changed since other than by a restriction, and records lifecycle_audit_entries action import.abandoned. A contact whose only changes since its recorded revision are extra opt-out or suppression rows and the statuses they raise still holds that revision when read for import, undo or abandon (import-recorded.ts; exports read the exact value). Held restrictions write only their opt-out or suppression rows and raise statuses. An earlier opt-out is not applied over consent the person confirmed in Mango after it (import-consent.ts). A review whose import was abandoned or undone is set aside so the same file is reviewed afresh.",
+  "publicReleaseNotes": "Mango 0.1.0 is the first public release, at https://github.com/just-every/run-mango. It adds manual authoring, saved-revision approval and durable SendGrid uncertainty reporting, with a responsive operator menu, inline form feedback, keyboard-managed dialogs, step-by-step campaign outcomes and URL-backed state and channel filters. Audience summaries derive from structured recipient rules, including for legacy revisions without changing stored approval records. The newsletter profile includes contact import, hosted signup and embeddable capture. Commerce, SMS and AI are optional. Saved segments and contact merge controls are included; segment edits do not change copied campaign revisions, and merge preserves restrictive consent. Contact erasure includes resumable anonymous receipts, opted-out alias protection and complete affected import-custody withdrawal; redacted approved content requires review in a new draft. Operator invitations and removals are covered by the native local sign-in/outbox journey, including retained attribution and revoked sessions. The wider flagship contract, production readiness and live provider-webhook acceptance are separate release obligations; local behavior coverage does not establish hosted operation. Settings now lists what a sender needs before the first real send, Insights reports provider outcomes per campaign, provider unsubscribes and soft bounces from signed SendGrid events update contacts, and a going-live guide states what Mango checks and what the owner supplies. Signed events were replayed locally with a locally generated key; live provider acceptance and hosted restore remain open. A whole account export from an email tool can now move in as one archive: contacts by status with consent kept, sent emails as read-only history and templates as draft starters, with a reconciliation report and an undo that keeps anything changed since. This is a documented format, tested on synthetic files shaped from the published help page, not on a real export. Each opt-out and suppression reason is now kept as its own record, and hosted deploys serve built files and report their deploy identity on /health."
+}

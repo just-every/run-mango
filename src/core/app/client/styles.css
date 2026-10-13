@@ -1,0 +1,36 @@
+@import "tailwindcss";
+/* The site's palette, shared with the landing. The faces are linked from the root head (public/fonts/fonts.css). */
+@import "../../features/site/styles/palette.css";
+
+/* The operator app's system, in cascade order. */
+@import "./styles/icons.css";
+@import "./styles/base.css";
+@import "./styles/page.css";
+@import "./styles/surfaces.css";
+@import "./styles/buttons.css";
+@import "./styles/forms.css";
+@import "./styles/tables.css";
+@import "./styles/pills.css";
+@import "./styles/notices.css";
+@import "./styles/dialog.css";
+@import "./styles/shell.css";
+
+/* One partial per page group, after the system so a page refines it. Each group's writer owns only its file. */
+@import "./styles/pages/public.css";
+@import "./styles/pages/desk.css";
+@import "./styles/pages/review.css";
+@import "./styles/pages/campaigns.css";
+@import "./styles/pages/audience.css";
+@import "./styles/pages/settings.css";
+
+/* Any Tailwind or shadcn utility draws from the same palette. */
+@theme inline {
+  --color-ink: var(--ms-ink);
+  --color-paper: var(--ms-paper);
+  --color-ground: var(--ms-ground);
+  --color-sun: var(--ms-sun);
+  --color-leaf: var(--ms-leaf-deep);
+  --color-tomato: var(--ms-tomato);
+  --font-serif: var(--ms-serif);
+  --font-sans: var(--ms-sans);
+}

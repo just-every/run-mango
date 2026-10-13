@@ -1,0 +1,131 @@
+import { createReceiptConnector } from '@/core/features/sender-verification/qa-inbox';
+import { createSendgridAdapter } from './adapters/sendgrid';
+import { createDatabase } from '@/core/platform/db/client';
+import { localBindings } from './local-bindings';
+import { createSenderVerification } from '@/core/features/sender-verification/service';
+import type {
+  AppBindings,
+  AppConfig,
+  Platform,
+  SenderAdapter,
+} from '@/core/shared/platform';
+
+import { createMobileMessageAdapter } from './adapters/mobile-message';
+import { createOpenAiAdapter } from './adapters/openai';
+import { createResendAdapter } from './adapters/resend';
+import { createShopifyAdapter } from './adapters/shopify';
+import { createBlobStore } from './blobs';
+import { optionalModuleInputs, readProductionConfig, unavailableModule } from './config';
+import { createJobDispatcher } from './jobs';
+import { createLinkInspector } from './link-inspector';
+import { createPublicTokenSigner } from './public-tokens';
+import { localContactHashSalt } from './local-contact-authority';
+
+function unavailableSender(channel: 'email'): SenderAdapter {
+  const unavailable = () => {
+    throw new Error(`${channel} is unavailable in local development because no production provider is configured.`);
+  };
+  return {
+    channel,
+    async capabilities() {
+      return {
+        configured: false,
+        canSendMarketing: false,
+        effectiveDeduplication: false,
+        effectiveReconciliation: false,
+        deduplicationWindowMs: 0,
+        reconciliationWindowMs: 0,
+        detail: `${channel} delivery is unavailable in local development.`,
+      };
+    },
+    async validateSender() {
+      return { ready: false, detail: `${channel} delivery is unavailable in local development.` };
+    },
+    send: unavailable,
+    reconcile: unavailable,
+    verifyWebhook: unavailable,
+  };
+}
+
+function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'mailer' | 'sms'>): Platform {
+  return {
+    database: createDatabase(environment.DB),
+    config,
+    ...adapters,
+    jobs: createJobDispatcher(environment.MANGO_JOBS),
+    blobs: createBlobStore(environment.ASSETS_BUCKET),
+    linkInspector: createLinkInspector(config.allowedLinkHosts),
+    publicTokens: createPublicTokenSigner(config.sessionSigningKey),
+  };
+}
+
+export function createProductionPlatform(environment: AppBindings): Platform {
+  const config = readProductionConfig(environment);
+  const verification = createSenderVerification({ database: createDatabase(environment.DB), config,
+    receiver: config.mailboxReceiptUrl ? createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient) : undefined });
+  const adapters: Pick<Platform, 'commerce' | 'ai' | 'mailer' | 'sms'> = {
+    mailer: config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
+      apiKey: config.mailProviderApiKey,
+      webhookSecret: config.mailWebhookSecret,
+      webhookId: config.mailWebhookId,
+      verification,
+    }),
+  };
+  if (config.modules.commerce.enabled) {
+    adapters.commerce = createShopifyAdapter({
+      storeUrl: config.modules.commerce.config.storeUrl,
+      accessToken: config.modules.commerce.config.apiToken,
+      webhookSecret: config.modules.commerce.config.webhookSecret,
+    });
+  }
+  if (config.modules.ai.enabled) {
+    adapters.ai = createOpenAiAdapter({
+      apiKey: config.modules.ai.config.providerApiKey,
+      model: config.modules.ai.config.model,
+    });
+  }
+  if (config.modules.sms.enabled) {
+    adapters.sms = createMobileMessageAdapter({
+      credentials: config.modules.sms.config.providerApiKey,
+      webhookSecret: config.modules.sms.config.webhookSecret,
+    });
+  }
+  return compose(environment, config, adapters);
+}
+
+export function createLocalPlatform(environment: AppBindings, localSigningKey: string): Platform {
+  environment = localBindings(environment);
+  if (environment.MANGO_LOCAL_CONFIG_VERSION === '2') localSigningKey = environment.SESSION_SIGNING_KEY;
+  return compose(environment, {
+    sessionSigningKey: localSigningKey,
+    initialOperatorEmails: (environment.INITIAL_OPERATOR_EMAILS ?? "").split(",").filter(Boolean),
+    authSetupToken: environment.AUTH_SETUP_TOKEN,
+    contactHashSalt: localContactHashSalt(environment),
+    modules: {
+      commerce: unavailableModule('Commerce', optionalModuleInputs.commerce),
+      sms: unavailableModule('SMS', optionalModuleInputs.sms),
+      ai: unavailableModule('AI', optionalModuleInputs.ai),
+    },
+    mailProviderApiKey: '',
+    mailAuthFrom: 'auth@localhost.test',
+    mailWebhookSecret: '',
+    mailWebhookId: '',
+    publicBaseUrl: new URL(environment.MANGO_PUBLIC_BASE_URL || 'http://127.0.0.1'),
+    appVersion: 'local',
+    local: true,
+    allowedLinkHosts: ['localhost'],
+    testEmailAllowlist: ['local@example.test'],
+    providerReconciliationIntervalMinutes: 15,
+    unresolvedProviderOutcomeHours: 1,
+    emailHandoffsPerMinute: 1,
+    deliverabilityReportingWindowDays: 30,
+    mailSender: {
+      displayName: 'Mango local',
+      fromEmail: '',
+      replyToEmail: '',
+      physicalAddress: 'local development only',
+    },
+  }, {
+    mailer: unavailableSender('email'),
+  });
+}

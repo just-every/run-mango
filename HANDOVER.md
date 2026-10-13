@@ -1,0 +1,21 @@
+# Mango maintained state
+
+Public source: https://github.com/just-every/run-mango (version 0.1.0).
+
+Mango 0.1.0 is a newsletter release. Manual operator-authored email is available without commerce, SMS or AI. Wider flagship requirements remain in CONTRACT.md; incomplete enabled providers fail visibly. SendGrid uses the owner's approved single-attempt handoff with durable fencing and operator-reviewed uncertainty. Delivery facts require provider evidence. Nothing sends until the exact saved revision is approved.
+
+Start through AGENTS.md's Run it locally section: rer install, setup --owner-email EMAIL, dev and its private RER_OPEN link; use dev --login for the native Base outbox journey. Rer also owns verify, confirmed reset, complete local D1/R2 export/import and owner-account deployment. Node 22.20.0/pnpm 10.12.4 are pinned. Repeat setup preserves the owner, private settings and data. Explicit authority recovery stays documented in OPERATIONS.md; ambiguous state and unknown authority stop without mutation.
+
+The local UI supports phone navigation with keyboard/focus behavior, linked field errors, focused dialogs, persisted signup frequency, per-step scheduling/results, URL-backed campaign filters and audience descriptions derived from structured rules. Source sync checkpoints/leases preserve resumption and prevent stale writers. CSV mapping and lossless Mango encoding retain recorded consent and suppression evidence; named vendor compatibility needs actual export proof.
+
+Maintained source selections are in edition.json and sources.lock.json, with copy provenance for the runtime actually consumed. Preserve all applied migrations, including import staging/custody and invitation cancellation. The local runtime and tests cover native outbox sign-in, pre-hydration POST, one-use confirmation, credential retention/recovery, binary D1/R2 roundtrip, empty setup after reset and process teardown. Test commands and results for a change belong outside the product checkout.
+
+Local results do not establish deployment, live mail/webhooks, provider acceptance, complete flagship coverage, jurisdiction evidence. Those release gates remain open in ACCEPTANCE.md. Production deployment requires the owner's authorization.
+
+Managed delivery uses the pinned trusted workflow's project build profile. Native active-owner grants limit the editor to the exact management origin; logout revokes it. Hosted admission and publication still need separately authorized verification. No registration, stage publication or provider acceptance follows from source packaging alone.
+
+The imported D1 application surface remains under strict TypeScript checks. Standalone upstream reader and proof entrypoints are outside Mango's runtime dependency graph and are not evidence for its hosted behavior.
+
+Public local ports now refuse Local Explorer, scheduled triggers and private/archive files. Setup uses the fixed local Worker runtime, with its outbox behind the same checkout key as preview. Vite serves only src, public and node_modules. Mango has no inherited foundation branding prepare step: its prepare hook validates contact authority and keeps saved settings; it does not generate branding. Base auth refresh requires additive migration 0032 for ordinary email sign-in domain-rule lookup; all earlier migration bytes remain unchanged.
+
+Contact controls add named saved segments (0033), reuse the campaign rule editor and common review eligibility evaluation, and copy rules into drafts without segment references. Contact merge now has address search, restrictive preview and existing-dialog confirmation; merged queued recipients retain their approved identity and are excluded as contact-merged. The survivor exposes source activity, consent/import evidence, suppressions and campaign history. Applied SQL and Base copies are unchanged. Segment literals belong in the later erasure inventory; these contact controls do not certify erasure.

@@ -1,0 +1,52 @@
+/* Status pills. The visible text is the value, so the meaning never rests on colour; a small glyph is a second cue.
+   Five tones, each value listed once. Any other value takes the stopped tone. */
+.status-pill, .audience-import-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  min-height: 22px;
+  padding: 2px 9px 2px 7px;
+  border: 1px solid transparent; /* still drawn in forced-colours mode */
+  border-radius: 999px;
+  justify-self: start;
+  color: var(--ms-ink-soft);
+  background: var(--ms-paper-deep);
+  font-family: var(--ms-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.status-pill::before, .audience-import-status::before {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  content: '';
+  -webkit-mask: var(--pill-icon, var(--icon-minus)) center / contain no-repeat;
+  mask: var(--pill-icon, var(--icon-minus)) center / contain no-repeat;
+}
+
+/* Yes / done. */
+.status-pill:is(.status-pill--subscribed, .status-pill--completed, .status-pill--approved, .status-pill--passed, .status-pill--fresh, .status-pill--configured, .status-pill--sent), .audience-import-status--good {
+  --pill-icon: var(--icon-check); color: var(--ms-leaf-deep); background: var(--ms-leaf-wash);
+}
+/* In the post. */
+.status-pill:is(.status-pill--scheduled, .status-pill--sending, .status-pill--dispatching, .status-pill--running) {
+  --pill-icon: var(--icon-send); color: var(--ms-ink); background: var(--ms-sun-soft);
+}
+/* Waiting on someone or something. */
+.status-pill:is(.status-pill--pending, .status-pill--draft, .status-pill--paused, .status-pill--advisory, .status-pill--needs-sync, .status-pill--queued, .status-pill--unconfigured), .audience-import-status--pending {
+  --pill-icon: var(--icon-clock); color: var(--ms-wait); background: var(--ms-sun-wash); border-color: var(--ms-sun-line);
+}
+/* Stopped by choice: unsubscribed, cancelled, superseded and any value not listed. */
+.status-pill:is(.status-pill--unsubscribed, .status-pill--not-subscribed, .status-pill--non-subscribed, .status-pill--cancelled, .status-pill--superseded), .audience-import-status--neutral {
+  --pill-icon: var(--icon-minus); color: var(--ms-ink-soft); background: var(--ms-paper-deep);
+}
+/* Alarm: something went wrong or blocks the next step. */
+.status-pill:is(.status-pill--suppressed, .status-pill--failed, .status-pill--blocked, .status-pill--missed), .audience-import-status--alert {
+  --pill-icon: var(--icon-alert); color: var(--ms-tomato-deep); background: #f9e0d6;
+}

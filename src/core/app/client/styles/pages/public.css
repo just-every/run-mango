@@ -1,0 +1,103 @@
+/* Public page group: sign-in, subscribe and the 404s. (The Hono consent and unsubscribe pages carry their own inline
+   stylesheet: site/message-page.) These pages bridge the landing and the app, so they keep the site's looser rhythm. */
+
+/* The standalone frame (ui/standalone-frame.tsx): the lockup on the cream ground, one drawn paper card, a way back. */
+.app-standalone { --standalone-gutter: clamp(16px, 5.6vw, 88px); display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; }
+.app-standalone .simple-page__header { display: flex; align-items: center; height: 96px; padding: 0 var(--standalone-gutter); }
+.app-standalone .app-brand { gap: 12px; }
+.app-standalone .app-brand__mark { width: 36px; }
+.app-standalone .app-brand__name { font-size: 32px; }
+.app-standalone .simple-page { display: grid; flex: 1; align-content: start; justify-items: center; gap: var(--sp-6); padding: var(--sp-6) var(--standalone-gutter) var(--sp-10); }
+/* Tall enough to hold the card: sit it in the middle of the room under the header. */
+@media (min-height: 860px) { .app-standalone .simple-page { align-content: center; padding-bottom: 120px; } }
+
+.standalone-card { width: min(100%, 30rem); }
+.subscribe-page .standalone-card { width: min(100%, 36rem); }
+.setup-page .standalone-card { width: min(100%, 42rem); }
+.mango-app .paper.standalone-card::before { inset: 12px -8px -9px 10px; }
+.mango-app .standalone-card .paper-face { padding: 44px 44px 40px; box-shadow: var(--ms-shadow-lift); }
+/* The card is a letter: the mango stamp on its corner. */
+.mango-app .standalone-stamp { position: absolute; top: -16px; right: 28px; width: 56px; rotate: 6deg; }
+
+.message-card { min-width: 0; overflow-wrap: anywhere; }
+.message-card > .eyebrow { margin: 0 0 var(--sp-3); padding-right: 72px; }
+.mango-app .standalone-title { margin: 0; font-size: clamp(36px, 4vw, 48px); letter-spacing: -0.035em; line-height: 1.04; }
+/* The docs' sunny pencil stroke (DocsTitleStroke) under a standalone or 404 title, as a mask in the sun colour. Decorative. */
+:is(.standalone-title, .site-missing-title)::after { display: block; width: min(196px, 58%); height: 15px; margin-top: 12px; background: var(--ms-sun); content: ''; -webkit-mask: var(--title-stroke) left / 100% 100% no-repeat; mask: var(--title-stroke) left / 100% 100% no-repeat; }
+:is(.app-standalone, .site-missing) { --title-stroke: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' fill='none' stroke='%23000' stroke-linecap='round'%3E%3Cpath stroke-width='4.8' d='M3.5 11.2C40 7.4 92 5.2 142 6.1 176 6.7 206 8.4 236 11'/%3E%3Cpath stroke-width='1.8' opacity='.5' d='M14 14.2C58 11.2 112 10.2 160 11.2 182 11.7 202 12.8 222 14.4'/%3E%3C/svg%3E"); }
+.message-card > p:not(.eyebrow, .action-notice, .inline-error) { max-width: 34em; margin: var(--sp-4) 0 0; color: var(--ms-ink-soft); font-size: 17px; line-height: 1.55; }
+
+/* The card's form, at the site's size: 48px controls with 17px text and the sun button. */
+.standalone-form { display: grid; gap: var(--sp-5); margin-top: var(--sp-7); }
+.standalone-form label { color: var(--ms-ink); font-size: 15px; }
+.standalone-form label small { font-size: 14px; }
+.mango-app .standalone-form :is(input[type="email"], input[type="text"]) { min-height: 48px; padding: 11px 14px; font-size: 17px; }
+/* Its submit is content-width, and spans the card only on a phone (≤480px), as on the message pages. */
+.standalone-form .primary-action { justify-self: start; min-height: 48px; padding: 0 var(--sp-6); font-size: 17px; }
+.message-card .action-notice, .message-card .inline-error { margin: var(--sp-5) 0 0; }
+.mango-app .message-card > .standalone-note { margin-top: var(--sp-5); color: var(--ms-muted); font-size: 15px; }
+.standalone-back { font-size: 15px; }
+
+/* Sign-in: one field, so the label sits on its input. */
+.signin-form { gap: 0; }
+.signin-form label { margin-bottom: 6px; }
+.signin-form .primary-action { margin-top: var(--sp-4); }
+
+/* Subscribe: the sender is the eyebrow; frequency, then who keeps the address, quieter. */
+.mango-app .message-card > .subscribe-privacy-note { margin-top: var(--sp-2); color: var(--ms-muted); font-size: 15px; }
+.subscribe-form > label:not(.subscribe-consent) { display: grid; min-width: 0; gap: 6px; }
+.subscribe-consent { display: grid; grid-template-columns: 18px minmax(0, 1fr); align-items: start; gap: 6px 12px; color: var(--ms-ink-soft); font-size: 15px; font-weight: 400; line-height: 1.5; }
+.mango-app .subscribe-consent input { margin-top: 3px; }
+/* Field puts the consent error after the box: it sits under the sentence, not beside the box. */
+.subscribe-consent > input[type="checkbox"] { grid-column: 1; grid-row: 1; }
+.subscribe-consent > span:not(.field-error) { grid-column: 2; grid-row: 1; }
+.subscribe-consent > .field-error { grid-column: 2; grid-row: 2; margin-top: 0; }
+.subscribe-form > .validation-summary { margin-bottom: 0; }
+.subscribe-form > .inline-error { margin: 0; }
+/* Request received: the notice beside an envelope postmarked YES. */
+.subscribe-success { display: grid; grid-template-columns: minmax(0, 1fr) 132px; align-items: center; gap: var(--sp-5); }
+.subscribe-confirmation { margin: 0; }
+.subscribe-success-art { width: 132px; aspect-ratio: 4 / 3; }
+.subscribe-success-art .art-inner > * { top: 12%; left: 2%; width: 94%; height: 70%; rotate: -4deg; }
+
+/* The 404s. The public one sits in the site frame and follows the docs' missing page: the note and two ways back
+   beside an envelope postmarked 404, in the middle of the room between header and footer. */
+.mango-site main:has(> .site-missing) { display: flex; flex-direction: column; justify-content: center; }
+.mango-site .site-missing { display: grid; width: 100%; max-width: var(--ms-max); grid-template-columns: minmax(0, 1fr) minmax(0, 440px); align-items: center; gap: 40px 64px; margin: 0 auto; padding: max(40px, calc(96 * var(--u))) var(--ms-gutter) max(64px, calc(128 * var(--u))); }
+.mango-site .site-missing-eyebrow { margin-bottom: 12px; color: var(--ms-amber); font-size: 13px; font-weight: 600; letter-spacing: 0.15em; line-height: 1.3; text-transform: uppercase; }
+.mango-site .site-missing-title { max-width: 12em; font-size: max(42px, calc(72 * var(--u))); letter-spacing: -0.035em; line-height: 1.04; }
+.mango-site .site-missing-title::after { width: min(240px, 64%); height: 18px; margin-top: max(10px, calc(14 * var(--u))); }
+.mango-site .site-missing-text { max-width: 30em; margin-top: max(18px, calc(26 * var(--u))); color: var(--ms-ink-soft); font-size: max(17px, calc(20 * var(--u))); line-height: 1.55; text-wrap: balance; }
+.mango-site .site-missing-actions { display: flex; flex-wrap: wrap; gap: 14px 18px; margin-top: max(26px, calc(36 * var(--u))); }
+.mango-site .site-missing-art { width: 100%; aspect-ratio: 440 / 300; }
+:is(.site-missing-art, .app-missing) .art-inner > .missing-envelope { top: 13%; left: 12%; width: 86%; height: 69%; rotate: -4deg; }
+/* The app's: an empty state in the operator frame. */
+.app-missing .art-inner > .missing-envelope { top: 12%; left: 4%; width: 92%; height: 72%; }
+.mango-app .empty-state.app-missing { grid-template-columns: 200px minmax(0, 30rem); }
+.mango-app .app-missing > .empty-art { width: 200px; }
+.mango-app .app-missing h1 { font-size: 30px; }
+
+@media (max-width: 860px) {
+  .mango-site .site-missing { grid-template-columns: minmax(0, 1fr); }
+  .mango-site .site-missing-art { max-width: 360px; }
+  .site-missing-art .art-inner > .missing-envelope { left: 4%; }
+}
+@media (max-width: 480px) {
+  .mango-site .site-missing-actions .site-button { flex: 1 1 auto; }
+  .standalone-form .primary-action { justify-self: stretch; }
+}
+
+@media (max-width: 680px) {
+  .app-standalone .simple-page__header { height: 72px; }
+  .app-standalone .app-brand__mark { width: 28px; }
+  .app-standalone .app-brand__name { font-size: 26px; }
+  .app-standalone .simple-page { padding-top: var(--sp-3); padding-bottom: var(--sp-9); }
+  .mango-app .standalone-card .paper-face { padding: 36px 24px 28px; }
+  .mango-app .standalone-stamp { right: 18px; width: 48px; }
+  .message-card > .eyebrow { padding-right: 56px; }
+  .standalone-form { margin-top: var(--sp-6); }
+  .subscribe-success { grid-template-columns: minmax(0, 1fr); }
+  .subscribe-success-art { display: none; }
+  .mango-app .empty-state.app-missing { grid-template-columns: minmax(0, 1fr); }
+  .mango-app .app-missing > .empty-art { width: 150px; }
+}

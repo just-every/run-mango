@@ -1,0 +1,2 @@
+Email Address,First Name,Last Name,OPTIN_TIME,OPTIN_IP,CONFIRM_TIME,CONFIRM_IP,MEMBER_RATING,TIMEZONE,CC,LAST_CHANGED,LEID,NOTES,TAGS
+cleo@example.test,Cleo,Bounced,2026-01-01 09:00:00,192.0.2.30,2026-01-01 09:05:00,192.0.2.30,1,Australia/Brisbane,AU,2026-09-04 12:00:00,1010,Synthetic documentation fixture,Newsletter

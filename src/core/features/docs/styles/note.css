@@ -1,0 +1,16 @@
+/* A tip: a small sun-washed paper note with the perforated mango stamp at its corner (build/blocks.ts). Other quotes keep a sunny
+   rule; GitHub-style callouts ([!NOTE] and friends) are plain warm notes. */
+.mango-docs .docs-prose .docs-note { max-width: var(--md-measure); margin: 2.1em 0 1.6em; }
+.mango-docs .paper.docs-note::before { inset: 10px -6px -7px 8px; }
+.mango-docs .docs-note .paper-face { padding: 20px 112px 21px 24px; box-shadow: 0 12px 20px -16px rgb(84 64 28 / 0.38), 0 1px 3px rgb(84 64 28 / 0.06); }
+.mango-docs .paper--warm.docs-note .paper-face { background: linear-gradient(168deg, #fffbec 0%, #fff2cc 100%); }
+.mango-docs .docs-note .paper-pencil { stroke: #d2ae66; }
+.mango-docs .docs-note-body { color: var(--ms-ink-soft); font-size: 16.5px; line-height: 1.65; }
+.mango-docs .docs-note-body > :last-child { margin-bottom: 0; }
+.mango-docs .docs-note-body > p:first-child > strong:first-child { color: var(--ms-amber); }
+.mango-docs .docs-note-stamp { position: absolute; top: -16px; right: 26px; width: 64px; rotate: 6deg; }
+
+.mango-docs .docs-prose blockquote { padding-left: 18px; border-left: 3px solid var(--ms-sun); color: var(--ms-muted); }
+.mango-docs .docs-callout { padding: 16px 20px; border: 1px solid var(--ms-hairline); border-radius: 6px; background: var(--ms-paper-warm); }
+.mango-docs .docs-callout > :last-child { margin-bottom: 0; }
+.mango-docs .docs-prose .docs-callout-label { margin-bottom: 0.3em; color: var(--ms-amber); font-weight: 600; }

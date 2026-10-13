@@ -1,0 +1,291 @@
+import {erasureFencedDatabase,withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
+import {pendingErasure} from '@/core/features/audience/erasure/maintenance';
+import { createSegmentRoutes } from '@/core/features/audience/segments';
+import { senderIdentitySchema } from '@/core/features/settings/sender-validation';
+import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
+import { createAudienceImportRoutes } from '@/core/features/audience/import-routes';
+import { createSignupRoutes } from '@/core/features/audience/signup-routes';
+import { createPortabilityRoutes } from '@/core/features/portability/routes';
+import { createAuthoringService } from '@/core/features/campaigns/authoring-service';
+import { createSyncRoutes } from '@/core/features/store/sync-routes';
+import { createCommerceSynchronizer } from '@/core/features/store/synchronize';
+import { Hono } from 'hono';
+import {ownerClaim} from '@/core/features/auth/owner-claim';
+import {configuredEditor} from '@/core/features/editor/config';
+
+import { createCommerceWebhookRoutes } from '@/core/features/audience/commerce-webhook-routes';
+import { createAudienceRepository } from '@/core/features/audience/repository';
+import { createAudiencePublicRoutes } from '@/core/features/audience/public-routes';
+import { createAudienceRoutes } from '@/core/features/audience/routes';
+import { createAudienceService } from '@/core/features/audience/service';
+import { createLifecycleAudience } from '@/core/features/audience/lifecycle-adapter';
+import { createAuthRepository } from '@/core/features/auth/repository';
+import { createOperatorRoutes, createPublicAuthRoutes, type AuthVariables } from '@/core/features/auth/routes';
+import { createAuthService } from '@/core/features/auth/service';
+import { createCampaignRepository } from '@/core/features/campaigns/repository';
+import { createCampaignCompositionRepository } from '@/core/features/campaigns/composition-repository';
+import { createCampaignRoutes } from '@/core/features/campaigns/routes';
+import { createCampaignService } from '@/core/features/campaigns/service';
+import { createHealthRepository } from '@/core/features/health/repository';
+import { createHealthRoutes } from '@/core/features/health/routes';
+import { createMoveInRoutes } from '@/core/features/move-in/routes';
+import { createHealthService } from '@/core/features/health/service';
+import { createInsightsRepository } from '@/core/features/insights/repository';
+import { createInsightsRoutes } from '@/core/features/insights/routes';
+import { createInsightsService } from '@/core/features/insights/service';
+import {
+  moveContactDeliveryFacts,
+  registerLifecycleRoutes,
+  type LifecycleRuntime,
+} from '@/core/features/lifecycle';
+import { createSettingsRoutes } from '@/core/features/settings/routes';
+import { createSettingsService } from '@/core/features/settings/service';
+import { createStoreRepository } from '@/core/features/store/repository';
+import { createStoreRoutes } from '@/core/features/store/routes';
+import { createStoreService } from '@/core/features/store/service';
+import { createDatabase } from '@/core/platform/db/client';
+import type { AppBindings, Platform } from '@/core/shared/platform';
+
+export type AppEnvironment = { Bindings: AppBindings; Variables: AuthVariables };
+
+function isSafeMethod(method: string) {
+  return method === 'GET' || method === 'HEAD' || method === 'OPTIONS';
+}
+
+function validOrigin(
+  context: { req: { header(name: string): string | undefined; url: string } },
+  platform: Platform,
+  trustedLocal: boolean,
+) {
+  if (trustedLocal) return true;
+  const origin = context.req.header('Origin');
+  return origin === platform.config.publicBaseUrl.origin;
+}
+
+function audienceDependencies(
+  platform: Platform,
+  storeService: ReturnType<typeof createStoreService>,
+  lifecycle: () => LifecycleRuntime,
+) {
+  return {
+    contactHashSalt: platform.config.contactHashSalt,
+    publicTokens: {
+      issuePublicToken: (id: string, purpose: string, expiresAt: Date) => platform.publicTokens.issue({ id, purpose, expiresAt }),
+      async verifyPublicToken(token: string, purpose: string) {
+        try {
+          const claims = await platform.publicTokens.verify(token, purpose);
+          return { id: claims.id };
+        } catch {
+          return undefined;
+        }
+      },
+    },
+    confirmationDispatcher: {
+      async sendConfirmation(input: { channel: 'email' | 'sms'; destination: string; token: string; expiresAt: Date }, authorizeHandoff: () => Promise<boolean>) {
+        const smsModule = platform.config.modules.sms;
+        const identity = senderIdentitySchema.parse(await loadSenderSettings(platform));
+        const escape = (value: string) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\"', '&quot;');
+        let sender = `${identity.displayName} <${identity.fromEmail}>`;
+        if (input.channel === 'sms') {
+          if (!smsModule.enabled) throw new Error(smsModule.detail);
+          if (!platform.sms) throw new Error('The SMS adapter is unavailable despite complete module configuration.');
+          sender = smsModule.config.confirmationSender;
+        }
+        const tokenDigest = await platform.publicTokens.digest(input.token);
+        const handoffStartedAt = new Date();
+        const destination = input.channel === 'email'
+          ? new URL(`/consent/confirm/${encodeURIComponent(input.token)}`, platform.config.publicBaseUrl).toString()
+          : new URL(`/consent/confirm/${encodeURIComponent(input.token)}`, platform.config.publicBaseUrl).toString();
+        const request = {
+          recipientStepId: `consent-confirmation:${tokenDigest}`,
+          idempotencyKey: `consent-confirmation:${tokenDigest}`,
+          handoffStartedAt,
+          to: input.destination,
+          sender,
+          content: input.channel === 'email'
+            ? {
+                subject: 'Confirm your Mango subscription',
+                text: `Confirm your subscription within 30 days: ${destination}\n\n${identity.displayName}\n${identity.physicalAddress}`,
+                html: `<p>Confirm your subscription within 30 days:</p><p><a href="${destination}">Confirm subscription</a></p><footer>${escape(identity.displayName)}<br>${escape(identity.physicalAddress)}</footer>`,
+                replyTo: identity.replyToEmail,
+              }
+            : {
+                text: `Confirm your subscription: ${destination}`,
+              },
+          callbackUrl: new URL(`/webhooks/${input.channel === 'email' ? 'mail/resend' : 'sms/mobile-message'}`, platform.config.publicBaseUrl).toString(),
+        };
+        // No asynchronous preparation may occur between this D1 authorization
+        // and adapter invocation. A provider handoff already in progress cannot
+        // be recalled by a later database transition.
+        if (!await authorizeHandoff()) return false;
+        if (input.channel === 'email') {
+          const result = await platform.mailer.send(request);
+          if (result.disposition !== 'accepted') throw new Error('Confirmation delivery is uncertain; the attempt will not be repeated automatically.');
+        }
+        else {
+          if (!platform.sms) throw new Error('The SMS adapter is unavailable despite complete module configuration.');
+          await platform.sms.send(request);
+        }
+        return true;
+      },
+    },
+    store: {...storeService, async freshness(types: Parameters<typeof storeService.freshness>[0], now:Date) {
+      if (!platform.commerce && types.length) return types.map(sourceType=>({sourceType,reason:'source-unavailable' as const,detail:'Commerce is unavailable. Connect the store before using this source in an audience.'}));
+      return storeService.freshness(types,now);
+    }},
+
+    async moveLifecycleData(mergedContactId: string, survivorContactId: string) {
+      await moveContactDeliveryFacts(lifecycle(), mergedContactId, survivorContactId);
+    },
+  };
+}
+
+type AppServices = {
+  platform: Platform;
+  database: ReturnType<typeof createDatabase>;
+  healthService: ReturnType<typeof createHealthService>;
+  authService: ReturnType<typeof createAuthService>;
+  audienceService: ReturnType<typeof createAudienceService>;
+  storeService: ReturnType<typeof createStoreService>;
+  campaignService: ReturnType<typeof createCampaignService>;
+  insightsService: ReturnType<typeof createInsightsService>;
+  lifecycleRuntime: LifecycleRuntime;
+};
+
+type BeforeAuthenticationRoutes = (app: Hono<AppEnvironment>, services: AppServices) => void;
+
+export function createAppServices(platform: Platform): AppServices {
+  const database = platform.database;
+  const healthService = createHealthService(createHealthRepository(database));
+  const authService = createAuthService(createAuthRepository(database), platform);
+  const storeService = createStoreService(createStoreRepository(database));
+  let lifecycleRuntime: LifecycleRuntime | undefined;
+  const audienceService = createAudienceService(createAudienceRepository(database), audienceDependencies(platform, storeService, () => {
+    if (!lifecycleRuntime) throw new Error('Lifecycle runtime has not been composed.');
+    return lifecycleRuntime;
+  }));
+  lifecycleRuntime = {
+    platform,
+    audience: createLifecycleAudience(audienceService),
+    synchronizeCommerce: platform.commerce
+      ? createCommerceSynchronizer(platform.commerce, storeService, audienceService)
+      : undefined,
+  };
+  const campaignService = createCampaignService(
+    createCampaignRepository(database),
+    createCampaignCompositionRepository(database),
+    storeService,
+    { smsEnabled: platform.config.modules.sms.enabled },
+  );
+  const insightsService = createInsightsService(createInsightsRepository(database));
+
+  return {
+    platform,
+    database,
+    healthService,
+    authService,
+    audienceService,
+    storeService,
+    campaignService,
+    insightsService,
+    lifecycleRuntime,
+  };
+}
+
+export function createApp(
+  environment: AppBindings,
+  platform: Platform,
+  mountBeforeAuthentication?: BeforeAuthenticationRoutes,
+  trustedLocal = false,
+) {
+  environment={...environment,DB:erasureFencedDatabase(environment.DB)};
+  const app = new Hono<AppEnvironment>();
+  app.use('*',async(context,next)=>{
+    const path=context.req.path;
+    const erasure=path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path));
+    if(erasure||path.startsWith('/auth/')||path==='/health')return next();
+    return withErasureWriteFence(environment.DB,next);
+  });
+  const services = createAppServices(platform);
+  const {
+    healthService,
+    authService,
+    storeService,
+    audienceService,
+    campaignService,
+    insightsService,
+    lifecycleRuntime,
+  } = services;
+  const secureCookie = platform.config.publicBaseUrl.protocol === 'https:';
+
+  app.use('*', async (context, next) => {
+    const path = context.req.path;
+    // Public tracked-link GETs also write facts. During restore every product
+    // request pauses; only the separate authentication/transfer custody runs.
+    if (environment.MANGO_RESTORE_MODE === '1'
+      && !path.startsWith('/auth/') && !path.startsWith('/api/portability/')
+      && path !== '/__dev/outbox' && !['/health', '/api/operator', '/api/auth/magic-link'].includes(path)) {
+      return context.json({ error: 'restore_in_progress' }, 503);
+    }
+    if(!path.startsWith('/api/')&&!path.startsWith('/auth/')&&!path.startsWith('/app')&&!['/health','/signin','/__dev/key','/__dev/outbox'].includes(path)&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
+    await next();
+  });
+  app.use('*', async (context, next) => {
+    await loadSenderSettings(platform);
+    context.header('X-Mango-Version', platform.config.appVersion);
+    await next();
+  });
+  app.route('/', createHealthRoutes(healthService, environment));
+  app.all('/auth/owner-claim', context => ownerClaim(context.req.raw, environment, platform));
+  app.get('/auth/environment', async context => {
+    context.header('Cache-Control', 'no-store');
+    let editorConfigured = false;
+    try { editorConfigured = configuredEditor(environment)?.enabled === true; } catch { /* Invalid configuration grants no editor. */ }
+    return context.json({local: platform.config.local === true,
+      editorEligible: editorConfigured && await authService.isNativeOwner(context.req.raw)});
+  });
+  app.route('/', createPublicAuthRoutes(authService, { secureCookie }));
+  app.route('/', createAudiencePublicRoutes(audienceService));
+  app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
+  if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce));
+  mountBeforeAuthentication?.(app, services);
+  if (!mountBeforeAuthentication) app.all('/api/_local/*', (context) => context.json({ error: 'not_found' }, 404));
+
+  app.use('/api/*', async (context, next) => {
+    const operator = await authService.authenticate(context.req.raw);
+    if (!operator) return context.json({ error: 'unauthenticated' }, 401);
+    if (!isSafeMethod(context.req.method) && !validOrigin(context, platform, trustedLocal)) return context.json({ error: 'invalid_origin' }, 403);
+    context.set('operator', operator);
+    if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
+    await next();
+  });
+  app.route('/api', createOperatorRoutes(authService, { secureCookie }));
+  app.get('/api/editor/config', async context => {
+    context.header('Cache-Control', 'no-store');
+    const operator = context.get('operator');
+    const authority = await environment.DB.prepare('SELECT role,status FROM oa_operators WHERE id=?').bind(operator.id).first<{role: string; status: string}>();
+    if (authority?.role !== 'owner' || authority.status !== 'active') return context.json({error: 'owner_required'}, 403);
+    try {
+      const config = configuredEditor(environment);
+      if (!config) return context.json({error: 'editor_not_configured'}, 503);
+      return context.json({config, expiresAt: Date.now() + 30_000});
+    } catch { return context.json({error: 'editor_not_configured'}, 503); }
+  });
+  app.route('/api', createPortabilityRoutes(environment, platform));
+  registerLifecycleRoutes(app, lifecycleRuntime);
+  app.route('/api', createSettingsRoutes(createSettingsService(platform)));
+  app.route('/api', createStoreRoutes(storeService));
+  app.route('/api', createSyncRoutes(platform, services.storeService));
+  app.route('/api', createSegmentRoutes(environment.DB));
+  app.route('/api', createAudienceRoutes(audienceService,environment.DB,platform,environment));
+  app.route('/api', createAudienceImportRoutes(platform));
+  app.route('/api', createMoveInRoutes(platform));
+  app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService)));
+  app.route('/api', createInsightsRoutes(insightsService));
+
+  app.all('*', (context) => context.json({ error: 'not_found' }, 404));
+
+  return app;
+}
+
+export type AppType = ReturnType<typeof createApp>;

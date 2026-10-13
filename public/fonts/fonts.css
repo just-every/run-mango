@@ -1,0 +1,104 @@
+/* Newsreader (display serif) and Outfit (body sans), both SIL Open Font License 1.1 and self-hosted from public/fonts
+   (each licence beside its files), served at the stable same-origin paths /fonts/..., so the page makes no third-party
+   request. This one stylesheet is linked from the persistent root head (routes/__root.tsx) and from the server-rendered
+   message pages (site/message-page.ts), with a preload of each Latin file (site/font-head.ts). */
+@font-face {
+  font-family: Newsreader;
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/newsreader/newsreader-latin-opsz-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: Newsreader;
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/newsreader/newsreader-latin-ext-opsz-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: Outfit;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/outfit/outfit-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: Outfit;
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/outfit/outfit-latin-ext-wght-normal.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Metric-matched fallbacks: a system face resized to the web font's advance widths and given its vertical metrics, so the
+   text painted before the web font arrives takes the room it will and nothing reflows when it swaps in. Each override is
+   divided by its size-adjust, because the browser scales the overrides by it again.
+   Newsreader at display size: ascent 740, descent 260, no line gap (per 1000 units); Georgia's advances need 100.45% at
+   regular weight and 103.2% at medium; Times New Roman (or its metric twin Liberation Serif) needs 109.1%. */
+@font-face {
+  font-family: 'Newsreader Fallback';
+  font-style: normal;
+  font-weight: 100 450;
+  src: local('Georgia');
+  size-adjust: 100.45%;
+  ascent-override: 73.67%;
+  descent-override: 25.88%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Newsreader Fallback';
+  font-style: normal;
+  font-weight: 451 900;
+  src: local('Georgia');
+  size-adjust: 103.2%;
+  ascent-override: 71.71%;
+  descent-override: 25.19%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Newsreader Fallback Times';
+  font-style: normal;
+  font-weight: 100 900;
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'), local('LiberationSerif');
+  size-adjust: 109.1%;
+  ascent-override: 67.83%;
+  descent-override: 23.83%;
+  line-gap-override: 0%;
+}
+/* Outfit Fallback: Arial (or Liberation Sans) at Outfit's advance widths and vertical metrics (ascent 1000, descent 260),
+   one scale per weight the pages use, as Slate measured them. */
+@font-face {
+  font-family: 'Outfit Fallback';
+  font-style: normal;
+  font-weight: 100 450;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans');
+  size-adjust: 97.5%;
+  ascent-override: 102.56%;
+  descent-override: 26.67%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Outfit Fallback';
+  font-style: normal;
+  font-weight: 451 549;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans');
+  size-adjust: 99.8%;
+  ascent-override: 100.2%;
+  descent-override: 26.05%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Outfit Fallback';
+  font-style: normal;
+  font-weight: 550 900;
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold');
+  size-adjust: 94.2%;
+  ascent-override: 106.16%;
+  descent-override: 27.6%;
+  line-gap-override: 0%;
+}

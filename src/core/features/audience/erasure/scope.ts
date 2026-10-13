@@ -1,0 +1,23 @@
+import {sha256} from '@/core/shared/ids';
+import {signupNetwork} from '../signup-security';
+import type {ErasureScope} from './types';
+import {splitFreeText} from './needles';
+export async function readScope(db:D1Database,id:string,salt:string,additionalPlans:string[]=[] ):Promise<ErasureScope|null>{
+  const contact=await db.prepare('SELECT * FROM contacts WHERE id=?').bind(id).first<Record<string,string>>();
+  if(!contact)return null;
+  const ids=(await db.prepare('WITH RECURSIVE identities(id) AS (SELECT ? UNION SELECT m.merged_contact_id FROM contact_merges m JOIN identities i ON m.survivor_contact_id=i.id) SELECT id FROM identities').bind(id).all<{id:string}>()).results.map(row=>row.id);
+  const selected=JSON.stringify(ids);
+  const names=(await db.prepare("SELECT DISTINCT detail FROM contact_history WHERE contact_id IN (SELECT value FROM json_each(?)) AND kind='contact-name'").bind(selected).all<{detail:string}>()).results.map(row=>row.detail);
+  const emails=[...new Set([contact.email,...(await db.prepare('SELECT email FROM contact_email_addresses WHERE contact_id IN (SELECT value FROM json_each(?))').bind(selected).all<{email:string}>()).results.map(row=>row.email)].filter(Boolean))];
+  const phones=(await db.prepare('SELECT phone_e164 FROM contact_phones WHERE contact_id IN (SELECT value FROM json_each(?))').bind(selected).all<{phone_e164:string}>()).results.map(row=>row.phone_e164);
+  const metadata=(await db.prepare('SELECT capture_ip,confirmation_ip FROM consent_capture_metadata WHERE contact_id IN (SELECT value FROM json_each(?)) UNION SELECT capture_ip,confirmation_ip FROM audience_import_observations WHERE contact_id IN (SELECT value FROM json_each(?))').bind(selected,selected).all<{capture_ip:string|null;confirmation_ip:string|null}>()).results;
+  const ips=[...new Set(metadata.flatMap(row=>[row.capture_ip,row.confirmation_ip]).filter((value):value is string=>Boolean(value)))];
+  const channels=[];if(['unsubscribed','suppressed'].includes(contact.email_status))channels.push('email');if(['unsubscribed','suppressed'].includes(contact.sms_status))channels.push('sms');
+  // Per-address restrictions survive even if a legacy aggregate was less strict.
+  const restricted=(await db.prepare("SELECT 'email' AS channel FROM contact_email_addresses WHERE contact_id IN (SELECT value FROM json_each(?)) AND channel_status IN ('unsubscribed','suppressed') UNION SELECT 'sms' FROM contact_phones WHERE contact_id IN (SELECT value FROM json_each(?)) AND channel_status IN ('unsubscribed','suppressed')").bind(selected,selected).all<{channel:string}>()).results;
+  const plans=[...new Set([...additionalPlans,...(await db.prepare('SELECT DISTINCT fingerprint FROM audience_import_plan_contacts WHERE contact_id IN (SELECT value FROM json_each(?)) OR email IN (SELECT value FROM json_each(?))').bind(selected,JSON.stringify([...emails,...phones])).all<{fingerprint:string}>()).results.map(row=>row.fingerprint)])];
+  const streams=(await db.prepare(`SELECT id FROM ik_d1_streams WHERE operation_key IN (SELECT value FROM json_each(?)) UNION SELECT o.stream_id FROM ik_d1_stream_origins o JOIN ik_provenance p ON p.job_id=o.job_id WHERE p.target_kind='contact' AND p.target_id IN (SELECT value FROM json_each(?))`).bind(JSON.stringify(plans),selected).all<{id:string}>()).results.map(row=>row.id);
+  const stages=(await db.prepare('SELECT id FROM ik_d1_staging WHERE operation_key IN (SELECT value FROM json_each(?))').bind(JSON.stringify(plans)).all<{id:string}>()).results.map(row=>row.id);
+  const jobs=(await db.prepare(`WITH RECURSIVE affected(id) AS (SELECT id FROM ik_jobs WHERE fingerprint IN (SELECT value FROM json_each(?)) UNION SELECT job_id FROM ik_provenance WHERE target_kind='contact' AND target_id IN (SELECT value FROM json_each(?)) UNION SELECT job_id FROM ik_d1_stream_origins WHERE stream_id IN (SELECT value FROM json_each(?)) UNION SELECT e.job_id FROM ik_d1_entries e JOIN affected a ON e.owner_job_id=a.id) SELECT id FROM affected`).bind(JSON.stringify(plans),selected,JSON.stringify(streams)).all<{id:string}>()).results.map(row=>row.id);
+  return {subject:contact,ids,emails,phones,jobs,plans,streams,stages,identifiers:[...new Set([...ids,...emails,...phones].filter(Boolean))],ips,...splitFreeText([contact.display_name,...names]),hashes:await Promise.all([...emails,...phones].map(value=>sha256(`${salt}:${value}`))),signupHashes:await Promise.all(emails.map(value=>sha256(`${salt}:signup-email:${value}`))),networkKeys:await Promise.all(ips.map(signupNetwork).filter((value):value is string=>Boolean(value)).map(async value=>`signup:${await sha256(`${salt}:signup:${value}`)}`)),channels:[...new Set([...channels,...restricted.map(row=>row.channel)])]};
+}

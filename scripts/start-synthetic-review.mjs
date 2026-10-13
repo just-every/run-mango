@@ -1,0 +1,17 @@
+import { readFile, writeFile } from 'node:fs/promises';
+import { spawnSync, spawn } from 'node:child_process';
+import { ensureLocalBootstrapToken } from '../tests/support/bootstrap-token.mjs';
+import { localPort } from '../tests/support/review-port.mjs';
+const port = localPort(process.env.MANGO_REVIEW_PORT ?? '15662');
+const token = await ensureLocalBootstrapToken();
+const template = await readFile('deploy/wrangler.local.template.toml', 'utf8');
+await writeFile('wrangler.review.toml', template.replace('./src/core/app/worker.local.ts', './tests/review/worker.ts') + `\n[vars]\nLOCAL_BOOTSTRAP_TOKEN = ${JSON.stringify(token)}\nMANGO_REVIEW_BASE_URL = ${JSON.stringify(`http://127.0.0.1:${port}`)}\n`);
+const migrate = spawnSync('pnpm', ['exec', 'wrangler', 'd1', 'migrations', 'apply', 'mango-local', '--local', '--config', 'wrangler.review.toml', '--persist-to', '.seed/review-state'], {stdio: 'inherit', env: {...process.env, CI: '1'}});
+if (migrate.status !== 0) process.exit(migrate.status ?? 1);
+const access = `http://127.0.0.1:${port}/_review/open?access=${token}&scenario=synthetic-review-owner-${Date.now()}`;
+await writeFile('.seed/review-access', access + '\n', {mode: 0o600});
+await writeFile('.seed/suppression-review-access', `http://127.0.0.1:${port}/_review/suppression?access=${token}\n`, {mode: 0o600});
+console.log(`Synthetic Mango review runs on port ${port}. Access link is in .seed/review-access. No marketing sends or provider calls are possible.`);
+const server = spawn('pnpm', ['exec', 'vite', 'dev', '--port', String(port), '--strictPort'], {stdio: 'inherit', env: {...process.env, MANGO_SYNTHETIC_REVIEW: '1'}});
+for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => server.kill(signal));
+server.once('exit', code => {process.exitCode = code ?? 1});

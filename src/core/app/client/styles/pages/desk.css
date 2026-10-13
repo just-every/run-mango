@@ -1,0 +1,76 @@
+/* Desk page group: the Decision Desk (head, proposal queue, the proposal letter, its evidence, the empty state and the
+   store data sheet). It also owns .source-status__grid, which Store uses. */
+
+/* Head: the second line is a lead (it stays an h2 for the page's outline). */
+.mango-app .desk-head .page-head__lead { font-family: var(--ms-sans); font-size: 17px; font-weight: 400; letter-spacing: 0; line-height: 1.55; }
+.desk-page > :is(.action-notice, .inline-error) { margin: 0; }
+
+/* Queue beside the proposal; the proposal and its evidence side by side while there is room. */
+.decision-desk__proposals { display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: var(--sp-6); align-items: start; }
+.proposal-layout { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(300px, .82fr); gap: var(--sp-6); align-items: start; overflow-wrap: anywhere; }
+.proposal-evidence { display: grid; align-items: start; gap: var(--sp-6); min-width: 0; }
+
+/* The queue: a sheet of rows; the open suggestion carries the docs' current-page bar on a sun wash. */
+.proposal-queue { position: sticky; top: 88px; }
+.mango-app .proposal-queue h2 { margin: 0; }
+.proposal-queue .muted-copy { margin: var(--sp-2) 0 0; }
+.proposal-queue__items { display: grid; margin: var(--sp-4) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-3)); border-top: 1px solid var(--ms-hairline); }
+.proposal-queue__item { display: block; width: 100%; padding: 14px var(--sp-6) 14px 21px; border: 0; border-left: 3px solid transparent; border-bottom: 1px solid var(--ms-hairline); background: transparent; color: var(--ms-ink); cursor: pointer; font: 500 16px/1.35 var(--ms-sans); text-align: left; transition: background-color .18s, text-decoration-color .18s; }
+.proposal-queue__item:last-child { border-bottom: 0; }
+.proposal-queue__item span { text-decoration: underline 2px transparent; text-underline-offset: 4px; transition: text-decoration-color .18s; }
+.proposal-queue__item:hover { background: rgb(255 207 71 / 0.08); }
+.proposal-queue__item:hover span { text-decoration-color: var(--ms-mango); }
+.proposal-queue__item.is-selected { border-left-color: var(--ms-sun-hover); background: var(--ms-sun-wash); font-weight: 600; }
+.mango-app .proposal-queue__item:is(:focus, :focus-visible) { outline-offset: -3px; }
+
+/* The proposal: the letter you are about to approve, on drawn paper. */
+.proposal-focus { min-width: 0; }
+.mango-app .proposal-focus .app-sheet .paper-face { padding: 32px 36px 28px; }
+.mango-app .proposal-focus h2 { max-width: 22ch; margin: 0; font-size: clamp(30px, 2.6vw, 40px); letter-spacing: -0.03em; line-height: 1.08; }
+.proposal-summary, .evidence-note, .rule-block { margin-top: var(--sp-5); }
+.evidence-note, .rule-block { padding-top: var(--sp-4); border-top: 1px solid var(--ms-hairline); }
+.proposal-summary > strong, .evidence-note > strong, .rule-block > span { display: block; }
+.proposal-summary p, .evidence-note p, .rule-block p { max-width: 62ch; margin: 6px 0 0; color: var(--ms-ink-soft); }
+.proposal-summary p { color: var(--ms-ink); font-size: 17px; line-height: 1.55; }
+.rule-block small { display: block; margin-top: 6px; color: var(--ms-muted); font-size: 13px; }
+.proposal-focus__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3) var(--sp-4); margin-top: var(--sp-6); padding-top: var(--sp-5); border-top: 1px solid var(--ms-hairline); }
+.proposal-focus__actions .quiet-caption { flex: 1 1 14rem; margin: 0; }
+.proposal-focus .inline-error { margin: var(--sp-4) 0 0; }
+
+/* No suggestions (the empty state, surfaces.css): a stamped envelope not yet posted. When connections need attention,
+   the line introduces a short list of them. */
+.desk-empty .empty-art .art-inner > .desk-empty__envelope { top: 15%; left: 4%; width: 92%; height: 68%; rotate: -4deg; }
+.capability-list { display: grid; padding: 0; list-style: none; }
+.capability-list li { display: grid; gap: 2px; padding: var(--sp-3) 0; border-top: 1px solid var(--ms-hairline); }
+.capability-list li:last-child { border-bottom: 1px solid var(--ms-hairline); }
+.capability-list strong { color: var(--ms-ink); font-size: 15px; font-weight: 500; }
+.capability-list span { color: var(--ms-muted); font-size: 14px; line-height: 1.45; }
+
+/* Store data: a sheet of inset tiles (surfaces.css). Store lays its own source cards on the same grid. */
+.source-status__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--sp-3); }
+.source-status article { overflow-wrap: anywhere; }
+.source-status article > :is(strong, span, small) { display: block; }
+.source-status article > strong { color: var(--ms-ink); font-size: 15px; font-weight: 500; line-height: 1.35; }
+.source-status article > span { margin-top: 4px; color: var(--ms-muted); font-size: 14px; line-height: 1.45; }
+.source-status article > small { margin-top: 6px; color: var(--ms-tomato-deep); font-size: 13px; line-height: 1.45; }
+
+@media (max-width: 1200px) {
+  .proposal-layout { grid-template-columns: minmax(0, 1fr); }
+  .proposal-evidence { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+}
+@media (max-width: 900px) {
+  .decision-desk__proposals { grid-template-columns: minmax(0, 1fr); }
+  .proposal-queue { position: static; }
+}
+@media (max-width: 680px) {
+  .proposal-queue__items { margin-inline: calc(-1 * var(--sp-5)); }
+  .proposal-queue__item { padding-right: var(--sp-5); padding-left: 17px; }
+  .mango-app .proposal-focus .app-sheet .paper-face { padding: 24px 22px 22px; }
+  .proposal-evidence { grid-template-columns: minmax(0, 1fr); }
+  .proposal-focus__actions .primary-action { flex: 1 1 100%; }
+  .capability-list { text-align: left; }
+}
+@media (max-width: 400px) {
+  .proposal-queue__items { margin-inline: calc(-1 * var(--sp-4)); }
+  .proposal-queue__item { padding-right: var(--sp-4); padding-left: 13px; }
+}

@@ -1,0 +1,287 @@
+{
+  "id": "mango-demo-v4",
+  "operator": {
+    "id": "operator_sample",
+    "email": "owner@example.test",
+    "displayName": "Store owner"
+  },
+  "providerCapabilities": [
+    {
+      "id": "provider_commerce",
+      "adapter": "commerce.store.v1",
+      "configured": false,
+      "status": "unconfigured",
+      "detail": "No commerce adapter is configured. Source imports and proposal generation are unavailable."
+    },
+    {
+      "id": "provider_ai",
+      "adapter": "ai.provider.v1",
+      "configured": false,
+      "status": "unconfigured",
+      "detail": "No AI provider is configured. Mango will not generate generic campaign copy."
+    },
+    {
+      "id": "provider_mail",
+      "adapter": "mail.sender.v1",
+      "configured": false,
+      "status": "unconfigured",
+      "detail": "No mail sender is configured. Magic links, test sends, and campaign approval remain blocked."
+    },
+    {
+      "id": "provider_sms",
+      "adapter": "sms.sender.v1",
+      "configured": false,
+      "status": "unconfigured",
+      "detail": "No SMS sender is configured. SMS approval and test sends remain blocked."
+    }
+  ],
+  "sourceSyncs": ["customers", "products", "carts", "orders"],
+  "contacts": [
+    {
+      "id": "contact_alex_v4",
+      "email": "alex-v4@example.test",
+      "displayName": "Alex Morgan",
+      "emailStatus": "subscribed",
+      "smsStatus": "non-subscribed",
+      "history": [
+        { "kind": "consent-recorded", "detail": "Email consent captured from the sample import." },
+        { "kind": "product-saved", "detail": "Saved a linen table runner in the sample store data." }
+      ]
+    },
+    {
+      "id": "contact_jamie_v4",
+      "email": "jamie-v4@example.test",
+      "displayName": "Jamie Lee",
+      "emailStatus": "unsubscribed",
+      "smsStatus": "unsubscribed",
+      "history": [
+        { "kind": "product-saved", "detail": "Saved a linen table runner before opting out of both channels." },
+        { "kind": "unsubscribe", "detail": "Email and SMS opt-outs are retained by the sample consent ledger." }
+      ]
+    },
+    {
+      "id": "contact_casey_v4",
+      "email": "casey-v4@example.test",
+      "displayName": "Casey Rivers",
+      "emailStatus": "subscribed",
+      "smsStatus": "subscribed",
+      "history": [
+        { "kind": "consent-recorded", "detail": "Email and SMS consent captured from the sample import." },
+        { "kind": "product-saved", "detail": "Saved a linen table runner in the sample store data." }
+      ]
+    }
+  ],
+  "audience": {
+    "rule": "Saved a linen table runner and did not purchase it.",
+    "candidateHistoryKind": "product-saved"
+  },
+  "proposals": [
+    {
+      "id": "proposal_table_runner_v4",
+      "campaignId": "campaign_table_runner_draft_v4",
+      "title": "Saved linen table runners need review",
+      "summary": "A sample proposal seeded from local demonstration records. It does not claim a forecast or initiate a send.",
+      "evidence": "The persisted sample saved-product records identify contacts who engaged with linen table runners.",
+      "steps": [
+        {
+          "id": "proposal_step_email_v4",
+          "sequence": 1,
+          "channel": "email",
+          "schedule": {
+            "timezone": "Australia/Brisbane",
+            "scheduledOffsetDays": 1,
+            "sendByOffsetDays": 2,
+            "whyThisTime": "The sample plan gives the owner a full day to review before an email step."
+          }
+        },
+        {
+          "id": "proposal_step_sms_v4",
+          "sequence": 2,
+          "channel": "sms",
+          "schedule": {
+            "timezone": "Australia/Brisbane",
+            "scheduledOffsetDays": 2,
+            "sendByOffsetDays": 3,
+            "whyThisTime": "The sample SMS step follows the email by one day for review only."
+          }
+        }
+      ]
+    },
+    {
+      "id": "proposal_snapshot_only_v4",
+      "title": "Standalone audience snapshot",
+      "summary": "A proposal-owned review snapshot remains readable before a campaign exists.",
+      "evidence": "The same persisted sample saved-product records are used without attaching a campaign.",
+      "steps": [
+        {
+          "id": "proposal_snapshot_email_v4",
+          "sequence": 1,
+          "channel": "email",
+          "schedule": {
+            "timezone": "Australia/Brisbane",
+            "scheduledOffsetDays": 1,
+            "sendByOffsetDays": 2,
+            "whyThisTime": "This standalone snapshot has an email step so its recipient-step count is reviewable."
+          }
+        },
+        {
+          "id": "proposal_snapshot_sms_v4",
+          "sequence": 2,
+          "channel": "sms",
+          "schedule": {
+            "timezone": "Australia/Brisbane",
+            "scheduledOffsetDays": 2,
+            "sendByOffsetDays": 3,
+            "whyThisTime": "This standalone snapshot records a separate SMS review count."
+          }
+        }
+      ]
+    }
+  ],
+  "campaigns": [
+    {
+      "id": "campaign_table_runner_draft_v4",
+      "proposalId": "proposal_table_runner_v4",
+      "state": "draft",
+      "revision": {
+        "id": "revision_table_runner_draft_v4",
+        "version": 1,
+        "name": "Linen table runner follow-up",
+        "emailSubject": "Your saved linen table runner is waiting",
+        "emailBody": "Hello {{first_name}},\n\nYour saved linen table runner is still available in the sample catalogue.",
+        "emailText": "Your saved linen table runner is still available in the sample catalogue.",
+        "smsBody": "Your saved linen table runner is still available. Reply STOP to unsubscribe.",
+        "senderName": "Your store",
+        "fromEmail": "hello@example.test",
+        "replyToEmail": "help@example.test",
+        "smsSender": "YourStore",
+        "links": [
+          { "label": "View saved table runner", "destinationUrl": "https://store.example.test/linen-table-runner" }
+        ],
+        "steps": [
+          {
+            "id": "campaign_step_draft_email_v4",
+            "sequence": 1,
+            "channel": "email",
+            "schedule": {
+              "timezone": "Australia/Brisbane",
+              "scheduledOffsetDays": 1,
+              "sendByOffsetDays": 2,
+              "whyThisTime": "The sample plan gives the owner a full day to review before an email step."
+            }
+          },
+          {
+            "id": "campaign_step_draft_sms_v4",
+            "sequence": 2,
+            "channel": "sms",
+            "schedule": {
+              "timezone": "Australia/Brisbane",
+              "scheduledOffsetDays": 2,
+              "sendByOffsetDays": 3,
+              "whyThisTime": "The sample SMS step follows the email by one day for review only."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "campaign_sample_scheduled_v4",
+      "state": "scheduled",
+      "revision": {
+        "id": "revision_sample_scheduled_v4",
+        "version": 1,
+        "name": "Sample scheduled campaign",
+        "emailSubject": "A sample scheduled revision",
+        "emailBody": "This imported scheduled record can be cancelled locally. It does not dispatch because no sender is configured.",
+        "emailText": "This imported scheduled record can be cancelled locally.",
+        "smsBody": "This record cannot dispatch without a configured sender. Reply STOP to unsubscribe.",
+        "senderName": "Your store",
+        "fromEmail": "hello@example.test",
+        "replyToEmail": "help@example.test",
+        "smsSender": "YourStore",
+        "links": [
+          { "label": "View campaign details", "destinationUrl": "https://store.example.test/campaign-details" }
+        ],
+        "steps": [
+          {
+            "id": "campaign_step_scheduled_email_v4",
+            "sequence": 1,
+            "channel": "email",
+            "schedule": {
+              "timezone": "Australia/Brisbane",
+              "scheduledOffsetDays": 2,
+              "sendByOffsetDays": 3,
+              "whyThisTime": "The sample scheduled revision stores a resolved review instant but has no configured sender."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "campaign_composition_fixture_v4",
+      "state": "draft",
+      "revision": {
+        "id": "revision_composition_fixture_v4",
+        "version": 1,
+        "name": "Composition test fixture",
+        "emailSubject": "A durable draft composition",
+        "emailBody": "This local fixture verifies persisted composition fields.",
+        "emailText": "This local fixture verifies persisted composition fields.",
+        "smsBody": "This local fixture verifies persisted composition fields. Reply STOP to unsubscribe.",
+        "senderName": "Your store",
+        "fromEmail": "hello@example.test",
+        "replyToEmail": "help@example.test",
+        "smsSender": "YourStore",
+        "links": [
+          { "label": "Fixture link", "destinationUrl": "https://store.example.test/composition-fixture" }
+        ],
+        "steps": [
+          {
+            "id": "campaign_step_composition_fixture_email_v4",
+            "sequence": 1,
+            "channel": "email",
+            "schedule": {
+              "timezone": "Australia/Brisbane",
+              "scheduledOffsetDays": 1,
+              "sendByOffsetDays": 2,
+              "whyThisTime": "The local fixture starts with one email step before the composition test replaces it."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "campaign_ui_composition_fixture_v4",
+      "state": "draft",
+      "revision": {
+        "id": "revision_ui_composition_fixture_v4",
+        "version": 1,
+        "name": "UI composition test fixture",
+        "emailSubject": "A browser draft composition",
+        "emailBody": "This local fixture verifies browser-persisted composition fields.",
+        "emailText": "This local fixture verifies browser-persisted composition fields.",
+        "smsBody": "This local fixture verifies browser-persisted composition fields. Reply STOP to unsubscribe.",
+        "senderName": "Your store",
+        "fromEmail": "hello@example.test",
+        "replyToEmail": "help@example.test",
+        "smsSender": "YourStore",
+        "links": [
+          { "label": "UI fixture link", "destinationUrl": "https://store.example.test/ui-composition-fixture" }
+        ],
+        "steps": [
+          {
+            "id": "campaign_step_ui_composition_fixture_email_v4",
+            "sequence": 1,
+            "channel": "email",
+            "schedule": {
+              "timezone": "Australia/Brisbane",
+              "scheduledOffsetDays": 1,
+              "sendByOffsetDays": 2,
+              "whyThisTime": "The browser fixture starts with one email step before its isolated UI test replaces it."
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

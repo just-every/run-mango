@@ -1,0 +1,17 @@
+/* Narrower screens for the hero and the closing: at 1080px and below the hero's scene moves under the copy, where
+   beside it the buttons would crowd its audience card. How it works has its own steps (how.css), the bands their own
+   stacking (bands.css), and the hero scene its phone layout (hero-phone.css). */
+@media (max-width: 1080px) {
+  .mango-landing .hero { min-height: 0; padding-top: 48px; padding-bottom: 72px; }
+  .mango-landing .hero-copy { max-width: 680px; }
+  .mango-landing .hero h1 { font-size: clamp(44px, 8.6vw, 76px); }
+  .mango-landing .hero-lead { max-width: 600px; }
+  .mango-landing .hero-replaces { text-wrap: balance; }
+  .mango-landing .hero-art { position: relative; top: auto; left: auto; width: min(100%, 720px); margin: 56px auto 0; }
+}
+
+@media (max-width: 600px) {
+  .mango-landing .hero { padding-top: 40px; padding-bottom: 64px; }
+  .mango-landing .hero-art { margin-top: 48px; }
+  .mango-landing .hero-actions .site-button, .mango-landing .closing-actions .site-button { flex: 1 1 auto; }
+}

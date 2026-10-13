@@ -1,0 +1,35 @@
+/* Notices. The 3px left bar and the role keep each kind visible without colour.
+   Success (role=status), error (role=alert), warning (attention) and note (guidance). */
+.action-notice, .subscribe-confirmation, .inline-error, .unsaved-notice, .notice-warning {
+  min-width: 0;
+  padding: 12px 14px 12px 16px;
+  border: 1px solid;
+  border-left-width: 3px;
+  border-radius: var(--ms-radius-control);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.action-notice, .subscribe-confirmation { border-color: var(--ms-leaf-line); border-left-color: var(--ms-leaf); background: var(--ms-leaf-wash); color: var(--ms-leaf-deep); }
+.inline-error { border-color: var(--ms-tomato-line); border-left-color: var(--ms-tomato); background: var(--ms-tomato-wash); color: var(--ms-tomato-deep); }
+.unsaved-notice, .notice-warning { border-color: var(--ms-sun-line); border-left-color: var(--ms-sun-hover); background: #fff7e0; color: var(--ms-ink); }
+.notice-warning .eyebrow, .unsaved-notice .eyebrow { color: var(--ms-wait); }
+
+/* A notice with an action: the action sits at its right, and below it on a phone. */
+.unsaved-notice { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); }
+.unsaved-notice > * { margin: 0; }
+
+/* Guidance: the docs callout. With a heading it reads eyebrow, title, then the sentence. Its text keeps the panels'
+   content edge (surfaces.css) at every width. */
+.notice-note { padding: var(--sp-5) var(--sp-6); border: 1px solid var(--ms-hairline); border-radius: var(--ms-radius); background: var(--ms-paper-warm); color: var(--ms-ink-soft); }
+.notice-note:has(> h2) > * { max-width: 68ch; margin: 0; }
+.notice-note > .eyebrow { margin-bottom: var(--sp-1); }
+.mango-app .notice-note > h2 { font-size: 22px; }
+.notice-note > h2 + p { margin-top: var(--sp-2); }
+
+@media (max-width: 680px) { .notice-note { padding: var(--sp-4) var(--sp-5); } }
+@media (max-width: 640px) {
+  .unsaved-notice { align-items: stretch; flex-direction: column; }
+}
+@media (max-width: 400px) { .notice-note { padding-inline: var(--sp-4); } }

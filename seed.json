@@ -1,0 +1,572 @@
+{
+  "id": "mango",
+  "name": "Mango",
+  "version": "0.1.0",
+  "maturity": "newsletter-release-candidate",
+  "category": "marketing",
+  "spine": {
+    "id": "marketing",
+    "record": "campaign over an audience"
+  },
+  "replaces": [
+    "Mailchimp",
+    "Klaviyo"
+  ],
+  "description": "An operator-managed newsletter with consent-aware audience imports, hosted signup, email authoring, exact-revision approval, and provider-confirmed delivery reporting.",
+  "scope": "One self-hosted newsletter and its equal operators. Mail is required; commerce, SMS, and AI are optional. Wider commerce and multichannel contract clauses remain release obligations.",
+  "capabilities": [
+    {
+      "id": "public-landing",
+      "description": "A static, hand-illustrated public landing page at `/` for the newsletter profile: Mango's mark and name, a hero, how a letter leaves Mango, consent, approval of the exact letter, scheduling, delivery reports, ownership and a closing call to action, linking to sign-in and the first-party docs, with the owner's configured name, one-line description and optional credit in the footer. It reads no record or session, sets no cookie, and loads only same-origin fonts, styles, scripts and favicons.",
+      "clauses": [
+        "HOME-001"
+      ]
+    },
+    {
+      "id": "public-documentation",
+      "description": "First-party public documentation at `/docs` for the people who run Mango: the repository Markdown that `docs/site.json` publishes, rendered to HTML at build time by a Vite plugin and served per request inside the public landing's shared header and footer, cookie-free and same-origin, describing the default newsletter profile only.",
+      "clauses": [
+        "DOCS-001"
+      ]
+    },
+    {
+      "id": "operator-access",
+      "description": "Base sessions and confirmed invitations, equal product powers, retained attribution, initial self-removal and last-active-operator protection; Local hosted acceptance proved mailed sign-in and native-session access on one disposable workers.dev installation, with no production authentication claim.",
+      "clauses": [
+        "OPER-001",
+        "OPER-002",
+        "OPER-003"
+      ]
+    },
+    {
+      "id": "commerce-signal-ingestion",
+      "description": "Imports customers, products, orders, refunds, carts, and browsing events from one connected commerce store, tracks per-source freshness, and blocks approval on stale or missing sources.",
+      "clauses": [
+        "STORE-001",
+        "STORE-002",
+        "STORE-003",
+        "STORE-004",
+        "STORE-005",
+        "STORE-006",
+        "STORE-007"
+      ]
+    },
+    {
+      "id": "contact-and-consent-ledger",
+      "description": "Tracks each contact's independent per-channel consent state, evidence, opt-outs, imports, merges, dormancy, and erasure with a surviving opt-out record.",
+      "clauses": [
+        "CONT-001",
+        "CONT-002",
+        "CONT-003",
+        "CONT-004",
+        "CONT-005",
+        "CONT-006",
+        "CONT-007",
+        "CONT-008",
+        "CONT-009",
+        "CONT-010",
+        "CONT-011",
+        "CONT-012",
+        "CONT-013"
+      ]
+    },
+    {
+      "id": "evidence-backed-proposals",
+      "description": "Generates ranked, evidence-cited campaign proposals from store data with grounded AI content and honest forecast provenance, held as drafts until an operator approves a revision.",
+      "clauses": [
+        "PROP-001",
+        "PROP-002",
+        "PROP-003",
+        "PROP-004",
+        "PROP-005",
+        "PROP-006",
+        "PROP-007",
+        "PROP-008",
+        "PROP-009"
+      ]
+    },
+    {
+      "id": "audience-safety",
+      "description": "Resolves and rechecks campaign audiences against consent, commerce, dormancy, and frequency rules, freezing the candidate set at approval and re-excluding at dispatch.",
+      "clauses": [
+        "AUD-001",
+        "AUD-002",
+        "AUD-003",
+        "AUD-004",
+        "AUD-005",
+        "AUD-006",
+        "AUD-007"
+      ]
+    },
+    {
+      "id": "campaign-review-and-scheduling",
+      "description": "Operator-authored blank and recorded-signal drafts without AI, shared proposal Review, rich/HTML content with managed footer and plain text, structured live audience counts, store-zone scheduling, exact-revision approval and existing cancellation/test-send controls.",
+      "clauses": [
+        "CAMP-001",
+        "CAMP-002",
+        "CAMP-003",
+        "CAMP-004",
+        "CAMP-005",
+        "CAMP-006",
+        "CAMP-007",
+        "CAMP-008",
+        "CAMP-009",
+        "CAMP-010",
+        "CAMP-011"
+      ]
+    },
+    {
+      "id": "email-and-sms-safety",
+      "description": "Enforces sender identity, authentication, unsubscribe and opt-out mechanics, link and content checks, personalisation fallbacks, and sending-reputation limits before any send.",
+      "clauses": [
+        "MSG-001",
+        "MSG-002",
+        "MSG-003",
+        "MSG-004",
+        "MSG-005",
+        "MSG-006",
+        "MSG-007",
+        "MSG-008",
+        "MSG-009",
+        "MSG-010",
+        "MSG-011"
+      ]
+    },
+    {
+      "id": "reliable-delivery",
+      "description": "Hands recipient-steps to email and SMS providers under their declared retry guarantees, reconciles unknown outcomes where evidence is available, throttles retry-safe transport failures, and pauses a channel during a provider outage; SendGrid uses at-most-once handoff and operator-reviewed uncertainty.",
+      "clauses": [
+        "SEND-001",
+        "SEND-002",
+        "SEND-003",
+        "SEND-004",
+        "SEND-005",
+        "SEND-006",
+        "SEND-007",
+        "SEND-008",
+        "SEND-009"
+      ]
+    },
+    {
+      "id": "campaign-results",
+      "description": "Reports campaign history, engagement, attribution, cost, tracked-link activity, and deliverability without presenting forecasts as facts.",
+      "clauses": [
+        "RESULT-001",
+        "RESULT-002",
+        "RESULT-003",
+        "RESULT-004",
+        "RESULT-005",
+        "RESULT-006"
+      ]
+    },
+    {
+      "id": "portable-data",
+      "description": "Exports every contact, source record, consent record, campaign, and audit entry as JSON alongside uploaded campaign assets.",
+      "clauses": [
+        "DATA-001",
+        "BASE-DATA-001"
+      ]
+    }
+  ],
+  "nonGoals": [
+    "Multiple stores or workspaces",
+    "Roles and permissions",
+    "A general CRM",
+    "Signup-form, landing-page, and website builders",
+    "Social and advertising campaigns",
+    "Store transactional messaging (order, shipping, and account notifications)",
+    "Autonomous sends",
+    "Visual journey automation",
+    "A/B and multivariate testing",
+    "Predictive send-time models",
+    "Multi-touch attribution",
+    "Purchased-list prospecting",
+    "Native mobile apps"
+  ],
+  "externals": [
+    {
+      "id": "commerce-store",
+      "required": false,
+      "why": "Mango needs the buyer's real customers, products, carts, browsing signals, orders, refunds, and inventory to identify and recheck opportunities.",
+      "data": [
+        "Webhook acknowledgements sent back to the store confirming receipt of an event",
+        "Explicit adapter requests for source records (customers, products, orders, refunds, carts, browsing events)"
+      ],
+      "adapters": [
+        "commerce.store.v1"
+      ],
+      "requiredWhen": "Corresponding optional module is enabled"
+    },
+    {
+      "id": "ai-provider",
+      "required": false,
+      "why": "A language model turns structured evidence into reviewable campaign content and explanations; Cloudflare primitives do not provide that model capability.",
+      "data": [
+        "The proposal evidence required for the requested generation",
+        "The configured business context required for the requested generation"
+      ],
+      "adapters": [
+        "ai.provider.v1"
+      ],
+      "requiredWhen": "Corresponding optional module is enabled"
+    },
+    {
+      "id": "mail-sender",
+      "required": true,
+      "why": "Internet email delivery, domain authentication, bounce handling, and complaint feedback require a delivery provider with established sending infrastructure.",
+      "data": [
+        "Approved email content",
+        "Sender metadata",
+        "Each eligible recipient's email address",
+        "Operator email addresses that receive magic links, test sends, and dispatch-paused notices"
+      ],
+      "adapters": [
+        "mail.sender.v1"
+      ]
+    },
+    {
+      "id": "sms-sender",
+      "required": false,
+      "why": "Registered sending numbers, carrier routing, country approval, compliance keywords, and delivery receipts require a telecommunications provider.",
+      "data": [
+        "Approved SMS content",
+        "Programme metadata",
+        "Each eligible recipient's phone number"
+      ],
+      "adapters": [
+        "sms.sender.v1"
+      ],
+      "requiredWhen": "Corresponding optional module is enabled"
+    },
+    {
+      "id": "link-dns-resolver",
+      "required": true,
+      "why": "A public DNS-over-HTTPS resolver verifies that each approved external link and redirect target resolves outside private networks before dispatch.",
+      "data": [
+        "Approved link host names only"
+      ],
+      "adapters": [
+        "platform.link-inspector.v1"
+      ]
+    }
+  ],
+  "env": [
+    {
+      "name": "SESSION_SIGNING_KEY",
+      "required": true,
+      "secret": true,
+      "why": "At least 32 characters; Base HMAC credential hashing and Mango opaque public token signing."
+    },
+    {
+      "name": "INITIAL_OPERATOR_EMAILS",
+      "required": true,
+      "secret": false,
+      "why": "The first address is the explicit Base bootstrap owner; existing imported initial identities retain self-only removal. Further operators are invited in Settings."
+    },
+    {
+      "name": "CONTACT_HASH_SALT",
+      "required": true,
+      "secret": true,
+      "why": "Salt the one-way opt-out hashes that survive contact erasure (CONT-013)."
+    },
+    {
+      "name": "COMMERCE_STORE_URL",
+      "required": false,
+      "secret": false,
+      "why": "Identify the single connected ecommerce store.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "COMMERCE_API_TOKEN",
+      "required": false,
+      "secret": true,
+      "why": "Read configured commerce data through commerce.store.v1.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "COMMERCE_WEBHOOK_SECRET",
+      "required": false,
+      "secret": true,
+      "why": "Verify commerce source events.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "AI_PROVIDER_API_KEY",
+      "required": false,
+      "secret": true,
+      "why": "Generate grounded proposal explanations and message drafts through ai.provider.v1.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "AI_PROVIDER_MODEL",
+      "required": false,
+      "secret": false,
+      "why": "Pin the OpenAI Responses model used for grounded generation and recorded usage.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "MAIL_PROVIDER_API_KEY",
+      "required": true,
+      "secret": true,
+      "why": "Send operator magic links, test emails, and approved marketing email through mail.sender.v1."
+    },
+    {
+      "name": "MAIL_AUTH_FROM",
+      "required": true,
+      "secret": false,
+      "why": "Verified transactional and marketing email sender used in exact approved revisions."
+    },
+    {
+      "name": "MAIL_WEBHOOK_SECRET",
+      "required": true,
+      "secret": true,
+      "why": "SendGrid base64 SPKI ECDSA public verification key, or Resend Svix webhook signing secret."
+    },
+    {
+      "name": "MAIL_WEBHOOK_ID",
+      "required": true,
+      "secret": false,
+      "why": "Configured webhook identity; Resend also uses this to read immutable reconciliation events."
+    },
+    {
+      "name": "SMS_PROVIDER_API_KEY",
+      "required": false,
+      "secret": true,
+      "why": "Send approved marketing SMS through sms.sender.v1.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "SMS_WEBHOOK_SECRET",
+      "required": false,
+      "secret": true,
+      "why": "Verify SMS delivery and compliance replies.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "SMS_CONFIRMATION_SENDER",
+      "required": false,
+      "secret": false,
+      "why": "Dedicated two-way Mobile Message sender used for consent confirmations.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "MANGO_PUBLIC_BASE_URL",
+      "required": true,
+      "secret": false,
+      "why": "Canonical HTTPS origin for magic links, consent, unsubscribe, tracking, and webhooks."
+    },
+    {
+      "name": "MANGO_APP_VERSION",
+      "required": true,
+      "secret": false,
+      "why": "Release identity presented by the deployed Worker."
+    },
+    {
+      "name": "MANGO_ALLOWED_LINK_HOSTS",
+      "required": true,
+      "secret": false,
+      "why": "Comma-separated destination host allow-list checked before an approved revision can send."
+    },
+    {
+      "name": "MANGO_TEST_EMAIL_ALLOWLIST",
+      "required": true,
+      "secret": false,
+      "why": "Comma-separated operator-approved email test destinations."
+    },
+    {
+      "name": "MANGO_TEST_SMS_ALLOWLIST",
+      "required": false,
+      "secret": false,
+      "why": "Comma-separated operator-approved SMS test destinations.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "MANGO_RECONCILIATION_INTERVAL_MINUTES",
+      "required": true,
+      "secret": false,
+      "why": "Cadence for unresolved provider handoff reconciliation."
+    },
+    {
+      "name": "MANGO_UNRESOLVED_OUTCOME_HOURS",
+      "required": true,
+      "secret": false,
+      "why": "Time before unresolved provider outcomes become a reported outage."
+    },
+    {
+      "name": "MANGO_EMAIL_HANDOFFS_PER_MINUTE",
+      "required": true,
+      "secret": false,
+      "why": "Hard email delivery handoff rate limit."
+    },
+    {
+      "name": "MANGO_SMS_HANDOFFS_PER_MINUTE",
+      "required": false,
+      "secret": false,
+      "why": "Hard SMS delivery handoff rate limit.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "MANGO_DELIVERABILITY_WINDOW_DAYS",
+      "required": true,
+      "secret": false,
+      "why": "Reporting window for provider delivery facts."
+    },
+    {
+      "name": "MAIL_SENDER_NAME",
+      "required": false,
+      "secret": false,
+      "why": "Optional initial sender identity; saved Settings are authoritative and complete valid identity is required before newsletter sending."
+    },
+    {
+      "name": "MAIL_REPLY_TO",
+      "required": false,
+      "secret": false,
+      "why": "Optional initial sender identity; saved Settings are authoritative and complete valid identity is required before newsletter sending."
+    },
+    {
+      "name": "MAIL_PHYSICAL_ADDRESS",
+      "required": false,
+      "secret": false,
+      "why": "Optional initial sender identity; saved Settings are authoritative and complete valid identity is required before newsletter sending."
+    },
+    {
+      "name": "AUTH_SETUP_TOKEN",
+      "required": false,
+      "secret": true,
+      "why": "Independent one-time Base bootstrap capability of at least 32 characters; remove after setup."
+    },
+    {
+      "name": "MAIL_PROVIDER",
+      "required": true,
+      "secret": false,
+      "why": "Explicit resend or sendgrid for production; local installation selects Base development mail without sending email."
+    }
+  ],
+  "deploy": {
+    "healthPath": "/health",
+    "operatorPath": "/app",
+    "publicPaths": [
+      "/",
+      "/health",
+      "/signin",
+      "/signin/verify/",
+      "/api/auth/magic-link",
+      "/assets/",
+      "/fonts/",
+      "/unsubscribe/",
+      "/consent/",
+      "/l/",
+      "/webhooks/commerce/",
+      "/webhooks/mail/",
+      "/webhooks/sms/",
+      "/auth/bootstrap",
+      "/auth/magic-link",
+      "/auth/confirm",
+      "/auth/signout",
+      "/auth/session",
+      "/subscribe",
+      "/subscribe/info",
+      "/favicon.svg",
+      "/favicon-32.png",
+      "/favicon.ico",
+      "/apple-touch-icon.png",
+      "/docs",
+      "/docs/"
+    ]
+  },
+  "customFields": [
+    "contact",
+    "campaign"
+  ],
+  "extensionPoints": {
+    "policies": [
+      "operator.management.v1",
+      "contact.opt-in.v1",
+      "contact.soft-bounce.v1",
+      "proposal.selection.v1",
+      "audience.exclusions.v1",
+      "audience.frequency.v1",
+      "campaign.send-time.v1",
+      "sms.quiet-hours.v1",
+      "campaign.attribution.v1"
+    ],
+    "events": [
+      "store.event-recorded.v1",
+      "contact.consent-recorded.v1",
+      "contact.channel-suppressed.v1",
+      "contact.merged.v1",
+      "proposal.created.v1",
+      "proposal.failed.v1",
+      "campaign.scheduled.v1",
+      "campaign.dispatch-paused.v1",
+      "campaign.cancelled.v1",
+      "campaign.completed.v1",
+      "delivery.outcome-recorded.v1"
+    ],
+    "slots": [
+      "app.navigation.after.v1",
+      "decision-desk.header.after.v1",
+      "proposal.evidence.after.v1",
+      "proposal.actions.before.v1",
+      "campaign.review.summary.after.v1",
+      "campaign.review.audience.after.v1",
+      "campaign.review.safety.after.v1",
+      "campaign.detail.tabs.after.v1",
+      "contact.detail.tabs.after.v1",
+      "settings.sections.after.v1"
+    ],
+    "adapters": [
+      "commerce.store.v1",
+      "ai.provider.v1",
+      "mail.sender.v1",
+      "sms.sender.v1",
+      "platform.link-inspector.v1"
+    ],
+    "contributions": [
+      "routes.v1",
+      "pages.v1",
+      "navigation.v1",
+      "settings.sections.v1",
+      "jobs.v1",
+      "cron.v1",
+      "queue.consumers.v1"
+    ]
+  },
+  "limits": {
+    "status": "estimated-until-load-tested",
+    "maxContacts": 100000,
+    "maxStoredCommerceEvents": 5000000,
+    "maxContactImportRows": 50000,
+    "maxCampaignSteps": 10,
+    "maxEligibleContactsPerCampaign": 100000,
+    "maxCampaignAssetBytes": 10485760,
+    "allowedCampaignAssetContentTypes": [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp"
+    ],
+    "maxEmailHtmlBytes": 102400,
+    "maxSmsSegmentsPerRecipientStep": 3,
+    "emailHandoffsPerMinute": 3000,
+    "smsHandoffsPerMinute": 600,
+    "deliverabilityReportingWindowDays": 30,
+    "operatorRequestsPerMinute": 300,
+    "publicRequestsPerMinutePerIp": 60,
+    "unsubscribeRequestsPerMinutePerToken": 10,
+    "providerWebhooksPerMinute": 5000,
+    "providerReconciliationIntervalMinutes": 15,
+    "unresolvedProviderOutcomeHours": 1
+  },
+  "accessibility": {
+    "level": "WCAG 2.2 AA",
+    "status": "target-not-yet-verified"
+  },
+  "operatingCost": {
+    "assumptions": "One store, 10000 contacts, 4 campaigns per month, 20000 email and 5000 SMS recipient-steps, and 500 AI generations. Queue messages are at most 64 KB and dispatch stays below 3334 recipient-steps per UTC day.",
+    "cloudflareMonthlyUsd": "$0 on the current Workers Free plan while the deployment stays inside every Free quota: at most 100000 dynamic Worker requests per UTC day with 10 ms CPU per invocation; 10000 Queue operations per UTC day (write, read, and delete are each one operation per 64 KB); D1 at 5 million rows read per UTC day, 100000 rows written per UTC day, and 5 GB total storage; and SQLite Durable Objects at 100000 requests and 13000 GB-s per UTC day. Workers Paid starts at $5/month and is required for the declared 100000-contact campaign: its 100000 recipient-step writes plus step and schedule mutations exceed D1 Free's 100000 rows-written-per-UTC-day limit.",
+    "externalMonthlyUsd": "Not yet estimated because the reference commerce, email, SMS, and AI adapters have not been selected; required before first release.",
+    "totalMonthlyUsd": "Incomplete until reference adapters and unit prices are selected.",
+    "status": "cloudflare-free-plan-assumptions-researched-2026-08-31; external-adapters-unselected"
+  }
+}

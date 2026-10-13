@@ -1,0 +1,77 @@
+import { contract } from './contract';
+import { randomBytes } from 'node:crypto';
+
+import { expect, test } from '@playwright/test';
+
+import productionWorker from '../src/core/app/worker';
+import type { AppBindings } from '../src/core/shared/platform';
+
+function productionBindings(overrides: Partial<AppBindings> = {}): AppBindings {
+  return {
+    ASSETS: { fetch: () => Promise.resolve(new Response('asset fallback must not run')) },
+    DB: {} as D1Database,
+    ASSETS_BUCKET: {} as R2Bucket,
+    MANGO_JOBS: {} as Queue<any>,
+    SESSION_SIGNING_KEY: randomBytes(32).toString('hex'),
+    INITIAL_OPERATOR_EMAILS: 'operator@example.test',
+    CONTACT_HASH_SALT: randomBytes(32).toString('hex'),
+    COMMERCE_STORE_URL: 'https://shop.example.test',
+    COMMERCE_API_TOKEN: 'commerce-token',
+    COMMERCE_WEBHOOK_SECRET: 'commerce-secret',
+    AI_PROVIDER_API_KEY: 'ai-key',
+    AI_PROVIDER_MODEL: 'gpt-5.4-mini',
+    MAIL_PROVIDER: 'resend', MAIL_PROVIDER_API_KEY: 'mail-key',
+    MAIL_AUTH_FROM: 'Mango <offers@example.test>',
+    MAIL_WEBHOOK_SECRET: 'mail-webhook-secret',
+    MAIL_WEBHOOK_ID: 'wh_123',
+    SMS_PROVIDER_API_KEY: 'username:password',
+    SMS_WEBHOOK_SECRET: 'sms-webhook-secret',
+    SMS_CONFIRMATION_SENDER: '+61400000000',
+    MANGO_PUBLIC_BASE_URL: 'https://operator.example.test',
+    MANGO_APP_VERSION: 'test',
+    MANGO_ALLOWED_LINK_HOSTS: 'shop.example.test',
+    MANGO_TEST_EMAIL_ALLOWLIST: 'operator@example.test',
+    MANGO_TEST_SMS_ALLOWLIST: '+61400000000',
+    MANGO_RECONCILIATION_INTERVAL_MINUTES: '15',
+    MANGO_UNRESOLVED_OUTCOME_HOURS: '48',
+    MANGO_EMAIL_HANDOFFS_PER_MINUTE: '10',
+    MANGO_SMS_HANDOFFS_PER_MINUTE: '5',
+    MANGO_DELIVERABILITY_WINDOW_DAYS: '30',
+    MAIL_SENDER_NAME: 'Mango',
+    MAIL_REPLY_TO: 'help@example.test',
+    MAIL_PHYSICAL_ADDRESS: '1 Example Street, Brisbane QLD 4000',
+    ...overrides,
+  };
+}
+
+test('production Worker entry rejects local bootstrap despite a spoofed Host and binding', async () => {
+  const response = await productionWorker.fetch(
+    new Request('https://operator.example.test/api/_local/bootstrap', {
+      method: 'POST',
+      headers: {
+        Host: 'localhost',
+        'X-Mango-Local-Bootstrap-Token': randomBytes(32).toString('hex'),
+      },
+    }),
+    productionBindings(),
+    {} as ExecutionContext,
+  );
+
+  expect(response.status).toBe(404);
+  await expect(response.json()).resolves.toEqual({ error: 'not_found' });
+});
+
+test('production Worker names a missing required configuration binding', async () => {
+  await expect(productionWorker.fetch(
+    new Request('https://operator.example.test/health'),
+    productionBindings({ MAIL_AUTH_FROM: '' }),
+    {} as ExecutionContext,
+  )).rejects.toThrow('MAIL_AUTH_FROM is required.');
+});
+
+// The production entry never routes outbox requests, including spoofed loopback hosts.
+for (const host of ['operator.example.test', 'localhost']) contract('OPER-001', `production outbox stays unavailable for ${host}`, async () => {
+  const response = await productionWorker.fetch(new Request('https://operator.example.test/__dev/outbox', {headers:{Host:host}}), productionBindings({ MANGO_APP_VERSION: 'local' }), {} as ExecutionContext);
+  expect(response.status).toBe(404);
+  expect(await response.text()).not.toContain('Development outbox');
+});

@@ -1,0 +1,93 @@
+/* The app shell: a slim top bar in the site header's manner. The lockup on the left, quiet text links with a sun
+   underline for the current page, the operator's name and Sign out on the right. At 1100px and below the links fold
+   into a menu panel: on a phone it pushes the page down; between phone and desktop it hangs over the page as a
+   dropdown under the toggle (a deliberate replacement of spec §4's "pushes, does not overlay" at those widths, so the
+   open menu leaves no empty band beside it). */
+.operator-layout { min-height: 100vh; background: var(--ms-ground); }
+
+.operator-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 64px;
+  align-items: center;
+  column-gap: var(--sp-7);
+  /* The header's content lines up with the main column. */
+  padding: 0 max(var(--app-gutter), (100% - var(--app-max)) / 2);
+  border-bottom: 1px solid var(--ms-hairline);
+  background: color-mix(in srgb, var(--ms-ground) 94%, transparent);
+  backdrop-filter: blur(12px);
+}
+.operator-header__brand { display: inline-flex; border-radius: 3px; text-decoration: none; }
+
+/* The lockup: Mango's mark and the product name (the site's, at app size). */
+.app-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ms-ink); }
+.app-brand__mark { width: 28px; height: auto; flex: none; }
+.app-brand__name { font-family: var(--ms-serif); font-size: 26px; font-weight: 400; letter-spacing: -0.025em; line-height: 1; }
+
+.operator-nav { display: flex; align-items: center; gap: 4px var(--sp-6); min-width: 0; }
+.operator-nav__link {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 40px;
+  padding: var(--sp-2) 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--ms-ink-soft);
+  cursor: pointer;
+  font: 400 15px/1.2 var(--ms-sans);
+  text-decoration: underline 2px transparent;
+  text-underline-offset: 7px;
+  white-space: nowrap;
+  transition: text-decoration-color .18s, color .18s;
+}
+.operator-nav__link:hover { color: var(--ms-ink); text-decoration-color: var(--ms-sun); }
+.operator-nav__link[aria-current="page"] { color: var(--ms-ink); font-weight: 500; text-decoration-color: var(--ms-sun-hover); }
+
+.operator-signout { display: flex; align-items: center; gap: var(--sp-4); margin-left: auto; font-size: 14px; }
+.operator-signout span { display: inline-flex; align-items: center; gap: var(--sp-4); max-width: 24ch; overflow: hidden; color: var(--ms-muted); text-overflow: ellipsis; white-space: nowrap; }
+.operator-signout span::after { color: var(--ms-faint); content: '/'; font-weight: 300; }
+.operator-signout .operator-nav__link { font-size: 14px; }
+
+.operator-menu-toggle { display: none; }
+
+.operator-main { width: min(100% - 2 * var(--app-gutter), var(--app-max)); min-width: 0; margin: 0 auto; padding: var(--sp-8) 0 var(--sp-10); }
+
+@media (max-width: 1100px) {
+  .operator-header { column-gap: var(--sp-4); }
+  .operator-menu-toggle.secondary-action { display: inline-flex; justify-self: end; min-height: 40px; white-space: normal; }
+  .operator-menu-toggle::after { flex: none; width: 7px; height: 7px; margin: -4px 2px 0 4px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; content: ''; rotate: 45deg; transition: rotate .18s, margin .18s; }
+  .operator-menu-toggle[aria-expanded="true"]::after { margin-top: 3px; rotate: 225deg; }
+  .operator-nav { display: none; }
+  .operator-nav.is-open { display: grid; grid-column: 1 / -1; gap: 2px; margin: var(--sp-2) 0 var(--sp-3); padding: var(--sp-2); border: 1px solid var(--ms-line); border-radius: var(--ms-radius); background: var(--ms-paper); box-shadow: var(--ms-shadow-lift); }
+  .operator-nav.is-open .operator-nav__link { display: flex; width: 100%; min-height: 44px; padding: 0 14px; border-radius: 3px 999px 999px 3px; text-decoration: none; white-space: normal; }
+  .operator-nav.is-open .operator-nav__link:hover { background: var(--ms-paper-deep); }
+  /* The ring sits inside the panel, so the first and last links keep a whole ring. Opening the menu moves focus to its
+     first link; after a pointer open that link does not match :focus-visible and shows no ring, so only the current
+     page reads as selected. A keyboard open keeps the ring. */
+  .mango-app .operator-nav.is-open .operator-nav__link:is(:focus, :focus-visible) { outline-offset: -3px; }
+  .mango-app .operator-nav.is-open .operator-nav__link:focus:not(:focus-visible) { outline: none; }
+  .operator-nav.is-open .operator-nav__link[aria-current="page"] { position: relative; background: var(--ms-sun-wash); }
+  .operator-nav.is-open .operator-nav__link[aria-current="page"]::before { position: absolute; top: 6px; bottom: 6px; left: 0; width: 3px; border-radius: 2px; background: var(--ms-sun-hover); content: ''; }
+  .operator-signout { display: grid; gap: 2px; width: 100%; margin: 6px 0 0; padding-top: 6px; border-top: 1px solid var(--ms-hairline); }
+  .operator-signout span { max-width: none; padding: var(--sp-2) 14px 0; }
+  .operator-signout span::after { content: none; }
+}
+
+/* Between phone and desktop the open panel hangs under the toggle at a menu's width, out of the header's flow (the
+   header's grid area across its columns is its containing block, already inside the header's padding), with its right
+   edge on the toggle's. On a phone it spans the bar. */
+@media (min-width: 681px) and (max-width: 1100px) {
+  .operator-nav.is-open { position: absolute; top: calc(100% + 8px); right: 0; z-index: 11; width: 22rem; margin: 0; }
+}
+
+@media (max-width: 680px) {
+  .operator-header { grid-template-rows: 56px; }
+  .app-brand__mark { width: 26px; }
+  .app-brand__name { font-size: 24px; }
+  .operator-main { padding: var(--sp-6) 0 var(--sp-9); }
+}

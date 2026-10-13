@@ -1,0 +1,52 @@
+/* The consent and approval drawings. Each is a size container (paper.css): its pieces are placed as shares of its box
+   (bands.css) and sized in --q. These are the wide drawings; art-consent-approval-tall.css redraws them taller, with
+   larger cards, where their band's drawing column is narrow. */
+/* Consent: the signup card, the confirmation letter it sends, and the consent record kept once the reader confirms.
+   --dx moves the four pieces together: beside the copy the envelope's right edge lands on the content edge; centred in
+   a stacked column (601px to 720px) they sit in the middle of the box. */
+.mango-landing .consent-art { --dx: 5%; aspect-ratio: 560 / 340; }
+.mango-landing .c-signup { --x: calc(14% + var(--dx)); --y: 13%; --w: 44%; --h: 53%; --r: -4deg; z-index: 2; }
+.mango-landing .c-signup .paper-face { display: flex; flex-direction: column; padding: calc(3.2 * var(--q)) calc(3.4 * var(--q)); }
+.mango-landing .c-signup-title { font-family: var(--ms-serif); font-size: calc(4 * var(--q)); letter-spacing: -0.01em; line-height: 1.1; }
+.mango-landing .c-signup-tagline { margin-top: calc(0.9 * var(--q)); color: #5c574f; font-size: calc(2.3 * var(--q)); }
+.mango-landing .c-signup-field { margin-top: calc(2.7 * var(--q)); padding: calc(1.5 * var(--q)) calc(1.7 * var(--q)); border: 1px solid #bdb4a2; border-radius: calc(0.75 * var(--q)); background: #fffefb; color: #5c574f; font-size: calc(2.36 * var(--q)); }
+.mango-landing .c-signup-button { margin-top: calc(1.6 * var(--q)); padding: calc(1.5 * var(--q)); border-radius: calc(0.75 * var(--q)); background: #2f6b36; color: #fffdf8; font-size: calc(2.46 * var(--q)); font-weight: 500; text-align: center; }
+.mango-landing .c-arrow { --x: calc(56% + var(--dx)); --y: 5%; --w: 8%; --r: 4deg; }
+.mango-landing .c-confirm { --x: calc(66% + var(--dx)); --y: 6%; --w: 27%; --h: 31%; --r: 8deg; }
+.mango-landing .c-confirm-envelope { position: absolute; inset: 0; }
+.mango-landing .c-record { --x: calc(55% + var(--dx)); --y: 57%; --w: 36%; --h: 39%; --r: 3deg; z-index: 3; }
+.mango-landing .c-record .paper-face { display: grid; align-content: center; gap: calc(1.1 * var(--q)); padding: calc(2.4 * var(--q)) calc(2.8 * var(--q)); }
+.mango-landing .c-record-title { margin-bottom: calc(0.3 * var(--q)); font-size: calc(2.5 * var(--q)); font-weight: 600; }
+.mango-landing .c-record-row { display: flex; align-items: center; justify-content: space-between; gap: calc(1.1 * var(--q)); color: #5c574f; font-size: calc(2.1 * var(--q)); }
+.mango-landing .c-record-row b { display: inline-flex; align-items: center; gap: calc(0.75 * var(--q)); color: var(--ms-ink); font-weight: 500; }
+.mango-landing .c-record-row svg { width: calc(2.3 * var(--q)); height: auto; }
+
+/* Approval: the draft (its pencil beside it) behind, the approved copy in front, its postmark and stamp inside the card. */
+.mango-landing .approval-art { --k: 1.1; aspect-ratio: 560 / 430; }
+.mango-landing .ap-card .paper-face { display: flex; flex-direction: column; }
+.mango-landing .ap-draft { --x: 3%; --y: 6%; --w: 44%; --h: 64.4%; --r: -6deg; }
+.mango-landing .ap-draft .paper-face { padding: calc(3.6 * var(--q)) calc(4 * var(--q)); }
+.mango-landing .ap-approved { --x: 42%; --y: 13%; --w: 54%; --h: 77.6%; --r: 3deg; z-index: 2; }
+.mango-landing .ap-approved .paper-face { padding: calc(2.8 * var(--q)) calc(3.4 * var(--q)) calc(3.4 * var(--q)); }
+.mango-landing .ap-postage { display: flex; align-items: center; justify-content: flex-end; gap: calc(1.4 * var(--q)); }
+.mango-landing .ap-postage > * { position: relative; flex: none; }
+.mango-landing .ap-postmark { width: calc(27 * var(--q)); }
+.mango-landing .ap-stamp { width: calc(9.4 * var(--q)); rotate: 5deg; }
+.mango-landing .ap-tag { display: inline-flex; align-self: flex-start; align-items: center; gap: calc(1.1 * var(--q)); padding: calc(0.95 * var(--q)) calc(1.75 * var(--q)); border-radius: calc(0.95 * var(--q)); font-size: calc(2.6 * var(--q)); font-weight: 500; white-space: nowrap; }
+.mango-landing .ap-tag--draft { background: #efe9dc; color: #57524a; }
+.mango-landing .ap-tag--approved { margin-top: auto; background: var(--ms-leaf-wash); color: #285b2c; }
+.mango-landing .ap-tag svg { width: calc(2.4 * var(--q)); height: auto; }
+.mango-landing .ap-subject { margin-top: calc(2.3 * var(--q)); font-family: var(--ms-serif); font-size: calc(4.15 * var(--q)); letter-spacing: -0.01em; line-height: 1.1; }
+.mango-landing .ap-approved .ap-subject { margin-top: calc(1.1 * var(--q)); }
+.mango-landing .ap-lines { display: grid; gap: calc(1.9 * var(--q)); margin-top: calc(2.4 * var(--q)); }
+.mango-landing .ap-lines i { display: block; height: calc(0.87 * var(--q)); border-radius: calc(1.4 * var(--q)); background: #b9b1a2; opacity: 0.75; }
+.mango-landing .ap-lines i:nth-child(2) { width: 86%; }
+.mango-landing .ap-lines i:nth-child(3) { width: 64%; }
+/* The approved letter's second paragraph. */
+.mango-landing .ap-lines + .ap-lines i:nth-child(2) { width: 94%; }
+.mango-landing .ap-lines + .ap-lines i:nth-child(3) { width: 46%; }
+.mango-landing .ap-pencil { --x: 4%; --y: 76%; --w: 29%; --r: -14deg; z-index: 1; }
+
+@media (601px <= width <= 720px) {
+  .mango-landing .consent-art { --dx: 2.5%; }
+}

@@ -1,0 +1,42 @@
+/* The confirmation dialog (Modal portals its backdrop to <body>, which carries .mango-app itself). Crisp: a pencil
+   hatch over a dimmed backdrop looks muddy. */
+.modal-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: var(--sp-4); background: rgb(29 27 23 / .42); }
+.modal-panel.panel { width: min(100%, 34rem); max-height: calc(100dvh - 32px); overflow: auto; padding: 28px; box-shadow: var(--ms-shadow-pop); }
+.mango-app .modal-panel h2 { margin: 0 0 var(--sp-2); font-size: 26px; letter-spacing: -0.02em; line-height: 1.15; }
+.modal-panel > p { margin: 0 0 var(--sp-5); color: var(--ms-muted); }
+.modal-panel .detail-actions { justify-content: flex-end; gap: var(--sp-3); margin-top: var(--sp-6); }
+@media (max-width: 480px) {
+  .modal-panel.panel { padding: var(--sp-5); }
+  .modal-panel .detail-actions > * { flex: 1 1 100%; }
+}
+
+/* Disclosures: a text button with the docs chevron, which turns when open. Inside a heading it takes the heading's face. */
+.disclosure-toggle, .passed-checks summary, .test-send-panel summary, .rich-email-link summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ms-ink);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+}
+.disclosure-toggle::after, .passed-checks summary::after, .test-send-panel summary::after, .rich-email-link summary::after {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-top: -4px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  content: '';
+  rotate: 45deg;
+  transition: rotate .18s, margin .18s;
+}
+.disclosure-toggle[aria-expanded="true"]::after, :is(.passed-checks, .test-send-panel, .rich-email-link)[open] summary::after { margin-top: 3px; rotate: 225deg; }
+:is(.passed-checks, .test-send-panel, .rich-email-link) summary { list-style: none; }
+:is(.passed-checks, .test-send-panel, .rich-email-link) summary::-webkit-details-marker { display: none; }
+.mango-app h2 .disclosure-toggle { font-family: var(--ms-serif); font-weight: 400; letter-spacing: inherit; }

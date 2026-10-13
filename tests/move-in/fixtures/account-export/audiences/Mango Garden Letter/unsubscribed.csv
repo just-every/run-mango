@@ -1,0 +1,3 @@
+Email Address,First Name,Last Name,OPTIN_TIME,OPTIN_IP,CONFIRM_TIME,CONFIRM_IP,MEMBER_RATING,TIMEZONE,CC,LAST_CHANGED,LEID,NOTES,TAGS
+both@example.test,Bo,Twofiles,2026-03-05 09:00:00,192.0.2.14,2026-03-05 09:03:00,192.0.2.14,2,Australia/Brisbane,AU,2026-09-03 12:00:00,1006,Synthetic documentation fixture,Newsletter
+uma@example.test,Uma,Leaver,2026-02-01 09:00:00,192.0.2.20,2026-02-01 09:05:00,192.0.2.20,1,Australia/Brisbane,AU,2026-09-03 12:00:00,1009,Synthetic documentation fixture,Newsletter

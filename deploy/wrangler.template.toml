@@ -1,0 +1,30 @@
+name = "__MANGO_WORKER_NAME__"
+main = "./src/core/app/worker.ts"
+compatibility_date = "2026-09-08"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[assets]
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "__MANGO_DATABASE_NAME__"
+database_id = "__MANGO_DATABASE_ID__"
+migrations_dir = "migrations/core"
+
+[[r2_buckets]]
+binding = "ASSETS_BUCKET"
+bucket_name = "__MANGO_BUCKET_NAME__"
+
+[[queues.producers]]
+binding = "MANGO_JOBS"
+queue = "__MANGO_QUEUE_NAME__"
+
+[[queues.consumers]]
+queue = "__MANGO_QUEUE_NAME__"
+max_batch_size = 10
+max_retries = 5

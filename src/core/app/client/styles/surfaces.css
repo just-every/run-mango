@@ -1,0 +1,47 @@
+/* Three surfaces. 1. The sheet: crisp paper with a warm hairline, for everything you operate.
+   2. The inset: a deeper paper tone inside a sheet, for metrics and read-only blocks.
+   3. The drawn paper (site Paper with .app-sheet): only where the object is a letter or a note. */
+.panel, .empty-panel, .summary-grid__tile, .contact-status-tile { min-width: 0; border: 1px solid var(--ms-line); border-radius: var(--ms-radius); background: var(--ms-paper); box-shadow: var(--ms-shadow-card); }
+.panel { padding: var(--sp-6); overflow-wrap: anywhere; }
+
+.metric-row > div, .audience-import-stats > div, .step-result__timing > div, .disposition-counts > div, .source-status__grid article, .audience-import-mapped-file, .audience-estimate, .audience-rule-summary, .contact-evidence-fields__wide dd {
+  min-width: 0; padding: 12px 14px; border-radius: var(--ms-radius-control); background: var(--ms-paper-deep);
+}
+/* An inset that holds a small card of its own (a store source, the sender's authentication). */
+:is(.source-status__grid .store-source, .settings-validation) { min-width: 0; padding: var(--sp-4) var(--sp-5); border-radius: var(--ms-radius); background: var(--ms-paper-deep); }
+
+/* A tile's label and its headline number (Newsreader, lining tabular figures). */
+:is(.metric-row, .audience-import-stats, .disposition-counts) dt { color: var(--ms-muted); font-size: 13px; font-weight: 500; line-height: 1.35; }
+:is(.metric-row, .audience-import-stats, .disposition-counts) dd, .summary-grid__tile strong { margin: 0; font-family: var(--ms-serif); font-size: 32px; font-weight: 400; font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.01em; line-height: 1; }
+
+/* The drawn paper in the app: Paper (site/paper/Paper.ts) with className="app-sheet". Pass the card's typical size as
+   w/h and a distinct seed. The margin leaves the hatched shadow room. */
+.mango-app .paper.app-sheet { margin: 0 8px 8px 0; }
+.mango-app .paper.app-sheet::before { inset: 10px -6px -7px 8px; }
+.mango-app .app-sheet .paper-face { padding: 28px 32px; box-shadow: var(--ms-shadow-lift); }
+
+/* The one empty state (ui/empty-state.tsx): a small paper-and-post drawing beside a short heading, one line and an
+   optional action. On its own it is a sheet (.empty-panel); in a panel it sits under the panel's heading on a hairline.
+   A drawing's blank writing lines are .empty-art-lines, spaced by --lines-gap. */
+.empty-panel { padding: var(--sp-8) var(--sp-6); }
+.empty-state--in-panel { padding: var(--sp-6) 0 var(--sp-5); border-top: 1px solid var(--ms-hairline); }
+.empty-state { display: grid; grid-template-columns: 144px minmax(0, 32rem); justify-content: center; align-items: center; gap: var(--sp-5) var(--sp-7); }
+.empty-state > .empty-art { width: 144px; aspect-ratio: 4 / 3; }
+.empty-state__text > * { margin: 0; }
+.empty-state__text > * + * { margin-top: var(--sp-2); }
+.mango-app .empty-state__text > :is(h2, h3) { font-family: var(--ms-serif); font-size: 24px; font-weight: 400; letter-spacing: -0.02em; line-height: 1.2; }
+.empty-state__text > p { max-width: 60ch; color: var(--ms-ink-soft); }
+.empty-state__text > .empty-state__action { margin-top: var(--sp-4); }
+.empty-art-lines { display: grid; gap: var(--lines-gap, 5cqw); }
+.empty-art-lines i { display: block; height: 1cqw; border-radius: 1cqw; background: #b5ad9e; opacity: 0.75; }
+.empty-art-lines i:nth-child(2) { width: 84%; }
+.empty-art-lines i:last-child { width: 56%; }
+
+@media (max-width: 680px) {
+  .panel { padding: var(--sp-5); }
+  :is(.metric-row, .audience-import-stats, .disposition-counts) dd, .summary-grid__tile strong { font-size: 26px; }
+  .empty-panel { padding: var(--sp-7) var(--sp-5); }
+  .empty-state { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .empty-state > .empty-art { width: 120px; }
+}
+@media (max-width: 400px) { .panel { padding: var(--sp-4); } }

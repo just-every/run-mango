@@ -1,0 +1,55 @@
+import type {Database} from '@/core/platform/db/client';
+import type {consentEvidence} from './schema';
+
+/** Public capture has no reconsent authority. All identity/profile/evidence
+ * writes share the D1 transaction that checks the destination's current state. */
+export function createPublicCaptureWriter(database: Database) {
+  const db = database.$client;
+  return async (evidence: typeof consentEvidence.$inferInsert, destinationHash: string, displayName?: string, captureIp?: string) => {
+    const {id, contactId, destination} = evidence, now = evidence.createdAt.getTime(), occurred = evidence.occurredAt.getTime();
+    const owner = `COALESCE((SELECT contact_id FROM contact_email_addresses WHERE email=?),
+      (SELECT id FROM contacts WHERE email=?), ?)`;
+    const ownerValues = [destination, destination, contactId];
+    // Keep the evidence insert last: the absent ID gates every prior write too,
+    // so a concurrent replay cannot update a profile or append metadata/history.
+    const eligible = `NOT EXISTS(SELECT 1 FROM consent_evidence WHERE id=?)
+      AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel='email')
+      AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email')
+      AND NOT EXISTS(SELECT 1 FROM contact_email_addresses WHERE email=? AND channel_status IN ('subscribed','unsubscribed','suppressed'))
+      AND NOT EXISTS(SELECT 1 FROM contacts WHERE (email=? OR id IN (SELECT contact_id FROM contact_email_addresses WHERE email=?))
+        AND (email_status IN ('subscribed','unsubscribed','suppressed') OR merge_lock IS NOT NULL))`;
+    const guard = [id, destinationHash, destinationHash, destination, destination, destination];
+    const statements = [
+      db.prepare(`INSERT INTO contacts(id,email,display_name,email_status,sms_status,email_status_at,sms_status_at,last_activity_at,created_at,updated_at)
+        SELECT ?,?,?,'pending','non-subscribed',?,?,?,?,? WHERE ${eligible}
+        AND NOT EXISTS(SELECT 1 FROM contacts WHERE email=?)
+        AND NOT EXISTS(SELECT 1 FROM contact_email_addresses WHERE email=?) ON CONFLICT DO NOTHING`)
+        .bind(contactId, destination, displayName?.trim() || destination, occurred, now, occurred, now, now, ...guard, destination, destination),
+      db.prepare(`INSERT INTO contact_email_addresses(id,contact_id,email,channel_status,channel_status_at,created_at,updated_at)
+        SELECT ?,${owner},?,'pending',?,?,? WHERE ${eligible}
+        AND EXISTS(SELECT 1 FROM contacts WHERE id=${owner}) ON CONFLICT(email) DO NOTHING`)
+        .bind(`${id}_email`, ...ownerValues, destination, occurred, now, now, ...guard, ...ownerValues),
+      db.prepare(`UPDATE contacts SET display_name=COALESCE(NULLIF(?,''),display_name),email_status='pending',email_status_at=?,
+        last_activity_at=MAX(COALESCE(last_activity_at,?),?),updated_at=? WHERE id=${owner} AND ${eligible}`)
+        .bind(displayName?.trim() ?? '', occurred, occurred, occurred, now, ...ownerValues, ...guard),
+      db.prepare(`UPDATE contact_email_addresses SET channel_status='pending',channel_status_at=?,updated_at=? WHERE email=? AND ${eligible}`)
+        .bind(occurred, now, destination, ...guard),
+    ];
+    if (captureIp) statements.push(db.prepare(`INSERT INTO consent_capture_metadata(id,contact_id,capture_ip,confirmation_ip,created_at,updated_at)
+      SELECT ?,${owner},?,NULL,?,? WHERE ${eligible}`).bind(id, ...ownerValues, captureIp, now, now, ...guard));
+    statements.push(
+      db.prepare(`INSERT INTO contact_history(id,contact_id,kind,detail,occurred_at,created_at,updated_at)
+        SELECT ?,${owner},'consent-captured',?,?,?,? WHERE ${eligible}`)
+        .bind(`${id}_captured`, ...ownerValues, `email consent captured through ${evidence.captureMethod}.`, occurred, occurred, occurred, ...guard),
+      db.prepare(`INSERT INTO consent_evidence(id,contact_id,channel,destination,brand_or_legal_sender,sms_program,message_category,
+        frequency_disclosure,destination_jurisdiction,capture_method,capture_source,consent_text,consent_version,occurred_at,
+        confirmation_required,confirmed_at,created_at,updated_at)
+        SELECT ?,${owner},'email',?,?,NULL,?,?,?,?,?,?,?,?,1,NULL,?,? WHERE ${eligible}`)
+        .bind(id, ...ownerValues, destination, evidence.brandOrLegalSender, evidence.messageCategory, evidence.frequencyDisclosure,
+          evidence.destinationJurisdiction, evidence.captureMethod, evidence.captureSource, evidence.consentText, evidence.consentVersion,
+          occurred, now, now, ...guard),
+    );
+    const result = await db.batch(statements);
+    return result.at(-1)!.meta.changes === 1;
+  };
+}

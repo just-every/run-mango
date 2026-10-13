@@ -1,0 +1,15 @@
+/* Where the consent and approval drawings sit in a narrow column (721px to 1180px, bands.css) or across a phone, each
+   is redrawn taller, its cards and their type grown together by --k
+   (art-consent-approval.css), so nothing in it shrinks past reading. */
+@media (721px <= width <= 1180px), (width <= 600px) {
+  .mango-landing .consent-art { --k: 1.55; aspect-ratio: 350 / 380; }
+  .mango-landing .c-signup { --x: 4%; --y: 13%; --w: 65%; --h: 46%; }
+  .mango-landing .c-arrow { display: none; }
+  .mango-landing .c-confirm { --x: 61%; --y: 6%; --w: 35%; --h: 23%; }
+  .mango-landing .c-record { --x: 40%; --y: 60%; --w: 56%; --h: 34%; }
+
+  .mango-landing .approval-art { --k: 1.25; aspect-ratio: 350 / 380; }
+  .mango-landing .ap-draft { --x: 3%; --y: 3%; --w: 54%; --h: 52%; }
+  .mango-landing .ap-approved { --x: 33%; --y: 29%; --w: 62%; --h: 64%; }
+  .mango-landing .ap-pencil { --x: 2%; --y: 72%; --w: 30%; --r: -22deg; }
+}

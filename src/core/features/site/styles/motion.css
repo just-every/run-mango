@@ -1,0 +1,4 @@
+/* Every public page plays its motion only without a reduced-motion preference: with one, nothing animates or transitions. */
+@media (prefers-reduced-motion: reduce) {
+  :is(.mango-site, .mango-app) *, :is(.mango-site, .mango-app) *::before, :is(.mango-site, .mango-app) *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

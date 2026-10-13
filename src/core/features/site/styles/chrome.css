@@ -1,0 +1,61 @@
+/* The shared header, footer, lockup and skip link. Sizes follow the approved 1536px design (one --u per design pixel) and
+   never drop below a readable floor. */
+:is(.mango-site, .mango-app) .site-skip { position: fixed; top: 10px; left: 10px; z-index: 100; padding: 10px 18px; border: 1.5px solid var(--ms-ink); border-radius: 4px; background: var(--ms-paper); font-size: 16px; transform: translateY(-200%); }
+:is(.mango-site, .mango-app) .site-skip:focus { transform: none; }
+
+.mango-site .site-header { display: flex; align-items: center; justify-content: space-between; gap: 16px 24px; width: 100%; max-width: var(--ms-max); height: max(76px, calc(118 * var(--u))); margin: 0 auto; padding: 0 var(--ms-gutter); }
+.mango-site .site-brand { display: inline-flex; align-items: center; gap: max(8px, calc(14 * var(--u))); flex: none; }
+.mango-site .site-brand-mark { width: max(32px, calc(44 * var(--u))); height: auto; }
+.mango-site .site-brand-name { font-family: var(--ms-serif); font-size: max(28px, calc(39 * var(--u))); font-weight: 400; letter-spacing: -0.025em; line-height: 1; }
+
+.mango-site .site-nav { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 6px max(18px, calc(30 * var(--u))); font-size: max(16px, calc(19 * var(--u))); line-height: 1.2; }
+.mango-site .site-nav a { padding: 6px 0; text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 2px; text-underline-offset: 7px; transition: text-decoration-color 0.18s; }
+.mango-site .site-nav a:hover, .mango-site .site-nav a[aria-current] { text-decoration-color: var(--ms-sun); }
+.mango-site .site-nav-slash { color: var(--ms-faint); font-weight: 300; }
+
+.mango-site .site-footer { width: 100%; max-width: var(--ms-max); margin: 0 auto; padding: 0 var(--ms-gutter) max(48px, calc(64 * var(--u))); }
+.mango-site .site-footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px 40px; padding-top: max(32px, calc(44 * var(--u))); border-top: 1px solid var(--ms-hairline); }
+.mango-site .site-footer .site-brand-mark { width: 36px; }
+.mango-site .site-footer .site-brand-name { font-size: 32px; }
+.mango-site .site-footer-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px 30px; font-size: 15px; }
+.mango-site .site-footer-links a { display: inline-block; padding: 4px 0; }
+.mango-site .site-footer-links a:hover, .mango-site .site-footer-credit a:hover { text-decoration: underline; text-decoration-color: var(--ms-sun); text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.mango-site .site-footer-meta { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px 32px; margin-top: max(24px, calc(28 * var(--u))); color: var(--ms-muted); font-size: 14px; line-height: 1.5; }
+.mango-site .site-footer-owner { max-width: 46em; text-wrap: pretty; }
+.mango-site .site-footer-owner strong { color: var(--ms-ink-soft); font-weight: 500; }
+.mango-site .site-footer-dash { color: var(--ms-faint); }
+.mango-site .site-footer-credit a { text-decoration: underline; text-decoration-color: var(--ms-line); text-underline-offset: 4px; }
+
+/* Stacked under the lockup, the eight links sit on a grid so no row is left holding one: two rows of four, three rows
+   (3, 3, 2) once four no longer fit, and four rows of two on the narrowest phones. */
+@media (max-width: 900px) {
+  .mango-site .site-footer-row { flex-direction: column; align-items: flex-start; }
+  .mango-site .site-footer-links { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 10px 40px; }
+}
+@media (max-width: 520px) {
+  .mango-site .site-footer-links { grid-template-columns: repeat(3, auto); column-gap: clamp(16px, 5vw, 26px); }
+}
+@media (max-width: 349px) {
+  .mango-site .site-footer-links { grid-template-columns: repeat(2, auto); column-gap: 32px; }
+}
+@media (max-width: 480px) {
+  .mango-site .site-header { gap: 10px; }
+  .mango-site .site-brand-mark { width: 28px; }
+  .mango-site .site-brand-name { font-size: 25px; }
+  .mango-site .site-nav { gap: 4px 13px; font-size: 15px; }
+}
+
+/* The narrowest phones keep the header on one line: the slash steps aside and the links and lockup close up a little. */
+@media (max-width: 380px) {
+  .mango-site .site-header { gap: 8px; }
+  .mango-site .site-brand { gap: 7px; }
+  .mango-site .site-brand-mark { width: 25px; }
+  .mango-site .site-brand-name { font-size: 23px; }
+  .mango-site .site-nav { column-gap: 12px; font-size: 14px; }
+  .mango-site .site-nav-slash { display: none; }
+}
+@media (max-width: 340px) {
+  .mango-site .site-brand-mark { width: 23px; }
+  .mango-site .site-brand-name { font-size: 22px; }
+  .mango-site .site-nav { column-gap: 10px; }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Mango",
+  "description": "Consent-aware newsletters for one workspace",
+  "primaryColor": "#b45935",
+  "backgroundColor": "#f6ead7",
+  "installerBackground": "scripts/installer/ui/background.svg"
+}

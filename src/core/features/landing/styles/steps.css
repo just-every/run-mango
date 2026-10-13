@@ -1,0 +1,37 @@
+/* The five step drawings, each a 230 x 185 scene; sizes in cqw of the scene (one cqw is 2.3 design pixels). Each card
+   sits centred in its scene with the same margin either side, so the arrows between them sit midway and, stacked,
+   their left edges line up. */
+.mango-landing .step-art .art-inner > * { left: var(--x); top: var(--y); width: var(--w); height: var(--h, auto); rotate: var(--r, 0deg); }
+.mango-landing .s-card .paper-face { display: flex; flex-direction: column; padding: 7cqw 8cqw; }
+.mango-landing .s-title { font-size: 6.4cqw; font-weight: 500; }
+.mango-landing .s-serif { font-family: var(--ms-serif); font-size: 8.2cqw; letter-spacing: -0.01em; line-height: 1.1; }
+
+.mango-landing .s-collect { --x: 12%; --y: 3%; --w: 76%; --h: 92%; --r: -1.5deg; }
+.mango-landing .s-list { display: grid; gap: 3.2cqw; margin-top: 4.4cqw; }
+.mango-landing .s-row { display: flex; align-items: center; gap: 3.4cqw; padding-bottom: 2.6cqw; border-bottom: 1px solid rgb(165 156 138 / 0.35); color: #3d3933; font-size: 5.8cqw; }
+.mango-landing .s-row:last-child { padding-bottom: 0; border-bottom: 0; }
+.mango-landing .s-row svg { width: 6.6cqw; height: auto; flex: none; }
+.mango-landing .s-row em { margin-left: auto; color: #6b665e; font-size: 4.8cqw; font-style: normal; }
+
+.mango-landing .s-write { --x: 12.5%; --y: 12%; --w: 76%; --h: 70%; --r: -3.5deg; }
+.mango-landing .s-lines { display: grid; gap: 4cqw; margin-top: 5cqw; }
+.mango-landing .s-lines i { display: block; height: 1.7cqw; border-radius: 2cqw; background: #b5ad9e; opacity: 0.8; }
+.mango-landing .s-lines i:nth-child(2) { width: 70%; }
+.mango-landing .s-toolbar { display: flex; align-items: center; gap: 7cqw; margin-top: auto; color: #4a453e; font-size: 6cqw; }
+.mango-landing .s-toolbar b { font-weight: 600; }
+.mango-landing .s-toolbar i { font-family: var(--ms-serif); font-style: italic; }
+.mango-landing .s-toolbar svg { width: 6.6cqw; height: auto; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.mango-landing .s-approve { --x: 13%; --y: 6%; --w: 74%; --h: 84%; --r: 2deg; }
+.mango-landing .s-approve .paper-face { align-items: center; justify-content: center; gap: 3cqw; text-align: center; }
+.mango-landing .s-approve-check { width: 15cqw; height: auto; }
+.mango-landing .s-approve-status { display: inline-flex; align-items: center; gap: 2.4cqw; color: #285b2c; font-size: 6cqw; font-weight: 500; }
+.mango-landing .s-approve-status svg { width: 4.6cqw; height: auto; }
+
+.mango-landing .s-schedule { --x: 12.5%; --y: 5%; --w: 75%; --h: 88%; --r: 2.5deg; }
+.mango-landing .s-calendar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2.6cqw; margin-top: 5.4cqw; }
+.mango-landing .s-calendar i { aspect-ratio: 1; border-radius: 1.4cqw; background: #f0e9db; }
+.mango-landing .s-calendar i.is-picked { background: var(--ms-sun); box-shadow: 0 0 0 0.8cqw #fff4c8; }
+
+.mango-landing .s-sealed { --x: 16%; --y: 20%; --w: 68%; --h: 56%; --r: -4deg; }
+

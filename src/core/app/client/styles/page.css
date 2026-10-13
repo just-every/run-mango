@@ -1,0 +1,47 @@
+/* Page rhythm and the one page-header pattern:
+   <header class="page-head [page-head--actions]"><div class="page-head__text">[.back-link] [.eyebrow] h1 [.page-head__lead]</div>
+   [<div class="page-head__actions">buttons</div>]</header> */
+.page-flow { display: grid; gap: var(--sp-6); min-width: 0; overflow-wrap: anywhere; }
+
+.page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--sp-4) var(--sp-7); margin-bottom: var(--sp-7); }
+/* In a page flow the flow's gap adds to this: every page keeps one 32px (24px on a phone) step from head to content. */
+.page-flow > .page-head { margin-bottom: var(--sp-2); }
+.page-head__text { min-width: 0; max-width: 60rem; }
+.mango-app .page-head h1 { margin: 0; overflow-wrap: anywhere; }
+/* A draft saved without a name has an empty title: it takes no row. */
+.mango-app .page-head h1:empty { display: none; }
+.page-head .eyebrow { margin: 0 0 var(--sp-2); }
+.page-head__lead { max-width: 60ch; margin: 10px 0 0; color: var(--ms-ink-soft); font-size: 17px; line-height: 1.55; }
+.page-head__actions { display: flex; flex: none; flex-wrap: wrap; gap: var(--sp-3); }
+/* The state line under a title: its pill beside the revision or state facts. */
+.page-head__meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); margin: var(--sp-3) 0 0; color: var(--ms-ink-soft); font-size: 14px; }
+.page-head__meta p { margin: 0; color: var(--ms-muted); }
+
+.back-link { display: inline-flex; gap: 6px; margin-bottom: var(--sp-3); color: var(--ms-muted); font-size: 14px; font-weight: 500; line-height: 1.3; text-decoration: none; }
+.back-link:hover { color: var(--ms-ink); text-decoration: underline 2px var(--ms-mango); text-underline-offset: 4px; }
+
+.eyebrow { margin: 0 0 var(--sp-2); color: var(--ms-amber); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; line-height: 1.3; text-transform: uppercase; }
+/* Over a panel or section title the eyebrow sits close, so the pair reads as one heading. */
+.eyebrow:has(+ h2) { margin-bottom: var(--sp-1); }
+.muted-copy, .quiet-caption { color: var(--ms-muted); font-size: 13px; line-height: 1.45; }
+.panel > p:not(.eyebrow, .action-notice, .inline-error, .muted-copy, .quiet-caption) { max-width: 68ch; color: var(--ms-ink-soft); }
+
+/* A panel's heading row: [eyebrow and] title on the left, the panel's own action or note on the right, sitting on the
+   title's baseline. */
+.section-heading { display: flex; flex-wrap: wrap; align-items: last baseline; justify-content: space-between; gap: var(--sp-3) var(--sp-4); margin-bottom: var(--sp-4); }
+.mango-app .section-heading :is(h2, h3) { margin: 0; }
+.section-heading .text-link { white-space: nowrap; }
+.detail-actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
+
+/* LoadState: a quiet loading line, or the error notice (notices.css) with its own heading. */
+.load-state { max-width: 42rem; margin: var(--sp-9) auto; color: var(--ms-muted); }
+.mango-app .load-state h1 { margin: 0 0 var(--sp-1); color: inherit; font-size: 24px; letter-spacing: -0.02em; }
+.load-state.inline-error p { margin: 0; }
+
+@media (max-width: 680px) {
+  .page-head { flex-direction: column; align-items: stretch; margin-bottom: var(--sp-6); }
+  .page-flow > .page-head { margin-bottom: var(--sp-1); }
+  .page-head__actions > * { flex: 1 1 auto; }
+  .page-flow { gap: var(--sp-5); }
+  .detail-actions { gap: var(--sp-2); }
+}

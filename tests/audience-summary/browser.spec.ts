@@ -1,0 +1,50 @@
+import { expect, test } from '@playwright/test';
+import { contract } from '../contract.js';
+import { authoringRuntime } from '../campaign-authoring/browser-runtime.mjs';
+import { summarizeAudienceRules } from '../../src/core/features/campaigns/audience-summary';
+
+test.describe.configure({mode:'serial',timeout:120000});
+for(const width of [1440,390]) contract('AUD-001][CAMP-002', `condition changes render a safe live summary before and after saving at ${width}px`, async ({page,request}) => {
+  const runtime=await authoringRuntime();
+  try {
+    await page.setViewportSize({width,height:900});
+    const opened=await request.post(runtime.url+'/_authoring/open',{headers:{'X-Test-Token':runtime.token}});
+    expect(opened.status()).toBe(200);
+    const {token}=await opened.json();
+    await page.context().addCookies([{name:'operator_session_local',value:token,url:runtime.url}]);
+    const created=await request.post(runtime.url+'/api/campaigns',{headers:{Cookie:`operator_session_local=${token}`,Origin:runtime.url},data:{mode:'blank'}});
+    expect(created.status()).toBe(201);
+    const {campaignId}=await created.json();
+    await page.goto(`${runtime.url}/app/campaigns/${campaignId}/review`);
+    await expect(page.getByRole('textbox',{name:'Audience rule',exact:true})).toHaveCount(0);
+    const summary=page.getByLabel('Audience summary',{exact:true});
+    const initial=await (await page.request.get(`${runtime.url}/api/campaigns/${campaignId}`)).json();
+    await expect(summary).toHaveText(summarizeAudienceRules(initial.revision.inclusionRuleJson,initial.revision.exclusionRulesJson));
+    await expect(summary).toHaveAttribute('aria-live','polite');
+    expect(await summary.evaluate(element=>element.tagName)).toBe('P');
+    await page.getByLabel('Include 1 field',{exact:true}).selectOption('contact:displayName');
+    const value='<img src="/audience-summary-image" onerror="window.audienceSummaryExecuted=true"> '+ 'Long value '.repeat(60);
+    await page.getByLabel('Include 1 value',{exact:true}).fill(value);
+    await page.getByRole('button',{name:'Add exclusion',exact:true}).click();
+    await page.getByLabel('Exclude 1 value',{exact:true}).fill('excluded@example.test');
+    const inclusion=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'displayName',comparator:'eq',value}]});
+    const exclusion=JSON.stringify([{version:1,reason:'operator-exclusion-1',predicate:{sourceType:'contact',field:'email',comparator:'contains',value:'excluded@example.test'}}]);
+    const expected=summarizeAudienceRules(inclusion,exclusion);
+    await expect(summary).toHaveText(expected);
+    await expect(summary).toContainText(value);
+    await expect(summary.locator('img,script')).toHaveCount(0);
+    expect(await page.evaluate(()=>Reflect.get(window,'audienceSummaryExecuted'))).toBeUndefined();
+    const saving=page.waitForRequest(request=>request.method()==='PATCH'&&request.url().includes('/api/campaign-revisions/'));
+    await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+    expect((await saving).postDataJSON()).not.toHaveProperty('audienceRule');
+    await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+    await expect(summary).toHaveText(expected);
+    await page.reload();
+    await expect(summary).toHaveText(expected);
+    await expect(page.getByLabel('Saved audience rule',{exact:true})).toHaveText(expected);
+    const saved=await page.evaluate(async id=>(await fetch(`/api/campaigns/${id}`)).json(),campaignId);
+    expect(saved.revision.audienceRule).toBe(expected);
+    expect(saved.revision.audienceRule).toBe(summarizeAudienceRules(saved.revision.inclusionRuleJson,saved.revision.exclusionRulesJson));
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+  } finally {await runtime.close();}
+});

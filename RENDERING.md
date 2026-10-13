@@ -1,0 +1,7 @@
+# Rendering ownership — October 2026 candidate
+
+Start owns GET/HEAD React documents `/`, `/signin`, `/docs` and `/docs/<slug>`, `/app` and its children, and generated `/_serverFn/` transport. The public landing and sign-in render request-time HTML; the documentation pages render per request from Markdown that a Vite plugin turned into static HTML at build time (no prerender, no Hono route, no session read); operator documents authenticate in the custom Worker and independently in the private operator server function. Existing feature requests continue over Hono HTTP APIs.
+
+Hono owns `/health`, `/api` and `/api/*`, `/auth` and `/auth/*`, `/unsubscribe`, `/consent`, `/links` and `/webhooks` namespaces with existing method, token, native session and Origin guards. Bootstrap is local-entry-only and loopback/token guarded. Worker `queue` and `scheduled` exports remain in the production entry. Start supplies route matching and real public document 404s. Cloudflare serves built assets. No prerender pages are allowed.
+
+No credentials, migrations, data repositories or domain services move into the browser bundle. Applied SQL migrations remain immutable. This is local rendering work, not a deployment or complete BASE-ACCESS-002 certification; expanded transport/session matrix evidence is tracked separately.

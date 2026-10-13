@@ -1,0 +1,20 @@
+/* The drawings' materials, shared by the landing and the docs: the art box and paper cards with pencil outlines and
+   hatched shadows. An art box is a size container, so everything drawn inside it is sized in cqw (hundredths of the
+   box's width) and the whole drawing grows and shrinks as one piece. */
+:is(.mango-site, .mango-app) .art { position: relative; container-type: inline-size; }
+:is(.mango-site, .mango-app) .art-inner { position: absolute; inset: 0; color: var(--ms-ink); font-family: var(--ms-sans); line-height: 1.25; }
+:is(.mango-site, .mango-app) .art > .art-inner > * { position: absolute; }
+/* A drawing with a phone layout of its own carries two labels; the phone's is exposed only in that layout. */
+:is(.mango-site, .mango-app) .art-label { position: absolute; inset: 0; }
+:is(.mango-site, .mango-app) .art-label--phone { display: none; }
+:is(.mango-site, .mango-app) .paper { position: relative; isolation: isolate; }
+:is(.mango-site, .mango-app) .paper::before { position: absolute; z-index: -1; inset: 7% -2.2% -5.5% 2.4%; border-radius: 6px; background: repeating-linear-gradient(-58deg, rgb(112 98 72 / 0.2) 0 1px, transparent 1px 3.6px); content: ''; filter: blur(0.35px); }
+:is(.mango-site, .mango-app) .paper-face { position: relative; width: 100%; height: 100%; border-radius: 6px; background: linear-gradient(168deg, var(--ms-paper) 0%, #fffaf0 62%, #fbf3e2 100%); box-shadow: 0 1.4cqw 2.6cqw -1.6cqw rgb(84 64 28 / 0.32), 0 0.2cqw 0.5cqw rgb(84 64 28 / 0.06); }
+:is(.mango-site, .mango-app) .paper--warm .paper-face { background: linear-gradient(168deg, #fffaf0 0%, var(--ms-paper-warm) 100%); }
+:is(.mango-site, .mango-app) .paper--leaf .paper-face { background: linear-gradient(168deg, #f4f8ee 0%, #e9f1df 100%); }
+:is(.mango-site, .mango-app) .paper--envelope .paper-face { background: linear-gradient(160deg, #fbf1dc 0%, var(--ms-envelope) 55%, #f2deb6 100%); }
+:is(.mango-site, .mango-app) .paper-pencil { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; stroke: var(--ms-pencil); stroke-width: 1.2px; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+:is(.mango-site, .mango-app) .paper-pencil path { vector-effect: non-scaling-stroke; }
+:is(.mango-site, .mango-app) .paper-pencil-ghost { opacity: 0.45; stroke-width: 0.9px; }
+:is(.mango-site, .mango-app) .paper--leaf .paper-pencil { stroke: #8fb07c; }
+:is(.mango-site, .mango-app) .paper--envelope .paper-pencil { stroke: #c4ac7c; }

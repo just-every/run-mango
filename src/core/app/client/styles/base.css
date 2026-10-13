@@ -1,0 +1,48 @@
+/* The app root: every operator page, the standalone public pages and the modal portal carry .mango-app. It sets type,
+   colour, the spacing scale and the element rules only, never layout, so it is safe on a portal root. The palette is
+   the site's (palette.css on :root); the app keeps the landing's fixed light look in a dark-mode browser. */
+html:has(.mango-app), body:has(.mango-app) { margin: 0; background: var(--ms-ground); color: var(--ms-ink); color-scheme: light; }
+/* WCAG 2.4.11: the sticky header never covers the focused control. */
+html:has(.mango-app) { scroll-padding-top: 80px; }
+body:has(.mango-app) { min-width: 320px; min-height: 100vh; }
+
+.mango-app {
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 20px;
+  --sp-6: 24px; --sp-7: 32px; --sp-8: 40px; --sp-9: 56px; --sp-10: 72px;
+  --app-gutter: clamp(16px, 3.5vw, 48px);
+  --app-max: 1232px;
+  color: var(--ms-ink);
+  color-scheme: light;
+  font-family: var(--ms-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+@media (max-width: 680px) { .mango-app { --app-gutter: 16px; } }
+
+:where(.mango-app) :is(button, a) { -webkit-tap-highlight-color: transparent; }
+:where(.mango-app) a { color: inherit; }
+/* A bare link inside running copy is the docs link: ink, underlined in mango. */
+:where(.mango-app :is(p, li, dd)) a:where(:not([class])) { color: var(--ms-ink); font-weight: 500; text-decoration: underline 2px var(--ms-mango); text-underline-offset: 4px; }
+:where(.mango-app :is(p, li, dd)) a:where(:not([class])):hover { text-decoration-color: var(--ms-ink); }
+:where(.mango-app) :is(h1, h2) { font-family: var(--ms-serif); font-weight: 400; font-optical-sizing: auto; text-wrap: balance; }
+:where(.mango-app) h1 { font-size: clamp(30px, 2.4vw, 38px); letter-spacing: -0.03em; line-height: 1.1; }
+:where(.mango-app) h2 { font-size: 24px; letter-spacing: -0.02em; line-height: 1.2; }
+:where(.mango-app) :is(h3, h4) { font-family: var(--ms-sans); font-size: 16px; font-weight: 600; letter-spacing: 0; line-height: 1.35; text-wrap: balance; }
+:where(.mango-app) p { text-wrap: pretty; }
+:where(.mango-app) :is(code, kbd, samp) { font-family: var(--ms-mono); font-size: 13px; }
+:where(.mango-app) small { font-size: 13px; }
+@media (max-width: 680px) { :where(.mango-app) h2 { font-size: 22px; } }
+
+/* One focus ring everywhere: ink, 16:1 on the ground and clear on a sun button. The plain :focus keeps it for controls
+   focused from script (validation summaries, dialogs). Programmatic targets (main, a dialog panel) show none. */
+.mango-app :where(a, button, input, select, textarea, summary, [tabindex], [contenteditable]):is(:focus, :focus-visible) { outline: 3px solid var(--ms-ink); outline-offset: 3px; }
+.mango-app :where(input, select, textarea, .rich-email-editor):is(:focus, :focus-visible) { outline-offset: 2px; }
+/* A link, button or disclosure focused by a pointer press (lib/pointer-focus.ts) shows no ring until a key is pressed. */
+.mango-app [data-pointer-focus]:focus:not(:focus-visible) { outline: none; }
+.mango-app :where(main, [tabindex="-1"]):focus { outline: none; }
+
+.visually-hidden, .subscribe-honeypot { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+[hidden] { display: none !important; }

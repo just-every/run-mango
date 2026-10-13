@@ -1,0 +1,338 @@
+{
+  "version": 2,
+  "profile": "newsletter",
+  "runtime": {
+    "requirements": [
+      {
+        "name": "node",
+        "version": "22.20.0"
+      },
+      {
+        "name": "pnpm",
+        "version": "10.12.4"
+      }
+    ]
+  },
+  "commands": {
+    "setup": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "setup"
+      ],
+      "effects": "Local shared Base installer: preserve private settings, migrate local D1, claim the first owner once, capture sign-in in the dev outbox and stop the application.",
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ]
+    },
+    "deploy": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "deploy"
+      ],
+      "effects": "Deploy an existing committed build through the full Base owner-account kit: find/create owned resources, apply remote D1 migrations, upload Worker, read back bindings and verify source/version health. Requires explicit owner credentials and persistent ownership state.",
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ]
+    },
+    "verify": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "verify"
+      ],
+      "effects": "Checks source integrity, operations tooling, TypeScript, production build, local D1 and browser tests. No hosted acceptance claim.",
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ]
+    },
+    "export": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "export"
+      ],
+      "effects": "Complete local D1/R2 export with private-authority binding and explicit exclusions.",
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ]
+    },
+    "import": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "import"
+      ],
+      "effects": "Confirmed atomic import into an empty local destination; no remote effects.",
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ]
+    },
+    "install": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "install"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Shared install command; see SEED-COMMAND-CONTRACT.md."
+    },
+    "dev": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "dev"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Shared dev command; see SEED-COMMAND-CONTRACT.md."
+    },
+    "preview": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "preview"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Serve fixed production output, preserve local owner and durable state, stop after idle timeout or explicit stop."
+    },
+    "build": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "build"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Shared build command; see SEED-COMMAND-CONTRACT.md."
+    },
+    "reset": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "reset"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Confirmed deletion of inventoried local state/private settings only; no remote effects."
+    },
+    "release": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "release"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Verified private release artifacts; never pushes or deploys."
+    },
+    "outbox": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "outbox"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Shared outbox command; see SEED-COMMAND-CONTRACT.md."
+    },
+    "doctor": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "doctor"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Shared doctor command; see SEED-COMMAND-CONTRACT.md."
+    },
+    "describe": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "describe"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Shared describe command; see SEED-COMMAND-CONTRACT.md."
+    },
+    "check": {
+      "argv": [
+        "node",
+        "scripts/rer.mjs",
+        "check"
+      ],
+      "inputs": [
+        "scripts/rer.mjs",
+        "scripts/installer/local.mjs",
+        "rer-setup.json"
+      ],
+      "effects": "Shared check command; see SEED-COMMAND-CONTRACT.md."
+    }
+  },
+  "requiredEnvironment": [
+    "SESSION_SECRET",
+    "OWNER_EMAIL",
+    "CONTACT_HASH_SALT",
+    "MAIL_PROVIDER_API_KEY",
+    "MAIL_AUTH_FROM",
+    "MAIL_WEBHOOK_SECRET",
+    "MAIL_WEBHOOK_ID",
+    "MANGO_PUBLIC_BASE_URL",
+    "MANGO_APP_VERSION",
+    "MANGO_ALLOWED_LINK_HOSTS",
+    "MANGO_TEST_EMAIL_ALLOWLIST",
+    "MANGO_RECONCILIATION_INTERVAL_MINUTES",
+    "MANGO_UNRESOLVED_OUTCOME_HOURS",
+    "MANGO_EMAIL_HANDOFFS_PER_MINUTE",
+    "MANGO_DELIVERABILITY_WINDOW_DAYS",
+    "MAIL_SENDER_NAME",
+    "MAIL_REPLY_TO",
+    "MAIL_PHYSICAL_ADDRESS",
+    "CLOUDFLARE_ACCOUNT_ID",
+    "CLOUDFLARE_API_TOKEN",
+    "MANGO_DEPLOY_ENV",
+    "SETUP_TOKEN",
+    "MAIL_PROVIDER"
+  ],
+  "optionalModules": {
+    "commerce": [
+      "COMMERCE_STORE_URL",
+      "COMMERCE_API_TOKEN",
+      "COMMERCE_WEBHOOK_SECRET"
+    ],
+    "ai": [
+      "AI_PROVIDER_API_KEY",
+      "AI_PROVIDER_MODEL"
+    ],
+    "sms": [
+      "SMS_PROVIDER_API_KEY",
+      "SMS_WEBHOOK_SECRET",
+      "SMS_CONFIRMATION_SENDER",
+      "MANGO_TEST_SMS_ALLOWLIST",
+      "MANGO_SMS_HANDOFFS_PER_MINUTE"
+    ]
+  },
+  "authentication": {
+    "deployment": "Protected stage/live-proof runner credentials only. Inspection never logs in or reads credential files. Production requires owner dispatch.",
+    "operators": "Base operator-auth: one explicit first-owner claim, confirmed magic links, equal product operators, persistent version fences and last-operator protection. Hosted authentication needs separate exact-revision evidence."
+  },
+  "configurationFiles": [
+    "seed.json",
+    "src/core/platform/config.ts",
+    "deploy/wrangler.template.toml",
+    "src/ext/config.ts"
+  ],
+  "health": {
+    "path": "/health",
+    "semantics": "Worker response and version only; does not establish provider capability, domain verification, delivery or release acceptance."
+  },
+  "acceptance": {
+    "document": "ACCEPTANCE.md"
+  },
+  "optionalEnvironment": [
+    "AUTH_ORIGIN",
+    "AUTH_SETUP_TOKEN",
+    "INITIAL_OPERATOR_EMAILS",
+    "MAILBOX_RECEIPT_RECIPIENT",
+    "MAILBOX_RECEIPT_URL",
+    "MANGO_LOCAL_HASH_AUTHORITY",
+    "MANGO_RESTORE_MODE",
+    "SESSION_SIGNING_KEY",
+    "TURNSTILE_SECRET_KEY",
+    "TURNSTILE_SITE_KEY"
+  ],
+  "environmentSources": {
+    "CONTACT_HASH_SALT": "Runtime and mail inputs in OPERATIONS.md",
+    "MAIL_PROVIDER_API_KEY": "Runtime and mail inputs in OPERATIONS.md",
+    "MAIL_AUTH_FROM": "Runtime and mail inputs in OPERATIONS.md",
+    "MAIL_WEBHOOK_SECRET": "Runtime and mail inputs in OPERATIONS.md",
+    "MAIL_WEBHOOK_ID": "Runtime and mail inputs in OPERATIONS.md",
+    "MANGO_PUBLIC_BASE_URL": "Runtime and mail inputs in OPERATIONS.md",
+    "MANGO_APP_VERSION": "Runtime and mail inputs in OPERATIONS.md",
+    "MANGO_ALLOWED_LINK_HOSTS": "Runtime and mail inputs in OPERATIONS.md",
+    "MANGO_TEST_EMAIL_ALLOWLIST": "Runtime and mail inputs in OPERATIONS.md",
+    "MANGO_RECONCILIATION_INTERVAL_MINUTES": "Runtime and mail inputs in OPERATIONS.md",
+    "MANGO_UNRESOLVED_OUTCOME_HOURS": "Runtime and mail inputs in OPERATIONS.md",
+    "MANGO_EMAIL_HANDOFFS_PER_MINUTE": "Runtime and mail inputs in OPERATIONS.md",
+    "MANGO_DELIVERABILITY_WINDOW_DAYS": "Runtime and mail inputs in OPERATIONS.md",
+    "MAIL_SENDER_NAME": "Runtime and mail inputs in OPERATIONS.md",
+    "MAIL_REPLY_TO": "Runtime and mail inputs in OPERATIONS.md",
+    "MAIL_PHYSICAL_ADDRESS": "Runtime and mail inputs in OPERATIONS.md",
+    "CLOUDFLARE_ACCOUNT_ID": "Cloudflare deployment inputs in OPERATIONS.md",
+    "CLOUDFLARE_API_TOKEN": "Cloudflare deployment inputs in OPERATIONS.md",
+    "MANGO_DEPLOY_ENV": "Cloudflare deployment inputs in OPERATIONS.md",
+    "MAIL_PROVIDER": "Choose the declared mail provider explicitly; see OPERATIONS.md",
+    "SENDGRID_API_KEY": "Use the same sender credential as the runtime mail key; see OPERATIONS.md",
+    "SESSION_SECRET": "Canonical Base auth profile; see Authentication and credential recovery in OPERATIONS.md",
+    "OWNER_EMAIL": "Canonical Base auth profile; see Authentication and credential recovery in OPERATIONS.md",
+    "SETUP_TOKEN": "Canonical Base auth profile; see Authentication and credential recovery in OPERATIONS.md"
+  },
+  "project": "just-every/mango",
+  "documentation": {
+    "document": "OPERATIONS.md"
+  },
+  "configuration": {
+    "module": "scripts/operations-config.mjs"
+  },
+  "loops": [
+    {
+      "id": "newsletter-worker",
+      "type": "worker",
+      "required": true,
+      "enabled": true
+    },
+    {
+      "id": "transactional-mail",
+      "type": "mail",
+      "required": true,
+      "enabled": true,
+      "provider": "sendgrid"
+    }
+  ],
+  "seedContract": {
+    "version": 1,
+    "profile": "first-party",
+    "adapter": "scripts/installer/local.mjs"
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "project": {
+    "schema": 1,
+    "projectId": "just-every/mango",
+    "name": "Mango",
+    "sourceRepository": "https://github.com/just-every/run-mango",
+    "license": "MIT",
+    "deployment": {
+      "target": "cloudflare-workers",
+      "artifactFile": "rer-worker-artifact.json"
+    },
+    "operations": {
+      "setup": "pnpm run deps",
+      "build": "pnpm run build",
+      "verify": "pnpm run verify",
+      "artifact": "node scripts/build-delivery-artifact.mjs",
+      "recovery": "Read OPERATIONS.md: stop writes and scheduled work, preserve exact source, applied migrations and matching private authority; export D1 and R2, restore into fresh resources, compare exports and verify native sessions and publication before routing traffic."
+    }
+  },
+  "managed": {
+    "workflowRef": "runeditrun/delivery/.github/workflows/trusted-build.yml@bf7a25abb44bec1457a7bc738ff63921d90fb52e",
+    "artifactFile": "rer-worker-artifact.json",
+    "buildProfile": "project",
+    "pnpmVersion": "10.12.4",
+    "verificationProfiles": [
+      "full"
+    ]
+  },
+  "setup": {
+    "manifestFile": "rer-setup.json"
+  },
+  "edition": {
+    "manifestFile": "edition.json",
+    "componentId": "just-every/mango"
+  },
+  "artifact": {
+    "specInputs": {
+      "publicVariableNames": [
+        "OWNER_EMAIL",
+        "RER_MANAGEMENT_ORIGIN",
+        "RER_INSTALLATION_ID",
+        "RER_OWNER_CLAIM_ISSUER",
+        "RER_OWNER_CLAIM_PUBLIC_KEYS",
+        "TURNSTILE_SITE_KEY",
+        "MAILBOX_RECEIPT_RECIPIENT",
+        "MAIL_PROVIDER",
+        "INITIAL_OPERATOR_EMAILS",
+        "MAIL_AUTH_FROM",
+        "MAIL_WEBHOOK_ID",
+        "MANGO_PUBLIC_BASE_URL",
+        "MANGO_APP_VERSION",
+        "MANGO_ALLOWED_LINK_HOSTS",
+        "MANGO_TEST_EMAIL_ALLOWLIST",
+        "MANGO_RECONCILIATION_INTERVAL_MINUTES",
+        "MANGO_UNRESOLVED_OUTCOME_HOURS",
+        "MANGO_EMAIL_HANDOFFS_PER_MINUTE",
+        "MANGO_DELIVERABILITY_WINDOW_DAYS",
+        "MAIL_SENDER_NAME",
+        "MAIL_REPLY_TO",
+        "MAIL_PHYSICAL_ADDRESS",
+        "COMMERCE_STORE_URL",
+        "AI_PROVIDER_MODEL",
+        "SMS_CONFIRMATION_SENDER",
+        "MANGO_TEST_SMS_ALLOWLIST",
+        "MANGO_SMS_HANDOFFS_PER_MINUTE"
+      ],
+      "secretNames": [
+        "SESSION_SECRET",
+        "SETUP_TOKEN",
+        "CONTACT_HASH_SALT"
+      ],
+      "optionalSecretNames": [
+        "SESSION_SIGNING_KEY",
+        "AUTH_SETUP_TOKEN",
+        "TURNSTILE_SECRET_KEY",
+        "MAILBOX_RECEIPT_URL",
+        "MAIL_PROVIDER_API_KEY",
+        "MAIL_WEBHOOK_SECRET",
+        "COMMERCE_API_TOKEN",
+        "COMMERCE_WEBHOOK_SECRET",
+        "AI_PROVIDER_API_KEY",
+        "SMS_PROVIDER_API_KEY",
+        "SMS_WEBHOOK_SECRET"
+      ],
+      "healthPath": "/health",
+      "migrationPrefix": "core-",
+      "extraMigrationDirectories": [
+        {
+          "binding": "DB",
+          "path": "migrations/ext",
+          "prefix": "ext-",
+          "optional": true
+        }
+      ],
+      "providerEffects": [
+        "outbound-mail",
+        "ai",
+        "outbound-webhooks",
+        "outbound-sms"
+      ],
+      "surfaces": {
+        "app": {
+          "path": "/signin",
+          "originVariable": "MANGO_PUBLIC_BASE_URL"
+        },
+        "page": {
+          "path": "/",
+          "originVariable": "MANGO_PUBLIC_BASE_URL",
+          "readiness": [
+            {
+              "path": "/",
+              "statuses": [
+                200
+              ]
+            }
+          ]
+        }
+      },
+      "recovery": "Preserve source, applied migration history and matching CONTACT_HASH_SALT and session authority. Restore D1 and R2 into empty resources and compare exports before routing traffic."
+    }
+  }
+}

@@ -1,0 +1,6 @@
+/* The closing call to action, centred: the hairline above it sits midway between the last band and its heading, with
+   more room below its buttons than a section has. */
+.mango-landing .closing { padding-top: var(--rhythm-end); padding-bottom: max(80px, calc(144 * var(--u))); text-align: center; }
+.mango-landing .closing-title { font-size: var(--sec-title); letter-spacing: -0.03em; line-height: 1.04; }
+.mango-landing .closing-line { margin-top: var(--head-gap); color: var(--ms-ink-soft); font-size: max(17px, calc(21 * var(--u))); text-wrap: pretty; }
+.mango-landing .closing-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px max(16px, calc(24 * var(--u))); margin-top: var(--lead-gap); }

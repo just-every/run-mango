@@ -1,0 +1,36 @@
+/* Mango's public pages (the landing and /docs) share the frame below, scoped under .mango-site so the operator app's
+   Tailwind preflight and global rules and these pages never leak into each other. The palette is palette.css on :root;
+   only the landing's 1536px design measures (--ms-gutter, --u) live here.
+   The page sets its own document background and colour scheme, so a dark-mode browser still sees warm paper. */
+html:has(.mango-site), body:has(.mango-site) { margin: 0; padding: 0; background: #fbf7ee; color: #1d1b17; color-scheme: light; }
+.mango-site {
+  --ms-gutter: clamp(22px, 5.6vw, 86px);
+  /* One design pixel of the 1536px-wide approved design, never larger than a real pixel. */
+  --u: min(100vw / 1536, 1px);
+  /* A column whose main grows, so the footer sits at the bottom of a short page. */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+  color: var(--ms-ink);
+  color-scheme: light;
+  background: var(--ms-ground);
+  font-family: var(--ms-sans);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  font-synthesis: none;
+}
+.mango-site *, .mango-site *::before, .mango-site *::after { box-sizing: border-box; }
+.mango-site h1, .mango-site h2, .mango-site h3, .mango-site p, .mango-site ul, .mango-site ol, .mango-site figure { margin: 0; padding: 0; }
+.mango-site ul, .mango-site ol { list-style: none; }
+.mango-site h1, .mango-site h2, .mango-site h3 { font-family: var(--ms-serif); font-weight: 400; font-optical-sizing: auto; letter-spacing: -0.02em; line-height: 1.08; text-wrap: balance; }
+.mango-site a { color: inherit; text-decoration: none; }
+.mango-site svg { display: block; }
+.mango-site a:focus-visible, .mango-site button:focus-visible { outline: 3px solid var(--ms-ink); outline-offset: 4px; border-radius: 3px; }
+.mango-site main { display: block; flex: 1 0 auto; }
+.mango-site main:focus { outline: none; }
+/* A hyphenated compound, a clock time with its am or pm, and a paragraph's last two words stay on one line (site/BodyText). */
+:is(.mango-site, .mango-app) .nowrap { white-space: nowrap; }

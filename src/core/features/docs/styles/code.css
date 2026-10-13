@@ -1,0 +1,34 @@
+/* Code blocks: a sheet of warm paper with the landing's pencil outline and hatched shadow (build/blocks.ts), set in a
+   quiet monospace. A line longer than the sheet scrolls inside it. Highlighting is weight and a muted comment, not colour;
+   shell commands get no weight at all (to a reader, `exec` in `pnpm exec` is not a keyword), only muted comments and
+   faintly tinted strings. */
+.mango-docs .docs-prose .docs-code { max-width: var(--md-measure); margin: 1.5em 0 1.75em; }
+.mango-docs .paper.docs-code::before { inset: 10px -6px -7px 8px; }
+.mango-docs .docs-code .paper-face { box-shadow: 0 12px 20px -16px rgb(84 64 28 / 0.38), 0 1px 3px rgb(84 64 28 / 0.06); }
+.mango-docs .docs-code pre { margin: 0; overflow-x: auto; padding: 18px 22px 19px; border-radius: 6px; color: var(--ms-ink); font-family: var(--ms-mono); font-size: 14.5px; line-height: 1.7; tab-size: 2; white-space: pre; }
+.mango-docs .docs-code pre:focus-visible { outline: 3px solid var(--ms-ink); outline-offset: 3px; }
+.mango-docs .docs-code pre code { display: block; width: max-content; min-width: 100%; max-width: none; padding: 0; border: 0; border-radius: 0; background: none; color: inherit; font-size: inherit; line-height: inherit; overflow-wrap: normal; }
+.mango-docs .docs-code [class*="hljs-"] { color: inherit; font-style: normal; font-weight: inherit; }
+.mango-docs .docs-code :is(.hljs-keyword, .hljs-built_in, .hljs-literal, .hljs-attr, .hljs-attribute, .hljs-name, .hljs-section, .hljs-title) { font-weight: 600; }
+.mango-docs .docs-code :is(.hljs-string, .hljs-number) { color: #55642a; }
+.mango-docs .docs-code :is(.hljs-comment, .hljs-quote) { color: #6f675a; font-style: italic; }
+.mango-docs .docs-code code:is(.language-bash, .language-sh, .language-zsh, .language-shell) [class*="hljs-"]:not(.hljs-comment) { font-weight: inherit; }
+
+/* A line too long for the sheet fades into the paper at the sheet's edge while there is more of it to scroll to, and
+   at the start once scrolled, so a cut line reads as scrolling rather than broken; the code is one block as wide as
+   its longest line, so the sheet's padding follows that line's last character. Without scroll-driven animation the
+   line scrolls as before, without the fades. */
+@supports (timeline-scope: --docs-code) {
+  .mango-docs .docs-code .paper-face { timeline-scope: --docs-code; }
+  .mango-docs .docs-code pre { scroll-timeline: --docs-code inline; }
+  .mango-docs .docs-code .paper-face::before, .mango-docs .docs-code .paper-face::after { position: absolute; top: 0; bottom: 0; width: 44px; background: inherit; content: ''; opacity: 0; pointer-events: none; animation: linear both; animation-timeline: --docs-code; }
+  .mango-docs .docs-code .paper-face::before { left: 0; border-radius: 6px 0 0 6px; mask-image: linear-gradient(to left, transparent, #000 70%); animation-name: docs-code-start; }
+  .mango-docs .docs-code .paper-face::after { right: 0; border-radius: 0 6px 6px 0; mask-image: linear-gradient(to right, transparent, #000 70%); animation-name: docs-code-end; }
+  @keyframes docs-code-start { from { opacity: 0; } 12% { opacity: 1; } to { opacity: 1; } }
+  @keyframes docs-code-end { from { opacity: 1; } 88% { opacity: 1; } to { opacity: 0; } }
+  /* The fades follow the reader's own scrolling, not a clock, so they stay when the site's motion is off (../../site/styles/motion.css). */
+  @media (prefers-reduced-motion: reduce) {
+    .mango-site .mango-docs .docs-code .paper-face::before { animation: docs-code-start linear both !important; animation-timeline: --docs-code !important; }
+    .mango-site .mango-docs .docs-code .paper-face::after { animation: docs-code-end linear both !important; animation-timeline: --docs-code !important; }
+  }
+}

@@ -1,0 +1,5 @@
+Hello *|FNAME|*,
+
+The spring beds are in. Read the full note: https://garden.example.test/spring
+
+Unsubscribe: *|UNSUB|*

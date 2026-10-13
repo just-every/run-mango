@@ -1,0 +1,51 @@
+/* Running text from the Markdown: Outfit at 17px with relaxed leading on a 680px measure, Newsreader h2 and h3, sunny
+   bullets, numbered sun discs for steps, links underlined in mango, and inline code on warm chips. The shared resets
+   (margins, list styles) are put back for running text here. Running text wraps pretty, so no paragraph ends on a lone
+   word. */
+.mango-docs .docs-prose { max-width: var(--md-measure); color: var(--ms-ink-soft); font-size: 17px; line-height: 1.72; overflow-wrap: break-word; text-wrap: pretty; }
+.mango-docs .docs-prose > p:first-child { color: var(--ms-ink); font-size: 19px; line-height: 1.62; }
+.mango-docs .docs-prose :is(p, ul, ol, blockquote, .docs-table, .docs-callout) { margin: 0 0 1.15em; }
+.mango-docs .docs-prose > :last-child { margin-bottom: 0; }
+
+.mango-docs .docs-prose :is(h2, h3) { color: var(--ms-ink); text-wrap: balance; }
+.mango-docs .docs-prose h2 { margin: 2.2em 0 0.55em; font-size: max(30px, calc(36 * var(--u))); letter-spacing: -0.024em; line-height: 1.12; }
+.mango-docs .docs-prose h3 { margin: 1.8em 0 0.45em; font-size: max(23px, calc(25 * var(--u))); letter-spacing: -0.014em; line-height: 1.2; }
+.mango-docs .docs-prose :is(h4, h5, h6) { margin: 1.6em 0 0.4em; color: var(--ms-ink); font-size: 17px; font-weight: 600; line-height: 1.4; }
+.mango-docs .docs-prose :is(h2, h3, h4) + :is(h3, h4) { margin-top: 0.9em; }
+.mango-docs .docs-prose :is(strong, b) { color: var(--ms-ink); font-weight: 600; }
+.mango-docs .docs-prose hr { height: 1px; margin: 2.4em 0; border: 0; background: var(--ms-hairline); }
+
+/* Bullets are small mangoes; numbered steps sit on the landing's flat sun discs, their numerals in the sans. */
+.mango-docs .docs-prose ul { padding-left: 1.45em; }
+.mango-docs .docs-prose ol { padding-left: 2.55em; counter-reset: docs-step; }
+.mango-docs .docs-prose li { position: relative; }
+.mango-docs .docs-prose li + li { margin-top: 0.42em; }
+.mango-docs .docs-prose ul > li::before { position: absolute; top: 0.66em; left: -1.05em; width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #ffe08a, var(--ms-mango) 60%, var(--ms-mango-deep)); content: ''; }
+.mango-docs .docs-prose ol > li { counter-increment: docs-step; }
+.mango-docs .docs-prose ol > li + li { margin-top: 0.7em; }
+.mango-docs .docs-prose ol > li::before { position: absolute; top: 0.08em; left: -2.55em; display: grid; place-items: center; width: 1.72em; height: 1.72em; border-radius: 50%; background: var(--ms-sun-soft); color: var(--ms-ink); content: counter(docs-step); font-family: var(--ms-sans); font-size: 0.95em; font-variant-numeric: lining-nums tabular-nums; font-weight: 500; line-height: 1; }
+.mango-docs .docs-prose li > :is(ul, ol) { margin: 0.42em 0 0; }
+.mango-docs .docs-prose li > p { margin-bottom: 0.5em; }
+
+/* Links: ink, underlined in mango, the underline turning ink on hover. External links carry a small arrow. */
+.mango-docs .docs-prose a { color: var(--ms-ink); text-decoration: underline; text-decoration-color: var(--ms-mango); text-decoration-thickness: 2px; text-underline-offset: 4px; transition: text-decoration-color 0.18s; }
+.mango-docs .docs-prose a:hover { text-decoration-color: var(--ms-ink); }
+.mango-docs .docs-prose a:is([href^="http:"], [href^="https:"])::after { display: inline-block; margin-left: 0.12em; font-size: 0.8em; text-decoration: none; content: "\2197" / ""; }
+
+/* Inline code: a warm chip, quiet enough to read through. A chip is one piece: a line wraps before it, never inside it,
+   unless the chip alone is wider than the line (a long path on a phone), which then wraps within its own box. */
+.mango-docs .docs-prose code { display: inline-block; max-width: 100%; padding: 0.08em 0.36em 0.1em; border: 1px solid #efdfb6; border-radius: 5px; background: #fcf1d8; color: #3a3125; font-family: var(--ms-mono); font-size: 0.84em; line-height: 1.45; overflow-wrap: anywhere; }
+
+/* Tables: ruled in ink and hairline; the wrapper scrolls only when a table cannot fit. */
+.mango-docs .docs-prose > .docs-table { width: fit-content; min-width: min(var(--md-measure), 100%); max-width: 100%; }
+.mango-docs .docs-table { overflow-x: auto; }
+.mango-docs .docs-table table { width: 100%; border-collapse: collapse; font-size: 15.5px; line-height: 1.55; }
+.mango-docs .docs-table :is(th, td) { padding: 10px 16px 10px 0; text-align: left; vertical-align: top; }
+.mango-docs .docs-table th { border-bottom: 1.5px solid var(--ms-ink); color: var(--ms-ink); font-weight: 600; }
+.mango-docs .docs-table td { border-bottom: 1px solid var(--ms-hairline); }
+.mango-docs .docs-table td:last-child { min-width: 14em; }
+.mango-docs .docs-table code { overflow-wrap: normal; }
+.mango-docs .docs-table:focus-visible { outline: 3px solid var(--ms-ink); outline-offset: 4px; border-radius: 4px; }
+.mango-docs .docs-table .docs-align-left { text-align: left; }
+.mango-docs .docs-table .docs-align-center { text-align: center; }
+.mango-docs .docs-table .docs-align-right { text-align: right; }

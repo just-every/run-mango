@@ -1,0 +1,17 @@
+/* The docs home's head: the eyebrow, the Introduction title (the page's one h1) and its stroke, then the welcome as a
+   standfirst under it (a Newsreader greeting a size below the title, and one line), beside a small drawing of a written
+   page and its envelope, placed as shares of the drawing's box. A hairline closes
+   the head before the page text. */
+.mango-docs .docs-page-head--welcome { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 250px); align-items: center; gap: 22px 40px; padding-bottom: max(26px, calc(34 * var(--u))); border-bottom: 1px solid var(--ms-hairline); }
+.mango-docs .docs-welcome-title { max-width: 19em; margin-top: max(18px, calc(24 * var(--u))); color: var(--ms-ink-soft); font-family: var(--ms-serif); font-size: max(22px, calc(26 * var(--u))); letter-spacing: -0.015em; line-height: 1.25; text-wrap: balance; }
+.mango-docs .docs-welcome-lead { max-width: 32em; margin-top: 8px; color: var(--ms-muted); font-size: 17px; line-height: 1.55; text-wrap: pretty; }
+
+.mango-docs .docs-welcome-art { width: 100%; aspect-ratio: 320 / 210; }
+.mango-docs .docs-welcome-art .art-inner > * { top: var(--y); left: var(--x); width: var(--w); height: var(--h, auto); rotate: var(--r, 0deg); }
+.mango-docs .dw-sheet { --x: 50%; --y: 3%; --w: 40%; --h: 66%; --r: 7deg; }
+.mango-docs .dw-sheet .paper-face { padding: 16cqw 7cqw 0; }
+.mango-docs .dw-sheet-lines { display: grid; gap: 3.4cqw; }
+.mango-docs .dw-sheet-lines i { display: block; height: 0.9cqw; border-radius: 1cqw; background: #b5ad9e; opacity: 0.75; }
+.mango-docs .dw-sheet-lines i:nth-child(2) { width: 86%; }
+.mango-docs .dw-sheet-lines i:nth-child(4) { width: 58%; }
+.mango-docs .dw-envelope { --x: 10%; --y: 32%; --w: 68%; --h: 60%; --r: -5deg; z-index: 1; }

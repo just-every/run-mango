@@ -1,0 +1,1 @@
+CREATE INDEX contact_suppressions_destination_channel_idx ON contact_suppressions(destination_hash, channel);

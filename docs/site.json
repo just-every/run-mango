@@ -1,0 +1,160 @@
+{
+  "sections": [
+    {
+      "title": "Get started",
+      "pages": [
+        {
+          "slug": "",
+          "source": "docs/introduction.md",
+          "label": "Introduction",
+          "description": "What Mango is, how a newsletter moves through it, and what you need to run your own copy."
+        },
+        {
+          "slug": "install",
+          "source": "docs/install.md",
+          "label": "Install and deploy",
+          "description": "Run Mango on your computer, then deploy it to your own Cloudflare account."
+        },
+        {
+          "slug": "first-newsletter",
+          "source": "docs/first-newsletter.md",
+          "label": "Write your first newsletter",
+          "description": "Create a draft in the app, write the message, choose who receives it, preview it and save it."
+        }
+      ]
+    },
+    {
+      "title": "Run your newsletter",
+      "pages": [
+        {
+          "slug": "signup-and-consent",
+          "source": "docs/signup-and-consent.md",
+          "label": "Signup and consent",
+          "description": "How the hosted signup page works, what consent evidence Mango records, and how unsubscribing works."
+        },
+        {
+          "slug": "importing-contacts",
+          "source": "docs/importing-contacts.md",
+          "label": "Importing contacts",
+          "description": "Bring existing contacts into Mango from a CSV file while keeping consent evidence and opt-outs intact."
+        },
+        {
+          "slug": "approval-and-sending",
+          "source": "docs/approval-and-sending.md",
+          "label": "Approval and sending",
+          "description": "How Mango checks a draft, how you approve and schedule one exact saved revision, and how to cancel queued sends."
+        },
+        {
+          "slug": "delivery-reports",
+          "source": "docs/delivery-reports.md",
+          "label": "Delivery reports",
+          "description": "What the campaign list and each campaign's results page show, and which facts come from your mail provider."
+        },
+        {
+          "slug": "going-live",
+          "source": "docs/going-live.md",
+          "label": "Going live",
+          "description": "What a sender needs before the first real send, which items Mango checks itself, and what you supply."
+        }
+      ]
+    },
+    {
+      "title": "Move in",
+      "pages": [
+        {
+          "slug": "moving-in",
+          "source": "docs/moving-in.md",
+          "label": "Moving in from an email tool",
+          "description": "Choose a documented audience export, map its columns and preserve its subscription restrictions in Mango."
+        }
+      ]
+    },
+    {
+      "title": "Operate",
+      "pages": [
+        {
+          "slug": "team-and-settings",
+          "source": "docs/team-and-settings.md",
+          "label": "Team and settings",
+          "description": "How operators, invitations and email sign-in work, and how to set your sender identity."
+        },
+        {
+          "slug": "backup-and-export",
+          "source": "docs/backup-and-export.md",
+          "label": "Backup and export",
+          "description": "What you can export from Mango today, how to bring it back, and what is not covered yet."
+        }
+      ]
+    }
+  ],
+  "githubOnly": [
+    {
+      "source": "ACCEPTANCE.md",
+      "reason": "Release evidence gates for the contract clauses, for maintainers"
+    },
+    {
+      "source": "AGENTS.consumer.md",
+      "reason": "Instructions for coding agents working in an owner's copy of the source"
+    },
+    {
+      "source": "AGENTS.md",
+      "reason": "Contributor and coding-agent rules for working on Mango"
+    },
+    {
+      "source": "BASELINE.md",
+      "reason": "Security, privacy and operations requirement clauses, for maintainers"
+    },
+    {
+      "source": "CHANGELOG.md",
+      "reason": "Release history for maintainers, which names internal requirement records"
+    },
+    {
+      "source": "CLAUDE.md",
+      "reason": "A one-line pointer to AGENTS.md for coding agents"
+    },
+    {
+      "source": "CONTRACT.md",
+      "reason": "Product requirement clauses, for maintainers and reviewers"
+    },
+    {
+      "source": "DIVERGENCE.md",
+      "reason": "Design decisions record for maintainers"
+    },
+    {
+      "source": "HANDOVER.md",
+      "reason": "Maintainer orientation and current verification scope"
+    },
+    {
+      "source": "OPERATIONS.md",
+      "reason": "Maintainer operating description that also covers optional modules; the operator steps are in Install and deploy"
+    },
+    {
+      "source": "README.md",
+      "reason": "The repository front page, with developer commands and maintainer notes; the docs home is Introduction"
+    },
+    {
+      "source": "RELEASE-STATUS.md",
+      "reason": "Private release status and open release obligations, for maintainers"
+    },
+    {
+      "source": "RENDERING.md",
+      "reason": "Rendering ownership record for maintainers"
+    },
+    {
+      "source": "RUN-LOCALLY.md",
+      "reason": "Short developer command guide; the operator steps are in Install and deploy"
+    },
+    {
+      "source": "SEED-COMMAND-CONTRACT.md",
+      "reason": "Command contract for seed maintainers and coding agents"
+    },
+    {
+      "source": "VERIFYING.md",
+      "reason": "Verification profiles for maintainers"
+    },
+    {
+      "source": ".publish-check/README.md",
+      "reason": "Publication review rules for maintainers"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+/* The landing drawings' pen glyphs and arrows (the shared paper and stamp are in ../../site/styles). */
+.mango-landing .glyph-tick { fill: none; stroke: var(--ms-leaf-deep); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.mango-landing .glyph-checkdot circle { fill: #3f8a48; }
+.mango-landing .glyph-checkdot path { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mango-landing .glyph-opendot { fill: #fffdf8; stroke: #a59c8a; stroke-width: 1.4; }
+.mango-landing .glyph-padlock-shackle { fill: none; stroke: #2f7a3a; stroke-width: 2.6; stroke-linecap: round; }
+.mango-landing .glyph-padlock-body { fill: #3f8a48; }
+.mango-landing .glyph-padlock-hole { stroke: #e9f3e2; stroke-width: 2.4; stroke-linecap: round; }
+.mango-landing .glyph-pencil { overflow: visible; stroke-linejoin: round; }
+.mango-landing .glyph-pencil-eraser { fill: #f2a99b; stroke: #c98275; stroke-width: 1.1; }
+.mango-landing .glyph-pencil-ferrule { fill: #d8d1c2; stroke: #9f978a; stroke-width: 1.1; }
+.mango-landing .glyph-pencil-body { fill: #ffcf47; stroke: #d29a14; stroke-width: 1.1; }
+.mango-landing .glyph-pencil-facet { fill: none; stroke: #e9ad1f; stroke-width: 1.1; }
+.mango-landing .glyph-pencil-wood { fill: #f6dfb2; stroke: #c9a46a; stroke-width: 1.1; }
+.mango-landing .glyph-pencil-lead { fill: #3d3832; }
+.mango-landing .glyph-mail { fill: #fff9e6; stroke: #f2b51c; stroke-width: 1.9; stroke-linejoin: round; stroke-linecap: round; }
+.mango-landing .pen-arrow { overflow: visible; fill: none; stroke: #3d3832; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.mango-landing .pen-arrow path { vector-effect: non-scaling-stroke; }

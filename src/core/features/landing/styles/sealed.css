@@ -1,0 +1,12 @@
+/* The back of a sealed letter (mail/SealedEnvelope), in the consent drawing and the Deliver step: envelope paper with
+   its pencil outline and hatched shadow (paper.css), the top flap alone folded down, a shade deeper and lifted by a
+   soft shadow, and a round mango sticker with a firm rim sealing its point. Sized in cqw of whichever drawing holds it. */
+.mango-landing .sealed-paper { width: 100%; height: 100%; }
+.mango-landing .sealed-paper .paper-face { overflow: hidden; }
+.mango-landing .sealed-folds { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.mango-landing .sealed-folds path { vector-effect: non-scaling-stroke; }
+.mango-landing .sealed-flap { filter: drop-shadow(0 0.5cqw 0.5cqw rgb(122 92 40 / 0.16)); }
+.mango-landing .sealed-flap-fill { fill: #f7e6c2; stroke: none; }
+.mango-landing .sealed-flap-edge { stroke: #c9b080; stroke-width: 1.1; }
+.mango-landing .sealed-seal { position: absolute; top: 57.7%; left: 50%; display: grid; place-items: center; width: 22%; aspect-ratio: 1; border: 2px solid #e2a423; border-radius: 50%; background: radial-gradient(circle at 40% 38%, #fff3c9 0%, #ffe492 62%, #fbd56a 100%); box-shadow: 0 0 0 1px rgb(140 100 30 / 0.3), 0 0.4cqw 0.8cqw rgb(84 64 28 / 0.24); translate: -50% -50%; rotate: -8deg; }
+.mango-landing .sealed-fruit { width: 66%; height: auto; }

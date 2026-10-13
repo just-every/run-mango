@@ -1,0 +1,46 @@
+/* Mango's one palette, type pair and shared measures: the landing, the docs and the operator app all read these.
+   Custom properties on :root style nothing by themselves, so declaring them globally changes no page. */
+:root {
+  --ms-ground: #fbf7ee;
+  --ms-paper: #fffdf8;
+  --ms-paper-warm: #fdf5e3;
+  --ms-paper-deep: #f3ecdd;
+  --ms-envelope: #f8ebcf;
+  --ms-envelope-deep: #efdab0;
+  --ms-ink: #1d1b17;
+  --ms-ink-soft: #37332d;
+  --ms-muted: #5c574f;
+  /* 3.47:1 on the ground: decoration only (separators, slashes), never text. */
+  --ms-faint: #8b8476;
+  --ms-pencil: #a59c8a;
+  --ms-hairline: #eadcb8;
+  --ms-line: #e4dccb;
+  /* Form control boundaries: 4.44:1 on paper, 4.22:1 on the ground. */
+  --ms-control: #7d7666;
+  --ms-sun: #ffcf47;
+  --ms-sun-hover: #ffc21f;
+  --ms-sun-soft: #ffe17a;
+  --ms-sun-wash: #fff2cc;
+  --ms-sun-line: #efd38a;
+  --ms-amber: #8c5b0c;
+  --ms-wait: #7a4f08;
+  --ms-mango: #f6b828;
+  --ms-mango-deep: #e99a1c;
+  --ms-leaf: #4f7d3e;
+  --ms-leaf-deep: #2d6232;
+  --ms-leaf-wash: #e6f0dc;
+  --ms-leaf-line: #c5d9b3;
+  --ms-tomato: #b5452a;
+  --ms-tomato-deep: #9a3a22;
+  --ms-tomato-wash: #fdf0ea;
+  --ms-tomato-line: #e9c3b5;
+  --ms-serif: Newsreader, 'Newsreader Fallback', 'Newsreader Fallback Times', Georgia, serif;
+  --ms-sans: Outfit, 'Outfit Fallback', 'Avenir Next', 'Segoe UI', sans-serif;
+  --ms-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --ms-shadow-card: 0 1px 2px rgb(84 64 28 / 0.06);
+  --ms-shadow-lift: 0 12px 20px -16px rgb(84 64 28 / 0.38), 0 1px 3px rgb(84 64 28 / 0.06);
+  --ms-shadow-pop: 0 24px 48px -24px rgb(84 64 28 / 0.45), 0 2px 6px rgb(84 64 28 / 0.08);
+  --ms-radius: 6px;
+  --ms-radius-control: 4px;
+  --ms-max: 1536px;
+}

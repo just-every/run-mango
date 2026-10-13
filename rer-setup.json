@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "title": "Mango",
+  "groups": [
+    {
+      "id": "owner",
+      "label": "First owner"
+    },
+    {
+      "id": "configuration",
+      "label": "Installation configuration"
+    }
+  ],
+  "fields": [
+    {
+      "name": "OWNER_EMAIL",
+      "label": "Owner email",
+      "help": "Local sign-in is delivered to the development outbox. No email is sent.",
+      "kind": "email",
+      "required": true,
+      "prefill": "account-email",
+      "group": "owner"
+    },
+    {
+      "name": "SESSION_SECRET",
+      "label": "Session secret",
+      "kind": "secret",
+      "required": true,
+      "ownerVisible": false,
+      "input": "managed",
+      "generate": "hex",
+      "group": "configuration"
+    },
+    {
+      "name": "SETUP_TOKEN",
+      "label": "Private setup token",
+      "kind": "secret",
+      "required": true,
+      "ownerVisible": false,
+      "input": "managed",
+      "generate": "hex",
+      "group": "configuration"
+    },
+    {
+      "name": "CONTACT_HASH_SALT",
+      "label": "Contact authority salt",
+      "kind": "secret",
+      "required": true,
+      "ownerVisible": false,
+      "input": "managed",
+      "generate": "hex",
+      "group": "configuration"
+    }
+  ],
+  "steps": [
+    {
+      "type": "owner-claim",
+      "mode": "signed",
+      "emailField": "OWNER_EMAIL",
+      "tokenField": "SETUP_TOKEN",
+      "path": "/auth/owner-claim"
+    }
+  ]
+}

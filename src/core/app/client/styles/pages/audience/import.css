@@ -1,0 +1,133 @@
+/* The import: numbered sheets for the source, the mapping and the consent scope, then the reviewed preview, the
+   start bar and the saved import activity. */
+.audience-import-page { min-width: 0; }
+.audience-import-form { display: grid; gap: var(--sp-6); min-width: 0; }
+.audience-import-form > .validation-summary { margin: 0; }
+.audience-import-panel { min-width: 0; }
+.audience-import-panel > .muted-copy { max-width: 68ch; margin: 0 0 var(--sp-4); color: var(--ms-ink-soft); font-size: 14px; }
+
+/* A step's title: the docs step disc, then its eyebrow and heading. */
+.audience-import-section-title { display: flex; align-items: start; gap: var(--sp-3); margin-bottom: var(--sp-3); }
+.audience-import-section-title > span { display: grid; flex: none; width: 28px; aspect-ratio: 1; place-items: center; margin-top: 1px; border-radius: 50%; background: var(--ms-sun-soft); color: var(--ms-ink); font-size: 15px; font-weight: 500; line-height: 1; }
+.mango-app .audience-import-section-title h2 { margin: 0; }
+
+/* Selected files: a row each, with the preset beside the name. */
+.audience-import-files, .audience-import-job-list { display: grid; margin: 0; padding: 0; list-style: none; }
+.audience-import-files:not(:empty) { margin-bottom: var(--sp-4); border-bottom: 1px solid var(--ms-hairline); }
+.audience-import-file { display: grid; grid-template-columns: minmax(0, 1fr) minmax(14rem, 18rem) max-content; align-items: center; gap: 6px var(--sp-4); min-width: 0; padding: 14px 0; border-top: 1px solid var(--ms-hairline); }
+.audience-import-file__details { display: flex; min-width: 0; align-items: center; gap: var(--sp-3); }
+.audience-import-file__details > div { display: grid; min-width: 0; gap: 2px; }
+.audience-import-file__details strong { font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
+.audience-import-file__details small { color: var(--ms-muted); }
+.audience-import-file__icon { display: grid; flex: none; width: 40px; height: 40px; place-items: center; border-radius: var(--ms-radius-control); background: var(--ms-paper-deep); color: var(--ms-ink-soft); font-size: 11px; font-weight: 600; letter-spacing: .08em; }
+.audience-import-file__preset, .audience-import-mapping-grid label, .audience-import-consent-grid label { display: grid; min-width: 0; gap: 6px; }
+/* Remove is a text link (buttons.css), with room to tap. */
+.audience-import-file .audience-import-file__remove { justify-self: end; padding: var(--sp-2) var(--sp-1); font-size: 14px; }
+.audience-import-file__description { grid-column: 1 / -1; margin: 0 0 0 52px; color: var(--ms-muted); font-size: 13px; line-height: 1.45; }
+
+/* The file picker is a line button (buttons.css); the real input covers it so the label stays one click target. */
+.audience-import-upload { position: relative; overflow: hidden; }
+.audience-import-upload > span:first-child { font-size: 20px; line-height: 1; }
+.audience-import-upload input { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; opacity: 0; cursor: pointer; }
+.audience-import-panel .quiet-caption { margin: var(--sp-2) 0 0; }
+.audience-import-panel .quiet-caption + .quiet-caption { margin-top: 2px; }
+.audience-import-panel > .inline-error { margin: var(--sp-3) 0 0; }
+
+.audience-import-mappings { display: grid; gap: var(--sp-4); }
+.audience-import-mapping-file legend { max-width: 100%; overflow-wrap: anywhere; }
+.audience-import-mapping-grid, .audience-import-consent-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); }
+.audience-import-consent-grid__wide { grid-column: 1 / -1; }
+
+/* The step to the preview: a quiet line and the sun button, right-aligned under the sheets. */
+.audience-import-preview-action, .audience-import-final-action { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: var(--sp-4); }
+.audience-import-preview-action .muted-copy, .audience-import-final-action p { margin: 0; }
+.audience-import-preview-action .muted-copy { font-size: 14px; }
+.audience-import-preview-action .primary-action, .audience-import-final-action .primary-action { flex: none; }
+/* The start bar is the docs callout (notices.css) holding the sun button. */
+.audience-import-final-action { justify-content: space-between; }
+.audience-import-final-action > div { min-width: 0; }
+.audience-import-final-action .eyebrow { margin-bottom: var(--sp-1); }
+
+/* The reviewed preview. */
+.audience-import-review { min-width: 0; max-width: 100%; }
+.audience-import-review :is(.unsaved-notice, .audience-import-warnings) { margin: 0 0 var(--sp-4); }
+.audience-import-warnings .eyebrow { margin-bottom: 6px; }
+.audience-import-warnings ul, .audience-import-row-warnings { display: grid; gap: 4px; margin: 0; padding-left: 18px; color: var(--ms-tomato-deep); font-size: 14px; line-height: 1.45; }
+.audience-import-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--sp-3); margin: 0 0 var(--sp-6); }
+/* Total tiles are insets (surfaces.css); a count that needs attention turns tomato. */
+.audience-import-stats > .audience-import-stat--alert { background: var(--ms-tomato-wash); }
+.audience-import-stats dd { margin-top: 6px; }
+.audience-import-stats > .audience-import-stat--alert :is(dt, dd) { color: var(--ms-tomato-deep); }
+
+.audience-import-mapped-review { display: grid; gap: var(--sp-3); margin: 0 0 var(--sp-6); }
+.audience-import-mapped-review .eyebrow { margin: 0 0 var(--sp-1); }
+.audience-import-mapped-review h3 { margin: 0; }
+.audience-import-mapped-file h4 { margin: 0 0 var(--sp-2); font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.audience-import-mapped-file dl { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sp-2) var(--sp-4); margin: 0; }
+.audience-import-mapped-file dl > div { min-width: 0; }
+.audience-import-mapped-file dt { color: var(--ms-muted); font-size: 12px; font-weight: 500; line-height: 1.35; }
+.audience-import-mapped-file dd { margin: 2px 0 0; font-size: 14px; overflow-wrap: anywhere; }
+
+/* The row table: the system table (tables.css), wider, with stacked labelled rows on a phone. */
+.audience-import-table.responsive-table { min-width: 58rem; }
+.audience-import-table td { min-width: 0; vertical-align: top; }
+.audience-import-table td strong, .audience-import-row-file { display: block; }
+.audience-import-table td strong { font-weight: 500; }
+.audience-import-table td small { overflow-wrap: anywhere; }
+.audience-import-row-file { max-width: 14rem; overflow-wrap: anywhere; }
+.audience-import-row-reason { margin: 0 0 4px; color: var(--ms-tomato-deep); font-weight: 600; overflow-wrap: anywhere; }
+.audience-import-row-warnings { font-size: 13px; }
+.audience-import-pagination { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: var(--sp-4); margin-top: var(--sp-3); }
+.audience-import-pagination > p { margin: 0; }
+.audience-import-pagination > div { display: flex; align-items: center; gap: var(--sp-3); }
+.audience-import-pagination > div > span { color: var(--ms-muted); font-size: 13px; white-space: nowrap; }
+
+/* Saved import activity: a row per job with its progress. */
+.audience-import-jobs { min-width: 0; }
+.audience-import-job { min-width: 0; padding: var(--sp-4) 0; border-top: 1px solid var(--ms-hairline); }
+.audience-import-job:first-child { padding-top: 0; border-top: 0; }
+.audience-import-job:last-child { padding-bottom: 0; }
+.audience-import-job__heading, .audience-import-job__heading > div, .audience-import-job__actions { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+.audience-import-job__heading > div { flex-wrap: wrap; justify-content: start; }
+.audience-import-job__heading code { max-width: 100%; color: var(--ms-muted); font-size: 12px; overflow-wrap: anywhere; }
+.audience-import-job__heading > strong { flex: none; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.audience-import-job progress { display: block; width: 100%; height: 6px; margin: var(--sp-3) 0; overflow: hidden; border: 0; border-radius: 999px; background: var(--ms-paper-deep); color: var(--ms-leaf); -webkit-appearance: none; appearance: none; }
+.audience-import-job progress::-webkit-progress-bar { border-radius: 999px; background: var(--ms-paper-deep); }
+.audience-import-job progress::-webkit-progress-value { border-radius: 999px; background: var(--ms-leaf); }
+.audience-import-job progress::-moz-progress-bar { border-radius: 999px; background: var(--ms-leaf); }
+.audience-import-job > .inline-error { margin: 0 0 var(--sp-3); }
+.audience-import-job__actions { flex-wrap: wrap; justify-content: end; }
+.audience-import-job__actions:empty { display: none; }
+.audience-import-undo-confirm { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); }
+.audience-import-undo-confirm p { flex-basis: 100%; margin: 0; }
+
+@media (max-width: 900px) {
+  .audience-import-mapping-grid, .audience-import-consent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .audience-import-mapped-file dl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 680px) {
+  .audience-import-file { grid-template-columns: minmax(0, 1fr) max-content; gap: var(--sp-2) var(--sp-3); }
+  .audience-import-file__preset { grid-column: 1 / -1; grid-row: 2; }
+  .audience-import-file__remove { grid-column: 2; grid-row: 1; }
+  .audience-import-file__description { grid-column: 1 / -1; margin-left: 0; }
+  .audience-import-upload { width: 100%; justify-content: center; padding-block: var(--sp-2); white-space: normal; text-align: center; }
+  .audience-import-mapping-grid, .audience-import-consent-grid { grid-template-columns: minmax(0, 1fr); }
+  .audience-import-consent-grid__wide { grid-column: auto; }
+  .audience-import-preview-action, .audience-import-final-action { flex-direction: column; align-items: stretch; }
+  .audience-import-preview-action .primary-action, .audience-import-final-action .primary-action { width: 100%; }
+  .audience-import-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .audience-import-mapped-file dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .audience-import-table-scroll { overflow: visible; }
+  .audience-import-table.responsive-table, .audience-import-table tbody, .audience-import-table tr, .audience-import-table td { display: block; width: 100%; min-width: 0; }
+  .audience-import-table thead { display: none; }
+  .audience-import-table tbody tr { padding: var(--sp-3) 0; border-bottom: 1px solid var(--ms-hairline); }
+  .audience-import-table td { display: grid; grid-template-columns: minmax(6rem, .4fr) minmax(0, 1fr); align-items: start; gap: 2px var(--sp-3); padding: 5px 0; border: 0; overflow-wrap: anywhere; }
+  .audience-import-table td > * { grid-column: 2; }
+  .audience-import-table td small { margin-top: 0; }
+  .audience-import-table td::before { grid-row: span 2; content: attr(data-label); }
+  .audience-import-pagination { flex-direction: column; align-items: stretch; }
+  .audience-import-pagination > div { flex-wrap: wrap; justify-content: space-between; }
+  .audience-import-pagination .secondary-action { flex: 1; }
+  .audience-import-job__heading { flex-direction: column; align-items: start; }
+  .audience-import-job__actions > *, .audience-import-undo-confirm > button { flex: 1; }
+}

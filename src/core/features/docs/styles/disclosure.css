@@ -1,0 +1,14 @@
+/* The two disclosures of narrower screens, "Contents" (the section list) and "On this page": an outlined button like the
+   landing's secondary call to action that opens its list on a paper card. */
+.mango-docs :is(.docs-menu, .docs-toc-compact) summary { display: inline-flex; align-items: center; gap: 0.4em; min-height: 46px; max-width: 100%; padding: 0 18px; border: 1.5px solid #4a463f; border-radius: 4px; background: rgb(255 253 248 / 0.7); color: var(--ms-ink); font-size: 16px; line-height: 1.2; cursor: pointer; list-style: none; transition: background-color 0.18s; }
+.mango-docs :is(.docs-menu, .docs-toc-compact) summary:hover { background: var(--ms-paper); }
+.mango-docs :is(.docs-menu, .docs-toc-compact) summary::-webkit-details-marker { display: none; }
+.mango-docs :is(.docs-menu, .docs-toc-compact) summary::after { flex: none; width: 7px; height: 7px; margin: -4px 0 0 8px; border: solid currentColor; border-width: 0 1.5px 1.5px 0; content: ''; rotate: 45deg; }
+.mango-docs :is(.docs-menu details, .docs-toc-compact)[open] > summary::after { margin-top: 4px; rotate: 225deg; }
+.mango-docs :is(.docs-menu, .docs-toc-compact) summary:focus-visible { outline: 3px solid var(--ms-ink); outline-offset: 4px; }
+.mango-docs .docs-menu-current { min-width: 0; overflow: hidden; color: var(--ms-muted); text-overflow: ellipsis; white-space: nowrap; }
+.mango-docs :is(.docs-menu-list, .docs-toc-compact-list) { margin-top: 14px; }
+.mango-docs .paper:is(.docs-menu-list, .docs-toc-compact-list)::before { inset: 10px -6px -7px 8px; }
+.mango-docs :is(.docs-menu-list, .docs-toc-compact-list) .paper-face { padding: 18px 18px 20px 14px; box-shadow: 0 12px 20px -16px rgb(84 64 28 / 0.38), 0 1px 3px rgb(84 64 28 / 0.06); }
+.mango-docs .docs-toc-compact { margin-bottom: 28px; }
+.mango-docs .docs-toc-compact-list .paper-face { padding-left: 22px; }

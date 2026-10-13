@@ -1,0 +1,106 @@
+/* Campaigns page group: the campaign list and its starters, campaign detail and the scheduled results page. */
+
+/* Campaign starters, opened by "New campaign": three ways in, side by side. */
+.mango-app .new-campaign-panel h2 { margin: 0 0 var(--sp-5); }
+.starter-grid { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--sp-6); align-items: start; }
+.starter-group { display: grid; align-content: start; justify-items: start; gap: var(--sp-3); min-width: 0; }
+.starter-group + .starter-group { padding-left: var(--sp-6); border-left: 1px solid var(--ms-hairline); }
+.mango-app .starter-group h3 { margin: 0; }
+.starter-group p { margin: 0; }
+.starter-list { display: grid; width: 100%; margin: 0; padding: 0; list-style: none; }
+.starter-list li { display: grid; justify-items: start; gap: 6px; padding: var(--sp-3) 0; border-top: 1px solid var(--ms-hairline); }
+.starter-list li:first-child { padding-top: 0; border-top: 0; }
+.starter-list li:last-child { padding-bottom: 0; }
+.starter-list p, .starter-note { color: var(--ms-muted); font-size: 13px; line-height: 1.45; }
+/* Starter titles are real data (customer addresses, suggestion titles), so these buttons wrap. */
+.new-campaign-panel .secondary-action { max-width: 100%; padding-block: 8px; justify-content: flex-start; overflow-wrap: anywhere; text-align: left; white-space: normal; }
+.new-campaign-panel > .inline-error { margin: var(--sp-5) 0 0; }
+
+/* The list: filters, the count, then one row per campaign (name and channels, audience, state and date). */
+.campaign-filters { display: flex; flex-wrap: wrap; align-items: end; gap: var(--sp-3) var(--sp-4); }
+.campaign-filter { display: grid; gap: 6px; min-width: 0; }
+.mango-app .campaign-filter label { color: var(--ms-muted); font-size: 13px; }
+.mango-app .campaign-filter select { width: auto; min-width: 220px; }
+/* The count line and the rows reach 12px past the text, so a row's hover and focus ring have room. */
+.campaign-list__count { margin: var(--sp-5) -12px 0; padding: 0 12px var(--sp-3); border-bottom: 1px solid var(--ms-hairline); font-size: 14px; }
+.campaign-list__none { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-2) var(--sp-4); padding: var(--sp-6) 0 var(--sp-4); color: var(--ms-ink-soft); }
+.campaign-list__none p { margin: 0; }
+.campaign-list__rows { display: grid; margin-inline: -12px; }
+.campaign-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(220px, 300px) 10px; align-items: center; gap: var(--sp-3) var(--sp-6); min-width: 0; padding: 18px var(--sp-4) 18px var(--sp-3); border-top: 1px solid var(--ms-hairline); color: var(--ms-ink); text-decoration: none; transition: background-color .18s; }
+.campaign-row:first-child { border-top: 0; }
+.mango-app .campaign-row:is(:focus, :focus-visible) { outline-offset: -3px; }
+.campaign-row:hover { background: rgb(255 207 71 / .08); }
+.campaign-row::after { width: 8px; height: 8px; border-top: 1.5px solid var(--ms-muted); border-right: 1.5px solid var(--ms-muted); content: ''; rotate: 45deg; transition: border-color .18s; }
+.campaign-row:hover::after { border-color: var(--ms-ink); }
+.campaign-row__content { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; gap: 4px var(--sp-6); min-width: 0; }
+.campaign-row strong:empty { display: none; }
+.campaign-row strong { grid-column: 1; font-family: var(--ms-serif); font-size: 21px; font-weight: 400; letter-spacing: -0.015em; line-height: 1.2; overflow-wrap: anywhere; text-wrap: balance; }
+.campaign-row:hover strong { text-decoration: underline 2px var(--ms-mango); text-underline-offset: 5px; }
+.campaign-row__content > span { grid-column: 1; color: var(--ms-muted); font-size: 14px; }
+.campaign-row__audience { grid-column: 2; grid-row: 1 / span 2; margin: 0; color: var(--ms-muted); font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; }
+.campaign-row__meta { display: grid; justify-items: start; gap: 6px; min-width: 0; }
+.campaign-row small { max-width: 100%; color: var(--ms-muted); font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+
+/* No campaigns yet: the docs welcome pair, a blank lined sheet going out in its envelope. */
+.campaigns-empty-art .art-inner > * { top: var(--y); left: var(--x); width: var(--w); height: var(--h); rotate: var(--r); }
+.campaigns-empty-sheet { --x: 50%; --y: 3%; --w: 40%; --h: 66%; --r: 7deg; }
+.campaigns-empty-sheet .paper-face { --lines-gap: 3.4cqw; padding: 16cqw 7cqw 0; }
+.campaigns-empty-envelope { --x: 10%; --y: 32%; --w: 68%; --h: 60%; --r: -5deg; z-index: 1; }
+
+/* Campaign detail. */
+.two-column-detail { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: var(--sp-6); align-items: start; }
+.mango-app .uncertain-deliveries h2 { margin: 0 0 var(--sp-2); font-size: 20px; }
+.uncertain-deliveries p { margin: 0 0 var(--sp-2); font-weight: 400; }
+.uncertain-deliveries ul { display: grid; gap: 4px; margin: 0; padding-left: 18px; font-size: 14px; font-weight: 400; }
+
+/* Scheduled results: the head (with a stamped envelope while the campaign waits), then the steps beside the audience. */
+.scheduled-head { flex-wrap: nowrap; align-items: center; }
+.scheduled-head .overall-result { max-width: 60ch; margin: var(--sp-3) 0 0; color: var(--ms-ink-soft); font-size: 17px; line-height: 1.5; }
+.scheduled-head__recall { margin: 6px 0 0; color: var(--ms-muted); font-size: 14px; }
+.scheduled-head__art { flex: none; width: 176px; aspect-ratio: 380 / 230; margin-right: var(--sp-4); }
+.scheduled-head__envelope { top: 4%; left: 0; width: 100%; height: 88%; rotate: -4deg; }
+.scheduled-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: var(--sp-6); align-items: start; }
+.scheduled-layout__main, .scheduled-layout__side { display: grid; gap: var(--sp-6); min-width: 0; }
+.mango-app .cancellation-panel h2 { margin: 0 0 var(--sp-2); }
+.cancellation-panel p { margin: 0 0 var(--sp-5); }
+.scheduled-layout__main > .notice-note { margin: 0; }
+
+/* Every scheduled step: its state, when it sends and when its window closes, then its recipient outcomes. */
+.mango-app .step-results { display: grid; margin: var(--sp-4) 0 0; padding: 0; list-style: none; }
+.step-results > li { display: grid; gap: var(--sp-4); min-width: 0; padding: var(--sp-5) 0; border-top: 1px solid var(--ms-hairline); overflow-wrap: anywhere; }
+.step-results > li:first-child { padding-top: var(--sp-2); border-top: 0; }
+.step-results > li:last-child { padding-bottom: 0; }
+.step-result__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-2) var(--sp-4); }
+.mango-app .step-result__head h3 { margin: 0; }
+.step-result-state { margin: 0; }
+/* Step states the campaign pills do not name. */
+.step-result__timing { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.step-result__timing p { margin: 0; }
+.step-result__timing time { color: var(--ms-ink); font-weight: 500; }
+.step-result__timing .muted-copy { margin-top: 2px; }
+.step-result__timing .step-result__countdown { margin-top: 6px; color: var(--ms-ink); font-weight: 500; }
+.step-result__notes { display: grid; gap: 6px; color: var(--ms-ink-soft); font-size: 14px; }
+.step-result__notes:empty { display: none; }
+.step-result__notes p { margin: 0; }
+.disposition-counts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); gap: var(--sp-3); margin: 0; }
+.disposition-counts:empty { display: none; }
+.disposition-counts > div { display: grid; align-content: start; gap: 6px; }
+
+@media (max-width: 1000px) {
+  .starter-grid { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
+  .starter-group + .starter-group { padding: var(--sp-5) 0 0; border-top: 1px solid var(--ms-hairline); border-left: 0; }
+  .campaign-row { grid-template-columns: minmax(0, 1fr) minmax(180px, 250px) 10px; }
+  .campaign-row__content { grid-template-columns: minmax(0, 1fr); }
+  .campaign-row__audience { grid-column: 1; grid-row: auto; margin-top: 4px; }
+  .two-column-detail, .scheduled-layout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 680px) {
+  .campaign-filter { flex: 1 1 100%; }
+  .mango-app .campaign-filter select { width: 100%; min-width: 0; }
+  .campaign-row { grid-template-columns: minmax(0, 1fr) 10px; gap: var(--sp-3) var(--sp-4); padding-block: var(--sp-4); }
+  .campaign-row::after { grid-column: 2; grid-row: 1; align-self: start; margin-top: 10px; }
+  .campaign-row__meta { grid-column: 1; }
+  .campaign-row strong { font-size: 19px; }
+  .scheduled-head__art { display: none; }
+  .step-result__timing { grid-template-columns: minmax(0, 1fr); }
+}

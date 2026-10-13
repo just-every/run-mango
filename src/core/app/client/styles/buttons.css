@@ -1,0 +1,49 @@
+/* Buttons: square-cornered like the site's, Outfit, one line, at least 40px (44px on touch).
+   Sun is the one main action per view; the line button is everything else; tomato is a final destructive confirmation. */
+.primary-action, .secondary-action, .danger-action, .danger-action--line, .audience-import-upload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 40px;
+  padding: 0 var(--sp-4);
+  border: 1.5px solid transparent;
+  border-radius: var(--ms-radius-control);
+  color: var(--ms-ink);
+  cursor: pointer;
+  font-family: var(--ms-sans);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color .18s, border-color .18s, box-shadow .18s;
+}
+@media (pointer: coarse) { .primary-action, .secondary-action, .danger-action, .danger-action--line, .audience-import-upload { min-height: 44px; } }
+
+.primary-action { border-color: var(--ms-sun); background: var(--ms-sun); }
+.primary-action:hover:not(:disabled) { border-color: var(--ms-sun-hover); background: var(--ms-sun-hover); }
+
+/* The file picker (a label holding its input) wears the line button too. */
+.secondary-action, .danger-action--line, .audience-import-upload { border-color: #4a463f; background: rgb(255 253 248 / 0.7); }
+:is(.secondary-action, .audience-import-upload):hover:not(:disabled) { background: var(--ms-paper); box-shadow: 0 6px 16px -10px rgb(70 52 18 / 0.5); }
+.audience-import-upload:focus-within { outline: 3px solid var(--ms-ink); outline-offset: 3px; }
+
+.danger-action { border-color: var(--ms-tomato); background: var(--ms-tomato); color: #fff; }
+.danger-action:hover:not(:disabled) { border-color: var(--ms-tomato-deep); background: var(--ms-tomato-deep); }
+.danger-action--line { border-color: var(--ms-tomato-deep); color: var(--ms-tomato-deep); }
+.danger-action--line:hover:not(:disabled) { background: var(--ms-tomato-wash); }
+
+.mango-app button:disabled, .primary-action:disabled, .secondary-action:disabled, .danger-action:disabled { cursor: not-allowed; opacity: .55; box-shadow: none; }
+
+/* Inline and tertiary actions: ink, underlined in mango like the docs links. */
+.text-link, .secondary-link, .audience-import-file__remove { color: var(--ms-ink); font-weight: 500; text-decoration: underline 2px var(--ms-mango); text-underline-offset: 4px; transition: text-decoration-color .18s; }
+:is(.text-link, .secondary-link, .audience-import-file__remove):hover { text-decoration-color: var(--ms-ink); }
+button:is(.text-link, .audience-import-file__remove) { padding: 0; border: 0; background: transparent; cursor: pointer; }
+
+/* Add and remove inside an editor: compact text links, 32px tall for the pointer. An add leads with a plus; the adds
+   that belong together share a row. */
+.edit-action { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; font-size: 14px; }
+.edit-action--add::before { flex: none; width: 12px; height: 12px; background: currentColor; content: ''; -webkit-mask: var(--icon-plus) center / contain no-repeat; mask: var(--icon-plus) center / contain no-repeat; }
+.edit-actions { display: flex; flex-wrap: wrap; gap: 0 var(--sp-6); }

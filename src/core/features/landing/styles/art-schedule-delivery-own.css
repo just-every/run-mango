@@ -1,0 +1,60 @@
+/* The scheduling, delivery report and ownership drawings, each a 410 x 300 scene (bands.css). */
+.mango-landing .timetable-art, .mango-landing .report-art, .mango-landing .account-art { aspect-ratio: 410 / 300; }
+
+/* Schedule: sizes in cqw of a 410px scene. */
+.mango-landing .t-card { --x: 4%; --y: 15%; --w: 70%; --h: 76%; --r: -2.5deg; z-index: 2; }
+.mango-landing .t-card .paper-face { display: flex; flex-direction: column; padding: 4.6cqw 5cqw; }
+.mango-landing .t-title { font-family: var(--ms-serif); font-size: 5.2cqw; letter-spacing: -0.01em; }
+.mango-landing .t-zone { display: inline-flex; align-items: center; gap: 1.4cqw; margin-top: 1.4cqw; color: #5c574f; font-size: 3.2cqw; }
+.mango-landing .t-zone-icon { width: 3.6cqw; height: auto; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.mango-landing .t-step { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; margin-top: 3.4cqw; padding: 2.6cqw 3cqw; border: 1px solid rgb(165 156 138 / 0.5); border-radius: 1.4cqw; background: #fffefb; }
+.mango-landing .t-when { display: grid; gap: 0.6cqw; font-size: 3.4cqw; }
+.mango-landing .t-when b { font-weight: 500; }
+.mango-landing .t-when small { color: #5c574f; font-size: 2.9cqw; }
+.mango-landing .t-state { padding: 1cqw 2.2cqw; border-radius: 4cqw; background: #fff1bf; color: #4d3d0c; font-size: 3cqw; font-weight: 500; }
+/* The letter the schedule will send, stamped but not yet posted, tucked behind the card and turned against it, its
+   stamped corner showing above and to the right with room round it. */
+.mango-landing .t-envelope { --x: 47%; --y: 7%; --w: 50%; --h: 37.5%; --r: 3.5deg; z-index: 1; }
+.mango-landing .t-envelope .envelope-stamp { top: 9%; right: 7%; rotate: -5deg; }
+
+/* Delivery report. */
+.mango-landing .d-card { --x: 6%; --y: 3%; --w: 70%; --h: 76%; --r: 2deg; }
+.mango-landing .d-card .paper-face { display: flex; flex-direction: column; gap: 2.4cqw; padding: 4.4cqw 5cqw; }
+.mango-landing .d-title { margin-bottom: 0.6cqw; font-family: var(--ms-serif); font-size: 5.2cqw; letter-spacing: -0.01em; }
+.mango-landing .d-row { display: flex; align-items: center; gap: 2.6cqw; padding-bottom: 2cqw; border-bottom: 1px solid rgb(165 156 138 / 0.32); font-size: 3.5cqw; }
+.mango-landing .d-row:last-child { padding-bottom: 0; border-bottom: 0; }
+.mango-landing .d-row > svg, .mango-landing .d-mark { width: 5.2cqw; height: auto; flex: none; }
+.mango-landing .d-mark { display: grid; place-items: center; aspect-ratio: 1; border-radius: 50%; background: #efe9dc; color: #57524a; }
+.mango-landing .d-row--bounced .d-mark { background: #fbe7c2; color: #7a4d0a; }
+.mango-landing .d-row--complaint .d-mark { background: #f8ddd3; color: #8c321d; }
+.mango-landing .d-icon { width: 62%; height: auto; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.mango-landing .d-label { color: #3d3933; }
+.mango-landing .d-value { margin-left: auto; font-weight: 500; font-variant-numeric: tabular-nums; }
+.mango-landing .d-slip { --x: 50%; --y: 77%; --w: 46%; --h: 18%; --r: -3deg; z-index: 2; }
+.mango-landing .d-slip .paper-face { flex-direction: row; display: flex; align-items: center; gap: 2.4cqw; padding: 0 3.6cqw; }
+.mango-landing .d-slip .glyph-checkdot { width: 5.6cqw; height: auto; flex: none; }
+.mango-landing .d-slip-text { display: grid; color: #3a5a34; font-size: 2.9cqw; line-height: 1.25; }
+.mango-landing .d-slip-text b { color: #23411f; font-size: 3.7cqw; font-weight: 500; }
+/* Side by side the report's band is flipped, so the drawing's outer edge is its left one and sits on the content edge
+   (bands.css): card and slip move left together. Narrower the drawing is centred, and keeps the places above. */
+@media (min-width: 861px) {
+  .mango-landing .d-card { --x: 1%; }
+  .mango-landing .d-slip { --x: 45%; }
+}
+
+/* Your account, its stamp, and the CSV sliding out. */
+.mango-landing .o-account { --x: 4%; --y: 8%; --w: 56%; --h: 66%; --r: -3deg; z-index: 1; }
+.mango-landing .o-account .paper-face { display: flex; flex-direction: column; gap: 2.2cqw; padding: 4.6cqw 4.6cqw; }
+.mango-landing .o-title { display: inline-flex; align-items: center; gap: 1.6cqw; margin-bottom: 1cqw; font-family: var(--ms-serif); font-size: 5.2cqw; letter-spacing: -0.01em; }
+.mango-landing .o-title-icon { width: 5cqw; height: auto; fill: none; stroke: var(--ms-leaf-deep); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.mango-landing .o-row { display: flex; align-items: center; gap: 2cqw; padding: 1.8cqw 2.4cqw; border-radius: 1.2cqw; background: #f6f0e3; color: #3d3933; font-size: 3.3cqw; }
+.mango-landing .o-row i { width: 2.2cqw; aspect-ratio: 1; border-radius: 50%; background: var(--ms-leaf); }
+.mango-landing .o-stamp { --x: 46%; --y: 2%; --w: 12%; --r: 8deg; z-index: 2; }
+.mango-landing .o-arrow { --x: 62%; --y: 29%; --w: 12%; --r: 38deg; z-index: 3; }
+.mango-landing .o-sheet { --x: 39%; --y: 46%; --w: 59%; --h: 43%; --r: 4deg; z-index: 2; }
+.mango-landing .o-sheet .paper-face { display: flex; flex-direction: column; gap: 2cqw; padding: 3.4cqw 3.8cqw; }
+.mango-landing .o-sheet-name { display: inline-flex; align-items: center; gap: 1.4cqw; font-size: 3.4cqw; font-weight: 500; }
+.mango-landing .o-sheet-icon { width: 3.8cqw; height: auto; fill: none; stroke: var(--ms-leaf-deep); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mango-landing .o-grid { display: grid; grid-template-columns: 2.3fr 1fr 1.35fr; border-top: 1px solid #d9d1c0; border-left: 1px solid #d9d1c0; font-size: 2.3cqw; }
+.mango-landing .o-grid > * { overflow: hidden; padding: 0.9cqw 1cqw; border-right: 1px solid #d9d1c0; border-bottom: 1px solid #d9d1c0; color: #4f4a43; white-space: nowrap; text-overflow: clip; }
+.mango-landing .o-grid b { background: #fbf1d4; color: var(--ms-ink); font-weight: 500; }

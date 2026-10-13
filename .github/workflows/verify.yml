@@ -1,0 +1,31 @@
+name: Verify
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reclaim unused hosted runner toolchain space
+        if: runner.environment == 'github-hosted' && runner.os == 'Linux'
+        shell: bash
+        run: |
+          # rer dev and preview refuse to start below 15 GiB free. This disposable JavaScript job uses
+          # none of Android, .NET or Haskell; Node, browser dependencies, the checkout and caches stay intact.
+          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
+          sudo rm -rf -- /usr/local/lib/android /usr/share/dotnet /usr/local/.ghcup
+          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.20.0
+          cache: pnpm
+      - run: node scripts/rer.mjs install
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: node scripts/rer.mjs verify

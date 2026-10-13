@@ -1,0 +1,106 @@
+import { capabilityName, capabilityNextStep, plainServiceText } from '@/core/app/client/ui/product-copy';
+import { requestJson } from '@/core/app/client/lib/api';
+import { Link } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
+
+import { formatDate, titleCase } from '@/core/app/client/lib/format';
+import type { DecisionDesk } from '@/core/app/client/lib/types';
+import { useResource } from '@/core/app/client/lib/use-resource';
+import { EmptyState } from '@/core/app/client/ui/empty-state';
+import { LoadState } from '@/core/app/client/ui/layout';
+import { Envelope } from '@/core/features/site/drawings/Envelope';
+
+import { ProposalDetail } from './proposal-detail';
+import { ProposalQueue } from './proposal-queue';
+
+function ProposalCapabilityState({ providers }: { providers: DecisionDesk['sourceStatus']['providers'] }) {
+  const unavailable = providers.filter((provider) => !provider.configured);
+  const art = (
+    <div className="empty-art art" aria-hidden="true">
+      <div className="art-inner"><Envelope className="desk-empty__envelope" seed={41} cancelled={false} /></div>
+    </div>
+  );
+  return (
+    <EmptyState id="proposal-empty-title" title="No campaign suggestions yet" className="desk-empty" art={art} action={<Link className="secondary-action" to="/app/campaigns">Review campaigns</Link>}>
+      {unavailable.length ? (
+        <>
+          <p>These connections need attention before suggestions are available.</p>
+          <ul className="capability-list">
+            {unavailable.map((provider) => (
+              <li key={provider.id}>
+                <strong>{capabilityName(provider.adapter)}</strong>
+                <span>{plainServiceText(provider.detail)} {capabilityNextStep(provider.adapter)}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p>You can still review your saved campaigns.</p>
+      )}
+    </EmptyState>
+  );
+}
+
+export function DecisionDeskPage() {
+  const { data, error, loading, reload } = useResource<DecisionDesk>('/api/decision-desk');
+  const [generationSuccess,setGenerationSuccess]=useState(false);
+  const [generating,setGenerating]=useState(false),[generationNotice,setGenerationNotice]=useState('');
+  const generate=async()=>{setGenerating(true);setGenerationNotice('');setGenerationSuccess(false);try {const result=await requestJson<{kind:string;detail?:string;error?:string}>('/api/proposals/generate',{method:'POST',body:'{}'});setGenerationSuccess(result.data.kind==='proposed');setGenerationNotice(result.data.kind==='proposed'?'Suggestion ready. Review it before approving.':result.data.detail??'Generation failed. No substitute content was created; manual authoring remains available.');await reload();} catch {setGenerationNotice('Generation could not be confirmed. Reload to inspect suggestions.');} finally {setGenerating(false);}};
+  const [selectedId, setSelectedId] = useState<string>();
+
+  useEffect(() => {
+    if (!data?.proposals.length) return;
+    if (!data.proposals.some((entry) => entry.proposal.id === selectedId)) {
+      setSelectedId(data.proposals[0].proposal.id);
+    }
+  }, [data, selectedId]);
+
+  if (loading) return <LoadState />;
+  if (!data) return <LoadState error={error} />;
+  const entry = data.proposals.find((candidate) => candidate.proposal.id === selectedId);
+  const showing = Boolean(entry && selectedId);
+
+  return (
+    <div className="desk-page page-flow">
+      <header className="page-head desk-head">
+        <div className="page-head__text">
+          <h1>Decision Desk</h1>
+          <h2 className="page-head__lead">Nothing sends until you approve it.</h2>
+        </div>
+        <div className="page-head__actions">
+          {/* Sun once per view: while a suggestion is open, its "Use this" is the sun button and generating steps back. */}
+          <button type="button" className={showing ? 'secondary-action' : 'primary-action'} disabled={generating} onClick={()=>void generate()}>{generating?'Generating…':'Generate suggestion'}</button>
+          <Link className="secondary-action" to="/app/campaigns">Write a campaign</Link>
+        </div>
+      </header>
+      {generationNotice?<p className={generationSuccess?'action-notice':'inline-error'} role={generationSuccess?'status':'alert'}>{plainServiceText(generationNotice)}</p>:null}
+      {entry && selectedId ? (
+        <div className="decision-desk__proposals">
+          <ProposalQueue proposals={data.proposals} selectedId={selectedId} onSelect={setSelectedId} />
+          <ProposalDetail entry={entry} />
+        </div>
+      ) : (
+        <ProposalCapabilityState providers={data.sourceStatus.providers} />
+      )}
+      <section className="source-status panel" aria-labelledby="source-status-title">
+        <div className="section-heading">
+          <h2 id="source-status-title">Store data</h2>
+          <Link className="text-link" to="/app/store">Manage sync</Link>
+        </div>
+        {data.sourceStatus.sourceSyncs.length ? (
+          <div className="source-status__grid">
+            {data.sourceStatus.sourceSyncs.map((source) => (
+              <article key={source.id}>
+                <strong>{titleCase(source.sourceType)}</strong>
+                <span>{source.lastSuccessfulAt ? `Synced ${formatDate(source.lastSuccessfulAt)}` : 'Not synced'}</span>
+                {source.lastError ? <small>{source.lastError}</small> : null}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className="muted-copy">No source sync state has been recorded.</p>
+        )}
+      </section>
+    </div>
+  );
+}

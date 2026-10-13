@@ -1,0 +1,50 @@
+/* One idea per band (sections/Bands.tsx). Wider than 860px the heading and points sit beside a large drawing, which
+   alternates sides down the page. From 721px to 860px the heading runs across the band with the points and drawing
+   side by side under it; at 720px and narrower everything stacks: heading, drawing, points. Each drawing is a size
+   container whose pieces are placed as shares of its box and sized in --q (or cqw), so it grows and shrinks as one
+   piece. */
+.mango-landing .feature-band { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; column-gap: var(--split); }
+.mango-landing .feature-band--flip .band-copy { grid-column: 2; grid-row: 1; }
+.mango-landing .feature-band--flip .band-art { grid-column: 1; grid-row: 1; }
+.mango-landing .band-copy { max-width: 600px; }
+.mango-landing .band-copy .features { margin-top: var(--lead-gap); }
+
+/* The wide consent scene may grow to --art-max; the others stop smaller, so their type stays no larger than the points
+   beside them. Side by side, the drawing's outer edge sits on the content edge, like the header's logo and last link,
+   and the drawing is centred against the sub-heading and points (its margin keeps it from rising beside the heading). */
+.mango-landing .band-art { --art-max: 640px; width: 100%; max-width: var(--art-max); }
+.mango-landing .band-art:is(.approval-art, .timetable-art, .report-art, .account-art) { --art-max: 480px; }
+.mango-landing .feature-band .band-art { align-self: center; justify-self: end; margin-top: calc(1.04 * var(--sec-title) + var(--head-gap)); }
+.mango-landing .feature-band--flip .band-art { justify-self: start; }
+.mango-landing .band-art .art-inner > * { left: var(--x); top: var(--y); width: var(--w); height: var(--h, auto); rotate: var(--r, 0deg); }
+/* --q is one hundredth of the drawing's width times --k: a taller layout (art-consent-approval-tall.css) enlarges every
+   card and its type together. */
+.mango-landing .band-art .art-inner { --q: calc(1cqw * var(--k, 1)); }
+
+/* Narrower, the words take the larger share and the drawings are their tall versions. */
+@media (max-width: 1180px) {
+  .mango-landing .feature-band { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+  .mango-landing .feature-band--flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); }
+  .mango-landing .band-art, .mango-landing .band-art:is(.approval-art, .timetable-art, .report-art, .account-art) { --art-max: 420px; }
+}
+
+/* The heading across the band; the points, and the drawing beside them, under it. The band's copy dissolves into the
+   grid so its heading and its points can sit apart. */
+@media (max-width: 860px) {
+  .mango-landing .feature-band, .mango-landing .feature-band--flip { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); grid-template-areas: 'head head' 'list art'; column-gap: 48px; row-gap: var(--lead-gap); }
+  .mango-landing .feature-band .band-copy { display: contents; }
+  .mango-landing .feature-band .sec-head { grid-area: head; }
+  .mango-landing .feature-band .features { grid-area: list; margin-top: 0; }
+  .mango-landing .feature-band .band-art { grid-area: art; align-self: start; justify-self: center; margin-top: 0; }
+}
+
+/* One column: heading, drawing, points, the same order as the hero. */
+@media (max-width: 720px) {
+  .mango-landing .feature-band, .mango-landing .feature-band--flip { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'art' 'list'; }
+  .mango-landing .band-art, .mango-landing .band-art:is(.approval-art, .timetable-art, .report-art, .account-art) { --art-max: 460px; }
+}
+
+/* A phone's drawings are the tall ones, as wide as the column but never a whole screen tall. */
+@media (max-width: 600px) {
+  .mango-landing .band-art, .mango-landing .band-art:is(.approval-art, .timetable-art, .report-art, .account-art) { --art-max: 440px; }
+}

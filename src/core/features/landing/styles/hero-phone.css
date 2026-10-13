@@ -1,0 +1,16 @@
+/* The hero scene on a phone: fewer, larger pieces in a taller box, none covering another's words. Every card and its
+   type grow by --k (hero-art.css); the editor, the approved card under it, the envelope, then the subscriber and the
+   delivery count side by side. The audience card and the joining arrows step aside, and the scene's description is
+   the phone's own (Art's phoneLabel). */
+@media (max-width: 600px) {
+  .mango-landing .hero-art { --k: 1.45; aspect-ratio: 350 / 500; }
+  .mango-landing .hero-art .art-label--wide { display: none; }
+  .mango-landing .hero-art .art-label--phone { display: block; }
+  .mango-landing .h-editor { --x: 1%; --y: 2.4%; --w: 62%; --h: 23.6%; --r: -4deg; }
+  .mango-landing .h-editor-stamp { --x: 51%; --y: 0.4%; --w: 14%; }
+  .mango-landing .h-approved { --x: 41%; --y: 27.4%; --w: 55%; --h: 9.2%; --r: 3deg; }
+  .mango-landing .h-envelope { --x: 9%; --y: 41.5%; --w: 78%; --h: 29%; --r: -4deg; }
+  .mango-landing .h-subscriber { --x: 1.5%; --y: 74%; --w: 43%; --h: 23.6%; --r: 1.5deg; }
+  .mango-landing .h-delivered { --x: 48%; --y: 77%; --w: 51%; --h: 14.6%; --r: -2deg; }
+  .mango-landing .h-audience, .mango-landing .h-arrow { display: none; }
+}
