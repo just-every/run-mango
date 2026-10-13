@@ -10,6 +10,25 @@
 
 <p align="center"><a href="https://run-mango.com">run-mango.com</a> · <a href="https://justevery.com">Part of Just Every</a> · <a href="LICENSE">MIT licensed</a></p>
 
+<p align="center">
+  <a href="https://justevery.com/#vol-mango"><img src=".github/assets/media/preview.gif" width="800" alt="Mango: a reader signs up with her consent, her consent is recorded, and the campaign goes only to eligible contacts"></a>
+</p>
+<p align="center"><a href="https://justevery.com/#vol-mango"><b>Watch the full demo</b></a> · 45 seconds</p>
+
+<p align="center">
+  <img src=".github/assets/media/flow.webp" width="800" alt="From yes to send: Rosa ticks the consent box, Grace's consent is on record, and the audience counts 7 eligible contacts with 2 excluded">
+</p>
+
+<p align="center">
+  <img src=".github/assets/media/screen-1.webp" width="800" alt="Mango's contact ledger: nine contacts with email and SMS consent per channel, one suppressed and one unsubscribed"><br>
+  <sub>Consent is recorded per contact and per channel.</sub>
+</p>
+
+<p align="center">
+  <img src=".github/assets/media/screen-2.webp" width="800" alt="Reviewing the Field Notes campaign for Sunday 18 October: draft saved, the saved audience and Approve & schedule"><br>
+  <sub>Review the exact revision before it is scheduled.</sub>
+</p>
+
 # Mango
 
 Mango is an approval-first newsletter desk. Public source: [just-every/run-mango](https://github.com/just-every/run-mango), version 0.1.0. CONTRACT.md preserves the complete product target; ACCEPTANCE.md separates the current local milestone from release obligations. The default newsletter profile supports operator-authored email with optional commerce, SMS and AI. Wider contract obligations and unverified release gates remain documented in ACCEPTANCE.md.
