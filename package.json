@@ -83,6 +83,9 @@
     "onlyBuiltDependencies": [
       "esbuild",
       "workerd"
-    ]
+    ],
+    "overrides": {
+      "miniflare>undici": "7.29.1"
+    }
   }
 }

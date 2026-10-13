@@ -9,5 +9,10 @@
   },
   "devDependencies": {
     "miniflare": "5.20260907.0-alpha"
+  },
+  "pnpm": {
+    "overrides": {
+      "miniflare>undici": "7.29.1"
+    }
   }
 }
