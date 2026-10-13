@@ -24,63 +24,53 @@ You need a Cloudflare account, its account ID, an API token scoped for the work,
 
 First, set `storeTimezone`, `organizationName` and `landingSummary` in `src/ext/config.ts`. Schedules use `storeTimezone`; the default is Australia/Brisbane.
 
-Next, put the inputs listed in `.env.example` into the environment of the shell that runs the commands. The file lists the names with empty values. `rer doctor` reports which inputs are missing or invalid, without contacting any provider or printing values.
+Create `.rer/hosted.env` once from the repository root. This refuses to overwrite an existing file and gives it private permissions:
 
-```bash
-export CLOUDFLARE_ACCOUNT_ID=...
-export CLOUDFLARE_API_TOKEN=...
-export MANGO_DEPLOY_ENV=production
-export MANGO_PUBLIC_BASE_URL=https://<your-worker>.workers.dev
-export MANGO_APP_VERSION=0.1.0
-export MANGO_ALLOWED_LINK_HOSTS=example.com
-export MANGO_TEST_EMAIL_ALLOWLIST=you@example.com
-export OWNER_EMAIL=you@example.com
-export SESSION_SECRET=...        # 32+ random characters
-export CONTACT_HASH_SALT=...     # keep the same value for the life of the install
-export SETUP_TOKEN=...           # 32+ random characters
-export MAIL_PROVIDER=sendgrid    # or resend
-export MAIL_PROVIDER_API_KEY=...
-export MAIL_AUTH_FROM=news@example.com
-export MAIL_WEBHOOK_SECRET=...
-export MAIL_WEBHOOK_ID=...
-export MAIL_SENDER_NAME="Example News"
-export MAIL_REPLY_TO=hello@example.com
-export MAIL_PHYSICAL_ADDRESS="1 Example Street, Brisbane QLD 4000, Australia"
-export MANGO_RECONCILIATION_INTERVAL_MINUTES=15
-export MANGO_UNRESOLVED_OUTCOME_HOURS=1
-export MANGO_EMAIL_HANDOFFS_PER_MINUTE=3000
-export MANGO_DELIVERABILITY_WINDOW_DAYS=30
+```sh
+node --input-type=module <<'NODE'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+mkdirSync('.rer', { recursive: true, mode: 0o700 });
+const values = { MANGO_DEPLOY_ENV: 'production', ...Object.fromEntries(['SESSION_SECRET', 'SETUP_TOKEN', 'CONTACT_HASH_SALT'].map(name => [name, randomBytes(32).toString('hex')])) };
+const deployment = JSON.parse(readFileSync('deploy.json', 'utf8'));
+for (const name of ['CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_API_TOKEN', ...deployment.secrets.map(input => input.environment)]) values[name] ??= '';
+// Deployment and sender verification read product settings directly from deployment.vars.
+writeFileSync('.rer/hosted.env', Object.entries(values).map(([name, value]) => `${name}='${value}'`).join('\n') + '\n', { flag: 'wx', mode: 0o600 });
+NODE
 ```
 
-The last four numbers are the limits `seed.json` declares; it labels them estimates that have not been load-tested. `MANGO_PUBLIC_BASE_URL` must be HTTPS. For SendGrid, `MAIL_WEBHOOK_SECRET` is the base64 public verification key of its signed event webhook. For Resend it is the Svix signing secret.
+Fill it privately with your account credentials, owner email, mail settings and allowed link hosts; choose `MANGO_DEPLOY_ENV` for this installation. Keep the independent generated session, setup and contact keys with your backups. Mango never reads Wrangler credential files.
 
-### Keep secrets secret
-
-Generate `SESSION_SECRET`, `SETUP_TOKEN` and `CONTACT_HASH_SALT` yourself, for example with `openssl rand -hex 32`, and keep them independent. Supply them, your Cloudflare token and your mail keys privately; Mango never reads Wrangler credential files, and your Cloudflare token is used only by the commands on your machine. Keep all of it out of version control, and load it from a protected runner or secret manager rather than typing secrets into a shell that records history.
+Product settings, including `MAIL_PROVIDER`, app version, timing and rate limits, live in `deploy.json` `vars`. Both deployment and sender verification read that definition. Change those settings there and deploy the change; shell overrides do not change the sender runner's declared settings. For SendGrid, `MAIL_WEBHOOK_SECRET` is the base64 public verification key of its signed event webhook. For Resend it is the Svix signing secret.
 
 ### Check, then deploy
 
+From the repository root:
+
 ```bash
-rer deploy --environment production --dry-run
-rer deploy --environment production
+set -a
+. ./.rer/hosted.env
+set +a
+rer deploy --environment "$MANGO_DEPLOY_ENV" --dry-run
+rer deploy --environment "$MANGO_DEPLOY_ENV"
+pnpm run hosted claim --environment "$MANGO_DEPLOY_ENV"
 ```
 
 - `--dry-run` checks your inputs and builds locally without any provider request.
-- `deploy` finds or creates the Worker, D1 database, R2 bucket and Queue for the environment (`mango-production`, `mango-production-db`, `mango-production-assets-bucket` and `mango-production-mango-jobs`), applies the remote migrations, uploads the Worker and its assets, then reads back the bindings and checks the deployment's health after a real database ping. A five-minute scheduled job is part of the Worker.
+- `deploy` finds or creates the Worker, D1 database, R2 bucket and Queue for the selected environment, applies remote migrations, uploads the Worker and its assets, then verifies bindings and health after a real database ping. A five-minute scheduled job is part of the Worker.
+- `hosted claim` validates the successful receipt and claims the first owner through Base's native bootstrap without printing credentials. A repeat keeps the existing owner.
 
-`deploy` records which resources it owns in `.rer/deploy/<environment>.json`. Back that file up: a later deploy needs it, and a same-named resource it does not own is refused rather than taken over.
+`deploy` records owned resources and the canonical HTTPS origin in `.rer/deploy/<environment>.json`. Back that file up with the matching private inputs: later deployment needs it, and same-named unowned resources are refused. No manually guessed origin is needed. Open the deployed site, request an email sign-in link as `OWNER_EMAIL`, confirm it and save your business sender details in **Set up your sender identity**.
 
-### Create the first owner
+### Verify your sender
 
-With `SETUP_TOKEN` still set, send one request from your computer. The `Origin` header must be exactly your public origin, with no trailing slash or path.
+If you configure the trusted receiver, supply both its authenticated URL and diagnostic recipient privately in `.rer/hosted.env`, and include that recipient in `MANGO_TEST_EMAIL_ALLOWLIST`. The URL must use the trusted connector's public DNS host in the form `https://<public-receiver-host>/receipts?token=<private capability>`, with no other query parameters, port, fragment or user information. URL-encode the nonempty capability and keep the entire URL private. The connector must implement the Cloudflare Email Routing receipt semantics described in the repository's `OPERATIONS.md`; a generic mailbox API is insufficient. After completing sender setup, the same loaded `.rer/hosted.env` supports:
 
 ```bash
-curl -s -o /dev/null -w '%{http_code}\n' -X POST "$MANGO_PUBLIC_BASE_URL/auth/bootstrap" \
-  -H "Origin: $MANGO_PUBLIC_BASE_URL" -H 'Content-Type: application/json' \
-  -d '{"token":"<your SETUP_TOKEN>","displayName":"Owner","returnTo":"/setup"}'
+node scripts/sender-verification.mjs inspect
 ```
 
-It works once, on an empty installation, and creates the owner named by `OWNER_EMAIL`. Expect `303`. Then open `/signin` in a browser and request a link as usual. If the sender identity from your `MAIL_SENDER_NAME`, `MAIL_AUTH_FROM`, `MAIL_REPLY_TO` and `MAIL_PHYSICAL_ADDRESS` inputs is incomplete, signing in opens **Set up your sender identity** first.
+The runner reads `deploy.json` variables and the selected deployment's validated origin and owned D1 target. Missing inputs name themselves before any remote requests. A conflicting shell origin is refused. `inspect` checks authority without sending mail; run `node scripts/sender-verification.mjs prepare` to approve the diagnostic body shown in `scripts/sender-verification-entry.ts`, then use its returned ID with `node scripts/sender-verification.mjs send <id>` and `node scripts/sender-verification.mjs observe <id>`. Inspect again before approving a campaign. Provider/DNS checks alone do not grant sender authority.
 
 ### Optional: email design with 12ui
 

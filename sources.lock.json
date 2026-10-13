@@ -828,7 +828,7 @@
       "executable": false
     },
     "docs/install.md": {
-      "sha256": "cc1acb8492f471482295f075053c3edfe2f3a4fc9eb4f4874bb4004e165ad0e1",
+      "sha256": "b8b26e33b450384087aec2c72fa5b9f289839a08d254314d89bb5c5a5e99c1e4",
       "executable": false
     },
     "docs/introduction.md": {
@@ -1044,7 +1044,7 @@
       "executable": false
     },
     "OPERATIONS.md": {
-      "sha256": "b3f217e759478b9392db1a27c12768ceb26278a5464cee3514b6601ae72790c4",
+      "sha256": "ffabd30a14254d7b399e0683784d5c2b90f188900646bcba0891e4805ebf9908",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -1108,7 +1108,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "dd78d1d65eb92aa392dc8063d00e53a3f0242aafc64e6ad08d6189aa869d0261",
+      "sha256": "494529d05bea95fd7087b02c9a4b356c9d427356ba2255efa4309095abff5312",
       "executable": false
     },
     "playwright.config.js": {
@@ -1116,7 +1116,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "ebe6f25029a31cb7d7caad606213ae4a4cf5d619b07f1222aeeda75d47702f48",
+      "sha256": "71b6c03865684d71242dc67fb58eeefcd01ace037dd433e0719f9cbfd70d54a2",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -1439,12 +1439,16 @@
       "sha256": "f0d8cf73cc7eb479f96fab43887509bc7238737fce4f7ee92eeaea1b30588cb4",
       "executable": false
     },
+    "scripts/sender-verification-config.mjs": {
+      "sha256": "6d3fea2d5af03995f9d1b7b0fe51ee273418ea7ad13d36efc9e253b8e34e2d1f",
+      "executable": false
+    },
     "scripts/sender-verification-entry.ts": {
-      "sha256": "ed450a589de0a638d1258453faec6cc83591a9f465118685dd4e3e0883e1f295",
+      "sha256": "a7c7a988eb8829b39cbf4e1b41a362bd27f2f934db10c0d764105b1c5dca5fae",
       "executable": false
     },
     "scripts/sender-verification.mjs": {
-      "sha256": "50bfc4bee733f8ef26caf3686312eada475715c2822e5827fc6da11ad45875cc",
+      "sha256": "4269679ea49c25595bca97d17d0d4adf1fd6959c6135e90936e90eba74619ed3",
       "executable": false
     },
     "scripts/start-synthetic-review.mjs": {
@@ -2068,7 +2072,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/audience-import-jobs.tsx": {
-      "sha256": "fd6f7460cc44554c85a1175866ded0d5deff006077cb96ca5ce4718ddebde741",
+      "sha256": "527a6ce56871c9fad91fdd447f744b085b912a006992587d79d6abb5448adf48",
       "executable": false
     },
     "src/core/features/audience/ui/audience-import-mapping.ts": {
@@ -2088,7 +2092,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/audience-import.tsx": {
-      "sha256": "c28461d193c01e168a8e1ab51d3f31ce5da1e4c0555d6929bc9008660be712b4",
+      "sha256": "534c255bc07398ec3eaf1278d9edda0a9621f4c2143dabe25527b1874859555f",
       "executable": false
     },
     "src/core/features/audience/ui/audience-page.tsx": {

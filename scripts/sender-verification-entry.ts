@@ -9,11 +9,30 @@ import type { AppBindings } from '../src/core/shared/platform';
 import { loadSenderSettings } from '../src/core/features/settings/sender-persistence';
 import { senderIdentitySchema } from '../src/core/features/settings/sender-validation';
 
-export async function senderVerificationCommand(bindings: AppBindings, action: string, challengeId?: string) {
+function senderConfiguration(bindings: AppBindings) {
   const config = readProductionConfig(bindings);
-  senderIdentitySchema.parse(await loadSenderSettings({database: createDatabase(bindings.DB), config}));
-  if (!config.mailboxReceiptUrl || !config.mailboxReceiptRecipient) throw new Error('MAILBOX_RECEIPT_URL and MAILBOX_RECEIPT_RECIPIENT are required.');
+  if (!config.mailboxReceiptUrl) throw new Error('MAILBOX_RECEIPT_URL is required.');
+  if (!config.mailboxReceiptRecipient) throw new Error('MAILBOX_RECEIPT_RECIPIENT is required.');
   const receiver = createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient);
+  return { config, receiver };
+}
+
+/** Only local configuration is inspected here; never forward operational or provider error text. */
+export function senderVerificationInputError(bindings: AppBindings): string | undefined {
+  try { senderConfiguration(bindings); }
+  catch (error) {
+    const message = error instanceof Error ? error.message : '';
+    const names = [...new Set(message.match(/\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b/g) ?? [])];
+    if (names.length) return `${names.join(', ')} configuration is missing or invalid.`;
+    if (message === 'receiver-configuration-invalid') return 'MAILBOX_RECEIPT_URL or MAILBOX_RECEIPT_RECIPIENT is invalid.';
+    if (message.startsWith('Auth configuration profiles conflict.')) return 'Auth configuration profiles conflict. Restore the matching installation configuration.';
+    return 'Sender verification runtime configuration is invalid.';
+  }
+}
+
+export async function senderVerificationCommand(bindings: AppBindings, action: string, challengeId?: string) {
+  const { config, receiver } = senderConfiguration(bindings);
+  senderIdentitySchema.parse(await loadSenderSettings({database: createDatabase(bindings.DB), config}));
   const verification = createSenderVerification({database:createDatabase(bindings.DB),config,receiver});
   if (action === 'prepare') {
     const challenge = await verification.prepareChallenge({recipient:receiver.recipient,

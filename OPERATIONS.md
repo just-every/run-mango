@@ -20,7 +20,7 @@ Hosted configuration uses canonical `OWNER_EMAIL`, `SESSION_SECRET`, `SETUP_TOKE
 
 ## Mail and sender authority
 
-Set `MAIL_PROVIDER=sendgrid` or `resend` (omitted selects the existing Resend installation). `MAIL_PROVIDER_API_KEY` supplies that provider's key. `MAIL_WEBHOOK_SECRET` is SendGrid's base64 SPKI ECDSA public verification key when using SendGrid; for Resend it is the existing Svix signing secret. `MAIL_WEBHOOK_ID` identifies the configured event webhook. Transactional auth uses Base mail directly. SendGrid newsletter submission also uses Base mail; its delivery correlation metadata is **not** deduplication.
+Select `MAIL_PROVIDER` in `deploy.json` `vars` (`sendgrid` in this checkout, or `resend`). `MAIL_PROVIDER_API_KEY` supplies that provider's key. `MAIL_WEBHOOK_SECRET` is SendGrid's base64 SPKI ECDSA public verification key when using SendGrid; for Resend it is the existing Svix signing secret. `MAIL_WEBHOOK_ID` identifies the configured event webhook. Transactional auth uses Base mail directly. SendGrid newsletter submission also uses Base mail; its delivery correlation metadata is **not** deduplication.
 
 For a separately authorized installation, configure SendGrid's signed event webhook at `https://<deployment>/webhooks/mail/sendgrid`. Incoming original bytes are verified by Base before normalization; supported facts persist through Mango's existing inbox, destination suppression and conflict/replay safeguards before success. Submissions, processed events and delivered events remain distinct. SendGrid uses the approved single-attempt policy; uncertain handoffs require operator review and never automatically retry. Sender authority requires provider/DNS verification and the approved trusted receiver's original evidence. Configure the account-level webhook setting separately and verify live events before relying on delivery evidence. Sender lease, consent, saved revision and approval checks are unchanged. Resend keeps its existing marketing transport/reconciliation contract; it does not inherit claims from Base transactional mail.
 
@@ -34,16 +34,18 @@ Receiver material must come from an authenticated original-message mailbox conne
 
 ```sh
 node --input-type=module <<'NODE'
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { randomBytes } from 'node:crypto';
 mkdirSync('.rer', { recursive: true, mode: 0o700 });
-const values = Object.fromEntries(['SESSION_SECRET', 'SETUP_TOKEN', 'CONTACT_HASH_SALT'].map(name => [name, randomBytes(32).toString('hex')]));
-for (const name of ['CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_API_TOKEN', 'OWNER_EMAIL', 'MAIL_PROVIDER_API_KEY', 'MAIL_AUTH_FROM', 'MAIL_WEBHOOK_SECRET', 'MAIL_WEBHOOK_ID', 'MANGO_ALLOWED_LINK_HOSTS', 'MAILBOX_RECEIPT_URL', 'MAILBOX_RECEIPT_RECIPIENT', 'MANGO_TEST_EMAIL_ALLOWLIST']) values[name] = '';
+const values = { MANGO_DEPLOY_ENV: 'production', ...Object.fromEntries(['SESSION_SECRET', 'SETUP_TOKEN', 'CONTACT_HASH_SALT'].map(name => [name, randomBytes(32).toString('hex')])) };
+const deployment = JSON.parse(readFileSync('deploy.json', 'utf8'));
+for (const name of ['CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_API_TOKEN', ...deployment.secrets.map(input => input.environment)]) values[name] ??= '';
+// Deployment and sender verification read product settings directly from deployment.vars.
 writeFileSync('.rer/hosted.env', Object.entries(values).map(([name, value]) => `${name}='${value}'`).join('\n') + '\n', { flag: 'wx', mode: 0o600 });
 NODE
 ```
 
-2. Edit `.rer/hosted.env` privately. Fill the account ID, scoped API token, owner email, SendGrid API key, verified sign-in sender (`MAIL_AUTH_FROM`), signed-webhook verification material (`MAIL_WEBHOOK_SECRET` and `MAIL_WEBHOOK_ID`), and comma-separated allowed link hostnames (`MANGO_ALLOWED_LINK_HOSTS`). Keep the generated authority values. Values are shell single-quoted: escape an embedded apostrophe as `'\''`. Never print this file or commit it. Sender display name, reply-to and postal address are saved in the app's sender setup after sign-in.
+2. Edit `.rer/hosted.env` privately. Choose `MANGO_DEPLOY_ENV` for this installation (the generated value is `production`). Fill the account ID, scoped API token, owner email, SendGrid API key, verified sign-in sender (`MAIL_AUTH_FROM`), signed-webhook verification material (`MAIL_WEBHOOK_SECRET` and `MAIL_WEBHOOK_ID`), and comma-separated allowed link hostnames (`MANGO_ALLOWED_LINK_HOSTS`). Keep the generated authority values. Values are shell single-quoted: escape an embedded apostrophe as `'\''`. Never print this file or commit it. Sender display name, reply-to and postal address are saved in the app's sender setup after sign-in.
 
    Receiver verification is optional. Leave its two lines empty to keep it off, or fill **both** `MAILBOX_RECEIPT_URL` and `MAILBOX_RECEIPT_RECIPIENT` (its diagnostic mailbox). The URL must have the form `https://<public-receiver-host>/receipts?token=<private capability>`, using the trusted connector's public DNS hostname, the exact `/receipts` path and exactly one query parameter named `token`. Replace both placeholders with the connector's actual settings; this template is not a usable endpoint. Use its nonempty private capability (at most 4096 decoded characters), URL-encoding the value so reserved characters cannot introduce extra parameters. Do not include a custom port, URL user information, a fragment or whitespace. IP addresses and local/private hostnames are unsupported. The connector must implement the supported Cloudflare Email Routing receipt semantics; a generic mailbox API URL is not sufficient. Keep the entire token-bearing URL private in this file; the deploy kit stores both receiver settings as Worker secrets. Never paste the URL into logs, screenshots, client configuration or shared reports.
 
@@ -55,13 +57,13 @@ NODE
 set -a
 . ./.rer/hosted.env
 set +a
-pnpm exec rer deploy --environment production
-pnpm run hosted claim --environment production
+pnpm exec rer deploy --environment "$MANGO_DEPLOY_ENV"
+pnpm run hosted claim --environment "$MANGO_DEPLOY_ENV"
 ```
 
-The claim command reads the successful receipt in `.rer/deploy/production.json`, validates its project/environment and workers.dev origin, and posts the private setup token to `/auth/bootstrap` without following redirects or printing the token, cookie or response. It creates one native owner; a repeat keeps the existing owner. Open the deployed origin, request an email sign-in link for `OWNER_EMAIL`, confirm it, and complete sender setup. Keep the setup token private with the matching session and contact authority backup.
+The claim command reads the successful receipt in `.rer/deploy/<environment>.json`, validates its project/environment and workers.dev origin, and posts the private setup token to `/auth/bootstrap` without following redirects or printing the token, cookie or response. It creates one native owner; a repeat keeps the existing owner. Open the deployed origin, request an email sign-in link for `OWNER_EMAIL`, confirm it, and complete sender setup. Keep the setup token private with the matching session and contact authority backup.
 
-The kit uploads only the inputs in `deploy.json`: required secrets are needed on first deploy and inherited afterwards. Receiver and QA inputs, like design inputs, are optional secrets uploaded when supplied; the kit preserves existing Worker secrets on later uploads even when their shell inputs are absent. `.rer/declarations/` contains names only. To change an existing secret deliberately, replace that Worker secret using your authorized Cloudflare administration; rer deploy keeps existing values. Product settings are in `deploy.json` `vars`; `MANGO_PUBLIC_BASE_URL` is set from the deployed origin.
+The kit uploads only the inputs in `deploy.json`: required secrets are needed on first deploy and inherited afterwards. Receiver and QA inputs, like design inputs, are optional secrets uploaded when supplied; the kit preserves existing Worker secrets on later uploads even when their shell inputs are absent. `.rer/declarations/` contains names only. To change an existing secret deliberately, replace that Worker secret using your authorized Cloudflare administration; rer deploy keeps existing values. Product settings (provider, app version, timing and rate limits) are defined once in `deploy.json` `vars`, consumed by both deployment and the sender-verification runner; change them there and deploy before verification. Shell values do not override those declared settings. `MANGO_PUBLIC_BASE_URL` comes from the successful deployment receipt, after its project, environment, Worker, owned D1 and canonical HTTPS workers.dev origin have been checked. The runner refuses a conflicting shell origin. Keep the receipt and private inputs for the same installation together.
 
 For an update, preserve private inputs, the deploy receipt and your data backups, then run:
 
@@ -71,7 +73,7 @@ pnpm install --frozen-lockfile
 set -a
 . ./.rer/hosted.env
 set +a
-pnpm exec rer deploy --environment production
+pnpm exec rer deploy --environment "$MANGO_DEPLOY_ENV"
 ```
 
 Choose the same `--environment` as the first deployment. Verify existing and fresh email sign-in and the Worker health after deployment. The owner claim need not be repeated. Mango never reads Wrangler credential files.
@@ -96,7 +98,20 @@ Design import (DESIGN-004): in a draft's email editor, **Import 12ui design** ta
 
 Design generation (DESIGN-001 to DESIGN-003) is optional and off by default. To let operators press **Design with 12ui** in a draft's email editor, set both `DESIGN_PROVIDER_API_KEY` (the owner's own 12ui API key, a secret) and `DESIGN_PROVIDER_ORIGIN` (`https://12ui.com`); one without the other fails startup, and an origin that is not a bare HTTPS origin is refused. With both absent Mango constructs no design adapter and never contacts 12ui. On a hosted deployment set both as environment inputs when you run `deploy`: `deploy.json` declares them as optional secrets (`"optional": true`), which `deploy` uploads only when their inputs are set, on the first deploy or a later one, and keeps afterwards (Mango resolves `deploy.json` into `.rer/declarations/` for the deploy kit, with the optional secrets you set); `rer verify` checks the build without them. Setting them with `wrangler secret put` also works. On a copy running on your computer, add both lines to `.dev.vars` and restart dev; that copy may also name a loopback `http://127.0.0.1:<port>` origin for a stand-in service. A run spends from the owner's 12ui account (about $0.03 per candidate and $0.05 per layout at 12ui's list prices, free within its daily allowance) and writes `external_cost_facts` rows with provider `12ui`. Runs live in `design_jobs` and `design_candidates` (migration 0040; migration 0041 adds why and until when a run waits on 12ui) and in R2 under `design-jobs/<run>/`; they are exported like everything else. The queue command kinds are `design.draft` and `design.layout`, and the `*/5` cron fails runs past their 15-minute deadline. A 429 with `Retry-After` makes a run wait (the editor shows the time until Mango asks again); a 429 without one, a 402, a refused key or three failed passes fail it at once with Mango's reason, and every request to 12ui has a time limit, so a silent 12ui fails a run within minutes. Downloads from 12ui are read with a size limit and follow a redirect only on the configured origin, so the key never goes to another host. What is sent to 12ui and its sub-processors is declared in `seed.json → externals → design-provider` and CONTRACT.md.
 
-For receiver qualification, configure both receiver secrets using the exact token-bearing URL format in the [deployment recipe](#deployment) and the connector's diagnostic recipient. The URL is stored as a Worker secret and never emitted in configuration or client assets. The protected sender-verification runner is documented in `src/core/features/sender-verification/README.md`. SendGrid uses single-attempt handoff with operator-reviewed uncertainty.
+### Sender verification
+
+For receiver qualification, configure both receiver secrets using the exact token-bearing URL format in the [deployment recipe](#deployment) and the connector's diagnostic recipient. After deployment, owner sign-in and sender setup, load the same private inputs from the repository root:
+
+```sh
+set -a
+. ./.rer/hosted.env
+set +a
+node scripts/sender-verification.mjs inspect
+```
+
+The runner loads product variables from `deploy.json` and the canonical origin and owned D1 target from `.rer/deploy/$MANGO_DEPLOY_ENV.json`; no extra runtime defaults or manually guessed origin are needed. Missing or invalid configuration is reported by input name before provider, DNS, receiver or D1 requests. Keep these local secrets synchronized with the deployed Worker; local parsing cannot verify that remote credentials match.
+
+`inspect` reports current authority; it does not send diagnostic mail. To authorize the diagnostic body shown in `scripts/sender-verification-entry.ts`, run `node scripts/sender-verification.mjs prepare`, then use its returned ID with `node scripts/sender-verification.mjs send <id>` and `node scripts/sender-verification.mjs observe <id>`, and inspect again before approval. The URL is stored as a Worker secret and never emitted in configuration or client assets. The protected runner's evidence requirements are documented in `src/core/features/sender-verification/README.md`. SendGrid uses single-attempt handoff with operator-reviewed uncertainty.
 
 ## Public signup protection
 
@@ -118,7 +133,7 @@ An ambiguous database at `src/core/app/client/.wrangler/state` is refused withou
 
 Cloudflare deployment inputs: obtain `CLOUDFLARE_ACCOUNT_ID` from your target account and an appropriately scoped `CLOUDFLARE_API_TOKEN` from its token settings. Choose `MANGO_DEPLOY_ENV` for the intended installation. Only deploy changes hosted resources.
 
-Runtime and mail inputs: generate independent `SESSION_SECRET`, `SETUP_TOKEN` and `CONTACT_HASH_SALT` (at least 32 random bytes for the first two); set `OWNER_EMAIL` to the owner address. Set the public HTTPS origin/version and allowed link hosts, test destinations, timing and rate limits using the names in `.env.example`. Configure the sender display name, from address, reply-to and physical postal address. For SendGrid use `MAIL_PROVIDER=sendgrid`, the provider API credential as `MAIL_PROVIDER_API_KEY`, and your configured webhook verification material as `MAIL_WEBHOOK_SECRET`/`MAIL_WEBHOOK_ID`. If hosted sign-in mail fails, check these mail inputs and the provider sender verification, then request a new link after correcting them. No development outbox is exposed on a deployed install.
+Runtime and mail inputs: generate independent `SESSION_SECRET`, `SETUP_TOKEN` and `CONTACT_HASH_SALT` (at least 32 random bytes for the first two); set `OWNER_EMAIL` to the owner address. Set allowed link hosts and test destinations in the private inputs; set the provider, app version, timing and rate limits in `deploy.json` `vars`. Deployment and sender verification derive the public HTTPS origin from the selected deployment. Configure the sender display name, from address, reply-to and physical postal address. For SendGrid select `MAIL_PROVIDER=sendgrid` in `deploy.json` `vars`, the provider API credential as `MAIL_PROVIDER_API_KEY`, and your configured webhook verification material as `MAIL_WEBHOOK_SECRET`/`MAIL_WEBHOOK_ID`. If hosted sign-in mail fails, check these mail inputs and the provider sender verification, then request a new link after correcting them. No development outbox is exposed on a deployed install.
 
 Commerce, SMS, AI and design generation remain optional: configure every key in the corresponding `optionalModules` group together, or leave that group empty. The mailbox receipt URL/recipient and Turnstile site/secret keys are optional pairs; each pair must be configured together. The receipt connector is needed for marketing sender approval, not transactional sign-in. Input source descriptions name locations, never credential values.
 
