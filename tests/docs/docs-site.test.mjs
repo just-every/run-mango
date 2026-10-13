@@ -17,6 +17,12 @@ const { buildSite } = await import('../../src/core/features/docs/build/site.ts')
 
 const manifest = readManifest(root);
 const site = buildSite(root);
+const contractIds = [...new Set(['CONTRACT.md', 'BASELINE.md'].flatMap(file => {
+  const ids = [...readFileSync(join(root, file), 'utf8').matchAll(/^- \*\*([A-Z]+(?:-[A-Z]+)*-\d+)\b/gm)].map(match => match[1]);
+  assert.ok(ids.length, `${file} declares contract clauses`);
+  return ids;
+}))];
+const contractClause = new RegExp(`\\b(?:${contractIds.join('|')})\\b`);
 
 contract('DOCS-001', 'every Markdown file in scope is published or listed as not published with a reason', () => {
   const tracked = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '*.md'], { cwd: root, encoding: 'utf8' }).split('\n').filter(Boolean);
@@ -33,7 +39,7 @@ contract('DOCS-001', 'the repository docs render with no problems, one title eac
   for (const page of site.pages) {
     assert.ok(page.title && page.html.length > 100, `${page.source} renders`);
     assert.ok(!/<h1[\s>]/.test(page.html), `${page.source}: the title is the page's only h1, outside the body`);
-    assert.ok(!/\b[A-Z]{2,6}(?:-[A-Z]{2,})?-\d{3}\b|source:(?:lock|check)/.test(page.html), `${page.source} names no contract clause or maintainer command`);
+    assert.ok(!contractClause.test(page.html) && !/source:(?:lock|check)/.test(page.html), `${page.source} names no contract clause or maintainer command`);
     assert.ok(page.description.length > 20, `${page.source} has a description`);
   }
 });

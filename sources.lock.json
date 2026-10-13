@@ -1044,7 +1044,7 @@
       "executable": false
     },
     "OPERATIONS.md": {
-      "sha256": "53dd01770ccfaa7ed22480dc0e060f759ce7ebac35cfc25b3175daf7aa31e659",
+      "sha256": "b3f217e759478b9392db1a27c12768ceb26278a5464cee3514b6601ae72790c4",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -1052,7 +1052,7 @@
       "executable": false
     },
     "operations/deploy-optional-secrets.test.mjs": {
-      "sha256": "7b0b47812e5effbea89abe78c1a6b49f4155e52462523dd2c7167b72f0d6e200",
+      "sha256": "c8bca8a21a6e6e8da877a4354496fbf781b1bf3983351503f75ac876810c558b",
       "executable": false
     },
     "operations/fixtures/invitation-runtime.mjs": {
@@ -1172,7 +1172,7 @@
       "executable": false
     },
     "README.md": {
-      "sha256": "4137f655463b4d194394e234cd7cea2b41ee5fc9a1083472a6bd3ab3803705df",
+      "sha256": "02b86b24b28244ee0c1dcc4d43d4a87a8ecdc7951ff89aea5ddfc69aa538d4d2",
       "executable": false
     },
     "RELEASE-STATUS.md": {
@@ -5216,7 +5216,7 @@
       "executable": false
     },
     "tests/docs/docs-site.test.mjs": {
-      "sha256": "c5bf7d4fd8094682b9b0745cb5f4ccbc8fe9b5aee79c5932f020f2918a10ebc5",
+      "sha256": "8ca8f6da1fecd508c0908432180774ddac60e53858a5d6f457a513c2e692191b",
       "executable": false
     },
     "tests/email-presentation.spec.ts": {

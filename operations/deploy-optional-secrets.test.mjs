@@ -9,7 +9,7 @@ import { ownerPlan } from '@runeditrun/rer/modules/deploy-kit/owner';
 import { secretBindings, uploadWorker } from '../node_modules/@runeditrun/rer/modules/deploy-kit/worker.mjs';
 
 const design = { DESIGN_PROVIDER_API_KEY: 'test-design-key', DESIGN_PROVIDER_ORIGIN: 'https://12ui.com' };
-const receiver = { MAILBOX_RECEIPT_URL: 'https://receiver.example.test/receipts', MAILBOX_RECEIPT_RECIPIENT: 'receiver@example.test', MANGO_TEST_EMAIL_ALLOWLIST: 'receiver@example.test,qa@example.test' };
+const receiver = { MAILBOX_RECEIPT_URL: 'https://receiver.example.test/receipts?token=synthetic-test-capability', MAILBOX_RECEIPT_RECIPIENT: 'receiver@example.test', MANGO_TEST_EMAIL_ALLOWLIST: 'receiver@example.test,qa@example.test' };
 
 test('optional design and receiver inputs reach the deploy upload, partial pairs fail, and later deploys preserve configured secrets', async () => {
   const root = await mkdtemp(join(tmpdir(), 'mango-declaration-'));
