@@ -48,10 +48,11 @@ export const hooks = {
  owner:{displayName:input=>input.displayName,returnTo:'/setup'},signIn:{emailKey:'OWNER_EMAIL',returnTo:'/setup'},
 };
 const lifecycle=localInstaller(hooks);
-// The deploy kit reads the declaration Mango resolves from deploy.json for this deploy: optional secrets only when set.
+// The deploy kit reads the resolved secrets for app deployment; rer's run-site planner reads
+// project identity from the tracked input before the app deploy callback runs.
 function deploy() {
  const owner=ownerDeploy(declarationPaths.deploy,lifecycle);
- return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:owner.declaration});
+ return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:'deploy.json'});
 }
 export const {install}=lifecycle;
 export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'rer-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',

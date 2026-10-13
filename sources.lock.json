@@ -1356,7 +1356,7 @@
       "executable": false
     },
     "scripts/installer/local.mjs": {
-      "sha256": "f0ffabe1a30aeb7e523ad722c751801a8f6d79e8436da068f4374963856d9458",
+      "sha256": "a36982dc693e10a23bd9faa2aa379d6c1ece5d4e6d1eb4049085399a2f02bbe7",
       "executable": false
     },
     "scripts/installer/portability.mjs": {
