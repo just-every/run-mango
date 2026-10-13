@@ -1035,6 +1035,10 @@
       "sha256": "b6d88fcb57c0494486c3c049693c693e05f628ac6da461016ae417eced7df7f6",
       "executable": false
     },
+    "migrations/core/0043_local_auth_setup.sql": {
+      "sha256": "10d87363fbd93381a12bc220efd3d434c501c7d5d9c2f5f13808da1819d1887b",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "b92f496a0c1f60f37a7e1887d3cf36de0a0fd501f0595a711655de8f53bb7045",
       "executable": false
@@ -1263,6 +1267,10 @@
       "sha256": "da3a9d09860c33bdd0b287bca9abc6210b12d13439e569d178a5b31fec563ee5",
       "executable": false
     },
+    "scripts/delivery/base/schema/dependencies.mjs": {
+      "sha256": "4bfc30fa75029db2727a9d1fb095d4969dc756c5317ac55ce768202bb869e2b7",
+      "executable": false
+    },
     "scripts/delivery/base/schema/json-schema.mjs": {
       "sha256": "ed601a8f68d25769ff3706a90f69f1a9e18dd6eb4b3b5f81a18b7cd0dcfc8fa3",
       "executable": false
@@ -1353,6 +1361,10 @@
     },
     "scripts/installer/environment.mjs": {
       "sha256": "4f7e94cbbb288e71442d8ebac69e3afea42cc4283b297689bd4147e74dbb1af2",
+      "executable": false
+    },
+    "scripts/installer/hosted.mjs": {
+      "sha256": "bb590bd9d5398965aa7ad5031ea9a894fee1dfd894d63c972fc20005406bef81",
       "executable": false
     },
     "scripts/installer/local.mjs": {
@@ -2169,6 +2181,10 @@
     },
     "src/core/features/auth/service.ts": {
       "sha256": "2d5f26c8f373ef6975aa89918bca258e91a8e17331df5338ce976be8a711ab3b",
+      "executable": false
+    },
+    "src/core/features/auth/setup-complete.ts": {
+      "sha256": "d07da23e2aa46dc840327224cc7b027d1dbffa9d8dc3fba38743fb13073d26a4",
       "executable": false
     },
     "src/core/features/bootstrap/repository.ts": {
