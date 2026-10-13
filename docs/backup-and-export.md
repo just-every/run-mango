@@ -8,13 +8,13 @@ Open **Audience** and choose **Download contacts CSV**. You get a file named `au
 
 `email`, `phone`, `display_name`, `email_status`, `sms_status`, `consent_source`, `consent_timestamp`, `consent_method`, `consent_ip`, `confirmation_timestamp`, `confirmation_ip`, `ledger_json`, and a final marker column, `__mango_csv_encoding`.
 
-The first eleven columns are for reading and for spreadsheets. The `ledger_json` column is the lossless part: it holds that contact's complete record, including every consent record, history entries, suppressions, and the opt-out record. Opt-outs are stored as hashes in a portable form, so your installation's secret salt is never in the file.
+The first eleven columns are for reading and for spreadsheets. The `ledger_json` column is the lossless part: it holds that contact's complete record, including every consent record, history entries, suppressions, and the opt-out record. Opt-outs are stored as hashes in a portable form, so your installation's secret salt is never in the file. An opt-out or suppression whose address no contact holds any more (for example after the import that created the contact was undone, or after the contact was deleted) is exported on a row of its own with no address: its `ledger_json` names the address only by that portable hash.
 
 To keep spreadsheets from running cell contents as formulas, any value that starts with `=`, `+`, `-`, `@`, a tab, a return or an apostrophe gets a leading apostrophe, and the marker column records that. Mango removes those apostrophes when it reads its own export. Other tools will show them.
 
 ## Restoring from an export
 
-On **Audience**, open **Import contacts**, choose your file, and select the preset **Mango audience export**. Mango reads the `ledger_json` column and restores each contact with its consent evidence and opt-outs. See [Importing contacts](./importing-contacts.md) for the preview, start and undo steps.
+On **Audience**, open **Import contacts**, choose your file, and select the preset **Mango audience export**. Mango reads the `ledger_json` column and restores each contact with its consent evidence and opt-outs. Rows with no address restore their opt-outs and suppressions as they are, before any contact is written, and undoing the import leaves them in place: when that address reaches Mango later, through a file, a signup or a consent capture, it is unsubscribed or suppressed, so the restored installation cannot mail it. See [Importing contacts](./importing-contacts.md) for the preview, start and undo steps.
 
 Restoration has rules:
 

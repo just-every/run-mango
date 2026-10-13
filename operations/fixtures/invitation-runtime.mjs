@@ -21,11 +21,11 @@ export async function confirmedOwner(runtime) {
   return session;
 }
 
-export async function invitationRuntime() {
+export async function invitationRuntime({ contactHashSalt = secret } = {}) {
   const bundled = await build({ entryPoints: [resolve('operations/fixtures/invitation-worker.ts')], bundle: true, write: false,
     format: 'esm', platform: 'browser', external: ['node:*'], alias: { '@': resolve('src') } });
   const bindings = { SESSION_SIGNING_KEY: secret, AUTH_SETUP_TOKEN: setup, INITIAL_OPERATOR_EMAILS: 'owner@example.test',
-    CONTACT_HASH_SALT: secret, MAIL_PROVIDER: 'sendgrid', MAIL_PROVIDER_API_KEY: 'test-api-key', MAIL_AUTH_FROM: 'owner@example.test',
+    CONTACT_HASH_SALT: contactHashSalt, MAIL_PROVIDER: 'sendgrid', MAIL_PROVIDER_API_KEY: 'test-api-key', MAIL_AUTH_FROM: 'owner@example.test',
     MAIL_WEBHOOK_SECRET: 'test-public-key', MAIL_WEBHOOK_ID: 'test-hook', MANGO_PUBLIC_BASE_URL: 'https://mango.example.test',
     MANGO_APP_VERSION: 'integration', MANGO_ALLOWED_LINK_HOSTS: 'example.test', MANGO_TEST_EMAIL_ALLOWLIST: 'owner@example.test',
     MANGO_RECONCILIATION_INTERVAL_MINUTES: '15', MANGO_UNRESOLVED_OUTCOME_HOURS: '48', MANGO_EMAIL_HANDOFFS_PER_MINUTE: '10',

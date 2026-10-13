@@ -69,8 +69,10 @@ export async function importSnapshot(state: ImportState, row: NormalizedImportRo
   // An earlier opt-out stays applied unless the person confirmed newer consent in Mango; a row
   // that itself unsubscribes or suppresses is a newer opt-out and always applies.
   const consent = row.ledger || restrictiveRank[status] >= restrictiveRank.unsubscribed ? undefined : newerConfirmedConsent(before, row.email, optOuts);
+  // Confirmed consent keeps the contact's status: a row that does not opt the person out never lowers it.
+  const keptStatus = Boolean(consent && !externalBlocks.length && currentStatus && restrictiveRank[currentStatus] < restrictiveRank[status]);
   if (externalBlocks.length) status='suppressed';
-  else if (consent) { if (currentStatus && restrictiveRank[currentStatus] < restrictiveRank[status]) status=currentStatus; }
+  else if (consent) { if (keptStatus) status=currentStatus!; }
   else if (existingOptOut && status !== 'suppressed') status='unsubscribed';
   const evidence = snapshot.tables.consent_evidence.filter(item=>item.channel==='email' && item.destination===row.email && item.confirmed_at);
   if (status==='subscribed' && !evidence.some(item=>['brand_or_legal_sender','message_category','frequency_disclosure','destination_jurisdiction','capture_method','capture_source','consent_text','consent_version','occurred_at'].every(key=>Boolean(item[key])))) status='non-subscribed';
@@ -102,5 +104,5 @@ export async function importSnapshot(state: ImportState, row: NormalizedImportRo
     snapshot.tables.mango_audience_hashes=snapshot.tables.mango_audience_hashes.filter(item=>item.id!==entry.id);snapshot.tables.mango_audience_hashes.push(entry);
   }
   for (const rows of Object.values(snapshot.tables)) rows.sort((a,b)=>String(a.id).localeCompare(String(b.id)));
-  return {id,snapshot,status,...(consent && !externalBlocks.length ? {kept:keptForConsent(consent)} : {})};
+  return {id,snapshot,status,...(consent && !externalBlocks.length && (optOuts.length || keptStatus) ? {kept:keptForConsent(consent,optOuts.length>0)} : {})};
 }

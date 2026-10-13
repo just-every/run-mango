@@ -47,6 +47,8 @@ export type ImportPreview = {
     displayName: string;
     status: string;
     reason?: string;
+    /** An opt-out for an address no contact holds, named only by its portable identity. */
+    optOut?: boolean;
     warnings: string[];
   }>;
   warnings: string[];

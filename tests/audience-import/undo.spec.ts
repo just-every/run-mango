@@ -15,7 +15,9 @@ test('CONT-004/006 undo preserves a later unsubscribe and suppression',async()=>
   const source=(await files()).slice(0,1);const preview=await h.service.preview({files:source,consent},h.context);const job=await h.service.create(preview.fingerprint,h.context);await finish(h,job.id);
   const contact=await h.f.db.prepare("SELECT id FROM contacts WHERE email='subscribed@example.test'").first<{id:string}>();
   const token=await h.f.services.audienceService.issueUnsubscribeToken(contact!.id,'email');await h.f.services.audienceService.unsubscribeWithToken(token.token);
-  await h.service.undo(job.id,h.context);await expect(finish(h,job.id)).rejects.toThrow();expect(await h.f.db.prepare('SELECT email_status FROM contacts WHERE id=?').bind(contact!.id).first()).toEqual({email_status:'unsubscribed'});
+  // The person changed the contact, so Undo refuses before any write and the import stays completed.
+  await expect(h.service.undo(job.id,h.context)).rejects.toThrow('NATIVE_EDIT_CONFLICT');expect((await h.service.read(job.id,h.context)).state).toBe('completed');
+  expect(await h.f.db.prepare('SELECT email_status FROM contacts WHERE id=?').bind(contact!.id).first()).toEqual({email_status:'unsubscribed'});
   await h.f.services.audienceService.recordProviderSuppression({destination:'subscribed@example.test',channel:'email',cause:'hard',occurredAt:new Date(),providerEventId:'later-bounce'});
   await expect(h.service.undo(job.id,h.context)).rejects.toThrow();expect(await h.f.db.prepare('SELECT email_status FROM contacts WHERE id=?').bind(contact!.id).first()).toEqual({email_status:'suppressed'});
  }finally{await h.close();}

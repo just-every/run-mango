@@ -3,7 +3,7 @@ import {createAudienceStream,isAudienceStream,audienceStreamActions} from './imp
 import {readAudiencePlan,saveAudiencePlan} from './import-plans';
 import {readImportState} from './import-state';
 import { Buffer } from 'node:buffer';
-import { canonicalJson, planD1Import, createD1ImportJob, applyD1ImportBatches, resumeD1Import, undoD1Import, readD1ImportJob, type D1ImportContext } from '@/vendor/base/import-kit/src/d1/index';
+import { canonicalJson, planD1Import, createD1ImportJob, applyD1ImportBatches, resumeD1Import, readD1ImportJob, type D1ImportContext } from '@/vendor/base/import-kit/src/d1/index';
 import type { SourceBundle, ImportPlan, TargetEffect, Json } from '@/vendor/base/import-kit/src/types';
 import { hashToken } from '@/vendor/base/operator-auth/crypto.mjs';
 import { sha256 } from '@/core/shared/ids';
@@ -11,9 +11,12 @@ import type { Platform } from '@/core/shared/platform';
 import { normalizeImport, restrictiveRank } from './import-normalize';
 import { createAudienceImportTarget, validateSnapshot } from './import-target';
 import { importSnapshot } from './import-snapshot';
-import { applyHeldRestrictions, heldRows, heldStatus } from './import-held';
+import { heldRows, heldStatus } from './import-held';
+import { applyStartRestrictions } from './import-start';
+import { optOutCsvRow, optOutLines, optOutRows } from './import-opt-out-lines';
 import { heldContacts, holdReason, unfinished } from './import-hold';
 import { abandonImport, abandoning, abandonments } from './import-abandon';
+import { undoImport } from './import-undo';
 import { encodeCsv } from './csv';
 import { portableAudienceSnapshot } from './import-export';
 import type { AudienceSnapshot, ImportInput } from './import-types';
@@ -21,7 +24,8 @@ import type { AudienceSnapshot, ImportInput } from './import-types';
 const planned=holdReason.running;
 function previewCounts(plan:ImportPlan) {
   const effects=plan.entries.flatMap(entry=>entry.effects), held=heldRows(plan);
-  const statuses=[...effects.map(effect=>(effect.value as unknown as AudienceSnapshot).tables.contacts[0].email_status),...held.map(row=>row.status)];
+  // An opt-out-only line counts toward the restrictions it restores, never as a contact.
+  const statuses=[...effects.map(effect=>(effect.value as unknown as AudienceSnapshot).tables.contacts[0].email_status),...held.map(row=>row.status),...optOutRows(plan).map(row=>row.status)];
   return {...plan.counts,created:effects.filter(effect=>!effect.expectedRevision).length,updated:effects.filter(effect=>effect.expectedRevision).length+held.length,
     unsubscribed:statuses.filter(status=>status==='unsubscribed').length,suppressed:statuses.filter(status=>status==='suppressed').length};
 }
@@ -55,7 +59,7 @@ export function createAudienceImportService(platform: Platform) {
       // One native effect per canonical identity, across every file. All restrictive
       // rows are handled before any sendable row, including between resume calls.
       const winners = new Map<string,typeof normalized.rows[number]>();
-      for (const row of normalized.rows.filter(row=>!row.reason)) {
+      for (const row of normalized.rows.filter(row=>!row.reason&&!row.optOuts)) {
         if(row.ledger){try{validateSnapshot(row.ledger);}catch(error){row.reason=error instanceof Error?error.message:'Invalid audience ledger.';continue;}}
         const key=row.email || String(row.ledger?.tables.contact_phones[0]?.phone_e164);
         const previous = winners.get(key);
@@ -76,7 +80,9 @@ export function createAudienceImportService(platform: Platform) {
       const source: SourceBundle = {records:[],artifacts,diagnostics:[]};
       for (const [index,row] of normalized.rows.entries()) {
         const sourceId = `${input.origin?`${input.origin}:`:''}${artifacts.find(artifact=>artifact.name===row.file)!.sha256}:${index}:${row.file}:${row.row}`;
-        if (!row.reason && winners.get(row.email || String(row.ledger?.tables.contact_phones[0]?.phone_e164))===row) {
+        // An opt-out-only line takes no contact effect: the import writes it when it starts (import-start).
+        if (row.optOuts) row.warnings.push('An opt-out for an address no contact holds: it is restored before any contact is written and stays when the import is undone.');
+        else if (!row.reason && winners.get(row.email || String(row.ledger?.tables.contact_phones[0]?.phone_e164))===row) {
           const contactId=state.byIdentity.get(row.email) ?? null, holder=contactId?held.get(contactId):plannedIdentities.has(row.email)?planned:undefined;
           if(holder&&restrictiveRank[row.status]>=restrictiveRank.unsubscribed){
             row.status=heldStatus(state,contactId,row.status,await sha256(`${platform.config.contactHashSalt}:${row.email}`));
@@ -118,7 +124,7 @@ export function createAudienceImportService(platform: Platform) {
         const users=await previewDb.prepare("SELECT j.state FROM ik_jobs j WHERE j.destination=? AND j.principal_id=? AND (j.operation_key=? OR j.id IN (SELECT p.job_id FROM ik_d1_stream_pages p JOIN ik_d1_streams s ON s.id=p.stream_id WHERE s.destination=? AND s.principal_id=? AND s.operation_key=?))").bind(context.destination,context.authorization.principalId,existing.fingerprint,context.destination,context.authorization.principalId,existing.fingerprint).all<{state:string}>();
         const used=users.results.length>0,reversed=used&&users.results.every(row=>['rolled_back','undone'].includes(row.state));
         if(reversed)await previewDb.prepare("UPDATE audience_import_plans SET source_digest=source_digest||':reversed:'||fingerprint WHERE fingerprint=?").bind(existing.fingerprint).run();
-        else if(current||used){const rows=cached.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);return {fingerprint:cached.fingerprint,counts:previewCounts(cached),columns:normalized.columns,rows:rows.map(({values,ledger,...row})=>row),warnings:rows.flatMap(row=>row.warnings)};}
+        else if(current||used){const rows=cached.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);return {fingerprint:cached.fingerprint,counts:previewCounts(cached),columns:normalized.columns,rows:rows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:rows.flatMap(row=>row.warnings)};}
         else{
           const unused="NOT EXISTS(SELECT 1 FROM ik_jobs WHERE operation_key=?) AND NOT EXISTS(SELECT 1 FROM ik_d1_streams WHERE operation_key=?)";
           await previewDb.batch(['audience_import_plan_chunks','audience_import_plan_contacts','audience_import_plans'].map(table=>previewDb.prepare(`DELETE FROM ${table} WHERE fingerprint=? AND ${unused}`).bind(existing.fingerprint,existing.fingerprint,existing.fingerprint)));
@@ -127,14 +133,13 @@ export function createAudienceImportService(platform: Platform) {
       await saveAudiencePlan(previewDb,plan,context.authorization.principalId,sourceDigest,now,budget);
       const saved=await previewDb.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE source_digest=? AND principal_id=?').bind(sourceDigest,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();
       const retained=await readAudiencePlan(previewDb,saved!);const retainedRows=retained.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);
-      return {fingerprint:retained.fingerprint,counts:previewCounts(retained),columns:normalized.columns,rows:retainedRows.map(({values,ledger,...row})=>row),warnings:retainedRows.flatMap(row=>row.warnings)};
+      return {fingerprint:retained.fingerprint,counts:previewCounts(retained),columns:normalized.columns,rows:retainedRows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:retainedRows.flatMap(row=>row.warnings)};
     },
     async create(fingerprint: string, context: D1ImportContext) {
       const row=await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=? AND principal_id=?').bind(fingerprint,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();
       if(!row) throw new Error('Review this import before applying it.');
       const plan=await readAudiencePlan(db,row);
-      // Contacts another import still holds take only their opt-outs, before any contact is written.
-      await applyHeldRestrictions(db,platform.config.contactHashSalt,plan);
+      await applyStartRestrictions(db,platform.config.contactHashSalt,plan);
       if(plan.entries.length>10000)return createAudienceStream(plan,context);
       const reviewed={...context,reviewedFingerprint:fingerprint,operationKey:fingerprint};
       const job=await createD1ImportJob(plan,reviewed);
@@ -144,9 +149,12 @@ export function createAudienceImportService(platform: Platform) {
     resume:async(id:string,context:D1ImportContext)=>{
       await notArchive(id);
       if(await abandoning(db,id))return abandonImport(db,platform.config.contactHashSalt,id,context);
-      return await isAudienceStream(id,context)?audienceStreamActions.resume(id,context):resumeD1Import(id,context);
+      const stream=await isAudienceStream(id,context);
+      // An undo continues through Undo's own steps, never the kit's plain resume.
+      if((stream?await audienceStreamActions.read(id,context):await readD1ImportJob(id,context)).state==='undoing')return undoImport(db,platform.config.contactHashSalt,id,context);
+      return stream?audienceStreamActions.resume(id,context):resumeD1Import(id,context);
     },
-    undo:async(id:string,context:D1ImportContext)=>{await notArchive(id);return await isAudienceStream(id,context)?audienceStreamActions.undo(id,context):undoD1Import(id,context);},
+    undo:async(id:string,context:D1ImportContext)=>{await notArchive(id);return undoImport(db,platform.config.contactHashSalt,id,context);},
     abandon:async(id:string,context:D1ImportContext)=>{await notArchive(id);return abandonImport(db,platform.config.contactHashSalt,id,context);},
     abandonments:(ids:string[])=>abandonments(db,ids),
     async jobs(principalId: string) {
@@ -155,13 +163,15 @@ export function createAudienceImportService(platform: Platform) {
     },
     async exportCsv() {
       const targets=await createAudienceImportTarget(platform.config.contactHashSalt).list(db,'mango');
+      // Every opt-out and suppression leaves: with its contact, or on a line of its own.
+      const carried=new Set(targets.flatMap(target=>(['surviving_opt_outs','contact_suppressions'] as const).flatMap(table=>(target.value as unknown as AudienceSnapshot).tables[table].map(row=>`${table}:${row.id}`))));
       const header=['email','phone','display_name','email_status','sms_status','consent_source','consent_timestamp','consent_method','consent_ip','confirmation_timestamp','confirmation_ip','ledger_json'];
       return encodeCsv([header,...await Promise.all(targets.map(async target=>{
         const snapshot=await portableAudienceSnapshot(target.value as unknown as AudienceSnapshot); const contact=snapshot.tables.contacts[0];
         const evidence=snapshot.tables.consent_evidence.filter(row=>row.channel==='email').sort((a,b)=>Number(b.occurred_at)-Number(a.occurred_at))[0];
         const metadata=snapshot.tables.consent_capture_metadata.find(row=>row.id===evidence?.id);
         return [contact.email,snapshot.tables.contact_phones[0]?.phone_e164,contact.display_name,contact.email_status,contact.sms_status,evidence?.capture_source,evidence?.occurred_at,evidence?.capture_method,metadata?.capture_ip,evidence?.confirmed_at,metadata?.confirmation_ip,canonicalJson(snapshot)];
-      }))]);
+      })),...(await optOutLines(db,carried)).map(optOutCsvRow)]);
     },
   };
 }

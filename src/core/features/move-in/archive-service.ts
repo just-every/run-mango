@@ -6,7 +6,7 @@ import { audiencePreviewBudget } from '@/core/features/audience/import-query-bud
 import { createAudienceImportTarget } from '@/core/features/audience/import-target';
 import { readAudiencePlan } from '@/core/features/audience/import-plans';
 import { createAudienceStream } from '@/core/features/audience/import-stream';
-import { applyHeldRestrictions } from '@/core/features/audience/import-held';
+import { applyStartRestrictions } from '@/core/features/audience/import-start';
 import { readD1ImportStream, readD1ImportUndoReport, resumeD1ImportStream, undoD1ImportStream, type D1ImportContext } from '@/vendor/base/import-kit/src/d1/index';
 import { custodyChunkBytes } from './archive-limits';
 import { reviewContent } from './archive-content';
@@ -74,8 +74,7 @@ export function createArchiveService(platform: Platform) {
     const preview = await audience.preview({ files, consent, origin: `archive:${archive.id}` }, context, { archive: true });
     const stored = (await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(preview.fingerprint).first<{ fingerprint: string; plan_json: string }>())!;
     const plan = await readAudiencePlan(db, stored);
-    // Contacts another import still holds take only their opt-outs, before any contact is written.
-    await applyHeldRestrictions(db, platform.config.contactHashSalt, plan);
+    await applyStartRestrictions(db, platform.config.contactHashSalt, plan);
     const summary = JSON.parse(archive.summary_json) as ArchiveSummary;
     summary.audience = summary.audience.map(file => files.some(item => item.name === file.path) ? audienceCounts(file.path, file.status, plan) : file);
     await touch(archive.id, 'audience_plan=?,summary_json=?', plan.fingerprint, JSON.stringify(summary));

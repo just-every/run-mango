@@ -22,13 +22,20 @@ async function reversing(db: D1Database, id: string, stream: boolean) {
   return job && ['rolling_back', 'undoing'].includes(job.state) ? job : undefined;
 }
 
+export type Written = { target_id: string; appliedRevision: string; valueHash: string };
+
 /** Of these written contacts, those a person changed since: not at the value and revision the import wrote. */
-async function changed(db: D1Database, salt: string, destination: string, rows: Provenance[]) {
+export async function changedSince<Row extends Written>(db: D1Database, salt: string, destination: string, rows: Row[]) {
   const targets = await snapshotTargets(db, destination, await readAudienceSnapshots(db, salt, rows.map(row => row.target_id)), true);
   return rows.filter(row => {
-    const written = JSON.parse(row.record_json) as { appliedRevision: string; valueHash: string }, target = targets.get(row.target_id);
-    return !target || target.revision !== written.appliedRevision || sha256(canonicalJson(target.value)) !== written.valueHash;
+    const target = targets.get(row.target_id);
+    return !target || target.revision !== row.appliedRevision || sha256(canonicalJson(target.value)) !== row.valueHash;
   });
+}
+
+async function changed(db: D1Database, salt: string, destination: string, rows: Provenance[]) {
+  const written = rows.map(row => { const { appliedRevision, valueHash } = JSON.parse(row.record_json) as Omit<Written, 'target_id'>; return { row, target_id: row.target_id, appliedRevision, valueHash }; });
+  return (await changedSince(db, salt, destination, written)).map(item => item.row);
 }
 
 /** Releases every changed contact among the effects the next rollback step reverses. Each

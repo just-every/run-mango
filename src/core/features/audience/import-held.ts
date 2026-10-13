@@ -1,5 +1,6 @@
 import type { ImportPlan } from '@/vendor/base/import-kit/src/types';
 import { sha256, ulid } from '@/core/shared/ids';
+import { recordPortableHash } from './portable-hashes';
 import type { ImportState } from './import-state';
 import type { NormalizedImportRow } from './import-normalize';
 
@@ -37,7 +38,8 @@ export async function applyHeldRestrictions(db: D1Database, salt: string, plan: 
           .bind(status, contactId, row.email, weaker),
         // Its own opt-out, named for this import, so a replay adds nothing and no before image carries it.
         db.prepare(`INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES(?,?,'email',?,?,?,?)
-          ON CONFLICT(destination_hash,channel,reason) DO NOTHING`).bind(ulid(now), hash, `import-${status}:${plan.fingerprint.slice(0, 16)}`, now, now, now));
+          ON CONFLICT(destination_hash,channel,reason) DO NOTHING`).bind(ulid(now), hash, `import-${status}:${plan.fingerprint.slice(0, 16)}`, now, now, now),
+        recordPortableHash(db, hash, row.email));
       if (status === 'suppressed') statements.push(db.prepare(`INSERT INTO contact_suppressions(id,contact_id,channel,destination_hash,cause,occurred_at,provider_event_id,created_at,updated_at)
         SELECT ?,(SELECT id FROM contacts WHERE id=?),'email',?,'import-cleaned-or-bounced',?,NULL,?,? WHERE NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email')`)
         .bind(ulid(now), contactId, hash, now, now, now, hash));

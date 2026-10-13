@@ -96,7 +96,7 @@ export function AudienceImportPreview({ preview, isCurrent }: { preview: ImportP
                 return (
                   <tr key={`${row.file}:${row.row}`}>
                     <td data-label="File and row"><span className="audience-import-row-file">{row.file}</span><small>Row {row.row}</small></td>
-                    <td data-label="Contact"><strong>{row.displayName || row.email}</strong><small>{row.email || 'No valid email address'}</small></td>
+                    <td data-label="Contact">{row.optOut ? <><strong>Opt-out only</strong><small>No contact holds this address</small></> : <><strong>{row.displayName || row.email}</strong><small>{row.email || 'No valid email address'}</small></>}</td>
                     <td data-label="Consent status"><span className={`audience-import-status audience-import-status--${statusClass(status)}`}>{titleCase(status)}</span></td>
                     <td data-label="Reason and warnings">
                       {row.reason ? <p className="audience-import-row-reason">{row.reason}</p> : null}
