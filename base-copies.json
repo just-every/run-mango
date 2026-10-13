@@ -849,28 +849,6 @@
       }
     },
     {
-      "path": "src/vendor/base/mail/package.json",
-      "originPath": "modules/mail/package.json",
-      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
-      "files": {
-        "src/vendor/base/mail/package.json": "fb97ece867a3c13b9b1ad70c1ceb855e6547a49b30c2d8d265980f1759fe58f6"
-      },
-      "modes": {
-        "src/vendor/base/mail/package.json": "100644"
-      }
-    },
-    {
-      "path": "src/vendor/base/mail/pnpm-lock.yaml",
-      "originPath": "modules/mail/pnpm-lock.yaml",
-      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
-      "files": {
-        "src/vendor/base/mail/pnpm-lock.yaml": "9e2b9946e854b4e4aa2c32b9a5436971ee8e505561baa224bb83001877b0a6c7"
-      },
-      "modes": {
-        "src/vendor/base/mail/pnpm-lock.yaml": "100644"
-      }
-    },
-    {
       "path": "src/vendor/base/mail/src",
       "originPath": "modules/mail/src",
       "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
