@@ -1,5 +1,7 @@
 import {withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
 import {continueErasure,pendingErasure} from '@/core/features/audience/erasure/maintenance';
+import { advanceDesignJob, isDesignCommand } from '@/core/features/design-generation/advance';
+import { sweepDesignJobs } from '@/core/features/design-generation/sweep';
 import { createApprovalService } from './approval';
 import { createDeliveryService } from './delivery';
 import { createLifecycleRepository } from './repository';
@@ -26,12 +28,16 @@ export function registerLifecycleRoutes(app: LifecycleApp, runtime: LifecycleRun
   return services;
 }
 
-export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime: LifecycleRuntime) {
+/** `only` limits a consumer to some command kinds; every other message is left for retry, as a copy running on a
+ * computer does with everything but design runs. */
+export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime: LifecycleRuntime, only?: readonly LifecycleQueueBatch['messages'][number]['body']['kind'][]) {
   for (const message of batch.messages) {
+    if (only && !only.includes(message.body.kind)) {message.retry(); continue;}
     try {
       if(message.body.kind==='contact.erase'){await continueErasure(runtime.platform,String(message.body.payload.reference??''));message.ack();continue;}
       if(await pendingErasure(runtime.platform.database.$client)){message.retry({delaySeconds:30});continue;}
       await withErasureWriteFence(runtime.platform.database.$client,async()=>{
+      if (isDesignCommand(message.body)) {await advanceDesignJob(runtime.platform, message.body); message.ack(); return;}
       if (!['source.sync', 'campaign.dispatch', 'delivery.reconcile', 'provider.outage-probe'].includes(message.body.kind)) throw new Error('Unknown queue command.');
       if (message.body.kind === 'source.sync') {
         if (!runtime.synchronizeCommerce) throw new Error('Commerce synchronization is not composed.');
@@ -97,6 +103,7 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
   await delivery.probeOutage('email');
   if (runtime.platform.sms) await delivery.probeOutage('sms');
   await repository.completeCampaigns(new Date());
+  await sweepDesignJobs(runtime.platform, now.getTime());
   });
 }
 

@@ -1,0 +1,30 @@
+/* Import a 12ui design (DESIGN-004): the editor's import row, the import dialog's form and the change summary. */
+.design-import { display: grid; gap: var(--sp-3); min-width: 0; }
+.design-import__row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); }
+.design-import__row > .muted-copy { margin: 0; font-size: 14px; }
+.design-import__row code, .design-import-summary .design-import-url { font: 13px/1.4 var(--ms-mono); overflow-wrap: anywhere; }
+
+.modal-panel .design-import-form__fields { display: grid; gap: var(--sp-4); padding: 0; border: 0; }
+.design-import-form__fields > label { display: grid; gap: 6px; }
+.design-import-form__fields input[type="file"] { max-width: 100%; color: var(--ms-ink-soft); font: 400 14px/1.4 var(--ms-sans); }
+.design-import-form__fields input[type="file"]::file-selector-button { min-height: 36px; margin-right: var(--sp-3); padding: 0 14px; border: 1px solid var(--ms-control); border-radius: var(--ms-radius-control); background: var(--ms-paper); color: var(--ms-ink); font: 500 14px/1 var(--ms-sans); cursor: pointer; }
+.design-import-form__fields > .muted-copy { margin: calc(-1 * var(--sp-2)) 0 0; font-size: 14px; }
+.design-import-form > .inline-error, .design-import-form > [role="status"] { margin: var(--sp-4) 0 0; }
+
+/* The summary reads as a paper note pinned under the editor controls; highlights are the sun wash. */
+.design-import-summary { display: grid; gap: var(--sp-4); padding: var(--sp-5); border: 1px solid var(--ms-sun-line); border-left: 3px solid var(--ms-sun); border-radius: var(--ms-radius); background: var(--ms-paper-warm); }
+.design-import-summary__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-3); }
+.design-import-summary__head .eyebrow { margin: 0 0 var(--sp-1); }
+.mango-app .design-import-summary h3 { margin: 0; font-family: var(--ms-serif); font-size: 22px; font-weight: 400; letter-spacing: -0.01em; }
+.mango-app .design-import-summary h4 { margin: 0 0 var(--sp-1); }
+.design-import-summary__group > p, .design-import-summary > p { margin: 0; }
+.design-import-summary ul { display: grid; gap: 4px; margin: var(--sp-1) 0 0; padding-left: 18px; list-style: disc; overflow-wrap: anywhere; }
+.design-import-summary li .muted-copy { font-size: 13px; }
+.design-import-summary .design-import-images { gap: var(--sp-2); padding-left: 0; list-style: none; }
+.design-import-images li { display: grid; grid-template-columns: 96px minmax(0, 1fr); align-items: start; gap: var(--sp-3); }
+.design-import-images img { width: 96px; height: auto; max-height: 128px; object-fit: contain; border: 1px solid var(--ms-sun-line); border-radius: 3px; background: var(--ms-paper); }
+.design-import-lines mark, .design-import-images mark { padding: 1px 4px; border-radius: 3px; background: var(--ms-sun-wash); box-shadow: inset 0 -2px 0 var(--ms-sun-hover); color: var(--ms-ink); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+@media (max-width: 480px) {
+  .design-import-summary { padding: var(--sp-4); }
+}

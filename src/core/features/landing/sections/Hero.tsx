@@ -30,11 +30,6 @@ export function Hero() {
           <PrimaryAction />
           <ButtonLink to={sitePaths.docs} tone="line">{hero.secondary}</ButtonLink>
         </div>
-        <p className="hero-note">
-          {hero.note.map((part, index) => (
-            <span key={part}>{index > 0 ? <span className="hero-note-dot" aria-hidden="true"> · </span> : null}{part}</span>
-          ))}
-        </p>
       </div>
       <HeroArt />
     </section>

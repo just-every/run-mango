@@ -14,8 +14,9 @@ import { createMobileMessageAdapter } from './adapters/mobile-message';
 import { createOpenAiAdapter } from './adapters/openai';
 import { createResendAdapter } from './adapters/resend';
 import { createShopifyAdapter } from './adapters/shopify';
+import { createTwelveUiAdapter } from './adapters/twelve-ui';
 import { createBlobStore } from './blobs';
-import { optionalModuleInputs, readProductionConfig, unavailableModule } from './config';
+import { optionalModuleInputs, readDesignModule, readProductionConfig, unavailableModule } from './config';
 import { createJobDispatcher } from './jobs';
 import { createLinkInspector } from './link-inspector';
 import { createPublicTokenSigner } from './public-tokens';
@@ -47,7 +48,12 @@ function unavailableSender(channel: 'email'): SenderAdapter {
   };
 }
 
-function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'mailer' | 'sms'>): Platform {
+/** The design adapter exists only when its module is enabled (DESIGN-001); otherwise nothing is constructed or contacted. */
+function designAdapter(module: AppConfig['modules']['design']) {
+  return module.enabled ? { design: createTwelveUiAdapter({ apiKey: module.config.providerApiKey, origin: module.config.origin }) } : {};
+}
+
+function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'>): Platform {
   return {
     database: createDatabase(environment.DB),
     config,
@@ -63,7 +69,8 @@ export function createProductionPlatform(environment: AppBindings): Platform {
   const config = readProductionConfig(environment);
   const verification = createSenderVerification({ database: createDatabase(environment.DB), config,
     receiver: config.mailboxReceiptUrl ? createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient) : undefined });
-  const adapters: Pick<Platform, 'commerce' | 'ai' | 'mailer' | 'sms'> = {
+  const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'> = {
+    ...designAdapter(config.modules.design),
     mailer: config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
       apiKey: config.mailProviderApiKey,
       webhookSecret: config.mailWebhookSecret,
@@ -96,6 +103,8 @@ export function createProductionPlatform(environment: AppBindings): Platform {
 export function createLocalPlatform(environment: AppBindings, localSigningKey: string): Platform {
   environment = localBindings(environment);
   if (environment.MANGO_LOCAL_CONFIG_VERSION === '2') localSigningKey = environment.SESSION_SIGNING_KEY;
+  // A copy running on a computer may try design generation with the owner's own key in .dev.vars (decision D8a).
+  const design = readDesignModule(environment, { local: true });
   return compose(environment, {
     sessionSigningKey: localSigningKey,
     initialOperatorEmails: (environment.INITIAL_OPERATOR_EMAILS ?? "").split(",").filter(Boolean),
@@ -105,6 +114,7 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
       commerce: unavailableModule('Commerce', optionalModuleInputs.commerce),
       sms: unavailableModule('SMS', optionalModuleInputs.sms),
       ai: unavailableModule('AI', optionalModuleInputs.ai),
+      design,
     },
     mailProviderApiKey: '',
     mailAuthFrom: 'auth@localhost.test',
@@ -120,12 +130,14 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
     emailHandoffsPerMinute: 1,
     deliverabilityReportingWindowDays: 30,
     mailSender: {
-      displayName: 'Mango local',
+      // Local installations start with no sender identity; /setup collects the real one.
+      displayName: '',
       fromEmail: '',
       replyToEmail: '',
-      physicalAddress: 'local development only',
+      physicalAddress: '',
     },
   }, {
+    ...designAdapter(design),
     mailer: unavailableSender('email'),
   });
 }

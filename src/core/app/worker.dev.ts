@@ -11,7 +11,7 @@ import type { AppBindings } from '@/core/shared/platform';
 const local = (environment: AppBindings): AppBindings => ({ ...localBindings(environment), AUTH_ORIGIN: environment.RER_DEV_ORIGIN || environment.AUTH_ORIGIN, AUTH_LOCAL: 'true' });
 const config = (environment: AppBindings) => ({
   origin: environment.AUTH_ORIGIN!, OWNER_EMAIL: environment.OWNER_EMAIL!, SESSION_SECRET: environment.SESSION_SECRET!, SETUP_TOKEN: environment.SETUP_TOKEN,
-  local: true, branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin' },
+  local: true, branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
 });
 
 export default withDevIdentity<AppBindings, typeof worker>(worker, { bindings: local, config, personas: devPersonas });

@@ -11,6 +11,7 @@ export const optionalModuleInputs = {
     'MANGO_SMS_HANDOFFS_PER_MINUTE',
   ],
   ai: ['AI_PROVIDER_API_KEY', 'AI_PROVIDER_MODEL'],
+  design: ['DESIGN_PROVIDER_API_KEY', 'DESIGN_PROVIDER_ORIGIN'],
 } as const satisfies Record<string, readonly (keyof AppBindings)[]>;
 
 export function unavailableModule<Config>(name: string, requiredInputs: readonly string[]): OptionalModuleConfig<Config> {
@@ -94,6 +95,31 @@ function optionalModule<Config, Name extends keyof AppBindings & string>(
   };
 }
 
+const loopbackHosts = new Set(['127.0.0.1', 'localhost', '[::1]']);
+
+/** The design service's origin (DESIGN-001): an HTTPS origin with no path, such as https://12ui.com. A copy running
+ * on a computer may also name a loopback http origin, so it can be tried against a local stand-in service. */
+function designOrigin(environment: AppBindings, allowLoopbackHttp: boolean): URL {
+  const message = 'DESIGN_PROVIDER_ORIGIN must be an HTTPS origin with no path, such as https://12ui.com.';
+  let url: URL;
+  try { url = new URL(required(environment, 'DESIGN_PROVIDER_ORIGIN')); } catch (error) {
+    if (error instanceof Error && error.message.endsWith('is required.')) throw error;
+    throw new Error(message);
+  }
+  const loopback = allowLoopbackHttp && url.protocol === 'http:' && loopbackHosts.has(url.hostname);
+  if ((url.protocol !== 'https:' && !loopback) || url.pathname !== '/' || url.search || url.hash || url.username || url.password) throw new Error(message);
+  return url;
+}
+
+/** The optional design module (DESIGN-001). Production and local copies read the same two inputs; only a local copy
+ * accepts a loopback http origin. */
+export function readDesignModule(environment: AppBindings, { local = false } = {}) {
+  return optionalModule(environment, 'Design', optionalModuleInputs.design, () => ({
+    providerApiKey: required(environment, 'DESIGN_PROVIDER_API_KEY'),
+    origin: designOrigin(environment, local),
+  }));
+}
+
 export function readProductionConfig(environment: AppBindings): AppConfig {
   environment = authBindings(environment);
   const siteKey = environment.TURNSTILE_SITE_KEY?.trim();
@@ -125,6 +151,7 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
       providerApiKey: required(environment, 'AI_PROVIDER_API_KEY'),
       model: required(environment, 'AI_PROVIDER_MODEL'),
     })),
+    design: readDesignModule(environment),
   };
   return {
     sessionSigningKey: required(environment, 'SESSION_SIGNING_KEY'),

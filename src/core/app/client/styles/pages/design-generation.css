@@ -1,0 +1,26 @@
+/* Design with 12ui (DESIGN-002): the run panel under the editor's design row and its estimate lines. */
+.design-import__row > .design-run { order: 10; flex: 1 1 100%; }
+.design-import__row > .design-earlier { order: 11; flex: 1 1 100%; min-width: 0; }
+.design-run { display: grid; gap: var(--sp-3); min-width: 0; padding: var(--sp-4); border: 1px solid var(--ms-sun-line); border-radius: var(--ms-radius); background: var(--ms-paper-warm); }
+.design-run__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-3); }
+.mango-app .design-run h3 { margin: 0; font-family: var(--ms-serif); font-size: 20px; font-weight: 400; }
+.design-run p { margin: 0; }
+.design-run__ready { display: grid; gap: var(--sp-2); justify-items: start; }
+/* A wait on 12ui is calm: muted text with a quiet bar, never styled as a failure. */
+.design-run__wait { padding-left: var(--sp-3); border-left: 3px solid var(--ms-sun-line); color: var(--ms-ink-soft); font-size: 15px; line-height: 1.5; }
+.design-run__wait time { color: var(--ms-ink); font-weight: 500; }
+.design-run__failure { display: grid; gap: var(--sp-2); }
+.design-run__candidates { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--sp-3); margin: 0; padding: 0; list-style: none; }
+.design-run__candidates li { display: grid; gap: var(--sp-2); align-content: start; justify-items: start; }
+.design-run__candidates img { width: 100%; height: auto; max-height: 320px; object-fit: contain; object-position: top; border: 1px solid var(--ms-sun-line); border-radius: 3px; background: var(--ms-paper); }
+.design-run__candidate-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); }
+.design-run__candidates li[aria-current="true"] img { outline: 3px solid var(--ms-sun); outline-offset: 2px; }
+.design-run__waiting { min-height: 120px; place-content: center; border: 1px dashed var(--ms-sun-line); border-radius: 3px; padding: var(--sp-3); }
+.design-estimate { margin: calc(-1 * var(--sp-2)) 0 0; font-size: 14px; color: var(--ms-ink-soft); }
+/* Earlier runs whose designs are still on offer, folded under the latest run. */
+.design-earlier { display: grid; gap: var(--sp-3); }
+.design-earlier > summary { cursor: pointer; font-weight: 500; }
+.design-earlier > summary .muted-copy { font-weight: 400; }
+.design-earlier__runs { display: grid; gap: var(--sp-3); margin-top: var(--sp-3); }
+.mango-app .design-earlier .design-run h3 { font-size: 17px; }
+.design-kept { margin: 0; padding-left: var(--sp-3); border-left: 3px solid var(--ms-sun-line); font-size: 15px; color: var(--ms-ink); }

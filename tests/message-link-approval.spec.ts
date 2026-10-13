@@ -1,4 +1,6 @@
 import { expect, test } from '@playwright/test';
+import { readFileSync } from 'node:fs';
+import { htmlToText } from '../src/core/features/campaigns/authoring-content';
 import { runApprovalChecks } from '../src/core/features/lifecycle/checks';
 import type { LifecycleRepository } from '../src/core/features/lifecycle/repository';
 import type { CampaignRevisionSnapshot, LifecyclePlatform } from '../src/core/features/lifecycle/types';
@@ -36,7 +38,7 @@ async function check(saved: CampaignRevisionSnapshot) {
     authentication:{spf:true,dkim:true,dmarc:true,aligned:true}}},async capabilities() {return capabilities}, async validateSender() {return {ready: true, detail: 'Synthetic validation'}}};
   const platform = {
     database: senderRuntime.platform.database,
-    config: {allowedLinkHosts: ['shop.example.test'], unresolvedProviderOutcomeHours: 1, providerReconciliationIntervalMinutes: 1, deliverabilityReportingWindowDays: 30,
+    config: {publicBaseUrl: new URL('https://mango.example.test'), allowedLinkHosts: ['shop.example.test'], unresolvedProviderOutcomeHours: 1, providerReconciliationIntervalMinutes: 1, deliverabilityReportingWindowDays: 30,
       mailSender: {displayName: 'Mango', fromEmail: 'offers@example.test', replyToEmail: 'help@example.test', physicalAddress: '5 Main Street'}},
     mailer: sender, sms: sender,
     linkInspector: {async inspect(url: string) {return {ok: url.startsWith('https://shop.example.test/'), finalUrl: url, detail: 'Synthetic local inspection'}}},
@@ -91,6 +93,17 @@ for (const markup of [
   });
 }
 
+
+test('[MSG-009][MSG-012][CAMP-004] a designed email with validated inline styles approves; colour-hidden text in it blocks', async () => {
+  const designed = readFileSync(new URL('./support/designed-email.html', import.meta.url), 'utf8').trim();
+  const season = 'https://shop.example.test/season';
+  const text = htmlToText(designed);
+  expect(text).toContain(season);
+  const checks = await check(snapshot(designed, text, [season]));
+  expect([...checks.values()].filter(item => item.blocking)).toEqual([]);
+  const hidden = designed.replace('{{physical_address}}</p>', '{{physical_address}}</p><p style="color:#f9f7f1">Unreviewed claim</p>');
+  expectBlocked(await check(snapshot(hidden, htmlToText(hidden), [season])), 'message.content');
+});
 
 test('[MSG-003] visible inline formatted unsubscribe label remains valid', async () => {
   const checks = await check(snapshot(`<a href="${offer}">Offer</a>${address}<a href="{{unsubscribe_url}}"><strong>Unsubscribe</strong></a>`));

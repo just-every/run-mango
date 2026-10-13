@@ -6,6 +6,9 @@ import { loadSenderSettings } from '@/core/features/settings/sender-persistence'
 import { createAudienceImportRoutes } from '@/core/features/audience/import-routes';
 import { createSignupRoutes } from '@/core/features/audience/signup-routes';
 import { createPortabilityRoutes } from '@/core/features/portability/routes';
+import { createMediaRoutes } from '@/core/features/campaign-assets/media-routes';
+import { createCampaignAssetRoutes } from '@/core/features/campaign-assets/upload-routes';
+import { createDesignGenerationRoutes } from '@/core/features/design-generation/routes';
 import { createAuthoringService } from '@/core/features/campaigns/authoring-service';
 import { createSyncRoutes } from '@/core/features/store/sync-routes';
 import { createCommerceSynchronizer } from '@/core/features/store/synchronize';
@@ -203,7 +206,8 @@ export function createApp(
   app.use('*',async(context,next)=>{
     const path=context.req.path;
     const erasure=path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path));
-    if(erasure||path.startsWith('/auth/')||path==='/health')return next();
+    // Campaign images write only a per-image request counter, never personal data (CAMP-012).
+    if(erasure||path.startsWith('/auth/')||path.startsWith('/media/')||path==='/health')return next();
     return withErasureWriteFence(environment.DB,next);
   });
   const services = createAppServices(platform);
@@ -247,6 +251,7 @@ export function createApp(
   app.route('/', createPublicAuthRoutes(authService, { secureCookie }));
   app.route('/', createAudiencePublicRoutes(audienceService));
   app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
+  app.route('/', createMediaRoutes(environment.DB, platform.blobs));
   if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce));
   mountBeforeAuthentication?.(app, services);
   if (!mountBeforeAuthentication) app.all('/api/_local/*', (context) => context.json({ error: 'not_found' }, 404));
@@ -280,7 +285,9 @@ export function createApp(
   app.route('/api', createAudienceRoutes(audienceService,environment.DB,platform,environment));
   app.route('/api', createAudienceImportRoutes(platform));
   app.route('/api', createMoveInRoutes(platform));
-  app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService)));
+  app.route('/api', createCampaignAssetRoutes(environment.DB, platform.blobs, platform.config.publicBaseUrl));
+  app.route('/api', createDesignGenerationRoutes(environment.DB, platform));
+  app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin));
   app.route('/api', createInsightsRoutes(insightsService));
 
   app.all('*', (context) => context.json({ error: 'not_found' }, 404));

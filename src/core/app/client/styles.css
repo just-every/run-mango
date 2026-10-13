@@ -17,8 +17,11 @@
 
 /* One partial per page group, after the system so a page refines it. Each group's writer owns only its file. */
 @import "./styles/pages/public.css";
+@import "./styles/pages/setup.css";
 @import "./styles/pages/desk.css";
 @import "./styles/pages/review.css";
+@import "./styles/pages/design-import.css";
+@import "./styles/pages/design-generation.css";
 @import "./styles/pages/campaigns.css";
 @import "./styles/pages/audience.css";
 @import "./styles/pages/settings.css";

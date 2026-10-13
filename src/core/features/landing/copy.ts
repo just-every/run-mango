@@ -26,7 +26,6 @@ export const copy = {
     // The run site's primary action (run-mango.com), to its Run page.
     run: 'Run Mango',
     secondary: 'Read the docs',
-    note: ['MIT licensed'],
     // The scene drops the audience list on a phone (hero-phone.css), so each layout has its own description.
     art: {
       wide: 'A newsletter on its way: a draft in the editor, the approved letter locked, the envelope stamped with a mango and postmarked APPROVED, a new subscriber confirmed, an audience of four confirmed readers, and 1,204 letters delivered as confirmed by the mail provider.',

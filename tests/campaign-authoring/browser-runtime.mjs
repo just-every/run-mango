@@ -35,7 +35,8 @@ export async function authoringRuntime({
     const template = (await readFile('deploy/wrangler.local.template.toml', 'utf8'))
       .replace('./src/core/app/worker.local.ts', join(process.cwd(), fixtureWorker))
       .replace('migrations_dir = "migrations/core"', `migrations_dir = ${JSON.stringify(join(process.cwd(), 'migrations/core'))}`);
-    const extra = Object.entries(vars).map(([name, value]) => `${name} = ${JSON.stringify(value)}\n`).join('');
+    // `vars` may depend on the runtime's own origin, as a copy started by `rer dev` does with MANGO_PUBLIC_BASE_URL.
+    const extra = Object.entries(typeof vars === 'function' ? vars(url) : vars).map(([name, value]) => `${name} = ${JSON.stringify(value)}\n`).join('');
     await writeFile(config, `${template}\n[vars]\nLOCAL_BOOTSTRAP_TOKEN = ${JSON.stringify(token)}\n${extra}`, { mode: 0o600 });
     commands = await createCommands(directory, { logs: [] }, { terminal: text => { logs += text; } });
     commands.addSecrets([token]);

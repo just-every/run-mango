@@ -15,8 +15,8 @@ export function editorHtml(html: string) {
     for (const element of [...root.children]) {
       if (!emailTags.has(element.localName) || element.namespaceURI !== 'http://www.w3.org/1999/xhtml') { element.remove(); continue; }
       for (const attribute of [...element.attributes]) {
-        // DOM attributes are already entity-decoded; the policy examines authored values.
-        const value = tokens.restore(attribute.value).replaceAll('&', '&amp;');
+        // DOM attributes are entity-decoded, as the policy reads them.
+        const value = tokens.restore(attribute.value);
         if (!allowedEmailAttribute(element.localName, attribute.name, value)) element.removeAttribute(attribute.name);
       }
       clean(element);

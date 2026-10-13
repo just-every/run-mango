@@ -6,12 +6,26 @@ import { dispatchDocuments } from '../../src/core/app/document-dispatch';
 import { fixtureVerification } from '../support/sender-verification';
 import type { LocalAppBindings } from '../support/fixture-app';
 import { createShopifyAdapter } from '../../src/core/platform/adapters/shopify';
+import { createLinkInspector } from '../../src/core/platform/link-inspector';
+import { consumeLifecycleQueue, type LifecycleQueueBatch } from '../../src/core/features/lifecycle';
+import { designCommandKinds, isDesignCommand } from '../../src/core/features/design-generation/advance';
+// The network edge for one destination host: DNS answers a documentation address and HEAD succeeds; anything else is refused.
+const linkEdge=(host:string):typeof fetch=>async(input,init)=>{
+  const url=new URL(input instanceof Request?input.url:String(input));
+  if(url.hostname==='cloudflare-dns.com') return Response.json(url.searchParams.get('name')===host&&url.searchParams.get('type')==='A'?{Answer:[{data:'203.0.113.10'}]}:{});
+  if(url.hostname===host&&(init?.method??'GET')==='HEAD') return new Response(null,{status:200});
+  return new Response('Refused by the test network edge.',{status:502});
+};
 export default {async fetch(request:Request,bindings:LocalAppBindings,context:ExecutionContext) {
   const platform=createFixturePlatform(bindings,bindings.LOCAL_BOOTSTRAP_TOKEN);
   const sender=platform.config.mailSender={displayName:'Authoring test',fromEmail:'offers@example.test',replyToEmail:'reply@example.test',physicalAddress:'1 Test Street'};
   const evidence=fixtureVerification(bindings.DB,platform.config);
+  const linkHost=(bindings as {AUTHORING_LINK_HOST?:string}).AUTHORING_LINK_HOST;
+  if(linkHost){platform.config.allowedLinkHosts.push(linkHost);platform.linkInspector=createLinkInspector(platform.config.allowedLinkHosts,linkEdge(linkHost));}
   platform.mailer={channel:'email',async capabilities(){return {configured:true,canSendMarketing:true,effectiveDeduplication:true,effectiveReconciliation:true,deduplicationWindowMs:30*86400000,reconciliationWindowMs:30*86400000,detail:'Test sender; sends disabled.'};},inspectSender:value=>evidence.inspect(value),async validateSender(){return {ready:true,detail:'Test only.'};},async send(){throw new Error('Authoring tests never send.');},async reconcile(){return {facts:[],exhausted:true};},async verifyWebhook(){throw new Error('No webhook fixture.');}};
-  platform.jobs={async enqueue(job){await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();},async retry(){throw new Error('Tests never dispatch.');}};
+  // Design runs use the real local queue, as on a copy running on a computer; everything else is only recorded.
+  const queue=platform.jobs;
+  platform.jobs={async enqueue(job){if(isDesignCommand(job))return queue.enqueue(job);await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();},async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');}};
   const path=new URL(request.url).pathname;
   if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) platform.commerce=createShopifyAdapter({storeUrl:new URL('https://shop.example.test'),accessToken:'test-no-network',webhookSecret:'test-no-network'});
   const services=createAppServices(platform);
@@ -40,4 +54,9 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});
   }
   return dispatchDocuments(request,bindings,context,platform,createApp(bindings,platform,undefined,true));
+},
+// The local queue consumer runs design runs only, exactly as src/core/app/worker.local.ts does.
+async queue(batch,bindings:LocalAppBindings){
+  const platform=createFixturePlatform(bindings,bindings.LOCAL_BOOTSTRAP_TOKEN);
+  await consumeLifecycleQueue(batch as unknown as LifecycleQueueBatch,createAppServices(platform).lifecycleRuntime,designCommandKinds);
 }} satisfies ExportedHandler<LocalAppBindings>;

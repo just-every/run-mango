@@ -14,6 +14,7 @@ import { assertFreshContactStore } from './contact-authority.mjs';
 import { features } from './ui/seed.mjs';
 import { portability } from './portability.mjs';
 import { localBindings } from '../../src/core/platform/local-bindings.ts';
+import { declarationPaths, resolveDeclaration } from './deploy-declaration.mjs';
 export const statePath = '.wrangler/state';
 function stateInventory(root) {
  const legacy='src/core/app/client/.wrangler/state';
@@ -47,14 +48,26 @@ export const hooks = {
  owner:{displayName:input=>input.displayName,returnTo:'/setup'},signIn:{emailKey:'OWNER_EMAIL',returnTo:'/setup'},
 };
 const lifecycle=localInstaller(hooks);
+// The deploy kit reads the declaration Mango resolves from deploy.json for this deploy: optional secrets only when set.
+function deploy() {
+ const owner=ownerDeploy(declarationPaths.deploy,lifecycle);
+ return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:owner.declaration});
+}
 export const {install}=lifecycle;
-export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:ownerDeploy('deploy.json',lifecycle),portability,setup:{manifestFile:'rer-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',
+export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'rer-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',
  // The production build regenerates wrangler.toml; preview's fixed-build receipt ignores it.
  // Local dev identity: the local-only Worker entry, the build output rer build scans for the dev layer, and the kept end-to-end email-link test.
  devIdentity:{entry:'src/core/app/worker.dev.ts',output:['dist'],emailLinkTest:'tests/local-start/local.journey.ts'},localOnlyKeys:['RER_DEV_ORIGIN','RER_DEV_IDENTITY'],
  generatedOutputs:['wrangler.toml'],product:'Mango',
  // The run site (run-mango.com): the approved landing, the Run page and the docs, built by rer build --site.
  site:{entry:'src/site/pages.tsx',output:'dist/site',declaration:'deploy-site.json',config:'vite.site.config.ts'},input:{names:{email:'OWNER_EMAIL'}}});
+
+// rer verify serves the build as deploy hosts it, from deploy.json without its optional secrets (deploy-declaration.mjs).
+// Not enumerable: the setup seed loader spreads the adapter for every verb, and only verify's hosted check may read
+// deploy.json and write the declaration it resolves.
+Object.defineProperty(commandAdapter,'deployDeclaration',{enumerable:false,get(){
+ return resolveDeclaration(fileURLToPath(new URL('../../',import.meta.url)),'verify');
+}});
 
 // Supply the old inventory to Base's existing state validator so it refuses
 // legacy placement before any shared verb changes state or private settings.

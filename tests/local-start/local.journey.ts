@@ -70,14 +70,16 @@ contract('OPER-001', 'fresh install completes sender setup via the Base outbox a
     page.on('request',request=>{if(new URL(request.url()).pathname==='/api/settings/sender'&&request.method()==='PUT')senderWrites++;});
     await page.getByRole('button',{name:'Save sender details',exact:true}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
-    // Local setup supplies a display name; its missing email addresses need feedback.
-    for(const label of ['From email','Reply-to email']) {
+    // Setup starts with the owner's own address as sender and reply-to; the business name and postal address are theirs to give.
+    await expect(page.getByLabel('From email',{exact:true})).toHaveValue('owner@example.test');
+    await expect(page.getByLabel('Business display name',{exact:true})).toHaveValue('');
+    for(const label of ['Business display name','Physical postal address']) {
       const field=page.getByLabel(label,{exact:true});
       await expect(field).toHaveAttribute('aria-invalid','true');
       await expect(field).toHaveAccessibleDescription(/\S/);
     }
     await expect(page.getByRole('alert')).toBeVisible();
-    await expect(page.getByLabel('From email',{exact:true})).toBeFocused();
+    await expect(page.getByLabel('Business display name',{exact:true})).toBeFocused();
     expect(senderWrites).toBe(0);
     await finishSetup(page);
     expect(senderWrites).toBe(1);

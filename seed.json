@@ -13,7 +13,7 @@
     "Klaviyo"
   ],
   "description": "An operator-managed newsletter with consent-aware audience imports, hosted signup, email authoring, exact-revision approval, and provider-confirmed delivery reporting.",
-  "scope": "One self-hosted newsletter and its equal operators. Mail is required; commerce, SMS, and AI are optional. Wider commerce and multichannel contract clauses remain release obligations.",
+  "scope": "One self-hosted newsletter and its equal operators. Mail is required; commerce, SMS, AI and email design are optional. Wider commerce and multichannel contract clauses remain release obligations.",
   "capabilities": [
     {
       "id": "public-landing",
@@ -116,6 +116,29 @@
       ]
     },
     {
+      "id": "campaign-images",
+      "description": "Signed-in operators upload JPEG, PNG, GIF or WebP campaign images, checked by their own header bytes, size and pixel dimensions. Each is stored once in R2 under its SHA-256, never changed or deleted except by contact erasure of bytes holding an erased identifier, and served publicly at `/media/<sha256>` with an immutable cache, its exact content type, no cookie and no session, rate-limited per image rather than per client address, recording nothing about who fetched it. Approval verifies these images in storage instead of fetching the deployment's own hostname.",
+      "clauses": [
+        "CAMP-012"
+      ]
+    },
+    {
+      "id": "design-import",
+      "description": "An operator imports a design made with their own 12ui CLI (a LayerDoc version 2 file and its PNG candidate) into a draft's email body. The browser crops the photos and stores them as campaign images, compiles a 600px table email in the validated email grammar with the operator's HTTPS button link and Mango's managed footer, and highlights every line not in the operator's brief. Import only makes an unsaved edit and itself makes no request to 12ui.",
+      "clauses": [
+        "DESIGN-004"
+      ]
+    },
+    {
+      "id": "design-generation",
+      "description": "With the optional design module configured (the owner's own 12ui API key and origin), an operator editing a draft can ask for designs from a brief prefilled from the draft. A background run on the owner's 12ui account draws two to four candidates, shown as they land and kept across reloads; the operator picks one with Use this design, Mango fetches its layout as a LayerDoc and the browser then builds the email through the design import path, keeping the run on offer until the draft is saved with it. Estimates come before each paid step, each paid request records a cost fact, a rate-limit wait and every failure are shown with Mango's own reason, every request to 12ui has a time limit, and nothing is saved, approved, scheduled or sent by the run. With the module off, nothing is shown and 12ui is never contacted.",
+      "clauses": [
+        "DESIGN-001",
+        "DESIGN-002",
+        "DESIGN-003"
+      ]
+    },
+    {
       "id": "email-and-sms-safety",
       "description": "Enforces sender identity, authentication, unsubscribe and opt-out mechanics, link and content checks, personalisation fallbacks, and sending-reputation limits before any send.",
       "clauses": [
@@ -129,7 +152,8 @@
         "MSG-008",
         "MSG-009",
         "MSG-010",
-        "MSG-011"
+        "MSG-011",
+        "MSG-012"
       ]
     },
     {
@@ -211,6 +235,20 @@
       "requiredWhen": "Corresponding optional module is enabled"
     },
     {
+      "id": "design-provider",
+      "required": false,
+      "why": "An image-generation design service (12ui, reached with the owner's own API key) turns an operator's brief into candidate email designs and a structured layout; Cloudflare primitives do not generate designs. It is contacted only when an operator asks for designs or chooses one, never otherwise. Privacy: No contact, audience, personalisation value or token is sent. 12ui's sub-processors are OpenAI, fal.ai, Google and Cloudflare, and 12ui may keep briefs and images in its internal evaluation corpus until the account owner asks for deletion. 12ui's generated artifacts expire after 7 days, so Mango stores the candidates and layout it uses in its own R2 bucket.",
+      "data": [
+        "The operator's design brief, prefilled from the draft's name, subject, preheader, sender name and current text and edited by the operator, with every {{...}} personalisation or managed token removed, inside Mango's fixed description of an email layout",
+        "The chosen candidate image, sent back for layout conversion",
+        "The owner's design-service API key, as bearer authentication"
+      ],
+      "adapters": [
+        "design.provider.v1"
+      ],
+      "requiredWhen": "Corresponding optional module is enabled"
+    },
+    {
       "id": "mail-sender",
       "required": true,
       "why": "Internet email delivery, domain authentication, bounce handling, and complaint feedback require a delivery provider with established sending infrastructure.",
@@ -241,7 +279,7 @@
     {
       "id": "link-dns-resolver",
       "required": true,
-      "why": "A public DNS-over-HTTPS resolver verifies that each approved external link and redirect target resolves outside private networks before dispatch.",
+      "why": "A public DNS-over-HTTPS resolver verifies that each approved external link, image and redirect target resolves outside private networks before dispatch. Images this deployment stores itself at /media/ are verified in its own storage and never resolved or fetched.",
       "data": [
         "Approved link host names only"
       ],
@@ -302,6 +340,20 @@
       "required": false,
       "secret": false,
       "why": "Pin the OpenAI Responses model used for grounded generation and recorded usage.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "DESIGN_PROVIDER_API_KEY",
+      "required": false,
+      "secret": true,
+      "why": "The owner's own 12ui API key, used through design.provider.v1 only when an operator asks for designs (DESIGN-001). Never shared, logged or sent to the browser.",
+      "requiredWhen": "Any input in this module is set"
+    },
+    {
+      "name": "DESIGN_PROVIDER_ORIGIN",
+      "required": false,
+      "secret": false,
+      "why": "The design service's HTTPS origin, https://12ui.com for 12ui. A copy running on a computer may name a loopback http origin.",
       "requiredWhen": "Any input in this module is set"
     },
     {
@@ -456,6 +508,7 @@
       "/unsubscribe/",
       "/consent/",
       "/l/",
+      "/media/",
       "/webhooks/commerce/",
       "/webhooks/mail/",
       "/webhooks/sms/",
@@ -467,6 +520,7 @@
       "/subscribe",
       "/subscribe/info",
       "/favicon.svg",
+      "/rer-theme.css",
       "/favicon-32.png",
       "/favicon.ico",
       "/apple-touch-icon.png",
@@ -521,6 +575,7 @@
     "adapters": [
       "commerce.store.v1",
       "ai.provider.v1",
+      "design.provider.v1",
       "mail.sender.v1",
       "sms.sender.v1",
       "platform.link-inspector.v1"
@@ -549,6 +604,7 @@
       "image/gif",
       "image/webp"
     ],
+    "maxCampaignAssetPixelsPerSide": 4096,
     "maxEmailHtmlBytes": 102400,
     "maxSmsSegmentsPerRecipientStep": 3,
     "emailHandoffsPerMinute": 3000,
@@ -557,6 +613,7 @@
     "operatorRequestsPerMinute": 300,
     "publicRequestsPerMinutePerIp": 60,
     "unsubscribeRequestsPerMinutePerToken": 10,
+    "mediaRequestsPerMinutePerAsset": 6000,
     "providerWebhooksPerMinute": 5000,
     "providerReconciliationIntervalMinutes": 15,
     "unresolvedProviderOutcomeHours": 1
@@ -566,7 +623,7 @@
     "status": "target-not-yet-verified"
   },
   "operatingCost": {
-    "assumptions": "One store, 10000 contacts, 4 campaigns per month, 20000 email and 5000 SMS recipient-steps, and 500 AI generations. Queue messages are at most 64 KB and dispatch stays below 3334 recipient-steps per UTC day.",
+    "assumptions": "One store, 10000 contacts, 4 campaigns per month, 20000 email and 5000 SMS recipient-steps, and 500 AI generations. Queue messages are at most 64 KB and dispatch stays below 3334 recipient-steps per UTC day. Every campaign image fetched from an inbox is one Worker request and one D1 row write for its per-image rate counter; at 4 images per email, 20000 email recipient-steps add up to 80000 of each per month, concentrated on send days, and they count toward the same daily Free quotas as everything else. Each design run with the optional design module is one Worker request to start it, about 5 to 15 Queue messages while it polls (three operations each), one R2 write per candidate image and one for the layout, and a few D1 rows; 12ui itself bills the owner's own account at about $0.03 per candidate and $0.05 per layout at its 12 October 2026 list prices, free within its daily allowance of 20 images and 50 layouts.",
     "cloudflareMonthlyUsd": "$0 on the current Workers Free plan while the deployment stays inside every Free quota: at most 100000 dynamic Worker requests per UTC day with 10 ms CPU per invocation; 10000 Queue operations per UTC day (write, read, and delete are each one operation per 64 KB); D1 at 5 million rows read per UTC day, 100000 rows written per UTC day, and 5 GB total storage; and SQLite Durable Objects at 100000 requests and 13000 GB-s per UTC day. Workers Paid starts at $5/month and is required for the declared 100000-contact campaign: its 100000 recipient-step writes plus step and schedule mutations exceed D1 Free's 100000 rows-written-per-UTC-day limit.",
     "externalMonthlyUsd": "Not yet estimated because the reference commerce, email, SMS, and AI adapters have not been selected; required before first release.",
     "totalMonthlyUsd": "Incomplete until reference adapters and unit prices are selected.",

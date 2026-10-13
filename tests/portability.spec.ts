@@ -5,6 +5,7 @@ import { contract } from './contract';
 import { portabilityRuntime } from './portability/runtime.mjs';
 import { runCommand } from '../scripts/installer/run-command.mjs';
 import { readArchive } from '../src/vendor/base/portability/index.mjs';
+import { png } from './support/images';
 
 contract('DATA-001', 'complete native records and uploaded assets round-trip without restoring login authority', async () => {
   test.setTimeout(180000);
@@ -16,6 +17,12 @@ contract('DATA-001', 'complete native records and uploaded assets round-trip wit
     await source.db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES('portable-opt-out','already-hashed','email','unsubscribed',1,1,1)").run();
     const bytes = Uint8Array.from([0, 255, 127, 1]);
     await source.bucket.put('campaigns/original.png', bytes, { httpMetadata: { contentType: 'image/png' }, customMetadata: { label: 'Original' } });
+    const image = png(5, 4);
+    const form = new FormData();
+    form.append('file', new Blob([image]), 'original.png');
+    const uploaded = await fetch(`${source.origin}/api/campaign-assets`, { method: 'POST', body: form, headers: { Origin: source.origin, Cookie: source.cookie } });
+    expect(uploaded.status).toBe(201);
+    const campaignImage = (await uploaded.json()).asset;
     const archive = join(source.directory, 'source.ndjson'), session = join(source.directory, 'session');
     await writeFile(session, source.cookie, { mode: 0o600 });
     const command = (args: string[]) => runCommand('node', [resolve('src/vendor/base/portability/cli.mjs'), ...args], { write: () => {} });
@@ -57,6 +64,10 @@ contract('DATA-001', 'complete native records and uploaded assets round-trip wit
     expect(new Uint8Array(await (await target.bucket.get('campaigns/original.png'))!.arrayBuffer())).toEqual(bytes);
     expect((await target.call('/api/operator', { cookie: source.cookie })).status).toBe(401);
     expect((await target.call('/api/operator', { cookie: target.cookie })).status).toBe(200);
+    const media = await target.call(`/media/${campaignImage.sha256}`);
+    expect(media.status).toBe(200);
+    expect(media.headers.get('content-type')).toBe('image/png');
+    expect(new Uint8Array(await media.arrayBuffer())).toEqual(image);
     const asset = await target.bucket.get('campaigns/original.png');
     expect(new Uint8Array(await asset!.arrayBuffer())).toEqual(bytes);
     expect(asset!.httpMetadata.contentType).toBe('image/png');

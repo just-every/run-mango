@@ -61,6 +61,7 @@
         "MAIL_PHYSICAL_ADDRESS",
         "COMMERCE_STORE_URL",
         "AI_PROVIDER_MODEL",
+        "DESIGN_PROVIDER_ORIGIN",
         "SMS_CONFIRMATION_SENDER",
         "MANGO_TEST_SMS_ALLOWLIST",
         "MANGO_SMS_HANDOFFS_PER_MINUTE"
@@ -80,6 +81,7 @@
         "COMMERCE_API_TOKEN",
         "COMMERCE_WEBHOOK_SECRET",
         "AI_PROVIDER_API_KEY",
+        "DESIGN_PROVIDER_API_KEY",
         "SMS_PROVIDER_API_KEY",
         "SMS_WEBHOOK_SECRET"
       ],
@@ -96,6 +98,7 @@
       "providerEffects": [
         "outbound-mail",
         "ai",
+        "design",
         "outbound-webhooks",
         "outbound-sms"
       ],

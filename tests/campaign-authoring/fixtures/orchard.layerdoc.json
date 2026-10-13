@@ -1,0 +1,918 @@
+{
+ "version": "2",
+ "canvas": {
+  "width": 1024,
+  "height": 1536
+ },
+ "source": {
+  "artifactId": "source-original",
+  "mediaType": "image/png",
+  "width": 1024,
+  "height": 1536,
+  "scale": 1,
+  "url": "https://12ui.com/api/v1/convert/8ba8f704-d43c-4fee-9abc-99b5784a62e3?artifact=source-original&expires=1792417880&signature=redacted",
+  "expiresAt": "2026-10-19T13:51:20.993Z"
+ },
+ "extractionContract": {
+  "revision": 2,
+  "promptRevision": "4ad097ef026b757c95fbde768f9979c3b0f96e97875f6b889c5ae8290837f012",
+  "schemaRevision": "45780b2f66deca0d3738d119b4e769a5980ea1cb460b50b652aff41d76da8d72"
+ },
+ "layers": [
+  {
+   "kind": "group",
+   "name": "page",
+   "box": [
+    0,
+    0,
+    1024,
+    1536
+   ],
+   "children": [
+    {
+     "kind": "background",
+     "content": "Warm ivory page ground",
+     "z": 0,
+     "box": [
+      0,
+      0,
+      1024,
+      1536
+     ],
+     "extractionIndex": 0,
+     "surface": "vector",
+     "style": {
+      "background": "#f9f7f1"
+     },
+     "groundRegistration": "featureless-texture"
+    }
+   ]
+  },
+  {
+   "kind": "group",
+   "name": "header",
+   "box": [
+    379.3147877013177,
+    21,
+    265.37042459736455,
+    130.5
+   ],
+   "children": [
+    {
+     "kind": "logo",
+     "content": "Hilltop Orchard botanical branch emblem",
+     "z": 1,
+     "box": [
+      479.7657393850659,
+      21,
+      68.96632503660317,
+      64.5
+     ],
+     "extractionIndex": 1,
+     "surface": "raster",
+     "artifacts": {
+      "cutout": {
+       "artifactId": "cutout-1",
+       "mediaType": "image/png",
+       "width": 46,
+       "height": 43,
+       "scale": 0.67,
+       "pixels": "matted",
+       "lineage": "prepared-source",
+       "carriesSourceContent": true,
+       "url": "https://12ui.com/api/v1/convert/8ba8f704-d43c-4fee-9abc-99b5784a62e3?artifact=cutout-1&expires=1792417880&signature=redacted",
+       "expiresAt": "2026-10-19T13:51:20.993Z"
+      }
+     }
+    },
+    {
+     "kind": "logo",
+     "content": "HILLTOP ORCHARD",
+     "z": 2,
+     "box": [
+      379.3147877013177,
+      96,
+      265.37042459736455,
+      19.5
+     ],
+     "extractionIndex": 2,
+     "surface": "vector",
+     "googleFontFamily": "Libre Baskerville",
+     "color": "#30523d",
+     "align": "center",
+     "fontSizePx": 22.494508846776064,
+     "fontWeight": 400,
+     "style": {
+      "letterSpacing": "3.899px"
+     },
+     "measured": {
+      "ink": {
+       "box": [
+        382.31332357247436,
+        99,
+        259.3733528550513,
+        13.5
+       ],
+       "rows": 1,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    },
+    {
+     "kind": "divider",
+     "content": "Left gold ornament rule",
+     "z": 3,
+     "box": [
+      463.27379209370423,
+      138,
+      28.486090775988316,
+      1.5
+     ],
+     "extractionIndex": 3,
+     "surface": "vector",
+     "style": {
+      "background": "#dbb57a"
+     }
+    },
+    {
+     "kind": "divider",
+     "content": "Right gold ornament rule",
+     "z": 4,
+     "box": [
+      530.7408491947291,
+      138,
+      28.486090775988373,
+      1.5
+     ],
+     "extractionIndex": 4,
+     "surface": "vector",
+     "style": {
+      "background": "#dbb57a"
+     }
+    },
+    {
+     "kind": "icon",
+     "content": "Gold sun ornament",
+     "z": 5,
+     "box": [
+      500.75549048316253,
+      126,
+      23.988286969253238,
+      25.5
+     ],
+     "extractionIndex": 5,
+     "iconSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 256 256\" width=\"100%\" height=\"100%\" preserveAspectRatio=\"xMidYMid meet\"><rect width=\"256\" height=\"256\" fill=\"none\"/><line x1=\"128\" y1=\"40\" x2=\"128\" y2=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/><circle cx=\"128\" cy=\"128\" r=\"56\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/><line x1=\"64\" y1=\"64\" x2=\"48\" y2=\"48\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/><line x1=\"64\" y1=\"192\" x2=\"48\" y2=\"208\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/><line x1=\"192\" y1=\"64\" x2=\"208\" y2=\"48\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/><line x1=\"192\" y1=\"192\" x2=\"208\" y2=\"208\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/><line x1=\"40\" y1=\"128\" x2=\"16\" y2=\"128\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/><line x1=\"128\" y1=\"216\" x2=\"128\" y2=\"240\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/><line x1=\"216\" y1=\"128\" x2=\"240\" y2=\"128\" fill=\"none\" stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"16\"/></svg>",
+     "surface": "vector",
+     "color": "#dca44d"
+    }
+   ]
+  },
+  {
+   "kind": "group",
+   "name": "hero",
+   "box": [
+    136.43338213762812,
+    165,
+    751.1332357247438,
+    531
+   ],
+   "children": [
+    {
+     "kind": "photo",
+     "content": "Sunlit ripe apples hanging on an orchard branch",
+     "z": 6,
+     "box": [
+      136.43338213762812,
+      165,
+      751.1332357247438,
+      301.5
+     ],
+     "extractionIndex": 6,
+     "surface": "raster",
+     "style": {
+      "borderRadius": "8.998px"
+     },
+     "artifacts": {
+      "crop": {
+       "artifactId": "crop-6",
+       "mediaType": "image/png",
+       "width": 501,
+       "height": 201,
+       "scale": 0.67,
+       "pixels": "source",
+       "lineage": "prepared-source",
+       "carriesSourceContent": true,
+       "url": "https://12ui.com/api/v1/convert/8ba8f704-d43c-4fee-9abc-99b5784a62e3?artifact=crop-6&expires=1792417880&signature=redacted",
+       "expiresAt": "2026-10-19T13:51:20.993Z"
+      }
+     }
+    },
+    {
+     "kind": "text",
+     "content": "SEASONAL UPDATE",
+     "z": 7,
+     "box": [
+      139.43191800878478,
+      489,
+      157.42313323572475,
+      13.5
+     ],
+     "extractionIndex": 7,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#789282",
+     "align": "left",
+     "fontSizePx": 13.49670530806564,
+     "fontWeight": 500,
+     "style": {
+      "letterSpacing": "1.8px"
+     },
+     "measured": {
+      "ink": {
+       "box": [
+        142.43045387994144,
+        492,
+        151.42606149341142,
+        7.5
+       ],
+       "rows": 1,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    },
+    {
+     "kind": "heading",
+     "content": "Good Things\nAre Ripening",
+     "z": 8,
+     "box": [
+      139.43191800878478,
+      519,
+      307.34992679355787,
+      117
+     ],
+     "extractionIndex": 8,
+     "surface": "vector",
+     "googleFontFamily": "Libre Baskerville",
+     "color": "#345440",
+     "align": "left",
+     "fontSizePx": 53.98682123226256,
+     "fontWeight": 400,
+     "measured": {
+      "ink": {
+       "box": [
+        142.43045387994144,
+        522,
+        301.35285505124455,
+        106.5
+       ],
+       "rows": 2,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        7.498169615592022
+       ]
+      }
+     }
+    },
+    {
+     "kind": "paragraph",
+     "content": "The orchard is in its best season yet. Fruit is maturing,\nthe air is crisp, and there’s a lot to look forward to.",
+     "z": 9,
+     "box": [
+      139.43191800878478,
+      646.5,
+      457.27672035139085,
+      49.5
+     ],
+     "extractionIndex": 9,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#344b43",
+     "align": "left",
+     "fontSizePx": 17.995607077420853,
+     "fontWeight": 400,
+     "measured": {
+      "ink": {
+       "box": [
+        142.43045387994144,
+        649.5,
+        451.27964860907764,
+        43.5
+       ],
+       "rows": 2,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "kind": "group",
+   "name": "harvest",
+   "box": [
+    136.43338213762812,
+    732,
+    676.1698389458272,
+    238.5
+   ],
+   "children": [
+    {
+     "kind": "photo",
+     "content": "Basket filled with freshly harvested red apples",
+     "z": 10,
+     "box": [
+      136.43338213762812,
+      732,
+      370.3191800878477,
+      238.5
+     ],
+     "extractionIndex": 10,
+     "surface": "raster",
+     "style": {
+      "borderRadius": "8.998px"
+     },
+     "artifacts": {
+      "crop": {
+       "artifactId": "crop-10",
+       "mediaType": "image/png",
+       "width": 247,
+       "height": 159,
+       "scale": 0.67,
+       "pixels": "source",
+       "lineage": "prepared-source",
+       "carriesSourceContent": true,
+       "url": "https://12ui.com/api/v1/convert/8ba8f704-d43c-4fee-9abc-99b5784a62e3?artifact=crop-10&expires=1792417880&signature=redacted",
+       "expiresAt": "2026-10-19T13:51:20.993Z"
+      }
+     }
+    },
+    {
+     "kind": "text",
+     "content": "IN THE GROVE",
+     "z": 11,
+     "box": [
+      548.7320644216691,
+      745.5,
+      113.94436310395315,
+      13.5
+     ],
+     "extractionIndex": 11,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#789282",
+     "align": "left",
+     "fontSizePx": 13.49670530806564,
+     "fontWeight": 500,
+     "style": {
+      "letterSpacing": "1.8px"
+     },
+     "measured": {
+      "ink": {
+       "box": [
+        551.7306002928258,
+        748.5,
+        107.94729136163983,
+        7.5
+       ],
+       "rows": 1,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    },
+    {
+     "kind": "heading",
+     "content": "Harvest Time\nIs Near",
+     "z": 12,
+     "box": [
+      551.7306002928258,
+      774,
+      169.41727672035142,
+      61.5
+     ],
+     "extractionIndex": 12,
+     "surface": "vector",
+     "googleFontFamily": "Libre Baskerville",
+     "color": "#345440",
+     "align": "left",
+     "fontSizePx": 29.992678462368087,
+     "fontWeight": 400,
+     "measured": {
+      "ink": {
+       "box": [
+        554.7291361639824,
+        777,
+        163.4202049780381,
+        54
+       ],
+       "rows": 2,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        4.498901769355213
+       ]
+      }
+     }
+    },
+    {
+     "kind": "paragraph",
+     "content": "Our early varieties are ready, and\nthe full harvest is just around the\ncorner. We can’t wait to share the\nseason’s best with you.",
+     "z": 13,
+     "box": [
+      548.7320644216691,
+      855,
+      263.87115666178624,
+      93
+     ],
+     "extractionIndex": 13,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#344b43",
+     "align": "left",
+     "fontSizePx": 16.495973154302447,
+     "fontWeight": 400,
+     "measured": {
+      "ink": {
+       "box": [
+        551.7306002928258,
+        858,
+        257.8740849194729,
+        87
+       ],
+       "rows": 4,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "kind": "group",
+   "name": "care",
+   "box": [
+    139.43191800878478,
+    994.5,
+    748.1346998535871,
+    232.5
+   ],
+   "children": [
+    {
+     "kind": "photo",
+     "content": "White apple blossoms and pink buds on a sunlit branch",
+     "z": 14,
+     "box": [
+      520.2459736456808,
+      994.5,
+      367.3206442166911,
+      232.5
+     ],
+     "extractionIndex": 14,
+     "surface": "raster",
+     "style": {
+      "borderRadius": "8.998px"
+     },
+     "artifacts": {
+      "crop": {
+       "artifactId": "crop-14",
+       "mediaType": "image/png",
+       "width": 245,
+       "height": 155,
+       "scale": 0.67,
+       "pixels": "source",
+       "lineage": "prepared-source",
+       "carriesSourceContent": true,
+       "url": "https://12ui.com/api/v1/convert/8ba8f704-d43c-4fee-9abc-99b5784a62e3?artifact=crop-14&expires=1792417880&signature=redacted",
+       "expiresAt": "2026-10-19T13:51:20.993Z"
+      }
+     }
+    },
+    {
+     "kind": "text",
+     "content": "BEHIND THE SCENES",
+     "z": 15,
+     "box": [
+      139.43191800878478,
+      1012.5,
+      170.9165446559297,
+      13.5
+     ],
+     "extractionIndex": 15,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#789282",
+     "align": "left",
+     "fontSizePx": 13.49670530806564,
+     "fontWeight": 500,
+     "style": {
+      "letterSpacing": "1.8px"
+     },
+     "measured": {
+      "ink": {
+       "box": [
+        142.43045387994144,
+        1015.5,
+        164.91947291361637,
+        7.5
+       ],
+       "rows": 1,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    },
+    {
+     "kind": "heading",
+     "content": "Small Steps,\nBig Impact",
+     "z": 16,
+     "box": [
+      139.43191800878478,
+      1039.5,
+      166.41874084919473,
+      72
+     ],
+     "extractionIndex": 16,
+     "surface": "vector",
+     "googleFontFamily": "Libre Baskerville",
+     "color": "#345440",
+     "align": "left",
+     "fontSizePx": 29.992678462368087,
+     "fontWeight": 400,
+     "measured": {
+      "ink": {
+       "box": [
+        142.43045387994144,
+        1042.5,
+        160.4216691068814,
+        64.5
+       ],
+       "rows": 2,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        4.498901769355213
+       ]
+      }
+     }
+    },
+    {
+     "kind": "paragraph",
+     "content": "From healthier soil to happier trees,\nwe’re always tending the land with\ncare — for fruit today and for\ngenerations to come.",
+     "z": 17,
+     "box": [
+      139.43191800878478,
+      1125,
+      274.36603221083453,
+      96
+     ],
+     "extractionIndex": 17,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#344b43",
+     "align": "left",
+     "fontSizePx": 16.495973154302447,
+     "fontWeight": 400,
+     "measured": {
+      "ink": {
+       "box": [
+        142.43045387994144,
+        1128,
+        268.3689604685212,
+        90
+       ],
+       "rows": 4,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "kind": "group",
+   "name": "cta",
+   "box": [
+    361.3235724743777,
+    1252.5,
+    301.3528550512445,
+    58.5
+   ],
+   "children": [
+    {
+     "kind": "button",
+     "content": "Explore the Season",
+     "z": 18,
+     "box": [
+      361.3235724743777,
+      1252.5,
+      301.3528550512445,
+      58.5
+     ],
+     "labelBox": [
+      431.7891654465593,
+      1275,
+      160.42166910688138,
+      18
+     ],
+     "extractionIndex": 18,
+     "surface": "vector",
+     "googleFontFamily": "Libre Baskerville",
+     "color": "#faf8ed",
+     "align": "center",
+     "fontSizePx": 17.995607077420853,
+     "fontWeight": 400,
+     "style": {
+      "background": "#314e36",
+      "borderRadius": "10.497px"
+     },
+     "measured": {
+      "ink": {
+       "box": [
+        440.7847730600293,
+        1272,
+        148.4275256222548,
+        18
+       ],
+       "rows": 1,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    },
+    {
+     "kind": "icon",
+     "content": "Botanical sprig",
+     "z": 19,
+     "box": [
+      395.80673499267937,
+      1269,
+      22.489019033674936,
+      27
+     ],
+     "extractionIndex": 19,
+     "surface": "raster",
+     "artifacts": {
+      "cutout": {
+       "artifactId": "cutout-19",
+       "mediaType": "image/png",
+       "width": 15,
+       "height": 18,
+       "scale": 0.67,
+       "pixels": "matted",
+       "lineage": "prepared-source",
+       "carriesSourceContent": true,
+       "url": "https://12ui.com/api/v1/convert/8ba8f704-d43c-4fee-9abc-99b5784a62e3?artifact=cutout-19&expires=1792417880&signature=redacted",
+       "expiresAt": "2026-10-19T13:51:20.993Z"
+      }
+     }
+    },
+    {
+     "kind": "icon",
+     "content": "Right arrow",
+     "z": 20,
+     "box": [
+      611.701317715959,
+      1275,
+      16.491947291361612,
+      15
+     ],
+     "extractionIndex": 20,
+     "iconSvg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" width=\"100%\" height=\"100%\" preserveAspectRatio=\"xMidYMid meet\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12l14 0\" /><path d=\"M13 18l6 -6\" /><path d=\"M13 6l6 6\" /></svg>",
+     "surface": "vector",
+     "color": "#d2dcc8"
+    }
+   ]
+  },
+  {
+   "kind": "group",
+   "name": "footer",
+   "box": [
+    274.36603221083453,
+    1357.5,
+    475.26793557833093,
+    117
+   ],
+   "children": [
+    {
+     "kind": "divider",
+     "content": "Left footer rule",
+     "z": 21,
+     "box": [
+      274.36603221083453,
+      1377,
+      202.4011713030747,
+      1.5
+     ],
+     "extractionIndex": 21,
+     "surface": "vector",
+     "style": {
+      "background": "#c5cbbf"
+     }
+    },
+    {
+     "kind": "divider",
+     "content": "Right footer rule",
+     "z": 22,
+     "box": [
+      547.2327964860908,
+      1377,
+      202.40117130307465,
+      1.5
+     ],
+     "extractionIndex": 22,
+     "surface": "vector",
+     "style": {
+      "background": "#c5cbbf"
+     }
+    },
+    {
+     "kind": "logo",
+     "content": "Small Hilltop Orchard botanical sprig",
+     "z": 23,
+     "box": [
+      496.2576866764275,
+      1357.5,
+      32.98389458272334,
+      39
+     ],
+     "extractionIndex": 23,
+     "surface": "raster",
+     "artifacts": {
+      "cutout": {
+       "artifactId": "cutout-23",
+       "mediaType": "image/png",
+       "width": 22,
+       "height": 26,
+       "scale": 0.67,
+       "pixels": "matted",
+       "lineage": "prepared-source",
+       "carriesSourceContent": true,
+       "url": "https://12ui.com/api/v1/convert/8ba8f704-d43c-4fee-9abc-99b5784a62e3?artifact=cutout-23&expires=1792417880&signature=redacted",
+       "expiresAt": "2026-10-19T13:51:20.993Z"
+      }
+     }
+    },
+    {
+     "kind": "text",
+     "content": "You’re receiving this email because you signed up for updates from Hilltop Orchard.",
+     "z": 24,
+     "box": [
+      287.85944363103954,
+      1410,
+      446.78184480234256,
+      15
+     ],
+     "extractionIndex": 24,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#858981",
+     "align": "center",
+     "fontSizePx": 11.247254423388032,
+     "fontWeight": 400,
+     "measured": {
+      "ink": {
+       "box": [
+        290.8579795021962,
+        1413,
+        440.7847730600293,
+        9
+       ],
+       "rows": 1,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    },
+    {
+     "kind": "link",
+     "content": "Unsubscribe",
+     "z": 25,
+     "box": [
+      476.76720351390924,
+      1435.5,
+      62.9692532942899,
+      12
+     ],
+     "extractionIndex": 25,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#536453",
+     "align": "center",
+     "fontSizePx": 11.247254423388032,
+     "fontWeight": 400,
+     "style": {
+      "textDecoration": "underline"
+     },
+     "measured": {
+      "ink": {
+       "box": [
+        479.7657393850659,
+        1438.5,
+        56.97218155197652,
+        6
+       ],
+       "rows": 1,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    },
+    {
+     "kind": "text",
+     "content": "Hilltop Orchard · 123 Orchard Lane · Pleasant Valley, CA 94566",
+     "z": 26,
+     "box": [
+      338.8345534407028,
+      1459.5,
+      344.8316251830161,
+      15
+     ],
+     "extractionIndex": 26,
+     "surface": "vector",
+     "googleFontFamily": "Inter",
+     "color": "#858981",
+     "align": "center",
+     "fontSizePx": 11.247254423388032,
+     "fontWeight": 400,
+     "measured": {
+      "ink": {
+       "box": [
+        341.83308931185945,
+        1462.5,
+        338.83455344070273,
+        9
+       ],
+       "rows": 1,
+       "basis": "declared-color",
+       "marginPx": [
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088,
+        2.9992678462368088
+       ]
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

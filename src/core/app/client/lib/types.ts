@@ -112,6 +112,8 @@ export type CampaignDetail = {
   audienceChannelCounts: AudienceChannelCount[];
   audienceState: 'saved' | 'needs_recomputation';
   checks?: Check[];
+  /** The deployment's own origin, where its campaign images are served (CAMP-012). */
+  mediaOrigin: string;
 };
 
 export type Proposal = {

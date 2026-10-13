@@ -7,13 +7,22 @@ import { z } from 'zod';
 
 import { readJson, readParams } from '@/core/api/input';
 
+import { UnsettledEmailBodyError } from './authoring-content';
 import { campaignStates } from './result-model';
 import { draftCompositionSchema } from './draft-composition';
 import type { createCampaignService } from './service';
 
 const identifier = z.object({ id: z.string().min(1) });
+/** A body that never settles into a form that saves to itself is refused by name (CAMP-003); no such body is known. */
+const settled = async <T,>(save: Promise<T>) => {
+  try { return { saved: await save }; } catch (error) {
+    if (error instanceof UnsettledEmailBodyError) return { refused: { error: 'invalid_email_body', detail: error.message } };
+    throw error;
+  }
+};
 
-export function createCampaignRoutes(service: ReturnType<typeof createCampaignService>, authoring: ReturnType<typeof createAuthoringService>) {
+/** `mediaOrigin` is the deployment's own origin: campaign pages use it to recognise the draft's own images (CAMP-012). */
+export function createCampaignRoutes(service: ReturnType<typeof createCampaignService>, authoring: ReturnType<typeof createAuthoringService>, mediaOrigin: string) {
   const routes = new Hono<{Variables:AuthVariables}>();
 
   routes.get('/campaign-starters', async context => context.json(await authoring.starters()));
@@ -36,7 +45,7 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     const parsed = readParams(context, identifier);
     if ('error' in parsed) return parsed.error;
     const detail = await service.proposalDetail(parsed.data.id);
-    return detail ? context.json(detail) : context.json({ error: 'not_found' }, 404);
+    return detail ? context.json({ ...detail, mediaOrigin }) : context.json({ error: 'not_found' }, 404);
   });
   routes.post('/campaigns', async context => {
     const body = await readJson(context, createDraftSchema);
@@ -46,7 +55,8 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
       return context.json(result,result.kind==='draft'?201:409);
     }
     const composition = body.data.mode === 'blank' ? { name: 'Untitled campaign' } : body.data.composition;
-    return context.json(await authoring.create(composition, context.get('operator').id), 201);
+    const created = await settled(authoring.create(composition, context.get('operator').id));
+    return 'refused' in created ? context.json(created.refused, 400) : context.json(created.saved, 201);
   });
   routes.get('/campaigns', async context => {
     const parsed = z.object({state:z.enum(campaignStates).optional(),channel:z.enum(['email','sms']).optional()}).safeParse(context.req.query());
@@ -59,20 +69,22 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     const parsed = readParams(context, identifier);
     if ('error' in parsed) return parsed.error;
     const detail = await service.campaignDetail(parsed.data.id);
-    return detail ? context.json(detail) : context.json({ error: 'not_found' }, 404);
+    return detail ? context.json({ ...detail, mediaOrigin }) : context.json({ error: 'not_found' }, 404);
   });
   routes.get('/campaigns/:id/review', async (context) => {
     const parsed = readParams(context, identifier);
     if ('error' in parsed) return parsed.error;
     const review = await service.review(parsed.data.id);
-    return review ? context.json(review) : context.json({ error: 'not_found' }, 404);
+    return review ? context.json({ ...review, mediaOrigin }) : context.json({ error: 'not_found' }, 404);
   });
   routes.patch('/campaign-revisions/:id', async (context) => {
     const params = readParams(context, identifier);
     if ('error' in params) return params.error;
     const body = await readJson(context, draftCompositionSchema);
     if ('error' in body) return body.error;
-    const result = await service.updateDraft(params.data.id, body.data);
+    const update = await settled(service.updateDraft(params.data.id, body.data));
+    if ('refused' in update) return context.json(update.refused, 400);
+    const result = update.saved;
     if (result.kind === 'not_found') return context.json({ error: 'not_found' }, 404);
     if (result.kind === 'not_draft') return context.json({ error: 'revision_not_draft' }, 409);
     if (result.kind === 'stale_revision') return context.json({error:'stale_revision',detail:'This draft changed while saving. Reload it and review your changes before saving again.'},409);

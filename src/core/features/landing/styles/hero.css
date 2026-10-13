@@ -8,8 +8,6 @@
 .mango-landing .hero-replaces { margin-top: max(14px, calc(20 * var(--u))); color: var(--ms-muted); font-size: max(14px, calc(16 * var(--u))); text-wrap: pretty; }
 .mango-landing .hero-replaces strong { color: var(--ms-ink-soft); font-weight: 600; }
 .mango-landing .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px max(16px, calc(24 * var(--u))); margin-top: max(32px, calc(56 * var(--u))); }
-.mango-landing .hero-note { margin-top: max(20px, calc(28 * var(--u))); color: var(--ms-muted); font-size: max(14px, calc(16 * var(--u))); text-wrap: pretty; }
-.mango-landing .hero-note-dot { color: var(--ms-faint); }
 
 /* The scene: the 770 x 690 design drawn 684 design pixels wide, its top-left corner 778px in from the hero's left edge.
    Its rightmost card, the new subscriber, ends on the right gutter, level with the header's last link (1536 - 86 = 1450

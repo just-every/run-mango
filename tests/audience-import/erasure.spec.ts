@@ -87,7 +87,8 @@ test('CONT-013 erasure removes an address inside URLs and storage keys and keeps
   const before=await keys();
   expect((await eraseHttp(f,cookie,ann.id)).state).toBe('complete');
   const body=(await f.db.prepare('SELECT email_body FROM campaign_revisions WHERE id=?').bind(draft.revisionId).first()).email_body;
-  expect(body).toContain('https://shop.test/survey?email=[erased]&src=news');expect(body).toContain('https://shop.test/u/[erased]/prefs');
+  // Saved in canonical form (CAMP-003), which writes the query's & as &amp; inside the attribute.
+  expect(body).toContain('https://shop.test/survey?email=[erased]&amp;src=news');expect(body).toContain('https://shop.test/u/[erased]/prefs');
   expect(body).toContain('https://shop.test/u/xann@x.test/prefs or ann@x.test.example');
   expect(before).toHaveLength(kept.length+3);expect(await keys()).toEqual([...kept].sort());
  }finally{await f.close();}

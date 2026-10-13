@@ -1,4 +1,5 @@
 import { allowedEmailAttribute, emailTags, escapeHtml, inspectEmailHtml, safeEmailUrl, voidEmailTags } from '@/core/features/campaigns/email-html-policy';
+import { parseEmailHtml } from '@/core/features/campaigns/email-html-parse';
 import { foreignMergeTags } from '@/core/features/campaigns/message-content';
 
 // Imported HTML is reduced to Mango's restricted email grammar. Every removal is
@@ -35,12 +36,12 @@ export function importHtml(source: string): ImportedHtml {
       const name = attribute[1].toLowerCase(), value = (attribute[2] ?? attribute[3] ?? attribute[4] ?? '').trim();
       if (values.has(name)) continue;
       values.set(name, value);
-      if (allowedEmailAttribute(tag, name, value.replaceAll('&amp;', '&').replaceAll('&', '&amp;'))) attributes.push(`${name}="${escapeHtml(value.replaceAll('&amp;', '&'))}"`);
+      if (allowedEmailAttribute(tag, name, value.replaceAll('&amp;', '&'))) attributes.push(`${name}="${escapeHtml(value.replaceAll('&amp;', '&'))}"`);
       else if (!(tag === 'a' && name === 'href') && !(tag === 'img' && name === 'src')) note(`${name} attribute`);
     }
     if (tag === 'a') {
       const href = values.get('href') ?? '';
-      if (!safeEmailUrl(href.replaceAll('&amp;', '&').replaceAll('&', '&amp;'), true)) {
+      if (!safeEmailUrl(href.replaceAll('&amp;', '&'), true)) {
         anchors.push('dropped');
         // A link whose address is another tool's merge tag stays visible as text.
         if (foreignMergeTags(href).length) out.push(`(${escapeHtml(href)}) `);
@@ -49,7 +50,7 @@ export function importHtml(source: string): ImportedHtml {
       }
       anchors.push('kept');
     }
-    if (tag === 'img' && (!safeEmailUrl(values.get('src') ?? '') || !values.has('width') || !values.has('height') || !attributes.some(item => item.startsWith('width=')) || !attributes.some(item => item.startsWith('height=')))) {
+    if (tag === 'img' && (!safeEmailUrl((values.get('src') ?? '').replaceAll('&amp;', '&')) || !values.has('width') || !values.has('height') || !attributes.some(item => item.startsWith('width=')) || !attributes.some(item => item.startsWith('height=')))) {
       note('Image without an HTTPS address and explicit width and height');
       if (foreignMergeTags(values.get('src') ?? '').length) out.push(escapeHtml(values.get('src')!));
       continue;
@@ -57,7 +58,10 @@ export function importHtml(source: string): ImportedHtml {
     out.push(`<${tag}${attributes.length ? ' ' + attributes.join(' ') : ''}>`);
   }
   out.push(text(html.slice(offset)));
-  const cleaned = out.join('').replace(/[ \t]*\r?\n[\s]*/g, '\n').replace(/\n{2,}/g, '\n').trim();
+  // Stored in the canonical form saving uses; a tag mail clients would ignore here takes its attributes with it.
+  const parsed = parseEmailHtml(out.join('').replace(/[ \t]*\r?\n[\s]*/g, '\n').replace(/\n{2,}/g, '\n').trim());
+  parsed.lost.forEach(() => note('Attribute on a tag mail clients ignore where it stands'));
+  const cleaned = parsed.canonical;
   return {
     html: cleaned,
     removed: [...removed].map(([message, count]) => count > 1 ? `${message} (${count})` : message),

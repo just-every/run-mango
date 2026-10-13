@@ -56,7 +56,7 @@ export function CampaignDetailPage() {
         <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
         <DeliveryPlan steps={data.steps} />
       </div>
-      <RevisionPreviews revision={data.revision} links={data.links} />
+      <RevisionPreviews revision={data.revision} links={data.links} mediaOrigin={data.mediaOrigin} />
       <ApprovalCheckList checks={data.checks} />
     </div>
   );

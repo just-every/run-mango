@@ -1,16 +1,9 @@
 import { escapeHtml } from './email-html-policy';
+import { parsePersonalisationToken as parseToken } from './authoring-tokens';
 export type MessageRevision = {
   emailSubject: string; emailBody: string; emailText: string; preheader: string; smsBody: string; physicalAddress: string;
 };
 export const messageRendererVersion = 'mango-message-v2';
-function parseToken(source: string) {
-  const token = source.trim();
-  if (token === 'unsubscribe_url' || token === 'physical_address') return {managed: token};
-  const match = /^([a-zA-Z0-9_.-]+)\s*\|\s*(?:fallback|default)\s*:\s*(?:"([^"\r\n]*)"|'([^'\r\n]*)'|([^"'{}\r\n]*))$/.exec(token);
-  if (!match) return undefined;
-  const fallback = match[2] ?? match[3] ?? match[4].trim();
-  return fallback.length ? {key: match[1], fallback} : undefined;
-}
 function personalisationValue(values: Record<string, string | null | undefined>, key: string | undefined) {
   return key && Object.hasOwn(values, key) && typeof values[key] === 'string' ? values[key] : undefined;
 }

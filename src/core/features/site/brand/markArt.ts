@@ -5,12 +5,12 @@ export const markViewBox = '0 0 48 48';
 
 /** The mark's shapes, back to front. */
 export const markShapes = [
-  // Fruit: a fat rounded end at the lower left, narrowing to the stem at the upper right, with the gentle inward curve of a mango's back.
-  { d: 'M30.2 10.4C37.6 10.9 41.8 18.3 40.2 26.6 38.3 36.6 29.4 44.4 19.4 44.2 10.6 44 5 38.2 6.7 31.2 7.9 26.4 12.3 24.8 16.4 22.3 20.7 19.6 22.4 10 30.2 10.4Z', fill: '#f6b828' },
+  // Fruit: a tilted side-view mango with a gently convex, near-straight back along the upper left, a full round belly on the lower right, and a soft rounded tip at the lower left.
+  { d: 'M30.0 10.2C37.6 10.6 41.8 18.0 40.6 26.6 39.0 36.8 30.4 44.6 21.6 44.4 13.6 44.2 6.0 41.6 6.0 35.6 6.0 29.6 11.4 19.0 17.8 13.0 20.8 10.6 25.0 10.0 30.0 10.2Z', fill: '#f6b828' },
   // Ripe blush along the underside.
-  { d: 'M40.2 26.6C38.3 36.6 29.4 44.4 19.4 44.2 29.2 42.4 36.8 35.6 39.4 24.6Z', fill: '#ea9f22' },
+  { d: 'M40.6 26.6C39.0 36.8 30.4 44.6 21.6 44.4 30.6 42.2 37.4 35.8 39.6 24.8Z', fill: '#ea9f22' },
   // Soft highlight on the shoulder.
-  { d: 'M13.1 29.4C14.9 27.4 18.2 26.5 20.6 24.4 19.2 27.7 15.8 29.7 13.6 31.9 12.7 32.8 12.3 30.3 13.1 29.4Z', fill: '#ffdb6e' },
+  { d: 'M17.4 19.0C19.4 16.4 21.8 14.8 24.0 14.2 22.6 17.6 19.8 20.8 17.2 23.6 16.0 24.6 16.2 20.4 17.4 19.0Z', fill: '#ffdb6e' },
   // Stem.
   { d: 'M29.4 11.6C29.6 9.9 30.2 8.5 31.2 7.4L32.3 8.2C31.5 9.2 31 10.4 30.9 11.8Z', fill: '#6b4a22' },
   // Leaf, two-toned along its midrib.

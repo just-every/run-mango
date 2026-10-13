@@ -4,6 +4,7 @@ import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-co
 import { unavailableInspection } from '@/core/features/sender-verification/service';
 import { invalidPersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
+import { inspectOwnMedia, ownMediaName } from '@/core/features/campaign-assets/own-media';
 import { parseStructuredRules } from './rules';
 import type { ApprovalCheck, LifecycleRepository } from './repository';
 import type { CampaignRevisionSnapshot, FrozenCandidate, LifecyclePlatform, SenderCapabilities } from './types';
@@ -57,7 +58,7 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
   const htmlPolicy = inspectEmailHtml(revision.emailBody);
   findings.push(check('message.content', htmlPolicy.issues.length === 0, htmlPolicy.issues.length
     ? htmlPolicy.issues.join(' ')
-    : 'Email HTML uses the allowed tags, attributes and HTTPS destinations.'));
+    : 'Email HTML uses the allowed tags, attributes, inline styles and HTTPS destinations, and hides no text.'));
   const missingFallback = invalidPersonalisation(authored);
   findings.push(check('message.personalisation', missingFallback.length === 0,
     missingFallback.length ? `Invalid personalisation or missing fallback: ${missingFallback.join(', ')}` : 'Every personalisation token carries an explicit fallback.'));
@@ -153,10 +154,12 @@ export async function runApprovalChecks(input: {
     }
   }
   const destinations = transmittedDestinations(snapshot);
-  const linkInspections = await Promise.all(destinations.map(async (destination) => ({
-    destination,
-    inspection: await platform.linkInspector.inspect(destination),
-  })));
+  const linkInspections = await Promise.all(destinations.map(async (destination) => {
+    const ownMedia = ownMediaName(destination, platform.config.publicBaseUrl);
+    return { destination, inspection: ownMedia
+      ? await inspectOwnMedia(platform.database.$client, platform.blobs, ownMedia)
+      : await platform.linkInspector.inspect(destination) };
+  }));
   const blockedDestinations = linkInspections.filter(({ inspection }) => !inspection.ok);
   checks.push(check('message.links.resolved', blockedDestinations.length === 0,
     blockedDestinations.length

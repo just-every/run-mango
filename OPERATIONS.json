@@ -230,6 +230,10 @@
       "AI_PROVIDER_API_KEY",
       "AI_PROVIDER_MODEL"
     ],
+    "design": [
+      "DESIGN_PROVIDER_API_KEY",
+      "DESIGN_PROVIDER_ORIGIN"
+    ],
     "sms": [
       "SMS_PROVIDER_API_KEY",
       "SMS_WEBHOOK_SECRET",

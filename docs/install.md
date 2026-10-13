@@ -82,6 +82,28 @@ curl -s -o /dev/null -w '%{http_code}\n' -X POST "$MANGO_PUBLIC_BASE_URL/auth/bo
 
 It works once, on an empty installation, and creates the owner named by `OWNER_EMAIL`. Expect `303`. Then open `/signin` in a browser and request a link as usual. If the sender identity from your `MAIL_SENDER_NAME`, `MAIL_AUTH_FROM`, `MAIL_REPLY_TO` and `MAIL_PHYSICAL_ADDRESS` inputs is incomplete, signing in opens **Set up your sender identity** first.
 
+### Optional: email design with 12ui
+
+**Design with 12ui** in the email editor uses your own [12ui](https://12ui.com) account. It stays off, and Mango never contacts 12ui, until you give Mango two settings together: your 12ui API key and the address of 12ui's service. Supplying only one stops Mango from starting, with a message naming the other.
+
+- On your computer, add both lines to `.dev.vars` and restart `rer dev`:
+
+  ```bash
+  DESIGN_PROVIDER_API_KEY=<your 12ui API key>
+  DESIGN_PROVIDER_ORIGIN=https://12ui.com
+  ```
+
+- On a deployment, set both in the environment of the deploy; `deploy.json` declares them as optional secrets, so the deploy uploads them only when they are set, and later deploys keep them. Type the key at a hidden prompt rather than on the command line, so it stays out of your shell history:
+
+  ```bash
+  read -rs -p '12ui API key: ' DESIGN_PROVIDER_API_KEY && export DESIGN_PROVIDER_API_KEY
+  DESIGN_PROVIDER_ORIGIN=https://12ui.com rer deploy --environment production
+  ```
+
+  Storing them with `npx wrangler secret put DESIGN_PROVIDER_API_KEY --name mango-production`, which also asks for the value at a prompt (and the origin the same way), works too.
+
+Every operator can then spend from your 12ui account; Mango shows an estimate before each paid step and records each request with the campaign's costs. See [Write your first newsletter](./first-newsletter.md#design-with-12ui) for how it works and what is sent to 12ui.
+
 ## Before you send
 
 Local checks and a deploy do not prove that mail works. Continue with [Team and settings](./team-and-settings.md) and [Approval and sending](./approval-and-sending.md).

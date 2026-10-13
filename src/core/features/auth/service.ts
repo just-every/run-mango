@@ -61,7 +61,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       OWNER_EMAIL: config.initialOperatorEmails[0] ?? 'local@example.test',
       SESSION_SECRET: config.sessionSigningKey, SETUP_TOKEN: config.authSetupToken,
       MAIL_FROM: config.mailAuthFrom || undefined, local,
-      branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin' },
+      branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
     }, mailSender: local ? createMailSender({ provider: 'development', mode: 'development' }, { outbox: createD1DevelopmentOutbox({ db }) }) : createBaseMailSender(config),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {

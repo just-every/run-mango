@@ -16,7 +16,9 @@
     {"binding": "MAIL_AUTH_FROM", "environment": "MAIL_AUTH_FROM"},
     {"binding": "MAIL_WEBHOOK_SECRET", "environment": "MAIL_WEBHOOK_SECRET"},
     {"binding": "MAIL_WEBHOOK_ID", "environment": "MAIL_WEBHOOK_ID"},
-    {"binding": "MANGO_ALLOWED_LINK_HOSTS", "environment": "MANGO_ALLOWED_LINK_HOSTS"}
+    {"binding": "MANGO_ALLOWED_LINK_HOSTS", "environment": "MANGO_ALLOWED_LINK_HOSTS"},
+    {"binding": "DESIGN_PROVIDER_API_KEY", "environment": "DESIGN_PROVIDER_API_KEY", "optional": true},
+    {"binding": "DESIGN_PROVIDER_ORIGIN", "environment": "DESIGN_PROVIDER_ORIGIN", "optional": true}
   ],
   "vars": {
     "MAIL_PROVIDER": "sendgrid",

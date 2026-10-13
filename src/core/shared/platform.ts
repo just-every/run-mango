@@ -132,8 +132,36 @@ export interface AiProvider {
   generateGroundedJson(request: GroundedGenerationRequest): Promise<AiGenerationResult>;
 }
 
+/** One candidate slot of a design run, as the design service reports it. */
+export type DesignCandidateStatus = 'pending' | 'dispatched' | 'succeeded' | 'failed';
+export type DesignRun = { runId: string; candidates: { slot: string; status: DesignCandidateStatus }[] };
+export type DesignLayout = { layoutId: string; status: 'queued' | 'running' | 'succeeded' | 'failed' | 'expired'; resultSha256?: string };
+export type DesignProviderFailure = 'provider_unauthorized' | 'provider_rejected' | 'provider_quota' | 'provider_unavailable' | 'provider_invalid';
+
+/** A refusal or outage at the design service. The message is Mango's own; provider text is never kept. */
+export class DesignProviderError extends Error {
+  constructor(readonly code: DesignProviderFailure, readonly status: number, readonly retryAfterSeconds?: number) {
+    super(`Design provider request failed (${code}${status ? `, HTTP ${status}` : ''}).`);
+    this.name = 'DesignProviderError';
+  }
+}
+
+/** design.provider.v1 (DESIGN-001..003): candidate designs from a brief, and a chosen candidate's layout as a
+ * LayerDoc. Every paid POST carries the caller's idempotency key, so a replay never buys twice. */
+export interface DesignProvider {
+  readonly provider: string;
+  startDraft(input: { concept: string; slots: string[] }, idempotencyKey: string): Promise<DesignRun>;
+  dispatchCandidate(runId: string, slot: string, idempotencyKey: string): Promise<'dispatched' | 'unconfirmed'>;
+  readDraft(runId: string): Promise<DesignRun>;
+  candidateImage(runId: string, slot: string): Promise<Uint8Array<ArrayBuffer>>;
+  startLayout(image: Blob, idempotencyKey: string): Promise<DesignLayout>;
+  readLayout(layoutId: string): Promise<DesignLayout>;
+  /** The settled layout's LayerDoc text, checked against the digest the service published. */
+  layoutDocument(layout: DesignLayout): Promise<string>;
+}
+
 export type QueueCommand = {
-  kind: 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync';
+  kind: 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync' | 'design.draft' | 'design.layout';
   idempotencyKey: string;
   payload: Record<string, unknown>;
 };
@@ -144,6 +172,7 @@ export interface JobDispatcher {
 }
 
 export interface BlobStore {
+  head(key: string): ReturnType<R2Bucket['head']>;
   get(key: string, options?: R2GetOptions): ReturnType<R2Bucket['get']>;
   put(key: string, value: ReadableStream | ArrayBuffer | ArrayBufferView | string | Blob, options?: R2PutOptions): ReturnType<R2Bucket['put']>;
   delete(key: string | string[]): ReturnType<R2Bucket['delete']>;
@@ -200,6 +229,10 @@ export type AppConfig = {
       providerApiKey: string;
       model: string;
     }>;
+    design: OptionalModuleConfig<{
+      providerApiKey: string;
+      origin: URL;
+    }>;
   };
   mailProviderApiKey: string;
   mailAuthFrom: string;
@@ -240,6 +273,7 @@ export interface Platform {
   config: AppConfig;
   commerce?: CommerceStore;
   ai?: AiProvider;
+  design?: DesignProvider;
   mailer: SenderAdapter;
   sms?: SenderAdapter;
   jobs: JobDispatcher;
@@ -287,6 +321,8 @@ export interface AppBindings {
   COMMERCE_WEBHOOK_SECRET?: string;
   AI_PROVIDER_API_KEY?: string;
   AI_PROVIDER_MODEL?: string;
+  DESIGN_PROVIDER_API_KEY?: string;
+  DESIGN_PROVIDER_ORIGIN?: string;
   MAIL_PROVIDER_API_KEY: string;
   MAIL_AUTH_FROM: string;
   MAIL_WEBHOOK_SECRET: string;

@@ -8,7 +8,7 @@ import { lobbyResponse } from '@/base/lobby';
 import { setupStateResponse } from '@/base/setup-state';
 import { identity } from '@/identity';
 
-const honoPrefixes = ['/api', '/auth', '/unsubscribe', '/consent', '/l', '/links', '/webhooks', '/signin/verify', '/__dev'];
+const honoPrefixes = ['/api', '/auth', '/unsubscribe', '/consent', '/l', '/links', '/media', '/webhooks', '/signin/verify', '/__dev'];
 export async function dispatchDocuments(
   request: Request, environment: AppBindings, executionContext: ExecutionContext,
   platform: Platform, hono: {fetch: (request: Request, environment: AppBindings, executionContext: ExecutionContext) => Response | Promise<Response>},

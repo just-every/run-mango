@@ -26,5 +26,6 @@ export const loadOperator = createServerFn({method: 'GET'}).handler(async () => 
 export const loadSetup = createServerFn({method: 'GET'}).handler(async () => {
   const state = await operatorState(true);
   if (state.setupComplete) throw redirect({to: '/app'});
-  return {identity: state.identity};
+  // The owner's own address is the natural sender and reply-to until they say otherwise.
+  return {identity: state.identity, ownerEmail: state.email};
 });

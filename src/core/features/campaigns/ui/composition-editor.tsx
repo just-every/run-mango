@@ -11,7 +11,10 @@ import { CompositionLinkFields } from './composition-link-fields';
 import { CompositionStepFields } from './composition-step-fields';
 
 export function CampaignCompositionEditor({
+  campaignId,
   draft,
+  savedEmailBody,
+  mediaOrigin,
   busy,
   onChange,
   onSave,
@@ -19,7 +22,12 @@ export function CampaignCompositionEditor({
   serverErrors,
   validationRequest,
 }: {
+  campaignId: string;
   draft: DraftComposition;
+  /** The saved revision's body, so the design import summary can say whether the import is saved. */
+  savedEmailBody: string;
+  /** The deployment's own origin, where its campaign images are served (CAMP-012). */
+  mediaOrigin: string;
   busy: boolean;
   onChange: (draft: DraftComposition) => void;
   onSave: () => void;
@@ -61,7 +69,7 @@ export function CampaignCompositionEditor({
         <p className="muted-copy">Preview updates when you save.</p>
       </div>
       <fieldset className="draft-fields" disabled={busy}>
-      <CompositionContentFields busy={busy} draft={draft} setField={setField} />
+      <CompositionContentFields campaignId={campaignId} busy={busy} draft={draft} savedEmailBody={savedEmailBody} mediaOrigin={mediaOrigin} setField={setField} />
       <SegmentPicker draft={draft} onChange={onChange} />
       <AudienceRuleEditor draft={draft} onChange={onChange} />
       <CompositionLinkFields links={draft.links} setLink={setLink} busy={busy} addLink={() => onChange({...draft, links: [...draft.links, {label: '', destinationUrl: ''}]})} removeLink={index => {const template=authoredHtmlTemplate(draft.emailBody);for(const anchor of template.content.querySelectorAll('a')) if(anchor.getAttribute('href')===draft.links[index].destinationUrl) anchor.replaceWith(document.createTextNode(anchor.textContent??''));onChange({...draft,emailBody:authoredEditorHtml(template), links: draft.links.filter((_link, itemIndex) => itemIndex !== index)});}} />

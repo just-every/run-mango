@@ -44,7 +44,7 @@ export const contactErasureTables:ErasureTable[]=[
   {table:'audience_segments',literal:true,mode:'redact'},
   {table:'campaigns',literal:true,mode:'redact'},
   {table:'campaign_revisions',literal:true,mode:'redact'},
-  ...['source_syncs','source_sync_runs','source_sync_cursors','commerce_source_capabilities','campaign_channel_pauses','campaign_revision_links','campaign_steps','proposal_forecasts','campaign_audiences','campaign_checks','campaign_state_transitions','proposal_audiences','proposals','proposal_exclusions','proposal_steps','provider_outages','proposal_transitions'].map(table=>({table,literal:true,mode:'redact' as const})),
+  ...['source_syncs','source_sync_runs','source_sync_cursors','commerce_source_capabilities','campaign_channel_pauses','campaign_revision_links','campaign_steps','proposal_forecasts','campaign_audiences','campaign_checks','campaign_state_transitions','proposal_audiences','proposals','proposal_exclusions','proposal_steps','provider_outages','proposal_transitions','design_jobs'].map(table=>({table,literal:true,mode:'redact' as const})),
   // State-only consequences run as bounded, PK-fenced pages after literal edits.
   {table:'campaigns',mode:'invalidate-campaign',where:()=>({sql:"state<>'erasure-invalidated' AND active_revision_id IN (SELECT id FROM campaign_revisions WHERE state='erasure-invalidated')",params:[]})},
   {table:'recipient_steps',mode:'invalidate-recipient',where:()=>({sql:"transport_disposition='queued' AND revision_id IN (SELECT id FROM campaign_revisions WHERE state='erasure-invalidated')",params:[]})},

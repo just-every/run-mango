@@ -19,7 +19,7 @@ Save the draft, then read the **Approval checks** panel. Blocking items come fir
 
 - the name, subject, message body, preheader, sender name, From, reply-to or postal address is missing;
 - the message lacks a visible unsubscribe link or the postal address, or its HTML links, plain-text links and saved links differ;
-- the HTML uses a disallowed tag or attribute, or a personalization token has no fallback;
+- the HTML uses a disallowed tag, attribute or inline style, hides text with its styling or colours, or a personalization token has no fallback;
 - a link is not HTTPS, its host is not in `MANGO_ALLOWED_LINK_HOSTS`, or it does not resolve;
 - a step has no valid time zone, send time or later deadline;
 - the audience conditions are invalid or no contact is eligible;

@@ -2,6 +2,7 @@ import { evidenceDirectory } from '../tests/support/artifacts.mjs';
 import { join } from 'node:path';
 import { chromium, expect } from '@playwright/test';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { rejectedPresentation } from '../tests/support/adversarial-email.mjs';
 const output = evidenceDirectory('email-preview');
 await mkdir(output, {recursive:true});
 const access = new URL((await readFile('.seed/review-access', 'utf8')).trim());
@@ -36,10 +37,15 @@ try {
     expect((await response).status()).toBe(200);
     await expect(page.getByRole('status').filter({hasText: 'Draft saved.'})).toBeVisible();
   }
+  // Raw HTML is written in HTML mode; the rich editor would type it as text.
+  await page.getByRole('button', {name: 'HTML mode', exact: true}).click();
   await page.getByLabel('Email body', {exact: true}).fill(malicious);
   // Unsaved changes must not replace the approved-content preview input.
   await expect(frame.locator('body')).not.toContainText('Adversarial saved content');
-  await save();
+  // Its script links are not valid destinations, so the editor refuses to save it; a direct save stores it in canonical form.
+  const stored = await page.request.patch(new URL(`/api/campaign-revisions/${scenario}-v1`, access.origin).href, {data: {emailBody: malicious}});
+  expect(stored.status()).toBe(200);
+  await page.reload();
   await expect(frame.locator('body')).toContainText('Adversarial saved content');
   await expect(frame.locator('script,form,svg,link,input,[onerror],[href]')).toHaveCount(0);
   await expect(frame.locator('img')).toHaveCount(0);
@@ -52,14 +58,18 @@ try {
   const blocked = await page.request.post(new URL(`/api/campaigns/${scenario}/approve`, access.origin).href, {data: {revisionId: `${scenario}-v1`, idempotencyKey: `blocked-${scenario}`}});
   expect(blocked.status()).toBe(409);
   expect((await blocked.json()).blockers.some(check => check.kind === 'message.content')).toBe(true);
-  const safe = `<h2>Hello {{displayName | fallback: "Friend"}}</h2><p><strong>Saved offer</strong></p><a href="https://example.test/offer">Offer details</a>${footer}`;
+  const safe = `<h2>Hello {{displayName | fallback: "Friend"}}</h2><p><strong>Saved offer</strong></p><p><a href="https://example.test/offer">Offer details</a></p>${footer}`;
+  // The adversarial body saved its script links; remove them before adding the real destination.
+  const removeLink = page.getByRole('button', {name: /^Remove link \d+$/});
+  while (await removeLink.count()) await removeLink.first().click();
   await page.getByRole('button', {name: 'Add destination link', exact: true}).click();
   await page.getByLabel('Link 1 label', {exact: true}).fill('Offer details');
   await page.getByLabel('Link 1 destination', {exact: true}).fill('https://example.test/offer');
   await page.getByRole('button', {name: 'Add destination link', exact: true}).click();
   await page.getByRole('button', {name: 'Remove link 2', exact: true}).click();
   await page.getByLabel('Email body', {exact: true}).fill(safe);
-  await page.getByLabel('Plain-text email', {exact: true}).fill('Hello {{displayName | fallback: "Friend"}}. Saved offer: https://example.test/offer. {{physical_address}} Unsubscribe: {{unsubscribe_url}}');
+  // The plain-text part is derived from the HTML with the same destinations (read-only in the editor).
+  await expect(page.getByLabel('Plain-text email', {exact: true})).toHaveValue(/Offer details \(https:\/\/example\.test\/offer\)/);
   await save();
   await expect(frame.locator('h2')).toHaveText('Hello Alex Example');
   await expect(frame.locator('body')).toContainText('1 Synthetic Street');
@@ -103,7 +113,27 @@ try {
   expect(edit.status()).toBe(409);
   await page.reload();
   await expect(frame.locator('h2')).toHaveText('Hello Alex Example');
+  // Hidden, deceptive or remote-loading presentation (MSG-009, MSG-012), on a second synthetic draft: each case,
+  // saved in canonical form, previews with its warning and without any presentation, loads nothing, and blocks approval.
+  const presentation = `${scenario}-presentation`, presentationAccess = new URL(access);
+  presentationAccess.searchParams.set('scenario', presentation);
+  await page.goto(presentationAccess.href);
+  await expect(frame.locator('body')).toContainText('Synthetic offer');
+  const refusedPresentation = [];
+  for (const [name, html] of rejectedPresentation) {
+    const saved = await page.request.patch(new URL(`/api/campaign-revisions/${presentation}-v1`, access.origin).href, {data: {emailBody: `${html}${footer}`}});
+    expect(saved.status(), name).toBe(200);
+    await page.reload();
+    await expect(page.getByRole('region', {name: 'Saved revision previews'}).getByRole('alert'), name).toBeVisible();
+    // The preview's own stylesheet sits in its head; nothing from the body may carry presentation.
+    await expect(frame.locator('body').locator('style,link,[style],[class],[id],[background],[bgcolor],[role],[cellpadding],[cellspacing],[align],[valign],[dir]'), name).toHaveCount(0);
+    const checks = await page.request.post(new URL(`/api/campaigns/${presentation}/checks`, access.origin).href, {data: {revisionId: `${presentation}-v1`}});
+    expect(checks.status(), name).toBe(200);
+    expect((await checks.json()).blockers.some(check => check.kind === 'message.content'), name).toBe(true);
+    refusedPresentation.push(name);
+  }
+  expect(external).toEqual(['https://example.test/offer.png']);
   expect(errors).toEqual([]);
-  await writeFile(join(output, 'email-preview.json'), JSON.stringify({scenario, savedRevisionOnly: true, adversarialMarkupRemoved: true, initialExternalRequests: 0, explicitImageRequestInterceptedLocally: external, unsafeApprovalBlocked: true, mobileEditRecovered: true, mismatchedPostalIdentityBlocked: true, draftAudienceRefreshed: true, approvedSourcePreserved: true, approvedEligibleCount: detail.audience.eligibleCount, errors}, null, 2));
+  await writeFile(join(output, 'email-preview.json'), JSON.stringify({scenario, savedRevisionOnly: true, adversarialMarkupRemoved: true, initialExternalRequests: 0, explicitImageRequestInterceptedLocally: external, unsafeApprovalBlocked: true, mobileEditRecovered: true, mismatchedPostalIdentityBlocked: true, draftAudienceRefreshed: true, approvedSourcePreserved: true, approvedEligibleCount: detail.audience.eligibleCount, refusedPresentation, errors}, null, 2));
   console.log(JSON.stringify({scenario, state: detail.revision.state, errors}));
 } finally {await browser.close();}

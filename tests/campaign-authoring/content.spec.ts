@@ -1,6 +1,6 @@
 import {renderMessageContent} from '../../src/core/features/campaigns/message-content';
 import {test,expect} from '@playwright/test';
-import {normalizeAuthoredContent,managedFooter} from '../../src/core/features/campaigns/authoring-content';
+import {htmlToText,normalizeAuthoredContent,managedFooter} from '../../src/core/features/campaigns/authoring-content';
 import {draftCompositionSchema} from '../../src/core/features/campaigns/draft-composition';
 import {createDraftSchema} from '../../src/core/features/campaigns/create-draft';
 
@@ -41,6 +41,14 @@ test('[CAMP-003] generated plain text preserves opaque fallback markup, ampersan
   expect(rendered.text).toContain('Hello <strong>Friend & "guest"</strong>');
   const embedded=normalizeAuthoredContent({emailBody:`<p>{{name | fallback: '<a href="https://example.test/inside">Friend</a>'}}</p>`});
   expect(embedded.links).toEqual([]);expect(embedded.emailText).toContain('<a href="https://example.test/inside">Friend</a>');
+});
+
+test('[MSG-009][CAMP-003] the plain-text part carries the text mail clients show, read from the same parse as the HTML',()=>{
+  // A tag stripper drops what lies between "<" and ">"; mail clients show it as text, so the plain text must too.
+  expect(htmlToText('<p>Save more when 1 < 2 and 3 > 2</p>')).toBe('Save more when 1 < 2 and 3 > 2');
+  expect(htmlToText('<p><span>Reviewed< /span> claim</span></p>')).toBe('Reviewed< /span> claim');
+  // Mail clients show neither a comment nor a bogus close tag, which parsers read as one.
+  expect(htmlToText('<p>Shown<!-- note --></ span> text</p>')).toBe('Shown text');
 });
 
 test('[CAMP-002][CAMP-003] empty contains and in authoring conditions remain incomplete, never a broad audience',()=>{

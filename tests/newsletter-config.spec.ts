@@ -79,11 +79,13 @@ test('newsletter-only production entry boots on isolated D1 without constructing
   expect(config.modules.commerce).toMatchObject({ enabled: false, requiredInputs: [...optionalModuleInputs.commerce] });
   expect(config.modules.sms).toMatchObject({ enabled: false, requiredInputs: [...optionalModuleInputs.sms] });
   expect(config.modules.ai).toMatchObject({ enabled: false, requiredInputs: [...optionalModuleInputs.ai] });
+  expect(config.modules.design).toMatchObject({ enabled: false, requiredInputs: [...optionalModuleInputs.design] });
 
   const platform = createProductionPlatform(environment);
   expect(platform.commerce).toBeUndefined();
   expect(platform.sms).toBeUndefined();
   expect(platform.ai).toBeUndefined();
+  expect(platform.design).toBeUndefined();
   const services = createAppServices(platform);
   const commerceRule = await services.lifecycleRuntime.audience.resolveFrozenCandidates({
     inclusionRule: {
@@ -216,11 +218,13 @@ test('any supplied optional-module input enables validation and reports every ex
     COMMERCE_STORE_URL: 'https://shop.example.test',
     SMS_PROVIDER_API_KEY: 'newsletter-test-sms-key',
     AI_PROVIDER_API_KEY: 'newsletter-test-ai-key',
+    DESIGN_PROVIDER_API_KEY: 'newsletter-test-design-key',
   };
   const labels: Record<keyof typeof optionalModuleInputs, string> = {
     commerce: 'Commerce',
     sms: 'SMS',
     ai: 'AI',
+    design: 'Design',
   };
 
   for (const [moduleName, inputs] of Object.entries(optionalModuleInputs) as Array<[
@@ -242,10 +246,12 @@ test('blank optional-module inputs remain disabled while complete groups become 
     COMMERCE_STORE_URL: '  ',
     SMS_PROVIDER_API_KEY: '',
     AI_PROVIDER_MODEL: '\t',
+    DESIGN_PROVIDER_ORIGIN: ' ',
   });
   expect(blank.modules.commerce.enabled).toBe(false);
   expect(blank.modules.sms.enabled).toBe(false);
   expect(blank.modules.ai.enabled).toBe(false);
+  expect(blank.modules.design.enabled).toBe(false);
 
   const configured = readProductionConfig({
     ...base,
@@ -259,8 +265,15 @@ test('blank optional-module inputs remain disabled while complete groups become 
     MANGO_SMS_HANDOFFS_PER_MINUTE: '5',
     AI_PROVIDER_API_KEY: 'newsletter-test-ai-key',
     AI_PROVIDER_MODEL: 'newsletter-test-model',
+    DESIGN_PROVIDER_API_KEY: 'newsletter-test-design-key',
+    DESIGN_PROVIDER_ORIGIN: 'https://design.example.test',
   });
   expect(configured.modules.commerce).toMatchObject({ enabled: true, config: { storeUrl: new URL('https://shop.example.test') } });
   expect(configured.modules.sms).toMatchObject({ enabled: true, config: { confirmationSender: '+61400000000', testAllowlist: ['+61400000000'], handoffsPerMinute: 5 } });
   expect(configured.modules.ai).toMatchObject({ enabled: true, config: { providerApiKey: 'newsletter-test-ai-key', model: 'newsletter-test-model' } });
+  expect(configured.modules.design).toMatchObject({ enabled: true, config: { providerApiKey: 'newsletter-test-design-key', origin: new URL('https://design.example.test') } });
+  // A deployment reaches the design service only over HTTPS at a bare origin; loopback http is for copies on a computer.
+  for (const origin of ['http://127.0.0.1:8787', 'https://design.example.test/api/v1', 'design.example.test']) {
+    expect(() => readProductionConfig({ ...base, DESIGN_PROVIDER_API_KEY: 'newsletter-test-design-key', DESIGN_PROVIDER_ORIGIN: origin })).toThrow('DESIGN_PROVIDER_ORIGIN must be an HTTPS origin');
+  }
 });

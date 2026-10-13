@@ -58,7 +58,8 @@ export function ValidationForm({children, onValidSubmit, serverErrors = NO_ERROR
     // Keep field focus until native submission validates and focuses its errors.
     if (event.button === 0 && !event.defaultPrevented && submit?.form === event.currentTarget && active && [...entries.current.values()].some(entry => entry.id === active.id)) event.preventDefault();
   }} onSubmit={event => {
-    event.preventDefault();
+    // React bubbles a portalled dialog's submit to the form that rendered the dialog; it belongs to this form only.
+    event.preventDefault(); event.stopPropagation();
     setReportedErrors(NO_ERRORS);
     if (!validate()) onValidSubmit();
   }}>{visible.length ? <div className="validation-summary" role="alert"><p>{visible.length} {visible.length === 1 ? 'field needs' : 'fields need'} attention.</p><ul>{visible.map(([name, message]) => {const entry = entries.current.get(name)!; return <li key={name}><a href={`#${entry.id}`} onClick={event => {event.preventDefault(); document.getElementById(entry.id)?.focus();}}>{entry.label}: {message}</a></li>;})}</ul></div> : null}{children}</form></Context.Provider>;
@@ -66,7 +67,7 @@ export function ValidationForm({children, onValidSubmit, serverErrors = NO_ERROR
 
 type Control = ReactElement<{id?: string; required?: boolean; onBlur?: (event: unknown) => void; onChange?: (event: unknown) => void; onInput?: (event: unknown) => void; 'aria-describedby'?: string; 'aria-label'?: string}>;
 export function Field({name, label, children, validate, advisory = false, required = false, live = false}: {name: string; label: string; children: Control; validate?: () => string | undefined; advisory?: boolean; required?: boolean; live?: boolean}) {
-  const context = useContext(Context), generated = useId(), check = useRef(validate), edited = useRef(false);
+  const context = useContext(Context), generated = useId(), check = useRef(validate), edited = useRef(false), [, recheck] = useState(0);
   const child = Children.only(children), id = child.props.id ?? `field-${generated.replaceAll(':', '')}`, errorId = `${id}-error`;
   check.current = validate;
   useEffect(() => context?.register(name, {id, label, advisory, check: () => {
@@ -76,8 +77,10 @@ export function Field({name, label, children, validate, advisory = false, requir
     if (element?.validity && !element.validity.valid) {if (element.validity.typeMismatch) return `Enter a valid ${element.type === 'email' ? 'email address' : label.toLowerCase()}.`; if (element.validity.rangeUnderflow || element.validity.rangeOverflow) return `Use a value between ${element.min} and ${element.max}.`; return `Check ${label.toLowerCase()}.`;}
     return undefined;
   }}), [context?.register, name, id, label, advisory, required]);
-  // A derived value such as a local time that cannot be resolved reports as it is typed, not only on blur.
-  useEffect(() => {if (live && edited.current) context?.touch(name);});
   const error = context?.errors[name];
-  return <>{cloneElement(child, {id, 'aria-label': child.props['aria-label'] ?? (typeof child.type === 'string' && ['input','textarea','select'].includes(child.type) ? label : undefined), required: required || child.props.required, 'aria-invalid': error ? true : undefined, 'aria-describedby': [child.props['aria-describedby'], error ? errorId : undefined].filter(Boolean).join(' ') || undefined, onBlur: (event: unknown) => {child.props.onBlur?.(event); context?.touch(name);}, onChange: (event: unknown) => {child.props.onChange?.(event); edited.current = true; context?.change(name);}, onInput: (event: unknown) => {child.props.onInput?.(event); edited.current = true; context?.change(name);}} as never)}{error ? <span id={errorId} className="field-error">{error}</span> : null}</>;
+  // A derived value such as a local time that cannot be resolved reports as it is typed, not only on blur;
+  // a shown error is checked again after the field changes (an uncontrolled file input re-renders through
+  // `recheck`), so choosing a file or fixing a value clears it at once.
+  useEffect(() => {if ((live || error) && edited.current) context?.touch(name);});
+  return <>{cloneElement(child, {id, 'aria-label': child.props['aria-label'] ?? (typeof child.type === 'string' && ['input','textarea','select'].includes(child.type) ? label : undefined), required: required || child.props.required, 'aria-invalid': error ? true : undefined, 'aria-describedby': [child.props['aria-describedby'], error ? errorId : undefined].filter(Boolean).join(' ') || undefined, onBlur: (event: unknown) => {child.props.onBlur?.(event); context?.touch(name);}, onChange: (event: unknown) => {child.props.onChange?.(event); edited.current = true; context?.change(name); if (error) recheck(count => count + 1);}, onInput: (event: unknown) => {child.props.onInput?.(event); edited.current = true; context?.change(name); if (error) recheck(count => count + 1);}} as never)}{error ? <span id={errorId} className="field-error">{error}</span> : null}</>;
 }

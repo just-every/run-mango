@@ -5,11 +5,13 @@ export type ModalProps = {open: boolean; onClose: () => void; title: string; des
 /** A confirmation owns no action until its explicit confirmation button is pressed. The backdrop portals to <body>, outside
  * the app root, so it carries `mango-app` itself. */
 export function Modal({open, onClose, title, description, children, role = 'alertdialog'}: ModalProps) {
-  const panel = useRef<HTMLDivElement>(null), close = useRef(onClose);
+  const panel = useRef<HTMLDivElement>(null), close = useRef(onClose), opener = useRef<HTMLElement>(null);
   const id = useId(); close.current = onClose;
   useEffect(() => {
     if (!open) return;
-    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const element = panel.current, active = document.activeElement;
+    // Development re-runs this effect on a panel that stays open; the opener is the control outside it.
+    if (active instanceof HTMLElement && !element?.contains(active)) opener.current = active;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const controls = () => Array.from(panel.current?.querySelectorAll<HTMLElement>('button:not(:disabled),a[href],input:not(:disabled),select:not(:disabled),textarea:not(:disabled),[tabindex="0"]') ?? []).filter(element => element.getClientRects().length);
@@ -24,7 +26,12 @@ export function Modal({open, onClose, title, description, children, role = 'aler
     };
     const keepFocus = (event: FocusEvent) => {if (event.target instanceof Node && !panel.current?.contains(event.target)) (controls()[0] ?? panel.current)?.focus();};
     document.addEventListener('keydown', keydown, true); document.addEventListener('focusin', keepFocus);
-    return () => {document.removeEventListener('keydown', keydown, true); document.removeEventListener('focusin', keepFocus); document.body.style.overflow = previousOverflow; if (opener?.isConnected) opener.focus();};
+    return () => {
+      document.removeEventListener('keydown', keydown, true); document.removeEventListener('focusin', keepFocus); document.body.style.overflow = previousOverflow;
+      // Focus returns only once the panel has really closed: moving it while the panel stays would blur its
+      // first field and report that field as incomplete before the operator touched it.
+      if (!element?.isConnected && opener.current?.isConnected) opener.current.focus();
+    };
   }, [open]);
   if (!open) return null;
   return createPortal(<div className="modal-backdrop mango-app"><div className="panel modal-panel" ref={panel} tabIndex={-1} role={role} aria-modal="true" aria-labelledby={`${id}-title`} aria-describedby={description ? `${id}-description` : undefined}><h2 id={`${id}-title`}>{title}</h2>{description ? <p id={`${id}-description`}>{description}</p> : null}{children}</div></div>, document.body);

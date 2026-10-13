@@ -15,7 +15,7 @@ export async function ownerClaim(request: Request, environment: AppBindings, pla
       db: environment.DB,
       authConfig: {origin: config.publicBaseUrl.origin, OWNER_EMAIL: config.initialOperatorEmails[0], SESSION_SECRET: config.sessionSigningKey,
         SETUP_TOKEN: config.authSetupToken, local: config.local === true,
-        branding: {productName: 'Mango', signInPath: '/signin', accentColor: '#bd492b'}},
+        branding: {productName: 'Mango', signInPath: '/signin', accentColor: '#bd492b', theme: '/rer-theme.css'}},
       clientIp: req => config.local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       issuer, installationId: environment.RER_INSTALLATION_ID, appOrigin: config.publicBaseUrl.origin,
       expectedEmail: config.initialOperatorEmails[0], publicKeys: JSON.parse(environment.RER_OWNER_CLAIM_PUBLIC_KEYS),

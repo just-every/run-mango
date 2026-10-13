@@ -5,7 +5,8 @@ import { sanitizeEmailPreview, previewDocument } from './sanitize-email-preview'
 import type { Revision, RevisionLink } from '@/core/app/client/lib/types';
 import { Paper } from '@/core/features/site/paper/Paper';
 
-export function RevisionPreviews({ revision, links }: { revision: Revision; links: RevisionLink[] }) {
+/** `mediaOrigin` is the deployment's own origin, where its campaign images are served (CAMP-012). */
+export function RevisionPreviews({ revision, links, mediaOrigin }: { revision: Revision; links: RevisionLink[]; mediaOrigin?: string }) {
   const [width, setWidth] = useState<'desktop' | 'mobile'>('desktop');
   const [loadImages, setLoadImages] = useState(false);
   const [preview, setPreview] = useState({html: '', imagesBlocked: 0});
@@ -13,9 +14,9 @@ export function RevisionPreviews({ revision, links }: { revision: Revision; link
     values: {first_name: 'Alex', name: 'Alex Example', displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
   }), [revision]);
-  const issues = useMemo(() => inspectEmailHtml(revision.emailBody).issues, [revision.emailBody]);
+  const issues = useMemo(() => inspectEmailHtml(revision.emailBody, mediaOrigin).issues, [revision.emailBody, mediaOrigin]);
   useEffect(() => {setLoadImages(false)}, [revision.id, revision.updatedAt]);
-  useEffect(() => {setPreview(sanitizeEmailPreview(rendered.html, loadImages))}, [rendered.html, loadImages]);
+  useEffect(() => {setPreview(sanitizeEmailPreview(rendered.html, loadImages, issues.length === 0, mediaOrigin))}, [rendered.html, loadImages, issues, mediaOrigin]);
   return (
     <section className="preview-grid" aria-label="Saved revision previews">
       <article className="message-preview message-preview--email">
@@ -29,9 +30,9 @@ export function RevisionPreviews({ revision, links }: { revision: Revision; link
             <button type="button" className="secondary-action" aria-pressed={width === 'desktop'} onClick={() => setWidth('desktop')}>Desktop email</button>
             <button type="button" className="secondary-action" aria-pressed={width === 'mobile'} onClick={() => setWidth('mobile')}>Mobile email</button>
           </div>
-          {issues.length > 0 ? <p className="inline-error" role="alert">Unsafe or unsupported HTML is removed from this preview and blocks approval: {issues.join(' ')}</p> : null}
+          {issues.length > 0 ? <p className="inline-error" role="alert">Unsafe or unsupported HTML is removed from this preview, which then shows no styling, and blocks approval: {issues.join(' ')}</p> : null}
           <div className={`email-preview-frame email-preview-frame--${width}`}>
-            <iframe title="Saved email preview" sandbox="" referrerPolicy="no-referrer" srcDoc={previewDocument(preview.html, loadImages)} />
+            <iframe title="Saved email preview" sandbox="" referrerPolicy="no-referrer" srcDoc={previewDocument(preview.html, loadImages, mediaOrigin)} />
           </div>
           {preview.imagesBlocked > 0 && !loadImages ? <button type="button" className="secondary-action" onClick={() => setLoadImages(true)}>Load {preview.imagesBlocked} remote image{preview.imagesBlocked === 1 ? '' : 's'}</button> : null}
           {loadImages ? <button type="button" className="secondary-action" onClick={() => setLoadImages(false)}>Block remote images</button> : null}
