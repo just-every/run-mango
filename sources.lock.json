@@ -5036,11 +5036,11 @@
       "executable": false
     },
     "tests/local-start/dev-gate.mjs": {
-      "sha256": "2b20f800eac9101f63b744f9132c1292aabef225ef82ab15202884898217b6d7",
+      "sha256": "919c5b10ac483fda0e9e6e712152a7fe417502928a15fcb534fa3a77e53bd85f",
       "executable": false
     },
     "tests/local-start/editor.journey.ts": {
-      "sha256": "191dc9dbe25aa71bb48136fb19f164d82237a513710cbe8a139b8cad1c51179a",
+      "sha256": "e43f49e80c41e9cc8f9bd24e8600ebf045898844c99c0e216ad2ed5c341a388f",
       "executable": false
     },
     "tests/local-start/finish-setup.mjs": {
@@ -5048,7 +5048,7 @@
       "executable": false
     },
     "tests/local-start/fresh-copy.mjs": {
-      "sha256": "3b63c97f626d38b1541d09bca7581136c4f79b889841676dd54c71da32851546",
+      "sha256": "3eda4068a1e1bcd67abea442024290990f1cbd61dc7ecf9b1495441d6bc2338e",
       "executable": false
     },
     "tests/local-start/legacy-authority.journey.ts": {

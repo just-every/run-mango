@@ -4,6 +4,7 @@ import {readFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {contract} from '../contract';
 import {authorityRuntime, signIn} from './authority-runtime.mjs';
+import {openGate} from './dev-gate.mjs';
 
 contract('MGMT-002','native owner editor mounts at 1440 and 390, refuses visitors and loses its grant on sign-out',async ({browser}) => {
   test.setTimeout(600000);
@@ -31,7 +32,8 @@ contract('MGMT-002','native owner editor mounts at 1440 and 390, refuses visitor
     await runtime.start();
     expect((await page.request.get(runtime.url+'/api/editor/config')).status()).toBe(401);
     expect((await (await page.request.get(runtime.url+'/auth/environment')).json()).editorEligible).toBe(false);
-    await page.goto(runtime.url+'/docs');await expect(page.locator('[data-rer-editor]')).toHaveCount(0);
+    await openGate(context,runtime.url);await page.goto(runtime.url+'/docs');
+    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');await expect(page.locator('[data-rer-editor]')).toHaveCount(0);
     await signIn(page,runtime.url);
     expect((await (await page.request.get(runtime.url+'/auth/environment')).json()).editorEligible).toBe(true);
     for(const width of [1440,390]) {

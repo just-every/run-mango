@@ -10,7 +10,14 @@ export async function rememberKey(url, checkout) {
   keys.set(url, key);
   return key;
 }
+// rer's proxy serves Vite's /@fs/ files (here only because a journey copy links node_modules from outside the checkout)
+// to a request holding the key header or the rer_dev_gate_<port> cookie; Mango's operator-auth names its gate cookie
+// rer_dev_gate, so those module requests present the header, as rer's own harness does.
+const routed = new WeakSet();
 export async function openGate(context, url) {
   const response = await context.request.post(url + '/__dev/key', { data: { key: keys.get(url) } });
   assert.equal(response.status(), 204, 'the key opens the outbox gate');
+  if (routed.has(context)) return;
+  routed.add(context);
+  await context.route(url + '/@fs/**', route => route.continue({ headers: { ...route.request().headers(), 'x-rer-dev-key': keys.get(url) } }));
 }
