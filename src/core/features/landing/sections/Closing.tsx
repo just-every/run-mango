@@ -1,6 +1,7 @@
 import { ButtonLink } from '../../site/ButtonLink';
 import { sitePaths } from '../../site/links';
 import { copy } from '../copy';
+import { PrimaryAction } from '../parts/PrimaryAction';
 
 const { closing, hero } = copy;
 
@@ -11,7 +12,7 @@ export function Closing() {
       <h2 id="closing-title" className="closing-title">{closing.title}</h2>
       <p className="closing-line">{closing.line}</p>
       <div className="closing-actions">
-        <ButtonLink to={sitePaths.install} tone="sun">{hero.primary}</ButtonLink>
+        <PrimaryAction />
         <ButtonLink to={sitePaths.docs} tone="line">{hero.secondary}</ButtonLink>
       </div>
     </section>

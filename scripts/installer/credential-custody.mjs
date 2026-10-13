@@ -1,6 +1,6 @@
 import { open } from 'node:fs/promises';
 import { constants } from 'node:fs';
-import { assertRegular } from '../base-onboarding/local/files.mjs';
+import { assertRegular } from '@runeditrun/rer/local/files';
 
 // Retained Mango authority-read behavior: rotating authentication credentials
 // must read the exact file inspected for the matching contact database.

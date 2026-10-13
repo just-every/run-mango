@@ -2,8 +2,8 @@ import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { realpath } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { readSettings } from '../base-onboarding/adapter-settings.mjs';
-import { productionModules } from '../base-onboarding/production-modules.mjs';
+import { readSettings } from '@runeditrun/rer/adapter-settings';
+import { productionModules } from '@runeditrun/rer/production-modules';
 
 // Build the local worker once into `.seed/preview`, then serve it from one Miniflare over `.wrangler/state`,
 // as Base's production runtime serves `dist/server`. No bundler or file watcher runs while it serves.

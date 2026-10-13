@@ -1,13 +1,13 @@
-import { localInstaller, readSettings } from '../base-onboarding/adapter.mjs';
-import { developmentTarget } from '../base-onboarding/operator-installer.mjs';
+import { localInstaller, readSettings } from '@runeditrun/rer/local-installer';
+import { developmentTarget } from '@runeditrun/rer/operator-installer';
 import { previewTarget } from './preview.mjs';
-import { privateDirectory } from '../base-onboarding/private-files.mjs';
-import { commandAdapter as commands } from '../base-cli/cli/adapter.mjs';
-import { ownerDeploy } from '../base-cli/cli/deploy.mjs';
-import { refuse } from '../base-cli/cli/errors.mjs';
+import { privateDirectory } from '@runeditrun/rer/private-files';
+import { commandAdapter as commands } from '@runeditrun/rer/adapter';
+import { ownerDeploy } from '@runeditrun/rer/deploy';
+import { refuse } from '@runeditrun/rer/errors';
 import {lstatSync} from 'node:fs';
 import {fileURLToPath} from 'node:url';
-import {selectLocalState} from '../base-onboarding/local/state.mjs';
+import {selectLocalState} from '@runeditrun/rer/local/state';
 import { join } from 'node:path';
 import { localContactHashSalt, localContactAuthorityVersion } from '../../src/core/platform/local-contact-authority.ts';
 import { assertFreshContactStore } from './contact-authority.mjs';
@@ -52,7 +52,9 @@ export const commandAdapter=commands(lifecycle,{dev:development,preview:previewT
  // The production build regenerates wrangler.toml; preview's fixed-build receipt ignores it.
  // Local dev identity: the local-only Worker entry, the build output rer build scans for the dev layer, and the kept end-to-end email-link test.
  devIdentity:{entry:'src/core/app/worker.dev.ts',output:['dist'],emailLinkTest:'tests/local-start/local.journey.ts'},localOnlyKeys:['RER_DEV_ORIGIN','RER_DEV_IDENTITY'],
- generatedOutputs:['wrangler.toml'],product:'Mango',input:{names:{email:'OWNER_EMAIL'}}});
+ generatedOutputs:['wrangler.toml'],product:'Mango',
+ // The run site (run-mango.com): the approved landing, the Run page and the docs, built by rer build --site.
+ site:{entry:'src/site/pages.tsx',output:'dist/site',declaration:'deploy-site.json',config:'vite.site.config.ts'},input:{names:{email:'OWNER_EMAIL'}}});
 
 // Supply the old inventory to Base's existing state validator so it refuses
 // legacy placement before any shared verb changes state or private settings.

@@ -1,6 +1,6 @@
 import { mkdtemp } from 'node:fs/promises';
 import { join } from 'node:path';
-import { createCommands } from '../../scripts/base-onboarding/commands.mjs';
+import { createCommands } from '@runeditrun/rer/commands';
 
 // The shared command store owns rer and its application descendants.
 export async function startNativeDev({ checkout, directory, url, env, secrets = [], write, signal, timeoutMs = 900000, verb = 'dev' }) {
@@ -27,7 +27,7 @@ export async function startNativeDev({ checkout, directory, url, env, secrets = 
   });
   commands.addSecrets(secrets);
   try {
-    child = commands.spawn(`Starting native ${verb}`, process.execPath, ['scripts/rer.mjs', verb, ...(verb === 'dev' ? ['--login'] : [])], { cwd: checkout, env: {...env, RER_SERVER_JOURNEY: '1'}, signal });
+    child = commands.spawn(`Starting native ${verb}`, process.execPath, ['node_modules/@runeditrun/rer/bin/rer.mjs', verb, ...(verb === 'dev' ? ['--login'] : [])], { cwd: checkout, env: {...env, RER_SERVER_JOURNEY: '1'}, signal });
     await new Promise((resolve, reject) => {
       let settled = false;
       const finish = error => {

@@ -16,7 +16,7 @@ contract('OPER-001','rer doctor diagnoses missing inputs and configured private 
     await symlink(resolve('node_modules'),join(directory,'node_modules'));
     const descriptor=JSON.parse(await readFile('OPERATIONS.json','utf8'));
     const shell={PATH:process.env.PATH,HOME:process.env.HOME};
-    const run=(env)=>spawnSync(process.execPath,['scripts/rer.mjs','doctor','--json'],{cwd:directory,env,encoding:'utf8'});
+    const run=(env)=>spawnSync(process.execPath,['node_modules/@runeditrun/rer/bin/rer.mjs','doctor','--json'],{cwd:directory,env,encoding:'utf8'});
     const result=(command)=>JSON.parse(command.stdout.trim().split('\n').at(-1));
     const fresh=run(shell);
     expect(fresh.status).toBe(3);expect(result(fresh).ok).toBe(false);

@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { ownerWorkerName, ownerResourceName } from '../base-cli/modules/deploy-kit/owner.mjs';
+import { ownerWorkerName, ownerResourceName } from '@runeditrun/rer/modules/deploy-kit/owner';
 
 export function deploymentNames(environment = process.env.MANGO_DEPLOY_ENV || 'production') {
   const workerName = ownerWorkerName('just-every/mango', environment);

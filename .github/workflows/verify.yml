@@ -26,6 +26,6 @@ jobs:
         with:
           node-version: 22.20.0
           cache: pnpm
-      - run: node scripts/rer.mjs install
+      - run: pnpm install --frozen-lockfile && pnpm exec rer install
       - run: pnpm exec playwright install --with-deps chromium
-      - run: node scripts/rer.mjs verify
+      - run: pnpm exec rer verify

@@ -1,0 +1,19 @@
+/* Mango's look for the shared Lobby and the run site's Run page: the landing's paper, ink and sun
+   (src/core/features/site/styles/palette.css), read by Base's theme hook (@runeditrun/rer onboarding/README.md,
+   "Seed theme"). Only :root tokens and font faces are allowed here; the faces themselves are in /fonts/fonts.css,
+   which the edition identity links before this file. */
+:root {
+  --rer-page: #fbf7ee;
+  --rer-surface: #fffdf8;
+  --rer-text: #1d1b17;
+  --rer-muted: #5c574f;
+  --rer-border: #7d7666;
+  --rer-focus: #1d1b17;
+  --rer-accent: #ffcf47;
+  --rer-accent-text: #1d1b17;
+  --rer-link: #8c5b0c;
+  --rer-font-body: Outfit, "Outfit Fallback", "Avenir Next", "Segoe UI", sans-serif;
+  --rer-font-heading: Newsreader, "Newsreader Fallback", Georgia, serif;
+  --rer-radius: 6px;
+  --rer-logo: url("/favicon.svg");
+}

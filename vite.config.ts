@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
-import { archiveOutputGuard } from './scripts/base-onboarding/archive-output.mjs';
+import { archiveOutputGuard } from '@runeditrun/rer/archive-output';
 import { docsSite } from './src/core/features/docs/build/plugin.ts';
 import { excludeLocalVariables } from './vite/exclude-local-variables.ts';
 // Only normal app development loads the local-only entry and checkout dev key.

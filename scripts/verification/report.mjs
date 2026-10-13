@@ -1,5 +1,5 @@
 import { join } from 'node:path';
-import { writePrivateFile } from '../base-onboarding/private-files.mjs';
+import { writePrivateFile } from '@runeditrun/rer/private-files';
 
 export function markdown(report) {
   const seconds = value => (value / 1000).toFixed(3);

@@ -30,7 +30,7 @@ export async function authorityRuntime() {
   for (const key of Object.keys(env)) if (key !== 'MANGO_TEST_WORK_DIR' && /^(MANGO_|PLAYWRIGHT_PORT|MAIL_|AUTH_|INITIAL_OPERATOR|SESSION_|CONTACT_)/.test(key)) delete env[key];
   delete env.RER_LOCAL_OPERATION;
   let output = '', dev, secrets = [];
-  const command = ([verb, ...args]) => runCommand(process.execPath, verb === 'auth:rotate' ? ['scripts/installer/rotate.mjs', ...args] : ['scripts/rer.mjs', verb, ...args], { cwd: checkout, env, secrets, write: text => { output += text; } });
+  const command = ([verb, ...args]) => runCommand(process.execPath, verb === 'auth:rotate' ? ['scripts/installer/rotate.mjs', ...args] : ['node_modules/@runeditrun/rer/bin/rer.mjs', verb, ...args], { cwd: checkout, env, secrets, write: text => { output += text; } });
   const variables = async () => {
     const values = localBindings(localVariables(await readFile(join(checkout, '.dev.vars'), 'utf8')));
     secrets.push(...['SESSION_SIGNING_KEY', 'AUTH_SETUP_TOKEN', 'CONTACT_HASH_SALT'].map(key => values[key]).filter(Boolean));

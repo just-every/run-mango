@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import type { ReactNode } from 'react';
+import { useRunSite } from '../site/run-site';
 
 type DocsLinkProps = {
   /** The page's slug from docs/site.json ("" is the docs home). */
@@ -10,8 +11,12 @@ type DocsLinkProps = {
   children: ReactNode;
 };
 
-/** A client-side link to a published docs page. Only the page itself counts as active, so `/docs` is not marked on every page. */
+/**
+ * A client-side link to a published docs page. Only the page itself counts as active, so `/docs` is not marked on every
+ * page. The run site's static docs link with plain anchors.
+ */
 export function DocsLink({ slug, children, ...props }: DocsLinkProps) {
+  if (useRunSite()) return <a href={slug ? `/docs/${slug}` : '/docs'} {...props}>{children}</a>;
   return slug
     ? <Link to="/docs/$slug" params={{ slug }} activeOptions={{ exact: true }} {...props}>{children}</Link>
     : <Link to="/docs" activeOptions={{ exact: true }} {...props}>{children}</Link>;

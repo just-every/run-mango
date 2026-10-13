@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { Link } from '@tanstack/react-router';
 import { productConfig } from '@/ext/config';
 import { MangoMark } from '@/core/features/site/brand/MangoMark';
 import { Paper } from '@/core/features/site/paper/Paper';
@@ -21,7 +20,7 @@ export function StandaloneFrame({ className, home, card, after }: {
   return (
     <div className={`mango-app app-standalone ${className}`}>
       <header className="simple-page__header">
-        {home ? <Link to="/" aria-label={`Back to ${productConfig.productName}`}>{lockup}</Link> : lockup}
+        {home ? <a href="/" aria-label={`Back to ${productConfig.productName}`}>{lockup}</a> : lockup}
       </header>
       <main className="simple-page">
         <Paper w={card.w} h={card.h} seed={card.seed} className="standalone-card">

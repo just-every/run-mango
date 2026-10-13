@@ -4,6 +4,9 @@ import type { AppBindings, Platform } from '@/core/shared/platform';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { senderIdentitySchema } from '@/core/features/settings/sender-validation';
 import {configuredEditor} from '@/core/features/editor/config';
+import { lobbyResponse } from '@/base/lobby';
+import { setupStateResponse } from '@/base/setup-state';
+import { identity } from '@/identity';
 
 const honoPrefixes = ['/api', '/auth', '/unsubscribe', '/consent', '/l', '/links', '/webhooks', '/signin/verify', '/__dev'];
 export async function dispatchDocuments(
@@ -18,6 +21,14 @@ export async function dispatchDocuments(
     ? ['localhost', '127.0.0.1', '[::1]'].includes(host)
     : host === platform.config.publicBaseUrl.hostname;
   if (!permitted) return Response.json({error: 'not_found'}, {status: 404});
+  // HOME-001: the installed `/` is Base's Lobby and `/setup/state` its claim, both read from the sender identity that
+  // first-run setup saves (the same completeness /setup and /app check below). The host check above admits the request.
+  const claim = {DB: environment.DB, AUTH_ORIGIN: ''};
+  const claimed = async () => senderIdentitySchema.safeParse(await loadSenderSettings(platform)).success;
+  const state = await setupStateResponse(request, claim, claimed);
+  if (state) return state;
+  const lobby = await lobbyResponse(request, claim, identity, claimed);
+  if (lobby) return lobby;
   const path = url.pathname;
   if (path.startsWith('/__dev') && platform.config.local !== true) return Response.json({error: 'not_found'}, {status: 404});
   if (path === '/subscribe/info' || (path === '/subscribe' && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {

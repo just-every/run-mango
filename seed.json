@@ -17,7 +17,7 @@
   "capabilities": [
     {
       "id": "public-landing",
-      "description": "A static, hand-illustrated public landing page at `/` for the newsletter profile: Mango's mark and name, a hero, how a letter leaves Mango, consent, approval of the exact letter, scheduling, delivery reports, ownership and a closing call to action, linking to sign-in and the first-party docs, with the owner's configured name, one-line description and optional credit in the footer. It reads no record or session, sets no cookie, and loads only same-origin fonts, styles, scripts and favicons.",
+      "description": "Base's Lobby at an installed Mango's `/` (Finish setup until the sender identity is saved, then Sign in) with `GET /setup/state`, and the static, hand-illustrated landing page at the run site's `/` (run-mango.com, Run Mango to `/run`) for the newsletter profile: Mango's mark and name, a hero, how a letter leaves Mango, consent, approval of the exact letter, scheduling, delivery reports, ownership and a closing call to action, linking to the Run page and the first-party docs, with the owner's configured name, one-line description and optional credit in the footer. It reads no record or session, sets no cookie, and loads only same-origin fonts, styles, scripts and favicons.",
       "clauses": [
         "HOME-001"
       ]
@@ -470,6 +470,9 @@
       "/favicon-32.png",
       "/favicon.ico",
       "/apple-touch-icon.png",
+      "/setup/state",
+      "/rer-theme.css",
+      "/brand/",
       "/docs",
       "/docs/"
     ]

@@ -14,7 +14,7 @@ const cpuBudget = availableParallelism();
 const mainWorkers = Math.min(2, cpuBudget);
 const overlapMainAndNative = cpuBudget >= mainWorkers + 1;
 const groups = flags.has('--tests-only') ? [] : [
-  [{ name: 'command-contract', command: process.execPath, args: ['scripts/rer.mjs', 'check', '--profile', 'first-party'] }, pnpm('source', ['run', 'source:check'])],
+  [{ name: 'command-contract', command: process.execPath, args: ['node_modules/@runeditrun/rer/bin/rer.mjs', 'check', '--profile', 'first-party'] }, pnpm('source', ['run', 'source:check'])],
   // Operations read compiler inputs; bundles stay in memory and fixture writes
   // use isolated state/scratch. Both stages finish before the mutating build.
   [{ ...pnpm('operations', ['run', 'test:operations']), timingRequired: true }, pnpm('typecheck', ['run', 'typecheck'])],

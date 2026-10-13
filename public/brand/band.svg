@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <!-- Mango's floor art for the Lobby and the run site: rolling ground in the landing's palette (envelope washes #f8ebcf
+       and #efdab0, one sun line #ffcf47, mango #f6b828 and #e99a1c, leaf greens #4f7d3e and #2d6232), with a few small
+       leaves and a fleck of sun, the way the Lobby authority draws its floor. -->
+  <path fill="#f8ebcf" d="M0 150C200 132 372 140 560 160S920 204 1110 180 1350 118 1440 112V300H0Z"/>
+  <path fill="none" stroke="#ffcf47" stroke-width="4" stroke-linecap="round" d="M-8 178C190 160 368 168 556 188S918 230 1108 206 1352 146 1450 140"/>
+  <path fill="#efdab0" d="M0 204C190 190 360 196 548 214S910 250 1102 232 1344 182 1440 178V300H0Z"/>
+  <path fill="#f6b828" d="M0 236C210 218 400 222 600 240S960 270 1160 254 1370 216 1440 214V300H0Z"/>
+  <path fill="#e99a1c" d="M0 252C220 236 410 240 610 256S970 282 1170 268 1376 234 1440 232V300H0Z"/>
+  <path fill="#4f7d3e" d="M0 270C200 258 390 260 600 272S980 292 1190 284 1390 262 1440 260V300H0Z"/>
+  <path fill="#2d6232" d="M0 288C230 280 440 282 670 288S1080 298 1280 294 1414 286 1440 285V300H0Z"/>
+  <g fill="#3f8a3c">
+    <path d="M246 168c8-12 24-15 36-10-7 11-23 16-36 10Z"/>
+    <path d="M1206 132c9-11 25-13 36-7-8 10-24 14-36 7Z"/>
+  </g>
+  <g fill="#2f6e30">
+    <path d="M452 196c6-9 18-11 26-7-5 8-17 12-26 7Z"/>
+    <path d="M1012 214c6-9 18-11 26-7-5 8-17 12-26 7Z"/>
+  </g>
+  <g fill="#ffcf47">
+    <circle cx="742" cy="214" r="5"/>
+    <circle cx="1338" cy="150" r="4"/>
+  </g>
+</svg>

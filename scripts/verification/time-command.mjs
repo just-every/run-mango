@@ -3,8 +3,8 @@ import { mkdir, mkdtemp } from 'node:fs/promises';
 import { join } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { evidenceDirectory } from '../../tests/support/artifacts.mjs';
-import { createCommands } from '../base-onboarding/commands.mjs';
-import { writePrivateFile } from '../base-onboarding/private-files.mjs';
+import { createCommands } from '@runeditrun/rer/commands';
+import { writePrivateFile } from '@runeditrun/rer/private-files';
 import { writeTerminal } from './terminal-output.mjs';
 import { attachPublicTiming } from './public-timing.mjs';
 

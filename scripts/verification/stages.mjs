@@ -1,9 +1,9 @@
 import { mkdir, readFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
-import { createCommands } from '../base-onboarding/commands.mjs';
-import { openPrivateLog } from '../base-onboarding/private-files.mjs';
-import { createRedaction, credentialValues } from '../base-onboarding/redaction.mjs';
-import { inheritedScopeTokens } from '../base-onboarding/process-scope.mjs';
+import { createCommands } from '@runeditrun/rer/commands';
+import { openPrivateLog } from '@runeditrun/rer/private-files';
+import { createRedaction, credentialValues } from '@runeditrun/rer/redaction';
+import { inheritedScopeTokens } from '@runeditrun/rer/process-scope';
 import { awaitOutput, writeTerminal } from './terminal-output.mjs';
 import { validateFileTimings, writeReport } from './report.mjs';
 

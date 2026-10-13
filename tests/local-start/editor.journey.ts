@@ -31,12 +31,12 @@ contract('MGMT-002','native owner editor mounts at 1440 and 390, refuses visitor
     await runtime.start();
     expect((await page.request.get(runtime.url+'/api/editor/config')).status()).toBe(401);
     expect((await (await page.request.get(runtime.url+'/auth/environment')).json()).editorEligible).toBe(false);
-    await page.goto(runtime.url+'/');await expect(page.locator('[data-rer-editor]')).toHaveCount(0);
+    await page.goto(runtime.url+'/docs');await expect(page.locator('[data-rer-editor]')).toHaveCount(0);
     await signIn(page,runtime.url);
     expect((await (await page.request.get(runtime.url+'/auth/environment')).json()).editorEligible).toBe(true);
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:900});
-      await page.goto(runtime.url+'/');
+      await page.goto(runtime.url+'/docs');
       const host=page.locator('[data-rer-editor]');await expect(host).toHaveCount(1);
       await page.getByRole('button',{name:'Open Run Edit Run',exact:true}).click();
       await expect(host).toHaveAttribute('data-connection','connected');

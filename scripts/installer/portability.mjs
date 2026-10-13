@@ -1,11 +1,11 @@
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
-import { readSettings } from '../base-onboarding/adapter.mjs';
+import { readSettings } from '@runeditrun/rer/local-installer';
 import { createPortability, PortabilityError } from '../../src/vendor/base/portability/index.mjs';
 import { portabilityPolicy } from '../../src/core/features/portability/policy.ts';
 import { localBindings } from '../../src/core/platform/local-bindings.ts';
 import { localContactHashSalt } from '../../src/core/platform/local-contact-authority.ts';
-import { RerError, refuse } from '../base-cli/cli/errors.mjs';
+import { RerError, refuse } from '@runeditrun/rer/errors';
 import { transferArchive } from './transfer-archive.mjs';
 
 // Mango supplies its private-authority policy; Base owns validation and atomic restoration.

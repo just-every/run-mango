@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { localBootstrapToken } from './local-bootstrap.js';
 
 test('[BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authenticates its actual generated operator transport', async ({page, request, baseURL}, testInfo) => {
-  const html = await request.get('/');
+  const html = await request.get('/docs');
   expect(html.status()).toBe(200);
   expect(await html.text()).toContain('Your store');
   expect(await html.text()).toContain('Sign in');
@@ -11,7 +11,7 @@ test('[BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authe
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(String(error)));
   page.on('console', message => {if (message.type() === 'error') errors.push(message.text())});
-  await page.goto('/');
+  await page.goto('/docs');
   await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
   const publicOrigin = await page.evaluate(() => performance.timeOrigin);
   await page.getByRole('link', {name: 'Sign in', exact: true}).click();

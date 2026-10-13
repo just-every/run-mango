@@ -16,77 +16,71 @@
   "commands": {
     "setup": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "setup"
       ],
       "effects": "Local shared Base installer: preserve private settings, migrate local D1, claim the first owner once, capture sign-in in the dev outbox and stop the application.",
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ]
     },
     "deploy": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "deploy"
       ],
       "effects": "Deploy an existing committed build through the full Base owner-account kit: find/create owned resources, apply remote D1 migrations, upload Worker, read back bindings and verify source/version health. Requires explicit owner credentials and persistent ownership state.",
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ]
     },
     "verify": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "verify"
       ],
       "effects": "Checks source integrity, operations tooling, TypeScript, production build, local D1 and browser tests. No hosted acceptance claim.",
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ]
     },
     "export": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "export"
       ],
       "effects": "Complete local D1/R2 export with private-authority binding and explicit exclusions.",
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ]
     },
     "import": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "import"
       ],
       "effects": "Confirmed atomic import into an empty local destination; no remote effects.",
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ]
     },
     "install": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "install"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -94,12 +88,11 @@
     },
     "dev": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "dev"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -107,12 +100,11 @@
     },
     "preview": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "preview"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -120,12 +112,11 @@
     },
     "build": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "build"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -133,12 +124,11 @@
     },
     "reset": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "reset"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -146,12 +136,11 @@
     },
     "release": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "release"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -159,12 +148,11 @@
     },
     "outbox": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "outbox"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -172,12 +160,11 @@
     },
     "doctor": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "doctor"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -185,12 +172,11 @@
     },
     "describe": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "describe"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],
@@ -198,12 +184,11 @@
     },
     "check": {
       "argv": [
-        "node",
-        "scripts/rer.mjs",
+        "rer",
         "check"
       ],
       "inputs": [
-        "scripts/rer.mjs",
+        "package.json",
         "scripts/installer/local.mjs",
         "rer-setup.json"
       ],

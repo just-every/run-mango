@@ -23,6 +23,8 @@ export const copy = {
     replaces,
     replacedProducts,
     primary: 'Start your newsletter',
+    // The run site's primary action (run-mango.com), to its Run page.
+    run: 'Run Mango',
     secondary: 'Read the docs',
     note: ['MIT licensed'],
     // The scene drops the audience list on a phone (hero-phone.css), so each layout has its own description.

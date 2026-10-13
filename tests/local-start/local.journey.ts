@@ -38,8 +38,13 @@ contract('OPER-001', 'fresh install completes sender setup via the Base outbox a
     }
     // Exercise hydrated sign-in with a supplied return path.
 
+    // HOME-001: before the owner saves the sender identity, the home page is the Lobby, whose one action finishes setup.
     await page.getByRole('link',{name:'Back to Mango'}).click();
-    await page.getByRole('link',{name:'Sign in',exact:true}).click();
+    await expect(page).toHaveURL(runtime.url+'/');
+    expect(await (await page.request.get(runtime.url+'/setup/state')).json()).toEqual({state:'unclaimed'});
+    await expect(page.getByRole('link',{name:'Finish setup'})).toHaveAttribute('href','/setup');
+    await page.goto(runtime.url+'/signin');
+    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
     await page.evaluate(async () => {await window.__TSR_ROUTER__!.navigate({to:'/signin',search:{returnTo:'/setup'}});});
     await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
     await page.getByLabel('Email address').fill('owner@example.test');
@@ -76,6 +81,10 @@ contract('OPER-001', 'fresh install completes sender setup via the Base outbox a
     expect(senderWrites).toBe(0);
     await finishSetup(page);
     expect(senderWrites).toBe(1);
+    // Once setup is saved the installation is claimed, and the Lobby's one action is Sign in.
+    expect(await (await page.request.get(runtime.url+'/setup/state')).json()).toEqual({state:'claimed'});
+    await page.goto(runtime.url+'/');
+    await expect(page.getByRole('link',{name:'Sign in'})).toHaveAttribute('href','/signin');
     await page.goto(runtime.url+'/setup');
     await expect(page).toHaveURL(runtime.url+'/app');
     // A reload reads the persisted sender identity and preserves access.

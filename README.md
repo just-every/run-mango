@@ -9,23 +9,23 @@ git clone https://github.com/just-every/run-mango.git
 cd run-mango
 ```
 
-Use Node **22.20.0** and pnpm **10.12.4** from the project root. Supply your own owner email.
+Use Node **22.20.0** and pnpm **10.12.4** from the project root. Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`); in this checkout it runs the rer version `package.json` pins. Supply your own owner email.
 
 ```sh
-node scripts/rer.mjs install
-node scripts/rer.mjs setup --owner-email owner@example.test
-node scripts/rer.mjs dev
+rer install
+rer setup --owner-email owner@example.test
+rer dev
 ```
 
 Wait for `RER_READY`. `rer dev` opens signed in: it prints `RER_SIGNED_IN` (the owner) and `RER_OPEN`, a link that carries this checkout's private dev key in its fragment. Open `RER_OPEN` in a browser on this computer and you land signed in as the owner; a small dev badge switches to the `teammate` persona (a second operator beside the owner; Mango operators hold equal authority) or signs out. Never share the link: the key is what keeps the outbox and dev sign-in closed to anything that reaches this port through a proxy or tunnel, and `reset` removes the key so every earlier browser session stops working. `--as teammate` (or `--as signed-out`) starts as another persona, and `--login` turns dev identity off so dev prints `RER_SIGN_IN` and a key-carrying `RER_OPEN` for the outbox instead: choose the newest message, follow its link and press Confirm (no email is sent). `RER_OPEN` is for people at this terminal; scripts use `rer dev --json` or the key header. The sign-in opens `/setup`, where you save your business sender identity before entering `/app`. A configured installation goes straight to the app; sender details remain editable in Settings. Setup exits with no server running; stop dev with Ctrl-C before verification or data operations.
 
 ```sh
-node scripts/rer.mjs verify
-node scripts/rer.mjs reset --yes
-node scripts/rer.mjs export --output exports/mango.jsonl
-node scripts/rer.mjs import --input exports/mango.jsonl --yes
-node scripts/rer.mjs deploy --environment production --dry-run
-node scripts/rer.mjs describe
+rer verify
+rer reset --yes
+rer export --output exports/mango.jsonl
+rer import --input exports/mango.jsonl --yes
+rer deploy --environment production --dry-run
+rer describe
 ```
 
 Reset deletes local data and credentials. Export before resetting if you need that data; import requires an empty destination and the matching private settings backup. The commands above are separate operations, not a reset-and-backup sequence. Real deployment uses `deploy --environment production` and requires authorized owner-account credentials. See [OPERATIONS.md](OPERATIONS.md) for recovery and configuration; `describe --json` lists the actual flags, and `check --profile first-party` checks the command contract.
@@ -112,4 +112,4 @@ Large contact import lifecycle operations target [Cloudflare D1’s Workers Paid
 
 ## Move your data
 
-The local `node scripts/rer.mjs export --output FILE` and `node scripts/rer.mjs import --input FILE --yes` commands use the maintained Base archive engine for complete Mango D1 records and original uploaded R2 assets. Keep matching private settings separately and restore into an empty local destination before ordinary setup. See [restore requirements](OPERATIONS.md#complete-data-export-and-restore). Remote CLI transfer is unsupported. Authentication credentials are re-established separately. The CSV audience export remains available for contact interoperability.
+The local `rer export --output FILE` and `rer import --input FILE --yes` commands use the maintained Base archive engine for complete Mango D1 records and original uploaded R2 assets. Keep matching private settings separately and restore into an empty local destination before ordinary setup. See [restore requirements](OPERATIONS.md#complete-data-export-and-restore). Remote CLI transfer is unsupported. Authentication credentials are re-established separately. The CSV audience export remains available for contact interoperability.

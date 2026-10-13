@@ -4,19 +4,19 @@ There are two ways to run Mango. Run it on your computer to look around and writ
 
 ## Run it on your computer
 
-You need Node 22.20.0 and pnpm 10.12.4. Run these from the project root, with your own email address:
+You need Node 22.20.0 and pnpm 10.12.4. Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`); in this checkout it runs the rer version `package.json` pins. Run these from the project root, with your own email address:
 
 ```bash
-node scripts/rer.mjs install
-node scripts/rer.mjs setup --owner-email you@example.com
-node scripts/rer.mjs dev
+rer install
+rer setup --owner-email you@example.com
+rer dev
 ```
 
 `install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again keeps your owner, your data and your secrets. Pass `--port PORT` or `--host HOST` to use another loopback address than the default, 127.0.0.1:15660. Never commit or share `.dev.vars`.
 
 `dev` starts Mango and prints `RER_READY` with the address of the development outbox, `/__dev/outbox`, once it is ready. Open the outbox, read the newest sign-in message, follow its link and press **Confirm**. The first time, the link opens **Set up your sender identity**: save your business details there to enter the app. You can change them later in Settings. Local mail never leaves your computer and no mail provider is configured locally, so a local copy cannot send a real newsletter. Stop the server with Ctrl-C.
 
-To run Mango's own checks, install the headless browser its tests use with `pnpm exec playwright install chromium`, stop the server, then run `node scripts/rer.mjs verify`. `node scripts/rer.mjs describe` lists every command and its flags.
+To run Mango's own checks, install the headless browser its tests use with `pnpm exec playwright install chromium`, stop the server, then run `rer verify`. `rer describe` lists every command and its flags.
 
 ## Deploy to your Cloudflare account
 
@@ -24,7 +24,7 @@ You need a Cloudflare account, its account ID, an API token scoped for the work,
 
 First, set `storeTimezone`, `organizationName` and `landingSummary` in `src/ext/config.ts`. Schedules use `storeTimezone`; the default is Australia/Brisbane.
 
-Next, put the inputs listed in `.env.example` into the environment of the shell that runs the commands. The file lists the names with empty values. `node scripts/rer.mjs doctor` reports which inputs are missing or invalid, without contacting any provider or printing values.
+Next, put the inputs listed in `.env.example` into the environment of the shell that runs the commands. The file lists the names with empty values. `rer doctor` reports which inputs are missing or invalid, without contacting any provider or printing values.
 
 ```bash
 export CLOUDFLARE_ACCOUNT_ID=...
@@ -61,8 +61,8 @@ Generate `SESSION_SECRET`, `SETUP_TOKEN` and `CONTACT_HASH_SALT` yourself, for e
 ### Check, then deploy
 
 ```bash
-node scripts/rer.mjs deploy --environment production --dry-run
-node scripts/rer.mjs deploy --environment production
+rer deploy --environment production --dry-run
+rer deploy --environment production
 ```
 
 - `--dry-run` checks your inputs and builds locally without any provider request.

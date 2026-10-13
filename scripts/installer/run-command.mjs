@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process'
 import { StringDecoder } from 'node:string_decoder'
-import { stopOwnedGroup } from '../base-onboarding/process-cleanup.mjs'
-import { createRedaction } from '../base-onboarding/redaction.mjs'
+import { stopOwnedGroup } from '@runeditrun/rer/process-cleanup'
+import { createRedaction } from '@runeditrun/rer/redaction'
 
 export function redact(text, values = []) {
   for (const value of values.filter(Boolean).sort((a, b) => b.length - a.length)) {

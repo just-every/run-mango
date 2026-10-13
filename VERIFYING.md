@@ -1,6 +1,6 @@
 # Verification profiles
 
-`node scripts/rer.mjs verify` runs routine acceptance: command/source checks,
+`rer verify` runs routine acceptance: command/source checks,
 operations, typecheck, production build, API/model tests, browser journeys and
 native install/setup/rotation/export/restore/reset journeys. The independent
 command/source checks overlap, followed by operations and root typecheck running
@@ -38,7 +38,7 @@ successful output remains complete and preserves decoded Unicode code points.
 For full public-command wall time, including rer initialization and cleanup, use:
 
 ```sh
-node scripts/verification/time-command.mjs -- node scripts/rer.mjs verify
+node scripts/verification/time-command.mjs -- rer verify
 node scripts/verification/time-command.mjs -- pnpm verify:release
 ```
 

@@ -3,7 +3,7 @@ import { once } from 'node:events';
 import { basename, join } from 'node:path';
 import { freePort } from '../support/free-port.mjs';
 import { scratchDirectory } from '../support/artifacts.mjs';
-import { createCommands } from '../../scripts/base-onboarding/commands.mjs';
+import { createCommands } from '@runeditrun/rer/commands';
 
 export async function authoringRuntime({
   suite = 'campaign-authoring',

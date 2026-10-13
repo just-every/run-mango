@@ -1,6 +1,7 @@
 import { ButtonLink } from '../../site/ButtonLink';
 import { sitePaths } from '../../site/links';
 import { copy } from '../copy';
+import { PrimaryAction } from '../parts/PrimaryAction';
 import { HeroArt } from '../drawings/hero/HeroArt';
 
 const { hero } = copy;
@@ -26,7 +27,7 @@ export function Hero() {
         <p className="hero-lead">{hero.lead}</p>
         <p className="hero-replaces"><ReplacesLine /></p>
         <div className="hero-actions">
-          <ButtonLink to={sitePaths.install} tone="sun">{hero.primary}</ButtonLink>
+          <PrimaryAction />
           <ButtonLink to={sitePaths.docs} tone="line">{hero.secondary}</ButtonLink>
         </div>
         <p className="hero-note">

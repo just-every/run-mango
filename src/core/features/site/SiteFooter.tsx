@@ -4,13 +4,15 @@ import { siteCopy } from './copy';
 import { creditUrl, landingSectionIds, sitePaths } from './links';
 import type { SitePage } from './SiteHeader';
 import { SectionLink, SiteLink } from './SiteLink';
+import { useRunSite } from './run-site';
 
 /**
  * The shared footer: the lockup, the landing's sections, Docs and operator sign-in, then the deployment owner's name and
- * one-line summary. The credit shows only while the owner keeps `showPoweredByCredit` on.
+ * one-line summary. The credit shows only while the owner keeps `showPoweredByCredit` on. The run site has no sign-in.
  */
 export function SiteFooter({ current }: { current: SitePage }) {
   const { footer, sections } = siteCopy;
+  const runSite = useRunSite();
   return (
     <footer className="site-footer">
       <div className="site-footer-row">
@@ -21,7 +23,7 @@ export function SiteFooter({ current }: { current: SitePage }) {
               <li key={id}><SectionLink id={id} onLanding={current === 'home'}>{sections[id]}</SectionLink></li>
             ))}
             <li><SiteLink to={sitePaths.docs}>{footer.docs}</SiteLink></li>
-            <li><SiteLink to={sitePaths.signIn}>{footer.signIn}</SiteLink></li>
+            {runSite ? null : <li><SiteLink to={sitePaths.signIn}>{footer.signIn}</SiteLink></li>}
           </ul>
         </nav>
       </div>

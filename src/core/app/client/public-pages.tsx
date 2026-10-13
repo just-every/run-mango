@@ -1,6 +1,6 @@
 import { safeReturnTo } from '@/vendor/base/operator-auth/policy.mjs';
 import { useEffect, useState, type FormEvent } from 'react';
-import { Link, useLocation } from '@tanstack/react-router';
+import { useLocation } from '@tanstack/react-router';
 import { BodyText } from '@/core/features/site/BodyText';
 import { StandaloneFrame } from './ui/standalone-frame';
 export function SignInPage() {
@@ -57,7 +57,7 @@ export function SignInPage() {
           {local && <p className="standalone-note"><a href="/__dev/outbox">Open the development outbox</a>{' '}<BodyText text="to read your local sign-in mail." /></p>}
         </section>
       ) }}
-      after={<Link className="secondary-link standalone-back" to="/">Back to the home page</Link>}
+      after={<a className="secondary-link standalone-back" href="/">Back to the home page</a>}
     />
   );
 }

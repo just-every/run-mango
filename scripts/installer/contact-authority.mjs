@@ -1,7 +1,7 @@
 import { localContactHashSalt } from '../../src/core/platform/local-contact-authority.ts';
 import { readdir } from 'node:fs/promises';
 import { localVariables } from './environment.mjs';
-import { refuse } from '../base-cli/cli/errors.mjs';
+import { refuse } from '@runeditrun/rer/errors';
 
 // A versionless configuration does not establish whether this database used the
 // historical session key or the briefly shipped independent contact salt.

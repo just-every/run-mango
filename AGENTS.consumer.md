@@ -1,22 +1,22 @@
 ## Run it locally
 
-Use Node **22.20.0** and pnpm **10.12.4** from the project root. Supply your own owner email.
+Use Node **22.20.0** and pnpm **10.12.4** from the project root. Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`); in this checkout it runs the rer version `package.json` pins. Supply your own owner email.
 
 ```sh
-node scripts/rer.mjs install
-node scripts/rer.mjs setup --owner-email owner@example.test
-node scripts/rer.mjs dev
+rer install
+rer setup --owner-email owner@example.test
+rer dev
 ```
 
 Wait for `RER_READY`, open the printed `/__dev/outbox`, read the newest sign-in message, follow its link and press Confirm. No email is sent. Setup exits with no server running; stop dev with Ctrl-C before verification or data operations.
 
 ```sh
-node scripts/rer.mjs verify
-node scripts/rer.mjs reset --yes
-node scripts/rer.mjs export --output exports/mango.jsonl
-node scripts/rer.mjs import --input exports/mango.jsonl --yes
-node scripts/rer.mjs deploy --environment production --dry-run
-node scripts/rer.mjs describe
+rer verify
+rer reset --yes
+rer export --output exports/mango.jsonl
+rer import --input exports/mango.jsonl --yes
+rer deploy --environment production --dry-run
+rer describe
 ```
 
 Reset deletes local data and credentials. Export before resetting if you need that data; import requires an empty destination and the matching private settings backup. The commands above are separate operations, not a reset-and-backup sequence. Real deployment uses `deploy --environment production` and requires authorized owner-account credentials. See [OPERATIONS.md](OPERATIONS.md) for recovery and configuration; `describe --json` lists the actual flags, and `check --profile first-party` checks the command contract.

@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as SetupRouteImport } from './routes/setup'
@@ -29,11 +28,6 @@ import { Route as AppCampaignsIdRouteImport } from './routes/app.campaigns_.$id'
 import { Route as AppCampaignsIdReviewRouteImport } from './routes/app.campaigns_.$id_.review'
 import { Route as AppCampaignsIdScheduledRouteImport } from './routes/app.campaigns_.$id_.scheduled'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -126,7 +120,6 @@ const AppCampaignsIdScheduledRoute = AppCampaignsIdScheduledRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/docs': typeof DocsRouteWithChildren
   '/setup': typeof SetupRoute
@@ -147,7 +140,6 @@ export interface FileRoutesByFullPath {
   '/app/campaigns/$id/scheduled': typeof AppCampaignsIdScheduledRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/setup': typeof SetupRoute
   '/signin': typeof SigninRoute
   '/subscribe': typeof SubscribeRoute
@@ -167,7 +159,6 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/docs': typeof DocsRouteWithChildren
   '/setup': typeof SetupRoute
@@ -190,7 +181,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/app'
     | '/docs'
     | '/setup'
@@ -211,7 +201,6 @@ export interface FileRouteTypes {
     | '/app/campaigns/$id/scheduled'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/setup'
     | '/signin'
     | '/subscribe'
@@ -230,7 +219,6 @@ export interface FileRouteTypes {
     | '/app/campaigns/$id/scheduled'
   id:
     | '__root__'
-    | '/'
     | '/app'
     | '/docs'
     | '/setup'
@@ -252,7 +240,6 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
   DocsRoute: typeof DocsRouteWithChildren
   SetupRoute: typeof SetupRoute
@@ -262,13 +249,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/app': {
       id: '/app'
       path: '/app'
@@ -441,7 +421,6 @@ const DocsRouteChildren: DocsRouteChildren = {
 const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
   DocsRoute: DocsRouteWithChildren,
   SetupRoute: SetupRoute,
