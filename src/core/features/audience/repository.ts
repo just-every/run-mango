@@ -2,6 +2,7 @@ import { consentCaptureMetadata } from './consent-metadata';
 import { createSuppressionWriter } from './suppression-writer';
 import { createPublicCaptureWriter } from './public-capture-writer';
 import { createConfirmationHandoff } from './confirmation-handoff';
+import { claimPortableRestrictions, recordPortableHash } from './portable-hashes';
 import { fencedInsert, syncWritePredicate, type SyncWriteFence } from '@/core/features/store/sync-write-fence';
 import { and, asc, desc, eq, inArray, lt, lte, or, sql } from 'drizzle-orm';
 
@@ -289,7 +290,11 @@ export function createAudienceRepository(database: Database) {
         .then((rows) => rows[0]);
     },
 
-    async upsertSurvivingOptOut(values: typeof survivingOptOuts.$inferInsert) {
+    /** A restored opt-out still named by its portable identity covers an address as it arrives. */
+    claimPortableRestrictions: (salt: string, destinations: string[]) => claimPortableRestrictions(database.$client, salt, destinations),
+
+    async upsertSurvivingOptOut(values: typeof survivingOptOuts.$inferInsert, destination: string) {
+      await recordPortableHash(database.$client, values.destinationHash, destination).run();
       await database.insert(survivingOptOuts).values(values).onConflictDoUpdate({
         target: [survivingOptOuts.destinationHash, survivingOptOuts.channel, survivingOptOuts.reason],
         set: { occurredAt: values.occurredAt, updatedAt: values.updatedAt },

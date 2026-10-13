@@ -11,6 +11,8 @@ type AudienceImportJobsProps = {
   onResume: (id: string) => void;
   onUndo: (id: string) => void;
   onAbandon: (id: string) => void;
+  /** Stops an import writing on its own after its current step. */
+  onStop: () => void;
 };
 
 function canResume(job: ImportJob) {
@@ -50,7 +52,7 @@ export const abandonNotice = (job: ImportJob) => ['undone', 'rolled_back'].inclu
 
 const dateTime = (value: number) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(value);
 
-export function AudienceImportJobs({ jobs, loading, error, busyJobId, onRefresh, onResume, onUndo, onAbandon }: AudienceImportJobsProps) {
+export function AudienceImportJobs({ jobs, loading, error, busyJobId, onRefresh, onResume, onUndo, onAbandon, onStop }: AudienceImportJobsProps) {
   const [confirming, setConfirming] = useState<{ id: string; action: 'undo' | 'abandon' }>();
 
   return (
@@ -100,6 +102,7 @@ export function AudienceImportJobs({ jobs, loading, error, busyJobId, onRefresh,
               ) : (
                 <div className="audience-import-job__actions">
                   {canResume(job) ? <button className="secondary-action" type="button" onClick={() => onResume(job.id)} disabled={Boolean(busyJobId)}>{busy ? 'Working…' : actionLabel(job)}</button> : null}
+                  {busy && ['queued', 'applying'].includes(job.state) && !job.abandonedAt ? <button className="secondary-action" type="button" onClick={onStop}>Stop</button> : null}
                   {canUndo(job) ? <button className="danger-action--line" type="button" onClick={() => setConfirming({ id: job.id, action: 'undo' })} disabled={Boolean(busyJobId)}>Undo import</button> : null}
                   {canAbandon(job) ? <button className="danger-action--line" type="button" onClick={() => setConfirming({ id: job.id, action: 'abandon' })} disabled={Boolean(busyJobId)}>Abandon import</button> : null}
                 </div>

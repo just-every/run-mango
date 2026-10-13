@@ -1,4 +1,5 @@
 import type { Database } from '@/core/platform/db/client';
+import { recordPortableHash } from './portable-hashes';
 
 type Suppression = {id: string; destination: string; destinationHash: string; channel: 'email' | 'sms'; cause: string; occurredAt: Date; providerEventId?: string};
 
@@ -31,6 +32,7 @@ export function createSuppressionWriter(database: Database) {
         ON CONFLICT(destination_hash, channel, reason) DO UPDATE SET occurred_at = excluded.occurred_at,
           updated_at = excluded.updated_at WHERE surviving_opt_outs.occurred_at <= excluded.occurred_at`)
         .bind(`${id}_block`, destinationHash, channel, cause, time, time, time, ...guardValues),
+      recordPortableHash(client, destinationHash, destination),
       client.prepare(`UPDATE ${addressTable} SET channel_status = 'suppressed',
         channel_status_at = MAX(COALESCE(channel_status_at, 0), ?), updated_at = MAX(updated_at, ?)
         WHERE ${addressColumn} = ? AND ${guard}`).bind(time, time, destination, ...guardValues),

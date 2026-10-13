@@ -3,6 +3,7 @@ import {sha256} from '@/core/shared/ids';
 import type {NativeRow} from './import-types';
 import type {NormalizedImportRow} from './import-normalize';
 import {readAudienceSnapshots,snapshotTargets} from './import-read';
+import {portableHash} from './portable-hashes';
 
 export async function readImportState(db:D1Database,rows:NormalizedImportRow[],salt:string,destination:string){
  const identities=[...new Set(rows.flatMap(row=>[row.email,...(row.ledger?.identities.map(identity=>identity.destination)??[])]).filter(Boolean))];
@@ -13,9 +14,14 @@ export async function readImportState(db:D1Database,rows:NormalizedImportRow[],s
  const targets=await snapshotTargets(db,destination,snapshots,true);
  const exportedIds=rows.flatMap(row=>row.ledger?[String(row.ledger.tables.contacts[0]?.id)]:[]);
  const existingIds=new Set((await db.prepare('SELECT id FROM contacts WHERE id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(exportedIds)).all<{id:string}>()).results.map(row=>row.id));
- const hashes=JSON.stringify(await Promise.all(identities.map(identity=>sha256(`${salt}:${identity}`))));
- const optOuts=(await db.prepare('SELECT * FROM surviving_opt_outs WHERE destination_hash IN (SELECT value FROM json_each(?)) ORDER BY id').bind(hashes).all<NativeRow>()).results;
- const suppressions=(await db.prepare('SELECT * FROM contact_suppressions WHERE destination_hash IN (SELECT value FROM json_each(?)) ORDER BY id').bind(hashes).all<NativeRow>()).results;
+ const salted=await Promise.all(identities.map(identity=>sha256(`${salt}:${identity}`))),hashes=JSON.stringify(salted);
+ // A restored opt-out still named by its portable identity counts as this address's own: the import's
+ // start gives it this installation's hash before any contact is written (import-start).
+ const portable=new Map(identities.map((identity,index)=>[portableHash(identity),salted[index]])),restored=JSON.stringify([...portable.keys()]);
+ const read=async(table:string)=>[...(await db.prepare(`SELECT * FROM ${table} WHERE destination_hash IN (SELECT value FROM json_each(?)) ORDER BY id`).bind(hashes).all<NativeRow>()).results,
+  ...(await db.prepare(`SELECT * FROM ${table} WHERE destination_hash IN (SELECT value FROM json_each(?)) ORDER BY id`).bind(restored).all<NativeRow>()).results.map((row):NativeRow=>({...row,destination_hash:portable.get(String(row.destination_hash))!}))]
+  .sort((a,b)=>String(a.id).localeCompare(String(b.id)));
+ const optOuts=await read('surviving_opt_outs'),suppressions=await read('contact_suppressions');
  return {byIdentity,snapshots,targets,existingIds,optOuts,suppressions};
 }
 export type ImportState=Awaited<ReturnType<typeof readImportState>>;

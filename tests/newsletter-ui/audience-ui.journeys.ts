@@ -35,7 +35,7 @@ function makeImportFiles(runId: string) {
   ];
 }
 
-test('operator imports, resumes and undoes reviewed CSVs, and exports the saved ledger at desktop and mobile widths', async ({ page, request }, testInfo) => {
+test('operator imports reviewed CSVs to completion without further clicks, undoes them, and exports the saved ledger at desktop and mobile widths', async ({ page, request }, testInfo) => {
   await signInAsLocalOperator(page, request);
   const runId = `${Date.now()}`;
   const importedEmail = `ui-${runId}-1@example.test`;
@@ -122,14 +122,12 @@ test('operator imports, resumes and undoes reviewed CSVs, and exports the saved 
   // Journeys share the native installation and its saved import history.
   // Follow the job accepted by this request through every subsequent action.
   const importJob = page.locator('.audience-import-job').filter({ has: page.getByText(job.id, { exact: true }) });
+  // The first step writes 10 of the 12 rows; the page keeps writing until the import completes.
+  expect(job.checkpoint).toBeLessThan(job.total);
   await expect(importJob).toHaveCount(1);
-  await expect(importJob).toContainText('applying');
-  await expect(importJob).toContainText(/10 of 12 rows/);
-  await expect(importJob.getByRole('button', { name: 'Undo import' })).toHaveCount(0);
-  await expect(importJob.getByRole('button', { name: 'Resume import' })).toBeVisible();
-  await importJob.getByRole('button', { name: 'Resume import' }).click();
   await expect(importJob).toContainText('completed');
   await expect(importJob).toContainText(/12 of 12 rows/);
+  await expect(importJob.getByRole('button', { name: 'Resume import' })).toHaveCount(0);
 
   const audienceCookie = (await page.context().cookies()).find((cookie) => cookie.name === 'operator_session_local');
   const audienceResponse = await request.get('/api/audience', { headers: { Cookie: `operator_session_local=${audienceCookie?.value}` } });

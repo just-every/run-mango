@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { requestJson } from '@/core/app/client/lib/api';
 import { useResource } from '@/core/app/client/lib/use-resource';
@@ -49,6 +49,13 @@ export function AudienceImportPage() {
   const [error, setError] = useState<string>();
   const [notice, setNotice] = useState<string>();
   const archive = useArchiveImport({ setError, setNotice });
+  // An import with rows left keeps writing on its own until it completes, a step fails, the operator
+  // presses Stop or leaves this page. A stopped import still offers Resume and Abandon.
+  const driving = useRef({ stopped: false, mounted: true });
+  useEffect(() => {
+    driving.current.mounted = true;
+    return () => { driving.current.mounted = false; };
+  }, []);
 
   if ((presets.loading && !presets.data) || (jobsResource.loading && !jobsResource.data)) return <LoadState />;
   if (!presets.data) return <LoadState error={presets.error ?? 'Import presets could not be loaded.'} />;
@@ -187,6 +194,8 @@ export function AudienceImportPage() {
       const { job } = response.data;
       setNotice(`Import ${job.state.replaceAll('_', ' ')}: ${job.checkpoint} of ${job.total} rows processed.`);
       await jobsResource.reload();
+      setBusy(undefined);
+      if (writing(job)) await runJobAction(job.id, 'resume');
     } catch {
       setError('The start result could not be confirmed. Refresh imports before trying again.');
     } finally {
@@ -194,29 +203,36 @@ export function AudienceImportPage() {
     }
   };
 
+  const writing = (job: ImportJob) => ['queued', 'applying'].includes(job.state) && !job.abandonedAt;
+
   const runJobAction = async (id: string, action: 'resume' | 'undo' | 'abandon') => {
     if (busyJobId) return;
     setBusyJobId(id);
     setError(undefined);
     setNotice(undefined);
+    driving.current.stopped = false;
     try {
-      const response = await requestJson<{ job?: ImportJob } & ImportApiError>(`/api/audience/imports/${encodeURIComponent(id)}/${action}`, { method: 'POST' });
-      if (response.status >= 300 || !response.data.job) {
-        setError(requestError(response.data, `The import could not be ${{ resume: 'resumed', undo: 'undone', abandon: 'abandoned' }[action]}. Review the import status before trying again.`));
+      for (;;) {
+        const response = await requestJson<{ job?: ImportJob } & ImportApiError>(`/api/audience/imports/${encodeURIComponent(id)}/${action}`, { method: 'POST' });
+        if (!driving.current.mounted) return;
+        if (response.status >= 300 || !response.data.job) {
+          setError(requestError(response.data, `The import could not be ${{ resume: 'resumed', undo: 'undone', abandon: 'abandoned' }[action]}. Review the import status before trying again.`));
+          await jobsResource.reload();
+          return;
+        }
+        const { job } = response.data;
+        setNotice(action === 'undo'
+          ? `Import ${job.state.replaceAll('_', ' ')}. Later opt-outs and suppressions remain protected.`
+          : action === 'abandon' || job.abandonedAt
+            ? abandonNotice(job)
+            : `Import ${job.state.replaceAll('_', ' ')}: ${job.checkpoint} of ${job.total} rows processed.`);
         await jobsResource.reload();
-        return;
+        if (action !== 'resume' || !writing(job) || driving.current.stopped || !driving.current.mounted) return;
       }
-      const { job } = response.data;
-      setNotice(action === 'undo'
-        ? `Import ${job.state.replaceAll('_', ' ')}. Later opt-outs and suppressions remain protected.`
-        : action === 'abandon' || job.abandonedAt
-          ? abandonNotice(job)
-          : `Import ${job.state.replaceAll('_', ' ')}: ${job.checkpoint} of ${job.total} rows processed.`);
-      await jobsResource.reload();
     } catch {
       setError(`The ${action} result could not be confirmed. Refresh imports before trying again.`);
     } finally {
-      setBusyJobId(undefined);
+      if (driving.current.mounted) setBusyJobId(undefined);
     }
   };
 
@@ -292,6 +308,7 @@ export function AudienceImportPage() {
         onResume={(id) => void runJobAction(id, 'resume')}
         onUndo={(id) => void runJobAction(id, 'undo')}
         onAbandon={(id) => void runJobAction(id, 'abandon')}
+        onStop={() => { driving.current.stopped = true; }}
       />
     </div>
   );

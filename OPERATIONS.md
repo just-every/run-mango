@@ -34,7 +34,7 @@ Names derive from project and environment: `mango-production`, `mango-production
 
 Restore mode on a deployment: set `"MANGO_RESTORE_MODE": "1"` in `deploy.json` `vars` and deploy; product routes, the queue consumer and cron then pause (503 `restore_in_progress`) while sign-in, `/health` and the authenticated transfer routes stay open. Set it back to `"0"` and deploy again after the restore. A hosted restore itself is not yet proven.
 
-Back up `.rer/deploy/<environment>.json`; repeat deployment requires matching ownership state. Same-named unowned resources are refused. Resolve uncertain resource ownership with the [Base deploy-kit recovery guide](scripts/base-cli/modules/deploy-kit/README.md), preserving source and data. CI verifies main pushes; it does not deploy.
+Back up `.rer/deploy/<environment>.json`; repeat deployment requires matching ownership state. Same-named unowned resources are refused. Resolve uncertain resource ownership with the Base deploy-kit recovery guide (`modules/deploy-kit/README.md` in the installed `@runeditrun/rer` package), preserving source and data. CI verifies main pushes; it does not deploy.
 
 ## Authored newsletter draft API
 

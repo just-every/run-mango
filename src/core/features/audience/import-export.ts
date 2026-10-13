@@ -1,4 +1,4 @@
-import { sha256 } from '@/core/shared/ids';
+import { portableHash } from './portable-hashes';
 import type { AudienceSnapshot } from './import-types';
 
 /** Export identities use a portable namespace; installation salts never leave
@@ -6,11 +6,11 @@ import type { AudienceSnapshot } from './import-types';
 export async function portableAudienceSnapshot(native: AudienceSnapshot): Promise<AudienceSnapshot> {
   const snapshot = structuredClone(native);
   for (const identity of snapshot.identities) {
-    const portableHash = await sha256(`mango-audience-export-v1:${identity.destination}`);
+    const portable = portableHash(identity.destination);
     for (const table of ['contact_suppressions', 'surviving_opt_outs']) {
-      for (const row of snapshot.tables[table]) if (row.destination_hash === identity.hash) row.destination_hash = portableHash;
+      for (const row of snapshot.tables[table]) if (row.destination_hash === identity.hash) row.destination_hash = portable;
     }
-    identity.hash = portableHash;
+    identity.hash = portable;
   }
   snapshot.hashes = snapshot.identities.map(identity => identity.hash);
   snapshot.tables.mango_audience_hashes = snapshot.identities.map(identity => {

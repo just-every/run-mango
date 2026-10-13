@@ -7,6 +7,7 @@ import type { AudienceSnapshot } from './import-types';
 
 import {ownedTables,readAudienceSnapshots,snapshotTargets} from './import-read';
 import {restrictionStatuses} from './import-restrictions';
+import {portableHashSql} from './portable-hashes';
 export {ownedTables} from './import-read';
 const names = new Set<string>(ownedTables);
 export function validateSnapshot(value: unknown): asserts value is AudienceSnapshot {
@@ -93,6 +94,8 @@ export function createAudienceImportTarget(salt: string, options: {archive?: boo
         }
       }
       statements.push(...restrictionStatuses(snapshot));
+      // Each address's portable identity, so an opt-out that outlives this contact still leaves in an export.
+      statements.push(...snapshot.identities.map(identity => portableHashSql(identity.hash, identity.destination)));
       statements.push({ sql: 'INSERT INTO mango_import_revisions(contact_id,revision,value_hash) VALUES (?,?,?) ON CONFLICT(contact_id) DO UPDATE SET revision=excluded.revision,value_hash=excluded.value_hash', params: [row.targetId, row.revision, hashJson(canonicalJson(snapshot))] });
       return statements;
     },

@@ -3,6 +3,7 @@ import { canonicalEmail, canonicalPhone } from './identity';
 import { presetStatuses, type ImportInput, type AudienceSnapshot } from './import-types';
 import { resolveHeaderMapping, isStatusHeader } from './import-mapping';
 import { maxContactImportRows } from './import-limits';
+import { optOutLedger, optOutStatus, type OptOutLine } from './import-opt-out-lines';
 
 export type NormalizedImportRow = {
   file: string; row: number; email: string; displayName: string; status: string; reason?: string; skipped?: string; warnings: string[];
@@ -10,6 +11,8 @@ export type NormalizedImportRow = {
   /** A contact another import still attributes: only this row's opt-out or suppression is applied to it.
    * contactId is null while an unfinished import has planned the contact but not written it. */
   held?: { contactId: string | null; reason: string };
+  /** An opt-out-only ledger line: written outside the undo plan when the import starts. */
+  optOuts?: OptOutLine;
 };
 export function timestamp(value: string | undefined) {
   if (!value?.trim()) return null;
@@ -36,32 +39,37 @@ export function normalizeImport(input: ImportInput) {
       const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values};
       try {
         if (original.__parse_error) throw new Error(original.__parse_error);
-        if(file.preset==='mango' && values.ledger_json)row.ledger=JSON.parse(values.ledger_json);
-        row.email = canonicalEmail(values.email) ?? '';
-        if(values.phone)canonicalPhone(values.phone);
-        if (!row.email && !row.ledger?.tables.contact_phones?.length) throw new Error('An email address is required.');
-        // A row with no name leaves the contact's name as it is (import-snapshot).
-        row.displayName = values.display_name || [values.first_name,values.last_name].filter(Boolean).join(' ');
-        const sourceStatuses = [values.email_status, values.status,
-          ...Object.entries(original).filter(([header]) => isStatusHeader(header)).map(([, value]) => value),
-        ].filter(Boolean).map(value => value.trim().toLowerCase().replace(/[_\s]+/g, '-'));
-        // A mapping never hides another source column's opt-out or suppression.
-        for (const rawStatus of sourceStatuses) {
-          const mapped = statusAliases[rawStatus] ?? rawStatus;
-          if (!Object.hasOwn(restrictiveRank, mapped)) throw new Error(`Unknown source email status: ${rawStatus}`);
-          if (restrictiveRank[mapped] > restrictiveRank[row.status]) row.status = mapped;
-        }
-        values.source_status=sourceStatuses.join('; ') || file.preset.replace('csv-','');
-        if (file.preset === 'mango') {
-          if (!values.ledger_json) throw new Error('Mango exports require the lossless ledger_json column.');
-          row.ledger = JSON.parse(values.ledger_json);
-          // An observation without a name carries no name key, as Mango reads it (import-read).
-          for (const observation of row.ledger?.tables?.audience_import_observations ?? []) if (observation.source_display_name === null) delete observation.source_display_name;
-        } else if (row.status === 'subscribed') {
-          const evidence = ['brandOrLegalSender','messageCategory','frequencyDisclosure','destinationJurisdiction','consentText','consentVersion'];
-          if (!timestamp(values.occurred_at) || !timestamp(values.confirmed_at) || evidence.some(field => !input.consent?.[field]?.trim())) {
-            row.status = 'non-subscribed'; row.warnings.push('Original consent scope, opt-in time and confirmation time are required before this contact can receive marketing.');
-          } else if (timestamp(values.confirmed_at)! < timestamp(values.occurred_at)!) throw new Error('Confirmation precedes opt-in.');
+        // An opt-out whose address no contact holds carries only its portable identity (import-opt-out-lines).
+        const optOuts = file.preset === 'mango' && values.ledger_json ? optOutLedger(JSON.parse(values.ledger_json)) : undefined;
+        if (optOuts) { row.optOuts = optOuts; row.status = optOutStatus(optOuts); values.source_status = row.status; }
+        else {
+          if(file.preset==='mango' && values.ledger_json)row.ledger=JSON.parse(values.ledger_json);
+          row.email = canonicalEmail(values.email) ?? '';
+          if(values.phone)canonicalPhone(values.phone);
+          if (!row.email && !row.ledger?.tables.contact_phones?.length) throw new Error('An email address is required.');
+          // A row with no name leaves the contact's name as it is (import-snapshot).
+          row.displayName = values.display_name || [values.first_name,values.last_name].filter(Boolean).join(' ');
+          const sourceStatuses = [values.email_status, values.status,
+            ...Object.entries(original).filter(([header]) => isStatusHeader(header)).map(([, value]) => value),
+          ].filter(Boolean).map(value => value.trim().toLowerCase().replace(/[_\s]+/g, '-'));
+          // A mapping never hides another source column's opt-out or suppression.
+          for (const rawStatus of sourceStatuses) {
+            const mapped = statusAliases[rawStatus] ?? rawStatus;
+            if (!Object.hasOwn(restrictiveRank, mapped)) throw new Error(`Unknown source email status: ${rawStatus}`);
+            if (restrictiveRank[mapped] > restrictiveRank[row.status]) row.status = mapped;
+          }
+          values.source_status=sourceStatuses.join('; ') || file.preset.replace('csv-','');
+          if (file.preset === 'mango') {
+            if (!values.ledger_json) throw new Error('Mango exports require the lossless ledger_json column.');
+            row.ledger = JSON.parse(values.ledger_json);
+            // An observation without a name carries no name key, as Mango reads it (import-read).
+            for (const observation of row.ledger?.tables?.audience_import_observations ?? []) if (observation.source_display_name === null) delete observation.source_display_name;
+          } else if (row.status === 'subscribed') {
+            const evidence = ['brandOrLegalSender','messageCategory','frequencyDisclosure','destinationJurisdiction','consentText','consentVersion'];
+            if (!timestamp(values.occurred_at) || !timestamp(values.confirmed_at) || evidence.some(field => !input.consent?.[field]?.trim())) {
+              row.status = 'non-subscribed'; row.warnings.push('Original consent scope, opt-in time and confirmation time are required before this contact can receive marketing.');
+            } else if (timestamp(values.confirmed_at)! < timestamp(values.occurred_at)!) throw new Error('Confirmation precedes opt-in.');
+          }
         }
       } catch (error) { row.reason = error instanceof Error ? error.message : 'Invalid CSV row.'; }
       rows.push(row);

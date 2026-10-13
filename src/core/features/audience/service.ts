@@ -113,6 +113,9 @@ export function createAudienceService(
     if (emailContact && phoneContact && emailContact.id !== phoneContact.id) {
       throw new Error('The supplied email and phone already identify different contacts; merge them before linking identities.');
     }
+    // An address new to Mango first takes any opt-out restored for it from another installation.
+    const arriving = [emailContact ? undefined : normalized.email, phoneContact ? undefined : normalized.phone].filter((value): value is string => Boolean(value));
+    if (arriving.length) await repository.claimPortableRestrictions(requiredDependencies().contactHashSalt, arriving);
     let contact = emailContact ?? phoneContact;
     let created = false;
     if (!contact) {
@@ -204,7 +207,7 @@ export function createAudienceService(
     await repository.upsertSurvivingOptOut({
       id: ulid(input.occurredAt.getTime()), destinationHash, channel: input.channel, reason: input.reason,
       occurredAt: input.occurredAt, createdAt: input.occurredAt, updatedAt: input.occurredAt,
-    });
+    }, normalized);
     if (contact) {
       await repository.setDestinationStatus(input.channel, normalized, 'unsubscribed', input.occurredAt);
       await recordHistory(contact.id, 'opt-out', input.reason, input.occurredAt, input.stableId);
@@ -226,6 +229,7 @@ export function createAudienceService(
   async function canCapturePublicEmail(email: string) {
     const destination = canonicalEmail(email);
     if (!destination) return false;
+    await repository.claimPortableRestrictions(requiredDependencies().contactHashSalt, [destination]);
     const hash = await hashDestination(destination);
     const [contact, optOut, suppressed] = await Promise.all([
       repository.findContactByEmail(destination),
