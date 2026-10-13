@@ -2,23 +2,93 @@
   "version": 1,
   "project": "just-every/mango",
   "compatibilityDate": "2026-09-08",
-  "compatibilityFlags": ["nodejs_compat"],
-  "d1": [{"binding": "DB"}],
-  "r2": [{"binding": "ASSETS_BUCKET"}],
-  "queues": [{"binding": "MANGO_JOBS", "consumer": {"batch_size": 10, "max_retries": 5}}],
-  "crons": ["*/5 * * * *"],
+  "compatibilityFlags": [
+    "nodejs_compat"
+  ],
+  "d1": [
+    {
+      "binding": "DB"
+    }
+  ],
+  "r2": [
+    {
+      "binding": "ASSETS_BUCKET"
+    }
+  ],
+  "queues": [
+    {
+      "binding": "MANGO_JOBS",
+      "consumer": {
+        "batch_size": 10,
+        "max_retries": 5
+      }
+    }
+  ],
+  "crons": [
+    "*/5 * * * *"
+  ],
   "secrets": [
-    {"binding": "OWNER_EMAIL", "environment": "OWNER_EMAIL"},
-    {"binding": "SESSION_SECRET", "environment": "SESSION_SECRET"},
-    {"binding": "SETUP_TOKEN", "environment": "SETUP_TOKEN"},
-    {"binding": "CONTACT_HASH_SALT", "environment": "CONTACT_HASH_SALT"},
-    {"binding": "MAIL_PROVIDER_API_KEY", "environment": "MAIL_PROVIDER_API_KEY"},
-    {"binding": "MAIL_AUTH_FROM", "environment": "MAIL_AUTH_FROM"},
-    {"binding": "MAIL_WEBHOOK_SECRET", "environment": "MAIL_WEBHOOK_SECRET"},
-    {"binding": "MAIL_WEBHOOK_ID", "environment": "MAIL_WEBHOOK_ID"},
-    {"binding": "MANGO_ALLOWED_LINK_HOSTS", "environment": "MANGO_ALLOWED_LINK_HOSTS"},
-    {"binding": "DESIGN_PROVIDER_API_KEY", "environment": "DESIGN_PROVIDER_API_KEY", "optional": true},
-    {"binding": "DESIGN_PROVIDER_ORIGIN", "environment": "DESIGN_PROVIDER_ORIGIN", "optional": true}
+    {
+      "binding": "OWNER_EMAIL",
+      "environment": "OWNER_EMAIL"
+    },
+    {
+      "binding": "SESSION_SECRET",
+      "environment": "SESSION_SECRET"
+    },
+    {
+      "binding": "SETUP_TOKEN",
+      "environment": "SETUP_TOKEN"
+    },
+    {
+      "binding": "CONTACT_HASH_SALT",
+      "environment": "CONTACT_HASH_SALT"
+    },
+    {
+      "binding": "MAIL_PROVIDER_API_KEY",
+      "environment": "MAIL_PROVIDER_API_KEY"
+    },
+    {
+      "binding": "MAIL_AUTH_FROM",
+      "environment": "MAIL_AUTH_FROM"
+    },
+    {
+      "binding": "MAIL_WEBHOOK_SECRET",
+      "environment": "MAIL_WEBHOOK_SECRET"
+    },
+    {
+      "binding": "MAIL_WEBHOOK_ID",
+      "environment": "MAIL_WEBHOOK_ID"
+    },
+    {
+      "binding": "MANGO_ALLOWED_LINK_HOSTS",
+      "environment": "MANGO_ALLOWED_LINK_HOSTS"
+    },
+    {
+      "binding": "DESIGN_PROVIDER_API_KEY",
+      "environment": "DESIGN_PROVIDER_API_KEY",
+      "optional": true
+    },
+    {
+      "binding": "DESIGN_PROVIDER_ORIGIN",
+      "environment": "DESIGN_PROVIDER_ORIGIN",
+      "optional": true
+    },
+    {
+      "binding": "MAILBOX_RECEIPT_URL",
+      "environment": "MAILBOX_RECEIPT_URL",
+      "optional": true
+    },
+    {
+      "binding": "MAILBOX_RECEIPT_RECIPIENT",
+      "environment": "MAILBOX_RECEIPT_RECIPIENT",
+      "optional": true
+    },
+    {
+      "binding": "MANGO_TEST_EMAIL_ALLOWLIST",
+      "environment": "MANGO_TEST_EMAIL_ALLOWLIST",
+      "optional": true
+    }
   ],
   "vars": {
     "MAIL_PROVIDER": "sendgrid",

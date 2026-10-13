@@ -177,7 +177,7 @@ export function AudienceImportPage() {
   };
 
   const startImport = async () => {
-    if (!preview || !previewIsCurrent || busy) return;
+    if (!preview || !previewIsCurrent || busy || busyJobId || archive.busy || archive.busyId) return;
     setBusy('start');
     setError(undefined);
     setNotice(undefined);
@@ -277,8 +277,9 @@ export function AudienceImportPage() {
           <div>
             <p className="eyebrow">Review complete</p>
             <p>{archive.current ? 'Importing brings in contacts by status, imported history and draft starters. It grants no schedule, approval or send.' : 'This preview is out of date. Preview the archive again before importing it.'}</p>
+            {busyJobId ? <p role="status">An import is still running. Wait for it to finish or press Stop in Imports below before starting another.</p> : archive.busyId ? <p role="status">An archive import is still running. Wait for it to finish before starting another.</p> : null}
           </div>
-          <button className="primary-action" type="button" onClick={() => void archive.start(consent)} disabled={!archive.current || Boolean(archive.busy) || Boolean(archive.busyId)}>
+          <button className="primary-action" type="button" onClick={() => { if (!busy && !busyJobId) void archive.start(consent); }} disabled={!archive.current || Boolean(busy) || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>
             {archive.busy === 'start' || archive.busyId ? 'Importing…' : 'Import archive'}
           </button>
         </section>
@@ -289,8 +290,9 @@ export function AudienceImportPage() {
           <div>
             <p className="eyebrow">Review complete</p>
             <p>{previewIsCurrent ? 'This is the reviewed preview. Check the Imports list below for saved progress.' : 'This preview is out of date. Refresh it before starting the import.'}</p>
+            {busyJobId ? <p role="status">An import is still running. Wait for it to finish or press Stop in Imports below before starting another.</p> : archive.busyId ? <p role="status">An archive import is still running. Wait for it to finish before starting another.</p> : null}
           </div>
-          <button className="primary-action" type="button" onClick={() => void startImport()} disabled={!previewIsCurrent || !preview.rows.length || Boolean(busy)}>
+          <button className="primary-action" type="button" onClick={() => void startImport()} disabled={!previewIsCurrent || !preview.rows.length || Boolean(busy) || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>
             {busy === 'start' ? 'Starting…' : 'Start import'}
           </button>
         </section>

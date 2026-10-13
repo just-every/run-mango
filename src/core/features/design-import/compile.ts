@@ -68,10 +68,10 @@ export function compileDesignEmail(plan: DesignPlan, hosted: ReadonlyMap<string,
   const html = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="${plan.background}" style="background-color:${plan.background};padding:16px 0;overflow-wrap:anywhere">`
     + `<table role="presentation" width="${emailWidth}" align="center" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${emailWidth}px">`
     + plan.rows.map(item => rowHtml(item, hosted, buttonHref, mediaOrigin)).join('') + '</table></td></tr></table>';
-  const issues = inspectEmailHtml(html, mediaOrigin).issues;
-  if (issues.length) throw new DesignImportError('invalid_layout', `The compiled email would not pass approval: ${issues.join(' ')}`);
   // The editor receives the form saving stores (CAMP-003), so saving the import changes nothing in it.
   const {canonical} = parseEmailHtml(html);
+  const issues = inspectEmailHtml(canonical, mediaOrigin).issues;
+  if (issues.length) throw new DesignImportError('invalid_layout', `The compiled email would not pass approval: ${issues.join(' ')}`);
   if (canonical.length > maxEmailBodyCharacters) throw new DesignImportError('unsupported_design', `The compiled email is ${canonical.length} characters, over the ${maxEmailBodyCharacters}-character body limit. Import a shorter design.`);
   return canonical;
 }

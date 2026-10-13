@@ -10,7 +10,7 @@ The newsletter profile needs email only. Commerce, SMS, AI and design generation
 
 ## Authentication
 
-Base operator-auth owns native sessions, one-use confirmed magic links, operator authority versions and last-active-operator protection. Every operator has equal product powers. Local setup claims one first owner, requests ordinary transactional mail in `/__dev/outbox`, and stops its temporary application. Repeat setup preserves private bytes and the existing owner/data. Dev prints readiness only after health and outbox checks pass. `rer preview` serves a fixed build of the local worker (`.seed/preview`) over the same local state and sign-in as dev; Mango's production entry never serves the development outbox, so preview cannot serve the built server folder. Preview runs no schedules, and `build` leaves the local `wrangler.toml` in place so dev works afterwards.
+Base operator-auth owns native sessions, one-use confirmed magic links, operator authority versions and last-active-operator protection. Every operator has equal product powers. Setup declares optional `oidc-provider@1` through `IDENTITY_PROVIDER`; leaving it empty retains email-link sign-in. `/auth/setup-complete` delegates only the local completion handshake to the pinned Base package, which requires the local CLI proof and an active owner; production cannot use it. Migration 0043 adds Base authentication settings without rewriting existing operator/session tables. Local setup claims one first owner, requests ordinary transactional mail in `/__dev/outbox`, and stops its temporary application. Repeat setup preserves private bytes and the existing owner/data. Dev prints readiness only after health and outbox checks pass. `rer preview` serves a fixed build of the local worker (`.seed/preview`) over the same local state and sign-in as dev; Mango's production entry never serves the development outbox, so preview cannot serve the built server folder. Preview runs no schedules, and `build` leaves the local `wrangler.toml` in place so dev works afterwards.
 
 `/signin` accepts an HTML POST before hydration. Link GET/HEAD renders a confirmation form without consuming it; the affirmative POST creates the native cookie. Private documents, APIs and Start server functions validate the session independently. Local outbox routes are restricted to the configured loopback origin, never exposed on a deployment. Viewing messages only reads storage; expired captures are removed on a subsequent capture. No email provider is required locally. Messages and token-bearing links must never appear in command logs.
 
@@ -24,17 +24,61 @@ Set `MAIL_PROVIDER=sendgrid` or `resend` (omitted selects the existing Resend in
 
 For a separately authorized installation, configure SendGrid's signed event webhook at `https://<deployment>/webhooks/mail/sendgrid`. Incoming original bytes are verified by Base before normalization; supported facts persist through Mango's existing inbox, destination suppression and conflict/replay safeguards before success. Submissions, processed events and delivered events remain distinct. SendGrid uses the approved single-attempt policy; uncertain handoffs require operator review and never automatically retry. Sender authority requires provider/DNS verification and the approved trusted receiver's original evidence. Configure the account-level webhook setting separately and verify live events before relying on delivery evidence. Sender lease, consent, saved revision and approval checks are unchanged. Resend keeps its existing marketing transport/reconciliation contract; it does not inherit claims from Base transactional mail.
 
-Receiver material must come from an authenticated original-message mailbox connector. Excerpts, provider domain state and DNS alone cannot manufacture receiver authentication proof. Configure both secret `MAILBOX_RECEIPT_URL` and variable `MAILBOX_RECEIPT_RECIPIENT` to select the authenticated production receiver connector and its diagnostic recipient. One-sided configuration rejects startup. The installation trusts this public HTTPS endpoint to provide authoritative original-message receipt evidence; neither value has an owner-specific default.
+Receiver material must come from an authenticated original-message mailbox connector. Excerpts, provider domain state and DNS alone cannot manufacture receiver authentication proof. Configure both `MAILBOX_RECEIPT_URL` and `MAILBOX_RECEIPT_RECIPIENT` (the deploy kit stores both as Worker secrets) to select the authenticated production receiver connector and its diagnostic recipient. One-sided configuration rejects deployment before the build and also rejects Worker startup. Leave both unset to keep the receiver off. Set `MANGO_TEST_EMAIL_ALLOWLIST` to a comma-separated list containing the receiver address and every permitted QA destination; with no explicit allowlist the owner address is the only test destination. The installation trusts this public HTTPS endpoint to provide authoritative original-message receipt evidence; neither value has an owner-specific default.
 
 ## Deployment
 
-`rer deploy --environment production --dry-run` validates/builds locally without provider requests. A separately authorized `deploy --environment production` uses `deploy.json` and Base's owner-account kit. The kit uploads only what `deploy.json` declares: its `secrets` (owner email, session and setup keys, contact hash salt, mail key, sender address, webhook material and allowed link hosts) are read from environment variables of the same names on the first deploy and kept unchanged afterwards; the two optional design inputs are uploaded only when you set them, its `vars` are the product settings shown there, and `MANGO_PUBLIC_BASE_URL` is the deployed origin. Change a setting by editing `vars` and deploying again. Supply explicit account/token and runtime configuration privately. The environment flag chooses the installation; default is production. Mango never reads Wrangler credential files.
+`pnpm exec rer deploy --environment production --dry-run` validates/builds locally without provider requests. The pinned rer 0.2.1 deploy command provisions the Worker; it does **not** admit the first owner. The following recipe supplies the actual deploy inputs and then explicitly claims that owner through Base's native bootstrap.
+
+1. Create a private deployment input file once, from the repository root:
+
+```sh
+node --input-type=module <<'NODE'
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+mkdirSync('.rer', { recursive: true, mode: 0o700 });
+const values = Object.fromEntries(['SESSION_SECRET', 'SETUP_TOKEN', 'CONTACT_HASH_SALT'].map(name => [name, randomBytes(32).toString('hex')]));
+for (const name of ['CLOUDFLARE_ACCOUNT_ID', 'CLOUDFLARE_API_TOKEN', 'OWNER_EMAIL', 'MAIL_PROVIDER_API_KEY', 'MAIL_AUTH_FROM', 'MAIL_WEBHOOK_SECRET', 'MAIL_WEBHOOK_ID', 'MANGO_ALLOWED_LINK_HOSTS', 'MAILBOX_RECEIPT_URL', 'MAILBOX_RECEIPT_RECIPIENT', 'MANGO_TEST_EMAIL_ALLOWLIST']) values[name] = '';
+writeFileSync('.rer/hosted.env', Object.entries(values).map(([name, value]) => `${name}='${value}'`).join('\n') + '\n', { flag: 'wx', mode: 0o600 });
+NODE
+```
+
+2. Edit `.rer/hosted.env` privately. Fill the account ID, scoped API token, owner email, SendGrid API key, verified sign-in sender (`MAIL_AUTH_FROM`), signed-webhook verification material (`MAIL_WEBHOOK_SECRET` and `MAIL_WEBHOOK_ID`), and comma-separated allowed link hostnames (`MANGO_ALLOWED_LINK_HOSTS`). Keep the generated authority values. Values are shell single-quoted: escape an embedded apostrophe as `'\''`. Never print this file or commit it. Sender display name, reply-to and postal address are saved in the app's sender setup after sign-in.
+
+   Receiver verification is optional. Leave its two lines empty to keep it off, or fill **both** `MAILBOX_RECEIPT_URL` (your trusted public HTTPS original-message receiver endpoint) and `MAILBOX_RECEIPT_RECIPIENT` (its diagnostic mailbox). Fill `MANGO_TEST_EMAIL_ALLOWLIST` with the comma-separated receiver and QA addresses. This allowlist may also be configured without a receiver; it never grants sign-in access. The receiver alone cannot verify provider/DNS authority, and absent receiver evidence prevents sender approval. Optional design generation uses the pair described below.
+
+3. From a committed checkout, load those inputs, deploy and claim:
+
+```sh
+set -a
+. ./.rer/hosted.env
+set +a
+pnpm exec rer deploy --environment production
+pnpm run hosted claim --environment production
+```
+
+The claim command reads the successful receipt in `.rer/deploy/production.json`, validates its project/environment and workers.dev origin, and posts the private setup token to `/auth/bootstrap` without following redirects or printing the token, cookie or response. It creates one native owner; a repeat keeps the existing owner. Open the deployed origin, request an email sign-in link for `OWNER_EMAIL`, confirm it, and complete sender setup. Keep the setup token private with the matching session and contact authority backup.
+
+The kit uploads only the inputs in `deploy.json`: required secrets are needed on first deploy and inherited afterwards. Receiver and QA inputs, like design inputs, are optional secrets uploaded when supplied; the kit preserves existing Worker secrets on later uploads even when their shell inputs are absent. `.rer/declarations/` contains names only. To change an existing secret deliberately, replace that Worker secret using your authorized Cloudflare administration; rer deploy keeps existing values. Product settings are in `deploy.json` `vars`; `MANGO_PUBLIC_BASE_URL` is set from the deployed origin.
+
+For an update, preserve private inputs, the deploy receipt and your data backups, then run:
+
+```sh
+git pull --ff-only
+pnpm install --frozen-lockfile
+set -a
+. ./.rer/hosted.env
+set +a
+pnpm exec rer deploy --environment production
+```
+
+Choose the same `--environment` as the first deployment. Verify existing and fresh email sign-in and the Worker health after deployment. The owner claim need not be repeated. Mango never reads Wrangler credential files.
 
 Names derive from project and environment: `mango-production`, `mango-production-db`, `mango-production-assets-bucket` and `mango-production-mango-jobs`. The kit derives the workers.dev origin from the authenticated account, owns resources and migrations, uploads Worker/assets and verifies bindings plus source/version health after a real D1 ping.
 
 Restore mode on a deployment: set `"MANGO_RESTORE_MODE": "1"` in `deploy.json` `vars` and deploy; product routes, the queue consumer and cron then pause (503 `restore_in_progress`) while sign-in, `/health` and the authenticated transfer routes stay open. Set it back to `"0"` and deploy again after the restore. A hosted restore itself is not yet proven.
 
-Back up `.rer/deploy/<environment>.json`; repeat deployment requires matching ownership state. Same-named unowned resources are refused. Resolve uncertain resource ownership with the Base deploy-kit recovery guide (`modules/deploy-kit/README.md` in the installed `@runeditrun/rer` package), preserving source and data. CI verifies main pushes; it does not deploy.
+Back up `.rer/deploy/<environment>.json`; repeat deployment requires matching ownership state. Same-named unowned resources are refused. Resolve uncertain resource ownership with the Base deploy-kit recovery guide (`modules/deploy-kit/README.md` in the installed `@runeditrun/rer` package), preserving source and data. CI verifies application changes. The Run site workflow automatically publishes marketing pages and documentation; application deployment remains explicit.
 
 ## Authored newsletter draft API
 

@@ -10,6 +10,10 @@ Open **Audience** and choose **Download contacts CSV**. You get a file named `au
 
 The first eleven columns are for reading and for spreadsheets. The `ledger_json` column is the lossless part: it holds that contact's complete record, including every consent record, history entries, suppressions, and the opt-out record. Opt-outs are stored as hashes in a portable form, so your installation's secret salt is never in the file. An opt-out or suppression whose address no contact holds any more (for example after the import that created the contact was undone, or after the contact was deleted) is exported on a row of its own with no address: its `ledger_json` names the address only by that portable hash.
 
+The local opt-out destination hash is keyed with the installation's private contact secret. Mango also retains `audience_portable_hashes`, a mapping from that local hash to an unsalted SHA-256 hash of the destination with the fixed prefix `mango-audience-export-v1:`. That mapping survives contact deletion so CSV exports can carry surviving restrictions across installations. The complete local archive also carries the retained mapping.
+
+Portable hashes are not anonymous. Anyone holding the mapping or an export can hash guessed addresses or a dictionary of addresses and compare the results without knowing the installation secret. The same destination produces the same portable hash across installations and exports, so those records can be linked. A row without a readable address still exposes this comparison risk; protect these files and mappings as sensitive personal data.
+
 To keep spreadsheets from running cell contents as formulas, any value that starts with `=`, `+`, `-`, `@`, a tab, a return or an apostrophe gets a leading apostrophe, and the marker column records that. Mango removes those apostrophes when it reads its own export. Other tools will show them.
 
 ## Restoring from an export
@@ -50,6 +54,6 @@ Export again after deletion and retain the latest private authority with your re
 
 There is no command or screen in Mango for a complete backup or restore of a hosted deployment: export and import work on a local copy, and a remote target fails. Complete deployment backup and restore is a separate release gate that is still open. A deployment can be put into restore mode, which pauses everything except sign-in, `/health` and the transfer routes: set `"MANGO_RESTORE_MODE": "1"` under `vars` in `deploy.json`, deploy, and set it back to `"0"` and deploy again afterwards. That switch is checked locally against a production build; a restore into a hosted deployment has not been run. Your data lives in the Cloudflare resources that `deploy` created in your own account, so Cloudflare's tooling for those resources is your responsibility; Mango does not verify it.
 
-If you run Mango locally, keep your `.dev.vars` file together with a backup of the matching local database. The contact hash salt in that file is what makes saved opt-outs and suppressions still apply, and the hashes cannot be rebuilt without it.
+If you run Mango locally, keep your `.dev.vars` file together with a backup of the matching local database. The contact hash salt in that file is needed to reproduce the installation-keyed hashes and restore the complete local archive. Portable CSV hashes do not require that secret; they preserve restrictions across installations and carry the address-comparison risk described above.
 
 > **Tip:** Download a contacts CSV on a schedule that suits you and keep it somewhere private. It holds personal data, consent evidence and IP addresses.

@@ -10,6 +10,7 @@ import { renderMessagePage } from '@/core/features/site/message-page';
 import type { Platform } from '@/core/shared/platform';
 import type { createAuthRepository } from './repository';
 import type { operators } from './schema';
+import { completeLocalSetup } from './setup-complete';
 
 export type AuthenticatedOperator = InferSelectModel<typeof operators>;
 
@@ -81,6 +82,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       // Administrative APIs are mediated by Mango's operator policy.
       if (['/auth/review-session', '/auth/invite', '/auth/invite/cancel', '/auth/operators', '/auth/operator/status', '/auth/operator/role', '/auth/sessions', '/auth/session/revoke'].includes(new URL(request.url).pathname)) return new Response(null, { status: 404 });
       const normalized = normalize(request, true);
+      if (new URL(request.url).pathname === '/auth/setup-complete') return completeLocalSetup(normalized, db, config);
       const auth = core(normalized);
       const nativeMagicLink = new URL(request.url).pathname === '/auth/magic-link'
         && request.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded';

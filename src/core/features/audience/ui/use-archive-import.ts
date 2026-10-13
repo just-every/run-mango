@@ -18,6 +18,7 @@ export function useArchiveImport({ setError, setNotice }: Messages) {
   const [busyId, setBusyId] = useState<string>();
 
   const drive = async (id: string, first: 'continue' | 'undo') => {
+    if (busyId) return;
     setBusyId(id);
     try {
       let action = first;
@@ -54,7 +55,7 @@ export function useArchiveImport({ setError, setNotice }: Messages) {
       finally { setBusy(undefined); }
     },
     async start(consent: ImportConsent) {
-      if (!archive || !preview || !current || busy) return;
+      if (!archive || !preview || !current || busy || busyId) return;
       setBusy('start'); setError(undefined); setNotice(undefined);
       try {
         const response = await postArchive<{ archive?: ArchiveImport; repeated?: boolean }>('/api/audience/archives', archive, consent, preview.fingerprint);

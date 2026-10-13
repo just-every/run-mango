@@ -5,41 +5,55 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { resolveDeclaration } from '../scripts/installer/deploy-declaration.mjs';
 import { ownerPlan } from '@runeditrun/rer/modules/deploy-kit/owner';
-// The package exports no subpath for the kit's secret step; read it from the pinned package itself.
-import { secretBindings } from '../node_modules/@runeditrun/rer/modules/deploy-kit/worker.mjs';
+// Exercise the pinned kit's actual upload boundary; no account is contacted.
+import { secretBindings, uploadWorker } from '../node_modules/@runeditrun/rer/modules/deploy-kit/worker.mjs';
 
-// The deploy kit's own planning and secret steps against a stand-in for the provider's secret list; no account is contacted.
-const provider = names => ({ async request(path) { assert.match(path, /^\/workers\/scripts\/[a-z-]+\/secrets$/); return names.map(name => ({ name, type: 'secret_text' })); } });
-const design = ['DESIGN_PROVIDER_API_KEY', 'DESIGN_PROVIDER_ORIGIN'];
+const design = { DESIGN_PROVIDER_API_KEY: 'test-design-key', DESIGN_PROVIDER_ORIGIN: 'https://12ui.com' };
+const receiver = { MAILBOX_RECEIPT_URL: 'https://receiver.example.test/receipts', MAILBOX_RECEIPT_RECIPIENT: 'receiver@example.test', MANGO_TEST_EMAIL_ALLOWLIST: 'receiver@example.test,qa@example.test' };
 
-test('DESIGN-001: deploy.json lets a hosted deployment upload the design inputs as secrets only when the owner sets them', async () => {
+test('optional design and receiver inputs reach the deploy upload, partial pairs fail, and later deploys preserve configured secrets', async () => {
   const root = await mkdtemp(join(tmpdir(), 'mango-declaration-'));
   try {
     await copyFile('deploy.json', join(root, 'deploy.json'));
-    assert.deepEqual(JSON.parse(await readFile('deploy.json', 'utf8')).secrets.filter(item => item.optional).map(item => item.binding).sort(), design);
     const plan = async (purpose, env) => {
       const declaration = JSON.parse(await readFile(join(root, resolveDeclaration(root, purpose, env)), 'utf8'));
       return ownerPlan({ project: declaration.project, environment: 'production', worker: 'mango-production', origin: 'https://mango-production.example.workers.dev' }, declaration, { migrations: [] });
     };
-    const names = secrets => secrets.map(item => item.binding).sort();
-
-    // Without the design inputs the kit is asked for the required secrets only, so a first deploy needs nothing more.
+    const held = new Map();
+    const provider = { async request(path, options) {
+      if (path.endsWith('/secrets')) return [...held.keys()].map(name => ({ name, type: 'secret_text' }));
+      assert.equal(options.method, 'PUT');
+      const metadata = JSON.parse(await options.body.get('metadata').text());
+      const previous = new Map(held); held.clear();
+      if (metadata.keep_bindings?.includes('secret_text')) for (const [name, value] of previous) held.set(name, value);
+      for (const binding of metadata.bindings) {
+        if (binding.type === 'secret_text') held.set(binding.name, binding.text);
+        if (binding.type === 'inherit') { assert.ok(previous.has(binding.name)); held.set(binding.name, previous.get(binding.name)); }
+      }
+      return {};
+    } };
+    const deploy = async env => {
+      const selected = await plan('deploy', env);
+      const secrets = await secretBindings(provider, selected.worker, selected, env, held.size > 0);
+      await uploadWorker(provider, { plan: selected, artifact: { main: 'worker.mjs', modules: [], assets: [] }, bindings: [], secrets, fingerprint: 'test-upload' });
+    };
     const off = await plan('deploy', {});
-    assert.ok(!names(off.secrets).some(name => design.includes(name)));
-    const inputs = Object.fromEntries(off.secrets.map(item => [item.environment, `value of ${item.environment}`]));
-    const first = await secretBindings(provider([]), off.worker, off, inputs, false);
-    assert.deepEqual(first.bindings.map(binding => binding.name).sort(), names(off.secrets));
-    // The hosted check of rer verify serves the build without them, whatever is set.
-    assert.deepEqual(names((await plan('verify', { DESIGN_PROVIDER_API_KEY: 'test-design-key', DESIGN_PROVIDER_ORIGIN: 'https://12ui.com' })).secrets), names(off.secrets));
-
-    // With both set, a later deploy uploads them beside the secrets already there, which stay as they are.
-    const on = await plan('deploy', { DESIGN_PROVIDER_API_KEY: 'test-design-key', DESIGN_PROVIDER_ORIGIN: 'https://12ui.com' });
-    assert.deepEqual(names(on.secrets), [...names(off.secrets), ...design].sort());
-    const later = await secretBindings(provider(names(off.secrets)), on.worker, on, { DESIGN_PROVIDER_API_KEY: 'test-design-key', DESIGN_PROVIDER_ORIGIN: 'https://12ui.com' }, true);
-    assert.deepEqual(later.missing.sort(), design);
-    assert.deepEqual(later.bindings.filter(binding => binding.type === 'secret_text').map(binding => binding.name).sort(), design);
-    assert.ok(later.bindings.filter(binding => binding.type !== 'secret_text').every(binding => binding.type === 'inherit'));
-    // The resolved declaration holds names only, never a value.
-    assert.doesNotMatch(await readFile(join(root, '.rer/declarations/deploy.json'), 'utf8'), /test-design-key/);
+    const required = Object.fromEntries(off.secrets.map(item => [item.environment, `value of ${item.environment}`]));
+    await deploy(required);
+    for (const name of [...Object.keys(design), ...Object.keys(receiver)]) assert.ok(!held.has(name));
+    const original = new Map(held);
+    for (const env of [{ MAILBOX_RECEIPT_URL: receiver.MAILBOX_RECEIPT_URL }, { MAILBOX_RECEIPT_RECIPIENT: receiver.MAILBOX_RECEIPT_RECIPIENT }, { DESIGN_PROVIDER_API_KEY: design.DESIGN_PROVIDER_API_KEY }]) {
+      await assert.rejects(plan('deploy', env), /Configure both/);
+      assert.deepEqual(held, original);
+    }
+    await deploy({ ...design, ...receiver });
+    for (const [name, value] of Object.entries({ ...design, ...receiver })) assert.equal(held.get(name), value);
+    const configured = new Map(held);
+    await deploy({});
+    assert.deepEqual(held, configured);
+    const verify = await plan('verify', { ...design, ...receiver });
+    assert.deepEqual(verify.secrets, off.secrets);
+    const resolved = await readFile(join(root, '.rer/declarations/deploy.json'), 'utf8');
+    for (const value of Object.values({ ...design, ...receiver })) assert.ok(!resolved.includes(value));
   } finally { await rm(root, { recursive: true, force: true }); }
 });

@@ -12,6 +12,12 @@ export const declarationPaths = { deploy: '.rer/declarations/deploy.json', verif
 export function resolveDeclaration(root, purpose, env = {}) {
   const declaration = JSON.parse(readFileSync(join(root, 'deploy.json'), 'utf8'));
   const supplied = item => typeof env[item.environment] === 'string' && env[item.environment].trim() !== '';
+  if (purpose === 'deploy') {
+    for (const pair of [['DESIGN_PROVIDER_API_KEY', 'DESIGN_PROVIDER_ORIGIN'], ['MAILBOX_RECEIPT_URL', 'MAILBOX_RECEIPT_RECIPIENT']]) {
+      const present = pair.map(environment => supplied({ environment }));
+      if (present.some(Boolean) && !present.every(Boolean)) throw new Error(`Configure both ${pair.join(' and ')} or leave both unset.`);
+    }
+  }
   declaration.secrets = (declaration.secrets ?? [])
     .filter(item => !item.optional || (purpose === 'deploy' && supplied(item)))
     .map(({ optional: _optional, ...item }) => item);

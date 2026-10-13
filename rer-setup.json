@@ -50,6 +50,14 @@
       "input": "managed",
       "generate": "hex",
       "group": "configuration"
+    },
+    {
+      "name": "IDENTITY_PROVIDER",
+      "label": "Identity provider",
+      "kind": "url",
+      "required": false,
+      "help": "Optional Auth install. Leave empty to use email links.",
+      "default": ""
     }
   ],
   "steps": [
@@ -59,6 +67,18 @@
       "emailField": "OWNER_EMAIL",
       "tokenField": "SETUP_TOKEN",
       "path": "/auth/owner-claim"
+    }
+  ],
+  "dependencies": [
+    {
+      "interface": "oidc-provider@1",
+      "optional": true,
+      "cardinality": 1,
+      "address": "IDENTITY_PROVIDER",
+      "paths": [
+        "/auth/oidc/auth/callback",
+        "/auth/oidc/auth/logout"
+      ]
     }
   ]
 }
