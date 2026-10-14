@@ -13,7 +13,7 @@
 <p align="center">
   <a href="https://justevery.com/#vol-mango"><img src=".github/assets/media/preview.gif" width="800" alt="Mango: a reader signs up with her consent, her consent is recorded, and the campaign goes only to eligible contacts"></a>
 </p>
-<p align="center"><a href="https://justevery.com/#vol-mango"><b>Watch the full demo</b></a> · 45 seconds</p>
+<p align="center"><a href="https://justevery.com/#vol-mango"><b>Watch the full demo</b></a> · 56 seconds</p>
 
 <p align="center">
   <img src=".github/assets/media/flow.webp" width="800" alt="From yes to send: Rosa ticks the consent box, Grace's consent is on record, and the audience counts 7 eligible contacts with 2 excluded">
