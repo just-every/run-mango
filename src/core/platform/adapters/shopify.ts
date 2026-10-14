@@ -1,143 +1,79 @@
-import type { CommerceStore, SourceRecordInput, VerifiedCommerceWebhook } from '@/core/shared/platform';
+import {readWebhookBytes} from './webhook-body';
+import type {CommerceStore,VerifiedCommerceWebhook} from '@/core/shared/platform';
+import type {Database} from '@/core/platform/db/client';
+import {hmacSha256Base64,timingSafeEqual} from '@/core/platform/crypto';
+import {sha256} from '@/core/shared/ids';
+import {createShopifyAdmin} from './shopify/admin';
+import {querySpecs,type AdminSource} from './shopify/queries';
+import {gid,losslessJson,object,text} from './shopify/values';
+import {normalizeAdmin,normalizeCart} from './shopify/normalize';
+import {createCommerceEventLog} from '@/core/features/store/shopify/event-log';
+import {createShopifyCollector} from '@/core/features/store/shopify/collector';
+import {createShopifyHealth,type ShopifyObservationConfig} from '@/core/features/store/shopify/health';
 
-import { hmacSha256Base64, timingSafeEqual } from '@/core/platform/crypto';
-
-import { asRecord, responseJson, stringValue } from './http';
-
-const supportedTypes = ['customer', 'product', 'variant', 'inventory', 'order', 'refund'] as const;
-type SupportedSourceType = (typeof supportedTypes)[number];
-
-type ShopifyNode = Record<string, unknown>;
-
-function adminEndpoint(storeUrl: URL): string {
-  const url = new URL(storeUrl);
-  url.pathname = '/admin/api/2026-07/graphql.json';
-  url.search = '';
-  return url.toString();
-}
-
-function sourceTypeForTopic(topic: string): SupportedSourceType {
-  if (topic.startsWith('customers/')) return 'customer';
-  if (topic.startsWith('products/')) return 'product';
-  if (topic.startsWith('inventory_levels/')) return 'inventory';
-  if (topic.startsWith('orders/')) return 'order';
-  if (topic.startsWith('refunds/')) return 'refund';
-  throw new Error(`Shopify webhook topic ${topic} is not a declared Mango source type.`);
-}
-
-function occurredAt(node: ShopifyNode): Date {
-  const raw = node.updatedAt ?? node.updated_at ?? node.createdAt ?? node.created_at;
-  const parsed = new Date(typeof raw === 'string' ? raw : Date.now());
-  if (Number.isNaN(parsed.valueOf())) throw new Error('Shopify source record has an invalid occurrence time.');
-  return parsed;
-}
-
-function sourceId(node: ShopifyNode): string {
-  const value = node.id ?? node.admin_graphql_api_id;
-  return stringValue(value, 'Shopify source record has no identifier.');
-}
-
-function record(sourceType: SourceRecordInput['sourceType'], node: ShopifyNode): SourceRecordInput {
-  return { sourceType, sourceId: sourceId(node), occurredAt: occurredAt(node), payload: node };
-}
-
-function page(data: unknown, key: string): { nodes: ShopifyNode[]; nextCursor?: string } {
-  const root = asRecord(data, 'Shopify returned an invalid GraphQL response.');
-  const result = asRecord(root.data, 'Shopify GraphQL response has no data.');
-  const connection = asRecord(result[key], `Shopify GraphQL response has no ${key} connection.`);
-  const nodes = Array.isArray(connection.nodes)
-    ? connection.nodes.map((node) => asRecord(node, `Shopify ${key} node is invalid.`))
-    : [];
-  const pageInfo = asRecord(connection.pageInfo, `Shopify ${key} page information is missing.`);
-  return {
-    nodes,
-    nextCursor: pageInfo.hasNextPage === true ? stringValue(pageInfo.endCursor, `Shopify ${key} page cursor is missing.`) : undefined,
-  };
-}
-
-const queries: Record<SupportedSourceType, { connection: string; document: string }> = {
-  customer: {
-    connection: 'customers',
-    document: `query MangoCustomers($cursor: String) { customers(first: 50, after: $cursor) { nodes { id updatedAt createdAt email firstName lastName } pageInfo { hasNextPage endCursor } } }`,
-  },
-  product: {
-    connection: 'products',
-    document: `query MangoProducts($cursor: String) { products(first: 50, after: $cursor) { nodes { id updatedAt createdAt title handle status } pageInfo { hasNextPage endCursor } } }`,
-  },
-  variant: {
-    connection: 'productVariants',
-    document: `query MangoVariants($cursor: String) { productVariants(first: 50, after: $cursor) { nodes { id updatedAt createdAt title sku inventoryQuantity product { id } } pageInfo { hasNextPage endCursor } } }`,
-  },
-  inventory: {
-    connection: 'inventoryItems',
-    document: `query MangoInventory($cursor: String) { inventoryItems(first: 50, after: $cursor) { nodes { id updatedAt sku tracked variant { id } } pageInfo { hasNextPage endCursor } } }`,
-  },
-  order: {
-    connection: 'orders',
-    document: `query MangoOrders($cursor: String) { orders(first: 50, after: $cursor) { nodes { id updatedAt createdAt name displayFinancialStatus displayFulfillmentStatus } pageInfo { hasNextPage endCursor } } }`,
-  },
-  refund: {
-    connection: 'orders',
-    document: `query MangoRefunds($cursor: String) { orders(first: 50, after: $cursor) { nodes { id refunds { id createdAt updatedAt note } } pageInfo { hasNextPage endCursor } } }`,
-  },
+const topics:Record<string,AdminSource|'cart'>={
+  'customers/create':'customer','customers/update':'customer','products/create':'product','products/update':'product',
+  'inventory_levels/update':'inventory','inventory_items/update':'inventory','orders/create':'order','orders/updated':'order','orders/paid':'order','orders/cancelled':'order','refunds/create':'refund','carts/create':'cart','carts/update':'cart',
 };
-
-export function createShopifyAdapter(options: { storeUrl: URL; accessToken: string; webhookSecret: string }): CommerceStore {
+export function createShopifyAdapter(options:{storeUrl:URL;accessToken:string;webhookSecret:string;exclusiveShop?:string;database?:Database;observations?:ShopifyObservationConfig}):CommerceStore{
+  const shop=options.storeUrl.hostname;
+  if(options.storeUrl.protocol!=='https:'||!/^[-a-z0-9]+\.myshopify\.com$/.test(shop)||options.storeUrl.username||options.storeUrl.password)throw new Error('Shopify connection requires its canonical HTTPS myshopify domain.');
+  const admin=createShopifyAdmin(options);
+  const log=options.database&&options.observations?createCommerceEventLog(options.database,options.observations.channel):undefined;
+  const health=options.database&&options.observations?createShopifyHealth(options.database,admin,shop,options.observations):undefined;
+  const collector=log&&options.database&&options.observations?createShopifyCollector({database:options.database,shop,secret:options.webhookSecret,channel:options.observations.channel,proxyPath:options.observations.proxyPath,log}):undefined;
+  let checked = false;
+  async function verifyAccess(progress?:()=>Promise<void>) {
+    if (checked) return;
+    const data = await admin.query('query MangoAccess { shop { myshopifyDomain } currentAppInstallation { id accessScopes { handle } } }',{},progress);
+    if (object(data.shop).myshopifyDomain !== shop) throw new Error('Shopify token belongs to another shop.');
+    const scopes = object(data.currentAppInstallation).accessScopes;
+    if (!Array.isArray(scopes)) throw new Error('Shopify access scopes are unavailable.');
+    const granted = new Set(scopes.map(scope => object(scope).handle));
+    for (const required of ['read_customers','read_products','read_inventory','read_locations','read_orders','read_all_orders','read_returns']) {
+      if (!granted.has(required)) throw new Error(`Shopify is missing required ${required} scope; full history is unavailable.`);
+    }
+    checked = true;
+  }
   return {
-    capabilities() {
-      return {
-        provider: 'shopify', sourceTypes: [...supportedTypes],
-        detail: 'Shopify Admin GraphQL provides customers, products, variants, inventory items, orders, and refunds. Carts and browsing events are deliberately not declared because this adapter cannot retrieve them.',
-      };
-    },
-
-    async verifyWebhook(request): Promise<VerifiedCommerceWebhook> {
-      const signature = request.headers.get('X-Shopify-Hmac-Sha256');
-      const topic = request.headers.get('X-Shopify-Topic');
-      if (!signature || !topic) throw new Error('Shopify webhook signature or topic is missing.');
-      const rawBody = await request.text();
-      const expected = await hmacSha256Base64(options.webhookSecret, rawBody);
-      if (!timingSafeEqual(signature, expected)) throw new Error('Shopify webhook signature is invalid.');
-      let payload: ShopifyNode;
-      try {
-        payload = asRecord(JSON.parse(rawBody), 'Shopify webhook body is invalid.');
-      } catch {
-        throw new Error('Shopify webhook body is not JSON.');
+    capabilities(){return {provider:'shopify',sourceTypes:[...Object.keys(querySpecs),...(log?['cart','browsing-event']:[])],detail:log?'Shopify Admin snapshots and bounded first-party observation replay. Installation/scopes are verified before synchronization. Observations cannot prove absence or abandonment.':'Shopify Admin snapshots. Cart/browsing ingestion needs the installed Mango Web Pixel and signed app proxy configuration.'};},
+    async refreshHealth(progress){await verifyAccess(progress);if(health){await health(progress);await log!.retain();}},
+    collectObservation:collector,
+    recordObservation:log?async(record,eventId,digest)=>log.append(record,eventId,digest):undefined,
+    async verifyWebhook(request):Promise<VerifiedCommerceWebhook>{
+      // Shopify signs the body, not shop/topic headers. A shared multi-shop app
+      // secret is explicitly unsupported at this one-store webhook boundary.
+      if(options.exclusiveShop!==shop)throw new Error('Webhook ingestion requires credentials exclusive to this configured shop.');
+      const signature=request.headers.get('X-Shopify-Hmac-Sha256'),topic=request.headers.get('X-Shopify-Topic');
+      if(request.headers.get('X-Shopify-Shop-Domain')!==shop||!signature||!topic||!Object.hasOwn(topics,topic))throw new Error('Shopify webhook tenant/topic is not configured.');
+      const rawBody=new TextDecoder('utf-8',{fatal:true}).decode(await readWebhookBytes(request,1048576));
+      if(!timingSafeEqual(signature,await hmacSha256Base64(options.webhookSecret,rawBody)))throw new Error('Shopify webhook signature is invalid.');
+      const delivery=text(request.headers.get('X-Shopify-Webhook-Id'),'delivery ID');
+      const event=text(request.headers.get('X-Shopify-Event-Id'),'event ID');
+      const payload=object(losslessJson(rawBody));const type=topics[topic];
+      let records;
+      if(type==='cart')records=[await normalizeCart(payload)];
+      else{
+        const kind=querySpecs[type].kind;
+        const id=type==='refund'?gid('Order',payload.order_id):type==='inventory'?gid('InventoryItem',payload.inventory_item_id??payload.id):gid(kind,payload.admin_graphql_api_id??payload.id);
+        await verifyAccess();
+        records=normalizeAdmin(type,await admin.node(type,id));
+        if(type==='refund')records=records.filter(record=>record.sourceId===gid('Refund',payload.admin_graphql_api_id??payload.id));
+        if(!records.length)throw new Error('Shopify webhook record could not be reconciled.');
       }
-      const sourceType = sourceTypeForTopic(topic);
-      return {
-        providerEventId: request.headers.get('X-Shopify-Webhook-Id') ?? undefined,
-        rawBody,
-        receivedAt: new Date(),
-        sourceType,
-        sourceId: sourceId(payload),
-        occurredAt: occurredAt(payload),
-        payload,
-      };
+      const digest=await sha256(`${shop}\n${topic}\n${rawBody}`);
+      return {...records[0],records,rawBody:'',receivedAt:new Date(),providerEventId:event,
+        receipt:{ids:[`shopify:delivery:${delivery}`,`shopify:event:${topic}:${event}`],digest}};
     },
-
-    async synchronize(type, cursor) {
-      if (!supportedTypes.includes(type as SupportedSourceType)) {
-        throw new Error(`Shopify does not support Mango source type ${type}.`);
+    async synchronize(type,cursor,progress){
+      if(type==='cart'||type==='browsing-event'){
+        if(!log)throw new Error('Shopify observation channel is not configured.');
+        return log.read(type,cursor);
       }
-      const query = queries[type as SupportedSourceType];
-      const response = await fetch(adminEndpoint(options.storeUrl), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Access-Token': options.accessToken,
-        },
-        body: JSON.stringify({ query: query.document, variables: { cursor: cursor ?? null } }),
-      });
-      const data = await responseJson(response);
-      const result = page(data, query.connection);
-      const records = type === 'refund'
-        ? result.nodes.flatMap((order) => {
-            const refunds = Array.isArray(order.refunds) ? order.refunds : [];
-            return refunds.map((refund) => record('refund', asRecord(refund, 'Shopify refund is invalid.')));
-          })
-        : result.nodes.map((node) => record(type, node));
-      return { records, nextCursor: result.nextCursor };
+      if(!Object.hasOwn(querySpecs,type))throw new Error(`Shopify does not supply ${type}.`);
+      await verifyAccess(progress);
+      const page=await admin.page(type as AdminSource,cursor,progress);
+      return {records:page.nodes.flatMap(node=>normalizeAdmin(type as AdminSource,node)),nextCursor:page.nextCursor,coverage:{mode:'snapshot',exhaustive:true,complete:page.nextCursor===undefined}};
     },
   };
 }

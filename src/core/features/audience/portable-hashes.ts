@@ -56,3 +56,10 @@ const claimStatements = [
   raise('contacts', 'email_status', 'email', 'contacts.email'),
   raise('contacts', 'sms_status', 'sms', '(SELECT p.phone_e164 FROM contact_phones p WHERE p.contact_id=contacts.id AND p.phone_e164 IN (SELECT json_extract(value,\'$.d\') FROM json_each(?1)))'),
 ];
+
+/** Pure preparation for callers whose restriction claim must share their native
+ * business transaction. No database operation executes while preparing. */
+export function portableRestrictionStatements(db:D1Database,pairs:Array<{p:string;s:string;d:string}>) {
+  const encoded=JSON.stringify(pairs);
+  return pairs.length?claimStatements.map(sql=>db.prepare(sql).bind(encoded)):[];
+}

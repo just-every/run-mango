@@ -1,6 +1,5 @@
-import { savedSenderRevisionGuard } from '@/core/features/settings/sender-persistence';
+import {recipientHandoffGuard} from './recipient-handoff-guard';
 import { leaseGuard, leaseValues, associationStatement } from '@/core/features/sender-verification/repository';
-import { approvalAuthorityGuard } from '@/core/features/sender-verification/approval-authority';
 import type { SenderLease } from '@/core/features/sender-verification/types';
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
@@ -57,8 +56,10 @@ function recipientFromRow(row: Row) {
     idempotencyKey: String(row.idempotency_key),
     transportDisposition: String(row.transport_disposition),
     provider: row.provider == null ? undefined : String(row.provider),
+    providerCredentialDigest:row.provider_credential_digest==null?undefined:String(row.provider_credential_digest),
     providerMessageId: row.provider_message_id == null ? undefined : String(row.provider_message_id),
     attemptCount: Number(row.attempt_count),
+    firstAttemptAt:row.first_attempt_at==null?undefined:timestamp(row.first_attempt_at),
     sendByAt: timestamp(row.send_by_at),
     reconcileUntil: row.reconcile_until == null ? undefined : timestamp(row.reconcile_until),
     reconcileCursor: row.reconcile_cursor == null ? undefined : String(row.reconcile_cursor),
@@ -111,16 +112,20 @@ export function createRecipientLifecycleRepository(database: Database) {
       ).bind(stepId).first<{ count: number }>();
       if (Number(pending?.count ?? 0) > 0) return false;
       await client.prepare(
-        `UPDATE step_dispatches SET state = 'completed', completed_at = ?, updated_at = ? WHERE step_id = ?`,
+        `UPDATE step_dispatches SET state = 'completed', completed_at = ?, estimated_completion_at=NULL, updated_at = ? WHERE step_id = ?`,
       ).bind(now.getTime(), now.getTime(), stepId).run();
       return true;
     },
 
-    async skipExpiredForStep(stepId: string, now: Date) {
-      await client.prepare(
-        `UPDATE recipient_steps SET transport_disposition = 'skipped', skip_reason = 'deadline-passed', terminal_at = ?, updated_at = ?
-         WHERE step_id = ? AND transport_disposition = 'queued' AND send_by_at <= ?`,
-      ).bind(now.getTime(), now.getTime(), stepId, now.getTime()).run();
+    async expireDueRecipients(now:Date) {
+      await client.batch([
+        client.prepare(`UPDATE recipient_steps SET transport_disposition='skipped',skip_reason='send-window-expired',
+          terminal_at=?,next_attempt_at=NULL,lease_token=NULL,lease_expires_at=NULL,updated_at=?
+          WHERE transport_disposition='queued' AND send_by_at<=?`).bind(now.getTime(),now.getTime(),now.getTime()),
+        client.prepare(`UPDATE step_dispatches SET state='completed',completed_at=?,estimated_completion_at=NULL,updated_at=?
+          WHERE state='dispatching' AND NOT EXISTS(SELECT 1 FROM recipient_steps r WHERE r.step_id=step_dispatches.step_id
+            AND r.transport_disposition IN ('queued','handoff-unknown','handed-off','accepted'))`).bind(now.getTime(),now.getTime()),
+      ]);
     },
 
     async listDueSteps(now: Date) {
@@ -157,13 +162,12 @@ export function createRecipientLifecycleRepository(database: Database) {
     async claimRecipient(id: string, now: Date, leaseMs = 60_000) {
       const leaseToken = crypto.randomUUID();
       const row = await client.prepare(
-        `UPDATE recipient_steps SET lease_token = ?, lease_expires_at = ?, handoff_started_at = ?,
-           attempt_count = attempt_count + 1, updated_at = ?
+        `UPDATE recipient_steps SET lease_token = ?, lease_expires_at = ?, updated_at = ?
          WHERE id = ? AND transport_disposition = 'queued' AND send_by_at > ?
            AND (next_attempt_at IS NULL OR next_attempt_at <= ?)
            AND (lease_expires_at IS NULL OR lease_expires_at <= ?)
          RETURNING *`,
-      ).bind(leaseToken, now.getTime() + leaseMs, now.getTime(), now.getTime(), id, now.getTime(), now.getTime(), now.getTime()).first<Row>();
+      ).bind(leaseToken, now.getTime() + leaseMs, now.getTime(), id, now.getTime(), now.getTime(), now.getTime()).first<Row>();
       return row ? recipientFromRow(row) : undefined;
     },
 
@@ -206,31 +210,15 @@ export function createRecipientLifecycleRepository(database: Database) {
         WHERE id = ? AND transport_disposition = 'queued'`).bind(id).run();
     },
 
-    async markHandoffUnknown(id: string, leaseToken: string, now: Date, senderLease?: SenderLease, requestJson?: string, provider?: string) {
+    async markHandoffUnknown(id: string, leaseToken: string, now: Date, senderLease?: SenderLease, requestJson?: string, provider?: string, lookupWindowMs?:number, reputationSince=now.getTime()-30*86400000,destinationHash='',sourceGeneration?:number,providerCredentialDigest?:string) {
       const senderGuard = senderLease ? leaseGuard : '0';
       const statements = [client.prepare(
-        `UPDATE recipient_steps SET transport_disposition = 'handoff-unknown', provider = COALESCE(?, provider),
+        `UPDATE recipient_steps SET transport_disposition = 'handoff-unknown', provider = COALESCE(?, provider), provider_credential_digest=?,
+           handoff_started_at = ?, first_attempt_at=COALESCE(first_attempt_at,?), attempt_count=attempt_count+1,
+           reconcile_until=CASE WHEN ?>0 THEN MIN(COALESCE(reconcile_until,?),?) ELSE reconcile_until END,
            last_error_code = CASE WHEN ? = 'sendgrid' THEN 'uncertain' ELSE last_error_code END, updated_at = ?
-         WHERE id = ? AND lease_token = ? AND transport_disposition = 'queued' AND lease_expires_at > ? AND send_by_at > ?
-           AND (channel <> 'email' OR (outbound_request_json = ? AND (${senderGuard})
-             AND ${approvalAuthorityGuard('recipient_steps.campaign_id', 'recipient_steps.revision_id')}
-             AND json_extract(outbound_request_json, '$.recipientStepId') = id
-             AND json_extract(outbound_request_json, '$.idempotencyKey') = idempotency_key
-             AND json_extract(outbound_request_json, '$.to') = destination
-             AND EXISTS (SELECT 1 FROM campaign_revision_candidates fc
-               WHERE fc.revision_id = recipient_steps.revision_id
-                 AND fc.contact_id = recipient_steps.contact_id
-                 AND fc.contact_identity_key = recipient_steps.contact_identity_key)
-             AND EXISTS (SELECT 1 FROM campaign_revisions av WHERE av.id = recipient_steps.revision_id
-               AND ${savedSenderRevisionGuard('av')}
-               AND COALESCE(json_extract(outbound_request_json, '$.content.from.name') || ' <' ||
-                 json_extract(outbound_request_json, '$.content.from.email') || '>',
-                 json_extract(outbound_request_json, '$.sender')) = av.sender_name || ' <' || av.from_email || '>')))
-           AND EXISTS (
-             SELECT 1 FROM campaigns c WHERE c.id = recipient_steps.campaign_id
-               AND c.active_revision_id = recipient_steps.revision_id AND c.state = 'dispatching'
-           )`,
-      ).bind(provider ?? null, provider ?? null, now.getTime(), id, leaseToken, now.getTime(), now.getTime(), requestJson ?? null, ...(senderLease ? leaseValues(senderLease, Date.now()) : []))];
+         WHERE ${recipientHandoffGuard(senderGuard, provider ?? 'unreported', reputationSince)}`,
+      ).bind(provider ?? null, providerCredentialDigest??null, now.getTime(),now.getTime(),lookupWindowMs??0,now.getTime()+(lookupWindowMs??0),now.getTime()+(lookupWindowMs??0),provider ?? null, now.getTime(), id, leaseToken, now.getTime(), now.getTime(), requestJson ?? null, ...(senderLease ? leaseValues(senderLease, Date.now()) : []),sourceGeneration??null,destinationHash)];
       if (senderLease) statements.push(associationStatement(client, senderLease, 'handoff', id, leaseToken, now.getTime(),
         'changes() = 1', []));
       const results = await client.batch(statements);
@@ -298,11 +286,30 @@ export function createRecipientLifecycleRepository(database: Database) {
     },
 
     async deferRecipient(id: string, leaseToken: string, retryAt: Date, reason: string, now: Date) {
-      await client.prepare(
-        `UPDATE recipient_steps SET next_attempt_at = ?, last_error_code = ?, lease_token = NULL,
-           lease_expires_at = NULL, updated_at = ?
-         WHERE id = ? AND lease_token = ? AND transport_disposition IN ('queued', 'handoff-unknown')`,
-      ).bind(retryAt.getTime(), reason, now.getTime(), id, leaseToken).run();
+      const due=Number.isFinite(retryAt.getTime())?retryAt.getTime():Number.MAX_SAFE_INTEGER;
+      const deadlineReason=['sms-quiet-window','quiet-hours-deadline'].includes(reason)?'quiet-hours-deadline':reason==='sms-frequency-window'?'frequency-window-deadline':'send-window-expired';
+      await client.prepare(`UPDATE recipient_steps SET
+        transport_disposition=CASE WHEN MAX(?,?)>=send_by_at THEN 'skipped' ELSE 'queued' END,
+        next_attempt_at=CASE WHEN MAX(?,?)>=send_by_at THEN NULL ELSE ? END,
+        skip_reason=CASE WHEN MAX(?,?)>=send_by_at THEN ? ELSE NULL END,
+        terminal_at=CASE WHEN MAX(?,?)>=send_by_at THEN ? ELSE NULL END,
+        last_error_code=?,lease_token=NULL,lease_expires_at=NULL,updated_at=?
+        WHERE id=? AND lease_token=? AND transport_disposition IN ('queued','handoff-unknown')`)
+        .bind(due,now.getTime(),due,now.getTime(),due,due,now.getTime(),deadlineReason,due,now.getTime(),now.getTime(),reason,now.getTime(),id,leaseToken).run();
+    },
+
+    async deferPacedRecipient(id:string,leaseToken:string,retryAt:Date,now:Date,code='provider-pacing') {
+      const due=Number.isFinite(retryAt.getTime())?retryAt.getTime():Number.MAX_SAFE_INTEGER;
+      const deadlineReason=['sms-quiet-window','quiet-hours-deadline'].includes(code)?'quiet-hours-deadline':code==='sms-frequency-window'?'frequency-window-deadline':'send-window-expired';
+      await client.prepare(`UPDATE recipient_steps SET
+        transport_disposition=CASE WHEN MAX(?,?)>=send_by_at THEN 'skipped' ELSE 'queued' END,
+        next_attempt_at=CASE WHEN MAX(?,?)>=send_by_at THEN NULL ELSE ? END,
+        skip_reason=CASE WHEN MAX(?,?)>=send_by_at THEN ? ELSE NULL END,
+        terminal_at=CASE WHEN MAX(?,?)>=send_by_at THEN ? ELSE NULL END,
+        attempt_count=MAX(0,attempt_count-1),first_attempt_at=CASE WHEN attempt_count=1 THEN NULL ELSE first_attempt_at END,
+        handoff_started_at=NULL,lease_token=NULL,lease_expires_at=NULL,last_error_code=?,updated_at=?
+        WHERE id=? AND lease_token=? AND transport_disposition='handoff-unknown'`)
+        .bind(due,now.getTime(),due,now.getTime(),due,due,now.getTime(),deadlineReason,due,now.getTime(),now.getTime(),code,now.getTime(),id,leaseToken).run();
     },
 
     async recordHandoff(input: {
@@ -312,17 +319,18 @@ export function createRecipientLifecycleRepository(database: Database) {
       providerMessageId: string;
       disposition: 'accepted' | 'handoff-unknown';
       acceptedAt?: Date;
+      actualSender?:string;
       now: Date;
     }) {
       await client.prepare(
-        `UPDATE recipient_steps SET provider = ?, provider_message_id = ?, transport_disposition = ?,
+        `UPDATE recipient_steps SET provider = ?, provider_message_id = ?, transport_disposition = ?, actual_sender=?,
            last_error_code = CASE WHEN ? = 'handoff-unknown' AND ? = 'sendgrid' THEN 'uncertain' ELSE NULL END,
            last_error_detail = CASE WHEN ? = 'handoff-unknown' AND ? = 'sendgrid' THEN 'Uncertain submission: operator review required. Never automatically retried.' ELSE NULL END,
            provider_accepted_at = ?, handed_off_at = CASE WHEN ? = 'accepted' THEN ? ELSE handed_off_at END,
            lease_token = NULL, lease_expires_at = NULL, updated_at = ?
          WHERE id = ? AND lease_token = ? AND transport_disposition = 'handoff-unknown'`,
       ).bind(
-        input.provider, input.providerMessageId || null, input.disposition,
+        input.provider, input.providerMessageId || null, input.disposition, input.actualSender??null,
         input.disposition, input.provider, input.disposition, input.provider,
         input.acceptedAt?.getTime() ?? null, input.disposition, input.now.getTime(), input.now.getTime(), input.id, input.leaseToken,
       ).run();
@@ -339,7 +347,7 @@ export function createRecipientLifecycleRepository(database: Database) {
     }) {
       await client.prepare(
         `UPDATE recipient_steps SET transport_disposition = CASE WHEN ? THEN 'failed' ELSE 'queued' END,
-           terminal_at = CASE WHEN ? THEN ? ELSE NULL END, next_attempt_at = ?, last_error_code = ?,
+           terminal_at = CASE WHEN ? THEN ? ELSE NULL END, handoff_started_at=NULL, next_attempt_at = ?, last_error_code = ?,
            last_error_detail = ?, lease_token = NULL, lease_expires_at = NULL, updated_at = ?
          WHERE id = ? AND lease_token = ? AND transport_disposition IN ('queued', 'handoff-unknown')`,
       ).bind(

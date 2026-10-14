@@ -1,3 +1,5 @@
+import { smsPolicyAuthority, managedSmsText } from '@/core/features/sms/content';
+import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
 import { prepareTestHandoffCost, cancelHandoffCost, settleHandoffCost, settleHandoffFailure, type HandoffCostContext } from '@/core/features/insights/cost-handoff';
 import type { DeliveryRequest, ProviderHandoff } from '@/core/shared/platform';
 import { createProposalRepository } from '@/core/features/proposals/repository';
@@ -49,18 +51,29 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
           && !await repository.hasSenderApprovalAuthority(input.campaignId, input.revisionId)) {
           return { kind: 'conflict' as const, detail: 'This historical approval has no sender evidence. An operator must explicitly reapprove the saved revision before pending email can send.' };
         }
+        if(snapshot.steps.some(step=>step.channel==='sms')){
+          const current=await smsPolicyAuthority(runtime.platform.config);
+          const frozen=await runtime.platform.database.$client.prepare('SELECT policy_digest FROM sms_approval_policies WHERE revision_id=?').bind(input.revisionId).first<{policy_digest:string}>();
+          if(frozen?.policy_digest!==current.digest)return {kind:'conflict' as const,detail:'SMS programme or sender changed. Create and review a new revision before sending.'};
+        }
         return { kind: 'approved' as const, revisionDigest: digest, idempotent: true };
       }
       if (snapshot.revision.state !== 'draft') return { kind: 'conflict' as const, detail: 'Revision is immutable after approval.' };
       const linkedProposal=await runtime.platform.database.$client.prepare('SELECT c.proposal_id,p.state,p.send_by_at FROM campaigns c LEFT JOIN proposals p ON p.id=c.proposal_id WHERE c.id=?').bind(snapshot.campaign.id).first<{proposal_id:string|null;state:string|null;send_by_at:number|null}>();
       if (linkedProposal?.proposal_id && (linkedProposal.state !== 'proposed' || !linkedProposal.send_by_at || linkedProposal.send_by_at <= now.getTime())) return {kind:'conflict' as const,detail:'Only an unexpired proposed suggestion can be approved.'};
 
+      const authority=await runtime.platform.database.$client.prepare('SELECT generation FROM audience_source_authority WHERE id=1').first<{generation:number}>();
+      if(!authority)return {kind:'conflict' as const,detail:'Audience source authority is unavailable.'};
       const {candidates, checkResult, audience, exclusionCounts, personalisationUsage} = await evaluateApproval(runtime, repository, snapshot, now);
+      const evaluatedAuthority=await runtime.platform.database.$client.prepare('SELECT generation FROM audience_source_authority WHERE id=1').first<{generation:number}>();
+      if(evaluatedAuthority?.generation!==authority.generation)return {kind:'conflict' as const,detail:'Audience facts changed during review. Review the current audience and try again.'};
       await repository.saveChecks(snapshot.revision.id, checkResult.checks, now);
       const blockers = checkResult.checks.filter((item) => item.blocking);
       if (blockers.length) return { kind: 'blocked' as const, blockers };
 
+      const smsPolicy=snapshot.steps.some(step=>step.channel==='sms')?await smsPolicyAuthority(runtime.platform.config):undefined;
       const revisionDigest = await digestJson({
+        smsPolicy: smsPolicy?.digest,
         rendererVersion: messageRendererVersion,
         revision: snapshot.revision,
         steps: snapshot.steps,
@@ -75,7 +88,9 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       const result = await repository.approve({
         snapshot,
         revisionDigest,
+        sourceGeneration:authority.generation,
         senderLease: checkResult.senderLease,
+        smsPolicy,
         operatorId: input.operatorId,
         idempotencyKey: input.idempotencyKey,
         candidates,
@@ -85,7 +100,9 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
           personalisationUsage,
         } : undefined,
         now,
-        reconciliationWindowMs: {
+        mailProvider:runtime.platform.config.mailProvider,
+        reputationSince:now.getTime()-runtime.platform.config.deliverabilityReportingWindowDays*86400000,
+      reconciliationWindowMs: {
           email: checkResult.mailCapabilities.reconciliationWindowMs,
           sms: checkResult.smsCapabilities?.reconciliationWindowMs ?? 0,
         },
@@ -167,12 +184,14 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       const issues = input.channel === 'email' ? inspectEmailHtml(snapshot.revision.emailBody).issues : [];
       issues.push(...invalidPersonalisation(`${snapshot.revision.emailSubject}\n${snapshot.revision.preheader}\n${snapshot.revision.emailBody}\n${snapshot.revision.emailText}\n${snapshot.revision.smsBody}`));
       if (issues.length) return {kind: 'blocked' as const, detail: issues.join(' ')};
+      const smsPolicy=input.channel==='sms'?await smsPolicyAuthority(runtime.platform.config):undefined;
+      if(smsPolicy&&snapshot.revision.smsSender!==smsPolicy.sender)return {kind:'blocked' as const,detail:'SMS sender changed. Save and review the current programme sender.'};
       const marker = '[MANGO TEST — NOT A CAMPAIGN SEND]';
       const rendered = renderMessageContent(snapshot.revision, {values: {displayName: 'Test recipient'}, unsubscribeUrl: 'https://preview.invalid/unsubscribe/test-example'});
       const content = input.channel === 'email'
         ? {subject: `${marker} ${rendered.subject}`, html: `<p><strong>${marker}</strong></p>${rendered.html}`, text: `${marker}\n\n${rendered.text}`, preheader: `${marker} ${rendered.preheader}`, test: true,
           from: {name: snapshot.revision.senderName, email: snapshot.revision.fromEmail}, replyTo: snapshot.revision.replyToEmail}
-        : {text: `${marker} ${rendered.sms}`, test: true};
+        : {text: managedSmsText(`${marker} ${rendered.sms}`,smsPolicy!.policy,smsPolicy!.sender), test: true};
       const revisionDigest = await digestJson({
         rendererVersion: messageRendererVersion,
         revision: snapshot.revision,
@@ -182,6 +201,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       const destinationDigest = await sha256(destination);
       const idempotencyKey = `test:${input.revisionId}:${input.channel}:${destinationDigest}:${revisionDigest}`;
       const request: DeliveryRequest = {
+        ...(smsPolicy?{smsAuthority:{policyDigest:smsPolicy.digest,expiresAt:now.getTime()+15*60000}}:{}),
         recipientStepId: `test:${input.revisionId}`, idempotencyKey, to: input.to,
         sender: input.channel === 'email' ? `${snapshot.revision.senderName} <${snapshot.revision.fromEmail}>` : snapshot.revision.smsSender,
         content, callbackUrl: `${publicBaseUrl}/webhooks/${input.channel === 'email' ? 'mail' : 'sms'}/status`, handoffStartedAt: now,
@@ -194,6 +214,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       }
       let handoff: ProviderHandoff;
       try {handoff=await sender.send(request);} catch(error) {
+        if(error instanceof ProviderDeferredError) {await cancelHandoffCost(runtime.platform.database,cost.key);return {kind:'blocked' as const,detail:`Send deferred by ${error.code}; available after ${error.retryAt.toISOString()}.`};}
         try { await settleHandoffFailure(runtime.platform.database,sender,request,cost,error); }
         catch { /* The durable prepared fact retains uncertainty; preserve the transport error. */ }
         throw error;

@@ -28,11 +28,13 @@ async function buildWorker() {
             env.DB.prepare('INSERT INTO recipient_steps (id, campaign_id, revision_id, step_id, contact_id, contact_identity_key, channel, destination, idempotency_key, transport_disposition, handed_off_at, send_by_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
               .bind('recipient-new', 'campaign-1', 'revision-1', 'step-1', 'contact-new', 'identity-new', 'email', 'new@example.test', 'new-key', 'delivered', 2000, 4000, 1, 1),
             env.DB.prepare('INSERT INTO recipient_steps (id, campaign_id, revision_id, step_id, contact_id, contact_identity_key, channel, destination, idempotency_key, transport_disposition, handed_off_at, send_by_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-              .bind('recipient-old', 'campaign-1', 'revision-1', 'step-2', 'contact-old', 'identity-old', 'email', 'old@example.test', 'old-key', 'failed', 100, 4000, 1, 1),
+              .bind('recipient-old', 'campaign-1', 'revision-1', 'step-2', 'contact-old', 'identity-old', 'email', 'old@example.test', 'old-key', 'delivered', 100, 4000, 1, 1),
             env.DB.prepare('INSERT INTO delivery_facts (id, identity_key, recipient_step_id, provider, provider_message_id, kind, provider_occurred_at, payload_digest, detail_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
               .bind('fact-new', 'fact-new', 'recipient-new', 'resend', 'message-new', 'delivered', 2001, 'digest-new', '{}', 2001),
+            env.DB.prepare('INSERT INTO recipient_steps (id, campaign_id, revision_id, step_id, contact_id, contact_identity_key, channel, destination, idempotency_key, transport_disposition, handed_off_at, send_by_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+              .bind('recipient-failed-old', 'campaign-1', 'revision-1', 'step-3', 'contact-failed-old', 'identity-failed-old', 'email', 'failed-old@example.test', 'failed-old-key', 'failed', 100, 4000, 1, 100),
             env.DB.prepare('INSERT INTO delivery_facts (id, identity_key, recipient_step_id, provider, provider_message_id, kind, provider_occurred_at, payload_digest, detail_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-              .bind('fact-old', 'fact-old', 'recipient-old', 'resend', 'message-old', 'bounced', 2001, 'digest-old', '{"hard":1}', 2001),
+              .bind('fact-old', 'fact-old', 'recipient-old', 'resend', 'message-old', 'delivered', 101, 'digest-old', '{}', 2001),
             env.DB.prepare('INSERT INTO attribution_facts (id, order_source_record_id, campaign_id, recipient_step_id, click_fact_id, attribution_window_days, gross_amount_minor, refund_amount_minor, currency, attributed_at, updated_at, created_at) VALUES (?, ?, ?, ?, ?, 7, ?, 0, ?, ?, ?, ?)')
               .bind('attribution-usd', 'order-usd', 'campaign-1', 'recipient-new', 'click-usd', 1_000, 'USD', 2000, 2000, 2000),
             env.DB.prepare('INSERT INTO attribution_facts (id, order_source_record_id, campaign_id, recipient_step_id, click_fact_id, attribution_window_days, gross_amount_minor, refund_amount_minor, currency, attributed_at, updated_at, created_at) VALUES (?, ?, ?, ?, ?, 7, ?, 0, ?, ?, ?, ?)')
@@ -44,10 +46,6 @@ async function buildWorker() {
             env.DB.prepare('INSERT INTO proposals (id, state, title, summary, evidence, audience_rule, source_data_as_of, send_by_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
               .bind('proposal-due', 'proposed', 'Due proposal', '', '[]', '', 1, 2000, 1, 1),
           ]);
-          return new Response(null, { status: 204 });
-        }
-        if (url.pathname === '/refund') {
-          await repository.recordRefund('order-usd', Number(url.searchParams.get('total')), new Date(Number(url.searchParams.get('at'))));
           return new Response(null, { status: 204 });
         }
         if (url.pathname === '/failed-generation') {
@@ -70,7 +68,15 @@ async function buildWorker() {
           return new Response('accepted invalid cost', { status: 500 });
         }
         if (url.pathname === '/campaign') return Response.json(await repository.campaignResult('campaign-1'));
-        if (url.pathname === '/deliverability') return Response.json(await repository.deliverability(new Date(1500)));
+        if (url.pathname === '/late-bounce') {
+          await env.DB.batch([
+            env.DB.prepare('INSERT INTO delivery_facts (id, identity_key, recipient_step_id, provider, provider_message_id, kind, provider_occurred_at, payload_digest, detail_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+              .bind('fact-late-bounce', 'fact-late-bounce', 'recipient-old', 'resend', 'message-old', 'bounced', 2002, 'digest-late-bounce', '{"hard":1}', 3000),
+            env.DB.prepare("UPDATE recipient_steps SET transport_disposition='bounced', bounced_at=2002, updated_at=3000 WHERE id='recipient-old'"),
+          ]);
+          return new Response(null, {status:204});
+        }
+        if (url.pathname === '/deliverability') return Response.json(await repository.deliverability(new Date(Number(url.searchParams.get('since')??1500))));
         return new Response('not found', { status: 404 });
       },
     };
@@ -109,19 +115,17 @@ async function request(worker: InstanceType<typeof Miniflare>, pathname: string)
 test.describe('insights facts on Worker D1', () => {
   test.beforeAll(async () => { workerSource = await buildWorker(); });
 
-  test('keeps currencies and reporting windows separate while retaining the greatest known refund total', async () => {
+  test('keeps historical reporting currencies and provider windows separate', async () => {
     const worker = await insightsWorker();
     try {
       expect((await request(worker, '/seed')).response.status).toBe(204);
-      await request(worker, '/refund?total=400&at=2500');
-      await request(worker, '/refund?total=100&at=2000');
 
       const result = await request(worker, '/campaign');
       expect(result.body.attribution).toMatchObject({
         orders: 2,
         revenueByCurrency: [
           { currency: 'AUD', orders: 1, amountMinor: 2_000 },
-          { currency: 'USD', orders: 1, amountMinor: 600 },
+          { currency: 'USD', orders: 1, amountMinor: 1_000 },
         ],
       });
       expect(result.body.costs).toEqual(expect.arrayContaining([
@@ -131,8 +135,23 @@ test.describe('insights facts on Worker D1', () => {
 
       const deliverability = await request(worker, '/deliverability');
       expect(deliverability.body).toEqual([
-        expect.objectContaining({ channel: 'email', sender: 'offers@example.test', delivered: 1, bounced: 0, failed: 0, attempted: 1 }),
+        expect.objectContaining({ channel: 'email', sender: 'example.test', delivered: 1, bounced: 0, failed: 0, attempted: 1 }),
       ]);
+      expect((await request(worker, '/deliverability?since=0')).body).toEqual([
+        expect.objectContaining({delivered:2,bounced:0,failed:1,attempted:3}),
+      ]);
+      // Provider occurrence defines the outcome window, independently of the
+      // older handoff and later ingestion. Historical failures stay outside it.
+      expect((await request(worker, '/late-bounce')).response.status).toBe(204);
+      expect((await request(worker, '/deliverability')).body).toEqual([
+        expect.objectContaining({ channel:'email',sender:'example.test',delivered:1,bounced:1,hardBounced:1,failed:0,attempted:1 }),
+      ]);
+      // Both provider outcomes remain observable after their attempts leave
+      // the window. An absent denominator cannot turn a real bounce into 0%.
+      expect((await request(worker, '/deliverability?since=2001')).body).toEqual([
+        expect.objectContaining({delivered:1,bounced:1,hardBounced:1,complained:0,failed:0,attempted:0,hardBounceRate:null,complaintRate:0}),
+      ]);
+      expect((await request(worker, '/deliverability?since=2500')).body).toEqual([]);
 
       expect((await request(worker, '/expire')).body).toEqual({ expired: 1 });
       expect((await request(worker, '/proposal-transition')).body).toEqual({

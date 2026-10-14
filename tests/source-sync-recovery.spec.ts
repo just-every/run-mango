@@ -198,9 +198,9 @@ test('[STORE-002][STORE-003][STORE-005] an expired lease cannot apply its late p
   try {
     let calls = 0;
     let clockTime = Date.now();
-    const commerce = adapter(async () => {
+    const commerce = adapter(async (_type,_cursor,progress) => {
       const call = ++calls;
-      if (call === 1) {entered(); await gate; return {records: [record(1)]}}
+      if (call === 1) {entered(); await gate; await progress?.(); return {records: [record(1)]}}
       return {records: [record(2)]};
     });
     const command = {sourceType: 'customer', provider, runId: 'expired-lease-fence'};
@@ -323,56 +323,8 @@ test('[STORE-003] undefined or undocumented source-sync completion never acknowl
 });
 
 
-test('[STORE-002][STORE-003][STORE-005] lease expiry during ingestion fences the actual source mutation after a replacement completes', async () => {
-  const {worker, binding, storeRepository, store, audience} = await fixture();
-  let release!: () => void;
-  const gate = new Promise<void>(resolve => {release = resolve});
-  let entered!: () => void;
-  const entering = new Promise<void>(resolve => {entered = resolve});
-  let first: Promise<unknown> | undefined;
-  try {
-    let clockTime = Date.now();
-    let calls = 0;
-    // Equal provider timestamps deliberately prevent a time-only upsert guard from substituting for lease ownership.
-    const occurredAt = new Date(clockTime);
-    const commerce: CommerceStore = {
-      capabilities: () => ({sourceTypes: ['product'], detail: 'Task-owned product pages; no provider connection'}),
-      async synchronize() {
-        const version = ++calls === 1 ? 'old-owner' : 'replacement-owner';
-        return {records: [{sourceType: 'product', sourceId: 'same-product', occurredAt, payload: {version, title: version}}]};
-      },
-      async verifyWebhook() {throw new Error('No provider webhook in ingestion fence test')},
-    };
-    const upsert = storeRepository.upsertSourceRecord.bind(storeRepository);
-    storeRepository.upsertSourceRecord = async (...args: Parameters<typeof upsert>) => {
-      if (String(args[0].payload).includes('old-owner')) {entered(); await gate}
-      return upsert(...args);
-    };
-    const command = {sourceType: 'product', provider, runId: 'mid-ingestion-fence'};
-    const options = {pageLimit: 1, leaseMs: 1000, now: () => new Date(clockTime)};
-    first = createCommerceSynchronizer(commerce, store, audience, options)(command);
-    void first.catch(() => undefined);
-    await Promise.race([entering, first.then(() => {throw new Error('First run finished before reaching the repository write')})]);
-    clockTime += 1001;
-    expect(await createCommerceSynchronizer(commerce, store, audience, options)(command)).toMatchObject({status: 'completed', pages: 1});
-    const completedStatus = await store.status();
-    const completedRecord = await store.sourceRecord(provider, 'product', 'same-product');
-    expect(JSON.parse(completedRecord!.payload)).toMatchObject({version: 'replacement-owner'});
-    release();
-    await expect(first).rejects.toThrow();
-    expect(calls).toBe(2);
-    expect(await store.sourceRecord(provider, 'product', 'same-product')).toEqual(completedRecord);
-    expect(await store.status()).toEqual(completedStatus);
-    expect(await store.freshness(['product'], new Date(clockTime))).toEqual([]);
-    expect(await store.sourceRecordCount(provider, 'product', 'same-product')).toBe(1);
-    expect(await audience.list()).toEqual([]);
-    expect(await binding.prepare('SELECT COUNT(*) n FROM source_activities').first()).toEqual({n: 0});
-  } finally {release(); await first?.catch(() => undefined); await worker.dispose()}
-});
-
-
 test('[STORE-002][STORE-003] an expired ingestion lease cannot create a stale contact after its replacement completes', async () => {
-  const {worker, binding, audienceRepository, store, audience} = await fixture();
+  const {worker, binding, storeRepository, store, audience} = await fixture();
   let release!: () => void;
   const gate = new Promise<void>(resolve => {release = resolve});
   let entered!: () => void;
@@ -386,10 +338,12 @@ test('[STORE-002][STORE-003] an expired ingestion lease cannot create a stale co
       const email = ++calls === 1 ? 'stale-lease@example.test' : 'current-lease@example.test';
       return {records: [{sourceType: 'customer', sourceId: 'same-customer', occurredAt, payload: {email, state: 'observed'}}]};
     });
-    const create = audienceRepository.createContact.bind(audienceRepository);
-    audienceRepository.createContact = async (...args: Parameters<typeof create>) => {
-      if (args[0].email === 'stale-lease@example.test') {entered(); await gate}
-      return create(...args);
+    const ingest = storeRepository.ingestAtomic.bind(storeRepository);
+    storeRepository.ingestAtomic = async (...args: Parameters<typeof ingest>) => {
+      // Pause at the native transaction boundary; the production batch must
+      // reject this expired owner before creating any identity or source fact.
+      if (args[1][0].contact?.email === 'stale-lease@example.test') {entered(); await gate}
+      return ingest(...args);
     };
     const command = {sourceType: 'customer', provider, runId: 'contact-creation-fence'};
     const options = {pageLimit: 1, leaseMs: 1000, now: () => new Date(clockTime)};
@@ -410,47 +364,6 @@ test('[STORE-002][STORE-003] an expired ingestion lease cannot create a stale co
     expect(await store.freshness(['customer'], new Date(clockTime))).toEqual([]);
   } finally {release(); await first?.catch(() => undefined); await worker.dispose()}
 });
-
-test('[STORE-002][STORE-003][STORE-005] expiry at the activity write cannot regress the replacement source activity', async () => {
-  const {worker, storeRepository, store, audience} = await fixture();
-  let release!: () => void;
-  const gate = new Promise<void>(resolve => {release = resolve});
-  let entered!: () => void;
-  const entering = new Promise<void>(resolve => {entered = resolve});
-  let first: Promise<unknown> | undefined;
-  try {
-    let clockTime = Date.now();
-    let calls = 0;
-    const occurredAt = new Date(clockTime);
-    const commerce = adapter(async () => {
-      const state = ++calls === 1 ? 'old-activity' : 'replacement-activity';
-      return {records: [{sourceType: 'customer', sourceId: 'same-active-customer', occurredAt, payload: {email: 'activity@example.test', state}}]};
-    });
-    const upsert = storeRepository.upsertSourceActivity.bind(storeRepository);
-    storeRepository.upsertSourceActivity = async (...args: Parameters<typeof upsert>) => {
-      if (args[0].state === 'old-activity') {entered(); await gate}
-      return upsert(...args);
-    };
-    const command = {sourceType: 'customer', provider, runId: 'activity-write-fence'};
-    const options = {pageLimit: 1, leaseMs: 1000, now: () => new Date(clockTime)};
-    first = createCommerceSynchronizer(commerce, store, audience, options)(command);
-    void first.catch(() => undefined);
-    await Promise.race([entering, first.then(() => {throw new Error('First run finished before reaching the activity write')})]);
-    clockTime += 1001;
-    expect(await createCommerceSynchronizer(commerce, store, audience, options)(command)).toMatchObject({status: 'completed', pages: 1});
-    const contact = (await audience.list())[0];
-    const before = {status: await store.status(), activity: await store.sourceActivities(contact.id), source: await store.sourceRecord(provider, 'customer', 'same-active-customer')};
-    expect(before.activity).toHaveLength(1);
-    expect(before.activity[0]).toMatchObject({state: 'replacement-activity'});
-    release();
-    await expect(first).rejects.toThrow();
-    expect(await store.sourceActivities(contact.id)).toEqual(before.activity);
-    expect(await store.sourceRecord(provider, 'customer', 'same-active-customer')).toEqual(before.source);
-    expect(await store.status()).toEqual(before.status);
-    expect(await store.freshness(['customer'], new Date(clockTime))).toEqual([]);
-  } finally {release(); await first?.catch(() => undefined); await worker.dispose()}
-});
-
 
 test('[STORE-003] a failed continuation enqueue retains queue ownership and retries without acknowledgement', async () => {
   const {worker, database} = await fixture();

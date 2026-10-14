@@ -7,7 +7,7 @@ import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
 
 type SyncRun = {id: string; provider: string; sourceType: string; state: string; pages: number; records: number; lastError: string | null; completedAt: string | null};
-type StoreStatus = { providers: Provider[]; sourceSyncs: SourceSync[]; sourceCapabilities: Array<{sourceType: string; available: boolean; detail: string}>; syncRuns: SyncRun[] };
+type StoreStatus = { channels?: Array<{id:string; shop:string; coverage_start:number; retention_start:number; healthy_at:number; last_observation_at:number|null; last_error:string|null}>; providers: Provider[]; sourceSyncs: SourceSync[]; sourceCapabilities: Array<{sourceType: string; available: boolean; detail: string}>; syncRuns: SyncRun[] };
 
 export function StorePage() {
   const { data, error, loading, reload } = useResource<StoreStatus>('/api/store');
@@ -79,6 +79,14 @@ export function StorePage() {
           </div>
         ) : <p className="notice-note">No commerce source types have been declared by the server.</p>}
       </section>
+      {data.channels?.map(channel => <section className="panel" key={channel.id}>
+        <h2>Observed store activity</h2>
+        <p>{channel.shop} · {channel.last_error || channel.healthy_at < Date.now()-3600000 ? 'Connection needs attention' : 'Installation verified'}</p>
+        <p>Accepted observations retained since {formatDate(new Date(channel.retention_start).toISOString())}. Last connection check {formatDate(new Date(channel.healthy_at).toISOString())}.</p>
+        <p>{channel.last_observation_at ? `Last observation ${formatDate(new Date(channel.last_observation_at).toISOString())}` : 'No observations received.'}</p>
+        {channel.last_error ? <p className="inline-error">{channel.last_error}</p> : null}
+        <p>These are observed events. Missing browser or webhook events cannot prove that someone did not browse, abandoned a cart, or did not purchase. Anonymous observations remain unlinked.</p>
+      </section>)}
       <ProviderStatus providers={data.providers} />
     </div>
   );

@@ -1,3 +1,5 @@
+import {reputationGuard} from './reputation-guard';
+import {providerHoldGuard} from './provider-holds';
 import { leaseGuard, leaseValues, associationStatement } from '@/core/features/sender-verification/repository';
 import { createApprovalAuthorityRepository, senderEvidenceDetail, senderFromGuard } from '@/core/features/sender-verification/approval-authority';
 import type { SenderLease } from '@/core/features/sender-verification/types';
@@ -205,19 +207,25 @@ export function createCampaignLifecycleRepository(database: Database) {
       snapshot: CampaignRevisionSnapshot;
       revisionDigest: string;
       senderLease?: SenderLease;
+      smsPolicy?:{digest:string;sender:string;json:string};
       operatorId: string;
       idempotencyKey: string;
       candidates: FrozenCandidate[];
       audienceSummary?: {candidateCount: number; exclusions: Record<string, number>; personalisationUsage?: PersonalisationUsage[]};
       now: Date;
       reconciliationWindowMs: Partial<Record<Channel, number>>;
+      sourceGeneration?:number;
+      mailProvider?:string;
+      reputationSince?:number;
     }) {
       const { snapshot, revisionDigest, operatorId, idempotencyKey, candidates, now } = input;
       const nowMs = now.getTime();
       const writeToken = crypto.randomUUID();
       const previousRevision = snapshot.campaign.activeRevisionId;
       const needsSender = snapshot.steps.some(step => step.channel === 'email');
+      const needsSms = snapshot.steps.some(step => step.channel === 'sms');
       if (needsSender && !input.senderLease) return { kind: 'conflict' as const };
+      if (needsSms && (!input.smsPolicy || input.smsPolicy.sender!==snapshot.revision.smsSender)) return {kind:'conflict' as const};
       const authorityTime = Date.now();
       const approvedFrom = `${snapshot.revision.senderName} <${snapshot.revision.fromEmail}>`;
       const senderGuard = needsSender ? `(${leaseGuard} AND ${senderFromGuard})` : '1';
@@ -249,6 +257,10 @@ export function createCampaignLifecycleRepository(database: Database) {
              SELECT 1 FROM campaign_revisions r JOIN campaigns c ON c.id = r.campaign_id
              WHERE r.id = ? AND r.campaign_id = ? AND r.state = 'draft' AND r.updated_at = ?
                AND c.updated_at = ? AND ${replaceGuard} AND ${senderGuard}
+               AND EXISTS(SELECT 1 FROM audience_source_authority WHERE id=1 AND generation=?)
+               AND ${needsSender?reputationGuard('r',input.reputationSince??nowMs-30*86400000):'1'}
+               AND ${needsSender?providerHoldGuard(input.mailProvider??'resend','r'):'1'}
+               AND ${needsSms?providerHoldGuard('mobile-message','r',"'sms'"):'1'}
                AND (c.proposal_id IS NULL OR EXISTS (SELECT 1 FROM proposals p WHERE p.id=c.proposal_id AND p.state='proposed' AND p.send_by_at>?))
            )
            ON CONFLICT(idempotency_key) DO NOTHING`,
@@ -266,11 +278,16 @@ export function createCampaignLifecycleRepository(database: Database) {
           snapshot.revision.updatedAt.getTime(),
           snapshot.campaign.updatedAt.getTime(),
           ...senderValues,
+          input.sourceGeneration??null,
           Math.max(nowMs,authorityTime),
         ),
       );
       if (needsSender) statements.push(associationStatement(client, input.senderLease!, 'approval', snapshot.revision.id,
         idempotencyKey, authorityTime, approvalGuard, [...approvalGuardValues()]));
+      if (needsSms) statements.push(client.prepare(`INSERT INTO sms_approval_policies(revision_id,policy_digest,sender,policy_json)
+        SELECT ?,?,?,? WHERE ${approvalGuard}
+        ON CONFLICT(revision_id) DO UPDATE SET policy_digest=excluded.policy_digest,sender=excluded.sender,policy_json=excluded.policy_json`)
+        .bind(snapshot.revision.id,input.smsPolicy!.digest,input.smsPolicy!.sender,input.smsPolicy!.json,...approvalGuardValues()));
       statements.push(
         client.prepare(
           `UPDATE campaign_revisions SET state = 'approved', content_digest = ?, approved_at = ?,

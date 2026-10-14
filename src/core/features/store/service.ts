@@ -1,6 +1,7 @@
+import type {CommerceReceipt} from './atomic-ingestion';
 import type { SyncWriteFence } from './sync-write-fence';
 import type { createStoreRepository } from './repository';
-import { sha256, stableJson, ulid } from '@/core/shared/ids';
+import { ulid } from '@/core/shared/ids';
 
 export const commerceSourceTypes = [
   'customer',
@@ -25,8 +26,11 @@ export type NormalizedCommerceRecord = {
   sourceType: CommerceSourceType;
   providerSourceId: string;
   occurredAt: Date;
+  providerUpdatedAt?: Date;
   payload: Record<string, unknown>;
   contactId?: string;
+  contact?: {email?:string;phone?:string;displayName?:string};
+  activities?: Array<{kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer'; productId?: string; state: string}>;
   activity?: { kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer'; productId?: string; state: string };
 };
 
@@ -103,7 +107,7 @@ export function createStoreService(repository: ReturnType<typeof createStoreRepo
       ]);
 
       const sourceCapabilities = await repository.listCommerceSourceCapabilities();
-      return { providers, sourceSyncs, sourceCapabilities, syncRuns: await repository.syncRuns.list() };
+      return { providers, sourceSyncs, sourceCapabilities, syncRuns: await repository.syncRuns.list(), channels: await repository.channelStatus() };
     },
 
     async providerBlockers() {
@@ -134,6 +138,28 @@ export function createStoreService(repository: ReturnType<typeof createStoreRepo
 
     freshness,
 
+    async intervalCoverage(types: CommerceSourceType[], from: Date, now: Date): Promise<SourceFreshnessIssue[]> {
+      const issues = await freshness(types,now);
+      const coverage = await repository.intervalCoverageRows(types);
+      for (const sourceType of [...new Set(types)]) {
+        const proof=coverage.find(row=>row.source_type===sourceType);
+        if (!proof || proof.mode!=='snapshot' || !proof.exhaustive || (proof.from_at!==null && from.getTime()<proof.from_at)) {
+          issues.push({sourceType,reason:'source-unavailable',detail:'A completed exhaustive source snapshot with verified historical access is required for this interval.'});
+        }
+      }
+      return issues;
+    },
+
+    async observationCoverage(sourceType: 'cart' | 'browsing-event', from: Date, purpose: 'positive' | 'absence'): Promise<SourceFreshnessIssue[]> {
+      if (purpose === 'absence') return [{sourceType,reason:'source-unavailable',detail:'Browser and cart observations cannot prove absence or abandonment.'}];
+      const proof=(await repository.intervalCoverageRows([sourceType]))[0];
+      if (!proof || proof.mode!=='observations' || !proof.channel_id) return [{sourceType,reason:'source-not-synced',detail:'This observation source has no completed verified replay range.'}];
+      const channels = (await repository.channelStatus()).filter(channel=>channel.id===proof.channel_id);
+      if (!channels.length || channels.some(channel => channel.last_error || Number(channel.healthy_at) < Date.now()-3600000)) return [{sourceType,reason:'source-unavailable',detail:'Observation installation or channel health is unverified, failed or expired.'}];
+      if (channels.some(channel => from.getTime() < Number(channel.retention_start))) return [{sourceType,reason:'source-not-synced',detail:'The requested observation interval precedes coverage or contains a retention/privacy gap.'}];
+      return [];
+    },
+
     async ingestSuccessfulCommerceBatch(
       provider: string,
       records: NormalizedCommerceRecord[],
@@ -142,6 +168,8 @@ export function createStoreService(repository: ReturnType<typeof createStoreRepo
       adapterCompleted: boolean,
       completedAt = new Date(),
       fence?: SyncWriteFence,
+      receipt?: CommerceReceipt,
+      contactHashSalt?: string,
     ) {
       if (!provider.trim()) throw new Error('Commerce provider is required.');
       const sourceTypes = [...new Set(records.map((record) => record.sourceType))];
@@ -150,35 +178,8 @@ export function createStoreService(repository: ReturnType<typeof createStoreRepo
       }
       if (completion === 'delta' && !records.length) throw new Error('A delta webhook must carry a normalized source record.');
       try {
-        for (const record of records) {
-          if (!record.providerSourceId.trim()) throw new Error(`A ${record.sourceType} record is missing its provider identifier.`);
-          const payload = stableJson(record.payload);
-          const source = await repository.upsertSourceRecord({
-            id: ulid(completedAt.getTime()),
-            provider,
-            sourceType: record.sourceType,
-            providerSourceId: record.providerSourceId,
-            contactId: record.contactId ?? null,
-            occurredAt: record.occurredAt,
-            payload,
-            payloadDigest: await sha256(payload),
-            createdAt: completedAt,
-            updatedAt: completedAt,
-          }, fence);
-          if (record.contactId && record.activity) {
-            await repository.upsertSourceActivity({
-              id: ulid(completedAt.getTime()),
-              contactId: record.contactId,
-              sourceRecordId: source.id,
-              kind: record.activity.kind,
-              productId: record.activity.productId ?? null,
-              state: record.activity.state,
-              occurredAt: record.occurredAt,
-              createdAt: completedAt,
-              updatedAt: completedAt,
-            }, fence);
-          }
-        }
+        for (const record of records) if (!record.providerSourceId.trim()) throw new Error('Commerce source identity is missing.');
+        await repository.ingestAtomic(provider, records, completedAt, fence, receipt, contactHashSalt);
         for (const sourceType of completion === 'full' && adapterCompleted ? completedSourceTypes : []) {
           await repository.recordSyncSuccess(sourceType, ulid(completedAt.getTime()), completedAt);
         }

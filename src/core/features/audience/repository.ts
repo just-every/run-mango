@@ -65,13 +65,14 @@ export function createAudienceRepository(database: Database) {
 
   return {
     capturePublicSignupAtomic: createPublicCaptureWriter(database),
+    async recordPhoneLocation(phone:string,timeZone:string,source:string,at:Date){await database.update(contactPhones).set({timeZone,locationSource:source,locationRecordedAt:at}).where(eq(contactPhones.phoneE164,phone));},
     claimConfirmationHandoff: createConfirmationHandoff(database),
     listContacts() {
       return database.select().from(contacts).orderBy(asc(contacts.displayName));
     },
 
     searchContacts(address: string) {
-      return database.select().from(contacts).where(sql`EXISTS (SELECT 1 FROM contact_email_addresses a WHERE a.contact_id = ${contacts.id} AND instr(lower(a.email), ${address.toLowerCase()}) > 0)`).orderBy(asc(contacts.email)).limit(30);
+      return database.select().from(contacts).where(sql`EXISTS (SELECT 1 FROM contact_email_addresses a WHERE a.contact_id = ${contacts.id} AND instr(lower(a.email), ${address.toLowerCase()}) > 0) OR EXISTS (SELECT 1 FROM contact_phones p WHERE p.contact_id=${contacts.id} AND instr(p.phone_e164, ${address.replace(/[\s().-]/g,'')})>0)`).orderBy(asc(contacts.displayName)).limit(30);
     },
 
     getContact(id: string) {
@@ -180,6 +181,22 @@ export function createAudienceRepository(database: Database) {
 
     getConsent(id: string) {
       return database.select().from(consentEvidence).where(eq(consentEvidence.id, id)).then((rows) => rows[0]);
+    },
+
+    async sourceGeneration() {
+      const row=await database.$client.prepare('SELECT generation FROM audience_source_authority WHERE id=1').first<{generation:number}>();
+      if(!row) throw new Error('Audience source authority is missing.');
+      return row.generation;
+    },
+
+    async lastQualifyingActivity(contactId: string, now: Date) {
+      const row = await database.$client.prepare(`SELECT MAX(at) at FROM (
+        SELECT confirmed_at at FROM consent_evidence WHERE contact_id=? AND confirmed_at<=?
+        UNION ALL SELECT occurred_at FROM contact_history WHERE contact_id=? AND kind IN ('consent-captured','consent-confirmed','opt-out') AND occurred_at<=?
+        UNION ALL SELECT c.occurred_at FROM link_click_facts c JOIN recipient_steps r ON r.id=c.recipient_step_id WHERE r.contact_id=? AND c.automated=0 AND c.occurred_at<=?
+        UNION ALL SELECT purchased_at FROM commerce_orders WHERE contact_id=? AND qualifying=1 AND purchased_at<=?
+      )`).bind(contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime()).first<{at:number|null}>();
+      return row?.at == null ? undefined : new Date(row.at);
     },
 
     listConsent(contactId: string) {
@@ -441,6 +458,8 @@ export function createAudienceRepository(database: Database) {
         await database.update(contactPhones).set({ contactId: survivorContactId, updatedAt: occurredAt }).where(eq(contactPhones.id, phone.id));
       }
       await Promise.all([
+        database.$client.batch(['sms_frequency_claims','sms_service_messages','sms_inbound_receipts','consent_handoff_claims'].map(table=>
+          database.$client.prepare(`UPDATE ${table} SET contact_id=? WHERE contact_id=?`).bind(survivorContactId,mergedContactId))),
         database.update(contactImportRows).set({contactId:survivorContactId}).where(eq(contactImportRows.contactId,mergedContactId)),
         database.update(contactBounceFacts).set({contactId:survivorContactId}).where(eq(contactBounceFacts.contactId,mergedContactId)),
         database.update(contactHistory).set({ contactId: survivorContactId, updatedAt: occurredAt }).where(eq(contactHistory.contactId, mergedContactId)),

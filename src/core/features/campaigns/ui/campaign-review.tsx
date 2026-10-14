@@ -217,7 +217,7 @@ export function CampaignReviewPage() {
         {editable ? authoring.loading ? <LoadState /> : authoring.error || !authoring.data?.timezone
           ? <LoadState error="Campaign authoring is unavailable: the configured store time zone could not be loaded." />
           : <CampaignCompositionEditor campaignId={id} draft={draft} savedEmailBody={revision.emailBody} mediaOrigin={data.mediaOrigin} busy={Boolean(busy)} storeTimezone={authoring.data.timezone} onChange={setDraft} serverErrors={fieldErrors} validationRequest={validationRequest} onSave={() => void save()} />
-          : <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} />}
+          : <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} smsPreview={data.smsPreview} />}
         <div className="review-facts">
           {editable ? <section className="review-previews">
             <div className="section-heading">
@@ -226,7 +226,7 @@ export function CampaignReviewPage() {
                 <h2>Saved revision content</h2>
               </div>
             </div>
-            <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} />
+            <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} smsPreview={data.smsPreview} />
           </section> : null}
           {editable ? <Disclosure className="panel test-send-panel" title="Send a test">
             <p className="muted-copy">Uses the saved revision and an approved test destination. Configure approved destinations in the operations guide.</p>

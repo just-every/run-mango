@@ -4,12 +4,16 @@ import type { SenderInspection } from '@/core/features/sender-verification/types
 export type Channel = 'email' | 'sms';
 
 export type DeliveryRequest = {
+  smsAuthority?: {policyDigest:string;expiresAt:number};
+  purpose?: 'marketing' | 'consent-confirmation' | 'sms-compliance';
   recipientStepId: string;
   idempotencyKey: string;
   handoffStartedAt: Date;
   to: string;
   sender: string;
   content: {
+    /** Set only by the authenticated diagnostic send route. */
+    test?: boolean;
     subject?: string;
     html?: string;
     text: string;
@@ -21,7 +25,11 @@ export type DeliveryRequest = {
   callbackUrl: string;
 };
 
+export type ProviderHealth = {reachable:boolean; code:string; observedAt:Date; evidence:string};
+
 export type ProviderHandoff = {
+  actualSender?: string;
+  complianceHold?: {scope:string; reason:string};
   cost?: { billableUnits: number | null; unitKind: string; reportedCostMicros?: number; currency?: string };
   providerMessageId: string;
   disposition: 'accepted' | 'handoff-unknown';
@@ -65,6 +73,9 @@ export type ProviderTransportFailure = {
   permanent: boolean;
   code: string;
   detail: string;
+  retryAfterSeconds?: number;
+  restriction?: 'hard-bounce'|'complained'|'suppressed';
+  hold?: {scope:string; reason:string};
 };
 
 export class ProviderTransportError extends Error {
@@ -87,6 +98,7 @@ export type VerifiedWebhook = {
 export interface SenderAdapter {
   channel: Channel;
   capabilities(): Promise<SenderCapabilities>;
+  probeHealth?(signal?: AbortSignal): Promise<ProviderHealth>;
   validateSender(sender: string, jurisdiction: string): Promise<SenderValidation>;
   inspectSender?(sender: string): Promise<SenderInspection>;
   send(request: DeliveryRequest): Promise<ProviderHandoff>;
@@ -95,6 +107,8 @@ export interface SenderAdapter {
 }
 
 export type SourceRecordInput = {
+  updatedAt?: Date;
+  contactId?: string;
   sourceType: string;
   sourceId: string;
   occurredAt: Date;
@@ -102,15 +116,22 @@ export type SourceRecordInput = {
 };
 
 export type VerifiedCommerceWebhook = VerifiedWebhook & {
+  records?: SourceRecordInput[];
+  receipt?: {ids: string[]; digest: string};
   sourceType: string;
   sourceId: string;
   occurredAt: Date;
   payload: Record<string, unknown>;
 };
 
+export type CommerceCoverage = {mode:'snapshot'|'observations'; exhaustive:boolean; from?:number; channel?:string; through?:number; complete:boolean};
+
 export interface CommerceStore {
+  collectObservation?(request: Request): Promise<VerifiedCommerceWebhook>;
+  refreshHealth?(progress?: () => Promise<void>): Promise<void>;
+  recordObservation?(record: SourceRecordInput, eventId: string, digest: string): Promise<void>;
   capabilities(): { provider?: string; sourceTypes: string[]; detail: string };
-  synchronize(type: string, cursor?: string): Promise<{ records: SourceRecordInput[]; nextCursor?: string }>;
+  synchronize(type: string, cursor?: string, progress?: () => Promise<void>): Promise<{ records: SourceRecordInput[]; nextCursor?: string; coverage?: CommerceCoverage }>;
   verifyWebhook(request: Request): Promise<VerifiedCommerceWebhook>;
 }
 
@@ -204,7 +225,21 @@ export interface PublicTokenSigner {
   digest(token: string): Promise<string>;
 }
 
+export type DeliveryPolicy = {
+  credentialDigest: string;
+  account: string;
+  evidence: string;
+  lookupWindowMs?: number;
+  scopes?: string[];
+  webhookId?:string;
+  lookupHistorySince?:string;
+  providerPerMinute?: number;
+  carrierPerMinute?: number;
+  carrierScope?: string;
+};
+
 export type AppConfig = {
+  deliveryPolicies?: Partial<Record<'resend'|'sendgrid'|'mobile-message',DeliveryPolicy>>;
   /** Set only by the local Worker composition, never from an environment binding. */
   local?: boolean;
   sessionSigningKey: string;
@@ -220,11 +255,14 @@ export type AppConfig = {
       storeUrl: URL;
       apiToken: string;
       webhookSecret: string;
+      exclusiveShop: string;
+      observations?: {channel: string; installationId: string; pixelId: string; proxyPath: string; webhookUrl: string};
     }>;
     sms: OptionalModuleConfig<{
       providerApiKey: string;
       webhookSecret: string;
       confirmationSender: string;
+      programme: import('@/core/features/sms/policy').SmsProgramme;
       testAllowlist: string[];
       handoffsPerMinute: number;
     }>;
@@ -286,6 +324,7 @@ export interface Platform {
 }
 
 export interface AppBindings {
+  MANGO_DELIVERY_POLICY_JSON?: string;
   MANGO_LOCAL_CONFIG_VERSION?: string;
   OWNER_EMAIL?: string;
   SESSION_SECRET?: string;
@@ -322,6 +361,11 @@ export interface AppBindings {
   COMMERCE_STORE_URL?: string;
   COMMERCE_API_TOKEN?: string;
   COMMERCE_WEBHOOK_SECRET?: string;
+  COMMERCE_EXCLUSIVE_SHOP?: string;
+  COMMERCE_OBSERVATION_CHANNEL?: string;
+  COMMERCE_APP_INSTALLATION_ID?: string;
+  COMMERCE_PIXEL_ID?: string;
+  COMMERCE_PROXY_PATH?: string;
   AI_PROVIDER_API_KEY?: string;
   AI_PROVIDER_MODEL?: string;
   DESIGN_PROVIDER_API_KEY?: string;
@@ -333,6 +377,7 @@ export interface AppBindings {
   SMS_PROVIDER_API_KEY?: string;
   SMS_WEBHOOK_SECRET?: string;
   SMS_CONFIRMATION_SENDER?: string;
+  SMS_PROGRAMME_POLICY?: string;
   MANGO_PUBLIC_BASE_URL: string;
   MANGO_APP_VERSION: string;
   MANGO_ALLOWED_LINK_HOSTS: string;

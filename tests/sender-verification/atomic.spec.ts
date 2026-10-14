@@ -37,7 +37,9 @@ test('an expired lease cannot be committed using a supplied historical clock', a
     const inspection=await f.verifier.inspect('Mango <offers@example.test>');
     const snapshot=await f.lifecycle.repository.readRevisionSnapshot(campaign.campaignId,campaign.revisionId);
     await f.db.prepare('UPDATE sender_verification_inspections SET expires_at=? WHERE id=?').bind(Date.now()-1,inspection.lease!.id).run();
-    const result=await f.lifecycle.repository.approve({snapshot:snapshot!,revisionDigest:'test-digest',operatorId:'operator',idempotencyKey:'test-expired',candidates:[],now:new Date(1),reconciliationWindowMs:{},senderLease:inspection.lease});
+    const authority=await f.db.prepare('SELECT generation FROM audience_source_authority WHERE id=1').first<{generation:number}>();
+    if(!authority)throw new Error('Expected migrated source authority.');
+    const result=await f.lifecycle.repository.approve({sourceGeneration:authority.generation,snapshot:snapshot!,revisionDigest:'test-digest',operatorId:'operator',idempotencyKey:'test-expired',candidates:[],now:new Date(1),reconciliationWindowMs:{},senderLease:inspection.lease});
     expect(result.kind).toBe('conflict');
     expect(await f.db.prepare('SELECT count(*) n FROM campaign_approval_requests').first()).toEqual({n:0});
   } finally {await f.dispose();}

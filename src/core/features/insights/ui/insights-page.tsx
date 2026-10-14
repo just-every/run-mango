@@ -1,3 +1,4 @@
+import {SenderRates} from './sender-rates';
 import { CostTotals } from './cost-totals';
 import type { CostReport } from '../cost-report';
 import { Link } from '@tanstack/react-router';
@@ -36,6 +37,7 @@ export function InsightsPage() {
         </div>
       </header>
       <CostTotals report={data.costs} />
+      <SenderRates />
       {data.results.length ? (
         <section className="panel data-table-panel" aria-labelledby="insights-results-title">
           <div className="section-heading"><div><p className="eyebrow">Recorded results</p><h2 id="insights-results-title">{data.results.length} observed events</h2></div></div>

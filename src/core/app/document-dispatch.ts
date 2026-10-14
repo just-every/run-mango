@@ -31,7 +31,7 @@ export async function dispatchDocuments(
   if (lobby) return lobby;
   const path = url.pathname;
   if (path.startsWith('/__dev') && platform.config.local !== true) return Response.json({error: 'not_found'}, {status: 404});
-  if (path === '/subscribe/info' || (path === '/subscribe' && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
+  if (path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
     return hono.fetch(request, environment, executionContext);
   }
   if (path === '/setup' || path === '/app' || path.startsWith('/app/')) {

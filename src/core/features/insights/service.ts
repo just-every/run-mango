@@ -1,7 +1,8 @@
 import type { createInsightsRepository } from './repository';
 
-export function createInsightsService(repository: ReturnType<typeof createInsightsRepository>) {
+export function createInsightsService(repository: ReturnType<typeof createInsightsRepository>,reportingWindowDays=30) {
   return {
+    reportingWindowDays,
     async list() {
       return {
         results: await repository.listResults(),
@@ -18,8 +19,6 @@ export function createInsightsService(repository: ReturnType<typeof createInsigh
       return repository.deliverability(new Date(now.getTime() - reportingWindowDays * 86_400_000));
     },
 
-    attributeOrder: repository.attributeOrder,
-    recordRefund: repository.recordRefund,
     recordExternalCost: repository.recordExternalCost,
   };
 }

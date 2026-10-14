@@ -1,12 +1,14 @@
+import { smsProgrammeSchema } from '@/core/features/sms/policy';
 import type { AppBindings, AppConfig, OptionalModuleConfig } from '@/core/shared/platform';
 import { authBindings } from './auth-bindings.ts';
 
 export const optionalModuleInputs = {
-  commerce: ['COMMERCE_STORE_URL', 'COMMERCE_API_TOKEN', 'COMMERCE_WEBHOOK_SECRET'],
+  commerce: ['COMMERCE_STORE_URL', 'COMMERCE_API_TOKEN', 'COMMERCE_WEBHOOK_SECRET', 'COMMERCE_EXCLUSIVE_SHOP'],
   sms: [
     'SMS_PROVIDER_API_KEY',
     'SMS_WEBHOOK_SECRET',
     'SMS_CONFIRMATION_SENDER',
+    'SMS_PROGRAMME_POLICY',
     'MANGO_TEST_SMS_ALLOWLIST',
     'MANGO_SMS_HANDOFFS_PER_MINUTE',
   ],
@@ -139,11 +141,14 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
       storeUrl: requiredUrl(environment, 'COMMERCE_STORE_URL'),
       apiToken: required(environment, 'COMMERCE_API_TOKEN'),
       webhookSecret: required(environment, 'COMMERCE_WEBHOOK_SECRET'),
+      exclusiveShop: required(environment, 'COMMERCE_EXCLUSIVE_SHOP'),
+      observations: commerceObservations(environment),
     })),
     sms: optionalModule(environment, 'SMS', optionalModuleInputs.sms, () => ({
       providerApiKey: required(environment, 'SMS_PROVIDER_API_KEY'),
       webhookSecret: required(environment, 'SMS_WEBHOOK_SECRET'),
-      confirmationSender: required(environment, 'SMS_CONFIRMATION_SENDER'),
+      confirmationSender: smsConfirmationSender(environment),
+      programme: readSmsProgramme(environment),
       testAllowlist: commaValues(environment, 'MANGO_TEST_SMS_ALLOWLIST'),
       handoffsPerMinute: positiveInteger(environment, 'MANGO_SMS_HANDOFFS_PER_MINUTE'),
     })),
@@ -182,4 +187,23 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
       physicalAddress: environment.MAIL_PHYSICAL_ADDRESS?.trim() ?? '',
     },
   };
+}
+
+function readSmsProgramme(environment: AppBindings) {
+ try {return smsProgrammeSchema.parse(JSON.parse(required(environment,'SMS_PROGRAMME_POLICY')));}
+ catch {throw new Error('SMS_PROGRAMME_POLICY is incomplete or invalid.');}
+}
+
+function commerceObservations(environment: AppBindings) {
+  const keys = ['COMMERCE_OBSERVATION_CHANNEL','COMMERCE_APP_INSTALLATION_ID','COMMERCE_PIXEL_ID','COMMERCE_PROXY_PATH'] as const;
+  if (!keys.some(key => environment[key]?.trim())) return undefined;
+  const [channel, installationId, pixelId, proxyPath] = keys.map(key => required(environment,key));
+  if (!/^\/apps\/[a-z0-9-]+$/.test(proxyPath)) throw new Error('COMMERCE_PROXY_PATH must be the configured /apps/name path.');
+  return {channel, installationId, pixelId, proxyPath, webhookUrl: new URL('/webhooks/commerce/shopify',requiredUrl(environment,'MANGO_PUBLIC_BASE_URL')).toString()};
+}
+
+function smsConfirmationSender(environment: AppBindings){
+ const value=required(environment,'SMS_CONFIRMATION_SENDER');
+ if(!/^\+?61\d{9}$/.test(value))throw new Error('SMS_CONFIRMATION_SENDER must be an Australian dedicated number.');
+ return value.replace(/^\+/,'');
 }

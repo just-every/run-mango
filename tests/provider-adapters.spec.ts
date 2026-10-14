@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { createMobileMessageAdapter } from '../src/core/platform/adapters/mobile-message';
 import { createResendAdapter } from '../src/core/platform/adapters/resend';
-import { decodeProviderReference } from '../src/core/shared/provider-reference';
+import { decodeProviderReference,encodeProviderReference } from '../src/core/shared/provider-reference';
 import { ProviderTransportError, type DeliveryRequest } from '../src/core/shared/platform';
 
 const request: DeliveryRequest = {
@@ -64,14 +64,16 @@ test('Resend reconciliation preserves documented immutable delivery facts and re
     if (url.includes('/webhooks/wh_123/events/event_123')) {
       return new Response(JSON.stringify({
         id: 'event_123',
-        type: 'email.delivered',
+        status:'failed',
+        payload:{type: 'email.delivered',
         created_at: '2026-09-08T01:00:00.000Z',
-        data: { email_id: 'email_123' },
+        data: { email_id: 'email_123' }},
       }), { status: 200 });
     }
     return new Response(JSON.stringify({
       id: 'email_123',
-      tags: [{ name: 'mango_recipient_step', value: encodedRecipient }],
+      from:'Mango <offers@example.test>',to:[request.to],subject:request.content.subject,text:request.content.text,html:request.content.html,
+      tags: [{ name: 'mango_recipient_step', value: encodedRecipient },{name:'mango_handoff_key',value:encodeProviderReference(request.idempotencyKey)}],
       created_at: '2026-09-08T00:00:00.000Z',
       last_event: 'delivered',
     }), { status: 200 });
@@ -103,9 +105,10 @@ test('Mobile Message preserves Mango controls and uses an encoded exact reconcil
   globalThis.fetch = (async (_input, init) => {
     sendBody = JSON.parse(String(init?.body)) as Record<string, unknown>;
     return new Response(JSON.stringify({
+      status:'complete',
       ignore_unsubscribes: false,
       shorten_urls: false,
-      results: [{ status: 'success', message_id: 'sms_123' }],
+      results: [{ status: 'success', message_id: 'sms_123',to:'61400000000',sender:'+61400000000',custom_ref:encodeProviderReference(request.idempotencyKey) }],
     }), { status: 200 });
   }) as typeof fetch;
   try {
@@ -114,7 +117,51 @@ test('Mobile Message preserves Mango controls and uses an encoded exact reconcil
     const message = (sendBody?.messages as Array<Record<string, unknown>>)[0];
     expect(sendBody).toMatchObject({ enable_unicode: true, ignore_unsubscribes: false, shorten_urls: false });
     expect(decodeProviderReference(String(message.custom_ref))).toBe(request.idempotencyKey);
+    const delivery={...request,to:'+61400000000',sender:'+61400000000',content:{text:'Reply STOP to unsubscribe.'}};
+    globalThis.fetch=async()=>Response.json({status:'complete',ignore_unsubscribes:false,shorten_urls:false,
+      results:[{status:'blocked',to:'61499999999',sender:delivery.sender,custom_ref:encodeProviderReference(delivery.idempotencyKey)}]});
+    await expect(adapter.send(delivery)).rejects.not.toBeInstanceOf(ProviderTransportError);
+    globalThis.fetch=async()=>Response.json({status:'complete',ignore_unsubscribes:false,shorten_urls:false,
+      results:[{status:'blocked',to:'61400000000',sender:delivery.sender,custom_ref:encodeProviderReference(delivery.idempotencyKey)}]});
+    await expect(adapter.send(delivery)).rejects.toMatchObject({failure:{outcome:'known-not-accepted',restriction:'suppressed'}});
+    const retryAt=new Date(Date.now()+120000);
+    globalThis.fetch=async()=>new Response('{}',{status:429,headers:{'Retry-After':retryAt.toUTCString()}});
+    try {await adapter.send(delivery);throw new Error('Expected a definite refusal');}
+    catch(error) {expect(error).toBeInstanceOf(ProviderTransportError);expect((error as ProviderTransportError).failure.retryAfterSeconds).toBeGreaterThan(110);}
   } finally {
     globalThis.fetch = previousFetch;
   }
+});
+
+test('SEND-009 authenticated probes bound headers and body, reject invalid evidence, and never send a recipient canary',async()=>{
+  const {boundedJson}=await import('../src/core/platform/adapters/bounded-read');
+  const saved=globalThis.fetch;const calls:string[]=[];
+  try {
+    globalThis.fetch=async(input,init)=>{calls.push(String(input));expect(init?.method??'GET').toBe('GET');return Response.json({object:'usage',emails:{daily:{used:1,limit:null,sent:1,received:0,resets_at:new Date().toISOString()},monthly:{used:1,limit:3000,sent:1,received:0,resets_at:new Date().toISOString()}}});};
+    const adapter=createResendAdapter({apiKey:'test',webhookSecret:'test',webhookId:'test'});
+    expect(await adapter.probeHealth!()).toMatchObject({reachable:true});
+    expect(calls).toEqual(['https://api.resend.com/usage']);
+    globalThis.fetch=async()=>new Response(new ReadableStream({start(c){c.enqueue(new TextEncoder().encode('{'));}}));
+    await expect(boundedJson('https://api.resend.com/usage',{}, {deadlineMs:10})).rejects.toThrow('provider-read-deadline');
+    globalThis.fetch=async()=>new Promise(()=>{});
+    await expect(boundedJson('https://api.resend.com/usage',{}, {signal:AbortSignal.abort(),deadlineMs:10})).rejects.toThrow('provider-read-deadline');
+    globalThis.fetch=async()=>Response.json({object:'usage',emails:{}});
+    expect(await adapter.probeHealth!()).toMatchObject({reachable:false});
+  }finally{globalThis.fetch=saved;}
+});
+
+test('SEND-001/008 ambiguous non-SendGrid responses remain unknown and lookup retention requires separate account evidence',async()=>{
+  const saved=globalThis.fetch;
+  try {
+    for(const adapter of [createResendAdapter({apiKey:'test',webhookSecret:'test',webhookId:'test'}),createMobileMessageAdapter({credentials:'user:pass',webhookSecret:'test'})]) {
+      expect(await adapter.capabilities()).toMatchObject({effectiveDeduplication:true,effectiveReconciliation:false,reconciliationWindowMs:0});
+      const payload=adapter.channel==='sms'?{...request,to:'+61400000000',sender:'61400000000'}:request;
+      for(const status of [408,500,502]) {
+        globalThis.fetch=async()=>new Response('{}',{status});
+        await expect(adapter.send(payload)).rejects.not.toBeInstanceOf(ProviderTransportError);
+      }
+      globalThis.fetch=async()=>Response.json({});
+      await expect(adapter.send(payload)).rejects.not.toBeInstanceOf(ProviderTransportError);
+    }
+  }finally{globalThis.fetch=saved;}
 });

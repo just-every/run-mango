@@ -1,3 +1,5 @@
+import { ProviderDeferredError } from '@/core/shared/provider-deferred-error';
+import { smsSignupDescription } from '@/core/features/sms/signup';
 import { loadSignupSettings } from './signup-settings';
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -12,12 +14,12 @@ export function signupDescription(platform: Platform, frequencyDisclosure = 'Occ
   const sender = platform.config.mailSender.displayName;
   const consentText=`I agree to receive email newsletters from ${sender}. I can unsubscribe at any time.`;
   const disclosure=JSON.stringify({sender,consentText,frequencyDisclosure,version:'newsletter-signup-v1'});
-  return {sender,consentText,frequencyDisclosure,disclosure,...(platform.config.signupTurnstile ? {turnstileSiteKey:platform.config.signupTurnstile.siteKey}:{}),privacyNote:'Your email address and consent evidence are stored by this newsletter operator.'};
+  return {sms:smsSignupDescription(platform),sender,consentText,frequencyDisclosure,disclosure,...(platform.config.signupTurnstile ? {turnstileSiteKey:platform.config.signupTurnstile.siteKey}:{}),privacyNote:'Your email address and consent evidence are stored by this newsletter operator.'};
 }
 export async function loadSignupDescription(platform: Platform) {
   return signupDescription(platform, (await loadSignupSettings(platform)).frequencyDisclosure);
 }
-async function limitedBody(request: Request) {
+export async function limitedBody(request: Request) {
   if (Number(request.headers.get('content-length') ?? 0)>8192) throw new Error('too_large');
   const reader=request.body?.getReader(); if(!reader)return '';
   const chunks:Uint8Array[]=[];let bytes=0;
@@ -70,6 +72,10 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
       await db.prepare("UPDATE audience_signup_requests SET status='sent' WHERE id=?").bind(evidenceId).run();
     } catch (error) {
       await db.prepare("UPDATE audience_signup_requests SET status='failed' WHERE id=?").bind(evidenceId).run();
+      if (error instanceof ProviderDeferredError) {
+        context.header('Retry-After', String(Math.max(1, Math.ceil((error.retryAt.getTime()-Date.now())/1000))));
+        return context.json({error:'confirmation_deferred',detail:'Confirmation was not sent because the provider is temporarily unavailable. Submit a fresh signup later.',retryAt:error.retryAt.toISOString()},503);
+      }
       return context.json({ error: 'signup_failed', detail: 'Confirmation could not be delivered. Please try again later.' }, 503);
     }
     return success();

@@ -1,3 +1,5 @@
+import { pacedAdapter } from '@/core/features/lifecycle/transport-pacing';
+import { readDeliveryPolicies } from '@/core/features/lifecycle/transport-policy';
 import { createReceiptConnector } from '@/core/features/sender-verification/qa-inbox';
 import { createSendgridAdapter } from './adapters/sendgrid';
 import { createDatabase } from '@/core/platform/db/client';
@@ -67,6 +69,7 @@ function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Pla
 
 export function createProductionPlatform(environment: AppBindings): Platform {
   const config = readProductionConfig(environment);
+  config.deliveryPolicies = readDeliveryPolicies(environment.MANGO_DELIVERY_POLICY_JSON);
   const verification = createSenderVerification({ database: createDatabase(environment.DB), config,
     receiver: config.mailboxReceiptUrl ? createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient) : undefined });
   const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'> = {
@@ -76,6 +79,7 @@ export function createProductionPlatform(environment: AppBindings): Platform {
       webhookSecret: config.mailWebhookSecret,
       webhookId: config.mailWebhookId,
       verification,
+      retentionPolicy:config.deliveryPolicies?.resend,
     }),
   };
   if (config.modules.commerce.enabled) {
@@ -83,6 +87,9 @@ export function createProductionPlatform(environment: AppBindings): Platform {
       storeUrl: config.modules.commerce.config.storeUrl,
       accessToken: config.modules.commerce.config.apiToken,
       webhookSecret: config.modules.commerce.config.webhookSecret,
+      exclusiveShop: config.modules.commerce.config.exclusiveShop,
+      observations: config.modules.commerce.config.observations,
+      database: createDatabase(environment.DB),
     });
   }
   if (config.modules.ai.enabled) {
@@ -95,8 +102,12 @@ export function createProductionPlatform(environment: AppBindings): Platform {
     adapters.sms = createMobileMessageAdapter({
       credentials: config.modules.sms.config.providerApiKey,
       webhookSecret: config.modules.sms.config.webhookSecret,
+      retentionPolicy:config.deliveryPolicies?.['mobile-message'],
     });
   }
+  const database=createDatabase(environment.DB);
+  adapters.mailer=pacedAdapter(adapters.mailer,database,config);
+  if(adapters.sms) adapters.sms=pacedAdapter(adapters.sms,database,config);
   return compose(environment, config, adapters);
 }
 

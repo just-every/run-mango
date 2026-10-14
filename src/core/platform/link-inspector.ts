@@ -28,7 +28,7 @@ async function addressesFor(host: string, request: typeof fetch): Promise<string
   for (const type of ['A', 'AAAA']) {
     const response = await request(`${resolver}?name=${encodeURIComponent(host)}&type=${type}`, {
       headers: { Accept: 'application/dns-json' },
-      redirect: 'error',
+      redirect: 'manual',
       signal: AbortSignal.timeout(timeoutMs),
     });
     if (!response.ok) throw new Error(`DNS resolver returned HTTP ${response.status}.`);

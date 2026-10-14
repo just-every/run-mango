@@ -1,3 +1,6 @@
+import {providerBehavior} from './provider-behavior';
+import {smsProviderEdge} from './sms-provider-edge';
+import {resendProviderEdge} from './resend-provider-edge';
 import { generateKeyPairSync, randomBytes } from 'node:crypto';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 
@@ -6,20 +9,27 @@ import { createServer, type IncomingMessage, type ServerResponse } from 'node:ht
 // It answers like SendGrid's v3 API and a DNS-over-HTTPS resolver for a sending
 // domain authenticated with SendGrid (SPF via the mail CNAME, two DKIM CNAMEs,
 // a DMARC record). Each mail send is recorded exactly as Mango serialized it.
-export type EdgeSend = { to: string; messageId: string; outcome: 'accepted' | 'lost'; body: Record<string, any> };
+export type EdgeSend = { to: string; messageId: string; outcome: 'accepted' | 'lost'; body: Record<string, any>; at:number };
 type Answer = { type: number; data: string };
 
 const quoted = (value: string) => (value.match(/.{1,255}/g) ?? []).map(part => JSON.stringify(part)).join(' ');
 const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
 
-export async function providerEdge() {
+export async function providerEdge(options:{commerce?:(request:Record<string,unknown>)=>unknown}={}) {
+  const behavior=providerBehavior();
+  const sms=smsProviderEdge();
   const keys = [dkimKey(), dkimKey()];
+  const resend=resendProviderEdge(keys[0]);
   const sends: EdgeSend[] = [], unexpected: string[] = [], lost = new Set<string>();
   const domain = { id: 123, user_id: 99, domain: 'example.test', valid: true, automatic_security: true, custom_spf: false, dns: {
     mail_cname: { valid: true, type: 'cname', host: 'em123.example.test', data: 'u99.wl.sendgrid.net' },
     dkim1: { valid: true, type: 'cname', host: 's1._domainkey.example.test', data: 's1.domainkey.u99.wl.sendgrid.net' },
     dkim2: { valid: true, type: 'cname', host: 's2._domainkey.example.test', data: 's2.domainkey.u99.wl.sendgrid.net' } } };
   const zone: Record<string, Answer[]> = {
+    'mango-test.myshopify.com': [{type:1,data:'203.0.113.10'}],
+    'shop.example.test':[{type:1,data:'203.0.113.10'}],
+    'send.example.test':[{type:16,data:quoted('v=spf1 ip4:192.0.2.1 -all')}],
+    'resend._domainkey.example.test':[{type:16,data:quoted(`v=DKIM1; k=rsa; p=${keys[0]}`)}],
     'em123.example.test': [{ type: 5, data: 'u99.wl.sendgrid.net.' }],
     'u99.wl.sendgrid.net': [{ type: 16, data: quoted('v=spf1 ip4:192.0.2.1 -all') }],
     's1._domainkey.example.test': [{ type: 5, data: 's1.domainkey.u99.wl.sendgrid.net.' }],
@@ -28,7 +38,7 @@ export async function providerEdge() {
     's2.domainkey.u99.wl.sendgrid.net': [{ type: 16, data: quoted(`v=DKIM1; k=rsa; p=${keys[1]}`) }],
     '_dmarc.example.test': [{ type: 16, data: quoted('v=DMARC1; p=quarantine; psd=n') }],
   };
-  const codes: Record<string, number> = { CNAME: 5, TXT: 16, MX: 15 };
+  const codes: Record<string, number> = { CNAME: 5, TXT: 16, MX: 15, A:1, AAAA:28 };
   function resolve(name: string, type: string) {
     const answers: Array<Answer & { name: string; TTL: number }> = [];
     let target = name.toLowerCase().replace(/\.$/, '');
@@ -48,17 +58,30 @@ export async function providerEdge() {
   };
   const server = createServer(async (request, response) => {
     const original = new URL(String(request.headers['x-edge-original-url']));
+    behavior.requests.push({method:request.method??'',path:original.pathname,at:Date.now()});
+    if(await sms.handle(original,request,response))return;
+    if(await resend.handle(original,request,response))return;
+    if(original.hostname==='shop.example.test'&&request.method==='HEAD'){response.writeHead(200);response.end();return;}
+    if(original.hostname==='mango-test.myshopify.com' && options.commerce) {
+      if(original.pathname.startsWith('/products/')) {response.writeHead(200,{'Content-Type':'text/html'});return response.end('<p>Product</p>');}
+      return json(response,200,options.commerce(JSON.parse(await body(request))));
+    }
     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
     if (original.hostname === 'api.sendgrid.com') {
+      if (original.pathname === '/v3/scopes' && request.method === 'GET') return json(response,behavior.healthStatus(),behavior.healthStatus()===200?{scopes:['mail.send']}:{errors:[{message:'Provider unavailable'}]});
       if (original.pathname === '/v3/whitelabel/domains' && request.method === 'GET') return json(response, 200, original.searchParams.get('offset') === '0' ? [domain] : []);
       if (original.pathname === '/v3/whitelabel/domains/123' && request.method === 'GET') return json(response, 200, domain);
       // The Email Activity API is a paid add-on; this account does not have it.
       if (original.pathname.startsWith('/v3/messages')) return json(response, 403, { errors: [{ message: 'access forbidden' }] });
       if (original.pathname === '/v3/mail/send' && request.method === 'POST') {
         const sent = JSON.parse(await body(request)), to = String(sent.personalizations?.[0]?.to?.[0]?.email ?? '');
+        const refusal=behavior.nextRefusal(to);
+        behavior.attempts.push({to,status:refusal?.status??202,at:Date.now()});
+        if(refusal)return json(response,refusal.status,{errors:[{message:'Synthetic provider rejection with private detail'}]},refusal.retryAfter===undefined?{}:{'Retry-After':String(refusal.retryAfter)});
         const messageId = randomBytes(11).toString('base64url');
         // SendGrid accepted it either way; a lost response leaves Mango uncertain.
-        sends.push({ to, messageId, outcome: lost.has(to) ? 'lost' : 'accepted', body: sent });
+        sends.push({ at:Date.now(),to, messageId, outcome: lost.has(to) ? 'lost' : 'accepted', body: sent });
+        await behavior.responseDelay(Boolean(sent.headers?.['List-Unsubscribe']));
         if (lost.has(to)) return response.destroy();
         response.writeHead(202, { 'X-Message-Id': messageId }); return response.end();
       }
@@ -69,7 +92,7 @@ export async function providerEdge() {
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('Edge server has no port.');
-  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, unexpected,
+  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, unexpected,behavior,sms,resend,
     loseResponseFor: (address: string) => lost.add(address),
     close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
 }

@@ -28,7 +28,7 @@ export async function invitationRuntime({ contactHashSalt = secret } = {}) {
     CONTACT_HASH_SALT: contactHashSalt, MAIL_PROVIDER: 'sendgrid', MAIL_PROVIDER_API_KEY: 'test-api-key', MAIL_AUTH_FROM: 'owner@example.test',
     MAIL_WEBHOOK_SECRET: 'test-public-key', MAIL_WEBHOOK_ID: 'test-hook', MANGO_PUBLIC_BASE_URL: 'https://mango.example.test',
     MANGO_APP_VERSION: 'integration', MANGO_ALLOWED_LINK_HOSTS: 'example.test', MANGO_TEST_EMAIL_ALLOWLIST: 'owner@example.test',
-    MANGO_RECONCILIATION_INTERVAL_MINUTES: '15', MANGO_UNRESOLVED_OUTCOME_HOURS: '48', MANGO_EMAIL_HANDOFFS_PER_MINUTE: '10',
+    MANGO_RECONCILIATION_INTERVAL_MINUTES: '15', MANGO_UNRESOLVED_OUTCOME_HOURS: '48', MANGO_EMAIL_HANDOFFS_PER_MINUTE: '100000',
     MANGO_DELIVERABILITY_WINDOW_DAYS: '30', MAIL_SENDER_NAME: 'Example', MAIL_REPLY_TO: 'owner@example.test', MAIL_PHYSICAL_ADDRESS: 'Test address' };
   const mf = new Miniflare({ host: '127.0.0.1', cf: false, telemetry: { enabled: false }, workers: [{ config: {
     name: 'invitation-cancellation-test', type: 'worker', compatibilityDate: '2026-09-01', compatibilityFlags: ['nodejs_compat'],

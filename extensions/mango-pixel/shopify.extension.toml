@@ -1,0 +1,22 @@
+name = "Mango observations"
+type = "web_pixel_extension"
+runtime_context = "strict"
+
+[customer_privacy]
+analytics = true
+marketing = true
+preferences = false
+sale_of_data = "enabled"
+
+[settings]
+type = "object"
+
+[settings.fields.channel]
+name = "Mango channel"
+description = "The installation's configured COMMERCE_OBSERVATION_CHANNEL"
+type = "single_line_text_field"
+
+[settings.fields.proxyPath]
+name = "App proxy path"
+description = "The configured Online Store path, for example /apps/mango-signals"
+type = "single_line_text_field"

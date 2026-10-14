@@ -1,3 +1,4 @@
+import {editSchedule} from './edit-schedule';
 import { summarizeAudienceRules, withDerivedAudience } from './audience-summary';
 import { normalizeAuthoredContent } from './authoring-content';
 import { parseStructuredRules } from '@/core/features/lifecycle/rules';
@@ -106,6 +107,11 @@ export function createCampaignCompositionRepository(database: Database) {
 
   return {
     read,
+    async editable(campaignId:string) {
+      const row=await database.$client.prepare("SELECT id FROM campaign_revisions WHERE campaign_id=? AND state='draft' ORDER BY version DESC LIMIT 1").bind(campaignId).first<{id:string}>();
+      return row?read(row.id):undefined;
+    },
+    editSchedule:(campaignId:string,composition:DraftComposition,operatorId:string)=>editSchedule(database,campaignId,composition,operatorId),
     createDraft: (composition: DraftComposition, operatorId: string) => createDraft(database, composition, operatorId),
 
     async saveDraft(id: string, composition: DraftComposition, updatedAt: Date) {

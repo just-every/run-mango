@@ -54,3 +54,30 @@ While a campaign is a draft, every save discards the previous checks, so you alw
 Open **View schedule and results**. While some recipients have not yet been handed to your provider, a **Cancel remaining sends** panel appears. **Cancel campaign**, then **Confirm cancellation**, stops every queued recipient. Messages already handed to a provider cannot be recalled, and handoffs with an unknown outcome stay visible. When nothing can be stopped, the panel is replaced by a note saying so.
 
 > **Tip:** Use **Send a test** on the draft first. It goes only to addresses on your test allowlist and is marked as a test.
+
+Provider pacing is shared durably by the configured provider account across campaigns,
+confirmation messages, tests, operator notices and sign-in mail. SMS consumes the actual
+GSM-7 or UTF-16 segment count. Carrier limits are the provider's documented policy for
+all permitted destinations; Mango never infers a carrier from a phone prefix.
+
+`MANGO_DELIVERY_POLICY_JSON` supplies provider evidence keyed by `resend`, `sendgrid`
+or `mobile-message`. Each entry requires `account`, an HTTPS provider `evidence` URL,
+and `credentialDigest` (SHA-256 of the configured API credential, computed privately).
+Optional `providerPerMinute` restricts the installation's existing limit further. SMS
+also requires `carrierPerMinute` and `carrierScope` naming the applicable provider policy.
+Changing credentials invalidates their evidence until the account binding is renewed.
+
+For Resend, supply `lookupWindowMs`, `scopes: ["full_access"]`, the configured `webhookId`
+and `lookupHistorySince` as an ISO timestamp covering this installation's retained event
+history. Resend's published standard account retention is 30 days, distinct from its
+24-hour idempotency keys; Enterprise retention needs the actual account evidence.
+Mobile Message documents 24-hour idempotency but no minimum numeric retained lookup
+window. SMS approval therefore remains blocked until account-bound provider evidence
+supplies `lookupWindowMs`; dashboard request-log retention is not sufficient evidence.
+Never substitute an observed old message for a minimum retention guarantee.
+
+An outage uses a bounded authenticated read: SendGrid scopes, Resend usage (full-access
+key), or Mobile Message account balance. The probe sends no recipient message. Recovery
+clears only reachability; account compliance, sender verification, source freshness,
+consent and deadlines still apply. Outage notices are fenced per active operator; an
+uncertain notification acceptance remains visible and is never automatically resent.

@@ -9,6 +9,15 @@ export const presetStatuses: Record<string, string> = {
 };
 export const defaultMapping: Record<string, readonly string[]> = {
   email: ['email address', 'email'],
+  phone: ['phone', 'phone_e164', 'mobile', 'phone number'],
+  sms_status: ['sms_status', 'sms marketing status'],
+  sms_occurred_at: ['sms_occurred_at', 'sms optin time'], sms_confirmed_at: ['sms_confirmed_at', 'sms confirm time'],
+  sms_brand: ['sms_brand'], sms_program: ['sms_program'], sms_category: ['sms_category'],
+  sms_frequency: ['sms_frequency'], sms_jurisdiction: ['sms_jurisdiction'],
+  sms_consent_text: ['sms_consent_text'], sms_consent_version: ['sms_consent_version'],
+  sms_capture_ip: ['sms_capture_ip'], sms_confirmation_ip: ['sms_confirmation_ip'],
+  sms_capture_method: ['sms_capture_method'], sms_capture_source: ['sms_capture_source'],
+  sms_time_zone: ['sms_time_zone'], sms_location_source: ['sms_location_source'], sms_location_recorded_at: ['sms_location_recorded_at'],
   status: ['email marketing status', 'email marketing', 'marketing status', 'status', 'email_status'],
   first_name: ['first name'], last_name: ['last name'],
   occurred_at: ['optin_time', 'occurred_at'], capture_ip: ['optin_ip', 'capture_ip'],

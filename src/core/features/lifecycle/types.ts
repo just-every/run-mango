@@ -1,3 +1,4 @@
+import type { InclusionRule, ExclusionRule } from './rules';
 import type { Hono } from 'hono';
 
 import type {
@@ -37,6 +38,7 @@ export type FrozenCandidate = {
       destination: string;
       brandOrLegalSender: string;
       smsProgramme?: string;
+      frequencyDisclosure?: string;
       category: string;
       jurisdiction: string;
     }>;
@@ -47,6 +49,7 @@ export type EligibilityResult =
   | { eligible: false; reason: string; retryAt?: Date }
   | {
       eligible: true;
+      sourceGeneration: number;
       contact: {
         contactId: string;
         destination: string;
@@ -70,17 +73,21 @@ export interface LifecycleAudience {
     | {
         status: 'ok';
         candidateCount?: number;
+        matchedContactIds?: string[];
         asOf: Date;
         candidates: FrozenCandidate[];
         exclusions: Array<{ reason: string; count: number }>;
       }
-    | { status: 'stale' | 'unavailable'; sourceTypes: string[]; detail: string }
+    | { status: 'stale' | 'unavailable'; sourceTypes: string[]; detail: string; observedExclusions?: Array<{reason:string;count:number}> }
   >;
   recheckHandoffEligibility(input: {
     contactId: string;
     channel: Channel;
     sourceTypes: string[];
     productId?: string;
+    productIds?: string[];
+    inclusionRule?: InclusionRule;
+    exclusionRules?: ExclusionRule[];
     now: Date;
     lastMarketingAt?: Date;
     frequencyWindowMs: number;

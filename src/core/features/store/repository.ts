@@ -1,3 +1,4 @@
+import {createAtomicCommerceIngestion} from './atomic-ingestion';
 import { fencedInsert, type SyncWriteFence } from './sync-write-fence';
 import { createSyncRunRepository } from './sync-run-repository';
 import { and, asc, desc, eq, inArray, lte, sql } from 'drizzle-orm';
@@ -15,6 +16,11 @@ import {
 export function createStoreRepository(database: Database) {
   return {
     syncRuns: createSyncRunRepository(database),
+    ingestAtomic: createAtomicCommerceIngestion(database),
+    async intervalCoverageRows(types: string[]) {
+      return (await database.$client.prepare("SELECT c.* FROM commerce_source_coverage c JOIN source_sync_runs r ON r.id=c.run_id JOIN source_syncs s ON s.source_type=c.source_type WHERE r.state='completed' AND s.last_successful_at=c.completed_at AND c.source_type IN (SELECT value FROM json_each(?))").bind(JSON.stringify(types)).all<{source_type:string;mode:string;exhaustive:number;from_at:number|null;channel_id:string|null;completed_at:number}>()).results;
+    },
+    async channelStatus() { return (await database.$client.prepare("SELECT * FROM commerce_channels ORDER BY id").all()).results; },
     listProviderCapabilities() {
       return database.select().from(providerCapabilities).orderBy(asc(providerCapabilities.adapter));
     },
@@ -88,28 +94,6 @@ export function createStoreRepository(database: Database) {
         });
     },
 
-    async upsertSourceRecord(values: typeof sourceRecords.$inferInsert, fence?: SyncWriteFence) {
-      if (fence) {
-        await fencedInsert(database, sourceRecords, values, fence, {target: ['provider', 'sourceType', 'providerSourceId'], update: ['contactId', 'occurredAt', 'payload', 'payloadDigest', 'updatedAt']});
-        return (await database.select().from(sourceRecords).where(and(eq(sourceRecords.provider, values.provider), eq(sourceRecords.sourceType, values.sourceType), eq(sourceRecords.providerSourceId, values.providerSourceId))))[0];
-      }
-      const rows = await database
-        .insert(sourceRecords)
-        .values(values)
-        .onConflictDoUpdate({
-          target: [sourceRecords.provider, sourceRecords.sourceType, sourceRecords.providerSourceId],
-          set: {
-            contactId: values.contactId,
-            occurredAt: values.occurredAt,
-            payload: values.payload,
-            payloadDigest: values.payloadDigest,
-            updatedAt: values.updatedAt,
-          },
-        })
-        .returning();
-      return rows[0];
-    },
-
     getSourceRecord(provider: string, sourceType: string, providerSourceId: string) {
       return database
         .select()
@@ -134,25 +118,6 @@ export function createStoreRepository(database: Database) {
         .then((rows) => Number(rows[0]?.count ?? 0));
     },
 
-    async upsertSourceActivity(values: typeof sourceActivities.$inferInsert, fence?: SyncWriteFence) {
-      if (fence) {
-        await fencedInsert(database, sourceActivities, values, fence, {target: ['contactId', 'sourceRecordId', 'kind'], update: ['productId', 'state', 'occurredAt', 'updatedAt']});
-        return;
-      }
-      await database
-        .insert(sourceActivities)
-        .values(values)
-        .onConflictDoUpdate({
-          target: [sourceActivities.contactId, sourceActivities.sourceRecordId, sourceActivities.kind],
-          set: {
-            productId: values.productId,
-            state: values.state,
-            occurredAt: values.occurredAt,
-            updatedAt: values.updatedAt,
-          },
-        });
-    },
-
     listSourceActivities(contactId: string) {
       return database
         .select()
@@ -170,6 +135,11 @@ export function createStoreRepository(database: Database) {
     },
 
     async moveSourceData(mergedContactId: string, survivorContactId: string) {
+      await database.$client.batch([
+        database.$client.prepare('UPDATE commerce_observations SET contact_id=? WHERE contact_id=?').bind(survivorContactId,mergedContactId),
+        database.$client.prepare('INSERT INTO commerce_privacy_controls(contact_id,revoked_at) SELECT ?,revoked_at FROM commerce_privacy_controls WHERE contact_id=? ON CONFLICT(contact_id) DO UPDATE SET revoked_at=max(revoked_at,excluded.revoked_at)').bind(survivorContactId,mergedContactId),
+        database.$client.prepare('DELETE FROM commerce_privacy_controls WHERE contact_id=?').bind(mergedContactId),
+      ]);
       await database
         .update(sourceRecords)
         .set({ contactId: survivorContactId })

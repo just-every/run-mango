@@ -47,7 +47,7 @@ export function validateLedger(snapshot:AudienceSnapshot){
  for(const metadata of snapshot.tables.consent_capture_metadata)if(!snapshot.tables.consent_evidence.some(evidence=>evidence.id===metadata.id))throw new Error('Capture metadata has no consent evidence.');
  for(const table of ['contact_email_addresses','contact_phones'])for(const address of snapshot.tables[table])if(address.channel_status==='subscribed'){
   const destination=table==='contact_email_addresses'?address.email:address.phone_e164;const channel=table==='contact_email_addresses'?'email':'sms';
-  if(!snapshot.tables.consent_evidence.some(evidence=>evidence.channel===channel&&evidence.destination===destination&&evidence.confirmed_at&&['brand_or_legal_sender','message_category','frequency_disclosure','destination_jurisdiction','capture_method','capture_source','consent_text','consent_version','occurred_at'].every(key=>Boolean(evidence[key]))))throw new Error('Subscribed destination requires complete confirmed consent.');
+  if(!snapshot.tables.consent_evidence.some(evidence=>evidence.channel===channel&&evidence.destination===destination&&evidence.confirmed_at&&[...(channel==='sms'?['sms_program']:[]),'brand_or_legal_sender','message_category','frequency_disclosure','destination_jurisdiction','capture_method','capture_source','consent_text','consent_version','occurred_at'].every(key=>Boolean(evidence[key]))))throw new Error('Subscribed destination requires complete confirmed consent.');
  }
  if(contact.merge_lock)throw new Error('A contact being merged cannot be imported.');
 }

@@ -15,7 +15,7 @@ export function createCampaignService(
   repository: ReturnType<typeof createCampaignRepository>,
   compositionRepository: ReturnType<typeof createCampaignCompositionRepository>,
   store: ReturnType<typeof createStoreService>,
-  options: { smsEnabled: boolean; now?: () => Date } = { smsEnabled: false },
+  options: { smsEnabled: boolean; now?: () => Date; smsPreview?:(campaignId:string,revisionId:string)=>Promise<import('@/core/features/sms/review-preview').SmsReviewPreview|undefined> } = { smsEnabled: false },
 ) {
   async function campaignDetail(id: string) {
     const campaign = await repository.getCampaign(id);
@@ -86,14 +86,27 @@ export function createCampaignService(
     },
 
     campaignDetail,
+    async editSchedule(id:string,operatorId:string) {
+      const detail=await campaignDetail(id);if(!detail?.revision)return undefined;
+      const {revision,steps,links}=detail;
+      const composition:DraftComposition={name:revision.name,emailSubject:revision.emailSubject,emailBody:revision.emailBody,emailText:revision.emailText,
+        preheader:revision.preheader,smsBody:revision.smsBody,senderName:revision.senderName,fromEmail:revision.fromEmail,replyToEmail:revision.replyToEmail,
+        smsSender:revision.smsSender,physicalAddress:revision.physicalAddress,messageCategory:revision.messageCategory,inclusionRuleJson:revision.inclusionRuleJson,
+        exclusionRulesJson:revision.exclusionRulesJson,sourceTypesJson:revision.sourceTypesJson,trackingEnabled:revision.trackingEnabled,
+        links:links.map(({label,destinationUrl})=>({label,destinationUrl})),
+        steps:steps.map(step=>({channel:step.channel as 'email'|'sms',timezone:step.timezone,scheduledAt:step.scheduledAt.toISOString(),sendByAt:step.sendByAt.toISOString(),whyThisTime:step.whyThisTime}))};
+      return compositionRepository.editSchedule(id,composition,operatorId);
+    },
 
     async review(id: string) {
-      const detail = await campaignDetail(id);
-      if (!detail) return undefined;
+      const saved = await campaignDetail(id);
+      if (!saved) return undefined;
+      const editable=await compositionRepository.editable(id);
+      const detail=editable?{...saved,...editable,checks:await repository.listChecks(editable.revision.id),results:undefined}:saved;
       const required=new Set<string>(detail.steps.map(step=>step.channel==='email'?'mail.sender.v1':'sms.sender.v1'));
       const rules=detail.revision&&parseStructuredRules(detail.revision.inclusionRuleJson,detail.revision.exclusionRulesJson);
       if(rules?.ok&&rules.sourceTypes.length)required.add('commerce.store.v1');
-      return { ...detail, blockers: (await store.providerBlockers()).filter(blocker=>required.has(blocker.kind)) };
+      return { ...detail, smsPreview:detail.revision?await options.smsPreview?.(id,detail.revision.id):undefined, blockers: (await store.providerBlockers()).filter(blocker=>required.has(blocker.kind)) };
     },
 
     updateDraft(id: string, composition: DraftComposition) {

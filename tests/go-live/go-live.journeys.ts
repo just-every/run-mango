@@ -6,7 +6,7 @@ import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
 import { decodeProviderReference } from '../../src/core/shared/provider-reference';
 import { archiveRows, importContacts, transfer } from './restore';
-import { approve, confirmedContact, dispatch, draftCampaign, installation, json, sender, signedPost, type Installation } from './harness';
+import { approve, availableTransport, confirmedContact, dispatch, draftCampaign, installation, json, sender, signedPost, type Installation } from './harness';
 
 // One installation runs the whole go-live sequence: confirmed contacts, an
 // approved campaign handed to SendGrid, signed delivery facts, one-click
@@ -58,6 +58,7 @@ test('[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts r
   state.first = first;
   const contactsBefore = await site.rows('SELECT * FROM contact_email_addresses ORDER BY email');
   const historyBefore = await site.count('contact_history');
+  await availableTransport(site);
   const test = await json(await site.call(`/api/campaigns/${first.campaignId}/test-send`, { method: 'POST', cookie,
     body: { revisionId: first.revisionId, channel: 'email', to: 'tester@example.test' } }), 200);
   const testMessage = edge.sends.findLast(send => send.to === 'tester@example.test')!;

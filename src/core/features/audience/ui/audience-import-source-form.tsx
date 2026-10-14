@@ -152,7 +152,7 @@ export function AudienceImportSourceForm({
               <h2 id="import-mapping-title">Field mapping</h2>
             </div>
           </div>
-          <p className="muted-copy">Each mapping is reviewed with the file. Missing original consent evidence keeps a row non-subscribed.</p>
+          <p className="muted-copy">Map email, E.164 phone, or both. SMS columns carry independent consent; email consent and file presets never subscribe SMS. Missing original evidence keeps that channel non-subscribed.</p>
           <div className="audience-import-mappings">
             {columns.map((column) => {
               const preset = files.find((file) => file.name === column.name)?.preset;
@@ -165,8 +165,8 @@ export function AudienceImportSourceForm({
                     <div className="audience-import-mapping-grid">
                       {fields.map((field) => (
                         <label key={field.id}>
-                          <span>{fieldLabel(field)}{field.id === 'email' ? ' (required)' : ''}</span>
-                          <Field name={`mapping.${column.name}.${field.id}`} label={`${fieldLabel(field)} in ${column.name}`} required={field.id === 'email'}><select
+                          <span>{fieldLabel(field)}</span>
+                          <Field name={`mapping.${column.name}.${field.id}`} label={`${fieldLabel(field)} in ${column.name}`}><select
                             aria-label={`${fieldLabel(field)} in ${column.name}`}
                             value={mappings[column.name]?.[field.id] ?? column.mapping[field.id] ?? ''}
                             onChange={(event) => onMappingChange(column.name, field.id, event.currentTarget.value)}
@@ -192,7 +192,7 @@ export function AudienceImportSourceForm({
           <span aria-hidden="true">{columns?.length ? '3' : '2'}</span>
           <div>
             <p className="eyebrow">Keep the original scope</p>
-            <h2 id="import-consent-title">Consent evidence</h2>
+            <h2 id="import-consent-title">Email consent evidence</h2>
           </div>
         </div>
         <p className="muted-copy">These details must match what each person actually saw when they opted in. Adding them here cannot create consent or reverse an opt-out.</p>

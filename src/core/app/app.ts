@@ -1,3 +1,9 @@
+import {smsReviewPreview} from '@/core/features/sms/review-preview';
+import { recordConfirmationDeferral } from '@/core/features/audience/confirmation-deferred';
+import { ProviderDeferredError } from '@/core/shared/provider-deferred-error';
+import { createSmsSignupRoutes } from '@/core/features/sms/signup';
+import { createSmsInboundRoutes } from '@/core/features/sms/inbound';
+import { sendSmsConfirmation, validateSmsConsent } from '@/core/features/sms/confirmation';
 import {retireTransfers} from '@/core/features/portability/retire-transfers';
 import {erasureFencedDatabase,withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
 import {pendingErasure} from '@/core/features/audience/erasure/maintenance';
@@ -73,6 +79,7 @@ function audienceDependencies(
   lifecycle: () => LifecycleRuntime,
 ) {
   return {
+    validateConsent(input: import('@/core/features/audience/service').ConsentCapture){if(input.channel==='sms')validateSmsConsent(platform,input);},
     contactHashSalt: platform.config.contactHashSalt,
     publicTokens: {
       issuePublicToken: (id: string, purpose: string, expiresAt: Date) => platform.publicTokens.issue({ id, purpose, expiresAt }),
@@ -86,44 +93,33 @@ function audienceDependencies(
       },
     },
     confirmationDispatcher: {
-      async sendConfirmation(input: { channel: 'email' | 'sms'; destination: string; token: string; expiresAt: Date }, authorizeHandoff: () => Promise<boolean>) {
-        const smsModule = platform.config.modules.sms;
+      async sendConfirmation(input: { channel: 'email' | 'sms'; destination: string; token: string; expiresAt: Date; contactId: string; consentId: string }, authorizeHandoff: () => Promise<boolean>) {
+        if(input.channel==='sms'){await sendSmsConfirmation(platform,input);return true;}
         const identity = senderIdentitySchema.parse(await loadSenderSettings(platform));
         const escape = (value: string) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('\"', '&quot;');
-        let sender = `${identity.displayName} <${identity.fromEmail}>`;
-        if (input.channel === 'sms') {
-          if (!smsModule.enabled) throw new Error(smsModule.detail);
-          if (!platform.sms) throw new Error('The SMS adapter is unavailable despite complete module configuration.');
-          sender = smsModule.config.confirmationSender;
-        }
+        const sender = `${identity.displayName} <${identity.fromEmail}>`;
         const tokenDigest = await platform.publicTokens.digest(input.token);
         const handoffStartedAt = new Date();
-        const destination = input.channel === 'email'
-          ? new URL(`/consent/confirm/${encodeURIComponent(input.token)}`, platform.config.publicBaseUrl).toString()
-          : new URL(`/consent/confirm/${encodeURIComponent(input.token)}`, platform.config.publicBaseUrl).toString();
+        const destination = new URL(`/consent/confirm/${encodeURIComponent(input.token)}`, platform.config.publicBaseUrl).toString();
         const request = {
+          purpose: 'consent-confirmation' as const,
           recipientStepId: `consent-confirmation:${tokenDigest}`,
           idempotencyKey: `consent-confirmation:${tokenDigest}`,
           handoffStartedAt,
           to: input.destination,
           sender,
-          content: input.channel === 'email'
-            ? {
+          content: {
                 subject: 'Confirm your Mango subscription',
                 text: `Confirm your subscription within 30 days: ${destination}\n\n${identity.displayName}\n${identity.physicalAddress}`,
                 html: `<p>Confirm your subscription within 30 days:</p><p><a href="${destination}">Confirm subscription</a></p><footer>${escape(identity.displayName)}<br>${escape(identity.physicalAddress)}</footer>`,
                 replyTo: identity.replyToEmail,
-              }
-            : {
-                text: `Confirm your subscription: ${destination}`,
               },
-          callbackUrl: new URL(`/webhooks/${input.channel === 'email' ? 'mail/resend' : 'sms/mobile-message'}`, platform.config.publicBaseUrl).toString(),
+          callbackUrl: new URL('/webhooks/mail/resend', platform.config.publicBaseUrl).toString(),
         };
-        const adapter = input.channel === 'email' ? platform.mailer : platform.sms;
-        if (!adapter) throw new Error('The SMS adapter is unavailable despite complete module configuration.');
-        const provider = (await adapter.capabilities()).provider ?? (input.channel === 'email' ? platform.config.mailProvider ?? 'unreported' : 'mobile-message');
+        const adapter = platform.mailer;
+        const provider = (await adapter.capabilities()).provider ?? (platform.config.mailProvider ?? 'unreported');
         const costContext = {
-          key: `handoff:${provider}:${request.idempotencyKey}`, provider, operation: 'confirmation-handoff' as const,
+          key: `handoff:${provider}:${request.idempotencyKey}:attempt:${crypto.randomUUID()}`, provider, operation: 'confirmation-handoff' as const,
         };
         await prepareHandoffCost(platform.database, adapter, request, costContext);
         // No asynchronous preparation may occur between this D1 authorization
@@ -136,6 +132,11 @@ function audienceDependencies(
         let result;
         try { result = await adapter.send(request); }
         catch (error) {
+          if (error instanceof ProviderDeferredError) {
+            await recordConfirmationDeferral(platform.database, input, error);
+            await cancelHandoffCost(platform.database, costContext.key);
+            throw error;
+          }
           try { await settleHandoffFailure(platform.database, adapter, request, costContext, error); }
           catch { /* The durable prepared fact retains uncertainty; preserve the transport error. */ }
           throw error;
@@ -192,9 +193,9 @@ export function createAppServices(platform: Platform): AppServices {
     createCampaignRepository(database),
     createCampaignCompositionRepository(database),
     storeService,
-    { smsEnabled: platform.config.modules.sms.enabled },
+    { smsEnabled: platform.config.modules.sms.enabled, smsPreview:(campaignId,revisionId)=>smsReviewPreview(lifecycleRuntime!,campaignId,revisionId) },
   );
-  const insightsService = createInsightsService(createInsightsRepository(database));
+  const insightsService = createInsightsService(createInsightsRepository(database), platform.config.deliverabilityReportingWindowDays);
 
   return {
     platform,
@@ -270,6 +271,7 @@ export function createApp(
   app.route('/', createPublicAuthRoutes(authService, { secureCookie }));
   app.route('/', createAudiencePublicRoutes(audienceService));
   app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
+  app.route('/', createSmsSignupRoutes(platform,audienceService));
   app.route('/', createMediaRoutes(environment.DB, platform.blobs));
   if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce));
   mountBeforeAuthentication?.(app, services);
@@ -296,9 +298,10 @@ export function createApp(
     } catch { return context.json({error: 'editor_not_configured'}, 503); }
   });
   app.route('/api', createPortabilityRoutes(environment, platform));
+  app.route('/',createSmsInboundRoutes(platform));
   registerLifecycleRoutes(app, lifecycleRuntime);
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
-  app.route('/api', createStoreRoutes(storeService));
+  app.route('/api', createStoreRoutes(storeService,platform.commerce));
   app.route('/api', createSyncRoutes(platform, services.storeService));
   app.route('/api', createSegmentRoutes(environment.DB));
   app.route('/api', createAudienceRoutes(audienceService,environment.DB,platform,environment));

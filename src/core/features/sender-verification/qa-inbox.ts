@@ -15,7 +15,7 @@ export function createReceiptConnector(receiptUrl: string, configuredRecipient?:
   const get = async (url: URL) => {
     try {
       if (url.origin !== base.origin) throw new Error('origin');
-      const response = await transport(url, { redirect: 'error', signal: AbortSignal.timeout(10_000) });
+      const response = await transport(url, { redirect: 'manual', signal: AbortSignal.timeout(10_000) });
       if (!response.ok || response.redirected || (response.url && new URL(response.url).origin !== base.origin)) throw new Error('response');
       return response;
     } catch { throw new VerificationError('receiver-unavailable', 'unknown'); }

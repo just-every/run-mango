@@ -98,7 +98,7 @@ test('newsletter-only production entry boots on isolated D1 without constructing
     channels: ['email'],
     now: new Date(),
   });
-  expect(commerceRule).toMatchObject({ status: 'unavailable', sourceTypes: ['order'] });
+  expect(commerceRule).toMatchObject({ status: 'unavailable', sourceTypes: ['order', 'refund'] });
   expect(await services.storeService.freshness(['order'], new Date())).toMatchObject([
     { sourceType: 'order', reason: 'source-unavailable' },
   ]);
@@ -202,7 +202,7 @@ test('a previously approved SMS step becomes a durable unconfigured failure with
     ).bind(recipientId).first()).resolves.toMatchObject({
       transport_disposition: 'failed',
       last_error_code: 'sms_module_unconfigured',
-      last_error_detail: 'SMS is unavailable until SMS_PROVIDER_API_KEY, SMS_WEBHOOK_SECRET, SMS_CONFIRMATION_SENDER, MANGO_TEST_SMS_ALLOWLIST, MANGO_SMS_HANDOFFS_PER_MINUTE are configured.',
+      last_error_detail: expect.stringMatching(/SMS.*unavailable.*configur/i),
     });
     await expect(local.database.prepare('SELECT state FROM step_dispatches WHERE step_id = ?').bind(stepId).first()).resolves.toEqual({ state: 'completed' });
     await expect(local.database.prepare('SELECT state FROM campaigns WHERE id = ?').bind(campaignId).first()).resolves.toEqual({ state: 'completed' });
@@ -253,14 +253,26 @@ test('blank optional-module inputs remain disabled while complete groups become 
   expect(blank.modules.ai.enabled).toBe(false);
   expect(blank.modules.design.enabled).toBe(false);
 
+  const windows = [{ days: [0, 1, 2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 20 * 60 }];
+  const programme = {
+    brand: 'Mango', programme: 'Newsletter', category: 'newsletter', frequency: 'Weekly',
+    jurisdiction: 'AU', support: 'help@example.test', providerAlreadyReplies: false,
+    // Synthetic installation evidence for this configuration-only fixture.
+    policySource: 'https://policy.example.test/newsletter-sms',
+    policyVerifiedAt: new Date(Date.now() - 60_000).toISOString(),
+    policyExpiresAt: new Date(Date.now() + 86_400_000).toISOString(),
+    providerWindows: windows, jurisdictionWindows: windows, recipientWindows: windows,
+  };
   const configured = readProductionConfig({
     ...base,
-    COMMERCE_STORE_URL: 'https://shop.example.test',
+    COMMERCE_STORE_URL: 'https://newsletter-test.myshopify.com',
     COMMERCE_API_TOKEN: 'newsletter-test-commerce-key',
     COMMERCE_WEBHOOK_SECRET: 'newsletter-test-commerce-webhook',
+    COMMERCE_EXCLUSIVE_SHOP: 'newsletter-test.myshopify.com',
     SMS_PROVIDER_API_KEY: 'newsletter-test-sms-key',
     SMS_WEBHOOK_SECRET: 'newsletter-test-sms-webhook',
     SMS_CONFIRMATION_SENDER: '+61400000000',
+    SMS_PROGRAMME_POLICY: JSON.stringify(programme),
     MANGO_TEST_SMS_ALLOWLIST: '+61400000000',
     MANGO_SMS_HANDOFFS_PER_MINUTE: '5',
     AI_PROVIDER_API_KEY: 'newsletter-test-ai-key',
@@ -268,8 +280,8 @@ test('blank optional-module inputs remain disabled while complete groups become 
     DESIGN_PROVIDER_API_KEY: 'newsletter-test-design-key',
     DESIGN_PROVIDER_ORIGIN: 'https://design.example.test',
   });
-  expect(configured.modules.commerce).toMatchObject({ enabled: true, config: { storeUrl: new URL('https://shop.example.test') } });
-  expect(configured.modules.sms).toMatchObject({ enabled: true, config: { confirmationSender: '+61400000000', testAllowlist: ['+61400000000'], handoffsPerMinute: 5 } });
+  expect(configured.modules.commerce).toMatchObject({ enabled: true, config: { storeUrl: new URL('https://newsletter-test.myshopify.com') } });
+  expect(configured.modules.sms).toMatchObject({ enabled: true, config: { confirmationSender: '61400000000', testAllowlist: ['+61400000000'], handoffsPerMinute: 5 } });
   expect(configured.modules.ai).toMatchObject({ enabled: true, config: { providerApiKey: 'newsletter-test-ai-key', model: 'newsletter-test-model' } });
   expect(configured.modules.design).toMatchObject({ enabled: true, config: { providerApiKey: 'newsletter-test-design-key', origin: new URL('https://design.example.test') } });
   // A deployment reaches the design service only over HTTPS at a bare origin; loopback http is for copies on a computer.

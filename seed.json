@@ -329,6 +329,41 @@
       "requiredWhen": "Any input in this module is set"
     },
     {
+      "name": "COMMERCE_EXCLUSIVE_SHOP",
+      "required": false,
+      "secret": false,
+      "why": "Assert actual Shopify app credentials restricted to this canonical single shop; shared multi-shop secrets are unsupported.",
+      "requiredWhen": "Any commerce input is set"
+    },
+    {
+      "name": "COMMERCE_OBSERVATION_CHANNEL",
+      "required": false,
+      "secret": false,
+      "why": "Stable installed Shopify pixel and cart observation channel identity.",
+      "requiredWhen": "Any observation channel input is set"
+    },
+    {
+      "name": "COMMERCE_APP_INSTALLATION_ID",
+      "required": false,
+      "secret": false,
+      "why": "Expected actual Shopify AppInstallation GID verified against Admin API.",
+      "requiredWhen": "Any observation channel input is set"
+    },
+    {
+      "name": "COMMERCE_PIXEL_ID",
+      "required": false,
+      "secret": false,
+      "why": "Expected installed Shopify WebPixel GID verified against Admin API.",
+      "requiredWhen": "Any observation channel input is set"
+    },
+    {
+      "name": "COMMERCE_PROXY_PATH",
+      "required": false,
+      "secret": false,
+      "why": "Configured Shopify app proxy path used for signed observation identity.",
+      "requiredWhen": "Any observation channel input is set"
+    },
+    {
       "name": "AI_PROVIDER_API_KEY",
       "required": false,
       "secret": true,

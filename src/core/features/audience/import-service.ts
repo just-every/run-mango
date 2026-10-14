@@ -25,7 +25,7 @@ const planned=holdReason.running;
 function previewCounts(plan:ImportPlan) {
   const effects=plan.entries.flatMap(entry=>entry.effects), held=heldRows(plan);
   // An opt-out-only line counts toward the restrictions it restores, never as a contact.
-  const statuses=[...effects.map(effect=>(effect.value as unknown as AudienceSnapshot).tables.contacts[0].email_status),...held.map(row=>row.status),...optOutRows(plan).map(row=>row.status)];
+  const statuses=[...effects.map(effect=>{const c=(effect.value as unknown as AudienceSnapshot).tables.contacts[0];return restrictiveRank[String(c.sms_status)]>restrictiveRank[String(c.email_status)]?c.sms_status:c.email_status;}),...held.map(row=>restrictiveRank[row.smsStatus]>restrictiveRank[row.status]?row.smsStatus:row.status),...optOutRows(plan).map(row=>row.status)];
   return {...plan.counts,created:effects.filter(effect=>!effect.expectedRevision).length,updated:effects.filter(effect=>effect.expectedRevision).length+held.length,
     unsubscribed:statuses.filter(status=>status==='unsubscribed').length,suppressed:statuses.filter(status=>status==='suppressed').length};
 }
@@ -61,10 +61,15 @@ export function createAudienceImportService(platform: Platform) {
       const winners = new Map<string,typeof normalized.rows[number]>();
       for (const row of normalized.rows.filter(row=>!row.reason&&!row.optOuts)) {
         if(row.ledger){try{validateSnapshot(row.ledger);}catch(error){row.reason=error instanceof Error?error.message:'Invalid audience ledger.';continue;}}
-        const key=row.email || String(row.ledger?.tables.contact_phones[0]?.phone_e164);
+        const key=row.email || row.phone || String(row.ledger?.tables.contact_phones[0]?.phone_e164);
         const previous = winners.get(key);
+        if(previous && previous.phone !== row.phone){previous.reason=row.reason='Duplicate identity has conflicting phone/email assignments. Resolve the identities explicitly.';continue;}
+        if(previous && restrictiveRank[row.smsStatus]>restrictiveRank[previous.smsStatus]){previous.smsStatus=row.smsStatus;previous.values={...previous.values,...Object.fromEntries(Object.entries(row.values).filter(([key])=>key.startsWith('sms_')))};}
+        if(previous && restrictiveRank[previous.smsStatus]>restrictiveRank[row.smsStatus]){row.smsStatus=previous.smsStatus;row.values={...row.values,...Object.fromEntries(Object.entries(previous.values).filter(([key])=>key.startsWith('sms_')))};}
         if (!previous || restrictiveRank[row.status] > restrictiveRank[previous.status]) winners.set(key,row);
       }
+      const phoneRows=new Map<string,typeof normalized.rows[number]>();
+      for(const row of winners.values())if(row.phone){const other=phoneRows.get(row.phone);if(other&&other.email!==row.email){other.reason=row.reason='Phone appears with different email identities. Resolve the identities explicitly.';}else phoneRows.set(row.phone,row);}
       normalized.rows.sort((a,b)=>restrictiveRank[b.status]-restrictiveRank[a.status]);
       const artifacts = await Promise.all(input.files.map(async file=>({name:file.name,sha256:await sha256(file.csv),size:new TextEncoder().encode(file.csv).length,original:{status:'available' as const,base64:Buffer.from(file.csv,'utf8').toString('base64')}})));
       const state=await readImportState(previewDb,[...winners.values()],platform.config.contactHashSalt,context.destination);
@@ -82,10 +87,14 @@ export function createAudienceImportService(platform: Platform) {
         const sourceId = `${input.origin?`${input.origin}:`:''}${artifacts.find(artifact=>artifact.name===row.file)!.sha256}:${index}:${row.file}:${row.row}`;
         // An opt-out-only line takes no contact effect: the import writes it when it starts (import-start).
         if (row.optOuts) row.warnings.push('An opt-out for an address no contact holds: it is restored before any contact is written and stays when the import is undone.');
-        else if (!row.reason && winners.get(row.email || String(row.ledger?.tables.contact_phones[0]?.phone_e164))===row) {
-          const contactId=state.byIdentity.get(row.email) ?? null, holder=contactId?held.get(contactId):plannedIdentities.has(row.email)?planned:undefined;
-          if(holder&&restrictiveRank[row.status]>=restrictiveRank.unsubscribed){
-            row.status=heldStatus(state,contactId,row.status,await sha256(`${platform.config.contactHashSalt}:${row.email}`));
+        else if (!row.reason && winners.get(row.email || row.phone || String(row.ledger?.tables.contact_phones[0]?.phone_e164))===row) {
+          const destination=row.email||row.phone;
+          const contactId=state.byIdentity.get(destination) ?? state.byIdentity.get(row.phone) ?? null, holder=contactId?held.get(contactId):plannedIdentities.has(destination)?planned:undefined;
+          const emailOwner=state.byIdentity.get(row.email),phoneOwner=state.byIdentity.get(row.phone);
+          if(emailOwner&&phoneOwner&&emailOwner!==phoneOwner){row.reason='Email and phone belong to different contacts. Resolve the identities explicitly.';}
+          else if(holder&&Math.max(restrictiveRank[row.status],restrictiveRank[row.smsStatus])>=restrictiveRank.unsubscribed){
+            if(row.email)row.status=heldStatus(state,contactId,row.status,await sha256(`${platform.config.contactHashSalt}:${row.email}`));
+            if(row.phone)row.smsStatus=heldStatus(state,contactId,row.smsStatus,await sha256(`${platform.config.contactHashSalt}:${row.phone}`),'sms');
             row.held={contactId,reason:`${holder}; its ${row.status==='suppressed'?'suppression':'opt-out'} is applied and its other details are left ${contactId?'as they are now':'to that import'}.`};
             row.warnings.push(row.held.reason);
           }
@@ -97,7 +106,7 @@ export function createAudienceImportService(platform: Platform) {
             const current=state.targets.get(native.id);
             effects.set(sourceId,{targetKind:'contact',targetId:native.id,value:native.snapshot as unknown as Json,...(current?{expectedRevision:current.revision}:{})});
           } catch(error) { row.reason=error instanceof Error ? error.message : 'Invalid audience row.'; }
-        } else if (!row.reason) row.warnings.push('Duplicate email combined with its most restrictive row in this import.');
+        } else if (!row.reason) row.warnings.push('Duplicate destination combined with its most restrictive channel statuses in this import.');
         source.records.push({namespace:context.namespace,kind:'contact',sourceId,payload:row as unknown as Json,payloadHash:await sha256(canonicalJson(row)),artifactHash:artifacts.find(artifact=>artifact.name===row.file)!.sha256,location:{artifact:row.file,row:row.row}});
       }
       const plan = await planD1Import(source,{version:context.mappingVersion,map:record=>{

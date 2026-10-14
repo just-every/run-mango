@@ -77,6 +77,10 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     const detail = await service.campaignDetail(parsed.data.id);
     return detail ? context.json({ ...detail, mediaOrigin }) : context.json({ error: 'not_found' }, 404);
   });
+  routes.post('/campaigns/:id/edit-schedule',async context=>{
+    const result=await service.editSchedule(context.req.param('id'),context.get('operator').id);
+    return result?context.json(result,201):context.json({error:'not_found'},404);
+  });
   routes.get('/campaigns/:id/review', async (context) => {
     const parsed = readParams(context, identifier);
     if ('error' in parsed) return parsed.error;

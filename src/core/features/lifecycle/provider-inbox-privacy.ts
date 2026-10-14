@@ -11,7 +11,7 @@ export async function privateInboxFact(db:D1Database,salt:string,provider:string
     ?'SELECT 1 FROM contact_email_addresses WHERE email=? LIMIT 1'
     :'SELECT 1 FROM contact_phones WHERE phone_e164=? LIMIT 1').bind(destination).first():null;
   const keyword=['stop','stopall','optout','revoke','unsubscribe','cancel','end','quit','start','unstop','yes','help','info'].includes(String(fact.detail.action).toLowerCase())?String(fact.detail.action).toLowerCase():undefined;
-  if(known)return fact.kind==='sms-reply'?{...fact,detail:{...fact.detail,action:keyword}}:fact;
+  if(known)return {...fact,detail:{...fact.detail,destinationHash:await sha256(`${salt}:${destination}`),...(fact.kind==='sms-reply'?{action:keyword}:{})}};
   return {identity:await sha256(`${salt}:provider-event:${provider}:${fact.identity}`),kind:fact.kind,occurredAt:fact.occurredAt,payloadDigest:fact.payloadDigest,
     detail:{...(destination?{destinationHash:await sha256(`${salt}:${destination}`)}:{}),hard:fact.detail.hard===true,action:keyword,providerEvent:fact.kind}};
 }

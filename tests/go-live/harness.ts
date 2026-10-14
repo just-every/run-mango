@@ -13,11 +13,12 @@ type Edge = Awaited<ReturnType<typeof providerEdge>>;
 type Signer = ReturnType<typeof eventSigner>;
 
 /** One Mango installation: the Vite/D1 runtime, its owner session and the shared provider edge. */
-export async function installation(edge: Edge, signer: Signer, options: { origin?: string; providerKey?: string; token?: string; stateDirectory?: string; restore?: boolean } = {}) {
+export async function installation(edge: Edge, signer: Signer, options: { origin?: string; providerKey?: string; token?: string; stateDirectory?: string; restore?: boolean; parallelQueue?: boolean; commerce?: boolean; sms?: boolean | 'missing-retention'; smsPolicyAt?:number; mailProvider?:'sendgrid'|'resend'; resendCoverage?:'complete'|'missing' } = {}) {
+  const smsPolicyAt=options.smsPolicyAt??Date.now();
   const runtime = await authoringRuntime({ suite: 'go-live', fixtureWorker: 'tests/go-live/worker.ts', startupTimeout: 180000,
-    token: options.token, stateDirectory: options.stateDirectory, vars: { GO_LIVE_EDGE_ORIGIN: edge.origin, GO_LIVE_WEBHOOK_KEY: signer.publicKey,
+    token: options.token, stateDirectory: options.stateDirectory, parallelQueue: options.parallelQueue, vars: { GO_LIVE_SMS_POLICY_AT: String(smsPolicyAt), GO_LIVE_MAIL_PROVIDER: options.mailProvider??'sendgrid', GO_LIVE_RESEND_COVERAGE: options.resendCoverage??'complete', GO_LIVE_EDGE_ORIGIN: edge.origin, GO_LIVE_WEBHOOK_KEY: signer.publicKey,
       GO_LIVE_PUBLIC_ORIGIN: options.origin ?? publicOrigin, GO_LIVE_PROVIDER_KEY: options.providerKey ?? 'go-live-provider-key',
-      GO_LIVE_DKIM_KEY: edge.dkimKey, MANGO_RESTORE_MODE: options.restore ? '1' : '0' } });
+      GO_LIVE_COMMERCE: options.commerce ? '1' : '0', GO_LIVE_SMS: options.sms === true ? '1' : options.sms === 'missing-retention' ? 'missing-retention' : '0', GO_LIVE_DKIM_KEY: edge.dkimKey, MANGO_RESTORE_MODE: options.restore ? '1' : '0' } });
   const origin = options.origin ?? publicOrigin;
   const control = async (path: string, body: unknown = {}) => {
     const response = await fetch(runtime.url + path, { method: 'POST', headers: { 'X-Test-Token': runtime.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -45,7 +46,9 @@ export async function json(response: Response, status: number) {
 
 /** Operator-entered consent, confirmed by the contact through the emailed link (confirmed opt-in). */
 export async function confirmedContact(site: Installation, edge: Edge, cookie: string, email: string, displayName: string) {
-  await json(await site.call('/api/contacts/consent', { method: 'POST', cookie, body: { ...consent, contact: { email, displayName }, occurredAt: new Date().toISOString() } }), 201);
+  await availableTransport(site);
+  const clock=await site.control('/_golive/clock');
+  await json(await site.call('/api/contacts/consent', { method: 'POST', cookie, body: { ...consent, contact: { email, displayName }, occurredAt: new Date(clock.now).toISOString() } }), 201);
   const message = edge.sends.findLast(send => send.to === email && send.body.subject === 'Confirm your Mango subscription');
   const link = /https:\/\/\S+\/consent\/confirm\/\S+/.exec(message!.body.content.find((part: any) => part.type === 'text/plain').value)![0];
   expect((await fetch(site.local(link), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'confirm=true' })).status).toBe(200);
@@ -73,15 +76,29 @@ export async function approve(site: Installation, cookie: string, campaign: { ca
 }
 
 /** Runs the scheduled handler once the step is due, then waits for the queue consumer to settle every recipient. */
-export async function dispatch(site: Installation, campaignId: string, due: Date) {
-  while (Date.now() <= due.getTime()) await new Promise(resolve => setTimeout(resolve, 250));
+export async function dispatch(site: Installation, campaignId: string, due: Date, stepId?:string) {
+  const step=stepId ? ` AND step_id='${stepId}'` : '';
+  while ((await site.control('/_golive/clock')).now <= due.getTime()) await new Promise(resolve => setTimeout(resolve, 250));
   await site.control('/_golive/cron');
-  await expect.poll(async () => (await site.rows(`SELECT count(*) AS n FROM recipient_steps WHERE campaign_id='${campaignId}' AND transport_disposition='queued'`))[0].n,
-    { timeout: 60000, intervals: [250] }).toBe(0);
+  let deliveryState:unknown;
+  try {
+    await expect.poll(async () => {
+      const rows=await site.rows(`SELECT id,transport_disposition,skip_reason,last_error_code,last_error_detail,next_attempt_at,lease_expires_at FROM recipient_steps WHERE campaign_id='${campaignId}'${step}`);
+      deliveryState=rows;
+      return rows.filter(row=>row.transport_disposition==='queued').length;
+    },{ timeout: 60000, intervals: [250] }).toBe(0);
+  } catch(error) {throw new Error(`Native delivery did not settle: ${JSON.stringify(deliveryState)}`,{cause:error});}
   return site.rows(`SELECT id, destination AS email, transport_disposition, skip_reason, provider_message_id FROM recipient_steps
-    WHERE campaign_id='${campaignId}' ORDER BY destination`);
+    WHERE campaign_id='${campaignId}'${step} ORDER BY destination`);
 }
 
 export async function signedPost(site: Installation, path: string, body: Buffer, headers: Record<string, string>) {
   return (await fetch(site.runtime.url + path, { method: 'POST', headers, body })).status;
+}
+
+/** Wait for the actual persisted account budget, never grant a test bypass. */
+export async function availableTransport(site:Installation) {
+  const [rows,clock]=await Promise.all([site.rows('SELECT MAX(next_at) AS due FROM provider_pacing'),site.control('/_golive/clock')]);
+  const delay=Number(rows[0]?.due??0)-clock.now;
+  if(delay>0)await new Promise(resolve=>setTimeout(resolve,Math.ceil(delay)+20));
 }

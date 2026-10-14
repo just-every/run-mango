@@ -1,3 +1,6 @@
+import { managedSmsText } from '@/core/features/sms/content';
+import { smsProgrammeSchema } from '@/core/features/sms/policy';
+import {renderTracking} from './message-tracking';
 import { renderMessageContent, invalidPersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { confirmationUnsubscribePath, oneClickUnsubscribePath } from '@/core/features/audience/unsubscribe-paths';
@@ -37,31 +40,23 @@ export async function prepareDeliveryRequest(
     recipientStepId: envelope.recipient.id,
     expiresAt: new Date(now.getTime() + 365 * 86_400_000),
   });
-  const trackedLinks: Array<{ tokenDigest: string; destinationUrl: string; expiresAt: Date }> = [];
-  const rewritten = new Map<string, string>();
-  if (envelope.revision.trackingEnabled) {
-    for (const link of envelope.links) {
-      const expiresAt = new Date(envelope.recipient.sendByAt.getTime() + 30 * 86_400_000);
-      const token = await runtime.platform.publicTokens.issue({ id: crypto.randomUUID(), purpose: 'link', expiresAt });
-      trackedLinks.push({
-        tokenDigest: await runtime.platform.publicTokens.digest(token),
-        destinationUrl: link.destinationUrl,
-        expiresAt,
-      });
-      rewritten.set(link.destinationUrl, `${publicBaseUrl}/l/${encodeURIComponent(token)}`);
-    }
-  }
+  const {trackedLinks,rewritten}=await renderTracking(runtime.platform,{channel:envelope.recipient.channel,enabled:envelope.revision.trackingEnabled,smsBody:envelope.revision.smsBody,links:envelope.links,sendByAt:envelope.recipient.sendByAt});
   const unsubscribeUrl = `${publicBaseUrl}${confirmationUnsubscribePath(unsubscribe.token)}`;
   const oneClickUrl = `${publicBaseUrl}${oneClickUnsubscribePath(unsubscribe.token)}`;
   const rendered = renderMessageContent(envelope.revision, {values: eligibility.contact.personalisation, unsubscribeUrl, rewrittenLinks: rewritten});
+  const smsApproval=envelope.recipient.channel==='sms'?await runtime.platform.database.$client.prepare('SELECT policy_digest,sender,policy_json FROM sms_approval_policies WHERE revision_id=?').bind(envelope.recipient.revisionId).first<{policy_digest:string;sender:string;policy_json:string}>():undefined;
+  if(envelope.recipient.channel==='sms'&&!smsApproval)throw new Error('SMS approval lacks its frozen programme policy; review the revision again.');
+  const smsPolicy=smsApproval?smsProgrammeSchema.parse(JSON.parse(smsApproval.policy_json).policy):undefined;
   const content: DeliveryRequest['content'] = envelope.recipient.channel === 'email'
     ? {
         subject: rendered.subject, preheader: rendered.preheader, html: rendered.html, text: rendered.text,
         from: {name: envelope.revision.senderName, email: envelope.revision.fromEmail}, replyTo: envelope.revision.replyToEmail,
         headers: {'List-Unsubscribe': `<${oneClickUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'},
       }
-    : {text: rendered.sms};
+    : {text: managedSmsText(rendered.sms,smsPolicy!,smsApproval!.sender)};
   const request: DeliveryRequest = {
+    purpose:'marketing',
+    ...(smsApproval?{smsAuthority:{policyDigest:smsApproval.policy_digest,expiresAt:envelope.recipient.sendByAt.getTime()}}:{}),
     recipientStepId: envelope.recipient.id,
     idempotencyKey: envelope.recipient.idempotencyKey,
     to: eligibility.contact.destination,

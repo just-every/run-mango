@@ -1,4 +1,5 @@
 import {fixtureVerification} from './support/sender-verification';
+import {composeFixture} from './sender-verification/test-runtime';
 import { sqlStatements } from '../operations/sql-statements.mjs';
 import { expect, test } from '@playwright/test';
 import { readFile, readdir } from 'node:fs/promises';
@@ -67,6 +68,12 @@ function candidate(id: string): FrozenCandidate {
   };
 }
 
+async function sourceGeneration(database:D1Database) {
+  const authority=await database.prepare('SELECT generation FROM audience_source_authority WHERE id=1').first<{generation:number}>();
+  if(!authority)throw new Error('Expected migrated source authority.');
+  return authority.generation;
+}
+
 function createD1Miniflare(name: string) {
   return new Miniflare({
     host: '127.0.0.1',
@@ -102,16 +109,16 @@ contract('CAMP-005', 'a losing or repeated approval cannot mutate the winning fr
     const evidence = fixtureVerification(binding, {mailSender:{displayName:'Mango',fromEmail:'sender@example.test',replyToEmail:'reply@example.test',physicalAddress:'1 Test Street'}});
     const senderLease = (await evidence.inspect('Mango <sender@example.test>')).lease!;
     const shared = { senderLease, operatorId: 'operator', now: new Date(), reconciliationWindowMs: { email: 60_000 } };
-    const first = await repository.approve({
+    const first = await repository.approve({sourceGeneration:await sourceGeneration(binding),
       ...shared, snapshot: firstSnapshot, revisionDigest: 'digest-a', idempotencyKey: 'request-a', candidates: [candidate('X')], audienceSummary: {candidateCount: 3, exclusions: {'opt-out': 2}},
     });
-    const loser = await repository.approve({
+    const loser = await repository.approve({sourceGeneration:await sourceGeneration(binding),
       ...shared, snapshot: losingSnapshot, revisionDigest: 'digest-b', idempotencyKey: 'request-b', candidates: [candidate('X'), candidate('Y')], audienceSummary: {candidateCount: 8, exclusions: {'opt-out': 6}},
     });
     expect(first.kind).toBe('approved');
     expect(loser.kind).toBe('conflict');
 
-    const repeated = await repository.approve({
+    const repeated = await repository.approve({sourceGeneration:await sourceGeneration(binding),
       ...shared, snapshot: firstSnapshot, revisionDigest: 'digest-a', idempotencyKey: 'request-a', candidates: [candidate('X'), candidate('Z')], audienceSummary: {candidateCount: 9, exclusions: {'opt-out': 7}},
     });
     expect(repeated.kind).toBe('approved');
@@ -129,7 +136,7 @@ contract('CAMP-005', 'a losing or repeated approval cannot mutate the winning fr
     await binding.prepare(
       'UPDATE campaign_revisions SET email_subject = ?, updated_at = ? WHERE id = ?',
     ).bind('Edited after checks', now + 11, edit.revisionId).run();
-    const editRace = await repository.approve({
+    const editRace = await repository.approve({sourceGeneration:await sourceGeneration(binding),
       ...shared, snapshot: editSnapshot, revisionDigest: 'stale-digest', idempotencyKey: 'request-edit', candidates: [candidate('E')],
     });
     expect(editRace.kind).toBe('conflict');
@@ -140,7 +147,7 @@ contract('CAMP-005', 'a losing or repeated approval cannot mutate the winning fr
     await binding.prepare(
       'UPDATE campaigns SET active_revision_id = ?, updated_at = ? WHERE id = ?',
     ).bind('old-revision-b', now + 21, replacement.campaignId).run();
-    const replacementRace = await repository.approve({
+    const replacementRace = await repository.approve({sourceGeneration:await sourceGeneration(binding),
       ...shared, snapshot: replacementSnapshot, revisionDigest: 'replacement-digest', idempotencyKey: 'request-replacement', candidates: [candidate('R')],
     });
     expect(replacementRace.kind).toBe('conflict');
@@ -235,6 +242,23 @@ contract('SEND-001', 'persists the exact hand-off before importing replay-safe p
     const database = createDatabase(binding);
     const repository = createLifecycleRepository(database);
     const now = Date.now();
+    // Establish the actual destination and confirmed consent that the final
+    // atomic handoff now requires, using production capture/confirmation code.
+    const contactFixture=composeFixture(binding,false);
+    let contactId:string;
+    try {
+      const captured=await contactFixture.services.audienceService.captureConsent({
+        contact:{email:'buyer@example.test',displayName:'Ari'},channel:'email',brandOrLegalSender:'Mango Store',
+        messageCategory:'newsletter',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',
+        captureMethod:'hosted-form',captureSource:'delivery-truth',consentText:'Send me weekly garden news.',
+        consentVersion:'v1',occurredAt:new Date(now),
+      });
+      expect(captured.confirmation).toBeDefined();
+      expect(contactFixture.outbound).toHaveLength(1);
+      expect(contactFixture.outbound[0].text).toContain(captured.confirmation!.token);
+      expect((await contactFixture.services.audienceService.confirmConsent(captured.confirmation!.token)).kind).toBe('confirmed');
+      contactId=captured.contact.id;
+    } finally {await contactFixture.dispose();}
     await binding.prepare(
       `INSERT INTO campaigns (id, state, active_revision_id, created_at, updated_at)
        VALUES ('campaign-delivery', 'scheduled', 'revision-delivery', ?, ?)`,
@@ -258,16 +282,16 @@ contract('SEND-001', 'persists the exact hand-off before importing replay-safe p
       `INSERT INTO recipient_steps
        (id, campaign_id, revision_id, step_id, contact_id, contact_identity_key, channel, destination,
         idempotency_key, transport_disposition, send_by_at, created_at, updated_at)
-       VALUES ('recipient-delivery', 'campaign-delivery', 'revision-delivery', 'step-delivery', 'contact-delivery',
+       VALUES ('recipient-delivery', 'campaign-delivery', 'revision-delivery', 'step-delivery', ?,
         'identity-delivery', 'email', 'buyer@example.test', 'campaign:revision:step:identity', 'queued', ?, ?, ?)`,
-    ).bind(now + 3_600_000, now, now).run();
+    ).bind(contactId,now + 3_600_000, now, now).run();
 
     const evidence = fixtureVerification(binding, {mailSender:{displayName:'Mango Store',fromEmail:'sender@example.test',replyToEmail:'reply@example.test',physicalAddress:'1 Mango Way'}});
     const senderLease = (await evidence.inspect('Mango Store <sender@example.test>')).lease!;
     await binding.prepare("UPDATE campaigns SET state='draft' WHERE id='campaign-delivery'").run();
     await binding.prepare("UPDATE campaign_revisions SET state='draft' WHERE id='revision-delivery'").run();
     const approvalSnapshot = await repository.readRevisionSnapshot('campaign-delivery','revision-delivery');
-    const authorization = await repository.approve({snapshot:approvalSnapshot!,senderLease,revisionDigest:'delivery-authority',operatorId:'operator',idempotencyKey:'delivery-authority',candidates:[{contactId:'contact-delivery',contactIdentityKey:'identity-delivery',channels:{email:{destination:'buyer@example.test',consents:[]}}}],now:new Date(),reconciliationWindowMs:{email:3600000}});
+    const authorization = await repository.approve({sourceGeneration:await sourceGeneration(binding),snapshot:approvalSnapshot!,senderLease,revisionDigest:'delivery-authority',operatorId:'operator',idempotencyKey:'delivery-authority',candidates:[{contactId,contactIdentityKey:'identity-delivery',channels:{email:{destination:'buyer@example.test',consents:[{destination:'buyer@example.test',brandOrLegalSender:'Mango Store',category:'newsletter',jurisdiction:'AU'}]}}}],now:new Date(),reconciliationWindowMs:{email:3600000}});
     expect(authorization.kind).toBe('approved');
     // Keep the original recipient row for the exact-handoff/replay assertions.
     await binding.prepare("DELETE FROM recipient_steps WHERE id<>'recipient-delivery' AND campaign_id='campaign-delivery'").run();
@@ -281,7 +305,7 @@ contract('SEND-001', 'persists the exact hand-off before importing replay-safe p
       async capabilities() {
         return {
           configured: true, canSendMarketing: true, effectiveDeduplication: true, effectiveReconciliation: true,
-          deduplicationWindowMs: 7_200_000, reconciliationWindowMs: 3_600_000, detail: 'ready', provider: 'test-provider',
+          deduplicationWindowMs: 10_800_000, reconciliationWindowMs: 10_800_000, detail: 'ready', provider: 'test-provider',
         };
       },
       inspectSender: sender => evidence.inspect(sender),
@@ -300,6 +324,10 @@ contract('SEND-001', 'persists the exact hand-off before importing replay-safe p
           publicBaseUrl: new URL('https://mango.example.test'),
           providerReconciliationIntervalMinutes: 5,
           emailHandoffsPerMinute: 100,
+          unresolvedProviderOutcomeHours:1,
+          deliverabilityReportingWindowDays:30,
+          mailProviderApiKey:'synthetic-delivery-key',
+          contactHashSalt:'synthetic-delivery-contact-salt',
           smsHandoffsPerMinute: 20,
           // Use the same configured identity that supplied the sender evidence.
           mailSender: evidence.config.mailSender,
@@ -319,7 +347,7 @@ contract('SEND-001', 'persists the exact hand-off before importing replay-safe p
       audience: {
         async recheckHandoffEligibility(input: { now: Date }) {
           eligibilityChecks.push(input.now);
-          return { eligible: true as const, contact: { contactId: 'contact-delivery', destination: 'buyer@example.test', personalisation: { first_name: 'Ari' } } };
+          return { eligible: true as const, sourceGeneration:await sourceGeneration(binding), contact: { contactId, destination: 'buyer@example.test', personalisation: { first_name: 'Ari' } } };
         },
         async issueMarketingUnsubscribe(input: { expiresAt: Date }) {
           unsubscribeExpiries.push(input.expiresAt);

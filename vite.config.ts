@@ -29,7 +29,11 @@ export default defineConfig(({command, isPreview}) => {
  }), docsSite(), tanstackStart({prerender: {enabled: false, autoStaticPathsDiscovery: false, crawlLinks: false}}), react(), tailwindcss(), excludeLocalVariables(), archiveOutputGuard()],
  ...(process.env.MANGO_PREVIEW_OUT ? {environments: {client: {build: {outDir: `${process.env.MANGO_PREVIEW_OUT}/client`}}, ssr: {build: {outDir: `${process.env.MANGO_PREVIEW_OUT}/server`}}}} : {}),
  resolve: {alias: {'@': fileURLToPath(new URL('./src', import.meta.url))}},
- server: {host: '127.0.0.1', port: 15660, strictPort: true, allowedHosts: true, fs: {
+ server: {host: '127.0.0.1', port: 15660, strictPort: true, allowedHosts: true,
+  // Fresh isolated fixtures observe current file stats, not delayed native
+  // watcher events from checkout creation. Actual source edits still reload.
+  ...(runtime === 'authoring' ? {watch: {usePolling: true}} : {}),
+  fs: {
   allow: ['src', 'public', 'node_modules', ...fixtureSources],
   // An explicit deny list replaces Vite's defaults; retain its sensitive-file
   // patterns as well as the checkout's private state and exports.

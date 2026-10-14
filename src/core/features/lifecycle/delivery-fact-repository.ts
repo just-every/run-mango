@@ -1,131 +1,18 @@
+import {outageRepository} from './provider-outages';
+import {marketingOccurrenceSql} from './marketing-history';
 import { recordExternalCost } from '@/core/features/insights/cost-recording';
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
 
-import type { CampaignRevisionSnapshot, Channel, FrozenCandidate, ProviderFact } from './types';
+import type { Channel, ProviderFact } from './types';
 
 type Row = Record<string, unknown>;
-
-function timestamp(value: unknown) {
-  return new Date(Number(value));
-}
-
-function bool(value: unknown) {
-  return Number(value) === 1;
-}
-
-function revisionFromRow(row: Row) {
-  return {
-    id: String(row.id),
-    campaignId: String(row.campaign_id),
-    state: String(row.state),
-    version: Number(row.version),
-    name: String(row.name),
-    audienceRule: String(row.audience_rule),
-    inclusionRuleJson: String(row.inclusion_rule_json),
-    exclusionRulesJson: String(row.exclusion_rules_json),
-    sourceTypesJson: String(row.source_types_json),
-    emailSubject: String(row.email_subject),
-    emailBody: String(row.email_body),
-    emailText: String(row.email_text),
-    preheader: String(row.preheader),
-    smsBody: String(row.sms_body),
-    senderName: String(row.sender_name),
-    fromEmail: String(row.from_email),
-    replyToEmail: String(row.reply_to_email),
-    smsSender: String(row.sms_sender),
-    physicalAddress: String(row.physical_address),
-    messageCategory: String(row.message_category),
-    trackingEnabled: bool(row.tracking_enabled),
-    updatedAt: timestamp(row.updated_at),
-  };
-}
-
-function recipientFromRow(row: Row) {
-  return {
-    id: String(row.id),
-    campaignId: String(row.campaign_id),
-    revisionId: String(row.revision_id),
-    stepId: String(row.step_id),
-    contactId: String(row.contact_id),
-    contactIdentityKey: String(row.contact_identity_key),
-    channel: String(row.channel) as Channel,
-    destination: String(row.destination),
-    idempotencyKey: String(row.idempotency_key),
-    transportDisposition: String(row.transport_disposition),
-    provider: row.provider == null ? undefined : String(row.provider),
-    providerMessageId: row.provider_message_id == null ? undefined : String(row.provider_message_id),
-    attemptCount: Number(row.attempt_count),
-    sendByAt: timestamp(row.send_by_at),
-    reconcileUntil: row.reconcile_until == null ? undefined : timestamp(row.reconcile_until),
-    reconcileCursor: row.reconcile_cursor == null ? undefined : String(row.reconcile_cursor),
-    handoffStartedAt: row.handoff_started_at == null ? undefined : timestamp(row.handoff_started_at),
-    outboundRequestJson: row.outbound_request_json == null ? undefined : String(row.outbound_request_json),
-    leaseToken: row.lease_token == null ? undefined : String(row.lease_token),
-  };
-}
-
-export type ApprovalCheck = {
-  kind: string;
-  status: 'passed' | 'blocked' | 'advisory';
-  detail: string;
-  blocking: boolean;
-};
 
 export function createDeliveryFactRepository(database: Database) {
   const client = database.$client;
 
   return {
-    async recordProviderFailure(adapter: string, channel: Channel, detail: string, now: Date) {
-      const existing = await client.prepare(
-        `SELECT * FROM provider_outages WHERE adapter = ? AND channel = ? AND state IN ('observing', 'paused')
-         ORDER BY first_failure_at DESC LIMIT 1`,
-      ).bind(adapter, channel).first<Row>();
-      if (!existing) {
-        await client.prepare(
-          `INSERT INTO provider_outages
-           (id, adapter, channel, state, first_failure_at, last_error, created_at, updated_at)
-           VALUES (?, ?, ?, 'observing', ?, ?, ?, ?)`,
-        ).bind(ulid(now.getTime()), adapter, channel, now.getTime(), detail, now.getTime(), now.getTime()).run();
-        return { paused: false };
-      }
-      const shouldPause = String(existing.state) === 'paused' || now.getTime() - Number(existing.first_failure_at) >= 5 * 60_000;
-      await client.prepare(
-        `UPDATE provider_outages SET state = ?, paused_at = CASE WHEN ? THEN COALESCE(paused_at, ?) ELSE paused_at END,
-           last_error = ?, updated_at = ? WHERE id = ?`,
-      ).bind(shouldPause ? 'paused' : 'observing', shouldPause ? 1 : 0, now.getTime(), detail, now.getTime(), String(existing.id)).run();
-      if (shouldPause) {
-        await client.prepare(
-          `UPDATE campaigns SET state = 'paused', updated_at = ? WHERE state = 'dispatching' AND EXISTS (
-             SELECT 1 FROM recipient_steps r WHERE r.campaign_id = campaigns.id AND r.channel = ?
-               AND r.transport_disposition IN ('queued', 'handoff-unknown', 'accepted', 'handed-off')
-           )`,
-        ).bind(now.getTime(), channel).run();
-      }
-      return { paused: shouldPause };
-    },
-
-    async channelOutage(adapter: string, channel: Channel) {
-      const outage = await client.prepare(
-        `SELECT * FROM provider_outages WHERE adapter = ? AND channel = ? AND state = 'paused' LIMIT 1`,
-      ).bind(adapter, channel).first<Row>();
-      return outage ? { id: String(outage.id), detail: String(outage.last_error) } : undefined;
-    },
-
-    async recoverProvider(adapter: string, channel: Channel, now: Date) {
-      await client.batch([
-        client.prepare(
-          `UPDATE provider_outages SET state = 'recovered', recovered_at = ?, updated_at = ?
-           WHERE adapter = ? AND channel = ? AND state IN ('observing', 'paused')`,
-        ).bind(now.getTime(), now.getTime(), adapter, channel),
-        client.prepare(
-          `UPDATE campaigns SET state = 'dispatching', updated_at = ? WHERE state = 'paused' AND EXISTS (
-             SELECT 1 FROM recipient_steps r WHERE r.campaign_id = campaigns.id AND r.channel = ?
-               AND r.transport_disposition IN ('queued', 'handoff-unknown', 'accepted', 'handed-off')
-           )`,
-        ).bind(now.getTime(), channel),
-      ]);
-    },
+    ...outageRepository(database),
 
     findRecipientByProviderMessage(providerMessageId: string, provider: string, channel: Channel) {
       return client.prepare('SELECT * FROM recipient_steps WHERE provider_message_id = ? AND provider = ? AND channel = ?').bind(providerMessageId, provider, channel).first<Row>();
@@ -137,13 +24,13 @@ export function createDeliveryFactRepository(database: Database) {
 
     async bindProviderMessage(recipientStepId: string, providerMessageId: string, provider: string, now: Date) {
       await client.prepare(
-        `UPDATE recipient_steps SET provider_message_id = COALESCE(provider_message_id, ?), provider = COALESCE(provider, ?), updated_at = ?
+        `UPDATE recipient_steps SET reconcile_cursor=CASE WHEN provider_message_id IS NULL THEN NULL ELSE reconcile_cursor END, provider_message_id = COALESCE(provider_message_id, ?), provider = COALESCE(provider, ?), updated_at = ?
          WHERE id = ?`,
       ).bind(providerMessageId, provider, now.getTime(), recipientStepId).run();
     },
 
-    async recordProviderInboxFact(provider: string, fact: ProviderFact, now: Date) {
-      await client.prepare(
+    async recordProviderInboxFact(provider: string, fact: ProviderFact, now: Date,channel:Channel=provider==='mobile-message'?'sms':'email') {
+      const insert=client.prepare(
         `INSERT INTO provider_fact_inbox
          (identity_key, provider, provider_message_id, mango_reference, kind, provider_occurred_at, payload_digest, detail_json, created_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT(identity_key) DO NOTHING`,
@@ -151,7 +38,8 @@ export function createDeliveryFactRepository(database: Database) {
         fact.identity, provider, fact.providerMessageId ?? null,
         typeof fact.detail.mangoReference === 'string' ? fact.detail.mangoReference : null,
         fact.kind, fact.occurredAt.getTime(), fact.payloadDigest, JSON.stringify(fact.detail), now.getTime(),
-      ).run();
+      );
+      await insert.run();
       const stored = await client.prepare('SELECT provider, provider_message_id, kind, provider_occurred_at, payload_digest, detail_json FROM provider_fact_inbox WHERE identity_key = ?').bind(fact.identity).first<Record<string, unknown>>();
       if (!stored || stored.provider !== provider || stored.provider_message_id !== (fact.providerMessageId ?? null)
         || stored.kind !== fact.kind || stored.provider_occurred_at !== fact.occurredAt.getTime() || stored.payload_digest !== fact.payloadDigest) throw new Error('Provider event identity was reused for different evidence.');
@@ -162,9 +50,9 @@ export function createDeliveryFactRepository(database: Database) {
 
     async lastMarketingAt(contactId: string, channel: Channel) {
       const row = await client.prepare(
-        `SELECT MAX(handed_off_at) handed_off_at FROM recipient_steps WHERE contact_id = ? AND channel = ? AND handed_off_at IS NOT NULL`,
-      ).bind(contactId, channel).first<{ handed_off_at: number | null }>();
-      return row?.handed_off_at == null ? undefined : new Date(row.handed_off_at);
+        `SELECT MAX(${marketingOccurrenceSql}) occurred_at FROM recipient_steps WHERE contact_id = ? AND channel = ?`,
+      ).bind(contactId, channel).first<{ occurred_at: number | null }>();
+      return row?.occurred_at == null ? undefined : new Date(row.occurred_at);
     },
 
     async pauseChannel(input: {
@@ -208,13 +96,13 @@ export function createDeliveryFactRepository(database: Database) {
            COUNT(DISTINCT CASE WHEN f.kind = 'delivered' THEN f.recipient_step_id END) delivered,
            COUNT(DISTINCT CASE WHEN f.kind = 'complained' THEN f.recipient_step_id END) complained,
            COUNT(DISTINCT CASE WHEN f.kind = 'bounced' AND json_extract(f.detail_json, '$.hard') = 1 THEN f.recipient_step_id END) hard_bounced,
-           COUNT(DISTINCT CASE WHEN r.handed_off_at IS NOT NULL THEN r.id END) attempted,
+           COUNT(DISTINCT CASE WHEN r.first_attempt_at >= ? THEN r.id END) attempted,
            COUNT(DISTINCT CASE WHEN r.transport_disposition = 'failed' THEN r.id END) failed
          FROM recipient_steps r
          JOIN campaign_revisions v ON v.id = r.revision_id
          LEFT JOIN delivery_facts f ON f.recipient_step_id = r.id AND f.provider_occurred_at >= ?
-         WHERE r.channel = ? AND (CASE WHEN ? = 'email' THEN v.from_email ELSE v.sms_sender END) = ?`,
-      ).bind(since.getTime(), channel, channel, sender).first<Row>();
+         WHERE r.channel = ? AND (CASE WHEN ? = 'email' THEN lower(substr(v.from_email,instr(v.from_email,'@')+1)) ELSE v.sms_sender END) = ?`,
+      ).bind(since.getTime(),since.getTime(), channel, channel, channel==='email'?sender.toLowerCase().split('@').at(-1):sender).first<Row>();
       const delivered = Number(row?.delivered ?? 0);
       const complained = Number(row?.complained ?? 0);
       const hardBounced = Number(row?.hard_bounced ?? 0);
@@ -225,8 +113,8 @@ export function createDeliveryFactRepository(database: Database) {
         hardBounced,
         attempted,
         failed: Number(row?.failed ?? 0),
-        complaintRate: delivered ? complained / delivered : 0,
-        hardBounceRate: attempted ? hardBounced / attempted : 0,
+        complaintRate: delivered ? complained / delivered : null,
+        hardBounceRate: attempted ? hardBounced / attempted : null,
       };
     },
 
@@ -286,7 +174,7 @@ export function createDeliveryFactRepository(database: Database) {
       };
       const update = columns[fact.kind];
       if (!update) { await enrichCost(); return true; }
-      const latestTransportAt = `MAX(COALESCE(provider_accepted_at, 0), COALESCE(delivered_at, 0), COALESCE(bounced_at, 0))`;
+      const latestTransportAt = `(SELECT COALESCE(MAX(provider_occurred_at),0) FROM delivery_facts tf WHERE tf.recipient_step_id=recipient_steps.id AND tf.kind IN ('delivered','bounced','failed'))`;
       await client.prepare(
         `UPDATE recipient_steps SET
            ${update.timestamp} = CASE WHEN ${update.timestamp} IS NULL OR ${update.timestamp} < ? THEN ? ELSE ${update.timestamp} END,
@@ -336,7 +224,7 @@ export function createDeliveryFactRepository(database: Database) {
     async completeCampaigns(now: Date) {
       return client.prepare(
         `UPDATE campaigns SET state = 'completed', updated_at = ?
-         WHERE state IN ('scheduled', 'dispatching')
+         WHERE state IN ('scheduled', 'dispatching', 'paused')
            AND EXISTS (SELECT 1 FROM recipient_steps r WHERE r.campaign_id = campaigns.id)
            AND NOT EXISTS (
              SELECT 1 FROM recipient_steps r WHERE r.campaign_id = campaigns.id

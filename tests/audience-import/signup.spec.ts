@@ -54,3 +54,109 @@ test('CONT-003 a stale or missing rendered disclosure cannot capture changed sen
   expect(h.f.outbound).toHaveLength(0);expect(await h.f.db.prepare('SELECT count(*) AS count FROM consent_evidence').first()).toEqual({count:0});
  }finally{await h.close();}
 });
+test('CONT-007/009 signed SMS signup confirms once; linked STOP is durable and HELP/START cannot subscribe or duplicate replies',async()=>{
+ const h=await native();const {smsEdge}=await import('./sms-edge');const edge=smsEdge(h);
+ try{
+  const {createSmsSignupRoutes,smsSignupDescription}=await import('../../src/core/features/sms/signup');
+  const {createSmsInboundRoutes}=await import('../../src/core/features/sms/inbound');
+  const {createAudiencePublicRoutes}=await import('../../src/core/features/audience/public-routes');
+  const {deliverSmsService,resumeSmsServices}=await import('../../src/core/features/sms/service-delivery');
+  const signup=createSmsSignupRoutes(h.f.platform,h.f.services.audienceService),inbound=createSmsInboundRoutes(h.f.platform),publicRoutes=createAudiencePublicRoutes(h.f.services.audienceService);
+  const request=()=>signup.request('https://mango.example.test/subscribe/sms',{method:'POST',headers:{'Content-Type':'application/json','CF-Connecting-IP':'192.0.2.88'},body:JSON.stringify({phone:'+61411111111',consent:true,timeZone:'Australia/Brisbane',disclosure:smsSignupDescription(h.f.platform)!.disclosure})});
+  expect((await request()).status).toBe(202);
+  const {smsWindow}=await import('../../src/core/features/sms/policy');
+  let allowed=new Date();while(![0,60000,120000].every(offset=>smsWindow(edge.policy,new Date(allowed.getTime()+offset),'Australia/Brisbane','recipient-supplied-signup',Date.now()).allowed))allowed=new Date(allowed.getTime()+60000);
+  const drain=()=>resumeSmsServices(h.f.platform,new Date(allowed.getTime()+60000));
+  const service=await h.f.db.prepare('SELECT id,state FROM sms_service_messages').first<{id:string;state:string}>();
+  expect(service).toBeTruthy();
+  if(service!.state==='queued'){
+   expect(edge.requests).toHaveLength(0);
+   await deliverSmsService(h.f.platform,service!.id,allowed);
+  }
+  expect(edge.requests).toHaveLength(1);const sent=edge.requests[0].messages[0];expect(sent.message).toContain('News');expect(sent.message).toContain('Weekly');const {smsComplianceBlock}=await import('../../src/core/features/sms/content');expect(sent.message.endsWith(smsComplianceBlock(edge.policy,'61400000010'))).toBe(true);
+  const confirmation=sent.message.match(/https:\/\/[^\s]+/)[0].replace(/\.$/,'');
+  expect((await publicRoutes.request(confirmation)).status).toBe(200);
+  expect(await h.f.db.prepare('SELECT sms_status,email_status FROM contacts').first()).toEqual({sms_status:'pending',email_status:'non-subscribed'});
+  const confirm=()=>publicRoutes.request(confirmation,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({confirm:true})});
+  expect((await confirm()).status).toBe(200);expect((await confirm()).status).toBe(410);
+  const payload={type:'inbound',to:'61400000010',sender:'61411111111',message:'STOP',received_at:new Date().toISOString().slice(0,19).replace('T',' '),original_message_id:'sms-1',original_custom_ref:sent.custom_ref};
+  expect((await inbound.request('https://mango.example.test/webhooks/sms/mobile-message',{...edge.signed(payload),headers:{'X-MM-Signature':'forged'}})).status).toBe(401);
+  expect((await inbound.request('https://mango.example.test/webhooks/sms/mobile-message',edge.signed({...payload,to:'61400000099'}))).status).toBe(400);
+  expect((await inbound.request('https://mango.example.test/webhooks/sms/mobile-message',edge.signed({...payload,message:'HELP',original_message_id:'other-recipient-message'}))).status).toBe(400);
+  const post=(value:Record<string,unknown>)=>inbound.request('https://mango.example.test/webhooks/sms/mobile-message',edge.signed(value));
+  payload.original_message_id='';payload.original_custom_ref='';
+  expect((await Promise.all([post(payload),post(payload)])).map(response=>response.status)).toEqual([204,204]);await drain();expect(await h.f.db.prepare('SELECT sms_status FROM contacts').first()).toEqual({sms_status:'unsubscribed'});
+  expect((await post(payload)).status).toBe(204);expect(edge.requests).toHaveLength(2);
+  expect(edge.requests[1].ignore_unsubscribes).toBe(true);
+  expect((await post({...payload,message:'HELP',original_message_id:'sms-1',original_custom_ref:sent.custom_ref})).status).toBe(204);await drain();expect(edge.requests.at(-1)!.messages[0].message).toContain('help@example.test');
+  expect((await post({...payload,message:'START',original_message_id:'sms-1',original_custom_ref:sent.custom_ref})).status).toBe(204);await drain();expect(edge.requests.at(-1)!.messages[0].message).toContain('/subscribe?channel=sms');
+  expect(await h.f.db.prepare('SELECT sms_status FROM contacts').first()).toEqual({sms_status:'unsubscribed'});
+  await deliverSmsService(h.f.platform,service!.id);expect(edge.requests).toHaveLength(4);
+  const unknown={...payload,sender:'61499999999'};
+  expect((await post(unknown)).status).toBe(204);expect((await post(unknown)).status).toBe(204);
+  expect(await h.f.db.prepare("SELECT count(*) AS n FROM contact_phones WHERE phone_e164='+61499999999'").first()).toEqual({n:0});
+  const importInput={files:[{name:'after-stop.csv',preset:'csv-non-subscribed' as const,csv:'phone,sms_status,sms_brand,sms_program,sms_category,sms_frequency,sms_jurisdiction,sms_consent_text,sms_consent_version,sms_capture_method,sms_capture_source,sms_occurred_at,sms_confirmed_at\n+61499999999,subscribed,Mango,News,newsletter,Weekly,AU,I agree,v1,signup,original-form,2026-01-01T00:00:00Z,2026-01-02T00:00:00Z'}]};
+  const reviewed=await h.service.preview(importInput,h.context);const imported=await h.service.create(reviewed.fingerprint,h.context);
+  const {finish}=await import('./native');await finish(h,imported.id);
+  expect(await h.f.db.prepare("SELECT channel_status FROM contact_phones WHERE phone_e164='+61499999999'").first()).toEqual({channel_status:'unsubscribed'});
+  expect(edge.requests).toHaveLength(4);
+
+ }finally{edge.restore();await h.close();}
+});
+test('CONT-009 SMS uncertainty, disabled ingress and service expiry never resend or disclose a challenge',async()=>{
+ const h=await native();const {smsEdge}=await import('./sms-edge');const edge=smsEdge(h);
+ try{
+  const {createSmsSignupRoutes,smsSignupDescription}=await import('../../src/core/features/sms/signup');
+  const {createSmsInboundRoutes}=await import('../../src/core/features/sms/inbound');
+  const {resumeSmsServices,deliverSmsService}=await import('../../src/core/features/sms/service-delivery');
+  const {smsWindow}=await import('../../src/core/features/sms/policy');
+  const signup=createSmsSignupRoutes(h.f.platform,h.f.services.audienceService);
+  const call=(phone:string,ip:string)=>signup.request('https://mango.example.test/subscribe/sms',{method:'POST',headers:{'Content-Type':'application/json','CF-Connecting-IP':ip},body:JSON.stringify({phone,consent:true,timeZone:'Australia/Brisbane',disclosure:smsSignupDescription(h.f.platform)!.disclosure})});
+  edge.loseResponse();const response=await call('+61411111111','192.0.2.90');expect([202,503]).toContain(response.status);
+  let now=new Date();while(!smsWindow(edge.policy,now,'Australia/Brisbane','signup',Date.now()).allowed)now=new Date(now.getTime()+60000);
+  const row=await h.f.db.prepare('SELECT id FROM sms_service_messages').first<{id:string}>();await deliverSmsService(h.f.platform,row!.id,now);
+  expect(edge.requests).toHaveLength(1);expect(await h.f.db.prepare('SELECT state,payload_ciphertext FROM sms_service_messages').first()).toEqual({state:'uncertain',payload_ciphertext:null});
+  await resumeSmsServices(h.f.platform,new Date(now.getTime()+86400000));await call('+61411111111','192.0.2.91');expect(edge.requests).toHaveLength(1);
+  const configured=h.f.platform.config.modules.sms;h.f.platform.config.modules.sms={enabled:false,requiredInputs:['SMS_PROGRAMME_POLICY'],missingInputs:['SMS_PROGRAMME_POLICY'],detail:'SMS_PROGRAMME_POLICY is required.'};
+  const inbound=createSmsInboundRoutes(h.f.platform);expect((await inbound.request('https://mango.example.test/webhooks/sms/mobile-message',{method:'POST',body:'{}'})).status).toBe(503);expect(await h.f.db.prepare('SELECT count(*) AS n FROM sms_inbound_receipts').first()).toEqual({n:0});
+  h.f.platform.config.modules.sms=configured;
+  edge.policy.providerWindows=[{days:[0,1,2,3,4,5,6],startMinute:0,endMinute:1}];
+  expect((await call('+61422222222','192.0.2.92')).status).toBe(202);
+  await h.f.db.prepare("UPDATE sms_service_messages SET expires_at=?,next_at=? WHERE state='queued'").bind(Date.now()-1,Date.now()+86400000).run();
+  await resumeSmsServices(h.f.platform);expect(edge.requests).toHaveLength(1);expect(await h.f.db.prepare("SELECT state,payload_ciphertext FROM sms_service_messages WHERE state='expired'").first()).toEqual({state:'expired',payload_ciphertext:null});
+  expect((await call('+61433333333','192.0.2.93')).status).toBe(202);
+  const drift=await h.f.db.prepare("SELECT id FROM sms_service_messages WHERE state='queued'").first<{id:string}>();
+  edge.policy.frequency='Monthly';await deliverSmsService(h.f.platform,drift!.id);
+  expect(await h.f.db.prepare('SELECT state,reason FROM sms_service_messages WHERE id=?').bind(drift!.id).first()).toEqual({state:'blocked',reason:'sms-programme-policy-changed'});
+  edge.policy.frequency='Weekly';edge.policy.providerWindows=[{days:[0,1,2,3,4,5,6],startMinute:0,endMinute:19*60}];
+  // The fixture provider closes before Mango's house window, so this proves its independent restriction.
+  const closing=Math.floor(Date.now()/86400000)*86400000+9*3600000;
+  edge.setClock(closing-1000);let reads=0,before=0,after=0;
+  edge.onSenderRead(()=>{if(++reads===2){before=Date.now();edge.setClock(closing);after=Date.now();}});
+  expect((await call('+61444444444','192.0.2.94')).status).toBe(202);
+  expect(before).toBeLessThan(closing);expect(after).toBeGreaterThanOrEqual(closing);expect(reads).toBe(2);
+  expect(edge.requests).toHaveLength(1);
+  expect(await h.f.db.prepare("SELECT state,reason FROM sms_service_messages WHERE state='queued'").first()).toEqual({state:'queued',reason:'sms-quiet-window'});
+
+ }finally{edge.restore();await h.close();}
+});
+
+test('CONT-009 email provider preflight deferral reports no handoff and releases only its durable claim',async()=>{
+ const h=await native();try{
+  const {createAppServices}=await import('../../src/core/app/app');
+  Object.assign(h.f.platform,h.f.originalProduction());h.f.services=createAppServices(h.f.platform);
+  const retryAt=Date.now()+60000;
+  await h.f.db.prepare('INSERT INTO provider_pacing(scope,next_at,updated_at) VALUES(?,?,?)').bind(`resend:${h.f.platform.config.deliveryPolicies!.resend!.account}`,retryAt,Date.now()).run();
+  const response=await client(h)({email:'deferred@example.test',consent:true});
+  expect(response.status).toBe(503);expect(response.headers.get('Retry-After')).toBeTruthy();
+  expect(await response.json(),JSON.stringify({pacing:(await h.f.db.prepare('SELECT scope,next_at FROM provider_pacing').all()).results,holds:(await h.f.db.prepare('SELECT provider,scope,reason FROM provider_holds WHERE held=1').all()).results})).toMatchObject({error:'confirmation_deferred',retryAt:new Date(retryAt).toISOString()});
+  expect(h.f.outbound).toHaveLength(0);
+  expect(await h.f.db.prepare('SELECT count(*) AS n FROM consent_handoff_claims').first()).toEqual({n:0});
+  expect(await h.f.db.prepare("SELECT kind FROM contact_history WHERE kind='confirmation-deferred'").first()).toEqual({kind:'confirmation-deferred'});
+  expect(await h.f.db.prepare('SELECT outcome FROM external_cost_facts').first()).toEqual({outcome:'not-sent'});
+  expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'pending'});
+  await h.f.db.prepare('DELETE FROM provider_pacing').run();
+  expect((await client(h)({email:'deferred@example.test',consent:true},'192.0.2.101')).status).toBe(503);
+  expect(h.f.outbound).toHaveLength(0); // the failed signup is never mislabeled queued or replayed
+ }finally{await h.close();}
+});

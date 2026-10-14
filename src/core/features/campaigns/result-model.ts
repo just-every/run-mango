@@ -5,6 +5,9 @@ export type StepResult = {
   state: 'Scheduled' | 'Sending' | 'Sent' | 'Cancelled' | 'Failed' | 'Missed' | 'Paused' | 'Completed';
   startedAt: string | null;
   completedAt: string | null;
+  estimatedCompletionAt?:string|null;
+  pauses?:Array<{reason:string;detail:string;resumedAt:string|null;nextProbeAt:string|null}>;
+  outageNotices?:Array<{state:string;count:number;code:string|null}>;
   counts: DispositionCount[];
   failures: Array<{ code: string; detail: string; count: number }>;
   stoppableCount: number;

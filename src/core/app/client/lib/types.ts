@@ -106,6 +106,7 @@ export type Check = {
 };
 
 export type CampaignDetail = {
+  smsPreview?: import('@/core/features/sms/review-preview').SmsReviewPreview;
   scheduler?: import('@/core/features/lifecycle/scheduler-observation').SchedulerObservation;
   results?: CampaignResults;
   uncertainDeliveries?: Array<{id:string;destination:string;providerMessageId:string|null;detail:string}>;
@@ -171,7 +172,7 @@ export type DecisionDesk = {
 
 export type Contact = {
   id: string;
-  email: string;
+  email: string | null;
   displayName: string;
   emailStatus: string;
   smsStatus: string;

@@ -1,16 +1,20 @@
+import {senderDomain} from '@/core/features/lifecycle/provider-holds';
+import {boundedSubmission} from './bounded-submission';
+import {reconcileResend} from './resend-reconciliation';
+import {boundPolicy} from '@/core/features/lifecycle/transport-policy';
+import type {DeliveryPolicy} from '@/core/shared/platform';
+import { probeProvider } from './provider-health';
 import { unavailableInspection, type SenderVerification } from '@/core/features/sender-verification/service';
 import {
   ProviderTransportError,
   type DeliveryRequest,
-  type ProviderFact,
   type SenderAdapter,
   type SenderCapabilities,
   type VerifiedWebhook,
 } from '@/core/shared/platform';
-import { parseVerifiedWebhook } from '@/core/features/lifecycle/webhook-facts';
 import { encodeProviderReference } from '@/core/shared/provider-reference';
 
-import { hmacSha256Base64Key, sha256, timingSafeEqual } from '@/core/platform/crypto';
+import { hmacSha256Base64Key, timingSafeEqual } from '@/core/platform/crypto';
 
 import { asRecord, responseJson, stringValue } from './http';
 
@@ -23,16 +27,6 @@ type ResendEmail = {
   last_event?: string;
 };
 
-function emailEventToFact(event: string): ProviderFact['kind'] | undefined {
-  if (event === 'sent' || event === 'queued') return 'accepted';
-  if (event === 'delivered') return 'delivered';
-  if (event === 'bounced') return 'bounced';
-  if (event === 'complained') return 'complained';
-  if (event === 'failed') return 'failed';
-  if (event === 'suppressed') return 'suppressed';
-  return undefined;
-}
-
 function resendHeaders(apiKey: string, extra: HeadersInit = {}): Headers {
   const headers = new Headers(extra);
   headers.set('Authorization', `Bearer ${apiKey}`);
@@ -40,7 +34,7 @@ function resendHeaders(apiKey: string, extra: HeadersInit = {}): Headers {
 }
 
 async function sendEmail(apiKey: string, request: DeliveryRequest): Promise<ResendEmail> {
-  const response = await fetch(`${resendBaseUrl}/emails`, {
+  const response = await boundedSubmission(`${resendBaseUrl}/emails`, {
     method: 'POST',
     headers: resendHeaders(apiKey, {
       'Content-Type': 'application/json',
@@ -61,8 +55,15 @@ async function sendEmail(apiKey: string, request: DeliveryRequest): Promise<Rese
     }),
   });
   if (!response.ok) {
-    await response.text();
+    const text=await response.text();
+    if(response.status>=500||[408,409,425].includes(response.status)) throw new Error('Resend handoff outcome is unknown.');
+    let code='',domainRejected=false;try{const error=JSON.parse(text);domainRejected=response.status===403&&error.name==='validation_error'&&typeof error.message==='string'&&(/domain is not verified\./.test(error.message)||error.message.startsWith('You can only send testing emails to your own email address')); if(['suspended_api_key','restricted_api_key','invalid_permission','validation_error','rate_limit_exceeded','daily_quota_exceeded','monthly_quota_exceeded'].includes(error.name))code=error.name;}catch{}
+    const retryHeader=response.headers.get('retry-after');
+    const retryAfterSeconds=retryHeader?(Number.isFinite(Number(retryHeader))?Number(retryHeader):Math.max(0,(Date.parse(retryHeader)-Date.now())/1000)):undefined;
     throw new ProviderTransportError({
+      retryAfterSeconds,
+      ...(domainRejected?{hold:{scope:`domain:${senderDomain(request.content.from?.email??request.sender)}`,reason:'domain-not-verified'}}:{}),
+      ...(['suspended_api_key','restricted_api_key','invalid_permission'].includes(code)?{hold:{scope:'account',reason:code}}:{}),
       outcome: 'known-not-accepted',
       permanent: response.status >= 400 && response.status < 500 && ![408, 409, 425, 429].includes(response.status),
       code: `resend_http_${response.status}`,
@@ -73,128 +74,29 @@ async function sendEmail(apiKey: string, request: DeliveryRequest): Promise<Rese
   return { id: stringValue(data.id, 'Resend did not return an email identifier.') };
 }
 
-function tagsContainRecipientStep(email: Record<string, unknown>, recipientStepId: string): boolean {
-  if (email.tags && typeof email.tags === 'object' && !Array.isArray(email.tags)) {
-    return (email.tags as Record<string, unknown>).mango_recipient_step === encodeProviderReference(recipientStepId);
-  }
-  const tags = Array.isArray(email.tags) ? email.tags : [];
-  return tags.some((tag) => {
-    if (!tag || typeof tag !== 'object' || Array.isArray(tag)) return false;
-    const value = tag as Record<string, unknown>;
-    return value.name === 'mango_recipient_step' && value.value === encodeProviderReference(recipientStepId);
-  });
-}
-
-async function retrieveEmail(apiKey: string, id: string): Promise<Record<string, unknown>> {
-  const response = await fetch(`${resendBaseUrl}/emails/${encodeURIComponent(id)}`, {
-    headers: resendHeaders(apiKey),
-  });
-  return asRecord(await responseJson(response), 'Resend returned an invalid sent-email record.');
-}
-
-async function acceptedFactFromEmail(email: Record<string, unknown>): Promise<ProviderFact> {
-  const id = stringValue(email.id, 'Resend sent-email record has no identifier.');
-  const timestamp = stringValue(email.created_at, 'Resend sent-email record has no created_at timestamp.');
-  const occurredAt = new Date(timestamp);
-  if (Number.isNaN(occurredAt.valueOf())) throw new Error('Resend sent-email record has an invalid created_at timestamp.');
-  const payloadDigest = await sha256(JSON.stringify(email));
-  return {
-    identity: `resend:${id}:accepted:${payloadDigest}`,
-    providerMessageId: id,
-    kind: 'accepted',
-    occurredAt,
-    payloadDigest,
-    detail: { event: 'accepted' },
-  };
-}
-
-async function retrieveWebhookEvent(apiKey: string, webhookId: string, eventId: string): Promise<Record<string, unknown>> {
-  const response = await fetch(
-    `${resendBaseUrl}/webhooks/${encodeURIComponent(webhookId)}/events/${encodeURIComponent(eventId)}`,
-    { headers: resendHeaders(apiKey) },
-  );
-  return asRecord(await responseJson(response), 'Resend returned an invalid webhook event.');
-}
-
-async function reconcileWebhookEvents(apiKey: string, webhookId: string, providerMessageId: string, cursor?: string) {
-  const query = new URLSearchParams({ limit: '100' });
-  if (cursor) query.set('after', cursor);
-  const response = await fetch(
-    `${resendBaseUrl}/webhooks/${encodeURIComponent(webhookId)}/events?${query}`,
-    { headers: resendHeaders(apiKey) },
-  );
-  const page = asRecord(await responseJson(response), 'Resend returned an invalid webhook-event page.');
-  const rows = Array.isArray(page.data)
-    ? page.data.map((row) => asRecord(row, 'Resend webhook-event page contains an invalid event.'))
-    : [];
-  const facts: ProviderFact[] = [];
-  for (const row of rows) {
-    const eventId = stringValue(row.id, 'Resend webhook-event page event has no identifier.');
-    const event = await retrieveWebhookEvent(apiKey, webhookId, eventId);
-    const data = asRecord(event.data, 'Resend webhook event has no data object.');
-    const emailId = typeof data.email_id === 'string' ? data.email_id : data.id;
-    if (emailId !== providerMessageId) continue;
-    const type = stringValue(event.type, 'Resend webhook event has no type.');
-    const kind = emailEventToFact(type.replace(/^email\./, ''));
-    if (!kind) continue;
-    const occurredAt = new Date(stringValue(event.created_at, 'Resend webhook event has no created_at timestamp.'));
-    if (Number.isNaN(occurredAt.valueOf())) throw new Error('Resend webhook event has an invalid created_at timestamp.');
-    facts.push(...await parseVerifiedWebhook('email', {
-      providerEventId: `resend-webhook:${webhookId}:${eventId}`,
-      rawBody: JSON.stringify(event),
-      receivedAt: occurredAt,
-    }));
-  }
-  if (page.has_more === true) {
-    const finalRow = rows.at(-1);
-    if (!finalRow) throw new Error('Resend reported another webhook-event page without a cursor event.');
-    return { facts, cursor: stringValue(finalRow.id, 'Resend webhook-event cursor is missing.'), exhausted: false };
-  }
-  return { facts, exhausted: true };
-}
-
-async function reconcileUnknownEmail(apiKey: string, request: DeliveryRequest, cursor?: string) {
-  const query = new URLSearchParams({ limit: '100' });
-  if (cursor) query.set('after', cursor);
-  const response = await fetch(`${resendBaseUrl}/emails?${query}`, { headers: resendHeaders(apiKey) });
-  const page = asRecord(await responseJson(response), 'Resend returned an invalid sent-email page.');
-  const rows = Array.isArray(page.data)
-    ? page.data.map((row) => asRecord(row, 'Resend sent-email page contains an invalid record.'))
-    : [];
-  for (const row of rows) {
-    const id = stringValue(row.id, 'Resend sent-email page record has no identifier.');
-    const email = await retrieveEmail(apiKey, id);
-    if (tagsContainRecipientStep(email, request.recipientStepId)) {
-      return { facts: [await acceptedFactFromEmail(email)], exhausted: true };
-    }
-  }
-  if (page.has_more === true) {
-    const finalRow = rows.at(-1);
-    if (!finalRow) throw new Error('Resend reported another sent-email page without a cursor record.');
-    return { facts: [], cursor: stringValue(finalRow.id, 'Resend sent-email page cursor is missing.'), exhausted: false };
-  }
-  return { facts: [], exhausted: true };
-}
-
 export function createResendAdapter(options: {
   apiKey: string;
   webhookSecret: string;
   webhookId: string;
   verification?: SenderVerification;
+  retentionPolicy?:DeliveryPolicy;
 }): SenderAdapter {
   return {
     channel: 'email',
 
+    probeHealth: signal => probeProvider('resend', options.apiKey, signal),
     async capabilities(): Promise<SenderCapabilities> {
+      const policy=await boundPolicy(options.retentionPolicy,options.apiKey);
+      const lookup=policy?.scopes?.includes('full_access')&&policy.webhookId===options.webhookId&&policy.lookupHistorySince&&Date.parse(policy.lookupHistorySince)<=Date.now()?policy.lookupWindowMs??0:0;
       return {
         configured: true,
         provider: 'resend',
         canSendMarketing: true,
         effectiveDeduplication: true,
-        effectiveReconciliation: true,
+        effectiveReconciliation: lookup > 0,
         deduplicationWindowMs: idempotencyWindowMs,
-        reconciliationWindowMs: idempotencyWindowMs,
-        detail: 'Resend retains POST /emails idempotency keys for 24 hours. Mango recovers a lost response by paging sent-email identifiers and retrieving each candidate to match the persisted opaque recipient-step tag; this scan is resumable and never re-sends.',
+        reconciliationWindowMs: lookup,
+        detail: 'Resend idempotency is 24 hours. Lookup requires separately configured account-bound retention and full_access evidence; standard account retention is 30 days, with Enterprise/custom retention requiring its own evidence.',
       };
     },
 
@@ -214,8 +116,7 @@ export function createResendAdapter(options: {
     },
 
     async reconcile(request, { providerMessageId, cursor }) {
-      if (!providerMessageId) return reconcileUnknownEmail(options.apiKey, request, cursor);
-      return reconcileWebhookEvents(options.apiKey, options.webhookId, providerMessageId, cursor);
+      return reconcileResend(options.apiKey,options.webhookId,request,{providerMessageId,cursor});
     },
 
     async verifyWebhook(request): Promise<VerifiedWebhook> {

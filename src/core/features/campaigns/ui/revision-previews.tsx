@@ -1,3 +1,4 @@
+import type {SmsReviewPreview} from '@/core/features/sms/review-preview';
 import { useEffect, useMemo, useState } from 'react';
 import { renderMessageContent } from '../message-content';
 import { inspectEmailHtml } from '../email-html-policy';
@@ -6,7 +7,7 @@ import type { Channel, Revision, RevisionLink } from '@/core/app/client/lib/type
 import { Paper } from '@/core/features/site/paper/Paper';
 
 /** `mediaOrigin` is the deployment's own origin, where its campaign images are served (CAMP-012). */
-export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannels }: { revision: Revision; links: RevisionLink[]; mediaOrigin?: string; selectedChannels?: readonly Channel[] }) {
+export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannels, smsPreview }: { revision: Revision; links: RevisionLink[]; mediaOrigin?: string; selectedChannels?: readonly Channel[]; smsPreview?:SmsReviewPreview }) {
   const [width, setWidth] = useState<'desktop' | 'mobile'>('desktop');
   const [loadImages, setLoadImages] = useState(false);
   const [preview, setPreview] = useState({html: '', imagesBlocked: 0});
@@ -44,7 +45,8 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
       {showSms ? <article className="message-preview message-preview--sms">
         <p className="eyebrow">SMS · saved revision</p>
         <p className="preview-sender">Sender {revision.smsSender}</p>
-        <p>{rendered.sms}</p>
+        {smsPreview?.examples.length?smsPreview.examples.map(example=><div key={example.destination}><p>{example.destination}</p><p className="preview-plain-text">{example.text}</p><strong>{example.segments} SMS segments · {example.encoding}</strong></div>):<p>{rendered.sms}</p>}
+        <small>{smsPreview?.detail??'Draft text only. Open review for recipient examples with managed disclosures, tracked links and segment counts.'}</small>
       </article>
       : showEmail ? <p className="muted-copy preview-sms-off">Text messages are disabled for this email-only campaign.</p> : null}
       {showEmail ? <article className="message-preview message-preview--plain">

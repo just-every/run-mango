@@ -1,3 +1,4 @@
+import { resumeSmsServices } from '@/core/features/sms/service-delivery';
 import {withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
 import { createProposalRepository } from '@/core/features/proposals/repository';
@@ -14,7 +15,7 @@ export * from './types';
 export * from './schema';
 export { createLifecycleRepository } from './repository';
 export { resolveLocalInstant } from './schedule';
-export { parseStructuredRules, productIdFromRules, inclusionRuleSchema, exclusionRuleSchema } from './rules';
+export { parseStructuredRules, productIdFromRules, productIdsFromRules, inclusionRuleSchema, exclusionRuleSchema } from './rules';
 export type { InclusionRule, ExclusionRule } from './rules';
 
 export function createLifecycleServices(runtime: LifecycleRuntime) {
@@ -82,6 +83,8 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
   const pending=await pendingErasure(runtime.platform.database.$client);if(pending){await continueErasure(runtime.platform,pending.reference);return 'blocked-erasure' as const;}
   return withErasureWriteFence(runtime.platform.database.$client,async()=>{
   const now = new Date();
+  await repository.expireDueRecipients(now);
+  await resumeSmsServices(runtime.platform);
   await createProposalRepository(runtime.platform.database).expireDue(now);
   if (runtime.platform.commerce) {
     const commerceCapabilities = runtime.platform.commerce.capabilities();
