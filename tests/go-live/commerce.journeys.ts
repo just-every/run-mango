@@ -7,7 +7,7 @@ import {approve,confirmedContact,dispatch,draftCampaign,installation,json,sender
 
 /** Business proof enters through signed provider ingress, authenticated authoring,
  * and production Cron/Queue. SQL below observes results only. */
-test('[RESULT-003][RESULT-005][AUD-003][AUD-006] actual tracked delivery attributes canonical paid store receipts and distinct refunds',async()=>{
+test('[RESULT-003][RESULT-005][AUD-003][AUD-006] actual tracked delivery attributes canonical paid store receipts and distinct refunds',async({page},info)=>{
   const store=storeEdge(),edge=await providerEdge({commerce:store.answer});
   let site:Installation|undefined;
   try {
@@ -99,6 +99,35 @@ test('[RESULT-003][RESULT-005][AUD-003][AUD-006] actual tracked delivery attribu
     const part=store.order('partial','buyer@example.test',new Date(),{amount:'20.00',received:'4.00',status:'PARTIALLY_PAID'});expect((await post(part)).status).toBe(204);
     const yen=store.order('yen','buyer@example.test',new Date(),{amount:'123',currency:'JPY'});expect((await post(yen)).status).toBe(204);
     expect((await report()).attribution.revenueByCurrency).toEqual([{currency:'JPY',orders:1,grossAmountMinor:123,reversedAmountMinor:0,amountMinor:123},{currency:'USD',orders:2,grossAmountMinor:1400,reversedAmountMinor:1000,amountMinor:400}]);
+    // Read the actual campaign results UI before later clock changes. Its
+    // amounts must match the signed receipts already verified above.
+    const commerce=(await report()).attribution;
+    await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
+    const displayedMoney=(minor:number,currency:string)=>{
+      const digits=new Intl.NumberFormat('en',{style:'currency',currency}).resolvedOptions().maximumFractionDigits!;
+      return `${currency} ${new Intl.NumberFormat('en',{minimumFractionDigits:digits,maximumFractionDigits:digits,useGrouping:false}).format(minor/10**digits)}`;
+    };
+    for(const [name,width] of [['desktop',1440],['mobile',390]] as const) {
+      await page.setViewportSize({width,height:900});
+      await page.goto(`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
+      const table=page.getByRole('table',{name:'Attributed store orders by currency',exact:true});
+      await expect(table).toBeVisible();
+      await expect(table.getByRole('row')).toHaveCount(commerce.revenueByCurrency.length+1);
+      for(const currency of commerce.revenueByCurrency) {
+        const row=table.getByRole('row').filter({has:page.getByRole('rowheader',{name:currency.currency,exact:true})});
+        await expect(row.getByRole('cell')).toHaveText([
+          String(currency.orders),displayedMoney(currency.grossAmountMinor,currency.currency),
+          displayedMoney(currency.reversedAmountMinor,currency.currency),displayedMoney(currency.amountMinor,currency.currency),
+        ]);
+      }
+      await table.scrollIntoViewIfNeeded();
+      const bounds=await table.boundingBox();
+      expect(bounds).not.toBeNull();
+      expect(bounds!.x).toBeGreaterThanOrEqual(0);
+      expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(width);
+      await page.screenshot({path:info.outputPath(`commerce-results-${name}.png`),fullPage:true});
+    }
+    await page.close();
     const old=store.order('before-click','buyer@example.test',new Date(Date.now()-86400000));old.updatedAt=new Date().toISOString();expect((await post(old)).status).toBe(204);expect((await report()).attribution.orders).toBe(3);
     const offDue=new Date(Date.now()+5000),off=await draftCampaign(site,cookie,'Original links',['untracked@example.test'],offDue);
     await json(await site.call(`/api/campaign-revisions/${off.revisionId}`,{method:'PATCH',cookie,body:{emailBody:`<p><a href="${destination.replaceAll('&','&amp;')}">Herbs</a></p>`,trackingEnabled:false}}),200);
