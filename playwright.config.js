@@ -1,9 +1,8 @@
 import { evidenceDirectory } from './tests/support/artifacts.mjs';
 import { defineConfig } from '@playwright/test';
 
-import { testPort } from './tests/support/free-port.mjs';
-const port = await testPort('PLAYWRIGHT_PORT');
-const baseURL = `http://127.0.0.1:${port}`;
+import { fixtureServer } from './tests/support/fixture-server.mjs';
+const { baseURL, webServer } = await fixtureServer();
 
 export default defineConfig({
   testDir: './tests',
@@ -20,12 +19,5 @@ export default defineConfig({
     baseURL,
     trace: 'off',
   },
-  webServer: {
-    command: 'exec node tests/support/start-fixture-runtime.mjs',
-    gracefulShutdown: { signal: 'SIGTERM', timeout: 15000 },
-    env: { MANGO_FIXTURE_PORT: String(port) },
-    url: `${baseURL}/health`,
-    reuseExistingServer: process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER === '1' && !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer,
 });

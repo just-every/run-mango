@@ -1,14 +1,16 @@
 import { test, expect } from '@playwright/test';
-import { authoringRuntime } from './browser-runtime.mjs';
+import { ensureLocalBootstrapToken } from '../support/bootstrap-token.mjs';
 import type { Check } from '../../src/core/app/client/lib/types';
 
-test('[MSG-007] an advisory records native actor/time without overriding approval or following changed findings', async ({page, request}, info) => {
-  const runtime = await authoringRuntime({suite: 'advisory-acknowledgement', fixtureWorker: 'tests/campaign-authoring/advisory-worker.ts'});
-  try {
-    const session = await request.post(`${runtime.url}/_authoring/open`, {headers: {'X-Test-Token': runtime.token}});
+test('[MSG-007] an advisory records native actor/time without overriding approval or following changed findings', async ({page, request, baseURL}, info) => {
+    if (!baseURL) throw new Error('Advisory journey requires the shared fixture server.');
+    const runtime = { url: baseURL, token: await ensureLocalBootstrapToken() };
+    const fixtureHeaders = {'X-Mango-Authoring-Fixture': runtime.token};
+    await page.context().setExtraHTTPHeaders(fixtureHeaders);
+    const session = await request.post(`${runtime.url}/_authoring/open`, {headers: {...fixtureHeaders, 'X-Test-Token': runtime.token}});
     expect(session.status()).toBe(200);
     await page.context().addCookies([{name: 'operator_session_local', value: (await session.json()).token, url: runtime.url}]);
-    const api = page.context().request, headers = {Origin: runtime.url};
+    const api = page.context().request, headers = {...fixtureHeaders, Origin: runtime.url};
     const created = await api.post(`${runtime.url}/api/campaigns`, {headers, data: {}});
     expect(created.status()).toBe(201);
     const {campaignId, revisionId} = await created.json();
@@ -23,7 +25,7 @@ test('[MSG-007] an advisory records native actor/time without overriding approva
       const response = await api.post(`${runtime.url}/api/campaigns/${campaignId}/checks`, {headers, data: {revisionId}});
       expect(response.status()).toBe(200);
     };
-    const checks = async (): Promise<Check[]> => (await (await api.get(`${runtime.url}/api/campaigns/${campaignId}/review`)).json()).checks;
+    const checks = async (): Promise<Check[]> => (await (await api.get(`${runtime.url}/api/campaigns/${campaignId}/review`, {headers})).json()).checks;
     const advisory = async () => (await checks()).find(check => check.status === 'advisory')!;
     const acknowledge = (check: Check, extra = {}, campaign = campaignId) => api.post(`${runtime.url}/api/campaigns/${campaign}/checks/${check.id}/acknowledge`, {
       headers, data: {revisionId, findingIdentity: check.findingIdentity ?? '0'.repeat(64), ...extra},
@@ -64,7 +66,7 @@ test('[MSG-007] an advisory records native actor/time without overriding approva
 
     await page.screenshot({path: info.outputPath('advisory-reload.png'), fullPage: true});
 
-    const second = await request.post(`${runtime.url}/_advisory/second-operator`, {headers: {'X-Test-Token': runtime.token}});
+    const second = await request.post(`${runtime.url}/_advisory/second-operator`, {headers: {...fixtureHeaders, 'X-Test-Token': runtime.token}});
     expect(second.status()).toBe(200);
     const repeated = await request.post(`${runtime.url}/api/campaigns/${campaignId}/checks/${original.id}/acknowledge`, {
       headers: {...headers, Cookie: `operator_session_local=${(await second.json()).token}`}, data: {revisionId, findingIdentity: original.findingIdentity},
@@ -105,5 +107,4 @@ test('[MSG-007] an advisory records native actor/time without overriding approva
     await refresh();
     expect((await checks()).some(check => check.status === 'advisory')).toBe(false);
     expect((await acknowledge(different)).status()).toBe(409);
-  } finally {await runtime.close();}
 });

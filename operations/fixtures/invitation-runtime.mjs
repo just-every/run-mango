@@ -38,7 +38,10 @@ export async function invitationRuntime({ contactHashSalt = secret } = {}) {
   try {
     const db = await mf.getD1Database('DB');
     for (const file of (await readdir('migrations/core')).filter(name => name.endsWith('.sql')).sort()) {
-      for (const sql of sqlStatements(await readFile(`migrations/core/${file}`, 'utf8'))) await db.prepare(sql).run();
+      // Preserve migration and statement order, but cross the D1 bridge once per
+      // migration instead of once per statement. These run on a fresh database.
+      const statements = sqlStatements(await readFile(`migrations/core/${file}`, 'utf8'));
+      if (statements.length) await db.batch(statements.map(sql => db.prepare(sql)));
     }
     await db.prepare('CREATE TABLE test_queue(id INTEGER PRIMARY KEY,body TEXT NOT NULL)').run();
     await db.prepare('CREATE TABLE test_mail(id INTEGER PRIMARY KEY,body TEXT NOT NULL)').run();
