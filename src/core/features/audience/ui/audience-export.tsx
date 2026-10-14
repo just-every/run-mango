@@ -22,8 +22,8 @@ export function AudienceExport() {
       setError('The contacts CSV could not be downloaded. Try again when the connection is available.');
     } finally { setBusy(false); }
   }
-  return <div>
+  return <div className={error ? 'audience-export audience-export--error' : 'audience-export'}>
     <button className="secondary-action" type="button" disabled={busy} onClick={() => void download()}>{busy ? 'Preparing CSV…' : 'Download contacts CSV'}</button>
-    {error ? <div className="notice-warning" role="alert"><p>{error}</p><a href="/docs/backup-and-export#export-and-restore-a-local-copy">Local backup and restore instructions</a></div> : null}
+    {error ? <div className="notice-warning audience-export__notice" role="alert"><p>{error}</p><a href="/docs/backup-and-export#export-and-restore-a-local-copy">Local backup and restore instructions</a></div> : null}
   </div>;
 }

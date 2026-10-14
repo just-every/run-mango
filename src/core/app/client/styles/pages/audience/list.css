@@ -1,6 +1,12 @@
 /* The audience list: the page head, the three count tiles (sheets, surfaces.css), the contact ledger and the
    eligibility note (the docs callout, notices.css). */
 
+/* A refused export can include a long local command. Keep its notice inside the page head and let the action row
+   align to the controls instead of stretching Import contacts to the notice height. */
+.audience-page .page-head__actions:has(.audience-export--error) { min-width: 0; max-width: 100%; align-items: flex-start; }
+.audience-page .audience-export--error { min-width: 0; max-width: 100%; }
+.audience-page .audience-export__notice { max-width: 100%; }
+
 /* Count tiles: each with a line icon for what it counts. */
 .summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); }
 .summary-grid__tile { position: relative; display: grid; gap: var(--sp-2); padding: var(--sp-5) 72px var(--sp-5) var(--sp-6); }
