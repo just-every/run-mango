@@ -13,6 +13,8 @@ test('[MSG-007] an advisory records native actor/time without overriding approva
     expect(created.status()).toBe(201);
     const {campaignId, revisionId} = await created.json();
     const subject = 'Orchard news: harvest dates, seasonal produce, garden updates and everything to plan for the coming month';
+    const scheduledAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const sendByAt = new Date(Date.parse(scheduledAt) + 24 * 60 * 60 * 1000).toISOString();
     const save = async (data: object) => {
       const response = await api.patch(`${runtime.url}/api/campaign-revisions/${revisionId}`, {headers, data});
       expect(response.status(), await response.text()).toBe(200);
@@ -26,7 +28,7 @@ test('[MSG-007] an advisory records native actor/time without overriding approva
     const acknowledge = (check: Check, extra = {}, campaign = campaignId) => api.post(`${runtime.url}/api/campaigns/${campaign}/checks/${check.id}/acknowledge`, {
       headers, data: {revisionId, findingIdentity: check.findingIdentity ?? '0'.repeat(64), ...extra},
     });
-    await save({name: 'Advisory review', emailSubject: subject, emailBody: '<p>Harvest news.</p>'});
+    await save({name: 'Advisory review', emailSubject: subject, emailBody: '<p>Harvest news.</p>', steps: [{channel: 'email', timezone: 'Australia/Brisbane', scheduledAt, sendByAt, whyThisTime: 'Operator selected this send time.'}]});
     await refresh();
     const original = await advisory();
     expect(original).toMatchObject({blocking: false, status: 'advisory', findingIdentity: expect.any(String)});
