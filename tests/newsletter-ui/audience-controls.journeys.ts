@@ -51,7 +51,7 @@ test('AUD-001 CONT-011 operator saves, copies, edits and deletes a segment and r
     const survivor=contacts.find((item:any)=>item.email===`${prefix}-keep@example.test`),merged=contacts.find((item:any)=>item.email===`${prefix}-duplicate@example.test`);
     await page.goto(`/app/audience/${merged.id}`);await expect(page.getByRole('button',{name:'Merge into another contact'})).toBeVisible();await expectDocumentToFit(page,width);
     await page.screenshot({path:join(folder,`merge-control-${width}.png`),fullPage:true});
-    await page.getByRole('button',{name:'Merge into another contact'}).click();await page.getByLabel('Survivor email address').fill(survivor.email);
+    await page.getByRole('button',{name:'Merge into another contact'}).click();await page.getByRole('searchbox',{name:/survivor/i}).fill(survivor.email);
     await page.getByRole('button',{name:new RegExp(survivor.email.replaceAll('.','\\.'))}).click();
     await expect(page.getByRole('alertdialog')).toContainText(/unsubscribed/i);await page.screenshot({path:join(folder,`merge-preview-${width}.png`)});
     await page.getByRole('button',{name:'Confirm merge',exact:true}).click();await expect(page).toHaveURL(new RegExp(`/app/audience/${survivor.id}$`));

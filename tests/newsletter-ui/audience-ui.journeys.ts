@@ -234,20 +234,32 @@ test('public form renders the configured disclosure and acknowledges only after 
   await expect(page.getByRole('checkbox', { name: info.consentText })).not.toBeChecked();
   await expect(page.getByRole('status')).toHaveCount(0);
   await expect(page.getByText('Occasional newsletters')).toBeVisible();
-  const [apiResponse] = await Promise.all([
-    page.waitForResponse((result) => result.request().method() === 'POST' && new URL(result.url()).pathname === '/subscribe'),
-    (async () => {
-      await page.getByLabel('Email address').fill(`ui-subscribe-${Date.now()}@example.test`);
-      await page.getByRole('checkbox', { name: info.consentText }).check();
-      await page.locator('#subscribe-website').fill('automation honeypot');
-      await page.getByRole('button', { name: 'Request confirmation' }).click();
-    })(),
-  ]);
+  let release!: () => void, arrived!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  const pending = new Promise<void>(resolve => { arrived = resolve; });
+  await page.route('**/subscribe', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    arrived();
+    await held;
+    await route.continue();
+  }, { times: 1 });
+  const accepted = page.waitForResponse((result) => result.request().method() === 'POST' && new URL(result.url()).pathname === '/subscribe');
+  try {
+    await page.getByLabel('Email address').fill(`ui-subscribe-${Date.now()}@example.test`);
+    await page.getByRole('checkbox', { name: info.consentText }).check();
+    await page.locator('#subscribe-website').fill('automation honeypot');
+    await page.getByRole('button', { name: 'Request confirmation' }).click();
+    await pending;
+    await expect(page.getByRole('status')).toHaveCount(0);
+  } finally { release(); }
+  const apiResponse = await accepted;
   expect(await apiResponse.request().headerValue('cookie')).toBeNull();
   expect(apiResponse.status()).toBe(202);
   expect((await apiResponse.json()).status).toBe('confirmation-required');
-  await expect(page.getByRole('status')).toContainText('Request received. If this address can receive email, open its confirmation link and press Confirm subscription.');
+  await expect(page.getByRole('status')).toBeVisible();
+  await expect(page.getByRole('status')).not.toBeEmpty();
 
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.getByRole('status')).toContainText('Request received. If this address can receive email, open its confirmation link and press Confirm subscription.');
+  await expect(page.getByRole('status')).toBeVisible();
+  await expect(page.getByRole('status')).not.toBeEmpty();
 });

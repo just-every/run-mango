@@ -156,6 +156,8 @@ export function AudienceImportSourceForm({
           <div className="audience-import-mappings">
             {columns.map((column) => {
               const preset = files.find((file) => file.name === column.name)?.preset;
+              const mapping = {...column.mapping, ...mappings[column.name]};
+              const destinationError = () => mapping.email || mapping.phone ? undefined : 'Map an email or E.164 phone column.';
               return (
                 <fieldset className="audience-import-mapping-file" key={column.name}>
                   <legend>{column.name}</legend>
@@ -166,7 +168,7 @@ export function AudienceImportSourceForm({
                       {fields.map((field) => (
                         <label key={field.id}>
                           <span>{fieldLabel(field)}</span>
-                          <Field name={`mapping.${column.name}.${field.id}`} label={`${fieldLabel(field)} in ${column.name}`}><select
+                          <Field name={`mapping.${column.name}.${field.id}`} label={`${fieldLabel(field)} in ${column.name}`} validate={field.id === 'email' || field.id === 'phone' ? destinationError : undefined}><select
                             aria-label={`${fieldLabel(field)} in ${column.name}`}
                             value={mappings[column.name]?.[field.id] ?? column.mapping[field.id] ?? ''}
                             onChange={(event) => onMappingChange(column.name, field.id, event.currentTarget.value)}

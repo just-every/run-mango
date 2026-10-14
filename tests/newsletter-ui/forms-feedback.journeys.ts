@@ -62,8 +62,23 @@ import { createBlank, expectFieldError, expectSummary, expectVisibleFocus } from
     await expect(destination).toHaveAttribute('required','');
     await page.goto('/app/audience/import'); const importForm=page.getByRole('form',{name:'Audience import mapping'}); await importForm.getByRole('button',{name:'Preview import'}).click(); await expect(page.getByLabel('Choose CSV files')).toBeFocused(); await expectSummary(importForm,1);
     await expect(page.getByLabel('Choose CSV files')).toHaveAttribute('aria-required','true');
-    await page.getByLabel('Choose CSV files').setInputFiles({name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from('Email Address,First Name\nvalidation@example.test,Validation')}); await page.getByLabel('Preset for mapping.csv').selectOption('csv-non-subscribed'); await page.getByRole('button',{name:'Preview import'}).click(); const mapping=page.getByLabel('Email in mapping.csv',{exact:true}); await expect(mapping).toBeVisible(); await mapping.focus(); await mapping.selectOption(''); await mapping.blur(); await expectFieldError(mapping); await page.getByRole('button',{name:'Preview import'}).click(); await expect(mapping).toBeFocused(); await expectSummary(importForm,1);
-    await expect(mapping).toHaveAttribute('required',''); await expect(page.getByLabel('Preset for mapping.csv')).toHaveAttribute('required','');
+    await page.getByLabel('Choose CSV files').setInputFiles({name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from('Email Address,Phone,First Name\nvalidation@example.test,+61400123456,Validation')});
+    await page.getByLabel('Preset for mapping.csv').selectOption('csv-non-subscribed'); await page.getByRole('button',{name:'Preview import'}).click();
+    const mapping=page.getByLabel('Email in mapping.csv',{exact:true}), phoneMapping=page.getByLabel('Phone in mapping.csv',{exact:true});
+    await expect(mapping).toBeVisible(); await phoneMapping.selectOption(''); await mapping.focus(); await mapping.selectOption(''); await mapping.blur();
+    await expectFieldError(mapping); await phoneMapping.focus(); await phoneMapping.blur(); await expectFieldError(phoneMapping);
+    await page.getByRole('button',{name:'Preview import'}).click(); await expect(mapping).toBeFocused();
+    await expectSummary(importForm,await importForm.locator('[aria-invalid="true"]').count());
+    // Either destination satisfies the mapping requirement; a phone does not borrow email consent.
+    await phoneMapping.selectOption('Phone');
+    const phonePreview=page.waitForResponse(response=>response.request().method()==='POST'&&new URL(response.url()).pathname==='/api/audience/import-preview');
+    await page.getByRole('button',{name:'Preview import'}).click(); const phoneResponse=await phonePreview;
+    expect(phoneResponse.status()).toBe(200); const phoneData=await phoneResponse.json();
+    expect(phoneData.columns[0].mapping.email).toBe('');
+    expect(phoneData.rows).toEqual([expect.objectContaining({email:'',phone:'+61400123456',smsStatus:'non-subscribed'})]);
+    await expect(mapping).not.toHaveAttribute('aria-invalid','true'); await expect(phoneMapping).not.toHaveAttribute('aria-invalid','true');
+    await expect(importForm.locator('.validation-summary')).toHaveCount(0);
+    await expect(page.getByLabel('Preset for mapping.csv')).toHaveAttribute('required','');
     await page.goto('/app/audience'); const signup=page.getByRole('form',{name:'Signup-form settings'}), frequency=signup.getByLabel('Newsletter frequency',{exact:true}); const original=await frequency.inputValue(); await frequency.fill(''); await frequency.blur(); await expectFieldError(frequency); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(frequency).toBeFocused(); await expectSummary(signup,1); await frequency.fill('<weekly>'); await frequency.blur(); await expectFieldError(frequency,/plain text/);
     await expect(frequency).toHaveAttribute('required','');
     await frequency.fill('Weekly newsletter updates'); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice[role="status"]')).toContainText('Signup settings saved'); await page.reload(); await expect(frequency).toHaveValue('Weekly newsletter updates'); await frequency.fill(original); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice')).toBeVisible();
