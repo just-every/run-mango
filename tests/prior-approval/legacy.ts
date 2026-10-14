@@ -60,3 +60,12 @@ export async function legacyApproval(f:ReturnType<typeof composeFixture>,suffix=
 export async function approvalBytes(db:D1Database) {
   return JSON.stringify((await db.prepare('SELECT * FROM campaign_approval_requests ORDER BY idempotency_key').all()).results);
 }
+
+/** Preserve every original serialized field while stating the migration's new
+ * authority facts: prior handoff start can bound an attempt, but the upgrade
+ * cannot invent an actual sender or the credential used by that handoff. */
+export function recipientBytesAfterAuthorityMigration(before:string) {
+  return JSON.stringify(JSON.parse(before).map((row:Record<string,unknown>)=>({...row,
+    first_attempt_at:row.handoff_started_at,actual_sender:null,provider_credential_digest:null,
+  })));
+}

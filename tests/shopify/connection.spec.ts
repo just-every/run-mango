@@ -269,5 +269,10 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     expect(await f.db.prepare('SELECT count(*) n FROM commerce_privacy_controls WHERE contact_id=?').bind(contact.contact_id).first()).toEqual({n:0});
     await f.db.prepare('UPDATE commerce_channels SET healthy_at=0').run();
     expect((await proxy(f,observation())).status).toBe(422);
-  }finally{try{await f.call('/test/erasure-race/release',{method:'POST'});}finally{await f.close();}}
+  }finally{
+    try {
+      const race=await (await f.call('/test/erasure-race/status')).json();
+      await test.info().attach('native-erasure-race-failures',{body:JSON.stringify(race,null,2),contentType:'application/json'});
+    }finally{try{await f.call('/test/erasure-race/release',{method:'POST'});}finally{await f.close();}}
+  }
 });

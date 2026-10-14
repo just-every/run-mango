@@ -7,6 +7,7 @@ import productionWorker from '../src/core/app/worker';
 import type { AppBindings } from '../src/core/shared/platform';
 
 function productionBindings(overrides: Partial<AppBindings> = {}): AppBindings {
+  const windows = [{days: [0, 1, 2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 20 * 60}];
   return {
     ASSETS: { fetch: () => Promise.resolve(new Response('asset fallback must not run')) },
     DB: {} as D1Database,
@@ -28,6 +29,14 @@ function productionBindings(overrides: Partial<AppBindings> = {}): AppBindings {
     SMS_PROVIDER_API_KEY: 'username:password',
     SMS_WEBHOOK_SECRET: 'sms-webhook-secret',
     SMS_CONFIRMATION_SENDER: '+61400000000',
+    SMS_PROGRAMME_POLICY: JSON.stringify({
+      brand: 'Mango', programme: 'Newsletter', category: 'newsletter', frequency: 'Weekly',
+      jurisdiction: 'AU', support: 'help@example.test', providerAlreadyReplies: false,
+      policySource: 'https://policy.example.test/production-entry-fixture',
+      policyVerifiedAt: new Date(Date.now() - 1000).toISOString(),
+      policyExpiresAt: new Date(Date.now() + 86400000).toISOString(),
+      providerWindows: windows, jurisdictionWindows: windows, recipientWindows: windows,
+    }),
     MANGO_PUBLIC_BASE_URL: 'https://operator.example.test',
     MANGO_APP_VERSION: 'test',
     MANGO_ALLOWED_LINK_HOSTS: 'shop.example.test',

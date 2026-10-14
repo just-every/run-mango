@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test';
-import {fixture,legacyApproval,approvalBytes,draft} from './fixture';
+import {fixture,legacyApproval,approvalBytes,draft,recipientBytesAfterAuthorityMigration} from './fixture';
 import {createApprovalService} from '../../src/core/features/lifecycle/approval';
 
 const input=(campaign:Awaited<ReturnType<typeof legacyApproval>>)=>({...campaign,idempotencyKey:`reapprove-${campaign.revisionId}`,operatorId:'current-operator'});
@@ -78,7 +78,7 @@ test('explicit reapproval and restart preserve accepted and uncertain provider t
       .bind(Date.now(),JSON.stringify({idempotencyKey:'historic-accepted-bytes'}),acceptedId).run();
     await f.db.prepare("UPDATE recipient_steps SET transport_disposition='handoff-unknown',provider='resend',attempt_count=1,handoff_started_at=?,outbound_request_json=? WHERE id=?")
       .bind(Date.now(),JSON.stringify({idempotencyKey:'historic-uncertain-bytes'}),unknownId).run();
-    const historic=JSON.stringify((await f.db.prepare("SELECT * FROM recipient_steps WHERE transport_disposition<>'queued' ORDER BY id").all()).results);
+    const historic=recipientBytesAfterAuthorityMigration(JSON.stringify((await f.db.prepare("SELECT * FROM recipient_steps WHERE transport_disposition<>'queued' ORDER BY id").all()).results));
     const bytes=await approvalBytes(f.db);await h.upgrade();await f.prove();
     expect((await f.lifecycle.approval.reapprove(input(pending))).kind).toBe('approved');
     f=await h.restart();

@@ -106,7 +106,8 @@ export function createCampaignService(
       const required=new Set<string>(detail.steps.map(step=>step.channel==='email'?'mail.sender.v1':'sms.sender.v1'));
       const rules=detail.revision&&parseStructuredRules(detail.revision.inclusionRuleJson,detail.revision.exclusionRulesJson);
       if(rules?.ok&&rules.sourceTypes.length)required.add('commerce.store.v1');
-      return { ...detail, smsPreview:detail.revision?await options.smsPreview?.(id,detail.revision.id):undefined, blockers: (await store.providerBlockers()).filter(blocker=>required.has(blocker.kind)) };
+      const checks=detail.checks.map(check=>authoringSourceCheck(check,rules?.ok?rules.sourceTypes:[]));
+      return { ...detail, checks, smsPreview:detail.revision?await options.smsPreview?.(id,detail.revision.id):undefined, blockers: (await store.providerBlockers()).filter(blocker=>required.has(blocker.kind)) };
     },
 
     updateDraft(id: string, composition: DraftComposition) {

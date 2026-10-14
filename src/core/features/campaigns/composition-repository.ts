@@ -108,7 +108,11 @@ export function createCampaignCompositionRepository(database: Database) {
   return {
     read,
     async editable(campaignId:string) {
-      const row=await database.$client.prepare("SELECT id FROM campaign_revisions WHERE campaign_id=? AND state='draft' ORDER BY version DESC LIMIT 1").bind(campaignId).first<{id:string}>();
+      // An active draft remains the editor's authority even if historical draft
+      // copies exist. Approved campaigns instead expose their latest replacement.
+      const row=await database.$client.prepare(`SELECT r.id FROM campaign_revisions r JOIN campaigns c ON c.id=r.campaign_id
+        WHERE r.campaign_id=? AND r.state='draft'
+        ORDER BY CASE WHEN r.id=c.active_revision_id THEN 0 ELSE 1 END,r.version DESC LIMIT 1`).bind(campaignId).first<{id:string}>();
       return row?read(row.id):undefined;
     },
     editSchedule:(campaignId:string,composition:DraftComposition,operatorId:string)=>editSchedule(database,campaignId,composition,operatorId),

@@ -2402,7 +2402,7 @@
       "executable": false
     },
     "src/core/features/campaigns/composition-repository.ts": {
-      "sha256": "c7e516b1d1b9d74836aad4f069bda06d959772501b683e6ec2e240447296f9b4",
+      "sha256": "d551ba4a47176ef380b055fe8d1f7d00c4940ceeb0663042d8aaa883825a8be9",
       "executable": false
     },
     "src/core/features/campaigns/create-draft.ts": {
@@ -2502,7 +2502,7 @@
       "executable": false
     },
     "src/core/features/campaigns/service.ts": {
-      "sha256": "d95d980c9472887f7116484c321cf34ff8d7e3dbb8cdb9dae8e3a1a38fcdc7ea",
+      "sha256": "ed3eb7ac87e8e049de37bedcd1eb5712ca69bc2b84bd6bc5cd2e2ecd3314b4be",
       "executable": false
     },
     "src/core/features/campaigns/signal-starters.ts": {
@@ -6050,7 +6050,7 @@
       "executable": false
     },
     "tests/prior-approval/fixture.ts": {
-      "sha256": "ccd3baedfbda7e361f1504cbb175408c5248f7284bc7b903c3398446a45d1dfc",
+      "sha256": "d3eed5dff0e99c5677943fec5e25a240d33dafb17a459ac8d9eeea14457be957",
       "executable": false
     },
     "tests/prior-approval/historical-draft.ts": {
@@ -6062,15 +6062,15 @@
       "executable": false
     },
     "tests/prior-approval/legacy.ts": {
-      "sha256": "60b434948f7a0899d8aca1662ca197fd852ef12dd4d69d1834dfa9a60e29ba24",
+      "sha256": "f4350e2eb6a57a94b1131425f2a0eb261b5d978cb970bc47fae7507b82793d15",
       "executable": false
     },
     "tests/prior-approval/prior-data.spec.ts": {
-      "sha256": "071b3e8f309b53baa85b2b58ff351463090930de54a531edce9cef940b247a09",
+      "sha256": "72359f6fb412f355120653b9b9d8e08ced72eb053612aa0d102e89dda7b55b4d",
       "executable": false
     },
     "tests/prior-approval/transactions.spec.ts": {
-      "sha256": "59b0cb8b6842190b35204ee24c4a60ba4a20d7a618aa6a11d062dc2bcc2fd9da",
+      "sha256": "d4afcc3f4cfb4a6db093ba479e074229ce682938e6f0a5ee5bbd115efe2578fa",
       "executable": false
     },
     "tests/prior-approval/worker-entry.ts": {
@@ -6082,7 +6082,7 @@
       "executable": false
     },
     "tests/production-entry.spec.ts": {
-      "sha256": "086476c44440d255a66ae2be5640f8f1ef731072c3730d6944ebe30d494041bd",
+      "sha256": "afc13b2cbf02659c2668e4b1bf102474b7e99810e13ed52755a3627d6fd87114",
       "executable": false
     },
     "tests/proposals-decision/browser-worker.ts": {
@@ -6242,11 +6242,11 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "f28653bd938c05bc81994e8e570907e100a861e890bb089f72dc5daaeb1e2e41",
+      "sha256": "60e9623c80688e777b7603b47de9a01b6d53c2e3b10a92948358e8d69705ceeb",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
-      "sha256": "36b67c45e53b9ecb31f6121f765b48bf39e193feeee880c6eda3314b8fa31a11",
+      "sha256": "00e27113e41d73af5649359e164a4921db16e9cd29e81c042f59c5309f3c90d5",
       "executable": false
     },
     "tests/shopify/fixtures.ts": {

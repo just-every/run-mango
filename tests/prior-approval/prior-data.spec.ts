@@ -1,5 +1,5 @@
 import {test, expect} from '@playwright/test';
-import {fixture, legacyApproval, approvalBytes, draft} from './fixture';
+import {fixture, legacyApproval, approvalBytes, draft, recipientBytesAfterAuthorityMigration} from './fixture';
 import {createDeliveryService} from '../../src/core/features/lifecycle/delivery';
 import {createApprovalService} from '../../src/core/features/lifecycle/approval';
 
@@ -40,7 +40,7 @@ test('explicit reapproval appends operator authority, preserves old approval and
   const h=await fixture();let f=h.current;
   try {
     const campaign=await legacyApproval(f), bytes=await approvalBytes(f.db);
-    const recipients=JSON.stringify((await f.db.prepare('SELECT * FROM recipient_steps').all()).results);
+    const recipients=recipientBytesAfterAuthorityMigration(JSON.stringify((await f.db.prepare('SELECT * FROM recipient_steps').all()).results));
     await h.upgrade();await f.prove();
     const input=reapprove(campaign);
     expect(await f.lifecycle.approval.reapprove(input)).toMatchObject({kind:'approved',idempotent:false,revisionDigest:campaign.revisionDigest});
