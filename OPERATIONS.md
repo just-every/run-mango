@@ -28,7 +28,7 @@ Receiver material must come from an authenticated original-message mailbox conne
 
 ## Deployment
 
-`pnpm exec rer deploy --environment production --dry-run` validates/builds locally without provider requests. The pinned rer 0.2.1 deploy command provisions the Worker; it does **not** admit the first owner. The following recipe supplies the actual deploy inputs and then explicitly claims that owner through Base's native bootstrap.
+`pnpm exec rer deploy --environment production --dry-run` validates/builds locally without provider requests. The installed, pinned rer deploy command provisions the Worker; it does **not** admit the first owner. The following recipe supplies the actual deploy inputs and then explicitly claims that owner through Base's native bootstrap.
 
 1. Create a private deployment input file once, from the repository root:
 
