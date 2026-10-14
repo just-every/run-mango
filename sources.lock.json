@@ -1618,7 +1618,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "185a4dca788c1f08ad28d455c2b9314dfd5046386e7f67fb74a4124d80c61690",
+      "sha256": "cfcbc6a4a17cf4150063e6e0a58b9b13aab6400ec3457a13a7b3a5305452244f",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -3042,7 +3042,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/approval.ts": {
-      "sha256": "3cf4f58a42d3da3316875f1ac4f86d70c92d13dbbfc2cfa4075e328e737cdd8c",
+      "sha256": "f6cc57a26e33b2516677cb9689b6ba92c9e54f3d662238afd258e3f0c595ce09",
       "executable": false
     },
     "src/core/features/lifecycle/campaign-repository.ts": {

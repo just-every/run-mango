@@ -192,11 +192,13 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       }
       let handoff: ProviderHandoff;
       try {handoff=await sender.send(request);} catch(error) {
-        await settleHandoffFailure(runtime.platform.database,sender,request,cost,error);
+        try { await settleHandoffFailure(runtime.platform.database,sender,request,cost,error); }
+        catch { /* The durable prepared fact retains uncertainty; preserve the transport error. */ }
         throw error;
       }
       await repository.recordTestSend(input.revisionId, input.operatorId, input.channel, destinationDigest, revisionDigest, now);
-      await settleHandoffCost(runtime.platform.database,sender,request,cost,handoff);
+      try { await settleHandoffCost(runtime.platform.database,sender,request,cost,handoff); }
+      catch { /* Keep the recorded test send and original receipt; its prepared cost remains unpriced. */ }
       return { kind: 'sent' as const, disposition: handoff.disposition, providerMessageId: handoff.providerMessageId };
     },
   };

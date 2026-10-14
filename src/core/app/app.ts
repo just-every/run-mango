@@ -136,10 +136,12 @@ function audienceDependencies(
         let result;
         try { result = await adapter.send(request); }
         catch (error) {
-          await settleHandoffFailure(platform.database, adapter, request, costContext, error);
+          try { await settleHandoffFailure(platform.database, adapter, request, costContext, error); }
+          catch { /* The durable prepared fact retains uncertainty; preserve the transport error. */ }
           throw error;
         }
-        await settleHandoffCost(platform.database, adapter, request, costContext, result);
+        try { await settleHandoffCost(platform.database, adapter, request, costContext, result); }
+        catch { /* The receipt controls confirmation; failed enrichment leaves its prepared cost unpriced. */ }
         if (input.channel === 'email' && result.disposition !== 'accepted') throw new Error('Confirmation delivery is uncertain; the attempt will not be repeated automatically.');
         return true;
       },
