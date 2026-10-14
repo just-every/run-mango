@@ -1,4 +1,5 @@
 import { incompletePredicates, ruleJson, exclusionJson } from './rule-fixtures';
+import { recordProposalClaims } from '../support/record-proposal-claims';
 import { expect } from '@playwright/test';
 import { contract } from '../contract.js';
 import { testIdentity } from '../support/test-identity';
@@ -99,6 +100,7 @@ contract('AUD-001][CAMP-002', 'adopted and generated proposals persist summaries
     await f.db.prepare(`INSERT INTO proposals (id,state,title,summary,evidence,audience_rule,source_data_as_of,send_by_at,inclusion_rule_json,exclusion_rules_json,created_at,updated_at)
       VALUES ('unlinked-audience','proposed','Title is not the audience','A reason','Evidence is not the audience','False prose',?,?,?,?,?,?)`)
       .bind(now,now+86400000,included('@example.test'),excluded,now,now).run();
+    await recordProposalClaims(f.db,'unlinked-audience',now);
     const first=await authoring.adopt('unlinked-audience','operator');
     expect(first.kind).toBe('draft');
     if(first.kind!=='draft')throw new Error('Expected draft');

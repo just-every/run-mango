@@ -74,7 +74,13 @@ contract('AUD-001][CAMP-002', 'Decision Desk and proposal detail project stored 
       for (const entry of [detail, desk.proposals.find(entry => entry.proposal.id === 'legacy-proposal')]) {
         expect(entry!.proposal.audienceRule).toBe(summarizeAudienceRules(rules?.included ?? '',rules?.excluded ?? '[]'));
         expect(entry!.proposal.inclusionRuleJson).toBe(rules?.included ?? '');
-        expect(entry!.proposal.exclusionRulesJson).toBe(rules?.excluded ?? '[]');
+        // Generated labels are now withheld; the exact exclusion conditions and
+        // immutable stored JSON remain the authority (checked below).
+        const shownExclusions=JSON.parse(entry!.proposal.exclusionRulesJson);
+        const storedExclusions=JSON.parse(rules?.excluded ?? '[]');
+        expect(shownExclusions.map(({reason,...condition}:any)=>condition)).toEqual(storedExclusions.map(({reason,...condition}:any)=>condition));
+        if(rules)expect(shownExclusions[0].reason).not.toBe(storedExclusions[0].reason);
+        expect(entry!.claimsUnavailable).toBeTruthy();
         expect(entry!.audience).toMatchObject({candidateCount:3,excludedCount:1,eligibleCount:2});
         expect(entry!.audienceChannelCounts).toEqual([expect.objectContaining({channel:'email',recipientStepCount:2})]);
         expect(entry!.exclusions).toEqual([expect.objectContaining({reason:'unsubscribed',count:1})]);

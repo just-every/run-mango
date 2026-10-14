@@ -9,6 +9,7 @@ import type { DraftComposition } from './draft-composition';
 import type { createCampaignRepository } from './repository';
 import { proposalReviewSnapshot } from './review-snapshot';
 import { authoringSourceCheck, authoringSourceStatus } from './authoring-source-status';
+import { persistedProposalClaims, projectExclusionClaims, unavailableProposalClaims } from './persisted-proposal-claims';
 
 export function createCampaignService(
   repository: ReturnType<typeof createCampaignRepository>,
@@ -49,10 +50,18 @@ export function createCampaignService(
       repository.listProposalExclusions(proposal.id), repository.listProposalSteps(proposal.id), repository.proposalAudience(proposal.id),repository.proposalEvidence(proposal.id),
       proposal.campaignId ? campaignDetail(proposal.campaignId) : undefined,
     ]);
-    const context=JSON.parse(proposal.decisionContextJson);
-    return {proposal:withDerivedAudience(proposal),exclusions,steps:steps.map((step,index)=>({...step,whyThisTime:context.timing?.[index]})),
+    const context=persistedProposalClaims(proposal,steps.length,evidence.evidenceItems);
+    const rules=parseStructuredRules(proposal.inclusionRuleJson,proposal.exclusionRulesJson);
+    const exclusionRulesJson=projectExclusionClaims(proposal.exclusionRulesJson,evidence.evidenceItems);
+    const projectedRules=parseStructuredRules(proposal.inclusionRuleJson,exclusionRulesJson);
+    const labels=new Map(rules.ok&&projectedRules.ok?rules.exclusions.map((rule,index)=>[rule.reason,projectedRules.exclusions[index].reason]):[]);
+    const {decisionContextJson:_,...displayProposal}=proposal;
+    return {proposal:withDerivedAudience({...displayProposal,summary:context?proposal.summary:'',evidence:'',exclusionRulesJson}),
+      claimsUnavailable:context?undefined:unavailableProposalClaims,
+      exclusions:exclusions.map(exclusion=>({...exclusion,reason:labels.get(exclusion.reason)??exclusion.reason})),
+      steps:steps.map((step,index)=>({...step,whyThisTime:context?.timing[index]})),
       ...proposalReviewSnapshot(steps,audience.audience,audience.audienceChannelCounts),...evidence,
-      explanation:context.explanation,forecast:context.forecast??{status:'insufficient',method:'Insufficient deployment attribution history; no forecast was computed.'},
+      explanation:context?.explanation,forecast:context?.forecast??{status:'unavailable',method:'No verified forecast is available for this saved proposal.'},
       composition:composition?{revision:composition.revision,links:composition.links}:undefined};
   }
   return {

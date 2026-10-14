@@ -27,7 +27,7 @@ export function ProposalQueue({
               onClick={() => onSelect(entry.proposal.id)}
             >
               <span>#{index+1} {entry.proposal.title}</span>
-              <small>{entry.forecast?.status==='available'?`${entry.forecast.currency} ${((entry.forecast.valueMinor??0)/100).toFixed(2)} expected`:'Insufficient attribution history'}</small>
+              <small>{entry.claimsUnavailable?'Generated explanation unavailable':entry.forecast?.status==='available'?`${entry.forecast.currency} ${((entry.forecast.valueMinor??0)/100).toFixed(2)} expected`:'Insufficient attribution history'}</small>
             </button>
           );
         })}

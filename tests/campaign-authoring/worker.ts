@@ -1,4 +1,5 @@
 import { testIdentity } from '../support/test-identity';
+import { recordProposalClaims } from '../support/record-proposal-claims';
 // Isolated authoring test entry. Actual API, D1, native sessions and SSR; sends disabled.
 import { createFixturePlatform } from '../support/local-platform';
 import { createApp, createAppServices } from '../../src/core/app/app';
@@ -50,6 +51,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
     if(path==='/_authoring/proposal') {
       const id=crypto.randomUUID(),now=Date.now(),rules=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'}]});
       await bindings.DB.prepare("INSERT INTO proposals (id,state,title,summary,evidence,audience_rule,source_data_as_of,send_by_at,inclusion_rule_json,exclusion_rules_json,created_at,updated_at) VALUES (?, 'proposed', 'Recorded suggestion', 'A recorded suggestion', 'Test source evidence', 'Subscribed email contacts', ?, ?, ?, '[]', ?, ?)").bind(id,now,now+86400000,rules,now,now).run();
+      await recordProposalClaims(bindings.DB,id,now);
       return Response.json({id});
     }
     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});

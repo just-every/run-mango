@@ -7,6 +7,7 @@ import { messageRendererVersion, renderMessageContent, invalidPersonalisation } 
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { digestJson, sha256 } from './digest';
 import { evaluateApproval } from './evaluate-approval';
+import { campaignClaimProjection } from '@/core/features/campaigns/campaign-claim-projection';
 import type { LifecycleRepository } from './repository';
 import type { Channel, FrozenCandidate, LifecycleRuntime } from './types';
 
@@ -24,9 +25,10 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       const candidateCount = audience.status === 'ok' ? (audience.candidateCount ?? audience.candidates.length) : null;
       const saved = await repository.saveDraftReview({snapshot, checks: checkResult.checks, now, audience: candidateCount === null ? undefined : {candidateCount, eligibleCount: candidates.length, exclusions, channelCounts}});
       if (!saved) return {kind: 'conflict' as const};
+      const projection=await campaignClaimProjection(runtime.platform.database,input.revisionId);
       return {kind: 'preview' as const, asOf: now, sourceStatus: audience.status,
-        candidateCount, eligibleCount: candidates.length, exclusions, channelCounts,
-        checks: checkResult.checks, blockers: checkResult.checks.filter(check => check.blocking)};
+        candidateCount, eligibleCount: candidates.length, exclusions:projection?exclusions.map(item=>({...item,reason:projection.reason(item.reason)})):exclusions, channelCounts,
+        checks: projection?checkResult.checks.map(projection.check):checkResult.checks, blockers: checkResult.checks.filter(check => check.blocking)};
     },
 
     async approve(input: {

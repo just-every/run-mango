@@ -2,6 +2,9 @@ import {expect,test} from '@playwright/test';
 import {decisionRuntime,generated} from './runtime';
 import {history} from './history';
 import {proposalRenderer} from '../audience-summary/proposal-render';
+import {createRequire} from 'node:module';
+import {resolve} from 'node:path';
+import {toDraftComposition} from '../../src/core/features/campaigns/ui/draft-composition';
 
 test('[PROP-006] generation accepts grounded observations and rejects fabricated prose even with valid citations, without losing billed attempts',async()=>{
   const runtime=await decisionRuntime();
@@ -31,6 +34,122 @@ test('[PROP-006] generation accepts grounded observations and rejects fabricated
     }
     expect((await runtime.call('/api/decision-desk')).body.proposals.map((entry:any)=>entry.proposal.id)).toEqual([accepted.proposalId]);
     expect((await runtime.call(`/api/proposals/${accepted.proposalId}`)).body).toEqual(before.body);
+
+    // A legitimate pre-0045 row has no decision_context_json. The old generator
+    // accepted arbitrary prose alongside real evidence; reproduce its stored shape.
+    const legacySummary='This store has a 90% recovery rate.';
+    const legacyTiming='Tuesday morning doubles sales.';
+    const legacyExclusion='These customers cannot afford this offer.';
+    const exclusionPredicate={sourceType:'contact',field:'email',comparator:'eq',value:'first@example.test'};
+    const legacyExclusions=JSON.stringify([{version:1,reason:legacyExclusion,predicate:exclusionPredicate}]);
+    const cloneRow=async(table:string,where:string,overrides:Record<string,unknown>,omit:string[]=[])=>{
+      const row=await runtime.db.prepare(`SELECT * FROM ${table} WHERE ${where}`).first<Record<string,unknown>>();
+      if(!row)throw new Error(`Missing fixture row for ${table}`);
+      const values={...row,...overrides};
+      const keys=Object.keys(values).filter(key=>!omit.includes(key));
+      await runtime.db.prepare(`INSERT INTO ${table} (${keys.join(',')}) VALUES (${keys.map(()=>'?').join(',')})`).bind(...keys.map(key=>values[key])).run();
+    };
+    const legacy={proposalId:'legacy-proposal',campaignId:'legacy-campaign',revisionId:'legacy-revision'};
+    await cloneRow('proposals',`id='${accepted.proposalId}'`,{id:legacy.proposalId,campaign_id:legacy.campaignId,summary:legacySummary,exclusion_rules_json:legacyExclusions},['decision_context_json']);
+    await cloneRow('campaigns',`id='${accepted.campaignId}'`,{id:legacy.campaignId,proposal_id:legacy.proposalId,active_revision_id:legacy.revisionId});
+    await cloneRow('campaign_revisions',`id='${accepted.revisionId}'`,{id:legacy.revisionId,campaign_id:legacy.campaignId,exclusion_rules_json:legacyExclusions});
+    await cloneRow('proposal_steps',`proposal_id='${accepted.proposalId}'`,{id:'legacy-proposal-step',proposal_id:legacy.proposalId});
+    await cloneRow('campaign_steps',`revision_id='${accepted.revisionId}'`,{id:'legacy-campaign-step',revision_id:legacy.revisionId,why_this_time:legacyTiming});
+    await cloneRow('proposal_evidence_items',`proposal_id='${accepted.proposalId}'`,{id:'legacy-evidence',proposal_id:legacy.proposalId});
+    await cloneRow('proposal_transitions',`proposal_id='${accepted.proposalId}'`,{id:'legacy-transition',proposal_id:legacy.proposalId});
+    const storedLegacy=await runtime.db.prepare('SELECT * FROM proposals WHERE id=?').bind(legacy.proposalId).first();
+    expect(storedLegacy).toMatchObject({decision_context_json:'{}',summary:legacySummary});
+    const legacyDetail=(await runtime.call(`/api/proposals/${legacy.proposalId}`)).body;
+    const legacyDesk=(await runtime.call('/api/decision-desk')).body.proposals.find((entry:any)=>entry.proposal.id===legacy.proposalId);
+    const render=await proposalRenderer();
+    for(const entry of [legacyDetail,legacyDesk]) {
+      expect(entry.proposal.state).toBe('proposed');
+      expect(entry.claimsUnavailable).toBeTruthy();
+      expect(JSON.stringify(entry)).not.toContain(legacySummary);
+      expect(JSON.stringify(entry)).not.toContain(legacyExclusion);
+      expect(JSON.parse(entry.proposal.exclusionRulesJson)[0].predicate).toEqual(exclusionPredicate);
+      const html=await render(entry);
+      expect(html).not.toContain(legacySummary);
+      expect(html).toContain(entry.claimsUnavailable);
+      expect(html).toMatch(/<button[^>]*disabled[^>]*>Use this/);
+      expect(entry.history).toEqual(before.body.history);
+      expect(entry.evidenceItems).toEqual(before.body.evidenceItems);
+    }
+    expect((await runtime.call(`/api/proposals/${legacy.proposalId}/adopt`,{})).status).toBe(409);
+    const require=createRequire(import.meta.url);
+    const {build}=createRequire(require.resolve('wrangler'))('esbuild');
+    const deliveryBundle=await build({stdin:{contents:`
+      import {renderToStaticMarkup} from 'react-dom/server';
+      import {DeliveryPlan} from './src/core/features/campaigns/ui/delivery-plan';
+      export const render=steps=>renderToStaticMarkup(<DeliveryPlan steps={steps}/>);`,
+      resolveDir:process.cwd(),sourcefile:'delivery-render.tsx',loader:'tsx'},
+      bundle:true,write:false,format:'cjs',platform:'node',jsx:'automatic',alias:{'@':resolve('src')}});
+    const deliveryModule={exports:{} as {render:(steps:any[])=>string}};
+    new Function('require','module','exports',deliveryBundle.outputFiles[0].text)(require,deliveryModule,deliveryModule.exports);
+    const renderDelivery=deliveryModule.exports.render;
+    const assertLegacyReview=async()=>{for(const path of [`/api/campaigns/${legacy.campaignId}`,`/api/campaigns/${legacy.campaignId}/review`]) {
+      const review=(await runtime.call(path)).body;
+      expect(review.steps[0].claimsUnavailable).toBeTruthy();
+      expect(JSON.stringify(review)).not.toContain(legacyTiming);
+      expect(JSON.stringify(review)).not.toContain(legacyExclusion);
+      expect(JSON.parse(review.revision.exclusionRulesJson)[0].predicate).toEqual(exclusionPredicate);
+      const html=renderDelivery(review.steps);
+      expect(html).not.toContain(legacyTiming);
+      expect(html).toContain(review.steps[0].claimsUnavailable);
+      const audience=await runtime.call('/api/campaign-authoring/audience',{inclusionRuleJson:review.revision.inclusionRuleJson,exclusionRulesJson:review.revision.exclusionRulesJson,channels:['email']});
+      expect(audience.status).toBe(200);
+      expect(audience.body.eligibleCount).toBe(1);
+      expect(JSON.stringify(audience.body)).not.toContain(legacyExclusion);
+    }};
+    await assertLegacyReview();
+    const checks=await runtime.call(`/api/campaigns/${legacy.campaignId}/checks`,{revisionId:legacy.revisionId});
+    expect(checks.status).toBe(200);
+    expect(JSON.stringify(checks.body)).not.toContain(legacyExclusion);
+    await assertLegacyReview();
+    expect(await runtime.db.prepare('SELECT * FROM proposals WHERE id=?').bind(legacy.proposalId).first()).toEqual(storedLegacy);
+    expect(await runtime.db.prepare('SELECT why_this_time FROM campaign_steps WHERE revision_id=?').bind(legacy.revisionId).first()).toEqual({why_this_time:legacyTiming});
+
+    // Historical full saves reinserted every step, even for copy-only edits. Later
+    // timestamps and revision numbers cannot establish operator authorship.
+    await runtime.db.prepare('UPDATE campaign_steps SET created_at=created_at+1000,updated_at=updated_at+1000 WHERE revision_id=?').bind(legacy.revisionId).run();
+    await runtime.db.prepare('UPDATE campaign_revisions SET updated_at=updated_at+1000 WHERE id=?').bind(legacy.revisionId).run();
+    await assertLegacyReview();
+    await cloneRow('campaign_revisions',`id='${legacy.revisionId}'`,{id:'legacy-copy',version:2});
+    await cloneRow('campaign_steps',`revision_id='${legacy.revisionId}'`,{id:'legacy-copy-step',revision_id:'legacy-copy'});
+    await runtime.db.prepare('UPDATE campaigns SET active_revision_id=? WHERE id=?').bind('legacy-copy',legacy.campaignId).run();
+    await assertLegacyReview();
+    await runtime.db.prepare('UPDATE campaigns SET active_revision_id=? WHERE id=?').bind(legacy.revisionId,legacy.campaignId).run();
+
+    const fullDraft=toDraftComposition(legacyDetail.composition.revision,legacyDetail.composition.links,[{...legacyDetail.steps[0],whyThisTime:legacyTiming}]);
+    const fullSave=await runtime.call(`/api/campaign-revisions/${legacy.revisionId}`,{...fullDraft,emailSubject:'Copy edit in a full draft save'},true,'PATCH');
+    expect(fullSave.status).toBe(200);
+    expect(fullSave.body.composition.steps[0].claimsUnavailable).toBeTruthy();
+    expect(fullSave.body.revision.emailSubject).toBe('Copy edit in a full draft save');
+    expect(await runtime.db.prepare('SELECT exclusion_rules_json FROM campaign_revisions WHERE id=?').bind(legacy.revisionId).first()).toEqual({exclusion_rules_json:legacyExclusions});
+    expect(await runtime.db.prepare('SELECT timing_origin FROM campaign_steps WHERE revision_id=?').bind(legacy.revisionId).first()).toEqual({timing_origin:null});
+    await assertLegacyReview();
+
+    // Editing copy does not relabel untouched generated timing as operator-authored.
+    const copyEdit=await runtime.call(`/api/campaign-revisions/${legacy.revisionId}`,{emailSubject:'My edited subject'},true,'PATCH');
+    expect(copyEdit.status).toBe(200);
+    expect(copyEdit.body.composition.steps[0].claimsUnavailable).toBeTruthy();
+    const manualReason='I chose this time for our shop announcement.';
+    const manualStep={channel:'email',timezone:'Etc/UTC',scheduledAt:before.body.steps[0].scheduledAt,sendByAt:before.body.steps[0].sendByAt,whyThisTime:manualReason};
+    // The same linked draft remains authorable, and an unrelated manual draft also
+    // keeps its explicit timing reason without needing machine-derived observations.
+    const manual=await runtime.call('/api/campaigns',{mode:'blank'});
+    expect(manual.status).toBe(201);
+    for(const draft of [legacy,manual.body]) {
+      const manualExclusion='Operator selected this exclusion for our announcement.';
+      const edit=await runtime.call(`/api/campaign-revisions/${draft.revisionId}`,{steps:[manualStep],exclusionRulesJson:JSON.stringify([{version:1,reason:manualExclusion,predicate:exclusionPredicate}])},true,'PATCH');
+      expect(edit.status).toBe(200);
+      const review=(await runtime.call(`/api/campaigns/${draft.campaignId}/review`)).body;
+      expect(review.steps[0].whyThisTime).toBe(manualReason);
+      expect(review.steps[0].claimsUnavailable).toBeUndefined();
+      expect(JSON.parse(review.revision.exclusionRulesJson)[0]).toEqual({version:1,reason:manualExclusion,predicate:exclusionPredicate});
+      expect(await runtime.db.prepare('SELECT timing_origin FROM campaign_steps WHERE revision_id=?').bind(draft.revisionId).first()).toEqual({timing_origin:'operator'});
+      expect(renderDelivery(review.steps)).toContain(manualReason);
+    }
     expect(runtime.jobs).toEqual([]);
   } finally {await runtime.close();}
 });

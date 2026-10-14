@@ -2,6 +2,8 @@ import { summarizeAudienceRules, withDerivedAudience } from './audience-summary'
 import { normalizeAuthoredContent } from './authoring-content';
 import { parseStructuredRules } from '@/core/features/lifecycle/rules';
 import { createDraft } from './create-draft';
+import { authoredExclusionReasons, persistedClaimIsGrounded, restoreExclusionClaims, unavailableTimingClaim } from './persisted-proposal-claims';
+import { campaignClaimProjection } from './campaign-claim-projection';
 import { asc, eq } from 'drizzle-orm';
 
 import type { Database } from '@/core/platform/db/client';
@@ -88,11 +90,17 @@ export function createCampaignCompositionRepository(database: Database) {
           .orderBy(asc(campaignAudienceChannelCounts.channel))
       : [];
 
+    // Old full saves and revision copies also carry unknown generated prose. Only
+    // durable manual provenance or exact recorded observations permit display.
+    const projection=await campaignClaimProjection(database,revisionId);
+    const displayedSteps = steps.map(step=>projection && step.timingOrigin!=='operator' && !persistedClaimIsGrounded(step.whyThisTime,projection.evidence)
+      ? {...step,whyThisTime:'',claimsUnavailable:unavailableTimingClaim} : step);
+
     return {
-      revision: withDerivedAudience(revision),
-      steps,
+      revision: withDerivedAudience({...revision,exclusionRulesJson:projection?.exclusionRulesJson??revision.exclusionRulesJson}),
+      steps: displayedSteps,
       links,
-      ...campaignReviewSnapshot(revision, steps, audience, audienceChannelCounts),
+      ...campaignReviewSnapshot(revision, steps, audience&&projection?{...audience,exclusions:projection.exclusionsJson(audience.exclusions)}:audience, audienceChannelCounts),
     };
   }
 
@@ -104,12 +112,15 @@ export function createCampaignCompositionRepository(database: Database) {
       const existing = await read(id);
       if (!existing) return { kind: 'not_found' as const };
       if (existing.revision.state !== 'draft') return { kind: 'not_draft' as const };
+      const storedRevision=(await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,id)}))!;
+      const storedSteps=composition.steps===undefined?[]:await database.select().from(campaignSteps).where(eq(campaignSteps.revisionId,id));
 
       composition = normalizeAuthoredContent({...composition, emailBody:composition.emailBody ?? existing.revision.emailBody, links:composition.links ?? (composition.emailBody !== undefined ? [] : existing.links.map(({label,destinationUrl})=>({label,destinationUrl})))});
       // Persist the complete rule pair and its summary in the same guarded update.
       // Partial edits and concurrent saves must never combine prose with another rule pair.
       composition.inclusionRuleJson ??= existing.revision.inclusionRuleJson;
-      composition.exclusionRulesJson ??= existing.revision.exclusionRulesJson;
+      composition.exclusionRulesJson = composition.exclusionRulesJson===undefined?storedRevision.exclusionRulesJson
+        :restoreExclusionClaims(composition.exclusionRulesJson,storedRevision.exclusionRulesJson);
       const rules = parseStructuredRules(composition.inclusionRuleJson, composition.exclusionRulesJson);
       if (!rules.ok) throw new Error('Invalid audience rules.');
       composition.audienceRule = summarizeAudienceRules(composition.inclusionRuleJson, composition.exclusionRulesJson);
@@ -156,8 +167,8 @@ export function createCampaignCompositionRepository(database: Database) {
         for (const [index, step] of composition.steps.entries()) {
           prepare(
             `INSERT INTO campaign_steps
-             (id, revision_id, sequence, channel, timezone, scheduled_at, send_by_at, why_this_time, created_at, updated_at)
-             SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE ${guard}`,
+             (id, revision_id, sequence, channel, timezone, scheduled_at, send_by_at, why_this_time, timing_origin, created_at, updated_at)
+             SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE ${guard}`,
             crypto.randomUUID(),
             id,
             index + 1,
@@ -166,11 +177,15 @@ export function createCampaignCompositionRepository(database: Database) {
             new Date(step.scheduledAt).getTime(),
             new Date(step.sendByAt).getTime(),
             step.whyThisTime,
+            storedSteps.some(previous=>previous.whyThisTime===step.whyThisTime&&previous.timingOrigin!=='operator')?null:'operator',
             updatedAt.getTime(),
             updatedAt.getTime(),
           );
         }
       }
+
+      prepare(`UPDATE campaign_revisions SET authored_exclusion_reasons_json=? WHERE id=? AND ${guard}`,
+        JSON.stringify(authoredExclusionReasons(composition.exclusionRulesJson,storedRevision.exclusionRulesJson,JSON.parse(storedRevision.authoredExclusionReasonsJson))),id);
 
       const update = revisionUpdate(composition, updatedAt, id, existing.revision.updatedAt);
       prepare(update.sql, ...update.values);

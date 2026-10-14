@@ -22,6 +22,7 @@ export function DeliveryPlan({ steps }: { steps: DeliveryStep[] }) {
                 {step.timezone} · resolved UTC {formatUtc(step.scheduledAt)} · send by {formatDateInTimeZone(step.sendByAt,step.timezone)} (resolved UTC {formatUtc(step.sendByAt)})
               </small>
               {'whyThisTime' in step ? <p>{step.whyThisTime}</p> : null}
+              {step.claimsUnavailable?<p role="alert">{step.claimsUnavailable}</p>:null}
             </div>
           ))
         ) : (

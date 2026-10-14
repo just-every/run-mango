@@ -71,6 +71,7 @@ export type Revision = {
 };
 
 export type Step = {
+  claimsUnavailable?: string;
   id: string;
   revisionId: string;
   sequence: number;
@@ -138,6 +139,7 @@ export type Proposal = {
 export type Exclusion = { id: string; reason: string; count: number };
 
 export type ProposalEntry = {
+  claimsUnavailable?: string;
   evidenceItems?: Array<{key:string;sourceRecordId:string;sourceType:string;observedValue:unknown;occurredAt:string}>;
   history?: Array<{fromState:string;toState:string;actorId:string;reason:string|null;occurredAt:string}>;
   explanation?:string;

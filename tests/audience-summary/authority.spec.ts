@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { recordProposalClaims } from '../support/record-proposal-claims';
 import { contract } from '../contract.js';
 import { native, rows } from '../approval-binding/native';
 import { draft } from '../sender-verification/test-runtime';
@@ -94,6 +95,7 @@ contract('AUD-001][CAMP-002', 'proposal adoption fences a rule change between va
     await f.db.prepare(`INSERT INTO proposals (id,state,title,summary,evidence,audience_rule,source_data_as_of,send_by_at,inclusion_rule_json,exclusion_rules_json,created_at,updated_at)
       VALUES ('racing-proposal','proposed','A title','A reason','Evidence','Old prose',?,?,?,'[]',?,?)`)
       .bind(now,now+86400000,ruleJson(subscribed),now,now).run();
+    await recordProposalClaims(f.db,'racing-proposal',now);
     const database=f.platform.database;
     const client=new Proxy(database.$client,{get(target,key){
       if(key==='batch')return async (statements:D1PreparedStatement[])=>{

@@ -3,6 +3,7 @@ import { enrichAdvisoryAcknowledgements } from '@/core/features/lifecycle/adviso
 import { asc, desc, eq } from 'drizzle-orm';
 import { createCampaignResultRepository } from './result-repository';
 import { createCampaignListRepository } from './list-repository';
+import { campaignClaimProjection } from './campaign-claim-projection';
 
 import type { Database } from '@/core/platform/db/client';
 
@@ -101,7 +102,9 @@ export function createCampaignRepository(database: Database) {
         .from(campaignChecks)
         .where(eq(campaignChecks.revisionId, revisionId))
         .orderBy(asc(campaignChecks.kind));
-      return enrichAdvisoryAcknowledgements(database,revisionId,checks);
+      const enriched=await enrichAdvisoryAcknowledgements(database,revisionId,checks);
+      const projection=await campaignClaimProjection(database,revisionId);
+      return projection?enriched.map(projection.check):enriched;
     },
 
   };
