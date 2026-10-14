@@ -1081,6 +1081,10 @@
       "sha256": "67059d05af556fd76e4120e23ac0f6220218daa789679aea620653b99f28d626",
       "executable": false
     },
+    "migrations/core/0048_authored_explanation_provenance.sql": {
+      "sha256": "ddebff35ede310c4b04d92b3c8cab42079dcc0bad3e296de654112556d1f69a6",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "b92f496a0c1f60f37a7e1887d3cf36de0a0fd501f0595a711655de8f53bb7045",
       "executable": false
@@ -2325,6 +2329,10 @@
       "sha256": "4d36e99a87213697f7b9b0eb20b8b3ff6bfd8290177a10ece9f2cd3402ce2c71",
       "executable": false
     },
+    "src/core/features/campaigns/campaign-claim-projection.ts": {
+      "sha256": "aa081bc175323d4244b56a590071e730b1871f88f3a9eccd4885223df6347875",
+      "executable": false
+    },
     "src/core/features/campaigns/campaign-schema.ts": {
       "sha256": "f70303e57b625f13b096e09783d0b4158829963a0aaa863b41bf8881a94ef3f3",
       "executable": false
@@ -2391,6 +2399,10 @@
     },
     "src/core/features/campaigns/message-content.ts": {
       "sha256": "dee919c29e3e6dac9070e39836e3474ad94aeb7d225b793b2e558dcc380dff63",
+      "executable": false
+    },
+    "src/core/features/campaigns/persisted-proposal-claims.ts": {
+      "sha256": "35cb94706c638c0d228e0d897e71bb4937a33af4a3c81c11e0ee33dc556c1a2a",
       "executable": false
     },
     "src/core/features/campaigns/proposal-schema.ts": {
@@ -5967,6 +5979,10 @@
     },
     "tests/support/operator-session.ts": {
       "sha256": "f0dc60fe2d9cecc834e3715d30643f74e5a5c6f2c67e0655b63d9b1fe6b34dcb",
+      "executable": false
+    },
+    "tests/support/record-proposal-claims.ts": {
+      "sha256": "2e9ecd1dc1477951f2551ffbaa2a8b508f75a1390869dd65b20dc2fc641aee43",
       "executable": false
     },
     "tests/support/review-port.mjs": {
