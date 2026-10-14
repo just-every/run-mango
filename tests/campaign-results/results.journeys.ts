@@ -123,7 +123,7 @@ contract('CAMP-009','cancel dialog contains focus, Escape cancels and returns fo
 contract('RESULT-001','[CAMP-002] successful queued sync and failed refresh use distinct consistent feedback',async({page,request})=>{
   await seed(request,'presentation');await login(page,request);await page.setViewportSize({width:1440,height:900});await page.goto(`${runtime.url}/app/store`);
   const sync=page.waitForResponse(response=>response.url().endsWith('/api/store/sync')&&response.request().method()==='POST');
-  await page.getByRole('button',{name:'Sync now',exact:true}).click();expect((await sync).status()).toBe(202);
+  await page.getByRole('article',{name:'Customer sync'}).getByRole('button',{name:'Sync now',exact:true}).click();expect((await sync).status()).toBe(202);
   const success=page.locator('.action-notice[role="status"]');await expect(success).toBeVisible();await expect(success).not.toBeEmpty();
   const successFeedback=await success.textContent();
   const jobs=await seed(request,'jobs');expect(jobs.map((job:any)=>JSON.parse(job.payload))).toContainEqual(expect.objectContaining({kind:'source.sync'}));
