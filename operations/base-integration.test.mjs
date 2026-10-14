@@ -101,6 +101,12 @@ test('Base D1 auth: explicit bootstrap, signed-in APIs, email confirmation, sing
     assert.equal((await r.call('/auth/confirm',{method:'POST',body:{token}})).status,400);
     const stored = await r.db.prepare('SELECT token_hash FROM oa_tokens WHERE kind = ?').bind('magic').first();
     assert.equal(stored.token_hash!==token,true);
+    // Auth links and invitations share the actual provider budget. This is a
+    // second independent mail request, so wait for its persisted permission.
+    const budget = await r.db.prepare('SELECT next_at FROM provider_pacing WHERE scope=?').bind('sendgrid:installation').first();
+    assert.ok(budget, 'The confirmed magic link must reserve the shared provider budget');
+    const wait = Math.ceil(budget.next_at - Date.now());
+    if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
     const invite = await r.call('/api/operators',{method:'POST',cookie:ownerCookie,body:{email:'other@example.test'}});
     assert.equal(invite.status,201,await invite.clone().text());
     const other = (await invite.json()).operator;

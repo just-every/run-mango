@@ -1134,7 +1134,7 @@
       "executable": false
     },
     "operations/base-integration.test.mjs": {
-      "sha256": "2569f75f39bf061ee54b57741c7ff8bba10b5b726d63bd7f7e2cc8cddac02f53",
+      "sha256": "76ac1f03e3e2a4079b79b722e974157611df785f8db527dc62bb0ae6277b45d3",
       "executable": false
     },
     "operations/deploy-optional-secrets.test.mjs": {
