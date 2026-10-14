@@ -1,5 +1,6 @@
 import { readProductionConfig } from '../src/core/platform/config';
 import { pacedAdapter } from '../src/core/features/lifecycle/transport-pacing';
+import { readDeliveryPolicies } from '../src/core/features/lifecycle/transport-policy';
 import { createDatabase } from '../src/core/platform/db/client';
 import { createSenderVerification } from '../src/core/features/sender-verification/service';
 import { createReceiptConnector } from '../src/core/features/sender-verification/qa-inbox';
@@ -12,6 +13,7 @@ import { senderIdentitySchema } from '../src/core/features/settings/sender-valid
 
 function senderConfiguration(bindings: AppBindings) {
   const config = readProductionConfig(bindings);
+  config.deliveryPolicies = readDeliveryPolicies(bindings.MANGO_DELIVERY_POLICY_JSON);
   if (!config.mailboxReceiptUrl) throw new Error('MAILBOX_RECEIPT_URL is required.');
   if (!config.mailboxReceiptRecipient) throw new Error('MAILBOX_RECEIPT_RECIPIENT is required.');
   const receiver = createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient);

@@ -1530,7 +1530,7 @@
       "executable": false
     },
     "scripts/sender-verification-entry.ts": {
-      "sha256": "78bb4014d2719986f49164438bd44a1ca9789cff3d80b2b958624ae316523560",
+      "sha256": "4c31ab50fd21317a0803d31a528e4ea7aece7518abe8aeb90368c2dc18038606",
       "executable": false
     },
     "scripts/sender-verification.mjs": {
