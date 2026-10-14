@@ -166,7 +166,7 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
     await expect(page.getByRole('heading', { name: /consent stays visible/i })).toBeVisible();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
-      page.getByRole('link', { name: 'Download contacts CSV' }).click(),
+      page.getByRole('button', { name: 'Download contacts CSV' }).click(),
     ]);
     expect(download.suggestedFilename()).toBe('audience.csv');
     const downloadPath = await download.path();
