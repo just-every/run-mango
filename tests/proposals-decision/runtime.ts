@@ -4,7 +4,7 @@ import {createApp, createAppServices} from '../../src/core/app/app';
 import {createFixturePlatform} from '../support/local-platform';
 import {testIdentity} from '../support/test-identity';
 import {fixtureVerification} from '../support/sender-verification';
-import {createShopifyAdapter} from '../../src/core/platform/adapters/shopify';
+import {proposalCommerce,synchronizeProposalProduct} from './shopify-edge';
 import {sqlStatements} from '../../operations/sql-statements.mjs';
 import type {AppBindings, GroundedGenerationRequest} from '../../src/core/shared/platform';
 import type {GeneratedProposalWire} from '../../src/core/features/proposals/generation';
@@ -25,7 +25,7 @@ export async function decisionRuntime() {
     const jobs: unknown[] = [];
     const env = {DB:db,ASSETS_BUCKET:await native.getR2Bucket('ASSETS_BUCKET'),MANGO_JOBS:{async send(job:unknown){jobs.push(job)}},MANGO_PUBLIC_BASE_URL:'http://127.0.0.1',INITIAL_OPERATOR_EMAILS:'owner@example.test'} as unknown as AppBindings;
     const platform = createFixturePlatform(env,'proposal-fixture-signing-authority-at-least-thirty-two');
-    platform.commerce=createShopifyAdapter({storeUrl:new URL('https://store.example.test'),accessToken:'test-no-network',webhookSecret:'test-no-network'});
+    platform.commerce=proposalCommerce();
     const verification=fixtureVerification(db,platform.config);
     platform.mailer={channel:'email',async capabilities(){return {configured:true,canSendMarketing:true,effectiveDeduplication:true,effectiveReconciliation:true,deduplicationWindowMs:86400000,reconciliationWindowMs:86400000,detail:'Test transport'}},inspectSender:sender=>verification.inspect(sender),async validateSender(){return {ready:true,detail:'Test transport'}},async send(){throw new Error('No proposal test sends')},async reconcile(){return {facts:[],exhausted:true}},async verifyWebhook(){throw new Error('No webhook')}};
     const controls:{alter?:(output:GeneratedProposalWire)=>void;failure?:Error;lastRequest?:GroundedGenerationRequest}={};
@@ -55,8 +55,7 @@ export async function decisionRuntime() {
     const session=await identity.createTestSession('proposal-operator');
     for(const name of ['first','second','excluded']) await services.audienceService.captureConsent({idempotencyKey:`proposal-${name}`,contact:{email:`${name}@example.test`,displayName:name},channel:'email',brandOrLegalSender:platform.config.mailSender.displayName,messageCategory:'newsletter',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',captureMethod:'test-fixture',captureSource:'decision-test',consentText:'Receive newsletter',consentVersion:'v1',occurredAt:new Date(),confirmationRequired:false});
     await services.audienceService.recordChannelOptOut({channel:'email',destination:'excluded@example.test',occurredAt:new Date(),reason:'fixture-optout'});
-    await services.storeService.recordSourceCapabilities([{sourceType:'product',available:true,detail:'Fixture source'}]);
-    await services.storeService.ingestSuccessfulCommerceBatch('shopify',[{sourceType:'product',providerSourceId:'product-1',payload:{id:'product-1',title:'Garden linen',status:'ACTIVE'},occurredAt:new Date()}],'full',['product'],true,new Date());
+    await synchronizeProposalProduct(services);
     const app=createApp(env,platform,undefined,true);
     const call=async(path:string,body?:unknown,authenticated=true,method=body===undefined?'GET':'POST')=>{
       const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',...(authenticated?{Cookie:`operator_session_local=${session.token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);

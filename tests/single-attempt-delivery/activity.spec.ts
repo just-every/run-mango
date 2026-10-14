@@ -22,7 +22,7 @@ test('SEND-008 no message ID or unavailable Activity never invents a delivery', 
   let calls=0;
   const transport:typeof fetch=async()=>{calls++;return new Response(null,{status:403});};
   expect(await reconcileSendgrid('test-api-key',request,{},transport)).toEqual({facts:[],exhausted:true});expect(calls).toBe(0);
-  expect(await reconcileSendgrid('test-api-key',request,{providerMessageId:'submission-1'},transport)).toEqual({facts:[],exhausted:true});expect(calls).toBe(1);
+  await expect(reconcileSendgrid('test-api-key',request,{providerMessageId:'submission-1'},transport)).rejects.toThrow('provider-read-http-403');expect(calls).toBe(1);
 });
 
 test('SEND-008 signed event parser normalizes a SendGrid event message ID to its durable submission ID',async()=>{

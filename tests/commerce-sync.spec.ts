@@ -157,17 +157,26 @@ contract('STORE-005', 'a source failure during audience rechecks blocks approval
       records: [{sourceType: 'customer', providerSourceId: 'second-eligible', occurredAt: new Date(), payload: {segment: 'synthetic-review'}, contact: {email: 'second@example.test'}}]});
     const runtime = services.lifecycleRuntime;
     const recheck = runtime.audience.recheckHandoffEligibility.bind(runtime.audience);
+    const generationBefore = await binding.prepare('SELECT generation FROM audience_source_authority WHERE id=1').first() as {generation:number};
+    const rechecks: Awaited<ReturnType<typeof recheck>>[] = [];
     let calls = 0;
     runtime.audience.recheckHandoffEligibility = async input => {
       const result = await recheck(input);
+      rechecks.push(result);
       if (++calls === 1) await services.storeService.recordCommerceSyncFailure(['customer'], 'Synthetic concurrent source failure');
       return result;
     };
     const result = await createLifecycleServices(runtime).approval.approve({...scenario, operatorId: 'operator', idempotencyKey: 'source-race-approval'});
     expect(calls).toBe(2);
-    expect(result.kind).toBe('blocked');
-    if (result.kind === 'blocked') expect(result.blockers).toContainEqual(expect.objectContaining({kind: 'audience.recheck', blocking: true}));
+    // The source authority changed during evaluation: approval rejects the stale
+    // snapshot before saving checks, even though its first recipient was eligible.
+    expect(rechecks).toEqual([expect.objectContaining({eligible:true}),expect.objectContaining({eligible:false,reason:'source-sync-failed'})]);
+    expect(result.kind).toBe('conflict');
+    const generationAfter = await binding.prepare('SELECT generation FROM audience_source_authority WHERE id=1').first() as {generation:number};
+    expect(generationAfter.generation).toBeGreaterThan(generationBefore.generation);
+    expect(await binding.prepare('SELECT COUNT(*) n FROM campaign_approval_requests').first()).toEqual({n: 0});
     expect(await binding.prepare('SELECT COUNT(*) n FROM recipient_steps').first()).toEqual({n: 0});
+    expect(await binding.prepare('SELECT state FROM campaign_revisions WHERE id=?').bind(scenario.revisionId).first()).toEqual({state:'draft'});
   } finally {await worker.dispose();}
 });
 

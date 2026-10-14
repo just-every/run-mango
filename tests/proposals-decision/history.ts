@@ -18,6 +18,6 @@ export async function history(runtime:DecisionRuntime) {
   }
   await db.batch(writes);
   // Imported order history is available to the generation evidence selection too.
-  await db.prepare("INSERT INTO commerce_source_capabilities(id,source_type,available,detail,updated_at) VALUES ('history-order-capability','order',1,'Fixture own history',?)").bind(Date.now()).run();
+  await db.prepare("INSERT INTO commerce_source_capabilities(id,source_type,available,detail,updated_at) VALUES ('history-order-capability','order',1,'Fixture own history',?) ON CONFLICT(source_type) DO UPDATE SET available=excluded.available,detail=excluded.detail,updated_at=excluded.updated_at").bind(Date.now()).run();
   await db.prepare("INSERT INTO source_syncs(id,source_type,last_successful_at,created_at,updated_at) VALUES ('history-order-sync','order',?,?,?)").bind(Date.now(),Date.now(),Date.now()).run();
 }

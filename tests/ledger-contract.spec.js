@@ -400,11 +400,16 @@ test.describe('ledger contract on Worker D1', () => {
   contract('CONT-012', 'excludes a dormant subscribed contact without changing its subscription state', async () => {
     const worker = await ledger();
     try {
-      await readySource(worker);
+      // Confirmation is a qualifying consent event. Complete it historically,
+      // rather than confirming an old capture at the current test clock.
+      await request(worker, '/test-clock', {now:'2024-01-01T00:00:00.000Z'});
       const capture = await captured(worker, { email: 'dormant@example.test' }, 'email', '2024-01-01T00:00:00.000Z');
-      await request(worker, '/confirm', { token: capture.confirmation.token });
+      expect((await request(worker, '/confirm', { token: capture.confirmation.token })).response.ok).toBeTruthy();
+      await request(worker, '/test-clock', {now:'2026-09-08T12:00:00.000Z'});
+      await readySource(worker);
       const recheck = await request(worker, '/recheck', { contactId: capture.contact.id, channel: 'email', sourceTypes: ['customer'], frequencyWindowMs: 86400000, now: '2026-09-08T12:00:00.000Z' });
-      expect(recheck.body.reason).toBe('dormant');
+      expect(recheck.body).toMatchObject({eligible:false,reason:'dormant'});
+      expect((await request(worker, `/detail/${capture.contact.id}`, undefined, 'GET')).body.emails[0].channelStatus).toBe('subscribed');
     } finally { await worker.dispose(); }
   });
 

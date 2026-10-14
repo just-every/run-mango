@@ -7,7 +7,7 @@ import { createApp, createAppServices } from '../../src/core/app/app';
 import { dispatchDocuments } from '../../src/core/app/document-dispatch';
 import { fixtureVerification } from '../support/sender-verification';
 import type { LocalAppBindings } from '../support/fixture-app';
-import { createShopifyAdapter } from '../../src/core/platform/adapters/shopify';
+import { proposalCommerce, synchronizeProposalProduct } from './shopify-edge';
 import { createLinkInspector } from '../../src/core/platform/link-inspector';
 import { consumeLifecycleQueue, type LifecycleQueueBatch } from '../../src/core/features/lifecycle';
 import { designCommandKinds, isDesignCommand } from '../../src/core/features/design-generation/advance';
@@ -30,7 +30,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
   const queue=platform.jobs;
   platform.jobs={async enqueue(job){if(job.kind==='health.probe'||isDesignCommand(job))return queue.enqueue(job);await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();},async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');}};
   const path=new URL(request.url).pathname;
-  if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) platform.commerce=createShopifyAdapter({storeUrl:new URL('https://shop.example.test'),accessToken:'test-no-network',webhookSecret:'test-no-network'});
+  if(path==='/_authoring/source'||await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) platform.commerce=proposalCommerce();
   platform.ai={costIdentity:{provider:'openai',model:'decision-browser-fixture'},async generateGroundedJson(request:GroundedGenerationRequest){
     const input=request.evidence as {items:Array<{key:string;observedValueJson:string;allowedClaim:string}>;now:string};
     const item=input.items[0],at=Date.parse(input.now),claim={text:item.allowedClaim,citations:[{key:item.key,observedValueJson:item.observedValueJson}]};
@@ -54,8 +54,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
     }
     if(path==='/_authoring/source') {
       await bindings.DB.prepare('CREATE TABLE IF NOT EXISTS task_authoring_commerce (id TEXT)').run();
-      await services.storeService.recordSourceCapabilities([{sourceType:'product',available:true,detail:'Recorded test source'}]);
-      await services.storeService.ingestSuccessfulCommerceBatch('shopify',[{sourceType:'product',providerSourceId:'gid://shopify/Product/1',payload:{id:'gid://shopify/Product/1',title:'Garden linen',handle:'garden-linen',status:'ACTIVE'},occurredAt:new Date()}],'full',['product'],true,new Date());
+      await synchronizeProposalProduct(services);
       return Response.json({ok:true});
     }
     if(path==='/_authoring/stale') {await bindings.DB.prepare("UPDATE source_syncs SET last_successful_at=? WHERE source_type='product'").bind(Date.now()-25*3600000).run();return Response.json({ok:true});}

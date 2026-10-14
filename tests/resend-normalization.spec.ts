@@ -10,7 +10,7 @@ const receivedAt = new Date('2026-09-08T04:00:00.000Z');
 const request: DeliveryRequest = {
   recipientStepId: 'step-one', idempotencyKey: 'handoff:step-one',
   handoffStartedAt: new Date(createdAt), to: 'person@example.test',
-  sender: 'offers@example.test', content: { text: 'Approved copy' },
+  sender: 'offers@example.test', content: { subject: 'Approved subject', text: 'Approved copy' },
   callbackUrl: 'https://mango.example.test/webhooks/mail/resend',
 };
 function payload(type: string, data: Record<string, unknown> = {}) {
@@ -61,7 +61,7 @@ test('[SEND-005] Resend reconciliation retains the same hard-bounce and suppress
   globalThis.fetch = (async (input) => {
     const url = String(input);
     const body = url.includes('/events?') ? { data: [{ id: 'bounce-event' }, { id: 'suppression-event' }], has_more: false }
-      : events[url.endsWith('/bounce-event') ? 0 : 1];
+      : {object:'webhook_event',id:url.endsWith('/bounce-event')?'bounce-event':'suppression-event',status:'delivered',payload:events[url.endsWith('/bounce-event') ? 0 : 1]};
     return new Response(JSON.stringify(body));
   }) as typeof fetch;
   try {
@@ -75,19 +75,25 @@ test('[SEND-005] Resend reconciliation retains the same hard-bounce and suppress
   } finally { globalThis.fetch = previousFetch; }
 });
 
-test('[SEND-005] lost-response reconciliation accepts record-shaped recipient-step tags without resending', async () => {
+test('[SEND-005] lost-response reconciliation requires both documented tags and exact message context without resending', async () => {
   const previousFetch = globalThis.fetch;
   const methods: string[] = [];
+  let complete=false;
   globalThis.fetch = (async (input, init) => {
     methods.push(init?.method ?? 'GET');
     return new Response(JSON.stringify(String(input).includes('/emails?')
       ? { data: [{ id: 'mail-one' }], has_more: false }
-      : { id: 'mail-one', created_at: createdAt, tags: { mango_recipient_step: encodeProviderReference(request.recipientStepId) } }));
+      : complete ? { id:'mail-one',created_at:createdAt,from:request.sender,to:[request.to],subject:request.content.subject,text:request.content.text,
+        tags:[{name:'mango_recipient_step',value:encodeProviderReference(request.recipientStepId)},{name:'mango_handoff_key',value:encodeProviderReference(request.idempotencyKey)}] }
+        : { id: 'mail-one', created_at: createdAt, tags: { mango_recipient_step: encodeProviderReference(request.recipientStepId) } }));
   }) as typeof fetch;
   try {
-    const result = await createResendAdapter({ apiKey: 'fixture', webhookSecret: 'fixture', webhookId: 'hook-one' }).reconcile(request, {});
+    const adapter=createResendAdapter({ apiKey:'fixture',webhookSecret:'fixture',webhookId:'hook-one' });
+    expect(await adapter.reconcile(request,{})).toEqual({facts:[],exhausted:true});
+    complete=true;
+    const result = await adapter.reconcile(request, {});
     expect(result).toMatchObject({ exhausted: true, facts: [{ providerMessageId: 'mail-one', kind: 'accepted' }] });
-    expect(methods).toEqual(['GET', 'GET']);
+    expect(methods).toEqual(['GET', 'GET', 'GET', 'GET']);
   } finally { globalThis.fetch = previousFetch; }
 });
 

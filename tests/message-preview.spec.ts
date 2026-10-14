@@ -161,7 +161,7 @@ test('[CAMP-003][MSG-009][SEND-001] actual delivery uses pure rendering and pers
   const effects = {unsubscribe: 0, tracking: 0, digest: 0};
   const runtime = {
     platform: {
-      config: {publicBaseUrl: new URL('https://mango.example.test')},
+      config: {publicBaseUrl: new URL('https://mango.example.test'), allowedLinkHosts: [new URL(offer).hostname]},
       publicTokens: {
         async issue() { effects.tracking++; return 'synthetic-link-token'; },
         async digest(token: string) { effects.digest++; return `digest:${token}`; },

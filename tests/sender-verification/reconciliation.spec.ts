@@ -12,11 +12,12 @@ test('an uncertain diagnostic handoff persists its pagination cursor and reconci
     expect(f.outbound).toHaveLength(1);
     f.reconciliationPages();
     await expect(f.verifier.sendChallenge(challenge.id,adapter)).rejects.toThrow('probe-handoff-unresolved');
-    expect(await f.db.prepare('SELECT reconcile_cursor,provider_message_id FROM sender_verification_challenges WHERE id=?').bind(challenge.id).first())
-      .toEqual({reconcile_cursor:'other-email',provider_message_id:null});
+    const persisted=await f.db.prepare('SELECT reconcile_cursor,provider_message_id FROM sender_verification_challenges WHERE id=?').bind(challenge.id).first<{reconcile_cursor:string;provider_message_id:string|null}>();
+    expect(persisted?.provider_message_id).toBeNull();
+    expect(JSON.parse(persisted!.reconcile_cursor)).toEqual({kind:'emails',after:'other-email'});
     const restarted=f.restart();
     expect(await restarted.sendChallenge(challenge.id,f.platform.mailer)).toMatchObject({providerMessageId:'sent-1'});
-    expect(f.calls.some(url=>url.includes('/emails?limit=100&after=other-email'))).toBe(true);
+    expect(f.calls.some(value=>{const url=new URL(value);return url.pathname==='/emails'&&url.searchParams.get('after')==='other-email';})).toBe(true);
     expect(f.outbound).toHaveLength(1);
     await restarted.acquireObservation(challenge.id);
     expect((await restarted.inspect('Mango <offers@example.test>')).ready).toBe(true);

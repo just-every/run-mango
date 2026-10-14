@@ -1,4 +1,4 @@
-import { smsProgrammeSchema } from '@/core/features/sms/policy';
+import { smsProgrammeSchema } from '../features/sms/policy.ts';
 import type { AppBindings, AppConfig, OptionalModuleConfig } from '@/core/shared/platform';
 import { authBindings } from './auth-bindings.ts';
 

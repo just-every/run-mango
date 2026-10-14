@@ -213,23 +213,50 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     expect(await f.db.prepare("SELECT count(*) n FROM source_activities WHERE contact_id=? AND kind IN ('cart','browsing-event')").bind(contact.contact_id).first()).toEqual({n:0});
     expect((await proxy(f,event)).status).toBe(422);
     expect(await sync(f,session,'browsing-event')).toEqual([expect.objectContaining({ack:true})]);
+    await f.call('/test/erasure-race/arm',{method:'POST'});
     const erased=await f.call(`/api/contacts/${contact.contact_id}`,{method:'DELETE',cookie:session});
     expect(erased.status,await erased.clone().text()).toBe(202);
     const receipt=(await erased.json()).receipt;
-    let state=receipt;
-    let revision=(await f.db.prepare('SELECT revision FROM audience_erasures WHERE reference=?').bind(receipt.reference).first()).revision;
-    // Native Queue and authenticated resume both advance the same guarded job.
-    // The queue may finish after the pending receipt was read: resuming that
-    // completed job is idempotent. Pending pages still require strict progress;
-    // every observation is monotonic and completion must fit this test's bound.
-    while(state.state==='pending'){
-      const resumed=await f.call(`/api/audience/erasures/${receipt.reference}/resume`,{method:'POST',cookie:session});
-      expect([200,202]).toContain(resumed.status);state=(await resumed.json()).receipt;
-      const next=(await f.db.prepare('SELECT revision FROM audience_erasures WHERE reference=?').bind(receipt.reference).first()).revision;
-      expect(next).toBeGreaterThanOrEqual(revision);
-      if(state.state==='pending')expect(next).toBeGreaterThan(revision);
-      revision=next;
+    // Hold the queued continuation after reading its revision, before its native
+    // batch. HTTP then exercises both a real SQL failure and a winning commit.
+    await f.call('/test/erasure-race/arrived',{method:'POST'});
+    const heldRevision=(await f.db.prepare('SELECT revision FROM audience_erasures WHERE reference=?').bind(receipt.reference).first()).revision;
+    const resume=()=>f.call(`/api/audience/erasures/${receipt.reference}/resume`,{method:'POST',cookie:session});
+    const sessions=(await f.db.prepare('SELECT token_hash,expires_at FROM oa_sessions').all()).results;
+    await f.call('/test/erasure-race/expire-authority',{method:'POST'});
+    expect((await resume()).status).toBe(500);
+    expect(await f.db.prepare('SELECT revision FROM audience_erasures WHERE reference=?').bind(receipt.reference).first()).toEqual({revision:heldRevision});
+    expect(await f.db.prepare('SELECT count(*) n FROM audience_erasure_guard').first()).toEqual({n:0});
+    for(const saved of sessions)await f.db.prepare('UPDATE oa_sessions SET expires_at=? WHERE token_hash=?').bind(saved.expires_at,saved.token_hash).run();
+    await f.db.prepare("CREATE TRIGGER test_erasure_failure BEFORE UPDATE ON audience_erasures BEGIN SELECT RAISE(ABORT,'injected erasure write failure'); END").run();
+    expect((await resume()).status).toBe(500);
+    expect(await f.db.prepare('SELECT revision FROM audience_erasures WHERE reference=?').bind(receipt.reference).first()).toEqual({revision:heldRevision});
+    expect(await f.db.prepare('SELECT count(*) n FROM audience_erasure_guard').first()).toEqual({n:0});
+    await f.db.prepare('DROP TRIGGER test_erasure_failure').run();
+    const winner=await resume();expect(winner.status).toBe(202);
+    const won=(await f.db.prepare('SELECT revision FROM audience_erasures WHERE reference=?').bind(receipt.reference).first()).revision;
+    expect(won).toBeGreaterThan(heldRevision);
+    await f.call('/test/erasure-race/release',{method:'POST'});
+    // The stale queue batch must roll back and acknowledge the newer authorized
+    // receipt. Its subsequent actual continuations still have to finish erasure.
+    const erasureOutcomes=await (await f.call('/test/run-queue',{method:'POST'})).json();
+    expect(erasureOutcomes.length).toBeGreaterThan(0);
+    let revision=heldRevision;
+    for(const outcome of erasureOutcomes){
+      expect(outcome).toMatchObject({ack:true,command:{kind:'contact.erase',payload:{reference:receipt.reference}}});
+      expect(outcome.erasure.revision).toBeGreaterThanOrEqual(revision);
+      if(outcome.erasure.state==='pending')expect(outcome.erasure.revision).toBeGreaterThan(revision);
+      revision=outcome.erasure.revision;
     }
+    const race=await (await f.call('/test/erasure-race/status')).json();
+    expect(race.failures).toContainEqual(expect.stringMatching(/^D1_ERROR: CHECK constraint failed: value=1: SQLITE_CONSTRAINT(?: \(extended: SQLITE_CONSTRAINT_CHECK\))?$/));
+    expect(race.failures).toContainEqual(expect.stringMatching(/^D1_ERROR: injected erasure write failure: SQLITE_CONSTRAINT(?: \(extended: SQLITE_CONSTRAINT_TRIGGER\))?$/));
+    expect(race.failures).toContainEqual(expect.stringMatching(/^D1_ERROR: NOT NULL constraint failed: audience_erasure_guard\.value: SQLITE_CONSTRAINT(?: \(extended: SQLITE_CONSTRAINT_NOTNULL\))?$/));
+    expect(await f.db.prepare('SELECT count(*) n FROM audience_erasure_guard').first()).toEqual({n:0});
+    expect(erasureOutcomes.at(-1).erasure.state).toBe('complete');
+    const observed=await f.call(`/api/audience/erasures/${receipt.reference}`,{cookie:session});
+    expect(observed.status).toBe(200);
+    const state=(await observed.json()).receipt;
     expect(state.state).toBe('complete');
     // Prove the completed-resume contract explicitly, including when the native
     // queue reaches completion before this caller observes its final page.
@@ -242,5 +269,5 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     expect(await f.db.prepare('SELECT count(*) n FROM commerce_privacy_controls WHERE contact_id=?').bind(contact.contact_id).first()).toEqual({n:0});
     await f.db.prepare('UPDATE commerce_channels SET healthy_at=0').run();
     expect((await proxy(f,observation())).status).toBe(422);
-  }finally{await f.close();}
+  }finally{try{await f.call('/test/erasure-race/release',{method:'POST'});}finally{await f.close();}}
 });

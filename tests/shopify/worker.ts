@@ -1,3 +1,4 @@
+import {erasureRace,raceDatabase} from './erasure-race';
 import productionWorker from '../../src/core/app/worker';
 // Test-only elapsed time advances at the Shopify HTTP boundary. Native D1 and
 // production lease ownership remain authoritative; no wall-clock sleep is used.
@@ -30,9 +31,12 @@ export default {
   async fetch(envelope,env,context){
     installNetworkEdge(env);
     const input=await envelope.json();
+    if(input.url.includes('/test/erasure-race/'))return Response.json(await erasureRace(new URL(input.url).pathname.split('/').at(-1)!));
+    env={...env,DB:raceDatabase(env.DB)};
     return productionWorker.fetch(new Request(input.url,{method:input.method,headers:input.headers,...(input.body!==undefined?{body:input.body}:{})}),env,context);
   },
   async queue(batch,env){
+    env={...env,DB:raceDatabase(env.DB)};
     installNetworkEdge(env);
     const outcomes=[];
     // Observe native acknowledgements without changing delivery or retry policy.
@@ -42,6 +46,9 @@ export default {
       return Reflect.get(target,key,target);
     }}));
     await productionWorker.queue({...batch,messages},env);
-    for(const outcome of outcomes)await env.DB.prepare('INSERT INTO test_queue_outcomes(body) VALUES(?)').bind(JSON.stringify(outcome)).run();
+    for(const outcome of outcomes){
+      if(outcome.command.kind==='contact.erase')outcome.erasure=await env.DB.prepare('SELECT revision,state FROM audience_erasures WHERE reference=?').bind(outcome.command.payload.reference).first();
+      await env.DB.prepare('INSERT INTO test_queue_outcomes(body) VALUES(?)').bind(JSON.stringify(outcome)).run();
+    }
   },
 };
