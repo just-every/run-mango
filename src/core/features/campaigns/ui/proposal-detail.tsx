@@ -1,3 +1,4 @@
+import { RevisionPreviews } from './revision-previews';
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
@@ -10,9 +11,10 @@ import { summarizeAudienceRules } from '../audience-summary';
 import { AudienceSnapshot } from './audience-snapshot';
 import { DeliveryPlan } from './delivery-plan';
 
-export function ProposalDetail({ entry }: { entry: ProposalEntry }) {
+export function ProposalDetail({ entry, onDismiss }: { entry: ProposalEntry; onDismiss?:()=>void }) {
   const { proposal } = entry;
   const navigate = useNavigate();
+  const [reason,setReason]=useState('');
   const [busy,setBusy]=useState(false),[error,setError]=useState('');
   const adopt = async () => {
     setBusy(true);setError('');
@@ -20,6 +22,12 @@ export function ProposalDetail({ entry }: { entry: ProposalEntry }) {
       if (response.status<300&&response.data.campaignId) await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId}});
       else setError(response.data.detail??'This suggestion could not be opened.');
     } catch {setError('This suggestion could not be opened.');} finally {setBusy(false);}
+  };
+  const dismiss=async()=>{
+    setBusy(true);setError('');
+    try {const result=await requestJson(`/api/proposals/${proposal.id}/dismiss`,{method:'POST',body:JSON.stringify({reason})});
+      if(result.status<300){setReason('');onDismiss?.();}else setError('This proposal is no longer available to dismiss.');
+    }catch{setError('The dismissal could not be saved.');}finally{setBusy(false);}
   };
   return (
     <section className="proposal-layout" aria-labelledby="proposal-title">
@@ -34,17 +42,22 @@ export function ProposalDetail({ entry }: { entry: ProposalEntry }) {
           </div>
           <div className="evidence-note">
             <strong>Evidence</strong>
-            <p>{proposal.evidence}</p>
+            {entry.evidenceItems?.length?<ul>{entry.evidenceItems.map(item=><li key={item.key}><strong>{item.sourceType} · {item.sourceRecordId}</strong><pre>{JSON.stringify(item.observedValue,null,2)}</pre><small>{formatDate(item.occurredAt)}</small></li>)}</ul>:<p>{proposal.evidence}</p>}
+            <p>Trigger events: {proposal.triggerEventsJson??'Not recorded'}</p>
+            <p>Lookback: {proposal.lookbackStartAt?formatDate(proposal.lookbackStartAt):'Not recorded'} to {formatDate(proposal.sourceDataAsOf)}</p>
+            <p>Send by {formatDate(proposal.sendByAt)}</p>
           </div>
           <div className="rule-block">
             <span>Audience rule</span>
             <p>{summarizeAudienceRules(proposal.inclusionRuleJson, proposal.exclusionRulesJson)}</p>
+            <p>{entry.explanation}</p>
             <small>Source data as of {formatDate(proposal.sourceDataAsOf)}</small>
           </div>
           <div className="proposal-focus__actions">
-            <button type="button" className="primary-action" disabled={busy || (!proposal.campaignId && (proposal.state!=='proposed' || Date.parse(proposal.sendByAt)<=Date.now()))} onClick={()=>void adopt()}>{busy?'Opening…':'Use this'}</button>
+            <button type="button" className="primary-action" disabled={busy || proposal.state!=='proposed' || Date.parse(proposal.sendByAt)<=Date.now()} onClick={()=>void adopt()}>{busy?'Opening…':'Use this'}</button>
             <p className="quiet-caption">Nothing is scheduled until you approve a saved revision.</p>
           </div>
+          {proposal.state==='proposed'?<div><label>Dismissal reason<textarea value={reason} onChange={event=>setReason(event.target.value)} /></label><button type="button" className="secondary-action" disabled={busy||!reason.trim()||Date.parse(proposal.sendByAt)<=Date.now()} onClick={()=>void dismiss()}>Dismiss proposal</button></div>:null}
           {error?<p className="inline-error" role="alert">{error}</p>:null}
         </Paper>
       </article>
@@ -56,6 +69,11 @@ export function ProposalDetail({ entry }: { entry: ProposalEntry }) {
           exclusions={entry.exclusions}
         />
         <DeliveryPlan steps={entry.steps} />
+        <p>Timing method: AI suggests future instants within the send-by deadline for operator review. The cited observations explain its evidence; Mango does not estimate a best hour or timing uplift.</p>
+        {entry.steps.map(step=><p key={step.id}>{step.channel} · {step.timezone} · Suggested timing evidence: {step.whyThisTime??'Not recorded'}</p>)}
+        <section className="panel"><h3>Forecast and provenance</h3><p>{entry.forecast?.status==='available'?`${entry.forecast.currency} ${((entry.forecast.valueMinor??0)/100).toFixed(2)} expected revenue`:'Insufficient deployment attribution history; no revenue range is shown.'}</p><p>{entry.forecast?.method}</p>{entry.forecast?.sampleSize!==undefined?<><p>{entry.forecast.campaignCount} campaigns · {entry.forecast.eventCount} store events · {entry.forecast.sampleSize} historical recipient-steps · {entry.forecast.proposedRecipientSteps} proposed recipient-steps</p><p>Campaigns: {entry.forecast.campaignIds?.join(', ')||'None'}</p><p>Store events: {entry.forecast.sourceEventIds?.join(', ')||'None'}</p><p>As of {entry.forecast.asOf&&formatDate(entry.forecast.asOf)}</p></>:null}</section>
+        {entry.composition?.revision?<RevisionPreviews revision={entry.composition.revision} links={entry.composition.links} selectedChannels={entry.steps.map(step=>step.channel)}/>:null}
+        <section className="panel"><h3>Proposal history</h3><ul>{entry.history?.map((event,index)=><li key={index}>{event.fromState} → {event.toState} · {event.actorId} · {formatDate(event.occurredAt)} · {event.reason}</li>)}</ul></section>
       </div>
     </section>
   );

@@ -9,7 +9,7 @@ import { Link, useParams, useBlocker } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
 import { requestJson } from '@/core/app/client/lib/api';
-import type { ApprovalBlocker, CampaignDetail, Revision } from '@/core/app/client/lib/types';
+import type { ApprovalBlocker, CampaignDetail, Check, Revision } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
 
@@ -33,7 +33,7 @@ export function CampaignReviewPage() {
   const [validationRequest, setValidationRequest] = useState(0);
   const [testErrors, setTestErrors] = useState<FieldErrors>({});
   const [actionBlockers, setActionBlockers] = useState<ApprovalBlocker[]>();
-  const [busy, setBusy] = useState<'save' | 'approve' | 'test' | 'reload' | undefined>();
+  const [busy, setBusy] = useState<'save' | 'approve' | 'test' | 'reload' | 'acknowledge' | undefined>();
   const [needsCanonicalRead, setNeedsCanonicalRead] = useState(false);
   const [testChannel, setTestChannel] = useState<'email' | 'sms'>('email');
   const [testDestination, setTestDestination] = useState('');
@@ -105,6 +105,28 @@ export function CampaignReviewPage() {
     if (kind === 'test') setTestErrors({destination: response.data.error === 'test_destination_not_allowed' ? 'Use a destination approved by your operator in the test allowlist.' : 'Check the approved destination and sender in Settings before sending a test.'});
     setNotice('This action is unavailable. Check the approval checks and sending configuration, then try again.');
     } catch {setNotice('The result could not be confirmed. Reload this campaign before trying again.');}
+    finally {setBusy(undefined);}
+  };
+
+  const acknowledge = async (check: Check) => {
+    if (busy || dirty || needsCanonicalRead || !check.findingIdentity) return;
+    setBusy('acknowledge');
+    setNotice(undefined);
+    setNoticeKind('error');
+    try {
+      const response = await requestJson<{error?: string}>(`/api/campaigns/${id}/checks/${check.id}/acknowledge`, {
+        method: 'POST', body: JSON.stringify({revisionId: revision.id, findingIdentity: check.findingIdentity}),
+      });
+      const saved = await reload();
+      if (response.status >= 300) {
+        setNotice('The advisory changed or is no longer available. Review the saved findings before acknowledging.');
+      } else if (!saved?.revision) {
+        setNotice('Acknowledgement saved, but review could not be reloaded. Reload to see its record.');
+      } else {
+        setNoticeKind('success');
+        setNotice('Advisory acknowledged. All approval checks still apply.');
+      }
+    } catch {setNotice('Acknowledgement could not be confirmed. Reload this campaign to check its record.');}
     finally {setBusy(undefined);}
   };
 
@@ -189,7 +211,7 @@ export function CampaignReviewPage() {
         <p>{dirty ? 'Your edits are still here. Save them, or discard them before reloading the saved revision.' : 'Reload the saved revision, then review its content and checks.'}</p>
         <button className="secondary-action" type="button" onClick={() => void recover()} disabled={Boolean(busy) || dirty}>Reload saved revision</button>
       </section> : null}
-      <ApprovalCheckList checks={findings} title="Approval checks" eyebrow="Saved revision" emptyMessage="Approval will check this saved revision and current consent." />
+      <ApprovalCheckList checks={findings} onAcknowledge={check => void acknowledge(check)} acknowledgementDisabled={Boolean(busy) || dirty || needsCanonicalRead} title="Approval checks" eyebrow="Saved revision" emptyMessage="Approval will check this saved revision and current consent." />
       <p className="saved-audience-summary notice-note"><strong>Saved audience:</strong> {summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p>
       <div className="review-layout">
         {editable ? authoring.loading ? <LoadState /> : authoring.error || !authoring.data?.timezone

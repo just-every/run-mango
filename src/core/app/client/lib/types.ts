@@ -83,6 +83,7 @@ export type Step = {
 
 export type ProposalStep = Omit<Step, 'revisionId' | 'whyThisTime'> & {
   proposalId: string;
+  whyThisTime?: string;
 };
 
 export type RevisionLink = {
@@ -94,6 +95,8 @@ export type RevisionLink = {
 };
 
 export type Check = {
+  findingIdentity?: string;
+  acknowledgement?: {operatorId: string; acknowledgedAt: string};
   id: string;
   kind: string;
   status: string;
@@ -125,6 +128,8 @@ export type Proposal = {
   audienceRule: string;
   inclusionRuleJson: string;
   exclusionRulesJson: string;
+  lookbackStartAt?: string | null;
+  triggerEventsJson?: string;
   sourceDataAsOf: string;
   sendByAt: string;
   campaignId: string | null;
@@ -133,6 +138,11 @@ export type Proposal = {
 export type Exclusion = { id: string; reason: string; count: number };
 
 export type ProposalEntry = {
+  evidenceItems?: Array<{key:string;sourceRecordId:string;sourceType:string;observedValue:unknown;occurredAt:string}>;
+  history?: Array<{fromState:string;toState:string;actorId:string;reason:string|null;occurredAt:string}>;
+  explanation?:string;
+  forecast?:{status:string;valueMinor?:number|null;currency?:string|null;method:string;campaignIds?:string[];sourceEventIds?:string[];sampleSize?:number;campaignCount?:number;eventCount?:number;historicalNetRevenueMinor?:number|null;proposedRecipientSteps?:number;asOf?:string};
+  composition?:{revision?:Revision;links:RevisionLink[]};
   proposal: Proposal;
   exclusions: Exclusion[];
   steps: ProposalStep[];
@@ -147,7 +157,11 @@ export type ApprovalBlocker = {
   blocking: boolean;
 };
 
+export type ProposalDecision = {proposalId:string;title:string;state:string;actorId:string;reason:string|null;occurredAt:string};
+
 export type DecisionDesk = {
+  recentDecisions?:ProposalDecision[];
+  policy?:{id:string;detail:string};
   sourceStatus: { providers: Provider[]; sourceSyncs: SourceSync[] };
   proposals: ProposalEntry[];
 };

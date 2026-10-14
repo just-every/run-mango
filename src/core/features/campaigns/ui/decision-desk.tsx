@@ -11,6 +11,7 @@ import { LoadState } from '@/core/app/client/ui/layout';
 import { Envelope } from '@/core/features/site/drawings/Envelope';
 
 import { ProposalDetail } from './proposal-detail';
+import { ProposalHistory } from './proposal-history';
 import { ProposalQueue } from './proposal-queue';
 
 function ProposalCapabilityState({ providers }: { providers: DecisionDesk['sourceStatus']['providers'] }) {
@@ -77,11 +78,12 @@ export function DecisionDeskPage() {
       {entry && selectedId ? (
         <div className="decision-desk__proposals">
           <ProposalQueue proposals={data.proposals} selectedId={selectedId} onSelect={setSelectedId} />
-          <ProposalDetail entry={entry} />
+          <ProposalDetail key={entry.proposal.id} entry={entry} onDismiss={()=>void reload()} />
         </div>
       ) : (
         <ProposalCapabilityState providers={data.sourceStatus.providers} />
       )}
+      <ProposalHistory decisions={data.recentDecisions??[]} />
       <section className="source-status panel" aria-labelledby="source-status-title">
         <div className="section-heading">
           <h2 id="source-status-title">Store data</h2>

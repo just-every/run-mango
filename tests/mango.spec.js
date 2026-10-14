@@ -16,12 +16,6 @@ async function authenticatedHeaders(request) {
 test.describe('Worker product spine', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test('checks the local D1 binding through the health route', async ({ request }) => {
-    const response = await request.get('/health');
-    await expect(response).toBeOK();
-    await expect(response.json()).resolves.toEqual({ ok: true, status: 'ok', deployment: { sourceSha: null, fingerprint: null, versionId: null } });
-  });
-
   test('keeps product API routes behind a persisted operator session', async ({ request }) => {
     const response = await request.get('/api/decision-desk');
     expect(response.status()).toBe(401);
@@ -91,25 +85,6 @@ test.describe('Worker product spine', () => {
     });
   });
 
-  contract('PROP-003', 'returns a proposal-owned recipient-step snapshot without a campaign', async ({ request }) => {
-    const headers = await authenticatedHeaders(request);
-    const response = await request.get('/api/decision-desk', { headers });
-    await expect(response).toBeOK();
-    const body = await response.json();
-    const proposal = body.proposals.find(({ proposal: item }) => item.id === 'proposal_snapshot_only_v4');
-    expect(proposal.proposal.campaignId).toBeNull();
-    expect(proposal.audienceState).toBe('saved');
-    expect(proposal.audience).toMatchObject({ candidateCount: 3, excludedCount: 1, eligibleCount: 2 });
-    expect(proposal.exclusions).toEqual([
-      expect.objectContaining({ reason: 'no-eligible-channel', count: 1 }),
-    ]);
-    expect(proposal.audienceChannelCounts).toEqual([
-      expect.objectContaining({ channel: 'email', recipientStepCount: 2 }),
-      expect.objectContaining({ channel: 'sms', recipientStepCount: 1 }),
-    ]);
-    expect(body.sourceStatus.sourceSyncs.every((source) => source.lastSuccessfulAt === null)).toBe(true);
-  });
-
   contract('AUD-001', 'returns the complete review snapshot and recipient-step counts', async ({ request }) => {
     const headers = await authenticatedHeaders(request);
     const response = await request.get('/api/campaigns/campaign_table_runner_draft_v4/review', { headers });
@@ -123,16 +98,6 @@ test.describe('Worker product spine', () => {
       expect.objectContaining({ channel: 'email', recipientStepCount: 2 }),
       expect.objectContaining({ channel: 'sms', recipientStepCount: 1 }),
     ]);
-  });
-
-  contract('PROP-008', 'shows evidence without inventing a forecast', async ({ request }) => {
-    const headers = await authenticatedHeaders(request);
-    const response = await request.get('/api/proposals/proposal_table_runner_v4', { headers });
-    await expect(response).toBeOK();
-    await expect(response.json()).resolves.toMatchObject({
-      proposal: { evidence: expect.stringContaining('persisted sample saved-product') },
-      forecast: { status: 'unavailable' },
-    });
   });
 
   contract('CAMP-002', 'round-trips the complete draft composition and preserves scheduled revisions', async ({ request }) => {

@@ -71,7 +71,10 @@ contract('AUD-001][CAMP-002', 'native proposal adoption and generation reject in
       output.audience.inclusion=JSON.parse(inclusion);output.audience.exclusions=JSON.parse(exclusions);
       await expect(repository.saveGenerated({proposalId:`direct-${id}`,campaignId:`campaign-${id}`,revisionId:`revision-${id}`,output,evidence,now,sendByAt:new Date(now.getTime()+86400000),generation:{provider:'test',model:'test',billableUnits:1}})).rejects.toThrow();
       // The test adapter supplies invalid model output; production validation and D1 remain real.
-      const service=createProposalService(repository,{async generateGroundedJson(){return {output,provider:'openai',model:'test',billableUnits:1};}});
+      const wireOutput=generatedOutput();
+      wireOutput.audience.inclusion={...output.audience.inclusion,predicates:output.audience.inclusion.predicates.map(predicate=>({...predicate,lookbackDays:predicate.lookbackDays??null}))};
+      wireOutput.audience.exclusions=output.audience.exclusions.map(rule=>({...rule,reason:'Matches an exclusion condition',predicate:{...rule.predicate,lookbackDays:rule.predicate.lookbackDays??null}})) as never;
+      const service=createProposalService(repository,{async generateGroundedJson(){return {output:wireOutput,provider:'openai',model:'test',billableUnits:1};}});
       const generated=await service.generate({evidence,configuredKnowledge:[],now,sendByAt:new Date(now.getTime()+86400000)});
       expect(generated).toMatchObject({kind:'failed',error:'invalid_ai_output'});
       expect(await f.db.prepare('SELECT state,generation_error,campaign_id FROM proposals WHERE id=?').bind(generated.proposalId).first())

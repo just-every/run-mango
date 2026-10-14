@@ -44,13 +44,13 @@ function requiredUrl(environment: AppBindings, name: keyof AppBindings): URL {
   return url;
 }
 
-function emails(value: string): string[] {
+function emails(value: string, name: string): string[] {
   const parsed = value
     .split(',')
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
   if (parsed.length === 0 || parsed.some((email) => !/^\S+@\S+\.\S+$/.test(email))) {
-    throw new Error('INITIAL_OPERATOR_EMAILS must be a comma-separated list of email addresses.');
+    throw new Error(`${name} must be a comma-separated list of email addresses.`);
   }
   return [...new Set(parsed)];
 }
@@ -160,7 +160,7 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     mailboxReceiptUrl,
     mailboxReceiptRecipient,
     ...(siteKey && secretKey ? {signupTurnstile:{siteKey,secretKey}} : {}),
-    initialOperatorEmails: emails(required(environment, 'INITIAL_OPERATOR_EMAILS')),
+    initialOperatorEmails: emails(required(environment, 'INITIAL_OPERATOR_EMAILS'), 'INITIAL_OPERATOR_EMAILS'),
     contactHashSalt: required(environment, 'CONTACT_HASH_SALT'),
     modules,
     mailProviderApiKey: required(environment, 'MAIL_PROVIDER_API_KEY'),
@@ -170,7 +170,7 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     publicBaseUrl: requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL'),
     appVersion: required(environment, 'MANGO_APP_VERSION'),
     allowedLinkHosts: linkHosts(environment),
-    testEmailAllowlist: emails(required(environment, 'MANGO_TEST_EMAIL_ALLOWLIST')),
+    testEmailAllowlist: emails(required(environment, 'MANGO_TEST_EMAIL_ALLOWLIST'), 'MANGO_TEST_EMAIL_ALLOWLIST'),
     providerReconciliationIntervalMinutes: positiveInteger(environment, 'MANGO_RECONCILIATION_INTERVAL_MINUTES'),
     unresolvedProviderOutcomeHours: positiveInteger(environment, 'MANGO_UNRESOLVED_OUTCOME_HOURS'),
     emailHandoffsPerMinute: positiveInteger(environment, 'MANGO_EMAIL_HANDOFFS_PER_MINUTE'),

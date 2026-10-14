@@ -37,6 +37,7 @@ import { createHealthService } from '@/core/features/health/service';
 import { createInsightsRepository } from '@/core/features/insights/repository';
 import { createInsightsRoutes } from '@/core/features/insights/routes';
 import { createInsightsService } from '@/core/features/insights/service';
+import { prepareHandoffCost, cancelHandoffCost, settleHandoffCost, settleHandoffFailure } from '@/core/features/insights/cost-handoff';
 import {
   moveContactDeliveryFacts,
   registerLifecycleRoutes,
@@ -118,18 +119,28 @@ function audienceDependencies(
               },
           callbackUrl: new URL(`/webhooks/${input.channel === 'email' ? 'mail/resend' : 'sms/mobile-message'}`, platform.config.publicBaseUrl).toString(),
         };
+        const adapter = input.channel === 'email' ? platform.mailer : platform.sms;
+        if (!adapter) throw new Error('The SMS adapter is unavailable despite complete module configuration.');
+        const provider = (await adapter.capabilities()).provider ?? (input.channel === 'email' ? platform.config.mailProvider ?? 'unreported' : 'mobile-message');
+        const costContext = {
+          key: `handoff:${provider}:${request.idempotencyKey}`, provider, operation: 'confirmation-handoff' as const,
+        };
+        await prepareHandoffCost(platform.database, adapter, request, costContext);
         // No asynchronous preparation may occur between this D1 authorization
         // and adapter invocation. A provider handoff already in progress cannot
         // be recalled by a later database transition.
-        if (!await authorizeHandoff()) return false;
-        if (input.channel === 'email') {
-          const result = await platform.mailer.send(request);
-          if (result.disposition !== 'accepted') throw new Error('Confirmation delivery is uncertain; the attempt will not be repeated automatically.');
+        if (!await authorizeHandoff()) {
+          await cancelHandoffCost(platform.database, costContext.key);
+          return false;
         }
-        else {
-          if (!platform.sms) throw new Error('The SMS adapter is unavailable despite complete module configuration.');
-          await platform.sms.send(request);
+        let result;
+        try { result = await adapter.send(request); }
+        catch (error) {
+          await settleHandoffFailure(platform.database, adapter, request, costContext, error);
+          throw error;
         }
+        await settleHandoffCost(platform.database, adapter, request, costContext, result);
+        if (input.channel === 'email' && result.disposition !== 'accepted') throw new Error('Confirmation delivery is uncertain; the attempt will not be repeated automatically.');
         return true;
       },
     },
@@ -160,7 +171,7 @@ type BeforeAuthenticationRoutes = (app: Hono<AppEnvironment>, services: AppServi
 
 export function createAppServices(platform: Platform): AppServices {
   const database = platform.database;
-  const healthService = createHealthService(createHealthRepository(database));
+  const healthService = createHealthService(createHealthRepository(database), platform);
   const authService = createAuthService(createAuthRepository(database), platform);
   const storeService = createStoreService(createStoreRepository(database));
   let lifecycleRuntime: LifecycleRuntime | undefined;
@@ -205,6 +216,9 @@ export function createApp(
   const retirementDatabase=environment.DB;
   environment={...environment,DB:erasureFencedDatabase(environment.DB)};
   const app = new Hono<AppEnvironment>();
+  const services = createAppServices(platform);
+  // Health owns its deadline; no settings or maintenance read may run ahead of it.
+  app.route('/', createHealthRoutes(services.healthService, environment));
   app.use('*',async(_context,next)=>{
     await retireTransfers(retirementDatabase,{ASSETS_BUCKET:environment.ASSETS_BUCKET});
     return next();
@@ -216,9 +230,7 @@ export function createApp(
     if(erasure||path.startsWith('/auth/')||path.startsWith('/media/')||path==='/health')return next();
     return withErasureWriteFence(environment.DB,next);
   });
-  const services = createAppServices(platform);
   const {
-    healthService,
     authService,
     storeService,
     audienceService,
@@ -245,7 +257,6 @@ export function createApp(
     context.header('X-Mango-Version', platform.config.appVersion);
     await next();
   });
-  app.route('/', createHealthRoutes(healthService, environment));
   app.all('/auth/owner-claim', context => ownerClaim(context.req.raw, environment, platform));
   app.get('/auth/environment', async context => {
     context.header('Cache-Control', 'no-store');

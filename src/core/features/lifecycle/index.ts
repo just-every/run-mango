@@ -1,4 +1,6 @@
 import {withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
+import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
+import { createProposalRepository } from '@/core/features/proposals/repository';
 import {continueErasure,pendingErasure} from '@/core/features/audience/erasure/maintenance';
 import { advanceDesignJob, isDesignCommand } from '@/core/features/design-generation/advance';
 import { sweepDesignJobs } from '@/core/features/design-generation/sweep';
@@ -32,6 +34,7 @@ export function registerLifecycleRoutes(app: LifecycleApp, runtime: LifecycleRun
  * computer does with everything but design runs. */
 export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime: LifecycleRuntime, only?: readonly LifecycleQueueBatch['messages'][number]['body']['kind'][]) {
   for (const message of batch.messages) {
+    if (acknowledgeHealthProbe(message)) continue;
     if (only && !only.includes(message.body.kind)) {message.retry(); continue;}
     try {
       if(message.body.kind==='contact.erase'){await continueErasure(runtime.platform,String(message.body.payload.reference??''));message.ack();continue;}
@@ -79,6 +82,7 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
   const pending=await pendingErasure(runtime.platform.database.$client);if(pending){await continueErasure(runtime.platform,pending.reference);return;}
   return withErasureWriteFence(runtime.platform.database.$client,async()=>{
   const now = new Date();
+  await createProposalRepository(runtime.platform.database).expireDue(now);
   if (runtime.platform.commerce) {
     const commerceCapabilities = runtime.platform.commerce.capabilities();
     for (const sourceType of commerceCapabilities.sourceTypes) {

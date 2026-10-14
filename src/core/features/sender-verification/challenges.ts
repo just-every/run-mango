@@ -1,4 +1,5 @@
-import type { SenderAdapter } from '@/core/shared/platform';
+import { ProviderTransportError, type ProviderHandoff, type SenderAdapter } from '@/core/shared/platform';
+import { recordExternalCost } from '@/core/features/insights/cost-recording';
 import { digest, serializedFrom } from './identity';
 import { validateReceiverMaterial } from './receiver';
 import type { VerificationRepository, AuthorityState } from './repository';
@@ -60,6 +61,13 @@ export function createChallengeService(input: { options: VerificationOptions; re
       if (challenge.bindingDigest !== bindingDigest || challenge.configurationDigest !== configuration.configurationDigest
         || challenge.generation !== state.generation || challenge.expiresAt <= now || serializedFrom(challenge.request) !== binding.from
         || await digest(challenge.request) !== challenge.requestDigest) throw new VerificationError('challenge-superseded');
+      const costOccurredAt = new Date(challenge.sentAt ?? clock());
+      const recordCost = (outcome: string, cost?: ProviderHandoff['cost']) => recordExternalCost(options.database, {
+        key: `sender-verification:${id}`, provider: binding.provider, operation: 'sender-verification-handoff',
+        modelOrChannel: 'email', billableUnits: cost?.billableUnits ?? null, unitKind: cost?.unitKind,
+        reportedCostMicros: cost?.reportedCostMicros, currency: cost?.currency, outcome,
+        occurredAt: costOccurredAt,
+      });
       if (challenge.sentAt !== undefined) {
         // An uncertain handoff is only reconciled; never blindly resent.
         const result = await adapter.reconcile(challenge.request, { cursor: challenge.reconciliationCursor });
@@ -74,15 +82,31 @@ export function createChallengeService(input: { options: VerificationOptions; re
         }
         await db.prepare(`UPDATE sender_verification_challenges SET provider_message_id = ?, updated_at = ?
           WHERE id = ? AND provider_message_id IS NULL`).bind(accepted.providerMessageId!, clock(), id).run();
+        // Receipt authority is durable before accounting; missing enrichment leaves an explicit unknown cost.
+        await recordCost('accepted').catch(() => {});
         return read(id);
       }
+      // Account before the guarded handoff claim; no asynchronous work follows a successful claim before send.
+      await recordCost('prepared');
       const claimed = await db.prepare(`UPDATE sender_verification_challenges SET sent_at = ?, updated_at = ?
         WHERE id = ? AND sent_at IS NULL AND ${currentGuard}`)
         .bind(now, now, id, ...currentValues(state)).run();
-      if (!claimed.meta.changes) throw new VerificationError('probe-handoff-unresolved', 'unknown');
-      const sent = await adapter.send(challenge.request);
+      if (!claimed.meta.changes) {
+        // A competing caller may own this same attempt. Exclude it only when nobody claimed the handoff.
+        await db.prepare(`UPDATE external_cost_facts SET outcome='not-sent' WHERE id=? AND outcome='prepared'
+          AND NOT EXISTS (SELECT 1 FROM sender_verification_challenges WHERE id=? AND sent_at IS NOT NULL)`)
+          .bind(`sender-verification:${id}`, id).run().catch(() => {});
+        throw new VerificationError('probe-handoff-unresolved', 'unknown');
+      }
+      let sent: ProviderHandoff;
+      try { sent = await adapter.send(challenge.request); }
+      catch (error) {
+        await recordCost(error instanceof ProviderTransportError ? 'rejected' : 'unknown').catch(() => {});
+        throw error;
+      }
       await db.prepare(`UPDATE sender_verification_challenges SET provider_message_id = ?, updated_at = ?
         WHERE id = ? AND provider_message_id IS NULL`).bind(sent.providerMessageId, clock(), id).run();
+      await recordCost(sent.disposition === 'accepted' ? 'accepted' : 'unknown', sent.cost).catch(() => {});
       return read(id);
     },
     async acquireObservation(id: string) {

@@ -1,3 +1,5 @@
+import { createProposalRepository } from '@/core/features/proposals/repository';
+import { enrichAdvisoryAcknowledgements } from '@/core/features/lifecycle/advisory-acknowledgements';
 import { asc, desc, eq } from 'drizzle-orm';
 import { createCampaignResultRepository } from './result-repository';
 import { createCampaignListRepository } from './list-repository';
@@ -16,11 +18,30 @@ import {
 export function createCampaignRepository(database: Database) {
   return {
     ...createCampaignResultRepository(database),
-    listProposals() {
-      return database.select().from(proposals).orderBy(desc(proposals.createdAt));
+    async listProposals(now = new Date()) {
+      await createProposalRepository(database).expireDue(now);
+      const rows = await database.select().from(proposals).where(eq(proposals.state,'proposed'));
+      const forecast = (row:typeof rows[number]) => JSON.parse(row.decisionContextJson).forecast;
+      // Currency is part of the value: never compare incomparable monetary units.
+      const currencies = new Set(rows.map(row=>forecast(row)).filter(value=>value?.status==='available').map(value=>value.currency));
+      return rows.sort((a,b)=>{
+        const af=forecast(a),bf=forecast(b);
+        const av=currencies.size===1&&af?.status==='available'?af.valueMinor:null;
+        const bv=currencies.size===1&&bf?.status==='available'?bf.valueMinor:null;
+        if(av!==null||bv!==null) {if(av===null)return 1;if(bv===null)return -1;if(av!==bv)return bv-av;}
+        return a.sendByAt.getTime()-b.sendByAt.getTime()||a.id.localeCompare(b.id);
+      });
     },
 
-    getProposal(id: string) {
+    async recentProposalDecisions() {
+      const result=await database.$client.prepare(`SELECT t.proposal_id AS proposalId,p.title,t.to_state AS state,t.actor_id AS actorId,t.reason,t.occurred_at AS occurredAt
+        FROM proposal_transitions t JOIN proposals p ON p.id=t.proposal_id
+        WHERE t.to_state IN ('approved','dismissed','expired','failed') ORDER BY t.occurred_at DESC,t.id DESC LIMIT 20`).all<{proposalId:string;title:string;state:string;actorId:string;reason:string|null;occurredAt:number}>();
+      return result.results.map(event=>({...event,occurredAt:new Date(event.occurredAt).toISOString()}));
+    },
+
+    async getProposal(id: string, now = new Date()) {
+      await createProposalRepository(database).expireDue(now);
       return database.query.proposals.findFirst({ where: eq(proposals.id, id) });
     },
 
@@ -53,6 +74,13 @@ export function createCampaignRepository(database: Database) {
       return { audience, audienceChannelCounts };
     },
 
+    async proposalEvidence(id:string) {
+      const [evidence, history] = await Promise.all([
+        database.$client.prepare('SELECT source_record_id AS sourceRecordId, source_type AS sourceType, claim_key AS key, observed_value_json AS observedValueJson, occurred_at AS occurredAt FROM proposal_evidence_items WHERE proposal_id=? ORDER BY occurred_at,claim_key').bind(id).all<{sourceRecordId:string;sourceType:string;key:string;observedValueJson:string;occurredAt:number}>(),
+        database.$client.prepare('SELECT from_state AS fromState,to_state AS toState,actor_id AS actorId,reason,occurred_at AS occurredAt FROM proposal_transitions WHERE proposal_id=? ORDER BY occurred_at,id').bind(id).all<{fromState:string;toState:string;actorId:string;reason:string|null;occurredAt:number}>(),
+      ]);
+      return {evidenceItems:evidence.results.map(({observedValueJson,occurredAt,...item})=>({...item,observedValue:JSON.parse(observedValueJson),occurredAt:new Date(occurredAt)})),history:history.results.map(({occurredAt,...item})=>({...item,occurredAt:new Date(occurredAt)}))};
+    },
     listCampaigns: createCampaignListRepository(database),
 
     getCampaign(id: string) {
@@ -67,12 +95,13 @@ export function createCampaignRepository(database: Database) {
       return rows.results;
     },
 
-    listChecks(revisionId: string) {
-      return database
+    async listChecks(revisionId: string) {
+      const checks = await database
         .select()
         .from(campaignChecks)
         .where(eq(campaignChecks.revisionId, revisionId))
         .orderBy(asc(campaignChecks.kind));
+      return enrichAdvisoryAcknowledgements(database,revisionId,checks);
     },
 
   };

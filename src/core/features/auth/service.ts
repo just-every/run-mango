@@ -63,7 +63,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       SESSION_SECRET: config.sessionSigningKey, SETUP_TOKEN: config.authSetupToken,
       MAIL_FROM: config.mailAuthFrom || undefined, local,
       branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
-    }, mailSender: local ? createMailSender({ provider: 'development', mode: 'development' }, { outbox: createD1DevelopmentOutbox({ db }) }) : createBaseMailSender(config),
+    }, mailSender: local ? createMailSender({ provider: 'development', mode: 'development' }, { outbox: createD1DevelopmentOutbox({ db }) }) : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
         if (action === 'operators:role') return false;

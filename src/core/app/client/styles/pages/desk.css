@@ -74,3 +74,10 @@
   .proposal-queue__items { margin-inline: calc(-1 * var(--sp-4)); }
   .proposal-queue__item { padding-right: var(--sp-4); padding-left: 13px; }
 }
+
+.proposal-layout :is(p,small,li), .proposal-history { overflow-wrap: anywhere; }
+.evidence-note pre { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; }
+.proposal-history { display: grid; gap: var(--sp-6); min-width: 0; }
+.proposal-history li + li { margin-top: var(--sp-4); }
+.proposal-history li p { margin: var(--sp-2) 0 0; }
+.proposal-queue__item small { display: block; margin-top: var(--sp-2); }

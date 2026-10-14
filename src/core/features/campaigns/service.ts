@@ -44,45 +44,26 @@ export function createCampaignService(
       uncertainDeliveries: await repository.uncertainDeliveries(id), checks };
   }
 
+  async function proposalEntry(proposal:NonNullable<Awaited<ReturnType<typeof repository.getProposal>>>) {
+    const [exclusions, steps, audience, evidence, composition] = await Promise.all([
+      repository.listProposalExclusions(proposal.id), repository.listProposalSteps(proposal.id), repository.proposalAudience(proposal.id),repository.proposalEvidence(proposal.id),
+      proposal.campaignId ? campaignDetail(proposal.campaignId) : undefined,
+    ]);
+    const context=JSON.parse(proposal.decisionContextJson);
+    return {proposal:withDerivedAudience(proposal),exclusions,steps:steps.map((step,index)=>({...step,whyThisTime:context.timing?.[index]})),
+      ...proposalReviewSnapshot(steps,audience.audience,audience.audienceChannelCounts),...evidence,
+      explanation:context.explanation,forecast:context.forecast??{status:'insufficient',method:'Insufficient deployment attribution history; no forecast was computed.'},
+      composition:composition?{revision:composition.revision,links:composition.links}:undefined};
+  }
   return {
     async decisionDesk() {
-      const [sourceStatus, proposalRows] = await Promise.all([store.status(), repository.listProposals()]);
-      const proposals = await Promise.all(
-        proposalRows.map(async (proposal) => {
-          const [exclusions, steps, audience] = await Promise.all([
-            repository.listProposalExclusions(proposal.id),
-            repository.listProposalSteps(proposal.id),
-            repository.proposalAudience(proposal.id),
-          ]);
-          return {
-            proposal: withDerivedAudience(proposal),
-            exclusions,
-            steps,
-            ...proposalReviewSnapshot(steps, audience.audience, audience.audienceChannelCounts),
-          };
-        }),
-      );
-      return { sourceStatus:authoringSourceStatus(sourceStatus), proposals };
+      const [sourceStatus, proposalRows] = await Promise.all([store.status(), repository.listProposals(options.now?.() ?? new Date())]);
+      const proposals = await Promise.all(proposalRows.map(proposalEntry));
+      return {sourceStatus:authoringSourceStatus(sourceStatus),proposals,recentDecisions:await repository.recentProposalDecisions(),policy:{id:'proposal.selection.v1',detail:'Expected revenue descending when sufficient own attribution history is available in one comparable currency; then earliest send-by. Insufficient history has no forecast. Mixed currencies rank by send-by.'}};
     },
-
     async proposalDetail(id: string) {
-      const proposal = await repository.getProposal(id);
-      if (!proposal) return undefined;
-      const [exclusions, steps, audience] = await Promise.all([
-        repository.listProposalExclusions(id),
-        repository.listProposalSteps(id),
-        repository.proposalAudience(id),
-      ]);
-      return {
-        proposal: withDerivedAudience(proposal),
-        exclusions,
-        steps,
-        ...proposalReviewSnapshot(steps, audience.audience, audience.audienceChannelCounts),
-        forecast: {
-          status: 'unavailable',
-          detail: 'No forecast is shown because provider-confirmed outcome data is unavailable.',
-        },
-      };
+      const proposal=await repository.getProposal(id,options.now?.() ?? new Date());
+      return proposal?proposalEntry(proposal):undefined;
     },
 
     async listCampaigns(filters: CampaignFilters = {}) {

@@ -1,3 +1,4 @@
+import { cancelHandoffCost, prepareHandoffCost, settleHandoffCost, settleHandoffFailure } from '@/core/features/insights/cost-handoff';
 import {privateInboxFact} from './provider-inbox-privacy';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
@@ -173,24 +174,22 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
       return;
     }
     await repository.resumeChannel(claimed.campaignId, claimed.revisionId, claimed.channel, 'source-freshness', new Date());
+    const costContext = {
+      key: `handoff:${capabilities.provider ?? (claimed.channel === 'email' ? runtime.platform.config.mailProvider ?? 'unreported' : 'mobile-message')}:${claimed.id}:${claimed.attemptCount}`,
+      provider: capabilities.provider ?? (claimed.channel === 'email' ? runtime.platform.config.mailProvider ?? 'unreported' : 'mobile-message'), operation: 'provider-handoff' as const,
+      campaignId: claimed.campaignId, recipientStepId: claimed.id, occurredAt: new Date(),
+    };
+    await prepareHandoffCost(runtime.platform.database, adapter, request, costContext);
     if (!await repository.markHandoffUnknown(claimed.id, claimed.leaseToken, new Date(), inspection?.lease, claimed.outboundRequestJson ?? serializeDeliveryRequest(request), capabilities.provider)) {
+      await cancelHandoffCost(runtime.platform.database, costContext.key);
       await repository.deferRecipient(claimed.id, claimed.leaseToken,
         new Date(Date.now() + runtime.platform.config.providerReconciliationIntervalMinutes * 60_000),
         'approval-or-sender-authority-changed', new Date());
       return;
     }
+    let handoff;
     try {
-      const handoff = await adapter.send(request);
-      await repository.recordHandoff({
-        id: claimed.id,
-        leaseToken: claimed.leaseToken,
-        provider: capabilities.provider ?? adapterName(claimed.channel),
-        providerMessageId: handoff.providerMessageId,
-        disposition: handoff.disposition,
-        acceptedAt: handoff.providerAcceptedAt,
-        now: new Date(),
-      });
-      await repository.recoverProvider(adapterName(claimed.channel), claimed.channel, new Date());
+      handoff = await adapter.send(request);
     } catch (error) {
       const detail = error instanceof Error ? error.message : 'Provider hand-off failed without a provider response.';
       if (error instanceof ProviderTransportError) {
@@ -219,16 +218,28 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
           }, delaySeconds);
           await repository.recordProviderFailure(adapterName(claimed.channel), claimed.channel, detail, new Date());
         }
+        await settleHandoffFailure(runtime.platform.database, adapter, request, costContext, error);
         return;
       }
       await repository.noteUnknownFailure(claimed.id, claimed.leaseToken, detail, new Date());
       await repository.recordProviderFailure(adapterName(claimed.channel), claimed.channel, detail, new Date());
+      await settleHandoffFailure(runtime.platform.database, adapter, request, costContext, error);
+    }
+    if (handoff) {
+      await repository.recordHandoff({
+        id: claimed.id, leaseToken: claimed.leaseToken, provider: costContext.provider,
+        providerMessageId: handoff.providerMessageId, disposition: handoff.disposition,
+        acceptedAt: handoff.providerAcceptedAt, now: new Date(),
+      });
+      await repository.recoverProvider(adapterName(claimed.channel), claimed.channel, new Date());
     }
     await runtime.platform.jobs.enqueue({
       kind: 'delivery.reconcile',
       idempotencyKey: `reconcile:${claimed.id}`,
       payload: { recipientStepId: claimed.id },
     });
+    // A cost write failure cannot discard the stored receipt or reclassify acceptance.
+    if (handoff) await settleHandoffCost(runtime.platform.database, adapter, request, costContext, handoff);
   }
 
   async function dispatchStep(payload: Record<string, unknown>) {

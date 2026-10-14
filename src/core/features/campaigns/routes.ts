@@ -33,8 +33,14 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     return context.json(await authoring.audience(body.data));
   });
   routes.post('/proposals/generate', async context => {
-    const result = await authoring.generate();
+    const result = await authoring.generate(context.get('operator').id);
     return context.json(result, result.kind === 'proposed' ? 201 : 409);
+  });
+  routes.post('/proposals/:id/dismiss', async context => {
+    const body=await readJson(context,z.object({reason:z.string().trim().min(1).max(4000)}).strict());
+    if ('error' in body) return body.error;
+    const dismissed=await authoring.dismiss(context.req.param('id'),context.get('operator').id,body.data.reason);
+    return dismissed?context.json({kind:'dismissed'}):context.json({kind:'unavailable',detail:'Only a live proposed suggestion can be dismissed.'},409);
   });
   routes.post('/proposals/:id/adopt', async context => {
     const result = await authoring.adopt(context.req.param('id'), context.get('operator').id);

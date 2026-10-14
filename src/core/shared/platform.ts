@@ -22,6 +22,7 @@ export type DeliveryRequest = {
 };
 
 export type ProviderHandoff = {
+  cost?: { billableUnits: number | null; unitKind: string; reportedCostMicros?: number; currency?: string };
   providerMessageId: string;
   disposition: 'accepted' | 'handoff-unknown';
   providerAcceptedAt?: Date;
@@ -123,12 +124,14 @@ export type AiGenerationResult = {
   output: unknown;
   provider: 'openai';
   model: string;
-  billableUnits: number;
+  billableUnits: number | null;
+  unitKind?: string;
   reportedCostMicros?: number;
   currency?: string;
 };
 
 export interface AiProvider {
+  costIdentity?: { provider: 'openai'; model: string };
   generateGroundedJson(request: GroundedGenerationRequest): Promise<AiGenerationResult>;
 }
 
@@ -161,7 +164,7 @@ export interface DesignProvider {
 }
 
 export type QueueCommand = {
-  kind: 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync' | 'design.draft' | 'design.layout';
+  kind: 'health.probe' | 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync' | 'design.draft' | 'design.layout';
   idempotencyKey: string;
   payload: Record<string, unknown>;
 };

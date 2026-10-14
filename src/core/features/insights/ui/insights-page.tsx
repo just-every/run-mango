@@ -1,3 +1,5 @@
+import { CostTotals } from './cost-totals';
+import type { CostReport } from '../cost-report';
 import { Link } from '@tanstack/react-router';
 
 import { formatDate, titleCase } from '@/core/app/client/lib/format';
@@ -21,7 +23,7 @@ function NothingPostmarked() {
 }
 
 export function InsightsPage() {
-  const { data, error, loading } = useResource<{ results: Insight[]; note: string }>('/api/insights');
+  const { data, error, loading } = useResource<{ results: Insight[]; note: string; costs: CostReport }>('/api/insights');
   if (loading) return <LoadState />;
   if (!data) return <LoadState error={error} />;
   return (
@@ -33,6 +35,7 @@ export function InsightsPage() {
           <p className="page-head__lead">{data.note}</p>
         </div>
       </header>
+      <CostTotals report={data.costs} />
       {data.results.length ? (
         <section className="panel data-table-panel" aria-labelledby="insights-results-title">
           <div className="section-heading"><div><p className="eyebrow">Recorded results</p><h2 id="insights-results-title">{data.results.length} observed events</h2></div></div>

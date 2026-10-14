@@ -21,8 +21,8 @@ function newsletterBindings(database: D1Database): AppBindings {
   return {
     ASSETS: { fetch: () => Promise.resolve(new Response('asset fallback must not run')) },
     DB: database,
-    ASSETS_BUCKET: {} as R2Bucket,
-    MANGO_JOBS: {} as Queue<any>,
+    ASSETS_BUCKET: { async head() { return null; } } as unknown as R2Bucket,
+    MANGO_JOBS: { async send() {} } as unknown as Queue<any>,
     SESSION_SIGNING_KEY: randomBytes(32).toString('hex'),
     INITIAL_OPERATOR_EMAILS: 'operator@example.test',
     CONTACT_HASH_SALT: randomBytes(32).toString('hex'),

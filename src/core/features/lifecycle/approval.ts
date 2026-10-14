@@ -1,3 +1,6 @@
+import { prepareTestHandoffCost, cancelHandoffCost, settleHandoffCost, settleHandoffFailure, type HandoffCostContext } from '@/core/features/insights/cost-handoff';
+import type { DeliveryRequest, ProviderHandoff } from '@/core/shared/platform';
+import { createProposalRepository } from '@/core/features/proposals/repository';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
 import { messageRendererVersion, renderMessageContent, invalidPersonalisation } from '@/core/features/campaigns/message-content';
@@ -34,6 +37,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       now?: Date;
     }) {
       const now = input.now ?? new Date();
+      await createProposalRepository(runtime.platform.database).expireDue(now);
       const snapshot = await repository.readRevisionSnapshot(input.campaignId, input.revisionId);
       if (!snapshot) return { kind: 'not_found' as const };
       if (snapshot.revision.state === 'approved' && snapshot.campaign.activeRevisionId === input.revisionId) {
@@ -46,6 +50,8 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         return { kind: 'approved' as const, revisionDigest: digest, idempotent: true };
       }
       if (snapshot.revision.state !== 'draft') return { kind: 'conflict' as const, detail: 'Revision is immutable after approval.' };
+      const linkedProposal=await runtime.platform.database.$client.prepare('SELECT c.proposal_id,p.state,p.send_by_at FROM campaigns c LEFT JOIN proposals p ON p.id=c.proposal_id WHERE c.id=?').bind(snapshot.campaign.id).first<{proposal_id:string|null;state:string|null;send_by_at:number|null}>();
+      if (linkedProposal?.proposal_id && (linkedProposal.state !== 'proposed' || !linkedProposal.send_by_at || linkedProposal.send_by_at <= now.getTime())) return {kind:'conflict' as const,detail:'Only an unexpired proposed suggestion can be approved.'};
 
       const {candidates, checkResult, audience, exclusionCounts, personalisationUsage} = await evaluateApproval(runtime, repository, snapshot, now);
       await repository.saveChecks(snapshot.revision.id, checkResult.checks, now);
@@ -173,21 +179,24 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       });
       const destinationDigest = await sha256(destination);
       const idempotencyKey = `test:${input.revisionId}:${input.channel}:${destinationDigest}:${revisionDigest}`;
+      const request: DeliveryRequest = {
+        recipientStepId: `test:${input.revisionId}`, idempotencyKey, to: input.to,
+        sender: input.channel === 'email' ? `${snapshot.revision.senderName} <${snapshot.revision.fromEmail}>` : snapshot.revision.smsSender,
+        content, callbackUrl: `${publicBaseUrl}/webhooks/${input.channel === 'email' ? 'mail' : 'sms'}/status`, handoffStartedAt: now,
+      };
+      const costContext: HandoffCostContext = {key:`test-handoff:${idempotencyKey}`,provider:capabilities.provider ?? (input.channel==='email'?'mail.sender.v1':'sms.sender.v1'),operation:'test-handoff',campaignId:input.campaignId};
+      const cost=await prepareTestHandoffCost(runtime.platform.database,sender,request,costContext,capabilities.effectiveDeduplication?capabilities.deduplicationWindowMs:0);
       if (input.channel === 'email' && !revisionMatchesSender(snapshot.revision, await loadSenderSettings(runtime.platform))) {
+        await cancelHandoffCost(runtime.platform.database,cost.key);
         return {kind: 'blocked' as const, detail: 'Sender settings changed during preparation. Save and review the current sender details before sending.'};
       }
-      const handoff = await sender.send({
-        recipientStepId: `test:${input.revisionId}`,
-        idempotencyKey,
-        to: input.to,
-        sender: input.channel === 'email'
-          ? `${snapshot.revision.senderName} <${snapshot.revision.fromEmail}>`
-          : snapshot.revision.smsSender,
-        content,
-        callbackUrl: `${publicBaseUrl}/webhooks/${input.channel === 'email' ? 'mail' : 'sms'}/status`,
-        handoffStartedAt: now,
-      });
+      let handoff: ProviderHandoff;
+      try {handoff=await sender.send(request);} catch(error) {
+        await settleHandoffFailure(runtime.platform.database,sender,request,cost,error);
+        throw error;
+      }
       await repository.recordTestSend(input.revisionId, input.operatorId, input.channel, destinationDigest, revisionDigest, now);
+      await settleHandoffCost(runtime.platform.database,sender,request,cost,handoff);
       return { kind: 'sent' as const, disposition: handoff.disposition, providerMessageId: handoff.providerMessageId };
     },
   };

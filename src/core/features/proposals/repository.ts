@@ -1,14 +1,23 @@
+import {completeInclusionRuleSchema,completeExclusionRuleSchema} from '@/core/features/lifecycle/rules';
+import { recordExternalCost } from '@/core/features/insights/cost-recording';
+import type { AiGenerationResult } from '@/core/shared/platform';
+import type { ProposalDecisionContext } from './forecast';
 import { summarizeAudienceRules } from '@/core/features/campaigns/audience-summary';
 import { normalizeAuthoredContent } from '@/core/features/campaigns/authoring-content';
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
 
-import { generatedProposalSchema, type GeneratedProposal, type ProposalEvidence } from './generation';
+import { validateGrounding, type GeneratedProposal, type ProposalEvidence } from './generation';
 
 export function createProposalRepository(database: Database) {
   const client = database.$client;
   return {
+    recordGenerationCost(proposalId:string, generation:AiGenerationResult, now:Date, campaignId?:string, outcome = 'reported') {
+      return recordExternalCost(database,{key:`ai:${proposalId}`,proposalId,campaignId,outcome,provider:generation.provider,operation:'ai-proposal-generation',modelOrChannel:generation.model,billableUnits:generation.billableUnits,unitKind:generation.unitKind??'tokens',reportedCostMicros:generation.reportedCostMicros,currency:generation.currency,occurredAt:now});
+    },
     async saveGenerated(input: {
+      actorId?: string;
+      decisionContext?: ProposalDecisionContext;
       proposalId: string;
       campaignId: string;
       revisionId: string;
@@ -16,10 +25,13 @@ export function createProposalRepository(database: Database) {
       evidence: ProposalEvidence[];
       now: Date;
       sendByAt: Date;
-      generation: { provider: string; model: string; billableUnits: number; reportedCostMicros?: number; currency?: string };
+      generation: AiGenerationResult;
     }) {
       const { now } = input;
-      const output = generatedProposalSchema.parse(input.output);
+      const output = input.output;
+      completeInclusionRuleSchema.parse(output.audience.inclusion);
+      for(const rule of output.audience.exclusions)completeExclusionRuleSchema.parse(rule);
+      validateGrounding(output,input.evidence);
       const audienceRule = summarizeAudienceRules(JSON.stringify(output.audience.inclusion), JSON.stringify(output.audience.exclusions));
       const content=normalizeAuthoredContent({emailBody:output.email?.html??'',links:output.links});
       const sourceTypes = [...new Set([
@@ -30,9 +42,9 @@ export function createProposalRepository(database: Database) {
         client.prepare(
           `INSERT INTO proposals
            (id, state, title, summary, evidence, audience_rule, source_data_as_of, send_by_at, campaign_id,
-            trigger_events_json, lookback_start_at, inclusion_rule_json, exclusion_rules_json, generation_error,
+            trigger_events_json, lookback_start_at, inclusion_rule_json, exclusion_rules_json, generation_error, decision_context_json,
             created_at, updated_at)
-           VALUES (?, 'proposed', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)`,
+           VALUES (?, 'proposed', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)`,
         ).bind(
           input.proposalId, output.title, output.summary.text,
           JSON.stringify(input.evidence.map((item) => ({ key: item.key, sourceRecordId: item.sourceRecordId }))),
@@ -42,6 +54,7 @@ export function createProposalRepository(database: Database) {
           JSON.stringify(input.evidence.map((item) => item.sourceRecordId)),
           Math.min(...input.evidence.map((item) => item.occurredAt.getTime())),
           JSON.stringify(output.audience.inclusion), JSON.stringify(output.audience.exclusions),
+          JSON.stringify({...input.decisionContext, explanation:output.audience.explanation.text, timing:output.steps.map(step=>step.whyThisTime.text)}),
           now.getTime(), now.getTime(),
         ),
         client.prepare(
@@ -88,37 +101,30 @@ export function createProposalRepository(database: Database) {
            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         ).bind(ulid(now.getTime()), input.proposalId, item.sourceRecordId, item.sourceType, item.key, JSON.stringify(item.observedValue), item.occurredAt.getTime(), now.getTime()));
       }
-      if (output.forecast) {
-        statements.push(client.prepare(
-          `INSERT INTO proposal_forecasts
-           (id, proposal_id, metric, value_minor, method, campaign_ids_json, source_event_ids_json, sample_size, created_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        ).bind(
-          ulid(now.getTime()), input.proposalId, output.forecast.metric, output.forecast.valueMinor,
-          output.forecast.method, JSON.stringify(output.forecast.campaignIds), JSON.stringify(output.forecast.sourceEventIds),
-          output.forecast.sampleSize, now.getTime(),
-        ));
+      if (input.decisionContext) {
+        const {audience, forecast} = input.decisionContext;
+        const audienceId = ulid(now.getTime());
+        statements.push(client.prepare(`INSERT INTO proposal_audiences (id,proposal_id,as_of_at,candidate_count,excluded_count,eligible_count,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)`).bind(audienceId,input.proposalId,audience.asOf.getTime(),audience.candidateCount,audience.excludedCount,audience.eligibleCount,now.getTime(),now.getTime()));
+        for (const channel of audience.channelCounts) statements.push(client.prepare(`INSERT INTO proposal_audience_channel_counts (id,audience_id,channel,recipient_step_count,created_at,updated_at) VALUES (?,?,?,?,?,?)`).bind(ulid(now.getTime()),audienceId,channel.channel,channel.recipientStepCount,now.getTime(),now.getTime()));
+        for (const exclusion of audience.exclusions) statements.push(client.prepare(`INSERT INTO proposal_exclusions (id,proposal_id,reason,count,created_at,updated_at) VALUES (?,?,?,?,?,?)`).bind(ulid(now.getTime()),input.proposalId,exclusion.reason,exclusion.count,now.getTime(),now.getTime()));
+        statements.push(client.prepare(`INSERT INTO proposal_forecasts (id,proposal_id,metric,value_minor,method,campaign_ids_json,source_event_ids_json,sample_size,created_at) VALUES (?,?,?,?,?,?,?,?,?)`).bind(ulid(now.getTime()),input.proposalId,forecast.metric,forecast.valueMinor,forecast.method,JSON.stringify(forecast.campaignIds),JSON.stringify(forecast.sourceEventIds),forecast.sampleSize,now.getTime()));
       }
-      statements.push(client.prepare(
-        `INSERT INTO external_cost_facts
-         (id, campaign_id, provider, operation, model_or_channel, billable_units, reported_cost_micros, currency, occurred_at, created_at)
-         VALUES (?, ?, ?, 'ai-proposal-generation', ?, ?, ?, ?, ?, ?)`,
-      ).bind(
-        ulid(now.getTime()), input.campaignId, input.generation.provider, input.generation.model,
-        input.generation.billableUnits, input.generation.reportedCostMicros ?? null, input.generation.currency ?? null,
-        now.getTime(), now.getTime(),
-      ));
+      statements.push(client.prepare(`INSERT INTO proposal_transitions (id,proposal_id,from_state,to_state,actor_id,reason,occurred_at,created_at) VALUES (?,?,'generating','proposed',?,'grounded-generation',?,?)`).bind(ulid(now.getTime()),input.proposalId,input.actorId ?? 'system:proposal-generation',now.getTime(),now.getTime()));
+      statements.push(client.prepare('UPDATE external_cost_facts SET campaign_id=? WHERE id=?').bind(input.campaignId,`ai:${input.proposalId}`));
       await client.batch(statements);
     },
 
     async saveFailure(input: {
+      actorId?: string;
+      decisionContext?: ProposalDecisionContext;
       proposalId: string;
       evidence: ProposalEvidence[];
       error: string;
       now: Date;
       sendByAt: Date;
-      generation?: { provider: string; model: string; billableUnits: number; reportedCostMicros?: number; currency?: string };
+      generation?: AiGenerationResult;
     }) {
+      if(input.generation) await recordExternalCost(database,{key:`ai:${input.proposalId}`,proposalId:input.proposalId,provider:input.generation.provider,operation:'ai-proposal-generation',modelOrChannel:input.generation.model,billableUnits:input.generation.billableUnits,unitKind:input.generation.unitKind??'tokens',reportedCostMicros:input.generation.reportedCostMicros,currency:input.generation.currency,occurredAt:input.now});
       const statements: D1PreparedStatement[] = [client.prepare(
         `INSERT INTO proposals
          (id, state, title, summary, evidence, audience_rule, source_data_as_of, send_by_at,
@@ -131,25 +137,15 @@ export function createProposalRepository(database: Database) {
         Math.min(...input.evidence.map((item) => item.occurredAt.getTime())), input.error,
         input.now.getTime(), input.now.getTime(),
       )];
-      if (input.generation) {
-        statements.push(client.prepare(
-          `INSERT INTO external_cost_facts
-           (id, proposal_id, provider, operation, model_or_channel, billable_units, reported_cost_micros, currency, occurred_at, created_at)
-           VALUES (?, ?, ?, 'ai-proposal-generation-failed', ?, ?, ?, ?, ?, ?)`,
-        ).bind(
-          ulid(input.now.getTime()), input.proposalId, input.generation.provider, input.generation.model,
-          input.generation.billableUnits, input.generation.reportedCostMicros ?? null, input.generation.currency ?? null,
-          input.now.getTime(), input.now.getTime(),
-        ));
-      }
+      statements.push(client.prepare(`INSERT INTO proposal_transitions (id,proposal_id,from_state,to_state,actor_id,reason,occurred_at,created_at) VALUES (?,?,'generating','failed',?,?,?,?)`).bind(ulid(input.now.getTime()),input.proposalId,input.actorId ?? 'system:proposal-generation',input.error,input.now.getTime(),input.now.getTime()));
       await client.batch(statements);
     },
 
-    async transition(proposalId: string, toState: 'dismissed' | 'expired', actorId: string, reason: string, now: Date) {
+    async transition(proposalId: string, toState: 'dismissed', actorId: string, reason: string, now: Date) {
       const statements = [
         client.prepare(
-          `UPDATE proposals SET state = ?, updated_at = ? WHERE id = ? AND state = 'proposed'`,
-        ).bind(toState, now.getTime(), proposalId),
+          `UPDATE proposals SET state = ?, updated_at = ? WHERE id = ? AND state = 'proposed' AND send_by_at > ?`,
+        ).bind(toState, now.getTime(), proposalId, now.getTime()),
         client.prepare(
           `INSERT INTO proposal_transitions
            (id, proposal_id, from_state, to_state, actor_id, reason, occurred_at, created_at)

@@ -105,17 +105,17 @@ contract('AUD-001][CAMP-002', 'adopted and generated proposals persist summaries
     const adopted=await f.db.prepare('SELECT r.* FROM campaign_revisions r JOIN campaigns c ON c.active_revision_id=r.id WHERE c.id=?').bind(first.campaignId).first<Stored>();
     expect(adopted!.audience_rule).toBe(summarizeAudienceRules(adopted!.inclusion_rule_json,adopted!.exclusion_rules_json));
     expect(await authoring.adopt('unlinked-audience','operator')).toEqual(first);
-    const claim={text:'A documented reason',citations:[{key:'evidence',observedValue:'value'}]};
+    const claim={text:'Observed evidence: "value".',citations:[{key:'evidence',observedValueJson:'"value"'}]};
     const output=generatedProposalSchema.parse({title:'Generated title',summary:claim,
-      audience:{displayRule:'Invented description',inclusion:JSON.parse(included('generated')),exclusions:JSON.parse(excluded),explanation:claim},
-      email:{subject:'News',html:'<p>News</p>',text:'News',preheader:'News'},
+      audience:{inclusion:{...JSON.parse(included('generated')),predicates:JSON.parse(included('generated')).predicates.map((predicate:object)=>({...predicate,lookbackDays:null}))},exclusions:JSON.parse(excluded).map((rule:any)=>({...rule,reason:'Matches an exclusion condition',predicate:{...rule.predicate,lookbackDays:null}})),explanation:claim},
+      email:{subject:'News',html:'<p>News</p>',text:'News',preheader:'News'},sms:null,
       sender:{displayName:'Mango',fromEmail:'offers@example.test',replyToEmail:'reply@example.test',physicalAddress:'1 Test Street',smsSender:'MANGO'},
       messageCategory:'newsletter',links:[],steps:[{channel:'email',scheduledAt:'2031-04-07T00:00:00.000Z',sendByAt:'2031-04-07T13:59:00.000Z',timezone:'Australia/Brisbane',whyThisTime:claim}],forecast:null});
     await createProposalRepository(f.platform.database).saveGenerated({proposalId:'generated-audience',campaignId:'generated-campaign',revisionId:'generated-revision',output,
       evidence:[{key:'evidence',sourceRecordId:'source-evidence',sourceType:'order',observedValue:'value',occurredAt:new Date(now)}],now:new Date(now),sendByAt:new Date(now+86400000),generation:{provider:'test',model:'test',billableUnits:1}});
     const generated=await f.db.prepare("SELECT * FROM campaign_revisions WHERE id='generated-revision'").first<Stored>();
     expect(generated!.audience_rule).toBe(summarizeAudienceRules(generated!.inclusion_rule_json,generated!.exclusion_rules_json));
-    expect(generated!.audience_rule).not.toContain(output.audience.displayRule);
+    expect(generated!.audience_rule).not.toContain(output.summary.text);
   } finally {await h.dispose();}
 });
 

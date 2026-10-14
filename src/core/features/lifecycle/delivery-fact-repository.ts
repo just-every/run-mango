@@ -1,3 +1,4 @@
+import { recordExternalCost } from '@/core/features/insights/cost-recording';
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
 
@@ -245,22 +246,27 @@ export function createDeliveryFactRepository(database: Database) {
         typeof fact.detail.currency === 'string' ? fact.detail.currency : null,
         now.getTime(),
       ).run();
-      if (!result.meta.changes) return false;
-
-      if (typeof fact.detail.billableUnits === 'number') {
-        await client.prepare(
-          `INSERT INTO external_cost_facts
-           (id, campaign_id, recipient_step_id, provider, operation, model_or_channel, billable_units,
-            reported_cost_micros, currency, occurred_at, created_at)
-           SELECT ?, r.campaign_id, r.id, ?, 'provider-handoff', r.channel, ?, ?, ?, ?, ?
-           FROM recipient_steps r WHERE r.id = ?`,
-        ).bind(
-          ulid(now.getTime()), provider, fact.detail.billableUnits,
-          typeof fact.detail.reportedCostMicros === 'number' ? fact.detail.reportedCostMicros : null,
-          typeof fact.detail.currency === 'string' ? fact.detail.currency : null,
-          fact.occurredAt.getTime(), now.getTime(), recipientStepId,
-        ).run();
-      }
+      const enrichCost = async () => {
+        // A later event enriches the same logical handoff; different status events are not new purchases.
+        const recipient = await client.prepare('SELECT campaign_id,channel,attempt_count FROM recipient_steps WHERE id=?').bind(recipientStepId).first<{campaign_id:string;channel:string;attempt_count:number}>();
+        if (recipient && (['accepted','delivered','bounced','failed'].includes(fact.kind) || typeof fact.detail.billableUnits === 'number')) {
+          const attemptKey = `handoff:${provider}:${recipientStepId}:${recipient.attempt_count}`;
+          // Pre-upgrade facts used generated IDs. Enrich their existing purchase instead of buying a second accounting row.
+          const existing = await client.prepare(`SELECT id FROM external_cost_facts WHERE id=? OR
+            (recipient_step_id=? AND provider=? AND operation='provider-handoff' AND substr(id,1,8)<>'handoff:')
+            ORDER BY (id=?) DESC,occurred_at DESC LIMIT 1`).bind(attemptKey,recipientStepId,provider,attemptKey).first<{id:string}>();
+          const units = fact.detail.billableUnits;
+          const price = fact.detail.reportedCostMicros, currency = fact.detail.currency;
+          const validPrice = typeof price === 'number' && Number.isSafeInteger(price) && price >= 0 && typeof currency === 'string' && /^[A-Z]{3}$/.test(currency);
+          await recordExternalCost(database, { key: existing?.id ?? attemptKey, campaignId: recipient.campaign_id,
+            recipientStepId, provider, operation: 'provider-handoff', modelOrChannel: recipient.channel,
+            billableUnits: typeof units === 'number' && Number.isSafeInteger(units) && units >= 0 ? units : null,
+            unitKind: typeof fact.detail.unitKind === 'string' ? fact.detail.unitKind : 'provider units',
+            reportedCostMicros: validPrice ? price : null, currency: validPrice ? currency : null,
+            outcome: fact.kind === 'failed' ? 'failed' : 'accepted', occurredAt: fact.occurredAt });
+        }
+      };
+      if (!result.meta.changes) { await enrichCost(); return false; }
 
       const occurred = fact.occurredAt.getTime();
       if (fact.kind === 'complained' || fact.kind === 'suppressed') {
@@ -269,6 +275,7 @@ export function createDeliveryFactRepository(database: Database) {
           `UPDATE recipient_steps SET ${column} = CASE WHEN ${column} IS NULL OR ${column} < ? THEN ? ELSE ${column} END,
              updated_at = ? WHERE id = ?`,
         ).bind(occurred, occurred, now.getTime(), recipientStepId).run();
+        await enrichCost();
         return true;
       }
       const columns: Record<string, { timestamp: string; disposition: string; terminal: boolean }> = {
@@ -278,7 +285,7 @@ export function createDeliveryFactRepository(database: Database) {
         failed: { timestamp: 'updated_at', disposition: 'failed', terminal: true },
       };
       const update = columns[fact.kind];
-      if (!update) return true;
+      if (!update) { await enrichCost(); return true; }
       const latestTransportAt = `MAX(COALESCE(provider_accepted_at, 0), COALESCE(delivered_at, 0), COALESCE(bounced_at, 0))`;
       await client.prepare(
         `UPDATE recipient_steps SET
@@ -296,6 +303,7 @@ export function createDeliveryFactRepository(database: Database) {
         update.terminal ? 1 : 0, occurred, occurred,
         providerMessageId, now.getTime(), recipientStepId,
       ).run();
+      await enrichCost();
       return true;
     },
 

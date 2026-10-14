@@ -54,11 +54,11 @@ export const contactErasureTables:ErasureTable[]=[
   // different erased contact. Keep surviving consent, redact only its literals.
   ...['audience_import_observations','consent_capture_metadata','consent_evidence','contact_history'].map(table=>({...contact(table),literal:true,mode:'contact-data' as const})),
   {table:'contact_suppressions',where:s=>({sql:'contact_id IN (SELECT value FROM json_each(?)) OR destination_hash IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.hashes)]})},
-  // An address's portable identity stays only while an opt-out for it survives: an erased opt-out still leaves the
-  // export by it (import-opt-out-lines), and an address erased while subscribed keeps nothing.
+  // An address's portable identity stays while an opt-out or detached suppression
+  // survives, so that restriction still leaves through the export (import-opt-out-lines).
   // Match the portable value too: prior mappings may use another installation's
   // hash as their key. Derive it here so already-pending erasure scopes work too.
-  {table:'audience_portable_hashes',where:s=>({sql:'(destination_hash IN (SELECT value FROM json_each(?)) OR portable_hash IN (SELECT value FROM json_each(?))) AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs o WHERE o.destination_hash=audience_portable_hashes.destination_hash)',params:[JSON.stringify(s.hashes),JSON.stringify([...s.emails,...s.phones].map(portableHash))]})},
+  {table:'audience_portable_hashes',where:s=>({sql:'(destination_hash IN (SELECT value FROM json_each(?)) OR portable_hash IN (SELECT value FROM json_each(?))) AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs o WHERE o.destination_hash=audience_portable_hashes.destination_hash) AND NOT EXISTS(SELECT 1 FROM contact_suppressions c WHERE c.destination_hash=audience_portable_hashes.destination_hash)',params:[JSON.stringify(s.hashes),JSON.stringify([...s.emails,...s.phones].map(portableHash))]})},
   contact('mango_audience_hashes'),contact('mango_import_revisions'),contact('contact_email_addresses'),contact('contact_phones'),
   {table:'contact_merges',where:s=>({sql:'survivor_contact_id IN (SELECT value FROM json_each(?)) OR merged_contact_id IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.ids)]})},
 ];

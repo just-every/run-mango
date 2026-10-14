@@ -249,6 +249,7 @@ export function createCampaignLifecycleRepository(database: Database) {
              SELECT 1 FROM campaign_revisions r JOIN campaigns c ON c.id = r.campaign_id
              WHERE r.id = ? AND r.campaign_id = ? AND r.state = 'draft' AND r.updated_at = ?
                AND c.updated_at = ? AND ${replaceGuard} AND ${senderGuard}
+               AND (c.proposal_id IS NULL OR EXISTS (SELECT 1 FROM proposals p WHERE p.id=c.proposal_id AND p.state='proposed' AND p.send_by_at>?))
            )
            ON CONFLICT(idempotency_key) DO NOTHING`,
         ).bind(
@@ -265,6 +266,7 @@ export function createCampaignLifecycleRepository(database: Database) {
           snapshot.revision.updatedAt.getTime(),
           snapshot.campaign.updatedAt.getTime(),
           ...senderValues,
+          Math.max(nowMs,authorityTime),
         ),
       );
       if (needsSender) statements.push(associationStatement(client, input.senderLease!, 'approval', snapshot.revision.id,
@@ -347,7 +349,7 @@ export function createCampaignLifecycleRepository(database: Database) {
            (id, proposal_id, from_state, to_state, actor_id, reason, occurred_at, created_at)
            SELECT ?, c.proposal_id, 'proposed', 'approved', ?, ?, ?, ? FROM campaigns c
            WHERE c.id = ? AND c.active_revision_id = ? AND c.proposal_id IS NOT NULL
-             AND ${approvalGuard}
+             AND changes() = 1 AND ${approvalGuard}
              AND NOT EXISTS (SELECT 1 FROM proposal_transitions WHERE proposal_id = c.proposal_id AND to_state = 'approved')`,
         ).bind(
           ulid(nowMs), operatorId, `approval:${snapshot.revision.id}`, nowMs, nowMs,

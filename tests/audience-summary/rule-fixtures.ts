@@ -12,10 +12,10 @@ export const incompletePredicates: Predicate[] = [
 export const ruleJson = (predicate: Predicate) => JSON.stringify({version:1,operator:'all',predicates:[predicate]});
 export const exclusionJson = (predicate: Predicate) => JSON.stringify([{version:1,reason:'excluded',predicate}]);
 export function generatedOutput() {
-  const claim={text:'A documented reason',citations:[{key:'evidence',observedValue:'value'}]};
+  const claim={text:'Observed evidence: "value".',citations:[{key:'evidence',observedValueJson:'"value"'}]};
   return {title:'Generated title',summary:claim,
-    audience:{displayRule:'Invented description',inclusion:JSON.parse(ruleJson(subscribed)),exclusions:[],explanation:claim},
-    email:{subject:'News',html:'<p>News</p>',text:'News',preheader:'News'},
+    audience:{inclusion:{version:1,operator:'all',predicates:[{...subscribed,lookbackDays:null}]},exclusions:[],explanation:claim},
+    email:{subject:'News',html:'<p>News</p>',text:'News',preheader:'News'},sms:null,
     sender:{displayName:'Mango',fromEmail:'offers@example.test',replyToEmail:'reply@example.test',physicalAddress:'1 Test Street',smsSender:'MANGO'},
     messageCategory:'newsletter',links:[],steps:[{channel:'email',scheduledAt:'2031-04-07T00:00:00.000Z',sendByAt:'2031-04-07T13:59:00.000Z',timezone:'Australia/Brisbane',whyThisTime:claim}],forecast:null};
 }

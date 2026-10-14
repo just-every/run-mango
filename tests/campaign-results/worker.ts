@@ -1,5 +1,7 @@
 // Dedicated test entry: real native sessions, D1, API and SSR with an injected read clock.
 import { presentationPlatform } from './presentation-platform';
+import { acknowledgeHealthProbe } from '../../src/core/features/health/queue-probe';
+import type { LifecycleQueueBatch } from '../../src/core/features/lifecycle';
 import { testIdentity } from '../support/test-identity';
 import { createFixturePlatform } from '../support/local-platform';
 import { createApp } from '../../src/core/app/app';
@@ -47,4 +49,10 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
   },true);
   if(new URL(request.url).pathname.startsWith('/_results/')) return app.fetch(request,bindings,context);
   return dispatchDocuments(request,bindings,context,platform,app);
+},
+// Presentation domain jobs are recorded; only harmless transport probes reach this consumer.
+async queue(batch){
+  for(const message of (batch as unknown as LifecycleQueueBatch).messages) {
+    if(!acknowledgeHealthProbe(message))message.retry();
+  }
 }} satisfies ExportedHandler<LocalAppBindings>;

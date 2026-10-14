@@ -6,8 +6,9 @@ export function presentationPlatform(platform:Platform, db:D1Database) {
     async synchronize(){return {records:[]};},
     async verifyWebhook(){throw new Error('This fixture has no webhook source.');},
   };
+  const queue = platform.jobs;
   platform.jobs = {
-    async enqueue(command){await db.prepare('INSERT INTO presentation_jobs(payload) VALUES(?)').bind(JSON.stringify(command)).run();},
+    async enqueue(command){if(command.kind==='health.probe')return queue.enqueue(command);await db.prepare('INSERT INTO presentation_jobs(payload) VALUES(?)').bind(JSON.stringify(command)).run();},
     async retry(){throw new Error('This fixture does not retry jobs.');},
   };
   return platform;

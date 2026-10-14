@@ -22,7 +22,12 @@ export function senderVerificationInputError(bindings: AppBindings): string | un
   try { senderConfiguration(bindings); }
   catch (error) {
     const message = error instanceof Error ? error.message : '';
-    const names = [...new Set(message.match(/\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b/g) ?? [])];
+    // The command uses hosted inputs unless an explicit legacy auth profile was supplied.
+    const hosted = ['OWNER_EMAIL', 'SESSION_SECRET', 'SETUP_TOKEN'].some(name => Object.hasOwn(bindings, name))
+      || !['INITIAL_OPERATOR_EMAILS', 'SESSION_SIGNING_KEY', 'AUTH_SETUP_TOKEN'].some(name => Object.hasOwn(bindings, name));
+    const hostedNames: Record<string, string> = { INITIAL_OPERATOR_EMAILS: 'OWNER_EMAIL', SESSION_SIGNING_KEY: 'SESSION_SECRET', AUTH_SETUP_TOKEN: 'SETUP_TOKEN' };
+    const names = [...new Set((message.match(/\b[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+\b/g) ?? [])
+      .map(name => hosted ? hostedNames[name] ?? name : name))];
     if (names.length) return `${names.join(', ')} configuration is missing or invalid.`;
     if (message === 'receiver-configuration-invalid') return 'MAILBOX_RECEIPT_URL or MAILBOX_RECEIPT_RECIPIENT is invalid.';
     if (message.startsWith('Auth configuration profiles conflict.')) return 'Auth configuration profiles conflict. Restore the matching installation configuration.';

@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { requestJson } from '@/core/app/client/lib/api';
 import { useResource } from '@/core/app/client/lib/use-resource';
@@ -13,6 +13,7 @@ import { resolveImportMappings } from './audience-import-mapping';
 import { AudienceImportSourceForm, type SelectedImportFile } from './audience-import-source-form';
 import type { ImportApiError, ImportConsent, ImportJob, ImportPreview, ImportPresetsResponse } from './audience-import-types';
 import { useArchiveImport } from './use-archive-import';
+import { useImportOperation, type ImportOperation } from './use-import-operation';
 
 const emptyConsent: ImportConsent = {
   brandOrLegalSender: '',
@@ -31,8 +32,6 @@ type ImportPayload = {
   consent: ImportConsent;
 };
 
-type ImportOperation = { stopped: boolean };
-
 function requestError(data: ImportApiError, fallback: string) {
   return data.detail?.trim() || data.error?.replaceAll('_', ' ') || fallback;
 }
@@ -50,17 +49,8 @@ export function AudienceImportPage() {
   const [fileError, setFileError] = useState<string>();
   const [error, setError] = useState<string>();
   const [notice, setNotice] = useState<string>();
-  const archive = useArchiveImport({ setError, setNotice });
-  // An import with rows left keeps writing on its own until it completes, a step fails, the operator
-  // presses Stop or leaves this page. A stopped import still offers Resume and Abandon.
-  const driving = useRef<{ mounted: boolean; operation?: ImportOperation }>({ mounted: true });
-  useEffect(() => {
-    driving.current.mounted = true;
-    return () => {
-      driving.current.mounted = false;
-      driving.current.operation = undefined;
-    };
-  }, []);
+  const owner = useImportOperation();
+  const archive = useArchiveImport({ setError, setNotice, owner });
 
   if ((presets.loading && !presets.data) || (jobsResource.loading && !jobsResource.data)) return <LoadState />;
   if (!presets.data) return <LoadState error={presets.error ?? 'Import presets could not be loaded.'} />;
@@ -68,21 +58,12 @@ export function AudienceImportPage() {
 
   const canPreview = archive.archive ? !fileError : files.length > 0 && files.every((entry) => Boolean(entry.preset)) && !fileError;
 
-  // React state renders the busy controls; this owner fences even callbacks from an older render.
-  const acquireOperation = () => {
-    if (!driving.current.mounted || driving.current.operation) return;
-    const operation: ImportOperation = { stopped: false };
-    driving.current.operation = operation;
-    return operation;
-  };
-
-  const ownsOperation = (operation: ImportOperation) => driving.current.mounted && driving.current.operation === operation;
-
+  const ownsOperation = owner.owns;
   const releaseOperation = (operation: ImportOperation) => {
     if (!ownsOperation(operation)) return;
-    driving.current.operation = undefined;
     setBusy((current) => current === 'start' ? undefined : current);
     setBusyJobId(undefined);
+    owner.release(operation);
   };
 
   const markPreviewStale = () => {
@@ -200,7 +181,7 @@ export function AudienceImportPage() {
 
   const startImport = async () => {
     if (!preview || !previewIsCurrent || busy || busyJobId || archive.busy || archive.busyId) return;
-    const operation = acquireOperation();
+    const operation = owner.acquire('csv');
     if (!operation) return;
     setBusy('start');
     setError(undefined);
@@ -230,7 +211,7 @@ export function AudienceImportPage() {
   const writing = (job: ImportJob) => ['queued', 'applying'].includes(job.state) && !job.abandonedAt;
 
   const runJobAction = async (id: string, action: 'resume' | 'undo' | 'abandon') => {
-    const operation = acquireOperation();
+    const operation = owner.acquire('csv');
     if (!operation) return;
     try {
       await driveJob(id, action, operation);
@@ -293,7 +274,7 @@ export function AudienceImportPage() {
         columns={preview?.columns}
         mappings={mappings}
         canPreview={canPreview}
-        busy={Boolean(busy || archive.busy)}
+        busy={Boolean(busy || archive.busy || owner.busy)}
         previewIsCurrent={archive.archive ? archive.current : previewIsCurrent}
         fileError={fileError}
         onFilesSelected={addFiles}
@@ -313,7 +294,7 @@ export function AudienceImportPage() {
             <p>{archive.current ? 'Importing brings in contacts by status, imported history and draft starters. It grants no schedule, approval or send.' : 'This preview is out of date. Preview the archive again before importing it.'}</p>
             {busyJobId ? <p role="status">An import is still running. Wait for it to finish or press Stop in Imports below before starting another.</p> : archive.busyId ? <p role="status">An archive import is still running. Wait for it to finish before starting another.</p> : null}
           </div>
-          <button className="primary-action" type="button" onClick={() => { if (!busy && !busyJobId) void archive.start(consent); }} disabled={!archive.current || Boolean(busy) || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>
+          <button className="primary-action" type="button" onClick={() => { if (!busy && !busyJobId) void archive.start(consent); }} disabled={!archive.current || Boolean(busy) || owner.busy || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>
             {archive.busy === 'start' || archive.busyId ? 'Importing…' : 'Import archive'}
           </button>
         </section>
@@ -326,13 +307,13 @@ export function AudienceImportPage() {
             <p>{previewIsCurrent ? 'This is the reviewed preview. Check the Imports list below for saved progress.' : 'This preview is out of date. Refresh it before starting the import.'}</p>
             {busyJobId ? <p role="status">An import is still running. Wait for it to finish or press Stop in Imports below before starting another.</p> : archive.busyId ? <p role="status">An archive import is still running. Wait for it to finish before starting another.</p> : null}
           </div>
-          <button className="primary-action" type="button" onClick={() => void startImport()} disabled={!previewIsCurrent || !preview.rows.length || Boolean(busy) || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>
+          <button className="primary-action" type="button" onClick={() => void startImport()} disabled={!previewIsCurrent || !preview.rows.length || Boolean(busy) || owner.busy || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>
             {busy === 'start' ? 'Starting…' : 'Start import'}
           </button>
         </section>
       ) : null}
 
-      {archive.archives.data ? <AudienceArchiveImports archives={archive.archives.data.archives} busyId={archive.busyId}
+      {archive.archives.data ? <AudienceArchiveImports archives={archive.archives.data.archives} busyId={archive.busyId} actionsBusy={owner.busy}
         onUndo={(id) => void archive.undo(id)} onContinue={(id) => void archive.resume(id)} /> : null}
 
       <AudienceImportJobs
@@ -340,12 +321,12 @@ export function AudienceImportPage() {
         loading={jobsResource.loading}
         error={jobsResource.error}
         busyJobId={busyJobId}
-        starting={busy === 'start'}
+        actionsBusy={owner.busy}
         onRefresh={() => void jobsResource.reload()}
         onResume={(id) => void runJobAction(id, 'resume')}
         onUndo={(id) => void runJobAction(id, 'undo')}
         onAbandon={(id) => void runJobAction(id, 'abandon')}
-        onStop={() => { if (driving.current.operation) driving.current.operation.stopped = true; }}
+        onStop={() => owner.stopCsv(owner.operation)}
       />
     </div>
   );

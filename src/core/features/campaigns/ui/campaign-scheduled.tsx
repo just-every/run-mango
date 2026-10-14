@@ -1,3 +1,4 @@
+import { CampaignCosts } from '@/core/features/insights/ui/cost-totals';
 import { productConfig } from '@/ext/config';
 import { Link, useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
@@ -69,6 +70,7 @@ export function CampaignScheduledPage() {
         <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
       </div>
     </div>
+    <CampaignCosts campaignId={id} />
     <Modal open={confirmCancel} onClose={() => setConfirmCancel(false)} title="Cancel this campaign?" description="Recipient-steps not yet handed to a provider will be stopped. Messages already handed to a provider cannot be recalled.">
       <div className="detail-actions"><button className="secondary-action" type="button" disabled={cancelling} onClick={() => setConfirmCancel(false)}>Keep campaign</button><button className="danger-action" type="button" disabled={cancelling} onClick={() => void cancel()}>{cancelling ? 'Cancelling…' : 'Confirm cancellation'}</button></div>
     </Modal>

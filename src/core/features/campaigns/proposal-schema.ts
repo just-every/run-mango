@@ -16,6 +16,7 @@ export const proposals = sqliteTable(
     lookbackStartAt: integer('lookback_start_at', { mode: 'timestamp_ms' }),
     inclusionRuleJson: text('inclusion_rule_json').notNull().default(''),
     exclusionRulesJson: text('exclusion_rules_json').notNull().default('[]'),
+    decisionContextJson: text('decision_context_json').notNull().default('{}'),
     generationError: text('generation_error'),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),

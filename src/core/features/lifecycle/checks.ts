@@ -1,3 +1,4 @@
+import { emailSubjectAdvisory } from './advisory-policy';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
 import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-content';
@@ -64,6 +65,8 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
     missingFallback.length ? `Invalid personalisation or missing fallback: ${missingFallback.join(', ')}` : 'Every personalisation token carries an explicit fallback.'));
 
   if (selected.has('email')) {
+    const advisory = emailSubjectAdvisory(revision.emailSubject);
+    if (advisory) findings.push(advisory);
     const emailComplete = Boolean(
       revision.emailSubject.trim() && revision.emailBody.trim() && revision.emailText.trim() && revision.preheader.trim()
       && revision.senderName.trim() && revision.fromEmail.trim() && revision.replyToEmail.trim() && revision.physicalAddress.trim(),

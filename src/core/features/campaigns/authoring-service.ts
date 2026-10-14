@@ -1,3 +1,4 @@
+import { computeProposalForecast } from '@/core/features/proposals/forecast';
 import { evaluateAudience } from '@/core/features/lifecycle/evaluate-audience';
 import { signalStarters } from './signal-starters';
 import type { Platform } from '@/core/shared/platform';
@@ -30,6 +31,12 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
     },
     defaults: () => ({timezone, sender:defaults()}),
     create: (draft: DraftComposition, operatorId: string) => composition.createDraft({...defaults(), ...draft}, operatorId),
+    dismiss: async (id:string, operatorId:string, reason:string) => {
+      if(!reason.trim()) return false;
+      const repository=createProposalRepository(platform.database);
+      await repository.expireDue(new Date());
+      return repository.transition(id,'dismissed',operatorId,reason,new Date());
+    },
     adopt: (id: string, operatorId: string) => adoptProposal(platform.database, id, operatorId, defaults()),
     async audience(draft: {inclusionRuleJson:string; exclusionRulesJson:string; channels:('email'|'sms')[]; stepCounts?:{email:number;sms:number}}) {
       const unavailableCounts = {candidateCount:null, excludedCount:null, eligibleCount:null, channelCounts:null};
@@ -48,7 +55,7 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
         channelCounts:channels.map(channel=>({channel,stepCount:stepCounts[channel],eligibleContactCount:candidates.filter(candidate=>candidate.channels[channel]).length,recipientStepCount:candidates.filter(candidate=>candidate.channels[channel]).length*stepCounts[channel]})),
         exclusions:[...exclusionCounts].map(([reason,count])=>({reason,count}))};
     },
-    async generate() {
+    async generate(operatorId: string) {
       if (!platform.ai) return {kind:'unavailable', detail:'AI suggestions are unavailable. You can create a campaign manually.'};
       if (!platform.commerce) return {kind:'unavailable', detail:'Connect commerce and sync store evidence before generating a suggestion. Manual authoring is available.'};
       const rows = await platform.database.$client.prepare('SELECT id, source_type, payload, occurred_at FROM source_records ORDER BY occurred_at DESC LIMIT 30').all<{id:string;source_type:string;payload:string;occurred_at:number}>();
@@ -57,6 +64,14 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
       if (issues.length) return {kind:'unavailable', detail:authoringSourceIssues(issues)};
       return createProposalService(createProposalRepository(platform.database), platform.ai).generate({
         evidence:rows.results.map(row => ({key:row.id, sourceRecordId:row.id, sourceType:row.source_type, observedValue:JSON.parse(row.payload), occurredAt:new Date(row.occurred_at)})),
+        actorId:operatorId,
+        prepare:async (output, now) => {
+          const evaluated = await evaluateAudience(runtime,createLifecycleRepository(platform.database),{inclusionRuleJson:JSON.stringify(output.audience.inclusion),exclusionRulesJson:JSON.stringify(output.audience.exclusions),channels:[...new Set(output.steps.map(step=>step.channel))]},now);
+          if(evaluated.audience.status!=='ok'||evaluated.blockingEligibility.size) throw new Error('Proposal audience evidence is unavailable.');
+          const candidateCount=evaluated.audience.candidateCount??evaluated.audience.candidates.length;
+          const channelCounts=[...new Set(output.steps.map(step=>step.channel))].map(channel=>({channel,recipientStepCount:output.steps.filter(step=>step.channel===channel).length*evaluated.candidates.filter(candidate=>candidate.channels[channel]).length}));
+          return {audience:{asOf:evaluated.audience.asOf,candidateCount,excludedCount:candidateCount-evaluated.candidates.length,eligibleCount:evaluated.candidates.length,channelCounts,exclusions:[...evaluated.exclusionCounts].map(([reason,count])=>({reason,count}))},forecast:await computeProposalForecast(platform.database,channelCounts.reduce((sum,row)=>sum+row.recipientStepCount,0),now)};
+        },
         configuredKnowledge:Object.entries({...defaults(), timezone}).map(([key,value]) => ({key,value})),
         sendByAt:new Date(Date.now() + 7*86400000),
       });

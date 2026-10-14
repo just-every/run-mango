@@ -16,6 +16,7 @@ import { tags } from '../../src/core/features/sender-verification/dns';
 import type { Challenge } from '../../src/core/features/sender-verification/types';
 import { loadSenderSettings } from '../../src/core/features/settings/sender-persistence';
 import { consumeLifecycleQueue, runLifecycleCron, type LifecycleQueueBatch } from '../../src/core/features/lifecycle';
+import { acknowledgeHealthProbe } from '../../src/core/features/health/queue-probe';
 
 type Bindings = LocalAppBindings & { GO_LIVE_EDGE_ORIGIN: string; GO_LIVE_WEBHOOK_KEY: string; GO_LIVE_PUBLIC_ORIGIN: string;
   GO_LIVE_PROVIDER_KEY: string; GO_LIVE_DKIM_KEY: string; MANGO_RESTORE_MODE?: string };
@@ -93,8 +94,10 @@ export default {
     return dispatchDocuments(request, bindings, context, platform, createApp(bindings, platform, undefined, true));
   },
   async queue(batch: unknown, bindings: Bindings) {
+    const messages=(batch as LifecycleQueueBatch).messages.filter(message=>!acknowledgeHealthProbe(message));
+    if(!messages.length)return;
     if (bindings.MANGO_RESTORE_MODE === '1') throw new Error('Mango restore maintenance is active; retry the queue later.');
     const { platform } = await compose(bindings);
-    await consumeLifecycleQueue(batch as LifecycleQueueBatch, createAppServices(platform).lifecycleRuntime);
+    await consumeLifecycleQueue({messages}, createAppServices(platform).lifecycleRuntime);
   },
 } satisfies ExportedHandler<Bindings>;

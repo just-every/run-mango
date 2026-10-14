@@ -4,7 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { requestJson } from '@/core/app/client/lib/api';
 import type { ArchiveContentRow, ArchiveImport } from './archive-client';
 
-type Props = { archives: ArchiveImport[]; busyId?: string; onUndo: (id: string) => void; onContinue: (id: string) => void };
+type Props = { archives: ArchiveImport[]; busyId?: string; actionsBusy?: boolean; onUndo: (id: string) => void; onContinue: (id: string) => void };
 const tone = (state: ArchiveImport['state']) => state === 'applied' ? 'good' : state === 'undone' ? 'neutral' : 'pending';
 
 function ArchiveContent({ archive }: { archive: ArchiveImport }) {
@@ -51,7 +51,7 @@ function ArchiveContent({ archive }: { archive: ArchiveImport }) {
 }
 
 /** Each archive move-in: progress, its reconciliation report, imported history and undo. */
-export function AudienceArchiveImports({ archives, busyId, onUndo, onContinue }: Props) {
+export function AudienceArchiveImports({ archives, busyId, actionsBusy = false, onUndo, onContinue }: Props) {
   const [confirming, setConfirming] = useState<string>();
   if (!archives.length) return null;
   return (
@@ -74,14 +74,14 @@ export function AudienceArchiveImports({ archives, busyId, onUndo, onContinue }:
               {confirming === archive.id ? (
                 <div className="audience-import-undo-confirm notice-warning" role="group" aria-label={`Confirm undo for ${archive.name}`}>
                   <p>Undo this import? Unchanged imported contacts, drafts and history records are removed. Anything edited, unsubscribed, suppressed, scheduled or sent since is kept and listed. Opt-outs, suppressions and send history are never erased.</p>
-                  <button className="danger-action" type="button" disabled={busy} onClick={() => { setConfirming(undefined); onUndo(archive.id); }}>Confirm undo</button>
-                  <button className="secondary-action" type="button" disabled={busy} onClick={() => setConfirming(undefined)}>Keep import</button>
+                  <button className="danger-action" type="button" disabled={actionsBusy} onClick={() => { setConfirming(undefined); onUndo(archive.id); }}>Confirm undo</button>
+                  <button className="secondary-action" type="button" disabled={actionsBusy} onClick={() => setConfirming(undefined)}>Keep import</button>
                 </div>
               ) : (
                 <div className="audience-import-job__actions">
                   <a className="secondary-action" href={`/api/audience/archives/${encodeURIComponent(archive.id)}/report`} download>Download reconciliation report</a>
-                  {archive.state === 'applying' || archive.state === 'undoing' ? <button className="secondary-action" type="button" disabled={Boolean(busyId)} onClick={() => onContinue(archive.id)}>{busy ? 'Working…' : archive.state === 'undoing' ? 'Continue undo' : 'Continue import'}</button> : null}
-                  {archive.state === 'applied' ? <button className="danger-action--line" type="button" disabled={Boolean(busyId)} onClick={() => setConfirming(archive.id)}>Undo this import</button> : null}
+                  {archive.state === 'applying' || archive.state === 'undoing' ? <button className="secondary-action" type="button" disabled={actionsBusy} onClick={() => onContinue(archive.id)}>{busy ? 'Working…' : archive.state === 'undoing' ? 'Continue undo' : 'Continue import'}</button> : null}
+                  {archive.state === 'applied' ? <button className="danger-action--line" type="button" disabled={actionsBusy} onClick={() => setConfirming(archive.id)}>Undo this import</button> : null}
                 </div>
               )}
               {archive.state !== 'applying' ? <ArchiveContent archive={archive} key={`${archive.id}:${archive.state}`} /> : null}

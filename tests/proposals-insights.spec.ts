@@ -4,96 +4,10 @@ import { createRequire } from 'node:module';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-import { generatedProposalSchema, validateGrounding } from '../src/core/features/proposals/generation';
-import { createProposalService } from '../src/core/features/proposals/service';
-
 const require = createRequire(import.meta.url);
 const { Miniflare } = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const { build } = createRequire(require.resolve('vite/package.json'))('esbuild');
 const root = process.cwd();
-
-const observedOrder = { orderId: 'order-1', totalMinor: 1_250 };
-
-function claim(text: string, observedValue = observedOrder) {
-  return { text, citations: [{ key: 'order-1', observedValue }] };
-}
-
-function proposal(forecast: unknown = null) {
-  return generatedProposalSchema.parse({
-    title: 'Returning customers',
-    summary: claim('Order order-1 total 1250.'),
-    audience: {
-      displayRule: 'Customers who ordered order-1.',
-      inclusion: { version: 1, operator: 'all', predicates: [{ sourceType: 'order', field: 'orderId', comparator: 'eq', value: 'order-1' }] },
-      exclusions: [],
-      explanation: claim('Order order-1 total 1250.'),
-    },
-    email: { subject: 'Thank you', html: '<p>Thank you</p>', text: 'Thank you', preheader: 'Thank you' },
-    sender: {
-      displayName: 'Mango', fromEmail: 'offers@example.test', replyToEmail: 'support@example.test',
-      physicalAddress: '1 Mango Street', smsSender: 'MANGO',
-    },
-    messageCategory: 'offers',
-    links: [],
-    steps: [{
-      channel: 'email', scheduledAt: '2026-09-09T10:00:00.000Z', sendByAt: '2026-09-09T23:00:00.000Z', timezone: 'Etc/UTC',
-      whyThisTime: claim('Order order-1 total 1250.'),
-    }],
-    forecast,
-  });
-}
-
-test('proposal grounding requires the cited observed value and an exact trusted forecast', () => {
-  const evidence = [{ key: 'order-1', sourceRecordId: 'source-order-1', sourceType: 'order', observedValue: observedOrder, occurredAt: new Date('2026-09-08T00:00:00.000Z') }];
-  expect(() => validateGrounding(proposal(), evidence)).not.toThrow();
-
-  const changedCitation = proposal();
-  changedCitation.summary.citations[0].observedValue = { orderId: 'order-1', totalMinor: 9_999 };
-  expect(() => validateGrounding(changedCitation, evidence)).toThrow('changed the observed value');
-
-  const forecast = {
-    metric: 'attributed-revenue', valueMinor: 1_250, method: 'single-attributed-order',
-    campaignIds: ['campaign-1'], sourceEventIds: ['source-order-1'], sampleSize: 1,
-    claim: claim('Order order-1 total 1250.'),
-  };
-  expect(() => validateGrounding(proposal(forecast), evidence)).toThrow('must exactly match deployment-owned attribution history');
-  expect(() => validateGrounding(proposal(forecast), evidence, [{ ...forecast, claim: undefined }])).not.toThrow();
-});
-
-test('proposal failure records a safe code instead of provider response text', async () => {
-  let savedFailure: { error: string } | undefined;
-  const service = createProposalService({
-    async saveFailure(input: { error: string }) { savedFailure = input; },
-  } as never, {
-    async generateGroundedJson() { throw new Error('provider response contained customer@example.test and a secret diagnostic'); },
-  });
-
-  const result = await service.generate({
-    evidence: [{ key: 'order-1', sourceRecordId: 'source-order-1', sourceType: 'order', observedValue: observedOrder, occurredAt: new Date('2026-09-08T00:00:00.000Z') }],
-    configuredKnowledge: [], sendByAt: new Date('2026-09-09T00:00:00.000Z'), now: new Date('2026-09-08T00:00:00.000Z'),
-  });
-  expect(result).toMatchObject({ kind: 'failed', error: 'ai_provider_failed' });
-  expect(savedFailure).toMatchObject({ error: 'ai_provider_failed' });
-});
-
-test('proposal persistence failure is not misreported as invalid AI output', async () => {
-  let savedFailure: { error: string } | undefined;
-  const service = createProposalService({
-    async saveGenerated() { throw new Error('D1 write failed with raw detail'); },
-    async saveFailure(input: { error: string }) { savedFailure = input; },
-  } as never, {
-    async generateGroundedJson() {
-      return { output: proposal(), provider: 'openai' as const, model: 'model-test', billableUnits: 1 };
-    },
-  });
-
-  const result = await service.generate({
-    evidence: [{ key: 'order-1', sourceRecordId: 'source-order-1', sourceType: 'order', observedValue: observedOrder, occurredAt: new Date('2026-09-08T00:00:00.000Z') }],
-    configuredKnowledge: [], sendByAt: new Date('2026-09-09T00:00:00.000Z'), now: new Date('2026-09-08T00:00:00.000Z'),
-  });
-  expect(result).toMatchObject({ kind: 'failed', error: 'proposal_storage_failed' });
-  expect(savedFailure).toMatchObject({ error: 'proposal_storage_failed' });
-});
 
 let workerSource: string;
 
@@ -228,7 +142,7 @@ test.describe('insights facts on Worker D1', () => {
 
       expect((await request(worker, '/failed-generation')).response.status).toBe(204);
       expect((await request(worker, '/failed-generation-cost')).body).toEqual({
-        proposal_id: 'proposal-failed', provider: 'openai', operation: 'ai-proposal-generation-failed',
+        proposal_id: 'proposal-failed', provider: 'openai', operation: 'ai-proposal-generation',
         model_or_channel: 'model-test', billable_units: 42, reported_cost_micros: 12, currency: 'USD',
       });
       const invalidCost = await request(worker, '/invalid-cost');

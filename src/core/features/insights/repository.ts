@@ -1,9 +1,12 @@
+import { recordExternalCost, type ExternalCost } from './cost-recording';
+import { costGroups, costReport } from './cost-report';
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
 
 export function createInsightsRepository(database: Database) {
   const client = database.$client;
   return {
+    costReport: () => costReport(database),
     /** One row per campaign and observed outcome, never summed: provider acceptance, each kind of
      * provider event, and hand-offs still awaiting the provider's confirmation. */
     async listResults() {
@@ -48,12 +51,7 @@ export function createInsightsRepository(database: Database) {
           `SELECT currency, COUNT(*) orders, COALESCE(SUM(gross_amount_minor - refund_amount_minor), 0) revenue_minor
            FROM attribution_facts WHERE campaign_id = ? GROUP BY currency ORDER BY currency`,
         ).bind(campaignId).all<Record<string, number | string>>(),
-        client.prepare(
-          `SELECT provider, model_or_channel, SUM(billable_units) billable_units,
-             SUM(reported_cost_micros) reported_cost_micros, currency,
-             COUNT(CASE WHEN reported_cost_micros IS NULL THEN 1 END) unpriced_facts
-           FROM external_cost_facts WHERE campaign_id = ? GROUP BY provider, model_or_channel, currency`,
-        ).bind(campaignId).all<Record<string, unknown>>(),
+        costGroups(database, 'campaign', campaignId),
         client.prepare(
           `SELECT kind, provider_occurred_at occurred_at, provider, recipient_step_id, payload_digest
            FROM delivery_facts WHERE recipient_step_id IN (SELECT id FROM recipient_steps WHERE campaign_id = ?)
@@ -86,11 +84,7 @@ export function createInsightsRepository(database: Database) {
           })),
           status: 'observed-store-events',
         },
-        costs: costs.results.map((row) => ({
-          provider: row.provider, modelOrChannel: row.model_or_channel, billableUnits: Number(row.billable_units),
-          reportedCostMicros: row.reported_cost_micros == null ? null : Number(row.reported_cost_micros),
-          currency: row.currency ?? null, unpricedFacts: Number(row.unpriced_facts),
-        })),
+        costs,
         timeline: timeline.results,
       };
     },
@@ -165,39 +159,6 @@ export function createInsightsRepository(database: Database) {
       ).bind(refundAmountMinor, refundAmountMinor, occurredAt.getTime(), occurredAt.getTime(), orderSourceRecordId).run();
     },
 
-    async recordExternalCost(input: {
-      campaignId?: string;
-      recipientStepId?: string;
-      provider: string;
-      operation: string;
-      modelOrChannel: string;
-      billableUnits: number;
-      reportedCostMicros?: number;
-      currency?: string;
-      occurredAt: Date;
-    }) {
-      if (!Number.isSafeInteger(input.billableUnits) || input.billableUnits < 0) {
-        throw new Error('External cost billable units must be a non-negative safe integer.');
-      }
-      if (input.reportedCostMicros != null && (!Number.isSafeInteger(input.reportedCostMicros) || input.reportedCostMicros < 0)) {
-        throw new Error('External reported cost must be a non-negative safe integer in micros.');
-      }
-      if (input.currency != null && !/^[A-Z]{3}$/.test(input.currency)) {
-        throw new Error('External cost currency must be an ISO 4217 uppercase code.');
-      }
-      if (input.reportedCostMicros != null && !input.currency) {
-        throw new Error('External reported cost requires an ISO 4217 currency.');
-      }
-      await client.prepare(
-        `INSERT INTO external_cost_facts
-         (id, campaign_id, recipient_step_id, provider, operation, model_or_channel, billable_units,
-          reported_cost_micros, currency, occurred_at, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      ).bind(
-        ulid(input.occurredAt.getTime()), input.campaignId ?? null, input.recipientStepId ?? null, input.provider,
-        input.operation, input.modelOrChannel, input.billableUnits, input.reportedCostMicros ?? null,
-        input.currency ?? null, input.occurredAt.getTime(), input.occurredAt.getTime(),
-      ).run();
-    },
+    recordExternalCost: (input: ExternalCost) => recordExternalCost(database, input),
   };
 }

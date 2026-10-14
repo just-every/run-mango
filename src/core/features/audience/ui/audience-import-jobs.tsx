@@ -7,7 +7,7 @@ type AudienceImportJobsProps = {
   loading: boolean;
   error?: string;
   busyJobId?: string;
-  starting?: boolean;
+  actionsBusy?: boolean;
   onRefresh: () => void;
   onResume: (id: string) => void;
   onUndo: (id: string) => void;
@@ -53,9 +53,8 @@ export const abandonNotice = (job: ImportJob) => ['undone', 'rolled_back'].inclu
 
 const dateTime = (value: number) => new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(value);
 
-export function AudienceImportJobs({ jobs, loading, error, busyJobId, starting, onRefresh, onResume, onUndo, onAbandon, onStop }: AudienceImportJobsProps) {
+export function AudienceImportJobs({ jobs, loading, error, busyJobId, actionsBusy = false, onRefresh, onResume, onUndo, onAbandon, onStop }: AudienceImportJobsProps) {
   const [confirming, setConfirming] = useState<{ id: string; action: 'undo' | 'abandon' }>();
-  const actionsBusy = Boolean(starting || busyJobId);
 
   return (
     <section className="panel audience-import-jobs" aria-labelledby="import-jobs-title">
