@@ -2966,7 +2966,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/commerce-results.tsx": {
-      "sha256": "cf1717c892ae180db4f0fb1039093c0d6ef8083148b5ec4224763d92bc53f81d",
+      "sha256": "c4a337fe3796e32f6c701f7de38999d04bd27acbee96dd4cfa4160cbf3f9dc1f",
       "executable": false
     },
     "src/core/features/insights/ui/cost-totals.tsx": {
@@ -2978,7 +2978,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/sender-rates.tsx": {
-      "sha256": "e1d0dede605702c7e6a750a1a80ed721911b39b18b65e1ae35bd4ff3c90744b9",
+      "sha256": "b4521beb0b29bc035cbda58c1636df48cc912ed8b2ba09f31d0fdd8dc6d574ad",
       "executable": false
     },
     "src/core/features/landing/copy.ts": {
