@@ -1,3 +1,4 @@
+import { AudienceExport } from './audience-export';
 import { SavedSegments } from './saved-segments';
 import { Link } from '@tanstack/react-router';
 
@@ -31,7 +32,7 @@ export function AudiencePage() {
         </div>
         <div className="page-head__actions">
           <Link className="primary-action" to="/app/audience/import">Import contacts</Link>
-          <a className="secondary-action" href="/api/audience/export" download="audience.csv">Download contacts CSV</a>
+          <AudienceExport />
         </div>
       </header>
       <section className="summary-grid" aria-label="Audience summary">

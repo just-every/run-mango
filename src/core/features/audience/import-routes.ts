@@ -7,6 +7,7 @@ import type { Platform } from '@/core/shared/platform';
 import { createAudienceImportService, audienceImportContext } from './import-service';
 import { defaultMapping, presetStatuses } from './import-types';
 import { loadSignupDescription } from './signup-routes';
+import { AudienceCsvUnavailable } from './import-opt-out-lines';
 import { importConflict } from './import-conflict';
 const inputSchema=z.object({files:z.array(z.object({name:z.string().min(1).max(200),csv:z.string().min(1),preset:z.enum(['csv-subscribed','csv-unsubscribed','csv-cleaned','csv-non-subscribed','mango']),mapping:z.record(z.string(),z.string()).optional()})).min(1).max(10),consent:z.record(z.string(),z.string()).optional()});
 export function createAudienceImportRoutes(platform: Platform) {
@@ -25,7 +26,14 @@ export function createAudienceImportRoutes(platform: Platform) {
     try {return context.json(await saveSignupSettings(platform,parsed.data,operator.id,context.req.raw));}
     catch(error){return context.json({error:error instanceof SenderAuthorityChanged?'authority_changed':'signup_settings_save_failed'},error instanceof SenderAuthorityChanged?403:500);}
   });
-  routes.get('/audience/export',async context=>new Response(await service.exportCsv(),{headers:{'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="audience.csv"','Cache-Control':'no-store'}}));
+  routes.get('/audience/export',async context=>{
+    context.header('Cache-Control','no-store');
+    try { return new Response(await service.exportCsv(),{headers:{'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="audience.csv"','Cache-Control':'no-store'}}); }
+    catch(error) {
+      if(error instanceof AudienceCsvUnavailable)return context.json({error:'complete_csv_unavailable',detail:error.message,help:'/docs/backup-and-export#export-and-restore-a-local-copy'},409);
+      throw error;
+    }
+  });
   routes.post('/audience/import-preview',async context=>{
     const parsed=inputSchema.safeParse(await context.req.json().catch(()=>null));
     if(!parsed.success) return context.json({error:'invalid_import',detail:'Choose CSV files and their export presets.'},400);

@@ -17,14 +17,22 @@ type Table = keyof typeof columns;
 const tables = Object.keys(columns) as Table[];
 export type OptOutLine = { hash: string } & Record<Table, NativeRow[]>;
 
+export class AudienceCsvUnavailable extends Error {
+  constructor() {
+    super('A complete CSV cannot be created because an older opt-out or suppression has no portable identity. No file was downloaded. For a lossless local archive, stop dev and run rer export --output exports/mango.jsonl; keep the matching .dev.vars authority for restoration. Hosted full backup is not supported.');
+  }
+}
+
 /** Every opt-out and suppression no exported contact carries, one line per address. */
 export async function optOutLines(db: D1Database, carried: Set<string>) {
   const lines = new Map<string, OptOutLine>();
   for (const table of tables) {
     const rows = (await db.prepare(`SELECT r.*,m.portable_hash AS portable_hash FROM ${table} r LEFT JOIN audience_portable_hashes m ON m.destination_hash=r.destination_hash ORDER BY r.id`).all<NativeRow>()).results;
     for (const row of rows) {
-      // A row written before its address's portable identity was recorded cannot leave by it.
-      if (carried.has(`${table}:${row.id}`) || !row.portable_hash) continue;
+      if (carried.has(`${table}:${row.id}`)) continue;
+      // A detached legacy restriction cannot be translated without its address.
+      // Refuse the whole file instead of silently producing a lossy backup.
+      if (!row.portable_hash) throw new AudienceCsvUnavailable();
       const hash = String(row.portable_hash);
       if (!lines.has(hash)) lines.set(hash, { hash, surviving_opt_outs: [], contact_suppressions: [] });
       lines.get(hash)![table].push({ ...Object.fromEntries(columns[table].map(column => [column, row[column]])), destination_hash: hash, ...(table === 'contact_suppressions' ? { contact_id: null } : {}) });

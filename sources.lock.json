@@ -764,7 +764,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "dd2d703f20791e0ff22120e19718262dd79be46205f3b5dae8d7ddc9a87189b0",
+      "sha256": "7787ec49566760f57a6851d0071854ef5982b18028bdae26df277f9b926e63a4",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -824,7 +824,7 @@
       "executable": false
     },
     "docs/backup-and-export.md": {
-      "sha256": "bbfff6b7692d9fbaf3800c9b28258d3fcb6d2b402f049fd4e3961c7db0dae10d",
+      "sha256": "855555d4461fde83e0194b8722f28ee55c34eac24d7f02c6db2aa5985ddfa84c",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -856,7 +856,7 @@
       "executable": false
     },
     "docs/signup-and-consent.md": {
-      "sha256": "8e998efbd14a1da562da16aa31344d97e35f72852086c5d3d36bdaec0178e1cc",
+      "sha256": "32a8f5e84fbe47ea30bcca3be7e7088d6dcb85acb910c25f97770befc2f00e1b",
       "executable": false
     },
     "docs/site.json": {
@@ -876,7 +876,7 @@
       "executable": false
     },
     "HANDOVER.md": {
-      "sha256": "77050ea1e01f351d0028f44dcc4287c86d1bd73cb382d5d126f76a7844480c6e",
+      "sha256": "af335bceb6ca1a65133b5eab9e70f7875c3cba120d1ee31d63c6043cf79c9ddf",
       "executable": false
     },
     "LICENSE": {
@@ -1060,7 +1060,7 @@
       "executable": false
     },
     "OPERATIONS.md": {
-      "sha256": "ffabd30a14254d7b399e0683784d5c2b90f188900646bcba0891e4805ebf9908",
+      "sha256": "edd67fc3ce090a5d6e76500b6437390864275e4c90245971f0fb818518268ec4",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -1124,7 +1124,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "494529d05bea95fd7087b02c9a4b356c9d427356ba2255efa4309095abff5312",
+      "sha256": "5f109787a6b446386b610865ce6e5a531ddd81307e8f78185041ff043797ed5e",
       "executable": false
     },
     "playwright.config.js": {
@@ -1132,7 +1132,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "71b6c03865684d71242dc67fb58eeefcd01ace037dd433e0719f9cbfd70d54a2",
+      "sha256": "5cb76daceca840c9a75e0946ad01966e299be15bd9a0e006c559e5fcd2f7368e",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -1832,7 +1832,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "bd765f2d7ee2e7482fc4d90d931aab0bfbaea8eec5ddc0b8cd1f0d023a9d0ee3",
+      "sha256": "7dc35beaaede1cc190e312916ac8c5868d6c54caccc64a85908b6041560017d0",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -1876,7 +1876,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/service.ts": {
-      "sha256": "141db1b5b7950744a4c6f8f871337728113fc4358b1f749261465108df6ff47f",
+      "sha256": "800cad0df4653a39ec881fd187778115dfad56e0b56d0c7ac94640ca7cfd933f",
       "executable": false
     },
     "src/core/features/audience/erasure/source-literals.ts": {
@@ -1916,7 +1916,7 @@
       "executable": false
     },
     "src/core/features/audience/import-export.ts": {
-      "sha256": "befe6ac7b6e00721ef153adcbca532d8f1de131cf6772e526f6beb9663b44b46",
+      "sha256": "46213f980334499c07a7d123055da6a5fbef7ffbadb1cb5df72a234b061d8e63",
       "executable": false
     },
     "src/core/features/audience/import-held.ts": {
@@ -1948,7 +1948,7 @@
       "executable": false
     },
     "src/core/features/audience/import-opt-out-lines.ts": {
-      "sha256": "07b9e1996efcbf0143adc3380739da17d52655597ef9aa56e8ed71897c8fd2ed",
+      "sha256": "5e9ce7be6efe8de7511ef23cabcfd6d6ae3d451f172caddb420444751f1c1be3",
       "executable": false
     },
     "src/core/features/audience/import-plans.ts": {
@@ -1972,7 +1972,7 @@
       "executable": false
     },
     "src/core/features/audience/import-routes.ts": {
-      "sha256": "bd49acf4ae64960a06ef4c7d82035ad068a887ab5a779d85f9a8b78efbead9c2",
+      "sha256": "73aa0f1b3468693d5f53cc2b365ec9672293d0ee66e88d17d648d07c4df052c5",
       "executable": false
     },
     "src/core/features/audience/import-service.ts": {
@@ -2087,6 +2087,10 @@
       "sha256": "b3884dd3d19d9318d0644f30dc5a8429366e778fc55fc3e12d17739565152688",
       "executable": false
     },
+    "src/core/features/audience/ui/audience-export.tsx": {
+      "sha256": "72ec72abac8f5f29951afcea0924aefdff93df308b8fa0af2fd2209bc070547b",
+      "executable": false
+    },
     "src/core/features/audience/ui/audience-import-jobs.tsx": {
       "sha256": "527a6ce56871c9fad91fdd447f744b085b912a006992587d79d6abb5448adf48",
       "executable": false
@@ -2112,7 +2116,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/audience-page.tsx": {
-      "sha256": "3cb58b5f543e7255b0a81f6052a64705c60fc740ff099dc384a52e2e2a520f76",
+      "sha256": "d4f626de38c7bb81adc42c88cdfc6233345bfec1b640cb5b5a084e19d91f8aad",
       "executable": false
     },
     "src/core/features/audience/ui/audience-signup-tools.tsx": {
@@ -5017,6 +5021,10 @@
     },
     "tests/audience-import/plan-custody.spec.ts": {
       "sha256": "bf3d8fbe7e6ceb2d9542ebbb4c7ec48fff44fb19f89cb54bda16fa7cd9f09c8e",
+      "executable": false
+    },
+    "tests/audience-import/privacy-portability.spec.ts": {
+      "sha256": "452dbc1dc24f81c3b2d95ad972da43c4f80c7cb9eb0bd82c91cdcfe8264198e0",
       "executable": false
     },
     "tests/audience-import/release.config.js": {

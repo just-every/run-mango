@@ -112,7 +112,11 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
       }
       const scope=JSON.parse(job.scope_json) as ErasureScope,counts=JSON.parse(job.counts_json) as Record<string,number>;
       const transfer=await erasurePortability(db);
-      const table=contactErasureTables[job.stage];
+      // Stage numbers are durable: append a reconciliation pass for older jobs
+      // whose cursor already passed the original portable-mapping predicate.
+      // It uses the same bounded, PK-fenced transaction as every declared table.
+      const table=contactErasureTables[job.stage]??(job.stage===contactErasureTables.length
+        ?contactErasureTables.find(table=>table.table==='audience_portable_hashes'):undefined);
       if(table){
         const columns=(await db.prepare(`PRAGMA table_info(${quote(table.table)})`).all<{name:string;pk:number}>()).results;
         if(!columns.length)throw new Error(`Erasure declaration table missing: ${table.table}`);

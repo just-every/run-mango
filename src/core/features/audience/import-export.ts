@@ -1,3 +1,4 @@
+import { AudienceCsvUnavailable } from './import-opt-out-lines';
 import { portableHash } from './portable-hashes';
 import type { AudienceSnapshot } from './import-types';
 
@@ -5,6 +6,11 @@ import type { AudienceSnapshot } from './import-types';
  * through the ledger. Import custody belongs to the receiving installation. */
 export async function portableAudienceSnapshot(native: AudienceSnapshot): Promise<AudienceSnapshot> {
   const snapshot = structuredClone(native);
+  // A legacy suppression can still point to a contact while carrying a hash
+  // from another authority. Its presence alone does not make it portable.
+  for (const table of ['contact_suppressions', 'surviving_opt_outs']) {
+    if (snapshot.tables[table].some(row => !snapshot.identities.some(identity => identity.hash === row.destination_hash && identity.channel === row.channel))) throw new AudienceCsvUnavailable();
+  }
   for (const identity of snapshot.identities) {
     const portable = portableHash(identity.destination);
     for (const table of ['contact_suppressions', 'surviving_opt_outs']) {
