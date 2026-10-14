@@ -30,7 +30,7 @@ export async function stageArchive(runtime: any, records: any[]) {
 }
 export async function durableRows(db: D1Database) {
   const tables = (await db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name <> '_cf_METADATA'").all<{name: string}>()).results;
-  const rows = [];
-  for (const {name} of tables) rows.push({name, rows: (await db.prepare(`SELECT * FROM "${name.replaceAll('"', '""')}"`).all()).results});
+  const snapshots = await db.batch(tables.map(({name}) => db.prepare(`SELECT * FROM "${name.replaceAll('"', '""')}"`)));
+  const rows = tables.map(({name}, index) => ({name, rows: snapshots[index].results}));
   return JSON.stringify(rows);
 }

@@ -61,7 +61,7 @@ test('CONT-013/DATA-001 populated upgrade retires legacy custody and resumes a p
   } finally {await f.close();}
 });
 
-test('CONT-013/DATA-001 authority validation, atomic race refusal and current archive recovery preserve all rows', async () => {
+test('CONT-013/DATA-001 invalid archive authority is refused before any durable admission mutation', async () => {
   const source = await portabilityRuntime(), target = await portabilityRuntime({restore:true});
   try {
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();
@@ -72,6 +72,14 @@ test('CONT-013/DATA-001 authority validation, atomic race refusal and current ar
       expect(refused.status).toBeGreaterThanOrEqual(400);
       expect(await durableRows(target.db)).toBe(before);
     }
+  } finally {await source.close();await target.close();}
+});
+
+test('CONT-013/DATA-001 staged archive replay, checksum and finalize authority validation prevent restored rows', async () => {
+  const source = await portabilityRuntime(), target = await portabilityRuntime({restore:true});
+  try {
+    await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();
+    const records = await archiveRecords(source), manifest = records[0];
     const id = await stageArchive(target,records), finalize = (laterJournal?: unknown, contentHash = records.at(-1).contentHash) => transferRequest(target,`imports/${id}/finalize`,{contentHash,laterJournal});
     expect((await finalize(undefined,hash('tampered-content'))).status).toBe(400);
     for (const mutation of [{sourceIdentity:'wrong-source'},{epoch:-1},{epoch:0.5},{journal:['malformed']},{journal:[hash('legacy-authority')]}]) {
@@ -81,10 +89,19 @@ test('CONT-013/DATA-001 authority validation, atomic race refusal and current ar
     for (const malformed of [null, 0, false]) expect((await finalize(malformed)).status).toBe(400);
     const stale = await finalize({sourceIdentity:manifest.sourceIdentity,epoch:manifest.epoch+1,journal:[]});
     expect((await stale.json()).error).toBe('erasure_epoch');
+  } finally {await source.close();await target.close();}
+});
+
+test('CONT-013/DATA-001 atomic epoch race refuses stale readmission and current archive recovery preserves rows', async () => {
+  const source = await portabilityRuntime(), target = await portabilityRuntime({restore:true});
+  try {
+    await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();
+    const records = await archiveRecords(source), manifest = records[0];
+    const id = await stageArchive(target,records);
     // A real SQL commit advances authority after fence() and before final apply.
     const sourceSql = manifest.sourceIdentity.replaceAll("'","''");
     await target.db.prepare(`CREATE TRIGGER concurrent_erasure AFTER UPDATE OF applying ON rer_portability_state WHEN NEW.applying=1 BEGIN INSERT INTO rer_portability_epochs VALUES('${sourceSql}',${manifest.epoch+1}) ON CONFLICT(source) DO UPDATE SET epoch=excluded.epoch; END`).run();
-    expect((await finalize()).status).toBe(500);
+    expect((await transferRequest(target,`imports/${id}/finalize`,{contentHash:records.at(-1).contentHash})).status).toBe(500);
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first<any>()).n).toBe(0);
     expect((await target.db.prepare('SELECT epoch FROM rer_portability_epochs WHERE source=?').bind(manifest.sourceIdentity).first<any>()).epoch).toBeGreaterThan(manifest.epoch);
     await target.db.prepare('DROP TRIGGER concurrent_erasure').run();
