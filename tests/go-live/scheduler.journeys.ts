@@ -74,6 +74,8 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${letter.campaignId}/scheduled`);
     await expect(page.locator('[data-scheduler-outcome="failed"]')).toBeVisible();
+    // Dismiss Vite's diagnostic for the deliberately failed Cron request before capturing the app.
+    await page.keyboard.press('Escape');
     await page.screenshot({path:info.outputPath('scheduler-failed-390.png'),fullPage:true});
     // Restore records a real callback without dispatching or claiming completion.
     await site.runtime.close();
