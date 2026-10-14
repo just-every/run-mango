@@ -790,7 +790,7 @@
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "f9a65ce0723cf9466f812d90c0cafcea1898d50453f02b6f193328658d958d5d",
+      "sha256": "8903c0bd3e96c63e270020b397618a62921806f1bc33e4ffce4a2420a9a10c2b",
       "executable": false
     },
     "BASELINE.md": {
@@ -4426,7 +4426,7 @@
       "executable": false
     },
     "src/vendor/base/mail/src/development/viewer.mjs": {
-      "sha256": "8c8c7575c2364151501d1725515b90fa662be039422837643d89f6668f241627",
+      "sha256": "9149e14e4c22db323a43a1e34d5b1e60aa63caf41e14f02a76f9caa553ff5af9",
       "executable": false
     },
     "src/vendor/base/mail/src/doctor/common.mjs": {
