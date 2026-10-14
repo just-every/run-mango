@@ -1,3 +1,4 @@
+import { runScheduled } from './scheduled';
 import { dispatchDocuments } from './document-dispatch';
 import { createApp, createAppServices } from './app';
 import type { AppBindings } from '@/core/shared/platform';
@@ -5,7 +6,7 @@ import { createProductionPlatform } from '@/core/platform/runtime';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { staticAssetResponse } from '@/base/static-assets';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
-import { consumeLifecycleQueue, runLifecycleCron, type LifecycleQueueBatch } from '@/core/features/lifecycle';
+import { consumeLifecycleQueue, type LifecycleQueueBatch } from '@/core/features/lifecycle';
 
 async function lifecycleRuntime(environment: AppBindings) {
   const platform = createProductionPlatform(environment);
@@ -29,7 +30,6 @@ export default {
     return consumeLifecycleQueue({ messages }, await lifecycleRuntime(environment as AppBindings));
   },
   scheduled(controller, environment, executionContext) {
-    if (environment.MANGO_RESTORE_MODE === '1') return;
-    executionContext.waitUntil(lifecycleRuntime(environment as AppBindings).then(runtime => runLifecycleCron(controller, runtime)));
+    executionContext.waitUntil(runScheduled(controller, environment, lifecycleRuntime));
   },
 } satisfies ExportedHandler<AppBindings>;

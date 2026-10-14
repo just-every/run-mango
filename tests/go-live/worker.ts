@@ -1,3 +1,5 @@
+import productionWorker from '../../src/core/app/worker';
+import { productionBindings, receiptUrl, receiptRecipient } from './production-bindings';
 // Test-only Worker entry for the go-live journey, served by the same Vite and
 // Cloudflare plugin runtime as rer dev. It composes Mango's real SendGrid
 // adapter, sender verification, approval, queue dispatch, webhook, unsubscribe
@@ -12,11 +14,10 @@ import { dispatchDocuments } from '../../src/core/app/document-dispatch';
 import { createSendgridAdapter } from '../../src/core/platform/adapters/sendgrid';
 import { createSenderVerification } from '../../src/core/features/sender-verification/service';
 import { digest } from '../../src/core/features/sender-verification/identity';
+import { receiptConfiguration } from '../../src/core/features/sender-verification/receipt-configuration';
 import { tags } from '../../src/core/features/sender-verification/dns';
 import type { Challenge } from '../../src/core/features/sender-verification/types';
 import { loadSenderSettings } from '../../src/core/features/settings/sender-persistence';
-import { consumeLifecycleQueue, runLifecycleCron, type LifecycleQueueBatch } from '../../src/core/features/lifecycle';
-import { acknowledgeHealthProbe } from '../../src/core/features/health/queue-probe';
 
 type Bindings = LocalAppBindings & { GO_LIVE_EDGE_ORIGIN: string; GO_LIVE_WEBHOOK_KEY: string; GO_LIVE_PUBLIC_ORIGIN: string;
   GO_LIVE_PROVIDER_KEY: string; GO_LIVE_DKIM_KEY: string; MANGO_RESTORE_MODE?: string };
@@ -33,7 +34,7 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
 }) as typeof fetch;
 
 function receiver(bindings: Bindings) {
-  return { id: 'go-live-receiving-mailbox', recipient: 'receiver@example.test', async acquire(challenge: Challenge) {
+  return { id: receiptConfiguration(receiptUrl,receiptRecipient).id, recipient: receiptRecipient, async acquire(challenge: Challenge) {
     return { receiptId: `receipt-${challenge.id}`, originalDigest: await digest(['original', challenge.id]), receivedAt: Date.now(),
       from: challenge.request.sender, to: challenge.recipient, providerMessageId: challenge.providerMessageId!, requestDigest: challenge.requestDigest,
       nonce: challenge.nonce, signedBody: { digest: await digest(challenge.request.content.text), complete: true, nonce: challenge.nonce },
@@ -48,6 +49,7 @@ async function compose(bindings: Bindings) {
   const platform = createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
   Object.assign(platform.config, { mailProvider: 'sendgrid', mailProviderApiKey: bindings.GO_LIVE_PROVIDER_KEY,
     mailWebhookSecret: bindings.GO_LIVE_WEBHOOK_KEY, publicBaseUrl: new URL(bindings.GO_LIVE_PUBLIC_ORIGIN),
+    mailboxReceiptUrl: receiptUrl, mailboxReceiptRecipient: receiptRecipient,
     emailHandoffsPerMinute: 50, testEmailAllowlist: ['tester@example.test', 'receiver@example.test'] });
   await loadSenderSettings(platform);
   const verification = createSenderVerification({ database: platform.database, config: platform.config, receiver: receiver(bindings) });
@@ -70,7 +72,14 @@ async function control(request: Request, bindings: Bindings) {
     return Response.json(await verification.acquireObservation(challenge.id));
   }
   // The deployed scheduled handler: due steps are queued for the real consumer.
-  if (path === '/_golive/cron') { await runLifecycleCron(null, createAppServices(platform).lifecycleRuntime); return Response.json({ ok: true }); }
+  if (path === '/_golive/cron') {
+    const body=await request.json() as {scheduledTime?:number; missingMailConfiguration?:boolean};
+    const pending:Promise<unknown>[]=[];
+    productionWorker.scheduled({scheduledTime:body.scheduledTime??Date.now(),cron:'*/5 * * * *',noRetry(){}},{...productionBindings(bindings),...(body.missingMailConfiguration?{MAIL_PROVIDER_API_KEY:''}:{})},
+      {waitUntil:work=>{pending.push(work);}} as ExecutionContext);
+    await Promise.all(pending);
+    return Response.json({ok:true});
+  }
   // The unsubscribe link a letter to this contact would carry, without sending one.
   if (path === '/_golive/unsubscribe-link') {
     const { contactId } = await request.json() as { contactId: string };
@@ -85,7 +94,7 @@ async function control(request: Request, bindings: Bindings) {
   return new Response('Not found', { status: 404 });
 }
 
-export default {
+const worker = {
   async fetch(request: Request, bindings: Bindings, context: ExecutionContext) {
     if (new URL(request.url).pathname.startsWith('/_golive/')) return control(request, bindings);
     const { platform } = await compose(bindings);
@@ -93,11 +102,14 @@ export default {
     // app's origin check is trusted locally; Base's transfer handler still checks its own.
     return dispatchDocuments(request, bindings, context, platform, createApp(bindings, platform, undefined, true));
   },
-  async queue(batch: unknown, bindings: Bindings) {
-    const messages=(batch as LifecycleQueueBatch).messages.filter(message=>!acknowledgeHealthProbe(message));
-    if(!messages.length)return;
-    if (bindings.MANGO_RESTORE_MODE === '1') throw new Error('Mango restore maintenance is active; retry the queue later.');
-    const { platform } = await compose(bindings);
-    await consumeLifecycleQueue({messages}, createAppServices(platform).lifecycleRuntime);
+  scheduled(controller:ScheduledController,bindings:Bindings,context:ExecutionContext) {
+    edge=bindings.GO_LIVE_EDGE_ORIGIN;
+    return productionWorker.scheduled(controller,productionBindings(bindings),context);
+  },
+  async queue(batch: MessageBatch, bindings: Bindings) {
+    edge=bindings.GO_LIVE_EDGE_ORIGIN;
+    return productionWorker.queue(batch,productionBindings(bindings));
   },
 } satisfies ExportedHandler<Bindings>;
+
+export default worker;

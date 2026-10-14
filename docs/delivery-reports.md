@@ -16,6 +16,8 @@ Open an approved campaign and choose **View schedule and results**. The page ref
 
 A step's state is Scheduled, Sending, Sent, Cancelled, Failed, Missed, Paused or Completed. "Sent" means handed to the provider; the page says "Only the Delivered count confirms delivery." "Missed" means the send window closed before dispatch began.
 
+The sending schedule panel shows when the Worker last actually ran, or that no tick has been observed. Before the first tick, sending starts once Cloudflare activates the schedule, usually within an hour. A tick that becomes overdue, a failed tick and a tick blocked by restore or contact erasure are shown separately. Completion means the scheduler finished its checks; it does not confirm provider acceptance or delivery. Send windows still expire while waiting for activation.
+
 Under each step is a list of recipient outcomes, each with a count:
 
 - **Queued**, **Handed off**, **Accepted**, **Delivered**, **Bounced** and **Failed**;

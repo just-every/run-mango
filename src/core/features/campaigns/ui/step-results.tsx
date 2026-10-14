@@ -3,7 +3,7 @@ import type { Step } from '@/core/app/client/lib/types';
 import type { CampaignResults } from '../result-model';
 import { dispositionLabel } from './result-copy';
 
-export function StepResults({steps,results,now,timezone}:{steps:Step[];results:CampaignResults;now:number;timezone:string}) {
+export function StepResults({steps,results,now,timezone,awaitingFirstTick=false}:{steps:Step[];results:CampaignResults;now:number;timezone:string;awaitingFirstTick?:boolean}) {
   return <section className="panel" aria-labelledby="step-results-title">
     <h2 id="step-results-title">Every scheduled step</h2>
     <ol className="step-results">
@@ -20,7 +20,7 @@ export function StepResults({steps,results,now,timezone}:{steps:Step[];results:C
             <div>
               <p><time dateTime={step.scheduledAt}>{formatDateInTimeZone(step.scheduledAt,timezone)}</time> <span>({timezone})</span></p>
               <p className="muted-copy">Resolved UTC: {formatUtc(step.scheduledAt)}</p>
-              {outcome.state === 'Scheduled' ? <p className="step-result__countdown">{timeRemaining(step.scheduledAt,now)}</p> : null}
+              {outcome.state === 'Scheduled' && !(awaitingFirstTick && Date.parse(step.scheduledAt)<=now) ? <p className="step-result__countdown">{timeRemaining(step.scheduledAt,now)}</p> : null}
             </div>
             <div>
               <p>{closed ? 'Send window closed at ' : 'Send window closes at '}<time dateTime={step.sendByAt}>{formatDateInTimeZone(step.sendByAt,timezone)}</time></p>

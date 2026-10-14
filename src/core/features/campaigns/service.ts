@@ -40,6 +40,7 @@ export function createCampaignService(
     const rules=parseStructuredRules(composition.revision.inclusionRuleJson,composition.revision.exclusionRulesJson);
     const checks=(await repository.listChecks(composition.revision.id)).map(check=>authoringSourceCheck(check,rules.ok?rules.sourceTypes:[]));
     return { campaign, ...composition,
+      scheduler: await repository.scheduler(options.now?.() ?? new Date()),
       revision: {...composition.revision, audienceRule:summarizeAudienceRules(composition.revision.inclusionRuleJson,composition.revision.exclusionRulesJson)},
       results: composition.revision.state === 'approved' ? await repository.results(id, composition.revision.id, campaign.state, options.now?.() ?? new Date()) : undefined,
       uncertainDeliveries: await repository.uncertainDeliveries(id), checks };

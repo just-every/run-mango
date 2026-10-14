@@ -40,7 +40,7 @@ git clone https://github.com/just-every/run-mango.git
 cd run-mango
 ```
 
-Use Node **22.20.0** and pnpm **10.12.4** from the project root. Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`); in this checkout it runs the rer version `package.json` pins. Supply your own owner email.
+Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.2**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** and installs the locked dependencies. You do not need to install Node or pnpm separately when using the installer script. Run from the project root and supply your own owner email.
 
 ```sh
 rer install
@@ -59,11 +59,11 @@ rer deploy --environment production --dry-run
 rer describe
 ```
 
-Reset deletes local data and credentials. Export before resetting if you need that data; import requires an empty destination and the matching private settings backup. The commands above are separate operations, not a reset-and-backup sequence. Real deployment requires authorized owner-account credentials. Follow the complete [deployment recipe](OPERATIONS.md#deployment): `pnpm exec rer deploy --environment production`, then `pnpm run hosted claim --environment production` on first install. Pinned rer 0.2.1 deploys the Worker but does not claim its owner. The recipe also supplies optional receiver and QA inputs. See [OPERATIONS.md](OPERATIONS.md) for recovery and configuration; `describe --json` lists the actual flags, and `check --profile first-party` checks the command contract.
+Reset deletes local data and credentials. Export before resetting if you need that data; import requires an empty destination and the matching private settings backup. The commands above are separate operations, not a reset-and-backup sequence. Real deployment requires authorized owner-account credentials. Follow the complete [deployment recipe](OPERATIONS.md#deployment): `rer deploy --environment production`. Pinned rer 0.2.2 deploys the Worker, automatically claims the first owner through native bootstrap and removes the one-time setup token from the Worker. Repeat deployment preserves the existing owner. For updates, preserve private inputs and the deploy receipt, run `git pull --ff-only`, then `rer deploy --environment production` with the same environment and loaded private inputs. rer handles the pinned tools and dependency install. The recipe also supplies optional receiver and QA inputs. See [OPERATIONS.md](OPERATIONS.md) for recovery and configuration; `describe --json` lists the actual flags, and `check --profile first-party` checks the command contract.
 
 Setup builds and migrates local D1, creates one real first owner, and preserves existing owner/data/private bytes on repeat runs. `--port PORT` and `--host HOST` select a loopback origin; dev overrides do not rewrite saved settings. For browser verification install Chromium with `pnpm exec playwright install chromium`. Production configuration may remain absent during local work. [RUN-LOCALLY.md](RUN-LOCALLY.md) provides the short command guide.
 
-Sample data is opt-in in the separate test-only workspace: `pnpm run review:synthetic`. It serves its own `/__dev/outbox` and takes its origin from `MANGO_REVIEW_BASE_URL` in the ignored `wrangler.review.toml`, so local development settings cannot redirect it to the dev port. Open the link written to `.seed/review-access` once so the review operator exists; you can then request a sign-in link for `review@example.test` at `/signin`, open the development outbox and press Confirm, as in `rer dev`.
+Sample data is opt-in in the separate test-only workspace: `pnpm run review:synthetic`. It serves its own `/__dev/outbox` and takes its origin from `MANGO_REVIEW_BASE_URL` in the ignored `wrangler.review.toml`, so local development settings cannot redirect it to the dev port. Open the link written to `.seed/review-access` once so the review operator exists; you can then request a sign-in link for `review@example.test` at `/signin`, open the development outbox and press Confirm, as in `rer dev --login`.
 
 ## Source synchronization
 

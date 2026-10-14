@@ -1,3 +1,4 @@
+import { schedulerObservation } from '@/core/features/lifecycle/scheduler-observation';
 import { createProposalRepository } from '@/core/features/proposals/repository';
 import { enrichAdvisoryAcknowledgements } from '@/core/features/lifecycle/advisory-acknowledgements';
 import { asc, desc, eq } from 'drizzle-orm';
@@ -19,6 +20,7 @@ import {
 export function createCampaignRepository(database: Database) {
   return {
     ...createCampaignResultRepository(database),
+    scheduler: (now:Date) => schedulerObservation(database.$client).read(now),
     async listProposals(now = new Date()) {
       await createProposalRepository(database).expireDue(now);
       const rows = await database.select().from(proposals).where(eq(proposals.state,'proposed'));

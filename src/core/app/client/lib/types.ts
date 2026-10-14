@@ -106,6 +106,7 @@ export type Check = {
 };
 
 export type CampaignDetail = {
+  scheduler?: import('@/core/features/lifecycle/scheduler-observation').SchedulerObservation;
   results?: CampaignResults;
   uncertainDeliveries?: Array<{id:string;destination:string;providerMessageId:string|null;detail:string}>;
   campaign: Campaign;

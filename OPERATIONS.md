@@ -1,6 +1,6 @@
 # Mango operations
 
-Use Node **22.20.0** and pnpm **10.12.4**. All application lifecycle commands use the installed `@runeditrun/rer` package pinned exactly to **0.2.2**; `pnpm exec rer` selects that checkout's CLI, and package scripts invoke the same `rer` command; start with [Run it locally](AGENTS.md#run-it-locally). `describe --json` reports verbs/flags, `check --profile first-party` validates structure without configuration, and `doctor` diagnoses tools and missing inputs without provider requests or private values.
+Pinned rer **0.2.2** selects and acquires Node **22.20.0** and pnpm **10.12.4** and installs locked dependencies; neither tool needs a separate manual install. All application lifecycle commands use the installed `@runeditrun/rer` package pinned exactly to **0.2.2**; `rer` selects that checkout's CLI, and package scripts invoke the same command; start with [Run it locally](AGENTS.md#run-it-locally). `describe --json` reports verbs/flags, `check --profile first-party` validates structure without configuration, and `doctor` diagnoses tools and missing inputs without provider requests or private values.
 
 The newsletter profile needs email only. Commerce, SMS, AI and design generation are optional: leave each disabled group absent; partial enabled groups fail with missing names. `verify` runs contract/source checks, operations tests, typecheck, production build and local browser journeys. Run affected tests while editing; CI is the complete wall. Local success does not prove hosted operation or delivery.
 
@@ -28,7 +28,7 @@ Receiver material must come from an authenticated original-message mailbox conne
 
 ## Deployment
 
-`pnpm exec rer deploy --environment production --dry-run` validates/builds locally without provider requests. The installed, pinned rer deploy command provisions the Worker; it does **not** admit the first owner. The following recipe supplies the actual deploy inputs and then explicitly claims that owner through Base's native bootstrap.
+`rer deploy --environment production --dry-run` validates/builds locally without provider requests. The installed, pinned rer 0.2.2 deploy command provisions the Worker, automatically claims the first owner through native bootstrap, then removes the one-time setup token from the Worker. Repeat deployment keeps the existing owner. The following recipe supplies the actual deploy inputs; no separate owner claim command is required.
 
 1. Create a private deployment input file once, from the repository root:
 
@@ -51,17 +51,16 @@ NODE
 
    Fill `MANGO_TEST_EMAIL_ALLOWLIST` with the comma-separated receiver and QA addresses. This allowlist may also be configured without a receiver; it never grants sign-in access. The receiver alone cannot verify provider/DNS authority, and absent receiver evidence prevents sender approval. Optional design generation uses the pair described below.
 
-3. From a committed checkout, load those inputs, deploy and claim:
+3. From a committed checkout, load those inputs and deploy:
 
 ```sh
 set -a
 . ./.rer/hosted.env
 set +a
-pnpm exec rer deploy --environment "$MANGO_DEPLOY_ENV"
-pnpm run hosted claim --environment "$MANGO_DEPLOY_ENV"
+rer deploy --environment "$MANGO_DEPLOY_ENV"
 ```
 
-The claim command reads the successful receipt in `.rer/deploy/<environment>.json`, validates its project/environment and workers.dev origin, and posts the private setup token to `/auth/bootstrap` without following redirects or printing the token, cookie or response. It creates one native owner; a repeat keeps the existing owner. Open the deployed origin, request an email sign-in link for `OWNER_EMAIL`, confirm it, and complete sender setup. Keep the setup token private with the matching session and contact authority backup.
+After a successful health check, deploy claims the first owner without printing credentials and removes the one-time setup token from the Worker. A repeat keeps the existing owner. If claiming fails, deploy reports that the application is deployed but owner admission failed; repeat the same deploy after resolving the reported cause. Open the deployed origin, request an email sign-in link for `OWNER_EMAIL`, confirm it, and complete sender setup. Preserve matching private session and contact authority backups.
 
 The kit uploads only the inputs in `deploy.json`: required secrets are needed on first deploy and inherited afterwards. Receiver and QA inputs, like design inputs, are optional secrets uploaded when supplied; the kit preserves existing Worker secrets on later uploads even when their shell inputs are absent. `.rer/declarations/` contains names only. To change an existing secret deliberately, replace that Worker secret using your authorized Cloudflare administration; rer deploy keeps existing values. Product settings (provider, app version, timing and rate limits) are defined once in `deploy.json` `vars`, consumed by both deployment and the sender-verification runner; change them there and deploy before verification. Shell values do not override those declared settings. `MANGO_PUBLIC_BASE_URL` comes from the successful deployment receipt, after its project, environment, Worker, owned D1 and canonical HTTPS workers.dev origin have been checked. The runner refuses a conflicting shell origin. Keep the receipt and private inputs for the same installation together.
 
@@ -69,20 +68,23 @@ For an update, preserve private inputs, the deploy receipt and your data backups
 
 ```sh
 git pull --ff-only
-pnpm install --frozen-lockfile
 set -a
 . ./.rer/hosted.env
 set +a
-pnpm exec rer deploy --environment "$MANGO_DEPLOY_ENV"
+rer deploy --environment "$MANGO_DEPLOY_ENV"
 ```
 
-Choose the same `--environment` as the first deployment. Verify existing and fresh email sign-in and the Worker health after deployment. The owner claim need not be repeated. Mango never reads Wrangler credential files.
+Choose the same `--environment` as the first deployment. Verify existing and fresh email sign-in and the Worker health after deployment. rer installs updated locked dependencies and keeps the owner automatically. Mango never reads Wrangler credential files.
 
 Names derive from project and environment: `mango-production`, `mango-production-db`, `mango-production-assets-bucket` and `mango-production-mango-jobs`. The kit derives the workers.dev origin from the authenticated account, owns resources and migrations, uploads Worker/assets and verifies bindings plus source/version health after a real D1 ping.
 
-Restore mode on a deployment: set `"MANGO_RESTORE_MODE": "1"` in `deploy.json` `vars` and deploy; product routes, the queue consumer and cron then pause (503 `restore_in_progress`) while sign-in, `/health` and the authenticated transfer routes stay open. Set it back to `"0"` and deploy again after the restore. A hosted restore itself is not yet proven.
+Restore mode on a deployment: set `"MANGO_RESTORE_MODE": "1"` in `deploy.json` `vars` and deploy; product routes and the queue consumer pause (product requests answer 503 `restore_in_progress`). Cron records each actual tick as blocked by restore; sign-in, `/health` and the authenticated transfer routes stay open. Set it back to `"0"` and deploy again after the restore. A hosted restore itself is not yet proven.
 
 Back up `.rer/deploy/<environment>.json`; repeat deployment requires matching ownership state. Same-named unowned resources are refused. Resolve uncertain resource ownership with the Base deploy-kit recovery guide (`modules/deploy-kit/README.md` in the installed `@runeditrun/rer` package), preserving source and data. CI verifies application changes. The Run site workflow automatically publishes marketing pages and documentation; application deployment remains explicit.
+
+## Scheduler readiness
+
+The schedule and results page reads durable actual Worker scheduled entries. A fresh installation reports no tick observed and explains that sending starts once Cloudflare activates the schedule, usually within an hour. The five-minute schedule is observed only after its Worker handler runs; deploy, approval, health checks and page reads do not establish it. A tick older than fifteen minutes is overdue. Its latest completion, failure or restore/erasure block is separate from that observation. Expired send windows remain closed regardless of scheduler readiness. The actual entry time is separate from Cloudflare’s nominal scheduled slot: a delayed callback records when it really entered Mango. A late completion cannot replace a newer entry’s outcome, including across Worker restarts. A completed tick confirms scheduling checks, never provider acceptance or delivery.
 
 ## Authored newsletter draft API
 
@@ -149,7 +151,7 @@ Resend remains supported by the runtime. To select it, explicitly change the tra
 
 ## Complete data export and restore
 
-With dev stopped, `rer export --output exports/mango.jsonl` creates a new private archive. It contains every product D1 table and original R2 asset with metadata: contacts, consent, surviving opt-outs, source records, campaigns/revisions, approvals, outcomes, settings, audit and import history. Attribution profiles carry no login authority. Auth sessions/tokens, owner-claim admission, outbox, transfer bookkeeping, secrets/provider credentials and queue transport envelopes are excluded. Remote CLI targets are unsupported and fail visibly.
+With dev stopped, `rer export --output exports/mango.jsonl` creates a new private archive. It contains every product D1 table and original R2 asset with metadata: contacts, consent, surviving opt-outs, source records, campaigns/revisions, approvals, outcomes, settings, audit and import history. Attribution profiles carry no login authority. Auth sessions/tokens, owner-claim admission, outbox, transfer bookkeeping, secrets/provider credentials and queue transport envelopes and installation-local scheduler observations are excluded. Remote CLI targets are unsupported and fail visibly.
 
 Back up matching private settings separately, including contact and signing authority. The archive binds restoration to their fingerprint and cannot recover them. Copy the archive and private settings into a new empty local destination with no writer running, then run `rer import --input exports/mango.jsonl --yes`. The shared CLI locks state, applies migrations and validates/stages data before atomic restoration; wrong schema, integrity, key fingerprint or nonempty destinations are refused. Re-export to a new filename and compare content before ordinary setup and fresh sign-in. Reconfigure provider inputs separately; never rotate authority during restore.
 

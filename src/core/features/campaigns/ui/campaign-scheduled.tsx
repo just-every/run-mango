@@ -1,3 +1,4 @@
+import { SchedulerReadiness } from './scheduler-readiness';
 import { CampaignCosts } from '@/core/features/insights/ui/cost-totals';
 import { productConfig } from '@/ext/config';
 import { Link, useParams } from '@tanstack/react-router';
@@ -59,7 +60,8 @@ export function CampaignScheduledPage() {
     {error ? <p className="inline-error" role="alert">Results could not be refreshed. The last saved results remain below.</p> : null}
     <div className="scheduled-layout">
       <div className="scheduled-layout__main">
-        <StepResults timezone={productConfig.storeTimezone} steps={data.steps} results={results} now={Math.max(now,Date.parse(results.asOf))} />
+        {data.scheduler ? <SchedulerReadiness scheduler={data.scheduler} expired={data.steps.length>0 && data.steps.every(step=>Date.parse(step.sendByAt)<=Math.max(now,Date.parse(results.asOf)))} /> : null}
+        <StepResults awaitingFirstTick={data.scheduler?.state==='not-observed'} timezone={productConfig.storeTimezone} steps={data.steps} results={results} now={Math.max(now,Date.parse(results.asOf))} />
         {results.cancellable ? <section className="panel cancellation-panel">
           <h2>Cancel remaining sends</h2>
           <p>Cancellation stops queued recipient-steps that have not begun handoff. It cannot recall messages already handed to a provider. Unknown handoffs remain visible for confirmation.</p>

@@ -79,7 +79,7 @@ export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime:
 
 export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntime) {
   const { repository, delivery } = createLifecycleServices(runtime);
-  const pending=await pendingErasure(runtime.platform.database.$client);if(pending){await continueErasure(runtime.platform,pending.reference);return;}
+  const pending=await pendingErasure(runtime.platform.database.$client);if(pending){await continueErasure(runtime.platform,pending.reference);return 'blocked-erasure' as const;}
   return withErasureWriteFence(runtime.platform.database.$client,async()=>{
   const now = new Date();
   await createProposalRepository(runtime.platform.database).expireDue(now);
@@ -108,6 +108,7 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
   if (runtime.platform.sms) await delivery.probeOutage('sms');
   await repository.completeCampaigns(new Date());
   await sweepDesignJobs(runtime.platform, now.getTime());
+  return 'completed' as const;
   });
 }
 

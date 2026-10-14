@@ -48,8 +48,9 @@ with exit 3 and a message naming the field.
 
 ## Install for a real owner
 
-Use Node 22.20.0 and pnpm 10.12.4 for maintained first-party checkouts. To
-install with a real owner mailbox, run the verbs yourself from the runnable
+Pinned rer 0.2.2 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
+checkout; neither needs a separate manual install. To install with a real owner
+mailbox, run the verbs yourself from the runnable
 edition's root: install locked dependencies, prepare its local owner, then start
 development:
 
@@ -68,6 +69,11 @@ Set `RER_NODE_AUTO=0` to disable automatic selection. If selection is disabled
 or acquisition fails, the command reports a repair invocation in this form:
 `npm exec --yes --package=node@VERSION -- node SCRIPT VERB --cwd PROJECT`.
 Help, check, describe, doctor and stop do not select or acquire Node.
+pnpm is selected in the same way: rer uses an installed matching version or
+its verified private cache, without changing global installations. `rer install`
+installs the locked dependencies; `rer dev` and `rer deploy` also install them
+when needed.
+
 A runtime that has just verified also drops its stale `.quarantine-` copies and
 Node's unused `include/` headers, which saves about 250 MB per Node release;
 `doctor` lists what it could not remove. `doctor` also warns, without failing,
@@ -214,7 +220,13 @@ transfer is unsupported by the maintained references and fails visibly.
 Real deployment uses the owner-account procedure and its private credentials.
 `rer deploy --dry-run` validates and builds locally without a
 provider request. The default environment is `production`; select another with
-`--environment NAME`. Local validation does not establish provider acceptance,
+`--environment NAME`. Pinned rer 0.2.2 claims the first hosted owner after the
+health check and removes the one-time setup token. Repeated deployments retain
+the existing owner. Preserve your private inputs, receipt, backups and local
+customizations when updating: run `git pull --ff-only`, then
+`rer deploy --environment NAME` for the same environment with the same private
+inputs loaded. rer installs locked dependencies; no separate owner claim or
+manual dependency installation is required. Local validation does not establish provider acceptance,
 hosted health or mail delivery.
 
 `rer describe` reads the current checkout's actual verbs,

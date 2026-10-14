@@ -11,7 +11,7 @@ In the draft editor, **Selected channel steps** holds the schedule. Choose **Add
 - **Local send-by date and time**, which defaults to 23:59 on the chosen day, with its own resolved UTC instant;
 - **Why this time**, a short required note.
 
-A local time that does not exist, or occurs twice, because of a daylight saving change is rejected until you pick another. Messages not handed to your provider by the send-by deadline are skipped and shown as "send window closed". Mango looks for due steps every five minutes, so do not expect sends to begin to the second.
+A local time that does not exist, or occurs twice, because of a daylight saving change is rejected until you pick another. Messages not handed to your provider by the send-by deadline are skipped and shown as "send window closed". Once Cloudflare activates the schedule, Mango looks for due steps every five minutes, so do not expect sends to begin to the second. First activation usually takes up to an hour. The schedule and results page shows whether a tick has actually run; approval and a configured schedule are not evidence of a send.
 
 ## Read the approval checks
 
