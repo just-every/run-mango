@@ -17,8 +17,8 @@ export function createCopy(db,table,copy,snapshot=false) {
     ?[db.prepare(generatedCopySQL(table,copy)),...(snapshot?[db.prepare(`INSERT INTO ${quote(copy)} SELECT ${columns} FROM ${quote(table.name)} ORDER BY ${ordering}`)]:[])]
     :[db.prepare(`CREATE TABLE ${quote(copy)} AS SELECT * FROM ${quote(table.name)} ${snapshot?'ORDER BY '+ordering:'WHERE 0'}`)];
   return [...product,
-    db.prepare(`CREATE TABLE ${meta}(rer_portability_row_order INTEGER PRIMARY KEY,rer_portability_copy_rowid INTEGER NOT NULL UNIQUE,rer_portability_source_rowid INTEGER,rer_portability_tombstone TEXT)`),
-    ...(snapshot?[db.prepare(`INSERT INTO ${meta} SELECT ROW_NUMBER() OVER(ORDER BY ${ordering})-1,ROW_NUMBER() OVER(ORDER BY ${ordering}),${table.rowidAlias?quote(table.rowidAlias):'NULL'},NULL FROM ${quote(table.name)}`)]:[])];
+    db.prepare(`CREATE TABLE ${meta}(rer_portability_row_order INTEGER PRIMARY KEY,rer_portability_copy_rowid INTEGER NOT NULL UNIQUE,rer_portability_source_rowid INTEGER)`),
+    ...(snapshot?[db.prepare(`INSERT INTO ${meta} SELECT ROW_NUMBER() OVER(ORDER BY ${ordering})-1,ROW_NUMBER() OVER(ORDER BY ${ordering}),${table.rowidAlias?quote(table.rowidAlias):'NULL'} FROM ${quote(table.name)}`)]:[])];
 }
 export async function readCopy(db,table,copy,offset,limit,encoded=false) {
   const columns=projectedColumns(table,encoded);
@@ -46,7 +46,7 @@ export async function normalizeCopy(context,table,copy) {
   const pk=keys(table);if(!pk.length)return;
   const normalizedOrder=pk.map(c=>'s.'+quote(c.name)).join(',')+',m.rer_portability_copy_rowid';
   const temporary=sidecar(copy)+'_sorted';
-  await db.batch([db.prepare(`CREATE TABLE ${quote(temporary)} AS SELECT ROW_NUMBER() OVER(ORDER BY ${normalizedOrder})-1 AS rer_portability_row_order,m.rer_portability_copy_rowid,m.rer_portability_source_rowid,m.rer_portability_tombstone FROM ${quote(copy)} s JOIN ${quote(sidecar(copy))} m ON s.${copyRowid(table)}=m.rer_portability_copy_rowid`),
+  await db.batch([db.prepare(`CREATE TABLE ${quote(temporary)} AS SELECT ROW_NUMBER() OVER(ORDER BY ${normalizedOrder})-1 AS rer_portability_row_order,m.rer_portability_copy_rowid,m.rer_portability_source_rowid FROM ${quote(copy)} s JOIN ${quote(sidecar(copy))} m ON s.${copyRowid(table)}=m.rer_portability_copy_rowid`),
     db.prepare(`DROP TABLE ${quote(sidecar(copy))}`),db.prepare(`ALTER TABLE ${quote(temporary)} RENAME TO ${quote(sidecar(copy))}`)]);
 }
 export function restoreCopy(db,table,copy) {

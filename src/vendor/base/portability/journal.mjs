@@ -1,11 +1,10 @@
 import { all, statement, state, insist, quote } from './storage.mjs';
-import { canonicalJson, sha256 } from './hash.mjs';
-import { sidecar } from './copies.mjs';
-export async function tombstone(source,table,key) { return sha256(canonicalJson([source,table,key])); }
-export async function erasureStatements(db,table,primaryKey) {
-  const s=await state(db), hash=await tombstone(s.source_identity,table,primaryKey);
-  return [statement(db,'INSERT OR IGNORE INTO rer_portability_journal VALUES(?,?)',s.source_identity,hash),
-    db.prepare('UPDATE rer_portability_state SET epoch=epoch+1 WHERE id=1'),
+
+// Mango uses a source-wide floor. A row hash of a portable address key would
+// remain dictionary-testable after deletion, so no row identity is retained.
+export async function erasureStatements(db) {
+  await state(db);
+  return [db.prepare('UPDATE rer_portability_state SET epoch=epoch+1 WHERE id=1'),
     statement(db,'INSERT INTO rer_portability_epochs SELECT source_identity,epoch FROM rer_portability_state WHERE id=1 ON CONFLICT(source) DO UPDATE SET epoch=MAX(epoch,excluded.epoch)')];
 }
 export async function invalidateTransfersStatements(db) {
@@ -13,28 +12,28 @@ export async function invalidateTransfersStatements(db) {
   return [...tables.map(x=>db.prepare(`DROP TABLE ${quote(x.name)}`)),db.prepare('DELETE FROM rer_portability_segments'),db.prepare('DELETE FROM rer_portability_parts'),
     db.prepare('DELETE FROM rer_portability_jobs'),db.prepare('UPDATE rer_portability_state SET import_job=NULL,applying=0 WHERE id=1')];
 }
-export async function journal(db,source) {
-  return (await all(db,'SELECT tombstone FROM rer_portability_journal WHERE source=? ORDER BY tombstone',source)).map(x=>x.tombstone);
+export async function journal() { return []; }
+export function validateAuthority(authority,code='later_journal') {
+  insist(authority && typeof authority.sourceIdentity==='string' && authority.sourceIdentity.length>0 && Number.isSafeInteger(authority.epoch) && authority.epoch>=0 && Array.isArray(authority.journal),code);
+  insist(authority.journal.every(x=>typeof x==='string' && /^[a-f0-9]{64}$/.test(x)),'invalid_journal');
+  // Refuse before staging: retaining the legacy manifest itself would preserve
+  // its row hashes, even if mergeJournal no longer inserted them individually.
+  insist(authority.journal.length===0,'legacy_row_journal_unsupported',409);
 }
-export async function fence(db,manifest,copies,later) {
+export async function fence(db,manifest,later) {
+  validateAuthority(manifest,'manifest_identity');
+  if(later!==undefined) {
+    validateAuthority(later);
+    insist(later.sourceIdentity===manifest.sourceIdentity && later.epoch>=manifest.epoch,'later_journal');
+  }
   const recorded=await statement(db,'SELECT epoch FROM rer_portability_epochs WHERE source=?',manifest.sourceIdentity).first();
   const s=await state(db);
-  insist(manifest.epoch>=Math.max(recorded?.epoch??0,s.source_identity===manifest.sourceIdentity?s.epoch:0),'erasure_epoch');
-  if(later) insist(later.sourceIdentity===manifest.sourceIdentity && Number.isSafeInteger(later.epoch) && later.epoch>=manifest.epoch && Array.isArray(later.journal),'later_journal');
-  const hashes=new Set([...manifest.journal,...await journal(db,manifest.sourceIdentity),...(later?.journal??[])]);
-  insist([...hashes].every(x=>/^[a-f0-9]{64}$/.test(x)),'invalid_journal');
-  for(const table of manifest.tables) {
-    for(let offset=0;offset<table.count;offset+=500) {
-      const rows=await all(db,`SELECT rer_portability_tombstone FROM ${quote(sidecar(copies[table.name]))} ORDER BY rer_portability_row_order LIMIT 500 OFFSET ?`,offset);
-      for(const row of rows) {
-        insist(!hashes.has(row.rer_portability_tombstone),'erased_row:'+table.name);
-      }
-    }
-  }
-  return {hashes:[...hashes],epoch:later?.epoch??manifest.epoch};
+  insist(manifest.epoch>=Math.max(recorded?.epoch??0,s.source_identity===manifest.sourceIdentity?s.epoch:0,later?.epoch??0),'erasure_epoch');
+  // Never elevate an old manifest to later authority: the atomic commit repeats
+  // the floor check against this original epoch to catch a concurrent erasure.
+  return {epoch:manifest.epoch};
 }
 export function mergeJournal(db,manifest,checked) {
-  return [...checked.hashes.map(h=>statement(db,'INSERT OR IGNORE INTO rer_portability_journal VALUES(?,?)',manifest.sourceIdentity,h)),
-    statement(db,'INSERT INTO rer_portability_epochs VALUES(?,?) ON CONFLICT(source) DO UPDATE SET epoch=MAX(epoch,excluded.epoch)',manifest.sourceIdentity,checked.epoch),
+  return [statement(db,'INSERT INTO rer_portability_epochs VALUES(?,?) ON CONFLICT(source) DO UPDATE SET epoch=MAX(epoch,excluded.epoch)',manifest.sourceIdentity,checked.epoch),
     statement(db,'UPDATE rer_portability_state SET source_identity=?,epoch=? WHERE id=1',manifest.sourceIdentity,checked.epoch)];
 }

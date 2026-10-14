@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { invitationRuntime } from '../../operations/fixtures/invitation-runtime.mjs';
 import { eraseHttp } from './erase';
 import { consent } from './native';
+import { archiveRecords } from '../portability/flows';
 import { contactErasureTables } from '../../src/core/features/audience/erasure/declaration';
 
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
@@ -103,6 +104,14 @@ for (const passedMappingStage of [false, true]) test(`CONT-013 different-salt im
     expect(erased.removed.audience_portable_hashes).toBe(aliases.length + 1);
     const after = await dump(f.db);
     for (const value of [email, contact.id, local, prior, portable, Buffer.from(exported).toString('base64')]) expect(after).not.toContain(value);
+    const authority = await f.db.prepare('SELECT source_identity FROM rer_portability_state WHERE id=1').first<any>();
+    for (const alias of [local, ...aliases]) expect(after).not.toContain(hash(JSON.stringify([authority.source_identity, 'audience_portable_hashes', { destination_hash: alias }])));
+    expect((await f.db.prepare('SELECT * FROM rer_portability_journal').all()).results).toEqual([]);
+    const currentArchive = JSON.stringify(await archiveRecords(f, cookie));
+    const currentCsv = await (await f.call('/api/audience/export', { cookie })).text();
+    for (const value of [email, contact.id, local, prior, portable]) {
+      expect(currentArchive).not.toContain(value); expect(currentCsv).not.toContain(value);
+    }
     expect(await survivorRows()).toEqual(unrelated);
     for (const action of ['resume', 'undo']) expect((await f.call(`/api/audience/imports/${job.id}/${action}`, { cookie, method: 'POST', body: {} })).status).toBeGreaterThanOrEqual(400);
     expect((await f.call('/api/audience/imports', { cookie, method: 'POST', body: { fingerprint: preview.fingerprint } })).status).toBe(409);

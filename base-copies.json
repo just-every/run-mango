@@ -1133,51 +1133,189 @@
       }
     },
     {
-      "path": "src/vendor/base/portability",
-      "originPath": "modules/portability",
+      "path": "src/vendor/base/portability/catalogue.mjs",
+      "originPath": "modules/portability/catalogue.mjs",
       "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
       "files": {
-        "src/vendor/base/portability/catalogue.mjs": "31d7c7d7f56d1e6edbf42da33a0c442215dcea312c7a8a3d9bc7a5b4258f9efb",
-        "src/vendor/base/portability/cli-options.mjs": "fe6f2202e9f1571ca9a040e2cf7e393c63dc4c979045709da9b3a9f341ed71ba",
-        "src/vendor/base/portability/cli.mjs": "6acbe9171216b2dec4feaf9ef9b1d6a8f7eed5646ab34d88f2d41b6dea7d63bd",
-        "src/vendor/base/portability/copies.mjs": "b17c9429bff65d4d86437284860340694705a5bb8d67fded3dff5d87d3f4c2a1",
-        "src/vendor/base/portability/dev-data.mjs": "3764eb68a73249310cac6730cbbe874b88d0de47c7e9d5621eb2ee41cec4dd57",
-        "src/vendor/base/portability/export.mjs": "78941bcb1ba5a1f57c1de66d790679731fff6ddcd2212f7be32f0d8bb46ceccc",
-        "src/vendor/base/portability/format.mjs": "a2d0a2345884ff2c311e2c767d77029d286e265a1c5b0db9e547af195e307dfa",
-        "src/vendor/base/portability/generated.mjs": "dbc9139b4f89f626805ce1939c545b939f209dc4c4b8c6e7f96efe242c104129",
-        "src/vendor/base/portability/hash.mjs": "b31b726749cdceb3240dc2a1a9f6a7a2b17011af07bf53e85f7b6793fe5bcac2",
-        "src/vendor/base/portability/http.mjs": "c4dad3b6ea5c2a5384262e391bfebe83365ba3f934f99050cb3efd54171af16d",
-        "src/vendor/base/portability/import.mjs": "8defce78dff0e6f39c77f36a420e7b782f25e6fe1572732a33260cfeb2579fad",
-        "src/vendor/base/portability/index.d.mts": "bdd9ed29a676146bba8c6769e0925e80073cf24ad65f8b1982c0772cefc2303e",
-        "src/vendor/base/portability/index.mjs": "2da7a86e587bffda3c3f3bdfee93437d9493c4cdc15f78e8a999bc0fb9868d42",
-        "src/vendor/base/portability/journal.mjs": "8d8fb95b4045d03ac4535cf175315f4566f9f8223ab2644ca6ad0b9fb1c468b7",
-        "src/vendor/base/portability/lines.mjs": "dda9e5466d17ddcfa78a6a227d5b0e05ddef7462516662c97bf9cb01dc57ea49",
-        "src/vendor/base/portability/payloads.mjs": "396263dd8a6a0852950147a7a2f2eebda968670614e496cd5df18b48e692531f",
-        "src/vendor/base/portability/README.md": "0424a8704878a9a8faacfbcae50becb2704d070c7f67abd9539f1a43cc3bc56b",
-        "src/vendor/base/portability/restore-safety.mjs": "6a291534ea7bce3a59600b9b98140a24ecdb6f627a50e557b1d9d97796fa2823",
-        "src/vendor/base/portability/schema/portability.sql": "c7db9042f6d5c571e10297c02df858ad2f3466beb4fa85649fee407cc228747b",
+        "src/vendor/base/portability/catalogue.mjs": "31d7c7d7f56d1e6edbf42da33a0c442215dcea312c7a8a3d9bc7a5b4258f9efb"
+      },
+      "modes": {
+        "src/vendor/base/portability/catalogue.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/cli-options.mjs",
+      "originPath": "modules/portability/cli-options.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/cli-options.mjs": "fe6f2202e9f1571ca9a040e2cf7e393c63dc4c979045709da9b3a9f341ed71ba"
+      },
+      "modes": {
+        "src/vendor/base/portability/cli-options.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/cli.mjs",
+      "originPath": "modules/portability/cli.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/cli.mjs": "6acbe9171216b2dec4feaf9ef9b1d6a8f7eed5646ab34d88f2d41b6dea7d63bd"
+      },
+      "modes": {
+        "src/vendor/base/portability/cli.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/dev-data.mjs",
+      "originPath": "modules/portability/dev-data.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/dev-data.mjs": "3764eb68a73249310cac6730cbbe874b88d0de47c7e9d5621eb2ee41cec4dd57"
+      },
+      "modes": {
+        "src/vendor/base/portability/dev-data.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/export.mjs",
+      "originPath": "modules/portability/export.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/export.mjs": "78941bcb1ba5a1f57c1de66d790679731fff6ddcd2212f7be32f0d8bb46ceccc"
+      },
+      "modes": {
+        "src/vendor/base/portability/export.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/format.mjs",
+      "originPath": "modules/portability/format.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/format.mjs": "a2d0a2345884ff2c311e2c767d77029d286e265a1c5b0db9e547af195e307dfa"
+      },
+      "modes": {
+        "src/vendor/base/portability/format.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/generated.mjs",
+      "originPath": "modules/portability/generated.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/generated.mjs": "dbc9139b4f89f626805ce1939c545b939f209dc4c4b8c6e7f96efe242c104129"
+      },
+      "modes": {
+        "src/vendor/base/portability/generated.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/hash.mjs",
+      "originPath": "modules/portability/hash.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/hash.mjs": "b31b726749cdceb3240dc2a1a9f6a7a2b17011af07bf53e85f7b6793fe5bcac2"
+      },
+      "modes": {
+        "src/vendor/base/portability/hash.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/http.mjs",
+      "originPath": "modules/portability/http.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/http.mjs": "c4dad3b6ea5c2a5384262e391bfebe83365ba3f934f99050cb3efd54171af16d"
+      },
+      "modes": {
+        "src/vendor/base/portability/http.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/index.d.mts",
+      "originPath": "modules/portability/index.d.mts",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/index.d.mts": "bdd9ed29a676146bba8c6769e0925e80073cf24ad65f8b1982c0772cefc2303e"
+      },
+      "modes": {
+        "src/vendor/base/portability/index.d.mts": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/index.mjs",
+      "originPath": "modules/portability/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/index.mjs": "2da7a86e587bffda3c3f3bdfee93437d9493c4cdc15f78e8a999bc0fb9868d42"
+      },
+      "modes": {
+        "src/vendor/base/portability/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/lines.mjs",
+      "originPath": "modules/portability/lines.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/lines.mjs": "dda9e5466d17ddcfa78a6a227d5b0e05ddef7462516662c97bf9cb01dc57ea49"
+      },
+      "modes": {
+        "src/vendor/base/portability/lines.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/payloads.mjs",
+      "originPath": "modules/portability/payloads.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/payloads.mjs": "396263dd8a6a0852950147a7a2f2eebda968670614e496cd5df18b48e692531f"
+      },
+      "modes": {
+        "src/vendor/base/portability/payloads.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/README.md",
+      "originPath": "modules/portability/README.md",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/README.md": "0424a8704878a9a8faacfbcae50becb2704d070c7f67abd9539f1a43cc3bc56b"
+      },
+      "modes": {
+        "src/vendor/base/portability/README.md": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/restore-safety.mjs",
+      "originPath": "modules/portability/restore-safety.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/restore-safety.mjs": "6a291534ea7bce3a59600b9b98140a24ecdb6f627a50e557b1d9d97796fa2823"
+      },
+      "modes": {
+        "src/vendor/base/portability/restore-safety.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/schema/portability.sql",
+      "originPath": "modules/portability/schema/portability.sql",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/schema/portability.sql": "c7db9042f6d5c571e10297c02df858ad2f3466beb4fa85649fee407cc228747b"
+      },
+      "modes": {
+        "src/vendor/base/portability/schema/portability.sql": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/storage.mjs",
+      "originPath": "modules/portability/storage.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
         "src/vendor/base/portability/storage.mjs": "9b8e4329b69afd081ea1744aae70d3a6d342d623a47790a26e198b58278518c5"
       },
       "modes": {
-        "src/vendor/base/portability/catalogue.mjs": "100644",
-        "src/vendor/base/portability/cli-options.mjs": "100644",
-        "src/vendor/base/portability/cli.mjs": "100644",
-        "src/vendor/base/portability/copies.mjs": "100644",
-        "src/vendor/base/portability/dev-data.mjs": "100644",
-        "src/vendor/base/portability/export.mjs": "100644",
-        "src/vendor/base/portability/format.mjs": "100644",
-        "src/vendor/base/portability/generated.mjs": "100644",
-        "src/vendor/base/portability/hash.mjs": "100644",
-        "src/vendor/base/portability/http.mjs": "100644",
-        "src/vendor/base/portability/import.mjs": "100644",
-        "src/vendor/base/portability/index.d.mts": "100644",
-        "src/vendor/base/portability/index.mjs": "100644",
-        "src/vendor/base/portability/journal.mjs": "100644",
-        "src/vendor/base/portability/lines.mjs": "100644",
-        "src/vendor/base/portability/payloads.mjs": "100644",
-        "src/vendor/base/portability/README.md": "100644",
-        "src/vendor/base/portability/restore-safety.mjs": "100644",
-        "src/vendor/base/portability/schema/portability.sql": "100644",
         "src/vendor/base/portability/storage.mjs": "100644"
       }
     },

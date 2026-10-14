@@ -1,7 +1,7 @@
 import { sha256, PortabilityError, type ArchivePolicy } from '../../../vendor/base/portability/index.mjs';
 import type { Platform } from '@/core/shared/platform';
 
-/** Product inventory and private-key binding; Base owns the archive and restore engine. */
+/** Product inventory and private-key binding for the locally adapted Base engine. */
 export function portabilityPolicy(config: Pick<Platform['config'], 'contactHashSalt' | 'sessionSigningKey'>): ArchivePolicy {
   const identity = async () => new TextEncoder().encode(await sha256(JSON.stringify([
     'mango-private-authority-v1', config.contactHashSalt, config.sessionSigningKey,

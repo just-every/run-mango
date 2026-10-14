@@ -411,7 +411,21 @@
             "modules/portability/schema/portability.sql",
             "modules/portability/storage.mjs"
           ]
-        }
+        },
+        "mappings": [
+          {
+            "path": "src/vendor/base/portability/journal.mjs",
+            "originPath": "modules/portability/journal.mjs"
+          },
+          {
+            "path": "src/vendor/base/portability/import.mjs",
+            "originPath": "modules/portability/import.mjs"
+          },
+          {
+            "path": "src/vendor/base/portability/copies.mjs",
+            "originPath": "modules/portability/copies.mjs"
+          }
+        ]
       }
     },
     {

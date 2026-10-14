@@ -130,7 +130,7 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
           matches=rows.filter(row=>direct.has(Number(row._cursor))||hasLiteral(row,identifierNeedles(scope)));
         }else{matches=rows;direct=new Set(rows.map(row=>Number(row._cursor)));}
         const statements:D1PreparedStatement[]=[];
-        // Public portability hashes every affected PK and commits the fences with
+        // Public portability advances the source floor and commits the fence with
         // its exact delete/redaction and durable cursor. A crash replays no row.
         const fences=await Promise.all(matches.map(row=>transfer.service.erasureStatements(table.table,Object.fromEntries(columns.filter(column=>column.pk).sort((a,b)=>a.pk-b.pk).map(column=>[column.name,row[column.name]])))));
         if(table.table==='ik_jobs'&&matches.length)for(const child of importJobCascadeChildren){

@@ -1,3 +1,4 @@
+import {eraseHttp} from './erase';
 import {test,expect} from '@playwright/test';
 import {native,files,consent,finish} from './native';
 import {parseCsv} from '../../src/core/features/audience/csv';
@@ -19,8 +20,8 @@ test('CONT-003/004/006/010 CSV roundtrip into a fresh differently salted D1 pres
   expect(await second.f.db.prepare("SELECT count(*) AS count FROM contact_suppressions WHERE destination_hash IN (SELECT destination_hash FROM surviving_opt_outs)").first()).toEqual({count:2});
  }finally{await second.close();}
 });
-test('CONT-004/010 an opt-out whose contact was undone leaves in the export and a restored installation never mails that address',async()=>{
- const optedOut='list-only@example.test';
+test('CONT-004/010 opt-outs whose contacts were undone or erased leave in the export and remain restricted under a different salt',async()=>{
+ const optedOut='list-only@example.test',erased='erased-optout@example.test';
  const run=async(f:Awaited<ReturnType<typeof invitationRuntime>>,cookie:string,files:unknown[],input:Record<string,unknown>={})=>{
   const preview=await f.call('/api/audience/import-preview',{cookie,method:'POST',body:{files,...input}});expect(preview.status).toBe(200);
   let response=await f.call('/api/audience/imports',{cookie,method:'POST',body:{fingerprint:(await preview.json()).fingerprint}});expect(response.status).toBe(200);
@@ -36,7 +37,11 @@ test('CONT-004/010 an opt-out whose contact was undone leaves in the export and 
   let undo=await first.call(`/api/audience/imports/${list.id}/undo`,{cookie,method:'POST',body:{}});expect(undo.status).toBe(200);let {job}=await undo.json();
   while(job.state==='undoing'){undo=await first.call(`/api/audience/imports/${list.id}/resume`,{cookie,method:'POST',body:{}});({job}=await undo.json());}
   expect(job.state).toBe('undone');expect(await first.db.prepare('SELECT count(*) AS count FROM contacts').first()).toEqual({count:0});
+  await run(first,cookie,[{name:'erased.csv',preset:'csv-unsubscribed',csv:`Email Address\n${erased}`}]);
+  const subject=await first.db.prepare('SELECT id FROM contacts WHERE email=?').bind(erased).first<any>();
+  expect((await eraseHttp(first,cookie,subject.id)).retainedChannels).toEqual(['email']);
   exported=await(await first.call('/api/audience/export',{cookie})).text();
+  expect(exported).not.toContain(erased);
   expect(exported).not.toContain(optedOut);
  }finally{await first.close();}
  const second=await invitationRuntime({contactHashSalt:'second-installation-salt-more-than-thirty-two-bytes'});
@@ -45,8 +50,8 @@ test('CONT-004/010 an opt-out whose contact was undone leaves in the export and 
   await run(second,cookie,[{name:'audience.csv',preset:'mango',csv:exported}]);
   // A later file with complete original consent for that address cannot subscribe it here.
   const confirmed=new Date(Date.now()-60_000).toISOString();
-  await run(second,cookie,[{name:'subscribed.csv',preset:'csv-subscribed',csv:`Email Address,OPTIN_TIME,CONFIRM_TIME\n${optedOut},${confirmed},${confirmed}`}],{consent});
-  expect(await second.db.prepare('SELECT c.email_status AS contact,a.channel_status AS address FROM contacts c JOIN contact_email_addresses a ON a.contact_id=c.id WHERE c.email=?').bind(optedOut).first())
+  await run(second,cookie,[{name:'subscribed.csv',preset:'csv-subscribed',csv:`Email Address,OPTIN_TIME,CONFIRM_TIME\n${optedOut},${confirmed},${confirmed}\n${erased},${confirmed},${confirmed}`}],{consent});
+  for(const address of [optedOut,erased])expect(await second.db.prepare('SELECT c.email_status AS contact,a.channel_status AS address FROM contacts c JOIN contact_email_addresses a ON a.contact_id=c.id WHERE c.email=?').bind(address).first())
    .toEqual({contact:'unsubscribed',address:'unsubscribed'});
  }finally{await second.close();}
 });

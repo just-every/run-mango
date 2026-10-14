@@ -3,12 +3,13 @@ import { refuseDevData } from './dev-data.mjs';
 import { catalogue, validateRow, bindCell, writableColumns } from './catalogue.mjs';
 import { canonicalJson, unbase64 } from './hash.mjs';
 import { checkManifest, checkPart, ContentVerifier } from './format.mjs';
-import { fence, mergeJournal, tombstone } from './journal.mjs';
+import { fence, mergeJournal } from './journal.mjs';
 import { writeObject } from './payloads.mjs';
 import { createCopy,sidecar,readCopy,restoreCopy } from './copies.mjs';
 import { excludedDependentGuards } from './restore-safety.mjs';
 export async function createImport(context,manifest,actor='direct') {
-  const {db,config,buckets}=context;await checkManifest(manifest);await state(db);
+  const {db,config,buckets}=context;await checkManifest(manifest);
+  await fence(db,manifest);
   insist(manifest.product===config.product,'wrong_product');
   const cat=await catalogue(db,config),upgrade=config.acceptedSchemas[manifest.schema];
   insist(manifest.schema===cat.identity || upgrade,'schema_mismatch');
@@ -48,11 +49,9 @@ export async function uploadPart(context,id,index,part) {
       const values=columns.map(c=>bindCell(config.secretColumns[table.name]?.includes(c.name)?null:data[c.name]));
       const pk=table.columns.filter(c=>c.pk).sort((a,b)=>a.pk-b.pk);
       if(!pk.length)insist(Number.isSafeInteger(item.rowid),'rowid_inventory');
-      const key=pk.length?Object.fromEntries(pk.map(c=>[c.name,item.row[c.name]])):{rowid:item.rowid};
-      const hash=await tombstone(manifest.sourceIdentity,table.name,key);
       if(!groups.has(table.name))groups.set(table.name,{columns:columns.map(c=>quote(c.name)).join(','),rows:[],metadata:[]});
       groups.get(table.name).rows.push(values);
-      groups.get(table.name).metadata.push([item.index,item.rowid??null,hash]);
+      groups.get(table.name).metadata.push([item.index,item.rowid??null]);
     }else{
       insist(['object','payload'].includes(item.kind) && Number.isSafeInteger(item.offset) && item.offset>=0,'binary_inventory');
       const entry=item.kind==='object'?manifest.objects.find(x=>x.bucket===item.bucket && x.key===item.key):manifest.payloads.find(x=>x.name===item.name);
@@ -67,7 +66,7 @@ export async function uploadPart(context,id,index,part) {
     for(let start=0;start<group.rows.length;start+=count) {
       const chunk=group.rows.slice(start,start+count);
       inserts.push(statement(db,`INSERT INTO ${quote(copy)} (${group.columns}) VALUES${chunk.map(()=> '('+Array(width).fill('?').join(',')+')').join(',')}`,...chunk.flat()));
-      inserts.push(statement(db,`INSERT INTO ${quote(sidecar(copy))} VALUES${chunk.map((_,i)=>`(?,${first+start+i},?,?)`).join(',')}`,...group.metadata.slice(start,start+count).flat()));
+      inserts.push(statement(db,`INSERT INTO ${quote(sidecar(copy))} VALUES${chunk.map((_,i)=>`(?,${first+start+i},?)`).join(',')}`,...group.metadata.slice(start,start+count).flat()));
     }
     row.metadata.stagedCounts[table]=first-1+group.rows.length;
   }
@@ -113,7 +112,7 @@ export async function finalizeImport(context,id,{contentHash,laterJournal}={}) {
   for(const table of row.metadata.targets) if(!config.replaceableTables.includes(table.name))insist(!(await statement(db,`SELECT 1 FROM ${quote(table.name)} LIMIT 1`).first()),'target_not_empty:'+table.name,409);
   const dependentGuards=await excludedDependentGuards(db,row.metadata.targets,config.replaceableTables);
   await bucketsEmpty(context,row);
-  const checked=await fence(db,manifest,row.metadata.copies,laterJournal);
+  const checked=await fence(db,manifest,laterJournal);
   await refuseDevData(db,row.metadata.copies,row.metadata.targets);
   if(config.validateStaged) {
     const read=async table=>{insist(row.metadata.copies[table],'staged_table');const target=row.metadata.targets.find(t=>t.name===table);return (await readCopy(db,target,row.metadata.copies[table],0,row.metadata.manifest.tables.find(t=>t.name===table).count)).map(x=>x.row);};
@@ -135,7 +134,6 @@ export async function finalizeImport(context,id,{contentHash,laterJournal}={}) {
     row.phase='complete';row.metadata.contentHash=digest;
     await db.batch([db.prepare('PRAGMA defer_foreign_keys=ON'),...emptyGuards(context,row),...dependentGuards,
       guard(db,'NOT EXISTS(SELECT 1 FROM rer_portability_epochs WHERE source=? AND epoch>?) AND NOT EXISTS(SELECT 1 FROM rer_portability_state WHERE source_identity=? AND epoch>?)',manifest.sourceIdentity,checked.epoch,manifest.sourceIdentity,checked.epoch),
-      ...row.metadata.targets.map(t=>guard(db,`NOT EXISTS(SELECT 1 FROM ${quote(sidecar(row.metadata.copies[t.name]))} s JOIN rer_portability_journal j ON j.source=? AND j.tombstone=s.rer_portability_tombstone)`,manifest.sourceIdentity)),
       ...row.metadata.triggers.map(t=>db.prepare(`DROP TRIGGER ${quote(t.name)}`)),
       ...config.replaceableTables.map(t=>db.prepare(`DELETE FROM ${quote(t)}`)),
       ...row.metadata.targets.flatMap(t=>restoreCopy(db,t,row.metadata.copies[t.name])),

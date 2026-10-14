@@ -1,3 +1,4 @@
+import {retireTransfers} from '@/core/features/portability/retire-transfers';
 import {erasureFencedDatabase,withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
 import {pendingErasure} from '@/core/features/audience/erasure/maintenance';
 import { createSegmentRoutes } from '@/core/features/audience/segments';
@@ -201,8 +202,13 @@ export function createApp(
   mountBeforeAuthentication?: BeforeAuthenticationRoutes,
   trustedLocal = false,
 ) {
+  const retirementDatabase=environment.DB;
   environment={...environment,DB:erasureFencedDatabase(environment.DB)};
   const app = new Hono<AppEnvironment>();
+  app.use('*',async(_context,next)=>{
+    await retireTransfers(retirementDatabase,{ASSETS_BUCKET:environment.ASSETS_BUCKET});
+    return next();
+  });
   app.use('*',async(context,next)=>{
     const path=context.req.path;
     const erasure=path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path));

@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url);
 const { Miniflare, convertV4MiniflareOptions } = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const { build } = createRequire(require.resolve('vite/package.json'))('esbuild');
 export const privateKey = 'portable-test-private-key-at-least-thirty-two-bytes';
-export async function portabilityRuntime({ restore = false, key = privateKey } = {}) {
+export async function portabilityRuntime({ restore = false, key = privateKey, beforeMigration } = {}) {
   const directory = await mkdtemp(join(tmpdir(), 'mango-portability-')), port = await freePort();
   const origin = `http://127.0.0.1:${port}`;
   const bundled = await build({ entryPoints: [resolve('tests/portability/worker.ts')], bundle: true, write: false,
@@ -24,6 +24,7 @@ export async function portabilityRuntime({ restore = false, key = privateKey } =
   try {
     let db = await mf.getD1Database('DB'), bucket = await mf.getR2Bucket('ASSETS_BUCKET');
     for (const file of (await readdir('migrations/core')).filter(name => name.endsWith('.sql')).sort()) {
+      await beforeMigration?.(file,db,bucket);
       for (const sql of sqlStatements(await readFile(`migrations/core/${file}`, 'utf8'))) await db.prepare(sql).run();
     }
     const call = (path, { method = 'GET', cookie, body, origin: requestOrigin = origin } = {}) => fetch(origin + path, {

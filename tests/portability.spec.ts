@@ -5,6 +5,7 @@ import { contract } from './contract';
 import { portabilityRuntime } from './portability/runtime.mjs';
 import { runCommand } from '../scripts/installer/run-command.mjs';
 import { readArchive } from '../src/vendor/base/portability/index.mjs';
+import { stageArchive } from './portability/flows';
 import { png } from './support/images';
 
 contract('DATA-001', 'complete native records and uploaded assets round-trip without restoring login authority', async () => {
@@ -111,14 +112,25 @@ contract('CONT-013', 'current erasure authority refuses an old archive on an emp
     while(receipt.state==='pending'){const next=await source.call(`/api/audience/erasures/${receipt.reference}/resume`,{cookie:source.cookie,method:'POST',body:{}});expect([200,202]).toContain(next.status);({receipt}=await next.json());}
     expect(receipt.removed.transfer_artifacts).toBe(discarded);
     const after=await archive();expect(JSON.stringify(after)).not.toContain(email);expect(JSON.stringify(after)).not.toContain(name);
-    const latest=after[0];expect(latest.journal.length).toBeGreaterThan(0);
+    const latest=after[0];expect(latest.journal).toEqual([]);
     const request=(path:string,body:unknown,method='POST')=>target.call('/api/portability/'+path,{cookie:target.cookie,method,body});
     const created=await request('imports',{confirmed:true,manifest:before[0]});expect(created.status).toBe(201);const {id}=await created.json();
     for(const part of before.filter(record=>record.kind==='part'))expect((await request(`imports/${id}/parts/${part.index}`,part,'PUT')).status).toBe(200);
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
     const restored=await request(`imports/${id}/finalize`,{contentHash:before.at(-1).contentHash,laterJournal:{sourceIdentity:latest.sourceIdentity,epoch:latest.epoch,journal:latest.journal}});
-    const refusal=await restored.json();expect(restored.status,JSON.stringify(refusal)).toBe(400);expect(refusal.error).toMatch(/^erased_row:/);
+    const refusal=await restored.json();expect(restored.status,JSON.stringify(refusal)).toBe(400);expect(refusal.error).toBe('erasure_epoch');
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
     expect((await target.call('/api/operator',{cookie:target.cookie})).status).toBe(200);
+    expect((await request(`imports/${id}/abort`,{})).status).toBe(200);
+    const currentId=await stageArchive(target,after);
+    const current=await request(`imports/${currentId}/finalize`,{contentHash:after.at(-1).contentHash,laterJournal:{sourceIdentity:latest.sourceIdentity,epoch:latest.epoch,journal:[]}});
+    expect(current.status,await current.clone().text()).toBe(200);
+    expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
+    const exportedRows=after.filter(record=>record.kind==='part').flatMap(part=>part.items).filter(item=>item.kind==='row');
+    const optouts=(await target.db.prepare('SELECT * FROM surviving_opt_outs').all()).results;
+    expect(optouts).toEqual(exportedRows.filter(item=>item.table==='surviving_opt_outs').map(item=>item.row));
+    expect(optouts.length).toBeGreaterThan(0);
+    // Current authority is now durable locally; an old manifest fails before staging.
+    expect((await request('imports',{confirmed:true,manifest:before[0]})).status).toBe(400);
   } finally {await source.close();await target.close();}
 });

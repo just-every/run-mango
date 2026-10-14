@@ -7,8 +7,9 @@ import { localBindings } from '../../src/core/platform/local-bindings.ts';
 import { localContactHashSalt } from '../../src/core/platform/local-contact-authority.ts';
 import { RerError, refuse } from '@runeditrun/rer/errors';
 import { transferArchive } from './transfer-archive.mjs';
+import { retireTransfers } from '../../src/core/features/portability/retire-transfers.ts';
 
-// Mango supplies its private-authority policy; Base owns validation and atomic restoration.
+// Mango supplies its private-authority policy and source-wide erasure floors over the adapted Base engine.
 async function run(direction,{root,path,store,signal,operationToken}) {
   const env={...process.env,RER_LOCAL_OPERATION:operationToken};
   // Refuse before any write: migrations would otherwise leave a database that setup must then protect.
@@ -20,6 +21,9 @@ async function run(direction,{root,path,store,signal,operationToken}) {
   const {getPlatformProxy}=createRequire(join(root,'package.json'))('wrangler');
   const proxy=await getPlatformProxy({configPath:join(root,'wrangler.toml'),persist:{path:join(root,'.wrangler/state/v3')},remoteBindings:false});
   try {
+    await retireTransfers(proxy.env.DB,{ASSETS_BUCKET:proxy.env.ASSETS_BUCKET});
+    const pending=await proxy.env.DB.prepare("SELECT 1 FROM audience_erasures WHERE state='pending' LIMIT 1").first();
+    if(pending)throw new PortabilityError('contact_erasure_in_progress',409);
     const service=await createPortability({db:proxy.env.DB,buckets:{ASSETS_BUCKET:proxy.env.ASSETS_BUCKET},policy:portabilityPolicy({contactHashSalt:localContactHashSalt(vars),sessionSigningKey:vars.SESSION_SIGNING_KEY})});
     return await transferArchive(service,direction,path,signal);
   } catch(error) {
