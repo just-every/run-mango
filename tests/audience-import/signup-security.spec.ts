@@ -11,6 +11,7 @@ function client(f: Awaited<ReturnType<typeof native>>['f']) {
 async function snapshot(db:D1Database) {
  return Promise.all(['contacts','consent_evidence','consent_confirmations','consent_capture_metadata','contact_history','audience_signup_requests','oa_limits'].map(table=>db.prepare(`SELECT * FROM ${table} ORDER BY 1`).all().then(result=>result.results)));
 }
+function isTurnstile(input:Parameters<typeof fetch>[0]) { return new URL(input instanceof Request ? input.url : String(input),'http://localhost').hostname==='challenges.cloudflare.com'; }
 function confirmationUrl(f:Awaited<ReturnType<typeof native>>['f']) { return f.outbound.at(-1)!.text.match(/https:\/\/\S+/)[0]; }
 
 test('security: confirmation scanner GET and HEAD write nothing; affirmative POST alone consumes token',async()=>{
@@ -62,10 +63,10 @@ test('security: configured Turnstile fails closed before storage for missing, ba
   expect((await call('missing@example.test')).status).toBe(400);expect(await snapshot(h.f.db)).toEqual(before);
   const original=globalThis.fetch;
   try{for(const reply of [{success:false},{success:true,action:'other',hostname:'mango.example.test'},{success:true,action:'newsletter-signup',hostname:'evil.example.test'},null]){
-   globalThis.fetch=async (input,init)=>String(input).includes('challenges.cloudflare.com') ? reply===null ? Promise.reject(new Error('unavailable')) : Response.json(reply) : original(input,init);
+   globalThis.fetch=async (input,init)=>isTurnstile(input) ? reply===null ? Promise.reject(new Error('unavailable')) : Response.json(reply) : original(input,init);
    expect((await call('bad@example.test','192.0.2.45',{'cf-turnstile-response':'token'})).status).toBe(400);expect(await snapshot(h.f.db)).toEqual(before);
   }
-  globalThis.fetch=async(input,init)=>{if(!String(input).includes('challenges.cloudflare.com'))return original(input,init);const form=new URLSearchParams(String(init?.body));expect(form.get('secret')).toBe('test-secret');expect(form.get('response')).toBe('good-token');return Response.json({success:true,action:'newsletter-signup',hostname:'mango.example.test'});};
+  globalThis.fetch=async(input,init)=>{if(!isTurnstile(input))return original(input,init);const form=new URLSearchParams(String(init?.body));expect(form.get('secret')).toBe('test-secret');expect(form.get('response')).toBe('good-token');return Response.json({success:true,action:'newsletter-signup',hostname:'mango.example.test'});};
   expect((await call('valid@example.test','192.0.2.46',{'cf-turnstile-response':'good-token'})).status).toBe(202);expect(h.f.outbound).toHaveLength(1);
   }finally{globalThis.fetch=original;}
  }finally{await h.close();}
