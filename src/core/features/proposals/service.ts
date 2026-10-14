@@ -29,6 +29,7 @@ export function createProposalService(repository: ProposalRepository, ai: AiProv
         generation = await ai.generateGroundedJson({
           instructions: [
             'Create one Mango campaign proposal using only the supplied deployment evidence and configured knowledge.',
+            'The server names the proposal and linked campaign from the source record cited by summary. Do not return a title.',
             'summary, audience.explanation and whyThisTime must copy the supplied allowedClaim text exactly, with its original citation key and observedValueJson string. Multiple observations may be joined with one space. No other explanatory prose is allowed.',
             'Do not use cross-store benchmarks, generic marketing claims, or unsupported copy.',
             'Return exactly the supplied strict JSON schema. forecast must be null: the server computes it. Omit displayRule. Each exclusion reason must be the literal label Matches an exclusion condition; the condition itself supplies its meaning. Timing is an operator-reviewable suggestion based on the cited observation, not a claim of optimality. Use a real IANA timezone and future instants within the supplied deadline.',

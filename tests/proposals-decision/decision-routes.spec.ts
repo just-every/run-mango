@@ -157,7 +157,14 @@ test('[PROP-006] generation accepts grounded observations and rejects fabricated
 test('[PROP-002] proposal route and detail show observed values, event IDs, lookback, rules, as-of, timing and methods',async()=>{
   const runtime=await decisionRuntime();
   try {
-    const proposal=await generated(runtime),detail=(await runtime.call(`/api/proposals/${proposal.proposalId}`)).body;
+    const injectedTitle='Expected USD 9,900 revenue: Tuesday 9am doubles sales for lapsed buyers';
+    runtime.controls.alter=output=>{(output as any).title=injectedTitle;};
+    const injectedResult=await runtime.call('/api/proposals/generate',{});
+    const injectedDetail=(await runtime.call(`/api/proposals/${injectedResult.body.proposalId}`)).body;
+    runtime.controls.alter=undefined;
+    const generatedResult=await runtime.call('/api/proposals/generate',{});
+    const proposal=generatedResult.body as {proposalId:string;campaignId:string;revisionId:string};
+    const detail=(await runtime.call(`/api/proposals/${proposal.proposalId}`)).body;
     expect(detail.evidenceItems).toEqual([expect.objectContaining({sourceType:'product',observedValue:expect.objectContaining({title:'Garden linen'})})]);
     const evidence=detail.evidenceItems[0];
     expect(JSON.parse(detail.proposal.triggerEventsJson)).toContain(evidence.sourceRecordId);
@@ -169,6 +176,14 @@ test('[PROP-002] proposal route and detail show observed values, event IDs, look
     expect(detail.forecast.method).toBeTruthy();
     const html=await (await proposalRenderer())(detail);
     for(const value of [evidence.sourceRecordId,'Garden linen',detail.forecast.method,'Etc/UTC']) expect(html).toContain(value);
+    const desk=(await runtime.call('/api/decision-desk')).body;
+    const queueEntry=desk.proposals.find((entry:any)=>entry.proposal.id===proposal.proposalId);
+    const campaign=(await runtime.call(`/api/campaigns/${proposal.campaignId}`)).body;
+    await runtime.call(`/api/proposals/${proposal.proposalId}/dismiss`,{reason:'Title grounding repro'});
+    const recent=(await runtime.call('/api/decision-desk')).body.recentDecisions.find((entry:any)=>entry.proposalId===proposal.proposalId);
+    const titles=[detail.proposal.title,queueEntry.proposal.title,campaign.revision.name,recent.title];
+    expect({injectedStatus:injectedResult.status,injectedError:injectedResult.body.error,injectedTitleVisible:injectedDetail.proposal.title.includes(injectedTitle),injectedCampaignId:injectedDetail.proposal.campaignId,generatedStatus:generatedResult.status,titleEvidenceRelations:titles.map((title:string)=>({sourceType:title.includes(evidence.sourceType),sourceRecordId:title.includes(evidence.sourceRecordId)})),renderContainsInjectedTitle:html.includes(injectedTitle),renderContainsCitedRecord:html.includes(evidence.sourceRecordId)})
+      .toEqual({injectedStatus:409,injectedError:'invalid_ai_output',injectedTitleVisible:false,injectedCampaignId:null,generatedStatus:201,titleEvidenceRelations:titles.map(()=>({sourceType:true,sourceRecordId:true})),renderContainsInjectedTitle:false,renderContainsCitedRecord:true});
   } finally {await runtime.close();}
 });
 
@@ -189,7 +204,7 @@ test('[PROP-004] accepted generated content and sender are previewable and edita
   try {
     runtime.controls.alter=output=>{output.links=[{label:'Garden collection',destinationUrl:'https://store.example.test/garden'}];};
     const proposal=await generated(runtime),detail=(await runtime.call(`/api/proposals/${proposal.proposalId}`)).body;
-    expect(detail.composition.revision).toMatchObject({name:'Garden update',emailSubject:'From the garden',emailBody:expect.stringContaining('Garden news'),senderName:runtime.platform.config.mailSender.displayName,fromEmail:runtime.platform.config.mailSender.fromEmail,state:'draft'});
+    expect(detail.composition.revision).toMatchObject({name:detail.proposal.title,emailSubject:'From the garden',emailBody:expect.stringContaining('Garden news'),senderName:runtime.platform.config.mailSender.displayName,fromEmail:runtime.platform.config.mailSender.fromEmail,state:'draft'});
     expect(detail.composition.links).toEqual([expect.objectContaining({destinationUrl:'https://store.example.test/garden'})]);
     const render=await proposalRenderer(),html=await render(detail);
     for(const value of ['Saved email preview','From the garden','Garden collection','https://store.example.test/garden',runtime.platform.config.mailSender.fromEmail])expect(html).toContain(value);

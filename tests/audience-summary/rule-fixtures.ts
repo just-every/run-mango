@@ -13,7 +13,7 @@ export const ruleJson = (predicate: Predicate) => JSON.stringify({version:1,oper
 export const exclusionJson = (predicate: Predicate) => JSON.stringify([{version:1,reason:'excluded',predicate}]);
 export function generatedOutput() {
   const claim={text:'Observed evidence: "value".',citations:[{key:'evidence',observedValueJson:'"value"'}]};
-  return {title:'Generated title',summary:claim,
+  return {summary:claim,
     audience:{inclusion:{version:1,operator:'all',predicates:[{...subscribed,lookbackDays:null}]},exclusions:[],explanation:claim},
     email:{subject:'News',html:'<p>News</p>',text:'News',preheader:'News'},sms:null,
     sender:{displayName:'Mango',fromEmail:'offers@example.test',replyToEmail:'reply@example.test',physicalAddress:'1 Test Street',smsSender:'MANGO'},

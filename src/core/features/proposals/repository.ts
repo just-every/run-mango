@@ -7,7 +7,7 @@ import { normalizeAuthoredContent } from '@/core/features/campaigns/authoring-co
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
 
-import { validateGrounding, type GeneratedProposal, type ProposalEvidence } from './generation';
+import { deriveProposalTitle, validateGrounding, type GeneratedProposal, type ProposalEvidence } from './generation';
 
 export function createProposalRepository(database: Database) {
   const client = database.$client;
@@ -32,6 +32,7 @@ export function createProposalRepository(database: Database) {
       completeInclusionRuleSchema.parse(output.audience.inclusion);
       for(const rule of output.audience.exclusions)completeExclusionRuleSchema.parse(rule);
       validateGrounding(output,input.evidence);
+      const title=deriveProposalTitle(output,input.evidence);
       const audienceRule = summarizeAudienceRules(JSON.stringify(output.audience.inclusion), JSON.stringify(output.audience.exclusions));
       const content=normalizeAuthoredContent({emailBody:output.email?.html??'',links:output.links});
       const sourceTypes = [...new Set([
@@ -46,7 +47,7 @@ export function createProposalRepository(database: Database) {
             created_at, updated_at)
            VALUES (?, 'proposed', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?)`,
         ).bind(
-          input.proposalId, output.title, output.summary.text,
+          input.proposalId, title, output.summary.text,
           JSON.stringify(input.evidence.map((item) => ({ key: item.key, sourceRecordId: item.sourceRecordId }))),
           audienceRule,
           Math.max(...input.evidence.map((item) => item.occurredAt.getTime())),
@@ -68,7 +69,7 @@ export function createProposalRepository(database: Database) {
             inclusion_rule_json, exclusion_rules_json, source_types_json, tracking_enabled, created_at, updated_at)
            VALUES (?, ?, 1, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
         ).bind(
-          input.revisionId, input.campaignId, output.title, output.email?.subject ?? '', content.emailBody!,
+          input.revisionId, input.campaignId, title, output.email?.subject ?? '', content.emailBody!,
           content.emailText!, output.email?.preheader ?? '', output.sms?.body ?? '', output.sender.displayName,
           output.sender.fromEmail, audienceRule, output.sender.replyToEmail, output.sender.smsSender,
           output.sender.physicalAddress, output.messageCategory, JSON.stringify(output.audience.inclusion), JSON.stringify(output.audience.exclusions),

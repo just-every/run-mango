@@ -3198,7 +3198,7 @@
       "executable": false
     },
     "src/core/features/proposals/generation.ts": {
-      "sha256": "c4082918eb21e3caf3c731c97126ad633c75dc19d78686c4095ab550a21c4d43",
+      "sha256": "492566d51e2a42fdf4a0b09b5c59c0681a30164040876efd03556478e91c43fc",
       "executable": false
     },
     "src/core/features/proposals/index.ts": {
@@ -3206,7 +3206,7 @@
       "executable": false
     },
     "src/core/features/proposals/repository.ts": {
-      "sha256": "76482e74a418b518faab20820df12a5b195a8b61e0a7d2ee060c0bae97618162",
+      "sha256": "acad10a5a4d7e8f26f80b8ae9df9bf36a0f11084c247dfed0873370e2380b3fe",
       "executable": false
     },
     "src/core/features/proposals/schema.ts": {
@@ -3214,7 +3214,7 @@
       "executable": false
     },
     "src/core/features/proposals/service.ts": {
-      "sha256": "7cd1fd9a8cdda99fdf52fb4aacb3f59508d966ee3ac44e132d031ce87648ff56",
+      "sha256": "64bff219492aa13c9d1f7136bd52ac0cf140597823f50dab903671b31303cbbb",
       "executable": false
     },
     "src/core/features/sender-verification/approval-authority.ts": {
@@ -5178,7 +5178,7 @@
       "executable": false
     },
     "tests/audience-summary/persistence.spec.ts": {
-      "sha256": "7c041b8cbdb426d183a291c56ef309ce09c26ba6647cafb893623731767bcd0a",
+      "sha256": "3453294090ea5b2c8db50c7bdfea1a1f7c0877e80af90ee3c625d320568fc026",
       "executable": false
     },
     "tests/audience-summary/proposal-display.spec.ts": {
@@ -5194,7 +5194,7 @@
       "executable": false
     },
     "tests/audience-summary/rule-fixtures.ts": {
-      "sha256": "ba482ffa1bc5a39becffb5c053f82e2287613d961b611f9b02fdf1514812cc1f",
+      "sha256": "1a0d5fae7591d3ed41021603c959eaa49192aa908db7fec794edc9e3dca1dba5",
       "executable": false
     },
     "tests/audience-summary/summary.spec.ts": {
@@ -5766,7 +5766,7 @@
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
-      "sha256": "0a9abe79ae3bc66ae41a77c9483ced1fc9258cf483c19960ccdca6904c1bd190",
+      "sha256": "a038bc9eeae6965cac4bb88f1a351a9fe32144d75dd52f339894f0e7b7bf3ee3",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
@@ -5778,7 +5778,7 @@
       "executable": false
     },
     "tests/proposals-decision/runtime.ts": {
-      "sha256": "e85c91f2bb39d75ea256adfda8a0dced467a291f2cfbbeaccf3d2a839c7e7782",
+      "sha256": "21deae7f8a5595f46c591cd728808cc82693247794b9862b8fdc3b4f4cdb73a6",
       "executable": false
     },
     "tests/proposals-insights.spec.ts": {

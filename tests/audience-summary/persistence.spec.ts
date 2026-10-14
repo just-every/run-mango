@@ -108,7 +108,7 @@ contract('AUD-001][CAMP-002', 'adopted and generated proposals persist summaries
     expect(adopted!.audience_rule).toBe(summarizeAudienceRules(adopted!.inclusion_rule_json,adopted!.exclusion_rules_json));
     expect(await authoring.adopt('unlinked-audience','operator')).toEqual(first);
     const claim={text:'Observed evidence: "value".',citations:[{key:'evidence',observedValueJson:'"value"'}]};
-    const output=generatedProposalSchema.parse({title:'Generated title',summary:claim,
+    const output=generatedProposalSchema.parse({summary:claim,
       audience:{inclusion:{...JSON.parse(included('generated')),predicates:JSON.parse(included('generated')).predicates.map((predicate:object)=>({...predicate,lookbackDays:null}))},exclusions:JSON.parse(excluded).map((rule:any)=>({...rule,reason:'Matches an exclusion condition',predicate:{...rule.predicate,lookbackDays:null}})),explanation:claim},
       email:{subject:'News',html:'<p>News</p>',text:'News',preheader:'News'},sms:null,
       sender:{displayName:'Mango',fromEmail:'offers@example.test',replyToEmail:'reply@example.test',physicalAddress:'1 Test Street',smsSender:'MANGO'},

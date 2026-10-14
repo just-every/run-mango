@@ -17,7 +17,7 @@ const exclusion=z.strictObject({version:z.literal(1),reason:z.literal('Matches a
 /** Provider wire schema: every object is closed and every field required. Nullable fields
  * are explicit absence; domain normalization below removes them, without substituting content. */
 export const generatedProposalWireSchema=z.strictObject({
-  title:z.string().min(1).max(160),summary:citedClaim,
+  summary:citedClaim,
   audience:z.strictObject({inclusion,exclusions:z.array(exclusion).max(50),explanation:citedClaim}),
   email:z.strictObject({subject:z.string().min(1).max(250),html:z.string().min(1).max(102400),text:z.string().min(1).max(102400),preheader:z.string().min(1).max(250)}).nullable(),
   sms:z.strictObject({body:z.string().min(1).max(1600)}).nullable(),
@@ -58,4 +58,11 @@ export function validateGrounding(output:GeneratedProposal,evidence:ProposalEvid
     });
     if(claim.text!==observations.join(' '))throw new Error('AI explanatory prose is not derivable from the cited observations.');
   }
+}
+
+export function deriveProposalTitle(output:Pick<GeneratedProposal,'summary'>,evidence:ProposalEvidence[]) {
+  const citation=output.summary.citations[0];
+  const source=evidence.find(item=>item.key===citation.key);
+  if(!source)throw new Error('Proposal naming requires supplied cited evidence.');
+  return `${source.sourceType} · ${source.sourceRecordId}`;
 }
