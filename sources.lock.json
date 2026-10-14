@@ -5198,7 +5198,7 @@
       "executable": false
     },
     "tests/campaign-authoring/advisory-acknowledgement.spec.ts": {
-      "sha256": "4f7d7b2455d545b05ac800b0ee8f26bb6da66932c67c5402b5d8f0ad77eb54d1",
+      "sha256": "efcd4ff7a8c580faf4cdadcd759dfd98bf291639257eb8e3817fcd72470b1429",
       "executable": false
     },
     "tests/campaign-authoring/advisory-worker.ts": {

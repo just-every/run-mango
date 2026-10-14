@@ -50,6 +50,7 @@ test('[MSG-007] an advisory records native actor/time without overriding approva
 
     await page.goto(`${runtime.url}/app/campaigns/${campaignId}/review`);
     const blockingRows = page.locator('.check-list__item').filter({has: page.getByLabel('Status: Blocking', {exact: true})});
+    await expect(blockingRows.first()).toBeVisible();
     expect(await blockingRows.count()).toBeGreaterThan(0);
     await expect(blockingRows.getByRole('button', {name: 'Acknowledge advisory', exact: true})).toHaveCount(0);
     await page.getByRole('button', {name: 'Acknowledge advisory', exact: true}).click();
