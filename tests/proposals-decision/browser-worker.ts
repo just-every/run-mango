@@ -35,7 +35,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
     const input=request.evidence as {items:Array<{key:string;observedValueJson:string;allowedClaim:string}>;now:string};
     const item=input.items[0],at=Date.parse(input.now),claim={text:item.allowedClaim,citations:[{key:item.key,observedValueJson:item.observedValueJson}]};
     return {provider:'openai',model:'decision-browser-fixture',billableUnits:40,output:{
-      title:'Garden newsletter',summary:claim,audience:{inclusion:{version:1,operator:'all',predicates:[{sourceType:'contact',field:'email',comparator:'contains',value:'@example.test',lookbackDays:null}]},exclusions:[],explanation:claim},
+      summary:claim,audience:{inclusion:{version:1,operator:'all',predicates:[{sourceType:'contact',field:'email',comparator:'contains',value:'@example.test',lookbackDays:null}]},exclusions:[],explanation:claim},
       email:{subject:'A note from the garden',html:'<p>Here is our garden newsletter.</p>',text:'Here is our garden newsletter.',preheader:'Garden news'},sms:null,
       sender:{...sender,smsSender:'MANGO'},messageCategory:'newsletter',links:[],
       steps:[{channel:'email',scheduledAt:new Date(at+3600000).toISOString(),sendByAt:new Date(at+7200000).toISOString(),timezone:'Etc/UTC',whyThisTime:claim}],forecast:null,

@@ -5762,7 +5762,7 @@
       "executable": false
     },
     "tests/proposals-decision/browser-worker.ts": {
-      "sha256": "3b0720561d04e50e489ba0931d4f065d9ea546ce447e7eca086121160a1c7617",
+      "sha256": "4b29b5a0bb4339087e03b726cb893938dbce508bf68a4e82beba54ad0ebf8f04",
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
