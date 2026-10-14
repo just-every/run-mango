@@ -88,15 +88,16 @@ export function createChallengeService(input: { options: VerificationOptions; re
         return read(id);
       }
       // Prepare accounting before the final generation fence. A stale caller may
-      // resume after another caller's definite no-POST release, so stamp the cost
-      // only with its successful claim, in the same transaction.
+      // resume after another caller's definite no-POST release, so revive and stamp
+      // its unspent cost only with its successful claim, in the same transaction.
       await recordCost('prepared');
       const claimedAt = clock();
       const [claimed] = await db.batch([
         db.prepare(`UPDATE sender_verification_challenges SET sent_at = ?, updated_at = ?
           WHERE id = ? AND sent_at IS NULL AND expires_at > ? AND ${currentGuard}`)
           .bind(claimedAt, claimedAt, id, claimedAt, ...currentValues(state)),
-        db.prepare(`UPDATE external_cost_facts SET occurred_at=? WHERE id=? AND outcome='prepared'
+        db.prepare(`UPDATE external_cost_facts SET outcome='prepared',occurred_at=?
+          WHERE id=? AND outcome IN ('prepared','not-sent')
           AND changes()=1 AND EXISTS (SELECT 1 FROM sender_verification_challenges
             WHERE id=? AND sent_at=? AND provider_message_id IS NULL)`)
           .bind(claimedAt, `sender-verification:${id}`, id, claimedAt),

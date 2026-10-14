@@ -36,8 +36,8 @@ export async function proveOperationalMailCosts() {
     await proveBaseMailReplay(f.platform.database,f.platform.config);
     const budget=await f.db.prepare('SELECT MAX(next_at) AS due FROM provider_pacing').first<{due:number}>();
     expect(budget!.due).toBeGreaterThan(Date.now());
-    // B reads the unclaimed challenge, then pauses before cost preparation.
-    // A's definite no-POST release must not let B retain A's cancelled date.
+    // B commits its cost preparation, then pauses before the handoff claim.
+    // A's no-POST release must not leave B's later paid handoff cancelled or dated earlier.
     const barrier=holdCostPreparation(f.bindings.DB,next.id);
     const concurrent=senderVerificationCommand({...f.bindings,DB:barrier.database},'send',next.id);
     const settled=concurrent.then(value=>({value}),error=>({error}));

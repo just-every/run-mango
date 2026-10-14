@@ -3374,7 +3374,7 @@
       "executable": false
     },
     "src/core/features/sender-verification/challenges.ts": {
-      "sha256": "fd969c3da7218f41a4217d340fef4d1bbcb5cba037e82ad1fd7f1503a5f71cef",
+      "sha256": "ee2c81ecd1ac9b2298216d07411368669ba528c874d5b7b8c559e424bf298b7a",
       "executable": false
     },
     "src/core/features/sender-verification/configuration.ts": {
@@ -5546,7 +5546,7 @@
       "executable": false
     },
     "tests/campaign-results/cost-base-mail-proof.ts": {
-      "sha256": "137211e432a36ed25076ef7fb5bbd6c49443c0132ab43e35ef1cdb454ffb1d89",
+      "sha256": "7835d32107f2f46ed8aa8c3395b9dea7829e976071a7b3218aafeefa05d5bcb9",
       "executable": false
     },
     "tests/campaign-results/cost-campaign-proof.ts": {
@@ -5554,7 +5554,7 @@
       "executable": false
     },
     "tests/campaign-results/cost-mail-proof.ts": {
-      "sha256": "9717fc639910eed44e5b7f2a79d92f9486525562f77fcf492564c4a5193e98ff",
+      "sha256": "d768eb5ca97414dfaa9a579ace6d4a125127d087ac91c42f1b3a201b669a3f2c",
       "executable": false
     },
     "tests/campaign-results/cost-worker.ts": {

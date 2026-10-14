@@ -9,7 +9,7 @@ export async function waitForMailBudget(db:D1Database) {
   if(delay>0)await new Promise(resolve=>setTimeout(resolve,delay));
 }
 
-/** Pause one actual command before its cost INSERT; all statements still run on native D1. */
+/** Pause after the actual cost INSERT commits, before the command can claim its handoff. */
 export function holdCostPreparation(db:D1Database,challengeId:string) {
   let release!:()=>void, arrived!:()=>void;
   const held=new Promise<void>(resolve=>{release=resolve;});
@@ -18,7 +18,8 @@ export function holdCostPreparation(db:D1Database,challengeId:string) {
     get(target,key) {
       if(key==='bind')return (...args:unknown[])=>statement(target.bind(...args),args);
       if(key==='run'&&values[0]===`sender-verification:${challengeId}`)return async()=>{
-        arrived();await held;return target.run();
+        const result=await target.run();
+        arrived();await held;return result;
       };
       const value=Reflect.get(target,key);
       return typeof value==='function'?value.bind(target):value;
