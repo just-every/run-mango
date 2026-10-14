@@ -205,7 +205,13 @@
             "modules/mail/src/sendgrid-email/index.mjs",
             "modules/mail/src/unsubscribe/index.mjs"
           ]
-        }
+        },
+        "mappings": [
+          {
+            "path": "src/vendor/base/mail/src/core/validation.mjs",
+            "originPath": "modules/mail/src/core/validation.mjs"
+          }
+        ]
       }
     },
     {

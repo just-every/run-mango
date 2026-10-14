@@ -2,6 +2,28 @@
   "schemaVersion": 1,
   "copies": [
     {
+      "path": "RUN-LOCALLY.md",
+      "originPath": "export/RUN-LOCALLY.md",
+      "revision": "8981bc2c4d9e61feca5787c83b4ed44056659dd9",
+      "files": {
+        "RUN-LOCALLY.md": "5eeb33783fc12fb09530716aa885e630f84123aa7f0fb79458fee4c5a2683e1d"
+      },
+      "modes": {
+        "RUN-LOCALLY.md": "100644"
+      }
+    },
+    {
+      "path": "SEED-COMMAND-CONTRACT.md",
+      "originPath": "export/SEED-COMMAND-CONTRACT.md",
+      "revision": "8981bc2c4d9e61feca5787c83b4ed44056659dd9",
+      "files": {
+        "SEED-COMMAND-CONTRACT.md": "bccf98c60748f580b46bbf5eef83ddd66aefaf1e29499d2f50424d12c9c98ffa"
+      },
+      "modes": {
+        "SEED-COMMAND-CONTRACT.md": "100644"
+      }
+    },
+    {
       "path": "migrations/core/0016_invitation_cancellation.sql",
       "originPath": "modules/operator-auth/accounts/schema/invitation-cancellation.sql",
       "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
@@ -80,17 +102,6 @@
         "public/fonts/outfit/LICENSE.txt": "100644",
         "public/fonts/outfit/outfit-latin-ext-wght-normal.woff2": "100644",
         "public/fonts/outfit/outfit-latin-wght-normal.woff2": "100644"
-      }
-    },
-    {
-      "path": "RUN-LOCALLY.md",
-      "originPath": "export/RUN-LOCALLY.md",
-      "revision": "8981bc2c4d9e61feca5787c83b4ed44056659dd9",
-      "files": {
-        "RUN-LOCALLY.md": "5eeb33783fc12fb09530716aa885e630f84123aa7f0fb79458fee4c5a2683e1d"
-      },
-      "modes": {
-        "RUN-LOCALLY.md": "100644"
       }
     },
     {
@@ -221,6 +232,17 @@
       }
     },
     {
+      "path": "scripts/delivery/base/schema/SETUP.schema.json",
+      "originPath": "schema/SETUP.schema.json",
+      "revision": "79e70e60eae6277b2f35be58258d0e9d2ffa4dc0",
+      "files": {
+        "scripts/delivery/base/schema/SETUP.schema.json": "a6af219fb0fb3ea80ad5673883644a7f765ece93c67a4e85bd7053d67b427067"
+      },
+      "modes": {
+        "scripts/delivery/base/schema/SETUP.schema.json": "100644"
+      }
+    },
+    {
       "path": "scripts/delivery/base/schema/dependencies.mjs",
       "originPath": "schema/dependencies.mjs",
       "revision": "79e70e60eae6277b2f35be58258d0e9d2ffa4dc0",
@@ -254,17 +276,6 @@
       }
     },
     {
-      "path": "scripts/delivery/base/schema/SETUP.schema.json",
-      "originPath": "schema/SETUP.schema.json",
-      "revision": "79e70e60eae6277b2f35be58258d0e9d2ffa4dc0",
-      "files": {
-        "scripts/delivery/base/schema/SETUP.schema.json": "a6af219fb0fb3ea80ad5673883644a7f765ece93c67a4e85bd7053d67b427067"
-      },
-      "modes": {
-        "scripts/delivery/base/schema/SETUP.schema.json": "100644"
-      }
-    },
-    {
       "path": "scripts/delivery/base/spec.mjs",
       "originPath": "modules/delivery-producer/spec.mjs",
       "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
@@ -273,6 +284,17 @@
       },
       "modes": {
         "scripts/delivery/base/spec.mjs": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/LICENSE",
+      "originPath": "LICENSE",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "scripts/edition-authoring/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
+      },
+      "modes": {
+        "scripts/edition-authoring/LICENSE": "100644"
       }
     },
     {
@@ -306,17 +328,6 @@
       },
       "modes": {
         "scripts/edition-authoring/files.mjs": "100644"
-      }
-    },
-    {
-      "path": "scripts/edition-authoring/LICENSE",
-      "originPath": "LICENSE",
-      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
-      "files": {
-        "scripts/edition-authoring/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
-      },
-      "modes": {
-        "scripts/edition-authoring/LICENSE": "100644"
       }
     },
     {
@@ -386,17 +397,6 @@
       }
     },
     {
-      "path": "SEED-COMMAND-CONTRACT.md",
-      "originPath": "export/SEED-COMMAND-CONTRACT.md",
-      "revision": "8981bc2c4d9e61feca5787c83b4ed44056659dd9",
-      "files": {
-        "SEED-COMMAND-CONTRACT.md": "bccf98c60748f580b46bbf5eef83ddd66aefaf1e29499d2f50424d12c9c98ffa"
-      },
-      "modes": {
-        "SEED-COMMAND-CONTRACT.md": "100644"
-      }
-    },
-    {
       "path": "src/base",
       "originPath": "foundation/runtime",
       "revision": "8981bc2c4d9e61feca5787c83b4ed44056659dd9",
@@ -437,6 +437,17 @@
         "src/base/setup.ts": "100644",
         "src/base/static-assets.ts": "100644",
         "src/base/theme-frame.ts": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/LICENSE",
+      "originPath": "LICENSE",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
+      },
+      "modes": {
+        "src/vendor/base/LICENSE": "100644"
       }
     },
     {
@@ -792,17 +803,6 @@
       }
     },
     {
-      "path": "src/vendor/base/LICENSE",
-      "originPath": "LICENSE",
-      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
-      "files": {
-        "src/vendor/base/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
-      },
-      "modes": {
-        "src/vendor/base/LICENSE": "100644"
-      }
-    },
-    {
       "path": "src/vendor/base/mail/.gitignore",
       "originPath": "modules/mail/.gitignore",
       "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
@@ -811,6 +811,17 @@
       },
       "modes": {
         "src/vendor/base/mail/.gitignore": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/LICENSE",
+      "originPath": "modules/mail/LICENSE",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
+      },
+      "modes": {
+        "src/vendor/base/mail/LICENSE": "100644"
       }
     },
     {
@@ -833,17 +844,6 @@
       },
       "modes": {
         "src/vendor/base/mail/index.mjs": "100644"
-      }
-    },
-    {
-      "path": "src/vendor/base/mail/LICENSE",
-      "originPath": "modules/mail/LICENSE",
-      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
-      "files": {
-        "src/vendor/base/mail/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
-      },
-      "modes": {
-        "src/vendor/base/mail/LICENSE": "100644"
       }
     },
     {
@@ -882,103 +882,497 @@
       }
     },
     {
-      "path": "src/vendor/base/mail/src",
-      "originPath": "modules/mail/src",
+      "path": "src/vendor/base/mail/src/adapters/cloudflare/README.md",
+      "originPath": "modules/mail/src/adapters/cloudflare/README.md",
       "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
       "files": {
-        "src/vendor/base/mail/src/adapters/cloudflare/headers.mjs": "6bee46c1edb6228b9d3df8b26ca1acbb163c36d94ecbd8e28ace1a6811095f23",
-        "src/vendor/base/mail/src/adapters/cloudflare/index.mjs": "377e4a322ac7803a1c56986ac909c35c1328896cff07c0610abbad5e8f8c3f86",
-        "src/vendor/base/mail/src/adapters/cloudflare/README.md": "80531ce460180b853b7db0480b4ff3d4f919fa5ccc119f71255fb1ac13485c5a",
-        "src/vendor/base/mail/src/adapters/cloudflare/response.mjs": "5eb6749653c10e45c712a76029f5f87503f660315f8f3f665531f2d346f70ddf",
-        "src/vendor/base/mail/src/adapters/resend/index.mjs": "03d292468577cb51b012b2c71c13654cd7b0af82c240ec124921ee88e05639dc",
-        "src/vendor/base/mail/src/adapters/resend/README.md": "07487907a351cde380774bed9b1f7b8d387f55f19be02990a521e25bdb09d468",
-        "src/vendor/base/mail/src/adapters/resend/response.mjs": "a0f26cafacdae8c6b8070a9ddeb7c1a68a67b47310d27932e59f425450b4b650",
-        "src/vendor/base/mail/src/adapters/resend/serialize.mjs": "724e04eba7ed515d0a137c69faf388c04061185677335076af7d9d91fdd7de94",
-        "src/vendor/base/mail/src/adapters/resend/size.mjs": "1726a4e7ce6ca1198dce3b0fcfe43e0d1e9795ca0e334824a61560318c2eabd5",
-        "src/vendor/base/mail/src/adapters/sendgrid/index.mjs": "bd94b2d46151ed35f4b0f8ba720588e4d64c899654111e114691b4c6421dfa4e",
-        "src/vendor/base/mail/src/adapters/sendgrid/README.md": "37a03786dd7cbc6d114a344389daa828334967642574f939df35219b094ad536",
-        "src/vendor/base/mail/src/adapters/sendgrid/serialize.mjs": "60d7836f94068a92283b1b66ccd27efeb78173c013fd1c9a6caaef1b928e09c0",
-        "src/vendor/base/mail/src/core/errors.mjs": "ad6d85870719774eff284328d54bdcb20cc9fb24faf790e3f1e934d19be5197c",
-        "src/vendor/base/mail/src/core/transport.mjs": "3f7bf52854e4908bb69b93032ac65cbd90bba57d03a62da1c2652ef4e470a1f8",
-        "src/vendor/base/mail/src/core/validation.mjs": "c1f54ba93abdead716f8e647aa5ac05af0b47bafa2055e67682393d16791e89d",
-        "src/vendor/base/mail/src/development/index.d.mts": "6fe266148a517c9759e1c70358a2d9ffba8fed36ed10bcb653c61fcc6e0b928d",
-        "src/vendor/base/mail/src/development/index.mjs": "d4e2cd5726291a63af51b09e1d8d6fd8212091a330f083782c84fe0c45fb8e2e",
-        "src/vendor/base/mail/src/development/outbox.mjs": "ca97ec8816a03cd606c90a37a98d3764fab809dba73411922cbd6f7a3f314376",
-        "src/vendor/base/mail/src/development/schema.sql": "45d6b03eadfe1e91737763ae85cdff74e7216f859869e34431550bba48294996",
-        "src/vendor/base/mail/src/development/viewer-html.mjs": "96706dc588fa35a18203cc3e3350fbf03c2db2ddad779fbdbd21fa29a7d8f00a",
-        "src/vendor/base/mail/src/development/viewer.mjs": "8c8c7575c2364151501d1725515b90fa662be039422837643d89f6668f241627",
-        "src/vendor/base/mail/src/doctor/common.mjs": "09d55a9065b133ca5e3c64e35a652cac6c5220cd1f130328c9014f994ebd1e23",
-        "src/vendor/base/mail/src/doctor/dns.mjs": "dbbd30abedf91cbf041597be0016d8f308f86951685161af89eeee1e99a9450e",
-        "src/vendor/base/mail/src/doctor/index.mjs": "bc7e27eb1066b48b0c10bf0d874e858016675124e87f9795b04aa90cd5a11860",
-        "src/vendor/base/mail/src/doctor/probe.mjs": "8f784edc9b8b1d28543471a406bfb7539db0f4070cdd24065798804012b735c0",
-        "src/vendor/base/mail/src/doctor/README.md": "03fbc37879c24a39d864147142b3474ade2f3611a3bc9343be214f2280619e14",
-        "src/vendor/base/mail/src/doctor/receive.mjs": "c113c033011d3a98c4407c5d7bb5a1f7130de088620a03d36d9087fc536a24c7",
-        "src/vendor/base/mail/src/doctor/records.mjs": "f5a8f43ab1d3e5a125056f34068380f7634ed178b238937eac26c92b67c686b1",
-        "src/vendor/base/mail/src/events/index.mjs": "6184eeaf89d426b8650f68dfb064f7825541d33a8190ba91d29a9e7de0149a7d",
-        "src/vendor/base/mail/src/events/intake.mjs": "88dc2902d523908a4d5a030814816c7322667373b5670d413de4c03c065c95ff",
-        "src/vendor/base/mail/src/events/README.md": "14f2daf2819422b62059434910d5ca18995f0fc63f3ef4810c9cc80c8b60218e",
-        "src/vendor/base/mail/src/events/storage.mjs": "56a1befc9d7bb799de431d7e938bf84470cd10f891c5275cb0be89704f2de32b",
-        "src/vendor/base/mail/src/events/verify.mjs": "d5ab927fdcca001bebdf1128e7cdf4c6006b49468406aff983c10957ef5bf286",
-        "src/vendor/base/mail/src/inbound/bytes.mjs": "cf6d59fff8c693a2833d0015f134d5c2559ec749aeb69b292b38585be7b7db7f",
-        "src/vendor/base/mail/src/inbound/headers.mjs": "79673d562647f4e15e7fe10ca3b13241acd5b2cc25a651a32918cee45e02235c",
-        "src/vendor/base/mail/src/inbound/index.mjs": "6defd48ac74f7a267f63d84f5b7cc8c1acfecfb26940df1a200088aa8be9f824",
-        "src/vendor/base/mail/src/inbound/mime.mjs": "743ae43126ba32aa0cbc00b3be738a7486612b220787c548455c7a778fa1803c",
-        "src/vendor/base/mail/src/inbound/multipart.mjs": "3696b971db5cf7a8c43eae84faca32123645293dcf97304382359be501d19cca",
-        "src/vendor/base/mail/src/inbound/README.md": "19f1c3448ae767095f257e2aa0bef8e19e94bd9d00fe0cd7515fb4d0d9f53eff",
-        "src/vendor/base/mail/src/inbound/resend-attachment.mjs": "a2ca74f17f0018c96b12a6bcaadc31c9b20d870687c5a2d7374de50e4c8fbff3",
-        "src/vendor/base/mail/src/inbound/resend.mjs": "7d279b6dcb1280b0c3902afc05c7356a9fbfcc015051a5c852fbfbb789a41e17",
-        "src/vendor/base/mail/src/inbound/sendgrid.mjs": "b599533e99e7912adfd10fc7343ba59e9387d783a623af0c6ac0843314265118",
-        "src/vendor/base/mail/src/sender.mjs": "fb8a0036fcd591a8f218702ca2dc94b40853cfc02b7d1c98972224ad8a88e179",
-        "src/vendor/base/mail/src/sendgrid-email/index.d.mts": "65efe2ed9647dd24ce7a7c1055cc5d8213ce94061db7597fb0460309baaa48be",
-        "src/vendor/base/mail/src/sendgrid-email/index.mjs": "4b0a9132941f0ba7a2f91b86b46b16bb0cdb5d3b9396b19ad13fb060bd02737d",
+        "src/vendor/base/mail/src/adapters/cloudflare/README.md": "80531ce460180b853b7db0480b4ff3d4f919fa5ccc119f71255fb1ac13485c5a"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/cloudflare/README.md": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/cloudflare/headers.mjs",
+      "originPath": "modules/mail/src/adapters/cloudflare/headers.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/cloudflare/headers.mjs": "6bee46c1edb6228b9d3df8b26ca1acbb163c36d94ecbd8e28ace1a6811095f23"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/cloudflare/headers.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/cloudflare/index.mjs",
+      "originPath": "modules/mail/src/adapters/cloudflare/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/cloudflare/index.mjs": "377e4a322ac7803a1c56986ac909c35c1328896cff07c0610abbad5e8f8c3f86"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/cloudflare/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/cloudflare/response.mjs",
+      "originPath": "modules/mail/src/adapters/cloudflare/response.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/cloudflare/response.mjs": "5eb6749653c10e45c712a76029f5f87503f660315f8f3f665531f2d346f70ddf"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/cloudflare/response.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/resend/README.md",
+      "originPath": "modules/mail/src/adapters/resend/README.md",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/resend/README.md": "07487907a351cde380774bed9b1f7b8d387f55f19be02990a521e25bdb09d468"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/resend/README.md": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/resend/index.mjs",
+      "originPath": "modules/mail/src/adapters/resend/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/resend/index.mjs": "03d292468577cb51b012b2c71c13654cd7b0af82c240ec124921ee88e05639dc"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/resend/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/resend/response.mjs",
+      "originPath": "modules/mail/src/adapters/resend/response.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/resend/response.mjs": "a0f26cafacdae8c6b8070a9ddeb7c1a68a67b47310d27932e59f425450b4b650"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/resend/response.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/resend/serialize.mjs",
+      "originPath": "modules/mail/src/adapters/resend/serialize.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/resend/serialize.mjs": "724e04eba7ed515d0a137c69faf388c04061185677335076af7d9d91fdd7de94"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/resend/serialize.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/resend/size.mjs",
+      "originPath": "modules/mail/src/adapters/resend/size.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/resend/size.mjs": "1726a4e7ce6ca1198dce3b0fcfe43e0d1e9795ca0e334824a61560318c2eabd5"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/resend/size.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/sendgrid/README.md",
+      "originPath": "modules/mail/src/adapters/sendgrid/README.md",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/sendgrid/README.md": "37a03786dd7cbc6d114a344389daa828334967642574f939df35219b094ad536"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/sendgrid/README.md": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/sendgrid/index.mjs",
+      "originPath": "modules/mail/src/adapters/sendgrid/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/sendgrid/index.mjs": "bd94b2d46151ed35f4b0f8ba720588e4d64c899654111e114691b4c6421dfa4e"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/sendgrid/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/adapters/sendgrid/serialize.mjs",
+      "originPath": "modules/mail/src/adapters/sendgrid/serialize.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/adapters/sendgrid/serialize.mjs": "60d7836f94068a92283b1b66ccd27efeb78173c013fd1c9a6caaef1b928e09c0"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/adapters/sendgrid/serialize.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/core/errors.mjs",
+      "originPath": "modules/mail/src/core/errors.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/core/errors.mjs": "ad6d85870719774eff284328d54bdcb20cc9fb24faf790e3f1e934d19be5197c"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/core/errors.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/core/transport.mjs",
+      "originPath": "modules/mail/src/core/transport.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/core/transport.mjs": "3f7bf52854e4908bb69b93032ac65cbd90bba57d03a62da1c2652ef4e470a1f8"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/core/transport.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/development/index.d.mts",
+      "originPath": "modules/mail/src/development/index.d.mts",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/development/index.d.mts": "6fe266148a517c9759e1c70358a2d9ffba8fed36ed10bcb653c61fcc6e0b928d"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/development/index.d.mts": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/development/index.mjs",
+      "originPath": "modules/mail/src/development/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/development/index.mjs": "d4e2cd5726291a63af51b09e1d8d6fd8212091a330f083782c84fe0c45fb8e2e"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/development/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/development/outbox.mjs",
+      "originPath": "modules/mail/src/development/outbox.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/development/outbox.mjs": "ca97ec8816a03cd606c90a37a98d3764fab809dba73411922cbd6f7a3f314376"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/development/outbox.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/development/schema.sql",
+      "originPath": "modules/mail/src/development/schema.sql",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/development/schema.sql": "45d6b03eadfe1e91737763ae85cdff74e7216f859869e34431550bba48294996"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/development/schema.sql": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/development/viewer-html.mjs",
+      "originPath": "modules/mail/src/development/viewer-html.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/development/viewer-html.mjs": "96706dc588fa35a18203cc3e3350fbf03c2db2ddad779fbdbd21fa29a7d8f00a"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/development/viewer-html.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/development/viewer.mjs",
+      "originPath": "modules/mail/src/development/viewer.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/development/viewer.mjs": "8c8c7575c2364151501d1725515b90fa662be039422837643d89f6668f241627"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/development/viewer.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/doctor/README.md",
+      "originPath": "modules/mail/src/doctor/README.md",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/doctor/README.md": "03fbc37879c24a39d864147142b3474ade2f3611a3bc9343be214f2280619e14"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/doctor/README.md": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/doctor/common.mjs",
+      "originPath": "modules/mail/src/doctor/common.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/doctor/common.mjs": "09d55a9065b133ca5e3c64e35a652cac6c5220cd1f130328c9014f994ebd1e23"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/doctor/common.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/doctor/dns.mjs",
+      "originPath": "modules/mail/src/doctor/dns.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/doctor/dns.mjs": "dbbd30abedf91cbf041597be0016d8f308f86951685161af89eeee1e99a9450e"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/doctor/dns.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/doctor/index.mjs",
+      "originPath": "modules/mail/src/doctor/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/doctor/index.mjs": "bc7e27eb1066b48b0c10bf0d874e858016675124e87f9795b04aa90cd5a11860"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/doctor/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/doctor/probe.mjs",
+      "originPath": "modules/mail/src/doctor/probe.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/doctor/probe.mjs": "8f784edc9b8b1d28543471a406bfb7539db0f4070cdd24065798804012b735c0"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/doctor/probe.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/doctor/receive.mjs",
+      "originPath": "modules/mail/src/doctor/receive.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/doctor/receive.mjs": "c113c033011d3a98c4407c5d7bb5a1f7130de088620a03d36d9087fc536a24c7"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/doctor/receive.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/doctor/records.mjs",
+      "originPath": "modules/mail/src/doctor/records.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/doctor/records.mjs": "f5a8f43ab1d3e5a125056f34068380f7634ed178b238937eac26c92b67c686b1"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/doctor/records.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/events/README.md",
+      "originPath": "modules/mail/src/events/README.md",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/events/README.md": "14f2daf2819422b62059434910d5ca18995f0fc63f3ef4810c9cc80c8b60218e"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/events/README.md": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/events/index.mjs",
+      "originPath": "modules/mail/src/events/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/events/index.mjs": "6184eeaf89d426b8650f68dfb064f7825541d33a8190ba91d29a9e7de0149a7d"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/events/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/events/intake.mjs",
+      "originPath": "modules/mail/src/events/intake.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/events/intake.mjs": "88dc2902d523908a4d5a030814816c7322667373b5670d413de4c03c065c95ff"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/events/intake.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/events/storage.mjs",
+      "originPath": "modules/mail/src/events/storage.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/events/storage.mjs": "56a1befc9d7bb799de431d7e938bf84470cd10f891c5275cb0be89704f2de32b"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/events/storage.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/events/verify.mjs",
+      "originPath": "modules/mail/src/events/verify.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/events/verify.mjs": "d5ab927fdcca001bebdf1128e7cdf4c6006b49468406aff983c10957ef5bf286"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/events/verify.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/README.md",
+      "originPath": "modules/mail/src/inbound/README.md",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/README.md": "19f1c3448ae767095f257e2aa0bef8e19e94bd9d00fe0cd7515fb4d0d9f53eff"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/README.md": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/bytes.mjs",
+      "originPath": "modules/mail/src/inbound/bytes.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/bytes.mjs": "cf6d59fff8c693a2833d0015f134d5c2559ec749aeb69b292b38585be7b7db7f"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/bytes.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/headers.mjs",
+      "originPath": "modules/mail/src/inbound/headers.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/headers.mjs": "79673d562647f4e15e7fe10ca3b13241acd5b2cc25a651a32918cee45e02235c"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/headers.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/index.mjs",
+      "originPath": "modules/mail/src/inbound/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/index.mjs": "6defd48ac74f7a267f63d84f5b7cc8c1acfecfb26940df1a200088aa8be9f824"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/mime.mjs",
+      "originPath": "modules/mail/src/inbound/mime.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/mime.mjs": "743ae43126ba32aa0cbc00b3be738a7486612b220787c548455c7a778fa1803c"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/mime.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/multipart.mjs",
+      "originPath": "modules/mail/src/inbound/multipart.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/multipart.mjs": "3696b971db5cf7a8c43eae84faca32123645293dcf97304382359be501d19cca"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/multipart.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/resend-attachment.mjs",
+      "originPath": "modules/mail/src/inbound/resend-attachment.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/resend-attachment.mjs": "a2ca74f17f0018c96b12a6bcaadc31c9b20d870687c5a2d7374de50e4c8fbff3"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/resend-attachment.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/resend.mjs",
+      "originPath": "modules/mail/src/inbound/resend.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/resend.mjs": "7d279b6dcb1280b0c3902afc05c7356a9fbfcc015051a5c852fbfbb789a41e17"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/resend.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/inbound/sendgrid.mjs",
+      "originPath": "modules/mail/src/inbound/sendgrid.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/inbound/sendgrid.mjs": "b599533e99e7912adfd10fc7343ba59e9387d783a623af0c6ac0843314265118"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/inbound/sendgrid.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/sender.mjs",
+      "originPath": "modules/mail/src/sender.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/sender.mjs": "fb8a0036fcd591a8f218702ca2dc94b40853cfc02b7d1c98972224ad8a88e179"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/sender.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/sendgrid-email/index.d.mts",
+      "originPath": "modules/mail/src/sendgrid-email/index.d.mts",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/sendgrid-email/index.d.mts": "65efe2ed9647dd24ce7a7c1055cc5d8213ce94061db7597fb0460309baaa48be"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/sendgrid-email/index.d.mts": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/sendgrid-email/index.mjs",
+      "originPath": "modules/mail/src/sendgrid-email/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/mail/src/sendgrid-email/index.mjs": "4b0a9132941f0ba7a2f91b86b46b16bb0cdb5d3b9396b19ad13fb060bd02737d"
+      },
+      "modes": {
+        "src/vendor/base/mail/src/sendgrid-email/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/src/unsubscribe/index.mjs",
+      "originPath": "modules/mail/src/unsubscribe/index.mjs",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
         "src/vendor/base/mail/src/unsubscribe/index.mjs": "4cd7c05a3a885d4d16cfcb50e623fdc201fe6c6bb8d9418502b0837161e55295"
       },
       "modes": {
-        "src/vendor/base/mail/src/adapters/cloudflare/headers.mjs": "100644",
-        "src/vendor/base/mail/src/adapters/cloudflare/index.mjs": "100644",
-        "src/vendor/base/mail/src/adapters/cloudflare/README.md": "100644",
-        "src/vendor/base/mail/src/adapters/cloudflare/response.mjs": "100644",
-        "src/vendor/base/mail/src/adapters/resend/index.mjs": "100644",
-        "src/vendor/base/mail/src/adapters/resend/README.md": "100644",
-        "src/vendor/base/mail/src/adapters/resend/response.mjs": "100644",
-        "src/vendor/base/mail/src/adapters/resend/serialize.mjs": "100644",
-        "src/vendor/base/mail/src/adapters/resend/size.mjs": "100644",
-        "src/vendor/base/mail/src/adapters/sendgrid/index.mjs": "100644",
-        "src/vendor/base/mail/src/adapters/sendgrid/README.md": "100644",
-        "src/vendor/base/mail/src/adapters/sendgrid/serialize.mjs": "100644",
-        "src/vendor/base/mail/src/core/errors.mjs": "100644",
-        "src/vendor/base/mail/src/core/transport.mjs": "100644",
-        "src/vendor/base/mail/src/core/validation.mjs": "100644",
-        "src/vendor/base/mail/src/development/index.d.mts": "100644",
-        "src/vendor/base/mail/src/development/index.mjs": "100644",
-        "src/vendor/base/mail/src/development/outbox.mjs": "100644",
-        "src/vendor/base/mail/src/development/schema.sql": "100644",
-        "src/vendor/base/mail/src/development/viewer-html.mjs": "100644",
-        "src/vendor/base/mail/src/development/viewer.mjs": "100644",
-        "src/vendor/base/mail/src/doctor/common.mjs": "100644",
-        "src/vendor/base/mail/src/doctor/dns.mjs": "100644",
-        "src/vendor/base/mail/src/doctor/index.mjs": "100644",
-        "src/vendor/base/mail/src/doctor/probe.mjs": "100644",
-        "src/vendor/base/mail/src/doctor/README.md": "100644",
-        "src/vendor/base/mail/src/doctor/receive.mjs": "100644",
-        "src/vendor/base/mail/src/doctor/records.mjs": "100644",
-        "src/vendor/base/mail/src/events/index.mjs": "100644",
-        "src/vendor/base/mail/src/events/intake.mjs": "100644",
-        "src/vendor/base/mail/src/events/README.md": "100644",
-        "src/vendor/base/mail/src/events/storage.mjs": "100644",
-        "src/vendor/base/mail/src/events/verify.mjs": "100644",
-        "src/vendor/base/mail/src/inbound/bytes.mjs": "100644",
-        "src/vendor/base/mail/src/inbound/headers.mjs": "100644",
-        "src/vendor/base/mail/src/inbound/index.mjs": "100644",
-        "src/vendor/base/mail/src/inbound/mime.mjs": "100644",
-        "src/vendor/base/mail/src/inbound/multipart.mjs": "100644",
-        "src/vendor/base/mail/src/inbound/README.md": "100644",
-        "src/vendor/base/mail/src/inbound/resend-attachment.mjs": "100644",
-        "src/vendor/base/mail/src/inbound/resend.mjs": "100644",
-        "src/vendor/base/mail/src/inbound/sendgrid.mjs": "100644",
-        "src/vendor/base/mail/src/sender.mjs": "100644",
-        "src/vendor/base/mail/src/sendgrid-email/index.d.mts": "100644",
-        "src/vendor/base/mail/src/sendgrid-email/index.mjs": "100644",
         "src/vendor/base/mail/src/unsubscribe/index.mjs": "100644"
       }
     },
@@ -1133,6 +1527,17 @@
       }
     },
     {
+      "path": "src/vendor/base/portability/README.md",
+      "originPath": "modules/portability/README.md",
+      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+      "files": {
+        "src/vendor/base/portability/README.md": "0424a8704878a9a8faacfbcae50becb2704d070c7f67abd9539f1a43cc3bc56b"
+      },
+      "modes": {
+        "src/vendor/base/portability/README.md": "100644"
+      }
+    },
+    {
       "path": "src/vendor/base/portability/catalogue.mjs",
       "originPath": "modules/portability/catalogue.mjs",
       "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
@@ -1273,17 +1678,6 @@
       },
       "modes": {
         "src/vendor/base/portability/payloads.mjs": "100644"
-      }
-    },
-    {
-      "path": "src/vendor/base/portability/README.md",
-      "originPath": "modules/portability/README.md",
-      "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
-      "files": {
-        "src/vendor/base/portability/README.md": "0424a8704878a9a8faacfbcae50becb2704d070c7f67abd9539f1a43cc3bc56b"
-      },
-      "modes": {
-        "src/vendor/base/portability/README.md": "100644"
       }
     },
     {

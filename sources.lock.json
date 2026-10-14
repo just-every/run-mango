@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "parent": null,
   "edition": "just-every/mango",
-  "manifest": "b77c1fe424d1b6dae0dcfed220a05a5f637b9701d1e84c5b190d09306c99dd51",
+  "manifest": "6a7b186c1a812ebb9214a095c6e148d382473beb624aa3da687044436783f5f3",
   "toolchain": {
     "id": "runeditrun/edition-authoring",
     "version": "1.1.0",
@@ -215,7 +215,13 @@
             "modules/mail/src/sendgrid-email/index.mjs",
             "modules/mail/src/unsubscribe/index.mjs"
           ]
-        }
+        },
+        "mappings": [
+          {
+            "path": "src/vendor/base/mail/src/core/validation.mjs",
+            "originPath": "modules/mail/src/core/validation.mjs"
+          }
+        ]
       },
       "baseline": {
         "key": "904b3633c73cb94f3d42de4ca67c7f69386eb048a27b3263b9e149100223fb49",
@@ -790,7 +796,7 @@
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "f9a65ce0723cf9466f812d90c0cafcea1898d50453f02b6f193328658d958d5d",
+      "sha256": "cbadb0cf06624b030ffcb7143807a71110dc6a4d536a86b22399cf3bc6666eb5",
       "executable": false
     },
     "BASELINE.md": {
@@ -886,7 +892,7 @@
       "executable": false
     },
     "edition.json": {
-      "sha256": "b77c1fe424d1b6dae0dcfed220a05a5f637b9701d1e84c5b190d09306c99dd51",
+      "sha256": "6a7b186c1a812ebb9214a095c6e148d382473beb624aa3da687044436783f5f3",
       "executable": false
     },
     "HANDOVER.md": {
@@ -4402,7 +4408,7 @@
       "executable": false
     },
     "src/vendor/base/mail/src/core/validation.mjs": {
-      "sha256": "c1f54ba93abdead716f8e647aa5ac05af0b47bafa2055e67682393d16791e89d",
+      "sha256": "c0a7cb57e632998e1432d74cc92a7e3e6d58b245f3522eba23458072b458b24c",
       "executable": false
     },
     "src/vendor/base/mail/src/development/index.d.mts": {
