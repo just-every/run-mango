@@ -110,6 +110,7 @@ export function AudienceImportPage() {
 
   const removeFile = (fileName: string) => {
     setFiles((current) => current.filter((entry) => entry.name !== fileName));
+    setPreview((current) => current ? {...current, columns: current.columns.filter((column) => column.name !== fileName)} : current);
     setMappings((current) => {
       const next = { ...current };
       delete next[fileName];

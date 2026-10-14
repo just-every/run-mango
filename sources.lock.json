@@ -1530,7 +1530,7 @@
       "executable": false
     },
     "scripts/sender-verification-entry.ts": {
-      "sha256": "0ccd3e02f45713ded7f960900d3b41692bff7c3eeb18757cf6d88999baeb1d71",
+      "sha256": "78bb4014d2719986f49164438bd44a1ca9789cff3d80b2b958624ae316523560",
       "executable": false
     },
     "scripts/sender-verification.mjs": {
@@ -2198,7 +2198,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/audience-import-source-form.tsx": {
-      "sha256": "0bd362c2b8584464389d31fbec7e78cf21b427f2ebd11c3aa032320d176b98f5",
+      "sha256": "ac5bd08c51352afdc732741c12c8a3468ead95c5425bc9395e2b2e9441ca4f65",
       "executable": false
     },
     "src/core/features/audience/ui/audience-import-types.ts": {
@@ -2206,7 +2206,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/audience-import.tsx": {
-      "sha256": "b838195d7cc8c8c396f51700de020fa3d9c75d896ad9d95115b0823e42ab1168",
+      "sha256": "35bf474c452e967bfcb3bf41da9b3419584d4b7259cda1462aa25515893acde3",
       "executable": false
     },
     "src/core/features/audience/ui/audience-page.tsx": {
@@ -3374,7 +3374,7 @@
       "executable": false
     },
     "src/core/features/sender-verification/challenges.ts": {
-      "sha256": "49e778f59ededb233d94a27ab26a9c47119d7229f2c6fe2438d631a39e856cd7",
+      "sha256": "fd969c3da7218f41a4217d340fef4d1bbcb5cba037e82ad1fd7f1503a5f71cef",
       "executable": false
     },
     "src/core/features/sender-verification/configuration.ts": {
@@ -5546,7 +5546,7 @@
       "executable": false
     },
     "tests/campaign-results/cost-base-mail-proof.ts": {
-      "sha256": "74a960d2b7eaf51196aee8381be1627227922619c913d701ae3c42cbd272203a",
+      "sha256": "137211e432a36ed25076ef7fb5bbd6c49443c0132ab43e35ef1cdb454ffb1d89",
       "executable": false
     },
     "tests/campaign-results/cost-campaign-proof.ts": {
@@ -5554,7 +5554,7 @@
       "executable": false
     },
     "tests/campaign-results/cost-mail-proof.ts": {
-      "sha256": "05d56d8c800f1a696e2f78a26c8523f789e1f67d1b3c6560bcbd8da73618e541",
+      "sha256": "9717fc639910eed44e5b7f2a79d92f9486525562f77fcf492564c4a5193e98ff",
       "executable": false
     },
     "tests/campaign-results/cost-worker.ts": {
@@ -5974,7 +5974,7 @@
       "executable": false
     },
     "tests/newsletter-ui/audience-ui.journeys.ts": {
-      "sha256": "49b23d03b281d93adca905ab66d14113215b7f91c5c5aea533eaccc5e54bc627",
+      "sha256": "d3dc766e8730c1539692ab42e319e769b02a9f5d9f82a4dad6ba8e46d57954d6",
       "executable": false
     },
     "tests/newsletter-ui/authoring-runtime.journeys.ts": {

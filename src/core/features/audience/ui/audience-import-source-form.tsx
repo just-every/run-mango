@@ -73,6 +73,8 @@ export function AudienceImportSourceForm({
   };
 
   const presetById = new Map(presets.map((preset) => [preset.id, preset]));
+  const selectedNames = new Set(files.map((file) => file.name));
+  const mappingColumns = archive ? [] : (columns ?? []).filter((column) => selectedNames.has(column.name));
 
   return (
     <ValidationForm className="audience-import-form" onValidSubmit={onPreview} aria-label="Audience import mapping">
@@ -143,7 +145,7 @@ export function AudienceImportSourceForm({
         {fileError ? <p className="inline-error" role="alert">{fileError}</p> : null}
       </section>
 
-      {columns?.length ? (
+      {mappingColumns.length ? (
         <section className="panel audience-import-panel" aria-labelledby="import-mapping-title">
           <div className="audience-import-section-title">
             <span aria-hidden="true">2</span>
@@ -154,7 +156,7 @@ export function AudienceImportSourceForm({
           </div>
           <p className="muted-copy">Map email, E.164 phone, or both. SMS columns carry independent consent; email consent and file presets never subscribe SMS. Missing original evidence keeps that channel non-subscribed.</p>
           <div className="audience-import-mappings">
-            {columns.map((column) => {
+            {mappingColumns.map((column) => {
               const preset = files.find((file) => file.name === column.name)?.preset;
               const mapping = {...column.mapping, ...mappings[column.name]};
               const destinationError = () => mapping.email || mapping.phone ? undefined : 'Map an email or E.164 phone column.';
@@ -191,7 +193,7 @@ export function AudienceImportSourceForm({
 
       <section className="panel audience-import-panel" aria-labelledby="import-consent-title">
         <div className="audience-import-section-title">
-          <span aria-hidden="true">{columns?.length ? '3' : '2'}</span>
+          <span aria-hidden="true">{mappingColumns.length ? '3' : '2'}</span>
           <div>
             <p className="eyebrow">Keep the original scope</p>
             <h2 id="import-consent-title">Email consent evidence</h2>

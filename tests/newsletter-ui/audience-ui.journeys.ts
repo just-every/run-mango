@@ -174,6 +174,29 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
     const content = await readFile(downloadPath!, 'utf8');
     expect(content.split('\r\n')[0]).toContain('ledger_json');
     expect(content).not.toContain(importedEmail);
+
+    // A removed lossless export must not leave mapping validators on the next source.
+    await page.goto('/app/audience/import');
+    await page.getByLabel('Choose CSV files').setInputFiles({name:'audience.csv',mimeType:'text/csv',buffer:Buffer.from(content)});
+    await page.getByLabel('Preset for audience.csv').selectOption('mango');
+    const mangoPreview = page.waitForResponse(response => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/api/audience/import-preview');
+    await page.getByRole('button', {name:'Preview import',exact:true}).click();
+    const mangoResponse = await mangoPreview;
+    expect(mangoResponse.status()).toBe(200);
+    expect((await mangoResponse.json()).columns[0].mapping).toEqual({});
+    await expect(page.getByRole('group', {name:'audience.csv',exact:true})).toBeVisible();
+    await page.getByRole('button', {name:'Remove audience.csv',exact:true}).click();
+    await expect(page.getByRole('group', {name:'audience.csv',exact:true})).toHaveCount(0);
+    const replacementEmail = `ui-replacement-${runId}@example.test`;
+    await page.getByLabel('Choose CSV files').setInputFiles({name:'audience.csv',mimeType:'text/csv',buffer:Buffer.from(`Email Address\n${replacementEmail}`)});
+    await page.getByLabel('Preset for audience.csv').selectOption('csv-non-subscribed');
+    const replacementPreview = page.waitForResponse(response => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/api/audience/import-preview');
+    await page.getByRole('button', {name:'Preview import',exact:true}).click();
+    const replacementResponse = await replacementPreview;
+    expect(replacementResponse.status()).toBe(200);
+    expect((await replacementResponse.json()).rows).toEqual([expect.objectContaining({email:replacementEmail,status:'non-subscribed'})]);
   }
 });
 

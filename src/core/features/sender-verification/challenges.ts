@@ -1,3 +1,4 @@
+import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
 import { ProviderTransportError, type ProviderHandoff, type SenderAdapter } from '@/core/shared/platform';
 import { recordExternalCost } from '@/core/features/insights/cost-recording';
 import { digest, serializedFrom } from './identity';
@@ -86,11 +87,20 @@ export function createChallengeService(input: { options: VerificationOptions; re
         await recordCost('accepted').catch(() => {});
         return read(id);
       }
-      // Account before the guarded handoff claim; no asynchronous work follows a successful claim before send.
+      // Prepare accounting before the final generation fence. A stale caller may
+      // resume after another caller's definite no-POST release, so stamp the cost
+      // only with its successful claim, in the same transaction.
       await recordCost('prepared');
-      const claimed = await db.prepare(`UPDATE sender_verification_challenges SET sent_at = ?, updated_at = ?
-        WHERE id = ? AND sent_at IS NULL AND ${currentGuard}`)
-        .bind(now, now, id, ...currentValues(state)).run();
+      const claimedAt = clock();
+      const [claimed] = await db.batch([
+        db.prepare(`UPDATE sender_verification_challenges SET sent_at = ?, updated_at = ?
+          WHERE id = ? AND sent_at IS NULL AND expires_at > ? AND ${currentGuard}`)
+          .bind(claimedAt, claimedAt, id, claimedAt, ...currentValues(state)),
+        db.prepare(`UPDATE external_cost_facts SET occurred_at=? WHERE id=? AND outcome='prepared'
+          AND changes()=1 AND EXISTS (SELECT 1 FROM sender_verification_challenges
+            WHERE id=? AND sent_at=? AND provider_message_id IS NULL)`)
+          .bind(claimedAt, `sender-verification:${id}`, id, claimedAt),
+      ]);
       if (!claimed.meta.changes) {
         // A competing caller may own this same attempt. Exclude it only when nobody claimed the handoff.
         await db.prepare(`UPDATE external_cost_facts SET outcome='not-sent' WHERE id=? AND outcome='prepared'
@@ -101,7 +111,21 @@ export function createChallengeService(input: { options: VerificationOptions; re
       let sent: ProviderHandoff;
       try { sent = await adapter.send(challenge.request); }
       catch (error) {
-        await recordCost(error instanceof ProviderTransportError ? 'rejected' : 'unknown').catch(() => {});
+        if(error instanceof ProviderDeferredError) {
+          // This exact error certifies no provider request. Release only this
+          // caller's claim and its unspent cost together; ambiguous outcomes
+          // retain sent_at and can only reconcile. A later call rechecks all
+          // current binding, generation, approval and expiry guards above.
+          await db.batch([
+            db.prepare(`UPDATE external_cost_facts SET outcome='not-sent'
+              WHERE id=? AND outcome='prepared' AND EXISTS (
+                SELECT 1 FROM sender_verification_challenges WHERE id=? AND sent_at=? AND provider_message_id IS NULL)`)
+              .bind(`sender-verification:${id}`,id,claimedAt),
+            db.prepare(`UPDATE sender_verification_challenges SET sent_at=NULL,updated_at=?
+              WHERE id=? AND sent_at=? AND provider_message_id IS NULL`)
+              .bind(clock(),id,claimedAt),
+          ]);
+        } else await recordCost(error instanceof ProviderTransportError ? 'rejected' : 'unknown').catch(() => {});
         throw error;
       }
       await db.prepare(`UPDATE sender_verification_challenges SET provider_message_id = ?, updated_at = ?
