@@ -37,7 +37,7 @@ test('[SEND-001][SEND-008][SEND-006] native Resend reconciliation resumes exact 
     for(const email of emails) {
       await availableTransport(site);
       await json(await site.call('/api/contacts/consent',{method:'POST',cookie,body:{...consent,contact:{email,displayName:email},occurredAt:new Date().toISOString()}}),201);
-      const sent=edge.resend.sends.findLast(send=>send.body.to[0]===email&&send.body.subject==='Confirm your Mango subscription')!;
+      const sent=edge.resend.sends.findLast(send=>send.body.to[0]===email&&send.body.subject==='Confirm your Mango Garden subscription')!;
       const link=/https:\/\/\S+\/consent\/confirm\/\S+/.exec(sent.body.text)![0];
       expect((await fetch(site.local(link),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
     }

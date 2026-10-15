@@ -1,37 +1,64 @@
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
-import { ProviderTransportError, type ProviderHandoff, type SenderAdapter } from '@/core/shared/platform';
+import { ProviderTransportError, type DeliveryRequest, type ProviderHandoff, type SenderAdapter } from '@/core/shared/platform';
 import { recordExternalCost } from '@/core/features/insights/cost-recording';
 import { digest, serializedFrom } from './identity';
 import { validateReceiverMaterial } from './receiver';
 import type { VerificationRepository, AuthorityState } from './repository';
 import type { ConfigurationInspection } from './configuration';
 import type { VerificationOptions } from './service';
-import { VerificationError, type Challenge, type SenderBinding } from './types';
+import { VerificationError, ownerConnectorId, type Challenge, type SenderBinding } from './types';
 
-type Context = { binding: SenderBinding; bindingDigest: string; state: AuthorityState; configuration: ConfigurationInspection; now: number };
+export type Context = { binding: SenderBinding; bindingDigest: string; state: AuthorityState; configuration: ConfigurationInspection; now: number };
+const currentGuard = `EXISTS (SELECT 1 FROM sender_verification_state WHERE id = ? AND generation = ?
+  AND binding_digest = ? AND configuration_digest = ?)`;
+const currentValues = (state: AuthorityState) => [state.id, state.generation, state.binding_digest, state.configuration_digest];
+export async function readChallenge(db: D1Database, id: string): Promise<Challenge> {
+  const row = await db.prepare('SELECT * FROM sender_verification_challenges WHERE id = ?').bind(id).first<Record<string, unknown>>();
+  if (!row) throw new VerificationError('challenge-missing');
+  const request = JSON.parse(String(row.request_json));
+  request.handoffStartedAt = new Date(request.handoffStartedAt);
+  return { id, stateId: String(row.state_id), generation: Number(row.generation), bindingDigest: String(row.binding_digest),
+    configurationDigest: String(row.configuration_digest), recipient: String(row.recipient), connectorId: String(row.connector_id),
+    nonce: String(row.nonce), request, requestDigest: String(row.request_digest),
+    reconciliationCursor: row.reconcile_cursor == null ? undefined : String(row.reconcile_cursor),
+    providerMessageId: row.provider_message_id == null ? undefined : String(row.provider_message_id),
+    sentAt: row.sent_at == null ? undefined : Number(row.sent_at), createdAt: Number(row.created_at), expiresAt: Number(row.expires_at) };
+}
+/** Stores one diagnostic request under the current authority generation before any handoff. */
+export async function insertChallenge(db: D1Database, context: Context, input: { recipient: string; connectorId: string;
+  nonce: string; id: string; request: DeliveryRequest; lifetimeMs: number }) {
+  const { bindingDigest, state, configuration, now } = context;
+  const requestDigest = await digest(input.request);
+  const result = await db.prepare(`INSERT INTO sender_verification_challenges
+    (id,state_id,binding_digest,configuration_digest,generation,recipient,connector_id,nonce,request_json,request_digest,expires_at,created_at,updated_at)
+    SELECT ?,?,?,?,?,?,?,?,?,?,?,?,? WHERE ${currentGuard}`)
+    .bind(input.id, state.id, bindingDigest, configuration.configurationDigest, state.generation, input.recipient, input.connectorId,
+      input.nonce, JSON.stringify(input.request), requestDigest, now + input.lifetimeMs, now, now, ...currentValues(state)).run();
+  if (!result.meta.changes) throw new VerificationError('challenge-superseded');
+  return readChallenge(db, input.id);
+}
+/** Stores one observation and, when promoted, makes it the current authority, both under the generation fence. */
+export function observationStatements(db: D1Database, state: AuthorityState, input: { id: string; challengeId: string;
+  receiptKey: string; receiptDigest: string; resultJson: string; reason: string; observedAt: number; expiresAt: number; now: number; promote: boolean }) {
+  return [db.prepare(`INSERT INTO sender_verification_observations
+    (id,challenge_id,receipt_key,receipt_digest,binding_digest,configuration_digest,result_json,observed_at,expires_at,created_at)
+    SELECT ?,?,?,?,?,?,?,?,?,? WHERE ${currentGuard}`)
+    .bind(input.id, input.challengeId, input.receiptKey, input.receiptDigest, state.binding_digest, state.configuration_digest,
+      input.resultJson, input.observedAt, input.expiresAt, input.now, ...currentValues(state)),
+  db.prepare(`UPDATE sender_verification_state SET observation_id = ?, generation = generation + 1,
+    revoked_at = NULL, reason = ?, updated_at = ? WHERE ${currentGuard} AND id = ?
+    AND EXISTS (SELECT 1 FROM sender_verification_observations WHERE id = ?) AND ?`)
+    .bind(input.id, input.reason, input.now, ...currentValues(state), state.id, input.id, input.promote ? 1 : 0)];
+}
 export function createChallengeService(input: { options: VerificationOptions; repository: VerificationRepository;
   currentConfiguration: () => Promise<Context>; clock: () => number }) {
   const { options, repository, clock } = input, db = repository.db;
-  async function read(id: string): Promise<Challenge> {
-    const row = await db.prepare('SELECT * FROM sender_verification_challenges WHERE id = ?').bind(id).first<Record<string, unknown>>();
-    if (!row) throw new VerificationError('challenge-missing');
-    const request = JSON.parse(String(row.request_json));
-    request.handoffStartedAt = new Date(request.handoffStartedAt);
-    return { id, stateId: String(row.state_id), generation: Number(row.generation), bindingDigest: String(row.binding_digest),
-      configurationDigest: String(row.configuration_digest), recipient: String(row.recipient), connectorId: String(row.connector_id),
-      nonce: String(row.nonce), request, requestDigest: String(row.request_digest),
-      reconciliationCursor: row.reconcile_cursor == null ? undefined : String(row.reconcile_cursor),
-      providerMessageId: row.provider_message_id == null ? undefined : String(row.provider_message_id),
-      sentAt: row.sent_at == null ? undefined : Number(row.sent_at), createdAt: Number(row.created_at), expiresAt: Number(row.expires_at) };
-  }
+  const read = (id: string) => readChallenge(db, id);
   function receiver() {
     if (!options.receiver) throw new VerificationError('receiver-not-configured');
     if (!options.config.testEmailAllowlist.includes(options.receiver.recipient)) throw new VerificationError('receiver-not-allowlisted');
     return options.receiver;
   }
-  const currentGuard = `EXISTS (SELECT 1 FROM sender_verification_state WHERE id = ? AND generation = ?
-    AND binding_digest = ? AND configuration_digest = ?)`;
-  const currentValues = (state: AuthorityState) => [state.id, state.generation, state.binding_digest, state.configuration_digest];
   return {
     /** Internal protected-runner operation; deliberately no HTTP/upload route.
      * The caller approves this exact diagnostic body and recipient before calling.
@@ -40,23 +67,16 @@ export function createChallengeService(input: { options: VerificationOptions; re
       const connector = receiver();
       if (approval.recipient !== connector.recipient || !approval.subject.trim() || !approval.text.trim()
         || /[\r\n]/.test(approval.subject)) throw new VerificationError('probe-approval-invalid');
-      const { binding, bindingDigest, state, configuration, now } = await input.currentConfiguration();
+      const context = await input.currentConfiguration();
       const id = crypto.randomUUID(), nonce = crypto.randomUUID();
-      const request = { recipientStepId: `sender-probe:${id}`, idempotencyKey: `sender-probe:${id}`, handoffStartedAt: new Date(now),
-        sender: binding.from, to: approval.recipient, content: { subject: `[Mango sender check] ${approval.subject}`,
+      const request = { recipientStepId: `sender-probe:${id}`, idempotencyKey: `sender-probe:${id}`, handoffStartedAt: new Date(context.now),
+        sender: context.binding.from, to: approval.recipient, content: { subject: `[Mango sender check] ${approval.subject}`,
           text: `${approval.text}\n\nMango sender verification challenge: ${nonce}` }, callbackUrl: options.config.publicBaseUrl.origin };
-      const requestDigest = await digest(request);
-      const result = await db.prepare(`INSERT INTO sender_verification_challenges
-        (id,state_id,binding_digest,configuration_digest,generation,recipient,connector_id,nonce,request_json,request_digest,expires_at,created_at,updated_at)
-        SELECT ?,?,?,?,?,?,?,?,?,?,?,?,? WHERE ${currentGuard}`)
-        .bind(id, state.id, bindingDigest, configuration.configurationDigest, state.generation, approval.recipient, connector.id,
-          nonce, JSON.stringify(request), requestDigest, now + 3_600_000, now, now, ...currentValues(state)).run();
-      if (!result.meta.changes) throw new VerificationError('challenge-superseded');
-      return read(id);
+      return insertChallenge(db, context, { id, nonce, request, recipient: approval.recipient, connectorId: connector.id, lifetimeMs: 3_600_000 });
     },
     async sendChallenge(id: string, adapter: Pick<SenderAdapter, 'send' | 'reconcile'>) {
-      receiver();
       const challenge = await read(id);
+      if (challenge.connectorId !== ownerConnectorId) receiver();
       if (challenge.providerMessageId) return challenge;
       const { binding, bindingDigest, state, configuration, now } = await input.currentConfiguration();
       if (challenge.bindingDigest !== bindingDigest || challenge.configurationDigest !== configuration.configurationDigest
@@ -170,15 +190,9 @@ export function createChallengeService(input: { options: VerificationOptions; re
       const promote = !currentObservation || material.receivedAt >= currentObservation.observed_at;
       const observationId = crypto.randomUUID();
       const expiresAt = validated.material.receivedAt + 86_400_000;
-      const statements = [db.prepare(`INSERT INTO sender_verification_observations
-        (id,challenge_id,receipt_key,receipt_digest,binding_digest,configuration_digest,result_json,observed_at,expires_at,created_at)
-        SELECT ?,?,?,?,?,?,?,?,?,? WHERE ${currentGuard}`)
-        .bind(observationId, id, receiptKey, receiptDigest, bindingDigest, configuration.configurationDigest,
-          JSON.stringify({ ...validated.result, receiver: { connectorId: connector.id, receiptId: material.receiptId, originalDigest: material.originalDigest, authentication: material.authentication, signedBodyDigest: material.signedBody.digest } }), material.receivedAt, expiresAt, now, ...currentValues(state)),
-      db.prepare(`UPDATE sender_verification_state SET observation_id = ?, generation = generation + 1,
-        revoked_at = NULL, reason = ?, updated_at = ? WHERE ${currentGuard} AND id = ?
-        AND EXISTS (SELECT 1 FROM sender_verification_observations WHERE id = ?) AND ?`)
-        .bind(observationId, validated.result.reason, now, ...currentValues(state), state.id, observationId, promote ? 1 : 0)];
+      const statements = observationStatements(db, state, { id: observationId, challengeId: id, receiptKey, receiptDigest,
+        resultJson: JSON.stringify({ ...validated.result, receiver: { connectorId: connector.id, receiptId: material.receiptId, originalDigest: material.originalDigest, authentication: material.authentication, signedBodyDigest: material.signedBody.digest } }),
+        reason: validated.result.reason, observedAt: material.receivedAt, expiresAt, now, promote });
       let result;
       try { result = await db.batch(statements); }
       catch (error) {

@@ -1,6 +1,6 @@
 ## Run it locally
 
-Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.15**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** and installs the locked dependencies. You do not need to install Node or pnpm separately when using the installer script. Run from the project root and supply your own owner email.
+First install **Node 22 or later**: rer runs on it, and the installer stops with `node is required` without it. Get it from [nodejs.org](https://nodejs.org/en/download) (or `brew install node` on a Mac, or a version manager such as nvm). Then install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.19**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
 
 ```sh
 rer install
@@ -19,7 +19,7 @@ rer deploy --environment production --dry-run
 rer describe
 ```
 
-Reset deletes local data and credentials. Export before resetting if you need that data; import requires an empty destination and the matching private settings backup. The commands above are separate operations, not a reset-and-backup sequence. Real deployment uses `rer deploy --environment production` with authorized owner-account credentials. Pinned rer 0.2.15 automatically claims the first owner and removes the one-time setup token. For an existing installation, preserve private inputs, backups and customizations, then use `git pull --ff-only` and `rer deploy --environment production` with the same environment and loaded private inputs. rer installs locked dependencies and retains the owner; no separate claim is needed. See [OPERATIONS.md](OPERATIONS.md) for recovery and configuration; `describe --json` lists the actual flags, and `check --profile first-party` checks the command contract.
+Reset deletes local data and credentials. Export before resetting if you need that data; import requires an empty destination and the matching private settings backup. The commands above are separate operations, not a reset-and-backup sequence. Real deployment uses `rer deploy --environment production` with authorized owner-account credentials. Pinned rer 0.2.19 automatically claims the first owner and removes the one-time setup token. For an existing installation, preserve private inputs, backups and customizations, then use `git pull --ff-only` and `rer deploy --environment production` with the same environment and loaded private inputs. rer installs locked dependencies and retains the owner; no separate claim is needed. See [OPERATIONS.md](OPERATIONS.md) for recovery and configuration; `describe --json` lists the actual flags, and `check --profile first-party` checks the command contract.
 
 # Working on this edition
 

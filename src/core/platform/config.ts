@@ -170,12 +170,14 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     modules,
     mailProviderApiKey: required(environment, 'MAIL_PROVIDER_API_KEY'),
     mailAuthFrom: required(environment, 'MAIL_AUTH_FROM'),
-    mailWebhookSecret: required(environment, 'MAIL_WEBHOOK_SECRET'),
+    // SendGrid's signed Event Webhook is optional: without it delivery shows Accepted, never Delivered.
+    mailWebhookSecret: mailProvider === 'resend' ? required(environment, 'MAIL_WEBHOOK_SECRET') : environment.MAIL_WEBHOOK_SECRET?.trim() ?? '',
     mailWebhookId: mailProvider === 'resend' ? required(environment, 'MAIL_WEBHOOK_ID') : environment.MAIL_WEBHOOK_ID?.trim() ?? '',
     publicBaseUrl: requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL'),
     appVersion: required(environment, 'MANGO_APP_VERSION'),
     allowedLinkHosts: linkHosts(environment),
-    testEmailAllowlist: emails(required(environment, 'MANGO_TEST_EMAIL_ALLOWLIST'), 'MANGO_TEST_EMAIL_ALLOWLIST'),
+    // Optional extra test-send addresses; operators' own sign-in addresses are always allowed.
+    testEmailAllowlist: environment.MANGO_TEST_EMAIL_ALLOWLIST?.trim() ? emails(environment.MANGO_TEST_EMAIL_ALLOWLIST, 'MANGO_TEST_EMAIL_ALLOWLIST') : [],
     providerReconciliationIntervalMinutes: positiveInteger(environment, 'MANGO_RECONCILIATION_INTERVAL_MINUTES'),
     unresolvedProviderOutcomeHours: positiveInteger(environment, 'MANGO_UNRESOLVED_OUTCOME_HOURS'),
     emailHandoffsPerMinute: positiveInteger(environment, 'MANGO_EMAIL_HANDOFFS_PER_MINUTE'),

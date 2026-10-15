@@ -13,7 +13,6 @@ export function createStoreRoutes(service:ReturnType<typeof createStoreService>,
     const sourceCapabilities=commerceSourceTypes.map(sourceType=>({sourceType,available:capability?.sourceTypes.includes(sourceType)??false,detail:capability?.detail??'No commerce connection is configured.'}));
     return context.json({...status,sourceSyncs,sourceCapabilities});
   });
-  routes.get('/settings/providers',async context=>context.json(await service.status()));
   // Mounted under native operator authentication with the other /api routes.
   routes.get('/store/observations',async context=>{
     const parsed=z.object({sourceType:z.enum(['cart','browsing-event']),cursor:z.string().min(1).max(4096).optional()}).strict().safeParse(context.req.query());

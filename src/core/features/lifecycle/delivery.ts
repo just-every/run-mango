@@ -421,7 +421,8 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
 
     async probeOutage(channel: Channel) {
       const adapter = sender(channel);
-      if (!adapter) return;
+      // An installation without a provider (a copy on a computer) has nothing to probe.
+      if (!adapter || !(await adapter.capabilities()).configured) return;
       const now=new Date();
       const due=await repository.claimOutageProbe(adapterName(channel),channel,now,runtime.platform.config.providerReconciliationIntervalMinutes*60000);
       if(due) {

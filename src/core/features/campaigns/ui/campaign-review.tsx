@@ -37,6 +37,7 @@ export function CampaignReviewPage() {
   const [needsCanonicalRead, setNeedsCanonicalRead] = useState(false);
   const [testChannel, setTestChannel] = useState<'email' | 'sms'>('email');
   const [testDestination, setTestDestination] = useState('');
+  const [confirmingApproval, setConfirmingApproval] = useState(false);
   const savedComposition = data?.revision ? JSON.stringify(toDraftComposition(data.revision, data.links, data.steps)) : undefined;
 
   useEffect(() => {
@@ -85,7 +86,7 @@ export function CampaignReviewPage() {
       setActionBlockers(response.data.blockers);
       setFieldErrors(approvalFieldErrors(response.data.blockers, draft));
       if (kind === 'approve') setValidationRequest(request => request + 1);
-      setNotice('Campaign unchanged. Resolve the blockers below and try again.');
+      setNotice(kind === 'test' ? 'Test not sent. Resolve the blockers below, then send the test again.' : 'Not approved. Resolve the blockers below and try again.');
       return;
     }
     if (response.status < 300 && response.data.status === 'scheduled') {
@@ -187,6 +188,9 @@ export function CampaignReviewPage() {
       <Modal open={navigation.status === 'blocked'} onClose={() => {if (navigation.status === 'blocked') navigation.reset();}} title="Leave without saving?" description="Your changes to this draft will be discarded.">
         <div className="detail-actions"><button className="secondary-action" type="button" onClick={() => {if (navigation.status === 'blocked') navigation.reset();}}>Keep editing</button><button className="danger-action--line" type="button" onClick={() => {if (navigation.status === 'blocked') navigation.proceed();}}>Discard and leave</button></div>
       </Modal>
+      <Modal open={confirmingApproval} onClose={() => setConfirmingApproval(false)} title="Approve and schedule?" description={`Mango will send revision ${revision.version} exactly as saved to its eligible contacts at the scheduled time. Until it sends, you can cancel it from the campaign page.`}>
+        <div className="detail-actions"><button className="secondary-action" type="button" onClick={() => setConfirmingApproval(false)}>Keep reviewing</button><button className="primary-action" type="button" onClick={() => {setConfirmingApproval(false); void action('approve');}}>Approve &amp; schedule</button></div>
+      </Modal>
       <header className="page-head review-heading">
         <div className="page-head__text">
           <Link className="back-link" to="/app/campaigns">
@@ -197,7 +201,7 @@ export function CampaignReviewPage() {
           <p className="page-head__meta review-heading__meta"><span>Revision {revision.version}</span> · <StatusPill value={data.campaign.state} /></p>
         </div>
         {editable || data.results ? <div className="page-head__actions review-heading__actions">
-          {editable ? <button className="primary-action" type="button" onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : void action('approve')} disabled={Boolean(busy) || (!dirty && needsCanonicalRead)}>
+          {editable ? <button className="primary-action" type="button" onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : setConfirmingApproval(true)} disabled={Boolean(busy) || (!dirty && needsCanonicalRead)}>
             {busy === 'save' ? 'Saving…' : busy === 'approve' ? 'Checking…' : dirty ? 'Save changes' : 'Approve & schedule'}
           </button> : null}
           {data.results ? <Link className="primary-action" to="/app/campaigns/$id/scheduled" params={{id}}>View schedule and results</Link> : null}
@@ -229,7 +233,7 @@ export function CampaignReviewPage() {
             <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} smsPreview={data.smsPreview} />
           </section> : null}
           {editable ? <Disclosure className="panel test-send-panel" title="Send a test">
-            <p className="muted-copy">Uses the saved revision and an approved test destination. Configure approved destinations in the operations guide.</p>
+            <p className="muted-copy">Uses the saved revision. Send it to your own sign-in address, another operator’s, or an address on the optional test allowlist (operations guide).</p>
             {!testDestination.trim() ? <p>Enter an approved test destination to send a test.</p> : null}
             {!revision.fromEmail || !revision.senderName ? <p>Email tests are unavailable until you save a sender identity in Settings and update this draft.</p> : null}
             {dirty ? <p>Save your changes before sending a test of this revision.</p> : null}

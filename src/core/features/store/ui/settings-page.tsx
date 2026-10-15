@@ -1,4 +1,4 @@
-import type { Provider, SourceSync } from '@/core/app/client/lib/types';
+import type { Provider } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState } from '@/core/app/client/ui/layout';
 import { KeepTogether } from '@/core/features/site/BodyText';
@@ -8,7 +8,7 @@ import type { SettingsOperator } from './settings-operator-actions';
 import { SettingsOperators } from './settings-operators';
 import { SettingsSender } from './settings-sender';
 
-type ProviderResponse = { providers: Provider[]; sourceSyncs: SourceSync[] };
+type ProviderResponse = { providers: Provider[]; off: string[] };
 
 export function SettingsPage() {
   const operator = useResource<{ operator: SettingsOperator }>('/api/operator');
@@ -23,7 +23,7 @@ export function SettingsPage() {
           <p className="page-head__lead">Operator identity and sending connections.</p>
         </div>
       </header>
-      <SettingsSender />
+      <SettingsSender operatorEmail={operator.data.operator.email} />
       <div className="settings-grid">
         <section className="panel settings-current" aria-labelledby="current-operator-title">
           <p className="eyebrow">Current operator</p>
@@ -34,13 +34,7 @@ export function SettingsPage() {
       </div>
       {providers.error ? <p className="inline-error settings-providers-error" role="alert">Unable to load delivery connections. <button className="secondary-action" onClick={() => void providers.reload()}>Try again</button></p> : null}
       {providers.data ? <ProviderStatus providers={providers.data.providers} /> : null}
-      {providers.data && !providers.data.sourceSyncs.length ? (
-        <section className="notice-note settings-note" aria-labelledby="settings-sources-title">
-          <p className="eyebrow">Commerce sources</p>
-          <h2 id="settings-sources-title">No source connection is declared.</h2>
-          <p>The server has not declared source types, so no source freshness or proposal-generation capability can be inferred.</p>
-        </section>
-      ) : null}
+      {providers.data?.off.length ? <p className="muted-copy settings-note">Off in this setup: {providers.data.off.join(', ')}. <a href="/docs/going-live">The going-live guide</a> explains the optional modules.</p> : null}
     </div>
   );
 }

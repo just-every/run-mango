@@ -129,6 +129,7 @@ for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as a
     await page.screenshot({ path: testInfo.outputPath(`design-import-${width}.png`), fullPage: true });
 
     await page.getByRole('button', { name: 'Approve & schedule', exact: true }).click();
+    await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();
     await expect(page.getByRole('status').filter({ hasText: 'exact saved revision is approved and scheduled' })).toBeVisible();
     expect((await read()).campaign.state).toBe('scheduled');
     expect(outbound).toEqual([]);

@@ -30,16 +30,11 @@ Save the draft, then read the **Approval checks** panel. Blocking items come fir
 
 ### Verify your sender
 
-SPF, DKIM, DMARC and domain alignment must all pass in a message actually received by a mailbox you control. Mango checks this through a receipt connector that you provide. Set `MAILBOX_RECEIPT_URL` and `MAILBOX_RECEIPT_RECIPIENT` together, and list the recipient in `MANGO_TEST_EMAIL_ALLOWLIST`. Mango supplies no receipt service and no default endpoint, and the connector must follow Cloudflare Email Routing receipt semantics. From the checkout you deployed from, with the same environment variables set and your sender saved in Settings:
+Approval needs evidence that your sender works. In **Settings**, once **Provider domain** and **DNS records** pass, press **Send the check to** *your sign-in address*. Mango sends one email from your From address through your provider. Open it; if it reached your inbox (not spam), follow its link and press **Yes, it reached my inbox**. That is all: no command line is needed.
 
-```bash
-node scripts/sender-verification.mjs prepare
-node scripts/sender-verification.mjs send <id>
-node scripts/sender-verification.mjs observe <id>
-node scripts/sender-verification.mjs inspect
-```
+The confirmation lasts 30 days, or until the provider's domain records or your DNS change, and Mango checks the provider and public DNS (SPF, DKIM, DMARC and alignment with the From domain) again at approval and at every handoff. If the evidence is not passing when a message is due, the message waits and is retried on your reconciliation interval until its deadline. **Settings** shows each check and when it expires.
 
-Use the `id` that `prepare` prints. The evidence lasts at most 24 hours and is re-checked at approval and at every handoff. If it is not passing when a message is due, the message waits and is retried on your reconciliation interval until its deadline. **Settings** shows each check and when it expires.
+An installation can instead trust a receipt connector that reports the receiving mailbox's own authentication results; [Install and deploy](./install.md#optional-a-trusted-receipt-connector) describes it.
 
 ## Approve
 

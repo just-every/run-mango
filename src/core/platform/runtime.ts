@@ -23,13 +23,17 @@ import { createJobDispatcher } from './jobs';
 import { createLinkInspector } from './link-inspector';
 import { createPublicTokenSigner } from './public-tokens';
 import { localContactHashSalt } from './local-contact-authority';
+import { createD1DevelopmentOutbox } from '@/vendor/base/mail/src/development/index.mjs';
 
-function unavailableSender(channel: 'email'): SenderAdapter {
+/** A copy on a computer sends no marketing. Consent confirmations land in the local
+ * development outbox beside sign-in mail, so signup can be completed locally. */
+function localSender(database: D1Database): SenderAdapter {
+  const outbox = createD1DevelopmentOutbox({ db: database });
   const unavailable = () => {
-    throw new Error(`${channel} is unavailable in local development because no production provider is configured.`);
+    throw new Error('Sending is off on a copy running on your computer. Deploy Mango with a mail provider to send email.');
   };
   return {
-    channel,
+    channel: 'email',
     async capabilities() {
       return {
         configured: false,
@@ -38,13 +42,19 @@ function unavailableSender(channel: 'email'): SenderAdapter {
         effectiveReconciliation: false,
         deduplicationWindowMs: 0,
         reconciliationWindowMs: 0,
-        detail: `${channel} delivery is unavailable in local development.`,
+        detail: 'Sending is off on a copy running on your computer. Drafts, previews, imports and signup work here; deploy Mango with a mail provider to send letters.',
       };
     },
     async validateSender() {
-      return { ready: false, detail: `${channel} delivery is unavailable in local development.` };
+      return { ready: false, detail: 'Sending is off on a copy running on your computer.' };
     },
-    send: unavailable,
+    async send(request) {
+      if (request.purpose !== 'consent-confirmation') unavailable();
+      await outbox.put({ deliveryId: request.idempotencyKey, from: request.sender, to: [request.to], subject: request.content.subject ?? '',
+        text: request.content.text, ...(request.content.html ? { html: request.content.html } : {}),
+        ...(request.content.replyTo ? { replyTo: request.content.replyTo } : {}) });
+      return { providerMessageId: `local-outbox:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
+    },
     reconcile: unavailable,
     verifyWebhook: unavailable,
   };
@@ -108,7 +118,7 @@ export function createProductionPlatform(environment: AppBindings): Platform {
   const database=createDatabase(environment.DB);
   adapters.mailer=pacedAdapter(adapters.mailer,database,config);
   if(adapters.sms) adapters.sms=pacedAdapter(adapters.sms,database,config);
-  return compose(environment, config, adapters);
+  return { ...compose(environment, config, adapters), senderVerification: verification };
 }
 
 export function createLocalPlatform(environment: AppBindings, localSigningKey: string): Platform {
@@ -149,6 +159,6 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
     },
   }, {
     ...designAdapter(design),
-    mailer: unavailableSender('email'),
+    mailer: localSender(environment.DB),
   });
 }

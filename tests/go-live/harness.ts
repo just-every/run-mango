@@ -49,7 +49,7 @@ export async function confirmedContact(site: Installation, edge: Edge, cookie: s
   await availableTransport(site);
   const clock=await site.control('/_golive/clock');
   await json(await site.call('/api/contacts/consent', { method: 'POST', cookie, body: { ...consent, contact: { email, displayName }, occurredAt: new Date(clock.now).toISOString() } }), 201);
-  const message = edge.sends.findLast(send => send.to === email && send.body.subject === 'Confirm your Mango subscription');
+  const message = edge.sends.findLast(send => send.to === email && send.body.subject === 'Confirm your Mango Garden subscription');
   const link = /https:\/\/\S+\/consent\/confirm\/\S+/.exec(message!.body.content.find((part: any) => part.type === 'text/plain').value)![0];
   expect((await fetch(site.local(link), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'confirm=true' })).status).toBe(200);
   return link;

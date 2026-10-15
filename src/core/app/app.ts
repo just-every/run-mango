@@ -52,6 +52,7 @@ import {
 } from '@/core/features/lifecycle';
 import { createSettingsRoutes } from '@/core/features/settings/routes';
 import { createSettingsService } from '@/core/features/settings/service';
+import { createSenderCheckRoutes } from '@/core/features/settings/sender-check-routes';
 import { createStoreRepository } from '@/core/features/store/repository';
 import { createStoreRoutes } from '@/core/features/store/routes';
 import { createStoreService } from '@/core/features/store/service';
@@ -110,7 +111,7 @@ function audienceDependencies(
           to: input.destination,
           sender,
           content: {
-                subject: 'Confirm your Mango subscription',
+                subject: `Confirm your ${identity.displayName} subscription`,
                 text: `Confirm your subscription within 30 days: ${destination}\n\n${identity.displayName}\n${identity.physicalAddress}`,
                 html: `<p>Confirm your subscription within 30 days:</p><p><a href="${destination}">Confirm subscription</a></p><footer>${escape(identity.displayName)}<br>${escape(identity.physicalAddress)}</footer>`,
                 replyTo: identity.replyToEmail,
@@ -271,6 +272,7 @@ export function createApp(
   });
   app.route('/', createPublicAuthRoutes(authService, { secureCookie }));
   app.route('/', createAudiencePublicRoutes(audienceService));
+  app.route('/', createSenderCheckRoutes(platform));
   app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
   app.route('/', createSmsSignupRoutes(platform,audienceService));
   app.route('/', createMediaRoutes(environment.DB, platform.blobs));

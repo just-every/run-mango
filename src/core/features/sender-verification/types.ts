@@ -50,3 +50,7 @@ export class VerificationError extends Error {
   providerVerified = false;
   constructor(readonly reason: string, readonly state: 'unknown' | 'failed' = 'failed') { super(reason); }
 }
+/** Challenges sent to the signed-in operator's own mailbox and confirmed by its one-time link. */
+export const ownerConnectorId = 'owner-inbox:v1';
+/** Observation results that grant marketing authority. */
+export const authorityReasons = ['authentication-observed', 'owner-confirmed'] as const;

@@ -2,7 +2,7 @@ import {CommerceResults} from '@/core/features/insights/ui/commerce-results';
 import { SchedulerReadiness } from './scheduler-readiness';
 import { CampaignCosts } from '@/core/features/insights/ui/cost-totals';
 import { productConfig } from '@/ext/config';
-import { Link, useParams } from '@tanstack/react-router';
+import { Link, useLoaderData, useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
 import type { CampaignDetail } from '@/core/app/client/lib/types';
@@ -16,6 +16,7 @@ import { ScheduledEnvelopeArt } from './scheduled-envelope-art';
 
 export function CampaignScheduledPage() {
   const { id } = useParams({ from: '/app/campaigns_/$id_/scheduled' });
+  const { modules } = useLoaderData({ from: '/app' });
   const { data, error, loading, reload } = useResource<CampaignDetail>(`/api/campaigns/${id}`);
   const [notice, setNotice] = useState<{message:string;error:boolean}>();
   const [cancelling, setCancelling] = useState(false);
@@ -73,7 +74,7 @@ export function CampaignScheduledPage() {
         <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
       </div>
     </div>
-    <CommerceResults campaignId={id} />
+    {modules.store ? <CommerceResults campaignId={id} /> : null}
     <CampaignCosts campaignId={id} />
     <Modal open={confirmCancel} onClose={() => setConfirmCancel(false)} title="Cancel this campaign?" description="Recipient-steps not yet handed to a provider will be stopped. Messages already handed to a provider cannot be recalled.">
       <div className="detail-actions"><button className="secondary-action" type="button" disabled={cancelling} onClick={() => setConfirmCancel(false)}>Keep campaign</button><button className="danger-action" type="button" disabled={cancelling} onClick={() => void cancel()}>{cancelling ? 'Cancelling…' : 'Confirm cancellation'}</button></div>

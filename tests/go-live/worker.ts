@@ -80,6 +80,7 @@ async function compose(bindings: Bindings) {
     ? createResendAdapter({apiKey:platform.config.mailProviderApiKey,webhookSecret:platform.config.mailWebhookSecret,webhookId:platform.config.mailWebhookId,verification,retentionPolicy:platform.config.deliveryPolicies?.resend})
     : createSendgridAdapter({apiKey:platform.config.mailProviderApiKey,webhookPublicKey:platform.config.mailWebhookSecret,verification});
   platform.mailer=pacedAdapter(mailer,platform.database,platform.config);
+  platform.senderVerification=verification;
   return { platform, verification };
 }
 

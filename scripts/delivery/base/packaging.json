@@ -71,10 +71,10 @@
         "SESSION_SECRET",
         "SETUP_TOKEN",
         "CONTACT_HASH_SALT",
-        "MAIL_PROVIDER_API_KEY",
-        "MAIL_WEBHOOK_SECRET"
+        "MAIL_PROVIDER_API_KEY"
       ],
       "optionalSecretNames": [
+        "MAIL_WEBHOOK_SECRET",
         "SESSION_SIGNING_KEY",
         "AUTH_SETUP_TOKEN",
         "TURNSTILE_SECRET_KEY",

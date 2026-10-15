@@ -1,7 +1,13 @@
 # Sender evidence boundary
 
 `createSenderVerification({database, config})` is composed into both production
-mail adapters. The installation selects its trusted receipt connector with an authenticated
+mail adapters. Its default receiver is the operator's own inbox (`owner-confirmation.ts`):
+`sendOwnerConfirmation` sends one diagnostic message through the provider to the signed-in
+operator, and `confirmOwnerReceipt` records an `owner-confirmed` observation from the
+POST behind its one-time link (`/sender-check/<id>?key=…`). That observation grants authority
+only with current provider/DNS evidence and alignment, lasts at most 30 days, and is
+invalidated by the same binding, configuration and generation fences as connector receipts.
+The connector path below is optional. The installation selects its trusted receipt connector with an authenticated
 receipt URL and diagnostic recipient; without it observed authentication is missing and marketing cannot
 be approved. Provider/DNS configuration alone never grants authority.
 Transactional sign-in uses the existing direct mail path independently.

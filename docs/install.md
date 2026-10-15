@@ -4,7 +4,7 @@ There are two ways to run Mango. Run it on your computer to look around and writ
 
 ## Run it on your computer
 
-Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.15**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** and installs the locked dependencies. You do not need to install Node or pnpm separately when using the installer script. Run from the project root and supply your own owner email.
+First install **Node 22 or later**: rer runs on it, and the installer stops with `node is required` without it. Get it from [nodejs.org](https://nodejs.org/en/download) (or `brew install node` on a Mac, or a version manager such as nvm). Then install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.19**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
 
 ```bash
 rer install
@@ -12,7 +12,7 @@ rer setup --owner-email you@example.com
 rer dev
 ```
 
-`install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again keeps your existing owner and private settings, but rer 0.2.15 repeats the build and migrations, starts a temporary application and requests a fresh sign-in message. Authentication/outbox records, SQLite runtime files, generated build outputs, command receipts and redacted logs can change. Production builds use a separate generated Worker configuration from local dev, preview and migrations. Unchanged configuration and private settings are preserved when building or repeating a deploy dry-run, while build outputs, receipts and logs may be regenerated. Setup is not a read-only check. Starting dev and signing in also writes real authentication and outbox records; omitting --port reuses the saved origin. Pass `--port PORT` or `--host HOST` to use another loopback address than the default, 127.0.0.1:15660. Never commit or share `.dev.vars`.
+`install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again keeps your existing owner and private settings, but rer 0.2.19 repeats the build and migrations, starts a temporary application and requests a fresh sign-in message. Authentication/outbox records, SQLite runtime files, generated build outputs, command receipts and redacted logs can change. Production builds use a separate generated Worker configuration from local dev, preview and migrations. Unchanged configuration and private settings are preserved when building or repeating a deploy dry-run, while build outputs, receipts and logs may be regenerated. Setup is not a read-only check. Starting dev and signing in also writes real authentication and outbox records; omitting --port reuses the saved origin. Pass `--port PORT` or `--host HOST` to use another loopback address than the default, 127.0.0.1:15660. Never commit or share `.dev.vars`.
 
 `dev` starts Mango and prints `RER_READY`, `RER_SIGNED_IN` and a private `RER_OPEN` link. Open that link on this computer to enter as the owner; keep it private because it carries the checkout’s dev key. To use ordinary email-link sign-in instead, run `rer dev --login`, open its outbox `RER_OPEN`, choose the newest message, follow its link and press **Confirm**. The first time, the link opens **Set up your sender identity**: save your business details there to enter the app. You can change them later in Settings. Local mail never leaves your computer and no mail provider is configured locally, so a local copy cannot send a real newsletter. Stop the server with Ctrl-C.
 
@@ -41,7 +41,9 @@ NODE
 
 Fill it privately with your account credentials, owner email, mail settings and allowed link hosts; choose `MANGO_DEPLOY_ENV` for this installation. Keep the independent generated session, setup and contact keys with your backups. Mango never reads Wrangler credential files.
 
-Product settings, including `MAIL_PROVIDER`, app version, timing and rate limits, live in `deploy.json` `vars`. Both deployment and sender verification read that definition. Change those settings there and deploy the change; shell overrides do not change the sender runner's declared settings. For SendGrid, `MAIL_WEBHOOK_SECRET` is the base64 public verification key of its signed event webhook. For Resend it is the Svix signing secret.
+Product settings, including `MAIL_PROVIDER`, app version, timing and rate limits, live in `deploy.json` `vars`. Change those settings there and deploy the change.
+
+With SendGrid you need only its API key (`MAIL_PROVIDER_API_KEY`) and a verified sign-in sender (`MAIL_AUTH_FROM`). Leave `MAIL_WEBHOOK_SECRET` and `MAIL_WEBHOOK_ID` empty if you have no signed Event Webhook: Mango deploys and sends, and each send shows **Accepted** (SendGrid took it). To see **Delivered**, bounces and complaints, add a webhook later; see [Add a SendGrid event webhook](#add-a-sendgrid-event-webhook). Resend needs both: `MAIL_WEBHOOK_SECRET` is its Svix signing secret and `MAIL_WEBHOOK_ID` its webhook ID.
 
 ### Check, then deploy
 
@@ -56,7 +58,7 @@ rer deploy --environment "$MANGO_DEPLOY_ENV"
 ```
 
 - `--dry-run` validates the local declaration and build without a provider request. It does not prove account permissions, hosted provisioning, owner claim, token retirement or mail delivery.
-- `deploy` finds or creates the Worker, D1 database, R2 bucket and Queue for the selected environment, applies remote migrations, uploads the Worker and its assets, then verifies bindings and health after a real database ping. A five-minute scheduled job is part of the Worker.
+- `deploy` finds or creates the Worker, D1 database, R2 bucket and Queue for the selected environment, applies remote migrations, uploads the Worker and its assets, then verifies bindings and health after a real database ping. A scheduled job that runs every minute is part of the Worker. Cloudflare can take a while to start a new Worker's first scheduled run, so Mango also queues each approved letter for its exact send time (up to 12 hours ahead); it leaves on time either way.
 - `deploy` automatically claims the first owner through native bootstrap, then removes the one-time setup token from the Worker. Repeat deployment keeps the existing owner. No separate claim command is required.
 
 `deploy` records owned resources and the canonical HTTPS origin in `.rer/deploy/<environment>.json`. Back that file up with the matching private inputs: later deployment needs it, and same-named unowned resources are refused. No manually guessed origin is needed. Open the deployed site, request an email sign-in link as `OWNER_EMAIL`, confirm it and save your business sender details in **Set up your sender identity**.
@@ -72,9 +74,39 @@ rer deploy --environment "$MANGO_DEPLOY_ENV"
 
 Use the same environment as the first deployment. rer installs updated locked dependencies and preserves the existing owner. Check health and email sign-in afterwards.
 
+### Remove a deployment
+
+To delete a deployment and everything rer created for it (the Worker, D1 database, R2 bucket and Queue), load `.rer/hosted.env` as above and run:
+
+```bash
+rer deploy --environment "$MANGO_DEPLOY_ENV" --remove --yes
+```
+
+rer reads back that each resource is gone and touches nothing else in your account. Export your data first if you want to keep it; removal deletes it.
+
+### Sign in as the owner without email
+
+If sign-in email does not arrive, or the owner email was mistyped, `rer signin` prints a one-time sign-in link for the recorded owner, using the same Cloudflare credentials that deployed it:
+
+```bash
+rer signin --environment "$MANGO_DEPLOY_ENV"
+```
+
+The link works once, within 15 minutes, and its use is recorded in the owner's audit log. Once signed in you can correct the email in Settings.
+
 ### Verify your sender
 
-If you configure the trusted receiver, supply both its authenticated URL and diagnostic recipient privately in `.rer/hosted.env`, and include that recipient in `MANGO_TEST_EMAIL_ALLOWLIST`. The URL must use the trusted connector's public DNS host in the form `https://<public-receiver-host>/receipts?token=<private capability>`, with no other query parameters, port, fragment or user information. URL-encode the nonempty capability and keep the entire URL private. The connector must implement the Cloudflare Email Routing receipt semantics described in the repository's `OPERATIONS.md`; a generic mailbox API is insufficient. After completing sender setup, the same loaded `.rer/hosted.env` supports:
+Approval needs evidence that your sender works. After you sign in and save your sender identity, open **Settings**:
+
+1. **Provider domain** and **DNS records** must pass: finish domain authentication with your mail provider (SPF and DKIM records) and publish a DMARC record for the From domain, for example `_dmarc` TXT `v=DMARC1; p=none`.
+2. Press **Send the check to** *your sign-in address*. Mango sends one email from your From address through the provider to the address you sign in with.
+3. Open that email. If it is in your inbox (not spam), follow its link and press **Yes, it reached my inbox**.
+
+Settings then shows the sender as confirmed, and campaigns can be approved. The confirmation lasts 30 days, or until the provider or DNS records change; Mango still checks the provider and DNS fresh at every approval and every send. No command-line step is needed.
+
+#### Optional: a trusted receipt connector
+
+Instead of confirming from your inbox, an installation can trust a receipt connector that reads the receiving mailbox's own SPF, DKIM and DMARC results. If you configure the trusted receiver, supply both its authenticated URL and diagnostic recipient privately in `.rer/hosted.env`, and include that recipient in `MANGO_TEST_EMAIL_ALLOWLIST`. The URL must use the trusted connector's public DNS host in the form `https://<public-receiver-host>/receipts?token=<private capability>`, with no other query parameters, port, fragment or user information. URL-encode the nonempty capability and keep the entire URL private. The connector must implement the Cloudflare Email Routing receipt semantics described in the repository's `OPERATIONS.md`; a generic mailbox API is insufficient. After completing sender setup, the same loaded `.rer/hosted.env` supports:
 
 ```bash
 node scripts/sender-verification.mjs inspect
@@ -109,6 +141,20 @@ Every operator can then spend from your 12ui account; Mango shows an estimate be
 Local checks and a deploy do not prove that mail works. Continue with [Team and settings](./team-and-settings.md) and [Approval and sending](./approval-and-sending.md).
 
 > **Tip:** Want sample data? `pnpm run review:synthetic` starts a separate, isolated synthetic workspace on port 15662. Open the link written to `.seed/review-access`. It never sends anything.
+
+## Add a SendGrid event webhook
+
+Delivery status reads **Accepted** until SendGrid's signed Event Webhook reports back. To add one:
+
+1. In SendGrid, open **Settings → Mail Settings → Event Webhooks**, create a webhook with the URL `https://<your-deployment>/webhooks/mail/sendgrid`, select the delivery, bounce, dropped, deferred, spam report and unsubscribe events, and turn on **Signed Event Webhook**.
+2. Copy its **verification key** (the public key) into `MAIL_WEBHOOK_SECRET` in `.rer/hosted.env`.
+3. Load `.rer/hosted.env` and set the secret on the running Worker without a rebuild:
+
+```bash
+rer deploy --environment "$MANGO_DEPLOY_ENV" --set-secret MAIL_WEBHOOK_SECRET
+```
+
+New sends then show **Delivered**, bounced and complained separately. A SendGrid account has a limited number of webhooks; if they are all in use, see the next section to reuse one.
 
 ## Use an existing signed event receiver
 

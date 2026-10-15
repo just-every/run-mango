@@ -103,4 +103,4 @@ To reuse conditions, select a **Saved segment** under **Start from a saved segme
 
 Press **Save full draft** (or **Save changes** at the top). Saving refreshes the preview and the approval checks, and it discards any earlier checks. Under "Saved revision content" you can switch between **Desktop email** and **Mobile email**. Links in the preview are inactive, the recipient is an example ("Alex Example"), and remote images stay blocked until you choose **Load N remote images**. Unsaved edits are flagged, and leaving the page asks first.
 
-> **Tip:** Under **Send a test** you can send the saved draft to an address on your `MANGO_TEST_EMAIL_ALLOWLIST`. The subject is marked "[MANGO TEST — NOT A CAMPAIGN SEND]". It needs a configured mail provider.
+> **Tip:** Under **Send a test** you can send the saved draft to your own sign-in address (or any operator's), or to an address on the optional `MANGO_TEST_EMAIL_ALLOWLIST`. The subject is marked "[MANGO TEST — NOT A CAMPAIGN SEND]". It needs a configured mail provider.

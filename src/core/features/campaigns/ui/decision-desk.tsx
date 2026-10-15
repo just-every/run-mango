@@ -1,6 +1,6 @@
 import { capabilityName, capabilityNextStep, plainServiceText } from '@/core/app/client/ui/product-copy';
 import { requestJson } from '@/core/app/client/lib/api';
-import { Link } from '@tanstack/react-router';
+import { Link, useLoaderData } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
 import { formatDate, titleCase } from '@/core/app/client/lib/format';
@@ -14,7 +14,7 @@ import { ProposalDetail } from './proposal-detail';
 import { ProposalHistory } from './proposal-history';
 import { ProposalQueue } from './proposal-queue';
 
-function ProposalCapabilityState({ providers }: { providers: DecisionDesk['sourceStatus']['providers'] }) {
+function ProposalCapabilityState({ providers, suggestions }: { providers: DecisionDesk['sourceStatus']['providers']; suggestions: boolean }) {
   const unavailable = providers.filter((provider) => !provider.configured);
   const art = (
     <div className="empty-art art" aria-hidden="true">
@@ -22,8 +22,8 @@ function ProposalCapabilityState({ providers }: { providers: DecisionDesk['sourc
     </div>
   );
   return (
-    <EmptyState id="proposal-empty-title" title="No campaign suggestions yet" className="desk-empty" art={art} action={<Link className="secondary-action" to="/app/campaigns">Review campaigns</Link>}>
-      {unavailable.length ? (
+    <EmptyState id="proposal-empty-title" title={suggestions ? 'No campaign suggestions yet' : 'Write your next letter'} className="desk-empty" art={art} action={<Link className="secondary-action" to="/app/campaigns">Review campaigns</Link>}>
+      {!suggestions ? <p>Write a campaign, preview it on desktop and mobile, then approve the exact saved version. Nothing sends until you do.</p> : unavailable.length ? (
         <>
           <p>These connections need attention before suggestions are available.</p>
           <ul className="capability-list">
@@ -48,6 +48,7 @@ export function DecisionDeskPage() {
   const [generating,setGenerating]=useState(false),[generationNotice,setGenerationNotice]=useState('');
   const generate=async()=>{setGenerating(true);setGenerationNotice('');setGenerationSuccess(false);try {const result=await requestJson<{kind:string;detail?:string;error?:string}>('/api/proposals/generate',{method:'POST',body:'{}'});setGenerationSuccess(result.data.kind==='proposed');setGenerationNotice(result.data.kind==='proposed'?'Suggestion ready. Review it before approving.':result.data.detail??'Generation failed. No substitute content was created; manual authoring remains available.');await reload();} catch {setGenerationNotice('Generation could not be confirmed. Reload to inspect suggestions.');} finally {setGenerating(false);}};
   const [selectedId, setSelectedId] = useState<string>();
+  const { modules } = useLoaderData({ from: '/app' });
 
   useEffect(() => {
     if (!data?.proposals.length) return;
@@ -70,8 +71,8 @@ export function DecisionDeskPage() {
         </div>
         <div className="page-head__actions">
           {/* Sun once per view: while a suggestion is open, its "Use this" is the sun button and generating steps back. */}
-          <button type="button" className={showing ? 'secondary-action' : 'primary-action'} disabled={generating} onClick={()=>void generate()}>{generating?'Generating…':'Generate suggestion'}</button>
-          <Link className="secondary-action" to="/app/campaigns">Write a campaign</Link>
+          {modules.ai ? <button type="button" className={showing ? 'secondary-action' : 'primary-action'} disabled={generating} onClick={()=>void generate()}>{generating?'Generating…':'Generate suggestion'}</button> : null}
+          <Link className={modules.ai ? 'secondary-action' : 'primary-action'} to="/app/campaigns">Write a campaign</Link>
         </div>
       </header>
       {generationNotice?<p className={generationSuccess?'action-notice':'inline-error'} role={generationSuccess?'status':'alert'}>{plainServiceText(generationNotice)}</p>:null}
@@ -81,10 +82,10 @@ export function DecisionDeskPage() {
           <ProposalDetail key={entry.proposal.id} entry={entry} onDismiss={()=>void reload()} />
         </div>
       ) : (
-        <ProposalCapabilityState providers={data.sourceStatus.providers} />
+        <ProposalCapabilityState providers={data.sourceStatus.providers} suggestions={modules.ai} />
       )}
       <ProposalHistory decisions={data.recentDecisions??[]} />
-      <section className="source-status panel" aria-labelledby="source-status-title">
+      {modules.store ? <section className="source-status panel" aria-labelledby="source-status-title">
         <div className="section-heading">
           <h2 id="source-status-title">Store data</h2>
           <Link className="text-link" to="/app/store">Manage sync</Link>
@@ -102,7 +103,7 @@ export function DecisionDeskPage() {
         ) : (
           <p className="muted-copy">No source sync state has been recorded.</p>
         )}
-      </section>
+      </section> : null}
     </div>
   );
 }

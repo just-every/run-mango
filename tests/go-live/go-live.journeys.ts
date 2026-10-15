@@ -43,10 +43,21 @@ test('[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts r
   state.readinessBefore = await readiness();
   expect(state.readinessBefore).toMatchObject({ domain: 'observed', dns: 'observed', receipt: 'not-observed', authentication: 'not-observed', jurisdiction: 'owner' });
   await record('settings-before.txt', await screens(page, `${site.runtime.url}/app/settings`, 'settings-before-evidence', info));
-  await site.control('/_golive/sender-evidence');
+  // Mango's default receiving mailbox is the owner's own inbox: Settings emails a check, the
+  // owner opens its link (a GET only shows the page) and presses Confirm.
+  await availableTransport(site);
+  const sentCheck = await json(await site.call('/api/settings/sender/confirmation', { method: 'POST', cookie, body: {} }), 202);
+  expect(sentCheck.sentTo).toBe('owner@example.test');
+  const check = edge.sends.findLast(send => send.to === 'owner@example.test')!;
+  const checkLink = /https:\/\/\S+\/sender-check\/\S+/.exec(check.body.content.find((part: any) => part.type === 'text/plain').value)![0];
+  expect((await fetch(site.local(checkLink))).status).toBe(200);
+  expect((await json(await site.call('/api/settings/sender', { cookie }), 200)).validation.ready).toBe(false);
+  const forged = new URL(site.local(checkLink)); forged.searchParams.set('key', 'A'.repeat(43));
+  expect((await fetch(forged, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'confirm=true' })).status).toBe(404);
+  expect((await fetch(site.local(checkLink), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'confirm=true' })).status).toBe(200);
   expect((await json(await site.call('/api/settings/sender', { cookie }), 200)).validation.ready).toBe(true);
   state.readinessAfter = await readiness();
-  expect(state.readinessAfter).toMatchObject({ domain: 'observed', dns: 'observed', receipt: 'observed', authentication: 'observed', 'one-click': 'built-in', footer: 'built-in', jurisdiction: 'owner' });
+  expect(state.readinessAfter).toMatchObject({ domain: 'observed', dns: 'observed', receipt: 'observed', authentication: 'checked', 'one-click': 'built-in', footer: 'built-in', jurisdiction: 'owner' });
   await record('settings-after.txt', await screens(page, `${site.runtime.url}/app/settings`, 'settings-after-evidence', info));
   const people = ['alice', 'bob', 'carol', 'dave', 'erin'].map(name => `${name}@example.test`);
   state.confirmations = {} as Record<string, string>;

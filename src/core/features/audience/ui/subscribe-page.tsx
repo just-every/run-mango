@@ -62,7 +62,7 @@ export function SubscribePage({ info }: { info: SubscribeInfo }) {
         }),
       });
       if (response.status === 202 && response.data.status === 'confirmation-required') {
-        setMessage('Request received. Open the confirmation link sent to your selected channel and press Confirm subscription. SMS waits for the permitted recipient-local window.');
+        setMessage(sms ? 'Request received. Open the confirmation text and reply as it asks. It arrives during the permitted local hours for your number.' : 'Request received. Open the confirmation email and press Confirm subscription.');
         return;
       }
       setErrors(mapFieldErrors(response.data.fields, ['email','phone','timeZone','displayName','consent']));

@@ -8,6 +8,7 @@ import { loadSenderSettings } from '@/core/features/settings/sender-persistence'
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
 import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-content';
 import { unavailableInspection } from '@/core/features/sender-verification/service';
+import { senderReasonText } from '@/core/features/sender-verification/reason-text';
 import { invalidPersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { inspectOwnMedia, ownMediaName } from '@/core/features/campaign-assets/own-media';
@@ -103,6 +104,8 @@ function adapterChecks(
   requiredReconciliationMs: number,
 ) {
   const prefix = channel === 'email' ? 'mail.sender.v1' : 'sms.sender.v1';
+  // Without a provider there is nothing else to check; one blocker says so.
+  if (!capabilities.configured) return [check(`${prefix}.configured`, false, capabilities.detail)];
   if (capabilities.handoffPolicy === 'single-attempt') return [
     check(`${prefix}.configured`, capabilities.configured && capabilities.canSendMarketing, capabilities.detail),
     check(`${prefix}.single-attempt`, channel === 'email' && capabilities.provider === 'sendgrid',
@@ -175,13 +178,15 @@ export async function runApprovalChecks(input: {
     checks.push(...adapterChecks('email', mailCapabilities, requiredWindow('email')));
     const holds=await activeProviderHolds(platform.database,mailCapabilities.provider??platform.config.mailProvider??'resend','email',snapshot.revision.fromEmail);
     checks.push(check('provider.restrictions',holds.length===0,holds.length?holds.map(h=>`${h.provider} ${h.scope}: ${h.detail}`).join('; '):'No observed provider restriction.'));
-    checks.push(check('message.email-sender', mailInspection.ready && Boolean(mailInspection.lease), mailInspection.reason));
+    if (mailCapabilities.configured) {
+      checks.push(check('message.email-sender', mailInspection.ready && Boolean(mailInspection.lease), senderReasonText(mailInspection.reason)));
+      const authentication = mailInspection.authentication;
+      checks.push(check('message.email-authentication', Boolean(authentication?.spf && authentication.dkim && authentication.dmarc && authentication.aligned),
+        'SPF, DKIM, DMARC, and visible From-domain alignment must all pass.'));
+    }
     checks.push(check('message.email-configured-identity',
       revisionMatchesSender(snapshot.revision, configured),
       'The saved sender identity must exactly match the configured business identity.'));
-    const authentication = mailInspection.authentication;
-    checks.push(check('message.email-authentication', Boolean(authentication?.spf && authentication.dkim && authentication.dmarc && authentication.aligned),
-      'SPF, DKIM, DMARC, and visible From-domain alignment must all pass.'));
     checks.push(check('message.email-consent-scope', input.candidates.every((candidate) => {
       const email = candidate.channels.email;
       return !email || Boolean(

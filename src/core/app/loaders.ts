@@ -15,13 +15,15 @@ async function operatorState(setup = false) {
     throw new Error('unauthenticated');
   }
   const identity = await loadSenderSettings(platform);
-  return {displayName: operator.displayName, email: operator.email, identity,
+  // Optional modules shown in navigation and on the desk only when this installation enables them.
+  const modules = {store: Boolean(platform.commerce), ai: Boolean(platform.ai), sms: Boolean(platform.sms)};
+  return {displayName: operator.displayName, email: operator.email, identity, modules,
     setupComplete: senderIdentitySchema.safeParse(identity).success};
 }
 export const loadOperator = createServerFn({method: 'GET'}).handler(async () => {
   const state = await operatorState();
   if (!state.setupComplete) throw redirect({to: '/setup'});
-  return {displayName: state.displayName, email: state.email};
+  return {displayName: state.displayName, email: state.email, modules: state.modules};
 });
 export const loadSetup = createServerFn({method: 'GET'}).handler(async () => {
   const state = await operatorState(true);

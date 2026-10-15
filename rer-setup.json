@@ -103,10 +103,10 @@
       "name": "MAIL_WEBHOOK_SECRET",
       "label": "Mail webhook verification key",
       "kind": "secret",
-      "required": true,
+      "required": false,
       "ownerVisible": true,
       "input": "entered",
-      "help": "SendGrid event webhook public key, or Resend webhook signing secret.",
+      "help": "Optional for SendGrid: its signed Event Webhook public key, which turns Accepted into Delivered, bounced and complaint reports. Required for Resend: its webhook signing secret.",
       "group": "mail"
     },
     {

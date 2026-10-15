@@ -110,11 +110,16 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       if (result.kind !== 'approved') {
         return { kind: 'conflict' as const, detail: 'The revision or campaign changed while approval checks were running.' };
       }
-      // The durable schedule is dispatched by Cron when due. An immediate
-      // future dispatch command would be acknowledged before its due instant.
-      for (const step of snapshot.steps.filter(step=>step.scheduledAt<=now)) {
-        await runtime.platform.jobs.enqueue({kind:'campaign.dispatch',idempotencyKey:`dispatch:${step.id}:${step.scheduledAt.toISOString()}`,
-          payload:{campaignId:snapshot.campaign.id,revisionId:snapshot.revision.id,stepId:step.id,channel:step.channel}});
+      // Due steps dispatch now. A step due within the Queue's 12-hour delay limit also gets
+      // a command delayed to its instant, so it leaves on time even before Cloudflare starts a
+      // new Worker's Cron Trigger; Cron remains the durable path and a duplicate is fenced.
+      for (const step of snapshot.steps) {
+        const delaySeconds = Math.ceil((step.scheduledAt.getTime() - Date.now()) / 1000);
+        if (delaySeconds > 43_200) continue;
+        const command = {kind:'campaign.dispatch' as const,idempotencyKey:`dispatch:${step.id}:${step.scheduledAt.toISOString()}`,
+          payload:{campaignId:snapshot.campaign.id,revisionId:snapshot.revision.id,stepId:step.id,channel:step.channel}};
+        if (delaySeconds > 0) await runtime.platform.jobs.retry(command, delaySeconds);
+        else await runtime.platform.jobs.enqueue(command);
       }
       return { kind: 'approved' as const, revisionDigest, idempotent: false };
     },
@@ -158,7 +163,9 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       let allowlist: string[];
       if (input.channel === 'email') {
         sender = runtime.platform.mailer;
-        allowlist = runtime.platform.config.testEmailAllowlist.map((item) => item.toLowerCase());
+        // Active operators may always test-send to their own sign-in addresses.
+        const operators = await runtime.platform.database.$client.prepare("SELECT email FROM oa_operators WHERE status = 'active'").all<{email: string}>();
+        allowlist = [...runtime.platform.config.testEmailAllowlist, ...operators.results.map(row => row.email)].map((item) => item.toLowerCase());
       } else {
         const smsModule = runtime.platform.config.modules.sms;
         if (!runtime.platform.sms || !smsModule.enabled) {

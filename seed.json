@@ -467,13 +467,13 @@
     },
     {
       "name": "MAIL_WEBHOOK_SECRET",
-      "required": true,
+      "required": false,
       "secret": true,
-      "why": "SendGrid base64 SPKI ECDSA public verification key, or Resend Svix webhook signing secret."
+      "why": "Optional SendGrid base64 SPKI ECDSA public key of a signed Event Webhook (without it, delivery shows Accepted only), or the Resend Svix webhook signing secret, which Resend requires."
     },
     {
       "name": "MAIL_WEBHOOK_ID",
-      "required": true,
+      "required": false,
       "secret": false,
       "why": "Configured webhook identity; Resend also uses this to read immutable reconciliation events."
     },
@@ -518,9 +518,9 @@
     },
     {
       "name": "MANGO_TEST_EMAIL_ALLOWLIST",
-      "required": true,
+      "required": false,
       "secret": false,
-      "why": "Comma-separated operator-approved email test destinations."
+      "why": "Optional comma-separated extra email test destinations; active operators' own sign-in addresses are always allowed."
     },
     {
       "name": "MANGO_TEST_SMS_ALLOWLIST",
@@ -624,6 +624,7 @@
       "/fonts/",
       "/unsubscribe/",
       "/consent/",
+      "/sender-check/",
       "/l/",
       "/media/",
       "/webhooks/commerce/",

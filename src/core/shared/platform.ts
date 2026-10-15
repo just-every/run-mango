@@ -1,5 +1,6 @@
 import type { Database } from '@/core/platform/db/client';
 import type { SenderInspection } from '@/core/features/sender-verification/types';
+import type { SenderVerification } from '@/core/features/sender-verification/service';
 
 export type Channel = 'email' | 'sms';
 
@@ -316,6 +317,8 @@ export interface Platform {
   ai?: AiProvider;
   design?: DesignProvider;
   mailer: SenderAdapter;
+  /** Sender evidence for marketing email; absent where no mail provider is configured. */
+  senderVerification?: SenderVerification;
   sms?: SenderAdapter;
   jobs: JobDispatcher;
   blobs: BlobStore;
@@ -372,8 +375,8 @@ export interface AppBindings {
   DESIGN_PROVIDER_ORIGIN?: string;
   MAIL_PROVIDER_API_KEY: string;
   MAIL_AUTH_FROM: string;
-  MAIL_WEBHOOK_SECRET: string;
-  MAIL_WEBHOOK_ID: string;
+  MAIL_WEBHOOK_SECRET?: string;
+  MAIL_WEBHOOK_ID?: string;
   SMS_PROVIDER_API_KEY?: string;
   SMS_WEBHOOK_SECRET?: string;
   SMS_CONFIRMATION_SENDER?: string;
@@ -381,7 +384,7 @@ export interface AppBindings {
   MANGO_PUBLIC_BASE_URL: string;
   MANGO_APP_VERSION: string;
   MANGO_ALLOWED_LINK_HOSTS: string;
-  MANGO_TEST_EMAIL_ALLOWLIST: string;
+  MANGO_TEST_EMAIL_ALLOWLIST?: string;
   MANGO_TEST_SMS_ALLOWLIST?: string;
   MANGO_RECONCILIATION_INTERVAL_MINUTES: string;
   MANGO_UNRESOLVED_OUTCOME_HOURS: string;

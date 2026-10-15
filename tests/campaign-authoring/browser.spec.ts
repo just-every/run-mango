@@ -49,6 +49,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
     await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
     await page.getByRole('button',{name:'Approve & schedule',exact:true}).click();
+    await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();
     await expect(page.getByText('Add the missing subject, message body, preheader before approval.',{exact:false})).toBeVisible();
     await expect(page.getByText('Add a campaign name before approval.',{exact:false})).toBeVisible();
     expect(await state()).toEqual({jobs:[],recipients:[],approvals:[]});
@@ -136,6 +137,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await page.locator('iframe[title="Saved email preview"]').screenshot({path:testInfo.outputPath(`preview-${width}.png`)});
     await page.screenshot({path:testInfo.outputPath(`authoring-${width}.png`),fullPage:true});
     await page.getByRole('button',{name:'Approve & schedule',exact:true}).click();
+    await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();
     await expect(page.getByRole('status').filter({hasText:'exact saved revision is approved and scheduled'})).toBeVisible();
     detail=await read();expect(detail.campaign.state).toBe('scheduled');expect(detail.revision.state).toBe('approved');expect(detail.steps[0].scheduledAt).toBe('2031-04-07T00:00:00.000Z');
     const again=await call(`/api/campaigns/${campaignId}/approve`,{revisionId:detail.revision.id,idempotencyKey:'authoring-repeat-approval'});expect(again.status).toBe(200);expect(again.data.idempotent).toBe(true);

@@ -55,11 +55,13 @@
     },
     {
       "binding": "MAIL_WEBHOOK_SECRET",
-      "environment": "MAIL_WEBHOOK_SECRET"
+      "environment": "MAIL_WEBHOOK_SECRET",
+      "optional": true
     },
     {
       "binding": "MAIL_WEBHOOK_ID",
-      "environment": "MAIL_WEBHOOK_ID"
+      "environment": "MAIL_WEBHOOK_ID",
+      "optional": true
     },
     {
       "binding": "MANGO_ALLOWED_LINK_HOSTS",

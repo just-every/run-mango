@@ -28,7 +28,7 @@
     },
     "CAMP-004": {
       "change": "added",
-      "summary": "2026-10-07 approved SendGrid single-attempt policy replaces provider deduplication capability gating only for SendGrid. Every consent, content, exact revision and sender-evidence gate remains. Authoring retains all existing negative content/link gates, adds actionable missing-content checks, and normalizes only create/save. 2026-10-12: Merge tags written for another tool (*|TAG|*) are unrecognised personalisation and block approval; Mango does not guess them. Imported content grants no schedule, approval or delivery authority."
+      "summary": "2026-10-07 approved SendGrid single-attempt policy replaces provider deduplication capability gating only for SendGrid. Every consent, content, exact revision and sender-evidence gate remains. Authoring retains all existing negative content/link gates, adds actionable missing-content checks, and normalizes only create/save. 2026-10-12: Merge tags written for another tool (*|TAG|*) are unrecognised personalisation and block approval; Mango does not guess them. Imported content grants no schedule, approval or delivery authority. 2026-10-15: The default receiving mailbox is the signed-in operator's own inbox: an emailed one-time link and Confirm POST record an owner-confirmed observation that grants sender authority only with current provider and DNS SPF/DKIM/DMARC alignment evidence, for at most 30 days. The trusted receipt connector remains optional. A SendGrid signed Event Webhook is optional; without it delivery shows Accepted only."
     },
     "SEND-008": {
       "change": "added",

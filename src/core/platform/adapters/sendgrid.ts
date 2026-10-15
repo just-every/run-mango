@@ -48,6 +48,7 @@ export function createSendgridAdapter(options: { apiKey: string; webhookPublicKe
     },
     async reconcile(request, state) { return reconcileSendgrid(options.apiKey, request, state); },
     async verifyWebhook(request) {
+      if (!options.webhookPublicKey) throw new Error('No SendGrid Event Webhook is configured for this installation.');
       const bytes = await readWebhookBytes(request,32*1024*1024);
       const valid = await verifyWebhook({ provider: 'sendgrid', rawBody: bytes,
         headers: request.headers, key: options.webhookPublicKey, now: Date.now() });
