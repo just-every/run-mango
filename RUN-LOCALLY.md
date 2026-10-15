@@ -48,7 +48,7 @@ with exit 3 and a message naming the field.
 
 ## Install for a real owner
 
-Pinned rer 0.2.11 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
+Pinned rer 0.2.14 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
 checkout; neither needs a separate manual install. To install with a real owner
 mailbox, run the verbs yourself from the runnable
 edition's root: install locked dependencies, prepare its local owner, then start
@@ -220,7 +220,7 @@ transfer is unsupported by the maintained references and fails visibly.
 Real deployment uses the owner-account procedure and its private credentials.
 `rer deploy --dry-run` validates and builds locally without a
 provider request. The default environment is `production`; select another with
-`--environment NAME`. Pinned rer 0.2.11 claims the first hosted owner after the
+`--environment NAME`. Pinned rer 0.2.14 claims the first hosted owner after the
 health check and removes the one-time setup token. Repeated deployments retain
 the existing owner. Preserve your private inputs, receipt, backups and local
 customizations when updating: run `git pull --ff-only`, then

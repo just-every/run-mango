@@ -32,7 +32,9 @@
           "src/identity.ts",
           "src/site",
           "deploy-site.json",
-          "vite.site.config.ts"
+          "vite.site.config.ts",
+          "management/integration",
+          "scripts/sync-integration.mjs"
         ]
       }
     },

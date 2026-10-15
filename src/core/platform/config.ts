@@ -171,7 +171,7 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     mailProviderApiKey: required(environment, 'MAIL_PROVIDER_API_KEY'),
     mailAuthFrom: required(environment, 'MAIL_AUTH_FROM'),
     mailWebhookSecret: required(environment, 'MAIL_WEBHOOK_SECRET'),
-    mailWebhookId: required(environment, 'MAIL_WEBHOOK_ID'),
+    mailWebhookId: mailProvider === 'resend' ? required(environment, 'MAIL_WEBHOOK_ID') : environment.MAIL_WEBHOOK_ID?.trim() ?? '',
     publicBaseUrl: requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL'),
     appVersion: required(environment, 'MANGO_APP_VERSION'),
     allowedLinkHosts: linkHosts(environment),

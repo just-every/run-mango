@@ -64,20 +64,21 @@
         "DESIGN_PROVIDER_ORIGIN",
         "SMS_CONFIRMATION_SENDER",
         "MANGO_TEST_SMS_ALLOWLIST",
-        "MANGO_SMS_HANDOFFS_PER_MINUTE"
+        "MANGO_SMS_HANDOFFS_PER_MINUTE",
+        "MANGO_RESTORE_MODE"
       ],
       "secretNames": [
         "SESSION_SECRET",
         "SETUP_TOKEN",
-        "CONTACT_HASH_SALT"
+        "CONTACT_HASH_SALT",
+        "MAIL_PROVIDER_API_KEY",
+        "MAIL_WEBHOOK_SECRET"
       ],
       "optionalSecretNames": [
         "SESSION_SIGNING_KEY",
         "AUTH_SETUP_TOKEN",
         "TURNSTILE_SECRET_KEY",
         "MAILBOX_RECEIPT_URL",
-        "MAIL_PROVIDER_API_KEY",
-        "MAIL_WEBHOOK_SECRET",
         "COMMERCE_API_TOKEN",
         "COMMERCE_WEBHOOK_SECRET",
         "AI_PROVIDER_API_KEY",
