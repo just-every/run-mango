@@ -508,9 +508,9 @@
     {
       "path": "src/vendor/base/demo",
       "originPath": "modules/demo",
-      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
+      "revision": "1ce15dd8cbb7c8cf2d83ebfde2b4a8a130ff9d74",
       "files": {
-        "src/vendor/base/demo/effects.mjs": "2e523da1d9fcffc4b6e3e0e4901b6bd45e6f08adfb380b397e775acb0358c395",
+        "src/vendor/base/demo/effects.mjs": "e74d46fec165fdb5eafc62e53d6691e3064d5b9b5257c53f3cd6dd9a40386226",
         "src/vendor/base/demo/index.d.mts": "71caa39f5001ab8bd2891ae5bdb9bf1ab4910c121fb038d83ae549adaf8fcf10",
         "src/vendor/base/demo/index.mjs": "a90f58afaf7d7d54121f1e49746a51631c1b12c603e44edba81b1570eaa68d96",
         "src/vendor/base/demo/label.d.mts": "96a4692d568cfb6fd5593c9d7d4296bced338e0f54c2d17f80ae1da105287285",

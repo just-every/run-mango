@@ -720,7 +720,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
+          "revision": "1ce15dd8cbb7c8cf2d83ebfde2b4a8a130ff9d74",
           "paths": [
             "modules/demo/README.md",
             "modules/demo/effects.mjs",
