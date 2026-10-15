@@ -724,6 +724,35 @@
           ]
         }
       }
+    },
+    {
+      "id": "runeditrun/dependencies",
+      "role": "module",
+      "source": {
+        "kind": "local",
+        "paths": [
+          "src/vendor/base/dependencies"
+        ],
+        "origin": {
+          "repository": "https://github.com/runeditrun/base.git",
+          "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+          "paths": [
+            "modules/dependencies/README.md",
+            "modules/dependencies/approval.mjs",
+            "modules/dependencies/auth.mjs",
+            "modules/dependencies/authority.mjs",
+            "modules/dependencies/crypto.mjs",
+            "modules/dependencies/index.d.mts",
+            "modules/dependencies/index.mjs",
+            "modules/dependencies/logout.mjs",
+            "modules/dependencies/native.mjs",
+            "modules/dependencies/protocol.mjs",
+            "modules/dependencies/schema/approval-attempt.sql",
+            "modules/dependencies/schema/dependencies.sql",
+            "modules/dependencies/store.mjs"
+          ]
+        }
+      }
     }
   ]
 }
