@@ -21,6 +21,19 @@ export async function confirmedOwner(runtime) {
   return session;
 }
 
+/** Join through Mango's invitation and Base's emailed confirmation. */
+export async function confirmedInvite(runtime, actor, email) {
+  const invited = await runtime.call('/api/operators', { method: 'POST', cookie: actor, body: { email } });
+  assert.equal(invited.status, 201, await invited.clone().text());
+  const confirmed = await runtime.call('/auth/confirm', { method: 'POST', body: { token: await runtime.token() } });
+  assert.equal(confirmed.status, 303);
+  const session = cookie(confirmed);
+  assert.ok(session, 'Invitation confirmation must create an operator session');
+  const current = await runtime.call('/api/operator', { cookie: session });
+  assert.equal(current.status, 200);
+  return { cookie: session, operator: (await current.json()).operator };
+}
+
 export async function invitationRuntime({ contactHashSalt = secret } = {}) {
   const bundled = await build({ entryPoints: [resolve('operations/fixtures/invitation-worker.ts')], bundle: true, write: false,
     format: 'esm', platform: 'browser', external: ['node:*'], alias: { '@': resolve('src') } });

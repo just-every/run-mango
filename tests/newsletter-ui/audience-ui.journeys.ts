@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 
 import { expect, test } from '@playwright/test';
 
-import {challengeEdge,untouchedForm} from './signup-privacy-support';
+import {challengeEdge,untouchedForm,storedSignup} from './signup-privacy-support';
 import { signInAsLocalOperator } from './browser-checks';
 
 function csv(headers: string[], rows: string[][]) {
@@ -340,7 +340,8 @@ test('public form renders the configured disclosure and acknowledges only after 
   await page.getByLabel('Email address').click();
   await expect(page.getByRole('button',{name:'Complete verification'})).toBeVisible();
   expect(external).toHaveLength(1);
-  await page.getByLabel('Email address').fill(`ui-subscribe-${Date.now()}@example.test`);
+  const signupEmail=`ui-subscribe-${Date.now()}@example.test`;
+  await page.getByLabel('Email address').fill(signupEmail);
   await page.getByRole('checkbox', { name: info.consentText }).check();
   await page.getByRole('button',{name:'Complete verification'}).click();
   await expect(page.getByRole('button',{name:'Complete verification'})).toBeDisabled();
@@ -369,6 +370,7 @@ test('public form renders the configured disclosure and acknowledges only after 
   await expect(page.getByRole('status')).toBeVisible();
   await expect(page.getByRole('status')).not.toBeEmpty();
 
+  await storedSignup(request,`operator_session_local=${session!.value}`,signupEmail,info,testInfo);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole('status')).toBeVisible();
   await expect(page.getByRole('status')).not.toBeEmpty();

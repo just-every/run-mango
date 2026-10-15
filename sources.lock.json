@@ -1154,7 +1154,7 @@
       "executable": false
     },
     "operations/fixtures/invitation-runtime.mjs": {
-      "sha256": "2a2f69c8a9ef8da74f732a5b875668e7576b0b4812b34ac1200bf79e280098fd",
+      "sha256": "ec57fc1b90526ad3bfb25073bdae6c94cdbf0d31f06986f53ec61099a438b703",
       "executable": false
     },
     "operations/fixtures/invitation-worker.ts": {
@@ -5718,7 +5718,7 @@
       "executable": false
     },
     "tests/go-live/open-estimates.journeys.ts": {
-      "sha256": "c358af92b6ac45bad7d762533e8ce8e39457867d3f2a0a1eab74546a34f946c4",
+      "sha256": "911796c3d1dd360e29f6e4d4d3c3790174ff5cba268e755a8d9629cf657bef10",
       "executable": false
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
@@ -6010,7 +6010,7 @@
       "executable": false
     },
     "tests/newsletter-ui/audience-ui.journeys.ts": {
-      "sha256": "f30933b9d67f6a71323cf6e36de92cc186060ca12f7066d9aad636ea860841c1",
+      "sha256": "04db98d7b49a58a15435393a2803f86974da39229a5f25e6efbf7f9d2d803e61",
       "executable": false
     },
     "tests/newsletter-ui/authoring-runtime.journeys.ts": {
@@ -6054,7 +6054,7 @@
       "executable": false
     },
     "tests/newsletter-ui/signup-privacy-support.ts": {
-      "sha256": "cff451a33f1e38bafaec648fd195112957f4366424191b4a55b71a5459c18fb4",
+      "sha256": "3f0ddb76f330f33b60549ace6bd4db7f66aef3145d47aeafa684362c59996200",
       "executable": false
     },
     "tests/personalisation-fallbacks.spec.ts": {
@@ -6266,7 +6266,7 @@
       "executable": false
     },
     "tests/settings-sender/routes.spec.ts": {
-      "sha256": "13781b5e15de1202251cd1f83affc4844d2ffb05daf18156d3468b400d78aed7",
+      "sha256": "88dc145ce88fee5a063467c8f8d568b42751f7fd01649547d79c99afe01fca22",
       "executable": false
     },
     "tests/settings-sender/test-send.spec.ts": {
@@ -6397,6 +6397,10 @@
       "sha256": "b0d8875f273458879a857fdf9aeca25da2ee1b4102534df7c448ee0adbab99fc",
       "executable": false
     },
+    "tests/support/signup-mail-edge.ts": {
+      "sha256": "bcddb258e887206f3a7f2152fd2161cd1836dfd88fdfc20e004fd5466a766093",
+      "executable": false
+    },
     "tests/support/start-fixture-runtime.mjs": {
       "sha256": "9c3fe6d26824e84d49d66a73df0f68a6a40b1496a76f0fee550d3e1d337cbb31",
       "executable": false
@@ -6406,7 +6410,7 @@
       "executable": false
     },
     "tests/support/worker.ts": {
-      "sha256": "4829e640d1b623f5bb30e6ad755cd38c573c2db6d76449f738f813b556cf9786",
+      "sha256": "c5fb9d641f6d1159c5eb680f992859d86bf5de548ac18e647db76aa8722c04ed",
       "executable": false
     },
     "tests/ui-campaigns.spec.js": {

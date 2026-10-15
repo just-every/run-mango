@@ -1,4 +1,5 @@
 import { installSignupChallengeEdge } from './signup-challenge-edge';
+import { signupFixtureMailer } from './signup-mail-edge';
 import { dispatchDocuments } from '../../src/core/app/document-dispatch';
 import { createFixturePlatform } from './local-platform';
 import { createLocalApp } from './fixture-app';
@@ -23,6 +24,7 @@ export default {
     if (bindings.MANGO_FIXTURE_TURNSTILE === '1') {
       installSignupChallengeEdge();
       platform.config.signupTurnstile = {siteKey:'fixture-public-site',secretKey:'fixture-server-secret'};
+      platform.mailer = signupFixtureMailer();
     }
     return dispatchDocuments(request, bindings, executionContext, platform, createLocalApp(bindings, platform));
   },
