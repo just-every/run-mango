@@ -62,10 +62,10 @@ test('security: configured Turnstile fails closed before storage for missing, ba
   expect((await call('missing@example.test')).status).toBe(400);expect(await snapshot(h.f.db)).toEqual(before);
   const original=globalThis.fetch;
   try{for(const reply of [{success:false},{success:true,action:'other',hostname:'mango.example.test'},{success:true,action:'newsletter-signup',hostname:'evil.example.test'},null]){
-   globalThis.fetch=async (input,init)=>String(input).includes('challenges.cloudflare.com') ? reply===null ? Promise.reject(new Error('unavailable')) : Response.json(reply) : original(input,init);
+   globalThis.fetch=async (input,init)=>new URL(input instanceof Request ? input.url : String(input)).hostname === 'challenges.cloudflare.com' ? reply===null ? Promise.reject(new Error('unavailable')) : Response.json(reply) : original(input,init);
    expect((await call('bad@example.test','192.0.2.45',{'cf-turnstile-response':'token'})).status).toBe(400);expect(await snapshot(h.f.db)).toEqual(before);
   }
-  globalThis.fetch=async(input,init)=>{if(!String(input).includes('challenges.cloudflare.com'))return original(input,init);const form=new URLSearchParams(String(init?.body));expect(form.get('secret')).toBe('test-secret');expect(form.get('response')).toBe('good-token');return Response.json({success:true,action:'newsletter-signup',hostname:'mango.example.test'});};
+  globalThis.fetch=async(input,init)=>{if(new URL(input instanceof Request ? input.url : String(input)).hostname !== 'challenges.cloudflare.com')return original(input,init);const form=new URLSearchParams(await new Request(input,init).text());expect(form.get('secret')).toBe('test-secret');expect(form.get('response')).toBe('good-token');return Response.json({success:true,action:'newsletter-signup',hostname:'mango.example.test'});};
   expect((await call('valid@example.test','192.0.2.46',{'cf-turnstile-response':'good-token'})).status).toBe(202);expect(h.f.outbound).toHaveLength(1);
   }finally{globalThis.fetch=original;}
  }finally{await h.close();}

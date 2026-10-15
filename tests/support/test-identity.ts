@@ -10,12 +10,12 @@ export function testIdentity(platform: Platform) {
       await db.prepare('INSERT INTO operators(id,email,display_name,created_at,updated_at) VALUES(?,?,?,?,?) ON CONFLICT DO NOTHING').bind(operator.id,operator.email.toLowerCase(),operator.displayName,now.getTime(),now.getTime()).run();
       await db.prepare("INSERT INTO oa_operators(id,email,display_name,role,status,created_at) VALUES(?,?,?,'owner','active',?) ON CONFLICT(id) DO NOTHING").bind(operator.id,operator.email.toLowerCase(),operator.displayName,now.getTime()).run();
     },
-    async createTestSession(operatorId:string, now=new Date()) {
+    async createTestSession(operatorId:string, now=new Date(), origin=platform.config.publicBaseUrl.origin) {
       const operator=await repository.getOperator(operatorId);
       if(!operator) throw new Error('Test operator is missing.');
       const token=opaqueToken(), hash=await hashToken(platform.config.sessionSigningKey,'session',token);
       await db.prepare("INSERT INTO oa_sessions(id,token_hash,operator_id,operator_version,kind,created_at,expires_at) SELECT ?,?,id,version,'native',?,? FROM oa_operators WHERE id=?").bind(crypto.randomUUID(),hash,now.getTime(),now.getTime()+7*86400000,operatorId).run();
-      return {operator,token,cookie:`${localSessionCookieName(platform.config.publicBaseUrl.origin)}=${token}; Path=/; HttpOnly; SameSite=Lax`};
+      return {operator,token,cookie:`${localSessionCookieName(origin)}=${token}; Path=/; HttpOnly; SameSite=Lax`};
     },
   };
 }
