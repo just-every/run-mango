@@ -63,7 +63,8 @@ async function approve(page:Page,campaignId:string,revisionId:string) {
   for(const key of ['name','emailBody','emailText','emailSubject','preheader','inclusionRuleJson','exclusionRulesJson']) expect(after.revision[key]).toBe(before.revision[key]);
   expect(after.steps).toEqual(before.steps);expect(after.links).toEqual(before.links);
   expect(stateAfter.approvals.filter((row:{campaign_id:string})=>row.campaign_id===campaignId)).toEqual([expect.objectContaining({revision_id:revisionId,revision_digest:authority.revisionDigest})]);
-  expect(stateAfter.jobs).toHaveLength(stateBefore.jobs.length+1);expect(stateAfter.recipients).toHaveLength(stateBefore.recipients.length+1);
+  // These 2030 schedules retain their approval and recipients without an early dispatch command.
+  expect(stateAfter.jobs).toEqual(stateBefore.jobs);expect(stateAfter.recipients).toHaveLength(stateBefore.recipients.length+1);
   expect(stateAfter.recipients.at(-1).transport_disposition).toBe('queued');
 }
 

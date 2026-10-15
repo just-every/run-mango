@@ -5502,7 +5502,7 @@
       "executable": false
     },
     "tests/campaign-authoring/approved-schedule.ts": {
-      "sha256": "17a17c9d5d643e8762827ce584d42d305082e7247d584421f3daf21c8523556e",
+      "sha256": "f59ef8787c1034b136d6266fb6a00a60de8611391f7c28b7b8cb9df3a0949949",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
@@ -5510,7 +5510,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "8b8b44134273e41ed858c749dc84240b6c514995301510aef97ad629c1ceb4a9",
+      "sha256": "8dfe5ea3c61cee35c401c01ff88c835ef76477db011473ad4fcb4b3fd8c2eb82",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
@@ -5562,7 +5562,7 @@
       "executable": false
     },
     "tests/campaign-authoring/review-save-regressions.spec.ts": {
-      "sha256": "c0fa6abd31b2e460e3a8149a13fe6348b740399e7adf09a9ee1dd8d651452eed",
+      "sha256": "5d0f2989f45c5b6895c7c31111784b79e1229715e3a71f5da3270f4660bf26c9",
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {

@@ -21,6 +21,8 @@ export async function withApprovedSchedule(page: Page, steps: Step[], inspect: (
       name: 'Approved schedule browser fixture', emailSubject: 'A saved schedule', preheader: 'Review the saved schedule',
       emailBody: 'The operator approved this schedule.', steps: scheduledSteps,
     });
+    // This helper's caller supplies the sample's future schedule; Cron owns due dispatch.
+    expect(scheduledSteps.every(step => Date.parse(step.scheduledAt) > Date.now())).toBe(true);
     const approved = await api(`/api/campaigns/${campaignId}/approve`, 'POST', {revisionId, idempotencyKey: crypto.randomUUID()});
     expect(approved.status).toBe('scheduled');
     const persisted = await api(`/api/campaigns/${campaignId}`);
@@ -29,7 +31,7 @@ export async function withApprovedSchedule(page: Page, steps: Step[], inspect: (
     expect(persisted.results.steps).toHaveLength(steps.length);
     const state = await (await fetch(runtime.url + '/_authoring/state', {headers: {'X-Test-Token': runtime.token}})).json();
     expect(state.approvals).toEqual([expect.objectContaining({revision_id: revisionId, revision_digest: approved.revisionDigest})]);
-    expect(state.jobs).toHaveLength(1); expect(state.recipients.length).toBeGreaterThan(0);
+    expect(state.jobs).toEqual([]); expect(state.recipients.length).toBeGreaterThan(0);
     for (const recipient of state.recipients) expect(recipient.transport_disposition).toBe('queued');
     await page.context().addCookies([{name: 'operator_session_local', value: token, url: runtime.url}]);
     await inspect(`${runtime.url}/app/campaigns/${campaignId}/scheduled`);
