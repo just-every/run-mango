@@ -1,5 +1,6 @@
 import { withDemo } from './vendor/base/demo/index.mjs';
-import worker from './core/app/worker';
+import { createWorker } from './core/app/worker';
+import { createWorkerPlatform } from './core/platform/worker-runtime';
 import { seedDemo } from './demo';
 
-export default withDemo(worker, { seed: seedDemo });
+export default withDemo(createWorker(createWorkerPlatform), { seed: seedDemo });
