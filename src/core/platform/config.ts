@@ -1,6 +1,7 @@
 import { smsProgrammeSchema } from '../features/sms/policy.ts';
 import type { AppBindings, AppConfig, OptionalModuleConfig } from '@/core/shared/platform';
 import { authBindings } from './auth-bindings.ts';
+import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
 
 export const optionalModuleInputs = {
   commerce: ['COMMERCE_STORE_URL', 'COMMERCE_API_TOKEN', 'COMMERCE_WEBHOOK_SECRET', 'COMMERCE_EXCLUSIVE_SHOP'],
@@ -67,14 +68,6 @@ function positiveInteger(environment: AppBindings, name: keyof AppBindings): num
   const value = Number(required(environment, name));
   if (!Number.isSafeInteger(value) || value <= 0) throw new Error(`${name} must be a positive integer.`);
   return value;
-}
-
-function linkHosts(environment: AppBindings): string[] {
-  const hosts = commaValues(environment, 'MANGO_ALLOWED_LINK_HOSTS').map((value) => value.toLowerCase());
-  if (hosts.some((host) => !/^[a-z0-9.-]+$/i.test(host))) {
-    throw new Error('MANGO_ALLOWED_LINK_HOSTS must be a comma-separated list of DNS host names.');
-  }
-  return hosts;
 }
 
 function optionalModule<Config, Name extends keyof AppBindings & string>(
@@ -175,7 +168,7 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     mailWebhookId: mailProvider === 'resend' ? required(environment, 'MAIL_WEBHOOK_ID') : environment.MAIL_WEBHOOK_ID?.trim() ?? '',
     publicBaseUrl: requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL'),
     appVersion: required(environment, 'MANGO_APP_VERSION'),
-    allowedLinkHosts: linkHosts(environment),
+    allowedLinkHosts: configuredLinkHosts(environment.MANGO_ALLOWED_LINK_HOSTS, requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL')),
     // Optional extra test-send addresses; operators' own sign-in addresses are always allowed.
     testEmailAllowlist: environment.MANGO_TEST_EMAIL_ALLOWLIST?.trim() ? emails(environment.MANGO_TEST_EMAIL_ALLOWLIST, 'MANGO_TEST_EMAIL_ALLOWLIST') : [],
     providerReconciliationIntervalMinutes: positiveInteger(environment, 'MANGO_RECONCILIATION_INTERVAL_MINUTES'),

@@ -7,6 +7,7 @@ import { ProviderStatus } from './store-page';
 import type { SettingsOperator } from './settings-operator-actions';
 import { SettingsOperators } from './settings-operators';
 import { SettingsSender } from './settings-sender';
+import { SettingsLinkHosts } from './settings-link-hosts';
 
 type ProviderResponse = { providers: Provider[]; off: string[] };
 
@@ -24,6 +25,7 @@ export function SettingsPage() {
         </div>
       </header>
       <SettingsSender operatorEmail={operator.data.operator.email} />
+      <SettingsLinkHosts />
       <div className="settings-grid">
         <section className="panel settings-current" aria-labelledby="current-operator-title">
           <p className="eyebrow">Current operator</p>

@@ -356,6 +356,12 @@
       "name": "core-0058_owner_signin.sql",
       "sha256": "be66a21f23a99e2027b1848a899d1645fd517f5b7f1e98d83a66c3434e95d729",
       "sql": "-- One-time owner sign-in links minted by `rer signin` with the deployment's own\n-- Cloudflare credentials (Base operator-auth accounts/schema/owner-signin.sql).\n-- Additive only. token_hash is the SHA-256 of the link token; the token is never stored.\nCREATE TABLE IF NOT EXISTS oa_owner_signins (\n id TEXT PRIMARY KEY, token_hash TEXT NOT NULL UNIQUE,\n operator_id TEXT NOT NULL REFERENCES oa_operators(id), operator_version INTEGER NOT NULL,\n created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, consumed_at INTEGER\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0059_link_host_settings.sql",
+      "sha256": "837cf066ee255e246951406e3dc0bbd5133b5e3cff1c3e7a65a1d344280738ed",
+      "sql": "-- Existing environment policies remain authoritative until an operator saves Settings.\nCREATE TABLE link_host_settings (\n  id INTEGER PRIMARY KEY CHECK (id = 1), hosts TEXT NOT NULL,\n  updated_at INTEGER NOT NULL, operator_id TEXT NOT NULL\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

@@ -11,6 +11,7 @@ import {pendingErasure} from '@/core/features/audience/erasure/maintenance';
 import { createSegmentRoutes } from '@/core/features/audience/segments';
 import { senderIdentitySchema } from '@/core/features/settings/sender-validation';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
+import { createLinkHostRoutes, loadLinkHosts } from '@/core/features/settings/link-hosts';
 import { createAudienceImportRoutes } from '@/core/features/audience/import-routes';
 import { createSignupRoutes } from '@/core/features/audience/signup-routes';
 import { createPortabilityRoutes } from '@/core/features/portability/routes';
@@ -259,6 +260,7 @@ export function createApp(
   });
   app.use('*', async (context, next) => {
     await loadSenderSettings(platform);
+    await loadLinkHosts(platform);
     context.header('X-Mango-Version', platform.config.appVersion);
     await next();
   });
@@ -305,6 +307,7 @@ export function createApp(
   app.route('/',createSmsInboundRoutes(platform));
   registerLifecycleRoutes(app, lifecycleRuntime);
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
+  app.route('/api', createLinkHostRoutes(platform));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));
   app.route('/api', createSyncRoutes(platform, services.storeService));
   app.route('/api', createSegmentRoutes(environment.DB));

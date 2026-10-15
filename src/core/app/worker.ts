@@ -4,6 +4,7 @@ import { createApp, createAppServices } from './app';
 import type { AppBindings } from '@/core/shared/platform';
 import { createProductionPlatform } from '@/core/platform/runtime';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
+import { loadLinkHosts } from '@/core/features/settings/link-hosts';
 import { staticAssetResponse } from '@/base/static-assets';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
 import { consumeLifecycleQueue, type LifecycleQueueBatch } from '@/core/features/lifecycle';
@@ -11,6 +12,7 @@ import { consumeLifecycleQueue, type LifecycleQueueBatch } from '@/core/features
 async function lifecycleRuntime(environment: AppBindings) {
   const platform = createProductionPlatform(environment);
   await loadSenderSettings(platform);
+  await loadLinkHosts(platform);
   return createAppServices(platform).lifecycleRuntime;
 }
 

@@ -23,6 +23,7 @@ import { createJobDispatcher } from './jobs';
 import { createLinkInspector } from './link-inspector';
 import { createPublicTokenSigner } from './public-tokens';
 import { localContactHashSalt } from './local-contact-authority';
+import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
 import { createD1DevelopmentOutbox } from '@/vendor/base/mail/src/development/index.mjs';
 
 /** A copy on a computer sends no marketing. Consent confirmations land in the local
@@ -144,7 +145,7 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
     publicBaseUrl: new URL(environment.MANGO_PUBLIC_BASE_URL || 'http://127.0.0.1'),
     appVersion: 'local',
     local: true,
-    allowedLinkHosts: ['localhost'],
+    allowedLinkHosts: configuredLinkHosts(environment.MANGO_ALLOWED_LINK_HOSTS, new URL(environment.MANGO_PUBLIC_BASE_URL || 'http://127.0.0.1')),
     testEmailAllowlist: ['local@example.test'],
     providerReconciliationIntervalMinutes: 15,
     unresolvedProviderOutcomeHours: 1,

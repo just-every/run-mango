@@ -107,6 +107,22 @@
       "ownerVisible": true,
       "input": "entered",
       "help": "Optional for SendGrid: its signed Event Webhook public key, which turns Accepted into Delivered, bounced and complaint reports. Required for Resend: its webhook signing secret.",
+      "presentations": [
+        {
+          "when": {
+            "field": "MAIL_PROVIDER",
+            "equals": "sendgrid"
+          },
+          "required": false
+        },
+        {
+          "when": {
+            "field": "MAIL_PROVIDER",
+            "equals": "resend"
+          },
+          "required": true
+        }
+      ],
       "group": "mail"
     },
     {
@@ -124,8 +140,8 @@
       "name": "MANGO_ALLOWED_LINK_HOSTS",
       "label": "Allowed newsletter link hosts",
       "kind": "text",
-      "required": true,
-      "help": "Comma-separated DNS host names your newsletters may link to, such as shop.example.com.",
+      "required": false,
+      "help": "Defaults to this app’s own host. Change it later in Mango Settings, or enter comma-separated host names such as shop.example.com.",
       "group": "mail"
     }
   ],

@@ -39,7 +39,7 @@ writeFileSync('.rer/hosted.env', Object.entries(values).map(([name, value]) => `
 NODE
 ```
 
-Fill it privately with your account credentials, owner email, mail settings and allowed link hosts; choose `MANGO_DEPLOY_ENV` for this installation. Keep the independent generated session, setup and contact keys with your backups. Mango never reads Wrangler credential files.
+Fill it privately with your account credentials, owner email and mail settings; choose `MANGO_DEPLOY_ENV` for this installation. Link hosts default to your app’s own host; change them later in Mango Settings, or optionally initialize them with `MANGO_ALLOWED_LINK_HOSTS`. Keep the independent generated session, setup and contact keys with your backups. Mango never reads Wrangler credential files.
 
 Product settings, including `MAIL_PROVIDER`, app version, timing and rate limits, live in `deploy.json` `vars`. Change those settings there and deploy the change.
 

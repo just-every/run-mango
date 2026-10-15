@@ -5,6 +5,7 @@ import { smsProgrammeSchema, smsWindow } from '@/core/features/sms/policy';
 import { smsSegments } from '@/core/features/sms/segments';
 import { emailSubjectAdvisory } from './advisory-policy';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
+import { loadLinkHosts } from '@/core/features/settings/link-hosts';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
 import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-content';
 import { unavailableInspection } from '@/core/features/sender-verification/service';
@@ -131,6 +132,7 @@ export async function runApprovalChecks(input: {
 }) {
   const { snapshot, platform, now } = input;
   await loadSenderSettings(platform);
+  await loadLinkHosts(platform);
   const selected = new Set(snapshot.steps.map((step) => step.channel));
   const baseReconciliationWindow = platform.config.unresolvedProviderOutcomeHours * 60 * 60_000
     + platform.config.providerReconciliationIntervalMinutes * 2 * 60_000;

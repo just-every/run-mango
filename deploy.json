@@ -65,7 +65,8 @@
     },
     {
       "binding": "MANGO_ALLOWED_LINK_HOSTS",
-      "environment": "MANGO_ALLOWED_LINK_HOSTS"
+      "environment": "MANGO_ALLOWED_LINK_HOSTS",
+      "optional": true
     },
     {
       "binding": "DESIGN_PROVIDER_API_KEY",

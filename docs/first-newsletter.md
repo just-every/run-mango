@@ -35,7 +35,7 @@ Scripts, forms, stylesheets, classes, event handlers and malformed markup are no
 
 ## Links
 
-Add a link with **Add a link to the message** (link text and an HTTPS URL), or write an `<a>` tag in HTML mode. Every link appears under **Saved links** with a label and a destination, and you can add or remove destinations there. The destination's host must be on your `MANGO_ALLOWED_LINK_HOSTS` list or approval is blocked.
+Add a link with **Add a link to the message** (link text and an HTTPS URL), or write an `<a>` tag in HTML mode. Every link appears under **Saved links** with a label and a destination, and you can add or remove destinations there. The destination's host must be in **Settings → Allowed link hosts** or approval is blocked. This starts with your app’s own host; add your website or shop there when you need it.
 
 ## Images
 

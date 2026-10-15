@@ -512,9 +512,9 @@
     },
     {
       "name": "MANGO_ALLOWED_LINK_HOSTS",
-      "required": true,
+      "required": false,
       "secret": false,
-      "why": "Comma-separated destination host allow-list checked before an approved revision can send."
+      "why": "Optional initial comma-separated destination hosts; defaults to the app’s own host and remains editable in Mango Settings. Checked before an approved revision can send."
     },
     {
       "name": "MANGO_TEST_EMAIL_ALLOWLIST",
