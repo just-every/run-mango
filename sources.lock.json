@@ -5768,7 +5768,7 @@
       "executable": false
     },
     "tests/newsletter-ui/forms-feedback.journeys.ts": {
-      "sha256": "a3d84120bd9ab6e3738a85d2b5d213897cffe2c4c4c8ffeec524bb50c4fcb548",
+      "sha256": "1c712bc3723e7afa837598e01f40b4e572624a581ef1166f57de7009345e1f21",
       "executable": false
     },
     "tests/newsletter-ui/playwright.config.js": {
@@ -5784,7 +5784,7 @@
       "executable": false
     },
     "tests/newsletter-ui/sender-disclosure.isolated.ts": {
-      "sha256": "c088187dedfd460b44806cf867e1003081d07ec23f7f8f955519fcb70d9cc021",
+      "sha256": "e32e2dab202e1bcffd7005768f5e9fddff260f3be2b7cd6a37a9a9f8992dca05",
       "executable": false
     },
     "tests/newsletter-ui/sender-playwright.config.js": {

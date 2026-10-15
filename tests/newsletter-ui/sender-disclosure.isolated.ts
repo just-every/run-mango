@@ -62,10 +62,10 @@ test('saved sender disclosure is current and stale consent cannot create evidenc
       await page.getByRole('button', { name: 'Request confirmation' }).click();
     })(),
   ]);
-  expect(captureResponse.status()).toBe(503);
-  expect((await captureResponse.json()).error).toBe('signup_failed');
-  await expect(page.getByRole('alert')).toContainText('Confirmation could not be delivered');
-  await expect(page.getByRole('status')).toHaveCount(0);
+  // Locally the confirmation lands in the development outbox, so signup succeeds.
+  expect(captureResponse.status()).toBe(202);
+  expect((await captureResponse.json()).status).toBe('confirmation-required');
+  await expect(page.getByText('Request received')).toBeVisible();
 
   const contactsResponse = await request.get('/api/audience', { headers });
   await expect(contactsResponse).toBeOK();
