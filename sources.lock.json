@@ -5760,7 +5760,7 @@
       "executable": false
     },
     "tests/audience-import/signup-security.spec.ts": {
-      "sha256": "cbfd17b433a33b1e3dc349fc7d50b02b5dfd339b3a4f9e08f49925f73b705a9e",
+      "sha256": "b2cfd6fab8d92740cd684d04144c0ea6a7ac19daf9e5c058f7644e5916272e46",
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {
@@ -6224,7 +6224,7 @@
       "executable": false
     },
     "tests/prior-approval/worker.spec.ts": {
-      "sha256": "be7ec9e10d360eab183f3b7716f393e7b24e0320fd7a3f07e02e1fa90d8b36b7",
+      "sha256": "149a0afce51ffd583b7abdfd98234ffb806ab94575ac55dca869803d52329c5b",
       "executable": false
     },
     "tests/production-entry.spec.ts": {
@@ -6348,7 +6348,7 @@
       "executable": false
     },
     "tests/support/bootstrap-routes.ts": {
-      "sha256": "6ff046ac77877f5c0efd0e7ef39ee53e039467e72ba746f4f65144d502bc401d",
+      "sha256": "23a4140be72acb09cef8583137eec2ff1cdd206a92dfaaf191f78ea68234ce96",
       "executable": false
     },
     "tests/support/bootstrap-token.mjs": {
@@ -6416,7 +6416,7 @@
       "executable": false
     },
     "tests/support/test-identity.ts": {
-      "sha256": "753750b8f893b5c5d57a7bb8a0797bc42bd2fb33c8e7acfbbc63cf022796c2c6",
+      "sha256": "4b835f19f2bbf63dd248abf727da7be14f85665b1dd78aeeea8861f873fc087e",
       "executable": false
     },
     "tests/support/worker.ts": {
