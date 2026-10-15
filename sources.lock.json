@@ -867,7 +867,7 @@
       "executable": false
     },
     ".github/workflows/verify.yml": {
-      "sha256": "60e420306593bf49cd862d7a292448569a401bb7fa9b5e8675d97b40fab8ea39",
+      "sha256": "a3f2b63686dea865174bc0c1eaec471c391bc2df96b598433bd7fe8aaf32b720",
       "executable": false
     },
     ".gitignore": {
@@ -1351,7 +1351,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "6afaa80edd42f84ed5c90962a47fcd3686776ba72c37095349e768dfa91dda91",
+      "sha256": "4d4c66e5d0952ca2fd95431401fc69e0538d3edb3261fd5ab76940265f1ce566",
       "executable": false
     },
     "playwright.config.js": {
@@ -1739,7 +1739,7 @@
       "executable": false
     },
     "scripts/verification/run.mjs": {
-      "sha256": "3968ca98d078df27683a15ecb1b42deab5164b8463fdc1ffaf17a57ef4cbc23d",
+      "sha256": "fcf391699b17560c132852c7e33f0ff4a4e83ca90bca6a6cb8fb5fa703632f28",
       "executable": false
     },
     "scripts/verification/stages.mjs": {

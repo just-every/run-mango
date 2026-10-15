@@ -9,7 +9,7 @@ const flags = new Set(process.argv.slice(2));
 for (const flag of flags) if (flag !== '--tests-only') throw new Error(`Unknown verification option: ${flag}`);
 const pnpm = (name, args) => ({ name, command: 'pnpm', args });
 const browser = (name, config, workers) => ({ ...pnpm(name, ['exec', 'playwright', 'test', '--config', config,
-  `--workers=${workers}`, '--reporter=list,./scripts/verification/reporter.mjs']), timingRequired: true });
+  `--workers=${workers}`, ...(process.env.MANGO_PLAYWRIGHT_SHARD ? [`--shard=${process.env.MANGO_PLAYWRIGHT_SHARD}`] : []), '--reporter=list,./scripts/verification/reporter.mjs']), timingRequired: true });
 const cpuBudget = availableParallelism();
 const mainWorkers = Math.min(2, cpuBudget);
 const overlapMainAndNative = cpuBudget >= mainWorkers + 1;
@@ -37,6 +37,9 @@ groups.push(
   // One account export moved in, reconciled and undone; hostile archives refused.
   [browser('move-in', 'tests/move-in/playwright.config.js', 1)],
 );
+const selected = process.env.MANGO_VERIFY_STAGES?.split(',');
+if (selected?.some(name => !groups.flat().some(stage => stage.name === name))) throw new Error('Unknown verification stage.');
+const selectedGroups = selected ? groups.map(group => group.filter(stage => selected.includes(stage.name))).filter(group => group.length) : groups;
 const root = evidenceDirectory('verify');
 await mkdir(root, { recursive: true });
 const directory = process.env.MANGO_VERIFY_REPORT_DIRECTORY
@@ -46,7 +49,7 @@ const controller = new AbortController();
 const handlers = new Map(['SIGINT', 'SIGTERM'].map(signal => [signal, () => controller.abort(Object.assign(new Error(`Cancelled by ${signal}.`), { signal }))]));
 for (const [signal, handler] of handlers) process.on(signal, handler);
 try {
-  await runStages(groups, { directory, signal: controller.signal,
+  await runStages(selectedGroups, { directory, signal: controller.signal,
     schedule: { cpuBudget, mainWorkers, nativeWorkers: 1, mainAndNative: overlapMainAndNative ? 'parallel' : 'sequential' } });
 }
 catch (error) {

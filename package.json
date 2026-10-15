@@ -34,7 +34,7 @@
     "build:worker": "pnpm config:production && vite build",
     "export": "rer export",
     "import": "rer import",
-    "verify:app": "node scripts/verification/run.mjs",
+    "verify:app": "node scripts/verify-app.mjs",
     "reset": "rer reset",
     "release": "rer release",
     "doctor": "rer doctor",

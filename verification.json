@@ -1,0 +1,111 @@
+{
+  "push": [
+    {
+      "name": "hosted",
+      "browser": true,
+      "hosted": true,
+      "commands": [
+        "MANGO_VERIFY_STAGES=command-contract,source,typecheck,build node scripts/verification/run.mjs",
+        "pnpm integration:check"
+      ]
+    },
+    {
+      "name": "operations",
+      "browser": false,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=operations node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "main-1",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=main MANGO_PLAYWRIGHT_SHARD=1/4 node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "main-2",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=main MANGO_PLAYWRIGHT_SHARD=2/4 node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "main-3",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=main MANGO_PLAYWRIGHT_SHARD=3/4 node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "main-4",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=main MANGO_PLAYWRIGHT_SHARD=4/4 node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "campaign-ui",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=newsletter-ui,sender-disclosure,campaign-results node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "delivery-1",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=go-live MANGO_PLAYWRIGHT_SHARD=1/4 node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "delivery-2",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=go-live MANGO_PLAYWRIGHT_SHARD=2/4 node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "delivery-3",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=go-live MANGO_PLAYWRIGHT_SHARD=3/4 node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "delivery-4",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=go-live MANGO_PLAYWRIGHT_SHARD=4/4 node scripts/verification/run.mjs --tests-only"
+      ]
+    },
+    {
+      "name": "move-in",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=move-in node scripts/verification/run.mjs --tests-only"
+      ]
+    }
+  ],
+  "nightly": [
+    {
+      "name": "installer",
+      "browser": true,
+      "hosted": false,
+      "commands": [
+        "MANGO_VERIFY_STAGES=local-start node scripts/verification/run.mjs --tests-only"
+      ]
+    }
+  ]
+}
