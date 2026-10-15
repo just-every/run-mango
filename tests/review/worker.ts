@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import { testIdentity } from '../support/test-identity';
 import { createLocalApp, type LocalAppBindings } from '../support/fixture-app';
 import { createAppServices } from '../../src/core/app/app';
@@ -32,7 +33,7 @@ export default {
       const services = createAppServices(platform);
       await testIdentity(platform).importLocalDemoOperator({id: 'synthetic-review-operator', email: 'review@example.test', displayName: 'Synthetic review · sends disabled'}, new Date());
       const session = await testIdentity(platform).createTestSession('synthetic-review-operator');
-      return new Response(null, {status: 303, headers: {Location: result.review, 'Set-Cookie': `operator_session_local=${session.token}; HttpOnly; SameSite=Strict; Path=/`, 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer'}});
+      return new Response(null, {status: 303, headers: {Location: result.review, 'Set-Cookie': `${localSessionCookieName(request.url)}=${session.token}; HttpOnly; SameSite=Strict; Path=/`, 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer'}});
     }
     const response = await dispatchDocuments(request, bindings, context, platform, createLocalApp(bindings, platform));
     // Task-owned local runner only. Real marketing dispatch stays held. A failed

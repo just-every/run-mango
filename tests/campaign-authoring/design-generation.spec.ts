@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import { test, expect, type Page, type APIRequestContext } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -21,7 +22,7 @@ const publicOrigin = 'https://mango.example.test', destination = 'https://shop.e
 async function openDraft(runtime: Awaited<ReturnType<typeof authoringRuntime>>, page: Page, request: APIRequestContext, emailBody = '<p>An earlier draft.</p>') {
   const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
   expect(open.status(), await open.text()).toBe(200);
-  await page.context().addCookies([{ name: 'operator_session_local', value: (await open.json()).token, url: runtime.url }]);
+  await page.context().addCookies([{ name: localSessionCookieName(runtime.url), value: (await open.json()).token, url: runtime.url }]);
   const api = page.context().request, headers = { Origin: runtime.url };
   const created = await (await api.post(runtime.url + '/api/campaigns', { headers, data: {} })).json();
   const seeded = await api.patch(`${runtime.url}/api/campaign-revisions/${created.revisionId}`, { headers, data: {

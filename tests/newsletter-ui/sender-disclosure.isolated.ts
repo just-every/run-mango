@@ -4,9 +4,9 @@ import { signInAsLocalOperator } from './browser-checks';
 test('saved sender disclosure is current and stale consent cannot create evidence', async ({ page, request }, testInfo) => {
   await signInAsLocalOperator(page, request);
   const baseURL = new URL(testInfo.project.use.baseURL as string);
-  const cookie = (await page.context().cookies()).find((entry) => entry.name === 'operator_session_local');
+  const cookie = (await page.context().cookies()).find((entry) => entry.name.startsWith('operator_session_local_'));
   expect(cookie?.value).toBeTruthy();
-  const headers = { Cookie: `operator_session_local=${cookie?.value}` };
+  const headers = { Cookie: `${cookie?.name}=${cookie?.value}` };
   const identity = {
     displayName: `Mango newsletter ${Date.now()}`,
     fromEmail: 'newsletter@example.test',

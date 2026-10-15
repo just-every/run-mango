@@ -43,10 +43,10 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/app/audience');
   await expect(page.getByRole('heading', { name: /consent stays visible/i })).toBeVisible();
-  const sessionCookie = (await page.context().cookies()).find((cookie) => cookie.name === 'operator_session_local');
+  const sessionCookie = (await page.context().cookies()).find((cookie) => cookie.name.startsWith('operator_session_local_'));
   expect(sessionCookie?.value).toBeTruthy();
   const actualSignup = await request.get('/api/audience/signup', {
-    headers: { Cookie: `operator_session_local=${sessionCookie?.value}` },
+    headers: { Cookie: `${sessionCookie?.name}=${sessionCookie?.value}` },
   });
   await expect(actualSignup).toBeOK();
   const signupData = await actualSignup.json();
@@ -130,8 +130,8 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
   await expect(importJob).toContainText(/12 of 12 rows/);
   await expect(importJob.getByRole('button', { name: 'Resume import' })).toHaveCount(0);
 
-  const audienceCookie = (await page.context().cookies()).find((cookie) => cookie.name === 'operator_session_local');
-  const audienceResponse = await request.get('/api/audience', { headers: { Cookie: `operator_session_local=${audienceCookie?.value}` } });
+  const audienceCookie = (await page.context().cookies()).find((cookie) => cookie.name.startsWith('operator_session_local_'));
+  const audienceResponse = await request.get('/api/audience', { headers: { Cookie: `${audienceCookie?.name}=${audienceCookie?.value}` } });
   await expect(audienceResponse).toBeOK();
   const audience = await audienceResponse.json();
   const importedContact = audience.contacts.find((contact: { email: string }) => contact.email === importedEmail);
@@ -203,9 +203,9 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
 
 test('the published embed enforces persisted exact origins and gates challenge traffic on trusted interaction', async ({ page, request, browser }, testInfo) => {
   await signInAsLocalOperator(page, request);
-  const session = (await page.context().cookies()).find(cookie => cookie.name === 'operator_session_local')!;
+  const session = (await page.context().cookies()).find(cookie => cookie.name.startsWith('operator_session_local_'))!;
   const appOrigin = new URL(testInfo.project.use.baseURL as string).origin;
-  const headers = {Cookie:`operator_session_local=${session.value}`,Origin:appOrigin};
+  const headers = {Cookie:`${session.name}=${session.value}`,Origin:appOrigin};
   const response = await request.get('/api/audience/signup',{headers});
   await expect(response).toBeOK();
   const signup = await response.json();
@@ -308,11 +308,11 @@ test('the published embed enforces persisted exact origins and gates challenge t
 
 test('public form renders the configured disclosure and acknowledges only after the server accepts a request', async ({ page, request }, testInfo) => {
   await signInAsLocalOperator(page, request);
-  const session = (await page.context().cookies()).find((cookie) => cookie.name === 'operator_session_local');
+  const session = (await page.context().cookies()).find((cookie) => cookie.name.startsWith('operator_session_local_'));
   expect(session?.value).toBeTruthy();
   // Public capture requires a complete saved sender even for a honeypot acknowledgement.
   await expect(await request.put('/api/settings/sender', {
-    headers: { Cookie: `operator_session_local=${session!.value}`, Origin: new URL(testInfo.project.use.baseURL as string).origin },
+    headers: { Cookie: `${session!.name}=${session!.value}`, Origin: new URL(testInfo.project.use.baseURL as string).origin },
     data: {
       displayName: 'Mango local',
       fromEmail: 'newsletter@example.test',
@@ -370,7 +370,7 @@ test('public form renders the configured disclosure and acknowledges only after 
   await expect(page.getByRole('status')).toBeVisible();
   await expect(page.getByRole('status')).not.toBeEmpty();
 
-  await storedSignup(request,`operator_session_local=${session!.value}`,signupEmail,info,testInfo);
+  await storedSignup(request,`${session!.name}=${session!.value}`,signupEmail,info,testInfo);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.getByRole('status')).toBeVisible();
   await expect(page.getByRole('status')).not.toBeEmpty();
