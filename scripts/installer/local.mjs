@@ -46,7 +46,7 @@ export const hooks = {
   localContactHashSalt(localBindings((await readSettings(context.root,{})).values));
   return previewTarget(context);
  },
- owner:{displayName:input=>input.displayName,returnTo:'/setup'},signIn:{emailKey:'OWNER_EMAIL',returnTo:'/setup'},
+ owner:{returnTo:'/setup'},signIn:{emailKey:'OWNER_EMAIL',returnTo:'/setup'},
 };
 const lifecycle=localInstaller(hooks);
 // The deploy kit reads the resolved secrets for app deployment; rer's run-site planner reads
