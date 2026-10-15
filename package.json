@@ -19,6 +19,7 @@
     "db:generate": "drizzle-kit generate",
     "test": "node scripts/verification/run.mjs --tests-only",
     "verify": "rer verify",
+    "verify:managed": "rer check --profile first-party && pnpm run source:check && pnpm run typecheck && pnpm run integration:check",
     "review:synthetic": "node scripts/start-synthetic-review.mjs",
     "source:inspect": "node scripts/edition-authoring/cli.mjs inspect",
     "source:lock": "node scripts/edition-authoring/cli.mjs lock",

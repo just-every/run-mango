@@ -413,7 +413,6 @@
     },
     "page": {
       "path": "/",
-      "originVariable": "MANGO_PUBLIC_BASE_URL",
       "readiness": [
         {
           "path": "/",

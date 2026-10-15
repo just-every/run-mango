@@ -13,7 +13,7 @@
     "operations": {
       "setup": "pnpm run deps",
       "build": "pnpm run build",
-      "verify": "pnpm run verify",
+      "verify": "pnpm run verify:managed",
       "artifact": "node scripts/build-delivery-artifact.mjs",
       "recovery": "Read OPERATIONS.md: stop writes and scheduled work, preserve exact source, applied migrations and matching private authority; export D1 and R2, restore into fresh resources, compare exports and verify native sessions and publication before routing traffic."
     }
@@ -110,7 +110,6 @@
         },
         "page": {
           "path": "/",
-          "originVariable": "MANGO_PUBLIC_BASE_URL",
           "readiness": [
             {
               "path": "/",

@@ -916,7 +916,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "d6e3d07e3a2945a352ca42a1e9180154b75ee0128990e824bb11a223e9fe6263",
+      "sha256": "e7e141a1455f928c2504f2e4df3d9785bf34bbd4c9e4a25ab5bbde6365276013",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1192,7 +1192,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "68defa72410d4be6ba245d98d3a106dea21fdcb7a563633a0c2da1bb1fc66333",
+      "sha256": "ee56d879fa124d6617dc521b5b69a4e9a2f3dd67637cf47d9b9d85310bc878e5",
       "executable": false
     },
     "playwright.config.js": {
@@ -1272,7 +1272,7 @@
       "executable": false
     },
     "rer-project.json": {
-      "sha256": "5f32122d74ae674ebcad06a0a831e87f51f56844bcb6b6d8a9d0e123c4168c1a",
+      "sha256": "0df158c4e8ec1c63fb3ea2a29b3c61e8c14b2ffcf68a78be743cc20d6599d3e0",
       "executable": false
     },
     "rer-setup.json": {
@@ -1340,7 +1340,7 @@
       "executable": false
     },
     "scripts/delivery/base/packaging.json": {
-      "sha256": "e199df0af83857ca7c9d7516c5fcc5bbad1befd840c2e6a852f5b01393427611",
+      "sha256": "a941a945aaadef3ce1f4bcf884f195613c8d8684c996997e66ec651b5ffd20ea",
       "executable": false
     },
     "scripts/delivery/base/paths.mjs": {
