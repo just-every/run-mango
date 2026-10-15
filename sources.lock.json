@@ -6192,11 +6192,11 @@
       "executable": false
     },
     "tests/portability/privacy.spec.ts": {
-      "sha256": "523e0d6c6fcce392b34de882effe6485159609097d1d7c9cecde1475c15872fc",
+      "sha256": "0f1b36720aa0be981adf8cb6b7c84301e0f79c2700b922028be9f1b2eb0ac634",
       "executable": false
     },
     "tests/portability/runtime.mjs": {
-      "sha256": "337d1ddbba34a500114738f084840067d8d830f4ad61529e2fb79c3001e382f6",
+      "sha256": "531b1970f0e0302b53fd36e1353b60d6d7da6b5acbd8d7be2a5050a6377e5b42",
       "executable": false
     },
     "tests/portability/worker.ts": {
