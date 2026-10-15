@@ -9,7 +9,6 @@ import { consumeLifecycleQueue, type LifecycleQueueBatch } from '@/core/features
 import { runScheduled } from './scheduled';
 import { designCommandKinds } from '@/core/features/design-generation/advance';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
-import { runScheduled } from './scheduled';
 
 const worker = {
   fetch(request, environment, executionContext) {
@@ -23,9 +22,6 @@ const worker = {
     const bindings = environment as LocalAppBindings;
     const runtime = createAppServices(createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY)).lifecycleRuntime;
     await consumeLifecycleQueue({ messages }, runtime, bindings.RER_DEMO === '1' ? undefined : designCommandKinds);
-  },
-  async scheduled(controller, bindings) {
-    if (bindings.RER_DEMO === '1') await runScheduled(controller, bindings, async env => createAppServices(createLocalPlatform(env, env.SESSION_SIGNING_KEY)).lifecycleRuntime);
   },
   // rer dev fires the Cron Trigger every minute: record the tick and run the same lifecycle work, which sends nothing here.
   scheduled(controller, environment, executionContext) {
