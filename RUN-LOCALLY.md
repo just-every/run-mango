@@ -89,12 +89,7 @@ packages from its store.
 
 After `RER_READY`, a seed with dev identity prints `RER_SIGNED_IN EMAIL` and
 `RER_OPEN URL`: open that URL on this computer and the app opens signed in as
-the owner, at `/setup` until first-run is finished. Other seeds, and
-`dev --login`, print `RER_SIGN_IN URL` for the local outbox: open it, follow
-the newest ordinary sign-in link and finish first-run setup at `/setup`. Until
-first-run completion is stored durably, app routes send the signed-in owner to
-`/setup`; signed-out visitors sign in and return there. Once complete,
-`/setup` opens the app or settings. The local outbox sends no external email.
+the owner, at `/setup` until first-run is finished. Sign-in is one click; local mail is silently suppressed, with no outbox or injected bar. Until first-run completion is stored durably, app routes send the signed-in owner to `/setup`; signed-out visitors sign in and return there. Once complete, `/setup` opens the app or settings. `rer demo` instead opens isolated sample data with the Mango Demo label; stop it with `rer demo --stop`.
 
 The saved local port is used; a first setup saves the first free port from 8787. Explicit ports are decimal
 integers from 1 through 65535 and must be free; a busy requested port fails
@@ -141,8 +136,7 @@ root, inspect the live queue with
 
 For the real owner mailbox, `setup` can prompt instead of receiving
 `--owner-email` on the command line. Setup builds the app, applies local
-migrations, prepares the first owner, requests an ordinary sign-in message and
-stops its temporary app before it exits. Existing owner data and private
+migrations, prepares the first owner and stops its temporary app before it exits. Existing owner data and private
 settings are preserved on a repeated setup.
 
 Dev starts the real local app with assets and HMR and prints `RER_READY URL`
@@ -151,54 +145,9 @@ after the application health check. With dev identity it then prints
 checkout's dev key in its fragment: opening it signs the browser in through a
 real dev session, and the key is removed from the address bar and kept only as a
 host-only cookie. Treat that line as a credential and open it only on this
-computer. A dev-only badge switches between the owner, signed out and the
-seed's personas (`admin@dev.localhost` and so on). `dev --as PERSONA` starts as
-another persona or `signed-out`; `dev --login` turns dev identity off and uses
-the outbox: it prints `RER_SIGN_IN URL` and a `RER_OPEN` URL that opens that
-outbox. Choose the newest ordinary sign-in message and follow its link. No
-external email is sent. A successful sign-in consumes the link once. Seeds
-without dev identity print only `RER_SIGN_IN URL` for the local outbox.
+computer. The nav and title read Mango Dev. Use `dev --as PERSONA` for another persona or `signed-out`; there is no injected bar or outbox, and local mail is silently suppressed.
 
-Dev and preview are managed servers. In a terminal the first invocation stays
-active while serving; without one, `rer dev` returns once the app is ready and
-leaves it running (see the launch section above). Use `rer dev --stop` or
-`rer preview --stop` to stop them; `--idle-timeout SECONDS`
-sets inactivity cleanup. Compatible repeated starts reuse the registered
-server, print readiness and exit. Preview serves fixed production output; dev
-serves live source edits.
-Both retain the same owner and `.wrangler/state`.
-
-Both also run the project's Cron Triggers on their schedule, read from the same
-files `check` reads for the deployed Worker (`wrangler.jsonc`, `wrangler.toml`,
-a deploy template such as `deploy/wrangler.template.toml`). Each run prints one
-`RER_SCHEDULED TIME "CRON" ok MSms` line. If two of those files declare different
-schedules the server refuses to start and names both files; make them the same.
-
-A server stops after 12 hours (43200 seconds) without activity, so one left
-running overnight is still there in the morning. Start it with
-`--idle-timeout SECONDS` (or set `RER_SERVER_IDLE_SECONDS`) to change that.
-
-Up to 10 dev or preview servers run on one computer, so several seeds can run
-side by side. At the limit a start is refused and the message lists the running
-servers with the command that stops each; start with `RER_SERVER_LIMIT=N` to
-allow more. Machine load alone never refuses a start or holds heavy work; a
-fleet that wants a load guard sets `RER_SERVERS_LOAD_THRESHOLD=N` and
-`RER_JOBS_LOAD_THRESHOLD=N` (the 1-minute load) in its own environment.
-
-A new server is refused only when available memory is below 1.5 GiB. An idle
-dev server holds about 0.5-1.3 GiB and a preview about 0.4-0.8 GiB. The message
-gives the available memory, the floor and the running servers with their stop
-commands; start with `RER_SERVERS_MIN_MEMORY_BYTES=N` (bytes; 0 turns it off) to
-start anyway. Reusing a checkout's running server is never refused for memory.
-
-Use the following operations as needed. Reset is destructive local cleanup;
-export any data you need to keep before resetting. Export saves under
-`exports/`: normalized relative paths such as `exports/x.rer` and
-`./exports/x.rer`, and absolute paths inside this checkout's `exports/`, are
-accepted. An absolute path outside the checkout is also accepted. Export
-refuses other paths in the checkout, `..` segments, unsafe symlinks and any
-path served by the app. Import requires an empty destination and `--yes`
-confirms the restore.
+Dev and preview are managed servers. Dev returns once ready and serves source edits in the background; `--foreground` keeps it attached. Use `rer dev --stop` or `rer preview --stop` to stop them. `--idle-timeout SECONDS` sets inactivity cleanup. Compatible repeated starts reuse the registered server, print readiness and exit. Preview serves a fixed build.
 
 ```sh
 rer verify
@@ -212,14 +161,14 @@ rer describe
 Stop dev with `rer dev --stop` or preview with `rer preview --stop` before build or verification, and
 before reset and data transfer. Reset removes only the
 declared local inventory: local database/storage state, owner and sessions,
-outbox, CLI and installer bookkeeping, and generated private settings. It
+legacy local mail records, CLI and installer bookkeeping, and generated private settings. It
 keeps source, dependencies, exports and deployment receipts. It refuses active
 operations and ambiguous or linked state.
 
 Local export creates a private archive with an integrity receipt and explicit
 exclusions. Import validates the archive and restores into an empty destination.
 After import, run setup to establish the owner and local configuration. Auth,
-outbox, private settings and transient runtime state are excluded. Remote
+legacy local mail records, private settings and transient runtime state are excluded. Remote
 transfer is unsupported by the maintained references and fails visibly.
 
 Real deployment uses the owner-account procedure and its private credentials.
@@ -267,8 +216,8 @@ Local durable state is `.wrangler/state`; CLI bookkeeping is `.rer/local`,
 installer state is `.seed/installer`, and the default private settings file is
 `.dev.vars` with mode 0600. Setup writes this checkout's dev key to
 `.rer/local/dev-key.env` (mode 0600); a repeat setup keeps it and reset removes
-it, which also ends every browser's earlier dev cookie. Dev sign-in, personas
-and the development outbox answer only a request holding that key's cookie, so
+it, which also ends every browser's earlier dev cookie. Dev sign-in and personas
+answer only a request holding that key's cookie, so
 a tunnel or local proxy to the app cannot reach them; anything else returns 404.
 Any local user or process that can read the checkout can read the key and sign
 in as the owner. `rer deploy` refuses the key, and `rer build` refuses output
@@ -277,7 +226,7 @@ that contains the dev layer.
 The first-party command profile is optional for independently authored
 projects. They may keep their own runtime, tools, installer, commands and
 provider choices. RER executes only their declared operations and does not
-impose Base pins, aliases, outbox or state layout.
+impose Base pins, aliases or state layout.
 
 ## The front door (opt-in)
 
