@@ -137,6 +137,10 @@ test('[SEND-003][SEND-006] concurrent campaigns and HTTP confirmation share the 
     expect(marketing().length).toBeLessThan(emails.length);
     const [liveProgress]=await site.rows(`SELECT updated_at FROM step_dispatches WHERE revision_id='${b.revisionId}'`);
     expect(liveProgress.updated_at).toBeGreaterThan(initialProgress.started_at);
+    // Slow replies have proved that the open screen refreshes during a backlog.
+    // Release that edge delay before draining: if B wins the shared queue early,
+    // eight remaining 8-second replies alone exceed the completion wait.
+    edge.behavior.delayMarketingResponses(0);
     await expect.poll(()=>Promise.resolve(marketing().length),{timeout:60000}).toBe(emails.length);
     const sends=edge.sends.slice().sort((a,b)=>a.at-b.at);
     // Compare measured handoffs to the installation's actual configured spacing,
