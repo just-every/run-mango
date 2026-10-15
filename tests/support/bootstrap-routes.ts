@@ -27,7 +27,7 @@ export function createLocalBootstrapRoutes(
     const result = await service.seedLocal();
     if (!body.data.testSession) return context.json(result);
     const createdAt = body.data.testSessionState === 'expired' ? new Date(Date.now() - 31 * 86400000) : new Date();
-    const session = await auth.createTestSession(service.operatorId(), createdAt);
+    const session = await auth.createTestSession(service.operatorId(), createdAt, new URL(context.req.url).origin);
     if (body.data.testSessionState === 'revoked') {
       const url = new URL(context.req.url);
       await auth.signOut(new Request(url, { method: 'POST', headers: { Origin: url.origin, Host: url.host, Cookie: session.cookie.split(';')[0] } }));
