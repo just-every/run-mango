@@ -102,6 +102,13 @@ test('[SEND-005] authenticated probes pause without recipients, obey durable cad
     const beforeOutage=await site.control('/_golive/clock');await site.control('/_golive/clock',{advanceMs:Math.max(0,nextHealth.next_probe_at-beforeOutage.now)+1});await site.control('/_golive/cron');
     const [activeOutage]=await site.rows("SELECT id,next_probe_at FROM provider_outages WHERE state='paused'");
     expect(await site.rows(`SELECT count(*) AS n FROM provider_outage_notifications WHERE outage_id='${activeOutage.id}' AND state='pending'`)).toEqual([{n:2}]);
+    // Future approvals wait for Cron. Capture a real due dispatch while the
+    // outage is paused, keeping its window open until the consumer settles.
+    const beforeDue=await site.control('/_golive/clock');
+    await site.control('/_golive/clock',{advanceMs:Math.max(0,scheduled-beforeDue.now)+1,hold:true});
+    await site.control('/_golive/cron');
+    await expect.poll(async()=> (await site.control('/_golive/emissions')).find((item:any)=>item.command.kind==='campaign.dispatch'&&item.command.payload.revisionId===campaign.revisionId)?.completedQueues.length??0,{timeout:60000}).toBeGreaterThan(0);
+    expect(await site.rows(`SELECT transport_disposition,attempt_count FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`)).toEqual([{transport_disposition:'queued',attempt_count:0}]);
     await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await expect(page.locator('.step-result-state.status-pill--paused')).toBeVisible();
@@ -112,6 +119,7 @@ test('[SEND-005] authenticated probes pause without recipients, obey durable cad
     expect(await site.rows(`SELECT state FROM campaigns WHERE id='${campaign.campaignId}'`)).toEqual([{state:'completed'}]);
     const emitted=await site.control('/_golive/emissions'),lateIndex=emitted.findIndex((item:any)=>item.command.kind==='campaign.dispatch'&&item.command.payload.revisionId===campaign.revisionId);
     expect(lateIndex).toBeGreaterThanOrEqual(0);await site.control('/_golive/replay',{index:lateIndex});
+    await expect.poll(async()=> (await site.control('/_golive/emissions'))[lateIndex].completedQueues.length,{timeout:60000}).toBeGreaterThan(emitted[lateIndex].completedQueues.length);
     await expect(page.locator('[data-disposition=skipped] dd')).toHaveText('1',{timeout:30000});
     await expect(page.locator('[data-disposition=queued]')).toHaveCount(0);
     await expect(page.locator('.step-result__notes time')).toHaveCount(0);
