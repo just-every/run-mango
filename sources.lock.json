@@ -916,7 +916,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "acb92dbbedf9cb618a1e2037ec7dae1cfa38769d8f9a8ff3ca35863b403a1f01",
+      "sha256": "091c58d5b6fc1ee5caf05be4d17e86195a4147305c9aed8d4b68a7bc640b06a4",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -2316,7 +2316,7 @@
       "executable": false
     },
     "src/core/features/auth/service.ts": {
-      "sha256": "02e1522280d78673f9abd12251b9e3c04c86eaabe0122b4f511972f22ce5c7a8",
+      "sha256": "4cf42325f305d528be6a77635a985c06e21cc78c6120895128b8831a47c61667",
       "executable": false
     },
     "src/core/features/auth/setup-complete.ts": {
@@ -3411,6 +3411,10 @@
       "sha256": "a9b9e70b53474c7ec5b30e9bf77d53b6d47bb70269a3a1c9c1d200688e34743c",
       "executable": false
     },
+    "src/core/features/sender-verification/owner-confirmation.ts": {
+      "sha256": "6d65233bb8a6030463bcebba77265a6515ff339457724921a949cae950441435",
+      "executable": false
+    },
     "src/core/features/sender-verification/qa-inbox-mime.ts": {
       "sha256": "e7e2033b2d811f53100d4b43315fb75877086660b1f62521417c36047d0484f1",
       "executable": false
@@ -3421,6 +3425,10 @@
     },
     "src/core/features/sender-verification/README.md": {
       "sha256": "20784423907b0a359bd65217b2aa4082ff1ee8f61a5f9bf50c98e205053ebbb5",
+      "executable": false
+    },
+    "src/core/features/sender-verification/reason-text.ts": {
+      "sha256": "f1233bb7adbf6bffaa3b883ce4a9ca3ee6ae39c0a72a8f61ea4166834fcd0816",
       "executable": false
     },
     "src/core/features/sender-verification/receipt-configuration.ts": {
@@ -3457,6 +3465,10 @@
     },
     "src/core/features/settings/sender-authority.ts": {
       "sha256": "5467bdae8e2ba5a2a811a709a4c467584a76772e643a38c4f69d17b5c3e1530b",
+      "executable": false
+    },
+    "src/core/features/settings/sender-check-routes.ts": {
+      "sha256": "e94b14fa5e9dfaf6aab27acc6ee621d5fb2340566841f7a7542d2d754b05689f",
       "executable": false
     },
     "src/core/features/settings/sender-persistence.ts": {
@@ -3697,6 +3709,10 @@
     },
     "src/core/features/store/synchronize.ts": {
       "sha256": "5270b10de9352fbf5b2bf3d93e1f46b29759b0de3fe5495fa368ab9a5317cc16",
+      "executable": false
+    },
+    "src/core/features/store/ui/settings-inbox-check.tsx": {
+      "sha256": "0c105441f9077495b5c92a01048e97c1b13b457fd50f1b702e6109d142301846",
       "executable": false
     },
     "src/core/features/store/ui/settings-operator-actions.ts": {

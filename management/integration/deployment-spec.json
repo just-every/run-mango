@@ -350,6 +350,12 @@
       "name": "core-0057_signup_embed_origins.sql",
       "sha256": "7bbbd312b651c7a36169a30019ededfb75a737f2c3ce4d9bd7ceec46ba7e0725",
       "sql": "-- Existing hosted forms remain available; outside framing requires an operator allowlist.\nALTER TABLE signup_settings ADD COLUMN embed_origins TEXT NOT NULL DEFAULT '[]' CHECK (json_valid(embed_origins) AND json_type(embed_origins) = 'array');\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0058_owner_signin.sql",
+      "sha256": "be66a21f23a99e2027b1848a899d1645fd517f5b7f1e98d83a66c3434e95d729",
+      "sql": "-- One-time owner sign-in links minted by `rer signin` with the deployment's own\n-- Cloudflare credentials (Base operator-auth accounts/schema/owner-signin.sql).\n-- Additive only. token_hash is the SHA-256 of the link token; the token is never stored.\nCREATE TABLE IF NOT EXISTS oa_owner_signins (\n id TEXT PRIMARY KEY, token_hash TEXT NOT NULL UNIQUE,\n operator_id TEXT NOT NULL REFERENCES oa_operators(id), operator_version INTEGER NOT NULL,\n created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL, consumed_at INTEGER\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

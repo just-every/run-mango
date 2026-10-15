@@ -11,6 +11,7 @@ import type { Platform } from '@/core/shared/platform';
 import type { createAuthRepository } from './repository';
 import type { operators } from './schema';
 import { completeLocalSetup } from './setup-complete';
+import { ownerSignin } from './owner-signin';
 
 export type AuthenticatedOperator = InferSelectModel<typeof operators>;
 
@@ -56,14 +57,15 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     return includeBody ? new Request(request.clone() as Request, { headers })
       : new Request(request.url, { method: request.method, headers });
   }
+  const authConfig = (request: Request) => ({
+    origin: local ? new URL(request.url).origin : config.publicBaseUrl.origin,
+    OWNER_EMAIL: config.initialOperatorEmails[0] ?? 'local@example.test',
+    SESSION_SECRET: config.sessionSigningKey, SETUP_TOKEN: config.authSetupToken,
+    MAIL_FROM: config.mailAuthFrom || undefined, local,
+    branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
+  });
   function core(request: Request) {
-    return createOperatorAuth({ db, config: {
-      origin: local ? new URL(request.url).origin : config.publicBaseUrl.origin,
-      OWNER_EMAIL: config.initialOperatorEmails[0] ?? 'local@example.test',
-      SESSION_SECRET: config.sessionSigningKey, SETUP_TOKEN: config.authSetupToken,
-      MAIL_FROM: config.mailAuthFrom || undefined, local,
-      branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
-    }, mailSender: local ? createMailSender({ provider: 'development', mode: 'development' }, { outbox: createD1DevelopmentOutbox({ db }) }) : createBaseMailSender(config, repository.database),
+    return createOperatorAuth({ db, config: authConfig(request), mailSender: local ? createMailSender({ provider: 'development', mode: 'development' }, { outbox: createD1DevelopmentOutbox({ db }) }) : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
         if (action === 'operators:role') return false;
@@ -83,6 +85,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       if (['/auth/review-session', '/auth/invite', '/auth/invite/cancel', '/auth/operators', '/auth/operator/status', '/auth/operator/role', '/auth/sessions', '/auth/session/revoke'].includes(new URL(request.url).pathname)) return new Response(null, { status: 404 });
       const normalized = normalize(request, true);
       if (new URL(request.url).pathname === '/auth/setup-complete') return completeLocalSetup(normalized, db, config);
+      if (new URL(request.url).pathname === '/auth/owner-signin') return ownerSignin(normalized, db, authConfig(normalized));
       const auth = core(normalized);
       const nativeMagicLink = new URL(request.url).pathname === '/auth/magic-link'
         && request.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded';
