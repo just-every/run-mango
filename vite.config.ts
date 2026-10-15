@@ -1,3 +1,4 @@
+import { demoSockets } from './src/modules/demo/vite.mjs';
 import { cloudflare } from '@cloudflare/vite-plugin';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
@@ -21,14 +22,14 @@ export default defineConfig(({command, isPreview}) => {
  // Explicit fixtures load tests/support or tests/campaign-authoring; synthetic
  // review selects tests/review/worker.ts. Their bootstrap imports the sample
  // JSON; normal app serving keeps both fixture sources closed.
- const fixtureSources = runtime === 'app' ? [] : ['tests', 'sample-data/initial.json'];
+ const fixtureSources = runtime === 'app' ? (process.env.RER_DEMO === '1' ? ['sample-data/initial.json'] : []) : ['tests', 'sample-data/initial.json'];
  return {
  cacheDir: fileURLToPath(new URL('./.cache/vite', import.meta.url)),
- plugins: [cloudflare({
+ plugins: [demoSockets(), cloudflare({
   inspectorPort: false,
   configPath: authoringConfig ?? (runtime === 'review' ? 'wrangler.review.toml' : productionBuild ? 'wrangler.production.toml' : 'wrangler.toml'),
-  persistState: {path: process.env.MANGO_AUTHORING_TEST_STATE ?? (runtime === 'review' ? '.seed/review-state' : '.wrangler/state')},
-  ...(appDev ? {config: {main: './src/core/app/worker.dev.ts', vars: {...local('RER_DEV_ORIGIN'), ...local('RER_DEV_KEY'), ...local('RER_DEV_IDENTITY')}}} : process.env.RER_DEV_ORIGIN ? {config: {vars: {RER_DEV_ORIGIN: process.env.RER_DEV_ORIGIN}}} : {}),
+  persistState: {path: process.env.RER_STATE_DIR ?? process.env.MANGO_AUTHORING_TEST_STATE ?? (runtime === 'review' ? '.seed/review-state' : '.wrangler/state')},
+  ...(appDev ? {config: {main: './src/core/app/worker.dev.ts', vars: {...local('RER_DEV_ORIGIN'), ...local('RER_DEV_KEY'), ...local('RER_DEV_IDENTITY'), ...local('RER_DEMO'), ...local('RER_DEMO_EXPIRES')}}} : process.env.RER_DEV_ORIGIN ? {config: {vars: {RER_DEV_ORIGIN: process.env.RER_DEV_ORIGIN}}} : {}),
   viteEnvironment: {name: 'ssr'},
  }), docsSite(), tanstackStart({prerender: {enabled: false, autoStaticPathsDiscovery: false, crawlLinks: false}}), react(), tailwindcss(), excludeLocalVariables(), archiveOutputGuard()],
  ...(process.env.MANGO_PREVIEW_OUT ? {environments: {client: {build: {outDir: `${process.env.MANGO_PREVIEW_OUT}/client`}}, ssr: {build: {outDir: `${process.env.MANGO_PREVIEW_OUT}/server`}}}} : {}),

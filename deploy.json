@@ -130,5 +130,9 @@
     "MAIL_FROM": "",
     "MAIL_RELAY_URL": ""
   },
-  "originVar": "MANGO_PUBLIC_BASE_URL"
+  "originVar": "MANGO_PUBLIC_BASE_URL",
+  "platforms": [
+    "workers",
+    "container"
+  ]
 }
