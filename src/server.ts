@@ -1,4 +1,4 @@
-import { withDemo } from './modules/demo/index.mjs';
+import { withDemo } from './vendor/base/demo/index.mjs';
 import worker from './core/app/worker';
 import { seedDemo } from './demo';
 
