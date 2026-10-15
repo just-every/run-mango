@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import {test,expect} from '@playwright/test';
 import {authoringRuntime} from './browser-runtime.mjs';
 
@@ -8,7 +9,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
   try {
     await page.setViewportSize({width,height:1000});
     const open=await request.post(runtime.url+'/_authoring/open',{headers:{'X-Test-Token':runtime.token}});expect(open.status(),await open.text()).toBe(200);
-    const {token}=await open.json();await page.context().addCookies([{name:'operator_session_local',value:token,url:runtime.url}]);
+    const {token}=await open.json();await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,url:runtime.url}]);
     expect((await request.post(runtime.url+'/api/campaigns',{data:{}})).status()).toBe(401);
     const call=(path:string,body:unknown)=>page.evaluate(async({path,body})=>{const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return {status:response.status,data:await response.json()};},{path,body});
     await page.goto(runtime.url+'/app/campaigns');

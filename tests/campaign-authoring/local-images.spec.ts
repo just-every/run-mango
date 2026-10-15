@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { authoringRuntime } from './browser-runtime.mjs';
@@ -11,7 +12,7 @@ test('[CAMP-012] on a local copy, Insert image adds an own-origin image that sav
   try {
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
     expect(open.status(), await open.text()).toBe(200);
-    await page.context().addCookies([{ name: 'operator_session_local', value: (await open.json()).token, url: runtime.url }]);
+    await page.context().addCookies([{ name: localSessionCookieName(runtime.url), value: (await open.json()).token, url: runtime.url }]);
     const outbound: string[] = [];
     page.on('request', item => { if (!item.url().startsWith(runtime.url)) outbound.push(item.url()); });
     const api = page.context().request, headers = { Origin: runtime.url };

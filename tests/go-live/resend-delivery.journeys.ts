@@ -65,7 +65,7 @@ test('[SEND-001][SEND-008][SEND-006] native Resend reconciliation resumes exact 
     expect(emissions.some((e:any)=>e.command.kind==='delivery.reconcile'&&before.some(r=>r.id===e.command.payload.recipientStepId))).toBe(true);
     await site.runtime.close();site=await installation(edge,signer,{...options,resendCoverage:'complete'});cookie=await site.open();
     expect((await recipients()).map(r=>r.outbound_request_json)).toEqual(before.map(r=>r.outbound_request_json));
-    await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await expect(page.locator('[data-disposition=handoff-unknown] dd')).toHaveText('2');
     const accepted=edge.resend.sends.find(send=>send.body.to[0]===emails[0]&&send.body.headers?.['List-Unsubscribe'])!;
@@ -100,7 +100,7 @@ test('[SEND-001][SEND-008][SEND-006] native Resend reconciliation resumes exact 
     // A new active owner session is necessary after advancing beyond account
     // retention. Expiry must never trigger another recipient submission.
     cookie=await site.open();await page.context().clearCookies();
-    await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await site.control('/_golive/cron');
     await expect.poll(async()=> (await site.rows(`SELECT transport_disposition,last_error_code FROM recipient_steps WHERE destination='${emails[1]}'`))[0],{timeout:60000})

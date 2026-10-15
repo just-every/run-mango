@@ -1,3 +1,4 @@
+import { localSessionCookieName } from './local-session';
 // Test-only database fixture. Product entrypoints never import this module.
 import { createAuthRepository } from '@/core/features/auth/repository';
 import { hashToken, opaqueToken } from '@/vendor/base/operator-auth/crypto.mjs';
@@ -14,7 +15,7 @@ export function testIdentity(platform: Platform) {
       if(!operator) throw new Error('Test operator is missing.');
       const token=opaqueToken(), hash=await hashToken(platform.config.sessionSigningKey,'session',token);
       await db.prepare("INSERT INTO oa_sessions(id,token_hash,operator_id,operator_version,kind,created_at,expires_at) SELECT ?,?,id,version,'native',?,? FROM oa_operators WHERE id=?").bind(crypto.randomUUID(),hash,now.getTime(),now.getTime()+7*86400000,operatorId).run();
-      return {operator,token,cookie:`operator_session_local=${token}; Path=/; HttpOnly; SameSite=Lax`};
+      return {operator,token,cookie:`${localSessionCookieName(platform.config.publicBaseUrl.origin)}=${token}; Path=/; HttpOnly; SameSite=Lax`};
     },
   };
 }

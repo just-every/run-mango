@@ -23,10 +23,10 @@ test("campaign review saves and discards long edits without granting unsaved app
   await signInAsLocalOperator(page, request);
   await page.setViewportSize({ width: 1440, height: 1000 });
   const session = (await page.context().cookies()).find(
-    (cookie) => cookie.name === "operator_session_local",
+    (cookie) => cookie.name.startsWith('operator_session_local_'),
   );
   expect(session?.value).toBeTruthy();
-  const cookie = `operator_session_local=${session!.value}`;
+  const cookie = `${session!.name}=${session!.value}`;
   const original = await readCampaign(request, cookie);
   expect(original.campaign.state).toBe("draft");
   expect(original.revision).toBeTruthy();

@@ -37,7 +37,7 @@ test('[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, re
     const html=(send:typeof disabled.sends[number])=>String(send.body.content.find((part:any)=>part.type==='text/html').value);
     expect(html(disabled.sends[0])).not.toContain('/o/');
     expect(await site.count('open_tracking_tokens')).toBe(0);
-    await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(site.runtime.url+'/app/insights');
     const toggle=page.getByRole('checkbox',{name:'Enable privacy-sensitive open estimates'});
     await expect(toggle).not.toBeChecked();await toggle.click();
