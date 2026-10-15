@@ -1,3 +1,5 @@
+import { withDemo } from '../../modules/demo/index.mjs';
+import { seedDemo } from '../../demo';
 import { dispatchDocuments } from './document-dispatch';
 import { createLocalPlatform } from '@/core/platform/runtime';
 import { createAppServices } from './app';
@@ -8,7 +10,7 @@ import { designCommandKinds } from '@/core/features/design-generation/advance';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
 import { runScheduled } from './scheduled';
 
-export default {
+const worker = {
   fetch(request, environment, executionContext) {
     const bindings = environment as LocalAppBindings;
     return dispatchDocuments(request, bindings, executionContext, createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY), createLocalApp(bindings));
@@ -29,3 +31,5 @@ export default {
       async () => createAppServices(createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY)).lifecycleRuntime));
   },
 } satisfies ExportedHandler<LocalAppBindings>;
+
+export default withDemo(worker, { seed: seedDemo });

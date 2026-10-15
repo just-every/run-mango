@@ -41,7 +41,7 @@ export const hooks = {
  // Build production with its own config; ensure the independent local config
  // exists for fresh checkouts without rewriting an unchanged local config.
  build:[['pnpm',['run','build:worker']],['pnpm',['run','config:local']]],
- migrate:[['pnpm',['run','config:local']],['pnpm',['exec','wrangler','d1','migrations','apply','mango-local','--local','--persist-to',statePath,'--config','wrangler.toml']]],
+ migrate:({demo})=>[['pnpm',['run','config:local']],['pnpm',['exec','wrangler','d1','migrations','apply','mango-local','--local','--persist-to',demo?.state??statePath,'--config','wrangler.toml']]],
  async start(context) {
   localContactHashSalt(localBindings((await readSettings(context.root,{})).values));
   return previewTarget(context);
