@@ -1,5 +1,3 @@
-import { demoConfig } from './demo-config';
-import { createDemoAdapters } from './demo/adapters';
 import { pacedAdapter } from '@/core/features/lifecycle/transport-pacing';
 import { readDeliveryPolicies } from '@/core/features/lifecycle/transport-policy';
 import { createReceiptConnector } from '@/core/features/sender-verification/qa-inbox';
@@ -62,7 +60,7 @@ function designAdapter(module: AppConfig['modules']['design']) {
   return module.enabled ? { design: createTwelveUiAdapter({ apiKey: module.config.providerApiKey, origin: module.config.origin }) } : {};
 }
 
-function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'>): Platform {
+export function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'>): Platform {
   return {
     database: createDatabase(environment.DB),
     config,
@@ -75,10 +73,6 @@ function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Pla
 }
 
 export function createProductionPlatform(environment: AppBindings): Platform {
-  if (environment.RER_DEMO === '1') {
-    const config = demoConfig(environment);
-    return compose(environment, config, createDemoAdapters(environment, config));
-  }
   const config = readProductionConfig(environment);
   config.deliveryPolicies = readDeliveryPolicies(environment.MANGO_DELIVERY_POLICY_JSON);
   const verification = createSenderVerification({ database: createDatabase(environment.DB), config,
@@ -123,10 +117,6 @@ export function createProductionPlatform(environment: AppBindings): Platform {
 }
 
 export function createLocalPlatform(environment: AppBindings, localSigningKey: string): Platform {
-  if (environment.RER_DEMO === '1') {
-    const config = demoConfig(environment);
-    return compose(environment, config, createDemoAdapters(environment, config));
-  }
   environment = localBindings(environment);
   if (environment.MANGO_LOCAL_CONFIG_VERSION === '2') localSigningKey = environment.SESSION_SIGNING_KEY;
   // A copy running on a computer may try design generation with the owner's own key in .dev.vars (decision D8a).

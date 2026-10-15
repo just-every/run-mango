@@ -1,7 +1,7 @@
 import { withDemo } from '../../vendor/base/demo/index.mjs';
 import { seedDemo } from '../../demo';
 import { dispatchDocuments } from './document-dispatch';
-import { createLocalPlatform } from '@/core/platform/runtime';
+import { createLocalWorkerPlatform as createLocalPlatform } from '@/core/platform/worker-runtime';
 import { createAppServices } from './app';
 import { createLocalApp } from './local-app';
 import type { LocalAppBindings } from './local-app';
@@ -13,7 +13,8 @@ import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
 const worker = {
   fetch(request, environment, executionContext) {
     const bindings = environment as LocalAppBindings;
-    return dispatchDocuments(request, bindings, executionContext, createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY), createLocalApp(bindings));
+    const platform = createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY);
+    return dispatchDocuments(request, bindings, executionContext, platform, createLocalApp(bindings, platform));
   },
   // Ordinary local development consumes design jobs; demos exercise all jobs through mocked effects.
   async queue(batch, environment) {
