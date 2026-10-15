@@ -16,7 +16,7 @@ export function StandaloneFrame({ className, home, card, after }: {
   card: { w: number; h: number; seed: number; children: ReactNode };
   after?: ReactNode;
 }) {
-  const lockup = <span className="app-brand"><MangoMark className="app-brand__mark" /><span className="app-brand__name">{productConfig.productName}</span></span>;
+  const lockup = <span className="app-brand"><MangoMark className="app-brand__mark" /><span className="app-brand__name" data-rer-name>{productConfig.productName}</span></span>;
   return (
     <div className={`mango-app app-standalone ${className}`}>
       <header className="simple-page__header">

@@ -51,7 +51,9 @@ export async function verifySignupChallenge(platform: Platform, token: unknown, 
   if (!config) return true;
   if (!config.siteKey || !config.secretKey || typeof token !== 'string' || !token || token.length > 2048) return false;
   try {
-    const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    // @ts-expect-error Base's portable fetch policy is runtime ESM.
+    const { fetchDemoRead } = await import('@/vendor/base/demo/effects.mjs');
+    const response = await fetchDemoRead('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: new URLSearchParams({secret:config.secretKey,response:token,remoteip:ip}).toString(),
       signal: AbortSignal.timeout(5000),

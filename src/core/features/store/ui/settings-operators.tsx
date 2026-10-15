@@ -6,7 +6,6 @@ import { operatorAction, OperatorProofRequired, type SettingsOperator } from './
 
 export function SettingsOperators({ current }: { current: SettingsOperator }) {
   const operators = useResource<{ operators: SettingsOperator[] }>('/api/operators');
-  const authEnvironment = useResource<{ local: boolean }>('/auth/environment');
   const [email, setEmail] = useState('');
   const [removing, setRemoving] = useState<SettingsOperator>();
   const [pending, setPending] = useState(false);
@@ -96,7 +95,6 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
       {error ? <p className="inline-error" role="alert">{error}</p> : null}
       {proofRequired ? <button className="secondary-action" type="button" disabled={pending} onClick={() => void confirmAccess()}>Email a confirmation link</button> : null}
       {notice ? <p className="action-notice" role="status">{notice}</p> : null}
-      {proofSent && authEnvironment.data?.local ? <p><a href="/__dev/outbox">Open the development outbox</a></p> : null}
       {operators.error ? <div className="inline-error" role="alert"><p>Unable to load the operator list.</p><button className="secondary-action" onClick={() => void operators.reload()} disabled={pending}>Refresh operators</button></div> : null}
       {operators.loading ? <p className="muted-copy" role="status">Loading operators…</p> : null}
       <ul className="settings-operator-list">
