@@ -30,12 +30,12 @@ test('[RESULT-004] rejected AI spend, distinct handoffs and replayed purchases r
     const opened=await request.post(`${runtime.url}/_costs/open`,{headers:control});expect(opened.status()).toBe(200);
     await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:(await opened.json()).token,url:runtime.url}]);
     const api=page.request, headers={Origin:runtime.url};
-    // Local authoring has no email transport; refusing sign-in buys no mail.
+    // Local v2 sign-in accepts without a provider handoff or paid mail.
     // Successful hosted sign-in handoffs and their costs are exercised above.
     const localSignin=await api.post(`${runtime.url}/auth/magic-link`,{headers,data:{email:'costs@example.test'}});
-    expect(localSignin.status()).toBe(503);
-    expect(await localSignin.json()).toMatchObject({error:'mail_unavailable'});
-    expect((await (await request.post(`${runtime.url}/_costs/records`,{headers:control})).json()).costs).toHaveLength(0);
+    expect(localSignin.status()).toBe(202);
+    expect(await localSignin.json()).toMatchObject({status:'accepted'});
+    expect(await (await request.post(`${runtime.url}/_costs/records`,{headers:control})).json()).toMatchObject({costs:[],sends:[]});
     for(const mode of ['invalid','unknown','failed']) {
       expect((await request.post(`${runtime.url}/_costs/mode`,{headers:control,data:{mode}})).ok()).toBe(true);
       const generated=await api.post(`${runtime.url}/api/proposals/generate`,{headers});
