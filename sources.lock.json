@@ -784,11 +784,11 @@
       "executable": false
     },
     "AGENTS.consumer.md": {
-      "sha256": "6f33cf42870f2e702cb68a9beb9c252efd92e735e64ddcfa75efa63f1ce25a5d",
+      "sha256": "d19544d08f3d5c47137fd0bc4d6bfdeee93cce89dff835fc83de4e5bc5087ba8",
       "executable": false
     },
     "AGENTS.md": {
-      "sha256": "976b1ccbac1c07ef31d05ceaf2c1db6951bd1404423fb958c993248cdd04eb21",
+      "sha256": "b8f36276cc07082786c8d5b6fc827a683b15889b89097378b992767ad4af4531",
       "executable": false
     },
     "base-copies.json": {
@@ -860,11 +860,11 @@
       "executable": false
     },
     "docs/install.md": {
-      "sha256": "aaaf0f83467d7e5201e2cc9c14c155087b42fedf7058b8bd580c6de78ea1ca3a",
+      "sha256": "793c7e5091f001c2eff39e79cdb19a6a76e933309200c2c74aa4c653f17f29a9",
       "executable": false
     },
     "docs/introduction.md": {
-      "sha256": "024568019b8d0cd101f8aaa14f05896d55dc7e69f4d81b86dd58637f4c09c03d",
+      "sha256": "a3c8183b2f034ae3b776b7d9a135e9b552dd095f3ab543bdb5e7548cc953fd6d",
       "executable": false
     },
     "docs/moving-in.md": {
@@ -908,7 +908,7 @@
       "executable": false
     },
     "HANDOVER.md": {
-      "sha256": "93bace29754c0dc198da604b32c2f33aeacac5678a31bdda50b3542f341310e8",
+      "sha256": "50c5a7fe0233b9a49f20ce5838106b95a3774079ce8ef1e24cb5e34fc5279c3a",
       "executable": false
     },
     "LICENSE": {
@@ -1148,7 +1148,7 @@
       "executable": false
     },
     "OPERATIONS.md": {
-      "sha256": "fc3a4625eebedda015ea967176bfbe87d66d0c25583c81f4aff3f78b94cf8cfd",
+      "sha256": "eb84c687628c6642b91b1403fb495466e3aa1dd8edd174f3900e051f90607333",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -1192,7 +1192,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "79c460ca85e075e524140d6b430a2bf85436747b86074c8927bafe26a6272556",
+      "sha256": "68defa72410d4be6ba245d98d3a106dea21fdcb7a563633a0c2da1bb1fc66333",
       "executable": false
     },
     "playwright.config.js": {
@@ -1200,7 +1200,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "c406d57bfc07f4c11a9fee1ddfba62cc59f4c735f1944e81eefde304a0001fb2",
+      "sha256": "258a44c33c8070f23745f38f9b8f03eb3af490dc8e025a429e27d7c26fb0e41f",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -1256,7 +1256,7 @@
       "executable": false
     },
     "README.md": {
-      "sha256": "15a86370afb062e3b78874c3894ea03d1d9815042cf4a59f05a4999e34f83dfa",
+      "sha256": "2842165aa16d61b7ae87866c0079a699e1939c1498605dd6b1f3eb8ed4ff5fb4",
       "executable": false
     },
     "RELEASE-STATUS.md": {
@@ -1280,7 +1280,7 @@
       "executable": false
     },
     "RUN-LOCALLY.md": {
-      "sha256": "d6572ee3f2ef4a8349369b06d0e14c22f990512ba486008c86264c6b077d6772",
+      "sha256": "f07ccf6eca735a489165a02d2f54917df66215415f1071158e331f1c2d83b894",
       "executable": false
     },
     "sample-data/initial.json": {
