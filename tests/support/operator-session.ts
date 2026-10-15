@@ -5,7 +5,7 @@ import type { Platform } from '../../src/core/shared/platform';
 /** Test-only bootstrap through Base's real transaction; no synthesized credentials. */
 export async function bootstrapSession(platform: Platform) {
   const origin = platform.config.publicBaseUrl.origin;
-  const token = 'test-bootstrap-credential-at-least-thirty-two-bytes';
+  const token = 'synthetic-test-bootstrap-credential-at-least-thirty-two-bytes';
   platform.config.authSetupToken = token;
   const auth = createAuthService(createAuthRepository(platform.database), platform);
   const response = await auth.handle(new Request(`${origin}/auth/bootstrap`, { method: 'POST',

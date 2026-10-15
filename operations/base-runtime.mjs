@@ -5,7 +5,7 @@ import { sqlStatements } from './sql-statements.mjs';
 const require = createRequire(import.meta.url);
 const { Miniflare } = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const { build } = createRequire(require.resolve('vite/package.json'))('esbuild');
-export const secret = 'integration-test-secret-more-than-thirty-two-bytes';
+export const secret = 'synthetic-integration-test-secret-more-than-thirty-two-bytes';
 export const setup = 'integration-test-setup-more-than-thirty-two-bytes';
 export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy = false, admission = {}) {
   const source = `

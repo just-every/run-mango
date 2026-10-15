@@ -24,7 +24,7 @@ function productionBindings(overrides: Partial<AppBindings> = {}): AppBindings {
     AI_PROVIDER_MODEL: 'gpt-5.4-mini',
     MAIL_PROVIDER: 'resend', MAIL_PROVIDER_API_KEY: 'mail-key',
     MAIL_AUTH_FROM: 'Mango <offers@example.test>',
-    MAIL_WEBHOOK_SECRET: 'mail-webhook-secret',
+    MAIL_WEBHOOK_SECRET: 'synthetic-mail-webhook-secret',
     MAIL_WEBHOOK_ID: 'wh_123',
     SMS_PROVIDER_API_KEY: 'username:password',
     SMS_WEBHOOK_SECRET: 'sms-webhook-secret',

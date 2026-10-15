@@ -252,7 +252,7 @@ test('[DATA-001][CONT-004][SEND-005] an installation with real history restores 
     const original = await archiveRows(archive);
 
     // A destination whose private authority does not match is refused before any write.
-    const wrong = await installation(edge, signer, { token: 'a-different-private-authority-key-value', restore: true, origin: 'https://wrong.example.test' });
+    const wrong = await installation(edge, signer, { token: 'synthetic-a-different-private-authority-key-value', restore: true, origin: 'https://wrong.example.test' });
     installations.push(wrong);
     const wrongSession = join(work, 'wrong-session');
     await writeFile(wrongSession, await wrong.open(), { mode: 0o600 });

@@ -22,7 +22,7 @@ async function fixture() {
   for (const file of (await readdir('migrations/core')).filter(name => name.endsWith('.sql')).sort()) {
     await binding.batch(sqlStatements((await readFile(`migrations/core/${file}`, 'utf8'))).map(sql => binding.prepare(sql)));
   }
-  const platform = syntheticReviewPlatform({DB: binding, MANGO_JOBS: {}, ASSETS_BUCKET: {}, LOCAL_BOOTSTRAP_TOKEN: 'suppression-local-test'} as never);
+  const platform = syntheticReviewPlatform({DB: binding, MANGO_JOBS: {}, ASSETS_BUCKET: {}, LOCAL_BOOTSTRAP_TOKEN: 'synthetic-suppression-local-test'} as never);
   platform.mailer = createResendAdapter({apiKey: 'unused-synthetic-key', webhookSecret: secret, webhookId: 'synthetic-hook'});
   platform.mailer.send = async () => {throw new Error('Sending forbidden in suppression tests')};
   const app = createApp({DB: binding} as never, platform);
@@ -164,7 +164,7 @@ test('[CONT-006] replay enriches older normalized inbox evidence without changin
 test('[CONT-004][CONT-013] erasure removes signed unmatched SMS facts with canonical and historical formatted destinations', async () => {
   const f = await fixture();
   try {
-    const smsSecret = 'task-owned-synthetic-sms-secret';
+    const smsSecret = 'synthetic-task-owned-sms-secret';
     const disabledSms = f.platform.config.modules.sms;
     const now = new Date();
     const windows = [{days: [0, 1, 2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 20 * 60}];

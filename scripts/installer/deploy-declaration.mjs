@@ -33,9 +33,10 @@ export function resolveDeclaration(root, purpose, env = {}) {
   }
   const provider = env.MAIL_PROVIDER?.trim() || declaration.vars.MAIL_PROVIDER;
   const managedMail = provider === 'rer';
+  const legacyMailKeyEnvironment = 'MAIL_PROVIDER_API_KEY';
   const mailSources = managedMail ? ['MAIL_FROM', 'MAIL_API_KEY', 'MAIL_RELAY_URL'] : [
     supplied({environment: 'MAIL_FROM'}) ? 'MAIL_FROM' : 'MAIL_AUTH_FROM',
-    supplied({environment: 'MAIL_API_KEY'}) ? 'MAIL_API_KEY' : 'MAIL_PROVIDER_API_KEY',
+    supplied({environment: 'MAIL_API_KEY'}) ? 'MAIL_API_KEY' : legacyMailKeyEnvironment,
   ];
   const mailNames = new Set(['MAIL_FROM', 'MAIL_API_KEY', 'MAIL_RELAY_URL', 'MAIL_AUTH_FROM', 'MAIL_PROVIDER_API_KEY']);
   declaration.secrets = (declaration.secrets ?? [])

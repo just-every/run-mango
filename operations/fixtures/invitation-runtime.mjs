@@ -6,7 +6,7 @@ import { sqlStatements } from '../sql-statements.mjs';
 const require = createRequire(import.meta.url);
 const { Miniflare } = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const { build } = createRequire(require.resolve('vite/package.json'))('esbuild');
-const secret = 'invitation-test-secret-more-than-thirty-two-bytes';
+const secret = 'synthetic-invitation-test-secret-more-than-thirty-two-bytes';
 const setup = 'invitation-test-setup-more-than-thirty-two-bytes';
 export const cookie = response => response.headers.get('set-cookie')?.split(';')[0];
 

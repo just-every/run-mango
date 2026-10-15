@@ -2,10 +2,10 @@ import {createShopifyAdapter} from '../../src/core/platform/adapters/shopify';
 import type {createAppServices} from '../../src/core/app/app';
 
 const shop = 'proposal-fixture.myshopify.com';
-const accessToken = 'proposal-fixture-admin-token';
+const accessToken = 'synthetic-proposal-fixture-admin-token';
 
 export function proposalCommerce() {
-  return createShopifyAdapter({storeUrl:new URL(`https://${shop}`),exclusiveShop:shop,accessToken,webhookSecret:'proposal-fixture-webhook-secret'});
+  return createShopifyAdapter({storeUrl:new URL(`https://${shop}`),exclusiveShop:shop,accessToken,webhookSecret:'synthetic-proposal-fixture-webhook-secret'});
 }
 
 /** Only the Shopify HTTP edge is doubled; access verification, normalization,

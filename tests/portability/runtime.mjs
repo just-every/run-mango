@@ -7,7 +7,7 @@ import { sqlStatements } from '../../operations/sql-statements.mjs';
 const require = createRequire(import.meta.url);
 const { Miniflare, convertV4MiniflareOptions } = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const { build } = createRequire(require.resolve('vite/package.json'))('esbuild');
-export const privateKey = 'portable-test-private-key-at-least-thirty-two-bytes';
+export const privateKey = 'synthetic-portable-test-private-key-at-least-thirty-two-bytes';
 export async function portabilityRuntime({ restore = false, key = privateKey, beforeMigration } = {}) {
   const directory = await mkdtemp(join(tmpdir(), 'mango-portability-')), port = await freePort();
   const origin = `http://127.0.0.1:${port}`;

@@ -1,6 +1,6 @@
 import { createResendAdapter } from '../../src/core/platform/adapters/resend';
 
-const apiKey = 'fixture-signup-mail-key';
+const apiKey = 'synthetic-fixture-signup-mail-key';
 let installed = false;
 
 // Exercise the production confirmation dispatcher and Resend serializer. Only
@@ -35,5 +35,5 @@ export function signupFixtureMailer() {
       return Response.json({ id: crypto.randomUUID() });
     };
   }
-  return createResendAdapter({ apiKey, webhookSecret: 'fixture-webhook-secret', webhookId: 'fixture-webhook' });
+  return createResendAdapter({ apiKey, webhookSecret: 'synthetic-fixture-webhook-secret', webhookId: 'fixture-webhook' });
 }

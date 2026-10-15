@@ -10,7 +10,7 @@ export async function authoringRuntime({
   fixtureWorker = 'tests/campaign-authoring/worker.ts',
   startupTimeout = 45000,
   vars = {},
-  token = crypto.randomUUID(),
+  token = `synthetic-${crypto.randomUUID()}`,
   stateDirectory,
   parallelQueue = false,
 } = {}) {

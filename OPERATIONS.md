@@ -170,7 +170,7 @@ Commerce, SMS, AI and design generation remain optional: configure every key in 
 
 ## Declared mail loop
 
-For Free and Assisted hosting, OPERATIONS v2 declares the maintained SendGrid newsletter path explicitly. Supply `MAIL_PROVIDER=sendgrid`, the runtime `MAIL_PROVIDER_API_KEY`, and `SENDGRID_API_KEY` for Base's declarative mail-loop inspection. Both key names identify the same account credential; the second is used only by the shared inspector. For example, assign it privately with `export SENDGRID_API_KEY="$MAIL_PROVIDER_API_KEY"`; this prints neither value.
+For Free and Assisted hosting, OPERATIONS v2 declares the maintained SendGrid newsletter path explicitly. Supply `MAIL_PROVIDER=sendgrid`, the runtime `MAIL_PROVIDER_API_KEY`, and `SENDGRID_API_KEY` for Base's declarative mail-loop inspection. Both key names identify the same account credential; the second is used only by the shared inspector. For example, assign it privately with `export SENDGRID_API_KEY="${MAIL_PROVIDER_API_KEY}"`; this prints neither value.
 
 Resend remains supported for Free and Assisted hosting. To select it, explicitly change the transactional-mail loop's provider to `resend` in OPERATIONS.json, replace its environmentSources key with RESEND_API_KEY, set MAIL_PROVIDER=resend and supply RESEND_API_KEY from the same credential as MAIL_PROVIDER_API_KEY. Refresh the source lock with `pnpm run source:lock` after changing the descriptor. An inconsistent declaration fails inspection; no provider is selected automatically. Local native browser admission needs neither hosted provider key and exposes no captured-mail page; emailed proofs require a configured transport.
 
