@@ -14,6 +14,7 @@ import { demoDesign } from './design';
 
 function sender(real: SenderAdapter): SenderAdapter {
   return { ...real,
+    probeHealth: signal => demoResult(() => real.probeHealth!(signal), () => ({ reachable: true, code: 'ok', observedAt: new Date(), evidence: 'demo' })),
     capabilities: () => demoResult(() => real.capabilities(), async () => ({ ...await real.capabilities(), effectiveDeduplication: true, effectiveReconciliation: true, deduplicationWindowMs: 30 * 86400000, reconciliationWindowMs: 30 * 86400000 })),
     reconcile: (request, state) => demoResult(() => real.reconcile(request, state), async () => ({ exhausted: true, facts: [{ identity: `demo:${request.idempotencyKey}`, providerMessageId: state.providerMessageId, kind: 'delivered' as const, occurredAt: new Date(), payloadDigest: await sha256(request.idempotencyKey), detail: { demo: true } }] })),
     validateSender: (value, country) => demoResult(() => real.validateSender(value, country), () => ({ ready: true, detail: 'Sender is ready.' })),
@@ -35,7 +36,10 @@ export function createDemoAdapters(env: AppBindings, config: AppConfig): Pick<Pl
     sms: sender(createMobileMessageAdapter({ credentials: 'demo:demo', webhookSecret: 'demo-only' })),
     commerce: { ...commerce,
       refreshHealth: () => demoResult(() => commerce.refreshHealth!(), () => undefined),
-      synchronize: (...args) => demoResult(() => commerce.synchronize(...args), () => ({ records: [], coverage: { mode: 'snapshot' as const, exhaustive: true, complete: true } })),
+      synchronize: (...args) => demoResult(() => commerce.synchronize(...args), async () => {
+        const [{ sampleData }, { demoCustomerRecords }] = await Promise.all([import('@/core/features/bootstrap/sample-data'), import('@/core/features/bootstrap/demo-audience')]);
+        return { records: args[0] === 'customer' ? demoCustomerRecords(sampleData, new Date()) : [], coverage: { mode: 'snapshot' as const, exhaustive: true, complete: true } };
+      }),
     },
     ai: { costIdentity: ai.costIdentity, generateGroundedJson: request => demoResult(() => ai.generateGroundedJson(request), () => demoProposal(request, config)) },
     design: demoDesign(createTwelveUiAdapter({ apiKey: 'demo-only', origin: new URL('https://12ui.com') }), env),

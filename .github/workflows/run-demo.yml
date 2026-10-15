@@ -6,6 +6,11 @@ on:
         description: 'Deploy a separate demo-test environment with Turnstile test keys'
         type: boolean
         default: false
+      instance_type:
+        description: 'Container size for this dispatch; declared uses deploy-demo.json'
+        type: choice
+        default: declared
+        options: [declared, basic, standard-1, standard-2, standard-3, standard-4]
       remove:
         description: 'Remove the test-only demo host'
         type: boolean
@@ -37,6 +42,11 @@ jobs:
       - name: Scope test deployment
         if: inputs.test_only
         run: node --input-type=module -e "import fs from 'node:fs'; const p='deploy-demo.json'; const d=JSON.parse(fs.readFileSync(p)); d.domain='test.run-mango.com'; fs.writeFileSync(p,JSON.stringify(d));"
+      - name: Select container size
+        if: ${{ !inputs.remove && inputs.instance_type != 'declared' }}
+        run: node --input-type=module -e "import fs from 'node:fs'; const p='deploy-demo.json'; const d=JSON.parse(fs.readFileSync(p)); d.instanceType=process.env.INSTANCE_TYPE; fs.writeFileSync(p,JSON.stringify(d));"
+        env:
+          INSTANCE_TYPE: ${{ inputs.instance_type }}
       - name: Deploy or remove demo
         run: |
           if [ "$REMOVE" = true ]; then

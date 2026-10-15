@@ -48,7 +48,7 @@ rer setup --owner-email owner@example.test
 rer dev
 ```
 
-Wait for `RER_READY`. `rer dev` opens signed in: it prints `RER_SIGNED_IN` (the owner) and `RER_OPEN`, a link that carries this checkout's private dev key in its fragment. Open `RER_OPEN` in a browser on this computer and you land signed in as the owner; a small dev badge switches to the `teammate` persona (a second operator beside the owner; Mango operators hold equal authority) or signs out. Never share the link: the key is what keeps the outbox and dev sign-in closed to anything that reaches this port through a proxy or tunnel, and `reset` removes the key so every earlier browser session stops working. `--as teammate` (or `--as signed-out`) starts as another persona, and `--login` turns dev identity off so dev prints `RER_SIGN_IN` and a key-carrying `RER_OPEN` for the outbox instead: choose the newest message, follow its link and press Confirm (no email is sent). `RER_OPEN` is for people at this terminal; scripts use `rer dev --json` or the key header. The sign-in opens `/setup`, where you save your business sender identity before entering `/app`. A configured installation goes straight to the app; sender details remain editable in Settings. Setup exits with no server running; stop dev with Ctrl-C before verification or data operations.
+Wait for `RER_READY`. Open the private `RER_OPEN` link on this computer to enter as the owner named by `RER_SIGNED_IN`. Its fragment carries the checkout's dev key; never share it. `--as teammate` or `--as signed-out` selects another local persona. The product name reads **Mango Dev**, with no bar or outbox, and sign-in is one click. `reset` removes the key so earlier browser sessions stop working. Scripts use `rer dev --json` or the key header. The first sign-in opens `/setup`, where you save your business sender identity; a configured installation opens the app. Setup exits with no server running; stop dev with Ctrl-C before verification or data operations. Local authentication mail is silently suppressed.
 
 ```sh
 rer verify
@@ -63,7 +63,7 @@ Reset deletes local data and credentials. Export before resetting if you need th
 
 Setup builds and migrates local D1, creates one real first owner, and preserves existing owner/data/private bytes on repeat runs. `--port PORT` and `--host HOST` select a loopback origin; dev overrides do not rewrite saved settings. For browser verification install Chromium with `pnpm exec playwright install chromium`. Production configuration may remain absent during local work. [RUN-LOCALLY.md](RUN-LOCALLY.md) provides the short command guide.
 
-Sample data is opt-in in the separate test-only workspace: `pnpm run review:synthetic`. It serves its own `/__dev/outbox` and takes its origin from `MANGO_REVIEW_BASE_URL` in the ignored `wrangler.review.toml`, so local development settings cannot redirect it to the dev port. Open the link written to `.seed/review-access` once so the review operator exists; you can then request a sign-in link for `review@example.test` at `/signin`, open the development outbox and press Confirm, as in `rer dev --login`.
+For a signed-in throwaway Mango with realistic sample data, run `rer demo`. The nav and title say **Mango Demo**. Public reads run for real; sends and third-party account effects complete with demo-only mocked success. `rer demo --stop` deletes its state; the next run is fresh and ordinary `.wrangler/state` is untouched. See [DEMO.md](DEMO.md). The separate `pnpm run review:synthetic` workspace remains test-only.
 
 ## Source synchronization
 
