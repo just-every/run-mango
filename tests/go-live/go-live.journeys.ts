@@ -38,7 +38,7 @@ test('[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts r
   site = await installation(edge, signer);
   cookie = await site.open();
   await json(await site.call('/api/settings/sender', { method: 'PUT', cookie, body: sender }), 200);
-  await page.context().addCookies([{ name: 'operator_session_local', value: cookie.split('=')[1], url: site.runtime.url }]);
+  await page.context().addCookies([{ name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url }]);
   const readiness = async () => Object.fromEntries((await json(await site.call('/api/settings/sender', { cookie }), 200)).readiness.map((item: any) => [item.key, item.state]));
   state.readinessBefore = await readiness();
   expect(state.readinessBefore).toMatchObject({ domain: 'observed', dns: 'observed', receipt: 'not-observed', authentication: 'not-observed', jurisdiction: 'owner' });

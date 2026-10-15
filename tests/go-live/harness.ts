@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import { expect } from '@playwright/test';
 import { authoringRuntime } from '../campaign-authoring/browser-runtime.mjs';
 import { providerEdge } from './edge';
@@ -27,7 +28,7 @@ export async function installation(edge: Edge, signer: Signer, options: { origin
   };
   const rows = (sql: string) => control('/_golive/rows', { sql }) as Promise<Array<Record<string, any>>>;
   const count = async (table: string) => Number((await rows(`SELECT count(*) AS n FROM ${table}`))[0].n);
-  const open = async (email = 'owner@example.test', id = 'go-live-owner') => `operator_session_local=${(await control('/_golive/open', { email, id })).token}`;
+  const open = async (email = 'owner@example.test', id = 'go-live-owner') => `${localSessionCookieName(runtime.url)}=${(await control('/_golive/open', { email, id })).token}`;
   const call = async (path: string, init: { method?: string; body?: unknown; cookie?: string; headers?: Record<string, string>; raw?: BodyInit } = {}) => fetch(runtime.url + path, {
     method: init.method ?? 'GET', redirect: 'manual', headers: { Origin: origin, ...(init.cookie ? { Cookie: init.cookie } : {}),
       ...(init.body === undefined ? {} : { 'Content-Type': 'application/json' }), ...init.headers },
