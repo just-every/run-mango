@@ -14,6 +14,10 @@ export default defineConfig(({command, isPreview}) => {
  const authoringConfig = process.env.MANGO_AUTHORING_TEST_CONFIG;
  const runtime = authoringConfig !== undefined ? 'authoring' : process.env.MANGO_SYNTHETIC_REVIEW === '1' ? 'review' : 'app';
  const appDev = runtime === 'app' && command === 'serve' && !isPreview;
+ // The installer preview builds the local Worker into its own output folder.
+ // Ordinary production builds use a separate config, keeping local dev and
+ // migration settings untouched throughout the build.
+ const productionBuild = runtime === 'app' && command === 'build' && !process.env.MANGO_PREVIEW_OUT;
  // Explicit fixtures load tests/support or tests/campaign-authoring; synthetic
  // review selects tests/review/worker.ts. Their bootstrap imports the sample
  // JSON; normal app serving keeps both fixture sources closed.
@@ -22,7 +26,7 @@ export default defineConfig(({command, isPreview}) => {
  cacheDir: fileURLToPath(new URL('./.cache/vite', import.meta.url)),
  plugins: [cloudflare({
   inspectorPort: false,
-  configPath: authoringConfig ?? (runtime === 'review' ? 'wrangler.review.toml' : 'wrangler.toml'),
+  configPath: authoringConfig ?? (runtime === 'review' ? 'wrangler.review.toml' : productionBuild ? 'wrangler.production.toml' : 'wrangler.toml'),
   persistState: {path: process.env.MANGO_AUTHORING_TEST_STATE ?? (runtime === 'review' ? '.seed/review-state' : '.wrangler/state')},
   ...(appDev ? {config: {main: './src/core/app/worker.dev.ts', vars: {...local('RER_DEV_ORIGIN'), ...local('RER_DEV_KEY'), ...local('RER_DEV_IDENTITY')}}} : process.env.RER_DEV_ORIGIN ? {config: {vars: {RER_DEV_ORIGIN: process.env.RER_DEV_ORIGIN}}} : {}),
   viteEnvironment: {name: 'ssr'},
