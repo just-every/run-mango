@@ -1,5 +1,5 @@
 import type { AppBindings } from './core/shared/platform';
-import { createProductionPlatform } from './core/platform/runtime';
+import { createDemoPlatform } from './core/platform/worker-runtime';
 import { createAppServices } from './core/app/app';
 import { createCampaignDemoImportRepository } from './core/features/campaigns/demo-import-repository';
 import { commerceSourceTypes } from './core/features/store/service';
@@ -18,7 +18,7 @@ export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEma
     import('./core/features/bootstrap/demo-history'),
     import('./core/features/bootstrap/demo-audience'),
   ]);
-  const platform = createProductionPlatform(env);
+  const platform = createDemoPlatform(env);
   const { audienceService, storeService } = createAppServices(platform);
   await storeService.importLocalDemo(sampleData.providerCapabilities.map(provider => ({ ...provider, configured: true, status: 'ready', detail: 'Provider is ready.' })), [], now);
   await storeService.recordSourceCapabilities(commerceSourceTypes.map(sourceType => ({ sourceType, available: platform.commerce!.capabilities().sourceTypes.includes(sourceType), detail: 'Sample store connection.' })), now);

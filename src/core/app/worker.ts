@@ -9,20 +9,21 @@ import { staticAssetResponse } from '@/base/static-assets';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
 import { consumeLifecycleQueue, type LifecycleQueueBatch } from '@/core/features/lifecycle';
 
+export function createWorker(platformFor = createProductionPlatform) {
 async function lifecycleRuntime(environment: AppBindings) {
-  const platform = createProductionPlatform(environment);
+  const platform = platformFor(environment);
   await loadSenderSettings(platform);
   await loadLinkHosts(platform);
   return createAppServices(platform).lifecycleRuntime;
 }
 
-export default {
+return {
   async fetch(request, environment, executionContext) {
     // Hosted deploys run this Worker before static assets; built files come from env.ASSETS.
     const asset = await staticAssetResponse(request, environment);
     if (asset) return asset;
     const bindings = environment as AppBindings;
-    const platform = createProductionPlatform(bindings);
+    const platform = platformFor(bindings);
     return dispatchDocuments(request, bindings, executionContext, platform, createApp(bindings, platform));
   },
   async queue(batch, environment) {
@@ -35,3 +36,6 @@ export default {
     executionContext.waitUntil(runScheduled(controller, environment, lifecycleRuntime));
   },
 } satisfies ExportedHandler<AppBindings>;
+}
+
+export default createWorker();
