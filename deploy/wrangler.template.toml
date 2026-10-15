@@ -1,5 +1,5 @@
 name = "__MANGO_WORKER_NAME__"
-main = "./src/core/app/worker.ts"
+main = "./src/server.ts"
 compatibility_date = "2026-09-08"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = true
