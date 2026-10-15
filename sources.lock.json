@@ -5392,7 +5392,7 @@
       "executable": false
     },
     "tests/audience-import/signup-reservation-clock.spec.ts": {
-      "sha256": "047fc4549ea930435003f02c8fe7a52b5ef2d038a1f0c053ea06d91cb645ee71",
+      "sha256": "37510e573b209c2ea4d098631e2e62ef165665ffe35290e23f50388a6852364b",
       "executable": false
     },
     "tests/audience-import/signup-security.spec.ts": {
