@@ -5511,7 +5511,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "a8cb3a4cec6163ce62b901c6af05210918155d0ce0e5a4d339f45bf242d75e7a",
+      "sha256": "113a71e66f01f5ef035d009e7578cf939b518973723a6a2dc69042515fe12ef7",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
@@ -5543,7 +5543,7 @@
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
-      "sha256": "8af6f4e26255bdbd233570a750c3752721be6a24496b3739e441f5f7d70eaa6f",
+      "sha256": "d004fa174e1b87bc1a8454f052db9a77c2467ab74a8100b4738a921099d0faf3",
       "executable": false
     },
     "tests/campaign-results/cost-base-mail-proof.ts": {
@@ -5563,7 +5563,7 @@
       "executable": false
     },
     "tests/campaign-results/costs.journeys.ts": {
-      "sha256": "9955498c9d55d799e32b1d9ac9129e29227cb60c1883030330d4cca2a30573eb",
+      "sha256": "418caba57d61ef43adc664dc43d258c2ddfb7b8e75e693a0ecefa635fcf703b0",
       "executable": false
     },
     "tests/campaign-results/fixtures.ts": {
@@ -5899,11 +5899,11 @@
       "executable": false
     },
     "tests/newsletter-ui/sender-disclosure.isolated.ts": {
-      "sha256": "e32e2dab202e1bcffd7005768f5e9fddff260f3be2b7cd6a37a9a9f8992dca05",
+      "sha256": "7255139ab89ad6806bd8d4d7b06f358a67fd27594c040fcfc2e097f96482a762",
       "executable": false
     },
     "tests/newsletter-ui/sender-playwright.config.js": {
-      "sha256": "6e0ffa4a39ffb3b9e6823caf2715f0778e92065bd99cfac1b05bf589d480c68f",
+      "sha256": "ea7989d6c27f5c8a18a70266205be5ac8c1c02c1adf20efb039c6a7399865927",
       "executable": false
     },
     "tests/newsletter-ui/signup-privacy-support.ts": {
@@ -6131,11 +6131,11 @@
       "executable": false
     },
     "tests/support/signup-mail-edge.ts": {
-      "sha256": "8355bf69029f49e6dbf52a513f1fd2e12c57a326017f0e38fc06eea5ce93445e",
+      "sha256": "733f7710f87dc8890bd8395602ca6482dc9e52fa584735da798cad8dff08aea6",
       "executable": false
     },
     "tests/support/start-fixture-runtime.mjs": {
-      "sha256": "9c3fe6d26824e84d49d66a73df0f68a6a40b1496a76f0fee550d3e1d337cbb31",
+      "sha256": "ffff15b4c267cb9c6d4d1626af2d09a298c75b29af2b4e895063441f5a8c4b9e",
       "executable": false
     },
     "tests/support/test-identity.ts": {
@@ -6143,7 +6143,7 @@
       "executable": false
     },
     "tests/support/worker.ts": {
-      "sha256": "c5fb9d641f6d1159c5eb680f992859d86bf5de548ac18e647db76aa8722c04ed",
+      "sha256": "7ff579b8a5ea6943517bc496076fe57bebc44b19b32a40e02ebb4b9ab9d45d56",
       "executable": false
     },
     "tsconfig.json": {

@@ -9,6 +9,7 @@ import authoringWorker from '../campaign-authoring/advisory-worker';
 interface FixtureBindings extends LocalAppBindings {
   AUTHORING_DB: D1Database;
   MANGO_FIXTURE_TURNSTILE?: string;
+  MANGO_FIXTURE_SIGNUP_MAIL?: string;
 }
 
 export default {
@@ -24,7 +25,10 @@ export default {
     if (bindings.MANGO_FIXTURE_TURNSTILE === '1') {
       installSignupChallengeEdge();
       platform.config.signupTurnstile = {siteKey:'fixture-public-site',secretKey:'fixture-server-secret'};
-      platform.mailer = signupFixtureMailer();
+    }
+    if (bindings.MANGO_FIXTURE_SIGNUP_MAIL === '1' || bindings.MANGO_FIXTURE_TURNSTILE === '1') {
+      platform.confirmationMailer = signupFixtureMailer(() => platform.config.mailSender);
+      if (bindings.MANGO_FIXTURE_TURNSTILE === '1') platform.mailer = platform.confirmationMailer;
     }
     return dispatchDocuments(request, bindings, executionContext, platform, createLocalApp(bindings, platform));
   },

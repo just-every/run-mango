@@ -29,7 +29,10 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
   const queue=platform.jobs;
   platform.jobs={async enqueue(job){if(job.kind==='health.probe'||isDesignCommand(job))return queue.enqueue(job);await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();},async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');}};
   const path=new URL(request.url).pathname;
-  if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) platform.commerce=createShopifyAdapter({storeUrl:new URL('https://mango-authoring.myshopify.com'),exclusiveShop:'mango-authoring.myshopify.com',accessToken:'test-no-network',webhookSecret:'test-no-network'});
+  if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) {
+    platform.config.modules.commerce.enabled=true;
+    platform.commerce=createShopifyAdapter({storeUrl:new URL('https://mango-authoring.myshopify.com'),exclusiveShop:'mango-authoring.myshopify.com',accessToken:'test-no-network',webhookSecret:'test-no-network'});
+  }
   const services=createAppServices(platform);
   if(path.startsWith('/_authoring/')) {
     if(request.headers.get('X-Test-Token')!==bindings.LOCAL_BOOTSTRAP_TOKEN) return new Response('Forbidden',{status:403});

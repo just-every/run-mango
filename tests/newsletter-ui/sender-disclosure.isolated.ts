@@ -13,13 +13,19 @@ test('saved sender disclosure is current and stale consent cannot create evidenc
     replyToEmail: 'reply@example.test',
     physicalAddress: '1 Audience Way, Sydney NSW 2000 Australia',
   };
-  const saveSender = (displayName: string) => request.put('/api/settings/sender', {
+  const saveSender = (sender: typeof identity) => request.put('/api/settings/sender', {
     headers: { ...headers, Origin: baseURL.origin },
-    data: { ...identity, displayName },
+    data: sender,
   });
   const firstSender = identity.displayName;
   const latestSender = `${firstSender} updated`;
-  await expect(await saveSender(firstSender)).toBeOK();
+  const updatedIdentity = {
+    ...identity,
+    displayName: latestSender,
+    fromEmail: 'updated-newsletter@example.test',
+    replyToEmail: 'updated-reply@example.test',
+  };
+  await expect(await saveSender(identity)).toBeOK();
 
   await page.setViewportSize({ width: 1440, height: 1000 });
   const firstConsent = `I agree to receive email newsletters from ${firstSender}. I can unsubscribe at any time.`;
@@ -30,7 +36,7 @@ test('saved sender disclosure is current and stale consent cannot create evidenc
   expect(serverHtml?.match(/<input[^>]*name="email"[^>]*>/)?.[0]).toContain('disabled');
   await expect(page.getByRole('checkbox', { name: firstConsent })).toBeVisible();
 
-  await expect(await saveSender(latestSender)).toBeOK();
+  await expect(await saveSender(updatedIdentity)).toBeOK();
   const staleEmail = `ui-stale-consent-${Date.now()}@example.test`;
   const [staleResponse] = await Promise.all([
     page.waitForResponse((result) => result.request().method() === 'POST' && new URL(result.url()).pathname === '/subscribe'),
@@ -62,7 +68,8 @@ test('saved sender disclosure is current and stale consent cannot create evidenc
       await page.getByRole('button', { name: 'Request confirmation' }).click();
     })(),
   ]);
-  // Locally the confirmation lands in the development outbox, so signup succeeds.
+  // The real confirmation dispatcher and Resend serializer hand off to the
+  // test provider edge, which validates the updated sender and public token link.
   expect(captureResponse.status()).toBe(202);
   expect((await captureResponse.json()).status).toBe('confirmation-required');
   await expect(page.getByText('Request received')).toBeVisible();
