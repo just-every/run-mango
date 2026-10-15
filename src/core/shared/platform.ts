@@ -239,6 +239,7 @@ export type DeliveryPolicy = {
 };
 
 export type AppConfig = {
+  demo?: boolean;
   deliveryPolicies?: Partial<Record<'resend'|'sendgrid'|'mobile-message',DeliveryPolicy>>;
   /** Set only by the local Worker composition, never from an environment binding. */
   local?: boolean;
@@ -324,6 +325,8 @@ export interface Platform {
 }
 
 export interface AppBindings {
+  RER_DEMO?: string;
+  RER_OWNER_CLAIM_INSTALLATION_ID?: string;
   MANGO_DELIVERY_POLICY_JSON?: string;
   MANGO_LOCAL_CONFIG_VERSION?: string;
   OWNER_EMAIL?: string;

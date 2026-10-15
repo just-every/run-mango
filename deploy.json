@@ -99,5 +99,9 @@
     "MANGO_EMAIL_HANDOFFS_PER_MINUTE": "10",
     "MANGO_DELIVERABILITY_WINDOW_DAYS": "30"
   },
-  "originVar": "MANGO_PUBLIC_BASE_URL"
+  "originVar": "MANGO_PUBLIC_BASE_URL",
+  "platforms": [
+    "workers",
+    "container"
+  ]
 }

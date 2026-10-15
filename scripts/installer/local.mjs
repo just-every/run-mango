@@ -40,7 +40,7 @@ export const hooks = {
  secrets:{keepExisting:true,originKey:'AUTH_ORIGIN',values:({origin})=>({AUTH_LOCAL:'true',AUTH_ORIGIN:origin,MAIL_PROVIDER:'development',MANGO_LOCAL_CONFIG_VERSION:'2',MANGO_LOCAL_HASH_AUTHORITY:localContactAuthorityVersion})},
  // The production build writes the production wrangler.toml; the last step puts the local one back for dev.
  build:[['pnpm',['run','build:worker']],['pnpm',['run','config:local']]],
- migrate:[['pnpm',['run','config:local']],['pnpm',['exec','wrangler','d1','migrations','apply','mango-local','--local','--persist-to',statePath,'--config','wrangler.toml']]],
+ migrate:({demo})=>[['pnpm',['run','config:local']],['pnpm',['exec','wrangler','d1','migrations','apply','mango-local','--local','--persist-to',demo?.state??statePath,'--config','wrangler.toml']]],
  async start(context) {
   localContactHashSalt(localBindings((await readSettings(context.root,{})).values));
   return previewTarget(context);
