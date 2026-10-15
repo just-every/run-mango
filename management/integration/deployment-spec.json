@@ -410,17 +410,6 @@
     "app": {
       "path": "/signin",
       "originVariable": "MANGO_PUBLIC_BASE_URL"
-    },
-    "page": {
-      "path": "/",
-      "readiness": [
-        {
-          "path": "/",
-          "statuses": [
-            200
-          ]
-        }
-      ]
     }
   }
 }

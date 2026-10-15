@@ -916,7 +916,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "e7e141a1455f928c2504f2e4df3d9785bf34bbd4c9e4a25ab5bbde6365276013",
+      "sha256": "fc48661887508e1ab9256d23ddcd04bc53f1a35de2acd2de96b28ea83d01ad63",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1340,7 +1340,7 @@
       "executable": false
     },
     "scripts/delivery/base/packaging.json": {
-      "sha256": "e3d9ee2d78d5477ba5079364e42f7ade5f45a3e80dd7de95b7ddc3e6e2d6a9a0",
+      "sha256": "5fbe189b1ac5f6c2402826c7a5334db4a4c547b872b04c7fd4ec0c31e309fb0f",
       "executable": false
     },
     "scripts/delivery/base/paths.mjs": {
