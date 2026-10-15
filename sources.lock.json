@@ -784,11 +784,11 @@
       "executable": false
     },
     "AGENTS.consumer.md": {
-      "sha256": "6f33cf42870f2e702cb68a9beb9c252efd92e735e64ddcfa75efa63f1ce25a5d",
+      "sha256": "d19544d08f3d5c47137fd0bc4d6bfdeee93cce89dff835fc83de4e5bc5087ba8",
       "executable": false
     },
     "AGENTS.md": {
-      "sha256": "976b1ccbac1c07ef31d05ceaf2c1db6951bd1404423fb958c993248cdd04eb21",
+      "sha256": "b8f36276cc07082786c8d5b6fc827a683b15889b89097378b992767ad4af4531",
       "executable": false
     },
     "base-copies.json": {
@@ -908,7 +908,7 @@
       "executable": false
     },
     "HANDOVER.md": {
-      "sha256": "1168045793f2f70ac6154f3dc28653afa36124e1c0dae7e5e76e3746968adf21",
+      "sha256": "d22e2654a23ebfbba9d40155ed1d33cff434ed6a96f5843445afe2a25860a634",
       "executable": false
     },
     "LICENSE": {
@@ -1140,7 +1140,7 @@
       "executable": false
     },
     "OPERATIONS.md": {
-      "sha256": "0c1cff691f52acb88149a8bc656e4485e7bde76715313feb70ec59dafc777f2a",
+      "sha256": "734f96e024eb14a7b21f9902cc4e4e96b5d67620a932de988504725b5ed3169c",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -1184,7 +1184,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "79c460ca85e075e524140d6b430a2bf85436747b86074c8927bafe26a6272556",
+      "sha256": "68defa72410d4be6ba245d98d3a106dea21fdcb7a563633a0c2da1bb1fc66333",
       "executable": false
     },
     "playwright.config.js": {
@@ -1192,7 +1192,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "c406d57bfc07f4c11a9fee1ddfba62cc59f4c735f1944e81eefde304a0001fb2",
+      "sha256": "258a44c33c8070f23745f38f9b8f03eb3af490dc8e025a429e27d7c26fb0e41f",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -1248,7 +1248,7 @@
       "executable": false
     },
     "README.md": {
-      "sha256": "0c13be3b118dd998896c78c2e1bf47c7f67f5fec62b0f5540b1045ebdedb24ae",
+      "sha256": "dbc6711135251193aa29318837832057ccba77393ca34b2f2e5a1f94c525d8b7",
       "executable": false
     },
     "RELEASE-STATUS.md": {
@@ -1272,7 +1272,7 @@
       "executable": false
     },
     "RUN-LOCALLY.md": {
-      "sha256": "d6572ee3f2ef4a8349369b06d0e14c22f990512ba486008c86264c6b077d6772",
+      "sha256": "f07ccf6eca735a489165a02d2f54917df66215415f1071158e331f1c2d83b894",
       "executable": false
     },
     "sample-data/initial.json": {

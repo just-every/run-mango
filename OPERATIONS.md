@@ -1,6 +1,6 @@
 # Mango operations
 
-Pinned rer **0.2.14** selects and acquires Node **22.20.0** and pnpm **10.12.4** and installs locked dependencies; neither tool needs a separate manual install. All application lifecycle commands use the installed `@runeditrun/rer` package pinned exactly to **0.2.14**; `rer` selects that checkout's CLI, and package scripts invoke the same command; start with [Run it locally](AGENTS.md#run-it-locally). `describe --json` reports verbs/flags, `check --profile first-party` validates structure without configuration, and `doctor` diagnoses tools and missing inputs without provider requests or private values.
+Pinned rer **0.2.15** selects and acquires Node **22.20.0** and pnpm **10.12.4** and installs locked dependencies; neither tool needs a separate manual install. All application lifecycle commands use the installed `@runeditrun/rer` package pinned exactly to **0.2.15**; `rer` selects that checkout's CLI, and package scripts invoke the same command; start with [Run it locally](AGENTS.md#run-it-locally). `describe --json` reports verbs/flags, `check --profile first-party` validates structure without configuration, and `doctor` diagnoses tools and missing inputs without provider requests or private values.
 
 The newsletter profile needs email only. Commerce, SMS, AI and design generation are optional: leave each disabled group absent; partial enabled groups fail with missing names. `verify` runs contract/source checks, operations tests, typecheck, production build and local browser journeys. Run affected tests while editing; CI is the complete wall. Local success does not prove hosted operation or delivery.
 
@@ -28,7 +28,7 @@ Receiver material must come from an authenticated original-message mailbox conne
 
 ## Deployment
 
-`rer deploy --environment production --dry-run` validates/builds locally without provider requests. The installed, pinned rer 0.2.14 deploy command provisions the Worker, automatically claims the first owner through native bootstrap, then removes the one-time setup token from the Worker. Repeat deployment keeps the existing owner. The following recipe supplies the actual deploy inputs; no separate owner claim command is required.
+`rer deploy --environment production --dry-run` validates/builds locally without provider requests. The installed, pinned rer 0.2.15 deploy command provisions the Worker, automatically claims the first owner through native bootstrap, then removes the one-time setup token from the Worker. Repeat deployment keeps the existing owner. The following recipe supplies the actual deploy inputs; no separate owner claim command is required.
 
 1. Create a private deployment input file once, from the repository root:
 
