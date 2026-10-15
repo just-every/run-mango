@@ -89,11 +89,7 @@ packages from its store.
 
 After `RER_READY`, a seed with dev identity prints `RER_SIGNED_IN EMAIL` and
 `RER_OPEN URL`: open that URL on this computer and the app opens signed in as
-the owner, at `/setup` until first-run is finished. Mango uses this automatic
-dev identity flow; no sign-in email is needed. Until
-first-run completion is stored durably, app routes send the signed-in owner to
-`/setup`; signed-out visitors sign in and return there. Once complete,
-`/setup` opens the app or settings. The local outbox sends no external email.
+the owner, at `/setup` until first-run is finished. Sign-in is one click; local mail is silently suppressed, with no outbox or injected bar. Until first-run completion is stored durably, app routes send the signed-in owner to `/setup`; signed-out visitors sign in and return there. Once complete, `/setup` opens the app or settings. `rer demo` instead opens isolated sample data with the Mango Demo label; stop it with `rer demo --stop`.
 
 Dev selects a free local port; use the printed `RER_OPEN` address. A first setup saves the first free port from 8787. Explicit ports are decimal
 integers from 1 through 65535 and must be free; a busy requested port fails
@@ -150,21 +146,9 @@ after the application health check. With dev identity it then prints
 checkout's dev key in its fragment: opening it signs the browser in through a
 real dev session, and the key is removed from the address bar and kept only as a
 host-only cookie. Treat that line as a credential and open it only on this
-computer. A dev-only badge switches between the owner, signed out and the
-seed's personas (`admin@dev.localhost` and so on). `dev --as PERSONA` starts as
-another persona or `signed-out`. In rer 0.2.22, the legacy `--login` flag
-uses the same automatic sign-in; it does not switch to email-link sign-in or
-open the outbox. `RER_OPEN` enters through `/__dev/key`. The `rer outbox`
-command is retired. Mango still retains its key-protected `/__dev/outbox`
-application route for locally captured messages; no external email is sent.
+computer. The nav and title read Mango Dev. Use `dev --as PERSONA` for another persona or `signed-out`; there is no injected bar or outbox, and local mail is silently suppressed.
 
-Dev and preview are managed servers. `rer dev` returns once the app is ready
-and leaves it running in the background; `--foreground` keeps it attached to
-the terminal (see the launch section above). Use `rer dev --stop` or
-`rer preview --stop` to stop them; `--idle-timeout SECONDS`
-sets inactivity cleanup. Compatible repeated starts reuse the registered
-server, print readiness and exit. Preview serves fixed production output; dev
-serves live source edits.
+Dev and preview are managed servers. Dev returns once ready and serves source edits in the background; `--foreground` keeps it attached. Use `rer dev --stop` or `rer preview --stop` to stop them. `--idle-timeout SECONDS` sets inactivity cleanup. Compatible repeated starts reuse the registered server, print readiness and exit. Preview serves a fixed build.
 Both retain the same owner and `.wrangler/state`.
 
 Both also run the project's Cron Triggers on their schedule, read from the same
@@ -211,14 +195,14 @@ rer describe
 Stop dev with `rer dev --stop` or preview with `rer preview --stop` before build or verification, and
 before reset and data transfer. Reset removes only the
 declared local inventory: local database/storage state, owner and sessions,
-outbox, CLI and installer bookkeeping, and generated private settings. It
+legacy local mail records, CLI and installer bookkeeping, and generated private settings. It
 keeps source, dependencies, exports and deployment receipts. It refuses active
 operations and ambiguous or linked state.
 
 Local export creates a private archive with an integrity receipt and explicit
 exclusions. Import validates the archive and restores into an empty destination.
 After import, run setup to establish the owner and local configuration. Auth,
-outbox, private settings and transient runtime state are excluded. Remote
+legacy local mail records, private settings and transient runtime state are excluded. Remote
 transfer is unsupported by the maintained references and fails visibly.
 
 Real deployment uses the owner-account procedure and its private credentials.
@@ -266,8 +250,8 @@ Local durable state is `.wrangler/state`; CLI bookkeeping is `.rer/local`,
 installer state is `.seed/installer`, and the default private settings file is
 `.dev.vars` with mode 0600. Setup writes this checkout's dev key to
 `.rer/local/dev-key.env` (mode 0600); a repeat setup keeps it and reset removes
-it, which also ends every browser's earlier dev cookie. Dev sign-in, personas
-and the development outbox answer only a request holding that key's cookie, so
+it, which also ends every browser's earlier dev cookie. Dev sign-in and personas
+answer only a request holding that key's cookie, so
 a tunnel or local proxy to the app cannot reach them; anything else returns 404.
 Any local user or process that can read the checkout can read the key and sign
 in as the owner. `rer deploy` refuses the key, and `rer build` refuses output
@@ -276,7 +260,7 @@ that contains the dev layer.
 The first-party command profile is optional for independently authored
 projects. They may keep their own runtime, tools, installer, commands and
 provider choices. RER executes only their declared operations and does not
-impose Base pins, aliases, outbox or state layout.
+impose Base pins, aliases or state layout.
 
 ## The front door (opt-in)
 

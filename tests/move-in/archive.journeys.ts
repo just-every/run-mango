@@ -25,7 +25,7 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
   const site = await installation(edge, signer);
   try {
     const cookie = await site.open();
-    await page.context().addCookies([{ name: 'operator_session_local', value: cookie.split('=')[1], url: site.runtime.url }]);
+    await page.context().addCookies([{ name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url }]);
     // An address that had already opted out in Mango before the move.
     const prior = await json(await site.call('/api/audience/import-preview', { method: 'POST', cookie, body: { files: [{ name: 'earlier.csv', preset: 'csv-unsubscribed', csv: 'Email Address\noptedout@example.test' }] } }), 200);
     let { job } = await json(await site.call('/api/audience/imports', { method: 'POST', cookie, body: { fingerprint: prior.fingerprint } }), 200);

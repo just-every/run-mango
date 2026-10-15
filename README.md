@@ -48,7 +48,7 @@ rer setup --owner-email owner@example.test
 rer dev
 ```
 
-Wait for `RER_READY`. `rer dev` prints `RER_SIGNED_IN` and a private `RER_OPEN` development entry. Open it in a browser on this computer to enter as the local owner. The entry carries the checkout’s dev key in its fragment; keep it private. It is not an emailed one-use sign-in link. The development badge switches to `teammate` (a second operator with equal authority) or signs out; `--as teammate` and `--as signed-out` select the starting persona. No sign-in email is sent and no captured-mail page is available. First sign-in opens `/setup`, where you save your business sender identity before entering `/app`; a configured installation opens the app. Setup exits without a server running. Dev leaves its server in the background; stop it with `rer dev --stop` before verification or data operations.
+Wait for `RER_READY`. `rer dev` starts Mango in the background and prints `RER_SIGNED_IN` (the owner) and a private `RER_OPEN` link. Open that link on this computer to enter as the owner. Its fragment carries the checkout's dev key; never share it. `--as teammate` or `--as signed-out` selects another local persona. The product name reads **Mango Dev**, with no bar or outbox, and sign-in is one click. `reset` removes the key so earlier browser sessions stop working. Scripts use `rer dev --json` or the key header. The first sign-in opens `/setup`, where you save your business sender identity; a configured installation opens the app. Setup exits with no server running. Use the free port in `RER_OPEN` and stop dev with `rer dev --stop` before verification or data operations. Local authentication mail is silently suppressed.
 
 Node may print `ExperimentalWarning: SQLite is an experimental feature and might change at any time` when rer loads Node’s built-in SQLite API for local tooling. This warning alone is not a command failure; check the command result and, for dev, wait for `RER_READY`.
 
@@ -69,7 +69,7 @@ When upgrading from 0.1.0, back up matching source, D1/R2 and private settings, 
 
 Setup builds and migrates local D1, creates one real first owner, and preserves existing owner/data/private bytes on repeat runs. `--port PORT` and `--host HOST` select a loopback origin; dev overrides do not rewrite saved settings. For browser verification install Chromium with `pnpm exec playwright install chromium`. Production configuration may remain absent during local work. [RUN-LOCALLY.md](RUN-LOCALLY.md) provides the short command guide.
 
-Synthetic data belongs only in the isolated test workspace (`pnpm run review:synthetic`). Its local development session uses native browser admission; it exposes no captured-mail inbox or outbox page.
+For a signed-in throwaway Mango with realistic sample data, run `rer demo`. The nav and title say **Mango Demo**. Public reads run for real; sends and third-party account effects complete with demo-only mocked success. `rer demo --stop` deletes its state; the next run is fresh and ordinary `.wrangler/state` is untouched. See [DEMO.md](DEMO.md). The separate `pnpm run review:synthetic` workspace remains test-only.
 
 ## Source synchronization
 
