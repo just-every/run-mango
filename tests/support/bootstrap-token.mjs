@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto';
 import { chmod, mkdir, readFile, writeFile } from 'node:fs/promises';
 
-const localTokenPath = '.seed/local-bootstrap-token';
+const localTokenPath = './.seed/local-bootstrap-token';
 const tokenPattern = /^[a-f0-9]{64}$/;
 
 async function readToken() {

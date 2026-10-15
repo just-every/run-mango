@@ -4,8 +4,15 @@ type Turnstile = { render(element: HTMLElement, options: Record<string, unknown>
 
 export function SignupChallenge({ siteKey, onToken }: { siteKey: string; onToken: (token: string) => void }) {
   const container = useRef<HTMLDivElement>(null);
+  const [interacted, setInteracted] = useState(false);
+  useEffect(() => {
+    const activate = (event: Event) => { if (event.isTrusted && container.current?.closest('form')?.contains(event.target as Node)) setInteracted(true); };
+    document.addEventListener('pointerdown', activate); document.addEventListener('keydown', activate);
+    return () => { document.removeEventListener('pointerdown', activate); document.removeEventListener('keydown', activate); };
+  }, []);
   const [failed, setFailed] = useState(false);
   useEffect(() => {
+    if (!interacted) return;
     let widget: string | undefined;
     let disposed = false;
     const api = () => (window as Window & { turnstile?: Turnstile }).turnstile;
@@ -30,6 +37,6 @@ export function SignupChallenge({ siteKey, onToken }: { siteKey: string; onToken
       disposed=true;script.removeEventListener('load',render);script.removeEventListener('error',fail);
       if (widget !== undefined) api()?.remove(widget);
     };
-  }, [siteKey, onToken]);
+  }, [siteKey, onToken, interacted]);
   return <><div ref={container} data-sitekey={siteKey} data-action="newsletter-signup" />{failed ? <p className="inline-error" role="alert">Verification is unavailable. Reload the form to try again.</p> : null}</>;
 }

@@ -29,6 +29,20 @@ export function registerLifecycleHttpRoutes(
   delivery: DeliveryService,
   repository: LifecycleRepository,
 ) {
+  app.post('/api/campaigns/:id/checks/:checkId/acknowledge', async (context: any) => {
+    const actor = operatorId(context);
+    if (!actor) return context.json({error: 'unauthenticated'}, 401);
+    const params = readParams(context, z.object({id: z.string().min(1), checkId: z.string().min(1)}));
+    if ('error' in params) return params.error;
+    const body = await readJson(context, z.object({revisionId: z.string().min(1), findingIdentity: z.string().regex(/^[a-f0-9]{64}$/)}).strict());
+    if ('error' in body) return body.error;
+    const result = await repository.acknowledgeAdvisory({campaignId: params.data.id, checkId: params.data.checkId,
+      ...body.data, operatorId: actor});
+    if (result.kind === 'not_found') return context.json({error: 'not_found'}, 404);
+    if (result.kind !== 'acknowledged') return context.json({error: result.kind === 'not_advisory' ? 'finding_not_advisory' : 'stale_finding'}, 409);
+    return context.json({status: 'acknowledged', acknowledgement: result.acknowledgement});
+  });
+
   app.post('/api/campaigns/:id/checks', async (context: any) => {
     if (!operatorId(context)) return context.json({error: 'unauthenticated'}, 401);
     const params = readParams(context, identifier);
@@ -107,11 +121,13 @@ export function registerLifecycleHttpRoutes(
   });
 
   app.post('/webhooks/mail/*', async (context: any) => {
-    await delivery.handleWebhook('email', context.req.raw);
+    const result = await delivery.handleWebhook('email', context.req.raw);
+    if (result.kind === 'unavailable') return context.json({ error: 'mail_webhook_unavailable' }, 404);
     return context.body(null, 204);
   });
   app.post('/webhooks/sms/*', async (context: any) => {
-    await delivery.handleWebhook('sms', context.req.raw);
+    const result = await delivery.handleWebhook('sms', context.req.raw);
+    if (result.kind === 'unavailable') return context.json({ error: 'sms_webhook_unavailable' }, 404);
     return context.body(null, 204);
   });
 }

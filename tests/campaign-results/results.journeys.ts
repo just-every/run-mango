@@ -1,9 +1,10 @@
+import { localSessionCookieName } from '../support/local-session';
 import { expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { test, contract, runtime } from './runtime-fixture';
 import { fixedNow,states } from './fixtures';
 async function seed(request:any,action:string) {const response=await request.post(`${runtime.url}/_results/${action}`,{headers:{'X-Test-Token':runtime.token}});expect(response.status()).toBe(200);return response.json();}
-async function login(page:any,request:any) {const {token}=await seed(request,'open');await page.context().addCookies([{name:'operator_session_local',value:token,domain:'127.0.0.1',path:'/'}]);await page.clock.install({time:fixedNow});}
+async function login(page:any,request:any) {const {token}=await seed(request,'open');await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,domain:'127.0.0.1',path:'/'}]);await page.clock.install({time:fixedNow});}
 // WCAG 2.x contrast of an element's text on its own background, from computed styles.
 async function textContrast(element:any) {
   const [fg,bg]=await element.evaluate((el:Element)=>{const s=getComputedStyle(el);return [s.color,s.backgroundColor];});
@@ -123,7 +124,7 @@ contract('CAMP-009','cancel dialog contains focus, Escape cancels and returns fo
 contract('RESULT-001','[CAMP-002] successful queued sync and failed refresh use distinct consistent feedback',async({page,request})=>{
   await seed(request,'presentation');await login(page,request);await page.setViewportSize({width:1440,height:900});await page.goto(`${runtime.url}/app/store`);
   const sync=page.waitForResponse(response=>response.url().endsWith('/api/store/sync')&&response.request().method()==='POST');
-  await page.getByRole('button',{name:'Sync now',exact:true}).click();expect((await sync).status()).toBe(202);
+  await page.getByRole('article',{name:'Customer sync'}).getByRole('button',{name:'Sync now',exact:true}).click();expect((await sync).status()).toBe(202);
   const success=page.locator('.action-notice[role="status"]');await expect(success).toBeVisible();await expect(success).not.toBeEmpty();
   const successFeedback=await success.textContent();
   const jobs=await seed(request,'jobs');expect(jobs.map((job:any)=>JSON.parse(job.payload))).toContainEqual(expect.objectContaining({kind:'source.sync'}));

@@ -155,6 +155,10 @@
     {
       "source": ".publish-check/README.md",
       "reason": "Publication review rules for maintainers"
+    },
+    {
+      "source": "DEMO.md",
+      "reason": "Demo operation and isolation guide for maintainers"
     }
   ]
 }

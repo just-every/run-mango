@@ -62,7 +62,7 @@ test('CONT-013/DATA-001 populated upgrade retires legacy custody and resumes a p
 });
 
 test('CONT-013/DATA-001 invalid archive authority is refused before any durable admission mutation', async () => {
-  const source = await portabilityRuntime(), target = await portabilityRuntime({restore:true});
+  const [source, target] = await Promise.all([portabilityRuntime(), portabilityRuntime({restore:true})]);
   try {
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();
     const records = await archiveRecords(source), manifest = records[0];
@@ -76,7 +76,7 @@ test('CONT-013/DATA-001 invalid archive authority is refused before any durable 
 });
 
 test('CONT-013/DATA-001 staged archive replay, checksum and finalize authority validation prevent restored rows', async () => {
-  const source = await portabilityRuntime(), target = await portabilityRuntime({restore:true});
+  const [source, target] = await Promise.all([portabilityRuntime(), portabilityRuntime({restore:true})]);
   try {
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();
     const records = await archiveRecords(source), manifest = records[0];
@@ -93,7 +93,7 @@ test('CONT-013/DATA-001 staged archive replay, checksum and finalize authority v
 });
 
 test('CONT-013/DATA-001 atomic epoch race refuses stale readmission and current archive recovery preserves rows', async () => {
-  const source = await portabilityRuntime(), target = await portabilityRuntime({restore:true});
+  const [source, target] = await Promise.all([portabilityRuntime(), portabilityRuntime({restore:true})]);
   try {
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();
     const records = await archiveRecords(source), manifest = records[0];

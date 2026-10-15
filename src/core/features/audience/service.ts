@@ -22,10 +22,11 @@ export type PublicTokenSigner = {
 export type ConfirmationDispatcher = {
   // Complete every asynchronous preparation step before authorizing, then invoke
   // the adapter immediately. False denotes a lost eligibility race.
-  sendConfirmation(input: { channel: Channel; destination: string; token: string; expiresAt: Date }, authorizeHandoff: () => Promise<boolean>): Promise<void | boolean>;
+  sendConfirmation(input: { channel: Channel; destination: string; token: string; expiresAt: Date; contactId: string; consentId: string }, authorizeHandoff: () => Promise<boolean>): Promise<void | boolean>;
 };
 
 export type AudienceDependencies = {
+  validateConsent?(input: ConsentCapture): void;
   contactHashSalt: string;
   publicTokens: PublicTokenSigner;
   confirmationDispatcher: ConfirmationDispatcher;
@@ -38,6 +39,9 @@ export type ConsentCapture = {
   channel: Channel;
   brandOrLegalSender: string;
   smsProgram?: string;
+  timeZone?: string;
+  locationSource?: string;
+  locationRecordedAt?: Date;
   messageCategory: string;
   frequencyDisclosure: string;
   destinationJurisdiction: string;
@@ -56,7 +60,8 @@ export type CommerceWebhookEvent = {
   completion: 'full' | 'delta';
   adapterCompleted: boolean;
   sourceTypes: CommerceSourceType[];
-  records: Array<Omit<NormalizedCommerceRecord, 'contactId'> & { contact?: { email?: string; phone?: string; displayName?: string } }>;
+  receipt?: {ids: string[]; digest: string};
+  records: Array<NormalizedCommerceRecord & { contact?: { email?: string; phone?: string; displayName?: string } }>;
 };
 
 export type SmsComplianceReply = {
@@ -272,6 +277,8 @@ export function createAudienceService(
   }
 
   async function captureConsent(input: ConsentCapture, now = new Date()) {
+    requiredDependencies().validateConsent?.(input);
+    if(input.channel==='sms' && !input.smsProgram?.trim())throw new Error('SMS programme is required.');
     if (input.idempotencyKey) {
       const previous = await repository.getConsent(input.idempotencyKey);
       if (previous) {
@@ -285,6 +292,7 @@ export function createAudienceService(
     }
     const { contact, normalized, created } = await ensureContact(input.contact, now);
     const destination = destinationForChannel(input.channel, normalized);
+    if(input.channel==='sms' && input.timeZone && input.locationSource && input.locationRecordedAt)await repository.recordPhoneLocation(destination,input.timeZone,input.locationSource,input.locationRecordedAt);
     const evidenceId = input.idempotencyKey ?? ulid(now.getTime());
     const confirmationRequired = input.confirmationRequired ?? true;
     if (confirmationRequired) requiredDependencies().confirmationDispatcher;
@@ -342,7 +350,7 @@ export function createAudienceService(
     });
     if (!publicCapture) await repository.setPendingFromEvidence(contact.id, input.channel, input.occurredAt);
     if (!await dispatchAllowed()) return { contact, evidence, confirmation: undefined };
-    const sent = await requiredDependencies().confirmationDispatcher.sendConfirmation({ channel: input.channel, destination, token, expiresAt },
+    const sent = await requiredDependencies().confirmationDispatcher.sendConfirmation({ channel: input.channel, destination, token, expiresAt, contactId:contact.id, consentId:evidence.id },
       () => repository.claimConfirmationHandoff(confirmationId, destinationHash, input.channel, publicCapture));
     if (sent === false) return { contact, evidence, confirmation: undefined };
     return { contact, evidence, confirmation: { token, expiresAt } };
@@ -644,11 +652,7 @@ export function createAudienceService(
         await requiredDependencies().store.recordCommerceSyncFailure(event.sourceTypes, 'The accepted webhook carried no source records.', now);
         throw new Error('The accepted webhook carried no source records.');
       }
-      const records: NormalizedCommerceRecord[] = [];
-      for (const record of event.records) {
-        const contact = record.contact ? await ensureContact(record.contact, now, fence) : undefined;
-        records.push({ ...record, contactId: contact?.contact.id });
-      }
+      const records = event.records;
       await requiredDependencies().store.ingestSuccessfulCommerceBatch(
         event.provider,
         records,
@@ -657,13 +661,9 @@ export function createAudienceService(
         event.adapterCompleted,
         now,
         fence,
+        event.receipt,
+        requiredDependencies().contactHashSalt,
       );
-      for (const record of records.filter((record) => record.contactId && (record.activity?.kind === 'order' || record.activity?.kind === 'click'))) {
-        const current = await repository.getContact(record.contactId!);
-        if (!current?.lastActivityAt || current.lastActivityAt < record.occurredAt) {
-          await repository.updateContact(record.contactId!, { lastActivityAt: record.occurredAt, updatedAt: now }, fence);
-        }
-      }
       return { accepted: records.length };
     },
 

@@ -1,6 +1,8 @@
 import {test,expect} from '@playwright/test';
+import {createHash} from 'node:crypto';
 import {invitationRuntime} from '../../operations/fixtures/invitation-runtime.mjs';
 import {eraseHttp} from './erase';
+import {parseCsv} from '../../src/core/features/audience/csv';
 
 function decoded(value:unknown):string{
  if(Array.isArray(value))return value.map(decoded).join('\n');
@@ -96,12 +98,20 @@ test('CONT-013 erasure removes an address inside URLs and storage keys and keeps
 test('CONT-013 a capture IP shared with another person never touches their separate import',async()=>{
  test.setTimeout(120000);const f=await invitationRuntime();try{
   const cookie=await f.bootstrap();
-  await importFile(f,cookie,{files:[{name:'monday.csv',preset:'csv-unsubscribed',csv:'Email Address,First Name,OPTIN_IP\nerin@x.test,Erin Fairweather,198.51.100.20'}]});
+  const when=new Date(Date.now()-60000).toISOString();
+  await importFile(f,cookie,{files:[{name:'monday.csv',preset:'csv-subscribed',csv:`Email Address,First Name,OPTIN_IP,OPTIN_TIME,CONFIRM_TIME\nerin@x.test,Erin Fairweather,198.51.100.20,${when},${when}`}],consent:{brandOrLegalSender:'Mango',messageCategory:'newsletter',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',consentText:'I agree to receive weekly newsletters.',consentVersion:'original-v1'}});
   const theirs=await importFile(f,cookie,{files:[{name:'tuesday.csv',preset:'csv-unsubscribed',csv:'Email Address,First Name,OPTIN_IP\nolive@x.test,Olive Other,198.51.100.20'}]});
   const erin=await f.db.prepare("SELECT id FROM contacts WHERE email='erin@x.test'").first(),olive=await f.db.prepare("SELECT id FROM contacts WHERE email='olive@x.test'").first();
+  // Prior data can hold a detached suppression under another authority's hash.
+  const hash=(value:string)=>createHash('sha256').update(value).digest('hex');
+  const prior=hash('prior-authority:erin@x.test'),portable=hash('mango-audience-export-v1:erin@x.test');
+  await f.db.prepare("INSERT INTO contact_suppressions(id,contact_id,channel,destination_hash,cause,occurred_at,created_at,updated_at) VALUES('legacy-prior-suppression',NULL,'email',?,'hard-bounce',1,1,1)").bind(prior).run();
+  await f.db.prepare('INSERT INTO audience_portable_hashes VALUES(?,?)').bind(prior,portable).run();
   const oliveRows=async()=>[await f.db.prepare('SELECT * FROM audience_import_observations WHERE contact_id=?').bind(olive.id).all(),await f.db.prepare('SELECT * FROM ik_jobs WHERE id=?').bind(theirs.id).all(),await f.db.prepare('SELECT * FROM audience_import_plan_contacts WHERE contact_id=?').bind(olive.id).all()].map(result=>result.results);
   const before=await oliveRows();expect(JSON.stringify(before)).toContain('198.51.100.20');
   expect((await eraseHttp(f,cookie,erin.id)).state).toBe('complete');
+  const exported=await f.call('/api/audience/export',{cookie}),csv=await exported.text();
+  expect({status:exported.status,restriction:exported.ok?parseCsv(csv).map(row=>JSON.parse(row.ledger_json).opt_outs).find(line=>line?.hash===portable):null}).toEqual({status:200,restriction:{hash:portable,surviving_opt_outs:[],contact_suppressions:[{id:'legacy-prior-suppression',contact_id:null,channel:'email',destination_hash:portable,cause:'hard-bounce',occurred_at:1,provider_event_id:null,created_at:1,updated_at:1}]}});
   expect(await oliveRows()).toEqual(before);
   expect((await f.call(`/api/audience/imports/${theirs.id}/undo`,{cookie,method:'POST',body:{}})).status).toBe(200);
  }finally{await f.close();}

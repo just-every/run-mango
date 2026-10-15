@@ -73,6 +73,8 @@ export function AudienceImportSourceForm({
   };
 
   const presetById = new Map(presets.map((preset) => [preset.id, preset]));
+  const selectedNames = new Set(files.map((file) => file.name));
+  const mappingColumns = archive ? [] : (columns ?? []).filter((column) => selectedNames.has(column.name));
 
   return (
     <ValidationForm className="audience-import-form" onValidSubmit={onPreview} aria-label="Audience import mapping">
@@ -143,7 +145,7 @@ export function AudienceImportSourceForm({
         {fileError ? <p className="inline-error" role="alert">{fileError}</p> : null}
       </section>
 
-      {columns?.length ? (
+      {mappingColumns.length ? (
         <section className="panel audience-import-panel" aria-labelledby="import-mapping-title">
           <div className="audience-import-section-title">
             <span aria-hidden="true">2</span>
@@ -152,10 +154,12 @@ export function AudienceImportSourceForm({
               <h2 id="import-mapping-title">Field mapping</h2>
             </div>
           </div>
-          <p className="muted-copy">Each mapping is reviewed with the file. Missing original consent evidence keeps a row non-subscribed.</p>
+          <p className="muted-copy">Map email, E.164 phone, or both. SMS columns carry independent consent; email consent and file presets never subscribe SMS. Missing original evidence keeps that channel non-subscribed.</p>
           <div className="audience-import-mappings">
-            {columns.map((column) => {
+            {mappingColumns.map((column) => {
               const preset = files.find((file) => file.name === column.name)?.preset;
+              const mapping = {...column.mapping, ...mappings[column.name]};
+              const destinationError = () => mapping.email || mapping.phone ? undefined : 'Map an email or E.164 phone column.';
               return (
                 <fieldset className="audience-import-mapping-file" key={column.name}>
                   <legend>{column.name}</legend>
@@ -165,8 +169,8 @@ export function AudienceImportSourceForm({
                     <div className="audience-import-mapping-grid">
                       {fields.map((field) => (
                         <label key={field.id}>
-                          <span>{fieldLabel(field)}{field.id === 'email' ? ' (required)' : ''}</span>
-                          <Field name={`mapping.${column.name}.${field.id}`} label={`${fieldLabel(field)} in ${column.name}`} required={field.id === 'email'}><select
+                          <span>{fieldLabel(field)}</span>
+                          <Field name={`mapping.${column.name}.${field.id}`} label={`${fieldLabel(field)} in ${column.name}`} validate={field.id === 'email' || field.id === 'phone' ? destinationError : undefined}><select
                             aria-label={`${fieldLabel(field)} in ${column.name}`}
                             value={mappings[column.name]?.[field.id] ?? column.mapping[field.id] ?? ''}
                             onChange={(event) => onMappingChange(column.name, field.id, event.currentTarget.value)}
@@ -189,10 +193,10 @@ export function AudienceImportSourceForm({
 
       <section className="panel audience-import-panel" aria-labelledby="import-consent-title">
         <div className="audience-import-section-title">
-          <span aria-hidden="true">{columns?.length ? '3' : '2'}</span>
+          <span aria-hidden="true">{mappingColumns.length ? '3' : '2'}</span>
           <div>
             <p className="eyebrow">Keep the original scope</p>
-            <h2 id="import-consent-title">Consent evidence</h2>
+            <h2 id="import-consent-title">Email consent evidence</h2>
           </div>
         </div>
         <p className="muted-copy">These details must match what each person actually saw when they opted in. Adding them here cannot create consent or reverse an opt-out.</p>

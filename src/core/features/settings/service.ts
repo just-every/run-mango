@@ -1,19 +1,41 @@
 import type { Platform } from '@/core/shared/platform';
 import { configuredFrom } from '@/core/features/sender-verification/identity';
 import { unavailableInspection } from '@/core/features/sender-verification/service';
-import type { EvidenceStatus } from '@/core/features/sender-verification/types';
+import { VerificationError, type EvidenceStatus } from '@/core/features/sender-verification/types';
+import { senderReasonText } from '@/core/features/sender-verification/reason-text';
 import type { SenderStatus } from './types';
 import { loadSenderSettings, saveSenderSettings } from './sender-persistence';
 import { senderIdentitySchema } from './sender-validation';
 import { senderWriteAuthority } from './sender-authority';
 import { sendingReadiness } from './readiness';
 
-const reasons = { passed: 'Current evidence meets this check.', missing: 'No trusted receiver observation is available.', unknown: 'This check could not be completed.', failed: 'This check did not pass.', stale: 'The original observation has expired.', revoked: 'The observation has been revoked.' };
-const safeStatus = (status: EvidenceStatus) => ({ state: status.state, reason: reasons[status.state],
+const safeStatus = (status: EvidenceStatus) => ({ state: status.state,
+  reason: status.state === 'passed' && !['owner-confirmed', 'authentication-observed'].includes(status.reason) ? 'Current evidence meets this check.' : senderReasonText(status.reason),
   observedAt: status.observedAt === undefined ? undefined : new Date(status.observedAt).toISOString(),
   expiresAt: status.expiresAt === undefined ? undefined : new Date(status.expiresAt).toISOString() });
-export function createSettingsService(platform: Pick<Platform, 'config' | 'mailer'> & Partial<Pick<Platform, 'database'>>) {
+export function createSettingsService(platform: Pick<Platform, 'config' | 'mailer'> & Partial<Pick<Platform, 'database' | 'senderVerification' | 'sms' | 'ai' | 'commerce'>>) {
   return {
+    /** The connections this installation actually composed, read live rather than from stored rows. */
+    async providers() {
+      const mail = await platform.mailer.capabilities(), at = new Date().toISOString();
+      const providerName = mail.provider === 'sendgrid' ? 'SendGrid' : mail.provider === 'resend' ? 'Resend' : 'The mail provider';
+      const configured = mail.configured && mail.canSendMarketing;
+      const detail = platform.config.authMail
+        ? `RER sends sign-in and subscription confirmations. ${configured ? `${providerName} sends newsletters through your own connection, with the sender checks above.` : 'Newsletters need your own SendGrid or Resend marketing connection in RER Configure.'}`
+        : configured ? `${providerName} sends sign-in, confirmation and campaign email. Campaigns also need the sender checks above.` : mail.detail;
+      const providers = [{ id: 'mail', adapter: 'mail.sender.v1', configured, status: configured ? 'available' : 'unavailable', updatedAt: at, detail }];
+      if (platform.sms) providers.push({ id: 'sms', adapter: 'sms.sender.v1', configured: true, status: 'available', updatedAt: at, detail: (await platform.sms.capabilities()).detail });
+      if (platform.ai) providers.push({ id: 'ai', adapter: 'ai.provider.v1', configured: true, status: 'available', updatedAt: at, detail: 'AI writing can draft campaign suggestions for your review.' });
+      if (platform.commerce) providers.push({ id: 'commerce', adapter: 'commerce.store.v1', configured: true, status: 'available', updatedAt: at, detail: platform.commerce.capabilities().detail });
+      const off = [platform.sms ? '' : 'text messages', platform.ai ? '' : 'AI writing', platform.commerce ? '' : 'a store connection'].filter(Boolean);
+      return { providers, off };
+    },
+    /** Emails a one-time check from the configured sender to the operator's own address. */
+    async sendOwnerConfirmation(operatorEmail: string) {
+      if (!platform.senderVerification || !(await platform.mailer.capabilities()).configured) throw new VerificationError('verification-not-configured');
+      if (platform.database) await loadSenderSettings({config: platform.config, database: platform.database});
+      return platform.senderVerification.sendOwnerConfirmation(operatorEmail, platform.mailer);
+    },
     async saveSender(value: unknown, operatorId: string, request: Request) {
       if (!platform.database) throw new Error('Sender settings database is required.');
       const persistent = {config: platform.config, database: platform.database};
@@ -34,12 +56,10 @@ export function createSettingsService(platform: Pick<Platform, 'config' | 'maile
         const ready = capabilities.configured && inspection.ready && Boolean(inspection.lease);
         return { identity, readiness: sendingReadiness(capabilities.configured ? inspection : undefined, identity.physicalAddress), validation: {
           state: !capabilities.configured ? 'unavailable' : ready ? 'ready' : inspection.provider.state === 'unknown' || (inspection.provider.state === 'passed' && inspection.dns.state === 'unknown') ? 'error' : 'blocked', ready,
-          detail: ready ? 'Fresh receiver evidence reports SPF, DKIM, DMARC and From alignment passing.'
-            : !capabilities.configured ? 'The mail provider is unavailable.'
-              : inspection.observation.state === 'missing' ? 'Receiver authentication evidence is missing. Marketing approval remains blocked.'
-                : 'Current sender evidence does not meet marketing requirements. Check configuration and obtain a fresh receiver observation.',
+          detail: !capabilities.configured ? 'Sending is off: no mail provider is configured for this copy of Mango.' : senderReasonText(inspection.reason),
           checkedAt: new Date(inspection.checkedAt).toISOString(),
-        }, evidence: { provider: safeStatus(inspection.provider), dns: safeStatus(inspection.dns), observation: safeStatus(inspection.observation) } };
+        }, canSendCheck: capabilities.configured && Boolean(platform.senderVerification) && inspection.provider.state === 'passed' && inspection.dns.state === 'passed',
+        evidence: { provider: safeStatus(inspection.provider), dns: safeStatus(inspection.dns), observation: safeStatus(inspection.observation) } };
       } catch {
         return { identity, readiness: sendingReadiness(undefined, identity.physicalAddress), validation: { state: 'error', ready: false,
           detail: 'The sender check failed. Check the mail provider configuration and try again.', checkedAt: new Date().toISOString() } };

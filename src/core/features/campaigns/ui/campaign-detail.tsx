@@ -1,9 +1,12 @@
-import { Link, useParams } from '@tanstack/react-router';
+import {requestJson} from '@/core/app/client/lib/api';
+import {useState} from 'react';
+import { Link, useParams, useNavigate } from '@tanstack/react-router';
 
 import { formatDate } from '@/core/app/client/lib/format';
 import type { CampaignDetail } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
-import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
+import { LoadState } from '@/core/app/client/ui/layout';
+import { CampaignStatusPill } from './campaign-status-pill';
 
 import { ApprovalCheckList } from './approval-check-list';
 import { AudienceSnapshot } from './audience-snapshot';
@@ -11,12 +14,19 @@ import { DeliveryPlan } from './delivery-plan';
 import { RevisionPreviews } from './revision-previews';
 
 export function CampaignDetailPage() {
+  const navigate=useNavigate();
+  const [editError,setEditError]=useState<string>();
   const { id } = useParams({ from: '/app/campaigns_/$id' });
   const { data, error, loading } = useResource<CampaignDetail>(`/api/campaigns/${id}`);
   if (loading) return <LoadState />;
   if (!data || !data.revision) return <LoadState error={error ?? 'This campaign has no saved revision.'} />;
 
   const hasResults = Boolean(data.results);
+  const edit=async()=>{
+    try {const response=await requestJson<{campaignId:string}>(`/api/campaigns/${id}/edit-schedule`,{method:'POST'});
+      if(response.status!==201)throw new Error();await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId}});
+    }catch{setEditError('The editable copy could not be confirmed. Reload before trying again.');}
+  };
   return (
     <div className="page-flow campaign-detail-page">
       <header className="page-head page-head--actions">
@@ -27,13 +37,14 @@ export function CampaignDetailPage() {
           <p className="eyebrow">Campaign</p>
           <h1>{data.revision.name}</h1>
           <div className="page-head__meta campaign-head-meta">
-            <StatusPill value={data.campaign.state} />
+            <CampaignStatusPill state={data.campaign.state} results={data.results} />
             <p>
               Saved revision {data.revision.version} · updated {formatDate(data.revision.updatedAt)}
             </p>
           </div>
         </div>
         <div className="page-head__actions">
+          {hasResults?<button type="button" className="secondary-action" onClick={()=>void edit()}>{data.campaign.state==='scheduled'?'Edit replacement schedule':'Create a new campaign from this revision'}</button>:null}
           <Link className={hasResults ? 'secondary-action' : 'primary-action'} to="/app/campaigns/$id/review" params={{ id }}>
             {data.campaign.state === 'draft' ? 'Review and approve' : 'Review saved revision'}
           </Link>
@@ -44,6 +55,7 @@ export function CampaignDetailPage() {
           ) : null}
         </div>
       </header>
+      {editError?<p role="alert">{editError}</p>:null}
       {data.campaign.state==='erasure-invalidated'?<section className="notice-warning" role="status"><h2>Review required after contact erasure</h2><p>This saved revision was redacted. Its historical approval no longer authorizes sending. Create and review a new draft before scheduling another campaign.</p><Link to="/app/campaigns" className="button button--secondary">Create new draft</Link></section>:null}
       {data.uncertainDeliveries?.length ? <section role="status" className="notice-warning uncertain-deliveries">
         <h2>Uncertain · operator review required</h2>

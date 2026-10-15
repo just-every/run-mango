@@ -3,6 +3,8 @@ import { formatDate, titleCase } from '@/core/app/client/lib/format';
 export type ContactConsentEvidence = {
   id: string;
   channel: string;
+  destination: string;
+  smsProgram?: string | null;
   brandOrLegalSender: string;
   messageCategory: string;
   frequencyDisclosure: string;
@@ -63,6 +65,8 @@ export function ContactConsentEvidencePanel({ consent, observations }: {
                 <dl className="contact-evidence-fields">
                   <div><dt>Captured</dt><dd>{formatDate(evidence.occurredAt)}</dd></div>
                   <div><dt>Confirmed</dt><dd>{formatDate(evidence.confirmedAt)}</dd></div>
+                  <div><dt>Destination</dt><dd>{evidence.destination}</dd></div>
+                  {evidence.channel==='sms'?<div><dt>SMS programme</dt><dd>{evidence.smsProgram || 'Not recorded'}</dd></div>:null}
                   <div><dt>Destination jurisdiction</dt><dd>{evidence.destinationJurisdiction}</dd></div>
                   <div><dt>Consent version</dt><dd>{evidence.consentVersion}</dd></div>
                   <div><dt>Capture method</dt><dd>{evidence.captureMethod}</dd></div>

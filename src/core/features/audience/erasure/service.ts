@@ -23,6 +23,10 @@ export class ErasureAmbiguousText extends Error {
   constructor(readonly store:string){super(`A record in ${store} that names this contact also holds their name or a note that is too short or a single word to remove safely. Edit that record, then retry deletion.`);}
 }
 
+class ErasureProgressConflict extends Error {
+  constructor(readonly current:ErasureJob){super('Another erasure continuation advanced this job.');}
+}
+
 type ErasureAuthority=Pick<D1ImportContext,'destination'|'authorization'>;
 function receipt(job:ErasureJob):ErasureReceipt {
   const scope=JSON.parse(job.scope_json);
@@ -79,9 +83,22 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
     async advance(reference:string,context:ErasureAuthority){
       const job=await read(reference);if(!job)return null;if(job.state==='complete')return receipt(job);
       const progress=async(statements:D1PreparedStatement[])=>{
-        await commit(context,[db.prepare("INSERT INTO audience_erasure_guard SELECT CASE WHEN EXISTS(SELECT 1 FROM audience_erasures WHERE reference=? AND revision=? AND state='pending') THEN 1 ELSE 0 END").bind(reference,job.revision),...statements,db.prepare('UPDATE audience_erasures SET revision=revision+1 WHERE reference=?').bind(reference)]);
+        try {
+          // NULL intentionally identifies only this optimistic conflict through
+          // the existing NOT NULL constraint. Authorization and other guards use
+          // value=0 and remain hard failures. D1 rolls the entire batch back.
+          await commit(context,[db.prepare("INSERT INTO audience_erasure_guard SELECT CASE WHEN EXISTS(SELECT 1 FROM audience_erasures WHERE reference=? AND revision=? AND state='pending') THEN 1 ELSE NULL END").bind(reference,job.revision),...statements,db.prepare('UPDATE audience_erasures SET revision=revision+1 WHERE reference=?').bind(reference)]);
+        } catch(error) {
+          if(!(error instanceof Error)||!/^D1_ERROR: NOT NULL constraint failed: audience_erasure_guard\.value: SQLITE_CONSTRAINT(?: \(extended: SQLITE_CONSTRAINT_NOTNULL\))?$/.test(error.message))throw error;
+          const check=context.authorization.predicate('erase',context.destination);
+          const current=await db.prepare(`SELECT * FROM audience_erasures WHERE reference=? AND (${check.sql})`).bind(reference,...check.params??[]).first<ErasureJob>();
+          if(!current||current.revision<=job.revision||current.requested_at!==job.requested_at
+            || !(current.subject_id===job.subject_id||(current.state==='complete'&&current.subject_id===null)))throw error;
+          throw new ErasureProgressConflict(current);
+        }
         job.revision++;
       };
+      try {
       if(job.stage===-3){
         const refreshed=await readScope(db,job.subject_id!,salt);if(!refreshed)throw new Error('Erasure subject disappeared.');
         // Enumerate/count transfer copies only after the pending write fence is
@@ -167,6 +184,10 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
       counts.contacts=Number((await db.prepare('SELECT count(*) AS n FROM contacts WHERE id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(scope.ids)).first<{n:number}>())!.n);
       statements.push(db.prepare('UPDATE audience_erasures SET counts_json=? WHERE reference=?').bind(JSON.stringify(counts),reference),...cleanup.statements,db.prepare("UPDATE audience_erasures SET state='complete',subject_id=NULL,blob_scan_json='{}',scope_json=?,completed_at=? WHERE reference=?").bind(JSON.stringify({channels:scope.channels}),done,reference),db.prepare("INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) VALUES(?,?,'contact',?,'erased','system',?,'{}',?,?)").bind(crypto.randomUUID(),crypto.randomUUID(),reference,reference,done,done));
       await progress(statements);return receipt((await read(reference))!);
+      } catch(error) {
+        if(error instanceof ErasureProgressConflict)return receipt(error.current);
+        throw error;
+      }
     },
   };
 }

@@ -4,22 +4,28 @@ import { signInAsLocalOperator } from './browser-checks';
 test('saved sender disclosure is current and stale consent cannot create evidence', async ({ page, request }, testInfo) => {
   await signInAsLocalOperator(page, request);
   const baseURL = new URL(testInfo.project.use.baseURL as string);
-  const cookie = (await page.context().cookies()).find((entry) => entry.name === 'operator_session_local');
+  const cookie = (await page.context().cookies()).find((entry) => entry.name.startsWith('operator_session_local_'));
   expect(cookie?.value).toBeTruthy();
-  const headers = { Cookie: `operator_session_local=${cookie?.value}` };
+  const headers = { Cookie: `${cookie?.name}=${cookie?.value}` };
   const identity = {
     displayName: `Mango newsletter ${Date.now()}`,
     fromEmail: 'newsletter@example.test',
     replyToEmail: 'reply@example.test',
     physicalAddress: '1 Audience Way, Sydney NSW 2000 Australia',
   };
-  const saveSender = (displayName: string) => request.put('/api/settings/sender', {
+  const saveSender = (sender: typeof identity) => request.put('/api/settings/sender', {
     headers: { ...headers, Origin: baseURL.origin },
-    data: { ...identity, displayName },
+    data: sender,
   });
   const firstSender = identity.displayName;
   const latestSender = `${firstSender} updated`;
-  await expect(await saveSender(firstSender)).toBeOK();
+  const updatedIdentity = {
+    ...identity,
+    displayName: latestSender,
+    fromEmail: 'updated-newsletter@example.test',
+    replyToEmail: 'updated-reply@example.test',
+  };
+  await expect(await saveSender(identity)).toBeOK();
 
   await page.setViewportSize({ width: 1440, height: 1000 });
   const firstConsent = `I agree to receive email newsletters from ${firstSender}. I can unsubscribe at any time.`;
@@ -30,7 +36,7 @@ test('saved sender disclosure is current and stale consent cannot create evidenc
   expect(serverHtml?.match(/<input[^>]*name="email"[^>]*>/)?.[0]).toContain('disabled');
   await expect(page.getByRole('checkbox', { name: firstConsent })).toBeVisible();
 
-  await expect(await saveSender(latestSender)).toBeOK();
+  await expect(await saveSender(updatedIdentity)).toBeOK();
   const staleEmail = `ui-stale-consent-${Date.now()}@example.test`;
   const [staleResponse] = await Promise.all([
     page.waitForResponse((result) => result.request().method() === 'POST' && new URL(result.url()).pathname === '/subscribe'),
@@ -62,10 +68,11 @@ test('saved sender disclosure is current and stale consent cannot create evidenc
       await page.getByRole('button', { name: 'Request confirmation' }).click();
     })(),
   ]);
-  expect(captureResponse.status()).toBe(503);
-  expect((await captureResponse.json()).error).toBe('signup_failed');
-  await expect(page.getByRole('alert')).toContainText('Confirmation could not be delivered');
-  await expect(page.getByRole('status')).toHaveCount(0);
+  // The real confirmation dispatcher and Resend serializer hand off to the
+  // test provider edge, which validates the updated sender and public token link.
+  expect(captureResponse.status()).toBe(202);
+  expect((await captureResponse.json()).status).toBe('confirmation-required');
+  await expect(page.getByText('Request received')).toBeVisible();
 
   const contactsResponse = await request.get('/api/audience', { headers });
   await expect(contactsResponse).toBeOK();

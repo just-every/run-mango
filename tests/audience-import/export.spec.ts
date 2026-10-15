@@ -7,7 +7,8 @@ test('CONT-003/004/006/010 CSV roundtrip into a fresh differently salted D1 pres
  const first=await native('first-salt');let exported:string;try{const preview=await first.service.preview({files:await files(),consent},first.context);const job=await first.service.create(preview.fingerprint,first.context);await finish(first,job.id);
   await first.f.services.audienceService.captureConsent({contact:{email:'native@example.test'},channel:'email',...consent,captureMethod:'original-form',captureSource:'https://example.test/signup',captureIp:'192.0.2.99',occurredAt:new Date(),confirmationRequired:false});
   await first.f.services.audienceService.recordProviderSuppression({destination:'native@example.test',channel:'email',cause:'hard',occurredAt:new Date(),providerEventId:'native-bounce'});
-  await first.f.services.audienceService.captureConsent({contact:{phone:'+61400111222'},channel:'sms',...consent,smsProgram:'Newsletter',captureMethod:'original-sms-form',captureSource:'https://example.test/sms',occurredAt:new Date(),confirmationRequired:false});
+  const sms=await first.service.preview({files:[{name:'original-sms.csv',preset:'csv-non-subscribed',csv:'phone,sms_status,sms_brand,sms_program,sms_category,sms_frequency,sms_jurisdiction,sms_consent_text,sms_consent_version,sms_capture_method,sms_capture_source,sms_occurred_at,sms_confirmed_at\n+61400111222,subscribed,Mango,Newsletter,newsletter,Weekly,AU,I agree,v1,original-sms-form,https://example.test/sms,2026-01-01T00:00:00Z,2026-01-02T00:00:00Z'}]},first.context);
+  await finish(first,(await first.service.create(sms.fingerprint,first.context)).id);
   await first.f.services.audienceService.recordChannelOptOut({destination:'+61400111222',channel:'sms',reason:'STOP',occurredAt:new Date()});
   exported=await first.service.exportCsv();
  }finally{await first.close();}

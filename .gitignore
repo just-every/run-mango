@@ -8,6 +8,7 @@ playwright-report/
 .seed/deployment/
 .seed/local-bootstrap-token
 wrangler.toml
+wrangler.production.toml
 .wrangler/
 .12ui/
 
@@ -32,3 +33,5 @@ node_modules
 .cache/
 delivery-artifact/
 rer-package/
+
+.rer/demo/

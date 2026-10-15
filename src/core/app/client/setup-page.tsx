@@ -16,7 +16,7 @@ export function SetupPage({ identity, ownerEmail }: { identity: SenderIdentity; 
     <div className="mango-app app-standalone setup-page">
       <header className="simple-page__header">
         <a href="/" aria-label={`Back to ${productConfig.productName}`}>
-          <span className="app-brand"><MangoMark className="app-brand__mark" /><span className="app-brand__name">{productConfig.productName}</span></span>
+          <span className="app-brand"><MangoMark className="app-brand__mark" /><span className="app-brand__name" data-rer-name>{productConfig.productName}</span></span>
         </a>
       </header>
       <main className="setup-main">

@@ -9,7 +9,6 @@ import type { Platform, AppBindings } from '@/core/shared/platform';
 import { createFixturePlatform } from './local-platform';
 
 import { createApp } from '../../src/core/app/app';
-import { mountDevelopmentOutbox } from '../../src/core/app/development-outbox';
 
 export interface LocalAppBindings extends AppBindings {
   LOCAL_BOOTSTRAP_TOKEN: string;
@@ -22,7 +21,6 @@ export function createLocalApp(environment: LocalAppBindings, suppliedPlatform?:
 
   const platform = suppliedPlatform ?? createFixturePlatform(environment, environment.LOCAL_BOOTSTRAP_TOKEN);
   return createApp(environment, platform, (app, { authService, audienceService, storeService }) => {
-    mountDevelopmentOutbox(app, environment, platform);
     const database = platform.database;
     const campaignDemoImport = createCampaignDemoImportService(
       createCampaignDemoImportRepository(database),

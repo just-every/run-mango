@@ -4,12 +4,13 @@ import { requestJson } from '@/core/app/client/lib/api';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { archiveActive, postArchive, type ArchiveImport, type ArchivePreview } from './archive-client';
 import type { ImportConsent } from './audience-import-types';
+import type { ImportOperation, ImportOperationOwner } from './use-import-operation';
 
-type Messages = { setError: (value?: string) => void; setNotice: (value?: string) => void };
+type Messages = { owner: ImportOperationOwner; setError: (value?: string) => void; setNotice: (value?: string) => void };
 const message = (data: { detail?: string; error?: string }, fallback: string) => data.detail?.trim() || data.error?.replaceAll('_', ' ') || fallback;
 
 /** Preview, import and undo of one account export; each step after the first is a bounded `continue`. */
-export function useArchiveImport({ setError, setNotice }: Messages) {
+export function useArchiveImport({ setError, setNotice, owner }: Messages) {
   const archives = useResource<{ archives: ArchiveImport[] }>('/api/audience/archives');
   const [archive, setArchive] = useState<File>();
   const [preview, setPreview] = useState<ArchivePreview>();
@@ -17,25 +18,43 @@ export function useArchiveImport({ setError, setNotice }: Messages) {
   const [busy, setBusy] = useState<'preview' | 'start'>();
   const [busyId, setBusyId] = useState<string>();
 
-  const drive = async (id: string, first: 'continue' | 'undo') => {
-    if (busyId) return;
+  const drive = async (id: string, first: 'continue' | 'undo', operation: ImportOperation) => {
+    if (!owner.owns(operation)) return;
     setBusyId(id);
+    let action = first;
+    for (;;) {
+      if (!owner.owns(operation)) return;
+      const response = await requestJson<{ archive?: ArchiveImport; detail?: string; error?: string }>(`/api/audience/archives/${encodeURIComponent(id)}/${action}`, { method: 'POST' });
+      if (!owner.owns(operation)) return;
+      if (response.status >= 300 || !response.data.archive) { setError(message(response.data, 'The archive step could not be completed. Continue it again from Archive imports.')); return; }
+      const next = response.data.archive;
+      const contacts = next.progress.audience;
+      setNotice(archiveActive(next)
+        ? `${next.state === 'undoing' ? 'Undoing' : 'Importing'} ${next.name}: ${next.progress.contentDone} of ${next.progress.contentTotal} history and draft records${contacts ? `, ${Math.min(contacts.checkpoint, contacts.total)} of ${contacts.total} contacts` : ''}.`
+        : next.state === 'applied' ? `${next.name} is imported. Download the reconciliation report to check every row.` : `${next.name} is undone. The report lists what was removed and what was kept.`);
+      if (!archiveActive(next)) return;
+      action = 'continue';
+    }
+  };
+
+  // Start passes its owner straight into drive; it never re-acquires or opens a gap between steps.
+  const run = async (work: (operation: ImportOperation) => Promise<void>) => {
+    const operation = owner.acquire('archive');
+    if (!operation) return;
+    setError(undefined); setNotice(undefined);
     try {
-      let action = first;
-      for (;;) {
-        const response = await requestJson<{ archive?: ArchiveImport; detail?: string; error?: string }>(`/api/audience/archives/${encodeURIComponent(id)}/${action}`, { method: 'POST' });
-        if (response.status >= 300 || !response.data.archive) { setError(message(response.data, 'The archive step could not be completed. Continue it again from Archive imports.')); break; }
-        const next = response.data.archive;
-        const contacts = next.progress.audience;
-        setNotice(archiveActive(next)
-          ? `${next.state === 'undoing' ? 'Undoing' : 'Importing'} ${next.name}: ${next.progress.contentDone} of ${next.progress.contentTotal} history and draft records${contacts ? `, ${Math.min(contacts.checkpoint, contacts.total)} of ${contacts.total} contacts` : ''}.`
-          : next.state === 'applied' ? `${next.name} is imported. Download the reconciliation report to check every row.` : `${next.name} is undone. The report lists what was removed and what was kept.`);
-        if (!archiveActive(next)) break;
-        action = 'continue';
-      }
+      await work(operation);
+    } catch {
+      if (owner.owns(operation)) setError('The import result could not be confirmed. Check Archive imports before trying again.');
     } finally {
-      setBusyId(undefined);
-      await archives.reload();
+      try {
+        if (owner.owns(operation)) await archives.reload();
+      } finally {
+        if (owner.owns(operation)) {
+          setBusy(undefined); setBusyId(undefined);
+          owner.release(operation);
+        }
+      }
     }
   };
 
@@ -56,16 +75,16 @@ export function useArchiveImport({ setError, setNotice }: Messages) {
     },
     async start(consent: ImportConsent) {
       if (!archive || !preview || !current || busy || busyId) return;
-      setBusy('start'); setError(undefined); setNotice(undefined);
-      try {
+      await run(async operation => {
+        setBusy('start');
         const response = await postArchive<{ archive?: ArchiveImport; repeated?: boolean }>('/api/audience/archives', archive, consent, preview.fingerprint);
+        if (!owner.owns(operation)) return;
         if (response.status >= 300 || !response.data.archive) { if (response.status === 409) setCurrent(false); setError(message(response.data, 'The archive could not be imported. Preview it again before retrying.')); return; }
-        if (response.data.repeated) { setNotice('This archive was already imported; nothing changed.'); await archives.reload(); return; }
-        await drive(response.data.archive.id, 'continue');
-      } catch { setError('The import result could not be confirmed. Check Archive imports before trying again.'); }
-      finally { setBusy(undefined); }
+        if (response.data.repeated) { setNotice('This archive was already imported; nothing changed.'); return; }
+        await drive(response.data.archive.id, 'continue', operation);
+      });
     },
-    undo: (id: string) => drive(id, 'undo'),
-    resume: (id: string) => drive(id, 'continue'),
+    undo: (id: string) => run(operation => drive(id, 'undo', operation)),
+    resume: (id: string) => run(operation => drive(id, 'continue', operation)),
   };
 }

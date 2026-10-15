@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import { test, expect } from '@playwright/test';
 import { authoredBody } from '../../src/core/features/campaigns/authoring-content';
 import { authoringRuntime } from './browser-runtime.mjs';
@@ -12,7 +13,7 @@ test('[CAMP-003][MSG-009][MSG-012] saving stores the body as mail clients parse 
   try {
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
     expect(open.status()).toBe(200);
-    const headers = { Cookie: `operator_session_local=${(await open.json()).token}`, Origin: runtime.url };
+    const headers = { Cookie: `${localSessionCookieName(runtime.url)}=${(await open.json()).token}`, Origin: runtime.url };
     const created = await request.post(runtime.url + '/api/campaigns', { headers, data: {} });
     expect(created.status(), await created.text()).toBe(201);
     const { campaignId, revisionId } = await created.json();
@@ -70,7 +71,7 @@ test('[CAMP-003][MSG-009] a saved body saves to the same bytes, whether saved as
   try {
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
     expect(open.status()).toBe(200);
-    const headers = { Cookie: `operator_session_local=${(await open.json()).token}`, Origin: runtime.url };
+    const headers = { Cookie: `${localSessionCookieName(runtime.url)}=${(await open.json()).token}`, Origin: runtime.url };
     const { campaignId, revisionId } = await (await request.post(runtime.url + '/api/campaigns', { headers, data: {} })).json();
     const save = async (emailBody: string) => {
       const saved = await request.patch(`${runtime.url}/api/campaign-revisions/${revisionId}`, { headers, data: { emailBody } });

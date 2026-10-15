@@ -5,8 +5,9 @@ import { join } from 'node:path';
 import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
 import { decodeProviderReference } from '../../src/core/shared/provider-reference';
+import { localSessionCookieName } from '../support/local-session';
 import { archiveRows, importContacts, transfer } from './restore';
-import { approve, confirmedContact, dispatch, draftCampaign, installation, json, sender, signedPost, type Installation } from './harness';
+import { approve, availableTransport, confirmedContact, dispatch, draftCampaign, installation, json, sender, signedPost, type Installation } from './harness';
 
 // One installation runs the whole go-live sequence: confirmed contacts, an
 // approved campaign handed to SendGrid, signed delivery facts, one-click
@@ -38,15 +39,26 @@ test('[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts r
   site = await installation(edge, signer);
   cookie = await site.open();
   await json(await site.call('/api/settings/sender', { method: 'PUT', cookie, body: sender }), 200);
-  await page.context().addCookies([{ name: 'operator_session_local', value: cookie.split('=')[1], url: site.runtime.url }]);
+  await page.context().addCookies([{ name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url }]);
   const readiness = async () => Object.fromEntries((await json(await site.call('/api/settings/sender', { cookie }), 200)).readiness.map((item: any) => [item.key, item.state]));
   state.readinessBefore = await readiness();
   expect(state.readinessBefore).toMatchObject({ domain: 'observed', dns: 'observed', receipt: 'not-observed', authentication: 'not-observed', jurisdiction: 'owner' });
   await record('settings-before.txt', await screens(page, `${site.runtime.url}/app/settings`, 'settings-before-evidence', info));
-  await site.control('/_golive/sender-evidence');
+  // Mango's default receiving mailbox is the owner's own inbox: Settings emails a check, the
+  // owner opens its link (a GET only shows the page) and presses Confirm.
+  await availableTransport(site);
+  const sentCheck = await json(await site.call('/api/settings/sender/confirmation', { method: 'POST', cookie, body: {} }), 202);
+  expect(sentCheck.sentTo).toBe('owner@example.test');
+  const check = edge.sends.findLast(send => send.to === 'owner@example.test')!;
+  const checkLink = /https:\/\/\S+\/sender-check\/\S+/.exec(check.body.content.find((part: any) => part.type === 'text/plain').value)![0];
+  expect((await fetch(site.local(checkLink))).status).toBe(200);
+  expect((await json(await site.call('/api/settings/sender', { cookie }), 200)).validation.ready).toBe(false);
+  const forged = new URL(site.local(checkLink)); forged.searchParams.set('key', 'A'.repeat(43));
+  expect((await fetch(forged, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'confirm=true' })).status).toBe(404);
+  expect((await fetch(site.local(checkLink), { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'confirm=true' })).status).toBe(200);
   expect((await json(await site.call('/api/settings/sender', { cookie }), 200)).validation.ready).toBe(true);
   state.readinessAfter = await readiness();
-  expect(state.readinessAfter).toMatchObject({ domain: 'observed', dns: 'observed', receipt: 'observed', authentication: 'observed', 'one-click': 'built-in', footer: 'built-in', jurisdiction: 'owner' });
+  expect(state.readinessAfter).toMatchObject({ domain: 'observed', dns: 'observed', receipt: 'observed', authentication: 'checked', 'one-click': 'built-in', footer: 'built-in', jurisdiction: 'owner' });
   await record('settings-after.txt', await screens(page, `${site.runtime.url}/app/settings`, 'settings-after-evidence', info));
   const people = ['alice', 'bob', 'carol', 'dave', 'erin'].map(name => `${name}@example.test`);
   state.confirmations = {} as Record<string, string>;
@@ -58,6 +70,7 @@ test('[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts r
   state.first = first;
   const contactsBefore = await site.rows('SELECT * FROM contact_email_addresses ORDER BY email');
   const historyBefore = await site.count('contact_history');
+  await availableTransport(site);
   const test = await json(await site.call(`/api/campaigns/${first.campaignId}/test-send`, { method: 'POST', cookie,
     body: { revisionId: first.revisionId, channel: 'email', to: 'tester@example.test' } }), 200);
   const testMessage = edge.sends.findLast(send => send.to === 'tester@example.test')!;
@@ -240,7 +253,7 @@ test('[DATA-001][CONT-004][SEND-005] an installation with real history restores 
     const original = await archiveRows(archive);
 
     // A destination whose private authority does not match is refused before any write.
-    const wrong = await installation(edge, signer, { token: 'a-different-private-authority-key-value', restore: true, origin: 'https://wrong.example.test' });
+    const wrong = await installation(edge, signer, { token: 'synthetic-a-different-private-authority-key-value', restore: true, origin: 'https://wrong.example.test' });
     installations.push(wrong);
     const wrongSession = join(work, 'wrong-session');
     await writeFile(wrongSession, await wrong.open(), { mode: 0o600 });
@@ -254,7 +267,7 @@ test('[DATA-001][CONT-004][SEND-005] an installation with real history restores 
       origin: 'https://mango-restored.example.test', providerKey: 'destination-provider-key' };
     const restoring = await installation(edge, signer, { ...destinationOptions, restore: true });
     installations.push(restoring);
-    const destinationCookie = await restoring.open('owner@example.test', 'destination-owner');
+    let destinationCookie = await restoring.open('owner@example.test', 'destination-owner');
     const destinationSession = join(work, 'destination-session');
     await writeFile(destinationSession, destinationCookie, { mode: 0o600 });
     started = Date.now();
@@ -265,6 +278,11 @@ test('[DATA-001][CONT-004][SEND-005] an installation with real history restores 
     await restoring.runtime.close();
     const restored = await installation(edge, signer, destinationOptions);
     installations.push(restored);
+    // The listener gets a fresh loopback port; keep the same persisted
+    // credential, under that port's cookie name, without creating a new session.
+    const restoredCookieName = localSessionCookieName(restored.runtime.url);
+    destinationCookie = `${restoredCookieName}=${destinationCookie.split('=')[1]}`;
+    await writeFile(destinationSession, destinationCookie, { mode: 0o600 });
 
     // Same records, approvals and digests; only the destination's own operator profile differs.
     const roundTrip = join(work, 'restored.rer');
@@ -279,7 +297,8 @@ test('[DATA-001][CONT-004][SEND-005] an installation with real history restores 
     expect(state.approvalDigests).toEqual(await site.rows('SELECT revision_id, revision_digest FROM campaign_approval_requests ORDER BY revision_id'));
 
     // The destination signs in with its own credentials, never the source's.
-    state.signIn = { sourceCookie: (await restored.call('/api/operator', { cookie })).status, destinationCookie: (await restored.call('/api/operator', { cookie: destinationCookie })).status };
+    const sourceCredential = `${restoredCookieName}=${cookie.split('=')[1]}`;
+    state.signIn = { sourceCookie: (await restored.call('/api/operator', { cookie: sourceCredential })).status, destinationCookie: (await restored.call('/api/operator', { cookie: destinationCookie })).status };
     expect(state.signIn).toEqual({ sourceCookie: 401, destinationCookie: 200 });
 
     // Opt-outs survive; sending waits for the destination's own sender evidence.

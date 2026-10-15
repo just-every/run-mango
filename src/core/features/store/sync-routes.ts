@@ -15,6 +15,12 @@ export function createSyncRoutes(platform: Platform, store: ReturnType<typeof cr
         : platform.config.modules.commerce.detail;
       return context.json({error: 'source_unavailable', detail}, 409);
     }
+    try { await platform.commerce.refreshHealth?.(); }
+    catch (error) {
+      const detail = error instanceof Error ? error.message : 'Shopify connection check failed.';
+      await store.recordCommerceSyncFailure([parsed.data.sourceType], detail);
+      return context.json({error:'source_unavailable',detail},409);
+    }
     const capabilities = platform.commerce.capabilities();
     if (!capabilities.sourceTypes.includes(parsed.data.sourceType)) return context.json({error: 'source_unavailable', detail: capabilities.detail}, 409);
     if (!capabilities.provider) return context.json({error: 'source_provider_unidentified', detail: 'The adapter must declare its provider identity before an operator sync can be queued.'}, 409);

@@ -4,8 +4,8 @@ import {mkdtemp, readdir, readFile, rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {composeFixture} from '../sender-verification/test-runtime';
-export {draft} from '../sender-verification/test-runtime';
-export {legacyApproval, approvalBytes} from './legacy';
+export {draft} from './historical-draft';
+export {legacyApproval, approvalBytes, recipientBytesAfterAuthorityMigration} from './legacy';
 const require = createRequire(import.meta.url);
 const {Miniflare} = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 export async function migrate(db: D1Database, from = 0, until = 99) {

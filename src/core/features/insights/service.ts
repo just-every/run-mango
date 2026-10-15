@@ -1,11 +1,13 @@
 import type { createInsightsRepository } from './repository';
 
-export function createInsightsService(repository: ReturnType<typeof createInsightsRepository>) {
+export function createInsightsService(repository: ReturnType<typeof createInsightsRepository>,reportingWindowDays=30) {
   return {
+    reportingWindowDays,
     async list() {
       return {
         results: await repository.listResults(),
-        note: 'Each count comes from the provider: its acceptance of a hand-off or a signed event about a recipient. Acceptance is not delivery, outcomes are never added together, and opens are not tracked.',
+        costs: await repository.costReport(),
+        note: 'Each count comes from the provider: its acceptance of a hand-off or a signed event about a recipient. Acceptance is not delivery, outcomes are never added together, and optional open estimates are kept separate.',
       };
     },
 
@@ -17,8 +19,6 @@ export function createInsightsService(repository: ReturnType<typeof createInsigh
       return repository.deliverability(new Date(now.getTime() - reportingWindowDays * 86_400_000));
     },
 
-    attributeOrder: repository.attributeOrder,
-    recordRefund: repository.recordRefund,
     recordExternalCost: repository.recordExternalCost,
   };
 }

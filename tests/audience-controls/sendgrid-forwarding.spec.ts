@@ -10,7 +10,7 @@ test('SEND-006 CONT-006 signed existing-hook forwarding preserves bytes, rejects
   const h=await native();try{
     const pair=generateKeyPairSync('ec',{namedCurve:'prime256v1'}),other=generateKeyPairSync('ec',{namedCurve:'prime256v1'});
     const key=pair.publicKey.export({type:'spki',format:'der'}).toString('base64');
-    h.f.platform.mailer=createSendgridAdapter({apiKey:'unused-no-provider-requests',webhookPublicKey:key});
+    h.f.platform.mailer=createSendgridAdapter({apiKey:'synthetic-unused-no-provider-requests',webhookPublicKey:key});
     const app=createApp(h.f.bindings,h.f.platform);
     const now=String(Math.floor(Date.now()/1000));
     const raw=Buffer.from('[\n { "event":"spamreport", "sg_event_id":"forwarded-original", "timestamp":'+now+', "email":"forwarded@example.test", "note":"Café 🥭" }\n]\n');

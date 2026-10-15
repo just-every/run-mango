@@ -8,7 +8,7 @@ import './materials';
 
 /** The lockup: Mango's mark and the product name. Its link (and that link's name) belongs to the caller. */
 export function Brand() {
-  return <span className="app-brand"><MangoMark className="app-brand__mark" /><span className="app-brand__name">{productConfig.productName}</span></span>;
+  return <span className="app-brand"><MangoMark className="app-brand__mark" /><span className="app-brand__name" data-rer-name>{productConfig.productName}</span></span>;
 }
 
 function NavLink({ to, children }: { to: string; children: ReactNode }) {
@@ -30,7 +30,7 @@ export function OperatorLayout() {
   const operator = useLoaderData({from: '/app'});
   const pathname = useRouterState({select: state => state.location.pathname});
   const [open, setOpen] = useState(false), trigger = useRef<HTMLButtonElement>(null), nav = useRef<HTMLElement>(null);
-  const destinations = [['/app', 'Decision Desk'], ['/app/campaigns', 'Campaigns'], ['/app/audience', 'Audience'], ['/app/insights', 'Insights'], ['/app/store', 'Store'], ['/app/settings', 'Settings']];
+  const destinations = [['/app', 'Decision Desk'], ['/app/campaigns', 'Campaigns'], ['/app/audience', 'Audience'], ['/app/insights', 'Insights'], ...(operator.modules.store ? [['/app/store', 'Store']] : []), ['/app/settings', 'Settings']];
   // An unmatched /app path (the app 404) has no current destination, so the toggle reads Menu alone.
   const current = pathname === '/app' ? 'Decision Desk' : destinations.find(([to]) => to !== '/app' && pathname.startsWith(to))?.[1];
   const close = () => {setOpen(false); trigger.current?.focus();};

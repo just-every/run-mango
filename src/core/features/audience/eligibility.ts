@@ -1,4 +1,6 @@
-import { parseStructuredRules, type ExclusionRule, type FrozenCandidate, type InclusionRule } from '@/core/features/lifecycle';
+import {productCoverage,ruleCoverage,type CoverageStore} from './source-coverage';
+import {commerceExclusions} from './commerce-exclusions';
+import { productIdsFromRules, parseStructuredRules, type ExclusionRule, type FrozenCandidate, type InclusionRule } from '@/core/features/lifecycle';
 import type { CommerceSourceType, createStoreService } from '@/core/features/store/service';
 
 import type { Channel } from './service';
@@ -8,7 +10,7 @@ const dayMs = 24 * 60 * 60 * 1000;
 const dormancyMs = 365 * dayMs;
 
 type AudienceRepository = ReturnType<typeof createAudienceRepository>;
-type Store = Pick<ReturnType<typeof createStoreService>, 'freshness' | 'sourceActivities' | 'sourceRecords'>;
+type Store = Pick<ReturnType<typeof createStoreService>, 'freshness' | 'sourceActivities' | 'sourceRecords'> & CoverageStore;
 type Predicate = InclusionRule['predicates'][number];
 
 function storeSourceType(sourceType: string): CommerceSourceType {
@@ -58,12 +60,15 @@ function matchesComparator(actual: unknown, comparator: Predicate['comparator'],
 async function predicateMatches(store: Store, contactId: string, predicate: Predicate, now: Date, contact?: Record<string, unknown>) {
   if (predicate.sourceType === 'contact') return matchesComparator(contact?.[predicate.field], predicate.comparator, predicate.value);
   const [records, activities] = await Promise.all([store.sourceRecords(contactId), store.sourceActivities(contactId)]);
-  const activitiesBySource = new Map(activities.map((activity) => [activity.sourceRecordId, activity]));
+
   const earliest = predicate.lookbackDays === undefined ? undefined : now.getTime() - predicate.lookbackDays * dayMs;
   return records.some((source) => {
     if (source.sourceType !== storeSourceType(predicate.sourceType)) return false;
-    if (earliest !== undefined && source.occurredAt.getTime() < earliest) return false;
-    return matchesComparator(fieldValue(asRecord(source.payload), predicate.field, source, activitiesBySource.get(source.id)), predicate.comparator, predicate.value);
+    const payload=asRecord(source.payload);
+    const occurred=source.sourceType==='order'&&typeof payload.processedAt==='string'?Date.parse(payload.processedAt):source.occurredAt.getTime();
+    if(occurred>now.getTime() || (earliest !== undefined && occurred < earliest)) return false;
+    const related = activities.filter(activity => activity.sourceRecordId === source.id);
+    return (related.length ? related : [undefined]).some(activity => matchesComparator(fieldValue(asRecord(source.payload), predicate.field, source, activity), predicate.comparator, predicate.value));
   });
 }
 
@@ -100,6 +105,7 @@ async function selectedChannel(
         destination: entry.destination,
         brandOrLegalSender: entry.brandOrLegalSender,
         smsProgramme: entry.smsProgram ?? undefined,
+        frequencyDisclosure: entry.frequencyDisclosure,
         category: entry.messageCategory,
         jurisdiction: entry.destinationJurisdiction,
       }));
@@ -115,6 +121,7 @@ async function selectedChannel(
       destination: entry.destination,
       brandOrLegalSender: entry.brandOrLegalSender,
       smsProgramme: entry.smsProgram ?? undefined,
+        frequencyDisclosure: entry.frequencyDisclosure,
       category: entry.messageCategory,
       jurisdiction: entry.destinationJurisdiction,
     }));
@@ -141,20 +148,18 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     channel: Channel;
     sourceTypes: string[];
     productId?: string;
+    productIds?: string[];
+    inclusionRule?: InclusionRule;
+    exclusionRules?: ExclusionRule[];
     lastMarketingAt?: Date;
     frequencyWindowMs?: number;
     now?: Date;
   }) {
     const now = input.now ?? new Date();
-    const freshnessIssues = await store.freshness(input.sourceTypes.map(storeSourceType), now);
-    if (freshnessIssues.length) {
-      return {
-        eligible: false as const,
-        reason: freshnessIssues[0].reason,
-        detail: freshnessIssues[0].detail,
-        retryAt: freshnessIssues[0].reason === 'source-unavailable' ? undefined : new Date(now.getTime() + 60_000),
-      };
-    }
+    const sourceGeneration=await repository.sourceGeneration();
+    const products = input.productIds ?? (input.productId ? [input.productId] : []);
+    const sourceTypes = [...new Set([...input.sourceTypes.map(storeSourceType), ...(products.length ? ['order','refund'] as const : [])])];
+    const freshnessIssues = [...await store.freshness(sourceTypes, now), ...await productCoverage(store,products,now), ...(input.inclusionRule ? await ruleCoverage(store,input.inclusionRule,input.exclusionRules??[],now) : [])];
     const contact = await repository.getContact(input.contactId);
     if (!contact) return await repository.findMerge(input.contactId)
       ? {eligible:false as const,reason:'contact-merged',detail:'The approved contact was merged. This recipient is excluded; approval never transfers to another contact.'}
@@ -162,21 +167,27 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     if (contact.mergeLock) return {eligible:false as const,reason:'contact-merging',detail:'The contact is being merged.'};
     const channelData = await selectedChannel(repository, contact.id, input.channel, now, isSuppressed);
     if (!channelData) return { eligible: false as const, reason: 'channel-not-subscribed', detail: 'Only a subscribed destination with confirmed consent is eligible for marketing.' };
-    if (!contact.lastActivityAt || contact.lastActivityAt.getTime() < now.getTime() - dormancyMs) {
+    const lastActivity = await repository.lastQualifyingActivity(contact.id, now);
+    if (!lastActivity || lastActivity.getTime() < now.getTime() - dormancyMs) {
       return { eligible: false as const, reason: 'dormant', detail: 'No click, order, or consent change was recorded in the dormancy window.' };
     }
     if (input.frequencyWindowMs && input.lastMarketingAt && now.getTime() - input.lastMarketingAt.getTime() < input.frequencyWindowMs) {
       return { eligible: false as const, reason: 'frequency-window', detail: 'The channel frequency window has not elapsed.' };
     }
-    const activities = await store.sourceActivities(contact.id);
-    if (input.productId) {
-      const recentPurchase = activities.find((activity) => activity.kind === 'order' && activity.productId === input.productId && activity.occurredAt.getTime() >= now.getTime() - 7 * dayMs);
-      if (recentPurchase) return { eligible: false as const, reason: 'recent-product-purchase', detail: 'The contact purchased this product inside the exclusion window.' };
-      const unresolvedRefund = activities.find((activity) => activity.kind === 'refund' && activity.productId === input.productId && activity.state === 'unresolved');
-      if (unresolvedRefund) return { eligible: false as const, reason: 'unresolved-refund', detail: 'The product has an unresolved refund or return.' };
+    const commerceReasons = commerceExclusions(await store.sourceRecords(contact.id), products, now);
+    if (commerceReasons.size) return {eligible:false as const,reason:[...commerceReasons][0],detail:'Recorded product purchase, return, or refund excludes this contact.'};
+    if (freshnessIssues.length) {
+      return {
+        eligible: false as const,
+        reason: freshnessIssues[0].reason,
+        detail: freshnessIssues[0].detail,
+        retryAt: new Date(now.getTime() + 60_000),
+      };
     }
+    if(sourceGeneration!==await repository.sourceGeneration()) return {eligible:false as const,reason:'source-authority-changed',detail:'Store authority changed while eligibility was being checked.',retryAt:new Date(now.getTime()+60_000)};
     return {
       eligible: true as const,
+      sourceGeneration,
       contact: {
         contactId: contact.id,
         destination: channelData.destination,
@@ -198,27 +209,24 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
   }) {
     const parsed = parseStructuredRules(JSON.stringify(input.inclusionRule), JSON.stringify(input.exclusionRules));
     if (!parsed.ok) return { status: 'unavailable' as const, sourceTypes: [], detail: parsed.detail };
-    const requiredSources = parsed.sourceTypes.map(storeSourceType);
-    const freshnessIssues = await store.freshness(requiredSources, input.now);
-    if (freshnessIssues.length) {
-      const unavailable = freshnessIssues.filter((issue) => issue.reason === 'source-unavailable').map((issue) => issue.sourceType);
-      return {
-        status: unavailable.length ? 'unavailable' as const : 'stale' as const,
-        sourceTypes: freshnessIssues.map((issue) => issue.sourceType),
-        detail: freshnessIssues.map((issue) => issue.detail).join(' '),
-      };
-    }
+    const products = productIdsFromRules(parsed.inclusion, parsed.exclusions);
+    const requiredSources = [...new Set([...parsed.sourceTypes.map(storeSourceType), ...(products.length ? ['order','refund'] as const : [])])];
+    const freshnessIssues = [...await store.freshness(requiredSources, input.now), ...await productCoverage(store,products,input.now), ...await ruleCoverage(store,parsed.inclusion,parsed.exclusions,input.now)];
     const contacts = await repository.listContacts();
     const counts = new Map<string, number>();
     const candidates: FrozenCandidate[] = [];
     let candidateCount = 0;
+    const matchedContactIds:string[]=[];
     for (const contact of contacts) {
       const matches = await Promise.all(parsed.inclusion.predicates.map((predicate) => predicateMatches(store, contact.id, predicate, input.now, contact)));
       const included = parsed.inclusion.operator === 'all' ? matches.every(Boolean) : matches.some(Boolean);
       if (!included) continue;
       candidateCount++;
+      matchedContactIds.push(contact.id);
       const reasons = new Set(await matchingExclusions(store, contact.id, parsed.exclusions, input.now, contact));
-      if (!contact.lastActivityAt || contact.lastActivityAt.getTime() < input.now.getTime() - dormancyMs) reasons.add('dormant');
+      const lastActivity = await repository.lastQualifyingActivity(contact.id, input.now);
+      if (!lastActivity || lastActivity.getTime() < input.now.getTime() - dormancyMs) reasons.add('dormant');
+      for (const reason of commerceExclusions(await store.sourceRecords(contact.id), products, input.now)) reasons.add(reason);
       if (contact.mergeLock) reasons.add('contact-merging');
       const channels = Object.fromEntries((await Promise.all(input.channels.map(async (channel) => [channel, await selectedChannel(repository, contact.id, channel, input.now, isSuppressed)] as const)))
         .filter((entry): entry is [Channel, NonNullable<FrozenCandidate['channels'][Channel]>] => Boolean(entry[1])));
@@ -233,9 +241,19 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
       if(reasons.size || !Object.keys(channels).length) continue;
       candidates.push({ contactId: contact.id, contactIdentityKey: contact.id, channels });
     }
+    if (freshnessIssues.length) {
+      const unavailable = freshnessIssues.filter((issue) => issue.reason === 'source-unavailable').map((issue) => issue.sourceType);
+      return {
+        observedExclusions: [...counts.entries()].map(([reason,count])=>({reason,count})),
+        status: unavailable.length ? 'unavailable' as const : 'stale' as const,
+        sourceTypes: [...new Set(freshnessIssues.map((issue) => issue.sourceType))],
+        detail: freshnessIssues.map((issue) => issue.detail).join(' '),
+      };
+    }
     return {
       status: 'ok' as const,
       candidateCount,
+      matchedContactIds,
       asOf: input.now,
       candidates,
       exclusions: [...counts.entries()].map(([reason, count]) => ({ reason, count })),

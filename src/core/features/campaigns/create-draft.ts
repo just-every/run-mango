@@ -46,12 +46,13 @@ export async function createDraft(database: Database, composition: DraftComposit
     senderName:parsed.senderName!,fromEmail:parsed.fromEmail!,replyToEmail:parsed.replyToEmail!,smsSender:parsed.smsSender ?? '',
     physicalAddress:parsed.physicalAddress!,messageCategory:parsed.messageCategory!,audienceRule:summarizeAudienceRules(parsed.inclusionRuleJson!, parsed.exclusionRulesJson ?? '[]'),
     inclusionRuleJson:parsed.inclusionRuleJson!,exclusionRulesJson:parsed.exclusionRulesJson ?? '[]',sourceTypesJson:JSON.stringify(rules.sourceTypes),
+    authoredExclusionReasonsJson:JSON.stringify(rules.exclusions.map(rule=>rule.reason)),
     trackingEnabled:parsed.trackingEnabled ?? false,createdAt:now,updatedAt:now };
   const statements = [database.insert(campaigns).values({id:campaignId,state:'draft',activeRevisionId:revisionId,createdAt:now,updatedAt:now}),
     database.insert(campaignRevisions).values(revision),
     database.insert(campaignStateTransitions).values({id:ulid(),campaignId,fromState:'draft',toState:'draft',actorType:'operator',actorId:operatorId,reason:'draft-created',occurredAt:now,createdAt:now}),
     ...(parsed.steps ?? []).map((step,index) => database.insert(campaignSteps).values({id:ulid(),revisionId,sequence:index+1,channel:step.channel,
-      timezone:step.timezone,scheduledAt:new Date(step.scheduledAt),sendByAt:new Date(step.sendByAt),whyThisTime:step.whyThisTime,createdAt:now,updatedAt:now})),
+      timezone:step.timezone,scheduledAt:new Date(step.scheduledAt),sendByAt:new Date(step.sendByAt),whyThisTime:step.whyThisTime,timingOrigin:'operator',createdAt:now,updatedAt:now})),
     ...(parsed.links ?? []).map((link,index) => database.insert(campaignRevisionLinks).values({id:ulid(),revisionId,sequence:index+1,...link,createdAt:now,updatedAt:now})),
     ...alongside({campaignId,revisionId,createdAt:now}),
   ];

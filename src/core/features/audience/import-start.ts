@@ -6,7 +6,7 @@ import { claimPortableRestrictions } from './portable-hashes';
 
 const destinations = (plan: ImportPlan) => plan.entries.flatMap(entry => {
   const row = entry.source.payload as unknown as NormalizedImportRow;
-  return [row.email, ...(row.ledger?.identities.map(identity => identity.destination) ?? [])];
+  return [row.email, row.phone, ...(row.ledger?.identities.map(identity => identity.destination) ?? [])];
 });
 
 /** What every start of a reviewed import writes before any contact, outside its undo plan; a

@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -23,7 +24,7 @@ for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as a
     await page.setViewportSize({ width, height: 1000 });
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
     expect(open.status(), await open.text()).toBe(200);
-    await page.context().addCookies([{ name: 'operator_session_local', value: (await open.json()).token, url: runtime.url }]);
+    await page.context().addCookies([{ name: localSessionCookieName(runtime.url), value: (await open.json()).token, url: runtime.url }]);
     const outbound: string[] = [], uploads: string[] = [], saves: string[] = [];
     page.on('request', item => {
       if (!item.url().startsWith(runtime.url)) outbound.push(item.url());
@@ -129,6 +130,7 @@ for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as a
     await page.screenshot({ path: testInfo.outputPath(`design-import-${width}.png`), fullPage: true });
 
     await page.getByRole('button', { name: 'Approve & schedule', exact: true }).click();
+    await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();
     await expect(page.getByRole('status').filter({ hasText: 'exact saved revision is approved and scheduled' })).toBeVisible();
     expect((await read()).campaign.state).toBe('scheduled');
     expect(outbound).toEqual([]);

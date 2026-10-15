@@ -2,6 +2,7 @@ import { Hono, type Context } from 'hono';
 import type { AuthVariables } from '@/core/features/auth/routes';
 import type { Platform } from '@/core/shared/platform';
 import { audienceImportContext } from '@/core/features/audience/import-service';
+import { sharedAudienceImport } from '@/core/features/audience/import-authority';
 import { importConflict } from '@/core/features/audience/import-conflict';
 import { readD1ImportStream } from '@/vendor/base/import-kit/src/d1/index';
 import { archiveLimits } from './archive-limits';
@@ -42,16 +43,14 @@ export function createMoveInRoutes(platform: Platform) {
   const view = async (archive: ArchiveRecord, context: RouteContext) => {
     let audience: { state: string; checkpoint: number; total: number } | null = null;
     if (archive.audience_stream) {
-      const job = await readD1ImportStream(archive.audience_stream, await audienceImportContext(platform, context.get('operator').id, context.req.raw)).catch(() => null);
+      const authority = await audienceImportContext(platform, context.get('operator').id, context.req.raw);
+      const job = await readD1ImportStream(archive.audience_stream, await sharedAudienceImport(archive.audience_stream, authority)).catch(() => null);
       audience = job ? { state: job.state, checkpoint: job.checkpoint, total: job.total } : null;
     }
     return { id: archive.id, name: archive.name, sha256: archive.sha256, size: archive.size, state: archive.state, createdAt: archive.created_at, appliedAt: archive.applied_at, undoneAt: archive.undone_at,
       summary: service.summary(archive), undo: archive.undo_json ? JSON.parse(archive.undo_json) : null, progress: { contentDone: archive.content_done, contentTotal: archive.content_total, audience } };
   };
-  const owned = async (context: RouteContext) => {
-    const archive = await service.read(context.req.param('id')!);
-    return archive && archive.principal_id === context.get('operator').id ? archive : undefined;
-  };
+  const read = (context: RouteContext) => service.read(context.req.param('id')!);
 
   routes.post('/audience/archive-preview', async context => {
     const input = await upload(context);
@@ -68,9 +67,9 @@ export function createMoveInRoutes(platform: Platform) {
       return context.json({ archive: await view(result.archive, context), repeated: result.repeated });
     } catch (error) { return refused(context, error); }
   });
-  routes.get('/audience/archives', async context => context.json({ archives: await Promise.all((await service.list(context.get('operator').id)).map(archive => view(archive, context))) }));
+  routes.get('/audience/archives', async context => context.json({ archives: await Promise.all((await service.list()).map(archive => view(archive, context))) }));
   routes.get('/audience/archives/:id', async context => {
-    const archive = await owned(context);
+    const archive = await read(context);
     if (!archive) return context.json({ error: 'not_found' }, 404);
     return context.json({ archive: await view(archive, context), entries: await service.entries(archive.id), content: await service.content(archive.id) });
   });
@@ -81,7 +80,7 @@ export function createMoveInRoutes(platform: Platform) {
     } catch (error) { return context.json({ error: 'archive_conflict', ...importConflict(error, action) }, 409); }
   });
   routes.get('/audience/archives/:id/report', async context => {
-    const archive = await owned(context);
+    const archive = await read(context);
     if (!archive) return context.json({ error: 'not_found' }, 404);
     const report = await archiveReport(platform.database.$client, archive, await service.content(archive.id) as never);
     return new Response(report, { headers: { 'Content-Type': 'text/markdown; charset=utf-8', 'Content-Disposition': `attachment; filename="move-in-${archive.id}.md"`, 'Cache-Control': 'no-store' } });

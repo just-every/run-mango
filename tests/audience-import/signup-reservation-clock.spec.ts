@@ -2,6 +2,9 @@ import {test, expect} from '@playwright/test';
 import {native} from './native';
 import {createSignupRoutes, signupDescription} from '../../src/core/features/audience/signup-routes';
 import {sha256} from '../../src/core/shared/ids';
+import {setTimeout as delay} from 'node:timers/promises';
+
+test.setTimeout(120000);
 
 async function heldSignup(h: Awaited<ReturnType<typeof native>>, email: string, ip: string) {
   let release!: () => void;
@@ -25,11 +28,19 @@ async function heldSignup(h: Awaited<ReturnType<typeof native>>, email: string, 
 }
 
 async function databaseWindow(db: D1Database) {
-  return (await db.prepare("SELECT CAST(strftime('%s','now') AS INTEGER)/3600 AS hour, CAST(strftime('%s','now') AS INTEGER)/86400 AS day").first<{hour: number; day: number}>())!;
+  const read = async () => (await db.prepare("SELECT CAST(strftime('%s','now') AS INTEGER)/3600 AS hour, CAST(strftime('%s','now') AS INTEGER)/86400 AS day, 3600-CAST(strftime('%s','now') AS INTEGER)%3600 AS remaining").first<{hour: number; day: number; remaining: number}>())!;
+  let window = await read();
+  // These assertions require all admissions to share one real D1 hour. Do not
+  // start a streamed-body batch in its last minute and mistake a valid rollover
+  // for a stale-clock reservation. The database clock remains unmodified.
+  if (window.remaining <= 60) {
+    await delay(window.remaining * 1000);
+    window = await read();
+  }
+  return window;
 }
 
 test('security: ascending old streamed-body groups spend only the actual D1 reservation hour', async () => {
-  test.setTimeout(120000);
   const h = await native();
   const realNow = Date.now;
   try {

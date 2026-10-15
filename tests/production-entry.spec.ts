@@ -7,6 +7,7 @@ import productionWorker from '../src/core/app/worker';
 import type { AppBindings } from '../src/core/shared/platform';
 
 function productionBindings(overrides: Partial<AppBindings> = {}): AppBindings {
+  const windows = [{days: [0, 1, 2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 20 * 60}];
   return {
     ASSETS: { fetch: () => Promise.resolve(new Response('asset fallback must not run')) },
     DB: {} as D1Database,
@@ -15,18 +16,27 @@ function productionBindings(overrides: Partial<AppBindings> = {}): AppBindings {
     SESSION_SIGNING_KEY: randomBytes(32).toString('hex'),
     INITIAL_OPERATOR_EMAILS: 'operator@example.test',
     CONTACT_HASH_SALT: randomBytes(32).toString('hex'),
-    COMMERCE_STORE_URL: 'https://shop.example.test',
+    COMMERCE_STORE_URL: 'https://mango-entry.myshopify.com',
+    COMMERCE_EXCLUSIVE_SHOP: 'mango-entry.myshopify.com',
     COMMERCE_API_TOKEN: 'commerce-token',
     COMMERCE_WEBHOOK_SECRET: 'commerce-secret',
     AI_PROVIDER_API_KEY: 'ai-key',
     AI_PROVIDER_MODEL: 'gpt-5.4-mini',
     MAIL_PROVIDER: 'resend', MAIL_PROVIDER_API_KEY: 'mail-key',
     MAIL_AUTH_FROM: 'Mango <offers@example.test>',
-    MAIL_WEBHOOK_SECRET: 'mail-webhook-secret',
+    MAIL_WEBHOOK_SECRET: 'synthetic-mail-webhook-secret',
     MAIL_WEBHOOK_ID: 'wh_123',
     SMS_PROVIDER_API_KEY: 'username:password',
     SMS_WEBHOOK_SECRET: 'sms-webhook-secret',
     SMS_CONFIRMATION_SENDER: '+61400000000',
+    SMS_PROGRAMME_POLICY: JSON.stringify({
+      brand: 'Mango', programme: 'Newsletter', category: 'newsletter', frequency: 'Weekly',
+      jurisdiction: 'AU', support: 'help@example.test', providerAlreadyReplies: false,
+      policySource: 'https://policy.example.test/production-entry-fixture',
+      policyVerifiedAt: new Date(Date.now() - 1000).toISOString(),
+      policyExpiresAt: new Date(Date.now() + 86400000).toISOString(),
+      providerWindows: windows, jurisdictionWindows: windows, recipientWindows: windows,
+    }),
     MANGO_PUBLIC_BASE_URL: 'https://operator.example.test',
     MANGO_APP_VERSION: 'test',
     MANGO_ALLOWED_LINK_HOSTS: 'shop.example.test',

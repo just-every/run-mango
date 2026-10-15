@@ -1,7 +1,15 @@
+import { managedSmsText, smsComplianceBlock } from '@/core/features/sms/content';
+import {activeProviderHolds} from './provider-holds';
+import {reputationRestricted} from './reputation-guard';
+import { smsProgrammeSchema, smsWindow } from '@/core/features/sms/policy';
+import { smsSegments } from '@/core/features/sms/segments';
+import { emailSubjectAdvisory } from './advisory-policy';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
+import { loadLinkHosts } from '@/core/features/settings/link-hosts';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
 import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-content';
 import { unavailableInspection } from '@/core/features/sender-verification/service';
+import { senderReasonText } from '@/core/features/sender-verification/reason-text';
 import { invalidPersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { inspectOwnMedia, ownMediaName } from '@/core/features/campaign-assets/own-media';
@@ -64,6 +72,8 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
     missingFallback.length ? `Invalid personalisation or missing fallback: ${missingFallback.join(', ')}` : 'Every personalisation token carries an explicit fallback.'));
 
   if (selected.has('email')) {
+    const advisory = emailSubjectAdvisory(revision.emailSubject);
+    if (advisory) findings.push(advisory);
     const emailComplete = Boolean(
       revision.emailSubject.trim() && revision.emailBody.trim() && revision.emailText.trim() && revision.preheader.trim()
       && revision.senderName.trim() && revision.fromEmail.trim() && revision.replyToEmail.trim() && revision.physicalAddress.trim(),
@@ -84,10 +94,7 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
 
   }
   if (selected.has('sms')) {
-    const compliant = revision.smsBody.includes(revision.smsSender) && /reply\s+stop\s+to\s+unsubscribe/i.test(revision.smsBody);
-    findings.push(check('message.sms-compliance', compliant, compliant
-      ? 'SMS content carries the programme identity and reply-based opt-out text.'
-      : 'SMS must carry its programme identity and Reply STOP to unsubscribe.'));
+    findings.push(check('message.sms-compliance',Boolean(revision.smsBody.trim()),'A non-empty SMS body is required. Mango appends the exact configured programme, sender, frequency, jurisdiction and STOP/HELP disclosure.'));
   }
   return findings;
 }
@@ -98,6 +105,8 @@ function adapterChecks(
   requiredReconciliationMs: number,
 ) {
   const prefix = channel === 'email' ? 'mail.sender.v1' : 'sms.sender.v1';
+  // Without a provider there is nothing else to check; one blocker says so.
+  if (!capabilities.configured) return [check(`${prefix}.configured`, false, capabilities.detail)];
   if (capabilities.handoffPolicy === 'single-attempt') return [
     check(`${prefix}.configured`, capabilities.configured && capabilities.canSendMarketing, capabilities.detail),
     check(`${prefix}.single-attempt`, channel === 'email' && capabilities.provider === 'sendgrid',
@@ -107,7 +116,7 @@ function adapterChecks(
     check(`${prefix}.configured`, capabilities.configured && capabilities.canSendMarketing, capabilities.detail),
     check(`${prefix}.deduplication`, capabilities.effectiveDeduplication,
       capabilities.effectiveDeduplication ? 'Provider-effective idempotency is available.' : 'Provider-effective idempotency is unavailable.'),
-    check(`${prefix}.reconciliation`, capabilities.reconciliationWindowMs >= requiredReconciliationMs,
+    check(`${prefix}.reconciliation`, capabilities.effectiveReconciliation && capabilities.reconciliationWindowMs >= requiredReconciliationMs,
       `Provider lookup window ${capabilities.reconciliationWindowMs}ms; Mango requires at least ${requiredReconciliationMs}ms.`),
     check(`${prefix}.deduplication-window`, capabilities.deduplicationWindowMs >= requiredReconciliationMs,
       `Provider deduplication window ${capabilities.deduplicationWindowMs}ms; Mango requires at least ${requiredReconciliationMs}ms.`),
@@ -123,6 +132,7 @@ export async function runApprovalChecks(input: {
 }) {
   const { snapshot, platform, now } = input;
   await loadSenderSettings(platform);
+  await loadLinkHosts(platform);
   const selected = new Set(snapshot.steps.map((step) => step.channel));
   const baseReconciliationWindow = platform.config.unresolvedProviderOutcomeHours * 60 * 60_000
     + platform.config.providerReconciliationIntervalMinutes * 2 * 60_000;
@@ -168,13 +178,17 @@ export async function runApprovalChecks(input: {
   const configured = platform.config.mailSender;
   if (selected.has('email')) {
     checks.push(...adapterChecks('email', mailCapabilities, requiredWindow('email')));
-    checks.push(check('message.email-sender', mailInspection.ready && Boolean(mailInspection.lease), mailInspection.reason));
+    const holds=await activeProviderHolds(platform.database,mailCapabilities.provider??platform.config.mailProvider??'resend','email',snapshot.revision.fromEmail);
+    checks.push(check('provider.restrictions',holds.length===0,holds.length?holds.map(h=>`${h.provider} ${h.scope}: ${h.detail}`).join('; '):'No observed provider restriction.'));
+    if (mailCapabilities.configured) {
+      checks.push(check('message.email-sender', mailInspection.ready && Boolean(mailInspection.lease), senderReasonText(mailInspection.reason)));
+      const authentication = mailInspection.authentication;
+      checks.push(check('message.email-authentication', Boolean(authentication?.spf && authentication.dkim && authentication.dmarc && authentication.aligned),
+        'SPF, DKIM, DMARC, and visible From-domain alignment must all pass.'));
+    }
     checks.push(check('message.email-configured-identity',
       revisionMatchesSender(snapshot.revision, configured),
       'The saved sender identity must exactly match the configured business identity.'));
-    const authentication = mailInspection.authentication;
-    checks.push(check('message.email-authentication', Boolean(authentication?.spf && authentication.dkim && authentication.dmarc && authentication.aligned),
-      'SPF, DKIM, DMARC, and visible From-domain alignment must all pass.'));
     checks.push(check('message.email-consent-scope', input.candidates.every((candidate) => {
       const email = candidate.channels.email;
       return !email || Boolean(
@@ -186,14 +200,21 @@ export async function runApprovalChecks(input: {
     }), 'Every email destination must have subscribed consent for this legal sender and message category.'));
     const reputation = await input.repository.reputation(snapshot.revision.fromEmail, 'email',
       new Date(now.getTime() - platform.config.deliverabilityReportingWindowDays * 86_400_000));
-    const internalBlock = reputation.delivered >= 1_000
-      && (reputation.complaintRate >= 0.003 || reputation.hardBounceRate >= 0.05);
+    const internalBlock = reputationRestricted(reputation);
     checks.push(check('message.sending-reputation', !internalBlock,
       `Window ${platform.config.deliverabilityReportingWindowDays}d: complaints ${reputation.complained}/${reputation.delivered}; hard bounces ${reputation.hardBounced}/${reputation.attempted}.`));
   }
   if (selected.has('sms')) {
+    const smsModule=platform.config.modules.sms,policy=smsModule.enabled?smsProgrammeSchema.safeParse(smsModule.config.programme):undefined;
+    const configured=policy?.success?policy.data:undefined;
+    checks.push(check('message.sms-programme',Boolean(configured && smsModule.enabled && snapshot.revision.smsSender===smsModule.config.confirmationSender && snapshot.revision.messageCategory===configured.category), configured&&smsModule.enabled?`Managed disclosure appended to every SMS: ${smsComplianceBlock(configured,smsModule.config.confirmationSender)}`:'Configure the SMS sender and programme before approval.'));
+    const disclosed=configured&&smsModule.enabled?managedSmsText(snapshot.revision.smsBody,configured,smsModule.config.confirmationSender):snapshot.revision.smsBody;
+    checks.push(check('message.sms-segments',smsSegments(disclosed).segments<=10, `Draft plus managed disclosure estimate: ${smsSegments(disclosed).segments} ${smsSegments(disclosed).encoding} segments before recipient personalisation and tracked links. Final text is counted again at handoff; provider limit is 10 parts.`));
+    checks.push(check('message.sms-policy',Boolean(configured && input.candidates.every(candidate=>{const sms=candidate.channels.sms;if(!sms)return true;const decision=smsWindow(configured,now,sms.timeZone??null,sms.timeZoneEvidenceSource??null,sms.timeZoneEvidenceAt?.getTime()??null);return decision.allowed||decision.reason==='sms-quiet-window';})), 'Current provider, jurisdiction and recipient window evidence and fresh recipient location are required; handoff waits for their intersection.'));
     if (smsCapabilities) {
       checks.push(...adapterChecks('sms', smsCapabilities, requiredWindow('sms')));
+      const holds=await activeProviderHolds(platform.database,'mobile-message','sms',snapshot.revision.smsSender);
+      checks.push(check('sms.provider-restrictions',holds.length===0,holds.length?holds.map(h=>String(h.detail)).join('; '):'No observed provider restriction.'));
       checks.push(check('message.sms-sender', smsValidations.every((item) => item.ready),
         smsValidations.length ? smsValidations.map((item) => item.detail).join('; ') : 'Recipient jurisdiction is missing; registered sender cannot be confirmed.'));
     }
@@ -206,7 +227,9 @@ export async function runApprovalChecks(input: {
       return !sms || Boolean(
         sms.consents.some((consent) =>
           consent.destination === sms.destination
-          && consent.smsProgramme === snapshot.revision.smsSender
+          && consent.smsProgramme === configured?.programme
+          && consent.brandOrLegalSender === configured?.brand
+          && consent.frequencyDisclosure === configured?.frequency
           && consent.category === snapshot.revision.messageCategory
           && consent.jurisdiction === sms.country),
       );

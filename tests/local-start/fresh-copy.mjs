@@ -34,7 +34,6 @@ export async function freshCopy() {
     if(secrets.some(secret=>secret && log.includes(secret))) throw new Error('Setup printed a generated secret.');
     secrets.push(await rememberKey(url,checkout));
     dev=await startNativeDev({checkout,directory,url,env,secrets,write});
-    await runCommand(process.execPath,[rer,'outbox'],{cwd:checkout,env,secrets,write});
     return {directory,checkout,url,stop,close,command:([verb,...args])=>runCommand(process.execPath,[rer,verb,...args],{cwd:checkout,env,secrets,write})};
   } catch(error) {await close();throw error;}
 }

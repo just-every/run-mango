@@ -1,12 +1,15 @@
+import { smsProgrammeSchema } from '../features/sms/policy.ts';
 import type { AppBindings, AppConfig, OptionalModuleConfig } from '@/core/shared/platform';
 import { authBindings } from './auth-bindings.ts';
+import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
 
 export const optionalModuleInputs = {
-  commerce: ['COMMERCE_STORE_URL', 'COMMERCE_API_TOKEN', 'COMMERCE_WEBHOOK_SECRET'],
+  commerce: ['COMMERCE_STORE_URL', 'COMMERCE_API_TOKEN', 'COMMERCE_WEBHOOK_SECRET', 'COMMERCE_EXCLUSIVE_SHOP'],
   sms: [
     'SMS_PROVIDER_API_KEY',
     'SMS_WEBHOOK_SECRET',
     'SMS_CONFIRMATION_SENDER',
+    'SMS_PROGRAMME_POLICY',
     'MANGO_TEST_SMS_ALLOWLIST',
     'MANGO_SMS_HANDOFFS_PER_MINUTE',
   ],
@@ -44,13 +47,13 @@ function requiredUrl(environment: AppBindings, name: keyof AppBindings): URL {
   return url;
 }
 
-function emails(value: string): string[] {
+function emails(value: string, name: string): string[] {
   const parsed = value
     .split(',')
     .map((email) => email.trim().toLowerCase())
     .filter(Boolean);
   if (parsed.length === 0 || parsed.some((email) => !/^\S+@\S+\.\S+$/.test(email))) {
-    throw new Error('INITIAL_OPERATOR_EMAILS must be a comma-separated list of email addresses.');
+    throw new Error(`${name} must be a comma-separated list of email addresses.`);
   }
   return [...new Set(parsed)];
 }
@@ -65,14 +68,6 @@ function positiveInteger(environment: AppBindings, name: keyof AppBindings): num
   const value = Number(required(environment, name));
   if (!Number.isSafeInteger(value) || value <= 0) throw new Error(`${name} must be a positive integer.`);
   return value;
-}
-
-function linkHosts(environment: AppBindings): string[] {
-  const hosts = commaValues(environment, 'MANGO_ALLOWED_LINK_HOSTS').map((value) => value.toLowerCase());
-  if (hosts.some((host) => !/^[a-z0-9.-]+$/i.test(host))) {
-    throw new Error('MANGO_ALLOWED_LINK_HOSTS must be a comma-separated list of DNS host names.');
-  }
-  return hosts;
 }
 
 function optionalModule<Config, Name extends keyof AppBindings & string>(
@@ -133,17 +128,33 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
   if (signingKey.length < 32 || signingKey.length > 1024) throw new Error('SESSION_SIGNING_KEY must contain 32–1024 characters.');
   if (environment.AUTH_SETUP_TOKEN !== undefined && (environment.AUTH_SETUP_TOKEN.length < 32 || environment.AUTH_SETUP_TOKEN.length > 1024)) throw new Error('AUTH_SETUP_TOKEN must contain 32–1024 characters.');
   const mailProvider = required(environment, 'MAIL_PROVIDER');
-  if (!['resend', 'sendgrid'].includes(mailProvider)) throw new Error('MAIL_PROVIDER must be resend or sendgrid.');
+  if (!['rer', 'resend', 'sendgrid'].includes(mailProvider)) throw new Error('MAIL_PROVIDER must be rer, resend or sendgrid.');
+  // Canonical fields are shared with RER Configure. Existing direct-provider installs retain their inputs.
+  const legacyMailKeyEnvironment = 'MAIL_PROVIDER_API_KEY';
+  const mailWebhookSecretEnvironment = 'MAIL_WEBHOOK_SECRET';
+  const mailKeyEnvironment = mailProvider === 'rer' || environment.MAIL_API_KEY?.trim() ? 'MAIL_API_KEY' : legacyMailKeyEnvironment;
+  const mailFromField = mailProvider === 'rer' || environment.MAIL_FROM?.trim() ? 'MAIL_FROM' : 'MAIL_AUTH_FROM';
+  const mailAuthFrom = required(environment, mailFromField);
+  const mailRelayUrl = mailProvider === 'rer' ? requiredUrl(environment, 'MAIL_RELAY_URL').href : undefined;
+  const marketingInputs = ['MARKETING_MAIL_PROVIDER', 'MARKETING_MAIL_API_KEY', 'MARKETING_MAIL_WEBHOOK_SECRET', 'MARKETING_MAIL_WEBHOOK_ID'] as const;
+  const hasMarketing = marketingInputs.some(name => environment[name]?.trim());
+  if (hasMarketing && mailProvider !== 'rer') throw new Error('MARKETING_MAIL_* is a separate connection for MAIL_PROVIDER=rer. Direct-provider installations use MAIL_* instead.');
+  const marketingProvider = hasMarketing ? required(environment, 'MARKETING_MAIL_PROVIDER') : undefined;
+  if (marketingProvider && !['sendgrid', 'resend'].includes(marketingProvider)) throw new Error('MARKETING_MAIL_PROVIDER must be sendgrid or resend.');
+  const effectiveMailProvider = marketingProvider ?? mailProvider;
   const modules: AppConfig['modules'] = {
     commerce: optionalModule(environment, 'Commerce', optionalModuleInputs.commerce, () => ({
       storeUrl: requiredUrl(environment, 'COMMERCE_STORE_URL'),
       apiToken: required(environment, 'COMMERCE_API_TOKEN'),
       webhookSecret: required(environment, 'COMMERCE_WEBHOOK_SECRET'),
+      exclusiveShop: required(environment, 'COMMERCE_EXCLUSIVE_SHOP'),
+      observations: commerceObservations(environment),
     })),
     sms: optionalModule(environment, 'SMS', optionalModuleInputs.sms, () => ({
       providerApiKey: required(environment, 'SMS_PROVIDER_API_KEY'),
       webhookSecret: required(environment, 'SMS_WEBHOOK_SECRET'),
-      confirmationSender: required(environment, 'SMS_CONFIRMATION_SENDER'),
+      confirmationSender: smsConfirmationSender(environment),
+      programme: readSmsProgramme(environment),
       testAllowlist: commaValues(environment, 'MANGO_TEST_SMS_ALLOWLIST'),
       handoffsPerMinute: positiveInteger(environment, 'MANGO_SMS_HANDOFFS_PER_MINUTE'),
     })),
@@ -156,30 +167,53 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
   return {
     sessionSigningKey: required(environment, 'SESSION_SIGNING_KEY'),
     authSetupToken: environment.AUTH_SETUP_TOKEN,
-    mailProvider: mailProvider as 'resend' | 'sendgrid',
+    mailProvider: effectiveMailProvider as 'rer' | 'resend' | 'sendgrid',
+    ...(mailProvider === 'rer' ? {authMail: {provider: 'rer' as const, apiKey: required(environment, mailKeyEnvironment), relayUrl: mailRelayUrl!}} : {}),
+    mailRelayUrl,
     mailboxReceiptUrl,
     mailboxReceiptRecipient,
     ...(siteKey && secretKey ? {signupTurnstile:{siteKey,secretKey}} : {}),
-    initialOperatorEmails: emails(required(environment, 'INITIAL_OPERATOR_EMAILS')),
+    initialOperatorEmails: emails(required(environment, 'INITIAL_OPERATOR_EMAILS'), 'INITIAL_OPERATOR_EMAILS'),
     contactHashSalt: required(environment, 'CONTACT_HASH_SALT'),
     modules,
-    mailProviderApiKey: required(environment, 'MAIL_PROVIDER_API_KEY'),
-    mailAuthFrom: required(environment, 'MAIL_AUTH_FROM'),
-    mailWebhookSecret: required(environment, 'MAIL_WEBHOOK_SECRET'),
-    mailWebhookId: required(environment, 'MAIL_WEBHOOK_ID'),
+    mailProviderApiKey: required(environment, marketingProvider ? 'MARKETING_MAIL_API_KEY' : mailKeyEnvironment),
+    mailAuthFrom,
+    // SendGrid's signed Event Webhook is optional: without it delivery shows Accepted, never Delivered.
+    mailWebhookSecret: effectiveMailProvider === 'resend' ? required(environment, marketingProvider ? 'MARKETING_MAIL_WEBHOOK_SECRET' : mailWebhookSecretEnvironment) : (marketingProvider ? environment.MARKETING_MAIL_WEBHOOK_SECRET : environment.MAIL_WEBHOOK_SECRET)?.trim() ?? '',
+    mailWebhookId: effectiveMailProvider === 'resend' ? required(environment, marketingProvider ? 'MARKETING_MAIL_WEBHOOK_ID' : 'MAIL_WEBHOOK_ID') : (marketingProvider ? environment.MARKETING_MAIL_WEBHOOK_ID : environment.MAIL_WEBHOOK_ID)?.trim() ?? '',
     publicBaseUrl: requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL'),
     appVersion: required(environment, 'MANGO_APP_VERSION'),
-    allowedLinkHosts: linkHosts(environment),
-    testEmailAllowlist: emails(required(environment, 'MANGO_TEST_EMAIL_ALLOWLIST')),
+    allowedLinkHosts: configuredLinkHosts(environment.MANGO_ALLOWED_LINK_HOSTS, requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL')),
+    // Optional extra test-send addresses; operators' own sign-in addresses are always allowed.
+    testEmailAllowlist: environment.MANGO_TEST_EMAIL_ALLOWLIST?.trim() ? emails(environment.MANGO_TEST_EMAIL_ALLOWLIST, 'MANGO_TEST_EMAIL_ALLOWLIST') : [],
     providerReconciliationIntervalMinutes: positiveInteger(environment, 'MANGO_RECONCILIATION_INTERVAL_MINUTES'),
     unresolvedProviderOutcomeHours: positiveInteger(environment, 'MANGO_UNRESOLVED_OUTCOME_HOURS'),
     emailHandoffsPerMinute: positiveInteger(environment, 'MANGO_EMAIL_HANDOFFS_PER_MINUTE'),
     deliverabilityReportingWindowDays: positiveInteger(environment, 'MANGO_DELIVERABILITY_WINDOW_DAYS'),
     mailSender: {
       displayName: environment.MAIL_SENDER_NAME?.trim() ?? '',
-      fromEmail: required(environment, 'MAIL_AUTH_FROM'),
+      fromEmail: mailAuthFrom,
       replyToEmail: environment.MAIL_REPLY_TO?.trim() ?? '',
       physicalAddress: environment.MAIL_PHYSICAL_ADDRESS?.trim() ?? '',
     },
   };
+}
+
+function readSmsProgramme(environment: AppBindings) {
+ try {return smsProgrammeSchema.parse(JSON.parse(required(environment,'SMS_PROGRAMME_POLICY')));}
+ catch {throw new Error('SMS_PROGRAMME_POLICY is incomplete or invalid.');}
+}
+
+function commerceObservations(environment: AppBindings) {
+  const keys = ['COMMERCE_OBSERVATION_CHANNEL','COMMERCE_APP_INSTALLATION_ID','COMMERCE_PIXEL_ID','COMMERCE_PROXY_PATH'] as const;
+  if (!keys.some(key => environment[key]?.trim())) return undefined;
+  const [channel, installationId, pixelId, proxyPath] = keys.map(key => required(environment,key));
+  if (!/^\/apps\/[a-z0-9-]+$/.test(proxyPath)) throw new Error('COMMERCE_PROXY_PATH must be the configured /apps/name path.');
+  return {channel, installationId, pixelId, proxyPath, webhookUrl: new URL('/webhooks/commerce/shopify',requiredUrl(environment,'MANGO_PUBLIC_BASE_URL')).toString()};
+}
+
+function smsConfirmationSender(environment: AppBindings){
+ const value=required(environment,'SMS_CONFIRMATION_SENDER');
+ if(!/^\+?61\d{9}$/.test(value))throw new Error('SMS_CONFIRMATION_SENDER must be an Australian dedicated number.');
+ return value.replace(/^\+/,'');
 }

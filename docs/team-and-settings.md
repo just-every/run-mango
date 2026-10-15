@@ -19,7 +19,7 @@ Two protections apply:
 - The owner created at setup, the address in `OWNER_EMAIL`, is marked "Setup operator". Only they can remove their own access.
 - Mango will not remove the last active operator.
 
-Removing an operator revokes their open sessions and unused invitation and sign-in links. Campaigns, saved revisions, approvals and audit entries retain their attribution. These invitation and removal controls are covered by the local native sign-in and outbox journey; that proof does not establish hosted mail delivery.
+Removing an operator revokes their open sessions and unused invitation and sign-in links. Campaigns, saved revisions, approvals and audit entries retain their attribution. These invitation and removal controls are covered by local native authentication journeys; that proof does not establish hosted mail delivery.
 
 ## Sign in with an email link
 
@@ -27,7 +27,7 @@ There are no passwords. Go to `/signin`, enter your address and press **Email si
 
 By default a link works once and expires after 15 minutes, and a session lasts 7 days. Requests for links are rate limited, and the page shows "Too many requests. Try again later." when you hit the limit. **Sign out** is in the main menu.
 
-On a deployment, if sign-in mail never arrives, check your mail inputs and your provider's sender verification (see [Install and deploy](./install.md)), then request a new link. Locally, links appear in the development outbox instead.
+On a deployment, if sign-in mail never arrives, correct the mail connection in Configure and check the provider’s sender verification (see [Install and deploy](./install.md#if-sign-in-email-does-not-arrive)), then request a fresh email. Managed sign-in uses the RER relay separately from newsletter mail. Locally, `rer dev` and its private `RER_OPEN` development entry open a native owner session without email. Local development exposes no captured-mail page; the development key is not an emailed one-use sign-in link.
 
 ## Sender identity
 
@@ -38,3 +38,7 @@ Changing these details clears the current sender authentication evidence, and ca
 The same panel shows **Email authentication**: one of "Sender check passed", "Sending requirements not met", "Sender check unavailable" or "Sender check failed", with rows for **Provider domain**, **DNS configuration** and **Observed message authentication**, including when each was observed and when it expires. Press **Check again** to refresh. How to produce the observation is in [Approval and sending](./approval-and-sending.md).
 
 > **Tip:** Save your sender identity before you create your first draft. New drafts start with these details filled in.
+
+## Open estimates
+
+Open estimates are off by default and enabled explicitly in Insights. While an approved email campaign has unsent work, Mango blocks changes to this setting. Finish or cancel that work before changing it, so the setting cannot add tracking after approval. Open estimates remain privacy-sensitive estimates and never establish delivery or revenue.

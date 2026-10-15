@@ -9,14 +9,14 @@
     "artifactFile": "rer-worker-artifact.json"
   },
   "operations": {
-    "setup": "pnpm run deps",
+    "setup": "pnpm install --frozen-lockfile",
     "build": "pnpm run build",
-    "verify": "pnpm run verify",
+    "verify": "pnpm run verify:managed",
     "artifact": "node scripts/build-delivery-artifact.mjs",
     "recovery": "Read OPERATIONS.md: stop writes and scheduled work, preserve exact source, applied migrations and matching private authority; export D1 and R2, restore into fresh resources, compare exports and verify native sessions and publication before routing traffic."
   },
   "setup": {
     "path": "rer-setup.json",
-    "sha256": "a94090470b8c7cc195014a58f26d885fb8f4308e2f4d359cada52bd9307d7a31"
+    "sha256": "7e64efc837c560b923d8fa0e5ad0aeeefd6353002ad38112c6f85b395332d7d6"
   }
 }

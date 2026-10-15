@@ -56,3 +56,23 @@ Deleting a contact withdraws every affected original file and its import custody
 Changing a contact name through capture, sync or import keeps the previous name in contact history. Merging also keeps the merged contact’s name there. Deleting the survivor uses those known names to redact saved rules and campaign content that also hold one of the contact's exact addresses, phones or IDs, then removes the history. A name alone never changes unrelated text. Affected approved content requires a new reviewed approval; its original approval digest, time and operator remain historical attribution.
 
 Older installations may already have discarded names during a rename or merge. Mango cannot infer who an unlinked historical name refers to. Review saved literals you know belong to that person explicitly. If a merge is in progress, deletion asks you to retry after it finishes.
+
+### Independent SMS columns
+
+The native CSV importer accepts `phone` (E.164), alone or with `email`. Map
+`sms_status` separately; an email preset or email consent never opts a phone in.
+Subscribed SMS rows require all original fields: `sms_brand`, `sms_program`,
+`sms_category`, `sms_frequency`, `sms_jurisdiction`, `sms_consent_text`,
+`sms_consent_version`, `sms_capture_method`, `sms_capture_source`,
+`sms_occurred_at`, and `sms_confirmed_at`. Missing evidence leaves SMS
+non-subscribed. Confirmation must follow capture and neither may be in the future.
+The importer never substitutes the import time for either event.
+
+Map `sms_time_zone`, `sms_location_source`, and `sms_location_recorded_at` to
+retain recipient location evidence for sending. Preview shows each channel's
+status. A phone/email combination that points at different people is rejected as
+a whole; resolve it explicitly in contact merge before importing again. A held
+contact retains its existing details; independently mapped email and SMS
+opt-outs and suppressions still apply outside the reversible import.
+Undo retains SMS opt-outs and suppressions; lossless Mango CSV export carries the
+separate SMS ledger for restoration.

@@ -4,7 +4,7 @@
 // follow site/styles/paper.css and mail.css; the frame, title, text and button sizes are pages/public.css's standalone
 // ones. Keep them in step. The faces are the site's own, linked from the head (public/fonts/fonts.css).
 
-const tokens = ':root{--ground:#fbf7ee;--paper:#fffdf8;--ink:#1d1b17;--ink-soft:#37332d;--muted:#5c574f;--pencil:#a59c8a;--sun:#ffcf47;--sun-hover:#ffc21f;--mango:#f6b828;--amber:#8c5b0c;'
+const palette = ':root{--ground:#fbf7ee;--paper:#fffdf8;--ink:#1d1b17;--ink-soft:#37332d;--muted:#5c574f;--pencil:#a59c8a;--sun:#ffcf47;--sun-hover:#ffc21f;--mango:#f6b828;--amber:#8c5b0c;'
   + "--serif:Newsreader,'Newsreader Fallback','Newsreader Fallback Times',Georgia,serif;--sans:Outfit,'Outfit Fallback','Avenir Next','Segoe UI',sans-serif;color-scheme:light;"
   // The docs' sunny pencil stroke under a title (DocsTitleStroke), as a mask painted in the sun colour.
   + `--stroke:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 18' fill='none' stroke='%23000' stroke-linecap='round'%3E%3Cpath stroke-width='4.8' d='M3.5 11.2C40 7.4 92 5.2 142 6.1 176 6.7 206 8.4 236 11'/%3E%3Cpath stroke-width='1.8' opacity='.5' d='M14 14.2C58 11.2 112 10.2 160 11.2 182 11.7 202 12.8 222 14.4'/%3E%3C/svg%3E")}`;
@@ -55,4 +55,4 @@ const content = 'h1{margin:0;font:400 clamp(36px,4vw,48px)/1.04 var(--serif);let
   + '@media(max-width:480px){button{width:100%}}'
   + '@media(prefers-reduced-motion:reduce){button,a{transition:none}}';
 
-export const messageStyles = tokens + frame + paper + stamp + postmark + content;
+export const messageStyles = palette + frame + paper + stamp + postmark + content;

@@ -1,4 +1,5 @@
 import { Field } from '@/core/app/client/ui/validation-form';
+import { useLoaderData } from '@tanstack/react-router';
 import { resolveLocalInstant } from '@/core/features/lifecycle/schedule';
 import type { DraftComposition, DraftStep } from './draft-composition';
 
@@ -9,6 +10,7 @@ export function localDateTime(instant: string, timezone: string) {
   } catch { return ''; }
 }
 export function CompositionStepFields({steps, setSteps, storeTimezone}: {steps:DraftComposition['steps'];setSteps:(steps:DraftStep[])=>void;storeTimezone:string}) {
+  const { modules } = useLoaderData({ from: '/app' });
   const update = (index:number, changes:Partial<DraftStep>) => setSteps(steps.map((step,i)=>i===index?{...step,...changes}:step));
   const localChange = (index:number, step:DraftStep, local:string, deadline=false) => {
     const resolved = resolveLocalInstant(local,step.timezone);
@@ -27,7 +29,7 @@ export function CompositionStepFields({steps, setSteps, storeTimezone}: {steps:D
       const local = step.localScheduledAt ?? localDateTime(step.scheduledAt,step.timezone), deadline = step.localSendByAt ?? localDateTime(step.sendByAt,step.timezone);
       const resolution = resolveLocalInstant(local,step.timezone), end = resolveLocalInstant(deadline,step.timezone);
       return <div className="composition-step" key={index}><p>Step {index+1}</p>
-        <label>Channel<select value={step.channel} onChange={event=>update(index,{channel:event.target.value as 'email'|'sms'})}><option value="email">Email</option><option value="sms">SMS</option></select></label>
+        <label>Channel<select value={step.channel} onChange={event=>update(index,{channel:event.target.value as 'email'|'sms'})}><option value="email">Email</option>{modules.sms || step.channel === 'sms' ? <option value="sms" disabled={!modules.sms}>{modules.sms ? 'SMS' : 'SMS (disabled)'}</option> : null}</select></label>
         <label>IANA time zone (required)<Field name={`steps.${index}.timezone`} label={`Step ${index+1} time zone`} required live validate={() => {try {new Intl.DateTimeFormat("en", {timeZone:step.timezone});return undefined;} catch {return "Choose a valid IANA time zone.";}}}><input aria-label="IANA time zone" value={step.timezone} onChange={event=>{const timezone=event.target.value; const send=resolveLocalInstant(local,timezone),until=resolveLocalInstant(deadline,timezone);update(index,{timezone,localScheduledAt:local,localSendByAt:deadline,scheduledAt:send.status==='resolved'?send.instant:'',sendByAt:until.status==='resolved'?until.instant:''});}} /></Field></label>
         <label>Local send date and time (required)<Field name={`steps.${index}.scheduledAt`} label={`Step ${index+1} send time`} required live validate={() => resolution.status === "resolved" ? undefined : `${resolution.detail} Choose another local time.`}><input aria-label="Local send date and time" type="datetime-local" value={local} onChange={event=>localChange(index,step,event.target.value)} required /></Field></label>
         <label>Resolved UTC send instant<input readOnly value={step.scheduledAt}/></label>

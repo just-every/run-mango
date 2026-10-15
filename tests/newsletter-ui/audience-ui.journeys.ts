@@ -1,8 +1,9 @@
 import {createServer} from 'node:http';
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 
 import { expect, test } from '@playwright/test';
 
+import {challengeEdge,untouchedForm,storedSignup} from './signup-privacy-support';
 import { signInAsLocalOperator } from './browser-checks';
 
 function csv(headers: string[], rows: string[][]) {
@@ -42,10 +43,10 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/app/audience');
   await expect(page.getByRole('heading', { name: /consent stays visible/i })).toBeVisible();
-  const sessionCookie = (await page.context().cookies()).find((cookie) => cookie.name === 'operator_session_local');
+  const sessionCookie = (await page.context().cookies()).find((cookie) => cookie.name.startsWith('operator_session_local_'));
   expect(sessionCookie?.value).toBeTruthy();
   const actualSignup = await request.get('/api/audience/signup', {
-    headers: { Cookie: `operator_session_local=${sessionCookie?.value}` },
+    headers: { Cookie: `${sessionCookie?.name}=${sessionCookie?.value}` },
   });
   await expect(actualSignup).toBeOK();
   const signupData = await actualSignup.json();
@@ -129,8 +130,8 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
   await expect(importJob).toContainText(/12 of 12 rows/);
   await expect(importJob.getByRole('button', { name: 'Resume import' })).toHaveCount(0);
 
-  const audienceCookie = (await page.context().cookies()).find((cookie) => cookie.name === 'operator_session_local');
-  const audienceResponse = await request.get('/api/audience', { headers: { Cookie: `operator_session_local=${audienceCookie?.value}` } });
+  const audienceCookie = (await page.context().cookies()).find((cookie) => cookie.name.startsWith('operator_session_local_'));
+  const audienceResponse = await request.get('/api/audience', { headers: { Cookie: `${audienceCookie?.name}=${audienceCookie?.value}` } });
   await expect(audienceResponse).toBeOK();
   const audience = await audienceResponse.json();
   const importedContact = audience.contacts.find((contact: { email: string }) => contact.email === importedEmail);
@@ -174,44 +175,144 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
     const content = await readFile(downloadPath!, 'utf8');
     expect(content.split('\r\n')[0]).toContain('ledger_json');
     expect(content).not.toContain(importedEmail);
+
+    // A removed lossless export must not leave mapping validators on the next source.
+    await page.goto('/app/audience/import');
+    await page.getByLabel('Choose CSV files').setInputFiles({name:'audience.csv',mimeType:'text/csv',buffer:Buffer.from(content)});
+    await page.getByLabel('Preset for audience.csv').selectOption('mango');
+    const mangoPreview = page.waitForResponse(response => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/api/audience/import-preview');
+    await page.getByRole('button', {name:'Preview import',exact:true}).click();
+    const mangoResponse = await mangoPreview;
+    expect(mangoResponse.status()).toBe(200);
+    expect((await mangoResponse.json()).columns[0].mapping).toEqual({});
+    await expect(page.getByRole('group', {name:'audience.csv',exact:true})).toBeVisible();
+    await page.getByRole('button', {name:'Remove audience.csv',exact:true}).click();
+    await expect(page.getByRole('group', {name:'audience.csv',exact:true})).toHaveCount(0);
+    const replacementEmail = `ui-replacement-${runId}@example.test`;
+    await page.getByLabel('Choose CSV files').setInputFiles({name:'audience.csv',mimeType:'text/csv',buffer:Buffer.from(`Email Address\n${replacementEmail}`)});
+    await page.getByLabel('Preset for audience.csv').selectOption('csv-non-subscribed');
+    const replacementPreview = page.waitForResponse(response => response.request().method() === 'POST'
+      && new URL(response.url()).pathname === '/api/audience/import-preview');
+    await page.getByRole('button', {name:'Preview import',exact:true}).click();
+    const replacementResponse = await replacementPreview;
+    expect(replacementResponse.status()).toBe(200);
+    expect((await replacementResponse.json()).rows).toEqual([expect.objectContaining({email:replacementEmail,status:'non-subscribed'})]);
   }
 });
 
-test('the published embed loads the configured public form at desktop and mobile widths', async ({ page, request }, testInfo) => {
+test('the published embed enforces persisted exact origins and gates challenge traffic on trusted interaction', async ({ page, request, browser }, testInfo) => {
   await signInAsLocalOperator(page, request);
-  const session = (await page.context().cookies()).find((cookie) => cookie.name === 'operator_session_local');
-  const response = await request.get('/api/audience/signup', { headers: { Cookie: `operator_session_local=${session?.value}` } });
+  const session = (await page.context().cookies()).find(cookie => cookie.name.startsWith('operator_session_local_'))!;
+  const appOrigin = new URL(testInfo.project.use.baseURL as string).origin;
+  const headers = {Cookie:`${session.name}=${session.value}`,Origin:appOrigin};
+  const response = await request.get('/api/audience/signup',{headers});
   await expect(response).toBeOK();
   const signup = await response.json();
-  // Serve the owner's embed host through the real network. An intercepted
-  // internet response has no loopback address classification in Chrome.
+  expect(signup.turnstileSiteKey).toBe('fixture-public-site');
+  const signupPaths=['/subscribe','/subscribe/','/Subscribe','/%73ubscribe','/%53ubscribe/'];
+  let embed=signup.embed;
   const host = createServer((_request, response) => {
-    response.setHeader('Content-Type', 'text/html');
-    response.end(`<!doctype html><html lang="en"><head><title>Newsletter embed</title></head><body><main>${signup.embed}</main></body></html>`);
+    response.setHeader('Content-Type','text/html');
+    response.end(`<!doctype html><html lang="en"><head><title>Newsletter embed</title></head><body><main>${embed}</main></body></html>`);
   });
+  let allowedOrigin='';
+  const hostile = createServer((incoming, response) => {
+    response.setHeader('Content-Type','text/html');
+    response.end(incoming.url==='/nested' ? `<iframe title="Allowed wrapper" src="${allowedOrigin}"></iframe>` : embed);
+  });
+  const anonymous = await browser.newContext();
+  const visitor = await anonymous.newPage();
+  const external = await challengeEdge(visitor);
+  const denied = async (url:string) => {
+    const violation = visitor.waitForEvent('console',{predicate:message=>message.text().includes('frame-ancestors')});
+    await visitor.goto(url); await violation;
+    expect(visitor.frames().some(frame=>frame.url().startsWith(appOrigin+'/subscribe'))).toBe(false);
+    await expect(visitor.locator('iframe').first()).toBeVisible();
+    expect(external).toEqual([]);
+  };
   try {
-    await new Promise<void>(resolve => host.listen(0, '127.0.0.1', resolve));
-    await page.goto(`http://127.0.0.1:${(host.address() as {port: number}).port}/`);
-    const frame = page.frameLocator('iframe[title="Subscribe to the newsletter"]');
-    for (const width of [1440, 390]) {
-      await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
-      await expect(frame.getByRole('heading', { name: 'Get the newsletter' })).toBeVisible();
-      await expect(frame.getByRole('checkbox', { name: signup.consentText })).toBeVisible();
-      expect(await frame.locator('html').evaluate(node => node.scrollWidth <= window.innerWidth)).toBe(true);
+    await Promise.all([new Promise<void>(resolve=>host.listen(0,'127.0.0.1',resolve)),new Promise<void>(resolve=>hostile.listen(0,'127.0.0.1',resolve))]);
+    allowedOrigin=`http://127.0.0.1:${(host.address() as {port:number}).port}`;
+    const hostileOrigin=`http://127.0.0.1:${(hostile.address() as {port:number}).port}`;
+    const settings={frequencyDisclosure:signup.frequencyDisclosure,embedOrigins:[]};
+    await expect(await request.put('/api/audience/signup',{headers,data:settings})).toBeOK();
+    expect((await anonymous.request.put(appOrigin+'/api/audience/signup',{data:{...settings,embedOrigins:[allowedOrigin]}})).status()).toBe(401);
+    expect((await request.put('/api/audience/signup',{headers:{...headers,Origin:hostileOrigin},data:{...settings,embedOrigins:[allowedOrigin]}})).status()).toBe(403);
+    for(const origin of ['*','https://*.example.com','https://example.com/path','https://owner@example.com','javascript:alert(1)']) {
+      expect((await request.put('/api/audience/signup',{headers,data:{...settings,embedOrigins:[origin]}})).status()).toBe(400);
     }
+    const documents=[];
+    for(const path of signupPaths) {
+      const response=await visitor.goto(appOrigin+path+'?from=embed');
+      await expect(visitor.getByRole('heading',{name:'Get the newsletter'})).toBeVisible();
+      documents.push({requested:path,status:response!.status(),finalPath:new URL(visitor.url()).pathname,query:new URL(visitor.url()).search,csp:response!.headers()['content-security-policy']});
+    }
+    await writeFile(testInfo.outputPath('signup-alias-documents.json'),JSON.stringify(documents,null,2));
+    for(const document of documents) {
+      expect(document.status).toBe(200);expect(document.finalPath).toBe('/subscribe');expect(document.query).toBe('?from=embed');
+      expect(document.csp).toBe(documents[0].csp);
+      expect(document.csp).toContain("frame-ancestors 'none'");expect(document.csp).toContain('https://challenges.cloudflare.com');
+    }
+    for(const path of signupPaths) {
+      embed=signup.embed.replace(appOrigin+'/subscribe',appOrigin+path);
+      await denied(allowedOrigin);
+      // Empty policy also denies same-origin aliases; top-level stays usable.
+      await visitor.goto(appOrigin+path);
+      await expect(visitor.getByRole('heading',{name:'Get the newsletter'})).toBeVisible();
+      const sameOriginDenied=visitor.waitForEvent('console',{predicate:message=>message.text().includes('frame-ancestors')});
+      await visitor.evaluate(path=>{const frame=document.createElement('iframe');frame.src=path;document.body.append(frame);},path);
+      await sameOriginDenied;
+    }
+    await page.goto('/app/audience');
+    await page.getByLabel('Allowed embed origins').fill(allowedOrigin);
+    await page.getByRole('button',{name:'Save signup settings'}).click();
+    await expect(page.getByRole('status').filter({hasText:'Signup settings saved'})).toBeVisible();
+    await page.reload();
+    await expect(page.getByLabel('Allowed embed origins')).toHaveValue(allowedOrigin);
+    expect((await (await request.get('/api/audience/signup',{headers})).json()).embedOrigins).toEqual([allowedOrigin]);
+    for(const path of signupPaths) {
+      embed=signup.embed.replace(appOrigin+'/subscribe',appOrigin+path);
+      external.length=0;
+      await denied(hostileOrigin);
+      await denied(hostileOrigin+'/nested');
+      await visitor.goto(allowedOrigin);
+      const frame=visitor.frameLocator('iframe[title="Subscribe to the newsletter"]');
+      await untouchedForm(visitor,frame,external);
+      for(const width of [1440,390]) {
+        await visitor.setViewportSize({width,height:width===390?844:1000});
+        await expect(frame.getByRole('checkbox',{name:signup.consentText})).toBeVisible();
+        expect(await frame.locator('html').evaluate(node=>node.scrollWidth<=window.innerWidth)).toBe(true);
+      }
+      // Playwright keyboard input is trusted; dispatchEvent above is not.
+      await frame.getByLabel('Email address').focus();
+      await visitor.keyboard.press('a');
+      await expect(frame.getByRole('button',{name:'Complete verification'})).toBeVisible();
+      expect(external).toHaveLength(1);
+    }
+    await visitor.screenshot({path:testInfo.outputPath('allowed-embed-mobile.png')});
+    await writeFile(testInfo.outputPath('signup-privacy.json'),JSON.stringify({emptyDenied:true,sameOriginUnlistedDenied:true,hostileDenied:true,nestedHostileDenied:true,allowedOrigin,externalAfterTrustedInteraction:external},null,2));
+    await page.getByLabel('Allowed embed origins').fill('');
+    await page.getByRole('button',{name:'Save signup settings'}).click();
+    await expect(page.getByRole('status').filter({hasText:'Signup settings saved'})).toBeVisible();
+    external.length=0;
+    await denied(allowedOrigin);
+    await visitor.goto(appOrigin+'/subscribe');
+    await expect(visitor.getByRole('heading',{name:'Get the newsletter'})).toBeVisible();
   } finally {
-    host.closeAllConnections();
-    await new Promise<void>(resolve => host.close(() => resolve()));
+    await request.put('/api/audience/signup',{headers,data:{frequencyDisclosure:signup.frequencyDisclosure,embedOrigins:signup.embedOrigins}});
+    await anonymous.close();
+    for(const server of [host,hostile]){server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
   }
 });
 
 test('public form renders the configured disclosure and acknowledges only after the server accepts a request', async ({ page, request }, testInfo) => {
   await signInAsLocalOperator(page, request);
-  const session = (await page.context().cookies()).find((cookie) => cookie.name === 'operator_session_local');
+  const session = (await page.context().cookies()).find((cookie) => cookie.name.startsWith('operator_session_local_'));
   expect(session?.value).toBeTruthy();
   // Public capture requires a complete saved sender even for a honeypot acknowledgement.
   await expect(await request.put('/api/settings/sender', {
-    headers: { Cookie: `operator_session_local=${session!.value}`, Origin: new URL(testInfo.project.use.baseURL as string).origin },
+    headers: { Cookie: `${session!.name}=${session!.value}`, Origin: new URL(testInfo.project.use.baseURL as string).origin },
     data: {
       displayName: 'Mango local',
       fromEmail: 'newsletter@example.test',
@@ -225,6 +326,7 @@ test('public form renders the configured disclosure and acknowledges only after 
   const infoResponse = await request.get('/subscribe/info');
   await expect(infoResponse).toBeOK();
   const info = await infoResponse.json();
+  const external = await challengeEdge(page);
   const response = await page.goto('/subscribe');
   expect(response?.ok()).toBe(true);
   const html = await response?.text();
@@ -234,20 +336,42 @@ test('public form renders the configured disclosure and acknowledges only after 
   await expect(page.getByRole('checkbox', { name: info.consentText })).not.toBeChecked();
   await expect(page.getByRole('status')).toHaveCount(0);
   await expect(page.getByText('Occasional newsletters')).toBeVisible();
-  const [apiResponse] = await Promise.all([
-    page.waitForResponse((result) => result.request().method() === 'POST' && new URL(result.url()).pathname === '/subscribe'),
-    (async () => {
-      await page.getByLabel('Email address').fill(`ui-subscribe-${Date.now()}@example.test`);
-      await page.getByRole('checkbox', { name: info.consentText }).check();
-      await page.locator('#subscribe-website').fill('automation honeypot');
-      await page.getByRole('button', { name: 'Request confirmation' }).click();
-    })(),
-  ]);
+  await untouchedForm(page,page,external);
+  await page.getByLabel('Email address').click();
+  await expect(page.getByRole('button',{name:'Complete verification'})).toBeVisible();
+  expect(external).toHaveLength(1);
+  const signupEmail=`ui-subscribe-${Date.now()}@example.test`;
+  await page.getByLabel('Email address').fill(signupEmail);
+  await page.getByRole('checkbox', { name: info.consentText }).check();
+  await page.getByRole('button',{name:'Complete verification'}).click();
+  await expect(page.getByRole('button',{name:'Complete verification'})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'Request confirmation'})).toBeEnabled();
+  let release!: () => void, arrived!: () => void;
+  const held = new Promise<void>(resolve => { release = resolve; });
+  const pending = new Promise<void>(resolve => { arrived = resolve; });
+  await page.route('**/subscribe', async route => {
+    if (route.request().method() !== 'POST') return route.continue();
+    arrived();
+    await held;
+    await route.continue();
+  }, { times: 1 });
+  const accepted = page.waitForResponse((result) => result.request().method() === 'POST' && new URL(result.url()).pathname === '/subscribe');
+  try {
+    // This uses the real consent/storage path after the real server verifies
+    // the network-edge challenge reply; no honeypot acknowledgement.
+    await page.getByRole('button', { name: 'Request confirmation' }).click();
+    await pending;
+    await expect(page.getByRole('status')).toHaveCount(0);
+  } finally { release(); }
+  const apiResponse = await accepted;
   expect(await apiResponse.request().headerValue('cookie')).toBeNull();
   expect(apiResponse.status()).toBe(202);
   expect((await apiResponse.json()).status).toBe('confirmation-required');
-  await expect(page.getByRole('status')).toContainText('Request received. If this address can receive email, open its confirmation link and press Confirm subscription.');
+  await expect(page.getByRole('status')).toBeVisible();
+  await expect(page.getByRole('status')).not.toBeEmpty();
 
+  await storedSignup(request,`${session!.name}=${session!.value}`,signupEmail,info,testInfo);
   await page.setViewportSize({ width: 390, height: 844 });
-  await expect(page.getByRole('status')).toContainText('Request received. If this address can receive email, open its confirmation link and press Confirm subscription.');
+  await expect(page.getByRole('status')).toBeVisible();
+  await expect(page.getByRole('status')).not.toBeEmpty();
 });

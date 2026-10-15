@@ -35,7 +35,7 @@ Scripts, forms, stylesheets, classes, event handlers and malformed markup are no
 
 ## Links
 
-Add a link with **Add a link to the message** (link text and an HTTPS URL), or write an `<a>` tag in HTML mode. Every link appears under **Saved links** with a label and a destination, and you can add or remove destinations there. The destination's host must be on your `MANGO_ALLOWED_LINK_HOSTS` list or approval is blocked.
+Add a link with **Add a link to the message** (link text and an HTTPS URL), or write an `<a>` tag in HTML mode. Every link appears under **Saved links** with a label and a destination, and you can add or remove destinations there. The destination's host must be in **Settings → Allowed link hosts** or approval is blocked. This starts with your app’s own host; add your website or shop there when you need it.
 
 ## Images
 
@@ -103,4 +103,4 @@ To reuse conditions, select a **Saved segment** under **Start from a saved segme
 
 Press **Save full draft** (or **Save changes** at the top). Saving refreshes the preview and the approval checks, and it discards any earlier checks. Under "Saved revision content" you can switch between **Desktop email** and **Mobile email**. Links in the preview are inactive, the recipient is an example ("Alex Example"), and remote images stay blocked until you choose **Load N remote images**. Unsaved edits are flagged, and leaving the page asks first.
 
-> **Tip:** Under **Send a test** you can send the saved draft to an address on your `MANGO_TEST_EMAIL_ALLOWLIST`. The subject is marked "[MANGO TEST — NOT A CAMPAIGN SEND]". It needs a configured mail provider.
+> **Tip:** Under **Send a test** you can send the saved draft to your own sign-in address (or any operator's), or to an address on the optional `MANGO_TEST_EMAIL_ALLOWLIST`. The subject is marked "[MANGO TEST — NOT A CAMPAIGN SEND]". It needs a configured mail provider.

@@ -7,7 +7,7 @@ export function createInsightsRoutes(service: ReturnType<typeof createInsightsSe
   routes.get('/insights', async (context) => context.json(await service.list()));
   routes.get('/campaigns/:id/results', async (context) => context.json(await service.campaignResult(context.req.param('id'))));
   routes.get('/insights/deliverability', async (context) => {
-    const windowDays = Number(context.req.query('windowDays') ?? 30);
+    const windowDays = Number(context.req.query('windowDays') ?? service.reportingWindowDays);
     if (!Number.isInteger(windowDays) || windowDays < 1 || windowDays > 365) {
       return context.json({ error: 'invalid_reporting_window' }, 400);
     }

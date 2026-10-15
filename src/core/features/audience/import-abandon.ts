@@ -3,6 +3,7 @@ import type { ImportJob } from '@/vendor/base/import-kit/src/types';
 import { audienceStreamActions, isAudienceStream } from './import-stream';
 import { unfinished } from './import-hold';
 import { keepChangedContacts, keptAction } from './import-keep';
+import { audienceImportActor } from './import-authority';
 
 const action = 'import.abandoned';
 const conflicts = /\b(NATIVE_EDIT_CONFLICT|IMPORT_ATOMIC_GUARD|TARGET_REVISION_CONFLICT)\b/;
@@ -38,7 +39,7 @@ export async function abandonImport(db: D1Database, salt: string, id: string, in
       const now = Date.now();
       await db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
         VALUES(?,?,'audience-import',?,?,'operator',?,?,?,?) ON CONFLICT(operation_key) DO NOTHING`)
-        .bind(crypto.randomUUID(), `${action}:${id}`, id, action, context.authorization.principalId, JSON.stringify({ written: before.checkpoint, total: before.total }), now, now).run();
+        .bind(crypto.randomUUID(), `${action}:${id}`, id, action, audienceImportActor(context), JSON.stringify({ written: before.checkpoint, total: before.total }), now, now).run();
     }
   }
 }

@@ -24,7 +24,7 @@ test('CONT-013 erasure invalidates a real approval, excludes queued dispatch and
   const info=await h.json('/subscribe/info');expect((await h.call('/subscribe',{email:optout.email,consent:true,disclosure:info.disclosure})).status).toBe(202);
   expect(await h.f.db.prepare('SELECT email_status FROM contacts WHERE email=?').bind(optout.email).first()).toEqual({email_status:'unsubscribed'});expect(h.f.outbound.length).toBe(sent);
   const recaptured=await h.f.db.prepare('SELECT id FROM contacts WHERE email=?').bind(optout.email).first<any>();await erase(recaptured.id);
-  h.f.customers.push({id:'erasure-optout-provider-customer',email:optout.email,firstName:'Later source name',updatedAt:new Date().toISOString()});
+  h.f.customers.push({id:`gid://shopify/Customer/${h.f.customers.length+1}`,email:optout.email,phone:null,firstName:'Later source name',lastName:null,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),defaultAddress:null,emailMarketingConsent:null,smsMarketingConsent:null});
   await queue('source.sync',{sourceType:'customer',provider:'shopify'});
   expect(await h.f.db.prepare('SELECT email_status FROM contacts WHERE email=?').bind(optout.email).first()).toEqual({email_status:'unsubscribed'});
   const audience=await h.json('/api/campaign-authoring/audience',{inclusionRuleJson:rule('email',optout.email,'eq'),exclusionRulesJson:'[]',channels:['email']});expect(audience.eligibleCount).toBe(0);expect(h.f.outbound.length).toBe(sent);

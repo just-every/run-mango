@@ -1,3 +1,4 @@
+import {commerceProjection} from './commerce-projection';
 import { sha256 } from '@/core/shared/ids';
 import { SourceSyncBusyError } from './sync-run-repository';
 import { z } from 'zod';
@@ -9,15 +10,8 @@ import type { createAudienceService } from '@/core/features/audience/service';
 const commandSchema = z.object({sourceType: z.enum(commerceSourceTypes), provider: z.string().trim().min(1).max(100), runId: z.string().trim().min(1).max(200).optional()});
 const recordSchema = z.object({
   sourceType: z.enum(commerceSourceTypes), sourceId: z.string().trim().min(1),
-  occurredAt: z.date().refine(value => Number.isFinite(value.getTime())), payload: z.record(z.string(), z.unknown()),
+  occurredAt: z.date().refine(value => Number.isFinite(value.getTime())), updatedAt: z.date().optional(), contactId: z.string().optional(), payload: z.record(z.string(), z.unknown()),
 });
-function contact(payload: Record<string, unknown>) {
-  const customer = payload.customer && typeof payload.customer === 'object' ? payload.customer as Record<string, unknown> : payload;
-  const email = typeof customer.email === 'string' ? customer.email : undefined;
-  const phone = typeof customer.phone === 'string' ? customer.phone : undefined;
-  return email || phone ? {email, phone} : undefined;
-}
-
 /** Full-sync completion belongs to the final page only. Interrupted attempts
  * resume from the last fully imported page. Replayed partial pages use identity upserts. */
 export function createCommerceSynchronizer(
@@ -35,13 +29,15 @@ export function createCommerceSynchronizer(
     let run = await store.syncRuns.claim(runId, clock(), leaseMs);
     if (!run) return {status: 'busy' as const, runId, sourceType, pages: existing.pages};
     const token = run.leaseToken!;
+    const progress=()=>store.syncRuns.renew(runId,token,clock(),leaseMs);
     try {
+      if (commerce.refreshHealth) await commerce.refreshHealth(progress);
       const capability = commerce.capabilities();
       await store.recordSourceCapabilities(commerceSourceTypes.map(type => ({sourceType: type, available: capability.sourceTypes.includes(type), detail: capability.detail})), clock(), {runId, token, now: clock});
       if (!capability.sourceTypes.includes(sourceType)) throw new Error(`Commerce adapter does not supply ${sourceType}.`);
       if (capability.provider && capability.provider !== provider) throw new Error('The queued sync provider no longer matches the configured adapter.');
       for (let pageNumber = 0; pageNumber < pageLimit; pageNumber++) {
-        const page = await commerce.synchronize(sourceType, run.nextCursor ?? undefined);
+        const page = await commerce.synchronize(sourceType, run.nextCursor ?? undefined, progress);
         if (!await store.syncRuns.owns(runId, token, clock())) throw new SourceSyncBusyError('Sync lease changed while awaiting the adapter.');
         const records = z.array(recordSchema).parse(page.records);
         if (records.some(record => record.sourceType !== sourceType)) throw new Error(`Commerce returned a different source type during ${sourceType} sync.`);
@@ -51,15 +47,10 @@ export function createCommerceSynchronizer(
         if (records.length) {
           await audience.ingestCommerceWebhook({
             provider, completion: 'delta', adapterCompleted: false, sourceTypes: [sourceType],
-            records: records.map(record => ({
-              sourceType: record.sourceType as CommerceSourceType, providerSourceId: record.sourceId,
-              occurredAt: record.occurredAt, payload: record.payload, contact: contact(record.payload),
-              activity: ['order', 'refund', 'cart', 'browsing-event', 'customer'].includes(sourceType)
-                ? {kind: sourceType as 'order' | 'refund' | 'cart' | 'browsing-event' | 'customer', state: typeof record.payload.state === 'string' ? record.payload.state : 'observed'} : undefined,
-            })),
+            records: records.map(commerceProjection),
           }, clock(), {runId, token, now: clock});
         }
-        run = await store.syncRuns.checkpoint(run, token, page.nextCursor, page.nextCursor === undefined ? undefined : await sha256(page.nextCursor), records.length, clock(), leaseMs);
+        run = await store.syncRuns.checkpoint(run, token, page.nextCursor, page.nextCursor === undefined ? undefined : await sha256(page.nextCursor), records.length, clock(), leaseMs, page.coverage);
         if (run.state === 'completed') return {status: 'completed' as const, runId, sourceType, pages: run.pages};
       }
       await store.syncRuns.release(run, token, clock());

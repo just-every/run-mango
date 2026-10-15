@@ -1,15 +1,20 @@
 import type { Database } from '@/core/platform/db/client';
 import type { SenderInspection } from '@/core/features/sender-verification/types';
+import type { SenderVerification } from '@/core/features/sender-verification/service';
 
 export type Channel = 'email' | 'sms';
 
 export type DeliveryRequest = {
+  smsAuthority?: {policyDigest:string;expiresAt:number};
+  purpose?: 'marketing' | 'consent-confirmation' | 'sms-compliance';
   recipientStepId: string;
   idempotencyKey: string;
   handoffStartedAt: Date;
   to: string;
   sender: string;
   content: {
+    /** Set only by the authenticated diagnostic send route. */
+    test?: boolean;
     subject?: string;
     html?: string;
     text: string;
@@ -21,7 +26,12 @@ export type DeliveryRequest = {
   callbackUrl: string;
 };
 
+export type ProviderHealth = {reachable:boolean; code:string; observedAt:Date; evidence:string};
+
 export type ProviderHandoff = {
+  actualSender?: string;
+  complianceHold?: {scope:string; reason:string};
+  cost?: { billableUnits: number | null; unitKind: string; reportedCostMicros?: number; currency?: string };
   providerMessageId: string;
   disposition: 'accepted' | 'handoff-unknown';
   providerAcceptedAt?: Date;
@@ -64,6 +74,9 @@ export type ProviderTransportFailure = {
   permanent: boolean;
   code: string;
   detail: string;
+  retryAfterSeconds?: number;
+  restriction?: 'hard-bounce'|'complained'|'suppressed';
+  hold?: {scope:string; reason:string};
 };
 
 export class ProviderTransportError extends Error {
@@ -86,6 +99,7 @@ export type VerifiedWebhook = {
 export interface SenderAdapter {
   channel: Channel;
   capabilities(): Promise<SenderCapabilities>;
+  probeHealth?(signal?: AbortSignal): Promise<ProviderHealth>;
   validateSender(sender: string, jurisdiction: string): Promise<SenderValidation>;
   inspectSender?(sender: string): Promise<SenderInspection>;
   send(request: DeliveryRequest): Promise<ProviderHandoff>;
@@ -94,6 +108,8 @@ export interface SenderAdapter {
 }
 
 export type SourceRecordInput = {
+  updatedAt?: Date;
+  contactId?: string;
   sourceType: string;
   sourceId: string;
   occurredAt: Date;
@@ -101,15 +117,22 @@ export type SourceRecordInput = {
 };
 
 export type VerifiedCommerceWebhook = VerifiedWebhook & {
+  records?: SourceRecordInput[];
+  receipt?: {ids: string[]; digest: string};
   sourceType: string;
   sourceId: string;
   occurredAt: Date;
   payload: Record<string, unknown>;
 };
 
+export type CommerceCoverage = {mode:'snapshot'|'observations'; exhaustive:boolean; from?:number; channel?:string; through?:number; complete:boolean};
+
 export interface CommerceStore {
+  collectObservation?(request: Request): Promise<VerifiedCommerceWebhook>;
+  refreshHealth?(progress?: () => Promise<void>): Promise<void>;
+  recordObservation?(record: SourceRecordInput, eventId: string, digest: string): Promise<void>;
   capabilities(): { provider?: string; sourceTypes: string[]; detail: string };
-  synchronize(type: string, cursor?: string): Promise<{ records: SourceRecordInput[]; nextCursor?: string }>;
+  synchronize(type: string, cursor?: string, progress?: () => Promise<void>): Promise<{ records: SourceRecordInput[]; nextCursor?: string; coverage?: CommerceCoverage }>;
   verifyWebhook(request: Request): Promise<VerifiedCommerceWebhook>;
 }
 
@@ -123,12 +146,14 @@ export type AiGenerationResult = {
   output: unknown;
   provider: 'openai';
   model: string;
-  billableUnits: number;
+  billableUnits: number | null;
+  unitKind?: string;
   reportedCostMicros?: number;
   currency?: string;
 };
 
 export interface AiProvider {
+  costIdentity?: { provider: 'openai'; model: string };
   generateGroundedJson(request: GroundedGenerationRequest): Promise<AiGenerationResult>;
 }
 
@@ -161,7 +186,7 @@ export interface DesignProvider {
 }
 
 export type QueueCommand = {
-  kind: 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync' | 'design.draft' | 'design.layout';
+  kind: 'health.probe' | 'contact.erase' | 'campaign.dispatch' | 'delivery.reconcile' | 'provider.outage-probe' | 'source.sync' | 'design.draft' | 'design.layout';
   idempotencyKey: string;
   payload: Record<string, unknown>;
 };
@@ -201,7 +226,22 @@ export interface PublicTokenSigner {
   digest(token: string): Promise<string>;
 }
 
+export type DeliveryPolicy = {
+  credentialDigest: string;
+  account: string;
+  evidence: string;
+  lookupWindowMs?: number;
+  scopes?: string[];
+  webhookId?:string;
+  lookupHistorySince?:string;
+  providerPerMinute?: number;
+  carrierPerMinute?: number;
+  carrierScope?: string;
+};
+
 export type AppConfig = {
+  demo?: boolean;
+  deliveryPolicies?: Partial<Record<'rer'|'resend'|'sendgrid'|'mobile-message',DeliveryPolicy>>;
   /** Set only by the local Worker composition, never from an environment binding. */
   local?: boolean;
   sessionSigningKey: string;
@@ -209,7 +249,10 @@ export type AppConfig = {
   mailboxReceiptUrl?: string;
   mailboxReceiptRecipient?: string;
   signupTurnstile?: { siteKey: string; secretKey: string };
-  mailProvider?: 'resend' | 'sendgrid';
+  mailProvider?: 'rer' | 'resend' | 'sendgrid';
+  /** Managed transactional connection, independent of the owner's marketing credentials. */
+  authMail?: { provider: 'rer'; apiKey: string; relayUrl: string };
+  mailRelayUrl?: string;
   initialOperatorEmails: string[];
   contactHashSalt: string;
   modules: {
@@ -217,11 +260,14 @@ export type AppConfig = {
       storeUrl: URL;
       apiToken: string;
       webhookSecret: string;
+      exclusiveShop: string;
+      observations?: {channel: string; installationId: string; pixelId: string; proxyPath: string; webhookUrl: string};
     }>;
     sms: OptionalModuleConfig<{
       providerApiKey: string;
       webhookSecret: string;
       confirmationSender: string;
+      programme: import('@/core/features/sms/policy').SmsProgramme;
       testAllowlist: string[];
       handoffsPerMinute: number;
     }>;
@@ -275,6 +321,9 @@ export interface Platform {
   ai?: AiProvider;
   design?: DesignProvider;
   mailer: SenderAdapter;
+  confirmationMailer?: SenderAdapter;
+  /** Sender evidence for marketing email; absent where no mail provider is configured. */
+  senderVerification?: SenderVerification;
   sms?: SenderAdapter;
   jobs: JobDispatcher;
   blobs: BlobStore;
@@ -283,6 +332,9 @@ export interface Platform {
 }
 
 export interface AppBindings {
+  RER_DEMO?: string;
+  RER_OWNER_CLAIM_INSTALLATION_ID?: string;
+  MANGO_DELIVERY_POLICY_JSON?: string;
   MANGO_LOCAL_CONFIG_VERSION?: string;
   OWNER_EMAIL?: string;
   SESSION_SECRET?: string;
@@ -312,28 +364,41 @@ export interface AppBindings {
   MAILBOX_RECEIPT_RECIPIENT?: string;
   TURNSTILE_SITE_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
-  MAIL_PROVIDER?: 'resend' | 'sendgrid';
+  MAIL_PROVIDER?: 'rer' | 'resend' | 'sendgrid';
+  MAIL_FROM?: string;
+  MAIL_RELAY_URL?: string;
+  MAIL_API_KEY?: string;
+  MARKETING_MAIL_PROVIDER?: 'sendgrid' | 'resend';
+  MARKETING_MAIL_API_KEY?: string;
+  MARKETING_MAIL_WEBHOOK_SECRET?: string;
+  MARKETING_MAIL_WEBHOOK_ID?: string;
   INITIAL_OPERATOR_EMAILS: string;
   CONTACT_HASH_SALT: string;
   MANGO_LOCAL_HASH_AUTHORITY?: string;
   COMMERCE_STORE_URL?: string;
   COMMERCE_API_TOKEN?: string;
   COMMERCE_WEBHOOK_SECRET?: string;
+  COMMERCE_EXCLUSIVE_SHOP?: string;
+  COMMERCE_OBSERVATION_CHANNEL?: string;
+  COMMERCE_APP_INSTALLATION_ID?: string;
+  COMMERCE_PIXEL_ID?: string;
+  COMMERCE_PROXY_PATH?: string;
   AI_PROVIDER_API_KEY?: string;
   AI_PROVIDER_MODEL?: string;
   DESIGN_PROVIDER_API_KEY?: string;
   DESIGN_PROVIDER_ORIGIN?: string;
-  MAIL_PROVIDER_API_KEY: string;
-  MAIL_AUTH_FROM: string;
-  MAIL_WEBHOOK_SECRET: string;
-  MAIL_WEBHOOK_ID: string;
+  MAIL_PROVIDER_API_KEY?: string;
+  MAIL_AUTH_FROM?: string;
+  MAIL_WEBHOOK_SECRET?: string;
+  MAIL_WEBHOOK_ID?: string;
   SMS_PROVIDER_API_KEY?: string;
   SMS_WEBHOOK_SECRET?: string;
   SMS_CONFIRMATION_SENDER?: string;
+  SMS_PROGRAMME_POLICY?: string;
   MANGO_PUBLIC_BASE_URL: string;
   MANGO_APP_VERSION: string;
-  MANGO_ALLOWED_LINK_HOSTS: string;
-  MANGO_TEST_EMAIL_ALLOWLIST: string;
+  MANGO_ALLOWED_LINK_HOSTS?: string;
+  MANGO_TEST_EMAIL_ALLOWLIST?: string;
   MANGO_TEST_SMS_ALLOWLIST?: string;
   MANGO_RECONCILIATION_INTERVAL_MINUTES: string;
   MANGO_UNRESOLVED_OUTCOME_HOURS: string;

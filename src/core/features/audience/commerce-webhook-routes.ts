@@ -1,58 +1,31 @@
-import { Hono } from 'hono';
-import { z } from 'zod';
+import {Hono} from 'hono';
+import type {CommerceStore,VerifiedCommerceWebhook} from '@/core/shared/platform';
+import {commerceProjection} from '@/core/features/store/commerce-projection';
+import type {createAudienceService} from './service';
 
-import { readParams } from '@/core/api/input';
-import type { CommerceStore } from '@/core/shared/platform';
-import type { CommerceSourceType } from '@/core/features/store/service';
-
-import type { createAudienceService } from './service';
-
-const providerParams = z.object({ provider: z.literal('shopify') });
-
-function stringField(payload: Record<string, unknown>, field: string) {
-  const value = payload[field];
-  return typeof value === 'string' && value.trim() ? value : undefined;
-}
-
-function contactFromShopifyPayload(payload: Record<string, unknown>) {
-  const email = stringField(payload, 'email');
-  const phone = stringField(payload, 'phone');
-  if (!email && !phone) return undefined;
-  const firstName = stringField(payload, 'firstName') ?? stringField(payload, 'first_name');
-  const lastName = stringField(payload, 'lastName') ?? stringField(payload, 'last_name');
-  const displayName = [firstName, lastName].filter(Boolean).join(' ') || undefined;
-  return { email, phone, displayName };
-}
-
-export function createCommerceWebhookRoutes(service: ReturnType<typeof createAudienceService>, commerce: CommerceStore) {
-  const routes = new Hono();
-  routes.post('/webhooks/commerce/:provider', async (context) => {
-    const params = readParams(context, providerParams);
-    if ('error' in params) return context.notFound();
+export function createCommerceWebhookRoutes(service:ReturnType<typeof createAudienceService>,commerce:CommerceStore){
+  const routes=new Hono();
+  async function ingest(verified:VerifiedCommerceWebhook){
+    const records=verified.records??[verified];
+    await service.ingestCommerceWebhook({provider:'shopify',completion:'delta',adapterCompleted:false,
+      sourceTypes:[...new Set(records.map(record=>commerceProjection(record).sourceType))],records:records.map(commerceProjection),receipt:verified.receipt});
+    for(const record of records)if(record.sourceType==='cart'&&record.payload.observation==='online-store-cart-webhook'&&commerce.recordObservation){
+      await commerce.recordObservation(record,verified.providerEventId!,verified.receipt!.digest);
+    }
+  }
+  routes.post('/webhooks/commerce/shopify',async context=>{
     let verified;
-    try {
-      verified = await commerce.verifyWebhook(context.req.raw);
-    } catch {
-      return context.json({ error: 'invalid_webhook' }, 401);
-    }
-    try {
-      await service.ingestCommerceWebhook({
-        provider: params.data.provider,
-        completion: 'delta',
-        adapterCompleted: true,
-        sourceTypes: [verified.sourceType as CommerceSourceType],
-        records: [{
-          sourceType: verified.sourceType as CommerceSourceType,
-          providerSourceId: verified.sourceId,
-          occurredAt: verified.occurredAt,
-          payload: verified.payload,
-          contact: contactFromShopifyPayload(verified.payload),
-        }],
-      });
-    } catch (error) {
-      return context.json({ error: 'commerce_ingestion_failed', detail: error instanceof Error ? error.message : 'Commerce ingestion failed.' }, 422);
-    }
-    return context.body(null, 204);
+    try{verified=await commerce.verifyWebhook(context.req.raw);}catch{return context.json({error:'invalid_webhook'},401);}
+    try{await ingest(verified);}catch{return context.json({error:'commerce_ingestion_failed'},422);}
+    return context.body(null,204);
+  });
+  routes.post('/webhooks/commerce/shopify/observations',async context=>{
+    const origin=context.req.header('origin');
+    if(origin){context.header('Access-Control-Allow-Origin',origin);context.header('Access-Control-Allow-Credentials','true');context.header('Vary','Origin');}
+    if(!commerce.collectObservation)return context.json({error:'observation_channel_unavailable'},409);
+    try{await ingest(await commerce.collectObservation(context.req.raw));}
+    catch{return context.json({error:'observation_rejected'},422);}
+    return context.body(null,204);
   });
   return routes;
 }

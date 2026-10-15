@@ -6,7 +6,7 @@ import {readAudienceSnapshots,snapshotTargets} from './import-read';
 import {portableHash} from './portable-hashes';
 
 export async function readImportState(db:D1Database,rows:NormalizedImportRow[],salt:string,destination:string){
- const identities=[...new Set(rows.flatMap(row=>[row.email,...(row.ledger?.identities.map(identity=>identity.destination)??[])]).filter(Boolean))];
+ const identities=[...new Set(rows.flatMap(row=>[row.email,row.phone,...(row.ledger?.identities.map(identity=>identity.destination)??[])]).filter(Boolean))];
  const selected=JSON.stringify(identities);
  const owners=(await db.prepare('SELECT email AS identity,contact_id AS id FROM contact_email_addresses WHERE email IN (SELECT value FROM json_each(?)) UNION SELECT email AS identity,id FROM contacts WHERE email IN (SELECT value FROM json_each(?)) UNION SELECT phone_e164 AS identity,contact_id AS id FROM contact_phones WHERE phone_e164 IN (SELECT value FROM json_each(?))').bind(selected,selected,selected).all<{identity:string;id:string}>()).results;
  const byIdentity=new Map(owners.map(row=>[row.identity,row.id]));

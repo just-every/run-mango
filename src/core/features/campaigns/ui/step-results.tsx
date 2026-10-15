@@ -3,7 +3,7 @@ import type { Step } from '@/core/app/client/lib/types';
 import type { CampaignResults } from '../result-model';
 import { dispositionLabel } from './result-copy';
 
-export function StepResults({steps,results,now,timezone}:{steps:Step[];results:CampaignResults;now:number;timezone:string}) {
+export function StepResults({steps,results,now,timezone,awaitingFirstTick=false}:{steps:Step[];results:CampaignResults;now:number;timezone:string;awaitingFirstTick?:boolean}) {
   return <section className="panel" aria-labelledby="step-results-title">
     <h2 id="step-results-title">Every scheduled step</h2>
     <ol className="step-results">
@@ -20,7 +20,7 @@ export function StepResults({steps,results,now,timezone}:{steps:Step[];results:C
             <div>
               <p><time dateTime={step.scheduledAt}>{formatDateInTimeZone(step.scheduledAt,timezone)}</time> <span>({timezone})</span></p>
               <p className="muted-copy">Resolved UTC: {formatUtc(step.scheduledAt)}</p>
-              {outcome.state === 'Scheduled' ? <p className="step-result__countdown">{timeRemaining(step.scheduledAt,now)}</p> : null}
+              {outcome.state === 'Scheduled' && !(awaitingFirstTick && Date.parse(step.scheduledAt)<=now) ? <p className="step-result__countdown">{timeRemaining(step.scheduledAt,now)}</p> : null}
             </div>
             <div>
               <p>{closed ? 'Send window closed at ' : 'Send window closes at '}<time dateTime={step.sendByAt}>{formatDateInTimeZone(step.sendByAt,timezone)}</time></p>
@@ -28,6 +28,9 @@ export function StepResults({steps,results,now,timezone}:{steps:Step[];results:C
             </div>
           </div>
           <div className="step-result__notes">
+            {outcome.estimatedCompletionAt?<p>Estimated handoff completion across the shared provider backlog: <time dateTime={outcome.estimatedCompletionAt}>{formatUtc(outcome.estimatedCompletionAt)}</time>. Delivery awaits provider confirmation.</p>:null}
+            {outcome.pauses?.map(p=><p key={p.reason} data-pause-reason={p.reason} data-pause-state={p.resumedAt?'recovered':'paused'}>{p.resumedAt?'Recovered':'Paused'}: {p.reason}. {p.detail} {p.nextProbeAt&&!p.resumedAt?`Next authenticated reachability probe: ${formatUtc(p.nextProbeAt)}.`:''} {p.reason==='provider-outage'?'Reachability recovery does not clear source, sender or provider compliance restrictions.':''}</p>)}
+            {outcome.outageNotices?.map(n=><p key={`${n.state}:${n.code}`}>Operator outage notices: {n.count} {n.state==='handoff-unknown'?'with unconfirmed acceptance; no duplicate notice will be sent':n.state==='pending'?'pending a reachable provider and shared send allowance':n.state==='failed'?'failed':n.state==='outcome-unconfirmed'?'with outcome unconfirmed after the lookup window':n.state}. {n.code?`Provider status: ${n.code}.`:''}</p>)}
             {outcome.expiredQueuedCount > 0 ? <p>Queued records remain unsent: {outcome.expiredQueuedCount}. Their closed windows cannot dispatch them.</p> : null}
             {outcome.inFlightCount > 0 ? <p>{outcome.inFlightCount} queued recipient-steps have begun provider handoff and are awaiting confirmation. A closed window cannot recall them.</p> : null}
             {outcome.state === 'Sent' ? <p>Handed to the provider. Only the Delivered count confirms delivery.</p> : null}

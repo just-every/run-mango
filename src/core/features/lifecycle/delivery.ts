@@ -1,3 +1,12 @@
+import {aggregateMobileMessageParts,matchesMobileMessagePart} from './mobile-message-status';
+import {reputationRestricted} from './reputation-guard';
+import {trackedRequestAutomation} from './tracked-link-policy';
+import {programme,smsWindow,smsLocationFresh,nextPermittedSmsInstant} from '@/core/features/sms/policy';
+import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
+import {recordProviderHold,activeProviderHolds,importSendgridAccountEvents} from './provider-holds';
+import {notifyProviderOutages} from './provider-notices';
+import {refreshDeliveryProgress,nextDispatchDelay} from './delivery-progress';
+import { cancelHandoffCost, prepareHandoffCost, settleHandoffCost, settleHandoffFailure } from '@/core/features/insights/cost-handoff';
 import {privateInboxFact} from './provider-inbox-privacy';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
@@ -7,9 +16,8 @@ import { ProviderTransportError } from '@/core/shared/platform';
 
 import { sha256 } from './digest';
 import { parseDeliveryRequest, prepareDeliveryRequest, serializeDeliveryRequest } from './message-renderer';
-import { marketingFrequencyWindowMs } from './policies';
-import { isInsideSmsWindow, nextSmsWindow } from './schedule';
-import { parseStructuredRules, productIdFromRules } from './rules';
+import {recheckDeliveryEligibility} from './delivery-eligibility';
+
 import type { LifecycleRepository } from './repository';
 import type {
   Channel,
@@ -19,16 +27,9 @@ import type {
 } from './types';
 import { parseVerifiedWebhook } from './webhook-facts';
 
-const retrySeconds = [60, 180, 600, 1_200, 1_560];
+const retrySeconds = [60, 180, 600, 900, 1_200];
 const unavailableRecipientBatchSize = 100;
 
-function automatedAgent(userAgent: string) {
-  const patterns = [
-    ['mailbox-security-scanner', /barracuda|mimecast|proofpoint|safelinks|messagelabs/i],
-    ['known-bot', /bot\b|crawler|spider|preview|slurp/i],
-  ] as const;
-  return patterns.find(([, pattern]) => pattern.test(userAgent))?.[0];
-}
 
 export function createDeliveryService(runtime: LifecycleRuntime, repository: LifecycleRepository) {
   const sender = (channel: Channel) => channel === 'email' ? runtime.platform.mailer : runtime.platform.sms;
@@ -41,22 +42,17 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
       : module.detail;
   };
 
-  async function recheck(envelope: NonNullable<Awaited<ReturnType<typeof repository.getDeliveryEnvelope>>>, now: Date) {
-    const rules = parseStructuredRules(envelope.inclusionRuleJson, envelope.exclusionRulesJson);
-    return runtime.audience.recheckHandoffEligibility({
-      contactId: envelope.recipient.contactId,
-      channel: envelope.recipient.channel,
-      sourceTypes: envelope.sourceTypes,
-      productId: rules.ok ? productIdFromRules(rules.inclusion, rules.exclusions) : undefined,
-      now,
-      lastMarketingAt: await repository.lastMarketingAt(envelope.recipient.contactId, envelope.recipient.channel),
-      frequencyWindowMs: marketingFrequencyWindowMs(envelope.recipient.channel),
-    });
-  }
+  const recheck=(envelope:NonNullable<Awaited<ReturnType<typeof repository.getDeliveryEnvelope>>>,now:Date)=>recheckDeliveryEligibility(runtime,repository,envelope,now);
 
   async function dispatchRecipient(recipientId: string, now: Date) {
     const beforeClaim = await repository.getDeliveryEnvelope(recipientId);
     if (!beforeClaim) return;
+    const outage=await repository.channelOutage(adapterName(beforeClaim.recipient.channel),beforeClaim.recipient.channel);
+    if(outage) {
+      await repository.pauseChannel({campaignId:beforeClaim.recipient.campaignId,revisionId:beforeClaim.recipient.revisionId,channel:beforeClaim.recipient.channel,
+        reason:'provider-outage',detail:outage.detail,resumeCheckAt:new Date(Date.now()+runtime.platform.config.providerReconciliationIntervalMinutes*60000),now});
+      return;
+    }
     if (beforeClaim.recipient.channel === 'email'
       && !revisionMatchesSender(beforeClaim.revision, await loadSenderSettings(runtime.platform))) {
       await repository.noteSenderApprovalRequired(recipientId);
@@ -85,7 +81,7 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
     const handleIneligible = async (eligibility: Extract<Awaited<ReturnType<typeof recheck>>, { eligible: false }>) => {
       if (eligibility.retryAt) {
         await repository.deferRecipient(claimed.id, claimed.leaseToken!, eligibility.retryAt, eligibility.reason, now);
-        if (eligibility.reason.includes('source-stale') || eligibility.reason.includes('source-refresh')) {
+        if (eligibility.reason.startsWith('source-')) {
           await repository.pauseChannel({
             campaignId: claimed.campaignId,
             revisionId: claimed.revisionId,
@@ -111,32 +107,38 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
       return;
     }
     if (claimed.channel === 'sms') {
-      const evidenceFresh = eligibility.contact.timeZone
-        && eligibility.contact.timeZoneEvidenceAt
-        && eligibility.contact.timeZoneEvidenceSource
-        && now.getTime() - eligibility.contact.timeZoneEvidenceAt.getTime() <= 30 * 86_400_000;
-      if (!evidenceFresh) {
-        await repository.markSkipped(claimed.id, claimed.leaseToken, 'recipient-timezone-unknown-or-stale', now);
+      if(!smsLocationFresh(now,eligibility.contact.timeZone??null,eligibility.contact.timeZoneEvidenceSource??null,eligibility.contact.timeZoneEvidenceAt?.getTime()??null)) {
+        await repository.markSkipped(claimed.id,claimed.leaseToken,'recipient-timezone-unknown-or-stale',now);
         return;
       }
       if (!eligibility.contact.country) {
         await repository.markSkipped(claimed.id, claimed.leaseToken, 'recipient-country-unknown', now);
         return;
       }
-      if (!isInsideSmsWindow(now, eligibility.contact.timeZone!)) {
-        const retryAt = nextSmsWindow(now, eligibility.contact.timeZone!);
-        if (retryAt >= claimed.sendByAt) await repository.markSkipped(claimed.id, claimed.leaseToken, 'quiet-hours-deadline', now);
-        else await repository.deferRecipient(claimed.id, claimed.leaseToken, retryAt, 'quiet-hours', now);
+      const policy=programme(runtime.platform);
+      const gate=smsWindow(policy,now,eligibility.contact.timeZone??null,eligibility.contact.timeZoneEvidenceSource??null,eligibility.contact.timeZoneEvidenceAt?.getTime()??null);
+      if(!gate.allowed) {
+        const next=nextPermittedSmsInstant(policy,now,eligibility.contact.timeZone??null,eligibility.contact.timeZoneEvidenceSource??null,eligibility.contact.timeZoneEvidenceAt?.getTime()??null,claimed.sendByAt);
+        await repository.deferRecipient(claimed.id,claimed.leaseToken,next.at??claimed.sendByAt,next.reason,now);
         return;
       }
     }
     const capabilities = await adapter.capabilities();
-    if (!capabilities.configured || !capabilities.canSendMarketing) {
+    const singleAttempt=claimed.channel==='email'&&capabilities.provider==='sendgrid'&&capabilities.handoffPolicy==='single-attempt';
+    const requiredWindow=Math.max(0,claimed.sendByAt.getTime()-Date.now())
+      +runtime.platform.config.unresolvedProviderOutcomeHours*3600000
+      +runtime.platform.config.providerReconciliationIntervalMinutes*120000;
+    const durableAuthority=singleAttempt||(capabilities.handoffPolicy!=='single-attempt'&&capabilities.effectiveDeduplication
+      &&capabilities.effectiveReconciliation&&capabilities.deduplicationWindowMs>=requiredWindow&&capabilities.reconciliationWindowMs>=requiredWindow);
+    if (!capabilities.configured || !capabilities.canSendMarketing || !durableAuthority) {
+      const retryAt=new Date(now.getTime()+runtime.platform.config.providerReconciliationIntervalMinutes*60000);
       await repository.deferRecipient(claimed.id, claimed.leaseToken,
-        new Date(now.getTime() + runtime.platform.config.providerReconciliationIntervalMinutes * 60_000), 'provider-unavailable', now);
-      await repository.recordProviderFailure(adapterName(claimed.channel), claimed.channel, capabilities.detail, now);
+        retryAt, 'provider-authority-unavailable', now);
+      await repository.pauseChannel({campaignId:claimed.campaignId,revisionId:claimed.revisionId,channel:claimed.channel,
+        reason:'provider-configuration',detail:capabilities.detail,resumeCheckAt:retryAt,now});
       return;
     }
+    await repository.resumeChannel(claimed.campaignId,claimed.revisionId,claimed.channel,'provider-configuration',now);
     if (claimed.channel === 'sms') {
       const senderCheck = await adapter.validateSender(beforeClaim.revision.smsSender, eligibility.contact.country!);
       if (!senderCheck.ready) {
@@ -144,9 +146,9 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
         return;
       }
     }
-    const prepared = await prepareDeliveryRequest(runtime, beforeClaim, eligibility, now);
+    const prepared = await prepareDeliveryRequest(runtime, {...beforeClaim,recipient:{...beforeClaim.recipient,outboundRequestJson:claimed.outboundRequestJson}}, eligibility, now);
     // Persisted outbound JSON is authoritative on restart, including content.from.
-    const request = claimed.outboundRequestJson ? parseDeliveryRequest(claimed.outboundRequestJson) : prepared.request;
+    const request = prepared.request;
     const saved = await repository.saveOutboundRequest({
       id: claimed.id,
       leaseToken: claimed.leaseToken,
@@ -172,31 +174,46 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
       await repository.markSkipped(claimed.id, claimed.leaseToken, 'destination-changed-after-preparation', new Date());
       return;
     }
+    const provider=capabilities.provider??runtime.platform.config.mailProvider??'resend';
+    const holds=await activeProviderHolds(runtime.platform.database,provider,claimed.channel,claimed.channel==='email'?beforeClaim.revision.fromEmail:beforeClaim.revision.smsSender);
+    const reputation=await repository.reputation(beforeClaim.revision.fromEmail,'email',new Date(Date.now()-runtime.platform.config.deliverabilityReportingWindowDays*86400000));
+    if(holds.length||(claimed.channel==='email'&&reputationRestricted(reputation))) {
+      const detail=holds.length?holds.map(h=>`${h.provider} ${h.scope}: ${h.detail}`).join('; '):`Local reputation: complaints ${reputation.complained}/${reputation.delivered}; hard bounces ${reputation.hardBounced}/${reputation.attempted}.`;
+      await repository.pauseChannel({campaignId:claimed.campaignId,revisionId:claimed.revisionId,channel:claimed.channel,reason:'provider-or-reputation-hold',detail,resumeCheckAt:new Date(Date.now()+60000),now:new Date()});
+      await repository.deferRecipient(claimed.id,claimed.leaseToken,new Date(Date.now()+60000),'provider-or-reputation-hold',new Date());return;
+    }
+    await repository.resumeChannel(claimed.campaignId,claimed.revisionId,claimed.channel,'provider-or-reputation-hold',new Date());
     await repository.resumeChannel(claimed.campaignId, claimed.revisionId, claimed.channel, 'source-freshness', new Date());
-    if (!await repository.markHandoffUnknown(claimed.id, claimed.leaseToken, new Date(), inspection?.lease, claimed.outboundRequestJson ?? serializeDeliveryRequest(request), capabilities.provider)) {
+    const costContext = {
+      key: `handoff:${capabilities.provider ?? (claimed.channel === 'email' ? runtime.platform.config.mailProvider ?? 'unreported' : 'mobile-message')}:${claimed.id}:${claimed.attemptCount+1}`,
+      provider: capabilities.provider ?? (claimed.channel === 'email' ? runtime.platform.config.mailProvider ?? 'unreported' : 'mobile-message'), operation: 'provider-handoff' as const,
+      campaignId: claimed.campaignId, recipientStepId: claimed.id, occurredAt: new Date(),
+    };
+    await prepareHandoffCost(runtime.platform.database, adapter, request, costContext);
+    if (!await repository.markHandoffUnknown(claimed.id, claimed.leaseToken, new Date(), inspection?.lease, claimed.outboundRequestJson ?? serializeDeliveryRequest(request), capabilities.provider,capabilities.reconciliationWindowMs,Date.now()-runtime.platform.config.deliverabilityReportingWindowDays*86400000,await sha256(`${runtime.platform.config.contactHashSalt}:${request.to}`),finalEligibility.sourceGeneration,await sha256(claimed.channel==='email'?runtime.platform.config.mailProviderApiKey:runtime.platform.config.modules.sms.enabled?runtime.platform.config.modules.sms.config.providerApiKey:''))) {
+      await cancelHandoffCost(runtime.platform.database, costContext.key);
       await repository.deferRecipient(claimed.id, claimed.leaseToken,
         new Date(Date.now() + runtime.platform.config.providerReconciliationIntervalMinutes * 60_000),
         'approval-or-sender-authority-changed', new Date());
       return;
     }
+    let handoff;
     try {
-      const handoff = await adapter.send(request);
-      await repository.recordHandoff({
-        id: claimed.id,
-        leaseToken: claimed.leaseToken,
-        provider: capabilities.provider ?? adapterName(claimed.channel),
-        providerMessageId: handoff.providerMessageId,
-        disposition: handoff.disposition,
-        acceptedAt: handoff.providerAcceptedAt,
-        now: new Date(),
-      });
-      await repository.recoverProvider(adapterName(claimed.channel), claimed.channel, new Date());
+      handoff = await adapter.send(request);
     } catch (error) {
-      const detail = error instanceof Error ? error.message : 'Provider hand-off failed without a provider response.';
+      const detail = 'Provider hand-off could not be confirmed.';
+      if(error instanceof ProviderDeferredError) {
+        await repository.deferPacedRecipient(claimed.id,claimed.leaseToken,error.retryAt,new Date(),error.code);
+        await cancelHandoffCost(runtime.platform.database,costContext.key);return;
+      }
       if (error instanceof ProviderTransportError) {
-        const delaySeconds = retrySeconds[claimed.attemptCount - 1];
+        const plannedDelay = retrySeconds[claimed.attemptCount];
+        const delaySeconds = plannedDelay===undefined?undefined:Math.max(plannedDelay,error.failure.retryAfterSeconds??0);
         const retryAt = delaySeconds === undefined ? undefined : new Date(Date.now() + delaySeconds * 1_000);
-        const canRetry = !error.failure.permanent && retryAt !== undefined && retryAt < claimed.sendByAt;
+        const firstAttempt=claimed.firstAttemptAt??new Date();
+        const canRetry = !error.failure.permanent && retryAt !== undefined && retryAt < claimed.sendByAt && retryAt.getTime()<=firstAttempt.getTime()+3600000;
+        // The shared production transport persists restrictive refusals before
+        // returning them, including service, test and operator-notice sends.
         await repository.recordTransportFailure({
           id: claimed.id,
           leaseToken: claimed.leaseToken,
@@ -209,26 +226,39 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
         if (canRetry && retryAt) {
           await runtime.platform.jobs.retry({
             kind: 'campaign.dispatch',
-            idempotencyKey: `dispatch-retry:${claimed.id}:${claimed.attemptCount}`,
+            idempotencyKey: `dispatch-retry:${claimed.id}:${claimed.attemptCount+1}`,
             payload: {
               campaignId: claimed.campaignId,
               revisionId: claimed.revisionId,
               stepId: claimed.stepId,
               channel: claimed.channel,
             },
-          }, delaySeconds);
+          }, delaySeconds!);
           await repository.recordProviderFailure(adapterName(claimed.channel), claimed.channel, detail, new Date());
         }
+        await settleHandoffFailure(runtime.platform.database, adapter, request, costContext, error);
         return;
       }
       await repository.noteUnknownFailure(claimed.id, claimed.leaseToken, detail, new Date());
       await repository.recordProviderFailure(adapterName(claimed.channel), claimed.channel, detail, new Date());
+      await settleHandoffFailure(runtime.platform.database, adapter, request, costContext, error);
     }
+    if (handoff) {
+      await repository.recordHandoff({
+        id: claimed.id, leaseToken: claimed.leaseToken, provider: costContext.provider,
+        providerMessageId: handoff.providerMessageId, disposition: handoff.disposition,
+        acceptedAt: handoff.providerAcceptedAt, actualSender:handoff.actualSender, now: new Date(),
+      });
+      if(handoff.complianceHold)await recordProviderHold(runtime.platform.database,{provider,...handoff.complianceHold,held:true,effectiveAt:Date.now(),evidenceId:`receipt:${handoff.providerMessageId}`,detail:'Provider substituted the requested sender. Acceptance is retained; further handoffs require sender review.'});
+    }
+    if(claimed.channel==='sms') {const whole=await aggregateMobileMessageParts(runtime.platform.database,claimed.id);if(whole)await repository.recordProviderFact(claimed.id,'mobile-message',whole,new Date());}
     await runtime.platform.jobs.enqueue({
       kind: 'delivery.reconcile',
       idempotencyKey: `reconcile:${claimed.id}`,
       payload: { recipientStepId: claimed.id },
     });
+    // A cost write failure cannot discard the stored receipt or reclassify acceptance.
+    if (handoff) await settleHandoffCost(runtime.platform.database, adapter, request, costContext, handoff);
   }
 
   async function dispatchStep(payload: Record<string, unknown>) {
@@ -244,16 +274,25 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
         ? smsModule.config.handoffsPerMinute
         : unavailableRecipientBatchSize;
     }
-    const began = await repository.beginStep(stepId, revisionId, now, new Date(now.getTime() + 60_000));
-    if (!began) return;
-    await repository.skipExpiredForStep(stepId, now);
-    const recipientIds = await repository.listDueRecipientIds(stepId, now, rate);
-    for (const recipientId of recipientIds) await dispatchRecipient(recipientId, new Date());
-    if (recipientIds.length === rate) {
-      await runtime.platform.jobs.retry({
-        kind: 'campaign.dispatch', idempotencyKey: `dispatch:${stepId}`, payload,
-      }, 60);
+    await repository.expireDueRecipients(now);
+    const began = await repository.beginStep(stepId, revisionId, now, now);
+    if (!began) {await repository.completeCampaigns(now);return;}
+    await refreshDeliveryProgress(runtime,channel);
+    const recipientIds = await repository.listDueRecipientIds(stepId, now, Math.min(rate,100));
+    for (const recipientId of recipientIds) {
+      const work=dispatchRecipient(recipientId,new Date()).then(()=>({ok:true as const}),error=>({ok:false as const,error}));
+      for(;;) {
+        let timer:ReturnType<typeof setTimeout>|undefined;
+        const result=await Promise.race([work,new Promise<null>(resolve=>{timer=setTimeout(()=>resolve(null),15000);})]);
+        clearTimeout(timer);
+        if(result) {if(!result.ok)throw result.error;break;}
+        await refreshDeliveryProgress(runtime,channel);
+      }
+      await refreshDeliveryProgress(runtime,channel);
     }
+    const nextDelay=await nextDispatchDelay(runtime.platform,stepId);
+    if(nextDelay!==undefined&&!await repository.channelOutage(adapterName(channel),channel))await runtime.platform.jobs.retry({kind:'campaign.dispatch',idempotencyKey:`dispatch:${stepId}`,payload},nextDelay);
+    await refreshDeliveryProgress(runtime,channel);
     await repository.completeStep(stepId, new Date());
     await repository.completeCampaigns(new Date());
   }
@@ -277,7 +316,8 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
     }
     for (const fact of facts) {
       const persisted=await privateInboxFact(runtime.platform.database.$client,runtime.platform.config.contactHashSalt,provider,channel,fact);
-      await repository.recordProviderInboxFact(provider,persisted,new Date());
+      await repository.recordProviderInboxFact(provider,persisted,new Date(),channel);
+
       if (fact.kind === 'sms-reply') {
         const action = String(fact.detail.action ?? '').toLowerCase();
         const destination = String(fact.detail.destination ?? '');
@@ -317,9 +357,11 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
         || (row.provider_message_id && fact.providerMessageId && row.provider_message_id !== fact.providerMessageId)
         || (suppliedDestination && suppliedDestination !== row.destination)) continue;
       const recipientStepId = String(row.id);
+      if(provider==='mobile-message'&&fact.detail.providerEvent==='part-status'&&!await matchesMobileMessagePart(runtime.platform.database,recipientStepId,fact))continue;
       if (fact.providerMessageId) await repository.bindProviderMessage(recipientStepId, fact.providerMessageId, provider, new Date());
       if (safetyFact && !suppliedDestination) await suppress(String(row.destination));
       await repository.recordProviderFact(recipientStepId, provider, persisted, new Date());
+      if(provider==='mobile-message') {const whole=await aggregateMobileMessageParts(runtime.platform.database,recipientStepId);if(whole)await repository.recordProviderFact(recipientStepId,provider,whole,new Date());}
       if (channel === 'email' && fact.kind === 'delivered' && row.contact_id) {
         await runtime.audience.recordProviderDelivery({ contactId: String(row.contact_id), occurredAt: fact.occurredAt, providerEventId: await factKey('provider-delivery') });
       }
@@ -334,21 +376,37 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
     const outboundRequestJson = recipient.outboundRequestJson;
     if (!outboundRequestJson) return;
     const adapter = sender(recipient.channel);
-    if (!adapter) return;
+    const credential=recipient.channel==='email'?runtime.platform.config.mailProviderApiKey:runtime.platform.config.modules.sms.enabled?runtime.platform.config.modules.sms.config.providerApiKey:'';
+    const capabilities=await adapter?.capabilities();
+    const sameAuthority=adapter&&recipient.provider&&capabilities?.provider===recipient.provider
+      &&recipient.providerCredentialDigest===await sha256(credential);
+    if(!sameAuthority) {
+      await repository.pauseChannel({campaignId:recipient.campaignId,revisionId:recipient.revisionId,channel:recipient.channel,
+        reason:'reconciliation-authority',detail:'The original provider credential is unavailable. Existing uncertainty requires that provider authority or operator review; no replacement provider will resend or classify it.',
+        resumeCheckAt:new Date(Date.now()+60000),now:new Date()});
+      return;
+    }
+    await repository.resumeChannel(recipient.campaignId,recipient.revisionId,recipient.channel,'reconciliation-authority',new Date());
+    const sendgridException=recipient.channel==='email'&&recipient.provider==='sendgrid';
+    if(!sendgridException&&recipient.reconcileUntil&&recipient.reconcileUntil<=new Date()){
+      await repository.failUnconfirmed(recipient.id,new Date());await repository.completeCampaigns(new Date());return;
+    }
     const result = await adapter.reconcile(parseDeliveryRequest(outboundRequestJson), {
       providerMessageId: recipient.providerMessageId,
       cursor: recipient.reconcileCursor,
     });
     await importFacts(recipient.provider ?? adapterName(recipient.channel), result.facts, recipient.id, recipient.channel);
+    await repository.saveReconciliationCursor(recipient.id, result.exhausted?undefined:result.cursor, new Date());
     if (!result.exhausted) {
-      await repository.saveReconciliationCursor(recipient.id, result.cursor, new Date());
       await runtime.platform.jobs.retry({
         kind: 'delivery.reconcile', idempotencyKey: `reconcile:${recipient.id}:${result.cursor ?? 'next'}`,
         payload: { recipientStepId: recipient.id },
       }, 1);
       return;
     }
-    if ((await adapter.capabilities()).handoffPolicy !== 'single-attempt' && recipient.reconcileUntil && recipient.reconcileUntil <= new Date()) await repository.failUnconfirmed(recipient.id, new Date());
+    if (!sendgridException && recipient.reconcileUntil && recipient.reconcileUntil <= new Date()) {
+      await repository.failUnconfirmed(recipient.id,new Date());await repository.completeCampaigns(new Date());
+    }
   }
 
   return {
@@ -358,23 +416,39 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
 
     async reconcileUnresolved() {
       const unresolved = await repository.listUnresolved(new Date());
-      for (const recipient of unresolved) await reconcileRecipient(recipient.id);
+      for (const recipient of unresolved)await runtime.platform.jobs.enqueue({kind:'delivery.reconcile',idempotencyKey:`reconcile:${recipient.id}`,payload:{recipientStepId:recipient.id}});
     },
 
     async probeOutage(channel: Channel) {
       const adapter = sender(channel);
-      if (!adapter) return;
-      const health = await adapter.capabilities().then((value) => ({ available: value.configured && value.canSendMarketing, detail: value.detail }));
-      if (health.available) await repository.recoverProvider(adapterName(channel), channel, new Date());
-      else await repository.recordProviderFailure(adapterName(channel), channel, health.detail, new Date());
+      // An installation without a provider (a copy on a computer) has nothing to probe.
+      if (!adapter || !(await adapter.capabilities()).configured) return;
+      const now=new Date();
+      const due=await repository.claimOutageProbe(adapterName(channel),channel,now,runtime.platform.config.providerReconciliationIntervalMinutes*60000);
+      if(due) {
+        const health=await adapter.probeHealth?.();
+        await repository.recordProviderHealth(adapterName(channel),channel,health?.reachable??false,health?.code??'provider-health-unavailable',new Date());
+        if(health?.reachable)await repository.recoverProvider(adapterName(channel),channel,new Date());
+        else await repository.recordProviderFailure(adapterName(channel),channel,health?.code??'Authenticated provider probe unavailable.',new Date(),true);
+      }
+      if(channel==='email')await notifyProviderOutages(runtime.platform);
     },
 
     async handleWebhook(channel: Channel, request: Request) {
       const adapter = sender(channel);
-      if (!adapter) throw new Error(unavailableModuleDetail(channel));
+      if (!adapter || (channel === 'sms' && !runtime.platform.config.modules.sms.enabled)) {
+        return { kind: 'unavailable' as const };
+      }
+      const capabilities = await adapter.capabilities();
+      if (!capabilities.configured || (channel === 'email'
+        && (capabilities.provider === 'rer' || (runtime.platform.config.mailProvider && !runtime.platform.config.mailWebhookSecret)))) {
+        return { kind: 'unavailable' as const };
+      }
       const verified = await adapter.verifyWebhook(request);
+      if(verified.provider==='sendgrid')await importSendgridAccountEvents(runtime.platform.database,verified.rawBody);
       const facts = await parseVerifiedWebhook(channel, verified);
       await importFacts(channel === 'email' ? verified.provider ?? 'resend' : 'mobile-message', facts, undefined, channel);
+      return { kind: 'accepted' as const };
     },
 
     async followTrackedLink(token: string, request: Request) {
@@ -387,7 +461,7 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
       const link = await repository.trackedLink(digest, new Date());
       if (!link) return { kind: 'not_found' as const };
       const userAgent = request.headers.get('User-Agent') ?? '';
-      const automationReason = automatedAgent(userAgent);
+      const automationReason = trackedRequestAutomation(request);
       const requestDigest = await sha256(`${digest}:${request.headers.get('CF-Ray') ?? crypto.randomUUID()}`);
       await repository.recordClick({
         recipientStepId: link.recipientStepId,

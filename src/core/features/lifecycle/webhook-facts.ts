@@ -1,3 +1,4 @@
+import {mobileMessageStatus} from './mobile-message-status';
 import { parseSendgridFacts } from './sendgrid-facts';
 import { canonicalEmail, canonicalPhone } from '@/core/features/audience/identity';
 import type { VerifiedWebhook } from '@/core/shared/platform';
@@ -86,6 +87,7 @@ export async function parseVerifiedWebhook(channel: Channel, verified: VerifiedW
   const rows = Array.isArray(payload.results) ? payload.results : [payload];
   return Promise.all(rows.map(async (item) => {
     const data = record(item, 'Mobile Message webhook contains an invalid result.');
+    if(data.status!==undefined&&!['inbound','unsubscribe'].includes(String(data.type??'')))return mobileMessageStatus(data);
     const type = String(data.type ?? '').toLowerCase();
     const explicitReply = String(data.reply ?? data.inbound_message ?? '').trim().toLowerCase();
     const messageText = String(data.message ?? data.text ?? '').trim().toLowerCase();
@@ -97,7 +99,8 @@ export async function parseVerifiedWebhook(channel: Channel, verified: VerifiedW
       queued: 'accepted', submitted: 'accepted', sent: 'accepted', accepted: 'accepted',
       delivered: 'delivered', failed: 'failed', error: 'failed', cancelled: 'failed', rejected: 'failed',
     };
-    const kind = inbound ? 'sms-reply' : statusKinds[status];
+    if(inbound)throw new Error('Inbound SMS must use the dedicated sender-bound compliance route.');
+    const kind = statusKinds[status];
     if (!kind) throw new Error(`Mobile Message webhook status ${JSON.stringify(status)} is not supported.`);
     const messageId = providerMessageId(data);
     if (!messageId && kind !== 'sms-reply') throw new Error('Mobile Message status webhook has no message identifier.');

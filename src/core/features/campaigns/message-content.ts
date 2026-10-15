@@ -1,3 +1,4 @@
+import {rewriteTextLinks} from './message-links';
 import { escapeHtml } from './email-html-policy';
 import { parsePersonalisationToken as parseToken } from './authoring-tokens';
 export type MessageRevision = {
@@ -47,7 +48,7 @@ export function renderMessageContent(revision: MessageRevision, options: {
       return encode(parsed.managed === 'unsubscribe_url' ? options.unsubscribeUrl : parsed.managed === 'physical_address' ? revision.physicalAddress : value || parsed.fallback!);
     });
   };
-  const replaceTextLinks = (text: string) => text.replace(/https?:\/\/[^\s<>"']+/g, value => options.rewrittenLinks?.get(value) ?? value);
+  const replaceTextLinks = (text: string) => rewriteTextLinks(text,options.rewrittenLinks);
   const html = render(revision.emailBody, true).replace(/\bhref\s*=\s*(["'])(.*?)\1/gi, (attribute, quote: string, url: string) => {
     const replacement = options.rewrittenLinks?.get(url.replaceAll('&amp;', '&'));
     return replacement ? `href=${quote}${escapeHtml(replacement)}${quote}` : attribute;

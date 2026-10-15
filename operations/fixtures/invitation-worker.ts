@@ -57,7 +57,17 @@ export default {
       return new Response(null, { status: 202, headers: { 'x-message-id': 'test-provider-message' } });
     };
     const input = await envelope.json();
-    const request = new Request(input.url, { method: input.method, headers: input.headers, ...(input.body ? { body: input.body } : {}) });
+    const bodyBarrier=input.headers['X-Test-Body-Barrier'];
+    const body=input.body&&bodyBarrier ? new ReadableStream({async pull(controller) {
+      await env.DB.prepare('INSERT INTO test_barriers(id,released) VALUES(?,0)').bind(bodyBarrier).run();
+      const deadline=Date.now()+60000;
+      while(!(await env.DB.prepare('SELECT released FROM test_barriers WHERE id=?').bind(bodyBarrier).first()).released) {
+        if(Date.now()>deadline)throw new Error('Test body barrier was not released');
+        await new Promise(resolve=>setTimeout(resolve,10));
+      }
+      controller.enqueue(new TextEncoder().encode(input.body));controller.close();
+    }},{highWaterMark:0}) : input.body;
+    const request = new Request(input.url, { method: input.method, headers: input.headers, ...(body ? { body } : {}) });
     const meter=queryMeter(pausedDatabase(env.DB,request));
     const bindings = { ...env, MANGO_JOBS:{async send(command){await env.DB.prepare('INSERT INTO test_queue(body) VALUES(?)').bind(JSON.stringify(command)).run();}}, DB: meter.db };
     const response=await createApp(bindings, createProductionPlatform(bindings)).fetch(request, bindings);

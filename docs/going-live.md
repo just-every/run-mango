@@ -2,7 +2,7 @@
 
 Before the first real send to a real list, a sender needs a few things in place. Some of them Mango checks for you, some it builds into every campaign, and some only you can supply. This page lists each one and says which is which.
 
-**Settings → Sender identity → Before the first real send** shows the same list for your installation. Mango marks an item **Observed** only when it saw the evidence itself: from your mail provider, from public DNS, or from a receiving mailbox. Saving a setting never counts. **Not observed** means the evidence is missing, stale or failed. **Unavailable** means Mango could not check, for example in local development, where no mail provider is configured.
+**Settings → Sender identity → Before the first real send** shows the same list for your installation. Mango marks an item **Observed** only when it saw the evidence itself: from your mail provider, from public DNS, or from a receiving mailbox. **Checked in DNS** means Mango read the records in public DNS rather than a receiving mailbox's own results. Saving a setting never counts. **Not observed** means the evidence is missing, stale or failed. **Unavailable** means Mango could not check, for example in local development, where no mail provider is configured.
 
 ## What you need, and who checks it
 
@@ -10,14 +10,16 @@ Before the first real send to a real list, a sender needs a few things in place.
 | --- | --- | --- |
 | A sending domain verified with your mail provider | You, in your SendGrid or Resend account | Asks the provider whether the From domain is verified for this account. |
 | SPF and DKIM records, and a DMARC record | You, in your domain's DNS | Reads the records your provider lists, and the domain's DMARC record, in public DNS. |
-| A trusted receipt of a test message | You configure a receiving mailbox (`MAILBOX_RECEIPT_URL` and `MAILBOX_RECEIPT_RECIPIENT`) | Sends one test message through your provider and reads that mailbox's report of it. |
-| SPF, DKIM and DMARC passing, aligned with the From domain | Follows from the three items above | Reads the receiving mailbox's own authentication results for the test message. Approval stays blocked until all pass. |
+| A test message that reached a real inbox | You press **Send the check** in Settings, then **Yes, it reached my inbox** in the email it sends to your sign-in address | Sends one test message from your From address through your provider and records your confirmation. An optional receipt connector (`MAILBOX_RECEIPT_URL` and `MAILBOX_RECEIPT_RECIPIENT`) can report it instead. |
+| SPF, DKIM and DMARC passing, aligned with the From domain | Follows from the items above | Checks in public DNS, at every approval and send, that SPF and DKIM match your provider and a DMARC record exists and aligns with the From domain. With a receipt connector it reads the receiving mailbox's own results instead. Approval stays blocked until all pass. |
 | A verified sender | You save the business name, From address on the verified domain, reply-to and postal address in Settings | Uses exactly this identity in every campaign. Changing it invalidates earlier sender evidence. |
 | One-click unsubscribe | Built in | Adds `List-Unsubscribe` and `List-Unsubscribe-Post` to every campaign email. A one-click request unsubscribes the contact before Mango answers. Whether your provider's DKIM signature covers these two headers is not observed. |
 | A visible unsubscribe link and your postal address | Built in; you save the address | Approval blocks a campaign without both. |
 | A sending jurisdiction | You decide | Mango does not record which country's rules apply to your list. See below. |
 
-Run the sender check on your deployment with `node scripts/sender-verification.mjs prepare`, then `send`, `observe` and `inspect`. [Install and deploy](./install.md) lists the settings these commands need.
+Run the sender check from **Settings** on your deployment: no command line is needed. [Install and deploy](./install.md#verify-your-sender) walks through it.
+
+Text messages, AI writing and a store connection are optional modules, off unless you configure them; a newsletter needs none of them. [Install and deploy](./install.md) and the repository's `OPERATIONS.md` describe their settings.
 
 ## What Gmail requires
 
