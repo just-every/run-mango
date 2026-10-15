@@ -1,10 +1,8 @@
 import type { AppBindings } from './core/shared/platform';
 import { createProductionPlatform } from './core/platform/runtime';
 import { createAppServices } from './core/app/app';
-import { sampleData } from './core/features/bootstrap/sample-data';
 import { createCampaignDemoImportRepository } from './core/features/campaigns/demo-import-repository';
 import { createCampaignDemoImportService } from './core/features/campaigns/demo-import-service';
-import { seedDemoHistory } from './core/features/bootstrap/demo-history';
 
 /** Real editable sample records; admission remains the native owner/session flow. */
 export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEmail: string; now: Date }) {
@@ -13,6 +11,10 @@ export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEma
   if (await db.prepare("SELECT 1 FROM seed_runs WHERE id='mango-visitor-demo-v1'").first()) return;
   const owner = await db.prepare('SELECT id FROM oa_operators WHERE email=? AND status=\'active\'').bind(ownerEmail).first<{ id: string }>();
   if (!owner) throw new Error('Demo owner is missing.');
+  const [{ sampleData }, { seedDemoHistory }] = await Promise.all([
+    import('./core/features/bootstrap/sample-data'),
+    import('./core/features/bootstrap/demo-history'),
+  ]);
   const platform = createProductionPlatform(env);
   const { audienceService, storeService } = createAppServices(platform);
   await storeService.importLocalDemo(sampleData.providerCapabilities, sampleData.sourceSyncs, now);
