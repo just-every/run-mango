@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { contract } from '../contract.js';
 import { signInAsLocalOperator } from './browser-checks';
 import { createBlank, expectFieldError, expectSummary, expectVisibleFocus } from './form-feedback-helpers';
+import { challengeEdge } from './signup-privacy-support';
 
 {
   const width = 390;
@@ -82,7 +83,15 @@ import { createBlank, expectFieldError, expectSummary, expectVisibleFocus } from
     await page.goto('/app/audience'); const signup=page.getByRole('form',{name:'Signup-form settings'}), frequency=signup.getByLabel('Newsletter frequency',{exact:true}); const original=await frequency.inputValue(); await frequency.fill(''); await frequency.blur(); await expectFieldError(frequency); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(frequency).toBeFocused(); await expectSummary(signup,1); await frequency.fill('<weekly>'); await frequency.blur(); await expectFieldError(frequency,/plain text/);
     await expect(frequency).toHaveAttribute('required','');
     await frequency.fill('Weekly newsletter updates'); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice[role="status"]')).toContainText('Signup settings saved'); await page.reload(); await expect(frequency).toHaveValue('Weekly newsletter updates'); await frequency.fill(original); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice')).toBeVisible();
-    await page.goto('/subscribe'); const subscribe=page.locator('.subscribe-form'), email=page.getByLabel('Email address',{exact:true}), consent=page.getByRole('checkbox'); await expect(email).toBeEnabled(); await email.focus(); await email.blur(); await expectFieldError(email); await page.getByRole('button',{name:'Request confirmation'}).click(); await expect(email).toBeFocused(); await expectFieldError(consent); await expectSummary(subscribe,2); await email.fill('invalid'); await email.blur(); await expectFieldError(email,/valid email/);
+    await challengeEdge(page);
+    await page.goto('/subscribe'); const subscribe=page.locator('.subscribe-form'), email=page.getByLabel('Email address',{exact:true}), consent=page.getByRole('checkbox');
+    await expect(email).toBeEnabled(); await email.click(); await email.blur(); await expectFieldError(email);
+    // The configured fixture requires verification, activated by a trusted form interaction.
+    const confirmation=page.getByRole('button',{name:'Request confirmation'});
+    await expect(confirmation).toBeDisabled();
+    await page.getByRole('button',{name:'Complete verification'}).click();
+    await expect(confirmation).toBeEnabled();
+    await confirmation.click(); await expect(email).toBeFocused(); await expectFieldError(consent); await expectSummary(subscribe,2); await email.fill('invalid'); await email.blur(); await expectFieldError(email,/valid email/);
     await expect(email).toHaveAttribute('required',''); await expect(consent).toHaveAttribute('required','');
   });
 }

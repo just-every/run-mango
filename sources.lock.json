@@ -6030,7 +6030,7 @@
       "executable": false
     },
     "tests/newsletter-ui/forms-feedback.journeys.ts": {
-      "sha256": "82305eea0715b4ef2958f9e9e0f24768e3096b8a11acd03ccf17b6dce8a42a5f",
+      "sha256": "da64f3138f93b5e97555d640b112f9dca86e83df0fc5f33861aa4db8439bff3e",
       "executable": false
     },
     "tests/newsletter-ui/playwright.config.js": {
