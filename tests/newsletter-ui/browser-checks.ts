@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { localBootstrapToken } from '../local-bootstrap.js';
@@ -10,7 +11,7 @@ export async function signInAsLocalOperator(page: import('@playwright/test').Pag
   await expect(response).toBeOK();
   const { session } = await response.json();
   await page.context().addCookies([
-    { name: 'operator_session_local', value: session.token, domain: '127.0.0.1', path: '/' },
+    { name: localSessionCookieName(response.url()), value: session.token, domain: '127.0.0.1', path: '/' },
   ]);
 }
 

@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import { expect, test } from '@playwright/test';
 import { authoringRuntime } from '../campaign-authoring/browser-runtime.mjs';
 import { proveCampaignCostFailure } from './cost-campaign-proof';
@@ -27,7 +28,7 @@ test('[RESULT-004] rejected AI spend, distinct handoffs and replayed purchases r
   try {
     const control={ 'X-Test-Token':runtime.token };
     const opened=await request.post(`${runtime.url}/_costs/open`,{headers:control});expect(opened.status()).toBe(200);
-    await page.context().addCookies([{name:'operator_session_local',value:(await opened.json()).token,url:runtime.url}]);
+    await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:(await opened.json()).token,url:runtime.url}]);
     const api=page.request, headers={Origin:runtime.url};
     expect((await api.post(`${runtime.url}/auth/magic-link`,{headers,data:{email:'costs@example.test'}})).status()).toBe(202);
     expect((await (await request.post(`${runtime.url}/_costs/records`,{headers:control})).json()).costs).toHaveLength(0);
