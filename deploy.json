@@ -102,6 +102,21 @@
       "binding": "TURNSTILE_SECRET_KEY",
       "environment": "TURNSTILE_SECRET_KEY",
       "optional": true
+    },
+    {
+      "binding": "MAIL_API_KEY",
+      "environment": "MAIL_API_KEY",
+      "optional": true
+    },
+    {
+      "binding": "MAIL_FROM",
+      "environment": "MAIL_FROM",
+      "optional": true
+    },
+    {
+      "binding": "MAIL_RELAY_URL",
+      "environment": "MAIL_RELAY_URL",
+      "optional": true
     }
   ],
   "vars": {
@@ -111,7 +126,9 @@
     "MANGO_RECONCILIATION_INTERVAL_MINUTES": "5",
     "MANGO_UNRESOLVED_OUTCOME_HOURS": "24",
     "MANGO_EMAIL_HANDOFFS_PER_MINUTE": "10",
-    "MANGO_DELIVERABILITY_WINDOW_DAYS": "30"
+    "MANGO_DELIVERABILITY_WINDOW_DAYS": "30",
+    "MAIL_FROM": "",
+    "MAIL_RELAY_URL": ""
   },
   "originVar": "MANGO_PUBLIC_BASE_URL"
 }

@@ -128,7 +128,12 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
   if (signingKey.length < 32 || signingKey.length > 1024) throw new Error('SESSION_SIGNING_KEY must contain 32–1024 characters.');
   if (environment.AUTH_SETUP_TOKEN !== undefined && (environment.AUTH_SETUP_TOKEN.length < 32 || environment.AUTH_SETUP_TOKEN.length > 1024)) throw new Error('AUTH_SETUP_TOKEN must contain 32–1024 characters.');
   const mailProvider = required(environment, 'MAIL_PROVIDER');
-  if (!['resend', 'sendgrid'].includes(mailProvider)) throw new Error('MAIL_PROVIDER must be resend or sendgrid.');
+  if (!['rer', 'resend', 'sendgrid'].includes(mailProvider)) throw new Error('MAIL_PROVIDER must be rer, resend or sendgrid.');
+  // Canonical fields are shared with RER Configure. Existing direct-provider installs retain their inputs.
+  const mailKeyField = mailProvider === 'rer' || environment.MAIL_API_KEY?.trim() ? 'MAIL_API_KEY' : 'MAIL_PROVIDER_API_KEY';
+  const mailFromField = mailProvider === 'rer' || environment.MAIL_FROM?.trim() ? 'MAIL_FROM' : 'MAIL_AUTH_FROM';
+  const mailAuthFrom = required(environment, mailFromField);
+  const mailRelayUrl = mailProvider === 'rer' ? requiredUrl(environment, 'MAIL_RELAY_URL').href : undefined;
   const modules: AppConfig['modules'] = {
     commerce: optionalModule(environment, 'Commerce', optionalModuleInputs.commerce, () => ({
       storeUrl: requiredUrl(environment, 'COMMERCE_STORE_URL'),
@@ -154,15 +159,16 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
   return {
     sessionSigningKey: required(environment, 'SESSION_SIGNING_KEY'),
     authSetupToken: environment.AUTH_SETUP_TOKEN,
-    mailProvider: mailProvider as 'resend' | 'sendgrid',
+    mailProvider: mailProvider as 'rer' | 'resend' | 'sendgrid',
+    mailRelayUrl,
     mailboxReceiptUrl,
     mailboxReceiptRecipient,
     ...(siteKey && secretKey ? {signupTurnstile:{siteKey,secretKey}} : {}),
     initialOperatorEmails: emails(required(environment, 'INITIAL_OPERATOR_EMAILS'), 'INITIAL_OPERATOR_EMAILS'),
     contactHashSalt: required(environment, 'CONTACT_HASH_SALT'),
     modules,
-    mailProviderApiKey: required(environment, 'MAIL_PROVIDER_API_KEY'),
-    mailAuthFrom: required(environment, 'MAIL_AUTH_FROM'),
+    mailProviderApiKey: required(environment, mailKeyField),
+    mailAuthFrom,
     // SendGrid's signed Event Webhook is optional: without it delivery shows Accepted, never Delivered.
     mailWebhookSecret: mailProvider === 'resend' ? required(environment, 'MAIL_WEBHOOK_SECRET') : environment.MAIL_WEBHOOK_SECRET?.trim() ?? '',
     mailWebhookId: mailProvider === 'resend' ? required(environment, 'MAIL_WEBHOOK_ID') : environment.MAIL_WEBHOOK_ID?.trim() ?? '',
@@ -177,7 +183,7 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     deliverabilityReportingWindowDays: positiveInteger(environment, 'MANGO_DELIVERABILITY_WINDOW_DAYS'),
     mailSender: {
       displayName: environment.MAIL_SENDER_NAME?.trim() ?? '',
-      fromEmail: required(environment, 'MAIL_AUTH_FROM'),
+      fromEmail: mailAuthFrom,
       replyToEmail: environment.MAIL_REPLY_TO?.trim() ?? '',
       physicalAddress: environment.MAIL_PHYSICAL_ADDRESS?.trim() ?? '',
     },

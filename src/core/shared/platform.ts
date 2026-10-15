@@ -240,7 +240,7 @@ export type DeliveryPolicy = {
 };
 
 export type AppConfig = {
-  deliveryPolicies?: Partial<Record<'resend'|'sendgrid'|'mobile-message',DeliveryPolicy>>;
+  deliveryPolicies?: Partial<Record<'rer'|'resend'|'sendgrid'|'mobile-message',DeliveryPolicy>>;
   /** Set only by the local Worker composition, never from an environment binding. */
   local?: boolean;
   sessionSigningKey: string;
@@ -248,7 +248,8 @@ export type AppConfig = {
   mailboxReceiptUrl?: string;
   mailboxReceiptRecipient?: string;
   signupTurnstile?: { siteKey: string; secretKey: string };
-  mailProvider?: 'resend' | 'sendgrid';
+  mailProvider?: 'rer' | 'resend' | 'sendgrid';
+  mailRelayUrl?: string;
   initialOperatorEmails: string[];
   contactHashSalt: string;
   modules: {
@@ -357,7 +358,10 @@ export interface AppBindings {
   MAILBOX_RECEIPT_RECIPIENT?: string;
   TURNSTILE_SITE_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
-  MAIL_PROVIDER?: 'resend' | 'sendgrid';
+  MAIL_PROVIDER?: 'rer' | 'resend' | 'sendgrid';
+  MAIL_FROM?: string;
+  MAIL_RELAY_URL?: string;
+  MAIL_API_KEY?: string;
   INITIAL_OPERATOR_EMAILS: string;
   CONTACT_HASH_SALT: string;
   MANGO_LOCAL_HASH_AUTHORITY?: string;
@@ -373,8 +377,8 @@ export interface AppBindings {
   AI_PROVIDER_MODEL?: string;
   DESIGN_PROVIDER_API_KEY?: string;
   DESIGN_PROVIDER_ORIGIN?: string;
-  MAIL_PROVIDER_API_KEY: string;
-  MAIL_AUTH_FROM: string;
+  MAIL_PROVIDER_API_KEY?: string;
+  MAIL_AUTH_FROM?: string;
   MAIL_WEBHOOK_SECRET?: string;
   MAIL_WEBHOOK_ID?: string;
   SMS_PROVIDER_API_KEY?: string;

@@ -14,7 +14,7 @@ export type SenderInspection = {
 };
 export type SenderBinding = {
   deployment: string; from: string; mailbox: string; domain: string;
-  provider: 'resend' | 'sendgrid'; accountScope: string; credentialGeneration: string;
+  provider: 'rer' | 'resend' | 'sendgrid'; accountScope: string; credentialGeneration: string;
   transport: string; connectorId: string | null;
 };
 export type DomainRecord = { record: 'SPF' | 'DKIM'; name: string; type: 'TXT' | 'MX' | 'CNAME'; value: string; priority?: number };

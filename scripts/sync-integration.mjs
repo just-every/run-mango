@@ -10,7 +10,7 @@ export async function syncIntegration(root = process.cwd(), write = false) {
   const config = JSON.parse(await readFile(resolve(root, 'scripts/delivery/base/packaging.json'), 'utf8'));
   const spec = await deploymentSpec(root, config.artifact.specInputs);
   const { project, setup } = packagingConfig(config);
-  const selected = await loadSetupManifest(root, setup);
+  const selected = await loadSetupManifest(root, setup, spec.mail);
   const descriptor = { ...project, setup: { path: selected.path, sha256: selected.sha256 } };
   const outputs = [['management/integration/deployment-spec.json', spec], ['rer-project.json', descriptor]];
   for (const [name, value] of outputs) {

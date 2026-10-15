@@ -7,6 +7,7 @@ import { digest } from './identity';
 import { VerificationError, type SenderBinding } from './types';
 
 export async function inspectConfiguration(binding: SenderBinding, apiKey: string, now: number, transport: typeof fetch = fetch) {
+  if (binding.provider === 'rer') throw new VerificationError('managed-newsletter-verification-unavailable', 'unknown');
   const provider = await (binding.provider === 'sendgrid' ? readSendgridDomain : readResendDomain)(apiKey, binding.domain, transport);
   try {
   const dns = createDnsInspection(now, transport);

@@ -377,13 +377,14 @@
     "MANGO_RECONCILIATION_INTERVAL_MINUTES": "5",
     "MANGO_UNRESOLVED_OUTCOME_HOURS": "24",
     "MANGO_EMAIL_HANDOFFS_PER_MINUTE": "10",
-    "MANGO_DELIVERABILITY_WINDOW_DAYS": "30"
+    "MANGO_DELIVERABILITY_WINDOW_DAYS": "30",
+    "MAIL_FROM": "",
+    "MAIL_RELAY_URL": ""
   },
   "secretNames": [
     "SESSION_SECRET",
     "SETUP_TOKEN",
-    "CONTACT_HASH_SALT",
-    "MAIL_PROVIDER_API_KEY"
+    "CONTACT_HASH_SALT"
   ],
   "optionalSecretNames": [
     "MAIL_WEBHOOK_SECRET",
@@ -396,7 +397,9 @@
     "AI_PROVIDER_API_KEY",
     "DESIGN_PROVIDER_API_KEY",
     "SMS_PROVIDER_API_KEY",
-    "SMS_WEBHOOK_SECRET"
+    "SMS_WEBHOOK_SECRET",
+    "MAIL_API_KEY",
+    "MAIL_PROVIDER_API_KEY"
   ],
   "schedules": [
     "* * * * *"
@@ -423,5 +426,10 @@
       "path": "/signin",
       "originVariable": "MANGO_PUBLIC_BASE_URL"
     }
+  },
+  "mail": {
+    "providers": [
+      "rer"
+    ]
   }
 }

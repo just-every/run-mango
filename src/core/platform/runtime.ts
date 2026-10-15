@@ -15,6 +15,7 @@ import type {
 import { createMobileMessageAdapter } from './adapters/mobile-message';
 import { createOpenAiAdapter } from './adapters/openai';
 import { createResendAdapter } from './adapters/resend';
+import { createRerAdapter } from './adapters/rer';
 import { createShopifyAdapter } from './adapters/shopify';
 import { createTwelveUiAdapter } from './adapters/twelve-ui';
 import { createBlobStore } from './blobs';
@@ -85,7 +86,8 @@ export function createProductionPlatform(environment: AppBindings): Platform {
     receiver: config.mailboxReceiptUrl ? createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient) : undefined });
   const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'> = {
     ...designAdapter(config.modules.design),
-    mailer: config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
+    mailer: config.mailProvider === 'rer' ? createRerAdapter(config)
+      : config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
       apiKey: config.mailProviderApiKey,
       webhookSecret: config.mailWebhookSecret,
       webhookId: config.mailWebhookId,

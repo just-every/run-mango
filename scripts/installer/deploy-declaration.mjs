@@ -18,16 +18,25 @@ export function resolveDeclaration(root, purpose, env = {}) {
       if (present.some(Boolean) && !present.every(Boolean)) throw new Error(`Configure both ${pair.join(' and ')} or leave both unset.`);
     }
   }
+  const provider = env.MAIL_PROVIDER?.trim() || declaration.vars.MAIL_PROVIDER;
+  const managedMail = provider === 'rer';
+  const mailSources = managedMail ? ['MAIL_FROM', 'MAIL_API_KEY', 'MAIL_RELAY_URL'] : [
+    supplied({environment: 'MAIL_FROM'}) ? 'MAIL_FROM' : 'MAIL_AUTH_FROM',
+    supplied({environment: 'MAIL_API_KEY'}) ? 'MAIL_API_KEY' : 'MAIL_PROVIDER_API_KEY',
+  ];
+  const mailNames = new Set(['MAIL_FROM', 'MAIL_API_KEY', 'MAIL_RELAY_URL', 'MAIL_AUTH_FROM', 'MAIL_PROVIDER_API_KEY']);
   declaration.secrets = (declaration.secrets ?? [])
-    .filter(item => !item.optional || (purpose === 'deploy' && supplied(item)))
+    .filter(item => mailNames.has(item.binding) ? mailSources.includes(item.binding)
+      : !item.optional || (purpose === 'deploy' && supplied(item)))
     .map(({ optional: _optional, ...item }) => item);
-  // Native sign-in and newsletter mail use the same provider. Project Mango's
-  // owner inputs to Base's mail bindings as well, so rer validates that actual
-  // connection without asking the owner for a second sender or credential.
+  // Keep legacy direct-provider deployments working through Base's canonical mail preflight.
   for (const [binding, source] of [['MAIL_FROM', 'MAIL_AUTH_FROM'], ['MAIL_API_KEY', 'MAIL_PROVIDER_API_KEY']]) {
     const input = declaration.secrets.find(item => item.binding === source);
     if (input) declaration.secrets.push({ binding, environment: input.environment });
   }
+  declaration.vars.MAIL_PROVIDER = provider;
+  // Configure declares public mail inputs; owner deploy may instead bind the same values privately.
+  for (const {binding} of declaration.secrets) delete declaration.vars[binding];
   const directory = join(root, '.rer', 'declarations');
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   if (lstatSync(directory).isSymbolicLink()) throw new Error('Refusing a symbolic link at .rer/declarations.');

@@ -13,7 +13,7 @@
     {
       "id": "mail",
       "label": "Newsletter mail provider",
-      "help": "Use your own SendGrid or Resend account. Sender identity is completed in Mango after claiming the owner."
+      "help": "Managed hosting includes RER mail for sign-in. Free and Assisted hosting use your own SendGrid or Resend account. Newsletter sender identity is completed in Mango."
     }
   ],
   "fields": [
@@ -72,6 +72,10 @@
       "default": "sendgrid",
       "options": [
         {
+          "value": "rer",
+          "label": "RER managed mail"
+        },
+        {
           "value": "sendgrid",
           "label": "SendGrid"
         },
@@ -83,21 +87,55 @@
       "group": "mail"
     },
     {
-      "name": "MAIL_AUTH_FROM",
+      "name": "MAIL_FROM",
       "label": "Sign-in sender email",
       "kind": "email",
       "required": true,
-      "help": "An address verified by your mail provider, used for owner sign-in links.",
+      "help": "RER supplies this address for Managed hosting. Otherwise use an address verified by your mail provider.",
       "group": "mail"
     },
     {
-      "name": "MAIL_PROVIDER_API_KEY",
+      "name": "MAIL_RELAY_URL",
+      "label": "Managed mail relay URL",
+      "kind": "url",
+      "required": true,
+      "when": {
+        "field": "MAIL_PROVIDER",
+        "equals": "rer"
+      },
+      "group": "mail"
+    },
+    {
+      "name": "MAIL_API_KEY",
       "label": "Mail provider API key",
       "kind": "secret",
-      "required": true,
+      "required": false,
       "ownerVisible": true,
       "input": "entered",
-      "group": "mail"
+      "group": "mail",
+      "presentations": [
+        {
+          "when": {
+            "field": "MAIL_PROVIDER",
+            "equals": "rer"
+          },
+          "required": true
+        },
+        {
+          "when": {
+            "field": "MAIL_PROVIDER",
+            "equals": "sendgrid"
+          },
+          "required": true
+        },
+        {
+          "when": {
+            "field": "MAIL_PROVIDER",
+            "equals": "resend"
+          },
+          "required": true
+        }
+      ]
     },
     {
       "name": "MAIL_WEBHOOK_SECRET",

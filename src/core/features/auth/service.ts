@@ -97,11 +97,14 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       }
       if (nativeMagicLink && response) {
         const ok = response.status === 202;
+        const mailProblem = !ok && (await response.clone().json().catch(() => ({})) as {error?: string}).error === 'mail_unavailable';
         await response.body?.cancel();
         const { html, headers } = await renderMessagePage(ok
           ? { title: 'Mango sign-in', heading: 'Check your sign-in message', text: 'If this address has access, open your message and press Confirm.', mark: 'stamp',
               links: [...(local ? [{ href: '/__dev/outbox', label: 'Open the development outbox' }] : []), { href: '/signin', label: 'Return to sign-in' }] }
-          : { title: 'Mango sign-in', heading: 'Sign-in unavailable', text: 'Return to sign-in and try again, or check the operations guide.', links: [{ href: '/signin', label: 'Return to sign-in' }] });
+          : { title: 'Mango sign-in', heading: 'Sign-in unavailable', text: mailProblem
+              ? 'Email could not be sent. Check the mail connection in RER or the operations guide, then request a new sign-in link.'
+              : 'Return to sign-in and try again, or check the operations guide.', links: [{ href: '/signin', label: 'Return to sign-in' }] });
         const answer = new Headers(response.headers);
         for (const [name, value] of Object.entries(headers)) answer.set(name, value); // the page's own policy replaces the JSON answer's
         answer.set('Content-Type', 'text/html; charset=utf-8');

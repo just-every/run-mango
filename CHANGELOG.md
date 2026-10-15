@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Managed hosting includes mail without a SendGrid or Resend account or provider API key. Run Edit Run supplies `MAIL_PROVIDER=rer`, `MAIL_FROM`, `MAIL_RELAY_URL` and a private `MAIL_API_KEY`. Free and Assisted hosting retain own-provider setup with `MAIL_AUTH_FROM` and `MAIL_PROVIDER_API_KEY`. Upgrade the pinned rer CLI to 0.2.22.
+
 - **Approve and send with only Mango and a mail provider.** Settings now sends a one-time check from your From address to the address you sign in with; press **Yes, it reached my inbox** in that email and campaigns can be approved. Before, approval needed a receipt connector Mango did not ship and a command-line runner. Provider and DNS evidence (SPF, DKIM, DMARC and alignment) is still checked at every approval and send; the confirmation lasts 30 days or until those records change. The receipt connector and `scripts/sender-verification.mjs` remain as an option. Approval checks now explain sender problems in words instead of codes such as `observation-missing`, and **Approve & schedule** asks for confirmation first. No migration.
 - **A SendGrid signed Event Webhook is optional.** `MAIL_WEBHOOK_SECRET` and `MAIL_WEBHOOK_ID` are optional deploy inputs with SendGrid; without them sends show **Accepted**, and adding the webhook later (`rer deploy --set-secret MAIL_WEBHOOK_SECRET`) turns on **Delivered**, bounce and complaint reports. Resend still requires both.
 - **The first letter after a deploy leaves on time.** Approval queues each step due within 12 hours as a Queue message delayed to its exact time, so it no longer waits for Cloudflare to start a new Worker's Cron Trigger (one stranger's 22:20 letter left at 22:32).

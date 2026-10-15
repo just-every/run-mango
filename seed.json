@@ -455,15 +455,15 @@
     },
     {
       "name": "MAIL_PROVIDER_API_KEY",
-      "required": true,
+      "required": false,
       "secret": true,
-      "why": "Send operator magic links, test emails, and approved marketing email through mail.sender.v1."
+      "why": "Legacy direct-provider input; existing Free and Assisted installations may keep it when the canonical mail field is absent."
     },
     {
       "name": "MAIL_AUTH_FROM",
-      "required": true,
+      "required": false,
       "secret": false,
-      "why": "Verified transactional and marketing email sender used in exact approved revisions."
+      "why": "Legacy direct-provider input; existing Free and Assisted installations may keep it when the canonical mail field is absent."
     },
     {
       "name": "MAIL_WEBHOOK_SECRET",
@@ -588,7 +588,7 @@
       "name": "MAIL_PROVIDER",
       "required": true,
       "secret": false,
-      "why": "Explicit resend or sendgrid for production; local installation selects Base development mail without sending email."
+      "why": "Explicit rer for Managed transactional mail, or resend/sendgrid for own-provider mail. Local installation keeps the development outbox."
     },
     {
       "name": "IDENTITY_PROVIDER",
@@ -609,6 +609,27 @@
       "secret": true,
       "why": "Server-only secret sent solely to Cloudflare Siteverify with signup token and visitor IP.",
       "requiredWhen": "TURNSTILE_SITE_KEY is configured"
+    },
+    {
+      "name": "MAIL_API_KEY",
+      "required": false,
+      "secret": true,
+      "why": "Private mail credential. RER issues it for Managed; own-provider plans supply their provider key.",
+      "requiredWhen": "MAIL_PROVIDER is rer, resend or sendgrid (direct-provider legacy MAIL_PROVIDER_API_KEY is also supported)"
+    },
+    {
+      "name": "MAIL_FROM",
+      "required": false,
+      "secret": false,
+      "why": "Transactional sender. RER assigns it for Managed; direct providers use a verified address.",
+      "requiredWhen": "A hosted provider is selected (direct-provider legacy MAIL_AUTH_FROM is also supported)"
+    },
+    {
+      "name": "MAIL_RELAY_URL",
+      "required": false,
+      "secret": false,
+      "why": "HTTPS Managed mail relay endpoint assigned by RER.",
+      "requiredWhen": "MAIL_PROVIDER is rer"
     }
   ],
   "deploy": {

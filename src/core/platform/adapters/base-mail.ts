@@ -9,8 +9,19 @@ import type { AppConfig } from '@/core/shared/platform';
 import type { Database } from '@/core/platform/db/client';
 import { prepareAuthMailCost } from '@/core/features/auth/mail-cost';
 
-export function createBaseMailSender(config: Pick<AppConfig, 'mailProvider' | 'mailProviderApiKey' | 'emailHandoffsPerMinute' | 'deliveryPolicies'>, database: Pick<Database, '$client'>): MailSender {
-  const sender: MailSender = createMailSender({ provider: config.mailProvider, mode: 'production', apiKey: config.mailProviderApiKey });
+export function createBaseMailSender(config: Pick<AppConfig, 'mailProvider' | 'mailProviderApiKey' | 'mailRelayUrl' | 'emailHandoffsPerMinute' | 'deliveryPolicies'>, database: Pick<Database, '$client'>): MailSender {
+  let retryAfterSeconds = 0;
+  const sender = createMailSender({ provider: config.mailProvider, mode: 'production', apiKey: config.mailProviderApiKey,
+    ...(config.mailProvider === 'rer' ? { relayUrl: config.mailRelayUrl } : {}) }, {
+    fetch: async (url: string, init: RequestInit) => {
+      const response = await fetch(url, init);
+      if (response.status === 429) {
+        const seconds = Number(response.headers.get('retry-after'));
+        if (Number.isFinite(seconds) && seconds > 0) retryAfterSeconds = seconds;
+      }
+      return response;
+    },
+  });
   const provider = config.mailProvider;
   if (!provider) throw new Error('Mail provider is not configured.');
   return { async send(message) {
@@ -23,11 +34,19 @@ export function createBaseMailSender(config: Pick<AppConfig, 'mailProvider' | 'm
     await reserveTransport(database,`${provider}:${policy?.account??'installation'}`,Math.min(config.emailHandoffsPerMinute,policy?.providerPerMinute??config.emailHandoffsPerMinute));
     const settle = await prepareAuthMailCost(database, provider, message.deliveryId);
     let result: Awaited<ReturnType<MailSender['send']>>;
-    try { result = await sender.send(message); }
+    // The Managed relay owns the envelope; Base auth's Auto-Submitted header is not a relay feature.
+    const { deliveryId, from, to, subject, text, html } = message;
+    try { result = await sender.send(provider === 'rer'
+      ? { deliveryId, from, to, subject, text, ...(html ? { html } : {}) } : message); }
     catch (error) { await settle('unknown').catch(() => {}); throw error; }
     // Keep the provider receipt unchanged if enrichment fails: the durable prepared fact remains visible.
     await settle(result.status === 'accepted' ? 'accepted'
       : result.status === 'rejected' || result.status === 'rate_limited' ? 'rejected' : 'unknown').catch(() => {});
+    if (provider === 'rer' && result.status === 'rate_limited' && retryAfterSeconds) {
+      // Native auth revokes the refused link. A fresh request may retry after the provider's cooldown.
+      await database.$client.prepare('UPDATE provider_pacing SET next_at=MAX(next_at,?) WHERE scope=?')
+        .bind(Date.now() + retryAfterSeconds * 1000, `${provider}:${policy?.account ?? 'installation'}`).run();
+    }
     return result;
   } };
 }

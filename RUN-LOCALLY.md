@@ -53,7 +53,7 @@ failure; check the command result and wait for `RER_READY` when starting dev.
 ## Install for a real owner
 
 rer itself needs Node 22 or later already installed (nodejs.org, `brew install node` or nvm).
-Pinned rer 0.2.20 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
+Pinned rer 0.2.22 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
 checkout; neither needs a separate manual install. To install with a real owner
 mailbox, run the verbs yourself from the runnable
 edition's root: install locked dependencies, prepare its local owner, then start
@@ -152,7 +152,7 @@ real dev session, and the key is removed from the address bar and kept only as a
 host-only cookie. Treat that line as a credential and open it only on this
 computer. A dev-only badge switches between the owner, signed out and the
 seed's personas (`admin@dev.localhost` and so on). `dev --as PERSONA` starts as
-another persona or `signed-out`. In rer 0.2.20, the legacy `--login` flag
+another persona or `signed-out`. In rer 0.2.22, the legacy `--login` flag
 uses the same automatic sign-in; it does not switch to email-link sign-in or
 open the outbox. `RER_OPEN` enters through `/__dev/key`. The `rer outbox`
 command is retired. Mango still retains its key-protected `/__dev/outbox`
@@ -228,7 +228,7 @@ then commit locally with `git add src/ext/config.ts` and
 needed; deploy refuses uncommitted tracked changes.
 `rer deploy --dry-run` validates and builds locally without a
 provider request. The default environment is `production`; select another with
-`--environment NAME`. Pinned rer 0.2.20 claims the first hosted owner after the
+`--environment NAME`. Pinned rer 0.2.22 claims the first hosted owner after the
 health check and removes the one-time setup token. Repeated deployments retain
 the existing owner. Preserve your private inputs, receipt, backups and local
 customizations when updating: run `git pull --ff-only`, then

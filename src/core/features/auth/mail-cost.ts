@@ -3,7 +3,7 @@ import { sha256 } from '@/core/platform/crypto';
 import { recordExternalCost } from '@/core/features/insights/cost-recording';
 
 /** Account only for native hosted mail. Delivery IDs are hashed; no address, link or message enters the ledger. */
-export async function prepareAuthMailCost(database: Pick<Database, '$client'>, provider: 'resend' | 'sendgrid', deliveryId: string) {
+export async function prepareAuthMailCost(database: Pick<Database, '$client'>, provider: 'rer' | 'resend' | 'sendgrid', deliveryId: string) {
   const now = new Date(), prefix = `auth-mail:${await sha256(`${provider}:${deliveryId}`)}:`;
   let key = `${prefix}${crypto.randomUUID()}`;
   if (provider === 'resend') {
