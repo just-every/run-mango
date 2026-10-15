@@ -210,14 +210,16 @@ test('the published embed enforces persisted exact origins and gates challenge t
   await expect(response).toBeOK();
   const signup = await response.json();
   expect(signup.turnstileSiteKey).toBe('fixture-public-site');
+  const signupPaths=['/subscribe','/subscribe/','/Subscribe','/%73ubscribe','/%53ubscribe/'];
+  let embed=signup.embed;
   const host = createServer((_request, response) => {
     response.setHeader('Content-Type','text/html');
-    response.end(`<!doctype html><html lang="en"><head><title>Newsletter embed</title></head><body><main>${signup.embed}</main></body></html>`);
+    response.end(`<!doctype html><html lang="en"><head><title>Newsletter embed</title></head><body><main>${embed}</main></body></html>`);
   });
   let allowedOrigin='';
   const hostile = createServer((incoming, response) => {
     response.setHeader('Content-Type','text/html');
-    response.end(incoming.url==='/nested' ? `<iframe title="Allowed wrapper" src="${allowedOrigin}"></iframe>` : signup.embed);
+    response.end(incoming.url==='/nested' ? `<iframe title="Allowed wrapper" src="${allowedOrigin}"></iframe>` : embed);
   });
   const anonymous = await browser.newContext();
   const visitor = await anonymous.newPage();
@@ -240,13 +242,28 @@ test('the published embed enforces persisted exact origins and gates challenge t
     for(const origin of ['*','https://*.example.com','https://example.com/path','https://owner@example.com','javascript:alert(1)']) {
       expect((await request.put('/api/audience/signup',{headers,data:{...settings,embedOrigins:[origin]}})).status()).toBe(400);
     }
-    await denied(allowedOrigin);
-    // Empty policy also denies a same-origin iframe; top-level is still usable.
-    await visitor.goto(appOrigin+'/subscribe');
-    await expect(visitor.getByRole('heading',{name:'Get the newsletter'})).toBeVisible();
-    const sameOriginDenied=visitor.waitForEvent('console',{predicate:message=>message.text().includes('frame-ancestors')});
-    await visitor.evaluate(()=>{const frame=document.createElement('iframe');frame.src='/subscribe';document.body.append(frame);});
-    await sameOriginDenied;
+    const documents=[];
+    for(const path of signupPaths) {
+      const response=await visitor.goto(appOrigin+path+'?from=embed');
+      await expect(visitor.getByRole('heading',{name:'Get the newsletter'})).toBeVisible();
+      documents.push({requested:path,status:response!.status(),finalPath:new URL(visitor.url()).pathname,query:new URL(visitor.url()).search,csp:response!.headers()['content-security-policy']});
+    }
+    await writeFile(testInfo.outputPath('signup-alias-documents.json'),JSON.stringify(documents,null,2));
+    for(const document of documents) {
+      expect(document.status).toBe(200);expect(document.finalPath).toBe('/subscribe');expect(document.query).toBe('?from=embed');
+      expect(document.csp).toBe(documents[0].csp);
+      expect(document.csp).toContain("frame-ancestors 'none'");expect(document.csp).toContain('https://challenges.cloudflare.com');
+    }
+    for(const path of signupPaths) {
+      embed=signup.embed.replace(appOrigin+'/subscribe',appOrigin+path);
+      await denied(allowedOrigin);
+      // Empty policy also denies same-origin aliases; top-level stays usable.
+      await visitor.goto(appOrigin+path);
+      await expect(visitor.getByRole('heading',{name:'Get the newsletter'})).toBeVisible();
+      const sameOriginDenied=visitor.waitForEvent('console',{predicate:message=>message.text().includes('frame-ancestors')});
+      await visitor.evaluate(path=>{const frame=document.createElement('iframe');frame.src=path;document.body.append(frame);},path);
+      await sameOriginDenied;
+    }
     await page.goto('/app/audience');
     await page.getByLabel('Allowed embed origins').fill(allowedOrigin);
     await page.getByRole('button',{name:'Save signup settings'}).click();
@@ -254,21 +271,25 @@ test('the published embed enforces persisted exact origins and gates challenge t
     await page.reload();
     await expect(page.getByLabel('Allowed embed origins')).toHaveValue(allowedOrigin);
     expect((await (await request.get('/api/audience/signup',{headers})).json()).embedOrigins).toEqual([allowedOrigin]);
-    await denied(hostileOrigin);
-    await denied(hostileOrigin+'/nested');
-    await visitor.goto(allowedOrigin);
-    const frame=visitor.frameLocator('iframe[title="Subscribe to the newsletter"]');
-    await untouchedForm(visitor,frame,external);
-    for(const width of [1440,390]) {
-      await visitor.setViewportSize({width,height:width===390?844:1000});
-      await expect(frame.getByRole('checkbox',{name:signup.consentText})).toBeVisible();
-      expect(await frame.locator('html').evaluate(node=>node.scrollWidth<=window.innerWidth)).toBe(true);
+    for(const path of signupPaths) {
+      embed=signup.embed.replace(appOrigin+'/subscribe',appOrigin+path);
+      external.length=0;
+      await denied(hostileOrigin);
+      await denied(hostileOrigin+'/nested');
+      await visitor.goto(allowedOrigin);
+      const frame=visitor.frameLocator('iframe[title="Subscribe to the newsletter"]');
+      await untouchedForm(visitor,frame,external);
+      for(const width of [1440,390]) {
+        await visitor.setViewportSize({width,height:width===390?844:1000});
+        await expect(frame.getByRole('checkbox',{name:signup.consentText})).toBeVisible();
+        expect(await frame.locator('html').evaluate(node=>node.scrollWidth<=window.innerWidth)).toBe(true);
+      }
+      // Playwright keyboard input is trusted; dispatchEvent above is not.
+      await frame.getByLabel('Email address').focus();
+      await visitor.keyboard.press('a');
+      await expect(frame.getByRole('button',{name:'Complete verification'})).toBeVisible();
+      expect(external).toHaveLength(1);
     }
-    // Playwright's keyboard input is trusted; dispatchEvent above is not.
-    await frame.getByLabel('Email address').focus();
-    await visitor.keyboard.press('a');
-    await expect(frame.getByRole('button',{name:'Complete verification'})).toBeVisible();
-    expect(external).toHaveLength(1);
     await visitor.screenshot({path:testInfo.outputPath('allowed-embed-mobile.png')});
     await writeFile(testInfo.outputPath('signup-privacy.json'),JSON.stringify({emptyDenied:true,sameOriginUnlistedDenied:true,hostileDenied:true,nestedHostileDenied:true,allowedOrigin,externalAfterTrustedInteraction:external},null,2));
     await page.getByLabel('Allowed embed origins').fill('');
@@ -319,7 +340,11 @@ test('public form renders the configured disclosure and acknowledges only after 
   await page.getByLabel('Email address').click();
   await expect(page.getByRole('button',{name:'Complete verification'})).toBeVisible();
   expect(external).toHaveLength(1);
+  await page.getByLabel('Email address').fill(`ui-subscribe-${Date.now()}@example.test`);
+  await page.getByRole('checkbox', { name: info.consentText }).check();
   await page.getByRole('button',{name:'Complete verification'}).click();
+  await expect(page.getByRole('button',{name:'Complete verification'})).toBeDisabled();
+  await expect(page.getByRole('button',{name:'Request confirmation'})).toBeEnabled();
   let release!: () => void, arrived!: () => void;
   const held = new Promise<void>(resolve => { release = resolve; });
   const pending = new Promise<void>(resolve => { arrived = resolve; });
@@ -331,8 +356,6 @@ test('public form renders the configured disclosure and acknowledges only after 
   }, { times: 1 });
   const accepted = page.waitForResponse((result) => result.request().method() === 'POST' && new URL(result.url()).pathname === '/subscribe');
   try {
-    await page.getByLabel('Email address').fill(`ui-subscribe-${Date.now()}@example.test`);
-    await page.getByRole('checkbox', { name: info.consentText }).check();
     // This uses the real consent/storage path after the real server verifies
     // the network-edge challenge reply; no honeypot acknowledgement.
     await page.getByRole('button', { name: 'Request confirmation' }).click();

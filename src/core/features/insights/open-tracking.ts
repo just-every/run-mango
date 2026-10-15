@@ -1,6 +1,12 @@
 import { Hono } from 'hono';
 import type { Platform } from '@/core/shared/platform';
 import type { AppEnvironment } from '@/core/app/app';
+import { senderWriteAuthority, senderWriteGuard, SenderAuthorityChanged } from '@/core/features/settings/sender-authority';
+import { reserveSignupAllowance } from '@/core/features/audience/signup-security';
+import { hmacSha256Hex } from '@/core/platform/crypto';
+
+/** seed.json limits.publicRequestsPerMinutePerIp, shared across every pixel token. */
+const publicRequestsPerMinutePerIp = 60;
 
 export const openEstimateLabel = 'Privacy-sensitive open estimates';
 export async function openTrackingSettings(db:D1Database) {
@@ -15,17 +21,30 @@ export async function openEstimates(db:D1Database,campaignId?:string) {
   return {enabled:settings.enabled,estimatedRecipients:Number(row?.count??0),label:openEstimateLabel,
     note:'Image loads can come from proxies and automation. These estimates do not establish that anyone read a message and never affect clicks, conversions, delivery, confidence, deliverability or attribution.'};
 }
-export function createOpenTrackingSettingsRoutes(db:D1Database) {
+export function createOpenTrackingSettingsRoutes(platform:Platform) {
+  const db=platform.database.$client;
   const routes=new Hono<AppEnvironment>();
   routes.get('/insights/open-tracking',async c=>c.json(await openEstimates(db)));
   routes.put('/insights/open-tracking',async c=>{
     const body=await c.req.json().catch(()=>null);
     if(!body||typeof body.enabled!=='boolean'||Object.keys(body).some(key=>key!=='enabled'))return c.json({error:'invalid_open_tracking_setting'},400);
-    // Each change revokes all previously issued pixels, even after re-enabling.
-    await db.prepare(`INSERT INTO open_tracking_settings (id,enabled,generation,updated_at,operator_id) VALUES (1,?,1,?,?)
-      ON CONFLICT(id) DO UPDATE SET enabled=excluded.enabled,generation=open_tracking_settings.generation+1,
-      updated_at=excluded.updated_at,operator_id=excluded.operator_id WHERE open_tracking_settings.enabled<>excluded.enabled`)
-      .bind(Number(body.enabled),Date.now(),c.get('operator').id).run();
+    try {
+      const authority=await senderWriteAuthority(platform,c.req.raw,c.get('operator').id),now=Date.now();
+      const guard=[authority.sessionId,authority.operatorId,authority.version,now];
+      // The current native authority is fenced in the same transaction as the
+      // preference. Each change revokes old pixels, even after re-enabling.
+      const result=await db.batch([
+        db.prepare(`INSERT INTO open_tracking_settings (id,enabled,generation,updated_at,operator_id)
+          SELECT 1,?,1,?,? WHERE ${senderWriteGuard}
+          ON CONFLICT(id) DO UPDATE SET enabled=excluded.enabled,generation=open_tracking_settings.generation+1,
+          updated_at=excluded.updated_at,operator_id=excluded.operator_id WHERE open_tracking_settings.enabled<>excluded.enabled`)
+          .bind(Number(body.enabled),now,authority.operatorId,...guard),
+        db.prepare(`SELECT 1 AS authorized WHERE ${senderWriteGuard}`).bind(...guard),
+      ]);
+      if(!result[1].results.length)throw new SenderAuthorityChanged();
+    } catch(error) {
+      return c.json({error:error instanceof SenderAuthorityChanged?'authority_changed':'open_tracking_save_failed'},error instanceof SenderAuthorityChanged?403:500);
+    }
     return c.json(await openEstimates(db));
   });
   return routes;
@@ -49,6 +68,14 @@ export async function removeDisabledPixel(platform:Platform,html:string|undefine
 export function createOpenPixelRoutes(platform:Platform) {
   const routes=new Hono();
   routes.get('/o/:token',async c=>{
+    c.header('Cache-Control','no-store, private');c.header('Referrer-Policy','no-referrer');
+    // Cloudflare supplies the client IP. Only an unlinked keyed digest and the
+    // current minute's counter enter rate-limit storage; no address enters facts.
+    const key=await hmacSha256Hex(platform.config.contactHashSalt,`open-rate\0${c.req.header('CF-Connecting-IP')??''}`);
+    if(!await reserveSignupAllowance(platform.database.$client,`open:${key}`,'minute',publicRequestsPerMinutePerIp)) {
+      c.header('Retry-After','60');
+      return c.json({error:'rate_limited'},429);
+    }
     const token=c.req.param('token'),now=new Date();
     try {await platform.publicTokens.verify(token,'open-estimate',now);} catch {return c.body(null,404);}
     // The signed bearer is the authentication. One estimate per recipient-step,
@@ -59,7 +86,6 @@ export function createOpenPixelRoutes(platform:Platform) {
       WHERE t.token_digest=? AND t.expires_at>? AND s.enabled=1 AND s.generation=t.generation
         AND r.handoff_started_at IS NOT NULL
       ON CONFLICT(recipient_step_id) DO NOTHING`).bind(now.getTime(),await platform.publicTokens.digest(token),now.getTime()).run();
-    c.header('Cache-Control','no-store, private');c.header('Referrer-Policy','no-referrer');
     c.header('Content-Type','image/gif');c.header('X-Content-Type-Options','nosniff');
     return c.body(Uint8Array.from(atob('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'),x=>x.charCodeAt(0)));
   });

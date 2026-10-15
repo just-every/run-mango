@@ -89,6 +89,16 @@
       "binding": "MANGO_TEST_EMAIL_ALLOWLIST",
       "environment": "MANGO_TEST_EMAIL_ALLOWLIST",
       "optional": true
+    },
+    {
+      "binding": "TURNSTILE_SITE_KEY",
+      "environment": "TURNSTILE_SITE_KEY",
+      "optional": true
+    },
+    {
+      "binding": "TURNSTILE_SECRET_KEY",
+      "environment": "TURNSTILE_SECRET_KEY",
+      "optional": true
     }
   ],
   "vars": {

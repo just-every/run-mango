@@ -31,6 +31,13 @@ export async function dispatchDocuments(
   const lobby = await lobbyResponse(request, claim, identity, claimed);
   if (lobby) return lobby;
   const path = url.pathname;
+  // Start decodes URI letters and accepts case/trailing-slash aliases. Only a
+  // complete signup match is canonicalized; encoded separators stay encoded.
+  let signupPath=path;
+  try { signupPath=decodeURI(path); } catch { /* Malformed encodings are not a signup alias. */ }
+  if (path !== '/subscribe' && /^\/+subscribe\/*$/i.test(signupPath) && ['GET','HEAD'].includes(request.method)) {
+    return new Response(null,{status:308,headers:{Location:`/subscribe${url.search}`,'Cache-Control':'no-store'}});
+  }
   if (path.startsWith('/__dev') && platform.config.local !== true) return Response.json({error: 'not_found'}, {status: 404});
   if (path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
     return hono.fetch(request, environment, executionContext);

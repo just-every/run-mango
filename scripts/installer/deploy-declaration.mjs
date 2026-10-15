@@ -13,7 +13,7 @@ export function resolveDeclaration(root, purpose, env = {}) {
   const declaration = JSON.parse(readFileSync(join(root, 'deploy.json'), 'utf8'));
   const supplied = item => typeof env[item.environment] === 'string' && env[item.environment].trim() !== '';
   if (purpose === 'deploy') {
-    for (const pair of [['DESIGN_PROVIDER_API_KEY', 'DESIGN_PROVIDER_ORIGIN'], ['MAILBOX_RECEIPT_URL', 'MAILBOX_RECEIPT_RECIPIENT']]) {
+    for (const pair of [['DESIGN_PROVIDER_API_KEY', 'DESIGN_PROVIDER_ORIGIN'], ['MAILBOX_RECEIPT_URL', 'MAILBOX_RECEIPT_RECIPIENT'], ['TURNSTILE_SITE_KEY', 'TURNSTILE_SECRET_KEY']]) {
       const present = pair.map(environment => supplied({ environment }));
       if (present.some(Boolean) && !present.every(Boolean)) throw new Error(`Configure both ${pair.join(' and ')} or leave both unset.`);
     }

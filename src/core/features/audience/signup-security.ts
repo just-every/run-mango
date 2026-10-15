@@ -39,8 +39,8 @@ export async function takeSignupAllowance(db: D1Database, key: string, window: n
   return Boolean(await db.prepare(allowanceSql('?')).bind(key, window, limit).first());
 }
 
-export async function reserveSignupAllowance(db: D1Database, key: string, period: 'hour' | 'day', limit: number) {
-  const seconds = period === 'hour' ? 3600 : 86400;
+export async function reserveSignupAllowance(db: D1Database, key: string, period: 'minute' | 'hour' | 'day', limit: number) {
+  const seconds = period === 'minute' ? 60 : period === 'hour' ? 3600 : 86400;
   // SQLite guarantees every 'now' in one step has the same value, including RETURNING.
   return db.prepare(allowanceSql(`CAST(strftime('%s','now') AS INTEGER)/${seconds}`))
     .bind(key, limit).first<{count: number; window: number; reservedAt: number}>();

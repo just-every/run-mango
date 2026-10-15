@@ -69,9 +69,9 @@ function validOrigin(
   platform: Platform,
   trustedLocal: boolean,
 ) {
-  if (trustedLocal) return true;
   const origin = context.req.header('Origin');
-  return origin === platform.config.publicBaseUrl.origin;
+  return origin === platform.config.publicBaseUrl.origin
+    || (trustedLocal && (origin === undefined || origin === new URL(context.req.url).origin));
 }
 
 function audienceDependencies(
@@ -313,7 +313,7 @@ export function createApp(
   app.route('/api', createDesignGenerationRoutes(environment.DB, platform));
   app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin));
   app.route('/api', createInsightsRoutes(insightsService));
-  app.route('/api', createOpenTrackingSettingsRoutes(platform.database.$client));
+  app.route('/api', createOpenTrackingSettingsRoutes(platform));
 
   app.all('*', (context) => context.json({ error: 'not_found' }, 404));
 
