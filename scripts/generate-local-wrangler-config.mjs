@@ -1,2 +1,3 @@
-import { copyFile } from 'node:fs/promises';
-await copyFile('deploy/wrangler.local.template.toml', 'wrangler.toml');
+import { readFile } from 'node:fs/promises';
+import { writeGeneratedConfig } from './installer/write-generated-config.mjs';
+await writeGeneratedConfig('wrangler.toml', await readFile('deploy/wrangler.local.template.toml', 'utf8'));

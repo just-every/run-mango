@@ -1,5 +1,6 @@
 import { variableNames, selectedEnvironment } from './runtime-environment.mjs';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
+import { writeGeneratedConfig } from './installer/write-generated-config.mjs';
 
 import { deploymentNames } from './deployment/target.mjs';
 
@@ -17,4 +18,4 @@ const generated = template
   .replaceAll('__MANGO_QUEUE_NAME__', metadata.queueName);
 
 const variables = Object.entries(selectedEnvironment(variableNames)).map(([name, value]) => `${name} = ${JSON.stringify(value)}`).join('\n');
-await writeFile('wrangler.toml', `${generated}\n[vars]\n${variables}\n`);
+await writeGeneratedConfig('wrangler.toml', `${generated}\n[vars]\n${variables}\n`);
