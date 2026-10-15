@@ -19,8 +19,9 @@ export async function seedDemoHistory(platform: Platform, ownerId: string, now: 
   // Give the existing bootstrap drafts the demo business identity and a native contact audience.
   for (const campaign of sampleData.campaigns) {
     await db.prepare(`UPDATE campaign_revisions SET sender_name=?,from_email=?,reply_to_email=?,physical_address=?,
-      inclusion_rule_json=?,source_types_json='[]',audience_rule='Newsletter subscribers',preheader='News and stories from Mango Sample Store.' WHERE id=?`)
+      inclusion_rule_json=?,source_types_json='[]',message_category='newsletter',audience_rule='Newsletter subscribers',preheader='News and stories from Mango Sample Store.' WHERE id=?`)
       .bind(identity.displayName, identity.fromEmail, identity.replyToEmail, identity.physicalAddress, rule, campaign.revision.id).run();
+    await db.prepare('DELETE FROM campaign_checks WHERE revision_id=?').bind(campaign.revision.id).run();
   }
   const original = sampleData.campaigns[0];
   const history = { ...original, id: 'demo-sent-newsletter', proposalId: undefined, state: 'draft' as const,
