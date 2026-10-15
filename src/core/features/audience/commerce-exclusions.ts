@@ -2,7 +2,7 @@ import type {createStoreService} from '@/core/features/store/service';
 import {shopMoney} from '@/core/features/insights/commerce-money';
 const dayMs=86_400_000;
 type RecordRow=Awaited<ReturnType<ReturnType<typeof createStoreService>['sourceRecords']>>[number];
-/** Read canonical financial and return state. A return request is not a refund. */
+/** Read canonical financial and return state. A return request is not a refund; only a refund whose money is still in flight (PENDING) is unresolved. */
 export function commerceExclusions(records:RecordRow[],productIds:string[],now:Date) {
   const reasons=new Set<string>();
   if(!productIds.length) return reasons;
@@ -24,8 +24,8 @@ export function commerceExclusions(records:RecordRow[],productIds:string[],now:D
         return !['CLOSED','CANCELED','CANCELLED','DECLINED'].includes(String(returned.status)) &&
           (!returned.lines?.length || returned.lines.some(line=>productIds.includes(line.line?.productId??'')));
       })) reasons.add('unresolved-return');
-      if(Array.isArray(p.refunds)&&p.refunds.some(value=>{const refund=value as {financialState?:unknown;lines?:Array<{line?:{productId?:string}}>};return refund.financialState!=='SUCCESS'&&(!refund.lines?.length||refund.lines.some(line=>productIds.includes(line.line?.productId??'')));})) reasons.add('unresolved-refund');
-    } else if(p.financialState!=='SUCCESS') reasons.add('unresolved-refund');
+      if(Array.isArray(p.refunds)&&p.refunds.some(value=>{const refund=value as {financialState?:unknown;lines?:Array<{line?:{productId?:string}}>};return refund.financialState==='PENDING'&&(!refund.lines?.length||refund.lines.some(line=>productIds.includes(line.line?.productId??'')));})) reasons.add('unresolved-refund');
+    } else if(p.financialState==='PENDING') reasons.add('unresolved-refund');
   }
   return reasons;
 }
