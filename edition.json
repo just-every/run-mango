@@ -673,6 +673,54 @@
           }
         ]
       }
+    },
+    {
+      "id": "runeditrun/demo",
+      "role": "module",
+      "source": {
+        "kind": "local",
+        "paths": [
+          "src/modules/demo"
+        ],
+        "origin": {
+          "repository": "https://github.com/runeditrun/base.git",
+          "revision": "fc0e1041efa55771142bbb57c4ab4743147e264d",
+          "paths": [
+            "modules/demo/index.mjs",
+            "modules/demo/index.d.mts",
+            "modules/demo/vite.mjs",
+            "modules/demo/vite.d.mts",
+            "modules/demo/sockets.mjs",
+            "modules/operator-auth/csp.mjs"
+          ]
+        },
+        "mappings": [
+          {
+            "path": "src/modules/demo/index.mjs",
+            "originPath": "modules/demo/index.mjs"
+          },
+          {
+            "path": "src/modules/demo/index.d.mts",
+            "originPath": "modules/demo/index.d.mts"
+          },
+          {
+            "path": "src/modules/demo/vite.mjs",
+            "originPath": "modules/demo/vite.mjs"
+          },
+          {
+            "path": "src/modules/demo/vite.d.mts",
+            "originPath": "modules/demo/vite.d.mts"
+          },
+          {
+            "path": "src/modules/demo/sockets.mjs",
+            "originPath": "modules/demo/sockets.mjs"
+          },
+          {
+            "path": "src/modules/demo/csp.mjs",
+            "originPath": "modules/operator-auth/csp.mjs"
+          }
+        ]
+      }
     }
   ]
 }
