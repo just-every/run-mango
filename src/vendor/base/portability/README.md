@@ -32,8 +32,46 @@ schema at construction. Apply the bookkeeping migration first. Policy fields:
 | `extraPayloads` | Named `{produce,consume}` pairs. Producers return bytes or a byte stream. Consumers receive a verified byte stream and descriptor before D1 commit. |
 | `partBytes` | Maximum part size, default 16 MiB, configurable from 1 KiB to 16 MiB. |
 
+Archives always skip Base's own tables: SQLite and Cloudflare internals, the
+migration ledgers (`d1_migrations`, `_rer_deploy_migrations`,
+`_rer_portability_migrations`), portability bookkeeping, development outboxes,
+operator identity and dependency secrets. `excludedTables` lists them (exact
+names, or prefixes ending in `%`), and `excludedTable(name, policy)` says whether
+an archive under that policy skips a table. A seed's own table inventory, which
+refuses tables it does not know, uses the same predicate, so it does not refuse a
+table Base created and never archives.
+
+For native local CLI transfers, declare executable policy through
+`localPortability({database, buckets, policyModule})`. `policyModule` is a
+seed-root-relative path or a `file:` URL (including `new URL('./archive-policy.mjs',
+import.meta.url)` in the seed adapter). Its real path must be a file inside the
+seed root, and its **default export** must be the policy object:
+
+```js
+const allowedDomains = new Set(['example.org']);
+export default {
+  product: 'my-product',
+  validateStaged: async ({read}) =>
+    (await read('contacts')).every(row => allowedDomains.has(row.domain)),
+};
+```
+
+The runner validates the module/export before applying data migrations. The
+native transfer worker imports that same seed-owned entry point, preserving
+functions and module-local closures. Modules should have no top-level effects:
+preflight and transfer each load them in a separate process. Archive metadata
+never selects executable policy. Invalid paths, missing/invalid default exports,
+and declaring both `policy` and `policyModule` fail closed. Serializable object
+`policy` declarations remain supported; inline functions (including nested
+schema-upgrade and payload callbacks) are refused instead of being dropped by
+JSON transport. Container transfer currently refuses `policyModule` explicitly;
+it continues to accept serializable object policies. Malformed primary or later
+journal JSON is reported once as `archive_json` with exit 2, before local data
+migrations, without echoing archive content or parser diagnostics.
+
 Default exclusions are `sqlite_%`, `_cf_%`, `d1_migrations`,
-`rer_portability_%`, `rer_mail_development_outbox`, `oa_%` and `oc_%`.
+`rer_portability_%`, `rer_mail_development_outbox`, `oa_%`, `oc_%`,
+`rer_dependency_keys`, `rer_dependency_pending` and `rer_dependency_codes`.
 When a policy includes operator-auth tables, local dev identity still never
 travels, and no policy option changes that: export drops `oa_sessions` rows of
 kind `dev`, every credential recorded in `oa_dev_credentials` (and that table's
@@ -41,11 +79,21 @@ rows), and marks dev personas (`<as>@dev.localhost` operators) inactive with a
 new authority version; import refuses with 409 (`dev_data`, exit 4 in the CLI)
 an archive holding a `dev` session or `oa_dev_credentials` rows. Only tables with
 operator-auth's own columns are touched.
-The destination completes its own bootstrap or claim. Other tables are discovered
-automatically. Exclusion rules follow SQLite's ASCII identifier case matching.
+A policy may preserve people, their external identity bindings and the original
+owner claim. Such a destination keeps that claim and recovers access through
+ordinary native sign-in; setup does not grant another owner. Other tables are
+discovered automatically. Exclusion rules follow SQLite's ASCII identifier case matching.
 Unlisted virtual tables, hidden virtual-table columns and foreign keys into
 excluded tables fail by name. The product must explicitly regenerate derived
 data. A schema upgrade may change columns but cannot silently omit tables.
+
+Provider link keys and transient provider sessions never travel. Export marks
+retained dependency links as needing re-link and turns provider sign-in and
+first-setup enablement off. When `oa_auth_settings` is included, each export
+advances its authority generation; importing then exporting therefore changes
+that generation and the content hash, while retained domain and identity rows
+remain equal. Re-linking keeps the installation sector and person bindings;
+restored provider sign-in remains off until the owner explicitly enables it.
 
 SQLite VIRTUAL and STORED generated columns retain their visible schema metadata
 and original table SQL. Only writable base cells appear in archived rows or
@@ -57,8 +105,9 @@ attachment references and `validateStaged` reads see recomputed values. Nullable
 secret base cells become NULL before generated snapshots are normalized. A
 generated column cannot itself be redacted: exclude the table or change the
 product schema/policy if its computed value must be secret. Ordinary-column
-metadata and row encoding are unchanged, so existing ordinary-table archives
-continue to import into the same schema.
+metadata and row encoding are unchanged. Ordinary-table archives using the
+authenticated format continue to import into the same schema; see the version
+1 refusal below.
 
 An archived INTEGER-affinity base cell outside JavaScript's safe integer range fails before
 precision is lost. Cells are null, strings, finite numbers or `{blob:base64}`.
@@ -88,6 +137,148 @@ parts also preserve the original rowid, including gaps, for restoration and
 erasure matching. Export time,
 source identity, job ids and boundaries do not affect equivalence.
 
+New exports use archive version 2. The closing `archiveHash` is SHA-256 of
+canonical JSON `{manifest,parts}`, where `manifest` is the complete manifest
+and `parts` is the ordered array of verified part SHA-256 strings. This binds
+source identity, erasure epoch/journal, export time, all table and policy-visible
+metadata, and every part field (including original rowids). It is required on
+finalize and checked before any R2 write, extra payload consumer or D1 restore
+commit. Local `rer import` verifies the whole input before even applying
+destination migrations. `contentHash` remains the content-equivalence digest;
+`archiveHash` changes when export time, source metadata or part boundaries change.
+
+Version 1 archives lack this binding and are refused with
+`legacy_archive_unverifiable` (HTTP 409; local `rer import` exit 4), before
+restoration. Upgrade the original installation and export a new archive.
+Changing an old archive's version or recomputing its part checksums cannot
+authenticate it. If the original installation is unavailable, use the explicit
+[backup-only v1 recovery](#backup-only-v1-recovery) below. Normal import still
+requires version 2 integrity.
+
+## Archives across later additive migrations
+
+An archive restores into an installation whose schema differs only by migrations
+applied after the archive was made, when those migrations are additive: new
+tables, new columns that are nullable or have a default, and indexes. The
+archive's tables restore with their archived columns, later columns take their
+defaults, and later tables stay empty (they must be empty, like every restored
+table). This applies to normal v2 import and to backup-only v1 recovery.
+
+The Base CLI runners (local Workers and container) pass `createPortability` a
+`migrations` replayer (`migration-history.mjs`, Node only) built from the
+destination's applied migration ledger and migration files. Import replays them
+into a scratch database to find the archive's place in that history:
+
+- Archives record the applied migration names in `manifest.migrations` (since
+  additive restore). Every recorded migration must be applied here, and
+  replaying exactly those must give the archive's schema identity.
+- Older v2 and all v1 archives do not record them; the latest prefix of the
+  applied migrations that gives the archive's schema identity is used. Migrations
+  that change no archived table (indexes, excluded tables) cannot be told apart
+  there and are reported as later.
+
+Restored rows never pass through the later migrations, so each of them may
+contain only `CREATE TABLE` (not `AS SELECT`), `CREATE INDEX` and
+`ALTER TABLE ... ADD COLUMN` (SQLite allows only constant defaults there) on the
+restorable tables. A later migration with any other statement that names a
+restorable table, such as an `INSERT`, `UPDATE` or `DELETE` that purges or
+backfills rows or a trigger, is refused with `schema_mismatch`; statements that
+touch only excluded tables are allowed. For archives without a migration record,
+every migration after the earliest prefix that gives the archive's schema is
+checked, since the archive may predate any of them.
+
+The same check runs when the archive's schema identity equals the destination's:
+a later migration that only purges or backfills rows leaves the schema unchanged,
+yet the archive's rows never passed through it. Such an archive is refused with
+`schema_mismatch:migration_data:<migration>` (local `rer import` exit 4, naming
+the migration) before any staging or import job; one whose later migrations only
+add indexes or touch excluded tables restores as usual. Without a replayer, an
+archive whose recorded migrations the destination's ledger has outgrown is
+refused with `schema_mismatch:migrations`, since those migrations cannot be read;
+an archive with no migration record cannot be placed there and restores as before.
+
+Then each archived table must still exist with the same leading columns, types,
+keys and constraints; its definition may differ only by added column definitions,
+as `ALTER TABLE ADD COLUMN` writes them. Anything else, including a dropped,
+renamed or retyped table or column and a migration the archive has but this
+installation lacks, is refused with `schema_mismatch` (local `rer import` exit 4)
+before any staging or audit write. Without a replayer (the HTTP handler, direct
+bindings), only identical schemas and `acceptedSchemas` restore.
+
+The import status and CLI receipt carry `bridged`: `migrations` (the later
+migrations bridged), `tables` (later tables left empty), `columns` (later columns
+per table that took defaults), `fromSchema` and `toSchema`. The import job keeps it
+and v1 recovery adds it to its audit record. `archiveHash`, `contentHash`,
+the erasure fence and v1's own checks are unchanged.
+
+## Backup-only v1 recovery
+
+When your only backup is a version 1 archive and the original installation is
+gone, the Base local Workers CLI provides an explicitly acknowledged recovery.
+Use a separate, empty installation with the same product schema, or one that
+differs only by [later additive migrations](#archives-across-later-additive-migrations),
+and the same portability policy. Keep its writers stopped. Do not run setup or claim an owner first:
+recovery also refuses populated identity, excluded and normally replaceable
+tables, and any objects in the declared buckets. It does not merge or overwrite
+existing installation data. Remote and container recovery are not supported.
+
+1. Keep the original v1 backup untouched. Obtain a fresh runnable checkout of
+   your product with this CLI, install its dependencies with `rer install`, and
+   copy the backup to `./exports/backup-v1.rer`. On macOS/Linux, make that copy
+   owner-only with `chmod 600 exports/backup-v1.rer`. Input files must be regular,
+   private, single-link files; do not use a symlink.
+2. Read the verification limits below, then run from that empty checkout:
+
+   ```sh
+   rer import --input exports/backup-v1.rer --legacy-v1 --yes \
+     --acknowledge-unverified-metadata --output exports/recovered-v2.rer
+   ```
+
+   `--yes` confirms restoring data. The separate
+   `--acknowledge-unverified-metadata` accepts the missing v1 metadata binding;
+   `--yes` alone cannot authorize legacy recovery. `--output` must name a new
+   safe archive path, inside `exports/` or an absolute path outside the checkout.
+   The command verifies the input before destination migrations, restores it,
+   and finishes by writing and verifying a fresh owner-only v2 export. An
+   existing output is refused. A v2 input cannot use this recovery mode.
+3. Keep `recovered-v2.rer` with your backups. Ordinary
+   `rer import --input exports/recovered-v2.rer --yes` accepts it in another
+   empty installation. Re-enter the reported required configuration and recover
+   owner access according to your product's identity policy; provider links
+   still need explicit re-linking. Check the recovered content before normal use.
+
+Recovery verifies all checks v1 carried: schema checksum, each ordered part's
+checksum, part/table counts, row order/types, binary sizes and hashes, the
+closing content hash and completeness. It validates the carried erasure journal
+and refuses rows matching its tombstones or any destination erasure fence.
+Product validation, foreign keys and normal restore safeguards still apply.
+Any mismatch refuses recovery; this mode does not repair damaged archives.
+
+Recovery needs a new installation. SQLite, migration and transfer bookkeeping, the
+storage tables of FTS5 indexes (`<index>_data|idx|content|docsize|config`; the index
+itself is still checked through its own SELECT) and the rows the destination's own
+migrations seed may exist; the seed rows are compared with a scratch replay of the
+applied migrations (Node runners) and must be unchanged. Any other row refuses with
+`legacy_target_not_empty`, before staging and again inside the restore batch. A table
+the policy lists in `replaceableTables` is replaced by the restore as usual.
+
+V1 cannot authenticate the complete manifest: source identity, export time,
+erasure epoch/journal, rowids and other metadata lack the v2 archive binding.
+Checksums are consistency checks, not proof of authorship. A missing or altered
+erasure record cannot be reconstructed, and deletions after the backup are
+unknown. The new v2 export binds the recovered data and metadata from recovery
+onward; it cannot prove the original v1 metadata was authentic.
+
+The installation records `legacy_v1_unverified_restore`, the explicit metadata
+acknowledgement, claimed source identity and export time, output path and restored content
+hash in `rer_portability_recovery_audit`, atomically with the restore. This
+additive, local bookkeeping table survives transfer cleanup and is excluded
+from data exports. No historical migration is rewritten. If the final v2
+export fails (for example, disk full), the restore and audit remain: preserve
+the installation, resolve the output problem and run ordinary `rer export
+--output exports/recovered-v2.rer`. The recovery command reports failure until
+its v2 output succeeds; do not reset the recovered installation to retry.
+
 `exports.create(actor?)` copies all tables in one D1 batch. Product writes may
 continue after that snapshot. R2 listing records size and etag; changes or missing
 objects fail subsequent reads. D1 and R2 do not share a cross-binding transaction.
@@ -101,13 +292,18 @@ by table name. Product-only staging keeps restore queries small even with long
 column names.
 Advance normalizes the durable snapshot, sorts archived keys and checks attachment
 references again before completing the archive.
+The shared D1 transport preserves mixed-script text through SQLite decoding and
+accounts for workerd's whole-call string width. Snapshot and archive-segment
+reads are bounded before crossing the provider boundary; staging and restore
+transactions remain atomic.
 `exports.advance(id,{expectedPart,maxParts})` commits durable bounded parts;
 `expectedPart` makes a lost-acknowledgement retry a no-op. Status reports progress;
 download streams completed jobs. Abort removes snapshots and stored parts.
 
 `imports.create(manifest,actor?)` creates staging under one durable import lock.
 Upload parts strictly in order. Same-index/same-hash retries are no-ops; different
-content returns 409. Finalize verifies all parts, semantic contents, destination
+content returns 409. Finalize requires the closing `archiveHash` and verifies all
+parts, semantic contents, destination
 emptiness, erasure and product invariants. R2 ownership is recorded after the
 empty-namespace check. Verified object writes precede one atomic D1 batch, with
 deferred FKs, trigger suppression/recreation, replaceable rows, staged inserts,
@@ -141,7 +337,7 @@ are `{error:code}`. Request bodies are bounded; `maxBodyBytes` can lower the bou
 | `POST exports/:id/abort` | Clean up export. |
 | `POST imports` | Create with `{confirmed:true,manifest}`. |
 | `PUT imports/:id/parts/:index` | Upload part. |
-| `POST imports/:id/finalize` | Apply with `{contentHash?,laterJournal?}`. |
+| `POST imports/:id/finalize` | Apply with `{archiveHash,contentHash?,laterJournal?}`. |
 | `GET imports/:id` | Status. |
 | `POST imports/:id/abort` | Clean up unfinished import. |
 
@@ -190,6 +386,15 @@ Include `await service.erasureStatements(table,primaryKey)` in the product's own
 deletion batch. Keys are objects of primary-key columns; a keyless table uses
 `{rowid:integer}`. Tombstones are opaque hashes bound to source identity, table
 and canonical key. Journals grow and epochs prevent older source restoration.
+For rows deliberately kept with all personal values replaced, include
+`await service.redactionStatements()` in that same transaction instead of
+permanently tombstoning their retained primary keys. It fences the source's
+checkpoint using the private portability state row and advances the epoch.
+A destination or trusted later journal with that checkpoint refuses the whole
+older archive; a post-redaction archive remains restorable with anonymous rows.
+This stricter checkpoint is necessary when preserved identities still appear in
+new archives. It does not change offline transfer's need for a trusted later journal.
+
 Archives, separately supplied later journals and destination journals all fence
 restore. Commit adopts source identity so subsequent erasures keep matching.
 
@@ -216,6 +421,8 @@ executes the copied Worker and CLI. Tests and development fixtures are not copie
 
 ```text
 modules/portability/index.mjs
+modules/d1-transport/index.mjs
+modules/d1-transport/index.d.mts
 modules/portability/index.d.mts
 modules/portability/lines.mjs
 modules/portability/hash.mjs
@@ -224,13 +431,18 @@ modules/portability/catalogue.mjs
 modules/portability/storage.mjs
 modules/portability/copies.mjs
 modules/portability/dev-data.mjs
+modules/portability/provider-data.mjs
 modules/portability/generated.mjs
 modules/portability/restore-safety.mjs
+modules/portability/bridge.mjs
+modules/portability/migration-statements.mjs
+modules/portability/legacy-safety.mjs
 modules/portability/export.mjs
 modules/portability/import.mjs
 modules/portability/payloads.mjs
 modules/portability/journal.mjs
 modules/portability/http.mjs
+modules/portability/http-client.mjs
 modules/portability/cli.mjs
 modules/portability/cli-options.mjs
 modules/portability/schema/portability.sql

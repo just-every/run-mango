@@ -109,16 +109,6 @@
       "optional": true
     },
     {
-      "binding": "MAIL_FROM",
-      "environment": "MAIL_FROM",
-      "optional": true
-    },
-    {
-      "binding": "MAIL_RELAY_URL",
-      "environment": "MAIL_RELAY_URL",
-      "optional": true
-    },
-    {
       "binding": "MARKETING_MAIL_API_KEY",
       "environment": "MARKETING_MAIL_API_KEY",
       "optional": true

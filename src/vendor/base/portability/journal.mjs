@@ -7,6 +7,8 @@ export async function erasureStatements(db) {
   return [db.prepare('UPDATE rer_portability_state SET epoch=epoch+1 WHERE id=1'),
     statement(db,'INSERT INTO rer_portability_epochs SELECT source_identity,epoch FROM rer_portability_state WHERE id=1 ON CONFLICT(source) DO UPDATE SET epoch=MAX(epoch,excluded.epoch)')];
 }
+// Redaction advances the same source-wide floor, without retaining row identity.
+export const redactionStatements = erasureStatements;
 export async function invalidateTransfersStatements(db) {
   const tables=await all(db,"SELECT name FROM sqlite_master WHERE type='table' AND (name GLOB 'rer_portability_snap_*' OR name GLOB 'rer_portability_stage_*')");
   return [...tables.map(x=>db.prepare(`DROP TABLE ${quote(x.name)}`)),db.prepare('DELETE FROM rer_portability_segments'),db.prepare('DELETE FROM rer_portability_parts'),

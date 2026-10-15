@@ -2,9 +2,11 @@ import { all, statement, state, guard, job, save, partStatements, parts, readPar
 import { catalogue, encodedRow } from './catalogue.mjs';
 import { createCopy,readCopy,normalizeCopy } from './copies.mjs';
 import { canonicalJson, utf8, base64, StreamHash } from './hash.mjs';
-import { FORMAT, makePart, checkPart, ContentVerifier } from './format.mjs';
+import { FORMAT, makePart, checkPart, ContentVerifier, ArchiveVerifier } from './format.mjs';
 import { journal } from './journal.mjs';
+import { appliedMigrations } from './bridge.mjs';
 import { capturePayload, payloadRange } from './payloads.mjs';
+import { dropProviderData } from './provider-data.mjs';
 import { dropDevData } from './dev-data.mjs';
 export async function createExport(context,actor='direct') {
   const {db,config,buckets}=context,s=await state(db);insist(!s.applying,'import_applying',409);
@@ -19,12 +21,14 @@ export async function createExport(context,actor='direct') {
   }
   objects.sort((a,b)=>a.bucket<b.bucket?-1:a.bucket>b.bucket?1:a.key<b.key?-1:a.key>b.key?1:0);
   const copies=Object.fromEntries(cat.tables.map((t,i)=>[t.name,'rer_portability_snap_'+id.replaceAll('-','')+'_'+i]));
-  const manifest={kind:'manifest',format:FORMAT,version:1,product:config.product,exportedAt:new Date().toISOString(),sourceIdentity:s.source_identity,schema:cat.identity,tables:cat.tables,objects,payloads:[],excludedTables:cat.excludedTables,excludedColumns:config.secretColumns,requiredConfiguration:config.requiredConfiguration,partCount:0,epoch:s.epoch,journal:await journal(db,s.source_identity)};
+  const migrations=await appliedMigrations(db);
+  const manifest={kind:'manifest',format:FORMAT,version:2,product:config.product,exportedAt:new Date().toISOString(),sourceIdentity:s.source_identity,schema:cat.identity,tables:cat.tables,objects,payloads:[],excludedTables:cat.excludedTables,excludedColumns:config.secretColumns,requiredConfiguration:config.requiredConfiguration,partCount:0,epoch:s.epoch,journal:await journal(db,s.source_identity),...(migrations?{migrations}:{})};
   const row={id,kind:'export',actor,phase:'building',completed:0,metadata:{manifest,copies,cursor:{table:0,row:0,binary:0,offset:0},partBytes:config.partBytes}};
   await db.batch([guard(db,'EXISTS(SELECT 1 FROM rer_portability_state WHERE id=1 AND applying=0 AND source_identity=? AND epoch=?)',s.source_identity,s.epoch),
     ...cat.tables.flatMap(t=>createCopy(db,t,copies[t.name],true)),statement(db,'INSERT INTO rer_portability_jobs(id,kind,actor,phase,metadata) VALUES(?,?,?,?,?)',id,'export',actor,row.phase,canonicalJson(row.metadata)),db.prepare('DELETE FROM rer_portability_guard')]);
   try {
     await dropDevData(db,cat.tables,copies);
+  await dropProviderData(db,cat.tables,copies);
     for(const t of manifest.tables) t.count=(await statement(db,`SELECT COUNT(*) AS n FROM ${quote(copies[t.name])}`).first()).n;
     for(const [name,producer] of Object.entries(config.extraPayloads).sort()) {
       const descriptor=await capturePayload(db,id,manifest.payloads.length,await producer.produce());manifest.payloads.push({name,...descriptor});
@@ -100,9 +104,9 @@ export async function advanceExport(context,id,{expectedPart,maxParts=1}={}) {
       // References are checked again against the archived, normalized snapshot.
       await checkReferences(context,row);
       row.metadata.manifest.partCount=row.completed;
-      const verifier=new ContentVerifier(row.metadata.manifest);
-      for await(const part of parts(context.db,id,row.completed))for(const item of part.items)verifier.add(item);
-      row.metadata.contentHash=verifier.digest();row.phase='complete';await save(context.db,row).run();
+      const verifier=new ContentVerifier(row.metadata.manifest),archive=new ArchiveVerifier(row.metadata.manifest);
+      for await(const part of parts(context.db,id,row.completed)){archive.add(part);for(const item of part.items)verifier.add(item);}
+      row.metadata.contentHash=verifier.digest();row.metadata.archiveHash=archive.digest();row.phase='complete';await save(context.db,row).run();
       // Finished snapshots are kept until abort so erasure can invalidate them.
       return exportStatus(context,id);
     }
@@ -117,7 +121,7 @@ export async function downloadExport(context,id) {
   return stream((async function*(){
     yield utf8(canonicalJson(row.metadata.manifest)+'\n');
     for(let i=0;i<row.completed;i++)yield utf8(canonicalJson(await readPart(context.db,id,i))+'\n');
-    yield utf8(canonicalJson({kind:'closing',partCount:row.completed,contentHash:row.metadata.contentHash})+'\n');
+    yield utf8(canonicalJson({kind:'closing',partCount:row.completed,contentHash:row.metadata.contentHash,archiveHash:row.metadata.archiveHash})+'\n');
   })());
 }
 export async function abortExport(context,id) {

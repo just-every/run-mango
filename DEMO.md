@@ -29,5 +29,7 @@ The manual `Run demo` workflow reads the `run-demo` environment. `test_only`
 uses a separate host and Cloudflare's published Turnstile test keys. Production
 uses the real widget keys. `test_only` plus `remove` removes the test host and
 reads back its absence. No repository deployment variable is required. Never
-automate real Turnstile. For manual packaging, run `pnpm config:production`
-before `rer deploy --demo`; the workflow performs this preparation.
+automate real Turnstile. The workflow generates production configuration and
+copies it to `wrangler.toml` in its disposable checkout before packaging; the
+container boundary reader needs that root entry. Local `rer demo` retains the
+owner's normal local configuration.

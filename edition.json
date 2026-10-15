@@ -764,6 +764,24 @@
           ]
         }
       }
+    },
+    {
+      "id": "runeditrun/d1-transport",
+      "role": "module",
+      "source": {
+        "kind": "local",
+        "paths": [
+          "src/vendor/base/d1-transport"
+        ],
+        "origin": {
+          "repository": "https://github.com/runeditrun/base.git",
+          "revision": "1ee378e41142c673a9098f60af21664c6d8477d1",
+          "paths": [
+            "modules/d1-transport/index.d.mts",
+            "modules/d1-transport/index.mjs"
+          ]
+        }
+      }
     }
   ]
 }
