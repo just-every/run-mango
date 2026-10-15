@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "domain": "run-mango.com",
+  "name": "Mango",
+  "settings": { "MAIL_PROVIDER": "development" }
+}
