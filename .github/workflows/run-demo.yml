@@ -31,6 +31,9 @@ jobs:
       - run: corepack enable && pnpm install --frozen-lockfile
         env:
           COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+      - name: Prepare production build configuration
+        if: ${{ !inputs.remove }}
+        run: pnpm config:production
       - name: Scope test deployment
         if: inputs.test_only
         run: node --input-type=module -e "import fs from 'node:fs'; const p='deploy-demo.json'; const d=JSON.parse(fs.readFileSync(p)); d.domain='test.run-mango.com'; fs.writeFileSync(p,JSON.stringify(d));"
