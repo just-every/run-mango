@@ -1143,6 +1143,10 @@
       "sha256": "7bbbd312b651c7a36169a30019ededfb75a737f2c3ce4d9bd7ceec46ba7e0725",
       "executable": false
     },
+    "migrations/core/0058_owner_signin.sql": {
+      "sha256": "be66a21f23a99e2027b1848a899d1645fd517f5b7f1e98d83a66c3434e95d729",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "f875f9889760bb6e7242d772dd2677fbf624ede116704c3915cf9835ca5cd3f4",
       "executable": false
@@ -2301,6 +2305,10 @@
     },
     "src/core/features/auth/owner-claim.ts": {
       "sha256": "fc33858cef7a7104dbfc3df3edd875d49de77bf90465ee83bbeb4e652e5bd5c8",
+      "executable": false
+    },
+    "src/core/features/auth/owner-signin.ts": {
+      "sha256": "282c742281315188968b2fe4b0cc05f46f1b133559450a9b075251a5f379a92f",
       "executable": false
     },
     "src/core/features/auth/repository.ts": {

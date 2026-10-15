@@ -23,7 +23,8 @@ const live = `g.token_hash=? AND g.consumed_at IS NULL AND g.expires_at>? AND g.
 async function page(status: number, content: Parameters<typeof renderMessagePage>[0], cookie?: string) {
   const { html, headers } = await renderMessagePage(content);
   return new Response(html, { status, headers: { ...headers, 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store',
-    'Referrer-Policy': 'no-referrer', ...(cookie ? { 'Set-Cookie': cookie } : {}) } });
+    // same-origin, not no-referrer: Chrome sends Origin: null on a form POST from a no-referrer page.
+    'Referrer-Policy': 'same-origin', ...(cookie ? { 'Set-Cookie': cookie } : {}) } });
 }
 const invalid = () => page(404, { title: 'Link not valid', heading: 'This sign-in link is not valid',
   text: 'It may have been used already or expired. Run rer signin again for a new link.', links: [{ href: '/signin', label: 'Sign in by email' }] });
