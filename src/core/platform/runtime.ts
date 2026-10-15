@@ -27,12 +27,9 @@ import { createLinkInspector } from './link-inspector';
 import { createPublicTokenSigner } from './public-tokens';
 import { localContactHashSalt } from './local-contact-authority';
 import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
-import { createD1DevelopmentOutbox } from '@/vendor/base/mail/src/development/index.mjs';
 
-/** A copy on a computer sends no marketing. Consent confirmations land in the local
- * development outbox beside sign-in mail, so signup can be completed locally. */
-function localSender(database: D1Database): SenderAdapter {
-  const outbox = createD1DevelopmentOutbox({ db: database });
+/** Local mail is silently suppressed, including consent confirmations. */
+function localSender(): SenderAdapter {
   const unavailable = () => {
     throw new Error('Sending is off on a copy running on your computer. Deploy Mango with a mail provider to send email.');
   };
@@ -54,10 +51,7 @@ function localSender(database: D1Database): SenderAdapter {
     },
     async send(request) {
       if (request.purpose !== 'consent-confirmation') unavailable();
-      await outbox.put({ deliveryId: request.idempotencyKey, from: request.sender, to: [request.to], subject: request.content.subject ?? '',
-        text: request.content.text, ...(request.content.html ? { html: request.content.html } : {}),
-        ...(request.content.replyTo ? { replyTo: request.content.replyTo } : {}) });
-      return { providerMessageId: `local-outbox:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
+      return { providerMessageId: `local-suppressed:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
     },
     reconcile: unavailable,
     verifyWebhook: unavailable,
@@ -172,6 +166,6 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
     },
   }, {
     ...designAdapter(design),
-    mailer: localSender(environment.DB),
+    mailer: localSender(),
   });
 }
