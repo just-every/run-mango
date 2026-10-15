@@ -185,34 +185,35 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     const rest=await (await f.call(`/api/store/observations?sourceType=browsing-event&cursor=${encodeURIComponent(range.nextCursor)}`,{cookie:session})).json();
     expect(rest.coverage.complete).toBe(true);expect(rest.coverage.through).toBe(range.coverage.through);
     expect(rest.records.some(record=>record.sourceId===`shopify-observation:${late.id}`)).toBe(false);
-    // Historical fixture state: an old retained event expires during the real
-    // health/sync path, while all recent events must remain covered and readable.
+    // Health/sync never expires owner history, and a pinned cursor still reads it.
     const ancient=Date.parse('2000-01-01T00:00:00.000Z');
     await f.db.prepare('UPDATE commerce_channels SET coverage_start=?,retention_start=?').bind(ancient,ancient).run();
     await f.db.prepare('UPDATE commerce_observations SET received_at=?,occurred_at=?,provider_updated_at=? WHERE event_id=?').bind(ancient,ancient,ancient,`${event.id}-page-100`).run();
     const beforeExpiry=await (await f.call('/api/store/observations?sourceType=browsing-event',{cookie:session})).json();
     expect(beforeExpiry.nextCursor).toBeTruthy();
     expect(await sync(f,session,'browsing-event')).toEqual([expect.objectContaining({ack:true})]);
-    expect(await f.db.prepare('SELECT count(*) n FROM commerce_observations WHERE event_id=?').bind(`${event.id}-page-100`).first()).toEqual({n:0});
-    expect((await f.call(`/api/store/observations?sourceType=browsing-event&cursor=${encodeURIComponent(beforeExpiry.nextCursor)}`,{cookie:session})).status).toBe(409);
-    const retained=await (await f.call('/api/store/observations?sourceType=browsing-event',{cookie:session})).json();
-    expect(retained.coverage.from).toBeGreaterThan(ancient);
-    expect(retained.coverage.from).toBeLessThan(Date.parse(event.timestamp));
-    expect(retained.records.some(record=>record.sourceId===`shopify-observation:${event.id}`)).toBe(true);
-    // Privacy deletion invalidates even a range whose declared coverage floor
-    // already lies beyond the removed row (revision is separate from the floor).
-    await f.db.prepare('UPDATE commerce_observations SET received_at=?,occurred_at=?,provider_updated_at=? WHERE event_id=?').bind(ancient,ancient,ancient,`${event.id}-page-99`).run();
-    const beforePrivacy=await (await f.call('/api/store/observations?sourceType=browsing-event',{cookie:session})).json();
-    expect(beforePrivacy.nextCursor).toBeTruthy();
-    await f.db.prepare('DELETE FROM commerce_observations WHERE event_id=?').bind(`${event.id}-page-99`).run();
-    expect((await f.call(`/api/store/observations?sourceType=browsing-event&cursor=${encodeURIComponent(beforePrivacy.nextCursor)}`,{cookie:session})).status).toBe(409);
-
-    expect((await f.call(`/api/store/observations?sourceType=browsing-event&cursor=${encodeURIComponent(range.nextCursor)}`,{cookie:session})).status).toBe(409);
+    expect(await f.db.prepare('SELECT count(*) n FROM commerce_observations WHERE event_id=?').bind(`${event.id}-page-100`).first()).toEqual({n:1});
+    const retainedResponse=await f.call(`/api/store/observations?sourceType=browsing-event&cursor=${encodeURIComponent(beforeExpiry.nextCursor)}`,{cookie:session});
+    expect(retainedResponse.status).toBe(200);
+    const retained=await retainedResponse.json();
+    expect(retained.coverage.from).toBe(ancient);
+    expect(retained.records).toContainEqual(expect.objectContaining({sourceId:`shopify-observation:${event.id}-page-100`,occurredAt:new Date(ancient).toISOString()}));
     const revoked={...observation('privacy_revoked'),timestamp:new Date().toISOString(),privacy:{analytics:false,marketing:false,saleOfData:false},lines:[]};
     expect((await proxy(f,revoked)).status).toBe(204);
     expect(await f.db.prepare("SELECT count(*) n FROM source_activities WHERE contact_id=? AND kind IN ('cart','browsing-event')").bind(contact.contact_id).first()).toEqual({n:0});
     expect((await proxy(f,event)).status).toBe(422);
     expect(await sync(f,session,'browsing-event')).toEqual([expect.objectContaining({ack:true})]);
+    // Fresh identifying history remains after explicit withdrawal, until the
+    // operator erases this contact. Another person's history must survive.
+    const erasable={...observation(),timestamp:new Date().toISOString()};
+    expect((await proxy(f,erasable)).status).toBe(204);
+    await f.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('unrelated-history','unrelated@example.test','Unrelated','non-subscribed','non-subscribed',1,1)").run();
+    await f.db.prepare("INSERT INTO commerce_observations(channel,event_id,source_type,source_id,contact_id,occurred_at,provider_updated_at,received_at,payload,digest) SELECT channel,'unrelated-event',source_type,'unrelated-source','unrelated-history',?,?,?,payload,digest FROM commerce_observations WHERE event_id=?").bind(ancient,ancient,ancient,erasable.id).run();
+    await f.db.prepare('UPDATE commerce_observations SET received_at=?,occurred_at=?,provider_updated_at=? WHERE event_id=?').bind(ancient,ancient,ancient,erasable.id).run();
+    await f.db.batch(Array.from({length:101},(_,i)=>f.db.prepare("INSERT INTO commerce_observations(channel,event_id,source_type,source_id,contact_id,occurred_at,provider_updated_at,received_at,payload,digest) SELECT channel,event_id||?,source_type,source_id||?,contact_id,occurred_at,provider_updated_at,received_at,payload,digest FROM commerce_observations WHERE event_id=?").bind(`-erase-${i}`,`-erase-${i}`,erasable.id)));
+    const beforeErasure=await (await f.call('/api/store/observations?sourceType=browsing-event',{cookie:session})).json();
+    expect(beforeErasure.nextCursor).toBeTruthy();
+    const unrelatedBefore=await f.db.prepare("SELECT * FROM commerce_observations WHERE contact_id='unrelated-history'").first();
     await f.call('/test/erasure-race/arm',{method:'POST'});
     const erased=await f.call(`/api/contacts/${contact.contact_id}`,{method:'DELETE',cookie:session});
     expect(erased.status,await erased.clone().text()).toBe(202);
@@ -267,6 +268,12 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     expect(await f.db.prepare('SELECT count(*) n FROM contacts WHERE id=?').bind(contact.contact_id).first()).toEqual({n:0});
     expect(await f.db.prepare('SELECT count(*) n FROM commerce_observations WHERE contact_id=?').bind(contact.contact_id).first()).toEqual({n:0});
     expect(await f.db.prepare('SELECT count(*) n FROM commerce_privacy_controls WHERE contact_id=?').bind(contact.contact_id).first()).toEqual({n:0});
+    expect(await f.db.prepare('SELECT count(*) n FROM source_records WHERE contact_id=?').bind(contact.contact_id).first()).toEqual({n:0});
+    expect(await f.db.prepare("SELECT * FROM commerce_observations WHERE contact_id='unrelated-history'").first()).toEqual(unrelatedBefore);
+    expect(await f.db.prepare("SELECT email FROM contacts WHERE id='unrelated-history'").first()).toEqual({email:'unrelated@example.test'});
+    expect((await f.call(`/api/store/observations?sourceType=browsing-event&cursor=${encodeURIComponent(beforeErasure.nextCursor)}`,{cookie:session})).status).toBe(409);
+    expect(await sync(f,session,'browsing-event')).toEqual([expect.objectContaining({ack:true})]);
+    expect(await f.db.prepare('SELECT count(*) n FROM source_records WHERE contact_id=?').bind(contact.contact_id).first()).toEqual({n:0});
     await f.db.prepare('UPDATE commerce_channels SET healthy_at=0').run();
     expect((await proxy(f,observation())).status).toBe(422);
   }finally{

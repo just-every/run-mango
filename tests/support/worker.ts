@@ -1,3 +1,4 @@
+import { installSignupChallengeEdge } from './signup-challenge-edge';
 import { dispatchDocuments } from '../../src/core/app/document-dispatch';
 import { createFixturePlatform } from './local-platform';
 import { createLocalApp } from './fixture-app';
@@ -6,6 +7,7 @@ import authoringWorker from '../campaign-authoring/advisory-worker';
 
 interface FixtureBindings extends LocalAppBindings {
   AUTHORING_DB: D1Database;
+  MANGO_FIXTURE_TURNSTILE?: string;
 }
 
 export default {
@@ -18,6 +20,10 @@ export default {
       return authoringWorker.fetch(request, { ...bindings, DB: bindings.AUTHORING_DB }, executionContext);
     }
     const platform = createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
+    if (bindings.MANGO_FIXTURE_TURNSTILE === '1') {
+      installSignupChallengeEdge();
+      platform.config.signupTurnstile = {siteKey:'fixture-public-site',secretKey:'fixture-server-secret'};
+    }
     return dispatchDocuments(request, bindings, executionContext, platform, createLocalApp(bindings, platform));
   },
 } satisfies ExportedHandler<FixtureBindings>;

@@ -84,15 +84,7 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
   return withErasureWriteFence(runtime.platform.database.$client,async()=>{
   const now = new Date();
   await repository.expireDueRecipients(now);
-  await resumeSmsServices(runtime.platform);
-  await createProposalRepository(runtime.platform.database).expireDue(now);
-  if (runtime.platform.commerce) {
-    const commerceCapabilities = runtime.platform.commerce.capabilities();
-    for (const sourceType of commerceCapabilities.sourceTypes) {
-      if (!commerceCapabilities.provider) continue;
-      await runtime.platform.jobs.enqueue({kind: 'source.sync', idempotencyKey: `source-sync:${sourceType}:${Math.floor(now.getTime() / 3_600_000)}`, payload: {sourceType, provider: commerceCapabilities.provider}});
-    }
-  }
+  // Dispatch due steps before optional source synchronization and reconciliation.
   const due = await repository.listDueSteps(now);
   for (const step of due) {
     await runtime.platform.jobs.enqueue({
@@ -105,6 +97,15 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
         channel: step.channel,
       },
     });
+  }
+  await resumeSmsServices(runtime.platform);
+  await createProposalRepository(runtime.platform.database).expireDue(now);
+  if (runtime.platform.commerce) {
+    const commerceCapabilities = runtime.platform.commerce.capabilities();
+    for (const sourceType of commerceCapabilities.sourceTypes) {
+      if (!commerceCapabilities.provider) continue;
+      await runtime.platform.jobs.enqueue({kind: 'source.sync', idempotencyKey: `source-sync:${sourceType}:${Math.floor(now.getTime() / 3_600_000)}`, payload: {sourceType, provider: commerceCapabilities.provider}});
+    }
   }
   await delivery.reconcileUnresolved();
   await delivery.probeOutage('email');

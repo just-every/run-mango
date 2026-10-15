@@ -146,9 +146,9 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
         return;
       }
     }
-    const prepared = await prepareDeliveryRequest(runtime, beforeClaim, eligibility, now);
+    const prepared = await prepareDeliveryRequest(runtime, {...beforeClaim,recipient:{...beforeClaim.recipient,outboundRequestJson:claimed.outboundRequestJson}}, eligibility, now);
     // Persisted outbound JSON is authoritative on restart, including content.from.
-    const request = claimed.outboundRequestJson ? parseDeliveryRequest(claimed.outboundRequestJson) : prepared.request;
+    const request = prepared.request;
     const saved = await repository.saveOutboundRequest({
       id: claimed.id,
       leaseToken: claimed.leaseToken,

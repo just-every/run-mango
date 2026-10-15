@@ -4,7 +4,7 @@ There are two ways to run Mango. Run it on your computer to look around and writ
 
 ## Run it on your computer
 
-Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.2**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** and installs the locked dependencies. You do not need to install Node or pnpm separately when using the installer script. Run from the project root and supply your own owner email.
+Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.11**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** and installs the locked dependencies. You do not need to install Node or pnpm separately when using the installer script. Run from the project root and supply your own owner email.
 
 ```bash
 rer install
@@ -12,7 +12,7 @@ rer setup --owner-email you@example.com
 rer dev
 ```
 
-`install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again keeps your owner, your data and your secrets. Pass `--port PORT` or `--host HOST` to use another loopback address than the default, 127.0.0.1:15660. Never commit or share `.dev.vars`.
+`install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again with unchanged inputs keeps your owner, data, secrets and generated configuration without rewriting their bytes or modification times. Command receipts and redacted logs may advance. Starting dev and signing in writes real authentication and outbox records. Pass `--port PORT` or `--host HOST` to use another loopback address than the default, 127.0.0.1:15660. Never commit or share `.dev.vars`.
 
 `dev` starts Mango and prints `RER_READY`, `RER_SIGNED_IN` and a private `RER_OPEN` link. Open that link on this computer to enter as the owner; keep it private because it carries the checkout’s dev key. To use ordinary email-link sign-in instead, run `rer dev --login`, open its outbox `RER_OPEN`, choose the newest message, follow its link and press **Confirm**. The first time, the link opens **Set up your sender identity**: save your business details there to enter the app. You can change them later in Settings. Local mail never leaves your computer and no mail provider is configured locally, so a local copy cannot send a real newsletter. Stop the server with Ctrl-C.
 
@@ -55,7 +55,7 @@ rer deploy --environment "$MANGO_DEPLOY_ENV" --dry-run
 rer deploy --environment "$MANGO_DEPLOY_ENV"
 ```
 
-- `--dry-run` checks your inputs and builds locally without any provider request.
+- `--dry-run` validates the local declaration and build without a provider request. It does not prove account permissions, hosted provisioning, owner claim, token retirement or mail delivery.
 - `deploy` finds or creates the Worker, D1 database, R2 bucket and Queue for the selected environment, applies remote migrations, uploads the Worker and its assets, then verifies bindings and health after a real database ping. A five-minute scheduled job is part of the Worker.
 - `deploy` automatically claims the first owner through native bootstrap, then removes the one-time setup token from the Worker. Repeat deployment keeps the existing owner. No separate claim command is required.
 

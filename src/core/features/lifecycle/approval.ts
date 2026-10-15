@@ -110,12 +110,11 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       if (result.kind !== 'approved') {
         return { kind: 'conflict' as const, detail: 'The revision or campaign changed while approval checks were running.' };
       }
-      for (const step of snapshot.steps) {
-        await runtime.platform.jobs.enqueue({
-          kind: 'campaign.dispatch',
-          idempotencyKey: `dispatch:${step.id}:${step.scheduledAt.toISOString()}`,
-          payload: { campaignId: snapshot.campaign.id, revisionId: snapshot.revision.id, stepId: step.id, channel: step.channel },
-        });
+      // The durable schedule is dispatched by Cron when due. An immediate
+      // future dispatch command would be acknowledged before its due instant.
+      for (const step of snapshot.steps.filter(step=>step.scheduledAt<=now)) {
+        await runtime.platform.jobs.enqueue({kind:'campaign.dispatch',idempotencyKey:`dispatch:${step.id}:${step.scheduledAt.toISOString()}`,
+          payload:{campaignId:snapshot.campaign.id,revisionId:snapshot.revision.id,stepId:step.id,channel:step.channel}});
       }
       return { kind: 'approved' as const, revisionDigest, idempotent: false };
     },

@@ -22,7 +22,7 @@ Mango 0.1.0 is a newsletter release candidate. This documentation describes what
 
 ## What you need
 
-To try it locally, install rer and run the commands in the install guide. Pinned rer 0.2.2 manages Node, pnpm and the locked dependencies. Local mail stays on your computer, so a local copy can write drafts, import contacts and show the signup page, but it cannot send real newsletters.
+To try it locally, install rer and run the commands in the install guide. Pinned rer 0.2.11 manages Node, pnpm and the locked dependencies. Local mail stays on your computer, so a local copy can write drafts, import contacts and show the signup page, but it cannot send real newsletters.
 
 To send real newsletters you need:
 

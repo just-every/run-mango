@@ -52,7 +52,7 @@ const lifecycle=localInstaller(hooks);
 // project identity from the tracked input before the app deploy callback runs.
 function deploy() {
  const owner=ownerDeploy(declarationPaths.deploy,lifecycle);
- return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:'deploy.json'});
+ return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:'deploy.json',managesHostedOwner:owner.managesHostedOwner});
 }
 export const {install}=lifecycle;
 export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'rer-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',

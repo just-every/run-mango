@@ -4,7 +4,7 @@ Mango hosts a public signup page for your newsletter and records evidence of eac
 
 ## The hosted signup page
 
-Your signup page lives at `/subscribe` on your deployment. In the app, open **Audience** and find **Hosted form and embed**. It shows the public form URL, an **Open hosted form** button, the exact consent text, and an iframe snippet you can copy with **Copy embed snippet** to place the form on your own website.
+Your signup page lives at `/subscribe` on your deployment. In the app, open **Audience** and find **Hosted form and embed**. It shows the public form URL, an **Open hosted form** button, the exact consent text, and an iframe snippet you can copy with **Copy embed snippet** to place the form on your own website. Allow that website’s exact origin in the signup settings first. The persisted origin allowlist starts empty; another website cannot frame your signup page until you explicitly allow it. An origin includes its scheme, host and any non-default port, not a path or wildcard.
 
 Two things must be in place first. Your sender identity must be fully saved in Settings; until it is, signup answers with an error and stores nothing. And the page shows how often you will write, taken from **Newsletter frequency** under **Signup-form settings** on the same Audience page (default "Occasional newsletters"). Changing it affects new requests only; people who already consented keep the exact wording they accepted.
 
@@ -42,7 +42,7 @@ Mango stores these limits, so a restart does not reset them:
 
 Failed or duplicate attempts can use up capacity. Requests over 8,192 bytes are rejected, and the form includes a hidden field that quietly discards bot submissions.
 
-Optional Cloudflare Turnstile adds a challenge. Set `TURNSTILE_SITE_KEY` (a plain variable) and `TURNSTILE_SECRET_KEY` (a secret) together, and configure the widget for the hostname in `MANGO_PUBLIC_BASE_URL`. Mango verifies the action `newsletter-signup`, the hostname and a five-second timeout, and rejects the signup if verification fails. Setting only one key makes startup fail. With neither, the form has no challenge but keeps the consent, suppression and rate limits above.
+Optional Cloudflare Turnstile adds a challenge. Set `TURNSTILE_SITE_KEY` (a plain variable) and `TURNSTILE_SECRET_KEY` (a secret) together, and configure the widget for the hostname in `MANGO_PUBLIC_BASE_URL`. The challenge script loads only after a trusted keyboard or pointer interaction with the form. Verification sends the challenge token and visitor IP to Cloudflare. Mango verifies the action `newsletter-signup`, the hostname and a five-second timeout, and rejects the signup if verification fails. Setting only one key makes startup fail. With neither, the form has no challenge but keeps the consent, suppression and rate limits above.
 
 > **Tip:** Open your own signup page before you share it, check that the consent text names the right sender, and sign yourself up once to see the confirmation email.
 

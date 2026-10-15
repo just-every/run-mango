@@ -1,0 +1,24 @@
+import {useState} from 'react';
+import {requestJson} from '@/core/app/client/lib/api';
+import {useResource} from '@/core/app/client/lib/use-resource';
+
+type Estimates={enabled:boolean;estimatedRecipients:number;label:string;note:string};
+export function OpenEstimates() {
+  const {data,loading,error,reload}=useResource<Estimates>('/api/insights/open-tracking');
+  const [busy,setBusy]=useState(false),[failure,setFailure]=useState('');
+  async function change(enabled:boolean) {
+    setBusy(true);setFailure('');
+    try {
+      const response=await requestJson('/api/insights/open-tracking',{method:'PUT',body:JSON.stringify({enabled})});
+      if(response.status!==200)throw new Error('The open tracking setting could not be saved.');
+      await reload();
+    } catch {setFailure('The open tracking setting could not be saved.');} finally {setBusy(false);}
+  }
+  return <section className="panel" aria-labelledby="open-estimates-title">
+    <h2 id="open-estimates-title">Privacy-sensitive open estimates</h2>
+    <p>Off by default. Enabling adds a recipient-specific image to future marketing emails. Disabling stops recording from all existing images; re-enabling only tracks newly prepared messages.</p>
+    {data?<><label><input type="checkbox" checked={data.enabled} disabled={busy} onChange={event=>void change(event.target.checked)}/> Enable privacy-sensitive open estimates</label>
+      <p>{data.estimatedRecipients} recipient-step estimates retained.</p><p>{data.note}</p></>:<p>{loading?'Loading open tracking setting…':error}</p>}
+    {failure?<p role="alert">{failure}</p>:null}
+  </section>;
+}

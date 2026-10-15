@@ -1,3 +1,4 @@
+import {OpenEstimates} from './open-estimates';
 import {SenderRates} from './sender-rates';
 import { CostTotals } from './cost-totals';
 import type { CostReport } from '../cost-report';
@@ -36,6 +37,7 @@ export function InsightsPage() {
           <p className="page-head__lead">{data.note}</p>
         </div>
       </header>
+      <OpenEstimates />
       <CostTotals report={data.costs} />
       <SenderRates />
       {data.results.length ? (

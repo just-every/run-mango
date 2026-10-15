@@ -1,3 +1,4 @@
+import {appendOpenPixel,removeDisabledPixel} from '@/core/features/insights/open-tracking';
 import { managedSmsText } from '@/core/features/sms/content';
 import { smsProgrammeSchema } from '@/core/features/sms/policy';
 import {renderTracking} from './message-tracking';
@@ -26,7 +27,9 @@ export async function prepareDeliveryRequest(
   now: Date,
 ) {
   if (envelope.recipient.outboundRequestJson) {
-    return { request: parseDeliveryRequest(envelope.recipient.outboundRequestJson), trackedLinks: [] };
+    const request=parseDeliveryRequest(envelope.recipient.outboundRequestJson);
+    request.content.html=await removeDisabledPixel(runtime.platform,request.content.html);
+    return { request, trackedLinks: [] };
   }
   const htmlPolicy = inspectEmailHtml(envelope.revision.emailBody);
   const invalidTokens = invalidPersonalisation(`${envelope.revision.emailSubject}\n${envelope.revision.preheader}\n${envelope.revision.emailBody}\n${envelope.revision.emailText}\n${envelope.revision.smsBody}`);
@@ -49,7 +52,7 @@ export async function prepareDeliveryRequest(
   const smsPolicy=smsApproval?smsProgrammeSchema.parse(JSON.parse(smsApproval.policy_json).policy):undefined;
   const content: DeliveryRequest['content'] = envelope.recipient.channel === 'email'
     ? {
-        subject: rendered.subject, preheader: rendered.preheader, html: rendered.html, text: rendered.text,
+        subject: rendered.subject, preheader: rendered.preheader, html: await appendOpenPixel(runtime.platform,envelope.recipient.id,rendered.html,new Date(now.getTime()+30*86400000)), text: rendered.text,
         from: {name: envelope.revision.senderName, email: envelope.revision.fromEmail}, replyTo: envelope.revision.replyToEmail,
         headers: {'List-Unsubscribe': `<${oneClickUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'},
       }

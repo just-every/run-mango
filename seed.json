@@ -173,7 +173,7 @@
     },
     {
       "id": "campaign-results",
-      "description": "Reports campaign history, engagement, attribution, cost, tracked-link activity, and deliverability without presenting forecasts as facts.",
+      "description": "Reports campaign history, engagement, attribution, cost, tracked-link activity, and deliverability without presenting forecasts as facts. Optional privacy-sensitive open estimates require a persisted operator opt-in in Insights and are disabled by default. A signed first-party /o/:token pixel counts at most one image-load estimate per recipient-step, never reads or delivery, click, attribution or confidence evidence. Disabling revokes old tokens, and contact erasure removes recipient-specific tokens and facts.",
       "clauses": [
         "RESULT-001",
         "RESULT-002",
@@ -185,7 +185,7 @@
     },
     {
       "id": "portable-data",
-      "description": "Exports every contact, source record, consent record, campaign, and audit entry as JSON alongside uploaded campaign assets.",
+      "description": "Exports every contact, source record, consent record, campaign, and audit entry as JSON alongside uploaded campaign assets. Private export/restore data includes signup_settings (frequency disclosure and exact embed origins), open_tracking_settings (operator preference/audit, disabled by default, generation), open_tracking_tokens (signed token digest, recipient-step, generation and expiry) and open_estimate_facts (recipient-step and first occurrence only). Contact erasure removes linked open tokens/facts; no IP, user agent or cookie is stored for open estimates.",
       "clauses": [
         "DATA-001",
         "BASE-DATA-001"
@@ -256,7 +256,8 @@
         "Approved email content",
         "Sender metadata",
         "Each eligible recipient's email address",
-        "Operator email addresses that receive magic links, test sends, and dispatch-paused notices"
+        "Operator email addresses that receive magic links, test sends, and dispatch-paused notices",
+        "Diagnostic sender-verification message and configured receipt mailbox; provider message IDs and sender-domain names for delivery reconciliation and authentication queries"
       ],
       "adapters": [
         "mail.sender.v1"
@@ -286,6 +287,67 @@
       "adapters": [
         "platform.link-inspector.v1"
       ]
+    },
+    {
+      "id": "signup-turnstile",
+      "required": false,
+      "why": "Optional abuse prevention on hosted and embedded signup. Only a trusted pointer or keyboard interaction with the form loads the browser challenge. The server verifies the token before accepting consent.",
+      "data": [
+        "After interaction, browser requests https://challenges.cloudflare.com/turnstile/v0/api.js and its challenge frames, disclosing the public site key, visitor IP and browser challenge signals to Cloudflare.",
+        "Server POST to https://challenges.cloudflare.com/turnstile/v0/siteverify sends the challenge token, visitor IP and TURNSTILE_SECRET_KEY; acceptance requires newsletter-signup action and the configured public hostname. No email address or consent evidence is sent to Cloudflare."
+      ],
+      "adapters": [
+        "platform.signup-challenge.v1"
+      ],
+      "requiredWhen": "Both TURNSTILE_SITE_KEY (public browser configuration) and TURNSTILE_SECRET_KEY (server-only secret) are configured; one-sided configuration is refused."
+    },
+    {
+      "id": "sender-dns-resolver",
+      "required": true,
+      "why": "Cloudflare DNS-over-HTTPS verifies sender domain authentication records before dispatch.",
+      "data": [
+        "Sender domain and DKIM/SPF/DMARC record names queried at https://cloudflare-dns.com/dns-query; no recipients or message bodies."
+      ],
+      "adapters": [
+        "platform.sender-verification.v1"
+      ]
+    },
+    {
+      "id": "approved-content-destinations",
+      "required": true,
+      "why": "Dispatch preflight checks explicitly approved external links and images, including each allowed redirect, for reachability after DNS safety checks.",
+      "data": [
+        "Full approved destination URLs including paths and query parameters sent as HEAD requests to configured allowed hosts. No operator cookie or provider credential is attached. Deployment-hosted /media/ images use local storage instead."
+      ],
+      "adapters": [
+        "platform.link-inspector.v1"
+      ]
+    },
+    {
+      "id": "owner-editor",
+      "required": false,
+      "why": "An authenticated owner can open the configured Run Edit Run editor and explicitly share page context for requested visual edits.",
+      "data": [
+        "The configured management origin receives installation identifier and application origin in the editor iframe URL after the owner opens it.",
+        "The origin-checked protocol sends page path, editor visibility and edit results. Only while context sharing is enabled, it additionally sends page title, bounded visible DOM text and selected element metadata (excluding input values and private-marked elements)."
+      ],
+      "adapters": [
+        "base.editor.v1"
+      ],
+      "requiredWhen": "RER_MANAGEMENT_ORIGIN and RER_INSTALLATION_ID configure the optional authenticated owner editor."
+    },
+    {
+      "id": "sender-receipt-receiver",
+      "required": false,
+      "why": "An installer-selected authenticated receipt service supplies original diagnostic email and trusted authentication observations before marketing sending is enabled. The optional paired MAILBOX_RECEIPT_URL and MAILBOX_RECEIPT_RECIPIENT inputs select its HTTPS origin, secret URL token and diagnostic mailbox; redirects and off-origin responses are refused.",
+      "data": [
+        "Authenticated GET requests carry the server-only receipt URL token, diagnostic recipient address, challenge nonce and sent-at timestamp to find the diagnostic email.",
+        "The matching receipt ID is sent to the same origin to retrieve original diagnostic message bytes; no audience contacts or campaign content are sent by this lookup."
+      ],
+      "adapters": [
+        "sender-verification.receiver.v1"
+      ],
+      "requiredWhen": "The authenticated sender receipt connector is configured and an operator verifies a diagnostic challenge"
     }
   ],
   "env": [
@@ -533,6 +595,20 @@
       "required": false,
       "secret": false,
       "why": "Optional Auth installation offered by setup through oidc-provider@1; leave empty for existing email-link sign-in."
+    },
+    {
+      "name": "TURNSTILE_SITE_KEY",
+      "required": false,
+      "secret": false,
+      "why": "Public Cloudflare Turnstile site key. Browser challenge loads after trusted interaction with signup.",
+      "requiredWhen": "TURNSTILE_SECRET_KEY is configured"
+    },
+    {
+      "name": "TURNSTILE_SECRET_KEY",
+      "required": false,
+      "secret": true,
+      "why": "Server-only secret sent solely to Cloudflare Siteverify with signup token and visitor IP.",
+      "requiredWhen": "TURNSTILE_SITE_KEY is configured"
     }
   ],
   "deploy": {
@@ -570,7 +646,8 @@
       "/brand/",
       "/docs",
       "/docs/",
-      "/auth/setup-complete"
+      "/auth/setup-complete",
+      "/o/"
     ]
   },
   "customFields": [

@@ -20,12 +20,13 @@
       "binding": "MANGO_JOBS",
       "consumer": {
         "batch_size": 10,
+        "max_wait_time_ms": 0,
         "max_retries": 5
       }
     }
   ],
   "crons": [
-    "*/5 * * * *"
+    "* * * * *"
   ],
   "secrets": [
     {

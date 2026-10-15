@@ -35,7 +35,7 @@ function refund(value: Node, order: Node) {
       createdAt:date(tx.createdAt,'transaction creation').toISOString(),processedAt:tx.processedAt===null?null:date(tx.processedAt,'transaction processing').toISOString(),amount:moneyBag(tx.amountSet)};
   });
   const refundTransactions=transactions.filter(tx=>tx.kind==='REFUND');
-  const financialState=refundTransactions.length&&refundTransactions.every(tx=>tx.status==='SUCCESS'&&!tx.test)?'SUCCESS':refundTransactions.some(tx=>tx.status==='PENDING')?'PENDING':refundTransactions.some(tx=>tx.status==='FAILURE'||tx.status==='ERROR')?'FAILURE':'UNKNOWN';
+  const financialState=refundTransactions.length&&refundTransactions.every(tx=>tx.status==='SUCCESS'&&!tx.test)?'SUCCESS':refundTransactions.some(tx=>tx.status==='PENDING'||tx.status==='AWAITING_RESPONSE')?'PENDING':refundTransactions.some(tx=>tx.status==='FAILURE'||tx.status==='ERROR')?'FAILURE':'UNKNOWN';
   return {schema: 'shopify-commerce-v1', id: gid('Refund', value.id), createdAt: date(value.createdAt, 'refund creation').toISOString(),
     updatedAt: date(value.updatedAt, 'refund update').toISOString(), orderId: gid('Order', order.id), customer: customer(order.customer),
     total: moneyBag(value.totalRefundedSet), transactions, financialState, lines: list(value.refundLineItems, 'refund lines').map(item => ({line: line(object(item.lineItem)), quantity: integer(item.quantity, 'refund quantity'), restockType: text(item.restockType, 'restock type'), subtotal: moneyBag(item.subtotalSet), tax: moneyBag(item.totalTaxSet)}))};

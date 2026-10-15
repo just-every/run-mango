@@ -24,6 +24,13 @@ export function resolveDeclaration(root, purpose, env = {}) {
   const directory = join(root, '.rer', 'declarations');
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   if (lstatSync(directory).isSymbolicLink()) throw new Error('Refusing a symbolic link at .rer/declarations.');
-  writeFileSync(join(root, declarationPaths[purpose]), `${JSON.stringify(declaration, null, 2)}\n`, { mode: 0o600 });
+  const path = join(root, declarationPaths[purpose]);
+  const text = `${JSON.stringify(declaration, null, 2)}\n`;
+  let previous;
+  try {
+    if (lstatSync(path).isSymbolicLink()) throw new Error('Refusing a symbolic link at the resolved declaration.');
+    previous = readFileSync(path, 'utf8');
+  } catch (error) { if (error.code !== 'ENOENT') throw error; }
+  if (previous !== text) writeFileSync(path, text, { mode: 0o600 });
   return declarationPaths[purpose];
 }

@@ -27,7 +27,7 @@ export function schedulerObservation(db:D1Database) {
     async read(now=new Date()):Promise<SchedulerObservation> {
       const row=await db.prepare('SELECT scheduled_at,entered_at,finished_at,outcome FROM scheduler_observation WHERE id=1').first<Row>();
       const iso=(value:number|null)=>value===null?null:new Date(value).toISOString();
-      return row ? {state:now.getTime()-row.entered_at>15*60_000?'overdue':'observed',lastTickAt:iso(row.entered_at),
+      return row ? {state:now.getTime()-row.entered_at>3*60_000?'overdue':'observed',lastTickAt:iso(row.entered_at),
         scheduledFor:iso(row.scheduled_at),finishedAt:iso(row.finished_at),outcome:row.outcome}
         : {state:'not-observed',lastTickAt:null,scheduledFor:null,finishedAt:null,outcome:null};
     },

@@ -1,4 +1,4 @@
-import { saveSignupSettings, signupSettingsSchema } from './signup-settings';
+import { loadSignupSettings, saveSignupSettings, signupSettingsSchema } from './signup-settings';
 import { SenderAuthorityChanged } from '@/core/features/settings/sender-authority';
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -16,7 +16,7 @@ export function createAudienceImportRoutes(platform: Platform) {
   routes.get('/audience/signup',async context=>{
     const origin=platform.config.local===true?new URL(context.req.url).origin:platform.config.publicBaseUrl;
     const url=new URL('/subscribe',origin).toString();
-    return context.json({...await loadSignupDescription(platform),url,embed:`<iframe src="${url}" title="Subscribe to the newsletter" width="100%" height="560" style="border:0"></iframe>`});
+    return context.json({...await loadSignupDescription(platform),embedOrigins:(await loadSignupSettings(platform)).embedOrigins,url,embed:`<iframe src="${url}" title="Subscribe to the newsletter" width="100%" height="560" style="border:0"></iframe>`});
   });
   routes.put('/audience/signup',async context=>{
     context.header('Cache-Control','no-store');

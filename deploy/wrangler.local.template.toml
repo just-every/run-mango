@@ -23,4 +23,5 @@ queue = "mango-local-jobs"
 [[queues.consumers]]
 queue = "mango-local-jobs"
 max_batch_size = 10
+max_batch_timeout = 0
 max_retries = 5

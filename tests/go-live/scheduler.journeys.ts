@@ -1,5 +1,6 @@
+import {configuredCronDriver} from './cron-driver';
 import { expect, test } from '@playwright/test';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { providerEdge } from './edge';
@@ -17,15 +18,20 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     await rm(directory,{recursive:true,force:true});
     throw error;
   });
+  let driver:Awaited<ReturnType<typeof configuredCronDriver>>|undefined;
   try {
     let cookie=await site.open();
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
     await site.control('/_golive/sender-evidence');
     const email='scheduler@example.test';
     await confirmedContact(site,edge,cookie,email,'Scheduler test');
-    // Let the approval's immediate Queue command finish before this future slot.
-    // It cannot hand off early. Only the subsequent scheduler dispatch sends it.
-    const due=new Date(Date.now()+20_000);
+    // Approval persists a future schedule. Only the independent configured
+    // wall-clock Cron driver may initiate this first dispatch.
+    // Just after a minute with >60s until the next five-minute boundary:
+    // the old */5 schedule must fail, whatever wall-clock time starts this test.
+    let minute=Math.floor(Date.now()/60000)+1;
+    if(minute%5===4)minute++;
+    const due=new Date(minute*60000+2000);
     const letter=await draftCampaign(site,cookie,'Scheduled newsletter',[email],due);
     expect((await approve(site,cookie,letter)).status).toBe('scheduled');
     const detail=async()=>json(await site.call(`/api/campaigns/${letter.campaignId}`,{cookie}),200);
@@ -35,22 +41,36 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     expect((await detail()).scheduler).toMatchObject({state:'not-observed',lastTickAt:null,outcome:null});
     expect((await site.call(`/api/campaigns/${letter.campaignId}`)).status).toBe(401);
     await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
-    while(Date.now()<=due.getTime())await new Promise(resolve=>setTimeout(resolve,250));
+
     await page.setViewportSize({width:390,height:900});
     await page.goto(`${site.runtime.url}/app/campaigns/${letter.campaignId}/scheduled`);
     await expect(page.locator('[data-scheduler-state="not-observed"]')).toBeVisible();
-    await expect(page.locator('.step-result__countdown')).toHaveCount(0);
+    driver=await configuredCronDriver(site);
     await page.screenshot({path:info.outputPath('scheduler-waiting-390.png'),fullPage:true});
     expect(handoffs()).toHaveLength(0);
-    // The nominal slot is old; the actual entry must still be current.
+    while(Date.now()<due.getTime()) {
+      expect(handoffs()).toHaveLength(0);
+      expect(await site.rows(`SELECT started_at FROM step_dispatches WHERE step_id IN (SELECT id FROM campaign_steps WHERE revision_id='${letter.revisionId}')`)).toEqual([]);
+      await new Promise(resolve=>setTimeout(resolve,100));
+    }
+    await expect.poll(async()=> (await site.rows(`SELECT started_at FROM step_dispatches WHERE revision_id='${letter.revisionId}'`))[0]?.started_at,{timeout:60000,intervals:[100]}).toBeTruthy();
+    const startedAt=Number((await site.rows(`SELECT started_at FROM step_dispatches WHERE revision_id='${letter.revisionId}'`))[0].started_at);
+    expect(startedAt).toBeGreaterThanOrEqual(due.getTime());
+    expect(startedAt-due.getTime()).toBeLessThanOrEqual(60000);
+    await expect.poll(async()=>(await site.rows(`SELECT transport_disposition FROM recipient_steps WHERE campaign_id='${letter.campaignId}'`))[0]?.transport_disposition,
+      {timeout:60000}).toBe('accepted');
+    await driver.close();
+    const receipt=JSON.stringify({driver:'Configured wall-clock driver; Vite does not initiate Cron Triggers; not hosted acceptance',ticks:driver.ticks,scheduledAt:due.toISOString(),startedAt:new Date(startedAt).toISOString(),latenessMs:startedAt-due.getTime()});
+    await writeFile(info.outputPath('native-cron-punctuality.json'),receipt);
+    console.log(`NATIVE_CRON_PUNCTUALITY ${receipt}`);
+    await info.attach('native-cron-punctuality.json',{contentType:'application/json',body:receipt});
+    driver=undefined;
     const old=Date.now()-60*60_000, enteredAfter=Date.now();
-    await site.control('/_golive/cron',{scheduledTime:old});
+    await Promise.all([site.control('/_golive/cron',{scheduledTime:old}),site.control('/_golive/cron',{scheduledTime:old})]);
     const before=(await detail()).scheduler;
     expect(before).toMatchObject({state:'observed',scheduledFor:new Date(old).toISOString(),outcome:'completed'});
     expect(Date.parse(before.lastTickAt)).toBeGreaterThanOrEqual(enteredAfter);
     expect(Date.parse(before.finishedAt)).toBeGreaterThanOrEqual(Date.parse(before.lastTickAt));
-    await expect.poll(async()=>(await site.rows(`SELECT transport_disposition FROM recipient_steps WHERE campaign_id='${letter.campaignId}'`))[0]?.transport_disposition,
-      {timeout:60000}).toBe('accepted');
     expect(await delivered()).toBe(0);
     await site.runtime.close();
     site=await installation(edge,signer,options);
@@ -61,6 +81,7 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     expect(Date.parse(after.lastTickAt)).toBeGreaterThanOrEqual(Date.parse(before.lastTickAt));
     expect(after.outcome).toBe('completed');
     expect(handoffs()).toHaveLength(1);
+    expect(await site.rows(`SELECT COUNT(*) n FROM step_dispatches WHERE revision_id='${letter.revisionId}'`)).toEqual([{n:1}]);
     expect(await delivered()).toBe(0);
     const sent=handoffs()[0];
     const body=Buffer.from(JSON.stringify([event('delivered',email,Date.now()+1000,sent.messageId,sent.body.custom_args)]));
@@ -85,6 +106,7 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     expect(handoffs()).toHaveLength(1);
     expect(edge.unexpected).toEqual([]);
   } finally {
+    await driver?.close();
     await page.close();
     await site.runtime.close();
     await edge.close();

@@ -49,13 +49,5 @@ export function createCommerceEventLog(database: Database, channel: string) {
       return {records,nextCursor:after<range.through?JSON.stringify({...range,after}):undefined,
         coverage:{mode:'observations' as const,channel,from:state.retention_start,through:range.through,complete:after===range.through,exhaustive:false}};
     },
-    async retain(now=Date.now()) {
-      const floor = now-30*86400000;
-      await db.batch([
-        db.prepare('UPDATE commerce_channels SET retention_start=max(retention_start,?) WHERE id=? AND EXISTS(SELECT 1 FROM commerce_observations WHERE channel=? AND received_at<?)').bind(floor,channel,channel,floor),
-        db.prepare('DELETE FROM commerce_observations WHERE channel=? AND received_at<?').bind(channel,floor),
-        db.prepare('DELETE FROM commerce_receipts WHERE received_at<?').bind(floor),
-      ]);
-    },
   };
 }

@@ -1,3 +1,4 @@
+import {openEstimates} from './open-tracking';
 import { recordExternalCost, type ExternalCost } from './cost-recording';
 import { costGroups, costReport } from './cost-report';
 import type { Database } from '@/core/platform/db/client';
@@ -69,7 +70,7 @@ export function createInsightsRepository(database: Database) {
         engagement: {
           observedClicks: Number(engagement?.observed_clicks ?? 0),
           automatedRequestsRetainedButExcluded: Number(engagement?.automated_requests ?? 0),
-          opens: { enabled: false, status: 'disabled-by-default' },
+          opens: await openEstimates(client,campaignId),
         },
         attribution,
         costs,

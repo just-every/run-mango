@@ -1,3 +1,4 @@
+import { loadSignupSettings } from '@/core/features/audience/signup-settings';
 import { requestPlatform } from './request-platform';
 import { createAppServices } from './app';
 import type { AppBindings, Platform } from '@/core/shared/platform';
@@ -8,7 +9,7 @@ import { lobbyResponse } from '@/base/lobby';
 import { setupStateResponse } from '@/base/setup-state';
 import { identity } from '@/identity';
 
-const honoPrefixes = ['/api', '/auth', '/unsubscribe', '/consent', '/l', '/links', '/media', '/webhooks', '/signin/verify', '/__dev'];
+const honoPrefixes = ['/api', '/auth', '/unsubscribe', '/consent', '/l', '/o', '/links', '/media', '/webhooks', '/signin/verify', '/__dev'];
 export async function dispatchDocuments(
   request: Request, environment: AppBindings, executionContext: ExecutionContext,
   platform: Platform, hono: {fetch: (request: Request, environment: AppBindings, executionContext: ExecutionContext) => Response | Promise<Response>},
@@ -46,9 +47,10 @@ export async function dispatchDocuments(
   if (path === '/setup') headers.set('Cache-Control', 'no-store');
   let frameOrigin = '';
   try { frameOrigin = configuredEditor(environment)?.managementOrigin ?? ''; } catch { /* A broken editor configuration grants no frame origin. */ }
-  // The public subscription document is delivered for embedding on owner sites.
-  // Operator documents and the owner editor remain restricted to this origin.
-  const ancestors = path === '/subscribe' ? '' : "frame-ancestors 'self'; ";
-  headers.set('Content-Security-Policy', `frame-src 'self' ${frameOrigin}; ${ancestors}object-src 'none'; base-uri 'self'`);
+  // CSP checks every ancestor, including a hostile host around an allowed embed.
+  const origins = path === '/subscribe' ? (await loadSignupSettings(platform)).embedOrigins : [];
+  const ancestors = `frame-ancestors ${path === '/subscribe' ? (origins.length ? origins.join(' ') : "'none'") : "'self'"}; `;
+  if (path === '/subscribe') headers.set('Cache-Control', 'no-store');
+  headers.set('Content-Security-Policy', `frame-src 'self' ${frameOrigin} ${path === '/subscribe' && platform.config.signupTurnstile ? 'https://challenges.cloudflare.com' : ''}; ${ancestors}object-src 'none'; base-uri 'self'`);
   return new Response(response.body, {status: response.status, statusText: response.statusText, headers});
 }

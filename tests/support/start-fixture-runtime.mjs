@@ -19,7 +19,7 @@ database_name = "mango-authoring-fixture"
 database_id = "00000000-0000-0000-0000-000000000001"
 migrations_dir = ${JSON.stringify(resolve('migrations/core'))}
 `;
-await writeFile(config, `${template}\n${authoringDatabase}\n[vars]\nLOCAL_BOOTSTRAP_TOKEN = ${JSON.stringify(token)}\n`, {mode:0o600});
+await writeFile(config, `${template}\n${authoringDatabase}\n[vars]\nLOCAL_BOOTSTRAP_TOKEN = ${JSON.stringify(token)}\nMANGO_FIXTURE_TURNSTILE = ${JSON.stringify(process.env.MANGO_FIXTURE_TURNSTILE ?? "0")}\n`, {mode:0o600});
 const env = { ...process.env, CI: '1', MANGO_AUTHORING_TEST_CONFIG: config, MANGO_AUTHORING_TEST_STATE: state, CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV:'false', CLOUDFLARE_INCLUDE_PROCESS_ENV:'false' };
 const cancellation = new AbortController();
 for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => cancellation.abort(Object.assign(new Error(`Cancelled by ${signal}.`), { signal })));

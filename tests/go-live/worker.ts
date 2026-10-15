@@ -119,7 +119,7 @@ async function control(request: Request, bindings: Bindings) {
   if (path === '/_golive/cron') {
     const body=await request.json() as {scheduledTime?:number; missingMailConfiguration?:boolean};
     const pending:Promise<unknown>[]=[];
-    productionWorker.scheduled({scheduledTime:body.scheduledTime??Date.now(),cron:'*/5 * * * *',noRetry(){}},{...productionBindings(bindings),...(body.missingMailConfiguration?{MAIL_PROVIDER_API_KEY:''}:{})},
+    productionWorker.scheduled({scheduledTime:body.scheduledTime??Date.now(),cron:'* * * * *',noRetry(){}},{...productionBindings(bindings),...(body.missingMailConfiguration?{MAIL_PROVIDER_API_KEY:''}:{})},
       {waitUntil:work=>{pending.push(work);}} as ExecutionContext);
     await Promise.all(pending);
     return Response.json({ok:true});

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { copyFile, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { copyFile, mkdtemp, readFile, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { resolveDeclaration } from '../scripts/installer/deploy-declaration.mjs';
@@ -49,6 +49,14 @@ test('optional design and receiver inputs reach the deploy upload, partial pairs
     await deploy({ ...design, ...receiver });
     for (const [name, value] of Object.entries({ ...design, ...receiver })) assert.equal(held.get(name), value);
     const configured = new Map(held);
+    // Repeated resolution of the same optional bindings must not invalidate
+    // the build cache by changing the generated declaration's modification time.
+    const declarationPath = join(root, '.rer/declarations/deploy.json');
+    const previous = await readFile(declarationPath);
+    const modified = (await stat(declarationPath, { bigint: true })).mtimeNs;
+    await deploy({ ...design, ...receiver });
+    assert.deepEqual(await readFile(declarationPath), previous);
+    assert.equal((await stat(declarationPath, { bigint: true })).mtimeNs, modified);
     await deploy({});
     assert.deepEqual(held, configured);
     const verify = await plan('verify', { ...design, ...receiver });

@@ -1,3 +1,4 @@
+import {createOpenPixelRoutes,createOpenTrackingSettingsRoutes} from '@/core/features/insights/open-tracking';
 import {smsReviewPreview} from '@/core/features/sms/review-preview';
 import { recordConfirmationDeferral } from '@/core/features/audience/confirmation-deferred';
 import { ProviderDeferredError } from '@/core/shared/provider-deferred-error';
@@ -274,6 +275,7 @@ export function createApp(
   app.route('/', createSmsSignupRoutes(platform,audienceService));
   app.route('/', createMediaRoutes(environment.DB, platform.blobs));
   if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce));
+  app.route('/',createOpenPixelRoutes(platform));
   mountBeforeAuthentication?.(app, services);
   if (!mountBeforeAuthentication) app.all('/api/_local/*', (context) => context.json({ error: 'not_found' }, 404));
 
@@ -311,6 +313,7 @@ export function createApp(
   app.route('/api', createDesignGenerationRoutes(environment.DB, platform));
   app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin));
   app.route('/api', createInsightsRoutes(insightsService));
+  app.route('/api', createOpenTrackingSettingsRoutes(platform.database.$client));
 
   app.all('*', (context) => context.json({ error: 'not_found' }, 404));
 

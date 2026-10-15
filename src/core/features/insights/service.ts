@@ -7,7 +7,7 @@ export function createInsightsService(repository: ReturnType<typeof createInsigh
       return {
         results: await repository.listResults(),
         costs: await repository.costReport(),
-        note: 'Each count comes from the provider: its acceptance of a hand-off or a signed event about a recipient. Acceptance is not delivery, outcomes are never added together, and opens are not tracked.',
+        note: 'Each count comes from the provider: its acceptance of a hand-off or a signed event about a recipient. Acceptance is not delivery, outcomes are never added together, and optional open estimates are kept separate.',
       };
     },
 
