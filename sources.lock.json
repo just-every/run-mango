@@ -1520,7 +1520,7 @@
       "executable": false
     },
     "scripts/installer/local.mjs": {
-      "sha256": "60289c3fc480a6e03b8474d17dc77318fac0b4a50e08b6716f96277de94e43f6",
+      "sha256": "0abe3a5f44cd689744f3c51c040e59288fb0a1103a0e4c443f2b520743f00a90",
       "executable": false
     },
     "scripts/installer/portability.mjs": {
