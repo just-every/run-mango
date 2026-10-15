@@ -68,6 +68,83 @@
       }
     },
     {
+      "path": "migrations/core/0058_base_provider_control.sql",
+      "originPath": "modules/operator-auth/accounts/schema/provider-control.sql",
+      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "files": {
+        "migrations/core/0058_base_provider_control.sql": "f19cc7a792538a8ff36d87760a3cad58fccab0316984488d1834af14fbf37cfe"
+      },
+      "modes": {
+        "migrations/core/0058_base_provider_control.sql": "100644"
+      }
+    },
+    {
+      "path": "migrations/core/0059_base_provider_pins.sql",
+      "originPath": "modules/operator-auth/accounts/schema/provider-pins.sql",
+      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "files": {
+        "migrations/core/0059_base_provider_pins.sql": "f0cfb6b3740869fd098ee449efb25807f8b1ef51c353fd07bafeb00ce38aeb63"
+      },
+      "modes": {
+        "migrations/core/0059_base_provider_pins.sql": "100644"
+      }
+    },
+    {
+      "path": "migrations/core/0060_base_owner_signin.sql",
+      "originPath": "modules/operator-auth/accounts/schema/owner-signin.sql",
+      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "files": {
+        "migrations/core/0060_base_owner_signin.sql": "98da904e768e35b43fb1be83d9dcc9c9b5d86ab3a795234ed5223c4fddc567d9"
+      },
+      "modes": {
+        "migrations/core/0060_base_owner_signin.sql": "100644"
+      }
+    },
+    {
+      "path": "migrations/core/0061_base_dependency_setup.sql",
+      "originPath": "modules/operator-auth/accounts/schema/dependency-setup.sql",
+      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "files": {
+        "migrations/core/0061_base_dependency_setup.sql": "7b36f7e1fb0991fe3e808613d911393bbad3386ead06427082c69a48c5738108"
+      },
+      "modes": {
+        "migrations/core/0061_base_dependency_setup.sql": "100644"
+      }
+    },
+    {
+      "path": "migrations/core/0062_base_dependencies.sql",
+      "originPath": "modules/dependencies/schema/dependencies.sql",
+      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "files": {
+        "migrations/core/0062_base_dependencies.sql": "3481d8aef870a9eda153a1617e99bb71a408e61a25dea92bb132efa7dd1c2526"
+      },
+      "modes": {
+        "migrations/core/0062_base_dependencies.sql": "100644"
+      }
+    },
+    {
+      "path": "migrations/core/0063_base_dependency_approval.sql",
+      "originPath": "modules/dependencies/schema/approval-attempt.sql",
+      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "files": {
+        "migrations/core/0063_base_dependency_approval.sql": "7d3742369189b69ea28bdc000097f150f83221c6474f7e177c7b5590691b67e9"
+      },
+      "modes": {
+        "migrations/core/0063_base_dependency_approval.sql": "100644"
+      }
+    },
+    {
+      "path": "migrations/core/0064_base_idp_claim.sql",
+      "originPath": "modules/owner-claim/schema/idp.sql",
+      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "files": {
+        "migrations/core/0064_base_idp_claim.sql": "a870102648a2226b18a2fe8168d096389b698af88333d112fa8137e582fc2b33"
+      },
+      "modes": {
+        "migrations/core/0064_base_idp_claim.sql": "100644"
+      }
+    },
+    {
       "path": "public/fonts/outfit",
       "originPath": "default-seed/public/fonts/outfit",
       "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
@@ -455,6 +532,41 @@
         "src/vendor/base/demo/sockets.mjs": "100644",
         "src/vendor/base/demo/vite.d.mts": "100644",
         "src/vendor/base/demo/vite.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/dependencies",
+      "originPath": "modules/dependencies",
+      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "files": {
+        "src/vendor/base/dependencies/approval.mjs": "41599909a5a8d5c2b31db98a06d7fbcc3ea47564c9643c9dd8e20062eaebafbd",
+        "src/vendor/base/dependencies/auth.mjs": "c1e864461c204731395555b0235a9cb058a8979fde84ae58abce559053ba27f0",
+        "src/vendor/base/dependencies/authority.mjs": "fe89cd1fb7da306cf145b8ef3ebe160902f4e4a82284681eccb97193c68e8750",
+        "src/vendor/base/dependencies/crypto.mjs": "8dc3397e90b6f8ec1dad81ba68da6e1a5e966ddd8c1b9ace943e964098fea950",
+        "src/vendor/base/dependencies/index.d.mts": "667f8fd42fb7319b5d43c5cced539ad0ad13bfca46887c45b52c1bee19ef7a22",
+        "src/vendor/base/dependencies/index.mjs": "403205efea3e027bfead18c93912275f9aa38471e13796b01481f8286dbf1597",
+        "src/vendor/base/dependencies/logout.mjs": "3bfa236ead120187b96da5f05e94861da682eb8419954a97ac594ff2de49ceb0",
+        "src/vendor/base/dependencies/native.mjs": "746b101f850bbf8ab18070352bb4920e2ab7252978b2594e9b4aa66e021534ce",
+        "src/vendor/base/dependencies/protocol.mjs": "851fedce4fbf2840fd75ace7b0216677d3d9f36cebe885dd39be0902009d2816",
+        "src/vendor/base/dependencies/README.md": "0360447fa552c02ebcd86053fe29dbf9ca386bdaf280012c5ff29a9fc8ef812d",
+        "src/vendor/base/dependencies/schema/approval-attempt.sql": "7d3742369189b69ea28bdc000097f150f83221c6474f7e177c7b5590691b67e9",
+        "src/vendor/base/dependencies/schema/dependencies.sql": "3481d8aef870a9eda153a1617e99bb71a408e61a25dea92bb132efa7dd1c2526",
+        "src/vendor/base/dependencies/store.mjs": "1d102b080d60634fe28da383c80d32a191b9b99cd94600168d6071ac25f0a606"
+      },
+      "modes": {
+        "src/vendor/base/dependencies/approval.mjs": "100644",
+        "src/vendor/base/dependencies/auth.mjs": "100644",
+        "src/vendor/base/dependencies/authority.mjs": "100644",
+        "src/vendor/base/dependencies/crypto.mjs": "100644",
+        "src/vendor/base/dependencies/index.d.mts": "100644",
+        "src/vendor/base/dependencies/index.mjs": "100644",
+        "src/vendor/base/dependencies/logout.mjs": "100644",
+        "src/vendor/base/dependencies/native.mjs": "100644",
+        "src/vendor/base/dependencies/protocol.mjs": "100644",
+        "src/vendor/base/dependencies/README.md": "100644",
+        "src/vendor/base/dependencies/schema/approval-attempt.sql": "100644",
+        "src/vendor/base/dependencies/schema/dependencies.sql": "100644",
+        "src/vendor/base/dependencies/store.mjs": "100644"
       }
     },
     {
