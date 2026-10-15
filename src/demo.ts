@@ -2,6 +2,8 @@ import type { AppBindings } from './core/shared/platform';
 import { createProductionPlatform } from './core/platform/runtime';
 import { createAppServices } from './core/app/app';
 import { createCampaignDemoImportRepository } from './core/features/campaigns/demo-import-repository';
+import { commerceSourceTypes } from './core/features/store/service';
+import { normalizeAuthoredContent } from './core/features/campaigns/authoring-content';
 import { createCampaignDemoImportService } from './core/features/campaigns/demo-import-service';
 
 /** Real editable sample records; admission remains the native owner/session flow. */
@@ -11,14 +13,17 @@ export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEma
   if (await db.prepare("SELECT 1 FROM seed_runs WHERE id='mango-visitor-demo-v1'").first()) return;
   const owner = await db.prepare('SELECT id FROM oa_operators WHERE email=? AND status=\'active\'').bind(ownerEmail).first<{ id: string }>();
   if (!owner) throw new Error('Demo owner is missing.');
-  const [{ sampleData }, { seedDemoHistory }] = await Promise.all([
+  const [{ sampleData }, { seedDemoHistory }, { seedDemoAudience }] = await Promise.all([
     import('./core/features/bootstrap/sample-data'),
     import('./core/features/bootstrap/demo-history'),
+    import('./core/features/bootstrap/demo-audience'),
   ]);
   const platform = createProductionPlatform(env);
   const { audienceService, storeService } = createAppServices(platform);
-  await storeService.importLocalDemo(sampleData.providerCapabilities, sampleData.sourceSyncs, now);
+  await storeService.importLocalDemo(sampleData.providerCapabilities.map(provider => ({ ...provider, configured: true, status: 'ready', detail: 'Provider is ready.' })), [], now);
+  await storeService.recordSourceCapabilities(commerceSourceTypes.map(sourceType => ({ sourceType, available: platform.commerce!.capabilities().sourceTypes.includes(sourceType), detail: 'Sample store connection.' })), now);
   await audienceService.importLocalDemo(sampleData.contacts, now);
+  await seedDemoAudience(platform, audienceService, sampleData, now);
   const contacts = await audienceService.localDemoContacts(sampleData.contacts.map(contact => contact.id));
   const importer = createCampaignDemoImportService(createCampaignDemoImportRepository(platform.database));
   const drafts = [
@@ -30,7 +35,7 @@ export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEma
   await importer.importLocalDemo({ ...sampleData, proposals: [], campaigns: sampleData.campaigns.map((campaign, index) => {
     const [name, emailSubject, copy] = drafts[index % drafts.length];
     return { ...campaign, proposalId: undefined, state: 'draft' as const, revision: { ...campaign.revision, name, emailSubject,
-      emailBody: `<h1>${emailSubject}</h1><p>Hello {{displayName|fallback:friend}},</p><p>${copy}</p>`, emailText: copy,
+      ...normalizeAuthoredContent({ emailBody: `<h1>${emailSubject}</h1><p>Hello {{displayName|fallback:friend}},</p><p>${copy}</p>`, links: [{ label: 'Explore the collection', destinationUrl: 'https://example.com/' }] }),
       smsBody: `${emailSubject}. Reply STOP to unsubscribe.`, smsSender: 'MangoSample',
       links: [{ label: 'Explore the collection', destinationUrl: 'https://example.com/' }],
       steps: campaign.revision.steps.map(step => ({ ...step, schedule: { ...step.schedule, whyThisTime: 'Planned for the next newsletter. Review and approve the saved revision before it can send.' } })) } };
