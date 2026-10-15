@@ -111,6 +111,7 @@ test('[SEND-003][SEND-006] concurrent campaigns and HTTP confirmation share the 
     await expect.poll(async()=> (await site.rows("SELECT count(*) AS n FROM recipient_steps WHERE transport_disposition='accepted'"))[0].n,{timeout:60000}).toBeGreaterThan(0);
     await expect.poll(async()=> (await site.rows("SELECT count(*) AS n FROM recipient_steps WHERE transport_disposition='handoff-unknown'"))[0].n,{timeout:60000}).toBe(0);
     await observe('before-restart-receipts-settled');
+    const acceptedBeforeRestart=(await site.rows(`SELECT count(*) AS n FROM recipient_steps WHERE revision_id='${b.revisionId}' AND transport_disposition='accepted'`))[0].n;
     const deferred=await site.rows("SELECT attempt_count,first_attempt_at FROM recipient_steps WHERE transport_disposition='queued'");
     expect(deferred.length).toBeGreaterThan(0);for(const row of deferred)expect(row).toEqual({attempt_count:0,first_attempt_at:null});
     const budget=await site.rows('SELECT scope,next_at,updated_at FROM provider_pacing');expect(budget).toHaveLength(1);
@@ -130,9 +131,9 @@ test('[SEND-003][SEND-006] concurrent campaigns and HTTP confirmation share the 
     // Queue batches may spend several slow provider responses on A before B.
     // Measure screen freshness from B's actual durable receipt, not its time
     // waiting behind another campaign in the same shared provider backlog.
-    await expect.poll(async()=> (await site.rows(`SELECT count(*) AS n FROM recipient_steps WHERE revision_id='${b.revisionId}' AND transport_disposition='accepted'`))[0].n,{timeout:60000}).toBeGreaterThan(0);
+    await expect.poll(async()=> (await site.rows(`SELECT count(*) AS n FROM recipient_steps WHERE revision_id='${b.revisionId}' AND transport_disposition='accepted'`))[0].n,{timeout:60000}).toBeGreaterThan(acceptedBeforeRestart);
     await observe('b-acceptance-recorded');
-    await expect.poll(async()=>Number((await page.locator('[data-disposition=accepted] dd').allTextContents())[0]??0),{timeout:30000}).toBeGreaterThan(0);
+    await expect.poll(async()=>Number((await page.locator('[data-disposition=accepted] dd').allTextContents())[0]??0),{timeout:30000}).toBeGreaterThan(acceptedBeforeRestart);
     await observe('b-acceptance-visible-without-navigation');
     expect(marketing().length).toBeLessThan(emails.length);
     const [liveProgress]=await site.rows(`SELECT updated_at FROM step_dispatches WHERE revision_id='${b.revisionId}'`);
