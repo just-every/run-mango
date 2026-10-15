@@ -10,7 +10,6 @@ import { Paper } from '@/core/features/site/paper/Paper';
 export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannels, smsPreview }: { revision: Revision; links: RevisionLink[]; mediaOrigin?: string; selectedChannels?: readonly Channel[]; smsPreview?:SmsReviewPreview }) {
   const [width, setWidth] = useState<'desktop' | 'mobile'>('desktop');
   const [loadImages, setLoadImages] = useState(false);
-  const [preview, setPreview] = useState({html: '', imagesBlocked: 0});
   const rendered = useMemo(() => renderMessageContent({...revision, preheader: revision.preheader ?? '', physicalAddress: revision.physicalAddress ?? ''}, {
     values: {first_name: 'Alex', name: 'Alex Example', displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
@@ -19,7 +18,8 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const showSms = selectedChannels?.includes('sms') ?? Boolean(rendered.sms.trim() || revision.smsSender.trim());
   const issues = useMemo(() => inspectEmailHtml(revision.emailBody, mediaOrigin).issues, [revision.emailBody, mediaOrigin]);
   useEffect(() => {setLoadImages(false)}, [revision.id, revision.updatedAt]);
-  useEffect(() => {setPreview(sanitizeEmailPreview(rendered.html, loadImages, issues.length === 0, mediaOrigin))}, [rendered.html, loadImages, issues, mediaOrigin]);
+  // Approval remounts this preview outside the editor. Supply its complete document on that first render.
+  const preview = useMemo(() => sanitizeEmailPreview(rendered.html, loadImages, issues.length === 0, mediaOrigin), [rendered.html, loadImages, issues, mediaOrigin]);
   return (
     <section className="preview-grid" aria-label="Saved revision previews">
       {showEmail ? <article className="message-preview message-preview--email">

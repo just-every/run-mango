@@ -99,7 +99,8 @@ test("campaign review saves and discards long edits without granting unsaved app
     await expect(page.locator(".unsaved-notice")).toHaveCount(0);
     await expect(
       page.getByRole("button", { name: "Approve & schedule", exact: true }),
-    ).toBeEnabled();
+    ).toBeDisabled();
+    await expect(page.locator("#approval-blocked-reason")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Send test", exact: true }),
     ).toBeEnabled();

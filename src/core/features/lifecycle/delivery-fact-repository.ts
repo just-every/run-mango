@@ -222,13 +222,15 @@ export function createDeliveryFactRepository(database: Database) {
     },
 
     async completeCampaigns(now: Date) {
+      // Sending is finished once every handoff has a known outcome. Provider
+      // delivery facts can arrive later and still enrich a completed campaign.
       return client.prepare(
         `UPDATE campaigns SET state = 'completed', updated_at = ?
          WHERE state IN ('scheduled', 'dispatching', 'paused')
            AND EXISTS (SELECT 1 FROM recipient_steps r WHERE r.campaign_id = campaigns.id)
            AND NOT EXISTS (
              SELECT 1 FROM recipient_steps r WHERE r.campaign_id = campaigns.id
-               AND r.transport_disposition IN ('queued', 'handoff-unknown', 'handed-off', 'accepted')
+               AND r.transport_disposition IN ('queued', 'handoff-unknown')
            )`,
       ).bind(now.getTime()).run();
     },

@@ -22,10 +22,10 @@ with exit 3 and a message naming the field.
 - **Port.** The first port from 8787 that is free on both `127.0.0.1` and `::1`
   and held by no registered server. Override with `rer dev --port N`; start the
   search elsewhere with `RER_DEV_PORT_FROM=N`.
-- **Detaching.** Without a terminal (an agent's shell tool) `rer dev` returns once
-  the app is ready and leaves it running in the background, printing its
-  private log path; in a terminal it stays in the foreground and Ctrl-C stops
-  it. `--detach` and `--foreground` override that.
+- **Background server.** `rer dev` returns once the app is ready and leaves it
+  running in the background, printing its private log path. Open the printed
+  `RER_OPEN` link, which uses the selected free port. Stop with `rer dev --stop`;
+  `--foreground` explicitly keeps the server attached to the terminal.
 - **Progress and resuming.** A first launch can take several minutes. It prints
   a progress line at least every 30 seconds (`progress` events with `--json`).
   If the calling command is killed the launch carries on; run `rer dev` again to
@@ -46,10 +46,14 @@ with exit 3 and a message naming the field.
   `rer deploy --site --dry-run` prints the site Worker, custom domains and www
   redirect it would create, with no provider request.
 
+Node may print `ExperimentalWarning: SQLite is an experimental feature and might change at any time`
+when rer loads Node’s built-in SQLite API for local tooling. The warning alone is not a command
+failure; check the command result and wait for `RER_READY` when starting dev.
+
 ## Install for a real owner
 
 rer itself needs Node 22 or later already installed (nodejs.org, `brew install node` or nvm).
-Pinned rer 0.2.19 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
+Pinned rer 0.2.20 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
 checkout; neither needs a separate manual install. To install with a real owner
 mailbox, run the verbs yourself from the runnable
 edition's root: install locked dependencies, prepare its local owner, then start
@@ -205,7 +209,7 @@ rer deploy
 rer describe
 ```
 
-Stop dev or preview with `--stop` or Ctrl-C before build or verification, and
+Stop dev with `rer dev --stop` or preview with `rer preview --stop` before build or verification, and
 before reset and data transfer. Reset removes only the
 declared local inventory: local database/storage state, owner and sessions,
 outbox, CLI and installer bookkeeping, and generated private settings. It
@@ -219,9 +223,13 @@ outbox, private settings and transient runtime state are excluded. Remote
 transfer is unsupported by the maintained references and fails visibly.
 
 Real deployment uses the owner-account procedure and its private credentials.
+Set `storeTimezone`, `organizationName` and `landingSummary` in `src/ext/config.ts`,
+then commit locally with `git add src/ext/config.ts` and
+`git commit -m "Configure Mango installation"` before deploying. No push is
+needed; deploy refuses uncommitted tracked changes.
 `rer deploy --dry-run` validates and builds locally without a
 provider request. The default environment is `production`; select another with
-`--environment NAME`. Pinned rer 0.2.19 claims the first hosted owner after the
+`--environment NAME`. Pinned rer 0.2.20 claims the first hosted owner after the
 health check and removes the one-time setup token. Repeated deployments retain
 the existing owner. Preserve your private inputs, receipt, backups and local
 customizations when updating: run `git pull --ff-only`, then

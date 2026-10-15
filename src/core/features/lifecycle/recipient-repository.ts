@@ -108,7 +108,7 @@ export function createRecipientLifecycleRepository(database: Database) {
     async completeStep(stepId: string, now: Date) {
       const pending = await client.prepare(
         `SELECT COUNT(*) count FROM recipient_steps WHERE step_id = ?
-         AND transport_disposition IN ('queued', 'handoff-unknown', 'handed-off', 'accepted')`,
+         AND transport_disposition IN ('queued', 'handoff-unknown')`,
       ).bind(stepId).first<{ count: number }>();
       if (Number(pending?.count ?? 0) > 0) return false;
       await client.prepare(
@@ -124,7 +124,7 @@ export function createRecipientLifecycleRepository(database: Database) {
           WHERE transport_disposition='queued' AND send_by_at<=?`).bind(now.getTime(),now.getTime(),now.getTime()),
         client.prepare(`UPDATE step_dispatches SET state='completed',completed_at=?,estimated_completion_at=NULL,updated_at=?
           WHERE state='dispatching' AND NOT EXISTS(SELECT 1 FROM recipient_steps r WHERE r.step_id=step_dispatches.step_id
-            AND r.transport_disposition IN ('queued','handoff-unknown','handed-off','accepted'))`).bind(now.getTime(),now.getTime()),
+            AND r.transport_disposition IN ('queued','handoff-unknown'))`).bind(now.getTime(),now.getTime()),
       ]);
     },
 

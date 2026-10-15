@@ -2,7 +2,7 @@
 const exact: Record<string, string> = {
   'authentication-observed': 'A receiving mailbox reported SPF, DKIM and DMARC passing for a test message.',
   'owner-confirmed': 'You confirmed a test message reached your inbox, and the domain’s SPF, DKIM and DMARC records check out.',
-  'observation-missing': 'No inbox check yet. In Settings, send a check to your own inbox and press Confirm in that email.',
+  'observation-missing': 'No inbox check yet. In Settings, send a check to your own inbox and press “Yes, it reached my inbox” in that email.',
   'observation-stale': 'The inbox check has expired. Send a new check from Settings.',
   'observation-revoked': 'The inbox check was withdrawn. Send a new check from Settings.',
   'observation-time-invalid': 'The inbox check has an impossible time. Send a new check from Settings.',

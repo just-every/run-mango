@@ -5,15 +5,16 @@ import { type FieldErrors } from '@/core/app/client/ui/field-errors';
 import { compositionFieldErrors } from './composition-field-errors';
 import { approvalFieldErrors } from './approval-field-errors';
 import { summarizeAudienceRules } from '../audience-summary';
-import { Link, useParams, useBlocker } from '@tanstack/react-router';
+import { Link, useParams, useBlocker, useLoaderData } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
 import { requestJson } from '@/core/app/client/lib/api';
 import type { ApprovalBlocker, CampaignDetail, Check, Revision } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
-import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
+import { LoadState } from '@/core/app/client/ui/layout';
+import { CampaignStatusPill } from './campaign-status-pill';
 
-import { ApprovalCheckList } from './approval-check-list';
+import { ApprovalCheckList, approvalFindingDescription } from './approval-check-list';
 import { AudienceSnapshot } from './audience-snapshot';
 import { CampaignCompositionEditor } from './composition-editor';
 import { DeliveryPlan } from './delivery-plan';
@@ -24,6 +25,7 @@ type ReviewData = CampaignDetail & { blockers: ApprovalBlocker[] };
 
 export function CampaignReviewPage() {
   const { id } = useParams({ from: '/app/campaigns_/$id_/review' });
+  const { modules } = useLoaderData({ from: '/app' });
   const { data, error, loading, reload } = useResource<ReviewData>(`/api/campaigns/${id}/review`);
   const authoring = useResource<{timezone:string}>('/api/campaign-authoring');
   const [draft, setDraft] = useState<DraftComposition>();
@@ -56,14 +58,16 @@ export function CampaignReviewPage() {
   const savedDraft = toDraftComposition(revision, data.links, data.steps);
   const dirty = JSON.stringify(draft) !== JSON.stringify(savedDraft);
   const findings = [...(actionBlockers ?? data.blockers), ...(data.checks ?? [])].filter((check, index, all) =>
-    all.findIndex(other => other.kind === check.kind && other.detail === check.detail && other.status === check.status) === index);
-
+    all.findIndex(other => other.kind === check.kind && other.detail === check.detail && other.status === check.status && other.blocking === check.blocking) === index);
+  const blockingFindings = findings.filter(check => check.blocking);
+  const approvalBlocked = needsCanonicalRead || blockingFindings.length > 0;
 
   const action = async (kind: 'approve' | 'test') => {
     if (busy) return;
     setNoticeKind('error');
     if (needsCanonicalRead) {setNotice('Reload the saved revision before approving or sending a test.'); return;}
     if (dirty) {setNotice('Save or discard your changes before using the saved revision.'); return;}
+    if (kind === 'approve' && approvalBlocked) {setNotice('Resolve the blocking approval checks before scheduling.'); return;}
     if (kind === 'test' && !testDestination.trim()) {
       setNotice('Enter an operator-approved test destination before requesting a test send.');
       return;
@@ -81,7 +85,6 @@ export function CampaignReviewPage() {
           : { revisionId: revision.id, idempotencyKey: crypto.randomUUID() }),
       },
     );
-    setBusy(undefined);
     if (response.status === 409 && response.data.blockers) {
       setActionBlockers(response.data.blockers);
       setFieldErrors(approvalFieldErrors(response.data.blockers, draft));
@@ -189,7 +192,7 @@ export function CampaignReviewPage() {
         <div className="detail-actions"><button className="secondary-action" type="button" onClick={() => {if (navigation.status === 'blocked') navigation.reset();}}>Keep editing</button><button className="danger-action--line" type="button" onClick={() => {if (navigation.status === 'blocked') navigation.proceed();}}>Discard and leave</button></div>
       </Modal>
       <Modal open={confirmingApproval} onClose={() => setConfirmingApproval(false)} title="Approve and schedule?" description={`Mango will send revision ${revision.version} exactly as saved to its eligible contacts at the scheduled time. Until it sends, you can cancel it from the campaign page.`}>
-        <div className="detail-actions"><button className="secondary-action" type="button" onClick={() => setConfirmingApproval(false)}>Keep reviewing</button><button className="primary-action" type="button" onClick={() => {setConfirmingApproval(false); void action('approve');}}>Approve &amp; schedule</button></div>
+        <div className="detail-actions"><button className="secondary-action" type="button" onClick={() => setConfirmingApproval(false)}>Keep reviewing</button><button className="primary-action" type="button" disabled={Boolean(busy) || dirty || approvalBlocked} onClick={() => {setConfirmingApproval(false); void action('approve');}}>Approve &amp; schedule</button></div>
       </Modal>
       <header className="page-head review-heading">
         <div className="page-head__text">
@@ -198,15 +201,16 @@ export function CampaignReviewPage() {
           </Link>
           <p className="eyebrow">Review campaign</p>
           <h1>{revision.name}</h1>
-          <p className="page-head__meta review-heading__meta"><span>Revision {revision.version}</span> · <StatusPill value={data.campaign.state} /></p>
+          <p className="page-head__meta review-heading__meta"><span>Revision {revision.version}</span> · <CampaignStatusPill state={data.campaign.state} results={data.results} /></p>
         </div>
         {editable || data.results ? <div className="page-head__actions review-heading__actions">
-          {editable ? <button className="primary-action" type="button" onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : setConfirmingApproval(true)} disabled={Boolean(busy) || (!dirty && needsCanonicalRead)}>
+          {editable ? <button className="primary-action" type="button" aria-describedby={!dirty && blockingFindings.length ? 'approval-blocked-reason' : undefined} onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : setConfirmingApproval(true)} disabled={Boolean(busy) || (!dirty && approvalBlocked)}>
             {busy === 'save' ? 'Saving…' : busy === 'approve' ? 'Checking…' : dirty ? 'Save changes' : 'Approve & schedule'}
           </button> : null}
           {data.results ? <Link className="primary-action" to="/app/campaigns/$id/scheduled" params={{id}}>View schedule and results</Link> : null}
         </div> : null}
       </header>
+      {editable && blockingFindings.length ? <p id="approval-blocked-reason" className="notice-note" role="status">Approval blocked: {approvalFindingDescription(blockingFindings[0])}{blockingFindings.length > 1 ? ` Review all ${blockingFindings.length} blocking checks below.` : ''}</p> : null}
       {dirty ? <div className="unsaved-notice" role="status"><span>Unsaved changes. Save before approving.</span><button type="button" className="text-link" disabled={Boolean(busy)} onClick={() => {setDraft(savedDraft); setNotice(undefined);}}>Discard changes</button></div> : null}
       {notice ? <p className={noticeKind === 'success' ? 'action-notice' : 'inline-error'} role={noticeKind === 'success' ? 'status' : 'alert'}>{notice}</p> : null}
       {needsCanonicalRead ? <section className="panel" role="region" aria-labelledby="canonical-read-title">
@@ -238,7 +242,7 @@ export function CampaignReviewPage() {
             {!revision.fromEmail || !revision.senderName ? <p>Email tests are unavailable until you save a sender identity in Settings and update this draft.</p> : null}
             {dirty ? <p>Save your changes before sending a test of this revision.</p> : null}
             <ValidationForm className="test-send-fields" aria-label="Send a test" serverErrors={testErrors} onValidSubmit={() => void action('test')}>
-              <label>Test channel<select aria-label="Test channel" value={testChannel} onChange={event => setTestChannel(event.target.value as 'email' | 'sms')}><option value="email">Email</option><option value="sms">SMS</option></select></label>
+              <label>Test channel<select aria-label="Test channel" value={testChannel} onChange={event => setTestChannel(event.target.value as 'email' | 'sms')}><option value="email">Email</option>{modules.sms ? <option value="sms">SMS</option> : null}</select></label>
               <label>Test destination (required)<Field name="destination" label="Test destination" required validate={() => testChannel === 'sms' && !/^\+[1-9]\d{6,14}$/.test(testDestination.trim()) ? 'Enter a phone number with its country code, such as +61412345678.' : undefined}><input aria-label="Test destination" type={testChannel === 'email' ? 'email' : 'tel'} value={testDestination} onChange={event => setTestDestination(event.target.value)} /></Field></label>
               <button className="secondary-action" type="submit" disabled={Boolean(busy) || dirty || needsCanonicalRead || !revision.fromEmail || !revision.senderName}>{busy === 'test' ? 'Checking…' : 'Send test'}</button>
             </ValidationForm>

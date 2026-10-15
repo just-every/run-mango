@@ -25,6 +25,10 @@ function readableDetail(detail:string) {
   return plainServiceText(labels[detail]??detail);
 }
 
+export function approvalFindingDescription(finding: ApprovalFinding) {
+  return `${readableKind(finding.kind)}: ${readableDetail(finding.detail)}`;
+}
+
 export function ApprovalCheckList({
   checks,
   onAcknowledge,
@@ -48,7 +52,7 @@ export function ApprovalCheckList({
   const renderFindings = (items: ApprovalFinding[]) => items.map((check, index) => (
     <p key={findingKey(check, index)} className={`check-list__item check-list__item--${check.status}`}>
       <strong>{readableKind(check.kind)}</strong>
-      <span><b aria-label={`Status: ${findingLabel(check)}`}>{findingLabel(check)}</b>{readableDetail(check.detail)}{check.blocking ? <small className="check-next-step">Next step: {check.kind === 'mail.sender.v1.configured' ? 'Deploy Mango with a mail provider to send. Drafts, previews and imports work here.' : check.kind === 'message.email-sender' ? 'Open Settings and send the inbox check, then press Confirm in that email.' : check.kind.startsWith('mail.') || check.kind.includes('sender') || check.kind.includes('authentication') ? 'Open Settings and complete sender setup, then save this draft and check again.' : check.kind.startsWith('audience.') ? 'Review the audience conditions and contact consent, then save the draft and check again.' : check.kind.startsWith('schedule.') ? 'Choose a valid send time, time zone and later deadline, then save the draft.' : 'Correct the indicated campaign content or connection, then save the draft and check again.'}</small> : null}
+      <span><b aria-label={`Status: ${findingLabel(check)}`}>{findingLabel(check)}</b>{readableDetail(check.detail)}{check.blocking ? <small className="check-next-step">Next step: {check.kind === 'mail.sender.v1.configured' ? 'Deploy Mango with a mail provider to send. Drafts, previews and imports work here.' : check.kind === 'message.email-sender' ? 'Open Settings and send the inbox check, then press “Yes, it reached my inbox” in that email.' : check.kind.startsWith('mail.') || check.kind.includes('sender') || check.kind.includes('authentication') ? 'Open Settings and complete sender setup, then save this draft and check again.' : check.kind.startsWith('audience.') ? 'Review the audience conditions and contact consent, then save the draft and check again.' : check.kind.startsWith('schedule.') ? 'Choose a valid send time, time zone and later deadline, then save the draft.' : 'Correct the indicated campaign content or connection, then save the draft and check again.'}</small> : null}
         {'id' in check && check.acknowledgement ? <small className="check-next-step">Acknowledged by {check.acknowledgement.operatorId} · <time dateTime={check.acknowledgement.acknowledgedAt}>{new Date(check.acknowledgement.acknowledgedAt).toLocaleString()}</time></small>
           : onAcknowledge && 'id' in check && check.findingIdentity && check.status === 'advisory' && !check.blocking
             ? <button type="button" className="text-link" disabled={acknowledgementDisabled} onClick={() => onAcknowledge(check)}>Acknowledge advisory</button> : null}

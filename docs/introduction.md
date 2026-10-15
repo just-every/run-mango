@@ -22,7 +22,7 @@ Mango 0.1.0 is a newsletter release candidate. This documentation describes what
 
 ## What you need
 
-To try it locally, install Node 22 or later, then rer, and run the commands in the install guide. Pinned rer 0.2.19 then manages this project's exact Node, pnpm and the locked dependencies. Signup works locally too: its confirmation lands in the local outbox. Local mail stays on your computer, so a local copy can write drafts, import contacts and show the signup page, but it cannot send real newsletters.
+To try it locally, install Node 22 or later, then rer, and run the commands in the install guide. Pinned rer 0.2.20 then manages this project's exact Node, pnpm and the locked dependencies. Signup works locally too: its confirmation lands in the local outbox. Local mail stays on your computer, so a local copy can write drafts, import contacts and show the signup page, but it cannot send real newsletters.
 
 To send real newsletters you need:
 

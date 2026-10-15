@@ -21,6 +21,13 @@ export function resolveDeclaration(root, purpose, env = {}) {
   declaration.secrets = (declaration.secrets ?? [])
     .filter(item => !item.optional || (purpose === 'deploy' && supplied(item)))
     .map(({ optional: _optional, ...item }) => item);
+  // Native sign-in and newsletter mail use the same provider. Project Mango's
+  // owner inputs to Base's mail bindings as well, so rer validates that actual
+  // connection without asking the owner for a second sender or credential.
+  for (const [binding, source] of [['MAIL_FROM', 'MAIL_AUTH_FROM'], ['MAIL_API_KEY', 'MAIL_PROVIDER_API_KEY']]) {
+    const input = declaration.secrets.find(item => item.binding === source);
+    if (input) declaration.secrets.push({ binding, environment: input.environment });
+  }
   const directory = join(root, '.rer', 'declarations');
   mkdirSync(directory, { recursive: true, mode: 0o700 });
   if (lstatSync(directory).isSymbolicLink()) throw new Error('Refusing a symbolic link at .rer/declarations.');

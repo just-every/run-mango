@@ -16,7 +16,7 @@ export function sendingReadiness(inspection: SenderInspection | undefined, physi
         : ['passed', 'failed'].includes(inspection.observation.state) ? 'observed' : 'not-observed',
       detail: ownerConfirmed
         ? 'You confirmed the check Mango sent to your own inbox. It counts for 30 days, or until the provider or DNS records change.'
-        : 'Send a check to the address you sign in with (below) and press Confirm in that email. An installed receipt connector can report it instead.' },
+        : 'Send a check to the address you sign in with (below) and press “Yes, it reached my inbox” in that email. An installed receipt connector can report it instead.' },
     { key: 'authentication', label: 'SPF, DKIM and DMARC pass, aligned with the From domain', state: !inspection || inspection.observation.state === 'unknown' ? 'unavailable'
         : authentication && authentication.spf && authentication.dkim && authentication.dmarc && authentication.aligned ? ownerConfirmed ? 'checked' : 'observed' : 'not-observed',
       detail: ownerConfirmed

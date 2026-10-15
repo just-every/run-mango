@@ -179,7 +179,7 @@ export function createAudienceImportService(platform: Platform) {
         const snapshot=await portableAudienceSnapshot(target.value as unknown as AudienceSnapshot); const contact=snapshot.tables.contacts[0];
         const evidence=snapshot.tables.consent_evidence.filter(row=>row.channel==='email').sort((a,b)=>Number(b.occurred_at)-Number(a.occurred_at))[0];
         const metadata=snapshot.tables.consent_capture_metadata.find(row=>row.id===evidence?.id);
-        return [contact.email,snapshot.tables.contact_phones[0]?.phone_e164,contact.display_name,contact.email_status,contact.sms_status,evidence?.capture_source,evidence?.occurred_at,evidence?.capture_method,metadata?.capture_ip,evidence?.confirmed_at,metadata?.confirmation_ip,canonicalJson(snapshot)];
+        return [contact.email,snapshot.tables.contact_phones[0]?.phone_e164,contact.display_name,contact.email_status,contact.sms_status,evidence?.capture_source,evidence?.occurred_at == null ? null : new Date(Number(evidence.occurred_at)).toISOString(),evidence?.capture_method,metadata?.capture_ip,evidence?.confirmed_at == null ? null : new Date(Number(evidence.confirmed_at)).toISOString(),metadata?.confirmation_ip,canonicalJson(snapshot)];
       })),...(await optOutLines(db,carried)).map(optOutCsvRow)]);
     },
   };

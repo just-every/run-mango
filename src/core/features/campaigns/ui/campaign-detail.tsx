@@ -5,7 +5,8 @@ import { Link, useParams, useNavigate } from '@tanstack/react-router';
 import { formatDate } from '@/core/app/client/lib/format';
 import type { CampaignDetail } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
-import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
+import { LoadState } from '@/core/app/client/ui/layout';
+import { CampaignStatusPill } from './campaign-status-pill';
 
 import { ApprovalCheckList } from './approval-check-list';
 import { AudienceSnapshot } from './audience-snapshot';
@@ -36,7 +37,7 @@ export function CampaignDetailPage() {
           <p className="eyebrow">Campaign</p>
           <h1>{data.revision.name}</h1>
           <div className="page-head__meta campaign-head-meta">
-            <StatusPill value={data.campaign.state} />
+            <CampaignStatusPill state={data.campaign.state} results={data.results} />
             <p>
               Saved revision {data.revision.version} · updated {formatDate(data.revision.updatedAt)}
             </p>

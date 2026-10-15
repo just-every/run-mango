@@ -48,10 +48,13 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await page.getByLabel('Local send date and time',{exact:true}).fill('2031-04-07T10:00');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
     await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
-    await page.getByRole('button',{name:'Approve & schedule',exact:true}).click();
-    await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();
+    await expect(page.getByRole('button',{name:'Approve & schedule',exact:true})).toBeDisabled();
+    await expect(page.locator('#approval-blocked-reason')).toBeVisible();
+    await expect(page.getByRole('alertdialog')).toHaveCount(0);
+    const refused=await call(`/api/campaigns/${campaignId}/approve`,{revisionId:detail.revision.id,idempotencyKey:'incomplete-draft'});
+    expect(refused.status).toBe(409);
     await expect(page.getByText('Add the missing subject, message body, preheader before approval.',{exact:false})).toBeVisible();
-    await expect(page.getByText('Add a campaign name before approval.',{exact:false})).toBeVisible();
+    await expect(page.locator('#approval-blocked-reason')).toContainText('Campaign name');
     expect(await state()).toEqual({jobs:[],recipients:[],approvals:[]});
     await page.getByLabel('Campaign name',{exact:true}).fill(`Authored newsletter ${width}`);
     await page.getByLabel('Email subject',{exact:true}).fill('Garden news');
@@ -87,7 +90,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await page.getByLabel('Include 1 field',{exact:true}).selectOption('contact:email');
     await page.getByLabel('Include 1 comparison',{exact:true}).selectOption('contains');
     await page.getByLabel('Include 1 value',{exact:true}).fill('@example.test');
-    await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contacts');
+    await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contact');
     if(width===1440) {
       // Delay an actual Worker response, without replacing any application data.
       let release!:()=>void, observed!:()=>void, returned!:()=>void;
@@ -99,20 +102,20 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
       });
       await page.getByLabel('Include 1 value',{exact:true}).fill('subscribed@');await seen;
       await page.getByLabel('Include 1 value',{exact:true}).fill('@example.test');
-      await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contacts');
+      await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contact');
       release();await finished;await page.unroute('**/api/campaign-authoring/audience');
-      await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contacts');
+      await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contact');
     }
     await page.getByRole('button',{name:'Add exclusion',exact:true}).click();
     await expect(page.getByLabel('Live audience estimate')).toContainText('Counts unavailable.');
     await page.getByLabel('Exclude 1 value',{exact:true}).fill('subscribed@');
     await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 0 eligible contacts');
     await page.getByRole('button',{name:'Remove exclusion 1',exact:true}).click();
-    await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contacts');
+    await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contact');
     await page.getByLabel('Include 1 field',{exact:true}).selectOption('order:productId');
     await expect(page.getByLabel('Live audience estimate')).toContainText('Counts unavailable.');
     await page.getByLabel('Include 1 field',{exact:true}).selectOption('contact:email');
-    await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contacts');
+    await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contact');
     // Both UI and API reject a half-hour DST fold and a gap without mutating the saved draft.
     await page.getByLabel('IANA time zone',{exact:true}).fill('Australia/Lord_Howe');
     await page.getByLabel('Local send date and time',{exact:true}).fill('2031-04-06T01:45');
@@ -130,7 +133,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await expect(page.getByRole('textbox',{name:'Email body',exact:true}).locator('h2')).toHaveText('Garden news');
     await expect(page.frameLocator('iframe[title="Saved email preview"]').getByRole('heading',{name:'Garden news'})).toBeVisible();
     await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('strong')).toHaveText('Written by the operator.');
-    await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contacts');
+    await expect(page.getByLabel('Live audience estimate')).toContainText('2 candidates · 1 eligible contact');
     expect(detail.revision.emailText).not.toContain('<h2>');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
     await page.locator('iframe[title="Saved email preview"]').scrollIntoViewIfNeeded();
@@ -139,6 +142,8 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await page.getByRole('button',{name:'Approve & schedule',exact:true}).click();
     await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();
     await expect(page.getByRole('status').filter({hasText:'exact saved revision is approved and scheduled'})).toBeVisible();
+    await expect(page.locator('#campaign-composer')).toHaveCount(0);
+    await expect(page.frameLocator('iframe[title="Saved email preview"]').getByRole('heading',{name:'Garden news'})).toBeVisible();
     detail=await read();expect(detail.campaign.state).toBe('scheduled');expect(detail.revision.state).toBe('approved');expect(detail.steps[0].scheduledAt).toBe('2031-04-07T00:00:00.000Z');
     const again=await call(`/api/campaigns/${campaignId}/approve`,{revisionId:detail.revision.id,idempotencyKey:'authoring-repeat-approval'});expect(again.status).toBe(200);expect(again.data.idempotent).toBe(true);
     // Future approval persists recipients and authority; Cron enqueues dispatch only when due.

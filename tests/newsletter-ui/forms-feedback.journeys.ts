@@ -23,7 +23,7 @@ import { challengeEdge } from './signup-privacy-support';
     await expect(form.getByLabel('Email body',{exact:true})).toHaveAttribute('aria-required','true');
     const invalid=await form.locator('[aria-invalid="true"]').count(); expect(invalid).toBeGreaterThan(0); await expectSummary(form,invalid);
     await page.reload(); await expect(subject).toHaveValue('');
-    await page.getByRole('button',{name:'Approve & schedule'}).click(); await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click(); await expect(page.locator('.inline-error[role="alert"]').filter({hasText:'Not approved'})).toBeVisible(); await expectFieldError(subject); await expect(subject).toBeFocused();
+    await expect(page.getByRole('button',{name:'Approve & schedule'})).toBeDisabled(); await expect(page.locator('#approval-blocked-reason')).toBeVisible(); await expect(page.getByRole('alertdialog')).toHaveCount(0);
     const savedState=await page.evaluate(async id=>(await fetch(`/api/campaigns/${id}`)).json(),id); expect(savedState.campaign.state).toBe('draft');
     await page.getByRole('button',{name:'Add exclusion',exact:true}).click(); const condition=page.getByLabel('Exclude 1 value'); await condition.focus(); await condition.blur(); await expectFieldError(condition);
     await page.getByRole('button',{name:'Save full draft'}).click(); expect(await form.locator('[aria-invalid="true"]').count()).toBeGreaterThan(0);
@@ -35,15 +35,13 @@ import { challengeEdge } from './signup-privacy-support';
     const timingReason=page.getByLabel('Why this time',{exact:true});await timingReason.fill('');await timingReason.blur();await expectFieldError(timingReason);await expect(timingReason).toHaveAttribute('required','');
     await page.getByRole('button',{name:'Save full draft'}).click();await expectFieldError(timingReason);await expectSummary(form,await form.locator('[aria-invalid="true"]').count());
     await timingReason.fill('The store opens at this time.');await timingReason.blur();
-    await page.getByRole('combobox',{name:'Channel',exact:true}).selectOption('sms');
-    const smsMessage=page.getByLabel('SMS message',{exact:true}),smsSender=page.getByLabel('SMS sender',{exact:true});
-    for(const field of [smsMessage,smsSender]) {await field.fill('');await field.blur();await expectFieldError(field);await expect(field).toHaveAttribute('required','');}
+    await expect(page.getByRole('combobox',{name:'Channel',exact:true}).locator('option[value="sms"]')).toHaveCount(0);
+    await expect(page.getByLabel('SMS message',{exact:true})).toHaveCount(0);
+    await expect(page.getByLabel('SMS sender',{exact:true})).toHaveCount(0);
     await page.getByLabel('Include 1 field').selectOption('contact:email'); await page.getByLabel('Include 1 comparison').selectOption('contains'); await page.getByLabel('Include 1 value').fill('live@example.test');
     const summary=page.getByLabel('Audience summary',{exact:true}); await expect(summary).toContainText('live@example.test'); await expect(summary).toContainText('exclude@example.test'); await expect(page.getByRole('textbox',{name:'Audience rule',exact:true})).toHaveCount(0);
     await page.getByRole('button',{name:'Save full draft'}).click(); await expect(page.locator('.action-notice')).toContainText('Draft saved.'); await page.reload(); await expect(summary).toContainText('live@example.test'); await expect(summary).toContainText('exclude@example.test');
-    await expect(smsMessage).toHaveValue('');await expect(smsSender).toHaveValue('');
-    await page.getByRole('button',{name:'Approve & schedule'}).click();await page.getByRole('alertdialog').getByRole('button',{name:'Approve & schedule'}).click();await expectFieldError(smsMessage);await expectFieldError(smsSender);
-    await page.getByRole('combobox',{name:'Channel',exact:true}).selectOption('email');await smsMessage.blur();await smsSender.blur();await expect(smsMessage).not.toHaveAttribute('required','');await expect(smsSender).not.toHaveAttribute('required','');
+    await expect(page.getByRole('button',{name:'Approve & schedule'})).toBeDisabled();await expect(page.locator('#approval-blocked-reason')).toBeVisible();await expect(page.getByRole('alertdialog')).toHaveCount(0);
     await expectVisibleFocus(page);
   });
   contract('CAMP-002', `unsaved changes modal traps keyboard focus, Escape cancels, and disclosures announce state at ${width}px`, async ({page,request}) => {

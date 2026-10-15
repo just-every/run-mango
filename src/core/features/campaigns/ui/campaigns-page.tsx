@@ -5,7 +5,8 @@ import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { formatDateInTimeZone } from '@/core/app/client/lib/format';
 import { KeepTogether } from '@/core/features/site/BodyText';
 import { EmptyState } from '@/core/app/client/ui/empty-state';
-import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
+import { LoadState } from '@/core/app/client/ui/layout';
+import { CampaignStatusPill } from './campaign-status-pill';
 import { campaignStates, campaignStateLabel } from '../result-model';
 import { useCampaignCollection } from './data';
 import { dispositionLabel } from './result-copy';
@@ -44,7 +45,7 @@ export function CampaignsPage() {
               <span>{campaign.channels.map(channel => channel === 'sms' ? 'SMS' : 'Email').join(' · ') || 'No saved steps'}</span>
               <p className="campaign-row__audience">{campaign.audienceSummary}</p>
             </div>
-            <div className="campaign-row__meta"><StatusPill value={campaign.state === 'dispatching' ? 'sending' : campaign.state} />
+            <div className="campaign-row__meta"><CampaignStatusPill state={campaign.state} lastOutcome={campaign.lastOutcome} />
               <small><KeepTogether text={`${campaign.nextScheduledAt ? `Next: ${formatDateInTimeZone(campaign.nextScheduledAt,data.timezone)}` : `${campaign.lastOutcome ? dispositionLabel({disposition:campaign.lastOutcome,reason:campaign.lastSkipReason,count:1}) : campaignStateLabel(campaign.state)}: ${formatDateInTimeZone(campaign.lastOutcomeAt ?? campaign.updatedAt,data.timezone)}`} (${data.timezone})`} /></small>
             </div>
           </Link>;

@@ -42,7 +42,7 @@ export function InsightsPage() {
       <SenderRates />
       {data.results.length ? (
         <section className="panel data-table-panel" aria-labelledby="insights-results-title">
-          <div className="section-heading"><div><p className="eyebrow">Recorded results</p><h2 id="insights-results-title">{data.results.length} observed events</h2></div></div>
+          <div className="section-heading"><div><p className="eyebrow">Recorded results</p><h2 id="insights-results-title">{data.results.length} observed event{data.results.length === 1 ? '' : 's'}</h2></div></div>
           <div className="table-scroll" tabIndex={0} role="region" aria-label="Recorded campaign outcomes">
             <table className="responsive-table insights-table" aria-label="Recorded campaign outcomes">
               <thead>

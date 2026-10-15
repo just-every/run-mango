@@ -4,7 +4,7 @@ There are two ways to run Mango. Run it on your computer to look around and writ
 
 ## Run it on your computer
 
-First install **Node 22 or later**: rer runs on it, and the installer stops with `node is required` without it. Get it from [nodejs.org](https://nodejs.org/en/download) (or `brew install node` on a Mac, or a version manager such as nvm). Then install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.19**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
+First install **Node 22 or later**: rer runs on it, and the installer stops with `node is required` without it. Get it from [nodejs.org](https://nodejs.org/en/download) (or `brew install node` on a Mac, or a version manager such as nvm). Then install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.20**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
 
 ```bash
 rer install
@@ -12,9 +12,11 @@ rer setup --owner-email you@example.com
 rer dev
 ```
 
-`install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again keeps your existing owner and private settings, but rer 0.2.19 repeats the build and migrations, starts a temporary application and requests a fresh sign-in message. Authentication/outbox records, SQLite runtime files, generated build outputs, command receipts and redacted logs can change. Production builds use a separate generated Worker configuration from local dev, preview and migrations. Unchanged configuration and private settings are preserved when building or repeating a deploy dry-run, while build outputs, receipts and logs may be regenerated. Setup is not a read-only check. Starting dev and signing in also writes real authentication and outbox records; omitting --port reuses the saved origin. Pass `--port PORT` or `--host HOST` to use another loopback address than the default, 127.0.0.1:15660. Never commit or share `.dev.vars`.
+`install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again keeps your existing owner and private settings, but rer 0.2.20 repeats the build and migrations, starts a temporary application and requests a fresh sign-in message. Authentication/outbox records, SQLite runtime files, generated build outputs, command receipts and redacted logs can change. Production builds use a separate generated Worker configuration from local dev, preview and migrations. Unchanged configuration and private settings are preserved when building or repeating a deploy dry-run, while build outputs, receipts and logs may be regenerated. Setup is not a read-only check. Starting dev and signing in also writes real authentication and outbox records. Dev picks a free loopback port; use the address in its printed `RER_OPEN` link. Pass `--port PORT` or `--host HOST` to select a loopback origin explicitly. Never commit or share `.dev.vars`.
 
-`dev` starts Mango and prints `RER_READY`, `RER_SIGNED_IN` and a private `RER_OPEN` link. Open that link on this computer to enter as the owner; keep it private because it carries the checkout’s dev key. To use ordinary email-link sign-in instead, run `rer dev --login`, open its outbox `RER_OPEN`, choose the newest message, follow its link and press **Confirm**. The first time, the link opens **Set up your sender identity**: save your business details there to enter the app. You can change them later in Settings. Local mail never leaves your computer and no mail provider is configured locally, so a local copy cannot send a real newsletter. Stop the server with Ctrl-C.
+`dev` starts Mango in the background, returns control to your terminal and prints `RER_READY`, `RER_SIGNED_IN` and a private `RER_OPEN` link. Open that link on this computer to enter as the owner; keep it private because it carries the checkout’s dev key. To use ordinary email-link sign-in instead, run `rer dev --login`, open its outbox `RER_OPEN`, choose the newest message, follow its link and press **Confirm**. The first time, the link opens **Set up your sender identity**: save your business details there to enter the app. You can change them later in Settings. Local mail never leaves your computer and no mail provider is configured locally, so a local copy cannot send a real newsletter. Stop the server with `rer dev --stop`.
+
+Node may print `ExperimentalWarning: SQLite is an experimental feature and might change at any time` when rer loads Node’s built-in SQLite API for local tooling. This warning alone is not a command failure; check the command result and, for dev, wait for `RER_READY`.
 
 To run Mango's own checks, install the headless browser its tests use with `pnpm exec playwright install chromium`, stop the server, then run `rer verify`. `rer describe` lists every command and its flags.
 
@@ -22,7 +24,14 @@ To run Mango's own checks, install the headless browser its tests use with `pnpm
 
 You need a Cloudflare account, its account ID, an API token scoped for the work, and an account with SendGrid or Resend.
 
-First, set `storeTimezone`, `organizationName` and `landingSummary` in `src/ext/config.ts`. Schedules use `storeTimezone`; the default is Australia/Brisbane.
+First, set `storeTimezone`, `organizationName` and `landingSummary` in `src/ext/config.ts`. Schedules use `storeTimezone`; the default is Australia/Brisbane. Commit that configuration edit locally before running either deploy command; no push is needed:
+
+```sh
+git add src/ext/config.ts
+git commit -m "Configure Mango installation"
+```
+
+Deploy refuses uncommitted tracked changes. Commit any other intentional source or `deploy.json` edits too; keep private input files untracked.
 
 Create `.rer/hosted.env` once from the repository root. This refuses to overwrite an existing file and gives it private permissions:
 
@@ -47,7 +56,7 @@ With SendGrid you need only its API key (`MAIL_PROVIDER_API_KEY`) and a verified
 
 ### Check, then deploy
 
-From the repository root:
+From the repository root, with your configuration edits committed:
 
 ```bash
 set -a
@@ -118,7 +127,7 @@ The runner reads `deploy.json` variables and the selected deployment's validated
 
 **Design with 12ui** in the email editor uses your own [12ui](https://12ui.com) account. It stays off, and Mango never contacts 12ui, until you give Mango two settings together: your 12ui API key and the address of 12ui's service. Supplying only one stops Mango from starting, with a message naming the other.
 
-- On your computer, add both lines to `.dev.vars` and restart `rer dev`:
+- On your computer, add both lines to `.dev.vars`, stop with `rer dev --stop`, then start `rer dev` again:
 
   ```bash
   DESIGN_PROVIDER_API_KEY=<your 12ui API key>

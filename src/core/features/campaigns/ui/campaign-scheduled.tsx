@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
 import type { CampaignDetail } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
-import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
+import { LoadState } from '@/core/app/client/ui/layout';
+import { CampaignStatusPill } from './campaign-status-pill';
 import { Modal } from '@/core/app/client/ui/modal';
 import { AudienceSnapshot } from './audience-snapshot';
 import { StepResults } from './step-results';
@@ -51,7 +52,7 @@ export function CampaignScheduledPage() {
       <div className="page-head__text">
         <Link className="back-link" to="/app/campaigns/$id" params={{ id }}>← Back to campaign</Link>
         <p className="eyebrow">Campaign schedule</p><h1>{data.revision.name}</h1>
-        <p className="page-head__meta scheduled-head__state">State: <StatusPill value={data.campaign.state} /></p>
+        <p className="page-head__meta scheduled-head__state">State: <CampaignStatusPill state={data.campaign.state} results={results} /></p>
         <p className="overall-result">{overallResult(results,data.steps,productConfig.storeTimezone)}</p>
         <p className="scheduled-head__recall">Messages already handed to a provider cannot be recalled.</p>
       </div>
