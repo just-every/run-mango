@@ -5,6 +5,10 @@ import type { AppBindings, Platform } from '@/core/shared/platform';
 export async function ownerClaim(request: Request, environment: AppBindings, platform: Platform) {
   const {config} = platform;
   try {
+    // The demo front supplies a per-container key and its exact application origin.
+    if (environment.RER_DEMO === '1') environment = { ...environment,
+      RER_MANAGEMENT_ORIGIN: config.publicBaseUrl.origin,
+      RER_INSTALLATION_ID: environment.RER_OWNER_CLAIM_INSTALLATION_ID };
     const issuer = environment.RER_OWNER_CLAIM_ISSUER;
     if (!issuer || issuer !== environment.RER_MANAGEMENT_ORIGIN || !environment.RER_INSTALLATION_ID || !environment.RER_OWNER_CLAIM_PUBLIC_KEYS) {
       return Response.json({error: 'owner_claim_not_configured'}, {status: 503, headers: {'Cache-Control': 'no-store'}});

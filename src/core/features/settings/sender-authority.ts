@@ -1,3 +1,5 @@
+// @ts-expect-error Portable Base ESM has no separate declaration for this helper.
+import { localCookieName } from '@/vendor/base/operator-auth/http.mjs';
 import { hmacSha256Hex } from '@/core/platform/crypto';
 import type { Platform } from '@/core/shared/platform';
 
@@ -8,7 +10,7 @@ export class SenderAuthorityChanged extends Error {}
 export async function senderWriteAuthority(platform: Pick<Platform, 'config' | 'database'>, request: Request, operatorId: string) {
   const cookies = request.headers.get('Cookie') ?? '';
   const local = platform.config.local === true;
-  const name = local ? 'operator_session_local' : '__Host-operator_session';
+  const name = local ? localCookieName('operator_session_local', request.url) : '__Host-operator_session';
   const matches = cookies.split(';').map(value => value.trim()).filter(value => value.startsWith(`${name}=`));
   const token = matches.length === 1 ? matches[0].slice(name.length + 1) : '';
   if (!/^[A-Za-z0-9_-]{43}$/.test(token)) throw new SenderAuthorityChanged();

@@ -10,6 +10,7 @@ export const setup = 'integration-test-setup-more-than-thirty-two-bytes';
 export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy = false, admission = {}) {
   const source = `
     import { testIdentity } from './tests/support/test-identity';
+    import { localSessionCookieName } from './tests/support/local-session';
     import { createApp } from './src/core/app/app';
     import { createProductionPlatform, createLocalPlatform } from './src/core/platform/runtime';
     import { createAppServices } from './src/core/app/app';
@@ -33,7 +34,7 @@ export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy =
         await testIdentity(platform).importLocalDemoOperator({id:'local-owner',email:'local@example.test',displayName:'Local'},new Date());
         const expired = await testIdentity(platform).createTestSession('local-owner',new Date(Date.now()-31*86400000));
         const active = await testIdentity(platform).createTestSession('local-owner');
-        const request = (session, method = 'GET') => new Request('http://127.0.0.1/api/operator', {method,headers:{Host:'127.0.0.1',Origin:'http://127.0.0.1',Cookie:'operator_session_local='+session.token}});
+        const request = (session, method = 'GET') => new Request('http://127.0.0.1/api/operator', {method,headers:{Host:'127.0.0.1',Origin:'http://127.0.0.1',Cookie:localSessionCookieName('http://127.0.0.1')+'='+session.token}});
         const values = {expired:!!await auth.authenticate(request(expired)),active:!!await auth.authenticate(request(active))};
         await auth.signOut(request(active,'POST'));
         values.revoked=!!await auth.authenticate(request(active));

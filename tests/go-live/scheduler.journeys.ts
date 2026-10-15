@@ -40,7 +40,7 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
       .filter((bucket:{disposition:string})=>bucket.disposition==='delivered').reduce((sum:number,bucket:{count:number})=>sum+bucket.count,0);
     expect((await detail()).scheduler).toMatchObject({state:'not-observed',lastTickAt:null,outcome:null});
     expect((await site.call(`/api/campaigns/${letter.campaignId}`)).status).toBe(401);
-    await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
 
     await page.setViewportSize({width:390,height:900});
     await page.goto(`${site.runtime.url}/app/campaigns/${letter.campaignId}/scheduled`);
@@ -92,7 +92,7 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     expect(failed.status).toBe(500);
     expect((await detail()).scheduler.outcome).toBe('failed');
     await page.context().clearCookies();
-    await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${letter.campaignId}/scheduled`);
     await expect(page.locator('[data-scheduler-outcome="failed"]')).toBeVisible();
     // Dismiss Vite's diagnostic for the deliberately failed Cron request before capturing the app.

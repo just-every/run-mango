@@ -21,7 +21,7 @@ export function SignInPage() {
       }).catch(() => {});
     return () => controller.abort();
   }, []);
-  const guidance = local === null ? 'Determining the sign-in environment. Reload this page if it does not finish.' : local ? 'Open the private RER_OPEN link from rer dev to sign in on this computer.' : 'Check the mail settings in the operations guide.';
+  const guidance = local === null ? 'Determining the sign-in environment. Reload this page if it does not finish.' : local ? 'Return to sign-in and continue as owner.' : 'Check the mail settings in the operations guide.';
   async function submit(event: FormEvent<HTMLFormElement>) {
     if (!hydrated) return;
     event.preventDefault();
@@ -54,7 +54,6 @@ export function SignInPage() {
             <button className="primary-action" type="submit" disabled={busy}>{busy ? 'Requesting link…' : 'Email sign-in link'}</button>
           </form>
           {notice && <p className={failed ? 'signin-notice signin-error inline-error' : 'signin-notice action-notice'} role={failed ? 'alert' : 'status'}><BodyText text={failed ? `${notice} ${guidance}` : notice} /></p>}
-          {local && <p className="standalone-note"><BodyText text="Local email is unavailable. Open the private RER_OPEN link from rer dev to sign in." /></p>}
         </section>
       ) }}
       after={<a className="secondary-link standalone-back" href="/">Back to the home page</a>}

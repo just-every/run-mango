@@ -9,7 +9,7 @@ import { freePort } from '../support/free-port.mjs';
 import { runCommand } from '../../scripts/installer/run-command.mjs';
 import { localVariables } from '../../scripts/installer/environment.mjs';
 import { startNativeDev } from './native-dev.mjs';
-import { enterOwner, rememberKey } from './dev-gate.mjs';
+import { openGate, rememberKey } from './dev-gate.mjs';
 
 // Real copied Mango entrypoints and persistent D1. Dependencies are reused from
 // this verified source tree; the separate fresh-start journey installs its own.
@@ -62,7 +62,10 @@ export async function authorityRuntime() {
 }
 
 export async function signIn(page, url) {
-  await enterOwner(page, url);
+  await openGate(page.context(), url);
+  await page.goto(url + '/signin?returnTo=%2Fapp');
+  await page.getByRole('link', { name: 'Continue as owner' }).click();
+  await page.waitForURL(current => ['/setup', '/app'].includes(current.pathname));
   if (new URL(page.url()).pathname === '/setup') await finishSetup(page);
   await page.waitForURL(url + '/app');
 }

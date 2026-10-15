@@ -142,5 +142,9 @@
     "MARKETING_MAIL_PROVIDER": "",
     "MARKETING_MAIL_WEBHOOK_ID": ""
   },
-  "originVar": "MANGO_PUBLIC_BASE_URL"
+  "originVar": "MANGO_PUBLIC_BASE_URL",
+  "platforms": [
+    "workers",
+    "container"
+  ]
 }

@@ -26,7 +26,7 @@ import { createPublicTokenSigner } from './public-tokens';
 import { localContactHashSalt } from './local-contact-authority';
 import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
 
-/** Local authoring has no mail transport. Dev identity opens the operator session directly. */
+/** Local mail is silently suppressed, including consent confirmations. */
 function localSender(): SenderAdapter {
   const unavailable = () => {
     throw new Error('Sending is off on a copy running on your computer. Deploy Mango with a mail provider to send email.');
@@ -47,7 +47,10 @@ function localSender(): SenderAdapter {
     async validateSender() {
       return { ready: false, detail: 'Sending is off on a copy running on your computer.' };
     },
-    send: async () => unavailable(),
+    async send(request) {
+      if (request.purpose !== 'consent-confirmation') unavailable();
+      return { providerMessageId: `local-suppressed:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
+    },
     reconcile: unavailable,
     verifyWebhook: unavailable,
   };
@@ -58,7 +61,7 @@ function designAdapter(module: AppConfig['modules']['design']) {
   return module.enabled ? { design: createTwelveUiAdapter({ apiKey: module.config.providerApiKey, origin: module.config.origin }) } : {};
 }
 
-function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'>): Platform {
+export function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'>): Platform {
   return {
     database: createDatabase(environment.DB),
     config,

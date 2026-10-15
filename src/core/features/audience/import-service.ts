@@ -1,3 +1,5 @@
+// @ts-expect-error Portable Base ESM has no separate declaration for this helper.
+import { localCookieName } from '@/vendor/base/operator-auth/http.mjs';
 import {audiencePreviewBudget} from './import-query-budget';
 import {sharedAudienceImport} from './import-authority';
 import {createAudienceStream,isAudienceStream,audienceStreamActions} from './import-stream';
@@ -32,7 +34,7 @@ function previewCounts(plan:ImportPlan) {
 }
 
 export async function audienceImportContext(platform: Platform, principalId: string, request: Request): Promise<D1ImportContext> {
-  const name = platform.config.local === true ? 'operator_session_local' : '__Host-operator_session';
+  const name = platform.config.local === true ? localCookieName('operator_session_local', request.url) : '__Host-operator_session';
   const cookies=(request.headers.get('cookie') ?? '').split(';').map(value=>value.trim());
   const names=[name];
   const selected=names.map(cookieName=>cookies.find(value=>value.startsWith(`${cookieName}=`))).find(Boolean);

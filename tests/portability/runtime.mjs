@@ -8,11 +8,14 @@ const require = createRequire(import.meta.url);
 const { Miniflare, convertV4MiniflareOptions } = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const { build } = createRequire(require.resolve('vite/package.json'))('esbuild');
 export const privateKey = 'synthetic-portable-test-private-key-at-least-thirty-two-bytes';
+let workerBundle;
+// Reuse code, while every runtime keeps its own bindings, native D1, R2 and persistence.
+const compiledWorker = () => workerBundle ??= build({ entryPoints: [resolve('tests/portability/worker.ts')], bundle: true, write: false,
+  format: 'esm', platform: 'browser', external: ['node:*'], alias: { '@': resolve('src') }, logLevel: 'silent' });
 export async function portabilityRuntime({ restore = false, key = privateKey, beforeMigration } = {}) {
   const directory = await mkdtemp(join(tmpdir(), 'mango-portability-')), port = await freePort();
   const origin = `http://127.0.0.1:${port}`;
-  const bundled = await build({ entryPoints: [resolve('tests/portability/worker.ts')], bundle: true, write: false,
-    format: 'esm', platform: 'browser', external: ['node:*'], alias: { '@': resolve('src') }, logLevel: 'silent' });
+  const bundled = await compiledWorker();
   let bindings = { MANGO_PUBLIC_BASE_URL: origin, INITIAL_OPERATOR_EMAILS: 'owner@example.test',
     SESSION_SIGNING_KEY: key, CONTACT_HASH_SALT: key, AUTH_SETUP_TOKEN: privateKey,
     MANGO_LOCAL_HASH_AUTHORITY: 'contact-salt-v1', MANGO_RESTORE_MODE: restore ? '1' : '0' };

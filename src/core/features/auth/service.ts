@@ -62,7 +62,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
   });
   function core(request: Request) {
-    return createOperatorAuth({ db, config: authConfig(request), mailSender: local ? { async send() { return { status: 'rejected', provider: 'local', providerMessageId: null, code: 'mail-unavailable' }; } } : createBaseMailSender(config, repository.database),
+    return createOperatorAuth({ db, config: authConfig(request), mailSender: local || config.demo ? { async send() { return { status: 'accepted' as const, provider: 'development', providerMessageId: null }; } } : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
         if (action === 'operators:role') return false;
