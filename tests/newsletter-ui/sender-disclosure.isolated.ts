@@ -62,7 +62,7 @@ test('saved sender disclosure is current and stale consent cannot create evidenc
       await page.getByRole('button', { name: 'Request confirmation' }).click();
     })(),
   ]);
-  // Locally the confirmation lands in the development outbox, so signup succeeds.
+  // Local confirmation mail is silently suppressed; native consent stays pending.
   expect(captureResponse.status()).toBe(202);
   expect((await captureResponse.json()).status).toBe('confirmation-required');
   await expect(page.getByText('Request received')).toBeVisible();
