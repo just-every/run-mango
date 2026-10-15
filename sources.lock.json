@@ -5552,7 +5552,7 @@
       "executable": false
     },
     "tests/local-start/editor.journey.ts": {
-      "sha256": "e43f49e80c41e9cc8f9bd24e8600ebf045898844c99c0e216ad2ed5c341a388f",
+      "sha256": "bc329f5689c2347df8edcffea1e64598c7a2461b319c2758767c7b7366b4b917",
       "executable": false
     },
     "tests/local-start/finish-setup.mjs": {

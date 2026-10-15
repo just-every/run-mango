@@ -8,13 +8,14 @@ import {openGate} from './dev-gate.mjs';
 
 contract('MGMT-002','native owner editor mounts at 1440 and 390, refuses visitors and loses its grant on sign-out',async ({browser}) => {
   test.setTimeout(600000);
-  const runtime=await authorityRuntime();
+  let runtime: Awaited<ReturnType<typeof authorityRuntime>> | undefined;
+  let appOrigin: string;
   const server=createServer((req,res)=>{
     const url=new URL(req.url!,'http://fixture');
-    if(url.pathname!=='/editor'||url.searchParams.get('parentOrigin')!==runtime.url){res.writeHead(403);res.end();return;}
-    res.setHeader('Content-Type','text/html');res.setHeader('Content-Security-Policy',`frame-ancestors ${runtime.url}`);
+    if(url.pathname!=='/editor'||url.searchParams.get('parentOrigin')!==appOrigin){res.writeHead(403);res.end();return;}
+    res.setHeader('Content-Type','text/html');res.setHeader('Content-Security-Policy',`frame-ancestors ${appOrigin}`);
     res.end(`<!doctype html><html><body><main style="position:fixed;right:10px;bottom:80px;width:300px;background:white;padding:12px">Editing Mango<script>
-      const origin=${JSON.stringify(runtime.url)},installationId='mango-editor-test';let sessionId;
+      const origin=${JSON.stringify(appOrigin)},installationId='mango-editor-test';let sessionId;
       const send=(type,data={})=>parent.postMessage({protocol:'rer-editor',version:1,installationId,type,...(sessionId?{sessionId}:{}),...data},origin);
       addEventListener('message',e=>{if(e.origin!==origin||e.source!==parent)return;const d=e.data;
         if(d.type==='protocol-offer'){sessionId=d.sessionId;send('protocol-accept');}
@@ -24,7 +25,10 @@ contract('MGMT-002','native owner editor mounts at 1440 and 390, refuses visitor
   });
   const context=await browser.newContext(),page=await context.newPage();
   try {
+    // Reserve management before choosing the app port, so it cannot take that released socket.
     await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));
+    runtime=await authorityRuntime();
+    appOrigin=runtime.url;
     const management=`http://127.0.0.1:${(server.address() as {port:number}).port}`;
     await runtime.setup(false);await runtime.variables();
     const file=join(runtime.checkout,'.dev.vars');
@@ -55,5 +59,5 @@ contract('MGMT-002','native owner editor mounts at 1440 and 390, refuses visitor
     await expect(page.locator('[data-rer-editor]')).toHaveCount(0);
     expect((await page.request.get(runtime.url+'/api/editor/config')).status()).toBe(401);
     expect((await (await page.request.get(runtime.url+'/auth/environment')).json()).editorEligible).toBe(false);
-  } finally {await context.close();await runtime.close();server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
+  } finally {await context.close();await runtime?.close();server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
 });
