@@ -38,3 +38,7 @@ The manually dispatched `Run demo` workflow reads the `run-demo` environment.
 production uses the environment's real widget keys. `test_only` plus `remove`
 removes that test deployment and reads back its absence. No deployment variable
 is needed. Never automate the production Turnstile challenge.
+
+For a manual hosted build, run `pnpm config:production` before
+`rer deploy --demo` (or its `--dry-run`). The workflow does this preparation
+automatically; it creates Mango’s separate production bundler configuration.
