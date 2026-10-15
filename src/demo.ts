@@ -32,7 +32,7 @@ export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEma
     return { ...campaign, proposalId: undefined, state: 'draft' as const, revision: { ...campaign.revision, name, emailSubject,
       emailBody: `<h1>${emailSubject}</h1><p>Hello {{displayName|fallback:friend}},</p><p>${copy}</p>`, emailText: copy,
       smsBody: `${emailSubject}. Reply STOP to unsubscribe.`, smsSender: 'MangoSample',
-      links: [{ label: 'Explore the collection', destinationUrl: 'https://example.test/collection' }],
+      links: [{ label: 'Explore the collection', destinationUrl: 'https://example.com/' }],
       steps: campaign.revision.steps.map(step => ({ ...step, schedule: { ...step.schedule, whyThisTime: 'Planned for the next newsletter. Review and approve the saved revision before it can send.' } })) } };
   }) }, contacts, now);
   await seedDemoHistory(platform, owner.id, now);
