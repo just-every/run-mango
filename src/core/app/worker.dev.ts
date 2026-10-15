@@ -1,7 +1,7 @@
 import '../../vendor/base/demo/index.mjs';
 // Local-only Worker entry. vite.config.ts loads it only for `vite dev`; the deployed main stays worker.ts and
 // preview serves worker.local.ts, and `rer build` refuses any output that contains the dev layer. It adds dev
-// sign-in, personas and the dev badge.
+// sign-in and personas, and marks the product name as Dev.
 import worker from './worker.local';
 import { withDevIdentity } from '@/vendor/base/operator-auth/dev/index.mjs';
 import { localBindings } from '@/core/platform/local-bindings';
