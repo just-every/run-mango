@@ -74,7 +74,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+          "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
           "paths": [
             "modules/operator-auth/README.md",
             "modules/operator-auth/accounts/adapter.mjs",
@@ -469,7 +469,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+          "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
           "paths": [
             "modules/owner-claim/README.md",
             "modules/owner-claim/idp.mjs",
@@ -720,7 +720,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+          "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
           "paths": [
             "modules/demo/README.md",
             "modules/demo/effects.mjs",
@@ -746,7 +746,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+          "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
           "paths": [
             "modules/dependencies/README.md",
             "modules/dependencies/approval.mjs",

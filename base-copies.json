@@ -4,7 +4,7 @@
     {
       "path": "migrations/core/0016_invitation_cancellation.sql",
       "originPath": "modules/operator-auth/accounts/schema/invitation-cancellation.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0016_invitation_cancellation.sql": "2130793483660155aaa1851b6111e51a7aeaf1f8ceb86d467d42ba684c35b562"
       },
@@ -48,7 +48,7 @@
     {
       "path": "migrations/core/0031_dev_sessions.sql",
       "originPath": "modules/operator-auth/accounts/schema/dev-sessions.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0031_dev_sessions.sql": "18754583983c09f3624038131c1b03fadecb8375dddb0a5d09c449a4238ce298"
       },
@@ -59,7 +59,7 @@
     {
       "path": "migrations/core/0032_auth_domain_rules_step_up.sql",
       "originPath": "modules/operator-auth/accounts/schema/domain-rules-step-up.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0032_auth_domain_rules_step_up.sql": "e41c7f1381f547582148cdf247b521d7f166461ab24058ace95acdf21839e815"
       },
@@ -70,7 +70,7 @@
     {
       "path": "migrations/core/0058_base_provider_control.sql",
       "originPath": "modules/operator-auth/accounts/schema/provider-control.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0058_base_provider_control.sql": "f19cc7a792538a8ff36d87760a3cad58fccab0316984488d1834af14fbf37cfe"
       },
@@ -81,7 +81,7 @@
     {
       "path": "migrations/core/0059_base_provider_pins.sql",
       "originPath": "modules/operator-auth/accounts/schema/provider-pins.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0059_base_provider_pins.sql": "f0cfb6b3740869fd098ee449efb25807f8b1ef51c353fd07bafeb00ce38aeb63"
       },
@@ -92,7 +92,7 @@
     {
       "path": "migrations/core/0060_base_owner_signin.sql",
       "originPath": "modules/operator-auth/accounts/schema/owner-signin.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0060_base_owner_signin.sql": "98da904e768e35b43fb1be83d9dcc9c9b5d86ab3a795234ed5223c4fddc567d9"
       },
@@ -103,7 +103,7 @@
     {
       "path": "migrations/core/0061_base_dependency_setup.sql",
       "originPath": "modules/operator-auth/accounts/schema/dependency-setup.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0061_base_dependency_setup.sql": "7b36f7e1fb0991fe3e808613d911393bbad3386ead06427082c69a48c5738108"
       },
@@ -114,7 +114,7 @@
     {
       "path": "migrations/core/0062_base_dependencies.sql",
       "originPath": "modules/dependencies/schema/dependencies.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0062_base_dependencies.sql": "3481d8aef870a9eda153a1617e99bb71a408e61a25dea92bb132efa7dd1c2526"
       },
@@ -125,7 +125,7 @@
     {
       "path": "migrations/core/0063_base_dependency_approval.sql",
       "originPath": "modules/dependencies/schema/approval-attempt.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0063_base_dependency_approval.sql": "7d3742369189b69ea28bdc000097f150f83221c6474f7e177c7b5590691b67e9"
       },
@@ -136,7 +136,7 @@
     {
       "path": "migrations/core/0064_base_idp_claim.sql",
       "originPath": "modules/owner-claim/schema/idp.sql",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "migrations/core/0064_base_idp_claim.sql": "a870102648a2226b18a2fe8168d096389b698af88333d112fa8137e582fc2b33"
       },
@@ -508,7 +508,7 @@
     {
       "path": "src/vendor/base/demo",
       "originPath": "modules/demo",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "src/vendor/base/demo/effects.mjs": "2e523da1d9fcffc4b6e3e0e4901b6bd45e6f08adfb380b397e775acb0358c395",
         "src/vendor/base/demo/index.d.mts": "71caa39f5001ab8bd2891ae5bdb9bf1ab4910c121fb038d83ae549adaf8fcf10",
@@ -537,7 +537,7 @@
     {
       "path": "src/vendor/base/dependencies",
       "originPath": "modules/dependencies",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "src/vendor/base/dependencies/approval.mjs": "41599909a5a8d5c2b31db98a06d7fbcc3ea47564c9643c9dd8e20062eaebafbd",
         "src/vendor/base/dependencies/auth.mjs": "c1e864461c204731395555b0235a9cb058a8979fde84ae58abce559053ba27f0",
@@ -1220,7 +1220,7 @@
     {
       "path": "src/vendor/base/operator-auth",
       "originPath": "modules/operator-auth",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "src/vendor/base/operator-auth/accounts/adapter.mjs": "989fca51e86ecc80cb150661b6d6cb8b6a57f82a85eb408d1fa6286a8372a3aa",
         "src/vendor/base/operator-auth/accounts/admin.mjs": "ad164e6b03136b67407e6f0b9ac7089dbcad505f65c07ac05c991705e17c69b1",
@@ -1393,7 +1393,7 @@
     {
       "path": "src/vendor/base/owner-claim",
       "originPath": "modules/owner-claim",
-      "revision": "5dbbda36b26fbb6d8d905cdc631c5fc6e2c626f1",
+      "revision": "38aa7efdb3cceec585d2344ed54dd559295b9059",
       "files": {
         "src/vendor/base/owner-claim/idp.mjs": "edb09dfeb0b66849cd84b651099d46c6420d1dc3f270446ae96595d91754d3e6",
         "src/vendor/base/owner-claim/index.d.mts": "33fc8d1b756cb2c0a4317ea4dbc29ae704dd137f76993278859d98ae5e9ad184",
