@@ -25,7 +25,8 @@ export async function portabilityRuntime({ restore = false, key = privateKey, be
     let db = await mf.getD1Database('DB'), bucket = await mf.getR2Bucket('ASSETS_BUCKET');
     for (const file of (await readdir('migrations/core')).filter(name => name.endsWith('.sql')).sort()) {
       await beforeMigration?.(file,db,bucket);
-      for (const sql of sqlStatements(await readFile(`migrations/core/${file}`, 'utf8'))) await db.prepare(sql).run();
+      const statements = sqlStatements(await readFile(`migrations/core/${file}`, 'utf8'));
+      if (statements.length) await db.batch(statements.map(sql => db.prepare(sql)));
     }
     const call = (path, { method = 'GET', cookie, body, origin: requestOrigin = origin } = {}) => fetch(origin + path, {
       method, redirect: 'manual', headers: { Origin: requestOrigin, ...(cookie ? { Cookie: cookie } : {}),

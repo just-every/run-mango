@@ -20,7 +20,8 @@ export async function decisionRuntime() {
   try {
     const db = await native.getD1Database('DB') as D1Database;
     for(const name of (await readdir('migrations/core')).filter(name=>name.endsWith('.sql')).sort()) {
-      for(const statement of sqlStatements(await readFile(`migrations/core/${name}`,'utf8'))) await db.prepare(statement).run();
+      const statements = sqlStatements(await readFile(`migrations/core/${name}`,'utf8'));
+      if(statements.length) await db.batch(statements.map(statement=>db.prepare(statement)));
     }
     const jobs: unknown[] = [];
     const env = {DB:db,ASSETS_BUCKET:await native.getR2Bucket('ASSETS_BUCKET'),MANGO_JOBS:{async send(job:unknown){jobs.push(job)}},MANGO_PUBLIC_BASE_URL:'http://127.0.0.1',INITIAL_OPERATOR_EMAILS:'owner@example.test'} as unknown as AppBindings;

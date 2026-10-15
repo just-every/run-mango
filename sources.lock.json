@@ -6038,7 +6038,7 @@
       "executable": false
     },
     "tests/portability/runtime.mjs": {
-      "sha256": "ab1da0282a80607d476a94fea22a8e11b7e61e4a15c4050d373397478fed013b",
+      "sha256": "337d1ddbba34a500114738f084840067d8d830f4ad61529e2fb79c3001e382f6",
       "executable": false
     },
     "tests/portability/worker.ts": {
@@ -6102,7 +6102,7 @@
       "executable": false
     },
     "tests/proposals-decision/runtime.ts": {
-      "sha256": "b194a33ca27c23a73b738627981a20b40a13e935720836424057521684289032",
+      "sha256": "7bc7e4e2e9cc604dfcb9745ede2de0959fe0d8e3b276596af4096b4921abd518",
       "executable": false
     },
     "tests/proposals-decision/shopify-edge.ts": {
