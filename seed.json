@@ -251,13 +251,14 @@
     {
       "id": "mail-sender",
       "required": true,
-      "why": "Internet email delivery, domain authentication, bounce handling, and complaint feedback require a delivery provider with established sending infrastructure.",
+      "why": "Internet email delivery, domain authentication, bounce handling, and complaint feedback require a delivery provider with established sending infrastructure. Managed hosting explicitly selects RER for transactional sign-in and subscription confirmations; Free and Assisted hosting retain their own-provider connections.",
       "data": [
         "Approved email content",
-        "Sender metadata",
+        "Sender metadata for direct providers; the RER relay chooses its own sending identity.",
         "Each eligible recipient's email address",
         "Operator email addresses that receive magic links, test sends, and dispatch-paused notices",
-        "Diagnostic sender-verification message and configured receipt mailbox; provider message IDs and sender-domain names for delivery reconciliation and authentication queries"
+        "Diagnostic sender-verification message and configured receipt mailbox; provider message IDs and sender-domain names for delivery reconciliation and authentication queries",
+        "With MAIL_PROVIDER=rer, only one recipient address, subject, text and optional HTML go to the RER-assigned HTTPS MAIL_RELAY_URL, authenticated by the server-only MAIL_API_KEY. Active Managed access and a valid credential are required."
       ],
       "adapters": [
         "mail.sender.v1"

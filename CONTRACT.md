@@ -2,7 +2,7 @@
 
 Run and verify through `rer`; AGENTS.md gives the local sequence and OPERATIONS.md describes configuration, recovery and data movement.
 
-What this product does. Every clause has a stable ID and requires at least one tagged test before release. Verification must distinguish tested requirements from uncovered or intentionally amended obligations; a passing suite alone does not certify every clause. Security, privacy, and operational guarantees are in `BASELINE.md`; a clause here may supersede one of them by naming its `BASE-` ID. Two do: CONT-013 supersedes BASE-DATA-003 for contact erasure, and the BASE-DATA-005 policy under "Design generation" states that the owner-configured, default-off design module's requests to the owner's own design service are not requests to the seed author (DESIGN-001). Capacity and rate limits are in `seed.json → limits`. Times are p95 at those limits. Clauses marked *Policy* have a default that buyers may replace through the named extension point.
+What this product does. Every clause has a stable ID and requires at least one tagged test before release. Verification must distinguish tested requirements from uncovered or intentionally amended obligations; a passing suite alone does not certify every clause. Security, privacy, and operational guarantees are in `BASELINE.md`; a clause here may supersede one of them by naming its `BASE-` ID. CONT-013 supersedes BASE-DATA-003 for contact erasure. The BASE-DATA-005 policies under "Design generation" and "Managed mail" describe explicitly selected provider dependencies. Capacity and rate limits are in `seed.json → limits`. Times are p95 at those limits. Clauses marked *Policy* have a default that buyers may replace through the named extension point.
 
 ## Scope
 
@@ -39,6 +39,12 @@ Local tooling, source integrity, tests and an operations input check certify
 only their stated scope. Hosted newsletter acceptance additionally requires a
 verified sender domain, real sign-in, one approved exact-revision campaign,
 signed persisted provider webhooks and unsubscribe before acknowledgement.
+
+## Managed mail
+
+The owner's Managed mail direction supersedes **BASE-DATA-005** only for the explicitly selected `MAIL_PROVIDER=rer` mail connection. It permits transactional sign-in and subscription confirmation messages to the RER-assigned HTTPS `MAIL_RELAY_URL`. The relay receives one recipient address, subject, text and optional HTML, authenticated with the private installation credential; it owns the sending identity. These are the declared `mail-sender` external's messages under BASE-DATA-004, not telemetry or general workspace access. Free and Assisted installations retain their own-provider choices and no RER mail dependency.
+
+Managed mail depends on active Managed service and a valid relay credential. Revocation, inactive access or service failure can prevent mail; Mango reports the problem through its normal delivery policy and never changes to another provider or a local outbox. The credential remains server-side. This exception grants no newsletter sender, authentication, unsubscribe, deduplication or delivery-evidence authority: MSG-001/002/003 and SEND-001/008 retain their existing requirements.
 
 ## Home
 

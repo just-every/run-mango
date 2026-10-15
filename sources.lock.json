@@ -823,7 +823,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "64cbdab19b6dad136e749c086366a8d06a074554fc085a2026d7d63088e7a632",
+      "sha256": "3e613d23a70536397dfcac80585acd4392a23b8aba07cb1f0ead52b6c80f38f9",
       "executable": false
     },
     "deploy-site.json": {
@@ -1167,7 +1167,7 @@
       "executable": false
     },
     "OPERATIONS.md": {
-      "sha256": "35b34917c0b9b8a08c8217eba4d82588105f95e691b4d7266b6bb79c1e365d81",
+      "sha256": "97885d3ff605169e1e10ef82fccd9ba2427e032a1014d56562ae1d1ff11fbe29",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -1627,7 +1627,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "7624f94599f6fc9bf978c19ba554485040dfc59d6d06b155f11398559c2c79a6",
+      "sha256": "124e767d6b6335888837600c6c7af43856d8f5b978a7c7e9347d85bf2252d218",
       "executable": false
     },
     "src/base/deployment-health.ts": {
