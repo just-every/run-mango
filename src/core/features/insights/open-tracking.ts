@@ -61,10 +61,6 @@ export async function appendOpenPixel(platform:Platform,recipientStepId:string,h
   const url=new URL(`/o/${encodeURIComponent(token)}`,platform.config.publicBaseUrl).href;
   return `${html}<img data-mango-open-estimate="1" src="${url}" width="1" height="1" alt="" />`;
 }
-export async function removeDisabledPixel(platform:Platform,html:string|undefined) {
-  if(!html|| (await openTrackingSettings(platform.database.$client)).enabled)return html;
-  return html.replace(/<img data-mango-open-estimate="1"[^>]*\/>/g,'');
-}
 export function createOpenPixelRoutes(platform:Platform) {
   const routes=new Hono();
   routes.get('/o/:token',async c=>{

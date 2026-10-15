@@ -2966,7 +2966,7 @@
       "executable": false
     },
     "src/core/features/insights/open-tracking.ts": {
-      "sha256": "1b9ba839c6c097047716b0fb20f0ff93f574687c16b05eabc4ff1c71d13b0d54",
+      "sha256": "d86a59570e90980c91814de5e0d714e5cd54d1d7d73f0d8375ed1f7e305469fd",
       "executable": false
     },
     "src/core/features/insights/repository.ts": {
@@ -3222,7 +3222,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/message-renderer.ts": {
-      "sha256": "9d37d0373f70fdb045749ba1b3d344d1a22e7bd287b86448b5da5a093b76abd2",
+      "sha256": "fcf26a4d325de41a9987a1dd4c73eae4d7bf624bdc805c07b18a3a47629d89d3",
       "executable": false
     },
     "src/core/features/lifecycle/message-tracking.ts": {
@@ -5650,7 +5650,7 @@
       "executable": false
     },
     "tests/email-presentation.spec.ts": {
-      "sha256": "2571e80b620d06c5884f8c699b9d472df2b3e9216d715c1ddf87d91808360adc",
+      "sha256": "003b3e868d823c9126b37a817667ec42d0cb4552b07af6bda650898e325d7292",
       "executable": false
     },
     "tests/forms-feedback/field-error-mapping.spec.ts": {
@@ -5890,7 +5890,7 @@
       "executable": false
     },
     "tests/message-preview.spec.ts": {
-      "sha256": "c5d07dfc46b2879058aeb5dd77fedd84707265a194f7fb945eda0da44772f193",
+      "sha256": "bee77f298d26168c136a8d14a2cdde32dcf1bdf019b7fef310048e7b313f3f7b",
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
@@ -6347,6 +6347,10 @@
     },
     "tests/support/bootstrap-token.mjs": {
       "sha256": "82186c626b29aba2cdd0e142b93d00ecdeac06041a4806d57197732da2c43e43",
+      "executable": false
+    },
+    "tests/support/database-fixture.ts": {
+      "sha256": "d84980ed5985f9e1610b1aa4d2f5dad9947a25e47fb82304b5323304cb93b5b0",
       "executable": false
     },
     "tests/support/designed-email.html": {

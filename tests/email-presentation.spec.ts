@@ -1,4 +1,5 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
+import { test } from './support/database-fixture';
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
@@ -17,7 +18,7 @@ const designed = readFileSync(new URL('./support/designed-email.html', import.me
 const offer = 'https://shop.example.test/season';
 const image = '<img src="https://shop.example.test/offer.png" width="200" height="100" alt="Offer"';
 
-test('[MSG-009] a designed email is admissible and delivery transmits its authored markup unchanged', async () => {
+test('[MSG-009] a designed email is admissible and delivery transmits its authored markup unchanged', async ({database}) => {
   expect(inspectEmailHtml(designed).issues).toEqual([]);
   // Hand-written presentation within the tightened grammar: light text on a dark cell, a rounded button whose padding
   // keeps its text out of the corners, right-to-left text in a cell, columns as cells, a fluid table and image, and an
@@ -35,7 +36,7 @@ test('[MSG-009] a designed email is admissible and delivery transmits its author
     senderName: 'Orchard', fromEmail: 'news@example.test', replyToEmail: 'help@example.test', trackingEnabled: false,
   };
   const runtime = {
-    platform: {config: {publicBaseUrl: new URL('https://mango.example.test')}},
+    platform: {database, config: {publicBaseUrl: new URL('https://mango.example.test')}},
     audience: {async issueMarketingUnsubscribe() { return {token: 'synthetic-unsubscribe-token'}; }},
   } as unknown as LifecycleRuntime;
   const envelope = {

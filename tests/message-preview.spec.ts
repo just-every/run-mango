@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test } from './support/database-fixture';
 import { invalidPersonalisation, renderMessageContent } from '../src/core/features/campaigns/message-content';
 import { escapeHtml, inspectEmailHtml } from '../src/core/features/campaigns/email-html-policy';
 import { prepareDeliveryRequest, serializeDeliveryRequest } from '../src/core/features/lifecycle/message-renderer';
@@ -155,12 +156,13 @@ test('[BASE-INPUT-002] names inherited from Object do not bypass saved fallback 
 });
 
 
-test('[CAMP-003][MSG-009][SEND-001] actual delivery uses pure rendering and persisted retries acquire no new capabilities', async () => {
+test('[CAMP-003][MSG-009][SEND-001] actual delivery uses pure rendering and persisted retries acquire no new capabilities', async ({database}) => {
   const now = new Date('2026-10-02T02:00:00.000Z');
   const saved = revision({trackingEnabled: true});
   const effects = {unsubscribe: 0, tracking: 0, digest: 0};
   const runtime = {
     platform: {
+      database,
       config: {publicBaseUrl: new URL('https://mango.example.test'), allowedLinkHosts: [new URL(offer).hostname]},
       publicTokens: {
         async issue() { effects.tracking++; return 'synthetic-link-token'; },
@@ -205,4 +207,33 @@ test('[CAMP-003][MSG-009][SEND-001] actual delivery uses pure rendering and pers
   expect(serializeDeliveryRequest(replay.request)).toBe(envelope.recipient.outboundRequestJson);
   expect(replay.trackedLinks).toEqual([]);
   expect(effects).toEqual({unsubscribe: 1, tracking: 1, digest: 1});
+
+  // An opt-in pixel is retained with the original recipient-step and request.
+  // Revocation happens at the pixel endpoint; retries never change provider bytes.
+  const db = database.$client;
+  await db.prepare(`INSERT INTO recipient_steps
+    (id,campaign_id,revision_id,step_id,contact_id,contact_identity_key,channel,destination,idempotency_key,transport_disposition,send_by_at,created_at,updated_at)
+    VALUES ('recipient-one','campaign','saved-revision','step-one','contact-one','contact-one','email','ada@example.test','handoff:recipient-one','queued',?,?,?)`)
+    .bind(envelope.recipient.sendByAt.getTime(),now.getTime(),now.getTime()).run();
+  await db.prepare('INSERT INTO open_tracking_settings (id,enabled,generation,updated_at) VALUES (1,1,1,?)').bind(now.getTime()).run();
+  envelope.revision = saved;
+  envelope.recipient.outboundRequestJson = undefined;
+  const optedIn = await prepareDeliveryRequest(runtime, envelope, eligibility, now);
+  expect(optedIn.request.content.html).toContain('data-mango-open-estimate="1"');
+  const tokens = await db.prepare('SELECT * FROM open_tracking_tokens').all();
+  expect(tokens.results).toEqual([expect.objectContaining({recipient_step_id: envelope.recipient.id})]);
+  envelope.recipient.outboundRequestJson = serializeDeliveryRequest(optedIn.request);
+  const enabledReplay = await prepareDeliveryRequest(inaccessibleRuntime, envelope, eligibility, now);
+  expect(enabledReplay).toEqual({request: optedIn.request, trackedLinks: []});
+  expect(serializeDeliveryRequest(enabledReplay.request)).toBe(envelope.recipient.outboundRequestJson);
+
+  await db.prepare('UPDATE open_tracking_settings SET enabled=0,generation=generation+1 WHERE id=1').run();
+  const disabledReplay = await prepareDeliveryRequest(inaccessibleRuntime, envelope, eligibility, now);
+  expect(disabledReplay).toEqual({request: optedIn.request, trackedLinks: []});
+  expect(serializeDeliveryRequest(disabledReplay.request)).toBe(envelope.recipient.outboundRequestJson);
+  await db.prepare('UPDATE open_tracking_settings SET enabled=1,generation=generation+1 WHERE id=1').run();
+  const reenabledReplay = await prepareDeliveryRequest(inaccessibleRuntime, envelope, eligibility, now);
+  expect(reenabledReplay).toEqual({request: optedIn.request, trackedLinks: []});
+  expect((await db.prepare('SELECT * FROM open_tracking_tokens').all()).results).toEqual(tokens.results);
+  expect(effects).toEqual({unsubscribe: 2, tracking: 3, digest: 3});
 });

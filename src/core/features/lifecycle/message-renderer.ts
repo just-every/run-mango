@@ -1,4 +1,4 @@
-import {appendOpenPixel,removeDisabledPixel} from '@/core/features/insights/open-tracking';
+import {appendOpenPixel} from '@/core/features/insights/open-tracking';
 import { managedSmsText } from '@/core/features/sms/content';
 import { smsProgrammeSchema } from '@/core/features/sms/policy';
 import {renderTracking} from './message-tracking';
@@ -28,7 +28,8 @@ export async function prepareDeliveryRequest(
 ) {
   if (envelope.recipient.outboundRequestJson) {
     const request=parseDeliveryRequest(envelope.recipient.outboundRequestJson);
-    request.content.html=await removeDisabledPixel(runtime.platform,request.content.html);
+    // Keep the provider's idempotent request byte-for-byte stable. Revocation is
+    // enforced when an existing pixel is fetched, without changing saved mail.
     return { request, trackedLinks: [] };
   }
   const htmlPolicy = inspectEmailHtml(envelope.revision.emailBody);
