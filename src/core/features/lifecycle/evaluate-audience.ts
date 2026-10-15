@@ -1,5 +1,5 @@
 import { marketingFrequencyWindowMs } from './policies';
-import { parseStructuredRules, productIdFromRules } from './rules';
+import { parseStructuredRules, productIdsFromRules } from './rules';
 import type { LifecycleRepository } from './repository';
 import type { Channel, FrozenCandidate, LifecycleRuntime } from './types';
 
@@ -20,11 +20,20 @@ export async function evaluateAudience(runtime:LifecycleRuntime,repository:Lifec
   const personalisations=new Map<string,Record<string,string|null|undefined>>();
   const exclusionCounts = new Map(audience.status === 'ok'
     ? audience.exclusions.map((item) => [item.reason, item.count] as const)
-    : []);
+    : ('observedExclusions' in audience ? audience.observedExclusions ?? [] : []).map(item=>[item.reason,item.count] as const));
   const blockingEligibility = new Set<string>();
   if (audience.status === 'ok' && parsedRules.ok) {
-    const productId = productIdFromRules(parsedRules.inclusion, parsedRules.exclusions);
+    const productIds = productIdsFromRules(parsedRules.inclusion, parsedRules.exclusions);
+    const frequencyExcluded=new Set<string>();
+    for(const contactId of audience.matchedContactIds ?? audience.candidates.map(c=>c.contactId)) {
+      for(const channel of selectedChannels) {
+        const last=await repository.lastMarketingAt(contactId,channel);
+        if(last&&audience.asOf.getTime()-last.getTime()<marketingFrequencyWindowMs(channel,runtime.platform.config))frequencyExcluded.add(contactId);
+      }
+    }
+    if(frequencyExcluded.size) exclusionCounts.set('frequency-window',frequencyExcluded.size);
     for (const candidate of audience.candidates) {
+      const contactReasons = new Set<string>();
       const channels: FrozenCandidate['channels'] = {};
       for (const channel of selectedChannels) {
         const frozenChannel = candidate.channels[channel];
@@ -33,10 +42,12 @@ export async function evaluateAudience(runtime:LifecycleRuntime,repository:Lifec
           contactId: candidate.contactId,
           channel,
           sourceTypes: parsedRules.sourceTypes,
-          productId,
+          productIds,
+          inclusionRule:parsedRules.inclusion,
+          exclusionRules:parsedRules.exclusions,
           now:audience.asOf,
           lastMarketingAt: await repository.lastMarketingAt(candidate.contactId, channel),
-          frequencyWindowMs: marketingFrequencyWindowMs(channel),
+          frequencyWindowMs: marketingFrequencyWindowMs(channel,runtime.platform.config),
         });
         if (eligibility.eligible && eligibility.contact.destination === frozenChannel.destination) {
           channels[channel] = frozenChannel;
@@ -44,9 +55,10 @@ export async function evaluateAudience(runtime:LifecycleRuntime,repository:Lifec
           continue;
         }
         const reason = eligibility.eligible ? 'destination-changed' : eligibility.reason;
-        exclusionCounts.set(reason, (exclusionCounts.get(reason) ?? 0) + 1);
+        if(reason!=='frequency-window')contactReasons.add(reason);
         if (reason.startsWith('source-')) blockingEligibility.add(reason);
       }
+      for (const reason of contactReasons) exclusionCounts.set(reason, (exclusionCounts.get(reason) ?? 0) + 1);
       if (Object.keys(channels).length) candidates.push({ ...candidate, channels });
     }
   }

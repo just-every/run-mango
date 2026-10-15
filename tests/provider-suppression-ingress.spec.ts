@@ -4,7 +4,7 @@ import { createMobileMessageAdapter } from '../src/core/platform/adapters/mobile
 import { parseVerifiedWebhook } from '../src/core/features/lifecycle/webhook-facts';
 import { expect, test } from '@playwright/test';
 import { createRequire } from 'node:module';
-import { createHmac } from 'node:crypto';
+import { createHash, createHmac } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
 import { createApp, createAppServices } from '../src/core/app/app';
 import { syntheticReviewPlatform } from './review/platform';
@@ -22,7 +22,7 @@ async function fixture() {
   for (const file of (await readdir('migrations/core')).filter(name => name.endsWith('.sql')).sort()) {
     await binding.batch(sqlStatements((await readFile(`migrations/core/${file}`, 'utf8'))).map(sql => binding.prepare(sql)));
   }
-  const platform = syntheticReviewPlatform({DB: binding, MANGO_JOBS: {}, ASSETS_BUCKET: {}, LOCAL_BOOTSTRAP_TOKEN: 'suppression-local-test'} as never);
+  const platform = syntheticReviewPlatform({DB: binding, MANGO_JOBS: {}, ASSETS_BUCKET: {}, LOCAL_BOOTSTRAP_TOKEN: 'synthetic-suppression-local-test'} as never);
   platform.mailer = createResendAdapter({apiKey: 'unused-synthetic-key', webhookSecret: secret, webhookId: 'synthetic-hook'});
   platform.mailer.send = async () => {throw new Error('Sending forbidden in suppression tests')};
   const app = createApp({DB: binding} as never, platform);
@@ -164,24 +164,52 @@ test('[CONT-006] replay enriches older normalized inbox evidence without changin
 test('[CONT-004][CONT-013] erasure removes signed unmatched SMS facts with canonical and historical formatted destinations', async () => {
   const f = await fixture();
   try {
-    const smsSecret = 'task-owned-synthetic-sms-secret';
+    const smsSecret = 'synthetic-task-owned-sms-secret';
+    const disabledSms = f.platform.config.modules.sms;
+    const now = new Date();
+    const windows = [{days: [0, 1, 2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 20 * 60}];
+    f.platform.config.modules.sms = {enabled: true, requiredInputs: disabledSms.requiredInputs, missingInputs: [], config: {
+      providerApiKey: 'unused:fixture', webhookSecret: smsSecret, confirmationSender: '61400000010',
+      testAllowlist: ['+61400123456'], handoffsPerMinute: 1,
+      programme: {brand: 'Synthetic Mango', programme: 'Synthetic programme', category: 'offers', frequency: 'Weekly',
+        jurisdiction: 'AU', support: 'help@example.test', providerAlreadyReplies: true,
+        policySource: 'https://policy.example.test/synthetic-sms', policyVerifiedAt: new Date(now.getTime() - 1000).toISOString(),
+        policyExpiresAt: new Date(now.getTime() + 86400000).toISOString(),
+        providerWindows: windows, jurisdictionWindows: windows, recipientWindows: windows},
+    }};
     f.platform.sms = createMobileMessageAdapter({credentials: 'unused:fixture', webhookSecret: smsSecret});
-    const {contact} = await f.services.audienceService.captureConsent({contact: {phone: '+61400123456'}, channel: 'sms', brandOrLegalSender: 'Synthetic Mango',
-      smsProgram: 'Synthetic programme', messageCategory: 'offers', frequencyDisclosure: 'Weekly', destinationJurisdiction: 'AU', captureMethod: 'task-fixture',
+    f.platform.sms.send = async () => {throw new Error('Sending forbidden in suppression tests')};
+    // A known phone can opt out without prior SMS consent or an outbound message.
+    const {contact} = await f.services.audienceService.captureConsent({contact: {email: 'sms-erasure@example.test', phone: '+61400123456'}, channel: 'email', brandOrLegalSender: 'Synthetic Mango',
+      messageCategory: 'offers', frequencyDisclosure: 'Weekly', destinationJurisdiction: 'AU', captureMethod: 'task-fixture',
       captureSource: 'task-fixture', consentText: 'Synthetic affirmative consent', consentVersion: 'v1', occurredAt: new Date(), confirmationRequired: false});
-    const raw = JSON.stringify({type: 'inbound', sender: '+61 400 123 456', message: 'STOP', created_at: new Date().toISOString()});
+    expect((await f.services.audienceService.list())[0].smsStatus).toBe('non-subscribed');
+    const raw = JSON.stringify({type: 'inbound', to: '61400000010', sender: '61400123456', message: 'STOP',
+      received_at: now.toISOString().slice(0, 19).replace('T', ' '), original_message_id: '', original_custom_ref: ''});
     const timestamp = String(Math.floor(Date.now() / 1000));
     const signature = createHmac('sha256', smsSecret).update(`${timestamp}.${raw}`).digest('hex');
     expect((await f.app.request('/webhooks/sms/mobile-message', {method: 'POST', body: raw, headers: {'X-MM-Timestamp': timestamp, 'X-MM-Signature': signature}})).status).toBe(204);
     expect((await f.services.audienceService.list())[0].smsStatus).toBe('unsubscribed');
+    expect(await f.count('sms_inbound_receipts')).toBe(1);
+    expect(await f.count('sms_compliance_replies')).toBe(1);
+    // Historical unmatched facts predate the dedicated sender-bound inbound ledger.
+    await f.binding.prepare(`INSERT INTO provider_fact_inbox (identity_key, provider, provider_message_id, mango_reference, kind, provider_occurred_at, payload_digest, detail_json, created_at)
+      VALUES ('legacy-canonical-sms', 'mobile-message', NULL, NULL, 'unsubscribed', ?, ?, ?, ?)`)
+      .bind(now.getTime(), createHash('sha256').update(raw).digest('hex'), JSON.stringify({destination: '+61400123456', providerEvent: 'inbound', reply: 'stop'}), now.getTime()).run();
     expect(await f.binding.prepare("SELECT json_extract(detail_json, '$.destination') AS destination FROM provider_fact_inbox").first()).toEqual({destination: '+61400123456'});
     // Persisted evidence from the earlier parser used the provider's formatting.
     await f.binding.prepare(`INSERT INTO provider_fact_inbox (identity_key, provider, provider_message_id, mango_reference, kind, provider_occurred_at, payload_digest, detail_json, created_at)
       SELECT 'legacy-formatted-sms', provider, provider_message_id, mango_reference, kind, provider_occurred_at, payload_digest,
         json_set(detail_json, '$.destination', '+61 (400) 123-456'), created_at FROM provider_fact_inbox LIMIT 1`).run();
     expect(await f.count('provider_fact_inbox')).toBe(2);
+    // Retained facts must remain erasable after the installation disables SMS.
+    f.platform.config.modules.sms = disabledSms;
+    f.platform.sms = undefined;
+    expect(f.platform.config.modules.sms.enabled).toBe(false);
     await eraseFixture({db:f.binding,platform:f.platform},contact.id);
     expect(await f.count('provider_fact_inbox')).toBe(0);
+    expect(await f.count('sms_inbound_receipts')).toBe(0);
+    expect(await f.count('sms_compliance_replies')).toBe(0);
     expect(await f.count('contacts')).toBe(0);
     expect(await f.count('surviving_opt_outs')).toBe(1);
     expect(JSON.stringify((await f.binding.prepare('SELECT * FROM surviving_opt_outs').all()).results)).not.toContain('61400123456');

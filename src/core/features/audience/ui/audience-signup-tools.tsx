@@ -9,6 +9,7 @@ type SignupToolsData = {
   embed: string;
   consentText: string;
   frequencyDisclosure: string;
+  embedOrigins: string[];
 };
 
 function publicHttpUrl(value: string) {
@@ -70,7 +71,7 @@ export function AudienceSignupTools() {
           </div>
         </div>
       </div>
-      <SignupSettingsForm frequencyDisclosure={data.frequencyDisclosure} saved={reload} />
+      <SignupSettingsForm frequencyDisclosure={data.frequencyDisclosure} embedOrigins={data.embedOrigins} saved={reload} />
     </section>
   );
 }

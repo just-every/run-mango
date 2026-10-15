@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { contract } from '../contract.js';
 import { signInAsLocalOperator } from './browser-checks';
 import { createBlank, expectFieldError, expectSummary, expectVisibleFocus } from './form-feedback-helpers';
+import { challengeEdge } from './signup-privacy-support';
 
 {
   const width = 390;
@@ -22,7 +23,7 @@ import { createBlank, expectFieldError, expectSummary, expectVisibleFocus } from
     await expect(form.getByLabel('Email body',{exact:true})).toHaveAttribute('aria-required','true');
     const invalid=await form.locator('[aria-invalid="true"]').count(); expect(invalid).toBeGreaterThan(0); await expectSummary(form,invalid);
     await page.reload(); await expect(subject).toHaveValue('');
-    await page.getByRole('button',{name:'Approve & schedule'}).click(); await expect(page.locator('.inline-error[role="alert"]').filter({hasText:'Campaign unchanged'})).toContainText('Campaign unchanged. Resolve the blockers below and try again.'); await expectFieldError(subject); await expect(subject).toBeFocused();
+    await expect(page.getByRole('button',{name:'Approve & schedule'})).toBeDisabled(); await expect(page.locator('#approval-blocked-reason')).toBeVisible(); await expect(page.getByRole('alertdialog')).toHaveCount(0);
     const savedState=await page.evaluate(async id=>(await fetch(`/api/campaigns/${id}`)).json(),id); expect(savedState.campaign.state).toBe('draft');
     await page.getByRole('button',{name:'Add exclusion',exact:true}).click(); const condition=page.getByLabel('Exclude 1 value'); await condition.focus(); await condition.blur(); await expectFieldError(condition);
     await page.getByRole('button',{name:'Save full draft'}).click(); expect(await form.locator('[aria-invalid="true"]').count()).toBeGreaterThan(0);
@@ -34,15 +35,13 @@ import { createBlank, expectFieldError, expectSummary, expectVisibleFocus } from
     const timingReason=page.getByLabel('Why this time',{exact:true});await timingReason.fill('');await timingReason.blur();await expectFieldError(timingReason);await expect(timingReason).toHaveAttribute('required','');
     await page.getByRole('button',{name:'Save full draft'}).click();await expectFieldError(timingReason);await expectSummary(form,await form.locator('[aria-invalid="true"]').count());
     await timingReason.fill('The store opens at this time.');await timingReason.blur();
-    await page.getByRole('combobox',{name:'Channel',exact:true}).selectOption('sms');
-    const smsMessage=page.getByLabel('SMS message',{exact:true}),smsSender=page.getByLabel('SMS sender',{exact:true});
-    for(const field of [smsMessage,smsSender]) {await field.fill('');await field.blur();await expectFieldError(field);await expect(field).toHaveAttribute('required','');}
+    await expect(page.getByRole('combobox',{name:'Channel',exact:true}).locator('option[value="sms"]')).toHaveCount(0);
+    await expect(page.getByLabel('SMS message',{exact:true})).toHaveCount(0);
+    await expect(page.getByLabel('SMS sender',{exact:true})).toHaveCount(0);
     await page.getByLabel('Include 1 field').selectOption('contact:email'); await page.getByLabel('Include 1 comparison').selectOption('contains'); await page.getByLabel('Include 1 value').fill('live@example.test');
     const summary=page.getByLabel('Audience summary',{exact:true}); await expect(summary).toContainText('live@example.test'); await expect(summary).toContainText('exclude@example.test'); await expect(page.getByRole('textbox',{name:'Audience rule',exact:true})).toHaveCount(0);
     await page.getByRole('button',{name:'Save full draft'}).click(); await expect(page.locator('.action-notice')).toContainText('Draft saved.'); await page.reload(); await expect(summary).toContainText('live@example.test'); await expect(summary).toContainText('exclude@example.test');
-    await expect(smsMessage).toHaveValue('');await expect(smsSender).toHaveValue('');
-    await page.getByRole('button',{name:'Approve & schedule'}).click();await expectFieldError(smsMessage);await expectFieldError(smsSender);
-    await page.getByRole('combobox',{name:'Channel',exact:true}).selectOption('email');await smsMessage.blur();await smsSender.blur();await expect(smsMessage).not.toHaveAttribute('required','');await expect(smsSender).not.toHaveAttribute('required','');
+    await expect(page.getByRole('button',{name:'Approve & schedule'})).toBeDisabled();await expect(page.locator('#approval-blocked-reason')).toBeVisible();await expect(page.getByRole('alertdialog')).toHaveCount(0);
     await expectVisibleFocus(page);
   });
   contract('CAMP-002', `unsaved changes modal traps keyboard focus, Escape cancels, and disclosures announce state at ${width}px`, async ({page,request}) => {
@@ -58,16 +57,39 @@ import { createBlank, expectFieldError, expectSummary, expectVisibleFocus } from
     await sender.getByRole('button',{name:'Save sender details'}).click(); await expect(sender.getByLabel('Business display name',{exact:true})).toBeFocused(); await expectSummary(sender,4);
     await sender.getByLabel('From email',{exact:true}).fill('invalid'); await sender.getByLabel('From email',{exact:true}).blur(); await expectFieldError(sender.getByLabel('From email',{exact:true}),/valid email/); await expectVisibleFocus(page);
     await page.goto('/app/campaigns/campaign_table_runner_draft_v4/review'); await page.getByRole('button',{name:'Send a test',exact:true}).click(); const testForm=page.getByRole('form',{name:'Send a test'}), destination=page.getByLabel('Test destination',{exact:true});
-    await destination.focus(); await destination.blur(); await expectFieldError(destination); await testForm.getByRole('button',{name:'Send test',exact:true}).click(); await expect(destination).toBeFocused(); await expectSummary(testForm,1); await destination.fill('invalid'); await destination.blur(); await expectFieldError(destination,/valid email/); await expect(testForm.locator('..')).toContainText('approved destinations');
+    await destination.focus(); await destination.blur(); await expectFieldError(destination); await testForm.getByRole('button',{name:'Send test',exact:true}).click(); await expect(destination).toBeFocused(); await expectSummary(testForm,1); await destination.fill('invalid'); await destination.blur(); await expectFieldError(destination,/valid email/); await expect(testForm.locator('..')).toContainText('own sign-in address');
     await expect(destination).toHaveAttribute('required','');
     await page.goto('/app/audience/import'); const importForm=page.getByRole('form',{name:'Audience import mapping'}); await importForm.getByRole('button',{name:'Preview import'}).click(); await expect(page.getByLabel('Choose CSV files')).toBeFocused(); await expectSummary(importForm,1);
     await expect(page.getByLabel('Choose CSV files')).toHaveAttribute('aria-required','true');
-    await page.getByLabel('Choose CSV files').setInputFiles({name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from('Email Address,First Name\nvalidation@example.test,Validation')}); await page.getByLabel('Preset for mapping.csv').selectOption('csv-non-subscribed'); await page.getByRole('button',{name:'Preview import'}).click(); const mapping=page.getByLabel('Email in mapping.csv',{exact:true}); await expect(mapping).toBeVisible(); await mapping.focus(); await mapping.selectOption(''); await mapping.blur(); await expectFieldError(mapping); await page.getByRole('button',{name:'Preview import'}).click(); await expect(mapping).toBeFocused(); await expectSummary(importForm,1);
-    await expect(mapping).toHaveAttribute('required',''); await expect(page.getByLabel('Preset for mapping.csv')).toHaveAttribute('required','');
+    await page.getByLabel('Choose CSV files').setInputFiles({name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from('Email Address,Phone,First Name\nvalidation@example.test,+61400123456,Validation')});
+    await page.getByLabel('Preset for mapping.csv').selectOption('csv-non-subscribed'); await page.getByRole('button',{name:'Preview import'}).click();
+    const mapping=page.getByLabel('Email in mapping.csv',{exact:true}), phoneMapping=page.getByLabel('Phone in mapping.csv',{exact:true});
+    await expect(mapping).toBeVisible(); await phoneMapping.selectOption(''); await mapping.focus(); await mapping.selectOption(''); await mapping.blur();
+    await expectFieldError(mapping); await phoneMapping.focus(); await phoneMapping.blur(); await expectFieldError(phoneMapping);
+    await page.getByRole('button',{name:'Preview import'}).click(); await expect(mapping).toBeFocused();
+    await expectSummary(importForm,await importForm.locator('[aria-invalid="true"]').count());
+    // Either destination satisfies the mapping requirement; a phone does not borrow email consent.
+    await phoneMapping.selectOption('Phone');
+    const phonePreview=page.waitForResponse(response=>response.request().method()==='POST'&&new URL(response.url()).pathname==='/api/audience/import-preview');
+    await page.getByRole('button',{name:'Preview import'}).click(); const phoneResponse=await phonePreview;
+    expect(phoneResponse.status()).toBe(200); const phoneData=await phoneResponse.json();
+    expect(phoneData.columns[0].mapping.email).toBe('');
+    expect(phoneData.rows).toEqual([expect.objectContaining({email:'',phone:'+61400123456',smsStatus:'non-subscribed'})]);
+    await expect(mapping).not.toHaveAttribute('aria-invalid','true'); await expect(phoneMapping).not.toHaveAttribute('aria-invalid','true');
+    await expect(importForm.locator('.validation-summary')).toHaveCount(0);
+    await expect(page.getByLabel('Preset for mapping.csv')).toHaveAttribute('required','');
     await page.goto('/app/audience'); const signup=page.getByRole('form',{name:'Signup-form settings'}), frequency=signup.getByLabel('Newsletter frequency',{exact:true}); const original=await frequency.inputValue(); await frequency.fill(''); await frequency.blur(); await expectFieldError(frequency); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(frequency).toBeFocused(); await expectSummary(signup,1); await frequency.fill('<weekly>'); await frequency.blur(); await expectFieldError(frequency,/plain text/);
     await expect(frequency).toHaveAttribute('required','');
     await frequency.fill('Weekly newsletter updates'); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice[role="status"]')).toContainText('Signup settings saved'); await page.reload(); await expect(frequency).toHaveValue('Weekly newsletter updates'); await frequency.fill(original); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice')).toBeVisible();
-    await page.goto('/subscribe'); const subscribe=page.locator('.subscribe-form'), email=page.getByLabel('Email address',{exact:true}), consent=page.getByRole('checkbox'); await expect(email).toBeEnabled(); await email.focus(); await email.blur(); await expectFieldError(email); await page.getByRole('button',{name:'Request confirmation'}).click(); await expect(email).toBeFocused(); await expectFieldError(consent); await expectSummary(subscribe,2); await email.fill('invalid'); await email.blur(); await expectFieldError(email,/valid email/);
+    await challengeEdge(page);
+    await page.goto('/subscribe'); const subscribe=page.locator('.subscribe-form'), email=page.getByLabel('Email address',{exact:true}), consent=page.getByRole('checkbox');
+    await expect(email).toBeEnabled(); await email.click(); await email.blur(); await expectFieldError(email);
+    // The configured fixture requires verification, activated by a trusted form interaction.
+    const confirmation=page.getByRole('button',{name:'Request confirmation'});
+    await expect(confirmation).toBeDisabled();
+    await page.getByRole('button',{name:'Complete verification'}).click();
+    await expect(confirmation).toBeEnabled();
+    await confirmation.click(); await expect(email).toBeFocused(); await expectFieldError(consent); await expectSummary(subscribe,2); await email.fill('invalid'); await email.blur(); await expectFieldError(email,/valid email/);
     await expect(email).toHaveAttribute('required',''); await expect(consent).toHaveAttribute('required','');
   });
 }

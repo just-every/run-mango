@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { stat, readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { contract } from '../contract';
 import { finishSetup } from './finish-setup.mjs';
 import { freshCopy } from './fresh-copy.mjs';
 import { openGate } from './dev-gate.mjs';
@@ -9,22 +8,14 @@ let runtime: Awaited<ReturnType<typeof freshCopy>>;
 test.beforeAll(async()=>{test.setTimeout(600000);runtime=await freshCopy();});
 test.afterAll(async()=>{await runtime?.close();});
 const width=390;
-contract('OPER-001', 'fresh install completes sender setup via the Base outbox at 1440 and 390', async({browser})=>{
+test('[OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440 and 390', async({browser})=>{
   const context=await browser.newContext({viewport:{width,height:900}}), page=await context.newPage();
   try {
     expect((await stat(join(runtime.checkout,'.dev.vars'))).mode & 0o777).toBe(0o600);
-    await page.goto(runtime.url+'/setup');
-    await expect(page).toHaveURL(runtime.url+'/signin?reason=session-required&returnTo=%2Fsetup');
-    // Use the ordinary sign-in message requested by the real rer dev command.
     expect((await page.request.get(runtime.url+'/__dev/outbox')).status()).toBe(404);
     await openGate(context,runtime.url);
-    await page.goto(runtime.url+'/__dev/outbox');
-    await page.getByRole('link',{name:'Read message'}).first().click();
-    await page.getByRole('link',{name:'Open this link'}).click();
-    await expect(page.getByRole('heading',{level:1})).toContainText('Mango');
-    const confirmation=page.waitForResponse(r=>new URL(r.url()).pathname==='/auth/confirm'&&r.request().method()==='POST');
-    await page.getByRole('button',{name:/Confirm/}).click();
-    expect((await confirmation).headers().location).toBe('/setup');
+    await page.goto(runtime.url+'/signin?returnTo=%2Fsetup');
+    await page.getByRole('link',{name:'Continue as owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
     for (const path of ['/app','/app/campaigns','/app/settings','/app/audience']) {
       const response=await page.request.get(runtime.url+path,{maxRedirects:0});
@@ -43,19 +34,8 @@ contract('OPER-001', 'fresh install completes sender setup via the Base outbox a
     await expect(page).toHaveURL(runtime.url+'/');
     expect(await (await page.request.get(runtime.url+'/setup/state')).json()).toEqual({state:'unclaimed'});
     await expect(page.getByRole('link',{name:'Finish setup'})).toHaveAttribute('href','/setup');
-    await page.goto(runtime.url+'/signin');
-    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
-    await page.evaluate(async () => {await window.__TSR_ROUTER__!.navigate({to:'/signin',search:{returnTo:'/setup'}});});
-    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
-    await page.getByLabel('Email address').fill('owner@example.test');
-    const issued=page.waitForRequest(r=>new URL(r.url()).pathname==='/auth/magic-link'&&r.method()==='POST');
-    await page.getByRole('button',{name:'Email sign-in link'}).click();
-    expect((await issued).postDataJSON().returnTo).toBe('/setup');
-    await expect(page.getByRole('status')).toContainText('Open it and press Confirm');
-    await page.getByRole('link',{name:'Open the development outbox'}).click();
-    await page.getByRole('link',{name:'Read message'}).first().click();
-    await page.getByRole('link',{name:'Open this link'}).click();
-    await page.getByRole('button',{name:/Confirm/}).click();
+    await page.goto(runtime.url+'/signin?returnTo=%2Fsetup');
+    await page.getByRole('link',{name:'Continue as owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
     await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
     for (const viewportWidth of [1440,390]) {
@@ -99,20 +79,7 @@ contract('OPER-001', 'fresh install completes sender setup via the Base outbox a
     await expect(page.getByRole('link',{name:'Request a new link'})).toHaveAttribute('href','/signin');
   } finally {await context.close();}
 });
-contract('OPER-001','sign-in failures explain the correct local and deployed next step',async({page})=>{
-  for(const local of [true,false]) {
-    await page.route('**/auth/environment',route=>route.fulfill({json:{local}}));
-    await page.route('**/auth/magic-link',route=>route.fulfill({status:503,json:{error:'mail_unavailable'}}));
-    const hydrated=page.waitForResponse('**/auth/environment');
-    await page.goto(runtime.url+'/signin');await hydrated;
-    if(local)await expect(page.getByRole('link',{name:'Open the development outbox'})).toBeVisible();
-    await page.getByLabel('Email address').fill('owner@example.test');await page.getByRole('button',{name:'Email sign-in link'}).click();
-    await expect(page.getByRole('alert')).toContainText(local?'Open the development outbox':'Check the mail settings in the operations guide');
-    await page.unroute('**/auth/environment');await page.unroute('**/auth/magic-link');
-  }
-});
-
-contract('OPER-001','a production build with local credentials present emits no local variable file or secret',async()=>{
+test('[OPER-001] a production build with local credentials present emits no local variable file or secret',async()=>{
   test.setTimeout(600000);
   const vars=await readFile(join(runtime.checkout,'.dev.vars'),'utf8');
   const secrets=vars.split('\n').filter(line=>/SECRET=|KEY=|TOKEN=|SALT=/.test(line)).map(line=>line.slice(line.indexOf('=')+1)).filter(Boolean);

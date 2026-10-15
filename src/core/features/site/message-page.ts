@@ -9,7 +9,7 @@ import { fontHead } from './font-head';
  * plain server-rendered string with one inline stylesheet and no scripts. `stamp` puts the mango stamp on the card's
  * corner (a letter on its way); `posted` also strikes a YES postmark beside it (the reader said yes). Without either the
  * card is a plain, respectful note. A `form` posts `confirm=true` to its action; `links` are plain same-site links
- * under the text (the no-script sign-in answer's way to the outbox and back).
+ * under the text (including the no-script sign-in answer's return link).
  *
  * Strings rather than React: these routes also run inside Node test harnesses that load them without a JSX runtime. The
  * markup follows the site's Paper, Stamp and Postmark components (paper/Paper.ts, paper/Stamp.ts, drawings/Postmark.tsx)

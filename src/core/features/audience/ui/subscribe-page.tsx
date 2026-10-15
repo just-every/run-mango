@@ -9,6 +9,7 @@ import { Art } from '@/core/features/site/drawings/Art';
 import { Envelope } from '@/core/features/site/drawings/Envelope';
 
 export type SubscribeInfo = {
+  sms?: {sender:string;brand:string;programme:string;frequency:string;jurisdiction:string;consentText:string;disclosure:string};
   sender: string;
   consentText: string;
   frequencyDisclosure: string;
@@ -25,6 +26,10 @@ type ApiMessage = {
 };
 
 export function SubscribePage({ info }: { info: SubscribeInfo }) {
+  const [channel,setChannel]=useState<'email'|'sms'>('email');
+  const [phone,setPhone]=useState(''),[timeZone,setTimeZone]=useState('');
+  const sms=channel==='sms'&&info.sms;
+  const disclosure=sms?info.sms!.disclosure:info.disclosure, consentText=sms?info.sms!.consentText:info.consentText;
   const [challenge, setChallenge] = useState('');
   const [challengeAttempt, setChallengeAttempt] = useState(0);
   const [email, setEmail] = useState('');
@@ -37,7 +42,7 @@ export function SubscribePage({ info }: { info: SubscribeInfo }) {
   const [ready, setReady] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
 
-  useEffect(() => setReady(true), []);
+  useEffect(() => {setReady(true);if(info.sms&&new URLSearchParams(window.location.search).get('channel')==='sms')setChannel('sms');}, [info.sms]);
 
   const submit = async () => {
     if (busy) return;
@@ -45,22 +50,22 @@ export function SubscribePage({ info }: { info: SubscribeInfo }) {
     setMessage(undefined);
     setError(undefined);
     try {
-      const response = await requestJson<ApiMessage>('/subscribe', {
+      const response = await requestJson<ApiMessage>(sms?'/subscribe/sms':'/subscribe', {
         method: 'POST',
         body: JSON.stringify({
-          email: email.trim(),
+          ...(sms?{phone:phone.trim(),timeZone}:{email:email.trim()}),
           ...(displayName.trim() ? { displayName: displayName.trim() } : {}),
           consent,
           website,
-          disclosure: info.disclosure,
+          disclosure,
           ...(info.turnstileSiteKey ? {'cf-turnstile-response':challenge} : {}),
         }),
       });
       if (response.status === 202 && response.data.status === 'confirmation-required') {
-        setMessage('Request received. If this address can receive email, open its confirmation link and press Confirm subscription.');
+        setMessage(sms ? 'Request received. Open the confirmation text and reply as it asks. It arrives during the permitted local hours for your number.' : 'Request received. Open the confirmation email and press Confirm subscription.');
         return;
       }
-      setErrors(mapFieldErrors(response.data.fields, ['email','displayName','consent']));
+      setErrors(mapFieldErrors(response.data.fields, ['email','phone','timeZone','displayName','consent']));
       setError(response.data.detail?.trim() || response.data.error?.replaceAll('_', ' ') || 'The request could not be completed. Review the form and try again.');
     } catch {
       setError('The request result could not be confirmed. Try again after checking your connection.');
@@ -84,21 +89,22 @@ export function SubscribePage({ info }: { info: SubscribeInfo }) {
     <StandaloneFrame className="subscribe-page" card={{ w: 576, h: 720, seed: 67, children: (
       <section className="message-card subscribe-card" aria-labelledby="subscribe-title">
         <p className="eyebrow">{info.sender}</p>
-        <h1 id="subscribe-title" className="standalone-title">Get the newsletter</h1>
-        <p>{info.frequencyDisclosure}</p>
-        <p className="subscribe-privacy-note">{info.privacyNote}</p>
+        <h1 id="subscribe-title" className="standalone-title">{sms?info.sms!.programme:'Get the newsletter'}</h1>
+        <p>{sms?info.sms!.frequency:info.frequencyDisclosure}</p>
+        <p className="subscribe-privacy-note">{sms?'Your phone number, recipient time zone and consent evidence are stored by this operator.':info.privacyNote}</p>
         <ValidationForm className="subscribe-form standalone-form" onValidSubmit={() => void submit()} serverErrors={errors}>
-          <label>
+          {info.sms?<label>Channel<select value={channel} onChange={event=>{setChannel(event.target.value as 'email'|'sms');setConsent(false);}}><option value="email">Email</option><option value="sms">SMS · {info.sms.programme}</option></select></label>:null}
+          {sms?<><label>Phone (required)<Field name="phone" label="Phone" required validate={()=>/^\+61\d{9}$/.test(phone.trim())?undefined:'Enter an Australian E.164 mobile number, such as +61412345678.'}><input type="tel" value={phone} onChange={event=>setPhone(event.target.value)} placeholder="+61412345678" required /></Field></label><label>Your current time zone (required)<Field name="timeZone" label="Time zone" required><input value={timeZone} onChange={event=>setTimeZone(event.target.value)} placeholder="Australia/Brisbane" required /></Field></label><p>Sender {info.sms!.sender} · {info.sms!.jurisdiction}</p></>:<label>
             <span>Email address (required)</span>
             <Field name="email" label="Email address" required><input type="email" name="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.currentTarget.value)} disabled={!ready || busy} /></Field>
-          </label>
+          </label>}
           <label>
             <span>Name <small>(optional)</small></span>
             <Field name="displayName" label="Name"><input type="text" name="displayName" autoComplete="name" maxLength={200} value={displayName} onChange={(event) => setDisplayName(event.currentTarget.value)} disabled={!ready || busy} /></Field>
           </label>
           <label className="subscribe-consent">
-            <Field name="consent" label="Consent" required validate={() => consent ? undefined : "Agree to receive the newsletter before requesting confirmation."}><input type="checkbox" name="consent" aria-label={`${info.consentText} (required)`} required checked={consent} onChange={(event) => setConsent(event.currentTarget.checked)} disabled={!ready || busy} /></Field>
-            <span>{info.consentText} (required)</span>
+            <Field name="consent" label="Consent" required validate={() => consent ? undefined : "Agree to receive the newsletter before requesting confirmation."}><input type="checkbox" name="consent" aria-label={`${consentText} (required)`} required checked={consent} onChange={(event) => setConsent(event.currentTarget.checked)} disabled={!ready || busy} /></Field>
+            <span>{consentText} (required)</span>
           </label>
           <div className="subscribe-honeypot" aria-hidden="true">
             <label htmlFor="subscribe-website">Leave this field empty</label>

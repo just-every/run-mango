@@ -1,4 +1,7 @@
+import { resumeSmsServices } from '@/core/features/sms/service-delivery';
 import {withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
+import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
+import { createProposalRepository } from '@/core/features/proposals/repository';
 import {continueErasure,pendingErasure} from '@/core/features/audience/erasure/maintenance';
 import { advanceDesignJob, isDesignCommand } from '@/core/features/design-generation/advance';
 import { sweepDesignJobs } from '@/core/features/design-generation/sweep';
@@ -12,7 +15,7 @@ export * from './types';
 export * from './schema';
 export { createLifecycleRepository } from './repository';
 export { resolveLocalInstant } from './schedule';
-export { parseStructuredRules, productIdFromRules, inclusionRuleSchema, exclusionRuleSchema } from './rules';
+export { parseStructuredRules, productIdFromRules, productIdsFromRules, inclusionRuleSchema, exclusionRuleSchema } from './rules';
 export type { InclusionRule, ExclusionRule } from './rules';
 
 export function createLifecycleServices(runtime: LifecycleRuntime) {
@@ -32,6 +35,7 @@ export function registerLifecycleRoutes(app: LifecycleApp, runtime: LifecycleRun
  * computer does with everything but design runs. */
 export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime: LifecycleRuntime, only?: readonly LifecycleQueueBatch['messages'][number]['body']['kind'][]) {
   for (const message of batch.messages) {
+    if (acknowledgeHealthProbe(message)) continue;
     if (only && !only.includes(message.body.kind)) {message.retry(); continue;}
     try {
       if(message.body.kind==='contact.erase'){await continueErasure(runtime.platform,String(message.body.payload.reference??''));message.ack();continue;}
@@ -76,16 +80,11 @@ export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime:
 
 export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntime) {
   const { repository, delivery } = createLifecycleServices(runtime);
-  const pending=await pendingErasure(runtime.platform.database.$client);if(pending){await continueErasure(runtime.platform,pending.reference);return;}
+  const pending=await pendingErasure(runtime.platform.database.$client);if(pending){await continueErasure(runtime.platform,pending.reference);return 'blocked-erasure' as const;}
   return withErasureWriteFence(runtime.platform.database.$client,async()=>{
   const now = new Date();
-  if (runtime.platform.commerce) {
-    const commerceCapabilities = runtime.platform.commerce.capabilities();
-    for (const sourceType of commerceCapabilities.sourceTypes) {
-      if (!commerceCapabilities.provider) continue;
-      await runtime.platform.jobs.enqueue({kind: 'source.sync', idempotencyKey: `source-sync:${sourceType}:${Math.floor(now.getTime() / 3_600_000)}`, payload: {sourceType, provider: commerceCapabilities.provider}});
-    }
-  }
+  await repository.expireDueRecipients(now);
+  // Dispatch due steps before optional source synchronization and reconciliation.
   const due = await repository.listDueSteps(now);
   for (const step of due) {
     await runtime.platform.jobs.enqueue({
@@ -99,11 +98,21 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
       },
     });
   }
+  await resumeSmsServices(runtime.platform);
+  await createProposalRepository(runtime.platform.database).expireDue(now);
+  if (runtime.platform.commerce) {
+    const commerceCapabilities = runtime.platform.commerce.capabilities();
+    for (const sourceType of commerceCapabilities.sourceTypes) {
+      if (!commerceCapabilities.provider) continue;
+      await runtime.platform.jobs.enqueue({kind: 'source.sync', idempotencyKey: `source-sync:${sourceType}:${Math.floor(now.getTime() / 3_600_000)}`, payload: {sourceType, provider: commerceCapabilities.provider}});
+    }
+  }
   await delivery.reconcileUnresolved();
   await delivery.probeOutage('email');
   if (runtime.platform.sms) await delivery.probeOutage('sms');
   await repository.completeCampaigns(new Date());
   await sweepDesignJobs(runtime.platform, now.getTime());
+  return 'completed' as const;
   });
 }
 

@@ -22,10 +22,10 @@ with exit 3 and a message naming the field.
 - **Port.** The first port from 8787 that is free on both `127.0.0.1` and `::1`
   and held by no registered server. Override with `rer dev --port N`; start the
   search elsewhere with `RER_DEV_PORT_FROM=N`.
-- **Detaching.** Without a terminal (an agent's shell tool) `rer dev` returns once
-  the app is ready and leaves it running in the background, printing its
-  private log path; in a terminal it stays in the foreground and Ctrl-C stops
-  it. `--detach` and `--foreground` override that.
+- **Background server.** `rer dev` returns once the app is ready and leaves it
+  running in the background, printing its private log path. Open the printed
+  `RER_OPEN` link, which uses the selected free port. Stop with `rer dev --stop`;
+  `--foreground` explicitly keeps the server attached to the terminal.
 - **Progress and resuming.** A first launch can take several minutes. It prints
   a progress line at least every 30 seconds (`progress` events with `--json`).
   If the calling command is killed the launch carries on; run `rer dev` again to
@@ -46,10 +46,16 @@ with exit 3 and a message naming the field.
   `rer deploy --site --dry-run` prints the site Worker, custom domains and www
   redirect it would create, with no provider request.
 
+Node may print `ExperimentalWarning: SQLite is an experimental feature and might change at any time`
+when rer loads Node’s built-in SQLite API for local tooling. The warning alone is not a command
+failure; check the command result and wait for `RER_READY` when starting dev.
+
 ## Install for a real owner
 
-Use Node 22.20.0 and pnpm 10.12.4 for maintained first-party checkouts. To
-install with a real owner mailbox, run the verbs yourself from the runnable
+rer itself needs Node 22 or later already installed (nodejs.org, `brew install node` or nvm).
+Pinned rer 0.2.22 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
+checkout; neither needs a separate manual install. To install with a real owner
+mailbox, run the verbs yourself from the runnable
 edition's root: install locked dependencies, prepare its local owner, then start
 development:
 
@@ -68,6 +74,11 @@ Set `RER_NODE_AUTO=0` to disable automatic selection. If selection is disabled
 or acquisition fails, the command reports a repair invocation in this form:
 `npm exec --yes --package=node@VERSION -- node SCRIPT VERB --cwd PROJECT`.
 Help, check, describe, doctor and stop do not select or acquire Node.
+pnpm is selected in the same way: rer uses an installed matching version or
+its verified private cache, without changing global installations. `rer install`
+installs the locked dependencies; `rer dev` and `rer deploy` also install them
+when needed.
+
 A runtime that has just verified also drops its stale `.quarantine-` copies and
 Node's unused `include/` headers, which saves about 250 MB per Node release;
 `doctor` lists what it could not remove. `doctor` also warns, without failing,
@@ -78,14 +89,9 @@ packages from its store.
 
 After `RER_READY`, a seed with dev identity prints `RER_SIGNED_IN EMAIL` and
 `RER_OPEN URL`: open that URL on this computer and the app opens signed in as
-the owner, at `/setup` until first-run is finished. Other seeds, and
-`dev --login`, print `RER_SIGN_IN URL` for the local outbox: open it, follow
-the newest ordinary sign-in link and finish first-run setup at `/setup`. Until
-first-run completion is stored durably, app routes send the signed-in owner to
-`/setup`; signed-out visitors sign in and return there. Once complete,
-`/setup` opens the app or settings. The local outbox sends no external email.
+the owner, at `/setup` until first-run is finished. Sign-in is one click; local mail is silently suppressed, with no outbox or injected bar. Until first-run completion is stored durably, app routes send the signed-in owner to `/setup`; signed-out visitors sign in and return there. Once complete, `/setup` opens the app or settings. `rer demo` instead opens isolated sample data with the Mango Demo label; stop it with `rer demo --stop`.
 
-The saved local port is used; a first setup saves the first free port from 8787. Explicit ports are decimal
+Dev selects a free local port; use the printed `RER_OPEN` address. A first setup saves the first free port from 8787. Explicit ports are decimal
 integers from 1 through 65535 and must be free; a busy requested port fails
 instead of silently moving. Only `127.0.0.1`, `localhost` and `::1` are allowed.
 Dev applies the selected host and port to both the listener and runtime bindings;
@@ -130,8 +136,8 @@ root, inspect the live queue with
 
 For the real owner mailbox, `setup` can prompt instead of receiving
 `--owner-email` on the command line. Setup builds the app, applies local
-migrations, prepares the first owner, requests an ordinary sign-in message and
-stops its temporary app before it exits. Existing owner data and private
+migrations, prepares the first owner and stops its temporary app before it
+exits. It does not request a sign-in email; dev opens signed in automatically. Existing owner data and private
 settings are preserved on a repeated setup.
 
 Dev starts the real local app with assets and HMR and prints `RER_READY URL`
@@ -140,21 +146,9 @@ after the application health check. With dev identity it then prints
 checkout's dev key in its fragment: opening it signs the browser in through a
 real dev session, and the key is removed from the address bar and kept only as a
 host-only cookie. Treat that line as a credential and open it only on this
-computer. A dev-only badge switches between the owner, signed out and the
-seed's personas (`admin@dev.localhost` and so on). `dev --as PERSONA` starts as
-another persona or `signed-out`; `dev --login` turns dev identity off and uses
-the outbox: it prints `RER_SIGN_IN URL` and a `RER_OPEN` URL that opens that
-outbox. Choose the newest ordinary sign-in message and follow its link. No
-external email is sent. A successful sign-in consumes the link once. Seeds
-without dev identity print only `RER_SIGN_IN URL` for the local outbox.
+computer. The nav and title read Mango Dev. Use `dev --as PERSONA` for another persona or `signed-out`; there is no injected bar or outbox, and local mail is silently suppressed.
 
-Dev and preview are managed servers. In a terminal the first invocation stays
-active while serving; without one, `rer dev` returns once the app is ready and
-leaves it running (see the launch section above). Use `rer dev --stop` or
-`rer preview --stop` to stop them; `--idle-timeout SECONDS`
-sets inactivity cleanup. Compatible repeated starts reuse the registered
-server, print readiness and exit. Preview serves fixed production output; dev
-serves live source edits.
+Dev and preview are managed servers. Dev returns once ready and serves source edits in the background; `--foreground` keeps it attached. Use `rer dev --stop` or `rer preview --stop` to stop them. `--idle-timeout SECONDS` sets inactivity cleanup. Compatible repeated starts reuse the registered server, print readiness and exit. Preview serves a fixed build.
 Both retain the same owner and `.wrangler/state`.
 
 Both also run the project's Cron Triggers on their schedule, read from the same
@@ -198,23 +192,33 @@ rer deploy
 rer describe
 ```
 
-Stop dev or preview with `--stop` or Ctrl-C before build or verification, and
+Stop dev with `rer dev --stop` or preview with `rer preview --stop` before build or verification, and
 before reset and data transfer. Reset removes only the
 declared local inventory: local database/storage state, owner and sessions,
-outbox, CLI and installer bookkeeping, and generated private settings. It
+legacy local mail records, CLI and installer bookkeeping, and generated private settings. It
 keeps source, dependencies, exports and deployment receipts. It refuses active
 operations and ambiguous or linked state.
 
 Local export creates a private archive with an integrity receipt and explicit
 exclusions. Import validates the archive and restores into an empty destination.
 After import, run setup to establish the owner and local configuration. Auth,
-outbox, private settings and transient runtime state are excluded. Remote
+legacy local mail records, private settings and transient runtime state are excluded. Remote
 transfer is unsupported by the maintained references and fails visibly.
 
 Real deployment uses the owner-account procedure and its private credentials.
+Set `storeTimezone`, `organizationName` and `landingSummary` in `src/ext/config.ts`,
+then commit locally with `git add src/ext/config.ts` and
+`git commit -m "Configure Mango installation"` before deploying. No push is
+needed; deploy refuses uncommitted tracked changes.
 `rer deploy --dry-run` validates and builds locally without a
 provider request. The default environment is `production`; select another with
-`--environment NAME`. Local validation does not establish provider acceptance,
+`--environment NAME`. Pinned rer 0.2.22 claims the first hosted owner after the
+health check and removes the one-time setup token. Repeated deployments retain
+the existing owner. Preserve your private inputs, receipt, backups and local
+customizations when updating: run `git pull --ff-only`, then
+`rer deploy --environment NAME` for the same environment with the same private
+inputs loaded. rer installs locked dependencies; no separate owner claim or
+manual dependency installation is required. Local validation does not establish provider acceptance,
 hosted health or mail delivery.
 
 `rer describe` reads the current checkout's actual verbs,
@@ -246,8 +250,8 @@ Local durable state is `.wrangler/state`; CLI bookkeeping is `.rer/local`,
 installer state is `.seed/installer`, and the default private settings file is
 `.dev.vars` with mode 0600. Setup writes this checkout's dev key to
 `.rer/local/dev-key.env` (mode 0600); a repeat setup keeps it and reset removes
-it, which also ends every browser's earlier dev cookie. Dev sign-in, personas
-and the development outbox answer only a request holding that key's cookie, so
+it, which also ends every browser's earlier dev cookie. Dev sign-in and personas
+answer only a request holding that key's cookie, so
 a tunnel or local proxy to the app cannot reach them; anything else returns 404.
 Any local user or process that can read the checkout can read the key and sign
 in as the owner. `rer deploy` refuses the key, and `rer build` refuses output
@@ -256,7 +260,7 @@ that contains the dev layer.
 The first-party command profile is optional for independently authored
 projects. They may keep their own runtime, tools, installer, commands and
 provider choices. RER executes only their declared operations and does not
-impose Base pins, aliases, outbox or state layout.
+impose Base pins, aliases or state layout.
 
 ## The front door (opt-in)
 

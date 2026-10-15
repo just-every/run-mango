@@ -70,7 +70,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
       </div>
       <div className="fallback-counts" aria-label="Personalisation fallback counts">
         {channelCounts.filter(count => count.eligibleContactCount != null && count.fallbackContactCount != null).map(count => (
-          <p key={count.id}>{count.channel === 'sms' ? 'SMS' : titleCase(count.channel)}: <strong>{count.fallbackContactCount} of {count.eligibleContactCount}</strong> eligible contacts use fallback text.</p>
+          <p key={count.id}>{count.channel === 'sms' ? 'SMS' : titleCase(count.channel)}: <strong>{count.fallbackContactCount} of {count.eligibleContactCount}</strong> eligible {count.eligibleContactCount === 1 ? 'contact uses' : 'contacts use'} fallback text.</p>
         ))}
         {channelCounts.some(count => count.eligibleContactCount == null || count.fallbackContactCount == null) ? <p className="muted-copy">Fallback usage was not recorded for this snapshot.</p> : null}
       </div>

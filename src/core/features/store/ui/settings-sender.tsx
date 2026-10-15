@@ -2,6 +2,7 @@ import { formatDate } from '@/core/app/client/lib/format';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import type { SenderStatus } from '@/core/features/settings/types';
 import { SettingsSenderForm } from './settings-sender-form';
+import { InboxCheck } from './settings-inbox-check';
 
 const statusLabels = {
   ready: 'Sender check passed',
@@ -10,10 +11,10 @@ const statusLabels = {
   error: 'Sender check failed',
 };
 
-const evidenceLabels = [['provider', 'Provider domain'], ['dns', 'DNS configuration'], ['observation', 'Observed message authentication']] as const;
-const readinessLabels = { observed: 'Observed', 'not-observed': 'Not observed', unavailable: 'Unavailable', 'built-in': 'Built in', owner: 'Your decision' };
+const evidenceLabels = [['provider', 'Provider domain'], ['dns', 'DNS records'], ['observation', 'Inbox check']] as const;
+const readinessLabels = { observed: 'Observed', checked: 'Checked in DNS', 'not-observed': 'Not yet', unavailable: 'Unavailable', 'built-in': 'Built in', owner: 'Your decision' };
 
-export function SettingsSender() {
+export function SettingsSender({ operatorEmail }: { operatorEmail: string }) {
   const sender = useResource<SenderStatus>('/api/settings/sender');
   return (
     <section className="panel settings-sender" aria-labelledby="sender-title" aria-busy={sender.loading}>
@@ -35,11 +36,11 @@ export function SettingsSender() {
             <p className="eyebrow">Email authentication</p>
             <h3>{statusLabels[sender.data.validation.state]}</h3>
             <p>{sender.data.validation.detail}</p>
-            {sender.data.evidence ? <dl className="settings-evidence">
+            {sender.data.evidence && sender.data.validation.state !== 'unavailable' ? <dl className="settings-evidence">
               {evidenceLabels.map(([key, label]) => {
                 const evidence = sender.data!.evidence![key];
                 return <div key={key}><dt>{label}</dt><dd>
-                  <strong className={`settings-evidence__state settings-evidence__state--${evidence.state}`}>{evidence.state === 'passed' ? 'Passed' : evidence.state === 'missing' ? 'No observation' : evidence.state}</strong>
+                  <strong className={`settings-evidence__state settings-evidence__state--${evidence.state}`}>{evidence.state === 'passed' ? 'Passed' : evidence.state === 'missing' ? 'Not yet' : evidence.state === 'stale' ? 'Expired' : evidence.state === 'unknown' ? 'Not checked' : evidence.state === 'failed' ? 'Failed' : 'Withdrawn'}</strong>
                   <span>{evidence.reason}</span>
                   {evidence.observedAt ? <small>Observed <time dateTime={evidence.observedAt}>{formatDate(evidence.observedAt)}</time></small> : null}
                   {evidence.expiresAt ? <small>Expires <time dateTime={evidence.expiresAt}>{formatDate(evidence.expiresAt)}</time></small> : null}
@@ -48,6 +49,7 @@ export function SettingsSender() {
             </dl> : null}
             <p className="muted-copy">Checked <time dateTime={sender.data.validation.checkedAt}>{formatDate(sender.data.validation.checkedAt)}</time>. Approval uses a fresh check for the saved campaign.</p>
           </div>
+          {sender.data.validation.state !== 'unavailable' ? <InboxCheck status={sender.data} operatorEmail={operatorEmail} /> : null}
           <div className="settings-validation">
             <p className="eyebrow">Before the first real send</p>
             <dl className="settings-evidence" aria-label="Sending readiness">

@@ -44,6 +44,8 @@ export type ImportPreview = {
     file: string;
     row: number;
     email: string;
+    phone: string;
+    smsStatus: string;
     displayName: string;
     status: string;
     reason?: string;

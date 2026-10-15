@@ -26,9 +26,9 @@ export type UndoSummary = { contacts: { removed: number; kept: Array<{ contactId
 const contentPage = 20;
 
 /** Archive jobs use preserved undo and keep contacts that existed before them or were mailed since. */
-async function archiveContext(platform: Platform, operatorId: string, request: Request): Promise<D1ImportContext> {
+async function archiveContext(platform: Platform, operatorId: string, request: Request, principalId = operatorId): Promise<D1ImportContext> {
   const base = await audienceImportContext(platform, operatorId, request);
-  return { ...base, reversalPolicy: 'preserve-conflicts', storage: { ...base.storage, targets: createAudienceImportTarget(platform.config.contactHashSalt, { archive: true }) } };
+  return { ...base, authorization: { ...base.authorization, principalId }, reversalPolicy: 'preserve-conflicts', storage: { ...base.storage, targets: createAudienceImportTarget(platform.config.contactHashSalt, { archive: true }) } };
 }
 
 export function createArchiveService(platform: Platform) {
@@ -127,8 +127,8 @@ export function createArchiveService(platform: Platform) {
     /** One bounded step: a page of contacts, or a page of content, then completion. */
     async continue(id: string, operatorId: string, request: Request) {
       const archive = await record(id);
-      if (!archive || archive.principal_id !== operatorId) return undefined;
-      const context = await archiveContext(platform, operatorId, request);
+      if (!archive) return undefined;
+      const context = await archiveContext(platform, operatorId, request, archive.principal_id);
       if (archive.state === 'applying') {
         if (audiencePending(archive)) { await startAudience(archive, audienceFiles((await readArchiveParts(await custody(archive))).entries), context); return record(id); }
         if (archive.audience_stream) {
@@ -159,15 +159,15 @@ export function createArchiveService(platform: Platform) {
 
     async undo(id: string, operatorId: string, request: Request) {
       const archive = await record(id);
-      if (!archive || archive.principal_id !== operatorId) return undefined;
+      if (!archive) return undefined;
       if (archive.state === 'applying') throw new Error('Finish this import before undoing it.');
       if (archive.state === 'applied') await db.prepare("UPDATE move_in_archives SET state='undoing',updated_at=? WHERE id=? AND state='applied'").bind(Date.now(), id).run();
       return this.continue(id, operatorId, request);
     },
 
     read: record,
-    async list(operatorId: string) {
-      return (await db.prepare('SELECT * FROM move_in_archives WHERE principal_id=? ORDER BY created_at DESC LIMIT 50').bind(operatorId).all<ArchiveRecord>()).results;
+    async list() {
+      return (await db.prepare('SELECT * FROM move_in_archives ORDER BY created_at DESC LIMIT 50').all<ArchiveRecord>()).results;
     },
     async entries(id: string) {
       return (await db.prepare('SELECT ordinal,path,size,compressed_size,sha256,part,disposition FROM move_in_archive_entries WHERE archive_id=? ORDER BY ordinal').bind(id).all()).results;

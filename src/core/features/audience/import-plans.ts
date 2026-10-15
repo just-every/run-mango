@@ -28,7 +28,7 @@ export async function saveAudiencePlan(db:D1Database,plan:ImportPlan,principalId
   const source=entry.source.payload as Record<string,unknown>;
   const ledger=source.ledger as AudienceSnapshot|undefined;
   const sourceIds=Array.isArray(ledger?.tables?.contacts)?ledger.tables.contacts.map(contact=>String(contact.id??'')):[''];
-  const sourceDestinations=[String(source.email??''),...(Array.isArray(ledger?.identities)?ledger.identities.filter(identity=>typeof identity.destination==='string').map(identity=>identity.destination):[])];
+  const sourceDestinations=[String(source.email??''),String(source.phone??''),...(Array.isArray(ledger?.identities)?ledger.identities.filter(identity=>typeof identity.destination==='string').map(identity=>identity.destination):[])];
   return [...sourceIds.flatMap(id=>sourceDestinations.map(email=>({id,email}))),...entry.effects.flatMap(effect=>{
    const snapshot=effect.value as unknown as AudienceSnapshot;
    return [{id:effect.targetId,email:String(source.email??'')},...snapshot.identities.map(identity=>({id:effect.targetId,email:identity.destination}))];

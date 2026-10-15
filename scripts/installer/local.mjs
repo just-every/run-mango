@@ -38,28 +38,29 @@ export const hooks = {
   }
  },
  secrets:{keepExisting:true,originKey:'AUTH_ORIGIN',values:({origin})=>({AUTH_LOCAL:'true',AUTH_ORIGIN:origin,MAIL_PROVIDER:'development',MANGO_LOCAL_CONFIG_VERSION:'2',MANGO_LOCAL_HASH_AUTHORITY:localContactAuthorityVersion})},
- // The production build writes the production wrangler.toml; the last step puts the local one back for dev.
+ // Build production with its own config; ensure the independent local config
+ // exists for fresh checkouts without rewriting an unchanged local config.
  build:[['pnpm',['run','build:worker']],['pnpm',['run','config:local']]],
- migrate:[['pnpm',['run','config:local']],['pnpm',['exec','wrangler','d1','migrations','apply','mango-local','--local','--persist-to',statePath,'--config','wrangler.toml']]],
+ migrate:({demo})=>[['pnpm',['run','config:local']],['pnpm',['exec','wrangler','d1','migrations','apply','mango-local','--local','--persist-to',demo?.state??statePath,'--config','wrangler.toml']]],
  async start(context) {
   localContactHashSalt(localBindings((await readSettings(context.root,{})).values));
   return previewTarget(context);
  },
- owner:{displayName:input=>input.displayName,returnTo:'/setup'},signIn:{emailKey:'OWNER_EMAIL',returnTo:'/setup'},
+ owner:{returnTo:'/setup'},signIn:{emailKey:'OWNER_EMAIL',returnTo:'/setup'},
 };
 const lifecycle=localInstaller(hooks);
 // The deploy kit reads the resolved secrets for app deployment; rer's run-site planner reads
 // project identity from the tracked input before the app deploy callback runs.
 function deploy() {
  const owner=ownerDeploy(declarationPaths.deploy,lifecycle);
- return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:'deploy.json'});
+ return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:'deploy.json',managesHostedOwner:owner.managesHostedOwner});
 }
 export const {install}=lifecycle;
-export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'rer-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',
- // The production build regenerates wrangler.toml; preview's fixed-build receipt ignores it.
+export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'scripts/installer/local-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',
+ // Generated configs are outputs rather than inputs to preview's fixed-build receipt.
  // Local dev identity: the local-only Worker entry, the build output rer build scans for the dev layer, and the kept end-to-end email-link test.
- devIdentity:{entry:'src/core/app/worker.dev.ts',output:['dist'],emailLinkTest:'tests/local-start/local.journey.ts'},localOnlyKeys:['RER_DEV_ORIGIN','RER_DEV_IDENTITY'],
- generatedOutputs:['wrangler.toml'],product:'Mango',
+ devIdentity:{entry:'src/core/app/worker.dev.ts',output:['dist'],emailLinkTest:'operations/invitation-cancellation.test.mjs'},localOnlyKeys:['RER_DEV_ORIGIN','RER_DEV_IDENTITY'],
+ generatedOutputs:['wrangler.toml','wrangler.production.toml'],product:'Mango',
  // The run site (run-mango.com): the approved landing, the Run page and the docs, built by rer build --site.
  site:{entry:'src/site/pages.tsx',output:'dist/site',declaration:'deploy-site.json',config:'vite.site.config.ts'},input:{names:{email:'OWNER_EMAIL'}}});
 

@@ -5,7 +5,8 @@ import { Link, useNavigate, useSearch } from '@tanstack/react-router';
 import { formatDateInTimeZone } from '@/core/app/client/lib/format';
 import { KeepTogether } from '@/core/features/site/BodyText';
 import { EmptyState } from '@/core/app/client/ui/empty-state';
-import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
+import { LoadState } from '@/core/app/client/ui/layout';
+import { CampaignStatusPill } from './campaign-status-pill';
 import { campaignStates, campaignStateLabel } from '../result-model';
 import { useCampaignCollection } from './data';
 import { dispositionLabel } from './result-copy';
@@ -23,7 +24,8 @@ export function CampaignsPage() {
       <div className="page-head__text"><h1>Campaigns</h1><p className="page-head__lead">Review drafts and follow approved campaigns.</p></div>
       <div className="page-head__actions"><button type="button" className="primary-action" aria-expanded={starting} aria-controls="campaign-starters" onClick={() => setStarting(!starting)}>New campaign</button></div>
     </header>
-    <NewCampaign open={starting} />
+    {data.marketingConnectionRequired ? <aside className="panel" role="status"><h2>Connect a newsletter provider</h2><p>Newsletters need your own SendGrid or Resend connection. Add the optional marketing connection in RER Configure, then verify your business sender in Settings. Managed mail handles sign-in and subscription confirmations.</p></aside> : null}
+    <NewCampaign open={starting} commerceEnabled={data.commerceEnabled} aiEnabled={data.aiEnabled} />
     <section className="campaigns-history" aria-label="Campaign history">
       {!data.total ? <EmptyState id="campaigns-empty-title" title="Nothing drafted yet" art={<CampaignsEmptyArt />}><p>No campaigns yet. Start with New campaign.</p></EmptyState> : <div className="panel campaign-list">
         <div className="campaign-filters">
@@ -44,7 +46,7 @@ export function CampaignsPage() {
               <span>{campaign.channels.map(channel => channel === 'sms' ? 'SMS' : 'Email').join(' · ') || 'No saved steps'}</span>
               <p className="campaign-row__audience">{campaign.audienceSummary}</p>
             </div>
-            <div className="campaign-row__meta"><StatusPill value={campaign.state === 'dispatching' ? 'sending' : campaign.state} />
+            <div className="campaign-row__meta"><CampaignStatusPill state={campaign.state} lastOutcome={campaign.lastOutcome} />
               <small><KeepTogether text={`${campaign.nextScheduledAt ? `Next: ${formatDateInTimeZone(campaign.nextScheduledAt,data.timezone)}` : `${campaign.lastOutcome ? dispositionLabel({disposition:campaign.lastOutcome,reason:campaign.lastSkipReason,count:1}) : campaignStateLabel(campaign.state)}: ${formatDateInTimeZone(campaign.lastOutcomeAt ?? campaign.updatedAt,data.timezone)}`} (${data.timezone})`} /></small>
             </div>
           </Link>;

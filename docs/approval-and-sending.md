@@ -11,7 +11,7 @@ In the draft editor, **Selected channel steps** holds the schedule. Choose **Add
 - **Local send-by date and time**, which defaults to 23:59 on the chosen day, with its own resolved UTC instant;
 - **Why this time**, a short required note.
 
-A local time that does not exist, or occurs twice, because of a daylight saving change is rejected until you pick another. Messages not handed to your provider by the send-by deadline are skipped and shown as "send window closed". Mango looks for due steps every five minutes, so do not expect sends to begin to the second.
+A local time that does not exist, or occurs twice, because of a daylight saving change is rejected until you pick another. Messages not handed to your provider by the send-by deadline are skipped and shown as "send window closed". Once Cloudflare activates the schedule, Mango looks for due steps every five minutes, so do not expect sends to begin to the second. First activation usually takes up to an hour. The schedule and results page shows whether a tick has actually run; approval and a configured schedule are not evidence of a send.
 
 ## Read the approval checks
 
@@ -20,7 +20,7 @@ Save the draft, then read the **Approval checks** panel. Blocking items come fir
 - the name, subject, message body, preheader, sender name, From, reply-to or postal address is missing;
 - the message lacks a visible unsubscribe link or the postal address, or its HTML links, plain-text links and saved links differ;
 - the HTML uses a disallowed tag, attribute or inline style, hides text with its styling or colours, or a personalization token has no fallback;
-- a link is not HTTPS, its host is not in `MANGO_ALLOWED_LINK_HOSTS`, or it does not resolve;
+- a link is not HTTPS, its host is not in the allowed link hosts in Settings, or it does not resolve (the default allowed host is your app’s own host);
 - a step has no valid time zone, send time or later deadline;
 - the audience conditions are invalid or no contact is eligible;
 - an eligible contact's recorded consent is for a different sender name or message category;
@@ -30,16 +30,11 @@ Save the draft, then read the **Approval checks** panel. Blocking items come fir
 
 ### Verify your sender
 
-SPF, DKIM, DMARC and domain alignment must all pass in a message actually received by a mailbox you control. Mango checks this through a receipt connector that you provide. Set `MAILBOX_RECEIPT_URL` and `MAILBOX_RECEIPT_RECIPIENT` together, and list the recipient in `MANGO_TEST_EMAIL_ALLOWLIST`. Mango supplies no receipt service and no default endpoint, and the connector must follow Cloudflare Email Routing receipt semantics. From the checkout you deployed from, with the same environment variables set and your sender saved in Settings:
+Approval needs evidence that your sender works. In **Settings**, once **Provider domain** and **DNS records** pass, press **Send the check to** *your sign-in address*. Mango sends one email from your From address through your provider. Open it; if it reached your inbox (not spam), follow its link and press **Yes, it reached my inbox**. That is all: no command line is needed.
 
-```bash
-node scripts/sender-verification.mjs prepare
-node scripts/sender-verification.mjs send <id>
-node scripts/sender-verification.mjs observe <id>
-node scripts/sender-verification.mjs inspect
-```
+The confirmation lasts 30 days, or until the provider's domain records or your DNS change, and Mango checks the provider and public DNS (SPF, DKIM, DMARC and alignment with the From domain) again at approval and at every handoff. If the evidence is not passing when a message is due, the message waits and is retried on your reconciliation interval until its deadline. **Settings** shows each check and when it expires.
 
-Use the `id` that `prepare` prints. The evidence lasts at most 24 hours and is re-checked at approval and at every handoff. If it is not passing when a message is due, the message waits and is retried on your reconciliation interval until its deadline. **Settings** shows each check and when it expires.
+An installation can instead trust a receipt connector that reports the receiving mailbox's own authentication results; [Install and deploy](./install.md#optional-a-trusted-receipt-connector) describes it.
 
 ## Approve
 
@@ -54,3 +49,30 @@ While a campaign is a draft, every save discards the previous checks, so you alw
 Open **View schedule and results**. While some recipients have not yet been handed to your provider, a **Cancel remaining sends** panel appears. **Cancel campaign**, then **Confirm cancellation**, stops every queued recipient. Messages already handed to a provider cannot be recalled, and handoffs with an unknown outcome stay visible. When nothing can be stopped, the panel is replaced by a note saying so.
 
 > **Tip:** Use **Send a test** on the draft first. It goes only to addresses on your test allowlist and is marked as a test.
+
+Provider pacing is shared durably by the configured provider account across campaigns,
+confirmation messages, tests, operator notices and sign-in mail. SMS consumes the actual
+GSM-7 or UTF-16 segment count. Carrier limits are the provider's documented policy for
+all permitted destinations; Mango never infers a carrier from a phone prefix.
+
+`MANGO_DELIVERY_POLICY_JSON` supplies provider evidence keyed by `resend`, `sendgrid`
+or `mobile-message`. Each entry requires `account`, an HTTPS provider `evidence` URL,
+and `credentialDigest` (SHA-256 of the configured API credential, computed privately).
+Optional `providerPerMinute` restricts the installation's existing limit further. SMS
+also requires `carrierPerMinute` and `carrierScope` naming the applicable provider policy.
+Changing credentials invalidates their evidence until the account binding is renewed.
+
+For Resend, supply `lookupWindowMs`, `scopes: ["full_access"]`, the configured `webhookId`
+and `lookupHistorySince` as an ISO timestamp covering this installation's retained event
+history. Resend's published standard account retention is 30 days, distinct from its
+24-hour idempotency keys; Enterprise retention needs the actual account evidence.
+Mobile Message documents 24-hour idempotency but no minimum numeric retained lookup
+window. SMS approval therefore remains blocked until account-bound provider evidence
+supplies `lookupWindowMs`; dashboard request-log retention is not sufficient evidence.
+Never substitute an observed old message for a minimum retention guarantee.
+
+An outage uses a bounded authenticated read: SendGrid scopes, Resend usage (full-access
+key), or Mobile Message account balance. The probe sends no recipient message. Recovery
+clears only reachability; account compliance, sender verification, source freshness,
+consent and deadlines still apply. Outage notices are fenced per active operator; an
+uncertain notification acceptance remains visible and is never automatically resent.

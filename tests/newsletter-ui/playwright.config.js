@@ -27,6 +27,6 @@ export default defineConfig({
     cwd: new URL('../..', import.meta.url).pathname,
     reuseExistingServer: false,
     timeout: 120_000,
-    env: { MANGO_FIXTURE_PORT: String(port) },
+    env: { MANGO_FIXTURE_PORT: String(port), MANGO_FIXTURE_TURNSTILE: '1' },
   },
 });

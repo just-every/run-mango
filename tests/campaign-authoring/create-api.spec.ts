@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import { summarizeAudienceRules } from '../../src/core/features/campaigns/audience-summary';
 import { test, expect } from '@playwright/test';
 import { authoringRuntime } from './browser-runtime.mjs';
@@ -9,7 +10,7 @@ test('[CAMP-002][CAMP-003][CAMP-004] native API persists blank and complete draf
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
     expect(open.status()).toBe(200);
     const { token } = await open.json();
-    const headers = { Cookie: `operator_session_local=${token}`, Origin: runtime.url };
+    const headers = { Cookie: `${localSessionCookieName(runtime.url)}=${token}`, Origin: runtime.url };
     const create = (data: unknown) => request.post(runtime.url + '/api/campaigns', { headers, data });
     const detail = async (id: string) => {
       const response = await request.get(`${runtime.url}/api/campaigns/${id}`, { headers });

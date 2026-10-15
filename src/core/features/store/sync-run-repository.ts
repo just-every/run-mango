@@ -1,3 +1,4 @@
+import type {CommerceCoverage} from '@/core/shared/platform';
 import type { Database } from '@/core/platform/db/client';
 export type SyncRun = {
   id: string; provider: string; sourceType: string; state: 'queued' | 'running' | 'failed' | 'completed' | 'superseded';
@@ -81,17 +82,28 @@ export function createSyncRunRepository(database: Database) {
       const claimed = await get(id);
       return claimed?.leaseToken === token ? claimed : null;
     },
+    async renew(id:string,token:string,now:Date,leaseMs:number) {
+      const time=now.getTime();
+      const renewed=await client.prepare(`UPDATE source_sync_runs SET lease_expires_at=max(?,CAST(unixepoch('subsec')*1000 AS INTEGER))+?,updated_at=?
+        WHERE id=? AND state='running' AND lease_token=? AND lease_expires_at>max(?,CAST(unixepoch('subsec')*1000 AS INTEGER))`).bind(time,leaseMs,time,id,token,time).run();
+      if(!renewed.meta.changes)throw new SourceSyncBusyError('Sync lease changed during source hydration.');
+    },
     async owns(id: string, token: string, now: Date) {
       return Boolean(await client.prepare(`SELECT 1 AS owned WHERE ${guard}`).bind(id, token, now.getTime()).first());
     },
     async hasCursor(id: string, digest: string) {
       return Boolean(await client.prepare('SELECT 1 AS seen FROM source_sync_cursors WHERE run_id = ? AND cursor_digest = ?').bind(id, digest).first());
     },
-    async checkpoint(run: SyncRun, token: string, nextCursor: string | undefined, digest: string | undefined, records: number, now: Date, leaseMs: number) {
+    async checkpoint(run: SyncRun, token: string, nextCursor: string | undefined, digest: string | undefined, records: number, now: Date, leaseMs: number, coverage?: CommerceCoverage) {
       const time = now.getTime(), values = [run.id, token, time];
       const statements: D1PreparedStatement[] = [];
       if (digest) statements.push(client.prepare(`INSERT INTO source_sync_cursors (run_id, cursor_digest) SELECT ?, ? WHERE ${guard}`).bind(run.id, digest, ...values));
-      if (nextCursor === undefined) statements.push(sourceState(run.sourceType, time, null, guard, values));
+      if (nextCursor === undefined) {
+        statements.push(sourceState(run.sourceType, time, null, guard, values));
+        statements.push(client.prepare(`DELETE FROM commerce_source_coverage WHERE source_type=? AND ${guard}`).bind(run.sourceType,...values));
+        if (coverage?.complete) statements.push(client.prepare(`INSERT INTO commerce_source_coverage(source_type,run_id,mode,exhaustive,from_at,channel_id,completed_at) SELECT ?,?,?,?,?,?,? WHERE ${guard}`)
+          .bind(run.sourceType,run.id,coverage.mode,coverage.exhaustive?1:0,coverage.from??null,coverage.channel??null,time,...values));
+      }
       statements.push(client.prepare(`UPDATE source_sync_runs SET next_cursor = ?, pages = pages + 1, records = records + ?, state = ?,
         lease_token = ?, lease_expires_at = ?, last_error = NULL, updated_at = ?, completed_at = ? WHERE id = ? AND ${guard}`)
         .bind(nextCursor ?? null, records, nextCursor === undefined ? 'completed' : 'running', nextCursor === undefined ? null : token,

@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { invitationRuntime } from '../../operations/fixtures/invitation-runtime.mjs';
 import { eraseHttp } from './erase';
 import { consent } from './native';
-import { archiveRecords } from '../portability/flows';
+import { archiveRecords, durableRows as dump } from '../portability/flows';
 import { contactErasureTables } from '../../src/core/features/audience/erasure/declaration';
 
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
@@ -20,13 +20,6 @@ async function importCsv(f: any, cookie: string, csv: string, preset = 'mango') 
   }
   expect(job.state).toBe('completed'); return { job, preview };
 }
-async function dump(db: D1Database) {
-  const tables = (await db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name <> '_cf_METADATA'").all<{name: string}>()).results;
-  const rows = [];
-  for (const { name } of tables) rows.push({ name, rows: (await db.prepare(`SELECT * FROM "${name.replaceAll('"', '""')}"`).all()).results });
-  return JSON.stringify(rows);
-}
-
 for (const passedMappingStage of [false, true]) test(`CONT-013 different-salt imported subscribed erasure removes every mapping alias and source custody${passedMappingStage ? ' after a pre-upgrade mapping cursor' : ''}`, async () => {
   const sourceSalt = 'source-installation-private-contact-salt-123456';
   const destinationSalt = 'destination-installation-private-contact-salt-123456';
@@ -50,12 +43,11 @@ for (const passedMappingStage of [false, true]) test(`CONT-013 different-salt im
     // the exported identity or an earlier installation authority. No application
     // behavior is replaced; deletion must handle all persisted mapping rows.
     const aliases = [prior, portable, ...passedMappingStage ? Array.from({ length: 300 }, (_, index) => hash(`older-authority-${index}:${email}`)) : []];
-    for (const alias of aliases) await f.db.prepare('INSERT INTO audience_portable_hashes VALUES(?,?)').bind(alias, portable).run();
+    await f.db.batch(aliases.map(alias => f.db.prepare('INSERT INTO audience_portable_hashes VALUES(?,?)').bind(alias, portable)));
     const survivorRows = async () => {
       const id = (await f.db.prepare('SELECT id FROM contacts WHERE email=?').bind(survivor).first<any>()).id;
-      const rows = [];
-      for (const table of ['consent_evidence', 'contact_history', 'audience_import_observations']) rows.push((await f.db.prepare(`SELECT * FROM ${table} WHERE contact_id=? ORDER BY id`).bind(id).all()).results);
-      return rows;
+      const results = await f.db.batch(['consent_evidence', 'contact_history', 'audience_import_observations'].map(table => f.db.prepare(`SELECT * FROM ${table} WHERE contact_id=? ORDER BY id`).bind(id)));
+      return results.map((result: D1Result) => result.results);
     };
     const unrelated = await survivorRows();
     const before = await dump(f.db); for (const value of [email, contact.id, local, prior, portable]) expect(before).toContain(value);

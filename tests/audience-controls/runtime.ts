@@ -5,7 +5,7 @@ import type {composeFixture} from '../sender-verification/test-runtime';
 export const rule=(field='email',value='@example.test',comparator='contains')=>JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field,comparator,value}]});
 export const segment=(name='Newsletter readers')=>({name,inclusionRuleJson:rule(),exclusionRulesJson:'[]'});
 export async function requests(f:ReturnType<typeof composeFixture>) {
-  const token='audience-controls-bootstrap-token-over-thirty-two-bytes';
+  const token='synthetic-audience-controls-bootstrap-token-over-thirty-two-bytes';
   const bindings={...f.bindings,AUTH_SETUP_TOKEN:token};
   f.platform.config.authSetupToken=token;
   const app=createApp(bindings,f.platform);let cookie='';

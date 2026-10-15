@@ -1,11 +1,11 @@
 name = "__MANGO_WORKER_NAME__"
-main = "./src/core/app/worker.ts"
+main = "./src/server.ts"
 compatibility_date = "2026-09-08"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 
 [triggers]
-crons = ["*/5 * * * *"]
+crons = ["* * * * *"]
 
 [assets]
 binding = "ASSETS"
@@ -27,4 +27,5 @@ queue = "__MANGO_QUEUE_NAME__"
 [[queues.consumers]]
 queue = "__MANGO_QUEUE_NAME__"
 max_batch_size = 10
+max_batch_timeout = 0
 max_retries = 5

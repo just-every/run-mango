@@ -19,3 +19,7 @@ export function isStatusHeader(header: string) {
   // ambiguous (possibly SMS) column as the email marketing field.
   return [...defaultMapping.status, 'subscription status'].some(alias => headerKey(alias) === headerKey(header));
 }
+
+export function isSmsStatusHeader(header: string) {
+  return defaultMapping.sms_status.some(alias => headerKey(alias) === headerKey(header));
+}

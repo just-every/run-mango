@@ -30,7 +30,7 @@ export async function runStages(groups, { directory, env = process.env, write = 
   signal?.addEventListener('abort', cancel, { once: true });
   if (signal?.aborted) cancel();
   const report = status => ({ startedAt: new Date(started).toISOString(), finishedAt: new Date().toISOString(),
-    durationMs: Date.now() - started, status, ...(failure ? { error: failure.message } : {}), fullCommand: null, stages });
+    durationMs: Date.now() - started, status, ...(failure ? { error: failure.message } : {}), fullCommand: null, schedule, stages });
   const save = status => {
     const next = reportQueue.then(() => writeReport(directory, report(status), redaction.redact));
     reportQueue = next.catch(() => {});

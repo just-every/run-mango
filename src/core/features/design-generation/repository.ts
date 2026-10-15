@@ -1,3 +1,4 @@
+import { recordExternalCost } from '@/core/features/insights/cost-recording';
 import type { DesignFailureCode, DesignJobState, DesignWaitCode } from './model';
 
 /** D1 records of design runs (migration 0040). Every transition names the states it may leave, so a replayed queue
@@ -73,8 +74,9 @@ export function createDesignRepository(db: D1Database) {
     },
     /** RESULT-004: one cost fact per paid request, keyed so a replayed request is recorded once. */
     async recordCost(fact: { key: string; campaignId: string; provider: string; operation: 'design-draft' | 'design-layout'; tier: string; units: number }, now: number) {
-      await db.prepare(`INSERT INTO external_cost_facts (id, campaign_id, provider, operation, model_or_channel, billable_units, reported_cost_micros, currency, occurred_at, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?, ?) ON CONFLICT(id) DO NOTHING`).bind(fact.key, fact.campaignId, fact.provider, fact.operation, fact.tier, fact.units, now, now).run();
+      await recordExternalCost({ $client: db }, { key: fact.key, campaignId: fact.campaignId, provider: fact.provider,
+        operation: fact.operation, modelOrChannel: fact.tier, billableUnits: fact.units,
+        unitKind: fact.operation === 'design-draft' ? 'images' : 'layouts', occurredAt: new Date(now) });
     },
     async campaignState(campaignId: string) {
       return (await db.prepare('SELECT state FROM campaigns WHERE id = ?').bind(campaignId).first<{ state: string }>())?.state;

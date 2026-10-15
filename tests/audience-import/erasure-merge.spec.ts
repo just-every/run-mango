@@ -61,6 +61,7 @@ test('CONT-013 changed contact rejects stale deletion and known manual names sur
   await capture(f,cookie,person.email,laterName);const before=await snapshot(f);await release(f,'name-changed');expect((await deletion).status).toBe(409);expect(await snapshot(f)).toEqual(before);
   expect((await f.call('/api/contacts/merge',{cookie,method:'POST',body:{survivorContactId:survivor.id,mergedContactId:person.id}})).status).toBe(200);
   expect((await f.db.prepare("SELECT detail FROM contact_history WHERE contact_id=? AND kind='contact-name'").bind(survivor.id).all()).results.map(row=>row.detail).sort()).toEqual([oldName,laterName].sort());
+  expect((await f.db.prepare('SELECT DISTINCT contact_id FROM consent_handoff_claims').all()).results).toEqual([{contact_id:survivor.id}]);
   expect((await f.db.prepare('SELECT count(*) n FROM audience_import_plans').first()).n).toBe(0);
   expect((await eraseHttp(f,cookie,survivor.id)).state).toBe('complete');
   // test_mail is the external provider recorder, outside product custody.

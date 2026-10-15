@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { copyFile, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { copyFile, mkdtemp, readFile, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { resolveDeclaration } from '../scripts/installer/deploy-declaration.mjs';
@@ -10,8 +10,10 @@ import { secretBindings, uploadWorker } from '../node_modules/@runeditrun/rer/mo
 
 const design = { DESIGN_PROVIDER_API_KEY: 'test-design-key', DESIGN_PROVIDER_ORIGIN: 'https://12ui.com' };
 const receiver = { MAILBOX_RECEIPT_URL: 'https://receiver.example.test/receipts?token=synthetic-test-capability', MAILBOX_RECEIPT_RECIPIENT: 'receiver@example.test', MANGO_TEST_EMAIL_ALLOWLIST: 'receiver@example.test,qa@example.test' };
+const challenge = { TURNSTILE_SITE_KEY: 'test-turnstile-site', TURNSTILE_SECRET_KEY: 'test-turnstile-secret' };
+const optionalInputs = { ...design, ...receiver, ...challenge };
 
-test('optional design and receiver inputs reach the deploy upload, partial pairs fail, and later deploys preserve configured secrets', async () => {
+test('optional design, receiver and signup challenge inputs reach deploy, partial pairs fail, and later deploys preserve configured secrets', async () => {
   const root = await mkdtemp(join(tmpdir(), 'mango-declaration-'));
   try {
     await copyFile('deploy.json', join(root, 'deploy.json'));
@@ -40,20 +42,28 @@ test('optional design and receiver inputs reach the deploy upload, partial pairs
     const off = await plan('deploy', {});
     const required = Object.fromEntries(off.secrets.map(item => [item.environment, `value of ${item.environment}`]));
     await deploy(required);
-    for (const name of [...Object.keys(design), ...Object.keys(receiver)]) assert.ok(!held.has(name));
+    for (const name of Object.keys(optionalInputs)) assert.ok(!held.has(name));
     const original = new Map(held);
-    for (const env of [{ MAILBOX_RECEIPT_URL: receiver.MAILBOX_RECEIPT_URL }, { MAILBOX_RECEIPT_RECIPIENT: receiver.MAILBOX_RECEIPT_RECIPIENT }, { DESIGN_PROVIDER_API_KEY: design.DESIGN_PROVIDER_API_KEY }]) {
+    for (const env of [{ MAILBOX_RECEIPT_URL: receiver.MAILBOX_RECEIPT_URL }, { MAILBOX_RECEIPT_RECIPIENT: receiver.MAILBOX_RECEIPT_RECIPIENT }, { DESIGN_PROVIDER_API_KEY: design.DESIGN_PROVIDER_API_KEY }, { TURNSTILE_SITE_KEY: challenge.TURNSTILE_SITE_KEY }, { TURNSTILE_SECRET_KEY: challenge.TURNSTILE_SECRET_KEY }]) {
       await assert.rejects(plan('deploy', env), /Configure both/);
       assert.deepEqual(held, original);
     }
-    await deploy({ ...design, ...receiver });
-    for (const [name, value] of Object.entries({ ...design, ...receiver })) assert.equal(held.get(name), value);
+    await deploy(optionalInputs);
+    for (const [name, value] of Object.entries(optionalInputs)) assert.equal(held.get(name), value);
     const configured = new Map(held);
+    // Repeated resolution of the same optional bindings must not invalidate
+    // the build cache by changing the generated declaration's modification time.
+    const declarationPath = join(root, '.rer/declarations/deploy.json');
+    const previous = await readFile(declarationPath);
+    const modified = (await stat(declarationPath, { bigint: true })).mtimeNs;
+    await deploy(optionalInputs);
+    assert.deepEqual(await readFile(declarationPath), previous);
+    assert.equal((await stat(declarationPath, { bigint: true })).mtimeNs, modified);
     await deploy({});
     assert.deepEqual(held, configured);
-    const verify = await plan('verify', { ...design, ...receiver });
+    const verify = await plan('verify', optionalInputs);
     assert.deepEqual(verify.secrets, off.secrets);
     const resolved = await readFile(join(root, '.rer/declarations/deploy.json'), 'utf8');
-    for (const value of Object.values({ ...design, ...receiver })) assert.ok(!resolved.includes(value));
+    for (const value of Object.values(optionalInputs)) assert.ok(!resolved.includes(value));
   } finally { await rm(root, { recursive: true, force: true }); }
 });

@@ -27,7 +27,7 @@ export async function startNativeDev({ checkout, directory, url, env, secrets = 
   });
   commands.addSecrets(secrets);
   try {
-    child = commands.spawn(`Starting native ${verb}`, process.execPath, ['node_modules/@runeditrun/rer/bin/rer.mjs', verb, ...(verb === 'dev' ? ['--login'] : [])], { cwd: checkout, env: {...env, RER_SERVER_JOURNEY: '1'}, signal });
+    child = commands.spawn(`Starting native ${verb}`, process.execPath, ['node_modules/@runeditrun/rer/bin/rer.mjs', verb], { cwd: checkout, env: {...env, RER_SERVER_JOURNEY: '1'}, signal });
     await new Promise((resolve, reject) => {
       let settled = false;
       const finish = error => {

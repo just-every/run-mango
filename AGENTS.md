@@ -1,6 +1,6 @@
 ## Run it locally
 
-Use Node **22.20.0** and pnpm **10.12.4** from the project root. Install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`); in this checkout it runs the rer version `package.json` pins. Supply your own owner email.
+First install **Node 22 or later**: rer runs on it, and the installer stops with `node is required` without it. Get it from [nodejs.org](https://nodejs.org/en/download) (or `brew install node` on a Mac, or a version manager such as nvm). Then install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.22**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
 
 ```sh
 rer install
@@ -8,7 +8,9 @@ rer setup --owner-email owner@example.test
 rer dev
 ```
 
-Wait for `RER_READY`. `rer dev` opens signed in: it prints `RER_SIGNED_IN` (the owner) and `RER_OPEN`, a link that carries this checkout's private dev key in its fragment. Open `RER_OPEN` in a browser on this computer and you land signed in as the owner; a small dev badge switches to the `teammate` persona (a second operator beside the owner; Mango operators hold equal authority) or signs out. Never share the link: the key is what keeps the outbox and dev sign-in closed to anything that reaches this port through a proxy or tunnel, and `reset` removes the key so every earlier browser session stops working. `--as teammate` (or `--as signed-out`) starts as another persona, and `--login` turns dev identity off so dev prints `RER_SIGN_IN` and a key-carrying `RER_OPEN` for the outbox instead: choose the newest message, follow its link and press Confirm (no email is sent). `RER_OPEN` is for people at this terminal; scripts use `rer dev --json` or the key header. The sign-in opens `/setup`, where you save your business sender identity before entering `/app`. A configured installation goes straight to the app; sender details remain editable in Settings. Setup exits with no server running; stop dev with Ctrl-C before verification or data operations.
+Wait for `RER_READY`. `rer dev` starts Mango in the background and prints `RER_SIGNED_IN` (the owner) and a private `RER_OPEN` link. Open that link on this computer to enter as the owner. Its fragment carries the checkout's dev key; never share it. `--as teammate` or `--as signed-out` selects another local persona. The product name reads **Mango Dev**, with no bar or outbox, and sign-in is one click. `reset` removes the key so earlier browser sessions stop working. Scripts use `rer dev --json` or the key header. The first sign-in opens `/setup`, where you save your business sender identity; a configured installation opens the app. Setup exits with no server running. Use the free port in `RER_OPEN` and stop dev with `rer dev --stop` before verification or data operations. Local authentication mail is silently suppressed.
+
+Node may print `ExperimentalWarning: SQLite is an experimental feature and might change at any time` when rer loads Node’s built-in SQLite API for local tooling. This warning alone is not a command failure; check the command result and, for dev, wait for `RER_READY`.
 
 ```sh
 rer verify
@@ -19,7 +21,9 @@ rer deploy --environment production --dry-run
 rer describe
 ```
 
-Reset deletes local data and credentials. Export before resetting if you need that data; import requires an empty destination and the matching private settings backup. The commands above are separate operations, not a reset-and-backup sequence. Real deployment uses `deploy --environment production` and requires authorized owner-account credentials. See [OPERATIONS.md](OPERATIONS.md) for recovery and configuration; `describe --json` lists the actual flags, and `check --profile first-party` checks the command contract.
+Reset deletes local data and credentials. Export before resetting if you need that data; import requires an empty destination and the matching private settings backup. The commands above are separate operations, not a reset-and-backup sequence. Real deployment uses `rer deploy --environment production` with authorized owner-account credentials. Set `storeTimezone`, `organizationName` and `landingSummary` in `src/ext/config.ts`, then commit that file locally before deploying (`git add src/ext/config.ts` and `git commit -m "Configure Mango installation"`). No push is needed; deploy requires tracked changes to be committed. Pinned rer 0.2.22 automatically claims the first owner and removes the one-time setup token. For an existing installation, preserve private inputs, backups and customizations, then use `git pull --ff-only`, `rer install`, `rer build` and `rer deploy --environment production` with the same environment and loaded private inputs. rer installs locked dependencies and retains the owner; no separate claim is needed. See [OPERATIONS.md](OPERATIONS.md) for recovery and configuration; `describe --json` lists the actual flags, and `check --profile first-party` checks the command contract.
+
+Managed hosting includes sign-in and subscription-confirmation mail: Run Edit Run supplies `MAIL_PROVIDER=rer`, `MAIL_FROM`, `MAIL_RELAY_URL` and a private `MAIL_API_KEY`. Newsletters require a separate owner-supplied SendGrid or Resend connection (`MARKETING_MAIL_PROVIDER`, `MARKETING_MAIL_API_KEY` and provider-specific webhook inputs) and a verified business sender. Missing marketing configuration blocks approval. Free and Assisted hosting retain their own-provider mail; see [Mail and sender authority](OPERATIONS.md#mail-and-sender-authority).
 
 # Building Mango
 
@@ -48,7 +52,7 @@ Inspect actual source and scripts before editing. Keep persistence, policy and r
 
 Stable clause IDs are never reused; BASE- is reserved for baseline clauses. Deliberate requirement changes name affected IDs, replacement behavior and security consequences, with meaningful verification. Distinguish satisfied, intentionally changed, broken and uncovered requirements. Use the edition's actual manifest/release/contract schemas and implemented helpers; do not assume override or supersession tooling exists.
 
-New Markdown at the repository root, under `docs/` or as a top-level `<directory>/README.md` must be listed in `docs/site.json`, published as a `/docs` page or marked not published with a reason; `pnpm test:docs` (a stage of `rer verify`) fails otherwise, and a broken docs link or anchor fails the build (DOCS-001).
+New Markdown at the repository root, under `docs/` or as a top-level `<directory>/README.md` must be listed in `docs/site.json`, published as a `/docs` page or marked not published with a reason; `rer build` validates the published documentation and its links (DOCS-001).
 
 Keep tests small and observable through routes, commands, transports or built pages. Outside auth, privacy, isolation, secrets, deployment and data-loss flows, use one test per requirement. Replace or delete unwanted behavior tests and report it. Prove one-off fixes in evidence. Never pin hashes, version strings, file/env lists, UI copy or threshold values. Run affected tests and typecheck locally; CI is the full wall.
 

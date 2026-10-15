@@ -12,7 +12,9 @@ import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
 import { ContactConsentEvidencePanel, type ContactConsentEvidence, type ContactImportObservation } from './contact-consent-evidence';
 
 type ContactDetail = ContactRelatedData & {
+  smsServices?:Array<{id:string;purpose:string;state:string;reason:string|null;provider_message_id:string|null;created_at:number}>;
   contact: Contact;
+  phones:Array<{id:string;phoneE164:string;channelStatus:string}>;
   history: ContactHistory[];
   consent: ContactConsentEvidence[];
   importObservations: ContactImportObservation[];
@@ -45,7 +47,7 @@ function ContactPage() {
             <div>
               <p className="eyebrow">Contact record</p>
               <h1>{data.contact.displayName}</h1>
-              <p className="page-head__lead">{data.contact.email}</p>
+              <p className="page-head__lead">{[data.contact.email,...data.phones.map(phone=>phone.phoneE164)].filter(Boolean).join(' · ')}</p>
             </div>
           </div>
         </div>
@@ -53,13 +55,14 @@ function ContactPage() {
       </header>
       <section className="contact-status-grid">
         <article className="contact-status-tile"><p className="contact-status-tile__label">Email</p><StatusPill value={data.contact.emailStatus} /><p>Updated {formatDate(data.contact.updatedAt)}</p></article>
-        <article className="contact-status-tile"><p className="contact-status-tile__label">SMS</p><StatusPill value={data.contact.smsStatus} /><p>Updated {formatDate(data.contact.updatedAt)}</p></article>
+        <article className="contact-status-tile"><p className="contact-status-tile__label">SMS</p><StatusPill value={data.contact.smsStatus} />{data.phones.map(phone=><p key={phone.id}>{phone.phoneE164} · {titleCase(phone.channelStatus)}</p>)}<p>Updated {formatDate(data.contact.updatedAt)}</p></article>
         <article className="contact-status-tile"><p className="contact-status-tile__label">Last activity</p><h2>{formatDate(data.contact.lastActivityAt)}</h2><p>Only recorded facts appear in this history.</p></article>
       </section>
       <div className="contact-layout">
         <div className="contact-layout__records">
           <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} />
           <ContactRelated data={data}/>
+          {data.smsServices?.length?<section className="panel"><h2>SMS confirmations and service replies</h2><p className="muted-copy">Queued messages wait for permitted windows. Unconfirmed handoffs are never repeated automatically.</p>{data.smsServices.map(message=><article key={message.id}><strong>{titleCase(message.purpose)}</strong><p>{titleCase(message.state)}{message.reason?` · ${titleCase(message.reason)}`:''}</p><small>{formatDate(new Date(message.created_at).toISOString())}{message.provider_message_id?` · Provider receipt ${message.provider_message_id}`:''}</small></article>)}</section>:null}
         </div>
         <section className="panel timeline" aria-labelledby="timeline-title">
           <p className="eyebrow">History</p>

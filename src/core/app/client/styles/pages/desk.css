@@ -9,6 +9,8 @@
 .decision-desk__proposals { display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: var(--sp-6); align-items: start; }
 .proposal-layout { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(300px, .82fr); gap: var(--sp-6); align-items: start; overflow-wrap: anywhere; }
 .proposal-evidence { display: grid; align-items: start; gap: var(--sp-6); min-width: 0; }
+.proposal-evidence .preview-grid { grid-template-columns: minmax(0, 1fr); }
+.proposal-evidence .message-preview--email { grid-row: auto; }
 
 /* The queue: a sheet of rows; the open suggestion carries the docs' current-page bar on a sun wash. */
 .proposal-queue { position: sticky; top: 88px; }
@@ -74,3 +76,10 @@
   .proposal-queue__items { margin-inline: calc(-1 * var(--sp-4)); }
   .proposal-queue__item { padding-right: var(--sp-4); padding-left: 13px; }
 }
+
+.proposal-layout :is(p,small,li), .proposal-history { overflow-wrap: anywhere; }
+.evidence-note pre { max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere; }
+.proposal-history { display: grid; gap: var(--sp-6); min-width: 0; }
+.proposal-history li + li { margin-top: var(--sp-4); }
+.proposal-history li p { margin: var(--sp-2) 0 0; }
+.proposal-queue__item small { display: block; margin-top: var(--sp-2); }

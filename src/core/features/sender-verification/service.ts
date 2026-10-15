@@ -4,7 +4,8 @@ import { inspectConfiguration } from './configuration';
 import { configuredFrom, digest, senderBinding } from './identity';
 import { createVerificationRepository } from './repository';
 import { createChallengeService } from './challenges';
-import { VerificationError, type ReceiverConnector, type SenderInspection } from './types';
+import { VerificationError, authorityReasons, type ReceiverConnector, type SenderInspection } from './types';
+import { createOwnerConfirmation } from './owner-confirmation';
 import type { ObservationResult } from './receiver';
 
 export type VerificationOptions = { database: Database; config: AppConfig; receiver?: ReceiverConnector;
@@ -33,8 +34,10 @@ export function createSenderVerification(options: VerificationOptions) {
       throw error;
     }
   }
+  const challenges = createChallengeService({ options, repository, currentConfiguration, clock });
   return {
-    ...createChallengeService({ options, repository, currentConfiguration, clock }),
+    ...challenges,
+    ...createOwnerConfirmation({ options, repository, currentConfiguration, clock, sendChallenge: challenges.sendChallenge }),
     async inspect(sender: string): Promise<SenderInspection> {
       const start = clock();
       try {
@@ -44,14 +47,14 @@ export function createSenderVerification(options: VerificationOptions) {
         const valid = observed && observed.binding_digest === state.binding_digest && observed.configuration_digest === state.configuration_digest;
         const result = valid ? JSON.parse(observed.result_json) as ObservationResult : null;
         const expiresAt = Math.min(configuration.expiresAt, valid ? observed.expires_at : now);
-        const reason = state.revoked_at ? 'observation-revoked' : !options.receiver || !valid ? 'observation-missing'
+        const reason = state.revoked_at ? 'observation-revoked' : !valid ? 'observation-missing'
           : observed.observed_at > now ? 'observation-time-invalid' : observed.expires_at <= clock() ? 'observation-stale'
             : configuration.expiresAt <= clock() ? 'configuration-stale' : result!.reason;
-        const ready = reason === 'authentication-observed' && Boolean(result?.authentication?.spf === true && result.authentication.dkim === true && result.authentication.dmarc === true && result.authentication.aligned === true);
+        const ready = (authorityReasons as readonly string[]).includes(reason) && Boolean(result?.authentication?.spf === true && result.authentication.dkim === true && result.authentication.dmarc === true && result.authentication.aligned === true);
         const inspection: SenderInspection = { ready, reason, checkedAt: now, expiresAt,
           provider: { state: 'passed', reason: 'provider-domain-verified', observedAt: now, expiresAt: configuration.expiresAt },
           dns: { state: 'passed', reason: 'dns-configured', observedAt: now, expiresAt: configuration.expiresAt },
-          observation: { state: state.revoked_at ? 'revoked' : !valid ? 'missing' : observed.expires_at <= clock() ? 'stale' : result?.reason === 'authentication-observed' ? 'passed' : 'failed',
+          observation: { state: state.revoked_at ? 'revoked' : !valid ? 'missing' : observed.expires_at <= clock() ? 'stale' : (authorityReasons as readonly string[]).includes(result?.reason ?? '') ? 'passed' : 'failed',
             reason, ...(valid ? { observedAt: observed.observed_at, expiresAt: observed.expires_at } : {}) },
           authentication: ready ? result!.authentication : noAuthentication(),
         };

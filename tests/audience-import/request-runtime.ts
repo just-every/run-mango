@@ -7,7 +7,7 @@ import type {Platform} from '../../src/core/shared/platform';
 /** Real auth, middleware and routes against the native D1 fixture. The caller's
  * meter wraps the binding before platform construction, counting every query. */
 export async function authenticatedRequests(f:Awaited<ReturnType<typeof native>>['f'],db:D1Database,mailer?:Platform['mailer']){
- const token='audience-scale-test-bootstrap-more-than-thirty-two-bytes';
+ const token='synthetic-audience-scale-test-bootstrap-more-than-thirty-two-bytes';
  const bindings={...f.bindings,DB:db,AUTH_SETUP_TOKEN:token};
  const platform=createProductionPlatform(bindings);
  // Optional real adapter with the fixture's authenticated receiver/network edge.

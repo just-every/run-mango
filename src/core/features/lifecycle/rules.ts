@@ -49,12 +49,16 @@ export const completeExclusionRuleSchema = exclusionRuleSchema.refine(
   rule => !incompleteCondition(rule.predicate), 'Complete every audience exclusion.',
 );
 
+export function productIdsFromRules(inclusion: InclusionRule, exclusions: ExclusionRule[]) {
+  return [...new Set([...inclusion.predicates, ...exclusions.map(item => item.predicate)]
+    .filter(item => /(^|\.)productId$/i.test(item.field))
+    .flatMap(item => item.comparator === 'eq' && typeof item.value === 'string' ? [item.value]
+      : item.comparator === 'in' && Array.isArray(item.value) ? item.value : []))];
+}
+/** Kept only for callers that explicitly require a single product. */
 export function productIdFromRules(inclusion: InclusionRule, exclusions: ExclusionRule[]) {
-  const values = [...inclusion.predicates, ...exclusions.map((item) => item.predicate)]
-    .filter((item) => item.comparator === 'eq' && /(^|\.)productId$/i.test(item.field) && typeof item.value === 'string')
-    .map((item) => item.value as string);
-  const unique = [...new Set(values)];
-  return unique.length === 1 ? unique[0] : undefined;
+  const products = productIdsFromRules(inclusion, exclusions);
+  return products.length === 1 ? products[0] : undefined;
 }
 
 export function parseStructuredRules(inclusionJson: string, exclusionJson: string) {

@@ -1,4 +1,4 @@
-import { saveSignupSettings, signupSettingsSchema } from './signup-settings';
+import { loadSignupSettings, saveSignupSettings, signupSettingsSchema } from './signup-settings';
 import { SenderAuthorityChanged } from '@/core/features/settings/sender-authority';
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -12,11 +12,13 @@ import { importConflict } from './import-conflict';
 const inputSchema=z.object({files:z.array(z.object({name:z.string().min(1).max(200),csv:z.string().min(1),preset:z.enum(['csv-subscribed','csv-unsubscribed','csv-cleaned','csv-non-subscribed','mango']),mapping:z.record(z.string(),z.string()).optional()})).min(1).max(10),consent:z.record(z.string(),z.string()).optional()});
 export function createAudienceImportRoutes(platform: Platform) {
   const routes=new Hono<{Variables:AuthVariables}>(); const service=createAudienceImportService(platform);
-  routes.get('/audience/import-presets',context=>context.json({presets:Object.entries(presetStatuses).map(([id,status])=>({id,status,label:id==='mango'?'Mango audience export':id.replace('csv-','CSV: '),description:id==='mango'?'Lossless Mango consent ledger':'Map the columns and choose the status represented by this CSV. Restrictive row statuses always take precedence.'})),fields:Object.keys(defaultMapping).map(id=>({id,label:id.replaceAll('_',' ')}))}));
+  routes.get('/audience/import-presets',context=>context.json({presets:Object.entries(presetStatuses).map(([id,status])=>({id,status,label:id==='mango'?'Mango audience export':id.replace('csv-','CSV: '),description:id==='mango'?'Lossless Mango consent ledger':'Choose the status this CSV represents. Preview import then shows how its columns map, and you can change them. Restrictive row statuses always take precedence.'})),
+    // SMS columns are offered only where text messages are enabled.
+    fields:Object.keys(defaultMapping).filter(id=>platform.sms||!id.startsWith('sms_')).map(id=>({id,label:id.replaceAll('_',' ')}))}));
   routes.get('/audience/signup',async context=>{
     const origin=platform.config.local===true?new URL(context.req.url).origin:platform.config.publicBaseUrl;
     const url=new URL('/subscribe',origin).toString();
-    return context.json({...await loadSignupDescription(platform),url,embed:`<iframe src="${url}" title="Subscribe to the newsletter" width="100%" height="560" style="border:0"></iframe>`});
+    return context.json({...await loadSignupDescription(platform),embedOrigins:(await loadSignupSettings(platform)).embedOrigins,url,embed:`<iframe src="${url}" title="Subscribe to the newsletter" width="100%" height="560" style="border:0"></iframe>`});
   });
   routes.put('/audience/signup',async context=>{
     context.header('Cache-Control','no-store');
@@ -48,7 +50,7 @@ export function createAudienceImportRoutes(platform: Platform) {
   });
   routes.get('/audience/imports',async context=>{
     const authority=await audienceImportContext(platform,context.get('operator').id,context.req.raw);
-    const jobs=await Promise.all((await service.jobs(context.get('operator').id)).map(job=>service.read(job.id,authority)));
+    const jobs=await Promise.all((await service.jobs()).map(job=>service.read(job.id,authority)));
     const abandoned=await service.abandonments(jobs.map(job=>job.id));
     return context.json({jobs:jobs.map(job=>({...job,...abandoned.get(job.id)}))});
   });

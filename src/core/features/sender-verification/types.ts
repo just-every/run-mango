@@ -14,7 +14,7 @@ export type SenderInspection = {
 };
 export type SenderBinding = {
   deployment: string; from: string; mailbox: string; domain: string;
-  provider: 'resend' | 'sendgrid'; accountScope: string; credentialGeneration: string;
+  provider: 'rer' | 'resend' | 'sendgrid'; accountScope: string; credentialGeneration: string;
   transport: string; connectorId: string | null;
 };
 export type DomainRecord = { record: 'SPF' | 'DKIM'; name: string; type: 'TXT' | 'MX' | 'CNAME'; value: string; priority?: number };
@@ -50,3 +50,7 @@ export class VerificationError extends Error {
   providerVerified = false;
   constructor(readonly reason: string, readonly state: 'unknown' | 'failed' = 'failed') { super(reason); }
 }
+/** Challenges sent to the signed-in operator's own mailbox and confirmed by its one-time link. */
+export const ownerConnectorId = 'owner-inbox:v1';
+/** Observation results that grant marketing authority. */
+export const authorityReasons = ['authentication-observed', 'owner-confirmed'] as const;

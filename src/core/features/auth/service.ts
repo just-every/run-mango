@@ -1,6 +1,3 @@
-// @ts-expect-error Base mail is portable ESM; its transport interface is checked at runtime.
-import { createMailSender } from '@/vendor/base/mail/index.mjs';
-import { createD1DevelopmentOutbox } from '@/vendor/base/mail/src/development/index.mjs';
 import type { InferSelectModel } from 'drizzle-orm';
 import { createOperatorAuth, createAuthHandler, AuthError, securityHeaders, type Operator } from '@/vendor/base/operator-auth/index.mjs';
 // @ts-expect-error Base's shared wire parser is portable ESM without declarations.
@@ -11,6 +8,7 @@ import type { Platform } from '@/core/shared/platform';
 import type { createAuthRepository } from './repository';
 import type { operators } from './schema';
 import { completeLocalSetup } from './setup-complete';
+import { ownerSignin } from './owner-signin';
 
 export type AuthenticatedOperator = InferSelectModel<typeof operators>;
 
@@ -56,14 +54,15 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     return includeBody ? new Request(request.clone() as Request, { headers })
       : new Request(request.url, { method: request.method, headers });
   }
+  const authConfig = (request: Request) => ({
+    origin: local ? new URL(request.url).origin : config.publicBaseUrl.origin,
+    OWNER_EMAIL: config.initialOperatorEmails[0] ?? 'local@example.test',
+    SESSION_SECRET: config.sessionSigningKey, SETUP_TOKEN: config.authSetupToken,
+    MAIL_FROM: config.mailAuthFrom || undefined, local,
+    branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
+  });
   function core(request: Request) {
-    return createOperatorAuth({ db, config: {
-      origin: local ? new URL(request.url).origin : config.publicBaseUrl.origin,
-      OWNER_EMAIL: config.initialOperatorEmails[0] ?? 'local@example.test',
-      SESSION_SECRET: config.sessionSigningKey, SETUP_TOKEN: config.authSetupToken,
-      MAIL_FROM: config.mailAuthFrom || undefined, local,
-      branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
-    }, mailSender: local ? createMailSender({ provider: 'development', mode: 'development' }, { outbox: createD1DevelopmentOutbox({ db }) }) : createBaseMailSender(config),
+    return createOperatorAuth({ db, config: authConfig(request), mailSender: local || config.demo ? { async send() { return { status: 'accepted' as const, provider: 'development', providerMessageId: null }; } } : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
         if (action === 'operators:role') return false;
@@ -83,6 +82,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       if (['/auth/review-session', '/auth/invite', '/auth/invite/cancel', '/auth/operators', '/auth/operator/status', '/auth/operator/role', '/auth/sessions', '/auth/session/revoke'].includes(new URL(request.url).pathname)) return new Response(null, { status: 404 });
       const normalized = normalize(request, true);
       if (new URL(request.url).pathname === '/auth/setup-complete') return completeLocalSetup(normalized, db, config);
+      if (new URL(request.url).pathname === '/auth/owner-signin') return ownerSignin(normalized, db, authConfig(normalized));
       const auth = core(normalized);
       const nativeMagicLink = new URL(request.url).pathname === '/auth/magic-link'
         && request.headers.get('Content-Type')?.split(';')[0].trim().toLowerCase() === 'application/x-www-form-urlencoded';
@@ -94,11 +94,14 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       }
       if (nativeMagicLink && response) {
         const ok = response.status === 202;
+        const mailProblem = !ok && (await response.clone().json().catch(() => ({})) as {error?: string}).error === 'mail_unavailable';
         await response.body?.cancel();
         const { html, headers } = await renderMessagePage(ok
           ? { title: 'Mango sign-in', heading: 'Check your sign-in message', text: 'If this address has access, open your message and press Confirm.', mark: 'stamp',
-              links: [...(local ? [{ href: '/__dev/outbox', label: 'Open the development outbox' }] : []), { href: '/signin', label: 'Return to sign-in' }] }
-          : { title: 'Mango sign-in', heading: 'Sign-in unavailable', text: 'Return to sign-in and try again, or check the operations guide.', links: [{ href: '/signin', label: 'Return to sign-in' }] });
+              links: [{ href: '/signin', label: 'Return to sign-in' }] }
+          : { title: 'Mango sign-in', heading: 'Sign-in unavailable', text: mailProblem
+              ? local ? 'Local email is unavailable. Open the private RER_OPEN link from rer dev to sign in on this computer.' : 'Email could not be sent. Check the mail connection in RER or the operations guide, then request a new sign-in link.'
+              : 'Return to sign-in and try again, or check the operations guide.', links: [{ href: '/signin', label: 'Return to sign-in' }] });
         const answer = new Headers(response.headers);
         for (const [name, value] of Object.entries(headers)) answer.set(name, value); // the page's own policy replaces the JSON answer's
         answer.set('Content-Type', 'text/html; charset=utf-8');

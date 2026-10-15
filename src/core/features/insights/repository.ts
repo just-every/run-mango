@@ -1,9 +1,13 @@
+import {openEstimates} from './open-tracking';
+import { recordExternalCost, type ExternalCost } from './cost-recording';
+import { costGroups, costReport } from './cost-report';
 import type { Database } from '@/core/platform/db/client';
-import { ulid } from '@/core/shared/ids';
+import { commerceReport } from './commerce-report';
 
 export function createInsightsRepository(database: Database) {
   const client = database.$client;
   return {
+    costReport: () => costReport(database),
     /** One row per campaign and observed outcome, never summed: provider acceptance, each kind of
      * provider event, and hand-offs still awaiting the provider's confirmation. */
     async listResults() {
@@ -44,16 +48,8 @@ export function createInsightsRepository(database: Database) {
            FROM link_click_facts c JOIN recipient_steps r ON r.id = c.recipient_step_id
            WHERE r.campaign_id = ?`,
         ).bind(campaignId).first<Record<string, number>>(),
-        client.prepare(
-          `SELECT currency, COUNT(*) orders, COALESCE(SUM(gross_amount_minor - refund_amount_minor), 0) revenue_minor
-           FROM attribution_facts WHERE campaign_id = ? GROUP BY currency ORDER BY currency`,
-        ).bind(campaignId).all<Record<string, number | string>>(),
-        client.prepare(
-          `SELECT provider, model_or_channel, SUM(billable_units) billable_units,
-             SUM(reported_cost_micros) reported_cost_micros, currency,
-             COUNT(CASE WHEN reported_cost_micros IS NULL THEN 1 END) unpriced_facts
-           FROM external_cost_facts WHERE campaign_id = ? GROUP BY provider, model_or_channel, currency`,
-        ).bind(campaignId).all<Record<string, unknown>>(),
+        commerceReport(database,campaignId),
+        costGroups(database, 'campaign', campaignId),
         client.prepare(
           `SELECT kind, provider_occurred_at occurred_at, provider, recipient_step_id, payload_digest
            FROM delivery_facts WHERE recipient_step_id IN (SELECT id FROM recipient_steps WHERE campaign_id = ?)
@@ -74,130 +70,44 @@ export function createInsightsRepository(database: Database) {
         engagement: {
           observedClicks: Number(engagement?.observed_clicks ?? 0),
           automatedRequestsRetainedButExcluded: Number(engagement?.automated_requests ?? 0),
-          opens: { enabled: false, status: 'disabled-by-default' },
+          opens: await openEstimates(client,campaignId),
         },
-        attribution: {
-          method: 'most-recent-non-automated-click-within-seven-days',
-          orders: attribution.results.reduce((total, row) => total + Number(row.orders), 0),
-          revenueByCurrency: attribution.results.map((row) => ({
-            currency: String(row.currency),
-            orders: Number(row.orders),
-            amountMinor: Number(row.revenue_minor),
-          })),
-          status: 'observed-store-events',
-        },
-        costs: costs.results.map((row) => ({
-          provider: row.provider, modelOrChannel: row.model_or_channel, billableUnits: Number(row.billable_units),
-          reportedCostMicros: row.reported_cost_micros == null ? null : Number(row.reported_cost_micros),
-          currency: row.currency ?? null, unpricedFacts: Number(row.unpriced_facts),
-        })),
+        attribution,
+        costs,
         timeline: timeline.results,
       };
     },
 
     async deliverability(since: Date) {
       const rows = await client.prepare(
-        `SELECT r.channel,
-           CASE WHEN r.channel = 'email' THEN v.from_email ELSE v.sms_sender END sender,
+        `SELECT r.channel,GROUP_CONCAT(DISTINCT COALESCE(r.provider,'unrecorded')) providers,
+           CASE WHEN r.channel = 'email' THEN lower(substr(v.from_email,instr(v.from_email,'@')+1)) ELSE v.sms_sender END sender,
            COUNT(DISTINCT CASE WHEN f.kind = 'delivered' THEN r.id END) delivered,
            COUNT(DISTINCT CASE WHEN f.kind = 'bounced' THEN r.id END) bounced,
            COUNT(DISTINCT CASE WHEN f.kind = 'complained' THEN r.id END) complained,
            COUNT(DISTINCT CASE WHEN r.transport_disposition = 'failed' THEN r.id END) failed,
-           COUNT(DISTINCT CASE WHEN r.handed_off_at IS NOT NULL OR f.recipient_step_id IS NOT NULL THEN r.id END) attempted,
+           COUNT(DISTINCT CASE WHEN COALESCE(r.first_attempt_at,r.handoff_started_at,r.handed_off_at)>=? THEN r.id END) attempted,
            COUNT(DISTINCT CASE WHEN f.kind = 'bounced' AND json_extract(f.detail_json, '$.hard') = 1 THEN r.id END) hard_bounced
          FROM recipient_steps r JOIN campaign_revisions v ON v.id = r.revision_id
          LEFT JOIN delivery_facts f ON f.recipient_step_id = r.id AND f.provider_occurred_at >= ?
-         -- An uncertain hand-off counts from when it started, once a provider event proves it.
-         WHERE COALESCE(r.handed_off_at, r.handoff_started_at) >= ?
-         GROUP BY r.channel, sender ORDER BY r.channel, sender`,
-      ).bind(since.getTime(), since.getTime()).all<Record<string, unknown>>();
+         -- Attempted handoffs include uncertainty; only provider facts establish delivery.
+         WHERE COALESCE(r.first_attempt_at,r.handed_off_at,r.handoff_started_at)>=? OR f.recipient_step_id IS NOT NULL
+         GROUP BY r.channel,sender ORDER BY r.channel,sender`,
+      ).bind(since.getTime(),since.getTime(),since.getTime()).all<Record<string, unknown>>();
       return rows.results.map((row) => {
         const delivered = Number(row.delivered);
         const complained = Number(row.complained);
         const attempted = Number(row.attempted);
         const hardBounced = Number(row.hard_bounced);
         return {
-          channel: row.channel, sender: row.sender, delivered, bounced: Number(row.bounced), complained,
+          channel: row.channel, providers:String(row.providers).split(',').sort(), windowStart:since.toISOString(), sender: row.sender, delivered, bounced: Number(row.bounced), complained,
           failed: Number(row.failed), attempted, hardBounced,
-          complaintRate: delivered ? complained / delivered : 0,
-          hardBounceRate: attempted ? hardBounced / attempted : 0,
+          complaintRate: delivered ? complained / delivered : null,
+          hardBounceRate: attempted ? hardBounced / attempted : null,
         };
       });
     },
 
-    async attributeOrder(input: {
-      orderSourceRecordId: string;
-      contactId: string;
-      occurredAt: Date;
-      amountMinor: number;
-      currency: string;
-    }) {
-      if (!Number.isSafeInteger(input.amountMinor) || input.amountMinor < 0) throw new Error('Attributed order amount must be a non-negative integer in minor units.');
-      if (!/^[A-Z]{3}$/.test(input.currency)) throw new Error('Attributed order currency must be an ISO 4217 uppercase code.');
-      const click = await client.prepare(
-        `SELECT c.id click_id, c.recipient_step_id, r.campaign_id FROM link_click_facts c
-         JOIN recipient_steps r ON r.id = c.recipient_step_id
-         WHERE r.contact_id = ? AND c.automated = 0 AND c.occurred_at <= ? AND c.occurred_at >= ?
-         ORDER BY c.occurred_at DESC LIMIT 1`,
-      ).bind(input.contactId, input.occurredAt.getTime(), input.occurredAt.getTime() - 7 * 86_400_000).first<Record<string, unknown>>();
-      if (!click) return { attributed: false };
-      const result = await client.prepare(
-        `INSERT INTO attribution_facts
-         (id, order_source_record_id, campaign_id, recipient_step_id, click_fact_id, attribution_window_days,
-          gross_amount_minor, refund_amount_minor, currency, attributed_at, updated_at, created_at)
-         VALUES (?, ?, ?, ?, ?, 7, ?, 0, ?, ?, ?, ?)
-         ON CONFLICT(order_source_record_id) DO NOTHING`,
-      ).bind(
-        ulid(input.occurredAt.getTime()), input.orderSourceRecordId, String(click.campaign_id), String(click.recipient_step_id),
-        String(click.click_id), input.amountMinor, input.currency, input.occurredAt.getTime(),
-        input.occurredAt.getTime(), input.occurredAt.getTime(),
-      ).run();
-      return { attributed: result.meta.changes === 1, campaignId: String(click.campaign_id) };
-    },
-
-    async recordRefund(orderSourceRecordId: string, refundAmountMinor: number, occurredAt: Date) {
-      if (!Number.isSafeInteger(refundAmountMinor) || refundAmountMinor < 0) throw new Error('Refund total must be a non-negative integer in minor units.');
-      await client.prepare(
-        `UPDATE attribution_facts
-         SET refund_amount_minor = CASE WHEN refund_amount_minor > ? THEN refund_amount_minor ELSE ? END,
-             updated_at = CASE WHEN updated_at > ? THEN updated_at ELSE ? END
-         WHERE order_source_record_id = ?`,
-      ).bind(refundAmountMinor, refundAmountMinor, occurredAt.getTime(), occurredAt.getTime(), orderSourceRecordId).run();
-    },
-
-    async recordExternalCost(input: {
-      campaignId?: string;
-      recipientStepId?: string;
-      provider: string;
-      operation: string;
-      modelOrChannel: string;
-      billableUnits: number;
-      reportedCostMicros?: number;
-      currency?: string;
-      occurredAt: Date;
-    }) {
-      if (!Number.isSafeInteger(input.billableUnits) || input.billableUnits < 0) {
-        throw new Error('External cost billable units must be a non-negative safe integer.');
-      }
-      if (input.reportedCostMicros != null && (!Number.isSafeInteger(input.reportedCostMicros) || input.reportedCostMicros < 0)) {
-        throw new Error('External reported cost must be a non-negative safe integer in micros.');
-      }
-      if (input.currency != null && !/^[A-Z]{3}$/.test(input.currency)) {
-        throw new Error('External cost currency must be an ISO 4217 uppercase code.');
-      }
-      if (input.reportedCostMicros != null && !input.currency) {
-        throw new Error('External reported cost requires an ISO 4217 currency.');
-      }
-      await client.prepare(
-        `INSERT INTO external_cost_facts
-         (id, campaign_id, recipient_step_id, provider, operation, model_or_channel, billable_units,
-          reported_cost_micros, currency, occurred_at, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      ).bind(
-        ulid(input.occurredAt.getTime()), input.campaignId ?? null, input.recipientStepId ?? null, input.provider,
-        input.operation, input.modelOrChannel, input.billableUnits, input.reportedCostMicros ?? null,
-        input.currency ?? null, input.occurredAt.getTime(), input.occurredAt.getTime(),
-      ).run();
-    },
+    recordExternalCost: (input: ExternalCost) => recordExternalCost(database, input),
   };
 }

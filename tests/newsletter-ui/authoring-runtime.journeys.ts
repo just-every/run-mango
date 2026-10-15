@@ -23,10 +23,10 @@ test("campaign review saves and discards long edits without granting unsaved app
   await signInAsLocalOperator(page, request);
   await page.setViewportSize({ width: 1440, height: 1000 });
   const session = (await page.context().cookies()).find(
-    (cookie) => cookie.name === "operator_session_local",
+    (cookie) => cookie.name.startsWith('operator_session_local_'),
   );
   expect(session?.value).toBeTruthy();
-  const cookie = `operator_session_local=${session!.value}`;
+  const cookie = `${session!.name}=${session!.value}`;
   const original = await readCampaign(request, cookie);
   expect(original.campaign.state).toBe("draft");
   expect(original.revision).toBeTruthy();
@@ -99,7 +99,8 @@ test("campaign review saves and discards long edits without granting unsaved app
     await expect(page.locator(".unsaved-notice")).toHaveCount(0);
     await expect(
       page.getByRole("button", { name: "Approve & schedule", exact: true }),
-    ).toBeEnabled();
+    ).toBeDisabled();
+    await expect(page.locator("#approval-blocked-reason")).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Send test", exact: true }),
     ).toBeEnabled();

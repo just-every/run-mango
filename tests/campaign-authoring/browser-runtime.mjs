@@ -10,8 +10,9 @@ export async function authoringRuntime({
   fixtureWorker = 'tests/campaign-authoring/worker.ts',
   startupTimeout = 45000,
   vars = {},
-  token = crypto.randomUUID(),
+  token = `synthetic-${crypto.randomUUID()}`,
   stateDirectory,
+  parallelQueue = false,
 } = {}) {
   const scratch = scratchDirectory(suite);
   await mkdir(scratch, { recursive: true });
@@ -37,7 +38,19 @@ export async function authoringRuntime({
       .replace('migrations_dir = "migrations/core"', `migrations_dir = ${JSON.stringify(join(process.cwd(), 'migrations/core'))}`);
     // `vars` may depend on the runtime's own origin, as a copy started by `rer dev` does with MANGO_PUBLIC_BASE_URL.
     const extra = Object.entries(typeof vars === 'function' ? vars(url) : vars).map(([name, value]) => `${name} = ${JSON.stringify(value)}\n`).join('');
-    await writeFile(config, `${template}\n[vars]\nLOCAL_BOOTSTRAP_TOKEN = ${JSON.stringify(token)}\n${extra}`, { mode: 0o600 });
+    // A second native broker permits a genuine concurrent consumer while the
+    // first is held at a D1 barrier. Only the SMS race opts into this test seam.
+    const concurrentQueue = parallelQueue ? `
+[[queues.producers]]
+binding = "GO_LIVE_PARALLEL_JOBS"
+queue = "mango-golive-parallel"
+
+[[queues.consumers]]
+queue = "mango-golive-parallel"
+max_batch_size = 10
+max_retries = 5
+` : '';
+    await writeFile(config, `${template}\n${concurrentQueue}\n[vars]\nLOCAL_BOOTSTRAP_TOKEN = ${JSON.stringify(token)}\n${extra}`, { mode: 0o600 });
     commands = await createCommands(directory, { logs: [] }, { terminal: text => { logs += text; } });
     commands.addSecrets([token]);
     await commands.run('Migrating authoring fixture', 'pnpm', ['exec', 'wrangler', 'd1', 'migrations', 'apply', 'mango-local', '--local', '--config', config, '--persist-to', state], options);

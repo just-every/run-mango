@@ -33,8 +33,14 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     return context.json(await authoring.audience(body.data));
   });
   routes.post('/proposals/generate', async context => {
-    const result = await authoring.generate();
+    const result = await authoring.generate(context.get('operator').id);
     return context.json(result, result.kind === 'proposed' ? 201 : 409);
+  });
+  routes.post('/proposals/:id/dismiss', async context => {
+    const body=await readJson(context,z.object({reason:z.string().trim().min(1).max(4000)}).strict());
+    if ('error' in body) return body.error;
+    const dismissed=await authoring.dismiss(context.req.param('id'),context.get('operator').id,body.data.reason);
+    return dismissed?context.json({kind:'dismissed'}):context.json({kind:'unavailable',detail:'Only a live proposed suggestion can be dismissed.'},409);
   });
   routes.post('/proposals/:id/adopt', async context => {
     const result = await authoring.adopt(context.req.param('id'), context.get('operator').id);
@@ -70,6 +76,10 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     if ('error' in parsed) return parsed.error;
     const detail = await service.campaignDetail(parsed.data.id);
     return detail ? context.json({ ...detail, mediaOrigin }) : context.json({ error: 'not_found' }, 404);
+  });
+  routes.post('/campaigns/:id/edit-schedule',async context=>{
+    const result=await service.editSchedule(context.req.param('id'),context.get('operator').id);
+    return result?context.json(result,201):context.json({error:'not_found'},404);
   });
   routes.get('/campaigns/:id/review', async (context) => {
     const parsed = readParams(context, identifier);

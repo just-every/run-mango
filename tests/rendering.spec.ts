@@ -1,3 +1,4 @@
+import { localSessionCookieName } from './support/local-session';
 import { writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import { localBootstrapToken } from './local-bootstrap.js';
@@ -20,7 +21,7 @@ test('[BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authe
   const bootstrap = await request.post('/api/_local/bootstrap', {headers: {'X-Mango-Local-Bootstrap-Token': await localBootstrapToken()}, data: {testSession: true}});
   expect(bootstrap.ok()).toBe(true);
   const {session} = await bootstrap.json();
-  await page.context().addCookies([{name: 'operator_session_local', value: session.token, url: baseURL!}]);
+  await page.context().addCookies([{name: localSessionCookieName(baseURL!), value: session.token, url: baseURL!}]);
   const completedSetup = await page.request.get('/setup', {maxRedirects: 0});
   expect(completedSetup.status()).toBe(303);
   expect(completedSetup.headers().location).toBe('/app');
@@ -59,7 +60,7 @@ test('[BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authe
       expect(response.ok()).toBe(true);
       token = (await response.json()).session.token;
     }
-    const stateHeaders = {...headers, Cookie: token ? `operator_session_local=${token}` : ''};
+    const stateHeaders = {...headers, Cookie: token ? `${localSessionCookieName(baseURL!)}=${token}` : ''};
     const nativeHeaders = {Cookie: stateHeaders.Cookie};
     const known = await request.get('/api/operator', {headers: nativeHeaders});
     const unknown = await request.get('/api/unknown-private-route', {headers: nativeHeaders});

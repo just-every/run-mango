@@ -8,7 +8,7 @@ export function localVariables(text) {
 
 export function buildEnvironment(environment = process.env) {
   const env = { ...environment, CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: 'false', CLOUDFLARE_INCLUDE_PROCESS_ENV: 'false', WRANGLER_SEND_METRICS: 'false' };
-  for (const key of Object.keys(env)) if (/^(SESSION_|CONTACT_|MANGO_LOCAL_HASH_AUTHORITY$|SETUP_TOKEN|OWNER_EMAIL|INITIAL_OPERATOR|AUTH_|MAIL_|OIDC_)/.test(key)) delete env[key];
+  for (const key of Object.keys(env)) if (/^(SESSION_|CONTACT_|MANGO_LOCAL_HASH_AUTHORITY$|SETUP_TOKEN|OWNER_EMAIL|INITIAL_OPERATOR|AUTH_|MAIL_|MARKETING_MAIL_|OIDC_)/.test(key)) delete env[key];
   return env;
 }
 

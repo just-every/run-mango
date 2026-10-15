@@ -1,3 +1,4 @@
+import {createHash} from 'node:crypto';
 import { createProductionPlatform } from '../../src/core/platform/runtime';
 import { createSenderVerification } from '../../src/core/features/sender-verification/service';
 import { createResendAdapter } from '../../src/core/platform/adapters/resend';
@@ -11,13 +12,14 @@ export function composeFixture(db: D1Database, commerce = true) {
   const bindings = { DB: db, ASSETS: { fetch: async () => new Response('asset') }, ASSETS_BUCKET: {},
     MANGO_JOBS: { send: async (job: unknown) => { jobs.push(job); } },
     SESSION_SIGNING_KEY: 'test-only-session-key-long-enough-to-pass', INITIAL_OPERATOR_EMAILS: 'operator@example.test', CONTACT_HASH_SALT: 'test-only-contact-salt',
+    MANGO_DELIVERY_POLICY_JSON:JSON.stringify({resend:{credentialDigest:createHash('sha256').update('test-only-credential').digest('hex'),account:'test-account',evidence:'https://resend.com/security/gdpr',lookupWindowMs:30*86400000,scopes:['full_access'],webhookId:'test-hook',lookupHistorySince:'2026-01-01T00:00:00.000Z'}}),
     MAIL_PROVIDER: 'resend', MAIL_PROVIDER_API_KEY: 'test-only-credential', MAIL_AUTH_FROM: 'offers@example.test', MAIL_WEBHOOK_SECRET: 'test-only-webhook', MAIL_WEBHOOK_ID: 'test-hook',
     MANGO_PUBLIC_BASE_URL: 'https://mango.example.test', MANGO_APP_VERSION: 'test', MANGO_ALLOWED_LINK_HOSTS: 'shop.example.test',
     MANGO_TEST_EMAIL_ALLOWLIST: 'receiver@example.test', MANGO_RECONCILIATION_INTERVAL_MINUTES: '15', MANGO_UNRESOLVED_OUTCOME_HOURS: '1',
     MANGO_EMAIL_HANDOFFS_PER_MINUTE: '10', MANGO_DELIVERABILITY_WINDOW_DAYS: '30', MAIL_SENDER_NAME: 'Mango',
     MAIL_REPLY_TO: 'reply@example.test', MAIL_PHYSICAL_ADDRESS: '1 Test Street',
   } as unknown as AppBindings;
-  if (commerce) Object.assign(bindings, { COMMERCE_STORE_URL: 'https://shop.example.test', COMMERCE_API_TOKEN: 'test-only-commerce', COMMERCE_WEBHOOK_SECRET: 'test-only-commerce-hook' });
+  if (commerce) Object.assign(bindings, { COMMERCE_STORE_URL: 'https://mango-fixture.myshopify.com', COMMERCE_EXCLUSIVE_SHOP:'mango-fixture.myshopify.com', COMMERCE_API_TOKEN: 'test-only-commerce', COMMERCE_WEBHOOK_SECRET: 'test-only-commerce-hook' });
   const customers: unknown[] = [];
   let nowOffset = 0, result = 'pass', outage = false, domainStatus = 'verified', reconcilePages = false, mutateReceipt: ((r: ReceiverMaterial) => ReceiverMaterial) | undefined;
   const outbound: Array<Record<string, any>> = [];
@@ -32,9 +34,24 @@ export function composeFixture(db: D1Database, commerce = true) {
     if (u.hostname === '127.0.0.1' || u.hostname === 'localhost') return originalFetch(url, init);
     calls.push(u.href);
     if (outage) return new Response('private provider response', { status: 503 });
-    if (u.hostname === 'shop.example.test') return Response.json({ data: { customers: { nodes: customers, pageInfo: { hasNextPage: false } } } });
+    if (u.hostname === 'mango-fixture.myshopify.com') {
+      if (u.pathname !== '/admin/api/2026-07/graphql.json' || (init?.method ?? (url instanceof Request ? url.method : 'GET')) !== 'POST') throw new Error('Unexpected Shopify fixture endpoint');
+      const {query,variables} = JSON.parse(url instanceof Request && init?.body === undefined ? await url.clone().text() : String(init?.body));
+      if (/^query MangoAccess\b/.test(query)) return Response.json({data:{
+        shop:{myshopifyDomain:'mango-fixture.myshopify.com'},
+        currentAppInstallation:{id:'gid://shopify/AppInstallation/1',accessScopes:['read_customers','read_products','read_inventory','read_locations','read_orders','read_all_orders','read_returns'].map(handle=>({handle}))},
+      }});
+      const customerPage = /^query MangoSource\b[\s\S]*?\{ customers\(first: (\d+), after: \$cursor\)/.exec(query);
+      if (customerPage) {
+        if (variables.cursor !== null && !/^\d+$/.test(variables.cursor)) throw new Error('Unexpected Shopify fixture cursor');
+        const start=Number(variables.cursor ?? 0),end=Math.min(start+Number(customerPage[1]),customers.length);
+        return Response.json({data:{customers:{nodes:customers.slice(start,end),pageInfo:{hasNextPage:end<customers.length,endCursor:end>start?String(end):null}}}});
+      }
+      throw new Error('Unexpected Shopify fixture query');
+    }
     if (u.hostname === 'api.resend.com') {
       const domain = { id: 'domain-1', name: 'example.test', status: domainStatus, region: 'us-east-1', capabilities: { sending: 'enabled' } };
+      if(u.pathname==='/usage')return Response.json({object:'usage',emails:{daily:{used:0,limit:100,sent:0,received:0,resets_at:new Date(Date.now()+86400000).toISOString()},monthly:{used:0,limit:3000,sent:0,received:0,resets_at:new Date(Date.now()+86400000).toISOString()}}});
       if (u.pathname === '/domains') {
         return Response.json(u.searchParams.has('after') ? { data: [domain], has_more: false }
           : { data: [{ ...domain, id: 'other-domain', name: 'other.test' }], has_more: true });
@@ -82,7 +99,7 @@ export function composeFixture(db: D1Database, commerce = true) {
   const platform = createProductionPlatform(bindings);
   const createVerifier = () => createSenderVerification({ database: platform.database, config: platform.config, receiver, transport, clock: () => Date.now() + nowOffset });
   let verifier = createVerifier();
-  const connect = () => { platform.mailer = createResendAdapter({ apiKey: bindings.MAIL_PROVIDER_API_KEY, webhookSecret: bindings.MAIL_WEBHOOK_SECRET, webhookId: bindings.MAIL_WEBHOOK_ID, verification: verifier }); };
+  const connect = () => { platform.mailer = createResendAdapter({ apiKey: bindings.MAIL_PROVIDER_API_KEY, webhookSecret: bindings.MAIL_WEBHOOK_SECRET, webhookId: bindings.MAIL_WEBHOOK_ID, verification: verifier,retentionPolicy:platform.config.deliveryPolicies?.resend }); };
   connect();
   const services = createAppServices(platform), lifecycle = createLifecycleServices(services.lifecycleRuntime);
   return { db, platform, bindings, verifier, services, lifecycle, calls, outbound, records, jobs, customers,
@@ -104,7 +121,9 @@ export async function draft(f: ReturnType<typeof composeFixture>, suffix = crypt
   await f.services.audienceService.captureConsent({ idempotencyKey: `consent-${suffix}`, contact: { email: `recipient-${suffix}@example.test`, displayName: 'Recipient' },
     channel: 'email', brandOrLegalSender: 'Mango', messageCategory: 'offers', destinationJurisdiction: 'AU', frequencyDisclosure: 'Weekly', captureMethod: 'test', captureSource: 'test',
     consentText: 'I consent to weekly offers.', consentVersion: 'v1', occurredAt: new Date(now), confirmationRequired: false });
-  f.customers.push({ id: `customer-${suffix}`, email: `recipient-${suffix}@example.test`, firstName: 'Test', updatedAt: new Date().toISOString() });
+  f.customers.push({ id: `gid://shopify/Customer/${f.customers.length+1}`, email: `recipient-${suffix}@example.test`, phone:null,
+    firstName:'Test',lastName:null,createdAt:new Date(now).toISOString(),updatedAt:new Date(now).toISOString(),
+    defaultAddress:null,emailMarketingConsent:null,smsMarketingConsent:null });
   await f.services.lifecycleRuntime.synchronizeCommerce!({sourceType: 'customer', provider: 'shopify'});
   await f.db.prepare(`INSERT INTO campaigns (id,state,active_revision_id,created_at,updated_at) VALUES (?,'draft',?,?,?)`).bind(campaignId, revisionId, now, now).run();
   await f.db.prepare(`INSERT INTO campaign_revisions (id,campaign_id,version,state,name,email_subject,email_body,email_text,preheader,sms_body,sender_name,from_email,reply_to_email,physical_address,message_category,audience_rule,inclusion_rule_json,exclusion_rules_json,created_at,updated_at)

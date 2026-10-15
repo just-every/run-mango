@@ -1,13 +1,15 @@
 import { csvRows, parseCsv } from './csv';
 import { canonicalEmail, canonicalPhone } from './identity';
 import { presetStatuses, type ImportInput, type AudienceSnapshot } from './import-types';
-import { resolveHeaderMapping, isStatusHeader } from './import-mapping';
+import { resolveHeaderMapping, isStatusHeader, isSmsStatusHeader } from './import-mapping';
 import { maxContactImportRows } from './import-limits';
 import { optOutLedger, optOutStatus, type OptOutLine } from './import-opt-out-lines';
 
 export type NormalizedImportRow = {
-  file: string; row: number; email: string; displayName: string; status: string; reason?: string; skipped?: string; warnings: string[];
+  file: string; row: number; email: string; phone: string; smsStatus: string; displayName: string; status: string; reason?: string; skipped?: string; warnings: string[];
   values: Record<string, string>; ledger?: AudienceSnapshot;
+  /** The original name stays in source observations when duplicates supply a fuller name. */
+  sourceDisplayName?: string;
   /** A contact another import still attributes: only this row's opt-out or suppression is applied to it.
    * contactId is null while an unfinished import has planned the contact but not written it. */
   held?: { contactId: string | null; reason: string };
@@ -36,7 +38,7 @@ export function normalizeImport(input: ImportInput) {
     for (const [index, original] of parseCsv(file.csv).entries()) {
       const values = { ...original };
       for (const [field, header] of Object.entries(mapping)) values[field] = original[header.trim().toLowerCase()] ?? '';
-      const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values};
+      const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',phone:'',smsStatus:'non-subscribed',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values};
       try {
         if (original.__parse_error) throw new Error(original.__parse_error);
         // An opt-out whose address no contact holds carries only its portable identity (import-opt-out-lines).
@@ -45,8 +47,26 @@ export function normalizeImport(input: ImportInput) {
         else {
           if(file.preset==='mango' && values.ledger_json)row.ledger=JSON.parse(values.ledger_json);
           row.email = canonicalEmail(values.email) ?? '';
-          if(values.phone)canonicalPhone(values.phone);
-          if (!row.email && !row.ledger?.tables.contact_phones?.length) throw new Error('An email address is required.');
+          row.phone = canonicalPhone(values.phone) ?? '';
+          if (!row.email && !row.phone && !row.ledger?.tables.contact_phones?.length) throw new Error('An email address or E.164 phone number is required.');
+          const smsStatus = (values.sms_status || 'non-subscribed').trim().toLowerCase().replace(/[_\s]+/g, '-');
+          row.smsStatus = statusAliases[smsStatus] ?? smsStatus;
+          if (!Object.hasOwn(restrictiveRank, row.smsStatus)) throw new Error('Unknown source SMS status.');
+          // Explicit mapping cannot conceal another SMS column's restriction.
+          for(const [,raw] of Object.entries(original).filter(([header,value])=>Boolean(value)&&isSmsStatusHeader(header))){
+            const normalized=raw.trim().toLowerCase().replace(/[_\s]+/g,'-'),status=statusAliases[normalized]??normalized;
+            if(!Object.hasOwn(restrictiveRank,status))throw new Error('Unknown source SMS status.');
+            if(restrictiveRank[status]>restrictiveRank[row.smsStatus])row.smsStatus=status;
+          }
+          if (row.phone && row.smsStatus === 'subscribed' && file.preset !== 'mango') {
+            const required = ['sms_brand','sms_program','sms_category','sms_frequency','sms_jurisdiction','sms_consent_text','sms_consent_version','sms_capture_method','sms_capture_source'];
+            const occurred = timestamp(values.sms_occurred_at), confirmed = timestamp(values.sms_confirmed_at);
+            if (!occurred || !confirmed || required.some(key => !values[key]?.trim())) {
+              row.smsStatus = 'non-subscribed'; row.warnings.push('SMS requires independent original scope, programme, capture source and confirmed consent; email consent does not apply.');
+            } else if (confirmed < occurred || occurred > Date.now() || confirmed > Date.now()) throw new Error('Invalid original SMS consent chronology.');
+          }
+          if(values.sms_location_recorded_at)timestamp(values.sms_location_recorded_at);
+          if(values.sms_time_zone)new Intl.DateTimeFormat('en', {timeZone:values.sms_time_zone});
           // A row with no name leaves the contact's name as it is (import-snapshot).
           row.displayName = values.display_name || [values.first_name,values.last_name].filter(Boolean).join(' ');
           const sourceStatuses = [values.email_status, values.status,

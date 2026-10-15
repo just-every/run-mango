@@ -5,7 +5,7 @@ import { useResource } from '@/core/app/client/lib/use-resource';
 import type { DecisionDesk } from '@/core/app/client/lib/types';
 
 /** The campaign starters the page's "New campaign" button opens. Starters load with the page, so opening is instant. */
-export function NewCampaign({ open }: { open: boolean }) {
+export function NewCampaign({ open, commerceEnabled, aiEnabled }: { open: boolean; commerceEnabled:boolean; aiEnabled:boolean }) {
   const [busy,setBusy]=useState(false), [error,setError]=useState('');
   const navigate=useNavigate();
   const signals=useResource<{starters:{id:string;title:string;evidence:string;available:boolean;detail:string}[];detail:string}>('/api/campaign-starters');
@@ -24,14 +24,14 @@ export function NewCampaign({ open }: { open: boolean }) {
   return <section id="campaign-starters" className="panel new-campaign-panel" aria-label="Choose a campaign starter"><h2>Start a campaign</h2>
     <div className="starter-grid">
       <div className="starter-group"><h3>From scratch</h3><button type="button" className="secondary-action" disabled={busy} onClick={()=>void create()}>Blank newsletter</button><p className="muted-copy">Write your own email. No AI or store connection needed.</p></div>
-      <div className="starter-group"><h3>From store signals</h3>
+      {commerceEnabled ? <div className="starter-group"><h3>From store signals</h3>
         {signals.data?.starters.length ? <ul className="starter-list">{signals.data.starters.map(source=><li key={source.id}><button type="button" className="secondary-action" disabled={busy||!source.available} onClick={()=>void create(undefined,source.id)}>{source.title}</button><p>{source.evidence}</p>{source.detail?<p>{source.detail}</p>:null}</li>)}</ul> : null}
         {signals.data?.detail?<p className="starter-note">{signals.data.detail}</p>:null}
-      </div>
-      <div className="starter-group"><h3>Saved suggestions</h3>
+      </div> : null}
+      {commerceEnabled && aiEnabled ? <div className="starter-group"><h3>Saved suggestions</h3>
         {current.length ? <ul className="starter-list">{current.map(entry=><li key={entry.proposal.id}><button type="button" className="secondary-action" disabled={busy} onClick={()=>void create(entry.proposal.id)}>{entry.proposal.title}</button></li>)}</ul>
           : <p className="starter-note">No current store suggestions. Generate one from the Decision Desk when evidence and AI are configured.</p>}
-      </div>
+      </div> : null}
     </div>
     {error?<p className="inline-error" role="alert">{error}</p>:null}</section>;
 }

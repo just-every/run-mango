@@ -11,15 +11,15 @@
       "artifactFile": "rer-worker-artifact.json"
     },
     "operations": {
-      "setup": "pnpm run deps",
+      "setup": "pnpm install --frozen-lockfile",
       "build": "pnpm run build",
-      "verify": "pnpm run verify",
+      "verify": "pnpm run verify:managed",
       "artifact": "node scripts/build-delivery-artifact.mjs",
       "recovery": "Read OPERATIONS.md: stop writes and scheduled work, preserve exact source, applied migrations and matching private authority; export D1 and R2, restore into fresh resources, compare exports and verify native sessions and publication before routing traffic."
     }
   },
   "managed": {
-    "workflowRef": "runeditrun/delivery/.github/workflows/trusted-build.yml@bf7a25abb44bec1457a7bc738ff63921d90fb52e",
+    "workflowRef": "runeditrun/delivery/.github/workflows/trusted-build.yml@86c8b37399c901bffd9a240dbd1148a65ec83b34",
     "artifactFile": "rer-worker-artifact.json",
     "buildProfile": "project",
     "pnpmVersion": "10.12.4",
@@ -64,7 +64,12 @@
         "DESIGN_PROVIDER_ORIGIN",
         "SMS_CONFIRMATION_SENDER",
         "MANGO_TEST_SMS_ALLOWLIST",
-        "MANGO_SMS_HANDOFFS_PER_MINUTE"
+        "MANGO_SMS_HANDOFFS_PER_MINUTE",
+        "MANGO_RESTORE_MODE",
+        "MAIL_FROM",
+        "MAIL_RELAY_URL",
+        "MARKETING_MAIL_PROVIDER",
+        "MARKETING_MAIL_WEBHOOK_ID"
       ],
       "secretNames": [
         "SESSION_SECRET",
@@ -72,18 +77,21 @@
         "CONTACT_HASH_SALT"
       ],
       "optionalSecretNames": [
+        "MAIL_WEBHOOK_SECRET",
         "SESSION_SIGNING_KEY",
         "AUTH_SETUP_TOKEN",
         "TURNSTILE_SECRET_KEY",
         "MAILBOX_RECEIPT_URL",
-        "MAIL_PROVIDER_API_KEY",
-        "MAIL_WEBHOOK_SECRET",
         "COMMERCE_API_TOKEN",
         "COMMERCE_WEBHOOK_SECRET",
         "AI_PROVIDER_API_KEY",
         "DESIGN_PROVIDER_API_KEY",
         "SMS_PROVIDER_API_KEY",
-        "SMS_WEBHOOK_SECRET"
+        "SMS_WEBHOOK_SECRET",
+        "MAIL_API_KEY",
+        "MAIL_PROVIDER_API_KEY",
+        "MARKETING_MAIL_API_KEY",
+        "MARKETING_MAIL_WEBHOOK_SECRET"
       ],
       "healthPath": "/health",
       "migrationPrefix": "core-",
@@ -106,21 +114,14 @@
         "app": {
           "path": "/signin",
           "originVariable": "MANGO_PUBLIC_BASE_URL"
-        },
-        "page": {
-          "path": "/",
-          "originVariable": "MANGO_PUBLIC_BASE_URL",
-          "readiness": [
-            {
-              "path": "/",
-              "statuses": [
-                200
-              ]
-            }
-          ]
         }
       },
-      "recovery": "Preserve source, applied migration history and matching CONTACT_HASH_SALT and session authority. Restore D1 and R2 into empty resources and compare exports before routing traffic."
+      "recovery": "Preserve source, applied migration history and matching CONTACT_HASH_SALT and session authority. Restore D1 and R2 into empty resources and compare exports before routing traffic.",
+      "mail": {
+        "providers": [
+          "rer"
+        ]
+      }
     }
   }
 }

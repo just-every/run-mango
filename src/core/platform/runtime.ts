@@ -1,3 +1,5 @@
+import { pacedAdapter } from '@/core/features/lifecycle/transport-pacing';
+import { readDeliveryPolicies } from '@/core/features/lifecycle/transport-policy';
 import { createReceiptConnector } from '@/core/features/sender-verification/qa-inbox';
 import { createSendgridAdapter } from './adapters/sendgrid';
 import { createDatabase } from '@/core/platform/db/client';
@@ -13,6 +15,7 @@ import type {
 import { createMobileMessageAdapter } from './adapters/mobile-message';
 import { createOpenAiAdapter } from './adapters/openai';
 import { createResendAdapter } from './adapters/resend';
+import { createRerAdapter } from './adapters/rer';
 import { createShopifyAdapter } from './adapters/shopify';
 import { createTwelveUiAdapter } from './adapters/twelve-ui';
 import { createBlobStore } from './blobs';
@@ -21,13 +24,15 @@ import { createJobDispatcher } from './jobs';
 import { createLinkInspector } from './link-inspector';
 import { createPublicTokenSigner } from './public-tokens';
 import { localContactHashSalt } from './local-contact-authority';
+import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
 
-function unavailableSender(channel: 'email'): SenderAdapter {
+/** Local mail is silently suppressed, including consent confirmations. */
+function localSender(): SenderAdapter {
   const unavailable = () => {
-    throw new Error(`${channel} is unavailable in local development because no production provider is configured.`);
+    throw new Error('Sending is off on a copy running on your computer. Deploy Mango with a mail provider to send email.');
   };
   return {
-    channel,
+    channel: 'email',
     async capabilities() {
       return {
         configured: false,
@@ -36,13 +41,16 @@ function unavailableSender(channel: 'email'): SenderAdapter {
         effectiveReconciliation: false,
         deduplicationWindowMs: 0,
         reconciliationWindowMs: 0,
-        detail: `${channel} delivery is unavailable in local development.`,
+        detail: 'Sending is off on a copy running on your computer. Drafts, previews, imports and signup work here; deploy Mango with a mail provider to send letters.',
       };
     },
     async validateSender() {
-      return { ready: false, detail: `${channel} delivery is unavailable in local development.` };
+      return { ready: false, detail: 'Sending is off on a copy running on your computer.' };
     },
-    send: unavailable,
+    async send(request) {
+      if (request.purpose !== 'consent-confirmation') unavailable();
+      return { providerMessageId: `local-suppressed:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
+    },
     reconcile: unavailable,
     verifyWebhook: unavailable,
   };
@@ -53,7 +61,7 @@ function designAdapter(module: AppConfig['modules']['design']) {
   return module.enabled ? { design: createTwelveUiAdapter({ apiKey: module.config.providerApiKey, origin: module.config.origin }) } : {};
 }
 
-function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'>): Platform {
+export function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'>): Platform {
   return {
     database: createDatabase(environment.DB),
     config,
@@ -67,15 +75,18 @@ function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Pla
 
 export function createProductionPlatform(environment: AppBindings): Platform {
   const config = readProductionConfig(environment);
+  config.deliveryPolicies = readDeliveryPolicies(environment.MANGO_DELIVERY_POLICY_JSON);
   const verification = createSenderVerification({ database: createDatabase(environment.DB), config,
     receiver: config.mailboxReceiptUrl ? createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient) : undefined });
-  const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'> = {
+  const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'> = {
     ...designAdapter(config.modules.design),
-    mailer: config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
+    mailer: config.mailProvider === 'rer' ? createRerAdapter(config)
+      : config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
       apiKey: config.mailProviderApiKey,
       webhookSecret: config.mailWebhookSecret,
       webhookId: config.mailWebhookId,
       verification,
+      retentionPolicy:config.deliveryPolicies?.resend,
     }),
   };
   if (config.modules.commerce.enabled) {
@@ -83,6 +94,9 @@ export function createProductionPlatform(environment: AppBindings): Platform {
       storeUrl: config.modules.commerce.config.storeUrl,
       accessToken: config.modules.commerce.config.apiToken,
       webhookSecret: config.modules.commerce.config.webhookSecret,
+      exclusiveShop: config.modules.commerce.config.exclusiveShop,
+      observations: config.modules.commerce.config.observations,
+      database: createDatabase(environment.DB),
     });
   }
   if (config.modules.ai.enabled) {
@@ -95,9 +109,17 @@ export function createProductionPlatform(environment: AppBindings): Platform {
     adapters.sms = createMobileMessageAdapter({
       credentials: config.modules.sms.config.providerApiKey,
       webhookSecret: config.modules.sms.config.webhookSecret,
+      retentionPolicy:config.deliveryPolicies?.['mobile-message'],
     });
   }
-  return compose(environment, config, adapters);
+  const database=createDatabase(environment.DB);
+  adapters.mailer=pacedAdapter(adapters.mailer,database,config);
+  if (config.authMail) {
+    const transactional = {...config, mailProvider: config.authMail.provider, mailProviderApiKey: config.authMail.apiKey, mailRelayUrl: config.authMail.relayUrl};
+    adapters.confirmationMailer = pacedAdapter(createRerAdapter(transactional), database, transactional);
+  }
+  if(adapters.sms) adapters.sms=pacedAdapter(adapters.sms,database,config);
+  return { ...compose(environment, config, adapters), senderVerification: verification };
 }
 
 export function createLocalPlatform(environment: AppBindings, localSigningKey: string): Platform {
@@ -123,7 +145,7 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
     publicBaseUrl: new URL(environment.MANGO_PUBLIC_BASE_URL || 'http://127.0.0.1'),
     appVersion: 'local',
     local: true,
-    allowedLinkHosts: ['localhost'],
+    allowedLinkHosts: configuredLinkHosts(environment.MANGO_ALLOWED_LINK_HOSTS, new URL(environment.MANGO_PUBLIC_BASE_URL || 'http://127.0.0.1')),
     testEmailAllowlist: ['local@example.test'],
     providerReconciliationIntervalMinutes: 15,
     unresolvedProviderOutcomeHours: 1,
@@ -138,6 +160,6 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
     },
   }, {
     ...designAdapter(design),
-    mailer: unavailableSender('email'),
+    mailer: localSender(),
   });
 }

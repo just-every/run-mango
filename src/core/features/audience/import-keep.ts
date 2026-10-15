@@ -3,6 +3,7 @@ import { atomic, guard, sql } from '@/vendor/base/import-kit/src/d1/database';
 import { remaining } from '@/vendor/base/import-kit/src/d1/budget';
 import type { D1Sql } from '@/vendor/base/import-kit/src/d1/types';
 import { readAudienceSnapshots, snapshotTargets } from './import-read';
+import { audienceImportActor } from './import-authority';
 
 // Abandoning keeps a contact a person changed since the import wrote it (they unsubscribed,
 // confirmed consent, or an operator edited it): Mango releases the import's claim on it, as the
@@ -63,7 +64,7 @@ export async function keepChangedContacts(db: D1Database, salt: string, importId
         sql('DELETE FROM ik_sources WHERE job_id=? AND identity=? AND NOT EXISTS(SELECT 1 FROM ik_provenance WHERE source_identity=? AND reversed=0) AND NOT EXISTS(SELECT 1 FROM ik_d1_history WHERE source_identity=?)', job.id, row.source_identity, row.source_identity, row.source_identity),
         sql(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
           VALUES(?,?,'audience-import',?,?,'operator',?,?,?,?) ON CONFLICT(operation_key) DO NOTHING`,
-        crypto.randomUUID(), `${keptAction}:${row.id}`, importId, keptAction, context.authorization.principalId, JSON.stringify({ contactId: row.target_id, kept: 'changed by the person' }), now, now));
+        crypto.randomUUID(), `${keptAction}:${row.id}`, importId, keptAction, audienceImportActor(context), JSON.stringify({ contactId: row.target_id, kept: 'changed by the person' }), now, now));
     }
     await atomic(context, job.state === 'undoing' ? 'undo' : 'rollback', statements);
   }

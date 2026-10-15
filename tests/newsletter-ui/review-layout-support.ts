@@ -107,7 +107,8 @@ export async function saveChanges(
   );
   await expect(
     page.getByRole("button", { name: "Approve & schedule", exact: true }),
-  ).toBeEnabled();
+  ).toBeDisabled();
+  await expect(page.locator("#approval-blocked-reason")).toBeVisible();
   await openTestSendPanel(page);
   await expect(
     page.getByRole("button", { name: "Send test", exact: true }),

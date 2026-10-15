@@ -16,6 +16,8 @@ Open an approved campaign and choose **View schedule and results**. The page ref
 
 A step's state is Scheduled, Sending, Sent, Cancelled, Failed, Missed, Paused or Completed. "Sent" means handed to the provider; the page says "Only the Delivered count confirms delivery." "Missed" means the send window closed before dispatch began.
 
+The sending schedule panel shows when the Worker last actually ran, or that no tick has been observed. Before the first tick, sending starts once Cloudflare activates the schedule, usually within an hour. A tick that becomes overdue, a failed tick and a tick blocked by restore or contact erasure are shown separately. Completion means the scheduler finished its checks; it does not confirm provider acceptance or delivery. Send windows still expire while waiting for activation.
+
 Under each step is a list of recipient outcomes, each with a count:
 
 - **Queued**, **Handed off**, **Accepted**, **Delivered**, **Bounced** and **Failed**;
@@ -31,7 +33,7 @@ If your provider is SendGrid and a handoff times out or the response is unclear,
 
 ## Where provider facts come from
 
-Mango records delivery facts from your provider's signed webhooks and, where available, from provider lookups. For SendGrid, point its signed event webhook at `https://<your-deployment>/webhooks/mail/sendgrid`, and set `MAIL_WEBHOOK_SECRET` and `MAIL_WEBHOOK_ID`. Mango verifies the signature before it reads an event. It uses these SendGrid events: processed (accepted), delivered, bounce, spam report (complaint), dropped (suppression), and unsubscribe or group unsubscribe (the recipient opted out through SendGrid). Open, click and deferred events are ignored, so a deferred message keeps waiting for a later event.
+Mango records delivery facts from your provider's signed webhooks and, where available, from provider lookups. For SendGrid the signed event webhook is optional: without one, each message shows **Accepted** (SendGrid took it) and never **Delivered**. To add it, point a signed event webhook at `https://<your-deployment>/webhooks/mail/sendgrid` and set `MAIL_WEBHOOK_SECRET` to its verification key; [Install and deploy](./install.md#add-a-sendgrid-event-webhook) shows the steps. Mango verifies the signature before it reads an event. It uses these SendGrid events: processed (accepted), delivered, bounce, spam report (complaint), dropped (suppression), and unsubscribe or group unsubscribe (the recipient opted out through SendGrid). Open, click and deferred events are ignored, so a deferred message keeps waiting for a later event.
 
 - **Delivered** is recorded only when a provider event says so.
 - A hard bounce, complaint or provider suppression suppresses that address, even if Mango cannot match the event to one of its own messages. A suppressed address is excluded from every later campaign.

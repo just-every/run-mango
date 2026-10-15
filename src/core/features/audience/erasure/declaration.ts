@@ -24,15 +24,17 @@ export const contactErasureTables:ErasureTable[]=[
   {table:'ik_jobs',where:s=>set('id',s.jobs)},
   {table:'ik_d1_streams',where:s=>set('id',s.streams)},
   {table:'proposal_evidence_items',literal:true,where:s=>({sql:'source_record_id IN (SELECT source_record_id FROM source_activities WHERE contact_id IN (SELECT value FROM json_each(?)))',params:[JSON.stringify(s.ids)]})},
-  recipient('link_click_facts'),recipient('tracked_links'),recipient('attribution_facts'),recipient('external_cost_facts'),recipient('delivery_facts'),
+  {table:'commerce_refunds',literal:true,where:s=>({sql:'contact_id IN (SELECT value FROM json_each(?)) OR provider_order_id IN (SELECT provider_order_id FROM commerce_orders WHERE contact_id IN (SELECT value FROM json_each(?)))',params:[JSON.stringify(s.ids),JSON.stringify(s.ids)]})},{...contact('commerce_orders'),literal:true},
+  recipient('open_estimate_facts'),recipient('open_tracking_tokens'),recipient('link_click_facts'),recipient('tracked_links'),recipient('attribution_facts'),recipient('external_cost_facts'),recipient('delivery_facts'),
   {table:'provider_fact_inbox',literal:true,where:s=>({sql:"json_extract(detail_json,'$.destinationHash') IN (SELECT value FROM json_each(?)) OR "+destination+" IN (SELECT value FROM json_each(?)) OR provider_message_id IN (SELECT provider_message_id FROM recipient_steps WHERE contact_id IN (SELECT value FROM json_each(?))) OR mango_reference IN (SELECT id FROM recipient_steps WHERE contact_id IN (SELECT value FROM json_each(?)))",params:[JSON.stringify(s.hashes),JSON.stringify([...s.emails,...s.phones]),JSON.stringify(s.ids),JSON.stringify(s.ids)]})},
   {...contact('recipient_steps'),mode:'recipient',literal:true},contact('campaign_revision_candidates'),
-  {...contact('source_activities'),literal:true},{...contact('source_records'),literal:true},
+  contact('commerce_privacy_controls'),{...contact('commerce_observations'),literal:true},{...contact('source_activities'),literal:true},{...contact('source_records'),literal:true},
   {table:'public_token_rate_limits',where:s=>({sql:'token_digest IN (SELECT token_digest FROM public_action_tokens WHERE contact_id IN (SELECT value FROM json_each(?)) UNION SELECT token_digest FROM consent_confirmations WHERE contact_id IN (SELECT value FROM json_each(?)))',params:[JSON.stringify(s.ids),JSON.stringify(s.ids)]})},
+  contact('sms_frequency_claims'),contact('sms_service_messages'),contact('sms_inbound_receipts'),contact('consent_handoff_claims'),
   contact('public_action_tokens'),contact('consent_confirmations'),contact('contact_bounce_facts'),contact('contact_bounce_states'),
   {...contact('sms_compliance_replies'),literal:true},contact('contact_import_rows'),
   {table:'audience_signup_requests',where:s=>set('destination_hash',s.signupHashes)},
-  {table:'oa_limits',where:s=>set('key',[...s.signupHashes.map(hash=>`signup-email:${hash}`),...s.networkKeys])},
+  {table:'oa_limits',where:s=>set('key',[...s.signupHashes.flatMap(hash=>[`signup-email:${hash}`,`signup-sms:${hash}`]),...s.networkKeys])},
   {table:'rer_mail_development_outbox',literal:true,where:s=>({sql:"EXISTS(SELECT 1 FROM json_tree(message,'$.to') t WHERE t.type='text' AND lower(t.atom) IN (SELECT value FROM json_each(?)))",params:[JSON.stringify(s.emails)]})},
   // An archive move-in that brought the contact in withdraws its whole original archive;
   // the entry list (paths and hashes) stays, and imported history keeps only redacted text.
@@ -45,7 +47,7 @@ export const contactErasureTables:ErasureTable[]=[
   {table:'audience_segments',literal:true,mode:'redact'},
   {table:'campaigns',literal:true,mode:'redact'},
   {table:'campaign_revisions',literal:true,mode:'redact'},
-  ...['source_syncs','source_sync_runs','source_sync_cursors','commerce_source_capabilities','campaign_channel_pauses','campaign_revision_links','campaign_steps','proposal_forecasts','campaign_audiences','campaign_checks','campaign_state_transitions','proposal_audiences','proposals','proposal_exclusions','proposal_steps','provider_outages','proposal_transitions','design_jobs'].map(table=>({table,literal:true,mode:'redact' as const})),
+  ...['audience_source_authority','commerce_source_coverage','source_syncs','source_sync_runs','source_sync_cursors','commerce_source_capabilities','campaign_channel_pauses','campaign_revision_links','campaign_steps','proposal_forecasts','campaign_audiences','campaign_checks','campaign_state_transitions','proposal_audiences','proposals','proposal_exclusions','proposal_steps','provider_outages','proposal_transitions','design_jobs'].map(table=>({table,literal:true,mode:'redact' as const})),
   // State-only consequences run as bounded, PK-fenced pages after literal edits.
   {table:'campaigns',mode:'invalidate-campaign',where:()=>({sql:"state<>'erasure-invalidated' AND active_revision_id IN (SELECT id FROM campaign_revisions WHERE state='erasure-invalidated')",params:[]})},
   {table:'recipient_steps',mode:'invalidate-recipient',where:()=>({sql:"transport_disposition='queued' AND revision_id IN (SELECT id FROM campaign_revisions WHERE state='erasure-invalidated')",params:[]})},
@@ -54,11 +56,11 @@ export const contactErasureTables:ErasureTable[]=[
   // different erased contact. Keep surviving consent, redact only its literals.
   ...['audience_import_observations','consent_capture_metadata','consent_evidence','contact_history'].map(table=>({...contact(table),literal:true,mode:'contact-data' as const})),
   {table:'contact_suppressions',where:s=>({sql:'contact_id IN (SELECT value FROM json_each(?)) OR destination_hash IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.hashes)]})},
-  // An address's portable identity stays only while an opt-out for it survives: an erased opt-out still leaves the
-  // export by it (import-opt-out-lines), and an address erased while subscribed keeps nothing.
+  // An address's portable identity stays while an opt-out or detached suppression
+  // survives, so that restriction still leaves through the export (import-opt-out-lines).
   // Match the portable value too: prior mappings may use another installation's
   // hash as their key. Derive it here so already-pending erasure scopes work too.
-  {table:'audience_portable_hashes',where:s=>({sql:'(destination_hash IN (SELECT value FROM json_each(?)) OR portable_hash IN (SELECT value FROM json_each(?))) AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs o WHERE o.destination_hash=audience_portable_hashes.destination_hash)',params:[JSON.stringify(s.hashes),JSON.stringify([...s.emails,...s.phones].map(portableHash))]})},
+  {table:'audience_portable_hashes',where:s=>({sql:'(destination_hash IN (SELECT value FROM json_each(?)) OR portable_hash IN (SELECT value FROM json_each(?))) AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs o WHERE o.destination_hash=audience_portable_hashes.destination_hash) AND NOT EXISTS(SELECT 1 FROM contact_suppressions c WHERE c.destination_hash=audience_portable_hashes.destination_hash)',params:[JSON.stringify(s.hashes),JSON.stringify([...s.emails,...s.phones].map(portableHash))]})},
   contact('mango_audience_hashes'),contact('mango_import_revisions'),contact('contact_email_addresses'),contact('contact_phones'),
   {table:'contact_merges',where:s=>({sql:'survivor_contact_id IN (SELECT value FROM json_each(?)) OR merged_contact_id IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.ids)]})},
 ];

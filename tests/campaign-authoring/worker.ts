@@ -1,4 +1,5 @@
 import { testIdentity } from '../support/test-identity';
+import { recordProposalClaims } from '../support/record-proposal-claims';
 // Isolated authoring test entry. Actual API, D1, native sessions and SSR; sends disabled.
 import { createFixturePlatform } from '../support/local-platform';
 import { createApp, createAppServices } from '../../src/core/app/app';
@@ -9,6 +10,7 @@ import { createShopifyAdapter } from '../../src/core/platform/adapters/shopify';
 import { createLinkInspector } from '../../src/core/platform/link-inspector';
 import { consumeLifecycleQueue, type LifecycleQueueBatch } from '../../src/core/features/lifecycle';
 import { designCommandKinds, isDesignCommand } from '../../src/core/features/design-generation/advance';
+import { acknowledgeHealthProbe } from '../../src/core/features/health/queue-probe';
 // The network edge for one destination host: DNS answers a documentation address and HEAD succeeds; anything else is refused.
 const linkEdge=(host:string):typeof fetch=>async(input,init)=>{
   const url=new URL(input instanceof Request?input.url:String(input));
@@ -23,11 +25,14 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
   const linkHost=(bindings as {AUTHORING_LINK_HOST?:string}).AUTHORING_LINK_HOST;
   if(linkHost){platform.config.allowedLinkHosts.push(linkHost);platform.linkInspector=createLinkInspector(platform.config.allowedLinkHosts,linkEdge(linkHost));}
   platform.mailer={channel:'email',async capabilities(){return {configured:true,canSendMarketing:true,effectiveDeduplication:true,effectiveReconciliation:true,deduplicationWindowMs:30*86400000,reconciliationWindowMs:30*86400000,detail:'Test sender; sends disabled.'};},inspectSender:value=>evidence.inspect(value),async validateSender(){return {ready:true,detail:'Test only.'};},async send(){throw new Error('Authoring tests never send.');},async reconcile(){return {facts:[],exhausted:true};},async verifyWebhook(){throw new Error('No webhook fixture.');}};
-  // Design runs use the real local queue, as on a copy running on a computer; everything else is only recorded.
+  // Health probes and design runs use the real local queue; domain jobs are only recorded.
   const queue=platform.jobs;
-  platform.jobs={async enqueue(job){if(isDesignCommand(job))return queue.enqueue(job);await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();},async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');}};
+  platform.jobs={async enqueue(job){if(job.kind==='health.probe'||isDesignCommand(job))return queue.enqueue(job);await bindings.DB.prepare('INSERT INTO task_authoring_jobs (kind,payload) VALUES (?,?)').bind(job.kind,JSON.stringify(job.payload)).run();},async retry(job,delay){if(isDesignCommand(job))return queue.retry(job,delay);throw new Error('Tests never dispatch.');}};
   const path=new URL(request.url).pathname;
-  if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) platform.commerce=createShopifyAdapter({storeUrl:new URL('https://shop.example.test'),accessToken:'test-no-network',webhookSecret:'test-no-network'});
+  if(await bindings.DB.prepare("SELECT name FROM sqlite_master WHERE name='task_authoring_commerce'").first()) {
+    platform.config.modules.commerce.enabled=true;
+    platform.commerce=createShopifyAdapter({storeUrl:new URL('https://mango-authoring.myshopify.com'),exclusiveShop:'mango-authoring.myshopify.com',accessToken:'test-no-network',webhookSecret:'test-no-network'});
+  }
   const services=createAppServices(platform);
   if(path.startsWith('/_authoring/')) {
     if(request.headers.get('X-Test-Token')!==bindings.LOCAL_BOOTSTRAP_TOKEN) return new Response('Forbidden',{status:403});
@@ -49,14 +54,17 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
     if(path==='/_authoring/proposal') {
       const id=crypto.randomUUID(),now=Date.now(),rules=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'}]});
       await bindings.DB.prepare("INSERT INTO proposals (id,state,title,summary,evidence,audience_rule,source_data_as_of,send_by_at,inclusion_rule_json,exclusion_rules_json,created_at,updated_at) VALUES (?, 'proposed', 'Recorded suggestion', 'A recorded suggestion', 'Test source evidence', 'Subscribed email contacts', ?, ?, ?, '[]', ?, ?)").bind(id,now,now+86400000,rules,now,now).run();
+      await recordProposalClaims(bindings.DB,id,now);
       return Response.json({id});
     }
     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});
   }
   return dispatchDocuments(request,bindings,context,platform,createApp(bindings,platform,undefined,true));
 },
-// The local queue consumer runs design runs only, exactly as src/core/app/worker.local.ts does.
+// Acknowledge probes before composing domain services, then run local design commands.
 async queue(batch,bindings:LocalAppBindings){
+  const messages=(batch as unknown as LifecycleQueueBatch).messages.filter(message=>!acknowledgeHealthProbe(message));
+  if(!messages.length)return;
   const platform=createFixturePlatform(bindings,bindings.LOCAL_BOOTSTRAP_TOKEN);
-  await consumeLifecycleQueue(batch as unknown as LifecycleQueueBatch,createAppServices(platform).lifecycleRuntime,designCommandKinds);
+  await consumeLifecycleQueue({messages},createAppServices(platform).lifecycleRuntime,designCommandKinds);
 }} satisfies ExportedHandler<LocalAppBindings>;

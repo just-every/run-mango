@@ -20,12 +20,13 @@
       "binding": "MANGO_JOBS",
       "consumer": {
         "batch_size": 10,
+        "max_wait_time_ms": 0,
         "max_retries": 5
       }
     }
   ],
   "crons": [
-    "*/5 * * * *"
+    "* * * * *"
   ],
   "secrets": [
     {
@@ -54,15 +55,18 @@
     },
     {
       "binding": "MAIL_WEBHOOK_SECRET",
-      "environment": "MAIL_WEBHOOK_SECRET"
+      "environment": "MAIL_WEBHOOK_SECRET",
+      "optional": true
     },
     {
       "binding": "MAIL_WEBHOOK_ID",
-      "environment": "MAIL_WEBHOOK_ID"
+      "environment": "MAIL_WEBHOOK_ID",
+      "optional": true
     },
     {
       "binding": "MANGO_ALLOWED_LINK_HOSTS",
-      "environment": "MANGO_ALLOWED_LINK_HOSTS"
+      "environment": "MANGO_ALLOWED_LINK_HOSTS",
+      "optional": true
     },
     {
       "binding": "DESIGN_PROVIDER_API_KEY",
@@ -88,16 +92,59 @@
       "binding": "MANGO_TEST_EMAIL_ALLOWLIST",
       "environment": "MANGO_TEST_EMAIL_ALLOWLIST",
       "optional": true
+    },
+    {
+      "binding": "TURNSTILE_SITE_KEY",
+      "environment": "TURNSTILE_SITE_KEY",
+      "optional": true
+    },
+    {
+      "binding": "TURNSTILE_SECRET_KEY",
+      "environment": "TURNSTILE_SECRET_KEY",
+      "optional": true
+    },
+    {
+      "binding": "MAIL_API_KEY",
+      "environment": "MAIL_API_KEY",
+      "optional": true
+    },
+    {
+      "binding": "MAIL_FROM",
+      "environment": "MAIL_FROM",
+      "optional": true
+    },
+    {
+      "binding": "MAIL_RELAY_URL",
+      "environment": "MAIL_RELAY_URL",
+      "optional": true
+    },
+    {
+      "binding": "MARKETING_MAIL_API_KEY",
+      "environment": "MARKETING_MAIL_API_KEY",
+      "optional": true
+    },
+    {
+      "binding": "MARKETING_MAIL_WEBHOOK_SECRET",
+      "environment": "MARKETING_MAIL_WEBHOOK_SECRET",
+      "optional": true
     }
   ],
   "vars": {
     "MAIL_PROVIDER": "sendgrid",
-    "MANGO_APP_VERSION": "0.1.0",
+    "MANGO_APP_VERSION": "0.2.0",
     "MANGO_RESTORE_MODE": "0",
     "MANGO_RECONCILIATION_INTERVAL_MINUTES": "5",
     "MANGO_UNRESOLVED_OUTCOME_HOURS": "24",
     "MANGO_EMAIL_HANDOFFS_PER_MINUTE": "10",
-    "MANGO_DELIVERABILITY_WINDOW_DAYS": "30"
+    "MANGO_DELIVERABILITY_WINDOW_DAYS": "30",
+    "MAIL_FROM": "",
+    "MAIL_RELAY_URL": "",
+    "MARKETING_MAIL_PROVIDER": "",
+    "MARKETING_MAIL_WEBHOOK_ID": ""
   },
-  "originVar": "MANGO_PUBLIC_BASE_URL"
+  "originVar": "MANGO_PUBLIC_BASE_URL",
+  "platforms": [
+    "workers",
+    "container"
+  ]
 }

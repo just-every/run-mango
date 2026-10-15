@@ -1,3 +1,4 @@
+import {sql} from 'drizzle-orm';
 import { index, integer, sqliteTable, text, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 export const stepDispatches = sqliteTable('step_dispatches', {
@@ -36,6 +37,8 @@ export const recipientSteps = sqliteTable(
     complainedAt: integer('complained_at', { mode: 'timestamp_ms' }),
     suppressedAt: integer('suppressed_at', { mode: 'timestamp_ms' }),
     attemptCount: integer('attempt_count').notNull(),
+    firstAttemptAt: integer('first_attempt_at',{mode:'timestamp_ms'}),
+    actualSender: text('actual_sender'),
     nextAttemptAt: integer('next_attempt_at', { mode: 'timestamp_ms' }),
     handoffStartedAt: integer('handoff_started_at', { mode: 'timestamp_ms' }),
     reconcileUntil: integer('reconcile_until', { mode: 'timestamp_ms' }),
@@ -95,10 +98,11 @@ export const providerOutages = sqliteTable(
     recoveredAt: integer('recovered_at', { mode: 'timestamp_ms' }),
     lastError: text('last_error').notNull(),
     noticeSentAt: integer('notice_sent_at', { mode: 'timestamp_ms' }),
+    nextProbeAt: integer('next_probe_at',{mode:'timestamp_ms'}),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
   },
-  (table) => [uniqueIndex('provider_outages_open_idx').on(table.adapter, table.channel, table.state)],
+  (table) => [uniqueIndex('provider_one_active_outage').on(table.adapter, table.channel).where(sql`${table.state} IN ('observing','paused')`)],
 );
 
 export const campaignChannelPauses = sqliteTable(
@@ -190,10 +194,13 @@ export const externalCostFacts = sqliteTable(
     operation: text('operation').notNull(),
     modelOrChannel: text('model_or_channel').notNull(),
     billableUnits: integer('billable_units').notNull(),
+    unitsKnown: integer('units_known').notNull().default(1),
+    unitKind: text('unit_kind').notNull().default('provider units'),
+    outcome: text('outcome').notNull().default('reported'),
     reportedCostMicros: integer('reported_cost_micros'),
     currency: text('currency'),
     occurredAt: integer('occurred_at', { mode: 'timestamp_ms' }).notNull(),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
   },
-  (table) => [index('external_cost_facts_campaign_idx').on(table.campaignId, table.occurredAt)],
+  (table) => [index('external_cost_facts_campaign_idx').on(table.campaignId, table.occurredAt), index('external_cost_facts_day_idx').on(table.occurredAt)],
 );
