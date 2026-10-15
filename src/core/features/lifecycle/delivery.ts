@@ -436,11 +436,19 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
 
     async handleWebhook(channel: Channel, request: Request) {
       const adapter = sender(channel);
-      if (!adapter) throw new Error(unavailableModuleDetail(channel));
+      if (!adapter || (channel === 'sms' && !runtime.platform.config.modules.sms.enabled)) {
+        return { kind: 'unavailable' as const };
+      }
+      const capabilities = await adapter.capabilities();
+      if (!capabilities.configured || (channel === 'email'
+        && (capabilities.provider === 'rer' || (runtime.platform.config.mailProvider && !runtime.platform.config.mailWebhookSecret)))) {
+        return { kind: 'unavailable' as const };
+      }
       const verified = await adapter.verifyWebhook(request);
       if(verified.provider==='sendgrid')await importSendgridAccountEvents(runtime.platform.database,verified.rawBody);
       const facts = await parseVerifiedWebhook(channel, verified);
       await importFacts(channel === 'email' ? verified.provider ?? 'resend' : 'mobile-message', facts, undefined, channel);
+      return { kind: 'accepted' as const };
     },
 
     async followTrackedLink(token: string, request: Request) {

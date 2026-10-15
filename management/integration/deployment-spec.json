@@ -372,14 +372,16 @@
   "durableObjectMigrations": [],
   "publicVariables": {
     "MAIL_PROVIDER": "sendgrid",
-    "MANGO_APP_VERSION": "0.1.0",
+    "MANGO_APP_VERSION": "0.2.0",
     "MANGO_RESTORE_MODE": "0",
     "MANGO_RECONCILIATION_INTERVAL_MINUTES": "5",
     "MANGO_UNRESOLVED_OUTCOME_HOURS": "24",
     "MANGO_EMAIL_HANDOFFS_PER_MINUTE": "10",
     "MANGO_DELIVERABILITY_WINDOW_DAYS": "30",
     "MAIL_FROM": "",
-    "MAIL_RELAY_URL": ""
+    "MAIL_RELAY_URL": "",
+    "MARKETING_MAIL_PROVIDER": "",
+    "MARKETING_MAIL_WEBHOOK_ID": ""
   },
   "secretNames": [
     "SESSION_SECRET",
@@ -399,7 +401,9 @@
     "SMS_PROVIDER_API_KEY",
     "SMS_WEBHOOK_SECRET",
     "MAIL_API_KEY",
-    "MAIL_PROVIDER_API_KEY"
+    "MAIL_PROVIDER_API_KEY",
+    "MARKETING_MAIL_API_KEY",
+    "MARKETING_MAIL_WEBHOOK_SECRET"
   ],
   "schedules": [
     "* * * * *"

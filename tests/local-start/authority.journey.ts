@@ -1,11 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { readFile, rename, rm, stat, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { contract } from '../contract';
 import { authorityRuntime, signIn } from './authority-runtime.mjs';
 import { nativeDatabase, preview, seedAuthority, snapshot } from './authority-data.mjs';
 
-contract('CONT-006', 'forced setup retains suppression and opt-out authority while invalidating prior native sessions', async ({ browser }) => {
+test('[CONT-006] forced setup retains suppression and opt-out authority while invalidating prior native sessions', async ({ browser }) => {
   test.setTimeout(600000);
   const runtime = await authorityRuntime();
   const context = await browser.newContext(), page = await context.newPage();
@@ -26,11 +25,10 @@ contract('CONT-006', 'forced setup retains suppression and opt-out authority whi
     let before = snapshot(db); db.close();
     await runtime.setup(false);
     expect(await readFile(varsPath, 'utf8') === priorText).toBe(true);
-    // Setup deliberately creates fresh sign-in mail. The failed migration and
-    // rotations must preserve the complete state after that successful rerun.
+    // Failed migration and rotations must preserve the state after successful setup.
     db = await nativeDatabase(runtime.checkout); const afterSetup = snapshot(db); db.close();
     for (const [table, rows] of Object.entries(before)) {
-      if (['oa_limits', 'oa_tokens', 'rer_mail_development_outbox'].includes(table)) continue;
+      if (['oa_limits', 'oa_tokens'].includes(table)) continue;
       const stable = (values: any[]) => table === 'operators' ? values.map(({ updated_at, ...row }) => row) : values;
       expect(JSON.stringify(stable(afterSetup[table])) === JSON.stringify(stable(rows)), table).toBe(true);
     }

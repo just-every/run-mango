@@ -2,11 +2,10 @@ import {expect, test} from '@playwright/test';
 import {readFile, writeFile, stat, access} from 'node:fs/promises';
 import {join} from 'node:path';
 import {createRequire} from 'node:module';
-import {contract} from '../contract';
 import {authorityRuntime} from './authority-runtime.mjs';
 import {nativeDatabase} from './authority-data.mjs';
 
-contract('DATA-001','rer commands restore complete local D1 and R2 with matching authority, then reset to one empty native owner',async () => {
+test('[DATA-001] rer commands restore complete local D1 and R2 with matching authority, then reset to one empty native owner',async () => {
   test.setTimeout(600000);
   const runtime=await authorityRuntime();
   try {

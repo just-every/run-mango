@@ -25,12 +25,9 @@ import { createLinkInspector } from './link-inspector';
 import { createPublicTokenSigner } from './public-tokens';
 import { localContactHashSalt } from './local-contact-authority';
 import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
-import { createD1DevelopmentOutbox } from '@/vendor/base/mail/src/development/index.mjs';
 
-/** A copy on a computer sends no marketing. Consent confirmations land in the local
- * development outbox beside sign-in mail, so signup can be completed locally. */
-function localSender(database: D1Database): SenderAdapter {
-  const outbox = createD1DevelopmentOutbox({ db: database });
+/** Local authoring has no mail transport. Dev identity opens the operator session directly. */
+function localSender(): SenderAdapter {
   const unavailable = () => {
     throw new Error('Sending is off on a copy running on your computer. Deploy Mango with a mail provider to send email.');
   };
@@ -50,13 +47,7 @@ function localSender(database: D1Database): SenderAdapter {
     async validateSender() {
       return { ready: false, detail: 'Sending is off on a copy running on your computer.' };
     },
-    async send(request) {
-      if (request.purpose !== 'consent-confirmation') unavailable();
-      await outbox.put({ deliveryId: request.idempotencyKey, from: request.sender, to: [request.to], subject: request.content.subject ?? '',
-        text: request.content.text, ...(request.content.html ? { html: request.content.html } : {}),
-        ...(request.content.replyTo ? { replyTo: request.content.replyTo } : {}) });
-      return { providerMessageId: `local-outbox:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
-    },
+    send: async () => unavailable(),
     reconcile: unavailable,
     verifyWebhook: unavailable,
   };
@@ -67,7 +58,7 @@ function designAdapter(module: AppConfig['modules']['design']) {
   return module.enabled ? { design: createTwelveUiAdapter({ apiKey: module.config.providerApiKey, origin: module.config.origin }) } : {};
 }
 
-function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'>): Platform {
+function compose(environment: AppBindings, config: AppConfig, adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'>): Platform {
   return {
     database: createDatabase(environment.DB),
     config,
@@ -84,7 +75,7 @@ export function createProductionPlatform(environment: AppBindings): Platform {
   config.deliveryPolicies = readDeliveryPolicies(environment.MANGO_DELIVERY_POLICY_JSON);
   const verification = createSenderVerification({ database: createDatabase(environment.DB), config,
     receiver: config.mailboxReceiptUrl ? createReceiptConnector(config.mailboxReceiptUrl, config.mailboxReceiptRecipient) : undefined });
-  const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'sms'> = {
+  const adapters: Pick<Platform, 'commerce' | 'ai' | 'design' | 'mailer' | 'confirmationMailer' | 'sms'> = {
     ...designAdapter(config.modules.design),
     mailer: config.mailProvider === 'rer' ? createRerAdapter(config)
       : config.mailProvider === 'sendgrid' ? createSendgridAdapter({ apiKey: config.mailProviderApiKey, webhookPublicKey: config.mailWebhookSecret, verification }) : createResendAdapter({
@@ -120,6 +111,10 @@ export function createProductionPlatform(environment: AppBindings): Platform {
   }
   const database=createDatabase(environment.DB);
   adapters.mailer=pacedAdapter(adapters.mailer,database,config);
+  if (config.authMail) {
+    const transactional = {...config, mailProvider: config.authMail.provider, mailProviderApiKey: config.authMail.apiKey, mailRelayUrl: config.authMail.relayUrl};
+    adapters.confirmationMailer = pacedAdapter(createRerAdapter(transactional), database, transactional);
+  }
   if(adapters.sms) adapters.sms=pacedAdapter(adapters.sms,database,config);
   return { ...compose(environment, config, adapters), senderVerification: verification };
 }
@@ -162,6 +157,6 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
     },
   }, {
     ...designAdapter(design),
-    mailer: localSender(environment.DB),
+    mailer: localSender(),
   });
 }

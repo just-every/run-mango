@@ -19,8 +19,11 @@ export function createSettingsService(platform: Pick<Platform, 'config' | 'maile
     async providers() {
       const mail = await platform.mailer.capabilities(), at = new Date().toISOString();
       const providerName = mail.provider === 'sendgrid' ? 'SendGrid' : mail.provider === 'resend' ? 'Resend' : 'The mail provider';
-      const providers = [{ id: 'mail', adapter: 'mail.sender.v1', configured: mail.configured, status: mail.configured ? 'available' : 'unavailable', updatedAt: at,
-        detail: mail.configured ? `${providerName} sends sign-in, confirmation and campaign email. Campaigns also need the sender checks above.` : mail.detail }];
+      const configured = mail.configured && mail.canSendMarketing;
+      const detail = platform.config.authMail
+        ? `RER sends sign-in and subscription confirmations. ${configured ? `${providerName} sends newsletters through your own connection, with the sender checks above.` : 'Newsletters need your own SendGrid or Resend marketing connection in RER Configure.'}`
+        : configured ? `${providerName} sends sign-in, confirmation and campaign email. Campaigns also need the sender checks above.` : mail.detail;
+      const providers = [{ id: 'mail', adapter: 'mail.sender.v1', configured, status: configured ? 'available' : 'unavailable', updatedAt: at, detail }];
       if (platform.sms) providers.push({ id: 'sms', adapter: 'sms.sender.v1', configured: true, status: 'available', updatedAt: at, detail: (await platform.sms.capabilities()).detail });
       if (platform.ai) providers.push({ id: 'ai', adapter: 'ai.provider.v1', configured: true, status: 'available', updatedAt: at, detail: 'AI writing can draft campaign suggestions for your review.' });
       if (platform.commerce) providers.push({ id: 'commerce', adapter: 'commerce.store.v1', configured: true, status: 'available', updatedAt: at, detail: platform.commerce.capabilities().detail });

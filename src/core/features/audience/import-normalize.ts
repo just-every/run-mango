@@ -8,6 +8,8 @@ import { optOutLedger, optOutStatus, type OptOutLine } from './import-opt-out-li
 export type NormalizedImportRow = {
   file: string; row: number; email: string; phone: string; smsStatus: string; displayName: string; status: string; reason?: string; skipped?: string; warnings: string[];
   values: Record<string, string>; ledger?: AudienceSnapshot;
+  /** The original name stays in source observations when duplicates supply a fuller name. */
+  sourceDisplayName?: string;
   /** A contact another import still attributes: only this row's opt-out or suppression is applied to it.
    * contactId is null while an unfinished import has planned the contact but not written it. */
   held?: { contactId: string | null; reason: string };

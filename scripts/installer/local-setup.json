@@ -15,7 +15,7 @@
     {
       "name": "OWNER_EMAIL",
       "label": "Owner email",
-      "help": "Local sign-in is delivered to the development outbox. No email is sent.",
+      "help": "Local development opens the browser signed in as this owner. Email requires a deployed mail connection.",
       "kind": "email",
       "required": true,
       "prefill": "account-email",

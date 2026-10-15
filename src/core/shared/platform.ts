@@ -249,6 +249,8 @@ export type AppConfig = {
   mailboxReceiptRecipient?: string;
   signupTurnstile?: { siteKey: string; secretKey: string };
   mailProvider?: 'rer' | 'resend' | 'sendgrid';
+  /** Managed transactional connection, independent of the owner's marketing credentials. */
+  authMail?: { provider: 'rer'; apiKey: string; relayUrl: string };
   mailRelayUrl?: string;
   initialOperatorEmails: string[];
   contactHashSalt: string;
@@ -318,6 +320,7 @@ export interface Platform {
   ai?: AiProvider;
   design?: DesignProvider;
   mailer: SenderAdapter;
+  confirmationMailer?: SenderAdapter;
   /** Sender evidence for marketing email; absent where no mail provider is configured. */
   senderVerification?: SenderVerification;
   sms?: SenderAdapter;
@@ -362,6 +365,10 @@ export interface AppBindings {
   MAIL_FROM?: string;
   MAIL_RELAY_URL?: string;
   MAIL_API_KEY?: string;
+  MARKETING_MAIL_PROVIDER?: 'sendgrid' | 'resend';
+  MARKETING_MAIL_API_KEY?: string;
+  MARKETING_MAIL_WEBHOOK_SECRET?: string;
+  MARKETING_MAIL_WEBHOOK_ID?: string;
   INITIAL_OPERATOR_EMAILS: string;
   CONTACT_HASH_SALT: string;
   MANGO_LOCAL_HASH_AUTHORITY?: string;

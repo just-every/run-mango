@@ -13,7 +13,12 @@
     {
       "id": "mail",
       "label": "Newsletter mail provider",
-      "help": "Managed hosting includes RER mail for sign-in. Free and Assisted hosting use your own SendGrid or Resend account. Newsletter sender identity is completed in Mango."
+      "help": "Managed hosting includes RER mail for sign-in and consent confirmations, supplied by RER. Add the optional newsletter connection below to send newsletters. Free and Assisted hosting use your own SendGrid or Resend account. Newsletter sender identity is completed in Mango."
+    },
+    {
+      "id": "marketing-mail",
+      "label": "Optional newsletter connection",
+      "help": "On Managed hosting, connect your own SendGrid or Resend account to send newsletters. Leave this connection empty to keep newsletter sending off. Sign-in and consent confirmations continue through RER. Mango uses your saved business sender identity for newsletters."
     }
   ],
   "fields": [
@@ -181,6 +186,110 @@
       "required": false,
       "help": "Defaults to this app’s own host. Change it later in Mango Settings, or enter comma-separated host names such as shop.example.com.",
       "group": "mail"
+    },
+    {
+      "name": "MARKETING_MAIL_PROVIDER",
+      "label": "Newsletter provider",
+      "kind": "select",
+      "required": false,
+      "default": "",
+      "options": [
+        {
+          "value": "",
+          "label": "Set up later"
+        },
+        {
+          "value": "sendgrid",
+          "label": "SendGrid"
+        },
+        {
+          "value": "resend",
+          "label": "Resend"
+        }
+      ],
+      "when": {
+        "field": "MAIL_PROVIDER",
+        "equals": "rer"
+      },
+      "group": "marketing-mail"
+    },
+    {
+      "name": "MARKETING_MAIL_API_KEY",
+      "label": "Newsletter provider API key",
+      "kind": "secret",
+      "required": false,
+      "ownerVisible": true,
+      "input": "entered",
+      "when": {
+        "field": "MAIL_PROVIDER",
+        "equals": "rer"
+      },
+      "presentations": [
+        {
+          "when": {
+            "field": "MARKETING_MAIL_PROVIDER",
+            "equals": "sendgrid"
+          },
+          "required": true
+        },
+        {
+          "when": {
+            "field": "MARKETING_MAIL_PROVIDER",
+            "equals": "resend"
+          },
+          "required": true
+        }
+      ],
+      "group": "marketing-mail"
+    },
+    {
+      "name": "MARKETING_MAIL_WEBHOOK_SECRET",
+      "label": "Newsletter webhook verification key",
+      "kind": "secret",
+      "required": false,
+      "ownerVisible": true,
+      "input": "entered",
+      "help": "Optional for SendGrid: its signed Event Webhook public key enables delivery, bounce and complaint reports. Required for Resend: its webhook signing secret.",
+      "when": {
+        "field": "MAIL_PROVIDER",
+        "equals": "rer"
+      },
+      "presentations": [
+        {
+          "when": {
+            "field": "MARKETING_MAIL_PROVIDER",
+            "equals": "sendgrid"
+          },
+          "required": false
+        },
+        {
+          "when": {
+            "field": "MARKETING_MAIL_PROVIDER",
+            "equals": "resend"
+          },
+          "required": true
+        }
+      ],
+      "group": "marketing-mail"
+    },
+    {
+      "name": "MARKETING_MAIL_WEBHOOK_ID",
+      "label": "Newsletter Resend webhook ID",
+      "kind": "text",
+      "required": true,
+      "when": {
+        "field": "MAIL_PROVIDER",
+        "equals": "rer"
+      },
+      "presentations": [
+        {
+          "when": {
+            "field": "MARKETING_MAIL_PROVIDER",
+            "equals": "resend"
+          }
+        }
+      ],
+      "group": "marketing-mail"
     }
   ],
   "steps": [

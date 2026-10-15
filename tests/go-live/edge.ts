@@ -20,7 +20,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
   const sms=smsProviderEdge();
   const keys = [dkimKey(), dkimKey()];
   const resend=resendProviderEdge(keys[0]);
-  const sends: EdgeSend[] = [], unexpected: string[] = [], lost = new Set<string>();
+  const sends: EdgeSend[] = [], relaySends: {body: Record<string, any>; authorization: string}[] = [], unexpected: string[] = [], lost = new Set<string>();
   const domain = { id: 123, user_id: 99, domain: 'example.test', valid: true, automatic_security: true, custom_spf: false, dns: {
     mail_cname: { valid: true, type: 'cname', host: 'em123.example.test', data: 'u99.wl.sendgrid.net' },
     dkim1: { valid: true, type: 'cname', host: 's1._domainkey.example.test', data: 's1.domainkey.u99.wl.sendgrid.net' },
@@ -58,6 +58,10 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
   };
   const server = createServer(async (request, response) => {
     const original = new URL(String(request.headers['x-edge-original-url']));
+    if (original.hostname === 'relay.example.test' && original.pathname === '/mail' && request.method === 'POST') {
+      relaySends.push({body: JSON.parse(await body(request)), authorization: String(request.headers.authorization)});
+      response.writeHead(202); response.end(); return;
+    }
     behavior.requests.push({method:request.method??'',path:original.pathname,at:Date.now()});
     if(await sms.handle(original,request,response))return;
     if(await resend.handle(original,request,response))return;
@@ -92,7 +96,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('Edge server has no port.');
-  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, unexpected,behavior,sms,resend,
+  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,
     loseResponseFor: (address: string) => lost.add(address),
     close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
 }

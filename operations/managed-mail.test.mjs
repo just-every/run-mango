@@ -16,7 +16,7 @@ test('Managed sign-in uses the published relay, retries fresh links after Retry-
     const captured = await r.db.prepare('SELECT * FROM test_mail ORDER BY id DESC LIMIT 1').first();
     assert.equal(captured.url, relayUrl);
     assert.equal(captured.method, 'POST');
-    assert.equal(captured.redirect, 'error');
+    assert.equal(captured.redirect, 'manual');
     assert.equal(captured.authorization, `Bearer ${relayKey}`);
     assert.equal(captured.content_type, 'application/json');
     const body = JSON.parse(captured.body);

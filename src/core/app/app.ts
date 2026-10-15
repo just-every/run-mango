@@ -119,7 +119,7 @@ function audienceDependencies(
               },
           callbackUrl: new URL('/webhooks/mail/resend', platform.config.publicBaseUrl).toString(),
         };
-        const adapter = platform.mailer;
+        const adapter = platform.confirmationMailer ?? platform.mailer;
         const provider = (await adapter.capabilities()).provider ?? (platform.config.mailProvider ?? 'unreported');
         const costContext = {
           key: `handoff:${provider}:${request.idempotencyKey}:attempt:${crypto.randomUUID()}`, provider, operation: 'confirmation-handoff' as const,
@@ -196,7 +196,9 @@ export function createAppServices(platform: Platform): AppServices {
     createCampaignRepository(database),
     createCampaignCompositionRepository(database),
     storeService,
-    { smsEnabled: platform.config.modules.sms.enabled, smsPreview:(campaignId,revisionId)=>smsReviewPreview(lifecycleRuntime!,campaignId,revisionId) },
+    { smsEnabled: platform.config.modules.sms.enabled, commerceEnabled:platform.config.modules.commerce.enabled, aiEnabled:platform.config.modules.ai.enabled,
+      marketingConnectionRequired:platform.config.authMail !== undefined && platform.config.mailProvider === 'rer',
+      smsPreview:(campaignId,revisionId)=>smsReviewPreview(lifecycleRuntime!,campaignId,revisionId) },
   );
   const insightsService = createInsightsService(createInsightsRepository(database), platform.config.deliverabilityReportingWindowDays);
 
@@ -252,10 +254,10 @@ export function createApp(
     // request pauses; only the separate authentication/transfer custody runs.
     if (environment.MANGO_RESTORE_MODE === '1'
       && !path.startsWith('/auth/') && !path.startsWith('/api/portability/')
-      && path !== '/__dev/outbox' && !['/health', '/api/operator', '/api/auth/magic-link'].includes(path)) {
+      && !['/health', '/api/operator', '/api/auth/magic-link'].includes(path)) {
       return context.json({ error: 'restore_in_progress' }, 503);
     }
-    if(!path.startsWith('/api/')&&!path.startsWith('/auth/')&&!path.startsWith('/app')&&!['/health','/signin','/__dev/key','/__dev/outbox'].includes(path)&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
+    if(!path.startsWith('/api/')&&!path.startsWith('/auth/')&&!path.startsWith('/app')&&!['/health','/signin','/__dev/key'].includes(path)&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
     await next();
   });
   app.use('*', async (context, next) => {

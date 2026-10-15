@@ -121,11 +121,13 @@ export function registerLifecycleHttpRoutes(
   });
 
   app.post('/webhooks/mail/*', async (context: any) => {
-    await delivery.handleWebhook('email', context.req.raw);
+    const result = await delivery.handleWebhook('email', context.req.raw);
+    if (result.kind === 'unavailable') return context.json({ error: 'mail_webhook_unavailable' }, 404);
     return context.body(null, 204);
   });
   app.post('/webhooks/sms/*', async (context: any) => {
-    await delivery.handleWebhook('sms', context.req.raw);
+    const result = await delivery.handleWebhook('sms', context.req.raw);
+    if (result.kind === 'unavailable') return context.json({ error: 'sms_webhook_unavailable' }, 404);
     return context.body(null, 204);
   });
 }

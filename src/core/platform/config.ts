@@ -134,6 +134,12 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
   const mailFromField = mailProvider === 'rer' || environment.MAIL_FROM?.trim() ? 'MAIL_FROM' : 'MAIL_AUTH_FROM';
   const mailAuthFrom = required(environment, mailFromField);
   const mailRelayUrl = mailProvider === 'rer' ? requiredUrl(environment, 'MAIL_RELAY_URL').href : undefined;
+  const marketingInputs = ['MARKETING_MAIL_PROVIDER', 'MARKETING_MAIL_API_KEY', 'MARKETING_MAIL_WEBHOOK_SECRET', 'MARKETING_MAIL_WEBHOOK_ID'] as const;
+  const hasMarketing = marketingInputs.some(name => environment[name]?.trim());
+  if (hasMarketing && mailProvider !== 'rer') throw new Error('MARKETING_MAIL_* is a separate connection for MAIL_PROVIDER=rer. Direct-provider installations use MAIL_* instead.');
+  const marketingProvider = hasMarketing ? required(environment, 'MARKETING_MAIL_PROVIDER') : undefined;
+  if (marketingProvider && !['sendgrid', 'resend'].includes(marketingProvider)) throw new Error('MARKETING_MAIL_PROVIDER must be sendgrid or resend.');
+  const effectiveMailProvider = marketingProvider ?? mailProvider;
   const modules: AppConfig['modules'] = {
     commerce: optionalModule(environment, 'Commerce', optionalModuleInputs.commerce, () => ({
       storeUrl: requiredUrl(environment, 'COMMERCE_STORE_URL'),
@@ -159,7 +165,8 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
   return {
     sessionSigningKey: required(environment, 'SESSION_SIGNING_KEY'),
     authSetupToken: environment.AUTH_SETUP_TOKEN,
-    mailProvider: mailProvider as 'rer' | 'resend' | 'sendgrid',
+    mailProvider: effectiveMailProvider as 'rer' | 'resend' | 'sendgrid',
+    ...(mailProvider === 'rer' ? {authMail: {provider: 'rer' as const, apiKey: required(environment, mailKeyField), relayUrl: mailRelayUrl!}} : {}),
     mailRelayUrl,
     mailboxReceiptUrl,
     mailboxReceiptRecipient,
@@ -167,11 +174,11 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     initialOperatorEmails: emails(required(environment, 'INITIAL_OPERATOR_EMAILS'), 'INITIAL_OPERATOR_EMAILS'),
     contactHashSalt: required(environment, 'CONTACT_HASH_SALT'),
     modules,
-    mailProviderApiKey: required(environment, mailKeyField),
+    mailProviderApiKey: required(environment, marketingProvider ? 'MARKETING_MAIL_API_KEY' : mailKeyField),
     mailAuthFrom,
     // SendGrid's signed Event Webhook is optional: without it delivery shows Accepted, never Delivered.
-    mailWebhookSecret: mailProvider === 'resend' ? required(environment, 'MAIL_WEBHOOK_SECRET') : environment.MAIL_WEBHOOK_SECRET?.trim() ?? '',
-    mailWebhookId: mailProvider === 'resend' ? required(environment, 'MAIL_WEBHOOK_ID') : environment.MAIL_WEBHOOK_ID?.trim() ?? '',
+    mailWebhookSecret: effectiveMailProvider === 'resend' ? required(environment, marketingProvider ? 'MARKETING_MAIL_WEBHOOK_SECRET' : 'MAIL_WEBHOOK_SECRET') : (marketingProvider ? environment.MARKETING_MAIL_WEBHOOK_SECRET : environment.MAIL_WEBHOOK_SECRET)?.trim() ?? '',
+    mailWebhookId: effectiveMailProvider === 'resend' ? required(environment, marketingProvider ? 'MARKETING_MAIL_WEBHOOK_ID' : 'MAIL_WEBHOOK_ID') : (marketingProvider ? environment.MARKETING_MAIL_WEBHOOK_ID : environment.MAIL_WEBHOOK_ID)?.trim() ?? '',
     publicBaseUrl: requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL'),
     appVersion: required(environment, 'MANGO_APP_VERSION'),
     allowedLinkHosts: configuredLinkHosts(environment.MANGO_ALLOWED_LINK_HOSTS, requiredUrl(environment, 'MANGO_PUBLIC_BASE_URL')),

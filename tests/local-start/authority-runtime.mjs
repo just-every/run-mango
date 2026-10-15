@@ -9,7 +9,7 @@ import { freePort } from '../support/free-port.mjs';
 import { runCommand } from '../../scripts/installer/run-command.mjs';
 import { localVariables } from '../../scripts/installer/environment.mjs';
 import { startNativeDev } from './native-dev.mjs';
-import { openGate, rememberKey } from './dev-gate.mjs';
+import { enterOwner, rememberKey } from './dev-gate.mjs';
 
 // Real copied Mango entrypoints and persistent D1. Dependencies are reused from
 // this verified source tree; the separate fresh-start journey installs its own.
@@ -62,17 +62,7 @@ export async function authorityRuntime() {
 }
 
 export async function signIn(page, url) {
-  await openGate(page.context(), url);
-  await page.goto(url + '/signin');
-  await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
-  await page.getByLabel('Email address').fill('owner@example.test');
-  await page.getByRole('button', { name: 'Email sign-in link' }).click();
-  await page.getByRole('status').filter({ hasText: 'Open it and press Confirm' }).waitFor();
-  await page.getByRole('link', { name: 'Open the development outbox' }).click();
-  await page.getByRole('link', { name: 'Read message' }).first().click();
-  await page.getByRole('link', { name: 'Open this link' }).click();
-  await page.getByRole('button', { name: /Confirm/ }).click();
-  await page.waitForURL(current => ['/setup', '/app'].includes(current.pathname));
+  await enterOwner(page, url);
   if (new URL(page.url()).pathname === '/setup') await finishSetup(page);
   await page.waitForURL(url + '/app');
 }

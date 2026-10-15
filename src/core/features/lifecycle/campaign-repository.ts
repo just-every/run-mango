@@ -208,6 +208,7 @@ export function createCampaignLifecycleRepository(database: Database) {
       revisionDigest: string;
       senderLease?: SenderLease;
       smsPolicy?:{digest:string;sender:string;json:string};
+      openTracking: {enabled:boolean;generation:number};
       operatorId: string;
       idempotencyKey: string;
       candidates: FrozenCandidate[];
@@ -258,6 +259,8 @@ export function createCampaignLifecycleRepository(database: Database) {
              WHERE r.id = ? AND r.campaign_id = ? AND r.state = 'draft' AND r.updated_at = ?
                AND c.updated_at = ? AND ${replaceGuard} AND ${senderGuard}
                AND EXISTS(SELECT 1 FROM audience_source_authority WHERE id=1 AND generation=?)
+               AND COALESCE((SELECT enabled FROM open_tracking_settings WHERE id=1),0)=?
+               AND COALESCE((SELECT generation FROM open_tracking_settings WHERE id=1),0)=?
                AND ${needsSender?reputationGuard('r',input.reputationSince??nowMs-30*86400000):'1'}
                AND ${needsSender?providerHoldGuard(input.mailProvider??'resend','r'):'1'}
                AND ${needsSms?providerHoldGuard('mobile-message','r',"'sms'"):'1'}
@@ -279,6 +282,8 @@ export function createCampaignLifecycleRepository(database: Database) {
           snapshot.campaign.updatedAt.getTime(),
           ...senderValues,
           input.sourceGeneration??null,
+          Number(input.openTracking.enabled),
+          input.openTracking.generation,
           Math.max(nowMs,authorityTime),
         ),
       );

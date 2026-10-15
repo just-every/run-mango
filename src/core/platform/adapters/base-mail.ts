@@ -9,12 +9,15 @@ import type { AppConfig } from '@/core/shared/platform';
 import type { Database } from '@/core/platform/db/client';
 import { prepareAuthMailCost } from '@/core/features/auth/mail-cost';
 
-export function createBaseMailSender(config: Pick<AppConfig, 'mailProvider' | 'mailProviderApiKey' | 'mailRelayUrl' | 'emailHandoffsPerMinute' | 'deliveryPolicies'>, database: Pick<Database, '$client'>): MailSender {
+export function createBaseMailSender(config: Pick<AppConfig, 'authMail' | 'mailProvider' | 'mailProviderApiKey' | 'mailRelayUrl' | 'emailHandoffsPerMinute' | 'deliveryPolicies'>, database: Pick<Database, '$client'>): MailSender {
+  if (config.authMail) config = {...config, mailProvider: config.authMail.provider, mailProviderApiKey: config.authMail.apiKey, mailRelayUrl: config.authMail.relayUrl};
   let retryAfterSeconds = 0;
   const sender = createMailSender({ provider: config.mailProvider, mode: 'production', apiKey: config.mailProviderApiKey,
     ...(config.mailProvider === 'rer' ? { relayUrl: config.mailRelayUrl } : {}) }, {
     fetch: async (url: string, init: RequestInit) => {
-      const response = await fetch(url, init);
+      // Workers has no Request redirect='error'. Manual refuses to follow a
+      // relay redirect too; Base classifies a 3xx as uncertain acceptance.
+      const response = await fetch(url, config.mailProvider === 'rer' ? {...init, redirect: 'manual'} : init);
       if (response.status === 429) {
         const seconds = Number(response.headers.get('retry-after'));
         if (Number.isFinite(seconds) && seconds > 0) retryAfterSeconds = seconds;

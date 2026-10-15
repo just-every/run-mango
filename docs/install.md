@@ -12,9 +12,9 @@ rer setup --owner-email you@example.com
 rer dev
 ```
 
-`install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again keeps your existing owner and private settings, but rer 0.2.22 repeats the build and migrations, starts a temporary application and completes local owner setup without requesting a sign-in email. Authentication records, SQLite runtime files, generated build outputs, command receipts and redacted logs can change. Production builds use a separate generated Worker configuration from local dev, preview and migrations. Unchanged configuration and private settings are preserved when building or repeating a deploy dry-run, while build outputs, receipts and logs may be regenerated. Setup is not a read-only check. Opening dev’s automatic sign-in creates real authentication records. Local mail appears in the application outbox only when requested by an application flow, such as submitting the email sign-in form. Dev picks a free loopback port; use the address in its printed `RER_OPEN` link. Pass `--port PORT` or `--host HOST` to select a loopback origin explicitly. Never commit or share `.dev.vars`.
+`install` installs Mango's dependencies. `setup` builds Mango, applies the database migrations to a local database, creates you as the first owner with no sample contacts or campaigns, and writes fresh local secrets to `.dev.vars` with private permissions. It then exits with no server running. Running it again keeps your existing owner and private settings, but rer 0.2.22 repeats the build and migrations, starts a temporary application and completes local owner setup without requesting a sign-in email. Authentication records, SQLite runtime files, generated build outputs, command receipts and redacted logs can change. Production builds use a separate generated Worker configuration from local dev, preview and migrations. Unchanged configuration and private settings are preserved when building or repeating a deploy dry-run, while build outputs, receipts and logs may be regenerated. Setup is not a read-only check. Opening dev’s automatic sign-in creates real authentication records. Local development uses native identity admission, sends no sign-in email and exposes no captured-mail inbox or outbox page. Dev picks a free loopback port; use the address in its printed `RER_OPEN` link. Pass `--port PORT` or `--host HOST` to select a loopback origin explicitly. Never commit or share `.dev.vars`.
 
-`dev` starts Mango in the background, returns control to your terminal and prints `RER_READY`, `RER_SIGNED_IN` and a private `RER_OPEN` link. Open that link on this computer to enter as the owner; keep it private because it carries the checkout’s dev key. Local dev signs you in automatically; no sign-in email is needed. The first time, the link opens **Set up your sender identity**: save your business details there to enter the app. You can change them later in Settings. Local mail never leaves your computer and no mail provider is configured locally, so a local copy cannot send a real newsletter. Stop the server with `rer dev --stop`.
+`dev` starts Mango in the background, returns control to your terminal and prints `RER_READY`, `RER_SIGNED_IN` and a private `RER_OPEN` link. Open that link on this computer to enter as the owner; keep it private because it carries the checkout’s dev key. Local dev signs you in automatically; no sign-in email is needed. The first time, the link opens **Set up your sender identity**: save your business details there to enter the app. You can change them later in Settings. `RER_OPEN` is a development-key browser entry, not an emailed one-use sign-in link. Local copies do not send real newsletters; signup confirmation and invitation emails require a hosted installation with configured mail. Stop the server with `rer dev --stop`.
 
 Node may print `ExperimentalWarning: SQLite is an experimental feature and might change at any time` when rer loads Node’s built-in SQLite API for local tooling. This warning alone is not a command failure; check the command result and, for dev, wait for `RER_READY`.
 
@@ -52,7 +52,7 @@ Fill it privately with your account credentials, owner email and mail settings; 
 
 Product settings, including `MAIL_PROVIDER`, app version, timing and rate limits, live in `deploy.json` `vars`. Change those settings there and deploy the change.
 
-Managed hosting includes sign-in and subscription confirmation mail without a provider account or your own mail key. RER fills and hides the mail connection during Configure. Newsletter sending still requires a verified business sender, reply-to and unsubscribe headers, and delivery evidence from an own-provider connection; the current Managed relay does not provide these newsletter features.
+Managed hosting includes sign-in and subscription-confirmation mail without a provider account or your own mail key. RER supplies the transactional relay connection during Configure. For newsletters, separately configure your own SendGrid or Resend connection with `MARKETING_MAIL_PROVIDER` and private `MARKETING_MAIL_API_KEY`. With SendGrid, `MARKETING_MAIL_WEBHOOK_SECRET` is optional; with Resend, both `MARKETING_MAIL_WEBHOOK_SECRET` and `MARKETING_MAIL_WEBHOOK_ID` are required. The saved verified business sender, reply-to and unsubscribe requirements still apply. Without the marketing connection newsletter approval stays blocked; the RER relay remains responsible for sign-in and subscription confirmations.
 
 For Free and Assisted hosting, SendGrid needs only its API key (`MAIL_PROVIDER_API_KEY`) and a verified sign-in sender (`MAIL_AUTH_FROM`). Configure uses the shared names `MAIL_API_KEY` and `MAIL_FROM`; existing deployments can keep the legacy names in the recipe above. Leave `MAIL_WEBHOOK_SECRET` and `MAIL_WEBHOOK_ID` empty if you have no signed Event Webhook: Mango deploys and sends, and each send shows **Accepted** (SendGrid took it). To see **Delivered**, bounces and complaints, add a webhook later; see [Add a SendGrid event webhook](#add-a-sendgrid-event-webhook). Resend needs both: `MAIL_WEBHOOK_SECRET` is its Svix signing secret and `MAIL_WEBHOOK_ID` its webhook ID.
 
@@ -80,8 +80,12 @@ Keep your private inputs, deployment receipt and data backups. Load `.rer/hosted
 
 ```bash
 git pull --ff-only
+rer install
+rer build
 rer deploy --environment "$MANGO_DEPLOY_ENV"
 ```
+
+After upgrading from 0.1.0, run `rer build` before making a fresh export. Add each website that embeds your signup form under Audience → Allowed embed origins: migration 0057 blocks existing iframes until allowed.
 
 Use the same environment as the first deployment. rer installs updated locked dependencies and preserves the existing owner. Check health and email sign-in afterwards.
 
@@ -95,15 +99,9 @@ rer deploy --environment "$MANGO_DEPLOY_ENV" --remove --yes
 
 rer reads back that each resource is gone and touches nothing else in your account. Export your data first if you want to keep it; removal deletes it.
 
-### Sign in as the owner without email
+### If sign-in email does not arrive
 
-If sign-in email does not arrive, or the owner email was mistyped, `rer signin` prints a one-time sign-in link for the recorded owner, using the same Cloudflare credentials that deployed it:
-
-```bash
-rer signin --environment "$MANGO_DEPLOY_ENV"
-```
-
-The link works once, within 15 minutes, and its use is recorded in the owner's audit log. Once signed in you can correct the email in Settings.
+Check the deployment’s mail connection in Configure. For Managed hosting, sign-in uses the RER transactional relay; your separate newsletter provider does not replace it. For Free and Assisted hosting, check the configured provider credential, verified sign-in sender and provider errors. Correct the connection, deploy the changes if needed, then request a fresh email from `/signin`. Local access uses `rer dev` and its private `RER_OPEN` development entry without email.
 
 ### Verify your sender
 
@@ -158,20 +156,20 @@ Local checks and a deploy do not prove that mail works. Continue with [Team and 
 Delivery status reads **Accepted** until SendGrid's signed Event Webhook reports back. To add one:
 
 1. In SendGrid, open **Settings → Mail Settings → Event Webhooks**, create a webhook with the URL `https://<your-deployment>/webhooks/mail/sendgrid`, select the delivery, bounce, dropped, deferred, spam report and unsubscribe events, and turn on **Signed Event Webhook**.
-2. Copy its **verification key** (the public key) into `MAIL_WEBHOOK_SECRET` in `.rer/hosted.env`.
+2. Copy its **verification key** (the public key) into `MAIL_WEBHOOK_SECRET` in `.rer/hosted.env`, or `MARKETING_MAIL_WEBHOOK_SECRET` for the separate Managed newsletter connection.
 3. Load `.rer/hosted.env` and set the secret on the running Worker without a rebuild:
 
 ```bash
 rer deploy --environment "$MANGO_DEPLOY_ENV" --set-secret MAIL_WEBHOOK_SECRET
 ```
 
-New sends then show **Delivered**, bounced and complained separately. A SendGrid account has a limited number of webhooks; if they are all in use, see the next section to reuse one.
+For the separate Managed marketing connection, set `MARKETING_MAIL_WEBHOOK_SECRET` in that command instead. New sends then show **Delivered**, bounced and complained separately. A SendGrid account has a limited number of webhooks; if they are all in use, see the next section to reuse one.
 
 ## Use an existing signed event receiver
 
 For SendGrid delivery reports, use the provider's signed Event Webhook directly at `/webhooks/mail/sendgrid`, or have an existing signed receiver forward the whole request there. Transparent forwarding can reuse an existing hook without another webhook slot. First establish that the receiver permits forwarding, receives the required event types and has an appropriate account scope; Mango cannot discover these permissions for you.
 
-Configure `MAIL_WEBHOOK_SECRET` with that Event Webhook's real public verification key. The path and `MAIL_WEBHOOK_ID` do not authenticate SendGrid events. Forward the original body bytes and both `X-Twilio-Email-Event-Webhook-Signature` and `X-Twilio-Email-Event-Webhook-Timestamp` headers unchanged. Do not parse and re-encode JSON, split or filter batches, replace timestamps, or sign with a relay key. Mango verifies the exact bytes before decoding the event JSON. The original timestamp must still be within five minutes; delayed forwarding does not relax that check. A `204` acknowledges completed ingestion in Mango; reliable forwarding and acknowledgement handling remain the receiver's responsibility.
+Configure `MAIL_WEBHOOK_SECRET` (or `MARKETING_MAIL_WEBHOOK_SECRET` for the separate Managed marketing connection) with that Event Webhook’s real public verification key. The path and `MAIL_WEBHOOK_ID` do not authenticate SendGrid events. Forward the original body bytes and both `X-Twilio-Email-Event-Webhook-Signature` and `X-Twilio-Email-Event-Webhook-Timestamp` headers unchanged. Do not parse and re-encode JSON, split or filter batches, replace timestamps, or sign with a relay key. Mango verifies the exact bytes before decoding the event JSON. The original timestamp must still be within five minutes; delayed forwarding does not relax that check. A `204` acknowledges completed ingestion in Mango; reliable forwarding and acknowledgement handling remain the receiver's responsibility.
 
 A whole batch may include other applications' addresses. Mango retains unmatched facts and applies valid address-level complaints, suppressions and hard bounces even without a matching Mango send. Choose a trusted event/account scope deliberately. Filtering the batch at the relay invalidates its signature. An unsigned or OAuth-only existing hook does not satisfy this verifier. See [SendGrid Event Webhook security](https://www.twilio.com/docs/sendgrid/for-developers/tracking-events/getting-started-event-webhook-security-features) and [Delivery reports](./delivery-reports.md).
 

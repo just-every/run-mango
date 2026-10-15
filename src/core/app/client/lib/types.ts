@@ -199,5 +199,5 @@ export type Insight = {
 };
 
 export type CampaignListEntry = Campaign & { name:string|null; channels:Channel[]; audienceSummary:string; nextScheduledAt:string|null; lastOutcomeAt:string|null; lastOutcome:string|null; lastSkipReason:string|null };
-export type CampaignCollection = { campaigns:CampaignListEntry[]; total:number; smsEnabled:boolean; timezone:string;
+export type CampaignCollection = { campaigns:CampaignListEntry[]; total:number; smsEnabled:boolean; commerceEnabled:boolean; aiEnabled:boolean; marketingConnectionRequired:boolean; timezone:string;
   counts:{allStates:number;allChannels:number;states:Record<string,number>;channels:Record<Channel,number>} };

@@ -2,7 +2,7 @@
 
 Mango is a self-hosted newsletter desk. You run it yourself: on your own computer to look around, and on your own Cloudflare account to send real mail. A person on your team writes each issue, a person approves one exact saved version of it, and only then does Mango send anything.
 
-Mango 0.1.0 is a newsletter release candidate. This documentation describes what the code does today, including the parts that are not finished (see "What Mango does not claim" below).
+Mango 0.2.0 is a newsletter release candidate. This documentation describes what the code does today, including the parts that are not finished (see "What Mango does not claim" below).
 
 ## How a newsletter moves through Mango
 
@@ -22,7 +22,7 @@ Mango 0.1.0 is a newsletter release candidate. This documentation describes what
 
 ## What you need
 
-To try it locally, install Node 22 or later, then rer, and run the commands in the install guide. Pinned rer 0.2.20 then manages this project's exact Node, pnpm and the locked dependencies. Signup works locally too: its confirmation lands in the local outbox. Local mail stays on your computer, so a local copy can write drafts, import contacts and show the signup page, but it cannot send real newsletters.
+To try it locally, install Node 22 or later, then rer, and run the commands in the install guide. Pinned rer 0.2.22 then manages this project's exact Node, pnpm and the locked dependencies. Open the private `RER_OPEN` development entry in your browser to start a native local owner session without email. This entry carries a private dev key; it is not an emailed one-use sign-in link. No captured-mail page is exposed. A local copy can write drafts, import contacts and show the signup page, but confirmation email requires a hosted installation with configured mail and local copies cannot send real newsletters.
 
 To send real newsletters you need:
 
@@ -30,6 +30,10 @@ To send real newsletters you need:
 - an account with a mail provider, SendGrid or Resend, with a sending domain you can verify;
 - a physical postal address, which every email carries in its footer;
 - a public HTTPS address for the deployment.
+
+Managed hosting supplies sign-in and subscription-confirmation mail through Run Edit Run. Sending newsletters still requires your own separate SendGrid or Resend marketing connection and verified business sender.
+
+If upgrading an existing installation, back up first and run `rer build` before making a fresh post-upgrade export. Add each website that embeds your signup form under Audience → Allowed embed origins; existing forms in iframes stay blocked until you allow their origins.
 
 Mango also has optional commerce, SMS and AI modules. They are off by default and these docs do not cover them.
 

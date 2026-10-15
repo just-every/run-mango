@@ -25,7 +25,7 @@ import type { Challenge } from '../../src/core/features/sender-verification/type
 import { loadSenderSettings } from '../../src/core/features/settings/sender-persistence';
 
 type Bindings = LocalAppBindings & { GO_LIVE_EDGE_ORIGIN: string; GO_LIVE_WEBHOOK_KEY: string; GO_LIVE_PUBLIC_ORIGIN: string;
-  GO_LIVE_PROVIDER_KEY: string; GO_LIVE_DKIM_KEY: string; MANGO_RESTORE_MODE?: string; GO_LIVE_COMMERCE?: string; GO_LIVE_SMS?: string; GO_LIVE_SMS_POLICY_AT?: string; GO_LIVE_MAIL_PROVIDER?: string; GO_LIVE_RESEND_COVERAGE?: string; GO_LIVE_PARALLEL_JOBS?: LocalAppBindings['MANGO_JOBS'] };
+  GO_LIVE_PROVIDER_KEY: string; GO_LIVE_DKIM_KEY: string; GO_LIVE_MANAGED?: string; MANGO_RESTORE_MODE?: string; GO_LIVE_COMMERCE?: string; GO_LIVE_SMS?: string; GO_LIVE_SMS_POLICY_AT?: string; GO_LIVE_MAIL_PROVIDER?: string; GO_LIVE_RESEND_COVERAGE?: string; GO_LIVE_PARALLEL_JOBS?: LocalAppBindings['MANGO_JOBS'] };
 
 // Observations only: each count is recorded after the actual production consumer returns.
 const completedQueues=new Map<string,string[]>();
@@ -34,7 +34,7 @@ let edge = '';
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const request = new Request(input, init), url = new URL(request.url);
   if (['127.0.0.1', 'localhost'].includes(url.hostname)) return network(request);
-  if (!['api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test'].includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
+  if (!['relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test'].includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
   const headers = new Headers(request.headers); headers.set('X-Edge-Original-Url', url.href);
   return network(new URL(url.pathname + url.search, edge), { method: request.method, headers,
     body: ['GET', 'HEAD'].includes(request.method) ? undefined : await request.arrayBuffer(), signal: request.signal });
@@ -53,8 +53,8 @@ function receiver(bindings: Bindings) {
 
 async function compose(bindings: Bindings) {
   edge = bindings.GO_LIVE_EDGE_ORIGIN;
-  const platform = createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
-  Object.assign(platform.config, { mailProvider: 'sendgrid', mailProviderApiKey: bindings.GO_LIVE_PROVIDER_KEY,
+  const platform = bindings.GO_LIVE_MANAGED ? createProductionPlatform(productionBindings(bindings)) : createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
+  if (!bindings.GO_LIVE_MANAGED) Object.assign(platform.config, { mailProvider: 'sendgrid', mailProviderApiKey: bindings.GO_LIVE_PROVIDER_KEY,
     mailWebhookSecret: bindings.GO_LIVE_WEBHOOK_KEY, publicBaseUrl: new URL(bindings.GO_LIVE_PUBLIC_ORIGIN),
     mailboxReceiptUrl: receiptUrl, mailboxReceiptRecipient: receiptRecipient,
     emailHandoffsPerMinute: 50, testEmailAllowlist: ['tester@example.test', 'receiver@example.test'] });
@@ -76,6 +76,7 @@ async function compose(bindings: Bindings) {
   }
   await loadSenderSettings(platform);
   const verification = createSenderVerification({ database: platform.database, config: platform.config, receiver: receiver(bindings) });
+  if (bindings.GO_LIVE_MANAGED === 'none') return {platform, verification};
   const mailer=platform.config.mailProvider==='resend'
     ? createResendAdapter({apiKey:platform.config.mailProviderApiKey,webhookSecret:platform.config.mailWebhookSecret,webhookId:platform.config.mailWebhookId,verification,retentionPolicy:platform.config.deliveryPolicies?.resend})
     : createSendgridAdapter({apiKey:platform.config.mailProviderApiKey,webhookPublicKey:platform.config.mailWebhookSecret,verification});
@@ -144,6 +145,13 @@ const worker = {
     bindings={...bindings,DB:controlledDatabase(bindings.DB),MANGO_JOBS:controlledQueue(bindings.MANGO_JOBS)};
     if (new URL(request.url).pathname.startsWith('/_golive/')) return control(request, bindings);
     const { platform } = await compose(bindings);
+    if (bindings.GO_LIVE_MANAGED) {
+      // The loopback test transport represents the public HTTPS origin.
+      const url = new URL(request.url), headers = new Headers(request.headers);
+      headers.set('Host', new URL(bindings.GO_LIVE_PUBLIC_ORIGIN).host);
+      if (headers.get('Origin') === url.origin) headers.set('Origin', bindings.GO_LIVE_PUBLIC_ORIGIN);
+      request = new Request(new URL(url.pathname + url.search, bindings.GO_LIVE_PUBLIC_ORIGIN), new Request(request, {headers}));
+    }
     // Links carry the HTTPS public origin while this runtime listens on loopback, so the
     // app's origin check is trusted locally; Base's transfer handler still checks its own.
     return dispatchDocuments(request, bindings, context, platform, createApp(bindings, platform, undefined, true));

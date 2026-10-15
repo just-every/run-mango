@@ -1,33 +1,111 @@
 name: Verify
+
 on:
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      tier:
+        type: string
+        default: push
+      timeout:
+        type: number
+        default: 12
+
 permissions:
   contents: read
+
+concurrency:
+  group: seed-verify-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  verify:
-    runs-on: ubuntu-latest
-    timeout-minutes: 90
+  plan:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
-      - name: Reclaim unused hosted runner toolchain space
-        if: runner.environment == 'github-hosted' && runner.os == 'Linux'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - id: plan
+        env:
+          TIER: ${{ inputs.tier || 'push' }}
+        run: echo "matrix=$(node scripts/verification/ci.mjs --matrix "$TIER")" >> "$GITHUB_OUTPUT"
+
+  shards:
+    needs: plan
+    name: Verify / ${{ matrix.name }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.timeout || 12 }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    env:
+      CI: 'true'
+      WRANGLER_SEND_METRICS: 'false'
+      PLAYWRIGHT_SKIP_BROWSER_GC: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22.20.0'
+          package-manager-cache: false
+      - name: Check edition source lock freshness
+        if: ${{ hashFiles('edition.json', 'sources.lock.json') != '' }}
+        run: node scripts/edition-authoring/cli.mjs check
+      - run: npm install --global pnpm@10.12.4
+      - name: Cache frozen dependencies and Chromium
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: |
+            ~/.local/share/pnpm/store
+            ~/.cache/ms-playwright
+          key: seed-ubuntu24-${{ runner.arch }}-browser-${{ matrix.browser }}-${{ hashFiles('pnpm-lock.yaml', 'package.json') }}
+      - name: Install frozen dependencies and reserve native runtime disk
         shell: bash
         run: |
-          # rer dev and preview refuse to start below 15 GiB free. This disposable JavaScript job uses
-          # none of Android, .NET or Haskell; Node, browser dependencies, the checkout and caches stay intact.
-          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
-          sudo rm -rf -- /usr/local/lib/android /usr/share/dotnet /usr/local/.ghcup
-          df -h "$GITHUB_WORKSPACE" "$RUNNER_TEMP"
-      - uses: pnpm/action-setup@v4
+          # Native rer journeys require 15 GiB. Only remove .NET if needed,
+          # overlapping it with install instead of reclaiming every toolchain.
+          reclaim_pid=
+          free_kib=$(df -Pk "$GITHUB_WORKSPACE" | awk 'END { print $4 }')
+          if [ "$free_kib" -lt "$((20 * 1024 * 1024))" ]; then
+            sudo rm -rf -- /usr/share/dotnet &
+            reclaim_pid=$!
+          fi
+          pnpm install --frozen-lockfile
+          if [ -n "$reclaim_pid" ]; then wait "$reclaim_pid"; fi
+      - run: pnpm run deps
+      - name: Install Chromium and system libraries
+        if: matrix.browser
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run this shard
+        env:
+          SHARD: ${{ matrix.name }}
+          MANGO_TEST_WORK_DIR: ${{ runner.temp }}/mango-verification/${{ matrix.name }}
+        run: node scripts/verification/ci.mjs "$SHARD"
+      - name: Keep this shard's timings and diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
         with:
-          version: 10.12.4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.20.0
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile && pnpm exec rer install
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm exec rer verify
-      - run: pnpm integration:check
+          name: verify-${{ matrix.name }}
+          path: ${{ runner.temp }}/mango-verification/${{ matrix.name }}/evidence
+          if-no-files-found: ignore
+          retention-days: 7
+
+  verify:
+    needs: [plan, shards]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - name: Require every shard
+        env:
+          PLAN: ${{ needs.plan.result }}
+          SHARDS: ${{ needs.shards.result }}
+        run: test "$PLAN" = success && test "$SHARDS" = success

@@ -15,7 +15,7 @@ export function createCampaignService(
   repository: ReturnType<typeof createCampaignRepository>,
   compositionRepository: ReturnType<typeof createCampaignCompositionRepository>,
   store: ReturnType<typeof createStoreService>,
-  options: { smsEnabled: boolean; now?: () => Date; smsPreview?:(campaignId:string,revisionId:string)=>Promise<import('@/core/features/sms/review-preview').SmsReviewPreview|undefined> } = { smsEnabled: false },
+  options: { smsEnabled: boolean; commerceEnabled?: boolean; aiEnabled?: boolean; marketingConnectionRequired?: boolean; now?: () => Date; smsPreview?:(campaignId:string,revisionId:string)=>Promise<import('@/core/features/sms/review-preview').SmsReviewPreview|undefined> } = { smsEnabled: false },
 ) {
   async function campaignDetail(id: string) {
     const campaign = await repository.getCampaign(id);
@@ -78,7 +78,8 @@ export function createCampaignService(
 
     async listCampaigns(filters: CampaignFilters = {}) {
       const collection = await repository.listCampaigns(filters, options.now?.() ?? new Date());
-      return { ...collection, smsEnabled:options.smsEnabled, timezone:productConfig.storeTimezone,
+      return { ...collection, smsEnabled:options.smsEnabled, commerceEnabled:options.commerceEnabled === true, aiEnabled:options.aiEnabled === true,
+        marketingConnectionRequired:options.marketingConnectionRequired === true, timezone:productConfig.storeTimezone,
         campaigns:collection.campaigns.map(({inclusionRuleJson, exclusionRulesJson, ...campaign}) => ({...campaign,
           audienceSummary:inclusionRuleJson === null || exclusionRulesJson === null ? '' : summarizeAudienceRules(inclusionRuleJson,exclusionRulesJson),
         })),

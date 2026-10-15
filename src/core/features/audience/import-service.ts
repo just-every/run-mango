@@ -1,4 +1,5 @@
 import {audiencePreviewBudget} from './import-query-budget';
+import {sharedAudienceImport} from './import-authority';
 import {createAudienceStream,isAudienceStream,audienceStreamActions} from './import-stream';
 import {readAudiencePlan,saveAudiencePlan} from './import-plans';
 import {readImportState} from './import-state';
@@ -64,6 +65,9 @@ export function createAudienceImportService(platform: Platform) {
         const key=row.email || row.phone || String(row.ledger?.tables.contact_phones[0]?.phone_e164);
         const previous = winners.get(key);
         if(previous && previous.phone !== row.phone){previous.reason=row.reason='Duplicate identity has conflicting phone/email assignments. Resolve the identities explicitly.';continue;}
+        // Name completeness is independent of which row supplies the restrictive status.
+        // Carry it forward as each duplicate arrives, including three or more files.
+        if(previous){const name=previous.displayName.trim().length>=row.displayName.trim().length?previous.displayName:row.displayName;previous.sourceDisplayName??=previous.displayName;row.sourceDisplayName=row.displayName;previous.displayName=row.displayName=name;}
         if(previous && restrictiveRank[row.smsStatus]>restrictiveRank[previous.smsStatus]){previous.smsStatus=row.smsStatus;previous.values={...previous.values,...Object.fromEntries(Object.entries(row.values).filter(([key])=>key.startsWith('sms_')))};}
         if(previous && restrictiveRank[previous.smsStatus]>restrictiveRank[row.smsStatus]){row.smsStatus=previous.smsStatus;row.values={...row.values,...Object.fromEntries(Object.entries(previous.values).filter(([key])=>key.startsWith('sms_')))};}
         if (!previous || restrictiveRank[row.status] > restrictiveRank[previous.status]) winners.set(key,row);
@@ -154,8 +158,12 @@ export function createAudienceImportService(platform: Platform) {
       const job=await createD1ImportJob(plan,reviewed);
       return applyD1ImportBatches(job,reviewed);
     },
-    read:async(id:string,context:D1ImportContext)=>await isAudienceStream(id,context)?audienceStreamActions.read(id,context):readD1ImportJob(id,context),
+    read:async(id:string,input:D1ImportContext)=>{
+      const context=await sharedAudienceImport(id,input);
+      return await isAudienceStream(id,context)?audienceStreamActions.read(id,context):readD1ImportJob(id,context);
+    },
     resume:async(id:string,context:D1ImportContext)=>{
+      context=await sharedAudienceImport(id,context);
       await notArchive(id);
       if(await abandoning(db,id))return abandonImport(db,platform.config.contactHashSalt,id,context);
       const stream=await isAudienceStream(id,context);
@@ -163,12 +171,12 @@ export function createAudienceImportService(platform: Platform) {
       if((stream?await audienceStreamActions.read(id,context):await readD1ImportJob(id,context)).state==='undoing')return undoImport(db,platform.config.contactHashSalt,id,context);
       return stream?audienceStreamActions.resume(id,context):resumeD1Import(id,context);
     },
-    undo:async(id:string,context:D1ImportContext)=>{await notArchive(id);return undoImport(db,platform.config.contactHashSalt,id,context);},
-    abandon:async(id:string,context:D1ImportContext)=>{await notArchive(id);return abandonImport(db,platform.config.contactHashSalt,id,context);},
+    undo:async(id:string,context:D1ImportContext)=>{await notArchive(id);return undoImport(db,platform.config.contactHashSalt,id,await sharedAudienceImport(id,context));},
+    abandon:async(id:string,context:D1ImportContext)=>{await notArchive(id);return abandonImport(db,platform.config.contactHashSalt,id,await sharedAudienceImport(id,context));},
     abandonments:(ids:string[])=>abandonments(db,ids),
-    async jobs(principalId: string) {
+    async jobs() {
       // A stream is published with its page jobs, so it lists at their position.
-      return (await db.prepare("SELECT id FROM (SELECT s.id,(SELECT min(j.rowid) FROM ik_d1_stream_pages p JOIN ik_jobs j ON j.id=p.job_id WHERE p.stream_id=s.id) AS position FROM ik_d1_streams s WHERE s.destination='mango' AND s.principal_id=? AND NOT EXISTS(SELECT 1 FROM move_in_archives a WHERE a.audience_stream=s.id) UNION ALL SELECT id,rowid FROM ik_jobs WHERE destination='mango' AND principal_id=? AND NOT EXISTS(SELECT 1 FROM ik_d1_stream_origins o WHERE o.job_id=ik_jobs.id) AND NOT EXISTS(SELECT 1 FROM ik_d1_stream_pages p WHERE p.job_id=ik_jobs.id)) ORDER BY position DESC LIMIT 100").bind(principalId,principalId).all<{id:string}>()).results;
+      return (await db.prepare("SELECT id FROM (SELECT s.id,(SELECT min(j.rowid) FROM ik_d1_stream_pages p JOIN ik_jobs j ON j.id=p.job_id WHERE p.stream_id=s.id) AS position FROM ik_d1_streams s WHERE s.destination='mango' AND NOT EXISTS(SELECT 1 FROM move_in_archives a WHERE a.audience_stream=s.id) UNION ALL SELECT id,rowid FROM ik_jobs WHERE destination='mango' AND NOT EXISTS(SELECT 1 FROM ik_d1_stream_origins o WHERE o.job_id=ik_jobs.id) AND NOT EXISTS(SELECT 1 FROM ik_d1_stream_pages p WHERE p.job_id=ik_jobs.id)) ORDER BY position DESC LIMIT 100").all<{id:string}>()).results;
     },
     async exportCsv() {
       const targets=await createAudienceImportTarget(platform.config.contactHashSalt).list(db,'mango');

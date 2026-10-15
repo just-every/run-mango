@@ -1,0 +1,17 @@
+name: Nightly journeys
+
+on:
+  push:
+    tags: ['v*']
+  schedule:
+    - cron: '23 3 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    uses: ./.github/workflows/verify.yml
+    with:
+      tier: all
+      timeout: 30

@@ -67,7 +67,9 @@
         "MANGO_SMS_HANDOFFS_PER_MINUTE",
         "MANGO_RESTORE_MODE",
         "MAIL_FROM",
-        "MAIL_RELAY_URL"
+        "MAIL_RELAY_URL",
+        "MARKETING_MAIL_PROVIDER",
+        "MARKETING_MAIL_WEBHOOK_ID"
       ],
       "secretNames": [
         "SESSION_SECRET",
@@ -87,7 +89,9 @@
         "SMS_PROVIDER_API_KEY",
         "SMS_WEBHOOK_SECRET",
         "MAIL_API_KEY",
-        "MAIL_PROVIDER_API_KEY"
+        "MAIL_PROVIDER_API_KEY",
+        "MARKETING_MAIL_API_KEY",
+        "MARKETING_MAIL_WEBHOOK_SECRET"
       ],
       "healthPath": "/health",
       "migrationPrefix": "core-",

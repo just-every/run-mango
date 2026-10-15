@@ -9,6 +9,7 @@ export const receiptRecipient='receiver@example.test';
 type GoLiveBindings = LocalAppBindings & {
   GO_LIVE_PROVIDER_KEY: string;
   GO_LIVE_MAIL_PROVIDER?: string;
+  GO_LIVE_MANAGED?: string;
   GO_LIVE_RESEND_COVERAGE?: string;
   GO_LIVE_COMMERCE?: string;
   GO_LIVE_SMS?: string;
@@ -49,6 +50,15 @@ export function productionBindings(bindings: GoLiveBindings): AppBindings {
     MANGO_EMAIL_HANDOFFS_PER_MINUTE: '50',
     MANGO_DELIVERABILITY_WINDOW_DAYS: '30',
     ...resend,
+    ...(bindings.GO_LIVE_MANAGED ? {
+      MAIL_PROVIDER: 'rer' as const, MAIL_FROM: 'mango@relay.example.test', MAIL_API_KEY: 'managed-relay-test-key', MAIL_RELAY_URL: 'https://relay.example.test/mail',
+      ...(bindings.GO_LIVE_MANAGED === 'none' ? {} : {
+        MARKETING_MAIL_PROVIDER: bindings.GO_LIVE_MAIL_PROVIDER === 'resend' ? 'resend' as const : 'sendgrid' as const,
+        MARKETING_MAIL_API_KEY: resend.MAIL_PROVIDER_API_KEY ?? bindings.GO_LIVE_PROVIDER_KEY,
+        MARKETING_MAIL_WEBHOOK_SECRET: resend.MAIL_WEBHOOK_SECRET ?? bindings.GO_LIVE_WEBHOOK_KEY,
+        MARKETING_MAIL_WEBHOOK_ID: resend.MAIL_WEBHOOK_ID ?? 'go-live-webhook',
+      }),
+    } : {}),
     MANGO_DELIVERY_POLICY_JSON: JSON.stringify({...JSON.parse(sms.MANGO_DELIVERY_POLICY_JSON??'{}'),...JSON.parse(resend.MANGO_DELIVERY_POLICY_JSON??'{}')}),
   };
 }

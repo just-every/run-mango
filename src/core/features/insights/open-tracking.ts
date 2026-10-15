@@ -32,16 +32,26 @@ export function createOpenTrackingSettingsRoutes(platform:Platform) {
       const authority=await senderWriteAuthority(platform,c.req.raw,c.get('operator').id),now=Date.now();
       const guard=[authority.sessionId,authority.operatorId,authority.version,now];
       // The current native authority is fenced in the same transaction as the
-      // preference. Each change revokes old pixels, even after re-enabling.
-      const result=await db.batch([
+      // preference. Approved email keeps the setting it was approved with,
+      // including scheduled steps that have not materialized recipients yet.
+      // Each change revokes old pixels, even after re-enabling.
+      const result=await db.batch<{enabled:number}>([
         db.prepare(`INSERT INTO open_tracking_settings (id,enabled,generation,updated_at,operator_id)
           SELECT 1,?,1,?,? WHERE ${senderWriteGuard}
+          AND NOT EXISTS(SELECT 1 FROM campaigns c
+            JOIN campaign_revisions r ON r.id=c.active_revision_id AND r.state='approved'
+            JOIN campaign_steps s ON s.revision_id=r.id AND s.channel='email'
+            LEFT JOIN step_dispatches d ON d.step_id=s.id
+            WHERE c.state IN ('scheduled','dispatching','paused') AND s.send_by_at>?
+              AND (d.step_id IS NULL OR d.state<>'completed'))
           ON CONFLICT(id) DO UPDATE SET enabled=excluded.enabled,generation=open_tracking_settings.generation+1,
           updated_at=excluded.updated_at,operator_id=excluded.operator_id WHERE open_tracking_settings.enabled<>excluded.enabled`)
-          .bind(Number(body.enabled),now,authority.operatorId,...guard),
+          .bind(Number(body.enabled),now,authority.operatorId,...guard,now),
         db.prepare(`SELECT 1 AS authorized WHERE ${senderWriteGuard}`).bind(...guard),
+        db.prepare('SELECT enabled FROM open_tracking_settings WHERE id=1'),
       ]);
       if(!result[1].results.length)throw new SenderAuthorityChanged();
+      if((result[2].results[0]?.enabled===1)!==body.enabled)return c.json({error:'approved_email_pending',detail:'Finish or cancel approved email before changing open estimates.'},409);
     } catch(error) {
       return c.json({error:error instanceof SenderAuthorityChanged?'authority_changed':'open_tracking_save_failed'},error instanceof SenderAuthorityChanged?403:500);
     }

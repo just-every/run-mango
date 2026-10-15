@@ -24,7 +24,8 @@ export function CampaignsPage() {
       <div className="page-head__text"><h1>Campaigns</h1><p className="page-head__lead">Review drafts and follow approved campaigns.</p></div>
       <div className="page-head__actions"><button type="button" className="primary-action" aria-expanded={starting} aria-controls="campaign-starters" onClick={() => setStarting(!starting)}>New campaign</button></div>
     </header>
-    <NewCampaign open={starting} />
+    {data.marketingConnectionRequired ? <aside className="panel" role="status"><h2>Connect a newsletter provider</h2><p>Newsletters need your own SendGrid or Resend connection. Add the optional marketing connection in RER Configure, then verify your business sender in Settings. Managed mail handles sign-in and subscription confirmations.</p></aside> : null}
+    <NewCampaign open={starting} commerceEnabled={data.commerceEnabled} aiEnabled={data.aiEnabled} />
     <section className="campaigns-history" aria-label="Campaign history">
       {!data.total ? <EmptyState id="campaigns-empty-title" title="Nothing drafted yet" art={<CampaignsEmptyArt />}><p>No campaigns yet. Start with New campaign.</p></EmptyState> : <div className="panel campaign-list">
         <div className="campaign-filters">

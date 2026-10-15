@@ -12,6 +12,7 @@ import { evaluateApproval } from './evaluate-approval';
 import { campaignClaimProjection } from '@/core/features/campaigns/campaign-claim-projection';
 import type { LifecycleRepository } from './repository';
 import type { Channel, FrozenCandidate, LifecycleRuntime } from './types';
+import { openTrackingSettings } from '@/core/features/insights/open-tracking';
 
 export function createApprovalService(runtime: LifecycleRuntime, repository: LifecycleRepository) {
   const publicBaseUrl = runtime.platform.config.publicBaseUrl.toString().replace(/\/$/, '');
@@ -72,8 +73,10 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       if (blockers.length) return { kind: 'blocked' as const, blockers };
 
       const smsPolicy=snapshot.steps.some(step=>step.channel==='sms')?await smsPolicyAuthority(runtime.platform.config):undefined;
+      const openTracking = await openTrackingSettings(runtime.platform.database.$client);
       const revisionDigest = await digestJson({
         smsPolicy: smsPolicy?.digest,
+        openTracking,
         rendererVersion: messageRendererVersion,
         revision: snapshot.revision,
         steps: snapshot.steps,
@@ -91,6 +94,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         sourceGeneration:authority.generation,
         senderLease: checkResult.senderLease,
         smsPolicy,
+        openTracking,
         operatorId: input.operatorId,
         idempotencyKey: input.idempotencyKey,
         candidates,

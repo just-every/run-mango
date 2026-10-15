@@ -1,7 +1,7 @@
 {
   "name": "mango",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "packageManager": "pnpm@10.12.4",
   "engines": {
     "node": "22.20.0"
@@ -37,7 +37,6 @@
     "verify:app": "node scripts/verification/run.mjs",
     "reset": "rer reset",
     "release": "rer release",
-    "outbox": "rer outbox",
     "doctor": "rer doctor",
     "describe": "rer describe",
     "check": "rer check",

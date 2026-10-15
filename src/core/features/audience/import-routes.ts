@@ -50,7 +50,7 @@ export function createAudienceImportRoutes(platform: Platform) {
   });
   routes.get('/audience/imports',async context=>{
     const authority=await audienceImportContext(platform,context.get('operator').id,context.req.raw);
-    const jobs=await Promise.all((await service.jobs(context.get('operator').id)).map(job=>service.read(job.id,authority)));
+    const jobs=await Promise.all((await service.jobs()).map(job=>service.read(job.id,authority)));
     const abandoned=await service.abandonments(jobs.map(job=>job.id));
     return context.json({jobs:jobs.map(job=>({...job,...abandoned.get(job.id)}))});
   });

@@ -6,23 +6,19 @@ import { operatorAction, OperatorProofRequired, type SettingsOperator } from './
 
 export function SettingsOperators({ current }: { current: SettingsOperator }) {
   const operators = useResource<{ operators: SettingsOperator[] }>('/api/operators');
-  const authEnvironment = useResource<{ local: boolean }>('/auth/environment');
   const [email, setEmail] = useState('');
   const [removing, setRemoving] = useState<SettingsOperator>();
   const [pending, setPending] = useState(false);
   const [notice, setNotice] = useState<string>();
   const [error, setError] = useState<string>();
   const [proofRequired, setProofRequired] = useState(false);
-  const [proofSent, setProofSent] = useState(false);
 
   async function confirmAccess() {
     setPending(true);
     setError(undefined);
     setNotice(undefined);
-    setProofSent(false);
     try {
       await operatorAction('/auth/step-up', { method: 'POST', body: JSON.stringify({ action: 'owner:transfer', returnTo: '/app/settings' }) });
-      setProofSent(true);
       setNotice('Open your confirmation message in this browser and press Confirm. Then add the operator again.');
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Unable to request confirmation. Try again.');
@@ -36,7 +32,6 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
     setPending(true);
     setError(undefined);
     setProofRequired(false);
-    setProofSent(false);
     setNotice(undefined);
     try {
       const { operator } = await operatorAction<{ operator: SettingsOperator }>('/api/operators', {
@@ -59,7 +54,6 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
     setPending(true);
     setError(undefined);
     setProofRequired(false);
-    setProofSent(false);
     setNotice(undefined);
     try {
       await operatorAction(`/api/operators/${encodeURIComponent(removing.id)}`, { method: 'DELETE' });
@@ -96,7 +90,6 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
       {error ? <p className="inline-error" role="alert">{error}</p> : null}
       {proofRequired ? <button className="secondary-action" type="button" disabled={pending} onClick={() => void confirmAccess()}>Email a confirmation link</button> : null}
       {notice ? <p className="action-notice" role="status">{notice}</p> : null}
-      {proofSent && authEnvironment.data?.local ? <p><a href="/__dev/outbox">Open the development outbox</a></p> : null}
       {operators.error ? <div className="inline-error" role="alert"><p>Unable to load the operator list.</p><button className="secondary-action" onClick={() => void operators.reload()} disabled={pending}>Refresh operators</button></div> : null}
       {operators.loading ? <p className="muted-copy" role="status">Loading operators…</p> : null}
       <ul className="settings-operator-list">

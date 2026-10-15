@@ -17,6 +17,19 @@ export function resolveDeclaration(root, purpose, env = {}) {
       const present = pair.map(environment => supplied({ environment }));
       if (present.some(Boolean) && !present.every(Boolean)) throw new Error(`Configure both ${pair.join(' and ')} or leave both unset.`);
     }
+    const marketingNames = ['MARKETING_MAIL_PROVIDER', 'MARKETING_MAIL_API_KEY', 'MARKETING_MAIL_WEBHOOK_SECRET', 'MARKETING_MAIL_WEBHOOK_ID'];
+    const marketingValue = name => env[name]?.trim() || declaration.vars[name]?.trim();
+    if (marketingNames.some(name => marketingValue(name))) {
+      const marketingProvider = marketingValue('MARKETING_MAIL_PROVIDER');
+      if (!marketingProvider) throw new Error('Configure MARKETING_MAIL_PROVIDER (sendgrid or resend) or leave all marketing mail inputs unset.');
+      if (!['sendgrid', 'resend'].includes(marketingProvider)) throw new Error('MARKETING_MAIL_PROVIDER must be sendgrid or resend.');
+      const required = ['MARKETING_MAIL_API_KEY', ...(marketingProvider === 'resend' ? ['MARKETING_MAIL_WEBHOOK_SECRET', 'MARKETING_MAIL_WEBHOOK_ID'] : [])];
+      const missing = required.filter(name => !marketingValue(name));
+      if (missing.length) throw new Error(`Configure marketing mail inputs: ${missing.join(', ')}.`);
+    }
+    for (const name of ['MARKETING_MAIL_PROVIDER', 'MARKETING_MAIL_WEBHOOK_ID']) {
+      if (supplied({environment: name})) declaration.vars[name] = env[name].trim();
+    }
   }
   const provider = env.MAIL_PROVIDER?.trim() || declaration.vars.MAIL_PROVIDER;
   const managedMail = provider === 'rer';

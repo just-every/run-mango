@@ -2,11 +2,10 @@ import {expect, test} from '@playwright/test';
 import {createServer} from 'node:http';
 import {readFile, writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
-import {contract} from '../contract';
 import {authorityRuntime, signIn} from './authority-runtime.mjs';
 import {openGate} from './dev-gate.mjs';
 
-contract('MGMT-002','native owner editor mounts at 1440 and 390, refuses visitors and loses its grant on sign-out',async ({browser}) => {
+test('[MGMT-002] native owner editor mounts at 1440 and 390, refuses visitors and loses its grant on sign-out',async ({browser}) => {
   test.setTimeout(600000);
   let runtime: Awaited<ReturnType<typeof authorityRuntime>> | undefined;
   let appOrigin: string;

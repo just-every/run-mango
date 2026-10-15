@@ -13,10 +13,10 @@ type Edge = Awaited<ReturnType<typeof providerEdge>>;
 type Signer = ReturnType<typeof eventSigner>;
 
 /** One Mango installation: the Vite/D1 runtime, its owner session and the shared provider edge. */
-export async function installation(edge: Edge, signer: Signer, options: { origin?: string; providerKey?: string; token?: string; stateDirectory?: string; restore?: boolean; parallelQueue?: boolean; commerce?: boolean; sms?: boolean | 'missing-retention'; smsPolicyAt?:number; mailProvider?:'sendgrid'|'resend'; resendCoverage?:'complete'|'missing' } = {}) {
+export async function installation(edge: Edge, signer: Signer, options: { managed?: 'none' | 'connected'; origin?: string; providerKey?: string; token?: string; stateDirectory?: string; restore?: boolean; parallelQueue?: boolean; commerce?: boolean; sms?: boolean | 'missing-retention'; smsPolicyAt?:number; mailProvider?:'sendgrid'|'resend'; resendCoverage?:'complete'|'missing' } = {}) {
   const smsPolicyAt=options.smsPolicyAt??Date.now();
   const runtime = await authoringRuntime({ suite: 'go-live', fixtureWorker: 'tests/go-live/worker.ts', startupTimeout: 180000,
-    token: options.token, stateDirectory: options.stateDirectory, parallelQueue: options.parallelQueue, vars: { GO_LIVE_SMS_POLICY_AT: String(smsPolicyAt), GO_LIVE_MAIL_PROVIDER: options.mailProvider??'sendgrid', GO_LIVE_RESEND_COVERAGE: options.resendCoverage??'complete', GO_LIVE_EDGE_ORIGIN: edge.origin, GO_LIVE_WEBHOOK_KEY: signer.publicKey,
+    token: options.token, stateDirectory: options.stateDirectory, parallelQueue: options.parallelQueue, vars: { GO_LIVE_MANAGED: options.managed ?? '', GO_LIVE_SMS_POLICY_AT: String(smsPolicyAt), GO_LIVE_MAIL_PROVIDER: options.mailProvider??'sendgrid', GO_LIVE_RESEND_COVERAGE: options.resendCoverage??'complete', GO_LIVE_EDGE_ORIGIN: edge.origin, GO_LIVE_WEBHOOK_KEY: signer.publicKey,
       GO_LIVE_PUBLIC_ORIGIN: options.origin ?? publicOrigin, GO_LIVE_PROVIDER_KEY: options.providerKey ?? 'go-live-provider-key',
       GO_LIVE_COMMERCE: options.commerce ? '1' : '0', GO_LIVE_SMS: options.sms === true ? '1' : options.sms === 'missing-retention' ? 'missing-retention' : '0', GO_LIVE_DKIM_KEY: edge.dkimKey, MANGO_RESTORE_MODE: options.restore ? '1' : '0' } });
   const origin = options.origin ?? publicOrigin;
@@ -27,7 +27,7 @@ export async function installation(edge: Edge, signer: Signer, options: { origin
   };
   const rows = (sql: string) => control('/_golive/rows', { sql }) as Promise<Array<Record<string, any>>>;
   const count = async (table: string) => Number((await rows(`SELECT count(*) AS n FROM ${table}`))[0].n);
-  const open = async (email = 'owner@example.test', id = 'go-live-owner') => `operator_session_local=${(await control('/_golive/open', { email, id })).token}`;
+  const open = async (email = 'owner@example.test', id = 'go-live-owner') => `${options.managed ? '__Host-operator_session' : 'operator_session_local'}=${(await control('/_golive/open', { email, id })).token}`;
   const call = async (path: string, init: { method?: string; body?: unknown; cookie?: string; headers?: Record<string, string>; raw?: BodyInit } = {}) => fetch(runtime.url + path, {
     method: init.method ?? 'GET', redirect: 'manual', headers: { Origin: origin, ...(init.cookie ? { Cookie: init.cookie } : {}),
       ...(init.body === undefined ? {} : { 'Content-Type': 'application/json' }), ...init.headers },

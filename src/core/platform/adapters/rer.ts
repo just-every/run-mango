@@ -22,7 +22,9 @@ export function createRerAdapter(config: Pick<AppConfig, 'mailProviderApiKey' | 
       let retryAfterSeconds: number | undefined;
       const mail = createMailSender({ provider: 'rer', mode: 'production', apiKey: config.mailProviderApiKey, relayUrl: config.mailRelayUrl }, {
         fetch: async (url: string, init: RequestInit) => {
-          const response = await fetch(url, init);
+          // Workers supports manual redirects, which never forwards the relay
+          // credential to a redirect target. Base refuses the resulting 3xx.
+          const response = await fetch(url, {...init, redirect: 'manual'});
           const seconds = Number(response.headers.get('retry-after'));
           if (response.status === 429 && Number.isFinite(seconds) && seconds > 0) retryAfterSeconds = seconds;
           return response;

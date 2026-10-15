@@ -1,11 +1,10 @@
 import { expect, test } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { contract } from '../contract';
 import { authorityRuntime, signIn } from './authority-runtime.mjs';
 import { nativeDatabase, preview, seedAuthority, snapshot } from './authority-data.mjs';
 
-for (const authority of ['session', 'contact'] as const) contract('CONT-006', `legacy ${authority} authority suppressions and opt-outs survive explicit upgrade and two native credential rotations`, async ({ browser }) => {
+for (const authority of ['session', 'contact'] as const) test(`[CONT-006] legacy ${authority} authority suppressions and opt-outs survive explicit upgrade and two native credential rotations`, async ({ browser }) => {
   test.setTimeout(600000);
   const runtime = await authorityRuntime();
   const context = await browser.newContext(), page = await context.newPage();

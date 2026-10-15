@@ -3,14 +3,15 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
+import { existsSync } from 'node:fs';
+import { defineConfig, type UserConfig } from 'vite';
 import { archiveOutputGuard } from '@runeditrun/rer/archive-output';
 import { docsSite } from './src/core/features/docs/build/plugin.ts';
 import { excludeLocalVariables } from './vite/exclude-local-variables.ts';
 // Only normal app development loads the local-only entry and checkout dev key.
 // Explicit fixture/review configs and builds/preview retain their configured entry.
 const local = (name: string) => process.env[name] ? {[name]: process.env[name]} : {};
-export default defineConfig(({command, isPreview}) => {
+export default defineConfig(async ({command, isPreview}): Promise<UserConfig> => {
  const authoringConfig = process.env.MANGO_AUTHORING_TEST_CONFIG;
  const runtime = authoringConfig !== undefined ? 'authoring' : process.env.MANGO_SYNTHETIC_REVIEW === '1' ? 'review' : 'app';
  const appDev = runtime === 'app' && command === 'serve' && !isPreview;
@@ -18,6 +19,12 @@ export default defineConfig(({command, isPreview}) => {
  // Ordinary production builds use a separate config, keeping local dev and
  // migration settings untouched throughout the build.
  const productionBuild = runtime === 'app' && command === 'build' && !process.env.MANGO_PREVIEW_OUT;
+ // Export's unserved-directory check loads this config in build mode after an
+ // upgrade, before the first build has generated the production config.
+ if (productionBuild && !existsSync('wrangler.production.toml')) {
+  // @ts-expect-error The generator is a Node-only ESM build script.
+  await import('./scripts/generate-production-wrangler-config.mjs');
+ }
  // Explicit fixtures load tests/support or tests/campaign-authoring; synthetic
  // review selects tests/review/worker.ts. Their bootstrap imports the sample
  // JSON; normal app serving keeps both fixture sources closed.

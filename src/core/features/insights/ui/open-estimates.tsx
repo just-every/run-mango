@@ -9,10 +9,10 @@ export function OpenEstimates() {
   async function change(enabled:boolean) {
     setBusy(true);setFailure('');
     try {
-      const response=await requestJson('/api/insights/open-tracking',{method:'PUT',body:JSON.stringify({enabled})});
-      if(response.status!==200)throw new Error('The open tracking setting could not be saved.');
+      const response=await requestJson<{detail?:string}>('/api/insights/open-tracking',{method:'PUT',body:JSON.stringify({enabled})});
+      if(response.status!==200)throw new Error(response.data.detail??'The open tracking setting could not be saved.');
       await reload();
-    } catch {setFailure('The open tracking setting could not be saved.');} finally {setBusy(false);}
+    } catch(error) {setFailure(error instanceof Error?error.message:'The open tracking setting could not be saved.');} finally {setBusy(false);}
   }
   return <section className="panel" aria-labelledby="open-estimates-title">
     <h2 id="open-estimates-title">Privacy-sensitive open estimates</h2>
