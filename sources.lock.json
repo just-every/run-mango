@@ -5883,7 +5883,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "00bab0dc4fc78b9db1e4a07d0cb53959a3eaacc98305507a9fde9841e30c34c0",
+      "sha256": "36b32b61b6b590e88ce12ed07698c807d8a11d50b0001bdc44402a6fdb5aa62c",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
@@ -5915,7 +5915,7 @@
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
-      "sha256": "8af6f4e26255bdbd233570a750c3752721be6a24496b3739e441f5f7d70eaa6f",
+      "sha256": "774d5d2195b00417951b8c95e15e79464c5bc22fed2a88007ae0503d562507b4",
       "executable": false
     },
     "tests/campaign-results/cost-base-mail-proof.ts": {

@@ -15,7 +15,8 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await page.goto(runtime.url+'/app/campaigns');
     await expect(page.getByText('No campaigns yet. Start with New campaign.')).toBeVisible();
     await page.getByRole('button',{name:'New campaign',exact:true}).click();
-    await expect(page.getByText('Store starters are unavailable', {exact:false})).toBeVisible();
+    await expect(page.getByRole('region',{name:'Choose a campaign starter'}).getByRole('button')).toHaveCount(1);
+    await expect(page.getByRole('button',{name:'Blank newsletter',exact:true})).toBeEnabled();
     await page.getByRole('button',{name:'Blank newsletter',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Untitled campaign',exact:true})).toBeVisible();
     const campaignId=new URL(page.url()).pathname.split('/')[3];
