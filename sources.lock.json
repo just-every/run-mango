@@ -5608,7 +5608,7 @@
       "executable": false
     },
     "tests/local-start/authority-runtime.mjs": {
-      "sha256": "4a948258c20d79c8c35cb862e2956eb6fa29afa6f66b2959cee06f5e3263449c",
+      "sha256": "136fa55e019b45c7825017591a3b45fa7e5aabcf458c646ca355425edd21fe0c",
       "executable": false
     },
     "tests/local-start/authority.journey.ts": {
@@ -5996,7 +5996,7 @@
       "executable": false
     },
     "tests/support/fixture-app.ts": {
-      "sha256": "e2fb62760225b70f8d659b8de85fbe1a5a72fecd61100e23912bf6b0ee9aed29",
+      "sha256": "dd4b37b6c94ccecf488c65cbc0051a1179c33f001877fb4e8e4bc3ba435299c4",
       "executable": false
     },
     "tests/support/fixture-server.mjs": {

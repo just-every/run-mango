@@ -63,15 +63,8 @@ export async function authorityRuntime() {
 
 export async function signIn(page, url) {
   await openGate(page.context(), url);
-  await page.goto(url + '/signin');
-  await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
-  await page.getByLabel('Email address').fill('owner@example.test');
-  await page.getByRole('button', { name: 'Email sign-in link' }).click();
-  await page.getByRole('status').filter({ hasText: 'Open it and press Confirm' }).waitFor();
-  await page.getByRole('link', { name: 'Open the development outbox' }).click();
-  await page.getByRole('link', { name: 'Read message' }).first().click();
-  await page.getByRole('link', { name: 'Open this link' }).click();
-  await page.getByRole('button', { name: /Confirm/ }).click();
+  await page.goto(url + '/signin?returnTo=%2Fapp');
+  await page.getByRole('link', { name: 'Continue as owner' }).click();
   await page.waitForURL(current => ['/setup', '/app'].includes(current.pathname));
   if (new URL(page.url()).pathname === '/setup') await finishSetup(page);
   await page.waitForURL(url + '/app');
