@@ -1,3 +1,4 @@
+import { localSessionCookieName } from '../support/local-session';
 import {createRequire} from 'node:module';
 import {readFile, readdir} from 'node:fs/promises';
 import {createApp, createAppServices} from '../../src/core/app/app';
@@ -59,7 +60,7 @@ export async function decisionRuntime() {
     await synchronizeProposalProduct(services);
     const app=createApp(env,platform,undefined,true);
     const call=async(path:string,body?:unknown,authenticated=true,method=body===undefined?'GET':'POST')=>{
-      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',...(authenticated?{Cookie:`operator_session_local=${session.token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
+      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',...(authenticated?{Cookie:`${localSessionCookieName('http://127.0.0.1')}=${session.token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
       return {status:response.status,body:await response.json() as any};
     };
     return {db,platform,controls,jobs,call,close:()=>native.dispose()};

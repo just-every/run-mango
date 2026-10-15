@@ -109,7 +109,7 @@ test('[SEND-005] authenticated probes pause without recipients, obey durable cad
     await site.control('/_golive/cron');
     await expect.poll(async()=> (await site.control('/_golive/emissions')).find((item:any)=>item.command.kind==='campaign.dispatch'&&item.command.payload.revisionId===campaign.revisionId)?.completedQueues.length??0,{timeout:60000}).toBeGreaterThan(0);
     expect(await site.rows(`SELECT transport_disposition,attempt_count FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`)).toEqual([{transport_disposition:'queued',attempt_count:0}]);
-    await page.context().addCookies([{name:'operator_session_local',value:cookie.split('=')[1],url:site.runtime.url}]);
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await expect(page.locator('.step-result-state.status-pill--paused')).toBeVisible();
     await expect(page.locator('[data-disposition=queued] dd')).toHaveText('1');
