@@ -37,7 +37,6 @@
     "verify:app": "node scripts/verification/run.mjs",
     "reset": "rer reset",
     "release": "rer release",
-    "outbox": "rer outbox",
     "doctor": "rer doctor",
     "describe": "rer describe",
     "check": "rer check",
