@@ -52,10 +52,10 @@ const lifecycle=localInstaller(hooks);
 // project identity from the tracked input before the app deploy callback runs.
 function deploy() {
  const owner=ownerDeploy(declarationPaths.deploy,lifecycle);
- return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:'deploy.json'});
+ return Object.assign(context=>{resolveDeclaration(context.root,'deploy',process.env);return owner(context);},{declaration:'deploy.json',managesHostedOwner:owner.managesHostedOwner});
 }
 export const {install}=lifecycle;
-export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'rer-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',
+export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'scripts/installer/local-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',
  // The production build regenerates wrangler.toml; preview's fixed-build receipt ignores it.
  // Local dev identity: the local-only Worker entry, the build output rer build scans for the dev layer, and the kept end-to-end email-link test.
  devIdentity:{entry:'src/core/app/worker.dev.ts',output:['dist'],emailLinkTest:'tests/local-start/local.journey.ts'},localOnlyKeys:['RER_DEV_ORIGIN','RER_DEV_IDENTITY'],

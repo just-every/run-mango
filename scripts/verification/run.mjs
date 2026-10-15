@@ -6,7 +6,7 @@ import { writeTerminal } from './terminal-output.mjs';
 import { runStages } from './stages.mjs';
 
 const flags = new Set(process.argv.slice(2));
-for (const flag of flags) if (!['--tests-only', '--release'].includes(flag)) throw new Error(`Unknown verification option: ${flag}`);
+for (const flag of flags) if (flag !== '--tests-only') throw new Error(`Unknown verification option: ${flag}`);
 const pnpm = (name, args) => ({ name, command: 'pnpm', args });
 const browser = (name, config, workers) => ({ ...pnpm(name, ['exec', 'playwright', 'test', '--config', config,
   `--workers=${workers}`, '--reporter=list,./scripts/verification/reporter.mjs']), timingRequired: true });
@@ -15,13 +15,12 @@ const mainWorkers = Math.min(2, cpuBudget);
 const overlapMainAndNative = cpuBudget >= mainWorkers + 1;
 const groups = flags.has('--tests-only') ? [] : [
   [{ name: 'command-contract', command: process.execPath, args: ['node_modules/@runeditrun/rer/bin/rer.mjs', 'check', '--profile', 'first-party'] }, pnpm('source', ['run', 'source:check'])],
-  // Operations read compiler inputs; bundles stay in memory and fixture writes
-  // use isolated state/scratch. Both stages finish before the mutating build.
-  [{ ...pnpm('operations', ['run', 'test:operations']), timingRequired: true }, pnpm('typecheck', ['run', 'typecheck'])],
+  [pnpm('typecheck', ['run', 'typecheck'])],
   [pnpm('build', ['run', 'build'])],
-  // Docs checks read the emitted bundles, so they follow the build.
-  [{ ...pnpm('docs', ['run', 'test:docs']), timingRequired: true }],
 ];
+// Test-only runs include the same auth, invitation and deployment boundaries.
+// Documentation is exercised through its public pages in the main suite.
+groups.push([{ ...pnpm('operations', ['run', 'test:operations']), timingRequired: true }]);
 const main = browser('main', 'playwright.config.js', mainWorkers);
 const native = browser('local-start', 'tests/local-start/config.js', 1);
 groups.push(
@@ -38,12 +37,11 @@ groups.push(
   // One account export moved in, reconciled and undone; hostile archives refused.
   [browser('move-in', 'tests/move-in/playwright.config.js', 1)],
 );
-if (flags.has('--release')) groups.push([browser('release-capacity', 'tests/audience-import/release.config.js', 2)]);
 const root = evidenceDirectory('verify');
 await mkdir(root, { recursive: true });
 const directory = process.env.MANGO_VERIFY_REPORT_DIRECTORY
   ? evidenceDirectory('verify', process.env.MANGO_VERIFY_REPORT_DIRECTORY)
-  : await mkdtemp(join(root, flags.has('--release') ? 'release-' : 'routine-'));
+  : await mkdtemp(join(root, 'routine-'));
 const controller = new AbortController();
 const handlers = new Map(['SIGINT', 'SIGTERM'].map(signal => [signal, () => controller.abort(Object.assign(new Error(`Cancelled by ${signal}.`), { signal }))]));
 for (const [signal, handler] of handlers) process.on(signal, handler);

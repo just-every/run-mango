@@ -1,6 +1,6 @@
 # Mango operations
 
-Pinned rer **0.2.2** selects and acquires Node **22.20.0** and pnpm **10.12.4** and installs locked dependencies; neither tool needs a separate manual install. All application lifecycle commands use the installed `@runeditrun/rer` package pinned exactly to **0.2.2**; `rer` selects that checkout's CLI, and package scripts invoke the same command; start with [Run it locally](AGENTS.md#run-it-locally). `describe --json` reports verbs/flags, `check --profile first-party` validates structure without configuration, and `doctor` diagnoses tools and missing inputs without provider requests or private values.
+Pinned rer **0.2.14** selects and acquires Node **22.20.0** and pnpm **10.12.4** and installs locked dependencies; neither tool needs a separate manual install. All application lifecycle commands use the installed `@runeditrun/rer` package pinned exactly to **0.2.14**; `rer` selects that checkout's CLI, and package scripts invoke the same command; start with [Run it locally](AGENTS.md#run-it-locally). `describe --json` reports verbs/flags, `check --profile first-party` validates structure without configuration, and `doctor` diagnoses tools and missing inputs without provider requests or private values.
 
 The newsletter profile needs email only. Commerce, SMS, AI and design generation are optional: leave each disabled group absent; partial enabled groups fail with missing names. `verify` runs contract/source checks, operations tests, typecheck, production build and local browser journeys. Run affected tests while editing; CI is the complete wall. Local success does not prove hosted operation or delivery.
 
@@ -28,7 +28,7 @@ Receiver material must come from an authenticated original-message mailbox conne
 
 ## Deployment
 
-`rer deploy --environment production --dry-run` validates/builds locally without provider requests. The installed, pinned rer 0.2.2 deploy command provisions the Worker, automatically claims the first owner through native bootstrap, then removes the one-time setup token from the Worker. Repeat deployment keeps the existing owner. The following recipe supplies the actual deploy inputs; no separate owner claim command is required.
+`rer deploy --environment production --dry-run` validates/builds locally without provider requests. The installed, pinned rer 0.2.14 deploy command provisions the Worker, automatically claims the first owner through native bootstrap, then removes the one-time setup token from the Worker. Repeat deployment keeps the existing owner. The following recipe supplies the actual deploy inputs; no separate owner claim command is required.
 
 1. Create a private deployment input file once, from the repository root:
 
@@ -45,7 +45,7 @@ writeFileSync('.rer/hosted.env', Object.entries(values).map(([name, value]) => `
 NODE
 ```
 
-2. Edit `.rer/hosted.env` privately. Choose `MANGO_DEPLOY_ENV` for this installation (the generated value is `production`). Fill the account ID, scoped API token, owner email, SendGrid API key, verified sign-in sender (`MAIL_AUTH_FROM`), signed-webhook verification material (`MAIL_WEBHOOK_SECRET` and `MAIL_WEBHOOK_ID`), and comma-separated allowed link hostnames (`MANGO_ALLOWED_LINK_HOSTS`). Keep the generated authority values. Values are shell single-quoted: escape an embedded apostrophe as `'\''`. Never print this file or commit it. Sender display name, reply-to and postal address are saved in the app's sender setup after sign-in.
+2. Edit `.rer/hosted.env` privately. Choose `MANGO_DEPLOY_ENV` for this installation (the generated value is `production`). Fill the account ID, scoped API token, owner email, SendGrid API key, verified sign-in sender (`MAIL_AUTH_FROM`), signed-webhook verification material (`MAIL_WEBHOOK_SECRET`; Resend also needs `MAIL_WEBHOOK_ID`), and comma-separated allowed link hostnames (`MANGO_ALLOWED_LINK_HOSTS`). Keep the generated authority values. Values are shell single-quoted: escape an embedded apostrophe as `'\''`. Never print this file or commit it. Sender display name, reply-to and postal address are saved in the app's sender setup after sign-in.
 
    Receiver verification is optional. Leave its two lines empty to keep it off, or fill **both** `MAILBOX_RECEIPT_URL` and `MAILBOX_RECEIPT_RECIPIENT` (its diagnostic mailbox). The URL must have the form `https://<public-receiver-host>/receipts?token=<private capability>`, using the trusted connector's public DNS hostname, the exact `/receipts` path and exactly one query parameter named `token`. Replace both placeholders with the connector's actual settings; this template is not a usable endpoint. Use its nonempty private capability (at most 4096 decoded characters), URL-encoding the value so reserved characters cannot introduce extra parameters. Do not include a custom port, URL user information, a fragment or whitespace. IP addresses and local/private hostnames are unsupported. The connector must implement the supported Cloudflare Email Routing receipt semantics; a generic mailbox API URL is not sufficient. Keep the entire token-bearing URL private in this file; the deploy kit stores both receiver settings as Worker secrets. Never paste the URL into logs, screenshots, client configuration or shared reports.
 
@@ -170,3 +170,5 @@ Managed delivery uses the pinned trusted workflow's project build profile. Hoste
 ## Verification cost and release capacity
 
 See [VERIFYING.md](VERIFYING.md) for routine verification, timing artifacts and the capacity profile enforced by `rer release`. `pnpm verify:release` runs both profiles before preparing a release.
+
+Managed Configure reads `rer-setup.json` and `management/integration/deployment-spec.json` from this repository. The hosted newsletter requires a SendGrid or Resend account, its API and webhook verification keys, a verified sign-in sender address, and the allowed newsletter link hosts; Resend also requires its webhook ID. Optional module secrets stay optional. Local setup uses `scripts/installer/local-setup.json` and the development outbox without mail credentials. After changing deployment resources, migrations, defaults or hosted setup, run `rer build` then `pnpm integration:sync`; CI checks the published spec against the same Base reader used by artifact production.

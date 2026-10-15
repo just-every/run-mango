@@ -9,13 +9,18 @@
     {
       "id": "configuration",
       "label": "Installation configuration"
+    },
+    {
+      "id": "mail",
+      "label": "Newsletter mail provider",
+      "help": "Use your own SendGrid or Resend account. Sender identity is completed in Mango after claiming the owner."
     }
   ],
   "fields": [
     {
       "name": "OWNER_EMAIL",
       "label": "Owner email",
-      "help": "Local sign-in is delivered to the development outbox. No email is sent.",
+      "help": "The first owner of this hosted Mango installation.",
       "kind": "email",
       "required": true,
       "prefill": "account-email",
@@ -58,6 +63,70 @@
       "required": false,
       "help": "Optional Auth install. Leave empty to use email links.",
       "default": ""
+    },
+    {
+      "name": "MAIL_PROVIDER",
+      "label": "Mail provider",
+      "kind": "select",
+      "required": true,
+      "default": "sendgrid",
+      "options": [
+        {
+          "value": "sendgrid",
+          "label": "SendGrid"
+        },
+        {
+          "value": "resend",
+          "label": "Resend"
+        }
+      ],
+      "group": "mail"
+    },
+    {
+      "name": "MAIL_AUTH_FROM",
+      "label": "Sign-in sender email",
+      "kind": "email",
+      "required": true,
+      "help": "An address verified by your mail provider, used for owner sign-in links.",
+      "group": "mail"
+    },
+    {
+      "name": "MAIL_PROVIDER_API_KEY",
+      "label": "Mail provider API key",
+      "kind": "secret",
+      "required": true,
+      "ownerVisible": true,
+      "input": "entered",
+      "group": "mail"
+    },
+    {
+      "name": "MAIL_WEBHOOK_SECRET",
+      "label": "Mail webhook verification key",
+      "kind": "secret",
+      "required": true,
+      "ownerVisible": true,
+      "input": "entered",
+      "help": "SendGrid event webhook public key, or Resend webhook signing secret.",
+      "group": "mail"
+    },
+    {
+      "name": "MAIL_WEBHOOK_ID",
+      "label": "Resend webhook ID",
+      "kind": "text",
+      "required": true,
+      "when": {
+        "field": "MAIL_PROVIDER",
+        "equals": "resend"
+      },
+      "group": "mail"
+    },
+    {
+      "name": "MANGO_ALLOWED_LINK_HOSTS",
+      "label": "Allowed newsletter link hosts",
+      "kind": "text",
+      "required": true,
+      "help": "Comma-separated DNS host names your newsletters may link to, such as shop.example.com.",
+      "group": "mail"
     }
   ],
   "steps": [

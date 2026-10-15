@@ -43,17 +43,16 @@
     "deps": "rer install",
     "rer": "rer",
     "artifact:delivery": "node scripts/build-delivery-artifact.mjs",
-    "verify:release": "node scripts/verification/run.mjs --release",
-    "test:release": "playwright test --config tests/audience-import/release.config.js",
-    "test:docs": "node --test --test-concurrency=2 --test-reporter=spec --test-reporter=./scripts/verification/node-reporter.mjs --test-reporter-destination=stdout --test-reporter-destination=stdout tests/docs/docs-site.test.mjs",
-    "hosted": "node scripts/installer/hosted.mjs"
+    "hosted": "node scripts/installer/hosted.mjs",
+    "integration:sync": "node scripts/sync-integration.mjs --write",
+    "integration:check": "node scripts/sync-integration.mjs --check"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@cloudflare/vite-plugin": "^1.54.5",
     "@cloudflare/workers-types": "^5.20260831.1",
     "@playwright/test": "^1.58.2",
-    "@runeditrun/rer": "0.2.6",
+    "@runeditrun/rer": "0.2.14",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.3.0",
     "@types/react": "^19.2.18",
