@@ -15,7 +15,12 @@ contract('OPER-001', 'fresh install completes sender setup via the Base outbox a
     expect((await stat(join(runtime.checkout,'.dev.vars'))).mode & 0o777).toBe(0o600);
     await page.goto(runtime.url+'/setup');
     await expect(page).toHaveURL(runtime.url+'/signin?reason=session-required&returnTo=%2Fsetup');
-    // Use the ordinary sign-in message requested by the real rer dev command.
+    // Rer dev opens through dev identity; request the ordinary email-link flow
+    // explicitly so this journey still proves native confirmation and setup.
+    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
+    await page.getByLabel('Email address').fill('owner@example.test');
+    await page.getByRole('button',{name:'Email sign-in link'}).click();
+    await expect(page.getByRole('status')).toContainText('Open it and press Confirm');
     expect((await page.request.get(runtime.url+'/__dev/outbox')).status()).toBe(404);
     await openGate(context,runtime.url);
     await page.goto(runtime.url+'/__dev/outbox');

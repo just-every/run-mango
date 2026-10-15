@@ -8,7 +8,7 @@ rer setup --owner-email owner@example.test
 rer dev
 ```
 
-Wait for `RER_READY` and open the private `RER_OPEN` link on this computer: default `rer dev` prints `RER_SIGNED_IN` and opens as the owner. Keep this key-bearing link private. For ordinary email-link sign-in use `rer dev --login`, open its outbox `RER_OPEN`, choose the newest message, follow its link and press Confirm. No email is sent. First sign-in opens `/setup` to save your business sender identity. Setup exits with no server running. `rer dev` leaves the server running in the background; use the free port in its printed `RER_OPEN` link and stop it with `rer dev --stop` before verification or data operations.
+Wait for `RER_READY` and open the private `RER_OPEN` link on this computer: default `rer dev` prints `RER_SIGNED_IN` and opens as the owner. Keep this key-bearing link private. Local dev signs you in automatically; no email is sent. First sign-in opens `/setup` to save your business sender identity. Setup exits with no server running. `rer dev` leaves the server running in the background; use the free port in its printed `RER_OPEN` link and stop it with `rer dev --stop` before verification or data operations.
 
 Node may print `ExperimentalWarning: SQLite is an experimental feature and might change at any time` when rer loads Node’s built-in SQLite API for local tooling. This warning alone is not a command failure; check the command result and, for dev, wait for `RER_READY`.
 

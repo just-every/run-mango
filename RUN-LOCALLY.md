@@ -89,14 +89,13 @@ packages from its store.
 
 After `RER_READY`, a seed with dev identity prints `RER_SIGNED_IN EMAIL` and
 `RER_OPEN URL`: open that URL on this computer and the app opens signed in as
-the owner, at `/setup` until first-run is finished. Other seeds, and
-`dev --login`, print `RER_SIGN_IN URL` for the local outbox: open it, follow
-the newest ordinary sign-in link and finish first-run setup at `/setup`. Until
+the owner, at `/setup` until first-run is finished. Mango uses this automatic
+dev identity flow; no sign-in email is needed. Until
 first-run completion is stored durably, app routes send the signed-in owner to
 `/setup`; signed-out visitors sign in and return there. Once complete,
 `/setup` opens the app or settings. The local outbox sends no external email.
 
-The saved local port is used; a first setup saves the first free port from 8787. Explicit ports are decimal
+Dev selects a free local port; use the printed `RER_OPEN` address. A first setup saves the first free port from 8787. Explicit ports are decimal
 integers from 1 through 65535 and must be free; a busy requested port fails
 instead of silently moving. Only `127.0.0.1`, `localhost` and `::1` are allowed.
 Dev applies the selected host and port to both the listener and runtime bindings;
@@ -141,8 +140,8 @@ root, inspect the live queue with
 
 For the real owner mailbox, `setup` can prompt instead of receiving
 `--owner-email` on the command line. Setup builds the app, applies local
-migrations, prepares the first owner, requests an ordinary sign-in message and
-stops its temporary app before it exits. Existing owner data and private
+migrations, prepares the first owner and stops its temporary app before it
+exits. It does not request a sign-in email; dev opens signed in automatically. Existing owner data and private
 settings are preserved on a repeated setup.
 
 Dev starts the real local app with assets and HMR and prints `RER_READY URL`
@@ -153,15 +152,15 @@ real dev session, and the key is removed from the address bar and kept only as a
 host-only cookie. Treat that line as a credential and open it only on this
 computer. A dev-only badge switches between the owner, signed out and the
 seed's personas (`admin@dev.localhost` and so on). `dev --as PERSONA` starts as
-another persona or `signed-out`; `dev --login` turns dev identity off and uses
-the outbox: it prints `RER_SIGN_IN URL` and a `RER_OPEN` URL that opens that
-outbox. Choose the newest ordinary sign-in message and follow its link. No
-external email is sent. A successful sign-in consumes the link once. Seeds
-without dev identity print only `RER_SIGN_IN URL` for the local outbox.
+another persona or `signed-out`. In rer 0.2.20, the legacy `--login` flag
+uses the same automatic sign-in; it does not switch to email-link sign-in or
+open the outbox. `RER_OPEN` enters through `/__dev/key`. The `rer outbox`
+command is retired. Mango still retains its key-protected `/__dev/outbox`
+application route for locally captured messages; no external email is sent.
 
-Dev and preview are managed servers. In a terminal the first invocation stays
-active while serving; without one, `rer dev` returns once the app is ready and
-leaves it running (see the launch section above). Use `rer dev --stop` or
+Dev and preview are managed servers. `rer dev` returns once the app is ready
+and leaves it running in the background; `--foreground` keeps it attached to
+the terminal (see the launch section above). Use `rer dev --stop` or
 `rer preview --stop` to stop them; `--idle-timeout SECONDS`
 sets inactivity cleanup. Compatible repeated starts reuse the registered
 server, print readiness and exit. Preview serves fixed production output; dev

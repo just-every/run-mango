@@ -784,11 +784,11 @@
       "executable": false
     },
     "AGENTS.consumer.md": {
-      "sha256": "21f9c321ec45ea1e714569cb76e1e44631ee3ce58d9dccf5a6c6ff2ded63511d",
+      "sha256": "6c8b48233ee94c040de97a682fc315c40d999b5b2c099c9178a4b81c7e981576",
       "executable": false
     },
     "AGENTS.md": {
-      "sha256": "20ea52a09d6b58211e1fc6cf472717b9bbac5a0fde3ac342c56171d99b6da485",
+      "sha256": "ebba1e940f623a2d33b4352167963ab21c8e1cbea9b40ab3177b6a265746220c",
       "executable": false
     },
     "base-copies.json": {
@@ -860,7 +860,7 @@
       "executable": false
     },
     "docs/install.md": {
-      "sha256": "198128fda118d16d8add4dd43d511f580a70a33f5a111752588ee78b403ea0e6",
+      "sha256": "17bc03ed5a46cfae86657f456112873a99801c0dc5c9645d2bc6a775d22bef7b",
       "executable": false
     },
     "docs/introduction.md": {
@@ -908,7 +908,7 @@
       "executable": false
     },
     "HANDOVER.md": {
-      "sha256": "a5ef65cb363e1de5f2fc3dbd8cb6717e720af1665267223edf00f606aafabed4",
+      "sha256": "96f0ea69a33b1967fb2c204129420a2d2437b9ca4881d259bcc20c11ca729f7b",
       "executable": false
     },
     "LICENSE": {
@@ -1156,7 +1156,7 @@
       "executable": false
     },
     "OPERATIONS.md": {
-      "sha256": "9ff9f15737697c83a60dacc53d101d21ba5004b2da8e446eb9bc62d2a681ffb7",
+      "sha256": "1e24b9d74be12f3b7aef9fae4933f660c7035918ff7872c5b31f7c781a644a17",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -1268,7 +1268,7 @@
       "executable": false
     },
     "README.md": {
-      "sha256": "3ffc866477676c8d0e114be20dc194cdbe1d00b31618bec62639d28a81bb85df",
+      "sha256": "88d502e535bca6dfa7ec436d73b73ded65a239c72a95bce7ab91ae75542a17ca",
       "executable": false
     },
     "RELEASE-STATUS.md": {
@@ -1292,7 +1292,7 @@
       "executable": false
     },
     "RUN-LOCALLY.md": {
-      "sha256": "d96e916ca00ba8e58e1b13f271c83d58e34f8951d2d7ac36c114a6648242d389",
+      "sha256": "30fe43f9d1c44ddcb915ec51169dc1694651ceec3a46e5da3b1ae4c374eb009c",
       "executable": false
     },
     "sample-data/initial.json": {
@@ -5640,7 +5640,7 @@
       "executable": false
     },
     "tests/local-start/fresh-copy.mjs": {
-      "sha256": "3eda4068a1e1bcd67abea442024290990f1cbd61dc7ecf9b1495441d6bc2338e",
+      "sha256": "1871bfc9df421ef78bfb13495c2197e6736248e0d0870e77d04fa46a82d0a85b",
       "executable": false
     },
     "tests/local-start/legacy-authority.journey.ts": {
@@ -5648,7 +5648,7 @@
       "executable": false
     },
     "tests/local-start/local.journey.ts": {
-      "sha256": "dc50eaf91f79fe672e01c3eec869daca5ef5b16f66c7f6b47bfdfaf96582ba1c",
+      "sha256": "b555e51cf1be2e5bea4e07aa61a7819181e8b18bbfaf965feb4b10d2466509af",
       "executable": false
     },
     "tests/local-start/native-dev.mjs": {
