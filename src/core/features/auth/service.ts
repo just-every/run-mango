@@ -1,6 +1,3 @@
-// @ts-expect-error Base mail is portable ESM; its transport interface is checked at runtime.
-import { createMailSender } from '@/vendor/base/mail/index.mjs';
-import { createD1DevelopmentOutbox } from '@/vendor/base/mail/src/development/index.mjs';
 import type { InferSelectModel } from 'drizzle-orm';
 import { createOperatorAuth, createAuthHandler, AuthError, securityHeaders, type Operator } from '@/vendor/base/operator-auth/index.mjs';
 // @ts-expect-error Base's shared wire parser is portable ESM without declarations.
@@ -65,7 +62,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
   });
   function core(request: Request) {
-    return createOperatorAuth({ db, config: authConfig(request), mailSender: local || config.demo ? createMailSender({ provider: 'development', mode: 'development' }, { outbox: createD1DevelopmentOutbox({ db }) }) : createBaseMailSender(config, repository.database),
+    return createOperatorAuth({ db, config: authConfig(request), mailSender: local || config.demo ? { async send() { return { status: 'accepted' as const, provider: 'development', providerMessageId: null }; } } : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
         if (action === 'operators:role') return false;
@@ -101,7 +98,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
         await response.body?.cancel();
         const { html, headers } = await renderMessagePage(ok
           ? { title: 'Mango sign-in', heading: 'Check your sign-in message', text: 'If this address has access, open your message and press Confirm.', mark: 'stamp',
-              links: [...(local ? [{ href: '/__dev/outbox', label: 'Open the development outbox' }] : []), { href: '/signin', label: 'Return to sign-in' }] }
+              links: [{ href: '/signin', label: 'Return to sign-in' }] }
           : { title: 'Mango sign-in', heading: 'Sign-in unavailable', text: mailProblem
               ? 'Email could not be sent. Check the mail connection in RER or the operations guide, then request a new sign-in link.'
               : 'Return to sign-in and try again, or check the operations guide.', links: [{ href: '/signin', label: 'Return to sign-in' }] });

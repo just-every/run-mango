@@ -252,10 +252,10 @@ export function createApp(
     // request pauses; only the separate authentication/transfer custody runs.
     if (environment.MANGO_RESTORE_MODE === '1'
       && !path.startsWith('/auth/') && !path.startsWith('/api/portability/')
-      && path !== '/__dev/outbox' && !['/health', '/api/operator', '/api/auth/magic-link'].includes(path)) {
+      && !['/health', '/api/operator', '/api/auth/magic-link'].includes(path)) {
       return context.json({ error: 'restore_in_progress' }, 503);
     }
-    if(!path.startsWith('/api/')&&!path.startsWith('/auth/')&&!path.startsWith('/app')&&!['/health','/signin','/__dev/key','/__dev/outbox'].includes(path)&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
+    if(!path.startsWith('/api/')&&!path.startsWith('/auth/')&&!path.startsWith('/app')&&!['/health','/signin','/__dev/key'].includes(path)&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
     await next();
   });
   app.use('*', async (context, next) => {
