@@ -1,4 +1,4 @@
-import '../../modules/demo/index.mjs';
+import '../../vendor/base/demo/index.mjs';
 // Local-only Worker entry. vite.config.ts loads it only for `vite dev`; the deployed main stays worker.ts and
 // preview serves worker.local.ts, and `rer build` refuses any output that contains the dev layer. It adds dev
 // sign-in, personas and the dev badge.

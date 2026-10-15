@@ -1,44 +1,33 @@
 # Mango demo
 
-Run `rer setup --owner-email owner@example.test` once, then `rer demo`. Open its
-private `RER_OPEN` link. You are signed in to a fresh database with sample
-contacts, editable newsletter drafts, saved segments, a configured signup form
-and a completed newsletter explicitly labelled sample history. The records come
-from `sample-data/initial.json` through `src/demo.ts`; sample history is invented
-example data, not a claim of actual delivery.
+Run `rer setup --owner-email owner@example.test` once, then `rer demo`. Open
+`RER_OPEN` to enter a fresh Mango, signed in with sample contacts, editable
+newsletter drafts, saved segments, a signup form and labelled sent sample
+history. `src/demo.ts` reuses `sample-data/initial.json`. History is invented
+example data. The nav and title say **Mango Demo**; local dev says **Mango Dev**.
+There is no bar or outbox. Sign-in is one click and mail is silently suppressed.
 
-`rer demo --stop` or Ctrl-C deletes the demo state under `.rer/demo/`. Restarting
-starts afresh. Ordinary `.wrangler/state` and private settings are retained.
-The slim Demo strip shows captured mail and refused outbound requests.
+`rer demo --stop` or Ctrl-C deletes `.rer/demo/` state. A second run is fresh;
+ordinary `.wrangler/state` and private settings are retained. Base's `withDemo`
+is the first Worker import; Vite passes demo vars, uses `RER_STATE_DIR`, and
+places `demoSockets()` first. Upstream module origins are in `edition.json`.
 
-Both Worker entries import Base's `withDemo` before application code. The copied
-module's exact upstream origin is recorded in `edition.json`; its HTTP helper import points to Mango’s operator-auth copy, and the unchanged
-CSP helper is retained alongside it. Vite passes demo mode and the isolated
-state directory through and installs Base's socket guard.
+Public internet reads run for real. Newsletter links use example.com; signup
+Turnstile verification declares its POST as a public read using `fetchDemoRead`.
+Email, SMS and third-party account operations complete with demo-only provider
+success responses. Base mocks email HTTP; Mango uses `demoEffect` for SMS and
+provider-specific verification, Shopify, AI and design results. Design results
+reuse a local sample newsletter. No provider credentials are read, payloads
+captured, or messages sent. Production uses the real providers and checks.
 
-Demo configuration never reads provider credentials. All campaign email paths,
-including test sends, subscription confirmation and notices, use the development
-outbox. A capture ends with `demo_mail_captured`, a known refusal, rather than a
-claim that a provider accepted or delivered it. Sender verification and campaign
-approval remain blocked. Authentication mail also uses the outbox. SMS, Shopify,
-OpenAI and the design provider are unconfigured. Global network guards refuse
-external requests even if an adapter attempts one. Public signup verification
-uses Turnstile test credentials inside the app and its server request is refused;
-the hosted front uses separate real Turnstile credentials to admit visitors.
+Hosted visitors receive separate workerd containers with public internet
+access, a direct-mail transport denylist, a random demo cookie, Turnstile,
+per-IP limits and capacity limits. Signup forms also require that cookie.
+The intended lifetime is 60 minutes, or 15 idle minutes.
 
-The hosted demo runs a private workerd container per visitor with internet
-access disabled and a denying egress Worker. Every app path, including signup
-forms, needs that visitor's demo cookie. The host expires a visit after 60
-minutes or 15 idle minutes. rer 0.2.15 has a known platform limitation that can
-stop idle containers after about three minutes; active visits and starts are
-unaffected by that documented limitation.
-
-The manually dispatched `Run demo` workflow reads the `run-demo` environment.
-`test_only` deploys a separate host with Cloudflare's published test widget keys;
-production uses the environment's real widget keys. `test_only` plus `remove`
-removes that test deployment and reads back its absence. No deployment variable
-is needed. Never automate the production Turnstile challenge.
-
-For a manual hosted build, run `pnpm config:production` before
-`rer deploy --demo` (or its `--dry-run`). The workflow does this preparation
-automatically; it creates Mango’s separate production bundler configuration.
+The manual `Run demo` workflow reads the `run-demo` environment. `test_only`
+uses a separate host and Cloudflare's published Turnstile test keys. Production
+uses the real widget keys. `test_only` plus `remove` removes the test host and
+reads back its absence. No repository deployment variable is required. Never
+automate real Turnstile. For manual packaging, run `pnpm config:production`
+before `rer deploy --demo`; the workflow performs this preparation.

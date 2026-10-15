@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-// The local key gate: the development outbox answers only a request that holds the checkout's RER_DEV_KEY,
+// The local key gate: identity routes admit only a request that holds the checkout's RER_DEV_KEY,
 // which rer setup wrote. Journeys remember each runtime's key by its origin and open the gate in a browser
 // context the way the RER_OPEN page does (a same-origin POST that works without JavaScript).
 const keys = new Map();
@@ -16,7 +16,7 @@ export async function rememberKey(url, checkout) {
 const routed = new WeakSet();
 export async function openGate(context, url) {
   const response = await context.request.post(url + '/__dev/key', { data: { key: keys.get(url) } });
-  assert.equal(response.status(), 204, 'the key opens the outbox gate');
+  assert.equal(response.status(), 204, 'the key opens the local identity gate');
   if (routed.has(context)) return;
   routed.add(context);
   await context.route(url + '/@fs/**', route => route.continue({ headers: { ...route.request().headers(), 'x-rer-dev-key': keys.get(url) } }));
