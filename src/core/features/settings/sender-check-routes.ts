@@ -41,6 +41,7 @@ export function createSenderCheckRoutes(platform: Pick<Platform, 'senderVerifica
         links: [{ href: '/app/settings', label: 'Open Settings' }] });
     } catch (error) {
       if (error instanceof VerificationError && error.reason === 'challenge-missing') return invalidLink(context);
+      if (!(error instanceof VerificationError)) console.error('Sender check confirmation failed', error instanceof Error ? `${error.name}: ${error.message}` : 'unknown error');
       const reason = error instanceof VerificationError ? error.reason : 'verification-unavailable';
       return messagePage(context, 410, { title: 'Not confirmed', heading: 'Sender not confirmed', text: senderReasonText(reason),
         links: [{ href: '/app/settings', label: 'Open Settings' }] });

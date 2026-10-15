@@ -3420,7 +3420,7 @@
       "executable": false
     },
     "src/core/features/sender-verification/owner-confirmation.ts": {
-      "sha256": "6d65233bb8a6030463bcebba77265a6515ff339457724921a949cae950441435",
+      "sha256": "23b5bd2725d5ffe33282e817cf9fb2051a4b571f345b780ae28f054f32a59502",
       "executable": false
     },
     "src/core/features/sender-verification/qa-inbox-mime.ts": {
@@ -3436,7 +3436,7 @@
       "executable": false
     },
     "src/core/features/sender-verification/reason-text.ts": {
-      "sha256": "f1233bb7adbf6bffaa3b883ce4a9ca3ee6ae39c0a72a8f61ea4166834fcd0816",
+      "sha256": "346befb0001f3291fd38cf81b6fd6006043eb932a60b4cc94035cbb06af1f047",
       "executable": false
     },
     "src/core/features/sender-verification/receipt-configuration.ts": {
@@ -3476,7 +3476,7 @@
       "executable": false
     },
     "src/core/features/settings/sender-check-routes.ts": {
-      "sha256": "e94b14fa5e9dfaf6aab27acc6ee621d5fb2340566841f7a7542d2d754b05689f",
+      "sha256": "ac8f427ffe339724012965c5da0fba9b3f184eff443058d6ee70e12b0c48c780",
       "executable": false
     },
     "src/core/features/settings/sender-persistence.ts": {

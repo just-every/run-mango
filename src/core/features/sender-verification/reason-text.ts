@@ -20,6 +20,7 @@ const exact: Record<string, string> = {
   'dns-unavailable': 'Mango could not read public DNS for the From domain. Try again shortly.',
   'dns-records-missing': 'The From domain needs both an SPF record and a DKIM key from your mail provider.',
   'dmarc-policy-missing': 'The From domain has no DMARC record. Add one, for example: _dmarc TXT "v=DMARC1; p=none".',
+  'verification-unavailable': 'Mango could not reach your mail provider or public DNS just now. Wait a minute and try again; an unused check link still works.',
   'challenge-missing': 'This check link is not valid.',
   'challenge-expired': 'This check link has expired. Send a new check from Settings.',
   'challenge-not-sent': 'This check was not handed to the mail provider. Send a new check from Settings.',

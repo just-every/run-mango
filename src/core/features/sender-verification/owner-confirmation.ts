@@ -73,8 +73,12 @@ export function createOwnerConfirmation(input: { options: VerificationOptions; r
       if (!challenge.providerMessageId || !challenge.sentAt) throw new VerificationError('challenge-not-sent');
       const { bindingDigest, state, configuration, now } = await input.currentConfiguration();
       if (now >= challenge.expiresAt) throw new VerificationError('challenge-expired');
+      // A transient inspection failure bumps the generation without changing any evidence; it
+      // must not cancel the owner's pending link. Changed evidence, a revocation or a newer
+      // observation does.
+      const current = state.observation_id ? await repository.observation(state.observation_id) : null;
       if (bindingDigest !== challenge.bindingDigest || configuration.configurationDigest !== challenge.configurationDigest
-        || state.generation !== challenge.generation) throw new VerificationError('challenge-superseded');
+        || state.revoked_at || (current && current.observed_at >= challenge.createdAt)) throw new VerificationError('challenge-superseded');
       const authentication = { spf: true, dkim: true, dmarc: true, aligned: configuration.aligned };
       const reason = configuration.aligned ? 'owner-confirmed' : 'authentication-failed';
       const observationId = crypto.randomUUID();
