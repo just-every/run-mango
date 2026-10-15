@@ -15,7 +15,7 @@
     {
       "name": "OWNER_EMAIL",
       "label": "Owner email",
-      "help": "Local sign-in is delivered to the development outbox. No email is sent.",
+      "help": "Local sign-in is one click. No email is sent.",
       "kind": "email",
       "required": true,
       "prefill": "account-email",
