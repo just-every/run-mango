@@ -1,7 +1,7 @@
 import { smsPolicyAuthority, managedSmsText } from '@/core/features/sms/content';
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
 import { prepareTestHandoffCost, cancelHandoffCost, settleHandoffCost, settleHandoffFailure, type HandoffCostContext } from '@/core/features/insights/cost-handoff';
-import type { DeliveryRequest, ProviderHandoff } from '@/core/shared/platform';
+import { ProviderTransportError, type DeliveryRequest, type ProviderHandoff } from '@/core/shared/platform';
 import { createProposalRepository } from '@/core/features/proposals/repository';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
@@ -216,6 +216,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         if(error instanceof ProviderDeferredError) {await cancelHandoffCost(runtime.platform.database,cost.key);return {kind:'blocked' as const,detail:`Send deferred by ${error.code}; available after ${error.retryAt.toISOString()}.`};}
         try { await settleHandoffFailure(runtime.platform.database,sender,request,cost,error); }
         catch { /* The durable prepared fact retains uncertainty; preserve the transport error. */ }
+        if (error instanceof ProviderTransportError) return { kind: 'blocked' as const, detail: error.failure.detail };
         throw error;
       }
       await repository.recordTestSend(input.revisionId, input.operatorId, input.channel, destinationDigest, revisionDigest, now);
