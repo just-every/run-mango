@@ -9,7 +9,7 @@
     "artifactFile": "rer-worker-artifact.json"
   },
   "operations": {
-    "setup": "pnpm run deps",
+    "setup": "pnpm install --frozen-lockfile",
     "build": "pnpm run build",
     "verify": "pnpm run verify:managed",
     "artifact": "node scripts/build-delivery-artifact.mjs",
