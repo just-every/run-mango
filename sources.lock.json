@@ -2474,7 +2474,7 @@
       "executable": false
     },
     "src/core/features/audience/signup-security.ts": {
-      "sha256": "d4f3803d7a5c5c4df7f8183e56ba3af8dec4ad48134095ac9e6039bcfbc727f6",
+      "sha256": "146492de4545dc4385a81e0359664b886f263fabb9467eed1a7d1ab79317838c",
       "executable": false
     },
     "src/core/features/audience/signup-settings.ts": {

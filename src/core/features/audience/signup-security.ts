@@ -60,8 +60,10 @@ export async function verifySignupChallenge(platform: Platform, token: unknown, 
     });
     if (!response.ok) return false;
     const result: unknown = await response.json();
-    return Boolean(result && typeof result === 'object' && 'success' in result && result.success === true
-      && 'action' in result && result.action === 'newsletter-signup'
+    if (!result || typeof result !== 'object' || !('success' in result) || result.success !== true) return false;
+    // Demo config uses Cloudflare's published test keys, whose answer names example.com and no action.
+    if (platform.config.demo && 'metadata' in result && (result.metadata as {result_with_testing_key?: unknown} | null)?.result_with_testing_key === true) return true;
+    return Boolean('action' in result && result.action === 'newsletter-signup'
       && 'hostname' in result && result.hostname === platform.config.publicBaseUrl.hostname);
   } catch { return false; }
 }
