@@ -35,7 +35,8 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
     const bytes = await accountExport();
     await page.goto(`${site.runtime.url}/app/audience/import`);
     await page.getByLabel('Choose CSV files').setInputFiles({ name: 'account-export.zip', mimeType: 'application/zip', buffer: Buffer.from(bytes) });
-    for (const [label, value] of [['Brand or legal sender', consentEvidence.brandOrLegalSender], ['Message category', consentEvidence.messageCategory], ['Disclosed frequency', consentEvidence.frequencyDisclosure],
+    await page.getByRole('combobox', { name: 'Message category', exact: true }).selectOption(consentEvidence.messageCategory);
+    for (const [label, value] of [['Brand or legal sender', consentEvidence.brandOrLegalSender], ['Disclosed frequency', consentEvidence.frequencyDisclosure],
       ['Destination jurisdiction', consentEvidence.destinationJurisdiction], ['Consent version', consentEvidence.consentVersion], ['Original consent text', consentEvidence.consentText]]) await page.getByRole('textbox', { name: new RegExp(`^${label}`) }).fill(value);
     await screens(page, 'upload', info);
     const before = await tableCounts(site);
