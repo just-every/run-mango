@@ -1,3 +1,4 @@
+import { openPage, reloadPage } from '../support/navigation';
 import {restoreOpenEstimates} from './open-estimates-restore';
 import {expect,test} from '@playwright/test';
 import {providerEdge} from './edge';
@@ -38,11 +39,11 @@ test('[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, re
     expect(html(disabled.sends[0])).not.toContain('/o/');
     expect(await site.count('open_tracking_tokens')).toBe(0);
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
-    await page.goto(site.runtime.url+'/app/insights');
+    await openPage(page, site.runtime.url+'/app/insights');
     const toggle=page.getByRole('checkbox',{name:'Enable privacy-sensitive open estimates'});
     await expect(toggle).not.toBeChecked();await toggle.click();
     await expect.poll(async()=>(await readSettings()).enabled).toBe(true);
-    await page.reload();await expect(toggle).toBeChecked();
+    await reloadPage(page);await expect(toggle).toBeChecked();
     await page.screenshot({path:info.outputPath('open-estimates-enabled.png'),fullPage:true});
     const enabled=await letter('Optional estimates',addresses);
     const enabledSends=addresses.map(email=>enabled.sends.find(send=>send.to===email)!);

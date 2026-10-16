@@ -59,7 +59,13 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
     }
     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});
   }
-  return dispatchDocuments(request,bindings,context,platform,createApp(bindings,platform,undefined,true));
+  const app=createApp(bindings,platform,undefined,true);
+  // Fail the same resource transport for SSR reads and explicit browser reads.
+  const transport={fetch:(resource:Request,env:LocalAppBindings,ctx:ExecutionContext)=>
+    resource.headers.get('X-Test-Token')===bindings.LOCAL_BOOTSTRAP_TOKEN
+      && new URL(resource.url).pathname===resource.headers.get('X-Test-Unavailable-Resource')
+      ? new Response(null,{status:503}) : app.fetch(resource,env,ctx)};
+  return dispatchDocuments(request,bindings,context,platform,transport);
 },
 // Acknowledge probes before composing domain services, then run local design commands.
 async queue(batch,bindings:LocalAppBindings){

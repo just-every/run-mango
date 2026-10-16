@@ -3,6 +3,7 @@ import { expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { test, contract, runtime } from './runtime-fixture';
 import { fixedNow,states } from './fixtures';
+import { openPage, reloadPage } from '../support/navigation';
 async function seed(request:any,action:string) {const response=await request.post(`${runtime.url}/_results/${action}`,{headers:{'X-Test-Token':runtime.token}});expect(response.status()).toBe(200);return response.json();}
 async function login(page:any,request:any) {const {token}=await seed(request,'open');await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,domain:'127.0.0.1',path:'/'}]);await page.clock.install({time:fixedNow});}
 // WCAG 2.x contrast of an element's text on its own background, from computed styles.
@@ -24,7 +25,7 @@ for(const width of [1440,390]) {
     expect(collection.campaigns).toHaveLength(21);expect(names.every((name:string|null)=>typeof name==='string'&&name.length>0)).toBe(true);
     expect(collection.campaigns.every((campaign:any)=>campaign.name!==campaign.id)).toBe(true);
     await page.route('**/api/campaigns/*',route=>route.abort('failed'));
-    await page.goto(`${runtime.url}/app/campaigns`);
+    await openPage(page,`${runtime.url}/app/campaigns`);
     await expect(page.locator('.campaign-row')).toHaveCount(collection.campaigns.length);
     await expect(page.locator('.campaign-row strong')).toHaveText(names);
     const cancelled=page.locator('.status-pill--cancelled').first();
@@ -37,7 +38,7 @@ for(const width of [1440,390]) {
     await seed(request,'outcomes');await login(page,request);await page.setViewportSize({width,height:900});
     const raw=await seed(request,'counts');
     for(const [id,state] of [['scheduled','Scheduled'],['sending','Sending'],['mixed','Sent'],['missed','Missed'],['partial','Sent'],['cancelled','Cancelled'],['failed','Failed'],['failed-before','Failed'],['closed-partial','Sent'],['closed-fence','Sending'],['dst','Scheduled']]) {
-      await page.goto(`${runtime.url}/app/campaigns/${id}/scheduled`);
+      await openPage(page,`${runtime.url}/app/campaigns/${id}/scheduled`);
       await expect(page.getByRole('heading',{name:`Campaign ${id}`,exact:true})).toBeVisible();
       const response=await page.request.get(`${runtime.url}/api/campaigns/${id}`);expect(response.ok()).toBe(true);const detail=await response.json();
       expect(detail.results.asOf).toBe(fixedNow.toISOString());
@@ -74,12 +75,12 @@ for(const width of [1440,390]) {
       await accessible(page,width);
     }
     expect(await seed(request,'counts')).toEqual(raw);
-    await page.goto(`${runtime.url}/app/campaigns/unapproved/scheduled`);
+    await openPage(page,`${runtime.url}/app/campaigns/unapproved/scheduled`);
     await expect(page.getByText('This revision has not been approved. Its draft steps are not scheduled to send.')).toBeVisible();
     await expect(page.locator('.step-results')).toHaveCount(0);await expect(page.getByRole('link',{name:'Review and approve this draft'})).toHaveAttribute('href','/app/campaigns/unapproved/review');
     const draft=await (await page.request.get(`${runtime.url}/api/campaigns/unapproved`)).json();expect(draft.results).toBeUndefined();
     await expect(page.getByLabel('Saved audience rule',{exact:true})).toHaveText(draft.revision.audienceRule);await accessible(page,width);
-    for(const id of ['mixed','cancelled','failed']) for(const suffix of ['', '/review']) {await page.goto(`${runtime.url}/app/campaigns/${id}${suffix}`);await expect(page.getByRole('link',{name:'View schedule and results'})).toHaveAttribute('href',`/app/campaigns/${id}/scheduled`);}
+    for(const id of ['mixed','cancelled','failed']) for(const suffix of ['', '/review']) {await openPage(page,`${runtime.url}/app/campaigns/${id}${suffix}`);await expect(page.getByRole('link',{name:'View schedule and results'})).toHaveAttribute('href',`/app/campaigns/${id}/scheduled`);}
   });
   contract('RESULT-001',`every combined campaign state/channel filter, counts, history and empty state at ${width}`,async({page,request})=>{
     await seed(request,'filters');await login(page,request);await page.setViewportSize({width,height:900});
@@ -90,7 +91,7 @@ for(const width of [1440,390]) {
       expect(data.campaigns.map((campaign:any)=>campaign.id).sort()).toEqual(expected);expect(data.total).toBe(21);
       for(const value of states)expect(data.counts.states[value]).toBe(channel?2:3);
       expect(data.counts.channels.email).toBe(state?2:14);expect(data.counts.channels.sms).toBe(state?2:14);
-      await page.goto(`${runtime.url}/app/campaigns?${query}`);
+      await openPage(page,`${runtime.url}/app/campaigns?${query}`);
       await expect(page.locator('.campaign-row')).toHaveCount(expected.length);
       expect(await page.locator('.campaign-row').evaluateAll((links:HTMLAnchorElement[])=>links.map(link=>decodeURIComponent(new URL(link.href).pathname.split('/')[3])).sort())).toEqual(expected);
       await expect(page.getByLabel('State',{exact:true})).toHaveValue(state);await expect(page.getByLabel('Channel',{exact:true})).toHaveValue(channel);
@@ -99,30 +100,33 @@ for(const width of [1440,390]) {
       for(const row of await page.locator('.campaign-row').all()) {await expect(row).toHaveAttribute('href', /^\/app\/campaigns\/[^/]+(?:\/review)?$/);await expect(row.locator('strong')).toHaveText(/^Campaign /);await expect(row.locator('small')).toContainText('Australia/Brisbane');await expect(row.locator('small')).toContainText('AEST');await expect(row.locator('.campaign-row__audience')).not.toBeEmpty();}
       await accessible(page,width);
     }
-    await page.goto(`${runtime.url}/app/campaigns`);await page.getByLabel('State',{exact:true}).selectOption('scheduled');await page.getByLabel('Channel',{exact:true}).selectOption('email');
-    await expect(page).toHaveURL(/state=scheduled.*channel=email/);await page.reload();await expect(page.getByLabel('Channel',{exact:true})).toHaveValue('email');
+    await openPage(page,`${runtime.url}/app/campaigns`);await page.getByLabel('State',{exact:true}).selectOption('scheduled');await page.getByLabel('Channel',{exact:true}).selectOption('email');
+    await expect(page).toHaveURL(/state=scheduled.*channel=email/);await reloadPage(page);await expect(page.getByLabel('Channel',{exact:true})).toHaveValue('email');
+    await page.screenshot({path:test.info().outputPath(`campaign-filters-${width}.png`),fullPage:true});
     await page.goBack();await expect(page.getByLabel('State',{exact:true})).toHaveValue('scheduled');await expect(page.getByLabel('Channel',{exact:true})).toHaveValue('');
-    await seed(request,'single');await page.goto(`${runtime.url}/app/campaigns?state=completed`);await expect(page.getByText('No campaigns match these filters',{exact:true})).toBeVisible();await page.getByRole('link',{name:'Clear filters'}).click();await expect(page.locator('.campaign-row')).toHaveCount(1);
-    await seed(request,'empty');await page.reload();await expect(page.getByText('No campaigns yet. Start with New campaign.',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'New campaign',exact:true})).toBeVisible();await expect(page.getByRole('link',{name:'Clear filters'})).toHaveCount(0);await accessible(page,width);
+    await seed(request,'single');await openPage(page,`${runtime.url}/app/campaigns?state=completed`);await expect(page.getByText('No campaigns match these filters',{exact:true})).toBeVisible();await page.getByRole('link',{name:'Clear filters'}).click();await expect(page.locator('.campaign-row')).toHaveCount(1);
+    await seed(request,'empty');await reloadPage(page);await expect(page.getByText('No campaigns yet. Start with New campaign.',{exact:true})).toBeVisible();await expect(page.getByRole('button',{name:'New campaign',exact:true})).toBeVisible();await expect(page.getByRole('link',{name:'Clear filters'})).toHaveCount(0);await accessible(page,width);
   });
 }
 contract('RESULT-001','disabled SMS is excluded from filter choices and rejected by the API',async({page,request})=>{
   await seed(request,'filters');await login(page,request);
-  await page.route('**/api/campaigns',route=>{const url=new URL(route.request().url());url.searchParams.set('smsDisabled','');return route.continue({url:url.toString()});});
-  await page.goto(`${runtime.url}/app/campaigns`);await expect(page.getByLabel('Channel',{exact:true}).locator('option[value="sms"]')).toHaveCount(0);
+  await page.context().setExtraHTTPHeaders({'X-Test-Token':runtime.token,'X-Test-Sms-Disabled':'true'});
+  await openPage(page,`${runtime.url}/app/campaigns`);await expect(page.getByLabel('Channel',{exact:true}).locator('option[value="sms"]')).toHaveCount(0);
+  for(const width of [1440,390]) {await page.setViewportSize({width,height:900});await page.screenshot({path:test.info().outputPath(`sms-disabled-${width}.png`),fullPage:true});}
   expect((await page.request.get(`${runtime.url}/api/campaigns?channel=sms&smsDisabled`)).status()).toBe(400);
   expect((await page.request.get(`${runtime.url}/api/campaigns?state=made-up`)).status()).toBe(400);
 });
 contract('CAMP-009','cancel dialog contains focus, Escape cancels and returns focus; confirmed cancel retains uncertain handoffs',async({page,request})=>{
-  await seed(request,'outcomes');await login(page,request);await page.goto(`${runtime.url}/app/campaigns/sending/scheduled`);
+  await seed(request,'outcomes');await login(page,request);await openPage(page,`${runtime.url}/app/campaigns/sending/scheduled`);
   const trigger=page.getByRole('button',{name:'Cancel campaign',exact:true});await trigger.focus();await page.keyboard.press('Enter');const dialog=page.getByRole('alertdialog');await expect(dialog).toBeVisible();
+  for(const width of [1440,390]) {await page.setViewportSize({width,height:900});await page.screenshot({path:test.info().outputPath(`cancel-dialog-${width}.png`),fullPage:true});}
   for(let i=0;i<5;i++){await page.keyboard.press('Tab');expect(await dialog.evaluate(element=>element.contains(document.activeElement))).toBe(true);}
   await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);await expect(trigger).toBeFocused();
   await trigger.click();await page.getByRole('button',{name:'Confirm cancellation',exact:true}).click();await expect(page.locator('.action-notice[role="status"]')).toContainText('Campaign cancelled');await expect(trigger).toHaveCount(0);
   const detail=await (await page.request.get(`${runtime.url}/api/campaigns/sending`)).json();expect(detail.campaign.state).toBe('cancelled');expect(detail.results.steps[0].counts).toContainEqual({disposition:'skipped',reason:'campaign-cancelled',count:1});expect(detail.results.steps[0].counts).toContainEqual({disposition:'accepted',reason:null,count:1});expect(detail.results.steps[0].counts).toContainEqual({disposition:'handoff-unknown',reason:null,count:1});
 });
 contract('RESULT-001','[CAMP-002] successful queued sync and failed refresh use distinct consistent feedback',async({page,request})=>{
-  await seed(request,'presentation');await login(page,request);await page.setViewportSize({width:1440,height:900});await page.goto(`${runtime.url}/app/store`);
+  await seed(request,'presentation');await login(page,request);await page.setViewportSize({width:1440,height:900});await openPage(page,`${runtime.url}/app/store`);
   const sync=page.waitForResponse(response=>response.url().endsWith('/api/store/sync')&&response.request().method()==='POST');
   await page.getByRole('article',{name:'Customer sync'}).getByRole('button',{name:'Sync now',exact:true}).click();expect((await sync).status()).toBe(202);
   const success=page.locator('.action-notice[role="status"]');await expect(success).toBeVisible();await expect(success).not.toBeEmpty();
@@ -154,7 +158,7 @@ contract('RESULT-001','[CAMP-002] successful queued sync and failed refresh use 
   await page.getByRole('button',{name:'Refresh sync status'}).click();expect((await restoredStore).ok()).toBe(true);
   await expect(error).toHaveCount(0);await expect(page.locator('.source-status__grid')).toHaveText(sourceStatus!);
   expect(await seed(request,'jobs')).toEqual(jobs);
-  await seed(request,'outcomes');await page.goto(`${runtime.url}/app/campaigns/scheduled/scheduled`);
+  await seed(request,'outcomes');await openPage(page,`${runtime.url}/app/campaigns/scheduled/scheduled`);
   await expect(page.locator('.step-results > li')).toHaveCount(3);
   const savedCounts=await seed(request,'counts');
   const resultCounts=await page.locator('.step-results .disposition-counts').allTextContents();
@@ -169,14 +173,15 @@ contract('RESULT-001','[CAMP-002] successful queued sync and failed refresh use 
   await page.clock.runFor(20_001);expect((await restoredResults).ok()).toBe(true);await expect(resultsError).toHaveCount(0);
   await expect(page.locator('.step-results .disposition-counts')).toHaveText(resultCounts);expect(await seed(request,'counts')).toEqual(savedCounts);
   const collectionResponse=await page.request.get(`${runtime.url}/api/campaigns`);expect(collectionResponse.ok()).toBe(true);const collection=await collectionResponse.json();
-  await page.route('**/api/campaigns/scheduled',route=>route.abort('failed'));await page.goto(`${runtime.url}/app/campaigns`);
+  await page.route('**/api/campaigns/scheduled',route=>route.abort('failed'));await openPage(page,`${runtime.url}/app/campaigns`);
   await expect(page.locator('.campaign-row strong')).toHaveText(collection.campaigns.map((campaign:any)=>campaign.name ?? 'Untitled campaign'));await expect(page.getByRole('alert')).toHaveCount(0);await page.unroute('**/api/campaigns/scheduled');
-  await page.goto(`${runtime.url}/app/settings`);await page.route('**/api/operators',route=>route.abort('failed'));
-  const failedOperators=page.waitForEvent('requestfailed',{predicate:request=>new URL(request.url()).pathname==='/api/operators'});
-  await page.reload();expect((await failedOperators).failure()?.errorText).toBeTruthy();
+  await page.context().setExtraHTTPHeaders({'X-Test-Token':runtime.token,'X-Test-Unavailable-Resource':'/api/operators'});
+  await openPage(page,`${runtime.url}/app/settings`);
+  expect((await page.request.get(`${runtime.url}/api/operators`)).status()).toBe(503);
   const operatorsError=page.locator('.settings-operators .inline-error[role="alert"]');await expect(operatorsError).toBeVisible();await expect(operatorsError).not.toBeEmpty();
   await expect(page.getByRole('button',{name:'Add operator',exact:true})).toBeDisabled();
-  await page.unroute('**/api/operators');
+  for(const width of [1440,390]) {await page.setViewportSize({width,height:900});await page.screenshot({path:test.info().outputPath(`operators-unavailable-${width}.png`),fullPage:true});}
+  await page.context().setExtraHTTPHeaders({});
   const restoredOperators=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/operators');
   await page.getByRole('button',{name:'Refresh operators',exact:true}).click();const operatorsResponse=await restoredOperators;expect(operatorsResponse.ok()).toBe(true);
   const {operators}=await operatorsResponse.json();await expect(operatorsError).toHaveCount(0);

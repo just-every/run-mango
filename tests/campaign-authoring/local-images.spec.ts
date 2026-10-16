@@ -1,3 +1,4 @@
+import { openPage } from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
 import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -19,7 +20,7 @@ test('[CAMP-012] on a local copy, Insert image adds an own-origin image that sav
     const created = await (await api.post(runtime.url + '/api/campaigns', { headers, data: {} })).json();
     const seeded = await api.patch(`${runtime.url}/api/campaign-revisions/${created.revisionId}`, { headers, data: { name: 'Orchard letter', emailBody: '<p>Harvest news.</p>' } });
     expect(seeded.status(), await seeded.text()).toBe(200);
-    await page.goto(`${runtime.url}/app/campaigns/${created.campaignId}/review`);
+    await openPage(page, `${runtime.url}/app/campaigns/${created.campaignId}/review`);
 
     // A photo wider than the email is shown at the email's width, keeping its proportions.
     const image = png(800, 400, 3), hash = createHash('sha256').update(image).digest('hex');

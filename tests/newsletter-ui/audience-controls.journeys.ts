@@ -1,3 +1,4 @@
+import { openPage } from '../support/navigation';
 import {test,expect} from '@playwright/test';
 import {mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -11,7 +12,7 @@ test('AUD-001 CONT-011 operator saves, copies, edits and deletes a segment and r
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:width===390?844:1000});
     const name=`Readers ${width}`;
-    await page.goto('/app/audience');
+    await openPage(page, '/app/audience');
     await page.getByRole('button',{name:'Create segment',exact:true}).click();
     await page.getByLabel('Segment name',{exact:true}).fill(name);
     await page.getByLabel('Include 1 field').selectOption('contact:email');
@@ -26,7 +27,7 @@ test('AUD-001 CONT-011 operator saves, copies, edits and deletes a segment and r
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:join(folder,`segment-count-${width}.png`),fullPage:true});
     const saved=(await json('/api/audience/segments')).segments.find((item:any)=>item.name===name);
     const campaign=await json('/api/campaigns',{mode:'blank'});
-    await page.goto(`/app/campaigns/${campaign.campaignId}/review`);
+    await openPage(page, `/app/campaigns/${campaign.campaignId}/review`);
     await page.getByRole('combobox',{name:'Saved segment',exact:true}).selectOption(saved.id);
     await page.getByRole('button',{name:'Copy segment into draft'}).click();
     await expect(page.getByLabel('Include 1 value',{exact:true})).toHaveValue('@example.test');
@@ -35,7 +36,7 @@ test('AUD-001 CONT-011 operator saves, copies, edits and deletes a segment and r
     await page.getByRole('combobox',{name:'Saved segment',exact:true}).scrollIntoViewIfNeeded();await expectDocumentToFit(page,width);
     await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:join(folder,`segment-copied-${width}.png`),fullPage:true});
     const before=(await json(`/api/campaigns/${campaign.campaignId}/review`)).revision;
-    await page.goto('/app/audience');await page.getByRole('button',{name:`Edit ${name}`,exact:true}).click();
+    await openPage(page, '/app/audience');await page.getByRole('button',{name:`Edit ${name}`,exact:true}).click();
     await page.getByLabel('Segment name',{exact:true}).fill(`${name} renamed`);await page.getByLabel('Include 1 value',{exact:true}).fill('nobody@example.test');
     await page.getByRole('button',{name:'Save segment',exact:true}).click();
     await expect(page.getByRole('button',{name:`Edit ${name} renamed`,exact:true})).toBeVisible();
@@ -49,7 +50,7 @@ test('AUD-001 CONT-011 operator saves, copies, edits and deletes a segment and r
     await json('/api/audience/imports',{fingerprint:preview.fingerprint});
     const contacts=(await json('/api/audience')).contacts;
     const survivor=contacts.find((item:any)=>item.email===`${prefix}-keep@example.test`),merged=contacts.find((item:any)=>item.email===`${prefix}-duplicate@example.test`);
-    await page.goto(`/app/audience/${merged.id}`);await expect(page.getByRole('button',{name:'Merge into another contact'})).toBeVisible();await expectDocumentToFit(page,width);
+    await openPage(page, `/app/audience/${merged.id}`);await expect(page.getByRole('button',{name:'Merge into another contact'})).toBeVisible();await expectDocumentToFit(page,width);
     await page.screenshot({path:join(folder,`merge-control-${width}.png`),fullPage:true});
     await page.getByRole('button',{name:'Merge into another contact'}).click();await page.getByRole('searchbox',{name:/survivor/i}).fill(survivor.email);
     await page.getByRole('button',{name:new RegExp(survivor.email.replaceAll('.','\\.'))}).click();

@@ -43,14 +43,21 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       if(!operator)return context.json({error:'unauthenticated'},401);
       context.set('operator',operator);await next();
     });
-    const service=createCampaignService(createCampaignRepository(platform.database),createCampaignCompositionRepository(platform.database),services.storeService,{smsEnabled:!new URL(request.url).searchParams.has('smsDisabled'),now:()=>fixedNow});
+    const disabledSms=new URL(request.url).searchParams.has('smsDisabled')
+      || (request.headers.get('X-Test-Token')===bindings.LOCAL_BOOTSTRAP_TOKEN && request.headers.get('X-Test-Sms-Disabled')==='true');
+    const service=createCampaignService(createCampaignRepository(platform.database),createCampaignCompositionRepository(platform.database),services.storeService,{smsEnabled:!disabledSms,now:()=>fixedNow});
     // Native campaign routes own all reads. Lifecycle cancellation remains on the real app below.
     const routes=createCampaignRoutes(service,createAuthoringService(platform,services.lifecycleRuntime,services.storeService),platform.config.publicBaseUrl.origin,
       (campaignId,revisionId)=>createLifecycleServices(services.lifecycleRuntime).approval.preview({campaignId,revisionId}));
     app.route('/api',routes);
   },true);
   if(new URL(request.url).pathname.startsWith('/_results/')) return app.fetch(request,bindings,context);
-  return dispatchDocuments(request,bindings,context,platform,app);
+  // The same authenticated fault reaches document snapshots and browser refreshes.
+  const transport={fetch:(resource:Request,env:LocalAppBindings,ctx:ExecutionContext)=>
+    resource.headers.get('X-Test-Token')===bindings.LOCAL_BOOTSTRAP_TOKEN
+      && new URL(resource.url).pathname===resource.headers.get('X-Test-Unavailable-Resource')
+      ? new Response(null,{status:503}) : app.fetch(resource,env,ctx)};
+  return dispatchDocuments(request,bindings,context,platform,transport);
 },
 // Presentation domain jobs are recorded; only harmless transport probes reach this consumer.
 async queue(batch){

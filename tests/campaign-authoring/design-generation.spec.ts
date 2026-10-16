@@ -1,3 +1,4 @@
+import { openPage, reloadPage } from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
 import { test, expect, type Page, type APIRequestContext } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -47,9 +48,10 @@ test('[DESIGN-001] without the design module the editor offers no generation and
     const outbound: string[] = [];
     page.on('request', item => { if (!item.url().startsWith(runtime.url)) outbound.push(item.url()); });
     const { api, headers, campaignId } = await openDraft(runtime, page, request);
-    const status = page.waitForResponse(response => response.url().endsWith(`/api/campaigns/${campaignId}/design-jobs`));
-    await page.goto(`${runtime.url}/app/campaigns/${campaignId}/review`);
-    expect((await (await status).json()).enabled).toBe(false);
+    await openPage(page, `${runtime.url}/app/campaigns/${campaignId}/review`);
+    const status = await api.get(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`);
+    expect(status.ok()).toBe(true);
+    expect((await status.json()).enabled).toBe(false);
     await expect(page.getByRole('button', { name: 'Import 12ui design', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Design with 12ui' })).toHaveCount(0);
     const refused = await api.post(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`, { headers, data: { brief: 'A seasonal letter', candidates: 2 } });
@@ -72,7 +74,7 @@ test('[DESIGN-002] Design with 12ui turns a brief into an unsaved body through t
     });
     const { campaignId, read } = await openDraft(runtime, page, request);
     const review = `${runtime.url}/app/campaigns/${campaignId}/review`;
-    await page.goto(review);
+    await openPage(page, review);
     const body = page.getByLabel('Email body', { exact: true });
     await expect(body).toBeVisible();
     const savedBody = (await read()).revision.emailBody;
@@ -89,7 +91,7 @@ test('[DESIGN-002] Design with 12ui turns a brief into an unsaved body through t
     const run = page.getByRole('region', { name: 'Design with 12ui' });
     await expect(run.getByRole('img', { name: 'Design A' })).toBeVisible({ timeout: 30000 });
     await expect(run.getByRole('img', { name: 'Design B' })).toHaveCount(0);
-    await page.reload();
+    await reloadPage(page);
     await expect(run.getByRole('img', { name: 'Design A' })).toBeVisible();
     await expect(run.getByRole('img', { name: 'Design B' })).toBeVisible({ timeout: 45000 });
     await page.screenshot({ path: testInfo.outputPath('design-generation-candidates.png'), fullPage: true });
@@ -98,7 +100,7 @@ test('[DESIGN-002] Design with 12ui turns a brief into an unsaved body through t
     // layout is ready the run says so with a notice, and nothing opens or takes focus until the operator asks.
     await useDesign(run, page, 'B').click();
     await expect(run.getByRole('status')).toBeVisible();
-    await page.reload();
+    await reloadPage(page);
     const apply = page.getByRole('dialog', { name: 'Use this design in the email' });
     const ready = run.getByRole('button', { name: 'Use design B in the email', exact: true });
     await expect(run.getByRole('status')).toBeVisible();
@@ -168,7 +170,7 @@ test('[DESIGN-003] a run sends only the brief, never buys twice, records its cos
   const runtime = await designRuntime(fake.origin);
   try {
     const { campaignId, read } = await openDraft(runtime, page, request, '<p>Hello {{first_name | fallback: friend}}, an earlier draft.</p>');
-    await page.goto(`${runtime.url}/app/campaigns/${campaignId}/review`);
+    await openPage(page, `${runtime.url}/app/campaigns/${campaignId}/review`);
     const body = page.getByLabel('Email body', { exact: true });
     await expect(body).toBeVisible();
     const content = () => body.evaluate(element => element instanceof HTMLTextAreaElement ? element.value : element.innerHTML);
@@ -207,7 +209,7 @@ test('[DESIGN-003] a run sends only the brief, never buys twice, records its cos
     const failure = run.getByRole('alert');
     await expect(failure.getByRole('button', { name: 'Try the layout again', exact: true })).toBeVisible({ timeout: 45000 });
     await expect(failure).not.toContainText('Injected');
-    await page.reload();
+    await reloadPage(page);
     await expect(failure).toBeVisible();
     await expect(useDesign(run, page, 'A')).toBeVisible();
     await expect(useDesign(run, page, 'B')).toBeVisible();
@@ -278,7 +280,7 @@ test('[DESIGN-003] a run sends only the brief, never buys twice, records its cos
     await start();
     await expect(run.getByRole('alert')).toContainText('Design generation failed', { timeout: 30000 });
     await expect(run.getByRole('alert')).not.toContainText('Injected');
-    await page.reload();
+    await reloadPage(page);
     await expect(run.getByRole('alert')).toContainText('Design generation failed');
     await run.getByRole('button', { name: 'Dismiss', exact: true }).click();
     // With the failed run dismissed, the newest run with designs on offer is the one shown.
@@ -291,7 +293,7 @@ test('[DESIGN-003] a run sends only the brief, never buys twice, records its cos
     await expect(dialog).toHaveCount(0);
     await expect(run.getByRole('img', { name: 'Design B' })).toBeVisible({ timeout: 45000 });
     await runtime.sql(`UPDATE design_jobs SET deadline_at = 0 WHERE state = 'drafting'`);
-    await page.reload();
+    await reloadPage(page);
     await expect(run.getByRole('alert')).toContainText('did not finish in time');
     // The designs it drew stay usable, and every earlier run with designs is still on offer.
     await expect(useDesign(run, page, 'B')).toBeVisible();

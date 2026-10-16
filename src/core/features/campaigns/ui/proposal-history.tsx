@@ -1,6 +1,7 @@
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {useState} from 'react';
 import type {ProposalDecision,ProposalEntry} from '@/core/app/client/lib/types';
-import {formatDate,titleCase} from '@/core/app/client/lib/format';
+import {titleCase} from '@/core/app/client/lib/format';
 import {useResource} from '@/core/app/client/lib/use-resource';
 import {LoadState} from '@/core/app/client/ui/layout';
 import {ProposalDetail} from './proposal-detail';
@@ -12,6 +13,7 @@ function SavedDecision({id}:{id:string}) {
 }
 
 export function ProposalHistory({decisions}:{decisions:ProposalDecision[]}) {
+  const formatDate = useDateFormatter();
   const [selected,setSelected]=useState<string>();
   if(!decisions.length)return null;
   return <section className="proposal-history" aria-labelledby="proposal-history-title">

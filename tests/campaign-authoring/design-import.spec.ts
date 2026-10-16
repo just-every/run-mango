@@ -1,3 +1,4 @@
+import { openPage } from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
 import { test, expect, type Page } from '@playwright/test';
 import { createHash } from 'node:crypto';
@@ -40,7 +41,7 @@ for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as a
       inclusionRuleJson: JSON.stringify({ version: 1, operator: 'all', predicates: [{ sourceType: 'contact', field: 'email', comparator: 'contains', value: '@example.test' }] }),
       steps: [{ channel: 'email', timezone: 'Australia/Brisbane', localScheduledAt: '2031-04-07T10:00', whyThisTime: 'Operator time' }] } });
     expect(seeded.status(), await seeded.text()).toBe(200);
-    await page.goto(`${runtime.url}/app/campaigns/${created.campaignId}/review`);
+    await openPage(page, `${runtime.url}/app/campaigns/${created.campaignId}/review`);
     const body = page.getByLabel('Email body', { exact: true });
     await expect(body).toBeVisible();
     const savedBody = (await read()).revision.emailBody;

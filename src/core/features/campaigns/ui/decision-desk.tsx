@@ -1,9 +1,10 @@
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { capabilityName, capabilityNextStep, plainServiceText } from '@/core/app/client/ui/product-copy';
 import { requestJson } from '@/core/app/client/lib/api';
 import { Link, useLoaderData } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-import { formatDate, titleCase } from '@/core/app/client/lib/format';
+import { titleCase } from '@/core/app/client/lib/format';
 import type { DecisionDesk } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { EmptyState } from '@/core/app/client/ui/empty-state';
@@ -43,6 +44,7 @@ function ProposalCapabilityState({ providers, suggestions }: { providers: Decisi
 }
 
 export function DecisionDeskPage() {
+  const formatDate = useDateFormatter();
   const { data, error, loading, reload } = useResource<DecisionDesk>('/api/decision-desk');
   const [generationSuccess,setGenerationSuccess]=useState(false);
   const [generating,setGenerating]=useState(false),[generationNotice,setGenerationNotice]=useState('');

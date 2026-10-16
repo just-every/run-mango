@@ -1,3 +1,4 @@
+import { openPage, reloadPage } from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
 import {test,expect} from '@playwright/test';
 import {authoringRuntime} from './browser-runtime.mjs';
@@ -12,7 +13,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     const {token}=await open.json();await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,url:runtime.url}]);
     expect((await request.post(runtime.url+'/api/campaigns',{data:{}})).status()).toBe(401);
     const call=(path:string,body:unknown)=>page.evaluate(async({path,body})=>{const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return {status:response.status,data:await response.json()};},{path,body});
-    await page.goto(runtime.url+'/app/campaigns');
+    await openPage(page, runtime.url+'/app/campaigns');
     await expect(page.getByText('No campaigns yet. Start with New campaign.')).toBeVisible();
     await page.getByRole('button',{name:'New campaign',exact:true}).click();
     const starters=page.getByRole('region',{name:'Choose a campaign starter'});
@@ -25,12 +26,13 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await expect(page.getByRole('heading',{name:'Untitled campaign',exact:true})).toBeVisible();
     const campaignId=new URL(page.url()).pathname.split('/')[3];
     if(width===1440) {
-      await page.route('**/api/campaign-authoring',route=>route.abort('failed'));
-      await page.reload();
+      // The initial resource read now runs inside SSR; fail its request transport too.
+      await page.context().setExtraHTTPHeaders({'X-Test-Token':runtime.token,'X-Test-Unavailable-Resource':'/api/campaign-authoring'});
+      await reloadPage(page);
       await expect(page.getByText('Campaign authoring is unavailable: the configured store time zone could not be loaded.',{exact:true})).toBeVisible();
       await expect(page.getByRole('button',{name:'Add email step',exact:true})).toHaveCount(0);
-      await page.unroute('**/api/campaign-authoring');
-      await page.reload();
+      await page.context().setExtraHTTPHeaders({});
+      await reloadPage(page);
       await expect(page.getByRole('button',{name:'Add email step',exact:true})).toBeVisible();
     }
     expect((await call('/api/campaigns',{composition:{inclusionRuleJson:'not-json'}})).status).toBe(400);
@@ -132,7 +134,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await page.getByLabel('IANA time zone',{exact:true}).fill('Australia/Brisbane');
     await page.getByLabel('Local send date and time',{exact:true}).fill('2031-04-07T10:00');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
-    await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();await page.reload();
+    await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();await reloadPage(page);
     await expect(page.getByRole('heading',{name:`Authored newsletter ${width}`,exact:true})).toBeVisible();
     detail=await read();expect(detail.links).toEqual([]);expect(detail.revision.emailBody).not.toContain('example.test/read');expect(detail.revision.emailBody.match(/Unsubscribe/g)).toHaveLength(1);expect(detail.revision.emailText.match(/Unsubscribe/g)).toHaveLength(1);
     expect(await state()).toEqual({jobs:[],recipients:[],approvals:[]});
@@ -156,7 +158,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     const final=await state();expect(final.jobs).toEqual([]);expect(final.recipients).toHaveLength(1);expect(final.recipients[0].transport_disposition).toBe('queued');expect(final.approvals).toHaveLength(1);
     // Store starter comes from an actual Shopify-shaped imported product, without an AI adapter.
     expect((await request.post(runtime.url+'/_authoring/source',{headers:{'X-Test-Token':runtime.token}})).status()).toBe(200);
-    await page.goto(runtime.url+'/app/campaigns');await page.getByRole('button',{name:'New campaign',exact:true}).click();await page.getByRole('button',{name:'Product newsletter: Garden linen',exact:true}).click();
+    await openPage(page, runtime.url+'/app/campaigns');await page.getByRole('button',{name:'New campaign',exact:true}).click();await page.getByRole('button',{name:'Product newsletter: Garden linen',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Product newsletter: Garden linen',exact:true})).toBeVisible();await expect(page.getByLabel('Audience summary',{exact:true})).toContainText('Email subscription status is "subscribed"');
     expect((await request.post(runtime.url+'/_authoring/stale',{headers:{'X-Test-Token':runtime.token}})).status()).toBe(200);
     const stale=await call('/api/campaign-authoring/audience',{inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'product',field:'title',comparator:'eq',value:'Garden linen'}]}),exclusionRulesJson:'[]',channels:['email']});
@@ -169,10 +171,10 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     expect(race.every(result=>result.status===200)).toBe(true);expect(new Set(race.map(result=>result.data.campaignId)).size).toBe(1);
     const campaigns=await page.evaluate(async()=>(await (await fetch('/api/campaigns')).json()).campaigns);
     expect(campaigns.filter((item:any)=>item.proposalId===proposal.id)).toHaveLength(1);
-    const unlinked=await makeProposal();await page.goto(runtime.url+'/app');
+    const unlinked=await makeProposal();await openPage(page, runtime.url+'/app');
     await page.locator(`[data-proposal-id="${unlinked.id}"]`).click();await page.getByRole('button',{name:'Use this',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Recorded suggestion',exact:true})).toBeVisible();
-    const adoptedUrl=page.url();await page.goto(runtime.url+'/app');await page.locator(`[data-proposal-id="${unlinked.id}"]`).click();await page.getByRole('button',{name:'Use this',exact:true}).click();await expect(page).toHaveURL(adoptedUrl);
+    const adoptedUrl=page.url();await openPage(page, runtime.url+'/app');await page.locator(`[data-proposal-id="${unlinked.id}"]`).click();await page.getByRole('button',{name:'Use this',exact:true}).click();await expect(page).toHaveURL(adoptedUrl);
     expect((await state()).jobs).toEqual([]);
 
   } finally {await runtime.close();}

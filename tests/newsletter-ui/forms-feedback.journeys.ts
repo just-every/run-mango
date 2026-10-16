@@ -1,3 +1,4 @@
+import { openPage, reloadPage } from '../support/navigation';
 import { expect } from '@playwright/test';
 import { contract } from '../contract.js';
 import { signInAsLocalOperator } from './browser-checks';
@@ -7,7 +8,7 @@ import { challengeEdge } from './signup-privacy-support';
 {
   const width = 390;
   contract('CAMP-002', `composer keeps incomplete drafts, validates conditions and schedule, and derives audience at ${width}px`, async ({page,request}) => {
-    await signInAsLocalOperator(page,request); await page.setViewportSize({width,height:900}); await page.goto('/app'); const id=await createBlank(page);
+    await signInAsLocalOperator(page,request); await page.setViewportSize({width,height:900}); await openPage(page, '/app'); const id=await createBlank(page);
     const form=page.locator('#campaign-composer'), subject=page.getByLabel('Email subject',{exact:true});
     await expect(form.getByLabel('Email body',{exact:true})).toHaveAttribute('aria-required','true');
     const htmlMode=page.getByRole('button',{name:'HTML mode',exact:true}), richMode=page.getByRole('button',{name:'Rich text',exact:true});
@@ -22,7 +23,7 @@ import { challengeEdge } from './signup-privacy-support';
     for(const label of ['Campaign name','Consent message category','Email subject','Email preheader','Physical postal address','Sender name','From email','Reply-to email']) await expect(form.getByLabel(label,{exact:true})).toHaveAttribute('required','');
     await expect(form.getByLabel('Email body',{exact:true})).toHaveAttribute('aria-required','true');
     const invalid=await form.locator('[aria-invalid="true"]').count(); expect(invalid).toBeGreaterThan(0); await expectSummary(form,invalid);
-    await page.reload(); await expect(subject).toHaveValue('');
+    await reloadPage(page); await expect(subject).toHaveValue('');
     await expect(page.getByRole('button',{name:'Approve & schedule'})).toBeDisabled(); await expect(page.locator('#approval-blocked-reason')).toBeVisible(); await expect(page.getByRole('alertdialog')).toHaveCount(0);
     const savedState=await page.evaluate(async id=>(await fetch(`/api/campaigns/${id}`)).json(),id); expect(savedState.campaign.state).toBe('draft');
     await page.getByRole('button',{name:'Add exclusion',exact:true}).click(); const condition=page.getByLabel('Exclude 1 value'); await condition.focus(); await condition.blur(); await expectFieldError(condition);
@@ -40,26 +41,26 @@ import { challengeEdge } from './signup-privacy-support';
     await expect(page.getByLabel('SMS sender',{exact:true})).toHaveCount(0);
     await page.getByLabel('Include 1 field').selectOption('contact:email'); await page.getByLabel('Include 1 comparison').selectOption('contains'); await page.getByLabel('Include 1 value').fill('live@example.test');
     const summary=page.getByLabel('Audience summary',{exact:true}); await expect(summary).toContainText('live@example.test'); await expect(summary).toContainText('exclude@example.test'); await expect(page.getByRole('textbox',{name:'Audience rule',exact:true})).toHaveCount(0);
-    await page.getByRole('button',{name:'Save full draft'}).click(); await expect(page.locator('.action-notice')).toContainText('Draft saved.'); await page.reload(); await expect(summary).toContainText('live@example.test'); await expect(summary).toContainText('exclude@example.test');
+    await page.getByRole('button',{name:'Save full draft'}).click(); await expect(page.locator('.action-notice')).toContainText('Draft saved.'); await reloadPage(page); await expect(summary).toContainText('live@example.test'); await expect(summary).toContainText('exclude@example.test');
     await expect(page.getByRole('button',{name:'Approve & schedule'})).toBeDisabled();await expect(page.locator('#approval-blocked-reason')).toBeVisible();await expect(page.getByRole('alertdialog')).toHaveCount(0);
     await expectVisibleFocus(page);
   });
   contract('CAMP-002', `unsaved changes modal traps keyboard focus, Escape cancels, and disclosures announce state at ${width}px`, async ({page,request}) => {
-    await signInAsLocalOperator(page,request); await page.setViewportSize({width,height:900}); await page.goto('/app'); await createBlank(page);
+    await signInAsLocalOperator(page,request); await page.setViewportSize({width,height:900}); await openPage(page, '/app'); await createBlank(page);
     for(const name of ['Send a test','Approval checks']) {const control=page.getByRole('button',{name,exact:true}); await control.focus(); const initial=await control.getAttribute('aria-expanded'); await control.press('Space'); await expect(control).toHaveAttribute('aria-expanded',initial==='true'?'false':'true'); await control.press('Enter'); await expect(control).toHaveAttribute('aria-expanded',initial!);}
     await page.getByLabel('Campaign name',{exact:true}).fill('Unsaved changes'); const opener=page.getByRole('link',{name:'← Back to campaigns',exact:true}); await opener.focus(); await opener.press('Enter');
     const modal=page.getByRole('alertdialog'); await expect(modal).toBeVisible(); const keep=modal.getByRole('button',{name:'Keep editing'}), discard=modal.getByRole('button',{name:'Discard and leave'}); await expect(keep).toBeFocused(); await keep.press('Shift+Tab'); await expect(discard).toBeFocused(); await discard.press('Tab'); await expect(keep).toBeFocused(); await page.keyboard.press('Escape'); await expect(modal).toHaveCount(0); await expect(opener).toBeFocused(); await expect(page.getByLabel('Campaign name',{exact:true})).toHaveValue('Unsaved changes'); await expect(page).toHaveURL(/\/review$/);
   });
   contract('AUD-001', `sender, test destination, import mapping, signup settings and subscribe give linked inline feedback at ${width}px`, async ({page,request}) => {
     await signInAsLocalOperator(page,request); await page.setViewportSize({width,height:900});
-    await page.goto('/app/settings'); const sender=page.locator('.settings-sender-form');
+    await openPage(page, '/app/settings'); const sender=page.locator('.settings-sender-form');
     for(const label of ['Business display name','From email','Reply-to email','Physical postal address']) {const control=sender.getByLabel(label,{exact:true}); await expect(control).toHaveAttribute('required',''); await control.fill(''); await control.blur(); await expectFieldError(control);}
     await sender.getByRole('button',{name:'Save sender details'}).click(); await expect(sender.getByLabel('Business display name',{exact:true})).toBeFocused(); await expectSummary(sender,4);
     await sender.getByLabel('From email',{exact:true}).fill('invalid'); await sender.getByLabel('From email',{exact:true}).blur(); await expectFieldError(sender.getByLabel('From email',{exact:true}),/valid email/); await expectVisibleFocus(page);
-    await page.goto('/app/campaigns/campaign_table_runner_draft_v4/review'); await page.getByRole('button',{name:'Send a test',exact:true}).click(); const testForm=page.getByRole('form',{name:'Send a test'}), destination=page.getByLabel('Test destination',{exact:true});
+    await openPage(page, '/app/campaigns/campaign_table_runner_draft_v4/review'); await page.getByRole('button',{name:'Send a test',exact:true}).click(); const testForm=page.getByRole('form',{name:'Send a test'}), destination=page.getByLabel('Test destination',{exact:true});
     await destination.focus(); await destination.blur(); await expectFieldError(destination); await testForm.getByRole('button',{name:'Send test',exact:true}).click(); await expect(destination).toBeFocused(); await expectSummary(testForm,1); await destination.fill('invalid'); await destination.blur(); await expectFieldError(destination,/valid email/); await expect(testForm.locator('..')).toContainText('own sign-in address');
     await expect(destination).toHaveAttribute('required','');
-    await page.goto('/app/audience/import'); const importForm=page.getByRole('form',{name:'Audience import mapping'}); await importForm.getByRole('button',{name:'Preview import'}).click(); await expect(page.getByLabel('Choose CSV files')).toBeFocused(); await expectSummary(importForm,1);
+    await openPage(page, '/app/audience/import'); const importForm=page.getByRole('form',{name:'Audience import mapping'}); await importForm.getByRole('button',{name:'Preview import'}).click(); await expect(page.getByLabel('Choose CSV files')).toBeFocused(); await expectSummary(importForm,1);
     await expect(page.getByLabel('Choose CSV files')).toHaveAttribute('aria-required','true');
     await page.getByLabel('Choose CSV files').setInputFiles({name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from('Email Address,Phone,First Name\nvalidation@example.test,+61400123456,Validation')});
     await page.getByLabel('Preset for mapping.csv').selectOption('csv-non-subscribed'); await page.getByRole('button',{name:'Preview import'}).click();
@@ -78,11 +79,11 @@ import { challengeEdge } from './signup-privacy-support';
     await expect(mapping).not.toHaveAttribute('aria-invalid','true'); await expect(phoneMapping).not.toHaveAttribute('aria-invalid','true');
     await expect(importForm.locator('.validation-summary')).toHaveCount(0);
     await expect(page.getByLabel('Preset for mapping.csv')).toHaveAttribute('required','');
-    await page.goto('/app/audience'); const signup=page.getByRole('form',{name:'Signup-form settings'}), frequency=signup.getByLabel('Newsletter frequency',{exact:true}); const original=await frequency.inputValue(); await frequency.fill(''); await frequency.blur(); await expectFieldError(frequency); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(frequency).toBeFocused(); await expectSummary(signup,1); await frequency.fill('<weekly>'); await frequency.blur(); await expectFieldError(frequency,/plain text/);
+    await openPage(page, '/app/audience'); const signup=page.getByRole('form',{name:'Signup-form settings'}), frequency=signup.getByLabel('Newsletter frequency',{exact:true}); const original=await frequency.inputValue(); await frequency.fill(''); await frequency.blur(); await expectFieldError(frequency); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(frequency).toBeFocused(); await expectSummary(signup,1); await frequency.fill('<weekly>'); await frequency.blur(); await expectFieldError(frequency,/plain text/);
     await expect(frequency).toHaveAttribute('required','');
-    await frequency.fill('Weekly newsletter updates'); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice[role="status"]')).toContainText('Signup settings saved'); await page.reload(); await expect(frequency).toHaveValue('Weekly newsletter updates'); await frequency.fill(original); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice')).toBeVisible();
+    await frequency.fill('Weekly newsletter updates'); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice[role="status"]')).toContainText('Signup settings saved'); await reloadPage(page); await expect(frequency).toHaveValue('Weekly newsletter updates'); await frequency.fill(original); await signup.getByRole('button',{name:'Save signup settings'}).click(); await expect(signup.locator('.action-notice')).toBeVisible();
     await challengeEdge(page);
-    await page.goto('/subscribe'); const subscribe=page.locator('.subscribe-form'), email=page.getByLabel('Email address',{exact:true}), consent=page.getByRole('checkbox');
+    await openPage(page, '/subscribe'); const subscribe=page.locator('.subscribe-form'), email=page.getByLabel('Email address',{exact:true}), consent=page.getByRole('checkbox');
     await expect(email).toBeEnabled(); await email.click(); await email.blur(); await expectFieldError(email);
     // The configured fixture requires verification, activated by a trusted form interaction.
     const confirmation=page.getByRole('button',{name:'Request confirmation'});
@@ -94,7 +95,7 @@ import { challengeEdge } from './signup-privacy-support';
   });
 }
 contract('CAMP-002','native server timing errors focus the corresponding control and linked summary',async({page,request})=>{
-  await signInAsLocalOperator(page,request);await page.goto('/app');await createBlank(page);
+  await signInAsLocalOperator(page,request);await openPage(page, '/app');await createBlank(page);
   await page.getByRole('button',{name:'Add email step',exact:true}).click();
   await page.getByLabel('Local send date and time',{exact:true}).fill('2031-10-08T10:00');
   await page.getByLabel('Local send-by date and time',{exact:true}).fill('2031-10-08T18:00');

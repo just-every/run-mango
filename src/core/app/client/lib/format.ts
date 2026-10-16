@@ -2,14 +2,6 @@ export function titleCase(value: string) {
   return value.replaceAll('-', ' ').replaceAll('_', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-export function formatDate(value: string | null | undefined) {
-  if (!value) return 'Not recorded';
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? 'Not recorded'
-    : new Intl.DateTimeFormat('en-AU', { dateStyle: 'medium', timeStyle: 'short' }).format(date);
-}
-
 export function formatDateInTimeZone(value: string, timeZone: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return 'Not recorded';

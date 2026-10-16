@@ -1,3 +1,4 @@
+import { openPage } from '../support/navigation';
 import { createHash } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
 import { providerEdge } from '../go-live/edge';
@@ -33,7 +34,7 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
 
     // Upload and preview on the Import page. Preview writes nothing to any table.
     const bytes = await accountExport();
-    await page.goto(`${site.runtime.url}/app/audience/import`);
+    await openPage(page, `${site.runtime.url}/app/audience/import`);
     await page.getByLabel('Choose CSV files').setInputFiles({ name: 'account-export.zip', mimeType: 'application/zip', buffer: Buffer.from(bytes) });
     await page.getByRole('combobox', { name: 'Message category', exact: true }).selectOption(consentEvidence.messageCategory);
     for (const [label, value] of [['Brand or legal sender', consentEvidence.brandOrLegalSender], ['Disclosed frequency', consentEvidence.frequencyDisclosure],
@@ -108,7 +109,7 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
     expect((await fetch(site.local(url), { method: 'POST', redirect: 'manual', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: 'confirm=true' })).status).toBe(200);
 
     // Undo on the page; then show what went and what stayed.
-    await page.goto(`${site.runtime.url}/app/audience/import`);
+    await openPage(page, `${site.runtime.url}/app/audience/import`);
     await page.getByRole('button', { name: 'Undo this import' }).click();
     await page.getByRole('button', { name: 'Confirm undo' }).click();
     await expect(page.getByText(/is undone/)).toBeVisible({ timeout: 300000 });

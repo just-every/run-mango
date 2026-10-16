@@ -1,4 +1,4 @@
-import { formatDate } from '@/core/app/client/lib/format';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import type { SenderStatus } from '@/core/features/settings/types';
 import { SettingsSenderForm } from './settings-sender-form';
@@ -15,6 +15,7 @@ const evidenceLabels = [['provider', 'Provider domain'], ['dns', 'DNS records'],
 const readinessLabels = { observed: 'Observed', checked: 'Checked in DNS', 'not-observed': 'Not yet', unavailable: 'Unavailable', 'built-in': 'Built in', owner: 'Your decision' };
 
 export function SettingsSender({ operatorEmail }: { operatorEmail: string }) {
+  const formatDate = useDateFormatter();
   const sender = useResource<SenderStatus>('/api/settings/sender');
   return (
     <section className="panel settings-sender" aria-labelledby="sender-title" aria-busy={sender.loading}>

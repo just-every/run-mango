@@ -1,12 +1,13 @@
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import type {CommerceReport} from '../commerce-report';
 import {useResource} from '@/core/app/client/lib/use-resource';
-import {formatDate} from '@/core/app/client/lib/format';
 function money(value:number|string,currency:string) {
   const exponent=new Intl.NumberFormat('en',{style:'currency',currency}).resolvedOptions().maximumFractionDigits!;
   const digits=String(value).padStart(exponent+1,'0');
   return `${currency} ${exponent?`${digits.slice(0,-exponent)}.${digits.slice(-exponent)}`:digits}`;
 }
 export function CommerceResults({campaignId}:{campaignId:string}) {
+  const formatDate = useDateFormatter();
   const {data,error}=useResource<{attribution:CommerceReport;engagement:{observedClicks:number;automatedRequestsRetainedButExcluded:number}}>(`/api/campaigns/${campaignId}/results`);
   if(!data)return error?<p role="status">Commerce results unavailable: {error}</p>:null;
   const report=data.attribution;
