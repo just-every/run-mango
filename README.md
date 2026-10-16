@@ -36,11 +36,12 @@ Mango is an approval-first newsletter desk. Public source: [just-every/run-mango
 ## Run it on your computer
 
 ```sh
-git clone https://github.com/just-every/run-mango.git
-cd run-mango
+npx -y @runeditrun/rer dev just-every/run-mango
 ```
 
-First install **Node 22 or later**: rer runs on it, and the installer stops with `node is required` without it. Get it from [nodejs.org](https://nodejs.org/en/download) (or `brew install node` on a Mac, or a version manager such as nvm). Then install `rer` once per computer with `npm install -g @runeditrun/rer` (or `curl -fsSL https://runeditrun.com/install.sh | sh`). In this checkout it selects pinned rer **0.2.22**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
+That one line installs `rer`, clones Mango and starts it; to start it again later, run `cd run-mango && rer dev`. To choose the owner yourself, work from the checkout with the commands below.
+
+First install **Node 22 or later**: rer runs on it, and the installer stops with `node is required` without it. Get it from [nodejs.org](https://nodejs.org/en/download) (or `brew install node` on a Mac, or a version manager such as nvm). The one line installs `rer` once per computer. In this checkout it selects pinned rer **0.2.22**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
 
 ```sh
 rer install
