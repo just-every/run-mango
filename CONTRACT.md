@@ -8,7 +8,7 @@ What this product does. Every clause has a stable ID and requires at least one t
 
 Mango is an email and SMS marketing platform that a US small or mid-size business can switch to from Mailchimp, Klaviyo, ActiveCampaign or Kit (ConvertKit) without losing a capability it uses every week. It grows a consented audience through signup forms, popups and landing pages; builds campaigns in a drag-and-drop editor with a template library and brand kit; selects people with behaviour-driven segments fed by the store and other business events; runs always-on automated flows (welcome, abandoned cart and checkout, browse abandonment, post-purchase, win-back and more) that start, wait, branch and exit on real events; sends SMS alongside email under US consent and carrier rules; tests and optimises what it sends; and reports revenue attributed to each campaign and flow, with holdout-measured lift kept separate from attribution. Agents go further than today's up-and-comers (beehiiv, Customer.io, Omnisend): they find a retention gap in connected purchase and engagement data, propose a journey with its audience, stop rules and holdout, run it only once a person approves it, and judge it on measured repeat purchases rather than open rates (see [Agents](#agents)).
 
-This document is the product Mango is building towards, not only what exists today. Every clause carries a status in the [status table](#clause-status) at the end: **done** (implemented and exercised by a cited test), **partial** (some of the behaviour exists, cited) or **missing**. A missing clause is a release obligation of the target, not a waiver; difficulty (carrier registration, provider apps, native apps, payments) is engineering work recorded in a clause, never a reason to cut scope. ACCEPTANCE.md lists every clause's acceptance evidence and status for build rounds to work towards.
+This document is the product Mango is building towards, not only what exists today. Every clause carries a status in the [status table](#status) at the end: **done** (implemented and exercised by a cited test), **partial** (some of the behaviour exists, cited) or **missing**. A missing clause is a release obligation of the target, not a waiver; difficulty (carrier registration, provider apps, native apps, payments) is engineering work recorded in a clause, never a reason to cut scope. ACCEPTANCE.md lists every clause's acceptance evidence and status for build rounds to work towards.
 
 The first buyer is a US ecommerce operator or creator-led business (about 1,000 to 250,000 contacts, one brand, one to ten people sending marketing) paying in USD. US norms are the default: CAN-SPAM sender and unsubscribe rules, TCPA express written consent and quiet hours for marketing texts, CTIA and carrier 10DLC or toll-free registration, Gmail, Yahoo and Microsoft bulk-sender requirements, CCPA/CPRA and other US state privacy rights, and USD money with US sales tax handled by the payment provider. Mango states these as product rules; it does not give legal advice.
 
@@ -806,250 +806,270 @@ Command contract 1 retains CONT-004/006 private contact authority during explici
 - **HOME-001 policy:** `BASE-PUBLIC-001` to `BASE-PUBLIC-003` govern the landing as an anonymous surface and are neither satisfied nor waived by it. The root and the favicon files claim no rate limiter, so `BASE-ACCESS-003`'s rate-limit sentence is neither claimed nor waived for them. The landing is the deployment's own fixed page, not a page builder for buyers. It links only to its own sections, `/run`, `/docs` and, while the credit is on, the credit, and it does not advertise optional commerce, SMS or AI, per-reader send times or provider-neutral delivery. Its fonts are self-hosted Newsreader and Outfit under the SIL Open Font License, static files from `public/fonts` served at `/fonts/` and declared in `deploy.publicPaths`, so the server-rendered message pages load the same faces; the favicons are static files from `public/`, also declared there. Its drawings are inline and contain no raster or embedded image. Its motion is CSS-only, plays once, runs only without a reduced-motion preference, moves only drawings and never hides content.
 - **DOCS-001 policy:** `/docs` and `/docs/` are declared in `seed.json → deploy.publicPaths`, which `BASE-ACCESS-003` keeps as the only sessionless paths; `BASE-PUBLIC-001..003` govern these anonymous pages and are neither satisfied nor waived by them. Start renders each page per request from its prebuilt chunk; no Hono route, operator gate or Worker event handler serves them. The slug is looked up as an own property of the manifest's page table, so `__proto__`, `constructor` and every other unlisted segment is a `404`. Markdown is rendered with raw HTML disabled, a link-scheme allowlist and images restricted to `docs/media/`. No rate limiter is claimed for these paths, as for Mango's other public documents (`/`, `/signin`).
 
-## Clause status
+## Scope mapping
 
-Status at `main` 3569d4e (17 October 2026; no status changed since `e784943`): **66 done, 72 partial, 103 missing** of 241 clauses. Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, each partial. Round 3 added MSG-013, MSG-014 (partial), MSG-015 and MOVE-013 for its two gaps, and CONT-026 (partial), CAMP-018, CAMP-019, BUILD-011 and RESULT-008 (partial) for its also-noted items; the rest are missing. Round 4 added BUILD-012 (partial) for its gap, and DELIV-007 (partial) and MOVE-014 (missing) for its also-noted items. Round 5 added FORM-008 (partial: today's code already draws the global allowance only after the honeypot, challenge, field, disclosure, eligibility and pending-duplicate checks, at levels below the floor), FORM-009 (missing) and FORM-010 (partial: allowance refusals answer 429 before anything is stored) for its first gap, and CONT-027 (missing) for its second. Round 6 added INT-015 (partial: today's adapter already checks the shop, installation, scopes, pixel settings and cart subscriptions on every sync (`health.ts`) and verifies Shopify's signed app-proxy identity (`collector.ts`); the merchant OAuth install, the connector, Mango-created wiring, first-sync progress, uninstall and the privacy webhooks are missing) for its gap, and sharpened CONT-018 and AUD-009 for two of its also-noted items. Round 7 added DELIV-008 (partial: today's SendGrid health probe already reads the key's scopes and requires `mail.send` (`provider-health.ts`), sender verification reads domain authentication from the connected account (`sendgrid-domain-verification.ts`), and signed SendGrid events are verified and stored (`tests/go-live/delivery.journeys.ts`); the Settings connection, the stored key, Mango-created webhooks, `delivery-events-missing` and connection monitoring are missing) for its gap, and SMS-008 (missing) for its also-noted Twilio item. Done means implemented and exercised by the cited test; partial means some of the behaviour exists in the cited file or test; missing means no code yet. A build round moves a clause to done only with the test its acceptance evidence names (ACCEPTANCE.md).
+How the owner-approved scope (16 October 2026) maps to the clauses above. Incumbents: Mailchimp, Klaviyo, ActiveCampaign and Kit (ConvertKit); up-and-comers: beehiiv, Customer.io and Omnisend.
 
-| Clause | Status | Evidence |
-|---|---|---|
-| HOME-001 | done | `tests/local-start/local.journey.ts` · `src/site/pages.tsx` |
-| DOCS-001 | done | `tests/docs.spec.ts` |
-| OPER-001 | done | `tests/local-start/local.journey.ts` · `tests/production-entry.spec.ts` |
-| OPER-002 | done | `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/service.ts` |
-| OPER-003 | done | `tests/settings-sender/routes.spec.ts` |
-| OPER-004 | missing | — |
-| OPER-005 | missing | — |
-| OPER-006 | missing | — |
-| OPER-007 | missing | — |
-| STORE-001 | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` |
-| STORE-002 | done | `tests/shopify/connection.spec.ts` |
-| STORE-003 | partial | `src/core/features/store/sync-run-repository.ts` |
-| STORE-004 | partial | `src/core/features/store/synchronize.ts` · `tests/shopify/connection.spec.ts` |
-| STORE-005 | partial | `src/core/features/audience/source-coverage.ts` |
-| STORE-006 | partial | `src/core/features/audience/source-coverage.ts` |
-| STORE-007 | partial | `src/core/features/audience/commerce-webhook-routes.ts` |
-| CONT-001 | done | `tests/move-in/archive.journeys.ts` |
-| CONT-002 | done | `tests/move-in/held.journeys.ts` · `tests/move-in/archive.journeys.ts` |
-| CONT-003 | done | `tests/audience-import/signup.spec.ts` · `tests/campaign-authoring/import-category.spec.ts` |
-| CONT-004 | done | `tests/go-live/go-live.journeys.ts` · `tests/provider-suppression-ingress.spec.ts` · `tests/move-in/held.journeys.ts` |
-| CONT-005 | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts` |
-| CONT-006 | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/go-live.journeys.ts` |
-| CONT-007 | partial | `src/core/features/sms/inbound.ts` · `tests/audience-import/signup.spec.ts` |
-| CONT-008 | partial | `src/core/features/audience/ui/contact-detail.tsx` |
-| CONT-009 | done | `tests/go-live/go-live.journeys.ts` · `tests/audience-import/signup.spec.ts` |
-| CONT-010 | done | `tests/audience-import/routes.spec.ts` · `tests/move-in/archive.journeys.ts` |
-| CONT-011 | done | `tests/audience-controls/merge.spec.ts` |
-| CONT-012 | partial | `src/core/features/audience/eligibility.ts` |
-| CONT-013 | done | `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts` |
-| CONT-014 | missing | — |
-| CONT-015 | partial | `src/core/features/lifecycle/email-consent-scope.ts` · `tests/campaign-authoring/import-category.spec.ts` |
-| CONT-016 | missing | — |
-| CONT-017 | partial | `src/core/features/audience/ui/contact-detail.tsx` |
-| CONT-018 | partial | `tests/shopify/connection.spec.ts` |
-| CONT-019 | partial | `src/core/features/sms/signup.ts` · `tests/audience-import/signup.spec.ts` |
-| CONT-020 | missing | — |
-| CONT-021 | partial | `src/core/features/audience/erasure` · `tests/audience-import/erasure.spec.ts` |
-| CONT-022 | partial | `src/core/features/audience/ui/contact-merge.tsx` |
-| CONT-023 | missing | — |
-| CONT-024 | partial | `src/core/features/audience/import-validation.ts` · `tests/move-in/archive.journeys.ts` |
-| CONT-025 | partial | `src/core/features/audience/signup-routes.ts` · `src/core/platform/adapters/shopify/normalize.ts` |
-| CONT-026 | partial | `src/core/features/audience/routes.ts` |
-| CONT-027 | missing | — |
-| PROP-001 | done | `tests/proposals-decision/decision-routes.spec.ts` |
-| PROP-002 | done | `tests/proposals-decision/decision-routes.spec.ts` |
-| PROP-003 | done | `tests/proposals-decision/decision-routes.spec.ts` |
-| PROP-004 | done | `tests/proposals-decision/decision-routes.spec.ts` |
-| PROP-005 | done | `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts` |
-| PROP-006 | done | `tests/proposals-decision/decision-routes.spec.ts` |
-| PROP-007 | done | `tests/proposals-decision/proposal-states.spec.ts` |
-| PROP-008 | done | `tests/proposals-decision/decision-routes.spec.ts` |
-| PROP-009 | done | `tests/proposals-decision/proposal-states.spec.ts` |
-| AUD-001 | done | `tests/audience-controls/segments.spec.ts` |
-| AUD-002 | done | `src/core/features/audience/eligibility.ts` · `tests/go-live/delivery.journeys.ts` |
-| AUD-003 | partial | `src/core/features/audience/commerce-exclusions.ts` |
-| AUD-004 | done | `src/core/features/audience/eligibility.ts` · `tests/go-live/open-estimates.journeys.ts` |
-| AUD-005 | done | `tests/audience-controls/merge.spec.ts` · `tests/go-live/delivery.journeys.ts` |
-| AUD-006 | partial | `src/core/features/lifecycle/evaluate-audience.ts` |
-| AUD-007 | done | `tests/audience-controls/segments.spec.ts` |
-| AUD-008 | partial | `src/core/features/audience/eligibility.ts` |
-| AUD-009 | partial | `src/core/features/lifecycle/policies.ts` · `src/core/features/audience/eligibility.ts` |
-| CAMP-001 | done | `tests/campaign-results/results.journeys.ts` |
-| CAMP-002 | done | `tests/campaign-authoring/browser.spec.ts` |
-| CAMP-003 | done | `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` |
-| CAMP-004 | done | `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/create-api.spec.ts` |
-| CAMP-005 | done | `tests/campaign-authoring/browser.spec.ts` |
-| CAMP-006 | done | `tests/campaign-authoring/browser.spec.ts` |
-| CAMP-007 | done | `tests/go-live/delivery.journeys.ts` |
-| CAMP-008 | done | `tests/go-live/go-live.journeys.ts` |
-| CAMP-009 | done | `tests/campaign-results/results.journeys.ts` |
-| CAMP-010 | done | `tests/go-live/scheduler.journeys.ts` |
-| CAMP-011 | done | `tests/go-live/scheduler.journeys.ts` |
-| CAMP-012 | done | `tests/campaign-assets.spec.ts` · `tests/campaign-authoring/local-images.spec.ts` |
-| CAMP-013 | missing | — |
-| CAMP-014 | partial | `src/core/features/lifecycle/routes.ts` · `src/core/features/lifecycle/provider-outages.ts` |
-| CAMP-015 | missing | — |
-| CAMP-016 | missing | — |
-| CAMP-017 | missing | — |
-| CAMP-018 | missing | — |
-| CAMP-019 | missing | — |
-| DESIGN-001 | done | `tests/campaign-authoring/design-generation.spec.ts` |
-| DESIGN-002 | done | `tests/campaign-authoring/design-generation.spec.ts` |
-| DESIGN-003 | done | `tests/campaign-authoring/design-generation.spec.ts` |
-| DESIGN-004 | done | `tests/campaign-authoring/design-import.spec.ts` |
-| MSG-001 | partial | `src/core/features/settings/sender-validation.ts` · `tests/settings-sender/routes.spec.ts` |
-| MSG-002 | done | `tests/sender-verification/worker.spec.ts` |
-| MSG-003 | done | `tests/go-live/go-live.journeys.ts` · `tests/sender-verification/worker.spec.ts` |
-| MSG-004 | partial | `src/core/features/sms/transport-guard.ts` |
-| MSG-005 | partial | `src/core/features/sms/content.ts` |
-| MSG-006 | partial | `src/core/features/settings/link-hosts-validation.ts` |
-| MSG-007 | partial | `src/core/features/lifecycle/advisory-acknowledgements.ts` |
-| MSG-008 | partial | `src/core/features/campaigns/message-content.ts` |
-| MSG-009 | done | `tests/campaign-authoring/canonical-save.spec.ts` |
-| MSG-010 | partial | `src/core/features/audience/unsubscribe-routes.ts` |
-| MSG-011 | done | `tests/go-live/delivery.journeys.ts` |
-| MSG-012 | done | `tests/campaign-authoring/canonical-save.spec.ts` |
-| MSG-013 | missing | — |
-| MSG-014 | partial | `src/core/features/settings/link-hosts-validation.ts` · `src/core/features/settings/link-hosts.ts` · `src/core/platform/link-inspector.ts` |
-| MSG-015 | missing | — |
-| SEND-001 | done | `tests/go-live/managed-mail.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts` |
-| SEND-002 | partial | `src/core/features/sms/policy.ts` |
-| SEND-003 | done | `tests/go-live/delivery.journeys.ts` |
-| SEND-004 | done | `tests/go-live/delivery-recovery.journeys.ts` · `tests/go-live/delivery.journeys.ts` |
-| SEND-005 | done | `tests/go-live/go-live.journeys.ts` · `tests/go-live/delivery-recovery.journeys.ts` |
-| SEND-006 | done | `tests/go-live/go-live.journeys.ts` · `tests/go-live/scheduler.journeys.ts` |
-| SEND-007 | done | `tests/go-live/go-live.journeys.ts` · `tests/campaign-results/results.journeys.ts` |
-| SEND-008 | done | `tests/go-live/go-live.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts` |
-| SEND-009 | done | `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts` |
-| RESULT-001 | done | `tests/campaign-results/results.journeys.ts` |
-| RESULT-002 | done | `tests/go-live/open-estimates.journeys.ts` |
-| RESULT-003 | partial | `src/core/features/insights/commerce-attribution.ts` |
-| RESULT-004 | done | `tests/campaign-results/costs.journeys.ts` |
-| RESULT-005 | partial | `src/core/features/lifecycle/message-tracking.ts` · `src/core/features/lifecycle/tracked-link-policy.ts` |
-| RESULT-006 | partial | `src/core/features/insights/ui/sender-rates.tsx` · `tests/go-live/delivery.journeys.ts` |
-| RESULT-007 | partial | `src/core/features/insights/repository.ts` |
-| RESULT-008 | partial | `src/core/features/campaigns/ui/step-results.tsx` |
-| DATA-001 | done | `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts` |
-| SCALE-001 | partial | `seed.json` · `src/core/features/audience/import-limits.ts` |
-| FORM-001 | done | `src/core/features/audience/signup-routes.ts` · `tests/audience-import/signup.spec.ts` |
-| FORM-002 | missing | — |
-| FORM-003 | missing | — |
-| FORM-004 | missing | — |
-| FORM-005 | missing | — |
-| FORM-006 | missing | — |
-| FORM-007 | done | `src/core/features/audience/signup-security.ts` · `tests/audience-import/signup.spec.ts` |
-| FORM-008 | partial | `src/core/features/audience/signup-routes.ts` · `src/core/features/audience/signup-security.ts` |
-| FORM-009 | missing | — |
-| FORM-010 | partial | `src/core/features/audience/signup-routes.ts` |
-| SEG-001 | partial | `src/core/features/audience/segments.ts` · `tests/audience-controls/segments.spec.ts` |
-| SEG-002 | missing | — |
-| SEG-003 | missing | — |
-| SEG-004 | missing | — |
-| SEG-005 | missing | — |
-| SEG-006 | missing | — |
-| BUILD-001 | missing | — |
-| BUILD-002 | partial | `src/core/features/design-import/compile.ts` · `src/core/features/move-in/html-import.ts` |
-| BUILD-003 | missing | — |
-| BUILD-004 | missing | — |
-| BUILD-005 | missing | — |
-| BUILD-006 | missing | — |
-| BUILD-007 | missing | — |
-| BUILD-008 | partial | `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` |
-| BUILD-009 | partial | `src/core/features/sms/content.ts` · `src/core/features/sms/review-preview.ts` |
-| BUILD-010 | missing | — |
-| BUILD-011 | missing | — |
-| BUILD-012 | partial | `src/core/features/campaigns/draft-composition.ts` · `src/core/features/design-import/compile.ts` |
-| FLOW-001 | missing | — |
-| FLOW-002 | missing | — |
-| FLOW-003 | missing | — |
-| FLOW-004 | missing | — |
-| FLOW-005 | missing | — |
-| FLOW-006 | missing | — |
-| FLOW-007 | missing | — |
-| FLOW-008 | missing | — |
-| FLOW-009 | missing | — |
-| FLOW-010 | missing | — |
-| FLOW-011 | missing | — |
-| FLOW-012 | missing | — |
-| FLOW-013 | missing | — |
-| FLOW-014 | missing | — |
-| FLOW-015 | missing | — |
-| FLOW-016 | missing | — |
-| EXP-001 | missing | — |
-| EXP-002 | missing | — |
-| EXP-003 | missing | — |
-| EXP-004 | missing | — |
-| EXP-005 | missing | — |
-| EXP-006 | missing | — |
-| SMS-001 | partial | `src/core/platform/adapters/mobile-message.ts` |
-| SMS-002 | missing | — |
-| SMS-003 | partial | `src/core/features/sms/policy.ts` |
-| SMS-004 | partial | `src/core/features/sms/inbound.ts` |
-| SMS-005 | missing | — |
-| SMS-006 | missing | — |
-| SMS-007 | missing | — |
-| SMS-008 | missing | — |
-| PUSH-001 | missing | — |
-| PUSH-002 | missing | — |
-| DELIV-001 | partial | `src/core/platform/adapters/sendgrid.ts` · `src/core/platform/adapters/resend.ts` · `tests/go-live/resend-delivery.journeys.ts` |
-| DELIV-002 | partial | `src/core/features/sender-verification/service.ts` · `tests/sender-verification/worker.spec.ts` |
-| DELIV-003 | partial | `src/core/features/lifecycle/reputation-guard.ts` · `tests/go-live/delivery.journeys.ts` |
-| DELIV-004 | missing | — |
-| DELIV-005 | missing | — |
-| DELIV-006 | missing | — |
-| DELIV-007 | partial | `src/core/features/sender-verification/owner-confirmation.ts` · `src/core/features/sender-verification/approval-authority.ts` |
-| DELIV-008 | partial | `src/core/platform/adapters/provider-health.ts` · `src/core/platform/adapters/sendgrid-domain-verification.ts` · `tests/go-live/delivery.journeys.ts` |
-| REPORT-001 | partial | `src/core/features/insights/service.ts` · `src/core/features/insights/commerce-report.ts` |
-| REPORT-002 | partial | `tests/campaign-results/results.journeys.ts` |
-| REPORT-003 | partial | `src/core/features/insights/commerce-attribution.ts` |
-| REPORT-004 | missing | — |
-| REPORT-005 | missing | — |
-| REPORT-006 | missing | — |
-| REPORT-007 | partial | `src/core/features/insights/cost-report.ts` · `tests/campaign-results/costs.journeys.ts` |
-| INT-001 | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` |
-| INT-002 | missing | — |
-| INT-003 | missing | — |
-| INT-004 | missing | — |
-| INT-005 | missing | — |
-| INT-006 | missing | — |
-| INT-007 | partial | `src/core/features/audience/commerce-webhook-routes.ts` |
-| INT-008 | missing | — |
-| INT-009 | missing | — |
-| INT-010 | missing | — |
-| INT-011 | missing | — |
-| INT-012 | missing | — |
-| INT-013 | missing | — |
-| INT-014 | missing | — |
-| INT-015 | partial | `src/core/features/store/shopify/health.ts` · `src/core/features/store/shopify/collector.ts` · `tests/shopify/connection.spec.ts` |
-| MOVE-001 | partial | `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts` |
-| MOVE-002 | missing | — |
-| MOVE-003 | missing | — |
-| MOVE-004 | partial | `docs/moving-in.md` · `tests/move-in/held.journeys.ts` |
-| MOVE-005 | missing | — |
-| MOVE-006 | partial | `src/core/features/move-in/archive-report.ts` · `tests/move-in/archive.journeys.ts` |
-| MOVE-007 | missing | — |
-| MOVE-008 | missing | — |
-| MOVE-009 | missing | — |
-| MOVE-010 | partial | `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts` |
-| MOVE-011 | partial | `src/core/features/move-in/html-import.ts` · `tests/move-in/archive.journeys.ts` |
-| MOVE-012 | partial | `src/core/features/move-in/archive-limits.ts` · `tests/move-in/archive.journeys.ts` |
-| MOVE-013 | missing | — |
-| MOVE-014 | missing | — |
-| MOBILE-001 | partial | `tests/newsletter-ui/representative-pages.journeys.ts` |
-| MOBILE-002 | missing | — |
-| PUB-001 | missing | — |
-| PUB-002 | missing | — |
-| PUB-003 | missing | — |
-| PUB-004 | missing | — |
-| AGENT-001 | partial | `src/core/features/proposals/forecast.ts` · `src/core/features/proposals/service.ts` |
-| AGENT-002 | missing | — |
-| AGENT-003 | missing | — |
-| AGENT-004 | partial | `src/core/features/store/synchronize.ts` · `src/core/features/lifecycle/provider-outages.ts` |
-| AGENT-005 | missing | — |
-| AGENT-006 | missing | — |
-| AGENT-007 | partial | `src/core/features/proposals/generation.ts` · `tests/proposals-decision/decision-routes.spec.ts` |
-| AGENT-008 | missing | — |
-| AGENT-009 | missing | — |
-| AGENT-010 | partial | `tests/proposals-decision/decision-routes.spec.ts` |
-| AGENT-011 | missing | — |
-| MGMT-001 | partial | `src/core/features/auth/owner-claim.ts` |
-| MGMT-002 | done | `tests/local-start/editor.journey.ts` |
+| Approved scope item | Clauses |
+| --- | --- |
+| Visual automation builder with triggers, waits, conditions, branches and exits for welcome series, abandoned cart and browse, post-purchase and win-back flows | FLOW-001, FLOW-002, FLOW-003, FLOW-004, FLOW-005, FLOW-006, FLOW-007, FLOW-008, FLOW-012, FLOW-015 |
+| Shopify, WooCommerce, Stripe and Stall/Orbit event integrations feeding dynamic segments (purchase history, predicted next order, RFM) and product blocks | STORE-001, INT-001, INT-002, INT-004, INT-006, INT-011, INT-015, SEG-001, SEG-002, SEG-003, SEG-004, BUILD-006 |
+| Drag-and-drop responsive email builder with template library, brand kit and dynamic personalized product recommendations | BUILD-001, BUILD-002, BUILD-003, BUILD-006, BUILD-010, BUILD-011 |
+| Signup forms, popups and landing pages with double opt-in and preference centre for list growth | FORM-001, FORM-002, FORM-003, FORM-004, CONT-009, CONT-015 |
+| SMS marketing with TCPA consent capture, quiet hours and 10DLC registration alongside email | SMS-001, SMS-002, SMS-003, SMS-008, CONT-019, BUILD-009 |
+| A/B and multivariate testing, send-time optimization, deliverability diagnostics and revenue attribution per campaign and flow | EXP-001, EXP-002, EXP-003, EXP-006, DELIV-003, DELIV-005, REPORT-003 |
+| Push further: an agent finds a retention gap, proposes a journey with audience, stop rules and holdout, runs it once approved, judges it on measured repeat purchases, and diagnoses delivery and integration failures | AGENT-001, AGENT-002, AGENT-003, AGENT-004, AGENT-005, AGENT-010 |
+
+## Status
+
+Judged from the code and tests at commit `3569d4e` (17 October 2026). Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, each partial. Round 3 added MSG-013, MSG-014 (partial), MSG-015 and MOVE-013 for its two gaps, and CONT-026 (partial), CAMP-018, CAMP-019, BUILD-011 and RESULT-008 (partial) for its also-noted items; the rest are missing. Round 4 added BUILD-012 (partial) for its gap, and DELIV-007 (partial) and MOVE-014 (missing) for its also-noted items. Round 5 added FORM-008 (partial: today's code already draws the global allowance only after the honeypot, challenge, field, disclosure, eligibility and pending-duplicate checks, at levels below the floor), FORM-009 (missing) and FORM-010 (partial: allowance refusals answer 429 before anything is stored) for its first gap, and CONT-027 (missing) for its second. Round 6 added INT-015 (partial: today's adapter already checks the shop, installation, scopes, pixel settings and cart subscriptions on every sync (`health.ts`) and verifies Shopify's signed app-proxy identity (`collector.ts`); the merchant OAuth install, the connector, Mango-created wiring, first-sync progress, uninstall and the privacy webhooks are missing) for its gap, and sharpened CONT-018 and AUD-009 for two of its also-noted items. Round 7 added DELIV-008 (partial: today's SendGrid health probe already reads the key's scopes and requires `mail.send` (`provider-health.ts`), sender verification reads domain authentication from the connected account (`sendgrid-domain-verification.ts`), and signed SendGrid events are verified and stored (`tests/go-live/delivery.journeys.ts`); the Settings connection, the stored key, Mango-created webhooks, `delivery-events-missing` and connection monitoring are missing) for its gap, and SMS-008 (missing) for its also-noted Twilio item. Done means implemented and exercised by the cited test; partial means some of the behaviour exists in the cited file or test; missing means no code yet. A build round moves a clause to done only with the test its acceptance evidence names (ACCEPTANCE.md).
+
+| Clauses | Done | Partial | Missing | Total |
+| --- | ---: | ---: | ---: | ---: |
+| Published | 64 | 23 | 0 | 87 |
+| Target and push further | 2 | 49 | 103 | 154 |
+| All | 66 | 72 | 103 | 241 |
+
+| Clause | Title | Kind | Status | Evidence | Gap |
+| --- | --- | --- | --- | --- | --- |
+| `HOME-001` | Lobby and public landing | published | done | `tests/local-start/local.journey.ts` · `src/site/pages.tsx` |  |
+| `DOCS-001` | Public documentation | published | done | `tests/docs.spec.ts` |  |
+| `OPER-001` | Operators and the default role | published | done | `tests/local-start/local.journey.ts` · `tests/production-entry.spec.ts` |  |
+| `OPER-002` | Management | published | done | `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/service.ts` |  |
+| `OPER-003` | Removal does not rewrite history | published | done | `tests/settings-sender/routes.spec.ts` |  |
+| `OPER-004` | Roles and permissions | target | missing |  | not implemented |
+| `OPER-005` | Separation of approval | target | missing |  | not implemented |
+| `OPER-006` | Single sign-on and deprovisioning | target | missing |  | not implemented |
+| `OPER-007` | Activity log | target | missing |  | not implemented |
+| `STORE-001` | Store and event connections | published | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: Each connection (INT-001 to INT-006) syncs every declared source type through its edge with source identity and occurrence time; Shopify is proved today. |
+| `STORE-002` | Source identity | published | done | `tests/shopify/connection.spec.ts` |  |
+| `STORE-003` | Freshness | published | partial | `src/core/features/store/sync-run-repository.ts` | acceptance not yet met: Freshness per source type shows the last successful completion and any later failure; needs a tagged journey. |
+| `STORE-004` | Source failure | published | partial | `src/core/features/store/synchronize.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: An unavailable adapter records a failed operation and sends nothing; nested-page failure and retry are proved for Shopify. |
+| `STORE-005` | Stale sources block approval | published | partial | `src/core/features/audience/source-coverage.ts` | acceptance not yet met: A rule reading a stale source blocks approval until a successful sync; needs a tagged journey. |
+| `STORE-006` | Declared adapter capability | published | partial | `src/core/features/audience/source-coverage.ts` | acceptance not yet met: A rule needing an unsupplied source type is shown unavailable and cannot be approved; needs a tagged journey. |
+| `STORE-007` | Ingestion latency | published | partial | `src/core/features/audience/commerce-webhook-routes.ts` | acceptance not yet met: A webhook source record is readable within 60 seconds of acknowledgement, measured at the stated limits. |
+| `CONT-001` | Contact identity | published | done | `tests/move-in/archive.journeys.ts` |  |
+| `CONT-002` | Channel status | published | done | `tests/move-in/held.journeys.ts` · `tests/move-in/archive.journeys.ts` |  |
+| `CONT-003` | Consent evidence | published | done | `tests/audience-import/signup.spec.ts` · `tests/campaign-authoring/import-category.spec.ts` |  |
+| `CONT-004` | Opt-out precedence | published | done | `tests/go-live/go-live.journeys.ts` · `tests/provider-suppression-ingress.spec.ts` · `tests/move-in/held.journeys.ts` |  |
+| `CONT-005` | Resubscription | published | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts` |  |
+| `CONT-006` | Email suppression | published | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/go-live.journeys.ts` |  |
+| `CONT-007` | SMS compliance replies | published | partial | `src/core/features/sms/inbound.ts` · `tests/audience-import/signup.spec.ts` | acceptance not yet met: Signed SMS replies: STOP family opts out before acknowledgement, HELP and START never subscribe; proved on the Mobile Message adapter, Twilio pending (SMS-001). |
+| `CONT-008` | Contact history | published | partial | `src/core/features/audience/ui/contact-detail.tsx` | acceptance not yet met: The contact page shows the full time-ordered history (see CONT-017). |
+| `CONT-009` | Confirmation | published | done | `tests/go-live/go-live.journeys.ts` · `tests/audience-import/signup.spec.ts` |  |
+| `CONT-010` | Import | published | done | `tests/audience-import/routes.spec.ts` · `tests/move-in/archive.journeys.ts` |  |
+| `CONT-011` | Merge | published | done | `tests/audience-controls/merge.spec.ts` |  |
+| `CONT-012` | Dormancy without deletion | published | partial | `src/core/features/audience/eligibility.ts` | acceptance not yet met: Dormant contacts are labelled and excluded, never deleted; imported clicks, orders and consent changes count at their original times, and a move-in contact without history is `no-history`, not dormant, while a dormant contact with only imported opens is labelled `open-only` (journey under AUD-008); needs a tagged journey. |
+| `CONT-013` | Erasure and surviving opt-out | published | done | `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts` |  |
+| `CONT-014` | Custom properties | target | missing |  | not implemented |
+| `CONT-015` | Topics and tags | target | partial | `src/core/features/lifecycle/email-consent-scope.ts` · `tests/campaign-authoring/import-category.spec.ts` | acceptance not yet met: A contact unsubscribes from one topic through the preference centre; the next campaign on that topic excludes them with `topic-unsubscribed` while a campaign on another topic still reaches them; adding a tag changes no eligibility. |
+| `CONT-016` | Preference centre | target | missing |  | not implemented |
+| `CONT-017` | Contact profile and event timeline | target | partial | `src/core/features/audience/ui/contact-detail.tsx` | acceptance not yet met: A contact who submitted a form, placed an order, entered a flow and clicked a message shows each in order with its source, at 1440 and 390 pixels. |
+| `CONT-018` | Onsite behaviour | target | partial | `tests/shopify/connection.spec.ts` | acceptance not yet met: A browser journey clicks a tracked link to the store, views two products and adds one to the cart; the contact timeline shows the three events labelled `click-identified`, and the address bar no longer shows `mgo_c`. An anonymous visitor views a product and then submits a form, and the earlier view appears on their timeline. A second browser using the same token after the exchange identifies nobody, and a link to a host outside the store hosts carries no token. The same journey with Global Privacy Control set records none. |
+| `CONT-019` | US SMS consent capture | target | partial | `src/core/features/sms/signup.ts` · `tests/audience-import/signup.spec.ts` | acceptance not yet met: A form with phone capture shows the disclosure, the submission stores every evidence field, the confirmation text is sent once through the provider edge, and only a signed confirming reply subscribes; a pre-checked or missing disclosure blocks the form from publishing. |
+| `CONT-020` | Engagement-based sunsetting | target | missing |  | not implemented |
+| `CONT-021` | US privacy requests | target | partial | `src/core/features/audience/erasure` · `tests/audience-import/erasure.spec.ts` | acceptance not yet met: A Support operator records an access request and a do-not-share request; the export contains every record type for that contact and no other contact; the next ad-audience sync omits the contact. |
+| `CONT-022` | Contact search and bulk actions | target | partial | `src/core/features/audience/ui/contact-merge.tsx` | acceptance not yet met: A search for a property value returns the matching contacts; a bulk tag of 5,000 contacts completes as a job with a receipt; a bulk "add to topic" refuses contacts without covering evidence and names them. |
+| `CONT-023` | Custom objects | target | missing |  | not implemented |
+| `CONT-024` | Incumbent-held consent | target | partial | `src/core/features/audience/import-validation.ts` · `tests/move-in/archive.journeys.ts` | acceptance not yet met: A Mailchimp subscribed-file fixture has rows with both `OPTIN_TIME` and `CONFIRM_TIME`, rows with only `CONFIRM_TIME`, and rows with neither but with `LAST_CHANGED`. With the owner's attestation, all import as subscribed with incumbent-held evidence and reach the first campaign's review as eligible, with no confirmation message at the mail edge. The reconciliation report counts each evidence kind, and an unsubscribed row and a cleaned row in the same move-in stay unsubscribed and suppressed. Without the attestation, the same rows import as non-subscribed with a named reason. Revoking the attestation makes them non-subscribed, and an SMS row without a collection point stays non-subscribed for SMS. |
+| `CONT-025` | Opt-in mode per form and source | target | partial | `src/core/features/audience/signup-routes.ts` · `src/core/platform/adapters/shopify/normalize.ts` | acceptance not yet met: A Shopify edge customer with marketing state `subscribed`, opt-in level `single_opt_in` and a consent time becomes subscribed with incumbent-held evidence under the default, and no confirmation email appears at the mail edge. After the operator switches the Shopify source to *Pending*, a second such customer becomes pending and receives exactly one confirmation email. After a switch to *Non-subscribed*, a third stays non-subscribed with the source state shown. A Shopify `pending` customer stays non-subscribed until the edge reports `subscribed`. A hosted form switched to single opt-in subscribes a submitter with full CONT-003 evidence and sends no confirmation, while a form left on the default sends exactly one. Each mode change appears in the activity log. |
+| `CONT-026` | Contact added by hand | target | partial | `src/core/features/audience/routes.ts` | acceptance not yet met: An operator adds an in-store signup with email and phone, and the email edge receives one confirmation; after the owner switches `manual entry` to single opt-in, a second entry is subscribed with `operator-recorded` evidence naming the operator. The phone receives a confirmation text and stays pending until the reply. An address that unsubscribed earlier stays unsubscribed, with the reason shown, and a Support session is refused with 403. Today the operator consent route records evidence and sends a confirmation. |
+| `CONT-027` | Resubscribe through a public form | target | missing |  | not implemented |
+| `PROP-001` | Decision Desk | published | done | `tests/proposals-decision/decision-routes.spec.ts` |  |
+| `PROP-002` | Evidence | published | done | `tests/proposals-decision/decision-routes.spec.ts` |  |
+| `PROP-003` | Counts | published | done | `tests/proposals-decision/decision-routes.spec.ts` |  |
+| `PROP-004` | Content | published | done | `tests/proposals-decision/decision-routes.spec.ts` |  |
+| `PROP-005` | Owner control | published | done | `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts` |  |
+| `PROP-006` | Grounded generation | published | done | `tests/proposals-decision/decision-routes.spec.ts` |  |
+| `PROP-007` | Generation failure | published | done | `tests/proposals-decision/proposal-states.spec.ts` |  |
+| `PROP-008` | Forecast provenance | published | done | `tests/proposals-decision/decision-routes.spec.ts` |  |
+| `PROP-009` | Proposal states | published | done | `tests/proposals-decision/proposal-states.spec.ts` |  |
+| `AUD-001` | Review snapshot | published | done | `tests/audience-controls/segments.spec.ts` |  |
+| `AUD-002` | Consent and suppression | published | done | `src/core/features/audience/eligibility.ts` · `tests/go-live/delivery.journeys.ts` |  |
+| `AUD-003` | Commerce and dormancy exclusions | published | partial | `src/core/features/audience/commerce-exclusions.ts` | acceptance not yet met: Purchase, refund and dormancy exclusions listed with counts; needs a tagged journey with commerce sources. |
+| `AUD-004` | Frequency protection | published | done | `src/core/features/audience/eligibility.ts` · `tests/go-live/open-estimates.journeys.ts` |  |
+| `AUD-005` | Dispatch recheck | published | done | `tests/audience-controls/merge.spec.ts` · `tests/go-live/delivery.journeys.ts` |  |
+| `AUD-006` | Multi-step exit | published | partial | `src/core/features/lifecycle/evaluate-audience.ts` | acceptance not yet met: Later steps re-apply rules; needs a multi-step journey. |
+| `AUD-007` | Frozen candidate set | published | done | `tests/audience-controls/segments.spec.ts` |  |
+| `AUD-008` | Inactivity rules in review | target | partial | `src/core/features/audience/eligibility.ts` | acceptance not yet met: A Mailchimp move-in fixture of contacts subscribed two years ago reaches the first campaign's review with no `dormant` exclusion, both for contacts whose `granular_activity` shows a click three months ago and for contacts with no activity rows (counted as `no-history`); a contact whose last imported click is 13 months old is excluded as `dormant`; turning the exclusion off for that campaign includes them, and the approved revision and activity log record the choice and its approver. The review also counts `open-only` contacts within `dormant` and includes them in one action, and an Owner or Admin's installation-wide default is recorded in the activity log. |
+| `AUD-009` | Frequency protection: one policy and a recorded override | target | partial | `src/core/features/lifecycle/policies.ts` · `src/core/features/audience/eligibility.ts` | acceptance not yet met: Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, a draft flow made from a Mailchimp journey fixture carries the same setting, and its activation shows the 30-day skip count from seeded sends. |
+| `CAMP-001` | States | published | done | `tests/campaign-results/results.journeys.ts` |  |
+| `CAMP-002` | Draft editing | published | done | `tests/campaign-authoring/browser.spec.ts` |  |
+| `CAMP-003` | Revision preview | published | done | `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` |  |
+| `CAMP-004` | Approval checks | published | done | `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/create-api.spec.ts` |  |
+| `CAMP-005` | Idempotent approval | published | done | `tests/campaign-authoring/browser.spec.ts` |  |
+| `CAMP-006` | Schedule | published | done | `tests/campaign-authoring/browser.spec.ts` |  |
+| `CAMP-007` | Scheduled edits | published | done | `tests/go-live/delivery.journeys.ts` |  |
+| `CAMP-008` | Test send | published | done | `tests/go-live/go-live.journeys.ts` |  |
+| `CAMP-009` | Cancellation | published | done | `tests/campaign-results/results.journeys.ts` |  |
+| `CAMP-010` | Step deadline | published | done | `tests/go-live/scheduler.journeys.ts` |  |
+| `CAMP-011` | Dispatch punctuality | published | done | `tests/go-live/scheduler.journeys.ts` |  |
+| `CAMP-012` | Campaign images | published | done | `tests/campaign-assets.spec.ts` · `tests/campaign-authoring/local-images.spec.ts` |  |
+| `CAMP-013` | Recipient-local send time | target | missing |  | not implemented |
+| `CAMP-014` | Pause and resume | target | partial | `src/core/features/lifecycle/routes.ts` · `src/core/features/lifecycle/provider-outages.ts` | acceptance not yet met: The scheduler journey pauses a two-step campaign mid-dispatch, shows no hand-off during the pause, resumes, and completes with each recipient-step handed off once. |
+| `CAMP-015` | Marketing calendar | target | missing |  | not implemented |
+| `CAMP-016` | Follow-up to non-engaged recipients | target | missing |  | not implemented |
+| `CAMP-017` | Recurring and RSS-to-email campaigns | target | missing |  | not implemented |
+| `CAMP-018` | Duplicate a campaign | target | missing |  | not implemented |
+| `CAMP-019` | Test send to typed addresses | target | missing |  | not implemented |
+| `DESIGN-001` | Optional design module | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
+| `DESIGN-002` | Draft-only design generation | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
+| `DESIGN-003` | Design data and records | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
+| `DESIGN-004` | Design import | published | done | `tests/campaign-authoring/design-import.spec.ts` |  |
+| `MSG-001` | Sender identity | published | partial | `src/core/features/settings/sender-validation.ts` · `tests/settings-sender/routes.spec.ts` | acceptance not yet met: Email identity is proved; per-country registered SMS senders await SMS-001 and SMS-002. |
+| `MSG-002` | Email authentication | published | done | `tests/sender-verification/worker.spec.ts` |  |
+| `MSG-003` | Email unsubscribe | published | done | `tests/go-live/go-live.journeys.ts` · `tests/sender-verification/worker.spec.ts` |  |
+| `MSG-004` | SMS permission | published | partial | `src/core/features/sms/transport-guard.ts` | acceptance not yet met: SMS eligibility needs subscribed scope and an approved sender; US registration pending. |
+| `MSG-005` | SMS opt-out | published | partial | `src/core/features/sms/content.ts` | acceptance not yet met: Every marketing SMS carries programme identity and STOP text; needs a tagged review journey. |
+| `MSG-006` | Links | published | partial | `src/core/features/settings/link-hosts-validation.ts` | acceptance not yet met: Malformed links, schemes other than HTTPS and MSG-013's contact schemes (`http:` and `javascript:` included), and hosts outside MSG-014's list on the link or any redirect block scheduling, each named with MSG-015's allow action; image sources stay HTTPS only. Needs a tagged journey. |
+| `MSG-007` | Content checks | published | partial | `src/core/features/lifecycle/advisory-acknowledgements.ts` | acceptance not yet met: Advisory findings can be acknowledged and blocking ones cannot; needs a tagged journey. |
+| `MSG-008` | Personalisation | published | partial | `src/core/features/campaigns/message-content.ts` | acceptance not yet met: Tokens with fallbacks render and count fallback use; needs an exercising test. |
+| `MSG-009` | Email body | published | done | `tests/campaign-authoring/canonical-save.spec.ts` |  |
+| `MSG-010` | Unsubscribe availability | published | partial | `src/core/features/audience/unsubscribe-routes.ts` | acceptance not yet met: Unsubscribe answers within 2 seconds and is rate-limited per token; needs a measured journey. |
+| `MSG-011` | Sending reputation | published | done | `tests/go-live/delivery.journeys.ts` |  |
+| `MSG-012` | Hidden or deceptive presentation | published | done | `tests/campaign-authoring/canonical-save.spec.ts` |  |
+| `MSG-013` | Contact links (`mailto:`, `tel:`, `sms:`) | target | missing |  | not implemented |
+| `MSG-014` | Allowed link and image hosts | target | partial | `src/core/features/settings/link-hosts-validation.ts` · `src/core/features/settings/link-hosts.ts` · `src/core/platform/link-inspector.ts` | acceptance not yet met: On a fresh installation with a connected Shopify edge store, settings lists the deployment host, `myshop.com`, `www.myshop.com`, `cdn.shopify.com` and the social link hosts with their sources. A campaign with a catalogue product block (`cdn.shopify.com` image, `myshop.com` link), a social links block and `mailto:` and `tel:` footer links approves with no settings change. `shop.myshop.com` blocks until `*.myshop.com` is added; `myshop.com.evil.example` still blocks; a removed host is not restored by the next store sync. Today settings hold operator-typed exact hosts defaulting to the deployment host, and the approval check and the link inspector disagree on subdomains. |
+| `MSG-015` | Allow a blocked host from review | target | missing |  | not implemented |
+| `SEND-001` | Provider hand-off | published | done | `tests/go-live/managed-mail.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts` |  |
+| `SEND-002` | Quiet hours | published | partial | `src/core/features/sms/policy.ts` | acceptance not yet met: Recipient-local SMS windows; US defaults in SMS-003. |
+| `SEND-003` | Throttling and progress | published | done | `tests/go-live/delivery.journeys.ts` |  |
+| `SEND-004` | Transport failure | published | done | `tests/go-live/delivery-recovery.journeys.ts` · `tests/go-live/delivery.journeys.ts` |  |
+| `SEND-005` | Provider-event identity | published | done | `tests/go-live/go-live.journeys.ts` · `tests/go-live/delivery-recovery.journeys.ts` |  |
+| `SEND-006` | Delivery truth | published | done | `tests/go-live/go-live.journeys.ts` · `tests/go-live/scheduler.journeys.ts` |  |
+| `SEND-007` | Partial completion | published | done | `tests/go-live/go-live.journeys.ts` · `tests/campaign-results/results.journeys.ts` |  |
+| `SEND-008` | Resumable dispatch and reconciliation | published | done | `tests/go-live/go-live.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts` |  |
+| `SEND-009` | Provider outage | published | done | `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts` |  |
+| `RESULT-001` | Campaign history | published | done | `tests/campaign-results/results.journeys.ts` |  |
+| `RESULT-002` | Engagement | published | done | `tests/go-live/open-estimates.journeys.ts` |  |
+| `RESULT-003` | Attribution | published | partial | `src/core/features/insights/commerce-attribution.ts` | acceptance not yet met: Click-window attribution once per order with refunds subtracted; needs a tagged commerce journey (see REPORT-003). |
+| `RESULT-004` | Cost | published | done | `tests/campaign-results/costs.journeys.ts` |  |
+| `RESULT-005` | Link tracking | published | partial | `src/core/features/lifecycle/message-tracking.ts` · `src/core/features/lifecycle/tracked-link-policy.ts` | acceptance not yet met: Opaque per-recipient redirects with automated clicks excluded; needs a tagged journey. |
+| `RESULT-006` | Deliverability reporting | published | partial | `src/core/features/insights/ui/sender-rates.tsx` · `tests/go-live/delivery.journeys.ts` | acceptance not yet met: Per-domain rates shown; SMS sender rates await SMS-001. |
+| `RESULT-007` | Click map, per-link clicks and clicker lists | target | partial | `src/core/features/insights/repository.ts` | acceptance not yet met: A seeded send has three links; some recipients click one link twice, and a known scanner requests every link. The report shows each link's total and unique clicks, with the scanner excluded. One link's clicker list equals the seeded clickers and exports as CSV with the same rows, and a segment started from it holds exactly those contacts. |
+| `RESULT-008` | Recipients per outcome | target | partial | `src/core/features/campaigns/ui/step-results.tsx` | acceptance not yet met: A seeded send with one hard bounce, one complaint, one unsubscribe from the message and one quiet-hours skip lists each contact under its outcome with the reason; the CSV export matches the lists, and every list count equals the campaign summary. Today campaign detail shows counts per disposition and skip reason, not the contacts. |
+| `DATA-001` | Export contents | published | done | `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts` |  |
+| `SCALE-001` | Capacity for the first buyer | target | partial | `seed.json` · `src/core/features/audience/import-limits.ts` | acceptance not yet met: A generated installation of 250,000 contacts with a year of order and activity events passes the MOVE-012 move-in, an exact review count within 60 seconds, a complete hand-off to the provider edge at the declared rate with no duplicate (SEND-001), and a segment update within SEG-002's time, with wall time and peak memory recorded against `seed.json → limits`; the per-email size floor is proved under BUILD-012, and the intake floor under FORM-008. |
+| `FORM-001` | Hosted and embedded signup | target | done | `src/core/features/audience/signup-routes.ts` · `tests/audience-import/signup.spec.ts` |  |
+| `FORM-002` | Popups, flyouts and full-page forms | target | missing |  | not implemented |
+| `FORM-003` | Multi-step capture and incentives | target | missing |  | not implemented |
+| `FORM-004` | Landing pages | target | missing |  | not implemented |
+| `FORM-005` | Form performance and tests | target | missing |  | not implemented |
+| `FORM-006` | Referral programme | target | missing |  | not implemented |
+| `FORM-007` | Abuse resistance | target | done | `src/core/features/audience/signup-security.ts` · `tests/audience-import/signup.spec.ts` |  |
+| `FORM-008` | Signup intake capacity | target | partial | `src/core/features/audience/signup-routes.ts` · `src/core/features/audience/signup-security.ts` | acceptance not yet met: A journey submits 600 distinct valid signups to one popup within an hour from 200 network addresses, and all 600 become pending or subscribed under the form's mode with no 429. A burst of 100 in one minute is accepted in full. In the same hour, 200 honeypot or failed-challenge submissions leave the next real signup accepted, and the global counter has risen only by accepted signups. Two concurrent duplicates leave one reservation spent. One address makes 30 accepted signups to an ordinary form, and 120 that pass the challenge. On an installation without Turnstile, a flood of unchallenged signups up to their allowance leaves a challenged signup accepted. The SCALE-001 intake floor is proved by this volume journey. |
+| `FORM-009` | Kiosk and event forms | target | missing |  | not implemented |
+| `FORM-010` | Refused signups are never silent | target | partial | `src/core/features/audience/signup-routes.ts` | acceptance not yet met: A submission over a declared allowance shows the error state, not success, with the visitor's entries kept and a `Retry-After`. The refusal is counted in the form's report under its reason, raised on Home, and summarised in that hour's activity log entry. |
+| `SEG-001` | Segment builder | target | partial | `src/core/features/audience/segments.ts` · `tests/audience-controls/segments.spec.ts` | acceptance not yet met: A saved segment over an event count with a value filter and a US state condition returns exactly the matching seeded contacts in review, and its summary names every condition. |
+| `SEG-002` | Live membership | target | missing |  | not implemented |
+| `SEG-003` | RFM and lifecycle stages | target | missing |  | not implemented |
+| `SEG-004` | Predictions | target | missing |  | not implemented |
+| `SEG-005` | Engagement and lead scoring | target | missing |  | not implemented |
+| `SEG-006` | Campaign and flow activity conditions | target | missing |  | not implemented |
+| `BUILD-001` | Drag-and-drop email builder | target | missing |  | not implemented |
+| `BUILD-002` | Template library | target | partial | `src/core/features/design-import/compile.ts` · `src/core/features/move-in/html-import.ts` | acceptance not yet met: An operator saves a draft as a template, starts a second campaign from it, edits the template, and the first campaign's approved revision is unchanged. |
+| `BUILD-003` | Brand kit | target | missing |  | not implemented |
+| `BUILD-004` | Reusable blocks | target | missing |  | not implemented |
+| `BUILD-005` | Conditional content | target | missing |  | not implemented |
+| `BUILD-006` | Dynamic product content | target | missing |  | not implemented |
+| `BUILD-007` | Coupons | target | missing |  | not implemented |
+| `BUILD-008` | Previews and pre-send checks | target | partial | `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` | acceptance not yet met: A draft with a missing alt attribute and a 95 KB sent size shows both advisories with locations, the size advisory naming 95 KB and the limit; acknowledging them allows approval while a contrast failure still blocks. A 110 KB body is refused at save under BUILD-012. |
+| `BUILD-009` | SMS and MMS composer | target | partial | `src/core/features/sms/content.ts` · `src/core/features/sms/review-preview.ts` | acceptance not yet met: A message with an emoji switches to UCS-2 and shows the new segment count and cost; the preview shows the short link and STOP text that will be sent. |
+| `BUILD-010` | Mobile layout the checker can prove | target | missing |  | not implemented |
+| `BUILD-011` | Chosen catalogue products | target | missing |  | not implemented |
+| `BUILD-012` | Email size the builder and imported templates fit in | target | partial | `src/core/features/campaigns/draft-composition.ts` · `src/core/features/design-import/compile.ts` | acceptance not yet met: A browser journey builds a full promotional email (header, hero and button, a two-column text section, a six-item product grid from the Shopify edge catalogue, a social links block, the managed footer and a block with BUILD-010 mobile settings), saves, reopens unchanged and approves it; its stored body is over 20,000 characters and within the limit derived from `seed.json → maxEmailHtmlBytes`, and the shown sent size matches the hand-off size at the provider edge. Mailchimp's `base_boxed_3column_query.html` blueprint, filled with fixture content and moved in through MOVE-011, starts a draft that saves and reaches approval. A body over the limit is refused at save with its size, the limit and its largest blocks named; a 95 KB body shows BUILD-008's size advisory. Today a save over a fixed 20,000-character cap is refused, and design import names its size and the cap. |
+| `FLOW-001` | Visual flow builder | target | missing |  | not implemented |
+| `FLOW-002` | Triggers | target | missing |  | not implemented |
+| `FLOW-003` | Entry filters and re-entry | target | missing |  | not implemented |
+| `FLOW-004` | Delays and waits | target | missing |  | not implemented |
+| `FLOW-005` | Splits | target | missing |  | not implemented |
+| `FLOW-006` | Actions | target | missing |  | not implemented |
+| `FLOW-007` | Exits and goals | target | missing |  | not implemented |
+| `FLOW-008` | Reviewed activation | target | missing |  | not implemented |
+| `FLOW-009` | Per-send rechecks | target | missing |  | not implemented |
+| `FLOW-010` | Exactly-once execution | target | missing |  | not implemented |
+| `FLOW-011` | Pause, manual review and stop | target | missing |  | not implemented |
+| `FLOW-012` | Flow library | target | missing |  | not implemented |
+| `FLOW-013` | Flow analytics and path inspection | target | missing |  | not implemented |
+| `FLOW-014` | Priority and cross-message frequency | target | missing |  | not implemented |
+| `FLOW-015` | Sequences | target | missing |  | not implemented |
+| `FLOW-016` | Flow portability | target | missing |  | not implemented |
+| `EXP-001` | Campaign A/B tests | target | missing |  | not implemented |
+| `EXP-002` | Multivariate tests | target | missing |  | not implemented |
+| `EXP-003` | Flow splits and flow holdouts | target | missing |  | not implemented |
+| `EXP-004` | Global holdout | target | missing |  | not implemented |
+| `EXP-005` | Honest test statistics | target | missing |  | not implemented |
+| `EXP-006` | Send-time optimisation | target | missing |  | not implemented |
+| `SMS-001` | US SMS through Twilio | target | partial | `src/core/platform/adapters/mobile-message.ts` | acceptance not yet met: The go-live journey with a Twilio edge sends an approved SMS step, ingests signed delivered and undelivered callbacks once each, and a replayed callback adds no fact, run on a connection made through SMS-008; done only once SMS-008 is done. |
+| `SMS-002` | Carrier registration status | target | missing |  | not implemented |
+| `SMS-003` | US quiet hours and state rules | target | partial | `src/core/features/sms/policy.ts` | acceptance not yet met: A step scheduled at 19:30 Eastern hands off to New York recipients and defers Los Angeles recipients only if 19:30 Eastern is outside their window; a fourth same-subject text to a Florida number in 24 hours is skipped with `state-frequency-limit`. A phone-only subscriber with a 305 number and no address hands off at 10:00 Eastern with zone source `area-code`, and is deferred at 20:30 Eastern. |
+| `SMS-004` | Two-way SMS inbox | target | partial | `src/core/features/sms/inbound.ts` | acceptance not yet met: An inbound signed reply appears in the inbox and contact timeline; the operator's answer hands off through Twilio once; an inbound STOP opts the number out before the webhook is acknowledged and shows in the thread. |
+| `SMS-005` | Branded short links and MMS | target | missing |  | not implemented |
+| `SMS-006` | SMS cost control | target | missing |  | not implemented |
+| `SMS-007` | WhatsApp marketing messages | target | missing |  | not implemented |
+| `SMS-008` | Twilio connection an owner makes in Settings | target | missing |  | not implemented |
+| `PUSH-001` | Web push | target | missing |  | not implemented |
+| `PUSH-002` | Mobile app push and in-app messages | target | missing |  | not implemented |
+| `DELIV-001` | Sending providers | target | partial | `src/core/platform/adapters/sendgrid.ts` · `src/core/platform/adapters/resend.ts` · `tests/go-live/resend-delivery.journeys.ts` | acceptance not yet met: The go-live journey runs against each adapter's edge and shows the declared capability on the campaign page; an SMTP relay without events never shows a delivered count; run on a connection made through DELIV-008, and done only once DELIV-008 is done. |
+| `DELIV-002` | Domain setup | target | partial | `src/core/features/sender-verification/service.ts` · `tests/sender-verification/worker.spec.ts` | acceptance not yet met: The sender-verification journey reports each record pass or fail with the record to add, and a tracking domain with a valid CNAME rewrites tracked links to it. On a provider edge with no domain authentication for the From domain, Mango creates it at the edge and shows the edge's records. |
+| `DELIV-003` | Bulk-sender compliance dashboard | target | partial | `src/core/features/lifecycle/reputation-guard.ts` · `tests/go-live/delivery.journeys.ts` | acceptance not yet met: With seeded provider facts at a 0.25 per cent complaint rate, the dashboard warns; at 0.3 per cent the MSG-011 block shows the same figures. With no signed event received yet, the complaint rate reads `delivery events not connected`. |
+| `DELIV-004` | Domain warm-up | target | missing |  | not implemented |
+| `DELIV-005` | Mailbox-provider breakdown | target | missing |  | not implemented |
+| `DELIV-006` | Address quality at intake | target | missing |  | not implemented |
+| `DELIV-007` | Sender evidence renewal without stopping live flows | target | partial | `src/core/features/sender-verification/owner-confirmation.ts` · `src/core/features/sender-verification/approval-authority.ts` | acceptance not yet met: At day 23 after confirmation, Home shows the renewal card and the edge receives the reminder and diagnostic emails. At day 31 a live welcome flow's next message waits with `sender-evidence-lapsed` and Home counts it; confirming the diagnostic hands it off within 5 minutes, once. A DKIM record change at the DNS edge raises the card at once and holds the next message the same way; a message whose send-by passes during the lapse is skipped with `sender-evidence-deadline`. With the receipt connector fixture, renewal on day 23 needs no click. Today the evidence lasts 30 days and approval checks its expiry. |
+| `DELIV-008` | Sending connection an owner makes in Settings | target | partial | `src/core/platform/adapters/provider-health.ts` · `src/core/platform/adapters/sendgrid-domain-verification.ts` · `tests/go-live/delivery.journeys.ts` | acceptance not yet met: Against a SendGrid edge and a Resend edge: on a fresh Managed installation with no `MARKETING_MAIL_*` input, and on a fresh Free installation with no `MAIL_PROVIDER_API_KEY` or `MAIL_WEBHOOK_SECRET` input, an Owner connects the SendGrid edge by pasting a key in Settings, with no redeploy, and no route, page, log line or export contains the key afterwards; on the Free installation an invited operator's sign-in email arrives through the edge. The edge records one webhook Mango created at this deployment's URL with the listed events and signing on; a pre-existing webhook is unchanged and reconnecting creates no second one. Before the first signed event, approval and flow activation name `delivery-events-missing`; the sender check's signed delivered event passes the webhook step. A signed hard bounce suppresses the address under CONT-006 before the next hand-off, and a delivered event shows **Delivered**. A SendGrid key without the event webhook scopes, and a sending-only Resend key, are named as missing that permission and no webhook is created. An account with no free webhook slot shows the limit and the forwarding route and nothing at the edge changes. Revoking the key, and separately deleting Mango's webhook, each raise the Home alert and email and block approval with the named cause; replacing the key leaves a `handoff-unknown` recipient-step unsent. The same journey on the Resend edge stores the returned `signing_secret`. An Admin, Manager or Author calling the connect, replace and disconnect routes is refused with 403. Today the SendGrid health probe reads the key's scopes and requires `mail.send`, sender verification reads domain authentication from the account, and signed SendGrid events are verified and stored. |
+| `REPORT-001` | Overview dashboard | target | partial | `src/core/features/insights/service.ts` · `src/core/features/insights/commerce-report.ts` | acceptance not yet met: With a seeded month of sends, orders and holdout data, each figure on the page matches the underlying records and the incremental figure is labelled separately from attribution. |
+| `REPORT-002` | Campaign and flow performance tables | target | partial | `tests/campaign-results/results.journeys.ts` | acceptance not yet met: The CSV export of the table equals the on-screen rows for the same filter; with open estimates on, the estimated open-rate column appears on screen and in the CSV labelled as an estimate, and is absent with them off. |
+| `REPORT-003` | Attribution for campaigns, flows and SMS | target | partial | `src/core/features/insights/commerce-attribution.ts` | acceptance not yet met: An order following an SMS click and an earlier email click is attributed once, to the most recent qualifying click; changing the window to one day recalculates the report. |
+| `REPORT-004` | Customer and retention analytics | target | missing |  | not implemented |
+| `REPORT-005` | List growth and consent sources | target | missing |  | not implemented |
+| `REPORT-006` | Scheduled and custom reports | target | missing |  | not implemented |
+| `REPORT-007` | Usage and cost transparency | target | partial | `src/core/features/insights/cost-report.ts` · `tests/campaign-results/costs.journeys.ts` | acceptance not yet met: `tests/campaign-results/costs.journeys.ts` for campaign and day totals; a flow's costs appear under that flow. |
+| `INT-001` | Shopify | target | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: Done only once INT-015 is done. `tests/shopify/connection.spec.ts` (native sync, signed carts, signed pixel), run on a connection made through INT-015's install journey, plus a consent write-back journey: a Mango unsubscribe appears as unsubscribed in the Shopify edge's customer record; and the CONT-025 Shopify opt-in journey. |
+| `INT-002` | WooCommerce | target | missing |  | not implemented |
+| `INT-003` | BigCommerce | target | missing |  | not implemented |
+| `INT-004` | Stripe | target | missing |  | not implemented |
+| `INT-005` | Square | target | missing |  | not implemented |
+| `INT-006` | Stall and Orbit | target | missing |  | not implemented |
+| `INT-007` | Events and profiles API | target | partial | `src/core/features/audience/commerce-webhook-routes.ts` | acceptance not yet met: An API journey tracks a custom event with an idempotency key twice (one event stored), refuses a subscribe call without evidence with a named error, and returns 429 past the key's limit. |
+| `INT-008` | Outbound webhooks | target | missing |  | not implemented |
+| `INT-009` | Zapier and Crank | target | missing |  | not implemented |
+| `INT-010` | Segment | target | missing |  | not implemented |
+| `INT-011` | CRM sync | target | missing |  | not implemented |
+| `INT-012` | Ad audiences | target | missing |  | not implemented |
+| `INT-013` | Web analytics tagging | target | missing |  | not implemented |
+| `INT-014` | Reviews and loyalty apps | target | missing |  | not implemented |
+| `INT-015` | Shopify connection a merchant installs | target | partial | `src/core/features/store/shopify/health.ts` · `src/core/features/store/shopify/collector.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: Against a Shopify edge providing OAuth, the Admin API, bulk operations, webhooks, app proxy and a theme: an Owner on a fresh installation with no `COMMERCE_*` input chooses Connect Shopify, enters the edge's shop domain, approves the edge's OAuth screen and returns connected, with no deployment variable set and no redeploy. The edge records the webhook subscriptions and the activated pixel Mango created; the granted scopes include `write_discounts` and `write_customers`; Settings shows each step as passed, and turning the edge theme's embed on passes the theme step. A seeded store of 250,000 customers and a year of orders syncs with progress and an estimated finish, survives one forced restart and completes within 2 hours with no duplicate; before it completes, a purchase segment shows as syncing and cannot be approved. An edge pixel cart event enrolls an identified contact in the abandoned-checkout flow, a flow message's unique code is created at the edge (BUILD-007), and a Mango unsubscribe is written back. A webhook to another installation's routing token, a bad HMAC, an app-level delivery whose signed body names another shop and a bad forwarding signature each change nothing, and a captured connector response leaves no token at the connector. An `app/uninstalled` delivery disconnects the store on Home and blocks a store-dependent campaign at approval while its synced data stays. A `customers/redact` delivery erases that customer under CONT-013, and `customers/data_request` creates the access request. |
+| `MOVE-001` | From Mailchimp | target | partial | `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts` | acceptance not yet met: `tests/move-in/archive.journeys.ts` runs on synthetic exports, extended with checked-in Mailchimp-format fixtures for a saved segment with a campaign-activity condition, a classic automation, a `granular_activity` file, two overlapping audiences with conflicting statuses and a template with merge tags and a `<style>` block. Each fixture shows its expected lines in the reconciliation report (MOVE-007 to MOVE-011). The CONT-024 subscribed-file fixture and the MOVE-012 full-scale export run through the same journey. The same journey also runs on one real, owner-supplied Mailchimp export with its reconciliation report. |
+| `MOVE-002` | From Klaviyo | target | missing |  | not implemented |
+| `MOVE-003` | From ActiveCampaign | target | missing |  | not implemented |
+| `MOVE-004` | From Kit (ConvertKit) | target | partial | `docs/moving-in.md` · `tests/move-in/held.journeys.ts` | acceptance not yet met: The move-in journey's Kit-format synthetic files (`docs/moving-in.md`) keep every restrictive state, plus a sequence fixture becomes a draft sequence. |
+| `MOVE-005` | From beehiiv, Omnisend and Customer.io | target | missing |  | not implemented |
+| `MOVE-006` | Reconciliation and cutover | target | partial | `src/core/features/move-in/archive-report.ts` · `tests/move-in/archive.journeys.ts` | acceptance not yet met: After a move-in, the report's counts reconcile to the files and contact table, and no campaign or flow is scheduled or live. The report counts consent per evidence kind (CONT-024) and names the attestation each relies on. The cutover checklist shows the parallel-run sync (MOVE-013), or the re-import advice for an export-only move-in, and **Mark cutover complete** ends the sync. The checklist names any template or live message still loading images from an incumbent host (MOVE-014). |
+| `MOVE-007` | Mailchimp saved segments | target | missing |  | not implemented |
+| `MOVE-008` | Mailchimp automations and Customer Journeys | target | missing |  | not implemented |
+| `MOVE-009` | Incumbent engagement history | target | missing |  | not implemented |
+| `MOVE-010` | Several audiences | target | partial | `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts` | acceptance not yet met: A fixture has two audiences that share addresses: one address subscribed in A and unsubscribed in B, one cleaned in B, and one with a different first name in each. Each address becomes one contact. The first is subscribed to topic A and unsubscribed from topic B, the cleaned one is suppressed on email, and the first-name conflict is listed. The report counts each audience and their overlap. |
+| `MOVE-011` | Incumbent template conversion | target | partial | `src/core/features/move-in/html-import.ts` · `tests/move-in/archive.journeys.ts` | acceptance not yet met: A Mailchimp template fixture contains `*\|FNAME\|*`, `*\|UNSUB\|*`, `*\|LIST:ADDRESS\|*`, `*\|ARCHIVE\|*`, an unknown `*\|FOO\|*`, and a `<style>` block with class rules, a `display: none` rule and a media query. It becomes a template whose tokens resolve in preview and whose inlined colours and sizes match the source. Its report names the unknown tag, the dropped `display: none` rule and the mapped mobile rule. The template passes the checker apart from the unknown-tag block. A second fixture with links to three outside hosts lists them in its report and in the reconciliation report, and a campaign built from it reaches review with the three hosts and their allow actions (MSG-015). Mailchimp's `base_boxed_3column_query.html` blueprint, filled with fixture content, converts with its sent size reported and starts a draft that saves and reaches approval (BUILD-012); a fixture inflated past the limit is listed with its size as a held conversion, not dropped. A fixture whose footer is `#999999` on white converts with that text at `#767676`, listed in its report, and passes the checker. |
+| `MOVE-012` | Move-in at the buyer's scale | target | partial | `src/core/features/move-in/archive-limits.ts` · `tests/move-in/archive.journeys.ts` | acceptance not yet met: A generated Mailchimp account export with 250,000 contacts across the subscribed, unsubscribed, non-subscribed and cleaned files and 52 weekly campaigns with `granular_activity` moves in through the journey. It is interrupted once by a forced worker restart during the activity import and resumes to completion with no re-upload. Its reconciliation report adds up per file, evidence kind and activity rows. A campaign to the whole subscribed audience then reaches review with an eligible count equal to an independent count over the generated files. The run records its wall time and peak memory. A generated API-pull fixture of the same size completes the same way. |
+| `MOVE-013` | Two-way sync during the parallel run | target | missing |  | not implemented |
+| `MOVE-014` | Incumbent images brought home | target | missing |  | not implemented |
+| `MOBILE-001` | Responsive operator app | target | partial | `tests/newsletter-ui/representative-pages.journeys.ts` | acceptance not yet met: The representative-pages journey (`tests/newsletter-ui/representative-pages.journeys.ts`) extended to every operator page at 390 pixels with axe and overflow checks. |
+| `MOBILE-002` | Native iOS and Android app | target | missing |  | not implemented |
+| `PUB-001` | Web archive | target | missing |  | not implemented |
+| `PUB-002` | Paid newsletters | target | missing |  | not implemented |
+| `PUB-003` | Recommendations | target | missing |  | not implemented |
+| `PUB-004` | Direct sponsorships | target | missing |  | not implemented |
+| `AGENT-001` | Retention-gap finder | push-further | partial | `src/core/features/proposals/forecast.ts` · `src/core/features/proposals/service.ts` | acceptance not yet met: On a seeded store history with a missing post-purchase flow and a lapsed cohort, the agent's findings name both with counts that match the data, and cite the queries behind them. |
+| `AGENT-002` | Journey proposal with holdout and stop rules | push-further | missing |  | not implemented |
+| `AGENT-003` | Outcome judge | push-further | missing |  | not implemented |
+| `AGENT-004` | Lifecycle failure diagnosis and repair | push-further | partial | `src/core/features/store/synchronize.ts` · `src/core/features/lifecycle/provider-outages.ts` | acceptance not yet met: With a simulated six-hour Shopify webhook outage, the agent reports the gap, lists the 37 missed checkouts, and its approved replay enrolls only those still relevant and not already messaged, sending nothing twice. |
+| `AGENT-005` | Deliverability diagnostician | push-further | missing |  | not implemented |
+| `AGENT-006` | Account audit | push-further | missing |  | not implemented |
+| `AGENT-007` | Grounded content drafting | push-further | partial | `src/core/features/proposals/generation.ts` · `tests/proposals-decision/decision-routes.spec.ts` | acceptance not yet met: A drafted abandoned-cart email names only products and prices present in the catalogue; a draft containing a claim not in the evidence is rejected as PROP-007 requires. |
+| `AGENT-008` | Natural-language segments and questions | push-further | missing |  | not implemented |
+| `AGENT-009` | Standing routines with memory | push-further | missing |  | not implemented |
+| `AGENT-010` | Agent authority and guardrails | push-further | partial | `tests/proposals-decision/decision-routes.spec.ts` | acceptance not yet met: Attempts by an agent to approve, activate, send and change consent are each refused server-side with a named reason and logged; disabling the agent stops its next scheduled run. |
+| `AGENT-011` | Migration agent | push-further | missing |  | not implemented |
+| `MGMT-001` | Signed first-owner admission | published | partial | `src/core/features/auth/owner-claim.ts` | acceptance not yet met: Signed first-owner admission once per installation; hosted proof pending. |
+| `MGMT-002` | Native owner editor | published | done | `tests/local-start/editor.journey.ts` |  |
