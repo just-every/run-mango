@@ -6153,7 +6153,7 @@
       "executable": false
     },
     "tests/campaign-results/results.journeys.ts": {
-      "sha256": "26f80fdb6efc18cb0fc081c5223e10e82f44e5f50074e0d1efb4f5f9fdfbb549",
+      "sha256": "c02534029c86659f5464bbb5cb1914827854ed1a45c6a0d7a044ffeefd80fa23",
       "executable": false
     },
     "tests/campaign-results/runtime-fixture.ts": {
@@ -6161,7 +6161,7 @@
       "executable": false
     },
     "tests/campaign-results/worker.ts": {
-      "sha256": "9452697849a82770f8d4f2f4cf01ab960ce757e2562d20524b0eedaabfacb559",
+      "sha256": "34e3ad5e22af3221f52f0cf8cf32d2837f10b33741a5f3bba646770aaad43feb",
       "executable": false
     },
     "tests/contract.js": {
