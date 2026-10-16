@@ -7,6 +7,8 @@ import { readScope } from '../../src/core/features/audience/erasure/scope';
 import { contactErasureTables } from '../../src/core/features/audience/erasure/declaration';
 
 const hash = (value: string) => createHash('sha256').update(value).digest('hex');
+// Each test starts two native Worker runtimes; the default 30s is too tight on a loaded runner.
+test.describe.configure({ timeout: 240000 });
 
 test('CONT-013/DATA-001 populated upgrade retires legacy custody and resumes a pending old erasure cursor', async () => {
   const email = 'legacy-journal-person@example.test', portable = hash(`mango-audience-export-v1:${email}`);
@@ -76,7 +78,6 @@ test('CONT-013/DATA-001 invalid archive authority is refused before any durable 
 });
 
 test('CONT-013/DATA-001 restore refuses a tampered or stale archive by name with no persistent effect, then restores a current one', async () => {
-  test.setTimeout(240000);
   const [source, target] = await Promise.all([portabilityRuntime(), portabilityRuntime({restore:true})]);
   try {
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('erased-reader','reader@example.test','Erased reader','unsubscribed','never-subscribed',1,1)").run();
