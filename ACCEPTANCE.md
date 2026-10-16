@@ -54,7 +54,7 @@ The 0.2.0 upgrade record includes every shipped migration through 0059. Existing
 
 ## Clause acceptance (target contract, 16 October 2026)
 
-CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **66 done, 54 partial, 88 missing**. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
+CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **66 done, 59 partial, 93 missing** of 218 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
 
 ### Home
 
@@ -94,7 +94,7 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **CONT-009 — Confirmation** (done). Pending until single-use, expiring, POST-only confirmation. Evidence: `tests/go-live/go-live.journeys.ts` · `tests/audience-import/signup.spec.ts`.
 - **CONT-010 — Import** (done). Reviewed CSV import with row outcomes, idempotent reruns and undo. Evidence: `tests/audience-import/routes.spec.ts` · `tests/move-in/archive.journeys.ts`.
 - **CONT-011 — Merge** (done). Merge keeps the most restrictive state per channel. Evidence: `tests/audience-controls/merge.spec.ts`.
-- **CONT-012 — Dormancy without deletion** (partial). Dormant contacts are labelled and excluded, never deleted; needs a tagged journey. Evidence: `src/core/features/audience/eligibility.ts`.
+- **CONT-012 — Dormancy without deletion** (partial). Dormant contacts are labelled and excluded, never deleted; imported clicks, orders and consent changes count at their original times, and a move-in contact without history is `no-history`, not dormant (journey under AUD-008); needs a tagged journey. Evidence: `src/core/features/audience/eligibility.ts`.
 - **CONT-013 — Erasure and surviving opt-out** (done). Erasure within five minutes with surviving opt-out hashes. Evidence: `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts`.
 - **CONT-014 — Custom properties** (missing). An operator creates a date and a money property, imports a CSV that maps both, sets one through the events API, and sees a segment on the date property and a personalised preview using the money value, with history showing each source.
 - **CONT-015 — Topics and tags** (partial). A contact unsubscribes from one topic through the preference centre; the next campaign on that topic excludes them with `topic-unsubscribed` while a campaign on another topic still reaches them; adding a tag changes no eligibility. Evidence: `src/core/features/lifecycle/email-consent-scope.ts` · `tests/campaign-authoring/import-category.spec.ts`.
@@ -128,6 +128,8 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **AUD-005 — Dispatch recheck** (done). Eligibility rechecked at dispatch and before each hand-off. Evidence: `tests/audience-controls/merge.spec.ts` · `tests/go-live/delivery.journeys.ts`.
 - **AUD-006 — Multi-step exit** (partial). Later steps re-apply rules; needs a multi-step journey. Evidence: `src/core/features/lifecycle/evaluate-audience.ts`.
 - **AUD-007 — Frozen candidate set** (done). Approval freezes the candidate set. Evidence: `tests/audience-controls/segments.spec.ts`.
+- **AUD-008 — Inactivity rules in review** (partial). A Mailchimp move-in fixture of contacts subscribed two years ago reaches the first campaign's review with no `dormant` exclusion, both for contacts whose `granular_activity` shows a click three months ago and for contacts with no activity rows (counted as `no-history`). A contact whose last imported click is 13 months old is excluded as `dormant`. Turning the exclusion off for that campaign includes them, and the approved revision and activity log record the choice and its approver. Evidence: `src/core/features/audience/eligibility.ts`.
+- **AUD-009 — Frequency protection: one policy and a recorded override** (partial). Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. Evidence: `src/core/features/lifecycle/policies.ts` · `src/core/features/audience/eligibility.ts`.
 
 ### Campaigns
 
@@ -191,6 +193,7 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **RESULT-004 — Cost** (done). Provider and AI costs by campaign and UTC day. Evidence: `tests/campaign-results/costs.journeys.ts`.
 - **RESULT-005 — Link tracking** (partial). Opaque per-recipient redirects with automated clicks excluded; needs a tagged journey. Evidence: `src/core/features/lifecycle/message-tracking.ts` · `src/core/features/lifecycle/tracked-link-policy.ts`.
 - **RESULT-006 — Deliverability reporting** (partial). Per-domain rates shown; SMS sender rates await SMS-001. Evidence: `src/core/features/insights/ui/sender-rates.tsx` · `tests/go-live/delivery.journeys.ts`.
+- **RESULT-007 — Click map, per-link clicks and clicker lists** (partial). A seeded send has three links; some recipients click one link twice, and a known scanner requests every link. The report shows each link's total and unique clicks, with the scanner excluded. One link's clicker list equals the seeded clickers and exports as CSV with the same rows, and a segment started from it holds exactly those contacts. Evidence: `src/core/features/insights/repository.ts`.
 
 ### Data
 
@@ -213,10 +216,11 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **SEG-003 — RFM and lifecycle stages** (missing). With a seeded order history, the stage distribution and one contact's scores match an independent calculation of the documented method.
 - **SEG-004 — Predictions** (missing). On a seeded history above the minimum, predictions appear with method and back-test error; on a history below it, the segment builder marks prediction conditions unavailable.
 - **SEG-005 — Engagement and lead scoring** (missing). A contact who clicks twice and submits a form reaches the configured score, which decays after the configured period.
+- **SEG-006 — Campaign and flow activity conditions** (missing). After a seeded campaign X with known recipients and clickers, "received campaign X and did not click" returns exactly the seeded non-clickers, and "clicked link 2 of campaign X" returns exactly that link's clickers. "Did not click any of the last 5 campaigns" returns exactly the seeded contacts with no clicks across five seeded sends. The same conditions over an imported Mailchimp campaign return the contacts its `granular_activity` file names.
 
 ### Email builder and content
 
-- **BUILD-001 — Drag-and-drop email builder** (missing). A browser journey builds a two-column email with product and button blocks, saves, reopens it unchanged, previews at desktop and mobile widths and approves it; the stored body re-parses to the same bytes (CAMP-003 policy).
+- **BUILD-001 — Drag-and-drop email builder** (missing). A browser journey builds a two-column email with product and button blocks, saves, reopens it unchanged, previews at desktop and mobile widths with the columns stacked at 375 pixels (BUILD-010) and approves it; the stored body re-parses to the same bytes (CAMP-003 policy).
 - **BUILD-002 — Template library** (partial). An operator saves a draft as a template, starts a second campaign from it, edits the template, and the first campaign's approved revision is unchanged. Evidence: `src/core/features/design-import/compile.ts` · `src/core/features/move-in/html-import.ts`.
 - **BUILD-003 — Brand kit** (missing). Proposing a kit from a test storefront page at the network edge yields its logo and two colours for review, and accepting it styles a new template.
 - **BUILD-004 — Reusable blocks** (missing). Editing a reusable footer updates two drafts and creates a new draft revision of one live flow message, while the live revision keeps sending the old footer until activation.
@@ -225,11 +229,12 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **BUILD-007 — Coupons** (missing). A flow message hands off with a unique Shopify code per recipient at the store edge; a store-side failure records `coupon-unavailable` and sends nothing for that recipient.
 - **BUILD-008 — Previews and pre-send checks** (partial). A draft with a missing alt attribute and a 110 KB body shows both advisories with locations; acknowledging them allows approval while a contrast failure still blocks. Evidence: `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts`.
 - **BUILD-009 — SMS and MMS composer** (partial). A message with an emoji switches to UCS-2 and shows the new segment count and cost; the preview shows the short link and STOP text that will be sent. Evidence: `src/core/features/sms/content.ts` · `src/core/features/sms/review-preview.ts`.
+- **BUILD-010 — Mobile layout the checker can prove** (missing). A browser journey builds a two-column email with one block set to hide on mobile and a mobile font size on another, saves it, and renders the stored body at 375 and 600 pixels in standards and quirks mode. At 375 the columns are stacked, the hidden block is absent and the mobile size applies. At 600 the columns sit side by side and the block is present. With the `<style>` element stripped, the columns still stack at 375. The stored body passes the MSG-012 checker in both trees. A hand-written `<style>` element or class in HTML view is refused with the reason named.
 
 ### Automated flows
 
 - **FLOW-001 — Visual flow builder** (missing). A browser journey builds a three-message welcome flow with a split, sees a validation error for an unconnected node, fixes it and saves a draft flow revision, at 1440 pixels and readable at 390.
-- **FLOW-002 — Triggers** (missing). Each trigger kind, fed through the events API or a store adapter at the network edge, enrolls a matching contact once and no other.
+- **FLOW-002 — Triggers** (missing). Each trigger kind, fed through the events API or a store adapter at the network edge, enrolls a matching contact once and no other; a Clicked trigger filtered to one link of a campaign enrolls a contact who clicked that link and not one who clicked another link of it.
 - **FLOW-003 — Entry filters and re-entry** (missing). A contact triggering Started Checkout three times in an hour under "once per 7 days" holds one enrollment; a contact who orders mid-flow exits at the next action with `filter-exit`.
 - **FLOW-004 — Delays and waits** (missing). A durable-timer journey sets delays of five minutes and two days (with a controlled clock), restarts the runtime between, and each fires once within 60 seconds of its instant; a wait-until for Placed Order takes the event path when the order arrives and the timeout path otherwise.
 - **FLOW-005 — Splits** (missing). Two contacts with cart values of $80 and $150 take different branches, and each enrollment shows the evaluated condition.
@@ -304,12 +309,17 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 
 ### Migration from incumbents
 
-- **MOVE-001 — From Mailchimp** (partial). `tests/move-in/archive.journeys.ts` on synthetic exports, plus the same journey on one real, owner-supplied Mailchimp export with its reconciliation report. Evidence: `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts`.
+- **MOVE-001 — From Mailchimp** (partial). `tests/move-in/archive.journeys.ts` runs on synthetic exports, extended with checked-in Mailchimp-format fixtures for a saved segment with a campaign-activity condition, a classic automation, a `granular_activity` file, two overlapping audiences with conflicting statuses and a template with merge tags and a `<style>` block. Each fixture shows its expected lines in the reconciliation report (MOVE-007 to MOVE-011). The same journey also runs on one real, owner-supplied Mailchimp export with its reconciliation report. Evidence: `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts`.
 - **MOVE-002 — From Klaviyo** (missing). An edge journey against a Klaviyo API fixture imports profiles with consent, a segment definition and an abandoned-cart flow as a draft with its unsupported steps listed.
 - **MOVE-003 — From ActiveCampaign** (missing). An API fixture import keeps an unsubscribed contact unsubscribed and produces a draft flow for a seeded automation.
 - **MOVE-004 — From Kit (ConvertKit)** (partial). The move-in journey's Kit-format synthetic files (`docs/moving-in.md`) keep every restrictive state, plus a sequence fixture becomes a draft sequence. Evidence: `docs/moving-in.md` · `tests/move-in/held.journeys.ts`.
 - **MOVE-005 — From beehiiv, Omnisend and Customer.io** (missing). One synthetic export per product imports with every unsubscribed or suppressed row restricted.
 - **MOVE-006 — Reconciliation and cutover** (partial). After a move-in, the report's counts reconcile to the files and contact table, and no campaign or flow is scheduled or live. Evidence: `src/core/features/move-in/archive-report.ts` · `tests/move-in/archive.journeys.ts`.
+- **MOVE-007 — Mailchimp saved segments** (missing). A Mailchimp API fixture has two saved segments. One, "clicked campaign X and engagement is often", is recreated as a draft segment whose membership over the imported history equals the fixture's expected members. The other has an unsupported condition, which is named in the segment and the report.
+- **MOVE-008 — Mailchimp automations and Customer Journeys** (missing). A Mailchimp API fixture with one classic two-email welcome automation yields a draft flow with both emails' converted content and named delays. A journey fixture whose two emails name an abandoned-cart journey yields an abandoned-cart draft flow with those emails, and a report line names its unreadable branch. Neither flow is live.
+- **MOVE-009 — Incumbent engagement history** (missing). A `granular_activity` fixture with clicks and opens for three contacts and one unknown address imports one click or open fact per row on the right contacts at their original times. The reconciliation report counts imported and dropped rows, the contacts' timelines show the facts as imported, and no campaign result figure changes.
+- **MOVE-010 — Several audiences** (partial). A fixture has two audiences that share addresses: one address subscribed in A and unsubscribed in B, one cleaned in B, and one with a different first name in each. Each address becomes one contact. The first is subscribed to topic A and unsubscribed from topic B, the cleaned one is suppressed on email, and the first-name conflict is listed. The report counts each audience and their overlap. Evidence: `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts`.
+- **MOVE-011 — Incumbent template conversion** (partial). A Mailchimp template fixture contains `*|FNAME|*`, `*|UNSUB|*`, `*|LIST:ADDRESS|*`, `*|ARCHIVE|*`, an unknown `*|FOO|*`, and a `<style>` block with class rules, a `display: none` rule and a media query. It becomes a template whose tokens resolve in preview and whose inlined colours and sizes match the source. Its report names the unknown tag, the dropped `display: none` rule and the mapped mobile rule. The template passes the checker apart from the unknown-tag block. Evidence: `src/core/features/move-in/html-import.ts` · `tests/move-in/archive.journeys.ts`.
 
 ### Mobile
 
@@ -335,7 +345,7 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **AGENT-008 — Natural-language segments and questions** (missing). The example request becomes a rule whose summary names the state, order count and recency conditions and whose count matches the builder's.
 - **AGENT-009 — Standing routines with memory** (missing). A routine with a revenue-drop alert fires once on a seeded drop, stays within its cost limit, and a memory note excluding a product line keeps that line out of the next drafted content.
 - **AGENT-010 — Agent authority and guardrails** (partial). Attempts by an agent to approve, activate, send and change consent are each refused server-side with a named reason and logged; disabling the agent stops its next scheduled run. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.
-- **AGENT-011 — Migration agent** (missing). On a Klaviyo fixture the agent proposes mappings for every field, flags a consent-upgrading column, and nothing is written until the operator approves the plan.
+- **AGENT-011 — Migration agent** (missing). On a Klaviyo fixture the agent proposes mappings for every field, flags a consent-upgrading column, and nothing is written until the operator approves the plan. On a Mailchimp fixture it proposes the MOVE-007 segment and MOVE-008 journey mappings, with each unsupported condition or step explained.
 
 ### Managed installation and editor
 
