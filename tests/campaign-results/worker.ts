@@ -12,6 +12,7 @@ import { createCampaignRepository } from '../../src/core/features/campaigns/repo
 import { createCampaignCompositionRepository } from '../../src/core/features/campaigns/composition-repository';
 import { createCampaignRoutes } from '../../src/core/features/campaigns/routes';
 import { createAuthoringService } from '../../src/core/features/campaigns/authoring-service';
+import { createLifecycleServices } from '../../src/core/features/lifecycle';
 import { fixedNow, seedCampaign, seedOutcomes, states, clearCampaigns } from './fixtures';
 export default {async fetch(request:Request,bindings:LocalAppBindings,context:ExecutionContext) {
   const platform=presentationPlatform(createFixturePlatform(bindings,bindings.LOCAL_BOOTSTRAP_TOKEN),bindings.DB);
@@ -44,7 +45,8 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
     });
     const service=createCampaignService(createCampaignRepository(platform.database),createCampaignCompositionRepository(platform.database),services.storeService,{smsEnabled:!new URL(request.url).searchParams.has('smsDisabled'),now:()=>fixedNow});
     // Native campaign routes own all reads. Lifecycle cancellation remains on the real app below.
-    const routes=createCampaignRoutes(service,createAuthoringService(platform,services.lifecycleRuntime,services.storeService));
+    const routes=createCampaignRoutes(service,createAuthoringService(platform,services.lifecycleRuntime,services.storeService),platform.config.publicBaseUrl.origin,
+      (campaignId,revisionId)=>createLifecycleServices(services.lifecycleRuntime).approval.preview({campaignId,revisionId}));
     app.route('/api',routes);
   },true);
   if(new URL(request.url).pathname.startsWith('/_results/')) return app.fetch(request,bindings,context);

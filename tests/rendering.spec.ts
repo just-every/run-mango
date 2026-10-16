@@ -26,6 +26,7 @@ test('[BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authe
   expect(completedSetup.status()).toBe(303);
   expect(completedSetup.headers().location).toBe('/app');
   await page.goto('/app');
+  await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
   await expect(page.getByRole('heading', {name: 'Nothing sends until you approve it.'})).toBeVisible();
   const privateOrigin = await page.evaluate(() => performance.timeOrigin);
   await page.getByRole('link', {name: 'Audience', exact: true}).click();

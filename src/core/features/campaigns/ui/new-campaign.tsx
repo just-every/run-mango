@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
+import { useNavigate, useRouter } from '@tanstack/react-router';
 import { requestJson } from '@/core/app/client/lib/api';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import type { DecisionDesk } from '@/core/app/client/lib/types';
@@ -8,6 +8,12 @@ import type { DecisionDesk } from '@/core/app/client/lib/types';
 export function NewCampaign({ open, commerceEnabled, aiEnabled }: { open: boolean; commerceEnabled:boolean; aiEnabled:boolean }) {
   const [busy,setBusy]=useState(false), [error,setError]=useState('');
   const navigate=useNavigate();
+  const router=useRouter();
+  // Opening the starter chooser expresses intent to enter the editor. Fetch
+  // its code while the operator chooses; data and authorization stay live.
+  useEffect(() => {
+    if (open) void router.loadRouteChunk(router.routesById['/app/campaigns_/$id_/review'])?.catch(() => {});
+  }, [open, router]);
   const signals=useResource<{starters:{id:string;title:string;evidence:string;available:boolean;detail:string}[];detail:string}>('/api/campaign-starters');
   const suggestions=useResource<DecisionDesk>('/api/decision-desk');
   const create=async (proposalId?:string,starterSourceId?:string)=>{
@@ -15,9 +21,15 @@ export function NewCampaign({ open, commerceEnabled, aiEnabled }: { open: boolea
     try {
       const body = proposalId ? {} : starterSourceId ? { starterSourceId } : { mode: 'blank' };
       const response=await requestJson<{campaignId?:string;detail?:string}>(proposalId?`/api/proposals/${proposalId}/adopt`:'/api/campaigns',{method:'POST',body:JSON.stringify(body)});
-      if(response.status<300&&response.data.campaignId) await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId}});
-      else setError(response.data.detail??'The draft could not be created. Try again.');
-    } catch {setError('The draft could not be created. Try again.');} finally {setBusy(false);}
+      if(response.status<300&&response.data.campaignId) {
+        // The document entry renders the fresh review directly. Keep the
+        // starter disabled until it replaces this page, avoiding duplicate clicks.
+        await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId},reloadDocument:true});
+        return;
+      }
+      setError(response.data.detail??'The draft could not be created. Try again.');
+    } catch {setError('The draft could not be created. Try again.');}
+    setBusy(false);
   };
   if (!open) return null;
   const current = suggestions.data?.proposals.filter(entry=>entry.proposal.state==='proposed'&&Date.parse(entry.proposal.sendByAt)>Date.now()) ?? [];

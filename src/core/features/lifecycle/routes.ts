@@ -1,3 +1,4 @@
+import { collectSenderTimings } from '@/core/features/sender-verification/timings';
 import { z } from 'zod';
 
 import { readJson, readParams } from '@/core/api/input';
@@ -96,7 +97,9 @@ export function registerLifecycleHttpRoutes(
     if ('error' in params) return params.error;
     const body = await readJson(context, testSendBody);
     if ('error' in body) return body.error;
-    const result = await approval.sendTest({ campaignId: params.data.id, operatorId: actor, ...body.data });
+    const timing = await collectSenderTimings(() => approval.sendTest({ campaignId: params.data.id, operatorId: actor, ...body.data }), 'test_send');
+    context.header('Server-Timing', timing.header);
+    const result = timing.value;
     if (result.kind === 'not_found') return context.json({ error: 'not_found' }, 404);
     if (result.kind === 'blocked') return context.json({ status: 'blocked', blockers: [{ kind: 'test-send', detail: result.detail, blocking: true }] }, 409);
     return context.json({ status: 'test-sent', disposition: result.disposition, providerMessageId: result.providerMessageId });

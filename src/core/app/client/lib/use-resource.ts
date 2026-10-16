@@ -1,11 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { ResourceSnapshot } from './resource-snapshot';
 
 import { ApiError, getJson } from './api';
 
 export function useResource<T>(path: string) {
-  const [data, setData] = useState<T>();
+  const snapshot = useContext(ResourceSnapshot);
+  const initial = snapshot[path] as T | undefined;
+  const [data, setData] = useState<T | undefined>(initial);
   const [error, setError] = useState<string>();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(initial === undefined);
+  const seeded = useRef(snapshot);
   const scope = useRef({ path, active: false, requested: 0, settled: 0, minimum: 0 });
 
   const read = useCallback(async () => {
@@ -43,19 +47,41 @@ export function useResource<T>(path: string) {
     return read();
   }, [path, read]);
 
+  const replace = useCallback((value: T) => {
+    const current = scope.current;
+    if (!current.active || current.path !== path) return;
+    current.minimum = ++current.requested;
+    current.settled = current.requested;
+    setData(value);
+    setError(undefined);
+    setLoading(false);
+  }, [path]);
+
   useEffect(() => {
     const current = scope.current;
     if (current.path !== path) {
       current.path = path;
       current.minimum = current.requested + 1;
-      setData(undefined);
+      setData(initial);
     }
     current.active = true;
+    if (initial !== undefined) {
+      // Consume once on hydration, and replace on a fresh navigation snapshot.
+      // Explicit reload always uses the API, including after a mutation.
+      if (seeded.current !== snapshot) {
+        current.minimum = ++current.requested;
+        setData(initial);
+        setError(undefined);
+      }
+      seeded.current = snapshot;
+      setLoading(false);
+      return () => { current.active = false; };
+    }
     // Mount replay may make equivalent reads; the first result stays usable until a newer one settles.
     void read();
     return () => { current.active = false; };
-  }, [path, read]);
+  }, [path, read, snapshot, initial]);
 
   const matchesPath = scope.current.path === path;
-  return { data: matchesPath ? data : undefined, error: matchesPath ? error : undefined, loading: !matchesPath || loading, reload };
+  return { data: matchesPath ? data : undefined, error: matchesPath ? error : undefined, loading: !matchesPath || loading, reload, replace };
 }

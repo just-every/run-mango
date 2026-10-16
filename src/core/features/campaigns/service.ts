@@ -17,13 +17,18 @@ export function createCampaignService(
   store: ReturnType<typeof createStoreService>,
   options: { smsEnabled: boolean; commerceEnabled?: boolean; aiEnabled?: boolean; marketingConnectionRequired?: boolean; now?: () => Date; smsPreview?:(campaignId:string,revisionId:string)=>Promise<import('@/core/features/sms/review-preview').SmsReviewPreview|undefined> } = { smsEnabled: false },
 ) {
-  async function campaignDetail(id: string) {
-    const campaign = await repository.getCampaign(id);
+  async function campaignDetail(id: string, preferEditable = false) {
+    const [campaignRead, editableRead] = await Promise.allSettled([
+      repository.getCampaign(id), preferEditable ? compositionRepository.editable(id) : undefined,
+    ]);
+    if (campaignRead.status === 'rejected') throw campaignRead.reason;
+    const campaign = campaignRead.value;
     if (!campaign) return undefined;
-
-    const composition = campaign.activeRevisionId
+    if (editableRead.status === 'rejected') throw editableRead.reason;
+    const editable = editableRead.value;
+    const composition = editable ?? (campaign.activeRevisionId
       ? await compositionRepository.read(campaign.activeRevisionId)
-      : undefined;
+      : undefined);
     if (!composition) {
       return {
         campaign,
@@ -38,12 +43,18 @@ export function createCampaignService(
     }
 
     const rules=parseStructuredRules(composition.revision.inclusionRuleJson,composition.revision.exclusionRulesJson);
-    const checks=(await repository.listChecks(composition.revision.id)).map(check=>authoringSourceCheck(check,rules.ok?rules.sourceTypes:[]));
+    const [savedChecks, scheduler, results, uncertainDeliveries] = await Promise.all([
+      repository.listChecks(composition.revision.id),
+      repository.scheduler(options.now?.() ?? new Date()),
+      !editable && composition.revision.state === 'approved'
+        ? repository.results(id, composition.revision.id, campaign.state, options.now?.() ?? new Date()) : undefined,
+      repository.uncertainDeliveries(id),
+    ]);
+    const checks=savedChecks.map(check=>authoringSourceCheck(check,rules.ok?rules.sourceTypes:[]));
     return { campaign, ...composition,
-      scheduler: await repository.scheduler(options.now?.() ?? new Date()),
+      scheduler,
       revision: {...composition.revision, audienceRule:summarizeAudienceRules(composition.revision.inclusionRuleJson,composition.revision.exclusionRulesJson)},
-      results: composition.revision.state === 'approved' ? await repository.results(id, composition.revision.id, campaign.state, options.now?.() ?? new Date()) : undefined,
-      uncertainDeliveries: await repository.uncertainDeliveries(id), checks };
+      results, uncertainDeliveries, checks };
   }
 
   async function proposalEntry(proposal:NonNullable<Awaited<ReturnType<typeof repository.getProposal>>>) {
@@ -100,19 +111,23 @@ export function createCampaignService(
     },
 
     async review(id: string) {
-      const saved = await campaignDetail(id);
-      if (!saved) return undefined;
-      const editable=await compositionRepository.editable(id);
-      const detail=editable?{...saved,...editable,checks:await repository.listChecks(editable.revision.id),results:undefined}:saved;
+      const [detailRead, blockersRead] = await Promise.allSettled([campaignDetail(id, true), store.providerBlockers()]);
+      if (detailRead.status === 'rejected') throw detailRead.reason;
+      const detail = detailRead.value;
+      if (!detail) return undefined;
+      if (blockersRead.status === 'rejected') throw blockersRead.reason;
+      const blockers = blockersRead.value;
       const required=new Set<string>(detail.steps.map(step=>step.channel==='email'?'mail.sender.v1':'sms.sender.v1'));
       const rules=detail.revision&&parseStructuredRules(detail.revision.inclusionRuleJson,detail.revision.exclusionRulesJson);
       if(rules?.ok&&rules.sourceTypes.length)required.add('commerce.store.v1');
       const checks=detail.checks.map(check=>authoringSourceCheck(check,rules?.ok?rules.sourceTypes:[]));
-      return { ...detail, checks, smsPreview:detail.revision?await options.smsPreview?.(id,detail.revision.id):undefined, blockers: (await store.providerBlockers()).filter(blocker=>required.has(blocker.kind)) };
+      const smsPreview = detail.revision && detail.steps.some(step=>step.channel==='sms')
+        ? await options.smsPreview?.(id,detail.revision.id) : undefined;
+      return { ...detail, checks, smsPreview, blockers: blockers.filter(blocker=>required.has(blocker.kind)) };
     },
 
-    updateDraft(id: string, composition: DraftComposition) {
-      return compositionRepository.saveDraft(id, composition, new Date());
+    updateDraft(id: string, composition: DraftComposition, deferRead = false) {
+      return compositionRepository.saveDraft(id, composition, new Date(), deferRead);
     },
 
     async approvalBlockers(id: string) {

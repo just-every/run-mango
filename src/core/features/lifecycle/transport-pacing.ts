@@ -9,6 +9,7 @@ import {activeProviderHolds,recordProviderHold,senderDomain} from './provider-ho
 import type { AppConfig, DeliveryRequest, SenderAdapter } from '@/core/shared/platform';
 import type { Database } from '@/core/platform/db/client';
 import { boundPolicy } from './transport-policy';
+import { measureSenderWork } from '@/core/features/sender-verification/timings';
 
 export {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
 /** Every purpose shares both even spacing and an atomic rolling-minute segment
@@ -66,10 +67,14 @@ export function pacedAdapter(adapter:SenderAdapter, database:Database, config:Ap
         await recordProviderHold(database,{provider,scope:`sender:${request.sender}`,reason:'sender-unavailable',held:!check.ready,
           effectiveAt:Date.now(),evidenceId:`active-senders:${Date.now()}`,detail:check.detail});
       }
-      const holds=await activeProviderHolds(database,provider,adapter.channel,request.content.from?.email??request.sender);
-      if(holds.length)throw new ProviderDeferredError(new Date(Date.now()+60000),'provider-hold');
-      const outage=await database.$client.prepare("SELECT 1 FROM provider_outages WHERE channel=? AND state='paused'").bind(adapter.channel).first();
-      if(outage)throw new ProviderDeferredError(new Date(Date.now()+60000),'provider-outage');
+      const [holds,outage]=await Promise.allSettled([
+        activeProviderHolds(database,provider,adapter.channel,request.content.from?.email??request.sender),
+        database.$client.prepare("SELECT 1 FROM provider_outages WHERE channel=? AND state='paused'").bind(adapter.channel).first(),
+      ]);
+      if(holds.status==='rejected')throw holds.reason;
+      if(holds.value.length)throw new ProviderDeferredError(new Date(Date.now()+60000),'provider-hold');
+      if(outage.status==='rejected')throw outage.reason;
+      if(outage.value)throw new ProviderDeferredError(new Date(Date.now()+60000),'provider-outage');
       const local=adapter.channel==='email'?config.emailHandoffsPerMinute:config.modules.sms.enabled?config.modules.sms.config.handoffsPerMinute:0;
       if(adapter.channel==='sms'&&(!p?.carrierPerMinute||!p.providerPerMinute)) throw new ProviderDeferredError(new Date(Date.now()+60000),'provider-policy-unavailable');
       const limit=Math.min(local,p?.providerPerMinute??local,p?.carrierPerMinute??local);
@@ -79,7 +84,7 @@ export function pacedAdapter(adapter:SenderAdapter, database:Database, config:Ap
       try {
         await reserveTransport(database,`${provider}:${p?.account??'installation'}`,limit,units);
         finalSmsGuard?.();
-        const handoff=await adapter.send(request);
+        const handoff=await measureSenderWork('handoff_provider',()=>adapter.send(request));
         if(handoff.disposition==='accepted')await finalSmsGuard?.accepted();
         if(handoff.complianceHold)await recordProviderHold(database,{provider,...handoff.complianceHold,held:true,effectiveAt:Date.now(),evidenceId:`receipt:${handoff.providerMessageId}`,detail:'Provider substituted the requested sender; provider acceptance is retained.'});
         return handoff;

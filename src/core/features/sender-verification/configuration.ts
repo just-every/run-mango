@@ -2,15 +2,27 @@ import { readSendgridDomain } from '@/core/platform/adapters/sendgrid-domain-ver
 import { readResendDomain } from '@/core/platform/adapters/resend-domain-verification';
 import { createDnsInspection, tags, txt } from './dns';
 import { inspectSpf } from './spf';
-import { inspectDmarc } from './dmarc';
+import { createDmarcInspection, prefetchDmarc } from './dmarc';
 import { digest } from './identity';
 import { VerificationError, type SenderBinding } from './types';
+import { measureSenderWork } from './timings';
 
 export async function inspectConfiguration(binding: SenderBinding, apiKey: string, now: number, transport: typeof fetch = fetch) {
   if (binding.provider === 'rer') throw new VerificationError('managed-newsletter-verification-unavailable', 'unknown');
-  const provider = await (binding.provider === 'sendgrid' ? readSendgridDomain : readResendDomain)(apiKey, binding.domain, transport);
-  try {
   const dns = createDnsInspection(now, transport);
+  const inspectDmarc = createDmarcInspection(dns, binding.domain);
+  const provider = await measureSenderWork('sender_provider', () =>
+    (binding.provider === 'sendgrid' ? readSendgridDomain : readResendDomain)(apiKey, binding.domain, transport));
+  return measureSenderWork('sender_dns', async () => {
+  try {
+  // Start independent reads together; consume them below in provider order so
+  // validation failures and the recorded evidence retain their existing meaning.
+  for (const row of provider.records) {
+    dns.prefetch(row.name, row.type);
+    if (row.type === 'CNAME') dns.prefetch(row.name, 'TXT');
+    const domain = row.record === 'SPF' ? row.name : row.name.split('._domainkey.')[1];
+    if (domain) prefetchDmarc(dns, domain);
+  }
   let spfDomain = '', signingDomain = '', selector = '', keyDigest = '';
   const signingKeys: Array<{ signingDomain: string; selector: string; keyDigest: string }> = [];
   for (const row of provider.records) {
@@ -51,7 +63,7 @@ export async function inspectConfiguration(binding: SenderBinding, apiKey: strin
     }
   }
   if (!spfDomain || !signingDomain) throw new VerificationError('dns-records-missing');
-  const dmarc = await inspectDmarc(dns, binding.domain, spfDomain, signingDomain);
+  const dmarc = await inspectDmarc(spfDomain, signingDomain);
   const snapshot = dns.snapshot();
   const configurationDigest = await digest({ provider, dns: snapshot.evidence, dmarc, engine: 'rfc9989-v1' });
   return { provider, dns: snapshot.evidence, dmarc, resolver: 'cloudflare-dns.com', checkedAt: now, configurationDigest, expiresAt: snapshot.expiresAt, spfDomain, signingDomain, selector, keyDigest, signingKeys,
@@ -61,5 +73,6 @@ export async function inspectConfiguration(binding: SenderBinding, apiKey: strin
     failure.providerVerified = true;
     throw failure;
   }
+  });
 }
 export type ConfigurationInspection = Awaited<ReturnType<typeof inspectConfiguration>>;

@@ -32,9 +32,7 @@ export function createDnsInspection(now: number, transport: typeof fetch = fetch
   const snapshots = new Map<string, Promise<DnsSnapshot>>();
   const evidence: Array<{ name: string; type: string; values: string[] }> = [];
   let expiresAt = now + 300_000;
-  async function resolve(name: string, type: keyof typeof typeCodes, ancestors = new Set<string>()): Promise<string[]> {
-    if (ancestors.has(normalize(name)) || ancestors.size >= 8) throw new VerificationError('dns-alias-loop');
-    const ancestry = new Set(ancestors).add(normalize(name));
+  function read(name: string, type: keyof typeof typeCodes): Promise<DnsSnapshot> {
     const key = `${normalize(name)}:${type}`;
     let request = snapshots.get(key);
     if (!request) {
@@ -57,7 +55,17 @@ export function createDnsInspection(now: number, transport: typeof fetch = fetch
       })();
       snapshots.set(key, request);
     }
-    const snapshot = await request;
+    return request;
+  }
+  function prefetch(name: string, type: keyof typeof typeCodes): void {
+    // Keep failures for resolve to report in validation order. Prefetching must
+    // not add evidence or change which validation failure the caller observes.
+    void read(name, type).catch(() => {});
+  }
+  async function resolve(name: string, type: keyof typeof typeCodes, ancestors = new Set<string>()): Promise<string[]> {
+    if (ancestors.has(normalize(name)) || ancestors.size >= 8) throw new VerificationError('dns-alias-loop');
+    const ancestry = new Set(ancestors).add(normalize(name));
+    const snapshot = await read(name, type);
     expiresAt = Math.min(expiresAt, snapshot.expiresAt);
     let target = normalize(name);
     const seen = new Set<string>();
@@ -76,6 +84,6 @@ export function createDnsInspection(now: number, transport: typeof fetch = fetch
     evidence.push({ name: normalize(name), type, values });
     return values;
   }
-  return { resolve, snapshot: () => ({ evidence: [...evidence].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))), expiresAt }) };
+  return { prefetch, resolve, snapshot: () => ({ evidence: [...evidence].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))), expiresAt }) };
 }
 export type DnsInspection = ReturnType<typeof createDnsInspection>;

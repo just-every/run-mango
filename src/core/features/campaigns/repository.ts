@@ -1,6 +1,7 @@
 import { schedulerObservation } from '@/core/features/lifecycle/scheduler-observation';
 import { createProposalRepository } from '@/core/features/proposals/repository';
 import { enrichAdvisoryAcknowledgements } from '@/core/features/lifecycle/advisory-acknowledgements';
+import { isAcknowledgableFinding } from '@/core/features/lifecycle/advisory-policy';
 import { asc, desc, eq } from 'drizzle-orm';
 import { createCampaignResultRepository } from './result-repository';
 import { createCampaignListRepository } from './list-repository';
@@ -104,9 +105,13 @@ export function createCampaignRepository(database: Database) {
         .from(campaignChecks)
         .where(eq(campaignChecks.revisionId, revisionId))
         .orderBy(asc(campaignChecks.kind));
-      const enriched=await enrichAdvisoryAcknowledgements(database,revisionId,checks);
-      const projection=await campaignClaimProjection(database,revisionId);
-      return projection?enriched.map(projection.check):enriched;
+      const [enriched, projection] = await Promise.all([
+        checks.some(isAcknowledgableFinding)
+          ? enrichAdvisoryAcknowledgements(database,revisionId,checks)
+          : checks.map(check=>({...check,findingIdentity:undefined,acknowledgement:undefined})),
+        campaignClaimProjection(database,revisionId),
+      ]);
+      return projection?enriched.map(check=>projection.check(check)):enriched;
     },
 
   };

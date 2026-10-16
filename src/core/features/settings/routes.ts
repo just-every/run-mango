@@ -7,13 +7,16 @@ import { SenderAuthorityChanged } from './sender-authority';
 import { VerificationError } from '@/core/features/sender-verification/types';
 import { senderReasonText } from '@/core/features/sender-verification/reason-text';
 import { ProviderTransportError } from '@/core/shared/platform';
+import { collectSenderTimings } from '@/core/features/sender-verification/timings';
 
 /** Mount under /api after the native session middleware. */
 export function createSettingsRoutes(service: ReturnType<typeof createSettingsService>) {
   const routes = new Hono<{ Variables: AuthVariables }>();
   routes.get('/settings/sender', async (context) => {
     context.header('Cache-Control', 'no-store');
-    return context.json(await service.senderStatus());
+    const result = await collectSenderTimings(() => service.senderStatus());
+    context.header('Server-Timing', result.header);
+    return context.json(result.value);
   });
   routes.put('/settings/sender', async (context) => {
     context.header('Cache-Control', 'no-store');

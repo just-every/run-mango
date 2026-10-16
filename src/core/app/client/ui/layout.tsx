@@ -1,10 +1,11 @@
-import { Link, Outlet, useRouterState, useLoaderData } from '@tanstack/react-router';
+import { Await, Link, Outlet, useRouterState, useLoaderData } from '@tanstack/react-router';
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 
 import { productConfig } from '@/ext/config';
 import { MangoMark } from '@/core/features/site/brand/MangoMark';
 import { SkipLink } from '@/core/features/site/SkipLink';
 import './materials';
+import { ResourceSnapshot } from '../lib/resource-snapshot';
 
 /** The lockup: Mango's mark and the product name. Its link (and that link's name) belongs to the caller. */
 export function Brand() {
@@ -29,6 +30,7 @@ function NavLink({ to, children }: { to: string; children: ReactNode }) {
 export function OperatorLayout() {
   const operator = useLoaderData({from: '/app'});
   const pathname = useRouterState({select: state => state.location.pathname});
+  const locationKey = useRouterState({select: state => state.location.pathname + state.location.searchStr});
   const [open, setOpen] = useState(false), trigger = useRef<HTMLButtonElement>(null), nav = useRef<HTMLElement>(null);
   const destinations = [['/app', 'Decision Desk'], ['/app/campaigns', 'Campaigns'], ['/app/audience', 'Audience'], ['/app/insights', 'Insights'], ...(operator.modules.store ? [['/app/store', 'Store']] : []), ['/app/settings', 'Settings']];
   // An unmatched /app path (the app 404) has no current destination, so the toggle reads Menu alone.
@@ -36,6 +38,7 @@ export function OperatorLayout() {
   const close = () => {setOpen(false); trigger.current?.focus();};
   useEffect(() => {setOpen(false);}, [pathname]);
   useEffect(() => {if (open) nav.current?.querySelector<HTMLAnchorElement>('a')?.focus();}, [open]);
+  const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /></ResourceSnapshot.Provider>;
   return <div className="operator-layout mango-app"><SkipLink /><header className="operator-header" onKeyDown={event => {if (event.key === 'Escape' && open) {event.preventDefault(); close();}}}>
     <Link className="operator-header__brand" to="/app" aria-label="Mango Decision Desk"><Brand /></Link>
     <button ref={trigger} className="operator-menu-toggle secondary-action" type="button" aria-expanded={open} aria-controls="operator-navigation" onClick={() => open ? close() : setOpen(true)}>{current ? `Menu · ${current}` : 'Menu'}</button>
@@ -43,7 +46,7 @@ export function OperatorLayout() {
       {destinations.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}
       <form method="post" action="/auth/signout" className="operator-signout"><input type="hidden" name="returnTo" value="/signin" /><span>{operator.displayName}</span><button type="submit" className="operator-nav__link">Sign out</button></form>
     </nav>
-  </header><main id="main" tabIndex={-1} className="operator-main"><Outlet /></main></div>;
+  </header><main id="main" tabIndex={-1} className="operator-main">{operator.locationKey === locationKey ? operator.snapshot === undefined ? <Await key={locationKey} promise={operator.resources} fallback={null}>{content}</Await> : content(operator.snapshot) : null}</main></div>;
 }
 
 export function LoadState({ error, children }: { error?: string; children?: ReactNode }) {

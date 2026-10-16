@@ -1,5 +1,5 @@
 import { loadSignupSettings } from '@/core/features/audience/signup-settings';
-import { requestPlatform } from './request-platform';
+import { requestPlatform, requestApi, documentAdmission } from './request-platform';
 import { createAppServices } from './app';
 import type { AppBindings, Platform } from '@/core/shared/platform';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
@@ -45,16 +45,22 @@ export async function dispatchDocuments(
   if (path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
     return hono.fetch(request, environment, executionContext);
   }
+  let admission: ReturnType<typeof documentAdmission.getStore>;
   if (path === '/setup' || path === '/app' || path.startsWith('/app/')) {
     const operator = await createAppServices(platform).authService.authenticate(request);
     if (!operator) return new Response(null, {status: 303, headers: {Location: path === '/setup' ? '/signin?reason=session-required&returnTo=%2Fsetup' : '/signin?reason=session-required'}});
+    admission = {operator};
     const complete = senderIdentitySchema.safeParse(await loadSenderSettings(platform)).success;
     if (path === '/setup' ? complete : !complete) return new Response(null, {status: 303, headers: {Location: complete ? '/app' : '/setup', 'Cache-Control': 'no-store'}});
   }
-  const { default: start } = await import('@tanstack/react-start/server-entry');
-  const response = await requestPlatform.run(platform, () => start.fetch(request));
+  const {default: start} = path === '/setup' || path === '/app' || path.startsWith('/app/')
+    ? await import('./private-server') : await import('@tanstack/react-start/server-entry');
+  const response = await requestPlatform.run(platform, () => requestApi.run(
+    async path => hono.fetch(new Request(new URL(path, url), {headers: request.headers}), environment, executionContext),
+    () => admission ? documentAdmission.run(admission, () => start.fetch(request)) : start.fetch(request),
+  ));
   const headers = new Headers(response.headers);
-  if (path === '/setup') headers.set('Cache-Control', 'no-store');
+  if (path === '/setup' || path === '/app' || path.startsWith('/app/') || path.startsWith('/_serverFn/')) headers.set('Cache-Control', 'no-store');
   let frameOrigin = '';
   try { frameOrigin = configuredEditor(environment)?.managementOrigin ?? ''; } catch { /* A broken editor configuration grants no frame origin. */ }
   // CSP checks every ancestor, including a hostile host around an allowed embed.

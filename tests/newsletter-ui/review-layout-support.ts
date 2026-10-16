@@ -44,6 +44,7 @@ async function setEmailBody(page: Page, value: string) {
 }
 
 export async function openTestSendPanel(page: Page) {
+  await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
   const disclosure = page.getByRole("button", {
     name: "Send a test",
     exact: true,
@@ -96,9 +97,9 @@ export async function saveChanges(
 ) {
   const freshReview = page.waitForResponse(
     (response) =>
-      response.request().method() === "GET" &&
-      new URL(response.url()).pathname ===
-        `/api/campaigns/${campaignId}/review`,
+      response.request().method() === "PATCH" &&
+      new URL(response.url()).pathname.startsWith('/api/campaign-revisions/') &&
+      new URL(response.url()).searchParams.get('review') === 'true',
   );
   await page.getByRole("button", { name: "Save changes", exact: true }).click();
   expect((await freshReview).ok()).toBe(true);

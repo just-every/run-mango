@@ -22,9 +22,15 @@ export function createSenderVerification(options: VerificationOptions) {
     const now = clock();
     const binding = await senderBinding(options.config, options.receiver?.id);
     const bindingDigest = await digest(binding), stateId = await digest(['marketing-sender', binding.deployment]);
-    const initial = await repository.bind(stateId, bindingDigest, now);
+    const [bound, inspected] = await Promise.allSettled([
+      repository.bind(stateId, bindingDigest, now),
+      inspectConfiguration(binding, options.config.mailProviderApiKey, now, options.transport),
+    ]);
+    if (bound.status === 'rejected') throw bound.reason;
+    const initial = bound.value;
     try {
-      const configuration = await inspectConfiguration(binding, options.config.mailProviderApiKey, now, options.transport);
+      if (inspected.status === 'rejected') throw inspected.reason;
+      const configuration = inspected.value;
       const state = await repository.configuration(initial, configuration.configurationDigest, clock());
       if (!state) throw new VerificationError('inspection-superseded', 'unknown');
       return { binding, bindingDigest, state, configuration, now };

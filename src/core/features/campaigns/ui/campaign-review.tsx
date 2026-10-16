@@ -26,9 +26,9 @@ type ReviewData = CampaignDetail & { blockers: ApprovalBlocker[] };
 export function CampaignReviewPage() {
   const { id } = useParams({ from: '/app/campaigns_/$id_/review' });
   const { modules } = useLoaderData({ from: '/app' });
-  const { data, error, loading, reload } = useResource<ReviewData>(`/api/campaigns/${id}/review`);
+  const { data, error, loading, reload, replace } = useResource<ReviewData>(`/api/campaigns/${id}/review`);
   const authoring = useResource<{timezone:string}>('/api/campaign-authoring');
-  const [draft, setDraft] = useState<DraftComposition>();
+  const [draft, setDraft] = useState<DraftComposition | undefined>(() => data?.revision ? toDraftComposition(data.revision, data.links, data.steps) : undefined);
   const [notice, setNotice] = useState<string>();
   const [noticeKind, setNoticeKind] = useState<'success'|'error'>('error');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -143,24 +143,24 @@ export function CampaignReviewPage() {
     setActionBlockers(undefined);
     try {
     setNotice(undefined);
-    const response = await requestJson<{ revision?: Revision; error?: string; fields?: unknown; fieldErrors?: unknown; issues?: unknown }>(
-      `/api/campaign-revisions/${revision.id}`,
+    const response = await requestJson<{ revision?: Pick<Revision, 'id' | 'campaignId'>; review?: ReviewData; checksRefreshed?: boolean; error?: string; fields?: unknown; fieldErrors?: unknown; issues?: unknown }>(
+      `/api/campaign-revisions/${revision.id}?review=true`,
       { method: 'PATCH', body: JSON.stringify({...draft,steps:draft.steps.map(step=>({...step,scheduledAt:step.scheduledAt||undefined,sendByAt:step.sendByAt||undefined}))}) },
     );
     if (response.status < 300 && response.data.revision) {
-      const checks = await requestJson(`/api/campaigns/${id}/checks`, {method: 'POST', body: JSON.stringify({revisionId: revision.id})});
-      const saved = await reload();
+      const saved = response.data.review;
       if (!saved?.revision) {
         setNotice('Draft saved, but the saved revision could not be reloaded. Reload this campaign before approving.');
         return;
       }
+      replace(saved);
       // Explicit acknowledgement also reconciles editor-only fields when normalization saved identical bytes.
       setDraft(toDraftComposition(saved.revision, saved.links, saved.steps));
       setFieldErrors({});
       setValidationRequest(request => request + 1);
       setNeedsCanonicalRead(false);
       setNoticeKind('success');
-      setNotice(checks.status < 300 ? 'Draft saved. Preview and checks are up to date.' : 'Full draft saved. Review checks could not be refreshed; approval will check the saved revision again.');
+      setNotice(response.data.checksRefreshed ? 'Draft saved. Preview and checks are up to date.' : 'Full draft saved. Review checks could not be refreshed; approval will check the saved revision again.');
       setBusy(undefined);
       return;
     }

@@ -1,8 +1,7 @@
-import { useEffect } from 'react';
+import { lazy, useEffect } from 'react';
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router';
 import stylesheet from '../core/app/client/styles.css?url';
 import {MangoEditor, editorLeaf} from '@/core/features/editor/client';
-import { PublicNotFound } from '../core/app/client/not-found';
 import { fontLinks } from '../core/features/site/font-head';
 import { trackPointerFocus } from '../core/app/client/lib/pointer-focus';
 function Document() {
@@ -23,5 +22,5 @@ export const Route = createRootRoute({
   ],
  }),
  component: Document,
- notFoundComponent: editorLeaf(PublicNotFound),
+ notFoundComponent: lazy(() => import('../core/app/client/not-found').then(module => ({default: editorLeaf(module.PublicNotFound)}))),
 });

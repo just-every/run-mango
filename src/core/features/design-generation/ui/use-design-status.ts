@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { ResourceSnapshot } from '@/core/app/client/lib/resource-snapshot';
 import { requestJson } from '@/core/app/client/lib/api';
 import { designsOnOffer, workingStates, type DesignGenerationStatus, type DesignJobView } from '../model';
 
@@ -9,7 +10,9 @@ const open = (job?: DesignJobView): job is DesignJobView => Boolean(job && !['ap
  * candidates appear as they land. `runs` is the latest run (while it is open) and then every earlier run whose paid
  * designs are still on offer, newest first. */
 export function useDesignStatus(campaignId: string) {
-  const [status, setStatus] = useState<DesignGenerationStatus>();
+  const snapshot = useContext(ResourceSnapshot);
+  const initial = snapshot[`/api/campaigns/${encodeURIComponent(campaignId)}/design-jobs`] as DesignGenerationStatus | undefined;
+  const [status, setStatus] = useState<DesignGenerationStatus | undefined>(initial);
   const [error, setError] = useState<string>();
   const load = useCallback(async () => {
     try {
@@ -18,7 +21,7 @@ export function useDesignStatus(campaignId: string) {
       setStatus(response.data); setError(undefined);
     } catch { setError('Mango could not read this draft\'s design runs. Reload the page to try again.'); }
   }, [campaignId]);
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => { if (initial) setStatus(initial); else void load(); }, [load, initial]);
   const runs = [status?.job, ...status?.earlier ?? []].filter(open);
   const working = runs.some(run => workingStates.includes(run.state));
   useEffect(() => {

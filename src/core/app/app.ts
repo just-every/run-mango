@@ -59,6 +59,7 @@ import { createStoreRoutes } from '@/core/features/store/routes';
 import { createStoreService } from '@/core/features/store/service';
 import { createDatabase } from '@/core/platform/db/client';
 import type { AppBindings, Platform } from '@/core/shared/platform';
+import { initialReads, initialReadOnce } from './request-platform';
 
 export type AppEnvironment = { Bindings: AppBindings; Variables: AuthVariables };
 
@@ -228,14 +229,14 @@ export function createApp(
   // Health owns its deadline; no settings or maintenance read may run ahead of it.
   app.route('/', createHealthRoutes(services.healthService, environment));
   app.use('*',async(_context,next)=>{
-    await retireTransfers(retirementDatabase,{ASSETS_BUCKET:environment.ASSETS_BUCKET});
+    await initialReadOnce('retire-transfers', () => retireTransfers(retirementDatabase,{ASSETS_BUCKET:environment.ASSETS_BUCKET}));
     return next();
   });
   app.use('*',async(context,next)=>{
     const path=context.req.path;
     const erasure=path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path));
     // Campaign images write only a per-image request counter, never personal data (CAMP-012).
-    if(erasure||path.startsWith('/auth/')||path.startsWith('/media/')||path==='/health')return next();
+    if(initialReads.getStore()||erasure||path.startsWith('/auth/')||path.startsWith('/media/')||path==='/health')return next();
     return withErasureWriteFence(environment.DB,next);
   });
   const {
@@ -261,8 +262,12 @@ export function createApp(
     await next();
   });
   app.use('*', async (context, next) => {
-    await loadSenderSettings(platform);
-    await loadLinkHosts(platform);
+    // Settings are independent, but both must be current before route work.
+    const settings = await Promise.allSettled([
+      initialReads.getStore() ? undefined : loadSenderSettings(platform),
+      initialReadOnce('link-hosts', () => loadLinkHosts(platform)),
+    ]);
+    for (const result of settings) if (result.status === 'rejected') throw result.reason;
     context.header('X-Mango-Version', platform.config.appVersion);
     await next();
   });
@@ -286,11 +291,11 @@ export function createApp(
   if (!mountBeforeAuthentication) app.all('/api/_local/*', (context) => context.json({ error: 'not_found' }, 404));
 
   app.use('/api/*', async (context, next) => {
-    const operator = await authService.authenticate(context.req.raw);
+    const operator = initialReads.getStore()?.operator ?? await authService.authenticate(context.req.raw);
     if (!operator) return context.json({ error: 'unauthenticated' }, 401);
     if (!isSafeMethod(context.req.method) && !validOrigin(context, platform, trustedLocal)) return context.json({ error: 'invalid_origin' }, 403);
     context.set('operator', operator);
-    if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
+    if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
     await next();
   });
   app.route('/api', createOperatorRoutes(authService, { secureCookie }));
@@ -307,7 +312,7 @@ export function createApp(
   });
   app.route('/api', createPortabilityRoutes(environment, platform));
   app.route('/',createSmsInboundRoutes(platform));
-  registerLifecycleRoutes(app, lifecycleRuntime);
+  const lifecycleServices = registerLifecycleRoutes(app, lifecycleRuntime);
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
   app.route('/api', createLinkHostRoutes(platform));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));
@@ -318,7 +323,8 @@ export function createApp(
   app.route('/api', createMoveInRoutes(platform));
   app.route('/api', createCampaignAssetRoutes(environment.DB, platform.blobs, platform.config.publicBaseUrl));
   app.route('/api', createDesignGenerationRoutes(environment.DB, platform));
-  app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin));
+  app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin,
+    (campaignId, revisionId) => lifecycleServices.approval.preview({campaignId, revisionId})));
   app.route('/api', createInsightsRoutes(insightsService));
   app.route('/api', createOpenTrackingSettingsRoutes(platform));
 

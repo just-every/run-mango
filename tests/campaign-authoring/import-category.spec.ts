@@ -12,9 +12,11 @@ test('[CONT-003][CONT-010][CAMP-004] imported category choices match the saved d
     const api = page.context().request, headers = { Origin: runtime.url };
     const email = 'orchard-reader@example.test', category = 'Orchard notes';
     await page.goto(`${runtime.url}/app/campaigns`);
+    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
     await page.getByRole('button', { name: 'New campaign', exact: true }).click();
     await page.getByRole('button', { name: 'Blank newsletter', exact: true }).click();
     await expect(page.getByLabel('Campaign name', { exact: true })).toBeVisible();
+    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
     const campaignId = new URL(page.url()).pathname.split('/')[3];
     const read = async () => (await api.get(`${runtime.url}/api/campaigns/${campaignId}`)).json();
     await page.getByLabel('Campaign name', { exact: true }).fill('October orchard letter');
@@ -30,6 +32,7 @@ test('[CONT-003][CONT-010][CAMP-004] imported category choices match the saved d
     await expect(page.getByRole('status').filter({ hasText: 'Draft saved.' })).toBeVisible();
 
     await page.goto(`${runtime.url}/app/audience/import`);
+    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
     await page.getByLabel('Choose CSV files').setInputFiles({ name: 'orchard-readers.csv', mimeType: 'text/csv', buffer: Buffer.from(
       `Email Address,First Name,Optin Time,Confirm Time\r\n${email},Avery,2026-10-06 12:00:00,2026-10-06 12:01:00`,
     ) });
@@ -50,6 +53,7 @@ test('[CONT-003][CONT-010][CAMP-004] imported category choices match the saved d
     await expect(page.locator('.audience-import-final-action button')).toBeDisabled();
 
     await page.goto(`${runtime.url}/app/campaigns/${campaignId}/review`);
+    await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
     const scopeFinding = page.locator('.check-list__item').filter({ has: page.getByText('Match email consent category and sender', { exact: true }) });
     for (const width of [1440, 390]) {
       await page.setViewportSize({ width, height: 1000 });
@@ -66,10 +70,10 @@ test('[CONT-003][CONT-010][CAMP-004] imported category choices match the saved d
       expect(blocked.status()).toBe(409);
       expect((await blocked.json()).blockers).toEqual(expect.arrayContaining([expect.objectContaining({ kind: 'message.email-consent-scope' })]));
 
-      const checked = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname === `/api/campaigns/${campaignId}/checks`);
+      const checked = page.waitForResponse(response => response.request().method() === 'PATCH' && new URL(response.url()).pathname.startsWith('/api/campaign-revisions/') && new URL(response.url()).searchParams.get('review') === 'true');
       await page.getByLabel('Consent message category', { exact: true }).fill(category);
       await page.getByRole('button', { name: 'Save full draft', exact: true }).click();
-      const result = await (await checked).json();
+      const result = (await (await checked).json()).review;
       expect(result.checks).toEqual(expect.arrayContaining([expect.objectContaining({ kind: 'message.email-consent-scope', status: 'passed', blocking: false })]));
       await expect(scopeFinding).toBeHidden();
     }

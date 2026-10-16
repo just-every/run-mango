@@ -21,7 +21,17 @@ return {
   async fetch(request, environment, executionContext) {
     // Hosted deploys run this Worker before static assets; built files come from env.ASSETS.
     const asset = await staticAssetResponse(request, environment);
-    if (asset) return asset;
+    if (asset) {
+      // Vite changes these URLs whenever their content changes. Returning pages
+      // can reuse them without revalidating every chunk across the network.
+      if (/^\/assets\/[^/]+-[\w-]{8}\.(?:js|css)$/.test(new URL(request.url).pathname)
+        && (asset.status === 200 || asset.status === 304)) {
+        const headers = new Headers(asset.headers);
+        headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+        return new Response(asset.body, {status: asset.status, statusText: asset.statusText, headers});
+      }
+      return asset;
+    }
     const bindings = environment as AppBindings;
     const platform = platformFor(bindings);
     return dispatchDocuments(request, bindings, executionContext, platform, createApp(bindings, platform));

@@ -34,16 +34,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
   const local = config.local === true;
   const db = repository.database.$client;
   async function project(operator: Operator) {
-    const now = new Date();
-    await db.prepare(`INSERT INTO operators(id,email,display_name,is_initial,invited_at,removed_at,created_at,updated_at)
-      SELECT id,email,display_name,?,created_at,CASE WHEN status='inactive' THEN ? ELSE NULL END,created_at,?
-      FROM oa_operators WHERE id=?
-      ON CONFLICT(id) DO UPDATE SET display_name=excluded.display_name,
-      removed_at=CASE WHEN excluded.removed_at IS NULL THEN NULL ELSE COALESCE(operators.removed_at,excluded.removed_at) END,updated_at=excluded.updated_at
-      WHERE operators.display_name IS NOT excluded.display_name
-        OR (operators.removed_at IS NULL) IS NOT (excluded.removed_at IS NULL)`)
-      .bind(config.initialOperatorEmails.includes(operator.email) ? 1 : 0, now.getTime(), now.getTime(), operator.id).run();
-    return (await repository.getOperator(operator.id))!;
+    return (await repository.projectOperator(operator.id, config.initialOperatorEmails.includes(operator.email)))!;
   }
   function normalize(request: Request, includeBody = false) {
     if (!local) return request;
@@ -126,7 +117,6 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     },
     async listOperators(request: Request) {
       const normalized = normalize(request);
-      const actor = await this.authenticate(normalized);
       const auth = core(normalized);
       return Promise.all((await auth.listOperators(normalized)).filter(row => row.status !== 'inactive')
         .map(async row => ({ ...await project(row), status: row.status })));

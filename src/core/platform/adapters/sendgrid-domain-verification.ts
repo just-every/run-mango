@@ -5,7 +5,7 @@ export async function readSendgridDomain(apiKey: string, domain: string, transpo
   const matches: Record<string, any>[] = [];
   for (let offset = 0; ; offset += 200) {
     if (offset >= 4000) throw new VerificationError('domain-list-incomplete', 'unknown');
-    const response = await transport(`https://api.sendgrid.com/v3/whitelabel/domains?limit=200&offset=${offset}`, {
+    const response = await transport(`https://api.sendgrid.com/v3/whitelabel/domains?limit=200&offset=${offset}&domain=${encodeURIComponent(domain)}`, {
       headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(10_000) });
     if (!response.ok) throw new VerificationError('provider-domain-unavailable', 'unknown');
     const rows = await response.json();
@@ -14,13 +14,11 @@ export async function readSendgridDomain(apiKey: string, domain: string, transpo
     if (rows.length < 200) break;
   }
   if (matches.length !== 1) throw new VerificationError(matches.length ? 'domain-ambiguous' : 'domain-missing');
-  const listed = matches[0];
-  const response = await transport(`https://api.sendgrid.com/v3/whitelabel/domains/${encodeURIComponent(String(listed.id))}`, {
-    headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(10_000) });
-  if (!response.ok) throw new VerificationError('provider-domain-unavailable', 'unknown');
-  const detail = await response.json() as Record<string, any>;
-  if (detail.id !== listed.id || detail.domain !== listed.domain || detail.user_id !== listed.user_id) throw new VerificationError('domain-detail-mismatch');
-  if (listed.valid !== true || detail.valid !== true || detail.automatic_security !== true) throw new VerificationError('domain-unverified');
+  // The live list response contains the complete domain, security settings and
+  // DNS records. A second GET for that same record adds no verification evidence.
+  const detail = matches[0];
+  if (!Number.isSafeInteger(detail.id) || detail.id <= 0 || !Number.isSafeInteger(detail.user_id) || detail.user_id <= 0) throw new VerificationError('provider-domain-malformed');
+  if (detail.valid !== true || detail.automatic_security !== true) throw new VerificationError('domain-unverified');
   const records: DomainRecord[] = [];
   for (const [name, row] of Object.entries(detail.dns ?? {}) as [string, Record<string, any>][]) {
     if (!['mail_cname', 'dkim1', 'dkim2'].includes(name)) continue;

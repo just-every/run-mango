@@ -63,12 +63,8 @@ function revisionUpdate(composition: DraftComposition, updatedAt: Date, revision
 
 export function createCampaignCompositionRepository(database: Database) {
   async function read(revisionId: string) {
-    const revision = await database.query.campaignRevisions.findFirst({
-      where: eq(campaignRevisions.id, revisionId),
-    });
-    if (!revision) return undefined;
-
-    const [steps, links, audience] = await Promise.all([
+    const reads = await Promise.allSettled([
+      database.query.campaignRevisions.findFirst({where: eq(campaignRevisions.id, revisionId)}),
       database
         .select()
         .from(campaignSteps)
@@ -82,18 +78,25 @@ export function createCampaignCompositionRepository(database: Database) {
       database.query.campaignAudiences.findFirst({
         where: eq(campaignAudiences.revisionId, revisionId),
       }),
+      campaignClaimProjection(database,revisionId),
+      database.select({count: campaignAudienceChannelCounts})
+        .from(campaignAudienceChannelCounts)
+        .innerJoin(campaignAudiences, eq(campaignAudiences.id, campaignAudienceChannelCounts.audienceId))
+        .where(eq(campaignAudiences.revisionId, revisionId))
+        .orderBy(asc(campaignAudienceChannelCounts.channel)),
     ]);
-    const audienceChannelCounts = audience
-      ? await database
-          .select()
-          .from(campaignAudienceChannelCounts)
-          .where(eq(campaignAudienceChannelCounts.audienceId, audience.id))
-          .orderBy(asc(campaignAudienceChannelCounts.channel))
-      : [];
+    const value = <T,>(result: PromiseSettledResult<T>): T => {
+      if (result.status === 'rejected') throw result.reason;
+      return result.value;
+    };
+    const revision = value(reads[0]);
+    if (!revision) return undefined;
+    const steps = value(reads[1]), links = value(reads[2]);
+    const audience = value(reads[3]), projection = value(reads[4]);
+    const audienceChannelCounts = value(reads[5]).map(row => row.count);
 
     // Old full saves and revision copies also carry unknown generated prose. Only
     // durable manual provenance or exact recorded observations permit display.
-    const projection=await campaignClaimProjection(database,revisionId);
     const displayedSteps = steps.map(step=>projection && step.timingOrigin!=='operator' && !persistedClaimIsGrounded(step.whyThisTime,projection.evidence)
       ? {...step,whyThisTime:'',claimsUnavailable:unavailableTimingClaim} : step);
 
@@ -118,24 +121,29 @@ export function createCampaignCompositionRepository(database: Database) {
     editSchedule:(campaignId:string,composition:DraftComposition,operatorId:string)=>editSchedule(database,campaignId,composition,operatorId),
     createDraft: (composition: DraftComposition, operatorId: string) => createDraft(database, composition, operatorId),
 
-    async saveDraft(id: string, composition: DraftComposition, updatedAt: Date) {
-      const existing = await read(id);
-      if (!existing) return { kind: 'not_found' as const };
-      if (existing.revision.state !== 'draft') return { kind: 'not_draft' as const };
-      const storedRevision=(await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,id)}))!;
-      const storedSteps=composition.steps===undefined?[]:await database.select().from(campaignSteps).where(eq(campaignSteps.revisionId,id));
+    async saveDraft(id: string, composition: DraftComposition, updatedAt: Date, deferRead = false) {
+      // Saving uses raw persisted authority, never the display-only claim projection.
+      const storedRevision = await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,id)});
+      if (!storedRevision) return { kind: 'not_found' as const };
+      if (storedRevision.state !== 'draft') return { kind: 'not_draft' as const };
+      const [storedLinks, storedSteps] = await Promise.all([
+        composition.links===undefined && composition.emailBody===undefined
+          ? database.select().from(campaignRevisionLinks).where(eq(campaignRevisionLinks.revisionId,id)).orderBy(asc(campaignRevisionLinks.sequence))
+          : [],
+        composition.steps===undefined?[]:database.select().from(campaignSteps).where(eq(campaignSteps.revisionId,id)),
+      ]);
 
-      composition = normalizeAuthoredContent({...composition, emailBody:composition.emailBody ?? existing.revision.emailBody, links:composition.links ?? (composition.emailBody !== undefined ? [] : existing.links.map(({label,destinationUrl})=>({label,destinationUrl})))});
+      composition = normalizeAuthoredContent({...composition, emailBody:composition.emailBody ?? storedRevision.emailBody, links:composition.links ?? (composition.emailBody !== undefined ? [] : storedLinks.map(({label,destinationUrl})=>({label,destinationUrl})))});
       // Persist the complete rule pair and its summary in the same guarded update.
       // Partial edits and concurrent saves must never combine prose with another rule pair.
-      composition.inclusionRuleJson ??= existing.revision.inclusionRuleJson;
+      composition.inclusionRuleJson ??= storedRevision.inclusionRuleJson;
       composition.exclusionRulesJson = composition.exclusionRulesJson===undefined?storedRevision.exclusionRulesJson
         :restoreExclusionClaims(composition.exclusionRulesJson,storedRevision.exclusionRulesJson);
       const rules = parseStructuredRules(composition.inclusionRuleJson, composition.exclusionRulesJson);
       if (!rules.ok) throw new Error('Invalid audience rules.');
       composition.audienceRule = summarizeAudienceRules(composition.inclusionRuleJson, composition.exclusionRulesJson);
       composition.sourceTypesJson = JSON.stringify(rules.sourceTypes);
-      const guard = draftGuard(id, existing.revision.updatedAt);
+      const guard = draftGuard(id, storedRevision.updatedAt);
       const statements: D1PreparedStatement[] = [];
       const prepare = (query: string, ...values: unknown[]) =>
         statements.push(database.$client.prepare(query).bind(...values));
@@ -197,17 +205,19 @@ export function createCampaignCompositionRepository(database: Database) {
       prepare(`UPDATE campaign_revisions SET authored_exclusion_reasons_json=? WHERE id=? AND ${guard}`,
         JSON.stringify(authoredExclusionReasons(composition.exclusionRulesJson,storedRevision.exclusionRulesJson,JSON.parse(storedRevision.authoredExclusionReasonsJson))),id);
 
-      const update = revisionUpdate(composition, updatedAt, id, existing.revision.updatedAt);
+      const update = revisionUpdate(composition, updatedAt, id, storedRevision.updatedAt);
       prepare(update.sql, ...update.values);
       const results = await database.$client.batch(statements);
       const updateResult = results.at(-1);
       if (!updateResult?.meta.changes) {
-        const current = await read(id);
+        const current = await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,id)});
         return !current ? {kind:'not_found' as const}
-          : current.revision.state !== 'draft' ? {kind:'not_draft' as const}
+          : current.state !== 'draft' ? {kind:'not_draft' as const}
           : {kind:'stale_revision' as const};
       }
 
+      // The combined save/check/read path hydrates once, after its live checks.
+      if (deferRead) return {kind: 'written' as const, revision: {id, campaignId: storedRevision.campaignId}};
       const saved = await read(id);
       if (!saved) throw new Error(`Draft revision ${id} disappeared after its composition was saved.`);
       return { kind: 'updated' as const, composition: saved };

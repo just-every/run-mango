@@ -24,12 +24,14 @@ export function createVerificationRepository(database: Database) {
   return {
     db, state,
     async bind(id: string, binding: string, now: number) {
-      await db.prepare(`INSERT INTO sender_verification_state (id,generation,binding_digest,reason,created_at,updated_at)
+      const [, rows] = await db.batch([db.prepare(`INSERT INTO sender_verification_state (id,generation,binding_digest,reason,created_at,updated_at)
         VALUES (?,0,?,'observation-missing',?,?) ON CONFLICT(id) DO UPDATE SET
         generation = generation + 1, binding_digest = excluded.binding_digest, configuration_digest = NULL,
         observation_id = NULL, reason = 'binding-changed', revoked_at = NULL, updated_at = excluded.updated_at
-        WHERE binding_digest <> excluded.binding_digest`).bind(id, binding, now, now).run();
-      return (await state(id))!;
+        WHERE binding_digest <> excluded.binding_digest`).bind(id, binding, now, now),
+        db.prepare('SELECT * FROM sender_verification_state WHERE id = ?').bind(id),
+      ]);
+      return rows.results[0] as AuthorityState;
     },
     async configuration(previous: AuthorityState, digest: string, now: number) {
       return db.prepare(`UPDATE sender_verification_state SET

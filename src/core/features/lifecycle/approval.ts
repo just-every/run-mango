@@ -167,9 +167,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       let allowlist: string[];
       if (input.channel === 'email') {
         sender = runtime.platform.mailer;
-        // Active operators may always test-send to their own sign-in addresses.
-        const operators = await runtime.platform.database.$client.prepare("SELECT email FROM oa_operators WHERE status = 'active'").all<{email: string}>();
-        allowlist = [...runtime.platform.config.testEmailAllowlist, ...operators.results.map(row => row.email)].map((item) => item.toLowerCase());
+        allowlist = runtime.platform.config.testEmailAllowlist;
       } else {
         const smsModule = runtime.platform.config.modules.sms;
         if (!runtime.platform.sms || !smsModule.enabled) {
@@ -181,12 +179,24 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         sender = runtime.platform.sms;
         allowlist = smsModule.config.testAllowlist;
       }
+      // These reads authorize no handoff. Consume failures in the original
+      // order, and retain the separate fresh sender read after cost preparation.
+      const [operatorsRead, snapshotRead, senderRead] = await Promise.allSettled([
+        input.channel === 'email' ? runtime.platform.database.$client.prepare("SELECT email FROM oa_operators WHERE status = 'active'").all<{email: string}>() : undefined,
+        repository.readRevisionSnapshot(input.campaignId, input.revisionId),
+        input.channel === 'email' ? loadSenderSettings(runtime.platform) : undefined,
+      ]);
+      if (operatorsRead.status === 'rejected') throw operatorsRead.reason;
+      // Active operators may always test-send to their own sign-in addresses.
+      if (input.channel === 'email') allowlist = [...allowlist, ...operatorsRead.value!.results.map(row => row.email)].map(item => item.toLowerCase());
       const destination = input.channel === 'email' ? input.to.toLowerCase() : input.to;
       if (!allowlist.includes(destination)) return { kind: 'blocked' as const, detail: 'Destination is not on the operator test-send allowlist.' };
-      const snapshot = await repository.readRevisionSnapshot(input.campaignId, input.revisionId);
+      if (snapshotRead.status === 'rejected') throw snapshotRead.reason;
+      const snapshot = snapshotRead.value;
       if (!snapshot) return { kind: 'not_found' as const };
       if (snapshot.revision.state !== 'draft') return { kind: 'blocked' as const, detail: 'Test sends use a saved draft revision.' };
-      if (input.channel === 'email' && !revisionMatchesSender(snapshot.revision, await loadSenderSettings(runtime.platform))) {
+      if (senderRead.status === 'rejected') throw senderRead.reason;
+      if (input.channel === 'email' && !revisionMatchesSender(snapshot.revision, senderRead.value!)) {
         return {kind: 'blocked' as const, detail: 'Save sender settings and update this draft to the current business identity and postal address before sending.'};
       }
       const capabilities = await sender.capabilities();
@@ -202,13 +212,15 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         ? {subject: `${marker} ${rendered.subject}`, html: `<p><strong>${marker}</strong></p>${rendered.html}`, text: `${marker}\n\n${rendered.text}`, preheader: `${marker} ${rendered.preheader}`, test: true,
           from: {name: snapshot.revision.senderName, email: snapshot.revision.fromEmail}, replyTo: snapshot.revision.replyToEmail}
         : {text: managedSmsText(`${marker} ${rendered.sms}`,smsPolicy!.policy,smsPolicy!.sender), test: true};
-      const revisionDigest = await digestJson({
-        rendererVersion: messageRendererVersion,
-        revision: snapshot.revision,
-        steps: snapshot.steps,
-        links: snapshot.links,
-      });
-      const destinationDigest = await sha256(destination);
+      const [revisionDigest, destinationDigest] = await Promise.all([
+        digestJson({
+          rendererVersion: messageRendererVersion,
+          revision: snapshot.revision,
+          steps: snapshot.steps,
+          links: snapshot.links,
+        }),
+        sha256(destination),
+      ]);
       const idempotencyKey = `test:${input.revisionId}:${input.channel}:${destinationDigest}:${revisionDigest}`;
       const request: DeliveryRequest = {
         ...(smsPolicy?{smsAuthority:{policyDigest:smsPolicy.digest,expiresAt:now.getTime()+15*60000}}:{}),

@@ -22,7 +22,8 @@ const settled = async <T,>(save: Promise<T>) => {
 };
 
 /** `mediaOrigin` is the deployment's own origin: campaign pages use it to recognise the draft's own images (CAMP-012). */
-export function createCampaignRoutes(service: ReturnType<typeof createCampaignService>, authoring: ReturnType<typeof createAuthoringService>, mediaOrigin: string) {
+export function createCampaignRoutes(service: ReturnType<typeof createCampaignService>, authoring: ReturnType<typeof createAuthoringService>, mediaOrigin: string,
+  refreshChecks: (campaignId: string, revisionId: string) => Promise<{kind: string}>) {
   const routes = new Hono<{Variables:AuthVariables}>();
 
   routes.get('/campaign-starters', async context => context.json(await authoring.starters()));
@@ -92,12 +93,26 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     if ('error' in params) return params.error;
     const body = await readJson(context, draftCompositionSchema);
     if ('error' in body) return body.error;
-    const update = await settled(service.updateDraft(params.data.id, body.data));
+    const started = performance.now();
+    const update = await settled(service.updateDraft(params.data.id, body.data, context.req.query('review') === 'true'));
+    const written = performance.now();
+    context.header('Server-Timing', `draft_write;dur=${(written-started).toFixed(1)}`);
     if ('refused' in update) return context.json(update.refused, 400);
     const result = update.saved;
     if (result.kind === 'not_found') return context.json({ error: 'not_found' }, 404);
     if (result.kind === 'not_draft') return context.json({ error: 'revision_not_draft' }, 409);
     if (result.kind === 'stale_revision') return context.json({error:'stale_revision',detail:'This draft changed while saving. Reload it and review your changes before saving again.'},409);
+    if (result.kind === 'written') {
+      const revision = result.revision;
+      // Checks must follow the guarded write; the canonical read must follow
+      // checks. Keep that order in one request instead of three network trips.
+      const checks = await refreshChecks(revision.campaignId, revision.id);
+      const checked = performance.now();
+      const review = await service.review(revision.campaignId);
+      context.header('Server-Timing', `draft_write;dur=${(written-started).toFixed(1)}, draft_checks;dur=${(checked-written).toFixed(1)}, draft_read;dur=${(performance.now()-checked).toFixed(1)}`);
+      return context.json({revision,
+        checksRefreshed: checks.kind === 'preview', review: review ? {...review, mediaOrigin} : undefined});
+    }
     return context.json({ revision: result.composition.revision, composition: result.composition });
   });
   routes.post('/campaigns/:id/approve', async (context) => {

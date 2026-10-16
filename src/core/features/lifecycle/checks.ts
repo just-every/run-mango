@@ -5,16 +5,13 @@ import { smsProgrammeSchema, smsWindow } from '@/core/features/sms/policy';
 import { smsSegments } from '@/core/features/sms/segments';
 import { emailSubjectAdvisory } from './advisory-policy';
 import { emailConsentScope } from './email-consent-scope';
-import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
-import { loadLinkHosts } from '@/core/features/settings/link-hosts';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
 import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-content';
-import { unavailableInspection } from '@/core/features/sender-verification/service';
 import { senderReasonText } from '@/core/features/sender-verification/reason-text';
 import { invalidPersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
-import { inspectOwnMedia, ownMediaName } from '@/core/features/campaign-assets/own-media';
 import { parseStructuredRules } from './rules';
+import { prepareApprovalChecks } from './checks-preparation';
 import type { ApprovalCheck, LifecycleRepository } from './repository';
 import type { CampaignRevisionSnapshot, FrozenCandidate, LifecyclePlatform, SenderCapabilities } from './types';
 
@@ -30,14 +27,6 @@ function validIanaTimeZone(value: string) {
   } catch {
     return false;
   }
-}
-
-function transmittedDestinations(snapshot: CampaignRevisionSnapshot) {
-  const destinations = new Set(snapshot.links.map((link) => link.destinationUrl));
-  for (const destination of inspectEmailHtml(snapshot.revision.emailBody).destinations) destinations.add(destination);
-  const authored = `${snapshot.revision.emailBody}\n${snapshot.revision.emailText}\n${snapshot.revision.smsBody}`;
-  for (const match of authored.matchAll(/\bhttps?:\/\/[^\s<>"']+/gi)) destinations.add(match[0].replace(/[),.;]+$/, ''));
-  return [...destinations];
 }
 
 function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[]) {
@@ -130,10 +119,16 @@ export async function runApprovalChecks(input: {
   platform: LifecyclePlatform;
   repository: LifecycleRepository;
   now: Date;
+  prepared?: Awaited<ReturnType<typeof prepareApprovalChecks>>;
 }) {
   const { snapshot, platform, now } = input;
-  await loadSenderSettings(platform);
-  await loadLinkHosts(platform);
+  // Read independent settings together, while retaining the previous error
+  // precedence when more than one operation fails.
+  const value = <T,>(result: PromiseSettledResult<T>): T => {
+    if (result.status === 'rejected') throw result.reason;
+    return result.value;
+  };
+  const prepared = input.prepared ?? await prepareApprovalChecks(snapshot, platform);
   const selected = new Set(snapshot.steps.map((step) => step.channel));
   const baseReconciliationWindow = platform.config.unresolvedProviderOutcomeHours * 60 * 60_000
     + platform.config.providerReconciliationIntervalMinutes * 2 * 60_000;
@@ -142,35 +137,27 @@ export async function runApprovalChecks(input: {
     ...snapshot.steps.filter((step) => step.channel === channel)
       .map((step) => step.sendByAt.getTime() - step.scheduledAt.getTime()),
   );
-  const [mailCapabilities, mailInspection] = await Promise.all([
-    platform.mailer.capabilities(),
-    platform.mailer.inspectSender?.(`${snapshot.revision.senderName} <${snapshot.revision.fromEmail}>`)
-      ?? Promise.resolve(unavailableInspection('verification-not-configured')),
-  ]);
-  let smsCapabilities: SenderCapabilities | undefined;
-  let smsValidations: Array<{ready: boolean; detail: string}> = [];
+  const [results, smsResults] = await Promise.all([prepared.results, Promise.allSettled([
+    selected.has('sms') && platform.sms ? Promise.all([
+      platform.sms.capabilities(),
+      Promise.all([...new Set(input.candidates.flatMap((item) => item.channels.sms?.country ?? []))]
+        .map((country) => platform.sms!.validateSender(snapshot.revision.smsSender, country))),
+    ]) : undefined,
+  ])]);
+  const smsResult = smsResults[0];
+  const [mailResult, linkResult] = results;
+  const [mailCapabilities, mailInspection] = value(mailResult);
   const checks = contentChecks(snapshot, platform.config.allowedLinkHosts.map((host) => host.toLowerCase()));
-  if (selected.has('sms')) {
-    if (!platform.sms) {
-      const smsModule = platform.config.modules.sms;
-      checks.push(check('sms.sender.v1.configured', false, smsModule.enabled
-        ? 'The SMS adapter is unavailable despite complete module configuration.'
-        : smsModule.detail));
-    } else {
-      [smsCapabilities, smsValidations] = await Promise.all([
-        platform.sms.capabilities(),
-        Promise.all([...new Set(input.candidates.flatMap((item) => item.channels.sms?.country ?? []))]
-          .map((country) => platform.sms!.validateSender(snapshot.revision.smsSender, country))),
-      ]);
-    }
+  const sms = value(smsResult);
+  const smsCapabilities = sms?.[0];
+  const smsValidations = sms?.[1] ?? [];
+  if (selected.has('sms') && !platform.sms) {
+    const smsModule = platform.config.modules.sms;
+    checks.push(check('sms.sender.v1.configured', false, smsModule.enabled
+      ? 'The SMS adapter is unavailable despite complete module configuration.'
+      : smsModule.detail));
   }
-  const destinations = transmittedDestinations(snapshot);
-  const linkInspections = await Promise.all(destinations.map(async (destination) => {
-    const ownMedia = ownMediaName(destination, platform.config.publicBaseUrl);
-    return { destination, inspection: ownMedia
-      ? await inspectOwnMedia(platform.database.$client, platform.blobs, ownMedia)
-      : await platform.linkInspector.inspect(destination) };
-  }));
+  const linkInspections = value(linkResult);
   const blockedDestinations = linkInspections.filter(({ inspection }) => !inspection.ok);
   checks.push(check('message.links.resolved', blockedDestinations.length === 0,
     blockedDestinations.length
@@ -178,12 +165,13 @@ export async function runApprovalChecks(input: {
       : `${linkInspections.length} transmitted destination links resolved through allowed HTTPS hosts.`));
   const configured = platform.config.mailSender;
   if (selected.has('email')) {
+    const inspection = mailInspection!;
     checks.push(...adapterChecks('email', mailCapabilities, requiredWindow('email')));
     const holds=await activeProviderHolds(platform.database,mailCapabilities.provider??platform.config.mailProvider??'resend','email',snapshot.revision.fromEmail);
     checks.push(check('provider.restrictions',holds.length===0,holds.length?holds.map(h=>`${h.provider} ${h.scope}: ${h.detail}`).join('; '):'No observed provider restriction.'));
     if (mailCapabilities.configured) {
-      checks.push(check('message.email-sender', mailInspection.ready && Boolean(mailInspection.lease), senderReasonText(mailInspection.reason)));
-      const authentication = mailInspection.authentication;
+      checks.push(check('message.email-sender', inspection.ready && Boolean(inspection.lease), senderReasonText(inspection.reason)));
+      const authentication = inspection.authentication;
       checks.push(check('message.email-authentication', Boolean(authentication?.spf && authentication.dkim && authentication.dmarc && authentication.aligned),
         'SPF, DKIM, DMARC, and visible From-domain alignment must all pass.'));
     }
@@ -229,5 +217,5 @@ export async function runApprovalChecks(input: {
       );
     }), 'Every SMS destination must have subscribed consent for this programme, category, and jurisdiction.'));
   }
-  return { checks, mailCapabilities, smsCapabilities, senderLease: mailInspection.lease };
+  return { checks, mailCapabilities, smsCapabilities, senderLease: mailInspection?.lease };
 }

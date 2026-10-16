@@ -2,13 +2,20 @@ import { evaluateAudience } from './evaluate-audience';
 import { messageFallbackKeys } from '@/core/features/campaigns/message-content';
 import { authoringSourceIssues } from '@/core/features/campaigns/authoring-source-status';
 import { runApprovalChecks } from './checks';
+import { prepareApprovalChecks } from './checks-preparation';
 import type { LifecycleRepository } from './repository';
 import type { LifecycleRuntime, CampaignRevisionSnapshot } from './types';
 
 export async function evaluateApproval(runtime: LifecycleRuntime, repository: LifecycleRepository, snapshot: CampaignRevisionSnapshot, now: Date) {
-      const {parsedRules,selectedChannels,audience,candidates,exclusionCounts,blockingEligibility,personalisations}=await evaluateAudience(runtime,repository,{...snapshot.revision,channels:snapshot.steps.map(step=>step.channel)},now);
+      const [audienceResult, preparation] = await Promise.allSettled([
+        evaluateAudience(runtime,repository,{...snapshot.revision,channels:snapshot.steps.map(step=>step.channel)},now),
+        prepareApprovalChecks(snapshot, runtime.platform),
+      ]);
+      if (audienceResult.status === 'rejected') throw audienceResult.reason;
+      const {parsedRules,selectedChannels,audience,candidates,exclusionCounts,blockingEligibility,personalisations}=audienceResult.value;
+      if (preparation.status === 'rejected') throw preparation.reason;
       snapshot.revision.sourceTypesJson = JSON.stringify(parsedRules.ok ? parsedRules.sourceTypes : []);
-      const checkResult = await runApprovalChecks({ snapshot, candidates, platform: runtime.platform, repository, now });
+      const checkResult = await runApprovalChecks({ snapshot, candidates, platform: runtime.platform, repository, now, prepared: preparation.value });
       checkResult.checks.push({
         kind: 'audience.resolution',
         status: audience.status === 'ok' ? 'passed' : 'blocked',

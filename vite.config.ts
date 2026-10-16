@@ -9,6 +9,7 @@ import { defineConfig, type UserConfig } from 'vite';
 import { archiveOutputGuard } from '@runeditrun/rer/archive-output';
 import { docsSite } from './src/core/features/docs/build/plugin.ts';
 import { excludeLocalVariables } from './vite/exclude-local-variables.ts';
+import { privatePreloads } from './vite/private-preloads.ts';
 // Only normal app development loads the local-only entry and checkout dev key.
 // Explicit fixture/review configs and builds/preview retain their configured entry.
 const local = (name: string) => process.env[name] ? {[name]: process.env[name]} : {};
@@ -38,7 +39,7 @@ export default defineConfig(async ({command, isPreview}): Promise<UserConfig> =>
   persistState: {path: process.env.RER_STATE_DIR ?? process.env.MANGO_AUTHORING_TEST_STATE ?? (runtime === 'review' ? '.seed/review-state' : '.wrangler/state')},
   ...(appDev ? {config: {main: './src/core/app/worker.dev.ts', vars: {...local('RER_DEV_ORIGIN'), ...local('RER_DEV_KEY'), ...local('RER_DEV_IDENTITY'), ...local('RER_DEMO'), ...local('RER_DEMO_EXPIRES')}}} : process.env.RER_DEV_ORIGIN ? {config: {vars: {RER_DEV_ORIGIN: process.env.RER_DEV_ORIGIN}}} : {}),
   viteEnvironment: {name: 'ssr'},
- }), docsSite(), tanstackStart({prerender: {enabled: false, autoStaticPathsDiscovery: false, crawlLinks: false}}), react(), tailwindcss(), excludeLocalVariables(), archiveOutputGuard()],
+ }), docsSite(), privatePreloads(), tanstackStart({prerender: {enabled: false, autoStaticPathsDiscovery: false, crawlLinks: false}}), react(), tailwindcss(), excludeLocalVariables(), archiveOutputGuard()],
  ...(process.env.MANGO_PREVIEW_OUT ? {environments: {client: {build: {outDir: `${process.env.MANGO_PREVIEW_OUT}/client`}}, ssr: {build: {outDir: `${process.env.MANGO_PREVIEW_OUT}/server`}}}} : {}),
  resolve: {alias: {'@': fileURLToPath(new URL('./src', import.meta.url))}},
  server: {host: '127.0.0.1', port: 15660, strictPort: true, allowedHosts: true,
