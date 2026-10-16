@@ -1,8 +1,8 @@
 import type { Platform } from '@/core/shared/platform';
-import { sampleData } from './sample-data';
+import type { SampleData } from './sample-data';
 import { createCampaignDemoImportRepository } from '../campaigns/demo-import-repository';
 
-export async function seedDemoHistory(platform: Platform, ownerId: string, now: Date) {
+export async function seedDemoHistory(platform: Platform, ownerId: string, now: Date, sampleData: SampleData) {
   const db = platform.database.$client, at = now.getTime(), past = at - 7 * 86400000;
   const identity = platform.config.mailSender;
   const rule = JSON.stringify({ version: 1, operator: 'all', predicates: [{ sourceType: 'contact', field: 'emailStatus', comparator: 'eq', value: 'subscribed' }] });

@@ -2537,11 +2537,11 @@
       "executable": false
     },
     "src/core/features/bootstrap/demo-audience.ts": {
-      "sha256": "137602a7c799b2e101ea675a740c5e3a2995f016e734fb66f00b0656790a1e33",
+      "sha256": "08edb1bb87150bacdf9354e69b1f7c0072a1d9d391fb6c71ecd93d8c5d16a8cb",
       "executable": false
     },
     "src/core/features/bootstrap/demo-history.ts": {
-      "sha256": "203be63aaf1a36d9e135b020d6b347e98b3999034a4e0b73bf6f9ea3e0f44560",
+      "sha256": "fb4ec7b3e838fc91a01b8251b261c4277aa3a4041692413bdb86611c5db77c67",
       "executable": false
     },
     "src/core/features/bootstrap/repository.ts": {
@@ -4165,7 +4165,7 @@
       "executable": false
     },
     "src/demo.ts": {
-      "sha256": "4de1dafd5d35b041837a22f194c1660f26a16c2fc78802980080dc69f1db6029",
+      "sha256": "04c42596f314f6884adabae3a031e4297e4b68f7906ab2fc3e803e8c589bf726",
       "executable": false
     },
     "src/editor/visual-edits.json": {

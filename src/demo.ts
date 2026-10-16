@@ -22,9 +22,8 @@ export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEma
   const { audienceService, storeService } = createAppServices(platform);
   await storeService.importLocalDemo(sampleData.providerCapabilities.map(provider => ({ ...provider, configured: true, status: 'ready', detail: 'Provider is ready.' })), [], now);
   await storeService.recordSourceCapabilities(commerceSourceTypes.map(sourceType => ({ sourceType, available: platform.commerce!.capabilities().sourceTypes.includes(sourceType), detail: 'Sample store connection.' })), now);
-  await audienceService.importLocalDemo(sampleData.contacts, now);
-  await seedDemoAudience(platform, audienceService, sampleData, now);
-  const contacts = await audienceService.localDemoContacts(sampleData.contacts.map(contact => contact.id));
+  const seededSample = await seedDemoAudience(platform, audienceService, sampleData, now);
+  const contacts = await audienceService.localDemoContacts(seededSample.contacts.map(contact => contact.id));
   const importer = createCampaignDemoImportService(createCampaignDemoImportRepository(platform.database));
   const drafts = [
     ['October arrivals', 'Meet the newest pieces in store', 'Our October collection is here. Find thoughtful pieces for the everyday, selected by the Mango Sample Store team.'],
@@ -40,6 +39,6 @@ export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEma
       links: [{ label: 'Explore the collection', destinationUrl: 'https://example.com/' }],
       steps: campaign.revision.steps.map(step => ({ ...step, schedule: { ...step.schedule, whyThisTime: 'Planned for the next newsletter. Review and approve the saved revision before it can send.' } })) } };
   }) }, contacts, now);
-  await seedDemoHistory(platform, owner.id, now);
+  await seedDemoHistory(platform, owner.id, now, seededSample);
   await db.prepare('INSERT OR IGNORE INTO seed_runs(id,applied_at) VALUES (?,?)').bind('mango-visitor-demo-v1', now.getTime()).run();
 }
