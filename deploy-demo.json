@@ -1,6 +1,5 @@
 {
   "version": 1,
   "domain": "run-mango.com",
-  "name": "Mango",
-  "instanceType": "basic"
+  "name": "Mango"
 }

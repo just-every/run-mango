@@ -1,8 +1,8 @@
 {
-  "key": "eb47ed52ddbe19ed59c9e7f7d6d458fb450ae27edbdbe6f92fc428230255618e",
+  "key": "d1ceaf324651c096c36c33c0e7983bde2245b69cbb9590af5cbc5cf48381e025",
   "origin": {
     "repository": "https://github.com/runeditrun/base.git",
-    "revision": "56d2eadbd094cfe31c7f155da3355afe6fccf7de",
+    "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
     "path": ".",
     "paths": [
       "modules/editor/src/visual-edits.json"
