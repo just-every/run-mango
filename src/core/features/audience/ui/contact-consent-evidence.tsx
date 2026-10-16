@@ -1,4 +1,5 @@
-import { formatDate, titleCase } from '@/core/app/client/lib/format';
+import { titleCase } from '@/core/app/client/lib/format';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 
 export type ContactConsentEvidence = {
   id: string;
@@ -46,6 +47,7 @@ export function ContactConsentEvidencePanel({ consent, observations }: {
   consent: ContactConsentEvidence[];
   observations: ContactImportObservation[];
 }) {
+  const formatDate = useDateFormatter();
   return (
     <>
       <section className="panel contact-evidence" aria-labelledby="consent-evidence-title">

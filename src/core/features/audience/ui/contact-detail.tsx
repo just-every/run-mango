@@ -5,7 +5,8 @@ import {ContactRelated,type ContactRelatedData} from './contact-related';
 import { ContactMerge } from './contact-merge';
 import { Link, useParams, useSearch } from '@tanstack/react-router';
 
-import { formatDate, titleCase } from '@/core/app/client/lib/format';
+import { titleCase } from '@/core/app/client/lib/format';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import type { Contact, ContactHistory } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
@@ -30,6 +31,7 @@ function ReceiptPage({reference}:{reference:string}){
   return data?<ContactErasureReceipt initial={data.receipt}/>:<LoadState error={error??'Receipt was not found.'}/>;
 }
 function ContactPage() {
+  const formatDate = useDateFormatter();
   const [receipt,setReceipt]=useState<ErasureReceipt>();
   const { id } = useParams({ from: '/app/audience_/$id' });
   const { data, error, loading } = useResource<ContactDetail>(`/api/contacts/${id}`);

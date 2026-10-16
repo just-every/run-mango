@@ -1,3 +1,4 @@
+import { openPage } from '../support/navigation';
 import { expect, type Locator, type Page } from '@playwright/test';
 export async function expectFieldError(control: Locator, message?: RegExp) {
   await expect(control).toHaveAttribute('aria-invalid','true');
@@ -10,7 +11,7 @@ export async function expectSummary(form: Locator, count: number) {
 }
 export async function createBlank(page: Page) {
   const result=await page.evaluate(async () => {const r=await fetch('/api/campaigns',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({mode:'blank'})});return {status:r.status,data:await r.json()};});
-  expect(result.status).toBeLessThan(300); await page.goto(`/app/campaigns/${result.data.campaignId}/review`); await expect(page.getByRole('heading',{name:'Edit draft'})).toBeVisible(); return result.data.campaignId as string;
+  expect(result.status).toBeLessThan(300); await openPage(page, `/app/campaigns/${result.data.campaignId}/review`); await expect(page.getByRole('heading',{name:'Edit draft'})).toBeVisible(); return result.data.campaignId as string;
 }
 export async function expectVisibleFocus(page: Page) {
   const controls=page.locator('a[href],button:not(:disabled),input:not(:disabled),textarea:not(:disabled),select:not(:disabled),summary,[contenteditable="true"]');

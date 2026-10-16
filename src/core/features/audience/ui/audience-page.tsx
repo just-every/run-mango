@@ -2,7 +2,7 @@ import { AudienceExport } from './audience-export';
 import { SavedSegments } from './saved-segments';
 import { Link } from '@tanstack/react-router';
 
-import { formatDate } from '@/core/app/client/lib/format';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import type { Contact } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { EmptyState } from '@/core/app/client/ui/empty-state';
@@ -16,6 +16,7 @@ function countByStatus(contacts: Contact[], channel: 'emailStatus' | 'smsStatus'
 }
 
 export function AudiencePage() {
+  const formatDate = useDateFormatter();
   const { data, error, loading } = useResource<{ contacts: Contact[] }>('/api/audience');
   if (loading) return <LoadState />;
   if (!data) return <LoadState error={error} />;

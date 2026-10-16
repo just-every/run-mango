@@ -1,10 +1,11 @@
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {OpenEstimates} from './open-estimates';
 import {SenderRates} from './sender-rates';
 import { CostTotals } from './cost-totals';
 import type { CostReport } from '../cost-report';
 import { Link } from '@tanstack/react-router';
 
-import { formatDate, titleCase } from '@/core/app/client/lib/format';
+import { titleCase } from '@/core/app/client/lib/format';
 import type { Insight } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { EmptyState } from '@/core/app/client/ui/empty-state';
@@ -25,6 +26,7 @@ function NothingPostmarked() {
 }
 
 export function InsightsPage() {
+  const formatDate = useDateFormatter();
   const { data, error, loading } = useResource<{ results: Insight[]; note: string; costs: CostReport }>('/api/insights');
   if (loading) return <LoadState />;
   if (!data) return <LoadState error={error} />;

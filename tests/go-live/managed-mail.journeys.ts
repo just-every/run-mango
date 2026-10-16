@@ -1,3 +1,4 @@
+import { openPage } from '../support/navigation';
 import { test, expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -37,7 +38,7 @@ test('[SEND-001][OPER-001] Managed relay confirms access and consent while the o
         await page.context().setExtraHTTPHeaders({Cookie:cookie});
         for (const width of [1440,390]) {
           await page.setViewportSize({width,height:1000});
-          await page.goto(site.runtime.url+'/app/campaigns');
+          await openPage(page, site.runtime.url+'/app/campaigns');
           await expect(page.getByRole('heading',{name:'Connect a newsletter provider'})).toBeVisible();
           await page.getByRole('button',{name:'New campaign',exact:true}).click();
           await expect(page.getByRole('button',{name:'Blank newsletter'})).toBeVisible();
@@ -59,11 +60,11 @@ test('[SEND-001][OPER-001] Managed relay confirms access and consent while the o
         await page.context().setExtraHTTPHeaders({Cookie:cookie});
         for (const width of [1440,390]) {
           await page.setViewportSize({width,height:1000});
-          await page.goto(site.runtime.url+'/app/insights');
+          await openPage(page, site.runtime.url+'/app/insights');
           await page.getByRole('checkbox',{name:'Enable privacy-sensitive open estimates'}).click();
           await expect(page.getByRole('alert')).toContainText('Finish or cancel approved email');
           await page.screenshot({path:resolve(shots,`insights-approved-${width}.png`),fullPage:true});
-          await page.goto(site.runtime.url+'/app/settings');
+          await openPage(page, site.runtime.url+'/app/settings');
           await expect(page.getByRole('heading',{name:'Settings',exact:true})).toBeVisible();
           await page.waitForLoadState('networkidle');
           await page.screenshot({path:resolve(shots,`settings-operators-${width}.png`),fullPage:true});

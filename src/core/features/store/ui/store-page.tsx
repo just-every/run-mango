@@ -1,7 +1,8 @@
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { capabilityName, capabilityNextStep, plainServiceText } from '@/core/app/client/ui/product-copy';
 import { useEffect, useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
-import { formatDate, titleCase } from '@/core/app/client/lib/format';
+import { titleCase } from '@/core/app/client/lib/format';
 import type { Provider, SourceSync } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
@@ -10,6 +11,7 @@ type SyncRun = {id: string; provider: string; sourceType: string; state: string;
 type StoreStatus = { channels?: Array<{id:string; shop:string; coverage_start:number; retention_start:number; healthy_at:number; last_observation_at:number|null; last_error:string|null}>; providers: Provider[]; sourceSyncs: SourceSync[]; sourceCapabilities: Array<{sourceType: string; available: boolean; detail: string}>; syncRuns: SyncRun[] };
 
 export function StorePage() {
+  const formatDate = useDateFormatter();
   const { data, error, loading, reload } = useResource<StoreStatus>('/api/store');
   const [busy, setBusy] = useState<string>();
   const [noticeKind, setNoticeKind] = useState<'success'|'error'>('error');

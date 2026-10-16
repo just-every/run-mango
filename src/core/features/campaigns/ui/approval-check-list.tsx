@@ -1,3 +1,4 @@
+import {useDateFormatter} from '@/core/app/client/lib/use-date-formatter';
 import { Disclosure } from '@/core/app/client/ui/disclosure';
 import { plainServiceText } from '@/core/app/client/ui/product-copy';
 import { useId, useState } from 'react';
@@ -45,6 +46,7 @@ export function ApprovalCheckList({
   eyebrow?: string;
   emptyMessage?: string;
 }) {
+  const dateTime=useDateFormatter({locale:undefined,options:{year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'}});
   const titleId = useId();
   const [expanded, setExpanded] = useState(true);
   const findings = checks ?? [];
@@ -54,7 +56,7 @@ export function ApprovalCheckList({
     <p key={findingKey(check, index)} className={`check-list__item check-list__item--${check.status}`}>
       <strong>{readableKind(check.kind)}</strong>
       <span><b aria-label={`Status: ${findingLabel(check)}`}>{findingLabel(check)}</b>{readableDetail(check.detail)}{check.blocking ? <small className="check-next-step">Next step: {check.kind === 'message.email-consent-scope' ? 'Review the recorded consent on the audience’s contact pages, then save the corrected draft and check again.' : check.kind === 'mail.sender.v1.configured' ? 'Deploy Mango with a mail provider to send. Drafts, previews and imports work here.' : check.kind === 'message.email-sender' ? 'Open Settings and send the inbox check, then press “Yes, it reached my inbox” in that email.' : check.kind.startsWith('mail.') || check.kind.includes('sender') || check.kind.includes('authentication') ? 'Open Settings and complete sender setup, then save this draft and check again.' : check.kind.startsWith('audience.') ? 'Review the audience conditions and contact consent, then save the draft and check again.' : check.kind.startsWith('schedule.') ? 'Choose a valid send time, time zone and later deadline, then save the draft.' : 'Correct the indicated campaign content or connection, then save the draft and check again.'}</small> : null}
-        {'id' in check && check.acknowledgement ? <small className="check-next-step">Acknowledged by {check.acknowledgement.operatorId} · <time dateTime={check.acknowledgement.acknowledgedAt}>{new Date(check.acknowledgement.acknowledgedAt).toLocaleString()}</time></small>
+        {'id' in check && check.acknowledgement ? <small className="check-next-step">Acknowledged by {check.acknowledgement.operatorId} · <time dateTime={check.acknowledgement.acknowledgedAt}>{dateTime(check.acknowledgement.acknowledgedAt)}</time></small>
           : onAcknowledge && 'id' in check && check.findingIdentity && check.status === 'advisory' && !check.blocking
             ? <button type="button" className="text-link" disabled={acknowledgementDisabled} onClick={() => onAcknowledge(check)}>Acknowledge advisory</button> : null}
       </span>

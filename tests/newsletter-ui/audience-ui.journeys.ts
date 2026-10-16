@@ -1,3 +1,4 @@
+import { openPage, reloadPage } from '../support/navigation';
 import {createServer} from 'node:http';
 import { readFile, writeFile } from 'node:fs/promises';
 
@@ -41,7 +42,7 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
   const runId = `${Date.now()}`;
   const importedEmail = `ui-${runId}-1@example.test`;
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto('/app/audience');
+  await openPage(page, '/app/audience');
   await expect(page.getByRole('heading', { name: /consent stays visible/i })).toBeVisible();
   const sessionCookie = (await page.context().cookies()).find((cookie) => cookie.name.startsWith('operator_session_local_'));
   expect(sessionCookie?.value).toBeTruthy();
@@ -137,7 +138,7 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
   const importedContact = audience.contacts.find((contact: { email: string }) => contact.email === importedEmail);
   expect(importedContact?.id).toBeTruthy();
   await page.setViewportSize({ width: 1440, height: 1000 });
-  await page.goto(`/app/audience/${encodeURIComponent(importedContact.id)}`);
+  await openPage(page, `/app/audience/${encodeURIComponent(importedContact.id)}`);
   await expect(page.getByRole('heading', { name: 'Consent evidence' })).toBeVisible();
   await expect(page.getByText('I agree to receive occasional newsletter emails from Mango local.')).toBeVisible();
   await expect(page.getByText('192.0.2.10').first()).toBeVisible();
@@ -148,10 +149,10 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
   await expect(page.getByText('Confirmed', { exact: true }).first()).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
 
-  await page.reload();
+  await reloadPage(page);
   await expect(page.getByText('I agree to receive occasional newsletter emails from Mango local.')).toBeVisible();
   await expect(page.getByText(/subscribed-export\.csv · row 2/)).toBeVisible();
-  await page.goto('/app/audience/import');
+  await openPage(page, '/app/audience/import');
   await expect(importJob).toContainText('completed');
   await importJob.getByRole('button', { name: 'Undo import' }).click();
   await expect(importJob.getByRole('group', { name: /Confirm undo/ })).toBeVisible();
@@ -163,7 +164,7 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
 
   for (const width of [390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
-    await page.goto('/app/audience');
+    await openPage(page, '/app/audience');
     await expect(page.getByRole('heading', { name: /consent stays visible/i })).toBeVisible();
     const [download] = await Promise.all([
       page.waitForEvent('download'),
@@ -177,7 +178,7 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
     expect(content).not.toContain(importedEmail);
 
     // A removed lossless export must not leave mapping validators on the next source.
-    await page.goto('/app/audience/import');
+    await openPage(page, '/app/audience/import');
     await page.getByLabel('Choose CSV files').setInputFiles({name:'audience.csv',mimeType:'text/csv',buffer:Buffer.from(content)});
     await page.getByLabel('Preset for audience.csv').selectOption('mango');
     const mangoPreview = page.waitForResponse(response => response.request().method() === 'POST'
@@ -264,11 +265,11 @@ test('the published embed enforces persisted exact origins and gates challenge t
       await visitor.evaluate(path=>{const frame=document.createElement('iframe');frame.src=path;document.body.append(frame);},path);
       await sameOriginDenied;
     }
-    await page.goto('/app/audience');
+    await openPage(page, '/app/audience');
     await page.getByLabel('Allowed embed origins').fill(allowedOrigin);
     await page.getByRole('button',{name:'Save signup settings'}).click();
     await expect(page.getByRole('status').filter({hasText:'Signup settings saved'})).toBeVisible();
-    await page.reload();
+    await reloadPage(page);
     await expect(page.getByLabel('Allowed embed origins')).toHaveValue(allowedOrigin);
     expect((await (await request.get('/api/audience/signup',{headers})).json()).embedOrigins).toEqual([allowedOrigin]);
     for(const path of signupPaths) {
@@ -327,7 +328,7 @@ test('public form renders the configured disclosure and acknowledges only after 
   await expect(infoResponse).toBeOK();
   const info = await infoResponse.json();
   const external = await challengeEdge(page);
-  const response = await page.goto('/subscribe');
+  const response = await openPage(page, '/subscribe');
   expect(response?.ok()).toBe(true);
   const html = await response?.text();
   expect(html).toContain(info.consentText);

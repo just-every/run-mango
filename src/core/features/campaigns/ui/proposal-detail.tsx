@@ -1,9 +1,9 @@
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { RevisionPreviews } from './revision-previews';
 import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
 
-import { formatDate } from '@/core/app/client/lib/format';
 import type { ProposalEntry } from '@/core/app/client/lib/types';
 import { Paper } from '@/core/features/site/paper/Paper';
 import { summarizeAudienceRules } from '../audience-summary';
@@ -12,6 +12,7 @@ import { AudienceSnapshot } from './audience-snapshot';
 import { DeliveryPlan } from './delivery-plan';
 
 export function ProposalDetail({ entry, onDismiss }: { entry: ProposalEntry; onDismiss?:()=>void }) {
+  const formatDate = useDateFormatter();
   const { proposal } = entry;
   const navigate = useNavigate();
   const [reason,setReason]=useState('');

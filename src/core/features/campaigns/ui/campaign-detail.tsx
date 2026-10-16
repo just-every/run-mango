@@ -1,8 +1,8 @@
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {requestJson} from '@/core/app/client/lib/api';
 import {useState} from 'react';
 import { Link, useParams, useNavigate } from '@tanstack/react-router';
 
-import { formatDate } from '@/core/app/client/lib/format';
 import type { CampaignDetail } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState } from '@/core/app/client/ui/layout';
@@ -14,6 +14,7 @@ import { DeliveryPlan } from './delivery-plan';
 import { RevisionPreviews } from './revision-previews';
 
 export function CampaignDetailPage() {
+  const formatDate = useDateFormatter();
   const navigate=useNavigate();
   const [editError,setEditError]=useState<string>();
   const { id } = useParams({ from: '/app/campaigns_/$id' });
