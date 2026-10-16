@@ -174,6 +174,8 @@ test('[DESIGN-003] a run sends only the brief, never buys twice, records its cos
     const body = page.getByLabel('Email body', { exact: true });
     await expect(body).toBeVisible();
     const content = () => body.evaluate(element => element instanceof HTMLTextAreaElement ? element.value : element.innerHTML);
+    // The rich-text body fills in after hydration; compare against the saved draft, not the empty mount.
+    await expect.poll(content).toContain('an earlier draft.');
     const before = await content();
     await page.getByRole('button', { name: 'Design with 12ui', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Design this email with 12ui' });
