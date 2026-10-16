@@ -64,7 +64,7 @@ export async function authorityRuntime() {
 export async function signIn(page, url) {
   await openGate(page.context(), url);
   await page.goto(url + '/signin?returnTo=%2Fapp');
-  await page.getByRole('link', { name: 'Continue as owner' }).click();
+  await page.getByRole('link', { name: 'Sign in as Owner' }).click();
   await page.waitForURL(current => ['/setup', '/app'].includes(current.pathname));
   if (new URL(page.url()).pathname === '/setup') await finishSetup(page);
   await page.waitForURL(url + '/app');

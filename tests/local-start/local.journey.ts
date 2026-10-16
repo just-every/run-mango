@@ -15,7 +15,7 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     expect((await page.request.get(runtime.url+'/__dev/outbox')).status()).toBe(404);
     await openGate(context,runtime.url);
     await page.goto(runtime.url+'/signin?returnTo=%2Fsetup');
-    await page.getByRole('link',{name:'Continue as owner'}).click();
+    await page.getByRole('link',{name:'Sign in as Owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
     for (const path of ['/app','/app/campaigns','/app/settings','/app/audience']) {
       const response=await page.request.get(runtime.url+path,{maxRedirects:0});
@@ -35,7 +35,7 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     expect(await (await page.request.get(runtime.url+'/setup/state')).json()).toEqual({state:'unclaimed'});
     await expect(page.getByRole('link',{name:'Finish setup'})).toHaveAttribute('href','/setup');
     await page.goto(runtime.url+'/signin?returnTo=%2Fsetup');
-    await page.getByRole('link',{name:'Continue as owner'}).click();
+    await page.getByRole('link',{name:'Sign in as Owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
     await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
     for (const viewportWidth of [1440,390]) {

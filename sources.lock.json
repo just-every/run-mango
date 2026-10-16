@@ -6430,7 +6430,7 @@
       "executable": false
     },
     "tests/local-start/authority-runtime.mjs": {
-      "sha256": "136fa55e019b45c7825017591a3b45fa7e5aabcf458c646ca355425edd21fe0c",
+      "sha256": "210ca8bda2b0827b4e25a6450a6a3b5e8b369a73c213ce8dd58dba81f0b96d6b",
       "executable": false
     },
     "tests/local-start/authority.journey.ts": {
@@ -6466,7 +6466,7 @@
       "executable": false
     },
     "tests/local-start/local.journey.ts": {
-      "sha256": "4250b9297da3e542b1861b39cef1819b920a4b14d03ab16875bd4f6241548af8",
+      "sha256": "ef39b458d519ffc92a88d4d24892f42cab8f96f5988b8add120115dda40a2c53",
       "executable": false
     },
     "tests/local-start/native-dev.mjs": {
@@ -6474,7 +6474,7 @@
       "executable": false
     },
     "tests/local-start/signin-hydration.journey.ts": {
-      "sha256": "a9668c8ad39679ebcbfcaacc6e648deb6b3109f6bd8d48dd7c732c55e5bfd9a4",
+      "sha256": "67cc8a6343a756b92d66ffd62e0a8875f0d43c3e28bb34a68577d54be0323c76",
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
