@@ -4234,7 +4234,7 @@
       "executable": false
     },
     "src/core/platform/demo/verification.ts": {
-      "sha256": "50ed7d3183e3bb6c33d31efdca0ddfc1c483a912e18bbeef3af9b677482bdab2",
+      "sha256": "4b5f8462faa67cab18620e30086898f8d2b27c1da657cb14bdc3e1c88436f45d",
       "executable": false
     },
     "src/core/platform/jobs.ts": {
