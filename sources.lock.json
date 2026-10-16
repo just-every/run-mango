@@ -6081,7 +6081,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "96b13f6a58f8d5235563ad9ef5063ea3e3dab0277d44cbf9bdb82afbb134eeaa",
+      "sha256": "830ad5eb1ef4a02bbcb446f90d65a87f8a0a953571b6bec3805582783db1a666",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
@@ -6689,7 +6689,7 @@
       "executable": false
     },
     "tests/support/navigation.ts": {
-      "sha256": "b383f74cb038f6f7e7e3e7d51a2f85dccdd36c9a4d13939b61e9c9a5f285609b",
+      "sha256": "1083ddec75da604d95deaa9f8e08583996f3abc32a5cde6102c36717aa65578d",
       "executable": false
     },
     "tests/support/operator-session.ts": {

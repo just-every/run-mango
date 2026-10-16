@@ -1,4 +1,4 @@
-import { openPage, reloadPage } from '../support/navigation';
+import { hydrated, openPage, reloadPage } from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
 import {test,expect} from '@playwright/test';
 import {authoringRuntime} from './browser-runtime.mjs';
@@ -24,6 +24,8 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await page.screenshot({path:testInfo.outputPath(`starters-${width}.png`),fullPage:true});
     await page.getByRole('button',{name:'Blank newsletter',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Untitled campaign',exact:true})).toBeVisible();
+    // Creation enters the server-rendered review document; interact once it hydrates.
+    await hydrated(page);
     const campaignId=new URL(page.url()).pathname.split('/')[3];
     if(width===1440) {
       // The initial resource read now runs inside SSR; fail its request transport too.
