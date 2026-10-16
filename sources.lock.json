@@ -6421,7 +6421,7 @@
       "executable": false
     },
     "tests/newsletter-ui/playwright.config.js": {
-      "sha256": "1210e9e365c112589f74a4e555cc16759fb96c9d0bcea1ddce15b8817e0541d3",
+      "sha256": "6fc75d4e478e4dd3df561025af7d8debdd007e9ace6541ba57c0750cbc36c965",
       "executable": false
     },
     "tests/newsletter-ui/representative-pages.journeys.ts": {

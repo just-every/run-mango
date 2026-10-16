@@ -22,6 +22,7 @@ export default defineConfig({
   },
   webServer: {
     command: 'exec node tests/support/start-fixture-runtime.mjs',
+    stdout: 'pipe',
     gracefulShutdown: { signal: 'SIGTERM', timeout: 15000 },
     url: `${baseURL}/health`,
     cwd: new URL('../..', import.meta.url).pathname,
