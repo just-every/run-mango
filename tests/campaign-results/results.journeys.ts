@@ -12,7 +12,8 @@ async function textContrast(element:any) {
   const luminance=(value:string)=>{const [r,g,b]=value.match(/[\d.]+/g)!.slice(0,3).map(Number).map(c=>{c/=255;return c<=0.03928?c/12.92:((c+0.055)/1.055)**2.4;});return 0.2126*r+0.7152*g+0.0722*b;};
   const [a,b]=[luminance(fg),luminance(bg)].sort((x,y)=>y-x);return (a+0.05)/(b+0.05);
 }
-async function accessible(page:any,width:number) {expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);}
+// Check the settled page: a fresh-data reload briefly replaces the document between rendered states.
+async function accessible(page:any,width:number) {await page.waitForLoadState('networkidle');await expect(page.locator('main').first()).toBeVisible();await expect(page.getByRole('heading',{level:1}).first()).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);}
 function expectedLocalClockAndZone(value:string,timeZone:string) {
   const parts=Object.fromEntries(new Intl.DateTimeFormat('en-AU',{hour:'numeric',minute:'2-digit',timeZone,timeZoneName:'short'}).formatToParts(new Date(value)).map(({type,value})=>[type,value]));
   return `${parts.hour}:${parts.minute} ${parts.dayPeriod} ${parts.timeZoneName}`;
