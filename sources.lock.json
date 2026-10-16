@@ -3309,7 +3309,7 @@
       "executable": false
     },
     "src/core/features/landing/sections/Hero.tsx": {
-      "sha256": "4e49172de831a8f193d69af6b661374dbe32b515847ca7a392ff2ceda47e3ae2",
+      "sha256": "9d3eedc93e5cff4144d574c12baab9c297544849b7e9593ed1f49050cc22db37",
       "executable": false
     },
     "src/core/features/landing/sections/How.tsx": {

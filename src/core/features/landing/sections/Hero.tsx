@@ -1,5 +1,6 @@
 import { ButtonLink } from '../../site/ButtonLink';
 import { sitePaths } from '../../site/links';
+import { useRunSite } from '../../site/run-site';
 import { copy } from '../copy';
 import { PrimaryAction } from '../parts/PrimaryAction';
 import { HeroArt } from '../drawings/hero/HeroArt';
@@ -20,6 +21,7 @@ function ReplacesLine() {
 
 /** The page's one h1, the lead, the two calls to action and the paper scene. */
 export function Hero() {
+  const runSite = useRunSite();
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="hero-copy">
@@ -28,6 +30,7 @@ export function Hero() {
         <p className="hero-replaces"><ReplacesLine /></p>
         <div className="hero-actions">
           <PrimaryAction />
+          {runSite ? <a href="https://demo.run-mango.com/" className="site-button site-button--line"><span>Try the demo</span></a> : null}
           <ButtonLink to={sitePaths.docs} tone="line">{hero.secondary}</ButtonLink>
         </div>
       </div>
