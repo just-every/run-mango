@@ -48,7 +48,7 @@ contract('DATA-001', 'complete native records and uploaded assets round-trip wit
       const request = (path: string, body: unknown, method = 'POST') => wrong.call('/api/portability/' + path, { method, cookie: wrong.cookie, body });
       const id = (await (await request('imports', { confirmed: true, manifest })).json()).id;
       for (const part of records.filter(record => record.kind === 'part')) expect((await request(`imports/${id}/parts/${part.index}`, part, 'PUT')).status).toBe(200);
-      expect((await request(`imports/${id}/finalize`, { contentHash: records.at(-1).contentHash })).status).toBe(409);
+      expect((await request(`imports/${id}/finalize`, { contentHash: records.at(-1).contentHash, archiveHash: records.at(-1).archiveHash })).status).toBe(409);
       expect((await wrong.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
       expect((await wrong.bucket.list()).objects).toEqual([]);
     } finally { await wrong.close(); }
@@ -117,13 +117,13 @@ contract('CONT-013', 'current erasure authority refuses an old archive on an emp
     const created=await request('imports',{confirmed:true,manifest:before[0]});expect(created.status).toBe(201);const {id}=await created.json();
     for(const part of before.filter(record=>record.kind==='part'))expect((await request(`imports/${id}/parts/${part.index}`,part,'PUT')).status).toBe(200);
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
-    const restored=await request(`imports/${id}/finalize`,{contentHash:before.at(-1).contentHash,laterJournal:{sourceIdentity:latest.sourceIdentity,epoch:latest.epoch,journal:latest.journal}});
+    const restored=await request(`imports/${id}/finalize`,{contentHash:before.at(-1).contentHash,archiveHash:before.at(-1).archiveHash,laterJournal:{sourceIdentity:latest.sourceIdentity,epoch:latest.epoch,journal:latest.journal}});
     const refusal=await restored.json();expect(restored.status,JSON.stringify(refusal)).toBe(400);expect(refusal.error).toBe('erasure_epoch');
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
     expect((await target.call('/api/operator',{cookie:target.cookie})).status).toBe(200);
     expect((await request(`imports/${id}/abort`,{})).status).toBe(200);
     const currentId=await stageArchive(target,after);
-    const current=await request(`imports/${currentId}/finalize`,{contentHash:after.at(-1).contentHash,laterJournal:{sourceIdentity:latest.sourceIdentity,epoch:latest.epoch,journal:[]}});
+    const current=await request(`imports/${currentId}/finalize`,{contentHash:after.at(-1).contentHash,archiveHash:after.at(-1).archiveHash,laterJournal:{sourceIdentity:latest.sourceIdentity,epoch:latest.epoch,journal:[]}});
     expect(current.status,await current.clone().text()).toBe(200);
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
     const exportedRows=after.filter(record=>record.kind==='part').flatMap(part=>part.items).filter(item=>item.kind==='row');

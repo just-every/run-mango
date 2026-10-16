@@ -1,8 +1,8 @@
-import { all, statement, state, guard, job, save, partStatements, parts, cleanCopies, quote, stream, insist, run } from './storage.mjs';
+import { all, statement, state, guard, job, save, partStatements, parts, cleanCopies, quote, stream, insist, run, PortabilityError } from './storage.mjs';
 import { refuseDevData } from './dev-data.mjs';
 import { catalogue, validateRow, bindCell, writableColumns } from './catalogue.mjs';
 import { canonicalJson, unbase64 } from './hash.mjs';
-import { checkManifest, checkPart, ContentVerifier } from './format.mjs';
+import { checkManifest, checkPart, ContentVerifier, ArchiveVerifier } from './format.mjs';
 import { fence, mergeJournal } from './journal.mjs';
 import { writeObject } from './payloads.mjs';
 import { createCopy,sidecar,readCopy,restoreCopy } from './copies.mjs';
@@ -101,18 +101,28 @@ async function removeOwned(context,id) {
   for(const o of owned)await context.buckets[o.bucket].delete(o.key);
   await run(context.db,'DELETE FROM rer_portability_owned WHERE job=?',id);
 }
-export async function finalizeImport(context,id,{contentHash,laterJournal}={}) {
+// Staged parts and the manifest are immutable, so an archive that fails its own
+// binding or the erasure floor can never be applied: withdraw it with nothing restored.
+async function verifyStaged(context,row,{contentHash,archiveHash,laterJournal}) {
+  const {db,config}=context,manifest=row.metadata.manifest;
+  try {
+    const verifier=new ContentVerifier(manifest),archive=new ArchiveVerifier(manifest);let index=0;
+    for await(const part of parts(db,row.id,row.completed)){await checkPart(part,index++,config.partBytes);archive.add(part);for(const item of part.items)verifier.add(item);}
+    const digest=verifier.digest();if(contentHash!==undefined)insist(contentHash===digest,'content_checksum');
+    // archiveHash binds source identity and epoch; only then can they key the erasure floor.
+    insist(archiveHash===archive.digest(),'archive_checksum',409);
+    return {digest,checked:await fence(db,manifest,laterJournal)};
+  }catch(e){if(e instanceof PortabilityError)await abortImport(context,row.id);throw e;}
+}
+export async function finalizeImport(context,id,options={}) {
   const {db,config}=context,row=await job(db,id,'import');
   if(row.phase==='complete')return importStatus(context,id);
   insist(['staging','applying'].includes(row.phase),'import_phase',409);
   const manifest=row.metadata.manifest;insist(row.completed===manifest.partCount,'parts_missing');
-  const verifier=new ContentVerifier(manifest);
-  for await(const part of parts(db,id,row.completed))for(const item of part.items)verifier.add(item);
-  const digest=verifier.digest();if(contentHash!==undefined)insist(contentHash===digest,'content_checksum');
+  const {digest,checked}=await verifyStaged(context,row,options);
   for(const table of row.metadata.targets) if(!config.replaceableTables.includes(table.name))insist(!(await statement(db,`SELECT 1 FROM ${quote(table.name)} LIMIT 1`).first()),'target_not_empty:'+table.name,409);
   const dependentGuards=await excludedDependentGuards(db,row.metadata.targets,config.replaceableTables);
   await bucketsEmpty(context,row);
-  const checked=await fence(db,manifest,laterJournal);
   await refuseDevData(db,row.metadata.copies,row.metadata.targets);
   if(config.validateStaged) {
     const read=async table=>{insist(row.metadata.copies[table],'staged_table');const target=row.metadata.targets.find(t=>t.name===table);return (await readCopy(db,target,row.metadata.copies[table],0,row.metadata.manifest.tables.find(t=>t.name===table).count)).map(x=>x.row);};

@@ -1,11 +1,17 @@
-import { safeReturnTo } from '@/vendor/base/operator-auth/policy.mjs';
+import { normalizeEmail, safeReturnTo } from '@/vendor/base/operator-auth/policy.mjs';
 import { useEffect, useState, type FormEvent } from 'react';
 import { useLocation } from '@tanstack/react-router';
 import { BodyText } from '@/core/features/site/BodyText';
 import { StandaloneFrame } from './ui/standalone-frame';
+// `login_hint` prefills a complete email address only; the visitor still submits.
+function emailHint(value: string | null) {
+  if (value === null) return '';
+  try { return normalizeEmail(value); } catch { return ''; }
+}
 export function SignInPage() {
   const search = new URLSearchParams(useLocation().searchStr);
   const returnTo = safeReturnTo(search.get('returnTo'), '/setup');
+  const hint = emailHint(search.get('login_hint'));
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
   const [hydrated, setHydrated] = useState(false);
@@ -50,7 +56,7 @@ export function SignInPage() {
           <form className="signin-form standalone-form" method="post" action="/auth/magic-link" onSubmit={submit}>
             <input type="hidden" name="returnTo" value={returnTo} />
             <label htmlFor="operator-email">Email address</label>
-            <input id="operator-email" type="email" name="email" autoComplete="email" required disabled={busy} />
+            <input id="operator-email" type="email" name="email" autoComplete="email" defaultValue={hint} required disabled={busy} />
             <button className="primary-action" type="submit" disabled={busy}>{busy ? 'Requesting link…' : 'Email sign-in link'}</button>
           </form>
           {notice && <p className={failed ? 'signin-notice signin-error inline-error' : 'signin-notice action-notice'} role={failed ? 'alert' : 'status'}><BodyText text={failed ? `${notice} ${guidance}` : notice} /></p>}

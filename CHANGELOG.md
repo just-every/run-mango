@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Mark test credentials and environment references explicitly so hosted source admission accepts the fixtures.
+- **Restore verifies the whole archive before applying anything.** Finalize (`POST /api/portability/imports/:id/finalize`, `rer import` and the transfer CLI) now requires the archive's closing `archiveHash` and checks it against the staged manifest and every staged part before the erasure floor is consulted. An archive whose source identity, epoch or any other manifest field was changed is refused with `archive_checksum`; before, the HTTP route accepted it and could restore a contact erased after that backup. A refused finalize (`archive_checksum`, `content_checksum`, `erasure_epoch` or an invalid later journal) withdraws the staged import: nothing is restored, staging is dropped and the job reads `aborted`. HTTP clients must now send `archiveHash` from the archive's closing line.
+- The sign-in page prefills the email field from a complete `login_hint` address; it never submits on its own.
 
 ## 0.2.0 (2026-10-16)
 

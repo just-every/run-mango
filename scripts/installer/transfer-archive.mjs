@@ -30,7 +30,7 @@ export async function transferArchive(service,direction,path,signal) {
         else if(record.kind==='part')await service.imports.uploadPart(id,record.index,record);
         else closing=record;
       }
-      await service.imports.finalize(id,{contentHash:closing.contentHash});complete=true;
+      await service.imports.finalize(id,{contentHash:closing.contentHash,archiveHash:closing.archiveHash});complete=true;
     }
     return {target:'local',contentHash:closing.contentHash,tables:manifest.tables.map(({name,count})=>({name,count})),objects:manifest.objects.length,payloads:manifest.payloads.length,requiredConfiguration:manifest.requiredConfiguration,exclusions:{tables:manifest.excludedTables,columns:manifest.excludedColumns,configuration:true,transient:['local caches and logs']}};
   } finally {

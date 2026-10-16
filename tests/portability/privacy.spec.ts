@@ -75,20 +75,49 @@ test('CONT-013/DATA-001 invalid archive authority is refused before any durable 
   } finally {await source.close();await target.close();}
 });
 
-test('CONT-013/DATA-001 staged archive replay, checksum and finalize authority validation prevent restored rows', async () => {
+test('CONT-013/DATA-001 restore refuses a tampered or stale archive by name with no persistent effect, then restores a current one', async () => {
+  test.setTimeout(240000);
   const [source, target] = await Promise.all([portabilityRuntime(), portabilityRuntime({restore:true})]);
   try {
-    await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();
-    const records = await archiveRecords(source), manifest = records[0];
-    const id = await stageArchive(target,records), finalize = (laterJournal?: unknown, contentHash = records.at(-1).contentHash) => transferRequest(target,`imports/${id}/finalize`,{contentHash,laterJournal});
-    expect((await finalize(undefined,hash('tampered-content'))).status).toBe(400);
-    for (const mutation of [{sourceIdentity:'wrong-source'},{epoch:-1},{epoch:0.5},{journal:['malformed']},{journal:[hash('legacy-authority')]}]) {
-      expect((await finalize({sourceIdentity:manifest.sourceIdentity,epoch:manifest.epoch,journal:[],...mutation})).status).toBeGreaterThanOrEqual(400);
-      expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first<any>()).n).toBe(0);
-    }
-    for (const malformed of [null, 0, false]) expect((await finalize(malformed)).status).toBe(400);
-    const stale = await finalize({sourceIdentity:manifest.sourceIdentity,epoch:manifest.epoch+1,journal:[]});
+    await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('erased-reader','reader@example.test','Erased reader','unsubscribed','never-subscribed',1,1)").run();
+    const records = await archiveRecords(source), manifest = records[0], closing = records.at(-1);
+    const hashes = {contentHash: closing.contentHash, archiveHash: closing.archiveHash};
+    // The destination's own installation identity exists before any restore attempt.
+    await target.db.prepare("INSERT INTO rer_portability_state(id,source_identity) VALUES(1,'destination-installation')").run();
+    // Everything except the withdrawn job's own record must be exactly as before.
+    const settled = async () => JSON.stringify([JSON.parse(await durableRows(target.db)).filter((t: any) => t.name !== 'rer_portability_jobs'), (await target.bucket.list()).objects.map((o: any) => o.key)]);
+    const refuses = async (archive: any[], body: Record<string, unknown>, error: string) => {
+      const before = await settled(), id = await stageArchive(target, archive);
+      const refused = await transferRequest(target, `imports/${id}/finalize`, body);
+      expect(refused.status).toBeGreaterThanOrEqual(400);
+      expect((await refused.json()).error).toBe(error);
+      expect(await settled()).toBe(before);
+      expect((await (await transferRequest(target, `imports/${id}`, undefined, 'GET')).json()).phase).toBe('aborted');
+    };
+    const later = (change = {}) => ({...hashes, laterJournal: {sourceIdentity: manifest.sourceIdentity, epoch: manifest.epoch, journal: [], ...change}});
+    await refuses(records, {contentHash: hash('tampered-content'), archiveHash: closing.archiveHash}, 'content_checksum');
+    await refuses(records, {contentHash: closing.contentHash}, 'archive_checksum');
+    await refuses(records, later({sourceIdentity: 'wrong-source'}), 'later_journal');
+    await refuses(records, later({journal: ['malformed']}), 'invalid_journal');
+    await refuses(records, {...hashes, laterJournal: null}, 'later_journal');
+    await refuses(records, later({epoch: manifest.epoch + 1}), 'erasure_epoch');
+    // The destination records a later erasure floor for this source.
+    await target.db.prepare('INSERT INTO rer_portability_epochs(source,epoch) VALUES(?,?)').bind(manifest.sourceIdentity, manifest.epoch + 1).run();
+    const floor = await settled();
+    const stale = await transferRequest(target, 'imports', {confirmed: true, manifest});
     expect((await stale.json()).error).toBe('erasure_epoch');
+    expect(await settled()).toBe(floor);
+    // Relabelled identity or epoch with the original parts and hashes fails the archive's own binding.
+    for (const change of [{sourceIdentity: 'altered-source-identity'}, {epoch: manifest.epoch + 1}]) {
+      await refuses([{...manifest, ...change}, ...records.slice(1)], hashes, 'archive_checksum');
+    }
+    expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first<any>()).n).toBe(0);
+    // A current archive above the floor still restores the same rows.
+    await source.db.prepare('UPDATE rer_portability_state SET epoch=epoch+1').run();
+    const current = await archiveRecords(source), currentId = await stageArchive(target, current);
+    const accepted = await transferRequest(target, `imports/${currentId}/finalize`, {contentHash: current.at(-1).contentHash, archiveHash: current.at(-1).archiveHash});
+    expect(accepted.status, await accepted.clone().text()).toBe(200);
+    expect(await target.db.prepare("SELECT email,email_status FROM contacts WHERE id='erased-reader'").first()).toEqual({email: 'reader@example.test', email_status: 'unsubscribed'});
   } finally {await source.close();await target.close();}
 });
 
@@ -101,7 +130,7 @@ test('CONT-013/DATA-001 atomic epoch race refuses stale readmission and current 
     // A real SQL commit advances authority after fence() and before final apply.
     const sourceSql = manifest.sourceIdentity.replaceAll("'","''");
     await target.db.prepare(`CREATE TRIGGER concurrent_erasure AFTER UPDATE OF applying ON rer_portability_state WHEN NEW.applying=1 BEGIN INSERT INTO rer_portability_epochs VALUES('${sourceSql}',${manifest.epoch+1}) ON CONFLICT(source) DO UPDATE SET epoch=excluded.epoch; END`).run();
-    expect((await transferRequest(target,`imports/${id}/finalize`,{contentHash:records.at(-1).contentHash})).status).toBe(500);
+    expect((await transferRequest(target,`imports/${id}/finalize`,{contentHash:records.at(-1).contentHash,archiveHash:records.at(-1).archiveHash})).status).toBe(500);
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first<any>()).n).toBe(0);
     expect((await target.db.prepare('SELECT epoch FROM rer_portability_epochs WHERE source=?').bind(manifest.sourceIdentity).first<any>()).epoch).toBeGreaterThan(manifest.epoch);
     await target.db.prepare('DROP TRIGGER concurrent_erasure').run();
@@ -110,7 +139,7 @@ test('CONT-013/DATA-001 atomic epoch race refuses stale readmission and current 
     // Bring the source to the same current authority, then export real current rows.
     await source.db.prepare('UPDATE rer_portability_state SET epoch=epoch+1').run();
     const current = await archiveRecords(source), currentId = await stageArchive(target,current);
-    const accepted = await transferRequest(target,`imports/${currentId}/finalize`,{contentHash:current.at(-1).contentHash,laterJournal:{sourceIdentity:current[0].sourceIdentity,epoch:current[0].epoch,journal:[]}});
+    const accepted = await transferRequest(target,`imports/${currentId}/finalize`,{contentHash:current.at(-1).contentHash,archiveHash:current.at(-1).archiveHash,laterJournal:{sourceIdentity:current[0].sourceIdentity,epoch:current[0].epoch,journal:[]}});
     expect(accepted.status,await accepted.clone().text()).toBe(200);
     expect(await target.db.prepare("SELECT email FROM contacts WHERE id='current-survivor'").first()).toEqual({email:'survivor@example.test'});
     expect((await target.db.prepare('SELECT * FROM rer_portability_journal').all()).results).toEqual([]);

@@ -929,7 +929,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "282b606eaccbd92d4d1e4b57d89b84f65370cd0fdb791e721ce43fb62651a04c",
+      "sha256": "1d32d1ce81f3b37d0dcc93918816aedfb95ca9c2adbae10d16ae33531ccb2da0",
       "executable": false
     },
     "CLAUDE.md": {
@@ -1681,7 +1681,7 @@
       "executable": false
     },
     "scripts/installer/transfer-archive.mjs": {
-      "sha256": "ba78aa9d30c5fb88cc28b4e755a9182f7419e6f5c208975299c2007d5783bb50",
+      "sha256": "e9660ae8d2cbf6efd4f20dfbde4c1fd6f02a109488ef1d3df073450446e32dd4",
       "executable": false
     },
     "scripts/installer/ui/background.svg": {
@@ -1913,7 +1913,7 @@
       "executable": false
     },
     "src/core/app/client/public-pages.tsx": {
-      "sha256": "ed4a0474695602ae8edb7371f4db7e53c4ba90c4a1c44c83db65ee08f2d54f80",
+      "sha256": "5fb29a170d1999c0dc5e9c963ea8e21384dd980aa887a09eb5d20a2aec37feee",
       "executable": false
     },
     "src/core/app/client/setup-page.tsx": {
@@ -2497,7 +2497,7 @@
       "executable": false
     },
     "src/core/features/auth/base-policy.d.ts": {
-      "sha256": "89f3d7fdcc2051399416001c003ef6420373a2a06290d481922b9665a692af67",
+      "sha256": "bafd511aa07939849977875181c1c52b215a5ec889b0dfc47f7b6076e2ccc27b",
       "executable": false
     },
     "src/core/features/auth/dev-personas.ts": {
@@ -5825,7 +5825,7 @@
       "executable": false
     },
     "src/vendor/base/portability/import.mjs": {
-      "sha256": "188688420f22db814ba881a7b3634783da53b5f157fb82522b220d69791c5c0c",
+      "sha256": "adae4fe638a3d9b00d052a37367c64adc89a6234f0ce40e0b391b7459136c618",
       "executable": false
     },
     "src/vendor/base/portability/index.d.mts": {
@@ -6445,7 +6445,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "d93d27b28a6ee9b012aded18ded31998ef2cd6b900120361870f2753ad92b4c8",
+      "sha256": "14f7c21956ef48d9af402771ca21efa5e34fa76707c18cc47ec9ad2165070e24",
       "executable": false
     },
     "tests/portability/flows.ts": {
@@ -6453,7 +6453,7 @@
       "executable": false
     },
     "tests/portability/privacy.spec.ts": {
-      "sha256": "0f1b36720aa0be981adf8cb6b7c84301e0f79c2700b922028be9f1b2eb0ac634",
+      "sha256": "283a459a892e3265310cf6a9be3381306391a5d156727b4ca69089a5c69aa223",
       "executable": false
     },
     "tests/portability/runtime.mjs": {
