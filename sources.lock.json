@@ -997,7 +997,7 @@
       "executable": false
     },
     "docs/install.md": {
-      "sha256": "48b417e6c5c996ae115a1f4ea90d2862b2fcf727918e5c073f4dfd54108c30c2",
+      "sha256": "20b6b8319297c73e3a1e58320de8de388fab0389ecbc4ef84142ec2e1245480d",
       "executable": false
     },
     "docs/introduction.md": {
@@ -1449,7 +1449,7 @@
       "executable": false
     },
     "README.md": {
-      "sha256": "9d80ea8e326cbadd20c72171c4872a1954cdd036ea53cd66102f9e2e748210a6",
+      "sha256": "39c33a016f12bed16247ef462911017b4c0c20ce043f63721481f9a2be1187f9",
       "executable": false
     },
     "RELEASE-STATUS.md": {
@@ -4309,7 +4309,7 @@
       "executable": false
     },
     "src/site/run.ts": {
-      "sha256": "e8d04a1376fd257257e608c11b95b712c5e0f5952abc4c62d81aa0643b03d728",
+      "sha256": "64a1a9a504a6bc3ed96a67bd5ffcf6574a822b317411ea0406504fab5ae25bf4",
       "executable": false
     },
     "src/vendor/base/d1-transport/index.d.mts": {
@@ -6081,7 +6081,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "96b13f6a58f8d5235563ad9ef5063ea3e3dab0277d44cbf9bdb82afbb134eeaa",
+      "sha256": "830ad5eb1ef4a02bbcb446f90d65a87f8a0a953571b6bec3805582783db1a666",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
@@ -6689,7 +6689,7 @@
       "executable": false
     },
     "tests/support/navigation.ts": {
-      "sha256": "b383f74cb038f6f7e7e3e7d51a2f85dccdd36c9a4d13939b61e9c9a5f285609b",
+      "sha256": "1083ddec75da604d95deaa9f8e08583996f3abc32a5cde6102c36717aa65578d",
       "executable": false
     },
     "tests/support/operator-session.ts": {
