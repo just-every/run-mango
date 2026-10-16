@@ -19,7 +19,7 @@ Up to 10 files, 10 MB in total, and 50,000 rows per review. Files must end in `.
 
 1. **Select files and presets.** Choose each file and its preset.
 2. **Field mapping.** Map your columns to **Email** (required), **Email marketing status**, **First Name**, **Last Name**, **Occurred At** (the original opt-in time), **Capture Ip**, **Confirmed At** and **Confirmation Ip**. Mango suggests matching headers, ignoring case, spaces and underscores. It recognizes `email` or `email address`; `status`, `email_status`, `email marketing`, `marketing status` or `email marketing status`; first and last names; and the original `optin_time`, `optin_ip`, `confirm_time` and `confirm_ip` fields (or the corresponding Mango field names). Missing fields stay unmapped, and your explicit choices are retained. Record creation dates are never suggested as consent.
-3. **Consent evidence.** Fill in **Brand or legal sender**, **Message category**, **Disclosed frequency**, **Destination jurisdiction**, **Consent version** and **Original consent text**. These must describe what people actually saw when they opted in.
+3. **Consent evidence.** Fill in **Brand or legal sender**, **Disclosed frequency**, **Destination jurisdiction**, **Consent version** and **Original consent text**, and choose **Message category** from this installation’s drafts and consent records (`newsletter` is always available for the hosted signup form). To add a category, save it in a draft first. These details must describe what people actually saw when they opted in.
 4. Press **Preview import**. Nothing is imported yet. You see counts for created, updated, rejected, unsubscribed and suppressed rows, plus a row-by-row table with warnings.
 5. Press **Start import**.
 
@@ -27,7 +27,7 @@ Up to 10 files, 10 MB in total, and 50,000 rows per review. Files must end in `.
 
 A row becomes **subscribed** only if it carries an original opt-in time, a confirmation time and all six consent fields. Otherwise it is imported as **non-subscribed** with the warning "Original consent scope, opt-in time and confirmation time are required before this contact can receive marketing." A confirmation time before the opt-in time rejects the row. Times without a time zone are read as UTC.
 
-Match the **Brand or legal sender** to your Settings sender name and the **Message category** to the category in your drafts (`newsletter` by default). If any eligible contact's consent was recorded for a different sender or category, approval is blocked.
+Match the **Brand or legal sender** to your Settings sender name and the **Message category** to the category in your drafts (`newsletter` by default), including case. If any eligible contact's consent was recorded for a different sender or category, approval names the required and recorded scopes. Correct the draft only if the recorded category describes the email; otherwise narrow the audience or obtain confirmed consent for that sender and category. Never relabel historical consent to pass approval.
 
 Mango does not claim an original signup method for imported contacts. The contact's record shows the CSV file name and row as the source.
 

@@ -52,6 +52,7 @@ export function ImportDialog({ open, initialBrief, replacing, mediaOrigin, onClo
       <button type="button" className="secondary-action" onClick={() => setStage('form')}>Back</button>
       <button type="button" className="primary-action" autoFocus onClick={() => void build()}>Replace</button>
     </div> : <ValidationForm className="design-import-form" aria-label="Import a 12ui design" aria-busy={stage === 'working'} onValidSubmit={() => void submit()}>
+      <p className="muted-copy">Optional: <a href="https://12ui.com" target="_blank" rel="noreferrer">12ui</a> is a separate AI design tool; <a href="/docs/first-newsletter#import-a-12ui-design" target="_blank" rel="noreferrer">follow these steps to get the PNG and LayerDoc layout file</a> with your own 12ui account.</p>
       <fieldset className="design-import-form__fields" disabled={stage === 'working'}>
         <label>LayerDoc (.layerdoc.json)<Field name="layerdoc" label="LayerDoc" required><input ref={layerdoc} type="file" accept=".json,application/json" /></Field></label>
         <label>Design image (PNG candidate)<Field name="candidate" label="Design image" required><input ref={candidate} type="file" accept="image/png" /></Field></label>

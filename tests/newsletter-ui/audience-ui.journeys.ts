@@ -67,7 +67,7 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
     await page.getByLabel(`Preset for ${file}`).selectOption(preset);
   }
   await page.getByLabel('Brand or legal sender').fill('Mango local');
-  await page.getByLabel('Message category').fill('newsletter');
+  await page.getByLabel('Message category', { exact: true }).selectOption('newsletter');
   await page.getByLabel('Disclosed frequency').fill('Occasional newsletters');
   await page.getByLabel('Destination jurisdiction').fill('Australia');
   await page.getByLabel('Consent version').fill('newsletter-v1');

@@ -18,6 +18,7 @@ type AudienceImportSourceFormProps = {
   archive?: File;
   presets: ImportPreset[];
   fields: ImportField[];
+  messageCategories: string[];
   consent: ImportConsent;
   columns?: ImportPreview['columns'];
   mappings: Record<string, Record<string, string>>;
@@ -53,6 +54,7 @@ export function AudienceImportSourceForm({
   archive,
   presets,
   fields,
+  messageCategories,
   consent,
   columns,
   mappings,
@@ -207,7 +209,11 @@ export function AudienceImportSourceForm({
           </label>
           <label>
             <span>Message category</span>
-            <input value={consent.messageCategory} onChange={(event) => onConsentChange('messageCategory', event.currentTarget.value)} disabled={busy} />
+            <select aria-label="Message category" value={consent.messageCategory} onChange={(event) => onConsentChange('messageCategory', event.currentTarget.value)} disabled={busy} aria-describedby="import-category-help">
+              <option value="">Choose the original consent category</option>
+              {messageCategories.map(category => <option key={category} value={category}>{category}</option>)}
+            </select>
+            <small id="import-category-help">Choose the category people agreed to receive. It must exactly match the draft’s Consent message category. These categories come from this Mango’s drafts and consent records; newsletter is used by its signup form. To add a category, save it in a draft first.</small>
           </label>
           <label>
             <span>Disclosed frequency</span>

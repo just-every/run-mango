@@ -44,6 +44,7 @@ export function AudienceImportPage() {
   const [consent, setConsent] = useState<ImportConsent>(emptyConsent);
   const [preview, setPreview] = useState<ImportPreview>();
   const [previewIsCurrent, setPreviewIsCurrent] = useState(false);
+  const [startedFingerprint, setStartedFingerprint] = useState<string>();
   const [busy, setBusy] = useState<'preview' | 'start'>();
   const [busyJobId, setBusyJobId] = useState<string>();
   const [fileError, setFileError] = useState<string>();
@@ -171,6 +172,7 @@ export function AudienceImportPage() {
       setPreview(response.data);
       setMappings(resolveImportMappings(response.data.columns));
       setPreviewIsCurrent(true);
+      setStartedFingerprint(undefined);
       setNotice('Preview ready. No contacts have been imported yet.');
     } catch (cause) {
       setPreviewIsCurrent(false);
@@ -181,7 +183,7 @@ export function AudienceImportPage() {
   };
 
   const startImport = async () => {
-    if (!preview || !previewIsCurrent || busy || busyJobId || archive.busy || archive.busyId) return;
+    if (!preview || !previewIsCurrent || startedFingerprint === preview.fingerprint || busy || busyJobId || archive.busy || archive.busyId) return;
     const operation = owner.acquire('csv');
     if (!operation) return;
     setBusy('start');
@@ -199,6 +201,7 @@ export function AudienceImportPage() {
         return;
       }
       const { job } = response.data;
+      setStartedFingerprint(preview.fingerprint);
       setNotice(`Import ${job.state.replaceAll('_', ' ')}: ${job.checkpoint} of ${job.total} rows processed.`);
       await jobsResource.reload();
       if (writing(job)) await driveJob(job.id, 'resume', operation);
@@ -271,6 +274,7 @@ export function AudienceImportPage() {
         archive={archive.archive}
         presets={presets.data.presets}
         fields={presets.data.fields}
+        messageCategories={presets.data.messageCategories}
         consent={consent}
         columns={preview?.columns}
         mappings={mappings}
@@ -305,11 +309,11 @@ export function AudienceImportPage() {
         <section className="audience-import-final-action notice-note" aria-label="Start reviewed import">
           <div>
             <p className="eyebrow">Review complete</p>
-            <p>{previewIsCurrent ? 'This is the reviewed preview. Check the Imports list below for saved progress.' : 'This preview is out of date. Refresh it before starting the import.'}</p>
+            <p>{!previewIsCurrent ? 'This preview is out of date. Refresh it before starting the import.' : startedFingerprint === preview.fingerprint ? 'Import started. Check the Imports list below for saved progress and actions.' : 'This is the reviewed preview. Check the Imports list below for saved progress.'}</p>
             {busyJobId ? <p role="status">An import is still running. Wait for it to finish or press Stop in Imports below before starting another.</p> : archive.busyId ? <p role="status">An archive import is still running. Wait for it to finish before starting another.</p> : null}
           </div>
-          <button className="primary-action" type="button" onClick={() => void startImport()} disabled={!previewIsCurrent || !preview.rows.length || Boolean(busy) || owner.busy || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>
-            {busy === 'start' ? 'Starting…' : 'Start import'}
+          <button className="primary-action" type="button" onClick={() => void startImport()} disabled={!previewIsCurrent || startedFingerprint === preview.fingerprint || !preview.rows.length || Boolean(busy) || owner.busy || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>
+            {busy === 'start' ? 'Starting…' : startedFingerprint === preview.fingerprint ? 'Import started' : 'Start import'}
           </button>
         </section>
       ) : null}

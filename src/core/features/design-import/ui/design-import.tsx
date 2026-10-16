@@ -29,7 +29,7 @@ export function DesignImport({ campaignId, draft, savedEmailBody, mediaOrigin, b
     <div className="design-import__row">
       <DesignGeneration campaignId={campaignId} draft={draft} body={body} saved={saved} replacing={replacing} mediaOrigin={mediaOrigin} busy={busy} onImported={received} />
       <button type="button" className="secondary-action" disabled={busy} onClick={() => setOpen(true)}>Import 12ui design</button>
-      <p className="muted-copy">From <code>12ui draft</code> and <code>12ui convert … --output layerdoc</code>.</p>
+      <p className="muted-copy">Optional: <a href="https://12ui.com" target="_blank" rel="noreferrer">12ui</a> is a separate AI design tool; <a href="/docs/first-newsletter#import-a-12ui-design" target="_blank" rel="noreferrer">make a design image and LayerDoc layout file</a> with your own account, then import them here.</p>
     </div>
     {open ? <Suspense fallback={<p className="muted-copy" role="status">Opening the importer…</p>}>
       <ImportDialog open initialBrief={draftBrief(draft)} replacing={replacing} mediaOrigin={mediaOrigin} onClose={() => setOpen(false)}

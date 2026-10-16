@@ -20,6 +20,7 @@ export type ImportField = {
 };
 
 export type ImportPresetsResponse = {
+  messageCategories: string[];
   presets: ImportPreset[];
   fields: ImportField[];
 };

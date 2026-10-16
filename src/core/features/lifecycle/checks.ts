@@ -4,6 +4,7 @@ import {reputationRestricted} from './reputation-guard';
 import { smsProgrammeSchema, smsWindow } from '@/core/features/sms/policy';
 import { smsSegments } from '@/core/features/sms/segments';
 import { emailSubjectAdvisory } from './advisory-policy';
+import { emailConsentScope } from './email-consent-scope';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { loadLinkHosts } from '@/core/features/settings/link-hosts';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
@@ -189,15 +190,8 @@ export async function runApprovalChecks(input: {
     checks.push(check('message.email-configured-identity',
       revisionMatchesSender(snapshot.revision, configured),
       'The saved sender identity must exactly match the configured business identity.'));
-    checks.push(check('message.email-consent-scope', input.candidates.every((candidate) => {
-      const email = candidate.channels.email;
-      return !email || Boolean(
-        email.consents.some((consent) =>
-          consent.destination.toLowerCase() === email.destination.toLowerCase()
-          && consent.brandOrLegalSender === snapshot.revision.senderName
-          && consent.category === snapshot.revision.messageCategory),
-      );
-    }), 'Every email destination must have subscribed consent for this legal sender and message category.'));
+    const consentScope = emailConsentScope(input.candidates, snapshot.revision);
+    checks.push(check('message.email-consent-scope', consentScope.passed, consentScope.detail));
     const reputation = await input.repository.reputation(snapshot.revision.fromEmail, 'email',
       new Date(now.getTime() - platform.config.deliverabilityReportingWindowDays * 86_400_000));
     const internalBlock = reputationRestricted(reputation);
