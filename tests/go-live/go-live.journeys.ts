@@ -153,8 +153,17 @@ test('[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts r
   const campaignText = await screens(page, `${site.runtime.url}/app/campaigns/${first.campaignId}`, 'campaign-page', info)
     + await screens(page, `${site.runtime.url}/app/campaigns/${first.campaignId}/scheduled`, 'campaign-results', info);
   const reportText = await screens(page, `${site.runtime.url}/app/insights`, 'delivery-report', info);
-  // No open, click-through or revenue figure is shown for a campaign that has none.
-  for (const text of [campaignText, reportText]) expect(text).not.toMatch(/revenue|open rate|\bopens?\s*\n?\s*\d|\d\s*\n?\s*opens?\b/i);
+  // Campaign outcomes cannot imply purchase revenue or opens. Insights also
+  // contains independent purchase analytics, which must stay empty here.
+  const outcomesText = await page.getByRole('table', { name: 'Recorded campaign outcomes', exact: true }).innerText();
+  for (const text of [campaignText, outcomesText]) expect(text).not.toMatch(/revenue|open rate|\bopens?\s*\n?\s*\d|\d\s*\n?\s*opens?\b/i);
+  expect(reportText).not.toMatch(/open rate|\bopens?\s*\n?\s*\d|\d\s*\n?\s*opens?\b/i);
+  const retention = await json(await site.call('/api/insights/retention', { cookie }), 200);
+  expect(retention).toMatchObject({ customers: 0, repeatCustomers: 0, repeatPurchaseRate: null,
+    medianDaysBetweenOrders: null, valueByAcquisitionSource: [], valueByForm: [] });
+  for (const name of ['Customer value by acquisition source', 'Customer value by signup form']) {
+    await expect(page.getByRole('table', { name, exact: true }).locator('tbody tr')).toHaveCount(0);
+  }
   state.insights = await json(await site.call('/api/insights', { cookie }), 200);
   expect(Object.fromEntries(state.insights.results.filter((row: any) => row.campaignId === first.campaignId).map((row: any) => [row.metric, row.value])))
     .toEqual({ accepted: 1, delivered: 1, bounced: 1, complained: 1, unsubscribed: 1 });
