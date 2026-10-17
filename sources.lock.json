@@ -6474,7 +6474,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
-      "sha256": "b27447597e6e777ec2b2f8039402ae5bd7d2df59ebb0357a92fe8c3138f1aae6",
+      "sha256": "9f0932244af275b0dd9d777aa54e384df0d0e964c8cfcc91e80d69633369a11f",
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
