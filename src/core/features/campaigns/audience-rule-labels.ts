@@ -4,6 +4,7 @@ type Predicate = InclusionRule['predicates'][number];
 
 /** The editor and every summary use the same labels, including imported fields. */
 export const audienceRuleFields = [
+  ['contact', 'id', 'Contact ID'],
   ['contact', 'emailStatus', 'Email subscription status'],
   ['contact', 'smsStatus', 'SMS subscription status'],
   ['contact', 'displayName', 'Contact name'],

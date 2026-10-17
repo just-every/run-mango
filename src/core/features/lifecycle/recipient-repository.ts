@@ -233,9 +233,11 @@ export function createRecipientLifecycleRepository(database: Database) {
       now: Date;
     }) {
       const statements = input.trackedLinks.map((link) => client.prepare(
-        `INSERT INTO tracked_links (token_digest, recipient_step_id, destination_url, expires_at, created_at)
-         VALUES (?, ?, ?, ?, ?) ON CONFLICT(token_digest) DO NOTHING`,
-      ).bind(link.tokenDigest, input.id, link.destinationUrl, link.expiresAt.getTime(), input.now.getTime()));
+        `INSERT INTO tracked_links (token_digest, recipient_step_id, destination_url, expires_at, created_at, revision_link_id)
+         VALUES (?, ?, ?, ?, ?, (SELECT MIN(l.id) FROM campaign_revision_links l
+           JOIN recipient_steps r ON r.revision_id=l.revision_id
+           WHERE r.id=? AND l.destination_url=? HAVING COUNT(*)=1)) ON CONFLICT(token_digest) DO NOTHING`,
+      ).bind(link.tokenDigest, input.id, link.destinationUrl, link.expiresAt.getTime(), input.now.getTime(), input.id, link.destinationUrl));
       statements.push(client.prepare(
         `UPDATE recipient_steps SET outbound_request_json = COALESCE(outbound_request_json, ?), updated_at = ?
          WHERE id = ? AND lease_token = ? AND transport_disposition = 'queued'`,
@@ -251,6 +253,7 @@ export function createRecipientLifecycleRepository(database: Database) {
       return row ? {
         recipientStepId: String(row.recipient_step_id),
         destinationUrl: String(row.destination_url),
+        revisionLinkId: row.revision_link_id == null ? undefined : String(row.revision_link_id),
       } : undefined;
     },
 
@@ -261,15 +264,17 @@ export function createRecipientLifecycleRepository(database: Database) {
       automated: boolean;
       automationReason?: string;
       userAgent?: string;
+      destinationUrl?: string;
+      revisionLinkId?: string;
     }) {
       await client.prepare(
         `INSERT INTO link_click_facts
-         (id, recipient_step_id, request_digest, occurred_at, automated, automation_reason, user_agent, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+         (id, recipient_step_id, request_digest, occurred_at, automated, automation_reason, user_agent, created_at, destination_url, revision_link_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
          ON CONFLICT(request_digest) DO NOTHING`,
       ).bind(
         ulid(input.occurredAt.getTime()), input.recipientStepId, input.requestDigest, input.occurredAt.getTime(), input.automated ? 1 : 0,
-        input.automationReason ?? null, input.userAgent ?? null, input.occurredAt.getTime(),
+        input.automationReason ?? null, input.userAgent ?? null, input.occurredAt.getTime(), input.destinationUrl ?? null, input.revisionLinkId ?? null,
       ).run();
     },
 

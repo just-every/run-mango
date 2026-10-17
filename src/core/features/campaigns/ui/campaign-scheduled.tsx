@@ -1,3 +1,5 @@
+import { CampaignEngagement } from '@/core/features/insights/ui/campaign-engagement';
+import { CampaignRecipients } from '@/core/features/insights/ui/campaign-recipients';
 import {CommerceResults} from '@/core/features/insights/ui/commerce-results';
 import { SchedulerReadiness } from './scheduler-readiness';
 import { CampaignCosts } from '@/core/features/insights/ui/cost-totals';
@@ -76,6 +78,8 @@ export function CampaignScheduledPage() {
       </div>
     </div>
     {modules.store ? <CommerceResults campaignId={id} /> : null}
+    <CampaignEngagement campaignId={id} revisionId={data.revision.id} emailBody={data.revision.emailBody}/>
+    <CampaignRecipients campaignId={id} revisionId={data.revision.id} steps={data.steps}/>
     <CampaignCosts campaignId={id} />
     <Modal open={confirmCancel} onClose={() => setConfirmCancel(false)} title="Cancel this campaign?" description="Recipient-steps not yet handed to a provider will be stopped. Messages already handed to a provider cannot be recalled.">
       <div className="detail-actions"><button className="secondary-action" type="button" disabled={cancelling} onClick={() => setConfirmCancel(false)}>Keep campaign</button><button className="danger-action" type="button" disabled={cancelling} onClick={() => void cancel()}>{cancelling ? 'Cancelling…' : 'Confirm cancellation'}</button></div>

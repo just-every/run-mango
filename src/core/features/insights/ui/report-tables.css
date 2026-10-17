@@ -1,0 +1,8 @@
+@media (max-width: 640px) {
+  .report-table, .report-table tbody, .report-table tr, .report-table tbody th, .report-table td { display: block; width: 100%; min-width: 0; }
+  .report-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .report-table tbody tr { padding: 12px 0; border-bottom: 1px solid var(--ms-hairline); }
+  .report-table tbody th { padding: 8px 0; border: 0; overflow-wrap: anywhere; }
+  .report-table td { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 12px; padding: 6px 0; border: 0; overflow-wrap: anywhere; }
+  .report-table td::before { content: attr(data-label); font-weight: 600; }
+}

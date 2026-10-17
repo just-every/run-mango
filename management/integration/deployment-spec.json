@@ -416,6 +416,12 @@
       "name": "core-0066_campaign_reuse.sql",
       "sha256": "1432355cf6f26b29e7e4178241a2bbfbcf120be08c56fa300baef3f20ede1ecb",
       "sql": "CREATE TABLE campaign_templates (\n id TEXT PRIMARY KEY,\n name TEXT NOT NULL,\n composition_json TEXT NOT NULL,\n created_by TEXT NOT NULL,\n updated_by TEXT NOT NULL,\n created_at INTEGER NOT NULL,\n updated_at INTEGER NOT NULL\n);\nCREATE TABLE campaign_draft_step_settings (\n revision_id TEXT PRIMARY KEY REFERENCES campaign_revisions(id),\n settings_json TEXT NOT NULL\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0067_campaign_link_identity.sql",
+      "sha256": "e59b116394646f2ec8278bf487d95d0a548a209cfbbe0bb7201680fa5fce0453",
+      "sql": "-- Existing click facts have no trustworthy link identity. Do not backfill them\n-- from a recipient's several tokens or from a campaign's current links.\nALTER TABLE tracked_links ADD COLUMN revision_link_id TEXT;\nALTER TABLE link_click_facts ADD COLUMN revision_link_id TEXT;\nALTER TABLE link_click_facts ADD COLUMN destination_url TEXT;\nCREATE INDEX link_click_facts_link_idx ON link_click_facts(revision_link_id, automated, recipient_step_id);\nCREATE INDEX link_click_facts_destination_idx ON link_click_facts(destination_url, recipient_step_id, automated);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

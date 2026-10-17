@@ -325,7 +325,7 @@ export function createApp(
   app.route('/api', createDesignGenerationRoutes(environment.DB, platform));
   app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin,
     (campaignId, revisionId) => lifecycleServices.approval.preview({campaignId, revisionId})));
-  app.route('/api', createInsightsRoutes(insightsService));
+  app.route('/api', createInsightsRoutes(insightsService,platform.database));
   app.route('/api', createOpenTrackingSettingsRoutes(platform));
 
   app.all('*', (context) => context.json({ error: 'not_found' }, 404));

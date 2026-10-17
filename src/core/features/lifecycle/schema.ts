@@ -142,6 +142,7 @@ export const providerFactInbox = sqliteTable(
 export const trackedLinks = sqliteTable('tracked_links', {
   tokenDigest: text('token_digest').primaryKey(),
   recipientStepId: text('recipient_step_id').notNull(),
+  revisionLinkId: text('revision_link_id'),
   destinationUrl: text('destination_url').notNull(),
   expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
@@ -153,6 +154,8 @@ export const linkClickFacts = sqliteTable(
     id: text('id').primaryKey(),
     recipientStepId: text('recipient_step_id').notNull(),
     requestDigest: text('request_digest').notNull(),
+    revisionLinkId: text('revision_link_id'),
+    destinationUrl: text('destination_url'),
     occurredAt: integer('occurred_at', { mode: 'timestamp_ms' }).notNull(),
     automated: integer('automated', { mode: 'boolean' }).notNull(),
     automationReason: text('automation_reason'),
@@ -162,6 +165,8 @@ export const linkClickFacts = sqliteTable(
   (table) => [
     uniqueIndex('link_click_facts_request_idx').on(table.requestDigest),
     index('link_click_facts_recipient_idx').on(table.recipientStepId, table.occurredAt),
+    index('link_click_facts_link_idx').on(table.revisionLinkId, table.automated, table.recipientStepId),
+    index('link_click_facts_destination_idx').on(table.destinationUrl, table.recipientStepId, table.automated),
   ],
 );
 

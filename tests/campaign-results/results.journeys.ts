@@ -1,3 +1,4 @@
+import { exerciseCampaignReports } from './reporting-journey';
 import { localSessionCookieName } from '../support/local-session';
 import { expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -35,7 +36,7 @@ for(const width of [1440,390]) {
     await accessible(page,width);
     await page.screenshot({path:test.info().outputPath(`campaign-names-${width}.png`),fullPage:true});
   });
-  contract('CAMP-001',`[CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001] stored step results and deadline/DST truth at ${width}`,async({page,request})=>{
+  contract('CAMP-001',`[CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008] stored step results and deadline/DST truth at ${width}`,async({page,request})=>{
     await seed(request,'outcomes');await login(page,request);await page.setViewportSize({width,height:900});
     const raw=await seed(request,'counts');
     for(const [id,state] of [['scheduled','Scheduled'],['sending','Sending'],['mixed','Sent'],['missed','Missed'],['partial','Sent'],['cancelled','Cancelled'],['failed','Failed'],['failed-before','Failed'],['closed-partial','Sent'],['closed-fence','Sending'],['dst','Scheduled']]) {
@@ -82,6 +83,7 @@ for(const width of [1440,390]) {
     const draft=await (await page.request.get(`${runtime.url}/api/campaigns/unapproved`)).json();expect(draft.results).toBeUndefined();
     await expect(page.getByLabel('Saved audience rule',{exact:true})).toHaveText(draft.revision.audienceRule);await accessible(page,width);
     for(const id of ['mixed','cancelled','failed']) for(const suffix of ['', '/review']) {await openPage(page,`${runtime.url}/app/campaigns/${id}${suffix}`);await expect(page.getByRole('link',{name:'View schedule and results'})).toHaveAttribute('href',`/app/campaigns/${id}/scheduled`);}
+    await exerciseCampaignReports(page,request,runtime,width,test.info());
   });
   contract('RESULT-001',`every combined campaign state/channel filter, counts, history and empty state at ${width}`,async({page,request})=>{
     await seed(request,'filters');await login(page,request);await page.setViewportSize({width,height:900});

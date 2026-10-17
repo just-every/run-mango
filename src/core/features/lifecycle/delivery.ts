@@ -465,6 +465,8 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
       const requestDigest = await sha256(`${digest}:${request.headers.get('CF-Ray') ?? crypto.randomUUID()}`);
       await repository.recordClick({
         recipientStepId: link.recipientStepId,
+        destinationUrl: link.destinationUrl,
+        revisionLinkId: link.revisionLinkId,
         requestDigest,
         occurredAt: new Date(),
         automated: Boolean(automationReason),
