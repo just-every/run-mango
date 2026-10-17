@@ -1,3 +1,4 @@
+import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {requestJson} from '@/core/app/client/lib/api';
 import {useState} from 'react';
@@ -45,6 +46,7 @@ export function CampaignDetailPage() {
           </div>
         </div>
         <div className="page-head__actions">
+          <DuplicateCampaign campaignId={id}/>
           {hasResults?<button type="button" className="secondary-action" onClick={()=>void edit()}>{data.campaign.state==='scheduled'?'Edit replacement schedule':'Create a new campaign from this revision'}</button>:null}
           <Link className={hasResults ? 'secondary-action' : 'primary-action'} to="/app/campaigns/$id/review" params={{ id }}>
             {data.campaign.state === 'draft' ? 'Review and approve' : 'Review saved revision'}
@@ -65,6 +67,7 @@ export function CampaignDetailPage() {
           {message.destination} · {message.providerMessageId ?? 'Provider message ID unavailable'} · {message.detail}
         </li>)}</ul>
       </section> : null}
+      <SaveCampaignTemplate revisionId={data.revision.id} name={data.revision.name} disabled={false}/>
       <div className="two-column-detail">
         <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
         <DeliveryPlan steps={data.steps} />

@@ -1,3 +1,4 @@
+import { createCampaignReuseRoutes } from './reuse-routes';
 import type { createAuthoringService } from './authoring-service';
 import { createDraftSchema } from './create-draft';
 import { authoringAudienceSchema } from './authoring-audience';
@@ -25,6 +26,7 @@ const settled = async <T,>(save: Promise<T>) => {
 export function createCampaignRoutes(service: ReturnType<typeof createCampaignService>, authoring: ReturnType<typeof createAuthoringService>, mediaOrigin: string,
   refreshChecks: (campaignId: string, revisionId: string) => Promise<{kind: string}>) {
   const routes = new Hono<{Variables:AuthVariables}>();
+  routes.route('/',createCampaignReuseRoutes(authoring.reuse));
 
   routes.get('/campaign-starters', async context => context.json(await authoring.starters()));
   routes.get('/campaign-authoring', context => context.json(authoring.defaults()));

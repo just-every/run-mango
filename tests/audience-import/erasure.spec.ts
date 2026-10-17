@@ -33,6 +33,7 @@ test('CONT-013 public erasure resumes, withdraws complete source custody, redact
   const draft=await(await f.call('/api/campaigns',{cookie,method:'POST',body:{mode:'blank'}})).json();
   expect((await f.call(`/api/campaign-revisions/${draft.revisionId}`,{cookie,method:'PATCH',body:{name:`For ${name}`,inclusionRuleJson:rule,emailBody:`<p>${JSON.stringify({nested:Buffer.from(email).toString('base64')})}</p>`}})).status).toBe(200);
   expect((await f.db.prepare('SELECT email_body FROM campaign_revisions WHERE id=?').bind(draft.revisionId).first()).email_body).toContain(Buffer.from(email).toString('base64'));
+  expect((await f.call('/api/campaign-templates',{cookie,method:'POST',body:{revisionId:draft.revisionId,name:`Template for ${name}`}})).status).toBe(201);
   await f.bucket.put('private-note.json',JSON.stringify({payload:Buffer.from(email).toString('base64')}),{customMetadata:{label:name}});
   await f.bucket.put('unrelated-asset.txt','An annual letter survives.');await f.bucket.put('empty-asset.txt','');
   // Shared text that merely spells the merged alias's name ("Ann") or ordinary

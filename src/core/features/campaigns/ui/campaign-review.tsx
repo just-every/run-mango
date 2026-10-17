@@ -1,3 +1,4 @@
+import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
 import { Modal } from '@/core/app/client/ui/modal';
 import { Disclosure } from '@/core/app/client/ui/disclosure';
 import { Field, ValidationForm } from '@/core/app/client/ui/validation-form';
@@ -203,12 +204,13 @@ export function CampaignReviewPage() {
           <h1>{revision.name}</h1>
           <p className="page-head__meta review-heading__meta"><span>Revision {revision.version}</span> · <CampaignStatusPill state={data.campaign.state} results={data.results} /></p>
         </div>
-        {editable || data.results ? <div className="page-head__actions review-heading__actions">
+        {<div className="page-head__actions review-heading__actions">
+          <DuplicateCampaign campaignId={id} disabled={dirty||Boolean(busy)}/>
           {editable ? <button className="primary-action" type="button" aria-describedby={!dirty && blockingFindings.length ? 'approval-blocked-reason' : undefined} onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : setConfirmingApproval(true)} disabled={Boolean(busy) || (!dirty && approvalBlocked)}>
             {busy === 'save' ? 'Saving…' : busy === 'approve' ? 'Checking…' : dirty ? 'Save changes' : 'Approve & schedule'}
           </button> : null}
           {data.results ? <Link className="primary-action" to="/app/campaigns/$id/scheduled" params={{id}}>View schedule and results</Link> : null}
-        </div> : null}
+        </div>}
       </header>
       {editable && blockingFindings.length ? <p id="approval-blocked-reason" className="notice-note" role="status">Approval blocked: {approvalFindingDescription(blockingFindings[0])}{blockingFindings.length > 1 ? ` Review all ${blockingFindings.length} blocking checks below.` : ''}</p> : null}
       {dirty ? <div className="unsaved-notice" role="status"><span>Unsaved changes. Save before approving.</span><button type="button" className="text-link" disabled={Boolean(busy)} onClick={() => {setDraft(savedDraft); setNotice(undefined);}}>Discard changes</button></div> : null}
@@ -221,6 +223,7 @@ export function CampaignReviewPage() {
       </section> : null}
       <ApprovalCheckList checks={findings} onAcknowledge={check => void acknowledge(check)} acknowledgementDisabled={Boolean(busy) || dirty || needsCanonicalRead} title="Approval checks" eyebrow="Saved revision" emptyMessage="Approval will check this saved revision and current consent." />
       <p className="saved-audience-summary notice-note"><strong>Saved audience:</strong> {summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p>
+      <SaveCampaignTemplate key={revision.id} revisionId={revision.id} name={revision.name} disabled={dirty||needsCanonicalRead||Boolean(busy)}/>
       <div className="review-layout">
         {editable ? authoring.loading ? <LoadState /> : authoring.error || !authoring.data?.timezone
           ? <LoadState error="Campaign authoring is unavailable: the configured store time zone could not be loaded." />

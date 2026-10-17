@@ -19,11 +19,12 @@ export type DraftComposition = Pick<
   | 'replyToEmail'
   | 'smsSender'
 > & {
+  trackingEnabled: boolean;
   links: DraftLink[];
   steps: DraftStep[];
 };
 
-export type DraftScalarField = Exclude<keyof DraftComposition, 'links' | 'steps'>;
+export type DraftScalarField = Exclude<keyof DraftComposition, 'links' | 'steps' | 'trackingEnabled'>;
 
 export function toDraftComposition(
   revision: Revision,
@@ -35,6 +36,7 @@ export function toDraftComposition(
     exclusionRulesJson:revision.exclusionRulesJson,
     messageCategory:revision.messageCategory,
     name: revision.name,
+    trackingEnabled: revision.trackingEnabled ?? false,
     emailSubject: revision.emailSubject,
     emailBody: revision.emailBody,
     emailText: revision.emailText,
@@ -46,12 +48,12 @@ export function toDraftComposition(
     replyToEmail: revision.replyToEmail,
     smsSender: revision.smsSender,
     links: links.map(({ label, destinationUrl }) => ({ label, destinationUrl })),
-    steps: steps.map(({ channel, timezone, scheduledAt, sendByAt, whyThisTime }) => ({
+    steps: steps.length ? steps.map(({ channel, timezone, scheduledAt, sendByAt, whyThisTime }) => ({
       channel,
       timezone,
       scheduledAt,
       sendByAt,
       whyThisTime,
-    })),
+    })) : (revision.stepSettings ?? []).map(step=>({...step,scheduledAt:'',sendByAt:''})),
   };
 }

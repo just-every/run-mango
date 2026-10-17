@@ -92,6 +92,7 @@ export function createCampaignCompositionRepository(database: Database) {
     const revision = value(reads[0]);
     if (!revision) return undefined;
     const steps = value(reads[1]), links = value(reads[2]);
+    const pending = await database.$client.prepare('SELECT settings_json FROM campaign_draft_step_settings WHERE revision_id=?').bind(revisionId).first<{settings_json:string}>();
     const audience = value(reads[3]), projection = value(reads[4]);
     const audienceChannelCounts = value(reads[5]).map(row => row.count);
 
@@ -101,7 +102,7 @@ export function createCampaignCompositionRepository(database: Database) {
       ? {...step,whyThisTime:'',claimsUnavailable:unavailableTimingClaim} : step);
 
     return {
-      revision: withDerivedAudience({...revision,exclusionRulesJson:projection?.exclusionRulesJson??revision.exclusionRulesJson}),
+      revision: withDerivedAudience({...revision,stepSettings: pending ? JSON.parse(pending.settings_json) as import('./reuse-service').UnscheduledStep[] : [],exclusionRulesJson:projection?.exclusionRulesJson??revision.exclusionRulesJson}),
       steps: displayedSteps,
       links,
       ...campaignReviewSnapshot(revision, steps, audience&&projection?{...audience,exclusions:projection.exclusionsJson(audience.exclusions)}:audience, audienceChannelCounts),
@@ -181,6 +182,7 @@ export function createCampaignCompositionRepository(database: Database) {
       }
 
       if (composition.steps !== undefined) {
+        prepare(`DELETE FROM campaign_draft_step_settings WHERE revision_id = ? AND ${guard}`, id);
         prepare(`DELETE FROM campaign_steps WHERE revision_id = ? AND ${guard}`, id);
         for (const [index, step] of composition.steps.entries()) {
           prepare(

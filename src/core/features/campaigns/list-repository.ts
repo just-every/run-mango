@@ -11,7 +11,7 @@ export function createCampaignListRepository(database: Database) {
     const rows = await database.$client.prepare(`SELECT c.id, c.proposal_id proposalId, c.state,
       c.active_revision_id activeRevisionId, c.cancelled_at cancelledAt, c.created_at createdAt, c.updated_at updatedAt,
       v.name, v.inclusion_rule_json inclusionRuleJson, v.exclusion_rules_json exclusionRulesJson,
-      COALESCE((SELECT group_concat(DISTINCT s.channel) FROM campaign_steps s WHERE s.revision_id = c.active_revision_id), '') channels,
+      COALESCE((SELECT group_concat(DISTINCT s.channel) FROM campaign_steps s WHERE s.revision_id = c.active_revision_id), (SELECT group_concat(DISTINCT json_extract(j.value,'$.channel')) FROM campaign_draft_step_settings p,json_each(p.settings_json) j WHERE p.revision_id=c.active_revision_id), '') channels,
       (SELECT MIN(s.scheduled_at) FROM campaign_steps s WHERE s.revision_id = c.active_revision_id
         AND s.send_by_at > ? AND c.state IN ('scheduled','dispatching','paused')
         AND ((NOT EXISTS (SELECT 1 FROM step_dispatches d WHERE d.step_id=s.id AND d.revision_id=s.revision_id)

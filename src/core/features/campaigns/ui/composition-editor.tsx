@@ -70,6 +70,7 @@ export function CampaignCompositionEditor({
       </div>
       <fieldset className="draft-fields" disabled={busy}>
       <CompositionContentFields campaignId={campaignId} busy={busy} draft={draft} savedEmailBody={savedEmailBody} mediaOrigin={mediaOrigin} setField={setField} />
+<label><input type="checkbox" checked={draft.trackingEnabled} onChange={event=>onChange({...draft,trackingEnabled:event.target.checked})}/> Track link clicks</label>
       <SegmentPicker draft={draft} onChange={onChange} />
       <AudienceRuleEditor draft={draft} onChange={onChange} />
       <CompositionLinkFields links={draft.links} setLink={setLink} busy={busy} addLink={() => onChange({...draft, links: [...draft.links, {label: '', destinationUrl: ''}]})} removeLink={index => {const template=authoredHtmlTemplate(draft.emailBody);for(const anchor of template.content.querySelectorAll('a')) if(anchor.getAttribute('href')===draft.links[index].destinationUrl) anchor.replaceWith(document.createTextNode(anchor.textContent??''));onChange({...draft,emailBody:authoredEditorHtml(template), links: draft.links.filter((_link, itemIndex) => itemIndex !== index)});}} />

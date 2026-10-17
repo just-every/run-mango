@@ -1,3 +1,4 @@
+import { createCampaignReuseService } from './reuse-service';
 import { computeProposalForecast } from '@/core/features/proposals/forecast';
 import { evaluateAudience } from '@/core/features/lifecycle/evaluate-audience';
 import { signalStarters } from './signal-starters';
@@ -23,6 +24,7 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
   };
   const starters = signalStarters(platform.database,store,Boolean(platform.commerce));
   return {
+    reuse:createCampaignReuseService(platform.database,defaults,timezone),
     starters:starters.list,
     async fromSignal(id:string,operatorId:string) {
       const source=await starters.read(id);

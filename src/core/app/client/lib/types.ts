@@ -47,6 +47,8 @@ export type Campaign = {
 };
 
 export type Revision = {
+  trackingEnabled?: boolean;
+  stepSettings?: Array<{channel:'email'|'sms';timezone:string;whyThisTime:string}>;
   inclusionRuleJson: string;
   exclusionRulesJson: string;
   messageCategory: string;

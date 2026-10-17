@@ -19,7 +19,7 @@
         "rer",
         "setup"
       ],
-      "effects": "Local shared Base installer: preserve private settings, migrate local D1, claim the first owner once, capture sign-in in the dev outbox and stop the application.",
+      "effects": "Local shared Base installer: preserve private settings, migrate local D1, claim the first owner once and stop the application; dev admits the owner through its private automatic entry.",
       "inputs": [
         "package.json",
         "scripts/installer/local.mjs",
@@ -145,18 +145,6 @@
         "rer-setup.json"
       ],
       "effects": "Verified private release artifacts; never pushes or deploys."
-    },
-    "outbox": {
-      "argv": [
-        "rer",
-        "outbox"
-      ],
-      "inputs": [
-        "package.json",
-        "scripts/installer/local.mjs",
-        "rer-setup.json"
-      ],
-      "effects": "Shared outbox command; see SEED-COMMAND-CONTRACT.md."
     },
     "doctor": {
       "argv": [

@@ -1,19 +1,20 @@
 import { expect, test } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
-import { contract } from './contract';
 import { portabilityRuntime } from './portability/runtime.mjs';
 import { runCommand } from '../scripts/installer/run-command.mjs';
 import { readArchive } from '../src/vendor/base/portability/index.mjs';
 import { stageArchive } from './portability/flows';
 import { png } from './support/images';
 
-contract('DATA-001', 'complete native records and uploaded assets round-trip without restoring login authority', async () => {
+test('[DATA-001] complete native records and uploaded assets round-trip without restoring login authority', async () => {
   test.setTimeout(180000);
   const source = await portabilityRuntime(), target = await portabilityRuntime({ restore: true });
   try {
     const draft = await source.call('/api/campaigns', { method: 'POST', cookie: source.cookie, body: { mode: 'blank' } });
     expect(draft.status).toBe(201);
+    const reusable=await source.call('/api/campaign-templates',{method:'POST',cookie:source.cookie,body:{revisionId:(await draft.clone().json()).revisionId,name:'Portable newsletter template'}});
+    expect(reusable.status).toBe(201);
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('portable-contact','contact@example.test','Contact','unsubscribed','never-subscribed',1,1)").run();
     await source.db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES('portable-opt-out','already-hashed','email','unsubscribed',1,1,1)").run();
     const bytes = Uint8Array.from([0, 255, 127, 1]);
@@ -35,6 +36,7 @@ contract('DATA-001', 'complete native records and uploaded assets round-trip wit
     // Inventory before export creates temporary snapshot tables. Every source
     // table is archived or explicitly excluded by the maintained policy.
     for (const { name } of allTables) expect([...manifest.tables.map(table => table.name), ...manifest.excludedTables]).toContain(name);
+    expect(original.some(row => row.table === 'campaign_templates' && row.row.name === 'Portable newsletter template')).toBe(true);
     expect(original.some(row => row.table === 'contacts' && row.row.id === 'portable-contact')).toBe(true);
     expect(original.some(row => row.table === 'surviving_opt_outs' && row.row.id === 'portable-opt-out')).toBe(true);
     expect(original.some(row => row.table.startsWith('oa_'))).toBe(false);
@@ -85,7 +87,7 @@ contract('DATA-001', 'complete native records and uploaded assets round-trip wit
   } finally { await source.close(); await target.close(); }
 });
 
-contract('CONT-013', 'current erasure authority refuses an old archive on an empty restore target', async () => {
+test('[CONT-013] current erasure authority refuses an old archive on an empty restore target', async () => {
   test.setTimeout(180000);
   const source=await portabilityRuntime(),target=await portabilityRuntime({restore:true});
   const archive=async()=>{

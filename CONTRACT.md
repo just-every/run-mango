@@ -835,8 +835,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 64 | 23 | 0 | 87 |
-| Target and push further | 2 | 49 | 103 | 154 |
-| All | 66 | 72 | 103 | 241 |
+| Target and push further | 3 | 49 | 102 | 154 |
+| All | 67 | 72 | 102 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -918,7 +918,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `CAMP-015` | Marketing calendar | target | missing |  | not implemented |
 | `CAMP-016` | Follow-up to non-engaged recipients | target | missing |  | not implemented |
 | `CAMP-017` | Recurring and RSS-to-email campaigns | target | missing |  | not implemented |
-| `CAMP-018` | Duplicate a campaign | target | missing |  | not implemented |
+| `CAMP-018` | Duplicate a campaign | target | done | `tests/campaign-authoring/browser.spec.ts` |  |
 | `CAMP-019` | Test send to typed addresses | target | missing |  | not implemented |
 | `DESIGN-001` | Optional design module | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
 | `DESIGN-002` | Draft-only design generation | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
@@ -975,7 +975,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `SEG-005` | Engagement and lead scoring | target | missing |  | not implemented |
 | `SEG-006` | Campaign and flow activity conditions | target | missing |  | not implemented |
 | `BUILD-001` | Drag-and-drop email builder | target | missing |  | not implemented |
-| `BUILD-002` | Template library | target | partial | `src/core/features/design-import/compile.ts` · `src/core/features/move-in/html-import.ts` | acceptance not yet met: An operator saves a draft as a template, starts a second campaign from it, edits the template, and the first campaign's approved revision is unchanged. |
+| `BUILD-002` | Template library | target | partial | `tests/campaign-authoring/browser.spec.ts` · `tests/portability.spec.ts` | Starter and saved templates create independent unscheduled campaigns; updating a template preserves existing drafts and approvals. Gap: flow-message use and automatic placement of imported/generated/migrated designs in the library await their owning integrations. |
 | `BUILD-003` | Brand kit | target | missing |  | not implemented |
 | `BUILD-004` | Reusable blocks | target | missing |  | not implemented |
 | `BUILD-005` | Conditional content | target | missing |  | not implemented |

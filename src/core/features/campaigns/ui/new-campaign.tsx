@@ -1,3 +1,4 @@
+import { TemplateLibrary } from './campaign-reuse';
 import { useEffect, useState } from 'react';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { requestJson } from '@/core/app/client/lib/api';
@@ -45,5 +46,6 @@ export function NewCampaign({ open, commerceEnabled, aiEnabled }: { open: boolea
           : <p className="starter-note">No current store suggestions. Generate one from the Decision Desk when evidence and AI are configured.</p>}
       </div> : null}
     </div>
+    <TemplateLibrary/>
     {error?<p className="inline-error" role="alert">{error}</p>:null}</section>;
 }

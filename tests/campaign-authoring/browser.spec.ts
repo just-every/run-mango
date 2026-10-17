@@ -1,3 +1,4 @@
+import { exerciseCampaignReuse } from './reuse-journey';
 import { hydrated, openPage, reloadPage } from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
 import {test,expect} from '@playwright/test';
@@ -5,7 +6,7 @@ import {authoringRuntime} from './browser-runtime.mjs';
 
 test.describe.configure({mode:'serial',timeout:120000});
 test.use({timezoneId:'America/Los_Angeles'});
-for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006] fresh authoring through actual Worker and D1 at ${width}px`,async({page,request}, testInfo)=>{
+for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at ${width}px`,async({page,request}, testInfo)=>{
   const runtime=await authoringRuntime();
   try {
     await page.setViewportSize({width,height:1000});
@@ -158,6 +159,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     const again=await call(`/api/campaigns/${campaignId}/approve`,{revisionId:detail.revision.id,idempotencyKey:'authoring-repeat-approval'});expect(again.status).toBe(200);expect(again.data.idempotent).toBe(true);
     // Future approval persists recipients and authority; Cron enqueues dispatch only when due.
     const final=await state();expect(final.jobs).toEqual([]);expect(final.recipients).toHaveLength(1);expect(final.recipients[0].transport_disposition).toBe('queued');expect(final.approvals).toHaveLength(1);
+    await exerciseCampaignReuse(page,campaignId,runtime.url,width,testInfo,runtime.sql);
     // Store starter comes from an actual Shopify-shaped imported product, without an AI adapter.
     expect((await request.post(runtime.url+'/_authoring/source',{headers:{'X-Test-Token':runtime.token}})).status()).toBe(200);
     await openPage(page, runtime.url+'/app/campaigns');await page.getByRole('button',{name:'New campaign',exact:true}).click();await page.getByRole('button',{name:'Product newsletter: Garden linen',exact:true}).click();
