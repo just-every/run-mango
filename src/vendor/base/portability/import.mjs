@@ -166,3 +166,11 @@ export async function abortImport(context,id) {
   await context.db.batch([save(context.db,row),statement(context.db,'UPDATE rer_portability_state SET import_job=NULL,applying=0 WHERE id=1 AND import_job=?',id)]);
   return importStatus(context,id);
 }
+// A restore's staging outlives a worker that died mid-restore (a crashed process or workerd) and refuses
+// every later import as running. Only a caller that owns the destination, as the local CLI does under the
+// checkout's operation lock, may call this: a hosted service can have a live import.
+export async function abortAbandonedImport(context) {
+  const id=(await state(context.db)).import_job;
+  if(!id)return null;
+  await abortImport(context,id);return id;
+}
