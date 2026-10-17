@@ -7093,6 +7093,10 @@
       "sha256": "2def4eaafab3d071ca905d265eed1b69af397963f8c5360e5db56f9773230223",
       "executable": false
     },
+    "tests/support/queue-consumers.mjs": {
+      "sha256": "01995d249e7ee99360d7520dce9d3032182983eb64b09c50a2ad7789815f577b",
+      "executable": false
+    },
     "tests/support/record-proposal-claims.ts": {
       "sha256": "2e9ecd1dc1477951f2551ffbaa2a8b508f75a1390869dd65b20dc2fc641aee43",
       "executable": false
