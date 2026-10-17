@@ -9,6 +9,7 @@ import { readParams } from '@/core/api/input';
 import { readJson } from '@/core/api/input';
 
 import type { createAudienceService } from './service';
+import { readContactTimeline } from './contact-timeline';
 
 const contactParams = z.object({ id: z.string().min(1) });
 const channel = z.enum(['email', 'sms']);
@@ -54,7 +55,8 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
     const importObservations=(await database.prepare('SELECT * FROM audience_import_observations WHERE contact_id=? ORDER BY created_at').bind(parsed.data.id).all()).results;
     const campaignHistory=(await database.prepare(`WITH RECURSIVE identities(id) AS (SELECT ? UNION SELECT m.merged_contact_id FROM contact_merges m JOIN identities i ON m.survivor_contact_id=i.id) SELECT r.id,r.campaign_id AS campaignId,v.name,r.channel,r.transport_disposition AS disposition,r.skip_reason AS skipReason,r.created_at AS createdAt FROM recipient_steps r JOIN campaign_revisions v ON v.id=r.revision_id WHERE r.contact_id IN (SELECT id FROM identities) ORDER BY r.created_at DESC`).bind(parsed.data.id).all()).results;
     const smsServices=(await database.prepare('SELECT id,purpose,state,reason,provider_message_id,created_at,updated_at FROM sms_service_messages WHERE contact_id=? ORDER BY created_at DESC LIMIT 100').bind(parsed.data.id).all()).results;
-    return context.json({...detail,campaignHistory,importObservations,smsServices,consent:detail.consent.map(evidence=>({...evidence,captureIp:metadata.find(row=>row.id===evidence.id)?.capture_ip ?? null,confirmationIp:metadata.find(row=>row.id===evidence.id)?.confirmation_ip ?? null}))});
+    const timeline=await readContactTimeline(database,parsed.data.id,detail);
+    return context.json({...detail,timeline,campaignHistory,importObservations,smsServices,consent:detail.consent.map(evidence=>({...evidence,captureIp:metadata.find(row=>row.id===evidence.id)?.capture_ip ?? null,confirmationIp:metadata.find(row=>row.id===evidence.id)?.confirmation_ip ?? null}))});
   });
   routes.get('/audience/sms-services',async context=>context.json({messages:(await database.prepare('SELECT id,contact_id,purpose,state,reason,provider_message_id,expires_at,next_at,created_at,updated_at FROM sms_service_messages ORDER BY created_at DESC LIMIT 100').all()).results}));
   routes.post('/contacts/consent', async (context) => {

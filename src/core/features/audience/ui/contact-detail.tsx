@@ -1,23 +1,23 @@
 import {useState} from 'react';
 import {ContactDelete,ContactErasureReceipt} from './contact-delete';
 import type {ErasureReceipt} from '../erasure/types';
-import {ContactRelated,type ContactRelatedData} from './contact-related';
 import { ContactMerge } from './contact-merge';
 import { Link, useParams, useSearch } from '@tanstack/react-router';
 
 import { titleCase } from '@/core/app/client/lib/format';
 import { ContactRetention } from '@/core/features/insights/ui/retention-report';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
-import type { Contact, ContactHistory } from '@/core/app/client/lib/types';
+import type { Contact } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
 import { ContactConsentEvidencePanel, type ContactConsentEvidence, type ContactImportObservation } from './contact-consent-evidence';
+import type { ContactTimelineEntry } from '../contact-timeline';
 
-type ContactDetail = ContactRelatedData & {
+type ContactDetail = {
   smsServices?:Array<{id:string;purpose:string;state:string;reason:string|null;provider_message_id:string|null;created_at:number}>;
   contact: Contact;
   phones:Array<{id:string;phoneE164:string;channelStatus:string}>;
-  history: ContactHistory[];
+  timeline: ContactTimelineEntry[];
   consent: ContactConsentEvidence[];
   importObservations: ContactImportObservation[];
 };
@@ -34,6 +34,7 @@ function ReceiptPage({reference}:{reference:string}){
 function ContactPage() {
   const formatDate = useDateFormatter();
   const [receipt,setReceipt]=useState<ErasureReceipt>();
+  const [visibleEvents,setVisibleEvents]=useState(40);
   const { id } = useParams({ from: '/app/audience_/$id' });
   const { data, error, loading } = useResource<ContactDetail>(`/api/contacts/${id}`);
   if(receipt)return <ContactErasureReceipt initial={receipt}/>;
@@ -65,21 +66,22 @@ function ContactPage() {
         <div className="contact-layout__records">
           <ContactRetention contactId={id} />
           <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} />
-          <ContactRelated data={data}/>
           {data.smsServices?.length?<section className="panel"><h2>SMS confirmations and service replies</h2><p className="muted-copy">Queued messages wait for permitted windows. Unconfirmed handoffs are never repeated automatically.</p>{data.smsServices.map(message=><article key={message.id}><strong>{titleCase(message.purpose)}</strong><p>{titleCase(message.state)}{message.reason?` · ${titleCase(message.reason)}`:''}</p><small>{formatDate(new Date(message.created_at).toISOString())}{message.provider_message_id?` · Provider receipt ${message.provider_message_id}`:''}</small></article>)}</section>:null}
         </div>
         <section className="panel timeline" aria-labelledby="timeline-title">
           <p className="eyebrow">History</p>
           <h2 id="timeline-title">Recorded contact activity</h2>
-          {data.history.length ? (
+          <p className="muted-copy">Newest first, using each source's original event time.</p>
+          {data.timeline.length ? (
             <div className="timeline__events">
-              {data.history.map((event) => (
-                <article key={event.id} className="timeline__event">
+              {data.timeline.slice(0,visibleEvents).map((event) => (
+                <article key={event.id} className="timeline__event" data-timeline-id={event.id} data-timeline-kind={event.kind} style={{minWidth:0,overflowWrap:'anywhere'}}>
                   <span aria-hidden="true" />
-                  <div><strong>{titleCase(event.kind)}</strong><p>{event.detail}</p></div>
-                  <time>{formatDate(event.occurredAt)}</time>
+                  <div><strong>{titleCase(event.kind)}</strong><p>{event.detail}</p><small>Source: {event.source}</small>{event.campaignId?<p><Link to="/app/campaigns/$id" params={{id:event.campaignId}}>View campaign</Link></p>:null}</div>
+                  <time dateTime={event.occurredAt} title={event.occurredAt}>{formatDate(event.occurredAt)}</time>
                 </article>
               ))}
+              {data.timeline.length>visibleEvents?<button type="button" className="secondary-action" onClick={()=>setVisibleEvents(count=>count+40)}>Show more activity ({data.timeline.length-visibleEvents} remaining)</button>:null}
             </div>
           ) : <p className="muted-copy">No history has been recorded for this contact.</p>}
         </section>

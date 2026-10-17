@@ -970,7 +970,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "246220d6abbef90aef4f529e043ab73d1e2d3ac4f9fd1e855f77e5afcb119c0e",
+      "sha256": "b67d01ad791d16d36c9ac2f276eff29d68bcc46353cd0e5d2fd7575268e7ae1d",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "2fbfa7af275bf0e3dff34c9d8e6c6d4649e2c4a68312d905ff645c472caabf38",
+      "sha256": "a443eee024c545baef2e1b96be9854dab9a9fb1568983c77bd8b23f7b30d743f",
       "executable": false
     },
     "DEMO.md": {
@@ -2257,6 +2257,10 @@
       "sha256": "a2561111f2c55cb3227ae765b3e4d1818e8d46aad1c314edac0a8835bb0c43e4",
       "executable": false
     },
+    "src/core/features/audience/contact-timeline.ts": {
+      "sha256": "f7b3f0ac9a2d47fc040bd6dd9f280f6b757248fb046a7022245e8d2bde8432a1",
+      "executable": false
+    },
     "src/core/features/audience/crypto.ts": {
       "sha256": "421acc9512a0448433a56c6489fadd8fd2ba6ec8f843e7411990c769833caeae",
       "executable": false
@@ -2502,7 +2506,7 @@
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
-      "sha256": "d68ab4ab897efa6db0875fcdcbef81eb6c8efee1a330fbd5c34ba0bc2ac64d6d",
+      "sha256": "505fd40e3d6aa52268acd9db7dbeeabe60b6c6852d2b9a375c4e3a2a141ea223",
       "executable": false
     },
     "src/core/features/audience/schema.ts": {
@@ -2598,15 +2602,11 @@
       "executable": false
     },
     "src/core/features/audience/ui/contact-detail.tsx": {
-      "sha256": "2ef913deba2f5eab91f3517b348df4046007cc5f8a928a7810e5bede4f646359",
+      "sha256": "b181606132c31fa5ebf7739e174ce9c8d011dc2436a25a3c0193d9b23adec068",
       "executable": false
     },
     "src/core/features/audience/ui/contact-merge.tsx": {
       "sha256": "e85de361db5d121b4f558cb675e99e48e47d9aa0ef634d2de491738b891965ac",
-      "executable": false
-    },
-    "src/core/features/audience/ui/contact-related.tsx": {
-      "sha256": "c9247b7aa02c6eaa2c29c1b379bfa6047e50bbf95d440ae23cdf73a4c455e04b",
       "executable": false
     },
     "src/core/features/audience/ui/receipt-counts.ts": {
@@ -6301,8 +6301,20 @@
       "sha256": "544096bed9b50af9b3b096f7dc049df177a9dd3c08d9a6b69bba597f6efc3897",
       "executable": false
     },
+    "tests/audience-controls/contact-history.spec.ts": {
+      "sha256": "0add95f956b15ca5fd076baf0159d5528c1d846dcacdd33da439f5e3691b1290",
+      "executable": false
+    },
     "tests/audience-controls/erasure-dispatch.spec.ts": {
       "sha256": "e59c676869aeefd2be0d75cf095aacaa6a22be7a69b7c225e8226eba2bf561fc",
+      "executable": false
+    },
+    "tests/audience-controls/history-worker.ts": {
+      "sha256": "e648308398608915bce75e90dee3cfe3563c6c58da17431d25660e79cc24aa65",
+      "executable": false
+    },
+    "tests/audience-controls/history.config.ts": {
+      "sha256": "30d0423d96627e51c0986f56240b122799f9b2e5a5f453f1f058498d424888fe",
       "executable": false
     },
     "tests/audience-controls/merge.spec.ts": {

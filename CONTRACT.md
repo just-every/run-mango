@@ -860,9 +860,9 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 64 | 23 | 0 | 87 |
+| Published | 65 | 22 | 0 | 87 |
 | Target and push further | 7 | 51 | 96 | 154 |
-| All | 71 | 74 | 96 | 241 |
+| All | 72 | 73 | 96 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -889,7 +889,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `CONT-005` | Resubscription | published | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts` |  |
 | `CONT-006` | Email suppression | published | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/go-live/integrations.journeys.ts` |  |
 | `CONT-007` | SMS compliance replies | published | partial | `src/core/features/sms/inbound.ts` · `tests/audience-import/signup.spec.ts` | acceptance not yet met: Signed SMS replies: STOP family opts out before acknowledgement, HELP and START never subscribe; proved on the Mobile Message adapter, Twilio pending (SMS-001). |
-| `CONT-008` | Contact history | published | partial | `src/core/features/audience/ui/contact-detail.tsx` | acceptance not yet met: The contact page shows the full time-ordered history (see CONT-017). |
+| `CONT-008` | Contact history | published | done | `tests/audience-controls/contact-history.spec.ts` |  |
 | `CONT-009` | Confirmation | published | done | `tests/go-live/go-live.journeys.ts` · `tests/audience-import/signup.spec.ts` |  |
 | `CONT-010` | Import | published | done | `tests/audience-import/routes.spec.ts` · `tests/move-in/archive.journeys.ts` |  |
 | `CONT-011` | Merge | published | done | `tests/audience-controls/merge.spec.ts` |  |
