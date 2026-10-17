@@ -54,7 +54,7 @@ The 0.2.0 upgrade record includes every shipped migration through 0059. Existing
 
 ## Clause acceptance (target contract, 16 October 2026)
 
-CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **66 done, 75 partial, 100 missing** of 241 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
+CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **70 done, 75 partial, 96 missing** of 241 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
 
 ### Home
 

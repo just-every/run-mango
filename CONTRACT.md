@@ -854,13 +854,15 @@ How the owner-approved scope (16 October 2026) maps to the clauses above. Incumb
 
 Judged from the code and tests at commit `3569d4eef3c079f146c54f2c45ca13c26a6822f9` (17 October 2026).
 
+The scoped integration round updates OPER-007, CONT-004/006/014/015 and INT-007/011 below.
+
 Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, each partial. Round 3 added MSG-013, MSG-014 (partial), MSG-015 and MOVE-013 for its two gaps, and CONT-026 (partial), CAMP-018, CAMP-019, BUILD-011 and RESULT-008 (partial) for its also-noted items; the rest are missing. Round 4 added BUILD-012 (partial) for its gap, and DELIV-007 (partial) and MOVE-014 (missing) for its also-noted items. Round 5 added FORM-008 (partial: today's code already draws the global allowance only after the honeypot, challenge, field, disclosure, eligibility and pending-duplicate checks, at levels below the floor), FORM-009 (missing) and FORM-010 (partial: allowance refusals answer 429 before anything is stored) for its first gap, and CONT-027 (missing) for its second. Round 6 added INT-015 (partial: today's adapter already checks the shop, installation, scopes, pixel settings and cart subscriptions on every sync (`health.ts`) and verifies Shopify's signed app-proxy identity (`collector.ts`); the merchant OAuth install, the connector, Mango-created wiring, first-sync progress, uninstall and the privacy webhooks are missing) for its gap, and sharpened CONT-018 and AUD-009 for two of its also-noted items. Round 7 added DELIV-008 (partial: today's SendGrid health probe already reads the key's scopes and requires `mail.send` (`provider-health.ts`), sender verification reads domain authentication from the connected account (`sendgrid-domain-verification.ts`), and signed SendGrid events are verified and stored (`tests/go-live/delivery.journeys.ts`); the Settings connection, the stored key, Mango-created webhooks, `delivery-events-missing` and connection monitoring are missing) for its gap, and SMS-008 (missing) for its also-noted Twilio item. Done means implemented and exercised by the cited test; partial means some of the behaviour exists in the cited file or test; missing means no code yet. A build round moves a clause to done only with the test its acceptance evidence names (ACCEPTANCE.md).
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 64 | 23 | 0 | 87 |
-| Target and push further | 6 | 49 | 99 | 154 |
-| All | 70 | 72 | 99 | 241 |
+| Target and push further | 6 | 52 | 96 | 154 |
+| All | 70 | 75 | 96 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
