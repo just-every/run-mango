@@ -28,8 +28,15 @@ test('AUD-001 CONT-011 operator saves, copies, edits and deletes a segment and r
     const saved=(await json('/api/audience/segments')).segments.find((item:any)=>item.name===name);
     const campaign=await json('/api/campaigns',{mode:'blank'});
     await openPage(page, `/app/campaigns/${campaign.campaignId}/review`);
-    await page.getByRole('combobox',{name:'Saved segment',exact:true}).selectOption(saved.id);
-    await page.getByRole('button',{name:'Copy segment into draft'}).click();
+    const segmentControls=page.getByRole('group',{name:'Start from a saved segment',exact:true});
+    const picker=segmentControls.getByRole('combobox',{name:'Saved segment',exact:true});
+    await expect(picker).toBeEnabled();
+    await picker.selectOption(saved.id);
+    await expect(picker).toHaveValue(saved.id);
+    const copy=segmentControls.getByRole('button',{name:'Copy segment into draft'});
+    await expect(copy).toBeEnabled();
+    await copy.click();
+    await expect(segmentControls.getByRole('status')).toContainText(`Copied ${name}.`);
     await expect(page.getByLabel('Include 1 value',{exact:true})).toHaveValue('@example.test');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();
     await expect.poll(async()=> (await json(`/api/campaigns/${campaign.campaignId}/review`)).revision.inclusionRuleJson).toBe(saved.inclusionRuleJson);

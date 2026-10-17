@@ -6854,7 +6854,7 @@
       "executable": false
     },
     "tests/newsletter-ui/audience-controls.journeys.ts": {
-      "sha256": "e6f08ee53327f55aebe7dda9ee340e663891e461b9cb150228003b54f66816a3",
+      "sha256": "2a8e1ad090dd1cda723218d8d7fc6428d0d1479ae1e1c31ec6f06ba3be05b307",
       "executable": false
     },
     "tests/newsletter-ui/audience-ui.journeys.ts": {
@@ -6906,7 +6906,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "926367cf335d862e44d70b68e2c216f891df67ec05a337ff9168f4b5e5bdeeec",
+      "sha256": "7f39036bddc92bd209055a081d93eae0b9026285591aee226056a295079f5de6",
       "executable": false
     },
     "tests/portability/flows.ts": {
@@ -6918,11 +6918,11 @@
       "executable": false
     },
     "tests/portability/runtime.mjs": {
-      "sha256": "45951ea14e2b0196175f7f575c7122984953fb9d9c8f0ec9db2a248c697ee087",
+      "sha256": "7299d41ff4e45da0567ff67117ac5eb64fca35d55c702b47d9955b90f1ec705d",
       "executable": false
     },
     "tests/portability/worker.ts": {
-      "sha256": "c67db30b4d1a6cbc9847d4214527595be88aea6eac71e9fe544ea9fa18dec2e5",
+      "sha256": "7df58a97a72b0b372c0c3d4ffe5f63b561d9f06ebe0b55706a5a9b0281f177e1",
       "executable": false
     },
     "tests/prior-approval/config.js": {

@@ -67,6 +67,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await target.db.prepare("SELECT email FROM contacts WHERE id='portable-contact'").first()).email).toBe('contact@example.test');
     expect((await target.db.prepare('SELECT count(*) AS n FROM audience_erasures').first()).n).toBe(0);
     await target.resume();
+    await writeFile(session, target.cookie, { mode: 0o600 });
     expect((await target.call('/api/portability/imports',{method:'POST',cookie:target.cookie,body:{confirmed:true,manifest}})).status).toBe(401);
     expect((await target.call('/api/portability/imports/prior-transfer/finalize',{method:'POST',cookie:target.cookie,body:{}})).status).toBe(401);
     expect(new Uint8Array(await (await target.bucket.get('campaigns/original.png'))!.arrayBuffer())).toEqual(bytes);
