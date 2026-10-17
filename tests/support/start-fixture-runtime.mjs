@@ -2,6 +2,7 @@ import { scratchDirectory } from './artifacts.mjs';
 import { mkdir, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { ensureLocalBootstrapToken } from '../../tests/support/bootstrap-token.mjs';
+import { testTemplate } from './queue-consumers.mjs';
 import { runCommand } from '../../scripts/installer/run-command.mjs';
 const root = process.cwd();
 const scratch = scratchDirectory('fixture-runtimes');
@@ -9,7 +10,7 @@ await mkdir(scratch, { recursive: true });
 const directory = await mkdtemp(join(scratch, 'run-'));
 const config = join(directory, 'wrangler.toml'), state = join(directory, 'state');
 const token = await ensureLocalBootstrapToken();
-const template = (await readFile('deploy/wrangler.local.template.toml', 'utf8'))
+const template = testTemplate(await readFile('deploy/wrangler.local.template.toml', 'utf8'))
   .replace('./src/core/app/worker.local.ts', resolve('tests/support/worker.ts'))
   .replace('migrations_dir = "migrations/core"', `migrations_dir = ${JSON.stringify(resolve('migrations/core'))}`);
 const authoringDatabase = `
