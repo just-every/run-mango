@@ -39,7 +39,7 @@ async function openDraft(runtime: Awaited<ReturnType<typeof authoringRuntime>>, 
 const useDesign = (run: ReturnType<Page['getByRole']>, page: Page, slot: string) =>
   run.getByRole('listitem').filter({ has: page.getByRole('img', { name: `Design ${slot}`, exact: true }) }).getByRole('button', { name: 'Use this design', exact: true });
 
-const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', vars: {
+const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', queueConsumers: true, vars: {
   MANGO_PUBLIC_BASE_URL: publicOrigin, AUTHORING_LINK_HOST: 'shop.example.test', DESIGN_PROVIDER_API_KEY: designKey, DESIGN_PROVIDER_ORIGIN: origin } });
 
 test('[DESIGN-001] without the design module the editor offers no generation and the API refuses to start one', async ({ page, request }) => {
