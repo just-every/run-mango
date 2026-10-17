@@ -1122,7 +1122,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "687a09a6568e5b583c918e2a5f5b3afc3bb0b2a66ada941c3430bb386ac3c12c",
+      "sha256": "b9a961f661b3b287861fe087351261600c3380b2da087f40f1e5fcb9b5c0f360",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
