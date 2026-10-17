@@ -69,7 +69,12 @@ export function matrix(tier) {
   if (!['push', 'slow', 'all'].includes(tier)) throw new Error('Matrix tier must be push, slow or all.');
   const push = [
     { name: 'static', stage: 'static', browser: true, hosted: true },
-    ...[...sharded].flatMap(stage => [1, 2, 3].map(index => ({ name: `${stage}-${index}-of-3`, stage, shard: `${index}/3`, browser: true }))),
+    ...[...sharded].flatMap(stage => {
+      // Native delivery journeys build and restart their own runtimes. Give
+      // these files smaller groups so the complete push wall stays under 15 minutes.
+      const count = stage === 'go-live' ? 8 : 3;
+      return Array.from({length: count}, (_, offset) => ({ name: `${stage}-${offset + 1}-of-${count}`, stage, shard: `${offset + 1}/${count}`, browser: true }));
+    }),
     ...['ui-results', 'move-in'].map(stage => ({ name: stage, stage, browser: true })),
   ];
   const slow = [{ name: 'local-start-slow', stage: 'local-start-slow', browser: true }];
