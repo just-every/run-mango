@@ -6442,7 +6442,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
-      "sha256": "5b62db182558572b7ac234e16132eb4578987f8d71e8cabe3c974e5a504458ce",
+      "sha256": "9efa2e72ef211f40aa015227a83c3f5ab1cf7d41a79488876516467a08ebc1cb",
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
@@ -6602,7 +6602,7 @@
       "executable": false
     },
     "tests/go-live/harness.ts": {
-      "sha256": "3327ff032300c0289b72e2ad75ec5e6d11fa487a3998efdadd24ea9d276274bc",
+      "sha256": "0254286605ab3f87955c8574933266f8177e27c5a1159bfc745f4a5db88f5dce",
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
@@ -7126,7 +7126,7 @@
       "executable": false
     },
     "tests/support/start-fixture-runtime.mjs": {
-      "sha256": "ffff15b4c267cb9c6d4d1626af2d09a298c75b29af2b4e895063441f5a8c4b9e",
+      "sha256": "70d0ba1f1d4be0dd8d200a5ba1d270bd62c1ca62944fbb75fae5dc10a273dcca",
       "executable": false
     },
     "tests/support/test-identity.ts": {
