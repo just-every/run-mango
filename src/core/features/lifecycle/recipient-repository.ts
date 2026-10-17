@@ -100,7 +100,8 @@ export function createRecipientLifecycleRepository(database: Database) {
       }
       if (result.meta.changes === 1) return true;
       const existing = await client.prepare(
-        `SELECT state FROM step_dispatches WHERE step_id = ? AND revision_id = ?`,
+        `SELECT d.state FROM step_dispatches d JOIN campaigns c ON c.active_revision_id=d.revision_id
+         WHERE d.step_id = ? AND d.revision_id = ? AND c.state IN ('scheduled','dispatching')`,
       ).bind(stepId, revisionId).first<{ state: string }>();
       return existing?.state === 'dispatching';
     },
@@ -164,6 +165,8 @@ export function createRecipientLifecycleRepository(database: Database) {
       const row = await client.prepare(
         `UPDATE recipient_steps SET lease_token = ?, lease_expires_at = ?, updated_at = ?
          WHERE id = ? AND transport_disposition = 'queued' AND send_by_at > ?
+           AND EXISTS(SELECT 1 FROM campaigns c WHERE c.id=recipient_steps.campaign_id
+             AND c.active_revision_id=recipient_steps.revision_id AND c.state='dispatching')
            AND (next_attempt_at IS NULL OR next_attempt_at <= ?)
            AND (lease_expires_at IS NULL OR lease_expires_at <= ?)
          RETURNING *`,

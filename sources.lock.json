@@ -970,7 +970,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "2d64dadd79e9689735a0d3f274ae43f8ef0250d9cce21a7d62439cf51dbbcc96",
+      "sha256": "246220d6abbef90aef4f529e043ab73d1e2d3ac4f9fd1e855f77e5afcb119c0e",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "0eec1dfce9dd00b6bbe99dd15cd7cc4880cf9c6639b38a807eb5be6284bf7a81",
+      "sha256": "2fbfa7af275bf0e3dff34c9d8e6c6d4649e2c4a68312d905ff645c472caabf38",
       "executable": false
     },
     "DEMO.md": {
@@ -1466,7 +1466,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "737c184bfca0de5f154d54c7cd15830cc8caa0c247cbc58b50cfc0f4de662227",
+      "sha256": "bcb8e5a83a9634559f344dc15cd6de3b6fb882ef8db242a3028375cfbb27e53a",
       "executable": false
     },
     "playwright.config.js": {
@@ -1474,7 +1474,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "7bcf5c893feeb24962ec119303df1f1739d7fc21ddf4c53d6fe4b15de47fb6d9",
+      "sha256": "259d5359b9c272ea4c2ca00abe2fc0d2ab727380763200db34d54753c50a3cc2",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -1898,7 +1898,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "3e27cc3548ff591b9bd6e2d065d2caee612ed0dbb125d43fbc7bfc164fc89fc5",
+      "sha256": "5383d8f17065aeecd836776d88314133c77987793f8ae5615470aad52a36954c",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -2950,7 +2950,11 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-scheduled.tsx": {
-      "sha256": "00ab71814f8e481bb00b4e3b0e42e01621970986088143b88ac63b008e053810",
+      "sha256": "efd25f6e634bcd8ba98ce6a6627d715eed21571a80e0639b13906c221ced7fef",
+      "executable": false
+    },
+    "src/core/features/campaigns/ui/campaign-send-controls.tsx": {
+      "sha256": "625a6504be63e461a6ea9371356f7daa532c6bb02f93b3605bf40b1346b93829",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-status-pill.tsx": {
@@ -3050,7 +3054,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/step-results.tsx": {
-      "sha256": "d3b528e74e81ce33cf185ef484ac81efeae478571be8ba9e270c1a14991bbdd6",
+      "sha256": "d675c476f612cc3dc268920e7fb9e1d76c5cff54fde15b2fcbee2e956368ef29",
       "executable": false
     },
     "src/core/features/design-generation/advance.ts": {
@@ -3697,6 +3701,10 @@
       "sha256": "364d4361a0d2811a5819d431ed9c420abf42bffbe3cd15a0bc69bda9971d9528",
       "executable": false
     },
+    "src/core/features/lifecycle/campaign-controls.ts": {
+      "sha256": "716e121827e7d95d5b72c763e422c4f3b554176a168c1b28b06591a951b6e2ed",
+      "executable": false
+    },
     "src/core/features/lifecycle/campaign-repository.ts": {
       "sha256": "a9b3bc94adb7ccd7cf42979045d68870625aa7ed13f452773d5703a6e970ea15",
       "executable": false
@@ -3786,11 +3794,11 @@
       "executable": false
     },
     "src/core/features/lifecycle/recipient-repository.ts": {
-      "sha256": "c872644322cd6208a039102204f06b49d7843a3f87e2459b6928b0d4261cb5c6",
+      "sha256": "8096d470e4b05558b2e2a2859841503cefa3683fca46a318640f0527d15afc1c",
       "executable": false
     },
     "src/core/features/lifecycle/repository.ts": {
-      "sha256": "7747d188d1d781fcb476801fe1d24007c15520cc04287d0cfc641ee5efb21b61",
+      "sha256": "b1dc38ad8ce55d48ad8881e0c4248ead422b65528e5b8b282b186f84a80d5886",
       "executable": false
     },
     "src/core/features/lifecycle/reputation-guard.ts": {
@@ -3798,7 +3806,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/routes.ts": {
-      "sha256": "59ed2f5c7426bf021dd0d77f43b740ad1fa173bbaa08dfde9bd7bcbc5b5799f1",
+      "sha256": "fd6aed8836e3892b9a0fb77e21efb895561ec3fb3c861e931160cf7f083c7bc6",
       "executable": false
     },
     "src/core/features/lifecycle/rules.ts": {
@@ -6615,6 +6623,10 @@
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
       "sha256": "e21bd177b811cdba0689c3b72cbffb0caf135e56e94939a1becce8b81781d797",
+      "executable": false
+    },
+    "tests/go-live/pause.journeys.ts": {
+      "sha256": "8401949c8820fc346c54d34c89cb90ac3395e4e2438e6d2a78c37fece406d69c",
       "executable": false
     },
     "tests/go-live/playwright.config.js": {

@@ -105,6 +105,18 @@ export function registerLifecycleHttpRoutes(
     return context.json({ status: 'test-sent', disposition: result.disposition, providerMessageId: result.providerMessageId });
   });
 
+  for (const action of ['pause', 'resume'] as const) {
+    app.post(`/api/campaigns/:id/${action}`, async (context: any) => {
+      const actor = operatorId(context);
+      if (!actor) return context.json({error: 'unauthenticated'}, 401);
+      const params = readParams(context, identifier);
+      if ('error' in params) return params.error;
+      const changed = await repository.controls[action](params.data.id, actor, new Date());
+      return changed ? context.json({status: action === 'pause' ? 'paused' : 'resumed'})
+        : context.json({error: `campaign_not_${action === 'pause' ? 'pausable' : 'operator_paused'}`}, 409);
+    });
+  }
+
   app.post('/api/campaigns/:id/cancel', async (context: any) => {
     const actor = operatorId(context);
     if (!actor) return context.json({ error: 'unauthenticated' }, 401);

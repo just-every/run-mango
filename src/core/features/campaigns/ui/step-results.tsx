@@ -29,14 +29,14 @@ export function StepResults({steps,results,now,timezone,awaitingFirstTick=false}
           </div>
           <div className="step-result__notes">
             {outcome.estimatedCompletionAt?<p>Estimated handoff completion across the shared provider backlog: <time dateTime={outcome.estimatedCompletionAt}>{formatUtc(outcome.estimatedCompletionAt)}</time>. Delivery awaits provider confirmation.</p>:null}
-            {outcome.pauses?.map(p=><p key={p.reason} data-pause-reason={p.reason} data-pause-state={p.resumedAt?'recovered':'paused'}>{p.resumedAt?'Recovered':'Paused'}: {p.reason}. {p.detail} {p.nextProbeAt&&!p.resumedAt?`Next authenticated reachability probe: ${formatUtc(p.nextProbeAt)}.`:''} {p.reason==='provider-outage'?'Reachability recovery does not clear source, sender or provider compliance restrictions.':''}</p>)}
+            {outcome.pauses?.map(p=><p key={p.reason} data-pause-reason={p.reason} data-pause-state={p.resumedAt?'recovered':'paused'}>{p.reason==='operator-pause' ? p.resumedAt ? 'Resumed by an operator.' : 'Paused by an operator. Use Resume campaign to continue remaining sends.' : <>{p.resumedAt?'Recovered':'Paused'}: {p.reason}. {p.detail}</>} {p.reason!=='operator-pause'&&p.nextProbeAt&&!p.resumedAt?`Next authenticated reachability probe: ${formatUtc(p.nextProbeAt)}.`:''} {p.reason==='provider-outage'?'Reachability recovery does not clear source, sender or provider compliance restrictions.':''}</p>)}
             {outcome.outageNotices?.map(n=><p key={`${n.state}:${n.code}`}>Operator outage notices: {n.count} {n.state==='handoff-unknown'?'with unconfirmed acceptance; no duplicate notice will be sent':n.state==='pending'?'pending a reachable provider and shared send allowance':n.state==='failed'?'failed':n.state==='outcome-unconfirmed'?'with outcome unconfirmed after the lookup window':n.state}. {n.code?`Provider status: ${n.code}.`:''}</p>)}
             {outcome.expiredQueuedCount > 0 ? <p>Queued records remain unsent: {outcome.expiredQueuedCount}. Their closed windows cannot dispatch them.</p> : null}
             {outcome.inFlightCount > 0 ? <p>{outcome.inFlightCount} queued recipient-steps have begun provider handoff and are awaiting confirmation. A closed window cannot recall them.</p> : null}
             {outcome.state === 'Sent' ? <p>Handed to the provider. Only the Delivered count confirms delivery.</p> : null}
             {outcome.failures.map(failure => <p key={`${failure.code}:${failure.detail}`}>Failure: {failure.detail} ({failure.code}) · {failure.count}</p>)}
             {outcome.state === 'Failed' && !outcome.failures.length ? <p>The campaign failed; no recipient failure cause was recorded.</p> : null}
-            {outcome.state === 'Paused' ? <p>Dispatch is paused. Resolve the provider or source issue before remaining sends can resume.</p> : null}
+            {outcome.state === 'Paused' ? <p>Dispatch is paused. Resume an operator hold above, or resolve the provider or source hold before remaining sends continue.</p> : null}
           </div>
           <dl className="disposition-counts" aria-label={`Step ${step.sequence} recipient outcomes`}>
             {outcome.counts.filter(bucket => bucket.count > 0).map(bucket => <div key={`${bucket.disposition}:${bucket.reason}`} data-disposition={bucket.disposition} data-skip-reason={bucket.reason ?? undefined}>

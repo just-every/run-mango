@@ -100,7 +100,7 @@
     },
     {
       "id": "campaign-review-and-scheduling",
-      "description": "Operator-authored blank and recorded-signal drafts without AI, shared proposal Review, rich/HTML content with managed footer and plain text, structured live audience counts, store-zone scheduling, exact-revision approval and existing cancellation/test-send controls.",
+      "description": "Operator-authored blank and recorded-signal drafts without AI, shared proposal Review, rich/HTML content with managed footer and plain text, structured live audience counts, store-zone scheduling, exact-revision approval and pause/resume, cancellation and test-send controls.",
       "clauses": [
         "CAMP-001",
         "CAMP-002",
@@ -112,7 +112,8 @@
         "CAMP-008",
         "CAMP-009",
         "CAMP-010",
-        "CAMP-011"
+        "CAMP-011",
+        "CAMP-014"
       ]
     },
     {

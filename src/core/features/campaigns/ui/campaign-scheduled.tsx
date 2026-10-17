@@ -1,3 +1,4 @@
+import { CampaignSendControls } from './campaign-send-controls';
 import {CampaignFollowup,FollowupParent} from './campaign-followup';
 import { CampaignEngagement } from '@/core/features/insights/ui/campaign-engagement';
 import { CampaignRecipients } from '@/core/features/insights/ui/campaign-recipients';
@@ -67,6 +68,9 @@ export function CampaignScheduledPage() {
     <div className="scheduled-layout">
       <div className="scheduled-layout__main">
         {data.scheduler ? <SchedulerReadiness scheduler={data.scheduler} expired={data.steps.length>0 && data.steps.every(step=>Date.parse(step.sendByAt)<=Math.max(now,Date.parse(results.asOf)))} /> : null}
+        <CampaignSendControls campaignId={id} state={data.campaign.state}
+          operatorPaused={data.campaign.state === 'paused' && results.steps.some(step => step.pauses?.some(pause => pause.reason === 'operator-pause' && pause.resumedAt === null))}
+          reload={reload} />
         <StepResults awaitingFirstTick={data.scheduler?.state==='not-observed'} timezone={productConfig.storeTimezone} steps={data.steps} results={results} now={Math.max(now,Date.parse(results.asOf))} />
         {results.cancellable ? <section className="panel cancellation-panel">
           <h2>Cancel remaining sends</h2>

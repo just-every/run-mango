@@ -861,8 +861,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 64 | 23 | 0 | 87 |
-| Target and push further | 6 | 52 | 96 | 154 |
-| All | 70 | 75 | 96 | 241 |
+| Target and push further | 7 | 51 | 96 | 154 |
+| All | 71 | 74 | 96 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -940,7 +940,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `CAMP-011` | Dispatch punctuality | published | done | `tests/go-live/scheduler.journeys.ts` |  |
 | `CAMP-012` | Campaign images | published | done | `tests/campaign-assets.spec.ts` · `tests/campaign-authoring/local-images.spec.ts` |  |
 | `CAMP-013` | Recipient-local send time | target | missing |  | not implemented |
-| `CAMP-014` | Pause and resume | target | partial | `src/core/features/lifecycle/routes.ts` · `src/core/features/lifecycle/provider-outages.ts` | acceptance not yet met: The scheduler journey pauses a two-step campaign mid-dispatch, shows no hand-off during the pause, resumes, and completes with each recipient-step handed off once. |
+| `CAMP-014` | Pause and resume | target | done | `tests/go-live/pause.journeys.ts` |  |
 | `CAMP-015` | Marketing calendar | target | missing |  | not implemented |
 | `CAMP-016` | Follow-up to non-engaged recipients | target | done | `tests/campaign-results/followup.journeys.ts` · `tests/portability.spec.ts` |  |
 | `CAMP-017` | Recurring and RSS-to-email campaigns | target | missing |  | not implemented |
