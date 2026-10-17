@@ -80,4 +80,13 @@ test('[INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, repla
     expect(JSON.stringify(audit)).not.toContain(created.token);
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close(); await edge.close();}
+  const managedEdge = await providerEdge(), managed = await installation(managedEdge, eventSigner(), {managed: 'none'});
+  try {
+    const cookie = await managed.open();
+    const key = await json(await managed.call('/api/settings/integrations', {method: 'POST', cookie, body: {name: 'Managed segment sender', scopes: ['campaigns:send']}}), 201);
+    expect((await managed.call('/api/integrations/v1/campaigns/unapproved/send', {method: 'POST', headers: {Authorization: `Bearer ${key.token}`},
+      body: {revisionId: 'unapproved', segmentId: 'unavailable-segment'}})).status).toBe(503);
+    expect(managedEdge.sends).toEqual([]);
+    expect(managedEdge.relaySends).toEqual([]);
+  } finally {await managed.runtime.close(); await managedEdge.close();}
 });

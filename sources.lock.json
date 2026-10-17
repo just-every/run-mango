@@ -970,7 +970,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "4db1a7dba556d7625278c072cc6e438c0cef9f090b004f7146e6e935ecd80a84",
+      "sha256": "2d64dadd79e9689735a0d3f274ae43f8ef0250d9cce21a7d62439cf51dbbcc96",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "ea2d035c32d8d4f06692cda93f59edcd9d340a22af9aaf1d3a8b622cedc4adcd",
+      "sha256": "0eec1dfce9dd00b6bbe99dd15cd7cc4880cf9c6639b38a807eb5be6284bf7a81",
       "executable": false
     },
     "DEMO.md": {
@@ -6594,7 +6594,7 @@
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
-      "sha256": "dacd39352d139ff1fb8b4678171eaf442ad5a784e99011df14c9692ca3c99176",
+      "sha256": "e9b6079b1e33d5ebccf7bd7f7210755e53e76ba8f162862b545d3d3dd5746648",
       "executable": false
     },
     "tests/go-live/managed-mail.journeys.ts": {
