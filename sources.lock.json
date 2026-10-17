@@ -3050,7 +3050,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/segment-picker.tsx": {
-      "sha256": "e20a6fbf8e62f2d62fb57fa5fb2ff7ba5d02e5ba5a818ab989cfb9ca61b976b1",
+      "sha256": "026a51cf72811dbf71de3abf202aedac60ba2a97722c887fd39e45b1980cfa16",
       "executable": false
     },
     "src/core/features/campaigns/ui/step-results.tsx": {
