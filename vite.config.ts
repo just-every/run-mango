@@ -8,7 +8,7 @@ import { existsSync } from 'node:fs';
 import { defineConfig, type UserConfig } from 'vite';
 import { archiveOutputGuard } from '@runeditrun/rer/archive-output';
 import { docsSite } from './src/core/features/docs/build/plugin.ts';
-import { excludeLocalVariables } from './vite/exclude-local-variables.ts';
+import { excludeLocalVariables } from '@runeditrun/rer/local-variables-output';
 import { privatePreloads } from './vite/private-preloads.ts';
 // Only normal app development loads the local-only entry and checkout dev key.
 // Explicit fixture/review configs and builds/preview retain their configured entry.

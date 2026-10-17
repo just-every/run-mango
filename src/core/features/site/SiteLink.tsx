@@ -14,7 +14,7 @@ const href = (to: SiteTarget) => to.to === '/docs/$slug' ? `/docs/${to.slug}` : 
  * installed Mango's Lobby, which the Worker serves rather than the router) are plain document links.
  */
 export function SiteLink({ to, hash, children, ...rest }: AnchorProps & { to: SiteTarget; hash?: string; children: ReactNode }) {
-  if (useRunSite() || to.to === '/' || to.to === '/run') return <a href={hash ? `${href(to)}#${hash}` : href(to)} {...rest}>{children}</a>;
+  if (useRunSite() || to.to === '/' || to.to === '/run' || to.to === '/contract') return <a href={hash ? `${href(to)}#${hash}` : href(to)} {...rest}>{children}</a>;
   if (to.to === '/docs/$slug') {
     return <Link to="/docs/$slug" params={{ slug: to.slug }} hash={hash} activeOptions={{ exact: true }} {...rest}>{children}</Link>;
   }

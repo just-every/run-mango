@@ -10,7 +10,7 @@ export type SitePage = 'home' | 'docs' | 'other';
 /**
  * The shared header: the lockup, then How it works, Docs and the page's one link named exactly "Sign in". On a docs page
  * the Docs link is marked as the current section (`aria-current="page"` on the docs home itself). The run site has no sign-in,
- * so it leaves that link and its slash out.
+ * so it leaves that link and its slash out and links Contract (/contract) in their place.
  */
 export function SiteHeader({ current }: { current: SitePage }) {
   const { nav } = siteCopy;
@@ -21,7 +21,7 @@ export function SiteHeader({ current }: { current: SitePage }) {
       <nav className="site-nav" aria-label={nav.label}>
         <SectionLink id="how" onLanding={current === 'home'}>{nav.how}</SectionLink>
         <SiteLink to={sitePaths.docs} aria-current={current === 'docs' ? 'true' : undefined}>{nav.docs}</SiteLink>
-        {runSite ? null : <>
+        {runSite ? <SiteLink to={sitePaths.contract}>{nav.contract}</SiteLink> : <>
           <span className="site-nav-slash" aria-hidden="true">/</span>
           <SiteLink to={sitePaths.signIn}>{nav.signIn}</SiteLink>
         </>}

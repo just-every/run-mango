@@ -2,15 +2,16 @@
 
 /**
  * A first-party public page: the home page (an installed Mango's Lobby, the run site's landing), sign-in, the run site's
- * Run page, the docs home, or one docs page by its slug in docs/site.json.
+ * Run and Contract pages, the docs home, or one docs page by its slug in docs/site.json.
  */
-export type SiteTarget = { to: '/' | '/signin' | '/run' | '/docs' } | { to: '/docs/$slug'; slug: string };
+export type SiteTarget = { to: '/' | '/signin' | '/run' | '/docs' | '/contract' } | { to: '/docs/$slug'; slug: string };
 
 export const sitePaths = {
   home: { to: '/' },
   signIn: { to: '/signin' },
   run: { to: '/run' },
   docs: { to: '/docs' },
+  contract: { to: '/contract' },
   install: { to: '/docs/$slug', slug: 'install' },
 } as const satisfies Record<string, SiteTarget>;
 
