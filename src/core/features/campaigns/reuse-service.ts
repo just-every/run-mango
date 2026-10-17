@@ -1,3 +1,4 @@
+import { createFollowupService } from './followup-service';
 import { eq } from 'drizzle-orm';
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
@@ -30,6 +31,7 @@ export function createCampaignReuseService(database: Database, defaults: () => D
     return createDraft(database,composition,operatorId,({revisionId})=>value.stepSettings.length ? [database.insert(draftStepSettings).values({revisionId,settingsJson:JSON.stringify(value.stepSettings)})] : []);
   }
   return {
+    followup:createFollowupService(database,snapshot),
     async list() {
       const saved = await db.prepare('SELECT id,name,updated_at FROM campaign_templates ORDER BY updated_at DESC,id').all<{id:string;name:string;updated_at:number}>();
       return {templates:[...starterTemplates.map(({id,name,kind})=>({id,name,kind,updatedAt:null})),...saved.results.map(row=>({id:row.id,name:row.name,kind:'saved' as const,updatedAt:new Date(row.updated_at).toISOString()}))]};

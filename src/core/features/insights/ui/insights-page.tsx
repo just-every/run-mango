@@ -1,6 +1,8 @@
 import { RetentionAnalytics } from './retention-report';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {OpenEstimates} from './open-estimates';
+import { CampaignPerformance } from './campaign-performance';
+import { useState } from 'react';
 import {SenderRates} from './sender-rates';
 import { CostTotals } from './cost-totals';
 import type { CostReport } from '../cost-report';
@@ -27,6 +29,7 @@ function NothingPostmarked() {
 }
 
 export function InsightsPage() {
+  const [settingsVersion, setSettingsVersion] = useState(0);
   const formatDate = useDateFormatter();
   const { data, error, loading } = useResource<{ results: Insight[]; note: string; costs: CostReport }>('/api/insights');
   if (loading) return <LoadState />;
@@ -40,7 +43,8 @@ export function InsightsPage() {
           <p className="page-head__lead">{data.note}</p>
         </div>
       </header>
-      <OpenEstimates />
+      <OpenEstimates onSettingsChanged={() => setSettingsVersion(version => version + 1)} />
+      <CampaignPerformance settingsVersion={settingsVersion} />
       <CostTotals report={data.costs} />
       <SenderRates />
       <RetentionAnalytics />

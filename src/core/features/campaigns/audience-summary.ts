@@ -4,6 +4,7 @@ import { audienceRuleComparisons, audienceRuleFieldLabel } from './audience-rule
 type Predicate = InclusionRule['predicates'][number];
 
 function describeCondition(predicate: Predicate): string {
+  if(predicate.sourceType==='campaign')return 'Non-engaged recipients from the linked campaign at its saved cutoff';
   const comparison = audienceRuleComparisons.find(([value]) => value === predicate.comparator)![1];
   // Presentation quotes preserve the exact string contents, including whitespace.
   // Return text, not HTML; consumers must render this as a text node.

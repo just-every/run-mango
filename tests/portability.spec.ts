@@ -1,3 +1,4 @@
+import {seedFollowup} from './campaign-results/followup-fixture';
 import { expect, test } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
@@ -17,6 +18,9 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(reusable.status).toBe(201);
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('portable-contact','contact@example.test','Contact','unsubscribed','never-subscribed',1,1)").run();
     await source.db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES('portable-opt-out','already-hashed','email','unsubscribed',1,1,1)").run();
+    const followupSource=await seedFollowup(source.db,{config:{mailSender:{displayName:'Orchard Studio'}}} as any);
+    const followup=await source.call(`/api/campaigns/${followupSource.campaignId}/followup`,{method:'POST',cookie:source.cookie,body:{subject:'A portable follow-up',delayHours:48,metric:'click'}});
+    expect(followup.status).toBe(201);const followupDraft=await followup.json();
     const bytes = Uint8Array.from([0, 255, 127, 1]);
     await source.bucket.put('campaigns/original.png', bytes, { httpMetadata: { contentType: 'image/png' }, customMetadata: { label: 'Original' } });
     const image = png(5, 4);
@@ -37,6 +41,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     // table is archived or explicitly excluded by the maintained policy.
     for (const { name } of allTables) expect([...manifest.tables.map(table => table.name), ...manifest.excludedTables]).toContain(name);
     expect(original.some(row => row.table === 'campaign_templates' && row.row.name === 'Portable newsletter template')).toBe(true);
+    expect(original.some(row => row.table === 'campaign_followups' && row.row.campaign_id === followupDraft.campaignId)).toBe(true);
     expect(original.some(row => row.table === 'contacts' && row.row.id === 'portable-contact')).toBe(true);
     expect(original.some(row => row.table === 'surviving_opt_outs' && row.row.id === 'portable-opt-out')).toBe(true);
     expect(original.some(row => row.table.startsWith('oa_'))).toBe(false);
@@ -67,6 +72,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(new Uint8Array(await (await target.bucket.get('campaigns/original.png'))!.arrayBuffer())).toEqual(bytes);
     expect((await target.call('/api/operator', { cookie: source.cookie })).status).toBe(401);
     expect((await target.call('/api/operator', { cookie: target.cookie })).status).toBe(200);
+    const restoredFollowup=await target.call(`/api/campaigns/${followupDraft.campaignId}/followup-parent`,{cookie:target.cookie});
+    expect(restoredFollowup.status).toBe(200);expect((await restoredFollowup.json()).followup.sourceCampaignId).toBe(followupSource.campaignId);
     const media = await target.call(`/media/${campaignImage.sha256}`);
     expect(media.status).toBe(200);
     expect(media.headers.get('content-type')).toBe('image/png');

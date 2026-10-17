@@ -6,7 +6,7 @@ import type { AuthVariables } from '@/core/features/auth/routes';
 import type { Platform } from '@/core/shared/platform';
 import { createAudienceImportService, audienceImportContext } from './import-service';
 import { defaultMapping, presetStatuses } from './import-types';
-import { loadSignupDescription } from './signup-routes';
+import { signupDescription } from './signup-routes';
 import { AudienceCsvUnavailable } from './import-opt-out-lines';
 import { importConflict } from './import-conflict';
 const inputSchema=z.object({files:z.array(z.object({name:z.string().min(1).max(200),csv:z.string().min(1),preset:z.enum(['csv-subscribed','csv-unsubscribed','csv-cleaned','csv-non-subscribed','mango']),mapping:z.record(z.string(),z.string()).optional()})).min(1).max(10),consent:z.record(z.string(),z.string()).optional()});
@@ -24,7 +24,8 @@ export function createAudienceImportRoutes(platform: Platform) {
   routes.get('/audience/signup',async context=>{
     const origin=platform.config.local===true?new URL(context.req.url).origin:platform.config.publicBaseUrl;
     const url=new URL('/subscribe',origin).toString();
-    return context.json({...await loadSignupDescription(platform),embedOrigins:(await loadSignupSettings(platform)).embedOrigins,url,embed:`<iframe src="${url}" title="Subscribe to the newsletter" width="100%" height="560" style="border:0"></iframe>`});
+    const settings=await loadSignupSettings(platform);
+    return context.json({...signupDescription(platform,settings.frequencyDisclosure),embedOrigins:settings.embedOrigins,url,embed:`<iframe src="${url}" title="Subscribe to the newsletter" width="100%" height="560" style="border:0"></iframe>`});
   });
   routes.put('/audience/signup',async context=>{
     context.header('Cache-Control','no-store');

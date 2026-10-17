@@ -12,11 +12,12 @@ function PredicateFields({predicate,onChange,label}: {predicate:Predicate;onChan
   const [lookback, setLookback] = useState(String(predicate.lookbackDays ?? ''));
   useEffect(() => setLookback(String(predicate.lookbackDays ?? '')), [predicate.lookbackDays]);
   const numeric = ['gt','gte','lt','lte'].includes(predicate.comparator);
+  if(predicate.sourceType==='campaign')return <p>Saved non-engagement audience. Its source campaign and cutoff are shown above. Current consent and frequency protections still apply.</p>;
   return <div className="rule-editor-row">
     <label>{label} field<select aria-label={`${label} field`} value={`${predicate.sourceType}:${predicate.field}`} onChange={event=>{
       const [sourceType,field]=event.target.value.split(':');
       const next={...predicate,sourceType:sourceType as Predicate['sourceType'],field};
-      if(sourceType==='contact') delete next.lookbackDays;
+      if(sourceType==='contact'||sourceType==='campaign') delete next.lookbackDays;
       onChange(next);
     }}>
       {!fields.some(([source,field])=>source===predicate.sourceType&&field===predicate.field)?<option value={`${predicate.sourceType}:${predicate.field}`}>{predicate.sourceType}: {predicate.field}</option>:null}

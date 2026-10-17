@@ -1,3 +1,4 @@
+import {FollowupParent} from './campaign-followup';
 import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
 import { Modal } from '@/core/app/client/ui/modal';
 import { Disclosure } from '@/core/app/client/ui/disclosure';
@@ -189,6 +190,7 @@ export function CampaignReviewPage() {
 
   return (
     <div className="page-flow review-page">
+      <FollowupParent campaignId={id} />
       <Modal open={navigation.status === 'blocked'} onClose={() => {if (navigation.status === 'blocked') navigation.reset();}} title="Leave without saving?" description="Your changes to this draft will be discarded.">
         <div className="detail-actions"><button className="secondary-action" type="button" onClick={() => {if (navigation.status === 'blocked') navigation.reset();}}>Keep editing</button><button className="danger-action--line" type="button" onClick={() => {if (navigation.status === 'blocked') navigation.proceed();}}>Discard and leave</button></div>
       </Modal>

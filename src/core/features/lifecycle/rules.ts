@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const comparator = z.enum(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'contains', 'in']);
-const sourceType = z.enum(['contact', 'customer', 'product', 'variant', 'inventory', 'order', 'refund', 'cart', 'browsing']);
+const sourceType = z.enum(['campaign', 'contact', 'customer', 'product', 'variant', 'inventory', 'order', 'refund', 'cart', 'browsing']);
 
 const predicate = z.object({
   sourceType,
@@ -10,6 +10,7 @@ const predicate = z.object({
   value: z.union([z.string(), z.number(), z.boolean(), z.array(z.string().min(1)).min(1)]),
   lookbackDays: z.number().int().min(0).max(3_650).optional(),
 }).superRefine((value, context) => {
+  if(value.sourceType==='campaign'&&(value.field!=='followup'||value.comparator!=='eq'||typeof value.value!=='string'||!value.value.trim()||value.value.length>160||value.lookbackDays!==undefined))context.addIssue({code:'custom',message:'Use a valid saved follow-up audience.'});
   if (value.sourceType === 'contact' && (!['id', 'email', 'displayName', 'emailStatus', 'smsStatus'].includes(value.field) || value.lookbackDays !== undefined)) {
     context.addIssue({ code: 'custom', message: 'Contact rules require a recorded contact field and cannot use a commerce lookback.' });
   }
@@ -76,7 +77,7 @@ export function parseStructuredRules(inclusionJson: string, exclusionJson: strin
       sourceTypes: [...new Set([
         ...inclusion.predicates.map((item) => item.sourceType),
         ...exclusions.map((item) => item.predicate.sourceType),
-      ].filter(type => type !== 'contact'))],
+      ].filter(type => type !== 'contact' && type !== 'campaign'))],
     };
   } catch (error) {
     return {

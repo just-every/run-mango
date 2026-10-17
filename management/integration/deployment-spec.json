@@ -422,6 +422,12 @@
       "name": "core-0067_campaign_link_identity.sql",
       "sha256": "e59b116394646f2ec8278bf487d95d0a548a209cfbbe0bb7201680fa5fce0453",
       "sql": "-- Existing click facts have no trustworthy link identity. Do not backfill them\n-- from a recipient's several tokens or from a campaign's current links.\nALTER TABLE tracked_links ADD COLUMN revision_link_id TEXT;\nALTER TABLE link_click_facts ADD COLUMN revision_link_id TEXT;\nALTER TABLE link_click_facts ADD COLUMN destination_url TEXT;\nCREATE INDEX link_click_facts_link_idx ON link_click_facts(revision_link_id, automated, recipient_step_id);\nCREATE INDEX link_click_facts_destination_idx ON link_click_facts(destination_url, recipient_step_id, automated);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0068_campaign_followups.sql",
+      "sha256": "6fc09d6a5a1dba6a5f1af4fab89a44dac7c969e1ba4a84fd519ef3ae49f8e8e0",
+      "sql": "CREATE TABLE campaign_followups (\n  id TEXT PRIMARY KEY NOT NULL,\n  campaign_id TEXT NOT NULL UNIQUE REFERENCES campaigns(id),\n  source_campaign_id TEXT NOT NULL REFERENCES campaigns(id),\n  source_revision_id TEXT NOT NULL REFERENCES campaign_revisions(id),\n  metric TEXT NOT NULL CHECK(metric IN ('click','open-estimate')),\n  cutoff_at INTEGER NOT NULL,\n  delay_hours INTEGER NOT NULL,\n  created_at INTEGER NOT NULL\n);\nCREATE INDEX campaign_followups_source ON campaign_followups(source_campaign_id);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

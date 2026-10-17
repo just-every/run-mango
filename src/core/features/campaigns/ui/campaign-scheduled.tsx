@@ -1,3 +1,4 @@
+import {CampaignFollowup,FollowupParent} from './campaign-followup';
 import { CampaignEngagement } from '@/core/features/insights/ui/campaign-engagement';
 import { CampaignRecipients } from '@/core/features/insights/ui/campaign-recipients';
 import {CommerceResults} from '@/core/features/insights/ui/commerce-results';
@@ -81,6 +82,8 @@ export function CampaignScheduledPage() {
     <CampaignEngagement campaignId={id} revisionId={data.revision.id} emailBody={data.revision.emailBody}/>
     <CampaignRecipients campaignId={id} revisionId={data.revision.id} steps={data.steps}/>
     <CampaignCosts campaignId={id} />
+    <CampaignFollowup campaignId={id} />
+    <FollowupParent campaignId={id} />
     <Modal open={confirmCancel} onClose={() => setConfirmCancel(false)} title="Cancel this campaign?" description="Recipient-steps not yet handed to a provider will be stopped. Messages already handed to a provider cannot be recalled.">
       <div className="detail-actions"><button className="secondary-action" type="button" disabled={cancelling} onClick={() => setConfirmCancel(false)}>Keep campaign</button><button className="danger-action" type="button" disabled={cancelling} onClick={() => void cancel()}>{cancelling ? 'Cancelling…' : 'Confirm cancellation'}</button></div>
     </Modal>

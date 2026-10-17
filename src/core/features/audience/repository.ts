@@ -1,3 +1,4 @@
+import { followupMember } from './followup-membership';
 import { consentCaptureMetadata } from './consent-metadata';
 import { createSuppressionWriter } from './suppression-writer';
 import { createPublicCaptureWriter } from './public-capture-writer';
@@ -67,6 +68,8 @@ export function createAudienceRepository(database: Database) {
     capturePublicSignupAtomic: createPublicCaptureWriter(database),
     async recordPhoneLocation(phone:string,timeZone:string,source:string,at:Date){await database.update(contactPhones).set({timeZone,locationSource:source,locationRecordedAt:at}).where(eq(contactPhones.phoneE164,phone));},
     claimConfirmationHandoff: createConfirmationHandoff(database),
+    async followupExists(cohort:string){return Boolean(await database.$client.prepare('SELECT id FROM campaign_followups WHERE id=?').bind(cohort).first());},
+    followupMember:(cohort:string,contactId:string)=>followupMember(database.$client,cohort,contactId),
     listContacts() {
       return database.select().from(contacts).orderBy(asc(contacts.displayName));
     },
