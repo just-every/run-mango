@@ -6,6 +6,7 @@ import { ContactMerge } from './contact-merge';
 import { Link, useParams, useSearch } from '@tanstack/react-router';
 
 import { titleCase } from '@/core/app/client/lib/format';
+import { ContactRetention } from '@/core/features/insights/ui/retention-report';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import type { Contact, ContactHistory } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
@@ -62,6 +63,7 @@ function ContactPage() {
       </section>
       <div className="contact-layout">
         <div className="contact-layout__records">
+          <ContactRetention contactId={id} />
           <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} />
           <ContactRelated data={data}/>
           {data.smsServices?.length?<section className="panel"><h2>SMS confirmations and service replies</h2><p className="muted-copy">Queued messages wait for permitted windows. Unconfirmed handoffs are never repeated automatically.</p>{data.smsServices.map(message=><article key={message.id}><strong>{titleCase(message.purpose)}</strong><p>{titleCase(message.state)}{message.reason?` · ${titleCase(message.reason)}`:''}</p><small>{formatDate(new Date(message.created_at).toISOString())}{message.provider_message_id?` · Provider receipt ${message.provider_message_id}`:''}</small></article>)}</section>:null}

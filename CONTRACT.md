@@ -835,8 +835,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 64 | 23 | 0 | 87 |
-| Target and push further | 3 | 49 | 102 | 154 |
-| All | 67 | 72 | 102 | 241 |
+| Target and push further | 5 | 49 | 100 | 154 |
+| All | 69 | 72 | 100 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -970,7 +970,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `FORM-010` | Refused signups are never silent | target | partial | `src/core/features/audience/signup-routes.ts` | acceptance not yet met: A submission over a declared allowance shows the error state, not success, with the visitor's entries kept and a `Retry-After`. The refusal is counted in the form's report under its reason, raised on Home, and summarised in that hour's activity log entry. |
 | `SEG-001` | Segment builder | target | partial | `src/core/features/audience/segments.ts` · `tests/audience-controls/segments.spec.ts` | acceptance not yet met: A saved segment over an event count with a value filter and a US state condition returns exactly the matching seeded contacts in review, and its summary names every condition. |
 | `SEG-002` | Live membership | target | missing |  | not implemented |
-| `SEG-003` | RFM and lifecycle stages | target | missing |  | not implemented |
+| `SEG-003` | RFM and lifecycle stages | target | done | `tests/campaign-results/results.journeys.ts`, `tests/campaign-results/retention-journey.ts` |  |
 | `SEG-004` | Predictions | target | missing |  | not implemented |
 | `SEG-005` | Engagement and lead scoring | target | missing |  | not implemented |
 | `SEG-006` | Campaign and flow activity conditions | target | missing |  | not implemented |
@@ -1029,7 +1029,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `REPORT-001` | Overview dashboard | target | partial | `src/core/features/insights/service.ts` · `src/core/features/insights/commerce-report.ts` | acceptance not yet met: With a seeded month of sends, orders and holdout data, each figure on the page matches the underlying records and the incremental figure is labelled separately from attribution. |
 | `REPORT-002` | Campaign and flow performance tables | target | partial | `tests/campaign-results/results.journeys.ts` | acceptance not yet met: The CSV export of the table equals the on-screen rows for the same filter; with open estimates on, the estimated open-rate column appears on screen and in the CSV labelled as an estimate, and is absent with them off. |
 | `REPORT-003` | Attribution for campaigns, flows and SMS | target | partial | `src/core/features/insights/commerce-attribution.ts` | acceptance not yet met: An order following an SMS click and an earlier email click is attributed once, to the most recent qualifying click; changing the window to one day recalculates the report. |
-| `REPORT-004` | Customer and retention analytics | target | missing |  | not implemented |
+| `REPORT-004` | Customer and retention analytics | target | done | `tests/campaign-results/results.journeys.ts`, `tests/campaign-results/retention-journey.ts` |  |
 | `REPORT-005` | List growth and consent sources | target | missing |  | not implemented |
 | `REPORT-006` | Scheduled and custom reports | target | missing |  | not implemented |
 | `REPORT-007` | Usage and cost transparency | target | partial | `src/core/features/insights/cost-report.ts` · `tests/campaign-results/costs.journeys.ts` | acceptance not yet met: `tests/campaign-results/costs.journeys.ts` for campaign and day totals; a flow's costs appear under that flow. |

@@ -1,3 +1,4 @@
+import { seedRetention } from './retention-fixture';
 import { seedReporting } from './reporting-fixture';
 // Dedicated test entry: real native sessions, D1, API and SSR with an injected read clock.
 import { presentationPlatform } from './presentation-platform';
@@ -34,6 +35,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       if(action==='jobs') return context.json((await bindings.DB.prepare('SELECT payload FROM presentation_jobs').all()).results);
       if(action==='counts') return context.json((await bindings.DB.prepare(`SELECT campaign_id,revision_id,step_id,transport_disposition disposition,skip_reason reason,COUNT(*) count FROM recipient_steps GROUP BY campaign_id,revision_id,step_id,transport_disposition,skip_reason`).all()).results);
       await clearCampaigns(bindings.DB);
+      if(action==='retention') return context.json(await seedRetention(bindings.DB));
       if(action==='reporting') return context.json(await seedReporting(bindings.DB,platform));
       if(action==='outcomes') await seedOutcomes(bindings.DB);
       if(action==='filters') for(const state of states) for(const channels of [['email'],['sms'],['email','sms']]) await seedCampaign(bindings.DB,`${state}-${channels.join('-')}`,state,channels);

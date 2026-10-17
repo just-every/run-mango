@@ -1,3 +1,4 @@
+import { createRetentionRoutes } from './retention-routes';
 import { createCampaignReportRoutes } from './campaign-report-routes';
 import type { Database } from '@/core/platform/db/client';
 import { Hono } from 'hono';
@@ -7,6 +8,7 @@ import type { createInsightsService } from './service';
 export function createInsightsRoutes(service: ReturnType<typeof createInsightsService>, database:Database) {
   const routes = new Hono();
   routes.route('/',createCampaignReportRoutes(database));
+  routes.route('/',createRetentionRoutes(database));
   routes.get('/insights', async (context) => context.json(await service.list()));
   routes.get('/campaigns/:id/results', async (context) => context.json(await service.campaignResult(context.req.param('id'))));
   routes.get('/insights/deliverability', async (context) => {
