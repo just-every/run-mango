@@ -8,7 +8,7 @@ export function erasureWriteCost(sql:string){
  if(operations.getStore()===undefined||/^\s*(SELECT|PRAGMA|EXPLAIN)\b/i.test(sql))return 0;
  const table=sql.match(/^\s*(?:INSERT(?: OR \w+)? INTO|REPLACE INTO|UPDATE|DELETE FROM)\s+["`]?([\w]+)/i)?.[1]?.toLowerCase();
  // Independently serving operator identities remain usable during maintenance.
- if(table==='operators'||table?.startsWith('oc_')||(table?.startsWith('oa_')&&table!=='oa_limits'))return 0;
+ if(table==='operators'||table==='integration_audit'||table==='integration_credentials'||table?.startsWith('oc_')||(table?.startsWith('oa_')&&table!=='oa_limits'))return 0;
  return 2;
 }
 /** A request admitted before deletion must not append personal data after the

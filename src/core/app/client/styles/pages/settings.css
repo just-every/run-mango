@@ -35,6 +35,22 @@
 .insights-table th.num, .insights-table td.num { padding-right: var(--sp-7); }
 
 /* Settings. */
+.settings-integrations { scroll-margin-top: 5rem; }
+.settings-integrations > p { max-width: 72ch; }
+.integration-create { display: grid; gap: var(--sp-4); max-width: 44rem; margin: var(--sp-5) 0; }
+.integration-create > label { display: grid; gap: 6px; }
+.integration-create fieldset { display: grid; gap: var(--sp-3); padding: var(--sp-4); border: 1px solid var(--ms-hairline); border-radius: 8px; min-width: 0; }
+.integration-create button { justify-self: start; }
+.integration-scope { display: flex; align-items: flex-start; gap: var(--sp-3); }
+.integration-scope input { width: 18px; height: 18px; flex-shrink: 0; margin-top: 4px; }
+.integration-scope small, .integration-activity small, .integration-activity time { display: block; color: var(--ms-muted); font-size: 13px; }
+.integration-secret { padding: var(--sp-5); margin: var(--sp-5) 0; }
+.integration-secret textarea { display: block; width: 100%; margin: var(--sp-2) 0 var(--sp-4); overflow-wrap: anywhere; }
+.integration-credentials small { overflow-wrap: anywhere; }
+.integration-audit { margin-top: var(--sp-6); }
+.integration-activity { list-style: none; padding: 0; margin: var(--sp-4) 0; }
+.integration-activity li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--sp-3); padding: var(--sp-3) 0; border-top: 1px solid var(--ms-hairline); overflow-wrap: anywhere; }
+.integration-activity li > div { min-width: 0; }
 .settings-sender__body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: var(--sp-7) var(--sp-8); align-items: start; }
 .settings-sender-form__intro { max-width: 60ch; margin: 0 0 var(--sp-4); color: var(--ms-ink-soft); }
 .settings-sender-form fieldset { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-4); min-width: 0; margin: 0; padding: 0; border: 0; }

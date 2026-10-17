@@ -12,6 +12,8 @@ import { createSegmentRoutes } from '@/core/features/audience/segments';
 import { senderIdentitySchema } from '@/core/features/settings/sender-validation';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { createLinkHostRoutes, loadLinkHosts } from '@/core/features/settings/link-hosts';
+import { createIntegrationService } from '@/core/features/integrations/service';
+import { createIntegrationApiRoutes, createIntegrationSettingsRoutes } from '@/core/features/integrations/routes';
 import { createAudienceImportRoutes } from '@/core/features/audience/import-routes';
 import { createSignupRoutes } from '@/core/features/audience/signup-routes';
 import { createPortabilityRoutes } from '@/core/features/portability/routes';
@@ -287,6 +289,8 @@ export function createApp(
   app.route('/', createMediaRoutes(environment.DB, platform.blobs));
   if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce));
   app.route('/',createOpenPixelRoutes(platform));
+  const integrations = createIntegrationService(platform, audienceService);
+  app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations));
   mountBeforeAuthentication?.(app, services);
   if (!mountBeforeAuthentication) app.all('/api/_local/*', (context) => context.json({ error: 'not_found' }, 404));
 
@@ -299,6 +303,7 @@ export function createApp(
     await next();
   });
   app.route('/api', createOperatorRoutes(authService, { secureCookie }));
+  app.route('/api', createIntegrationSettingsRoutes(integrations, authService));
   app.get('/api/editor/config', async context => {
     context.header('Cache-Control', 'no-store');
     const operator = context.get('operator');

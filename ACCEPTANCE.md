@@ -54,7 +54,7 @@ The 0.2.0 upgrade record includes every shipped migration through 0059. Existing
 
 ## Clause acceptance (target contract, 16 October 2026)
 
-CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **66 done, 72 partial, 103 missing** of 241 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
+CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **66 done, 75 partial, 100 missing** of 241 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
 
 ### Home
 
@@ -69,7 +69,7 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **OPER-004 — Roles and permissions** (missing). A route-level journey signs in one operator per role and calls each protected operation (approve, activate, import, export, erase, invite, connect integration, connect sending provider, view unmasked contact), asserting 403 with a named reason exactly where the matrix denies, at 1440 and 390 pixels for the visible controls.
 - **OPER-005 — Separation of approval** (missing). With the policy on, an Author saves a revision and a Manager approves it; the same Manager editing then approving their own revision is refused with `separation-required`.
 - **OPER-006 — Single sign-on and deprovisioning** (missing). A journey against a test OIDC issuer and SCIM client at the network edge signs an operator in with a mapped role, deprovisions them, and shows their next request refused and their past approvals still attributed.
-- **OPER-007 — Activity log** (missing). A journey performs one of each action, then filters and exports the log and checks every action appears once with actor and time.
+- **OPER-007 — Activity log** (partial). A journey performs one of each action, then filters and exports the log and checks every action appears once with actor and time. Scoped integration coverage: `tests/go-live/integrations.journeys.ts`; the remaining target acceptance is recorded in CONTRACT.md.
 
 ### Store signals
 
@@ -96,7 +96,7 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **CONT-011 — Merge** (done). Merge keeps the most restrictive state per channel. Evidence: `tests/audience-controls/merge.spec.ts`.
 - **CONT-012 — Dormancy without deletion** (partial). Dormant contacts are labelled and excluded, never deleted; imported clicks, orders and consent changes count at their original times, and a move-in contact without history is `no-history`, not dormant, while a dormant contact with only imported opens is labelled `open-only` (journey under AUD-008); needs a tagged journey. Evidence: `src/core/features/audience/eligibility.ts`.
 - **CONT-013 — Erasure and surviving opt-out** (done). Erasure within five minutes with surviving opt-out hashes. Evidence: `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts`.
-- **CONT-014 — Custom properties** (missing). An operator creates a date and a money property, imports a CSV that maps both, sets one through the events API, and sees a segment on the date property and a personalised preview using the money value, with history showing each source.
+- **CONT-014 — Custom properties** (partial). An operator creates a date and a money property, imports a CSV that maps both, sets one through the events API, and sees a segment on the date property and a personalised preview using the money value, with history showing each source. Scoped integration coverage: `tests/go-live/integrations.journeys.ts`; the remaining target acceptance is recorded in CONTRACT.md.
 - **CONT-015 — Topics and tags** (partial). A contact unsubscribes from one topic through the preference centre; the next campaign on that topic excludes them with `topic-unsubscribed` while a campaign on another topic still reaches them; adding a tag changes no eligibility. Evidence: `src/core/features/lifecycle/email-consent-scope.ts` · `tests/campaign-authoring/import-category.spec.ts`.
 - **CONT-016 — Preference centre** (missing). A journey opens the preference link from a sent message, confirms a topic change and a 30-day pause, and the next two campaigns exclude the contact with `topic-unsubscribed` and `paused-by-recipient`; a GET from a link scanner changes nothing.
 - **CONT-017 — Contact profile and event timeline** (partial). A contact who submitted a form, placed an order, entered a flow and clicked a message shows each in order with its source, at 1440 and 390 pixels. Evidence: `src/core/features/audience/ui/contact-detail.tsx`.
@@ -324,7 +324,7 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **INT-008 — Outbound webhooks** (missing). An endpoint that fails twice then succeeds receives each event once with a valid signature, and the log shows the attempts.
 - **INT-009 — Zapier and Crank** (missing). A Zapier platform test run of each trigger and action succeeds against a test installation.
 - **INT-010 — Segment** (missing). Segment-format identify and track payloads at the edge create one contact and one event, and Mango events are delivered to a test Segment source.
-- **INT-011 — CRM sync** (missing). An edge journey changes a mapped field in the CRM and sees it in Mango, unsubscribes in Mango and sees the CRM marked opted out, and a flow creates one CRM task.
+- **INT-011 — CRM sync** (partial). An edge journey changes a mapped field in the CRM and sees it in Mango, unsubscribes in Mango and sees the CRM marked opted out, and a flow creates one CRM task. Scoped integration coverage: `tests/go-live/integrations.journeys.ts`; the remaining target acceptance is recorded in CONTRACT.md.
 - **INT-012 — Ad audiences** (missing). An edge journey syncs a segment, then removes a contact who made a do-not-share request, and the next sync deletes them from the audience.
 - **INT-013 — Web analytics tagging** (missing). A sent message's links carry the configured UTM values, and a Vane goal fixture creates one event on the contact.
 - **INT-014 — Reviews and loyalty apps** (missing). A review-submitted fixture exits the contact from the review-request flow as converted.

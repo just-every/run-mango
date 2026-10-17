@@ -821,7 +821,7 @@ CSV imports use reviewed plans. Erasure withdraws the complete affected import c
 
 - **AUD-001 and CAMP-002 policy:** The audience rule shown in campaign review, approval checks, the scheduled page, campaign lists and audience snapshots is the plain-text summary derived from the structured inclusion and exclusion rules that select recipients. It includes every condition, comparison, value and lookback, with the same field labels as the editor and explicit all/any matching. The composer shows that summary live and does not author audience prose. Every newly saved revision stores its derived summary; caller-supplied audience text is ignored as authority. Earlier revisions display the derived summary without rewriting immutable approval records. Readiness requires valid structured rules, and approval continues to bind the exact saved rules.
 
-**DATA-001 implementation:** Maintained Base portability archives all product D1 rows and original R2 assets, with staged restore into an empty maintenance-mode destination. Authentication credentials, sessions, development outbox and transfer bookkeeping are excluded; operator profiles remain attribution only. Restore requires matching privately backed-up contact/link keys, explicit confirmation and fresh destination Base authentication. Mango adapts the journal to source-wide erasure floors (CONT-013), deliberately refusing all older archives against current authority and refusing nonempty legacy journals before staging; current post-erasure exports remain restorable with matching authority.
+**DATA-001 implementation:** Maintained Base portability archives all product D1 rows and original R2 assets, with staged restore into an empty maintenance-mode destination. Authentication credentials, sessions and transfer bookkeeping are excluded; operator profiles remain attribution only. Restore requires matching privately backed-up contact/link keys, explicit confirmation and fresh destination Base authentication. Mango adapts the journal to source-wide erasure floors (CONT-013), deliberately refusing all older archives against current authority and refusing nonempty legacy journals before staging; current post-erasure exports remain restorable with matching authority.
 
 
 ## Managed installation and editor
@@ -872,7 +872,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `OPER-004` | Roles and permissions | target | missing |  | not implemented |
 | `OPER-005` | Separation of approval | target | missing |  | not implemented |
 | `OPER-006` | Single sign-on and deprovisioning | target | missing |  | not implemented |
-| `OPER-007` | Activity log | target | missing |  | not implemented |
+| `OPER-007` | Activity log | target | partial | `tests/go-live/integrations.journeys.ts` · `src/core/features/integrations/routes.ts` | Owner-only integration activity records credential creation/revocation and every scoped API request, including denials. The complete cross-product activity log, filters and CSV export remain unimplemented. |
 | `STORE-001` | Store and event connections | published | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: Each connection (INT-001 to INT-006) syncs every declared source type through its edge with source identity and occurrence time; Shopify is proved today. |
 | `STORE-002` | Source identity | published | done | `tests/shopify/connection.spec.ts` |  |
 | `STORE-003` | Freshness | published | partial | `src/core/features/store/sync-run-repository.ts` | acceptance not yet met: Freshness per source type shows the last successful completion and any later failure; needs a tagged journey. |
@@ -883,9 +883,9 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `CONT-001` | Contact identity | published | done | `tests/move-in/archive.journeys.ts` |  |
 | `CONT-002` | Channel status | published | done | `tests/move-in/held.journeys.ts` · `tests/move-in/archive.journeys.ts` |  |
 | `CONT-003` | Consent evidence | published | done | `tests/audience-import/signup.spec.ts` · `tests/campaign-authoring/import-category.spec.ts` |  |
-| `CONT-004` | Opt-out precedence | published | done | `tests/go-live/go-live.journeys.ts` · `tests/provider-suppression-ingress.spec.ts` · `tests/move-in/held.journeys.ts` |  |
+| `CONT-004` | Opt-out precedence | published | done | `tests/go-live/go-live.journeys.ts` · `tests/provider-suppression-ingress.spec.ts` · `tests/move-in/held.journeys.ts` · `tests/go-live/integrations.journeys.ts` |  |
 | `CONT-005` | Resubscription | published | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts` |  |
-| `CONT-006` | Email suppression | published | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/go-live.journeys.ts` |  |
+| `CONT-006` | Email suppression | published | done | `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/go-live/integrations.journeys.ts` |  |
 | `CONT-007` | SMS compliance replies | published | partial | `src/core/features/sms/inbound.ts` · `tests/audience-import/signup.spec.ts` | acceptance not yet met: Signed SMS replies: STOP family opts out before acknowledgement, HELP and START never subscribe; proved on the Mobile Message adapter, Twilio pending (SMS-001). |
 | `CONT-008` | Contact history | published | partial | `src/core/features/audience/ui/contact-detail.tsx` | acceptance not yet met: The contact page shows the full time-ordered history (see CONT-017). |
 | `CONT-009` | Confirmation | published | done | `tests/go-live/go-live.journeys.ts` · `tests/audience-import/signup.spec.ts` |  |
@@ -893,8 +893,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `CONT-011` | Merge | published | done | `tests/audience-controls/merge.spec.ts` |  |
 | `CONT-012` | Dormancy without deletion | published | partial | `src/core/features/audience/eligibility.ts` | acceptance not yet met: Dormant contacts are labelled and excluded, never deleted; imported clicks, orders and consent changes count at their original times, and a move-in contact without history is `no-history`, not dormant, while a dormant contact with only imported opens is labelled `open-only` (journey under AUD-008); needs a tagged journey. |
 | `CONT-013` | Erasure and surviving opt-out | published | done | `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts` |  |
-| `CONT-014` | Custom properties | target | missing |  | not implemented |
-| `CONT-015` | Topics and tags | target | partial | `src/core/features/lifecycle/email-consent-scope.ts` · `tests/campaign-authoring/import-category.spec.ts` | acceptance not yet met: A contact unsubscribes from one topic through the preference centre; the next campaign on that topic excludes them with `topic-unsubscribed` while a campaign on another topic still reaches them; adding a tag changes no eligibility. |
+| `CONT-014` | Custom properties | target | partial | `tests/go-live/integrations.journeys.ts` · `src/core/features/integrations/contacts.ts` | The scoped API persists contact fields with contact identity and consent source. Typed property definitions, UI editing, date/money semantics, segments and personalisation remain unimplemented. |
+| `CONT-015` | Topics and tags | target | partial | `tests/go-live/integrations.journeys.ts` · `src/core/features/integrations/contacts.ts` · `src/core/features/lifecycle/email-consent-scope.ts` | Scoped subscriber sync stores deduplicated tags without granting consent, and maintains saved integration lists. Topic preference-centre acceptance and general tag-driven segmentation remain unmet. |
 | `CONT-016` | Preference centre | target | missing |  | not implemented |
 | `CONT-017` | Contact profile and event timeline | target | partial | `src/core/features/audience/ui/contact-detail.tsx` | acceptance not yet met: A contact who submitted a form, placed an order, entered a flow and clicked a message shows each in order with its source, at 1440 and 390 pixels. |
 | `CONT-018` | Onsite behaviour | target | partial | `tests/shopify/connection.spec.ts` | acceptance not yet met: A browser journey clicks a tracked link to the store, views two products and adds one to the cart; the contact timeline shows the three events labelled `click-identified`, and the address bar no longer shows `mgo_c`. An anonymous visitor views a product and then submits a form, and the earlier view appears on their timeline. A second browser using the same token after the exchange identifies nobody, and a link to a host outside the store hosts carries no token. The same journey with Global Privacy Control set records none. |
@@ -1063,11 +1063,11 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `INT-004` | Stripe | target | missing |  | not implemented |
 | `INT-005` | Square | target | missing |  | not implemented |
 | `INT-006` | Stall and Orbit | target | missing |  | not implemented |
-| `INT-007` | Events and profiles API | target | partial | `src/core/features/audience/commerce-webhook-routes.ts` | acceptance not yet met: An API journey tracks a custom event with an idempotency key twice (one event stored), refuses a subscribe call without evidence with a named error, and returns 429 past the key's limit. |
+| `INT-007` | Events and profiles API | target | partial | `tests/go-live/integrations.journeys.ts` · `docs/integrations.md` | Owner-created revocable scoped credentials, audited/rate-limited contact upsert with fields/tags and consent evidence, suppression, approved-segment dispatch and a replayable unsubscribe/bounce/complaint feed are implemented. General custom-event ingestion and its complete target acceptance remain unmet. |
 | `INT-008` | Outbound webhooks | target | missing |  | not implemented |
 | `INT-009` | Zapier and Crank | target | missing |  | not implemented |
 | `INT-010` | Segment | target | missing |  | not implemented |
-| `INT-011` | CRM sync | target | missing |  | not implemented |
+| `INT-011` | CRM sync | target | partial | `tests/go-live/integrations.journeys.ts` · `docs/integrations.md` | Scoped subscriber sync and a cursor-paged refusal feed support a sibling CRM client. The Coffer client is supplied as a patch in the integration round, not landed in Coffer here. Full CRM field mapping UI and flow-created CRM tasks remain unmet. |
 | `INT-012` | Ad audiences | target | missing |  | not implemented |
 | `INT-013` | Web analytics tagging | target | missing |  | not implemented |
 | `INT-014` | Reviews and loyalty apps | target | missing |  | not implemented |

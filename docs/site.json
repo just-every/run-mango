@@ -83,6 +83,12 @@
           "source": "docs/backup-and-export.md",
           "label": "Backup and export",
           "description": "What you can export from Mango today, how to bring it back, and what is not covered yet."
+        },
+        {
+          "slug": "integrations",
+          "source": "docs/integrations.md",
+          "label": "Connect another application",
+          "description": "Scoped credentials, subscriber sync and the unsubscribe change feed, with curl examples."
         }
       ]
     }
@@ -159,6 +165,10 @@
     {
       "source": "DEMO.md",
       "reason": "Demo operation and isolation guide for maintainers"
+    },
+    {
+      "source": "docs/CLAIMS.md",
+      "reason": "Maintainer claim inventory supplied by the sibling integration brief; product instructions are in Connect another application."
     }
   ]
 }
