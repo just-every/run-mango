@@ -93,6 +93,9 @@ test('[SEND-001][SEND-008][SEND-006] native Resend reconciliation resumes exact 
     await expect(reputation.locator('td').nth(1)).toHaveText(/^1 \/ 2 /);
     await expect(reputation.locator('td').nth(2)).toHaveText(/^0 \/ 4 /);
     await page.screenshot({path:test.info().outputPath('domain-rates-combined-providers.png'),fullPage:true});
+    // Leave the polling insights page first: once the session expires, its next reload sends it to
+    // sign-in, and that navigation would abort the next page.goto.
+    await page.goto('about:blank');
     const clock=await site.control('/_golive/clock'),expiry=(await recipients())[1].reconcile_until;
     expect(expiry).toBeGreaterThan(clock.now);
     const expiredClock=await site.control('/_golive/clock',{advanceMs:expiry-clock.now+1});edge.resend.setClock(expiredClock.now);
