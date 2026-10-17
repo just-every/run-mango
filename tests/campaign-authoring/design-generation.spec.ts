@@ -283,6 +283,9 @@ test('[DESIGN-003] a run sends only the brief, never buys twice, records its cos
     await expect(run.getByRole('alert')).toContainText('Design generation failed', { timeout: 30000 });
     await expect(run.getByRole('alert')).not.toContainText('Injected');
     await reloadPage(page);
+    // The streamed run can paint before the rich editor hydrates and changes its height.
+    // Confirm the saved body is mounted before clicking the run's moving control.
+    await expect.poll(content).toBe(before);
     await expect(run.getByRole('alert')).toContainText('Design generation failed');
     await run.getByRole('button', { name: 'Dismiss', exact: true }).click();
     // With the failed run dismissed, the newest run with designs on offer is the one shown.
