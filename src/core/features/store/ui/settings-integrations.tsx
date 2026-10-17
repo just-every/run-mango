@@ -52,7 +52,7 @@ export function SettingsIntegrations() {
         </fieldset>
         <button className="primary-action" disabled={busy || !scopes.length} type="submit">{busy ? 'Creating…' : 'Create credential'}</button>
       </form>}
-      <ul className="settings-operator-list integration-credentials">{resource.data.credentials.map(credential => <li key={credential.id}>
+      <ul className="integration-credentials">{resource.data.credentials.map(credential => <li key={credential.id}>
         <div className="settings-operator"><p className="settings-operator__name"><strong>{credential.name}</strong><span>{credential.revokedAt ? 'Revoked' : 'Active'}</span></p>
           <small>{credential.scopes.join(' · ')}</small><small>Created {new Date(credential.createdAt).toLocaleDateString()} · {credential.lastUsedAt ? `Last used ${new Date(credential.lastUsedAt).toLocaleString()}` : 'No API requests yet'}</small>
           {revoke === credential.id ? <div className="settings-removal notice-warning"><p>Stop this application’s access now? Its synced contacts and consent history stay in Mango.</p><div className="settings-actions"><button className="danger-action" disabled={busy} onClick={() => void remove(credential.id)}>Confirm revocation</button><button className="secondary-action" onClick={() => setRevoke(null)}>Keep credential</button></div></div> : null}

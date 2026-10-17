@@ -5,8 +5,11 @@ import { consentEvidence } from '../../src/core/features/audience/schema';
 export async function seedRetention(db:D1Database) {
   const now=Date.now(),day=86400000;
   const profiles=[['iris','Iris Dawson',5,5],['luis','Luis Moreno',1,10],['maya','Maya Chen',3,60],['noah','Noah Brooks',2,120],['opal','Opal Bennett',4,210]] as const;
-  await db.prepare("DELETE FROM commerce_orders WHERE provider_order_id LIKE 'retention-%'").run();
-  await db.prepare("DELETE FROM source_records WHERE id LIKE 'retention-%'").run();
+  // Retention reports on every recorded order, so this fixture owns the whole order population;
+  // purchases seeded by earlier journeys in the same runtime must not join it.
+  await db.prepare('DELETE FROM commerce_refunds').run();
+  await db.prepare('DELETE FROM commerce_orders').run();
+  await db.prepare("DELETE FROM source_records WHERE source_type IN ('order','refund')").run();
   const orders:{contactId:string;purchasedAt:number;amountMinor:number;currency:string}[]=[];
   for(const[id,name,count,recency]of profiles) {
     await db.prepare("INSERT OR REPLACE INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES(?,?,?,'subscribed','never-subscribed',?,?)").bind(`retention-${id}`,`${id}@example.test`,name,now-400*day,now).run();

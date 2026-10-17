@@ -87,9 +87,9 @@
 .settings-add-operator .muted-copy { margin: 0; }
 .settings-actions { display: flex; flex-wrap: wrap; gap: var(--sp-3); }
 .settings-actions input { flex: 1 1 16rem; width: 100%; min-width: 0; }
-.settings-operator-list { margin: 0; padding: 0; list-style: none; }
-.settings-operator-list li { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); padding: var(--sp-4) 0; border-top: 1px solid var(--ms-hairline); }
-.settings-operator-list li > button { flex-shrink: 0; }
+.settings-operator-list, .integration-credentials { margin: 0; padding: 0; list-style: none; }
+.settings-operator-list li, .integration-credentials li { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-4); padding: var(--sp-4) 0; border-top: 1px solid var(--ms-hairline); }
+.settings-operator-list li > button, .integration-credentials li > button { flex-shrink: 0; }
 .settings-operator { min-width: 0; }
 .settings-operator p { margin: 0; }
 .settings-operator__name { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; color: var(--ms-ink); font-size: 16px; }
@@ -120,6 +120,6 @@
   .insights-table td::before { content: attr(data-label); line-height: 1.8; }
 }
 @media (max-width: 480px) {
-  .settings-operator-list li { flex-direction: column; align-items: flex-start; }
+  .settings-operator-list li, .integration-credentials li { flex-direction: column; align-items: flex-start; }
   .settings-actions > * { flex: 1 1 100%; }
 }

@@ -30,7 +30,7 @@ test('[INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, repla
     expect((await api('/contacts', 'PUT', {...contact, email: 'missing-evidence@example.test', consent: undefined})).status).toBe(400);
     const reader = await json(await site.call('/api/settings/integrations', {method: 'POST', cookie, body: {name: 'Read only', scopes: ['contacts:read']}}), 201);
     expect((await site.call('/api/integrations/v1/contacts', {method: 'PUT', headers: {Authorization: `Bearer ${reader.token}`}, body: contact})).status).toBe(403);
-    const firstDue = new Date(Date.now() + 5000);
+    const firstDue = new Date(Date.now() + 30000);
     const sent = await json(await site.call('/api/campaigns', {method: 'POST', cookie, body: {}}), 201);
     const inclusionRuleJson = JSON.stringify({version: 1, operator: 'all', predicates: [{sourceType: 'contact', field: 'id', comparator: 'in', value: [first.contact.id]}]});
     await json(await site.call(`/api/campaign-revisions/${sent.revisionId}`, {method: 'PATCH', cookie, body: {
@@ -42,13 +42,17 @@ test('[INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, repla
     const send = () => site.call(`/api/integrations/v1/campaigns/${sent.campaignId}/send`, {method: 'POST', headers: {Authorization: `Bearer ${senderKey.token}`}, body: {revisionId: sent.revisionId, segmentId: first.contact.segmentIds[0]}});
     expect((await send()).status).toBe(409);
     await approve(site, cookie, sent);
-    while ((await site.control('/_golive/clock')).now <= firstDue.getTime()) await new Promise(resolve => setTimeout(resolve, 250));
+    // Approval also queues the step's own dispatch for its real due instant, which would complete the
+    // campaign first. Reach the due instant on the Worker clock alone so the integration send leads;
+    // both commands share one dispatch idempotency key, so the later approval command is fenced.
+    const beforeDue = await site.control('/_golive/clock');
+    await site.control('/_golive/clock', {advanceMs: firstDue.getTime() - beforeDue.now + 1});
     await json(await send(), 202);
     expect((await dispatch(site, sent.campaignId, firstDue))[0].transport_disposition).toBe('accepted');
     const delivered = edge.sends.findLast(send => send.to === 'alex@example.test' && send.body.headers?.['List-Unsubscribe'])!;
     const html = delivered.body.content.find((part: any) => part.type === 'text/html').value;
     const unsubscribe = /href="(https:\/\/[^\"]+\/unsubscribe\/[^\"]+)"[^>]*>Unsubscribe<\/a>/.exec(html)![1].replaceAll('&amp;', '&');
-    const nextDue = new Date(Date.now() + 7000);
+    const nextDue = new Date((await site.control('/_golive/clock')).now + 7000);
     const queued = await draftCampaign(site, cookie, 'Next donor update', ['blair@example.test'], nextDue);
     await approve(site, cookie, queued);
     expect((await fetch(site.local(unsubscribe))).status).toBe(200);

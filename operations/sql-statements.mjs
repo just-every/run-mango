@@ -1,10 +1,13 @@
 /** SQLite script reader for integration tests, including quoted semicolons and triggers. */
 export function sqlStatements(source) {
-  const statements = []; let start = 0, quote = '', comment = '', word = '', trigger = false, block = false;
+  // A trigger body runs from BEGIN to its own END; CASE ... END expressions nest inside it.
+  const statements = []; let start = 0, quote = '', comment = '', word = '', trigger = false, block = false, cases = 0;
   function token() {
-    if (word.toUpperCase() === 'TRIGGER') trigger = true;
-    if (trigger && word.toUpperCase() === 'BEGIN') block = true;
-    if (trigger && word.toUpperCase() === 'END') block = false;
+    const keyword = word.toUpperCase();
+    if (keyword === 'TRIGGER') trigger = true;
+    if (trigger && keyword === 'BEGIN') block = true;
+    if (block && keyword === 'CASE') cases++;
+    if (block && keyword === 'END') { if (cases) cases--; else block = false; }
     word = '';
   }
   for (let i = 0; i < source.length; i++) {
@@ -14,7 +17,7 @@ export function sqlStatements(source) {
     if (c === '-' && next === '-') { token(); comment = '--'; i++; continue; }
     if (c === '/' && next === '*') { token(); comment = '/*'; i++; continue; }
     if (c === "'" || c === '"' || c === '`') { token(); quote = c; continue; }
-    if (/[A-Za-z_]/.test(c)) { word += c; continue; }
+    if (/[A-Za-z_]/.test(c) || (word && /[0-9$]/.test(c))) { word += c; continue; }
     token();
     if (c === ';' && !block) { const sql = source.slice(start, i + 1).trim(); if (sql) statements.push(sql); start = i + 1; trigger = false; }
   }

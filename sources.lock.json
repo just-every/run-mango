@@ -1462,7 +1462,7 @@
       "executable": false
     },
     "operations/sql-statements.mjs": {
-      "sha256": "57b45eedd0cf581d0ace7bef1105cd6d18b4a9a5cf299babe9e3b965c6878d09",
+      "sha256": "3f90853269ff79f1154cdc546c6125a8ddbced4515f2b3c351fdf1cdf121e096",
       "executable": false
     },
     "package.json": {
@@ -2134,7 +2134,7 @@
       "executable": false
     },
     "src/core/app/client/styles/pages/settings.css": {
-      "sha256": "c3608424606fd928010113d04f24915083b0e0eae63be36ed8e479e158a7ddef",
+      "sha256": "aa2e8a5de9b51e80390089e94ddd7a1ff58a227fdbc99d93aba8304e6ab82186",
       "executable": false
     },
     "src/core/app/client/styles/pages/setup.css": {
@@ -4266,7 +4266,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-integrations.tsx": {
-      "sha256": "70da8589e35ab95247ecb25ef8a14e27ae41fcf4228dbc26a66d03ac23c3e3e1",
+      "sha256": "ffca0c4c636b21cc6cf78d88495982314392addfdbde6a32d67210f7512fef71",
       "executable": false
     },
     "src/core/features/store/ui/settings-link-hosts.tsx": {
@@ -6538,7 +6538,7 @@
       "executable": false
     },
     "tests/campaign-results/retention-fixture.ts": {
-      "sha256": "830326a158bebc8963f26f6e4daf1ec3840641885f51bcfd76240f487b05e537",
+      "sha256": "0bdbdf5d183d2115a33c7ccd2860d947f0ead51ff465d8d10c6c1c37cafda0b8",
       "executable": false
     },
     "tests/campaign-results/retention-journey.ts": {
@@ -6594,7 +6594,7 @@
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
-      "sha256": "e9b6079b1e33d5ebccf7bd7f7210755e53e76ba8f162862b545d3d3dd5746648",
+      "sha256": "21c3fe422ee986f4b0e7f9ce3c0d9d081beb55aabc0eba618b1aff8b662f586e",
       "executable": false
     },
     "tests/go-live/managed-mail.journeys.ts": {
