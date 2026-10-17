@@ -1734,7 +1734,7 @@
       "executable": false
     },
     "scripts/installer/deploy-declaration.mjs": {
-      "sha256": "a61512800a64459a32ee8a1fd15dc31bae99d859ae7bcdb45efe4d3843c6f465",
+      "sha256": "65a373559f8c739250322c38976eb31a6a46cfae240042eedcd89c08ea3438e2",
       "executable": false
     },
     "scripts/installer/environment.mjs": {

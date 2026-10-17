@@ -27,7 +27,7 @@ export function resolveDeclaration(root, purpose, env = {}) {
       const missing = required.filter(name => !marketingValue(name));
       if (missing.length) throw new Error(`Configure marketing mail inputs: ${missing.join(', ')}.`);
     }
-    for (const name of ['MARKETING_MAIL_PROVIDER', 'MARKETING_MAIL_WEBHOOK_ID']) {
+    for (const name of ['MAIL_FROM', 'MAIL_RELAY_URL', 'MARKETING_MAIL_PROVIDER', 'MARKETING_MAIL_WEBHOOK_ID']) {
       if (supplied({environment: name})) declaration.vars[name] = env[name].trim();
     }
   }
