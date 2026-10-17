@@ -4,6 +4,7 @@ import { basename, join } from 'node:path';
 import { freePort } from '../support/free-port.mjs';
 import { scratchDirectory } from '../support/artifacts.mjs';
 import { createCommands } from '@runeditrun/rer/commands';
+import { testTemplate } from '../support/queue-consumers.mjs';
 
 export async function authoringRuntime({
   suite = 'campaign-authoring',
@@ -13,6 +14,7 @@ export async function authoringRuntime({
   token = `synthetic-${crypto.randomUUID()}`,
   stateDirectory,
   parallelQueue = false,
+  queueConsumers,
 } = {}) {
   const scratch = scratchDirectory(suite);
   await mkdir(scratch, { recursive: true });
@@ -33,7 +35,7 @@ export async function authoringRuntime({
     }
   })();
   try {
-    const template = (await readFile('deploy/wrangler.local.template.toml', 'utf8'))
+    const template = testTemplate(await readFile('deploy/wrangler.local.template.toml', 'utf8'), queueConsumers)
       .replace('./src/core/app/worker.local.ts', join(process.cwd(), fixtureWorker))
       .replace('migrations_dir = "migrations/core"', `migrations_dir = ${JSON.stringify(join(process.cwd(), 'migrations/core'))}`);
     // `vars` may depend on the runtime's own origin, as a copy started by `rer dev` does with MANGO_PUBLIC_BASE_URL.
