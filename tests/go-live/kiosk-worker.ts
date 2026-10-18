@@ -1,0 +1,57 @@
+// Isolated native Worker for FORM-009. Only the paid mail and challenge HTTP
+// edges are doubled; product routing, sessions, D1, consent and SSR are real.
+import {createFixturePlatform} from '../support/local-platform';
+import {createApp} from '../../src/core/app/app';
+import {dispatchDocuments} from '../../src/core/app/document-dispatch';
+import {testIdentity} from '../support/test-identity';
+import {createResendAdapter} from '../../src/core/platform/adapters/resend';
+import type {LocalAppBindings} from '../support/fixture-app';
+
+type Bindings=LocalAppBindings&{KIOSK_TEST_CHALLENGE?:string};
+const transport=globalThis.fetch, usedTokens=new Set<string>();
+let challengeConnected=true;
+const messages:Array<{to:string;text:string}>=[];
+globalThis.fetch=async(input,init)=>{
+  const request=new Request(input,init),url=new URL(request.url);
+  if(url.hostname==='challenges.cloudflare.com') {
+    if(url.pathname!=='/turnstile/v0/siteverify'||request.method!=='POST')throw new Error('Unexpected challenge operation.');
+    const form=new URLSearchParams(await request.text()),token=form.get('response')??'';
+    const valid=form.get('secret')==='kiosk-test-secret'&&Boolean(form.get('remoteip'))&&/^kiosk-token-[\w-]+$/.test(token)&&!usedTokens.has(token);
+    if(valid)usedTokens.add(token);
+    return Response.json({success:valid,action:'newsletter-signup',hostname:'127.0.0.1'});
+  }
+  if(url.hostname==='api.resend.com') {
+    if(url.pathname!=='/emails'||request.method!=='POST'||request.headers.get('Authorization')!=='Bearer kiosk-test-mail-key')throw new Error('Unexpected mail operation.');
+    const body=await request.json() as {to:string[];text:string};
+    if(body.to.length!==1||!body.to[0].endsWith('@example.test')||!body.text.includes('/consent/confirm/'))throw new Error('Unexpected confirmation envelope.');
+    messages.push({to:body.to[0],text:body.text});
+    return Response.json({id:crypto.randomUUID()});
+  }
+  if(url.hostname==='127.0.0.1'||url.hostname==='localhost')return transport(request);
+  throw new Error('Unexpected kiosk fixture network request.');
+};
+export default {
+  async fetch(request,bindings,context) {
+    const platform=createFixturePlatform(bindings,bindings.LOCAL_BOOTSTRAP_TOKEN);
+    platform.config.publicBaseUrl=new URL(new URL(request.url).origin);
+    if(bindings.KIOSK_TEST_CHALLENGE==='1'&&challengeConnected)platform.config.signupTurnstile={siteKey:'kiosk-test-site',secretKey:'kiosk-test-secret'};
+    platform.mailer=platform.confirmationMailer=createResendAdapter({apiKey:'kiosk-test-mail-key',webhookId:'kiosk-test-webhook',webhookSecret:'kiosk-test-webhook-secret'});
+    const path=new URL(request.url).pathname;
+    if(path.startsWith('/_kiosk/')) {
+      if(request.headers.get('X-Test-Token')!==bindings.LOCAL_BOOTSTRAP_TOKEN)return new Response('Forbidden',{status:403});
+      if(path==='/_kiosk/open') {
+        await testIdentity(platform).importLocalDemoOperator({id:'kiosk-owner',email:'owner@example.test',displayName:'Kiosk Owner'},new Date());
+        return Response.json(await testIdentity(platform).createTestSession('kiosk-owner'));
+      }
+      if(path==='/_kiosk/challenge') {challengeConnected=(await request.json() as {connected:boolean}).connected;return Response.json({connected:challengeConnected});}
+      if(path==='/_kiosk/messages')return Response.json(messages);
+      if(path==='/_kiosk/rows') {
+        const {sql}=await request.json() as {sql:string};
+        if(!/^SELECT\s/i.test(sql))return new Response('Read only',{status:400});
+        return Response.json((await bindings.DB.prepare(sql).all()).results);
+      }
+      return new Response('Not found',{status:404});
+    }
+    return dispatchDocuments(request,bindings,context,platform,createApp(bindings,platform,undefined,true));
+  },
+} satisfies ExportedHandler<Bindings>;

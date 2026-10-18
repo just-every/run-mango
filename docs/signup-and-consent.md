@@ -169,3 +169,9 @@ signup rate reservation remain, so a public resubmission may also have to wait
 for its current hourly reservation to end. This is a visible failed attempt, not an
 invisible queued email. A later fresh signup may request new confirmation;
 ambiguous email handoffs retain their claim and are never automatically replayed.
+
+## Shared tablets and event kiosks
+
+In Audience → Hosted form and embed, turn on **Kiosk or event form**, name the device or event and save. Open the hosted form on the shared tablet. Configure the Turnstile site and secret keys first: a kiosk refuses signups without verification, and every person must complete a fresh challenge.
+
+After a successful request, the form clears within two seconds. It does not remember or pre-fill a previous visitor, set an identifying cookie or store a visitor in browser storage. Every signup still needs affirmative consent and email confirmation. An existing unsubscribe or suppression remains protected. The kiosk has separate allowances of 300 accepted requests per network and globally per hour; ordinary forms retain their existing allowances, and confirmation requests retain the per-destination daily allowance. Insights shows confirmed subscriptions under the kiosk device label and retains their consent disclosure. Kiosk setting changes are recorded with the operator and time.

@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "dd95b6b235e3809cc52b10c227748793ece19b724e9d8b01e4e88273d8f41ed4",
+      "sha256": "e844c9e5dbc8a09702d8b98575dbf4ec0a31c001778086eb45ee21ee6af6fa50",
       "executable": false
     },
     "DEMO.md": {
@@ -1042,7 +1042,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "64e053feef4dd4c1528934b2e7ef70f001104278d3e3ffceea287d86a51b05ee",
+      "sha256": "a20936b442c920d73934f428943aa45a80595f5e93056301060f96009ae5e1e7",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1078,7 +1078,7 @@
       "executable": false
     },
     "docs/signup-and-consent.md": {
-      "sha256": "633fb684fda4230c6d6cded3bec0f873e4bca8a0ba08d233de15d41128095def",
+      "sha256": "aad832484727297fd04db24a5e880d224554869b9ede8328ad54da68a5cbdf69",
       "executable": false
     },
     "docs/site.json": {
@@ -1122,7 +1122,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "1e3f5719c8f238ed0f75d3fdeca18e39919b2b537237feee12684720b28f7dba",
+      "sha256": "10a188d72aea93d1dc3d4981e9b80c5512ca25fe2ce709f8f3dae120ad374e39",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1425,6 +1425,10 @@
       "sha256": "7740e4d3c4271c63eb87e215e1b63ec3202646b66fc9617fe5ef73522c6eec53",
       "executable": false
     },
+    "migrations/core/0075_kiosk_forms.sql": {
+      "sha256": "95d8a07cb4a06084c44d5180aae7bc7b4d1e826b5a367b378fe71dd430d91c1d",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -1486,7 +1490,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "5bb63d458628c23939ffbba7599bbe66e81968779f110c24a171503a74435410",
+      "sha256": "7b85bfb56cc2a46cae3ae748d08ef35e98fc98b8219737b859d9a1b3876d5546",
       "executable": false
     },
     "playwright.config.js": {
@@ -1494,7 +1498,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "b443da3c72a92af03ff8326b791f21df5f5d98eb26c290e757f6f7c379a78e0f",
+      "sha256": "76296c1b51fc3b007a19c16bdaa0d99d0d4b06be7c47d53ed21adff554286baf",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -1922,7 +1926,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "fa23319b7f23560d30976f3d67c5cb437109afb3b7ecef7142e415258014ca3d",
+      "sha256": "69d9df6144e56a00eedbe8e701ac0a2e3e28f1757e1edd95612b28adab1efd72",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -2130,7 +2134,7 @@
       "executable": false
     },
     "src/core/app/client/styles/pages/audience/signup.css": {
-      "sha256": "075cda813234b6d40fe39c57e29b905633056c8b3b38bd811fe0c54c17b3a829",
+      "sha256": "b5afcb3d66e7176c3c9e936e8624c63729d6eb8ae8ba44f50d9f47b994b94d08",
       "executable": false
     },
     "src/core/app/client/styles/pages/campaigns.css": {
@@ -2494,7 +2498,7 @@
       "executable": false
     },
     "src/core/features/audience/import-routes.ts": {
-      "sha256": "4749504c1d570481561d11cb9f39bf7bf292bc3a12122c1767fbab50a260d598",
+      "sha256": "806c1ad44b810968f10b457c778a6e22ea1e83a314b9848ed3c23310257ceaf1",
       "executable": false
     },
     "src/core/features/audience/import-service.ts": {
@@ -2578,7 +2582,7 @@
       "executable": false
     },
     "src/core/features/audience/signup-routes.ts": {
-      "sha256": "7f96ed249a486ac966bc222345829d88853c9deddf88af7e8b6d9f50eeec0fbd",
+      "sha256": "e9055b37dce38e12659dfdd7d9d876b0a38339d25ba2d451a73c4750c87afa56",
       "executable": false
     },
     "src/core/features/audience/signup-security.ts": {
@@ -2586,7 +2590,7 @@
       "executable": false
     },
     "src/core/features/audience/signup-settings.ts": {
-      "sha256": "73faff1eec1a99d3c1bfe3f339b062a31c3fb90865b95cf7fb3006bca168b12f",
+      "sha256": "1bd0a9ee89af379810b8676b93f48cae0c0af465cff2a262d4633f389c3b0006",
       "executable": false
     },
     "src/core/features/audience/source-coverage.ts": {
@@ -2646,7 +2650,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/audience-signup-tools.tsx": {
-      "sha256": "e8e6996cdf24cad3ca01755b34a6e1eb2be135539e678f64507804355bc69c79",
+      "sha256": "dae5c536fe37ca3520a8cd29708fae27cfb3283f31b28f64d1b7f245253ba53f",
       "executable": false
     },
     "src/core/features/audience/ui/contact-consent-evidence.tsx": {
@@ -2665,6 +2669,10 @@
       "sha256": "e85de361db5d121b4f558cb675e99e48e47d9aa0ef634d2de491738b891965ac",
       "executable": false
     },
+    "src/core/features/audience/ui/kiosk-signup-page.tsx": {
+      "sha256": "9506fceaf14b122f9a3256a47f0399c7725ddd418cf20a00ef8701cfff03c861",
+      "executable": false
+    },
     "src/core/features/audience/ui/receipt-counts.ts": {
       "sha256": "b6e32f2e3f328141d4f1e6019c6a8d0ed4201a5b5b68da63cf3764b22f83ee65",
       "executable": false
@@ -2678,7 +2686,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/signup-settings-form.tsx": {
-      "sha256": "4264a48380ffb2e7f31c9e638aaf8a4c1efe475535a9d21975134897519df0cf",
+      "sha256": "a4c5e7003c7a28c6d221aa0816568fb50188671e1e0f7b07e70da1191afdc2c6",
       "executable": false
     },
     "src/core/features/audience/ui/subscribe-loader.ts": {
@@ -2686,7 +2694,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/subscribe-page.tsx": {
-      "sha256": "d0086d51adb15f2076dc9fb11f5bed07e2ae89dc8b16def2d570f952b41cbe0b",
+      "sha256": "c763a45ded2fc7f41fe3cef1631e6416ac52fdd7ed5242f9d494e57441171c25",
       "executable": false
     },
     "src/core/features/audience/ui/use-archive-import.ts": {
@@ -3594,7 +3602,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/list-growth.tsx": {
-      "sha256": "041176edfbf5de2a5f5bcfd164fc7f6a2a71cffe5abebb69d93f8000fb72b25f",
+      "sha256": "90bf737ef80272c62c13981805c27fa6903ff1afe8acfb7a06d755bae1852de3",
       "executable": false
     },
     "src/core/features/insights/ui/mailbox-providers.tsx": {
@@ -4642,7 +4650,7 @@
       "executable": false
     },
     "src/router.tsx": {
-      "sha256": "9750dc32514bfb356dd08dac87b32bb25184c32c8e7b721e9871af3af93c8579",
+      "sha256": "92d63a14abfa02cc2dc72813ad595977714a116a03b7e406d08510fa7b96b25d",
       "executable": false
     },
     "src/routes/__root.tsx": {
@@ -6783,6 +6791,18 @@
     },
     "tests/go-live/integrations.journeys.ts": {
       "sha256": "21c3fe422ee986f4b0e7f9ce3c0d9d081beb55aabc0eba618b1aff8b662f586e",
+      "executable": false
+    },
+    "tests/go-live/kiosk-harness.ts": {
+      "sha256": "de57a31d61a0a30fdaf9d27da04e1b4222fedf2caac53ec7b93daea83ddcdc71",
+      "executable": false
+    },
+    "tests/go-live/kiosk-worker.ts": {
+      "sha256": "2db7a1cc72a1969d5d046f880bf8cede3f17d6d3ff8d77cc145e96efdb33f68a",
+      "executable": false
+    },
+    "tests/go-live/kiosk.journeys.ts": {
+      "sha256": "25429e8ef9bb05a1346ed0e6a41adcc446c8b7c9331f3c1c0d41bf539ee2220b",
       "executable": false
     },
     "tests/go-live/list-growth-support.ts": {

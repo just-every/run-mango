@@ -210,6 +210,13 @@
       "clauses": [
         "DELIV-005"
       ]
+    },
+    {
+      "id": "kiosk-signup",
+      "description": "Shared-device hosted signup resets after every success, requires a fresh challenge, records the device-labelled consent source and provides a separate 300-per-hour kiosk allowance. Ordinary form allowances are unchanged.",
+      "clauses": [
+        "FORM-009"
+      ]
     }
   ],
   "nonGoals": [

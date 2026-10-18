@@ -38,3 +38,7 @@
   .signup-settings-form__row { flex-direction: column; align-items: stretch; }
   .signup-settings-form__row > button { margin-top: 0; }
 }
+
+/* The same hosted form becomes a full-viewport shared-device surface. */
+.kiosk-page { min-height: 100dvh; }
+.kiosk-page .simple-page { min-height: calc(100dvh - 5rem); display: grid; align-content: center; }

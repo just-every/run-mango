@@ -1,3 +1,4 @@
+import {KioskSignupPage} from './kiosk-signup-page';
 import { Field, ValidationForm } from '@/core/app/client/ui/validation-form';
 import { mapFieldErrors, type FieldErrors } from '@/core/app/client/ui/field-errors';
 import { useEffect, useState } from 'react';
@@ -10,6 +11,8 @@ import { Envelope } from '@/core/features/site/drawings/Envelope';
 
 export type SubscribeInfo = {
   sms?: {sender:string;brand:string;programme:string;frequency:string;jurisdiction:string;consentText:string;disclosure:string};
+  kioskEnabled?:boolean;
+  kioskDeviceLabel?:string;
   sender: string;
   consentText: string;
   frequencyDisclosure: string;
@@ -25,7 +28,11 @@ type ApiMessage = {
   fields?: unknown;
 };
 
-export function SubscribePage({ info }: { info: SubscribeInfo }) {
+export function SubscribePage({info}:{info:SubscribeInfo}) {
+  return info.kioskEnabled?<KioskSignupPage info={info}/>:<NewsletterSubscribePage info={info}/>;
+}
+
+function NewsletterSubscribePage({ info }: { info: SubscribeInfo }) {
   const [channel,setChannel]=useState<'email'|'sms'>('email');
   const [phone,setPhone]=useState(''),[timeZone,setTimeZone]=useState('');
   const sms=channel==='sms'&&info.sms;

@@ -2,7 +2,6 @@ import { SignupSettingsForm } from './signup-settings-form';
 import { useRef, useState } from 'react';
 
 import { useResource } from '@/core/app/client/lib/use-resource';
-import { LoadState } from '@/core/app/client/ui/layout';
 
 type SignupToolsData = {
   url: string;
@@ -10,6 +9,8 @@ type SignupToolsData = {
   consentText: string;
   frequencyDisclosure: string;
   embedOrigins: string[];
+  kioskEnabled:boolean;
+  kioskDeviceLabel:string;
 };
 
 function publicHttpUrl(value: string) {
@@ -71,7 +72,7 @@ export function AudienceSignupTools() {
           </div>
         </div>
       </div>
-      <SignupSettingsForm frequencyDisclosure={data.frequencyDisclosure} embedOrigins={data.embedOrigins} saved={reload} />
+      <SignupSettingsForm kioskEnabled={data.kioskEnabled} kioskDeviceLabel={data.kioskDeviceLabel} frequencyDisclosure={data.frequencyDisclosure} embedOrigins={data.embedOrigins} saved={reload} />
     </section>
   );
 }

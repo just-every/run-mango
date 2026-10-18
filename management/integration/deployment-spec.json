@@ -464,6 +464,12 @@
       "name": "core-0074_list_growth_retained_history.sql",
       "sha256": "7740e4d3c4271c63eb87e215e1b63ec3202646b66fc9617fe5ef73522c6eec53",
       "sql": "-- Recover only retained consent facts predating membership recording. Prior\n-- membership transitions, deleted evidence and erased contacts are unknowable;\n-- these facts therefore never change the 0073 opening membership or its deltas.\nALTER TABLE list_growth_events ADD COLUMN recording TEXT NOT NULL DEFAULT 'live'\n CHECK(recording IN ('live','retained-evidence'));\n\n-- A transient map assigns anonymous event IDs without retaining an identity in\n-- the count table. Attribution follows the existing erasure and merge triggers.\nCREATE TABLE list_growth_history_staging (\n event_id INTEGER PRIMARY KEY, evidence_id TEXT NOT NULL, contact_id TEXT NOT NULL,\n channel TEXT NOT NULL, observed_at INTEGER NOT NULL, kind TEXT NOT NULL\n);\nINSERT INTO list_growth_history_staging\nSELECT coalesce((SELECT max(id) FROM list_growth_events),0)\n + row_number() OVER (ORDER BY c.id,k.kind),c.id,c.contact_id,c.channel,\n CASE k.kind WHEN 'capture' THEN c.created_at ELSE max(c.created_at,c.confirmed_at) END,k.kind\nFROM consent_evidence c JOIN contacts contact ON contact.id=c.contact_id\nJOIN list_growth_baseline b ON b.channel=c.channel\nCROSS JOIN (SELECT 'capture' kind UNION ALL SELECT 'confirmation') k\nWHERE (k.kind='capture' AND c.created_at<b.covered_from)\n OR (k.kind='confirmation' AND c.confirmed_at IS NOT NULL\n AND max(c.created_at,c.confirmed_at)<b.covered_from);\nINSERT INTO list_growth_events(id,observed_at,channel,kind,delta,recording)\nSELECT event_id,observed_at,channel,kind,0,'retained-evidence' FROM list_growth_history_staging;\nINSERT INTO list_growth_attribution(event_id,contact_id,evidence_id)\nSELECT event_id,contact_id,evidence_id FROM list_growth_history_staging;\nDROP TABLE list_growth_history_staging;\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0075_kiosk_forms.sql",
+      "sha256": "95d8a07cb4a06084c44d5180aae7bc7b4d1e826b5a367b378fe71dd430d91c1d",
+      "sql": "ALTER TABLE signup_settings ADD COLUMN kiosk_enabled INTEGER NOT NULL DEFAULT 0 CHECK (kiosk_enabled IN (0,1));\nALTER TABLE signup_settings ADD COLUMN kiosk_device_label TEXT NOT NULL DEFAULT '';\n\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
