@@ -19,7 +19,26 @@
 :where(.mango-app) :is(input, select, textarea):disabled { background: var(--ms-paper-deep); color: var(--ms-muted); cursor: not-allowed; }
 :where(.mango-app) :is(input, textarea)::placeholder { color: var(--ms-muted); opacity: 1; }
 :where(.mango-app) textarea { min-height: 96px; resize: vertical; }
-:where(.mango-app) select { appearance: none; padding-right: 36px; background: var(--ms-paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%231d1b17' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center / 12px; cursor: pointer; }
+:where(.mango-app) select { cursor: pointer; }
+/* Single-choice chevron; native list boxes keep their own appearance. */
+:where(.mango-app) select:not([multiple],[size]:not([size="1"])) {
+  /* The app and rer-theme share the same palette under different token names. */
+  --rer-muted: var(--ms-muted);
+  --rer-text: var(--ms-ink);
+  --rer-select-ink: var(--rer-muted);
+  -webkit-appearance: none;
+  appearance: none;
+  padding-inline-end: 36px;
+  text-overflow: ellipsis;
+  background-image:
+    linear-gradient(to top right, transparent calc(50% - 1.1px), var(--rer-select-ink) calc(50% - .55px), var(--rer-select-ink) calc(50% + .55px), transparent calc(50% + 1.1px)),
+    linear-gradient(to top left, transparent calc(50% - 1.1px), var(--rer-select-ink) calc(50% - .55px), var(--rer-select-ink) calc(50% + .55px), transparent calc(50% + 1.1px));
+  background-repeat: no-repeat;
+  background-position: right 20px center, right 14px center;
+  background-size: 6px 6px;
+}
+:where(.mango-app) select:not([multiple],[size]:not([size="1"])):focus-visible { --rer-select-ink: var(--rer-text); }
+:where(.mango-app) select:not([multiple],[size]:not([size="1"])):disabled { --rer-select-ink: color-mix(in srgb, var(--rer-muted) 55%, transparent); }
 :where(.mango-app) :is(input[type="checkbox"], input[type="radio"]) { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--ms-leaf-deep); }
 
 :where(.mango-app) label { color: var(--ms-ink-soft); font-size: 14px; font-weight: 500; line-height: 1.35; }
