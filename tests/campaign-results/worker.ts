@@ -1,3 +1,4 @@
+import { seedArchive } from './archive-fixture';
 import {seedPerformanceOrders} from './performance-fixture';
 import {seedFollowup,seedFollowupOpens} from './followup-fixture';
 import { seedRetention } from './retention-fixture';
@@ -42,6 +43,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       if(action==='followup')return context.json(await seedFollowup(bindings.DB,platform));
       if(action==='retention') return context.json(await seedRetention(bindings.DB));
       if(action==='reporting') return context.json(await seedReporting(bindings.DB,platform));
+      if(action==='archive')return context.json(await seedArchive(bindings.DB,new URL(request.url).origin));
       if(action==='outcomes') await seedOutcomes(bindings.DB);
       if(action==='filters') for(const state of states) for(const channels of [['email'],['sms'],['email','sms']]) await seedCampaign(bindings.DB,`${state}-${channels.join('-')}`,state,channels);
       if(action==='single') await seedCampaign(bindings.DB,'only-email','draft');

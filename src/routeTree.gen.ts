@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as ArchiveRouteImport } from './routes/archive'
 import { Route as DocsRouteImport } from './routes/docs'
 import { Route as SetupRouteImport } from './routes/setup'
 import { Route as SigninRouteImport } from './routes/signin'
@@ -20,6 +21,8 @@ import { Route as AppCampaignsRouteImport } from './routes/app.campaigns'
 import { Route as AppInsightsRouteImport } from './routes/app.insights'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppStoreRouteImport } from './routes/app.store'
+import { Route as ArchiveIndexRouteImport } from './routes/archive.index'
+import { Route as ArchiveIdRouteImport } from './routes/archive.$id'
 import { Route as DocsIndexRouteImport } from './routes/docs.index'
 import { Route as DocsSlugRouteImport } from './routes/docs.$slug'
 import { Route as AppAudienceIdRouteImport } from './routes/app.audience_.$id'
@@ -31,6 +34,11 @@ import { Route as AppCampaignsIdScheduledRouteImport } from './routes/app.campai
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArchiveRoute = ArchiveRouteImport.update({
+  id: '/archive',
+  path: '/archive',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DocsRoute = DocsRouteImport.update({
@@ -83,6 +91,16 @@ const AppStoreRoute = AppStoreRouteImport.update({
   path: '/store',
   getParentRoute: () => AppRoute,
 } as any)
+const ArchiveIndexRoute = ArchiveIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ArchiveRoute,
+} as any)
+const ArchiveIdRoute = ArchiveIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ArchiveRoute,
+} as any)
 const DocsIndexRoute = DocsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -121,6 +139,7 @@ const AppCampaignsIdScheduledRoute = AppCampaignsIdScheduledRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
+  '/archive': typeof ArchiveRouteWithChildren
   '/docs': typeof DocsRouteWithChildren
   '/setup': typeof SetupRoute
   '/signin': typeof SigninRoute
@@ -130,8 +149,10 @@ export interface FileRoutesByFullPath {
   '/app/insights': typeof AppInsightsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/store': typeof AppStoreRoute
+  '/archive/$id': typeof ArchiveIdRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/app/': typeof AppIndexRoute
+  '/archive/': typeof ArchiveIndexRoute
   '/docs/': typeof DocsIndexRoute
   '/app/audience/$id': typeof AppAudienceIdRoute
   '/app/audience/import': typeof AppAudienceImportRoute
@@ -148,8 +169,10 @@ export interface FileRoutesByTo {
   '/app/insights': typeof AppInsightsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/store': typeof AppStoreRoute
+  '/archive/$id': typeof ArchiveIdRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/app': typeof AppIndexRoute
+  '/archive': typeof ArchiveIndexRoute
   '/docs': typeof DocsIndexRoute
   '/app/audience/$id': typeof AppAudienceIdRoute
   '/app/audience/import': typeof AppAudienceImportRoute
@@ -160,6 +183,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/app': typeof AppRouteWithChildren
+  '/archive': typeof ArchiveRouteWithChildren
   '/docs': typeof DocsRouteWithChildren
   '/setup': typeof SetupRoute
   '/signin': typeof SigninRoute
@@ -169,8 +193,10 @@ export interface FileRoutesById {
   '/app/insights': typeof AppInsightsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/store': typeof AppStoreRoute
+  '/archive/$id': typeof ArchiveIdRoute
   '/docs/$slug': typeof DocsSlugRoute
   '/app/': typeof AppIndexRoute
+  '/archive/': typeof ArchiveIndexRoute
   '/docs/': typeof DocsIndexRoute
   '/app/audience_/$id': typeof AppAudienceIdRoute
   '/app/audience_/import': typeof AppAudienceImportRoute
@@ -182,6 +208,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/app'
+    | '/archive'
     | '/docs'
     | '/setup'
     | '/signin'
@@ -191,8 +218,10 @@ export interface FileRouteTypes {
     | '/app/insights'
     | '/app/settings'
     | '/app/store'
+    | '/archive/$id'
     | '/docs/$slug'
     | '/app/'
+    | '/archive/'
     | '/docs/'
     | '/app/audience/$id'
     | '/app/audience/import'
@@ -209,8 +238,10 @@ export interface FileRouteTypes {
     | '/app/insights'
     | '/app/settings'
     | '/app/store'
+    | '/archive/$id'
     | '/docs/$slug'
     | '/app'
+    | '/archive'
     | '/docs'
     | '/app/audience/$id'
     | '/app/audience/import'
@@ -220,6 +251,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/app'
+    | '/archive'
     | '/docs'
     | '/setup'
     | '/signin'
@@ -229,8 +261,10 @@ export interface FileRouteTypes {
     | '/app/insights'
     | '/app/settings'
     | '/app/store'
+    | '/archive/$id'
     | '/docs/$slug'
     | '/app/'
+    | '/archive/'
     | '/docs/'
     | '/app/audience_/$id'
     | '/app/audience_/import'
@@ -241,6 +275,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
+  ArchiveRoute: typeof ArchiveRouteWithChildren
   DocsRoute: typeof DocsRouteWithChildren
   SetupRoute: typeof SetupRoute
   SigninRoute: typeof SigninRoute
@@ -254,6 +289,13 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/archive': {
+      id: '/archive'
+      path: '/archive'
+      fullPath: '/archive'
+      preLoaderRoute: typeof ArchiveRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/docs': {
@@ -325,6 +367,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/store'
       preLoaderRoute: typeof AppStoreRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/archive/': {
+      id: '/archive/'
+      path: '/'
+      fullPath: '/archive/'
+      preLoaderRoute: typeof ArchiveIndexRouteImport
+      parentRoute: typeof ArchiveRoute
+    }
+    '/archive/$id': {
+      id: '/archive/$id'
+      path: '/$id'
+      fullPath: '/archive/$id'
+      preLoaderRoute: typeof ArchiveIdRouteImport
+      parentRoute: typeof ArchiveRoute
     }
     '/docs/': {
       id: '/docs/'
@@ -408,6 +464,19 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface ArchiveRouteChildren {
+  ArchiveIdRoute: typeof ArchiveIdRoute
+  ArchiveIndexRoute: typeof ArchiveIndexRoute
+}
+
+const ArchiveRouteChildren: ArchiveRouteChildren = {
+  ArchiveIdRoute: ArchiveIdRoute,
+  ArchiveIndexRoute: ArchiveIndexRoute,
+}
+
+const ArchiveRouteWithChildren =
+  ArchiveRoute._addFileChildren(ArchiveRouteChildren)
+
 interface DocsRouteChildren {
   DocsSlugRoute: typeof DocsSlugRoute
   DocsIndexRoute: typeof DocsIndexRoute
@@ -422,6 +491,7 @@ const DocsRouteWithChildren = DocsRoute._addFileChildren(DocsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
+  ArchiveRoute: ArchiveRouteWithChildren,
   DocsRoute: DocsRouteWithChildren,
   SetupRoute: SetupRoute,
   SigninRoute: SigninRoute,

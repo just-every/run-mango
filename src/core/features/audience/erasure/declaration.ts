@@ -48,6 +48,7 @@ export const contactErasureTables:ErasureTable[]=[
   {table:'campaigns',literal:true,mode:'redact'},
   {table:'campaign_revisions',literal:true,mode:'redact'},
   {table:'campaign_templates',literal:true,mode:'redact'},
+  {table:'newsletter_archive',literal:true,mode:'redact'},
   {table:'campaign_followups',literal:true,mode:'redact'},
   {table:'campaign_draft_step_settings',literal:true,mode:'redact'},
   ...['audience_source_authority','commerce_source_coverage','source_syncs','source_sync_runs','source_sync_cursors','commerce_source_capabilities','campaign_channel_pauses','campaign_revision_links','campaign_steps','proposal_forecasts','campaign_audiences','campaign_checks','campaign_state_transitions','proposal_audiences','proposals','proposal_exclusions','proposal_steps','provider_outages','proposal_transitions','design_jobs'].map(table=>({table,literal:true,mode:'redact' as const})),

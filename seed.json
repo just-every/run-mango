@@ -192,6 +192,13 @@
         "DATA-001",
         "BASE-DATA-001"
       ]
+    },
+    {
+      "id": "newsletter-web-archive",
+      "description": "Operators explicitly publish sent email revisions as neutral public issues, with an archive index and RSS feed.",
+      "clauses": [
+        "PUB-001"
+      ]
     }
   ],
   "nonGoals": [
@@ -517,7 +524,7 @@
       "name": "MANGO_ALLOWED_LINK_HOSTS",
       "required": false,
       "secret": false,
-      "why": "Optional initial comma-separated destination hosts; defaults to the app’s own host and remains editable in Mango Settings. Checked before an approved revision can send."
+      "why": "Optional initial comma-separated destination hosts; defaults to the app\u2019s own host and remains editable in Mango Settings. Checked before an approved revision can send."
     },
     {
       "name": "MANGO_TEST_EMAIL_ALLOWLIST",
@@ -672,7 +679,10 @@
       "/docs",
       "/docs/",
       "/auth/setup-complete",
-      "/o/"
+      "/o/",
+      "/archive",
+      "/archive-paper.png",
+      "/archive/"
     ]
   },
   "customFields": [

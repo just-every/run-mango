@@ -1,3 +1,4 @@
+import {archiveOperatorRoutes,archivePublicRoutes} from '@/core/features/archive/routes';
 import {createOpenPixelRoutes,createOpenTrackingSettingsRoutes} from '@/core/features/insights/open-tracking';
 import {smsReviewPreview} from '@/core/features/sms/review-preview';
 import { recordConfirmationDeferral } from '@/core/features/audience/confirmation-deferred';
@@ -289,6 +290,7 @@ export function createApp(
   app.route('/', createMediaRoutes(environment.DB, platform.blobs));
   if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce));
   app.route('/',createOpenPixelRoutes(platform));
+  app.route('/',archivePublicRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   const integrations = createIntegrationService(platform, audienceService);
   app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations));
   mountBeforeAuthentication?.(app, services);
@@ -318,6 +320,7 @@ export function createApp(
   app.route('/api', createPortabilityRoutes(environment, platform));
   app.route('/',createSmsInboundRoutes(platform));
   const lifecycleServices = registerLifecycleRoutes(app, lifecycleRuntime);
+  app.route('/api',archiveOperatorRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
   app.route('/api', createLinkHostRoutes(platform));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));

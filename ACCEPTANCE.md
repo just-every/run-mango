@@ -377,3 +377,5 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 
 - **MGMT-001 — Signed first-owner admission** (partial). Signed first-owner admission once per installation; hosted proof pending. Evidence: `src/core/features/auth/owner-claim.ts`.
 - **MGMT-002 — Native owner editor** (done). The native owner editor mounts for the owner only. Evidence: `tests/local-start/editor.journey.ts`.
+
+The PUB-001 journey (`tests/campaign-results/archive.journeys.ts`) exercises publication from a completed campaign, neutral anonymous SSR and browser reading, search metadata, RSS, idempotent publication and withdrawal at 1440 and 390. Draft and no-handoff campaigns, anonymous mutations and foreign-origin mutations are refused. The contact erasure cascade includes published reading copies; the existing native erasure journey includes an attributed public copy. This is local Worker/D1 evidence, not hosted or live-provider acceptance.

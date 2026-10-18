@@ -861,8 +861,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 66 | 21 | 0 | 87 |
-| Target and push further | 8 | 51 | 95 | 154 |
-| All | 74 | 72 | 95 | 241 |
+| Target and push further | 9 | 51 | 94 | 154 |
+| All | 75 | 72 | 94 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -1090,7 +1090,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `MOVE-014` | Incumbent images brought home | target | missing |  | not implemented |
 | `MOBILE-001` | Responsive operator app | target | partial | `tests/newsletter-ui/representative-pages.journeys.ts` | acceptance not yet met: The representative-pages journey (`tests/newsletter-ui/representative-pages.journeys.ts`) extended to every operator page at 390 pixels with axe and overflow checks. |
 | `MOBILE-002` | Native iOS and Android app | target | missing |  | not implemented |
-| `PUB-001` | Web archive | target | missing |  | not implemented |
+| `PUB-001` | Web archive | target | done | `tests/campaign-results/archive.journeys.ts` · `tests/audience-import/erasure.spec.ts` |  |
 | `PUB-002` | Paid newsletters | target | missing |  | not implemented |
 | `PUB-003` | Recommendations | target | missing |  | not implemented |
 | `PUB-004` | Direct sponsorships | target | missing |  | not implemented |

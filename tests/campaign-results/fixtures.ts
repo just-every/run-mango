@@ -53,5 +53,5 @@ export async function seedOutcomes(binding:D1Database) {
   await recipient(binding,'sending',1,'delivered',null,{stepId:'mixed-step-1'});
 }
 export async function clearCampaigns(binding:D1Database) {
-  for(const table of ['campaign_followups','open_estimate_facts','open_tracking_tokens','attribution_facts','link_click_facts','tracked_links','delivery_facts','public_token_rate_limits','public_action_tokens','campaign_revision_links','campaign_draft_step_settings','campaign_audience_channel_counts','campaign_audiences','recipient_steps','step_dispatches','campaign_steps','campaign_revisions','campaigns']) await binding.prepare(`DELETE FROM ${table}`).run();
+  for(const table of ['newsletter_archive','campaign_followups','open_estimate_facts','open_tracking_tokens','attribution_facts','link_click_facts','tracked_links','delivery_facts','public_token_rate_limits','public_action_tokens','campaign_revision_links','campaign_draft_step_settings','campaign_audience_channel_counts','campaign_audiences','recipient_steps','step_dispatches','campaign_steps','campaign_revisions','campaigns']) await binding.prepare(`DELETE FROM ${table}`).run();
 }

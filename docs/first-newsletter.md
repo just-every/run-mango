@@ -104,3 +104,9 @@ To reuse conditions, select a **Saved segment** under **Start from a saved segme
 Press **Save full draft** (or **Save changes** at the top). Saving refreshes the preview and the approval checks, and it discards any earlier checks. Under "Saved revision content" you can switch between **Desktop email** and **Mobile email**. Links in the preview are inactive, the recipient is an example ("Alex Example"), and remote images stay blocked until you choose **Load N remote images**. Unsaved edits are flagged, and leaving the page asks first.
 
 > **Tip:** Under **Send a test** you can send the saved draft to your own sign-in address (or any operator's), or to an address on the optional `MANGO_TEST_EMAIL_ALLOWLIST`. The subject is marked "[MANGO TEST — NOT A CAMPAIGN SEND]". It needs a configured mail provider.
+
+## Publish a web version
+
+After an email campaign completes, open **View schedule and results** and find **Public web version**. Choose **Publish web version**, then **Read public newsletter** to inspect the public copy. Only a saved approved email revision with a recorded hand-off can be published.
+
+The reading copy replaces personalisation with neutral text and removes unsubscribe links, tracked redirects, tracking parameters and remote images. Your original sent revision stays unchanged. Review your wording: names or other information you typed directly become public. The archive at `/archive` includes an RSS feed and older-issue navigation. **Unpublish** removes the issue from the archive and feed, and its public page returns not found. Copies others have saved cannot be recalled.

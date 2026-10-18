@@ -213,6 +213,10 @@
     "SEND-009": {
       "change": "added",
       "summary": "Durable provider holds, health probes and per-operator outage notifications preserve paused delivery and observed recovery; scheduler observations record actual Worker scheduled entries only."
+    },
+    "PUB-001": {
+      "change": "added",
+      "summary": "2026-10-18: Completed email revisions with a recorded hand-off can be explicitly published as independent neutral public reading copies. The index, paged older issues, RSS and metadata contain no contact resolution, unsubscribe token or tracked redirect. Unpublish removes public availability; literal contact data remains covered by CONT-013."
     }
   },
   "extensionPointChanges": [],
@@ -396,6 +400,10 @@
     {
       "id": "0059_link_host_settings.sql",
       "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0058_owner_signin.sql before starting this runtime. Adds saved link-host settings. Existing environment hosts remain authoritative until an operator saves Settings; review the hosts needed by your newsletter links before approval. Recover with the matching source and data backup; account for any later erasure before restoring."
+    },
+    {
+      "id": "0070_newsletter_archive.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply after 0069. This additive table stores explicitly published neutral reading copies and is included in discovered D1 exports and contact erasure. Existing campaigns and delivery records are unchanged."
     }
   ],
   "breaking": true,

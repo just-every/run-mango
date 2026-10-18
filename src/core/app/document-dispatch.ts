@@ -42,7 +42,7 @@ export async function dispatchDocuments(
     return new Response(null,{status:308,headers:{Location:`/subscribe${url.search}`,'Cache-Control':'no-store'}});
   }
   if (path.startsWith('/__dev') && platform.config.local !== true) return Response.json({error: 'not_found'}, {status: 404});
-  if (path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
+  if (path === '/archive/feed.xml' || path === '/archive/data' || path.startsWith('/archive/data/') || path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
     return hono.fetch(request, environment, executionContext);
   }
   let admission: ReturnType<typeof documentAdmission.getStore>;
@@ -66,7 +66,7 @@ export async function dispatchDocuments(
   // CSP checks every ancestor, including a hostile host around an allowed embed.
   const origins = path === '/subscribe' ? (await loadSignupSettings(platform)).embedOrigins : [];
   const ancestors = `frame-ancestors ${path === '/subscribe' ? (origins.length ? origins.join(' ') : "'none'") : "'self'"}; `;
-  if (path === '/subscribe') headers.set('Cache-Control', 'no-store');
+  if (path === '/subscribe' || path === '/archive' || path.startsWith('/archive/')) headers.set('Cache-Control', 'no-store');
   headers.set('Content-Security-Policy', `frame-src 'self' ${frameOrigin} ${path === '/subscribe' && platform.config.signupTurnstile ? 'https://challenges.cloudflare.com' : ''}; ${ancestors}object-src 'none'; base-uri 'self'`);
   return new Response(response.body, {status: response.status, statusText: response.statusText, headers});
 }

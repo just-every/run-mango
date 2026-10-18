@@ -1,3 +1,4 @@
+import {CampaignPublication} from '@/core/features/archive/campaign-publication';
 import { CampaignSendControls } from './campaign-send-controls';
 import {CampaignFollowup,FollowupParent} from './campaign-followup';
 import { CampaignEngagement } from '@/core/features/insights/ui/campaign-engagement';
@@ -86,6 +87,7 @@ export function CampaignScheduledPage() {
     <CampaignEngagement campaignId={id} revisionId={data.revision.id} emailBody={data.revision.emailBody}/>
     <CampaignRecipients campaignId={id} revisionId={data.revision.id} steps={data.steps}/>
     <CampaignCosts campaignId={id} />
+    <CampaignPublication campaignId={id} revisionId={data.revision.id} completed={data.campaign.state==='completed'} />
     <CampaignFollowup campaignId={id} />
     <FollowupParent campaignId={id} />
     <Modal open={confirmCancel} onClose={() => setConfirmCancel(false)} title="Cancel this campaign?" description="Recipient-steps not yet handed to a provider will be stopped. Messages already handed to a provider cannot be recalled.">
