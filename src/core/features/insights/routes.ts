@@ -1,3 +1,4 @@
+import { createListGrowthRoutes } from './list-growth-routes';
 import { createRetentionRoutes } from './retention-routes';
 import { createCampaignReportRoutes } from './campaign-report-routes';
 import { createCampaignPerformanceRoutes } from './campaign-performance-routes';
@@ -11,6 +12,7 @@ export function createInsightsRoutes(service: ReturnType<typeof createInsightsSe
   routes.route('/',createCampaignReportRoutes(database));
   routes.route('/',createCampaignPerformanceRoutes(database));
   routes.route('/',createRetentionRoutes(database));
+  routes.route('/',createListGrowthRoutes(database));
   routes.get('/insights', async (context) => context.json(await service.list()));
   routes.get('/campaigns/:id/results', async (context) => context.json(await service.campaignResult(context.req.param('id'))));
   routes.get('/insights/deliverability', async (context) => {

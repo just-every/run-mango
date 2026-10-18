@@ -67,4 +67,6 @@ export const contactErasureTables:ErasureTable[]=[
   {table:'audience_portable_hashes',where:s=>({sql:'(destination_hash IN (SELECT value FROM json_each(?)) OR portable_hash IN (SELECT value FROM json_each(?))) AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs o WHERE o.destination_hash=audience_portable_hashes.destination_hash) AND NOT EXISTS(SELECT 1 FROM contact_suppressions c WHERE c.destination_hash=audience_portable_hashes.destination_hash)',params:[JSON.stringify(s.hashes),JSON.stringify([...s.emails,...s.phones].map(portableHash))]})},
   contact('mango_audience_hashes'),contact('mango_import_revisions'),contact('contact_email_addresses'),contact('contact_phones'),
   {table:'contact_merges',where:s=>({sql:'survivor_contact_id IN (SELECT value FROM json_each(?)) OR merged_contact_id IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.ids)]})},
+  // Append stages: persisted erasure cursors depend on every earlier index.
+  contact('list_growth_attribution'),
 ];

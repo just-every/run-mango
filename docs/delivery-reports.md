@@ -63,3 +63,9 @@ In **Insights**, **Recipient mailbox providers** splits signed delivered, bounce
 Each outcome counts message recipients once, while **Human clicks** counts non-automated requests and **Clicked recipients** counts each recipient-message once. A delivery and a later complaint can both count. Known scanner requests do not count as human engagement.
 
 Bounce reasons are **Invalid address**, **Mailbox full**, **Policy block**, **Reputation**, **Content**, or **Other / reason not recorded**. The latest signed bounce reason for each message in the window determines its category, so the category totals equal its mailbox’s bounced count. Provider-reported content and reputation bounces remain in this report even when the message’s transport outcome is Failed. Old events without diagnostic evidence appear under Other. Erased identities and their removed event details cannot be attributed to a mailbox provider.
+
+## List growth and consent sources
+
+Insights shows opening and closing subscribed contacts for each channel, plus the net change over a chosen UTC date range. Daily rows distinguish new subscriptions, resubscriptions, unsubscriptions, suppressions and removals. Capturing or confirming consent is shown separately and never adds a subscriber twice. Open a row’s consent version to read the retained wording and source.
+
+Recording begins when this feature is installed. Older daily growth is unavailable; the report labels that boundary and uses the subscribed membership then as its opening baseline. Imports count when applied here, rather than at the original consent date. Erasure removes the contact’s source links and keeps anonymous totals, which then read as evidence removed or not recorded. Dedicated kiosk and public-form resubscribe journeys are still forthcoming.
