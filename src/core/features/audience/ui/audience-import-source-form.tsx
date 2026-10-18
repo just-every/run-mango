@@ -1,6 +1,6 @@
 import { Field, ValidationForm } from '@/core/app/client/ui/validation-form';
 import { BodyText } from '@/core/features/site/BodyText';
-import type { ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import { maxContactImportRows } from '../import-limits';
 import { archiveLimits } from '@/core/features/move-in/archive-limits';
 
@@ -69,6 +69,11 @@ export function AudienceImportSourceForm({
   onConsentChange,
   onPreview,
 }: AudienceImportSourceFormProps) {
+  // The streamed form can paint before its change handler hydrates. File
+  // selection must stay inert until this component can retain the chosen files.
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+
   const onChooseFiles = (event: ChangeEvent<HTMLInputElement>) => {
     onFilesSelected(Array.from(event.currentTarget.files ?? []));
     event.currentTarget.value = '';
@@ -140,7 +145,7 @@ export function AudienceImportSourceForm({
         <label className="audience-import-upload">
           <span aria-hidden="true">＋</span>
           <span>Choose CSV files or one account export (required)</span>
-          <Field name="files" label="CSV files" validate={() => fileError || (files.length || archive ? undefined : "Choose at least one CSV file or one .zip account export.")}><input aria-label="Choose CSV files" aria-required="true" type="file" accept=".csv,text/csv,.zip,application/zip" multiple onChange={onChooseFiles} disabled={busy || Boolean(archive)} /></Field>
+          <Field name="files" label="CSV files" validate={() => fileError || (files.length || archive ? undefined : "Choose at least one CSV file or one .zip account export.")}><input aria-label="Choose CSV files" aria-required="true" type="file" accept=".csv,text/csv,.zip,application/zip" multiple onChange={onChooseFiles} disabled={!ready || busy || Boolean(archive)} /></Field>
         </label>
         <p className="quiet-caption">Up to 10 files, 10 MB total, and {maxContactImportRows.toLocaleString('en-US')} rows per review. An account export may be up to {Math.round(archiveLimits.archiveBytes / 1048576)} MB.</p>
         <p className="quiet-caption">Large consent or ledger payloads may require smaller files to fit one durable review.</p>
