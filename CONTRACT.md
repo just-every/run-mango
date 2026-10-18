@@ -865,8 +865,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 70 | 17 | 0 | 87 |
-| Target and push further | 10 | 51 | 93 | 154 |
-| All | 80 | 68 | 93 | 241 |
+| Target and push further | 11 | 50 | 93 | 154 |
+| All | 81 | 67 | 93 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -1011,7 +1011,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `BUILD-005` | Conditional content | target | missing |  | not implemented |
 | `BUILD-006` | Dynamic product content | target | missing |  | not implemented |
 | `BUILD-007` | Coupons | target | missing |  | not implemented |
-| `BUILD-008` | Previews and pre-send checks | target | partial | `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` | acceptance not yet met: A draft with a missing alt attribute and a 95 KB sent size shows both advisories with locations, the size advisory naming 95 KB and the limit; acknowledging them allows approval while a contrast failure still blocks. A 110 KB body is refused at save under BUILD-012. |
+| `BUILD-008` | Previews and pre-send checks | target | done | `tests/go-live/presend-checks.journeys.ts` · `tests/go-live/email-size.journeys.ts` |  |
 | `BUILD-009` | SMS and MMS composer | target | partial | `src/core/features/sms/content.ts` · `src/core/features/sms/review-preview.ts` | acceptance not yet met: A message with an emoji switches to UCS-2 and shows the new segment count and cost; the preview shows the short link and STOP text that will be sent. |
 | `BUILD-010` | Mobile layout the checker can prove | target | missing |  | not implemented |
 | `BUILD-011` | Chosen catalogue products | target | missing |  | not implemented |

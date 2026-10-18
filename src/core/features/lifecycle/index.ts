@@ -19,7 +19,7 @@ export { parseStructuredRules, productIdFromRules, productIdsFromRules, inclusio
 export type { InclusionRule, ExclusionRule } from './rules';
 
 export function createLifecycleServices(runtime: LifecycleRuntime) {
-  const repository = createLifecycleRepository(runtime.platform.database);
+  const repository = createLifecycleRepository(runtime.platform.database,{publicBaseUrl:runtime.platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
   const approval = createApprovalService(runtime, repository);
   const delivery = createDeliveryService(runtime, repository);
   return { repository, approval, delivery };
