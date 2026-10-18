@@ -2886,7 +2886,7 @@
       "executable": false
     },
     "src/core/features/campaigns/email-size.ts": {
-      "sha256": "53a8790ffa133cc8b7223399b40fd7c057298fc6d371ce5b7a548bde8d954bff",
+      "sha256": "94c4e8774e48308ee25a9c3c993eb7f52f943b0c121e4ea45a9c48c70583c37b",
       "executable": false
     },
     "src/core/features/campaigns/email-style-declarations.ts": {
@@ -6798,7 +6798,7 @@
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {
-      "sha256": "74b387ef5e04e9dae88698d3b3d4928469196c66047969a96ed154727997f426",
+      "sha256": "70a202cdae2692db134178014484017db5f8f8797c12fb16a146308dc278bb46",
       "executable": false
     },
     "tests/go-live/sendgrid-events.ts": {

@@ -1,4 +1,4 @@
-import seed from '../../../../seed.json';
+import seed from '../../../../seed.json' with {type:'json'};
 import { parseEmailHtml, type EmailNode } from './email-html-parse';
 import { escapeHtml } from './email-html-policy';
 import { parsePersonalisationToken } from './authoring-tokens';

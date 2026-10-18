@@ -29,7 +29,9 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     // wall-clock Cron driver may initiate this first dispatch.
     // Just after a minute with >60s until the next five-minute boundary:
     // the old */5 schedule must fail, whatever wall-clock time starts this test.
-    let minute=Math.floor(Date.now()/60000)+1;
+    // Leave a complete minute for saving, approval and cold browser hydration.
+    // No send may occur before due; the configured Cron still has only 60s after it.
+    let minute=Math.floor(Date.now()/60000)+2;
     if(minute%5===4)minute++;
     const due=new Date(minute*60000+2000);
     const letter=await draftCampaign(site,cookie,'Scheduled newsletter',[email],due);
