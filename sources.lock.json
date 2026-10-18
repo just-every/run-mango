@@ -1122,7 +1122,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "a12dc5e65e4aa342dbebec1248f16cd8711f35ab3fbae41a3a7350964ffd3c42",
+      "sha256": "a9088aadec3f862efa71f2ef17338d4283320203936436629b7060fbd03401e7",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1430,7 +1430,7 @@
       "executable": false
     },
     "migrations/core/0076_operator_product_roles.sql": {
-      "sha256": "38fd1e07bec70bdd5677ec9903cffffb01f5a4e80d43d19db3cd06fd049174d2",
+      "sha256": "4c6ee582d929873d65db8a9c7a8e2b68b934f665e4460eda3932ea6926240626",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -1442,7 +1442,7 @@
       "executable": false
     },
     "operations/base-integration.test.mjs": {
-      "sha256": "8256d3fa3a08f666adaafa7767384b5d8e595c7eca33ce862a066a7c29dca244",
+      "sha256": "770c93c3b087d531977c5ad3ec36253c8b2c00d30a1c3e9ff4bba73ed3f4b166",
       "executable": false
     },
     "operations/base-runtime.mjs": {
@@ -2750,7 +2750,7 @@
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
-      "sha256": "b4ef963bb324b279086ede87a365860a57be7db0db7762e8ee10b3f4dbe0998d",
+      "sha256": "29361bcd9f9f2f85e8bd65994a8daaefe579907b3a3d09ed04ccb2a6d92e90ac",
       "executable": false
     },
     "src/core/features/auth/repository.ts": {
@@ -7210,7 +7210,7 @@
       "executable": false
     },
     "tests/prior-approval/worker.spec.ts": {
-      "sha256": "553b66adbc8df55a311cd631fa7b49aa48a943c3160dd77fe0a0e7aacb5227a0",
+      "sha256": "6629309a5011f8aa4b0b8b38b64bfa207b9919fb18943894fc91f363128b5777",
       "executable": false
     },
     "tests/production-entry.spec.ts": {
