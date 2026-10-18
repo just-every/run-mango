@@ -59,6 +59,18 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
       expect((await wrong.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
       expect((await wrong.bucket.list()).objects).toEqual([]);
     } finally { await wrong.close(); }
+    // A migration baseline with former subscribers is real history, even when
+    // no contacts remain. Only the fresh zero-count baseline is replaceable.
+    await target.db.prepare("UPDATE list_growth_baseline SET subscribed=1 WHERE channel='email'").run();
+    const historicalId = await stageArchive(target, records);
+    const historical = await target.call(`/api/portability/imports/${historicalId}/finalize`, {method:'POST',cookie:target.cookie,
+      body:{contentHash:records.at(-1).contentHash,archiveHash:records.at(-1).archiveHash}});
+    expect(historical.status).toBe(409);
+    expect(await historical.json()).toEqual({error:'target_not_empty:list_growth_baseline'});
+    expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
+    expect(await target.db.prepare("SELECT subscribed FROM list_growth_baseline WHERE channel='email'").first()).toEqual({subscribed:1});
+    expect((await target.call(`/api/portability/imports/${historicalId}/abort`, {method:'POST',cookie:target.cookie,body:{}})).status).toBe(200);
+    await target.db.prepare("UPDATE list_growth_baseline SET subscribed=0 WHERE channel='email'").run();
     await writeFile(session, target.cookie, { mode: 0o600 });
     await command(['import', '--origin', target.origin, '--session-file', session, '--from', archive]);
     // Restore and erasure cannot share a running app: only restore mode can

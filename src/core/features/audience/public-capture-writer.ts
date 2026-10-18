@@ -44,12 +44,14 @@ export function createPublicCaptureWriter(database: Database) {
       db.prepare(`INSERT INTO consent_evidence(id,contact_id,channel,destination,brand_or_legal_sender,sms_program,message_category,
         frequency_disclosure,destination_jurisdiction,capture_method,capture_source,consent_text,consent_version,occurred_at,
         confirmation_required,confirmed_at,created_at,updated_at)
-        SELECT ?,${owner},'email',?,?,NULL,?,?,?,?,?,?,?,?,1,NULL,?,? WHERE ${eligible}`)
+        SELECT ?,${owner},'email',?,?,NULL,?,?,?,?,?,?,?,?,1,NULL,?,? WHERE ${eligible} RETURNING id`)
         .bind(id, ...ownerValues, destination, evidence.brandOrLegalSender, evidence.messageCategory, evidence.frequencyDisclosure,
           evidence.destinationJurisdiction, evidence.captureMethod, evidence.captureSource, evidence.consentText, evidence.consentVersion,
           occurred, now, now, ...guard),
     );
     const result = await db.batch(statements);
-    return result.at(-1)!.meta.changes === 1;
+    // D1's change count includes reporting triggers; only the evidence row
+    // returned by this guarded insert authorizes confirmation delivery.
+    return result.at(-1)!.results.length === 1;
   };
 }

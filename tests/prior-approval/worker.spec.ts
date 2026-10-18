@@ -15,11 +15,11 @@ test('native Worker requires a signed-in explicit reapproval and preserves immut
   try {
     const db=await worker.getD1Database('DB');await migrate(db,0,12);await migrate(db,15,33);
     // Keep sender history at its old schema while using current native identity tables.
-    await migrate(db,58);
+    await migrate(db,58,72);
     const seed=await worker.dispatchFetch('https://mango.example.test/test/legacy');
     expect(seed.status,await seed.clone().text()).toBe(200);
     const {campaign,operatorId,session}=await seed.json();const original=await approvalBytes(db);
-    await migrate(db,13,14);await migrate(db,34,57);
+    await migrate(db,13,14);await migrate(db,34,57);await migrate(db,73);
     const url=`https://mango.example.test/api/campaigns/${campaign.campaignId}/reapprove`;
     const body=JSON.stringify({revisionId:campaign.revisionId,idempotencyKey:`explicit-${campaign.revisionId}`});
     expect((await worker.dispatchFetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body})).status).toBe(401);

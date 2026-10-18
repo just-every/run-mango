@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "677a855bacb749d38d25387648039ed2f279db654f46e142b1a02f9e168c58f2",
+      "sha256": "87e9891ccdb0a8d7cf5192ad4bd4ec8c293e7faf8f140d117ee5db8ccb093d12",
       "executable": false
     },
     "DEMO.md": {
@@ -1042,7 +1042,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "0c497f993cf64aa82cbaa6509079c55dacf34e01dfc4abb13c4bb305247a0ec7",
+      "sha256": "63a69f5c8ccdf6fe0d9be672910822428ddacae384a645e6aad038a225aaade0",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -2546,7 +2546,7 @@
       "executable": false
     },
     "src/core/features/audience/public-capture-writer.ts": {
-      "sha256": "e009fa6db64c3a7fdb7a3bbd9eacfa7429cdd0dfadfdeb4ce27555bcbb9c046d",
+      "sha256": "282526031f9965c5fe635387129dfc42793363d69a30d6307e17ce23c3cf2003",
       "executable": false
     },
     "src/core/features/audience/public-routes.ts": {
@@ -4014,7 +4014,7 @@
       "executable": false
     },
     "src/core/features/portability/policy.ts": {
-      "sha256": "48597fb1460ab987d4ddcabb83970a998c33e8829a13b5cf435dc5e3648675df",
+      "sha256": "158e0a3decd70650704248c4670f091777967a631eb8c66907185b3fc3cc50a1",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -7094,7 +7094,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "7f39036bddc92bd209055a081d93eae0b9026285591aee226056a295079f5de6",
+      "sha256": "826552b1b7ba5b29c5fc003e73e6c3061434c22219a98c69296456a422597fbb",
       "executable": false
     },
     "tests/portability/flows.ts": {
@@ -7134,7 +7134,7 @@
       "executable": false
     },
     "tests/prior-approval/worker.spec.ts": {
-      "sha256": "149a0afce51ffd583b7abdfd98234ffb806ab94575ac55dca869803d52329c5b",
+      "sha256": "553b66adbc8df55a311cd631fa7b49aa48a943c3160dd77fe0a0e7aacb5227a0",
       "executable": false
     },
     "tests/production-entry.spec.ts": {
