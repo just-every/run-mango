@@ -1,3 +1,5 @@
+import { emailContentAdvisories } from '@/core/features/campaigns/email-advisories';
+import { emailSizeAdvisory } from '@/core/features/campaigns/email-size-advisory';
 import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
 import { formatEmailSize } from '@/core/features/campaigns/email-size';
 import { contactLink, safeEmailLink } from '@/core/features/campaigns/contact-links';
@@ -67,6 +69,7 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
     missingFallback.length ? `Invalid personalisation or missing fallback: ${missingFallback.join(', ')}` : 'Every personalisation token carries an explicit fallback.'));
 
   if (selected.has('email')) {
+    findings.push(...emailContentAdvisories(revision));
     const advisory = emailSubjectAdvisory(revision.emailSubject);
     if (advisory) findings.push(advisory);
     const emailComplete = Boolean(
@@ -172,6 +175,8 @@ export async function runApprovalChecks(input: {
   if (selected.has('email')) {
     const size=await savedEmailSize(platform.database,snapshot.revision,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);
     checks.push(check('message.email-size',!size.exceedsLimit,formatEmailSize(size)));
+    const sizeAdvisory=emailSizeAdvisory(size);
+    if(sizeAdvisory)checks.push(sizeAdvisory);
     const inspection = mailInspection!;
     checks.push(...adapterChecks('email', mailCapabilities, requiredWindow('email')));
     const holds=await activeProviderHolds(platform.database,mailCapabilities.provider??platform.config.mailProvider??'resend','email',snapshot.revision.fromEmail);

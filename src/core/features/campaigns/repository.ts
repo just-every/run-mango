@@ -1,3 +1,4 @@
+import type { EmailSizeOptions } from './email-size';
 import { schedulerObservation } from '@/core/features/lifecycle/scheduler-observation';
 import { createProposalRepository } from '@/core/features/proposals/repository';
 import { enrichAdvisoryAcknowledgements } from '@/core/features/lifecycle/advisory-acknowledgements';
@@ -18,7 +19,7 @@ import {
   proposalSteps,
 } from './proposal-schema';
 
-export function createCampaignRepository(database: Database) {
+export function createCampaignRepository(database: Database,sizeOptions:EmailSizeOptions = {}) {
   return {
     ...createCampaignResultRepository(database),
     scheduler: (now:Date) => schedulerObservation(database.$client).read(now),
@@ -107,7 +108,7 @@ export function createCampaignRepository(database: Database) {
         .orderBy(asc(campaignChecks.kind));
       const [enriched, projection] = await Promise.all([
         checks.some(isAcknowledgableFinding)
-          ? enrichAdvisoryAcknowledgements(database,revisionId,checks)
+          ? enrichAdvisoryAcknowledgements(database,revisionId,checks,sizeOptions)
           : checks.map(check=>({...check,findingIdentity:undefined,acknowledgement:undefined})),
         campaignClaimProjection(database,revisionId),
       ]);

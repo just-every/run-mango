@@ -7,6 +7,10 @@ export function emailSubjectAdvisory(subject: string) {
   } : undefined;
 }
 
+const acknowledgableKinds = new Set([
+  'message.email-subject-length', 'message.email-image-alt', 'message.email-heading-order',
+  'message.email-link-text', 'message.email-spam-wording', 'message.email-size-advisory',
+]);
 export function isAcknowledgableFinding(check: {kind: string; status: string; blocking: boolean}) {
-  return check.kind === 'message.email-subject-length' && check.status === 'advisory' && !check.blocking;
+  return acknowledgableKinds.has(check.kind) && check.status === 'advisory' && !check.blocking;
 }

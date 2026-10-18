@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 14 claims · 14 in code.**
+**Totals: 15 claims · 15 in code.**
 
 ## Mango integration claims
 
@@ -29,3 +29,4 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | STORE-003 | Decision Desk shows every source’s last successful sync and later failure, retains the completion through partial-page failure, and marks it fresh only after recovery completes. Unstarted sources are visible and operational diagnostics stay on Store. | done | `src/core/features/campaigns/ui/source-freshness.tsx`, `src/core/features/store/service.ts`, `tests/go-live/source-freshness.journeys.ts` |
 | STORE-005 | Campaign inclusion and exclusion rules cannot approve against stale or failed sources. Review names the safe cause with a sync link and recheck; unavailable counts stay unknown, and completed recovery still needs ordinary exact-revision approval. | done | `src/core/features/audience/eligibility.ts`, `src/core/features/lifecycle/evaluate-approval.ts`, `src/core/features/campaigns/ui/campaign-review.tsx`, `tests/go-live/stale-sources.journeys.ts` |
 | BUILD-012 | Newsletter saves measure UTF-8 sent-size bounds and retain oversize edits; approval, test send and actual delivery enforce the per-part limit. Full builder, product, flow and imported-blueprint acceptance remain outstanding. | partial | `src/core/features/campaigns/email-size.ts`, `src/core/features/campaigns/saved-email-size.ts`, `tests/go-live/email-size.journeys.ts` |
+| BUILD-008 | Saved-contact previews use the same name and fallbacks as delivery in desktop, mobile, dark approximation and plain text. Located content and size advisories retain exact-revision acknowledgements; safety blockers remain mandatory. | done | `src/core/features/campaigns/email-advisories.ts`, `src/core/features/campaigns/ui/revision-previews.tsx`, `tests/go-live/presend-checks.journeys.ts`, `tests/go-live/email-size.journeys.ts` |

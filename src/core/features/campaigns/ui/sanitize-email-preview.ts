@@ -40,7 +40,8 @@ export function sanitizeEmailPreview(source: string, loadImages = false, approva
 }
 /** Images load only after the operator opts in (BASE-INPUT-002): then from HTTPS hosts and from this
  * deployment's own origin, which serves its campaign images over http on a computer (CAMP-012). */
-export function previewDocument(html: string, loadImages: boolean, mediaOrigin?: string) {
+export function previewDocument(html: string, loadImages: boolean, mediaOrigin?: string, appearance: 'light' | 'dark' = 'light') {
   const images = loadImages ? ['https:', ...(mediaOrigin && /^https?:\/\/[a-z0-9.[\]:-]+$/i.test(mediaOrigin) ? [mediaOrigin] : [])].join(' ') : "'none'";
-  return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${images}; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><style>body{margin:0;padding:20px;font:16px/1.5 system-ui,sans-serif;color:#242821;overflow-wrap:anywhere}img,table{max-width:100%;height:auto}a{color:#355b39;text-decoration:underline}pre{white-space:pre-wrap}</style></head><body>${html}</body></html>`;
+  const dark = appearance === 'dark' ? 'html{filter:invert(1) hue-rotate(180deg)}img{filter:invert(1) hue-rotate(180deg)}' : '';
+  return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${images}; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1"><style>html{background:#fff}body{margin:0;padding:20px;font:16px/1.5 system-ui,sans-serif;color:#242821;overflow-wrap:anywhere}img,table{max-width:100%;height:auto}a{color:#355b39;text-decoration:underline}pre{white-space:pre-wrap}${dark}</style></head><body>${html}</body></html>`;
 }

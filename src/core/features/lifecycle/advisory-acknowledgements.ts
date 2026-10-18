@@ -1,3 +1,7 @@
+import { emailContentAdvisories } from '@/core/features/campaigns/email-advisories';
+import { emailSizeAdvisory } from '@/core/features/campaigns/email-size-advisory';
+import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
+import type { EmailSizeOptions } from '@/core/features/campaigns/email-size';
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
 import { digestJson } from './digest';
@@ -17,21 +21,26 @@ async function recorded(database: Database, identity: string): Promise<Acknowled
   return row ? {operatorId: row.actor_id, acknowledgedAt: new Date(row.occurred_at).toISOString()} : undefined;
 }
 
-function matchesCurrentSubject(check: Finding, subject: string) {
-  const current = emailSubjectAdvisory(subject);
-  return isAcknowledgableFinding(check) && current?.detail === check.detail;
+async function currentFindings(database: Database, snapshot: NonNullable<Awaited<ReturnType<typeof advisorySnapshot>>>, sizeOptions: EmailSizeOptions, includeSize: boolean) {
+  const row=snapshot.revision;
+  const revision={emailSubject:String(row.email_subject),emailBody:String(row.email_body),emailText:String(row.email_text),preheader:String(row.preheader??''),physicalAddress:String(row.physical_address),smsBody:String(row.sms_body),trackingEnabled:Boolean(row.tracking_enabled)};
+  const findings=[emailSubjectAdvisory(revision.emailSubject),...emailContentAdvisories(revision)];
+  if(includeSize)findings.push(emailSizeAdvisory(await savedEmailSize(database,revision,sizeOptions,false)));
+  return findings.filter((finding):finding is NonNullable<typeof finding>=>Boolean(finding));
 }
+const matchesCurrent = (check:Finding, findings:Awaited<ReturnType<typeof currentFindings>>) => isAcknowledgableFinding(check) && findings.some(current=>current.kind===check.kind&&current.detail===check.detail);
 
-export async function enrichAdvisoryAcknowledgements<T extends Finding>(database: Database, revisionId: string, checks: T[]) {
+export async function enrichAdvisoryAcknowledgements<T extends Finding>(database: Database, revisionId: string, checks: T[], sizeOptions:EmailSizeOptions = {}) {
   const snapshot = await advisorySnapshot(database, revisionId);
+  const findings=snapshot?await currentFindings(database,snapshot,sizeOptions,checks.some(check=>check.kind==='message.email-size-advisory')):[];
   return Promise.all(checks.map(async check => {
-    if (!snapshot || !snapshot.hasEmail || !matchesCurrentSubject(check, String(snapshot.revision.email_subject))) return {...check, findingIdentity: undefined, acknowledgement: undefined};
+    if (!snapshot || !snapshot.hasEmail || !matchesCurrent(check, findings)) return {...check, findingIdentity: undefined, acknowledgement: undefined};
     const findingIdentity = await identityFor(snapshot.digest, check);
     return {...check, findingIdentity, acknowledgement: await recorded(database, findingIdentity)};
   }));
 }
 
-export function createAdvisoryAcknowledgementRepository(database: Database) {
+export function createAdvisoryAcknowledgementRepository(database: Database,sizeOptions:EmailSizeOptions = {}) {
   return {
     async acknowledgeAdvisory(input: {campaignId: string; revisionId: string; checkId: string; findingIdentity: string; operatorId: string}) {
       const snapshot = await advisorySnapshot(database, input.revisionId);
@@ -40,7 +49,8 @@ export function createAdvisoryAcknowledgementRepository(database: Database) {
         .bind(input.checkId, input.revisionId).first<{id: string; kind: string; status: string; detail: string; blocking: number}>();
       if (!row) return {kind: 'conflict' as const};
       const check = {...row, blocking: Boolean(row.blocking)};
-      if (!snapshot.hasEmail || !matchesCurrentSubject(check, String(snapshot.revision.email_subject))) return {kind: 'not_advisory' as const};
+      const findings=await currentFindings(database,snapshot,sizeOptions,check.kind==='message.email-size-advisory');
+      if (!snapshot.hasEmail || !matchesCurrent(check,findings)) return {kind: 'not_advisory' as const};
       const identity = await identityFor(snapshot.digest, check);
       if (identity !== input.findingIdentity) return {kind: 'conflict' as const};
       const now = Date.now();
