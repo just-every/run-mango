@@ -19,6 +19,8 @@ export function createInsightsService(repository: ReturnType<typeof createInsigh
       return repository.deliverability(new Date(now.getTime() - reportingWindowDays * 86_400_000));
     },
 
+    mailboxes(windowDays:number,now=new Date()) {return repository.mailboxes(new Date(now.getTime()-windowDays*86400000),now);},
+
     recordExternalCost: repository.recordExternalCost,
   };
 }

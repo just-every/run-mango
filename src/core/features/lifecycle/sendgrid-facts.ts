@@ -1,3 +1,4 @@
+import {providerDiagnostic} from './provider-diagnostic';
 import { submissionId } from '@/core/platform/adapters/sendgrid-activity';
 import { canonicalEmail } from '@/core/features/audience/identity';
 import { decodeProviderReference } from '@/core/shared/provider-reference';
@@ -29,7 +30,8 @@ export async function parseSendgridFacts(verified: VerifiedWebhook): Promise<Pro
     facts.push({ identity: `sendgrid:${row.sg_event_id}`, providerMessageId, kind, occurredAt,
       payloadDigest: await sha256(JSON.stringify(row)), detail: { destination, providerEvent: row.event,
         hard: kind === 'bounced' && row.type === 'bounce' && !['Content','Frequency or Volume Too High','Reputation','Technical Failure'].includes(row.bounce_classification),
-        bounceClassification:typeof row.bounce_classification==='string'?row.bounce_classification:undefined,
+        bounceClassification:providerDiagnostic(row.bounce_classification),
+        reason:providerDiagnostic(row.reason),response:providerDiagnostic(row.response),status:providerDiagnostic(row.status),
         bounceType: kind === 'bounced' ? row.type === 'bounce' ? 'hard' : 'soft' : undefined,
         mangoReference: typeof reference === 'string' ? decodeProviderReference(reference) : undefined } });
   }

@@ -1,3 +1,4 @@
+import {providerDiagnostic} from './provider-diagnostic';
 import {mobileMessageStatus} from './mobile-message-status';
 import { parseSendgridFacts } from './sendgrid-facts';
 import { canonicalEmail, canonicalPhone } from '@/core/features/audience/identity';
@@ -78,6 +79,7 @@ export async function parseVerifiedWebhook(channel: Channel, verified: VerifiedW
         destination,
         hard: kind === 'bounced' && ['hard', 'permanent'].includes(bounceType),
         bounceType: kind === 'bounced' ? bounceType : undefined,
+        ...(kind === 'bounced' ? {reason:providerDiagnostic(bounce.message ?? bounce.description ?? data.reason),bounceSubtype:providerDiagnostic(bounce.subType ?? bounce.subtype),status:providerDiagnostic(data.status)} : {}),
         providerEvent: event,
         mangoReference: mangoReference(data),
       },

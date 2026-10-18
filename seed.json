@@ -199,6 +199,13 @@
       "clauses": [
         "PUB-001"
       ]
+    },
+    {
+      "id": "mailbox-provider-reporting",
+      "description": "Correlated signed email outcomes and non-automated clicks by exact recipient mailbox domain, with a diagnostic bounce taxonomy.",
+      "clauses": [
+        "DELIV-005"
+      ]
     }
   ],
   "nonGoals": [

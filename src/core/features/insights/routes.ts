@@ -18,7 +18,9 @@ export function createInsightsRoutes(service: ReturnType<typeof createInsightsSe
     if (!Number.isInteger(windowDays) || windowDays < 1 || windowDays > 365) {
       return context.json({ error: 'invalid_reporting_window' }, 400);
     }
-    return context.json({ windowDays, senders: await service.deliverability(windowDays) });
+    const now=new Date();
+    const [senders,mailboxes]=await Promise.all([service.deliverability(windowDays,now),service.mailboxes(windowDays,now)]);
+    return context.json({windowDays,senders,mailboxes});
   });
   return routes;
 }

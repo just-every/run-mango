@@ -44,7 +44,7 @@ Mango records delivery facts from your provider's signed webhooks and, where ava
 
 ## What is not covered
 
-Signed events have been replayed locally with a locally generated key, through the public webhook, but no live provider has delivered events to Mango yet. Confirm your own events arrive before relying on delivery counts. **Insights** lists, for each campaign, how many recipients the provider accepted and how many each kind of provider event reported, one row per outcome. Open tracking is off, and neither page shows open, click or revenue figures.
+Signed events have been replayed locally with a locally generated key, through the public webhook, but no live provider has delivered events to Mango yet. Confirm your own events arrive before relying on delivery counts. **Insights** lists, for each campaign, how many recipients the provider accepted and how many each kind of provider event reported, one row per outcome. Open tracking is off by default; observed click reports and optional labelled open estimates have their own sections.
 
 > **Tip:** After your first real send, compare the **Delivered** count with your provider's own dashboard. If they disagree, check that the webhook is configured and that its signing key matches `MAIL_WEBHOOK_SECRET`.
 
@@ -55,3 +55,11 @@ An existing signed SendGrid Event Webhook receiver may forward the original comp
 Unmatched signed complaints, hard bounces and suppression events still block the named address. Sharing an account-wide hook therefore requires an intentionally trusted event scope; it is not automatic isolation between applications. Retransmitting the same valid event does not create duplicate delivery facts. Local signed-request checks establish this behavior, while live signed ingestion and normal cron delivery remain separate acceptance work.
 
 SendGrid can also sign Inbound Parse requests. Those signatures authenticate received-email payloads; they do not prove delivery to another original recipient or an outgoing bounce or complaint. Mango has no Parse intake or production reply inbox, and Parse payloads cannot be posted to the outgoing event route. A future Parse receiver would store separately labelled receipt/reply evidence and need a specific trust contract before it could support sender readiness. The existing Cloudflare receipt connector does not accept Parse output as-is.
+
+## Recipient mailbox providers
+
+In **Insights**, **Recipient mailbox providers** splits signed delivered, bounced and complained outcomes and human clicks into Gmail, Outlook and Hotmail, Yahoo and AOL, Apple iCloud, and Other. Matching uses the exact domain of the address recorded for each send; custom domains stay Other because Mango does not infer their mail hosting. No signed email outcomes means the report states that delivery events are not connected.
+
+Each outcome counts message recipients once, while **Human clicks** counts non-automated requests and **Clicked recipients** counts each recipient-message once. A delivery and a later complaint can both count. Known scanner requests do not count as human engagement.
+
+Bounce reasons are **Invalid address**, **Mailbox full**, **Policy block**, **Reputation**, **Content**, or **Other / reason not recorded**. The latest signed bounce reason for each message in the window determines its category, so the category totals equal its mailbox’s bounced count. Provider-reported content and reputation bounces remain in this report even when the message’s transport outcome is Failed. Old events without diagnostic evidence appear under Other. Erased identities and their removed event details cannot be attributed to a mailbox provider.

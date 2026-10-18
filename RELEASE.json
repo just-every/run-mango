@@ -217,6 +217,10 @@
     "PUB-001": {
       "change": "added",
       "summary": "2026-10-18: Completed email revisions with a recorded hand-off can be explicitly published as independent neutral public reading copies. The index, paged older issues, RSS and metadata contain no contact resolution, unsubscribe token or tracked redirect. Unpublish removes public availability; literal contact data remains covered by CONT-013."
+    },
+    "DELIV-005": {
+      "change": "added",
+      "summary": "2026-10-18: Insights splits signed email outcomes and human clicks by the mailbox domain saved at send time, and classifies each message\u2019s latest signed bounce into invalid address, mailbox full, policy block, reputation, content or other. Bounded SendGrid and Resend diagnostics are retained without changing suppression or transport semantics. Missing historical diagnostics remain explicitly unclassified; erased details are not reconstructed."
     }
   },
   "extensionPointChanges": [],
@@ -404,6 +408,10 @@
     {
       "id": "0070_newsletter_archive.sql",
       "buyerSteps": "Back up matching source, data and private settings, then apply after 0069. This additive table stores explicitly published neutral reading copies and is included in discovered D1 exports and contact erasure. Existing campaigns and delivery records are unchanged."
+    },
+    {
+      "id": "0071_mailbox_reporting_indexes.sql",
+      "buyerSteps": "Apply in filename order after 0070. These additive reporting-window indexes preserve all existing source, recipient and provider records. Back up matching source, data and private settings before upgrading."
     }
   ],
   "breaking": true,

@@ -970,7 +970,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "875f3bc51613e77f80530b21c4ee49c93e152a79e77be27d8656635bfbb973e6",
+      "sha256": "8a9789f226f480bf437f9fe9020f1278f5bce6bcec2da987e983f1463a8a4d1b",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "269ee96424084506be173ad34fc8a90d6f592078d587a2df276e1ad7be869528",
+      "sha256": "59794ca6ae7dde1ca13b97f5ef75b00bcf98a35b5b95d1a4f3e71e44c8f30bc4",
       "executable": false
     },
     "DEMO.md": {
@@ -1042,11 +1042,11 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "21571113b6e7123ffe21415470fb6277c9b2ee82194fb762736d189dbf8e7da8",
+      "sha256": "438cb33edbb5a13bb48a7aea8a2fbe9273a88b977581999f69cfef3ee37801c8",
       "executable": false
     },
     "docs/delivery-reports.md": {
-      "sha256": "517c6700cbc78c4b45d2618e5b3f30336d06e77dfb7e7777943ecbad2d1b29e7",
+      "sha256": "b26fc3562f0514241011404cec626988b26fc25a67962ef42a49ac7e14f7e45f",
       "executable": false
     },
     "docs/first-newsletter.md": {
@@ -1122,7 +1122,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "5fe6a3e5039eb8a57893afb3654d219327695be42509435fc1f001fc9a3947f3",
+      "sha256": "a8073237bfabe71fb991d635c04f0e3f1e6b192f752854c2e0accfba23f768b2",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1409,6 +1409,10 @@
       "sha256": "3fb69bcb261fcab55027b592fd5e35c0eab1e87044aac97c9eeb8e986ddda3e9",
       "executable": false
     },
+    "migrations/core/0071_mailbox_reporting_indexes.sql": {
+      "sha256": "8e6f7591d35e670f7d0afeebfe0847ea0eeef3bdf9efa301781336d481aa1eda",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -1550,7 +1554,7 @@
       "executable": false
     },
     "RELEASE.json": {
-      "sha256": "01494861354573338e607114f297dd5dda8a9d347856d0461a2441c342961c0e",
+      "sha256": "d0035b4ae1f9c69b985dc2863e11e98486724dec65df116e90a18ac8fd1685dd",
       "executable": false
     },
     "RENDERING.md": {
@@ -1906,7 +1910,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "8c82cd0f9a284064309560f1d25dc92a40699c7ad3f6824598de905d36b9cbaf",
+      "sha256": "185d4fdd4d32df64010b80622c55f29874836e8587cfa5d59b1007aae430e8e1",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -3457,12 +3461,20 @@
       "sha256": "acad67b03b600216f73a24e22e3cf9ebc8037310225ac5a56a93113cd324d062",
       "executable": false
     },
+    "src/core/features/insights/mailbox-report.ts": {
+      "sha256": "e4e0694533869e08381705a2c79399f172b97e2933e360e541e6f255e2b65353",
+      "executable": false
+    },
+    "src/core/features/insights/mailbox-taxonomy.ts": {
+      "sha256": "cd3e4697ae0152d9b36db31b9b324e9c60a0703413850f6a19414edaadde6b8f",
+      "executable": false
+    },
     "src/core/features/insights/open-tracking.ts": {
       "sha256": "b7d1daef3c7006b25790cd369b25c3d182714660755c0d0145ae1c16347b2468",
       "executable": false
     },
     "src/core/features/insights/repository.ts": {
-      "sha256": "5b8ec40b6339b93fbc93bad4cf762b7df6f1fe7854c1f510339320a553688e03",
+      "sha256": "2d37bf4eeda35ccad94054419d78c739c9284d071833f4274fd39a7b92641009",
       "executable": false
     },
     "src/core/features/insights/retention-routes.ts": {
@@ -3494,7 +3506,7 @@
       "executable": false
     },
     "src/core/features/insights/routes.ts": {
-      "sha256": "7733ccfca7c5a6b9b22c52a252b5e6e50163b227739a90cbec883b44dd3cda8c",
+      "sha256": "767d3ad07f70c12d2e9b3da79f536d32b4e1404edc7050e8d0b1ca097f10e1d5",
       "executable": false
     },
     "src/core/features/insights/schema.ts": {
@@ -3502,7 +3514,7 @@
       "executable": false
     },
     "src/core/features/insights/service.ts": {
-      "sha256": "dad01b9fe46e7925b0241d8ebc7d8c5a33ee128be86aa9083d7c9c16b743e78f",
+      "sha256": "2db483a18dd5c360061a050e220f711059213be15b79b3e5cf5e5a76c046ccc2",
       "executable": false
     },
     "src/core/features/insights/ui/campaign-engagement.tsx": {
@@ -3529,6 +3541,10 @@
       "sha256": "4cf84316058ee317453df9e1d9eef062ce82e0516be5f716594e024fd1005816",
       "executable": false
     },
+    "src/core/features/insights/ui/mailbox-providers.tsx": {
+      "sha256": "ad94fdce5a1225eba511d64fed84258a4fc113f46e68d31acf69bf72d6aed898",
+      "executable": false
+    },
     "src/core/features/insights/ui/open-estimates.tsx": {
       "sha256": "c18a94fc1acf8933e0f541ce2781937654bddebe08a3ececb5d49e0e7a780708",
       "executable": false
@@ -3546,7 +3562,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/sender-rates.tsx": {
-      "sha256": "7617b8f9ecc635e1068e16b406986b9dbcddb52188cbe3c15fe2afb136a8c24c",
+      "sha256": "7d889784c1591e5f98bfd1b1d863223130b5a209e66d7b0998801c83a813c2d7",
       "executable": false
     },
     "src/core/features/integrations/contacts.ts": {
@@ -3817,6 +3833,10 @@
       "sha256": "0e84a222baa7d560a34310eeea2faed8992bfc6543483f3b2bdb290cd08f6ac2",
       "executable": false
     },
+    "src/core/features/lifecycle/provider-diagnostic.ts": {
+      "sha256": "caa6c32ea5965e384909be21bc0832d99531189626da5a92dcc3738c84c89339",
+      "executable": false
+    },
     "src/core/features/lifecycle/provider-holds.ts": {
       "sha256": "5f7f4b2243df3f377065e1c083a4fb92b00612d165f8568dd11bccf30e627028",
       "executable": false
@@ -3870,7 +3890,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/sendgrid-facts.ts": {
-      "sha256": "0e7e69d9e9d30afe9c45ab98858926289f283fe45920e3b11fd6e0897f23bc1c",
+      "sha256": "ee6f7d964698b6c8e905350cf175e5ecbb813d70dd1ae7110501ef9daa9de58d",
       "executable": false
     },
     "src/core/features/lifecycle/tracked-link-policy.ts": {
@@ -3890,7 +3910,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/webhook-facts.ts": {
-      "sha256": "67c24841dfe708c499a7a6b6019741366730e40d202cb096629430fdb8699faf",
+      "sha256": "b945f166d91c377f23b9d6f8db3c7b3eeb30f392c1df4b52ceb0fdbc1df9cb12",
       "executable": false
     },
     "src/core/features/move-in/archive-content.ts": {
@@ -6687,6 +6707,10 @@
     },
     "tests/go-live/integrations.journeys.ts": {
       "sha256": "21c3fe422ee986f4b0e7f9ce3c0d9d081beb55aabc0eba618b1aff8b662f586e",
+      "executable": false
+    },
+    "tests/go-live/mailbox-provider.journeys.ts": {
+      "sha256": "faaef71e18504c5ea416154bea175771403c84b33706f0248752bfbf147095cf",
       "executable": false
     },
     "tests/go-live/managed-mail.journeys.ts": {

@@ -440,6 +440,12 @@
       "name": "core-0070_newsletter_archive.sql",
       "sha256": "3fb69bcb261fcab55027b592fd5e35c0eab1e87044aac97c9eeb8e986ddda3e9",
       "sql": "CREATE TABLE newsletter_archive (\n  id TEXT PRIMARY KEY NOT NULL,\n  campaign_id TEXT NOT NULL,\n  revision_id TEXT NOT NULL UNIQUE,\n  title TEXT NOT NULL,\n  description TEXT NOT NULL,\n  sender TEXT NOT NULL,\n  body TEXT NOT NULL,\n  sent_at INTEGER NOT NULL,\n  published_at INTEGER NOT NULL\n);\nCREATE INDEX newsletter_archive_published ON newsletter_archive(published_at DESC, id);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0071_mailbox_reporting_indexes.sql",
+      "sha256": "8e6f7591d35e670f7d0afeebfe0847ea0eeef3bdf9efa301781336d481aa1eda",
+      "sql": "-- Bound the mailbox report to its requested event window without scanning all history.\nCREATE INDEX delivery_facts_reporting_window ON delivery_facts(provider_occurred_at,recipient_step_id);\nCREATE INDEX link_click_facts_human_window ON link_click_facts(automated,occurred_at,recipient_step_id);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
