@@ -22,9 +22,12 @@ export async function stageArchive(runtime: any, records: any[]) {
   const {id} = await created.json();
   for (const part of records.filter(row => row.kind === 'part')) {
     const uploaded = await transferRequest(runtime, `imports/${id}/parts/${part.index}`, part, 'PUT');
+    await uploaded.arrayBuffer();
     expect(uploaded.status).toBe(200);
     // Replayed parts retain content verification and resumability.
-    expect((await transferRequest(runtime, `imports/${id}/parts/${part.index}`, part, 'PUT')).status).toBe(200);
+    const replayed = await transferRequest(runtime, `imports/${id}/parts/${part.index}`, part, 'PUT');
+    await replayed.arrayBuffer();
+    expect(replayed.status).toBe(200);
   }
   return id;
 }
