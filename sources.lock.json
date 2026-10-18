@@ -2777,6 +2777,14 @@
       "sha256": "d07da23e2aa46dc840327224cc7b027d1dbffa9d8dc3fba38743fb13073d26a4",
       "executable": false
     },
+    "src/core/features/auth/ui/approval-requests.tsx": {
+      "sha256": "83c64b353fcfbe1d0605bceb0c63a6fac429f4cda0487a896b156f2d605a0cfd",
+      "executable": false
+    },
+    "src/core/features/auth/ui/contact-support.tsx": {
+      "sha256": "b5e3dd0f9912f606c9aeeeef09b7f2015a24b5d1d0d4786d84cf643407dcff59",
+      "executable": false
+    },
     "src/core/features/auth/ui/permissions.tsx": {
       "sha256": "eeeee925e9fea1b049587624aede103092bf8caad6632424928aa5aa0b9fd6c6",
       "executable": false
@@ -6903,6 +6911,10 @@
     },
     "tests/go-live/restore.ts": {
       "sha256": "a0c91d87e4026ffe4304a1657587f9d6cce83d42a41d84f8a9c566348641c2b1",
+      "executable": false
+    },
+    "tests/go-live/roles.journeys.ts": {
+      "sha256": "763f89810dd7c8ad573987d45ae85ad8a3303b15b0e219c9cd7e898a6a1fedb9",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {
