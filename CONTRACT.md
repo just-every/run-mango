@@ -864,9 +864,9 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 68 | 19 | 0 | 87 |
+| Published | 69 | 18 | 0 | 87 |
 | Target and push further | 10 | 51 | 93 | 154 |
-| All | 78 | 70 | 93 | 241 |
+| All | 79 | 69 | 93 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -881,7 +881,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `OPER-007` | Activity log | target | partial | `tests/go-live/integrations.journeys.ts` · `src/core/features/integrations/routes.ts` | Owner-only integration activity records credential creation/revocation and every scoped API request, including denials. The complete cross-product activity log, filters and CSV export remain unimplemented. |
 | `STORE-001` | Store and event connections | published | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: Each connection (INT-001 to INT-006) syncs every declared source type through its edge with source identity and occurrence time; Shopify is proved today. |
 | `STORE-002` | Source identity | published | done | `tests/shopify/connection.spec.ts` |  |
-| `STORE-003` | Freshness | published | partial | `src/core/features/store/sync-run-repository.ts` | acceptance not yet met: Freshness per source type shows the last successful completion and any later failure; needs a tagged journey. |
+| `STORE-003` | Freshness | published | done | `tests/go-live/source-freshness.journeys.ts` · `src/core/features/campaigns/ui/source-freshness.tsx` |  |
 | `STORE-004` | Source failure | published | partial | `src/core/features/store/synchronize.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: An unavailable adapter records a failed operation and sends nothing; nested-page failure and retry are proved for Shopify. |
 | `STORE-005` | Stale sources block approval | published | partial | `src/core/features/audience/source-coverage.ts` | acceptance not yet met: A rule reading a stale source blocks approval until a successful sync; needs a tagged journey. |
 | `STORE-006` | Declared adapter capability | published | partial | `src/core/features/audience/source-coverage.ts` | acceptance not yet met: A rule needing an unsupplied source type is shown unavailable and cannot be approved; needs a tagged journey. |

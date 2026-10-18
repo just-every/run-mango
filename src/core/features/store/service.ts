@@ -101,12 +101,16 @@ export function createStoreService(repository: ReturnType<typeof createStoreRepo
     },
 
     async status() {
-      const [providers, sourceSyncs] = await Promise.all([
+      const [providers, recordedSyncs] = await Promise.all([
         repository.listProviderCapabilities(),
         repository.listSourceSyncs(),
       ]);
 
       const sourceCapabilities = await repository.listCommerceSourceCapabilities();
+      // Show each source before its first completion too. The Decision Desk and
+      // Store must not mistake an absent status row for a successful sync.
+      const sourceSyncs = commerceSourceTypes.map(sourceType => recordedSyncs.find(source => source.sourceType === sourceType)
+        ?? {id: `source_${sourceType}`, sourceType, lastSuccessfulAt: null, lastError: null, createdAt: null, updatedAt: null});
       return { providers, sourceSyncs, sourceCapabilities, syncRuns: await repository.syncRuns.list(), channels: await repository.channelStatus() };
     },
 

@@ -1,10 +1,8 @@
-import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { capabilityName, capabilityNextStep, plainServiceText } from '@/core/app/client/ui/product-copy';
 import { requestJson } from '@/core/app/client/lib/api';
 import { Link, useLoaderData } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-import { titleCase } from '@/core/app/client/lib/format';
 import type { DecisionDesk } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { EmptyState } from '@/core/app/client/ui/empty-state';
@@ -14,6 +12,7 @@ import { Envelope } from '@/core/features/site/drawings/Envelope';
 import { ProposalDetail } from './proposal-detail';
 import { ProposalHistory } from './proposal-history';
 import { ProposalQueue } from './proposal-queue';
+import { SourceFreshness } from './source-freshness';
 
 function ProposalCapabilityState({ providers, suggestions }: { providers: DecisionDesk['sourceStatus']['providers']; suggestions: boolean }) {
   const unavailable = providers.filter((provider) => !provider.configured);
@@ -44,7 +43,6 @@ function ProposalCapabilityState({ providers, suggestions }: { providers: Decisi
 }
 
 export function DecisionDeskPage() {
-  const formatDate = useDateFormatter();
   const { data, error, loading, reload } = useResource<DecisionDesk>('/api/decision-desk');
   const [generationSuccess,setGenerationSuccess]=useState(false);
   const [generating,setGenerating]=useState(false),[generationNotice,setGenerationNotice]=useState('');
@@ -87,25 +85,7 @@ export function DecisionDeskPage() {
         <ProposalCapabilityState providers={data.sourceStatus.providers} suggestions={modules.ai} />
       )}
       <ProposalHistory decisions={data.recentDecisions??[]} />
-      {modules.store ? <section className="source-status panel" aria-labelledby="source-status-title">
-        <div className="section-heading">
-          <h2 id="source-status-title">Store data</h2>
-          <Link className="text-link" to="/app/store">Manage sync</Link>
-        </div>
-        {data.sourceStatus.sourceSyncs.length ? (
-          <div className="source-status__grid">
-            {data.sourceStatus.sourceSyncs.map((source) => (
-              <article key={source.id}>
-                <strong>{titleCase(source.sourceType)}</strong>
-                <span>{source.lastSuccessfulAt ? `Synced ${formatDate(source.lastSuccessfulAt)}` : 'Not synced'}</span>
-                {source.lastError ? <small>{source.lastError}</small> : null}
-              </article>
-            ))}
-          </div>
-        ) : (
-          <p className="muted-copy">No source sync state has been recorded.</p>
-        )}
-      </section> : null}
+      {modules.store ? <SourceFreshness sources={data.sourceStatus.sourceSyncs} /> : null}
     </div>
   );
 }

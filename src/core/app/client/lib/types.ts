@@ -15,7 +15,7 @@ export type SourceSync = {
   sourceType: string;
   lastSuccessfulAt: string | null;
   lastError: string | null;
-  updatedAt: string;
+  updatedAt: string | null;
 };
 
 export type Audience = {

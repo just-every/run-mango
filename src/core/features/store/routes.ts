@@ -9,9 +9,8 @@ export function createStoreRoutes(service:ReturnType<typeof createStoreService>,
     const status=await service.status(), capability=commerce?.capabilities();
     // A fresh configured installation must expose its first sync action before
     // any Cron run. These rows describe an unverified source, never a success.
-    const sourceSyncs=[...status.sourceSyncs,...commerceSourceTypes.filter(type=>!status.sourceSyncs.some(row=>row.sourceType===type)).map(sourceType=>({id:`source_${sourceType}`,sourceType,lastSuccessfulAt:null,lastError:null,createdAt:null,updatedAt:null}))];
     const sourceCapabilities=commerceSourceTypes.map(sourceType=>({sourceType,available:capability?.sourceTypes.includes(sourceType)??false,detail:capability?.detail??'No commerce connection is configured.'}));
-    return context.json({...status,sourceSyncs,sourceCapabilities});
+    return context.json({...status,sourceCapabilities});
   });
   // Mounted under native operator authentication with the other /api routes.
   routes.get('/store/observations',async context=>{
