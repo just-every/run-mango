@@ -2,7 +2,7 @@ import { openPage, reloadPage } from '../support/navigation';
 import {createServer} from 'node:http';
 import { readFile, writeFile } from 'node:fs/promises';
 
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 import {challengeEdge,untouchedForm,storedSignup} from './signup-privacy-support';
 import { signInAsLocalOperator } from './browser-checks';
@@ -37,6 +37,14 @@ function makeImportFiles(runId: string) {
   ];
 }
 
+async function selectImportPreset(page: Page, file: string, preset: string) {
+  const select = page.getByLabel(`Preset for ${file}`);
+  await expect(select).toBeEnabled();
+  await expect(select.locator(`option[value="${preset}"]:enabled`)).toBeAttached();
+  await select.selectOption(preset);
+  await expect(select).toHaveValue(preset);
+}
+
 test('operator imports reviewed CSVs to completion without further clicks, undoes them, and exports the saved ledger at desktop and mobile widths', async ({ page, request }, testInfo) => {
   await signInAsLocalOperator(page, request);
   const runId = `${Date.now()}`;
@@ -59,13 +67,15 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
 
   await page.getByRole('link', { name: 'Import contacts' }).click();
   await expect(page.getByRole('heading', { name: 'Import contacts' })).toBeVisible();
+  // setInputFiles does not wait for the streamed form to enable its input.
+  await expect(page.getByLabel('Choose CSV files')).toBeEnabled();
   await page.getByLabel('Choose CSV files').setInputFiles(makeImportFiles(runId));
   for (const [file, preset] of [
     ['subscribed-export.csv', 'csv-subscribed'],
     ['unsubscribed-export.csv', 'csv-unsubscribed'],
     ['cleaned-export.csv', 'csv-cleaned'],
   ]) {
-    await page.getByLabel(`Preset for ${file}`).selectOption(preset);
+    await selectImportPreset(page, file, preset);
   }
   await page.getByLabel('Brand or legal sender').fill('Mango local');
   await page.getByLabel('Message category', { exact: true }).selectOption('newsletter');
@@ -179,8 +189,9 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
 
     // A removed lossless export must not leave mapping validators on the next source.
     await openPage(page, '/app/audience/import');
+    await expect(page.getByLabel('Choose CSV files')).toBeEnabled();
     await page.getByLabel('Choose CSV files').setInputFiles({name:'audience.csv',mimeType:'text/csv',buffer:Buffer.from(content)});
-    await page.getByLabel('Preset for audience.csv').selectOption('mango');
+    await selectImportPreset(page, 'audience.csv', 'mango');
     const mangoPreview = page.waitForResponse(response => response.request().method() === 'POST'
       && new URL(response.url()).pathname === '/api/audience/import-preview');
     await page.getByRole('button', {name:'Preview import',exact:true}).click();
@@ -191,8 +202,9 @@ test('operator imports reviewed CSVs to completion without further clicks, undoe
     await page.getByRole('button', {name:'Remove audience.csv',exact:true}).click();
     await expect(page.getByRole('group', {name:'audience.csv',exact:true})).toHaveCount(0);
     const replacementEmail = `ui-replacement-${runId}@example.test`;
+    await expect(page.getByLabel('Choose CSV files')).toBeEnabled();
     await page.getByLabel('Choose CSV files').setInputFiles({name:'audience.csv',mimeType:'text/csv',buffer:Buffer.from(`Email Address\n${replacementEmail}`)});
-    await page.getByLabel('Preset for audience.csv').selectOption('csv-non-subscribed');
+    await selectImportPreset(page, 'audience.csv', 'csv-non-subscribed');
     const replacementPreview = page.waitForResponse(response => response.request().method() === 'POST'
       && new URL(response.url()).pathname === '/api/audience/import-preview');
     await page.getByRole('button', {name:'Preview import',exact:true}).click();
