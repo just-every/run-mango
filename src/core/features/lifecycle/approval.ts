@@ -1,3 +1,4 @@
+import { testDestination, testDestinationBlock, reserveTestSend, waitForTestSlot } from './test-destinations';
 import { utf8Bytes, emailByteLimit } from '@/core/features/campaigns/email-size';
 import { smsPolicyAuthority, managedSmsText } from '@/core/features/sms/content';
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
@@ -161,6 +162,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       operatorId: string;
       channel: Channel;
       to: string;
+      typed?: boolean;
       now?: Date;
     }) {
       const now = input.now ?? new Date();
@@ -190,8 +192,11 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       if (operatorsRead.status === 'rejected') throw operatorsRead.reason;
       // Active operators may always test-send to their own sign-in addresses.
       if (input.channel === 'email') allowlist = [...allowlist, ...operatorsRead.value!.results.map(row => row.email)].map(item => item.toLowerCase());
-      const destination = input.channel === 'email' ? input.to.toLowerCase() : input.to;
-      if (!allowlist.includes(destination)) return { kind: 'blocked' as const, detail: 'Destination is not on the operator test-send allowlist.' };
+      const destination = testDestination(input.channel, input.to);
+      if (!destination) return {kind:'blocked' as const,detail:'Enter a valid email address or E.164 phone number.'};
+      const configured = allowlist.includes(destination);
+      const blocked = await testDestinationBlock(runtime,input.channel,destination,input.operatorId,configured,input.typed);
+      if (blocked) return {kind:'blocked' as const,detail:blocked};
       if (snapshotRead.status === 'rejected') throw snapshotRead.reason;
       const snapshot = snapshotRead.value;
       if (!snapshot) return { kind: 'not_found' as const };
@@ -226,15 +231,21 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       const idempotencyKey = `test:${input.revisionId}:${input.channel}:${destinationDigest}:${revisionDigest}`;
       const request: DeliveryRequest = {
         ...(smsPolicy?{smsAuthority:{policyDigest:smsPolicy.digest,expiresAt:now.getTime()+15*60000}}:{}),
-        recipientStepId: `test:${input.revisionId}`, idempotencyKey, to: input.to,
+        recipientStepId: `test:${input.revisionId}`, idempotencyKey, to: destination,
         sender: input.channel === 'email' ? `${snapshot.revision.senderName} <${snapshot.revision.fromEmail}>` : snapshot.revision.smsSender,
         content, callbackUrl: `${publicBaseUrl}/webhooks/${input.channel === 'email' ? 'mail' : 'sms'}/status`, handoffStartedAt: now,
       };
       const costContext: HandoffCostContext = {key:`test-handoff:${idempotencyKey}`,provider:capabilities.provider ?? (input.channel==='email'?'mail.sender.v1':'sms.sender.v1'),operation:'test-handoff',campaignId:input.campaignId};
+      await waitForTestSlot(runtime,input.channel);
       const cost=await prepareTestHandoffCost(runtime.platform.database,sender,request,costContext,capabilities.effectiveDeduplication?capabilities.deduplicationWindowMs:0);
       if (input.channel === 'email' && !revisionMatchesSender(snapshot.revision, await loadSenderSettings(runtime.platform))) {
         await cancelHandoffCost(runtime.platform.database,cost.key);
         return {kind: 'blocked' as const, detail: 'Sender settings changed during preparation. Save and review the current sender details before sending.'};
+      }
+      const destinationBlock = await testDestinationBlock(runtime,input.channel,destination,input.operatorId,configured,input.typed);
+      if (destinationBlock || !await reserveTestSend(runtime,now)) {
+        await cancelHandoffCost(runtime.platform.database,cost.key);
+        return {kind:'blocked' as const,detail:destinationBlock ?? 'Daily test-send allowance reached. Try again on the next UTC day.'};
       }
       let handoff: ProviderHandoff;
       try {handoff=await sender.send(request);} catch(error) {
@@ -244,7 +255,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         if (error instanceof ProviderTransportError) return { kind: 'blocked' as const, detail: error.failure.detail };
         throw error;
       }
-      await repository.recordTestSend(input.revisionId, input.operatorId, input.channel, destinationDigest, revisionDigest, now);
+      await repository.recordTestSend(input.revisionId, input.operatorId, input.channel, destinationDigest, revisionDigest, now, destination);
       try { await settleHandoffCost(runtime.platform.database,sender,request,cost,handoff); }
       catch { /* Keep the recorded test send and original receipt; its prepared cost remains unpriced. */ }
       return { kind: 'sent' as const, disposition: handoff.disposition, providerMessageId: handoff.providerMessageId };

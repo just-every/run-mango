@@ -16,7 +16,7 @@ const approvalBody = z.object({
 const testSendBody = z.object({
   revisionId: z.string().min(1),
   channel: z.enum(['email', 'sms']),
-  to: z.string().min(3).max(320),
+  to: z.union([z.string().trim().min(3).max(320), z.array(z.string().trim().min(3).max(320)).min(1).max(5)]),
 });
 
 function operatorId(context: any) {
@@ -90,6 +90,11 @@ export function registerLifecycleHttpRoutes(
     return context.json({ status: 'reapproved', revisionDigest: result.revisionDigest, idempotent: result.idempotent });
   });
 
+  app.get('/api/campaigns/:id/test-sends', async (context:any) => {
+    if (!operatorId(context)) return context.json({error:'unauthenticated'},401);
+    return context.json({tests:await repository.testSendHistory(context.req.param('id'))});
+  });
+
   app.post('/api/campaigns/:id/test-send', async (context: any) => {
     const actor = operatorId(context);
     if (!actor) return context.json({ error: 'unauthenticated' }, 401);
@@ -97,12 +102,18 @@ export function registerLifecycleHttpRoutes(
     if ('error' in params) return params.error;
     const body = await readJson(context, testSendBody);
     if ('error' in body) return body.error;
-    const timing = await collectSenderTimings(() => approval.sendTest({ campaignId: params.data.id, operatorId: actor, ...body.data }), 'test_send');
-    context.header('Server-Timing', timing.header);
-    const result = timing.value;
-    if (result.kind === 'not_found') return context.json({ error: 'not_found' }, 404);
-    if (result.kind === 'blocked') return context.json({ status: 'blocked', blockers: [{ kind: 'test-send', detail: result.detail, blocking: true }] }, 409);
-    return context.json({ status: 'test-sent', disposition: result.disposition, providerMessageId: result.providerMessageId });
+    const destinations = [...new Set((Array.isArray(body.data.to) ? body.data.to : [body.data.to]).map(to => to.toLowerCase()))];
+    const results = [];
+    for (const to of destinations) {
+      const timing = await collectSenderTimings(() => approval.sendTest({ campaignId: params.data.id, operatorId: actor,
+        revisionId:body.data.revisionId,channel:body.data.channel,to,typed:Array.isArray(body.data.to) }), 'test_send');
+      context.header('Server-Timing', timing.header);
+      const result = timing.value;
+      if (result.kind === 'not_found') return context.json({ error: 'not_found' }, 404);
+      if (result.kind === 'blocked') return context.json({ status: 'blocked', results, blockers: [{ kind: 'test-send', detail: result.detail, blocking: true }] }, result.detail.startsWith('test-send-forbidden:') ? 403 : 409);
+      results.push({to,disposition:result.disposition,providerMessageId:result.providerMessageId});
+    }
+    return context.json({ status:'test-sent',disposition:results.some(item=>item.disposition==='handoff-unknown')?'handoff-unknown':'accepted',results });
   });
 
   for (const action of ['pause', 'resume'] as const) {

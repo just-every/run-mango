@@ -114,6 +114,7 @@
         "CAMP-010",
         "CAMP-011",
         "CAMP-014",
+        "CAMP-019",
         "BUILD-012"
       ]
     },
@@ -779,7 +780,8 @@
     "mediaRequestsPerMinutePerAsset": 6000,
     "providerWebhooksPerMinute": 5000,
     "providerReconciliationIntervalMinutes": 15,
-    "unresolvedProviderOutcomeHours": 1
+    "unresolvedProviderOutcomeHours": 1,
+    "maxTestSendsPerDay": 100
   },
   "accessibility": {
     "level": "WCAG 2.2 AA",

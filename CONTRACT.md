@@ -865,8 +865,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 70 | 17 | 0 | 87 |
-| Target and push further | 11 | 50 | 93 | 154 |
-| All | 81 | 67 | 93 | 241 |
+| Target and push further | 11 | 51 | 92 | 154 |
+| All | 81 | 68 | 92 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -949,7 +949,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `CAMP-016` | Follow-up to non-engaged recipients | target | done | `tests/campaign-results/followup.journeys.ts` · `tests/portability.spec.ts` |  |
 | `CAMP-017` | Recurring and RSS-to-email campaigns | target | missing |  | not implemented |
 | `CAMP-018` | Duplicate a campaign | target | done | `tests/campaign-authoring/browser.spec.ts` |  |
-| `CAMP-019` | Test send to typed addresses | target | missing |  | not implemented |
+| `CAMP-019` | Test send to typed addresses | target | partial | `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-destinations.ts` | Up to five typed email recipients receive marked saved-draft tests; opt-outs and suppressions block, atomic UTC-day attempts respect seed.json, and campaign test history retains destinations and actor. Gap: typed SMS consent/transport, Manager/Author assignment and visible role controls await SMS-001, CONT-019 and OPER-004; the general activity-log screen awaits OPER-007. |
 | `DESIGN-001` | Optional design module | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
 | `DESIGN-002` | Draft-only design generation | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
 | `DESIGN-003` | Design data and records | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |

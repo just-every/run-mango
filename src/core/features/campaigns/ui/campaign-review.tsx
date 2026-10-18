@@ -1,3 +1,4 @@
+import { TestSendHistory } from './test-send-history';
 import {FollowupParent} from './campaign-followup';
 import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
 import { Modal } from '@/core/app/client/ui/modal';
@@ -92,12 +93,12 @@ export function CampaignReviewPage() {
     setNotice(undefined);
     setActionBlockers(undefined);
     try {
-    const response = await requestJson<{ status?: string; blockers?: ApprovalBlocker[]; error?: string; disposition?: 'accepted' | 'handoff-unknown' }>(
+    const response = await requestJson<{ status?: string; blockers?: ApprovalBlocker[]; error?: string; disposition?: 'accepted' | 'handoff-unknown'; results?: Array<{to:string}> }>(
       `/api/campaigns/${id}/${kind === 'test' ? 'test-send' : 'approve'}`,
       {
         method: 'POST',
         body: JSON.stringify(kind === 'test'
-          ? { revisionId: revision.id, channel: testChannel, to: testDestination.trim() }
+          ? { revisionId: revision.id, channel: testChannel, to: testDestination.split(',').map(value=>value.trim()).filter(Boolean) }
           : { revisionId: revision.id, idempotencyKey: crypto.randomUUID() }),
       },
     );
@@ -105,7 +106,7 @@ export function CampaignReviewPage() {
       setActionBlockers(response.data.blockers);
       setFieldErrors(approvalFieldErrors(response.data.blockers, draft));
       if (kind === 'approve') setValidationRequest(request => request + 1);
-      setNotice(kind === 'test' ? 'Test not sent. Resolve the blockers below, then send the test again.' : 'Not approved. Resolve the blockers below and try again.');
+      setNotice(kind === 'test' ? `${response.data.results?.length ? 'Tests already sent to '+response.data.results.map(item=>item.to).join(', ')+'. ' : ''}Test stopped. Resolve the blockers below before trying again.` : 'Not approved. Resolve the blockers below and try again.');
       return;
     }
     if (response.status < 300 && response.data.status === 'scheduled') {
@@ -258,15 +259,16 @@ export function CampaignReviewPage() {
             <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} smsPreview={data.smsPreview} />
           </section> : null}
           {editable ? <Disclosure className="panel test-send-panel" title="Send a test">
-            <p className="muted-copy">Uses the saved revision. Send it to your own sign-in address, another operator’s, or an address on the optional test allowlist (operations guide).</p>
-            {!testDestination.trim() ? <p>Enter an approved test destination to send a test.</p> : null}
+            <p className="muted-copy">Uses the saved revision. Enter up to five email addresses, separated by commas. Unsubscribed and suppressed addresses are refused. SMS tests use the configured test destinations. Every provider attempt uses the daily test allowance.</p>
+            {!testDestination.trim() ? <p>Enter a test destination to send a test.</p> : null}
             {!revision.fromEmail || !revision.senderName ? <p>Email tests are unavailable until you save a sender identity in Settings and update this draft.</p> : null}
             {dirty ? <p>Save your changes before sending a test of this revision.</p> : null}
             <ValidationForm className="test-send-fields" aria-label="Send a test" serverErrors={testErrors} onValidSubmit={() => void action('test')}>
               <label>Test channel<select aria-label="Test channel" value={testChannel} onChange={event => setTestChannel(event.target.value as 'email' | 'sms')}><option value="email">Email</option>{modules.sms ? <option value="sms">SMS</option> : null}</select></label>
-              <label>Test destination (required)<Field name="destination" label="Test destination" required validate={() => testChannel === 'sms' && !/^\+[1-9]\d{6,14}$/.test(testDestination.trim()) ? 'Enter a phone number with its country code, such as +61412345678.' : undefined}><input aria-label="Test destination" type={testChannel === 'email' ? 'email' : 'tel'} value={testDestination} onChange={event => setTestDestination(event.target.value)} /></Field></label>
+              <label>Test destination (required)<Field name="destination" label="Test destination" required validate={() => {const values=testDestination.split(',').map(value=>value.trim()).filter(Boolean);return values.length>5?'Enter at most five destinations.':values.some(value=>testChannel==='sms'?!/^\+[1-9]\d{6,14}$/.test(value):!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))?'Enter valid email addresses, or SMS numbers with their country code.':undefined;}}><input aria-label="Test destination" type="text" inputMode={testChannel === 'email' ? 'email' : 'tel'} value={testDestination} onChange={event => setTestDestination(event.target.value)} /></Field></label>
               <button className="secondary-action" type="submit" disabled={Boolean(busy) || dirty || needsCanonicalRead || !revision.fromEmail || !revision.senderName}>{busy === 'test' ? 'Checking…' : 'Send test'}</button>
             </ValidationForm>
+            <TestSendHistory campaignId={id} refresh={busy} />
           </Disclosure> : null}
           <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
           <DeliveryPlan steps={data.steps} />

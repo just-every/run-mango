@@ -124,6 +124,13 @@ export function createCampaignLifecycleRepository(database: Database) {
       return row?.revision_digest;
     },
 
+    async testSendHistory(campaignId: string) {
+      return (await client.prepare(`SELECT a.actor_id,a.occurred_at,a.detail_json,o.display_name AS operator_name FROM lifecycle_audit_entries a
+        JOIN campaign_revisions r ON r.id=a.entity_id LEFT JOIN operators o ON o.id=a.actor_id WHERE r.campaign_id=? AND a.action='test-send'
+        ORDER BY a.occurred_at DESC,a.id DESC LIMIT 100`).bind(campaignId).all<{actor_id:string;occurred_at:number;detail_json:string;operator_name:string|null}>()).results
+        .map(row=>({operatorId:row.actor_id,operatorName:row.operator_name??'Removed operator',occurredAt:new Date(row.occurred_at).toISOString(),...JSON.parse(row.detail_json)}));
+    },
+
     async recordTestSend(
       revisionId: string,
       operatorId: string,
@@ -131,6 +138,7 @@ export function createCampaignLifecycleRepository(database: Database) {
       destinationDigest: string,
       revisionDigest: string,
       now: Date,
+      destination?: string,
     ) {
       const operationKey = `test-send:${revisionId}:${channel}:${destinationDigest}:${revisionDigest}`;
       await client.prepare(
@@ -140,7 +148,7 @@ export function createCampaignLifecycleRepository(database: Database) {
          ON CONFLICT(operation_key) DO NOTHING`,
       ).bind(
         ulid(now.getTime()), operationKey, revisionId, operatorId,
-        JSON.stringify({ channel, destinationDigest, revisionDigest, test: true }), now.getTime(), now.getTime(),
+        JSON.stringify({ channel, destination, destinationDigest, revisionDigest, test: true }), now.getTime(), now.getTime(),
       ).run();
     },
 
