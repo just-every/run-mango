@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "6199f67854fa06b423ac0017fa9b43dbc5e63bd01f18150799d74a5d77480920",
+      "sha256": "288bed84608f8bd9f9fe2782fa257682eccf723ea858a782901da73b5e44cbf0",
       "executable": false
     },
     "DEMO.md": {
@@ -1042,7 +1042,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "63a69f5c8ccdf6fe0d9be672910822428ddacae384a645e6aad038a225aaade0",
+      "sha256": "5e10fb47779233caf35988415f14787c19629cbc5b0b1085cd5af8fdc899add7",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -3018,7 +3018,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-review.tsx": {
-      "sha256": "092bd234a875a64e32ecd64c6be38e26aec984627cde59c8b4d93033b21d6059",
+      "sha256": "815e07f0b58940d07671defbe278d971682bf51dea35076d557610c960c27a04",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-scheduled.tsx": {
@@ -3142,7 +3142,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/test-send-history.tsx": {
-      "sha256": "a052b61928f6ad4823efc5d7e31a4e3040e99b27bc9a648e09c339031ad9d7cc",
+      "sha256": "fbcd2eb4cb44560bf9e27e0d22bd3f75abf40b4dac7f188bf4093c80006abb86",
       "executable": false
     },
     "src/core/features/design-generation/advance.ts": {
@@ -3806,7 +3806,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/approval.ts": {
-      "sha256": "6a9147695fd19c999ba6e7855749c429a430bd15659c972f279823a73f40a92e",
+      "sha256": "14bccc491ef7ae2276aaeb83de1226438c2f96b84f8f6431f27d5c5b39defb5b",
       "executable": false
     },
     "src/core/features/lifecycle/audience-marketing-history.ts": {
@@ -3922,7 +3922,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/routes.ts": {
-      "sha256": "a429aad3a50d89850f93d7b914db18b2030c63f23f3f5a08e82f1e0180d4d77b",
+      "sha256": "cfaaf783863b2de164b48dae875bb1ab3a64968afd3615c763f9604b6bffbeda",
       "executable": false
     },
     "src/core/features/lifecycle/rules.ts": {
@@ -3946,7 +3946,15 @@
       "executable": false
     },
     "src/core/features/lifecycle/test-destinations.ts": {
-      "sha256": "91172468cbafd44dcc9bd442c79ea78aae3a63298d96cc1d660236726d191493",
+      "sha256": "cfecb35ee2001bf75837e4f907d508d459be5398d81dfaff3d9edcb8f835ef2f",
+      "executable": false
+    },
+    "src/core/features/lifecycle/test-send-allowance.ts": {
+      "sha256": "af37e474e6cedd8791458dd59f378ae600a40d41be55cfae4bf261e554c52a4a",
+      "executable": false
+    },
+    "src/core/features/lifecycle/test-send.ts": {
+      "sha256": "353a28815b35a5d3f710b36fc83e36519edf74dddd7a4765c449faf753120ce3",
       "executable": false
     },
     "src/core/features/lifecycle/tracked-link-policy.ts": {
@@ -6870,7 +6878,7 @@
       "executable": false
     },
     "tests/go-live/typed-tests.journeys.ts": {
-      "sha256": "85d76749e64e8858b008d19ffda57c7d20aa82a52265c9ed0ddbb0c2c84f3cf4",
+      "sha256": "4e837e93d03549f271a08019c9bfbd6703518f1b7e637b1aa455c5e6e3e7b1f4",
       "executable": false
     },
     "tests/go-live/worker.ts": {

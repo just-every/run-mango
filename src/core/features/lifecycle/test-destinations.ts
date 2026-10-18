@@ -1,4 +1,4 @@
-import seed from '../../../../seed.json' with {type:'json'};
+import {testSendAllowance} from './test-send-allowance';
 import { canonicalEmail, canonicalPhone } from '@/core/features/audience/identity';
 import { sha256 } from './digest';
 import { boundPolicy } from './transport-policy';
@@ -31,12 +31,17 @@ export function testDestination(channel: Channel, value: string) {
   try { return channel === 'email' ? canonicalEmail(value) : canonicalPhone(value); } catch { return undefined; }
 }
 
-/** Atomic, installation-wide UTC-day allowance. A reservation covers a provider attempt, including uncertainty. */
-export async function reserveTestSend(runtime: LifecycleRuntime, now: Date) {
-  const day=now.toISOString().slice(0,10), limit=seed.limits.maxTestSendsPerDay;
-  const row=await runtime.platform.database.$client.prepare(`INSERT INTO test_send_allowances(day,used) VALUES(?,1)
-    ON CONFLICT(day) DO UPDATE SET used=used+1 WHERE used<? RETURNING used`).bind(day,limit).first();
-  return Boolean(row);
+/** Current role authority controls typed fields; configured destinations retain CAMP-008. */
+export async function testSendAccess(runtime:LifecycleRuntime, operatorId:string, now:Date) {
+  const db=runtime.platform.database.$client;
+  const [actor, operators, allowance]=await Promise.all([
+    db.prepare("SELECT role FROM oa_operators WHERE id=? AND status='active'").bind(operatorId).first<{role:string}>(),
+    db.prepare("SELECT email FROM oa_operators WHERE status='active'").all<{email:string}>(),
+    testSendAllowance(runtime,now),
+  ]);
+  return {allowance,canType:Boolean(actor&&['owner','admin','manager'].includes(actor.role)),
+    destinations:{email:[...new Set([...runtime.platform.config.testEmailAllowlist,...operators.results.map(row=>row.email)])],
+      sms:runtime.platform.config.modules.sms.enabled?runtime.platform.config.modules.sms.config.testAllowlist:[]}};
 }
 
 /** Wait once for a near pacing slot before attempting a batch recipient. A longer hold stays a visible refusal. */

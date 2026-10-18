@@ -91,8 +91,10 @@ export function registerLifecycleHttpRoutes(
   });
 
   app.get('/api/campaigns/:id/test-sends', async (context:any) => {
-    if (!operatorId(context)) return context.json({error:'unauthenticated'},401);
-    return context.json({tests:await repository.testSendHistory(context.req.param('id'))});
+    const actor = operatorId(context);
+    if (!actor) return context.json({error:'unauthenticated'},401);
+    const [tests,access]=await Promise.all([repository.testSendHistory(context.req.param('id')),approval.testSendAccess(actor)]);
+    return context.json({tests,...access});
   });
 
   app.post('/api/campaigns/:id/test-send', async (context: any) => {
@@ -102,18 +104,15 @@ export function registerLifecycleHttpRoutes(
     if ('error' in params) return params.error;
     const body = await readJson(context, testSendBody);
     if ('error' in body) return body.error;
-    const destinations = [...new Set((Array.isArray(body.data.to) ? body.data.to : [body.data.to]).map(to => to.toLowerCase()))];
-    const results = [];
-    for (const to of destinations) {
-      const timing = await collectSenderTimings(() => approval.sendTest({ campaignId: params.data.id, operatorId: actor,
-        revisionId:body.data.revisionId,channel:body.data.channel,to,typed:Array.isArray(body.data.to) }), 'test_send');
-      context.header('Server-Timing', timing.header);
-      const result = timing.value;
-      if (result.kind === 'not_found') return context.json({ error: 'not_found' }, 404);
-      if (result.kind === 'blocked') return context.json({ status: 'blocked', results, blockers: [{ kind: 'test-send', detail: result.detail, blocking: true }] }, result.detail.startsWith('test-send-forbidden:') ? 403 : 409);
-      results.push({to,disposition:result.disposition,providerMessageId:result.providerMessageId});
-    }
-    return context.json({ status:'test-sent',disposition:results.some(item=>item.disposition==='handoff-unknown')?'handoff-unknown':'accepted',results });
+    const timing = await collectSenderTimings(() => approval.sendTests({campaignId:params.data.id,operatorId:actor,
+      revisionId:body.data.revisionId,channel:body.data.channel,
+      to:Array.isArray(body.data.to)?body.data.to:[body.data.to],typed:Array.isArray(body.data.to)}), 'test_send');
+    context.header('Server-Timing', timing.header);
+    const result=timing.value;
+    if (result.kind==='not_found') return context.json({error:'not_found'},404);
+    if (result.kind==='blocked') return context.json({status:'blocked',results:result.results,
+      blockers:[{kind:'test-send',detail:result.detail,blocking:true}]},result.detail.startsWith('test-send-forbidden:')?403:409);
+    return context.json({status:'test-sent',disposition:result.results.some(item=>item.disposition==='handoff-unknown')?'handoff-unknown':'accepted',results:result.results});
   });
 
   for (const action of ['pause', 'resume'] as const) {

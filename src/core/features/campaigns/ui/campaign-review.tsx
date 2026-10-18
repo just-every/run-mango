@@ -1,4 +1,4 @@
-import { TestSendHistory } from './test-send-history';
+import { TestSendHistory, type TestSendAccess } from './test-send-history';
 import {FollowupParent} from './campaign-followup';
 import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
 import { Modal } from '@/core/app/client/ui/modal';
@@ -30,6 +30,7 @@ export function CampaignReviewPage() {
   const { id } = useParams({ from: '/app/campaigns_/$id_/review' });
   const { modules } = useLoaderData({ from: '/app' });
   const { data, error, loading, reload, replace } = useResource<ReviewData>(`/api/campaigns/${id}/review`);
+  const testAccess=useResource<TestSendAccess>(`/api/campaigns/${id}/test-sends`);
   const authoring = useResource<{timezone:string}>('/api/campaign-authoring');
   const [draft, setDraft] = useState<DraftComposition | undefined>(() => data?.revision ? toDraftComposition(data.revision, data.links, data.steps) : undefined);
   const [notice, setNotice] = useState<string>();
@@ -43,6 +44,12 @@ export function CampaignReviewPage() {
   const [testChannel, setTestChannel] = useState<'email' | 'sms'>('email');
   const [testDestination, setTestDestination] = useState('');
   const [confirmingApproval, setConfirmingApproval] = useState(false);
+  useEffect(()=>{
+    if (!testAccess.data) return;
+    const delay=Math.max(0,Date.parse(testAccess.data.allowance.resetsAt)-Date.now());
+    const timer=setTimeout(()=>void testAccess.reload(),Math.min(delay+100,2147483647));
+    return ()=>clearTimeout(timer);
+  },[testAccess.data?.allowance.resetsAt]);
   const savedComposition = data?.revision ? JSON.stringify(toDraftComposition(data.revision, data.links, data.steps)) : undefined;
 
   useEffect(() => {
@@ -98,7 +105,7 @@ export function CampaignReviewPage() {
       {
         method: 'POST',
         body: JSON.stringify(kind === 'test'
-          ? { revisionId: revision.id, channel: testChannel, to: testDestination.split(',').map(value=>value.trim()).filter(Boolean) }
+          ? { revisionId: revision.id, channel: testChannel, to: testAccess.data?.canType ? testDestination.split(',').map(value=>value.trim()).filter(Boolean) : testDestination }
           : { revisionId: revision.id, idempotencyKey: crypto.randomUUID() }),
       },
     );
@@ -126,7 +133,7 @@ export function CampaignReviewPage() {
     if (kind === 'test') setTestErrors({destination: response.data.error === 'test_destination_not_allowed' ? 'Use a destination approved by your operator in the test allowlist.' : 'Check the approved destination and sender in Settings before sending a test.'});
     setNotice('This action is unavailable. Check the approval checks and sending configuration, then try again.');
     } catch {setNotice('The result could not be confirmed. Reload this campaign before trying again.');}
-    finally {setBusy(undefined);}
+    finally {setBusy(undefined);if(kind==='test')void testAccess.reload();}
   };
 
   const acknowledge = async (check: Check) => {
@@ -259,16 +266,17 @@ export function CampaignReviewPage() {
             <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} smsPreview={data.smsPreview} />
           </section> : null}
           {editable ? <Disclosure className="panel test-send-panel" title="Send a test">
-            <p className="muted-copy">Uses the saved revision. Enter up to five email addresses, separated by commas. Unsubscribed and suppressed addresses are refused. SMS tests use the configured test destinations. Every provider attempt uses the daily test allowance.</p>
+            <p className="muted-copy">Uses the saved revision. {testAccess.data?.canType ? 'Enter up to five email addresses, separated by commas.' : 'Choose a configured test destination.'} Unsubscribed and suppressed addresses are refused. SMS tests use the configured test destinations.</p>
+            {testAccess.data ? <p role="status" aria-label="Daily test allowance">{testAccess.data.allowance.remaining} of {testAccess.data.allowance.limit} test recipient hand-offs remaining today. Resets at 00:00 UTC. Uncertain outcomes count.</p> : <LoadState error={testAccess.error} />}
             {!testDestination.trim() ? <p>Enter a test destination to send a test.</p> : null}
             {!revision.fromEmail || !revision.senderName ? <p>Email tests are unavailable until you save a sender identity in Settings and update this draft.</p> : null}
             {dirty ? <p>Save your changes before sending a test of this revision.</p> : null}
             <ValidationForm className="test-send-fields" aria-label="Send a test" serverErrors={testErrors} onValidSubmit={() => void action('test')}>
               <label>Test channel<select aria-label="Test channel" value={testChannel} onChange={event => setTestChannel(event.target.value as 'email' | 'sms')}><option value="email">Email</option>{modules.sms ? <option value="sms">SMS</option> : null}</select></label>
-              <label>Test destination (required)<Field name="destination" label="Test destination" required validate={() => {const values=testDestination.split(',').map(value=>value.trim()).filter(Boolean);return values.length>5?'Enter at most five destinations.':values.some(value=>testChannel==='sms'?!/^\+[1-9]\d{6,14}$/.test(value):!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))?'Enter valid email addresses, or SMS numbers with their country code.':undefined;}}><input aria-label="Test destination" type="text" inputMode={testChannel === 'email' ? 'email' : 'tel'} value={testDestination} onChange={event => setTestDestination(event.target.value)} /></Field></label>
-              <button className="secondary-action" type="submit" disabled={Boolean(busy) || dirty || needsCanonicalRead || !revision.fromEmail || !revision.senderName}>{busy === 'test' ? 'Checking…' : 'Send test'}</button>
+              {testAccess.data?.canType ? <label>Test destination (required)<Field name="destination" label="Test destination" required validate={() => {const values=testDestination.split(',').map(value=>value.trim()).filter(Boolean);return values.length>5?'Enter at most five destinations.':values.some(value=>testChannel==='sms'?!/^\+[1-9]\d{6,14}$/.test(value):!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))?'Enter valid email addresses, or SMS numbers with their country code.':undefined;}}><input aria-label="Test destination" type="text" inputMode={testChannel === 'email' ? 'email' : 'tel'} value={testDestination} onChange={event => setTestDestination(event.target.value)} /></Field></label> : <label>Configured test destination<select aria-label="Configured test destination" value={testDestination} required onChange={event=>setTestDestination(event.target.value)}><option value="">Choose a destination</option>{testAccess.data?.destinations[testChannel].map(to=><option key={to} value={to}>{to}</option>)}</select></label>}
+              <button className="secondary-action" type="submit" disabled={!testAccess.data || Boolean(busy) || dirty || needsCanonicalRead || !revision.fromEmail || !revision.senderName}>{busy === 'test' ? 'Checking…' : 'Send test'}</button>
             </ValidationForm>
-            <TestSendHistory campaignId={id} refresh={busy} />
+            <TestSendHistory tests={testAccess.data?.tests??[]} />
           </Disclosure> : null}
           <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
           <DeliveryPlan steps={data.steps} />

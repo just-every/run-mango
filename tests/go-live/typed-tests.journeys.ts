@@ -6,6 +6,7 @@ import {installation,json,sender,draftCampaign,availableTransport,signedPost} fr
 import {openPage} from '../support/navigation';
 
 test('[CAMP-019] typed email tests enforce restrictions, daily allowance and recorded destinations',async({page},info)=>{
+  page.setDefaultTimeout(15000);
   const edge=await providerEdge(),signer=eventSigner(),site=await installation(edge,signer);
   try {
     let cookie=await site.open();
@@ -13,6 +14,7 @@ test('[CAMP-019] typed email tests enforce restrictions, daily allowance and rec
     const clock=await site.control('/_golive/clock');
     const campaign=await draftCampaign(site,cookie,'Autumn harvest preview',['garden-reader@example.test'],new Date(clock.now+86400000));
     const path=`/api/campaigns/${campaign.campaignId}/test-send`;
+    const allowance=async()=> (await json(await site.call(`/api/campaigns/${campaign.campaignId}/test-sends`,{cookie}),200)).allowance;
     const send=(to:string|string[],auth=cookie)=>site.call(path,{method:'POST',cookie:auth,body:{revisionId:campaign.revisionId,channel:'email',to}});
     expect((await send('alice@example.test','')).status).toBe(401);
     expect((await send(Array.from({length:6},(_,i)=>`extra${i}@example.test`))).status).toBe(400);
@@ -28,10 +30,14 @@ test('[CAMP-019] typed email tests enforce restrictions, daily allowance and rec
       await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
       const panel=page.locator('.test-send-panel');await panel.getByRole('button',{name:'Send a test',exact:true}).click();
       await panel.getByLabel('Test destination',{exact:true}).fill(`design${width}@example.test, copy${width}@example.test`);
+      const before=await allowance();
+      await expect(panel.getByRole('status',{name:'Daily test allowance'})).toContainText(String(before.remaining));
       await availableTransport(site);
       await panel.getByRole('button',{name:'Send test',exact:true}).click();
       await expect(page.getByRole('status').filter({hasText:'The test send was accepted'})).toBeVisible();
       await expect(panel.getByRole('region',{name:'Test send history'})).toContainText(`copy${width}@example.test`);
+      expect((await allowance()).remaining).toBe(before.remaining-2);
+      await expect(panel.getByRole('status',{name:'Daily test allowance'})).toContainText(String(before.remaining-2));
       await panel.screenshot({path:info.outputPath(`typed-tests-${width}.png`)});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
@@ -44,15 +50,45 @@ test('[CAMP-019] typed email tests enforce restrictions, daily allowance and rec
     expect(history.tests.map((item:any)=>item.destination).sort()).toEqual(sent.map(item=>item.to).sort());
     await site.open('colleague@example.test','colleague');
     await site.runtime.sql("UPDATE oa_operators SET role='member' WHERE id='go-live-owner' RETURNING id");
-    expect((await send(['forbidden@example.test'],await site.open())).status).toBe(403);
+    cookie=await site.open();
+    expect((await send(['forbidden@example.test'])).status).toBe(403);
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+    for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1000});
+      await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+      const panel=page.locator('.test-send-panel');await panel.getByRole('button',{name:'Send a test',exact:true}).click();
+      await expect(panel.getByLabel('Configured test destination',{exact:true})).toBeVisible();
+      await expect(panel.getByLabel('Test destination',{exact:true})).toHaveCount(0);
+      await panel.screenshot({path:info.outputPath(`configured-tests-${width}.png`)});
+    }
     await site.runtime.sql("UPDATE oa_operators SET role='owner' WHERE id='go-live-owner' RETURNING id");
     cookie=await site.open();
+    edge.loseResponseFor('uncertain-preview@example.test');
+    await availableTransport(site);
+    const beforeUnknown=await allowance();
+    expect(await json(await send(['uncertain-preview@example.test']),200)).toMatchObject({disposition:'handoff-unknown'});
+    expect((await allowance()).remaining).toBe(beforeUnknown.remaining-1);
     const day=new Date((await site.control('/_golive/clock')).now).toISOString().slice(0,10);
     await site.runtime.sql(`UPDATE test_send_allowances SET used=${seed.limits.maxTestSendsPerDay-1} WHERE day='${day}' RETURNING used`);
+    const beforeRefusal=edge.sends.length;
+    const refused=await json(await send(['too-many-a@example.test','too-many-b@example.test']),409);
+    expect(refused).toMatchObject({results:[],blockers:[{detail:expect.stringContaining('1 remaining')}]});
+    expect(edge.sends).toHaveLength(beforeRefusal);
+    expect((await allowance()).remaining).toBe(1);
     await availableTransport(site);
     const competing=await Promise.all([send('last-a@example.test'),send('last-b@example.test')]);
     expect(competing.map(response=>response.status).sort()).toEqual([200,409]);
     expect((await json(await send('tomorrow@example.test'),409)).blockers[0].detail).toContain('Daily test-send allowance');
     expect(edge.sends.filter(item=>item.to.startsWith('last-'))).toHaveLength(1);
+    const now=(await site.control('/_golive/clock')).now;
+    const midnight=Date.parse(new Date(now).toISOString().slice(0,10))+86400000;
+    await site.control('/_golive/clock',{advanceMs:midnight-now+100});
+    cookie=await site.open();
+    expect((await allowance()).remaining).toBe(seed.limits.maxTestSendsPerDay);
+    expect((await send('tester@example.test')).status).toBe(200);
+    expect((await allowance()).remaining).toBe(seed.limits.maxTestSendsPerDay-1);
+    await availableTransport(site);
+    expect((await send(['new-day@example.test'])).status).toBe(200);
+    expect((await allowance()).remaining).toBe(seed.limits.maxTestSendsPerDay-2);
   } finally {await site.runtime.close();await edge.close();}
 });
