@@ -1,6 +1,7 @@
 import { allowedEmailAttribute, escapeHtml, inspectEmailHtml, safeEmailUrl } from '../campaigns/email-html-policy';
 import { parseEmailHtml } from '../campaigns/email-html-parse';
-import { maxEmailBodyCharacters } from '../campaigns/email-limits';
+import { assertEmailSize, EmailTooLargeError } from '../campaigns/email-size';
+import { normalizeAuthoredContent } from '../campaigns/authoring-content';
 import { DesignImportError } from './layerdoc';
 import { columnGap, columnWidth, emailWidth, gutter, type DesignPlan, type ImageBlock, type Row, type TextBlock } from './plan';
 
@@ -72,6 +73,8 @@ export function compileDesignEmail(plan: DesignPlan, hosted: ReadonlyMap<string,
   const {canonical} = parseEmailHtml(html);
   const issues = inspectEmailHtml(canonical, mediaOrigin).issues;
   if (issues.length) throw new DesignImportError('invalid_layout', `The compiled email would not pass approval: ${issues.join(' ')}`);
-  if (canonical.length > maxEmailBodyCharacters) throw new DesignImportError('unsupported_design', `The compiled email is ${canonical.length} characters, over the ${maxEmailBodyCharacters}-character body limit. Import a shorter design.`);
+  const saved=normalizeAuthoredContent({emailBody:canonical});
+  try {assertEmailSize({emailSubject:'',emailBody:saved.emailBody!,emailText:saved.emailText!,preheader:'',physicalAddress:'',smsBody:''},{publicBaseUrl:mediaOrigin});}
+  catch(error) {if(error instanceof EmailTooLargeError)throw new DesignImportError('unsupported_design',error.message);throw error;}
   return canonical;
 }

@@ -1,3 +1,4 @@
+import { utf8Bytes, emailByteLimit } from '@/core/features/campaigns/email-size';
 import { smsPolicyAuthority, managedSmsText } from '@/core/features/sms/content';
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
 import { prepareTestHandoffCost, cancelHandoffCost, settleHandoffCost, settleHandoffFailure, type HandoffCostContext } from '@/core/features/insights/cost-handoff';
@@ -212,6 +213,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         ? {subject: `${marker} ${rendered.subject}`, html: `<p><strong>${marker}</strong></p>${rendered.html}`, text: `${marker}\n\n${rendered.text}`, preheader: `${marker} ${rendered.preheader}`, test: true,
           from: {name: snapshot.revision.senderName, email: snapshot.revision.fromEmail}, replyTo: snapshot.revision.replyToEmail}
         : {text: managedSmsText(`${marker} ${rendered.sms}`,smsPolicy!.policy,smsPolicy!.sender), test: true};
+      if(input.channel==='email' && ('html' in content) && (utf8Bytes(content.html ?? '')>emailByteLimit||utf8Bytes(content.text)>emailByteLimit)) return {kind:'blocked' as const,detail:`Email test exceeds the ${emailByteLimit}-byte per-part limit.`};
       const [revisionDigest, destinationDigest] = await Promise.all([
         digestJson({
           rendererVersion: messageRendererVersion,

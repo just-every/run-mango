@@ -1,3 +1,5 @@
+import { savedEmailSize } from './saved-email-size';
+import type { EmailSizeOptions } from './email-size';
 import type { BatchItem } from 'drizzle-orm/batch';
 import { z } from 'zod';
 import { summarizeAudienceRules } from './audience-summary';
@@ -36,7 +38,7 @@ export const createDraftSchema = z.union([
 /** A single transaction creates authored content; it never approves or queues it. */
 /** `alongside` adds statements that must commit in the same batch as the new draft. */
 export async function createDraft(database: Database, composition: DraftComposition, operatorId: string,
-  alongside: (draft: {campaignId: string; revisionId: string; createdAt: Date}) => BatchItem<'sqlite'>[] = () => []) {
+  alongside: (draft: {campaignId: string; revisionId: string; createdAt: Date}) => BatchItem<'sqlite'>[] = () => [], sizeOptions: EmailSizeOptions = {}) {
   const parsed = normalizeAuthoredContent({name:'Untitled campaign', emailSubject:'', emailBody:'', emailText:'', senderName:'', fromEmail:'', replyToEmail:'', physicalAddress:'', messageCategory:'newsletter', inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'}]}), ...draftCompositionSchema.parse(composition)});
   const now = new Date(), campaignId = ulid(), revisionId = ulid();
   const rules = parseStructuredRules(parsed.inclusionRuleJson!, parsed.exclusionRulesJson ?? '[]');
@@ -48,6 +50,7 @@ export async function createDraft(database: Database, composition: DraftComposit
     inclusionRuleJson:parsed.inclusionRuleJson!,exclusionRulesJson:parsed.exclusionRulesJson ?? '[]',sourceTypesJson:JSON.stringify(rules.sourceTypes),
     authoredExclusionReasonsJson:JSON.stringify(rules.exclusions.map(rule=>rule.reason)),
     trackingEnabled:parsed.trackingEnabled ?? false,createdAt:now,updatedAt:now };
+  await savedEmailSize(database, revision, sizeOptions);
   const statements = [database.insert(campaigns).values({id:campaignId,state:'draft',activeRevisionId:revisionId,createdAt:now,updatedAt:now}),
     database.insert(campaignRevisions).values(revision),
     database.insert(campaignStateTransitions).values({id:ulid(),campaignId,fromState:'draft',toState:'draft',actorType:'operator',actorId:operatorId,reason:'draft-created',occurredAt:now,createdAt:now}),

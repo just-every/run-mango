@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 13 claims · 13 in code.**
+**Totals: 14 claims · 14 in code.**
 
 ## Mango integration claims
 
@@ -28,3 +28,4 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | MSG-008 | Review counts eligible contacts using fallback text, invalid tokens block approval, and escaped names and saved fallbacks reach the provider. Destination-only display labels do not substitute for names; preview uses the same supported fields and fallbacks. | done | `src/core/features/audience/contact-personalisation.ts`, `src/core/features/campaigns/message-content.ts`, `tests/go-live/personalisation.journeys.ts` |
 | STORE-003 | Decision Desk shows every source’s last successful sync and later failure, retains the completion through partial-page failure, and marks it fresh only after recovery completes. Unstarted sources are visible and operational diagnostics stay on Store. | done | `src/core/features/campaigns/ui/source-freshness.tsx`, `src/core/features/store/service.ts`, `tests/go-live/source-freshness.journeys.ts` |
 | STORE-005 | Campaign inclusion and exclusion rules cannot approve against stale or failed sources. Review names the safe cause with a sync link and recheck; unavailable counts stay unknown, and completed recovery still needs ordinary exact-revision approval. | done | `src/core/features/audience/eligibility.ts`, `src/core/features/lifecycle/evaluate-approval.ts`, `src/core/features/campaigns/ui/campaign-review.tsx`, `tests/go-live/stale-sources.journeys.ts` |
+| BUILD-012 | Newsletter saves measure UTF-8 sent-size bounds and retain oversize edits; approval, test send and actual delivery enforce the per-part limit. Full builder, product, flow and imported-blueprint acceptance remain outstanding. | partial | `src/core/features/campaigns/email-size.ts`, `src/core/features/campaigns/saved-email-size.ts`, `tests/go-live/email-size.journeys.ts` |

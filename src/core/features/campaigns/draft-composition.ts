@@ -1,7 +1,6 @@
 import { completeInclusionRuleSchema, completeExclusionRuleSchema } from '@/core/features/lifecycle/rules';
 import { z } from 'zod';
 import { resolveLocalInstant } from '@/core/features/lifecycle/schedule';
-import { maxEmailBodyCharacters } from './email-limits';
 
 const channel = z.enum(['email', 'sms']);
 const resolvedInstant = z.string().datetime({ offset: true });
@@ -54,8 +53,8 @@ export const draftCompositionSchema = z
     // Accepted for older clients only. Persistence always overwrites it from the rules.
     audienceRule: z.string().max(4_000).optional(),
     emailSubject: z.string().max(250).optional(),
-    emailBody: z.string().max(maxEmailBodyCharacters).optional(),
-    emailText: z.string().max(maxEmailBodyCharacters).optional(),
+    emailBody: z.string().optional(),
+    emailText: z.string().optional(),
     preheader: z.string().max(250).optional(),
     smsBody: z.string().max(1_600).optional(),
     senderName: z.string().max(160).optional(),

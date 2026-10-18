@@ -159,7 +159,7 @@ export function CampaignReviewPage() {
     setActionBlockers(undefined);
     try {
     setNotice(undefined);
-    const response = await requestJson<{ revision?: Pick<Revision, 'id' | 'campaignId'>; review?: ReviewData; checksRefreshed?: boolean; error?: string; fields?: unknown; fieldErrors?: unknown; issues?: unknown }>(
+    const response = await requestJson<{ revision?: Pick<Revision, 'id' | 'campaignId'>; review?: ReviewData; checksRefreshed?: boolean; error?: string; detail?:string; fields?: unknown; fieldErrors?: unknown; issues?: unknown }>(
       `/api/campaign-revisions/${revision.id}?review=true`,
       { method: 'PATCH', body: JSON.stringify({...draft,steps:draft.steps.map(step=>({...step,scheduledAt:step.scheduledAt||undefined,sendByAt:step.sendByAt||undefined}))}) },
     );
@@ -182,6 +182,7 @@ export function CampaignReviewPage() {
     }
     setBusy(undefined);
     setFieldErrors(compositionFieldErrors(response.data.fields ?? response.data.fieldErrors, response.data.issues, draft));
+    if(response.data.error==='email_too_large') {setNotice(response.data.detail ?? 'Email is too large. Your changes are still here.');return;}
     if (response.data.error === 'stale_revision') {setNotice('Another operator changed this draft. Your edits are still here. Copy any changes you want to keep, then discard your edits and reload the saved revision before editing again.'); return;}
     setNotice(response.data.error === 'revision_not_draft' ? 'Only draft revisions can be changed.' : 'Draft was not saved. Your changes are still here.');
     } catch {setNotice('Save could not be confirmed. Your changes are still here; reload to check the saved revision.');}

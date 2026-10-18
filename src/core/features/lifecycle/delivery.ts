@@ -1,3 +1,4 @@
+import { utf8Bytes, emailByteLimit } from '@/core/features/campaigns/email-size';
 import {aggregateMobileMessageParts,matchesMobileMessagePart} from './mobile-message-status';
 import {reputationRestricted} from './reputation-guard';
 import {trackedRequestAutomation} from './tracked-link-policy';
@@ -149,6 +150,10 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
     const prepared = await prepareDeliveryRequest(runtime, {...beforeClaim,recipient:{...beforeClaim.recipient,outboundRequestJson:claimed.outboundRequestJson}}, eligibility, now);
     // Persisted outbound JSON is authoritative on restart, including content.from.
     const request = prepared.request;
+    if(claimed.channel==='email' && 'html' in request.content && (utf8Bytes(request.content.html ?? '')>emailByteLimit||utf8Bytes(request.content.text)>emailByteLimit)) {
+      await repository.markSkipped(claimed.id,claimed.leaseToken,'email-too-large',now);
+      return;
+    }
     const saved = await repository.saveOutboundRequest({
       id: claimed.id,
       leaseToken: claimed.leaseToken,

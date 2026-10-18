@@ -1,3 +1,5 @@
+import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
+import { formatEmailSize } from '@/core/features/campaigns/email-size';
 import { contactLink, safeEmailLink } from '@/core/features/campaigns/contact-links';
 import { textLinkDestinations } from '@/core/features/campaigns/message-links';
 import { managedSmsText, smsComplianceBlock } from '@/core/features/sms/content';
@@ -168,6 +170,8 @@ export async function runApprovalChecks(input: {
       : `${linkInspections.length} transmitted destinations passed HTTPS or contact-link checks.`));
   const configured = platform.config.mailSender;
   if (selected.has('email')) {
+    const size=await savedEmailSize(platform.database,snapshot.revision,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);
+    checks.push(check('message.email-size',!size.exceedsLimit,formatEmailSize(size)));
     const inspection = mailInspection!;
     checks.push(...adapterChecks('email', mailCapabilities, requiredWindow('email')));
     const holds=await activeProviderHolds(platform.database,mailCapabilities.provider??platform.config.mailProvider??'resend','email',snapshot.revision.fromEmail);

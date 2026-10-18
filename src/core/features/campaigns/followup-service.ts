@@ -1,3 +1,4 @@
+import type { EmailSizeOptions } from './email-size';
 import type { Database } from '@/core/platform/db/client';
 import type { DraftComposition } from './draft-composition';
 import { createDraft } from './create-draft';
@@ -6,7 +7,7 @@ import { draftStepSettings } from './reuse-schema';
 import { openTrackingSettings } from '@/core/features/insights/open-tracking';
 import { ulid } from '@/core/shared/ids';
 type Snapshot={composition:DraftComposition;stepSettings:{channel:'email'|'sms';timezone:string;whyThisTime:string}[]};
-export function createFollowupService(database:Database,snapshot:(id:string)=>Promise<Snapshot|undefined>) {
+export function createFollowupService(database:Database,snapshot:(id:string)=>Promise<Snapshot|undefined>,sizeOptions:EmailSizeOptions = {}) {
   const db=database.$client;
   async function source(id:string) {
     const row=await db.prepare(`SELECT c.id,c.active_revision_id revisionId,v.name,v.email_subject subject,
@@ -31,7 +32,7 @@ export function createFollowupService(database:Database,snapshot:(id:string)=>Pr
       inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'campaign',field:'followup',comparator:'eq',value:cohort}]}),steps:[]},operatorId,({campaignId,revisionId})=>[
         database.insert(campaignFollowups).values({id:cohort,campaignId,sourceCampaignId:id,sourceRevisionId:original.revisionId,metric:input.metric,cutoffAt,delayHours:input.delayHours,createdAt:now}),
         database.insert(draftStepSettings).values({revisionId,settingsJson:JSON.stringify(saved.stepSettings.filter(step=>step.channel==='email'))}),
-      ]);
+      ],sizeOptions);
     return {kind:'draft' as const,...draft,sourceCampaignId:id,cutoffAt:new Date(cutoffAt).toISOString()};
   }};
 }

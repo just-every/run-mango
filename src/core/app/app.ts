@@ -198,7 +198,7 @@ export function createAppServices(platform: Platform): AppServices {
   };
   const campaignService = createCampaignService(
     createCampaignRepository(database),
-    createCampaignCompositionRepository(database),
+    createCampaignCompositionRepository(database,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true}),
     storeService,
     { smsEnabled: platform.config.modules.sms.enabled, commerceEnabled:platform.config.modules.commerce.enabled, aiEnabled:platform.config.modules.ai.enabled,
       marketingConnectionRequired:platform.config.authMail !== undefined && platform.config.mailProvider === 'rer',

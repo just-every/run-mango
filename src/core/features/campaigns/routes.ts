@@ -1,3 +1,4 @@
+import { EmailTooLargeError } from './email-size';
 import { createCampaignReuseRoutes } from './reuse-routes';
 import type { createAuthoringService } from './authoring-service';
 import { createDraftSchema } from './create-draft';
@@ -17,6 +18,7 @@ const identifier = z.object({ id: z.string().min(1) });
 /** A body that never settles into a form that saves to itself is refused by name (CAMP-003); no such body is known. */
 const settled = async <T,>(save: Promise<T>) => {
   try { return { saved: await save }; } catch (error) {
+    if (error instanceof EmailTooLargeError) return {refused:{error:'email_too_large',detail:error.message,fields:{emailBody:error.message},size:error.size}};
     if (error instanceof UnsettledEmailBodyError) return { refused: { error: 'invalid_email_body', detail: error.message } };
     throw error;
   }
@@ -34,6 +36,12 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     const body = await readJson(context, authoringAudienceSchema);
     if ('error' in body) return body.error;
     return context.json(await authoring.audience(body.data));
+  });
+  routes.post('/campaign-authoring/email-size',async context=>{
+    const body=await readJson(context,draftCompositionSchema);
+    if('error' in body)return body.error;
+    const result=await settled(authoring.emailSize(body.data));
+    return 'refused' in result?context.json(result.refused,400):context.json(result.saved);
   });
   routes.post('/proposals/generate', async context => {
     const result = await authoring.generate(context.get('operator').id);

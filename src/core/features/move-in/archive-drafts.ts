@@ -25,14 +25,14 @@ export async function writeContent(platform: Platform, archiveId: string, record
   const at = Date.now();
   if (record.kind === 'history') { await db.insert(moveInContent).values(row(archiveId, record, at)).onConflictDoNothing(); return; }
   await createDraft(db, { ...senderDefaults(platform), name: record.title, emailSubject: record.subject, emailBody: record.html }, operatorId,
-    draft => [db.insert(moveInContent).values({ ...row(archiveId, record, at), campaignId: draft.campaignId, revisionId: draft.revisionId, revisionUpdatedAt: draft.createdAt.getTime() })]);
+    draft => [db.insert(moveInContent).values({ ...row(archiveId, record, at), campaignId: draft.campaignId, revisionId: draft.revisionId, revisionUpdatedAt: draft.createdAt.getTime() })], {publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
 }
 
 /** Copy one imported history record into a new, ordinary draft. */
 export async function copyHistory(platform: Platform, id: string, operatorId: string) {
   const record = await platform.database.$client.prepare("SELECT title,subject,html FROM move_in_content WHERE id=? AND kind='history' AND state='imported'").bind(id).first<{ title: string; subject: string; html: string }>();
   if (!record) return undefined;
-  return createDraft(platform.database, { ...senderDefaults(platform), name: record.title, emailSubject: record.subject, emailBody: record.html }, operatorId);
+  return createDraft(platform.database, { ...senderDefaults(platform), name: record.title, emailSubject: record.subject, emailBody: record.html }, operatorId, undefined, {publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
 }
 
 const untouched = `EXISTS(SELECT 1 FROM campaigns c JOIN campaign_revisions r ON r.id=c.active_revision_id WHERE c.id=?1 AND c.state='draft' AND r.id=?2 AND r.updated_at=?3)

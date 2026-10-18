@@ -13,7 +13,7 @@ The draft editor ("Edit draft") has these fields. Those marked "(required for ap
 - **Campaign name**: for your own reference.
 - **Consent message category**: starts as `newsletter`. It must match the category your subscribers agreed to. Signups from the hosted form use `newsletter`.
 - **Email subject** and **Email preheader**: up to 250 characters each.
-- **Email body**: the message itself, up to 20,000 characters of HTML.
+- **Email body**: the message itself, up to 100 KB (102,400 UTF-8 bytes) per sent HTML or plain-text part. The editor measures an upper bound including saved names, the postal footer, unsubscribe and tracked links, and room for an open-estimate pixel.
 - **Sender name**, **From email**, **Reply-to email** and **Physical postal address**: copied from your saved sender identity (see [Team and settings](./team-and-settings.md)). Approval requires them to match Settings exactly.
 
 You may also see fields for SMS. Ignore them; they only matter if a step uses the SMS channel.
@@ -72,7 +72,7 @@ Your browser cuts the photos out of the PNG, uploads them as Mango-hosted images
 - **Button**: its label and your link.
 - **Left out**: icons, ornaments, the design's own unsubscribe link and any address it invented.
 
-Nothing is saved until you choose **Save full draft**, and the summary says when the import is saved; **Discard changes** restores the saved body and removes the summary. Then preview and approve as usual: every approval check applies to the imported email. Mango refuses a LayerDoc version other than 2, a PNG that does not match the LayerDoc, a button link that is not HTTPS and a design too long for the 20,000-character body, and leaves the body unchanged. On a copy running on your computer the import, save and preview work the same, with `http://` image addresses; approve the email from your hosted Mango, where its images are HTTPS.
+Nothing is saved until you choose **Save full draft**, and the summary says when the import is saved; **Discard changes** restores the saved body and removes the summary. Then preview and approve as usual: every approval check applies to the imported email. Mango refuses a LayerDoc version other than 2, a PNG that does not match the LayerDoc, a button link that is not HTTPS and an email whose measured sent size exceeds the 100 KB per-part limit, and leaves the body unchanged. On a copy running on your computer the import, save and preview work the same, with `http://` image addresses; approve the email from your hosted Mango, where its images are HTTPS.
 
 ## Design with 12ui
 

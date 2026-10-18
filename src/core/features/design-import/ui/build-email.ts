@@ -1,3 +1,5 @@
+import { requestJson } from '@/core/app/client/lib/api';
+import { formatEmailSize, type EmailSize } from '@/core/features/campaigns/email-size';
 import { safeEmailUrl } from '@/core/features/campaigns/email-html-policy';
 import { linesNotInBrief } from '../brief';
 import { compileDesignEmail } from '../compile';
@@ -24,6 +26,9 @@ export async function prepareDesign(input: { layerDocText: string; candidate: Bl
 export async function buildDesignEmail(design: PendingDesign, mediaOrigin: string, progress: (text: string) => void): Promise<{ html: string; summary: ImportSummary }> {
   const hosted = await hostImages(design.plan, design.bitmap, (done, total) => progress(total ? `Uploading images: ${done} of ${total}` : 'Building the email'));
   const html = compileDesignEmail(design.plan, hosted, design.href, mediaOrigin);
+  const measured=await requestJson<EmailSize>('/api/campaign-authoring/email-size',{method:'POST',body:JSON.stringify({emailBody:html,trackingEnabled:true})});
+  if(measured.status>=300)throw new DesignImportError('unsupported_design','The email size could not be checked. Try the import again.');
+  if(measured.data.exceedsLimit)throw new DesignImportError('unsupported_design',`Email is too large. ${formatEmailSize(measured.data)}`);
   return { html, summary: {
     unreviewed: linesNotInBrief(design.plan.lines, design.brief),
     images: [...hosted.values()].map(image => ({ ...image, altNotInBrief: linesNotInBrief([image.alt], design.brief).length > 0 })),

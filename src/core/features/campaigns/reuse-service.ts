@@ -1,3 +1,5 @@
+import { savedEmailSize } from './saved-email-size';
+import type { EmailSizeOptions } from './email-size';
 import { createFollowupService } from './followup-service';
 import { eq } from 'drizzle-orm';
 import type { Database } from '@/core/platform/db/client';
@@ -13,7 +15,7 @@ type Snapshot = { composition: DraftComposition; stepSettings: UnscheduledStep[]
 type Template = { id: string; name: string; composition_json: string; updated_at: number };
 const contentFields = ['emailSubject','emailBody','emailText','preheader','smsBody','senderName','fromEmail','replyToEmail','smsSender','physicalAddress','messageCategory','inclusionRuleJson','exclusionRulesJson','trackingEnabled'] as const;
 
-export function createCampaignReuseService(database: Database, defaults: () => DraftComposition, timezone: string) {
+export function createCampaignReuseService(database: Database, defaults: () => DraftComposition, timezone: string, sizeOptions: EmailSizeOptions = {}) {
   const db = database.$client;
   async function snapshot(revisionId: string): Promise<Snapshot | undefined> {
     const revision = await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,revisionId)});
@@ -28,10 +30,10 @@ export function createCampaignReuseService(database: Database, defaults: () => D
   }
   async function start(value: Snapshot, operatorId: string, name: string) {
     const composition = draftCompositionSchema.parse({...value.composition,name,steps:[]});
-    return createDraft(database,composition,operatorId,({revisionId})=>value.stepSettings.length ? [database.insert(draftStepSettings).values({revisionId,settingsJson:JSON.stringify(value.stepSettings)})] : []);
+    return createDraft(database,composition,operatorId,({revisionId})=>value.stepSettings.length ? [database.insert(draftStepSettings).values({revisionId,settingsJson:JSON.stringify(value.stepSettings)})] : [],sizeOptions);
   }
   return {
-    followup:createFollowupService(database,snapshot),
+    followup:createFollowupService(database,snapshot,sizeOptions),
     async list() {
       const saved = await db.prepare('SELECT id,name,updated_at FROM campaign_templates ORDER BY updated_at DESC,id').all<{id:string;name:string;updated_at:number}>();
       return {templates:[...starterTemplates.map(({id,name,kind})=>({id,name,kind,updatedAt:null})),...saved.results.map(row=>({id:row.id,name:row.name,kind:'saved' as const,updatedAt:new Date(row.updated_at).toISOString()}))]};
@@ -44,6 +46,7 @@ export function createCampaignReuseService(database: Database, defaults: () => D
     async save(input:{revisionId:string;name:string;templateId?:string;updatedAt?:number}, operatorId:string) {
       const value = await snapshot(input.revisionId);
       if (!value) return {kind:'not_found' as const};
+      await savedEmailSize(database,{emailSubject:'',emailBody:'',emailText:'',preheader:'',physicalAddress:'',smsBody:'',...value.composition},sizeOptions);
       const now = Date.now();
       if (input.templateId) {
         if (input.updatedAt === undefined) return {kind:'conflict' as const};

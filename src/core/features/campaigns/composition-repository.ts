@@ -1,3 +1,5 @@
+import { savedEmailSize } from './saved-email-size';
+import type { EmailSizeOptions } from './email-size';
 import {editSchedule} from './edit-schedule';
 import { summarizeAudienceRules, withDerivedAudience } from './audience-summary';
 import { normalizeAuthoredContent } from './authoring-content';
@@ -61,7 +63,7 @@ function revisionUpdate(composition: DraftComposition, updatedAt: Date, revision
   };
 }
 
-export function createCampaignCompositionRepository(database: Database) {
+export function createCampaignCompositionRepository(database: Database, sizeOptions: EmailSizeOptions = {}) {
   async function read(revisionId: string) {
     const reads = await Promise.allSettled([
       database.query.campaignRevisions.findFirst({where: eq(campaignRevisions.id, revisionId)}),
@@ -119,8 +121,8 @@ export function createCampaignCompositionRepository(database: Database) {
         ORDER BY CASE WHEN r.id=c.active_revision_id THEN 0 ELSE 1 END,r.version DESC LIMIT 1`).bind(campaignId).first<{id:string}>();
       return row?read(row.id):undefined;
     },
-    editSchedule:(campaignId:string,composition:DraftComposition,operatorId:string)=>editSchedule(database,campaignId,composition,operatorId),
-    createDraft: (composition: DraftComposition, operatorId: string) => createDraft(database, composition, operatorId),
+    editSchedule:(campaignId:string,composition:DraftComposition,operatorId:string)=>editSchedule(database,campaignId,composition,operatorId,sizeOptions),
+    createDraft: (composition: DraftComposition, operatorId: string) => createDraft(database, composition, operatorId, undefined, sizeOptions),
 
     async saveDraft(id: string, composition: DraftComposition, updatedAt: Date, deferRead = false) {
       // Saving uses raw persisted authority, never the display-only claim projection.
@@ -135,6 +137,7 @@ export function createCampaignCompositionRepository(database: Database) {
       ]);
 
       composition = normalizeAuthoredContent({...composition, emailBody:composition.emailBody ?? storedRevision.emailBody, links:composition.links ?? (composition.emailBody !== undefined ? [] : storedLinks.map(({label,destinationUrl})=>({label,destinationUrl})))});
+      await savedEmailSize(database, {...storedRevision,...composition}, sizeOptions);
       // Persist the complete rule pair and its summary in the same guarded update.
       // Partial edits and concurrent saves must never combine prose with another rule pair.
       composition.inclusionRuleJson ??= storedRevision.inclusionRuleJson;

@@ -1,3 +1,4 @@
+import { EmailSizeMeter } from './email-size-meter';
 import { Field } from '@/core/app/client/ui/validation-form';
 import { useLoaderData } from '@tanstack/react-router';
 import { summarizeAudienceRules } from '../audience-summary';
@@ -20,6 +21,7 @@ export function CompositionContentFields({campaignId, draft, savedEmailBody, med
     {text('preheader', 'Email preheader')}
     {text('physicalAddress', 'Physical postal address')}
     <RichEmailEditor busy={busy} value={draft.emailBody} onChange={value => setField('emailBody', value)} designImport={<DesignImport campaignId={campaignId} draft={draft} savedEmailBody={savedEmailBody} mediaOrigin={mediaOrigin} busy={busy} onImport={html => setField('emailBody', html)} />} />
+    <EmailSizeMeter draft={draft} />
     {modules.sms ? <label>SMS message{smsRequired ? ' (required for approval)' : ''} <small>{draft.smsBody.length} characters</small><Field name="smsBody" label="SMS message" required={smsRequired} advisory><textarea aria-label="SMS message" value={draft.smsBody} onChange={event => setField('smsBody', event.target.value)} rows={4} /></Field></label> : null}
     <div className="form-two-up">{text('senderName', 'Sender name')}{text('fromEmail', 'From email', 'email')}{text('replyToEmail', 'Reply-to email', 'email')}{modules.sms ? text('smsSender', 'SMS sender', 'text', smsRequired) : null}</div>
   </>;

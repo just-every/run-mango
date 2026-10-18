@@ -1,3 +1,5 @@
+import { savedEmailSize } from './saved-email-size';
+import { normalizeAuthoredContent } from './authoring-content';
 import { createCampaignReuseService } from './reuse-service';
 import { computeProposalForecast } from '@/core/features/proposals/forecast';
 import { evaluateAudience } from '@/core/features/lifecycle/evaluate-audience';
@@ -15,7 +17,7 @@ import type { DraftComposition } from './draft-composition';
 import { authoringSourceIssues } from './authoring-source-status';
 
 export function createAuthoringService(platform: Platform, runtime: LifecycleRuntime, store: ReturnType<typeof createStoreService>) {
-  const composition = createCampaignCompositionRepository(platform.database);
+  const composition = createCampaignCompositionRepository(platform.database, {publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
   const timezone = productConfig.storeTimezone;
   try { if (/^[+-]/.test(timezone)) throw new Error('Offset is not a zone'); new Intl.DateTimeFormat('en', {timeZone:timezone}); } catch { throw new Error('productConfig.storeTimezone must be a valid IANA time zone.'); }
   const defaults = () => {
@@ -24,8 +26,12 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
   };
   const starters = signalStarters(platform.database,store,Boolean(platform.commerce));
   return {
-    reuse:createCampaignReuseService(platform.database,defaults,timezone),
+    reuse:createCampaignReuseService(platform.database,defaults,timezone,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true}),
     starters:starters.list,
+    async emailSize(draft: DraftComposition) {
+      const value=normalizeAuthoredContent({...defaults(),...draft});
+      return savedEmailSize(platform.database,{emailSubject:value.emailSubject??'',emailBody:value.emailBody??'',emailText:value.emailText??'',preheader:value.preheader??'',physicalAddress:value.physicalAddress??'',smsBody:'',trackingEnabled:value.trackingEnabled},{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);
+    },
     async fromSignal(id:string,operatorId:string) {
       const source=await starters.read(id);
       if (!source) return {kind:'unavailable' as const,detail:'This store signal is unavailable or stale. Sync it before starting a campaign.'};

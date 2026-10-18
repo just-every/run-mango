@@ -1,3 +1,4 @@
+import { EmailTooLargeError } from './email-size';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AuthVariables } from '@/core/features/auth/routes';
@@ -6,6 +7,10 @@ import type { createCampaignReuseService } from './reuse-service';
 
 export function createCampaignReuseRoutes(service: ReturnType<typeof createCampaignReuseService>) {
   const routes=new Hono<{Variables:AuthVariables}>();
+  routes.onError((error,context)=>{
+    if(error instanceof EmailTooLargeError)return context.json({error:'email_too_large',detail:error.message,size:error.size},400);
+    throw error;
+  });
   routes.get('/campaigns/:id/followup-parent',async context=>context.json({followup:await service.followup.parent(context.req.param('id'))}));
   routes.get('/campaigns/:id/followup',async context=>context.json({source:await service.followup.source(context.req.param('id'))}));
   routes.post('/campaigns/:id/followup',async context=>{

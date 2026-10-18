@@ -47,7 +47,7 @@ export default defineConfig(async ({command, isPreview}): Promise<UserConfig> =>
   // watcher events from checkout creation. Actual source edits still reload.
   ...(runtime === 'authoring' ? {watch: {usePolling: true}} : {}),
   fs: {
-  allow: ['src', 'public', 'node_modules', ...fixtureSources],
+  allow: ['src', 'public', 'node_modules', 'seed.json', ...fixtureSources],
   // An explicit deny list replaces Vite's defaults; retain its sensitive-file
   // patterns as well as the checkout's private state and exports.
   deny: ['.env', '.env.*', '*.{crt,pem,key,p12,pfx,cer,der}', '.npmrc', '.yarnrc.yml', '**/.git/**', '**/.rer/**', '**/.seed/**', '**/exports/**', '**/*.rer'],
