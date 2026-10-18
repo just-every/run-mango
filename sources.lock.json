@@ -970,7 +970,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "0e89e687ea515f8366f9a1e53096af04be26537acd05d39c3609cfe61df89fab",
+      "sha256": "b6e60516801c168c93f8358220021567a6758810f876c529a784d04de993c5d4",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "cfa15889900b5dfbd279f9953df9c267c78ce828ddc45fe6b77e32735b2cef2e",
+      "sha256": "bd0c0009cd1e72bea20f29b36a566fe3de72de86dad9d759eba73fdec4d03c0e",
       "executable": false
     },
     "DEMO.md": {
@@ -1042,7 +1042,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "7cdde0598984fdf4ffea0e96b8d28e3fd1bdcd14219b30daa238a008e56a4be1",
+      "sha256": "1685b26199e7f23a48bfe32d5e9ef58bfba9cd567964df3cf3b17a8b28890300",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1474,7 +1474,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "fce477ee97eb26beddb366283fd6cd11f1da096b7fcbce2989e5a601efc8acb3",
+      "sha256": "db3d6a9974666247a292841cbb86786c1462a0e48a5e780e63fcf0e6a0350bfb",
       "executable": false
     },
     "playwright.config.js": {
@@ -1482,7 +1482,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "c0a763ff077a51870629c07b6194f905911fb50a3e0fa4a15f8c0c298b745a88",
+      "sha256": "807071d318f7b0b6d5c22d66d5aa24eb75bd5bf9c7dc9ac8c8b8b694a109fe4b",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -2142,7 +2142,7 @@
       "executable": false
     },
     "src/core/app/client/styles/pages/review.css": {
-      "sha256": "ca6a69b324f03702c6b4efa538169110843ba64623cf328b7366655da31cfa33",
+      "sha256": "ee9b65f513530b6d534c4ac2de8854b8d633481ac138e4250c66af65cbbe274e",
       "executable": false
     },
     "src/core/app/client/styles/pages/settings.css": {
@@ -2962,7 +2962,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/approval-check-list.tsx": {
-      "sha256": "3b1a21ecca32bfefc15717381c1f12895f615829d24c4cb3069829f9fd0f9122",
+      "sha256": "403bbbce9e1782a8e985e1d29b0d2254db005c4a0376cfda7880d7f54516010e",
       "executable": false
     },
     "src/core/features/campaigns/ui/approval-field-errors.ts": {
@@ -6675,6 +6675,10 @@
     },
     "tests/go-live/contact-links.journeys.ts": {
       "sha256": "4d3f234733f8bc506c6c0e571fc2714fea9b08a51fa268efb6dc5bbe0cabdfd9",
+      "executable": false
+    },
+    "tests/go-live/content-checks.journeys.ts": {
+      "sha256": "945a89a95d166e4d77f246ac80b225c40fb35d961ff1c0bf19e417b4998ebf9a",
       "executable": false
     },
     "tests/go-live/cron-driver.ts": {

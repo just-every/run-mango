@@ -22,6 +22,7 @@
 .check-list__item:not(.check-list__item--passed) b { justify-self: start; padding: 1px 8px; border: 1px solid var(--ms-tomato-line); border-radius: 999px; background: var(--ms-tomato-wash); line-height: 1.5; }
 .check-list__item--passed b { color: var(--ms-leaf-deep); }
 .check-list__item--advisory b { border-color: var(--ms-sun-line); background: var(--ms-sun-wash); color: var(--ms-wait); }
+.check-list__item .text-link { grid-column: 4; justify-self: start; width: fit-content; }
 .check-next-step { grid-column: 4; display: block; color: var(--ms-muted); font-size: 13px; }
 .passed-checks { border-top: 1px solid var(--ms-hairline); }
 .passed-checks > .disclosure-toggle { width: 100%; color: var(--ms-leaf-deep); font-size: 14px; }
@@ -178,7 +179,8 @@
   .check-list__item { grid-template-columns: 18px minmax(0, 1fr); }
   .check-list__item > span { display: block; grid-column: 2; }
   .check-list__item b { margin-right: var(--sp-2); }
-  .check-next-step { margin-top: var(--sp-1); }
+  .check-next-step, .check-list__item .text-link { margin-top: var(--sp-1); }
+  .check-list__item .text-link { display: block; }
   .form-two-up, .composition-link, .composition-step, .rich-email-link__fields { grid-template-columns: minmax(0, 1fr); }
   .rich-email-link__fields > button { justify-self: start; }
   .mango-app .email-sheet .paper-face { padding: var(--sp-5) var(--sp-4); }

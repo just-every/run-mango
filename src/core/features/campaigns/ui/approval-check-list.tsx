@@ -67,6 +67,7 @@ export function ApprovalCheckList({
       <p className="eyebrow">{eyebrow}</p>
       <h2 id={titleId}><button type="button" className="disclosure-toggle" aria-expanded={expanded} aria-controls={`${titleId}-checks`} onClick={() => setExpanded(value => !value)}>{title}</button></h2>
       <div id={`${titleId}-checks`} className="check-list" hidden={!expanded}>
+        {attention.length ? <p className="muted-copy">Advisories can be acknowledged for this saved revision. Blocking checks must be corrected before approval.</p> : null}
         {renderFindings(attention)}
         {passed.length ? <Disclosure className="passed-checks" title={`${passed.length} checks passed`}>{renderFindings(passed)}</Disclosure> : null}
         {!findings.length ? <p className="muted-copy">{emptyMessage}</p> : null}

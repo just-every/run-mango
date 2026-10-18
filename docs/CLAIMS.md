@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 9 claims · 9 in code.**
+**Totals: 10 claims · 10 in code.**
 
 ## Mango integration claims
 
@@ -24,3 +24,4 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | AUD-006 | Every later step rechecks saved inclusion, custom exclusions and current consent; skipped contacts have a named reason and newly matching contacts stay outside the frozen audience. | in code | `src/core/features/audience/eligibility.ts`, `tests/go-live/multistep.journeys.ts` |
 | PUB-001 | Operators publish sent email revisions as neutral public issues, with an archive index, RSS, search metadata and withdrawal. Draft and unsent campaigns cannot publish; recipient personalisation, unsubscribe links, tracked redirects and remote images do not enter the public copy. | in code | `src/core/features/archive/`, `tests/campaign-results/archive.journeys.ts`, `tests/audience-import/erasure.spec.ts` |
 | DELIV-005 | Insights groups signed delivered, bounced and complained outcomes and human clicks by the mailbox domain recorded for each send, with six bounce categories. Replays do not add counts, scanners are excluded, custom domains stay Other and missing historical diagnostics are labelled. | in code | `src/core/features/insights/mailbox-report.ts`, `src/core/features/insights/mailbox-taxonomy.ts`, `tests/go-live/mailbox-provider.journeys.ts` |
+| MSG-007 | Review distinguishes advisory findings from blockers. Acknowledgements record the operator and time for the exact saved revision, survive replay and reload, and never bypass safety checks; changed content needs a new acknowledgement. | done | `src/core/features/lifecycle/advisory-acknowledgements.ts`, `src/core/features/campaigns/ui/approval-check-list.tsx`, `tests/go-live/content-checks.journeys.ts` |

@@ -54,7 +54,7 @@ The 0.2.0 upgrade record includes every shipped migration through 0059. Existing
 
 ## Clause acceptance (target contract, 16 October 2026)
 
-CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **76 done, 72 partial, 93 missing** of 241 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
+CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **77 done, 71 partial, 93 missing** of 241 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
 
 ### Home
 
@@ -172,7 +172,7 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **MSG-004 — SMS permission** (partial). SMS eligibility needs subscribed scope and an approved sender; US registration pending. Evidence: `src/core/features/sms/transport-guard.ts`.
 - **MSG-005 — SMS opt-out** (partial). Every marketing SMS carries programme identity and STOP text; needs a tagged review journey. Evidence: `src/core/features/sms/content.ts`.
 - **MSG-006 — Links** (partial). Malformed links, schemes other than HTTPS and MSG-013's contact schemes (`http:` and `javascript:` included), and hosts outside MSG-014's list on the link or any redirect block scheduling, each named with MSG-015's allow action; image sources stay HTTPS only. Needs a tagged journey. Evidence: `src/core/features/settings/link-hosts-validation.ts`.
-- **MSG-007 — Content checks** (partial). Advisory findings can be acknowledged and blocking ones cannot; needs a tagged journey. Evidence: `src/core/features/lifecycle/advisory-acknowledgements.ts`.
+- **MSG-007 — Content checks** (done). The native Worker/D1 journey shows advisory and blocking findings, acknowledges only the exact saved advisory, retains its actor and time across reload and replay, invalidates it after an edit, refuses safety-check acknowledgements and still blocks approval until the content is corrected. Review is exercised at 1440 and 390 pixels. Evidence: `tests/go-live/content-checks.journeys.ts`.
 - **MSG-008 — Personalisation** (partial). Tokens with fallbacks render and count fallback use; needs an exercising test. Evidence: `src/core/features/campaigns/message-content.ts`.
 - **MSG-009 — Email body** (done). One parser and checker decide approval, test send and delivery; the size limit is proved under BUILD-012. Evidence: `tests/campaign-authoring/canonical-save.spec.ts`.
 - **MSG-010 — Unsubscribe availability** (partial). Unsubscribe answers within 2 seconds and is rate-limited per token; needs a measured journey. Evidence: `src/core/features/audience/unsubscribe-routes.ts`.
