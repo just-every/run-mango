@@ -1874,7 +1874,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "bccf6c24d09dc27dcd0ab37e0389b40548346cac384eeafdc65b99e4524100db",
+      "sha256": "0de9f3f94f49a9746d29818718255a80159f441f88b8e259dc3840536884695a",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -6782,7 +6782,7 @@
       "executable": false
     },
     "tests/go-live/presend-checks.journeys.ts": {
-      "sha256": "d94364943dd51f2b686a141448c816f1906e0b9d78e3c57d9b2e26ff240c8a4f",
+      "sha256": "b5bbdc1bfd7abbded4ce22d873f019001b24e27785afbd1fd1af8c9ad64561a9",
       "executable": false
     },
     "tests/go-live/production-bindings.ts": {
@@ -7310,7 +7310,7 @@
       "executable": false
     },
     "VERIFYING.md": {
-      "sha256": "8ce788ce9931114a0a44f75cc569ae36b90e253c7cb04a4c3f4e40d634b1111d",
+      "sha256": "56f26309f981a000ef989b9fc098541b7f05b6a53151f69c8e52a46a0c8a4bc5",
       "executable": false
     },
     "vite.config.ts": {

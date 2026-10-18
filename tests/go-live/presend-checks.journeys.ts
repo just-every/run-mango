@@ -116,6 +116,8 @@ contract('BUILD-008', 'saved contact previews and located advisories remain sepa
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
       await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}`);
+      // Root hydration precedes this page's independent campaign-data request.
+      await expect(page.getByRole('region',{name:'Saved revision previews',exact:true})).toBeVisible({timeout:30000});
       const email=page.locator('.message-preview--email');
       await expect(email.getByRole('button',{name:'Dark approximation',exact:true})).toBeVisible();
       await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('Hello Alex Example.');
