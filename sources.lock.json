@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "b0e1a2e9b7bf24c36c03d14882f1e0d20fd909c44d2b65571203cce46d9adee2",
+      "sha256": "819ce06f28c11f67f9044c24e11d44c394630af8a67928c35dcfb7eef67f8965",
       "executable": false
     },
     "DEMO.md": {
@@ -1042,7 +1042,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "5166327a69df2386d3c2a342c31f36c87fb661ef7484568502cb6b235ab5fbf4",
+      "sha256": "bb046f220c0070037d63907874e0278870545e70cb24bf5ef4600088f434fc32",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -2270,7 +2270,7 @@
       "executable": false
     },
     "src/core/features/audience/eligibility.ts": {
-      "sha256": "1b60ff3de4e4c5d5b1b7b57b9c1ba6b7a9bfe157832ce6e51bc466a3b29a02c4",
+      "sha256": "c9a7f2af896007169012587046f0d906b24164acd1e933b1bf2dfb54bcbefd1d",
       "executable": false
     },
     "src/core/features/audience/erasure/batched-preparation.ts": {
@@ -6635,6 +6635,10 @@
     },
     "tests/go-live/managed-mail.journeys.ts": {
       "sha256": "94c97438d72f94b0b9e94a1fc663f2c4a180a15199cd9428446aab040bfa1031",
+      "executable": false
+    },
+    "tests/go-live/multistep.journeys.ts": {
+      "sha256": "e7148d0094912b11311e2de4c7b50057b2698bad8aecec34b44b1b0f7ed2e21a",
       "executable": false
     },
     "tests/go-live/open-estimates-restore.ts": {

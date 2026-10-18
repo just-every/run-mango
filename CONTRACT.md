@@ -860,9 +860,9 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 65 | 22 | 0 | 87 |
+| Published | 66 | 21 | 0 | 87 |
 | Target and push further | 8 | 51 | 95 | 154 |
-| All | 73 | 73 | 95 | 241 |
+| All | 74 | 72 | 95 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -923,7 +923,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `AUD-003` | Commerce and dormancy exclusions | published | partial | `src/core/features/audience/commerce-exclusions.ts` | acceptance not yet met: Purchase, refund and dormancy exclusions listed with counts; needs a tagged journey with commerce sources. |
 | `AUD-004` | Frequency protection | published | done | `src/core/features/audience/eligibility.ts` · `tests/go-live/open-estimates.journeys.ts` |  |
 | `AUD-005` | Dispatch recheck | published | done | `tests/audience-controls/merge.spec.ts` · `tests/go-live/delivery.journeys.ts` |  |
-| `AUD-006` | Multi-step exit | published | partial | `src/core/features/lifecycle/evaluate-audience.ts` | acceptance not yet met: Later steps re-apply rules; needs a multi-step journey. |
+| `AUD-006` | Multi-step exit | published | done | `tests/go-live/multistep.journeys.ts` |  |
 | `AUD-007` | Frozen candidate set | published | done | `tests/audience-controls/segments.spec.ts` |  |
 | `AUD-008` | Inactivity rules in review | target | partial | `src/core/features/audience/eligibility.ts` | acceptance not yet met: A Mailchimp move-in fixture of contacts subscribed two years ago reaches the first campaign's review with no `dormant` exclusion, both for contacts whose `granular_activity` shows a click three months ago and for contacts with no activity rows (counted as `no-history`); a contact whose last imported click is 13 months old is excluded as `dormant`; turning the exclusion off for that campaign includes them, and the approved revision and activity log record the choice and its approver. The review also counts `open-only` contacts within `dormant` and includes them in one action, and an Owner or Admin's installation-wide default is recorded in the activity log. |
 | `AUD-009` | Frequency protection: one policy and a recorded override | target | partial | `src/core/features/lifecycle/policies.ts` · `src/core/features/audience/eligibility.ts` | acceptance not yet met: Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, a draft flow made from a Mailchimp journey fixture carries the same setting, and its activation shows the 30-day skip count from seeded sends. |

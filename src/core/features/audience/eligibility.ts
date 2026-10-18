@@ -168,12 +168,6 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     if (contact.mergeLock) return {eligible:false as const,reason:'contact-merging',detail:'The contact is being merged.'};
     const channelData = await selectedChannel(repository, contact.id, input.channel, now, isSuppressed);
     if (!channelData) return { eligible: false as const, reason: 'channel-not-subscribed', detail: 'Only a subscribed destination with confirmed consent is eligible for marketing.' };
-    const followups=input.inclusionRule?.predicates.filter(predicate=>predicate.sourceType==='campaign')??[];
-    if(followups.length&&input.inclusionRule){
-      const matches=await Promise.all(input.inclusionRule.predicates.map(predicate=>predicateMatches(repository,store,contact.id,predicate,now,contact)));
-      const included=input.inclusionRule.operator==='all'?matches.every(Boolean):matches.some(Boolean);
-      if(!included)return {eligible:false as const,reason:'followup-not-eligible',detail:'This person is outside the saved audience conditions.'};
-    }
     const lastActivity = await repository.lastQualifyingActivity(contact.id, now);
     if (!lastActivity || lastActivity.getTime() < now.getTime() - dormancyMs) {
       return { eligible: false as const, reason: 'dormant', detail: 'No click, order, or consent change was recorded in the dormancy window.' };
@@ -191,7 +185,21 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
         retryAt: new Date(now.getTime() + 60_000),
       };
     }
+    // Frozen candidates are an upper bound, not continuing selection authority.
+    // Re-evaluate every saved condition against current facts for every step and
+    // handoff. Unavailable sources above must defer, never masquerade as a miss.
+    const matches = input.inclusionRule
+      ? await Promise.all(input.inclusionRule.predicates.map(predicate => predicateMatches(repository, store, contact.id, predicate, now, contact)))
+      : undefined;
+    const included = !matches || (input.inclusionRule!.operator === 'all' ? matches.every(Boolean) : matches.some(Boolean));
+    const exclusions = await matchingExclusions(repository, store, contact.id, input.exclusionRules ?? [], now, contact);
     if(sourceGeneration!==await repository.sourceGeneration()) return {eligible:false as const,reason:'source-authority-changed',detail:'Store authority changed while eligibility was being checked.',retryAt:new Date(now.getTime()+60_000)};
+    if (!included) return {
+      eligible: false as const,
+      reason: input.inclusionRule?.predicates.some(predicate => predicate.sourceType === 'campaign') ? 'followup-not-eligible' : 'audience-no-longer-matches',
+      detail: 'This person is outside the saved audience conditions.',
+    };
+    if (exclusions.length) return {eligible: false as const, reason: exclusions[0], detail: 'This person now matches a saved audience exclusion.'};
     return {
       eligible: true as const,
       sourceGeneration,
