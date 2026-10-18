@@ -63,6 +63,20 @@ export function CampaignReviewPage() {
     all.findIndex(other => other.kind === check.kind && other.detail === check.detail && other.status === check.status && other.blocking === check.blocking) === index);
   const blockingFindings = findings.filter(check => check.blocking);
   const approvalBlocked = needsCanonicalRead || blockingFindings.length > 0;
+  const sourceBlocked = blockingFindings.some(check => check.kind === 'audience.source-freshness');
+
+  const recheckSources = async () => {
+    if (busy || dirty || needsCanonicalRead) return;
+    setBusy('reload'); setNotice(undefined); setNoticeKind('error');
+    try {
+      const response = await requestJson(`/api/campaigns/${id}/checks`, {
+        method: 'POST', body: JSON.stringify({revisionId: revision.id}),
+      });
+      if (response.status >= 300) {setNotice('Checks could not be refreshed. Reload the saved revision and try again.'); return;}
+      await reload(); setActionBlockers(undefined);
+    } catch {setNotice('Checks could not be refreshed. Check your connection and try again.');}
+    finally {setBusy(undefined);}
+  };
 
   const action = async (kind: 'approve' | 'test') => {
     if (busy) return;
@@ -208,6 +222,7 @@ export function CampaignReviewPage() {
         </div>
         {<div className="page-head__actions review-heading__actions">
           <DuplicateCampaign campaignId={id} disabled={dirty||Boolean(busy)}/>
+          {editable && sourceBlocked ? <button className="secondary-action" type="button" disabled={Boolean(busy) || dirty || needsCanonicalRead} onClick={() => void recheckSources()}>{busy === 'reload' ? 'Checking…' : 'Recheck sources'}</button> : null}
           {editable ? <button className="primary-action" type="button" aria-describedby={!dirty && blockingFindings.length ? 'approval-blocked-reason' : undefined} onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : setConfirmingApproval(true)} disabled={Boolean(busy) || (!dirty && approvalBlocked)}>
             {busy === 'save' ? 'Saving…' : busy === 'approve' ? 'Checking…' : dirty ? 'Save changes' : 'Approve & schedule'}
           </button> : null}

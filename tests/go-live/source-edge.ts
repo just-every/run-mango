@@ -6,19 +6,21 @@ import {json} from './harness';
 /** Shopify GraphQL boundary only; ingestion, persistence and jobs stay native. */
 export function sourceEdge() {
   let failing = false;
+  let failingSource = 'product';
   const access = {shop: {myshopifyDomain: 'mango-test.myshopify.com'}, currentAppInstallation: {
     accessScopes: ['read_customers','read_products','read_inventory','read_locations','read_orders','read_all_orders','read_returns'].map(handle => ({handle})),
   }};
   return {
-    fail: (value: boolean) => {failing = value;},
+    fail: (value: boolean, source = 'product') => {failing = value; failingSource = source;},
     commerce(request: Record<string, unknown>) {
       const query = String(request.query), variables = request.variables as {cursor?: string};
       if (query.includes('MangoAccess')) return {data: access};
       if (query.includes('products(first:')) {
-        if (failing && variables.cursor) return {errors: [{message: 'private upstream diagnostic'}]};
-        return {data: {products: page([product(variables.cursor ? 22 : 21)], failing && !variables.cursor ? 'next-products' : undefined)}};
+        if (failing && failingSource === 'product' && variables.cursor) return {errors: [{message: 'private upstream diagnostic'}]};
+        return {data: {products: page([product(variables.cursor ? 22 : 21)], failing && failingSource === 'product' && !variables.cursor ? 'next-products' : undefined)}};
       }
-      if (query.includes('customers(first:')) return {data: {customers: page([customer])}};
+      if (query.includes('customers(first:')) return failing && failingSource === 'customer'
+        ? {errors: [{message: 'private upstream diagnostic'}]} : {data: {customers: page([customer])}};
       for (const field of ['orders','productVariants','inventoryItems']) {
         if (query.includes(`${field}(first:`)) return {data: {[field]: page([])}};
       }

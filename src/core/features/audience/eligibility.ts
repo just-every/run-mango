@@ -266,6 +266,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
         observedExclusions: [...counts.entries()].map(([reason,count])=>({reason,count})),
         status: unavailable.length ? 'unavailable' as const : 'stale' as const,
         sourceTypes: [...new Set(freshnessIssues.map((issue) => issue.sourceType))],
+        sourceIssues: freshnessIssues.map(({sourceType, reason}) => ({sourceType, reason})),
         detail: freshnessIssues.map((issue) => issue.detail).join(' '),
       };
     }

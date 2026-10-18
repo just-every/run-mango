@@ -47,7 +47,9 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
       const stepCounts = draft.stepCounts ?? {email:Number(channels.includes('email')),sms:Number(channels.includes('sms'))};
       const result=await evaluateAudience(runtime,createLifecycleRepository(platform.database),{...draft,channels},new Date());
       const {audience,candidates,exclusionCounts,blockingEligibility}=result;
-      if(audience.status!=='ok') return {status:audience.status,...unavailableCounts,detail:audience.sourceTypes.length?authoringSourceIssues(audience.sourceTypes.map(sourceType=>({sourceType,reason:audience.status==='stale'?'source-not-current':'source-unavailable'}))):audience.detail};
+      if(audience.status!=='ok') return {status:audience.status,...unavailableCounts,detail:'sourceIssues' in audience && audience.sourceIssues?.length
+        ? authoringSourceIssues(audience.sourceIssues)
+        : audience.sourceTypes.length?authoringSourceIssues(audience.sourceTypes.map(sourceType=>({sourceType,reason:audience.status==='stale'?'source-not-current':'source-unavailable'}))):audience.detail};
       if(blockingEligibility.size && result.parsedRules.ok) {
         const reason=[...blockingEligibility][0];
         return {status:reason==='source-unavailable'?'unavailable':'stale',...unavailableCounts,detail:authoringSourceIssues(result.parsedRules.sourceTypes.map(sourceType=>({sourceType,reason})))};

@@ -16,12 +16,16 @@ export async function evaluateApproval(runtime: LifecycleRuntime, repository: Li
       if (preparation.status === 'rejected') throw preparation.reason;
       snapshot.revision.sourceTypesJson = JSON.stringify(parsedRules.ok ? parsedRules.sourceTypes : []);
       const checkResult = await runApprovalChecks({ snapshot, candidates, platform: runtime.platform, repository, now, prepared: preparation.value });
+      const sourceIssues = audience.status !== 'ok' && 'sourceIssues' in audience ? audience.sourceIssues : undefined;
       checkResult.checks.push({
-        kind: 'audience.resolution',
+        // This finding contains only source names and our closed reason
+        // vocabulary. Legacy resolution findings still get scrubbed on read.
+        kind: sourceIssues?.length ? 'audience.source-freshness' : 'audience.resolution',
         status: audience.status === 'ok' ? 'passed' : 'blocked',
         blocking: audience.status !== 'ok',
         detail: audience.status === 'ok'
           ? `Resolved ${audience.candidates.length} eligible candidate identities from source data as of ${audience.asOf.toISOString()}.`
+          : sourceIssues?.length ? authoringSourceIssues(sourceIssues)
           : audience.sourceTypes.length
             ? authoringSourceIssues(audience.sourceTypes.map(sourceType=>({sourceType,reason:audience.status==='stale'?'source-not-current':'source-unavailable'})))
             : audience.detail,
@@ -40,7 +44,7 @@ export async function evaluateApproval(runtime: LifecycleRuntime, repository: Li
           ? `Source eligibility changed during approval: ${[...blockingEligibility].join(', ')}.`
           : 'Every frozen candidate was rechecked against commerce, dormancy, consent, and frequency policy.',
       });
-      checkResult.checks.push({
+      if (audience.status === 'ok') checkResult.checks.push({
         kind: 'audience.eligible',
         status: candidates.length > 0 ? 'passed' : 'blocked',
         blocking: candidates.length === 0,

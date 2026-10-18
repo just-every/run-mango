@@ -78,7 +78,7 @@ export interface LifecycleAudience {
         candidates: FrozenCandidate[];
         exclusions: Array<{ reason: string; count: number }>;
       }
-    | { status: 'stale' | 'unavailable'; sourceTypes: string[]; detail: string; observedExclusions?: Array<{reason:string;count:number}> }
+    | { status: 'stale' | 'unavailable'; sourceTypes: string[]; detail: string; sourceIssues?: Array<{sourceType: string; reason: string}>; observedExclusions?: Array<{reason:string;count:number}> }
   >;
   recheckHandoffEligibility(input: {
     contactId: string;

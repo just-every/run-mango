@@ -54,7 +54,7 @@ The 0.2.0 upgrade record includes every shipped migration through 0059. Existing
 
 ## Clause acceptance (target contract, 16 October 2026)
 
-CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **79 done, 69 partial, 93 missing** of 241 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
+CONTRACT.md now describes the complete email and SMS marketing product Mango is building towards. Each clause below names the journey or test, through a public door (route, command, transport or built page) with fakes only at the provider or network edge, that proves it, and its current status: **80 done, 68 partial, 93 missing** of 241 clauses. A clause becomes done only when its named evidence runs in `rer verify` and is tagged with the clause ID through `tests/contract.js`. Partial and missing clauses are release obligations of the target, not waivers; the newsletter profile above remains the current release boundary until they ship.
 
 ### Home
 
@@ -77,7 +77,7 @@ CONTRACT.md now describes the complete email and SMS marketing product Mango is 
 - **STORE-002 — Source identity** (done). Replayed and resynced Shopify records update one source record each. Evidence: `tests/shopify/connection.spec.ts`.
 - **STORE-003 — Freshness** (done). The native Worker/D1/Queue journey imports each Admin source, retains its last completed sync through a later failed page, shows the failure and unaffected sources on Decision Desk at 1440 and 390, and clears it only on completed recovery. Unstarted sources show no successful sync; authoring keeps provider diagnostics private. Evidence: `tests/go-live/source-freshness.journeys.ts`.
 - **STORE-004 — Source failure** (partial). An unavailable adapter records a failed operation and sends nothing; nested-page failure and retry are proved for Shopify. Evidence: `src/core/features/store/synchronize.ts` · `tests/shopify/connection.spec.ts`.
-- **STORE-005 — Stale sources block approval** (partial). A rule reading a stale source blocks approval until a successful sync; needs a tagged journey. Evidence: `src/core/features/audience/source-coverage.ts`.
+- **STORE-005 — Stale sources block approval** (done). The native Worker/D1/Queue journey refuses both inclusion-dependent and exclusion-dependent campaigns against aged and failed Shopify data. Counts remain unavailable, approval writes no authority or recipients, and review names the source and safe cause at 1440 and 390. A completed sync and explicit recheck allow the same saved revision to pass its ordinary approval checks. Evidence: `tests/go-live/stale-sources.journeys.ts`.
 - **STORE-006 — Declared adapter capability** (partial). A rule needing an unsupplied source type is shown unavailable and cannot be approved; needs a tagged journey. Evidence: `src/core/features/audience/source-coverage.ts`.
 - **STORE-007 — Ingestion latency** (partial). A webhook source record is readable within 60 seconds of acknowledgement, measured at the stated limits. Evidence: `src/core/features/audience/commerce-webhook-routes.ts`.
 
