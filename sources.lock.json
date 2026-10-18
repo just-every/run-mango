@@ -7046,11 +7046,11 @@
       "executable": false
     },
     "tests/newsletter-ui/forms-feedback.journeys.ts": {
-      "sha256": "d0b5dc66b6a1dd0c1a4a3424db6681ba2a0c2aef31fd0d81eabf54ec5fa83966",
+      "sha256": "d83322f219abe4fb6e2516545504ca2635a7bb3eb85c087bd9a1bdea4012682f",
       "executable": false
     },
     "tests/newsletter-ui/playwright.config.js": {
-      "sha256": "6fc75d4e478e4dd3df561025af7d8debdd007e9ace6541ba57c0750cbc36c965",
+      "sha256": "013a79f3a55ea8e2e0f0b305463ce98bd2a464d445e32897b855ed4a3e6efb9e",
       "executable": false
     },
     "tests/newsletter-ui/representative-pages.journeys.ts": {

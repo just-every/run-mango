@@ -15,6 +15,7 @@ export default defineConfig({
   reporter: 'list',
   outputDir: evidenceDirectory('newsletter-ui'),
   use: {
+    launchOptions: {args: ['--use-mock-keychain', '--password-store=basic']},
     baseURL,
     viewport: { width: 1440, height: 1000 },
     screenshot: 'only-on-failure',
