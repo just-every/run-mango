@@ -1,3 +1,5 @@
+import type {ComponentProps} from 'react';
+import {Can} from '@/core/features/auth/ui/permissions';
 import { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { requestJson } from '@/core/app/client/lib/api';
@@ -6,7 +8,7 @@ import { StatusPill } from '@/core/app/client/ui/layout';
 import { Modal } from '@/core/app/client/ui/modal';
 
 type Preview={survivor:Contact;merged:Contact;emailStatus:string;smsStatus:string};
-export function ContactMerge({contact}:{contact:Contact}) {
+function ContactMergeContent({contact}:{contact:Contact}) {
   const navigate=useNavigate();
   const [open,setOpen]=useState(false),[address,setAddress]=useState(''),[matches,setMatches]=useState<Contact[]>([]);
   const [preview,setPreview]=useState<Preview>(),[busy,setBusy]=useState(false),[error,setError]=useState('');
@@ -38,3 +40,5 @@ export function ContactMerge({contact}:{contact:Contact}) {
       <button type="button" className="secondary-action" disabled={busy} onClick={()=>setOpen(false)}>Cancel</button>
     </Modal></>;
 }
+
+export function ContactMerge(props:ComponentProps<typeof ContactMergeContent>) {return <Can permission="settings.manage"><ContactMergeContent {...props}/></Can>;}

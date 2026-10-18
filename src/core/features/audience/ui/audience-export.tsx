@@ -1,7 +1,8 @@
+import {Can} from '@/core/features/auth/ui/permissions';
 import { useState } from 'react';
 
 /** Only a successful CSV becomes a download; refusal stays visible on Audience. */
-export function AudienceExport() {
+function AudienceExportContent() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   async function download() {
@@ -27,3 +28,5 @@ export function AudienceExport() {
     {error ? <div className="notice-warning audience-export__notice" role="alert"><p>{error}</p><a href="/docs/backup-and-export#export-and-restore-a-local-copy">Local backup and restore instructions</a></div> : null}
   </div>;
 }
+
+export function AudienceExport() {return <Can permission="audience.export"><AudienceExportContent/></Can>;}

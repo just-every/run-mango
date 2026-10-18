@@ -1,3 +1,4 @@
+import {Can} from '@/core/features/auth/ui/permissions';
 import { AudienceExport } from './audience-export';
 import { SavedSegments } from './saved-segments';
 import { Link } from '@tanstack/react-router';
@@ -32,7 +33,7 @@ export function AudiencePage() {
           <p className="page-head__lead">Each person keeps an independent Email and SMS status in the persisted contact ledger.</p>
         </div>
         <div className="page-head__actions">
-          <Link className="primary-action" to="/app/audience/import">Import contacts</Link>
+          <Can permission="audience.import"><Link className="primary-action" to="/app/audience/import">Import contacts</Link></Can>
           <AudienceExport />
         </div>
       </header>
@@ -83,8 +84,8 @@ export function AudiencePage() {
           </EmptyState>
         )}
       </section>
-      <SavedSegments />
-      <AudienceSignupTools />
+      <Can permission="segment.manage"><SavedSegments /></Can>
+      <Can permission="form.manage"><AudienceSignupTools /></Can>
       <section className="audience-rules notice-note">
         <p className="eyebrow">Eligibility rule</p>
         <h2>Subscribers are not the same as candidates.</h2>

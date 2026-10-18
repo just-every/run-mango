@@ -1,4 +1,5 @@
 import {testSendAllowance} from './test-send-allowance';
+import {productAuthority} from '@/core/features/auth/product-roles';
 import { canonicalEmail, canonicalPhone } from '@/core/features/audience/identity';
 import { sha256 } from './digest';
 import { boundPolicy } from './transport-policy';
@@ -8,7 +9,7 @@ import type { LifecycleRuntime, Channel } from './types';
 export async function testDestinationBlock(runtime: LifecycleRuntime, channel: Channel, to: string, operatorId: string, configured: boolean, typed = false) {
   const db = runtime.platform.database.$client;
   if (typed || !configured) {
-    const actor = await db.prepare("SELECT role FROM oa_operators WHERE id=? AND status='active'").bind(operatorId).first<{role:string}>();
+    const actor = await productAuthority(db,operatorId);
     if (!actor || !['owner','admin','manager'].includes(actor.role)) return 'test-send-forbidden: Approval rights are required for a typed destination.';
     // The SMS transport still requires its configured test allowlist and location authority.
     if (!configured && channel === 'sms') return 'Typed SMS tests are unavailable. Use a configured SMS test destination.';
@@ -35,7 +36,7 @@ export function testDestination(channel: Channel, value: string) {
 export async function testSendAccess(runtime:LifecycleRuntime, operatorId:string, now:Date) {
   const db=runtime.platform.database.$client;
   const [actor, operators, allowance]=await Promise.all([
-    db.prepare("SELECT role FROM oa_operators WHERE id=? AND status='active'").bind(operatorId).first<{role:string}>(),
+    productAuthority(db,operatorId),
     db.prepare("SELECT email FROM oa_operators WHERE status='active'").all<{email:string}>(),
     testSendAllowance(runtime,now),
   ]);

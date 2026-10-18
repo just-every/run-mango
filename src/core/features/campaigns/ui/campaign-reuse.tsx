@@ -1,3 +1,5 @@
+import type {ComponentProps} from 'react';
+import {Can} from '@/core/features/auth/ui/permissions';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { requestJson } from '@/core/app/client/lib/api';
@@ -7,7 +9,7 @@ import { Disclosure } from '@/core/app/client/ui/disclosure';
 type Template = { id:string;name:string;kind:'starter'|'saved';updatedAt:string|null };
 type Library = {templates:Template[]};
 
-export function DuplicateCampaign({campaignId,disabled=false}:{campaignId:string;disabled?:boolean}) {
+function DuplicateCampaignContent({campaignId,disabled=false}:{campaignId:string;disabled?:boolean}) {
   const navigate=useNavigate(),[busy,setBusy]=useState(false),[error,setError]=useState('');
   const duplicate=async()=>{
     setBusy(true);setError('');
@@ -20,7 +22,7 @@ export function DuplicateCampaign({campaignId,disabled=false}:{campaignId:string
   return <div><button type="button" className="secondary-action" disabled={disabled||busy} onClick={()=>void duplicate()}>{busy?'Copying…':'Duplicate'}</button>{error?<p role="alert">{error}</p>:null}</div>;
 }
 
-export function SaveCampaignTemplate({revisionId,name,disabled}:{revisionId:string;name:string;disabled:boolean}) {
+function SaveCampaignTemplateContent({revisionId,name,disabled}:{revisionId:string;name:string;disabled:boolean}) {
   const library=useResource<Library>('/api/campaign-templates');
   const [templateName,setTemplateName]=useState(name),[templateId,setTemplateId]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
   const save=async()=>{
@@ -65,3 +67,7 @@ export function TemplateLibrary() {
     {error?<p role="alert">{error}</p>:null}
   </section>;
 }
+
+export function DuplicateCampaign(props:ComponentProps<typeof DuplicateCampaignContent>) {return <Can permission="draft.write"><DuplicateCampaignContent {...props}/></Can>;}
+
+export function SaveCampaignTemplate(props:ComponentProps<typeof SaveCampaignTemplateContent>) {return <Can permission="draft.write"><SaveCampaignTemplateContent {...props}/></Can>;}

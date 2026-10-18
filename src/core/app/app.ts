@@ -1,3 +1,7 @@
+import {hasPermission,requiredPermission} from '@/core/features/auth/permissions';
+import {projectPrivateResponse} from '@/core/features/auth/response-privacy';
+import {contactSupportRoutes} from '@/core/features/auth/contact-actions';
+import {approvalRequestRoutes} from '@/core/features/auth/approval-requests';
 import {archiveOperatorRoutes,archivePublicRoutes} from '@/core/features/archive/routes';
 import {createOpenPixelRoutes,createOpenTrackingSettingsRoutes} from '@/core/features/insights/open-tracking';
 import {smsReviewPreview} from '@/core/features/sms/review-preview';
@@ -301,16 +305,26 @@ export function createApp(
     if (!operator) return context.json({ error: 'unauthenticated' }, 401);
     if (!isSafeMethod(context.req.method) && !validOrigin(context, platform, trustedLocal)) return context.json({ error: 'invalid_origin' }, 403);
     context.set('operator', operator);
+    context.header('Cache-Control','no-store');
+    const required=requiredPermission(context.req.method,context.req.url);
+    if(!hasPermission(operator.role,required))return context.json({error:'role_forbidden',requiredPermission:required},403);
     if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
     await next();
+    if(['GET','HEAD'].includes(context.req.method)&&context.res.ok&&context.res.headers.get('Content-Type')?.includes('application/json')) {
+      const value=await context.res.json();
+      const projected=projectPrivateResponse(operator.role==='analyst'&&operator.unmaskedContacts?'admin':operator.role,context.req.url,value);
+      context.res=new Response(JSON.stringify(projected),{status:context.res.status,headers:context.res.headers});
+    }
   });
+  app.route('/api',contactSupportRoutes(environment.DB,audienceService));
+  app.route('/api',approvalRequestRoutes(environment.DB));
   app.route('/api', createOperatorRoutes(authService, { secureCookie }));
-  app.route('/api', createIntegrationSettingsRoutes(integrations, authService));
+  app.route('/api', createIntegrationSettingsRoutes(integrations));
   app.get('/api/editor/config', async context => {
     context.header('Cache-Control', 'no-store');
     const operator = context.get('operator');
     const authority = await environment.DB.prepare('SELECT role,status FROM oa_operators WHERE id=?').bind(operator.id).first<{role: string; status: string}>();
-    if (authority?.role !== 'owner' || authority.status !== 'active') return context.json({error: 'owner_required'}, 403);
+    if (operator.role !== 'owner' || authority?.role !== 'owner' || authority.status !== 'active') return context.json({error: 'owner_required'}, 403);
     try {
       const config = configuredEditor(environment);
       if (!config) return context.json({error: 'editor_not_configured'}, 503);

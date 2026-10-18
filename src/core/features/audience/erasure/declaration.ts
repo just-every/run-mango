@@ -69,4 +69,5 @@ export const contactErasureTables:ErasureTable[]=[
   {table:'contact_merges',where:s=>({sql:'survivor_contact_id IN (SELECT value FROM json_each(?)) OR merged_contact_id IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.ids)]})},
   // Append stages: persisted erasure cursors depend on every earlier index.
   contact('list_growth_attribution'),
+  contact('operator_privacy_requests'),
 ];

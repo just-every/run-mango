@@ -1,5 +1,7 @@
 import { Hono } from 'hono';
 import type { ContentfulStatusCode } from 'hono/utils/http-status';
+import { z } from 'zod';
+import { productRoles } from './permissions';
 import { AuthError } from '@/vendor/base/operator-auth/index.mjs';
 import type { AuthenticatedOperator, createAuthService } from './service';
 
@@ -27,6 +29,12 @@ export function createOperatorRoutes(service: AuthService, _options: { secureCoo
       if (typeof body.email !== 'string') return context.json({ error: 'invalid_request' }, 400);
       return context.json({ operator: await service.inviteOperator(context.req.raw, body.email) }, 201);
     } catch (error) { return context.json({ error: error instanceof Error ? error.message : 'operator_invitation_failed' }, error instanceof AuthError ? error.status as ContentfulStatusCode : 400); }
+  });
+  routes.put('/operators/:id/role', async context => {
+    const parsed=z.object({role:z.enum(productRoles),unmaskedContacts:z.boolean().default(false)}).strict().safeParse(await context.req.json().catch(()=>null));
+    if(!parsed.success)return context.json({error:'invalid_role'},400);
+    try { await service.setProductRole(context.req.raw,context.req.param('id'),parsed.data.role,parsed.data.unmaskedContacts); return context.json({status:'role-saved'}); }
+    catch(error){ return context.json({error:error instanceof AuthError?error.code:'role_change_failed'},error instanceof AuthError?error.status as ContentfulStatusCode:409); }
   });
   routes.delete('/operators/:id', async context => {
     try {

@@ -9,8 +9,10 @@ import type { createAuthRepository } from './repository';
 import type { operators } from './schema';
 import { completeLocalSetup } from './setup-complete';
 import { ownerSignin } from './owner-signin';
+import { productAuthority, assignProductRole } from './product-roles';
+import { hasPermission, type ProductRole } from './permissions';
 
-export type AuthenticatedOperator = InferSelectModel<typeof operators>;
+export type AuthenticatedOperator = InferSelectModel<typeof operators> & {role: ProductRole; unmaskedContacts: boolean};
 
 async function requestNativeMagicLink(auth: ReturnType<typeof createOperatorAuth>, request: Request) {
   try {
@@ -34,7 +36,10 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
   const local = config.local === true;
   const db = repository.database.$client;
   async function project(operator: Operator) {
-    return (await repository.projectOperator(operator.id, config.initialOperatorEmails.includes(operator.email)))!;
+    const profile = (await repository.projectOperator(operator.id, config.initialOperatorEmails.includes(operator.email)))!;
+    const authority = await productAuthority(db,operator.id);
+    if(!authority)throw new AuthError('unauthenticated',401);
+    return {...profile,role:authority.role,unmaskedContacts:Boolean(authority.unmaskedContacts)};
   }
   function normalize(request: Request, includeBody = false) {
     if (!local) return request;
@@ -56,12 +61,17 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     return createOperatorAuth({ db, config: authConfig(request), mailSender: local || config.demo ? { async send() { return { status: 'accepted' as const, provider: 'development', providerMessageId: null }; } } : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
+        const profile = await project(actor);
         if (action === 'operators:role') return false;
+        if (['providers:manage','domains:manage'].includes(action)) return profile.role === 'owner';
+        if (action.startsWith('operators:') && !hasPermission(profile.role,'operators.manage')) return false;
         if (action === 'operators:invite') return role === 'owner';
         if (action === 'operators:deactivate' && target) {
           const original = await repository.getOperator(target.id);
           if (original?.isInitial && target.id !== actor.id) return false;
+          if ((await productAuthority(db,target.id))?.role==='owner' && profile.role!=='owner') return false;
         }
+        if(!action.startsWith('operators:')&&!action.startsWith('sessions:'))return profile.role==='owner';
         return true;
       },
     });
@@ -113,7 +123,12 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     async isNativeOwner(request: Request) {
       const normalized = normalize(request);
       const session = await core(normalized).getSession(normalized);
-      return session?.operator.role === 'owner' && session.operator.status === 'active';
+      return session ? session.operator.role === 'owner' && (await project(session.operator)).role === 'owner' && session.operator.status === 'active' : false;
+    },
+    async setProductRole(request: Request,targetId: string,role: ProductRole,unmaskedContacts: boolean) {
+      const actor=await this.authenticate(request);
+      if(!actor)throw new AuthError('unauthenticated',401);
+      await assignProductRole({config,database:repository.database},request,actor.id,targetId,role,unmaskedContacts);
     },
     async listOperators(request: Request) {
       const normalized = normalize(request);
@@ -132,15 +147,21 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     async removeOperator(request: Request, targetId: string) {
       const normalized = normalize(request), actor = await this.authenticate(normalized);
       const target = await repository.getOperator(targetId);
+      if((await productAuthority(db,targetId))?.role==='owner' && actor?.role!=='owner')throw new AuthError('owner_required',403);
       if (target?.isInitial && target.id !== actor?.id) throw new Error('The initial operator can remove themselves only.');
       const post = new Request(normalized, { method: 'POST' });
       const auth = core(post);
       const authority = (await auth.listOperators(post)).find(operator => operator.id === targetId);
       if (!authority) throw new AuthError('operator_not_found', 404);
-      const updated = authority.status === 'invited'
+      let updated;
+      try {updated = authority.status === 'invited'
         ? await auth.cancelInvitation(post, targetId)
-        : await auth.setOperatorStatus(post, targetId, 'inactive');
-      await project(updated);
+        : await auth.setOperatorStatus(post, targetId, 'inactive');}
+      catch(error) {
+        if(error instanceof Error&&error.message.includes('last_product_owner'))throw new AuthError('last_owner',409);
+        throw error;
+      }
+      await repository.projectOperator(updated.id,config.initialOperatorEmails.includes(updated.email));
     },
     async signOut(request: Request) { return core(normalize(request)).signOut(normalize(request)); },
   };

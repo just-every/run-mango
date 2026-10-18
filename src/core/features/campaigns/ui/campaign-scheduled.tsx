@@ -1,3 +1,4 @@
+import {usePermissions} from '@/core/features/auth/ui/permissions';
 import {CampaignPublication} from '@/core/features/archive/campaign-publication';
 import { CampaignSendControls } from './campaign-send-controls';
 import {CampaignFollowup,FollowupParent} from './campaign-followup';
@@ -21,6 +22,7 @@ import { overallResult } from './result-copy';
 import { ScheduledEnvelopeArt } from './scheduled-envelope-art';
 
 export function CampaignScheduledPage() {
+  const {can}=usePermissions();
   const { id } = useParams({ from: '/app/campaigns_/$id_/scheduled' });
   const { modules } = useLoaderData({ from: '/app' });
   const { data, error, loading, reload } = useResource<CampaignDetail>(`/api/campaigns/${id}`);
@@ -73,11 +75,11 @@ export function CampaignScheduledPage() {
           operatorPaused={data.campaign.state === 'paused' && results.steps.some(step => step.pauses?.some(pause => pause.reason === 'operator-pause' && pause.resumedAt === null))}
           reload={reload} />
         <StepResults awaitingFirstTick={data.scheduler?.state==='not-observed'} timezone={productConfig.storeTimezone} steps={data.steps} results={results} now={Math.max(now,Date.parse(results.asOf))} />
-        {results.cancellable ? <section className="panel cancellation-panel">
+        {results.cancellable && can('campaign.send') ? <section className="panel cancellation-panel">
           <h2>Cancel remaining sends</h2>
           <p>Cancellation stops queued recipient-steps that have not begun handoff. It cannot recall messages already handed to a provider. Unknown handoffs remain visible for confirmation.</p>
           <button className="danger-action--line" type="button" onClick={() => setConfirmCancel(true)} disabled={cancelling}>Cancel campaign</button>
-        </section> : <p className="notice-note">No remaining sends can be stopped. Provider outcomes may still arrive.</p>}
+        </section> : <p className="notice-note">{results.cancellable?'Your role can read this campaign. A Manager, Admin or Owner manages sending.':'No remaining sends can be stopped. Provider outcomes may still arrive.'}</p>}
       </div>
       <div className="scheduled-layout__side">
         <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />

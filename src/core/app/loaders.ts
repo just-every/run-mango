@@ -31,11 +31,13 @@ export const loadOperator = createServerFn({method: 'GET'}).validator((value: un
 }).handler(async ({data}) => {
   const state = await operatorState();
   if (!state.setupComplete) throw redirect({to: '/setup'});
+  if(state.operator.role==='support'&&data?.pathname==='/app')throw redirect({href:'/app/audience'});
+  if(state.operator.role==='analyst'&&data?.pathname==='/app')throw redirect({href:'/app/insights'});
   const {readPageResources} = await import('./page-resources');
   // Stream the head and its route assets while the fresh page reads finish.
   // The page's Suspense boundary resolves only with the complete snapshot.
   const resources = data ? readPageResources(data, state.operator) : Promise.resolve({});
-  return {displayName: state.displayName, email: state.email, modules: state.modules,
+  return {displayName: state.displayName, email: state.email, role: state.operator.role, unmaskedContacts: state.operator.unmaskedContacts, modules: state.modules,
     locationKey: data ? data.pathname + data.search : '', resources};
 });
 export const loadSetup = createServerFn({method: 'GET'}).handler(async () => {

@@ -1,7 +1,9 @@
+import type {ComponentProps} from 'react';
+import {Can} from '@/core/features/auth/ui/permissions';
 import { useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
 
-export function CampaignSendControls({ campaignId, state, operatorPaused, reload }: {
+function CampaignSendControlsContent({ campaignId, state, operatorPaused, reload }: {
   campaignId: string; state: string; operatorPaused: boolean; reload: () => Promise<unknown>;
 }) {
   const [busy, setBusy] = useState(false), [error, setError] = useState('');
@@ -27,3 +29,5 @@ export function CampaignSendControls({ campaignId, state, operatorPaused, reload
     {error ? <p role="alert" className="inline-error">{error}</p> : null}
   </section>;
 }
+
+export function CampaignSendControls(props:ComponentProps<typeof CampaignSendControlsContent>) {return <Can permission="campaign.approve"><CampaignSendControlsContent {...props}/></Can>;}

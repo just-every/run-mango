@@ -1,3 +1,4 @@
+import {Can} from '@/core/features/auth/ui/permissions';
 import { useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
 import { useResource } from '@/core/app/client/lib/use-resource';
@@ -37,7 +38,7 @@ export function SettingsIntegrations() {
   return <section id="integrations" className="panel settings-integrations" aria-labelledby="integrations-title">
     <p className="eyebrow">Connect another seed</p><h2 id="integrations-title">Integration credentials</h2>
     <p>Give Coffer or another application only the access it needs to keep subscribers and consent in sync. These credentials cannot sign in as an operator or approve campaigns.</p>
-    <p><a href="/docs/integrations">Integrator guide and curl examples</a>. Every API request appears in the activity below. Only the owner can create or revoke credentials.</p>
+    <p><a href="/docs/integrations">Integrator guide and curl examples</a>. Every API request appears in the activity below. An Owner, Admin or Manager can create or revoke credentials.</p>
     {resource.loading ? <p role="status">Loading credentials…</p> : null}
     {resource.error ? <p className="inline-error" role="alert">Credentials are unavailable. Sign in as the owner, or <button className="secondary-action" onClick={() => void resource.reload()}>try again</button>.</p> : null}
     {resource.data ? <>
@@ -59,7 +60,7 @@ export function SettingsIntegrations() {
         </div>{!credential.revokedAt && revoke !== credential.id ? <button className="secondary-action" disabled={busy} onClick={() => setRevoke(credential.id)}>Revoke {credential.name}</button> : null}
       </li>)}</ul>
       {!resource.data.credentials.length ? <p className="muted-copy">No credentials yet. Start with the scopes your connected application needs.</p> : null}
-      <IntegrationAudit key={revision} />
+      <Can permission="activity.read"><IntegrationAudit key={revision} /></Can>
     </> : null}
     {error ? <p className="inline-error" role="alert">{error}</p> : null}
     {notice ? <p className="action-notice" role="status">{notice}</p> : null}

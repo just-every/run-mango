@@ -13,7 +13,7 @@
     "Klaviyo"
   ],
   "description": "Grow your audience and send newsletters with reviewed content and delivery reporting.",
-  "scope": "One self-hosted newsletter and its equal operators. Mail is required; commerce, SMS, AI and email design are optional. Wider commerce and multichannel contract clauses remain release obligations.",
+  "scope": "One self-hosted newsletter and its role-controlled operators. Mail is required; commerce, SMS, AI and email design are optional. Wider commerce and multichannel contract clauses remain release obligations.",
   "capabilities": [
     {
       "id": "public-landing",
@@ -31,11 +31,12 @@
     },
     {
       "id": "operator-access",
-      "description": "Base sessions and confirmed invitations, equal product powers, retained attribution, initial self-removal and last-active-operator protection; Local hosted acceptance proved mailed sign-in and native-session access on one disposable workers.dev installation, with no production authentication claim.",
+      "description": "Native sessions and confirmed invitations with six assigned product roles, server-enforced newsletter permissions, masked restricted contact views, approval requests, recorded changes and retained attribution. Flow, provider-connection and installation-erasure role journeys remain unimplemented.",
       "clauses": [
         "OPER-001",
         "OPER-002",
-        "OPER-003"
+        "OPER-003",
+        "OPER-004"
       ]
     },
     {
@@ -221,7 +222,6 @@
   ],
   "nonGoals": [
     "Multiple stores or workspaces",
-    "Roles and permissions",
     "A general CRM",
     "Signup-form, landing-page, and website builders",
     "Social and advertising campaigns",

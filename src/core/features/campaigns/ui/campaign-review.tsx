@@ -1,4 +1,6 @@
-import { TestSendHistory, type TestSendAccess } from './test-send-history';
+import {ApprovalRequests} from '@/core/features/auth/ui/approval-requests';
+import {usePermissions} from '@/core/features/auth/ui/permissions';
+import {TestSendHistory,type TestSendAccess} from './test-send-history';
 import {FollowupParent} from './campaign-followup';
 import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
 import { Modal } from '@/core/app/client/ui/modal';
@@ -27,6 +29,7 @@ import { RevisionPreviews } from './revision-previews';
 type ReviewData = CampaignDetail & { blockers: ApprovalBlocker[] };
 
 export function CampaignReviewPage() {
+  const {can}=usePermissions();
   const { id } = useParams({ from: '/app/campaigns_/$id_/review' });
   const { modules } = useLoaderData({ from: '/app' });
   const { data, error, loading, reload, replace } = useResource<ReviewData>(`/api/campaigns/${id}/review`);
@@ -64,7 +67,7 @@ export function CampaignReviewPage() {
   if (!data || !data.revision) return <LoadState error={error ?? 'This review could not find a saved revision.'} />;
   if (!draft) return <LoadState />;
   const revision = data.revision;
-  const editable = data.campaign.state === 'draft';
+  const editable = data.campaign.state === 'draft' && can('draft.write');
   const savedDraft = toDraftComposition(revision, data.links, data.steps);
   const dirty = JSON.stringify(draft) !== JSON.stringify(savedDraft);
   const findings = [...(actionBlockers ?? data.blockers), ...(data.checks ?? [])].filter((check, index, all) =>
@@ -214,6 +217,7 @@ export function CampaignReviewPage() {
   return (
     <div className="page-flow review-page">
       <FollowupParent campaignId={id} />
+      <ApprovalRequests campaignId={id} revisionId={revision.id} dirty={dirty}/>
       <Modal open={navigation.status === 'blocked'} onClose={() => {if (navigation.status === 'blocked') navigation.reset();}} title="Leave without saving?" description="Your changes to this draft will be discarded.">
         <div className="detail-actions"><button className="secondary-action" type="button" onClick={() => {if (navigation.status === 'blocked') navigation.reset();}}>Keep editing</button><button className="danger-action--line" type="button" onClick={() => {if (navigation.status === 'blocked') navigation.proceed();}}>Discard and leave</button></div>
       </Modal>
@@ -232,8 +236,8 @@ export function CampaignReviewPage() {
         {<div className="page-head__actions review-heading__actions">
           <DuplicateCampaign campaignId={id} disabled={dirty||Boolean(busy)}/>
           {editable && sourceBlocked ? <button className="secondary-action" type="button" disabled={Boolean(busy) || dirty || needsCanonicalRead} onClick={() => void recheckSources()}>{busy === 'reload' ? 'Checking…' : 'Recheck sources'}</button> : null}
-          {editable ? <button className="primary-action" type="button" aria-describedby={!dirty && blockingFindings.length ? 'approval-blocked-reason' : undefined} onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : setConfirmingApproval(true)} disabled={Boolean(busy) || (!dirty && approvalBlocked)}>
-            {busy === 'save' ? 'Saving…' : busy === 'approve' ? 'Checking…' : dirty ? 'Save changes' : 'Approve & schedule'}
+          {editable ? <button className="primary-action" type="button" aria-describedby={!dirty && blockingFindings.length ? 'approval-blocked-reason' : undefined} onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : setConfirmingApproval(true)} disabled={Boolean(busy) || (!dirty && (approvalBlocked || !can('campaign.approve')))}>
+            {busy === 'save' ? 'Saving…' : busy === 'approve' ? 'Checking…' : dirty ? 'Save changes' : can('campaign.approve') ? 'Approve & schedule' : 'Save changes'}
           </button> : null}
           {data.results ? <Link className="primary-action" to="/app/campaigns/$id/scheduled" params={{id}}>View schedule and results</Link> : null}
         </div>}
@@ -247,8 +251,8 @@ export function CampaignReviewPage() {
         <p>{dirty ? 'Your edits are still here. Save them, or discard them before reloading the saved revision.' : 'Reload the saved revision, then review its content and checks.'}</p>
         <button className="secondary-action" type="button" onClick={() => void recover()} disabled={Boolean(busy) || dirty}>Reload saved revision</button>
       </section> : null}
-      <ApprovalCheckList checks={findings} onAcknowledge={check => void acknowledge(check)} acknowledgementDisabled={Boolean(busy) || dirty || needsCanonicalRead} title="Approval checks" eyebrow="Saved revision" emptyMessage="Approval will check this saved revision and current consent." />
-      <p className="saved-audience-summary notice-note"><strong>Saved audience:</strong> {summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p>
+      <ApprovalCheckList checks={findings} onAcknowledge={can('campaign.approve') ? check => void acknowledge(check) : undefined} acknowledgementDisabled={Boolean(busy) || dirty || needsCanonicalRead} title="Approval checks" eyebrow="Saved revision" emptyMessage="Approval will check this saved revision and current consent." />
+      <p className="saved-audience-summary notice-note"><strong>Saved audience:</strong> {revision.audienceMasked?'Audience conditions are restricted by your role.':summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p>
       <SaveCampaignTemplate key={revision.id} revisionId={revision.id} name={revision.name} disabled={dirty||needsCanonicalRead||Boolean(busy)}/>
       <div className="review-layout">
         {editable ? authoring.loading ? <LoadState /> : authoring.error || !authoring.data?.timezone
@@ -265,9 +269,10 @@ export function CampaignReviewPage() {
             </div>
             <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} smsPreview={data.smsPreview} />
           </section> : null}
-          {editable ? <Disclosure className="panel test-send-panel" title="Send a test">
+          {editable && can('campaign.test') ? <Disclosure className="panel test-send-panel" title="Send a test">
             <p className="muted-copy">Uses the saved revision. {testAccess.data?.canType ? 'Enter up to five email addresses, separated by commas.' : 'Choose a configured test destination.'} Unsubscribed and suppressed addresses are refused. SMS tests use the configured test destinations.</p>
             {testAccess.data ? <p role="status" aria-label="Daily test allowance">{testAccess.data.allowance.remaining} of {testAccess.data.allowance.limit} test recipient hand-offs remaining today. Resets at 00:00 UTC. Uncertain outcomes count.</p> : <LoadState error={testAccess.error} />}
+
             {!testDestination.trim() ? <p>Enter a test destination to send a test.</p> : null}
             {!revision.fromEmail || !revision.senderName ? <p>Email tests are unavailable until you save a sender identity in Settings and update this draft.</p> : null}
             {dirty ? <p>Save your changes before sending a test of this revision.</p> : null}
