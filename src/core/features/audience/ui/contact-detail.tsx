@@ -1,3 +1,5 @@
+import {Can} from '@/core/features/auth/ui/permissions';
+import {ContactSupport} from '@/core/features/auth/ui/contact-support';
 import {useState} from 'react';
 import {ContactDelete,ContactErasureReceipt} from './contact-delete';
 import type {ErasureReceipt} from '../erasure/types';
@@ -14,6 +16,7 @@ import { ContactConsentEvidencePanel, type ContactConsentEvidence, type ContactI
 import type { ContactTimelineEntry } from '../contact-timeline';
 
 type ContactDetail = {
+  masked?:boolean;
   smsServices?:Array<{id:string;purpose:string;state:string;reason:string|null;provider_message_id:string|null;created_at:number}>;
   contact: Contact;
   phones:Array<{id:string;phoneE164:string;channelStatus:string}>;
@@ -36,7 +39,7 @@ function ContactPage() {
   const [receipt,setReceipt]=useState<ErasureReceipt>();
   const [visibleEvents,setVisibleEvents]=useState(40);
   const { id } = useParams({ from: '/app/audience_/$id' });
-  const { data, error, loading } = useResource<ContactDetail>(`/api/contacts/${id}`);
+  const { data, error, loading, reload } = useResource<ContactDetail>(`/api/contacts/${id}`);
   if(receipt)return <ContactErasureReceipt initial={receipt}/>;
   if (loading) return <LoadState />;
   if (!data) return <LoadState error={error ?? 'This contact was not found.'} />;
@@ -64,8 +67,9 @@ function ContactPage() {
       </section>
       <div className="contact-layout">
         <div className="contact-layout__records">
-          <ContactRetention contactId={id} />
-          <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} />
+          <Can permission="report.read"><ContactRetention contactId={id} /></Can>
+          <Can permission="contact.privacy-request"><ContactSupport contactId={id} reload={reload}/></Can>
+          <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} restricted={data.masked} />
           {data.smsServices?.length?<section className="panel"><h2>SMS confirmations and service replies</h2><p className="muted-copy">Queued messages wait for permitted windows. Unconfirmed handoffs are never repeated automatically.</p>{data.smsServices.map(message=><article key={message.id}><strong>{titleCase(message.purpose)}</strong><p>{titleCase(message.state)}{message.reason?` · ${titleCase(message.reason)}`:''}</p><small>{formatDate(new Date(message.created_at).toISOString())}{message.provider_message_id?` · Provider receipt ${message.provider_message_id}`:''}</small></article>)}</section>:null}
         </div>
         <section className="panel timeline" aria-labelledby="timeline-title">

@@ -150,7 +150,7 @@ The runner reads `deploy.json` variables and the selected deployment's validated
 
   Storing them with `npx wrangler secret put DESIGN_PROVIDER_API_KEY --name mango-production`, which also asks for the value at a prompt (and the origin the same way), works too.
 
-Every operator can then spend from your 12ui account; Mango shows an estimate before each paid step and records each request with the campaign's costs. See [Write your first newsletter](./first-newsletter.md#design-with-12ui) for how it works and what is sent to 12ui.
+Operators with draft-editing access can then spend from your 12ui account; Mango shows an estimate before each paid step and records each request with the campaign's costs. See [Write your first newsletter](./first-newsletter.md#design-with-12ui) for how it works and what is sent to 12ui.
 
 ## Before you send
 

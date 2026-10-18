@@ -1,7 +1,7 @@
+import {hasPermission} from '@/core/features/auth/permissions';
 import { Hono, type Context, type MiddlewareHandler } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
 import { z } from 'zod';
-import type { createAuthService } from '@/core/features/auth/service';
 import type { AuthVariables } from '@/core/features/auth/routes';
 import type { Credential } from './credentials';
 import type { createIntegrationService } from './service';
@@ -29,7 +29,7 @@ function operation(context: IntegrationContext, settings: boolean) {
     : ['contacts', 'segments', 'events', 'suppressions'].find(name => path.endsWith(`/${name}`)) ?? 'unknown';
   return `${settings ? 'settings' : 'api'}.${endpoint}.${context.req.method.toLowerCase()}`;
 }
-function audited(service: Service, settings: boolean, auth?: Pick<ReturnType<typeof createAuthService>, 'isNativeOwner'>): MiddlewareHandler<Environment> {
+function audited(service: Service, settings: boolean): MiddlewareHandler<Environment> {
   return async (context, next) => {
     context.header('Cache-Control', 'no-store');
     let auditId: string | undefined;
@@ -41,7 +41,7 @@ function audited(service: Service, settings: boolean, auth?: Pick<ReturnType<typ
         await service.audit.attribute(auditId, credential.id);
       }
       if (settings) {
-        if (!await auth!.isNativeOwner(context.req.raw)) throw new IntegrationError('owner_required', 403);
+        if (!hasPermission(context.get('operator').role,'integration.manage')) throw new IntegrationError('owner_required', 403);
       } else {
         if (!credential) throw new IntegrationError('invalid_credential', 401);
         context.set('integrationCredential', credential);
@@ -106,9 +106,9 @@ export function createIntegrationApiRoutes(service: Service) {
 }
 
 /** Mount /api after the native session/origin middleware. Owner check remains native. */
-export function createIntegrationSettingsRoutes(service: Service, auth: Pick<ReturnType<typeof createAuthService>, 'isNativeOwner'>) {
+export function createIntegrationSettingsRoutes(service: Service) {
   const router = routes();
-  router.use('/settings/integrations/*', audited(service, true, auth));
+  router.use('/settings/integrations/*', audited(service, true));
   router.use('/settings/integrations/*', boundedBody());
   router.get('/settings/integrations', async context => context.json({credentials: await service.credentials.list(), scopes: integrationScopes}));
   router.post('/settings/integrations', async context => {

@@ -1,6 +1,7 @@
 import { requestJson } from '@/core/app/client/lib/api';
 
-export type SettingsOperator = { id: string; displayName: string; email: string; isInitial: boolean; status?: 'invited' | 'active' | 'inactive' };
+import type {ProductRole} from '@/core/features/auth/permissions';
+export type SettingsOperator = { role: ProductRole; unmaskedContacts: boolean; id: string; displayName: string; email: string; isInitial: boolean; status?: 'invited' | 'active' | 'inactive' };
 
 export class OperatorProofRequired extends Error {
   constructor() { super('Confirm your email again before inviting an operator.'); }
@@ -10,6 +11,7 @@ const knownErrors: Record<string, string> = {
   'A valid operator email address is required.': 'Enter a valid email address.',
   'The initial operator can remove themselves only.': 'The setup operator can only remove their own access.',
   'Operator does not exist.': 'This operator no longer has access. Refresh the list.',
+  last_owner: 'Assign another active owner before changing your own role.',
   invalid_request: 'Enter a valid email address.',
   authority_changed: 'Operator access changed during removal. Review the refreshed list before trying again.',
   invitation_conflict: 'This invitation changed during removal. Review the refreshed list before trying again.',

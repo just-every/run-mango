@@ -1,3 +1,4 @@
+import {Can} from '@/core/features/auth/ui/permissions';
 import type { Provider } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState } from '@/core/app/client/ui/layout';
@@ -25,20 +26,20 @@ export function SettingsPage() {
           <p className="page-head__lead">Operator identity and sending connections.</p>
         </div>
       </header>
-      <SettingsSender operatorEmail={operator.data.operator.email} />
-      <SettingsLinkHosts />
-      <SettingsIntegrations />
+      <Can permission="settings.manage"><SettingsSender operatorEmail={operator.data.operator.email} /></Can>
+      <Can permission="settings.manage"><SettingsLinkHosts /></Can>
+      <Can permission="integration.manage"><SettingsIntegrations /></Can>
       <div className="settings-grid">
         <section className="panel settings-current" aria-labelledby="current-operator-title">
           <p className="eyebrow">Current operator</p>
           <h2 id="current-operator-title"><KeepTogether text={operator.data.operator.displayName} /></h2>
-          <p>{operator.data.operator.email}</p>
+          <p>{operator.data.operator.email}</p><p>Role: {operator.data.operator.role}</p>
         </section>
-        <SettingsOperators current={operator.data.operator} />
+        <Can permission="operators.manage"><SettingsOperators current={operator.data.operator} /></Can>
       </div>
-      {providers.error ? <p className="inline-error settings-providers-error" role="alert">Unable to load delivery connections. <button className="secondary-action" onClick={() => void providers.reload()}>Try again</button></p> : null}
+      <Can permission="settings.manage">{providers.error ? <p className="inline-error settings-providers-error" role="alert">Unable to load delivery connections. <button className="secondary-action" onClick={() => void providers.reload()}>Try again</button></p> : null}
       {providers.data ? <ProviderStatus providers={providers.data.providers} /> : null}
-      {providers.data?.off.length ? <p className="muted-copy settings-note">Off in this setup: {providers.data.off.join(', ')}. <a href="/docs/going-live">The going-live guide</a> explains the optional modules.</p> : null}
+      {providers.data?.off.length ? <p className="muted-copy settings-note">Off in this setup: {providers.data.off.join(', ')}. <a href="/docs/going-live">The going-live guide</a> explains the optional modules.</p> : null}</Can>
     </div>
   );
 }

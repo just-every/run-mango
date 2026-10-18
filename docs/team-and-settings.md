@@ -1,14 +1,27 @@
 # Team and settings
 
-A Mango deployment is run by one or more operators. They all have the same powers, they sign in with a one-time email link, and the sender identity they save in Settings is what your newsletters carry. All of this is under **Settings** in the app.
+A Mango deployment is run by operators who sign in with one-time email links. The original native owner remains Owner; other existing operators and new invitations start as Admin until the Owner assigns a role in Settings.
 
-## Operators are equals
+## Roles
 
-There are no roles. Every operator can write and approve campaigns, manage contacts and change settings. Campaigns and approvals are attributed to the operator who made them, and that attribution stays in the history even after the operator is removed.
+The Owner selects each operator's role under **Settings → Operators**. Changes apply on the next request and are recorded with the acting operator and time.
+
+| Role | Current newsletter access |
+| --- | --- |
+| Owner | All product controls, role assignment and installation authority. |
+| Admin | Newsletter operations, contact import/export/erasure and team management; cannot remove an Owner or manage a billing-bearing sending connection. |
+| Manager | Drafts, tests, approval, pause/resume, segments, forms and integration credentials. |
+| Author | Drafts, templates and forms; configured-destination tests and approval requests. Cannot approve, activate or dispatch marketing. |
+| Analyst | Reports and campaigns; contact email and phone masked unless the Owner grants unmasked details. |
+| Support | Masked contact lookup and history; records channel opt-outs and erasure requests, never subscriptions. |
+
+Only Owner and Admin can export contacts or erase them. Support's erasure request waits for an Owner or Admin to fulfil it. Role assignments are authentication authority and are excluded from portable data archives; a restored installation retains its own native owner. Historical operator profiles and role-change audit entries remain attribution only.
+
+Flow activation, sending-provider connection controls and installation erasure are still wider target work. Their complete role journeys are not claimed by this newsletter release. CSV exports are currently restricted to Owner and Admin.
 
 ## Invite an operator
 
-Under **Operators** in Settings, enter the person's address in **Operator email** and press **Add operator**. Mango emails an invitation. The person must open it and press **Confirm** before they have access, and until then the list shows "Invitation pending". If the address already has access, Mango tells you so.
+An Owner or Admin uses **Operators** in Settings: enter the person's address in **Operator email** and press **Add operator**. Mango emails an invitation. The person must open it and press **Confirm** before they have access, and until then the list shows "Invitation pending". If the address already has access, Mango tells you so.
 
 ## Remove an operator
 
@@ -17,7 +30,7 @@ Press **Remove** next to a name, then **Confirm removal**. Removal revokes that 
 Two protections apply:
 
 - The owner created at setup, the address in `OWNER_EMAIL`, is marked "Setup operator". Only they can remove their own access.
-- Mango will not remove the last active operator.
+- Mango will not remove the last active Owner. Assign another active operator the Owner role before removing or downgrading that Owner.
 
 Removing an operator revokes their open sessions and unused invitation and sign-in links. Campaigns, saved revisions, approvals and audit entries retain their attribution. These invitation and removal controls are covered by local native authentication journeys; that proof does not establish hosted mail delivery.
 

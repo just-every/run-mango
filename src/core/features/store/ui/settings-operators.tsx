@@ -1,3 +1,4 @@
+import {productRoles,type ProductRole} from '@/core/features/auth/permissions';
 import { useState, type FormEvent } from 'react';
 
 import { useResource } from '@/core/app/client/lib/use-resource';
@@ -9,9 +10,17 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
   const [email, setEmail] = useState('');
   const [removing, setRemoving] = useState<SettingsOperator>();
   const [pending, setPending] = useState(false);
+  const [savingRole,setSavingRole]=useState<{id:string;role:ProductRole;unmaskedContacts:boolean}>();
   const [notice, setNotice] = useState<string>();
   const [error, setError] = useState<string>();
   const [proofRequired, setProofRequired] = useState(false);
+
+  async function changeRole(operator:SettingsOperator,role:ProductRole,unmaskedContacts=operator.unmaskedContacts) {
+    setSavingRole({id:operator.id,role,unmaskedContacts});setPending(true);setError(undefined);setNotice(undefined);
+    try {await operatorAction(`/api/operators/${encodeURIComponent(operator.id)}/role`,{method:'PUT',body:JSON.stringify({role,unmaskedContacts})});await operators.reload();setNotice(`Permissions updated for ${operator.email}. They apply on the next request.`);}
+    catch(cause){setError(cause instanceof Error?cause.message:'Role change failed.');}
+    finally{setPending(false);setSavingRole(undefined);}
+  }
 
   async function confirmAccess() {
     setPending(true);
@@ -78,12 +87,12 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
   return (
     <section className="panel settings-operators" aria-labelledby="operators-title">
       <div className="section-heading"><div><p className="eyebrow">Team access</p><h2 id="operators-title">Operators</h2></div></div>
-      <p>There are no roles. Every operator can manage campaigns, contacts and settings.</p>
+      <p>The owner assigns each operator a role. New operators start as Admin. Changes apply on their next request and are recorded.</p>
       <form className="settings-add-operator" onSubmit={(event) => void addOperator(event)}>
         <label htmlFor="operator-email">Operator email</label>
         <div className="settings-actions">
           <input id="operator-email" type="email" autoComplete="email" required value={email} disabled={pending} onChange={(event) => setEmail(event.target.value)} />
-          <button className="secondary-action" type="submit" disabled={pending || operators.loading || !operators.data}>{pending && !removing ? 'Adding…' : 'Add operator'}</button>
+          <button className="secondary-action" type="submit" disabled={pending || operators.loading || !operators.data}>{pending && !removing && !savingRole ? 'Adding…' : 'Add operator'}</button>
         </div>
         <p className="muted-copy">Adding an operator sends an invitation. They must open it and press Confirm before gaining access.</p>
       </form>
@@ -97,9 +106,11 @@ export function SettingsOperators({ current }: { current: SettingsOperator }) {
           <div className="settings-operator">
             <p className="settings-operator__name"><strong>{operator.displayName}{operator.id === current.id ? ' (you)' : ''}</strong>{operator.status ? <span className={`status-pill ${operator.status === 'invited' ? 'status-pill--pending' : 'status-pill--configured'}`}>{operator.status === 'invited' ? 'Invitation pending' : 'Active'}</span> : null}</p>
             <p className="settings-operator__email">{operator.email}</p>
+            {current.role==='owner'?<label>Role for {operator.email}<select aria-label={`Role for ${operator.email}`} value={savingRole?.id===operator.id?savingRole.role:operator.role} disabled={pending} onChange={event=>void changeRole(operator,event.target.value as ProductRole)}>{productRoles.map(role=><option key={role} value={role}>{role[0].toUpperCase()+role.slice(1)}</option>)}</select></label>:<p>Role: {operator.role}</p>}
+            {current.role==='owner'&&operator.role==='analyst'?<label><input type="checkbox" aria-label={`Allow unmasked contact details for ${operator.email}`} checked={savingRole?.id===operator.id?savingRole.unmaskedContacts:operator.unmaskedContacts} disabled={pending} onChange={event=>void changeRole(operator,operator.role,event.target.checked)}/> Allow unmasked contact details</label>:null}
             {operator.isInitial ? <small className="muted-copy">Setup operator · only they can remove their access</small> : null}
           </div>
-          <button type="button" className="danger-action--line" disabled={pending || Boolean(removing) || (operator.isInitial && operator.id !== current.id)} onClick={() => { setRemoving(operator); setError(undefined); setNotice(undefined); }} aria-label={`Remove ${operator.email}`}>Remove</button>
+          <button type="button" className="danger-action--line" disabled={pending || Boolean(removing) || (operator.isInitial && operator.id !== current.id) || (operator.role==='owner'&&current.role!=='owner')} onClick={() => { setRemoving(operator); setError(undefined); setNotice(undefined); }} aria-label={`Remove ${operator.email}`}>Remove</button>
         </li>)}
       </ul>
       {removing ? <div className="settings-removal notice-warning" role="group" aria-labelledby="remove-operator-title">

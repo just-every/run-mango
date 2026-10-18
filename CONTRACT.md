@@ -870,8 +870,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 70 | 17 | 0 | 87 |
-| Target and push further | 12 | 52 | 90 | 154 |
-| All | 82 | 69 | 90 | 241 |
+| Target and push further | 12 | 53 | 89 | 154 |
+| All | 82 | 70 | 89 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -880,7 +880,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `OPER-001` | Operators and the default role | published | done | `tests/local-start/local.journey.ts` · `tests/production-entry.spec.ts` |  |
 | `OPER-002` | Management | published | done | `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/service.ts` |  |
 | `OPER-003` | Removal does not rewrite history | published | done | `tests/settings-sender/routes.spec.ts` |  |
-| `OPER-004` | Roles and permissions | target | missing |  | not implemented |
+| `OPER-004` | Roles and permissions | target | partial | `tests/go-live/roles.journeys.ts` · `src/core/features/auth/permissions.ts` · `src/core/features/auth/product-roles.ts` · `migrations/core/0076_operator_product_roles.sql` | Six persisted roles, Owner assignment and Analyst unmasking grant, next-request API/server-function enforcement, role-change audits, last-owner protection, Author draft/request/configured-test controls, Manager typed tests and approval, restricted contact views, Support opt-out/request recording and visible controls at 1440/390 are exercised. Gap: full flow activation, billing-bearing provider connect/replace/disconnect and installation-erasure journeys await their owning product implementations; masked CSV export is not implemented (exports remain Owner/Admin only). Authentication role grants stay destination-owned on restore. |
 | `OPER-005` | Separation of approval | target | missing |  | not implemented |
 | `OPER-006` | Single sign-on and deprovisioning | target | missing |  | not implemented |
 | `OPER-007` | Activity log | target | partial | `tests/go-live/integrations.journeys.ts` · `src/core/features/integrations/routes.ts` | Owner-only integration activity records credential creation/revocation and every scoped API request, including denials. The complete cross-product activity log, filters and CSV export remain unimplemented. |
@@ -954,7 +954,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `CAMP-016` | Follow-up to non-engaged recipients | target | done | `tests/campaign-results/followup.journeys.ts` · `tests/portability.spec.ts` |  |
 | `CAMP-017` | Recurring and RSS-to-email campaigns | target | missing |  | not implemented |
 | `CAMP-018` | Duplicate a campaign | target | done | `tests/campaign-authoring/browser.spec.ts` |  |
-| `CAMP-019` | Test send to typed addresses | target | partial | `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts` | Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the UTC-day count, including uncertain outcomes, with midnight reset exercised. Non-approving native members see configured destinations only and typed requests receive 403. Remaining: typed SMS consent/transport (SMS-001, CONT-019), target Manager/Author assignment (OPER-004; native roles currently owner/admin/member), and the general activity-log screen (OPER-007). |
+| `CAMP-019` | Test send to typed addresses | target | partial | `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts` | Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the UTC-day count, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004), and the general activity-log screen (OPER-007). |
 | `DESIGN-001` | Optional design module | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
 | `DESIGN-002` | Draft-only design generation | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |
 | `DESIGN-003` | Design data and records | published | done | `tests/campaign-authoring/design-generation.spec.ts` |  |

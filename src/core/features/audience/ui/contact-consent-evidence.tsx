@@ -43,9 +43,10 @@ function ConfirmationState({ evidence }: { evidence: ContactConsentEvidence }) {
   return <span className={`audience-import-status audience-import-status--${style}`}>{value}</span>;
 }
 
-export function ContactConsentEvidencePanel({ consent, observations }: {
+export function ContactConsentEvidencePanel({ consent, observations, restricted=false }: {
   consent: ContactConsentEvidence[];
   observations: ContactImportObservation[];
+  restricted?: boolean;
 }) {
   const formatDate = useDateFormatter();
   return (
@@ -73,8 +74,8 @@ export function ContactConsentEvidencePanel({ consent, observations }: {
                   <div><dt>Consent version</dt><dd>{evidence.consentVersion}</dd></div>
                   <div><dt>Capture method</dt><dd>{evidence.captureMethod}</dd></div>
                   <div><dt>Capture source</dt><dd>{evidence.captureSource}</dd></div>
-                  <div><dt>Capture IP</dt><dd>{evidence.captureIp || 'Not recorded'}</dd></div>
-                  <div><dt>Confirmation IP</dt><dd>{evidence.confirmationIp || 'Not recorded'}</dd></div>
+                  <div><dt>Capture IP</dt><dd>{restricted?'Restricted':evidence.captureIp || 'Not recorded'}</dd></div>
+                  <div><dt>Confirmation IP</dt><dd>{restricted?'Restricted':evidence.confirmationIp || 'Not recorded'}</dd></div>
                   <div className="contact-evidence-fields__wide"><dt>Affirmative text</dt><dd>{evidence.consentText}</dd></div>
                 </dl>
               </article>
@@ -86,7 +87,7 @@ export function ContactConsentEvidencePanel({ consent, observations }: {
       <section className="panel contact-evidence" aria-labelledby="import-observations-title">
         <p className="eyebrow">Original CSV provenance</p>
         <h2 id="import-observations-title">Import source observations</h2>
-        {observations.length ? (
+        {restricted?<p className="muted-copy">Source observations are restricted by your role.</p>:observations.length ? (
           <div className="contact-evidence-list">
             {observations.map((observation) => (
               <article className="contact-evidence-card" key={observation.id}>

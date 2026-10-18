@@ -61,7 +61,9 @@ test('BASE-ACCESS-001/OPER-002: cancellation requires native session and exact O
     assert.equal((await r.call(path, { method: 'DELETE', cookie: owner, origin: 'https://attacker.test' })).status, 403);
     assert.equal((await r.call('/auth/invite/cancel', { method: 'POST', cookie: owner, body: { operatorId: pending.operator.id } })).status, 404);
     const initial = (await list(r, owner)).find(row => row.isInitial);
-    assert.equal((await r.call(`/api/operators/${initial.id}`, { method: 'DELETE', cookie: teammate.cookie })).status, 400);
+    const ownerRemoval=await r.call(`/api/operators/${initial.id}`, {method:'DELETE',cookie:teammate.cookie});
+    assert.equal(ownerRemoval.status,403);
+    assert.deepEqual(await ownerRemoval.json(),{error:'owner_required'});
     assert.equal((await r.call('/auth/signout', { method: 'POST', cookie: teammate.cookie, body: {} })).status, 204);
     assert.equal((await r.call(path, { method: 'DELETE', cookie: teammate.cookie })).status, 401);
     assert.equal((await r.call(`/auth/confirm?token=${pending.token}`)).status, 200);

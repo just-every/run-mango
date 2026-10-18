@@ -1,3 +1,4 @@
+import {hasPermission,type Capability} from '@/core/features/auth/permissions';
 import { Await, Link, Outlet, useRouterState, useLoaderData } from '@tanstack/react-router';
 import {useEffect, useRef, useState, type ReactNode} from 'react';
 
@@ -32,7 +33,7 @@ export function OperatorLayout() {
   const pathname = useRouterState({select: state => state.location.pathname});
   const locationKey = useRouterState({select: state => state.location.pathname + state.location.searchStr});
   const [open, setOpen] = useState(false), trigger = useRef<HTMLButtonElement>(null), nav = useRef<HTMLElement>(null);
-  const destinations = [['/app', 'Decision Desk'], ['/app/campaigns', 'Campaigns'], ['/app/audience', 'Audience'], ['/app/insights', 'Insights'], ...(operator.modules.store ? [['/app/store', 'Store']] : []), ['/app/settings', 'Settings']];
+  const destinations = [['/app', 'Decision Desk'], ['/app/campaigns', 'Campaigns'], ['/app/audience', 'Audience'], ['/app/insights', 'Insights'], ...(operator.modules.store ? [['/app/store', 'Store']] : []), ['/app/settings', 'Settings']].filter(([path])=>hasPermission(operator.role,({'/app':'draft.write','/app/campaigns':'campaign.read','/app/audience':'contact.read','/app/insights':'report.read','/app/store':'integration.manage','/app/settings':'session.self'} as Record<string,Capability>)[path]));
   // An unmatched /app path (the app 404) has no current destination, so the toggle reads Menu alone.
   const current = pathname === '/app' ? 'Decision Desk' : destinations.find(([to]) => to !== '/app' && pathname.startsWith(to))?.[1];
   const close = () => {setOpen(false); trigger.current?.focus();};
@@ -40,7 +41,7 @@ export function OperatorLayout() {
   useEffect(() => {if (open) nav.current?.querySelector<HTMLAnchorElement>('a')?.focus();}, [open]);
   const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /></ResourceSnapshot.Provider>;
   return <div className="operator-layout mango-app"><SkipLink /><header className="operator-header" onKeyDown={event => {if (event.key === 'Escape' && open) {event.preventDefault(); close();}}}>
-    <Link className="operator-header__brand" to="/app" aria-label="Mango Decision Desk"><Brand /></Link>
+    <Link className="operator-header__brand" to={operator.role==='support'?'/app/audience':operator.role==='analyst'?'/app/insights':'/app'} aria-label="Mango"><Brand /></Link>
     <button ref={trigger} className="operator-menu-toggle secondary-action" type="button" aria-expanded={open} aria-controls="operator-navigation" onClick={() => open ? close() : setOpen(true)}>{current ? `Menu · ${current}` : 'Menu'}</button>
     <nav ref={nav} id="operator-navigation" className={`operator-nav${open ? ' is-open' : ''}`} aria-label="Operator navigation" onKeyDown={event => {if (event.key === 'Escape' && open) {event.preventDefault(); close();}}} onClick={event => {if ((event.target as Element).closest('a')) setOpen(false);}}>
       {destinations.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}

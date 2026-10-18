@@ -8,7 +8,7 @@ import type { Audience, AudienceChannelCount, Exclusion } from '@/core/app/clien
 
 type AudienceSnapshotProps = {
   audience?: Audience;
-  revision?: {inclusionRuleJson: string; exclusionRulesJson: string};
+  revision?: {inclusionRuleJson: string; exclusionRulesJson: string;audienceMasked?:boolean};
   channelCounts: AudienceChannelCount[];
   exclusions?: Exclusion[];
 };
@@ -23,7 +23,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
             <h2 id="audience-snapshot-title">No saved audience snapshot</h2>
           </div>
         </div>
-        {revision ? <p aria-label="Saved audience rule">{summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p> : null}
+        {revision ? <p aria-label="Saved audience rule">{revision.audienceMasked?'Audience conditions are restricted by your role.':summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p> : null}
         <p className="muted-copy">The server has not saved audience and recipient-step counts for this composition.</p>
       </section>
     );
@@ -40,7 +40,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
           View audience
         </Link>
       </div>
-      {revision ? <p aria-label="Saved audience rule">{summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p> : null}
+      {revision ? <p aria-label="Saved audience rule">{revision.audienceMasked?'Audience conditions are restricted by your role.':summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p> : null}
       <dl className="metric-row">
         <div>
           <dt>Candidates</dt>

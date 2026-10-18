@@ -65,8 +65,10 @@ for (const passedMappingStage of [false, true]) test(`CONT-013 different-salt im
       const advance = async () => {
         const response = await f.call(`/api/audience/erasures/${reference}/resume`, { cookie, method: 'POST', body: {} });
         expect([200,202]).toContain(response.status);
+        // Consume the HTTP response before the next Miniflare control-plane read.
+        const receipt=(await response.json()).receipt;
         pending = await f.db.prepare('SELECT stage,cursor,scope_json FROM audience_erasures WHERE reference=?').bind(reference).first<any>();
-        return (await response.json()).receipt;
+        return receipt;
       };
       const mappingStage = contactErasureTables.findIndex(table => table.table === 'audience_portable_hashes');
       while (pending.stage < mappingStage) await advance();
