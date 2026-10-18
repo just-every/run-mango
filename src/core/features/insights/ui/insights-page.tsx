@@ -1,3 +1,4 @@
+import { ListGrowth } from './list-growth';
 import { RetentionAnalytics } from './retention-report';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {OpenEstimates} from './open-estimates';
@@ -48,6 +49,7 @@ export function InsightsPage() {
       <CostTotals report={data.costs} />
       <SenderRates />
       <RetentionAnalytics />
+      <ListGrowth />
       {data.results.length ? (
         <section className="panel data-table-panel" aria-labelledby="insights-results-title">
           <div className="section-heading"><div><p className="eyebrow">Recorded results</p><h2 id="insights-results-title">{data.results.length} observed event{data.results.length === 1 ? '' : 's'}</h2></div></div>

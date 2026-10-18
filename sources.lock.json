@@ -970,7 +970,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "7980d01861ec4166e4e3afff1e323314b8b65ec31b88b852467537c7030eb5e8",
+      "sha256": "a24c99438ce31e242d7880faa59c4e3aa5fbcf220bf218dd2d78530ad04de711",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "4da033aa08f30d993e32bff3aaee671736a4c628be9f95d3a314e107e28a1c73",
+      "sha256": "677a855bacb749d38d25387648039ed2f279db654f46e142b1a02f9e168c58f2",
       "executable": false
     },
     "DEMO.md": {
@@ -1042,11 +1042,11 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "2600d6f4bee83de72f3a3834625de11a572c503c230c05607ad32f9637efd595",
+      "sha256": "0c497f993cf64aa82cbaa6509079c55dacf34e01dfc4abb13c4bb305247a0ec7",
       "executable": false
     },
     "docs/delivery-reports.md": {
-      "sha256": "b26fc3562f0514241011404cec626988b26fc25a67962ef42a49ac7e14f7e45f",
+      "sha256": "24c3341f44e2893c80bbc6fb3bae1091b621caceda4a06231595cf6ce6f0ab06",
       "executable": false
     },
     "docs/first-newsletter.md": {
@@ -1122,7 +1122,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "a8dbe5f34e38bd0ef6804ef03f1d8b4f0eadfbc64232f251e113b4092fbd7618",
+      "sha256": "20a63040c9e70a18e5add1b2796d03c0b254e0d9e5718fef6e26168813039dd3",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1415,6 +1415,10 @@
     },
     "migrations/core/0072_test_send_allowance.sql": {
       "sha256": "778acc4051d85c7e2d08f78a52517651e6b777f66a3c6e4f7b55986ec28e3126",
+      "executable": false
+    },
+    "migrations/core/0073_list_growth.sql": {
+      "sha256": "36887f168b646c32f6aee962555e50b01c5fa23e17ebbe03aea2e12285b3f659",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -1914,7 +1918,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "30356479e4690ac501fe77dd58e4df0d437274c4bf4143dace7effe9c92879f4",
+      "sha256": "fa23319b7f23560d30976f3d67c5cb437109afb3b7ecef7142e415258014ca3d",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -2330,7 +2334,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "53a975eaa46c2ce044dad3f00f09d1efccf56bb183c2cb441ffa2e58e710e1f2",
+      "sha256": "1ce099bba87e4c4c89af804c0a158c4abafef6861b5b58b7b1962ca4534b4416",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -3497,6 +3501,14 @@
       "sha256": "acad67b03b600216f73a24e22e3cf9ebc8037310225ac5a56a93113cd324d062",
       "executable": false
     },
+    "src/core/features/insights/list-growth-routes.ts": {
+      "sha256": "a04af605479c3681ea2c32e96870232aa9ea4e029002d6658aff5415264606d2",
+      "executable": false
+    },
+    "src/core/features/insights/list-growth.ts": {
+      "sha256": "cc8b7011fb2d3568c57d6bee3bf5b14f8268f659388c0abf9aceb507f4298b34",
+      "executable": false
+    },
     "src/core/features/insights/mailbox-report.ts": {
       "sha256": "e4e0694533869e08381705a2c79399f172b97e2933e360e541e6f255e2b65353",
       "executable": false
@@ -3542,7 +3554,7 @@
       "executable": false
     },
     "src/core/features/insights/routes.ts": {
-      "sha256": "767d3ad07f70c12d2e9b3da79f536d32b4e1404edc7050e8d0b1ca097f10e1d5",
+      "sha256": "b071730e79ed68ef778aedab61dc65e7e04dd18491a23905ab04e60ec2543521",
       "executable": false
     },
     "src/core/features/insights/schema.ts": {
@@ -3574,7 +3586,11 @@
       "executable": false
     },
     "src/core/features/insights/ui/insights-page.tsx": {
-      "sha256": "4cf84316058ee317453df9e1d9eef062ce82e0516be5f716594e024fd1005816",
+      "sha256": "6db36329e407516687b57dd7374b8147349b47d72b5d46897b61504572241a91",
+      "executable": false
+    },
+    "src/core/features/insights/ui/list-growth.tsx": {
+      "sha256": "89be3decbed1f9bb1e36519e2ca087e203cd593c4c7c88afb653f3dfb1ed09ca",
       "executable": false
     },
     "src/core/features/insights/ui/mailbox-providers.tsx": {
@@ -6755,6 +6771,10 @@
     },
     "tests/go-live/integrations.journeys.ts": {
       "sha256": "21c3fe422ee986f4b0e7f9ce3c0d9d081beb55aabc0eba618b1aff8b662f586e",
+      "executable": false
+    },
+    "tests/go-live/list-growth.journeys.ts": {
+      "sha256": "bd0cbc8d4e6a26edbb009574005293edef087372bd466d8ad340f6c03f59c360",
       "executable": false
     },
     "tests/go-live/mailbox-provider.journeys.ts": {
