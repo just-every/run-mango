@@ -1,3 +1,4 @@
+import { contactLink } from '../contact-links';
 import type {SmsReviewPreview} from '@/core/features/sms/review-preview';
 import { useEffect, useMemo, useState } from 'react';
 import { renderMessageContent } from '../message-content';
@@ -61,6 +62,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
               <li key={link.id}>
                 <strong>{link.label}</strong>
                 <span>{link.destinationUrl}</span>
+                {contactLink(link.destinationUrl) ? <ContactLinkDetails destination={link.destinationUrl} /> : null}
               </li>
             ))}
           </ul>
@@ -70,4 +72,9 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
       </article>
     </section>
   );
+}
+
+function ContactLinkDetails({destination}: {destination: string}) {
+  const link = contactLink(destination)!;
+  return <small>{link.kind === 'email' ? 'Email' : link.kind === 'phone' ? 'Phone' : 'Text'}: {link.destination}{link.subject !== undefined ? ` · Subject: ${link.subject}` : ''}{link.body !== undefined ? ` · Body: ${link.body}` : ''} · No click tracking</small>;
 }

@@ -85,3 +85,9 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | M3 | A no-email suppression blocks an approved send at handoff; unsubscribe, bounce and complaint events have replayable cursors. | in code | `migrations/core/0069_scoped_integrations.sql`, `src/core/features/integrations/service.ts`, `tests/go-live/integrations.journeys.ts` |
 | M4 | One integrator page explains credentials, contact sync, suppression, event replay and approved-segment sending with curl examples. | in code | `docs/integrations.md`, `docs/site.json` |
 | M5 | RER Managed integration provider calls say “not available yet”; self-hosted approved-segment dispatch retains ordinary sender and consent gates. | in code | `src/core/features/integrations/service.ts`, `scripts/installer/deploy-declaration.mjs`, `docs/integrations.md`, `tests/go-live/integrations.journeys.ts` |
+
+## Mango daily-use claims
+
+| Clause | Claim | Status | Evidence |
+| --- | --- | --- | --- |
+| MSG-013 | Operators insert Web, Email, Phone and Text links, inspect decoded contact destinations in review, and deliver contact links unchanged without click tracking. Invalid contact destinations block approval; images remain HTTPS-only. | in code | `src/core/features/campaigns/contact-links.ts`, `src/core/features/campaigns/ui/message-link-tool.tsx`, `tests/go-live/contact-links.journeys.ts` |

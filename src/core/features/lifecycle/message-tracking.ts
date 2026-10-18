@@ -1,3 +1,4 @@
+import {contactLink} from '@/core/features/campaigns/contact-links';
 import {textLinkDestinations} from '@/core/features/campaigns/message-links';
 import {safeEmailUrl} from '@/core/features/campaigns/email-html-policy';
 import type {Platform} from '@/core/shared/platform';
@@ -7,6 +8,7 @@ export async function renderTracking(platform:Platform,input:{channel:'email'|'s
  if(input.enabled){
   const destinations=input.channel==='sms'?textLinkDestinations(input.smsBody):input.links.map(link=>link.destinationUrl);
   for(const destinationUrl of new Set(destinations)){
+   if(contactLink(destinationUrl))continue;
    if(!safeEmailUrl(destinationUrl)||!platform.config.allowedLinkHosts.some(host=>new URL(destinationUrl).hostname===host||new URL(destinationUrl).hostname.endsWith(`.${host}`)))throw new Error('Tracked destination is outside the approved URL policy.');
    const expiresAt=new Date(input.sendByAt.getTime()+30*86400000),token=await platform.publicTokens.issue({id:crypto.randomUUID(),purpose:'link',expiresAt});
    trackedLinks.push({tokenDigest:await platform.publicTokens.digest(token),destinationUrl,expiresAt});

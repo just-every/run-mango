@@ -1,3 +1,5 @@
+import { textLinkDestinations } from '@/core/features/campaigns/message-links';
+import { contactLink } from '@/core/features/campaigns/contact-links';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { loadLinkHosts } from '@/core/features/settings/link-hosts';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
@@ -12,7 +14,7 @@ export async function prepareApprovalChecks(snapshot: CampaignRevisionSnapshot, 
   const destinations = new Set(snapshot.links.map(link => link.destinationUrl));
   for (const destination of inspectEmailHtml(snapshot.revision.emailBody).destinations) destinations.add(destination);
   const authored = `${snapshot.revision.emailBody}\n${snapshot.revision.emailText}\n${snapshot.revision.smsBody}`;
-  for (const match of authored.matchAll(/\bhttps?:\/\/[^\s<>"']+/gi)) destinations.add(match[0].replace(/[),.;]+$/, ''));
+  for (const destination of textLinkDestinations(authored)) destinations.add(destination);
   const results = Promise.allSettled([
     Promise.all([
       platform.mailer.capabilities(),
@@ -23,7 +25,9 @@ export async function prepareApprovalChecks(snapshot: CampaignRevisionSnapshot, 
     ]),
     Promise.all([...destinations].map(async destination => {
       const ownMedia = ownMediaName(destination, platform.config.publicBaseUrl);
-      return {destination, inspection: ownMedia
+      return {destination, inspection: contactLink(destination)
+        ? {ok: true, detail: 'Validated contact link; no host or network inspection required.'}
+        : ownMedia
         ? await inspectOwnMedia(platform.database.$client, platform.blobs, ownMedia)
         : await platform.linkInspector.inspect(destination)};
     })),

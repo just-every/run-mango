@@ -1,3 +1,4 @@
+import { contactLink } from '@/core/features/campaigns/contact-links';
 import type { LinkInspection, LinkInspector } from '@/core/shared/platform';
 
 const resolver = 'https://cloudflare-dns.com/dns-query';
@@ -41,6 +42,7 @@ async function addressesFor(host: string, request: typeof fetch): Promise<string
 export function createLinkInspector(allowedHosts: string[], request: typeof fetch = fetch): LinkInspector {
   return {
     async inspect(value: string): Promise<LinkInspection> {
+      if (contactLink(value)) return {ok: true, detail: 'Validated contact link; no network host.'};
       let current: URL;
       try {
         current = new URL(value);

@@ -1,3 +1,5 @@
+import { contactLink, safeEmailLink } from '@/core/features/campaigns/contact-links';
+import { textLinkDestinations } from '@/core/features/campaigns/message-links';
 import { managedSmsText, smsComplianceBlock } from '@/core/features/sms/content';
 import {activeProviderHolds} from './provider-holds';
 import {reputationRestricted} from './reputation-guard';
@@ -43,20 +45,21 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
 
   const blockedLinks = links.filter((link) => {
     try {
+      if (contactLink(link.destinationUrl)) return false;
       const url = new URL(link.destinationUrl);
-      return url.protocol !== 'https:' || !allowedHosts.includes(url.hostname.toLowerCase());
+      return !safeEmailLink(link.destinationUrl) || !allowedHosts.includes(url.hostname.toLowerCase());
     } catch {
       return true;
     }
   });
   findings.push(check('message.links', blockedLinks.length === 0,
-    blockedLinks.length ? `Blocked links: ${blockedLinks.map((item) => item.destinationUrl).join(', ')}` : 'Every destination is HTTPS on an allowed host.'));
+    blockedLinks.length ? `Blocked links: ${blockedLinks.map((item) => item.destinationUrl).join(', ')}` : 'Every destination is an allowed HTTPS or contact link.'));
 
   const authored = `${revision.emailSubject}\n${revision.preheader}\n${revision.emailBody}\n${revision.emailText}\n${revision.smsBody}`;
   const htmlPolicy = inspectEmailHtml(revision.emailBody);
   findings.push(check('message.content', htmlPolicy.issues.length === 0, htmlPolicy.issues.length
     ? htmlPolicy.issues.join(' ')
-    : 'Email HTML uses the allowed tags, attributes, inline styles and HTTPS destinations, and hides no text.'));
+    : 'Email HTML uses the allowed tags, attributes, inline styles and validated destinations, and hides no text.'));
   const missingFallback = invalidPersonalisation(authored);
   findings.push(check('message.personalisation', missingFallback.length === 0,
     missingFallback.length ? `Invalid personalisation or missing fallback: ${missingFallback.join(', ')}` : 'Every personalisation token carries an explicit fallback.'));
@@ -76,7 +79,7 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
     const hasPhysicalAddress = revision.emailBody.includes('{{physical_address}}') && revision.emailText.includes('{{physical_address}}');
     findings.push(check('message.email-address', hasPhysicalAddress, 'HTML and plain-text email bodies must both carry the managed physical postal address.'));
     const htmlDestinations = new Set(htmlPolicy.anchors.filter(anchor => anchor.href !== '{{unsubscribe_url}}').map(anchor => anchor.href.replaceAll('&amp;', '&')));
-    const textDestinations = new Set([...revision.emailText.matchAll(/https?:\/\/[^\s<>"']+/gi)].map(match => match[0].replace(/[),.;]+$/, '')));
+    const textDestinations = new Set([...textLinkDestinations(revision.emailText), ...links.filter(link => contactLink(link.destinationUrl) && revision.emailText.includes(`(${link.destinationUrl})`)).map(link => link.destinationUrl)]);
     const savedDestinations = new Set(links.map(link => link.destinationUrl));
     const missing = [...new Set([...htmlDestinations, ...textDestinations, ...savedDestinations])].filter(destination => !htmlDestinations.has(destination) || !textDestinations.has(destination) || !savedDestinations.has(destination));
     findings.push(check('message.multipart-equivalence', missing.length === 0,
@@ -162,7 +165,7 @@ export async function runApprovalChecks(input: {
   checks.push(check('message.links.resolved', blockedDestinations.length === 0,
     blockedDestinations.length
       ? `Blocked transmitted links: ${blockedDestinations.map(({ destination, inspection }) => `${destination} (${inspection.detail})`).join('; ')}`
-      : `${linkInspections.length} transmitted destination links resolved through allowed HTTPS hosts.`));
+      : `${linkInspections.length} transmitted destinations passed HTTPS or contact-link checks.`));
   const configured = platform.config.mailSender;
   if (selected.has('email')) {
     const inspection = mailInspection!;

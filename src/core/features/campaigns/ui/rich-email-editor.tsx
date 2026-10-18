@@ -1,6 +1,6 @@
 import { Field } from '@/core/app/client/ui/validation-form';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { escapeHtml } from '../email-html-policy';
+import { MessageLinkTool } from './message-link-tool';
 import { requiresHtmlEditing } from '../email-presentation';
 import { authoredBody, htmlToText } from '../authoring-content';
 import { authoredEditorHtml, editorHtml } from './editor-html';
@@ -8,7 +8,6 @@ import { InsertImage } from '@/core/features/campaign-assets/ui/insert-image';
 
 export function RichEmailEditor({value, onChange, busy, designImport}: {value:string; busy:boolean; onChange:(value:string)=>void; designImport?: ReactNode}) {
   const [mode,setMode] = useState<'rich'|'html'>('rich');
-  const [linkUrl,setLinkUrl]=useState(''),[linkLabel,setLinkLabel]=useState('');
   const editor = useRef<HTMLDivElement>(null), caret = useRef<number>(undefined);
   const body = authoredBody(value);
   const htmlOnly = requiresHtmlEditing(body);
@@ -42,7 +41,7 @@ export function RichEmailEditor({value, onChange, busy, designImport}: {value:st
       <div className="detail-actions rich-email-toolbar" aria-label="Text formatting">{[['bold','Bold'],['italic','Italic'],['insertUnorderedList','Bullet list']].map(([command,label])=><button key={command} type="button" className="secondary-action" onMouseDown={event=>event.preventDefault()} onClick={()=>format(command)}>{label}</button>)}</div>
       <Field name="emailBody" label="Email body" advisory validate={() => htmlToText(body).trim() ? undefined : "Write the email body."}><div ref={editor} contentEditable={!busy} aria-disabled={busy} suppressContentEditableWarning role="textbox" aria-label="Email body" aria-required="true" aria-multiline="true" className="rich-email-editor" onPaste={paste} onDrop={event=>event.preventDefault()} onClick={event=>{if ((event.target as Element).closest('a')) event.preventDefault();}} onInput={event=>onChange(authoredEditorHtml(event.currentTarget))} /></Field>
     </>}
-    <details className="rich-email-link"><summary>Add a link to the message</summary><div className="rich-email-link__fields"><label>Link text<input value={linkLabel} onChange={event=>setLinkLabel(event.target.value)}/></label><label>Link URL<input type="url" value={linkUrl} onChange={event=>setLinkUrl(event.target.value)}/></label><button type="button" className="secondary-action" disabled={!linkLabel.trim() || !/^https:\/\//.test(linkUrl)} onClick={()=>{onChange(body+`<p><a href="${escapeHtml(linkUrl)}">${escapeHtml(linkLabel)}</a></p>`);setLinkLabel('');setLinkUrl('');}}>Insert link</button></div></details>
+    <MessageLinkTool disabled={busy} onInsert={html => onChange(body + html)} />
     <p className="muted-copy">Unsubscribe and your postal address are added automatically when saved. Plain text is generated with the same destination links.</p>
     <label>Plain-text email<textarea aria-label="Plain-text email" readOnly value={htmlToText(value)} rows={5}/></label>
   </fieldset>;

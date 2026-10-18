@@ -861,8 +861,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 65 | 22 | 0 | 87 |
-| Target and push further | 7 | 51 | 96 | 154 |
-| All | 72 | 73 | 96 | 241 |
+| Target and push further | 8 | 51 | 95 | 154 |
+| All | 73 | 73 | 95 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -962,7 +962,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `MSG-010` | Unsubscribe availability | published | partial | `src/core/features/audience/unsubscribe-routes.ts` | acceptance not yet met: Unsubscribe answers within 2 seconds and is rate-limited per token; needs a measured journey. |
 | `MSG-011` | Sending reputation | published | done | `tests/go-live/delivery.journeys.ts` |  |
 | `MSG-012` | Hidden or deceptive presentation | published | done | `tests/campaign-authoring/canonical-save.spec.ts` |  |
-| `MSG-013` | Contact links (`mailto:`, `tel:`, `sms:`) | target | missing |  | not implemented |
+| `MSG-013` | Contact links (`mailto:`, `tel:`, `sms:`) | target | done | `tests/go-live/contact-links.journeys.ts` |  |
 | `MSG-014` | Allowed link and image hosts | target | partial | `src/core/features/settings/link-hosts-validation.ts` · `src/core/features/settings/link-hosts.ts` · `src/core/platform/link-inspector.ts` | acceptance not yet met: On a fresh installation with a connected Shopify edge store, settings lists the deployment host, `myshop.com`, `www.myshop.com`, `cdn.shopify.com` and the social link hosts with their sources. A campaign with a catalogue product block (`cdn.shopify.com` image, `myshop.com` link), a social links block and `mailto:` and `tel:` footer links approves with no settings change. `shop.myshop.com` blocks until `*.myshop.com` is added; `myshop.com.evil.example` still blocks; a removed host is not restored by the next store sync. Today settings hold operator-typed exact hosts defaulting to the deployment host, and the approval check and the link inspector disagree on subdomains. |
 | `MSG-015` | Allow a blocked host from review | target | missing |  | not implemented |
 | `SEND-001` | Provider hand-off | published | done | `tests/go-live/managed-mail.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts` |  |

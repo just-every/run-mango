@@ -24,7 +24,7 @@ The email body opens in **Rich text** mode, with **Bold**, **Italic** and **Bull
 
 - paragraphs, `div`, `span`, line breaks, rules, headings, bold, italic, underline, lists, blockquotes, tables, links and images;
 - attributes limited to `title`, link `href`, image `src`, `alt`, `width` and `height`, and table `colspan` and `rowspan`;
-- quoted attributes only; links and image sources must be HTTPS;
+- quoted attributes only; web links and image sources must be HTTPS, while contact links may use `mailto:`, `tel:` or `sms:`;
 - images need explicit `width` and `height` of at least 2 pixels;
 - a `style` attribute with simple inline styles: hex colours, font stacks such as `Georgia, serif`, font sizes from 10 to 72 pixels, spacing, borders and rounded corners;
 - on tables, `role="presentation"`, `width`, `cellpadding`, `cellspacing`, `border="0"` and `align` (`left` or `center`); on table cells, `width`, `align`, `valign`, `dir` and a hex `bgcolor`.
@@ -35,7 +35,7 @@ Scripts, forms, stylesheets, classes, event handlers and malformed markup are no
 
 ## Links
 
-Add a link with **Add a link to the message** (link text and an HTTPS URL), or write an `<a>` tag in HTML mode. Every link appears under **Saved links** with a label and a destination, and you can add or remove destinations there. The destination's host must be in **Settings → Allowed link hosts** or approval is blocked. This starts with your app’s own host; add your website or shop there when you need it.
+Add a link with **Add a link to the message**: choose Web, Email, Phone or Text, enter its label and destination, and optionally add an email subject or an email/text message. You can also write an `<a>` tag in HTML mode. Email links admit one address, with only `subject` and `body` parameters; phone and text links admit one E.164 or 10-digit US number, with visual separators. Contact links need no allowed host, are listed decoded in review, and are never rewritten or counted as clicks. Every link appears under **Saved links** with a label and a destination, and you can add or remove destinations there. A web destination's host must be in **Settings → Allowed link hosts** or approval is blocked. This starts with your app’s own host; add your website or shop there when you need it.
 
 ## Images
 

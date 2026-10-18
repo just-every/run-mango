@@ -13,6 +13,7 @@ export default defineConfig({
   retries: 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
+    launchOptions: {args: ['--use-mock-keychain', '--password-store=basic']},
     baseURL,
     trace: 'off',
   },

@@ -1,3 +1,4 @@
+import { safeEmailLink } from '@/core/features/campaigns/contact-links';
 import { allowedEmailAttribute, emailTags, escapeHtml, inspectEmailHtml, safeEmailUrl, voidEmailTags } from '@/core/features/campaigns/email-html-policy';
 import { parseEmailHtml } from '@/core/features/campaigns/email-html-parse';
 import { foreignMergeTags } from '@/core/features/campaigns/message-content';
@@ -41,7 +42,7 @@ export function importHtml(source: string): ImportedHtml {
     }
     if (tag === 'a') {
       const href = values.get('href') ?? '';
-      if (!safeEmailUrl(href.replaceAll('&amp;', '&'), true)) {
+      if (!safeEmailLink(href.replaceAll('&amp;', '&'), true)) {
         anchors.push('dropped');
         // A link whose address is another tool's merge tag stays visible as text.
         if (foreignMergeTags(href).length) out.push(`(${escapeHtml(href)}) `);

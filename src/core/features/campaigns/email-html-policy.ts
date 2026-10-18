@@ -1,3 +1,4 @@
+import { safeEmailLink } from './contact-links';
 import { parseEmailHtml, type EmailElement, type EmailNode } from './email-html-parse';
 import { createPresentationCheck } from './email-presentation';
 /** Conservative authoring grammar, judged on the tree a mail client builds from the stored body (email-html-parse.ts).
@@ -12,8 +13,7 @@ export function escapeHtml(value: string) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 }
 /** A decoded link or image address: HTTPS, no credentials, and nothing a URL never needs written literally. */
-export function safeEmailUrl(value: string, managed = false) {
-  if (managed && value === '{{unsubscribe_url}}') return true;
+export function safeEmailUrl(value: string) {
   if (/[\u0000- \u007f- {}"<>]/.test(value)) return false;
   try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password; } catch { return false; }
 }
@@ -28,7 +28,7 @@ const insecureMedia = (value: string) => { try { const url = new URL(value); ret
 /** `mediaOrigin` is this deployment's own origin, passed only where a draft is saved or previewed. */
 export function allowedEmailAttribute(tag: string, name: string, value: string, mediaOrigin?: string) {
   if (name === 'title' || (tag === 'img' && name === 'alt')) return !value.includes('{{');
-  if (tag === 'a' && name === 'href') return safeEmailUrl(value, true);
+  if (tag === 'a' && name === 'href') return safeEmailLink(value, true);
   if (tag === 'img' && name === 'src') return safeEmailUrl(value) || localMediaUrl(value, mediaOrigin);
   if (['width', 'height'].includes(name) && tag === 'img') return /^\d{1,4}$/.test(value) && Number(value) >= 2;
   if (['colspan', 'rowspan'].includes(name) && ['td', 'th'].includes(tag)) return /^[1-9]\d?$/.test(value);
@@ -63,7 +63,7 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
         if (tag === 'img' && name === 'src' && insecureMedia(value)) localImages.add(value);
         else issues.add(`Attribute ${name} on <${tag}> is not allowed or has an unsafe value.`);
       }
-      if (name === 'href' && value !== '{{unsubscribe_url}}' && safeEmailUrl(value)) destinations.add(value);
+      if (name === 'href' && value !== '{{unsubscribe_url}}' && safeEmailLink(value)) destinations.add(value);
     }
     if (tag === 'img' && (!attributes.has('src') || !attributes.has('width') || !attributes.has('height'))) issues.add('Images require HTTPS src and explicit width and height of at least 2 pixels.');
     if (tag === 'a') {

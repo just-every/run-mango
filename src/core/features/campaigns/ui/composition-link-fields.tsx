@@ -1,3 +1,4 @@
+import { safeEmailLink } from '../contact-links';
 import { Field } from '@/core/app/client/ui/validation-form';
 import type { DraftComposition, DraftLink } from './draft-composition';
 
@@ -26,7 +27,7 @@ export function CompositionLinkFields({
             </label>
             <label>
               Link {index + 1} destination (required)
-              <Field name={`links.${index}.destinationUrl`} label={`Link ${index+1} destination`} required validate={() => {try {return new URL(link.destinationUrl).protocol === 'https:' ? undefined : 'Use an HTTPS destination.';} catch {return 'Enter a valid HTTPS destination.';}}}><input value={link.destinationUrl} onChange={(event) => setLink(index, 'destinationUrl', event.target.value)} type="url" /></Field>
+              <Field name={`links.${index}.destinationUrl`} label={`Link ${index+1} destination`} required validate={() => safeEmailLink(link.destinationUrl) ? undefined : 'Enter a valid HTTPS, email, phone or text destination.'}><input value={link.destinationUrl} onChange={(event) => setLink(index, 'destinationUrl', event.target.value)} type="text" /></Field>
             </label>
             <button className="text-link edit-action" type="button" disabled={busy} onClick={() => removeLink(index)}>Remove link {index + 1}</button>
           </div>
