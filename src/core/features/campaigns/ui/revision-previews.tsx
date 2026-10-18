@@ -12,7 +12,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const [width, setWidth] = useState<'desktop' | 'mobile'>('desktop');
   const [loadImages, setLoadImages] = useState(false);
   const rendered = useMemo(() => renderMessageContent({...revision, preheader: revision.preheader ?? '', physicalAddress: revision.physicalAddress ?? ''}, {
-    values: {first_name: 'Alex', name: 'Alex Example', displayName: 'Alex Example'},
+    values: {displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
   }), [revision]);
   const showEmail = selectedChannels?.includes('email') ?? true;

@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 10 claims · 10 in code.**
+**Totals: 11 claims · 11 in code.**
 
 ## Mango integration claims
 
@@ -25,3 +25,4 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | PUB-001 | Operators publish sent email revisions as neutral public issues, with an archive index, RSS, search metadata and withdrawal. Draft and unsent campaigns cannot publish; recipient personalisation, unsubscribe links, tracked redirects and remote images do not enter the public copy. | in code | `src/core/features/archive/`, `tests/campaign-results/archive.journeys.ts`, `tests/audience-import/erasure.spec.ts` |
 | DELIV-005 | Insights groups signed delivered, bounced and complained outcomes and human clicks by the mailbox domain recorded for each send, with six bounce categories. Replays do not add counts, scanners are excluded, custom domains stay Other and missing historical diagnostics are labelled. | in code | `src/core/features/insights/mailbox-report.ts`, `src/core/features/insights/mailbox-taxonomy.ts`, `tests/go-live/mailbox-provider.journeys.ts` |
 | MSG-007 | Review distinguishes advisory findings from blockers. Acknowledgements record the operator and time for the exact saved revision, survive replay and reload, and never bypass safety checks; changed content needs a new acknowledgement. | done | `src/core/features/lifecycle/advisory-acknowledgements.ts`, `src/core/features/campaigns/ui/approval-check-list.tsx`, `tests/go-live/content-checks.journeys.ts` |
+| MSG-008 | Review counts eligible contacts using fallback text, invalid tokens block approval, and escaped names and saved fallbacks reach the provider. Destination-only display labels do not substitute for names; preview uses the same supported fields and fallbacks. | done | `src/core/features/audience/contact-personalisation.ts`, `src/core/features/campaigns/message-content.ts`, `tests/go-live/personalisation.journeys.ts` |

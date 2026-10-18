@@ -864,9 +864,9 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 67 | 20 | 0 | 87 |
+| Published | 68 | 19 | 0 | 87 |
 | Target and push further | 10 | 51 | 93 | 154 |
-| All | 77 | 71 | 93 | 241 |
+| All | 78 | 70 | 93 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -961,7 +961,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `MSG-005` | SMS opt-out | published | partial | `src/core/features/sms/content.ts` | acceptance not yet met: Every marketing SMS carries programme identity and STOP text; needs a tagged review journey. |
 | `MSG-006` | Links | published | partial | `src/core/features/settings/link-hosts-validation.ts` | acceptance not yet met: Malformed links, schemes other than HTTPS and MSG-013's contact schemes (`http:` and `javascript:` included), and hosts outside MSG-014's list on the link or any redirect block scheduling, each named with MSG-015's allow action; image sources stay HTTPS only. Needs a tagged journey. |
 | `MSG-007` | Content checks | published | done | `tests/go-live/content-checks.journeys.ts` |  |
-| `MSG-008` | Personalisation | published | partial | `src/core/features/campaigns/message-content.ts` | acceptance not yet met: Tokens with fallbacks render and count fallback use; needs an exercising test. |
+| `MSG-008` | Personalisation | published | done | `tests/go-live/personalisation.journeys.ts` |  |
 | `MSG-009` | Email body | published | done | `tests/campaign-authoring/canonical-save.spec.ts` |  |
 | `MSG-010` | Unsubscribe availability | published | partial | `src/core/features/audience/unsubscribe-routes.ts` | acceptance not yet met: Unsubscribe answers within 2 seconds and is rate-limited per token; needs a measured journey. |
 | `MSG-011` | Sending reputation | published | done | `tests/go-live/delivery.journeys.ts` |  |

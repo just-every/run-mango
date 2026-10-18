@@ -605,7 +605,7 @@
       "name": "MAIL_PROVIDER",
       "required": true,
       "secret": false,
-      "why": "Explicit rer for Managed transactional mail, or resend/sendgrid for own-provider mail. Local installation keeps the development outbox."
+      "why": "Explicit rer for Managed transactional mail, or resend/sendgrid for own-provider mail. Local development automatically admits the owner and suppresses authentication mail."
     },
     {
       "name": "IDENTITY_PROVIDER",

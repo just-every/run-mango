@@ -41,6 +41,7 @@ export function RichEmailEditor({value, onChange, busy, designImport}: {value:st
       <div className="detail-actions rich-email-toolbar" aria-label="Text formatting">{[['bold','Bold'],['italic','Italic'],['insertUnorderedList','Bullet list']].map(([command,label])=><button key={command} type="button" className="secondary-action" onMouseDown={event=>event.preventDefault()} onClick={()=>format(command)}>{label}</button>)}</div>
       <Field name="emailBody" label="Email body" advisory validate={() => htmlToText(body).trim() ? undefined : "Write the email body."}><div ref={editor} contentEditable={!busy} aria-disabled={busy} suppressContentEditableWarning role="textbox" aria-label="Email body" aria-required="true" aria-multiline="true" className="rich-email-editor" onPaste={paste} onDrop={event=>event.preventDefault()} onClick={event=>{if ((event.target as Element).closest('a')) event.preventDefault();}} onInput={event=>onChange(authoredEditorHtml(event.currentTarget))} /></Field>
     </>}
+    <p className="muted-copy">Personalise with <code>{'{{displayName | fallback: Garden friend}}'}</code>. Every token needs fallback text; other property names use their saved fallback.</p>
     <MessageLinkTool disabled={busy} onInsert={html => onChange(body + html)} />
     <p className="muted-copy">Unsubscribe and your postal address are added automatically when saved. Plain text is generated with the same destination links.</p>
     <label>Plain-text email<textarea aria-label="Plain-text email" readOnly value={htmlToText(value)} rows={5}/></label>

@@ -1,3 +1,4 @@
+import { contactPersonalisation } from './contact-personalisation';
 import {productCoverage,ruleCoverage,type CoverageStore} from './source-coverage';
 import {commerceExclusions} from './commerce-exclusions';
 import { productIdsFromRules, parseStructuredRules, type ExclusionRule, type FrozenCandidate, type InclusionRule } from '@/core/features/lifecycle';
@@ -210,7 +211,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
         timeZone: channelData.timeZone,
         timeZoneEvidenceAt: channelData.timeZoneEvidenceAt,
         timeZoneEvidenceSource: channelData.timeZoneEvidenceSource,
-        personalisation: { displayName: contact.displayName },
+        personalisation: contactPersonalisation(contact, channelData.destination),
       },
     };
   }
