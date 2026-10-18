@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runtime, secret, setup } from './base-runtime.mjs';
 
-test('Base D1 auth: explicit bootstrap, signed-in APIs, email confirmation, single use, equal operators and revocation', async () => {
+test('Base D1 auth: explicit bootstrap, signed-in APIs, email confirmation, single use, default Admin access and revocation', async () => {
   const r = await runtime();
   try {
     assert.equal((await r.call('/api/operators')).status, 401);
@@ -38,7 +38,9 @@ test('Base D1 auth: explicit bootstrap, signed-in APIs, email confirmation, sing
     assert.equal(invited.status,303);
     const otherCookie = invited.headers.get('set-cookie').split(';')[0];
     assert.equal((await r.call('/api/operators',{cookie:otherCookie})).status,200);
-    assert.equal((await r.call(`/api/operators/${owner.id}`,{method:'DELETE',cookie:otherCookie})).status,400);
+    const ownerRemoval=await r.call(`/api/operators/${owner.id}`,{method:'DELETE',cookie:otherCookie});
+    assert.equal(ownerRemoval.status,403);
+    assert.deepEqual(await ownerRemoval.json(),{error:'owner_required'});
     assert.equal((await r.call(`/api/operators/${other.id}`,{method:'DELETE',cookie:ownerCookie})).status,204);
     assert.equal((await r.call('/api/operator',{cookie:otherCookie})).status,401);
     assert.ok((await r.db.prepare('SELECT removed_at FROM operators WHERE id=?').bind(other.id).first()).removed_at);

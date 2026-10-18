@@ -6,19 +6,9 @@ import type { Platform } from '@/core/shared/platform';
 const effectiveRole = "COALESCE(r.role,CASE WHEN n.role='member' THEN 'author' WHEN n.id=(SELECT owner_id FROM operator_role_settings WHERE singleton=1) THEN 'owner' ELSE 'admin' END)";
 
 export async function productAuthority(db: D1Database, operatorId: string) {
-  const read=()=>db.prepare(`SELECT ${effectiveRole} AS role,COALESCE(r.unmasked_contacts,0) AS unmaskedContacts,
-      (SELECT owner_id FROM operator_role_settings WHERE singleton=1) AS defaultOwnerId
+  const row=await db.prepare(`SELECT ${effectiveRole} AS role,COALESCE(r.unmasked_contacts,0) AS unmaskedContacts
       FROM oa_operators n JOIN operators p ON p.id=n.id LEFT JOIN operator_product_roles r ON r.operator_id=n.id
-      WHERE n.id=? AND n.status!='inactive'`).bind(operatorId).first<{role:ProductRole;unmaskedContacts:number;defaultOwnerId:string|null}>();
-  let row=await read();
-  if(row&&!row.defaultOwnerId) {
-    // First admission on an empty installation freezes its native owner once.
-    // Ordinary authentication stays read-only, including during erasure.
-    await db.prepare(`INSERT OR IGNORE INTO operator_role_settings(singleton,owner_id)
-      SELECT 1,n.id FROM oa_operators n LEFT JOIN operators p ON p.id=n.id
-      WHERE n.role='owner' AND n.status='active' ORDER BY COALESCE(p.is_initial,0) DESC,n.created_at,n.id LIMIT 1`).run();
-    row=await read();
-  }
+      WHERE n.id=? AND n.status!='inactive'`).bind(operatorId).first<{role:ProductRole;unmaskedContacts:number}>();
   return row?{role:row.role,unmaskedContacts:row.unmaskedContacts}:undefined;
 }
 

@@ -9,6 +9,15 @@ INSERT INTO operator_role_settings(singleton,owner_id)
  SELECT 1,n.id FROM oa_operators n LEFT JOIN operators p ON p.id=n.id
  WHERE n.role='owner' AND n.status='active' ORDER BY COALESCE(p.is_initial,0) DESC,n.created_at,n.id LIMIT 1;
 
+-- New installations establish ownership as part of native identity creation,
+-- never as a side effect of an authenticated read or a refused operation.
+CREATE TRIGGER operator_role_owner_created AFTER INSERT ON oa_operators
+WHEN NEW.role='owner' AND NEW.status='active'
+BEGIN INSERT OR IGNORE INTO operator_role_settings(singleton,owner_id) VALUES(1,NEW.id); END;
+CREATE TRIGGER operator_role_owner_activated AFTER UPDATE OF status,role ON oa_operators
+WHEN NEW.role='owner' AND NEW.status='active'
+BEGIN INSERT OR IGNORE INTO operator_role_settings(singleton,owner_id) VALUES(1,NEW.id); END;
+
 CREATE TABLE operator_product_roles (
   operator_id TEXT PRIMARY KEY REFERENCES oa_operators(id),
   role TEXT NOT NULL CHECK(role IN ('owner','admin','manager','author','analyst','support')),
