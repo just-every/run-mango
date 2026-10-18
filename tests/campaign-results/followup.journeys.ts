@@ -13,12 +13,13 @@ for(const width of [1440,390])contract('CAMP-016',`non-clicker follow-up keeps s
   await page.getByText('Follow up with non-engaged readers',{exact:true}).click();await page.getByLabel('New follow-up subject').fill('A closer look at the new ceramics');
   await page.getByLabel('Follow-up delay hours').fill('48');await page.screenshot({path:test.info().outputPath(`followup-create-${width}.png`),fullPage:true});
   await page.getByRole('button',{name:'Create follow-up draft',exact:true}).click();await page.waitForURL(/\/review$/);
+  await expect(page.getByRole('complementary',{name:'Follow-up source'})).toContainText('48 hours');
   const created=page.url().split('/').at(-2)!;const review=await (await page.request.get(`${runtime.url}/api/campaigns/${created}/review`)).json();
   expect(review.campaign.state).toBe('draft');expect(review.revision.state).toBe('draft');expect(review.steps).toEqual([]);expect(review.revision.emailSubject).toBe('A closer look at the new ceramics');
   const actual=await post('/api/campaign-authoring/audience',{inclusionRuleJson:review.revision.inclusionRuleJson,exclusionRulesJson:review.revision.exclusionRulesJson,channels:['email']});
   expect(actual.ok(),await actual.text()).toBe(true);const audience=await actual.json();expect(audience.candidateCount).toBe(fixture.expectedCandidateIds.length);expect(audience.eligibleCount).toBe(fixture.expectedEligibleIds.length);
   expect(audience.exclusions).toEqual(expect.arrayContaining([{reason:'email-unsubscribed',count:1},{reason:'email-suppressed',count:1},{reason:'frequency-window',count:1}]));
-  await expect(page.getByRole('complementary',{name:'Follow-up source'})).toContainText('48 hours');const approval=await post(`/api/campaigns/${created}/approve`,{revisionId:review.revision.id,idempotencyKey:crypto.randomUUID()});expect(approval.status()).toBe(409);expect((await approval.json()).status).toBe('blocked');
+  const approval=await post(`/api/campaigns/${created}/approve`,{revisionId:review.revision.id,idempotencyKey:crypto.randomUUID()});expect(approval.status()).toBe(409);expect((await approval.json()).status).toBe('blocked');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);await page.screenshot({path:test.info().outputPath(`followup-review-${width}.png`),fullPage:true});
   const copied=await post(`/api/campaigns/${created}/duplicate`,{});expect(copied.status()).toBe(201);const copy=await copied.json();
   const copiedParent=await (await page.request.get(`${runtime.url}/api/campaigns/${copy.campaignId}/followup-parent`)).json();expect(copiedParent.followup.sourceCampaignId).toBe(fixture.campaignId);
