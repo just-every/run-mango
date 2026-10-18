@@ -4,6 +4,10 @@
 
 - Mark test credentials and environment references explicitly so hosted source admission accepts the fixtures.
 
+## 0.2.1 (2026-10-18)
+
+Description only; no product change. The catalogue description is now "Grow your audience and send newsletters with reviewed content and delivery reporting.", the same sentence as main. The application, contract, migrations and configuration are identical to 0.2.0, so upgrading from 0.2.0 needs no migration, configuration or data step.
+
 ## 0.2.0 (2026-10-16)
 
 - **Upgrade from 0.1.0:** back up source, D1/R2 and private settings, preserve customizations, apply migrations in filename order through 0059, and run `rer build` before a fresh post-upgrade export. Migration 0044 retires legacy transfer journals and advances erasure floors; old archives remain subject to current erasure authority. 0023 and 0046 are numbering gaps, never renumbered migrations.

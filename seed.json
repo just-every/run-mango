@@ -1,7 +1,7 @@
 {
   "id": "mango",
   "name": "Mango",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "maturity": "newsletter-release-candidate",
   "category": "marketing",
   "spine": {
@@ -12,7 +12,7 @@
     "Mailchimp",
     "Klaviyo"
   ],
-  "description": "An operator-managed newsletter with consent-aware audience imports, hosted signup, email authoring, exact-revision approval, and provider-confirmed delivery reporting.",
+  "description": "Grow your audience and send newsletters with reviewed content and delivery reporting.",
   "scope": "One self-hosted newsletter and its equal operators. Mail is required; commerce, SMS, AI and email design are optional. Wider commerce and multichannel contract clauses remain release obligations.",
   "capabilities": [
     {
