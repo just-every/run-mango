@@ -870,9 +870,9 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 70 | 17 | 0 | 87 |
+| Published | 71 | 16 | 0 | 87 |
 | Target and push further | 12 | 54 | 88 | 154 |
-| All | 82 | 71 | 88 | 241 |
+| All | 83 | 70 | 88 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -890,7 +890,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `STORE-003` | Freshness | published | done | `tests/go-live/source-freshness.journeys.ts` · `src/core/features/campaigns/ui/source-freshness.tsx` |  |
 | `STORE-004` | Source failure | published | partial | `src/core/features/store/synchronize.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: An unavailable adapter records a failed operation and sends nothing; nested-page failure and retry are proved for Shopify. |
 | `STORE-005` | Stale sources block approval | published | done | `tests/go-live/stale-sources.journeys.ts` · `src/core/features/lifecycle/evaluate-approval.ts` |  |
-| `STORE-006` | Declared adapter capability | published | partial | `src/core/features/audience/source-coverage.ts` | acceptance not yet met: A rule needing an unsupplied source type is shown unavailable and cannot be approved; needs a tagged journey. |
+| `STORE-006` | Declared adapter capability | published | done | `tests/go-live/stale-sources.journeys.ts` · `src/core/features/audience/source-coverage.ts` · `src/core/features/campaigns/authoring-service.ts` |  |
 | `STORE-007` | Ingestion latency | published | partial | `src/core/features/audience/commerce-webhook-routes.ts` | acceptance not yet met: A webhook source record is readable within 60 seconds of acknowledgment, measured at the stated limits. |
 | `CONT-001` | Contact identity | published | done | `tests/move-in/archive.journeys.ts` |  |
 | `CONT-002` | Channel status | published | done | `tests/move-in/held.journeys.ts` · `tests/move-in/archive.journeys.ts` |  |

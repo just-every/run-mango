@@ -15,6 +15,7 @@ import { createCampaignCompositionRepository } from './composition-repository';
 import { adoptProposal } from './adopt-proposal';
 import type { DraftComposition } from './draft-composition';
 import { authoringSourceIssues } from './authoring-source-status';
+import { ProposalAudienceUnavailable } from '@/core/features/proposals/unavailable';
 
 export function createAuthoringService(platform: Platform, runtime: LifecycleRuntime, store: ReturnType<typeof createStoreService>) {
   const composition = createCampaignCompositionRepository(platform.database, {publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
@@ -77,7 +78,13 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
         actorId:operatorId,
         prepare:async (output, now) => {
           const evaluated = await evaluateAudience(runtime,createLifecycleRepository(platform.database),{inclusionRuleJson:JSON.stringify(output.audience.inclusion),exclusionRulesJson:JSON.stringify(output.audience.exclusions),channels:[...new Set(output.steps.map(step=>step.channel))]},now);
-          if(evaluated.audience.status!=='ok'||evaluated.blockingEligibility.size) throw new Error('Proposal audience evidence is unavailable.');
+          if(evaluated.audience.status!=='ok') {
+            const issues='sourceIssues' in evaluated.audience ? evaluated.audience.sourceIssues : undefined;
+            throw new ProposalAudienceUnavailable(issues?.length ? authoringSourceIssues(issues) : 'Proposal audience evidence is unavailable.');
+          }
+          if(evaluated.blockingEligibility.size) throw new ProposalAudienceUnavailable(authoringSourceIssues(
+            evaluated.parsedRules.ok ? evaluated.parsedRules.sourceTypes.map(sourceType=>({sourceType,reason:[...evaluated.blockingEligibility][0]})) : [],
+          ));
           const candidateCount=evaluated.audience.candidateCount??evaluated.audience.candidates.length;
           const channelCounts=[...new Set(output.steps.map(step=>step.channel))].map(channel=>({channel,recipientStepCount:output.steps.filter(step=>step.channel===channel).length*evaluated.candidates.filter(candidate=>candidate.channels[channel]).length}));
           return {audience:{asOf:evaluated.audience.asOf,candidateCount,excludedCount:candidateCount-evaluated.candidates.length,eligibleCount:evaluated.candidates.length,channelCounts,exclusions:[...evaluated.exclusionCounts].map(([reason,count])=>({reason,count}))},forecast:await computeProposalForecast(platform.database,channelCounts.reduce((sum,row)=>sum+row.recipientStepCount,0),now)};

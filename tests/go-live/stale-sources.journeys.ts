@@ -5,8 +5,9 @@ import {eventSigner} from './sendgrid-events';
 import {installation, json, sender, confirmedContact, draftCampaign, approve} from './harness';
 import {sourceEdge, syncSource} from './source-edge';
 import {openPage, reloadPage} from '../support/navigation';
+import {declaredCapability} from './declared-capability';
 
-contract('STORE-005', 'inclusion and exclusion sources block approval while stale or failed and recover only after completed sync', async ({page}, info) => {
+contract('STORE-005', '[STORE-006] inclusion, exclusion and proposal sources refuse unavailable data and recover stale data only after completed sync', async ({page, browser}, info) => {
   const commerce = sourceEdge(), edge = await providerEdge(commerce), site = await installation(edge, eventSigner(), {commerce: true});
   try {
     const cookie = await site.open();
@@ -88,4 +89,5 @@ contract('STORE-005', 'inclusion and exclusion sources block approval while stal
     }
     expect(edge.unexpected).toEqual([]);
   } finally {await page.close(); await site.runtime.close(); await edge.close();}
+  await declaredCapability(await browser.newPage(), info);
 });

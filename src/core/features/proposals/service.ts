@@ -7,6 +7,7 @@ import { generatedProposalSchema, generatedProposalWireSchema, validateGrounding
 import type { ProposalEvidence, GeneratedProposal } from './generation';
 import type { ProposalDecisionContext } from './forecast';
 import type { ProposalRepository } from './repository';
+import { ProposalAudienceUnavailable } from './unavailable';
 
 export function createProposalService(repository: ProposalRepository, ai: AiProvider) {
   return {
@@ -57,7 +58,7 @@ export function createProposalService(repository: ProposalRepository, ai: AiProv
         return { kind: 'proposed' as const, proposalId, campaignId, revisionId, provider: generation.provider, model: generation.model,
           cost: { billableUnits: generation.billableUnits, reportedCostMicros: generation.reportedCostMicros ?? null, currency: generation.currency ?? null } };
       } catch (error) {
-        const failure = generation
+        const failure = error instanceof ProposalAudienceUnavailable ? 'source_unavailable' : generation
           ? outputValidated
             ? 'proposal_storage_failed'
             : 'invalid_ai_output'
@@ -69,7 +70,9 @@ export function createProposalService(repository: ProposalRepository, ai: AiProv
         await repository.saveFailure({
           proposalId, evidence: input.evidence, error: failure, now, sendByAt: input.sendByAt, generation, actorId:input.actorId,
         });
-        return { kind: 'failed' as const, proposalId, error: failure };
+        return error instanceof ProposalAudienceUnavailable
+          ? {kind: 'unavailable' as const, proposalId, detail: error.message}
+          : { kind: 'failed' as const, proposalId, error: failure };
       }
     },
 

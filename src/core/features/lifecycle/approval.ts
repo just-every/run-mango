@@ -25,7 +25,9 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       if (!saved) return {kind: 'conflict' as const};
       const projection=await campaignClaimProjection(runtime.platform.database,input.revisionId);
       return {kind: 'preview' as const, asOf: now, sourceStatus: audience.status,
-        candidateCount, eligibleCount: candidates.length, exclusions:projection?exclusions.map(item=>({...item,reason:projection.reason(item.reason)})):exclusions, channelCounts,
+        candidateCount, eligibleCount: candidateCount === null ? null : candidates.length,
+        exclusions: candidateCount === null ? null : projection?exclusions.map(item=>({...item,reason:projection.reason(item.reason)})):exclusions,
+        channelCounts: candidateCount === null ? null : channelCounts,
         checks: projection?checkResult.checks.map(projection.check):checkResult.checks, blockers: checkResult.checks.filter(check => check.blocking)};
     },
 
