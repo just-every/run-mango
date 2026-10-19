@@ -974,7 +974,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "45576ecaaf768865a061b653e5443b1bfb4a5b56c3f075117c86fb7ad54eea36",
+      "sha256": "b27683270075c85057a10041c5fde3d6f59287e2ab2aedbcb53677a66be29ebd",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1006,7 +1006,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "5ee981aaa2c15397494215f538288386a564e9b8541d7114e15ff39bc5c28ea7",
+      "sha256": "903eedba0cb20441b95fc8b9479489a57905c05722a4dfcca1a288e6bbd2ac3d",
       "executable": false
     },
     "DEMO.md": {
@@ -1046,7 +1046,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "bd29ded177024a205f809c3374fce447ad997e45e193fc0ab72c372e69f32884",
+      "sha256": "55395a73da13e18553ad9baff378559ff7f0dde9df317612498a58787624846a",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -6958,7 +6958,7 @@
       "executable": false
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
-      "sha256": "e21bd177b811cdba0689c3b72cbffb0caf135e56e94939a1becce8b81781d797",
+      "sha256": "6f90c73af11591e95b0f368400fc12c9136cd3c6795f2297115fe81537828074",
       "executable": false
     },
     "tests/go-live/pause.journeys.ts": {
