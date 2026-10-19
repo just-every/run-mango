@@ -937,6 +937,10 @@
       "sha256": "56d1f577caf754034f6b5ce371a2af941dbe75030ed8973d907114957c56c092",
       "executable": false
     },
+    ".github/assets/release/mango-contact-ledger-1600.png": {
+      "sha256": "45d85510dd06723b8f77beb5e5cc531ea78239210035c27873d2287cdf8c1858",
+      "executable": false
+    },
     ".github/workflows/rer-managed.yml": {
       "sha256": "4438b6e2ab1aa8eac1ccb92a7a6063ed222ac3b8575417824951e80a0bf4c40a",
       "executable": false
