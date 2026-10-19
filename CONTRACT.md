@@ -870,9 +870,9 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 71 | 16 | 0 | 87 |
+| Published | 72 | 15 | 0 | 87 |
 | Target and push further | 12 | 54 | 88 | 154 |
-| All | 83 | 70 | 88 | 241 |
+| All | 84 | 69 | 88 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -969,7 +969,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `MSG-007` | Content checks | published | done | `tests/go-live/content-checks.journeys.ts` |  |
 | `MSG-008` | Personalization | published | done | `tests/go-live/personalisation.journeys.ts` |  |
 | `MSG-009` | Email body | published | done | `tests/campaign-authoring/canonical-save.spec.ts` |  |
-| `MSG-010` | Unsubscribe availability | published | partial | `src/core/features/audience/unsubscribe-routes.ts` | acceptance not yet met: Unsubscribe answers within 2 seconds and is rate-limited per token; needs a measured journey. |
+| `MSG-010` | Unsubscribe availability | published | done | `tests/go-live/opt-out-reasons.journeys.ts` · `src/core/features/audience/unsubscribe-routes.ts` |  |
 | `MSG-011` | Sending reputation | published | done | `tests/go-live/delivery.journeys.ts` |  |
 | `MSG-012` | Hidden or deceptive presentation | published | done | `tests/campaign-authoring/canonical-save.spec.ts` |  |
 | `MSG-013` | Contact links (`mailto:`, `tel:`, `sms:`) | target | done | `tests/go-live/contact-links.journeys.ts` |  |
