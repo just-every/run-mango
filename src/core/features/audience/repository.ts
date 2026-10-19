@@ -1,3 +1,5 @@
+import {listGrowthEvents} from '@/core/features/insights/schema';
+import {recipientOptOutSql, recipientSuppressionSql} from './public-resubscribe-policy';
 import { followupMember } from './followup-membership';
 import { consentCaptureMetadata } from './consent-metadata';
 import { createSuppressionWriter } from './suppression-writer';
@@ -230,25 +232,33 @@ export function createAudienceRepository(database: Database) {
       const email = confirmation.channel === 'email';
       const status = email ? contacts.emailStatus : contacts.smsStatus;
       const statusAt = email ? contacts.emailStatusAt : contacts.smsStatusAt;
+      const publicResubscribe = sql`EXISTS(SELECT 1 FROM contact_history WHERE id=${`${evidence.id}_resubscribe`} AND kind='resubscribe-request')`;
+      const resolvedSuppression = sql`(${publicResubscribe} AND EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND ${sql.raw(recipientSuppressionSql)}) AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND NOT (${sql.raw(recipientSuppressionSql)})))`;
       const eligible = sql`EXISTS (SELECT 1 FROM consent_confirmations WHERE id=${confirmation.id} AND confirmed_at IS NULL AND expires_at>${now.getTime()})
         AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND occurred_at>=${evidence.occurredAt.getTime()})
-        AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel})
-        AND EXISTS(SELECT 1 FROM contacts WHERE id=${confirmation.contactId}
-          AND ${status} != 'suppressed' AND (${status} != 'unsubscribed' OR ${statusAt}<${evidence.occurredAt.getTime()}))
+        AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND NOT (${publicResubscribe} AND ${sql.raw(recipientSuppressionSql)}))
+        AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND ${publicResubscribe} AND NOT (${sql.raw(recipientOptOutSql)}))
+        AND EXISTS(SELECT 1 FROM contacts WHERE id=${confirmation.contactId} AND merge_lock IS NULL
+          AND (${status} != 'suppressed' OR ${resolvedSuppression}) AND (${status} != 'unsubscribed' OR ${statusAt}<${evidence.occurredAt.getTime()}))
         AND EXISTS(SELECT 1 FROM ${email ? contactEmailAddresses : contactPhones}
           WHERE contact_id=${confirmation.contactId}
           AND ${email ? contactEmailAddresses.email : contactPhones.phoneE164}=${evidence.destination}
-          AND channel_status != 'suppressed' AND (channel_status != 'unsubscribed' OR channel_status_at<${evidence.occurredAt.getTime()}))`;
+          AND (channel_status != 'suppressed' OR ${resolvedSuppression}) AND (channel_status != 'unsubscribed' OR channel_status_at<${evidence.occurredAt.getTime()}))`;
       const address = email ? contactEmailAddresses : contactPhones;
       const destination = email ? contactEmailAddresses.email : contactPhones.phoneE164;
       const results = await database.batch([
         database.update(contacts).set(email ? {emailStatus:'subscribed',emailStatusAt:now,updatedAt:now} : {smsStatus:'subscribed',smsStatusAt:now,updatedAt:now})
-          .where(and(eq(contacts.id,confirmation.contactId), sql`${status} != 'suppressed'`, or(sql`${status} != 'unsubscribed'`,lt(statusAt,evidence.occurredAt)), eligible)).returning(),
+          .where(and(eq(contacts.id,confirmation.contactId), sql`(${status} != 'suppressed' OR ${resolvedSuppression})`, or(sql`${status} != 'unsubscribed'`,lt(statusAt,evidence.occurredAt)), eligible)).returning(),
         database.update(address).set({channelStatus:'subscribed',channelStatusAt:now,updatedAt:now})
-          .where(and(eq(destination,evidence.destination),eq(address.contactId,confirmation.contactId),sql`${address.channelStatus} != 'suppressed'`,or(sql`${address.channelStatus} != 'unsubscribed'`,lt(address.channelStatusAt,evidence.occurredAt)),eligible)),
+          .where(and(eq(destination,evidence.destination),eq(address.contactId,confirmation.contactId),sql`(${address.channelStatus} != 'suppressed' OR ${resolvedSuppression})`,or(sql`${address.channelStatus} != 'unsubscribed'`,lt(address.channelStatusAt,evidence.occurredAt)),eligible)),
         database.update(consentEvidence).set({confirmedAt:now,updatedAt:now}).where(and(eq(consentEvidence.id,evidence.id),eligible)),
         database.update(consentCaptureMetadata).set({confirmationIp:confirmationIp ?? null,updatedAt:now}).where(and(eq(consentCaptureMetadata.id,evidence.id),eligible)),
+        database.update(listGrowthEvents).set({kind:'resubscribe'}).where(and(eq(listGrowthEvents.kind,'subscription'),eligible,publicResubscribe,
+          sql`${listGrowthEvents.id} IN (SELECT event_id FROM list_growth_attribution WHERE contact_id=${confirmation.contactId} AND evidence_id=${evidence.id})`)),
+        database.insert(contactHistory).select(sql`SELECT ${`${evidence.id}_confirmed`},${confirmation.contactId},'consent-confirmed',${`${confirmation.channel} confirmation completed.`},${now.getTime()},${now.getTime()},${now.getTime()} WHERE ${eligible}`).onConflictDoNothing(),
+        database.insert(contactHistory).select(sql`SELECT ${`${evidence.id}_resubscribed`},${confirmation.contactId},'resubscribed',${`${confirmation.channel} subscription restored by the recipient's confirmation.`},${now.getTime()},${now.getTime()},${now.getTime()} WHERE ${eligible} AND ${publicResubscribe}`).onConflictDoNothing(),
         database.update(consentConfirmations).set({confirmedAt:now,updatedAt:now}).where(and(eq(consentConfirmations.id,confirmation.id),eligible)),
+        database.delete(contactSuppressions).where(and(eq(contactSuppressions.destinationHash,destinationHash),eq(contactSuppressions.channel,confirmation.channel),sql.raw(recipientSuppressionSql),publicResubscribe,sql`EXISTS(SELECT 1 FROM consent_confirmations WHERE id=${confirmation.id} AND confirmed_at=${now.getTime()})`)),
       ]);
       return results[0][0];
     },
@@ -287,6 +297,10 @@ export function createAudienceRepository(database: Database) {
     setChannelStatus,
 
     recordProviderSuppressionAtomic: createSuppressionWriter(database),
+
+    async listDestinationOptOuts(destinationHash: string, channel: Channel) {
+      return database.select().from(survivingOptOuts).where(and(eq(survivingOptOuts.destinationHash,destinationHash),eq(survivingOptOuts.channel,channel)));
+    },
 
     async hasDestinationSuppression(destinationHash: string, channel: Channel) {
       return Boolean((await database.select({id: contactSuppressions.id}).from(contactSuppressions)

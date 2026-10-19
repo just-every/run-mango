@@ -34,8 +34,8 @@ test('CONT-004/006/009 later optout blocks confirmation and uncertain confirmati
   const contact=await h.f.db.prepare('SELECT id FROM contacts').first<{id:string}>();const unsubscribe=await h.f.services.audienceService.issueUnsubscribeToken(contact!.id,'email');await h.f.services.audienceService.unsubscribeWithToken(unsubscribe.token);
   expect((await h.f.services.audienceService.confirmConsent(token)).kind).toBe('blocked-by-later-opt-out');expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'unsubscribed'});
   let attempts=0;h.f.platform.mailer.send=async()=>{attempts++;return{disposition:'handoff-unknown',providerMessageId:'uncertain'};};
-  expect((await call({email:'uncertain@example.test',consent:true},'192.0.2.66')).status).toBe(503);expect((await call({email:'uncertain@example.test',consent:true},'192.0.2.67')).status).toBe(503);expect(attempts).toBe(1);
-  h.f.platform.mailer.send=async()=>{throw new Error('SECRET-provider-body-and-sql');};const failure=await call({email:'private-error@example.test',consent:true},'192.0.2.68');expect(failure.status).toBe(503);expect(await failure.text()).not.toContain('SECRET');
+  expect(await (await call({email:'uncertain@example.test',consent:true},'192.0.2.66')).json()).toEqual({status:'confirmation-required'});expect(await (await call({email:'uncertain@example.test',consent:true},'192.0.2.67')).json()).toEqual({status:'confirmation-required'});expect(attempts).toBe(1);
+  h.f.platform.mailer.send=async()=>{throw new Error('SECRET-provider-body-and-sql');};const failure=await call({email:'private-error@example.test',consent:true},'192.0.2.68');expect(failure.status).toBe(202);expect(await failure.json()).toEqual({status:'confirmation-required'});expect(await h.f.db.prepare("SELECT count(*) n FROM audience_signup_requests WHERE status='failed'").first()).toEqual({n:2});
  }finally{await h.close();}
 });
 test('CONT-009 public confirmation replay is used, private and cannot claim a later unsubscribe was reversed',async()=>{
@@ -141,22 +141,21 @@ test('CONT-009 SMS uncertainty, disabled ingress and service expiry never resend
  }finally{edge.restore();await h.close();}
 });
 
-test('CONT-009 email provider preflight deferral reports no handoff and releases only its durable claim',async()=>{
+test('CONT-009 email provider preflight deferral retains a generic acknowledgement, records no handoff and releases only its durable claim',async()=>{
  const h=await native();try{
   const {createAppServices}=await import('../../src/core/app/app');
   Object.assign(h.f.platform,h.f.originalProduction());h.f.services=createAppServices(h.f.platform);
   const retryAt=Date.now()+60000;
   await h.f.db.prepare('INSERT INTO provider_pacing(scope,next_at,updated_at) VALUES(?,?,?)').bind(`resend:${h.f.platform.config.deliveryPolicies!.resend!.account}`,retryAt,Date.now()).run();
   const response=await client(h)({email:'deferred@example.test',consent:true});
-  expect(response.status).toBe(503);expect(response.headers.get('Retry-After')).toBeTruthy();
-  expect(await response.json(),JSON.stringify({pacing:(await h.f.db.prepare('SELECT scope,next_at FROM provider_pacing').all()).results,holds:(await h.f.db.prepare('SELECT provider,scope,reason FROM provider_holds WHERE held=1').all()).results})).toMatchObject({error:'confirmation_deferred',retryAt:new Date(retryAt).toISOString()});
+  expect(response.status).toBe(202);expect(await response.json()).toEqual({status:'confirmation-required'});
   expect(h.f.outbound).toHaveLength(0);
   expect(await h.f.db.prepare('SELECT count(*) AS n FROM consent_handoff_claims').first()).toEqual({n:0});
   expect(await h.f.db.prepare("SELECT kind FROM contact_history WHERE kind='confirmation-deferred'").first()).toEqual({kind:'confirmation-deferred'});
   expect(await h.f.db.prepare('SELECT outcome FROM external_cost_facts').first()).toEqual({outcome:'not-sent'});
   expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'pending'});
   await h.f.db.prepare('DELETE FROM provider_pacing').run();
-  expect((await client(h)({email:'deferred@example.test',consent:true},'192.0.2.101')).status).toBe(503);
+  expect((await client(h)({email:'deferred@example.test',consent:true},'192.0.2.101')).status).toBe(202);
   expect(h.f.outbound).toHaveLength(0); // the failed signup is never mislabeled queued or replayed
  }finally{await h.close();}
 });

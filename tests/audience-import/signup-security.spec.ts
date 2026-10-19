@@ -24,18 +24,20 @@ test('security: confirmation scanner GET and HEAD write nothing; affirmative POS
   expect((await app.request(url,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(410);
  }finally{await h.close();}
 });
-for(const state of ['subscribed','unsubscribed','suppressed','erased-optout'])test(`security: public capture preserves ${state} without mail or evidence`,async()=>{
+for(const state of ['subscribed','suppressed','erased-optout'])test(`security: public capture preserves ${state} without mail or evidence`,async()=>{
  const h=await native();try{
   const call=client(h.f);await call('existing@example.test');const token=confirmationUrl(h.f).split('/').at(-1)!;await h.f.services.audienceService.confirmConsent(token);
   const contact=await h.f.db.prepare('SELECT id FROM contacts').first<{id:string}>();
-  if(state==='unsubscribed'||state==='erased-optout'){const action=await h.f.services.audienceService.issueUnsubscribeToken(contact!.id,'email');await h.f.services.audienceService.unsubscribeWithToken(action.token);}
+  if(state==='erased-optout'){const action=await h.f.services.audienceService.issueUnsubscribeToken(contact!.id,'email');await h.f.services.audienceService.unsubscribeWithToken(action.token);}
   if(state==='suppressed')await h.f.services.audienceService.recordBounce({providerEventId:'hard-bounce',destination:'existing@example.test',kind:'hard',occurredAt:new Date()});
   if(state==='erased-optout')await eraseFixture(h.f,contact!.id);
   const before=await snapshot(h.f.db);const sent=h.f.outbound.length;
   expect((await call('existing@example.test','192.0.2.45')).status).toBe(202);expect(h.f.outbound).toHaveLength(sent);
   const after=await snapshot(h.f.db);
-  if(state==='erased-optout'){expect(after[0]).toHaveLength(1);expect(after[0][0]).toMatchObject({email_status:'unsubscribed'});expect(after.slice(1,6)).toEqual(before.slice(1,6));}
-  else expect(after.slice(0,6)).toEqual(before.slice(0,6));
+  if(state==='erased-optout'){expect(after[0]).toHaveLength(1);expect(after[0][0]).toMatchObject({email_status:'unsubscribed'});expect(after.slice(1,4)).toEqual(before.slice(1,4));expect(after[5]).toEqual(before[5]);expect(after[4]).toEqual([expect.objectContaining({kind:'resubscribe-refused'})]);}
+  else {expect(after.slice(0,4)).toEqual(before.slice(0,4));expect(after[5]).toEqual(before[5]);
+    if(state==='suppressed'){expect(after[4]).toHaveLength(before[4].length+1);expect(after[4]).toContainEqual(expect.objectContaining({kind:'resubscribe-refused'}));}
+    else expect(after[4]).toEqual(before[4]);}
  }finally{await h.close();}
 });
 test('security: incomplete sender refuses before every persistent write',async()=>{
@@ -52,8 +54,9 @@ test('security: durable global last slot is atomic across addresses and networks
  const h=await native();try{
   await h.f.db.prepare('INSERT INTO oa_limits(key,window,count) VALUES(?,?,?)').bind('signup-global',Math.floor(Date.now()/3600000),49).run();
   const results=await Promise.all(Array.from({length:6},(_,i)=>client(h.f)(`global-${i}@example.test`,`192.0.2.${60+i}`)));
-  expect(results.filter(r=>r.status===202)).toHaveLength(1);expect(results.filter(r=>r.status===429)).toHaveLength(5);expect(h.f.outbound).toHaveLength(1);expect(await h.f.db.prepare("SELECT count FROM oa_limits WHERE key='signup-global'").first()).toEqual({count:50});
-  const restarted=await h.restart();expect((await client(restarted)('restart@example.test','198.51.100.1')).status).toBe(429);expect(restarted.outbound).toHaveLength(0);
+  expect(results.every(r=>r.status===202)).toBe(true);for(const response of results)expect(await response.json()).toEqual({status:'confirmation-required'});expect(h.f.outbound).toHaveLength(1);expect(await h.f.db.prepare("SELECT count FROM oa_limits WHERE key='signup-global'").first()).toEqual({count:50});
+  const restarted=await h.restart();expect((await client(restarted)('restart@example.test','198.51.100.1')).status).toBe(202);expect(restarted.outbound).toHaveLength(0);
+  for(const [email,kind] of [['hard@example.test','hard'],['complaint@example.test','complaint']] as const){await restarted.services.audienceService.recordBounce({destination:email,kind,occurredAt:new Date(),providerEventId:`test-exhausted-${kind}`});const response=await client(restarted)(email,'198.51.100.2');expect(response.status).toBe(202);expect(await response.json()).toEqual({status:'confirmation-required'});}expect(restarted.outbound).toHaveLength(0);
  }finally{await h.close();}
 });
 test('security: configured Turnstile fails closed before storage for missing, bad, wrong scope, and unavailable verification',async()=>{
@@ -121,5 +124,56 @@ test('security: explicit ledger reconsent remains logged and confirmable after o
   const fresh=await h.f.services.audienceService.captureConsent({...input,occurredAt:new Date()});expect(fresh.confirmation).toBeTruthy();expect((await h.f.services.audienceService.confirmConsent(fresh.confirmation!.token)).kind).toBe('confirmed');
   await h.f.services.audienceService.recordBounce({destination:input.contact.email,kind:'hard',occurredAt:new Date(),providerEventId:'explicit-hard'});const sent=h.f.outbound.length;
   const blocked=await h.f.services.audienceService.captureConsent({...input,occurredAt:new Date(Date.now()+1)});expect(blocked.confirmation).toBeUndefined();expect(h.f.outbound).toHaveLength(sent);expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'suppressed'});
+ }finally{await h.close();}
+});
+
+
+test('[CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot',async()=>{
+ const h=await native();try {
+  const call=client(h.f),app=createAudiencePublicRoutes(h.f.services.audienceService);
+  await call('returning@example.test');await h.f.services.audienceService.confirmConsent(confirmationUrl(h.f).split('/').at(-1)!);
+  await h.f.services.audienceService.recordProviderSuppression({destination:'returning@example.test',channel:'email',cause:'recipient-unsubscribe',occurredAt:new Date(),providerEventId:'test-own-unsubscribe'});
+  const sent=h.f.outbound.length;
+  expect(await (await call('returning@example.test','192.0.2.45')).json()).toEqual({status:'confirmation-required'});
+  expect(h.f.outbound).toHaveLength(sent+1);
+  expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'suppressed'});
+  const link=confirmationUrl(h.f);expect((await app.request(link)).status).toBe(200);
+  expect((await app.request(link,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(200);
+  expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'subscribed'});
+  expect(await h.f.db.prepare('SELECT count(*) n FROM contact_suppressions').first()).toEqual({n:0});
+  expect((await h.f.db.prepare("SELECT kind,delta FROM list_growth_events WHERE delta=1 ORDER BY id DESC LIMIT 1").first())).toEqual({kind:'resubscribe',delta:1});
+  expect(await h.f.db.prepare("SELECT kind FROM contact_history WHERE kind='resubscribed'").first()).toEqual({kind:'resubscribed'});
+  await h.f.services.audienceService.recordBounce({destination:'returning@example.test',kind:'complaint',occurredAt:new Date(),providerEventId:'test-mixed-complaint'});
+  await h.f.services.audienceService.recordProviderSuppression({destination:'returning@example.test',channel:'email',cause:'recipient-unsubscribe',occurredAt:new Date(),providerEventId:'test-new-own-unsubscribe'});
+  expect(await (await call('returning@example.test','192.0.2.46')).json()).toEqual({status:'confirmation-required'});
+  expect(h.f.outbound).toHaveLength(sent+1);
+  await h.f.services.audienceService.recordProviderSuppression({destination:'owner-blocked@example.test',channel:'email',cause:'owner-requested',occurredAt:new Date(),providerEventId:'test-owner-block'});
+  expect(await (await call('owner-blocked@example.test','192.0.2.47')).json()).toEqual({status:'confirmation-required'});
+  expect(h.f.outbound).toHaveLength(sent+1);
+  expect(await h.f.db.prepare("SELECT count(*) n FROM contact_suppressions WHERE cause IN ('complaint','owner-requested')").first()).toEqual({n:2});
+  // Owner API suppression reasons are arbitrary text; calling it an unsubscribe never grants recipient authority.
+  await h.f.services.audienceService.recordProviderSuppression({destination:'owner-labelled-unsubscribe@example.test',channel:'email',cause:'recipient-unsubscribe',occurredAt:new Date(),providerEventId:'integration:test-owner:unsubscribe'});
+  expect(await (await call('owner-labelled-unsubscribe@example.test','198.51.100.20')).json()).toEqual({status:'confirmation-required'});
+  expect(h.f.outbound).toHaveLength(sent+1);
+ }finally{await h.close();}
+});
+
+test('[CONT-027] repeated public requests share the durable UTC destination allowance across restart and reopen on a new database day',async()=>{
+ const h=await native();try {
+  const {contact}=await h.f.services.audienceService.ensureContact({email:'daily-return@example.test'},new Date(Date.now()-2000));
+  await h.f.services.audienceService.recordChannelOptOut({contactId:contact.id,channel:'email',reason:'recipient-unsubscribe',occurredAt:new Date(Date.now()-1000)});
+  for(let request=0;request<4;request++) {
+   const response=await client(h.f)('daily-return@example.test',`198.51.100.${request+1}`);
+   expect(response.status).toBe(202);expect(await response.json()).toEqual({status:'confirmation-required'});
+   expect(h.f.outbound).toHaveLength(Math.min(request+1,3));
+  }
+  const restarted=await h.restart();
+  expect((await client(restarted)('daily-return@example.test','198.51.100.10')).status).toBe(202);expect(restarted.outbound).toHaveLength(0);
+  const current=await restarted.db.prepare("SELECT CAST(strftime('%s','now') AS INTEGER)/86400 AS day").first<{day:number}>();
+  // Reopen from the same persisted state a prior UTC day leaves behind.
+  await restarted.db.prepare("UPDATE oa_limits SET window=? WHERE key LIKE 'signup-email:%'").bind(current!.day-1).run();
+  expect((await client(restarted)('daily-return@example.test','198.51.100.11')).status).toBe(202);expect(restarted.outbound).toHaveLength(1);
+  expect(await restarted.db.prepare("SELECT window,count FROM oa_limits WHERE key LIKE 'signup-email:%'").first()).toEqual({window:current!.day,count:1});
+  expect(await restarted.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'unsubscribed'});
  }finally{await h.close();}
 });

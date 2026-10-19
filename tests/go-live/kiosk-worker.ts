@@ -1,7 +1,7 @@
 // Isolated native Worker for FORM-009. Only the paid mail and challenge HTTP
 // edges are doubled; product routing, sessions, D1, consent and SSR are real.
 import {createFixturePlatform} from '../support/local-platform';
-import {createApp} from '../../src/core/app/app';
+import {createApp,createAppServices} from '../../src/core/app/app';
 import {dispatchDocuments} from '../../src/core/app/document-dispatch';
 import {testIdentity} from '../support/test-identity';
 import {createResendAdapter} from '../../src/core/platform/adapters/resend';
@@ -45,6 +45,20 @@ export default {
       }
       if(path==='/_kiosk/challenge') {challengeConnected=(await request.json() as {connected:boolean}).connected;return Response.json({connected:challengeConnected});}
       if(path==='/_kiosk/messages')return Response.json(messages);
+      // Prepare a real product link without sending a marketing campaign.
+      if(path==='/_kiosk/unsubscribe') {
+        const {contactId}=await request.json() as {contactId:string};
+        const issued=await createAppServices(platform).audienceService.issueUnsubscribeToken(contactId,'email');
+        return Response.json({url:new URL(`/unsubscribe/${issued.token}`,platform.config.publicBaseUrl).href});
+      }
+      // Provider facts enter through the same service the signed webhook uses;
+      // this never writes a contact status or consent record directly.
+      if(path==='/_kiosk/provider-fact') {
+        const {email,kind}=await request.json() as {email:string;kind:'hard'|'complaint'};
+        if(!email.endsWith('@example.test')||!['hard','complaint'].includes(kind))return new Response('Invalid fixture fact',{status:400});
+        await createAppServices(platform).audienceService.recordBounce({destination:email,kind,occurredAt:new Date(),providerEventId:`kiosk:${crypto.randomUUID()}`});
+        return Response.json({recorded:true});
+      }
       if(path==='/_kiosk/rows') {
         const {sql}=await request.json() as {sql:string};
         if(!/^SELECT\s/i.test(sql))return new Response('Read only',{status:400});

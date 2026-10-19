@@ -1,3 +1,4 @@
+import {recipientOptOut, recipientSuppression} from './public-resubscribe-policy';
 import type { SyncWriteFence } from '@/core/features/store/sync-write-fence';
 import type { CommerceSourceType, NormalizedCommerceRecord, createStoreService } from '@/core/features/store/service';
 import { sha256, ulid } from '@/core/shared/ids';
@@ -231,26 +232,37 @@ export function createAudienceService(
       && evidence.occurredAt.getTime() === input.occurredAt.getTime();
   }
 
-  async function canCapturePublicEmail(email: string) {
+  async function publicSignupState(email: string) {
     const destination = canonicalEmail(email);
-    if (!destination) return false;
+    if (!destination) return 'refused' as const;
     await repository.claimPortableRestrictions(requiredDependencies().contactHashSalt, [destination]);
     const hash = await hashDestination(destination);
-    const [contact, optOut, suppressed] = await Promise.all([
-      repository.findContactByEmail(destination),
-      repository.getSurvivingOptOut(hash, 'email'),
-      repository.hasDestinationSuppression(hash, 'email'),
+    const [contact, optOuts, suppressions] = await Promise.all([
+      repository.findContactByEmail(destination), repository.listDestinationOptOuts(hash,'email'),
+      repository.listDestinationSuppressions([hash]),
     ]);
-    if(optOut && !contact)await ensureContact({email:destination},new Date());
-    if (optOut || suppressed || (contact && ['subscribed', 'unsubscribed', 'suppressed'].includes(contact.emailStatus))) return false;
-    if (contact) {
-      const address = (await repository.listEmails(contact.id)).find(row => row.email === destination);
-      if (address && ['subscribed', 'unsubscribed', 'suppressed'].includes(address.channelStatus)) return false;
+    const address = contact && (await repository.listEmails(contact.id)).find(row=>row.email===destination);
+    const blocks = suppressions.filter(row=>row.channel==='email');
+    if (!contact && optOuts.length) await ensureContact({email:destination},new Date());
+    if (blocks.some(row=>!recipientSuppression(row)) || optOuts.some(row=>!recipientOptOut(row.reason))) return 'refused' as const;
+    if (contact?.mergeLock || contact?.emailStatus==='subscribed' || address?.channelStatus==='subscribed') return 'refused' as const;
+    if (contact?.emailStatus==='suppressed' || address?.channelStatus==='suppressed') {
+      if (!blocks.length) return 'refused' as const;
     }
-    return true;
+    return optOuts.length || blocks.length || contact?.emailStatus==='unsubscribed' || address?.channelStatus==='unsubscribed'
+      ? 'resubscribe' as const : 'new' as const;
   }
 
-  // Public capture cannot supply explicit post-opt-out reconsent authority.
+  async function canCapturePublicEmail(email: string) {
+    return await publicSignupState(email) !== 'refused';
+  }
+
+  async function recordPublicSignupRefusal(email: string, reason: string, now = new Date()) {
+    const contact = await repository.findContactByEmail(canonicalEmail(email) ?? '');
+    if (contact && contact.emailStatus!=='subscribed') await recordHistory(contact.id,'resubscribe-refused',reason,now);
+  }
+
+  // Public reconsent creates evidence without relaxing the existing channel state.
   async function capturePublicSignup(input: ConsentCapture, now = new Date()) {
     if (input.channel !== 'email' || !await canCapturePublicEmail(input.contact.email ?? '')) return undefined;
     const destination = canonicalEmail(input.contact.email)!;
@@ -320,13 +332,13 @@ export function createAudienceService(
     const destinationHash = await hashDestination(destination);
     const dispatchAllowed = async () => {
       const [suppressed, optOut, address] = await Promise.all([
-        repository.hasDestinationSuppression(destinationHash, input.channel),
+        publicCapture ? repository.listDestinationSuppressions([destinationHash]).then(rows=>rows.some(row=>row.channel===input.channel&&!recipientSuppression(row))) : repository.hasDestinationSuppression(destinationHash, input.channel),
         repository.getSurvivingOptOut(destinationHash, input.channel),
         repository.destinationStatus(input.channel, destination),
       ]);
-      return !suppressed && address?.channelStatus !== 'suppressed'
-        && !(optOut && (publicCapture || optOut.occurredAt >= input.occurredAt))
-        && !(publicCapture && address && ['subscribed', 'unsubscribed'].includes(address.channelStatus));
+      return !suppressed && (!publicCapture ? address?.channelStatus !== 'suppressed' : await publicSignupState(destination) !== 'refused')
+        && !(optOut && optOut.occurredAt >= input.occurredAt)
+        && !(publicCapture && address?.channelStatus === 'subscribed');
     };
     if (!await dispatchAllowed()) return { contact, evidence, confirmation: undefined };
     const expiresAt = new Date(now.getTime() + confirmationLifetimeMs);
@@ -353,6 +365,7 @@ export function createAudienceService(
     const sent = await requiredDependencies().confirmationDispatcher.sendConfirmation({ channel: input.channel, destination, token, expiresAt, contactId:contact.id, consentId:evidence.id },
       () => repository.claimConfirmationHandoff(confirmationId, destinationHash, input.channel, publicCapture));
     if (sent === false) return { contact, evidence, confirmation: undefined };
+    await recordHistory(contact.id,'confirmation-handed-off',`${input.channel} confirmation handed to the mail provider; expires ${expiresAt.toISOString()}.`,new Date(),`${evidence.id}_handoff`);
     return { contact, evidence, confirmation: { token, expiresAt } };
   }
 
@@ -372,7 +385,9 @@ export function createAudienceService(
     ]);
     const status = confirmation.channel === 'email' ? owner?.emailStatus : owner?.smsStatus;
     const statusAt = confirmation.channel === 'email' ? owner?.emailStatusAt : owner?.smsStatusAt;
-    if (owner?.id !== confirmation.contactId || suppressed || status === 'suppressed'
+    const publicResubscribe = (await repository.listHistory(confirmation.contactId)).some(row=>row.id===`${evidence.id}_resubscribe`);
+    const recipientOnly = publicResubscribe && await publicSignupState(evidence.destination) !== 'refused';
+    if (owner?.id !== confirmation.contactId || ((suppressed || status === 'suppressed') && !recipientOnly)
       || (status === 'unsubscribed' && statusAt && statusAt >= evidence.occurredAt)
       || (optOut && evidence.occurredAt <= optOut.occurredAt)) return { kind: 'invalid' as const };
     return { kind: 'confirmation-required' as const };
@@ -395,7 +410,6 @@ export function createAudienceService(
     }
     const contact = await repository.confirmConsentAtomic(confirmation, evidence, await hashDestination(evidence.destination), now, confirmationIp);
     if (!contact) return { kind: 'blocked-by-later-opt-out' as const };
-    await recordHistory(contact.id, 'consent-confirmed', `${confirmation.channel} confirmation completed.`, now);
     return { kind: 'confirmed' as const, contact };
   }
 
@@ -619,6 +633,8 @@ export function createAudienceService(
     ensureContact,
     captureConsent,
     canCapturePublicEmail,
+    publicSignupState,
+    recordPublicSignupRefusal,
     capturePublicSignup,
     previewConsentConfirmation,
     confirmConsent,

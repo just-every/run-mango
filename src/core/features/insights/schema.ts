@@ -14,3 +14,13 @@ export const campaignResults = sqliteTable(
   },
   (table) => [index('campaign_results_campaign_idx').on(table.campaignId, table.observedAt)],
 );
+
+/** Anonymous membership facts created by migrations 0073/0074. */
+export const listGrowthEvents = sqliteTable('list_growth_events', {
+  id: integer('id').primaryKey({autoIncrement:true}),
+  observedAt: integer('observed_at', {mode:'timestamp_ms'}).notNull(),
+  channel: text('channel').notNull(),
+  kind: text('kind').notNull(),
+  delta: integer('delta').notNull(),
+  recording: text('recording').notNull().default('live'),
+});

@@ -1,7 +1,8 @@
+import {recipientOptOutSql,recipientSuppressionSql} from './public-resubscribe-policy';
 import type {Database} from '@/core/platform/db/client';
 import type {consentEvidence} from './schema';
 
-/** Public capture has no reconsent authority. All identity/profile/evidence
+/** Public capture records confirmed-only reconsent. All identity/profile/evidence
  * writes share the D1 transaction that checks the destination's current state. */
 export function createPublicCaptureWriter(database: Database) {
   const db = database.$client;
@@ -13,31 +14,38 @@ export function createPublicCaptureWriter(database: Database) {
     // Keep the evidence insert last: the absent ID gates every prior write too,
     // so a concurrent replay cannot update a profile or append metadata/history.
     const eligible = `NOT EXISTS(SELECT 1 FROM consent_evidence WHERE id=?)
-      AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel='email')
-      AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email')
-      AND NOT EXISTS(SELECT 1 FROM contact_email_addresses WHERE email=? AND channel_status IN ('subscribed','unsubscribed','suppressed'))
+      AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel='email' AND (NOT (${recipientOptOutSql}) OR occurred_at>=?))
+      AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email' AND (NOT (${recipientSuppressionSql}) OR occurred_at>=?))
+      AND NOT EXISTS(SELECT 1 FROM contact_email_addresses WHERE email=? AND (channel_status='subscribed' OR (channel_status='suppressed' AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email' AND ${recipientSuppressionSql}))))
       AND NOT EXISTS(SELECT 1 FROM contacts WHERE (email=? OR id IN (SELECT contact_id FROM contact_email_addresses WHERE email=?))
-        AND (email_status IN ('subscribed','unsubscribed','suppressed') OR merge_lock IS NOT NULL))`;
-    const guard = [id, destinationHash, destinationHash, destination, destination, destination];
+        AND (email_status='subscribed' OR merge_lock IS NOT NULL OR (email_status='suppressed' AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email' AND ${recipientSuppressionSql}))))`;
+    const guard = [id, destinationHash, occurred, destinationHash, occurred, destination, destinationHash, destination, destination, destinationHash];
+    const isResubscribe = `EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel='email')
+      OR EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email')
+      OR EXISTS(SELECT 1 FROM contacts WHERE id=${owner} AND email_status IN ('unsubscribed','suppressed'))`;
+    const resubscribeValues = [destinationHash,destinationHash,...ownerValues];
     const statements = [
       db.prepare(`INSERT INTO contacts(id,email,display_name,email_status,sms_status,email_status_at,sms_status_at,last_activity_at,created_at,updated_at)
-        SELECT ?,?,?,'pending','non-subscribed',?,?,?,?,? WHERE ${eligible}
+        SELECT ?,?,?,CASE WHEN ${isResubscribe} THEN 'unsubscribed' ELSE 'pending' END,'non-subscribed',?,?,?,?,? WHERE ${eligible}
         AND NOT EXISTS(SELECT 1 FROM contacts WHERE email=?)
         AND NOT EXISTS(SELECT 1 FROM contact_email_addresses WHERE email=?) ON CONFLICT DO NOTHING`)
-        .bind(contactId, destination, displayName?.trim() || destination, occurred, now, occurred, now, now, ...guard, destination, destination),
+        .bind(contactId, destination, displayName?.trim() || destination, ...resubscribeValues, occurred, now, occurred, now, now, ...guard, destination, destination),
       db.prepare(`INSERT INTO contact_email_addresses(id,contact_id,email,channel_status,channel_status_at,created_at,updated_at)
-        SELECT ?,${owner},?,'pending',?,?,? WHERE ${eligible}
+        SELECT ?,${owner},?,CASE WHEN ${isResubscribe} THEN 'unsubscribed' ELSE 'pending' END,?,?,? WHERE ${eligible}
         AND EXISTS(SELECT 1 FROM contacts WHERE id=${owner}) ON CONFLICT(email) DO NOTHING`)
-        .bind(`${id}_email`, ...ownerValues, destination, occurred, now, now, ...guard, ...ownerValues),
-      db.prepare(`UPDATE contacts SET display_name=COALESCE(NULLIF(?,''),display_name),email_status='pending',email_status_at=?,
+        .bind(`${id}_email`, ...ownerValues, destination, ...resubscribeValues, occurred, now, now, ...guard, ...ownerValues),
+      db.prepare(`UPDATE contacts SET display_name=COALESCE(NULLIF(?,''),display_name),email_status=CASE WHEN email_status IN ('unsubscribed','suppressed') THEN email_status ELSE 'pending' END,email_status_at=CASE WHEN email_status IN ('unsubscribed','suppressed') THEN email_status_at ELSE ? END,
         last_activity_at=MAX(COALESCE(last_activity_at,?),?),updated_at=? WHERE id=${owner} AND ${eligible}`)
         .bind(displayName?.trim() ?? '', occurred, occurred, occurred, now, ...ownerValues, ...guard),
-      db.prepare(`UPDATE contact_email_addresses SET channel_status='pending',channel_status_at=?,updated_at=? WHERE email=? AND ${eligible}`)
+      db.prepare(`UPDATE contact_email_addresses SET channel_status=CASE WHEN channel_status IN ('unsubscribed','suppressed') THEN channel_status ELSE 'pending' END,channel_status_at=CASE WHEN channel_status IN ('unsubscribed','suppressed') THEN channel_status_at ELSE ? END,updated_at=? WHERE email=? AND ${eligible}`)
         .bind(occurred, now, destination, ...guard),
     ];
     if (captureIp) statements.push(db.prepare(`INSERT INTO consent_capture_metadata(id,contact_id,capture_ip,confirmation_ip,created_at,updated_at)
       SELECT ?,${owner},?,NULL,?,? WHERE ${eligible}`).bind(id, ...ownerValues, captureIp, now, now, ...guard));
     statements.push(
+      db.prepare(`INSERT INTO contact_history(id,contact_id,kind,detail,occurred_at,created_at,updated_at)
+        SELECT ?,${owner},'resubscribe-request',?,?,?,? WHERE ${eligible} AND (${isResubscribe})`)
+        .bind(`${id}_resubscribe`,...ownerValues,`Recipient requested email resubscription through ${evidence.captureMethod}; confirmation required.`,occurred,occurred,occurred,...guard,...resubscribeValues),
       db.prepare(`INSERT INTO contact_history(id,contact_id,kind,detail,occurred_at,created_at,updated_at)
         SELECT ?,${owner},'consent-captured',?,?,?,? WHERE ${eligible}`)
         .bind(`${id}_captured`, ...ownerValues, `email consent captured through ${evidence.captureMethod}.`, occurred, occurred, occurred, ...guard),

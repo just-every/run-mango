@@ -55,24 +55,25 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
     if (!parsed.success) return context.json({ error: 'invalid_signup', detail: 'A valid email and affirmative consent are required.', fields: parsed.error.flatten().fieldErrors }, 400);
     if(parsed.data.disclosure!==description.disclosure)return context.json({error:'signup_disclosure_changed',detail:'The newsletter details changed. Reload the form and review your consent before subscribing.'},409);
     const email=parsed.data.email.trim().toLowerCase();
-    if (!await service.canCapturePublicEmail(email)) return success();
+    const state=await service.publicSignupState(email);
+    if (state==='refused') {await service.recordPublicSignupRefusal(email,'Existing restriction prevents public confirmation.');return success();}
     const destinationHash=await sha256(`${platform.config.contactHashSalt}:signup-email:${email}`);
     const networkWindow=networkReservation?.window??(await db.prepare("SELECT CAST(strftime('%s','now') AS INTEGER)/3600 AS window").first<{window:number}>())!.window;
     const lookupId=`signup_${await sha256(`${destinationHash}:${networkWindow}`)}`;
     const prior=await db.prepare('SELECT status FROM audience_signup_requests WHERE id=?').bind(lookupId).first<{status:string}>();
-    if(prior)return prior.status==='failed'?context.json({error:'confirmation_delivery_failed'},503):success();
+    if(prior&&state!=='resubscribe')return success();
     if(description.kioskEnabled&&!await reserveSignupAllowance(db,`signup-kiosk:${key}`,'hour',kioskPerHour)){
-      context.header('Retry-After',String(3600-Math.floor(Date.now()/1000)%3600));
-      return context.json({error:'rate_limited'},429);
+      await service.recordPublicSignupRefusal(email,'Kiosk confirmation intake allowance exhausted.');
+      return success();
     }
-    if(!await reserveSignupAllowance(db,`signup-email:${destinationHash}`,'day',signupLimits.destinationPerDay))return context.json({error:'rate_limited'},429);
+    if(!await reserveSignupAllowance(db,`signup-email:${destinationHash}`,'day',signupLimits.destinationPerDay)){await service.recordPublicSignupRefusal(email,'Daily confirmation allowance exhausted.');return success();}
     const reservation = await reserveSignupAllowance(db,description.kioskEnabled?'signup-kiosk-global':'signup-global','hour',description.kioskEnabled?kioskPerHour:signupLimits.globalPerHour);
     if (!reservation) {
-      if(description.kioskEnabled)context.header('Retry-After',String(3600-Math.floor(Date.now()/1000)%3600));
-      return context.json({error:'rate_limited'},429);
+      await service.recordPublicSignupRefusal(email,'Confirmation intake allowance exhausted.');
+      return success();
     }
     const now = reservation.reservedAt;
-    const evidenceId=`signup_${await sha256(`${destinationHash}:${reservation.window}`)}`;
+    const evidenceId=state==='resubscribe'?`resubscribe_${crypto.randomUUID()}`:`signup_${await sha256(`${destinationHash}:${reservation.window}`)}`;
     const claimed=await db.prepare("INSERT INTO audience_signup_requests(id,destination_hash,status,created_at) VALUES(?,?,'sending',?) ON CONFLICT(id) DO NOTHING RETURNING id").bind(evidenceId,destinationHash,now).first();
     if(!claimed)return success();
     try {
@@ -84,11 +85,8 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
       await db.prepare("UPDATE audience_signup_requests SET status='sent' WHERE id=?").bind(evidenceId).run();
     } catch (error) {
       await db.prepare("UPDATE audience_signup_requests SET status='failed' WHERE id=?").bind(evidenceId).run();
-      if (error instanceof ProviderDeferredError) {
-        context.header('Retry-After', String(Math.max(1, Math.ceil((error.retryAt.getTime()-Date.now())/1000))));
-        return context.json({error:'confirmation_deferred',detail:'Confirmation was not sent because the provider is temporarily unavailable. Submit a fresh signup later.',retryAt:error.retryAt.toISOString()},503);
-      }
-      return context.json({ error: 'signup_failed', detail: 'Confirmation could not be delivered. Please try again later.' }, 503);
+      await service.recordPublicSignupRefusal(email,error instanceof ProviderDeferredError?'Confirmation deferred before provider handoff.':'Confirmation delivery could not be established; no automatic retry.');
+      return success();
     }
     return success();
   });

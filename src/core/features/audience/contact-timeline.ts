@@ -19,6 +19,7 @@ const identities = `WITH RECURSIVE identities(id) AS (
 
 /** Source labels never carry a capture URL's credentials, query or fragment. */
 function captureSource(source:string) {
+  if(source.startsWith('Kiosk: '))return source;
   try {const url=new URL(source);return url.origin+url.pathname;}
   catch {return source;}
 }

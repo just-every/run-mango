@@ -12,7 +12,7 @@ Two things must be in place first. Your sender identity must be fully saved in S
 
 The page is titled "Get the newsletter". It asks for an email address, an optional name, and a required checkbox reading "I agree to receive email newsletters from" your sender name, "I can unsubscribe at any time." The button is **Request confirmation**.
 
-Mango then sends one confirmation email. Opening the link only shows a page with a **Confirm subscription** button; nothing is recorded until the person presses it, so mailbox scanners and link previewers cannot subscribe anyone. A link works once and expires after 30 days. Until confirmed, the contact is "pending" and receives no marketing.
+Mango then sends one confirmation email. Opening the link only shows a page with a **Confirm subscription** button; the person is not subscribed until they press it, so mailbox scanners and link previewers cannot subscribe anyone. A link works once and expires after 30 days. Until confirmed, a new contact is "pending" and receives no marketing. A returning unsubscriber keeps their restricted state until confirmation.
 
 ## What Mango records
 
@@ -26,11 +26,17 @@ Each consent record on a contact (Audience, then the contact) shows:
 
 ## Unsubscribing
 
-Every marketing email carries a visible **Unsubscribe** link. It opens a "Confirm unsubscribe" page, and pressing **Unsubscribe** opts the person out. Opening the page changes nothing. Links stay valid for a year. An opt-out is applied before the request is acknowledged, and Mango checks it again right before each message is handed to your provider. Imports and later signups never reverse it.
+Every marketing email carries a visible **Unsubscribe** link. It opens a "Confirm unsubscribe" page, and pressing **Unsubscribe** opts the person out. Opening the page changes nothing. Links stay valid for a year. An opt-out is applied before the request is acknowledged, and Mango checks it again right before each message is handed to your provider. Imports never reverse it. Signing up again changes it only after a fresh confirmation.
+
+## Resubscribing
+
+A person who unsubscribed can use the hosted form, an embedded copy or a shared kiosk to request a new confirmation email. The address stays unsubscribed until they press **Confirm subscription** in that email. Only that confirmation email can reach them in the meantime. Mango records the request, confirmation attempt and confirmed return in contact history, and Insights counts the return as a resubscription.
 
 ## What signup will not do
 
-Public signup never changes someone who is already subscribed, unsubscribed or suppressed, and it never emails them. The visitor sees the same acknowledgement either way, so the form does not reveal anyone's status. This also means an unsubscribed person cannot resubscribe through the form.
+An already subscribed address gets the same acknowledgment and no mail. A suppression caused only by the recipient's unsubscribe can be resolved by their new confirmation. Hard bounces, complaints, owner suppressions and unknown suppression reasons never receive confirmation mail through this path. A legacy erasure restriction whose original reason is no longer known also stays blocked.
+
+Every valid request has the same acknowledgment regardless of the address's state, confirmation allowance or provider outcome. A fourth confirmation request in the same UTC day sends no further mail. The operator can see refused requests and delivery problems in contact history.
 
 ## Spam protection and limits
 
@@ -162,16 +168,15 @@ webhook setup, carrier policy and account-specific reconciliation retention
 remain owner/provider inputs; offline route proofs do not qualify a live account.
 
 When the shared email transport rejects an attempt before handoff for pacing or a
-provider hold, signup returns `confirmation_deferred` with `Retry-After`. The
+provider hold, the public form keeps its generic acknowledgment. The
 contact history records that no message was handed off and the earliest next
 attempt. Its handoff claim is released; the original pending confirmation and
 signup rate reservation remain, so a public resubmission may also have to wait
-for its current hourly reservation to end. This is a visible failed attempt, not an
-invisible queued email. A later fresh signup may request new confirmation;
+for its current hourly reservation to end. The operator sees the failed attempt in contact history; it is never described as a queued email. A later fresh signup may request new confirmation;
 ambiguous email handoffs retain their claim and are never automatically replayed.
 
 ## Shared tablets and event kiosks
 
 In Audience → Hosted form and embed, turn on **Kiosk or event form**, name the device or event and save. Open the hosted form on the shared tablet. Configure the Turnstile site and secret keys first: a kiosk refuses signups without verification, and every person must complete a fresh challenge.
 
-After a successful request, the form clears within two seconds. It does not remember or pre-fill a previous visitor, set an identifying cookie or store a visitor in browser storage. Every signup still needs affirmative consent and email confirmation. An existing unsubscribe or suppression remains protected. The kiosk has separate allowances of 300 accepted requests per network and globally per hour; ordinary forms retain their existing allowances, and confirmation requests retain the per-destination daily allowance. Insights shows confirmed subscriptions under the kiosk device label and retains their consent disclosure. Kiosk setting changes are recorded with the operator and time.
+After a successful request, the form clears within two seconds. It does not remember or pre-fill a previous visitor, set an identifying cookie or store a visitor in browser storage. Every signup still needs affirmative consent and email confirmation. Returning unsubscribers use the same confirmed-only resubscribe path; other suppressions stay blocked. The kiosk has separate allowances of 300 accepted requests per network and globally per hour; ordinary forms retain their existing allowances, and confirmation requests retain the per-destination daily allowance. Insights shows confirmed subscriptions under the kiosk device label and retains their consent disclosure. Kiosk setting changes are recorded with the operator and time.
