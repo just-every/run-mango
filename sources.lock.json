@@ -3702,7 +3702,7 @@
       "executable": false
     },
     "src/core/features/landing/copy.ts": {
-      "sha256": "ca44cf276af6f30f0689c3ef02daa10bec8f265a06af99d2495fa27dd17cf8cc",
+      "sha256": "e967c62529ba679e947e6f8ce309534b9ced943bba5d956e87a9bc6bbd540eff",
       "executable": false
     },
     "src/core/features/landing/drawings/AccountArt.tsx": {
