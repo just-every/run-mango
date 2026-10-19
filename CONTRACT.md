@@ -864,15 +864,17 @@ How the owner-approved scope (16 October 2026) maps to the clauses above. Incumb
 
 Judged from the code and tests at commit `648e6390c1f681205ef1468fd83e5aea91adb834` (19 October 2026).
 
+The 0.3.0 release gate (19 October 2026) re-read every done row against its cited evidence at commit `bc5fdad`; it moved OPER-003 to partial because its cited test no longer shows retained attribution, and left every other status as judged.
+
 The scoped integration round updates OPER-007, CONT-004/006/014/015 and INT-007/011 below.
 
 Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, each still partial. Round 3 added MSG-013, MSG-014, MSG-015 and MOVE-013 for its two gaps, and CONT-026, CAMP-018, CAMP-019, BUILD-011 and RESULT-008 for its also-noted items. CAMP-018 and MSG-013 are now done; MSG-014, CONT-026, CAMP-019 and RESULT-008 are partial; MSG-015, MOVE-013 and BUILD-011 are missing. AUD-006 is also done, with its later-step audience recheck exercised by `tests/go-live/multistep.journeys.ts`. PUB-001 and DELIV-005 are now done, with their publication and mailbox-provider journeys cited below. Round 4 added BUILD-012 (partial) for its gap, and DELIV-007 (partial) and MOVE-014 (missing) for its also-noted items. Round 5 added FORM-008 (partial: today's code already draws the global allowance only after the honeypot, challenge, field, disclosure, eligibility and pending-duplicate checks, at levels below the floor), FORM-009 (done: the hosted kiosk form, fresh challenge, blank reset, separate rate partitions and confirmed source attribution are exercised by `tests/go-live/kiosk.journeys.ts`) and FORM-010 (partial: network refusals answer 429; destination-dependent confirmation refusals retain the generic acknowledgment under CONT-027) for its first gap, and CONT-027 (partial: confirmed-only hosted/kiosk resubscription is exercised; popup/incentive/topic/flow and erasure-expiry acceptance remains) for its second. Round 6 added INT-015 (partial: today's adapter already checks the shop, installation, scopes, pixel settings and cart subscriptions on every sync (`health.ts`) and verifies Shopify's signed app-proxy identity (`collector.ts`); the merchant OAuth install, the connector, Mango-created wiring, first-sync progress, uninstall and the privacy webhooks are missing) for its gap, and sharpened CONT-018 and AUD-009 for two of its also-noted items. Round 7 added DELIV-008 (partial: today's SendGrid health probe already reads the key's scopes and requires `mail.send` (`provider-health.ts`), sender verification reads domain authentication from the connected account (`sendgrid-domain-verification.ts`), and signed SendGrid events are verified and stored (`tests/go-live/delivery.journeys.ts`); the Settings connection, the stored key, Mango-created webhooks, `delivery-events-missing` and connection monitoring are missing) for its gap, and SMS-008 (missing) for its also-noted Twilio item. Done means implemented and exercised by the cited test; partial means some of the behavior exists in the cited file or test; missing means no code yet. A build round moves a clause to done only with the test its acceptance evidence names (ACCEPTANCE.md).
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 72 | 15 | 0 | 87 |
+| Published | 71 | 16 | 0 | 87 |
 | Target and push further | 12 | 54 | 88 | 154 |
-| All | 84 | 69 | 88 | 241 |
+| All | 83 | 70 | 88 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -880,7 +882,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `DOCS-001` | Public documentation | published | done | `tests/docs.spec.ts` |  |
 | `OPER-001` | Operators and the default role | published | done | `tests/local-start/local.journey.ts` · `tests/production-entry.spec.ts` |  |
 | `OPER-002` | Management | published | done | `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/service.ts` |  |
-| `OPER-003` | Removal does not rewrite history | published | done | `tests/settings-sender/routes.spec.ts` |  |
+| `OPER-003` | Removal does not rewrite history | published | partial | `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/repository.ts` | Removal revoking the removed operator's sessions is exercised, and removal sets `removed_at` rather than deleting the operator. Gap: no test since 15 October 2026 shows their proposals, approvals, revisions and audit entries still attributed to them after removal. |
 | `OPER-004` | Roles and permissions | target | partial | `tests/go-live/roles.journeys.ts` · `src/core/features/auth/permissions.ts` · `src/core/features/auth/product-roles.ts` · `migrations/core/0076_operator_product_roles.sql` | Six persisted roles, Owner assignment and Analyst unmasking grant, next-request API/server-function enforcement, role-change audits, last-owner protection, Author draft/request/configured-test controls, Manager typed tests and approval, restricted contact views, Support opt-out/request recording and visible controls at 1440/390 are exercised. Gap: full flow activation, billing-bearing provider connect/replace/disconnect and installation-erasure journeys await their owning product implementations; masked CSV export is not implemented (exports remain Owner/Admin only). Authentication role grants stay destination-owned on restore. |
 | `OPER-005` | Separation of approval | target | missing |  | not implemented |
 | `OPER-006` | Single sign-on and deprovisioning | target | missing |  | not implemented |

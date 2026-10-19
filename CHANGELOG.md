@@ -1,10 +1,48 @@
 # Changelog
 
-## Unreleased
+## 0.3.0 (2026-10-19)
 
-- Mark test credentials and environment references explicitly so hosted source admission accepts the fixtures.
-- **Restore verifies the whole archive before applying anything.** Finalize (`POST /api/portability/imports/:id/finalize`, `rer import` and the transfer CLI) now requires the archive's closing `archiveHash` and checks it against the staged manifest and every staged part before the erasure floor is consulted. An archive whose source identity, epoch or any other manifest field was changed is refused with `archive_checksum`; before, the HTTP route accepted it and could restore a contact erased after that backup. A refused finalize (`archive_checksum`, `content_checksum`, `erasure_epoch` or an invalid later journal) withdraws the staged import: nothing is restored, staging is dropped and the job reads `aborted`. HTTP clients must now send `archiveHash` from the archive's closing line.
-- The sign-in page prefills the email field from a complete `login_hint` address; it never submits on its own.
+**Back up first.** Before upgrading, back up your source, D1 database, R2 bucket and private settings (`.dev.vars`, or `.rer/hosted.env` and the deploy receipt for a hosted copy). Stop `rer dev`, run `git pull --ff-only`, `rer install`, then `rer setup` locally or `rer deploy --environment <name> --owner-name "Your name"` hosted; both apply the new migrations in filename order. Run `rer build` before taking a fresh export. A copy of 0.2.0 with contacts, an opt-out, a pending signup, a completed import and a draft upgraded with every earlier row unchanged.
+
+### What you get
+
+- **Roles.** The owner gives each operator one of six roles: Owner, Admin, Manager, Author, Analyst or Support. New and existing operators start as Admin, and your existing owner becomes the Owner. Authors write and request review, Managers approve and send typed tests, and Analyst and Support see masked contact details unless the owner unmasks them. Every role change is recorded, and the last Owner cannot be removed or demoted (OPER-004, partial: flows, provider connections and installation erasure have no role journeys yet, and CSV export stays with Owner and Admin).
+- **Pause and resume a campaign.** Pause stops sends that have not been handed off. Resume checks consent and frequency again and skips a send window that has expired (CAMP-014).
+- **Reuse your work.** Duplicate a sent campaign into a new draft or save it as a template. Send a follow-up to the people who did not click, which needs its own approval (CAMP-016, CAMP-018).
+- **Test to typed addresses.** Send a marked test of the saved draft to up to five addresses you type. A daily allowance shows what is left, and unsubscribed or suppressed addresses are refused by name (CAMP-019, partial: SMS tests are not included).
+- **Better checks before approval.** Advisories you acknowledge for the exact saved letter (MSG-007), personalisation fallbacks counted per eligible reader (MSG-008), `mailto:`, `tel:` and `sms:` contact links (MSG-013), and the sent size of each part measured against a 100 KB limit, with oversized hand-offs blocked (BUILD-012, partial).
+- **Later steps recheck their audience.** A second step rechecks inclusion, exclusions and consent, so someone who no longer qualifies is skipped with the reason (AUD-006).
+- **One timeline per contact.** Signups, consent, imports, suppressions, sends, provider outcomes, clicks and operator actions appear in order on the contact page (CONT-008).
+- **Deeper results.** Per-link clicks and clicker lists, recipients listed under each outcome, matching CSVs and segments built from them, a breakdown by mailbox provider, and list growth by consent source (DELIV-005; RESULT-007, RESULT-008 and REPORT-005 are partial).
+- **A public archive of sent letters.** You can publish a sent letter as a neutral web page with an archive index and RSS, and withdraw it later. Personal details, unsubscribe links and tracked links stay out of the public copy (PUB-001).
+- **Kiosk signup for events.** The hosted form can run on a shared tablet: each visitor completes a fresh check, the form resets blank, and confirmations record the kiosk as the source (FORM-009).
+- **Resubscribe by confirmation only.** Someone who unsubscribed can sign up again through your public form, but they are only subscribed after their own Confirm from the email. Suppressed addresses get the same reply and are never mailed (CONT-027, partial).
+- **Connect another app.** Settings can create integration credentials limited to the scopes you choose, for example so Coffer can keep subscribers and consent in sync. Every API request is logged (INT-007, INT-011, partial).
+- **Optional store connection:** source freshness on the Decision Desk, approval blocked by stale or failed sources, and sources the store connection cannot supply named instead of counted as zero (STORE-003, STORE-005, STORE-006).
+- **Unsubscribe stays fast and separate.** The confirmation page and one-click unsubscribe answer within two seconds locally. Each link has its own rate limit, so one busy link cannot block another reader's (MSG-010).
+- **Restore checks the whole archive before applying anything.** Finalize (`POST /api/portability/imports/:id/finalize`, `rer import` and the transfer CLI) now needs the archive's closing `archiveHash` and checks it against the staged manifest and every staged part before the erasure floor is consulted. A changed archive is refused with `archive_checksum`; before, the HTTP route accepted it and could restore a contact erased after that backup. A refused finalize withdraws the staged import: nothing is restored and the job reads `aborted`. **HTTP clients must now send `archiveHash`.**
+- Import contacts lets you choose the message category from the categories this Mango already uses, and says it must match the draft. **Import 12ui design** says what 12ui is and links to the guide.
+- The sign-in page fills in the email address from a complete `login_hint` address; it never submits on its own. Test credentials and environment references are marked explicitly so hosted source admission accepts the fixtures.
+- Start with one line: `npx -y @runeditrun/rer dev just-every/run-mango`. Pinned rer is 0.2.66. A first hosted deploy needs `--owner-name "Your name"`, and the deploy guides now show it.
+- CONTRACT.md now describes the full email and SMS marketing product Mango is building towards, with a status for each clause. At this release, 83 of 241 clauses are done, 70 partial and 88 missing; the 87 published clauses are 71 done and 16 partial.
+
+### Not in this release
+
+- Everything marked missing or partial in CONTRACT.md's status table, among them visual flows, A/B tests, popups and landing pages, SMS sending for the US, single sign-on, a full activity log, and moving in from Klaviyo, ActiveCampaign or Kit.
+- **The homepage is ahead of, or no longer matches, the code in one place.** "A team of equals: every operator has the same powers" predates roles. New operators still start as Admin with every product power, but the owner can now give narrower roles. Homepage wording is the owner's to change.
+- Hosted backup and restore are not built into Mango. The release gate backed up a hosted deployment with Cloudflare's own `wrangler d1 export --remote`, removed it, redeployed, loaded the backup into the new database, signed in by email and found every contact, opt-out and campaign. That is Cloudflare tooling, not a Mango feature (docs/backup-and-export.md).
+- Bounce, complaint and Delivered reports need a SendGrid signed Event Webhook. Without one, a hosted send shows **Accepted**; this release's live send showed Accepted 1. The webhook path is proven with locally signed events, not a live provider.
+
+### Known issues
+
+- In the plain-text part, a letter's first line runs into the next paragraph when the rich-text editor leaves it outside a paragraph (for example "Hello Rae Reader,The trees…"). HTML is unaffected.
+- A hosted Lobby shows **Sign in** as soon as deploy claims the owner, before sender setup is saved; HOME-001 says **Finish setup** until then. Both lead to `/setup` after sign-in.
+- OPER-003 (removing an operator keeps their attribution) is now partial: its dedicated test was removed on 15 October. Removal still revokes sessions, which is tested, and operators are soft-removed, not deleted.
+- Migration numbers 0058 and 0059 appear twice (`0058_owner_signin`, `0058_base_provider_control`, `0059_link_host_settings`, `0059_base_provider_pins`). Migrations apply by full file name, so an upgrade applies the new ones once each; never rename them.
+
+### Migrations
+
+0058_base_provider_control, 0059_base_provider_pins, 0060_base_owner_signin, 0061_base_dependency_setup, 0062_base_dependencies, 0063_base_dependency_approval, 0064_base_idp_claim, 0065_base_import_progress, 0066_campaign_reuse, 0067_campaign_link_identity, 0068_campaign_followups, 0069_scoped_integrations, 0070_newsletter_archive, 0071_mailbox_reporting_indexes, 0072_test_send_allowance, 0073_list_growth, 0074_list_growth_retained_history, 0075_kiosk_forms, 0076_operator_product_roles. All are additive; earlier migration files are unchanged.
 
 ## 0.2.0 (2026-10-16)
 

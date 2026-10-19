@@ -1,420 +1,840 @@
 {
-  "version": "0.2.0",
-  "date": "2026-10-16",
+  "version": "0.3.0",
+  "date": "2026-10-19",
   "contractChanges": {
-    "STORE-001": {
+    "OPER-004": {
       "change": "added",
-      "summary": "Commerce connection is optional in newsletter profile. Source-dependent rules remain unavailable without it; STORE-002 through STORE-007 are retained for enabled commerce. 2026-10-16: Optional Shopify connection reads the configured single shop through authenticated sync, signed webhooks and declared observation channels; no store data is invented and enabling it requires the complete input group."
+      "summary": "Roles and permissions. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "PROP-001": {
+    "OPER-005": {
       "change": "added",
-      "summary": "AI proposals are optional and unavailable without configured evidence/providers; no substitute generation or forecasts. PROP-002 through PROP-009 remain obligations when enabled."
+      "summary": "Separation of approval. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "MSG-004": {
+    "OPER-006": {
       "change": "added",
-      "summary": "SMS is optional; MSG-004/005, CONT-007 and SEND-002 remain binding whenever SMS is enabled. No absent module is certified satisfied. 2026-10-16: Optional Mobile Message SMS requires Australian two-way sender, complete credentials and recipient-local evidence; unavailable configuration fails closed."
+      "summary": "Single sign-on and deprovisioning. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "SEND-001": {
+    "OPER-007": {
       "change": "added",
-      "summary": "2026-10-07 SendGrid at-most-once handoff; definite nonacceptance is retry-safe, uncertain responses are durably fenced and never automatically retried."
+      "summary": "Activity log. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "MSG-005": {
+    "CONT-014": {
       "change": "added",
-      "summary": "SMS compliance text remains mandatory whenever SMS is enabled; newsletter does not claim SMS capability. 2026-10-16: Mobile Message approval freezes the exact structured programme, sender and compliance wording; STOP/HELP service messages and inbound facts retain separate consent and frequency authority."
+      "summary": "Custom properties. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "OPER-002": {
+    "CONT-015": {
       "change": "added",
-      "summary": "Approved Base fixture migration retains keyed token hashes, single use, real native sessions, revocation/version fences and canonical security triggers. Last active owner cannot be removed. Invitations now require fresh email proof from the signed-in operator, preventing a session without that proof from granting access. Settings requests Base's supported same-session confirmation so the operator can confirm and retry; confirmation GET/HEAD remain read-only and proof requires affirmative POST. 2026-10-11: Native rer/outbox Settings journey proves pending and active invitations, explicit confirmation, fresh proof, setup self-only and last-active protection, and foreign-origin rejection. 2026-10-16: rer signin uses deployment-owner credentials to mint an audited, one-use, active-owner-version-bound grant expiring within fifteen minutes; GET/HEAD are read-only and explicit POST consumes it. Local development uses the private RER_OPEN development-key entry without email or captured-mail pages. Pinned rer 0.2.22 prints its one-use owner grant for rer signin; the owner prohibits that recovery path pending a Base change. Hosted access uses delivered mail after correcting Configure."
+      "summary": "Topics and tags. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CAMP-004": {
+    "CONT-016": {
       "change": "added",
-      "summary": "2026-10-07 approved SendGrid single-attempt policy replaces provider deduplication capability gating only for SendGrid. Every consent, content, exact revision and sender-evidence gate remains. Authoring retains all existing negative content/link gates, adds actionable missing-content checks, and normalizes only create/save. 2026-10-12: Merge tags written for another tool (*|TAG|*) are unrecognised personalisation and block approval; Mango does not guess them. Imported content grants no schedule, approval or delivery authority. 2026-10-15: The default receiving mailbox is the signed-in operator's own inbox: an emailed one-time link and Confirm POST record an owner-confirmed observation that grants sender authority only with current provider and DNS SPF/DKIM/DMARC alignment evidence, for at most 30 days. The trusted receipt connector remains optional. A SendGrid signed Event Webhook is optional; without it delivery shows Accepted only."
+      "summary": "Preference center. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "SEND-008": {
+    "CONT-017": {
       "change": "added",
-      "summary": "2026-10-07 SendGrid uncertainty remains for operator review. Signed events and available Activity correlate message IDs; no guaranteed unattended reconciliation or blind retry is claimed."
+      "summary": "Contact profile and event timeline. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CAMP-002": {
+    "CONT-018": {
       "change": "added",
-      "summary": "2026-10-07 authenticated blank and deployment-signal starters, shared Review and atomic proposal adoption; incomplete drafts persist without approving or enqueueing. Rich authoring and optional preserved HTML. 2026-10-08: displayed and newly saved audience summaries derive from structured inclusion/exclusion rules; authored audience prose is removed, readiness requires valid rules, and legacy approval digests remain bound to the immutable saved revision and rules. 2026-10-12: An archive's emails become read-only imported history with Copy into a new draft, and its templates become draft starters. All imported HTML passes the restricted email HTML policy with a visible list of what was removed. 2026-10-13: Emails carrying inline styles or presentational attributes, like emails with images, open in HTML mode; rich text keeps only unstyled markup and never silently drops a design. 2026-10-13: HTML mode keeps allowed authored markup in the canonical form saving stores (CAMP-003), so the editor can show small structural changes after a save."
+      "summary": "Onsite behavior. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CAMP-003": {
+    "CONT-019": {
       "change": "added",
-      "summary": "2026-10-07 create/save-managed footer, generated text URLs, saved normalized previews and structured audience controls with current real counts and blocked unavailable sources. 2026-10-13: create/save store the email body in canonical form: parsed with the WHATWG HTML parsing algorithm (parse5) as the content of <body> with scripting off and written back with the HTML fragment serialisation algorithm (explicit closes, double-quoted attributes, decoded character references, comments kept, personalisation tokens exactly as written). Parse and serialise only: no declaration or kept attribute value changes, and what the checker refuses stays to be refused. The plain-text part is derived from the same parse. The saved-revision preview renders the validated set and shows a failing body unstyled with its warning. Design import hands the editor the canonical form, so saving an import changes nothing in it; move-in stores imported HTML in canonical form and lists any attribute parsers would drop among what it removed. 2026-10-13 (amended before release, owner decision to normalise): saving never refuses a body for how it is written. What parsers drop is absent from the stored body as from every recipient's tree (of an attribute written twice the first is kept; attributes on a closing tag, and a tag ignored where it stands such as a cell or row outside a table or <body>, go with their attributes), and the checker judges that tree, so a hiding style is still refused. Replaces a 400 for such bodies, which also made a draft stored before canonical saving unsavable when it held one; that draft now saves in canonical form whatever fields change. Security: none weakened; the stored bytes are exactly what recipients parse. 2026-10-13 (hardening): saving is a fixed point for every input. The body is parsed and written again until its written form parses back to itself before the managed footer is placed after it, and the save is repeated on its own result until it stores what it read, so saving the stored body or the body the editor shows (every managed footer removed, repeatedly) stores the same bytes; only an HTML plaintext element's text ends the written form (not a plaintext inside SVG), only HTML pre/textarea/listing get the extra leading line break, and an SVG or MathML element named template is read as a plain element. A body not settled after sixteen rounds (none known; every fuzzed body settles within two) is refused with invalid_email_body (400). Replaced behaviour: the footer was appended after one round, so <math><mtext><table><mglyph><style><li style> stored it inside the list item and the next save moved it after the math element; a single-quoted managed footer ahead of the content moved on the second save; a plaintext inside SVG's plaintext grew on every save; an SVG template failed the save. Such bodies remain refused at approval. Security: unchanged checker and parse-and-serialise-only saving; approval binds bytes a later save cannot move."
+      "summary": "US SMS consent capture. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CAMP-006": {
+    "CONT-020": {
       "change": "added",
-      "summary": "2026-10-07 configured store-zone local scheduling, read-only UTC, end-of-local-day deadline, gap/fold rejection including non-hour transitions; explicit resolved callers remain supported. 2026-10-16: Approval queues near-term approved steps for their exact scheduled time while durable cron recovery remains; local time, deadline and exact saved-revision checks stay mandatory."
+      "summary": "Engagement-based sunsetting. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "CONT-011": {
+    "CONT-021": {
       "change": "added",
-      "summary": "2026-10-11: Contact detail adds address search, restrictive per-channel preview and existing-dialog merge confirmation. Links, consent, source activity, suppression and history follow the survivor. Queued recipient identities and frozen approved candidates stay unchanged; dispatch excludes a removed identity as contact-merged. Restrictive aggregate consent cannot be bypassed through a subscribed merged alias."
+      "summary": "US privacy requests. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CONT-013": {
+    "CONT-022": {
       "change": "added",
-      "summary": "Contact erasure is included in the newsletter profile: bounded durable cascade, atomic source-wide erasure floors, complete affected import/source/original withdrawal, keyed opted-out aliases, anonymous audit/receipt, and approval invalidation when literals are redacted. Historical approval digests, approver and time remain history identifiers and attribution. Public archive cleanup is paged, counted atomically and keeps the receipt pending until every retained copy is removed. Earlier local release evidence qualified 50,000 fully applied public import rows with 429 original chunks and 5,000 additional history rows: erasure completed in 163,152 ms with at most 858 native D1 statements per request. Exact source bindings remain in external release evidence; full CI is a separate gate. Independent operator identities and already-authorised external handoffs remain separate; downloaded archives/provider copies/backups are outside local custody. Fresh restore requires current erasure authority; hosted restore remains uncertified. 2026-10-12: An R2 object key whose final segment is the erased address plus a file extension (the address followed by .json, under exports/) is erased; ann@x.test.example and xann@x.test are not. 2026-10-14 (intentional compatibility change): Mango replaces persistent row-hash journals with source-wide erasure floors. Subscribed erasure removes all mapping aliases without an address-derived tombstone. Every archive below known local or supplied current matching authority is refused, including unaffected archives; nonempty legacy journals are refused before staging. Upgrade 0044 advances every known source above its former epoch, retires legacy journals and invalidates transfer custody. A cold offline destination cannot infer future erasure without current authority."
+      "summary": "Contact search and bulk actions. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CONT-003": {
+    "CONT-023": {
       "change": "added",
-      "summary": "Reviewed CSV import preserves supplied consent scope, confirmation and source provenance without inferring missing consent from a file name or status. Public capture requires explicit consent."
+      "summary": "Custom objects. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "CONT-004": {
+    "CONT-024": {
       "change": "added",
-      "summary": "Imported restrictive statuses remain authoritative; approval and handoff preserve recorded opt-out and suppression precedence. Public signup writes and the final confirmation-mail handoff claim are atomically guarded against concurrent recorded opt-out, suppression and destination ownership changes. Local credential upgrades preserve the verified effective contact hash authority; unversioned and unknown configurations fail closed until explicitly migrated. 2026-10-12: SendGrid unsubscribe and group_unsubscribe events are email opt-outs recorded before the webhook is acknowledged; the one-click URL handed to the provider unsubscribes before answering 2xx and GET, HEAD, mutated or cross-purpose tokens change nothing (local go-live journey). 2026-10-12 (migration 0035): Each opt-out and suppression reason for an address is its own surviving record. Bounce and delivery reconciliation never overwrite or delete an opt-out, and an address returns to subscribed only when no opt-out and no suppression remains."
+      "summary": "Incumbent-held consent. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CONT-009": {
+    "CONT-025": {
       "change": "added",
-      "summary": "Public confirmation GET and HEAD are read-only; confirmation requires explicit affirmative POST. Atomic D1 reservations enforce five network reservations per UTC hour after parsed-body and challenge validation, three confirmation reservations per destination per UTC day and fifty global confirmation reservations per UTC hour using database reservation time. Failed or concurrent duplicate attempts may consume reservations without refund. Bounded bodies, sender validation and optional paired Turnstile protect public signup. 2026-10-16: Outside framing of signup requires explicitly allowed embed origins. Migration 0057 starts with an empty list; after upgrading add every embedding site under Audience \u2192 Allowed embed origins. Direct hosted signup remains available."
+      "summary": "Opt-in mode per form and source. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CONT-010": {
+    "CONT-026": {
       "change": "added",
-      "summary": "Reviewed import plans are chunked to remain within D1 limits and retain per-row outcomes; newsletter exports roundtrip consent and statuses with twelve logical contact fields plus a thirteenth versioned spreadsheet-safe CSV encoding marker column. Additive migration 0021 stores maintained Base import plan/original chunk custody while retaining existing inline and previously chunked records. Large import lifecycle operations target the Workers Paid D1 invocation budget; Free-plan and hosted throughput acceptance are not established. Unverified named vendor selectors are retired in favor of generic mapped CSV; historical provenance and lossless Mango restoration remain unchanged. 2026-10-09: Base import-kit is refreshed with additive migration 0025, retaining older original storage and adding guarded creation snapshots and reversal metadata. 2026-10-11: Move-in guide covers two documented formats with synthetic CSV evidence only; shared generic header aliases suggest actual columns in server and UI. All recognized status columns remain independent restrictions, including when a permissive column is explicitly mapped. Fixture routes exercise preview without contact writes, apply/resume, identical replay, undo and opted-out send exclusion. No real export or named importer is certified. Reviewed imports now support 50,000 rows through public Base normalised streams above the ordinary-plan range. Mango retains exact original files in bounded plan chunks; request limits and D1 invocation bounds remain enforced. 2026-10-12: One whole account export (.zip) is read structurally in the Worker without writing entries to disk; unsafe archives (absolute or .. paths, duplicate names, symbolic links, encryption, truncation, ZIP64, overlap, CRC or size mismatch, entry/size/ratio limits) are refused with a named reason and nothing written, nested archives and gallery files are skipped with counts. Its four audience status files take the matching generic presets with one consent-evidence entry; the most restrictive status wins across files and existing opt-outs stay. One Preview for the whole archive writes nothing. The original archive and every entry's SHA-256 are kept as import custody. Documented format, tested on synthetic files shaped from the published help page, not on a real export; one real export is still unreconciled."
+      "summary": "Contact added by hand. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CONT-005": {
+    "CONT-027": {
       "change": "added",
-      "summary": "Public capture has no reconsent route and neither mails nor changes existing subscribed, opted-out or suppressed destinations; an erased address matching a surviving opt-out recreates only an unsubscribed profile without consent or mail. Generic acknowledgements reveal no destination status; genuine explicit logged post-opt-out ledger evidence remains subject to confirmation and suppression resolution. Concurrent public capture cannot overwrite subscribed or restrictive channel status; reused consent evidence must match its recorded contact, destination and scope."
+      "summary": "Resubscribe through a public form. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "AUD-001": {
+    "AUD-008": {
       "change": "added",
-      "summary": "2026-10-08 \u2014 Review, approval checks, scheduled pages, campaign lists and audience snapshots display a plain-text summary derived from structured inclusion/exclusion rules, including every condition, value and lookback with explicit all/any matching. Legacy revisions are projected without rewriting immutable approval records. 2026-10-11: Named segments reuse campaign rules/editor and the shared campaign review eligibility calculation, including consent exclusion counts."
+      "summary": "Inactivity rules in review. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CONT-006": {
+    "AUD-009": {
       "change": "added",
-      "summary": "Local suppression and surviving opt-out hashes retain their effective authority through explicit legacy session/contact conversion and later authentication credential rotations. New local configurations record contact-salt-v1; unknown or missing authority cannot be inferred. 2026-10-12: Signed soft bounces count toward contact.soft-bounce.v1 and a delivery correlated to a Mango recipient resets the count; uncorrelated signed facts only restrict an address."
+      "summary": "Frequency protection: one policy and a recorded override. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "OPER-001": {
+    "CAMP-013": {
       "change": "added",
-      "summary": "Pinned rer 0.2.22 claims the first local owner and admits a native development session in the browser through its printed private RER_OPEN development-key entry; this is not an emailed one-use sign-in link. Local development sends no sign-in email and exposes no captured-mail page. /setup requires a saved business sender; production requires explicitly configured transactional mail. Repeat setup preserves existing owner, data and private settings."
+      "summary": "Recipient-local send time. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "DATA-001": {
+    "CAMP-014": {
       "change": "added",
-      "summary": "Base portability exports all product D1 records and uploaded R2 assets. Restore into an empty maintenance-mode destination requires matching private contact/link keys and fresh Base authentication; sessions and auth tokens are not restored. Additive migration 0033 audience_segments is discovered by the existing portability inventory and included in local export/restore. 2026-10-12: Locally, an installation with consent, suppressions, a one-click opt-out, delivery facts and approvals restores into an empty installation with its own origin and provider key: rows and approval digests match, a wrong key is refused before any write, the source's sender evidence does not authorize the destination and replayed facts add nothing. Hosted restore remains unverified. 2026-10-12: Additive migration 0036 adds archive custody, the immutable entry list and imported content records; the portability inventory discovers them, and contact erasure withdraws the archive that brought the contact in while keeping its entry hashes. Undo removes only unchanged imported contacts, drafts and history and never erases an opt-out, suppression or send history. 2026-10-13: Additive migration 0039 campaign_assets is discovered by the portability inventory, and campaign images are ordinary R2 objects in ASSETS_BUCKET, so an uploaded image round-trips and is served again from the restored installation (local proof). 2026-10-14 (intentional compatibility change): Mango replaces persistent row-hash journals with source-wide erasure floors. Subscribed erasure removes all mapping aliases without an address-derived tombstone. Every archive below known local or supplied current matching authority is refused, including unaffected archives; nonempty legacy journals are refused before staging. Upgrade 0044 advances every known source above its former epoch, retires legacy journals and invalidates transfer custody. A cold offline destination cannot infer future erasure without current authority."
+      "summary": "Pause and resume. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
     },
-    "MGMT-001": {
+    "CAMP-015": {
       "change": "added",
-      "summary": "Signed installation-bound first-owner claim uses the ordinary Base operator-auth bootstrap transaction; existing installations and replayed claims remain closed."
+      "summary": "Marketing calendar. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "MGMT-002": {
+    "CAMP-016": {
       "change": "added",
-      "summary": "Short native active-owner grants mount the Base editor at the configured management origin, with route-leaf hydration and synchronous logout/session-loss revocation."
+      "summary": "Follow-up to non-engaged recipients. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
     },
-    "HOME-001": {
+    "CAMP-017": {
       "change": "added",
-      "summary": "2026-10-09 The public root changes from an owner identity plate to a static, hand-illustrated landing for the newsletter profile (hero, how a letter leaves Mango, consent, approval of the exact letter, scheduling, delivery reports, ownership, closing call to action) around Mango's mark and the owner's configured name, description and optional credit. The feature-tour ban becomes a limit to shipped newsletter capabilities; pricing, testimonials, logos and metrics stay forbidden. No record or session read, no cookie or telemetry, rendered per request, every font, style and favicon same-origin, readable without scripts and with reduced motion. Capability owner-front-door is renamed public-landing. See CONTRACT.md 'Public landing and documentation'. 2026-10-13: an installed Mango answers / with Base's Lobby (Finish setup until the sender identity is saved, then Sign in) and GET /setup/state; the landing is the run site's homepage (run-mango.com, rer build --site) with Run Mango to /run and no sign-in links (owner decision, 12 October 2026)."
+      "summary": "Recurring and RSS-to-email campaigns. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "DOCS-001": {
+    "CAMP-018": {
       "change": "added",
-      "summary": "2026-10-09 \u2014 Added. First-party public documentation at /docs and /docs/<slug>, the Markdown that docs/site.json publishes rendered to HTML at build time by a Vite plugin (no Markdown or syntax-highlighting code in the Worker or client bundle), served per request by Start. Cookie-free, same-origin, no session or database read, no source-repository or edit links; every repository Markdown file is published or listed as not published with a reason; pages share the public landing's header, footer, palette and faces, and unknown, miscased and nested slugs answer 404 with a not-found page in that same frame. /docs and /docs/ are declared in seed.json deploy.publicPaths. No rate limiter is claimed. See CONTRACT.md 'Public landing and documentation'."
+      "summary": "Duplicate a campaign. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
     },
-    "AUD-007": {
+    "CAMP-019": {
       "change": "added",
-      "summary": "Saved segments copy structured inclusion/exclusion rules into drafts. Segment rename, edit and deletion cannot change saved/approved revisions, approval digests or frozen candidate sets."
+      "summary": "Test send to typed addresses. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "OPER-003": {
+    "MSG-013": {
       "change": "added",
-      "summary": "Native operator removal revokes open sessions and unused invitation/sign-in links while preserving campaign, approval and audit attribution. Real production approval on the same D1/native session uses provider/DNS/receipt/queue edge substitutes; native development approval remains unavailable."
+      "summary": "Contact links (`mailto:`, `tel:`, `sms:`). Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
     },
-    "SEND-006": {
+    "MSG-014": {
       "change": "added",
-      "summary": "2026-10-12: Existing signed Event Webhook receivers may forward unchanged whole requests to Mango. Bounded raw bytes are verified against the configured real public key and original timestamp before strict UTF-8 decoding. Local signed-route checks cover tampering, wrong keys, stale requests, replay and unmatched safety events. Inbound Parse is separate receipt/reply evidence and has no Mango intake. Live receiver access, signed ingestion and normal cron remain unverified. 2026-10-12: Insights lists provider acceptance and each kind of provider event per campaign as separate counts instead of an unwritten table; the deliverability report counts an uncertain hand-off once a provider event proves it. A local go-live journey replays a complete set of signed SendGrid facts with a locally generated key; this is not acceptance by a live provider. 2026-10-12: Archive reports and 'sent' rows stay raw source records; no delivery fact, campaign result, acceptance, delivered or revenue figure is created from an archive."
+      "summary": "Allowed link and image hosts. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "MSG-003": {
+    "MSG-015": {
       "change": "added",
-      "summary": "2026-10-12: Every marketing message in the local go-live journey carried List-Unsubscribe over HTTPS, List-Unsubscribe-Post and a visible link; test sends are marked and change no contact state. DKIM coverage of these headers by a live provider is not observed."
+      "summary": "Allow a blocked host from review. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "MSG-009": {
-      "change": "changed",
-      "summary": "2026-10-13: Operator HTML may carry a validated inline style attribute and presentational table, cell, wrapper and image attributes (role, width, cellpadding, cellspacing, border, align, valign, bgcolor, lang, dir) within the allow-list in the CONTRACT.md MSG-009 and MSG-012 policy. The set still admits no script, form, stylesheet, class or CSS function; style values use a closed character set, so no url(), escape, entity, comment, at-rule, custom property or !important can be written. One checker (inspectEmailHtml with email-presentation.ts) decides approval, test send and delivery; the preview keeps styles only when that checker passes. Rejected, never repaired. Security: no new remote load (img src and href remain the only fetches, inspected by MSG-006) and no CSS tracking channel. Every revision valid under the earlier grammar stays valid; renderer and messageRendererVersion unchanged; no re-approval. 2026-10-13 (copies running on a computer): where a draft is saved, imported or previewed, the checker is given the deployment's own origin and then also admits an img src that is exactly that origin plus a /media/<sha256>[.<ext>] path when the origin is http (rer dev); the preview keeps its validated styles and, after the operator opts in to images, its image policy admits that origin beside https:. Approval, test send and delivery are never given the origin and refuse those images with a reason naming the HTTPS requirement. Nothing changes on an HTTPS deployment. Style property names must be lower case. 2026-10-13 (one parser): the checker reads the stored body with parse5, the WHATWG HTML parsing algorithm, as the content of <body> with scripting off, in the Worker and the browser (email-html-parse.ts); approval, test send, delivery, the preview sanitiser and the plain-text part all walk that one tree, and personalisation tokens are kept whole as written. Replaces a regex tag tokenizer that read \"< /span>\" and \"</ span>\" as closing tags while mail clients keep the element open, so styled hidden text passed approval. Tag-level parse errors, unquoted attribute values, comments, tags outside the grammar wherever parsers place, rename or ignore them (a <body> tag's attributes included) and attributes parsers drop are refused as written; attribute values are judged decoded, and a style or presentational attribute written with a character reference other than &quot; is refused. Link and image addresses additionally may not contain a literal \", <, > or no-break space. Delivery transmits the stored bytes unchanged and re-checks them with the same parser. Security: the checker, preview and plain text no longer disagree with HTML parsers about structure. Revisions approved before this change are delivered byte for byte, not normalised; only those using a close tag written \"</ tag>\" (a comment to every parser), an attribute on a table cell or row outside any table, unstyled text below 10px from nested headings, or a direction override character (U+202D, U+202E) now need a new approval; a \"<\" that starts no tag (\"< p>\", \"< /span>\") is read as the text parsers show, so an earlier approval holding one is delivered as approved. Dependency: parse5 ^8.0.1 (MIT, maintained, html5lib-conformant, no Node API; about 154 KB minified, 43 KB gzip, in the Worker and the campaign editor). 2026-10-13 (amended before release): attributes parsers drop and the other as-written refusals now apply only to stored bytes saved before canonical saving (approved revisions, delivered byte for byte); a body saved now is the canonical tree and is never refused for how it was written (CAMP-003). 2026-10-13 (amended before release): the stored form parses back to itself, so saving it again stores the same bytes: a pre, textarea or listing whose text starts with a line break keeps the one parsers drop, and nothing is written after a plaintext element (no footer is appended after one; approval refuses the tag and the missing footer). 2026-10-13 (tightened grammar, owner decision): the allowed set narrows (MSG-012): bgcolor and background-color on td and th only, and background-color on the outer wrapper (the first top-level div that sets one; table bgcolor removed), no display, table-layout auto only, width and min-width on tables, cells and images, max-width on tables and images, height on tables, rows, cells, images and empty boxes, no border on inline elements, table align left or center only; dir (ltr, rtl) is now also allowed on td and th, and rtl must stand on or inside a cell. The same one checker decides approval, test send, delivery and whether the preview keeps styles. Every revision valid under the earlier unstyled grammar stays valid; renderer and messageRendererVersion unchanged."
-    },
-    "MSG-012": {
+    "RESULT-007": {
       "change": "added",
-      "summary": "2026-10-13: Hidden or deceptive presentation blocks approval, test send and delivery with a named reason: styles that hide, clip, fade, shrink below 10px, move, overlay or reverse text; text below 3:1 contrast against its nearest declared background (white by default, links #0000ee by default); text in a fixed-height box; and styled markup that is not well-formed (implicit closes, table foster parenting, misnesting), since the judged background must be the rendered one. Covers the unsubscribe link and postal address. Residuals: client rendering differences; large tap targets (a padded button or cell is a large click area, but its visible label is still required and its destination is still inspected under MSG-006); and (until the geometry rule below) an unbreakable word overflowing a narrow column under a following column or image; the preview shows the same bytes and the plain-text part carries all text. The allow-list also admits pixel line heights of 10-120px (refused when smaller than the text they set), table-layout (auto, fixed) and white-space (normal, nowrap); text in a fixed-layout table or a no-wrap run must reach 3:1 on every background around it, as text in a narrowed box must. 2026-10-13 (amended before release): a table part is exempt from the fixed-height and narrowed-box rules only while it keeps its own table display, so display:block or inline-block on a td, th, tr or table is judged like any other box; and because mail clients that render a body without a doctype use quirks mode, where a table does not inherit color, text in a table that sets no colour of its own must reach 3:1 in both the inherited colour and default black. Both closed hidden-text bypasses; their cases are in tests/support/adversarial-email.mjs. 2026-10-13 (one parser): hidden-text rules are judged on the tree mail clients build. For styled markup, the markup as written must be the markup parsers build (no implicit close, foster parenting, misnesting, ignored or renamed tag; an implied tbody is allowed), so the judged background is the rendered one in quirks and standards mode alike; this replaces the token-walk nesting rules. The 10px floor now also applies to unstyled markup, where a heading nested in a heading shrinks. New adversarial cases: three close-tag spellings a tag walker misreads, text parsers move out of a table onto a dark box, and markup quirks-mode clients read differently (tests/support/adversarial-email.mjs, rejectedPresentation and refusedAsWritten). 2026-10-13 (geometry, amended before release): text that margins, borders, padding, widths, images or unwrappable runs can carry out of the box whose background it is judged against is judged wherever it can land. email-geometry.ts (boxes in email-geometry-boxes.ts, ink shared with the contrast rule in email-ink.ts) lays every body out the way CSS normal flow and table layout place boxes (browser defaults, auto margins, cellpadding, cellspacing, width attributes, a table's align, cells side by side, tables growing to fit, dir) and measures every unwrappable run (a word, nowrap text, words joined by no-break spaces, text glued to inline padding) as recipients read it, a personalisation token as its fallback, at the widest any allowed face draws each character (email-glyph-widths.ts, from the table email-glyph-table.ts that scripts/measure-email-glyphs.mjs measures in Chromium). Text that leaves its box must reach 3:1 on every background it can land on; it may not leave a table cell or an inline block (it would run under the content beside it) or run past the left edge (right-to-left text, a table floated right); past the right edge it lands on the white page; text aligned to the start of a box that sticks out counts only as far as its widest line. Text in a rounded background's unpainted corners must read on what shows through, and overlapping cells' text on every background among them. Replaces, first, judging narrowed, fixed-layout and no-wrap text against every background around it, which let nested padding, a 1200px right-aligned box and a 9999px table carry text out of its dark box unseen; and then refusing any run or box wider than its room whatever its colours, at about twice the widths Chromium draws, which refused plain emails the released grammar approves (written-out addresses, personalised, German and Russian headings, a 640px image's caption) at approval and at delivery. Also: a link without an address takes its parent's colour, as browsers show it; refused too are a percentage height inside a box of set height holding text, text below 10px at the 16px quirks-mode clients restart tables from, and the direction override characters U+202D and U+202E in text (embeddings and isolates, which pasted right-to-left names carry, stay). Compiled 12ui designs set overflow-wrap:anywhere. No earlier approval needs a new approval for geometry: unstyled text has no background to hide against. Compared word by word with Chromium's rendering (pixel visibility and contrast) on the gate's and the repository's cases, no approved body hid a word. New adversarial cases: the six close-tag spellings and the geometry, corner, link-colour, overlap, percentage-height, quirks font-size and direction-override cases in tests/support/adversarial-email.mjs. 2026-10-13 (tightened grammar, owner decision \"Tighten the style rules\"; supersedes the geometry, ink and display notes above): only table cells (td, th) and the email's outer wrapper (the first top-level div that sets a background-color) paint a background and no element declares display, so every element keeps its native display; width and min-width stand only on tables, cells and images, max-width only on tables and images, height only on tables, rows, cells, images and empty boxes; a percentage-wide table or image sets no side margin, padding or border; inline elements set no border; a painted cell rounds its corners only within its left and right (or top and bottom) padding; dir=\"rtl\" stands only on or inside a cell and a table is not aligned right; overlapping styled cells are refused (email-table-slots.ts); a pixel line height is never below the text size; table-layout is auto only. Each rule is in email-placement.ts with the reason the argument needs it. Text cannot then leave its cell, so readability is one check: every text run reaches 3:1 against the background of its nearest painted cell, outside any against the wrapper's colour and the white page (a block does not hold an overlong line or a floated table), or the white page alone, in its declared or inherited colour, default black, #0000ee for a link with an address, and default black too inside a table that sets no colour (quirks mode). The 10px floor, the 2px image floor, the direction override characters and the written-as-parsed rule for styled markup stay; the phrasing/table-part structure rule is gone with inline backgrounds. Replaces the paint and geometry modelling (email-ink.ts, email-geometry.ts, email-geometry-boxes.ts, email-glyph-widths.ts, email-glyph-table.ts, scripts/measure-email-glyphs.mjs, all removed), whose last leak was an element set display:inline with a background: it paints none behind the block inside it, so white text inherited into that block was judged against black and reached recipients white on white. Security: the background behind every text run is read from the tree, sound by construction; compared pixel by pixel with Chromium (glyphs made transparent, quirks and standards, 800px and 375px) on every earlier bypass family, the adversarial suite and the new grammar's edge cases, no approvable body hid a word. Residuals: text past the right edge lands on the page and needs scrolling; tall glyphs at line-height 1 can overlap the line above by a few pixels; list markers can hang outside a cell. A revision approved under the untightened styled grammar (unreleased) that uses what is now refused needs a new approval. New adversarial cases: the inline-background reproducer and the tightened-grammar families in tests/support/adversarial-email.mjs."
+      "summary": "Click map, per-link clicks and clicker lists. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "CAMP-012": {
+    "RESULT-008": {
       "change": "added",
-      "summary": "2026-10-13: Campaign images. POST /api/campaign-assets (operator session, same origin) takes one JPEG, PNG, GIF or WebP image as the single file part of a multipart/form-data body; the type is read from the file header, never from the declared type or name, a truncated file (no PNG IEND, JPEG EOI, GIF trailer or matching WebP RIFF length) is refused, and size and pixel limits come from seed.json (maxCampaignAssetBytes, new maxCampaignAssetPixelsPerSide). Each image is stored once in R2 under its SHA-256 (campaign-assets/<sha256>) with an immutable campaign_assets record (migration 0039; update and delete are refused by triggers; no deletion route). GET/HEAD /media/<sha256> is a new public path in seed.json deploy.publicPaths: exact content type, nosniff, a sandboxing CSP, an immutable public cache, no cookie, 404 for unknown names and a per-image limit (new mediaRequestsPerMinutePerAsset) returning 429 without affecting other images. Security consequences: a new anonymous surface serving operator bytes, limited to four raster types never served or sniffed as active content; not a tracking channel (one URL for every recipient, nothing recorded about requesters, opens not counted); uploaded images are public and cannot be withdrawn in this release, except that contact erasure removes bytes holding an erased identifier (the image then answers 410 and blocks approval); anyone holding an image URL can spend its per-minute allowance. Proved locally against Miniflare D1 and R2; hosted serving and image-proxy behaviour are unverified. See CONTRACT.md 'Campaign images'. 2026-10-13 (amended before release): the same image is also served at /media/<sha256>.<ext> with its stored type's extension (another extension is 404). In HTML mode the email editor's Insert image uploads one file and writes <img src width height alt> at the cursor, sized from the server's header reading and scaled down to the 600px email width; the description is required. Design import uploads with ?source=design-import, which campaign_assets.source records (CHECK upload or design-import, in migration 0039). On a copy running on a computer (http origin) a draft may hold the deployment's own http images, which save and preview (MSG-009) but never pass approval. Proved locally on an http origin (Insert image, save, preview loading the image after opt-in) and with an HTTPS public base URL (approval). Residuals recorded in CONTRACT.md: each fetch writes the per-image rate counter (D1 write quota or cost), the pixel cap is the header's declared size, and erasure's 410 does not reach copies already cached under the immutable header. A RESULT-005 policy note states that /media/ fetches record nothing and are never open tracking; RESULT-005 itself is unchanged."
+      "summary": "Recipients per outcome. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "MSG-006": {
-      "change": "changed",
-      "summary": "2026-10-13: An image or link that is exactly this deployment's own /media/<sha256> URL is verified against its campaign_assets record and stored R2 object instead of a DNS lookup and a request to the deployment's own hostname; a missing image blocks approval and is named. Every other destination keeps the network inspection. Approval is otherwise unchanged and earlier approvals stay valid. 2026-10-16: Settings stores allowed destination hosts; existing environment policy remains authoritative until saved. Defaults admit only the app host and every destination remains HTTPS and server-checked."
-    },
-    "DESIGN-004": {
-      "change": "changed",
-      "summary": "2026-10-13: Design import. Import 12ui design in a draft's email editor takes a LayerDoc version 2 file and its PNG candidate, made with the owner's own 12ui CLI, and compiles them in the browser (src/core/features/design-import) into a 600px table email in the MSG-009/MSG-012 grammar: photos cropped from the PNG and uploaded as CAMP-012 campaign images, colours moved to 4.5:1, two fixed font stacks, one button with the operator's HTTPS destination, and the managed unsubscribe link and postal address in place of the design's footer. Unsupported versions, non-HTTPS destinations, template braces in design text and designs over the 20,000-character body are refused visibly with the body unchanged; left-out layers are listed and lines not in the operator's brief are highlighted. Import produces only an unsaved edit and never saves, approves, schedules or sends; the body is checked with the approval checker before it reaches the editor. Security: LayerDoc values never reach CSS unmatched, its signed 12ui URLs are never fetched, import itself uses no 12ui key and makes no request to 12ui (the optional design module of DESIGN-001 to DESIGN-003 is separate, with its own external and the BASE-DATA-005 policy); model-written copy is a residual mitigated by highlighting and operator review. Proved locally at 1440px and 390px with the real orchard LayerDoc against Worker, D1 and R2; real inbox rendering is unverified. 2026-10-13 (amended before release): on a copy running on a computer the import compiles with the copy's own http image addresses, saves and previews styled; approval there names the HTTPS requirement. A design line counts as from the brief only as whole words. The change summary states whether the imported body is saved or edited since import and disappears when Discard changes restores the earlier body. The importer's code loads only when the operator opens it. The change summary shows a thumbnail of each hosted image from its own /media/ path, so a different same-size candidate PNG is visible before saving, and highlights image descriptions (alt text) not in the brief; a wrong-shaped PNG is named with its real size. 2026-10-13 (design generation): the clause's closing note now points to DESIGN-001 to DESIGN-003 instead of reserving them; import itself still makes no request to 12ui. The browser path from a LayerDoc and PNG to a body is shared with Design with 12ui (src/core/features/design-import/ui/build-email.ts); import behaviour is unchanged. 2026-10-13 (geometry, amended before release): the compiled email's wrapper sets overflow-wrap:anywhere, so a design word too long for its column wraps inside it rather than the import being refused by the MSG-012 geometry rule; compiled output is otherwise unchanged. 2026-10-13 (tightened grammar): the compiled email's outer wrapper is the one cell of a full-width table carrying the page colour (it was a div with a background, and the 600px table repeated it as bgcolor); images keep their inline box with vertical-align:bottom instead of display:block (the emblem keeps its baseline, as inline-block did); the button's padding and type sit on its painted cell, with the radius held to its 32px side padding (the same pill at the button's height) and the link's vertical padding keeping the whole button height clickable; the rule is a border with 1px top padding instead of a 1px height; two-column sections are two cells of one row (vertically centred, as before) instead of inline blocks, so they stay side by side on phones instead of stacking; and two columns no longer require text that also reads on white, since text cannot leave its column's cell. The orchard design renders pixel-identical to the earlier compile at 640px in quirks and standards mode. 2026-10-13 (hardening): a LayerDoc is refused as invalid_layout past 2,000 layers or 64 levels of nesting, counted with an explicit stack before the recursive layer schema runs; before, a file nested about 1,500 levels deep overflowed the stack with an uncaught RangeError (in the editor, and in the Worker's design.layout pass) before the layer count was checked. Security: bounded work and a named failure for hostile LayerDocs."
-    },
-    "DESIGN-001": {
+    "SCALE-001": {
       "change": "added",
-      "summary": "2026-10-13: Optional design module. DESIGN_PROVIDER_API_KEY (secret, the owner's own 12ui key) and DESIGN_PROVIDER_ORIGIN (https://12ui.com) enable it together; one without the other fails startup naming the missing input, and the origin must be a bare HTTPS origin (a copy running on a computer may name a loopback http origin and reads both from .dev.vars). Disabled, no design.provider.v1 adapter is constructed, the editor shows no Design with 12ui control, the design-job routes answer 409 design_unavailable and 12ui is never contacted. Declared in seed.json (env, externals design-provider, extensionPoints.adapters), OPERATIONS.json optionalModules.design, .env.example and the delivery packaging; deploy.json declares both inputs as secrets marked \"optional\": true; Mango's deploy step (scripts/installer/deploy-declaration.mjs) hands the unchanged rer deploy kit a declaration with the required secrets plus each optional one whose environment input is set, so deploy uploads them only when set, never requires them and later deploys keep them, and rer verify's hosted check serves the build without them, so the module stays off unless the owner supplies both."
+      "summary": "Capacity for the first buyer. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "DESIGN-002": {
+    "FORM-001": {
       "change": "added",
-      "summary": "2026-10-13: Draft-only design generation. Design with 12ui in a draft's email editor takes a brief prefilled from the draft (name, subject, preheader, sender name, current text, tokens removed), shows an estimate before drawing candidates and before preparing a layout, and runs in the background through queue commands design.draft and design.layout: candidates appear as they land and the run survives a reload. The chosen candidate's LayerDoc and PNG go through the DESIGN-004 browser path (hosted crops, operator's HTTPS button destination, managed footer, lines not in the brief highlighted) into an unsaved edit, already in the canonical form saving stores (CAMP-003), that replaces existing content only after confirmation; the operator's Save stores it through the ordinary normalised draft save path. A run never saves, approves, schedules or sends; a failed or overdue run (15-minute deadline, cron sweep and read-time check) shows Mango's own reason and changes nothing; no substitute content. Proved locally on workerd, D1, R2 and the local queue with a stand-in 12ui server at the network edge; no live 12ui run was made. 2026-10-13 (amended before release): each candidate image has its own Use this design button; choosing prepares the layout and then opens the import path by itself (a reload while preparing keeps that), with no separate step. The run stays ready while its design is only an unsaved edit and is recorded applied by the editor once the draft is saved with it, so Discard changes or a reload keeps the paid designs on offer and reusing the prepared design buys nothing; closing the import path keeps the run, and in that tab the design no longer opens by itself. A run waiting out a 12ui rate limit (Retry-After) shows an alert with the time Mango asks again (migration 0041); a spent allowance (429 without Retry-After), an empty wallet (402), 401, 5xx after three passes, a request past its deadline (30 s, 60 s for downloads, 150 s for a purchase) and an expired, failed or silent conversion fail promptly in Mango's words. Starting a run sets aside one whose candidates were still on offer. The Design with 12ui button stays visible, disabled while a run is working. 2026-10-13 (amended before release): a wait is shown only until the time Mango asks again, and is cleared as soon as 12ui answers that request, so while 12ui draws or converts the run shows its ordinary progress, never a refusal beside a design that has landed. 2026-10-13 (composer fixes, amended before release): the import path opens when a layout turns ready only as the continuation of Use this design, while the operator has pressed no key, pointer or wheel in the tab since; otherwise (for example while typing in the body, which it used to interrupt by taking focus) the run shows a non-modal notice whose button opens it, and focus lands on the destination field. A failed layout step keeps the run and its drawn designs on offer: it says which step failed and whether the allowance or wallet is the cause, and offers Try the layout again (a new paid layout, layout_round, migration 0042) and Choose a different design; a failed draft step keeps any designs already drawn usable. Starting another run no longer sets aside one whose designs were on offer: earlier runs with drawn designs stay reachable under Earlier designs (GET design-jobs returns them as earlier), and the brief dialog says so. A wait on 12ui stays shown until 12ui answers, as calm muted text with a relative time (the rate limit keeps role=alert), so the panel no longer flips between being drawn and did not answer. Each candidate links to its full-size image. Security: no new data leaves; a retry is one new purchase under a new idempotency key and cost-fact key, shown with its estimate first, and replays of a try still buy nothing."
+      "summary": "Hosted and embedded signup. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
     },
-    "DESIGN-003": {
+    "FORM-002": {
       "change": "added",
-      "summary": "2026-10-13: Design data and records. 12ui receives only Mango's fixed email-layout description with the operator's brief (every {{...}} token removed) and then only the chosen candidate PNG; never contacts, audience data, personalisation values or tokens. Every paid POST carries an Idempotency-Key derived from the run (mango-design-<run>-draft, -draft-<slot>, -layout-<slot>), so retries and replays never buy twice. design_jobs and design_candidates (migration 0040) record brief, provider run and layout IDs, candidate outcomes, SHA-256 and sizes, choice, operator, times and safe failure codes, and are never deleted; candidate PNGs and the LayerDoc live in R2 under design-jobs/<run>/ and are exported (DATA-001); briefs are redacted by contact erasure like campaign text. Security: 12ui answers are validated (shapes; candidate PNGs by header, a streamed 40 MB cap and at most 4,096 pixels a side; the LayerDoc by a streamed 2 MB cap, its published digest and version 2; a redirect followed only by a read and only on the configured origin, so the key never goes to another host) and reach email only through the DESIGN-004 compiler and MSG-009/MSG-012 checker; 12ui error text is never stored or shown; candidates are served only to signed-in operators. 2026-10-13 (amended before release): additive migration 0041 records a waiting run's reason (provider_quota or provider_unavailable) and next request time, cleared when 12ui answers; a retry keeps the run's idempotency keys, and the cron never resumes a run before that time. 2026-10-13 (hardening): every JSON answer from 12ui (create, purchase, run read, convert start and status) is read with a streamed 64 KB cap, refused unread past a declared length and cancelled where a stream passes it, as provider_invalid; before, those answers were read whole without a limit. Security: a hostile or broken service can no longer fill the Worker's memory through a JSON answer. 2026-10-13 (composer fixes, amended before release): additive migration 0042 adds design_jobs.layout_round; a layout the operator asks for again after a failed layout step uses Idempotency-Key mango-design-<run>-layout-<slot>-<round> and its own RESULT-004 cost fact, while round 0 keeps the earlier keys."
+      "summary": "Popups, flyouts and full-page forms. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "BASE-DATA-005": {
-      "change": "changed",
-      "summary": "2026-10-13: Deliberate requirement change (owner decision D5a). 12ui's packages name Just Every as author and Mango's public source is just-every/mango, so the literal baseline text would forbid any request to it. Replacement: no request to the marketplace or the seed author; a design service the owner configured with the owner's own credentials in the default-off design module (DESIGN-001), contacted only for a design run an operator started, is not a request to the seed author. Those requests are the run's purchases and reads, the chosen candidate's layout and the cron resuming those runs, and carry only DESIGN-003 data. No telemetry, phone-home, licence check or kill switch; with the module absent no request to 12ui at all. Security consequences: the owner's key is a Worker secret never sent to the browser, logs or exports; any operator can spend from the owner's 12ui account (estimates shown, costs recorded, no Mango cap per D6a); briefs and chosen images go to 12ui and its sub-processors (OpenAI, fal.ai, Google, Cloudflare) and may be kept in 12ui's evaluation corpus until deletion is requested. Residual: 12ui's terms do not address a personal key held as a server secret used by teammates. 2026-10-13 (amended before release): the CONTRACT.md introduction now names this amendment beside CONT-013's supersession of BASE-DATA-003, and the phase-3 import text is scoped to import, which itself makes no request to 12ui. 2026-10-16: Managed auth and subscription confirmations use the explicitly selected RER relay with its private server credential. Optional separate MARKETING_MAIL_PROVIDER=sendgrid|resend and MARKETING_MAIL_API_KEY bind the owner\u2019s marketing connection; no relay credential or identity grants newsletter authority."
-    },
-    "RESULT-004": {
-      "change": "changed",
-      "summary": "2026-10-13: Design runs record external_cost_facts with provider 12ui, operation design-draft (tier standard, one unit per candidate bought) or design-layout (tier fast, one unit) and the campaign ID, once per idempotency key: a candidate image when 12ui answers its purchase or a later read shows the slot bought (a purchase whose answer timed out counts once 12ui shows it happened, never otherwise), the layout when 12ui answers the convert request. 12ui reports no per-request price, so reported cost stays empty; estimates shown to operators use 12ui's 12 October 2026 list prices."
-    },
-    "STORE-002": {
+    "FORM-003": {
       "change": "added",
-      "summary": "Shopify receipts, source versions and observation identities make repeated or reordered ingestion idempotent; source history and channel coverage remain inspectable."
+      "summary": "Multi-step capture and incentives. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "STORE-005": {
+    "FORM-004": {
       "change": "added",
-      "summary": "Approval and final handoff require current source authority; incomplete or stale Shopify coverage cannot become an empty eligible audience."
+      "summary": "Landing pages. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "STORE-006": {
+    "FORM-005": {
       "change": "added",
-      "summary": "Shopify source and observation coverage is declared explicitly; unavailable cart or browsing evidence blocks dependent rules."
+      "summary": "Form performance and tests. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "CONT-007": {
+    "FORM-006": {
       "change": "added",
-      "summary": "Mobile Message inbound opt-out/help and consent-confirmation service handling uses durable single-attempt custody; marketing never creates consent."
+      "summary": "Referral program. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "SEND-002": {
+    "FORM-007": {
       "change": "added",
-      "summary": "SMS handoff enforces recipient-local quiet hours, current programme policy and destination-wide frequency ownership; uncertain attempts retain ownership."
+      "summary": "Abuse resistance. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
     },
-    "RESULT-002": {
+    "FORM-008": {
       "change": "added",
-      "summary": "Open estimates are off by default and explicitly enabled in Insights. They remain privacy-sensitive estimates, never delivery, attribution or confidence evidence; open requests retain no IP address or user agent. Changing open estimates is blocked while approved email has unsent work; finish or cancel that work before changing the setting."
+      "summary": "Signup intake capacity. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "RESULT-003": {
+    "FORM-009": {
       "change": "added",
-      "summary": "Commerce attribution uses the last non-automated tracked click within seven days before purchase, assigns at most once per order and keeps gross, refund and cancellation amounts current even when customer links change."
+      "summary": "Kiosk and event forms. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
     },
-    "RESULT-005": {
+    "FORM-010": {
       "change": "added",
-      "summary": "Open tracking has revocable generation-bound recipient-step tokens. Campaign images remain shared untracked assets; clicks and open estimates are separate observations."
+      "summary": "Refused signups are never silent. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "MSG-001": {
+    "SEG-001": {
       "change": "added",
-      "summary": "Managed newsletter mail requires the saved business sender and its own verified SendGrid/Resend marketing connection beside transactional RER mail; reply-to, physical address and unsubscribe requirements remain mandatory."
+      "summary": "Segment builder. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
     },
-    "MSG-002": {
+    "SEG-002": {
       "change": "added",
-      "summary": "Marketing sender checks use marketing-provider and DNS authentication evidence; Managed transactional relay authority cannot substitute for it."
+      "summary": "Live membership. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "SEND-003": {
+    "SEG-003": {
       "change": "added",
-      "summary": "Cross-worker pacing and rolling reservation ledgers bound email/SMS handoffs across restarts; migration 0054 quarantines legacy pacing rows for their final minute."
+      "summary": "RFM and lifecycle stages. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
     },
-    "SEND-004": {
+    "SEG-004": {
       "change": "added",
-      "summary": "Definite nonacceptance alone is retry-safe within the deadline; a provider credential digest fences reconciliation and prevents switching credentials to resend uncertainty."
+      "summary": "Predictions. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "SEND-009": {
+    "SEG-005": {
       "change": "added",
-      "summary": "Durable provider holds, health probes and per-operator outage notifications preserve paused delivery and observed recovery; scheduler observations record actual Worker scheduled entries only."
+      "summary": "Engagement and lead scoring. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
-    "PUB-001": {
+    "SEG-006": {
       "change": "added",
-      "summary": "2026-10-18: Completed email revisions with a recorded hand-off can be explicitly published as independent neutral public reading copies. The index, paged older issues, RSS and metadata contain no contact resolution, unsubscribe token or tracked redirect. Unpublish removes public availability; literal contact data remains covered by CONT-013."
+      "summary": "Campaign and flow activity conditions. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-001": {
+      "change": "added",
+      "summary": "Drag-and-drop email builder. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-002": {
+      "change": "added",
+      "summary": "Template library. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "BUILD-003": {
+      "change": "added",
+      "summary": "Brand kit. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-004": {
+      "change": "added",
+      "summary": "Reusable blocks. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-005": {
+      "change": "added",
+      "summary": "Conditional content. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-006": {
+      "change": "added",
+      "summary": "Dynamic product content. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-007": {
+      "change": "added",
+      "summary": "Coupons. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-008": {
+      "change": "added",
+      "summary": "Previews and pre-send checks. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
+    },
+    "BUILD-009": {
+      "change": "added",
+      "summary": "SMS and MMS composer. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "BUILD-010": {
+      "change": "added",
+      "summary": "Mobile layout the checker can prove. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-011": {
+      "change": "added",
+      "summary": "Chosen catalog products. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "BUILD-012": {
+      "change": "added",
+      "summary": "Email size the builder and imported templates fit in. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "FLOW-001": {
+      "change": "added",
+      "summary": "Visual flow builder. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-002": {
+      "change": "added",
+      "summary": "Triggers. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-003": {
+      "change": "added",
+      "summary": "Entry filters and re-entry. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-004": {
+      "change": "added",
+      "summary": "Delays and waits. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-005": {
+      "change": "added",
+      "summary": "Splits. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-006": {
+      "change": "added",
+      "summary": "Actions. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-007": {
+      "change": "added",
+      "summary": "Exits and goals. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-008": {
+      "change": "added",
+      "summary": "Reviewed activation. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-009": {
+      "change": "added",
+      "summary": "Per-send rechecks. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-010": {
+      "change": "added",
+      "summary": "Exactly-once execution. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-011": {
+      "change": "added",
+      "summary": "Pause, manual review and stop. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-012": {
+      "change": "added",
+      "summary": "Flow library. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-013": {
+      "change": "added",
+      "summary": "Flow analytics and path inspection. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-014": {
+      "change": "added",
+      "summary": "Priority and cross-message frequency. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-015": {
+      "change": "added",
+      "summary": "Sequences. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "FLOW-016": {
+      "change": "added",
+      "summary": "Flow portability. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "EXP-001": {
+      "change": "added",
+      "summary": "Campaign A/B tests. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "EXP-002": {
+      "change": "added",
+      "summary": "Multivariate tests. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "EXP-003": {
+      "change": "added",
+      "summary": "Flow splits and flow holdouts. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "EXP-004": {
+      "change": "added",
+      "summary": "Global holdout. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "EXP-005": {
+      "change": "added",
+      "summary": "Honest test statistics. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "EXP-006": {
+      "change": "added",
+      "summary": "Send-time optimization. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "SMS-001": {
+      "change": "added",
+      "summary": "US SMS through Twilio. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "SMS-002": {
+      "change": "added",
+      "summary": "Carrier registration status. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "SMS-003": {
+      "change": "added",
+      "summary": "US quiet hours and state rules. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "SMS-004": {
+      "change": "added",
+      "summary": "Two-way SMS inbox. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "SMS-005": {
+      "change": "added",
+      "summary": "Branded short links and MMS. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "SMS-006": {
+      "change": "added",
+      "summary": "SMS cost control. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "SMS-007": {
+      "change": "added",
+      "summary": "WhatsApp marketing messages. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "SMS-008": {
+      "change": "added",
+      "summary": "Twilio connection an owner makes in Settings. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "PUSH-001": {
+      "change": "added",
+      "summary": "Web push. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "PUSH-002": {
+      "change": "added",
+      "summary": "Mobile app push and in-app messages. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "DELIV-001": {
+      "change": "added",
+      "summary": "Sending providers. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "DELIV-002": {
+      "change": "added",
+      "summary": "Domain setup. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "DELIV-003": {
+      "change": "added",
+      "summary": "Bulk-sender compliance dashboard. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "DELIV-004": {
+      "change": "added",
+      "summary": "Domain warm-up. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
     },
     "DELIV-005": {
       "change": "added",
-      "summary": "2026-10-18: Insights splits signed email outcomes and human clicks by the mailbox domain saved at send time, and classifies each message\u2019s latest signed bounce into invalid address, mailbox full, policy block, reputation, content or other. Bounded SendGrid and Resend diagnostics are retained without changing suppression or transport semantics. Missing historical diagnostics remain explicitly unclassified; erased details are not reconstructed."
+      "summary": "Mailbox-provider breakdown. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
+    },
+    "DELIV-006": {
+      "change": "added",
+      "summary": "Address quality at intake. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "DELIV-007": {
+      "change": "added",
+      "summary": "Sender evidence renewal without stopping live flows. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "DELIV-008": {
+      "change": "added",
+      "summary": "Sending connection an owner makes in Settings. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "REPORT-001": {
+      "change": "added",
+      "summary": "Overview dashboard. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "REPORT-002": {
+      "change": "added",
+      "summary": "Campaign and flow performance tables. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "REPORT-003": {
+      "change": "added",
+      "summary": "Attribution for campaigns, flows and SMS. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "REPORT-004": {
+      "change": "added",
+      "summary": "Customer and retention analytics. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
+    },
+    "REPORT-005": {
+      "change": "added",
+      "summary": "List growth and consent sources. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "REPORT-006": {
+      "change": "added",
+      "summary": "Scheduled and custom reports. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "REPORT-007": {
+      "change": "added",
+      "summary": "Usage and cost transparency. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "INT-001": {
+      "change": "added",
+      "summary": "Shopify. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "INT-002": {
+      "change": "added",
+      "summary": "WooCommerce. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-003": {
+      "change": "added",
+      "summary": "BigCommerce. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-004": {
+      "change": "added",
+      "summary": "Stripe. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-005": {
+      "change": "added",
+      "summary": "Square. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-006": {
+      "change": "added",
+      "summary": "Stall and Orbit. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-007": {
+      "change": "added",
+      "summary": "Events and profiles API. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "INT-008": {
+      "change": "added",
+      "summary": "Outbound webhooks. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-009": {
+      "change": "added",
+      "summary": "Zapier and Crank. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-010": {
+      "change": "added",
+      "summary": "Segment. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-011": {
+      "change": "added",
+      "summary": "CRM sync. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "INT-012": {
+      "change": "added",
+      "summary": "Ad audiences. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-013": {
+      "change": "added",
+      "summary": "Web analytics tagging. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-014": {
+      "change": "added",
+      "summary": "Reviews and loyalty apps. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "INT-015": {
+      "change": "added",
+      "summary": "Shopify connection a merchant installs. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "MOVE-001": {
+      "change": "added",
+      "summary": "From Mailchimp. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "MOVE-002": {
+      "change": "added",
+      "summary": "From Klaviyo. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "MOVE-003": {
+      "change": "added",
+      "summary": "From ActiveCampaign. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "MOVE-004": {
+      "change": "added",
+      "summary": "From Kit (ConvertKit). Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "MOVE-005": {
+      "change": "added",
+      "summary": "From beehiiv, Omnisend and Customer.io. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "MOVE-006": {
+      "change": "added",
+      "summary": "Reconciliation and cutover. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "MOVE-007": {
+      "change": "added",
+      "summary": "Mailchimp saved segments. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "MOVE-008": {
+      "change": "added",
+      "summary": "Mailchimp automations and Customer Journeys. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "MOVE-009": {
+      "change": "added",
+      "summary": "Incumbent engagement history. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "MOVE-010": {
+      "change": "added",
+      "summary": "Several audiences. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "MOVE-011": {
+      "change": "added",
+      "summary": "Incumbent template conversion. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "MOVE-012": {
+      "change": "added",
+      "summary": "Move-in at the buyer's scale. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "MOVE-013": {
+      "change": "added",
+      "summary": "Two-way sync during the parallel run. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "MOVE-014": {
+      "change": "added",
+      "summary": "Incumbent images brought home. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "MOBILE-001": {
+      "change": "added",
+      "summary": "Responsive operator app. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "MOBILE-002": {
+      "change": "added",
+      "summary": "Native iOS and Android app. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "PUB-001": {
+      "change": "added",
+      "summary": "Web archive. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: done."
+    },
+    "PUB-002": {
+      "change": "added",
+      "summary": "Paid newsletters. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "PUB-003": {
+      "change": "added",
+      "summary": "Recommendations. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "PUB-004": {
+      "change": "added",
+      "summary": "Direct sponsorships. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "AGENT-001": {
+      "change": "added",
+      "summary": "Retention-gap finder. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "AGENT-002": {
+      "change": "added",
+      "summary": "Journey proposal with holdout and stop rules. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "AGENT-003": {
+      "change": "added",
+      "summary": "Outcome judge. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "AGENT-004": {
+      "change": "added",
+      "summary": "Lifecycle failure diagnosis and repair. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "AGENT-005": {
+      "change": "added",
+      "summary": "Deliverability diagnostician. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "AGENT-006": {
+      "change": "added",
+      "summary": "Account audit. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "AGENT-007": {
+      "change": "added",
+      "summary": "Grounded content drafting. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "AGENT-008": {
+      "change": "added",
+      "summary": "Natural-language segments and questions. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "AGENT-009": {
+      "change": "added",
+      "summary": "Standing routines with memory. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "AGENT-010": {
+      "change": "added",
+      "summary": "Agent authority and guardrails. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: partial."
+    },
+    "AGENT-011": {
+      "change": "added",
+      "summary": "Migration agent. Target clause added to the full email and SMS marketing contract on 17 October 2026; status at 0.3.0: missing."
+    },
+    "OPER-001": {
+      "change": "changed",
+      "summary": "Operators and the default role. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "STORE-001": {
+      "change": "changed",
+      "summary": "Store and event connections. Clause text amended since 0.2.0; status at 0.3.0: partial."
+    },
+    "STORE-005": {
+      "change": "changed",
+      "summary": "Stale sources block approval. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CONT-003": {
+      "change": "changed",
+      "summary": "Consent evidence. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CONT-004": {
+      "change": "changed",
+      "summary": "Opt-out precedence. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CONT-005": {
+      "change": "changed",
+      "summary": "Resubscription. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CONT-006": {
+      "change": "changed",
+      "summary": "Email suppression. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CONT-007": {
+      "change": "changed",
+      "summary": "SMS compliance replies. Clause text amended since 0.2.0; status at 0.3.0: partial."
+    },
+    "CONT-008": {
+      "change": "changed",
+      "summary": "Contact history. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CONT-009": {
+      "change": "changed",
+      "summary": "Confirmation. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CONT-010": {
+      "change": "changed",
+      "summary": "Import. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CONT-012": {
+      "change": "changed",
+      "summary": "Dormancy without deletion. Clause text amended since 0.2.0; status at 0.3.0: partial."
+    },
+    "CONT-013": {
+      "change": "changed",
+      "summary": "Erasure and surviving opt-out. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "PROP-003": {
+      "change": "changed",
+      "summary": "Counts. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "AUD-003": {
+      "change": "changed",
+      "summary": "Commerce and dormancy exclusions. Clause text amended since 0.2.0; status at 0.3.0: partial."
+    },
+    "AUD-004": {
+      "change": "changed",
+      "summary": "Frequency protection. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "AUD-006": {
+      "change": "changed",
+      "summary": "Multi-step exit. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CAMP-001": {
+      "change": "changed",
+      "summary": "States. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CAMP-002": {
+      "change": "changed",
+      "summary": "Draft editing. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CAMP-003": {
+      "change": "changed",
+      "summary": "Revision preview. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CAMP-004": {
+      "change": "changed",
+      "summary": "Approval checks. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CAMP-008": {
+      "change": "changed",
+      "summary": "Test send. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "CAMP-009": {
+      "change": "changed",
+      "summary": "Cancellation. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "DESIGN-003": {
+      "change": "changed",
+      "summary": "Design data and records. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "MSG-005": {
+      "change": "changed",
+      "summary": "SMS opt-out. Clause text amended since 0.2.0; status at 0.3.0: partial."
+    },
+    "MSG-006": {
+      "change": "changed",
+      "summary": "Links. Clause text amended since 0.2.0; status at 0.3.0: partial."
+    },
+    "MSG-007": {
+      "change": "changed",
+      "summary": "Content checks. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "MSG-008": {
+      "change": "changed",
+      "summary": "Personalization. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "MSG-009": {
+      "change": "changed",
+      "summary": "Email body. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "SEND-002": {
+      "change": "changed",
+      "summary": "Quiet hours. Clause text amended since 0.2.0; status at 0.3.0: partial."
+    },
+    "RESULT-002": {
+      "change": "changed",
+      "summary": "Engagement. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "RESULT-005": {
+      "change": "changed",
+      "summary": "Link tracking. Clause text amended since 0.2.0; status at 0.3.0: partial."
+    },
+    "MGMT-002": {
+      "change": "changed",
+      "summary": "Native owner editor. Clause text amended since 0.2.0; status at 0.3.0: done."
+    },
+    "OPER-003": {
+      "change": "changed",
+      "summary": "Removal does not rewrite history. Status changed by the 0.3.0 release gate from done to partial: removal revoking sessions is tested and operators are soft-removed, but retained attribution after removal has no test since 15 October 2026."
     }
   },
   "extensionPointChanges": [],
   "migrations": [
     {
-      "id": "0013_sender_verification.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0058_base_provider_control.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0014_sender_verification_reconcile_cursor.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0059_base_provider_pins.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0015_base_operator_auth.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0060_base_owner_signin.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0016_invitation_cancellation.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0061_base_dependency_setup.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0017_sender_settings.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0062_base_dependencies.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0018_audience_import.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0063_base_dependency_approval.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0019_base_import_kit.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0064_base_idp_claim.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0020_audience_import_plan_chunks.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0065_base_import_progress.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0021_base_import_chunk_custody.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0066_campaign_reuse.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0022_local_mail_outbox.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0067_campaign_link_identity.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0024_signup_settings.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
+      "id": "0068_campaign_followups.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
-      "id": "0025_base_import_preserved_undo.sql",
-      "buyerSteps": "Back up the matching data and private settings, then apply all pending migrations in filename order before starting this release."
-    },
-    {
-      "id": "0026_base_portability.sql",
-      "buyerSteps": "Apply after existing migration 0025. Back up matching data and private settings before the first export or restore."
-    },
-    {
-      "id": "0027_operator_attribution.sql",
-      "buyerSteps": "Apply after 0026. Historical Mango profiles retain attribution; Base operator-auth remains the sole login authority."
-    },
-    {
-      "id": "0028_base_owner_claim.sql",
-      "buyerSteps": "Back up matching data/private settings and apply after 0027. Existing operators and bootstrap state remain unchanged; signed admission is available only for an unclaimed installation."
-    },
-    {
-      "id": "0029_base_import_staging.sql",
-      "buyerSteps": "Back up D1 and its matching private settings, then apply in filename order after 0028 before starting the refreshed import runtime. These additive Base schemas preserve prior migration history and product records. Recover by restoring the matching source, D1 and R2 backup together; do not drop new custody tables from an active import."
-    },
-    {
-      "id": "0030_base_import_custody.sql",
-      "buyerSteps": "Back up D1 and its matching private settings, then apply in filename order after 0028 before starting the refreshed import runtime. These additive Base schemas preserve prior migration history and product records. Recover by restoring the matching source, D1 and R2 backup together; do not drop new custody tables from an active import."
-    },
-    {
-      "id": "0031_dev_sessions.sql",
-      "buyerSteps": "Keep the already applied migration unchanged. It preserves existing sessions while allowing key-gated local dev sessions."
-    },
-    {
-      "id": "0032_auth_domain_rules_step_up.sql",
-      "buyerSteps": "Back up D1 and matching private settings, then apply after 0031 before starting the refreshed Base auth runtime. This additive schema supplies domain-rule lookup required by ordinary email sign-in and step-up challenge storage. Existing owners, sessions and product records remain unchanged; recover with the matching source and data backup."
-    },
-    {
-      "id": "0033_saved_segments.sql",
-      "buyerSteps": "Back up matching D1/R2 and private settings, then apply after 0032. The additive segment table preserves existing operators, imports, contacts and saved/approved campaigns. Recover with matching source and data backups."
-    },
-    {
-      "id": "0034_contact_erasure.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0033 before starting this runtime. The additive erasure progress and write-fence schema preserves operators, contacts, imports and saved/approved campaigns. Keep CONTACT_HASH_SALT unchanged. Finish pending erasures through their receipt before other audience work; recover source and data together, never drop pending custody tables. It adds name-history triggers; no existing historical names are invented."
-    },
-    {
-      "id": "0035_opt_out_reasons.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0034 before starting this runtime. It replaces the one-record-per-address opt-out index with one record per address, channel and reason; existing rows are kept unchanged. Recover with the matching source and data backup."
-    },
-    {
-      "id": "0036_archive_move_in.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0035 before starting this runtime. The additive tables hold archive move-in custody, the immutable entry list and imported history and draft starters; existing operators, contacts, imports and saved or approved campaigns are unchanged and the installation signs straight into /app. Recover with the matching source and data backup."
-    },
-    {
-      "id": "0037_import_observation_name.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0036 before starting this runtime. It adds one nullable column that keeps the name a contact had in an imported file; existing observations, contacts and imports are unchanged. Recover with the matching source and data backup."
-    },
-    {
-      "id": "0038_portable_opt_out_hashes.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0037 before starting this runtime. The additive table records the export's portable hash of each address an opt-out or suppression names; existing contacts, opt-outs, suppressions and imports are unchanged. Restrictions written before it whose contact is already gone cannot be exported by that hash. Recover with the matching source and data backup."
-    },
-    {
-      "id": "0039_campaign_assets.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0038 before starting this runtime. The additive table records campaign images stored in the existing R2 bucket; its records refuse update and deletion. Existing data is unchanged. Recover with the matching source and data backup."
-    },
-    {
-      "id": "0040_design_jobs.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0039 before starting this runtime. The additive tables record design runs and their candidates for the optional design module; they stay empty until DESIGN_PROVIDER_API_KEY and DESIGN_PROVIDER_ORIGIN are set. Existing data is unchanged. Recover with the matching source and data backup."
-    },
-    {
-      "id": "0041_design_job_waits.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0040 before starting this runtime. The two additive nullable columns on design_jobs record why a design run waits on 12ui and when Mango asks again; existing rows keep NULL and nothing else changes. Recover with the matching source and data backup."
-    },
-    {
-      "id": "0042_design_layout_rounds.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0041 before starting this runtime. The additive column design_jobs.layout_round (default 0) counts the layouts an operator asks for again after a failed layout step; existing rows keep 0, whose keys are unchanged, and nothing else changes. Recover with the matching source and data backup."
-    },
-    {
-      "id": "0043_local_auth_setup.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0042_design_layout_rounds.sql before starting this runtime. Adds Base auth settings and the bootstrap trigger, initializing previously claimed installations as setup-complete without rewriting accounts or sessions. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0044_source_erasure_floors.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings and stop prior runtime work; apply after 0043. All prior transfer jobs and legacy row journals are retired after every known source floor advances. The first HTTP request or native transfer completes idempotent dynamic-copy and unfinished-object cleanup before work proceeds. Run rer build after upgrading, then make a fresh post-upgrade export; nonempty legacy journals cannot be imported. Existing product records and surviving opt-outs are preserved. Do not downgrade or recover older data without accounting for subsequent erasure."
-    },
-    {
-      "id": "0045_proposal_decision_context.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0044_source_erasure_floors.sql before starting this runtime. Adds proposal decision_context_json with an empty-object default; existing proposals keep their recorded evidence and gain no approval authority. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0047_external_cost_usage.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0045_proposal_decision_context.sql before starting this runtime. Adds explicit known/unknown external usage, unit kind and outcome plus a day index; existing usage rows are classified by operation without inventing a reported price. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0048_authored_explanation_provenance.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0047_external_cost_usage.sql before starting this runtime. Adds nullable timing provenance and empty authored-exclusion reasons. Legacy explanations retain unknown origin; saving does not silently relabel them as operator-authored. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0049_scheduler_observations.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0048_authored_explanation_provenance.sql before starting this runtime. Adds installation-local scheduler observations. Existing campaigns are unchanged; deploys and page reads do not fabricate scheduled-run evidence. These observations are not portable. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0050_delivery_authority.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0049_scheduler_observations.sql before starting this runtime. Adds durable pacing, provider holds, health, outage notification custody and account-event identities plus recipient sender/first-attempt columns. Backfills known first attempts, marks older duplicate open outages recovered and replaces the open-outage index with a unique active-outage index; prior delivery facts remain history. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0051_shopify_connection.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0050_delivery_authority.sql before starting this runtime. Adds Shopify receipts, observation/channel/privacy/coverage tables and snapshot/version columns; backfills source versions and activity keys, replacing the activity identity index to include activity_key. Existing records remain; commerce stays disabled until its complete input group is configured. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0052_sms_service.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0051_shopify_connection.sql before starting this runtime. Adds Mobile Message service-message custody, inbound receipts, consent handoff claims, frozen SMS programme approvals and destination-wide frequency ownership. Existing consent is unchanged and SMS stays disabled without complete configuration. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0053_commerce_attribution.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0052_sms_service.sql before starting this runtime. Adds commerce order/refund ledgers, attribution views/triggers, erasure guards and monotonic source-authority generation. Existing source records are preserved; recorded provider facts, never invented order totals, drive attribution. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0054_transport_window_authority.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0053_commerce_attribution.sql before starting this runtime. Adds rolling pacing reservations and credential/provider bindings for recipient attempts and outage notifications. Advances legacy provider_pacing.next_at to at least updated_at plus one minute; allow this deliberate quarantine before new handoffs. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0055_attribution_amounts_follow_orders.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0054_transport_window_authority.sql before starting this runtime. Adds the order-amount view and triggers and replaces the attribution view so later refunds and cancellations update already attributed orders even after their customer link changes. Existing attribution identities remain intact. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0056_optional_open_estimates.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0055_attribution_amounts_follow_orders.sql before starting this runtime. Adds open-estimate settings, generation-bound tokens and facts. Open tracking is off for existing installations until an operator explicitly enables it; shared campaign images remain untracked. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0057_signup_embed_origins.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0056_optional_open_estimates.sql before starting this runtime. Adds signup embed_origins with an empty allowlist. After upgrading, add each site that embeds your form under Audience \u2192 Allowed embed origins; existing iframes stop loading until allowed. Direct /subscribe stays available. Do not restore unrestricted framing. Recover with the matching source and data backup; account for any later erasure before restoring."
-    },
-    {
-      "id": "0058_owner_signin.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0057_signup_embed_origins.sql before starting this runtime. Adds hashed, single-use owner-signin grant custody for rer signin. Existing operators and sessions are unchanged; grants require deployment-owner credentials and expire within fifteen minutes. Recover with the matching source and data backup; account for any later erasure before restoring. Pinned rer 0.2.22 prints the grant when rer signin is used; the owner prohibits that recovery path pending a Base change. Use delivered sign-in mail after correcting Configure."
-    },
-    {
-      "id": "0059_link_host_settings.sql",
-      "buyerSteps": "Back up matching source, D1/R2 and private settings, then apply after 0058_owner_signin.sql before starting this runtime. Adds saved link-host settings. Existing environment hosts remain authoritative until an operator saves Settings; review the hosts needed by your newsletter links before approval. Recover with the matching source and data backup; account for any later erasure before restoring."
+      "id": "0069_scoped_integrations.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
       "id": "0070_newsletter_archive.sql",
-      "buyerSteps": "Back up matching source, data and private settings, then apply after 0069. This additive table stores explicitly published neutral reading copies and is included in discovered D1 exports and contact erasure. Existing campaigns and delivery records are unchanged."
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
     },
     {
       "id": "0071_mailbox_reporting_indexes.sql",
-      "buyerSteps": "Apply in filename order after 0070. These additive reporting-window indexes preserve all existing source, recipient and provider records. Back up matching source, data and private settings before upgrading."
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0072_test_send_allowance.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0073_list_growth.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0074_list_growth_retained_history.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0075_kiosk_forms.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged."
+    },
+    {
+      "id": "0076_operator_product_roles.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds product roles: the existing owner becomes the product Owner and every other operator starts as Admin until the owner assigns a role."
     }
   ],
   "breaking": true,
-  "agentUpdateInstructions": "Preserve owner customizations, applied migration bytes and matching source/D1/R2/private-settings backups. Mango 0.2.0 uses pinned @runeditrun/rer 0.2.22, Node 22.20.0 and pnpm 10.12.4. Stop dev and writers before upgrade or data operations. Export and back up private inputs before updating; merge or reapply customizations deliberately. Run rer install, apply migrations in filename order through 0059 (0023 and 0046 are intentional gaps), then rer build before the fresh post-upgrade export. 0044 deliberately retires legacy transfer journals and advances source-wide erasure floors: preserve surviving opt-outs and current matching erasure authority; never restore stale archives or downgrade without accounting for later erasure. 0057 starts with no allowed iframe origins: add each embedding site under Audience \u2192 Allowed embed origins. Preserve saved sender identity, contact secret, consent, suppression, immutable revisions, approvals and uncertain-handoff fences. Managed MAIL_PROVIDER=rer retains auth/confirmation relay mail; newsletters require the optional separate SendGrid/Resend MARKETING_MAIL_PROVIDER and MARKETING_MAIL_API_KEY plus provider-specific webhook inputs and verified business sender. Absent marketing configuration must block newsletter approval. Local rer dev prints a private RER_OPEN development-key entry for native browser admission without email; it is distinct from an emailed one-use sign-in link. Do not expose captured inbox/outbox pages. Pinned rer 0.2.22 still prints its one-use owner grant for rer signin; the owner prohibits using that recovery path pending a Base change. Correct Configure and use delivered mail for hosted access. Use routine rer verify and affected public-flow checks; the release receipt runs the committed routine verify only, with no separate capacity profile. Push Verify is sharded; slow fresh-install/README clone journeys run on release tags and nightly. Keep exact-revision timings and evidence outside product source; local proof is not hosted acceptance. Refresh source:lock and integration declarations for intentional source changes. Rer deploy retains the existing owner; preserve environment inputs, resource IDs and deployment receipt. Public tag creation, deployment and hosted provider acceptance require their actual authorized execution; metadata alone proves none of them.",
-  "publicReleaseNotes": "Mango 0.2.0 (16 October 2026) updates the approval-first newsletter desk with optional Shopify source ingestion, Mobile Message SMS, commerce attribution and explicit external usage, privacy-sensitive opt-in open estimates, saved link hosts and secure signup embed origins. After upgrading, add each embedding site under Audience \u2192 Allowed embed origins: existing iframes are blocked until allowed. Back up source, data and private settings, apply migrations in order and run rer build before making a fresh post-upgrade export; 0044 retires legacy journals and stale archives remain refused. Managed RER mail supplies sign-in and subscription confirmations; newsletters need a separate owner-supplied SendGrid or Resend marketing connection and verified business sender. Test sends may reach every active operator\u2019s sign-in address plus explicitly allowed extra destinations, widening who can receive unapproved draft content. Local browser admission uses the private RER_OPEN development-key entry without email or captured-mail pages. Pinned rer 0.2.22 still prints its one-use owner grant for rer signin; that recovery path is prohibited by the owner pending a Base change. Hosted access uses delivered email after correcting Configure. Changes to open estimates are blocked while approved email has unsent work; finish or cancel that work first. Delivery retains exact-revision approval, durable pacing, credential-bound uncertainty and scheduled-step authority; provider acceptance is never reported as delivery. Designed-email checks, campaign images, optional 12ui designs, archive move-in, consent-preserving imports and resumable contact erasure are included. Routine release verification has no capacity profile; push checks are sharded and slow installer/README clone journeys run on tags and nightly. Live provider activation, hosted restore, wider flagship coverage and scale remain separate evidence obligations; this record does not establish deployment or a completed tag."
+  "agentUpdateInstructions": "Preserve owner customizations, applied migration bytes and matching source/D1/R2/private-settings backups. Mango 0.3.0 uses pinned @runeditrun/rer 0.2.66, Node 22.20.0 and pnpm 10.12.4. Stop dev and writers before upgrading. Back up first, then git pull --ff-only (or merge/reapply customizations deliberately), rer install, and apply migrations 0058_base_provider_control through 0076_operator_product_roles in filename order (rer setup locally; rer deploy --environment NAME --owner-name NAME hosted). Earlier migration files are unchanged; 0058 and 0059 each have two files and apply by full name: never rename or renumber them. Run rer build before a fresh export. Breaking: the authenticated restore finalize (POST /api/portability/imports/:id/finalize) now requires the archive's closing archiveHash and refuses a changed archive with archive_checksum; update any HTTP client. 0076 adds product roles: the existing owner becomes Owner, every other operator starts as Admin; role grants are destination-owned and are not restored from an archive. Keep confirmed-only resubscription, consent and opt-out precedence, suppression, exact-revision approval and uncertain-handoff fences intact. Local rer dev admits the owner through the private RER_OPEN entry; never add a captured-mail inbox or outbox. Use affected public-flow checks and CI Verify; local proof is not hosted acceptance. Refresh source:lock and integration declarations for intentional source changes.",
+  "publicReleaseNotes": "Mango 0.3.0 (19 October 2026) adds operator roles (Owner, Admin, Manager, Author, Analyst, Support), pause and resume for scheduled campaigns, duplicating campaigns and templates, follow-ups to non-clickers, tests to typed addresses with a daily allowance, pre-send advisories and sent-size checks, a contact timeline, per-link clicks and recipients per outcome, a mailbox-provider breakdown, a public web archive of sent letters with RSS, kiosk signup for events, confirmation-only resubscription and scoped integration credentials. Restore now verifies the whole archive first, and HTTP restore clients must send archiveHash. Back up first: 19 additive migrations (0058-0076) apply in filename order and a 0.2.0 install keeps all its data. The homepage's \"team of equals\" line predates roles; new operators start as Admin. Hosted backup and restore are not built in, and Delivered, bounce and complaint reports need a SendGrid signed Event Webhook. Product screenshot: .github/assets/release/mango-contact-ledger-1600.png"
 }
