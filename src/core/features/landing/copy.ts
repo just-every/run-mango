@@ -90,7 +90,7 @@ export const copy = {
     features: [
       { icon: 'account', title: 'Your readers, your data', text: 'Your readers, letters and history stay in your own database.' },
       { icon: 'download', title: 'Export any time', text: 'Download your audience with its consent history as CSV, ready to import again.' },
-      { icon: 'team', title: 'A team of equals', text: 'Every operator has the same powers, and approvals and cancellations record who made them.' },
+      { icon: 'team', title: 'Roles for your team', text: 'The owner gives each operator one of six roles, and approvals and cancellations record who made them.' },
       { icon: 'code', title: 'Yours to change', text: 'MIT-licensed source you can customise with your own agents.' },
     ] satisfies Feature[],
     art: 'Your data, stamped with a mango, holding your database, job queue and mail settings, with a CSV sheet of readers and their consent sliding out as an export.',
