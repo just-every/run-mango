@@ -6889,6 +6889,78 @@
       "sha256": "02e9164c08c8a6a3f61ff66ac78db094fc4693dcc3e6d4c2b00f49e178daf29d",
       "executable": false
     },
+    "tests/evidence/allowed-host-approved-1440.png": {
+      "sha256": "3f4e72836cbe9410924a29cb44399ff316253997b2e12b26c01bcfa25f226ea1",
+      "executable": false
+    },
+    "tests/evidence/allowed-host-approved-390.png": {
+      "sha256": "8e6d385bbcaa6ba6cf8321feb901e5b05bdbb3abd0e41a5b4f10d3fcf0f4e960",
+      "executable": false
+    },
+    "tests/evidence/aud-003-review-1440.png": {
+      "sha256": "5cc7fef9a1df42c1c93aa4cef44db78f2e1f1410854ee2c609c4514fab541ab3",
+      "executable": false
+    },
+    "tests/evidence/aud-003-review-390.png": {
+      "sha256": "c31b64928deb4f8d246b08212215dea0bb3695047912c94a74fdae8b56cb634f",
+      "executable": false
+    },
+    "tests/evidence/blocked-host-1440.png": {
+      "sha256": "95e69991be346be1fda4435779d7c725c5d0a7d88fa25bffa82d2f5ebfa7d32c",
+      "executable": false
+    },
+    "tests/evidence/blocked-host-390.png": {
+      "sha256": "0c4f5d7277b0f244ad1bb7e22ebb187d23d3bb6eca6cc3baf32be8ad6c017a95",
+      "executable": false
+    },
+    "tests/evidence/imported-host-1-1440.png": {
+      "sha256": "6a1542e9a2ebbe7a9245aab2316f0fa63daafbd201f5cc64095e2222c1cfe43c",
+      "executable": false
+    },
+    "tests/evidence/imported-host-1-390.png": {
+      "sha256": "c96fc331dcc674cee2ced932b3b9dbab2e673eefe4775001ea5299aa5dd0055d",
+      "executable": false
+    },
+    "tests/evidence/imported-host-2-1440.png": {
+      "sha256": "cca1f83d79841db191ed51a09184efeb5c16d424580f65328a8e0508df2f676a",
+      "executable": false
+    },
+    "tests/evidence/imported-host-2-390.png": {
+      "sha256": "ad3f59fe1d2ded21d459d686bf9f90390683e05fcb41ec3e12ce3639d2eacc53",
+      "executable": false
+    },
+    "tests/evidence/imported-host-3-1440.png": {
+      "sha256": "9807935332ebd0626508a496606c9a3fb7c83ae055e297e80f21fd3d772dc70d",
+      "executable": false
+    },
+    "tests/evidence/imported-host-3-390.png": {
+      "sha256": "c0ed7475a17463de503bc5a7c591b5d0ec9461ff1b25bb117b8dfaf2b6b9cf30",
+      "executable": false
+    },
+    "tests/evidence/imported-hosts-1440.png": {
+      "sha256": "431474906673836b5fb45131dc624329514900da333d48c53b5ccf3657b961fd",
+      "executable": false
+    },
+    "tests/evidence/imported-hosts-390.png": {
+      "sha256": "688a4eb58d9cb98cd7b9592438f6bed1ab4ca8ceee0e155e58ef6403061594ac",
+      "executable": false
+    },
+    "tests/evidence/roles-retained-campaign-1440.png": {
+      "sha256": "576c5751168ed75346e72001daca16fdc63161206fa197aa3ece2971c1cfa095",
+      "executable": false
+    },
+    "tests/evidence/roles-retained-campaign-390.png": {
+      "sha256": "8ab2867b0e3b455ecca99342518d86162295914243d5b0edaeebf6f621da82ff",
+      "executable": false
+    },
+    "tests/evidence/roles-retained-review-1440.png": {
+      "sha256": "87bd1855d552efabc79c3432df864a0dfe93afdf81bed54a769b73b5315a06cb",
+      "executable": false
+    },
+    "tests/evidence/roles-retained-review-390.png": {
+      "sha256": "616d3ddae797faa1b36aceb8b269818a0339d2fe04776dcbf52c2aea86206ae3",
+      "executable": false
+    },
     "tests/go-live/clock.ts": {
       "sha256": "aa09dfc4c365ba765d84b6ac5d624946529d6032b2f06d44af5ac348d743b938",
       "executable": false
@@ -7066,7 +7138,7 @@
       "executable": false
     },
     "tests/go-live/stale-sources.journeys.ts": {
-      "sha256": "d6ae9dedfd9a56b2a5aa5a1b1321f0f5c42c20d1c1a59e12a82a1ce97d3e55b0",
+      "sha256": "0d63219fef6af1ff59789df58c7c445acede2165cc2782cc5d7bbf3420d2e8c1",
       "executable": false
     },
     "tests/go-live/typed-tests.journeys.ts": {
