@@ -241,12 +241,12 @@
       "why": "Mango needs the buyer's real customers, products, carts, browsing signals, orders, refunds, and inventory to identify and recheck opportunities.",
       "data": [
         "Webhook acknowledgements sent back to the store confirming receipt of an event",
-        "Explicit adapter requests for source records (customers, products, orders, refunds, carts, browsing events)"
+        "Explicit adapter requests for source records (customers, products, orders, refunds, carts, browsing events), including authenticated Stripe customer reads for payment, Checkout and subscription event identity"
       ],
       "adapters": [
         "commerce.store.v1"
       ],
-      "requiredWhen": "Corresponding optional module is enabled"
+      "requiredWhen": "Corresponding optional module or Settings Stripe connection is enabled"
     },
     {
       "id": "ai-provider",

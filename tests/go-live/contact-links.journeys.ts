@@ -1,10 +1,11 @@
+import {domainJourney} from './domain-journey';
 import { test, expect } from '@playwright/test';
 import { providerEdge } from './edge';
 import { eventSigner } from './sendgrid-events';
 import { installation, json, sender, confirmedContact, draftCampaign, approve, dispatch } from './harness';
 import { openPage, reloadPage } from '../support/navigation';
 
-test('[MSG-013] contact links survive authoring, exact approval and delivery without tracking', async ({page}, info) => {
+test('[DELIV-002][MSG-013] contact links survive authoring, exact approval and delivery without tracking', async ({page}, info) => {
   const edge = await providerEdge(), site = await installation(edge, eventSigner());
   try {
     const cookie = await site.open();
@@ -77,5 +78,6 @@ test('[MSG-013] contact links survive authoring, exact approval and delivery wit
     expect(html).not.toContain('/l/');
     expect(await site.count('tracked_links')).toBe(0);
     expect(await site.count('link_click_facts')).toBe(0);
+    await domainJourney(site, edge, cookie, page, info);
   } finally {await site.runtime.close(); await edge.close();}
 });

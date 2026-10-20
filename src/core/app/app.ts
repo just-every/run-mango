@@ -1,3 +1,5 @@
+import {domainSetupRoutes} from '@/core/features/sender-verification/setup-routes';
+import {stripeRoutes} from '@/core/features/store/stripe/routes';
 import {hasPermission,requiredPermission} from '@/core/features/auth/permissions';
 import {projectPrivateResponse} from '@/core/features/auth/response-privacy';
 import {contactSupportRoutes} from '@/core/features/auth/contact-actions';
@@ -296,6 +298,8 @@ export function createApp(
   app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
   app.route('/', createSmsSignupRoutes(platform,audienceService));
   app.route('/', createMediaRoutes(environment.DB, platform.blobs));
+  const stripe = stripeRoutes(platform, audienceService);
+  app.route('/', stripe.webhooks);
   if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce));
   app.route('/',createOpenPixelRoutes(platform));
   app.route('/',archivePublicRoutes(environment.DB,platform.config.publicBaseUrl.origin));
@@ -343,6 +347,8 @@ export function createApp(
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
   app.route('/api', createLinkHostRoutes(platform));
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
+  app.route('/api', stripe.settings);
+  app.route('/api', domainSetupRoutes(platform));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));
   app.route('/api', createSyncRoutes(platform, services.storeService));
   app.route('/api', createSegmentRoutes(environment.DB));

@@ -14,7 +14,8 @@ export const commerceSourceTypes = [
   'browsing-event',
 ] as const;
 
-export type CommerceSourceType = (typeof commerceSourceTypes)[number];
+// Webhook-only payment sources do not claim an exhaustive snapshot/sync capability.
+export type CommerceSourceType = (typeof commerceSourceTypes)[number] | 'payment' | 'checkout-session' | 'subscription';
 
 export type SourceCapability = {
   sourceType: CommerceSourceType;
@@ -30,8 +31,8 @@ export type NormalizedCommerceRecord = {
   payload: Record<string, unknown>;
   contactId?: string;
   contact?: {email?:string;phone?:string;displayName?:string};
-  activities?: Array<{kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer'; productId?: string; state: string}>;
-  activity?: { kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer'; productId?: string; state: string };
+  activities?: Array<{kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer' | 'payment' | 'checkout-session' | 'subscription'; productId?: string; state: string}>;
+  activity?: { kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer' | 'payment' | 'checkout-session' | 'subscription'; productId?: string; state: string };
 };
 
 export type SourceFreshnessIssue = {

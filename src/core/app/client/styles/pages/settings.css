@@ -123,3 +123,5 @@
   .settings-operator-list li, .integration-credentials li { flex-direction: column; align-items: flex-start; }
   .settings-actions > * { flex: 1 1 100%; }
 }
+
+#domain-guide td[data-label="Type"] { white-space: nowrap; }

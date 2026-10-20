@@ -21,6 +21,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
   const keys = [dkimKey(), dkimKey()];
   const resend=resendProviderEdge(keys[0]);
   const sends: EdgeSend[] = [], relaySends: {body: Record<string, any>; authorization: string}[] = [], unexpected: string[] = [], lost = new Set<string>();
+  const domainSetup = {exists: true, creates: 0, dnsPass: true, trackingCname: true, trackingHttps: true};
   const domain = { id: 123, user_id: 99, domain: 'example.test', valid: true, automatic_security: true, custom_spf: false, dns: {
     mail_cname: { valid: true, type: 'cname', host: 'em123.example.test', data: 'u99.wl.sendgrid.net' },
     dkim1: { valid: true, type: 'cname', host: 's1._domainkey.example.test', data: 's1.domainkey.u99.wl.sendgrid.net' },
@@ -73,10 +74,18 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
       if(original.pathname.startsWith('/products/')) {response.writeHead(200,{'Content-Type':'text/html'});return response.end('<p>Product</p>');}
       return json(response,200,options.commerce(JSON.parse(await body(request))));
     }
+    if (original.hostname === 'links.example.test' && request.method === 'HEAD') {response.writeHead(domainSetup.trackingHttps ? 200 : 503); response.end(); return;}
+    if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
+    if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+    if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/charges/ch_fixture' && request.method === 'GET') return json(response, 200, {id:'ch_fixture', customer:'cus_fixture'});
+    if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/customers/cus_fixture' && request.method === 'GET') return json(response, 200, {id:'cus_fixture', email:'stripe-reader@example.test', name:'Taylor Orchard'});
+    if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/customers' && request.method === 'GET') return json(response, 200, {data: []});
     if (original.hostname === 'api.sendgrid.com') {
       if (original.pathname === '/v3/scopes' && request.method === 'GET') return json(response,behavior.healthStatus(),behavior.healthStatus()===200?{scopes:['mail.send']}:{errors:[{message:'Provider unavailable'}]});
-      if (original.pathname === '/v3/whitelabel/domains' && request.method === 'GET') return json(response, 200, original.searchParams.get('offset') === '0' ? [domain] : []);
+      if (original.pathname === '/v3/whitelabel/domains' && request.method === 'GET') return json(response, 200, original.searchParams.get('offset') === '0' && domainSetup.exists ? [domain] : []);
+      if (original.pathname === '/v3/whitelabel/domains' && request.method === 'POST') {const input = JSON.parse(await body(request)); if (input.domain !== 'example.test' || input.automatic_security !== true) return json(response,400,{}); domainSetup.creates++; domain.id=124; domainSetup.exists=true; return json(response,201,domain);}
+      if (/^\/v3\/whitelabel\/domains\/\d+\/validate$/.test(original.pathname) && request.method === 'POST') return json(response,200,{valid:true});
       if (original.pathname === '/v3/whitelabel/domains/123' && request.method === 'GET') return json(response, 200, domain);
       // The Email Activity API is a paid add-on; this account does not have it.
       if (original.pathname.startsWith('/v3/messages')) return json(response, 403, { errors: [{ message: 'access forbidden' }] });
@@ -99,7 +108,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('Edge server has no port.');
-  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,
+  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,domainSetup,
     loseResponseFor: (address: string) => lost.add(address),
     close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
 }

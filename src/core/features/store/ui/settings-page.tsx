@@ -1,3 +1,5 @@
+import {SettingsDomainGuide} from './settings-domain-guide';
+import {SettingsStripe} from './settings-stripe';
 import {Can} from '@/core/features/auth/ui/permissions';
 import type { Provider } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
@@ -29,6 +31,8 @@ export function SettingsPage() {
       <Can permission="settings.manage"><SettingsSender operatorEmail={operator.data.operator.email} /></Can>
       <Can permission="settings.manage"><SettingsLinkHosts /></Can>
       <Can permission="integration.manage"><SettingsIntegrations /></Can>
+      <Can permission="settings.manage"><SettingsStripe /></Can>
+      <Can permission="settings.manage"><SettingsDomainGuide /></Can>
       <div className="settings-grid">
         <section className="panel settings-current" aria-labelledby="current-operator-title">
           <p className="eyebrow">Current operator</p>

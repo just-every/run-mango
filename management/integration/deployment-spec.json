@@ -482,6 +482,18 @@
       "name": "core-0077_signup_refusal_hours.sql",
       "sha256": "5e30e2a8d7bb1e22bf12046481dd40eef846020bd2f80c2bba69ed1ff0526c69",
       "sql": "-- FORM-010: refusals are counted by hour, form and reason, never by address. Each closed hour with\n-- refusals becomes one append-only activity entry (OPER-007).\nCREATE TABLE signup_refusal_hours (\n  hour INTEGER NOT NULL,\n  form TEXT NOT NULL CHECK(form IN ('hosted','kiosk')),\n  reason TEXT NOT NULL,\n  refusals INTEGER NOT NULL CHECK(refusals>0),\n  PRIMARY KEY(hour,form,reason)\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0078_stripe_connection.sql",
+      "sha256": "50d53165b7dea0712bfa41227f0ac09d38486bcad674b262c7ebfd3383c87e64",
+      "sql": "-- Private provider authority is destination-owned and excluded from exports.\nCREATE TABLE stripe_connection (\n  id INTEGER PRIMARY KEY CHECK(id=1),\n  key_cipher TEXT NOT NULL,\n  signing_cipher TEXT NOT NULL,\n  mode TEXT NOT NULL CHECK(mode IN ('test','live')),\n  last_four TEXT NOT NULL,\n  connected_by TEXT NOT NULL,\n  connected_at INTEGER NOT NULL\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0079_tracking_domain.sql",
+      "sha256": "fb840d7a10f54b42eb1d6831fd8e8fe4a6052f0f27e3abecf9c3b53c80066a9c",
+      "sql": "CREATE TABLE tracking_domain (\n id INTEGER PRIMARY KEY CHECK(id=1),\n host TEXT NOT NULL,\n updated_at INTEGER NOT NULL,\n operator_id TEXT NOT NULL\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
