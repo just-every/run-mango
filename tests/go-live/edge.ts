@@ -78,6 +78,8 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
     if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
     if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+    if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/charges/ch_fixture' && request.method === 'GET') return json(response, 200, {id:'ch_fixture', customer:'cus_fixture'});
+    if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/customers/cus_fixture' && request.method === 'GET') return json(response, 200, {id:'cus_fixture', email:'stripe-reader@example.test', name:'Taylor Orchard'});
     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/customers' && request.method === 'GET') return json(response, 200, {data: []});
     if (original.hostname === 'api.sendgrid.com') {
       if (original.pathname === '/v3/scopes' && request.method === 'GET') return json(response,behavior.healthStatus(),behavior.healthStatus()===200?{scopes:['mail.send']}:{errors:[{message:'Provider unavailable'}]});

@@ -76,7 +76,7 @@ On RER Managed, outbound provider calls for seed integrations are **not availabl
 
 ## Stripe
 
-An Owner connects Stripe in Settings with a restricted read key and the webhook signing secret. Mango shows test/live mode, the key’s last four characters and the connecting operator/time. Only Owners can connect, replace or disconnect. Both secrets are encrypted under the installation signing key, never returned by the API and excluded from account exports. Restore requires reconnecting Stripe in the destination. Keep the installation signing key safe.
+An Owner connects Stripe in Settings with a restricted key granting read access to customers, charges and PaymentIntents, and the webhook signing secret. Mango shows test/live mode, the key’s last four characters and the connecting operator/time. Only Owners can connect, replace or disconnect. Both secrets are encrypted under the installation signing key, never returned by the API and excluded from account exports. Restore requires reconnecting Stripe in the destination. Keep the installation signing key safe.
 
 Configure Stripe to send customer, payment-intent, charge, Checkout session, invoice, subscription and refund events to `/webhooks/commerce/stripe` on your Mango origin. Match test/live mode to the key. Mango verifies Stripe-Signature over the exact request bytes with a five-minute tolerance before reading the event, refuses mode mismatches and imports allowlisted facts through `commerce.store.v1`. Event identity is Stripe’s event id; a replay adds no event. Customers resolve by their Stripe customer’s email, without granting marketing consent. Unresolved identities return a retryable failure rather than silently losing timeline activity.
 

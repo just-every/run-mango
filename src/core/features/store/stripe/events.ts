@@ -20,7 +20,7 @@ export async function verifyStripe(request: Request, secret: string, now = Date.
   if (typeof event.id !== 'string' || !event.id.startsWith('evt_') || typeof event.type !== 'string' || !Number.isSafeInteger(event.created) || typeof event.livemode !== 'boolean' || !event.data?.object?.id) throw new Error('shape');
   return event as ObjectValue;
 }
-export async function stripeRecord(event: ObjectValue, customer: (id: string) => Promise<ObjectValue>): Promise<NormalizedCommerceRecord | null> {
+export async function stripeRecord(event: ObjectValue, lookup: (path: string) => Promise<ObjectValue>): Promise<NormalizedCommerceRecord | null> {
   const object = event.data.object as ObjectValue, type = event.type as string;
   let sourceType: CommerceSourceType, state = type;
   if (type.startsWith('customer.subscription.')) {
@@ -35,9 +35,18 @@ export async function stripeRecord(event: ObjectValue, customer: (id: string) =>
     else if (type === 'invoice.payment_failed') state = 'subscription.past_due';
     else if (type === 'payment_intent.succeeded' || type === 'charge.succeeded') state = 'payment.succeeded';
   } else return null;
-  const customerId = sourceType === 'customer' ? object.id : typeof object.customer === 'string' ? object.customer : object.customer?.id;
+  let customerId = sourceType === 'customer' ? object.id : typeof object.customer === 'string' ? object.customer : object.customer?.id;
   let profile: ObjectValue = sourceType === 'customer' ? object : typeof object.customer === 'object' && object.customer ? object.customer : object.customer_details ?? {};
-  if (!profile.email && customerId) profile = await customer(customerId);
+  // Refund payloads identify their charge/payment intent, not their customer.
+  // Resolve that provider relationship before importing the contact identity.
+  if (sourceType === 'refund' && !customerId) {
+    const related = typeof object.charge === 'string' ? await lookup('charges/' + encodeURIComponent(object.charge))
+      : object.charge && typeof object.charge === 'object' ? object.charge
+        : typeof object.payment_intent === 'string' ? await lookup('payment_intents/' + encodeURIComponent(object.payment_intent)) : null;
+    customerId = typeof related?.customer === 'string' ? related.customer : related?.customer?.id;
+    if (related?.customer && typeof related.customer === 'object') profile = related.customer;
+  }
+  if (!profile.email && customerId) profile = await lookup('customers/' + encodeURIComponent(customerId));
   if (!profile.email && object.customer_email) profile = {...profile, email: object.customer_email};
   // Persist only event facts, never the provider object (which can contain client secrets and URLs).
   return {sourceType, providerSourceId: event.id, occurredAt: new Date(event.created * 1000),

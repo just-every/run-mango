@@ -57,7 +57,7 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
       const previous = await db.prepare('SELECT digest FROM commerce_receipts WHERE id=?').bind(await sha256(receipt)).first<{digest: string}>();
       if (previous) return previous.digest === digest ? context.body(null, 204) : context.json({error: 'stripe_event_conflict'}, 409);
       const key = await unseal(stored.key_cipher, platform.config.sessionSigningKey);
-      const record = await stripeRecord(event, id => api('customers/' + encodeURIComponent(id), key));
+      const record = await stripeRecord(event, path => api(path, key));
       if (!record) return context.body(null, 204);
       if (!record.contact) return context.json({error: 'stripe_contact_unresolved'}, 422);
       await audience.ingestCommerceWebhook({provider: 'stripe', completion: 'delta', adapterCompleted: false, sourceTypes: [record.sourceType], records: [record], receipt: {ids: [receipt], digest}});

@@ -30,7 +30,7 @@ export function SettingsStripe() {
       <Can permission="provider.connect"><form onSubmit={event => void connect(event)} className="integration-create">
         <label htmlFor="stripe-key">Restricted Stripe key<input id="stripe-key" type="password" autoComplete="new-password" required value={key} onChange={event => setKey(event.target.value)} /></label>
         <label htmlFor="stripe-signing">Webhook signing secret<input id="stripe-signing" type="password" autoComplete="new-password" required value={signingSecret} onChange={event => setSigningSecret(event.target.value)} /></label>
-        <p>Use a restricted key with read access to customers. Keys stay encrypted on the server and are excluded from exports. Save the signing secret from your Stripe webhook configuration.</p>
+        <p>Use a restricted key with read access to customers, charges and PaymentIntents. Keys stay encrypted on the server and are excluded from exports. Save the signing secret from your Stripe webhook configuration.</p>
         <button type="submit" className="primary-action" disabled={busy}>{busy ? 'Saving…' : resource.data.connection ? 'Replace Stripe connection' : 'Connect Stripe'}</button>
         {resource.data.connection ? <button type="button" className="secondary-action" disabled={busy} onClick={() => void disconnect()}>Disconnect Stripe</button> : null}
       </form></Can>

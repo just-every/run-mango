@@ -36,6 +36,24 @@ export async function stripeJourney(site: Installation, page: Page, info: TestIn
   const detail = await json(await site.call('/api/contacts/' + rows[0].id, {cookie: owner}), 200);
   expect(detail.timeline.filter((entry: any) => entry.source === 'stripe · subscription').map((entry: any) => entry.detail).sort()).toEqual(['subscription · subscription.canceled', 'subscription · subscription.started']);
   expect((await site.rows("SELECT count(*) AS n FROM source_records WHERE provider='stripe'"))[0].n).toBe(2);
+  const additional = [
+    {id:'evt_customer', type:'customer.created', object:{id:'cus_fixture', email:'stripe-reader@example.test'}},
+    {id:'evt_payment', type:'payment_intent.succeeded', object:{id:'pi_fixture', customer:'cus_fixture', amount_received:1200, currency:'usd', client_secret:'not-for-storage'}},
+    {id:'evt_checkout', type:'checkout.session.completed', object:{id:'cs_fixture', customer:'cus_fixture', amount_total:1200, currency:'usd'}},
+    {id:'evt_renewal', type:'invoice.paid', object:{id:'in_fixture', customer:'cus_fixture', billing_reason:'subscription_cycle', amount_paid:1200, currency:'usd'}},
+    {id:'evt_pastdue', type:'invoice.payment_failed', object:{id:'in_late', customer:'cus_fixture'}},
+    {id:'evt_refund', type:'refund.created', object:{id:'re_fixture', charge:'ch_fixture', amount:1200, currency:'usd'}},
+  ];
+  for (const fixture of additional) {
+    const event={id:fixture.id, type:fixture.type, created:now, livemode:false, data:{object:fixture.object}};
+    expect((await post(event)).status).toBe(204); expect((await post(event)).status).toBe(204);
+  }
+  const expanded=await json(await site.call('/api/contacts/' + rows[0].id, {cookie:owner}),200);
+  expect(expanded.timeline.filter((entry:any)=>entry.source.startsWith('stripe · '))).toHaveLength(8);
+  for(const state of ['payment.succeeded','subscription.renewed','subscription.past_due','refund.created'])expect(expanded.timeline.some((entry:any)=>entry.detail.includes(state))).toBe(true);
+  expect((await site.rows("SELECT count(*) AS n FROM source_records WHERE provider='stripe'"))[0].n).toBe(8);
+  expect(JSON.stringify(await site.rows("SELECT payload FROM source_records WHERE provider='stripe'"))).not.toContain('not-for-storage');
+  expect(expanded.contact.emailStatus).toBe('non-subscribed');
   for (const width of [1440, 390]) {
     await page.setViewportSize({width, height: 1000});
     await openPage(page, site.runtime.url + '/app/settings');
