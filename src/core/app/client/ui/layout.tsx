@@ -33,7 +33,7 @@ export function OperatorLayout() {
   const pathname = useRouterState({select: state => state.location.pathname});
   const locationKey = useRouterState({select: state => state.location.pathname + state.location.searchStr});
   const [open, setOpen] = useState(false), trigger = useRef<HTMLButtonElement>(null), nav = useRef<HTMLElement>(null);
-  const destinations = [['/app', 'Decision Desk'], ['/app/campaigns', 'Campaigns'], ['/app/audience', 'Audience'], ['/app/insights', 'Insights'], ...(operator.modules.store ? [['/app/store', 'Store']] : []), ['/app/settings', 'Settings']].filter(([path])=>hasPermission(operator.role,({'/app':'draft.write','/app/campaigns':'campaign.read','/app/audience':'contact.read','/app/insights':'report.read','/app/store':'integration.manage','/app/settings':'session.self'} as Record<string,Capability>)[path]));
+  const destinations = [['/app', 'Decision Desk'], ['/app/campaigns', 'Campaigns'], ['/app/audience', 'Audience'], ['/app/insights', 'Insights'], ...(operator.modules.store ? [['/app/store', 'Store']] : []), ['/app/settings/activity', 'Activity'], ['/app/settings', 'Settings']].filter(([path])=>hasPermission(operator.role,({'/app':'draft.write','/app/campaigns':'campaign.read','/app/audience':'contact.read','/app/insights':'report.read','/app/store':'integration.manage','/app/settings/activity':'activity.read','/app/settings':'session.self'} as Record<string,Capability>)[path]));
   // An unmatched /app path (the app 404) has no current destination, so the toggle reads Menu alone.
   const current = pathname === '/app' ? 'Decision Desk' : destinations.find(([to]) => to !== '/app' && pathname.startsWith(to))?.[1];
   const close = () => {setOpen(false); trigger.current?.focus();};

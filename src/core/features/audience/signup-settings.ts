@@ -13,7 +13,7 @@ export async function loadSignupSettings(platform: Pick<Platform, 'database'>) {
 }
 export async function saveSignupSettings(platform: Platform, value: unknown, operatorId: string, request: Request) {
   const settings = signupSettingsSchema.parse(value), authority = await senderWriteAuthority(platform, request, operatorId), now = Date.now();
-  const db=platform.database.$client, id=ulid(now);
+  const db=platform.database.$client, id=ulid(now), settingsChange=ulid(now+1), origins=[...new Set(settings.embedOrigins)];
   const guard=[authority.sessionId,authority.operatorId,authority.version,now];
   const result = await db.batch([
     db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
@@ -21,12 +21,17 @@ export async function saveSignupSettings(platform: Platform, value: unknown, ope
       AND (COALESCE((SELECT kiosk_enabled FROM signup_settings WHERE id='newsletter'),0)<>?
         OR COALESCE((SELECT kiosk_device_label FROM signup_settings WHERE id='newsletter'),'')<>?)`)
       .bind(id,id,operatorId,JSON.stringify({kioskEnabled:settings.kioskEnabled,deviceLabel:settings.kioskDeviceLabel}),now,now,...guard,Number(settings.kioskEnabled),settings.kioskDeviceLabel),
+    db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
+      SELECT ?,?,'signup-form','newsletter','signup.settings.changed','operator',?,?,?,? WHERE ${senderWriteGuard}
+      AND (COALESCE((SELECT frequency_disclosure FROM signup_settings WHERE id='newsletter'),'Occasional newsletters')<>?
+        OR COALESCE((SELECT embed_origins FROM signup_settings WHERE id='newsletter'),'[]')<>?)`)
+      .bind(settingsChange,settingsChange,operatorId,JSON.stringify({frequencyDisclosure:settings.frequencyDisclosure,embedOrigins:origins}),now,now,...guard,settings.frequencyDisclosure,JSON.stringify(origins)),
     db.prepare(`INSERT INTO signup_settings(id,frequency_disclosure,embed_origins,kiosk_enabled,kiosk_device_label,updated_by,updated_at)
       SELECT 'newsletter',?,?,?,?,?,? WHERE (${senderWriteGuard}) OR EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE id=?)
       ON CONFLICT(id) DO UPDATE SET frequency_disclosure=excluded.frequency_disclosure,embed_origins=excluded.embed_origins,
         kiosk_enabled=excluded.kiosk_enabled,kiosk_device_label=excluded.kiosk_device_label,updated_by=excluded.updated_by,updated_at=excluded.updated_at RETURNING id`)
-      .bind(settings.frequencyDisclosure,JSON.stringify([...new Set(settings.embedOrigins)]),Number(settings.kioskEnabled),settings.kioskDeviceLabel,operatorId,now,...guard,id),
+      .bind(settings.frequencyDisclosure,JSON.stringify(origins),Number(settings.kioskEnabled),settings.kioskDeviceLabel,operatorId,now,...guard,id),
   ]);
-  if (!result[1].results.length) throw new SenderAuthorityChanged();
+  if (!result[2].results.length) throw new SenderAuthorityChanged();
   return settings;
 }

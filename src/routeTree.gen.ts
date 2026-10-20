@@ -28,6 +28,7 @@ import { Route as DocsSlugRouteImport } from './routes/docs.$slug'
 import { Route as AppAudienceIdRouteImport } from './routes/app.audience_.$id'
 import { Route as AppAudienceImportRouteImport } from './routes/app.audience_.import'
 import { Route as AppCampaignsIdRouteImport } from './routes/app.campaigns_.$id'
+import { Route as AppSettingsActivityRouteImport } from './routes/app.settings_.activity'
 import { Route as AppCampaignsIdReviewRouteImport } from './routes/app.campaigns_.$id_.review'
 import { Route as AppCampaignsIdScheduledRouteImport } from './routes/app.campaigns_.$id_.scheduled'
 
@@ -126,6 +127,11 @@ const AppCampaignsIdRoute = AppCampaignsIdRouteImport.update({
   path: '/campaigns/$id',
   getParentRoute: () => AppRoute,
 } as any)
+const AppSettingsActivityRoute = AppSettingsActivityRouteImport.update({
+  id: '/settings_/activity',
+  path: '/settings/activity',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppCampaignsIdReviewRoute = AppCampaignsIdReviewRouteImport.update({
   id: '/campaigns_/$id_/review',
   path: '/campaigns/$id/review',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/app/audience/$id': typeof AppAudienceIdRoute
   '/app/audience/import': typeof AppAudienceImportRoute
   '/app/campaigns/$id': typeof AppCampaignsIdRoute
+  '/app/settings/activity': typeof AppSettingsActivityRoute
   '/app/campaigns/$id/review': typeof AppCampaignsIdReviewRoute
   '/app/campaigns/$id/scheduled': typeof AppCampaignsIdScheduledRoute
 }
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/app/audience/$id': typeof AppAudienceIdRoute
   '/app/audience/import': typeof AppAudienceImportRoute
   '/app/campaigns/$id': typeof AppCampaignsIdRoute
+  '/app/settings/activity': typeof AppSettingsActivityRoute
   '/app/campaigns/$id/review': typeof AppCampaignsIdReviewRoute
   '/app/campaigns/$id/scheduled': typeof AppCampaignsIdScheduledRoute
 }
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   '/app/audience_/$id': typeof AppAudienceIdRoute
   '/app/audience_/import': typeof AppAudienceImportRoute
   '/app/campaigns_/$id': typeof AppCampaignsIdRoute
+  '/app/settings_/activity': typeof AppSettingsActivityRoute
   '/app/campaigns_/$id_/review': typeof AppCampaignsIdReviewRoute
   '/app/campaigns_/$id_/scheduled': typeof AppCampaignsIdScheduledRoute
 }
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/app/audience/$id'
     | '/app/audience/import'
     | '/app/campaigns/$id'
+    | '/app/settings/activity'
     | '/app/campaigns/$id/review'
     | '/app/campaigns/$id/scheduled'
   fileRoutesByTo: FileRoutesByTo
@@ -246,6 +256,7 @@ export interface FileRouteTypes {
     | '/app/audience/$id'
     | '/app/audience/import'
     | '/app/campaigns/$id'
+    | '/app/settings/activity'
     | '/app/campaigns/$id/review'
     | '/app/campaigns/$id/scheduled'
   id:
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | '/app/audience_/$id'
     | '/app/audience_/import'
     | '/app/campaigns_/$id'
+    | '/app/settings_/activity'
     | '/app/campaigns_/$id_/review'
     | '/app/campaigns_/$id_/scheduled'
   fileRoutesById: FileRoutesById
@@ -417,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCampaignsIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/settings_/activity': {
+      id: '/app/settings_/activity'
+      path: '/settings/activity'
+      fullPath: '/app/settings/activity'
+      preLoaderRoute: typeof AppSettingsActivityRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/campaigns_/$id_/review': {
       id: '/app/campaigns_/$id_/review'
       path: '/campaigns/$id/review'
@@ -444,6 +463,7 @@ interface AppRouteChildren {
   AppAudienceIdRoute: typeof AppAudienceIdRoute
   AppAudienceImportRoute: typeof AppAudienceImportRoute
   AppCampaignsIdRoute: typeof AppCampaignsIdRoute
+  AppSettingsActivityRoute: typeof AppSettingsActivityRoute
   AppCampaignsIdReviewRoute: typeof AppCampaignsIdReviewRoute
   AppCampaignsIdScheduledRoute: typeof AppCampaignsIdScheduledRoute
 }
@@ -458,6 +478,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAudienceIdRoute: AppAudienceIdRoute,
   AppAudienceImportRoute: AppAudienceImportRoute,
   AppCampaignsIdRoute: AppCampaignsIdRoute,
+  AppSettingsActivityRoute: AppSettingsActivityRoute,
   AppCampaignsIdReviewRoute: AppCampaignsIdReviewRoute,
   AppCampaignsIdScheduledRoute: AppCampaignsIdScheduledRoute,
 }

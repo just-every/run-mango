@@ -1,3 +1,4 @@
+import { ulid } from '@/core/shared/ids';
 import { savedEmailSize } from './saved-email-size';
 import type { EmailSizeOptions } from './email-size';
 import {editSchedule} from './edit-schedule';
@@ -124,7 +125,7 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
     editSchedule:(campaignId:string,composition:DraftComposition,operatorId:string)=>editSchedule(database,campaignId,composition,operatorId,sizeOptions),
     createDraft: (composition: DraftComposition, operatorId: string) => createDraft(database, composition, operatorId, undefined, sizeOptions),
 
-    async saveDraft(id: string, composition: DraftComposition, updatedAt: Date, deferRead = false) {
+    async saveDraft(id: string, composition: DraftComposition, updatedAt: Date, deferRead = false, actorId?: string) {
       // Saving uses raw persisted authority, never the display-only claim projection.
       const storedRevision = await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,id)});
       if (!storedRevision) return { kind: 'not_found' as const };
@@ -210,6 +211,13 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
       prepare(`UPDATE campaign_revisions SET authored_exclusion_reasons_json=? WHERE id=? AND ${guard}`,
         JSON.stringify(authoredExclusionReasons(composition.exclusionRulesJson,storedRevision.exclusionRulesJson,JSON.parse(storedRevision.authoredExclusionReasonsJson))),id);
 
+      // OPER-007: the append-only record is written in the same guarded batch as the save it records.
+      if (actorId) {
+        const operation = ulid(updatedAt.getTime());
+        prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
+          SELECT ?,?,'campaign-revision',?,'draft.saved','operator',?,json_object('campaignId',?),?,? WHERE ${guard}`,
+          operation, operation, id, actorId, storedRevision.campaignId, updatedAt.getTime(), updatedAt.getTime());
+      }
       const update = revisionUpdate(composition, updatedAt, id, storedRevision.updatedAt);
       prepare(update.sql, ...update.values);
       const results = await database.$client.batch(statements);

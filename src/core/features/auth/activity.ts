@@ -1,35 +1,32 @@
 import { Hono } from 'hono';
-import { z } from 'zod';
 import type { AuthVariables } from './routes';
 import { hasPermission } from './permissions';
+import { activityPage, activityFilters, activitySelect, csvColumns, csvRow, readEntry, type ActivityEntry } from './activity-query';
+import { summariseSignupRefusals } from '@/core/features/audience/signup-refusals';
 
-const querySchema = z.object({
-  operator: z.string().min(1).max(200).optional(),
-  action: z.string().min(1).max(200).optional(),
-  object: z.string().min(1).max(200).optional(),
-  limit: z.coerce.number().int().min(1).max(200).default(100),
-});
+const exportLimit = 50_000;
 
-/** Minimal lifecycle activity read; the full OPER-007 log/export remains partial. */
+/** OPER-007: every operator action and integration call, newest first, filterable and exportable for Owner and Admin. */
 export function activityRoutes(db: D1Database) {
   const routes = new Hono<{Variables: AuthVariables}>();
+  const read = (sql: string, bindings: Array<string | number>) => db.prepare(sql).bind(...bindings).all<Omit<ActivityEntry, 'detail'> & {detailJson: string}>();
   routes.get('/activity', async context => {
     if (!hasPermission(context.get('operator').role, 'activity.read')) return context.json({error: 'role_forbidden'}, 403);
-    const query = querySchema.safeParse(context.req.query());
+    const query = activityPage.safeParse(context.req.query());
     if (!query.success) return context.json({error: 'invalid_activity_filter'}, 400);
-    const filters: string[] = [], bindings: Array<string | number> = [];
-    for (const [column, value] of [['a.actor_id', query.data.operator], ['a.action', query.data.action], ['a.entity_id', query.data.object]]) {
-      if (value) { filters.push(`${column}=?`); bindings.push(value); }
-    }
-    const result = await db.prepare(`SELECT a.id,a.actor_id AS operatorId,p.display_name AS operatorName,
-      a.actor_type AS actorType,a.action,a.entity_type AS objectType,a.entity_id AS objectId,
-      a.detail_json AS detailJson,a.occurred_at AS occurredAt
-      FROM lifecycle_audit_entries a LEFT JOIN operators p ON p.id=a.actor_id AND a.actor_type='operator'
-      ${filters.length ? `WHERE ${filters.join(' AND ')}` : ''}
-      ORDER BY a.occurred_at DESC,a.id DESC LIMIT ?`).bind(...bindings, query.data.limit)
-      .all<{id: string; operatorId: string; operatorName: string | null; actorType: string; action: string;
-        objectType: string; objectId: string; detailJson: string; occurredAt: number}>();
-    return context.json({entries: result.results.map(({detailJson, ...entry}) => ({...entry, detail: JSON.parse(detailJson)}))});
+    await summariseSignupRefusals(db);
+    const {limit, before, ...filters} = query.data, {sql, bindings} = activitySelect(filters, before);
+    const rows = (await read(`${sql} LIMIT ?`, [...bindings, limit + 1])).results, page = rows.slice(0, limit).map(readEntry), last = page.at(-1);
+    return context.json({entries: page, nextCursor: rows.length > limit && last ? `${last.occurredAt}:${last.id}` : null});
+  });
+  routes.get('/activity/export', async context => {
+    if (!hasPermission(context.get('operator').role, 'activity.read')) return context.json({error: 'role_forbidden'}, 403);
+    const query = activityFilters.safeParse(context.req.query());
+    if (!query.success) return context.json({error: 'invalid_activity_filter'}, 400);
+    await summariseSignupRefusals(db);
+    const {sql, bindings} = activitySelect(query.data), rows = (await read(`${sql} LIMIT ?`, [...bindings, exportLimit])).results.map(readEntry);
+    return new Response(`${[csvColumns.join(','), ...rows.map(csvRow)].join('\r\n')}\r\n`, {headers: {
+      'Content-Type': 'text/csv; charset=utf-8', 'Content-Disposition': 'attachment; filename="mango-activity.csv"', 'Cache-Control': 'no-store'}});
   });
   return routes;
 }

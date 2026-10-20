@@ -19,6 +19,12 @@ Only Owner and Admin can export contacts or erase them. Support's erasure reques
 
 Flow activation, sending-provider connection controls and installation erasure are still wider target work. Their complete role journeys are not claimed by this newsletter release. CSV exports are currently restricted to Owner and Admin.
 
+## Activity log
+
+Owner and Admin open **Settings → Activity** (the **Activity** entry in the menu) to see what was done, by whom and when. It lists drafts saved, approval requests and approvals, pauses, resumes and cancellations, imports, audience and account exports, consent entered by hand, opt-outs, erasures, role changes, signup and kiosk form changes, an hourly summary of refused public signups (counts by form and reason, never addresses) and every integration call, newest first.
+
+Filter by operator, agent, action, object (a campaign, revision or contact reference) and date, then press **Export CSV** to download exactly the filtered view. Cells that a spreadsheet could read as a formula are kept as text. Entries are never edited. They stay after an operator is removed, with that person's name; an erased contact's entries are anonymised. Authors, Managers, Analysts and Support cannot open the screen. Agents and flows do not exist yet, so the agent filter is empty and flow activations will join the log with those features.
+
 ## Invite an operator
 
 An Owner or Admin uses **Operators** in Settings: enter the person's address in **Operator email** and press **Add operator**. Mango emails an invitation. The person must open it and press **Confirm** before they have access, and until then the list shows "Invitation pending". If the address already has access, Mango tells you so.

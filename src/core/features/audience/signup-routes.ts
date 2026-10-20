@@ -1,6 +1,7 @@
 import { ProviderDeferredError } from '@/core/shared/provider-deferred-error';
 import { smsSignupDescription } from '@/core/features/sms/signup';
 import { loadSignupSettings } from './signup-settings';
+import { countSignupRefusal, type SignupRefusalReason } from './signup-refusals';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import { sha256 } from '@/core/shared/ids';
@@ -38,6 +39,7 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
     const success = () => isJson ? context.json({ status: 'confirmation-required' }, 202) : context.redirect('/subscribe?submitted=1', 303);
     if (!senderIdentitySchema.safeParse(platform.config.mailSender).success) return context.json({error:'sender_not_configured'},503);
     const description = await loadSignupDescription(platform);
+    const refuse = (reason: SignupRefusalReason) => countSignupRefusal(db, description.kioskEnabled ? 'kiosk' : 'hosted', reason);
     if(description.kioskEnabled&&!platform.config.signupTurnstile)return context.json({error:'kiosk_verification_unavailable',detail:'This kiosk needs verification configured before it can accept signups.'},503);
     const ip = context.req.header('CF-Connecting-IP') ?? '';
     const network = signupNetwork(ip);
@@ -49,27 +51,27 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
     const challenge = body && typeof body === 'object' && 'cf-turnstile-response' in body ? body['cf-turnstile-response'] : undefined;
     if (!await verifySignupChallenge(platform, challenge, ip)) return context.json({error:'verification_failed',detail:'Complete the verification and try again.'},400);
     const networkReservation = description.kioskEnabled?undefined:await reserveSignupAllowance(db,`signup:${key}`,'hour',signupLimits.networkPerHour);
-    if (!description.kioskEnabled&&!networkReservation)return context.json({error:'rate_limited'},429);
+    if (!description.kioskEnabled&&!networkReservation){await refuse('network-rate-limit');return context.json({error:'rate_limited'},429);}
     if (body && typeof body === 'object' && 'website' in body && body.website) return success();
     const parsed = signup.safeParse(body);
     if (!parsed.success) return context.json({ error: 'invalid_signup', detail: 'A valid email and affirmative consent are required.', fields: parsed.error.flatten().fieldErrors }, 400);
     if(parsed.data.disclosure!==description.disclosure)return context.json({error:'signup_disclosure_changed',detail:'The newsletter details changed. Reload the form and review your consent before subscribing.'},409);
     const email=parsed.data.email.trim().toLowerCase();
     const state=await service.publicSignupState(email);
-    if (state==='refused') {await service.recordPublicSignupRefusal(email,'Existing restriction prevents public confirmation.');return success();}
+    if (state==='refused') {await refuse('existing-restriction');await service.recordPublicSignupRefusal(email,'Existing restriction prevents public confirmation.');return success();}
     const destinationHash=await sha256(`${platform.config.contactHashSalt}:signup-email:${email}`);
     const networkWindow=networkReservation?.window??(await db.prepare("SELECT CAST(strftime('%s','now') AS INTEGER)/3600 AS window").first<{window:number}>())!.window;
     const lookupId=`signup_${await sha256(`${destinationHash}:${networkWindow}`)}`;
     const prior=await db.prepare('SELECT status FROM audience_signup_requests WHERE id=?').bind(lookupId).first<{status:string}>();
     if(prior&&state!=='resubscribe')return success();
     if(description.kioskEnabled&&!await reserveSignupAllowance(db,`signup-kiosk:${key}`,'hour',kioskPerHour)){
-      await service.recordPublicSignupRefusal(email,'Kiosk confirmation intake allowance exhausted.');
+      await refuse('kiosk-allowance');await service.recordPublicSignupRefusal(email,'Kiosk confirmation intake allowance exhausted.');
       return success();
     }
-    if(!await reserveSignupAllowance(db,`signup-email:${destinationHash}`,'day',signupLimits.destinationPerDay)){await service.recordPublicSignupRefusal(email,'Daily confirmation allowance exhausted.');return success();}
+    if(!await reserveSignupAllowance(db,`signup-email:${destinationHash}`,'day',signupLimits.destinationPerDay)){await refuse('daily-allowance');await service.recordPublicSignupRefusal(email,'Daily confirmation allowance exhausted.');return success();}
     const reservation = await reserveSignupAllowance(db,description.kioskEnabled?'signup-kiosk-global':'signup-global','hour',description.kioskEnabled?kioskPerHour:signupLimits.globalPerHour);
     if (!reservation) {
-      await service.recordPublicSignupRefusal(email,'Confirmation intake allowance exhausted.');
+      await refuse('global-allowance');await service.recordPublicSignupRefusal(email,'Confirmation intake allowance exhausted.');
       return success();
     }
     const now = reservation.reservedAt;
@@ -85,7 +87,7 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
       await db.prepare("UPDATE audience_signup_requests SET status='sent' WHERE id=?").bind(evidenceId).run();
     } catch (error) {
       await db.prepare("UPDATE audience_signup_requests SET status='failed' WHERE id=?").bind(evidenceId).run();
-      await service.recordPublicSignupRefusal(email,error instanceof ProviderDeferredError?'Confirmation deferred before provider handoff.':'Confirmation delivery could not be established; no automatic retry.');
+      await refuse(error instanceof ProviderDeferredError?'delivery-deferred':'delivery-failed');await service.recordPublicSignupRefusal(email,error instanceof ProviderDeferredError?'Confirmation deferred before provider handoff.':'Confirmation delivery could not be established; no automatic retry.');
       return success();
     }
     return success();

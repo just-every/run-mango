@@ -28,3 +28,8 @@
   .responsive-table { min-width: 38rem; }
   .kv-list > div { grid-template-columns: minmax(0, 1fr); gap: 2px; }
 }
+
+/* OPER-007 activity log: filters in a wrapping grid; detail never widens the page. */
+.activity-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--sp-4); align-items: end; }
+.activity-filters .detail-actions { grid-column: 1 / -1; }
+.activity-detail { display: block; max-width: 28rem; overflow-wrap: anywhere; font-size: 12px; }

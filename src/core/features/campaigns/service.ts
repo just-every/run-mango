@@ -130,8 +130,8 @@ export function createCampaignService(
       return { ...detail, checks, smsPreview, blockedHosts: blockedHosts ?? [], blockers: blockers.filter(blocker=>required.has(blocker.kind)) };
     },
 
-    updateDraft(id: string, composition: DraftComposition, deferRead = false) {
-      return compositionRepository.saveDraft(id, composition, new Date(), deferRead);
+    updateDraft(id: string, composition: DraftComposition, deferRead: boolean, actorId: string) {
+      return compositionRepository.saveDraft(id, composition, new Date(), deferRead, actorId);
     },
 
     async approvalBlockers(id: string) {

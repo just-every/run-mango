@@ -42,7 +42,7 @@
 
 ### Migrations
 
-0058_base_provider_control, 0059_base_provider_pins, 0060_base_owner_signin, 0061_base_dependency_setup, 0062_base_dependencies, 0063_base_dependency_approval, 0064_base_idp_claim, 0065_base_import_progress, 0066_campaign_reuse, 0067_campaign_link_identity, 0068_campaign_followups, 0069_scoped_integrations, 0070_newsletter_archive, 0071_mailbox_reporting_indexes, 0072_test_send_allowance, 0073_list_growth, 0074_list_growth_retained_history, 0075_kiosk_forms, 0076_operator_product_roles. All are additive; earlier migration files are unchanged.
+0058_base_provider_control, 0059_base_provider_pins, 0060_base_owner_signin, 0061_base_dependency_setup, 0062_base_dependencies, 0063_base_dependency_approval, 0064_base_idp_claim, 0065_base_import_progress, 0066_campaign_reuse, 0067_campaign_link_identity, 0068_campaign_followups, 0069_scoped_integrations, 0070_newsletter_archive, 0071_mailbox_reporting_indexes, 0072_test_send_allowance, 0073_list_growth, 0074_list_growth_retained_history, 0075_kiosk_forms, 0076_operator_product_roles, 0077_signup_refusal_hours. All are additive; earlier migration files are unchanged.
 
 ## 0.2.0 (2026-10-16)
 

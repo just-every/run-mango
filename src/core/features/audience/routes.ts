@@ -10,6 +10,7 @@ import { readJson } from '@/core/api/input';
 
 import type { createAudienceService } from './service';
 import { readContactTimeline } from './contact-timeline';
+import { recordActivity } from '@/core/features/auth/activity-record';
 
 const contactParams = z.object({ id: z.string().min(1) });
 const channel = z.enum(['email', 'sms']);
@@ -64,6 +65,8 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
     if ('error' in parsed) return parsed.error;
     try {
       const result = await service.captureConsent({ ...parsed.data, confirmationRequired: true });
+      await recordActivity(database, {key: `consent-entered:${result.evidence.id}`, action: 'consent.entered', entityType: 'contact', entityId: result.contact.id, actorId: context.get('operator').id,
+        detail: {channel: parsed.data.channel, captureMethod: parsed.data.captureMethod, captureSource: parsed.data.captureSource, messageCategory: parsed.data.messageCategory}});
       return context.json({ contact: result.contact, evidence: result.evidence, confirmationRequired: Boolean(result.confirmation) }, 201);
     } catch (error) {
       return context.json({ error: 'consent_capture_failed', detail: error instanceof Error ? error.message : 'Consent capture failed.' }, 409);

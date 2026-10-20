@@ -9,6 +9,7 @@ import { defaultMapping, presetStatuses } from './import-types';
 import { loadSignupDescription } from './signup-routes';
 import { AudienceCsvUnavailable } from './import-opt-out-lines';
 import { importConflict } from './import-conflict';
+import { recordActivity } from '@/core/features/auth/activity-record';
 const inputSchema=z.object({files:z.array(z.object({name:z.string().min(1).max(200),csv:z.string().min(1),preset:z.enum(['csv-subscribed','csv-unsubscribed','csv-cleaned','csv-non-subscribed','mango']),mapping:z.record(z.string(),z.string()).optional()})).min(1).max(10),consent:z.record(z.string(),z.string()).optional()});
 export function createAudienceImportRoutes(platform: Platform) {
   const routes=new Hono<{Variables:AuthVariables}>(); const service=createAudienceImportService(platform);
@@ -37,7 +38,11 @@ export function createAudienceImportRoutes(platform: Platform) {
   });
   routes.get('/audience/export',async context=>{
     context.header('Cache-Control','no-store');
-    try { return new Response(await service.exportCsv(),{headers:{'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="audience.csv"','Cache-Control':'no-store'}}); }
+    try {
+      const csv=await service.exportCsv();
+      await recordActivity(platform.database.$client,{key:`audience-exported:${crypto.randomUUID()}`,action:'audience.exported',entityType:'audience',entityId:'audience',actorId:context.get('operator').id});
+      return new Response(csv,{headers:{'Content-Type':'text/csv; charset=utf-8','Content-Disposition':'attachment; filename="audience.csv"','Cache-Control':'no-store'}});
+    }
     catch(error) {
       if(error instanceof AudienceCsvUnavailable)return context.json({error:'complete_csv_unavailable',detail:error.message,help:'/docs/backup-and-export#export-and-restore-a-local-copy'},409);
       throw error;
@@ -52,7 +57,11 @@ export function createAudienceImportRoutes(platform: Platform) {
   routes.post('/audience/imports',async context=>{
     const body=await context.req.json().catch(()=>null);
     if(typeof body?.fingerprint!=='string')return context.json({error:'review_required'},400);
-    try{return context.json({job:await service.create(body.fingerprint,await audienceImportContext(platform,context.get('operator').id,context.req.raw))});}
+    try{
+      const job=await service.create(body.fingerprint,await audienceImportContext(platform,context.get('operator').id,context.req.raw));
+      await recordActivity(platform.database.$client,{key:`import-applied:${job.id}`,action:'import.applied',entityType:'audience-import',entityId:job.id,actorId:context.get('operator').id,detail:{state:job.state}});
+      return context.json({job});
+    }
     catch(error){return context.json({error:'import_conflict',...importConflict(error,'start')},409);}
   });
   routes.get('/audience/imports',async context=>{

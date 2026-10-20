@@ -72,6 +72,10 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
       statements.push(db.prepare(`INSERT INTO audience_erasure_blobs SELECT ?,o.bucket,o.key FROM rer_portability_owned o JOIN rer_portability_jobs j ON j.id=o.job WHERE j.phase<>'complete' AND ${admitted}`).bind(reference,reference));
       statements.push(db.prepare(`UPDATE ik_jobs SET state='invalid',fence=fence+1,lease_token=NULL,lease_expires=NULL WHERE id IN (SELECT value FROM json_each(?)) AND ${admitted}`).bind(JSON.stringify(scope.jobs),reference));
       statements.push(db.prepare(`UPDATE ik_d1_creation_plans SET released=1 WHERE job_id IN (SELECT value FROM json_each(?)) AND ${admitted}`).bind(JSON.stringify(scope.jobs),reference));
+      // OPER-007: recorded with the admission it describes, and anonymised with the contact (CONT-013).
+      statements.push(db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
+        SELECT ?,?,'contact',?,'contact.erasure-started','operator',?,'{}',?,? WHERE ${admitted} ON CONFLICT(operation_key) DO NOTHING`)
+        .bind(crypto.randomUUID(),`erasure-started:${reference}`,id,context.authorization.principalId,now,now,reference));
       await commit(context,statements);
       const accepted=await read(reference);
       if(!accepted){

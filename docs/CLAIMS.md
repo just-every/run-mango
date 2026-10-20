@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 27 claims · 27 in code.**
+**Totals: 28 claims · 28 in code.**
 
 ## Mango integration claims
 
@@ -42,3 +42,4 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | MSG-015 | Review names each blocked host and its links, including redirect hosts. Authors see no allow action and receive 403; a Manager allows a host, the stored list appends it, checks rerun and approval passes. The append-only row names operator, host and campaign through Owner/Admin GET /api/activity, newest first with operator/action/object filters. An imported Mailchimp template lists three outside hosts with allow actions at 1440/390. Exact and explicit wildcard matching agree across approval, inspection and tracking; deceptive suffixes remain blocked. OPER-007 inherits the full cross-product screen, CSV and every action type (ct pattern 2, c4 authorized default). | done | `tests/go-live/content-checks.journeys.ts` |
 | MSG-006 | A draft with a malformed link, `http:`, `javascript:`, `data:` and `file:` links, a redirect to an unlisted host and images over `http:` or on an unlisted host is blocked at review and approval. Every blocked link is named with the scheme, fault or host that blocks it; only unlisted HTTPS hosts offer Allow this host, and contact links never need it. | done | `tests/go-live/content-checks.journeys.ts` |
 | MSG-005 | Review of an SMS step shows each rendered example with the program identity, `Reply STOP to unsubscribe`, the frequency disclosure and the exact segment count. Mobile Message is the proved adapter. | done | `tests/go-live/content-checks.journeys.ts` |
+| OPER-007 | Owner and Admin read Activity under Settings: every recorded operator action and integration call, newest first, filtered by operator, agent, action, object and date, with a CSV of the filtered view. Drafts saved, approvals, pauses, imports, exports, erasures, consent edits, signup and kiosk changes, role changes and hourly signup-refusal summaries each appear once with actor and time; Authors are refused. | done | `tests/go-live/integrations.journeys.ts` |

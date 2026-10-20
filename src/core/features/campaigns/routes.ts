@@ -104,7 +104,7 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     const body = await readJson(context, draftCompositionSchema);
     if ('error' in body) return body.error;
     const started = performance.now();
-    const update = await settled(service.updateDraft(params.data.id, body.data, context.req.query('review') === 'true'));
+    const update = await settled(service.updateDraft(params.data.id, body.data, context.req.query('review') === 'true', context.get('operator').id));
     const written = performance.now();
     context.header('Server-Timing', `draft_write;dur=${(written-started).toFixed(1)}`);
     if ('refused' in update) return context.json(update.refused, 400);
