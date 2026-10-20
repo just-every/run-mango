@@ -863,7 +863,7 @@ How the owner-approved scope (16 October 2026) maps to the clauses above. Incumb
 
 ## Status
 
-Judged from the code and tests at commit `9caab720dabe16b8d46f5370ca3f4672ec2de8b8` (20 October 2026).
+Judged from the code and tests at commit `21027766118521e25be9f14ffbf2807319148d6f` (20 October 2026).
 
 The 0.3.0 release gate (19 October 2026) re-read every done row against its cited evidence at commit `bc5fdad`; it moved OPER-003 to partial because its cited test no longer showed retained attribution. The c4 journeys now restore OPER-003 to done and close AUD-003 and MSG-015; the c5 review journeys close MSG-006 and MSG-005 and the c5 activity journey closes OPER-007; other statuses retain their existing boundaries.
 
