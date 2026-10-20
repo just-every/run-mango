@@ -1006,7 +1006,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "7037c357d6d22794ab0c74ec340a85b180a83a3accd9bf069cf92bcf0e2a5f64",
+      "sha256": "83ea0b7ee1e38a792fca9f915535bc1cff35b3ff5e153e5e41b594a6c0b5aa70",
       "executable": false
     },
     "DEMO.md": {
@@ -6902,7 +6902,7 @@
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "b084355de0b01c3663970572ffc9de147e818a86b24f24379853af43166c4144",
+      "sha256": "61a07a71cfff873905e0c3ff185e3a2371098eb70e8b88867246e5aad715c0c8",
       "executable": false
     },
     "tests/go-live/cron-driver.ts": {

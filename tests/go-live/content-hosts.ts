@@ -96,6 +96,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
       const group=page.locator(`[aria-label="Blocked host ${host}"]`);
       await expect(group).toContainText(`Garden partner ${index+1}`);
       await expect(group.getByRole('button',{name:'Allow this host',exact:true})).toBeVisible();
+      await group.screenshot({path:info.outputPath(`imported-host-${index+1}-${width}.png`)});
     }
     await page.locator('[aria-label="Blocked link hosts"]').screenshot({path:info.outputPath(`imported-hosts-${width}.png`)});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
