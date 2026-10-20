@@ -1126,7 +1126,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "019769b682233ec8fcf6168ed3785058116010a4e05c868d9795582065da4513",
+      "sha256": "cfa62296492b395d28b9c989948be8b7ff8277dc7ccdbadcb6b076e7bbf6a38e",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -4482,7 +4482,7 @@
       "executable": false
     },
     "src/core/features/store/service.ts": {
-      "sha256": "c1d4358ff105d3287397dc5717c5b42437678e8ad4b64a89bfcfffa962d01da9",
+      "sha256": "df13d98a9b485977078dfff4feaf6082d40a3fba1771838a86749fad59d31829",
       "executable": false
     },
     "src/core/features/store/shopify/collector.ts": {

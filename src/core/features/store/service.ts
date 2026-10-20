@@ -12,12 +12,10 @@ export const commerceSourceTypes = [
   'refund',
   'cart',
   'browsing-event',
-  'payment',
-  'checkout-session',
-  'subscription',
 ] as const;
 
-export type CommerceSourceType = (typeof commerceSourceTypes)[number];
+// Webhook-only payment sources do not claim an exhaustive snapshot/sync capability.
+export type CommerceSourceType = (typeof commerceSourceTypes)[number] | 'payment' | 'checkout-session' | 'subscription';
 
 export type SourceCapability = {
   sourceType: CommerceSourceType;
