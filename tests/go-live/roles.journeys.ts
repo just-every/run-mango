@@ -1,3 +1,4 @@
+import {createHmac} from 'node:crypto';
 import {test,expect} from '@playwright/test';
 import {providerEdge} from './edge';
 import {eventSigner} from './sendgrid-events';
@@ -157,8 +158,13 @@ test('[OPER-003][OPER-004] roles govern native requests and removal retains auth
     expect(history.requests).toEqual([expect.objectContaining({revisionId:campaign.revisionId,operator:'Lena Chen'})]);
     expect(history.authorActivity).toEqual([expect.objectContaining({operatorId:'role-author',operatorName:'Lena Chen',objectId:campaign.revisionId})]);
     expect(history.managerActivity).toEqual([expect.objectContaining({operatorId:'role-manager',operatorName:'Maya Torres',objectId:campaign.revisionId})]);
+    const proof = await site.call('/auth/local/cli-session',{method:'POST',headers:{
+      Origin:site.runtime.url, 'x-rer-local-cli':createHmac('sha256',site.runtime.token).update('local-cli\0sign-in').digest('hex'),
+    },body:{}});
+    expect(proof.status,await proof.clone().text()).toBe(303);
+    const removalCookie=proof.headers.get('set-cookie')!.split(';')[0];
     for(const role of ['author','manager'] as const) {
-      expect((await site.call(`/api/operators/role-${role}`,{method:'DELETE',cookie:owner})).status).toBe(204);
+      expect((await site.call(`/api/operators/role-${role}`,{method:'DELETE',cookie:removalCookie,headers:{Origin:site.runtime.url}})).status).toBe(204);
       expect((await site.call('/api/operator',{cookie:cookies[role]})).status).toBe(401);
       expect((await site.call(`/api/campaigns/${campaign.campaignId}/review`,{cookie:cookies[role]})).status).toBe(401);
     }

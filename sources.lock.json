@@ -7038,7 +7038,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "8aa72d7f054e5db271df8a950dbdabd1c76feb169d65080256905410ce55f212",
+      "sha256": "33100eea8108bd7560df7394de158f3418bfa9cdb56c72c48e04a5e4cd7fdd03",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {
@@ -7074,7 +7074,7 @@
       "executable": false
     },
     "tests/go-live/worker.ts": {
-      "sha256": "761c6cb86dbb531796233247af0acf66f208de2605655ba53558ebf133f584ab",
+      "sha256": "10023f7426a552a1c1ac4a87e2fedd1a33e4e4d41a5c3bda619ebf54717c87ae",
       "executable": false
     },
     "tests/local-bootstrap.js": {

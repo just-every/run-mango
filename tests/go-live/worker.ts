@@ -1,3 +1,4 @@
+import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
 import {advanceClock} from './clock';
 import {pacedAdapter} from '../../src/core/features/lifecycle/transport-pacing';
 import {controlledDatabase,controlledQueue,arm,release,status,capturedEmissions,replay} from './delivery-controls';
@@ -144,6 +145,14 @@ const worker = {
   async fetch(request: Request, bindings: Bindings, context: ExecutionContext) {
     bindings={...bindings,DB:controlledDatabase(bindings.DB),MANGO_JOBS:controlledQueue(bindings.MANGO_JOBS)};
     if (new URL(request.url).pathname.startsWith('/_golive/')) return control(request, bindings);
+    if (new URL(request.url).pathname === '/auth/local/cli-session' && !bindings.GO_LIVE_MANAGED) {
+      // Exercise the real rer local-owner proof door; removal still requires fresh authority.
+      const origin = new URL(request.url).origin;
+      return withDevIdentity(worker, {
+        bindings: environment => ({...environment, AUTH_LOCAL:'true', AUTH_ORIGIN:origin, RER_DEV_KEY:environment.LOCAL_BOOTSTRAP_TOKEN}),
+        config: environment => ({origin, OWNER_EMAIL:'owner@example.test', SESSION_SECRET:environment.LOCAL_BOOTSTRAP_TOKEN, local:true}),
+      }).fetch(request, bindings, context);
+    }
     const { platform } = await compose(bindings);
     if (bindings.GO_LIVE_MANAGED) {
       // The loopback test transport represents the public HTTPS origin.
