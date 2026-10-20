@@ -2,6 +2,9 @@ import {hasPermission,requiredPermission} from '@/core/features/auth/permissions
 import {projectPrivateResponse} from '@/core/features/auth/response-privacy';
 import {contactSupportRoutes} from '@/core/features/auth/contact-actions';
 import {approvalRequestRoutes} from '@/core/features/auth/approval-requests';
+import {activityRoutes} from '@/core/features/auth/activity';
+import {reviewLinkHostRoutes} from '@/core/features/settings/review-link-hosts';
+import {blockedLinkHosts,inspectRevisionLinks} from '@/core/features/lifecycle/link-checks';
 import {archiveOperatorRoutes,archivePublicRoutes} from '@/core/features/archive/routes';
 import {createOpenPixelRoutes,createOpenTrackingSettingsRoutes} from '@/core/features/insights/open-tracking';
 import {smsReviewPreview} from '@/core/features/sms/review-preview';
@@ -206,7 +209,8 @@ export function createAppServices(platform: Platform): AppServices {
     storeService,
     { smsEnabled: platform.config.modules.sms.enabled, commerceEnabled:platform.config.modules.commerce.enabled, aiEnabled:platform.config.modules.ai.enabled,
       marketingConnectionRequired:platform.config.authMail !== undefined && platform.config.mailProvider === 'rer',
-      smsPreview:(campaignId,revisionId)=>smsReviewPreview(lifecycleRuntime!,campaignId,revisionId) },
+      smsPreview:(campaignId,revisionId)=>smsReviewPreview(lifecycleRuntime!,campaignId,revisionId),
+      blockedHosts:async input=>blockedLinkHosts(await inspectRevisionLinks(input,platform)) },
   );
   const insightsService = createInsightsService(createInsightsRepository(database), platform.config.deliverabilityReportingWindowDays);
 
@@ -318,6 +322,7 @@ export function createApp(
   });
   app.route('/api',contactSupportRoutes(environment.DB,audienceService));
   app.route('/api',approvalRequestRoutes(environment.DB));
+  app.route('/api',activityRoutes(environment.DB));
   app.route('/api', createOperatorRoutes(authService, { secureCookie }));
   app.route('/api', createIntegrationSettingsRoutes(integrations));
   app.get('/api/editor/config', async context => {
@@ -337,6 +342,7 @@ export function createApp(
   app.route('/api',archiveOperatorRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
   app.route('/api', createLinkHostRoutes(platform));
+  app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));
   app.route('/api', createSyncRoutes(platform, services.storeService));
   app.route('/api', createSegmentRoutes(environment.DB));

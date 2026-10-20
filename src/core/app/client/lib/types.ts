@@ -25,6 +25,7 @@ export type Audience = {
   candidateCount: number;
   excludedCount: number;
   eligibleCount: number;
+  exclusions: string;
 };
 
 export type AudienceChannelCount = {
@@ -98,7 +99,10 @@ export type RevisionLink = {
   destinationUrl: string;
 };
 
+export type BlockedHost = { host: string; links: string[] };
+
 export type Check = {
+  blockedHosts?: BlockedHost[];
   findingIdentity?: string;
   acknowledgement?: {operatorId: string; acknowledgedAt: string};
   id: string;
@@ -109,6 +113,8 @@ export type Check = {
 };
 
 export type CampaignDetail = {
+  blockedHosts?: BlockedHost[];
+  attribution?: import('@/core/features/campaigns/campaign-attribution').CampaignAttribution;
   smsPreview?: import('@/core/features/sms/review-preview').SmsReviewPreview;
   scheduler?: import('@/core/features/lifecycle/scheduler-observation').SchedulerObservation;
   results?: CampaignResults;
@@ -158,6 +164,7 @@ export type ProposalEntry = {
 };
 
 export type ApprovalBlocker = {
+  blockedHosts?: BlockedHost[];
   kind: string;
   status: string;
   detail: string;

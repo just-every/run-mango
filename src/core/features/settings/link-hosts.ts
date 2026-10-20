@@ -14,7 +14,18 @@ export async function loadLinkHosts(platform: Pick<Platform, 'database' | 'confi
 
 export function createLinkHostRoutes(platform: Platform) {
   const routes = new Hono<{Variables: AuthVariables}>();
-  const status = async () => ({hosts: await loadLinkHosts(platform), defaultHost: platform.config.publicBaseUrl.hostname});
+  const status = async () => {
+    const [hosts, audit] = await Promise.all([
+      loadLinkHosts(platform),
+      platform.database.$client.prepare(`SELECT json_extract(a.detail_json,'$.host') AS host,
+        'allowed in review' AS source,a.entity_id AS campaignId,a.actor_id AS operatorId,
+        p.display_name AS operatorName,a.occurred_at AS occurredAt
+        FROM lifecycle_audit_entries a LEFT JOIN operators p ON p.id=a.actor_id
+        WHERE a.action='link-host.allowed' ORDER BY a.occurred_at DESC,a.id DESC`).all<{host:string;
+          source:string;campaignId:string;operatorId:string;operatorName:string|null;occurredAt:number}>(),
+    ]);
+    return {hosts, defaultHost: platform.config.publicBaseUrl.hostname, sources: audit.results.filter(entry => hosts.includes(entry.host))};
+  };
   routes.get('/settings/link-hosts', async context => {
     context.header('Cache-Control', 'no-store');
     return context.json(await status());

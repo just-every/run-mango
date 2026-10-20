@@ -3,10 +3,11 @@ import { contract } from '../contract.js';
 import { providerEdge } from './edge';
 import { eventSigner } from './sendgrid-events';
 import { installation, json, sender, confirmedContact, draftCampaign, approve } from './harness';
+import { blockedHostJourney, hostNetwork } from './content-hosts';
 import { openPage, reloadPage } from '../support/navigation';
 
-contract('MSG-007', 'review acknowledges only current advisories and never overrides a blocking check', async ({page}, info) => {
-  const edge = await providerEdge(), site = await installation(edge, eventSigner());
+contract('MSG-015][MSG-006][MSG-007', 'review names blocked hosts, allows an approver to trust them, and keeps advisory safety', async ({page}, info) => {
+  const edge = await providerEdge({links:hostNetwork}), site = await installation(edge, eventSigner(), {commerce:true});
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);
@@ -70,5 +71,6 @@ contract('MSG-007', 'review acknowledges only current advisories and never overr
     const records = await site.rows("SELECT actor_id,occurred_at FROM lifecycle_audit_entries WHERE action='acknowledge-advisory'");
     expect(records).toHaveLength(2);
     expect(records.every(record => record.actor_id === 'go-live-owner' && record.occurred_at > 0)).toBe(true);
+    await blockedHostJourney(site,cookie,page,info,clock.now);
   } finally {await site.runtime.close();await edge.close();}
 });

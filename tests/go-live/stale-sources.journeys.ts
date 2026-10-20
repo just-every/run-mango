@@ -6,9 +6,32 @@ import {installation, json, sender, confirmedContact, draftCampaign, approve} fr
 import {sourceEdge, syncSource} from './source-edge';
 import {openPage, reloadPage} from '../support/navigation';
 import {declaredCapability} from './declared-capability';
+import {id, line, order, page as shopifyPage} from '../shopify/fixtures';
 
-contract('STORE-005', '[STORE-006] inclusion, exclusion and proposal sources refuse unavailable data and recover stale data only after completed sync', async ({page, browser}, info) => {
-  const commerce = sourceEdge(), edge = await providerEdge(commerce), site = await installation(edge, eventSigner(), {commerce: true});
+/** Shopify response fixtures only: canonical records and exclusions are produced by the real adapter. */
+function commerceOrder(n: number, email: string, purchasedAt: string, updatedAt: string, state: 'purchase' | 'refund' | 'return' | 'resolved' = 'purchase') {
+  const fixture = structuredClone(order);
+  const returned = fixture.returns.nodes[0] as Record<string, unknown>;
+  const refunded = fixture.refunds[0];
+  return {...fixture, id: id('Order', n), createdAt: purchasedAt, processedAt: purchasedAt, updatedAt,
+    customer: {...fixture.customer, id: id('Customer', n), email, phone: null, firstName: email.split('@')[0], lastName: 'Garden'},
+    lineItems: shopifyPage([line()]),
+    returns: shopifyPage(state === 'return' || state === 'resolved'
+      ? [{...returned, id: id('Return', n), createdAt: purchasedAt, status: state === 'resolved' ? 'CLOSED' : 'OPEN', closedAt: state === 'resolved' ? updatedAt : null}]
+      : []),
+    refunds: state === 'refund' || state === 'resolved' ? [{...refunded, id: id('Refund', n), createdAt: purchasedAt, updatedAt,
+      transactions: shopifyPage(refunded.transactions.nodes.map(transaction => ({...(transaction as Record<string, unknown>), id: id('OrderTransaction', n), createdAt: purchasedAt,
+        status: state === 'refund' ? 'PENDING' : 'SUCCESS', processedAt: state === 'refund' ? null : updatedAt}))),
+    }] : [],
+  };
+}
+
+contract('STORE-005', '[STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions', async ({page, browser}, info) => {
+  const commerce = sourceEdge();
+  let orders: ReturnType<typeof commerceOrder>[] = [];
+  const edge = await providerEdge({commerce: request => String(request.query).includes('orders(first:')
+    ? {data: {orders: shopifyPage(structuredClone(orders))}} : commerce.commerce(request)});
+  const site = await installation(edge, eventSigner(), {commerce: true});
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
@@ -86,6 +109,79 @@ contract('STORE-005', '[STORE-006] inclusion, exclusion and proposal sources ref
       await reloadPage(page);
       await expect(page.getByRole('link', {name: 'View schedule and results'})).toBeVisible();
       await page.locator('.review-heading').screenshot({path: info.outputPath(`source-approved-${width}.png`)});
+    }
+
+    // Let genuine confirmed consent age, rather than editing stored history.
+    const nextTransport = async () => {
+      const [rows, clock] = await Promise.all([site.rows('SELECT MAX(next_at) AS due FROM provider_pacing'), site.control('/_golive/clock')]);
+      await site.control('/_golive/clock', {advanceMs: Math.max(0, Math.ceil(Number(rows[0]?.due ?? 0) - clock.now))});
+    };
+    await nextTransport();
+    await confirmedContact(site, edge, cookie, 'dormant@example.test', 'Dormant Garden');
+    await nextTransport();
+    await confirmedContact(site, edge, cookie, 'active-year@example.test', 'Active Garden');
+    const oldAt = (await site.control('/_golive/clock')).now;
+    const thirteenMonthsLater = new Date(oldAt);
+    thirteenMonthsLater.setUTCMonth(thirteenMonthsLater.getUTCMonth() + 13);
+    await site.control('/_golive/clock', {advanceMs: thirteenMonthsLater.getTime() - oldAt});
+    // Operator sessions expire normally during the thirteen-month interval.
+    const reviewCookie = await site.open();
+    for (const name of ['buyer', 'refund', 'return', 'resolved']) {
+      await nextTransport();
+      await confirmedContact(site, edge, reviewCookie, `${name}@example.test`, `${name} Garden`);
+    }
+    const current = await site.control('/_golive/clock');
+    const now = new Date(current.now), iso = now.toISOString();
+    const daysAgo = (days: number) => new Date(current.now - days * 86400000).toISOString();
+    const elevenMonthsAgo = new Date(current.now);
+    elevenMonthsAgo.setUTCMonth(elevenMonthsAgo.getUTCMonth() - 11);
+    orders = [
+      commerceOrder(101, 'buyer@example.test', daysAgo(6), iso),
+      commerceOrder(102, 'refund@example.test', daysAgo(30), iso, 'refund'),
+      commerceOrder(103, 'return@example.test', daysAgo(30), iso, 'return'),
+      commerceOrder(104, 'dormant@example.test', new Date(oldAt).toISOString(), iso),
+      // These remain eligible: an eight-day purchase with resolved money/return,
+      // and an eleven-month-old order with no newer consent or click.
+      commerceOrder(105, 'resolved@example.test', daysAgo(8), iso, 'resolved'),
+      commerceOrder(106, 'active-year@example.test', elevenMonthsAgo.toISOString(), iso),
+    ];
+    for (const source of ['product', 'order', 'refund']) await syncSource(site, reviewCookie, source);
+    await nextTransport();
+    await site.control('/_golive/sender-evidence');
+    const productCampaign = await draftCampaign(site, reviewCookie, 'Garden product exclusions', ['buyer@example.test'], new Date(current.now + 3600000));
+    const productRule = {version: 1, operator: 'all', predicates: [{sourceType: 'order', field: 'activity.productId', comparator: 'eq', value: id('Product', 21)}]};
+    await json(await site.call(`/api/campaign-revisions/${productCampaign.revisionId}`, {method: 'PATCH', cookie: reviewCookie,
+      body: {inclusionRuleJson: JSON.stringify(productRule)}}), 200);
+    const reasons = [
+      {reason: 'recent-product-purchase', count: 1}, {reason: 'unresolved-refund', count: 1},
+      {reason: 'unresolved-return', count: 1}, {reason: 'dormant', count: 1},
+    ];
+    const productChecks = await json(await site.call(`/api/campaigns/${productCampaign.campaignId}/checks`, {method: 'POST', cookie: reviewCookie,
+      body: {revisionId: productCampaign.revisionId}}), 200);
+    expect(productChecks).toMatchObject({sourceStatus: 'ok', candidateCount: 6, eligibleCount: 2, blockers: []});
+    expect(productChecks.exclusions).toHaveLength(reasons.length);
+    expect(productChecks.exclusions).toEqual(expect.arrayContaining(reasons));
+    expect(productChecks.channelCounts).toContainEqual(expect.objectContaining({channel: 'email', recipientStepCount: 2}));
+    const saved = await json(await site.call(`/api/campaigns/${productCampaign.campaignId}/review`, {cookie: reviewCookie}), 200);
+    expect(saved.audience).toMatchObject({candidateCount: 6, excludedCount: 4, eligibleCount: 2});
+    expect(JSON.parse(saved.audience.exclusions)).toHaveLength(reasons.length);
+    expect(JSON.parse(saved.audience.exclusions)).toEqual(expect.arrayContaining(reasons));
+    await page.context().addCookies([{name: reviewCookie.split('=')[0], value: reviewCookie.split('=')[1], url: site.runtime.url}]);
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({width, height: 1000});
+      await openPage(page, `${site.runtime.url}/app/campaigns/${productCampaign.campaignId}/review`);
+      const snapshot = page.locator('.audience-snapshot');
+      await expect(snapshot.locator('.metric-row > div').filter({has: page.locator('dt', {hasText: /^Candidates$/})}).locator('dd')).toHaveText('6');
+      await expect(snapshot.locator('.metric-row > div').filter({has: page.locator('dt', {hasText: /^Eligible contacts$/})}).locator('dd')).toHaveText('2');
+      for (const {reason, count} of reasons) {
+        const label = new RegExp(`^${reason.replaceAll('-', ' ')}$`, 'i');
+        const row = snapshot.locator('.exclusion-list p').filter({has: page.locator('span', {hasText: label})});
+        await expect(row).toBeVisible();
+        await expect(row.locator('strong')).toHaveText(String(count));
+      }
+      await expect(page.getByRole('button', {name: 'Approve & schedule', exact: true})).toBeEnabled();
+      await snapshot.screenshot({path: `tests/evidence/aud-003-review-${width}.png`});
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
     expect(edge.unexpected).toEqual([]);
   } finally {await page.close(); await site.runtime.close(); await edge.close();}

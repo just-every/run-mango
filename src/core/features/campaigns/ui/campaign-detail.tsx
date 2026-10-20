@@ -1,3 +1,4 @@
+import { CampaignAttributionSummary } from './campaign-attribution';
 import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {requestJson} from '@/core/app/client/lib/api';
@@ -58,6 +59,7 @@ export function CampaignDetailPage() {
           ) : null}
         </div>
       </header>
+      <CampaignAttributionSummary attribution={data.attribution} version={data.revision.version}/>
       {editError?<p role="alert">{editError}</p>:null}
       {data.campaign.state==='erasure-invalidated'?<section className="notice-warning" role="status"><h2>Review required after contact erasure</h2><p>This saved revision was redacted. Its historical approval no longer authorizes sending. Create and review a new draft before scheduling another campaign.</p><Link to="/app/campaigns" className="button button--secondary">Create new draft</Link></section>:null}
       {data.uncertainDeliveries?.length ? <section role="status" className="notice-warning uncertain-deliveries">
@@ -69,7 +71,7 @@ export function CampaignDetailPage() {
       </section> : null}
       <SaveCampaignTemplate revisionId={data.revision.id} name={data.revision.name} disabled={false}/>
       <div className="two-column-detail">
-        <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
+        <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} exclusions={data.audience ? JSON.parse(data.audience.exclusions).map((item: {reason:string;count:number}) => ({...item,id:item.reason})) : []} />
         <DeliveryPlan steps={data.steps} />
       </div>
       <RevisionPreviews revision={data.revision} links={data.links} mediaOrigin={data.mediaOrigin} />

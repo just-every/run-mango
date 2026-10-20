@@ -7,6 +7,7 @@ import { asc, desc, eq } from 'drizzle-orm';
 import { createCampaignResultRepository } from './result-repository';
 import { createCampaignListRepository } from './list-repository';
 import { campaignClaimProjection } from './campaign-claim-projection';
+import { campaignAttribution } from './campaign-attribution';
 
 import type { Database } from '@/core/platform/db/client';
 
@@ -22,6 +23,7 @@ import {
 export function createCampaignRepository(database: Database,sizeOptions:EmailSizeOptions = {}) {
   return {
     ...createCampaignResultRepository(database),
+    attribution:(campaignId:string,revisionId:string)=>campaignAttribution(database.$client,campaignId,revisionId),
     scheduler: (now:Date) => schedulerObservation(database.$client).read(now),
     async listProposals(now = new Date()) {
       await createProposalRepository(database).expireDue(now);

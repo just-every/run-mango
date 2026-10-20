@@ -5,7 +5,7 @@ import {installation,json,sender,confirmedContact,draftCampaign,availableTranspo
 import {openPage} from '../support/navigation';
 import {type ProductRole} from '../../src/core/features/auth/permissions';
 
-test('[OPER-004] assigned roles govern the next native request, drafting, tests, approval and masked support',async({page},info)=>{
+test('[OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
   const edge=await providerEdge(),site=await installation(edge,eventSigner());
   try {
     const owner=await site.open();
@@ -132,5 +132,55 @@ test('[OPER-004] assigned roles govern the next native request, drafting, tests,
     expect((await site.rows(`SELECT email_status FROM contacts WHERE id='${contact}'`))[0].email_status).toBe('unsubscribed');
     expect((await site.call('/api/operators/role-manager/role',{method:'PUT',cookie:cookies.admin,body:{role:'owner'}})).status).toBe(403);
     expect((await site.call('/api/operators/go-live-owner',{method:'DELETE',cookie:cookies.admin})).status).toBe(403);
+
+    const retainedHistory=async()=>{
+      const read=async(path:string)=>json(await site.call(path,{cookie:owner}),200);
+      const [detail,requests,authorActivity,managerActivity,records]=await Promise.all([
+        read(`/api/campaigns/${campaign.campaignId}`),
+        read(`/api/campaigns/${campaign.campaignId}/approval-requests`),
+        read(`/api/activity?operator=role-author&action=campaign.approval-requested&object=${campaign.revisionId}`),
+        read(`/api/activity?operator=role-manager&action=approved&object=${campaign.revisionId}`),
+        Promise.all([
+          `SELECT * FROM campaigns WHERE id='${campaign.campaignId}'`,
+          `SELECT * FROM campaign_revisions WHERE id='${campaign.revisionId}'`,
+          `SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}' ORDER BY idempotency_key`,
+          `SELECT * FROM campaign_state_transitions WHERE campaign_id='${campaign.campaignId}' ORDER BY id`,
+          `SELECT * FROM lifecycle_audit_entries WHERE entity_id='${campaign.revisionId}' ORDER BY id`,
+        ].map(sql=>site.rows(sql))),
+      ]);
+      return {campaign:detail.campaign,revision:detail.revision,attribution:detail.attribution,requests:requests.requests,
+        authorActivity:authorActivity.entries,managerActivity:managerActivity.entries,records};
+    };
+    const history=await retainedHistory();
+    expect(history.attribution.campaignAuthor).toMatchObject({operatorId:'role-author',operatorName:'Lena Chen'});
+    expect(history.attribution.revisionApprover).toMatchObject({operatorId:'role-manager',operatorName:'Maya Torres'});
+    expect(history.requests).toEqual([expect.objectContaining({revisionId:campaign.revisionId,operator:'Lena Chen'})]);
+    expect(history.authorActivity).toEqual([expect.objectContaining({operatorId:'role-author',operatorName:'Lena Chen',objectId:campaign.revisionId})]);
+    expect(history.managerActivity).toEqual([expect.objectContaining({operatorId:'role-manager',operatorName:'Maya Torres',objectId:campaign.revisionId})]);
+    for(const role of ['author','manager'] as const) {
+      expect((await site.call(`/api/operators/role-${role}`,{method:'DELETE',cookie:owner})).status).toBe(204);
+      expect((await site.call('/api/operator',{cookie:cookies[role]})).status).toBe(401);
+      expect((await site.call(`/api/campaigns/${campaign.campaignId}/review`,{cookie:cookies[role]})).status).toBe(401);
+    }
+    const removed=await site.rows("SELECT id,display_name,removed_at FROM operators WHERE id IN ('role-author','role-manager') ORDER BY id");
+    expect(removed.map(row=>({id:row.id,name:row.display_name,removed:row.removed_at!==null}))).toEqual([
+      {id:'role-author',name:'Lena Chen',removed:true},{id:'role-manager',name:'Maya Torres',removed:true},
+    ]);
+    const activeOperators=(await json(await site.call('/api/operators',{cookie:owner}),200)).operators.map((operator:any)=>operator.id);
+    for(const role of ['author','manager'])expect(activeOperators).not.toContain(`role-${role}`);
+    expect(await retainedHistory()).toEqual(history);
+    for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1000});
+      await view(owner,`/app/campaigns/${campaign.campaignId}/review`);
+      await expect(page.getByLabel('Campaign attribution',{exact:true})).toContainText('Lena Chen');
+      await expect(page.getByLabel('Campaign attribution',{exact:true})).toContainText('Maya Torres');
+      await expect(page.locator('main')).toContainText('Approval requested by Lena Chen');
+      await page.screenshot({path:info.outputPath(`roles-retained-review-${width}.png`),fullPage:true});
+      await view(owner,`/app/campaigns/${campaign.campaignId}`);
+      await expect(page.getByLabel('Campaign attribution',{exact:true})).toContainText('Lena Chen');
+      await expect(page.getByLabel('Campaign attribution',{exact:true})).toContainText('Maya Torres');
+      await page.screenshot({path:info.outputPath(`roles-retained-campaign-${width}.png`),fullPage:true});
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    }
   } finally {await site.runtime.close();await edge.close();}
 });

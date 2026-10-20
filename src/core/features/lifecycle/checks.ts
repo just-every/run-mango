@@ -3,6 +3,8 @@ import { emailSizeAdvisory } from '@/core/features/campaigns/email-size-advisory
 import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
 import { formatEmailSize } from '@/core/features/campaigns/email-size';
 import { contactLink, safeEmailLink } from '@/core/features/campaigns/contact-links';
+import { allowedLinkHost } from '@/core/features/settings/link-hosts-validation';
+import { blockedLinkHosts } from './link-checks';
 import { textLinkDestinations } from '@/core/features/campaigns/message-links';
 import { managedSmsText, smsComplianceBlock } from '@/core/features/sms/content';
 import {activeProviderHolds} from './provider-holds';
@@ -51,13 +53,21 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
     try {
       if (contactLink(link.destinationUrl)) return false;
       const url = new URL(link.destinationUrl);
-      return !safeEmailLink(link.destinationUrl) || !allowedHosts.includes(url.hostname.toLowerCase());
+      return !safeEmailLink(link.destinationUrl) || !allowedLinkHost(url.hostname, allowedHosts);
     } catch {
       return true;
     }
   });
-  findings.push(check('message.links', blockedLinks.length === 0,
-    blockedLinks.length ? `Blocked links: ${blockedLinks.map((item) => item.destinationUrl).join(', ')}` : 'Every destination is an allowed HTTPS or contact link.'));
+  const directHosts = blockedLinks.flatMap(link => {
+    try {
+      const url = new URL(link.destinationUrl);
+      return url.protocol === 'https:' && !allowedLinkHost(url.hostname, allowedHosts)
+        ? [{destination: link.destinationUrl, inspection: {ok: false, detail: '', blockedHost: url.hostname}}] : [];
+    } catch { return []; }
+  });
+  findings.push({...check('message.links', blockedLinks.length === 0,
+    blockedLinks.length ? `Blocked links: ${blockedLinks.map((item) => item.destinationUrl).join(', ')}` : 'Every destination is an allowed HTTPS or contact link.'),
+    blockedHosts: blockedLinkHosts(directHosts)});
 
   const authored = `${revision.emailSubject}\n${revision.preheader}\n${revision.emailBody}\n${revision.emailText}\n${revision.smsBody}`;
   const htmlPolicy = inspectEmailHtml(revision.emailBody);
@@ -167,10 +177,11 @@ export async function runApprovalChecks(input: {
   }
   const linkInspections = value(linkResult);
   const blockedDestinations = linkInspections.filter(({ inspection }) => !inspection.ok);
-  checks.push(check('message.links.resolved', blockedDestinations.length === 0,
+  checks.push({...check('message.links.resolved', blockedDestinations.length === 0,
     blockedDestinations.length
       ? `Blocked transmitted links: ${blockedDestinations.map(({ destination, inspection }) => `${destination} (${inspection.detail})`).join('; ')}`
-      : `${linkInspections.length} transmitted destinations passed HTTPS or contact-link checks.`));
+      : `${linkInspections.length} transmitted destinations passed HTTPS or contact-link checks.`),
+    blockedHosts: blockedLinkHosts(blockedDestinations)});
   const configured = platform.config.mailSender;
   if (selected.has('email')) {
     const size=await savedEmailSize(platform.database,snapshot.revision,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);

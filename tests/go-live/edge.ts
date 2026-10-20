@@ -15,7 +15,7 @@ type Answer = { type: number; data: string };
 const quoted = (value: string) => (value.match(/.{1,255}/g) ?? []).map(part => JSON.stringify(part)).join(' ');
 const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
 
-export async function providerEdge(options:{commerce?:(request:Record<string,unknown>)=>unknown}={}) {
+export async function providerEdge(options:{commerce?:(request:Record<string,unknown>)=>unknown; links?:Record<string,{status?:number;location?:string}>}={}) {
   const behavior=providerBehavior();
   const sms=smsProviderEdge();
   const keys = [dkimKey(), dkimKey()];
@@ -38,6 +38,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
     's2.domainkey.u99.wl.sendgrid.net': [{ type: 16, data: quoted(`v=DKIM1; k=rsa; p=${keys[1]}`) }],
     '_dmarc.example.test': [{ type: 16, data: quoted('v=DMARC1; p=quarantine; psd=n') }],
   };
+  for (const address of Object.keys(options.links ?? {})) zone[new URL(address).hostname] = [{type:1,data:'203.0.113.10'}];
   const codes: Record<string, number> = { CNAME: 5, TXT: 16, MX: 15, A:1, AAAA:28 };
   function resolve(name: string, type: string) {
     const answers: Array<Answer & { name: string; TTL: number }> = [];
@@ -65,6 +66,8 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
     behavior.requests.push({method:request.method??'',path:original.pathname,at:Date.now()});
     if(await sms.handle(original,request,response))return;
     if(await resend.handle(original,request,response))return;
+    const linked = options.links?.[original.href];
+    if(linked && request.method==='HEAD') {response.writeHead(linked.status ?? (linked.location ? 302 : 200), linked.location ? {Location:linked.location} : {});response.end();return;}
     if(original.hostname==='shop.example.test'&&request.method==='HEAD'){response.writeHead(200);response.end();return;}
     if(original.hostname==='mango-test.myshopify.com' && options.commerce) {
       if(original.pathname.startsWith('/products/')) {response.writeHead(200,{'Content-Type':'text/html'});return response.end('<p>Product</p>');}

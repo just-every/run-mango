@@ -74,6 +74,7 @@ export type ApprovalCheck = {
   status: 'passed' | 'blocked' | 'advisory';
   detail: string;
   blocking: boolean;
+  blockedHosts?: Array<{host: string; links: string[]}>;
 };
 
 export function createCampaignLifecycleRepository(database: Database) {

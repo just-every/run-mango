@@ -1,4 +1,5 @@
 import { contactLink } from '@/core/features/campaigns/contact-links';
+import { allowedLinkHost } from '@/core/features/settings/link-hosts-validation';
 import type { LinkInspection, LinkInspector } from '@/core/shared/platform';
 
 const resolver = 'https://cloudflare-dns.com/dns-query';
@@ -17,11 +18,6 @@ function privateAddress(value: string) {
     || (first === 172 && second >= 16 && second <= 31)
     || (first === 192 && second === 168)
     || (first === 198 && (second === 18 || second === 19));
-}
-
-function allowed(host: string, hosts: string[]) {
-  const normalized = host.toLowerCase();
-  return hosts.some((entry) => normalized === entry || normalized.endsWith(`.${entry}`));
 }
 
 async function addressesFor(host: string, request: typeof fetch): Promise<string[]> {
@@ -51,7 +47,7 @@ export function createLinkInspector(allowedHosts: string[], request: typeof fetc
       }
       for (let redirect = 0; redirect <= maxRedirects; redirect += 1) {
         if (current.protocol !== 'https:') return { ok: false, detail: 'Link must use HTTPS.' };
-        if (!allowed(current.hostname, allowedHosts)) return { ok: false, detail: `Link host ${current.hostname} is not allowed.` };
+        if (!allowedLinkHost(current.hostname, allowedHosts)) return { ok: false, blockedHost: current.hostname, detail: `Link host ${current.hostname} is not allowed.` };
         if (privateAddress(current.hostname)) return { ok: false, detail: `Link host ${current.hostname} is a private-network address.` };
         try {
           const addresses = await addressesFor(current.hostname, request);

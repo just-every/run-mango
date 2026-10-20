@@ -5,7 +5,7 @@ import type { CampaignResults, DispositionCount } from '../result-model';
 const reasons: Record<string,string> = {
   'channel-not-subscribed':'unsubscribed, suppressed or without confirmed consent',
   'contact-erased':'contact removed', dormant:'no recent activity',
-  'recent-product-purchase':'recent product purchase', 'unresolved-refund':'unresolved refund or return',
+  'recent-product-purchase':'recent product purchase', 'unresolved-refund':'unresolved refund', 'unresolved-return':'unresolved return',
   'recipient-timezone-unknown-or-stale':'recipient time zone unknown or evidence expired',
   'recipient-country-unknown':'recipient country unknown', 'sender-not-registered':'SMS sender not registered',
   'destination-changed-after-preparation':'destination changed before handoff', 'schedule-replaced':'schedule replaced',

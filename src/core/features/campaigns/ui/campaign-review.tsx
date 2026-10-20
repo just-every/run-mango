@@ -1,3 +1,5 @@
+import { BlockedLinkHosts } from './blocked-link-hosts';
+import { CampaignAttributionSummary } from './campaign-attribution';
 import {ApprovalRequests} from '@/core/features/auth/ui/approval-requests';
 import {usePermissions} from '@/core/features/auth/ui/permissions';
 import {TestSendHistory,type TestSendAccess} from './test-send-history';
@@ -242,6 +244,7 @@ export function CampaignReviewPage() {
           {data.results ? <Link className="primary-action" to="/app/campaigns/$id/scheduled" params={{id}}>View schedule and results</Link> : null}
         </div>}
       </header>
+      <CampaignAttributionSummary attribution={data.attribution} version={revision.version}/>
       {editable && blockingFindings.length ? <p id="approval-blocked-reason" className="notice-note" role="status">Approval blocked: {approvalFindingDescription(blockingFindings[0])}{blockingFindings.length > 1 ? ` Review all ${blockingFindings.length} blocking checks below.` : ''}</p> : null}
       {dirty ? <div className="unsaved-notice" role="status"><span>Unsaved changes. Save before approving.</span><button type="button" className="text-link" disabled={Boolean(busy)} onClick={() => {setDraft(savedDraft); setNotice(undefined);}}>Discard changes</button></div> : null}
       {notice ? <p className={noticeKind === 'success' ? 'action-notice' : 'inline-error'} role={noticeKind === 'success' ? 'status' : 'alert'}>{notice}</p> : null}
@@ -252,6 +255,7 @@ export function CampaignReviewPage() {
         <button className="secondary-action" type="button" onClick={() => void recover()} disabled={Boolean(busy) || dirty}>Reload saved revision</button>
       </section> : null}
       <ApprovalCheckList checks={findings} onAcknowledge={can('campaign.approve') ? check => void acknowledge(check) : undefined} acknowledgementDisabled={Boolean(busy) || dirty || needsCanonicalRead} title="Approval checks" eyebrow="Saved revision" emptyMessage="Approval will check this saved revision and current consent." />
+      <BlockedLinkHosts campaignId={id} blockedHosts={data.blockedHosts} findings={findings} links={data.links} canAllow={can('campaign.approve')} disabled={Boolean(busy) || dirty || needsCanonicalRead} onAllowed={async () => {await reload(); setActionBlockers(undefined);}} />
       <p className="saved-audience-summary notice-note"><strong>Saved audience:</strong> {revision.audienceMasked?'Audience conditions are restricted by your role.':summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p>
       <SaveCampaignTemplate key={revision.id} revisionId={revision.id} name={revision.name} disabled={dirty||needsCanonicalRead||Boolean(busy)}/>
       <div className="review-layout">
@@ -283,7 +287,7 @@ export function CampaignReviewPage() {
             </ValidationForm>
             <TestSendHistory tests={testAccess.data?.tests??[]} />
           </Disclosure> : null}
-          <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
+          <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} exclusions={data.audience ? JSON.parse(data.audience.exclusions).map((item: {reason:string;count:number}) => ({...item,id:item.reason})) : []} />
           <DeliveryPlan steps={data.steps} />
         </div>
       </div>

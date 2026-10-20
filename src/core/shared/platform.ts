@@ -207,6 +207,7 @@ export interface BlobStore {
 export type LinkInspection = {
   ok: boolean;
   finalUrl?: string;
+  blockedHost?: string;
   detail: string;
 };
 
