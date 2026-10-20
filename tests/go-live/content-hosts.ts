@@ -39,7 +39,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await expect(blocked.getByRole('button',{name:'Allow this host',exact:true})).toHaveCount(0);
   await json(await site.call(`${path}/link-hosts`,{method:'POST',cookie:author,body:{host:'partner.example'}}),403);
   await page.getByRole('button',{name:'Request approval',exact:true}).click();
-  await expect(page.getByText(/Requested by Lena Chen/)).toBeVisible();
+  await expect(page.getByText(/Approval requested by Lena Chen/)).toBeVisible();
   await view(manager);
   for (const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});
@@ -68,6 +68,10 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   const evil = await draftCampaign(site,author,'Untrusted suffix',['garden-reader@example.test'],new Date(now+7200000));
   await json(await site.call(`/api/campaign-revisions/${evil.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:'<p><a href="https://myshop.com.evil.example/offer">Untrusted shop</a></p>'}}),200);
   expect((await site.call(`/api/campaigns/${evil.campaignId}/approve`,{method:'POST',cookie:manager,body:{revisionId:evil.revisionId,idempotencyKey:'evil-blocked'}})).status).toBe(409);
+  await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie:owner,body:{hosts:'mango.example.test,*.myshop.com'}}),200);
+  await json(await site.call(`/api/campaign-revisions/${evil.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:'<p><a href="https://myshop.com/offer">Bare shop</a></p>'}}),200);
+  const bare = await json(await site.call(`/api/campaigns/${evil.campaignId}/approve`,{method:'POST',cookie:manager,body:{revisionId:evil.revisionId,idempotencyKey:'bare-blocked'}}),409);
+  expect(JSON.stringify(bare.blockers)).toContain('myshop.com');
   // A real Mailchimp-shaped archive creates the draft starter; no handcrafted campaign substitutes for the import.
   const hosts = ['partners.garden.example','workshops.market.example','seeds.community.example'];
   const html = `<html><head><title>Community garden partners</title></head><body><h2>Meet our garden partners</h2>${hosts.map((host,index)=>`<p><a href="https://${host}/visit">Garden partner ${index+1}</a></p>`).join('')}</body></html>`;
