@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 29 claims · 29 in code.**
+**Totals: 30 claims · 30 in code.**
 
 ## Mango integration claims
 
@@ -44,3 +44,4 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | MSG-005 | Review of an SMS step shows each rendered example with the program identity, `Reply STOP to unsubscribe`, the frequency disclosure and the exact segment count. Mobile Message is the proved adapter. | done | `tests/go-live/content-checks.journeys.ts` |
 | OPER-007 | Owner and Admin read Activity under Settings: every recorded operator action and integration call, newest first, filtered by operator, agent, action, object and date, with a CSV of the filtered view. Drafts saved, approvals, pauses, imports, exports, erasures, consent edits, signup and kiosk changes, role changes and hourly signup-refusal summaries each appear once with actor and time; Authors are refused. Actual restore-completion actor/time and Activity view/filter/export proof remain open. | partial | `tests/go-live/integrations.journeys.ts` |
 | INT-004 | Owner-only Stripe connection, encrypted export-excluded secrets, exact-byte signed ingestion and source-identified contact timeline events. Real-provider lifecycle acceptance remains blocked by test-clock metadata rejection; no live-provider completion is claimed. | partial | `src/core/features/store/stripe/`, `tests/go-live/roles.journeys.ts` |
+| DELIV-002 | Owner-only SendGrid domain creation and validation, returned DNS records with independent per-record checks, DMARC/BIMI guidance and branded tracking gated by CNAME and HTTPS. Real authentication/DNS round trip and cleanup passed; real branded-host HTTPS/rewrite acceptance remains open. | partial | `src/core/features/sender-verification/domain-setup.ts`, `src/core/features/sender-verification/setup-routes.ts`, `src/core/features/sender-verification/tracking-domain.ts`, `tests/go-live/contact-links.journeys.ts` |

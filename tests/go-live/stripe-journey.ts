@@ -4,6 +4,7 @@ import {type Installation, json} from './harness';
 import {openPage} from '../support/navigation';
 export async function stripeJourney(site: Installation, page: Page, info: TestInfo, owner: string, admin: string, author: string) {
   const body = {key: 'rk_test_SyntheticStripe1234', signingSecret: 'whsec_SyntheticSigning'};
+  expect((await site.call('/api/settings/stripe', {method: 'PUT', cookie: owner, body: {...body, key: 'sk_test_UnrestrictedKey'}})).status).toBe(400);
   for (const cookie of [admin, author]) expect((await site.call('/api/settings/stripe', {method: 'PUT', cookie, body})).status).toBe(403);
   expect((await site.call('/api/settings/stripe', {method: 'PUT', body})).status).toBe(401);
   const [name, value] = owner.split('=');

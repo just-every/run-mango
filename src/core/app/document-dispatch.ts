@@ -21,7 +21,16 @@ export async function dispatchDocuments(
   const permitted = platform.config.local === true
     ? ['localhost', '127.0.0.1', '[::1]'].includes(host)
     : host === platform.config.publicBaseUrl.hostname;
-  if (!permitted) return Response.json({error: 'not_found'}, {status: 404});
+  if (!permitted) {
+    // A branded host exposes only the existing public token redirect and a
+    // cookie-free HTTPS probe. It grants no app, API, setup or session surface.
+    const branded = await platform.database.$client.prepare('SELECT host FROM tracking_domain WHERE id=1').first<{host: string}>();
+    if (branded?.host === host) {
+      if (url.pathname === '/' && request.method === 'HEAD') return new Response(null, {status: 204, headers: {'Cache-Control': 'no-store'}});
+      if (/^\/l\/[^/]+$/.test(url.pathname) && request.method === 'GET') return hono.fetch(request, environment, executionContext);
+    }
+    return Response.json({error: 'not_found'}, {status: 404});
+  }
   // Hosted deploy claims the native owner before they save a sender profile.
   // Local first-run setup still leads its automatic owner through that profile.
   // The signed-in /setup and /app gates below check sender completeness separately.

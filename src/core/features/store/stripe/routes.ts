@@ -7,7 +7,7 @@ import {activityStatement} from '@/core/features/auth/activity-record';
 import {sha256} from '@/core/shared/ids';
 import {seal, unseal} from './secrets';
 import {stripeSources, stripeRecord, verifyStripe} from './events';
-const connection = z.object({key: z.string().regex(/^(?:rk|sk)_(?:test|live)_[A-Za-z0-9]+$/).max(512), signingSecret: z.string().regex(/^whsec_[A-Za-z0-9]+$/).max(256)}).strict();
+const connection = z.object({key: z.string().regex(/^rk_(?:test|live)_[A-Za-z0-9]+$/).max(512), signingSecret: z.string().regex(/^whsec_[A-Za-z0-9]+$/).max(256)}).strict();
 type Stored = {key_cipher: string; signing_cipher: string; mode: string};
 export function stripeRoutes(platform: Platform, audience: ReturnType<typeof createAudienceService>) {
   const db = platform.database.$client;

@@ -25,17 +25,18 @@ import { tags } from '../../src/core/features/sender-verification/dns';
 import type { Challenge } from '../../src/core/features/sender-verification/types';
 import { loadSenderSettings } from '../../src/core/features/settings/sender-persistence';
 
-type Bindings = LocalAppBindings & { GO_LIVE_EDGE_ORIGIN: string; GO_LIVE_WEBHOOK_KEY: string; GO_LIVE_PUBLIC_ORIGIN: string;
+type Bindings = LocalAppBindings & { GO_LIVE_EXTRA_HOSTS?: string; GO_LIVE_EDGE_ORIGIN: string; GO_LIVE_WEBHOOK_KEY: string; GO_LIVE_PUBLIC_ORIGIN: string;
   GO_LIVE_PROVIDER_KEY: string; GO_LIVE_DKIM_KEY: string; GO_LIVE_MANAGED?: string; MANGO_RESTORE_MODE?: string; GO_LIVE_COMMERCE?: string; GO_LIVE_SMS?: string; GO_LIVE_SMS_POLICY_AT?: string; GO_LIVE_MAIL_PROVIDER?: string; GO_LIVE_RESEND_COVERAGE?: string; GO_LIVE_PARALLEL_JOBS?: LocalAppBindings['MANGO_JOBS'] };
 
 // Observations only: each count is recorded after the actual production consumer returns.
 const completedQueues=new Map<string,string[]>();
 const network = globalThis.fetch;
 let edge = '';
+let extraHosts: string[] = [];
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const request = new Request(input, init), url = new URL(request.url);
   if (['127.0.0.1', 'localhost'].includes(url.hostname)) return network(request);
-  if (!['api.stripe.com', 'relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test','partner.example','redirect.example','via.example','myshop.com','shop.myshop.com','myshop.com.evil.example'].includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
+  if (!['links.example.test', 'api.stripe.com', 'relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test','partner.example','redirect.example','via.example','myshop.com','shop.myshop.com','myshop.com.evil.example'].includes(url.hostname) && !extraHosts.includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
   const headers = new Headers(request.headers); headers.set('X-Edge-Original-Url', url.href);
   return network(new URL(url.pathname + url.search, edge), { method: request.method, headers, redirect:request.redirect,
     body: ['GET', 'HEAD'].includes(request.method) ? undefined : await request.arrayBuffer(), signal: request.signal });
@@ -54,6 +55,7 @@ function receiver(bindings: Bindings) {
 
 async function compose(bindings: Bindings) {
   edge = bindings.GO_LIVE_EDGE_ORIGIN;
+  extraHosts = JSON.parse(bindings.GO_LIVE_EXTRA_HOSTS ?? '[]');
   const platform = bindings.GO_LIVE_MANAGED ? createProductionPlatform(productionBindings(bindings)) : createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
   if (!bindings.GO_LIVE_MANAGED) Object.assign(platform.config, { mailProvider: 'sendgrid', mailProviderApiKey: bindings.GO_LIVE_PROVIDER_KEY,
     mailWebhookSecret: bindings.GO_LIVE_WEBHOOK_KEY, publicBaseUrl: new URL(bindings.GO_LIVE_PUBLIC_ORIGIN),
@@ -152,6 +154,15 @@ const worker = {
         bindings: environment => ({...environment, AUTH_LOCAL:'true', AUTH_ORIGIN:origin, RER_DEV_KEY:environment.LOCAL_BOOTSTRAP_TOKEN}),
         config: environment => ({origin, OWNER_EMAIL:'owner@example.test', SESSION_SECRET:environment.LOCAL_BOOTSTRAP_TOKEN, local:true}),
       }).fetch(request, bindings, context);
+    }
+    // Vite's loopback proxy replaces Host. This authenticated test-transport
+    // header represents a request arriving on a configured public hostname;
+    // it changes no application authority, records or provider response.
+    const transportHost = request.headers.get('X-GoLive-Host');
+    if (transportHost && request.headers.get('X-Test-Token') === bindings.LOCAL_BOOTSTRAP_TOKEN) {
+      const url = new URL(request.url), headers = new Headers(request.headers);
+      headers.set('Host', transportHost); headers.delete('X-GoLive-Host'); headers.delete('X-Test-Token');
+      request = new Request(new URL(url.pathname + url.search, 'https://' + transportHost), new Request(request, {headers}));
     }
     const { platform } = await compose(bindings);
     if (bindings.GO_LIVE_MANAGED) {

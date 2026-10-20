@@ -1,3 +1,4 @@
+import {domainSetupRoutes} from '@/core/features/sender-verification/setup-routes';
 import {stripeRoutes} from '@/core/features/store/stripe/routes';
 import {hasPermission,requiredPermission} from '@/core/features/auth/permissions';
 import {projectPrivateResponse} from '@/core/features/auth/response-privacy';
@@ -347,6 +348,7 @@ export function createApp(
   app.route('/api', createLinkHostRoutes(platform));
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
   app.route('/api', stripe.settings);
+  app.route('/api', domainSetupRoutes(platform));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));
   app.route('/api', createSyncRoutes(platform, services.storeService));
   app.route('/api', createSegmentRoutes(environment.DB));

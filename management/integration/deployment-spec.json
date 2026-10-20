@@ -488,6 +488,12 @@
       "name": "core-0078_stripe_connection.sql",
       "sha256": "50d53165b7dea0712bfa41227f0ac09d38486bcad674b262c7ebfd3383c87e64",
       "sql": "-- Private provider authority is destination-owned and excluded from exports.\nCREATE TABLE stripe_connection (\n  id INTEGER PRIMARY KEY CHECK(id=1),\n  key_cipher TEXT NOT NULL,\n  signing_cipher TEXT NOT NULL,\n  mode TEXT NOT NULL CHECK(mode IN ('test','live')),\n  last_four TEXT NOT NULL,\n  connected_by TEXT NOT NULL,\n  connected_at INTEGER NOT NULL\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0079_tracking_domain.sql",
+      "sha256": "fb840d7a10f54b42eb1d6831fd8e8fe4a6052f0f27e3abecf9c3b53c80066a9c",
+      "sql": "CREATE TABLE tracking_domain (\n id INTEGER PRIMARY KEY CHECK(id=1),\n host TEXT NOT NULL,\n updated_at INTEGER NOT NULL,\n operator_id TEXT NOT NULL\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
