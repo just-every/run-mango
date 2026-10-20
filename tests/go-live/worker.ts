@@ -35,7 +35,7 @@ let edge = '';
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const request = new Request(input, init), url = new URL(request.url);
   if (['127.0.0.1', 'localhost'].includes(url.hostname)) return network(request);
-  if (!['relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test','partner.example','redirect.example','via.example','myshop.com','shop.myshop.com','myshop.com.evil.example'].includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
+  if (!['api.stripe.com', 'relay.example.test', 'api.sendgrid.com', 'api.resend.com', 'cloudflare-dns.com','mango-test.myshopify.com','api.mobilemessage.com.au','shop.example.test','partner.example','redirect.example','via.example','myshop.com','shop.myshop.com','myshop.com.evil.example'].includes(url.hostname)) throw new Error(`Unexpected network call: ${url.origin}`);
   const headers = new Headers(request.headers); headers.set('X-Edge-Original-Url', url.href);
   return network(new URL(url.pathname + url.search, edge), { method: request.method, headers, redirect:request.redirect,
     body: ['GET', 'HEAD'].includes(request.method) ? undefined : await request.arrayBuffer(), signal: request.signal });

@@ -12,6 +12,9 @@ export const commerceSourceTypes = [
   'refund',
   'cart',
   'browsing-event',
+  'payment',
+  'checkout-session',
+  'subscription',
 ] as const;
 
 export type CommerceSourceType = (typeof commerceSourceTypes)[number];
@@ -30,8 +33,8 @@ export type NormalizedCommerceRecord = {
   payload: Record<string, unknown>;
   contactId?: string;
   contact?: {email?:string;phone?:string;displayName?:string};
-  activities?: Array<{kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer'; productId?: string; state: string}>;
-  activity?: { kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer'; productId?: string; state: string };
+  activities?: Array<{kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer' | 'payment' | 'checkout-session' | 'subscription'; productId?: string; state: string}>;
+  activity?: { kind: 'order' | 'refund' | 'cart' | 'browsing-event' | 'click' | 'customer' | 'payment' | 'checkout-session' | 'subscription'; productId?: string; state: string };
 };
 
 export type SourceFreshnessIssue = {

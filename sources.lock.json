@@ -974,7 +974,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "4183079baf8f977f531a16fc7d4a18a62e7ba05a10364905d2e783d1eb770334",
+      "sha256": "eca73fa7ab5ed057481e6d7b61e74195519752baf534bdbd6dffd2afc3413b89",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1006,7 +1006,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "81ad9ac999232b4c1e68cbe8f622a1eb4e7cc5985e483c632114b53f57f6bf03",
+      "sha256": "cf7ab6cc6662ee2a49e5fc9ccb2d5cfea218dd5b9eb4793173ea60e84251189a",
       "executable": false
     },
     "DEMO.md": {
@@ -1046,7 +1046,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "0a4396b06e0d43f0a9ce58331e116ea60d5a15c8ddbd8b8ed7260219079448a0",
+      "sha256": "cae1ea5c56d4bbec5d08ef9df456305d89bd612ddfae814c8faccfe7464789ab",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1070,7 +1070,7 @@
       "executable": false
     },
     "docs/integrations.md": {
-      "sha256": "c47c1b816b7b31ea9a5a75cd36693614111d90ef8d1a130cd3fe94b2a396bebc",
+      "sha256": "e3953bfb232a8e66cdc473835ea0e947194340b44dc12d6128fe7b3b709f594b",
       "executable": false
     },
     "docs/introduction.md": {
@@ -1938,7 +1938,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "c7e25dd4f5d5122768f1f7ccfaeabb9cb8d530f63df0240a0a062019a47527f2",
+      "sha256": "ad9d846be85ffc0f3efd27706d5332a4f436aaa5f0c515b8da3ea44b57bb2a12",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -2058,7 +2058,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "827d651e9ac8c537c1c07d56d56a93380be96b27e0a7951eab1c8d99c5d541ac",
+      "sha256": "edd667605aca71c1500e91e7911220e46dfc069943bb520b3fb5f0d4a9de9899",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -2782,7 +2782,7 @@
       "executable": false
     },
     "src/core/features/auth/permissions.ts": {
-      "sha256": "69ca06ebe93e9b027da1acd5f2e6d61e85a0395d10b85527245d7c913ce628df",
+      "sha256": "de43dc307f8dabe9d91081f68fe74dc49a7c158bf76d1810125edb352c2c7951",
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
@@ -4130,7 +4130,7 @@
       "executable": false
     },
     "src/core/features/portability/policy.ts": {
-      "sha256": "7f3d6eecf9eb0bd010968f068f5b679be813bc2b910d944a259fc029bb09777a",
+      "sha256": "df3ddd75514b807360fd1c9661767140309115d31c9708243afd6c4e19121044",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -4478,7 +4478,7 @@
       "executable": false
     },
     "src/core/features/store/service.ts": {
-      "sha256": "385fd5fc8ed95ed3585890ce2f1bfbe3e353a8075352c725885ec7aefbf68ae5",
+      "sha256": "c1d4358ff105d3287397dc5717c5b42437678e8ad4b64a89bfcfffa962d01da9",
       "executable": false
     },
     "src/core/features/store/shopify/collector.ts": {
@@ -4534,7 +4534,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-page.tsx": {
-      "sha256": "60b0323d9f47a13a9d4c554402c5d6a01de68ef979bf548549acb120fa460f2f",
+      "sha256": "42e86c9c65089aad43f63a6dcb4832bd703cf6ede00b67683403b35ba6c442a0",
       "executable": false
     },
     "src/core/features/store/ui/settings-sender-form.tsx": {
@@ -7034,7 +7034,7 @@
       "executable": false
     },
     "tests/go-live/edge.ts": {
-      "sha256": "63a8f3dd77a98aa14c69fff6e19c8d643bbe38aad2deafb1e7e618fb3ea3711b",
+      "sha256": "70f2804010f7474e7b20200839d2e383cf5641b161e4ad6f428c5bf9e7bc807e",
       "executable": false
     },
     "tests/go-live/email-size.journeys.ts": {
@@ -7146,7 +7146,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "3984babce35e70690275403a69450193078dedd7a04495bed38efb086990c0a3",
+      "sha256": "f35f05b9aedc6f65ce62fe151955daf5a763abc185fa51e21742ff55adcf074c",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {
@@ -7186,7 +7186,7 @@
       "executable": false
     },
     "tests/go-live/worker.ts": {
-      "sha256": "ba9c68a99383d0a10b28739119089f8c48c625b23882d3c3ad39eae1c634f910",
+      "sha256": "caa75e93e582754b11631b94e7e8d2aa06ebf6dccaa00d6156f28ee143374d83",
       "executable": false
     },
     "tests/local-bootstrap.js": {
