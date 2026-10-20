@@ -32,6 +32,12 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     const archive = join(source.directory, 'source.ndjson'), session = join(source.directory, 'session');
     await writeFile(session, source.cookie, { mode: 0o600 });
     const command = (args: string[]) => runCommand('node', [resolve('src/vendor/base/portability/cli.mjs'), ...args], { write: () => {} });
+    // Provider authority stays private and destination-owned; the non-secret
+    // branded host is ordinary portable configuration.
+    await source.db.prepare('INSERT INTO stripe_connection(id,key_cipher,signing_cipher,mode,last_four,connected_by,connected_at) VALUES(1,?,?,?,?,?,?)')
+      .bind('synthetic-encrypted-api-key','synthetic-encrypted-signing-key','test','1234','owner@example.test',1).run();
+    await source.db.prepare('INSERT INTO tracking_domain(id,host,updated_at,operator_id) VALUES(1,?,?,?)')
+      .bind('links.example.test',1,'portable-operator').run();
     const allTables = (await source.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND sql IS NOT NULL").all()).results;
     await command(['export', '--origin', source.origin, '--session-file', session, '--out', archive]);
     const records = [];
@@ -45,6 +51,9 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(original.some(row => row.table === 'contacts' && row.row.id === 'portable-contact')).toBe(true);
     expect(original.some(row => row.table === 'surviving_opt_outs' && row.row.id === 'portable-opt-out')).toBe(true);
     expect(original.some(row => row.table.startsWith('oa_'))).toBe(false);
+    expect(original.some(row => row.table === 'stripe_connection')).toBe(false);
+    expect(JSON.stringify(original)).not.toContain('synthetic-encrypted-api-key');
+    expect(original.filter(row => row.table === 'tracking_domain').map(row => row.row.host)).toEqual(['links.example.test']);
     expect((await target.call('/api/campaigns', { method: 'POST', cookie: target.cookie, body: { mode: 'blank' } })).status).toBe(503);
     expect((await target.call('/l/invalid-link-during-restore')).status).toBe(503);
     expect((await target.call('/subscribe/info')).status).toBe(503);
@@ -78,6 +87,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await target.call('/api/contacts/portable-contact', {method:'DELETE',cookie:target.cookie})).status).toBe(503);
     expect((await target.db.prepare("SELECT email FROM contacts WHERE id='portable-contact'").first()).email).toBe('contact@example.test');
     expect((await target.db.prepare('SELECT count(*) AS n FROM audience_erasures').first()).n).toBe(0);
+    expect((await target.db.prepare('SELECT count(*) AS n FROM stripe_connection').first()).n).toBe(0);
+    expect((await target.db.prepare('SELECT host FROM tracking_domain WHERE id=1').first()).host).toBe('links.example.test');
     await target.resume();
     await writeFile(session, target.cookie, { mode: 0o600 });
     expect((await target.call('/api/portability/imports',{method:'POST',cookie:target.cookie,body:{confirmed:true,manifest}})).status).toBe(401);

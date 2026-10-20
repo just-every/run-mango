@@ -24,10 +24,15 @@ export async function dispatchDocuments(
   if (!permitted) {
     // A branded host exposes only the existing public token redirect and a
     // cookie-free HTTPS probe. It grants no app, API, setup or session surface.
-    const branded = await platform.database.$client.prepare('SELECT host FROM tracking_domain WHERE id=1').first<{host: string}>();
+    const publicLink = /^\/l\/[^/]+$/.test(url.pathname) && ['GET', 'HEAD'].includes(request.method);
+    const probe = url.pathname === '/' && request.method === 'HEAD';
+    if (!publicLink && !probe) return Response.json({error: 'not_found'}, {status: 404});
+    let branded: {host: string} | null;
+    try {branded = await platform.database.$client.prepare('SELECT host FROM tracking_domain WHERE id=1').first<{host: string}>();}
+    catch {return Response.json({error: 'not_found'}, {status: 404});}
     if (branded?.host === host) {
-      if (url.pathname === '/' && request.method === 'HEAD') return new Response(null, {status: 204, headers: {'Cache-Control': 'no-store'}});
-      if (/^\/l\/[^/]+$/.test(url.pathname) && request.method === 'GET') return hono.fetch(request, environment, executionContext);
+      if (probe) return new Response(null, {status: 204, headers: {'Cache-Control': 'no-store'}});
+      if (publicLink) return hono.fetch(request, environment, executionContext);
     }
     return Response.json({error: 'not_found'}, {status: 404});
   }

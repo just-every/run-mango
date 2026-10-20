@@ -974,7 +974,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "c7c60377958397a73ef24ea9517676a30dd0762cb82bd984b8d41bcab8ab4e84",
+      "sha256": "a5f4898b671f043b86c011ae45dac3ab8e08fff7d0b9934de136db3568893392",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1058,7 +1058,7 @@
       "executable": false
     },
     "docs/going-live.md": {
-      "sha256": "7f215079f395b6c5fb5ba461ec0c16ee346f359f65b3a10376a307367dadeebd",
+      "sha256": "325cd656421f838c2f946a61838a8db0f0588067ebfb0542bbba99c95bca80f0",
       "executable": false
     },
     "docs/importing-contacts.md": {
@@ -2250,7 +2250,7 @@
       "executable": false
     },
     "src/core/app/document-dispatch.ts": {
-      "sha256": "3ea4784b28d335fcc5d8d643838ab8a5326f845b57085b5e571f79eca09b211c",
+      "sha256": "82ff3d67ff459f393964ab2875a8870c4c429e8cb1521ead5a6a925e43a18014",
       "executable": false
     },
     "src/core/app/loaders.ts": {
@@ -7074,7 +7074,7 @@
       "executable": false
     },
     "tests/go-live/domain-journey.ts": {
-      "sha256": "1aac6e84e54a728ad69ebfe47bde3fda1728e28fa2288139f5c332decc6f53db",
+      "sha256": "6263d139f8748089a9f7c8a08952710248e3b4e8e2461c00194fab84e17b02ce",
       "executable": false
     },
     "tests/go-live/edge.ts": {
@@ -7394,7 +7394,7 @@
       "executable": false
     },
     "tests/move-in/playwright.config.js": {
-      "sha256": "6c038971a7cbc06fa81e6d4c85a738ce6b224cb4c0612bcf9172e33465439a24",
+      "sha256": "1efa85bd98062fc60dcbae771fe7d9935c110f63c8e3877de9e072691d62e8f9",
       "executable": false
     },
     "tests/move-in/support.ts": {
@@ -7454,7 +7454,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "826552b1b7ba5b29c5fc003e73e6c3061434c22219a98c69296456a422597fbb",
+      "sha256": "e9e0a9d43c90bd500ec893d6f6799292921e12cc6fb4a7d6c665ae7b7942988a",
       "executable": false
     },
     "tests/portability/flows.ts": {
