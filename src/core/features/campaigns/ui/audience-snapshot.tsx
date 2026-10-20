@@ -16,7 +16,8 @@ type AudienceSnapshotProps = {
 /** Draft reviews save rows; approved snapshots save the same counts as a reason map. */
 export function savedAudienceExclusions(audience: Audience | undefined): Exclusion[] {
   if (!audience) return [];
-  const saved: Array<{reason:string;count:number}> | Record<string,number> = JSON.parse(audience.exclusions);
+  const saved: Array<{reason:string;count:number}> | Record<string,number> | string = JSON.parse(audience.exclusions);
+  if (typeof saved === 'string') return [];
   const rows = Array.isArray(saved) ? saved : Object.entries(saved).map(([reason,count]) => ({reason,count}));
   return rows.map(row => ({...row,id:row.reason}));
 }
@@ -37,6 +38,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
     );
   }
 
+  const explanations = JSON.parse(audience.exclusions);
   return (
     <section className="panel audience-snapshot" aria-labelledby="audience-snapshot-title">
       <div className="section-heading">
@@ -82,6 +84,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
         ))}
         {channelCounts.some(count => count.eligibleContactCount == null || count.fallbackContactCount == null) ? <p className="muted-copy">Fallback usage was not recorded for this snapshot.</p> : null}
       </div>
+      {typeof explanations === 'string' ? <p className="notice-note">{explanations}</p> : null}
       {exclusions.length ? (
         <div className="exclusion-list" aria-label="Saved audience exclusions">
           <p className="channel-counts__title">Saved audience exclusions</p>

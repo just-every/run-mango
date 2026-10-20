@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 23 claims · 23 in code.**
+**Totals: 25 claims · 25 in code.**
 
 ## Mango integration claims
 

@@ -1046,7 +1046,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "a2e11c2ac5895f43e704d3bc815c5e696d871d0350158fcf9f4b5b9f7c70f887",
+      "sha256": "2fb32a8186d4107c27082850dcf748e2acc7b274a4596ad261860205174c1cb3",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -3074,7 +3074,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/audience-snapshot.tsx": {
-      "sha256": "765da45c0d2d6864a5146a9e6e8e131c17c39387df2283815912b7ff83243427",
+      "sha256": "42eafc93e0f19a4a5580b10926794e076176764b7632dbefa0cc57a52fd264d6",
       "executable": false
     },
     "src/core/features/campaigns/ui/blocked-link-hosts.tsx": {
@@ -6902,7 +6902,7 @@
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "c7c1614da65bd07eef81ec5a8f547acc5a336832a40ce416fb931e49ae04c18c",
+      "sha256": "b084355de0b01c3663970572ffc9de147e818a86b24f24379853af43166c4144",
       "executable": false
     },
     "tests/go-live/cron-driver.ts": {
@@ -7038,7 +7038,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "33100eea8108bd7560df7394de158f3418bfa9cdb56c72c48e04a5e4cd7fdd03",
+      "sha256": "3984babce35e70690275403a69450193078dedd7a04495bed38efb086990c0a3",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {
@@ -7074,7 +7074,7 @@
       "executable": false
     },
     "tests/go-live/worker.ts": {
-      "sha256": "10023f7426a552a1c1ac4a87e2fedd1a33e4e4d41a5c3bda619ebf54717c87ae",
+      "sha256": "bf6f237b80e95c888eef0d18f2033b6b40c49189330549e1e3b8a2acc603122f",
       "executable": false
     },
     "tests/local-bootstrap.js": {

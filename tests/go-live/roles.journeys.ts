@@ -28,6 +28,7 @@ test('[OPER-003][OPER-004] roles govern native requests and removal retains auth
       ['POST','/api/flows/absent/activate',['owner','admin','manager']],
       ['POST','/api/audience/import-preview',['owner','admin']],
       ['GET','/api/audience/export',['owner','admin']],
+      ['GET','/api/activity',['owner','admin']],
       ['DELETE','/api/contacts/absent',['owner','admin']],
       ['POST','/api/operators',['owner','admin']],
       ['POST','/api/settings/integrations',['owner','admin','manager']],

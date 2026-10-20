@@ -51,13 +51,23 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await expect(blocked).toHaveCount(0);
   await reloadPage(page);
   await expect(blocked).toHaveCount(0);
-  expect((await json(await site.call('/api/settings/link-hosts',{cookie:manager}),200)).hosts).toEqual(expect.arrayContaining(['mango.example.test','redirect.example','myshop.com','partner.example']));
+  const allowed = await json(await site.call('/api/settings/link-hosts',{cookie:manager}),200);
+  expect(allowed.hosts).toEqual(expect.arrayContaining(['mango.example.test','redirect.example','myshop.com','partner.example']));
+  expect(allowed.sources).toContainEqual(expect.objectContaining({host:'partner.example',source:'allowed in review',campaignId:campaign.campaignId,operatorId:'host-manager'}));
   const activity = await json(await site.call(`/api/activity?operator=host-manager&action=link-host.allowed&object=${campaign.campaignId}`,{cookie:owner}),200);
   expect(activity.entries).toHaveLength(1);
   expect(activity.entries[0]).toMatchObject({operatorId:'host-manager',operatorName:'Maya Torres',objectId:campaign.campaignId,detail:expect.objectContaining({host:'partner.example'})});
   await json(await site.call('/api/activity',{cookie:manager}),403);
   await json(await site.call('/api/activity',{cookie:author}),403);
-  await approve(site,manager,campaign);
+  await page.getByRole('button',{name:'Approve & schedule',exact:true}).click();
+  await page.getByRole('alertdialog',{name:'Approve and schedule?'}).getByRole('button',{name:'Approve & schedule',exact:true}).click();
+  await expect(page.getByRole('link',{name:'View schedule and results'})).toBeVisible();
+  expect((await json(await site.call(path,{cookie:manager}),200)).campaign.state).toBe('scheduled');
+  for (const width of [1440,390]) {
+    await page.setViewportSize({width,height:1000});
+    await expect(page.locator('[aria-label="Blocked link hosts"]')).toHaveCount(0);
+    await page.screenshot({path:info.outputPath(`allowed-host-approved-${width}.png`),fullPage:true});
+  }
   // Exact entries do not authorize subdomains. An explicit wildcard does, without matching a deceptive suffix or its bare domain.
   const domains = await draftCampaign(site,author,'Shop domain review',['garden-reader@example.test'],new Date(now+7200000));
   const domainBody = async (destination:string) => json(await site.call(`/api/campaign-revisions/${domains.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:`<p><a href="${destination}">Browse seedlings</a></p>`}}),200);
