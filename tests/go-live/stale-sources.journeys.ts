@@ -180,7 +180,7 @@ contract('STORE-005', '[STORE-006][AUD-003] sources recover only after completed
         await expect(row.locator('strong')).toHaveText(String(count));
       }
       await expect(page.getByRole('button', {name: 'Approve & schedule', exact: true})).toBeEnabled();
-      await snapshot.screenshot({path: `tests/evidence/aud-003-review-${width}.png`});
+      await snapshot.screenshot({path: info.outputPath(`aud-003-review-${width}.png`)});
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
     expect(edge.unexpected).toEqual([]);
