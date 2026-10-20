@@ -287,7 +287,7 @@ export function CampaignReviewPage() {
             </ValidationForm>
             <TestSendHistory tests={testAccess.data?.tests??[]} />
           </Disclosure> : null}
-          <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} exclusions={savedAudienceExclusions(data.audience)} />
+          <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} {...savedAudienceExclusions(data.audience)} />
           <DeliveryPlan steps={data.steps} />
         </div>
       </div>

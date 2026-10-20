@@ -2074,7 +2074,7 @@
       "executable": false
     },
     "src/core/app/client/lib/types.ts": {
-      "sha256": "4e99dbb10f8fbdc263db64ea151428cc5f5cc15927b6f4a6335fe83987ab548b",
+      "sha256": "127e8f0c4095c14827dc95fcb5e6ba4bcc914ec270aa85e6d74936ff90d0987b",
       "executable": false
     },
     "src/core/app/client/lib/use-date-formatter.ts": {
@@ -3074,7 +3074,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/audience-snapshot.tsx": {
-      "sha256": "42eafc93e0f19a4a5580b10926794e076176764b7632dbefa0cc57a52fd264d6",
+      "sha256": "cbd2bda47dac314498ea4b7f74a2f69ba148980afc0c3e1b17c17e47984a1b78",
       "executable": false
     },
     "src/core/features/campaigns/ui/blocked-link-hosts.tsx": {
@@ -3086,7 +3086,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-detail.tsx": {
-      "sha256": "bcd79f9dc60be75e6c5a3d9e6509b32b48ecd67c7fdaef7488f7fe2004a1f268",
+      "sha256": "0a4cffe8a7ecb8395b44de96ad2908109d6d6d508111fd727b35a966a7e91f41",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-followup.tsx": {
@@ -3098,7 +3098,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-review.tsx": {
-      "sha256": "6dcb1d83649b525111b9d2ca485558e74fcf85d4b821954564af13d29b116baa",
+      "sha256": "9b326db9ad723be41f6ce5c0bf93b24bcc43485d4d764c896998ca87c5b584b9",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-scheduled.tsx": {

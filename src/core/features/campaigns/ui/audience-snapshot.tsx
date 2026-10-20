@@ -4,25 +4,26 @@ import { Link } from '@tanstack/react-router';
 
 import { formatDateInTimeZone, titleCase } from '@/core/app/client/lib/format';
 import { KeepTogether } from '@/core/features/site/BodyText';
-import type { Audience, AudienceChannelCount, Exclusion } from '@/core/app/client/lib/types';
+import type { Audience, CampaignAudience, AudienceChannelCount, Exclusion } from '@/core/app/client/lib/types';
 
 type AudienceSnapshotProps = {
   audience?: Audience;
   revision?: {inclusionRuleJson: string; exclusionRulesJson: string;audienceMasked?:boolean};
   channelCounts: AudienceChannelCount[];
   exclusions?: Exclusion[];
+  exclusionNotice?: string;
 };
 
-/** Draft reviews save rows; approved snapshots save the same counts as a reason map. */
-export function savedAudienceExclusions(audience: Audience | undefined): Exclusion[] {
-  if (!audience) return [];
+/** Campaign draft reviews save rows; approved snapshots save a reason map. Proposals supply their own rows. */
+export function savedAudienceExclusions(audience: CampaignAudience | undefined): Pick<AudienceSnapshotProps,'exclusions'|'exclusionNotice'> {
+  if (!audience) return {exclusions:[]};
   const saved: Array<{reason:string;count:number}> | Record<string,number> | string = JSON.parse(audience.exclusions);
-  if (typeof saved === 'string') return [];
+  if (typeof saved === 'string') return {exclusions:[],exclusionNotice:saved};
   const rows = Array.isArray(saved) ? saved : Object.entries(saved).map(([reason,count]) => ({reason,count}));
-  return rows.map(row => ({...row,id:row.reason}));
+  return {exclusions:rows.map(row => ({...row,id:row.reason}))};
 }
 
-export function AudienceSnapshot({ audience, revision, channelCounts, exclusions = [] }: AudienceSnapshotProps) {
+export function AudienceSnapshot({ audience, revision, channelCounts, exclusions = [], exclusionNotice }: AudienceSnapshotProps) {
   if (!audience) {
     return (
       <section className="panel audience-snapshot" aria-labelledby="audience-snapshot-title">
@@ -38,7 +39,6 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
     );
   }
 
-  const explanations = JSON.parse(audience.exclusions);
   return (
     <section className="panel audience-snapshot" aria-labelledby="audience-snapshot-title">
       <div className="section-heading">
@@ -84,7 +84,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
         ))}
         {channelCounts.some(count => count.eligibleContactCount == null || count.fallbackContactCount == null) ? <p className="muted-copy">Fallback usage was not recorded for this snapshot.</p> : null}
       </div>
-      {typeof explanations === 'string' ? <p className="notice-note">{explanations}</p> : null}
+      {exclusionNotice ? <p className="notice-note">{exclusionNotice}</p> : null}
       {exclusions.length ? (
         <div className="exclusion-list" aria-label="Saved audience exclusions">
           <p className="channel-counts__title">Saved audience exclusions</p>

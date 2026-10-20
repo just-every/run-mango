@@ -71,7 +71,7 @@ export function CampaignDetailPage() {
       </section> : null}
       <SaveCampaignTemplate revisionId={data.revision.id} name={data.revision.name} disabled={false}/>
       <div className="two-column-detail">
-        <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} exclusions={savedAudienceExclusions(data.audience)} />
+        <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} {...savedAudienceExclusions(data.audience)} />
         <DeliveryPlan steps={data.steps} />
       </div>
       <RevisionPreviews revision={data.revision} links={data.links} mediaOrigin={data.mediaOrigin} />

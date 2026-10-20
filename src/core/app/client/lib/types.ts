@@ -25,8 +25,9 @@ export type Audience = {
   candidateCount: number;
   excludedCount: number;
   eligibleCount: number;
-  exclusions: string;
 };
+
+export type CampaignAudience = Audience & {exclusions:string};
 
 export type AudienceChannelCount = {
   id: string;
@@ -123,7 +124,7 @@ export type CampaignDetail = {
   revision?: Revision;
   steps: Step[];
   links: RevisionLink[];
-  audience?: Audience;
+  audience?: CampaignAudience;
   audienceChannelCounts: AudienceChannelCount[];
   audienceState: 'saved' | 'needs_recomputation';
   checks?: Check[];
