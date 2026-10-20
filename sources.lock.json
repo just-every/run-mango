@@ -1502,7 +1502,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "f3e28195d194922b75fd04295034e66d582b443a7bc3a23238f8c2f487a7c709",
+      "sha256": "f3b77cf8c17254d399f72f9cd8aa9e9fc18edf65ddfe8c8f3d1722d024f94c87",
       "executable": false
     },
     "playwright.config.js": {
@@ -1510,7 +1510,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "7a4e81fd9f45e3a965790abb517a4d1fa72c606fefd9ba4eb0c1b8847aeddade",
+      "sha256": "3927e9c7c7b328aa6d563aacb135295813618c070e327b8f27270b534b2d052b",
       "executable": false
     },
     "public/apple-touch-icon.png": {
