@@ -22,7 +22,7 @@ The first buyer is a US ecommerce operator or creator-led business (about 1,000 
 
 **Scope after (this contract):** the complete category job above. Visual flows, experiments, send-time optimization, landing pages and popups, roles and permissions, multiple commerce connections, SMS for the US, migration from every named incumbent and a native mobile app are now in scope. Every existing clause still holds: exact-revision approval for campaigns, reviewed activation for flows, consent and opt-out precedence, suppression, delivery truth, erasure, audit and portability are the guarantees the larger product is built on, not its whole job.
 
-Neighboring products stay separate products, as the market separates them. Mango links to them rather than rebuilding them: the storefront and checkout are Stall's (`just-every/run-stall`) or Shopify's; the sales pipeline is Orbit's (`just-every/run-orbit`); full websites are Pane's; surveys and quizzes are Pencil's; cross-app workflow automation is Crank's; product feedback is Penny's; the support inbox is HappyToHelp's; subscription billing is Nectar's or Stripe's. See [Honest boundaries](#honest-boundaries).
+Neighboring products stay separate products, as the market separates them. Mango links to them rather than rebuilding them: the storefront and checkout are Stall's (`just-every/run-stall`) or Shopify's; the sales pipeline is Orbit's (`just-every/run-orbit`); full websites are Pane's; surveys and quizzes are Pencil's; cross-app workflow automation is Crank's; product feedback is Penny's; the support inbox is HappyToHelp's; subscription billing is Nectar's or Stripe's; payroll is Envelope's (`just-every/run-envelope`); work and project management is Pegboard's (`just-every/run-pegboard`); metrics, logs, traces and alerts are Porthole's (`just-every/run-porthole`). See [Honest boundaries](#honest-boundaries).
 
 ## Scope
 
@@ -742,6 +742,7 @@ What Mango does not do, and how a US buyer gets it:
 - **An SMS carrier, or sending without US registration.** Messages go through the owner's Twilio account under their 10DLC, toll-free or short-code registration; carrier fees and registration are on that account (SMS-002).
 - **A storefront, checkout or store transactional messages.** Order confirmations, shipping and account emails remain the store platform's (Stall, Shopify, WooCommerce) or a transactional provider's such as Postmark; Mango sends marketing and lifecycle messages.
 - **A CRM sales pipeline, help desk, website builder, survey tool or cross-app automation platform.** Those are Orbit, HappyToHelp, Pane, Pencil and Crank (or HubSpot, Zendesk, Squarespace, Typeform and Zapier); Mango integrates with them (INT-009, INT-011, SMS-004).
+- **Payroll, work and project management, or monitoring and observability.** Those are the RunEditRun products Envelope (payroll), Pegboard (work and project management) and Porthole (metrics, logs, traces and alerts); Mango links to them and claims none of their capability.
 - **Running paid social or search ads, or social posting.** Mango syncs audiences to ad platforms (INT-012); campaigns themselves are run in Meta, Google and TikTok.
 - **An ad exchange, newsletter ad network or paid-recommendation marketplace, or holding money.** Direct sponsorships (PUB-004) and partner recommendations (PUB-003) are in; network ads come from third-party sponsorship marketplaces, and all payments run through Stripe or Nectar (PUB-002).
 - **Collecting product reviews, loyalty points or direct mail.** Review and loyalty apps feed events (INT-014); postcards come from a direct-mail provider triggered by a flow webhook (INT-008).
@@ -862,9 +863,9 @@ How the owner-approved scope (16 October 2026) maps to the clauses above. Incumb
 
 ## Status
 
-Judged from the code and tests at commit `5569eb957cc33e905ff614b027974e2c9f050c97` (20 October 2026).
+Judged from the code and tests at commit `9caab720dabe16b8d46f5370ca3f4672ec2de8b8` (20 October 2026).
 
-The 0.3.0 release gate (19 October 2026) re-read every done row against its cited evidence at commit `bc5fdad`; it moved OPER-003 to partial because its cited test no longer showed retained attribution. The c4 journeys now restore OPER-003 to done and close AUD-003 and MSG-015; other statuses retain their existing boundaries.
+The 0.3.0 release gate (19 October 2026) re-read every done row against its cited evidence at commit `bc5fdad`; it moved OPER-003 to partial because its cited test no longer showed retained attribution. The c4 journeys now restore OPER-003 to done and close AUD-003 and MSG-015; the c5 review journeys close MSG-006 and MSG-005; other statuses retain their existing boundaries.
 
 The scoped integration round updates OPER-007, CONT-004/006/014/015 and INT-007/011 below.
 
@@ -872,9 +873,9 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 73 | 14 | 0 | 87 |
+| Published | 75 | 12 | 0 | 87 |
 | Target and push further | 13 | 54 | 87 | 154 |
-| All | 86 | 68 | 87 | 241 |
+| All | 88 | 66 | 87 | 241 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -966,8 +967,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `MSG-002` | Email authentication | published | done | `tests/sender-verification/worker.spec.ts` |  |
 | `MSG-003` | Email unsubscribe | published | done | `tests/go-live/go-live.journeys.ts` · `tests/sender-verification/worker.spec.ts` |  |
 | `MSG-004` | SMS permission | published | partial | `src/core/features/sms/transport-guard.ts` | acceptance not yet met: SMS eligibility needs subscribed scope and an approved sender; US registration pending. |
-| `MSG-005` | SMS opt-out | published | partial | `src/core/features/sms/content.ts` | acceptance not yet met: Every marketing SMS carries program identity and STOP text; needs a tagged review journey. |
-| `MSG-006` | Links | published | partial | `src/core/features/settings/link-hosts-validation.ts` | acceptance not yet met: Malformed links, schemes other than HTTPS and MSG-013's contact schemes (`http:` and `javascript:` included), and hosts outside MSG-014's list on the link or any redirect block scheduling, each named with MSG-015's allow action; image sources stay HTTPS only. Direct and redirect blocked hosts and allow actions are now exercised in the c4 journey. Gap: the same journey does not cover every malformed-link and image-source sentence. |
+| `MSG-005` | SMS opt-out | published | done | `tests/go-live/content-checks.journeys.ts` · `src/core/features/sms/review-preview.ts` · `src/core/features/sms/content.ts` | On the Mobile Message edge, review of an SMS step for a confirmed SMS contact shows the rendered example with the configured program identity, `Reply STOP to unsubscribe`, the configured frequency disclosure, the help contact and the exact segment count at 1440 and 390. Mobile Message is the proved adapter; Twilio acceptance stays with SMS-008. |
+| `MSG-006` | Links | published | done | `tests/go-live/content-checks.journeys.ts` · `src/core/features/campaigns/link-reasons.ts` · `src/core/features/lifecycle/checks.ts` | One draft carries a malformed link, `http:`, `javascript:`, `data:` and `file:` links, a link whose redirect lands on an unlisted host, an `http:` image and an HTTPS image on an unlisted host, with `mailto:` and `tel:` contact links beside them. Review and approval block it and name every blocked link with the scheme, fault or host that blocks it; only the unlisted HTTPS hosts (the redirect's and the image's) offer Allow this host, never a scheme, at 1440 and 390. Contact links never need it. FLOW-008 (flow activation) and RESULT-005 (tracking) inherit this one rule in their own text. |
 | `MSG-007` | Content checks | published | done | `tests/go-live/content-checks.journeys.ts` |  |
 | `MSG-008` | Personalization | published | done | `tests/go-live/personalisation.journeys.ts` |  |
 | `MSG-009` | Email body | published | done | `tests/campaign-authoring/canonical-save.spec.ts` |  |
