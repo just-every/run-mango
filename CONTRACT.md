@@ -863,7 +863,7 @@ How the owner-approved scope (16 October 2026) maps to the clauses above. Incumb
 
 ## Status
 
-Judged from the code and tests at commit `e626fcbc004570187e7fe87ac381520d3217f5ae` (20 October 2026).
+Judged from the code and tests at commit `0abce7910396bfc1552f40d34ba5708a62c72112` (20 October 2026).
 
 The 0.3.0 release gate (19 October 2026) re-read every done row against its cited evidence at commit `bc5fdad`; it moved OPER-003 to partial because its cited test no longer showed retained attribution. The c4 journeys now restore OPER-003 to done and close AUD-003 and MSG-015; the c5 review journeys close MSG-006 and MSG-005 and the c5 activity journey covers existing Activity actions; OPER-007 remains partial until actual restore completion has actor/time and Activity view, filter and export proof; other statuses retain their existing boundaries.
 
@@ -1075,7 +1075,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `INT-001` | Shopify | target | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: Done only once INT-015 is done. `tests/shopify/connection.spec.ts` (native sync, signed carts, signed pixel), run on a connection made through INT-015's install journey, plus a consent write-back journey: a Mango unsubscribe appears as unsubscribed in the Shopify edge's customer record; and the CONT-025 Shopify opt-in journey. |
 | `INT-002` | WooCommerce | target | missing |  | not implemented |
 | `INT-003` | BigCommerce | target | missing |  | not implemented |
-| `INT-004` | Stripe | target | partial | `src/core/features/store/stripe/` · `tests/go-live/roles.journeys.ts` | Owner-only encrypted connection and signed once-only commerce event ingestion. Gap: required real-provider lifecycle proof cannot start as written: Stripe rejects metadata on a test clock (HTTP 400 parameter_unknown, metadata). No real lifecycle events or cleanup search proof claimed. FLOW-001/FLOW-002 inherit renewal-reminder enrolment without status changes. |
+| `INT-004` | Stripe | target | partial | `src/core/features/store/stripe/` · `tests/go-live/roles.journeys.ts` · `tests/portability.spec.ts` | Owner-only encrypted connection and signed once-only commerce event ingestion. Gap: required real-provider lifecycle proof cannot start as written: Stripe rejects metadata on a test clock (HTTP 400 parameter_unknown, metadata). No real lifecycle events or cleanup search proof claimed. FLOW-001/FLOW-002 inherit renewal-reminder enrolment without status changes. |
 | `INT-005` | Square | target | missing |  | not implemented |
 | `INT-006` | Stall and Orbit | target | missing |  | not implemented |
 | `INT-007` | Events and profiles API | target | partial | `tests/go-live/integrations.journeys.ts` · `docs/integrations.md` | Owner-created revocable scoped credentials, audited/rate-limited contact upsert with fields/tags and consent evidence, suppression, approved-segment dispatch and a replayable unsubscribe/bounce/complaint feed are implemented. General custom-event ingestion and its complete target acceptance remain unmet. |
