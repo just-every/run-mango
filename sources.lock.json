@@ -1441,6 +1441,10 @@
       "sha256": "5e30e2a8d7bb1e22bf12046481dd40eef846020bd2f80c2bba69ed1ff0526c69",
       "executable": false
     },
+    "migrations/core/0078_stripe_connection.sql": {
+      "sha256": "50d53165b7dea0712bfa41227f0ac09d38486bcad674b262c7ebfd3383c87e64",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -4493,6 +4497,18 @@
       "sha256": "3c843bbdaa53852eb028bf4aaedcc7269bab6f3124418b363b6011236e0496b2",
       "executable": false
     },
+    "src/core/features/store/stripe/events.ts": {
+      "sha256": "6d39445b4a83cbba72903a51d5b27e5bcacfe21316bc6d8c8efc385d3b20e3f7",
+      "executable": false
+    },
+    "src/core/features/store/stripe/routes.ts": {
+      "sha256": "062bfd7acd455d97069d1037b3534d2e8a8444c4c5987490ae1e5d4c5fc52ba8",
+      "executable": false
+    },
+    "src/core/features/store/stripe/secrets.ts": {
+      "sha256": "42319d67f731ac8084ccf7c5404bd58dd0dd48282efb6aea2f1bd6c9dfaa20bf",
+      "executable": false
+    },
     "src/core/features/store/sync-routes.ts": {
       "sha256": "f480256d92c3422a402d424d9004e5662fffd4d62f560cee5b8a03d4504c8edf",
       "executable": false
@@ -4543,6 +4559,10 @@
     },
     "src/core/features/store/ui/settings-sender.tsx": {
       "sha256": "c7cde36d780b717b7d434e975ca31169c77e90c502af32dc077bfe686267e1d1",
+      "executable": false
+    },
+    "src/core/features/store/ui/settings-stripe.tsx": {
+      "sha256": "aa3dd9b4e635b8deb8fb62e780df384fea4ba60ea69cda2d149bc6b35dc24482",
       "executable": false
     },
     "src/core/features/store/ui/store-page.tsx": {
@@ -7179,6 +7199,10 @@
     },
     "tests/go-live/stale-sources.journeys.ts": {
       "sha256": "0d63219fef6af1ff59789df58c7c445acede2165cc2782cc5d7bbf3420d2e8c1",
+      "executable": false
+    },
+    "tests/go-live/stripe-journey.ts": {
+      "sha256": "0333d25092fcc8ec334e9397845713c49a538b9cf8a1a46e6253e548a23c1d65",
       "executable": false
     },
     "tests/go-live/typed-tests.journeys.ts": {
