@@ -22,7 +22,7 @@ import { LoadState } from '@/core/app/client/ui/layout';
 import { CampaignStatusPill } from './campaign-status-pill';
 
 import { ApprovalCheckList, approvalFindingDescription } from './approval-check-list';
-import { AudienceSnapshot } from './audience-snapshot';
+import { AudienceSnapshot, savedAudienceExclusions } from './audience-snapshot';
 import { CampaignCompositionEditor } from './composition-editor';
 import { DeliveryPlan } from './delivery-plan';
 import { toDraftComposition, type DraftComposition } from './draft-composition';
@@ -287,7 +287,7 @@ export function CampaignReviewPage() {
             </ValidationForm>
             <TestSendHistory tests={testAccess.data?.tests??[]} />
           </Disclosure> : null}
-          <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} exclusions={data.audience ? JSON.parse(data.audience.exclusions).map((item: {reason:string;count:number}) => ({...item,id:item.reason})) : []} />
+          <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} exclusions={savedAudienceExclusions(data.audience)} />
           <DeliveryPlan steps={data.steps} />
         </div>
       </div>

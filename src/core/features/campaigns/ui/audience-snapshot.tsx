@@ -13,6 +13,14 @@ type AudienceSnapshotProps = {
   exclusions?: Exclusion[];
 };
 
+/** Draft reviews save rows; approved snapshots save the same counts as a reason map. */
+export function savedAudienceExclusions(audience: Audience | undefined): Exclusion[] {
+  if (!audience) return [];
+  const saved: Array<{reason:string;count:number}> | Record<string,number> = JSON.parse(audience.exclusions);
+  const rows = Array.isArray(saved) ? saved : Object.entries(saved).map(([reason,count]) => ({reason,count}));
+  return rows.map(row => ({...row,id:row.reason}));
+}
+
 export function AudienceSnapshot({ audience, revision, channelCounts, exclusions = [] }: AudienceSnapshotProps) {
   if (!audience) {
     return (

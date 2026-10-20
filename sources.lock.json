@@ -974,7 +974,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "b4aa3c459f1636e573560edaf21c6805a02bdbd17f1237c789b0b9bbd619e837",
+      "sha256": "cfc468fa5c34c347da5810247cafb3b33f2425d70f1ebacb90e90da772992ac7",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1006,7 +1006,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "4cc6965a76651e6d42f70aeff87d4fecde1a283424b1e1593bfc0cd01105442c",
+      "sha256": "a090a382dd3c5a06a4382729225e247ab71fd98e53973700b01c4912a835e9c0",
       "executable": false
     },
     "DEMO.md": {
@@ -1046,7 +1046,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "55395a73da13e18553ad9baff378559ff7f0dde9df317612498a58787624846a",
+      "sha256": "a2e11c2ac5895f43e704d3bc815c5e696d871d0350158fcf9f4b5b9f7c70f887",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -3074,7 +3074,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/audience-snapshot.tsx": {
-      "sha256": "e7f9c7f39d3234e63abfdd04886fdbf02f5efd48e6e5ffa586ea4356c933c380",
+      "sha256": "765da45c0d2d6864a5146a9e6e8e131c17c39387df2283815912b7ff83243427",
       "executable": false
     },
     "src/core/features/campaigns/ui/blocked-link-hosts.tsx": {
@@ -3086,7 +3086,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-detail.tsx": {
-      "sha256": "e92022926c6bc8f8450bc1d01b0e365e4c0909f7f58a42ad8732ec2107ceb7e8",
+      "sha256": "bcd79f9dc60be75e6c5a3d9e6509b32b48ecd67c7fdaef7488f7fe2004a1f268",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-followup.tsx": {
@@ -3098,7 +3098,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-review.tsx": {
-      "sha256": "d03d2ece3d2928bb5afa9fd9b1094494bfcefdeef7d285c589681682665489b4",
+      "sha256": "6dcb1d83649b525111b9d2ca485558e74fcf85d4b821954564af13d29b116baa",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-scheduled.tsx": {
@@ -6902,7 +6902,7 @@
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "a088493fc9e6e67c8a41390b31f846f7441dc9099ce3557b22f6c3e611c7a9d5",
+      "sha256": "c7c1614da65bd07eef81ec5a8f547acc5a336832a40ce416fb931e49ae04c18c",
       "executable": false
     },
     "tests/go-live/cron-driver.ts": {

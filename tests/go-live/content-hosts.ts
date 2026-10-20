@@ -24,7 +24,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   // Both the saved destination and a redirect destination are named, alongside the authored link.
   await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie:owner,body:{hosts:'mango.example.test,redirect.example,myshop.com'}}),200);
   await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:'<p>Visit our <a href="https://partner.example/offer">Garden partner offer</a> or <a href="https://redirect.example/start">Market partner redirect</a>.</p>'}}),200);
-  const rejected = await json(await site.call(`${path}/approve`,{method:'POST',cookie:manager,body:{revisionId:campaign.revisionId,idempotencyKey:'partner-blocked'}}),409);
+  const rejected = await json(await site.call(`${path}/approve`,{method:'POST',cookie:manager,body:{revisionId:campaign.revisionId,idempotencyKey:'partner-host-blocked'}}),409);
   expect(JSON.stringify(rejected.blockers)).toContain('partner.example');
   expect(JSON.stringify(rejected.blockers)).toContain('https://redirect.example/start');
   const view = async (cookie:string) => {
@@ -67,10 +67,10 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await approve(site,manager,domains);
   const evil = await draftCampaign(site,author,'Untrusted suffix',['garden-reader@example.test'],new Date(now+7200000));
   await json(await site.call(`/api/campaign-revisions/${evil.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:'<p><a href="https://myshop.com.evil.example/offer">Untrusted shop</a></p>'}}),200);
-  expect((await site.call(`/api/campaigns/${evil.campaignId}/approve`,{method:'POST',cookie:manager,body:{revisionId:evil.revisionId,idempotencyKey:'evil-blocked'}})).status).toBe(409);
+  expect((await site.call(`/api/campaigns/${evil.campaignId}/approve`,{method:'POST',cookie:manager,body:{revisionId:evil.revisionId,idempotencyKey:'evil-hostname-blocked'}})).status).toBe(409);
   await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie:owner,body:{hosts:'mango.example.test,*.myshop.com'}}),200);
   await json(await site.call(`/api/campaign-revisions/${evil.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:'<p><a href="https://myshop.com/offer">Bare shop</a></p>'}}),200);
-  const bare = await json(await site.call(`/api/campaigns/${evil.campaignId}/approve`,{method:'POST',cookie:manager,body:{revisionId:evil.revisionId,idempotencyKey:'bare-blocked'}}),409);
+  const bare = await json(await site.call(`/api/campaigns/${evil.campaignId}/approve`,{method:'POST',cookie:manager,body:{revisionId:evil.revisionId,idempotencyKey:'bare-domain-blocked'}}),409);
   expect(JSON.stringify(bare.blockers)).toContain('myshop.com');
   // A real Mailchimp-shaped archive creates the draft starter; no handcrafted campaign substitutes for the import.
   const hosts = ['partners.garden.example','workshops.market.example','seeds.community.example'];
