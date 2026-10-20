@@ -8,6 +8,7 @@ import { localContactHashSalt } from '../../src/core/platform/local-contact-auth
 import { RerError, refuse } from '@runeditrun/rer/errors';
 import { transferArchive } from './transfer-archive.mjs';
 import { retireTransfers } from '../../src/core/features/portability/retire-transfers.ts';
+import { restoreMigrations } from './migration-replay.mjs';
 
 // Mango supplies its private-authority policy and source-wide erasure floors over the adapted Base engine.
 async function run(direction,{root,path,store,signal,operationToken}) {
@@ -24,7 +25,9 @@ async function run(direction,{root,path,store,signal,operationToken}) {
     await retireTransfers(proxy.env.DB,{ASSETS_BUCKET:proxy.env.ASSETS_BUCKET});
     const pending=await proxy.env.DB.prepare("SELECT 1 FROM audience_erasures WHERE state='pending' LIMIT 1").first();
     if(pending)throw new PortabilityError('contact_erasure_in_progress',409);
-    const service=await createPortability({db:proxy.env.DB,buckets:{ASSETS_BUCKET:proxy.env.ASSETS_BUCKET},policy:portabilityPolicy({contactHashSalt:localContactHashSalt(vars),sessionSigningKey:vars.SESSION_SIGNING_KEY})});
+    const policy=portabilityPolicy({contactHashSalt:localContactHashSalt(vars),sessionSigningKey:vars.SESSION_SIGNING_KEY});
+    const service=await createPortability({db:proxy.env.DB,buckets:{ASSETS_BUCKET:proxy.env.ASSETS_BUCKET},policy,
+      migrations:()=>restoreMigrations(proxy.env.DB,root,policy)});
     return await transferArchive(service,direction,path,signal);
   } catch(error) {
     if(error instanceof PortabilityError)throw new RerError('restore_refused',`Mango transfer refused (${error.code.split(':')[0]}).`,error.status===409?4:1);

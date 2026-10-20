@@ -4,6 +4,7 @@ import { dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { Readable } from 'node:stream';
 import { readArchive } from '../../src/vendor/base/portability/index.mjs';
+import { ledgerReader } from '../../src/vendor/base/portability/ledgers.mjs';
 
 async function* records(path) {
   const file=await open(path,constants.O_RDONLY|constants.O_NOFOLLOW);
@@ -23,10 +24,11 @@ export async function transferArchive(service,direction,path,signal) {
       for await(const record of records(temporary)){if(record.kind==='manifest')manifest=record;else if(record.kind==='closing')closing=record;}
       await link(temporary,path);complete=true;
     } else {
-      for await(const record of records(path))signal?.throwIfAborted();
+      const history=ledgerReader();
+      for await(const record of records(path)){signal?.throwIfAborted();history.add(record);}
       for await(const record of records(path)) {
         signal?.throwIfAborted();
-        if(record.kind==='manifest'){manifest=record;id=await service.imports.create(manifest);}
+        if(record.kind==='manifest'){manifest=record;id=await service.imports.create(manifest,undefined,{ledgers:history.ledgers()});}
         else if(record.kind==='part')await service.imports.uploadPart(id,record.index,record);
         else closing=record;
       }
