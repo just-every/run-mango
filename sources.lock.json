@@ -1437,6 +1437,10 @@
       "sha256": "4c6ee582d929873d65db8a9c7a8e2b68b934f665e4460eda3932ea6926240626",
       "executable": false
     },
+    "migrations/core/0077_portability_import_leases.sql": {
+      "sha256": "bb30e6c77bcae155e63a7de07c21ccc4ea1d87a49e3d5e0f09bd6e2c8678e396",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -6518,7 +6522,7 @@
       "executable": false
     },
     "src/vendor/base/portability/import.mjs": {
-      "sha256": "38475cce63ab838f3cd5d0a37f9e7e6448d23a55c2b1587981641a632a6281fb",
+      "sha256": "da419ed177863d3743419ee0f9c8327b79388ec7e542a49f777f7b50bc8774af",
       "executable": false
     },
     "src/vendor/base/portability/index.d.mts": {
@@ -6591,6 +6595,10 @@
     },
     "src/vendor/base/portability/storage.mjs": {
       "sha256": "4b25a8d56c8905817b3f5b7955b68843c83cbf1350a1e36b219cd5ef62fded6a",
+      "executable": false
+    },
+    "src/vendor/base/portability/verify-staged.mjs": {
+      "sha256": "c8a3ecf7348f7771ba0d6d59f3f07d33f2bee37e90b0e25d5cf8eea9d327ad64",
       "executable": false
     },
     "tests/approval-binding/config.js": {

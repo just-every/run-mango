@@ -1,4 +1,5 @@
-import { all, statement, state, guard, job, save, partQueries, parts, readPart, cleanCopies, quote, stream, insist, run } from './storage.mjs';
+import { all, statement, state, guard, job, save, partQueries, parts, readPart, cleanCopies, quote, stream, insist, run, PortabilityError } from './storage.mjs';
+import { verifyStaged } from './verify-staged.mjs';
 import { stagePart } from './import-staging.mjs';
 import { normalizeStaged } from './import-safety.mjs';
 import { ensureImportLeases, createImportLease, importLeaseStatus, importRunning, withImportLease } from './import-lease.mjs';
@@ -8,7 +9,7 @@ import { refuseDevData } from './dev-data.mjs';
 import { catalogue, validateRow, bindCell, writableColumns } from './catalogue.mjs';
 import { platformTable, restorableManifest } from './bookkeeping.mjs';
 import { canonicalJson, unbase64 } from './hash.mjs';
-import { checkManifest, checkPart, ContentVerifier, ArchiveVerifier } from './format.mjs';
+import { checkManifest, checkPart } from './format.mjs';
 import { fence, mergeJournal } from './journal.mjs';
 import { writeObject } from './payloads.mjs';
 import { createCopy,sidecar,readCopy,restoreCopy } from './copies.mjs';
@@ -153,24 +154,15 @@ async function finalizeLeasedImport(context,id,{contentHash,archiveHash,laterJou
   if(row.phase==='complete')return importStatus(context,id);
   insist(['staging','applying'].includes(row.phase),'import_phase',409);
   const manifest=row.metadata.manifest;insist(row.completed===manifest.partCount,'parts_missing');
-  const verifier=new ContentVerifier(manifest),archive=new ArchiveVerifier(manifest),binaryIndexes=new Map();let index=0;
-  // Rebuild from the fully verified parts on every finalize, including resume.
-  // Keep only part positions: object reads must not rescan unrelated bytes.
-  for await(const part of parts(db,id,row.completed)){
-    await checkPart(part,index,config.partBytes);archive.add(part);
-    for(const item of part.items){
-      verifier.add(item);
-      if(item.kind==='object'||item.kind==='payload'){
-        const key=binaryKey(item),selected=binaryIndexes.get(key)??[];
-        if(selected.at(-1)!==index)selected.push(index);
-        binaryIndexes.set(key,selected);
-      }
-    }
-    index++;
+  let verified;
+  try { verified=await verifyStaged(context,row,{contentHash,archiveHash,laterJournal}); }
+  catch(error) {
+    // Immutable bytes that fail authentication or the source-wide floor can
+    // never be resumed. Withdraw all staged custody, as Mango did before.
+    if(error instanceof PortabilityError)await abortLeasedImport(context,row);
+    throw error;
   }
-  const digest=verifier.digest();if(contentHash!==undefined)insist(contentHash===digest,'content_checksum');
-  insist(archiveHash===archive.digest(),'archive_checksum',409);
-  const checked=await fence(db,row.metadata.restoreManifest??manifest,laterJournal);
+  const {digest,checked,binaryIndexes}=verified;
   if(row.metadata.legacyRecovery)await requireLegacyEmpty(context,row.metadata.legacyRecovery);
   const {seeded,replaced}=await destinationState(context,row);
   const dependentGuards=await excludedDependentGuards(db,row.metadata.targets,replaced);
@@ -230,7 +222,8 @@ export async function abortImport(context,id,options={}) {
 async function abortLeasedImport(context,row) {
   const id=row.id;
   await removeOwned(context,id);await cleanCopies(context.db,row);row.phase='aborted';
-  await context.db.batch([save(context.db,row),statement(context.db,'UPDATE rer_portability_state SET import_job=NULL,applying=0 WHERE id=1 AND import_job=?',id)]);
+  await context.db.batch([save(context.db,row),statement(context.db,'UPDATE rer_portability_state SET import_job=NULL,applying=0 WHERE id=1 AND import_job=?',id),
+    statement(context.db,'DELETE FROM rer_portability_import_leases WHERE job=?',id)]);
   return importStatus(context,id);
 }
 // A restore's staging outlives a worker that died mid-restore (a crashed process or workerd) and refuses
