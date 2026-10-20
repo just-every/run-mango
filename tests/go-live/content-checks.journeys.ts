@@ -4,10 +4,12 @@ import { providerEdge } from './edge';
 import { eventSigner } from './sendgrid-events';
 import { installation, json, sender, confirmedContact, draftCampaign, approve } from './harness';
 import { blockedHostJourney, hostNetwork } from './content-hosts';
+import { linkRulesJourney, linkNetwork } from './content-links';
+import { smsReviewJourney } from './sms-review';
 import { openPage, reloadPage } from '../support/navigation';
 
-contract('MSG-015][MSG-006][MSG-007', 'review names blocked hosts, allows an approver to trust them, and keeps advisory safety', async ({page}, info) => {
-  const edge = await providerEdge({links:hostNetwork}), site = await installation(edge, eventSigner(), {commerce:true});
+contract('MSG-015][MSG-006][MSG-007][MSG-005', 'review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out', async ({page}, info) => {
+  const edge = await providerEdge({links:{...hostNetwork,...linkNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true});
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);
@@ -72,5 +74,7 @@ contract('MSG-015][MSG-006][MSG-007', 'review names blocked hosts, allows an app
     expect(records).toHaveLength(2);
     expect(records.every(record => record.actor_id === 'go-live-owner' && record.occurred_at > 0)).toBe(true);
     await blockedHostJourney(site,cookie,page,info,clock.now);
+    await linkRulesJourney(site,cookie,page,info,clock.now);
+    await smsReviewJourney(site,edge,cookie,page,info,clock.now);
   } finally {await site.runtime.close();await edge.close();}
 });

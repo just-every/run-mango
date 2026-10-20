@@ -46,8 +46,9 @@ export function createLinkInspector(allowedHosts: string[], request: typeof fetc
         return { ok: false, detail: 'Link is not an absolute URL.' };
       }
       for (let redirect = 0; redirect <= maxRedirects; redirect += 1) {
-        if (current.protocol !== 'https:') return { ok: false, detail: 'Link must use HTTPS.' };
-        if (!allowedLinkHost(current.hostname, allowedHosts)) return { ok: false, blockedHost: current.hostname, detail: `Link host ${current.hostname} is not allowed.` };
+        const via = redirect ? 'Link redirects to ' : 'Link uses ';
+        if (current.protocol !== 'https:') return { ok: false, detail: `${via}the ${current.protocol} scheme; it must use HTTPS.` };
+        if (!allowedLinkHost(current.hostname, allowedHosts)) return { ok: false, blockedHost: current.hostname, detail: redirect ? `Link redirects to host ${current.hostname}, which is not allowed.` : `Link host ${current.hostname} is not allowed.` };
         if (privateAddress(current.hostname)) return { ok: false, detail: `Link host ${current.hostname} is a private-network address.` };
         try {
           const addresses = await addressesFor(current.hostname, request);

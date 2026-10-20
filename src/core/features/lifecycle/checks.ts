@@ -2,9 +2,9 @@ import { emailContentAdvisories } from '@/core/features/campaigns/email-advisori
 import { emailSizeAdvisory } from '@/core/features/campaigns/email-size-advisory';
 import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
 import { formatEmailSize } from '@/core/features/campaigns/email-size';
-import { contactLink, safeEmailLink } from '@/core/features/campaigns/contact-links';
-import { allowedLinkHost } from '@/core/features/settings/link-hosts-validation';
+import { contactLink } from '@/core/features/campaigns/contact-links';
 import { blockedLinkHosts } from './link-checks';
+import { blockedImage, blockedLink } from '@/core/features/campaigns/link-reasons';
 import { textLinkDestinations } from '@/core/features/campaigns/message-links';
 import { managedSmsText, smsComplianceBlock } from '@/core/features/sms/content';
 import {activeProviderHolds} from './provider-holds';
@@ -37,7 +37,7 @@ function validIanaTimeZone(value: string) {
   }
 }
 
-function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[]) {
+function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[], ownOrigin: URL) {
   const { revision, links, steps } = snapshot;
   const selected = new Set(steps.map((step) => step.channel));
   const findings: ApprovalCheck[] = [];
@@ -49,28 +49,16 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
   findings.push(check('schedule.timezone', steps.every((step) => validIanaTimeZone(step.timezone)),
     'Each step requires a valid IANA time zone.'));
 
-  const blockedLinks = links.filter((link) => {
-    try {
-      if (contactLink(link.destinationUrl)) return false;
-      const url = new URL(link.destinationUrl);
-      return !safeEmailLink(link.destinationUrl) || !allowedLinkHost(url.hostname, allowedHosts);
-    } catch {
-      return true;
-    }
-  });
-  const directHosts = blockedLinks.flatMap(link => {
-    try {
-      const url = new URL(link.destinationUrl);
-      return url.protocol === 'https:' && !allowedLinkHost(url.hostname, allowedHosts)
-        ? [{destination: link.destinationUrl, inspection: {ok: false, detail: '', blockedHost: url.hostname}}] : [];
-    } catch { return []; }
-  });
-  findings.push({...check('message.links', blockedLinks.length === 0,
-    blockedLinks.length ? `Blocked links: ${blockedLinks.map((item) => item.destinationUrl).join(', ')}` : 'Every destination is an allowed HTTPS or contact link.'),
+  const htmlPolicy = inspectEmailHtml(revision.emailBody);
+  const blockedLinks = [...new Set([...links.map((link) => link.destinationUrl), ...htmlPolicy.rejectedLinks])]
+    .flatMap((destination) => { const blocked = blockedLink(destination, allowedHosts); return blocked ? [{destination, ...blocked}] : []; });
+  const blockedImages = htmlPolicy.images.flatMap((source) => { const blocked = blockedImage(source, allowedHosts, ownOrigin); return blocked ? [{destination: source, ...blocked}] : []; });
+  const directHosts = [...blockedLinks, ...blockedImages].flatMap(({destination, host}) => host ? [{destination, inspection: {ok: false, detail: '', blockedHost: host}}] : []);
+  findings.push({...check('message.links', blockedLinks.length + blockedImages.length === 0,
+    blockedLinks.length + blockedImages.length ? `Blocked links: ${blockedLinks.map((item) => `${item.destination} (${item.reason})`).join('; ')}${blockedImages.length ? `${blockedLinks.length ? '; ' : ''}Blocked images: ${blockedImages.map((item) => `${item.destination} (${item.reason})`).join('; ')}` : ''}` : 'Every destination is an allowed HTTPS or contact link.'),
     blockedHosts: blockedLinkHosts(directHosts)});
 
   const authored = `${revision.emailSubject}\n${revision.preheader}\n${revision.emailBody}\n${revision.emailText}\n${revision.smsBody}`;
-  const htmlPolicy = inspectEmailHtml(revision.emailBody);
   findings.push(check('message.content', htmlPolicy.issues.length === 0, htmlPolicy.issues.length
     ? htmlPolicy.issues.join(' ')
     : 'Email HTML uses the allowed tags, attributes, inline styles and validated destinations, and hides no text.'));
@@ -165,7 +153,7 @@ export async function runApprovalChecks(input: {
   const smsResult = smsResults[0];
   const [mailResult, linkResult] = results;
   const [mailCapabilities, mailInspection] = value(mailResult);
-  const checks = contentChecks(snapshot, platform.config.allowedLinkHosts.map((host) => host.toLowerCase()));
+  const checks = contentChecks(snapshot, platform.config.allowedLinkHosts.map((host) => host.toLowerCase()), platform.config.publicBaseUrl);
   const sms = value(smsResult);
   const smsCapabilities = sms?.[0];
   const smsValidations = sms?.[1] ?? [];

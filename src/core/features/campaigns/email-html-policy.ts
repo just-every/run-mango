@@ -1,4 +1,5 @@
 import { safeEmailLink } from './contact-links';
+import { linkProblem } from './link-reasons';
 import { parseEmailHtml, type EmailElement, type EmailNode } from './email-html-parse';
 import { createPresentationCheck } from './email-presentation';
 /** Conservative authoring grammar, judged on the tree a mail client builds from the stored body (email-html-parse.ts).
@@ -43,7 +44,7 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
   const parsed = parseEmailHtml(source);
   const issues = new Set<string>([...parsed.malformed, ...parsed.lost]);
   for (const tag of parsed.tags) if (!emailTags.has(tag)) issues.add(`Tag <${tag}> is not allowed.`);
-  const destinations = new Set<string>();
+  const destinations = new Set<string>(), rejectedLinks = new Set<string>(), images = new Set<string>();
   const anchors: Array<{href: string; label: string}> = [];
   const presentation = createPresentationCheck(), localImages = new Set<string>();
   const visit = (node: EmailNode, inLink: boolean) => {
@@ -61,9 +62,12 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
       if (written !== undefined && writtenWithReferences(name, written)) issues.add(`Attribute ${name} on <${tag}> is written with a character reference; write the character itself.`);
       if (!presentation.attribute(tag, name, value) && !allowedEmailAttribute(tag, name, value, mediaOrigin)) {
         if (tag === 'img' && name === 'src' && insecureMedia(value)) localImages.add(value);
+        else if (tag === 'a' && name === 'href') { issues.add(`Link ${value} ${linkProblem(value) ?? 'is not allowed'}.`); rejectedLinks.add(value); }
+        else if (tag === 'img' && name === 'src') issues.add(`Image source ${value} ${linkProblem(value, 'image') ?? 'is not allowed'}.`);
         else issues.add(`Attribute ${name} on <${tag}> is not allowed or has an unsafe value.`);
       }
       if (name === 'href' && value !== '{{unsubscribe_url}}' && safeEmailLink(value)) destinations.add(value);
+      if (tag === 'img' && name === 'src' && safeEmailUrl(value)) images.add(value);
     }
     if (tag === 'img' && (!attributes.has('src') || !attributes.has('width') || !attributes.has('height'))) issues.add('Images require HTTPS src and explicit width and height of at least 2 pixels.');
     if (tag === 'a') {
@@ -81,5 +85,5 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
   // Styled markup is judged by the cell around each text run, so it must be written the way every parser builds it.
   if (presentation.presented && parsed.rewritten) issues.add(`Styled markup must be well-formed: mail clients build ${JSON.stringify(parsed.rewritten.parsed)} from ${JSON.stringify(parsed.rewritten.written)}; write every element closed, in order, where HTML parsers keep it.`);
   for (const issue of presentation.finish()) issues.add(issue);
-  return {issues: [...issues], destinations: [...destinations], anchors};
+  return {issues: [...issues], destinations: [...destinations], rejectedLinks: [...rejectedLinks], images: [...images], anchors};
 }
