@@ -85,8 +85,12 @@ test('[REPORT-005] native membership changes reconcile by day and consent source
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});await openPage(page,`${site.runtime.url}/app/insights`);
       const panel=page.locator('section[aria-labelledby="list-growth-title"]');
+      // The document can hydrate before this streamed panel. Wait for its
+      // client-loaded report so hydration cannot discard the entered dates.
+      await expect(panel.getByRole('table',{name:'Subscribed membership totals'})).toBeVisible();
       await panel.getByLabel('From (UTC)').fill(upgrade.from);await panel.getByLabel('Through (UTC)').fill(upgrade.to);
       await panel.getByRole('button',{name:'Apply dates'}).click();
+      await expect(panel).toContainText(`Selected period: ${upgrade.from} through ${upgrade.to} (UTC).`);
       await expect(panel.getByRole('table',{name:'Subscribed membership totals'})).toHaveCount(0);
       const rows=panel.getByRole('table',{name:'Daily list growth by source'});
       await expect(rows.locator('tbody tr')).toHaveCount(erased.rows.length);
