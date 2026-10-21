@@ -7222,7 +7222,7 @@
       "executable": false
     },
     "tests/go-live/list-growth.journeys.ts": {
-      "sha256": "ab6d122bd8f18910d13c4579d84d2ca515ca24f3f2aac839d00c034eba2bf3ea",
+      "sha256": "aa131d6925da8e3872d8c833a548a4164ee432a85a121f9d673315d782c99d96",
       "executable": false
     },
     "tests/go-live/mailbox-provider.journeys.ts": {
