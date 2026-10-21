@@ -953,6 +953,10 @@
       "sha256": "56d1f577caf754034f6b5ce371a2af941dbe75030ed8973d907114957c56c092",
       "executable": false
     },
+    ".github/assets/release/mango-0.4.0-activity-1440.png": {
+      "sha256": "64100a5094d57e92f02021ffd3e6fd9a0e0bbe8ec61ddd83d531625776ff6005",
+      "executable": false
+    },
     ".github/assets/release/mango-contact-ledger-1600.png": {
       "sha256": "45d85510dd06723b8f77beb5e5cc531ea78239210035c27873d2287cdf8c1858",
       "executable": false
@@ -1010,7 +1014,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "1f7bd6d7dd8df791409ab791eb33b92e6f72b88ff40bec82940243b475c44962",
+      "sha256": "e4c77aa5de65df1c7988aac18e1a63abd6286e5e2a6fd0fe94761d09f1e748a1",
       "executable": false
     },
     "CLAUDE.md": {

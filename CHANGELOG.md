@@ -2,7 +2,7 @@
 
 ## 0.4.0 (2026-10-21)
 
-**Back up first.** Before upgrading, back up your source, D1 database, R2 bucket and private settings (`.dev.vars`, or `.rer/hosted.env` and the deploy receipt for a hosted copy). Stop `rer dev`, run `git pull --ff-only`, `rer install`, then `rer setup` locally or `rer deploy --environment <name>` hosted; both apply the four new migrations in filename order. Run `rer build` before taking a fresh export.
+**Back up first.** Before upgrading, back up your source, D1 database, R2 bucket and private settings (`.dev.vars`, or `.rer/hosted.env` and the deploy receipt for a hosted copy). Stop `rer dev`, run `git pull --ff-only`, `rer install`, then `rer setup` locally or `rer deploy --environment <name>` hosted; both apply the four new migrations in filename order. Run `rer build` before taking a fresh export. A copy of 0.3.0 with contacts, an opt-out, a pending signup, a completed import and a draft upgraded with every earlier row unchanged, and a hosted copy updated in place kept its owner, contacts and sent campaign.
 
 ### What you get
 
