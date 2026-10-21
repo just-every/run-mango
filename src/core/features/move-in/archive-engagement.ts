@@ -12,6 +12,31 @@ export type EngagementRow = {source: string; sourceOrdinal: number; row: number;
 export type EngagementSummary = {rows: number; imported: number; dropped: number; reasons: Record<string,number>};
 const empty = (): EngagementSummary => ({rows:0,imported:0,dropped:0,reasons:{}});
 
+/** Validate the source calendar before Date.parse can roll an impossible day forward.
+ * Keep the shared parser's UTC CSV handling and supported timezone/precision forms.
+ */
+function engagementTimestamp(value: string | undefined) {
+  const text = value?.trim() ?? '';
+  const yearFirst = /^([+-]?\d{4,})[-/](\d+)[-/](\d+)/.exec(text);
+  const monthFirst = /^(\d+)[-/](\d+)[-/](\d+)/.exec(text);
+  const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  const namedMonth = /\b([a-z]{3})[a-z]*[\s-]+(\d{1,2})(?:,\s*|[\s-]+)(\d{2,4})\b/i.exec(text);
+  const namedDay = /\b(\d{1,2})[\s-]+([a-z]{3})[a-z]*[\s-]+(\d{2,4})\b/i.exec(text);
+  const calendar = yearFirst ? yearFirst.slice(1).map(Number)
+    : monthFirst ? [Number(monthFirst[3]), Number(monthFirst[1]), Number(monthFirst[2])]
+    : namedMonth && months.includes(namedMonth[1].toLowerCase()) ? [Number(namedMonth[3]), months.indexOf(namedMonth[1].toLowerCase()) + 1, Number(namedMonth[2])]
+    : namedDay && months.includes(namedDay[2].toLowerCase()) ? [Number(namedDay[3]), months.indexOf(namedDay[2].toLowerCase()) + 1, Number(namedDay[1])] : null;
+  if (calendar) {
+    const [sourceYear, month, day] = calendar;
+    // Match the existing parser's legacy two-digit year convention.
+    const year = sourceYear < 100 && !yearFirst ? sourceYear + (sourceYear < 50 ? 2000 : 1900) : sourceYear;
+    const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (month < 1 || month > 12 || day < 1 || day > days[month - 1]) return null;
+  }
+  return timestamp(value);
+}
+
 /** Only addresses admitted by this move-in can acquire imported facts. */
 export function engagementContacts(plan?: ImportPlan) {
   const contacts = new Set<string>();
@@ -48,7 +73,7 @@ export function reviewEngagement(parts: Array<{entry:ArchiveEntry;part:ArchivePa
       const kind=row.action?.trim().toLowerCase();
       if(kind!=='click'&&kind!=='open'){drop('unsupported-action');continue;}
       let at:number|null;
-      try{at=timestamp(row.timestamp);}catch{at=null;}
+      try{at=engagementTimestamp(row.timestamp);}catch{at=null;}
       if(at===null||at>Date.now()){drop('invalid-timestamp');continue;}
       const campaign=row.campaign_id?.trim();
       if(!campaign||!campaigns.has(campaign)){drop('campaign-not-in-move-in');continue;}

@@ -23,6 +23,72 @@ const facts = ['delivery_facts', 'campaign_results', 'attribution_facts', 'exter
 
 test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely', async ({ page }, info) => {
   const edge = await providerEdge(), signer = eventSigner();
+  const calendarSite = await installation(edge, signer);
+  try {
+    const cookie = await calendarSite.open();
+    const invalid = [
+      ...[1900, 2023, 2025, 2026].map(year => `${year}-02-29T10:00:00Z`),
+      ...[2024, 2025, 2026].map(year => `${year}-02-30T10:00:00Z`),
+      ...[4, 6, 9, 11].map(month => `2025-${String(month).padStart(2, '0')}-31T10:00:00Z`),
+      '2026-02-30Z', '2026-02-30',
+      '2026-2-30 10:00:00', '2026/02/30 10:00:00', '02/30/2026 10:00:00',
+      'Feb 30 2026 10:00:00 GMT', '30 Feb 2026 10:00:00 GMT', '+002026-02-30T10:00:00Z',
+      '2026-02-30 10:00:00', '2026-02-30T10:00:00+02:30',
+      '2026-02-28T25:00:00Z', '2026-02-28T10:60:00Z', '2026-02-28T10:00:60Z',
+      '2026-02-28T10:00:00+24:00', '2026-02-28T10:00:00+02:60',
+      '2026-00-10T10:00:00Z', '2026-13-10T10:00:00Z', '2026-02-00T10:00:00Z',
+    ];
+    const valid = [
+      ['2024-02-29T10:00:00Z', '2024-02-29T10:00:00.000Z'],
+      ['2000-02-29T23:30:00-02:30', '2000-03-01T02:00:00.000Z'],
+      ['2024-03-01T00:15:00+05:45', '2024-02-29T18:30:00.000Z'],
+      ['2025-04-30 10:00:00', '2025-04-30T10:00:00.000Z'],
+      ['2025-04-30T10:00:00.123Z', '2025-04-30T10:00:00.123Z'],
+      ['2025-04-30 10:00:00 +1000', '2025-04-30T00:00:00.000Z'],
+      ['2024-02-29Z', '2024-02-29T00:00:00.000Z'],
+      ['2024-02-29', '2024-02-29T00:00:00.000Z'],
+      ['2024-02-003', '2024-02-03T00:00:00.000Z'],
+      ['2024-2-29 10:00:00', '2024-02-29T10:00:00.000Z'],
+      ['2024/02/29 10:00:00', '2024-02-29T10:00:00.000Z'],
+      ['02/29/2024 10:00:00', '2024-02-29T10:00:00.000Z'],
+      ['Feb 29 2024 10:00:00 GMT', '2024-02-29T10:00:00.000Z'],
+      ['29 Feb 2024 10:00:00 GMT', '2024-02-29T10:00:00.000Z'],
+      ['+002024-02-29T10:00:00Z', '2024-02-29T10:00:00.000Z'],
+      ['2025-04-30T24:00:00Z', '2025-05-01T00:00:00.000Z'],
+    ];
+    const bytes = await accountExport('path', (name, data) => name.includes('granular_activity')
+      ? Buffer.from('campaign_id,email,action,timestamp\n' + [
+        ...invalid.map(value => `c0spring1,ben@example.test,click,${value}`),
+        ...valid.map(([value]) => `c0spring1,ada@example.test,click,${value}`),
+      ].join('\n')) : data);
+    const expected = {rows:invalid.length + valid.length, imported:valid.length, dropped:invalid.length, reasons:{'invalid-timestamp':invalid.length}};
+    const before = await tableCounts(calendarSite);
+    const preview = await postArchive(calendarSite, cookie, '/api/audience/archive-preview', bytes);
+    expect(preview.status).toBe(200);
+    expect(preview.body.summary.engagement).toEqual(expected);
+    expect(await tableCounts(calendarSite)).toEqual(before);
+    const moved = await importArchive(calendarSite, cookie, bytes);
+    expect(moved.archive.summary.engagement).toEqual(expected);
+    const stored = () => calendarSite.rows('SELECT c.email,f.occurred_at FROM imported_engagement_facts f JOIN contacts c ON c.id=f.contact_id ORDER BY f.source_row');
+    const originals = valid.map(([, instant]) => ({email:'ada@example.test', occurred_at:Date.parse(instant)}));
+    expect(await stored()).toEqual(originals);
+    expect(await calendarSite.rows("SELECT h.has_history FROM move_in_contact_history h JOIN contacts c ON c.id=h.contact_id WHERE c.email='ben@example.test'")).toEqual([{has_history:0}]);
+    for (const table of facts) expect(await calendarSite.count(table), table).toBe(0);
+    const consent = await statuses(calendarSite);
+    const repeatBefore = await tableCounts(calendarSite);
+    const repeat = await postArchive(calendarSite, cookie, '/api/audience/archives', bytes, moved.preview.fingerprint);
+    expect(repeat.status).toBe(200); expect(repeat.body.repeated).toBe(true);
+    expect(await tableCounts(calendarSite)).toEqual(repeatBefore);
+    await drive(calendarSite, cookie, moved.archive.id, 'undo');
+    expect(await stored()).toEqual([]);
+    expect(await calendarSite.count('move_in_contact_history')).toBe(0);
+    const reapplied = await importArchive(calendarSite, cookie, bytes);
+    expect(reapplied.archive.summary.engagement).toEqual(expected);
+    expect(await stored()).toEqual(originals);
+    expect(await statuses(calendarSite)).toEqual(consent);
+    await record('calendar-validation.json', {invalid, valid, preview:preview.body.summary.engagement, applied:moved.archive.summary.engagement,
+      reapplied:reapplied.archive.summary.engagement, stored:await stored(), repeated:repeat.body.repeated, undoFacts:0});
+  } finally { await calendarSite.runtime.close(); }
   const site = await installation(edge, signer);
   try {
     const cookie = await site.open();
@@ -195,7 +261,7 @@ test('[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immut
     const bytes=await accountExport('path',(name,data)=>{
       if(name.endsWith('/subscribed.csv')&&name.startsWith('audiences/'))return Buffer.from('Email Address,First Name,OPTIN_TIME,CONFIRM_TIME\n'+emails.map(email=>`${email},${email.split('@')[0]},${ago(24)},${ago(24)}`).join('\n'));
       if(name.startsWith('audiences/'))return Buffer.from('Email Address\n');
-      if(name.includes('granular_activity'))return Buffer.from(`campaign_id,email,action,timestamp\nc0spring1,ada@example.test,click,${ago(3)}\nc0winter2,ben@example.test,click,${ago(13)}\nc0spring1,dup@example.test,open,${ago(3)}\nc0spring1,unknown@example.test,click,${ago(3)}\nc0spring1,ada@example.test,click,invalid\n`);
+      if(name.includes('granular_activity'))return Buffer.from(`campaign_id,email,action,timestamp\nc0spring1,ada@example.test,click,${ago(3)}\nc0winter2,ben@example.test,click,${ago(13)}\nc0spring1,dup@example.test,open,${ago(3)}\nc0spring1,unknown@example.test,click,${ago(3)}\nc0spring1,ada@example.test,click,invalid\nc0winter2,ben@example.test,click,${new Date(clock.now).getUTCFullYear()}-02-30T10:00:00Z\nc0spring1,no-history@example.test,click,${new Date(clock.now).getUTCFullYear()}-02-30T10:00:00Z\n`);
       return data;
     });
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
@@ -213,7 +279,7 @@ test('[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immut
     expect(await site.rows(`SELECT count(*) n FROM recipient_steps WHERE campaign_id='${nativeCampaign.campaignId}' AND transport_disposition='accepted'`)).toEqual([{n:1}]);
     const before=await site.rows('SELECT * FROM campaign_results');
     const moved=await importArchive(site,cookie,bytes);
-    expect(moved.archive.summary.engagement).toMatchObject({rows:5,imported:3,dropped:2});
+    expect(moved.archive.summary.engagement).toEqual({rows:7,imported:3,dropped:4,reasons:{'address-not-in-move-in':1,'invalid-timestamp':3}});
     expect(JSON.stringify(await site.rows('SELECT * FROM campaign_results'))).toBe(JSON.stringify(before));
     expect(JSON.stringify(await nativeResults())).toBe(JSON.stringify(resultBefore));
     const campaign=await draftCampaign(site,cookie,'Imported garden engagement',emails,new Date(clock.now+3600000));
@@ -226,9 +292,11 @@ test('[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immut
     await screens(page,'imported-dormancy-review',info);
     await page.getByRole('button',{name:'Include open-only contacts',exact:true}).click();
     await expect(page.getByRole('button',{name:'Open-only contacts included'})).toBeDisabled();
+    await expect(page.getByLabel('Exclude dormant contacts',{exact:true})).toBeEnabled();
     expect(await checks()).toMatchObject({eligibleCount:3,dormancyIncludedCount:1,noHistoryCount:1,openOnlyCount:0,exclusions:[{reason:'dormant',count:1}]});
     await page.getByLabel('Exclude dormant contacts',{exact:true}).uncheck();
-    await expect.poll(async()=> (await checks()).eligibleCount).toBe(4);
+    await expect(page.getByLabel('Exclude dormant contacts',{exact:true})).toBeEnabled();
+    expect((await checks()).eligibleCount).toBe(4);
     expect(await checks()).toMatchObject({dormancyIncludedCount:2});
     await expect(page.getByLabel('Exclude dormant contacts',{exact:true})).not.toBeChecked();
     const nativeBefore=await statuses(site);
