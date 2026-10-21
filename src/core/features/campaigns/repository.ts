@@ -1,3 +1,4 @@
+import { exportCampaignsCsv } from './export';
 import type { EmailSizeOptions } from './email-size';
 import { schedulerObservation } from '@/core/features/lifecycle/scheduler-observation';
 import { createProposalRepository } from '@/core/features/proposals/repository';
@@ -22,6 +23,7 @@ import {
 
 export function createCampaignRepository(database: Database,sizeOptions:EmailSizeOptions = {}) {
   return {
+    exportCsv: (actorId: string) => exportCampaignsCsv(database, actorId),
     ...createCampaignResultRepository(database),
     attribution:(campaignId:string,revisionId:string)=>campaignAttribution(database.$client,campaignId,revisionId),
     scheduler: (now:Date) => schedulerObservation(database.$client).read(now),

@@ -189,9 +189,9 @@ type AppServices = {
 
 type BeforeAuthenticationRoutes = (app: Hono<AppEnvironment>, services: AppServices) => void;
 
-export function createAppServices(platform: Platform): AppServices {
+export function createAppServices(platform: Platform, queueIdentity: object = platform.jobs): AppServices {
   const database = platform.database;
-  const healthService = createHealthService(createHealthRepository(database), platform);
+  const healthService = createHealthService(createHealthRepository(database), platform, queueIdentity);
   const authService = createAuthService(createAuthRepository(database), platform);
   const storeService = createStoreService(createStoreRepository(database));
   let lifecycleRuntime: LifecycleRuntime | undefined;
@@ -239,7 +239,7 @@ export function createApp(
   const retirementDatabase=environment.DB;
   environment={...environment,DB:erasureFencedDatabase(environment.DB)};
   const app = new Hono<AppEnvironment>();
-  const services = createAppServices(platform);
+  const services = createAppServices(platform, environment.MANGO_JOBS);
   // Health owns its deadline; no settings or maintenance read may run ahead of it.
   app.route('/', createHealthRoutes(services.healthService, environment));
   app.use('*',async(_context,next)=>{

@@ -1,5 +1,5 @@
 const pnpm = (name, args) => ({ name, command: 'pnpm', args });
-const configs = {
+export const configs = {
   main: 'playwright.config.js',
   'local-start': 'scripts/verification/local-start.config.mjs',
   'local-start-slow': 'tests/local-start/config.js',
@@ -49,6 +49,7 @@ export function verificationGroups({ stage, shard, testsOnly }, cpuBudget) {
     return { ...pnpm(shard ? `${name}-${shard.replace('/', '-of-')}` : name, args), timingRequired: true };
   };
   const staticGroups = [
+    [{ name: 'test-budget', command: process.execPath, args: ['scripts/verification/test-budget.mjs'] }],
     [{ name: 'command-contract', command: process.execPath, args: ['node_modules/@runeditrun/rer/bin/rer.mjs', 'check', '--profile', 'first-party'] }, pnpm('source', ['run', 'source:check'])],
     [pnpm('typecheck', ['run', 'typecheck'])],
     [pnpm('build', ['run', 'build'])],

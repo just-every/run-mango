@@ -1,3 +1,6 @@
+import { CampaignExportLimitError } from './export';
+import { hasPermission } from '@/core/features/auth/permissions';
+import { campaignReportCsvResponse } from '@/core/features/insights/campaign-recipient-csv';
 import { EmailTooLargeError } from './email-size';
 import { createCampaignReuseRoutes } from './reuse-routes';
 import type { createAuthoringService } from './authoring-service';
@@ -81,6 +84,14 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     const collection = await service.listCampaigns(parsed.data);
     if (parsed.data.channel === 'sms' && !collection.smsEnabled) return context.json({error:'sms_disabled'},400);
     return context.json(collection);
+  });
+  routes.get('/campaigns/export', async context => {
+    if (!hasPermission(context.get('operator').role, 'audience.export')) return context.json({error:'role_forbidden'},403);
+    try { return campaignReportCsvResponse(await service.exportCsv(context.get('operator').id), 'campaigns.csv'); }
+    catch (error) {
+      if (error instanceof CampaignExportLimitError) return context.json({error:'campaign_export_too_large',detail:error.message},422);
+      throw error;
+    }
   });
   routes.get('/campaigns/:id', async (context) => {
     const parsed = readParams(context, identifier);
