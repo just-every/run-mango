@@ -1062,7 +1062,7 @@
       "executable": false
     },
     "docs/backup-and-export.md": {
-      "sha256": "2c724dd746ea6e1151f83233612da63b1bfffd6dbca94493b08b6c3951a121d8",
+      "sha256": "2c4be9bc087db13642becfb7f4719ab7caea789288645e79870bd1ed87ff437c",
       "executable": false
     },
     "docs/CLAIMS.md": {
@@ -3042,7 +3042,7 @@
       "executable": false
     },
     "src/core/features/campaigns/export.ts": {
-      "sha256": "d23fd8c317713bc4f47a43323db17cc98aabdcedaa3aef16d69af2b695ddc2ae",
+      "sha256": "2d001f685101dbc3da77baab0f8909dd68027dc6cb3573e3b344f0c8e04ee85b",
       "executable": false
     },
     "src/core/features/campaigns/followup-schema.ts": {
@@ -3078,7 +3078,7 @@
       "executable": false
     },
     "src/core/features/campaigns/repository.ts": {
-      "sha256": "024d81538b0568723616fa45f0f66d5a65bc5b33e184c1c645f910698f6b3980",
+      "sha256": "2c2d37bafc3a51213d3374a27c0b43ee3f10a3e320d5eb9d2123d1602b7dd8ee",
       "executable": false
     },
     "src/core/features/campaigns/result-model.ts": {
@@ -3106,7 +3106,7 @@
       "executable": false
     },
     "src/core/features/campaigns/routes.ts": {
-      "sha256": "6e2985fcc9f04a1b3628e19e3682171c47565f9bd01ec7daf99713daccb6e243",
+      "sha256": "025fec4b852f1b3faecc51914d6e0f9b7b2af32e89acf719f5b1e2bc638374eb",
       "executable": false
     },
     "src/core/features/campaigns/saved-email-size.ts": {
@@ -3114,7 +3114,7 @@
       "executable": false
     },
     "src/core/features/campaigns/service.ts": {
-      "sha256": "dc2d7920eb5d57f7b69dd04cccbc1e8b0371a559fe68daf1852530729e6ff70d",
+      "sha256": "47fdc4f7722da5e3a353457aab5166e26c44d6ae9a767cf66416d3d93682250c",
       "executable": false
     },
     "src/core/features/campaigns/signal-starters.ts": {
@@ -6994,7 +6994,7 @@
       "executable": false
     },
     "tests/campaign-results/performance.journeys.ts": {
-      "sha256": "c6d80d6994499ac2755d9107441228e62c94db555d6258e311ea9d11e024e13a",
+      "sha256": "cb6119d2cd844bc53b33db76ff9b67408b5ff2d1ca8fdc5870bb089c464bd221",
       "executable": false
     },
     "tests/campaign-results/playwright.config.js": {

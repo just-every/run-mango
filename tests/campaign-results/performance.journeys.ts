@@ -97,6 +97,14 @@ test('campaign revisions export safely with Owner/Admin authority and visible li
       expect((await authority.call('/api/campaigns/export',{cookie:colleague.cookie})).status).toBe(role==='admin'?200:403);
     }
   } finally {await authority.close();}
+  for(const prefix of ['=','+','-','@','\t','\r']) {
+    const cell=prefix+'Comma, "quote"\r\nNext line';
+    expect((await page.request.patch(runtime.url+'/api/campaign-revisions/'+second.revisionId,{data:{name:cell,emailSubject:cell}})).status()).toBe(200);
+    const record=parseCsv(await(await download()).text()).find(row=>row.revision==='2');
+    expect(record).toMatchObject({name:"'"+cell,subject:"'"+cell});
+  }
+  const exportsBefore=await(await page.request.get(runtime.url+'/api/activity?action=campaigns.exported')).json();
+  expect(exportsBefore.entries[0]).toMatchObject({actorType:'operator',detail:{revisions:2}});
   // Boundary data uses a compact SQL fixture, not 50,001 authoring requests.
   const columns=(await runtime.sql('PRAGMA table_info(campaign_revisions)')).map((row:any)=>row.name);
   const projections=columns.map((column:string)=>column==='id'?"'export-limit-'||n":column==='version'?'n+10':'r.'+column).join(',');
@@ -111,4 +119,9 @@ test('campaign revisions export safely with Owner/Admin authority and visible li
     expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
     await page.screenshot({path:test.info().outputPath('campaign-export-refusal-'+width+'.png'),fullPage:true});
   }
+  // A Unicode export below the row ceiling still refuses the independent byte ceiling.
+  await runtime.sql(`DELETE FROM campaign_revisions WHERE version>12010; UPDATE campaign_revisions SET name='${'界'.repeat(160)}',email_subject='${'界'.repeat(250)}' WHERE version>10`);
+  expect((await download()).status()).toBe(422);
+  const exportsAfter=await(await page.request.get(runtime.url+'/api/activity?action=campaigns.exported')).json();
+  expect(exportsAfter.entries).toEqual(exportsBefore.entries);
 });

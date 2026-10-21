@@ -87,7 +87,7 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
   });
   routes.get('/campaigns/export', async context => {
     if (!hasPermission(context.get('operator').role, 'audience.export')) return context.json({error:'role_forbidden'},403);
-    try { return campaignReportCsvResponse(await service.exportCsv(), 'campaigns.csv'); }
+    try { return campaignReportCsvResponse(await service.exportCsv(context.get('operator').id), 'campaigns.csv'); }
     catch (error) {
       if (error instanceof CampaignExportLimitError) return context.json({error:'campaign_export_too_large',detail:error.message},422);
       throw error;

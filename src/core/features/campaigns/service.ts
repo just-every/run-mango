@@ -89,7 +89,7 @@ export function createCampaignService(
       return proposal?proposalEntry(proposal):undefined;
     },
 
-    exportCsv: () => repository.exportCsv(),
+    exportCsv: (actorId: string) => repository.exportCsv(actorId),
 
     async listCampaigns(filters: CampaignFilters = {}) {
       const collection = await repository.listCampaigns(filters, options.now?.() ?? new Date());

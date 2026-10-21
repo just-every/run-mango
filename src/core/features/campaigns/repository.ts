@@ -23,7 +23,7 @@ import {
 
 export function createCampaignRepository(database: Database,sizeOptions:EmailSizeOptions = {}) {
   return {
-    exportCsv: () => exportCampaignsCsv(database),
+    exportCsv: (actorId: string) => exportCampaignsCsv(database, actorId),
     ...createCampaignResultRepository(database),
     attribution:(campaignId:string,revisionId:string)=>campaignAttribution(database.$client,campaignId,revisionId),
     scheduler: (now:Date) => schedulerObservation(database.$client).read(now),

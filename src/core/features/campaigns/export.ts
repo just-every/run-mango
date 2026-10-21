@@ -1,3 +1,4 @@
+import { recordActivity } from '@/core/features/auth/activity-record';
 import type { Database } from '@/core/platform/db/client';
 import { csvCell } from '@/core/features/auth/activity-query';
 
@@ -9,7 +10,7 @@ export class CampaignExportLimitError extends Error {
 }
 
 /** Each persisted revision is one row, including drafts with no scheduled steps. */
-export async function exportCampaignsCsv(database: Database) {
+export async function exportCampaignsCsv(database: Database, actorId: string) {
   const lines = ['campaign_id,name,revision,state,subject,updated\r\n'];
   let bytes = new TextEncoder().encode(lines[0]).length, count = 0;
   let after = '';
@@ -24,7 +25,11 @@ export async function exportCampaignsCsv(database: Database) {
       if (++count > rowLimit || bytes > byteLimit) throw new CampaignExportLimitError();
       lines.push(line);
     }
-    if (page.results.length < 500) return lines.join('');
+    if (page.results.length < 500) {
+      await recordActivity(database.$client, {key:`campaigns-exported:${crypto.randomUUID()}`,action:'campaigns.exported',
+        entityType:'campaigns',entityId:'campaigns',actorId,detail:{revisions:count}});
+      return lines.join('');
+    }
     after = page.results.at(-1)!.id;
   }
 }
