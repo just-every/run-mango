@@ -26,48 +26,45 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
   const calendarSite = await installation(edge, signer);
   try {
     const cookie = await calendarSite.open();
-    const invalid = [
-      ...[1900, 2023, 2025, 2026].map(year => `${year}-02-29T10:00:00Z`),
-      ...[2024, 2025, 2026].map(year => `${year}-02-30T10:00:00Z`),
-      ...[4, 6, 9, 11].map(month => `2025-${String(month).padStart(2, '0')}-31T10:00:00Z`),
-      '99-02-29 10:00:00', '2026.02.30 10:00:00',
-      '2026 Feb 30 10:00:00 GMT', 'Feb 2026 30 10:00:00 GMT', '30 2026 Feb 10:00:00 GMT',
-      '2026-02-30Z', '2026-02-30',
-      '2026-2-30 10:00:00', '2026/02/30 10:00:00', '02/30/2026 10:00:00',
-      'Feb 30 2026 10:00:00 GMT', '30 Feb 2026 10:00:00 GMT', '+002026-02-30T10:00:00Z',
-      '2026-02-30 10:00:00', '2026-02-30T10:00:00+02:30',
-      '2026-02-28T25:00:00Z', '2026-02-28T10:60:00Z', '2026-02-28T10:00:60Z',
-      '2026-02-28T10:00:00+24:00', '2026-02-28T10:00:00+02:60',
-      '2026-00-10T10:00:00Z', '2026-13-10T10:00:00Z', '2026-02-00T10:00:00Z',
-    ];
-    const valid = [
-      ['2024-02-29T10:00:00Z', '2024-02-29T10:00:00.000Z'],
-      ['2000-02-29T23:30:00-02:30', '2000-03-01T02:00:00.000Z'],
-      ['2024-03-01T00:15:00+05:45', '2024-02-29T18:30:00.000Z'],
-      ['2025-04-30 10:00:00', '2025-04-30T10:00:00.000Z'],
-      ['2025-04-30T10:00:00.123Z', '2025-04-30T10:00:00.123Z'],
-      ['2025-04-30 10:00:00 +1000', '2025-04-30T00:00:00.000Z'],
-      ['99-02-28 10:00:00', '1999-02-28T10:00:00.000Z'],
-      ['0-02-29 10:00:00', '2000-02-29T10:00:00.000Z'],
-      ['2024.02.29 10:00:00', '2024-02-29T10:00:00.000Z'],
-      ['2024 Feb 29 10:00:00 GMT', '2024-02-29T10:00:00.000Z'],
-      ['Feb 2024 29 10:00:00 GMT', '2024-02-29T10:00:00.000Z'],
-      ['29 2024 Feb 10:00:00 GMT', '2024-02-29T10:00:00.000Z'],
-      ['2024-02-29Z', '2024-02-29T00:00:00.000Z'],
-      ['2024-02-29', '2024-02-29T00:00:00.000Z'],
-      ['2024-02-003', '2024-02-03T00:00:00.000Z'],
-      ['2024-2-29 10:00:00', '2024-02-29T10:00:00.000Z'],
-      ['2024/02/29 10:00:00', '2024-02-29T10:00:00.000Z'],
-      ['02/29/2024 10:00:00', '2024-02-29T10:00:00.000Z'],
-      ['Feb 29 2024 10:00:00 GMT', '2024-02-29T10:00:00.000Z'],
-      ['29 Feb 2024 10:00:00 GMT', '2024-02-29T10:00:00.000Z'],
-      ['+002024-02-29T10:00:00Z', '2024-02-29T10:00:00.000Z'],
-      ['2025-04-30T24:00:00Z', '2025-05-01T00:00:00.000Z'],
-    ];
+    const pad = (number: number) => String(number).padStart(2, '0');
+    const invalid = [...new Set([
+      ...['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].flatMap(day =>
+        ['2026-02-30', '2024-02-29', '02/30/2026', '2025-04-31'].map(date => `${day} ${date} 10:00:00 GMT`)),
+      ...[1900, 2023, 2025, 2026].flatMap(year => ['T10:00:00Z', 'T10:00:00.123+05:45', ' 10:00:00', ' 10:00:00 -0230'].map(time => `${year}-02-29${time}`)),
+      ...[2024, 2025, 2026].flatMap(year => ['02-30', '04-31', '06-31', '09-31', '11-31'].map(date => `${year}-${date}T10:00:00Z`)),
+      ...['Feb 29 2024', '29 Feb 2024', '2024 Feb 29', 'Feb 2024 29', '29 2024 Feb', '99-02-28', '0-02-29',
+        '2024.02.29', '2024/02/29', '02/29/2024', '2024-2-29', '2024-02-003', '+002024-02-29'].map(date => `${date} 10:00:00 GMT`),
+      ...['2024-02-29', '2024-02-29Z', '+002024-02-29T10:00:00Z', '2024-02-29T10:00:00',
+        '2024-02-29t10:00:00Z', '2024-02-29T10:00:00z', '2024-02-29T10:00:00.1234Z',
+        '2024-02-29 10:00:00Z', '2024-02-29 10:00:00.123', '2024-02-29T10:00:00+0545',
+        '2024-02-29 10:00:00 +05:45', '2024-02-29T10:00Z', '2024-02-29T10:00:00.Z'],
+      ...[' ', '\t', '\n', '\r', '\u00a0'].flatMap(space => [`${space}2024-02-29T10:00:00Z`, `2024-02-29T10:00:00Z${space}`, `2024-02-29${space}10:00:00Z`]),
+      ...[' GMT', ' trailing', ' (UTC)', 'Z', ', ignored'].map(suffix => `2024-02-29T10:00:00Z${suffix}`),
+      ...['00', '13', '99'].map(month => `2024-${month}-10T10:00:00Z`),
+      ...['00', '30', '31', '99'].map(day => `2024-02-${day}T10:00:00Z`),
+      ...['24:00:00', '25:00:00', '23:60:00', '23:59:60', '99:99:99'].flatMap(time => [`2024-02-29T${time}Z`, `2024-02-29 ${time}`]),
+      ...['+', '-'].flatMap(sign => ['24:00', '02:60', '99:99'].flatMap(offset =>
+        [`2024-02-29T10:00:00${sign}${offset}`, `2024-02-29 10:00:00 ${sign}${offset.replace(':', '')}`])),
+    ])];
+    const valid: string[][] = [];
+    for (const [year, month, day] of [[2000, 2, 29], [2024, 2, 29], [2025, 4, 30]]) {
+      const date = `${year}-${pad(month)}-${pad(day)}`;
+      for (const [zone, minutes] of [['Z', 0], ['+05:45', 345], ['-02:30', -150]] as const) {
+        for (const fraction of ['', '.1', '.12', '.123']) {
+          const instant = Date.UTC(year, month - 1, day, 0, 15, 0, Number(fraction) * 1000) - minutes * 60_000;
+          valid.push([`${date}T00:15:00${fraction}${zone}`, new Date(instant).toISOString()]);
+        }
+        const instant = Date.UTC(year, month - 1, day, 23, 30) - minutes * 60_000;
+        valid.push([`${date} 23:30:00${zone === 'Z' ? '' : ' ' + zone.replace(':', '')}`, new Date(instant).toISOString()]);
+      }
+    }
+    valid.push(['0000-02-29T00:00:00Z', '0000-02-29T00:00:00.000Z'], ['0099-01-01T00:00:00Z', '0099-01-01T00:00:00.000Z'],
+      ['2024-03-01T00:00:00+23:59', '2024-02-29T00:01:00.000Z'], ['2024-02-29T23:59:59-23:59', '2024-03-01T23:58:59.000Z']);
+    const csvField = (value: string) => `"${value.replaceAll('"', '""')}"`;
     const bytes = await accountExport('path', (name, data) => name.includes('granular_activity')
       ? Buffer.from('campaign_id,email,action,timestamp\n' + [
-        ...invalid.map(value => `c0spring1,ben@example.test,click,${value}`),
-        ...valid.map(([value]) => `c0spring1,ada@example.test,click,${value}`),
+        ...invalid.map(value => `c0spring1,ben@example.test,click,${csvField(value)}`),
+        ...valid.map(([value]) => `c0spring1,ada@example.test,click,${csvField(value)}`),
       ].join('\n')) : data);
     const expected = {rows:invalid.length + valid.length, imported:valid.length, dropped:invalid.length, reasons:{'invalid-timestamp':invalid.length}};
     const before = await tableCounts(calendarSite);
@@ -91,9 +88,11 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     expect(await stored()).toEqual([]);
     expect(await calendarSite.count('move_in_contact_history')).toBe(0);
     const reapplied = await importArchive(calendarSite, cookie, bytes);
+    expect(reapplied.preview.summary.engagement).toEqual(expected);
     expect(reapplied.archive.summary.engagement).toEqual(expected);
     expect(await stored()).toEqual(originals);
     expect(await statuses(calendarSite)).toEqual(consent);
+    for (const table of facts) expect(await calendarSite.count(table), table).toBe(0);
     await record('calendar-validation.json', {invalid, valid, preview:preview.body.summary.engagement, applied:moved.archive.summary.engagement,
       reapplied:reapplied.archive.summary.engagement, stored:await stored(), repeated:repeat.body.repeated, undoFacts:0});
   } finally { await calendarSite.runtime.close(); }
@@ -231,6 +230,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
 
     // Deleting a contact the archive brought in withdraws every original archive that holds them.
     const ada = (await site.rows("SELECT id FROM contacts WHERE email='ada@example.test'"))[0].id;
+    expect(await site.rows(`SELECT count(*) AS n FROM imported_engagement_facts WHERE contact_id='${ada}'`)).toEqual([{n:1}]);
     let { receipt } = await json(await site.call(`/api/contacts/${ada}`, { method: 'DELETE', cookie }), 202);
     while (receipt.state === 'pending') ({ receipt } = await (await site.call(`/api/audience/erasures/${receipt.reference}/resume`, { method: 'POST', cookie })).json());
     expect(receipt.state).toBe('complete');

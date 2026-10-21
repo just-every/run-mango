@@ -1,6 +1,6 @@
 import { csvRows, parseCsv } from '@/core/features/audience/csv';
 import { canonicalEmail } from '@/core/features/audience/identity';
-import { timestamp, type NormalizedImportRow } from '@/core/features/audience/import-normalize';
+import { type NormalizedImportRow } from '@/core/features/audience/import-normalize';
 import type { ImportPlan } from '@/vendor/base/import-kit/src/types';
 import type { ArchiveEntry } from './zip-reader';
 import { ArchiveRefused } from './zip-reader';
@@ -12,46 +12,34 @@ export type EngagementRow = {source: string; sourceOrdinal: number; row: number;
 export type EngagementSummary = {rows: number; imported: number; dropped: number; reasons: Record<string,number>};
 const empty = (): EngagementSummary => ({rows:0,imported:0,dropped:0,reasons:{}});
 
-/** Validate the source calendar before Date.parse can roll an impossible day forward.
- * Keep the shared parser's UTC CSV handling and supported timezone/precision forms.
+/** Engagement accepts ISO instants (uppercase T/Z, optional 1–3 fractional
+ * digits, Z or ±HH:mm) and UTC CSV dates (YYYY-MM-DD HH:mm:ss, optionally
+ * followed by a space and ±HHmm). No locale parsing or calendar normalization.
  */
-function engagementTimestamp(value: string | undefined) {
-  const text = value?.trim() ?? '';
-  const numeric = /^([+-]?\d+)[./-](\d+)[./-](\d+)/.exec(text);
-  const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-  const monthName = '(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*';
-  // Named-month dates can put the year before or after the day. Ignore clock
-  // fields so a following hour cannot be mistaken for a year.
-  const calendarText = text.replace(/\b\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?/g, '');
-  const monthFirst = new RegExp(`\\b${monthName}[\\s,-]+(\\d+)[\\s,-]+(\\d+)\\b`, 'i').exec(calendarText);
-  const monthMiddle = new RegExp(`\\b(\\d+)[\\s,-]+${monthName}[\\s,-]+(\\d+)\\b`, 'i').exec(calendarText);
-  const monthLast = new RegExp(`\\b(\\d+)[\\s,-]+(\\d+)[\\s,-]+${monthName}\\b`, 'i').exec(calendarText);
-  const isDay = (number: number) => number >= 1 && number <= 31;
-  let calendar: number[] | null = null, explicitYear = false;
-  if (numeric) {
-    const [first, second, third] = numeric.slice(1).map(Number);
-    explicitYear = numeric[1].replace(/^[+-]/, '').length >= 4;
-    calendar = explicitYear || !isDay(first) ? [first, second, third] : [third, first, second];
-  } else {
-    const named = [
-      monthFirst && {at:monthFirst.index, parts:[monthFirst[1], monthFirst[2], monthFirst[3]]},
-      monthMiddle && {at:monthMiddle.index, parts:[monthMiddle[2], monthMiddle[1], monthMiddle[3]]},
-      monthLast && {at:monthLast.index, parts:[monthLast[3], monthLast[1], monthLast[2]]},
-    ].filter((entry): entry is {at:number;parts:string[]} => Boolean(entry)).sort((a,b) => a.at-b.at)[0]?.parts;
-    if (named) {
-      const month = months.indexOf(named[0].toLowerCase()) + 1, first = Number(named[1]), second = Number(named[2]);
-      calendar = isDay(first) ? [second, month, first] : [first, month, second];
-    }
+function engagementTimestamp(value: string | undefined): number | null {
+  if (!value) return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})([T ])(\d{2}):(\d{2}):(\d{2})(\.\d{1,3})?(Z|[+-]\d{2}:\d{2}| [+-]\d{4})?$/.exec(value);
+  // The whole field is significant, including whitespace and a final newline.
+  if (!match || match[0] !== value) return null;
+  const [, y, mo, d, separator, h, mi, s, fraction, zone] = match;
+  if (separator === 'T' ? !zone || zone.startsWith(' ') : fraction || (zone && !zone.startsWith(' '))) return null;
+  const [year, month, day, hour, minute, second] = [y, mo, d, h, mi, s].map(Number);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  if (month < 1 || month > 12 || day < 1 || day > days[month - 1] || hour > 23 || minute > 59 || second > 59) return null;
+  let offset = 0;
+  if (zone && zone !== 'Z') {
+    const digits = zone.trim().replace(':', '');
+    const hours = Number(digits.slice(1, 3)), minutes = Number(digits.slice(3, 5));
+    if (hours > 23 || minutes > 59) return null;
+    offset = (digits[0] === '+' ? 1 : -1) * (hours * 60 + minutes) * 60_000;
   }
-  if (calendar) {
-    const [sourceYear, month, day] = calendar;
-    // Match the existing parser's legacy two-digit year convention.
-    const year = sourceYear < 100 && !explicitYear ? sourceYear + (sourceYear < 50 ? 2000 : 1900) : sourceYear;
-    const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-    const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    if (month < 1 || month > 12 || day < 1 || day > days[month - 1]) return null;
-  }
-  return timestamp(value);
+  // setUTCFullYear preserves four-digit years 0000–0099 without Date.UTC's
+  // legacy 1900 adjustment. All components have been checked before conversion.
+  const date = new Date(0);
+  date.setUTCFullYear(year, month - 1, day);
+  date.setUTCHours(hour, minute, second, Number((fraction?.slice(1) ?? '').padEnd(3, '0')));
+  return date.getTime() - offset;
 }
 
 /** Only addresses admitted by this move-in can acquire imported facts. */
@@ -89,8 +77,7 @@ export function reviewEngagement(parts: Array<{entry:ArchiveEntry;part:ArchivePa
       if(!addresses.has(email)){drop('address-not-in-move-in');continue;}
       const kind=row.action?.trim().toLowerCase();
       if(kind!=='click'&&kind!=='open'){drop('unsupported-action');continue;}
-      let at:number|null;
-      try{at=engagementTimestamp(row.timestamp);}catch{at=null;}
+      const at=engagementTimestamp(row.timestamp);
       if(at===null||at>Date.now()){drop('invalid-timestamp');continue;}
       const campaign=row.campaign_id?.trim();
       if(!campaign||!campaigns.has(campaign)){drop('campaign-not-in-move-in');continue;}

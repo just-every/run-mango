@@ -4146,7 +4146,7 @@
       "executable": false
     },
     "src/core/features/move-in/archive-engagement.ts": {
-      "sha256": "3e959293e3768f683841a5f8b6081386f3737e6be57a509b541237be61a3942a",
+      "sha256": "2151e584bc175ae320facd1e45eb1741aa271e4049e133e901885d57faf27d01",
       "executable": false
     },
     "src/core/features/move-in/archive-limits.ts": {
@@ -7406,7 +7406,7 @@
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
-      "sha256": "0dab5493b276b152fb5c78b6a355af9fdaca04c4c28aa52dc64805966ebae61e",
+      "sha256": "7ea7f51bc666e4a0a768b85c02804f0f67705197efded11e08e28ab233f15354",
       "executable": false
     },
     "tests/move-in/archive.ts": {
