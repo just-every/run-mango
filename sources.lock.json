@@ -978,15 +978,15 @@
       "executable": false
     },
     "AGENTS.consumer.md": {
-      "sha256": "fbb9c5d145b4a98e70a9b0e97a4d21022be402d27f65c662600655df4e0cdb9e",
+      "sha256": "00a73c76c6a88ebd08f1c68753f5f98d0b216d42daf57f980cff8a8c71d9d7dd",
       "executable": false
     },
     "AGENTS.md": {
-      "sha256": "70c850675abbc19f37928854b855f77e5cf847bd457a205ce13b2eddd18ad4da",
+      "sha256": "454610738b41937f2e70b994cf94e1b23efabfa96d74a2dd65f37fc76b42af8b",
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "3ff9ecd6773ccf14b3d6d3da9f138bb6dbe08bec1eedceac7bfcc40171777339",
+      "sha256": "d3efb41112c394d496833ca86cc8940b14f9be49db5798b7dcf9559f2a800a15",
       "executable": false
     },
     "BASELINE.md": {
@@ -1042,7 +1042,7 @@
       "executable": false
     },
     "docs/backup-and-export.md": {
-      "sha256": "0dee58849775c4393ea9c2471bb0786b46508cfb7ad0a571c23d54232709750c",
+      "sha256": "156697fb3abcadbb8406e4d968bd85cf41a14b686104dc9c94f9657b6e0e1278",
       "executable": false
     },
     "docs/CLAIMS.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/install.md": {
-      "sha256": "3838f1deeb7f1e0ba79079e232ad1f1cebe7b4230ceccba8e61b179d5b7d172f",
+      "sha256": "12b9ea13e34800d4513cf3bca62eac5b4678ff985e9c5a5f7822e7dec574f8a0",
       "executable": false
     },
     "docs/integrations.md": {
@@ -1074,7 +1074,7 @@
       "executable": false
     },
     "docs/introduction.md": {
-      "sha256": "649dbb07074b9ca3aa10a51ec3b057ad279a5496b85a36cdb463c000483f0ba8",
+      "sha256": "9d7982bd355193995582e53167b480fdd1ab86a7104eedade7e92e3ff284a569",
       "executable": false
     },
     "docs/moving-in.md": {
@@ -1118,7 +1118,7 @@
       "executable": false
     },
     "HANDOVER.md": {
-      "sha256": "9db407efe19fc37d3d60fbd72d5800e33250191965184dd05bdd8c90f67d66a7",
+      "sha256": "da75a008d7f68ceb5ef29fa934d1983360cec23fdc0c457d85a5f83de9a9de44",
       "executable": false
     },
     "LICENSE": {
@@ -1126,7 +1126,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "461a5e65961408fd7be1d0ce47d2c093ceca272cae002a7aa5b4fe2dbd424383",
+      "sha256": "14168224fd412817bf133ffacd900a57add1eb6e9ae4369507632f5d08c45b87",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1449,12 +1449,16 @@
       "sha256": "fb840d7a10f54b42eb1d6831fd8e8fe4a6052f0f27e3abecf9c3b53c80066a9c",
       "executable": false
     },
+    "migrations/core/0080_portability_import_leases.sql": {
+      "sha256": "bb30e6c77bcae155e63a7de07c21ccc4ea1d87a49e3d5e0f09bd6e2c8678e396",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
     },
     "OPERATIONS.md": {
-      "sha256": "8a2e90627f5f2e734dda77f0265182c624c602edfcbf8589512f2b487832bad2",
+      "sha256": "a408b5df872c6547c4c1cdcf84438106d3eb68966afc8c7f4c00ce9ca54892ef",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -1510,7 +1514,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "f3b77cf8c17254d399f72f9cd8aa9e9fc18edf65ddfe8c8f3d1722d024f94c87",
+      "sha256": "9ef17d6c48380507968d7a86a57f9dde0aa9ce2a4fda3803e21a38b18b41bd80",
       "executable": false
     },
     "playwright.config.js": {
@@ -1518,7 +1522,7 @@
       "executable": false
     },
     "pnpm-lock.yaml": {
-      "sha256": "3927e9c7c7b328aa6d563aacb135295813618c070e327b8f27270b534b2d052b",
+      "sha256": "c983e18b9eb07778faefe99f810a62224296075276f12cfbc83861800f610769",
       "executable": false
     },
     "public/apple-touch-icon.png": {
@@ -1582,11 +1586,11 @@
       "executable": false
     },
     "README.md": {
-      "sha256": "8d74fdc2e9d312bff9dd2480ca2867ccda5ca5e074e584f997cd6c73e8fa3484",
+      "sha256": "0a8f3020315ae782d93c8b42b0313b911c1ca5541a360214ebc616273ce0f027",
       "executable": false
     },
     "RELEASE-STATUS.md": {
-      "sha256": "2c4fb067a126cd1d18406c199b226a43d81f24156189474572b0f59d45dfa821",
+      "sha256": "11ec53717344516e14dfde38df79940c8d6e96c6ff0b2863407b6454d3c6e441",
       "executable": false
     },
     "RELEASE.json": {
@@ -1606,7 +1610,7 @@
       "executable": false
     },
     "RUN-LOCALLY.md": {
-      "sha256": "1e121d564ec4792be4ed50cb6625229b83da01a397fc7aef0e1f9c55880ca523",
+      "sha256": "24469d73b207512db48691215cdcf6932e392c86c127850921cdb8266662889c",
       "executable": false
     },
     "sample-data/initial.json": {
@@ -1801,8 +1805,12 @@
       "sha256": "3a196ba47d5aeb57b13ebcc0a9fed8718408cec4d97349896ef4a821b828e41e",
       "executable": false
     },
+    "scripts/installer/migration-replay.mjs": {
+      "sha256": "b6379cf73937cd3f181a8d0a8a268fcbd0c9057354232513627ffc1a2669c003",
+      "executable": false
+    },
     "scripts/installer/portability.mjs": {
-      "sha256": "b32a2de3068faedc76f523195220b7113993166b5e3dabe504c5bea9a0854533",
+      "sha256": "3c4530671bdea1babe874e1316d1c453ef1338305c9f67c715125e663d27c9f9",
       "executable": false
     },
     "scripts/installer/preview-runtime.mjs": {
@@ -1826,7 +1834,7 @@
       "executable": false
     },
     "scripts/installer/transfer-archive.mjs": {
-      "sha256": "e9660ae8d2cbf6efd4f20dfbde4c1fd6f02a109488ef1d3df073450446e32dd4",
+      "sha256": "07b7044f14667df3236344ba9af67854dcd56778147b3434cbce5ac39b68c4e0",
       "executable": false
     },
     "scripts/installer/ui/background.svg": {
@@ -6529,16 +6537,20 @@
       "sha256": "a1cc5094a30415c60f739b67ad2eda40750e8d963d199fad45bdd562f7d0248b",
       "executable": false
     },
+    "src/vendor/base/portability/backfills.mjs": {
+      "sha256": "1805c23b6140da54de0c9e3f9b22637aba92b54544fb076d96e370a4d6450302",
+      "executable": false
+    },
     "src/vendor/base/portability/bookkeeping.mjs": {
-      "sha256": "64bf389143458ed33fb6f62bf63784c466817a22c04106d56c04074514637a0f",
+      "sha256": "f964664659954d3e190ebd8c9df5604fb9ca316b81081371144160578409df31",
       "executable": false
     },
     "src/vendor/base/portability/bridge.mjs": {
-      "sha256": "23325aaed0292c48145307ceab07842adb4294f77cc9d93648345046f2cc334b",
+      "sha256": "5ac698d5243ba61ced74528c9233a462f688e9c9e1def844af6432452d2b27c4",
       "executable": false
     },
     "src/vendor/base/portability/catalogue.mjs": {
-      "sha256": "7acdde9c59c04d8ed168fd16713e4e4c83e695720ff54bb007f7d4b62fa23bba",
+      "sha256": "0cdc0f650a074ab56b8866f03de16ced1234d45f2d97a9dc815432b7f3473b94",
       "executable": false
     },
     "src/vendor/base/portability/cli-options.mjs": {
@@ -6550,7 +6562,7 @@
       "executable": false
     },
     "src/vendor/base/portability/copies.mjs": {
-      "sha256": "eef6c4b921da41c65f1dee1ba4d46a08b0d4db7074e8ac5cecbc25e7cba24fed",
+      "sha256": "48bfed4a6b456c062369e16ad15b8215f76fd611db3d6e3d584f958f35f3bad5",
       "executable": false
     },
     "src/vendor/base/portability/dev-data.mjs": {
@@ -6562,11 +6574,11 @@
       "executable": false
     },
     "src/vendor/base/portability/export.mjs": {
-      "sha256": "c72b55cf0c4a824c662cc06f65bf263bec3309abfc9f8d9321795b7d966eb49c",
+      "sha256": "bf8cc53dc49867ff1b12626d3b70ea29bbc8d0e80038248654b346abd1c22def",
       "executable": false
     },
     "src/vendor/base/portability/files.mjs": {
-      "sha256": "7ae7c63a15926afb3b21b11389757adab77bc8107fd6edb9f8ae8f6341d7029f",
+      "sha256": "e24e04e9483f8d429d020f57e4dceef1469ec432232e985d18e2e8b467e25b09",
       "executable": false
     },
     "src/vendor/base/portability/format.mjs": {
@@ -6586,27 +6598,43 @@
       "executable": false
     },
     "src/vendor/base/portability/http.mjs": {
-      "sha256": "c4dad3b6ea5c2a5384262e391bfebe83365ba3f934f99050cb3efd54171af16d",
+      "sha256": "3b870041093fc7cf6e1fb91f87c7982b18a4f4b94055a448210aed2bfea0924c",
+      "executable": false
+    },
+    "src/vendor/base/portability/import-lease.mjs": {
+      "sha256": "97df004ec17a8b2fbc6ea53dbe1c3d4b8b5ad79f25eacca344609562f61dd761",
+      "executable": false
+    },
+    "src/vendor/base/portability/import-safety.mjs": {
+      "sha256": "7e2ad8cf632526856174747d19892e8702710d8d671f90ade1e05a560b3ebec4",
+      "executable": false
+    },
+    "src/vendor/base/portability/import-staging.mjs": {
+      "sha256": "54e08876ce1eb15f28b60a3101a17129cc75e897b76450d5ae866cd3c6a17987",
       "executable": false
     },
     "src/vendor/base/portability/import.mjs": {
-      "sha256": "16eb2573c0b288410902f0a017f34dbd3a93b35264c01177c28201733291a2e0",
+      "sha256": "8d14320c62b38e68b912441a6b1a42deafb2ff41c33eaae1c6dd224368c939a7",
       "executable": false
     },
     "src/vendor/base/portability/index.d.mts": {
-      "sha256": "a15e47ec3f7936e2f6bcbdb30d4f319ab95f2388f6c2371149f59a13e9c5dcfc",
+      "sha256": "78e5914e2cc6f1890db8f3eef02527fc09ed28e0b4877efc6f52332d70298184",
       "executable": false
     },
     "src/vendor/base/portability/index.mjs": {
-      "sha256": "e29d5ad39ab1af669b0b65746e4deea7279b8b51e82153f4163bcde7153e2c04",
+      "sha256": "417db6c1232f5f0ff1ada7cef3c99e2d49e89c61b7a5a8d87013ef23e1b03d97",
       "executable": false
     },
     "src/vendor/base/portability/journal.mjs": {
       "sha256": "26dc4458cdcc53edbbbf177cb8fbaec43e457407e07cfa264401adb0c588a609",
       "executable": false
     },
+    "src/vendor/base/portability/ledgers.mjs": {
+      "sha256": "272246b3dfc7842ee45b31c52d84db06ad4ff3d24e2209fe3e5637b18e226529",
+      "executable": false
+    },
     "src/vendor/base/portability/legacy-files.mjs": {
-      "sha256": "2f139ebe97ff13a4f13e6e649c5040f7968551cd5b0123467a8a40cb85f644b9",
+      "sha256": "ecaebacab08d5d2e600e7437fc257edc485ff9281797010f1808d867c8ca4793",
       "executable": false
     },
     "src/vendor/base/portability/legacy-safety.mjs": {
@@ -6618,15 +6646,23 @@
       "executable": false
     },
     "src/vendor/base/portability/migration-history.mjs": {
-      "sha256": "0ec98aae7054acb6f46667eecbeb9725c81966e23b48e732e893d7bbb9396271",
+      "sha256": "424f6c388e95a969b06a5b18e1aba76de039024778a5849c91a7b6a9596f8ec4",
       "executable": false
     },
     "src/vendor/base/portability/migration-statements.mjs": {
-      "sha256": "7ce888fb2ee1f12af2232cdedd2e03cb1d46bd4053b5e01d738f1882a49b0a8d",
+      "sha256": "f4c3f6895f499cc988dbf81492d8a477d63ef754d7a5b3e515761930370733a1",
       "executable": false
     },
     "src/vendor/base/portability/payloads.mjs": {
       "sha256": "bcfb978b8c0a0ac1d5dfb5fbccc9f2ed5c3c20c7d6286f0ab6bcadc95ea691a2",
+      "executable": false
+    },
+    "src/vendor/base/portability/policy-data.mjs": {
+      "sha256": "647f6784b44860b6842bd65d7f954961450253345dc63b27d9b40cbdfef99d2a",
+      "executable": false
+    },
+    "src/vendor/base/portability/progress.mjs": {
+      "sha256": "fece9aa4accbade5b97c8a81edabe1338582e7673d6b4a104f83c300f83958cf",
       "executable": false
     },
     "src/vendor/base/portability/provider-data.mjs": {
@@ -6634,7 +6670,7 @@
       "executable": false
     },
     "src/vendor/base/portability/README.md": {
-      "sha256": "c197313c33ed9c77103cc24fc4abf3b8d197559ad87cacd0f6e96076dfb04cd9",
+      "sha256": "352cb9ca00923217104b0b7a4267696d6127e4f31a3e49ef18bbb905249802cd",
       "executable": false
     },
     "src/vendor/base/portability/restore-safety.mjs": {
@@ -6645,8 +6681,16 @@
       "sha256": "c7db9042f6d5c571e10297c02df858ad2f3466beb4fa85649fee407cc228747b",
       "executable": false
     },
+    "src/vendor/base/portability/sql-text.mjs": {
+      "sha256": "19cd8578a841aa2cdfb40b6acc7cdf3ac73bdd579a60f9ca6819f3f5d2739c18",
+      "executable": false
+    },
     "src/vendor/base/portability/storage.mjs": {
-      "sha256": "4b25a8d56c8905817b3f5b7955b68843c83cbf1350a1e36b219cd5ef62fded6a",
+      "sha256": "33b0585d9c38658c647c5785231c87397cec26d4630c16eab2405db59d317355",
+      "executable": false
+    },
+    "src/vendor/base/portability/verify-staged.mjs": {
+      "sha256": "c8a3ecf7348f7771ba0d6d59f3f07d33f2bee37e90b0e25d5cf8eea9d327ad64",
       "executable": false
     },
     "tests/approval-binding/config.js": {
@@ -7029,6 +7073,10 @@
       "sha256": "616d3ddae797faa1b36aceb8b269818a0339d2fe04776dcbf52c2aea86206ae3",
       "executable": false
     },
+    "tests/fixtures/mango-retained-ac686032.rer.gz": {
+      "sha256": "135d32d7252b715acaca86efca6a02a42609be42513f5440b112e24f2a504dea",
+      "executable": false
+    },
     "tests/go-live/activity-log.ts": {
       "sha256": "f6349fd733d8cc0a7dad8e575585231410ef63cbeca659a2ea37e7226769013c",
       "executable": false
@@ -7287,6 +7335,10 @@
     },
     "tests/local-start/native-dev.mjs": {
       "sha256": "b6f279aaca9e057dc1a20dffe7f6a49a54a7e36271bca7a7662e408ac52a3097",
+      "executable": false
+    },
+    "tests/local-start/retained-archive.journey.ts": {
+      "sha256": "95e43027d26125813fb794b4468bfbb99c0b31d7f760f33fd038a03cc234a94d",
       "executable": false
     },
     "tests/local-start/signin-hydration.journey.ts": {

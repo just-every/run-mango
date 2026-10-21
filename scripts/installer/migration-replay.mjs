@@ -1,33 +1,45 @@
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
-import { appliedMigrations } from '../../src/vendor/base/portability/bridge.mjs';
 import { migrationReplay } from '../../src/vendor/base/portability/migration-history.mjs';
-import { splitStatements } from '../../src/vendor/base/portability/sql-text.mjs';
-import { PortabilityError } from '../../src/vendor/base/portability/index.mjs';
+import { migrationStatements } from '../../src/vendor/base/portability/migration-sql.mjs';
+import { destinationLedger, matchMigrationLedger } from '../../src/vendor/base/portability/ledgers.mjs';
+import { all, insist } from '../../src/vendor/base/portability/storage.mjs';
 
-/** Replay the destination's own applied files, retaining its runner's identities and order. */
-export async function restoreMigrations(db, root, policy) {
-  const inventory = new Map();
-  for (const directory of ['core', 'ext']) {
-    const path = join(root, 'migrations', directory);
-    let files;
-    try { files = await readdir(path); }
-    catch (error) { if (directory === 'ext' && error.code === 'ENOENT') continue; throw error; }
-    for (const file of files.filter(name => name.endsWith('.sql'))) {
-      const source = join(path, file);
-      inventory.set(`${directory}-${file}`, source);
-      if (inventory.has(file)) inventory.set(file, null);
-      else inventory.set(file, source);
+// Wrangler records Mango's core files by bare name; Platform's runner records
+// every file under the deployment specification's prefix (packaging specInputs).
+// Core files carry that prefixed alias; optional extra directories only exist
+// on Platform. Statements are split as the installation's runner stored them.
+async function inventory(root, split) {
+  const { migrationPrefix = '', extraMigrationDirectories = [] } = JSON.parse(await readFile(join(root, 'scripts/delivery/base/packaging.json'), 'utf8')).artifact.specInputs;
+  const directories = [{ path: 'migrations/core', prefix: migrationPrefix, native: true }, ...extraMigrationDirectories.filter(directory => directory.binding === 'DB')];
+  const files = [];
+  for (const { path, prefix, native, optional } of directories) {
+    let names;
+    try { names = (await readdir(join(root, path))).filter(name => name.endsWith('.sql')).sort(); }
+    catch (error) { if (optional && error.code === 'ENOENT') continue; throw error; }
+    for (const name of names) {
+      const bytes = await readFile(join(root, path, name));
+      files.push({ name: native ? name : prefix + name, statements: migrationStatements(bytes.toString('utf8'), split),
+        sha256: createHash('sha256').update(bytes).digest('hex'), ...(native ? { aliases: [prefix + name] } : {}) });
     }
   }
-  const plan = [];
-  for (const name of await appliedMigrations(db) ?? []) {
-    const file = inventory.get(name);
-    if (!file) throw new PortabilityError('schema_mismatch:migration_history', 409);
-    const bytes = await readFile(file);
-    plan.push({ name, statements: splitStatements(bytes.toString('utf8')),
-      sha256: createHash('sha256').update(bytes).digest('hex') });
-  }
+  return files;
+}
+
+/** Replay the destination's own applied files in its runner's order, resolving each ledger entry by hash where it records one. */
+export async function restoreMigrations(db, root, policy, split) {
+  const files = await inventory(root, split);
+  const plan = matchMigrationLedger(await destinationLedger(db) ?? [], files).map(name => files.find(file => file.name === name));
   return migrationReplay(plan, policy);
+}
+
+/** True for a destination Platform's runner migrated. It stays the sole authority: Wrangler cannot see its ledger, so every local file must already be applied. */
+export async function platformLedger(db, root, split) {
+  const ledgers = (await all(db, "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('rer_migrations','d1_migrations','_rer_deploy_migrations')")).map(row => row.name);
+  if (!ledgers.includes('rer_migrations')) return false;
+  insist(ledgers.length === 1, 'migration_ledger:multiple:rer_migrations', 409);
+  const files = await inventory(root, split), applied = matchMigrationLedger(await destinationLedger(db), files);
+  for (const file of files) insist(applied.includes(file.name), 'migration_ledger:unapplied:' + file.name, 409);
+  return true;
 }

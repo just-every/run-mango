@@ -8,4 +8,4 @@ Managed RER mail sends sign-in and subscription confirmations. Newsletter delive
 
 Open release obligations include live signed provider-webhook proof, built-in hosted backup and restore, flagship scale, and every partial or missing clause in CONTRACT.md's status table. See ACCEPTANCE.md, CONTRACT.md and CHANGELOG.md.
 
-Pinned rer 0.2.66 prints a one-use owner grant for `rer signin`; the owner's no-printed-sign-in-link rule prohibits that recovery path. Correct hosted mail in Configure and use delivered email. Private CLI recovery awaits a Base change. Local `RER_OPEN` is a separate private development-key entry.
+Pinned rer 0.2.76 prints a one-use owner grant for `rer signin`; the owner's no-printed-sign-in-link rule prohibits that recovery path. Correct hosted mail in Configure and use delivered email. Private CLI recovery awaits a Base change. Local `RER_OPEN` is a separate private development-key entry.

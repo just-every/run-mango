@@ -1,4 +1,4 @@
-import { all, statement, state, guard, job, save, partQueries, parts, readPart, cleanCopies, quote, stream, insist, run, PortabilityError } from './storage.mjs';
+import { all, statement, state, guard, job, save, partQueries, parts, readPart, dropCopyStatements, cleanCopyStatements, quote, stream, insist, run, PortabilityError } from './storage.mjs';
 import { verifyStaged } from './verify-staged.mjs';
 import { stagePart } from './import-staging.mjs';
 import { normalizeStaged } from './import-safety.mjs';
@@ -29,8 +29,7 @@ export async function createImport(context,manifest,actor='direct',legacyRecover
   const skippedTables=original.tables.filter(table=>platformTable(table.name)).map(table=>table.name);
   const cat=await catalogue(db,config),upgrade=config.acceptedSchemas[original.schema];
   const same=manifest.schema===cat.identity,history=()=>archivedHistory(original,ledgers);
-  const {replays,...bridge}=same || upgrade?{}:await additiveBridge(db,manifest,cat,context.migrations,history);
-  if(same && !upgrade)await sameSchemaMigrations(db,manifest,cat,context.migrations,history);
+  const {replays,...bridge}=upgrade?{}:same?(await sameSchemaMigrations(db,manifest,cat,context.migrations,history)??{}):await additiveBridge(db,manifest,cat,context.migrations,history);
   if(!bridge.fromSchema)insist(canonicalJson(manifest.tables.map(x=>x.name))===canonicalJson(cat.tables.map(x=>x.name)),'table_inventory');
   if(!upgrade && !bridge.fromSchema)for(const table of manifest.tables) {
     const target=cat.tables.find(t=>t.name===table.name);
@@ -173,7 +172,7 @@ async function finalizeLeasedImport(context,id,{contentHash,archiveHash,laterJou
   await normalizeStaged(context,row);
   await refusePolicyApprovals(db,row.metadata.copies);
   if(config.validateStaged) {
-    const read=async table=>{insist(row.metadata.copies[table],'staged_table');const target=row.metadata.targets.find(t=>t.name===table);return (await readCopy(db,target,row.metadata.copies[table],0,row.metadata.manifest.tables.find(t=>t.name===table)?.count??0)).map(x=>x.row);};
+    const read=async table=>{insist(row.metadata.copies[table],'staged_table:'+table);const target=row.metadata.targets.find(t=>t.name===table);return (await readCopy(db,target,row.metadata.copies[table],0,row.metadata.manifest.tables.find(t=>t.name===table)?.count??0)).map(x=>x.row);};
     insist(await config.validateStaged({db,tables:{...row.metadata.copies},read,manifest})!==false,'staged_validation');
   }
   row.phase='applying';
@@ -196,6 +195,9 @@ async function finalizeLeasedImport(context,id,{contentHash,archiveHash,laterJou
       ...replaced.map(t=>db.prepare(`DELETE FROM ${quote(t)}`)),
       ...row.metadata.targets.flatMap(t=>restoreCopy(db,t,row.metadata.copies[t.name])),save(db,row),...replayStatements(db,row),
       ...row.metadata.triggers.map(t=>db.prepare(t.sql)),...mergeJournal(db,manifest,checked),...legacyAuditStatements(db,row),
+      // Publication and removal of this import's scratch commit together. A lost
+      // acknowledgement still finds a complete job with no staging left behind.
+      ...dropCopyStatements(db,row),
       db.prepare('UPDATE rer_portability_state SET import_job=NULL,applying=0 WHERE id=1'),db.prepare('DELETE FROM rer_portability_guard')]);
   }catch(e){
     // D1 may have committed even when its acknowledgement failed.
@@ -221,8 +223,8 @@ export async function abortImport(context,id,options={}) {
 }
 async function abortLeasedImport(context,row) {
   const id=row.id;
-  await removeOwned(context,id);await cleanCopies(context.db,row);row.phase='aborted';
-  await context.db.batch([save(context.db,row),statement(context.db,'UPDATE rer_portability_state SET import_job=NULL,applying=0 WHERE id=1 AND import_job=?',id),
+  await removeOwned(context,id);row.phase='aborted';
+  await context.db.batch([...cleanCopyStatements(context.db,row),save(context.db,row),statement(context.db,'UPDATE rer_portability_state SET import_job=NULL,applying=0 WHERE id=1 AND import_job=?',id),
     statement(context.db,'DELETE FROM rer_portability_import_leases WHERE job=?',id)]);
   return importStatus(context,id);
 }

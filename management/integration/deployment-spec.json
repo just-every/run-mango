@@ -494,6 +494,12 @@
       "name": "core-0079_tracking_domain.sql",
       "sha256": "fb840d7a10f54b42eb1d6831fd8e8fe4a6052f0f27e3abecf9c3b53c80066a9c",
       "sql": "CREATE TABLE tracking_domain (\n id INTEGER PRIMARY KEY CHECK(id=1),\n host TEXT NOT NULL,\n updated_at INTEGER NOT NULL,\n operator_id TEXT NOT NULL\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0080_portability_import_leases.sql",
+      "sha256": "bb30e6c77bcae155e63a7de07c21ccc4ea1d87a49e3d5e0f09bd6e2c8678e396",
+      "sql": "-- Install transfer bookkeeping before admitting archive requests, so refusing\n-- invalid authority never changes the destination's durable schema.\nCREATE TABLE IF NOT EXISTS rer_portability_import_leases (\n  job TEXT PRIMARY KEY REFERENCES rer_portability_jobs(id) ON DELETE CASCADE,\n  expires_at INTEGER NOT NULL,\n  holder TEXT\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
