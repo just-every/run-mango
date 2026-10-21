@@ -7606,7 +7606,7 @@
       "executable": false
     },
     "tests/prior-approval/worker.spec.ts": {
-      "sha256": "6629309a5011f8aa4b0b8b38b64bfa207b9919fb18943894fc91f363128b5777",
+      "sha256": "472dc295a30143247283d8c07a2f8c94a039ec95f071f25e5b513966a081c19d",
       "executable": false
     },
     "tests/production-entry.spec.ts": {
