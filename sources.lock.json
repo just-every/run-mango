@@ -7105,6 +7105,10 @@
       "sha256": "135d32d7252b715acaca86efca6a02a42609be42513f5440b112e24f2a504dea",
       "executable": false
     },
+    "tests/fixtures/mango-retained-platform-ac686032.rer.gz": {
+      "sha256": "3e9bd95a8abdf96b48cb0525e2c7a05d1c837696c22e13a9c30c5a4e8f716124",
+      "executable": false
+    },
     "tests/go-live/activity-log.ts": {
       "sha256": "f6349fd733d8cc0a7dad8e575585231410ef63cbeca659a2ea37e7226769013c",
       "executable": false
