@@ -124,7 +124,8 @@ export async function readContactTimeline(db:D1Database, contactId:string, detai
     if(row.confirmedAt)add({id:`confirmation:${row.id}`,kind:'consent-confirmed',detail:`${row.channel} · ${row.messageCategory}`,source},row.confirmedAt);
   }
   for(const row of detail.suppressions)add({id:`suppression:${row.id}`,kind:'channel-suppressed',detail:`${row.channel} · ${row.cause}`,source:'Suppression ledger'},row.occurredAt);
-  for(const result of [activity,decisions,transport,provider,clicks,actions]) {
+  const imported=await db.prepare(`SELECT f.id,'imported-'||f.kind AS kind,h.title||' · imported '||CASE f.kind WHEN 'open' THEN 'open estimate' ELSE 'click' END AS detail,'Imported · '||f.source AS source,f.occurred_at AS occurredAt FROM imported_engagement_facts f JOIN move_in_content h ON h.id=f.history_id JOIN move_in_archives a ON a.id=f.archive_id WHERE f.contact_id=? AND a.state='applied'`).bind(contactId).all<Fact>();
+  for(const result of [activity,decisions,transport,provider,clicks,actions,imported]) {
     for(const {occurredAt,...entry} of result.results)add(entry,occurredAt);
   }
   return entries.sort((a,b)=>Date.parse(b.occurredAt)-Date.parse(a.occurredAt)||a.id.localeCompare(b.id));

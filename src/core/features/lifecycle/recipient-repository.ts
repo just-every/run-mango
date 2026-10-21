@@ -24,6 +24,7 @@ function revisionFromRow(row: Row) {
     version: Number(row.version),
     name: String(row.name),
     audienceRule: String(row.audience_rule),
+    dormancyPolicyJson: String(row.dormancy_policy_json),
     inclusionRuleJson: String(row.inclusion_rule_json),
     exclusionRulesJson: String(row.exclusion_rules_json),
     sourceTypesJson: String(row.source_types_json),
@@ -179,7 +180,7 @@ export function createRecipientLifecycleRepository(database: Database) {
         client.prepare(
           `SELECT r.*, v.name, v.email_subject, v.email_body, v.email_text, v.preheader, v.sms_body,
              v.sender_name, v.from_email, v.reply_to_email, v.sms_sender, v.physical_address,
-             v.tracking_enabled, v.source_types_json, v.inclusion_rule_json, v.exclusion_rules_json, s.timezone
+             v.dormancy_policy_json, v.tracking_enabled, v.source_types_json, v.inclusion_rule_json, v.exclusion_rules_json, s.timezone
            FROM recipient_steps r
            JOIN campaign_revisions v ON v.id = r.revision_id
            JOIN campaign_steps s ON s.id = r.step_id
@@ -195,6 +196,7 @@ export function createRecipientLifecycleRepository(database: Database) {
         recipient: recipientFromRow(row),
         timezone: String(row.timezone),
         sourceTypes: JSON.parse(String(row.source_types_json || '[]')) as string[],
+        dormancyPolicyJson: String(row.dormancy_policy_json),
         inclusionRuleJson: String(row.inclusion_rule_json),
         exclusionRulesJson: String(row.exclusion_rules_json),
         revision: {

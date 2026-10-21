@@ -1,3 +1,4 @@
+import {DormancyControls} from './dormancy-controls';
 import { BlockedLinkHosts } from './blocked-link-hosts';
 import { CampaignAttributionSummary } from './campaign-attribution';
 import {ApprovalRequests} from '@/core/features/auth/ui/approval-requests';
@@ -287,6 +288,7 @@ export function CampaignReviewPage() {
             </ValidationForm>
             <TestSendHistory tests={testAccess.data?.tests??[]} />
           </Disclosure> : null}
+          {data.campaign.state==='draft'&&can('campaign.approve')?<DormancyControls campaignId={id} revisionId={revision.id} policyJson={revision.dormancyPolicyJson} disabled={Boolean(busy)||dirty||needsCanonicalRead} onSaved={async()=>{await reload();setActionBlockers(undefined);}}/>:null}
           <AudienceSnapshot revision={revision} audience={data.audience} channelCounts={data.audienceChannelCounts} {...savedAudienceExclusions(data.audience)} />
           <DeliveryPlan steps={data.steps} />
         </div>

@@ -36,6 +36,14 @@ The confirmation lasts 30 days, or until the provider's domain records or your D
 
 An installation can instead trust a receipt connector that reports the receiving mailbox's own authentication results; [Install and deploy](./install.md#optional-a-trusted-receipt-connector) describes it.
 
+## Inactivity in review
+
+Review counts **No-history** among included contacts and **Open-only** within **Dormant**. Imported clicks count at their original times; opens never count as engagement. A move-in contact with no supplied engagement history starts their dormancy window when that move-in completes. Re-importing does not restart an earlier active window. Contacts never moved in retain the existing dormancy rule.
+
+An Owner, Admin or Manager can use **Include open-only contacts** or clear **Exclude dormant contacts** for the draft. The saved audience shows the resulting eligible count; consent, topics, suppression and opt-outs still apply. Approval retains the exact policy and its approver in the activity log, and dispatch rechecks that approved policy. Later default changes do not alter an approved campaign.
+
+Under **Settings → Audience inactivity default**, an Owner or Admin can change the default exclusion and its window (1–3,650 days). New drafts copy it. Saving records `audience.exclusions.v1` in the activity log. Unengaged/sunsetting rules are still owed and are not shown as implemented.
+
 ## Approve
 
 With passing checks and no unsaved edits, press **Approve & schedule**. The page confirms "The exact saved revision is approved and scheduled." If checks fail you see "Campaign unchanged" and the blockers. Approval applies to that saved revision only, freezes the recipient list at that moment (a contact who starts matching later is not added), and is repeat-safe: approving twice creates one schedule. Before each message goes out, Mango rechecks that the contact is still subscribed, not suppressed and outside the 24-hour frequency window.

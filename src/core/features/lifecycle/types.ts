@@ -64,6 +64,7 @@ export type EligibilityResult =
 
 export interface LifecycleAudience {
   resolveFrozenCandidates(input: {
+    dormancyPolicyJson?:string;
     inclusionRule: unknown;
     exclusionRules: unknown[];
     sourceTypes: string[];
@@ -74,6 +75,7 @@ export interface LifecycleAudience {
         status: 'ok';
         candidateCount?: number;
         matchedContactIds?: string[];
+        noHistoryContactIds?:string[];dormancyIncludedContactIds?:string[];openOnlyCount?:number;
         asOf: Date;
         candidates: FrozenCandidate[];
         exclusions: Array<{ reason: string; count: number }>;
@@ -81,6 +83,7 @@ export interface LifecycleAudience {
     | { status: 'stale' | 'unavailable'; sourceTypes: string[]; detail: string; sourceIssues?: Array<{sourceType: string; reason: string}>; observedExclusions?: Array<{reason:string;count:number}> }
   >;
   recheckHandoffEligibility(input: {
+    dormancyPolicyJson?:string;
     contactId: string;
     channel: Channel;
     sourceTypes: string[];
@@ -146,6 +149,7 @@ export type LifecycleQueueBatch = { messages: QueueMessage[] };
 
 export type CampaignRevisionSnapshot = {
   revision: {
+    dormancyPolicyJson?:string;
     id: string;
     campaignId: string;
     state: string;

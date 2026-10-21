@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
 import { providerEdge } from '../go-live/edge';
 import { eventSigner } from '../go-live/sendgrid-events';
-import { installation, json, type Installation } from '../go-live/harness';
+import { installation, json, sender, confirmedContact, draftCampaign, approve, dispatch, type Installation } from '../go-live/harness';
 import { accountExport } from './archive';
 import { consentEvidence, drive, importArchive, postArchive, record, screenshotPath, tableCounts } from './support';
 
@@ -21,7 +21,7 @@ const screens = async (page: Page, name: string, info: { outputPath(name: string
 };
 const facts = ['delivery_facts', 'campaign_results', 'attribution_facts', 'external_cost_facts', 'recipient_steps', 'step_dispatches', 'link_click_facts', 'provider_fact_inbox'];
 
-test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely', async ({ page }, info) => {
+test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely', async ({ page }, info) => {
   const edge = await providerEdge(), signer = eventSigner();
   const site = await installation(edge, signer);
   try {
@@ -35,6 +35,7 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
     // Upload and preview on the Import page. Preview writes nothing to any table.
     const bytes = await accountExport();
     await openPage(page, `${site.runtime.url}/app/audience/import`);
+    await screens(page,'empty-import',info);
     await page.getByLabel('Choose CSV files').setInputFiles({ name: 'account-export.zip', mimeType: 'application/zip', buffer: Buffer.from(bytes) });
     await page.getByRole('combobox', { name: 'Message category', exact: true }).selectOption(consentEvidence.messageCategory);
     for (const [label, value] of [['Brand or legal sender', consentEvidence.brandOrLegalSender], ['Disclosed frequency', consentEvidence.frequencyDisclosure],
@@ -55,7 +56,7 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
     expect(file('cleaned.csv')).toMatchObject({ rows: 1, created: 1, outcomes: { suppressed: 1 } });
     expect(file('transactional.csv')).toMatchObject({ rows: 1, created: 1, outcomes: { 'non-subscribed': 1 } });
     for (const item of reviewed.summary.audience) expect(item.rows).toBe(item.created + item.updated + item.duplicatesWithin + item.duplicatesAcross + item.rejected + item.skipped);
-    expect(reviewed.summary.kept.map((kind: { kind: string; files: number }) => [kind.kind, kind.files])).toEqual([['appointments', 1], ['ecommerce', 2], ['events', 1], ['gallery', 2], ['reports', 3], ['sms', 1], ['unmatched-content', 1]]);
+    expect(reviewed.summary.kept.map((kind: { kind: string; files: number }) => [kind.kind, kind.files])).toEqual([['appointments', 1], ['ecommerce', 2], ['events', 1], ['gallery', 2], ['reports', 2], ['sms', 1], ['unmatched-content', 1]]);
     await record('preview.json', reviewed);
 
     // Import through the page: contacts by status, imported history, a draft starter.
@@ -64,6 +65,11 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
     await screens(page, 'imported', info);
     const archive = (await json(await site.call('/api/audience/archives', { cookie }), 200)).archives[0];
     expect(archive.state).toBe('applied');
+    expect(archive.summary.engagement).toEqual({rows:5,imported:3,dropped:2,reasons:{'address-not-in-move-in':1,'invalid-timestamp':1}});
+    const engagement=await site.rows('SELECT c.email,f.kind,f.occurred_at,f.source,f.source_row,f.link,h.title FROM imported_engagement_facts f JOIN contacts c ON c.id=f.contact_id JOIN move_in_content h ON h.id=f.history_id ORDER BY c.email');
+    expect(engagement.map(row=>[row.email,row.kind,new Date(row.occurred_at).toISOString(),row.title])).toEqual([
+      ['ada@example.test','click','2026-07-21T10:00:00.000Z','Spring letter'],['ben@example.test','click','2025-09-21T10:05:00.000Z','Winter letter'],['dup@example.test','open','2026-07-21T10:10:00.000Z','Spring letter']]);
+    expect(engagement.map(row=>row.link)).toEqual(['https://garden.example.test/spring','https://garden.example.test/winter',null]);
     const imported = await statuses(site);
     expect(imported).toEqual({ 'ada@example.test': 'subscribed', 'ben@example.test': 'subscribed', 'both@example.test': 'unsubscribed', 'cleo@example.test': 'suppressed',
       'cy@example.test': 'non-subscribed', 'dup@example.test': 'subscribed', 'optedout@example.test': 'unsubscribed', 'tess@example.test': 'non-subscribed', 'uma@example.test': 'unsubscribed' });
@@ -116,6 +122,8 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
     await page.getByRole('button', { name: 'Show imported history and drafts' }).first().click();
     await screens(page, 'undo', info);
     const undone = (await json(await site.call(`/api/audience/archives/${archive.id}`, { cookie }), 200)).archive;
+    expect(await site.count('imported_engagement_facts')).toBe(0);
+    expect(await site.count('move_in_contact_history')).toBe(0);
     const afterUndo = await statuses(site);
     const optOuts = await site.rows('SELECT reason FROM surviving_opt_outs ORDER BY reason');
     const report = await (await site.call(`/api/audience/archives/${archive.id}/report`, { cookie })).text();
@@ -135,6 +143,8 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
     // The same archive again applies cleanly; the opted-out address stays opted out.
     const rerun = await importArchive(site, cookie, bytes);
     expect(rerun.archive.state).toBe('applied');
+    expect(rerun.archive.summary.engagement).toMatchObject({imported:3,dropped:2});
+    expect(await site.count('imported_engagement_facts')).toBe(3);
     const rerunStatuses = await statuses(site);
     expect(rerunStatuses).toEqual({ ...imported, 'ben@example.test': 'unsubscribed', 'cy@example.test': 'pending' });
     expect(rerunStatuses['optedout@example.test']).toBe('unsubscribed');
@@ -150,11 +160,14 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
     let { receipt } = await json(await site.call(`/api/contacts/${ada}`, { method: 'DELETE', cookie }), 202);
     while (receipt.state === 'pending') ({ receipt } = await (await site.call(`/api/audience/erasures/${receipt.reference}/resume`, { method: 'POST', cookie })).json());
     expect(receipt.state).toBe('complete');
+    expect(await site.rows(`SELECT * FROM imported_engagement_facts WHERE contact_id='${ada}'`)).toEqual([]);
+    expect(await site.count('imported_engagement_facts')).toBe(2);
     expect(await site.rows('SELECT count(*) AS n FROM move_in_archive_chunks')).toEqual([{ n: 0 }]);
     expect((await site.rows('SELECT count(*) AS n FROM move_in_archive_entries'))[0].n).toBe(42);
     const withdrawn = await (await site.call(`/api/audience/archives/${rerun.archive.id}/report`, { cookie })).text();
     expect(withdrawn).toContain('withdrawn by a contact deletion');
     expect(withdrawn).not.toContain('ada@example.test');
+    await page.setContent(`<pre style="font:13px/1.4 monospace;white-space:pre-wrap;padding:16px">${withdrawn.replaceAll('&','&amp;').replaceAll('<','&lt;')}</pre>`);await screens(page,'withdrawn-report',info);
     await record('erasure-withdraws-custody.json', { receipt: receipt.state, chunksLeft: 0, entriesKept: 42 });
 
     // The same archive with its entries in the opposite order gives the same result on a fresh install.
@@ -171,4 +184,106 @@ test('[CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DAT
       await record('two-orders.json', { forward: imported, reverse: await statuses(reverse), reverseNames: await names(reverse) });
     } finally { await reverse.runtime.close(); }
   } finally { await site.runtime.close(); await edge.close(); }
+});
+
+test('[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immutable dispatch policy without changing consent',async({page},info)=>{
+  const edge=await providerEdge(),site=await installation(edge,eventSigner());
+  try {
+    const cookie=await site.open(),clock=await site.control('/_golive/clock',{hold:true});
+    const ago=(months:number)=>{const date=new Date(clock.now);date.setUTCMonth(date.getUTCMonth()-months);return date.toISOString();};
+    const emails=['ada@example.test','ben@example.test','dup@example.test','no-history@example.test'];
+    const bytes=await accountExport('path',(name,data)=>{
+      if(name.endsWith('/subscribed.csv')&&name.startsWith('audiences/'))return Buffer.from('Email Address,First Name,OPTIN_TIME,CONFIRM_TIME\n'+emails.map(email=>`${email},${email.split('@')[0]},${ago(24)},${ago(24)}`).join('\n'));
+      if(name.startsWith('audiences/'))return Buffer.from('Email Address\n');
+      if(name.includes('granular_activity'))return Buffer.from(`campaign_id,email,action,timestamp\nc0spring1,ada@example.test,click,${ago(3)}\nc0winter2,ben@example.test,click,${ago(13)}\nc0spring1,dup@example.test,open,${ago(3)}\nc0spring1,unknown@example.test,click,${ago(3)}\nc0spring1,ada@example.test,click,invalid\n`);
+      return data;
+    });
+    await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
+    await site.control('/_golive/sender-evidence');
+    // Preserve a nonempty native campaign result, not just empty legacy tables.
+    await site.control('/_golive/clock',{hold:false});
+    await confirmedContact(site,edge,cookie,'native@example.test','Native subscriber');
+    const nativeClock=await site.control('/_golive/clock');
+    const nativeCampaign=await draftCampaign(site,cookie,'Existing native results',['native@example.test'],new Date(nativeClock.now+2000));
+    await approve(site,cookie,nativeCampaign);
+    expect((await dispatch(site,nativeCampaign.campaignId,new Date(nativeClock.now+2000))).map(row=>row.transport_disposition)).toEqual(['accepted']);
+    await site.control('/_golive/clock',{hold:true});
+    const nativeResults=()=>site.call(`/api/campaigns/${nativeCampaign.campaignId}/results`,{cookie}).then(r=>json(r,200));
+    const resultBefore=await nativeResults();
+    expect(await site.rows(`SELECT count(*) n FROM recipient_steps WHERE campaign_id='${nativeCampaign.campaignId}' AND transport_disposition='accepted'`)).toEqual([{n:1}]);
+    const before=await site.rows('SELECT * FROM campaign_results');
+    const moved=await importArchive(site,cookie,bytes);
+    expect(moved.archive.summary.engagement).toMatchObject({rows:5,imported:3,dropped:2});
+    expect(JSON.stringify(await site.rows('SELECT * FROM campaign_results'))).toBe(JSON.stringify(before));
+    expect(JSON.stringify(await nativeResults())).toBe(JSON.stringify(resultBefore));
+    const campaign=await draftCampaign(site,cookie,'Imported garden engagement',emails,new Date(clock.now+3600000));
+    const checks=()=>site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:campaign.revisionId}}).then(r=>json(r,200));
+    expect(await checks()).toMatchObject({candidateCount:4,eligibleCount:2,noHistoryCount:1,openOnlyCount:1,exclusions:[{reason:'dormant',count:2}]});
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+    await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+    await expect(page.locator('.audience-snapshot')).toContainText('No-history among included contacts: 1');
+    await expect(page.locator('.audience-snapshot')).toContainText('Open-only: 1');
+    await screens(page,'imported-dormancy-review',info);
+    await page.getByRole('button',{name:'Include open-only contacts',exact:true}).click();
+    await expect(page.getByRole('button',{name:'Open-only contacts included'})).toBeDisabled();
+    expect(await checks()).toMatchObject({eligibleCount:3,dormancyIncludedCount:1,noHistoryCount:1,openOnlyCount:0,exclusions:[{reason:'dormant',count:1}]});
+    await page.getByLabel('Exclude dormant contacts',{exact:true}).uncheck();
+    await expect.poll(async()=> (await checks()).eligibleCount).toBe(4);
+    expect(await checks()).toMatchObject({dormancyIncludedCount:2});
+    await expect(page.getByLabel('Exclude dormant contacts',{exact:true})).not.toBeChecked();
+    const nativeBefore=await statuses(site);
+    await screens(page,'imported-dormancy-included',info);
+    for(const email of emails){
+      const [{id}]=await site.rows(`SELECT id FROM contacts WHERE email='${email}'`);
+      const detail=await json(await site.call(`/api/contacts/${id}`,{cookie}),200);
+      expect(detail.timeline.filter((row:any)=>row.kind.startsWith('imported-'))).toHaveLength(email==='no-history@example.test'?0:1);
+      if(email==='ada@example.test'){
+        expect(detail.timeline.find((row:any)=>row.kind==='imported-click')).toMatchObject({source:expect.stringContaining('Imported'),occurredAt:ago(3)});
+        await openPage(page,`${site.runtime.url}/app/audience/${id}`);await expect(page.getByText(/Imported · reports/)).toBeVisible();await screens(page,'imported-contact-timeline',info);
+      }
+      if(email==='no-history@example.test'){await openPage(page,`${site.runtime.url}/app/audience/${id}`);await screens(page,'no-imported-history-timeline',info);}
+    }
+    // Settings reuse the app's ordinary checkbox, numeric input and save action.
+    await openPage(page,`${site.runtime.url}/app/settings`);
+    await page.getByLabel('Exclude dormant contacts by default').uncheck();
+    await page.getByRole('button',{name:'Save inactivity default'}).click();
+    await expect.poll(async()=> (await json(await site.call('/api/settings/audience-exclusions',{cookie}),200)).policy.enabled).toBe(false);
+    await screens(page,'inactivity-default',info);
+    const invalidDefault=await site.call('/api/settings/audience-exclusions',{method:'PUT',cookie,body:{policy:{enabled:true,windowDays:0}}});expect(invalidDefault.status).toBe(400);
+    const blank=await json(await site.call('/api/campaigns',{method:'POST',cookie,body:{mode:'blank'}}),201);
+    await openPage(page,`${site.runtime.url}/app/campaigns/${blank.campaignId}/review`);await expect(page.getByText('No saved audience snapshot')).toBeVisible();await screens(page,'empty-audience-review',info);
+    await openPage(page,`${site.runtime.url}/app/audience/missing-contact`);await expect(page.getByRole('alert')).toBeVisible();await screens(page,'missing-contact-failure',info);
+    const next=await draftCampaign(site,cookie,'Default policy copy',emails,new Date(clock.now+7200000));
+    const nextDetail=await json(await site.call(`/api/campaigns/${next.campaignId}`,{cookie}),200);
+    expect(JSON.parse(nextDetail.revision.dormancyPolicyJson).enabled).toBe(false);
+    expect(await statuses(site)).toEqual(nativeBefore);
+    await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+    await approve(site,cookie,campaign);
+    await page.getByLabel('Exclude dormant contacts',{exact:true}).click();
+    await expect(page.getByRole('alert')).toContainText('could not be saved');await screens(page,'locked-policy-refused',info);
+    expect((await site.call(`/api/campaigns/${campaign.campaignId}/dormancy`,{method:'PUT',cookie,body:{revisionId:campaign.revisionId,policy:{enabled:true,windowDays:365,includeOpenOnly:false}}})).status).toBe(409);
+    // Changing the installation default cannot rewrite the approved revision.
+    await json(await site.call('/api/settings/audience-exclusions',{method:'PUT',cookie,body:{policy:{enabled:true,windowDays:30}}}),200);
+    const activity=await json(await site.call('/api/activity',{cookie}),200);
+    expect(JSON.stringify(activity)).toContain('audience.default-changed');expect(JSON.stringify(activity)).toContain('audience.dormancy-changed');
+    const approved=await site.rows(`SELECT detail_json,actor_id FROM lifecycle_audit_entries WHERE action='approved' AND entity_id='${campaign.revisionId}'`);
+    expect(JSON.parse(approved[0].detail_json).dormancyPolicy.enabled).toBe(false);
+    expect(approved[0].actor_id).toBe('go-live-owner');
+    await site.control('/_golive/clock',{advanceMs:3600001,hold:false});
+    await dispatch(site,campaign.campaignId,new Date(clock.now+3600000));
+    expect(await site.rows(`SELECT transport_disposition FROM recipient_steps WHERE campaign_id='${campaign.campaignId}'`)).toEqual(Array.from({length:4},()=>({transport_disposition:'accepted'})));
+    expect(await statuses(site)).toEqual(nativeBefore);
+    // A full elapsed window ends the no-history grace; the native AUD-003 journey is unchanged.
+    await site.control('/_golive/clock',{advanceMs:366*86400000});
+    const laterCookie=await site.open();
+    const later=await draftCampaign(site,laterCookie,'After no-history grace',['no-history@example.test'],new Date(clock.now+367*86400000));
+    const late=await json(await site.call(`/api/campaigns/${later.campaignId}/checks`,{method:'POST',cookie:laterCookie,body:{revisionId:later.revisionId}}),200);
+    expect(late).toMatchObject({eligibleCount:0,noHistoryCount:0,exclusions:expect.arrayContaining([{reason:'dormant',count:1}])});
+    const ada=(await site.rows("SELECT id FROM contacts WHERE email='ada@example.test'"))[0].id,ben=(await site.rows("SELECT id FROM contacts WHERE email='ben@example.test'"))[0].id;
+    await json(await site.call('/api/contacts/merge',{method:'POST',cookie:laterCookie,body:{survivorContactId:ada,mergedContactId:ben}}),200);
+    expect(await site.rows(`SELECT count(*) AS n FROM imported_engagement_facts WHERE contact_id='${ada}'`)).toEqual([{n:2}]);
+    expect(await site.rows(`SELECT has_history FROM move_in_contact_history WHERE contact_id='${ada}'`)).toEqual([{has_history:1}]);
+    expect(await site.rows(`SELECT * FROM imported_engagement_facts WHERE contact_id='${ben}'`)).toEqual([]);
+    await record('imported-dormancy-counts.json',{initial:{candidates:4,included:2,noHistory:1,dormant:2,openOnly:1},includeOpenOnly:3,dormancyOff:4,afterGrace:0});
+  }finally{await page.close();await site.runtime.close();await edge.close();}
 });

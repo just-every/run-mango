@@ -105,7 +105,7 @@ export function AudienceImportSourceForm({
                 </div>
               </div>
               <button className="audience-import-file__remove" type="button" aria-label={`Remove ${archive.name}`} onClick={onRemoveArchive} disabled={busy}>Remove</button>
-              <p className="audience-import-file__description">Whole account export. Each audience status file, the emails and their content, and the templates are recognised from their folders and headers; reports, SMS, events, appointments, ecommerce and gallery files are kept as raw source and never imported.</p>
+              <p className="audience-import-file__description">Whole account export. Each audience status file, the emails and their content, templates and granular click/open activity are recognised from their folders and headers. Other reports, SMS, events, appointments, ecommerce and gallery files are kept as raw source and never imported.</p>
             </li>
           ) : null}
           {files.map(({ name, file, preset }) => (

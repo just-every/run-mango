@@ -70,6 +70,7 @@ export function AudienceArchiveImports({ archives, busyId, actionsBusy = false, 
                 <span>{done} of {total} records</span>
               </div>
               {archive.state === 'applying' || archive.state === 'undoing' ? <progress max={total || 1} value={done} aria-label={`Archive ${archive.name}: ${done} of ${total}`} /> : null}
+              {archive.summary.engagement?<p>Imported engagement: {archive.summary.engagement.imported} imported, {archive.summary.engagement.dropped} dropped. Opens are estimates.</p>:null}
               {archive.undo ? <p className="muted-copy">Undo removed {archive.undo.contacts.removed} unchanged contacts and kept {archive.undo.contacts.kept.length}; opt-outs and suppressions stay. The report lists every kept contact and draft with its reason.</p> : null}
               {confirming === archive.id ? (
                 <div className="audience-import-undo-confirm notice-warning" role="group" aria-label={`Confirm undo for ${archive.name}`}>

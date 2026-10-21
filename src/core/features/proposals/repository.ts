@@ -66,8 +66,8 @@ export function createProposalRepository(database: Database) {
           `INSERT INTO campaign_revisions
            (id, campaign_id, version, state, name, email_subject, email_body, email_text, preheader, sms_body,
             sender_name, from_email, audience_rule, reply_to_email, sms_sender, physical_address, message_category,
-            inclusion_rule_json, exclusion_rules_json, source_types_json, tracking_enabled, created_at, updated_at)
-           VALUES (?, ?, 1, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
+            inclusion_rule_json, exclusion_rules_json, source_types_json, tracking_enabled, created_at, updated_at, dormancy_policy_json)
+           VALUES (?, ?, 1, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, COALESCE((SELECT policy_json FROM audience_exclusion_settings WHERE id=1),'{"enabled":true,"windowDays":365,"includeOpenOnly":false}'))`,
         ).bind(
           input.revisionId, input.campaignId, title, output.email?.subject ?? '', content.emailBody!,
           content.emailText!, output.email?.preheader ?? '', output.sms?.body ?? '', output.sender.displayName,

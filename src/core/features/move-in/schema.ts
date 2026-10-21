@@ -8,6 +8,7 @@ export const moveInContent = sqliteTable('move_in_content', {
   kind: text('kind').notNull(),
   sourcePath: text('source_path').notNull(),
   sourceRow: integer('source_row'),
+  sourceCampaignId: text('source_campaign_id'),
   title: text('title').notNull(),
   subject: text('subject').notNull(),
   sentAtSource: text('sent_at_source').notNull(),

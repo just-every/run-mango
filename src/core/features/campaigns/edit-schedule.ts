@@ -9,7 +9,7 @@ import type {DraftComposition} from './draft-composition';
  * the durable dispatch-start record used by replacement approval. */
 export async function editSchedule(database:Database,campaignId:string,composition:DraftComposition,operatorId:string,sizeOptions:EmailSizeOptions={}) {
   const created=await createDraft(database,composition,operatorId,({campaignId:temporary,revisionId})=>[
-    database.update(campaignRevisions).set({campaignId,version:sql`(SELECT COALESCE(MAX(version),0)+1 FROM campaign_revisions WHERE campaign_id=${campaignId})`})
+    database.update(campaignRevisions).set({dormancyPolicyJson:sql`(SELECT r.dormancy_policy_json FROM campaigns c JOIN campaign_revisions r ON r.id=c.active_revision_id WHERE c.id=${campaignId})`,campaignId,version:sql`(SELECT COALESCE(MAX(version),0)+1 FROM campaign_revisions WHERE campaign_id=${campaignId})`})
       .where(and(eq(campaignRevisions.id,revisionId),sql`EXISTS(SELECT 1 FROM campaigns c WHERE c.id=${campaignId} AND c.state='scheduled'
         AND NOT EXISTS(SELECT 1 FROM step_dispatches d WHERE d.revision_id=c.active_revision_id AND d.started_at IS NOT NULL))`)),
     database.update(campaignStateTransitions).set({campaignId,reason:'scheduled-edit-created'})

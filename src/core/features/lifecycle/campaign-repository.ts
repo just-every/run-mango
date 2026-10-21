@@ -26,6 +26,7 @@ function revisionFromRow(row: Row) {
     version: Number(row.version),
     name: String(row.name),
     audienceRule: String(row.audience_rule),
+    dormancyPolicyJson: String(row.dormancy_policy_json),
     inclusionRuleJson: String(row.inclusion_rule_json),
     exclusionRulesJson: String(row.exclusion_rules_json),
     sourceTypesJson: String(row.source_types_json),
@@ -155,7 +156,7 @@ export function createCampaignLifecycleRepository(database: Database) {
 
     async saveDraftReview(input: {
       snapshot: CampaignRevisionSnapshot; checks: ApprovalCheck[]; now: Date;
-      audience?: {candidateCount: number; eligibleCount: number; exclusions: Array<{reason: string; count: number}>; channelCounts: Array<{channel: Channel; recipientStepCount: number; eligibleContactCount?: number; fallbackContactCount?: number}>};
+      audience?: {noHistoryCount?:number;dormancyIncludedCount?:number;openOnlyCount?:number;candidateCount: number; eligibleCount: number; exclusions: Array<{reason: string; count: number}>; channelCounts: Array<{channel: Channel; recipientStepCount: number; eligibleContactCount?: number; fallbackContactCount?: number}>};
     }) {
       const {snapshot, checks, now, audience} = input;
       const id = snapshot.revision.id, time = now.getTime();
@@ -182,6 +183,7 @@ export function createCampaignLifecycleRepository(database: Database) {
           SELECT ?, ?, ?, ?, ?, ?, ?, ? WHERE ${guard}`)
           .bind(ulid(time), audienceId, count.channel, count.recipientStepCount, count.eligibleContactCount ?? null, count.fallbackContactCount ?? null, time, time, ...guardValues()));
       }
+      if(audience)statements.push(client.prepare(`UPDATE campaign_audiences SET dormancy_included_count=?,no_history_count=?,open_only_count=? WHERE revision_id=? AND ${guard}`).bind(audience.dormancyIncludedCount??0,audience.noHistoryCount??0,audience.openOnlyCount??0,id,...guardValues()));
       statements.push(client.prepare(`SELECT 1 AS saved WHERE ${guard}`).bind(...guardValues()));
       const result = await client.batch(statements);
       return result.at(-1)?.results.length === 1;
@@ -221,7 +223,7 @@ export function createCampaignLifecycleRepository(database: Database) {
       operatorId: string;
       idempotencyKey: string;
       candidates: FrozenCandidate[];
-      audienceSummary?: {candidateCount: number; exclusions: Record<string, number>; personalisationUsage?: PersonalisationUsage[]};
+      audienceSummary?: {noHistoryCount?:number;dormancyIncludedCount?:number;openOnlyCount?:number;candidateCount: number; exclusions: Record<string, number>; personalisationUsage?: PersonalisationUsage[]};
       now: Date;
       reconciliationWindowMs: Partial<Record<Channel, number>>;
       sourceGeneration?:number;
@@ -388,6 +390,7 @@ export function createCampaignLifecycleRepository(database: Database) {
         ),
       );
 
+      if(input.audienceSummary)statements.push(client.prepare(`UPDATE campaign_audiences SET dormancy_included_count=?,no_history_count=?,open_only_count=? WHERE revision_id=? AND ${approvalGuard}`).bind(input.audienceSummary.dormancyIncludedCount??0,input.audienceSummary.noHistoryCount??0,input.audienceSummary.openOnlyCount??0,snapshot.revision.id,...approvalGuardValues()));
       for (const candidate of candidates) {
         const candidateId = ulid(nowMs);
         statements.push(
@@ -464,7 +467,7 @@ export function createCampaignLifecycleRepository(database: Database) {
            ON CONFLICT(operation_key) DO NOTHING`,
         ).bind(
           ulid(nowMs), `approval:${idempotencyKey}`, snapshot.revision.id, operatorId,
-          JSON.stringify({ revisionDigest, previousRevision,
+          JSON.stringify({ revisionDigest, previousRevision, dormancyPolicy:snapshot.revision.dormancyPolicyJson?JSON.parse(snapshot.revision.dormancyPolicyJson):undefined,
             approval: {idempotency_key: idempotencyKey, campaign_id: snapshot.campaign.id, revision_id: snapshot.revision.id,
               revision_digest: revisionDigest, write_token: writeToken, operator_id: operatorId, approved_at: nowMs, created_at: nowMs},
             ...(needsSender ? {approvedFrom, senderEvidence: input.senderLease} : {}),

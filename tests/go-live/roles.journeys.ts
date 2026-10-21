@@ -27,6 +27,8 @@ test('[INT-004][OPER-003][OPER-004] roles govern native requests and removal ret
     expect((await site.call('/api/operators/go-live-owner/role',{method:'PUT',cookie:owner,body:{role:'author'}})).status).toBe(409);
     const cases=[
       ['POST','/api/campaigns/absent/approve',['owner','admin','manager']],
+      ['PUT','/api/campaigns/absent/dormancy',['owner','admin','manager']],
+      ['PUT','/api/settings/audience-exclusions',['owner','admin']],
       ['POST','/api/flows/absent/activate',['owner','admin','manager']],
       ['POST','/api/audience/import-preview',['owner','admin']],
       ['GET','/api/audience/export',['owner','admin']],

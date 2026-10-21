@@ -56,7 +56,8 @@ Mango recognises each part from its folder names, file names and CSV headers, ne
 | Audience folders: cleaned, subscribed, transactional (non-subscribed) and unsubscribed CSV files | Contacts, each file with its matching status preset: cleaned becomes suppressed, transactional becomes non-subscribed, unsubscribed stays unsubscribed. Subscribed rows become subscribed only with the full consent evidence below. |
 | Emails CSV with a `campaigns_content` folder of HTML and TXT | Read-only **imported history**: title, subject, the send time exactly as the source states it, and the content. Each has **Copy into a new draft**. |
 | Templates folder of HTML | **Draft starters**: ordinary drafts you edit, check and approve like any other. |
-| Reports (aggregate activity, geography, granular opens and clicks) | Kept as raw source, not imported. |
+| `reports/granular_activity` CSV files | Historical clicks and open estimates on matching contacts, linked to imported campaign history at the original times. The CSV must name `campaign_id,email,action,timestamp`; optional `url` or `link` identifies a clicked link. |
+| Other reports (aggregate activity and geography) | Kept as raw source, not imported. |
 | Gallery images and files | Kept as raw source, not imported, with a count. |
 | SMS, custom events, appointments, ecommerce products and orders | Kept as raw source, not imported. |
 | Content files with no row in the emails CSV, or anything unrecognised | Kept as raw source, not imported. |
@@ -65,13 +66,17 @@ Mailchimp's export does not contain deleted audiences, billing receipts, third-p
 
 Imported history and draft starters carry no schedule, approval or delivery authority. Reports and "sent" rows stay source records: they never create a delivery, acceptance, campaign count, result figure or revenue in Mango.
 
+Imported clicks count for dormancy at their original times. Imported opens are estimates and never engagement. The contact timeline labels both as imported and names their source file. Unknown addresses, invalid times, unsupported actions, malformed rows, invalid links and missing campaign identities are counted and dropped by named reason in reconciliation. The importer never creates Mango send facts, results or attribution, and never changes consent from activity rows. The Mailchimp API activity pull and other incumbents’ history remain unimplemented. Scoring, activity segments, sunsetting and send-time optimization still owe consumption of these facts.
+
 ### Preview, import and undo
 
 1. Under **Audience → Import contacts**, choose the ZIP. The file list shows it as a whole account export.
 2. Enter the consent evidence once for the whole archive: brand or legal sender, message category, disclosed frequency, destination jurisdiction, consent version and the original consent text. Supply only what people actually saw. A subscribed row also needs its own opt-in and confirmation times (`OPTIN_TIME`, `CONFIRM_TIME`); a row missing any of it imports as non-subscribed with the standard warning.
 3. Press **Preview import**. Preview writes nothing. Per audience file it shows created, updated, duplicates in that file and across files, rejected rows with reasons, unknown consent, unsubscribed and cleaned. It also lists every content change and every folder kept as raw source, not imported.
-4. Press **Import archive**. Mango keeps the original ZIP as the import's raw source, with a content hash of the archive and of every entry; the import record lists each entry with its hash. Contacts and content then advance in bounded steps; **Continue import** resumes an interrupted one.
+4. Press **Import archive**. Mango keeps the original ZIP as the import's raw source, with a content hash of the archive and of every entry; the import record lists each entry with its hash. Contacts, content and engagement then advance in bounded steps (at most 50 engagement/coverage writes per continuation); **Continue import** resumes an interrupted one.
 5. **Undo this import** removes the imported contacts, drafts and history records that nobody has changed. It keeps and lists, with the reason, any contact or draft edited after the import, any contact who unsubscribed or was suppressed since, any contact who existed before, and anything scheduled or sent since. It never erases an opt-out, a suppression or send history.
+
+Undo removes the archive’s imported engagement facts and its no-history coverage, including facts on contacts it keeps. Repeating an applied archive creates no duplicate facts. Contact merges move these records to the survivor; erasure removes the erased contact’s facts; installation backup and restore carry both facts and move-in completion times.
 
 An address in two files takes the most restrictive status, so an address that is both subscribed and unsubscribed imports as unsubscribed. An address already opted out in Mango stays opted out. A contact that was already in Mango keeps its name; the name in the export is kept on the contact's import record. Cleaned and unsubscribed contacts are never sendable. Importing the same archive with the same consent evidence a second time changes nothing; after an undo, it applies again cleanly and keeps every opt-out. The order of files inside the ZIP does not change the result.
 
@@ -91,6 +96,7 @@ One archive is read inside a single Worker request (128 MB memory). These limits
 | --- | --- | --- |
 | Uploaded ZIP | 16 MB | The ZIP is held in memory and stored as custody. A 14 MB ZIP holding 15 MB of gallery images peaked at about 31 MB. |
 | Entries | 5,000 | Bounds directory checks and per-entry hashing. |
+| Engagement rows per archive | 10,000 | A larger granular-activity export is refused visibly before import; request a shorter time frame. The existing 12 MB retained-text and ZIP limits also apply. |
 | One expanded entry / all entries | 64 MB / 160 MB | Entries stream through inflate and hashing and are never written to disk; only text kept for review stays in memory. 124 MB of expanded reports peaked at about 115 MB of heap and buffers (70 MB of process growth), down from 193 MB before streaming. |
 | Expanded text read for review | 12 MB | Audience CSVs, the emails CSV, content and templates are held as text. The worst case measured, 5,000 rows plus 600 HTML files and 11.25 MB of text, peaked at about 75 MB. |
 | Audience rows | 5,000 per archive | Each reviewed row holds a snapshot: 5,000 rows peaked at about 81 MB, and 10,000 ran out of memory under a 150 MB heap. A larger audience imports as individual CSV files, up to 50,000 rows per review. |

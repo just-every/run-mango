@@ -70,4 +70,7 @@ export const contactErasureTables:ErasureTable[]=[
   // Append stages: persisted erasure cursors depend on every earlier index.
   contact('list_growth_attribution'),
   contact('operator_privacy_requests'),
+  {...contact('imported_engagement_facts'),literal:true,mode:'contact-data'},
+  contact('move_in_contact_history'),
+  {table:'audience_exclusion_settings',literal:true,mode:'redact'},
 ];

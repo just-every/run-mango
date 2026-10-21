@@ -5,11 +5,12 @@ import type { LifecycleRepository } from './repository';
 import type { Channel, FrozenCandidate, LifecycleRuntime } from './types';
 
 /** One eligibility calculation for saved segments, draft estimates and approval review. */
-export async function evaluateAudience(runtime:LifecycleRuntime,_repository:LifecycleRepository,input:{inclusionRuleJson:string;exclusionRulesJson:string;channels:Channel[]},now:Date) {
+export async function evaluateAudience(runtime:LifecycleRuntime,_repository:LifecycleRepository,input:{dormancyPolicyJson?:string;inclusionRuleJson:string;exclusionRulesJson:string;channels:Channel[]},now:Date) {
   const parsedRules = parseStructuredRules(input.inclusionRuleJson, input.exclusionRulesJson);
   const selectedChannels = [...new Set(input.channels)];
   const audience = parsedRules.ok
     ? await runtime.audience.resolveFrozenCandidates({
+        dormancyPolicyJson:input.dormancyPolicyJson,
         inclusionRule: parsedRules.inclusion,
         exclusionRules: parsedRules.exclusions,
         sourceTypes: parsedRules.sourceTypes,
@@ -43,6 +44,7 @@ export async function evaluateAudience(runtime:LifecycleRuntime,_repository:Life
       const rechecks = await Promise.allSettled(group.flatMap(candidate => selectedChannels
         .filter(channel => candidate.channels[channel])
         .map(channel => runtime.audience.recheckHandoffEligibility({
+          dormancyPolicyJson:input.dormancyPolicyJson,
           contactId: candidate.contactId,
           channel,
           sourceTypes: parsedRules.sourceTypes,

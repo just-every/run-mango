@@ -1,3 +1,4 @@
+import {engagementContacts,reviewEngagement,type EngagementSummary} from './archive-engagement';
 import { csvRows } from '@/core/features/audience/csv';
 import type { NormalizedImportRow } from '@/core/features/audience/import-normalize';
 import type { createAudienceImportService } from '@/core/features/audience/import-service';
@@ -22,7 +23,7 @@ export type ArchiveSummary = {
   archive: { name: string; size: number; sha256: string; entries: number; folders: number };
   audience: AudienceFileSummary[]; content: ContentFileSummary[];
   records: Array<Pick<ContentRecord, 'ordinal' | 'kind' | 'sourcePath' | 'sourceRow' | 'title' | 'subject' | 'sentAt' | 'removed' | 'flagged' | 'mergeTags'>>;
-  kept: KeptRaw[]; unmatchedContent: string[];
+  engagement?: EngagementSummary; kept: KeptRaw[]; unmatchedContent: string[];
 };
 export type ArchiveReview = { summary: ArchiveSummary; fingerprint: string; consentDigest: string; entries: Array<{ entry: ArchiveEntry; part: ArchivePart }>;
   audienceInput?: { files: ImportFile[]; consent: ArchiveConsent }; audiencePlan?: ImportPlan; records: ContentRecord[] };
@@ -107,6 +108,7 @@ export async function reviewArchive(name: string, bytes: Uint8Array<ArrayBuffer>
   const summary: ArchiveSummary = {
     archive: { name, size: read.size, sha256: read.sha256, entries: read.entries.length, folders: read.folders },
     audience: summaries, content: content.files,
+    engagement: reviewEngagement(entries,content.records,engagementContacts(audiencePlan)).summary,
     records: content.records.map(({ html: _html, text: _text, contentPaths: _paths, ...record }) => record),
     kept: [...kept.values()].sort((a, b) => a.kind < b.kind ? -1 : 1), unmatchedContent: content.unmatched,
   };

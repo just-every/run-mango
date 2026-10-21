@@ -85,7 +85,7 @@ export function requiredPermission(method: string, path: string): Capability {
     return location.searchParams.get('format') === 'csv' ? 'audience.export' : 'report.read';
   }
   if (/^\/api\/campaigns\/[^/]+\/report-segment$/.test(p)) return 'segment.manage';
-  if (/^\/api\/campaigns\/[^/]+\/(?:approve|reapprove|link-hosts|checks\/[^/]+\/acknowledge|publications(?:\/[^/]+)?)$/.test(p) && !read) return 'campaign.approve';
+  if (/^\/api\/campaigns\/[^/]+\/(?:approve|reapprove|dormancy|link-hosts|checks\/[^/]+\/acknowledge|publications(?:\/[^/]+)?)$/.test(p) && !read) return 'campaign.approve';
   if (/^\/api\/campaigns\/[^/]+\/checks$/.test(p) && verb === 'POST') return 'draft.write';
   if (/^\/api\/campaigns\/[^/]+\/(?:send|pause|resume|cancel)$/.test(p) && !read) return 'campaign.send';
   if(read&&/^\/api\/campaigns\/[^/]+\/approval-requests$/.test(p))return 'campaign.read';

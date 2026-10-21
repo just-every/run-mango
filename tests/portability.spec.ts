@@ -1,3 +1,5 @@
+import {accountExport} from './move-in/archive';
+import {consentEvidence} from './move-in/support';
 import {seedFollowup} from './campaign-results/followup-fixture';
 import { expect, test } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -10,9 +12,26 @@ import { png } from './support/images';
 
 test('[DATA-001] complete native records and uploaded assets round-trip without restoring login authority', async () => {
   test.setTimeout(180000);
-  const source = await portabilityRuntime(), target = await portabilityRuntime({ restore: true });
+  const source = await portabilityRuntime({beforeMigration:async(file:string,db:D1Database)=>{
+    if(file==='0081_imported_engagement.sql')await db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('prior-upgrade','prior@example.test','Prior data','unsubscribed','never-subscribed',1,1)").run();
+  }}), target = await portabilityRuntime({ restore: true });
   try {
-    const draft = await source.call('/api/campaigns', { method: 'POST', cookie: source.cookie, body: { mode: 'blank' } });
+    expect(await source.db.prepare("SELECT display_name FROM contacts WHERE id='prior-upgrade'").first()).toEqual({display_name:'Prior data'});
+    expect((await source.db.prepare('SELECT count(*) n FROM imported_engagement_facts').first()).n).toBe(0);
+    const bytesArchive=await accountExport();
+    const uploadArchive=async(path:string,fingerprint?:string)=>{
+      const form=new FormData();form.set('archive',new File([bytesArchive],'account-export.zip',{type:'application/zip'}));form.set('consent',JSON.stringify(consentEvidence));if(fingerprint)form.set('fingerprint',fingerprint);
+      const response=await fetch(source.origin+path,{method:'POST',headers:{Origin:source.origin,Cookie:source.cookie},body:form});expect(response.status,await response.clone().text()).toBe(200);return response.json();
+    };
+    const preview=await uploadArchive('/api/audience/archive-preview');
+    let {archive:importedArchive}=await uploadArchive('/api/audience/archives',preview.fingerprint);
+    while(importedArchive.state==='applying'){
+      const response=await source.call(`/api/audience/archives/${importedArchive.id}/continue`,{method:'POST',cookie:source.cookie,body:{}});expect(response.status,await response.clone().text()).toBe(200);({archive:importedArchive}=await response.json());
+    }
+    expect(importedArchive.summary.engagement.imported).toBe(3);
+    const importedFacts=(await source.db.prepare('SELECT * FROM imported_engagement_facts ORDER BY id').all()).results;
+    const importedCoverage=(await source.db.prepare('SELECT * FROM move_in_contact_history ORDER BY id').all()).results;
+    const draft = await source.call('/api/campaigns' , { method: 'POST', cookie: source.cookie, body: { mode: 'blank' } });
     expect(draft.status).toBe(201);
     const reusable=await source.call('/api/campaign-templates',{method:'POST',cookie:source.cookie,body:{revisionId:(await draft.clone().json()).revisionId,name:'Portable newsletter template'}});
     expect(reusable.status).toBe(201);
@@ -89,6 +108,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await target.db.prepare('SELECT count(*) AS n FROM audience_erasures').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT count(*) AS n FROM stripe_connection').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT host FROM tracking_domain WHERE id=1').first()).host).toBe('links.example.test');
+    expect((await target.db.prepare('SELECT * FROM imported_engagement_facts ORDER BY id').all()).results).toEqual(importedFacts);
+    expect((await target.db.prepare('SELECT * FROM move_in_contact_history ORDER BY id').all()).results).toEqual(importedCoverage);
     await target.resume();
     await writeFile(session, target.cookie, { mode: 0o600 });
     expect((await target.call('/api/portability/imports',{method:'POST',cookie:target.cookie,body:{confirmed:true,manifest}})).status).toBe(401);

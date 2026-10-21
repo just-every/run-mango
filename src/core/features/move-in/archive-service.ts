@@ -1,3 +1,4 @@
+import {engagementContacts,reviewEngagement,writeEngagement} from './archive-engagement';
 import { Buffer } from 'node:buffer';
 import type { Platform } from '@/core/shared/platform';
 import { ulid } from '@/core/shared/ids';
@@ -20,7 +21,7 @@ export class ArchiveReviewStale extends Error {}
 export type ArchiveRecord = {
   id: string; principal_id: string; name: string; sha256: string; size: number; consent_digest: string; consent_json: string; fingerprint: string;
   state: 'applying' | 'applied' | 'undoing' | 'undone'; audience_plan: string | null; audience_stream: string | null; summary_json: string;
-  content_total: number; content_done: number; undo_json: string | null; created_at: number; updated_at: number; applied_at: number | null; undone_at: number | null;
+  content_total: number; content_done: number; engagement_done: number; undo_json: string | null; created_at: number; updated_at: number; applied_at: number | null; undone_at: number | null;
 };
 export type UndoSummary = { contacts: { removed: number; kept: Array<{ contactId: string; reason: string }> } };
 const contentPage = 20;
@@ -142,8 +143,16 @@ export function createArchiveService(platform: Platform) {
           await touch(id, 'content_done=?', archive.content_done + records.length);
           return record(id);
         }
-        await touch(id, "state='applied',applied_at=?", Date.now());
+        const {entries}=await readArchiveParts(await custody(archive));
+        const stored=archive.audience_plan?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(archive.audience_plan).first<{fingerprint:string;plan_json:string}>():null;
+        const addresses=engagementContacts(stored?await readAudiencePlan(db,stored):undefined);
+        const engagement=reviewEngagement(entries,reviewContent(entries).records,addresses);
+        if(!await writeEngagement(db,id,engagement,addresses,archive.engagement_done))return record(id);
+        const summary=JSON.parse(archive.summary_json) as ArchiveSummary;
+        summary.engagement=engagement.summary;
+        await touch(id, "state='applied',applied_at=?,summary_json=?", Date.now(),JSON.stringify(summary));
       } else if (archive.state === 'undoing') {
+        await db.batch([db.prepare('DELETE FROM imported_engagement_facts WHERE archive_id=?').bind(id),db.prepare('DELETE FROM move_in_contact_history WHERE archive_id=?').bind(id)]);
         if (archive.audience_stream) {
           const job = await readD1ImportStream(archive.audience_stream, context);
           if (job.state !== 'undone') { await undoD1ImportStream(archive.audience_stream, context); return record(id); }

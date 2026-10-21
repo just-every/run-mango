@@ -1,3 +1,6 @@
-campaign_id,email,action,timestamp
-c0spring1,ada@example.test,open,2026-09-01 10:00:00
-c0spring1,ben@example.test,click,2026-09-01 10:05:00
+campaign_id,email,action,timestamp,url
+c0spring1,ada@example.test,click,2026-07-21 10:00:00,https://garden.example.test/spring
+c0winter2,ben@example.test,click,2025-09-21 10:05:00,https://garden.example.test/winter
+c0spring1,dup@example.test,open,2026-07-21 10:10:00,
+c0spring1,unknown@example.test,click,2026-07-21 10:15:00,
+c0spring1,ada@example.test,click,not-a-time,

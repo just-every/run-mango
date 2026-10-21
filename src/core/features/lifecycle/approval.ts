@@ -21,12 +21,13 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       const channelCounts = personalisationUsage.map(usage => ({...usage, recipientStepCount: snapshot.steps.filter(step => step.channel === usage.channel).length * candidates.filter(candidate => candidate.channels[usage.channel]).length}));
       const exclusions = [...exclusionCounts].map(([reason, count]) => ({reason, count}));
       const candidateCount = audience.status === 'ok' ? (audience.candidateCount ?? audience.candidates.length) : null;
-      const saved = await repository.saveDraftReview({snapshot, checks: checkResult.checks, now, audience: candidateCount === null ? undefined : {candidateCount, eligibleCount: candidates.length, exclusions, channelCounts}});
+      const saved = await repository.saveDraftReview({snapshot, checks: checkResult.checks, now, audience: candidateCount === null ? undefined : {candidateCount, eligibleCount: candidates.length, exclusions, channelCounts, dormancyIncludedCount:audience.status==='ok'?candidates.filter(c=>audience.dormancyIncludedContactIds?.includes(c.contactId)).length:0,noHistoryCount:audience.status==='ok'?candidates.filter(c=>audience.noHistoryContactIds?.includes(c.contactId)).length:0, openOnlyCount:audience.status==='ok'?audience.openOnlyCount??0:0}});
       if (!saved) return {kind: 'conflict' as const};
       const projection=await campaignClaimProjection(runtime.platform.database,input.revisionId);
       return {kind: 'preview' as const, asOf: now, sourceStatus: audience.status,
         candidateCount, eligibleCount: candidateCount === null ? null : candidates.length,
         exclusions: candidateCount === null ? null : projection?exclusions.map(item=>({...item,reason:projection.reason(item.reason)})):exclusions,
+        dormancyIncludedCount:audience.status==='ok'?candidates.filter(c=>audience.dormancyIncludedContactIds?.includes(c.contactId)).length:0,noHistoryCount:audience.status==='ok'?candidates.filter(c=>audience.noHistoryContactIds?.includes(c.contactId)).length:0,openOnlyCount:audience.status==='ok'?audience.openOnlyCount??0:0,
         channelCounts: candidateCount === null ? null : channelCounts,
         checks: projection?checkResult.checks.map(projection.check):checkResult.checks, blockers: checkResult.checks.filter(check => check.blocking)};
     },
@@ -96,6 +97,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         idempotencyKey: input.idempotencyKey,
         candidates,
         audienceSummary: audience.status === 'ok' ? {
+          dormancyIncludedCount:candidates.filter(c=>audience.dormancyIncludedContactIds?.includes(c.contactId)).length,noHistoryCount:candidates.filter(c=>audience.noHistoryContactIds?.includes(c.contactId)).length,openOnlyCount:audience.openOnlyCount??0,
           candidateCount: audience.candidateCount ?? audience.candidates.length,
           exclusions: Object.fromEntries(exclusionCounts),
           personalisationUsage,

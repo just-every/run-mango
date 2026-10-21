@@ -1,3 +1,4 @@
+import {readDormancyPolicy} from './dormancy-policy';
 import { contactPersonalisation } from './contact-personalisation';
 import {productCoverage,ruleCoverage,type CoverageStore} from './source-coverage';
 import {commerceExclusions} from './commerce-exclusions';
@@ -8,7 +9,7 @@ import type { Channel } from './service';
 import type { createAudienceRepository } from './repository';
 
 const dayMs = 24 * 60 * 60 * 1000;
-const dormancyMs = 365 * dayMs;
+
 
 type AudienceRepository = ReturnType<typeof createAudienceRepository>;
 type Store = Pick<ReturnType<typeof createStoreService>, 'freshness' | 'sourceActivities' | 'sourceRecords'> & CoverageStore;
@@ -145,8 +146,16 @@ async function selectedChannel(
 }
 
 export function createAudienceEligibility(repository: AudienceRepository, store: Store, isSuppressed: (channel: Channel, destination: string) => Promise<boolean>) {
+  async function dormancy(contactId:string,now:Date,policyJson?:string) {
+    const policy=readDormancyPolicy(policyJson),cutoff=now.getTime()-policy.windowDays*dayMs;
+    const [last,history]=await Promise.all([repository.lastQualifyingActivity(contactId,now),repository.importedHistoryWindow(contactId,now,cutoff)]);
+    const dormant=(!last||last.getTime()<cutoff)&&!history.noHistory;
+    const openOnly=dormant&&history.importedOpens;
+    return {dormant,noHistory:history.noHistory,openOnly,excluded:policy.enabled&&dormant&&!(policy.includeOpenOnly&&openOnly)};
+  }
   async function recheckHandoffEligibility(input: {
     contactId: string;
+    dormancyPolicyJson?: string;
     channel: Channel;
     sourceTypes: string[];
     productId?: string;
@@ -169,8 +178,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     if (contact.mergeLock) return {eligible:false as const,reason:'contact-merging',detail:'The contact is being merged.'};
     const channelData = await selectedChannel(repository, contact.id, input.channel, now, isSuppressed);
     if (!channelData) return { eligible: false as const, reason: 'channel-not-subscribed', detail: 'Only a subscribed destination with confirmed consent is eligible for marketing.' };
-    const lastActivity = await repository.lastQualifyingActivity(contact.id, now);
-    if (!lastActivity || lastActivity.getTime() < now.getTime() - dormancyMs) {
+    if ((await dormancy(contact.id,now,input.dormancyPolicyJson)).excluded) {
       return { eligible: false as const, reason: 'dormant', detail: 'No click, order, or consent change was recorded in the dormancy window.' };
     }
     if (input.frequencyWindowMs && input.lastMarketingAt && now.getTime() - input.lastMarketingAt.getTime() < input.frequencyWindowMs) {
@@ -217,6 +225,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
   }
 
   async function resolveFrozenCandidates(input: {
+    dormancyPolicyJson?: string;
     inclusionRule: unknown;
     exclusionRules: unknown[];
     sourceTypes: string[];
@@ -234,7 +243,8 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     const contacts = await repository.listContacts();
     const counts = new Map<string, number>();
     const candidates: FrozenCandidate[] = [];
-    let candidateCount = 0;
+    let candidateCount = 0, openOnlyCount=0;
+    const noHistoryContactIds:string[]=[],dormancyIncludedContactIds:string[]=[];
     const matchedContactIds:string[]=[];
     for (const contact of contacts) {
       const matches = await Promise.all(parsed.inclusion.predicates.map((predicate) => predicateMatches(repository,store, contact.id, predicate, input.now, contact)));
@@ -243,8 +253,8 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
       candidateCount++;
       matchedContactIds.push(contact.id);
       const reasons = new Set(await matchingExclusions(repository,store, contact.id, parsed.exclusions, input.now, contact));
-      const lastActivity = await repository.lastQualifyingActivity(contact.id, input.now);
-      if (!lastActivity || lastActivity.getTime() < input.now.getTime() - dormancyMs) reasons.add('dormant');
+      const inactivity=await dormancy(contact.id,input.now,input.dormancyPolicyJson);
+      if(inactivity.excluded){reasons.add('dormant');if(inactivity.openOnly)openOnlyCount++;}
       for (const reason of commerceExclusions(await store.sourceRecords(contact.id), products, input.now)) reasons.add(reason);
       if (contact.mergeLock) reasons.add('contact-merging');
       const channels = Object.fromEntries((await Promise.all(input.channels.map(async (channel) => [channel, await selectedChannel(repository, contact.id, channel, input.now, isSuppressed)] as const)))
@@ -258,6 +268,8 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
       }
       for(const reason of reasons) counts.set(reason,(counts.get(reason)??0)+1);
       if(reasons.size || !Object.keys(channels).length) continue;
+      if(inactivity.noHistory)noHistoryContactIds.push(contact.id);
+      if(inactivity.dormant)dormancyIncludedContactIds.push(contact.id);
       candidates.push({ contactId: contact.id, contactIdentityKey: contact.id, channels });
     }
     if (freshnessIssues.length) {
@@ -272,6 +284,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     }
     return {
       status: 'ok' as const,
+      noHistoryContactIds,dormancyIncludedContactIds,openOnlyCount,
       candidateCount,
       matchedContactIds,
       asOf: input.now,

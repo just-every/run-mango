@@ -1,3 +1,4 @@
+import {installationDormancyPolicy} from '@/core/features/audience/dormancy-policy';
 import { savedEmailSize } from './saved-email-size';
 import type { EmailSizeOptions } from './email-size';
 import type { BatchItem } from 'drizzle-orm/batch';
@@ -43,7 +44,8 @@ export async function createDraft(database: Database, composition: DraftComposit
   const now = new Date(), campaignId = ulid(), revisionId = ulid();
   const rules = parseStructuredRules(parsed.inclusionRuleJson!, parsed.exclusionRulesJson ?? '[]');
   if (!rules.ok) throw new Error('Invalid audience rules.');
-  const revision = { id:revisionId,campaignId,version:1,state:'draft',name:parsed.name!,emailSubject:parsed.emailSubject!,
+  const dormancyPolicyJson=JSON.stringify(await installationDormancyPolicy(database.$client));
+  const revision = { dormancyPolicyJson, id:revisionId,campaignId,version:1,state:'draft',name:parsed.name!,emailSubject:parsed.emailSubject!,
     emailBody:parsed.emailBody!,emailText:parsed.emailText!,preheader:parsed.preheader ?? '',smsBody:parsed.smsBody ?? '',
     senderName:parsed.senderName!,fromEmail:parsed.fromEmail!,replyToEmail:parsed.replyToEmail!,smsSender:parsed.smsSender ?? '',
     physicalAddress:parsed.physicalAddress!,messageCategory:parsed.messageCategory!,audienceRule:summarizeAudienceRules(parsed.inclusionRuleJson!, parsed.exclusionRulesJson ?? '[]'),

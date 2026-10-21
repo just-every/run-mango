@@ -1,3 +1,4 @@
+import {SettingsAudienceExclusions} from './settings-audience-exclusions';
 import {SettingsDomainGuide} from './settings-domain-guide';
 import {SettingsStripe} from './settings-stripe';
 import {Can} from '@/core/features/auth/ui/permissions';
@@ -30,6 +31,7 @@ export function SettingsPage() {
       </header>
       <Can permission="settings.manage"><SettingsSender operatorEmail={operator.data.operator.email} /></Can>
       <Can permission="settings.manage"><SettingsLinkHosts /></Can>
+      <Can permission="settings.manage"><SettingsAudienceExclusions /></Can>
       <Can permission="integration.manage"><SettingsIntegrations /></Can>
       <Can permission="settings.manage"><SettingsStripe /></Can>
       <Can permission="settings.manage"><SettingsDomainGuide /></Can>

@@ -13,6 +13,8 @@ export const archiveLimits = {
   retainedTextBytes: 12 * 1024 * 1024,
   /** Audience rows reviewed from one archive: the contact review holds every row's snapshot. */
   audienceRows: 5_000,
+  /** Click/open observations per archive, within the existing retained-text bound. */
+  engagementRows: 10_000,
   /** Expanded to compressed size, checked for entries over ratioFloorBytes. */
   compressionRatio: 100,
   ratioFloorBytes: 1024 * 1024,

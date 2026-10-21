@@ -1,3 +1,4 @@
+import {createDormancyRoutes} from '@/core/features/audience/dormancy-routes';
 import {domainSetupRoutes} from '@/core/features/sender-verification/setup-routes';
 import {stripeRoutes} from '@/core/features/store/stripe/routes';
 import {hasPermission,requiredPermission} from '@/core/features/auth/permissions';
@@ -346,6 +347,7 @@ export function createApp(
   app.route('/api',archiveOperatorRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
   app.route('/api', createLinkHostRoutes(platform));
+  app.route('/api',createDormancyRoutes(platform));
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
   app.route('/api', stripe.settings);
   app.route('/api', domainSetupRoutes(platform));

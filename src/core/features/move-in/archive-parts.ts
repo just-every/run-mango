@@ -7,7 +7,7 @@ export type AudienceStatus = 'subscribed' | 'unsubscribed' | 'cleaned' | 'non-su
 export type RawKind = 'reports' | 'sms' | 'events' | 'appointments' | 'ecommerce' | 'gallery' | 'nested-archive' | 'unmatched-content' | 'other';
 export type ArchivePart =
   | { kind: 'audience'; status: AudienceStatus }
-  | { kind: 'emails' }
+  | { kind: 'emails' } | { kind: 'engagement' }
   | { kind: 'campaign-html' } | { kind: 'campaign-text' }
   | { kind: 'template' }
   | { kind: 'raw'; raw: RawKind };
@@ -59,11 +59,13 @@ function rawKind(path: string): RawKind | undefined {
 
 /** Which entries are read as text: everything that may become an import or needs its header read. */
 export function keepsText(path: string) {
+  if (segmentsOf(path).includes('granular_activity') && extension(path)==='csv') return true;
   if (rawKind(path)) return false;
   return ['csv', 'html', 'htm', 'txt'].includes(extension(path));
 }
 
 export function classify(path: string, text: string | undefined): ArchivePart {
+  if (segmentsOf(path).includes('granular_activity') && extension(path)==='csv') return {kind:'engagement'};
   const raw = rawKind(path);
   if (raw) return { kind: 'raw', raw };
   const segments = segmentsOf(path), ext = extension(path);

@@ -84,6 +84,8 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
         ))}
         {channelCounts.some(count => count.eligibleContactCount == null || count.fallbackContactCount == null) ? <p className="muted-copy">Fallback usage was not recorded for this snapshot.</p> : null}
       </div>
+      <p>Included by this campaign’s inactivity choice: <strong>{audience.dormancyIncludedCount??0}</strong></p>
+      <p>No-history among included contacts: <strong>{audience.noHistoryCount??0}</strong></p>
       {exclusionNotice ? <p className="notice-note">{exclusionNotice}</p> : null}
       {exclusions.length ? (
         <div className="exclusion-list" aria-label="Saved audience exclusions">
@@ -91,7 +93,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
           {exclusions.map((exclusion) => (
             <p key={exclusion.id}>
               <span>{titleCase(exclusion.reason)}</span>
-              <strong>{exclusion.count}</strong>
+              <strong>{exclusion.count}</strong>{exclusion.reason==='dormant'?<small>Open-only: {audience.openOnlyCount??0}</small>:null}
             </p>
           ))}
         </div>

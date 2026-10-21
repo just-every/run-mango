@@ -11,6 +11,7 @@ export type ArchiveSummary = {
   archive: { name: string; size: number; sha256: string; entries: number; folders: number };
   audience: ArchiveFileSummary[]; content: ArchiveContentSummary[];
   records: Array<{ ordinal: number; kind: 'history' | 'draft'; sourcePath: string; sourceRow: number | null; title: string; subject: string; sentAt: string; removed: string[]; flagged: string[]; mergeTags: string[] }>;
+  engagement?:{rows:number;imported:number;dropped:number;reasons:Record<string,number>};
   kept: Array<{ kind: string; label: string; files: number; bytes: number }>; unmatchedContent: string[];
 };
 export type ArchivePreview = { fingerprint: string; summary: ArchiveSummary; alreadyImported: { id: string; applied_at: number | null } | null };

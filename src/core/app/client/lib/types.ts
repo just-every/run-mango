@@ -19,6 +19,7 @@ export type SourceSync = {
 };
 
 export type Audience = {
+  noHistoryCount?:number;dormancyIncludedCount?:number;openOnlyCount?:number;
   id: string;
   revisionId: string;
   asOfAt: string;
@@ -49,6 +50,7 @@ export type Campaign = {
 };
 
 export type Revision = {
+  dormancyPolicyJson?:string;
   audienceMasked?: boolean;
   trackingEnabled?: boolean;
   stepSettings?: Array<{channel:'email'|'sms';timezone:string;whyThisTime:string}>;

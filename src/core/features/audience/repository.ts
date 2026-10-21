@@ -199,9 +199,18 @@ export function createAudienceRepository(database: Database) {
         SELECT confirmed_at at FROM consent_evidence WHERE contact_id=? AND confirmed_at<=?
         UNION ALL SELECT occurred_at FROM contact_history WHERE contact_id=? AND kind IN ('consent-captured','consent-confirmed','opt-out') AND occurred_at<=?
         UNION ALL SELECT c.occurred_at FROM link_click_facts c JOIN recipient_steps r ON r.id=c.recipient_step_id WHERE r.contact_id=? AND c.automated=0 AND c.occurred_at<=?
+        UNION ALL SELECT f.occurred_at FROM imported_engagement_facts f JOIN move_in_archives a ON a.id=f.archive_id WHERE f.contact_id=? AND f.kind='click' AND f.occurred_at<=? AND a.state='applied'
         UNION ALL SELECT purchased_at FROM commerce_orders WHERE contact_id=? AND qualifying=1 AND purchased_at<=?
-      )`).bind(contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime()).first<{at:number|null}>();
+      )`).bind(contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime()).first<{at:number|null}>();
       return row?.at == null ? undefined : new Date(row.at);
+    },
+
+    async importedHistoryWindow(contactId:string,now:Date,cutoff:number) {
+      const coverage=await database.$client.prepare(`SELECT min(a.applied_at) started, max(h.has_history) hasHistory FROM move_in_contact_history h JOIN move_in_archives a ON a.id=h.archive_id WHERE h.contact_id=? AND a.state='applied' AND a.applied_at<=?`)
+        .bind(contactId,now.getTime()).first<{started:number|null;hasHistory:number|null}>();
+      const opens=await database.$client.prepare(`SELECT 1 FROM imported_engagement_facts f JOIN move_in_archives a ON a.id=f.archive_id WHERE f.contact_id=? AND a.state='applied' AND f.kind='open' AND f.occurred_at>=? AND f.occurred_at<=? LIMIT 1`)
+        .bind(contactId,cutoff,now.getTime()).first();
+      return {noHistory:coverage?.started!=null&&!coverage.hasHistory&&coverage.started>cutoff,importedOpens:Boolean(opens)};
     },
 
     listConsent(contactId: string) {
@@ -474,8 +483,13 @@ export function createAudienceRepository(database: Database) {
       for (const phone of mergedPhones) {
         await database.update(contactPhones).set({ contactId: survivorContactId, updatedAt: occurredAt }).where(eq(contactPhones.id, phone.id));
       }
+      await database.$client.batch([
+        database.$client.prepare(`UPDATE move_in_contact_history SET has_history=max(has_history,COALESCE((SELECT has_history FROM move_in_contact_history other WHERE other.archive_id=move_in_contact_history.archive_id AND other.contact_id=?),0)) WHERE contact_id=?`).bind(mergedContactId,survivorContactId),
+        database.$client.prepare('DELETE FROM move_in_contact_history WHERE contact_id=? AND archive_id IN (SELECT archive_id FROM move_in_contact_history WHERE contact_id=?)').bind(mergedContactId,survivorContactId),
+        database.$client.prepare('UPDATE move_in_contact_history SET contact_id=? WHERE contact_id=?').bind(survivorContactId,mergedContactId),
+      ]);
       await Promise.all([
-        database.$client.batch(['sms_frequency_claims','sms_service_messages','sms_inbound_receipts','consent_handoff_claims'].map(table=>
+        database.$client.batch(['sms_frequency_claims','sms_service_messages','sms_inbound_receipts','consent_handoff_claims','imported_engagement_facts'].map(table=>
           database.$client.prepare(`UPDATE ${table} SET contact_id=? WHERE contact_id=?`).bind(survivorContactId,mergedContactId))),
         database.update(contactImportRows).set({contactId:survivorContactId}).where(eq(contactImportRows.contactId,mergedContactId)),
         database.update(contactBounceFacts).set({contactId:survivorContactId}).where(eq(contactBounceFacts.contactId,mergedContactId)),

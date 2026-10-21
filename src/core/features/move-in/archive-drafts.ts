@@ -13,7 +13,7 @@ const senderDefaults = (platform: Platform) => {
 };
 const row = (archiveId: string, record: ContentRecord, at: number) => ({
   id: ulid(at), archiveId, ordinal: record.ordinal, kind: record.kind, sourcePath: record.sourcePath, sourceRow: record.sourceRow,
-  title: record.title, subject: record.subject, sentAtSource: record.sentAt, html: record.html, text: record.text,
+  sourceCampaignId: record.sourceCampaignId, title: record.title, subject: record.subject, sentAtSource: record.sentAt, html: record.html, text: record.text,
   removedJson: JSON.stringify(record.removed), flaggedJson: JSON.stringify(record.flagged), mergeTagsJson: JSON.stringify(record.mergeTags),
   state: 'imported', createdAt: at, updatedAt: at,
 });

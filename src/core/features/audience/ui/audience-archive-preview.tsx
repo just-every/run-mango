@@ -83,6 +83,7 @@ export function AudienceArchivePreview({ preview, isCurrent }: { preview: Archiv
           </div>
         ) : null}
 
+        {summary.engagement?<div className="audience-import-mapped-review"><h3>Imported engagement</h3><p>{count(summary.engagement.imported)} imported, {count(summary.engagement.dropped)} dropped of {count(summary.engagement.rows)} rows. Opens are estimates; only clicks count as engagement.</p>{Object.entries(summary.engagement.reasons).map(([reason,total])=><p key={reason}>{reason}: {count(total)}</p>)}</div>:null}
         <section className="audience-import-mapped-review" aria-labelledby="archive-kept-title">
           <div>
             <p className="eyebrow">Never imported</p>

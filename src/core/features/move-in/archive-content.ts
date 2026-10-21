@@ -8,7 +8,7 @@ import { importHtml } from './html-import';
 // Emails CSV rows with their content files become imported history; template files
 // become draft starters. Both carry only what the source states, never authority.
 export type ContentRecord = {
-  ordinal: number; kind: 'history' | 'draft'; sourcePath: string; sourceRow: number | null;
+  sourceCampaignId?: string; ordinal: number; kind: 'history' | 'draft'; sourcePath: string; sourceRow: number | null;
   title: string; subject: string; sentAt: string; html: string; text: string;
   removed: string[]; flagged: string[]; mergeTags: string[]; contentPaths: string[];
 };
@@ -62,7 +62,8 @@ export function reviewContent(parts: Array<{ entry: ArchiveEntry; part: ArchiveP
       if (key) used.add(key);
       const imported = files.html ? importHtml(files.html.text!) : { html: '', removed: [], flagged: [], mergeTags: [] };
       const text = files.text?.text?.trim() ?? (imported.html ? htmlToText(imported.html) : '');
-      records.push({ ordinal: 0, kind: 'history', sourcePath: entry.path, sourceRow: line, title: title || subject || key || `Row ${line}`, subject, sentAt,
+      const campaignKey=column(['campaignid','uniqueid','id']);
+      records.push({ sourceCampaignId:campaignKey?row[campaignKey]?.trim():undefined, ordinal: 0, kind: 'history', sourcePath: entry.path, sourceRow: line, title: title || subject || key || `Row ${line}`, subject, sentAt,
         html: imported.html, text, removed: imported.removed, flagged: imported.flagged,
         mergeTags: [...new Set([...imported.mergeTags, ...foreignMergeTags(`${subject}\n${text}`)])],
         contentPaths: [files.html?.path, files.text?.path].filter((path): path is string => Boolean(path)) });
