@@ -87,13 +87,14 @@ for (const host of ['operator.example.test', 'localhost']) contract('OPER-001', 
   expect(await response.text()).not.toContain('Development outbox');
 });
 
-test('BASE-OPS-001 health distinguishes slow Queue acceptance from failed dependencies and bounds probe traffic', async () => {
+contract('BASE-OPS-001', 'health distinguishes slow Queue acceptance from failed dependencies and bounds probe traffic', async () => {
+  test.setTimeout(60_000); // Several sequential real deadlines live inside this one contract case.
   const delay = (ms:number) => new Promise(resolve => setTimeout(resolve,ms));
   const rejected = () => Promise.reject(new Error('private provider error must not escape'));
   const healthy = (queue:Partial<Queue<any>>, database:()=>Promise<unknown> = async()=>({success:true}), storage:()=>Promise<unknown> = async()=>null) =>
     productionBindings({DB:{prepare:()=>({bind(){return this;},run:database})} as unknown as D1Database,
       ASSETS_BUCKET:{head:storage} as unknown as R2Bucket,MANGO_JOBS:queue as Queue<any>});
-  const read = (env:AppBindings) => productionWorker.fetch(new Request('https://operator.example.test/health'),env,{} as ExecutionContext);
+  const read = (env:AppBindings) => productionWorker.fetch(new Request('https://operator.example.test/health'),env,{waitUntil: () => {}} as unknown as ExecutionContext);
   await healthLifetime(healthy, read);
   for (const ms of [850,1100,1400]) {
     let sends=0;

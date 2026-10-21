@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "e37640976a5e57b2e4a2afb9f9c35215ec2823d1c944f24d13f9c6a42d927c9a",
+      "sha256": "3df1b21ad47f092990f60e0281295883e943b21ef22153a1b2e8927a29c2e944",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "f8231de6843be1b4272409c4b8a0f0ed74cab89cd18dcc85b9a43625f67e3532",
+      "sha256": "c0e0b90f8055955c3687951a6226ebe8343cb69546e6f55cb8b04a02880687c0",
       "executable": false
     },
     "DEMO.md": {
@@ -3582,11 +3582,11 @@
       "executable": false
     },
     "src/core/features/health/routes.ts": {
-      "sha256": "5ab5885c6d72691bee30f811581def7057067bae59858c3c9081a1c1f848e151",
+      "sha256": "b4f279a71265c24a0bd55c5fd4b3a7ceaa6b96bc13721d52ea4821cacb0bfa4f",
       "executable": false
     },
     "src/core/features/health/service.ts": {
-      "sha256": "12dbcfd955913e3abdf41f152156fdc46af29de3d2c6f15e88b63054f5f96ed8",
+      "sha256": "cf91c7be984528f417bb318f338a607b295e0dc3319bc042c8878b39c95e1d1f",
       "executable": false
     },
     "src/core/features/insights/campaign-engagement-clickers.ts": {
@@ -7342,7 +7342,7 @@
       "executable": false
     },
     "tests/health-lifetime.ts": {
-      "sha256": "92e9bf5d1dd6d25b4616f58e44135118d008c6b655755bca3d7f1206720c4edb",
+      "sha256": "d52d90b957ef1a43ba7940f88903094211809d723492139ee9bc5a2f2d674a98",
       "executable": false
     },
     "tests/local-bootstrap.js": {
@@ -7610,7 +7610,7 @@
       "executable": false
     },
     "tests/production-entry.spec.ts": {
-      "sha256": "43c82be7c1f88ee52fd8b53b5fd2235bbf6781237e3974ae08ca0dd2e4fbe8a3",
+      "sha256": "8e3b463219e24a85f0a91bbd338017a03bfdd9c5c6cb8aacc82bdf44a15890e8",
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {

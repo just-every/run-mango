@@ -13,60 +13,80 @@ export type HealthResult = { status: 'ok'; ok: true; queue: QueueDetail }
 const probeDeadlineMs = 1500;
 const slowMs = 800;
 const queueIntervalMs = 60_000;
+const maxOutstandingQueueSends = 2;
+type KeepAlive = (task: Promise<unknown>) => void;
+type QueueProbe = { started: number; result: Promise<ProbeResult> };
 // Binding identity survives per-request services. Cache is per Worker isolate,
 // never shared across installations or deployment versions.
-type QueueProbe = { started: number; pending: boolean; result: Promise<ProbeResult> };
-const queueProbes = new WeakMap<object, QueueProbe>();
+type QueueState = { outstanding: number; latest?: QueueProbe };
+const queueProbes = new WeakMap<object, QueueState>();
 
-async function probe(dependency: Dependency, operation: () => Promise<unknown>): Promise<ProbeResult> {
+function resultSince(started: number, failure?: ProbeFailure): ProbeResult {
+  const ms = Date.now() - started;
+  return { ms, slow: ms >= slowMs, ...(failure ? { failure } : {}) };
+}
+
+async function observe(dependency: Dependency, result: Promise<ProbeResult>): Promise<ProbeResult> {
   const started = Date.now();
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    const failure = await Promise.race([
-      Promise.resolve().then(operation).then(() => undefined, () => ({ dependency, code: 'unreachable' as const })),
-      new Promise<ProbeFailure>((resolve) => {
-        timer = setTimeout(() => resolve({ dependency, code: 'timeout' }), probeDeadlineMs);
+    return await Promise.race([
+      result,
+      new Promise<ProbeResult>((resolve) => {
+        timer = setTimeout(() => resolve(resultSince(started, { dependency, code: 'timeout' })), probeDeadlineMs);
       }),
     ]);
-    const ms = Date.now() - started;
-    return { ms, slow: ms >= slowMs, ...(failure ? { failure } : {}) };
   } finally {
     clearTimeout(timer);
   }
 }
 
-function startQueueProbe(operation: () => Promise<unknown>): QueueProbe {
-  const entry: QueueProbe = {
-    started: Date.now(), pending: true,
-    result: probe('queue', async () => {
-      try { await operation(); }
-      finally { entry.pending = false; }
-    }),
-  };
+function probe(dependency: Dependency, operation: () => Promise<unknown>): Promise<ProbeResult> {
+  const started = Date.now();
+  return observe(dependency, Promise.resolve().then(operation).then(
+    () => resultSince(started),
+    () => resultSince(started, { dependency, code: 'unreachable' }),
+  ));
+}
+
+function startQueueProbe(state: QueueState, operation: () => Promise<unknown>, keepAlive?: KeepAlive): QueueProbe {
+  state.outstanding++;
+  const started = Date.now();
+  const send = Promise.resolve().then(operation).then(
+    () => resultSince(started),
+    () => resultSince(started, { dependency: 'queue', code: 'unreachable' }),
+  ).finally(() => { state.outstanding--; });
+  const entry = { started, result: observe('queue', send) };
+  // Both the observation and slot release must survive the originating request.
+  // Keeping only the bounded observation alive loses late send settlement on
+  // workerd. The send has no retry timer and cannot overwrite a cached result.
+  keepAlive?.(send);
+  keepAlive?.(entry.result);
   return entry;
 }
 
 export interface HealthService {
-  check(): Promise<HealthResult>;
+  check(keepAlive?: KeepAlive): Promise<HealthResult>;
 }
 
 export function createHealthService(repository: HealthRepository, transports: Pick<Platform, 'blobs' | 'jobs'>,
   queueIdentity: object = transports.jobs): HealthService {
   return {
-    async check() {
-      const previous = queueProbes.get(queueIdentity), now = Date.now();
-      const cached = Boolean(previous && (previous.pending || now - previous.started < queueIntervalMs));
-      // The bounded observation and the actual send have separate lifetimes.
-      // An overdue send retains ownership even after cache expiry; callers reuse
-      // its timeout immediately. Late settlement only releases that entry, never
-      // rewrites its result or extends its original cache interval. A never-settling
-      // send remains retained once per binding; the transport is not cancelled.
-      const queue = cached ? previous! : startQueueProbe(() => transports.jobs.enqueue(healthProbeCommand()));
-      if (!cached) queueProbes.set(queueIdentity, queue);
+    async check(keepAlive) {
+      let state = queueProbes.get(queueIdentity);
+      if (!state) { state = { outstanding: 0 }; queueProbes.set(queueIdentity, state); }
+      const previous = state.latest;
+      const cached = Boolean(previous && (Date.now() - previous.started < queueIntervalMs
+        || state.outstanding >= maxOutstandingQueueSends));
+      // Expiry starts one fresh send even if an older send is unresolved. At the
+      // cap, retain the failure without moving its expiry; the next request can
+      // retry as soon as any outstanding send releases a slot.
+      const queue = cached ? previous! : (state.latest = startQueueProbe(state, () => transports.jobs.enqueue(healthProbeCommand()), keepAlive));
       const results = await Promise.all([
         probe('database', () => repository.ping()),
         probe('storage', () => transports.blobs.head('__mango_health__/reachability')),
-        queue.result,
+        // Every waiter owns a deadline in its own request context on workerd.
+        observe('queue', queue.result),
       ]);
       const failures = results.flatMap(result => result.failure ? [result.failure] : []);
       const detail = { ms: results[2].ms, slow: results[2].slow, cached };

@@ -8,7 +8,7 @@ export function createHealthRoutes(service: HealthService, environment: AppBindi
   const routes = new Hono();
 
   routes.get('/health', async (context) => {
-    const health = await service.check();
+    const health = await service.check(task => context.executionCtx.waitUntil(task));
     context.header('Cache-Control', 'no-store');
     return context.json({ ...deploymentHealth(environment), ...health }, health.ok ? 200 : 503);
   });
