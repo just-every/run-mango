@@ -970,7 +970,7 @@
       "executable": false
     },
     ".github/workflows/verify-nightly.yml": {
-      "sha256": "738a6cc8e8cff8fdbbe6b2141cd2aaa2b1d0dfdb7b6c712fc4674338ef6be078",
+      "sha256": "6885920a29ef2e83fcc2d73f829ac6ad77f99710f026abf837c4ddc1becd67e4",
       "executable": false
     },
     ".github/workflows/verify.yml": {
@@ -1010,7 +1010,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "caa0287835d788a46301be4d7ea5fe18012c1401bbfba93b5099a3318cc90167",
+      "sha256": "1f7bd6d7dd8df791409ab791eb33b92e6f72b88ff40bec82940243b475c44962",
       "executable": false
     },
     "CLAUDE.md": {
@@ -1038,7 +1038,7 @@
       "executable": false
     },
     "deploy.json": {
-      "sha256": "5fb3b69b085bfa697dcf726431513ebcb372b718920406adea4278856a363100",
+      "sha256": "0df58b712b8ccdc3a2b662580c5d4371a1837a96d8e79f5bbb1751cf011cd9db",
       "executable": false
     },
     "deploy/wrangler.local.template.toml": {
@@ -1142,7 +1142,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "14168224fd412817bf133ffacd900a57add1eb6e9ae4369507632f5d08c45b87",
+      "sha256": "8424d55bf487f16e7d703464812f0314d4b4dbd0a3814c1e9b4b1c6e7ab057d5",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1530,7 +1530,7 @@
       "executable": false
     },
     "package.json": {
-      "sha256": "9ef17d6c48380507968d7a86a57f9dde0aa9ce2a4fda3803e21a38b18b41bd80",
+      "sha256": "c56144915e96c5c785c0c421870bc689737a7770e2d636381b6a4fcc4103fc35",
       "executable": false
     },
     "playwright.config.js": {
@@ -1606,11 +1606,11 @@
       "executable": false
     },
     "RELEASE-STATUS.md": {
-      "sha256": "11ec53717344516e14dfde38df79940c8d6e96c6ff0b2863407b6454d3c6e441",
+      "sha256": "a9e60254df55b2c4bf27644130990e909bc4092ee217e2b6ea28c730f2c1bec0",
       "executable": false
     },
     "RELEASE.json": {
-      "sha256": "db177ebaf67f7889ff127c7e0a5dbefae8a496f6963c03516ee3edd109581797",
+      "sha256": "fa68dcee43090bc4b2205542c4145674cca7a33a39d333abb7aacccc1f5aa36d",
       "executable": false
     },
     "RENDERING.md": {
@@ -1970,7 +1970,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "ad9d846be85ffc0f3efd27706d5332a4f436aaa5f0c515b8da3ea44b57bb2a12",
+      "sha256": "c2ce6eb54d4df95ab98250fc486a7fea5da453f78d09b0675565e54622f01a92",
       "executable": false
     },
     "src/base/actor.ts": {

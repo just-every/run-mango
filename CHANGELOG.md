@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.4.0 (2026-10-21)
+
+**Back up first.** Before upgrading, back up your source, D1 database, R2 bucket and private settings (`.dev.vars`, or `.rer/hosted.env` and the deploy receipt for a hosted copy). Stop `rer dev`, run `git pull --ff-only`, `rer install`, then `rer setup` locally or `rer deploy --environment <name>` hosted; both apply the four new migrations in filename order. Run `rer build` before taking a fresh export.
+
+### What you get
+
+- **An activity log.** Settings → Activity shows the Owner and Admins every recorded operator and integration action, newest first: drafts saved, approval requests and approvals, pause, resume and cancel, imports and exports, consent entries, opt-outs, erasures (anonymised afterwards), signup-allowance and kiosk-form changes, role changes and an hourly count of refused public signups by form and reason. Filter by operator, agent, action, object and date, page back, and download the filtered view as CSV (OPER-007, partial: a completed restore has no entry yet).
+- **Removing an operator keeps their name on their work.** Their sessions end, and campaigns, approval requests, approvals, revisions and audit records still show who did what (OPER-003).
+- **Review names every blocked link and image.** A malformed link, an `http:`, `javascript:`, `data:` or `file:` link, a redirect that lands on an unlisted host and an image on an unlisted host are each named with what blocks it (MSG-006). A Manager can allow an unlisted HTTPS host from review; Authors cannot, and each allowed host is recorded in the activity log (MSG-015).
+- **SMS review shows what the reader gets:** your program name, `Reply STOP to unsubscribe`, the frequency disclosure, the help contact and the segment count (MSG-005).
+- **Commerce and dormancy exclusions** are listed with their counts on review (AUD-003).
+- **Connect Stripe (optional).** Settings keeps an encrypted Stripe connection that only the Owner manages, and records each signed payment, Checkout and subscription event once (INT-004, partial: a real Stripe subscription lifecycle is not proven yet).
+- **Domain setup for SendGrid.** Mango creates the domain authentication if it is missing, shows the DNS records, checks them in public DNS and turns on branded links only once their HTTPS works (DELIV-002, partial).
+- **Backups from earlier Mango builds restore.** `rer import` now restores an archive made by an earlier Mango, including the build Run Edit Run Managed lists, by replaying this copy's own migrations to place the archive in its history. A database that Run Edit Run Platform migrated restores in place, without Wrangler, once every migration file is applied there. Pinned rer is 0.2.76.
+- **Security:** TanStack Start 1.168.60 (GHSA-qx66-fv34-fjm8).
+- CONTRACT.md: 88 of 241 clauses are done, 67 partial and 86 missing; the 87 published clauses are 75 done and 12 partial.
+
+### Not in this release
+
+- Everything marked missing or partial in CONTRACT.md's status table, among them visual flows, A/B tests, popups and landing pages, SMS sending for the US, single sign-on, and moving in from Klaviyo, ActiveCampaign or Kit.
+- Hosted backup and restore are not built into Mango. Back up a hosted copy with Cloudflare's own `wrangler d1 export --remote` (docs/backup-and-export.md).
+- Bounce, complaint and Delivered reports need a SendGrid signed Event Webhook. Without one, a hosted send shows **Accepted**.
+- A real Stripe subscription lifecycle and branded tracking links over HTTPS are not proven yet.
+
+### Known issues
+
+- In the plain-text part, a letter's first line runs into the next paragraph when the rich-text editor leaves it outside a paragraph (for example "Hello Rae Reader,The trees…"). HTML is unaffected.
+- A hosted Lobby shows **Sign in** as soon as deploy claims the owner, before sender setup is saved; HOME-001 says **Finish setup** until then. Both lead to `/setup` after sign-in.
+- rer 0.2.76's restore planner stops every restore of a backup made before migration 0073 (list growth) with a "no such table" error. Mango adapts that one Base rule in `src/vendor/base/portability/backfills.mjs` until Base ships a fix. Such a backup restores every archived row exactly, but if it holds consent evidence, migration 0074's retained-evidence growth entries are not rebuilt for it.
+- Migration numbers 0058 and 0059 appear twice (`0058_owner_signin`, `0058_base_provider_control`, `0059_link_host_settings`, `0059_base_provider_pins`). Migrations apply by full file name, so an upgrade applies the new ones once each; never rename them.
+
+### Migrations
+
+0077_signup_refusal_hours, 0078_stripe_connection, 0079_tracking_domain, 0080_portability_import_leases. All are additive; earlier migration files are unchanged.
+
 ## 0.3.0 (2026-10-19)
 
 **Back up first.** Before upgrading, back up your source, D1 database, R2 bucket and private settings (`.dev.vars`, or `.rer/hosted.env` and the deploy receipt for a hosted copy). Stop `rer dev`, run `git pull --ff-only`, `rer install`, then `rer setup` locally or `rer deploy --environment <name> --owner-name "Your name"` hosted; both apply the new migrations in filename order. Run `rer build` before taking a fresh export. A copy of 0.2.0 with contacts, an opt-out, a pending signup, a completed import and a draft upgraded with every earlier row unchanged.
@@ -42,7 +77,7 @@
 
 ### Migrations
 
-0058_base_provider_control, 0059_base_provider_pins, 0060_base_owner_signin, 0061_base_dependency_setup, 0062_base_dependencies, 0063_base_dependency_approval, 0064_base_idp_claim, 0065_base_import_progress, 0066_campaign_reuse, 0067_campaign_link_identity, 0068_campaign_followups, 0069_scoped_integrations, 0070_newsletter_archive, 0071_mailbox_reporting_indexes, 0072_test_send_allowance, 0073_list_growth, 0074_list_growth_retained_history, 0075_kiosk_forms, 0076_operator_product_roles, 0077_signup_refusal_hours. All are additive; earlier migration files are unchanged.
+0058_base_provider_control, 0059_base_provider_pins, 0060_base_owner_signin, 0061_base_dependency_setup, 0062_base_dependencies, 0063_base_dependency_approval, 0064_base_idp_claim, 0065_base_import_progress, 0066_campaign_reuse, 0067_campaign_link_identity, 0068_campaign_followups, 0069_scoped_integrations, 0070_newsletter_archive, 0071_mailbox_reporting_indexes, 0072_test_send_allowance, 0073_list_growth, 0074_list_growth_retained_history, 0075_kiosk_forms, 0076_operator_product_roles. All are additive; earlier migration files are unchanged.
 
 ## 0.2.0 (2026-10-16)
 
