@@ -3546,7 +3546,7 @@
       "executable": false
     },
     "src/core/features/editor/client.tsx": {
-      "sha256": "9a5d3b00dc28f0ec992ec986a747499927fb10b0d2f35ac7c785b982cc7e6175",
+      "sha256": "9f7cc506f6eb76b001ffff9fea062fa4027aee4f87f44ae47d0148676ed25cd9",
       "executable": false
     },
     "src/core/features/editor/config.ts": {

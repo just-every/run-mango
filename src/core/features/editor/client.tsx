@@ -54,7 +54,8 @@ export function MangoEditor() {
     };
     const submit = (event: Event) => {
       const form = event.target;
-      if (form instanceof HTMLFormElement && new URL(form.action).pathname === '/auth/signout') revoke();
+      // A control named "action" shadows form.action, so read the attribute itself.
+      if (form instanceof HTMLFormElement && new URL(form.getAttribute('action') ?? '', document.baseURI).pathname === '/auth/signout') revoke();
     };
     document.addEventListener('submit', submit, true);
     window.addEventListener('mango-session-lost', revoke);
