@@ -50,8 +50,14 @@ export function createMoveInRoutes(platform: Platform) {
     let audience: { state: string; checkpoint: number; total: number } | null = null;
     if (archive.audience_stream) {
       const authority = await audienceImportContext(platform, context.get('operator').id, context.req.raw);
-      const job = await readD1ImportStream(archive.audience_stream, await sharedAudienceImport(archive.audience_stream, authority)).catch(() => null);
-      audience = job ? { state: job.state, checkpoint: job.checkpoint, total: job.total } : null;
+      try {
+        const job = await readD1ImportStream(archive.audience_stream, await sharedAudienceImport(archive.audience_stream, authority));
+        audience = job ? { state: job.state, checkpoint: job.checkpoint, total: job.total } : null;
+      } catch (error) {
+        // Contact erasure withdraws the stream while retaining the reconciliation report.
+        if (error instanceof Error && error.message === 'IMPORT_JOB_NOT_FOUND') return null;
+        throw error;
+      }
     }
     return { id: archive.id, name: archive.name, sha256: archive.sha256, size: archive.size, state: archive.state, createdAt: archive.created_at, appliedAt: archive.applied_at, undoneAt: archive.undone_at,
       summary: service.summary(archive), undo: archive.undo_json ? JSON.parse(archive.undo_json) : null, progress: { contentDone: archive.content_done, contentTotal: archive.content_total, audience } };
@@ -73,11 +79,13 @@ export function createMoveInRoutes(platform: Platform) {
       return context.json({ archive: await view(result.archive, context), repeated: result.repeated });
     } catch (error) { return refused(context, error); }
   });
-  routes.get('/audience/archives', async context => context.json({ archives: await Promise.all((await service.list()).map(archive => view(archive, context))) }));
+  routes.get('/audience/archives', async context => context.json({ archives: (await Promise.all((await service.list()).map(archive => view(archive, context)))).filter(archive => archive !== null) }));
   routes.get('/audience/archives/:id', async context => {
     const archive = await read(context);
     if (!archive) return context.json({ error: 'not_found' }, 404);
-    return context.json({ archive: await view(archive, context), entries: await service.entries(archive.id), content: await service.content(archive.id) });
+    const visible = await view(archive, context);
+    if (!visible) return context.json({ error: 'not_found' }, 404);
+    return context.json({ archive: visible, entries: await service.entries(archive.id), content: await service.content(archive.id) });
   });
   for (const action of ['continue', 'undo'] as const) routes.post(`/audience/archives/:id/${action}`, async context => {
     try {
