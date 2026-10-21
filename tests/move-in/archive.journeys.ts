@@ -252,7 +252,8 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
       return results;
     };
     const authorityBefore = await authority();
-    const oldExport = await archiveRecords(site, cookie);
+    const portableSite = { call: (path: string, init: Parameters<typeof site.call>[1]) => site.call(path, { ...init, headers: { Origin: site.runtime.url } }) };
+    const oldExport = await archiveRecords(portableSite, cookie);
     expect(JSON.stringify(oldExport)).toContain('ada@example.test');
     const [{id: oldDownload}] = await site.rows("SELECT id FROM rer_portability_jobs WHERE kind='export'");
 
@@ -297,7 +298,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     expect(await authority()).toEqual(authorityBefore);
     expect((await site.call(`/api/contacts/${ada}`, { cookie })).status).toBe(404);
     expect((await site.call(`/api/portability/exports/${oldDownload}/download`, { cookie })).status).toBe(404);
-    const fresh = await archiveRecords(site, cookie);
+    const fresh = await archiveRecords(portableSite, cookie);
     expect(JSON.stringify(fresh)).not.toContain('ada@example.test');
     const freshFacts = fresh.filter((row: any) => row.kind === 'part').flatMap((part: any) => part.items)
       .filter((row: any) => row.kind === 'row' && row.table === 'imported_engagement_facts');
