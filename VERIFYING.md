@@ -51,8 +51,21 @@ clean frozen-install clone. No separate release-capacity script or capacity
 workload is part of its receipt. Existing import limits are unchanged; prior
 capacity measurements retain their named revision and scope and are not fresh
 release evidence. Tag/nightly installer checks remain separate from capacity
-claims. Keep the suite within the 200-test budget and prove changed public
-flows; do not add copy, version, hash or file-list pin tests.
+claims. The default budget is 200 cases. Mango's narrow complex-seed exception in
+`test-budget.json` caps the aggregate at 213: the inherited 211 plus the health
+probe and erasure-aware export regressions. The six-role authorization matrix,
+consent/suppression, migration custody, erasure, delivery evidence and native
+restore flows retain their independent fixtures and assertions. Restructuring
+thirteen cases across these flows would exceed the bounded health correction;
+this exception grants no speculative headroom and changes no test discovery.
+
+`node scripts/verification/test-budget.mjs` collects every configured Playwright
+category (including the slow installer tier) and all top-level Node operation
+registrations, expanding their matrices without executing test bodies. It checks
+the aggregate against the written cap before the static CI stage. A collection
+error fails the check. Actual test execution keeps the existing runners, fixtures
+and cleanup. Prove changed public flows; do not add copy, version, hash or file-list
+pin tests.
 
 Native startup waits for the CLI's complete `RER_READY` line after health checks
 and stops owned processes on exit, error or cancellation. Authentication uses

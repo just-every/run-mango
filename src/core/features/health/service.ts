@@ -15,7 +15,8 @@ const slowMs = 800;
 const queueIntervalMs = 60_000;
 // Binding identity survives per-request services. Cache is per Worker isolate,
 // never shared across installations or deployment versions.
-const queueProbes = new WeakMap<object, { started: number; result: Promise<ProbeResult> }>();
+type QueueProbe = { started: number; pending: boolean; result: Promise<ProbeResult> };
+const queueProbes = new WeakMap<object, QueueProbe>();
 
 async function probe(dependency: Dependency, operation: () => Promise<unknown>): Promise<ProbeResult> {
   const started = Date.now();
@@ -34,6 +35,17 @@ async function probe(dependency: Dependency, operation: () => Promise<unknown>):
   }
 }
 
+function startQueueProbe(operation: () => Promise<unknown>): QueueProbe {
+  const entry: QueueProbe = {
+    started: Date.now(), pending: true,
+    result: probe('queue', async () => {
+      try { await operation(); }
+      finally { entry.pending = false; }
+    }),
+  };
+  return entry;
+}
+
 export interface HealthService {
   check(): Promise<HealthResult>;
 }
@@ -43,10 +55,13 @@ export function createHealthService(repository: HealthRepository, transports: Pi
   return {
     async check() {
       const previous = queueProbes.get(queueIdentity), now = Date.now();
-      const cached = Boolean(previous && now - previous.started < queueIntervalMs);
-      // Coalesce concurrent checks. Cache failures too, limiting enqueue attempts
-      // even during an outage. Acknowledgment proves acceptance, not consumption.
-      const queue = cached ? previous! : { started: now, result: probe('queue', () => transports.jobs.enqueue(healthProbeCommand())) };
+      const cached = Boolean(previous && (previous.pending || now - previous.started < queueIntervalMs));
+      // The bounded observation and the actual send have separate lifetimes.
+      // An overdue send retains ownership even after cache expiry; callers reuse
+      // its timeout immediately. Late settlement only releases that entry, never
+      // rewrites its result or extends its original cache interval. A never-settling
+      // send remains retained once per binding; the transport is not cancelled.
+      const queue = cached ? previous! : startQueueProbe(() => transports.jobs.enqueue(healthProbeCommand()));
       if (!cached) queueProbes.set(queueIdentity, queue);
       const results = await Promise.all([
         probe('database', () => repository.ping()),

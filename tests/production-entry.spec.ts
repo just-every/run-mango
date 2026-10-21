@@ -1,4 +1,5 @@
 import { contract } from './contract';
+import { healthLifetime } from './health-lifetime';
 import { randomBytes } from 'node:crypto';
 
 import { expect, test } from '@playwright/test';
@@ -93,6 +94,7 @@ test('BASE-OPS-001 health distinguishes slow Queue acceptance from failed depend
     productionBindings({DB:{prepare:()=>({bind(){return this;},run:database})} as unknown as D1Database,
       ASSETS_BUCKET:{head:storage} as unknown as R2Bucket,MANGO_JOBS:queue as Queue<any>});
   const read = (env:AppBindings) => productionWorker.fetch(new Request('https://operator.example.test/health'),env,{} as ExecutionContext);
+  await healthLifetime(healthy, read);
   for (const ms of [850,1100,1400]) {
     let sends=0;
     const env=healthy({send:async()=>{sends++;await delay(ms);}});

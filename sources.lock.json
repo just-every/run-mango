@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "cdacc27137d4bb2113b86fac45aa7788e4726a9e4e839074a4c51ca5d726d559",
+      "sha256": "24d7c6fefbe3caaa2a1ff7af38e32734c62a502cd030ceb1f56dfcd49e316460",
       "executable": false
     },
     "DEMO.md": {
@@ -1929,6 +1929,10 @@
       "sha256": "5057e41cca1a76930a19b56844e6631d0b1741beabe9e77b866599a920571997",
       "executable": false
     },
+    "scripts/verification/collect-operations.mjs": {
+      "sha256": "00338f7b94d8d78835b586b787ed93ba53318f5d96db3a1210766731eec88fe7",
+      "executable": false
+    },
     "scripts/verification/local-start.config.mjs": {
       "sha256": "a240085a32cbaae07653127c827c6b7eac266790a97873400f04613e1e6eae48",
       "executable": false
@@ -1938,7 +1942,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "0de9f3f94f49a9746d29818718255a80159f441f88b8e259dc3840536884695a",
+      "sha256": "9635b68786ec5a0da286982ba5ded1a9359a8e82fa427f85c821a6d52c40adb0",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -1963,6 +1967,10 @@
     },
     "scripts/verification/terminal-output.mjs": {
       "sha256": "2c4efa674587af010e1c5674993a0ed68de4404aaf0866ca914771816a6e8130",
+      "executable": false
+    },
+    "scripts/verification/test-budget.mjs": {
+      "sha256": "7231403b7b63b98800b26f078b2367f9cb8f2339a78a6c3712f2a6a194d3a884",
       "executable": false
     },
     "scripts/verification/time-command.mjs": {
@@ -3578,7 +3586,7 @@
       "executable": false
     },
     "src/core/features/health/service.ts": {
-      "sha256": "14eaab98d766ba7e21bb40c3d33fd5c67e8f65a58c1108e024d1fbdc3ccb69c3",
+      "sha256": "12dbcfd955913e3abdf41f152156fdc46af29de3d2c6f15e88b63054f5f96ed8",
       "executable": false
     },
     "src/core/features/insights/campaign-engagement-clickers.ts": {
@@ -6733,6 +6741,10 @@
       "sha256": "c8a3ecf7348f7771ba0d6d59f3f07d33f2bee37e90b0e25d5cf8eea9d327ad64",
       "executable": false
     },
+    "test-budget.json": {
+      "sha256": "0824819339830f93dc823066708e0bffbf39c4bec252e0691e054e8acf6b741c",
+      "executable": false
+    },
     "tests/approval-binding/config.js": {
       "sha256": "abf0405c273a73a7e5204e7d9660bd185dee096a549ae9b2b6a4112c9385ea8a",
       "executable": false
@@ -7329,6 +7341,10 @@
       "sha256": "14c669898cb6c0584ead1db400e92805c44c58397fa1a88669b4c6417df99326",
       "executable": false
     },
+    "tests/health-lifetime.ts": {
+      "sha256": "92e9bf5d1dd6d25b4616f58e44135118d008c6b655755bca3d7f1206720c4edb",
+      "executable": false
+    },
     "tests/local-bootstrap.js": {
       "sha256": "e58810762d4af4ff479dca1fc25ed08174f628248d3ecec947b9e42d3b889a8f",
       "executable": false
@@ -7594,7 +7610,7 @@
       "executable": false
     },
     "tests/production-entry.spec.ts": {
-      "sha256": "ce0d59f8e5ca595662e92b3f5aba8c7081193a0ddaf651f4159345840e6087cf",
+      "sha256": "43c82be7c1f88ee52fd8b53b5fd2235bbf6781237e3974ae08ca0dd2e4fbe8a3",
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
@@ -7802,7 +7818,7 @@
       "executable": false
     },
     "VERIFYING.md": {
-      "sha256": "56f26309f981a000ef989b9fc098541b7f05b6a53151f69c8e52a46a0c8a4bc5",
+      "sha256": "91ea3943a7e1200dcd6a56347fc75704d52086220a3b4b29af4801f57730cbec",
       "executable": false
     },
     "vite.config.ts": {
