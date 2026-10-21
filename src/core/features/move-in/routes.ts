@@ -16,10 +16,16 @@ type RouteContext = Context<{ Variables: AuthVariables }>;
 const megabytes = (bytes: number) => `${Math.round(bytes / 104857.6) / 10} MB`;
 const tooLarge = (size?: number) => ({ error: 'archive_too_large', detail: `${size ? `This archive is ${megabytes(size)}. ` : ''}Mango reads an account export of up to ${megabytes(archiveLimits.archiveBytes)} in one go. Unzip it and import the audience CSV files individually under Import contacts, or export again with a shorter time frame and without the gallery.` });
 
-/** The archive and its fields from a multipart upload, refusing an oversized body before reading it. */
+/** The archive and its fields from a multipart upload, refusing an oversized body by its declared length without keeping it. */
 async function upload(context: RouteContext) {
   const declared = Number(context.req.header('content-length') ?? 0);
-  if (declared > archiveLimits.archiveBytes + 256 * 1024) return { response: context.json(tooLarge(declared), 413) };
+  if (declared > archiveLimits.archiveBytes + 256 * 1024) {
+    // Answer once the upload has arrived: a server that closes its connection
+    // under an unread body resets the client, which can lose this plain message
+    // before reading it. The body streams to nowhere; nothing is held.
+    await context.req.raw.body?.pipeTo(new WritableStream());
+    return { response: context.json(tooLarge(declared), 413) };
+  }
   const form = await context.req.raw.formData().catch(() => null);
   const file = form?.get('archive');
   if (!form || !(file instanceof File)) return { response: context.json({ error: 'invalid_archive', detail: 'Choose a .zip account export.' }, 400) };

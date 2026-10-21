@@ -1014,7 +1014,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "e4c77aa5de65df1c7988aac18e1a63abd6286e5e2a6fd0fe94761d09f1e748a1",
+      "sha256": "d873dfbfefbdda1f5f8c62f65660676c2e7dd2172050e360dee96fdc779326ad",
       "executable": false
     },
     "CLAUDE.md": {
@@ -4154,7 +4154,7 @@
       "executable": false
     },
     "src/core/features/move-in/routes.ts": {
-      "sha256": "b860e69e355d9110d6e24a2bb88834dd3b5e7ccf588966a91a6f857656f1bad7",
+      "sha256": "bd7ca66d803b6469004d7c7ac313f793768f8a58e669ccb16ddcfe8ced6676dc",
       "executable": false
     },
     "src/core/features/move-in/schema.ts": {

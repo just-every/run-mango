@@ -14,6 +14,7 @@
 - **Connect Stripe (optional).** Settings keeps an encrypted Stripe connection that only the Owner manages, and records each signed payment, Checkout and subscription event once (INT-004, partial: a real Stripe subscription lifecycle is not proven yet).
 - **Domain setup for SendGrid.** Mango creates the domain authentication if it is missing, shows the DNS records, checks them in public DNS and turns on branded links only once their HTTPS works (DELIV-002, partial).
 - **Backups from earlier Mango builds restore.** `rer import` now restores an archive made by an earlier Mango, including the build Run Edit Run Managed lists, by replaying this copy's own migrations to place the archive in its history. A database that Run Edit Run Platform migrated restores in place, without Wrangler, once every migration file is applied there. Pinned rer is 0.2.76.
+- **An oversized account export always gets the plain size message.** Mango reads such an upload to the end, keeping none of it, before answering. Before, it answered mid-upload, and the reset connection could show an error page instead (CONT-010).
 - **Security:** TanStack Start 1.168.60 (GHSA-qx66-fv34-fjm8).
 - CONTRACT.md: 88 of 241 clauses are done, 67 partial and 86 missing; the 87 published clauses are 75 done and 12 partial.
 
