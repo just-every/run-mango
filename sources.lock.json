@@ -1062,7 +1062,7 @@
       "executable": false
     },
     "docs/backup-and-export.md": {
-      "sha256": "2c4be9bc087db13642becfb7f4719ab7caea789288645e79870bd1ed87ff437c",
+      "sha256": "232d78d6ee28187a8df886d2977b713ed4961bc8d7de0cb7c8466befa47195a6",
       "executable": false
     },
     "docs/CLAIMS.md": {
@@ -2778,7 +2778,7 @@
       "executable": false
     },
     "src/core/features/auth/activity-query.ts": {
-      "sha256": "fe18350b7aa435e19e0a5d1ffa76b080872a7f913eaca834a9a647d75cc6e657",
+      "sha256": "43f72fc276c5587d4d0a20f698a0d6e6e806118b45679a09ceeae0ecaed47881",
       "executable": false
     },
     "src/core/features/auth/activity-record.ts": {
@@ -2966,7 +2966,7 @@
       "executable": false
     },
     "src/core/features/campaigns/composition-repository.ts": {
-      "sha256": "761befdfe8b3b4344b6a295d23ce1ad208116930b49550489096cb6e41582e19",
+      "sha256": "443eb622442570bf4fac0c9fae84aa779aaee7ed30a53c305d4bcc80e72c456d",
       "executable": false
     },
     "src/core/features/campaigns/contact-links.ts": {

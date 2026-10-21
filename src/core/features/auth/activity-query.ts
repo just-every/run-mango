@@ -31,6 +31,8 @@ export type ActivityEntry = {
   objectType: string; objectId: string; detail: unknown; occurredAt: number;
 };
 
+// Resolve the current saved name from its erasure-aware revision, like the actor
+// name above. Copying it into immutable audit custody could retain erased names.
 export function activitySelect(filters: ActivityFilters, before?: string) {
   const where: string[] = [], bindings: Array<string | number> = [];
   if (filters.operator) { where.push("e.actor_type IN ('operator','integration') AND e.actor_id=?"); bindings.push(filters.operator); }
@@ -44,8 +46,10 @@ export function activitySelect(filters: ActivityFilters, before?: string) {
     where.push('(e.occurred_at<? OR (e.occurred_at=? AND e.id<?))'); bindings.push(Number(at), Number(at), id.join(':'));
   }
   return {bindings, sql: `SELECT e.id,e.actor_id AS operatorId,p.display_name AS operatorName,e.actor_type AS actorType,e.action,
-    e.entity_type AS objectType,e.entity_id AS objectId,e.detail_json AS detailJson,e.occurred_at AS occurredAt
+    e.entity_type AS objectType,e.entity_id AS objectId,
+    CASE WHEN v.id IS NOT NULL THEN json_set(e.detail_json,'$.name',v.name) ELSE e.detail_json END AS detailJson,e.occurred_at AS occurredAt
     FROM (${entries}) e LEFT JOIN operators p ON p.id=e.actor_id AND e.actor_type='operator'
+    LEFT JOIN campaign_revisions v ON e.action='draft.saved' AND e.entity_type='campaign-revision' AND v.id=e.entity_id
     ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY e.occurred_at DESC,e.id DESC`};
 }
 
