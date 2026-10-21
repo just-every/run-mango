@@ -17,19 +17,36 @@ const empty = (): EngagementSummary => ({rows:0,imported:0,dropped:0,reasons:{}}
  */
 function engagementTimestamp(value: string | undefined) {
   const text = value?.trim() ?? '';
-  const yearFirst = /^([+-]?\d{4,})[-/](\d+)[-/](\d+)/.exec(text);
-  const monthFirst = /^(\d+)[-/](\d+)[-/](\d+)/.exec(text);
+  const numeric = /^([+-]?\d+)[./-](\d+)[./-](\d+)/.exec(text);
   const months = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
-  const namedMonth = /\b([a-z]{3})[a-z]*[\s-]+(\d{1,2})(?:,\s*|[\s-]+)(\d{2,4})\b/i.exec(text);
-  const namedDay = /\b(\d{1,2})[\s-]+([a-z]{3})[a-z]*[\s-]+(\d{2,4})\b/i.exec(text);
-  const calendar = yearFirst ? yearFirst.slice(1).map(Number)
-    : monthFirst ? [Number(monthFirst[3]), Number(monthFirst[1]), Number(monthFirst[2])]
-    : namedMonth && months.includes(namedMonth[1].toLowerCase()) ? [Number(namedMonth[3]), months.indexOf(namedMonth[1].toLowerCase()) + 1, Number(namedMonth[2])]
-    : namedDay && months.includes(namedDay[2].toLowerCase()) ? [Number(namedDay[3]), months.indexOf(namedDay[2].toLowerCase()) + 1, Number(namedDay[1])] : null;
+  const monthName = '(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*';
+  // Named-month dates can put the year before or after the day. Ignore clock
+  // fields so a following hour cannot be mistaken for a year.
+  const calendarText = text.replace(/\b\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?/g, '');
+  const monthFirst = new RegExp(`\\b${monthName}[\\s,-]+(\\d+)[\\s,-]+(\\d+)\\b`, 'i').exec(calendarText);
+  const monthMiddle = new RegExp(`\\b(\\d+)[\\s,-]+${monthName}[\\s,-]+(\\d+)\\b`, 'i').exec(calendarText);
+  const monthLast = new RegExp(`\\b(\\d+)[\\s,-]+(\\d+)[\\s,-]+${monthName}\\b`, 'i').exec(calendarText);
+  const isDay = (number: number) => number >= 1 && number <= 31;
+  let calendar: number[] | null = null, explicitYear = false;
+  if (numeric) {
+    const [first, second, third] = numeric.slice(1).map(Number);
+    explicitYear = numeric[1].replace(/^[+-]/, '').length >= 4;
+    calendar = explicitYear || !isDay(first) ? [first, second, third] : [third, first, second];
+  } else {
+    const named = [
+      monthFirst && {at:monthFirst.index, parts:[monthFirst[1], monthFirst[2], monthFirst[3]]},
+      monthMiddle && {at:monthMiddle.index, parts:[monthMiddle[2], monthMiddle[1], monthMiddle[3]]},
+      monthLast && {at:monthLast.index, parts:[monthLast[3], monthLast[1], monthLast[2]]},
+    ].filter((entry): entry is {at:number;parts:string[]} => Boolean(entry)).sort((a,b) => a.at-b.at)[0]?.parts;
+    if (named) {
+      const month = months.indexOf(named[0].toLowerCase()) + 1, first = Number(named[1]), second = Number(named[2]);
+      calendar = isDay(first) ? [second, month, first] : [first, month, second];
+    }
+  }
   if (calendar) {
     const [sourceYear, month, day] = calendar;
     // Match the existing parser's legacy two-digit year convention.
-    const year = sourceYear < 100 && !yearFirst ? sourceYear + (sourceYear < 50 ? 2000 : 1900) : sourceYear;
+    const year = sourceYear < 100 && !explicitYear ? sourceYear + (sourceYear < 50 ? 2000 : 1900) : sourceYear;
     const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
     const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     if (month < 1 || month > 12 || day < 1 || day > days[month - 1]) return null;
