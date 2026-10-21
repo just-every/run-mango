@@ -5,6 +5,7 @@ import { providerEdge } from '../go-live/edge';
 import { eventSigner } from '../go-live/sendgrid-events';
 import { installation, json, sender, confirmedContact, draftCampaign, approve, dispatch, type Installation } from '../go-live/harness';
 import { accountExport } from './archive';
+import { archiveRecords } from '../portability/flows';
 import { consentEvidence, drive, importArchive, postArchive, record, screenshotPath, tableCounts } from './support';
 
 // One account export through the running Import page and routes: preview writes nothing,
@@ -228,6 +229,33 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     expect(await tableCounts(site)).toEqual(beforeRepeat);
     await record('rerun.json', { rerunStatuses, repeated: repeat.body.repeated, archive: repeat.body.archive.id === rerun.archive.id });
 
+    // An independent archive remains readable when the earlier source is withdrawn.
+    const control = await importArchive(site, cookie, await accountExport('path', (_name, data) =>
+      Buffer.from(data.toString().replaceAll('@example.test', '@control.example.test'))));
+    const controlFacts = await site.rows(`SELECT * FROM imported_engagement_facts WHERE archive_id='${control.archive.id}' ORDER BY id`);
+    expect(controlFacts).toHaveLength(3);
+    const admin = await site.open('archive-admin@example.test', 'archive-admin');
+    await json(await site.call('/api/operators/archive-admin/role', { method: 'PUT', cookie, body: { role: 'admin' } }), 200);
+    const denied = await site.open('archive-support@example.test', 'archive-support');
+    await json(await site.call('/api/operators/archive-support/role', { method: 'PUT', cookie, body: { role: 'support' } }), 200);
+    const authority = async () => {
+      const results = [];
+      for (const path of ['/api/audience/archives', `/api/audience/archives/${rerun.archive.id}`, `/api/audience/archives/${control.archive.id}`]) {
+        for (const [role, session, status] of [['support', denied, 403], ['signed-out', undefined, 401]] as const) {
+          const response = await site.call(path, { cookie: session });
+          const body = await response.json();
+          expect(response.status).toBe(status);
+          if (role === 'support') expect(body.error).toBe('role_forbidden');
+          results.push({ path, role, status: response.status, error: body.error });
+        }
+      }
+      return results;
+    };
+    const authorityBefore = await authority();
+    const oldExport = await archiveRecords(site, cookie);
+    expect(JSON.stringify(oldExport)).toContain('ada@example.test');
+    const [{id: oldDownload}] = await site.rows("SELECT id FROM rer_portability_jobs WHERE kind='export'");
+
     // Deleting a contact the archive brought in withdraws every original archive that holds them.
     const ada = (await site.rows("SELECT id FROM contacts WHERE email='ada@example.test'"))[0].id;
     expect(await site.rows(`SELECT count(*) AS n FROM imported_engagement_facts WHERE contact_id='${ada}'`)).toEqual([{n:1}]);
@@ -235,14 +263,47 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     while (receipt.state === 'pending') ({ receipt } = await (await site.call(`/api/audience/erasures/${receipt.reference}/resume`, { method: 'POST', cookie })).json());
     expect(receipt.state).toBe('complete');
     expect(await site.rows(`SELECT * FROM imported_engagement_facts WHERE contact_id='${ada}'`)).toEqual([]);
-    expect(await site.count('imported_engagement_facts')).toBe(2);
-    expect(await site.rows('SELECT count(*) AS n FROM move_in_archive_chunks')).toEqual([{ n: 0 }]);
-    expect((await site.rows('SELECT count(*) AS n FROM move_in_archive_entries'))[0].n).toBe(42);
+    expect(await site.rows(`SELECT count(*) AS n FROM imported_engagement_facts WHERE archive_id<>'${control.archive.id}'`)).toEqual([{ n: 2 }]);
+    expect(await site.rows(`SELECT * FROM imported_engagement_facts WHERE archive_id='${control.archive.id}' ORDER BY id`)).toEqual(controlFacts);
+    expect(await site.rows(`SELECT count(*) AS n FROM move_in_archive_chunks WHERE archive_id<>'${control.archive.id}'`)).toEqual([{ n: 0 }]);
+    expect((await site.rows(`SELECT count(*) AS n FROM move_in_archive_entries WHERE archive_id<>'${control.archive.id}'`))[0].n).toBe(42);
     const withdrawn = await (await site.call(`/api/audience/archives/${rerun.archive.id}/report`, { cookie })).text();
     expect(withdrawn).toContain('withdrawn by a contact deletion');
     expect(withdrawn).not.toContain('ada@example.test');
     await page.setContent(`<pre style="font:13px/1.4 monospace;white-space:pre-wrap;padding:16px">${withdrawn.replaceAll('&','&amp;').replaceAll('<','&lt;')}</pre>`);await screens(page,'withdrawn-report',info);
-    await record('erasure-withdraws-custody.json', { receipt: receipt.state, chunksLeft: 0, entriesKept: 42 });
+    const reads = [];
+    for (const [role, session] of [['owner', cookie], ['admin', admin]]) {
+      const list = await site.call('/api/audience/archives', { cookie: session });
+      const detail = await site.call(`/api/audience/archives/${rerun.archive.id}`, { cookie: session });
+      const listBody = list.status === 200 ? await list.json() : { error: await list.text() };
+      const detailBody = detail.status === 404 ? await detail.json() : { error: await detail.text() };
+      reads.push({ role, list: { status: list.status, body: listBody }, detail: { status: detail.status, body: detailBody } });
+    }
+    await record('withdrawn-archive-reads.json', reads);
+    for (const { list, detail } of reads) {
+      expect(list.status).toBe(200);
+      expect(list.body.archives.map((archive: any) => archive.id)).toEqual([control.archive.id]);
+      expect(detail.status).toBe(404); expect(detail.body).toEqual({ error: 'not_found' });
+      expect(JSON.stringify(list.body)).not.toContain('ada@example.test');
+    }
+    for (const session of [cookie, admin]) {
+      const surviving = await json(await site.call(`/api/audience/archives/${control.archive.id}`, { cookie: session }), 200);
+      expect(surviving.archive.id).toBe(control.archive.id);
+      expect(JSON.stringify(surviving)).not.toContain('ada@example.test');
+    }
+    await openPage(page, `${site.runtime.url}/app/audience/import`);
+    await expect(page.getByRole('link', { name: 'Download reconciliation report' })).toHaveCount(1);
+    await screens(page, 'surviving-archive-after-erasure', info);
+    expect(await authority()).toEqual(authorityBefore);
+    expect((await site.call(`/api/contacts/${ada}`, { cookie })).status).toBe(404);
+    expect((await site.call(`/api/portability/exports/${oldDownload}/download`, { cookie })).status).toBe(404);
+    const fresh = await archiveRecords(site, cookie);
+    expect(JSON.stringify(fresh)).not.toContain('ada@example.test');
+    const freshFacts = fresh.filter((row: any) => row.kind === 'part').flatMap((part: any) => part.items)
+      .filter((row: any) => row.kind === 'row' && row.table === 'imported_engagement_facts');
+    expect(freshFacts.filter((item: any) => item.row.contact_id === ada)).toEqual([]);
+    expect(freshFacts.filter((item: any) => item.row.archive_id === control.archive.id)).toHaveLength(controlFacts.length);
+    await record('erasure-withdraws-custody.json', { receipt: receipt.state, chunksLeft: 0, entriesKept: 42, authorityBefore, authorityAfter: await authority(), controlFacts: controlFacts.length });
 
     // The same archive with its entries in the opposite order gives the same result on a fresh install.
     const reverse = await installation(edge, signer);

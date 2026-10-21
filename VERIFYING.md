@@ -52,8 +52,11 @@ workload is part of its receipt. Existing import limits are unchanged; prior
 capacity measurements retain their named revision and scope and are not fresh
 release evidence. Tag/nightly installer checks remain separate from capacity
 claims. The default budget is 200 cases. Mango's narrow complex-seed exception in
-`test-budget.json` caps the aggregate at 213: the inherited 211 plus the health
-probe and erasure-aware export regressions. The six-role authorization matrix,
+`test-budget.json` caps the aggregate at 214: the inherited 211 plus the health
+probe and erasure-aware export regressions, plus one MOVE-009/CONT-012/AUD-008
+imported-engagement review, approval and dispatch journey. Its controlled clock,
+populated native results and immutable delivery policy are independently useful
+coverage alongside archive custody, repeat, undo and erasure. The six-role authorization matrix,
 consent/suppression, migration custody, erasure, delivery evidence and native
 restore flows retain their independent fixtures and assertions. Restructuring
 thirteen cases across these flows would exceed the bounded health correction;
