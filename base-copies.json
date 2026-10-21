@@ -1874,17 +1874,6 @@
       }
     },
     {
-      "path": "src/vendor/base/portability/backfills.mjs",
-      "originPath": "modules/portability/backfills.mjs",
-      "revision": "91c082876d6560150f3dc012ec57b92bd9895228",
-      "files": {
-        "src/vendor/base/portability/backfills.mjs": "1805c23b6140da54de0c9e3f9b22637aba92b54544fb076d96e370a4d6450302"
-      },
-      "modes": {
-        "src/vendor/base/portability/backfills.mjs": "100644"
-      }
-    },
-    {
       "path": "src/vendor/base/portability/bookkeeping.mjs",
       "originPath": "modules/portability/bookkeeping.mjs",
       "revision": "91c082876d6560150f3dc012ec57b92bd9895228",

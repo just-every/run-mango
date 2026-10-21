@@ -463,9 +463,11 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "91c082876d6560150f3dc012ec57b92bd9895228",
           "paths": [
             "modules/portability/README.md",
+            "modules/portability/backfills.mjs",
+            "modules/portability/bookkeeping.mjs",
             "modules/portability/bridge.mjs",
             "modules/portability/catalogue.mjs",
             "modules/portability/cli-options.mjs",
@@ -480,19 +482,29 @@
             "modules/portability/hash.mjs",
             "modules/portability/http-client.mjs",
             "modules/portability/http.mjs",
+            "modules/portability/import-lease.mjs",
+            "modules/portability/import-safety.mjs",
+            "modules/portability/import-staging.mjs",
             "modules/portability/import.mjs",
             "modules/portability/index.d.mts",
             "modules/portability/index.mjs",
             "modules/portability/journal.mjs",
+            "modules/portability/ledgers.mjs",
             "modules/portability/legacy-files.mjs",
             "modules/portability/legacy-safety.mjs",
             "modules/portability/lines.mjs",
             "modules/portability/migration-history.mjs",
+            "modules/portability/migration-sql.mjs",
             "modules/portability/migration-statements.mjs",
             "modules/portability/payloads.mjs",
+            "modules/portability/policy-data.mjs",
+            "modules/portability/progress.mjs",
             "modules/portability/provider-data.mjs",
+            "modules/portability/rebuilds.mjs",
+            "modules/portability/replay-views.mjs",
             "modules/portability/restore-safety.mjs",
             "modules/portability/schema/portability.sql",
+            "modules/portability/sql-text.mjs",
             "modules/portability/storage.mjs"
           ]
         },
@@ -508,6 +520,10 @@
           {
             "path": "src/vendor/base/portability/copies.mjs",
             "originPath": "modules/portability/copies.mjs"
+          },
+          {
+            "path": "src/vendor/base/portability/backfills.mjs",
+            "originPath": "modules/portability/backfills.mjs"
           }
         ]
       }

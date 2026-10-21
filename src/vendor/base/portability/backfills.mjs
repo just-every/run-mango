@@ -1,5 +1,5 @@
 import { statement, quote, insist } from './storage.mjs';
-import { tokens, folded } from './generated.mjs';
+import { tokens, identifier, folded } from './generated.mjs';
 import { changesData, dataStatement, reachingTables, triggerBodies, schemaChange, statementNames } from './migration-statements.mjs';
 import { splitStatements } from './sql-text.mjs';
 import { preservingRebuilds } from './rebuilds.mjs';
@@ -38,6 +38,10 @@ export function laterData({applied,unapplied,replay,catalogue,archived,empty,tab
   const later=unapplied.flatMap(migration=>split(migration).map((sql,index)=>({migration,index,sql,data:dataStatement(sql)})));
   const {admitted,tables:rebuilt}=preservingRebuilds(later,manifest,tables,statements),views=replayViews(statements);
   const known=fold(tables),outside=later.filter(s=>s.data && !writable.includes(s.data.target)),tainted=new Set();
+  // Mango: a table the applied history created and then dropped (a migration's
+  // own staging table) does not exist at finalize, so no write reading it can
+  // replay there; such a write keeps today's admission rule instead.
+  const dropped=createdTables(statements).filter(name=>!known.includes(name));
   // Tables an admitted write fills from archived rows (directly, through its
   // target's triggers, or from another such table) hold rows the restore lacks.
   const taint=name=>{if(known.includes(name) && !tainted.has(name)){tainted.add(name);triggerBodies(statements,name).forEach(taint);return true;}};
@@ -53,7 +57,7 @@ export function laterData({applied,unapplied,replay,catalogue,archived,empty,tab
   for(const [table,list] of writes) {
     // Seed INSERTs into a new table replay too: the rows already present in a
     // fresh destination must be reset and derived from the restored installation.
-    const bad=carried.includes(table) && list.length>1?list:list.filter(s=>!replayable(s,{table,statements,restorable,writable,carried,tables:known,secrets,views,manifest}));
+    const bad=carried.includes(table) && list.length>1?list:list.filter(s=>!replayable(s,{table,statements,restorable,writable,carried,tables:known,secrets,views,manifest,dropped}));
     // Writes confined to tables created after the archive retain their
     // admission. Replay eligible seeds, but do not turn a new-table-only
     // upgrade into a refused backfill. View reads always require resolution.
@@ -68,8 +72,8 @@ export function laterData({applied,unapplied,replay,catalogue,archived,empty,tab
   const named=Object.fromEntries(catalogue.map(name=>[folded(name),name]));
   return {rebuilt,replays:later.filter(s=>replays.includes(s)).map(s=>({migration:s.migration,statement:s.index,table:named[s.data.target],sql:s.sql,...(carried.includes(s.data.target)?{carried:true}:{})}))};
 }
-function replayable({data},{table,statements,restorable,writable,carried,tables,secrets,views,manifest}) {
-  if(!['insert','replace'].includes(data.verb) || data.star)return false;
+function replayable({data},{table,statements,restorable,writable,carried,tables,secrets,views,manifest,dropped}) {
+  if(!['insert','replace'].includes(data.verb) || data.star || data.names.some(name=>dropped.includes(name)))return false;
   if(carried.includes(table)) {
     // sqlite_sequence's high-water mark is not archived, so replay cannot
     // reproduce a carried AUTOINCREMENT table's live key allocation.
@@ -113,3 +117,11 @@ export function replayStatements(db,row) {
     statement(db,`UPDATE rer_portability_jobs SET metadata=json_set(metadata,'$.bridge.replayed[${i}].rows',changes()) WHERE id=?`,row.id)])];
 }
 const autoincrement=sql=>tokens(sql).some(t=>!t.quoted && folded(t.text)==='autoincrement');
+// The tables CREATE TABLE statements declare, folded.
+const createdTables=statements=>statements.flatMap(sql=>{
+  const list=tokens(sql),words=list.map(t=>t.quoted?undefined:folded(t.text));
+  const at=words[1]==='table'?2:['temp','temporary'].includes(words[1]) && words[2]==='table'?3:-1;
+  if(words[0]!=='create' || at<0)return [];
+  const name=list[words[at]==='if'?at+3:at];
+  return name?[folded(identifier(name))]:[];
+});

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "parent": null,
   "edition": "just-every/mango",
-  "manifest": "bb5d58e635beceff08eaaceb87e3cfc152a9e5d7817a5941780f7426ff814a13",
+  "manifest": "c9451309c635baa11ce817c3a9d71c897293348326dde092f6e50af56c86e9b1",
   "toolchain": {
     "id": "runeditrun/edition-authoring",
     "version": "1.1.0",
@@ -481,9 +481,11 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "91c082876d6560150f3dc012ec57b92bd9895228",
           "paths": [
             "modules/portability/README.md",
+            "modules/portability/backfills.mjs",
+            "modules/portability/bookkeeping.mjs",
             "modules/portability/bridge.mjs",
             "modules/portability/catalogue.mjs",
             "modules/portability/cli-options.mjs",
@@ -498,19 +500,29 @@
             "modules/portability/hash.mjs",
             "modules/portability/http-client.mjs",
             "modules/portability/http.mjs",
+            "modules/portability/import-lease.mjs",
+            "modules/portability/import-safety.mjs",
+            "modules/portability/import-staging.mjs",
             "modules/portability/import.mjs",
             "modules/portability/index.d.mts",
             "modules/portability/index.mjs",
             "modules/portability/journal.mjs",
+            "modules/portability/ledgers.mjs",
             "modules/portability/legacy-files.mjs",
             "modules/portability/legacy-safety.mjs",
             "modules/portability/lines.mjs",
             "modules/portability/migration-history.mjs",
+            "modules/portability/migration-sql.mjs",
             "modules/portability/migration-statements.mjs",
             "modules/portability/payloads.mjs",
+            "modules/portability/policy-data.mjs",
+            "modules/portability/progress.mjs",
             "modules/portability/provider-data.mjs",
+            "modules/portability/rebuilds.mjs",
+            "modules/portability/replay-views.mjs",
             "modules/portability/restore-safety.mjs",
             "modules/portability/schema/portability.sql",
+            "modules/portability/sql-text.mjs",
             "modules/portability/storage.mjs"
           ]
         },
@@ -526,13 +538,17 @@
           {
             "path": "src/vendor/base/portability/copies.mjs",
             "originPath": "modules/portability/copies.mjs"
+          },
+          {
+            "path": "src/vendor/base/portability/backfills.mjs",
+            "originPath": "modules/portability/backfills.mjs"
           }
         ]
       },
       "baseline": {
-        "key": "f88505dc52bd19111a4c0d7eac06ef97130c5122de431ec3081552cdaca14df5",
-        "digest": "27714848a0755df92b40c98304c4d9937181bae301e82b53cf5cf7b4d9409d81",
-        "sha256": "42a7fd285b004305539bd5f420975caa580c6d11822711cec74d2a1455f1373f"
+        "key": "1beaec4d5d0002f8056278490d469b6d7cc62a6434df4e594a594b2981ef29b3",
+        "digest": "584aed497f42d9df4caa8961d79511bb77f82ed119dc85ca627e130f90d34a46",
+        "sha256": "1f868c7062a9679830cc04d0f1d03609e07cad441557e9ea5001b6a2ef3a8d08"
       }
     },
     {
@@ -986,7 +1002,7 @@
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "d3efb41112c394d496833ca86cc8940b14f9be49db5798b7dcf9559f2a800a15",
+      "sha256": "4cf029d79f3be6a122e5f29a094821595dbb7252bf105c2a0e7dd8cc19fc4aa3",
       "executable": false
     },
     "BASELINE.md": {
@@ -1098,7 +1114,7 @@
       "executable": false
     },
     "edition.json": {
-      "sha256": "bb5d58e635beceff08eaaceb87e3cfc152a9e5d7817a5941780f7426ff814a13",
+      "sha256": "c9451309c635baa11ce817c3a9d71c897293348326dde092f6e50af56c86e9b1",
       "executable": false
     },
     "extensions/mango-pixel/INSTALL.md": {
@@ -6538,7 +6554,7 @@
       "executable": false
     },
     "src/vendor/base/portability/backfills.mjs": {
-      "sha256": "1805c23b6140da54de0c9e3f9b22637aba92b54544fb076d96e370a4d6450302",
+      "sha256": "6fedc77d03e64fd5a5f011e39c42454ee0c6cdb27e3086f7af8b1483cc2b88ac",
       "executable": false
     },
     "src/vendor/base/portability/bookkeeping.mjs": {
@@ -6649,6 +6665,10 @@
       "sha256": "424f6c388e95a969b06a5b18e1aba76de039024778a5849c91a7b6a9596f8ec4",
       "executable": false
     },
+    "src/vendor/base/portability/migration-sql.mjs": {
+      "sha256": "8bda4ab14f193dac4cdc5e9ee3e2d4f98dd14d7fe2b81031d36bb8e6479e9366",
+      "executable": false
+    },
     "src/vendor/base/portability/migration-statements.mjs": {
       "sha256": "f4c3f6895f499cc988dbf81492d8a477d63ef754d7a5b3e515761930370733a1",
       "executable": false
@@ -6671,6 +6691,14 @@
     },
     "src/vendor/base/portability/README.md": {
       "sha256": "352cb9ca00923217104b0b7a4267696d6127e4f31a3e49ef18bbb905249802cd",
+      "executable": false
+    },
+    "src/vendor/base/portability/rebuilds.mjs": {
+      "sha256": "625f28cbe8ac7fc73acb5f6cb6497a3342be24143c2dfb7450f3718dd5968344",
+      "executable": false
+    },
+    "src/vendor/base/portability/replay-views.mjs": {
+      "sha256": "86fe27bce062825e399cea780efaf0c0d29870f4ec14733a960a15b404d1ce9b",
       "executable": false
     },
     "src/vendor/base/portability/restore-safety.mjs": {
