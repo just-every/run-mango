@@ -49,7 +49,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       if(action==='single') await seedCampaign(bindings.DB,'only-email','draft');
       return context.json({ok:true});
     });
-    app.use('/api/campaigns*',async(context,next)=>{
+    for (const path of ['/api/campaigns*','/api/campaign-revisions/*']) app.use(path,async(context,next)=>{
       const operator=await services.authService.authenticate(context.req.raw);
       if(!operator)return context.json({error:'unauthenticated'},401);
       context.set('operator',operator);await next();

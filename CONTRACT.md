@@ -62,6 +62,10 @@ only their stated scope. Hosted newsletter acceptance additionally requires a
 verified sender domain, real sign-in, one approved exact-revision campaign,
 signed persisted provider webhooks and unsubscribe before acknowledgment.
 
+## Health readiness
+
+For this edition, **BASE-OPS-001** uses a 1,500 ms concurrent dependency deadline inside RER's 2,000 ms probe budget, superseding its one-second response requirement. D1 and R2 are checked on every request. Queue acceptance is checked at most once per 60 seconds per binding per Worker isolate (including concurrent requests); its success or failure is cached for that interval. A Queue acknowledgment taking 800 ms or more is reported as `queue.slow` with elapsed `queue.ms`, and still returns 200 if all dependencies answer successfully before the deadline. Rejection or deadline expiry returns 503 with the dependency named. A cached success can lag a new Queue failure by up to 60 seconds; this checks transport acceptance, not consumer readiness. Existing `ok`, `status`, `failures` and deployment identity fields retain their meanings. Evidence: `tests/production-entry.spec.ts`.
+
 ## Managed mail
 
 The owner's Managed mail direction supersedes **BASE-DATA-005** only for the explicitly selected `MAIL_PROVIDER=rer` mail connection. It permits transactional sign-in and subscription confirmation messages to the RER-assigned HTTPS `MAIL_RELAY_URL`. The relay receives one recipient address, subject, text and optional HTML, authenticated with the private installation credential; it owns the sending identity. These are the declared `mail-sender` external's messages under BASE-DATA-004, not telemetry or general workspace access. Free and Assisted installations retain their own-provider choices and no RER mail dependency.

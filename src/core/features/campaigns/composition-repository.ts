@@ -215,8 +215,8 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
       if (actorId) {
         const operation = ulid(updatedAt.getTime());
         prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-          SELECT ?,?,'campaign-revision',?,'draft.saved','operator',?,json_object('campaignId',?),?,? WHERE ${guard}`,
-          operation, operation, id, actorId, storedRevision.campaignId, updatedAt.getTime(), updatedAt.getTime());
+          SELECT ?,?,'campaign-revision',?,'draft.saved','operator',?,json_object('campaignId',?,'name',?),?,? WHERE ${guard}`,
+          operation, operation, id, actorId, storedRevision.campaignId, composition.name ?? storedRevision.name, updatedAt.getTime(), updatedAt.getTime());
       }
       const update = revisionUpdate(composition, updatedAt, id, storedRevision.updatedAt);
       prepare(update.sql, ...update.values);

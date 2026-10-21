@@ -89,6 +89,8 @@ export function createCampaignService(
       return proposal?proposalEntry(proposal):undefined;
     },
 
+    exportCsv: () => repository.exportCsv(),
+
     async listCampaigns(filters: CampaignFilters = {}) {
       const collection = await repository.listCampaigns(filters, options.now?.() ?? new Date());
       return { ...collection, smsEnabled:options.smsEnabled, commerceEnabled:options.commerceEnabled === true, aiEnabled:options.aiEnabled === true,

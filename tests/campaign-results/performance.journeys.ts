@@ -1,3 +1,4 @@
+import { invitationRuntime, confirmedOwner, confirmedInvite } from '../../operations/fixtures/invitation-runtime.mjs';
 import {test,contract,runtime} from './runtime-fixture';
 import {expect} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
@@ -33,4 +34,81 @@ for(const width of [1440,390])contract('REPORT-002',`campaign filters, exact CSV
   await page.getByLabel('Enable privacy-sensitive open estimates',{exact:true}).uncheck();await expect(table.getByRole('columnheader',{name:'Open-rate estimate',exact:true})).toHaveCount(0);await compareCsv();
   await page.getByLabel('Scheduled from (UTC)',{exact:true}).fill('2099-01-01');await expect(page.getByText('No campaign steps match these filters.',{exact:true})).toBeVisible();const empty=await page.request.get(runtime.url+(await page.getByRole('link',{name:'Export campaign performance CSV'}).getAttribute('href')));expect(csvRows(await empty.text())).toHaveLength(1);
   expect((await page.request.get(`${runtime.url}/api/insights/campaign-performance?from=2026-02-30`)).status()).toBe(400);
+});
+
+test('campaign revisions export safely with Owner/Admin authority and visible limits',async({page,request})=>{
+  test.setTimeout(180000);
+  const control=(action:string)=>request.post(runtime.url+'/_results/'+action,{headers:{'X-Test-Token':runtime.token}});
+  expect((await control('empty')).ok()).toBe(true);
+  const {token}=await(await control('open')).json();
+  await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,domain:'127.0.0.1',path:'/'}]);
+  const download=()=>page.request.get(runtime.url+'/api/campaigns/export');
+  const empty=await download();expect(empty.status()).toBe(200);
+  expect(csvRows(await empty.text())).toEqual([['campaign_id','name','revision','state','subject','updated']]);
+  const created=await page.request.post(runtime.url+'/api/campaigns',{data:{mode:'blank'}});
+  expect(created.status()).toBe(201);const draft=await created.json();
+  const name='=SUM(1,2), "Autumn"',subject='@Autumn, "news"';
+  const save=await page.request.patch(runtime.url+'/api/campaign-revisions/'+draft.revisionId,{data:{name,emailSubject:subject}});
+  expect(save.status()).toBe(200);
+  expect(parseCsv(await(await download()).text())).toEqual([expect.objectContaining({campaign_id:draft.campaignId,name:"'"+name,revision:'1',state:'draft',subject:"'"+subject})]);
+  // A prior approved/scheduled revision is fixture state; the replacement is
+  // created and saved through the public authoring doors.
+  await runtime.sql(`UPDATE campaigns SET state='scheduled' WHERE id='${draft.campaignId}'; UPDATE campaign_revisions SET state='approved' WHERE id='${draft.revisionId}'`);
+  const replacement=await page.request.post(runtime.url+'/api/campaigns/'+draft.campaignId+'/edit-schedule',{data:{}});
+  expect(replacement.status()).toBe(201);const second=await replacement.json();expect(second.campaignId).toBe(draft.campaignId);
+  const saved=await page.request.patch(runtime.url+'/api/campaign-revisions/'+second.revisionId,{data:{name,emailSubject:subject+' 2'}});
+  expect(saved.status()).toBe(200);
+  // Partial saves keep the campaign name in Activity and never include body text.
+  expect((await page.request.patch(runtime.url+'/api/campaign-revisions/'+second.revisionId,{data:{emailText:'private body marker'}})).status()).toBe(200);
+  const csv=await download();expect(csv.headers()['content-type']).toContain('text/csv');
+  const rows=parseCsv(await csv.text()).sort((a,b)=>Number(a.revision)-Number(b.revision));
+  expect(rows).toHaveLength(2);
+  expect(rows.map(row=>[row.campaign_id,row.name,row.revision,row.state,row.subject])).toEqual([
+    [draft.campaignId,"'"+name,'1','approved',"'"+subject],
+    [draft.campaignId,"'"+name,'2','draft',"'"+subject+' 2'],
+  ]);
+  expect(rows.every(row=>Number.isFinite(Date.parse(row.updated)))).toBe(true);
+  const activity=await page.request.get(runtime.url+'/api/activity?action=draft.saved');
+  expect(activity.status()).toBe(200);const log=await activity.json();
+  expect(log.entries.filter((entry:any)=>entry.objectId===second.revisionId).map((entry:any)=>entry.detail))
+    .toEqual([{campaignId:draft.campaignId,name},{campaignId:draft.campaignId,name}]);
+  expect(JSON.stringify(log)).not.toContain('private body marker');
+  for(const width of [1440,390]) {
+    await page.setViewportSize({width,height:1000});await openPage(page,runtime.url+'/app/campaigns');
+    await expect(page.getByRole('button',{name:'Export campaigns CSV'})).toBeVisible();
+    const [file]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export campaigns CSV'}).click()]);
+    expect(file.suggestedFilename()).toBe('campaigns.csv');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+    await page.screenshot({path:test.info().outputPath('campaign-export-'+width+'.png'),fullPage:true});
+    await openPage(page,runtime.url+'/app/settings/activity');
+    await expect(page.getByRole('heading',{name:'Activity',exact:true})).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+    await page.screenshot({path:test.info().outputPath('draft-activity-'+width+'.png'),fullPage:true});
+  }
+  const authority=await invitationRuntime();
+  try {
+    const owner=await confirmedOwner(authority), colleague=await confirmedInvite(authority,owner,'exporter@example.test');
+    expect((await authority.call('/api/campaigns/export')).status).toBe(401);
+    expect((await authority.call('/api/campaigns/export',{cookie:owner})).status).toBe(200);
+    for(const role of ['admin','manager','author','analyst','support']) {
+      expect((await authority.call('/api/operators/'+colleague.operator.id+'/role',{cookie:owner,method:'PUT',body:{role}})).status).toBe(200);
+      expect((await authority.call('/api/campaigns/export',{cookie:colleague.cookie})).status).toBe(role==='admin'?200:403);
+    }
+  } finally {await authority.close();}
+  // Boundary data uses a compact SQL fixture, not 50,001 authoring requests.
+  const columns=(await runtime.sql('PRAGMA table_info(campaign_revisions)')).map((row:any)=>row.name);
+  const projections=columns.map((column:string)=>column==='id'?"'export-limit-'||n":column==='version'?'n+10':'r.'+column).join(',');
+  await runtime.sql(`INSERT INTO campaign_revisions (${columns.join(',')}) WITH RECURSIVE numbers(n) AS (SELECT 1 UNION ALL SELECT n+1 FROM numbers WHERE n<50001) SELECT ${projections} FROM numbers,campaign_revisions r WHERE r.id='${second.revisionId}'`);
+  expect((await download()).status()).toBe(422);
+  await openPage(page,runtime.url+'/app/campaigns');
+  await page.getByRole('button',{name:'Export campaigns CSV'}).click();
+  await expect(page.getByRole('alert')).toContainText('No file was downloaded');
+  for(const width of [1440,390]) {
+    await page.setViewportSize({width,height:1000});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+    await page.screenshot({path:test.info().outputPath('campaign-export-refusal-'+width+'.png'),fullPage:true});
+  }
 });

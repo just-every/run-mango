@@ -1,3 +1,4 @@
+import { CampaignExport } from './campaign-export';
 import {Can} from '@/core/features/auth/ui/permissions';
 import { useState } from 'react';
 import { CampaignsEmptyArt } from './campaigns-empty-art';
@@ -23,7 +24,7 @@ export function CampaignsPage() {
   return <div className="page-flow campaigns-page">
     <header className="page-head page-head--actions">
       <div className="page-head__text"><h1>Campaigns</h1><p className="page-head__lead">Review drafts and follow approved campaigns.</p></div>
-      <Can permission="draft.write"><div className="page-head__actions"><button type="button" className="primary-action" aria-expanded={starting} aria-controls="campaign-starters" onClick={() => setStarting(!starting)}>New campaign</button></div></Can>
+      <div className="page-head__actions"><CampaignExport /><Can permission="draft.write"><button type="button" className="primary-action" aria-expanded={starting} aria-controls="campaign-starters" onClick={() => setStarting(!starting)}>New campaign</button></Can></div>
     </header>
     {data.marketingConnectionRequired ? <aside className="panel" role="status"><h2>Connect a newsletter provider</h2><p>Newsletters need your own SendGrid or Resend connection. Add the optional marketing connection in RER Configure, then verify your business sender in Settings. Managed mail handles sign-in and subscription confirmations.</p></aside> : null}
     <Can permission="draft.write"><NewCampaign open={starting} commerceEnabled={data.commerceEnabled} aiEnabled={data.aiEnabled} /></Can>

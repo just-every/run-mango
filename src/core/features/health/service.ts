@@ -4,20 +4,31 @@ import { healthProbeCommand } from './queue-probe';
 
 type Dependency = 'database' | 'storage' | 'queue';
 type ProbeFailure = { dependency: Dependency; code: 'unreachable' | 'timeout' };
-export type HealthResult = { status: 'ok'; ok: true } | { status: 'unavailable'; ok: false; failures: ProbeFailure[] };
+type ProbeResult = { ms: number; slow: boolean; failure?: ProbeFailure };
+type QueueDetail = { ms: number; slow: boolean; cached: boolean };
+export type HealthResult = { status: 'ok'; ok: true; queue: QueueDetail }
+  | { status: 'unavailable'; ok: false; failures: ProbeFailure[]; queue: QueueDetail };
 
-// Reserve time for route serialization and Worker dispatch inside the one-second contract.
-const probeDeadlineMs = 800;
+// Concurrent probes leave 500 ms inside RER's two-second request budget.
+const probeDeadlineMs = 1500;
+const slowMs = 800;
+const queueIntervalMs = 60_000;
+// Binding identity survives per-request services. Cache is per Worker isolate,
+// never shared across installations or deployment versions.
+const queueProbes = new WeakMap<object, { started: number; result: Promise<ProbeResult> }>();
 
-async function probe(dependency: Dependency, operation: () => Promise<unknown>): Promise<ProbeFailure | undefined> {
+async function probe(dependency: Dependency, operation: () => Promise<unknown>): Promise<ProbeResult> {
+  const started = Date.now();
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    return await Promise.race([
+    const failure = await Promise.race([
       Promise.resolve().then(operation).then(() => undefined, () => ({ dependency, code: 'unreachable' as const })),
       new Promise<ProbeFailure>((resolve) => {
         timer = setTimeout(() => resolve({ dependency, code: 'timeout' }), probeDeadlineMs);
       }),
     ]);
+    const ms = Date.now() - started;
+    return { ms, slow: ms >= slowMs, ...(failure ? { failure } : {}) };
   } finally {
     clearTimeout(timer);
   }
@@ -27,18 +38,25 @@ export interface HealthService {
   check(): Promise<HealthResult>;
 }
 
-export function createHealthService(repository: HealthRepository, transports: Pick<Platform, 'blobs' | 'jobs'>): HealthService {
+export function createHealthService(repository: HealthRepository, transports: Pick<Platform, 'blobs' | 'jobs'>,
+  queueIdentity: object = transports.jobs): HealthService {
   return {
     async check() {
+      const previous = queueProbes.get(queueIdentity), now = Date.now();
+      const cached = Boolean(previous && now - previous.started < queueIntervalMs);
+      // Coalesce concurrent checks. Cache failures too, limiting enqueue attempts
+      // even during an outage. Acknowledgment proves acceptance, not consumption.
+      const queue = cached ? previous! : { started: now, result: probe('queue', () => transports.jobs.enqueue(healthProbeCommand())) };
+      if (!cached) queueProbes.set(queueIdentity, queue);
       const results = await Promise.all([
         probe('database', () => repository.ping()),
-        // A read of a reserved, absent object exercises R2 without creating data.
         probe('storage', () => transports.blobs.head('__mango_health__/reachability')),
-        // Queue send acknowledgment proves transport acceptance, not consumer readiness.
-        probe('queue', () => transports.jobs.enqueue(healthProbeCommand())),
+        queue.result,
       ]);
-      const failures = results.filter((result): result is ProbeFailure => result !== undefined);
-      return failures.length ? { status: 'unavailable', ok: false, failures } : { status: 'ok', ok: true };
+      const failures = results.flatMap(result => result.failure ? [result.failure] : []);
+      const detail = { ms: results[2].ms, slow: results[2].slow, cached };
+      return failures.length ? { status: 'unavailable', ok: false, failures, queue: detail }
+        : { status: 'ok', ok: true, queue: detail };
     },
   };
 }

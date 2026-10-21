@@ -18,6 +18,12 @@ Portable hashes are not anonymous. Anyone holding the mapping or an export can h
 
 To keep spreadsheets from running cell contents as formulas, any value that starts with `=`, `+`, `-`, `@`, a tab, a return or an apostrophe gets a leading apostrophe, and the marker column records that. Mango removes those apostrophes when it reads its own export. Other tools will show them.
 
+## Campaigns CSV
+
+On **Campaigns**, Owners and Admins can choose **Export campaigns CSV**. The `campaigns.csv` file contains every saved campaign revision, including drafts with no scheduled steps, with columns `campaign_id`, `name`, `revision`, `state`, `subject` and `updated` (UTC). Revision and state describe the saved revision; saving an existing editable draft updates that revision, while a replacement revision gets its own row. The export includes all campaigns, regardless of the screen filters. An empty export contains only the header.
+
+Cells beginning with `=`, `+`, `-`, `@`, a tab or a return get a leading apostrophe so spreadsheets treat them as text. Commas, quotes and line breaks are quoted as CSV. The export refuses more than 50,000 revisions or 10 MB (10,000,000 bytes), displays the reason and downloads no partial file. Use the complete local archive for larger backups. This CSV contains campaign names and subjects, not message bodies, assets, schedules, approvals or delivery results, and is not a campaign restore format. Activity also names the campaign when a draft is saved, without recording its body.
+
 ## Restoring from an export
 
 On **Audience**, open **Import contacts**, choose your file, and select the preset **Mango audience export**. Mango reads the `ledger_json` column and restores each contact with its consent evidence and opt-outs. Rows with no address restore their opt-outs and suppressions as they are, before any contact is written, and undoing the import leaves them in place: when that address reaches Mango later, through a file, a signup or a consent capture, it is unsubscribed or suppressed, so the restored installation cannot mail it. See [Importing contacts](./importing-contacts.md) for the preview, start and undo steps.
@@ -29,9 +35,9 @@ Restoration has rules:
 - Opt-outs and suppressions already recorded on the receiving installation still apply, and restoring never reverses them.
 - The usual import limits apply: up to 50,000 rows per review and 10 MB in total.
 
-## What the CSV does not include
+## What the contacts CSV does not include
 
-The CSV contains contacts only. It does not include:
+The Audience CSV contains contacts only. It does not include:
 
 - saved segments, campaigns, drafts, approved revisions or schedules;
 - delivery results and provider facts;

@@ -85,3 +85,45 @@ for (const host of ['operator.example.test', 'localhost']) contract('OPER-001', 
   expect(response.status).toBe(404);
   expect(await response.text()).not.toContain('Development outbox');
 });
+
+test('BASE-OPS-001 health distinguishes slow Queue acceptance from failed dependencies and bounds probe traffic', async () => {
+  const delay = (ms:number) => new Promise(resolve => setTimeout(resolve,ms));
+  const rejected = () => Promise.reject(new Error('private provider error must not escape'));
+  const healthy = (queue:Partial<Queue<any>>, database:()=>Promise<unknown> = async()=>({success:true}), storage:()=>Promise<unknown> = async()=>null) =>
+    productionBindings({DB:{prepare:()=>({bind(){return this;},run:database})} as unknown as D1Database,
+      ASSETS_BUCKET:{head:storage} as unknown as R2Bucket,MANGO_JOBS:queue as Queue<any>});
+  const read = (env:AppBindings) => productionWorker.fetch(new Request('https://operator.example.test/health'),env,{} as ExecutionContext);
+  for (const ms of [850,1100,1400]) {
+    let sends=0;
+    const env=healthy({send:async()=>{sends++;await delay(ms);}});
+    for(let i=0;i<(ms===1100?12:1);i++) {
+      const response=await read(env);
+      expect(response.status).toBe(200);
+      const body=await response.json() as any;
+      expect(body).toMatchObject({ok:true,status:'ok',queue:{slow:true,cached:i>0}});
+      expect(body.queue.ms).toBeGreaterThanOrEqual(ms-50);
+      expect(body).not.toHaveProperty('failures');
+    }
+    expect(sends).toBe(1);
+  }
+  let sends=0;
+  const shared=healthy({send:async()=>{sends++;await delay(1100);}});
+  const concurrent=await Promise.all(Array.from({length:12},()=>read(shared)));
+  expect(concurrent.map(response=>response.status)).toEqual(Array(12).fill(200));
+  expect(sends).toBe(1);
+  for(const [dependency,env] of [
+    ['queue',healthy({send:rejected})],
+    ['database',healthy({send:async()=>{}},rejected)],
+    ['storage',healthy({send:async()=>{}},undefined,rejected)],
+    ['queue',healthy({send:()=>new Promise(()=>{})})],
+    ['database',healthy({send:async()=>{}},()=>new Promise(()=>{}))],
+    ['storage',healthy({send:async()=>{}},undefined,()=>new Promise(()=>{}))],
+  ] as const) {
+    const started=Date.now(),response=await read(env);
+    expect(response.status).toBe(503);
+    const body=await response.json() as any;
+    expect(body).toMatchObject({ok:false,status:'unavailable',failures:[{dependency,code:expect.stringMatching(/^(unreachable|timeout)$/)}]});
+    expect(JSON.stringify(body)).not.toContain('private provider');
+    expect(Date.now()-started).toBeLessThan(2000);
+  }
+});
