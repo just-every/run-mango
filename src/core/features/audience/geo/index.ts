@@ -1,4 +1,4 @@
-import coordinates from './zcta-2026.json';
+import coordinates from './zcta-2026.json' with {type:'json'};
 
 // U.S. Census Bureau 2026 Gazetteer, ZIP Code Tabulation Areas (public geography).
 // https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2026_Gazetteer/2026_Gaz_zcta_national.zip
