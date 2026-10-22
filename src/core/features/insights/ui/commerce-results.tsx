@@ -14,7 +14,7 @@ export function CommerceResults({ campaignId }: { campaignId: string }) {
   return <section className="panel" aria-labelledby="commerce-results-title">
     <h2 id="commerce-results-title">Clicks and attributed conversions</h2>
     <p>{data.engagement.observedClicks} observed clicks · {data.engagement.automatedRequestsRetainedButExcluded} automated requests retained and excluded.</p>
-    <p>The latest qualifying human tracked click wins once per conversion. Refunds and cancellations reverse attributed receipts. Attribution assigns recorded results and does not measure incremental lift.</p>
+    <p>The latest qualifying human tracked click wins once per conversion. These are observed events, separate from forecasts. Refunds and cancellations reverse attributed receipts. Attribution assigns recorded results and does not measure incremental lift.</p>
     <p>Current report policy<AttributionPolicyNote policy={policy} /></p>
     <div className="detail-actions"><Link className="text-link" to="/app/insights">Change attribution in Insights</Link><button type="button" className="secondary-action" disabled={loading} onClick={() => void reload()}>{loading ? 'Refreshing attribution…' : 'Refresh attribution'}</button></div>
     {error ? <p className="inline-error" role="alert">Attribution could not be refreshed. The last loaded report is shown.</p> : null}

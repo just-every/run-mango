@@ -133,6 +133,7 @@ export async function attributionJourney(input: {
   for (const width of [1440, 390]) {
     await page.setViewportSize({width, height: 1000});
     await expect(panel.locator('p').filter({hasText: 'Current report policy'})).toContainText('Placed Order · Email 7 days · SMS 7 days · click windows');
+    await expect(panel).toContainText('These are observed events, separate from forecasts.');
     await expect(panel).toContainText('Attribution assigns recorded results and does not measure incremental lift.');
     for (const purchase of purchases) {
       const summary = panel.locator('summary').filter({hasText: purchase.id});

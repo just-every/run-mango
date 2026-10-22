@@ -3818,7 +3818,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/commerce-results.tsx": {
-      "sha256": "f90384c2efdd6f2e632cb6af53a64bf0630dbeb926532200ee654718ebf71521",
+      "sha256": "14286e2d74964a44e2daa71ffc62008b2c120132849400b2fc3a3dbe5fccc9d1",
       "executable": false
     },
     "src/core/features/insights/ui/cost-totals.tsx": {
@@ -7114,7 +7114,7 @@
       "executable": false
     },
     "tests/campaign-results/performance-fixture.ts": {
-      "sha256": "111140f8926b250181694a7f62852dcf535db62fd60537804a288c7f7030d87d",
+      "sha256": "310f7a611dd9f7c6ce457f0158a0c90ef2561cfb25a8d0dc0fef28370141d703",
       "executable": false
     },
     "tests/campaign-results/performance.journeys.ts": {
