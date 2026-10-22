@@ -1,4 +1,4 @@
-import {trackingJourney} from './tracking-journey';
+import {prepareTrackingJourney, trackingJourney} from './tracking-journey';
 import { invitationRuntime, confirmedOwner, confirmedInvite } from '../../operations/fixtures/invitation-runtime.mjs';
 import {test,contract,runtime} from './runtime-fixture';
 import {expect} from '@playwright/test';
@@ -8,6 +8,13 @@ import {openPage} from '../support/navigation';
 import {csvRows,parseCsv} from '../../src/core/features/audience/csv';
 for(const width of [1440,390])contract('REPORT-002',`${width===1440?'[RESULT-005][RESULT-003] ':''}campaign filters, exact CSV rows and optional open estimates at ${width}${width===1440?'; native commerce at 1440 and 390':''}`,async({page,request})=>{
   test.setTimeout(width===1440?600000:180000);
+  // Start the independent native runtime while the existing report journey runs.
+  // Observe setup failure immediately, rethrow it before native assertions, and
+  // close the runtime even when an earlier historical-report assertion fails.
+  const setup = width===1440
+    ? prepareTrackingJourney().then(value => ({value}), error => ({error}))
+    : Promise.resolve(undefined);
+  try {
   const seed=await request.post(`${runtime.url}/_results/reporting`,{headers:{'X-Test-Token':runtime.token}});expect(seed.ok()).toBe(true);const fixture=await seed.json();
   const login=await request.post(`${runtime.url}/_results/open`,{headers:{'X-Test-Token':runtime.token}});const {token}=await login.json();await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,domain:'127.0.0.1',path:'/'}]);await page.setViewportSize({width,height:1000});
   for(const [index,scanner] of [false,false,true].entries()) {
@@ -37,7 +44,13 @@ for(const width of [1440,390])contract('REPORT-002',`${width===1440?'[RESULT-005
   expect((await page.request.get(`${runtime.url}/api/insights/campaign-performance?from=2026-02-30`)).status()).toBe(400);
   // Both viewports share one real send/order history; business requests do not
   // depend on viewport size. The helper checks every browser state at both widths.
-  if (width===1440) await trackingJourney(page, test.info());
+  const prepared = await setup;
+  if (prepared && 'error' in prepared) throw prepared.error;
+  if (prepared && 'value' in prepared) await trackingJourney(page, test.info(), prepared.value);
+  } finally {
+    const prepared = await setup;
+    if (prepared && 'value' in prepared) await prepared.value.close();
+  }
 });
 
 test('campaign revisions export safely with Owner/Admin authority and visible limits',async({page,request})=>{

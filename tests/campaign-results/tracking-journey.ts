@@ -7,11 +7,19 @@ import {performanceCommerce, attributionJourney} from './performance-fixture';
 import {openPage} from '../support/navigation';
 import {parseCsv} from '../../src/core/features/audience/csv';
 
-/** The existing performance cases also exercise actual approval and handoff.
- * Only provider HTTP responses are doubled; no delivery, token or click is seeded. */
-export async function trackingJourney(page: Page, info: TestInfo) {
+/** Independent runtime startup can overlap the existing historical report checks. */
+export async function prepareTrackingJourney() {
   const commerce = performanceCommerce(), edge = await providerEdge(commerce);
-  const site = await installation(edge, eventSigner(), {commerce: true, providerKey: 'synthetic-mango-1'});
+  try {
+    const site = await installation(edge, eventSigner(), {commerce: true, providerKey: 'synthetic-mango-1'});
+    let closing: Promise<void> | undefined;
+    return {commerce, edge, site, close: () => closing ??= (async () => {try {await site.runtime.close();} finally {await edge.close();}})()};
+  } catch (error) {await edge.close(); throw error;}
+}
+
+/** Only provider HTTP responses are doubled; no delivery, token or click is seeded. */
+export async function trackingJourney(page: Page, info: TestInfo, prepared: Awaited<ReturnType<typeof prepareTrackingJourney>>) {
+  const {commerce, edge, site} = prepared;
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
@@ -67,12 +75,16 @@ export async function trackingJourney(page: Page, info: TestInfo) {
     const disabled = await draftCampaign(site, cookie, 'Private garden letter', [people[2].email], disabledDue);
     await json(await site.call('/api/campaign-revisions/' + disabled.revisionId, {method: 'PATCH', cookie, body: {emailBody: `<p><a href="${destination}">Garden collection</a></p>`, trackingEnabled: true}}), 200);
     await page.context().addCookies([{name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url}]);
+    await openPage(page, `${site.runtime.url}/app/campaigns/${disabled.campaignId}/review`);
     for (const width of [1440, 390]) {
       await page.setViewportSize({width, height: 1000});
-      await openPage(page, `${site.runtime.url}/app/campaigns/${disabled.campaignId}/review`);
       await page.getByLabel('Track link clicks', {exact: true}).check();
       await page.getByLabel('Track link clicks', {exact: true}).uncheck();
-      await page.getByRole('button', {name: 'Save full draft', exact: true}).click();
+      const [saved] = await Promise.all([
+        page.waitForResponse(response => response.request().method()==='PATCH' && new URL(response.url()).pathname===`/api/campaign-revisions/${disabled.revisionId}`),
+        page.getByRole('button', {name: 'Save full draft', exact: true}).click(),
+      ]);
+      expect(saved.status()).toBe(200);
       await expect(page.getByRole('status').filter({hasText: 'Draft saved.'})).toBeVisible();
       expect((await json(await site.call(`/api/campaigns/${disabled.campaignId}`, {cookie}), 200)).revision.trackingEnabled).toBe(false);
       await page.screenshot({path: info.outputPath(`tracking-control-${width}.png`), fullPage: true});
@@ -111,5 +123,5 @@ export async function trackingJourney(page: Page, info: TestInfo) {
     }
     await attributionJourney({site, edge, commerce, cookie, campaign, links, people, destination, page, info});
     expect(edge.unexpected).toEqual([]);
-  } finally {await site.runtime.close(); await edge.close();}
+  } finally {await prepared.close();}
 }
