@@ -97,6 +97,8 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   await site.control('/_golive/clock', {advanceMs: 3600001});
   expect((await dispatch(site, campaign.campaignId, due)).filter(row => row.transport_disposition === 'accepted')).toEqual([]);
   expect(edge.sends.filter(send => String(send.body.subject).startsWith('Members-only garden notes'))).toEqual([]);
+  const timeline = (await json(await site.call(`/api/contacts/${contacts.paid}`, {cookie: owner}), 200)).timeline.map((entry: any) => entry.detail);
+  for (const detail of ['checkout-session · checkout.session.completed', 'subscription · subscription.started', 'payment · subscription.past_due', 'subscription · subscription.canceled']) expect(timeline).toContain(detail);
 
   for (const width of [1440, 390]) {
     await page.setViewportSize({width, height: 1000});
@@ -108,7 +110,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
     expect((await new AxeBuilder({page}).include('#stripe').analyze()).violations).toEqual([]);
     await page.locator('#stripe').screenshot({path: info.outputPath(`paid-tier-settings-${width}.png`)});
     await openPage(page, `${site.runtime.url}/app/audience/${contacts.paid}`);
-    for (const state of ['checkout.session.completed', 'subscription.started', 'subscription.past_due', 'subscription.canceled']) await expect(page.locator('.timeline')).toContainText(state);
+    for (const state of ['Members-only garden notes · email · audience-no-longer-matches', 'subscription.canceled', 'subscription.past_due']) await expect(page.locator('.timeline')).toContainText(state);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await page.locator('.timeline').screenshot({path: info.outputPath(`paid-tier-timeline-${width}.png`)});
   }
