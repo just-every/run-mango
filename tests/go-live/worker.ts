@@ -1,3 +1,4 @@
+import {loadWooCommerce} from '../../src/core/features/store/woocommerce/connection';
 import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
 import {advanceClock} from './clock';
 import {pacedAdapter} from '../../src/core/features/lifecycle/transport-pacing';
@@ -82,6 +83,7 @@ async function compose(bindings: Bindings) {
     }
   }
   await loadSenderSettings(platform);
+  await loadWooCommerce(platform);
   const verification = createSenderVerification({ database: platform.database, config: platform.config, receiver: receiver(bindings) });
   if (bindings.GO_LIVE_MANAGED === 'none') return {platform, verification};
   const mailer=platform.config.mailProvider==='resend'

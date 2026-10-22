@@ -1,3 +1,4 @@
+import {loadWooCommerce} from '@/core/features/store/woocommerce/connection';
 import { withDemo } from '../../vendor/base/demo/index.mjs';
 import { seedDemo } from '../../demo';
 import { dispatchDocuments } from './document-dispatch';
@@ -11,9 +12,10 @@ import { designCommandKinds } from '@/core/features/design-generation/advance';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
 
 const worker = {
-  fetch(request, environment, executionContext) {
+  async fetch(request, environment, executionContext) {
     const bindings = environment as LocalAppBindings;
     const platform = createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY);
+    if (new URL(request.url).pathname !== '/health') await loadWooCommerce(platform);
     return dispatchDocuments(request, bindings, executionContext, platform, createLocalApp(bindings, platform));
   },
   // Ordinary local development consumes design jobs; demos exercise all jobs through mocked effects.
@@ -21,14 +23,16 @@ const worker = {
     const messages = (batch as unknown as LifecycleQueueBatch).messages.filter(message => !acknowledgeHealthProbe(message));
     if (!messages.length) return;
     const bindings = environment as LocalAppBindings;
-    const runtime = createAppServices(createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY)).lifecycleRuntime;
-    await consumeLifecycleQueue({ messages }, runtime, bindings.RER_DEMO === '1' ? undefined : designCommandKinds);
+    const platform = createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY);
+    await loadWooCommerce(platform);
+    const runtime = createAppServices(platform).lifecycleRuntime;
+    await consumeLifecycleQueue({ messages }, runtime, bindings.RER_DEMO === '1' ? undefined : [...designCommandKinds, 'source.sync']);
   },
   // rer dev fires the Cron Trigger every minute: record the tick and run the same lifecycle work, which sends nothing here.
   scheduled(controller, environment, executionContext) {
     const bindings = environment as LocalAppBindings;
     executionContext.waitUntil(runScheduled(controller, bindings,
-      async () => createAppServices(createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY)).lifecycleRuntime));
+      async () => {const platform = createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY); await loadWooCommerce(platform); return createAppServices(platform).lifecycleRuntime;}));
   },
 } satisfies ExportedHandler<LocalAppBindings>;
 

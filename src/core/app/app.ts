@@ -1,3 +1,4 @@
+import {wooCommerceRoutes} from '@/core/features/store/woocommerce/routes';
 import { createAttributionPolicyRoutes } from '@/core/features/insights/attribution-policy-routes';
 import {createDormancyRoutes} from '@/core/features/audience/dormancy-routes';
 import {domainSetupRoutes} from '@/core/features/sender-verification/setup-routes';
@@ -211,7 +212,7 @@ export function createAppServices(platform: Platform, queueIdentity: object = pl
     createCampaignRepository(database,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true}),
     createCampaignCompositionRepository(database,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true}),
     storeService,
-    { smsEnabled: platform.config.modules.sms.enabled, commerceEnabled:platform.config.modules.commerce.enabled, aiEnabled:platform.config.modules.ai.enabled,
+    { smsEnabled: platform.config.modules.sms.enabled, commerceEnabled:!!platform.commerce, aiEnabled:platform.config.modules.ai.enabled,
       marketingConnectionRequired:platform.config.authMail !== undefined && platform.config.mailProvider === 'rer',
       smsPreview:(campaignId,revisionId)=>smsReviewPreview(lifecycleRuntime!,campaignId,revisionId),
       blockedHosts:async input=>blockedLinkHosts(await inspectRevisionLinks(input,platform)) },
@@ -300,9 +301,11 @@ export function createApp(
   app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
   app.route('/', createSmsSignupRoutes(platform,audienceService));
   app.route('/', createMediaRoutes(environment.DB, platform.blobs));
+  const woo = wooCommerceRoutes(platform, audienceService, storeService);
+  app.route('/', woo.webhooks);
   const stripe = stripeRoutes(platform, audienceService, storeService.syncRuns);
   app.route('/', stripe.webhooks);
-  if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce, storeService.syncRuns));
+  if (platform.commerce?.capabilities().provider === 'shopify') app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce, storeService.syncRuns));
   app.route('/',createOpenPixelRoutes(platform));
   app.route('/',archivePublicRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   const integrations = createIntegrationService(platform, audienceService);
@@ -351,6 +354,7 @@ export function createApp(
   app.route('/api',createDormancyRoutes(platform));
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
   app.route('/api', stripe.settings);
+  app.route('/api', woo.settings);
   app.route('/api', domainSetupRoutes(platform));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));
   app.route('/api', createSyncRoutes(platform, services.storeService));

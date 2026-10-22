@@ -5,7 +5,7 @@ import type {NormalizedCommerceRecord} from './service';
 import type {SyncWriteFence} from './sync-write-fence';
 import {sha256, stableJson, ulid} from '@/core/shared/ids';
 
-export type CommerceReceipt = {ids: string[]; digest: string};
+export type CommerceReceipt = {ids: string[]; digest: string; wooConnection?: {id: string; generation: string}};
 /** Native D1 batch is the transaction boundary: receipts, latest projection and
  * all product activities either commit together or are replayable together. */
 export function createAtomicCommerceIngestion(database: Database) {
@@ -13,6 +13,7 @@ export function createAtomicCommerceIngestion(database: Database) {
   return async (provider: string, records: NormalizedCommerceRecord[], now: Date, fence?: SyncWriteFence, receipt?: CommerceReceipt, contactHashSalt?: string) => {
     const statements: D1PreparedStatement[] = [];
     const planContact=commerceContactPlanner(db,contactHashSalt,now);
+    if (receipt?.wooConnection) statements.push(db.prepare('INSERT INTO commerce_transaction_guard SELECT CASE WHEN EXISTS(SELECT 1 FROM woocommerce_connection WHERE id=? AND generation=?) THEN 1 ELSE 0 END').bind(receipt.wooConnection.id, receipt.wooConnection.generation));
     if (fence) statements.push(db.prepare(`INSERT INTO commerce_transaction_guard SELECT CASE WHEN EXISTS
       (SELECT 1 FROM source_sync_runs WHERE id=? AND state='running' AND lease_token=? AND lease_expires_at>max(?,CAST(unixepoch('subsec')*1000 AS INTEGER))) THEN 1 ELSE 0 END`).bind(fence.runId,fence.token,fence.now().getTime()));
     for (const id of receipt?.ids ?? []) statements.push(db.prepare(`INSERT INTO commerce_receipts(id,digest,received_at) VALUES(?,?,?)

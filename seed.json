@@ -246,7 +246,7 @@
       "adapters": [
         "commerce.store.v1"
       ],
-      "requiredWhen": "Corresponding optional module or Settings Stripe connection is enabled"
+      "requiredWhen": "Corresponding optional module or Settings Stripe/WooCommerce connection is enabled"
     },
     {
       "id": "ai-provider",

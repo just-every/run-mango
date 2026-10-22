@@ -49,7 +49,7 @@ export function requiredPermission(method: string, path: string): Capability {
 
   if (!read && /^\/api\/settings\/sender\/(?:domain-authentication|tracking-domain)$/.test(p)) return 'provider.connect';
   // Billing-bearing connection changes remain Owner-only, including future authorities.
-  if (!read && /^\/api\/(?:settings\/(?:sending|sms|twilio|providers|stripe)|sending\/connection|sms\/connection)(?:\/|$)/.test(p)) return 'provider.connect';
+  if (!read && /^\/api\/(?:settings\/(?:sending|sms|twilio|providers|stripe|woocommerce)|sending\/connection|sms\/connection)(?:\/|$)/.test(p)) return 'provider.connect';
   if (/^\/api\/installation(?:\/(?:erase|delete|reset))?$/.test(p) && !read) return 'installation.erase';
   if (/^\/api\/(?:operators|invitations)(?:\/|$)/.test(p)) return 'operators.manage';
   if (/^\/api\/(?:activity|activity-log)(?:\/|$)/.test(p)) return 'activity.read';

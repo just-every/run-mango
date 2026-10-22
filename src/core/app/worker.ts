@@ -1,3 +1,4 @@
+import {loadWooCommerce} from '@/core/features/store/woocommerce/connection';
 import { runScheduled } from './scheduled';
 import { dispatchDocuments } from './document-dispatch';
 import { createApp, createAppServices } from './app';
@@ -13,6 +14,7 @@ export function createWorker(platformFor = createProductionPlatform) {
 async function lifecycleRuntime(environment: AppBindings) {
   const platform = platformFor(environment);
   await loadSenderSettings(platform);
+  await loadWooCommerce(platform);
   await loadLinkHosts(platform);
   return createAppServices(platform).lifecycleRuntime;
 }
@@ -34,6 +36,7 @@ return {
     }
     const bindings = environment as AppBindings;
     const platform = platformFor(bindings);
+    if (new URL(request.url).pathname !== '/health') await loadWooCommerce(platform);
     return dispatchDocuments(request, bindings, executionContext, platform, createApp(bindings, platform));
   },
   async queue(batch, environment) {

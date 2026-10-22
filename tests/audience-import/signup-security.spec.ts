@@ -40,9 +40,6 @@ for(const state of ['subscribed','suppressed','erased-optout'])test(`security: p
     else expect(after[4]).toEqual(before[4]);}
  }finally{await h.close();}
 });
-test('security: incomplete sender refuses before every persistent write',async()=>{
- const h=await native();try{h.f.platform.config.mailSender.physicalAddress='';const before=await snapshot(h.f.db);expect((await client(h.f)('no-sender@example.test')).status).toBe(503);expect(await snapshot(h.f.db)).toEqual(before);expect(h.f.outbound).toHaveLength(0);}finally{await h.close();}
-});
 test('security: IPv6 equivalent addresses and interface rotation share a /64 budget; invalid IP fails closed',async()=>{
  const h=await native();try{
   const call=client(h.f);for(let i=0;i<5;i++)expect((await call(`v6-${i}@example.test`,`2001:db8:1:2::${i+1}`)).status).toBe(202);

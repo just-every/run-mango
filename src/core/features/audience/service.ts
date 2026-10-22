@@ -61,7 +61,7 @@ export type CommerceWebhookEvent = {
   completion: 'full' | 'delta';
   adapterCompleted: boolean;
   sourceTypes: CommerceSourceType[];
-  receipt?: {ids: string[]; digest: string};
+  receipt?: import('@/core/features/store/atomic-ingestion').CommerceReceipt;
   records: Array<NormalizedCommerceRecord & { contact?: { email?: string; phone?: string; displayName?: string } }>;
 };
 

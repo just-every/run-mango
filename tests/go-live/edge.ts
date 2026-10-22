@@ -15,7 +15,7 @@ type Answer = { type: number; data: string };
 const quoted = (value: string) => (value.match(/.{1,255}/g) ?? []).map(part => JSON.stringify(part)).join(' ');
 const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
 
-export async function providerEdge(options:{commerce?:(request:Record<string,unknown>)=>unknown; links?:Record<string,{status?:number;location?:string}>}={}) {
+export async function providerEdge(options:{commerce?:(request:Record<string,unknown>)=>unknown; links?:Record<string,{status?:number;location?:string}>; woo?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>}={}) {
   const behavior=providerBehavior();
   const sms=smsProviderEdge();
   const keys = [dkimKey(), dkimKey()];
@@ -68,6 +68,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
       response.writeHead(202); response.end(); return;
     }
     behavior.requests.push({method:request.method??'',path:original.pathname,at:Date.now()});
+    if(await options.woo?.(original,request,response))return;
     if(await sms.handle(original,request,response))return;
     if(await resend.handle(original,request,response))return;
     const linked = options.links?.[original.href];

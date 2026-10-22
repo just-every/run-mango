@@ -1,3 +1,4 @@
+import {SettingsWooCommerce} from './settings-woocommerce';
 import {SettingsAudienceExclusions} from './settings-audience-exclusions';
 import {SettingsDomainGuide} from './settings-domain-guide';
 import {SettingsStripe} from './settings-stripe';
@@ -34,6 +35,7 @@ export function SettingsPage() {
       <Can permission="settings.manage"><SettingsAudienceExclusions /></Can>
       <Can permission="integration.manage"><SettingsIntegrations /></Can>
       <Can permission="settings.manage"><SettingsStripe /></Can>
+      <Can permission="settings.manage"><SettingsWooCommerce /></Can>
       <Can permission="settings.manage"><SettingsDomainGuide /></Can>
       <div className="settings-grid">
         <section className="panel settings-current" aria-labelledby="current-operator-title">
