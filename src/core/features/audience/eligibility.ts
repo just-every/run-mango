@@ -1,3 +1,6 @@
+import {flattenPredicates,predicateSourceTypes} from '@/core/features/lifecycle/rules';
+import {createRuleMatcher} from './rule-matcher';
+import {segmentAvailability} from './segment-availability';
 import {readDormancyPolicy} from './dormancy-policy';
 import { contactPersonalisation } from './contact-personalisation';
 import {productCoverage,ruleCoverage,type CoverageStore} from './source-coverage';
@@ -13,74 +16,9 @@ const dayMs = 24 * 60 * 60 * 1000;
 
 type AudienceRepository = ReturnType<typeof createAudienceRepository>;
 type Store = Pick<ReturnType<typeof createStoreService>, 'freshness' | 'sourceActivities' | 'sourceRecords'> & CoverageStore;
-type Predicate = InclusionRule['predicates'][number];
 
 function storeSourceType(sourceType: string): CommerceSourceType {
   return (sourceType === 'browsing' ? 'browsing-event' : sourceType) as CommerceSourceType;
-}
-
-function asRecord(value: string) {
-  try {
-    const parsed: unknown = JSON.parse(value);
-    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed as Record<string, unknown> : {};
-  } catch {
-    return {};
-  }
-}
-
-function fieldValue(payload: Record<string, unknown>, field: string, source: { sourceType: string; providerSourceId: string; occurredAt: Date }, activity?: { kind: string; productId: string | null; state: string }) {
-  if (field === 'sourceType') return source.sourceType;
-  if (field === 'providerSourceId') return source.providerSourceId;
-  if (field === 'occurredAt') return source.occurredAt.toISOString();
-  if (field.startsWith('activity.')) return activity?.[field.slice('activity.'.length) as keyof typeof activity];
-  return field.split('.').reduce<unknown>((current, key) => (
-    current && typeof current === 'object' && !Array.isArray(current)
-      ? (current as Record<string, unknown>)[key]
-      : undefined
-  ), payload);
-}
-
-function comparable(value: unknown) {
-  return typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ? value : undefined;
-}
-
-function matchesComparator(actual: unknown, comparator: Predicate['comparator'], expected: Predicate['value']) {
-  const value = comparable(actual);
-  if (value === undefined) return false;
-  if (comparator === 'eq') return value === expected;
-  if (comparator === 'neq') return value !== expected;
-  if (comparator === 'contains') return typeof value === 'string' && typeof expected === 'string' && value.includes(expected);
-  if (comparator === 'in') return Array.isArray(expected) && expected.includes(String(value));
-  if (typeof value !== 'number' || typeof expected !== 'number') return false;
-  if (comparator === 'gt') return value > expected;
-  if (comparator === 'gte') return value >= expected;
-  if (comparator === 'lt') return value < expected;
-  if (comparator === 'lte') return value <= expected;
-  return false;
-}
-
-async function predicateMatches(repository:AudienceRepository, store: Store, contactId: string, predicate: Predicate, now: Date, contact?: Record<string, unknown>) {
-  if(predicate.sourceType==='campaign')return repository.followupMember(String(predicate.value),contactId);
-  if (predicate.sourceType === 'contact') return matchesComparator(contact?.[predicate.field], predicate.comparator, predicate.value);
-  const [records, activities] = await Promise.all([store.sourceRecords(contactId), store.sourceActivities(contactId)]);
-
-  const earliest = predicate.lookbackDays === undefined ? undefined : now.getTime() - predicate.lookbackDays * dayMs;
-  return records.some((source) => {
-    if (source.sourceType !== storeSourceType(predicate.sourceType)) return false;
-    const payload=asRecord(source.payload);
-    const occurred=source.sourceType==='order'&&typeof payload.processedAt==='string'?Date.parse(payload.processedAt):source.occurredAt.getTime();
-    if(occurred>now.getTime() || (earliest !== undefined && occurred < earliest)) return false;
-    const related = activities.filter(activity => activity.sourceRecordId === source.id);
-    return (related.length ? related : [undefined]).some(activity => matchesComparator(fieldValue(asRecord(source.payload), predicate.field, source, activity), predicate.comparator, predicate.value));
-  });
-}
-
-async function matchingExclusions(repository:AudienceRepository, store: Store, contactId: string, exclusions: ExclusionRule[], now: Date, contact?: Record<string, unknown>) {
-  const reasons:string[]=[];
-  for (const exclusion of exclusions) {
-    if (await predicateMatches(repository,store, contactId, exclusion.predicate, now, contact)) reasons.push(exclusion.reason);
-  }
-  return reasons;
 }
 
 async function selectedChannel(
@@ -167,10 +105,12 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     now?: Date;
   }) {
     const now = input.now ?? new Date();
+    const matcher=createRuleMatcher(repository,store,now,(id,channel)=>selectedChannel(repository,id,channel,now,isSuppressed));
     const sourceGeneration=await repository.sourceGeneration();
     const products = input.productIds ?? (input.productId ? [input.productId] : []);
-    const sourceTypes = [...new Set([...input.sourceTypes.map(storeSourceType), ...(products.length ? ['order','refund'] as const : [])])];
-    const freshnessIssues = [...await store.freshness(sourceTypes, now), ...await productCoverage(store,products,now), ...(input.inclusionRule ? await ruleCoverage(store,input.inclusionRule,input.exclusionRules??[],now) : [])];
+    const ruleSources=input.inclusionRule?[...flattenPredicates(input.inclusionRule),...(input.exclusionRules??[]).map(rule=>rule.predicate)].flatMap(predicateSourceTypes):[];
+    const sourceTypes = [...new Set([...[...input.sourceTypes,...ruleSources].map(storeSourceType), ...(products.length ? ['order','refund'] as const : [])])];
+    const freshnessIssues = [...await store.freshness(sourceTypes, now), ...await productCoverage(store,products,now), ...(input.inclusionRule ? [...await ruleCoverage(store,input.inclusionRule,input.exclusionRules??[],now),...await segmentAvailability(repository,input.inclusionRule,input.exclusionRules??[])] : [])];
     const contact = await repository.getContact(input.contactId);
     if (!contact) return await repository.findMerge(input.contactId)
       ? {eligible:false as const,reason:'contact-merged',detail:'The approved contact was merged. This recipient is excluded; approval never transfers to another contact.'}
@@ -197,15 +137,13 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     // Frozen candidates are an upper bound, not continuing selection authority.
     // Re-evaluate every saved condition against current facts for every step and
     // handoff. Unavailable sources above must defer, never masquerade as a miss.
-    const matches = input.inclusionRule
-      ? await Promise.all(input.inclusionRule.predicates.map(predicate => predicateMatches(repository, store, contact.id, predicate, now, contact)))
-      : undefined;
-    const included = !matches || (input.inclusionRule!.operator === 'all' ? matches.every(Boolean) : matches.some(Boolean));
-    const exclusions = await matchingExclusions(repository, store, contact.id, input.exclusionRules ?? [], now, contact);
+    const included = !input.inclusionRule || await matcher.groupMatches(contact.id,input.inclusionRule,contact);
+    const exclusions:string[]=[];
+    for(const rule of input.exclusionRules??[])if(await matcher.predicateMatches(contact.id,rule.predicate,contact))exclusions.push(rule.reason);
     if(sourceGeneration!==await repository.sourceGeneration()) return {eligible:false as const,reason:'source-authority-changed',detail:'Store authority changed while eligibility was being checked.',retryAt:new Date(now.getTime()+60_000)};
     if (!included) return {
       eligible: false as const,
-      reason: input.inclusionRule?.predicates.some(predicate => predicate.sourceType === 'campaign') ? 'followup-not-eligible' : 'audience-no-longer-matches',
+      reason: input.inclusionRule&&flattenPredicates(input.inclusionRule).some(predicate => predicate.sourceType === 'campaign') ? 'followup-not-eligible' : 'audience-no-longer-matches',
       detail: 'This person is outside the saved audience conditions.',
     };
     if (exclusions.length) return {eligible: false as const, reason: exclusions[0], detail: 'This person now matches a saved audience exclusion.'};
@@ -234,12 +172,13 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
   }) {
     const parsed = parseStructuredRules(JSON.stringify(input.inclusionRule), JSON.stringify(input.exclusionRules));
     if (!parsed.ok) return { status: 'unavailable' as const, sourceTypes: [], detail: parsed.detail };
-    for(const predicate of [...parsed.inclusion.predicates,...parsed.exclusions.map(rule=>rule.predicate)].filter(p=>p.sourceType==='campaign')) {
+    for(const predicate of [...flattenPredicates(parsed.inclusion),...parsed.exclusions.map(rule=>rule.predicate)].filter(p=>p.sourceType==='campaign')) {
       if(!await repository.followupExists(String(predicate.value)))return {status:'unavailable' as const,sourceTypes:[],detail:'The saved follow-up audience is unavailable. Choose an existing source before review.'};
     }
     const products = productIdsFromRules(parsed.inclusion, parsed.exclusions);
     const requiredSources = [...new Set([...parsed.sourceTypes.map(storeSourceType), ...(products.length ? ['order','refund'] as const : [])])];
-    const freshnessIssues = [...await store.freshness(requiredSources, input.now), ...await productCoverage(store,products,input.now), ...await ruleCoverage(store,parsed.inclusion,parsed.exclusions,input.now)];
+    const freshnessIssues = [...await store.freshness(requiredSources, input.now), ...await productCoverage(store,products,input.now), ...await ruleCoverage(store,parsed.inclusion,parsed.exclusions,input.now),...await segmentAvailability(repository,parsed.inclusion,parsed.exclusions)];
+    const matcher=createRuleMatcher(repository,store,input.now,(id,channel)=>selectedChannel(repository,id,channel,input.now,isSuppressed));
     const contacts = await repository.listContacts();
     const counts = new Map<string, number>();
     const candidates: FrozenCandidate[] = [];
@@ -247,12 +186,12 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     const noHistoryContactIds:string[]=[],dormancyIncludedContactIds:string[]=[];
     const matchedContactIds:string[]=[];
     for (const contact of contacts) {
-      const matches = await Promise.all(parsed.inclusion.predicates.map((predicate) => predicateMatches(repository,store, contact.id, predicate, input.now, contact)));
-      const included = parsed.inclusion.operator === 'all' ? matches.every(Boolean) : matches.some(Boolean);
+      const included = await matcher.groupMatches(contact.id,parsed.inclusion,contact);
       if (!included) continue;
       candidateCount++;
       matchedContactIds.push(contact.id);
-      const reasons = new Set(await matchingExclusions(repository,store, contact.id, parsed.exclusions, input.now, contact));
+      const reasons = new Set<string>();
+      for(const rule of parsed.exclusions)if(await matcher.predicateMatches(contact.id,rule.predicate,contact))reasons.add(rule.reason);
       const inactivity=await dormancy(contact.id,input.now,input.dormancyPolicyJson);
       if(inactivity.excluded){reasons.add('dormant');if(inactivity.openOnly)openOnlyCount++;}
       for (const reason of commerceExclusions(await store.sourceRecords(contact.id), products, input.now)) reasons.add(reason);

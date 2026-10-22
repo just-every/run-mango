@@ -3,7 +3,7 @@ import { ulid } from '@/core/shared/ids';
 import { z } from 'zod';
 import { readJson, readParams } from '@/core/api/input';
 import type { AuthVariables } from '@/core/features/auth/routes';
-import { completeInclusionRuleSchema, completeExclusionRuleSchema } from '@/core/features/lifecycle/rules';
+import { completeInclusionRuleSchema, completeExclusionRuleSchema, flattenPredicates } from '@/core/features/lifecycle/rules';
 import { audienceRuleFields } from '@/core/features/campaigns/audience-rule-labels';
 
 const bodySchema = z.object({name:z.string().trim().min(1).max(160),
@@ -12,7 +12,7 @@ const bodySchema = z.object({name:z.string().trim().min(1).max(160),
   try {
     const inclusion=completeInclusionRuleSchema.parse(JSON.parse(value.inclusionRuleJson));
     const exclusions=z.array(completeExclusionRuleSchema).max(50).parse(JSON.parse(value.exclusionRulesJson));
-    if ([...inclusion.predicates,...exclusions.map(rule=>rule.predicate)].some(predicate=>!audienceRuleFields.some(([source,field])=>source===predicate.sourceType&&field===predicate.field))) throw new Error('Use a field available in the audience editor.');
+    if ([...flattenPredicates(inclusion),...exclusions.map(rule=>rule.predicate)].some(predicate=>!audienceRuleFields.some(([source,field])=>source===predicate.sourceType&&field===predicate.field))) throw new Error('Use a field available in the audience editor.');
   } catch { context.addIssue({code:'custom',message:'Complete the structured audience conditions using fields available in the editor.'}); }
 });
 const identifier=z.object({id:z.string().min(1).max(160)});

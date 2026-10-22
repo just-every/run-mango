@@ -1,3 +1,4 @@
+import {createSegmentFacts} from './segment-facts';
 import {listGrowthEvents} from '@/core/features/insights/schema';
 import {recipientOptOutSql, recipientSuppressionSql} from './public-resubscribe-policy';
 import { followupMember } from './followup-membership';
@@ -67,6 +68,7 @@ export function createAudienceRepository(database: Database) {
   }
 
   return {
+    ...createSegmentFacts(database.$client),
     capturePublicSignupAtomic: createPublicCaptureWriter(database),
     async recordPhoneLocation(phone:string,timeZone:string,source:string,at:Date){await database.update(contactPhones).set({timeZone,locationSource:source,locationRecordedAt:at}).where(eq(contactPhones.phoneE164,phone));},
     claimConfirmationHandoff: createConfirmationHandoff(database),

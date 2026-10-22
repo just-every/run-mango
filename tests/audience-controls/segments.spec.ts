@@ -1,8 +1,10 @@
+import {segmentJourney} from './segment-journey';
 import {test,expect} from '@playwright/test';
 import {runtime,segment,rule,importContacts,createCampaign} from './runtime';
 import {rows} from '../approval-binding/native';
 
-test('AUD-001 AUD-002 AUD-007 CAMP-004 saved segments share review counts and copy rules without mutating saved or approved revisions',async()=>{
+test('SEG-001 AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable',async({page},info)=>{
+  test.setTimeout(600000);
   const h=await runtime();try {
     await h.f.prove();
     await importContacts(h,['subscribed','unsubscribed','cleaned','non-subscribed'],'segments');
@@ -32,4 +34,5 @@ test('AUD-001 AUD-002 AUD-007 CAMP-004 saved segments share review counts and co
     const commerce=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'inventory',field:'arbitrary',comparator:'eq',value:'x'}]});
     expect((await h.call('/api/audience/segments',{...segment(),inclusionRuleJson:commerce})).status).toBe(400);
   }finally{await h.dispose();}
+  await segmentJourney(page,info);
 });
