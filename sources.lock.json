@@ -1174,7 +1174,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "e045e33a065002f0528c737afecb69ebcd36ed381d2e35ed6090b04dc330c265",
+      "sha256": "8fb74febb329202a630c3fe97c88f8e8521ed165aebb22314d811adf36cad96f",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -2338,7 +2338,7 @@
       "executable": false
     },
     "src/core/app/document-dispatch.ts": {
-      "sha256": "656f96801114de883e74e891705a4a6c25e4254cf797dde15e131651a817f785",
+      "sha256": "47af8d9f8f33f74e3a08b897555b454c47b90888165b07d0b11984cb3947463c",
       "executable": false
     },
     "src/core/app/loaders.ts": {
@@ -2378,7 +2378,7 @@
       "executable": false
     },
     "src/core/app/worker.ts": {
-      "sha256": "bffcc1cba2b5fccfa5ff4e6512b96faae72cfda289cdeafa6e25fd3a36c9e221",
+      "sha256": "b6bd2c72da064ee989e8eec2bb227ceab91c0ccc2dd57cb596283721d6373f2a",
       "executable": false
     },
     "src/core/features/archive/archive-page.tsx": {

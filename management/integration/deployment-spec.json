@@ -524,6 +524,18 @@
       "name": "core-0084_paid_tier.sql",
       "sha256": "835114fbeb01e2bcb9199da3ce6efb4c4420fd333256c95785588c249a5fea58",
       "sql": "-- PUB-002: one paid tier on the owner's own Stripe account. Mango stores Stripe\n-- ids, states and the tax figures Stripe reports; never card data, never funds.\nCREATE TABLE paid_tier (\n  id INTEGER PRIMARY KEY CHECK(id=1),\n  paid_topic TEXT NOT NULL,\n  free_topic TEXT NOT NULL,\n  price_id TEXT NOT NULL,\n  automatic_tax INTEGER NOT NULL CHECK(automatic_tax=1),\n  updated_by TEXT NOT NULL,\n  updated_at INTEGER NOT NULL\n);\n-- A paid subscription never creates consent: paid-topic membership is read at\n-- review time from an active row and the contact's own confirmed consent.\nCREATE TABLE paid_subscriptions (\n  subscription_id TEXT PRIMARY KEY NOT NULL,\n  customer_id TEXT NOT NULL,\n  contact_id TEXT,\n  state TEXT NOT NULL CHECK(state IN ('active','payment-failed','canceled')),\n  stripe_status TEXT,\n  tax_amount INTEGER,\n  currency TEXT,\n  state_event_id TEXT NOT NULL,\n  state_at INTEGER NOT NULL,\n  created_at INTEGER NOT NULL,\n  updated_at INTEGER NOT NULL\n);\nCREATE INDEX paid_subscriptions_contact ON paid_subscriptions(contact_id, state);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0085_woocommerce_connection.sql",
+      "sha256": "f2c4f84b3c520ad8fa94b0919169ad2797b1a25dd8ce2b7eb71f0eb4a7ca395a",
+      "sql": "-- Connection authority is private installation state, excluded from archives.\nCREATE TABLE woocommerce_connection (\n  slot INTEGER PRIMARY KEY CHECK(slot=1),\n  id TEXT NOT NULL UNIQUE,\n  url TEXT NOT NULL,\n  credentials TEXT NOT NULL,\n  generation TEXT NOT NULL,\n  connected_by TEXT NOT NULL,\n  connected_at INTEGER NOT NULL\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0086_woocommerce_plugin_flows.sql",
+      "sha256": "f126d2d1ab5320c0a95ecc3fcc036651300e221664696fed0cce1a0bf689a06a",
+      "sql": "ALTER TABLE woocommerce_connection ADD COLUMN plugin_enabled INTEGER NOT NULL DEFAULT 0 CHECK(plugin_enabled IN (0,1));\nCREATE TABLE woocommerce_flows (\n  id TEXT PRIMARY KEY NOT NULL,\n  connection_id TEXT NOT NULL,\n  name TEXT NOT NULL,\n  tag TEXT NOT NULL,\n  state TEXT NOT NULL CHECK(state IN ('draft','live','paused')),\n  created_by TEXT NOT NULL,\n  created_at INTEGER NOT NULL,\n  activated_by TEXT,\n  activated_at INTEGER\n);\nCREATE TABLE woocommerce_flow_enrollments (\n  id TEXT PRIMARY KEY NOT NULL,\n  revision_id TEXT NOT NULL REFERENCES woocommerce_flows(id),\n  event_id TEXT NOT NULL,\n  contact_id TEXT NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,\n  source_record_id TEXT NOT NULL REFERENCES source_records(id) ON DELETE CASCADE,\n  current_node TEXT NOT NULL,\n  state TEXT NOT NULL,\n  occurred_at INTEGER NOT NULL,\n  completed_at INTEGER,\n  UNIQUE(revision_id,event_id)\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
