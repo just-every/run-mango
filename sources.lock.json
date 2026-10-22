@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "8efcfd1c95248c6af364a97e7acad85ac8584f2e409744b46a1694bcd841a597",
+      "sha256": "d5c944c7d660a1b7309ed04dd95aced23423afdf7332213c1a1801c562f749c4",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "5d4cb1cb8995766a28678134fb8809f368bd24ad2db4edd10a8fdf2866dccf3a",
+      "sha256": "3a3c1550e7c279731bbb4908d4a9a7a6df7c7ffd8f45880d6cdc4eefde7982d1",
       "executable": false
     },
     "DEMO.md": {
@@ -4014,7 +4014,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/delivery.ts": {
-      "sha256": "7ac7198ed21f5f917c22389496644c82f032a63f0a842a98b6a94c8c83a337fa",
+      "sha256": "14aff1a9b74a66e4aaa9dbe9a1df1d1f6d33e6052c78a653ddc2cec48040789e",
       "executable": false
     },
     "src/core/features/lifecycle/digest.ts": {
@@ -4050,7 +4050,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/message-tracking.ts": {
-      "sha256": "0667b29aa5c367e172f459b4fcc08898632b908e71e8efcb42d8c8b90f733f83",
+      "sha256": "9beee4f1a539c12640c16f726c8a6c77afae1ccac95d090017a75e0b4ab08cfc",
       "executable": false
     },
     "src/core/features/lifecycle/mobile-message-status.ts": {
@@ -4086,7 +4086,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/recipient-repository.ts": {
-      "sha256": "49e9f79edb85a8d5bdbff15cf719531d86750c6b767245a477e3b6bcabf4c3e0",
+      "sha256": "882a99b400f9d2860af30ce3c6abb640ffae730fd71c811a95939403a7731c87",
       "executable": false
     },
     "src/core/features/lifecycle/repository.ts": {
@@ -4814,7 +4814,7 @@
       "executable": false
     },
     "src/core/platform/public-tokens.ts": {
-      "sha256": "fd6bb78270f4b9bb5128e7958d1618f3563ba6c747d528bc7b094a1c3067be50",
+      "sha256": "20755a74a1ca9529f14cb55b1b4b3548163880325898bd014f59be05841f5453",
       "executable": false
     },
     "src/core/platform/runtime.ts": {
@@ -4830,7 +4830,7 @@
       "executable": false
     },
     "src/core/shared/platform.ts": {
-      "sha256": "153ec9da2b2370c372a0b4e7f2868e5e44f38108efb6cf80cfd2dbe7ecd4db48",
+      "sha256": "7c694a425b166066758819015c9b448a5cb83e8ca2861a9d395ae987514d1aa8",
       "executable": false
     },
     "src/core/shared/product-config.ts": {
@@ -7066,7 +7066,7 @@
       "executable": false
     },
     "tests/campaign-results/tracking-journey.ts": {
-      "sha256": "d0aa3ca5506c4869fda37cfa2512ae676d711bca262b51c7464397032b5ffdac",
+      "sha256": "1903fd986eac8b773850ff4f0188a39dd4cb538b9946d56614edf3e1db240f0e",
       "executable": false
     },
     "tests/campaign-results/worker.ts": {
