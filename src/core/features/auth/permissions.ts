@@ -78,7 +78,7 @@ export function requiredPermission(method: string, path: string): Capability {
   if (/^\/api\/contacts\/merge(?:-preview)?$/.test(p)) return 'settings.manage';
   if (/^\/api\/audience\/sms-services$/.test(p)) return 'contact.unmasked';
 
-  if (/^\/api\/insights(?:\/(?:open-tracking|retention|deliverability|list-growth|campaign-performance))?$/.test(p)) {
+  if (/^\/api\/insights(?:\/(?:open-tracking|attribution-policy|retention|deliverability|list-growth|campaign-performance))?$/.test(p)) {
     return read ? (location.searchParams.get('format') === 'csv' ? 'audience.export' : 'report.read') : 'settings.manage';
   }
   if (/^\/api\/campaigns\/[^/]+\/test-sends?$/.test(p)) return 'campaign.test';

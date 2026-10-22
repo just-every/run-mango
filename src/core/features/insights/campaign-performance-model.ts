@@ -1,3 +1,4 @@
+import type { AttributionPolicy } from './attribution-policy';
 export const campaignPerformanceSorts = ['name', 'scheduledAt', 'channel', 'topic', 'recipients', 'delivered', 'totalClicks', 'uniqueClicks', 'clickRate', 'unsubscribes', 'complaints', 'conversions', 'netRevenue', 'revenuePerRecipient', 'openRateEstimate'] as const;
 export type CampaignPerformanceSort = typeof campaignPerformanceSorts[number];
 export type CampaignPerformanceFilter = {
@@ -13,6 +14,7 @@ export type CampaignPerformanceRow = {
   openRateEstimate?: number | null;
 };
 export type CampaignPerformanceReport = {
+  attributionPolicy: AttributionPolicy;
   rows: CampaignPerformanceRow[]; filters: CampaignPerformanceFilter; topics: string[]; currencies: string[];
   openEstimatesEnabled: boolean; note: string;
 };

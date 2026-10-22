@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
-export const integrationScopes = ['contacts:read', 'contacts:write', 'events:read', 'campaigns:send'] as const;
+export const integrationScopes = ['contacts:read', 'contacts:write', 'events:read', 'events:write', 'campaigns:send'] as const;
 export type IntegrationScope = typeof integrationScopes[number];
 const text = z.string().trim().min(1).max(2000);
 export const credentialInput = z.object({
   name: z.string().trim().min(1).max(160),
-  scopes: z.array(z.enum(integrationScopes)).min(1).max(4).transform(values => [...new Set(values)]),
+  scopes: z.array(z.enum(integrationScopes)).min(1).max(5).transform(values => [...new Set(values)]),
 }).strict();
 export const consentInput = z.object({
   source: text, evidence: text, brandOrLegalSender: text, messageCategory: text,

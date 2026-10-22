@@ -1,3 +1,5 @@
+import { attributionPolicy } from './attribution-policy';
+import { attributionProjection } from './attribution-projection';
 import type { Database } from '@/core/platform/db/client';
 import { assertCampaignReportReadable } from './campaign-recipient-query';
 import { openTrackingSettings } from './open-tracking';
@@ -33,7 +35,8 @@ function selectedSteps(filter: CampaignPerformanceFilter) {
 export async function campaignPerformance(database: Database, filter: CampaignPerformanceFilter = {}): Promise<CampaignPerformanceReport> {
   await assertCampaignReportReadable(database);
   const client = database.$client, selected = selectedSteps(filter);
-  const settings = await openTrackingSettings(client);
+  const [settings, policy] = await Promise.all([openTrackingSettings(client), attributionPolicy(client)]);
+  const projection = attributionProjection(policy);
   const query = (sql: string) => client.prepare(`${selected.sql} ${sql}`).bind(...selected.bindings);
   const [totals, clicks, revenue, opens, topics] = await Promise.all([
     query(`SELECT s.campaign_id,s.revision_id,s.version,s.name,s.state,
@@ -50,8 +53,8 @@ export async function campaignPerformance(database: Database, filter: CampaignPe
       FROM selected_recipients r JOIN link_click_facts f ON f.recipient_step_id=r.id
       WHERE f.automated=0 GROUP BY r.revision_id,r.channel`).all<Clicks>(),
     // Read integer operands as text: JS Number cannot represent every aggregate.
-    query(`SELECT r.revision_id,r.channel,a.currency,CAST(a.gross_amount_minor AS TEXT) gross,CAST(a.refund_amount_minor AS TEXT) refunded
-      FROM selected_recipients r JOIN attribution_facts a ON a.recipient_step_id=r.id AND a.campaign_id=r.campaign_id`).all<Revenue>(),
+    client.prepare(`${selected.sql}, ${projection.sql} SELECT r.revision_id,r.channel,a.currency,CAST(a.gross_amount_minor AS TEXT) gross,CAST(a.refund_amount_minor AS TEXT) refunded
+      FROM selected_recipients r JOIN attribution_projection a ON a.recipient_step_id=r.id AND a.campaign_id=r.campaign_id`).bind(...selected.bindings,...projection.bindings).all<Revenue>(),
     settings.enabled ? query(`SELECT r.revision_id,r.channel,COUNT(*) estimated FROM selected_recipients r
       JOIN open_estimate_facts f ON f.recipient_step_id=r.id GROUP BY r.revision_id,r.channel`).all<Opens>() : Promise.resolve({ results: [] as Opens[] }),
     client.prepare('SELECT DISTINCT message_category topic FROM campaign_revisions ORDER BY message_category').all<{ topic: string }>(),
@@ -80,7 +83,7 @@ export async function campaignPerformance(database: Database, filter: CampaignPe
       ...(settings.enabled ? { openRateEstimate: total.channel === 'email' && recipients ? Number(openGroups.get(id) ?? 0) / recipients : null } : {}),
     };
   });
-  return { rows: sortCampaignPerformance(rows, filter), filters: filter, topics: topics.results.map(row => row.topic),
+  return { attributionPolicy: policy, rows: sortCampaignPerformance(rows, filter), filters: filter, topics: topics.results.map(row => row.topic),
     currencies: [...new Set(revenue.results.map(row => row.currency))].sort(), openEstimatesEnabled: settings.enabled,
-    note: 'One row per saved revision and channel. UTC dates select scheduled steps; all recorded outcomes for those steps are included. Recipients and unique human clicks count recipient-steps, including repeated steps for the same person. Click rate divides unique clicked recipient-steps by recipients. Delivered requires a provider-confirmed delivered disposition. Unsubscribes and complaints overlap delivery. Conversions are attributed orders; net revenue subtracts recorded refunds and cancellations, separated by currency. Revenue per recipient is rounded to four decimal places. No currency conversion. Open-rate estimates divide image-load recipient-steps by email recipients and do not prove reading. Flow and flow-message performance is not available.' };
+    note: 'One row per saved revision and channel. UTC dates select scheduled steps; all recorded outcomes for those steps are included. Recipients and unique human clicks count recipient-steps, including repeated steps for the same person. Click rate divides unique clicked recipient-steps by recipients. Delivered requires a provider-confirmed delivered disposition. Unsubscribes and complaints overlap delivery. Conversions use the selected attribution metric; net revenue subtracts recorded refunds and cancellations, separated by currency. Revenue per recipient is rounded to four decimal places. No currency conversion. Open-rate estimates divide image-load recipient-steps by email recipients and do not prove reading. Flow and flow-message performance is not available.' };
 }

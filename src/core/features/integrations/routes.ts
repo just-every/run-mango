@@ -1,3 +1,4 @@
+import { conversionEventInput } from '@/core/features/insights/conversion-events';
 import {hasPermission} from '@/core/features/auth/permissions';
 import { Hono, type Context, type MiddlewareHandler } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
@@ -91,6 +92,10 @@ export function createIntegrationApiRoutes(service: Service) {
   router.post('/suppressions', scope('contacts:write'), async context => {
     const input = await body(context, suppressionInput);
     return context.json(await service.suppress(context.get('integrationCredential').id, input));
+  });
+  router.post('/events', scope('events:write'), async context => {
+    const input = await body(context, conversionEventInput);
+    return context.json(await service.recordEvent(context.get('integrationCredential').id, input));
   });
   router.get('/events', scope('events:read'), async context => {
     const input = query(context, pageInput.strict());

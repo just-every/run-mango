@@ -1,3 +1,4 @@
+import { recordConversionEvent } from '@/core/features/insights/conversion-events';
 import type { createAudienceService } from '@/core/features/audience/service';
 import type { Platform } from '@/core/shared/platform';
 import { sha256, stableJson } from '@/core/shared/ids';
@@ -10,6 +11,7 @@ export function createIntegrationService(platform: Platform, audience: ReturnTyp
   const contacts = createIntegrationContacts(db, audience, platform.config.contactHashSalt);
   return {
     credentials: createCredentialStore(db), audit: createIntegrationAudit(db), contacts,
+    recordEvent: (credentialId: string, input: Parameters<typeof recordConversionEvent>[2]) => recordConversionEvent(db, credentialId, input),
     async available() {
       if (await db.prepare("SELECT 1 FROM audience_erasures WHERE state='pending' LIMIT 1").first()) throw new IntegrationError('contact_erasure_in_progress', 503);
     },

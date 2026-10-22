@@ -1,3 +1,4 @@
+import { createAttributionPolicyRoutes } from '@/core/features/insights/attribution-policy-routes';
 import {createDormancyRoutes} from '@/core/features/audience/dormancy-routes';
 import {domainSetupRoutes} from '@/core/features/sender-verification/setup-routes';
 import {stripeRoutes} from '@/core/features/store/stripe/routes';
@@ -363,6 +364,7 @@ export function createApp(
     (campaignId, revisionId) => lifecycleServices.approval.preview({campaignId, revisionId})));
   app.route('/api', createInsightsRoutes(insightsService,platform.database));
   app.route('/api', createOpenTrackingSettingsRoutes(platform));
+  app.route('/api', createAttributionPolicyRoutes(platform));
 
   app.all('*', (context) => context.json({ error: 'not_found' }, 404));
 
