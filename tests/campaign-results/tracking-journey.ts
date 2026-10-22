@@ -28,10 +28,13 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     for (const person of people) await confirmedContact(site, edge, cookie, person.email, person.name);
     const clock = await site.control('/_golive/clock', {hold: true});
     const destination = 'https://mango-test.myshopify.com/products/garden?collection=autumn#details';
+    // Contact links (MSG-013) travel in the same tracked message as the store link.
+    const contactLinks = ['mailto:hello@myshop.example?subject=Order%20question&body=Can%20you%20help%3F', 'tel:+15555550123', 'sms:+15555550123?body=Hi'];
+    const contactAnchors = contactLinks.map((href, index) => `<a href="${href.replaceAll('&', '&amp;')}">${['Email', 'Call', 'Text'][index]} the garden</a>`);
     const due = new Date(clock.now + 3600000);
     const campaign = await draftCampaign(site, cookie, 'Tracked garden letter', people.slice(0, 2).map(person => person.email), due);
     await json(await site.call('/api/campaign-revisions/' + campaign.revisionId, {method: 'PATCH', cookie, body: {
-      emailBody: `<p><a href="${destination}">Garden collection</a></p>`, trackingEnabled: true,
+      emailBody: `<p><a href="${destination}">Garden collection</a></p><p>${contactAnchors.join(' ')}</p>`, trackingEnabled: true,
     }}), 200);
     await approve(site, cookie, campaign);
     await site.control('/_golive/clock', {advanceMs: 3600001, hold: false});
@@ -44,6 +47,12 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
       expect(link).toBeTruthy();
       expect(new URL(link!).origin).toBe(site.origin);
       expect(html).not.toContain(`href="${destination}"`);
+      // Tracking is on, yet every contact link reaches the recipient exactly as authored.
+      const text = String(send.body.content.find((part: any) => part.type === 'text/plain').value);
+      for (const [index, href] of contactLinks.entries()) {
+        expect(html).toContain(contactAnchors[index]);
+        expect(text).toContain(`(${href})`);
+      }
       return link!;
     });
     expect(new Set(links).size).toBe(2);
@@ -64,10 +73,14 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     expect((await result()).engagement).toMatchObject({observedClicks: 1, automatedRequestsRetainedButExcluded: 1});
     const engagementPath = `/api/campaigns/${campaign.campaignId}/engagement`;
     const map = await json(await site.call(engagementPath, {cookie}), 200);
-    expect(map.links).toEqual([expect.objectContaining({destinationUrl: destination, totalClicks: 1, uniqueClicks: 1, automatedRequests: 1})]);
+    // Contact links are authored links with no redirect behind them, so they never record a click.
+    expect(map.links).toEqual([expect.objectContaining({destinationUrl: destination, totalClicks: 1, uniqueClicks: 1, automatedRequests: 1}),
+      ...contactLinks.map(href => expect.objectContaining({destinationUrl: href, totalClicks: 0, uniqueClicks: 0, automatedRequests: 0}))]);
+    expect((await site.rows('SELECT DISTINCT destination_url FROM tracked_links')).map(row => row.destination_url)).toEqual([destination]);
     const csv = parseCsv(await (await site.call(engagementPath + '?format=csv', {cookie})).text());
-    expect(csv).toHaveLength(1);
+    expect(csv).toHaveLength(1 + contactLinks.length);
     expect(csv[0]).toMatchObject({clicks: '1', 'unique clickers': '1', 'automated requests': '1'});
+    for (const [index, href] of contactLinks.entries()) expect(csv[index + 1]).toMatchObject({destination: href, clicks: '0', 'unique clickers': '0', 'automated requests': '0'});
     const performance = await json(await site.call('/api/insights/campaign-performance', {cookie}), 200);
     expect(performance.rows.find((row: any) => row.campaignId === campaign.campaignId)).toMatchObject({totalClicks: 1, uniqueClicks: 1});
 
@@ -116,9 +129,12 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
       await page.screenshot({path: info.outputPath(`tracking-${width}.png`), fullPage: true});
       await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
       const clickMap = page.frameLocator('iframe[title="Campaign click map"]');
-      await expect(clickMap.locator('mark')).toHaveText('[1 clicks · 1 people]');
+      await expect(clickMap.locator('mark')).toHaveText(['[1 clicks · 1 people]', ...contactLinks.map(() => '[0 clicks · 0 people]')]);
       await page.locator('iframe[title="Campaign click map"]').scrollIntoViewIfNeeded();
-      await expect(clickMap.locator('mark')).toBeInViewport();
+      await expect(clickMap.locator('mark').first()).toBeInViewport();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      // axe cannot enter the sandboxed click map; its marks are asserted above.
+      expect((await new AxeBuilder({page}).exclude('iframe[title="Campaign click map"]').analyze()).violations).toEqual([]);
       const engagement = page.locator('section').filter({has: page.getByRole('heading', {name: 'Link engagement', exact: true})});
       await engagement.screenshot({path: info.outputPath(`tracking-map-${width}.png`)});
     }
