@@ -11,7 +11,7 @@ export const levelFields = `id updatedAt location { id name isActive } quantitie
 export const orderFields = `id createdAt updatedAt processedAt cancelledAt cancelReason test displayFinancialStatus displayFulfillmentStatus currencyCode customer { ${customerFields} } totalPriceSet ${bag} currentTotalPriceSet ${bag} totalReceivedSet ${bag} totalRefundedSet ${bag} lineItems(first: 10) { nodes { ${lineFields} } ${pageInfo} } returns(first: 10) { nodes { ${returnFields} } ${pageInfo} } refunds { ${refundFields} }`;
 export const querySpecs = {
   customer: {connection: 'customers', kind: 'Customer', fields: customerFields},
-  product: {connection: 'products', kind: 'Product', fields: 'id createdAt updatedAt title handle status'},
+  product: {connection: 'products', kind: 'Product', fields: `id createdAt updatedAt title handle status category { fullName } collections(first: 10) { nodes { id } ${pageInfo} }`},
   variant: {connection: 'productVariants', kind: 'ProductVariant', fields: 'id createdAt updatedAt title sku product { id } inventoryItem { id }'},
   inventory: {connection: 'inventoryItems', kind: 'InventoryItem', fields: `id createdAt updatedAt sku tracked variant { id product { id } } inventoryLevels(first: 10) { nodes { ${levelFields} } ${pageInfo} }`},
   order: {connection: 'orders', kind: 'Order', fields: orderFields},

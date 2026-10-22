@@ -22,9 +22,10 @@ export function createSegmentFacts(db:D1Database) {
     },
     async segmentCatalogCoverage(field:'boughtCollectionId'|'boughtCategory') {
       const path=field==='boughtCollectionId'?'$.collectionIds':'$.category';
-      // A missing catalog attribute is unavailable, never an empty purchase set.
-      const row=await db.prepare(`SELECT COUNT(*) total,SUM(CASE WHEN json_type(payload,?) IS NOT NULL AND json_type(payload,?)<>'null' THEN 1 ELSE 0 END) covered
-        FROM source_records WHERE source_type='product'`).bind(path,path).first<{total:number;covered:number|null}>();
+      // An attribute the source never recorded is unavailable, never an empty
+      // purchase set. A recorded null (an uncategorized product) is a fact.
+      const row=await db.prepare(`SELECT COUNT(*) total,SUM(CASE WHEN json_type(payload,?) IS NOT NULL THEN 1 ELSE 0 END) covered
+        FROM source_records WHERE source_type='product'`).bind(path).first<{total:number;covered:number|null}>();
       return Boolean(row?.total&&row.covered===row.total);
     },
   };

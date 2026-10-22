@@ -26,7 +26,7 @@ export async function synchronizeProposalProduct(services:ReturnType<typeof crea
       id:'gid://shopify/AppInstallation/1',accessScopes:['read_customers','read_products','read_inventory','read_locations','read_orders','read_all_orders','read_returns'].map(handle=>({handle})),
     }}});
     if (query.includes('query MangoSource') && /\bproducts\(first:/.test(query) && variables.cursor === null) {
-      return Response.json({data:{products:{nodes:[{id:'gid://shopify/Product/1',createdAt:at,updatedAt:at,title:'Garden linen',handle:'garden-linen',status:'ACTIVE'}],pageInfo:{hasNextPage:false,endCursor:null}}}});
+      return Response.json({data:{products:{nodes:[{id:'gid://shopify/Product/1',createdAt:at,updatedAt:at,title:'Garden linen',handle:'garden-linen',status:'ACTIVE',category:null,collections:{nodes:[],pageInfo:{hasNextPage:false,endCursor:null}}}],pageInfo:{hasNextPage:false,endCursor:null}}}});
     }
     throw new Error('Unexpected proposal Shopify query.');
   };

@@ -45,6 +45,7 @@ export function PredicateFields({predicate,onChange,label}: {predicate:Predicate
     {predicate.field.startsWith('rfmMonetary')?<label>{label} currency<input aria-label={`${label} currency`} value={predicate.currency??'USD'} maxLength={3} onChange={event=>onChange({...predicate,currency:event.target.value.toUpperCase()})}/></label>:null}
   </div>
   {predicate.sourceType==='order'&&predicate.field==='count'?<EventPropertyFilters predicate={predicate} label={label} onChange={onChange}/>:null}
+  {predicate.field==='boughtCollectionId'||predicate.field==='boughtCategory'?<p className="muted-copy">Matches recorded purchases of products the synced catalog currently places in this {predicate.field==='boughtCollectionId'?'collection':'category'}. Use the catalog's {predicate.field==='boughtCollectionId'?'collection ID':'full category name'}.</p>:null}
   {predicate.field==='distanceMiles'?<p className="muted-copy">Approximate straight-line miles between Census ZIP-area representative points. Contacts without a recorded US ZIP or a matching area are excluded.</p>:null}
   </div>;
 }

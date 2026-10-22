@@ -3,6 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import {segmentFixture} from './segment-fixture';
 import {json,draftCampaign,approve} from '../go-live/harness';
 import {openPage} from '../support/navigation';
+import {catalogSegmentJourney} from './segment-catalog';
 
 export async function segmentJourney(page:Page,info:TestInfo) {
   page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000);
@@ -107,6 +108,7 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     const selected=await site.rows(`SELECT contact_id FROM campaign_revision_candidates WHERE revision_id='${campaign.revisionId}' ORDER BY contact_id`);
     expect(selected.map(r=>r.contact_id)).toEqual([people[0].id,people[4].id].sort());
     expect((await json(await site.call('/api/audience/segments',{cookie}),200)).segments.find((s:any)=>s.id===saved.id)).toEqual(saved);
+    await catalogSegmentJourney(page,info,f);
     expect(f.edge.unexpected).toEqual([]);
   }finally{await f.close();}
 }

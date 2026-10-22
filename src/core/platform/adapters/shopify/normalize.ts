@@ -57,7 +57,11 @@ export function normalizeAdmin(type: AdminSource, n: Node): SourceRecordInput[] 
   const created = date(n.createdAt, 'creation'), updated = date(n.updatedAt, 'update'), id = gid(kind, n.id);
   let facts: Node;
   if (type === 'customer') facts = {...customer(n), customer: customer(n)};
-  else if (type === 'product') facts = {title: text(n.title, 'product title'), handle: text(n.handle, 'product handle'), status: text(n.status, 'product status')};
+  // Current catalog placement: every collection page is drained, and Shopify
+  // reports an uncategorized product's taxonomy category as null.
+  else if (type === 'product') facts = {title: text(n.title, 'product title'), handle: text(n.handle, 'product handle'), status: text(n.status, 'product status'),
+    collectionIds: list(n.collections, 'product collections').map(item => gid('Collection', item.id)),
+    category: n.category === null ? null : text(object(n.category, 'product category').fullName, 'product category')};
   else if (type === 'variant') facts = {productId: gid('Product', object(n.product).id), inventoryItemId: gid('InventoryItem', object(n.inventoryItem).id), title: text(n.title,'variant title'), sku: nullableString(n.sku,'variant SKU')};
   else if (type === 'inventory') {
     if (typeof n.tracked !== 'boolean') throw new Error('Shopify inventory tracking state is missing.');
