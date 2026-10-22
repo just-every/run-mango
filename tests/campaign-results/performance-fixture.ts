@@ -130,6 +130,8 @@ export async function attributionJourney(input: {
   for (const purchase of purchases) await expect(panel.locator('summary').filter({hasText: purchase.id})).toBeVisible();
   await expect(panel.getByRole('table', {name: 'Attributed store orders by currency'})).toContainText('USD 80.00');
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-  expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+  // The separate click-map iframe is sandboxed; audit the observed-order panel
+  // here and the complete Insights page above, without disabling any axe rules.
+  expect((await new AxeBuilder({page}).include('section[aria-labelledby="commerce-results-title"]').analyze()).violations).toEqual([]);
   await page.screenshot({path: info.outputPath(`attribution-events-${width}.png`), fullPage: true});
 }
