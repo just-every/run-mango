@@ -8,7 +8,7 @@ import {CommerceResults} from '@/core/features/insights/ui/commerce-results';
 import { SchedulerReadiness } from './scheduler-readiness';
 import { CampaignCosts } from '@/core/features/insights/ui/cost-totals';
 import { productConfig } from '@/ext/config';
-import { Link, useLoaderData, useParams } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
 import type { CampaignDetail } from '@/core/app/client/lib/types';
@@ -24,7 +24,6 @@ import { ScheduledEnvelopeArt } from './scheduled-envelope-art';
 export function CampaignScheduledPage() {
   const {can}=usePermissions();
   const { id } = useParams({ from: '/app/campaigns_/$id_/scheduled' });
-  const { modules } = useLoaderData({ from: '/app' });
   const { data, error, loading, reload } = useResource<CampaignDetail>(`/api/campaigns/${id}`);
   const [notice, setNotice] = useState<{message:string;error:boolean}>();
   const [cancelling, setCancelling] = useState(false);
@@ -85,7 +84,7 @@ export function CampaignScheduledPage() {
         <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} />
       </div>
     </div>
-    {modules.store ? <CommerceResults campaignId={id} /> : null}
+    {can('report.read') ? <CommerceResults campaignId={id} /> : null}
     <CampaignEngagement campaignId={id} revisionId={data.revision.id} emailBody={data.revision.emailBody}/>
     <CampaignRecipients campaignId={id} revisionId={data.revision.id} steps={data.steps}/>
     <CampaignCosts campaignId={id} />

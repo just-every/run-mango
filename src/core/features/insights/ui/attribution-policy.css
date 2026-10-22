@@ -1,0 +1,3 @@
+.attribution-policy-note { display: block; margin-top: var(--sp-1); font-weight: 400; overflow-wrap: anywhere; }
+.attribution-policy-settings form { display: grid; gap: var(--sp-4); }
+.attribution-policy-settings .primary-action { justify-self: start; }

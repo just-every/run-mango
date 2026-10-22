@@ -9,6 +9,7 @@ const choices = [
   ['contacts:read', 'Read contacts', 'Read contact fields, tags and lists.'],
   ['contacts:write', 'Write contacts', 'Sync contacts and consent evidence, and stop email. Existing opt-outs stay in force.'],
   ['events:read', 'Read campaign events', 'Read unsubscribe, bounce, complaint and suppression changes.'],
+  ['events:write', 'Write conversion events', 'Record custom conversions, refunds and cancellations for revenue attribution.'],
   ['campaigns:send', 'Send to a segment', 'Dispatch an exact campaign revision a person has already approved for its saved segment.'],
 ] as const;
 

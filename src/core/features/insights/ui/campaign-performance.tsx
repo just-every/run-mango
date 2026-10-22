@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { CampaignEngagement } from './campaign-engagement';
+import { AttributionPolicyNote } from './attribution-policy-note';
 import { performanceRate, performanceRevenue, type CampaignPerformanceFilter, type CampaignPerformanceReport, type CampaignPerformanceSort } from '../campaign-performance-model';
 
 const columns: { key: CampaignPerformanceSort; label: string }[] = [
@@ -53,7 +54,9 @@ export function CampaignPerformance({ settingsVersion }: { settingsVersion: numb
             <td data-label="Channel">{row.channel}</td><td data-label="Topic">{row.topic}</td>
             <td data-label="Scheduled (UTC)"><time dateTime={row.scheduledAt}>{row.scheduledAt.slice(0, 10)}</time>{row.lastScheduledAt !== row.scheduledAt ? <> – <time dateTime={row.lastScheduledAt}>{row.lastScheduledAt.slice(0, 10)}</time></> : null}</td>
             <td data-label="Recipients">{row.recipients}</td><td data-label="Delivered">{row.delivered}</td><td data-label="Human clicks">{row.totalClicks}</td><td data-label="Unique clicks">{row.uniqueClicks}</td><td data-label="Click rate">{performanceRate(row.clickRate)}</td>
-            <td data-label="Unsubscribes">{row.unsubscribes}</td><td data-label="Complaints">{row.complaints}</td><td data-label="Conversions">{row.conversions}</td><td data-label="Net revenue">{performanceRevenue(row)}</td><td data-label="Revenue / recipient">{performanceRevenue(row, true)}</td>
+            <td data-label="Unsubscribes">{row.unsubscribes}</td><td data-label="Complaints">{row.complaints}</td><td data-label="Conversions">{row.conversions}</td>
+            <td data-label="Net revenue"><div><span className="attribution-amount">{performanceRevenue(row)}</span><AttributionPolicyNote policy={data.attributionPolicy} channel={row.channel} /></div></td>
+            <td data-label="Revenue / recipient"><div><span className="attribution-amount">{performanceRevenue(row, true)}</span><AttributionPolicyNote policy={data.attributionPolicy} channel={row.channel} /></div></td>
             {data.openEstimatesEnabled ? <td data-label="Open-rate estimate">{performanceRate(row.openRateEstimate ?? null)}</td> : null}
             <td data-label="Links"><button type="button" className="text-link" aria-expanded={detail?.revisionId === row.revisionId} onClick={() => setDetail({ campaignId: row.campaignId, revisionId: row.revisionId })}>View links · revision {row.revision}</button></td>
           </tr>)}</tbody></table>

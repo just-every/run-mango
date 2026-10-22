@@ -3,6 +3,7 @@ import { RetentionAnalytics } from './retention-report';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {OpenEstimates} from './open-estimates';
 import { CampaignPerformance } from './campaign-performance';
+import { AttributionSettings } from './attribution-settings';
 import { useState } from 'react';
 import {SenderRates} from './sender-rates';
 import { CostTotals } from './cost-totals';
@@ -45,6 +46,7 @@ export function InsightsPage() {
         </div>
       </header>
       <OpenEstimates onSettingsChanged={() => setSettingsVersion(version => version + 1)} />
+      <AttributionSettings onSettingsChanged={() => setSettingsVersion(version => version + 1)} />
       <CampaignPerformance settingsVersion={settingsVersion} />
       <CostTotals report={data.costs} />
       <SenderRates />
