@@ -7026,7 +7026,7 @@
       "executable": false
     },
     "tests/campaign-results/performance-fixture.ts": {
-      "sha256": "75c43ce9a7c0c6c9d98d422170c08e1db469a612dee6590d195248ac81d647d3",
+      "sha256": "e60df3a8722f535532c1a3fd44606aaad4d835797c67ea54e7ffc093ec41c968",
       "executable": false
     },
     "tests/campaign-results/performance.journeys.ts": {

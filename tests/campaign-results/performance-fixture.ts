@@ -25,7 +25,8 @@ export async function attributionJourney(input: {
   cookie: string; campaign: {campaignId: string; revisionId: string}; links: string[];
   people: {email: string; name: string}[]; destination: string; page: Page; info: TestInfo; width: number;
 }) {
-  const {site, edge, commerce, cookie, campaign, links, people, destination, page, info, width} = input;
+  const {site, edge, commerce, campaign, links, people, destination, page, info, width} = input;
+  let cookie = input.cookie;
   const result = (campaignId: string) => site.call(`/api/campaigns/${campaignId}/results`, {cookie}).then(response => json(response, 200));
   const unchangedAttribution = (actual: any, expected: any) => {
     expect(actual).toEqual({...expected, events: expected.events.map((event: any) => ({...event, observedAt: expect.any(Number)}))});
@@ -102,6 +103,8 @@ export async function attributionJourney(input: {
   unchangedAttribution((await result(latest.campaignId)).attribution, final);
   // Real clicks expire by elapsed time; there is no backdated row insertion.
   await site.control('/_golive/clock', {advanceMs: 8 * 86400000});
+  cookie = await site.open();
+  await page.context().addCookies([{name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url}]);
   await deliver(await makeOrder(301, 0, '999.00'), true);
   unchangedAttribution((await result(latest.campaignId)).attribution, final);
   expect((await result(campaign.campaignId)).attribution.orders).toBe(1);
