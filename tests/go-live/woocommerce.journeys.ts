@@ -33,7 +33,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     await page.getByLabel('WooCommerce webhook secret', {exact: true}).fill(connection.signingSecret);
     await page.getByLabel('This webhook secret is used only for this store’s Mango connection.').check();
     await page.getByRole('button', {name: 'Connect WooCommerce', exact: true}).click();
-    await expect(page.locator('#woocommerce [role=status]')).toContainText('Connected to');
+    await expect(page.locator('#woocommerce [role=status]').filter({hasText: 'Connected to'})).toBeVisible();
     await expect(page.getByLabel('Consumer key', {exact: true})).toHaveValue('');
     const status = await json(await site.call('/api/settings/woocommerce', {cookie}), 200);
     expect(JSON.stringify(status)).not.toContain(connection.key);
