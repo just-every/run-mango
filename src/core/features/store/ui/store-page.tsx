@@ -6,8 +6,9 @@ import { titleCase } from '@/core/app/client/lib/format';
 import type { Provider, SourceSync } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
+import { StoreOperations, type OperationRun } from './store-operations';
 
-type SyncRun = {id: string; provider: string; sourceType: string; state: string; pages: number; records: number; lastError: string | null; completedAt: string | null};
+type SyncRun = {id: string; provider: string; sourceType: string; operation: 'sync' | OperationRun['operation']; state: string; pages: number; records: number; lastError: string | null; updatedAt: string; completedAt: string | null};
 type StoreStatus = { channels?: Array<{id:string; shop:string; coverage_start:number; retention_start:number; healthy_at:number; last_observation_at:number|null; last_error:string|null}>; providers: Provider[]; sourceSyncs: SourceSync[]; sourceCapabilities: Array<{sourceType: string; available: boolean; detail: string}>; syncRuns: SyncRun[] };
 
 export function StorePage() {
@@ -51,7 +52,7 @@ export function StorePage() {
         {data.sourceSyncs.length ? (
           <div className="source-status__grid store-sources">
             {data.sourceSyncs.map(source => {
-              const run = data.syncRuns.find(item => item.sourceType === source.sourceType);
+              const run = data.syncRuns.find(item => item.sourceType === source.sourceType && item.operation === 'sync');
               const capability = data.sourceCapabilities.find(item => item.sourceType === source.sourceType);
               const stale = !source.lastSuccessfulAt || Date.parse(source.lastSuccessfulAt) < Date.now() - 86400000;
               const resumable = run && ['queued', 'running', 'failed'].includes(run.state);
@@ -81,6 +82,7 @@ export function StorePage() {
           </div>
         ) : <p className="notice-note">No commerce source types have been declared by the server.</p>}
       </section>
+      <StoreOperations operations={data.syncRuns.filter((run): run is SyncRun & OperationRun => run.operation !== 'sync')} />
       {data.channels?.map(channel => <section className="panel" key={channel.id}>
         <h2>Observed store activity</h2>
         <p>{channel.shop} · {channel.last_error || channel.healthy_at < Date.now()-3600000 ? 'Connection needs attention' : 'Installation verified'}</p>

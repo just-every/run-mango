@@ -6,15 +6,18 @@ import type {createAudienceService} from '@/core/features/audience/service';
 import {activityStatement} from '@/core/features/auth/activity-record';
 import {sha256} from '@/core/shared/ids';
 import {seal, unseal} from './secrets';
-import {stripeSources, stripeRecord, verifyStripe} from './events';
+import {stripeEventSource, stripeSources, stripeRecord, verifyStripe} from './events';
+import {CommerceWebhookUnreadable} from '../webhook-unreadable';
+import type {FailedOperations} from '@/core/features/audience/commerce-webhook-routes';
 const connection = z.object({key: z.string().regex(/^rk_(?:test|live)_[A-Za-z0-9]+$/).max(512), signingSecret: z.string().regex(/^whsec_[A-Za-z0-9]+$/).max(256)}).strict();
 type Stored = {key_cipher: string; signing_cipher: string; mode: string};
-export function stripeRoutes(platform: Platform, audience: ReturnType<typeof createAudienceService>) {
+export function stripeRoutes(platform: Platform, audience: ReturnType<typeof createAudienceService>, operations: FailedOperations) {
   const db = platform.database.$client;
   const read = () => db.prepare('SELECT key_cipher,signing_cipher,mode FROM stripe_connection WHERE id=1').first<Stored>();
   async function api(path: string, key: string) {
-    const response = await fetch('https://api.stripe.com/v1/' + path, {headers: {Authorization: 'Bearer ' + key}, signal: AbortSignal.timeout(10000)});
-    if (!response.ok) throw new Error('stripe_unavailable');
+    const response = await fetch('https://api.stripe.com/v1/' + path, {headers: {Authorization: 'Bearer ' + key}, signal: AbortSignal.timeout(10000)})
+      .catch(() => {throw new Error('Stripe API request failed (no response).');});
+    if (!response.ok) throw new Error(`Stripe API request failed (${response.status}).`);
     return response.json() as Promise<Record<string, any>>;
   }
   const settings = new Hono<{Variables: AuthVariables}>();
@@ -57,12 +60,20 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
       const previous = await db.prepare('SELECT digest FROM commerce_receipts WHERE id=?').bind(await sha256(receipt)).first<{digest: string}>();
       if (previous) return previous.digest === digest ? context.body(null, 204) : context.json({error: 'stripe_event_conflict'}, 409);
       const key = await unseal(stored.key_cipher, platform.config.sessionSigningKey);
-      const record = await stripeRecord(event, path => api(path, key));
+      const sourceType = stripeEventSource(event.type, event.data.object)?.sourceType ?? 'payment';
+      const record = await stripeRecord(event, path => api(path, key).catch(error => {
+        throw new CommerceWebhookUnreadable(error instanceof Error ? error.message : 'Stripe API request failed.', receipt, sourceType);
+      }));
       if (!record) return context.body(null, 204);
       if (!record.contact) return context.json({error: 'stripe_contact_unresolved'}, 422);
       await audience.ingestCommerceWebhook({provider: 'stripe', completion: 'delta', adapterCompleted: false, sourceTypes: [record.sourceType], records: [record], receipt: {ids: [receipt], digest}});
+      await operations.recoverDeliveries([receipt], new Date());
       return context.body(null, 204);
-    } catch {return context.json({error: 'stripe_ingestion_failed'}, 422);}
+    } catch (error) {
+      // A verified event whose Stripe read failed is recorded once per event.
+      if (error instanceof CommerceWebhookUnreadable) await operations.recordFailedOperation({operation: 'webhook', provider: 'stripe', sourceType: error.sourceType, deliveryKey: error.deliveryKey, error: error.message, now: new Date()});
+      return context.json({error: 'stripe_ingestion_failed'}, 422);
+    }
   });
   return {settings, webhooks};
 }

@@ -1,17 +1,19 @@
 import type {CommerceCoverage} from '@/core/shared/platform';
 import type { Database } from '@/core/platform/db/client';
 export type SyncRun = {
-  id: string; provider: string; sourceType: string; state: 'queued' | 'running' | 'failed' | 'completed' | 'superseded';
+  id: string; provider: string; sourceType: string; operation: 'sync' | 'webhook' | 'generation'; state: 'queued' | 'running' | 'failed' | 'completed' | 'superseded';
   nextCursor: string | null; pages: number; records: number; leaseToken: string | null; leaseExpiresAt: number | null;
   lastError: string | null; createdAt: number; updatedAt: number; completedAt: number | null;
 };
 export class SourceSyncBusyError extends Error {}
-const columns = `id, provider, source_type AS sourceType, state, next_cursor AS nextCursor, pages, records,
+const columns = `id, provider, source_type AS sourceType, operation, state, next_cursor AS nextCursor, pages, records,
   lease_token AS leaseToken, lease_expires_at AS leaseExpiresAt, last_error AS lastError,
   created_at AS createdAt, updated_at AS updatedAt, completed_at AS completedAt`;
 export function createSyncRunRepository(database: Database) {
   const client = database.$client;
-  const get = (id: string) => client.prepare(`SELECT ${columns} FROM source_sync_runs WHERE id = ?`).bind(id).first<SyncRun>();
+  // Sync control only ever resolves sync runs; failed webhook and generation
+  // operations share the record for their visible adapter error.
+  const get = (id: string) => client.prepare(`SELECT ${columns} FROM source_sync_runs WHERE id = ? AND operation = 'sync'`).bind(id).first<SyncRun>();
   const guard = `EXISTS (SELECT 1 FROM source_sync_runs WHERE id = ? AND state = 'running' AND lease_token = ? AND lease_expires_at > ?)`;
   function sourceState(sourceType: string, time: number, error: string | null, predicate: string, values: unknown[]) {
     return client.prepare(`INSERT INTO source_syncs (id, source_type, last_successful_at, last_error, created_at, updated_at)
@@ -25,7 +27,7 @@ export function createSyncRunRepository(database: Database) {
     get,
     async list() {
       const result = await client.prepare(`SELECT ${columns} FROM source_sync_runs WHERE state IN ('queued', 'running')
-        OR rowid IN (SELECT MAX(rowid) FROM source_sync_runs GROUP BY provider, source_type)
+        OR rowid IN (SELECT MAX(rowid) FROM source_sync_runs GROUP BY provider, source_type, operation)
         OR rowid IN (SELECT rowid FROM source_sync_runs ORDER BY rowid DESC LIMIT 50) ORDER BY rowid DESC`).all<SyncRun>();
       return result.results.map(({nextCursor: _cursor, leaseToken: _token, leaseExpiresAt: _lease, ...run}) => ({
         ...run, createdAt: new Date(run.createdAt), updatedAt: new Date(run.updatedAt), completedAt: run.completedAt === null ? null : new Date(run.completedAt),
@@ -40,7 +42,7 @@ export function createSyncRunRepository(database: Database) {
         await client.batch([
           client.prepare(`UPDATE source_sync_runs SET state = 'superseded', updated_at = ? WHERE id = ? AND state = 'failed'
             AND EXISTS (SELECT 1 FROM source_sync_runs newer WHERE newer.provider = source_sync_runs.provider
-              AND newer.source_type = source_sync_runs.source_type AND newer.rowid > source_sync_runs.rowid)`).bind(time, id),
+              AND newer.source_type = source_sync_runs.source_type AND newer.operation = 'sync' AND newer.rowid > source_sync_runs.rowid)`).bind(time, id),
           client.prepare(`UPDATE source_sync_runs SET state = 'queued', last_error = NULL, updated_at = ? WHERE id = ? AND state = 'failed'
             AND NOT EXISTS (SELECT 1 FROM source_sync_runs other WHERE other.provider = source_sync_runs.provider
               AND other.source_type = source_sync_runs.source_type AND other.state IN ('queued', 'running'))`).bind(time, id),
@@ -59,7 +61,7 @@ export function createSyncRunRepository(database: Database) {
           (SELECT 1 FROM source_sync_runs WHERE provider = ? AND source_type = ? AND state IN ('queued', 'running'))
           ON CONFLICT(id) DO NOTHING`).bind(id, provider, sourceType, time, time, provider, sourceType),
         client.prepare(`UPDATE source_sync_runs SET state = 'superseded', updated_at = ? WHERE provider = ? AND source_type = ? AND state = 'failed'
-          AND rowid < (SELECT rowid FROM source_sync_runs WHERE id = ?)`).bind(time, provider, sourceType, id),
+          AND operation = 'sync' AND rowid < (SELECT rowid FROM source_sync_runs WHERE id = ?)`).bind(time, provider, sourceType, id),
         sourceState(sourceType, time, 'Full sync is queued; completion has not been confirmed.', predicate, [id]),
       ]);
       const run = await get(id);
@@ -125,6 +127,17 @@ export function createSyncRunRepository(database: Database) {
         client.prepare(`UPDATE source_sync_runs SET state = 'failed', lease_token = NULL, lease_expires_at = NULL, last_error = ?, updated_at = ?
           WHERE id = ? AND ${guard}`).bind(detail, time, run.id, ...values),
       ]);
+    },
+    async recordFailedOperation(input: {operation: 'webhook' | 'generation'; provider: string; sourceType: string; deliveryKey?: string; error: string; now: Date}) {
+      const time = input.now.getTime();
+      await client.prepare(`INSERT INTO source_sync_runs (id, provider, source_type, operation, delivery_key, state, last_error, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, 'failed', ?, ?, ?) ON CONFLICT DO NOTHING`)
+        .bind(crypto.randomUUID(), input.provider, input.sourceType, input.operation, input.deliveryKey ?? null, input.error.slice(0, 2000), time, time).run();
+    },
+    async recoverDeliveries(keys: string[], now: Date) {
+      const time = now.getTime();
+      await client.prepare(`UPDATE source_sync_runs SET state = 'completed', completed_at = ?, updated_at = ?
+        WHERE operation = 'webhook' AND state = 'failed' AND delivery_key IN (SELECT value FROM json_each(?))`).bind(time, time, JSON.stringify(keys)).run();
     },
     async enqueueFailed(run: SyncRun, error: string, now: Date) {
       const time = now.getTime(), detail = error.slice(0, 2000);

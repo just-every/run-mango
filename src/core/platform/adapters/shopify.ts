@@ -10,6 +10,7 @@ import {normalizeAdmin,normalizeCart} from './shopify/normalize';
 import {createCommerceEventLog} from '@/core/features/store/shopify/event-log';
 import {createShopifyCollector} from '@/core/features/store/shopify/collector';
 import {createShopifyHealth,type ShopifyObservationConfig} from '@/core/features/store/shopify/health';
+import {CommerceWebhookUnreadable} from '@/core/features/store/webhook-unreadable';
 
 const topics:Record<string,AdminSource|'cart'>={
   'customers/create':'customer','customers/update':'customer','products/create':'product','products/update':'product',
@@ -56,8 +57,8 @@ export function createShopifyAdapter(options:{storeUrl:URL;accessToken:string;we
       else{
         const kind=querySpecs[type].kind;
         const id=type==='refund'?gid('Order',payload.order_id):type==='inventory'?gid('InventoryItem',payload.inventory_item_id??payload.id):gid(kind,payload.admin_graphql_api_id??payload.id);
-        await verifyAccess();
-        records=normalizeAdmin(type,await admin.node(type,id));
+        try{await verifyAccess();records=normalizeAdmin(type,await admin.node(type,id));}
+        catch(error){throw new CommerceWebhookUnreadable(error instanceof Error?error.message:'Shopify Admin read failed.',`shopify:delivery:${delivery}`,type);}
         if(type==='refund')records=records.filter(record=>record.sourceId===gid('Refund',payload.admin_graphql_api_id??payload.id));
         if(!records.length)throw new Error('Shopify webhook record could not be reconciled.');
       }

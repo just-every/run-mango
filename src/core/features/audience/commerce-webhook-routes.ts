@@ -2,8 +2,11 @@ import {Hono} from 'hono';
 import type {CommerceStore,VerifiedCommerceWebhook} from '@/core/shared/platform';
 import {commerceProjection} from '@/core/features/store/commerce-projection';
 import type {createAudienceService} from './service';
+import {CommerceWebhookUnreadable} from '@/core/features/store/webhook-unreadable';
+import type {createSyncRunRepository} from '@/core/features/store/sync-run-repository';
 
-export function createCommerceWebhookRoutes(service:ReturnType<typeof createAudienceService>,commerce:CommerceStore){
+export type FailedOperations=Pick<ReturnType<typeof createSyncRunRepository>,'recordFailedOperation'|'recoverDeliveries'>;
+export function createCommerceWebhookRoutes(service:ReturnType<typeof createAudienceService>,commerce:CommerceStore,operations:FailedOperations){
   const routes=new Hono();
   async function ingest(verified:VerifiedCommerceWebhook){
     const records=verified.records??[verified];
@@ -15,8 +18,13 @@ export function createCommerceWebhookRoutes(service:ReturnType<typeof createAudi
   }
   routes.post('/webhooks/commerce/shopify',async context=>{
     let verified;
-    try{verified=await commerce.verifyWebhook(context.req.raw);}catch{return context.json({error:'invalid_webhook'},401);}
+    try{verified=await commerce.verifyWebhook(context.req.raw);}catch(error){
+      // Only a verified delivery the adapter could not read is recorded, once.
+      if(error instanceof CommerceWebhookUnreadable)await operations.recordFailedOperation({operation:'webhook',provider:'shopify',sourceType:error.sourceType,deliveryKey:error.deliveryKey,error:error.message,now:new Date()});
+      return context.json({error:'invalid_webhook'},401);
+    }
     try{await ingest(verified);}catch{return context.json({error:'commerce_ingestion_failed'},422);}
+    if(verified.receipt)await operations.recoverDeliveries(verified.receipt.ids,new Date());
     return context.body(null,204);
   });
   routes.post('/webhooks/commerce/shopify/observations',async context=>{

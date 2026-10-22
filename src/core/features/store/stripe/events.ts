@@ -20,21 +20,25 @@ export async function verifyStripe(request: Request, secret: string, now = Date.
   if (typeof event.id !== 'string' || !event.id.startsWith('evt_') || typeof event.type !== 'string' || !Number.isSafeInteger(event.created) || typeof event.livemode !== 'boolean' || !event.data?.object?.id) throw new Error('shape');
   return event as ObjectValue;
 }
+/** The recorded source type and lifecycle state of a Stripe event, or null when it is not recorded. */
+export function stripeEventSource(type: string, object: ObjectValue): {sourceType: Extract<CommerceSourceType, typeof stripeSources[number]>; state: string} | null {
+  if (type.startsWith('customer.subscription.')) return {sourceType: 'subscription',
+    state: type.endsWith('.deleted') ? 'subscription.canceled' : type.endsWith('.created') ? 'subscription.started' : object.status === 'past_due' ? 'subscription.past_due' : 'subscription.updated'};
+  if (type.startsWith('customer.')) return {sourceType: 'customer', state: type};
+  if (type.startsWith('checkout.session.')) return {sourceType: 'checkout-session', state: type};
+  if (type.startsWith('refund.') || type === 'charge.refunded') return {sourceType: 'refund', state: type};
+  if (type.startsWith('payment_intent.') || type.startsWith('charge.') || type.startsWith('invoice.')) {
+    if (type === 'invoice.paid' || type === 'invoice.payment_succeeded') return {sourceType: 'payment', state: object.billing_reason === 'subscription_cycle' ? 'subscription.renewed' : 'payment.succeeded'};
+    if (type === 'invoice.payment_failed') return {sourceType: 'payment', state: 'subscription.past_due'};
+    return {sourceType: 'payment', state: type === 'payment_intent.succeeded' || type === 'charge.succeeded' ? 'payment.succeeded' : type};
+  }
+  return null;
+}
 export async function stripeRecord(event: ObjectValue, lookup: (path: string) => Promise<ObjectValue>): Promise<NormalizedCommerceRecord | null> {
   const object = event.data.object as ObjectValue, type = event.type as string;
-  let sourceType: CommerceSourceType, state = type;
-  if (type.startsWith('customer.subscription.')) {
-    sourceType = 'subscription';
-    state = type.endsWith('.deleted') ? 'subscription.canceled' : type.endsWith('.created') ? 'subscription.started' : object.status === 'past_due' ? 'subscription.past_due' : 'subscription.updated';
-  } else if (type.startsWith('customer.')) sourceType = 'customer';
-  else if (type.startsWith('checkout.session.')) sourceType = 'checkout-session';
-  else if (type.startsWith('refund.') || type === 'charge.refunded') sourceType = 'refund';
-  else if (type.startsWith('payment_intent.') || type.startsWith('charge.') || type.startsWith('invoice.')) {
-    sourceType = 'payment';
-    if (type === 'invoice.paid' || type === 'invoice.payment_succeeded') state = object.billing_reason === 'subscription_cycle' ? 'subscription.renewed' : 'payment.succeeded';
-    else if (type === 'invoice.payment_failed') state = 'subscription.past_due';
-    else if (type === 'payment_intent.succeeded' || type === 'charge.succeeded') state = 'payment.succeeded';
-  } else return null;
+  const source = stripeEventSource(type, object);
+  if (!source) return null;
+  const {sourceType, state} = source;
   let customerId = sourceType === 'customer' ? object.id : typeof object.customer === 'string' ? object.customer : object.customer?.id;
   let profile: ObjectValue = sourceType === 'customer' ? object : typeof object.customer === 'object' && object.customer ? object.customer : object.customer_details ?? {};
   // Refund payloads identify their charge/payment intent, not their customer.

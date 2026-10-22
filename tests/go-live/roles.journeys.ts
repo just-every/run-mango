@@ -21,7 +21,7 @@ test('[INT-004][OPER-003][OPER-004] roles govern native requests and removal ret
       expect((await site.call(`/api/operators/role-${role}/role`,{method:'PUT',cookie:owner,body:{role}})).status).toBe(200);
       expect((await json(await site.call('/api/operator',{cookie:cookies[role]}),200)).operator.role).toBe(role);
     }
-    await stripeJourney(site, page, info, owner, cookies.admin!, cookies.author!);
+    await stripeJourney(site, page, info, owner, cookies.admin!, cookies.author!, edge);
     await site.runtime.sql("UPDATE oa_operators SET display_name=CASE id WHEN 'go-live-owner' THEN 'Jordan Green' WHEN 'role-admin' THEN 'Noah Brooks' WHEN 'role-manager' THEN 'Maya Torres' WHEN 'role-author' THEN 'Lena Chen' WHEN 'role-analyst' THEN 'Ari Patel' ELSE 'Sam Rivera' END RETURNING id");
     // Existing native sessions remain signed in, but cannot retain an old grant.
     expect((await site.call('/api/operators/go-live-owner/role',{method:'PUT',cookie:owner,body:{role:'author'}})).status).toBe(409);

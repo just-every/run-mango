@@ -72,7 +72,13 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
       const rows = await platform.database.$client.prepare('SELECT id, source_type, payload, occurred_at FROM source_records ORDER BY occurred_at DESC LIMIT 30').all<{id:string;source_type:string;payload:string;occurred_at:number}>();
       if (!rows.results.length) return {kind:'unavailable', detail:'Sync store evidence before generating a suggestion. Manual authoring is available.'};
       const issues = await store.freshness([...new Set(rows.results.map(row => row.source_type))] as CommerceSourceType[], new Date());
-      if (issues.length) return {kind:'unavailable', detail:authoringSourceIssues(issues)};
+      if (issues.length) {
+        // An unavailable adapter fails this generation with its last error; nothing is proposed or sent.
+        const failed = issues.filter(issue => issue.reason === 'source-sync-failed' || issue.reason === 'source-unavailable');
+        if (failed.length) await store.syncRuns.recordFailedOperation({operation:'generation', provider:platform.commerce.capabilities().provider ?? 'commerce',
+          sourceType:failed[0].sourceType, error:failed.map(issue => issue.detail).join(' '), now:new Date()});
+        return {kind:'unavailable', detail:authoringSourceIssues(issues)};
+      }
       return createProposalService(createProposalRepository(platform.database), platform.ai).generate({
         evidence:rows.results.map(row => ({key:row.id, sourceRecordId:row.id, sourceType:row.source_type, observedValue:JSON.parse(row.payload), occurredAt:new Date(row.occurred_at)})),
         actorId:operatorId,

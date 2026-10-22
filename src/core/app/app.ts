@@ -300,9 +300,9 @@ export function createApp(
   app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
   app.route('/', createSmsSignupRoutes(platform,audienceService));
   app.route('/', createMediaRoutes(environment.DB, platform.blobs));
-  const stripe = stripeRoutes(platform, audienceService);
+  const stripe = stripeRoutes(platform, audienceService, storeService.syncRuns);
   app.route('/', stripe.webhooks);
-  if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce));
+  if (platform.commerce) app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce, storeService.syncRuns));
   app.route('/',createOpenPixelRoutes(platform));
   app.route('/',archivePublicRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   const integrations = createIntegrationService(platform, audienceService);

@@ -1,4 +1,6 @@
+import {createHmac} from 'node:crypto';
 import {expect} from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 import {contract} from '../contract.js';
 import {providerEdge} from './edge';
 import {eventSigner} from './sendgrid-events';
@@ -11,6 +13,13 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
   try {
     const cookie = await site.open();
     const desk = async () => json(await site.call('/api/decision-desk', {cookie}), 200);
+    const store = async () => json(await site.call('/api/store', {cookie}), 200);
+    const operations = async (operation: string) => (await store()).syncRuns.filter((run: any) => run.operation === operation);
+    const webhook = (delivery: string, secret = 'synthetic-store-webhook-key') => {
+      const raw = JSON.stringify({admin_graphql_api_id: 'gid://shopify/Product/23'});
+      return site.call('/webhooks/commerce/shopify', {method: 'POST', raw, headers: {'X-Shopify-Hmac-Sha256': createHmac('sha256', secret).update(raw).digest('base64'),
+        'X-Shopify-Shop-Domain': 'mango-test.myshopify.com', 'X-Shopify-Topic': 'products/update', 'X-Shopify-Webhook-Id': delivery, 'X-Shopify-Event-Id': delivery}});
+    };
     const initial = await desk();
     expect(initial.sourceStatus.sourceSyncs).toHaveLength(8);
     expect(initial.sourceStatus.sourceSyncs.every((source: any) => source.lastSuccessfulAt === null)).toBe(true);
@@ -46,6 +55,18 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
     expect(generated).toMatchObject({kind: 'unavailable', detail: expect.stringMatching(/product.*sync failed/i)});
     expect(await site.count('proposals')).toBe(0);
     expect(await site.count('external_cost_facts')).toBe(costsBefore);
+    // The refused generation is itself a failed operation carrying the adapter's error.
+    expect(await operations('generation')).toEqual([expect.objectContaining({provider: 'shopify', sourceType: 'product', state: 'failed', lastError: expect.stringContaining('GraphQL')})]);
+    // During an Admin API outage a verified webhook keeps its answer and records
+    // one failed operation per delivery; a forged delivery records nothing.
+    commerce.outage(true);
+    expect((await webhook('synthetic-mango-delivery-1', 'synthetic-forged-key')).status).toBe(401);
+    expect(await operations('webhook')).toEqual([]);
+    for (let attempt = 0; attempt < 2; attempt++) expect((await webhook('synthetic-mango-delivery-1')).status).toBe(401);
+    expect(await operations('webhook')).toEqual([expect.objectContaining({provider: 'shopify', sourceType: 'product', state: 'failed', lastError: expect.stringContaining('GraphQL')})]);
+    commerce.outage(false);
+    const storeText = JSON.stringify(await store());
+    for (const secret of ['private upstream diagnostic', 'synthetic-store-webhook-key', 'synthetic-store-edge-key', 'Product 23']) expect(storeText).not.toContain(secret);
     await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`, {method: 'PATCH', cookie, body: {emailSubject: 'Saved during the outage'}}), 200);
     expect((await json(await site.call(`/api/campaigns/${draft.campaignId}`, {cookie}), 200)).revision.emailSubject).toBe('Saved during the outage');
     expect(await json(await site.call(`/api/campaigns/${sent.campaignId}/results`, {cookie}), 200)).toEqual(history);
@@ -73,6 +94,13 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
       const sync = page.getByRole('article', {name: 'Product sync', exact: true});
       await expect(sync).toContainText(/failed/i);
       await expect(sync).toContainText('GraphQL');
+      const failures = page.getByRole('region', {name: 'Failed operations', exact: true});
+      for (const name of ['Suggestion generation: Product', 'Webhook ingestion: Product']) {
+        await expect(failures.getByRole('article', {name, exact: true})).toContainText(/failed/i);
+        await expect(failures.getByRole('article', {name, exact: true})).toContainText('GraphQL');
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
       await page.screenshot({path: info.outputPath(`source-operation-failed-${width}.png`), fullPage: true});
       await openPage(page, `${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);
       await expect(page.getByRole('button', {name: 'Save full draft', exact: true})).toBeEnabled();
@@ -83,6 +111,10 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
     commerce.fail(false);
+    // Shopify's retry after recovery ingests the delivery once and completes its operation.
+    for (let attempt = 0; attempt < 2; attempt++) expect((await webhook('synthetic-mango-delivery-1')).status).toBe(204);
+    expect(await site.rows("SELECT provider_source_id FROM source_records WHERE provider_source_id='gid://shopify/Product/23'")).toHaveLength(1);
+    expect(await operations('webhook')).toEqual([expect.objectContaining({state: 'completed', lastError: expect.stringContaining('GraphQL')})]);
     await site.control('/_golive/clock', {advanceMs: 1000});
     await syncSource(site, cookie, 'product');
     const recovered = (await desk()).sourceStatus.sourceSyncs.find((source: any) => source.sourceType === 'product');

@@ -1,8 +1,9 @@
 import {createHmac} from 'node:crypto';
 import {expect, type Page, type TestInfo} from '@playwright/test';
 import {type Installation, json} from './harness';
+import type {providerEdge} from './edge';
 import {openPage} from '../support/navigation';
-export async function stripeJourney(site: Installation, page: Page, info: TestInfo, owner: string, admin: string, author: string) {
+export async function stripeJourney(site: Installation, page: Page, info: TestInfo, owner: string, admin: string, author: string, edge: Awaited<ReturnType<typeof providerEdge>>) {
   const testMode = ['_', 'test', '_'].join('');
   const body = {key: 'rk' + testMode + 'SyntheticStripe1234', signingSecret: 'whsec_SyntheticSigning'};
   expect((await site.call('/api/settings/stripe', {method: 'PUT', cookie: owner, body: {...body, key: 'sk' + testMode + 'UnrestrictedKey'}})).status).toBe(400);
@@ -55,6 +56,20 @@ export async function stripeJourney(site: Installation, page: Page, info: TestIn
   expect((await site.rows("SELECT count(*) AS n FROM source_records WHERE provider='stripe'"))[0].n).toBe(8);
   expect(JSON.stringify(await site.rows("SELECT payload FROM source_records WHERE provider='stripe'"))).not.toContain('not-for-storage');
   expect(expanded.contact.emailStatus).toBe('non-subscribed');
+  // A verified event whose Stripe read fails during an outage keeps its answer and
+  // records one failed operation per event; Stripe's retry after recovery ingests it once.
+  const failed = async () => (await json(await site.call('/api/store', {cookie: owner}), 200)).syncRuns.filter((run: any) => run.operation === 'webhook');
+  const outage = {id: 'evt_outage', type: 'payment_intent.succeeded', created: now, livemode: false, data: {object: {id: 'pi_outage', customer: 'cus_fixture', amount_received: 900, currency: 'usd'}}};
+  edge.stripe.outage = true;
+  expect((await post(outage, 'wrong')).status).toBe(401);
+  expect(await failed()).toEqual([]);
+  for (let attempt = 0; attempt < 2; attempt++) expect((await post(outage)).status).toBe(422);
+  expect(await failed()).toEqual([expect.objectContaining({provider: 'stripe', sourceType: 'payment', state: 'failed', lastError: 'Stripe API request failed (503).'})]);
+  edge.stripe.outage = false;
+  for (let attempt = 0; attempt < 2; attempt++) expect((await post(outage)).status).toBe(204);
+  expect(await failed()).toEqual([expect.objectContaining({state: 'completed', lastError: 'Stripe API request failed (503).'})]);
+  expect((await site.rows("SELECT count(*) AS n FROM source_records WHERE provider='stripe'"))[0].n).toBe(9);
+  expect(JSON.stringify(await failed())).not.toContain('private detail');
   for (const width of [1440, 390]) {
     await page.setViewportSize({width, height: 1000});
     await openPage(page, site.runtime.url + '/app/settings');

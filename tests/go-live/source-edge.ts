@@ -5,16 +5,20 @@ import {json} from './harness';
 
 /** Shopify GraphQL boundary only; ingestion, persistence and jobs stay native. */
 export function sourceEdge() {
-  let failing = false;
+  let failing = false, outage = false;
   let failingSource = 'product';
   const access = {shop: {myshopifyDomain: 'mango-test.myshopify.com'}, currentAppInstallation: {
     accessScopes: ['read_customers','read_products','read_inventory','read_locations','read_orders','read_all_orders','read_returns'].map(handle => ({handle})),
   }};
   return {
     fail: (value: boolean, source = 'product') => {failing = value; failingSource = source;},
+    // An Admin API outage: every read fails, including webhook reconciliation.
+    outage: (value: boolean) => {outage = value;},
     commerce(request: Record<string, unknown>) {
-      const query = String(request.query), variables = request.variables as {cursor?: string};
+      const query = String(request.query), variables = request.variables as {cursor?: string; id?: string};
+      if (outage) return {errors: [{message: 'private upstream diagnostic'}]};
       if (query.includes('MangoAccess')) return {data: access};
+      if (query.includes('MangoNode') && variables.id?.startsWith('gid://shopify/Product/')) return {data: {node: product(Number(variables.id.split('/').pop()))}};
       if (query.includes('products(first:')) {
         if (failing && failingSource === 'product' && variables.cursor) return {errors: [{message: 'private upstream diagnostic'}]};
         return {data: {products: page([product(variables.cursor ? 22 : 21)], failing && failingSource === 'product' && !variables.cursor ? 'next-products' : undefined)}};

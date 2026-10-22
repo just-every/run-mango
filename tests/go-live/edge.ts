@@ -22,6 +22,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
   const resend=resendProviderEdge(keys[0]);
   const sends: EdgeSend[] = [], relaySends: {body: Record<string, any>; authorization: string}[] = [], unexpected: string[] = [], lost = new Set<string>();
   const domainSetup = {exists: true, creates: 0, dnsPass: true, trackingCname: true, trackingHttps: true};
+  const stripe = {outage: false};
   const domain = { id: 123, user_id: 99, domain: 'example.test', valid: true, automatic_security: true, custom_spf: false, dns: {
     mail_cname: { valid: true, type: 'cname', host: 'em123.example.test', data: 'u99.wl.sendgrid.net' },
     dkim1: { valid: true, type: 'cname', host: 's1._domainkey.example.test', data: 's1.domainkey.u99.wl.sendgrid.net' },
@@ -78,6 +79,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
     if (original.hostname === 'cloudflare-dns.com' && original.searchParams.get('name') === 'links.example.test') return json(response, 200, {Status:0, Answer:[{name:'links.example.test', type:5, TTL:300, data:domainSetup.trackingCname ? 'mango.example.test.' : 'other.example.test.'}]});
     if (original.hostname === 'cloudflare-dns.com' && !domainSetup.dnsPass && original.searchParams.get('name') === 's1._domainkey.example.test') return json(response, 200, {Status:3, Authority:[{name:'example.test',type:6,TTL:300,data:'ns.example.test host.example.test 1 300 300 300 300'}]});
     if (original.hostname === 'cloudflare-dns.com') return json(response, 200, resolve(original.searchParams.get('name') ?? '', original.searchParams.get('type') ?? ''));
+    if (original.hostname === 'api.stripe.com' && stripe.outage) return json(response, 503, {error: {message: 'Synthetic Stripe outage with private detail'}});
     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/charges/ch_fixture' && request.method === 'GET') return json(response, 200, {id:'ch_fixture', customer:'cus_fixture'});
     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/customers/cus_fixture' && request.method === 'GET') return json(response, 200, {id:'cus_fixture', email:'stripe-reader@example.test', name:'Taylor Orchard'});
     if (original.hostname === 'api.stripe.com' && original.pathname === '/v1/customers' && request.method === 'GET') return json(response, 200, {data: []});
@@ -108,7 +110,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('Edge server has no port.');
-  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,domainSetup,
+  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,domainSetup,stripe,
     loseResponseFor: (address: string) => lost.add(address),
     close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
 }

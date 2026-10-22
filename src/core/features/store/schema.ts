@@ -84,12 +84,15 @@ export const sourceActivities = sqliteTable(
 
 export const sourceSyncRuns = sqliteTable('source_sync_runs', {
   id: text('id').primaryKey(), provider: text('provider').notNull(), sourceType: text('source_type').notNull(),
+  operation: text('operation').notNull().default('sync'), deliveryKey: text('delivery_key'),
   state: text('state').notNull(), nextCursor: text('next_cursor'), pages: integer('pages').notNull().default(0),
   records: integer('records').notNull().default(0), leaseToken: text('lease_token'), leaseExpiresAt: integer('lease_expires_at', {mode: 'timestamp_ms'}),
   lastError: text('last_error'), createdAt: integer('created_at', {mode: 'timestamp_ms'}).notNull(), updatedAt: integer('updated_at', {mode: 'timestamp_ms'}).notNull(),
   completedAt: integer('completed_at', {mode: 'timestamp_ms'}),
 }, table => [
   check('source_sync_runs_state', sql`${table.state} IN ('queued', 'running', 'failed', 'completed', 'superseded')`),
+  check('source_sync_runs_operation', sql`${table.operation} IN ('sync', 'webhook', 'generation')`),
+  uniqueIndex('source_sync_runs_delivery').on(table.deliveryKey),
   uniqueIndex('source_sync_runs_active').on(table.provider, table.sourceType).where(sql`${table.state} IN ('queued', 'running')`),
   index('source_sync_runs_updated').on(table.updatedAt),
 ]);
