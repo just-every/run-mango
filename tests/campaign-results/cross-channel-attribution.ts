@@ -19,7 +19,9 @@ export async function crossChannelAttributionJourney(input: {
   const {site, edge, commerce, destination, page, info} = input;
   const cookie = await site.open();
   await page.context().addCookies([{name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url}]);
-  await site.control('/_golive/clock', {hold: true});
+  const before = await site.control('/_golive/clock');
+  // Follow the real marketing quiet-window policy at Brisbane noon.
+  await site.control('/_golive/clock', {advanceMs: (43_200_000 - ((before.now + 36_000_000) % 86_400_000) + 86_400_000) % 86_400_000, hold: true});
   const person = {email: 'synthetic-mango-4@example.test', displayName: 'Mango cross-channel reader', phone: '+61411111111'};
   await confirmedContact(site, edge, cookie, person.email, person.displayName);
   const now = (await site.control('/_golive/clock')).now;
