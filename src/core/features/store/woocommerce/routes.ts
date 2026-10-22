@@ -1,3 +1,5 @@
+import {pluginRecord, verifyPluginEvent} from './plugin-events';
+import {enrollWooFlows} from './flows';
 import {Hono} from 'hono';
 import type {Platform} from '@/core/shared/platform';
 import type {AuthVariables} from '@/core/features/auth/routes';
@@ -14,7 +16,7 @@ export function wooCommerceRoutes(platform: Platform, audience: ReturnType<typeo
   const db = platform.database.$client, settings = new Hono<{Variables: AuthVariables}>(), webhooks = new Hono();
   const retire = () => db.prepare("UPDATE source_sync_runs SET state='superseded',lease_token=NULL,lease_expires_at=NULL,updated_at=? WHERE provider LIKE 'woocommerce:%' AND state IN ('queued','running','failed')").bind(Date.now());
   settings.get('/settings/woocommerce', async context => {
-    const connection = await db.prepare('SELECT id,url,connected_by AS connectedBy,connected_at AS connectedAt FROM woocommerce_connection WHERE slot=1').first<{id: string}>();
+    const connection = await db.prepare('SELECT id,url,connected_by AS connectedBy,connected_at AS connectedAt,plugin_enabled AS pluginEnabled FROM woocommerce_connection WHERE slot=1').first<{id: string}>();
     return context.json({connection, sourceTypes: wooSources, webhookUrl: connection ? new URL('/webhooks/commerce/woocommerce/' + connection.id, platform.config.publicBaseUrl).href : null});
   });
   settings.put('/settings/woocommerce', async context => {
@@ -27,9 +29,10 @@ export function wooCommerceRoutes(platform: Platform, audience: ReturnType<typeo
     const adapter = createWooCommerceAdapter({...input, id, generation});
     try {await adapter.refreshHealth?.();} catch {return context.json({error: 'woocommerce_connection_refused'}, 422);}
     const now = Date.now();
-    await db.batch([retire(), db.prepare(`INSERT INTO woocommerce_connection(slot,id,url,credentials,generation,connected_by,connected_at) VALUES(1,?,?,?,?,?,?)
-      ON CONFLICT(slot) DO UPDATE SET id=excluded.id,url=excluded.url,credentials=excluded.credentials,generation=excluded.generation,connected_by=excluded.connected_by,connected_at=excluded.connected_at`)
-      .bind(id, input.url, await encryptCredentials(input, platform.config.sessionSigningKey), generation, operator.id, now),
+    await db.batch([retire(), db.prepare(`INSERT INTO woocommerce_connection(slot,id,url,credentials,generation,connected_by,connected_at,plugin_enabled) VALUES(1,?,?,?,?,?,?,?)
+      ON CONFLICT(slot) DO UPDATE SET id=excluded.id,url=excluded.url,credentials=excluded.credentials,generation=excluded.generation,connected_by=excluded.connected_by,connected_at=excluded.connected_at,plugin_enabled=excluded.plugin_enabled`)
+      .bind(id, input.url, await encryptCredentials(input, platform.config.sessionSigningKey), generation, operator.id, now, Number(input.pluginEnabled)),
+      db.prepare("UPDATE woocommerce_flows SET state='paused' WHERE state='live'"),
       db.prepare("UPDATE source_syncs SET last_successful_at=NULL,last_error='WooCommerce connection changed; complete a fresh sync.',updated_at=?").bind(now),
       activityStatement(db, {key: crypto.randomUUID(), action: 'woocommerce-connected', entityType: 'integration', entityId: id, actorId: operator.id, detail: {host: new URL(input.url).hostname}, at: now})]);
     return context.json({connected: true});
@@ -37,7 +40,7 @@ export function wooCommerceRoutes(platform: Platform, audience: ReturnType<typeo
   settings.delete('/settings/woocommerce', async context => {
     const operator = context.get('operator');
     if (operator.role !== 'owner') return context.json({error: 'owner_required'}, 403);
-    await db.batch([retire(), db.prepare('DELETE FROM woocommerce_connection WHERE slot=1'),
+    await db.batch([retire(), db.prepare("UPDATE woocommerce_flows SET state='paused' WHERE state='live'"), db.prepare('DELETE FROM woocommerce_connection WHERE slot=1'),
       db.prepare("UPDATE commerce_source_capabilities SET available=0,detail='WooCommerce disconnected.'"),
       db.prepare("UPDATE source_syncs SET last_error='WooCommerce disconnected.',updated_at=?").bind(Date.now()),
       activityStatement(db, {key: crypto.randomUUID(), action: 'woocommerce-disconnected', entityType: 'integration', entityId: 'woocommerce', actorId: operator.id})]);
@@ -65,6 +68,21 @@ export function wooCommerceRoutes(platform: Platform, audience: ReturnType<typeo
       await store.syncRuns.recoverDeliveries(verified.receipt!.ids, new Date());
       return context.body(null, 204);
     } catch {return context.json({error: 'woocommerce_ingestion_failed'}, 422);}
+  });
+  webhooks.post('/webhooks/commerce/woocommerce/:connectionId/plugin', async context => {
+    const connection = await readWooConnection(platform);
+    if (!connection?.pluginEnabled || connection.id !== context.req.param('connectionId')) return context.json({error: 'plugin_not_connected'}, 409);
+    let verified;
+    try {verified = await verifyPluginEvent(context.req.raw, connection);} catch {return context.json({error: 'plugin_event_refused'}, 401);}
+    try {
+      const prior = await db.prepare('SELECT digest FROM commerce_receipts WHERE id=?').bind(await sha256(verified.receipt.ids[0])).first<{digest: string}>();
+      if (prior && prior.digest !== verified.receipt.digest) return context.json({error: 'plugin_event_conflict'}, 409);
+      const record = commerceProjection(await pluginRecord(verified.event, connection));
+      await audience.ingestCommerceWebhook({provider: 'woocommerce:' + connection.id, completion: 'delta', adapterCompleted: false,
+        sourceTypes: [record.sourceType], records: [record], receipt: verified.receipt});
+      await enrollWooFlows(platform, connection, verified.event);
+      return context.body(null, 204);
+    } catch {return context.json({error: 'plugin_ingestion_failed'}, 422);}
   });
   return {settings, webhooks};
 }

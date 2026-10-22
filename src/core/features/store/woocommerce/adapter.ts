@@ -1,3 +1,4 @@
+import {pluginEventSchema, pluginRecord} from './plugin-events';
 import type {CommerceStore, SourceRecordInput} from '@/core/shared/platform';
 import {hmacSha256Base64, timingSafeEqual} from '@/core/platform/crypto';
 import {readWebhookBytes} from '@/core/platform/adapters/webhook-body';
@@ -28,9 +29,19 @@ export function createWooCommerceAdapter(connection: WooConnection): CommerceSto
     return Number(value);
   }
   return {
-    capabilities: () => ({provider, sourceTypes: [...wooSources], detail: 'WooCommerce customers, products, orders and refunds. Onsite tracking and abandoned checkouts are not enabled.'}),
-    async refreshHealth(progress) {const result = await api('customers?per_page=1'); if (!Array.isArray(result.value)) throw new Error('WooCommerce customer access is unavailable.'); await progress?.();},
+    capabilities: () => ({provider, sourceTypes: [...wooSources, ...(connection.pluginEnabled ? ['cart', 'browsing-event'] as const : [])], detail: connection.pluginEnabled ? 'WooCommerce store and consented, identified plugin observations.' : 'WooCommerce store. Enable the installed plugin for onsite observations.'}),
+    async refreshHealth(progress) {const result = await api('customers?per_page=1'); if (!Array.isArray(result.value)) throw new Error('WooCommerce customer access is unavailable.'); if (connection.pluginEnabled) {const status = object((await api('mango/status')).value); if (status.version !== 1 || status.trackingEnabled !== true) throw new Error('Mango WordPress plugin is unavailable.');} await progress?.();},
     async synchronize(type, cursor, progress) {
+      if (connection.pluginEnabled && (type === 'cart' || type === 'browsing-event')) {
+        const page = cursor === undefined ? 1 : Number(cursor);
+        if (!Number.isSafeInteger(page) || page < 1 || (cursor !== undefined && String(page) !== cursor)) throw new Error('WooCommerce cursor is invalid.');
+        const result = await api(`mango/${type === 'cart' ? 'checkouts' : 'events'}?per_page=10&page=${page}`);
+        if (!Array.isArray(result.value)) throw new Error('Plugin observations are malformed.');
+        const records = [];
+        for (const raw of result.value) {const record = await pluginRecord(pluginEventSchema.parse(raw), connection); if (record.sourceType !== type) throw new Error('Plugin observation source mismatch.'); records.push(record); await progress?.();}
+        const nextCursor = page < pagination(result.totalPages) ? String(page + 1) : undefined;
+        return {records, nextCursor, coverage: {mode: 'observations', exhaustive: false, complete: nextCursor === undefined}};
+      }
       if (!wooSources.includes(type as any)) throw new Error('WooCommerce source is unavailable.');
       const page = cursor === undefined ? 1 : Number(cursor);
       if (!Number.isSafeInteger(page) || page < 1 || (cursor !== undefined && String(page) !== cursor)) throw new Error('WooCommerce cursor is invalid.');

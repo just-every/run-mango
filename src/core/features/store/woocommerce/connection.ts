@@ -10,10 +10,10 @@ export const connectionSchema = z.object({
     url.pathname = url.pathname.replace(/\/+$/, '') + '/'; return url.href;
   }),
   key: z.string().min(16).max(512), secret: z.string().min(16).max(512), signingSecret: z.string().min(16).max(512),
-  exclusiveSecret: z.literal(true),
+  exclusiveSecret: z.literal(true), pluginEnabled: z.boolean().default(false),
 }).strict();
-export type WooConnection = {id: string; url: string; key: string; secret: string; signingSecret: string; generation: string};
-type Stored = {id: string; url: string; credentials: string; generation: string};
+export type WooConnection = {id: string; url: string; key: string; secret: string; signingSecret: string; generation: string; pluginEnabled: boolean};
+type Stored = {id: string; url: string; credentials: string; generation: string; plugin_enabled: number};
 async function encryptionKey(secret: string) {
   return crypto.subtle.importKey('raw', await crypto.subtle.digest('SHA-256', new TextEncoder().encode('mango-woocommerce-v1:' + secret)), 'AES-GCM', false, ['encrypt', 'decrypt']);
 }
@@ -23,11 +23,11 @@ export async function encryptCredentials(value: Pick<WooConnection, 'key'|'secre
   return JSON.stringify([Array.from(iv), Array.from(new Uint8Array(cipher))]);
 }
 export async function readWooConnection(platform: Pick<Platform, 'database'|'config'>): Promise<WooConnection | null> {
-  const row = await platform.database.$client.prepare('SELECT id,url,credentials,generation FROM woocommerce_connection WHERE slot=1').first<Stored>();
+  const row = await platform.database.$client.prepare('SELECT id,url,credentials,generation,plugin_enabled FROM woocommerce_connection WHERE slot=1').first<Stored>();
   if (!row) return null;
   const [iv, cipher] = JSON.parse(row.credentials);
   const value = await crypto.subtle.decrypt({name: 'AES-GCM', iv: new Uint8Array(iv)}, await encryptionKey(platform.config.sessionSigningKey), new Uint8Array(cipher));
-  return {...JSON.parse(new TextDecoder().decode(value)), id: row.id, url: row.url, generation: row.generation};
+  return {...JSON.parse(new TextDecoder().decode(value)), id: row.id, url: row.url, generation: row.generation, pluginEnabled: row.plugin_enabled === 1};
 }
 export async function loadWooCommerce(platform: Platform) {
   const connection = await readWooConnection(platform);

@@ -1,3 +1,4 @@
+import {wooFlowRoutes} from '@/core/features/store/woocommerce/flows';
 import {wooCommerceRoutes} from '@/core/features/store/woocommerce/routes';
 import { createAttributionPolicyRoutes } from '@/core/features/insights/attribution-policy-routes';
 import {createDormancyRoutes} from '@/core/features/audience/dormancy-routes';
@@ -355,6 +356,7 @@ export function createApp(
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
   app.route('/api', stripe.settings);
   app.route('/api', woo.settings);
+  app.route('/api', wooFlowRoutes(platform));
   app.route('/api', domainSetupRoutes(platform));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));
   app.route('/api', createSyncRoutes(platform, services.storeService));

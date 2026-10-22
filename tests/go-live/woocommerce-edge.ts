@@ -6,7 +6,7 @@ export function wooCommerceEdge() {
   const order = {id: 31, date_created_gmt: at, date_modified_gmt: later, date_paid_gmt: at, currency: 'AUD', total: '48.00', status: 'completed', billing: customer,
     line_items: [{id: 41, product_id: 21, name: product.name, quantity: 2}], refunds: [{id: 51, total: '-12.00'}], order_key: 'never-import-this', customer_ip_address: '192.0.2.1'};
   const refund = {id: 51, date_created_gmt: later, amount: '12.00', refunded_payment: true, line_items: [{id: 61, product_id: 21, name: product.name, quantity: -1}]};
-  const state = {outage: false, secondPageFailure: false, requests: [] as string[], authorizations: [] as string[], customer, product, order, refund};
+  const state = {observations: [] as any[], outage: false, secondPageFailure: false, requests: [] as string[], authorizations: [] as string[], customer, product, order, refund};
   async function handle(url: URL, request: IncomingMessage, response: ServerResponse) {
     if (url.hostname !== 'woo.example.test' || !url.pathname.startsWith('/wp-json/wc/v3/')) return false;
     const path = url.pathname.slice('/wp-json/wc/v3/'.length), page = Number(url.searchParams.get('page') ?? '1');
@@ -15,7 +15,9 @@ export function wooCommerceEdge() {
     if (state.outage || (path === 'products' && page === 2 && state.secondPageFailure)) {send(503, {private_diagnostic: 'never-import-this'}); return true;}
     if (request.method !== 'GET' || request.headers.authorization !== 'Basic ' + Buffer.from('synthetic-mango-1:synthetic-mango-2').toString('base64')) {send(401, {}); return true;}
     const objects: Record<string, unknown> = {'customers/11': state.customer, 'products/21': state.product, 'orders/31': state.order};
-    if (objects[path]) send(200, objects[path]);
+    if (path === 'mango/status') send(200, {version: 1, trackingEnabled: true});
+    else if (path === 'mango/checkouts' || path === 'mango/events') send(200, state.observations.filter(value => path.endsWith('checkouts') ? value.checkoutId : !value.checkoutId), 1);
+    else if (objects[path]) send(200, objects[path]);
     else if (path === 'customers') send(200, page === 1 ? [state.customer] : [], 1);
     else if (path === 'products') send(200, page === 1 ? [state.product] : [{...state.product, id: 22, name: 'Citrus box'}], 2);
     else if (path === 'orders') send(200, page === 1 ? [state.order] : [], 1);

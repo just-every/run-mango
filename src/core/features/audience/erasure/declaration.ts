@@ -74,4 +74,5 @@ export const contactErasureTables:ErasureTable[]=[
   contact('move_in_contact_history'),
   contact('paid_subscriptions'),
   {table:'audience_exclusion_settings',literal:true,mode:'redact'},
+  contact('woocommerce_flow_enrollments'),
 ];

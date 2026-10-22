@@ -1,3 +1,4 @@
+import {wooPluginJourney, wooBrowserConsent} from './woocommerce-plugin-journey';
 import {test, expect} from '@playwright/test';
 import {createHmac} from 'node:crypto';
 import {providerEdge} from './edge';
@@ -11,7 +12,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
   const site = await installation(edge, eventSigner(), {networkHosts: ['woo.example.test']});
   try {
     const cookie = await site.open();
-    const connection = {url: 'https://woo.example.test/', key: 'synthetic-mango-1', secret: 'synthetic-mango-2', signingSecret: 'synthetic-mango-3', exclusiveSecret: true};
+    const connection = {url: 'https://woo.example.test/', key: 'synthetic-mango-1', secret: 'synthetic-mango-2', signingSecret: 'synthetic-mango-3', exclusiveSecret: true, pluginEnabled: true};
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
     await site.control('/_golive/sender-evidence');
     await confirmedContact(site, edge, cookie, 'woo-reader@example.test', 'Alex Orchard');
@@ -31,6 +32,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     await page.getByLabel('Consumer key', {exact: true}).fill(connection.key);
     await page.getByLabel('Consumer secret', {exact: true}).fill(connection.secret);
     await page.getByLabel('WooCommerce webhook secret', {exact: true}).fill(connection.signingSecret);
+    await page.getByLabel('Enable the installed Mango WordPress plugin').check();
     await page.getByLabel('This webhook secret is used only for this store’s Mango connection.').check();
     await page.getByRole('button', {name: 'Connect WooCommerce', exact: true}).click();
     await expect(page.locator('#woocommerce [role=status]').filter({hasText: 'Connected to'})).toBeVisible();
@@ -74,10 +76,22 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     woo.state.outage = false;
     await json(await webhook({id: 31}, 'synthetic-mango-6'), 204);
     expect((await site.rows("SELECT * FROM source_sync_runs WHERE operation='webhook' AND state='failed'"))).toHaveLength(0);
+    const plugin = await wooPluginJourney(site, page, cookie, webhookPath, connection.signingSecret);
+    woo.state.order.date_paid_gmt = new Date(Date.now()-1800000).toISOString().replace('Z','');
+    woo.state.order.date_modified_gmt = new Date().toISOString().replace('Z','');
+    await json(await webhook({id: 31}, 'synthetic-mango-8'), 204);
+    await json(await plugin.send({...plugin.event, id: crypto.randomUUID(), checkoutId: crypto.randomUUID()}), 204);
+    expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
+    woo.state.observations.push(plugin.event);
+    const cartSync = await queue('cart'); await finished(cartSync.runId);
+    const browsingSync = await queue('browsing-event'); await finished(browsingSync.runId);
+    expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
     // Later store reads cannot undo Mango's native opt-out.
     const contactId = records.find(row => row.source_type === 'customer')!.contact_id;
     await json(await site.call(`/api/contacts/${contactId}/opt-out`, {method: 'POST', cookie, body: {channel: 'email'}}), 200);
     await json(await webhook({id: 31}, 'synthetic-mango-7'), 204);
+    await json(await plugin.send({...plugin.event, id: crypto.randomUUID(), checkoutId: crypto.randomUUID(), checkoutStartedAt: new Date(Date.now()-1000).toISOString(), occurredAt: new Date().toISOString()}), 204);
+    expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
     expect((await site.rows("SELECT email_status FROM contacts WHERE email='woo-reader@example.test'"))[0].email_status).toBe('unsubscribed');
     expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
     // A later API page failing keeps the last completed source and its cursor.
@@ -92,7 +106,8 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       await page.setViewportSize({width, height: 1000});
       await openPage(page, site.runtime.url + '/app/settings');
       await expect(page.locator('#woocommerce')).toContainText(connection.url);
-      await page.locator('#woocommerce').screenshot({path: info.outputPath(`woocommerce-settings-${width}.png`)});
+      await page.evaluate(() => {window.scrollTo(0, 0); (document.activeElement as HTMLElement)?.blur();});
+      await page.screenshot({path: info.outputPath(`woocommerce-settings-${width}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await openPage(page, site.runtime.url + '/app/store');
       await expect(page.getByRole('article', {name: 'Order sync', exact: true})).toContainText('completed');
@@ -103,7 +118,10 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect((await webhook()).status).toBe(409);
     expect((await site.call('/api/store/sync', {method: 'POST', cookie, body: {sourceType: 'order'}})).status).toBe(409);
     expect(await site.count('woocommerce_connection')).toBe(0);
-    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}'`))).toHaveLength(5);
+    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(5);
+    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(5);
+    expect((await site.rows('SELECT state FROM woocommerce_flows'))).toEqual([{state: 'paused'}]);
+    await wooBrowserConsent(page);
     expect(woo.state.authorizations.every(value => value === 'Basic ' + Buffer.from(connection.key + ':' + connection.secret).toString('base64'))).toBe(true);
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close(); await edge.close();}
