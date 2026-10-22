@@ -18,7 +18,7 @@ function CostTable({rows, daily = false}: {rows: CostGroup[]; daily?: boolean}) 
       <div className="section-heading"><div><h3>{daily ? `${key} UTC` : key ? <Link to="/app/campaigns/$id" params={{id:key}}>Campaign {key}</Link> : 'No campaign assigned'}</h3>
         <p>{currencies.size ? Array.from(currencies,([currency, facts]) => `${price(facts.reduce((n,row)=>n+(row.reportedCostMicros??0),0),currency)} ${unpriced ? 'priced subtotal' : 'reported total'}`).join(' · ') : 'No reported price'} · {unpriced} unpriced attempt records</p>
       </div></div>
-      <div className="table-scroll" tabIndex={0} role="region" aria-label={daily ? `Costs on ${key} UTC` : 'Campaign cost details'}><table className="responsive-table">
+      <div className="table-scroll" tabIndex={0} role="region" aria-label={daily ? `Costs on ${key} UTC` : key ? `Costs for campaign ${key}` : 'Costs without an assigned campaign'}><table className="responsive-table">
         <thead><tr><th scope="col">Provider / model or channel</th><th scope="col">Operation</th><th scope="col">Usage</th><th scope="col">Reported price</th><th scope="col">Missing reports</th></tr></thead>
         <tbody>{entries.map((row,index) => <tr key={index}>
           <th scope="row">{row.provider} / {row.modelOrChannel}</th><td data-label="Operation">{row.operation}</td>

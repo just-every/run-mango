@@ -3754,7 +3754,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/cost-totals.tsx": {
-      "sha256": "bc393b93d5348bd544609a7ba88cccea70a6ca3993252d99362905ea4e246373",
+      "sha256": "dcce86151afbf9081bb97354f55abd54845b2f14d1b7bd9ecff79d5b67818bbc",
       "executable": false
     },
     "src/core/features/insights/ui/insights-page.tsx": {
@@ -7026,7 +7026,7 @@
       "executable": false
     },
     "tests/campaign-results/performance-fixture.ts": {
-      "sha256": "5cdd00b7835f5cb5cd4ff041f5dc92df944701ca2a7181a82d499034f7dfe455",
+      "sha256": "9e707e9a8d31e6b32484fa523c094732408a0e285a5c4e783d674e82f6bf640b",
       "executable": false
     },
     "tests/campaign-results/performance.journeys.ts": {

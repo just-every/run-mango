@@ -115,6 +115,7 @@ export async function attributionJourney(input: {
   expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
   await page.screenshot({path: info.outputPath(`attribution-insights-${width}.png`), fullPage: true});
   await row.getByRole('link', {name: 'Latest garden letter', exact: true}).click();
+  await page.getByRole('link', {name: 'View schedule and results', exact: true}).click();
   const panel = page.locator('section').filter({has: page.getByRole('heading', {name: 'Clicks and store orders', exact: true})});
   await expect(panel).toContainText(/seven days/);
   await expect(panel).toContainText(/observed Shopify events, separate from forecasts/);
