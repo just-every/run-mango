@@ -11,14 +11,15 @@ const collections = {customer: 'customers', product: 'products', order: 'orders'
 export function createWooCommerceAdapter(connection: WooConnection): CommerceStore {
   const api = wooApi(connection), provider = 'woocommerce:' + connection.id;
   async function refunds(order: WooObject, progress?: () => Promise<void>) {
-    const records: SourceRecordInput[] = [];
+    const records: SourceRecordInput[] = [], rawRefunds: WooObject[] = [];
     for (let page = 1; ; page++) {
       const result = await api(`orders/${identifier(order.id)}/refunds?per_page=100&page=${page}&orderby=id&order=asc`);
       if (!Array.isArray(result.value)) throw new Error('WooCommerce refunds response is malformed.');
+      rawRefunds.push(...result.value.map(object));
       records.push(...result.value.map(value => normalizeWoo('refund', value, connection.id, order)));
       await progress?.();
       const pages = pagination(result.totalPages);
-      if (page >= pages) return records;
+      if (page >= pages) return {records, rawRefunds};
       if (page >= 10) throw new Error('WooCommerce order refund page limit exceeded; sync is incomplete.');
     }
   }
@@ -38,7 +39,8 @@ export function createWooCommerceAdapter(connection: WooConnection): CommerceSto
       if (!Array.isArray(result.value)) throw new Error('WooCommerce collection is malformed.');
       const records: SourceRecordInput[] = [];
       for (const raw of result.value) {
-        if (source === 'refund') records.push(...await refunds(object(raw), progress));
+        if (source === 'refund') records.push(...(await refunds(object(raw), progress)).records);
+        else if (source === 'order') {const order = object(raw), found = await refunds(order, progress); records.push(normalizeWoo('order', {...order, mangoRefunds: found.rawRefunds}, connection.id));}
         else records.push(normalizeWoo(source, raw, connection.id));
       }
       await progress?.();
@@ -60,8 +62,8 @@ export function createWooCommerceAdapter(connection: WooConnection): CommerceSto
       try {
         const current = object((await api(`${collections[type]}/${id}`)).value);
         if (identifier(current.id) !== id) throw new Error('WooCommerce object identity changed.');
-        records = [normalizeWoo(type, current, connection.id)];
-        if (type === 'order') records.push(...await refunds(current));
+        if (type === 'order') {const found = await refunds(current); records = [normalizeWoo(type, {...current, mangoRefunds: found.rawRefunds}, connection.id), ...found.records];}
+        else records = [normalizeWoo(type, current, connection.id)];
       } catch (error) {throw new CommerceWebhookUnreadable(error instanceof Error ? error.message : 'WooCommerce read failed.', receiptId, type);}
       return {...records[0], records, rawBody: '', receivedAt: new Date(), receipt: {ids: [receiptId], digest}};
     },

@@ -10,7 +10,7 @@ export function commerceExclusions(records:RecordRow[],productIds:string[],now:D
     if(record.sourceType!=='order'&&record.sourceType!=='refund') continue;
     let p:Record<string,unknown>;
     try {p=JSON.parse(record.payload);} catch {continue;}
-    if(p.schema!=='shopify-commerce-v1') continue;
+    if(!['shopify-commerce-v1','woocommerce-commerce-v1'].includes(String(p.schema))) continue;
     const lines=Array.isArray(p.lines)?p.lines as Record<string,unknown>[]:[];
     const matching=lines.some(line=>productIds.includes(String(line.productId??(line.line as Record<string,unknown>|undefined)?.productId)));
     if(!matching) continue;

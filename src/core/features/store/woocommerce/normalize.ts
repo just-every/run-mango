@@ -1,3 +1,4 @@
+import {wooMoney, refundTotal} from './money';
 import type {SourceRecordInput} from '@/core/shared/platform';
 import {moneyMinor} from '@/core/features/insights/commerce-money';
 export type WooObject = Record<string, any>;
@@ -33,13 +34,27 @@ export function normalizeWoo(type: 'customer'|'product'|'order'|'refund', raw: u
   if (type === 'order') {
     const currency = text(value.currency), total = text(value.total); moneyMinor({amount: total, currency});
     const paid = value.date_paid_gmt ? date(value.date_paid_gmt) : null;
-    payload = {...payload, customer, status: text(value.status), currency, total, paidAt: paid,
-      lines: lines(value.line_items), refunds: Array.isArray(value.refunds) ? value.refunds.map((r: WooObject) => ({id: wooIdentity(connectionId, 'refund', r.id), total: text(r.total)})) : []};
+    const refunds: WooObject[] = Array.isArray(value.mangoRefunds) ? value.mangoRefunds : [];
+    if (!Array.isArray(value.mangoRefunds)) throw new Error('WooCommerce order refunds were not read.');
+    const refunded = refundTotal(refunds, currency);
+    const refundedAmount = moneyMinor({amount: refunded, currency}).amountMinor;
+    const totalAmount = moneyMinor({amount: total, currency}).amountMinor;
+    payload = {...payload, schema: 'woocommerce-commerce-v1', customer, status: text(value.status), test: false,
+      total: wooMoney(total, currency), received: wooMoney(paid ? total : '0', currency), refunded: wooMoney(refunded, currency),
+      financialStatus: value.status === 'cancelled' ? 'VOIDED' : paid ? refundedAmount >= totalAmount && refundedAmount > 0 ? 'REFUNDED' : refundedAmount > 0 ? 'PARTIALLY_REFUNDED' : 'PAID' : 'PENDING',
+      processedAt: paid ?? createdAt, cancelledAt: value.status === 'cancelled' ? updatedAt : null,
+      cancelReason: value.status === 'cancelled' ? 'WooCommerce reports canceled; time is its last reported update.' : null,
+      lines: lines(value.line_items), returns: [], refunds: refunds.map(refund => normalizeWoo('refund', refund, connectionId, value).payload)};
   }
   if (type === 'refund') {
     if (!parent) throw new Error('WooCommerce refund requires its order.');
     const currency = text(parent.currency), amount = text(value.amount); moneyMinor({amount, currency});
-    payload = {...payload, customer, orderId: wooIdentity(connectionId, 'order', parent.id), amount, currency, paymentRefundedViaApi: value.refunded_payment === true, lines: lines(value.line_items)};
+    const orderId = wooIdentity(connectionId, 'order', parent.id);
+    payload = {...payload, schema: 'woocommerce-commerce-v1', customer, orderId, amount, currency,
+      total: wooMoney(amount, currency), financialState: 'SUCCESS', paymentRefundedViaApi: value.refunded_payment === true,
+      // WooCommerce's refund resource records the merchant's refund, including
+      // manual refunds. Preserve whether the gateway API performed it separately.
+      transactions: [{id: id + ':recorded', kind: 'REFUND', status: 'SUCCESS', test: false, amount: wooMoney(amount, currency)}], lines: lines(value.line_items)};
   }
   // Never persist the original API object: order keys, recovery/payment URLs,
   // addresses, notes, IPs, agent strings and arbitrary metadata stay at the edge.

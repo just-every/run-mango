@@ -61,7 +61,9 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     await json(await webhook(), 204); await json(await webhook(), 204);
     expect(await site.rows(`SELECT source_type,provider_source_id,occurred_at,payload,contact_id FROM source_records WHERE provider='${provider}' ORDER BY source_type,provider_source_id`)).toEqual(records);
     expect(await site.count('commerce_receipts')).toBe(1);
-    expect((await webhook({id: 31, changed: true})).status).toBe(422);
+    expect(await site.rows('SELECT gross_amount_minor,reported_refund_minor,currency FROM commerce_orders')).toEqual([{gross_amount_minor: 4800, reported_refund_minor: 1200, currency: 'AUD'}]);
+    expect(await site.rows('SELECT amount_minor,currency FROM commerce_refunds')).toEqual([{amount_minor: 1200, currency: 'AUD'}]);
+    expect((await webhook({id: 31, changed: true})).status).toBe(409);
     expect((await webhook({id: 31}, 'synthetic-mango-5', {'X-WC-Webhook-Signature': 'invalid'})).status).toBe(401);
     expect((await webhook({id: 31}, 'synthetic-mango-5', {'X-WC-Webhook-Source': 'https://other.example.test/'})).status).toBe(401);
     woo.state.outage = true;
@@ -93,7 +95,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       await page.locator('#woocommerce').screenshot({path: info.outputPath(`woocommerce-settings-${width}.png`)});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await openPage(page, site.runtime.url + '/app/store');
-      await expect(page.getByRole('article', {name: 'Order sync', exact: true})).toContainText('Completed');
+      await expect(page.getByRole('article', {name: 'Order sync', exact: true})).toContainText('completed');
       await page.screenshot({path: info.outputPath(`woocommerce-store-${width}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }

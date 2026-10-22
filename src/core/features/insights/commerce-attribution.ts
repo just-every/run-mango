@@ -44,7 +44,7 @@ function refundStatements(db:Database,input:Input,value:Record<string,unknown>,p
  * SQL triggers reconcile on source changes AND late click indexing. */
 export function commerceAttributionStatements(db:Database,input:Input):D1PreparedStatement[] {
   const p=input.payload;
-  if(p.schema!=='shopify-commerce-v1'||!['order','refund'].includes(input.sourceType)) return [];
+  if(!['shopify-commerce-v1','woocommerce-commerce-v1'].includes(String(p.schema))||!['order','refund'].includes(input.sourceType)) return [];
   if(input.sourceType==='refund') return refundStatements(db,input,p);
   if(typeof p.test!=='boolean'||typeof p.financialStatus!=='string') throw new Error('Order financial status is missing.');
   const total=shopMoney(p.total), received=shopMoney(p.received), refunded=shopMoney(p.refunded);

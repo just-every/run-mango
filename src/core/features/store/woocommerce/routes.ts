@@ -56,6 +56,8 @@ export function wooCommerceRoutes(platform: Platform, audience: ReturnType<typeo
       return context.json({error: 'invalid_woocommerce_signature'}, 401);
     }
     try {
+      const prior = await db.prepare('SELECT digest FROM commerce_receipts WHERE id=?').bind(await sha256(verified.receipt!.ids[0])).first<{digest: string}>();
+      if (prior && prior.digest !== verified.receipt!.digest) return context.json({error: 'woocommerce_event_conflict'}, 409);
       const records = (verified.records ?? [verified]).map(commerceProjection);
       await audience.ingestCommerceWebhook({provider: 'woocommerce:' + connection.id, completion: 'delta', adapterCompleted: false,
         sourceTypes: [...new Set(records.map(row => row.sourceType))], records,
