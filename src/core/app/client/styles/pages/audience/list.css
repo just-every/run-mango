@@ -53,3 +53,9 @@
   .audience-ledger__table td:last-child { grid-column: 1 / -1; display: flex; gap: var(--sp-2); align-items: baseline; font-size: 13px; }
   .audience-ledger__table td::before { content: attr(data-label); }
 }
+
+@media (max-width: 680px) {
+  .saved-segments__table tbody tr { grid-template-columns: minmax(0, 1fr); }
+  .saved-segments__table td:last-child { flex-wrap: wrap; }
+  .saved-segments__table td:last-child::before { flex-basis: 100%; }
+}
