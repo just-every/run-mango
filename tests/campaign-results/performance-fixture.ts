@@ -27,6 +27,10 @@ export async function attributionJourney(input: {
 }) {
   const {site, edge, commerce, cookie, campaign, links, people, destination, page, info, width} = input;
   const result = (campaignId: string) => site.call(`/api/campaigns/${campaignId}/results`, {cookie}).then(response => json(response, 200));
+  const unchangedAttribution = (actual: any, expected: any) => {
+    expect(actual).toEqual({...expected, events: expected.events.map((event: any) => ({...event, observedAt: expect.any(Number)}))});
+    for (const event of actual.events) expect(event.observedAt).toBeGreaterThanOrEqual(expected.events.find((before: any) => before.providerOrderId === event.providerOrderId).observedAt);
+  };
   let event = 0;
   const deliver = async (value: typeof order, replay = false) => {
     commerce.orders.set(value.id, value);
@@ -55,6 +59,7 @@ export async function attributionJourney(input: {
   // Both campaigns have genuine clicks inside seven days. Frequency policy
   // requires a day between their sends; elapsed time uses the existing clock.
   await site.control('/_golive/clock', {advanceMs: 86400001});
+  await site.control('/_golive/sender-evidence');
   const due = new Date((await site.control('/_golive/clock')).now + 3600000);
   const latest = await draftCampaign(site, cookie, 'Latest garden letter', [people[0].email], due);
   await json(await site.call(`/api/campaign-revisions/${latest.revisionId}`, {method: 'PATCH', cookie, body: {emailBody: `<p><a href="${destination}">Garden collection</a></p>`, trackingEnabled: true}}), 200);
@@ -71,7 +76,7 @@ export async function attributionJourney(input: {
   expect(beforeSync.orders).toBe(4);
   expect(beforeSync.events.map((event: any) => event.providerOrderId).sort()).toEqual(purchases.map(purchase => purchase.id).sort());
   await syncSource(site, cookie, 'order');
-  expect((await result(latest.campaignId)).attribution).toEqual(beforeSync);
+  unchangedAttribution((await result(latest.campaignId)).attribution, beforeSync);
   expect((await result(campaign.campaignId)).attribution.orders).toBe(1);
   const revise = async (index: number, refunded: string, cancelled = false) => {
     const purchase = purchases[index], at = new Date((await site.control('/_golive/clock', {advanceMs: 1000})).now).toISOString();
@@ -94,11 +99,11 @@ export async function attributionJourney(input: {
     {currency: 'USD', orders: 3, grossAmountMinor: 18000, reversedAmountMinor: 10000, amountMinor: 8000},
   ]});
   await syncSource(site, cookie, 'order');
-  expect((await result(latest.campaignId)).attribution).toEqual(final);
+  unchangedAttribution((await result(latest.campaignId)).attribution, final);
   // Real clicks expire by elapsed time; there is no backdated row insertion.
   await site.control('/_golive/clock', {advanceMs: 8 * 86400000});
   await deliver(await makeOrder(301, 0, '999.00'), true);
-  expect((await result(latest.campaignId)).attribution).toEqual(final);
+  unchangedAttribution((await result(latest.campaignId)).attribution, final);
   expect((await result(campaign.campaignId)).attribution.orders).toBe(1);
   const report = await json(await site.call('/api/insights/campaign-performance', {cookie}), 200);
   expect(report.rows.find((row: any) => row.campaignId === latest.campaignId)).toMatchObject({conversions: 4, revenueByCurrency: [

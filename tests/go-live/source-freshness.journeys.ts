@@ -30,6 +30,7 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
     const draft = await draftCampaign(site, cookie, 'Saved garden draft', ['synthetic-mango-4@example.test'], future);
     const history = await json(await site.call(`/api/campaigns/${sent.campaignId}/results`, {cookie}), 200);
     const handoffs = edge.sends.length;
+    const costsBefore = await site.count('external_cost_facts');
     await site.control('/_golive/clock', {hold: true});
     for (const source of ['customer','product','variant','inventory','order','refund']) await syncSource(site, cookie, source);
     const completed = (await desk()).sourceStatus.sourceSyncs;
@@ -44,7 +45,7 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
     const generated = await json(await site.call('/api/proposals/generate', {method: 'POST', cookie, body: {}}), 409);
     expect(generated).toMatchObject({kind: 'unavailable', detail: expect.stringMatching(/product.*sync failed/i)});
     expect(await site.count('proposals')).toBe(0);
-    expect(await site.count('external_cost_facts')).toBe(0);
+    expect(await site.count('external_cost_facts')).toBe(costsBefore);
     await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`, {method: 'PATCH', cookie, body: {emailSubject: 'Saved during the outage'}}), 200);
     expect((await json(await site.call(`/api/campaigns/${draft.campaignId}`, {cookie}), 200)).revision.emailSubject).toBe('Saved during the outage');
     expect(await json(await site.call(`/api/campaigns/${sent.campaignId}/results`, {cookie}), 200)).toEqual(history);

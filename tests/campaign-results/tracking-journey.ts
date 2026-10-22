@@ -95,6 +95,10 @@ export async function trackingJourney(page: Page, info: TestInfo, width: number)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
     await page.screenshot({path: info.outputPath(`tracking-${width}.png`), fullPage: true});
+    await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
+    const clickMap = page.frameLocator('iframe[title="Campaign click map"]');
+    await expect(clickMap.locator('mark')).toHaveText('[1 clicks · 1 people]');
+    await page.screenshot({path: info.outputPath(`tracking-map-${width}.png`), fullPage: true});
     await attributionJourney({site, edge, commerce, cookie, campaign, links, people, destination, page, info, width});
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close(); await edge.close();}
