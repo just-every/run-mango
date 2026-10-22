@@ -1,4 +1,5 @@
 import {expect} from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 import {json} from '../go-live/harness';
 import {openPage} from '../support/navigation';
 import {assertAttributionReports, attributionStoredEvents, saveAttributionPolicy, type AttributionBrowser, type AttributionCampaign} from './attribution-report-ui';
@@ -9,6 +10,18 @@ export async function customAttributionJourney(input: AttributionBrowser & {
   email: AttributionCampaign; sms: AttributionCampaign; contactId: string;
 }) {
   const {site, cookie, page, sms, contactId} = input;
+  await openPage(page, site.runtime.url + '/app/settings');
+  const integration = page.getByRole('region', {name: 'Integration credentials', exact: true});
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({width, height: 1000});
+    await integration.getByRole('checkbox', {name: /Write conversion events/}).check();
+    await expect(integration.getByRole('checkbox', {name: /Write conversion events/})).toBeChecked();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    expect((await new AxeBuilder({page}).include('#integrations').analyze()).violations).toEqual([]);
+    // Capture the scope chooser before creating any one-time credential.
+    await integration.screenshot({path: input.info.outputPath(`attribution-integration-${width}.png`)});
+  }
+
   const credential = await json(await site.call('/api/settings/integrations', {method: 'POST', cookie,
     body: {name: 'Synthetic Mango conversion source', scopes: ['events:write']}}), 201);
   const reader = await json(await site.call('/api/settings/integrations', {method: 'POST', cookie,

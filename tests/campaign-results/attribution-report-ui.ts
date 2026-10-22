@@ -75,7 +75,10 @@ export async function assertAttributionReports(input: AttributionBrowser & {
     await page.locator('#attribution-settings-title').scrollIntoViewIfNeeded();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).analyze()).violations.filter(violation => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual([]);
+    await page.getByRole('region', {name: 'Revenue attribution', exact: true}).screenshot({path: info.outputPath(`attribution-policy-${receipt}-${width}.png`)});
     await page.screenshot({path: info.outputPath(`attribution-${receipt}-${width}.png`), fullPage: true});
+    await table.locator('tbody tr').filter({has: page.getByRole('link', {name: sms.name, exact: true})}).locator('[data-label="Net revenue"]').scrollIntoViewIfNeeded();
+    await page.screenshot({path: info.outputPath(`attribution-money-${receipt}-${width}.png`)});
   }
   const results = await json(await site.call(`/api/campaigns/${sms.campaignId}/results`, {cookie}), 200);
   expect(results.attribution).toMatchObject({orders: conversions, conversions, attributionPolicy: policy,

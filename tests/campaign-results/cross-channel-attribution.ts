@@ -129,6 +129,15 @@ export async function crossChannelAttributionJourney(input: {
   await syncSource(site, cookie, 'order');
   await openPage(page, site.runtime.url + '/app/insights');
   const context = {site, cookie, page, info, email, sms};
+  // Widening also includes the old journey's real order eight days after its
+  // click, which the historical seven-day ledger never attributed.
+  const beforeWidening = await attributionStoredEvents(site);
+  await saveAttributionPolicy(context, 'placed-order', 30);
+  const wider = await json(await site.call('/api/insights/campaign-performance', {cookie}), 200);
+  expect(wider.rows.find((row: any) => row.name === 'Latest garden letter')).toMatchObject({conversions: 5,
+    revenueByCurrency: [{currency: 'JPY', conversions: 1, netAmountMinor: '1000'}, {currency: 'USD', conversions: 4, netAmountMinor: '107900'}]});
+  expect(await attributionStoredEvents(site)).toEqual(beforeWidening);
+  await saveAttributionPolicy(context, 'placed-order', 7);
   const policy = await json(await site.call('/api/insights/attribution-policy', {cookie}), 200);
   expect(policy).toMatchObject({policy: 'campaign.attribution.v1', metric: 'placed-order', metricLabel: 'Placed Order', clickWindowDays: {email: 7, sms: 7}});
   await assertAttributionReports({...context, metric: 'placed-order', metricLabel: 'Placed Order', days: 7, conversions: 3, netMinor: '13000', receipt: 'cross-channel-before'});
