@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "2190de55e59cba9a07b0c972551979b3624594c3c896c82e12f709855b05f8b6",
+      "sha256": "d3d17dafe0ed027214d19c5343289cfbc276966d6a81638ee7cb8afe6f1f41ef",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "a74f58da7349a099ec4ff6bafe03cc7585793dddd93fa1df76ed0a6edb10a5ba",
+      "sha256": "872d99203a59e3293290223541cda8bc778847b3c8acf72656de2f262bb52054",
       "executable": false
     },
     "DEMO.md": {
@@ -1146,7 +1146,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "101b1a7257a59b3b3a129544189d53f7fea5175ed10a51c4776ea30170a66c3a",
+      "sha256": "538f0441e0f5b7cd54898860c29c2017482a119ff248ec405bfb25a72842941b",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1475,6 +1475,10 @@
     },
     "migrations/core/0081_imported_engagement.sql": {
       "sha256": "39ae281ded20fd964e2e51829cca1b474af6ce8d5b9748e213eb31e336b79a1a",
+      "executable": false
+    },
+    "migrations/core/0082_campaign_attribution_policy.sql": {
+      "sha256": "12176af41b65be7833dce2a08375a3c16ae05aefe48889a2ce6b142261c805a3",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -2106,7 +2110,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "ffb62865a35761d58cf9ba02a1948165876751e1e5d98e211d9153356ac09857",
+      "sha256": "fb37592ae7ae91be598eb780b2b1f5c969349367faf254d44129c7cbf113a8e2",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -2862,7 +2866,7 @@
       "executable": false
     },
     "src/core/features/auth/permissions.ts": {
-      "sha256": "9bddc108f43fff7549de6e7132b4369569ee68d89d36385d258cb9f474eada80",
+      "sha256": "7dba6bd28213070b20703ceeea89e519e8a5b11278fb06259f690f1084988172",
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
@@ -3222,7 +3226,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-scheduled.tsx": {
-      "sha256": "29d1fb81bbb88909ac3d2f53c2286ae11fbfe8982dad9192342a471c0a89593b",
+      "sha256": "86b1fba3ec2b2111da1af9459b0825e58a020050b2c6c91362dcfd3fc1f2a89d",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-send-controls.tsx": {
@@ -3641,6 +3645,18 @@
       "sha256": "cf91c7be984528f417bb318f338a607b295e0dc3319bc042c8878b39c95e1d1f",
       "executable": false
     },
+    "src/core/features/insights/attribution-policy-routes.ts": {
+      "sha256": "2744ef0da534145baa35103e61c11703d6dbd0527a8962a0281625cf90b24499",
+      "executable": false
+    },
+    "src/core/features/insights/attribution-policy.ts": {
+      "sha256": "9123b8ce72a8b1145b1b007e5a3d6d2f10a0bcd830cafffb457a03012d2c462f",
+      "executable": false
+    },
+    "src/core/features/insights/attribution-projection.ts": {
+      "sha256": "c9806bbd3b4dc8528ab4f69ced47e2769ddc9483e805cc265fe4de1155309f67",
+      "executable": false
+    },
     "src/core/features/insights/campaign-engagement-clickers.ts": {
       "sha256": "86e1ddac0a44793e720265754fdd258fdcc775c12767925fd27c49aadcb4c89b",
       "executable": false
@@ -3650,15 +3666,15 @@
       "executable": false
     },
     "src/core/features/insights/campaign-performance-csv.ts": {
-      "sha256": "0c84f78de4d4eeb0c943a390fb1432fc8ca24d9611c1791a47d05326f0974643",
+      "sha256": "ac9c0cfd8dd268c22ded0a9f2f13f0b4119ef349378d4245f8cafd76b4da2f98",
       "executable": false
     },
     "src/core/features/insights/campaign-performance-model.ts": {
-      "sha256": "9a9bf37954d36f428df1f99ef8435aad97d06b09bedfcf1653e9d4afe0d821b8",
+      "sha256": "4a66fb938938fa98f42379377eff89a2ef3ec75bb325523b57c882b02bc21638",
       "executable": false
     },
     "src/core/features/insights/campaign-performance-query.ts": {
-      "sha256": "470f1985a78cd6cb58c511c86a00eee227432f6ce25a693099db59059d88dead",
+      "sha256": "48615184bf3653704b04a19428837b44bbccd84ad76dbdfcfd4238f61953ad10",
       "executable": false
     },
     "src/core/features/insights/campaign-performance-routes.ts": {
@@ -3682,7 +3698,7 @@
       "executable": false
     },
     "src/core/features/insights/commerce-attribution.ts": {
-      "sha256": "f7f508090b84c5c4d6d4d64973294ae600fe8157cd881bf9f3636633e0733db5",
+      "sha256": "d2b824e1307d529ed555a69dbcf71377d2f188b766bf2f77d7c997bb9e964243",
       "executable": false
     },
     "src/core/features/insights/commerce-money.ts": {
@@ -3690,7 +3706,11 @@
       "executable": false
     },
     "src/core/features/insights/commerce-report.ts": {
-      "sha256": "c0eb048b491dea4b30dc2d9a00e9939304e4b3387e26dd882af31ebde3fd1183",
+      "sha256": "446fb6aaf7aa0bb4ce7415708331287e26e6d05f330a0ee1cc8bd32351dc5eb2",
+      "executable": false
+    },
+    "src/core/features/insights/conversion-events.ts": {
+      "sha256": "c5072d83f652880c2cb9854fb64d9b39b399686e52fb3ecb00fda43c2c7e41d9",
       "executable": false
     },
     "src/core/features/insights/cost-handoff.ts": {
@@ -3773,12 +3793,24 @@
       "sha256": "2db483a18dd5c360061a050e220f711059213be15b79b3e5cf5e5a76c046ccc2",
       "executable": false
     },
+    "src/core/features/insights/ui/attribution-policy-note.tsx": {
+      "sha256": "b3c266b58b2cd83500ea3cfbb0dd1b14c660064cac5503e49437839c163d9e17",
+      "executable": false
+    },
+    "src/core/features/insights/ui/attribution-policy.css": {
+      "sha256": "4949c3e6bab2e4030d968033765fd3d986d82d486eb099895d9b6b3331a9ca02",
+      "executable": false
+    },
+    "src/core/features/insights/ui/attribution-settings.tsx": {
+      "sha256": "5f045e49376d6999611407417b681ea9201ab259bc23282a73ede291e198159f",
+      "executable": false
+    },
     "src/core/features/insights/ui/campaign-engagement.tsx": {
       "sha256": "8771fac087e147f45bf126a95c8227d5c527a5d05163d32e22a54aa309ef90ab",
       "executable": false
     },
     "src/core/features/insights/ui/campaign-performance.tsx": {
-      "sha256": "c496bc4935808dc13354404da4f9829616c28a422765e71a97ae4746af529204",
+      "sha256": "cd3a18c1c2e27127a91a6d241fe694195ac79d188d328adc1d265957dad0d65e",
       "executable": false
     },
     "src/core/features/insights/ui/campaign-recipients.tsx": {
@@ -3786,7 +3818,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/commerce-results.tsx": {
-      "sha256": "08070e8176402c92e0bf00e1fc865349f82627292f498a4a7d209c8ab7e2628a",
+      "sha256": "f90384c2efdd6f2e632cb6af53a64bf0630dbeb926532200ee654718ebf71521",
       "executable": false
     },
     "src/core/features/insights/ui/cost-totals.tsx": {
@@ -3794,7 +3826,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/insights-page.tsx": {
-      "sha256": "6db36329e407516687b57dd7374b8147349b47d72b5d46897b61504572241a91",
+      "sha256": "cf5222b6137dc2a59df76909cf1ecfd379a15b634b29f30ad70b3da7c710433f",
       "executable": false
     },
     "src/core/features/insights/ui/list-growth.tsx": {
@@ -3834,15 +3866,15 @@
       "executable": false
     },
     "src/core/features/integrations/routes.ts": {
-      "sha256": "6e0c264fbcb32858d46dc51b5edb6ce18ee3a3df0c73cfb414e89b28a7681134",
+      "sha256": "556c3076e97564016ad225fe894a678ffe54ac448fe66b2dd3e9030ba50f7623",
       "executable": false
     },
     "src/core/features/integrations/schema.ts": {
-      "sha256": "f5670cb9fc250d24802932656bf891c25c1744983b877c64bf930c11bf2872d7",
+      "sha256": "6e76a2bdbee9deaff5a6acd152e9f6009c0c099b83cf6b6b49a63cb036d90706",
       "executable": false
     },
     "src/core/features/integrations/service.ts": {
-      "sha256": "aaadd5b3ac5f1046184155cbc8fa92e66d0316f787d29ac3c4d0fc9f7a226041",
+      "sha256": "324b67be4b335acf9af0bc1322718bc4b73852a3b2a46d46a725507ec30cd0f4",
       "executable": false
     },
     "src/core/features/landing/copy.ts": {
@@ -4658,7 +4690,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-integrations.tsx": {
-      "sha256": "77f99aaeef21b91949314d39b1737623ed7593f2a75f7f196b070008090d462b",
+      "sha256": "d50b115dead7762122b9c8088c6fd4feed703b63149c3f3a19648485d4bf81b3",
       "executable": false
     },
     "src/core/features/store/ui/settings-link-hosts.tsx": {
@@ -7037,6 +7069,10 @@
       "sha256": "314ccaff08b85980fdb1216d69b85b21391ce329df27c4d744cf2629ee217a28",
       "executable": false
     },
+    "tests/campaign-results/attribution-report-ui.ts": {
+      "sha256": "57894d1b1503a7efc81cd0ab901b8ccc257e60751bc51b70d1373eaa018089b9",
+      "executable": false
+    },
     "tests/campaign-results/cost-base-mail-proof.ts": {
       "sha256": "7835d32107f2f46ed8aa8c3395b9dea7829e976071a7b3218aafeefa05d5bcb9",
       "executable": false
@@ -7057,6 +7093,14 @@
       "sha256": "0df74a79dbd7e523aa9b658e118552120e137dba8e6035fe25263a6ad5f7bed4",
       "executable": false
     },
+    "tests/campaign-results/cross-channel-attribution.ts": {
+      "sha256": "abf63ca443cd3897ec169c0e587eadd41d4bcdf248aa98f660b8ea7d9bfa9d20",
+      "executable": false
+    },
+    "tests/campaign-results/custom-attribution.ts": {
+      "sha256": "784f5af1c37701e190a8a7f184d453448c5f30a89427a5e30ea7e1170f2793a1",
+      "executable": false
+    },
     "tests/campaign-results/fixtures.ts": {
       "sha256": "2940ac9e8c5e4d0360b88f106d7b073ba063448acbd26b4ba44ff5b438e08d1c",
       "executable": false
@@ -7070,11 +7114,11 @@
       "executable": false
     },
     "tests/campaign-results/performance-fixture.ts": {
-      "sha256": "4a84afe292da8905c051588defb138c52f9968e3ef17c7f9acb81ceb60526104",
+      "sha256": "111140f8926b250181694a7f62852dcf535db62fd60537804a288c7f7030d87d",
       "executable": false
     },
     "tests/campaign-results/performance.journeys.ts": {
-      "sha256": "54bb23ba42213deab6b4c401972cf3f566c31ba3072dc9ed087e7e8cf6cec0c7",
+      "sha256": "6cde169afe2e52e9f2f84260128cf713d19c035d8dce004d5f48401377767253",
       "executable": false
     },
     "tests/campaign-results/playwright.config.js": {
@@ -7110,7 +7154,7 @@
       "executable": false
     },
     "tests/campaign-results/tracking-journey.ts": {
-      "sha256": "1903fd986eac8b773850ff4f0188a39dd4cb538b9946d56614edf3e1db240f0e",
+      "sha256": "7e01e3acab5c75ca54c14b6a25e90a28ffc71e8fd2adf373347167a7d8a4382c",
       "executable": false
     },
     "tests/campaign-results/worker.ts": {
