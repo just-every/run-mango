@@ -114,7 +114,10 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       await page.screenshot({path: info.outputPath(`woocommerce-store-${width}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
-    await json(await site.call('/api/settings/woocommerce', {method: 'DELETE', cookie}), 200);
+    await openPage(page, site.runtime.url + '/app/settings');
+    await page.getByRole('button', {name: 'Disconnect WooCommerce', exact: true}).click();
+    await expect(page.locator('#woocommerce [role=status]').filter({hasText: 'No WooCommerce connection.'})).toBeVisible();
+    await expect(page.getByRole('heading', {name: 'Abandoned-checkout flows', exact: true})).toHaveCount(0);
     expect((await webhook()).status).toBe(409);
     expect((await site.call('/api/store/sync', {method: 'POST', cookie, body: {sourceType: 'order'}})).status).toBe(409);
     expect(await site.count('woocommerce_connection')).toBe(0);

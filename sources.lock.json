@@ -1150,7 +1150,7 @@
       "executable": false
     },
     "extensions/mango-woocommerce/observations.js": {
-      "sha256": "0942bbde3e0319bf5b5300f8bac23fc8df7ab3260361d8d6783aea3ded26ad23",
+      "sha256": "c48dca9277d140039c682e1a3b857365e97a36265622e9c028afa5b5695e0ea0",
       "executable": false
     },
     "extensions/mango-woocommerce/observations.php": {
@@ -7570,7 +7570,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "104896297c10d924f5cce96cdd6bb8b7d23d70b4c56ecbd50cc9f985e771b8a8",
+      "sha256": "b93b0ef286029bee9786c1a4a5ae5ed2759c1469356f27aa7985eee5a801ed8b",
       "executable": false
     },
     "tests/go-live/worker.ts": {

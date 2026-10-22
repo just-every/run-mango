@@ -26,6 +26,12 @@
     consent = event.detail ?? {};
     if (!allowed()) { started = false; void observe('privacy_withdrawal'); } else start();
   });
+  let checkoutActivity;
+  document.addEventListener('change', () => {
+    if (!config.checkout || !allowed()) return;
+    clearTimeout(checkoutActivity);
+    checkoutActivity = setTimeout(() => void observe('started_checkout'), 3000);
+  });
   document.addEventListener('wc-blocks_added_to_cart', () => void observe('added_to_cart'));
   if (window.jQuery) window.jQuery(document.body).on('added_to_cart', () => void observe('added_to_cart'));
   // A returning signed-in visitor with GPC must revoke pending checkout eligibility.
