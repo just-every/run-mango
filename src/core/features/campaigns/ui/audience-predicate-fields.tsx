@@ -7,7 +7,7 @@ import { EventPropertyFilters } from './event-property-filters';
 
 export type Predicate = InclusionRule['predicates'][number];
 export const newPredicate = ():Predicate => ({sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'});
-const booleans = ['consent','topic','clicked'];
+const booleans = ['consent','topic','clicked','paidMember'];
 const numericFields = ['count','distanceMiles','rfmRecencyDays','rfmRecencyScore','rfmFrequency','rfmFrequencyScore','rfmMonetaryScore','rfmMonetaryMinor'];
 
 export function PredicateFields({predicate,onChange,label}: {predicate:Predicate;onChange:(value:Predicate)=>void;label:string}) {

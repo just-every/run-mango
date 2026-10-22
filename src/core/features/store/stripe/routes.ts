@@ -9,21 +9,44 @@ import {seal, unseal} from './secrets';
 import {stripeEventSource, stripeSources, stripeRecord, verifyStripe} from './events';
 import {CommerceWebhookUnreadable} from '../webhook-unreadable';
 import type {FailedOperations} from '@/core/features/audience/commerce-webhook-routes';
+import {createPaidTier, paidTierSchema} from './paid-tier';
 const connection = z.object({key: z.string().regex(/^rk_(?:test|live)_[A-Za-z0-9]+$/).max(512), signingSecret: z.string().regex(/^whsec_[A-Za-z0-9]+$/).max(256)}).strict();
 type Stored = {key_cipher: string; signing_cipher: string; mode: string};
 export function stripeRoutes(platform: Platform, audience: ReturnType<typeof createAudienceService>, operations: FailedOperations) {
   const db = platform.database.$client;
   const read = () => db.prepare('SELECT key_cipher,signing_cipher,mode FROM stripe_connection WHERE id=1').first<Stored>();
+  const paid = createPaidTier(db);
   async function api(path: string, key: string) {
     const response = await fetch('https://api.stripe.com/v1/' + path, {headers: {Authorization: 'Bearer ' + key}, signal: AbortSignal.timeout(10000)})
       .catch(() => {throw new Error('Stripe API request failed (no response).');});
     if (!response.ok) throw new Error(`Stripe API request failed (${response.status}).`);
     return response.json() as Promise<Record<string, any>>;
   }
+  async function create(path: string, key: string, form: URLSearchParams) {
+    const response = await fetch('https://api.stripe.com/v1/' + path, {method: 'POST', body: form, signal: AbortSignal.timeout(10000),
+      headers: {Authorization: 'Bearer ' + key, 'Content-Type': 'application/x-www-form-urlencoded', 'Idempotency-Key': crypto.randomUUID()}});
+    if (!response.ok) throw new Error(`Stripe API request failed (${response.status}).`);
+    return response.json() as Promise<Record<string, any>>;
+  }
   const settings = new Hono<{Variables: AuthVariables}>();
   settings.get('/settings/stripe', async context => {
     const row = await db.prepare('SELECT mode,last_four AS lastFour,connected_by AS connectedBy,connected_at AS connectedAt FROM stripe_connection WHERE id=1').first();
-    return context.json({connection: row, sourceTypes: stripeSources, webhookPath: '/webhooks/commerce/stripe'});
+    return context.json({connection: row, sourceTypes: stripeSources, webhookPath: '/webhooks/commerce/stripe', paidTier: await paid.tier(), paidReaders: await paid.readers()});
+  });
+  settings.put('/settings/stripe/paid-tier', async context => {
+    const operator = context.get('operator');
+    if (operator.role !== 'owner') return context.json({error: 'owner_required'}, 403);
+    const parsed = paidTierSchema.safeParse(await context.req.json().catch(() => null));
+    if (!parsed.success) return context.json({error: 'invalid_paid_tier'}, 400);
+    const stored = await read();
+    if (!stored) return context.json({error: 'stripe_not_connected'}, 409);
+    try {
+      const price = await api('prices/' + encodeURIComponent(parsed.data.priceId), await unseal(stored.key_cipher, platform.config.sessionSigningKey));
+      if (price.type !== 'recurring' || price.active !== true) return context.json({error: 'paid_tier_price_refused'}, 422);
+    } catch {return context.json({error: 'paid_tier_price_refused'}, 422);}
+    const now = Date.now();
+    await db.batch([paid.save(parsed.data, operator.email, now), activityStatement(db, {key: crypto.randomUUID(), action: 'paid-tier-saved', entityType: 'integration', entityId: 'stripe', actorId: operator.id, detail: {paidTopic: parsed.data.paidTopic, freeTopic: parsed.data.freeTopic}, at: now})]);
+    return context.json({paidTier: await paid.tier()});
   });
   settings.put('/settings/stripe', async context => {
     const operator = context.get('operator');
@@ -47,6 +70,18 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
     return context.json({disconnected: true});
   });
   const webhooks = new Hono();
+  // A reader's checkout runs on the creator's own Stripe account with Stripe Tax;
+  // Mango never sees card data and never holds funds.
+  webhooks.post('/paid/checkout', async context => {
+    const parsed = z.object({email: z.string().trim().email().max(320)}).strict().safeParse(await context.req.json().catch(() => null));
+    if (!parsed.success) return context.json({error: 'invalid_checkout'}, 400);
+    const [stored, tier] = await Promise.all([read(), paid.tier()]);
+    if (!stored || !tier) return context.json({error: 'paid_tier_unavailable'}, 409);
+    try {
+      const session = await create('checkout/sessions', await unseal(stored.key_cipher, platform.config.sessionSigningKey), paid.checkout(tier, parsed.data.email, platform.config.publicBaseUrl.origin));
+      return typeof session.url === 'string' ? context.json({url: session.url}) : context.json({error: 'checkout_unavailable'}, 502);
+    } catch {return context.json({error: 'checkout_unavailable'}, 502);}
+  });
   webhooks.post('/webhooks/commerce/stripe', async context => {
     const stored = await read();
     if (!stored) return context.json({error: 'stripe_not_connected'}, 409);
@@ -58,16 +93,22 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
     try {
       const receipt = 'stripe:' + event.id, digest = await sha256(JSON.stringify(event));
       const previous = await db.prepare('SELECT digest FROM commerce_receipts WHERE id=?').bind(await sha256(receipt)).first<{digest: string}>();
-      if (previous) return previous.digest === digest ? context.body(null, 204) : context.json({error: 'stripe_event_conflict'}, 409);
+      if (previous && previous.digest !== digest) return context.json({error: 'stripe_event_conflict'}, 409);
       const key = await unseal(stored.key_cipher, platform.config.sessionSigningKey);
       const sourceType = stripeEventSource(event.type, event.data.object)?.sourceType ?? 'payment';
-      const record = await stripeRecord(event, path => api(path, key).catch(error => {
+      const lookup = (path: string) => api(path, key).catch(error => {
         throw new CommerceWebhookUnreadable(error instanceof Error ? error.message : 'Stripe API request failed.', receipt, sourceType);
-      }));
-      if (!record) return context.body(null, 204);
-      if (!record.contact) return context.json({error: 'stripe_contact_unresolved'}, 422);
-      await audience.ingestCommerceWebhook({provider: 'stripe', completion: 'delta', adapterCompleted: false, sourceTypes: [record.sourceType], records: [record], receipt: {ids: [receipt], digest}});
-      await operations.recoverDeliveries([receipt], new Date());
+      });
+      if (!previous) {
+        const record = await stripeRecord(event, lookup);
+        if (!record) return context.body(null, 204);
+        if (!record.contact) return context.json({error: 'stripe_contact_unresolved'}, 422);
+        await audience.ingestCommerceWebhook({provider: 'stripe', completion: 'delta', adapterCompleted: false, sourceTypes: [record.sourceType], records: [record], receipt: {ids: [receipt], digest}});
+        await operations.recoverDeliveries([receipt], new Date());
+      }
+      // Paid-topic state follows the recorded event; a replay re-applies it without change.
+      const contact = await db.prepare("SELECT contact_id AS id FROM source_records WHERE provider='stripe' AND provider_source_id=?").bind(event.id).first<{id: string | null}>();
+      await paid.apply(event, lookup, contact?.id ?? null);
       return context.body(null, 204);
     } catch (error) {
       // A verified event whose Stripe read failed is recorded once per event.

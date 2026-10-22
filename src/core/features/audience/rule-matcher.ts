@@ -28,6 +28,8 @@ export function createRuleMatcher(repository:Repository,store:Store,now:Date,cha
       return Boolean(evidence&&(p.field==='consent'||evidence.consents.some(item=>item.category===p.topicId)));
     }
     if(p.field==='clicked')return repository.segmentClicked(id,p.channel!,new Date(now.getTime()-p.lookbackDays!*dayMs),now);
+    // Payment never creates consent: the paid topic needs the contact's own channel evidence.
+    if(p.field==='paidMember')return Boolean(await repository.segmentPaid(id)&&await channelEvidence(id,p.channel!));
     if(p.field.startsWith('rfm')) {
       rfm??=repository.segmentRfm(now);
       return rfmRuleValue((await rfm).get(id),p.field,p.currency??'USD');

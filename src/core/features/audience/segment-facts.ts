@@ -16,6 +16,9 @@ export function createSegmentFacts(db:D1Database) {
       return Boolean(await db.prepare(`SELECT 1 FROM imported_engagement_facts f JOIN move_in_archives a ON a.id=f.archive_id
         WHERE f.contact_id=? AND f.kind='click' AND a.state='applied' AND f.occurred_at>=? AND f.occurred_at<=? LIMIT 1`).bind(contactId,from.getTime(),now.getTime()).first());
     },
+    async segmentPaid(contactId:string) {
+      return Boolean(await db.prepare("SELECT 1 FROM paid_subscriptions WHERE contact_id=? AND state='active' LIMIT 1").bind(contactId).first());
+    },
     async segmentCatalogProduct(productId:string) {
       const row=await db.prepare("SELECT payload FROM source_records WHERE source_type='product' AND provider_source_id=? ORDER BY updated_at DESC LIMIT 1").bind(productId).first<{payload:string}>();
       return row?JSON.parse(row.payload) as Record<string,unknown>:undefined;

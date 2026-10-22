@@ -2,7 +2,8 @@ import {useState} from 'react';
 import {useResource} from '@/core/app/client/lib/use-resource';
 import {requestJson} from '@/core/app/client/lib/api';
 import {Can} from '@/core/features/auth/ui/permissions';
-type Status = {connection: {mode: string; lastFour: string; connectedBy: string; connectedAt: number} | null; sourceTypes: string[]; webhookPath: string};
+import {SettingsPaidTier, type PaidReaders, type PaidTier} from './settings-paid-tier';
+type Status = {connection: {mode: string; lastFour: string; connectedBy: string; connectedAt: number} | null; sourceTypes: string[]; webhookPath: string; paidTier: PaidTier | null; paidReaders: PaidReaders};
 export function SettingsStripe() {
   const resource = useResource<Status>('/api/settings/stripe');
   const [key, setKey] = useState(''), [signingSecret, setSigningSecret] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState('');
@@ -34,6 +35,7 @@ export function SettingsStripe() {
         <button type="submit" className="primary-action" disabled={busy}>{busy ? 'Saving…' : resource.data.connection ? 'Replace Stripe connection' : 'Connect Stripe'}</button>
         {resource.data.connection ? <button type="button" className="secondary-action" disabled={busy} onClick={() => void disconnect()}>Disconnect Stripe</button> : null}
       </form></Can>
+      {resource.data.connection ? <SettingsPaidTier tier={resource.data.paidTier} readers={resource.data.paidReaders} onSaved={resource.reload} /> : null}
     </> : null}
     {error ? <p className="inline-error" role="alert">{error}</p> : null}
   </section>;

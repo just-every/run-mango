@@ -17,6 +17,7 @@ export const audienceRuleFields = [
   ['contact', 'zip', 'US ZIP code'],
   ['contact', 'distanceMiles', 'Distance in miles from ZIP (Census area points)'],
   ['contact', 'clicked', 'Human click'],
+  ['contact', 'paidMember', 'Paid topic member'],
   ['contact', 'rfmStage', 'RFM lifecycle stage'],
   ['contact', 'rfmRecencyDays', 'RFM days since last order'],
   ['contact', 'rfmRecencyScore', 'RFM recency score'],

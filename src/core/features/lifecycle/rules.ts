@@ -4,7 +4,7 @@ const comparator = z.enum(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'contains', 'i
 const sourceType = z.enum(['campaign', 'contact', 'customer', 'product', 'variant', 'inventory', 'order', 'refund', 'cart', 'browsing']);
 const ruleValue = z.union([z.string(), z.number(), z.boolean(), z.array(z.string().min(1)).min(1)]);
 export const eventFilterSchema = z.object({field:z.string().min(1).max(160),comparator,value:ruleValue});
-export const contactRuleFields = ['id','email','displayName','emailStatus','smsStatus','property','tags','usState','zip','distanceMiles','consent','topic','clicked',
+export const contactRuleFields = ['id','email','displayName','emailStatus','smsStatus','property','tags','usState','zip','distanceMiles','consent','topic','clicked','paidMember',
   'rfmStage','rfmRecencyDays','rfmRecencyScore','rfmFrequency','rfmFrequencyScore','rfmMonetaryScore','rfmMonetaryMinor'] as const;
 const predicate = z.object({
   sourceType,
@@ -24,7 +24,7 @@ const predicate = z.object({
   if (value.sourceType === 'contact') {
     if (!(contactRuleFields as readonly string[]).includes(value.field) || (value.lookbackDays !== undefined && value.field!=='clicked')) issue('Use a recorded contact field; only clicks have a contact time window.');
     if(value.field==='property'&&!value.property)issue('Choose a property key.');
-    if(['consent','topic','clicked'].includes(value.field)&&(!value.channel||typeof value.value!=='boolean'||!['eq','neq'].includes(value.comparator)))issue('Choose a channel and a boolean comparison.');
+    if(['consent','topic','clicked','paidMember'].includes(value.field)&&(!value.channel||typeof value.value!=='boolean'||!['eq','neq'].includes(value.comparator)))issue('Choose a channel and a boolean comparison.');
     if(value.field==='topic'&&!value.topicId)issue('Choose a consent topic.');
     if(value.field==='clicked'&&value.lookbackDays===undefined)issue('Choose a click time window.');
     if(value.field==='distanceMiles'&&(!value.originZip||typeof value.value!=='number'||value.value<0||!['gt','gte','lt','lte','eq','neq'].includes(value.comparator)))issue('Choose an origin ZIP and a distance in miles.');

@@ -2,6 +2,7 @@ import {createHmac} from 'node:crypto';
 import {expect, type Page, type TestInfo} from '@playwright/test';
 import {type Installation, json} from './harness';
 import type {providerEdge} from './edge';
+import {paidTierJourney} from './paid-tier-journey';
 import {openPage} from '../support/navigation';
 export async function stripeJourney(site: Installation, page: Page, info: TestInfo, owner: string, admin: string, author: string, edge: Awaited<ReturnType<typeof providerEdge>>) {
   const testMode = ['_', 'test', '_'].join('');
@@ -26,7 +27,7 @@ export async function stripeJourney(site: Installation, page: Page, info: TestIn
   const now = Math.floor(Date.now() / 1000);
   const events = ['created', 'deleted'].map((action, index) => ({id: 'evt_stripe' + index, type: 'customer.subscription.' + action, created: now, livemode: false,
     data: {object: {id: 'sub_synthetic', customer: {id: 'cus_synthetic', email: 'stripe-reader@example.test', name: 'Taylor Orchard'}, status: action === 'deleted' ? 'canceled' : 'active'}}}));
-  async function post(event: unknown, secret = body.signingSecret, at = now) {
+  async function post(event: unknown, secret = body.signingSecret, at = Math.floor(Date.now() / 1000)) {
     const raw = JSON.stringify(event), signature = createHmac('sha256', secret).update(at + '.' + raw).digest('hex');
     return site.call('/webhooks/commerce/stripe', {method: 'POST', raw, headers: {'Stripe-Signature': `t=${at},v1=${signature}`}});
   }
@@ -81,4 +82,5 @@ export async function stripeJourney(site: Installation, page: Page, info: TestIn
     await page.locator('.timeline').screenshot({path: info.outputPath(`stripe-timeline-${width}.png`)});
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
+  await paidTierJourney({site, page, info, owner, admin, author, restrictedKey: body.key, edge, post});
 }
