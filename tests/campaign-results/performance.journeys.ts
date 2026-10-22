@@ -6,7 +6,7 @@ import AxeBuilder from '@axe-core/playwright';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage} from '../support/navigation';
 import {csvRows,parseCsv} from '../../src/core/features/audience/csv';
-for(const width of [1440,390])contract('REPORT-002',`${width===1440?'[RESULT-005][RESULT-003] ':''}campaign filters, exact CSV rows and optional open estimates at ${width}${width===1440?'; native commerce at 1440 and 390':''}`,async({page,request})=>{
+for(const width of [1440,390])contract('REPORT-002',`${width===1440?'[RESULT-005][RESULT-003][REPORT-003] ':''}campaign filters, exact CSV rows and optional open estimates at ${width}${width===1440?'; native commerce and cross-channel attribution at 1440 and 390':''}`,async({page,request})=>{
   test.setTimeout(width===1440?600000:180000);
   // Start the independent native runtime while the existing report journey runs.
   // Observe setup failure immediately, rethrow it before native assertions, and
@@ -25,8 +25,9 @@ for(const width of [1440,390])contract('REPORT-002',`${width===1440?'[RESULT-005
   await openPage(page,`${runtime.url}/app/insights`);await expect(page.getByRole('table',{name:'Campaign performance',exact:true}).locator('tbody tr')).toHaveCount(2);await page.getByLabel('Performance channel',{exact:true}).selectOption('email');await expect(page.getByRole('table',{name:'Campaign performance',exact:true}).locator('tbody tr')).toHaveCount(1);await page.getByLabel('Performance topic',{exact:true}).selectOption('newsletter');
   const table=page.getByRole('table',{name:'Campaign performance',exact:true});await expect(table.locator('tbody tr')).toHaveCount(1);
   const row=table.locator('tbody tr').first();await expect(row.locator('[data-label="Recipients"]')).toHaveText('5');await expect(row.locator('[data-label="Delivered"]')).toHaveText('3');await expect(row.locator('[data-label="Human clicks"]')).toHaveText('2');await expect(row.locator('[data-label="Unique clicks"]')).toHaveText('2');await expect(row.locator('[data-label="Click rate"]')).toHaveText('40.00%');
-  await expect(row.locator('[data-label="Net revenue"]')).toHaveText('—');
-  await expect(row.locator('[data-label="Revenue / recipient"]')).toHaveText('—');
+  await expect(row.locator('[data-label="Net revenue"] .attribution-amount')).toHaveText('—');
+  await expect(row.locator('[data-label="Revenue / recipient"] .attribution-amount')).toHaveText('—');
+  for (const label of ['Net revenue', 'Revenue / recipient']) await expect(row.locator(`[data-label="${label}"] .attribution-policy-note`)).toHaveText('Placed Order · Email 7-day click window');
   const compareCsv=async()=>{
     const href=await page.getByRole('link',{name:'Export campaign performance CSV'}).getAttribute('href');const csv=await page.request.get(runtime.url+href);expect(csv.ok()).toBe(true);const rows=parseCsv(await csv.text());expect(rows).toHaveLength(await table.locator('tbody tr').count());
     for(const [index,csvRow]of rows.entries()) {

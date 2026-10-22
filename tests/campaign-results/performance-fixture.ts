@@ -95,7 +95,8 @@ export async function attributionJourney(input: {
   await revise(2, '200');
   await revise(3, '0', true);
   const final = (await result(latest.campaignId)).attribution;
-  expect(final).toMatchObject({orders: 4, status: 'observed-store-events', method: 'most-recent-non-automated-click-within-seven-days', revenueByCurrency: [
+  expect(final).toMatchObject({orders: 4, status: 'observed-store-events', method: 'most-recent-non-automated-click-within-channel-window',
+    attributionPolicy: {policy: 'campaign.attribution.v1', metric: 'placed-order', metricLabel: 'Placed Order', clickWindowDays: {email: 7, sms: 7}}, revenueByCurrency: [
     {currency: 'JPY', orders: 1, grossAmountMinor: 1200, reversedAmountMinor: 200, amountMinor: 1000},
     {currency: 'USD', orders: 3, grossAmountMinor: 18000, reversedAmountMinor: 10000, amountMinor: 8000},
   ]});
@@ -119,21 +120,26 @@ export async function attributionJourney(input: {
   const row = page.getByRole('table', {name: 'Campaign performance', exact: true}).locator('tbody tr').filter({hasText: 'Latest garden letter'});
   for (const width of [1440, 390]) {
     await page.setViewportSize({width, height: 1000});
-    await expect(row.locator('[data-label="Net revenue"]')).toHaveText('JPY 1000; USD 80.00');
-    await expect(row.locator('[data-label="Revenue / recipient"]')).toHaveText('JPY 1000.0000; USD 80.0000');
+    await expect(row.locator('[data-label="Net revenue"] .attribution-amount')).toHaveText('JPY 1000; USD 80.00');
+    await expect(row.locator('[data-label="Revenue / recipient"] .attribution-amount')).toHaveText('JPY 1000.0000; USD 80.0000');
+    for (const label of ['Net revenue', 'Revenue / recipient']) await expect(row.locator(`[data-label="${label}"] .attribution-policy-note`)).toHaveText('Placed Order · Email 7-day click window');
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
     await page.screenshot({path: info.outputPath(`attribution-insights-${width}.png`), fullPage: true});
   }
   await row.getByRole('link', {name: 'Latest garden letter', exact: true}).click();
   await page.getByRole('link', {name: 'View schedule and results', exact: true}).click();
-  const panel = page.locator('section').filter({has: page.getByRole('heading', {name: 'Clicks and store orders', exact: true})});
+  const panel = page.locator('section').filter({has: page.getByRole('heading', {name: 'Clicks and attributed conversions', exact: true})});
   for (const width of [1440, 390]) {
     await page.setViewportSize({width, height: 1000});
-    await expect(panel).toContainText(/seven days/);
-    await expect(panel).toContainText(/observed Shopify events, separate from forecasts/);
-    for (const purchase of purchases) await expect(panel.locator('summary').filter({hasText: purchase.id})).toBeVisible();
-    await expect(panel.getByRole('table', {name: 'Attributed store orders by currency'})).toContainText('USD 80.00');
+    await expect(panel.locator('p').filter({hasText: 'Current report policy'})).toContainText('Placed Order · Email 7 days · SMS 7 days · click windows');
+    await expect(panel).toContainText('Attribution assigns recorded results and does not measure incremental lift.');
+    for (const purchase of purchases) {
+      const summary = panel.locator('summary').filter({hasText: purchase.id});
+      await expect(summary).toBeVisible();
+      await expect(summary).toContainText('Shopify');
+    }
+    await expect(panel.getByRole('table', {name: 'Attributed conversions by currency', exact: true}).locator('[data-label="Net attributed revenue"] .attribution-amount')).toHaveText(['JPY 1000', 'USD 80.00']);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     // The separate click-map iframe is sandboxed; audit the observed-order panel
     // here and the complete Insights page above, without disabling any axe rules.

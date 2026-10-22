@@ -4,6 +4,7 @@ import {providerEdge} from '../go-live/edge';
 import {eventSigner} from '../go-live/sendgrid-events';
 import {installation, json, sender, confirmedContact, draftCampaign, approve, dispatch} from '../go-live/harness';
 import {performanceCommerce, attributionJourney} from './performance-fixture';
+import {crossChannelAttributionJourney} from './cross-channel-attribution';
 import {openPage} from '../support/navigation';
 import {parseCsv} from '../../src/core/features/audience/csv';
 
@@ -11,7 +12,7 @@ import {parseCsv} from '../../src/core/features/audience/csv';
 export async function prepareTrackingJourney() {
   const commerce = performanceCommerce(), edge = await providerEdge(commerce);
   try {
-    const site = await installation(edge, eventSigner(), {commerce: true, providerKey: 'synthetic-mango-1'});
+    const site = await installation(edge, eventSigner(), {commerce: true, sms: true, providerKey: 'synthetic-mango-1'});
     let closing: Promise<void> | undefined;
     return {commerce, edge, site, close: () => closing ??= (async () => {try {await site.runtime.close();} finally {await edge.close();}})()};
   } catch (error) {await edge.close(); throw error;}
@@ -139,6 +140,7 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
       await engagement.screenshot({path: info.outputPath(`tracking-map-${width}.png`)});
     }
     await attributionJourney({site, edge, commerce, cookie, campaign, links, people, destination, page, info});
+    await crossChannelAttributionJourney({site, edge, commerce, destination, page, info});
     // A delivered link forwards for the life of its message; only click recording
     // ends, when the link's recording window closes. Real elapsed time, no seeded click.
     const [{ends}] = await site.rows(`SELECT t.expires_at AS ends FROM tracked_links t JOIN recipient_steps r ON r.id=t.recipient_step_id
