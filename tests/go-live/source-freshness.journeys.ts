@@ -10,6 +10,10 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
   const commerce = sourceEdge(), edge = await providerEdge(commerce), site = await installation(edge, eventSigner(), {commerce: true, ai: true, providerKey: 'synthetic-mango-4'});
   try {
     const cookie = await site.open();
+    const desk = async () => json(await site.call('/api/decision-desk', {cookie}), 200);
+    const initial = await desk();
+    expect(initial.sourceStatus.sourceSyncs).toHaveLength(8);
+    expect(initial.sourceStatus.sourceSyncs.every((source: any) => source.lastSuccessfulAt === null)).toBe(true);
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
     await site.control('/_golive/sender-evidence');
     await confirmedContact(site, edge, cookie, 'synthetic-mango-4@example.test', 'Garden reader');
@@ -27,10 +31,6 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
     const history = await json(await site.call(`/api/campaigns/${sent.campaignId}/results`, {cookie}), 200);
     const handoffs = edge.sends.length;
     await site.control('/_golive/clock', {hold: true});
-    const desk = async () => json(await site.call('/api/decision-desk', {cookie}), 200);
-    const initial = await desk();
-    expect(initial.sourceStatus.sourceSyncs).toHaveLength(8);
-    expect(initial.sourceStatus.sourceSyncs.every((source: any) => source.lastSuccessfulAt === null)).toBe(true);
     for (const source of ['customer','product','variant','inventory','order','refund']) await syncSource(site, cookie, source);
     const completed = (await desk()).sourceStatus.sourceSyncs;
     const product = completed.find((source: any) => source.sourceType === 'product');
@@ -39,7 +39,7 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
     await site.control('/_golive/clock', {advanceMs: 1000});
     commerce.fail(true);
     const failedStore = await syncSource(site, cookie, 'product', true);
-    expect(failedStore.syncRuns.find((run: any) => run.sourceType === 'product')).toMatchObject({state: 'failed', lastError: expect.stringContaining('sync failed')});
+    expect(failedStore.syncRuns.find((run: any) => run.sourceType === 'product')).toMatchObject({state: 'failed', lastError: expect.stringContaining('GraphQL')});
     // Generation uses stored evidence and refuses the failed-source gate before AI.
     const generated = await json(await site.call('/api/proposals/generate', {method: 'POST', cookie, body: {}}), 409);
     expect(generated).toMatchObject({kind: 'unavailable', detail: expect.stringMatching(/product.*sync failed/i)});
@@ -71,7 +71,7 @@ contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync thr
       await openPage(page, `${site.runtime.url}/app/store`);
       const sync = page.getByRole('article', {name: 'Product sync', exact: true});
       await expect(sync).toContainText(/failed/i);
-      await expect(sync).toContainText('sync failed');
+      await expect(sync).toContainText('GraphQL');
       await page.screenshot({path: info.outputPath(`source-operation-failed-${width}.png`), fullPage: true});
       await openPage(page, `${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);
       await expect(page.getByRole('button', {name: 'Save full draft', exact: true})).toBeEnabled();

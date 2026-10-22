@@ -7350,7 +7350,7 @@
       "executable": false
     },
     "tests/go-live/source-freshness.journeys.ts": {
-      "sha256": "4283ad7cf41fef9acb8bc04d0808633fdacae852772aad9e7699eb784f5c37b5",
+      "sha256": "75f4b139a18a5c7483f8b9e6de8bd2ca374a4d34feeaefc9deb3a8c454f28eff",
       "executable": false
     },
     "tests/go-live/stale-sources.journeys.ts": {
@@ -7722,7 +7722,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "23f10793afafa78c87c61181f61ecfa139148910ffd1a79ffd95dc4171804025",
+      "sha256": "ad307ec52dc3c296453a1d95eee12f35c9474ce624cf24d8feb14b47804b4aef",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
