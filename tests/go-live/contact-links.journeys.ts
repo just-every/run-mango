@@ -5,7 +5,7 @@ import { eventSigner } from './sendgrid-events';
 import { installation, json, sender, confirmedContact, draftCampaign, approve, dispatch } from './harness';
 import { openPage, reloadPage } from '../support/navigation';
 
-test('[DELIV-002][MSG-013] contact links survive authoring, exact approval and delivery without tracking', async ({page}, info) => {
+test('[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking', async ({page}, info) => {
   const edge = await providerEdge(), site = await installation(edge, eventSigner());
   try {
     const cookie = await site.open();
