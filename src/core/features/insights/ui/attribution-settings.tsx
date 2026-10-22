@@ -44,12 +44,12 @@ export function AttributionSettings({ onSettingsChanged }: { onSettingsChanged: 
         {can('settings.manage') ? <form onSubmit={event => void save(event)}>
           <fieldset className="draft-fields" disabled={busy}>
             <legend>Conversion metric and click windows</legend>
-            <label>Conversion metric<select value={values.metric} onChange={event => update({ metric: event.target.value })}>
+            <label>Conversion metric<select aria-label="Conversion metric" value={values.metric} onChange={event => update({ metric: event.target.value })}>
               {!data.availableMetrics.some(metric => metric.id === data.metric) ? <option value={data.metric} disabled>{data.metricLabel} (no recorded conversions)</option> : null}
               {data.availableMetrics.map(metric => <option key={metric.id} value={metric.id}>{metric.label}</option>)}
             </select></label>
-            <label>Email click window (days)<input type="number" required min={1} max={365} step={1} value={values.email} onChange={event => update({ email: event.target.value })} /></label>
-            <label>SMS click window (days)<input type="number" required min={1} max={365} step={1} value={values.sms} onChange={event => update({ sms: event.target.value })} /></label>
+            <label>Email click window (days)<input aria-label="Email click window (days)" type="number" required min={1} max={365} step={1} value={values.email} onChange={event => update({ email: event.target.value })} /></label>
+            <label>SMS click window (days)<input aria-label="SMS click window (days)" type="number" required min={1} max={365} step={1} value={values.sms} onChange={event => update({ sms: event.target.value })} /></label>
           </fieldset>
           <p className="muted-copy">Defaults: Placed Order and seven days per channel. Custom conversion events appear after an integration records them.</p>
           <button type="submit" className="primary-action" disabled={busy || !changed}>{busy ? 'Saving attribution…' : 'Save attribution and recalculate'}</button>
