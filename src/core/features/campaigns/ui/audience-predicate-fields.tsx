@@ -20,7 +20,7 @@ export function PredicateFields({predicate,onChange,label}: {predicate:Predicate
     <label>{label} field<select aria-label={`${label} field`} value={`${predicate.sourceType}:${predicate.field}`} onChange={event=>{
       const [sourceType,field]=event.target.value.split(':');
       const isBoolean=sourceType==='contact'&&booleans.includes(field);
-      const next:Predicate={sourceType:sourceType as Predicate['sourceType'],field,comparator:isBoolean?'eq':numericFields.includes(field)?'gte':'eq',value:isBoolean?true:numericFields.includes(field)?1:''};
+      const next:Predicate={sourceType:sourceType as Predicate['sourceType'],field,comparator:isBoolean?'eq':numericFields.includes(field)?'gte':predicate.comparator,value:isBoolean?true:numericFields.includes(field)?1:typeof predicate.value==='boolean'?'':predicate.value};
       if(isBoolean)next.channel='email';
       if(field==='clicked'||field==='count')next.lookbackDays=90;
       if(field==='distanceMiles'){next.originZip='';next.comparator='lte';next.value=25;}
