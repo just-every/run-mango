@@ -23,9 +23,9 @@ export function performanceCommerce() {
 export async function attributionJourney(input: {
   site: Installation; edge: Awaited<ReturnType<typeof providerEdge>>; commerce: ReturnType<typeof performanceCommerce>;
   cookie: string; campaign: {campaignId: string; revisionId: string}; links: string[];
-  people: {email: string; name: string}[]; destination: string; page: Page; info: TestInfo; width: number;
+  people: {email: string; name: string}[]; destination: string; page: Page; info: TestInfo;
 }) {
-  const {site, edge, commerce, campaign, links, people, destination, page, info, width} = input;
+  const {site, edge, commerce, campaign, links, people, destination, page, info} = input;
   let cookie = input.cookie;
   const result = (campaignId: string) => site.call(`/api/campaigns/${campaignId}/results`, {cookie}).then(response => json(response, 200));
   const unchangedAttribution = (actual: any, expected: any) => {
@@ -115,23 +115,26 @@ export async function attributionJourney(input: {
   const csv = parseCsv(await (await site.call('/api/insights/campaign-performance?format=csv', {cookie})).text());
   expect(csv.find(row => row['campaign id'] === latest.campaignId)).toMatchObject({'attributed conversions': '4', 'net attributed revenue by currency': 'JPY 1000; USD 80.00'});
   expect(csv.find(row => row['campaign id'] === campaign.campaignId)).toMatchObject({'human clicks': '1', 'unique clicked recipient-steps': '1', 'attributed conversions': '1'});
-  await openPage(page, site.runtime.url + '/app/insights');
-  const row = page.getByRole('table', {name: 'Campaign performance', exact: true}).locator('tbody tr').filter({hasText: 'Latest garden letter'});
-  await expect(row.locator('[data-label="Net revenue"]')).toHaveText('JPY 1000; USD 80.00');
-  await expect(row.locator('[data-label="Revenue / recipient"]')).toHaveText('JPY 1000.0000; USD 80.0000');
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-  expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
-  await page.screenshot({path: info.outputPath(`attribution-insights-${width}.png`), fullPage: true});
-  await row.getByRole('link', {name: 'Latest garden letter', exact: true}).click();
-  await page.getByRole('link', {name: 'View schedule and results', exact: true}).click();
-  const panel = page.locator('section').filter({has: page.getByRole('heading', {name: 'Clicks and store orders', exact: true})});
-  await expect(panel).toContainText(/seven days/);
-  await expect(panel).toContainText(/observed Shopify events, separate from forecasts/);
-  for (const purchase of purchases) await expect(panel.locator('summary').filter({hasText: purchase.id})).toBeVisible();
-  await expect(panel.getByRole('table', {name: 'Attributed store orders by currency'})).toContainText('USD 80.00');
-  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-  // The separate click-map iframe is sandboxed; audit the observed-order panel
-  // here and the complete Insights page above, without disabling any axe rules.
-  expect((await new AxeBuilder({page}).include('section[aria-labelledby="commerce-results-title"]').analyze()).violations).toEqual([]);
-  await page.screenshot({path: info.outputPath(`attribution-events-${width}.png`), fullPage: true});
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({width, height: 1000});
+    await openPage(page, site.runtime.url + '/app/insights');
+    const row = page.getByRole('table', {name: 'Campaign performance', exact: true}).locator('tbody tr').filter({hasText: 'Latest garden letter'});
+    await expect(row.locator('[data-label="Net revenue"]')).toHaveText('JPY 1000; USD 80.00');
+    await expect(row.locator('[data-label="Revenue / recipient"]')).toHaveText('JPY 1000.0000; USD 80.0000');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+    await page.screenshot({path: info.outputPath(`attribution-insights-${width}.png`), fullPage: true});
+    await row.getByRole('link', {name: 'Latest garden letter', exact: true}).click();
+    await page.getByRole('link', {name: 'View schedule and results', exact: true}).click();
+    const panel = page.locator('section').filter({has: page.getByRole('heading', {name: 'Clicks and store orders', exact: true})});
+    await expect(panel).toContainText(/seven days/);
+    await expect(panel).toContainText(/observed Shopify events, separate from forecasts/);
+    for (const purchase of purchases) await expect(panel.locator('summary').filter({hasText: purchase.id})).toBeVisible();
+    await expect(panel.getByRole('table', {name: 'Attributed store orders by currency'})).toContainText('USD 80.00');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    // The separate click-map iframe is sandboxed; audit the observed-order panel
+    // here and the complete Insights page above, without disabling any axe rules.
+    expect((await new AxeBuilder({page}).include('section[aria-labelledby="commerce-results-title"]').analyze()).violations).toEqual([]);
+    await page.screenshot({path: info.outputPath(`attribution-events-${width}.png`), fullPage: true});
+  }
 }

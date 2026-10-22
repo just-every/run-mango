@@ -9,7 +9,7 @@ import {parseCsv} from '../../src/core/features/audience/csv';
 
 /** The existing performance cases also exercise actual approval and handoff.
  * Only provider HTTP responses are doubled; no delivery, token or click is seeded. */
-export async function trackingJourney(page: Page, info: TestInfo, width: number) {
+export async function trackingJourney(page: Page, info: TestInfo) {
   const commerce = performanceCommerce(), edge = await providerEdge(commerce);
   const site = await installation(edge, eventSigner(), {commerce: true, providerKey: 'synthetic-mango-1'});
   try {
@@ -67,12 +67,16 @@ export async function trackingJourney(page: Page, info: TestInfo, width: number)
     const disabled = await draftCampaign(site, cookie, 'Private garden letter', [people[2].email], disabledDue);
     await json(await site.call('/api/campaign-revisions/' + disabled.revisionId, {method: 'PATCH', cookie, body: {emailBody: `<p><a href="${destination}">Garden collection</a></p>`, trackingEnabled: true}}), 200);
     await page.context().addCookies([{name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url}]);
-    await page.setViewportSize({width, height: 1000});
-    await openPage(page, `${site.runtime.url}/app/campaigns/${disabled.campaignId}/review`);
-    await page.getByLabel('Track link clicks', {exact: true}).uncheck();
-    await page.getByRole('button', {name: 'Save full draft', exact: true}).click();
-    await expect(page.getByRole('status').filter({hasText: 'Draft saved.'})).toBeVisible();
-    expect((await json(await site.call(`/api/campaigns/${disabled.campaignId}`, {cookie}), 200)).revision.trackingEnabled).toBe(false);
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({width, height: 1000});
+      await openPage(page, `${site.runtime.url}/app/campaigns/${disabled.campaignId}/review`);
+      await page.getByLabel('Track link clicks', {exact: true}).check();
+      await page.getByLabel('Track link clicks', {exact: true}).uncheck();
+      await page.getByRole('button', {name: 'Save full draft', exact: true}).click();
+      await expect(page.getByRole('status').filter({hasText: 'Draft saved.'})).toBeVisible();
+      expect((await json(await site.call(`/api/campaigns/${disabled.campaignId}`, {cookie}), 200)).revision.trackingEnabled).toBe(false);
+      await page.screenshot({path: info.outputPath(`tracking-control-${width}.png`), fullPage: true});
+    }
     await approve(site, cookie, disabled);
     await site.control('/_golive/clock', {advanceMs: 3600001, hold: false});
     expect((await dispatch(site, disabled.campaignId, disabledDue))[0].transport_disposition).toBe('accepted');
@@ -86,20 +90,23 @@ export async function trackingJourney(page: Page, info: TestInfo, width: number)
     await page.unroute(destination.split('#')[0]);
     expect(await result()).toEqual(before);
     expect((await json(await site.call(`/api/campaigns/${disabled.campaignId}/results`, {cookie}), 200)).engagement.observedClicks).toBe(0);
-    await openPage(page, site.runtime.url + '/app/insights');
-    const row = page.getByRole('table', {name: 'Campaign performance', exact: true}).locator('tbody tr').filter({hasText: 'Tracked garden letter'});
-    await expect(row.locator('[data-label="Human clicks"]')).toHaveText('1');
-    await expect(row.locator('[data-label="Unique clicks"]')).toHaveText('1');
-    await row.getByRole('button', {name: 'View links · revision 1', exact: true}).click();
-    await expect(page.getByRole('table', {name: 'Clicks by link'})).toContainText('Garden collection');
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-    expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
-    await page.screenshot({path: info.outputPath(`tracking-${width}.png`), fullPage: true});
-    await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
-    const clickMap = page.frameLocator('iframe[title="Campaign click map"]');
-    await expect(clickMap.locator('mark')).toHaveText('[1 clicks · 1 people]');
-    await page.screenshot({path: info.outputPath(`tracking-map-${width}.png`), fullPage: true});
-    await attributionJourney({site, edge, commerce, cookie, campaign, links, people, destination, page, info, width});
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({width, height: 1000});
+      await openPage(page, site.runtime.url + '/app/insights');
+      const row = page.getByRole('table', {name: 'Campaign performance', exact: true}).locator('tbody tr').filter({hasText: 'Tracked garden letter'});
+      await expect(row.locator('[data-label="Human clicks"]')).toHaveText('1');
+      await expect(row.locator('[data-label="Unique clicks"]')).toHaveText('1');
+      await row.getByRole('button', {name: 'View links · revision 1', exact: true}).click();
+      await expect(page.getByRole('table', {name: 'Clicks by link'})).toContainText('Garden collection');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+      await page.screenshot({path: info.outputPath(`tracking-${width}.png`), fullPage: true});
+      await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
+      const clickMap = page.frameLocator('iframe[title="Campaign click map"]');
+      await expect(clickMap.locator('mark')).toHaveText('[1 clicks · 1 people]');
+      await page.screenshot({path: info.outputPath(`tracking-map-${width}.png`), fullPage: true});
+    }
+    await attributionJourney({site, edge, commerce, cookie, campaign, links, people, destination, page, info});
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close(); await edge.close();}
 }

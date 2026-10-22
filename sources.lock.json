@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "d785895dc5a5abfb96fa204cc128f2b78e6f15a2bfc5ffb004e92de90191af65",
+      "sha256": "8efcfd1c95248c6af364a97e7acad85ac8584f2e409744b46a1694bcd841a597",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "ab6a16aba787414b69aac57eeac38c6b823a374f534e8706a2050e7d296ac42e",
+      "sha256": "383d6568b941d1dc78c38bf8c4aae8f8383d0d08ee7031e0759d39981315e4c9",
       "executable": false
     },
     "DEMO.md": {
@@ -7026,11 +7026,11 @@
       "executable": false
     },
     "tests/campaign-results/performance-fixture.ts": {
-      "sha256": "43a8a452ce4c73b78cc173a6a99fed10f8f8b165586a30f3b3d4ebe1abc7ed01",
+      "sha256": "49baa662fd9d3727d00bc1c08ce2431f5a34c2acecda91fd10763c7cf8413932",
       "executable": false
     },
     "tests/campaign-results/performance.journeys.ts": {
-      "sha256": "5e16c0c37e5092e5511fec10f43da7dcdf59f81fd02eb9a6f187af61a67856e2",
+      "sha256": "5554416ea5dbfce8fc70303df9c2ab7e9c320e710851165dd46ee823ddff06bb",
       "executable": false
     },
     "tests/campaign-results/playwright.config.js": {
@@ -7066,7 +7066,7 @@
       "executable": false
     },
     "tests/campaign-results/tracking-journey.ts": {
-      "sha256": "090b11c56797889d2cf73343bede66cb469831bf125acd6e6e9c4c81f9940923",
+      "sha256": "8222b4a40a06f1d457bc3e5ec5a27a0f4422bf5f919f8ffb5288229c70e68141",
       "executable": false
     },
     "tests/campaign-results/worker.ts": {

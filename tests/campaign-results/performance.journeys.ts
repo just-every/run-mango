@@ -6,8 +6,8 @@ import AxeBuilder from '@axe-core/playwright';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage} from '../support/navigation';
 import {csvRows,parseCsv} from '../../src/core/features/audience/csv';
-for(const width of [1440,390])contract('REPORT-002',`[RESULT-005][RESULT-003] campaign filters, exact CSV rows and optional open estimates at ${width}`,async({page,request})=>{
-  test.setTimeout(600000);
+for(const width of [1440,390])contract('REPORT-002',`${width===1440?'[RESULT-005][RESULT-003] ':''}campaign filters, exact CSV rows and optional open estimates at ${width}${width===1440?'; native commerce at 1440 and 390':''}`,async({page,request})=>{
+  test.setTimeout(width===1440?600000:180000);
   const seed=await request.post(`${runtime.url}/_results/reporting`,{headers:{'X-Test-Token':runtime.token}});expect(seed.ok()).toBe(true);const fixture=await seed.json();
   const login=await request.post(`${runtime.url}/_results/open`,{headers:{'X-Test-Token':runtime.token}});const {token}=await login.json();await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,domain:'127.0.0.1',path:'/'}]);await page.setViewportSize({width,height:1000});
   for(const [index,scanner] of [false,false,true].entries()) {
@@ -35,7 +35,9 @@ for(const width of [1440,390])contract('REPORT-002',`[RESULT-005][RESULT-003] ca
   await page.getByLabel('Enable privacy-sensitive open estimates',{exact:true}).uncheck();await expect(table.getByRole('columnheader',{name:'Open-rate estimate',exact:true})).toHaveCount(0);await compareCsv();
   await page.getByLabel('Scheduled from (UTC)',{exact:true}).fill('2099-01-01');await expect(page.getByText('No campaign steps match these filters.',{exact:true})).toBeVisible();const empty=await page.request.get(runtime.url+(await page.getByRole('link',{name:'Export campaign performance CSV'}).getAttribute('href')));expect(csvRows(await empty.text())).toHaveLength(1);
   expect((await page.request.get(`${runtime.url}/api/insights/campaign-performance?from=2026-02-30`)).status()).toBe(400);
-  await trackingJourney(page, test.info(), width);
+  // Both viewports share one real send/order history; business requests do not
+  // depend on viewport size. The helper checks every browser state at both widths.
+  if (width===1440) await trackingJourney(page, test.info());
 });
 
 test('campaign revisions export safely with Owner/Admin authority and visible limits',async({page,request})=>{
