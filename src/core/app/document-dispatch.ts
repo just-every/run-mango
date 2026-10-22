@@ -56,7 +56,7 @@ export async function dispatchDocuments(
     return new Response(null,{status:308,headers:{Location:`/subscribe${url.search}`,'Cache-Control':'no-store'}});
   }
   if (path.startsWith('/__dev') && platform.config.local !== true) return Response.json({error: 'not_found'}, {status: 404});
-  if (path === '/archive/feed.xml' || path === '/archive/data' || path.startsWith('/archive/data/') || path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
+  if (path === '/archive/feed.xml' || path === '/archive/data' || path.startsWith('/archive/data/') || path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms' || path === '/paid/checkout') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
     return hono.fetch(request, environment, executionContext);
   }
   let admission: ReturnType<typeof documentAdmission.getStore>;
