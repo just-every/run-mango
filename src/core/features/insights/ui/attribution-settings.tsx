@@ -56,6 +56,6 @@ export function AttributionSettings({ onSettingsChanged }: { onSettingsChanged: 
         </form> : <p>An Owner or Admin can change this policy.</p>}
       </>}
     {failure ? <p className="inline-error" role="alert">{failure}</p> : null}
-    {saved ? <p className="action-notice" role="status">Attribution saved. Campaign performance is refreshing.</p> : null}
+    {saved ? <p className="action-notice" role="status">Attribution saved.</p> : null}
   </section>;
 }

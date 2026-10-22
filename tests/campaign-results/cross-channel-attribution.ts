@@ -142,6 +142,17 @@ export async function crossChannelAttributionJourney(input: {
   expect(policy).toMatchObject({policy: 'campaign.attribution.v1', metric: 'placed-order', metricLabel: 'Placed Order', clickWindowDays: {email: 7, sms: 7}});
   await assertAttributionReports({...context, metric: 'placed-order', metricLabel: 'Placed Order', days: 7, conversions: 3, netMinor: '13000', receipt: 'cross-channel-before'});
   const stored = await attributionStoredEvents(site);
+  // Windows belong to channels: removing only SMS's qualifying window gives
+  // this order to the earlier email click, never to both campaigns.
+  await json(await site.call('/api/insights/attribution-policy', {method: 'PUT', cookie,
+    body: {metric: 'placed-order', clickWindowDays: {email: 7, sms: 1}}}), 200);
+  expect((await result(sms.campaignId)).attribution.orders).toBe(0);
+  expect((await result(email.campaignId)).attribution).toMatchObject({orders: 3,
+    revenueByCurrency: [{currency: 'USD', orders: 3, grossAmountMinor: 18000, reversedAmountMinor: 5000, amountMinor: 13000}]});
+  expect(await attributionStoredEvents(site)).toEqual(stored);
+  await json(await site.call('/api/insights/attribution-policy', {method: 'PUT', cookie,
+    body: {metric: 'placed-order', clickWindowDays: {email: 7, sms: 7}}}), 200);
+
   await saveAttributionPolicy(context, 'placed-order', 1);
   await assertAttributionReports({...context, metric: 'placed-order', metricLabel: 'Placed Order', days: 1, conversions: 0, netMinor: '0', receipt: 'cross-channel-one-day'});
   expect(await attributionStoredEvents(site)).toEqual(stored);
