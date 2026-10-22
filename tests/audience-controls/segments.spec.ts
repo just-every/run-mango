@@ -1,9 +1,10 @@
+import {contract} from '../contract.js';
 import {segmentJourney} from './segment-journey';
 import {test,expect} from '@playwright/test';
 import {runtime,segment,rule,importContacts,createCampaign} from './runtime';
 import {rows} from '../approval-binding/native';
 
-test('SEG-001 AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable',async({page},info)=>{
+contract('SEG-001','AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable',async({page},info)=>{
   test.setTimeout(600000);
   const h=await runtime();try {
     await h.f.prove();

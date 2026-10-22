@@ -78,6 +78,26 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     expect(await review()).toMatchObject({candidateCount:0,eligibleCount:0});
     await setRules({...conditions,predicates:conditions.predicates.map((p:any)=>p.field==='count'?{...p,lookbackDays:30}:p)});
     expect(await review()).toMatchObject({candidateCount:1,eligibleCount:1});
+    // Every currently recorded condition uses the same public selection door.
+    const variants:Array<[Record<string,unknown>,number]>=[
+      [{field:'property',property:'interest',value:'vegetables'},1],
+      [{field:'tags',comparator:'contains',value:'local'},1],
+      [{field:'consent',channel:'email',value:true},8],
+      [{field:'consent',channel:'sms',value:true},0],
+      [{field:'topic',channel:'email',topicId:'newsletter',value:true},8],
+      [{field:'topic',channel:'email',topicId:'other',value:true},0],
+      [{field:'zip',value:'94102'},6],
+      [{field:'distanceMiles',originZip:'94102',comparator:'lte',value:10},7],
+      [{field:'rfmStage',value:'active'},5],
+      [{field:'rfmFrequency',comparator:'gte',value:2},5],
+      [{sourceType:'order',field:'boughtProductId',value:'gid://shopify/Product/21'},7],
+      [{field:'clicked',channel:'email',lookbackDays:7,value:true},0],
+      [{field:'clicked',channel:'sms',lookbackDays:7,value:true},0],
+    ];
+    for(const [condition,count]of variants) {
+      await setRules({version:1,operator:'all',predicates:[{sourceType:'contact',comparator:'eq',...condition}]});
+      expect(await review(),JSON.stringify(condition)).toMatchObject({candidateCount:count,eligibleCount:count});
+    }
     await setRules(conditions);
     expect(await review()).toMatchObject({candidateCount:2,eligibleCount:2});
     await approve(site,cookie,campaign);
