@@ -1,7 +1,7 @@
 import {createHmac} from 'node:crypto';
 import {expect, type Page, type TestInfo} from '@playwright/test';
 import {order, customer, id, page as shopifyPage} from '../shopify/fixtures';
-import {json, consent, confirmedContact, draftCampaign, approve, dispatch, type Installation} from '../go-live/harness';
+import {json, consent, availableTransport, confirmedContact, draftCampaign, approve, dispatch, type Installation} from '../go-live/harness';
 import {smsProgramme, smsDisclosure, smsSender} from '../go-live/sms-bindings';
 import {syncSource} from '../go-live/source-edge';
 import type {providerEdge} from '../go-live/edge';
@@ -21,7 +21,7 @@ export async function crossChannelAttributionJourney(input: {
   await page.context().addCookies([{name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url}]);
   const before = await site.control('/_golive/clock');
   // Follow the real marketing quiet-window policy at Brisbane noon.
-  await site.control('/_golive/clock', {advanceMs: (43_200_000 - ((before.now + 36_000_000) % 86_400_000) + 86_400_000) % 86_400_000, hold: true});
+  await site.control('/_golive/clock', {advanceMs: (43_200_000 - ((before.now + 36_000_000) % 86_400_000) + 86_400_000) % 86_400_000, hold: false});
   const person = {email: 'synthetic-mango-4@example.test', displayName: 'Mango cross-channel reader', phone: '+61411111111'};
   await confirmedContact(site, edge, cookie, person.email, person.displayName);
   const now = (await site.control('/_golive/clock')).now;
@@ -40,6 +40,7 @@ export async function crossChannelAttributionJourney(input: {
   expect((await fetch(site.local(confirmation), {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'confirm=true'})).status).toBe(200);
   const contact = await json(await site.call('/api/contacts/' + captured.contact.id, {cookie}), 200);
   expect(contact.contact).toMatchObject({id: captured.contact.id, email: person.email, smsStatus: 'subscribed'});
+  await availableTransport(site);
   await site.control('/_golive/sender-evidence');
   const emailDue = new Date((await site.control('/_golive/clock')).now + 3600000);
   const email = {...await draftCampaign(site, cookie, 'Cross-channel garden email', [person.email], emailDue), name: 'Cross-channel garden email'};
