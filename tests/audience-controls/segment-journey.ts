@@ -1,10 +1,11 @@
-import {expect,type Page,type TestInfo} from '@playwright/test';
+import {test,expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {segmentFixture} from './segment-fixture';
 import {json,draftCampaign,approve} from '../go-live/harness';
 import {openPage} from '../support/navigation';
 
 export async function segmentJourney(page:Page,info:TestInfo) {
+  page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000);
   const f=await segmentFixture(),{site,cookie,people,now}=f;
   try {
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
@@ -49,7 +50,7 @@ export async function segmentJourney(page:Page,info:TestInfo) {
       await page.setViewportSize({width,height:1000});
       await expect(estimate).toContainText('2 eligible contacts');
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-      expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+      await test.step(`Accessibility at ${width}`,async()=>expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]),{timeout:30000});
       await page.locator('[aria-labelledby="segments-title"]').screenshot({path:info.outputPath(`segment-builder-${width}.png`)});
     }
     const campaign=await draftCampaign(site,cookie,'California repeat gardeners',people.map(p=>p.email),new Date(now+3600000));
@@ -59,10 +60,10 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     expect(await review()).toMatchObject({candidateCount:2,eligibleCount:2});
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
-      await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+      await test.step(`Open review at ${width}`,()=>openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`));
       for(const part of ['Placed Order','US state','94103'])await expect(page.locator('main')).toContainText(part);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-      expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
+      await test.step(`Accessibility at ${width}`,async()=>expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]),{timeout:30000});
       await page.screenshot({path:info.outputPath(`segment-review-${width}.png`),fullPage:true});
     }
     // Intersect the saved segment with each actual contact through review. Equal
