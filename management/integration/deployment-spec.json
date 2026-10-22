@@ -512,6 +512,12 @@
       "name": "core-0082_campaign_attribution_policy.sql",
       "sha256": "12176af41b65be7833dce2a08375a3c16ae05aefe48889a2ce6b142261c805a3",
       "sql": "-- Report policy is independent of immutable clicks, sources and the historical\n-- seven-day financial ledger. A read projects the selected policy over facts.\nCREATE TABLE campaign_attribution_policy (\n id INTEGER PRIMARY KEY CHECK(id=1), metric TEXT NOT NULL,\n email_window_days INTEGER NOT NULL CHECK(email_window_days BETWEEN 1 AND 365),\n sms_window_days INTEGER NOT NULL CHECK(sms_window_days BETWEEN 1 AND 365),\n operator_id TEXT NOT NULL, updated_at INTEGER NOT NULL\n);\n\n-- Remember a received order even when a later update voids it. The legacy ledger\n-- may never have attributed it: the operator can now choose a longer window.\nALTER TABLE commerce_orders ADD COLUMN was_qualifying INTEGER NOT NULL DEFAULT 0 CHECK(was_qualifying IN (0,1));\nUPDATE commerce_orders SET was_qualifying=1 WHERE qualifying=1\n OR EXISTS(SELECT 1 FROM attribution_facts a WHERE a.order_source_record_id=commerce_orders.source_record_id);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0083_failed_operations.sql",
+      "sha256": "07bd74251900be62a7b95cb526d4025adc9bc623bcbf364a02373b570c07768a",
+      "sql": "-- STORE-004: a verified webhook the commerce adapter cannot read and proposal\n-- generation refused by a failed source record a failed operation on the same\n-- record as a failed sync, carrying the adapter's error. A provider delivery\n-- records at most one row; its retry after recovery completes that row.\nALTER TABLE source_sync_runs ADD COLUMN operation TEXT NOT NULL DEFAULT 'sync' CHECK (operation IN ('sync', 'webhook', 'generation'));\nALTER TABLE source_sync_runs ADD COLUMN delivery_key TEXT;\nCREATE UNIQUE INDEX source_sync_runs_delivery ON source_sync_runs(delivery_key);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
