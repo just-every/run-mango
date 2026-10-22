@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "521c606d17e4ed309e6d4ced782d9918119bd2191c593c46748f5900366ccb55",
+      "sha256": "a74f58da7349a099ec4ff6bafe03cc7585793dddd93fa1df76ed0a6edb10a5ba",
       "executable": false
     },
     "DEMO.md": {
@@ -3182,7 +3182,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/audience-predicate-fields.tsx": {
-      "sha256": "72269200557997fb1f3d46357b9623cb27608d8e3a148635190a695efba5e21b",
+      "sha256": "9d51390bd51b8bdc5b32afc8ccfef3e4af459625e14c846fcb9daed8d0793fef",
       "executable": false
     },
     "src/core/features/campaigns/ui/audience-rule-editor.tsx": {
