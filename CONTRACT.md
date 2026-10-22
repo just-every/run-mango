@@ -882,8 +882,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 79 | 8 | 0 | 87 |
-| Target and push further | 16 | 54 | 85 | 155 |
-| All | 95 | 62 | 85 | 242 |
+| Target and push further | 16 | 55 | 84 | 155 |
+| All | 95 | 63 | 84 | 242 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
