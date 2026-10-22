@@ -6,21 +6,20 @@ import AxeBuilder from '@axe-core/playwright';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage} from '../support/navigation';
 import {csvRows,parseCsv} from '../../src/core/features/audience/csv';
-for(const width of [1440,390])contract('REPORT-002',`[RESULT-005] campaign filters, exact CSV rows and optional open estimates at ${width}`,async({page,request})=>{
+for(const width of [1440,390])contract('REPORT-002',`[RESULT-005][RESULT-003] campaign filters, exact CSV rows and optional open estimates at ${width}`,async({page,request})=>{
   test.setTimeout(600000);
   const seed=await request.post(`${runtime.url}/_results/reporting`,{headers:{'X-Test-Token':runtime.token}});expect(seed.ok()).toBe(true);const fixture=await seed.json();
   const login=await request.post(`${runtime.url}/_results/open`,{headers:{'X-Test-Token':runtime.token}});const {token}=await login.json();await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,domain:'127.0.0.1',path:'/'}]);await page.setViewportSize({width,height:1000});
   for(const [index,scanner] of [false,false,true].entries()) {
     const response=await page.request.get(`${runtime.url}/l/${encodeURIComponent(index===1?fixture.links[0].chris:fixture.links[0].ada)}`,{maxRedirects:0,headers:{'User-Agent':scanner?'Barracuda LinkProtect':'Mozilla/5.0 Studio reader','CF-Ray':`performance-${index}`}});expect(response.status()).toBe(302);
   }
-  const purchases=await request.post(`${runtime.url}/_results/performance-orders`,{headers:{'X-Test-Token':runtime.token}});expect(purchases.ok()).toBe(true);
   const api='/api/insights/campaign-performance?channel=email&topic=newsletter&sort=totalClicks&direction=desc';
-  const report=await (await page.request.get(runtime.url+api)).json();expect(report.rows).toHaveLength(1);expect(report.rows[0]).toMatchObject({recipients:5,delivered:3,totalClicks:2,uniqueClicks:2,clickRate:0.4,unsubscribes:1,complaints:1,conversions:3,revenueByCurrency:[{currency:'JPY',conversions:1,netAmountMinor:'1000'},{currency:'USD',conversions:2,netAmountMinor:'8000'}]});expect(report.rows[0]).not.toHaveProperty('openRateEstimate');
-  await openPage(page,`${runtime.url}/app/insights`);await page.getByLabel('Performance channel',{exact:true}).selectOption('email');await page.getByLabel('Performance topic',{exact:true}).selectOption('newsletter');
+  const report=await (await page.request.get(runtime.url+api)).json();expect(report.rows).toHaveLength(1);expect(report.rows[0]).toMatchObject({recipients:5,delivered:3,totalClicks:2,uniqueClicks:2,clickRate:0.4,unsubscribes:1,complaints:1,conversions:0,revenueByCurrency:[]});expect(report.rows[0]).not.toHaveProperty('openRateEstimate');
+  await openPage(page,`${runtime.url}/app/insights`);await page.getByLabel('Performance channel',{exact:true}).selectOption('email');await expect(page.getByRole('table',{name:'Campaign performance',exact:true}).locator('tbody tr')).toHaveCount(1);await page.getByLabel('Performance topic',{exact:true}).selectOption('newsletter');
   const table=page.getByRole('table',{name:'Campaign performance',exact:true});await expect(table.locator('tbody tr')).toHaveCount(1);
   const row=table.locator('tbody tr').first();await expect(row.locator('[data-label="Recipients"]')).toHaveText('5');await expect(row.locator('[data-label="Delivered"]')).toHaveText('3');await expect(row.locator('[data-label="Human clicks"]')).toHaveText('2');await expect(row.locator('[data-label="Unique clicks"]')).toHaveText('2');await expect(row.locator('[data-label="Click rate"]')).toHaveText('40.00%');
-  await expect(row.locator('[data-label="Net revenue"]')).toHaveText('JPY 1000; USD 80.00');
-  await expect(row.locator('[data-label="Revenue / recipient"]')).toHaveText('JPY 200.0000; USD 16.0000');
+  await expect(row.locator('[data-label="Net revenue"]')).toHaveText('—');
+  await expect(row.locator('[data-label="Revenue / recipient"]')).toHaveText('—');
   const compareCsv=async()=>{
     const href=await page.getByRole('link',{name:'Export campaign performance CSV'}).getAttribute('href');const csv=await page.request.get(runtime.url+href);expect(csv.ok()).toBe(true);const rows=parseCsv(await csv.text());expect(rows).toHaveLength(await table.locator('tbody tr').count());
     for(const [index,csvRow]of rows.entries()) {

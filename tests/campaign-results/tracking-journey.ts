@@ -3,14 +3,14 @@ import AxeBuilder from '@axe-core/playwright';
 import {providerEdge} from '../go-live/edge';
 import {eventSigner} from '../go-live/sendgrid-events';
 import {installation, json, sender, confirmedContact, draftCampaign, approve, dispatch} from '../go-live/harness';
-import {sourceEdge} from '../go-live/source-edge';
+import {performanceCommerce, attributionJourney} from './performance-fixture';
 import {openPage} from '../support/navigation';
 import {parseCsv} from '../../src/core/features/audience/csv';
 
 /** The existing performance cases also exercise actual approval and handoff.
  * Only provider HTTP responses are doubled; no delivery, token or click is seeded. */
 export async function trackingJourney(page: Page, info: TestInfo, width: number) {
-  const commerce = sourceEdge(), edge = await providerEdge(commerce);
+  const commerce = performanceCommerce(), edge = await providerEdge(commerce);
   const site = await installation(edge, eventSigner(), {commerce: true, providerKey: 'synthetic-mango-1'});
   try {
     const cookie = await site.open();
@@ -26,7 +26,7 @@ export async function trackingJourney(page: Page, info: TestInfo, width: number)
       emailBody: `<p><a href="${destination}">Garden collection</a></p>`, trackingEnabled: true,
     }}), 200);
     await approve(site, cookie, campaign);
-    await site.control('/_golive/clock', {advanceMs: 3600001});
+    await site.control('/_golive/clock', {advanceMs: 3600001, hold: false});
     const recipients = await dispatch(site, campaign.campaignId, due);
     expect(recipients.map(row => row.transport_disposition)).toEqual(['accepted', 'accepted']);
     const sent = people.slice(0, 2).map(person => edge.sends.findLast(send => send.to === person.email && send.body.headers?.['List-Unsubscribe'])!);
@@ -74,7 +74,7 @@ export async function trackingJourney(page: Page, info: TestInfo, width: number)
     await expect(page.getByRole('status').filter({hasText: 'Draft saved.'})).toBeVisible();
     expect((await json(await site.call(`/api/campaigns/${disabled.campaignId}`, {cookie}), 200)).revision.trackingEnabled).toBe(false);
     await approve(site, cookie, disabled);
-    await site.control('/_golive/clock', {advanceMs: 3600001});
+    await site.control('/_golive/clock', {advanceMs: 3600001, hold: false});
     expect((await dispatch(site, disabled.campaignId, disabledDue))[0].transport_disposition).toBe('accepted');
     const untracked = edge.sends.findLast(send => send.to === people[2].email && send.body.headers?.['List-Unsubscribe'])!;
     const html = String(untracked.body.content.find((part: any) => part.type === 'text/html').value);
@@ -95,6 +95,7 @@ export async function trackingJourney(page: Page, info: TestInfo, width: number)
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
     await page.screenshot({path: info.outputPath(`tracking-${width}.png`), fullPage: true});
+    await attributionJourney({site, edge, commerce, cookie, campaign, links, people, destination, page, info, width});
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close(); await edge.close();}
 }

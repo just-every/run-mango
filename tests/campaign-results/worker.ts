@@ -1,5 +1,4 @@
 import { seedArchive } from './archive-fixture';
-import {seedPerformanceOrders} from './performance-fixture';
 import {seedFollowup,seedFollowupOpens} from './followup-fixture';
 import { seedRetention } from './retention-fixture';
 import { seedReporting } from './reporting-fixture';
@@ -37,7 +36,6 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       }
       if(action==='jobs') return context.json((await bindings.DB.prepare('SELECT payload FROM presentation_jobs').all()).results);
       if(action==='followup-opens')return context.json(await seedFollowupOpens(bindings.DB,platform));
-      if(action==='performance-orders')return context.json(await seedPerformanceOrders(bindings.DB));
       if(action==='counts') return context.json((await bindings.DB.prepare(`SELECT campaign_id,revision_id,step_id,transport_disposition disposition,skip_reason reason,COUNT(*) count FROM recipient_steps GROUP BY campaign_id,revision_id,step_id,transport_disposition,skip_reason`).all()).results);
       await clearCampaigns(bindings.DB);
       if(action==='followup')return context.json(await seedFollowup(bindings.DB,platform));
