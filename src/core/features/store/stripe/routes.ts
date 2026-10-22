@@ -104,11 +104,12 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
         if (!record) return context.body(null, 204);
         if (!record.contact) return context.json({error: 'stripe_contact_unresolved'}, 422);
         await audience.ingestCommerceWebhook({provider: 'stripe', completion: 'delta', adapterCompleted: false, sourceTypes: [record.sourceType], records: [record], receipt: {ids: [receipt], digest}});
-        await operations.recoverDeliveries([receipt], new Date());
       }
       // Paid-topic state follows the recorded event; a replay re-applies it without change.
       const contact = await db.prepare("SELECT contact_id AS id FROM source_records WHERE provider='stripe' AND provider_source_id=?").bind(event.id).first<{id: string | null}>();
       await paid.apply(event, lookup, contact?.id ?? null);
+      // Only a fully applied event completes a failed operation for this delivery.
+      await operations.recoverDeliveries([receipt], new Date());
       return context.body(null, 204);
     } catch (error) {
       // A verified event whose Stripe read failed is recorded once per event.
