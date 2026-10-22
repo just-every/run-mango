@@ -94,6 +94,12 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
     expect((await site.rows("SELECT email_status FROM contacts WHERE email='woo-reader@example.test'"))[0].email_status).toBe('unsubscribed');
     expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
+    const credential = await json(await site.call('/api/settings/integrations', {method: 'POST', cookie, body: {name: 'Store suppression control', scopes: ['contacts:write']}}), 201);
+    await json(await site.call('/api/integrations/v1/suppressions', {method: 'POST', headers: {Authorization: 'Bearer ' + credential.token}, body: {email: 'woo-reader@example.test', reason: 'Owner restriction', idempotencyKey: 'synthetic-mango-9'}}), 200);
+    expect((await site.rows("SELECT email_status FROM contacts WHERE email='woo-reader@example.test'"))[0].email_status).toBe('suppressed');
+    await json(await plugin.send({...plugin.event, id: crypto.randomUUID(), checkoutId: crypto.randomUUID(), checkoutStartedAt: new Date(Date.now()-1000).toISOString(), occurredAt: new Date().toISOString()}), 204);
+    expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
+    expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
     // A later API page failing keeps the last completed source and its cursor.
     woo.state.secondPageFailure = true;
     const failed = await queue('product'); await finished(failed.runId, 'failed');
@@ -122,7 +128,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect((await site.call('/api/store/sync', {method: 'POST', cookie, body: {sourceType: 'order'}})).status).toBe(409);
     expect(await site.count('woocommerce_connection')).toBe(0);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(5);
-    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(5);
+    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(6);
     expect((await site.rows('SELECT state FROM woocommerce_flows'))).toEqual([{state: 'paused'}]);
     await wooBrowserConsent(page);
     expect(woo.state.authorizations.every(value => value === 'Basic ' + Buffer.from(connection.key + ':' + connection.secret).toString('base64'))).toBe(true);

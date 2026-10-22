@@ -46,19 +46,23 @@ export async function enrollWooFlows(platform: Platform, connection: WooConnecti
   if (event.kind !== 'abandoned_checkout') return;
   const db = platform.database.$client, now = Date.now();
   const sourceId = `woocommerce:${connection.id}:cart:${event.checkoutId}`;
+  const contact = await db.prepare(`SELECT c.email FROM source_records s JOIN contacts c ON c.id=s.contact_id WHERE s.provider=? AND s.source_type='cart' AND s.provider_source_id=? AND json_extract(s.payload,'$.eventId')=?`).bind('woocommerce:' + connection.id, sourceId, event.id).first<{email: string}>();
+  if (!contact?.email) return;
+  const destinationHash = await sha256(platform.config.contactHashSalt + ':' + contact.email);
+
   const flows = (await db.prepare("SELECT id,tag FROM woocommerce_flows WHERE connection_id=? AND state='live'").bind(connection.id).all<{id: string; tag: string}>()).results;
   for (const flow of flows) {
     const id = await sha256(flow.id + ':' + event.id);
     const eligible = `SELECT s.id AS source_id,s.contact_id FROM source_records s JOIN contacts c ON c.id=s.contact_id
       WHERE s.provider=? AND s.source_type='cart' AND s.provider_source_id=? AND json_extract(s.payload,'$.eventId')=?
-      AND c.email_status='subscribed' AND c.merge_lock IS NULL
+      AND c.email_status='subscribed' AND c.merge_lock IS NULL AND c.email=?
       AND EXISTS(SELECT 1 FROM contact_email_addresses a JOIN consent_evidence e ON e.contact_id=a.contact_id AND e.destination=a.email
         WHERE a.contact_id=c.id AND a.email=c.email AND a.channel_status='subscribed' AND e.channel='email' AND e.confirmed_at IS NOT NULL AND e.confirmed_at<=?)
-      AND NOT EXISTS(SELECT 1 FROM contact_suppressions x WHERE x.contact_id=c.id)
+      AND NOT EXISTS(SELECT 1 FROM contact_suppressions x WHERE x.contact_id=c.id OR (x.channel='email' AND x.destination_hash=?))
       AND EXISTS(SELECT 1 FROM woocommerce_connection WHERE id=? AND generation=?)
       AND EXISTS(SELECT 1 FROM woocommerce_flows WHERE id=? AND state='live' AND activated_at<=?)
       AND NOT EXISTS(SELECT 1 FROM commerce_orders o WHERE o.contact_id=c.id AND o.qualifying=1 AND o.purchased_at>=?)`;
-    const bindings = ['woocommerce:' + connection.id, sourceId, event.id, now, connection.id, connection.generation, flow.id, Date.parse(event.occurredAt), Date.parse(event.checkoutStartedAt!)];
+    const bindings = ['woocommerce:' + connection.id, sourceId, event.id, contact.email, now, destinationHash, connection.id, connection.generation, flow.id, Date.parse(event.occurredAt), Date.parse(event.checkoutStartedAt!)];
     await db.batch([
       db.prepare(`INSERT INTO woocommerce_flow_enrollments(id,revision_id,event_id,contact_id,source_record_id,current_node,state,occurred_at)
         SELECT ?,?,?,contact_id,source_id,'tag','entered',? FROM (${eligible}) WHERE 1 ON CONFLICT(revision_id,event_id) DO NOTHING`).bind(id, flow.id, event.id, Date.parse(event.occurredAt), ...bindings),
