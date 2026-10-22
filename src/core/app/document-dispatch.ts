@@ -13,6 +13,7 @@ const honoPrefixes = ['/api', '/auth', '/unsubscribe', '/consent', '/sender-chec
 export async function dispatchDocuments(
   request: Request, environment: AppBindings, executionContext: ExecutionContext,
   platform: Platform, hono: {fetch: (request: Request, environment: AppBindings, executionContext: ExecutionContext) => Response | Promise<Response>},
+  prepareRequest?: () => Promise<void>,
 ) {
   const url = new URL(request.url);
   let host: string;
@@ -56,6 +57,7 @@ export async function dispatchDocuments(
     return new Response(null,{status:308,headers:{Location:`/subscribe${url.search}`,'Cache-Control':'no-store'}});
   }
   if (path.startsWith('/__dev') && platform.config.local !== true) return Response.json({error: 'not_found'}, {status: 404});
+  if (path !== '/health') await prepareRequest?.();
   if (path === '/archive/feed.xml' || path === '/archive/data' || path.startsWith('/archive/data/') || path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms' || path === '/paid/checkout') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
     return hono.fetch(request, environment, executionContext);
   }

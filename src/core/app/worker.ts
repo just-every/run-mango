@@ -36,8 +36,10 @@ return {
     }
     const bindings = environment as AppBindings;
     const platform = platformFor(bindings);
-    if (new URL(request.url).pathname !== '/health') await loadWooCommerce(platform);
-    return dispatchDocuments(request, bindings, executionContext, platform, createApp(bindings, platform));
+    // Admit the host and reject local-only routes before reading connection
+    // authority. Construct services only after that authority has been loaded.
+    const transport = {fetch: (incoming: Request, env: AppBindings, context: ExecutionContext) => createApp(bindings, platform).fetch(incoming, env, context)};
+    return dispatchDocuments(request, bindings, executionContext, platform, transport, () => loadWooCommerce(platform));
   },
   async queue(batch, environment) {
     const messages = (batch as unknown as LifecycleQueueBatch).messages.filter(message => !acknowledgeHealthProbe(message));
