@@ -14,6 +14,7 @@ export async function renderTracking(platform:Platform,input:{channel:'email'|'s
   for(const destinationUrl of new Set(destinations)){
    if(contactLink(destinationUrl))continue;
    if(!safeEmailUrl(destinationUrl)||!allowedLinkHost(new URL(destinationUrl).hostname,platform.config.allowedLinkHosts))throw new Error('Tracked destination is outside the approved URL policy.');
+   // Clicks are recorded until 30 days after send-by; the redirect itself keeps forwarding.
    const expiresAt=new Date(input.sendByAt.getTime()+30*86400000),token=await platform.publicTokens.issue({id:crypto.randomUUID(),purpose:'link',expiresAt});
    trackedLinks.push({tokenDigest:await platform.publicTokens.digest(token),destinationUrl,expiresAt});
    rewritten.set(destinationUrl,`${origin}/l/${encodeURIComponent(token)}`);

@@ -21,7 +21,7 @@ export async function prepareTrackingJourney() {
 export async function trackingJourney(page: Page, info: TestInfo, prepared: Awaited<ReturnType<typeof prepareTrackingJourney>>) {
   const {commerce, edge, site} = prepared;
   try {
-    const cookie = await site.open();
+    let cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
     await site.control('/_golive/sender-evidence');
     const people = ['reader', 'scanner', 'untracked'].map((kind, index) => ({email: `synthetic-mango-${index + 1}@example.test`, name: `Mango ${kind}`}));
@@ -53,13 +53,14 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     }
     const result = () => site.call(`/api/campaigns/${campaign.campaignId}/results`, {cookie}).then(response => json(response, 200));
     expect((await result()).engagement).toMatchObject({observedClicks: 0, automatedRequestsRetainedButExcluded: 0});
-    for (const [index, link] of links.entries()) {
-      const response = await site.call(new URL(link).pathname, {headers: {'User-Agent': index ? 'Barracuda LinkProtect' : 'Mozilla/5.0 Garden reader', 'CF-Ray': `synthetic-mango-${index + 1}`}});
+    const follow = async (link: string, agent: string, ray: string) => {
+      const response = await site.call(new URL(link).pathname, {headers: {'User-Agent': agent, 'CF-Ray': ray}});
       expect(response.status).toBe(302);
       expect(response.headers.get('Location')).toBe(destination);
       expect(response.headers.get('Set-Cookie')).toBeNull();
       expect(await response.text()).toBe('');
-    }
+    };
+    for (const [index, link] of links.entries()) await follow(link, index ? 'Barracuda LinkProtect' : 'Mozilla/5.0 Garden reader', `synthetic-mango-${index + 1}`);
     expect((await result()).engagement).toMatchObject({observedClicks: 1, automatedRequestsRetainedButExcluded: 1});
     const engagementPath = `/api/campaigns/${campaign.campaignId}/engagement`;
     const map = await json(await site.call(engagementPath, {cookie}), 200);
@@ -122,6 +123,23 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
       await engagement.screenshot({path: info.outputPath(`tracking-map-${width}.png`)});
     }
     await attributionJourney({site, edge, commerce, cookie, campaign, links, people, destination, page, info});
+    // A delivered link forwards for the life of its message; only click recording
+    // ends, when the link's recording window closes. Real elapsed time, no seeded click.
+    const [{ends}] = await site.rows(`SELECT t.expires_at AS ends FROM tracked_links t JOIN recipient_steps r ON r.id=t.recipient_step_id
+      WHERE r.campaign_id='${campaign.campaignId}' AND r.destination='${people[0].email}'`);
+    const moveClock = async (at: number) => site.control('/_golive/clock', {advanceMs: at - (await site.control('/_golive/clock')).now});
+    await moveClock(Number(ends) - 60000);
+    cookie = await site.open();
+    await follow(links[0], 'Mozilla/5.0 Garden reader', 'synthetic-mango-window-open');
+    const closing = await result();
+    expect(closing.engagement).toMatchObject({observedClicks: 2, automatedRequestsRetainedButExcluded: 1});
+    const facts = await site.count('link_click_facts');
+    await moveClock(Number(ends) + 60000);
+    cookie = await site.open();
+    await follow(links[0], 'Mozilla/5.0 Garden reader', 'synthetic-mango-window-closed');
+    await follow(links[1], 'Barracuda LinkProtect', 'synthetic-mango-window-closed-scanner');
+    expect((await result()).engagement).toEqual(closing.engagement);
+    expect(await site.count('link_click_facts')).toBe(facts);
     expect(edge.unexpected).toEqual([]);
   } finally {await prepared.close();}
 }

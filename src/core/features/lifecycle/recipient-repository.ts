@@ -251,14 +251,16 @@ export function createRecipientLifecycleRepository(database: Database) {
       return results.at(-1)?.meta.changes === 1;
     },
 
-    async trackedLink(tokenDigest: string, now: Date) {
+    /** A delivered link forwards for the life of its message; `expires_at` ends only its click recording. */
+    async trackedLink(tokenDigest: string) {
       const row = await client.prepare(
-        `SELECT * FROM tracked_links WHERE token_digest = ? AND expires_at > ?`,
-      ).bind(tokenDigest, now.getTime()).first<Row>();
+        `SELECT * FROM tracked_links WHERE token_digest = ?`,
+      ).bind(tokenDigest).first<Row>();
       return row ? {
         recipientStepId: String(row.recipient_step_id),
         destinationUrl: String(row.destination_url),
         revisionLinkId: row.revision_link_id == null ? undefined : String(row.revision_link_id),
+        recordsClicksUntil: Number(row.expires_at),
       } : undefined;
     },
 

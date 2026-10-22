@@ -14,6 +14,29 @@ async function encryptionKey(secret: string): Promise<CryptoKey> {
 }
 
 export function createPublicTokenSigner(secret: string): PublicTokenSigner {
+  async function read(token: string, purpose: string) {
+    const [nonce, ciphertext, signature, extra] = token.split('.');
+    if (!nonce || !ciphertext || !signature || extra || !timingSafeEqual(signature, await hmacSha256(secret, `${nonce}.${ciphertext}`))) {
+      throw new Error('Public token signature is invalid.');
+    }
+    let claims: EncodedClaims;
+    try {
+      const plaintext = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: bufferSource(base64UrlDecodeBytes(nonce)) },
+        await encryptionKey(secret),
+        bufferSource(base64UrlDecodeBytes(ciphertext)),
+      );
+      claims = JSON.parse(new TextDecoder().decode(plaintext)) as EncodedClaims;
+    } catch {
+      throw new Error('Public token payload is invalid.');
+    }
+    const expiresAt = new Date(claims.expiresAt);
+    if (!claims.id || claims.purpose !== purpose || Number.isNaN(expiresAt.valueOf())) {
+      throw new Error('Public token is for another action.');
+    }
+    return { id: claims.id, purpose: claims.purpose, expiresAt };
+  }
+
   return {
     async issue(claims) {
       const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -24,27 +47,12 @@ export function createPublicTokenSigner(secret: string): PublicTokenSigner {
       return `${nonce}.${ciphertext}.${await hmacSha256(secret, `${nonce}.${ciphertext}`)}`;
     },
 
+    read,
+
     async verify(token, purpose, now = new Date()) {
-      const [nonce, ciphertext, signature, extra] = token.split('.');
-      if (!nonce || !ciphertext || !signature || extra || !timingSafeEqual(signature, await hmacSha256(secret, `${nonce}.${ciphertext}`))) {
-        throw new Error('Public token signature is invalid.');
-      }
-      let claims: EncodedClaims;
-      try {
-        const plaintext = await crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv: bufferSource(base64UrlDecodeBytes(nonce)) },
-          await encryptionKey(secret),
-          bufferSource(base64UrlDecodeBytes(ciphertext)),
-        );
-        claims = JSON.parse(new TextDecoder().decode(plaintext)) as EncodedClaims;
-      } catch {
-        throw new Error('Public token payload is invalid.');
-      }
-      const expiresAt = new Date(claims.expiresAt);
-      if (!claims.id || claims.purpose !== purpose || Number.isNaN(expiresAt.valueOf()) || expiresAt <= now) {
-        throw new Error('Public token is expired or is for another action.');
-      }
-      return { id: claims.id, purpose: claims.purpose, expiresAt };
+      const claims = await read(token, purpose);
+      if (claims.expiresAt <= now) throw new Error('Public token is expired.');
+      return claims;
     },
 
     digest: sha256,

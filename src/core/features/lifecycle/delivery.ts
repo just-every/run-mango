@@ -457,27 +457,32 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
     },
 
     async followTrackedLink(token: string, request: Request) {
+      // The redirect forwards for the life of the delivered message (RESULT-005);
+      // only click recording ends, when the link's recording window closes.
       try {
-        await runtime.platform.publicTokens.verify(token, 'link');
+        await runtime.platform.publicTokens.read(token, 'link');
       } catch {
         return { kind: 'not_found' as const };
       }
       const digest = await runtime.platform.publicTokens.digest(token);
-      const link = await repository.trackedLink(digest, new Date());
+      const link = await repository.trackedLink(digest);
       if (!link) return { kind: 'not_found' as const };
-      const userAgent = request.headers.get('User-Agent') ?? '';
-      const automationReason = trackedRequestAutomation(request);
-      const requestDigest = await sha256(`${digest}:${request.headers.get('CF-Ray') ?? crypto.randomUUID()}`);
-      await repository.recordClick({
-        recipientStepId: link.recipientStepId,
-        destinationUrl: link.destinationUrl,
-        revisionLinkId: link.revisionLinkId,
-        requestDigest,
-        occurredAt: new Date(),
-        automated: Boolean(automationReason),
-        automationReason: automationReason ?? undefined,
-        userAgent,
-      });
+      const now = new Date();
+      if (now.getTime() < link.recordsClicksUntil) {
+        const userAgent = request.headers.get('User-Agent') ?? '';
+        const automationReason = trackedRequestAutomation(request);
+        const requestDigest = await sha256(`${digest}:${request.headers.get('CF-Ray') ?? crypto.randomUUID()}`);
+        await repository.recordClick({
+          recipientStepId: link.recipientStepId,
+          destinationUrl: link.destinationUrl,
+          revisionLinkId: link.revisionLinkId,
+          requestDigest,
+          occurredAt: now,
+          automated: Boolean(automationReason),
+          automationReason: automationReason ?? undefined,
+          userAgent,
+        });
+      }
       return { kind: 'redirect' as const, destinationUrl: link.destinationUrl };
     },
   };

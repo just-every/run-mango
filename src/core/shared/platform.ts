@@ -223,6 +223,8 @@ export type PublicTokenClaims = {
 
 export interface PublicTokenSigner {
   issue(claims: PublicTokenClaims): Promise<string>;
+  /** Signature, payload and purpose only; the claims still return after expiresAt. */
+  read(token: string, purpose: string): Promise<PublicTokenClaims>;
   verify(token: string, purpose: string, now?: Date): Promise<PublicTokenClaims>;
   digest(token: string): Promise<string>;
 }
