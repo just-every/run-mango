@@ -63,7 +63,9 @@ export async function segmentJourney(page:Page,info:TestInfo) {
       await test.step(`Open review at ${width}`,()=>openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`));
       for(const part of ['Placed Order','US state','94103'])await expect(page.locator('main')).toContainText(part);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-      await test.step(`Accessibility at ${width}`,async()=>expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]),{timeout:30000});
+      // Axe cannot enter the intentionally sandboxed authored-email preview.
+      await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('The spring beds are in.');
+      await test.step(`Review accessibility at ${width}`,async()=>expect((await new AxeBuilder({page}).exclude('iframe[title="Saved email preview"]').analyze()).violations).toEqual([]),{timeout:30000});
       await page.screenshot({path:info.outputPath(`segment-review-${width}.png`),fullPage:true});
     }
     // Intersect the saved segment with each actual contact through review. Equal
