@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "d5c944c7d660a1b7309ed04dd95aced23423afdf7332213c1a1801c562f749c4",
+      "sha256": "2190de55e59cba9a07b0c972551979b3624594c3c896c82e12f709855b05f8b6",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "3a3c1550e7c279731bbb4908d4a9a7a6df7c7ffd8f45880d6cdc4eefde7982d1",
+      "sha256": "521c606d17e4ed309e6d4ced782d9918119bd2191c593c46748f5900366ccb55",
       "executable": false
     },
     "DEMO.md": {
@@ -2198,7 +2198,7 @@
       "executable": false
     },
     "src/core/app/client/styles/pages/audience/list.css": {
-      "sha256": "4123368159c146a804600080db2fecdcecf1032978a6fa7e960b1a5f0b93c0c0",
+      "sha256": "bb588a1bc53ad1d066291db6b22a10b0f122dff538bf5f5583b430600fafed15",
       "executable": false
     },
     "src/core/app/client/styles/pages/audience/signup.css": {
@@ -2406,7 +2406,7 @@
       "executable": false
     },
     "src/core/features/audience/eligibility.ts": {
-      "sha256": "d4e462f3e12054691914a4ab3d5df6c7ac49d7af55c030cbc6f7a405ed6cb2c4",
+      "sha256": "1f3bef67648eb61dbb8889c570239c1f51c8da61cb64ded40eeba7802a08d065",
       "executable": false
     },
     "src/core/features/audience/erasure/batched-preparation.ts": {
@@ -2483,6 +2483,14 @@
     },
     "src/core/features/audience/followup-membership.ts": {
       "sha256": "45d5497718f6a51617be7b03092a1d7a919d4c17cc263b8204b93573cc6631d3",
+      "executable": false
+    },
+    "src/core/features/audience/geo/index.ts": {
+      "sha256": "4b4ef71762dcae86432024ed40d265e51e54b245ac7355128f068ce480eec1de",
+      "executable": false
+    },
+    "src/core/features/audience/geo/zcta-2026.json": {
+      "sha256": "9574a59b2c3b9f42ac6057a8f08b857961d0425f7cdcd1be427e6dfc5064867b",
       "executable": false
     },
     "src/core/features/audience/identity.ts": {
@@ -2642,19 +2650,35 @@
       "executable": false
     },
     "src/core/features/audience/repository.ts": {
-      "sha256": "d11178609806f8f44ff925ca9005d826b7e6f5f885fa347be85b67911c012660",
+      "sha256": "1bca36b0db6c6434418ca318a279cfa25f73dee230fd601d034edc618b989724",
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
       "sha256": "295aa4c4fbacea7d48df23d3a8b8836175db70f307e5bf7152bca9c1ddc86453",
       "executable": false
     },
+    "src/core/features/audience/rule-matcher.ts": {
+      "sha256": "e8aebbea950a0e20286777a7bc3b2ed58fc6e5637e92792cb4e2707e4222202d",
+      "executable": false
+    },
+    "src/core/features/audience/rule-values.ts": {
+      "sha256": "ba12b9b9cb0027111b28b8f7d7b9b99caf796ad067c98e3909c5a78063ac42b0",
+      "executable": false
+    },
     "src/core/features/audience/schema.ts": {
       "sha256": "30fee5e8f713d9ac396c68d641b87246032a2535054aea170a01c9802b1fbc16",
       "executable": false
     },
+    "src/core/features/audience/segment-availability.ts": {
+      "sha256": "f302613448e47b9126b29c1bd0127427a95e14cd7a8b4300bbd3345638ac38c4",
+      "executable": false
+    },
+    "src/core/features/audience/segment-facts.ts": {
+      "sha256": "8392076a0f10aa42956205018d88df998acf486be4613d31e309d6f108b27a9a",
+      "executable": false
+    },
     "src/core/features/audience/segments.ts": {
-      "sha256": "79b2ddc6b9fb6b5031e93d04342acfd22438ecd0a7f8057bdfc289b33a195fcb",
+      "sha256": "49ba8d910c1faa6334fc31f2e52c470d8d854e31ff84a527b0fcbbf0d9d18f4b",
       "executable": false
     },
     "src/core/features/audience/service.ts": {
@@ -2678,7 +2702,7 @@
       "executable": false
     },
     "src/core/features/audience/source-coverage.ts": {
-      "sha256": "be0b33ebfeaaa810b224707f929d717f2e85e0e7a3f13e935d74534ba70c7730",
+      "sha256": "53e4f5e5f6fdf888509b9158e80630e595a4af5fafd17f35f65c77a5bcfea444",
       "executable": false
     },
     "src/core/features/audience/suppression-writer.ts": {
@@ -2762,7 +2786,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/saved-segments.tsx": {
-      "sha256": "7799172898dc3a1eaf4f4d7700d8d3ba18d5da1709c3701c8e492ca64ec2577a",
+      "sha256": "978802bc469225d73ed90f329ba3ffd9c6c26a9eb6785c2cfbb843d8829196c4",
       "executable": false
     },
     "src/core/features/audience/ui/signup-challenge.tsx": {
@@ -2942,11 +2966,11 @@
       "executable": false
     },
     "src/core/features/campaigns/audience-rule-labels.ts": {
-      "sha256": "cb8c480f275c26cd0cfadda6b9617c66f76121630350a942033f33d81d11b6a2",
+      "sha256": "1f32cd940a36280f1e7201d27d45b6d475525b71d137e0c166c78e6b3b3c60ad",
       "executable": false
     },
     "src/core/features/campaigns/audience-summary.ts": {
-      "sha256": "f976ceadaec3851ef53546630637c03291e92f5c67fe3d7a2d12b8596d44d9ae",
+      "sha256": "ab3db66da0b7d2d738f5c1a1fe493d62052f95c2cb30d45dc7d8ea7855782ef7",
       "executable": false
     },
     "src/core/features/campaigns/authoring-audience.ts": {
@@ -2958,7 +2982,7 @@
       "executable": false
     },
     "src/core/features/campaigns/authoring-rules.ts": {
-      "sha256": "a7cbc9ee3809f7fe45b112f8ab0234f6de4b13da2575e7054ca61543bc9793fe",
+      "sha256": "d0eb8bb97ef8fcb7caabb1041221ed74654ce0fa55948b7cca5183f9e732537c",
       "executable": false
     },
     "src/core/features/campaigns/authoring-service.ts": {
@@ -3153,8 +3177,16 @@
       "sha256": "7f7b774eca53771e04a700fa990ad45eecb0e3826be5c88490931afc6b3df2e7",
       "executable": false
     },
+    "src/core/features/campaigns/ui/audience-group-editor.tsx": {
+      "sha256": "aa4450d6a28da4e35063c03e589001bc0685d5c8a8873242783769af3a44b03a",
+      "executable": false
+    },
+    "src/core/features/campaigns/ui/audience-predicate-fields.tsx": {
+      "sha256": "72269200557997fb1f3d46357b9623cb27608d8e3a148635190a695efba5e21b",
+      "executable": false
+    },
     "src/core/features/campaigns/ui/audience-rule-editor.tsx": {
-      "sha256": "f76a7fe1902eeb67d1e8e392a03bd1f2131a88613332ae16a418e4b2ceab8a2a",
+      "sha256": "459eea863b134d4507346ece65c9d30c76781a6c5ede2b830dbd18fe8bc16b78",
       "executable": false
     },
     "src/core/features/campaigns/ui/audience-snapshot.tsx": {
@@ -3255,6 +3287,10 @@
     },
     "src/core/features/campaigns/ui/email-size-meter.tsx": {
       "sha256": "c809d7f1aa2525eb6e8190ae6821678e309e8656c9b5953900c08784db7725b6",
+      "executable": false
+    },
+    "src/core/features/campaigns/ui/event-property-filters.tsx": {
+      "sha256": "b19359745918d796f3cf23aec65d628aba82237e0156dc7b6498700529bca503",
       "executable": false
     },
     "src/core/features/campaigns/ui/message-link-tool.tsx": {
@@ -4102,7 +4138,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/rules.ts": {
-      "sha256": "b06425bd1685f58c7459f082caf183dc8799243a2f1fad7b2d8db7a63c4b850b",
+      "sha256": "39ffb4bb037fc73bb38e92e56cafb3376c31d3a7d9d28cdadec361d699114974",
       "executable": false
     },
     "src/core/features/lifecycle/schedule.ts": {
@@ -6809,8 +6845,16 @@
       "sha256": "df1cb312ca75d80d5e2aa11c44350a1f9b73fdc83008b54ece8b00f30a135c33",
       "executable": false
     },
+    "tests/audience-controls/segment-fixture.ts": {
+      "sha256": "adcab43fa2ef5fc3ec7afb98a57ecf9bd09ced3ada99d814ac1be4fc43de2256",
+      "executable": false
+    },
+    "tests/audience-controls/segment-journey.ts": {
+      "sha256": "b499bf392149cd181097427d59868f1c7a6028ec4e791a8307204ab3f537fcef",
+      "executable": false
+    },
     "tests/audience-controls/segments.spec.ts": {
-      "sha256": "6a86a24c9ae98a3bff09fd0d5ae9dc7d6480661f4fc60be5bf5e7bae00ca7d9a",
+      "sha256": "f6fc08e07fa8bd159556045ce8c8efcbc396e5c4c0e22115080dd41e8fec75de",
       "executable": false
     },
     "tests/audience-controls/sendgrid-forwarding.spec.ts": {
