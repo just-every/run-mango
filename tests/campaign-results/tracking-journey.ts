@@ -104,7 +104,10 @@ export async function trackingJourney(page: Page, info: TestInfo) {
       await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
       const clickMap = page.frameLocator('iframe[title="Campaign click map"]');
       await expect(clickMap.locator('mark')).toHaveText('[1 clicks · 1 people]');
-      await page.screenshot({path: info.outputPath(`tracking-map-${width}.png`), fullPage: true});
+      await page.locator('iframe[title="Campaign click map"]').scrollIntoViewIfNeeded();
+      await expect(clickMap.locator('mark')).toBeInViewport();
+      const engagement = page.locator('section').filter({has: page.getByRole('heading', {name: 'Link engagement', exact: true})});
+      await engagement.screenshot({path: info.outputPath(`tracking-map-${width}.png`)});
     }
     await attributionJourney({site, edge, commerce, cookie, campaign, links, people, destination, page, info});
     expect(edge.unexpected).toEqual([]);
