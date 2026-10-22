@@ -10,9 +10,10 @@ before browser checks.
 
 Push and pull-request Verify split independent stages into parallel jobs.
 Main, local-start and go-live browser journeys use six, three and eight
-Playwright shards respectively; UI/results and move-in
-run independently, alongside static/operations checks and the remaining native
-lifecycle journeys. Shared mutable browser state stays within one isolated
+Playwright shards respectively; newsletter UI (with sender disclosure),
+campaign results and move-in run independently, alongside static/operations
+checks and the remaining native lifecycle journeys.
+Shared mutable browser state stays within one isolated
 job, and each job retains its own database, caches and temporary checkouts.
 Slow frozen fresh-install and README clone journeys run on release tags and
 nightly, outside the ordinary push wall. The push rule is fifteen minutes;

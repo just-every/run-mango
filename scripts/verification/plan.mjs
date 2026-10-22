@@ -10,7 +10,7 @@ export const configs = {
   'move-in': 'tests/move-in/playwright.config.js',
 };
 const sharded = new Set(['main', 'local-start', 'go-live']);
-export const stageNames = ['static', ...sharded, 'ui-results', 'move-in', 'local-start-slow'];
+export const stageNames = ['static', ...sharded, 'newsletter-ui', 'campaign-results', 'move-in', 'local-start-slow'];
 
 export function options(args, env = {}) {
   const result = { stage: env.MANGO_VERIFY_STAGE, shard: env.MANGO_VERIFY_SHARD, testsOnly: false };
@@ -56,14 +56,14 @@ export function verificationGroups({ stage, shard, testsOnly }, cpuBudget) {
   ];
   const operations = [{ ...pnpm('operations', ['run', 'test:operations']), timingRequired: true }];
   const integration = [pnpm('integration', ['run', 'integration:check'])];
-  const ui = ['newsletter-ui', 'sender-disclosure', 'campaign-results'].map(name => [browser(name)]);
+  const ui = ['newsletter-ui', 'sender-disclosure'].map(name => [browser(name)]);
   if (stage === 'static') return [...staticGroups, operations, integration];
-  if (stage === 'ui-results') return ui;
+  if (stage === 'newsletter-ui') return ui;
   if (stage) return [[browser(stage)]];
   const main = browser('main'), native = browser('local-start');
   return [...(testsOnly ? [] : staticGroups), operations,
     ...(cpuBudget >= mainWorkers + 1 ? [[main, native]] : [[main], [native]]),
-    ...ui, [browser('go-live')], [browser('move-in')], integration];
+    ...ui, [browser('campaign-results')], [browser('go-live')], [browser('move-in')], integration];
 }
 
 export function matrix(tier) {
@@ -76,7 +76,9 @@ export function matrix(tier) {
       const count = {main: 6, 'local-start': 3, 'go-live': 8}[stage];
       return Array.from({length: count}, (_, offset) => ({ name: `${stage}-${offset + 1}-of-${count}`, stage, shard: `${offset + 1}/${count}`, browser: true }));
     }),
-    ...['ui-results', 'move-in'].map(stage => ({ name: stage, stage, browser: true })),
+    // Newsletter UI and campaign results each start their own runtimes. Separate
+    // jobs keep both within the per-job limit on slower runners.
+    ...['newsletter-ui', 'campaign-results', 'move-in'].map(stage => ({ name: stage, stage, browser: true })),
   ];
   const slow = [{ name: 'local-start-slow', stage: 'local-start-slow', browser: true }];
   return { include: tier === 'push' ? push : tier === 'slow' ? slow : [...push, ...slow] };
