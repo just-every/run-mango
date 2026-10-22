@@ -8,7 +8,7 @@ export function AudienceGroupEditor({group, label, onChange, depth = 0}: {
 }) {
   return <fieldset className="composition-fieldset audience-condition-group">
     <legend>{depth ? `${label} group` : 'Included contacts'}</legend>
-    <label>{depth ? `${label} match conditions` : 'Match conditions'}<select value={group.operator}
+    <label>{depth ? `${label} match conditions` : 'Match conditions'}<select aria-label={depth ? `${label} match conditions` : "Match conditions"} value={group.operator}
       onChange={event=>onChange({...group,operator:event.target.value as 'all'|'any'})}>
       <option value="all">All conditions</option><option value="any">Any condition</option>
     </select></label>
