@@ -7222,7 +7222,7 @@
       "executable": false
     },
     "tests/go-live/harness.ts": {
-      "sha256": "20c685b4941511ec81a1a200d794ded89f950a87c1f27ad18b0e1ba1b0f3b4a7",
+      "sha256": "1ab78b5d4a5d77eb650e0b988f5943bec74eebe482b08e6768101aa0431e8ccd",
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
@@ -7290,7 +7290,7 @@
       "executable": false
     },
     "tests/go-live/production-bindings.ts": {
-      "sha256": "91895084718b6d6f2d09951cbc4133cede6f09f925c5aa1d654ca37a87cbbdee",
+      "sha256": "02ac6f691f2ced963c10933d064b03d6d8bb12c55c72fa67aa20211177577034",
       "executable": false
     },
     "tests/go-live/provider-behavior.ts": {
@@ -7350,7 +7350,7 @@
       "executable": false
     },
     "tests/go-live/source-freshness.journeys.ts": {
-      "sha256": "8baa43c7480262b0a2d2bd7414a69a9477bd6139ae510c24dc5e2f147f32f623",
+      "sha256": "4283ad7cf41fef9acb8bc04d0808633fdacae852772aad9e7699eb784f5c37b5",
       "executable": false
     },
     "tests/go-live/stale-sources.journeys.ts": {
@@ -7366,7 +7366,7 @@
       "executable": false
     },
     "tests/go-live/worker.ts": {
-      "sha256": "14c669898cb6c0584ead1db400e92805c44c58397fa1a88669b4c6417df99326",
+      "sha256": "df2334059604658c36166c56e2edaff809f219a7e1f1f213999acf0e723d10a5",
       "executable": false
     },
     "tests/health-lifetime.ts": {
@@ -7722,7 +7722,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "87d86233cf80adcade05beb01ca8505150ada24c708e111af6e9d448b7299d0a",
+      "sha256": "23f10793afafa78c87c61181f61ecfa139148910ffd1a79ffd95dc4171804025",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {

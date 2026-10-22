@@ -12,6 +12,7 @@ type GoLiveBindings = LocalAppBindings & {
   GO_LIVE_MANAGED?: string;
   GO_LIVE_RESEND_COVERAGE?: string;
   GO_LIVE_COMMERCE?: string;
+  GO_LIVE_AI?: string;
   GO_LIVE_SMS?: string;
   GO_LIVE_SMS_POLICY_AT?: string;
   GO_LIVE_WEBHOOK_KEY: string;
@@ -26,6 +27,7 @@ export function productionBindings(bindings: GoLiveBindings): AppBindings {
   const resend=bindings.GO_LIVE_MAIL_PROVIDER === 'resend' ? resendBindings(bindings.GO_LIVE_RESEND_COVERAGE !== 'missing') : {};
   return {
     ...bindings,
+    ...(bindings.GO_LIVE_AI === '1' ? {AI_PROVIDER_API_KEY: 'synthetic-mango-2', AI_PROVIDER_MODEL: 'synthetic-mango-3'} : {}),
     ...sms,
     ...(bindings.GO_LIVE_COMMERCE === '1' ? {
       COMMERCE_STORE_URL:'https://mango-test.myshopify.com',COMMERCE_API_TOKEN:'synthetic-store-edge-key',

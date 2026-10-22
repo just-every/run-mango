@@ -14,12 +14,12 @@ type Edge = Awaited<ReturnType<typeof providerEdge>>;
 type Signer = ReturnType<typeof eventSigner>;
 
 /** One Mango installation: the Vite/D1 runtime, its owner session and the shared provider edge. */
-export async function installation(edge: Edge, signer: Signer, options: { networkHosts?: string[]; managed?: 'none' | 'connected'; origin?: string; providerKey?: string; token?: string; stateDirectory?: string; restore?: boolean; parallelQueue?: boolean; commerce?: boolean; sms?: boolean | 'missing-retention'; smsPolicyAt?:number; mailProvider?:'sendgrid'|'resend'; resendCoverage?:'complete'|'missing' } = {}) {
+export async function installation(edge: Edge, signer: Signer, options: { networkHosts?: string[]; managed?: 'none' | 'connected'; origin?: string; providerKey?: string; token?: string; stateDirectory?: string; restore?: boolean; parallelQueue?: boolean; commerce?: boolean; ai?: boolean; sms?: boolean | 'missing-retention'; smsPolicyAt?:number; mailProvider?:'sendgrid'|'resend'; resendCoverage?:'complete'|'missing' } = {}) {
   const smsPolicyAt=options.smsPolicyAt??Date.now();
   const runtime = await authoringRuntime({ suite: 'go-live', fixtureWorker: 'tests/go-live/worker.ts', startupTimeout: 180000, queueConsumers: true,
     token: options.token, stateDirectory: options.stateDirectory, parallelQueue: options.parallelQueue, vars: { GO_LIVE_EXTRA_HOSTS: JSON.stringify(options.networkHosts ?? []), GO_LIVE_MANAGED: options.managed ?? '', GO_LIVE_SMS_POLICY_AT: String(smsPolicyAt), GO_LIVE_MAIL_PROVIDER: options.mailProvider??'sendgrid', GO_LIVE_RESEND_COVERAGE: options.resendCoverage??'complete', GO_LIVE_EDGE_ORIGIN: edge.origin, GO_LIVE_WEBHOOK_KEY: signer.publicKey,
       GO_LIVE_PUBLIC_ORIGIN: options.origin ?? publicOrigin, GO_LIVE_PROVIDER_KEY: options.providerKey ?? 'go-live-provider-key',
-      GO_LIVE_COMMERCE: options.commerce ? '1' : '0', GO_LIVE_SMS: options.sms === true ? '1' : options.sms === 'missing-retention' ? 'missing-retention' : '0', GO_LIVE_DKIM_KEY: edge.dkimKey, MANGO_RESTORE_MODE: options.restore ? '1' : '0' } });
+      GO_LIVE_COMMERCE: options.commerce ? '1' : '0', GO_LIVE_AI: options.ai ? '1' : '0', GO_LIVE_SMS: options.sms === true ? '1' : options.sms === 'missing-retention' ? 'missing-retention' : '0', GO_LIVE_DKIM_KEY: edge.dkimKey, MANGO_RESTORE_MODE: options.restore ? '1' : '0' } });
   const origin = options.origin ?? publicOrigin;
   const control = async (path: string, body: unknown = {}) => {
     const response = await fetch(runtime.url + path, { method: 'POST', headers: { 'X-Test-Token': runtime.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });

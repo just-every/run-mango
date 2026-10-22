@@ -28,7 +28,7 @@ async function proxy(f,body,context={}){
   return f.call(`/webhooks/commerce/shopify/observations?${params}`,{method:'POST',raw});
 }
 
-test('native authenticated sync imports complete Shopify records and retains original purchase time through nested-page failures and retry',async()=>{
+test('[STORE-004] native authenticated sync imports complete Shopify records and retains original purchase time through nested-page failures and retry',async()=>{
   const f=await shopifyRuntime();
   try{
     await seedShopify(f.fixture);const session=await f.owner();
@@ -58,6 +58,8 @@ test('native authenticated sync imports complete Shopify records and retains ori
     expect(failedDelivery).toEqual([expect.objectContaining({ack:false})]);
     const failed=await f.db.prepare("SELECT last_successful_at,last_error FROM source_syncs WHERE source_type='order'").first();
     expect(failed.last_successful_at).not.toBeNull();expect(failed.last_error).toContain('GraphQL');
+    const failedStatus=await (await f.call('/api/store',{cookie:session})).json();
+    expect(failedStatus.syncRuns.find(run=>run.sourceType==='order')).toMatchObject({state:'failed',lastError:expect.stringContaining('sync failed')});
     await f.fixture(`${order.id}:more`,{data:{node:{lineItems:page([line(62,22,32)])}}});
     const retried=await (await f.call('/test/run-queue',{method:'POST'})).json();
     expect(retried).toEqual([expect.objectContaining({ack:true,id:failedDelivery[0].id,command:failedDelivery[0].command,attempts:failedDelivery[0].attempts+1})]);

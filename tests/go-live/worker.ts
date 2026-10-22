@@ -26,7 +26,7 @@ import type { Challenge } from '../../src/core/features/sender-verification/type
 import { loadSenderSettings } from '../../src/core/features/settings/sender-persistence';
 
 type Bindings = LocalAppBindings & { GO_LIVE_EXTRA_HOSTS?: string; GO_LIVE_EDGE_ORIGIN: string; GO_LIVE_WEBHOOK_KEY: string; GO_LIVE_PUBLIC_ORIGIN: string;
-  GO_LIVE_PROVIDER_KEY: string; GO_LIVE_DKIM_KEY: string; GO_LIVE_MANAGED?: string; MANGO_RESTORE_MODE?: string; GO_LIVE_COMMERCE?: string; GO_LIVE_SMS?: string; GO_LIVE_SMS_POLICY_AT?: string; GO_LIVE_MAIL_PROVIDER?: string; GO_LIVE_RESEND_COVERAGE?: string; GO_LIVE_PARALLEL_JOBS?: LocalAppBindings['MANGO_JOBS'] };
+  GO_LIVE_PROVIDER_KEY: string; GO_LIVE_DKIM_KEY: string; GO_LIVE_MANAGED?: string; MANGO_RESTORE_MODE?: string; GO_LIVE_COMMERCE?: string; GO_LIVE_AI?: string; GO_LIVE_SMS?: string; GO_LIVE_SMS_POLICY_AT?: string; GO_LIVE_MAIL_PROVIDER?: string; GO_LIVE_RESEND_COVERAGE?: string; GO_LIVE_PARALLEL_JOBS?: LocalAppBindings['MANGO_JOBS'] };
 
 // Observations only: each count is recorded after the actual production consumer returns.
 const completedQueues=new Map<string,string[]>();
@@ -62,7 +62,7 @@ async function compose(bindings: Bindings) {
     mailboxReceiptUrl: receiptUrl, mailboxReceiptRecipient: receiptRecipient,
     emailHandoffsPerMinute: 50, testEmailAllowlist: ['tester@example.test', 'receiver@example.test'] });
   const smsEnabled=bindings.GO_LIVE_SMS==='1'||bindings.GO_LIVE_SMS==='missing-retention';
-  if(bindings.GO_LIVE_COMMERCE==='1'||smsEnabled||bindings.GO_LIVE_MAIL_PROVIDER==='resend') {
+  if(bindings.GO_LIVE_AI==='1'||bindings.GO_LIVE_COMMERCE==='1'||smsEnabled||bindings.GO_LIVE_MAIL_PROVIDER==='resend') {
     const production=createProductionPlatform(productionBindings(bindings));
     platform.config.allowedLinkHosts=production.config.allowedLinkHosts;
     platform.linkInspector=production.linkInspector;
@@ -71,6 +71,10 @@ async function compose(bindings: Bindings) {
     if(bindings.GO_LIVE_COMMERCE==='1') {
       platform.commerce=production.commerce;
       platform.config.modules.commerce=production.config.modules.commerce;
+    }
+    if(bindings.GO_LIVE_AI==='1') {
+      platform.ai=production.ai;
+      platform.config.modules.ai=production.config.modules.ai;
     }
     if(smsEnabled) {
       platform.sms=production.sms;

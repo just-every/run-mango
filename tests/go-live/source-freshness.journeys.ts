@@ -2,14 +2,30 @@ import {expect} from '@playwright/test';
 import {contract} from '../contract.js';
 import {providerEdge} from './edge';
 import {eventSigner} from './sendgrid-events';
-import {installation, json} from './harness';
+import {installation, json, sender, confirmedContact, draftCampaign, approve, dispatch} from './harness';
 import {sourceEdge, syncSource} from './source-edge';
 import {openPage, reloadPage} from '../support/navigation';
 
-contract('STORE-003', 'Decision Desk retains each completed sync through a later failed page and recovery', async ({page}, info) => {
-  const commerce = sourceEdge(), edge = await providerEdge(commerce), site = await installation(edge, eventSigner(), {commerce: true});
+contract('STORE-003', '[STORE-004] Decision Desk retains each completed sync through a later failed page and recovery', async ({page}, info) => {
+  const commerce = sourceEdge(), edge = await providerEdge(commerce), site = await installation(edge, eventSigner(), {commerce: true, ai: true, providerKey: 'synthetic-mango-4'});
   try {
     const cookie = await site.open();
+    await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
+    await site.control('/_golive/sender-evidence');
+    await confirmedContact(site, edge, cookie, 'synthetic-mango-4@example.test', 'Garden reader');
+    await confirmedContact(site, edge, cookie, 'synthetic-mango-5@example.test', 'Future reader');
+    const clock = await site.control('/_golive/clock');
+    const due = new Date(clock.now + 3600000);
+    const sent = await draftCampaign(site, cookie, 'Retained garden history', ['synthetic-mango-4@example.test'], due);
+    await approve(site, cookie, sent);
+    await site.control('/_golive/clock', {advanceMs: 3600001});
+    expect((await dispatch(site, sent.campaignId, due))[0].transport_disposition).toBe('accepted');
+    const future = new Date((await site.control('/_golive/clock')).now + 86400000);
+    const planned = await draftCampaign(site, cookie, 'Scheduled garden letter', ['synthetic-mango-5@example.test'], future);
+    await approve(site, cookie, planned);
+    const draft = await draftCampaign(site, cookie, 'Saved garden draft', ['synthetic-mango-4@example.test'], future);
+    const history = await json(await site.call(`/api/campaigns/${sent.campaignId}/results`, {cookie}), 200);
+    const handoffs = edge.sends.length;
     await site.control('/_golive/clock', {hold: true});
     const desk = async () => json(await site.call('/api/decision-desk', {cookie}), 200);
     const initial = await desk();
@@ -22,7 +38,18 @@ contract('STORE-003', 'Decision Desk retains each completed sync through a later
     expect(product.lastSuccessfulAt).toBeTruthy();
     await site.control('/_golive/clock', {advanceMs: 1000});
     commerce.fail(true);
-    await syncSource(site, cookie, 'product', true);
+    const failedStore = await syncSource(site, cookie, 'product', true);
+    expect(failedStore.syncRuns.find((run: any) => run.sourceType === 'product')).toMatchObject({state: 'failed', lastError: expect.stringContaining('sync failed')});
+    // Generation uses stored evidence and refuses the failed-source gate before AI.
+    const generated = await json(await site.call('/api/proposals/generate', {method: 'POST', cookie, body: {}}), 409);
+    expect(generated).toMatchObject({kind: 'unavailable', detail: expect.stringMatching(/product.*sync failed/i)});
+    expect(await site.count('proposals')).toBe(0);
+    expect(await site.count('external_cost_facts')).toBe(0);
+    await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`, {method: 'PATCH', cookie, body: {emailSubject: 'Saved during the outage'}}), 200);
+    expect((await json(await site.call(`/api/campaigns/${draft.campaignId}`, {cookie}), 200)).revision.emailSubject).toBe('Saved during the outage');
+    expect(await json(await site.call(`/api/campaigns/${sent.campaignId}/results`, {cookie}), 200)).toEqual(history);
+    expect((await json(await site.call(`/api/campaigns/${planned.campaignId}`, {cookie}), 200)).campaign.state).toBe('scheduled');
+    expect(edge.sends).toHaveLength(handoffs);
     const failed = (await desk()).sourceStatus.sourceSyncs;
     expect(failed.find((source: any) => source.sourceType === 'product')).toMatchObject({lastSuccessfulAt: product.lastSuccessfulAt, lastError: expect.stringContaining('sync failed')});
     expect(failed.find((source: any) => source.sourceType === 'order')).toEqual(order);
@@ -41,6 +68,17 @@ contract('STORE-003', 'Decision Desk retains each completed sync through a later
       await expect(page.getByRole('article', {name: 'Order source', exact: true})).toContainText(/fresh/i);
       await expect(page.getByRole('article', {name: 'Cart source', exact: true})).toContainText('No successful sync');
       await cards.screenshot({path: info.outputPath(`source-failed-${width}.png`)});
+      await openPage(page, `${site.runtime.url}/app/store`);
+      const sync = page.getByRole('article', {name: 'Product sync', exact: true});
+      await expect(sync).toContainText(/failed/i);
+      await expect(sync).toContainText('sync failed');
+      await page.screenshot({path: info.outputPath(`source-operation-failed-${width}.png`), fullPage: true});
+      await openPage(page, `${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);
+      await expect(page.getByRole('button', {name: 'Save full draft', exact: true})).toBeEnabled();
+      await page.screenshot({path: info.outputPath(`source-saved-draft-${width}.png`), fullPage: true});
+      await openPage(page, `${site.runtime.url}/app/campaigns/${sent.campaignId}`);
+      await expect(page.getByRole('heading', {name: 'Retained garden history', exact: true})).toBeVisible();
+      await page.screenshot({path: info.outputPath(`source-retained-history-${width}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
     commerce.fail(false);
@@ -51,14 +89,14 @@ contract('STORE-003', 'Decision Desk retains each completed sync through a later
     expect(recovered.lastError).toBeNull();
     for (const width of [1440, 390]) {
       await page.setViewportSize({width, height: 1000});
-      await reloadPage(page);
+      await openPage(page, `${site.runtime.url}/app`);
       const source = page.getByRole('article', {name: 'Product source', exact: true});
       await expect(source).toContainText(/fresh/i);
       await expect(source).not.toContainText('sync failed');
       await cards.screenshot({path: info.outputPath(`source-recovered-${width}.png`)});
     }
-    expect(await site.count('recipient_steps')).toBe(0);
-    expect(edge.sends).toHaveLength(0);
+    expect(await site.count('recipient_steps')).toBe(2);
+    expect(edge.sends).toHaveLength(handoffs);
     expect(edge.unexpected).toEqual([]);
   } finally {await page.close(); await site.runtime.close(); await edge.close();}
 });
