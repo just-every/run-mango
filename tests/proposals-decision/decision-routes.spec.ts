@@ -1,5 +1,6 @@
 import {expect,test} from '@playwright/test';
 import {decisionRuntime,generated} from './runtime';
+import {proposalCustomer,synchronizeProposalSource} from './shopify-edge';
 import {history} from './history';
 import {proposalRenderer} from '../audience-summary/proposal-render';
 import {createRequire} from 'node:module';
@@ -184,6 +185,24 @@ test('[PROP-002] proposal route and detail show observed values, event IDs, look
     const titles=[detail.proposal.title,queueEntry.proposal.title,campaign.revision.name,recent.title];
     expect({injectedStatus:injectedResult.status,injectedError:injectedResult.body.error,injectedTitleVisible:injectedDetail.proposal.title.includes(injectedTitle),injectedCampaignId:injectedDetail.proposal.campaignId,generatedStatus:generatedResult.status,titleEvidenceRelations:titles.map((title:string)=>({sourceType:title.includes(evidence.sourceType),sourceRecordId:title.includes(evidence.sourceRecordId)})),renderContainsInjectedTitle:html.includes(injectedTitle),renderContainsCitedRecord:html.includes(evidence.sourceRecordId)})
       .toEqual({injectedStatus:409,injectedError:'invalid_ai_output',injectedTitleVisible:false,injectedCampaignId:null,generatedStatus:201,titleEvidenceRelations:titles.map(()=>({sourceType:true,sourceRecordId:true})),renderContainsInjectedTitle:false,renderContainsCitedRecord:true});
+    // A role without unmasked contact access reads the decision without the customer records it cites or address-bearing rules.
+    await synchronizeProposalSource(runtime.services,'customer');
+    runtime.controls.alter=output=>{
+      const items=(runtime.controls.lastRequest!.evidence as {items:Array<{key:string;observedValueJson:string;allowedClaim:string}>}).items;
+      const item=items.find(candidate=>candidate.observedValueJson.includes(proposalCustomer.email))!;
+      const claim={text:item.allowedClaim,citations:[{key:item.key,observedValueJson:item.observedValueJson}]};
+      output.summary=structuredClone(claim);output.audience.explanation=structuredClone(claim);output.steps[0].whyThisTime=structuredClone(claim);
+      output.audience.inclusion={...output.audience.inclusion,operator:'any',predicates:[...output.audience.inclusion.predicates,{sourceType:'contact',field:'email',comparator:'eq',value:proposalCustomer.email,lookbackDays:null}]};
+    };
+    const cited=await generated(runtime);
+    runtime.controls.alter=undefined;
+    const ownerView=JSON.stringify((await runtime.call(`/api/proposals/${cited.proposalId}`)).body);
+    for(const value of Object.values(proposalCustomer))expect(ownerView).toContain(value);
+    for(const path of [`/api/proposals/${cited.proposalId}`,`/api/campaigns/${cited.campaignId}`,`/api/campaigns/${cited.campaignId}/review`]) {
+      const restricted=await runtime.analyst(path);
+      expect(restricted.status,path).toBe(200);
+      for(const value of Object.values(proposalCustomer))expect(JSON.stringify(restricted.body),`${path}: ${value}`).not.toContain(value);
+    }
   } finally {await runtime.close();}
 });
 

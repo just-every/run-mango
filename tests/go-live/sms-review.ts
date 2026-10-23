@@ -33,6 +33,12 @@ export async function smsReviewJourney(site: Installation, edge: Awaited<ReturnT
   expect(example.destination).toContain('61411111111');
   for (const part of [smsBody, `${policy.brand} | ${policy.programme}`, policy.frequency, `Sender ${smsSender}`, 'Reply STOP to unsubscribe.', policy.support]) expect(example.text).toContain(part);
   expect(example.segments).toBeGreaterThanOrEqual(1);
+  // A role without unmasked contact access reviews the same draft without recipient examples.
+  const analyst = await site.open('sms-analyst@example.test', 'sms-analyst');
+  await json(await site.call('/api/operators/sms-analyst/role', {method:'PUT', cookie:owner, body:{role:'analyst'}}), 200);
+  const restricted = await json(await site.call(`/api/campaigns/${campaignId}/review`, {cookie:analyst}), 200);
+  expect(restricted.smsPreview.examples).toEqual([]);
+  expect(JSON.stringify(restricted)).not.toContain('61411111111');
   await page.context().clearCookies();
   await page.context().addCookies([{name:owner.split('=')[0], value:owner.split('=')[1], url:site.runtime.url}]);
   for (const width of [1440, 390]) {

@@ -88,6 +88,24 @@ export function maskCampaignReportResponse(value: unknown): Row {
   };
 }
 
+/** Audience rules can name individual addresses; masked roles see that a rule exists, not its conditions. */
+const restrictedRules = {audienceRule: 'Restricted audience rule', audienceMasked: true, inclusionRuleJson: '', exclusionRulesJson: ''};
+
+/** Generated step reasons quote the proposal's source records, which can identify customers. */
+const operatorReasons = (value: unknown) => rows(value).map(step => step.timingOrigin === 'operator' ? step : {...step, whyThisTime: 'Restricted'});
+
+/** Proposal evidence and every claim, label and rule derived from it can carry customer records. */
+function maskProposalResponse(value: unknown): Row {
+  const body = object(value), composition = object(body.composition);
+  return {...body, proposal: {...object(body.proposal), summary: 'Restricted', ...restrictedRules},
+    exclusions: rows(body.exclusions).map(row => ({...row, reason: 'Restricted'})),
+    steps: rows(body.steps).map(step => ({...step, whyThisTime: 'Restricted'})),
+    evidenceItems: rows(body.evidenceItems).map(item => ({...item, observedValue: 'Restricted'})),
+    explanation: 'Restricted',
+    ...(body.composition ? {composition: {...composition, revision: {...object(composition.revision), ...restrictedRules}}} : {}),
+    masked: true};
+}
+
 /** The role whose grants govern contact data: an Analyst granted unmasked contacts reads them as an administrator does. */
 export function contactPrivacyRole(operator: {role: ProductRole; unmaskedContacts: boolean}): ProductRole {
   return operator.role === 'analyst' && operator.unmaskedContacts ? 'admin' : operator.role;
@@ -108,10 +126,14 @@ export function projectPrivateResponse(role: ProductRole, path: string, value: u
   if (/^\/api\/campaigns\/[^/]+(?:\/(?:review|scheduled))?$/.test(pathname ?? '')) {
     const body = object(value);
     // Campaign content is readable by these roles, but handoff recovery includes
-    // individual recipient destinations and provider receipts outside that grant.
-    return {...body,revision:{...object(body.revision),audienceRule:'Restricted audience rule',audienceMasked:true,inclusionRuleJson:'',exclusionRulesJson:''},masked:true, uncertainDeliveries: rows(body.uncertainDeliveries).map(row => ({
+    // individual recipient destinations and provider receipts outside that grant,
+    // and rendered SMS examples carry each recipient's number and personalised text.
+    return {...body,revision:{...object(body.revision),...restrictedRules},masked:true, uncertainDeliveries: rows(body.uncertainDeliveries).map(row => ({
       id: id(row.id), destination: masked(row.destination), providerMessageId: null, detail: 'Restricted',
-    }))};
+    })),
+    ...(Array.isArray(body.steps) ? {steps: operatorReasons(body.steps)} : {}),
+    ...(body.smsPreview ? {smsPreview: {examples: [], detail: 'Recipient examples are restricted by your role.'}} : {})};
   }
+  if (/^\/api\/proposals\/[^/]+$/.test(pathname ?? '')) return maskProposalResponse(value);
   return value;
 }

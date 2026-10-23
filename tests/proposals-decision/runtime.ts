@@ -5,7 +5,7 @@ import {createApp, createAppServices} from '../../src/core/app/app';
 import {createFixturePlatform} from '../support/local-platform';
 import {testIdentity} from '../support/test-identity';
 import {fixtureVerification} from '../support/sender-verification';
-import {proposalCommerce,synchronizeProposalProduct} from './shopify-edge';
+import {proposalCommerce,synchronizeProposalSource} from './shopify-edge';
 import {sqlStatements} from '../../operations/sql-statements.mjs';
 import type {AppBindings, GroundedGenerationRequest} from '../../src/core/shared/platform';
 import type {GeneratedProposalWire} from '../../src/core/features/proposals/generation';
@@ -55,15 +55,19 @@ export async function decisionRuntime() {
     const identity=testIdentity(platform);
     await identity.importLocalDemoOperator({id:'proposal-operator',email:'owner@example.test',displayName:'Owner'},new Date());
     const session=await identity.createTestSession('proposal-operator');
+    // A colleague whose role reads campaigns without unmasked contact access.
+    await identity.importLocalDemoOperator({id:'proposal-analyst',email:'analyst@example.test',displayName:'Analyst'},new Date());
+    await db.prepare("INSERT INTO operator_product_roles(operator_id,role,unmasked_contacts,updated_by,updated_at) VALUES('proposal-analyst','analyst',0,'proposal-operator',?)").bind(Date.now()).run();
+    const analyst=await identity.createTestSession('proposal-analyst');
     for(const name of ['first','second','excluded']) await services.audienceService.captureConsent({idempotencyKey:`proposal-${name}`,contact:{email:`${name}@example.test`,displayName:name},channel:'email',brandOrLegalSender:platform.config.mailSender.displayName,messageCategory:'newsletter',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',captureMethod:'test-fixture',captureSource:'decision-test',consentText:'Receive newsletter',consentVersion:'v1',occurredAt:new Date(),confirmationRequired:false});
     await services.audienceService.recordChannelOptOut({channel:'email',destination:'excluded@example.test',occurredAt:new Date(),reason:'fixture-optout'});
-    await synchronizeProposalProduct(services);
+    await synchronizeProposalSource(services);
     const app=createApp(env,platform,undefined,true);
-    const call=async(path:string,body?:unknown,authenticated=true,method=body===undefined?'GET':'POST')=>{
-      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',...(authenticated?{Cookie:`${localSessionCookieName('http://127.0.0.1')}=${session.token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
+    const call=async(path:string,body?:unknown,authenticated=true,method=body===undefined?'GET':'POST',token=session.token)=>{
+      const response=await app.fetch(new Request(`http://127.0.0.1${path}`,{method,headers:{'Content-Type':'application/json',...(authenticated?{Cookie:`${localSessionCookieName('http://127.0.0.1')}=${token}`}:{})},...(body===undefined?{}:{body:JSON.stringify(body)})}),env);
       return {status:response.status,body:await response.json() as any};
     };
-    return {db,platform,controls,jobs,call,close:()=>native.dispose()};
+    return {db,platform,services,controls,jobs,call,analyst:(path:string)=>call(path,undefined,true,'GET',analyst.token),close:()=>native.dispose()};
   }catch(error){await native.dispose();throw error;}
 }
 
