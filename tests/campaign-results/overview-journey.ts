@@ -1,3 +1,4 @@
+import {proveSavedReportMetrics} from './saved-report-metric-journey';
 import {expect,type Page,type APIRequestContext,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {openPage} from '../support/navigation';
@@ -23,6 +24,7 @@ export async function proveOverview(page:Page,request:APIRequestContext,runtime:
     const growth=await (await page.request.get(`${runtime.url}/api/insights/list-growth?${filter}`)).json();
     expect(period.growth.net).toBe(growth.channels.reduce((n:number,row:any)=>n+row.net,0));
   }
+  await proveSavedReportMetrics(page,runtime.url,new Date(Date.parse(fixture.from+'T00:00:00Z')+4*86400000).toISOString().slice(0,10));
   for(const bad of ['from=2026-02-30','from=2026-10-02&to=2026-10-01','from=2020-01-01&to=2026-10-01'])expect((await page.request.get(`${runtime.url}/api/insights?${bad}`)).status()).toBe(400);
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));page.on('console',message=>{if(message.type()==='error'&&/hydration|hydrated.*match/i.test(message.text()))errors.push(message.text());});
   await openPage(page,`${runtime.url}/app/insights`);

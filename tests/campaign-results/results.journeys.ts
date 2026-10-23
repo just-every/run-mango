@@ -22,7 +22,7 @@ function expectedLocalClockAndZone(value:string,timeZone:string) {
   return `${parts.hour}:${parts.minute} ${parts.dayPeriod} ${parts.timeZoneName}`;
 }
 for(const width of [1440,390]) {
-  contract('RESULT-001',`[REPORT-001] campaign names come from the collection when detail requests fail and overview matches period records at ${width}`,async({page,request})=>{
+  contract('RESULT-001',`[REPORT-001][REPORT-006] campaign names come from the collection when detail requests fail and overview matches period records at ${width}`,async({page,request})=>{
     await seed(request,'filters');await login(page,request);await page.setViewportSize({width,height:900});
     const response=await page.request.get(`${runtime.url}/api/campaigns`);expect(response.ok()).toBe(true);const collection=await response.json();
     const names=collection.campaigns.map((campaign:any)=>campaign.name);

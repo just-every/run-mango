@@ -1,3 +1,4 @@
+import {runScheduledReports} from '@/core/features/insights/scheduled-reports';
 import {loadWooCommerce} from '@/core/features/store/woocommerce/connection';
 import { runScheduled } from './scheduled';
 import { dispatchDocuments } from './document-dispatch';
@@ -49,6 +50,7 @@ return {
   },
   scheduled(controller, environment, executionContext) {
     executionContext.waitUntil(runScheduled(controller, environment, lifecycleRuntime));
+    executionContext.waitUntil(runScheduledReports(controller,environment,platformFor));
   },
 } satisfies ExportedHandler<AppBindings>;
 }

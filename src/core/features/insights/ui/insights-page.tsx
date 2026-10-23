@@ -1,3 +1,4 @@
+import {SavedReports} from './saved-reports';
 import {OverviewDashboard} from './overview-dashboard';
 import { ListGrowth } from './list-growth';
 import { RetentionAnalytics } from './retention-report';
@@ -47,6 +48,7 @@ export function InsightsPage() {
         </div>
       </header>
       <OverviewDashboard/>
+      <SavedReports/>
       <OpenEstimates onSettingsChanged={() => setSettingsVersion(version => version + 1)} />
       <AttributionSettings onSettingsChanged={() => setSettingsVersion(version => version + 1)} />
       <CampaignPerformance settingsVersion={settingsVersion} />
