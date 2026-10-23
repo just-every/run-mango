@@ -34,7 +34,7 @@ function Connections() {
         {app.supported?<form className="integration-create" onSubmit={e=>void save(e)}>
           <p>Configure this delivery path in the app: <code style={{overflowWrap:'anywhere'}}>{app.webhookPath}</code></p>
           <label htmlFor="review-loyalty-account">Account or store ID<input id="review-loyalty-account" value={accountId} onChange={e=>setAccount(e.target.value)} required maxLength={200}/></label>
-          <label htmlFor="review-loyalty-secret">Webhook signing secret<input id="review-loyalty-secret" type="password" autoComplete="new-password" value={secret} onChange={e=>setSecret(e.target.value)} required minLength={16} maxLength={512}/></label>
+          <label htmlFor="review-loyalty-secret">Review and loyalty signing secret<input id="review-loyalty-secret" type="password" autoComplete="new-password" value={secret} onChange={e=>setSecret(e.target.value)} required minLength={16} maxLength={512}/></label>
           <p>Secrets are encrypted on this installation, never shown again and excluded from account exports. A restored installation needs a new connection. Judge.me requires a store-specific private API token, not a shared OAuth app secret. Okendo uses its Svix signing secret; Smile uses the app client secret and your Smile account ID.</p>
           <label htmlFor="review-loyalty-exclusive"><input id="review-loyalty-exclusive" type="checkbox" checked={exclusive} onChange={e=>setExclusive(e.target.checked)} required/>I have checked that this secret authorizes only the configured account at this Mango connection.</label>
           <button type="submit" className="primary-action" disabled={busy}>{busy?'Saving…':app.connection?'Replace app connection':'Connect app'}</button>
