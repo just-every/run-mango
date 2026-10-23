@@ -14,7 +14,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
   test.setTimeout(180000);
   const source = await portabilityRuntime({beforeMigration:async(file:string,db:D1Database)=>{
     if(file==='0081_imported_engagement.sql')await db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('prior-upgrade','prior@example.test','Prior data','unsubscribed','never-subscribed',1,1)").run();
-    if(file==='0088_signup_capacity.sql')await db.prepare("INSERT INTO signup_settings(id,frequency_disclosure,updated_by,updated_at) VALUES('newsletter','Monthly','portable-operator',1)").run();
+    if(file==='0090_analytics_tagging.sql')await db.batch([db.prepare("INSERT INTO campaigns(id,state,active_revision_id,created_at,updated_at) VALUES('synthetic-mango-old-campaign','draft','synthetic-mango-old-revision',1,1)"),db.prepare("INSERT INTO campaign_revisions(id,campaign_id,version,state,name,email_subject,email_body,email_text,sms_body,sender_name,from_email,created_at,updated_at) VALUES('synthetic-mango-old-revision','synthetic-mango-old-campaign',1,'draft','Historic draft','Historic subject','<p>Historic</p>','Historic','','Mango','sender@example.test',1,1)")]);
+    if(file==='0089_signup_capacity.sql')await db.prepare("INSERT INTO signup_settings(id,frequency_disclosure,updated_by,updated_at) VALUES('newsletter','Monthly','portable-operator',1)").run();
     if(file==='0087_paid_state_authority.sql') await db.batch([
       db.prepare("INSERT INTO paid_subscriptions(subscription_id,customer_id,contact_id,state,stripe_status,tax_amount,currency,state_event_id,state_at,created_at,updated_at) VALUES('synthetic-mango-21','synthetic-mango-22','prior-upgrade','active','active',80,'usd','synthetic-mango-23',1,1,1)"),
       db.prepare("INSERT INTO commerce_receipts(id,digest,received_at) VALUES('synthetic-mango-24','synthetic-mango-25',1)")]);
@@ -26,6 +27,9 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(await source.db.prepare("SELECT stripe_applied_at FROM commerce_receipts WHERE id='synthetic-mango-24'").first()).toEqual({stripe_applied_at:null});
     expect(await source.db.prepare("SELECT challenge_enabled,frequency_disclosure FROM signup_settings WHERE id='newsletter'").first()).toEqual({challenge_enabled:1,frequency_disclosure:'Monthly'});
     await source.db.prepare("INSERT INTO signup_allowance_levels(name,effective_at,value,operator_id,updated_at) VALUES('globalHour',1,1200,'portable-operator',1)").run();
+    expect(await source.db.prepare("SELECT email_subject,utm_policy_json FROM campaign_revisions WHERE id='synthetic-mango-old-revision'").first()).toEqual({email_subject:'Historic subject',utm_policy_json:null});
+    const analytics={enabled:true,source:'synthetic-mango',emailMedium:'email',smsMedium:'sms',campaign:'portable',content:''};
+    expect((await source.call('/api/settings/analytics',{method:'PUT',cookie:source.cookie,body:analytics})).status).toBe(200);
     const bytesArchive=await accountExport();
     const uploadArchive=async(path:string,fingerprint?:string)=>{
       const form=new FormData();form.set('archive',new File([bytesArchive],'account-export.zip',{type:'application/zip'}));form.set('consent',JSON.stringify(consentEvidence));if(fingerprint)form.set('fingerprint',fingerprint);
@@ -122,6 +126,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await target.db.prepare('SELECT count(*) AS n FROM woocommerce_connection').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT host FROM tracking_domain WHERE id=1').first()).host).toBe('links.example.test');
     expect(await target.db.prepare("SELECT value FROM signup_allowance_levels WHERE name='globalHour'").first()).toEqual({value:1200});
+    expect(JSON.parse((await target.db.prepare('SELECT policy_json FROM analytics_settings WHERE id=1').first()).policy_json)).toEqual(analytics);
     expect(await target.db.prepare("SELECT challenge_enabled,frequency_disclosure FROM signup_settings WHERE id='newsletter'").first()).toEqual({challenge_enabled:1,frequency_disclosure:'Monthly'});
     expect((await target.db.prepare('SELECT * FROM imported_engagement_facts ORDER BY id').all()).results).toEqual(importedFacts);
     expect((await target.db.prepare('SELECT * FROM move_in_contact_history ORDER BY id').all()).results).toEqual(importedCoverage);

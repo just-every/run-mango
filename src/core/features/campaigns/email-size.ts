@@ -1,3 +1,4 @@
+import {analyticsContext,analyticsUrl} from '@/core/features/settings/analytics-policy';
 import seed from '../../../../seed.json' with {type:'json'};
 import { parseEmailHtml, type EmailNode } from './email-html-parse';
 import { escapeHtml } from './email-html-policy';
@@ -52,10 +53,10 @@ export function measureEmailSize(revision: MessageRevision & {trackingEnabled?: 
   const rewritten = new Map<string,string>();
   if (options.trackingEnabled ?? revision.trackingEnabled) {
     const tracked = tokenUrl(origin,'/l/',36,'link');
-    const visit = (nodes: EmailNode[]) => nodes.forEach(node=>{if(node.kind==='element') {const url=node.tag==='a'?node.attributes.get('href'):undefined;if(url && url !== '{{unsubscribe_url}}' && !contactLink(url)) rewritten.set(url,utf8Bytes(url)>utf8Bytes(tracked)?url:tracked);visit(node.children);}});
+    const visit = (nodes: EmailNode[]) => nodes.forEach(node=>{if(node.kind==='element') {const url=node.tag==='a'?node.attributes.get('href'):undefined;if(url && url !== '{{unsubscribe_url}}' && !contactLink(url)){const tagged=analyticsUrl(url,analyticsContext(bounded),'email');rewritten.set(url,utf8Bytes(tagged)>utf8Bytes(tracked)?tagged:tracked);}visit(node.children);}});
     visit(parseEmailHtml(bounded.emailBody).nodes);
   }
-  const rendered = renderMessageContent(bounded,{unsubscribeUrl,rewrittenLinks:rewritten});
+  const rendered = renderMessageContent(bounded,{analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten});
   const html = rendered.html + (options.openTrackingEnabled ? `<img data-mango-open-estimate="1" src="${tokenUrl(origin,'/o/',36,'open-estimate')}" width="1" height="1" alt="" />` : '');
   const htmlBytes=utf8Bytes(html)+growth(revision.emailBody,true)+growth(revision.preheader,true),textBytes=utf8Bytes(rendered.text)+growth(revision.emailText,false);
   return {htmlBytes,textBytes,limitBytes:emailByteLimit,largestBlocks:largestBlocks(html),exceedsLimit:htmlBytes>emailByteLimit||textBytes>emailByteLimit};

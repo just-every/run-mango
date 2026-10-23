@@ -42,6 +42,7 @@ const revisionColumns: Record<MutableRevisionField, string> = {
   exclusionRulesJson: 'exclusion_rules_json',
   sourceTypesJson: 'source_types_json',
   trackingEnabled: 'tracking_enabled',
+  utmPolicyJson: 'utm_policy_json',
 };
 
 function draftGuard(revisionId: string, savedAt: Date) {

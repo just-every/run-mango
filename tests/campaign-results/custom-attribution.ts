@@ -35,6 +35,13 @@ export async function customAttributionJourney(input: AttributionBrowser & {
   expect(await json(await post(first), 200)).toMatchObject({eventId: first.eventId, status: 'recorded'});
   const second = {...base, eventId: 'synthetic-mango-602', occurredAt: await occurredAt(), valueMinor: 500, kind: 'conversion'};
   expect(await json(await post(second), 200)).toMatchObject({eventId: second.eventId, status: 'recorded'});
+  const goal={...base,metric:'vane_goal',eventId:'synthetic-mango-vane-goal-1',occurredAt:await occurredAt(),valueMinor:0,kind:'conversion'};
+  expect(await json(await post(goal),200)).toMatchObject({status:'recorded'});
+  expect(await json(await post(goal),200)).toMatchObject({status:'replayed'});
+  expect((await post({...goal,eventId:'synthetic-mango-vane-missing',contactId:'synthetic-mango-unknown'})).status).toBe(404);
+  const {contactId:omitted,...missingContact}=goal;expect((await post(missingContact)).status).toBe(400);
+  const detail=await json(await site.call('/api/contacts/'+contactId,{cookie}),200);
+  expect(detail.timeline.filter((event:any)=>event.kind==='conversion:vane_goal')).toHaveLength(1);
   const beforeReplay = await attributionStoredEvents(site);
   expect(await json(await post(first), 200)).toMatchObject({eventId: first.eventId, status: 'replayed'});
   expect((await post({...first, valueMinor: 1001})).status).toBe(409);
