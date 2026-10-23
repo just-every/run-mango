@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 30 claims · 30 in code.**
+**Totals: 31 claims · 31 in code.**
 
 ## Mango integration claims
 
@@ -46,6 +46,8 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | INT-004 | Owner-only Stripe connection, encrypted export-excluded secrets, exact-byte signed ingestion and source-identified contact timeline events. Real-provider lifecycle acceptance remains blocked by test-clock metadata rejection; no live-provider completion is claimed. | partial | `src/core/features/store/stripe/`, `tests/go-live/roles.journeys.ts`, `tests/portability.spec.ts` |
 | DELIV-002 | Owner-only SendGrid domain creation and validation, returned DNS records with independent per-record checks, DMARC/BIMI guidance and branded tracking gated by CNAME and HTTPS. Real authentication/DNS round trip and cleanup passed; real branded-host HTTPS/rewrite acceptance remains open. | partial | `src/core/features/sender-verification/domain-setup.ts`, `src/core/features/sender-verification/setup-routes.ts`, `src/core/features/sender-verification/tracking-domain.ts`, `tests/go-live/contact-links.journeys.ts` |
 | INT-002 | Owner-connected WooCommerce REST sync, encrypted keys, signed idempotent order/plugin ingress and explicitly activated abandoned-checkout tag-and-exit flow. Real WordPress plugin source includes consent/GPC gates, onsite observations and the native signup iframe. Ct approved the stated privacy and activation semantics on 22 October. | done | `tests/go-live/woocommerce.journeys.ts`, `tests/go-live/woocommerce-plugin-journey.ts`, `extensions/mango-woocommerce/INSTALL.md` |
+
+| CONT-017 | Contact profiles show stored identities, merges, channel/topic evidence, properties, segment membership and one original-source timeline, with masked Analyst/Support views at desktop and phone widths. Flow and prediction panels state their availability; the text carve remains pending. | partial | `src/core/features/audience/contact-profile.ts`, `src/core/features/audience/ui/contact-detail.tsx`, `tests/audience-controls/contact-history.spec.ts` |
 
 ## Adopted target defaults (23 October 2026)
 
