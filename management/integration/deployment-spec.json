@@ -536,6 +536,12 @@
       "name": "core-0086_woocommerce_plugin_flows.sql",
       "sha256": "f126d2d1ab5320c0a95ecc3fcc036651300e221664696fed0cce1a0bf689a06a",
       "sql": "ALTER TABLE woocommerce_connection ADD COLUMN plugin_enabled INTEGER NOT NULL DEFAULT 0 CHECK(plugin_enabled IN (0,1));\nCREATE TABLE woocommerce_flows (\n  id TEXT PRIMARY KEY NOT NULL,\n  connection_id TEXT NOT NULL,\n  name TEXT NOT NULL,\n  tag TEXT NOT NULL,\n  state TEXT NOT NULL CHECK(state IN ('draft','live','paused')),\n  created_by TEXT NOT NULL,\n  created_at INTEGER NOT NULL,\n  activated_by TEXT,\n  activated_at INTEGER\n);\nCREATE TABLE woocommerce_flow_enrollments (\n  id TEXT PRIMARY KEY NOT NULL,\n  revision_id TEXT NOT NULL REFERENCES woocommerce_flows(id),\n  event_id TEXT NOT NULL,\n  contact_id TEXT NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,\n  source_record_id TEXT NOT NULL REFERENCES source_records(id) ON DELETE CASCADE,\n  current_node TEXT NOT NULL,\n  state TEXT NOT NULL,\n  occurred_at INTEGER NOT NULL,\n  completed_at INTEGER,\n  UNIQUE(revision_id,event_id)\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0087_paid_state_authority.sql",
+      "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
+      "sql": "-- Existing subscriptions retain their state; the first fresh read supersedes\n-- event-second ordering. No payment or consent record is recreated.\nALTER TABLE paid_subscriptions ADD COLUMN read_started_at INTEGER NOT NULL DEFAULT 0;\nALTER TABLE commerce_receipts ADD COLUMN stripe_applied_at INTEGER;\n-- The hand-off claim fences every paid-state write, including replay/restore.\nCREATE TRIGGER paid_subscriptions_audience_generation_insert AFTER INSERT ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\nCREATE TRIGGER paid_subscriptions_audience_generation_update AFTER UPDATE ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\nCREATE TRIGGER paid_subscriptions_audience_generation_delete AFTER DELETE ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

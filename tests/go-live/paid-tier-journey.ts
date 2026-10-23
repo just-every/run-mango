@@ -105,6 +105,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   expect(edge.sends.filter(send => String(send.body.subject).startsWith('Members-only garden notes')).map(send => send.to)).toEqual([people.paid]);
   // Start the cancellation campaign beyond the channel's ordinary frequency window.
   await site.control('/_golive/clock', {advanceMs: 86400001});
+  await site.control('/_golive/sender-evidence');
   due = new Date((await site.control('/_golive/clock')).now + 3600000);
   campaign = await draftCampaign(site, owner, 'Cancelled paid garden notes', Object.values(people), due);
   await setRules(paidOnly);

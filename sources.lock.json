@@ -1174,7 +1174,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "8fb74febb329202a630c3fe97c88f8e8521ed165aebb22314d811adf36cad96f",
+      "sha256": "98b5981479b44279309977027c344849d188b8ac54af0e785f21829aca24ac17",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1523,6 +1523,10 @@
     },
     "migrations/core/0086_woocommerce_plugin_flows.sql": {
       "sha256": "f126d2d1ab5320c0a95ecc3fcc036651300e221664696fed0cce1a0bf689a06a",
+      "executable": false
+    },
+    "migrations/core/0087_paid_state_authority.sql": {
+      "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -4693,6 +4697,10 @@
       "sha256": "9192b0327f39b0ab02dee35be98a5e30f92be02f0bc24263998ba1fc81554add",
       "executable": false
     },
+    "src/core/features/store/stripe/paid-state.ts": {
+      "sha256": "d48e5b360a63566a0a40a9201f72695391e9d95d85666ebcc3e183d21a24dfef",
+      "executable": false
+    },
     "src/core/features/store/stripe/paid-tier.ts": {
       "sha256": "d3d42b85068c0a69667296ffb8270d9446eac0e41cbbcd971ed1d1625bc45c5f",
       "executable": false
@@ -7466,7 +7474,7 @@
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
-      "sha256": "5e567d9960118f0ed634996143c5b7f90fb401614c028693af4993a21c1a1c89",
+      "sha256": "ac95b364e2f1c0f39f0ec5904d26b997b44169dc61da231abb114a9324f24fa2",
       "executable": false
     },
     "tests/go-live/pause.journeys.ts": {
