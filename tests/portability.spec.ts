@@ -13,6 +13,7 @@ import { png } from './support/images';
 test('[DATA-001] complete native records and uploaded assets round-trip without restoring login authority', async () => {
   test.setTimeout(180000);
   const source = await portabilityRuntime({beforeMigration:async(file:string,db:D1Database)=>{
+    if(file==='0092_link_host_sources.sql')await db.prepare("INSERT INTO link_host_settings(id,hosts,updated_at,operator_id) VALUES(1,'legacy.example.test',1,'portable-operator')").run();
     if(file==='0081_imported_engagement.sql')await db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('prior-upgrade','prior@example.test','Prior data','unsubscribed','never-subscribed',1,1)").run();
     if(file==='0090_analytics_tagging.sql')await db.batch([db.prepare("INSERT INTO campaigns(id,state,active_revision_id,created_at,updated_at) VALUES('synthetic-mango-old-campaign','draft','synthetic-mango-old-revision',1,1)"),db.prepare("INSERT INTO campaign_revisions(id,campaign_id,version,state,name,email_subject,email_body,email_text,sms_body,sender_name,from_email,created_at,updated_at) VALUES('synthetic-mango-old-revision','synthetic-mango-old-campaign',1,'draft','Historic draft','Historic subject','<p>Historic</p>','Historic','','Mango','sender@example.test',1,1)")]);
     if(file==='0089_signup_capacity.sql')await db.prepare("INSERT INTO signup_settings(id,frequency_disclosure,updated_by,updated_at) VALUES('newsletter','Monthly','portable-operator',1)").run();
@@ -34,6 +35,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await source.call('/api/settings/opt-in/manual',{method:'PUT',cookie:source.cookie,body:{mode:'single'}})).status).toBe(200);
     const hand=await source.call('/api/contacts/consent',{method:'POST',cookie:source.cookie,body:{contact:{email:'synthetic-mango-portable-manual@example.test',displayName:'Portable market visitor'},channel:'email',brandOrLegalSender:'Mango',messageCategory:'newsletter',frequencyDisclosure:'Monthly',destinationJurisdiction:'AU',captureMethod:'operator-entry',captureSource:'Market permission card',permissionMethod:'written',affirmed:true,properties:{interest:'Seedlings'},consentText:'Please send the monthly newsletter.',consentVersion:'manual-entry-v1',occurredAt:new Date(Date.now()-60000).toISOString()}});
     expect(hand.status,await hand.clone().text()).toBe(201);const handEvidence=(await hand.json()).evidence;
+    expect(await source.db.prepare('SELECT hosts,auto_sources FROM link_host_settings WHERE id=1').first()).toEqual({hosts:'legacy.example.test',auto_sources:0});
+    expect((await source.call('/api/settings/link-hosts',{method:'PUT',cookie:source.cookie,body:{hosts:'portable.example.test'}})).status).toBe(200);
     const bytesArchive=await accountExport();
     const uploadArchive=async(path:string,fingerprint?:string)=>{
       const form=new FormData();form.set('archive',new File([bytesArchive],'account-export.zip',{type:'application/zip'}));form.set('consent',JSON.stringify(consentEvidence));if(fingerprint)form.set('fingerprint',fingerprint);
@@ -132,11 +135,13 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(await target.db.prepare("SELECT value FROM signup_allowance_levels WHERE name='globalHour'").first()).toEqual({value:1200});
     expect(JSON.parse((await target.db.prepare('SELECT policy_json FROM analytics_settings WHERE id=1').first()).policy_json)).toEqual(analytics);
     expect(await target.db.prepare("SELECT mode FROM opt_in_modes WHERE point='hosted'").first()).toEqual({mode:'single'});
+    expect(await target.db.prepare('SELECT host FROM link_host_exclusions WHERE host=?').bind('legacy.example.test').first()).toEqual({host:'legacy.example.test'});
     expect(await target.db.prepare('SELECT capture_method,capture_source,confirmation_required FROM consent_evidence WHERE id=?').bind(handEvidence.id).first()).toEqual({capture_method:'operator-recorded',capture_source:handEvidence.captureSource,confirmation_required:0});
     expect(await target.db.prepare("SELECT challenge_enabled,frequency_disclosure FROM signup_settings WHERE id='newsletter'").first()).toEqual({challenge_enabled:1,frequency_disclosure:'Monthly'});
     expect((await target.db.prepare('SELECT * FROM imported_engagement_facts ORDER BY id').all()).results).toEqual(importedFacts);
     expect((await target.db.prepare('SELECT * FROM move_in_contact_history ORDER BY id').all()).results).toEqual(importedCoverage);
     await target.resume();
+    expect((await(await target.call('/api/settings/link-hosts',{cookie:target.cookie})).json()).hosts).toEqual(['portable.example.test']);
     await writeFile(session, target.cookie, { mode: 0o600 });
     expect((await target.call('/api/portability/imports',{method:'POST',cookie:target.cookie,body:{confirmed:true,manifest}})).status).toBe(401);
     expect((await target.call('/api/portability/imports/prior-transfer/finalize',{method:'POST',cookie:target.cookie,body:{}})).status).toBe(401);

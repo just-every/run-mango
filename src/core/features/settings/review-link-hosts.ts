@@ -6,7 +6,7 @@ import { effectiveRole } from '@/core/features/auth/product-roles';
 import type { ApprovalService } from '@/core/features/lifecycle/approval';
 import type { Platform } from '@/core/shared/platform';
 import { configuredLinkHosts, linkHostsSchema } from './link-hosts-validation';
-import { loadLinkHosts } from './link-hosts';
+import { loadLinkHosts,linkHostState } from './link-hosts';
 import { senderWriteAuthority, senderWriteGuard, SenderAuthorityChanged } from './sender-authority';
 
 const bodySchema = z.object({host: z.string().min(1)}).strict();
@@ -30,7 +30,7 @@ export function reviewLinkHostRoutes(platform: Platform, approval: ApprovalServi
       const authority = await senderWriteAuthority(platform, context.req.raw, operator.id);
       const now = Date.now(), operation = crypto.randomUUID();
       const guard = [authority.sessionId, authority.operatorId, authority.version, now, operator.id];
-      const initial = [...platform.config.allowedLinkHosts];
+      const state=await linkHostState(platform),initial=[...state.operator];
       const emptyDefault = configuredLinkHosts(undefined, platform.config.publicBaseUrl);
       if (!initial.includes(host)) initial.push(host);
       if (!emptyDefault.includes(host)) emptyDefault.push(host);
@@ -42,14 +42,15 @@ export function reviewLinkHostRoutes(platform: Platform, approval: ApprovalServi
           WHERE ${senderWriteGuard} AND ${approveGuard}
             AND EXISTS(SELECT 1 FROM campaign_revisions WHERE id=? AND campaign_id=? AND state='draft')`)
           .bind(operation, operation, campaignId, operator.id, host, campaignId, operator.id, now, now, ...guard, revision.id, campaignId),
-        db.prepare(`INSERT INTO link_host_settings(id,hosts,updated_at,operator_id)
-          SELECT 1,?,?,? WHERE EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE operation_key=?)
+        db.prepare(`INSERT INTO link_host_settings(id,hosts,auto_sources,updated_at,operator_id)
+          SELECT 1,?,?,?,? WHERE EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE operation_key=?)
           ON CONFLICT(id) DO UPDATE SET
             hosts=CASE WHEN trim(link_host_settings.hosts)='' THEN ?
               WHEN instr(',' || link_host_settings.hosts || ',', ',' || ? || ',')>0 THEN link_host_settings.hosts
               ELSE link_host_settings.hosts || ',' || ? END,
             updated_at=excluded.updated_at,operator_id=excluded.operator_id`)
-          .bind(initial.join(','), now, operator.id, operation, emptyDefault.join(','), host, host),
+          .bind(initial.join(','),state.autoSources,now,operator.id,operation, emptyDefault.join(','), host, host),
+        db.prepare('DELETE FROM link_host_exclusions WHERE host=? AND EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE operation_key=?)').bind(host,operation),
       ]);
       if (!audit.meta.changes) throw new SenderAuthorityChanged();
     } catch (error) {

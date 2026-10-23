@@ -285,7 +285,7 @@ export function createApp(
     // Settings are independent, but both must be current before route work.
     const settings = await Promise.allSettled([
       initialReads.getStore() ? undefined : loadSenderSettings(platform),
-      initialReadOnce('link-hosts', () => loadLinkHosts(platform)),
+      environment.MANGO_RESTORE_MODE==='1'||['/subscribe','/subscribe/info','/subscribe/sms','/api/contacts/consent'].includes(context.req.path)?undefined:initialReadOnce('link-hosts', () => loadLinkHosts(platform)),
     ]);
     for (const result of settings) if (result.status === 'rejected') throw result.reason;
     context.header('X-Mango-Version', platform.config.appVersion);
