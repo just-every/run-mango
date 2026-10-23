@@ -2390,7 +2390,7 @@
       "executable": false
     },
     "src/core/app/worker.ts": {
-      "sha256": "7801f0f234f9b0198e1c2590a3ad3f9cba03e6c9efcc576a8af65d924061521a",
+      "sha256": "d831dd0465da025cbf467ee3140012046dd0440f2db24b6da05520e48cf3f7b6",
       "executable": false
     },
     "src/core/features/archive/archive-page.tsx": {
