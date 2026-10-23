@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "9519b4579bbe9c23da7de9901baeeed52c9e095d8555d4cf6d7822f7070e672f",
+      "sha256": "da950efafbf8afb25c5511896a4da4d862541f0fbdbc0d48b644610f9411da89",
       "executable": false
     },
     "DEMO.md": {
@@ -3111,6 +3111,10 @@
     },
     "src/core/features/campaigns/email-limits.ts": {
       "sha256": "d6d4fb088a6cce5c464147b0819d120cb5b734e3395154996c7f20b986185c57",
+      "executable": false
+    },
+    "src/core/features/campaigns/email-mobile.ts": {
+      "sha256": "f8ce20a7f3a6c6aa70ec8a0997672356a80615376febf4f946d1c8c5184ab1f1",
       "executable": false
     },
     "src/core/features/campaigns/email-placement.ts": {
@@ -7163,6 +7167,10 @@
     },
     "tests/campaign-authoring/local-images.spec.ts": {
       "sha256": "935ed566551725e82d705abfb9e7d0d04e7c787179312428cd4c49e479c19cac",
+      "executable": false
+    },
+    "tests/campaign-authoring/mobile-presentation-journey.ts": {
+      "sha256": "6e231c1ea0424d3d2a8da60881a1953de92bad878513946128254874557bdea8",
       "executable": false
     },
     "tests/campaign-authoring/reuse-journey.ts": {
