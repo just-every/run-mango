@@ -1,3 +1,5 @@
+import AxeBuilder from '@axe-core/playwright';
+import {openPage} from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
 import { expect, test } from '@playwright/test';
 import { authoringRuntime } from '../campaign-authoring/browser-runtime.mjs';
@@ -6,7 +8,7 @@ import { proveOperationalMailCosts } from './cost-mail-proof';
 import { createOpenAiAdapter } from '../../src/core/platform/adapters/openai';
 
 // One RESULT-004 journey covers parser/provider boundaries, real routes, persisted facts and reloadable totals.
-test('[RESULT-004] rejected AI spend, distinct handoffs and replayed purchases retain truthful campaign and UTC-day totals', async ({page,request}) => {
+test('[RESULT-004][REPORT-007] Settings consent counts, currency-separated projection and rejected AI spend, distinct handoffs and replayed purchases retain truthful campaign and UTC-day totals', async ({page,request}) => {
   const originalFetch=globalThis.fetch;
   try {
     const adapter=createOpenAiAdapter({apiKey:'test-only',model:'requested-model'});
@@ -78,5 +80,40 @@ test('[RESULT-004] rejected AI spend, distinct handoffs and replayed purchases r
     await page.reload();await expect(daily).toContainText('6 messages');
     await expect(page.getByRole('region',{name:'Costs on 2031-10-05 UTC'})).toContainText('EUR');
     expect((await (await api.get(`${runtime.url}/api/insights`)).json()).costs).toEqual(costs);
+    const fixture=await (await request.post(`${runtime.url}/_costs/usage`,{headers:control})).json();
+    const report=await (await api.get(`${runtime.url}/api/insights`)).json(),usage=report.usage;
+    expect(usage.totalContacts).toBe(fixture.contacts.length);
+    for(const channel of ['email','sms']) {
+      const counts=new Map<string,number>();
+      for(const contact of fixture.contacts)counts.set(contact[`${channel}_status`],(counts.get(contact[`${channel}_status`])??0)+1);
+      expect(usage.consent.filter((row:any)=>row.channel===channel)).toEqual([...counts].sort(([a],[b])=>a.localeCompare(b)).map(([state,contacts])=>({channel,state,contacts})));
+    }
+    for(const marker of ['usage-reader@example.test','+15555550123','Usage reader'])expect(JSON.stringify(usage)).not.toContain(marker);
+    const recorded=(await (await request.post(`${runtime.url}/_costs/records`,{headers:control})).json()).costs;
+    const eligible=recorded.filter((row:any)=>row.outcome!=='not-sent'&&row.occurred_at>=Date.parse(usage.monthStart)&&row.occurred_at<Date.parse(usage.asOf));
+    for(const currency of ['USD','EUR']) {
+      const facts=eligible.filter((row:any)=>row.currency===currency),priced=facts.filter((row:any)=>row.reported_cost_micros!==null);
+      const total=priced.reduce((sum:number,row:any)=>sum+row.reported_cost_micros,0),row=usage.projection.find((row:any)=>row.currency===currency);
+      expect(row.reportedCostMicros).toBe(total);
+      expect(row.unpricedFacts).toBe(facts.filter((row:any)=>row.reported_cost_micros===null).length);
+      expect(row.projectedCostMicros).toBe((BigInt(total)*BigInt(usage.monthMs)/BigInt(usage.elapsedMs)).toString());
+    }
+    expect(usage.projection.find((row:any)=>row.currency==='USD').unpricedFacts).toBe(1);
+    const errors:string[]=[];
+    page.on('console',message=>{if(message.type()==='error'&&/hydration|hydrated.*match/i.test(message.text()))errors.push(message.text());});
+    page.on('pageerror',error=>errors.push(error.message));
+    for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1000});await openPage(page,`${runtime.url}/app/settings`);
+      const panel=page.getByRole('region',{name:'Usage and provider costs'});
+      await expect(panel.getByRole('region',{name:'Contacts by channel consent state'})).toContainText('subscribed');
+      await expect(panel.getByRole('region',{name:'Projected month'})).toContainText('Projection, not a provider bill');
+      await expect(panel.locator('[data-projection-currency="USD"]')).toContainText('1 unpriced facts');
+      await expect(panel.locator('[data-projection-currency="EUR"]')).toBeVisible();
+      await expect(panel).toContainText('No flows yet');
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+      await page.screenshot({path:test.info().outputPath(`settings-usage-${width}.png`),fullPage:true});
+    }
+    expect(errors).toEqual([]);
   } finally {await runtime.close();}
 });

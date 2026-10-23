@@ -1,3 +1,4 @@
+import {usageReport} from './usage-report';
 import {mailboxReport} from './mailbox-report';
 import {openEstimates} from './open-tracking';
 import { recordExternalCost, type ExternalCost } from './cost-recording';
@@ -8,6 +9,7 @@ import { commerceReport } from './commerce-report';
 export function createInsightsRepository(database: Database) {
   const client = database.$client;
   return {
+    usageReport:()=>usageReport(database),
     costReport: () => costReport(database),
     mailboxes: (since:Date,until:Date) => mailboxReport(client,since,until),
     /** One row per campaign and observed outcome, never summed: provider acceptance, each kind of
