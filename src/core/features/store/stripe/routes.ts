@@ -103,6 +103,7 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
         throw new CommerceWebhookUnreadable(error instanceof Error ? error.message : 'Stripe API request failed.', receipt, sourceType);
       });
       const snapshot = await paid.read(event, lookup);
+      if (!snapshot) await paid.failClosed(event, readStartedAt);
       if (!previous) {
         const observed = snapshot && event.type.startsWith('customer.subscription.')
           ? {...event, data: {...event.data, object: {...event.data.object, status: snapshot.subscription.status}}} : event;
