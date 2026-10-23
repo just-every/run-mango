@@ -49,8 +49,16 @@ return {
     return consumeLifecycleQueue({ messages }, await lifecycleRuntime(environment as AppBindings));
   },
   scheduled(controller, environment, executionContext) {
-    executionContext.waitUntil(runScheduled(controller, environment, lifecycleRuntime));
-    executionContext.waitUntil(runScheduledReports(controller,environment,platformFor));
+    // Both Cron consumers must finish their durable outcomes before this tick
+    // rejects. A fast report configuration failure must not cut off the
+    // lifecycle consumer while it is still recording scheduler failure.
+    executionContext.waitUntil(Promise.allSettled([
+      runScheduled(controller, environment, lifecycleRuntime),
+      runScheduledReports(controller, environment, platformFor),
+    ]).then(results => {
+      const failure = results.find(result => result.status === 'rejected');
+      if (failure?.status === 'rejected') throw failure.reason;
+    }));
   },
 } satisfies ExportedHandler<AppBindings>;
 }
