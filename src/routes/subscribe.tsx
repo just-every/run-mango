@@ -7,7 +7,7 @@ import { loadSubscribeInfo, loadPaidSubscribeInfo } from '@/core/features/audien
 import '@/core/app/client/ui/materials';
 
 export const Route = createFileRoute('/subscribe')({
-  validateSearch: (search: Record<string, unknown>) => ({paid: search.paid === '1', returned: search.returned === '1'}),
+  validateSearch: (search: Record<string, unknown>) => ({paid: (search.paid === '1' || search.paid === 1), returned: (search.returned === '1' || search.returned === 1)}),
   loaderDeps: ({search}) => ({paid: search.paid}),
   loader: async ({deps}) => deps.paid ? {kind:'paid' as const, info: await loadPaidSubscribeInfo()} : {kind:'free' as const, info: await loadSubscribeInfo()},
   component: editorLeaf(SubscribeRoute),
