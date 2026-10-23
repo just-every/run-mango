@@ -7474,7 +7474,7 @@
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
-      "sha256": "ac95b364e2f1c0f39f0ec5904d26b997b44169dc61da231abb114a9324f24fa2",
+      "sha256": "7704eeb261d13e4651441b374ff70a95d7d129980b929d131549af3fce955c3d",
       "executable": false
     },
     "tests/go-live/pause.journeys.ts": {

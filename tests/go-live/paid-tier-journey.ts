@@ -139,6 +139,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
     expect((await new AxeBuilder({page}).include('#stripe').analyze()).violations).toEqual([]);
     await page.locator('#stripe').screenshot({path: info.outputPath(`paid-tier-settings-${width}.png`)});
     await openPage(page, `${site.runtime.url}/app/audience/${contacts.paid}`);
+    while (!(await page.locator('.timeline').innerText()).includes('subscription.past_due') && await page.getByRole('button', {name: /^Show more activity/}).count()) await page.getByRole('button', {name: /^Show more activity/}).click();
     for (const state of ['Cancelled paid garden notes · email · audience-no-longer-matches', 'subscription.canceled', 'subscription.past_due']) await expect(page.locator('.timeline')).toContainText(state);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).include('.timeline').analyze()).violations.filter(v => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
