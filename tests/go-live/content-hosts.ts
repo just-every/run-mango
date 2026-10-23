@@ -1,3 +1,5 @@
+import AxeBuilder from '@axe-core/playwright';
+import {syncSource} from './source-edge';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { json, draftCampaign, approve, type Installation } from './harness';
 import { openPage, reloadPage } from '../support/navigation';
@@ -13,6 +15,18 @@ export const hostNetwork = {
 };
 
 export async function blockedHostJourney(site: Installation, owner: string, page: Page, info: TestInfo, now: number) {
+  const initial=await json(await site.call('/api/settings/link-hosts',{cookie:owner}),200);
+  expect(initial.sources).toContainEqual(expect.objectContaining({host:'mango.example.test',source:'Deployment host'}));
+  expect(initial.sources).toContainEqual(expect.objectContaining({host:'www.instagram.com',source:'Social defaults'}));
+  const freshReview=await draftCampaign(site,owner,'Synthetic Mango source review',['garden-reader@example.test'],new Date(now+3*3600000));
+  await json(await site.call(`/api/campaigns/${freshReview.campaignId}/link-hosts`,{method:'POST',cookie:owner,body:{host:'fresh-review.example.test'}}),200);
+  expect((await json(await site.call('/api/settings/link-hosts',{cookie:owner}),200)).sources).toContainEqual(expect.objectContaining({host:'www.instagram.com',source:'Social defaults'}));
+  await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie:owner,body:{hosts:initial.hosts.filter((host:string)=>host!=='www.instagram.com').join(',')}}),200);
+  await syncSource(site,owner,'product');
+  const removed=await json(await site.call('/api/settings/link-hosts',{cookie:owner}),200);expect(removed.hosts).not.toContain('www.instagram.com');
+  expect((await json(await site.call('/api/activity?action=link-host.removed',{cookie:owner}),200)).entries.some((entry:any)=>entry.detail.host==='www.instagram.com')).toBe(true);
+  await page.context().clearCookies();await page.context().addCookies([{name:owner.split('=')[0],value:owner.split('=')[1],url:site.runtime.url}]);
+  for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/settings');const panel=page.getByRole('region',{name:'Link host sources',exact:true});await expect(panel).toContainText('Deployment host');await expect(panel).toContainText('Social defaults');await expect(panel).not.toContainText('www.instagram.com');await panel.getByRole('heading',{name:'Link host sources'}).scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`link-host-sources-${width}.png`)});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>['serious','critical'].includes(v.impact??''))).toEqual([]);}
   const author = await site.open('lena@example.test','host-author');
   const manager = await site.open('maya@example.test','host-manager');
   for (const [id,role] of [['host-author','author'],['host-manager','manager']]) {

@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 35 claims · 35 in code.**
+**Totals: 36 claims · 36 in code.**
 
 ## Mango integration claims
 
@@ -79,3 +79,5 @@ The text-only adoption changes no implementation status. No real provider call o
 
 
 | CONT-026 | Authors and above record hand-entry consent and properties; email uses the manual mode and labels the operator. SMS requires express written evidence and a signed reply to its exact confirmation; prior restrictions and Support refusal remain enforced. Topic scope and legacy API attestation remain open. | partial | `tests/go-live/integrations.journeys.ts`, `tests/go-live/manual-entry-journey.ts`, `tests/portability.spec.ts` |
+
+| MSG-014 | Fresh source-labelled deployment and social defaults, genuine connection hosts, durable removal across sync and audited review allowances. Existing explicit policies remain explicit; Shopify storefront/image data, builder sources and disconnect acceptance remain open. | partial | `tests/go-live/content-checks.journeys.ts`, `tests/go-live/content-hosts.ts`, `tests/portability.spec.ts` |

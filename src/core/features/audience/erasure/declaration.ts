@@ -77,4 +77,7 @@ export const contactErasureTables:ErasureTable[]=[
   contact('woocommerce_flow_enrollments'),
   {table:'analytics_settings',literal:true,mode:'redact'},
   {table:'opt_in_modes',literal:true,mode:'redact'},
+  {table:'link_host_exclusions',literal:true,mode:'redact'},
+  {table:'link_host_sources',literal:true,mode:'redact'},
+  {table:'link_host_source_versions',literal:true,mode:'redact'},
 ];
