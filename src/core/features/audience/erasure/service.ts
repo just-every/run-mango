@@ -33,6 +33,13 @@ function receipt(job:ErasureJob):ErasureReceipt {
   return {reference:job.reference,state:job.state as 'pending'|'complete',requestedAt:new Date(job.requested_at).toISOString(),completedAt:job.completed_at?new Date(job.completed_at).toISOString():null,removed:JSON.parse(job.counts_json),retainedChannels:scope.channels};
 }
 export function createContactErasure(db:D1Database,salt:string,buckets:Record<string,BlobStore>={}){
+  // Initialize the public helper once per service, rather than repeating its
+  // schema discovery and lease setup for every durable erasure stage. Its
+  // methods still read current source fences and transfer tables on every call.
+  let portabilityService:ReturnType<typeof erasurePortability>|undefined;
+  const loadPortability=()=>portabilityService??=erasurePortability(db).catch(error=>{
+    portabilityService=undefined;throw error;
+  });
   const read=(reference:string)=>db.prepare('SELECT * FROM audience_erasures WHERE reference=?').bind(reference).first<ErasureJob>();
   function authority(context:ErasureAuthority):D1PreparedStatement {
     const check=context.authorization.predicate('erase',context.destination);
@@ -107,7 +114,7 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         const refreshed=await readScope(db,job.subject_id!,salt);if(!refreshed)throw new Error('Erasure subject disappeared.');
         // Enumerate/count transfer copies only after the pending write fence is
         // durable, so an earlier export cannot create a new table between reads.
-        const transfer=await erasurePortability(db);
+        const transfer=await loadPortability();
         const cleanup=await invalidateTransfers(db,transfer,reference);
         await progress([db.prepare('UPDATE audience_erasures SET scope_json=?,stage=? WHERE reference=? AND stage=-3').bind(JSON.stringify(refreshed),cleanup.complete?-2:-3,reference),...cleanup.statements]);
         return receipt((await read(reference))!);
@@ -132,7 +139,7 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         await progress(statements);return receipt((await read(reference))!);
       }
       const scope=JSON.parse(job.scope_json) as ErasureScope,counts=JSON.parse(job.counts_json) as Record<string,number>;
-      const transfer=await erasurePortability(db);
+      const transfer=await loadPortability();
       // Stage numbers are durable: append a reconciliation pass for older jobs
       // whose cursor already passed the original portable-mapping predicate.
       // It uses the same bounded, PK-fenced transaction as every declared table.
