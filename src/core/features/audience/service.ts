@@ -439,7 +439,7 @@ export function createAudienceService(
     return issueMarketingUnsubscribe({ contactId, channel, recipientStepId: `manual_${ulid(now.getTime())}`, expiresAt: new Date(now.getTime() + 365 * dayMs) }, now);
   }
 
-  async function unsubscribeWithToken(token: string, now = new Date()) {
+  async function unsubscribeWithToken(token: string, now = new Date(), method: 'link' | 'one-click' = 'link') {
     const verified = await requiredDependencies().publicTokens.verifyPublicToken(token, 'unsubscribe');
     if (!verified) return { kind: 'invalid' as const };
     const digest = await sha256(token);
@@ -452,7 +452,7 @@ export function createAudienceService(
     const destinations=action.channel==='email'?(await repository.listEmails(action.contactId)).map(row=>row.email):(await repository.listPhones(action.contactId)).map(row=>row.phoneE164);
     if(!destinations.length)return {kind:'invalid' as const};
     for(const [index,destination] of destinations.entries()) await optOut({contactId:action.contactId,destination,channel:action.channel as Channel,reason:'recipient-unsubscribe',occurredAt:now,stableId:`${action.id}_optout_${index}`});
-    await repository.markPublicActionUsed(action.id, now);
+    await repository.markPublicActionUsed(action.id, now, method);
     return { kind: 'unsubscribed' as const };
   }
 

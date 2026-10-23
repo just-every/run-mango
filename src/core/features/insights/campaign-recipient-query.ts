@@ -14,10 +14,7 @@ export type CampaignRecipientPage = CampaignRecipientFilter & { offset?: number;
 // status alone cannot establish that this campaign caused their unsubscribe.
 export const recipientOutcomeCte = `WITH outcomes AS (
   SELECT r.*,c.id visible_contact_id,c.display_name,
-    (SELECT MIN(at) FROM (
-      SELECT t.used_at at FROM public_action_tokens t WHERE t.recipient_step_id=r.id AND t.purpose='unsubscribe' AND t.used_at IS NOT NULL
-      UNION ALL SELECT f.provider_occurred_at FROM delivery_facts f WHERE f.recipient_step_id=r.id AND f.kind='unsubscribed'
-    )) unsubscribed_at,
+    r.message_unsubscribed_at unsubscribed_at,
     (SELECT COALESCE(json_extract(f.detail_json,'$.reason'),json_extract(f.detail_json,'$.response'),json_extract(f.detail_json,'$.code'))
       FROM delivery_facts f WHERE f.recipient_step_id=r.id AND f.kind=r.transport_disposition AND f.kind IN ('bounced','failed')
       ORDER BY f.provider_occurred_at DESC,f.id DESC LIMIT 1) provider_reason,
@@ -44,7 +41,7 @@ export function recipientFilter(filter: CampaignRecipientFilter) {
 type RecipientRow = {
   id: string; step_id: string; visible_contact_id: string | null; display_name: string | null; destination: string;
   channel: string; transport_disposition: string; skip_reason: string | null; last_error_code: string | null;
-  provider_reason: string | number | null; bounce_type:string|null; complained_at: number | null; suppressed_at: number | null; unsubscribed_at: number | null;
+  provider_reason: string | number | null; bounce_type:string|null; complained_at: number | null; suppressed_at: number | null; unsubscribed_at: number | null; unsubscribe_method: 1 | 2 | 3 | null;
 };
 const iso = (at: number | null) => at === null ? null : new Date(at).toISOString();
 
@@ -55,7 +52,7 @@ export async function campaignRecipientRows(database: Database, campaignId: stri
   const filter = recipientFilter(options);
   const result = await database.$client.prepare(`${recipientOutcomeCte}
     SELECT id,step_id,visible_contact_id,display_name,destination,channel,transport_disposition,skip_reason,last_error_code,
-      provider_reason,bounce_type,complained_at,suppressed_at,unsubscribed_at
+      provider_reason,bounce_type,complained_at,suppressed_at,unsubscribed_at,unsubscribe_method
     FROM outcomes ${filter.sql} ORDER BY step_id,id LIMIT ? OFFSET ?`)
     .bind(campaignId, revisionId, ...filter.bindings, limit, offset).all<RecipientRow>();
   return result.results.map(row => ({ recipientStepId: row.id, stepId: row.step_id, contactId: row.visible_contact_id,
@@ -64,7 +61,7 @@ export async function campaignRecipientRows(database: Database, campaignId: stri
     identityAvailable: row.visible_contact_id !== null, channel: row.channel, disposition: row.transport_disposition,
     skipReason: row.skip_reason, bounceType:row.bounce_type,
     reason: row.skip_reason ?? (['failed','bounced'].includes(row.transport_disposition) ? String(row.provider_reason ?? row.last_error_code ?? 'unrecorded-cause') : null),
-    complainedAt: iso(row.complained_at), suppressedAt: iso(row.suppressed_at), unsubscribedAt: iso(row.unsubscribed_at) }));
+    complainedAt: iso(row.complained_at), suppressedAt: iso(row.suppressed_at), unsubscribedAt: iso(row.unsubscribed_at), unsubscribeMethod: row.unsubscribe_method === null ? null : ({1:'link',2:'one-click',3:'reply'} as const)[row.unsubscribe_method] }));
 }
 
 export type CampaignRecipient = Awaited<ReturnType<typeof campaignRecipientRows>>[number];

@@ -9,7 +9,7 @@ import { createPublicCaptureWriter } from './public-capture-writer';
 import { createConfirmationHandoff } from './confirmation-handoff';
 import { claimPortableRestrictions, recordPortableHash } from './portable-hashes';
 import { fencedInsert, syncWritePredicate, type SyncWriteFence } from '@/core/features/store/sync-write-fence';
-import { and, asc, desc, eq, inArray, lt, lte, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNull, lt, lte, or, sql } from 'drizzle-orm';
 
 import type { Database } from '@/core/platform/db/client';
 
@@ -455,8 +455,8 @@ export function createAudienceRepository(database: Database) {
         .then((rows) => rows[0]);
     },
 
-    async markPublicActionUsed(id: string, usedAt: Date) {
-      await database.update(publicActionTokens).set({ usedAt, updatedAt: usedAt }).where(eq(publicActionTokens.id, id));
+    async markPublicActionUsed(id: string, usedAt: Date, usedMethod: 'link' | 'one-click') {
+      await database.update(publicActionTokens).set({ usedAt, usedMethod: usedMethod === 'link' ? 1 : 2, updatedAt: usedAt }).where(and(eq(publicActionTokens.id, id), isNull(publicActionTokens.usedAt)));
     },
 
     async takePublicTokenAllowance(tokenDigest: string, now: Date) {

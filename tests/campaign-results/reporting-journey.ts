@@ -32,7 +32,7 @@ export async function exerciseCampaignReports(page:Page,request:APIRequestContex
     await page.getByLabel('Recipient outcome',{exact:true}).selectOption(outcome);await expect(page.getByRole('table',{name:'Recipient outcomes'}).locator('tbody tr')).toHaveCount(recipients.total);
     if(outcome==='bounced'){expect(recipients.rows[0].contactId).toBe('ben');await expect(page.getByRole('table',{name:'Recipient outcomes'})).toContainText('550 mailbox does not exist');await expect(page.getByRole('table',{name:'Recipient outcomes'})).toContainText('hard');}
     if(outcome==='complained')expect(recipients.rows[0].contactId).toBe('chris');
-    if(outcome==='unsubscribed')expect(recipients.rows[0].contactId).toBe('drew');
+    if(outcome==='unsubscribed'){expect(recipients.rows[0].contactId).toBe('drew');expect(recipients.rows[0].unsubscribeMethod).toBeNull();await expect(page.getByRole('table',{name:'Recipient outcomes'})).toContainText('Method not recorded');}
     if(outcome==='skipped')expect(recipients.rows[0].reason).toBe('quiet-hours-deadline');
   }
   await page.getByLabel('Recipient outcome',{exact:true}).selectOption('delivered');await expect(page.getByRole('table',{name:'Recipient outcomes'})).toContainText('Erased contact');
