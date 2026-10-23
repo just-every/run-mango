@@ -16,7 +16,7 @@ import { emailConsentScope } from './email-consent-scope';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
 import { authoredBody, htmlToText } from '@/core/features/campaigns/authoring-content';
 import { senderReasonText } from '@/core/features/sender-verification/reason-text';
-import { invalidPersonalisation } from '@/core/features/campaigns/message-content';
+import { invalidMessagePersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { parseStructuredRules } from './rules';
 import { prepareApprovalChecks } from './checks-preparation';
@@ -58,11 +58,10 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
     blockedLinks.length + blockedImages.length ? `Blocked links: ${blockedLinks.map((item) => `${item.destination} (${item.reason})`).join('; ')}${blockedImages.length ? `${blockedLinks.length ? '; ' : ''}Blocked images: ${blockedImages.map((item) => `${item.destination} (${item.reason})`).join('; ')}` : ''}` : 'Every destination is an allowed HTTPS or contact link.'),
     blockedHosts: blockedLinkHosts(directHosts)});
 
-  const authored = `${revision.emailSubject}\n${revision.preheader}\n${revision.emailBody}\n${revision.emailText}\n${revision.smsBody}`;
   findings.push(check('message.content', htmlPolicy.issues.length === 0, htmlPolicy.issues.length
     ? htmlPolicy.issues.join(' ')
     : 'Email HTML uses the allowed tags, attributes, inline styles and validated destinations, and hides no text.'));
-  const missingFallback = invalidPersonalisation(authored);
+  const missingFallback = invalidMessagePersonalisation(revision);
   findings.push(check('message.personalisation', missingFallback.length === 0,
     missingFallback.length ? `Invalid personalisation or missing fallback: ${missingFallback.join(', ')}` : 'Every personalisation token carries an explicit fallback.'));
 
