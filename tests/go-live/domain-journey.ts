@@ -30,6 +30,8 @@ export async function domainJourney(site: Installation, edge: Awaited<ReturnType
   expect((await fetch(site.local(checkUrl), {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'confirm=true'})).status).toBe(200);
   expect((await json(await site.call('/api/settings/sender', {cookie}), 200)).validation.ready).toBe(true);
   await json(await site.call('/api/settings/link-hosts', {method: 'PUT', cookie, body: {hosts: 'shop.example.test'}}), 200);
+  await json(await site.call('/api/settings/analytics',{method:'PUT',cookie,body:{enabled:true,source:'synthetic-mango-domain',emailMedium:'email',smsMedium:'sms',campaign:'domain-proof',content:'branded-message'}}),200);
+  const destination='https://shop.example.test/?utm_source=synthetic-mango-domain&utm_medium=email&utm_campaign=domain-proof&utm_content=branded-message';
   for (const valid of [true, false]) {
     edge.domainSetup.trackingCname = valid;
     const tracking = await json(await site.call('/api/settings/sender/tracking-domain', {method: 'PUT', cookie, body: {host: 'links.example.test'}}), 200);
@@ -49,11 +51,11 @@ export async function domainJourney(site: Installation, edge: Awaited<ReturnType
     if (valid) {
       const link = /https:\/\/links\.example\.test(\/l\/[^"< ]+)/.exec(html)![1];
       const followed = await site.call(link, {headers: {'X-GoLive-Host': 'links.example.test', 'X-Test-Token': site.runtime.token}});
-      expect(followed.status).toBe(302); expect(followed.headers.get('Location')).toBe('https://shop.example.test/');
+      expect(followed.status).toBe(302); expect(followed.headers.get('Location')).toBe(destination);
       const humansBefore = (await site.rows('SELECT count(*) AS n FROM link_click_facts WHERE automated=0'))[0].n;
       const headsBefore = (await site.rows("SELECT count(*) AS n FROM link_click_facts WHERE automation_reason='non-navigation-request'"))[0].n;
       const head = await site.call(link, {method: 'HEAD', headers: {'X-GoLive-Host': 'links.example.test', 'X-Test-Token': site.runtime.token}});
-      expect(head.status).toBe(302); expect(head.headers.get('Location')).toBe('https://shop.example.test/');
+      expect(head.status).toBe(302); expect(head.headers.get('Location')).toBe(destination);
       expect((await site.rows('SELECT count(*) AS n FROM link_click_facts WHERE automated=0'))[0].n).toBe(humansBefore);
       expect((await site.rows("SELECT count(*) AS n FROM link_click_facts WHERE automation_reason='non-navigation-request'"))[0].n).toBe(headsBefore+1);
       expect((await site.call('/api/operator', {cookie, headers: {'X-GoLive-Host': 'links.example.test', 'X-Test-Token': site.runtime.token}})).status).toBe(404);
