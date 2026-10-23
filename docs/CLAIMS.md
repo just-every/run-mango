@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 34 claims · 34 in code.**
+**Totals: 35 claims · 35 in code.**
 
 ## Mango integration claims
 
@@ -76,3 +76,6 @@ The text-only adoption changes no implementation status. No real provider call o
 -->
 | FORM-010 | Hosted and kiosk allowance refusals retain entries, show the error state and return 429 with Retry-After. Settings exposes hourly counts; Home links a rolling-hour alert to form and allowances. Destination-dependent confirmation refusals remain generic. FORM-005 report remains open. | partial | `tests/go-live/kiosk.journeys.ts`, `tests/audience-import/signup-security.spec.ts`, `tests/go-live/integrations.journeys.ts` |
 | FORM-008 | Accepted-only atomic intake uses separate challenged, unchallenged and kiosk partitions, durable floors and next-window Owner changes. Verification defaults on, is mandatory for kiosks, and uses five-minute one-use tokens. Popup carriers, single opt-in and ct approval remain open. | partial | `tests/go-live/kiosk.journeys.ts`, `tests/go-live/signup-capacity-journey.ts`, `tests/audience-import/signup-security.spec.ts`, `tests/portability.spec.ts` |
+
+
+| CONT-026 | Authors and above record hand-entry consent and properties; email uses the manual mode and labels the operator. SMS requires express written evidence and a signed reply to its exact confirmation; prior restrictions and Support refusal remain enforced. Topic scope and legacy API attestation remain open. | partial | `tests/go-live/integrations.journeys.ts`, `tests/go-live/manual-entry-journey.ts`, `tests/portability.spec.ts` |

@@ -31,6 +31,9 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     const analytics={enabled:true,source:'synthetic-mango',emailMedium:'email',smsMedium:'sms',campaign:'portable',content:''};
     expect((await source.call('/api/settings/analytics',{method:'PUT',cookie:source.cookie,body:analytics})).status).toBe(200);
     expect((await source.call('/api/settings/opt-in/hosted',{method:'PUT',cookie:source.cookie,body:{mode:'single'}})).status).toBe(200);
+    expect((await source.call('/api/settings/opt-in/manual',{method:'PUT',cookie:source.cookie,body:{mode:'single'}})).status).toBe(200);
+    const hand=await source.call('/api/contacts/consent',{method:'POST',cookie:source.cookie,body:{contact:{email:'synthetic-mango-portable-manual@example.test',displayName:'Portable market visitor'},channel:'email',brandOrLegalSender:'Mango',messageCategory:'newsletter',frequencyDisclosure:'Monthly',destinationJurisdiction:'AU',captureMethod:'operator-entry',captureSource:'Market permission card',permissionMethod:'written',affirmed:true,properties:{interest:'Seedlings'},consentText:'Please send the monthly newsletter.',consentVersion:'manual-entry-v1',occurredAt:new Date(Date.now()-60000).toISOString()}});
+    expect(hand.status,await hand.clone().text()).toBe(201);const handEvidence=(await hand.json()).evidence;
     const bytesArchive=await accountExport();
     const uploadArchive=async(path:string,fingerprint?:string)=>{
       const form=new FormData();form.set('archive',new File([bytesArchive],'account-export.zip',{type:'application/zip'}));form.set('consent',JSON.stringify(consentEvidence));if(fingerprint)form.set('fingerprint',fingerprint);
@@ -129,6 +132,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(await target.db.prepare("SELECT value FROM signup_allowance_levels WHERE name='globalHour'").first()).toEqual({value:1200});
     expect(JSON.parse((await target.db.prepare('SELECT policy_json FROM analytics_settings WHERE id=1').first()).policy_json)).toEqual(analytics);
     expect(await target.db.prepare("SELECT mode FROM opt_in_modes WHERE point='hosted'").first()).toEqual({mode:'single'});
+    expect(await target.db.prepare('SELECT capture_method,capture_source,confirmation_required FROM consent_evidence WHERE id=?').bind(handEvidence.id).first()).toEqual({capture_method:'operator-recorded',capture_source:handEvidence.captureSource,confirmation_required:0});
     expect(await target.db.prepare("SELECT challenge_enabled,frequency_disclosure FROM signup_settings WHERE id='newsletter'").first()).toEqual({challenge_enabled:1,frequency_disclosure:'Monthly'});
     expect((await target.db.prepare('SELECT * FROM imported_engagement_facts ORDER BY id').all()).results).toEqual(importedFacts);
     expect((await target.db.prepare('SELECT * FROM move_in_contact_history ORDER BY id').all()).results).toEqual(importedCoverage);

@@ -1,3 +1,4 @@
+import {recordManualSmsCapture} from './manual-sms-capture';
 import {createSegmentFacts} from './segment-facts';
 import {listGrowthEvents} from '@/core/features/insights/schema';
 import {recipientOptOutSql, recipientSuppressionSql} from './public-resubscribe-policy';
@@ -185,6 +186,7 @@ export function createAudienceRepository(database: Database) {
       await database.run(sql`INSERT INTO consent_capture_metadata(id,contact_id,capture_ip,confirmation_ip,created_at,updated_at) VALUES(${id},${contactId},${ip},NULL,${now.getTime()},${now.getTime()}) ON CONFLICT(id) DO NOTHING`);
     },
 
+    recordManualSmsCapture:(values:Parameters<typeof recordManualSmsCapture>[1],hash:string,actor:Parameters<typeof recordManualSmsCapture>[3])=>recordManualSmsCapture(database,values,hash,actor),
     async recordConsent(values: typeof consentEvidence.$inferInsert) {
       await database.insert(consentEvidence).values(values).onConflictDoNothing();
       return database.select().from(consentEvidence).where(eq(consentEvidence.id, values.id)).then((rows) => rows[0]);

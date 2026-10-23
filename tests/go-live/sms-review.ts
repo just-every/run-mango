@@ -1,3 +1,4 @@
+import {confirmSmsReply} from './sms-confirm-reply';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { json, rule, availableTransport, consent, type Installation } from './harness';
 import { smsDisclosure, smsProgramme, smsSender } from './sms-bindings';
@@ -13,14 +14,13 @@ export async function smsReviewJourney(site: Installation, edge: Awaited<ReturnT
   const clock = await site.control('/_golive/clock', {advanceMs:(43_200_000 - ((before.now + 36_000_000) % 86_400_000) + 86_400_000) % 86_400_000, hold:true});
   now = clock.now;
   await json(await site.call('/api/contacts/consent', {method:'POST', cookie:owner, body:{
-    ...consent, channel:'sms', smsProgram:policy.programme, brandOrLegalSender:policy.brand, messageCategory:policy.category, frequencyDisclosure:policy.frequency,
+    ...consent,permissionMethod:'in-person',affirmed:true,expressWrittenConsent:true, channel:'sms', smsProgram:policy.programme, brandOrLegalSender:policy.brand, messageCategory:policy.category, frequencyDisclosure:policy.frequency,
     destinationJurisdiction:policy.jurisdiction, consentText:disclosure.text, consentVersion:disclosure.version, captureSource:'Market stall text sign-up',
     timeZone:'Australia/Brisbane', locationSource:'operator-entry', locationRecordedAt:new Date(clock.now).toISOString(),
     contact:{email:'sms-reader@example.test', phone:'+61411111111', displayName:'SMS reader'}, occurredAt:new Date(clock.now).toISOString()}}), 201);
   await site.control('/_golive/cron');
   await expect.poll(async () => edge.sms.sends.length || JSON.stringify(await site.rows('SELECT purpose,state,reason FROM sms_service_messages')), {timeout:60000, intervals:[1000]}).toBe(1);
-  const link = /https:\/\/\S+\/consent\/confirm\/\S+/.exec(edge.sms.sends.at(-1)!.body.messages[0].message)![0];
-  expect((await fetch(site.local(link), {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:'confirm=true'})).status).toBe(200);
+  await confirmSmsReply(site,edge);
   const { campaignId, revisionId } = await json(await site.call('/api/campaigns', {method:'POST', cookie:owner, body:{}}), 201);
   const at = new Date(now + 7200000);
   const smsBody = 'Seedlings are in at the Saturday market. Bring a pot.';
