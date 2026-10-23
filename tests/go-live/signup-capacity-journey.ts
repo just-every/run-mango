@@ -12,19 +12,26 @@ export async function capacityJourney(site:Awaited<ReturnType<typeof kioskInstal
     const description=await(await site.call('/subscribe/info')).json();
     return site.call('/subscribe',{email,consent:true,disclosure:description.disclosure,...(challenged?{'cf-turnstile-response':`kiosk-token-${crypto.randomUUID()}`} :{}),...extra},{'CF-Connecting-IP':ip});
   };
+  const batch=async(entries:Array<{email:string;ip:string;website?:string;token?:string}>)=>{
+    const statuses:number[]=[];
+    for(let index=0;index<entries.length;index+=10)statuses.push(...(await site.control('/_kiosk/captures',{entries:entries.slice(index,index+10)})).statuses);
+    return statuses;
+  };
   const counter=async(key:string)=>(await site.rows(`SELECT COALESCE((SELECT count FROM oa_limits WHERE key='${key}'),0) AS n`))[0].n;
   const minute=()=>site.control('/_kiosk/window',{kind:'minute'});
   await minute();
   const before=await counter('signup-challenged-global');
   // One volume matrix through the public Worker door: 600 on 200 networks,
   // with every complete minute accepting its full 100-request burst.
-  for(let index=0;index<600;index++){
-    if(index&&index%100===0)await minute();
-    expect((await capture(`synthetic-mango-volume-${index}@example.test`,`198.51.100.${1+index%200}`)).status).toBe(202);
+  for(let minuteIndex=0;minuteIndex<6;minuteIndex++){
+    if(minuteIndex)await minute();
+    const entries=Array.from({length:100},(_,offset)=>{const index=minuteIndex*100+offset;return {email:`synthetic-mango-volume-${index}@example.test`,ip:`198.51.100.${1+index%200}`,token:`kiosk-token-${crypto.randomUUID()}`};});
+    expect(await batch(entries)).toEqual(Array(100).fill(202));
   }
   expect(await counter('signup-challenged-global')).toBe(before+600);
   expect((await site.rows("SELECT count(*) AS n FROM contacts WHERE email LIKE 'synthetic-mango-volume-%' AND email_status='pending'"))[0].n).toBe(600);
-  for(let index=0;index<200;index++)expect((await capture(`synthetic-mango-bot-${index}@example.test`,`203.0.113.${1+index%200}`,index%2?{website:'robot'}:{'cf-turnstile-response':`invalid-${index}`})).status).toBe(index%2?202:400);
+  const bots=Array.from({length:200},(_,index)=>({email:`synthetic-mango-bot-${index}@example.test`,ip:`203.0.113.${1+index%200}`,token:index%2?`kiosk-token-${crypto.randomUUID()}`:`invalid-${index}`,...(index%2?{website:'robot'}:{})}));
+  expect(await batch(bots)).toEqual(bots.map((_,index)=>index%2?202:400));
   expect(await counter('signup-challenged-global')).toBe(before+600);
   await minute();
   expect((await capture('synthetic-mango-after-bots@example.test','198.51.100.220')).status).toBe(202);
@@ -43,9 +50,11 @@ export async function capacityJourney(site:Awaited<ReturnType<typeof kioskInstal
   for(let index=30;index<120;index++)expect((await capture(`synthetic-mango-nat-${index}@example.test`,'192.0.2.180')).status).toBe(202);
   expect((await capture('synthetic-mango-nat-challenged-over@example.test','192.0.2.180')).status).toBe(429);
   expect((await site.settings({...setting,challengeEnabled:false})).status).toBe(200);
-  for(let index=30;index<1000;index++){
-    if(index%100===0)await minute();
-    expect((await capture(`synthetic-mango-unchallenged-${index}@example.test`,`203.0.113.${1+index%200}`,{},false)).status).toBe(202);
+  for(let start=30;start<1000;){
+    if(start%100===0)await minute();
+    const end=Math.min(1000,Math.ceil((start+1)/100)*100);
+    expect(await batch(Array.from({length:end-start},(_,offset)=>{const index=start+offset;return {email:`synthetic-mango-unchallenged-${index}@example.test`,ip:`203.0.113.${1+index%200}`};}))).toEqual(Array(end-start).fill(202));
+    start=end;
   }
   expect((await capture('synthetic-mango-unchallenged-over@example.test','192.0.2.181',{},false)).status).toBe(429);
   expect((await site.settings({...setting,challengeEnabled:true})).status).toBe(200);

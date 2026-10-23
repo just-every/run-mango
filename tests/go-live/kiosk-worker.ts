@@ -1,3 +1,4 @@
+import {loadSignupDescription} from '../../src/core/features/audience/signup-routes';
 // Isolated native Worker for FORM-009. Only the paid mail and challenge HTTP
 // edges are doubled; product routing, sessions, D1, consent and SSR are real.
 import {createFixturePlatform} from '../support/local-platform';
@@ -44,6 +45,20 @@ export default {
         const {id='kiosk-owner'}=await request.json() as {id?:string};
         await testIdentity(platform).importLocalDemoOperator({id,email:`${id}@example.test`,displayName:id},new Date());
         return Response.json(await testIdentity(platform).createTestSession(id));
+      }
+      if(path==='/_kiosk/captures') {
+        const {entries}=await request.json() as {entries:Array<{email:string;ip:string;website?:string;token?:string}>};
+        if(!Array.isArray(entries)||entries.length>10)return new Response('Bounded public-route batch required',{status:400});
+        const description=await loadSignupDescription(platform),app=createApp(bindings,platform,undefined,true),statuses:number[]=[];
+        // Two public route invocations at a time, with real D1, verification,
+        // consent and delivery. Only the HTTP/provider boundary is a fixture.
+        for(let index=0;index<entries.length;index+=2){
+          statuses.push(...await Promise.all(entries.slice(index,index+2).map(async entry=>{
+            const response=await app.fetch(new Request(new URL('/subscribe',request.url),{method:'POST',headers:{'Content-Type':'application/json','CF-Connecting-IP':entry.ip},body:JSON.stringify({email:entry.email,consent:true,disclosure:description.disclosure,...(entry.website?{website:entry.website}:{}),...(entry.token?{'cf-turnstile-response':entry.token}:{})})}),bindings,context);
+            return response.status;
+          })));
+        }
+        return Response.json({statuses});
       }
       if(path==='/_kiosk/window') {
         const body=await request.json() as {kind:'minute'|'hour'};
