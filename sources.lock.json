@@ -5138,7 +5138,7 @@
       "executable": false
     },
     "src/routes/subscribe.tsx": {
-      "sha256": "facee80aa2a49e8bad0e3049160c76567b41a691813687dd1415d877ca32bb9c",
+      "sha256": "67e4014cf3166884d487e6d4f9dd271487d94d8ba35f0719cdc63df4dd757403",
       "executable": false
     },
     "src/routeTree.gen.ts": {
