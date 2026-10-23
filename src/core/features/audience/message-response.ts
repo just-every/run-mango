@@ -2,7 +2,7 @@ import type { Context } from 'hono';
 import { renderMessagePage, type MessagePage } from '../site/message-page';
 
 /** Answers with a reader-facing message page (consent confirmation, unsubscribe) and the headers it carries. */
-export async function messagePage(context: Context, status: 200 | 404 | 410 | 429, page: MessagePage) {
+export async function messagePage(context: Context, status: 200 | 400 | 401 | 403 | 404 | 410 | 422 | 429, page: MessagePage) {
   const { html, headers } = await renderMessagePage(page);
   return context.html(html, status, headers);
 }
