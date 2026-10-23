@@ -52,7 +52,7 @@ export function sendingConnectionService(platform:Platform) {
           const webhook=await api.request('/user/webhooks/event/settings','POST',{enabled:false,url,friendly_name:'Mango '+origin,
             ...Object.fromEntries(sendingEvents.map(event=>[event,true])),processed:false,open:false,click:false,group_resubscribe:false});
           if(typeof webhook?.id!=='string'||!webhook.id)throw new SendingConnectionError('SendGrid did not identify Mango’s created webhook.');
-          webhookId=webhook.id;created=true;
+          webhookId=webhook.id as string;created=true;
           await db.prepare('UPDATE sending_connection SET webhook_id=? WHERE id=1 AND generation=?').bind(webhookId,generation).run();
         }
         const path='/user/webhooks/event/settings/'+encodeURIComponent(webhookId);
@@ -62,7 +62,7 @@ export function sendingConnectionService(platform:Platform) {
         const signed=await api.request('/user/webhooks/event/settings/signed/'+encodeURIComponent(webhookId));
         if(signed.id!==webhookId||typeof signed.public_key!=='string'||!signed.public_key)throw new SendingConnectionError('SendGrid did not return Mango’s signing verification key.');
         // Validate the key before allowing the provider to post any events.
-        let binary:Uint8Array;
+        let binary:Uint8Array<ArrayBuffer>;
         try {binary=Uint8Array.from(atob(signed.public_key),c=>c.charCodeAt(0));await crypto.subtle.importKey('spki',binary,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);}
         catch {throw new SendingConnectionError('SendGrid returned an invalid signing verification key.');}
         await api.request(path,'PATCH',{enabled:true,url,friendly_name:'Mango '+origin,...Object.fromEntries(sendingEvents.map(event=>[event,true]))});
