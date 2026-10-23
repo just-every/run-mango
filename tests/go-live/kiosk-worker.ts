@@ -9,7 +9,8 @@ import type {LocalAppBindings} from '../support/fixture-app';
 
 type Bindings=LocalAppBindings&{KIOSK_TEST_CHALLENGE?:string};
 const transport=globalThis.fetch, usedTokens=new Set<string>();
-let challengeConnected=true;
+let challengeConnected=true,clockOffset=0;
+const realNow=Date.now;Date.now=()=>realNow()+clockOffset;
 const messages:Array<{to:string;text:string}>=[];
 globalThis.fetch=async(input,init)=>{
   const request=new Request(input,init),url=new URL(request.url);
@@ -43,6 +44,7 @@ export default {
         await testIdentity(platform).importLocalDemoOperator({id:'kiosk-owner',email:'owner@example.test',displayName:'Kiosk Owner'},new Date());
         return Response.json(await testIdentity(platform).createTestSession('kiosk-owner'));
       }
+      if(path==='/_kiosk/clock') {clockOffset+=(await request.json() as {advanceMs:number}).advanceMs;return Response.json({now:Date.now()});}
       if(path==='/_kiosk/challenge') {challengeConnected=(await request.json() as {connected:boolean}).connected;return Response.json({connected:challengeConnected});}
       if(path==='/_kiosk/messages')return Response.json(messages);
       // Prepare a real product link without sending a marketing campaign.

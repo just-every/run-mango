@@ -73,7 +73,7 @@ function NewsletterSubscribePage({ info }: { info: SubscribeInfo }) {
         return;
       }
       setErrors(mapFieldErrors(response.data.fields, ['email','phone','timeZone','displayName','consent']));
-      setError(response.data.detail?.trim() || response.data.error?.replaceAll('_', ' ') || 'The request could not be completed. Review the form and try again.');
+      setError(response.status === 429 ? 'Too many signups right now. Please try again in a few minutes.' : response.data.detail?.trim() || response.data.error?.replaceAll('_', ' ') || 'The request could not be completed. Review the form and try again.');
     } catch {
       setError('The request result could not be confirmed. Try again after checking your connection.');
     } finally {

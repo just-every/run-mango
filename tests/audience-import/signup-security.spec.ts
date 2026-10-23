@@ -51,8 +51,8 @@ test('security: durable global last slot is atomic across addresses and networks
  const h=await native();try{
   await h.f.db.prepare('INSERT INTO oa_limits(key,window,count) VALUES(?,?,?)').bind('signup-global',Math.floor(Date.now()/3600000),49).run();
   const results=await Promise.all(Array.from({length:6},(_,i)=>client(h.f)(`global-${i}@example.test`,`192.0.2.${60+i}`)));
-  expect(results.every(r=>r.status===202)).toBe(true);for(const response of results)expect(await response.json()).toEqual({status:'confirmation-required'});expect(h.f.outbound).toHaveLength(1);expect(await h.f.db.prepare("SELECT count FROM oa_limits WHERE key='signup-global'").first()).toEqual({count:50});
-  const restarted=await h.restart();expect((await client(restarted)('restart@example.test','198.51.100.1')).status).toBe(202);expect(restarted.outbound).toHaveLength(0);
+  expect(results.filter(r=>r.status===202)).toHaveLength(1);for(const response of results.filter(r=>r.status===429)){expect(Number(response.headers.get('Retry-After'))).toBeGreaterThan(0);expect(await response.json()).toMatchObject({error:'rate_limited'});}expect(h.f.outbound).toHaveLength(1);expect(await h.f.db.prepare("SELECT count FROM oa_limits WHERE key='signup-global'").first()).toEqual({count:50});
+  const restarted=await h.restart();expect((await client(restarted)('restart@example.test','198.51.100.1')).status).toBe(429);expect(restarted.outbound).toHaveLength(0);
   for(const [email,kind] of [['hard@example.test','hard'],['complaint@example.test','complaint']] as const){await restarted.services.audienceService.recordBounce({destination:email,kind,occurredAt:new Date(),providerEventId:`test-exhausted-${kind}`});const response=await client(restarted)(email,'198.51.100.2');expect(response.status).toBe(202);expect(await response.json()).toEqual({status:'confirmation-required'});}expect(restarted.outbound).toHaveLength(0);
  }finally{await h.close();}
 });
