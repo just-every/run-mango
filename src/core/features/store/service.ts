@@ -49,7 +49,7 @@ export type LocalDemoProvider = {
   detail: string;
 };
 
-export function createStoreService(repository: ReturnType<typeof createStoreRepository>) {
+export function createStoreService(repository: ReturnType<typeof createStoreRepository>, catalogChanged:()=>Promise<void>) {
   async function freshness(sourceTypes: CommerceSourceType[], now: Date) {
     const uniqueTypes = [...new Set(sourceTypes)];
     const [capabilities, syncs] = await Promise.all([
@@ -188,6 +188,7 @@ export function createStoreService(repository: ReturnType<typeof createStoreRepo
         for (const sourceType of completion === 'full' && adapterCompleted ? completedSourceTypes : []) {
           await repository.recordSyncSuccess(sourceType, ulid(completedAt.getTime()), completedAt);
         }
+        if(sourceTypes.includes('product') || completedSourceTypes.includes('product'))await catalogChanged();
       } catch (error) {
         const message = error instanceof Error ? error.message : 'The commerce adapter returned an unknown ingestion error.';
         for (const sourceType of fence ? [] : sourceTypes) {

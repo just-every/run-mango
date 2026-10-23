@@ -6,7 +6,7 @@ import { effectiveRole } from '@/core/features/auth/product-roles';
 import type { ApprovalService } from '@/core/features/lifecycle/approval';
 import type { Platform } from '@/core/shared/platform';
 import { configuredLinkHosts, linkHostsSchema } from './link-hosts-validation';
-import { loadLinkHosts,linkHostState } from './link-hosts';
+import { loadLinkHosts,linkHostState,persistLinkHostSources } from './link-hosts';
 import { senderWriteAuthority, senderWriteGuard, SenderAuthorityChanged } from './sender-authority';
 
 const bodySchema = z.object({host: z.string().min(1)}).strict();
@@ -53,6 +53,7 @@ export function reviewLinkHostRoutes(platform: Platform, approval: ApprovalServi
         db.prepare('DELETE FROM link_host_exclusions WHERE host=? AND EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE operation_key=?)').bind(host,operation),
       ]);
       if (!audit.meta.changes) throw new SenderAuthorityChanged();
+      await persistLinkHostSources(platform);
     } catch (error) {
       return context.json({error: error instanceof SenderAuthorityChanged ? 'authority_changed' : 'link_hosts_save_failed'},
         error instanceof SenderAuthorityChanged ? 403 : 500);
