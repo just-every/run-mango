@@ -4,6 +4,7 @@ import { changesData, dataStatement, reachingTables, triggerBodies, schemaChange
 import { splitStatements } from './sql-text.mjs';
 import { preservingRebuilds } from './rebuilds.mjs';
 import { replayViews, viewReads } from './replay-views.mjs';
+import { newColumnBackfill } from './column-backfill.mjs';
 
 // The data statements of later migrations, judged by the tables they write
 // (bridge.mjs placement). Restored rows never pass through a later migration.
@@ -14,7 +15,8 @@ import { replayViews, viewReads } from './replay-views.mjs';
 // - An eligible seed or backfill of a catalogue table replays at finalize.
 //   A carried table keeps its archived rows and admits only one later writer,
 //   naming its target columns. An absent table is reset first; each later write is a
-//   replayable INSERT: they run in migration order, exactly as written, after
+//   replayable INSERT. A carried table also admits a bounded UPDATE of a newly
+//   added column, leaving every archived cell intact. They run in migration order, exactly as written, after
 //   the archived rows are inserted and with the destination's triggers still
 //   dropped, so the table holds what the live upgrade gave it. A replay may read
 //   only archived tables (complete by then), views over those tables and the
@@ -36,6 +38,7 @@ export function laterData({applied,unapplied,replay,catalogue,archived,empty,tab
   const restorable=fold(catalogue),carried=fold(archived);
   const reached=reachingTables(statements,carried),writable=reachingTables(statements,restorable);
   const later=unapplied.flatMap(migration=>split(migration).map((sql,index)=>({migration,index,sql,data:dataStatement(sql)})));
+  for(const s of later)if(s.data?.verb==='update')s.columnBackfill=newColumnBackfill(s.sql,{table:s.data.target,statements,manifest});
   const {admitted,tables:rebuilt}=preservingRebuilds(later,manifest,tables,statements),views=replayViews(statements);
   const known=fold(tables),outside=later.filter(s=>s.data && !writable.includes(s.data.target)),tainted=new Set();
   // Mango: a table the applied history created and then dropped (a migration's
@@ -72,12 +75,12 @@ export function laterData({applied,unapplied,replay,catalogue,archived,empty,tab
   const named=Object.fromEntries(catalogue.map(name=>[folded(name),name]));
   return {rebuilt,replays:later.filter(s=>replays.includes(s)).map(s=>({migration:s.migration,statement:s.index,table:named[s.data.target],sql:s.sql,...(carried.includes(s.data.target)?{carried:true}:{})}))};
 }
-function replayable({data},{table,statements,restorable,writable,carried,tables,secrets,views,manifest,dropped}) {
-  if(!['insert','replace'].includes(data.verb) || data.star || data.names.some(name=>dropped.includes(name)))return false;
+function replayable({data,columnBackfill},{table,statements,restorable,writable,carried,tables,secrets,views,manifest,dropped}) {
+  if((!['insert','replace'].includes(data.verb) && !columnBackfill) || data.star || data.names.some(name=>dropped.includes(name)))return false;
   if(carried.includes(table)) {
     // sqlite_sequence's high-water mark is not archived, so replay cannot
     // reproduce a carried AUTOINCREMENT table's live key allocation.
-    if(!data.columns || autoincrement(manifest.find(t=>folded(t.name)===table).sql))return false;
+    if((!data.columns && !columnBackfill) || (!columnBackfill && autoincrement(manifest.find(t=>folded(t.name)===table).sql)))return false;
     // Keyed tables carry their key columns, not their hidden physical rowids.
     // Treat unarchived aliases as unreadable cells, including through views.
     secrets={...secrets};
@@ -98,7 +101,7 @@ function writesAnother(s,table,reach,replays) {
   if(s.data)return reach.includes(s.data.target);
   if(!statementNames(s.sql).includes(table))return false;
   const shape=schemaChange(s.sql);
-  if(shape==='add column')return !replays.every(r=>r.data.columns);
+  if(shape==='add column')return !replays.every(r=>r.data.columns || r.columnBackfill);
   return !['create table','create index','drop index','create view','drop view','trigger'].includes(shape);
 }
 // Finalize statements for the job's replays, to run after the archived rows are
