@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "e2ce0e51aa79a03b2cb797b22710d322cae8033a14d35faa0ef128a4ef0d36d8",
+      "sha256": "c845448178bea89b859b8a279f9160b2e8b285c4f2b95f3cee2a25771f630db3",
       "executable": false
     },
     "DEMO.md": {
@@ -7666,7 +7666,7 @@
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
-      "sha256": "bbebe806ecc06fe9a6f88256c51e0d6fd7438930366b7d78cb90344b781b21d6",
+      "sha256": "ec582a86fc9453034677884b3a91a7497cf708e04ab6a569835a5686943b6e89",
       "executable": false
     },
     "tests/move-in/archive.ts": {
