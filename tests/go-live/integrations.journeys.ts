@@ -1,3 +1,5 @@
+import AxeBuilder from '@axe-core/playwright';
+import {openPage} from '../support/navigation';
 import {manualEntryJourney} from './manual-entry-journey';
 import {proveReviewLoyalty} from './review-loyalty-journey';
 import {proveCustomEvents} from './custom-event-journey';
@@ -11,10 +13,31 @@ test('[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-
   const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer,{sms:true});
   try {
     const cookie = await site.open();
+    await browserPage.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+    await openPage(browserPage,site.runtime.url+'/setup');
+    await expect(browserPage.getByLabel('Your name',{exact:true})).toHaveCount(0);
+    await expect(browserPage.getByLabel('Business display name',{exact:true})).toBeVisible();
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
     const signedInEntry=await site.call('/signin',{cookie});
     expect(signedInEntry.status).toBe(303);
     expect(signedInEntry.headers.get('Location')).toBe('/app');
+    for(const [target,expected] of [['/app/audience?view=contacts','/app/audience?view=contacts'],['https://outside.example/path','/app'],['//outside.example/path','/app'],['/signin','/app']]) {
+      const response=await site.call('/signin?returnTo='+encodeURIComponent(target),{cookie});
+      expect(response.status).toBe(303);expect(response.headers.get('Location')).toBe(expected);
+    }
+    const entryErrors:string[]=[];
+    browserPage.on('pageerror',error=>entryErrors.push(error.message));
+    browserPage.on('console',message=>{if(message.type()==='error'&&/hydration|hydrated.*match/i.test(message.text()))entryErrors.push(message.text());});
+    for(const width of [1440,390]) {
+      await browserPage.setViewportSize({width,height:1000});await openPage(browserPage,site.runtime.url+'/signin');
+      await expect(browserPage).toHaveURL(site.runtime.url+'/app');
+      await expect(browserPage.getByRole('heading',{name:'Sign in to Mango',exact:true})).toHaveCount(0);
+      expect(await browserPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+      expect((await new AxeBuilder({page:browserPage}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+      await browserPage.screenshot({path:info.outputPath('signed-in-entry-'+width+'.png'),fullPage:true});
+    }
+    expect(entryErrors).toEqual([]);
+
     await json(await site.call('/api/settings/sender/confirmation', {method: 'POST', cookie, body: {}}), 202);
     const message = edge.sends.findLast(send => send.to === 'owner@example.test')!;
     const check = /https:\/\/\S+\/sender-check\/\S+/.exec(message.body.content.find((part: any) => part.type === 'text/plain').value)![0];

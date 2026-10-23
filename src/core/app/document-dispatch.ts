@@ -1,3 +1,4 @@
+import {safeReturnTo} from '@/vendor/base/operator-auth/policy.mjs';
 import { loadSignupSettings } from '@/core/features/audience/signup-settings';
 import { requestPlatform, requestApi, documentAdmission } from './request-platform';
 import { createAppServices } from './app';
@@ -64,6 +65,10 @@ export async function dispatchDocuments(
   }
   if (path === '/archive/feed.xml' || path === '/archive/data' || path.startsWith('/archive/data/') || path === '/subscribe/info' || path === '/paid/info' || ((path === '/subscribe' || path === '/subscribe/sms' || path === '/paid/checkout') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
     return hono.fetch(request, environment, executionContext);
+  }
+  if (path === '/signin' && ['GET','HEAD'].includes(request.method) && await createAppServices(platform).authService.authenticate(request)) {
+    const target = safeReturnTo(url.searchParams.get('returnTo'), '/app');
+    return new Response(null, {status:303,headers:{Location:new URL(target,url).pathname === '/signin' ? '/app' : target,'Cache-Control':'no-store'}});
   }
   let admission: ReturnType<typeof documentAdmission.getStore>;
   if (path === '/setup' || path === '/app' || path.startsWith('/app/')) {

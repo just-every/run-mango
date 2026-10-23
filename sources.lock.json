@@ -2374,7 +2374,7 @@
       "executable": false
     },
     "src/core/app/document-dispatch.ts": {
-      "sha256": "1250b011b82d669859c1a8ae5e58835362a61f6a2694b532c8f60a78705ef29f",
+      "sha256": "f9ec10740e65806251090b7bf6d6f185c8a06ab0b335e1eb99fbf7fbef62745f",
       "executable": false
     },
     "src/core/app/loaders.ts": {
@@ -7666,7 +7666,7 @@
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
-      "sha256": "7233358695832891419a29a9fc88c795c0bf5fb9c804479df04ff1b121b838c9",
+      "sha256": "51aa35647102252e65770597d5d506e435b19ca73de7b359bec55425d335a058",
       "executable": false
     },
     "tests/go-live/kiosk-harness.ts": {
