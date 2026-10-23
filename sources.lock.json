@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "e7948aa47036bbdc46a8a78ef58114037c6212eb98296b601b675eee1859dd98",
+      "sha256": "62ce7c24d845a2c3f1e9e6aa939d933e41827b216cb93a2c736755bf4098c915",
       "executable": false
     },
     "DEMO.md": {
@@ -3802,7 +3802,7 @@
       "executable": false
     },
     "src/core/features/insights/repository.ts": {
-      "sha256": "5d3d5f662b433e374306137fc6d1f8f1f5cccb4ffa24f934757a1fd49a01a1cf",
+      "sha256": "30d8faf0158f942e2c6ac5c95010e2facf57d3dcdc1e88fa31f2d1416cf6d3dc",
       "executable": false
     },
     "src/core/features/insights/retention-routes.ts": {
@@ -3834,7 +3834,7 @@
       "executable": false
     },
     "src/core/features/insights/routes.ts": {
-      "sha256": "b071730e79ed68ef778aedab61dc65e7e04dd18491a23905ab04e60ec2543521",
+      "sha256": "0e5d5c28345054631e3dba549e231d94bb8308112e28c163a93a831d5a8c03f4",
       "executable": false
     },
     "src/core/features/insights/schema.ts": {
@@ -3842,7 +3842,7 @@
       "executable": false
     },
     "src/core/features/insights/service.ts": {
-      "sha256": "b95f350f061f487670601537ee831187817c4db7f6cbb10e570babc3995bca14",
+      "sha256": "bf56634a56e3b1db59f98e1e2f3feb64518fd627021126f56af18604ce789113",
       "executable": false
     },
     "src/core/features/insights/ui/attribution-policy-note.tsx": {
@@ -3878,7 +3878,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/insights-page.tsx": {
-      "sha256": "cf5222b6137dc2a59df76909cf1ecfd379a15b634b29f30ad70b3da7c710433f",
+      "sha256": "069a76093f70a0b6fc7fc7ab988cc9a8014a4ef87225f5b4c3d292e984e46a1c",
       "executable": false
     },
     "src/core/features/insights/ui/list-growth.tsx": {
@@ -7262,7 +7262,7 @@
       "executable": false
     },
     "tests/campaign-results/results.journeys.ts": {
-      "sha256": "dee7710cbb00b159add452e437df2fcd14d6fa565180c180025f8a3d65a3fe0d",
+      "sha256": "8a09245765bf5d0e9cec21b05ff25634b5680b5152deca075d3e2540abfd4f65",
       "executable": false
     },
     "tests/campaign-results/retention-fixture.ts": {
@@ -7282,7 +7282,7 @@
       "executable": false
     },
     "tests/campaign-results/worker.ts": {
-      "sha256": "5577a0261ae79b105c4bb773b2dc08de7bf98c55b13ecea521ea3aac12a56763",
+      "sha256": "186719216d5f2d912dcb4ee4453c8b3147feaaabfc1c9215378f6a959aee5948",
       "executable": false
     },
     "tests/contract.js": {

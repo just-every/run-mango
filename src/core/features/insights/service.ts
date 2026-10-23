@@ -1,13 +1,15 @@
+import {overviewPeriod,type OverviewPeriod} from './overview-period';
 import type { createInsightsRepository } from './repository';
 
 export function createInsightsService(repository: ReturnType<typeof createInsightsRepository>,reportingWindowDays=30) {
   return {
     reportingWindowDays,
-    async list() {
+    async list(period:OverviewPeriod=overviewPeriod({})) {
       return {
         results: await repository.listResults(),
         costs: await repository.costReport(),
         usage: await repository.usageReport(),
+        overview: await repository.overview(period),
         note: 'Each count comes from the provider: its acceptance of a hand-off or a signed event about a recipient. Acceptance is not delivery, outcomes are never added together, and optional open estimates are kept separate.',
       };
     },

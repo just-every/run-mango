@@ -934,11 +934,9 @@ How the owner-approved scope (16 October 2026) maps to the clauses above. Incumb
 
 ## Status
 
-REPORT-007 was judged against code and tests at `7e58a8ec1aa8b42738cfac91285ff2ce80769820` (23 October 2026); flow grouping remains partial.
-
-CONT-017 was judged against code and tests at `811f55c640de9a40979aabd6c320874bd54acfb0` (23 October 2026); its row remains partial under the quoted carve default.
-
 Judged from the code and tests at commit `4ce94b70edc96f7653b3c1b7faf3e5308144b1d4` (23 October 2026). INT-002 moved to done with its Owner connection, store sync, signed replay and activated plugin checkout-flow journey; DELIV-002 and PUB-002 remain partial. SEG-001, STORE-004 and PUB-002 were reviewed at `4c4749cf2b4fb6584483bd1fc95f7af964b12335`: SEG-001 moved to done with its collection and category purchase conditions, STORE-004 moved to done with failed webhook and generation operations carrying the adapter's error, and PUB-002 moved to partial with its paid tier proved at the Stripe network edge (sandbox proof pending); REPORT-003 was reviewed at `2ecfa8e031c3a91bfc04bfd1bef2a26bb5d15bea` (22 October 2026); other rows retain their prior review boundaries. MOVE-009, CONT-012 and AUD-008 were reviewed against the candidate source based on `b40be01dcfcf8d793a92780252859eeccdaeb754` on 21 October 2026; their evidence and gaps below supersede only those earlier status entries. Published clause wording and the issued v0.4.0 release envelope are unchanged. MOVE-009 moved to done at d21d9e2b; its unproved remainder became MOVE-015 (missing), 22 October 2026.
+
+REPORT-007 was judged against code and tests at `7e58a8ec1aa8b42738cfac91285ff2ce80769820` (23 October 2026); flow grouping remains partial. CONT-017 was judged against code and tests at `811f55c640de9a40979aabd6c320874bd54acfb0` (23 October 2026); its row remains partial under the quoted carve default.
 
 The 0.3.0 release gate (19 October 2026) re-read every done row against its cited evidence at commit `bc5fdad`; it moved OPER-003 to partial because its cited test no longer showed retained attribution. The c4 journeys now restore OPER-003 to done and close AUD-003 and MSG-015; the c5 review journeys close MSG-006 and MSG-005 and the c5 activity journey covers existing Activity actions; OPER-007 remains partial until actual restore completion has actor/time and Activity view, filter and export proof; other statuses retain their existing boundaries.
 
