@@ -34,7 +34,7 @@ export async function activityJourney(site: Installation, edge: Awaited<ReturnTy
   // Public signup refusals are counted by hour and form, never by address, and summarised once the hour closes.
   const network = {'CF-Connecting-IP': '192.0.2.77', 'Content-Type': 'application/json'};
   const statuses: number[] = [];
-  for (let attempt = 0; attempt < 8; attempt++) statuses.push((await site.call('/subscribe', {method: 'POST', headers: network, body: {website: 'bot'}})).status);
+  for (let attempt = 0; attempt < 68; attempt++) statuses.push((await site.call('/subscribe', {method: 'POST', headers: network, body: {website: 'bot'}})).status);
   expect(statuses.filter(status => status === 429).length).toBeGreaterThan(0);
   const settings = await json(await site.call('/api/audience/signup', {cookie: owner}), 200);
   await json(await post('/api/audience/signup', owner, {frequencyDisclosure: 'Twice a month, on Fridays', embedOrigins: [], kioskEnabled: true, kioskDeviceLabel: 'Market stall tablet'}, 'PUT'), 200);

@@ -3,16 +3,17 @@ import { requestJson } from '@/core/app/client/lib/api';
 import { Field, ValidationForm } from '@/core/app/client/ui/validation-form';
 import { mapFieldErrors, type FieldErrors } from '@/core/app/client/ui/field-errors';
 
-export function SignupSettingsForm({frequencyDisclosure, embedOrigins, kioskEnabled=false, kioskDeviceLabel='', saved}: {frequencyDisclosure: string; embedOrigins: string[]; kioskEnabled?:boolean;kioskDeviceLabel?:string; saved: () => Promise<unknown>}) {
+export function SignupSettingsForm({frequencyDisclosure, embedOrigins, kioskEnabled=false, kioskDeviceLabel='', challengeEnabled=true, saved}: {frequencyDisclosure: string; embedOrigins: string[]; kioskEnabled?:boolean;kioskDeviceLabel?:string;challengeEnabled?:boolean; saved: () => Promise<unknown>}) {
   const [value, setValue] = useState(frequencyDisclosure), [busy, setBusy] = useState(false), [errors, setErrors] = useState<FieldErrors>({});
+  const [challenge,setChallenge]=useState(challengeEnabled);
   const [kiosk,setKiosk]=useState(kioskEnabled),[deviceLabel,setDeviceLabel]=useState(kioskDeviceLabel);
   const [origins, setOrigins] = useState(embedOrigins.join('\n'));
   const [notice, setNotice] = useState(''), [error, setError] = useState('');
   const validate = () => value.trim().length < 3 ? 'Describe how often subscribers will receive the newsletter.' : value.trim().length > 200 ? 'Use at most 200 characters.' : /[<>\u0000-\u001f\u007f]/u.test(value) ? 'Use plain text without markup or control characters.' : undefined;
   const save = async () => {
     if (busy) return; setBusy(true); setError(''); setNotice('');
-    try {const response = await requestJson<{fields?:unknown}>('/api/audience/signup', {method:'PUT', body:JSON.stringify({frequencyDisclosure:value,kioskEnabled:kiosk,kioskDeviceLabel:deviceLabel,embedOrigins:origins.split(/\r?\n/).map(origin=>origin.trim()).filter(Boolean)})});
-      if(response.status >= 400) {setErrors(mapFieldErrors(response.data.fields, ['frequencyDisclosure','embedOrigins','kioskDeviceLabel'])); setError('Signup settings could not be saved. Check the field and try again.'); return;}
+    try {const response = await requestJson<{fields?:unknown}>('/api/audience/signup', {method:'PUT', body:JSON.stringify({frequencyDisclosure:value,challengeEnabled:challenge,kioskEnabled:kiosk,kioskDeviceLabel:deviceLabel,embedOrigins:origins.split(/\r?\n/).map(origin=>origin.trim()).filter(Boolean)})});
+      if(response.status >= 400) {setErrors(mapFieldErrors(response.data.fields, ['frequencyDisclosure','embedOrigins','kioskDeviceLabel'])); setError('Signup settings could not be saved. Check the field and your permission to change verification.'); return;}
       await saved(); setNotice('Signup settings saved. New subscribers will see this frequency before giving consent.');
     } catch {setError('Signup settings could not be saved. Check your connection and try again.');} finally {setBusy(false);}
   };
@@ -23,7 +24,8 @@ export function SignupSettingsForm({frequencyDisclosure, embedOrigins, kioskEnab
         <label>Newsletter frequency (required)<Field name="frequencyDisclosure" label="Newsletter frequency" required validate={validate}><input value={value} onChange={event => setValue(event.target.value)} disabled={busy} maxLength={200} /></Field></label>
         <button className="secondary-action" type="submit" disabled={busy}>Save signup settings</button>
       </div>
-      <label><input type="checkbox" checked={kiosk} onChange={event=>setKiosk(event.target.checked)} disabled={busy}/> Kiosk or event form</label>
+      <label><input type="checkbox" checked={challenge} onChange={event=>setChallenge(event.target.checked)} disabled={busy||kiosk}/> Require verification (Owner or Admin changes this)</label>
+      <label><input type="checkbox" checked={kiosk} onChange={event=>{setKiosk(event.target.checked);if(event.target.checked)setChallenge(true);}} disabled={busy}/> Kiosk or event form</label>
       <p className="muted-copy">Use the hosted form on a shared tablet. Every visitor completes verification, and the form clears after success. Configure Turnstile before opening the kiosk.</p>
       <label>Device or event label<Field name="kioskDeviceLabel" label="Device or event label" required={kiosk}><input value={deviceLabel} onChange={event=>setDeviceLabel(event.target.value)} maxLength={100} disabled={busy} placeholder="Market stall tablet" /></Field></label>
       <label>Allowed embed origins<Field name="embedOrigins" label="Allowed embed origins"><textarea rows={3} value={origins} onChange={event=>setOrigins(event.target.value)} disabled={busy} placeholder="https://www.example.com" /></Field></label>

@@ -24,7 +24,7 @@ test('CONT-009 durable signup limits, body bounds, honeypot and concurrent desti
   expect((await call({email:'bot@example.test',consent:true,website:'spam'})).status).toBe(202);expect(h.f.outbound).toHaveLength(0);
   expect((await call({email:'bad',consent:false})).status).toBe(400);expect((await call({email:'large@example.test',consent:true,displayName:'x'.repeat(9000)})).status).toBe(400);
   const results=await Promise.all(Array.from({length:8},(_,i)=>call({email:'race@example.test',consent:true},`192.0.2.${100+i}`)));expect(results.every(response=>[202,429].includes(response.status))).toBeTruthy();expect(h.f.outbound).toHaveLength(1);
-  for(let index=0;index<3;index++)await call({email:'x@example.test',consent:false});expect((await call({email:'rate@example.test',consent:true})).status).toBe(429);
+  for(let index=0;index<60;index++)await call({email:'x@example.test',consent:false});expect((await call({email:'rate@example.test',consent:true})).status).toBe(429);
   expect(h.f.outbound).toHaveLength(1);
  }finally{await h.close();}
 });

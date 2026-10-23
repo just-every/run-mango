@@ -542,6 +542,12 @@
       "name": "core-0087_paid_state_authority.sql",
       "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
       "sql": "-- Existing subscriptions retain their state; the first fresh read supersedes\n-- event-second ordering. No payment or consent record is recreated.\nALTER TABLE paid_subscriptions ADD COLUMN read_started_at INTEGER NOT NULL DEFAULT 0;\nALTER TABLE commerce_receipts ADD COLUMN stripe_applied_at INTEGER;\n-- The hand-off claim fences every paid-state write, including replay/restore.\nCREATE TRIGGER paid_subscriptions_audience_generation_insert AFTER INSERT ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\nCREATE TRIGGER paid_subscriptions_audience_generation_update AFTER UPDATE ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\nCREATE TRIGGER paid_subscriptions_audience_generation_delete AFTER DELETE ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0088_signup_capacity.sql",
+      "sha256": "fad61e1f8590892158984333c0270437333faefa416d96fd7173ca016f285b13",
+      "sql": "-- Capacity revisions activate at a UTC window boundary. No contact data is held.\nCREATE TABLE signup_allowance_levels (\n  name TEXT NOT NULL,\n  effective_at INTEGER NOT NULL,\n  value INTEGER NOT NULL CHECK(value>0),\n  operator_id TEXT NOT NULL,\n  updated_at INTEGER NOT NULL,\n  PRIMARY KEY(name,effective_at)\n);\nALTER TABLE signup_settings ADD COLUMN challenge_enabled INTEGER NOT NULL DEFAULT 1 CHECK(challenge_enabled IN (0,1));\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

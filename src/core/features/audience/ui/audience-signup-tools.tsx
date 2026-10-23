@@ -9,6 +9,7 @@ type SignupToolsData = {
   consentText: string;
   frequencyDisclosure: string;
   embedOrigins: string[];
+  challengeEnabled:boolean;
   kioskEnabled:boolean;
   kioskDeviceLabel:string;
 };
@@ -72,7 +73,7 @@ export function AudienceSignupTools() {
           </div>
         </div>
       </div>
-      <SignupSettingsForm kioskEnabled={data.kioskEnabled} kioskDeviceLabel={data.kioskDeviceLabel} frequencyDisclosure={data.frequencyDisclosure} embedOrigins={data.embedOrigins} saved={reload} />
+      <SignupSettingsForm challengeEnabled={data.challengeEnabled} kioskEnabled={data.kioskEnabled} kioskDeviceLabel={data.kioskDeviceLabel} frequencyDisclosure={data.frequencyDisclosure} embedOrigins={data.embedOrigins} saved={reload} />
     </section>
   );
 }

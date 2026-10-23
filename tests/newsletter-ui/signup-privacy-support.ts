@@ -9,7 +9,7 @@ export async function challengeEdge(page:Page) {
     await route.fulfill({contentType:'application/javascript',body:`window.turnstile={render(element,options){
       if(options.action!=='newsletter-signup'||options.sitekey!=='fixture-public-site')throw Error('Unexpected challenge scope');
       const button=document.createElement('button');button.type='button';button.textContent='Complete verification';
-      button.onclick=()=>{options.callback('browser-valid-token');button.disabled=true;};element.append(button);return 'fixture-widget';
+      button.onclick=()=>{options.callback('browser-valid-token-'+crypto.randomUUID());button.disabled=true;};element.append(button);return 'fixture-widget';
     },remove(){}};`});
   });
   return external;
