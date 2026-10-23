@@ -934,10 +934,6 @@ How the owner-approved scope (16 October 2026) maps to the clauses above. Incumb
 
 ## Status
 
-REPORT-007 was judged against code and tests at `7e58a8ec1aa8b42738cfac91285ff2ce80769820` (23 October 2026); flow grouping remains partial.
-
-CONT-017 was judged against code and tests at `811f55c640de9a40979aabd6c320874bd54acfb0` (23 October 2026); its row remains partial under the quoted carve default.
-
 Judged from the code and tests at commit `55b95faf72aa44256703a6a540d26cb27c115730` (23 October 2026). PUB-005 moved to done with its hosted paid signup page, Worker Checkout and payer-consent journey. INT-002 moved to done with its Owner connection, store sync, signed replay and activated plugin checkout-flow journey; DELIV-002 and PUB-002 remain partial. SEG-001, STORE-004 and PUB-002 were reviewed at `4c4749cf2b4fb6584483bd1fc95f7af964b12335`: SEG-001 moved to done with its collection and category purchase conditions, STORE-004 moved to done with failed webhook and generation operations carrying the adapter's error, and PUB-002 moved to partial with its paid tier proved at the Stripe network edge (sandbox proof pending); REPORT-003 was reviewed at `2ecfa8e031c3a91bfc04bfd1bef2a26bb5d15bea` (22 October 2026); other rows retain their prior review boundaries. MOVE-009, CONT-012 and AUD-008 were reviewed against the candidate source based on `b40be01dcfcf8d793a92780252859eeccdaeb754` on 21 October 2026; their evidence and gaps below supersede only those earlier status entries. Published clause wording and the issued v0.4.0 release envelope are unchanged. MOVE-009 moved to done at d21d9e2b; its unproved remainder became MOVE-015 (missing), 22 October 2026.
 
 REPORT-007 was judged against code and tests at `7e58a8ec1aa8b42738cfac91285ff2ce80769820` (23 October 2026); flow grouping remains partial. CONT-017 was judged against code and tests at `811f55c640de9a40979aabd6c320874bd54acfb0` (23 October 2026); its row remains partial under the quoted carve default.
