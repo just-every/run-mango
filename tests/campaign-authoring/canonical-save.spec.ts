@@ -1,3 +1,4 @@
+import {mobilePresentationJourney} from './mobile-presentation-journey';
 import { localSessionCookieName } from '../support/local-session';
 import { test, expect } from '@playwright/test';
 import { authoredBody } from '../../src/core/features/campaigns/authoring-content';
@@ -7,7 +8,7 @@ import { authoringRuntime } from './browser-runtime.mjs';
 // clients read a comment or text and keep the span open over the claim.
 const closeTags = ['</ span>', '< /span>', '<\t/span>', '<\n/span>', '</\tspan>', '</\nspan>'];
 
-test('[CAMP-003][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree', async ({ request }) => {
+test('[BUILD-010][CAMP-003][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree', async ({ request,page },info) => {
   test.setTimeout(180000);
   const runtime = await authoringRuntime({ suite: 'authoring-canonical-save' });
   try {
@@ -48,6 +49,7 @@ test('[CAMP-003][MSG-009][MSG-012] saving stores the body as mail clients parse 
     const visible = await save('<p style="color:#333333" style="display:none">Reviewed claim</p><td style="display:none">Reviewed cell</td>');
     expect(visible).not.toMatch(/display:none|<td/);
     expect(await blockers()).not.toContain('message.content');
+    await mobilePresentationJourney(request,page,info,runtime.url,headers);
   } finally {
     await runtime.close();
   }
@@ -58,7 +60,7 @@ test('[CAMP-003][MSG-009][MSG-012] saving stores the body as mail clients parse 
 // written with other quotes ahead of the content, and a footer inside raw text; and bodies a save once failed on
 // (an SVG element named template) or grew on every save (a plaintext element inside SVG's own plaintext).
 const unsettled = [
-  { body: '<math><mtext><table><mglyph><style><li STYLE="color:#ffffff">', approvable: false },
+  { body: '<math><mtext><table><mglyph><style><li STYLE="color:#ffffff">', approvable: false, refused:true },
   { body: '<svg><template><p>Seasonal news</p></template></svg>', approvable: false },
   { body: '<svg><plaintext><desc><a href="https://shop.example.test/"><plaintext>Seasonal news', approvable: false },
   { body: `<hr><p>{{physical_address}}</p><p><a href='{{unsubscribe_url}}'>Unsubscribe</a></p><p>Seasonal news</p>`, approvable: true },
@@ -78,7 +80,8 @@ test('[CAMP-003][MSG-009] a saved body saves to the same bytes, whether saved as
       expect(saved.status(), `${JSON.stringify(emailBody)}: ${await saved.text()}`).toBe(200);
       return (await (await request.get(`${runtime.url}/api/campaigns/${campaignId}`, { headers })).json()).revision.emailBody as string;
     };
-    for (const { body, approvable } of unsettled) {
+    for (const { body, approvable,refused } of unsettled) {
+      if(refused){const response=await request.patch(`${runtime.url}/api/campaign-revisions/${revisionId}`,{headers,data:{emailBody:body}});expect(response.status()).toBe(400);expect((await response.json()).detail).toContain('style');continue;}
       const stored = await save(body);
       expect(await save(stored), body).toBe(stored);
       expect(await save(authoredBody(stored)), body).toBe(stored);

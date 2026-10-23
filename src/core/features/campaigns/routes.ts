@@ -1,3 +1,4 @@
+import {MobileEmailError} from './email-mobile';
 import { CampaignExportLimitError } from './export';
 import { hasPermission } from '@/core/features/auth/permissions';
 import { campaignReportCsvResponse } from '@/core/features/insights/campaign-recipient-csv';
@@ -22,6 +23,7 @@ const identifier = z.object({ id: z.string().min(1) });
 const settled = async <T,>(save: Promise<T>) => {
   try { return { saved: await save }; } catch (error) {
     if (error instanceof EmailTooLargeError) return {refused:{error:'email_too_large',detail:error.message,fields:{emailBody:error.message},size:error.size}};
+    if (error instanceof MobileEmailError) return {refused:{error:"invalid_mobile_email",detail:error.message}};
     if (error instanceof UnsettledEmailBodyError) return { refused: { error: 'invalid_email_body', detail: error.message } };
     throw error;
   }

@@ -1,3 +1,4 @@
+import {mobileEnvelope,mobileDocument,type MobileBlock} from './email-mobile';
 import { ErrorCodes, Parser, defaultTreeAdapter, html, serialize, type DefaultTreeAdapterMap, type DefaultTreeAdapterTypes, type ParserError, type Token } from 'parse5';
 import { protectAuthoringTokens } from './authoring-tokens';
 
@@ -23,6 +24,7 @@ export type EmailElement = {
 };
 export type EmailNode = EmailText | EmailComment | EmailElement;
 export type ParsedEmailHtml = {
+  mobile?: {style:string;settings:MobileBlock[]};
   nodes: EmailNode[];
   /** Every tag name the body writes, including tags parsers ignore or rename. */
   tags: ReadonlySet<string>;
@@ -118,7 +120,8 @@ const quoted = (written: string) => written.includes('=') && /["']$/.test(writte
 const attributeValue = (written: string) => written.includes('=') ? written.slice(written.indexOf('=') + 1).trim().replace(/^(["'])([\s\S]*)\1$/, '$2') : '';
 
 export function parseEmailHtml(source: string): ParsedEmailHtml {
-  const tokens = protectAuthoringTokens(source);
+  const envelope=mobileEnvelope(source);
+  const tokens = protectAuthoringTokens(envelope.body);
   const markup = tokens.html, restore = (value: string) => tokens.restore(value);
   const errors: ParserError[] = [];
   const context = defaultTreeAdapter.createElement('body', html.NS.HTML, []);
@@ -169,7 +172,8 @@ export function parseEmailHtml(source: string): ParsedEmailHtml {
     rewritten = { written: excerpt(written), parsed: excerpt(parsed) };
   }
   return {
-    nodes, tags: new Set(parser.tags.map(tag => restore(tag.name))), malformed: [...new Set(malformed)], lost: [...new Set(lost)],
-    rewritten, canonical: restore(serialized),
+    mobile:envelope.style?{style:envelope.style,settings:envelope.settings}:undefined,
+    nodes, tags: new Set(parser.tags.map(tag => restore(tag.name))), malformed: [...new Set([...malformed,...envelope.issues])], lost: [...new Set(lost)],
+    rewritten, canonical: mobileDocument(restore(serialized),envelope.style),
   };
 }
