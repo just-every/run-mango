@@ -40,6 +40,7 @@ export const campaignRevisions = sqliteTable(
     authoredExclusionReasonsJson: text('authored_exclusion_reasons_json').notNull().default('[]'),
     sourceTypesJson: text('source_types_json').notNull(),
     trackingEnabled: integer('tracking_enabled', { mode: 'boolean' }).notNull(),
+    utmPolicyJson: text('utm_policy_json'),
     contentDigest: text('content_digest'),
     approvedAt: integer('approved_at', { mode: 'timestamp_ms' }),
     approvedByOperatorId: text('approved_by_operator_id'),

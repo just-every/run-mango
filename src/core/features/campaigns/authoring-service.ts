@@ -31,7 +31,7 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
     starters:starters.list,
     async emailSize(draft: DraftComposition) {
       const value=normalizeAuthoredContent({...defaults(),...draft});
-      return savedEmailSize(platform.database,{emailSubject:value.emailSubject??'',emailBody:value.emailBody??'',emailText:value.emailText??'',preheader:value.preheader??'',physicalAddress:value.physicalAddress??'',smsBody:'',trackingEnabled:value.trackingEnabled},{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);
+      return savedEmailSize(platform.database,{emailSubject:value.emailSubject??'',emailBody:value.emailBody??'',emailText:value.emailText??'',preheader:value.preheader??'',physicalAddress:value.physicalAddress??'',smsBody:'',trackingEnabled:value.trackingEnabled,utmPolicyJson:value.utmPolicyJson,name:value.name},{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);
     },
     async fromSignal(id:string,operatorId:string) {
       const source=await starters.read(id);

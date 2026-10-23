@@ -545,9 +545,15 @@
     },
     {
       "binding": "DB",
-      "name": "core-0088_signup_capacity.sql",
+      "name": "core-0089_signup_capacity.sql",
       "sha256": "fad61e1f8590892158984333c0270437333faefa416d96fd7173ca016f285b13",
       "sql": "-- Capacity revisions activate at a UTC window boundary. No contact data is held.\nCREATE TABLE signup_allowance_levels (\n  name TEXT NOT NULL,\n  effective_at INTEGER NOT NULL,\n  value INTEGER NOT NULL CHECK(value>0),\n  operator_id TEXT NOT NULL,\n  updated_at INTEGER NOT NULL,\n  PRIMARY KEY(name,effective_at)\n);\nALTER TABLE signup_settings ADD COLUMN challenge_enabled INTEGER NOT NULL DEFAULT 1 CHECK(challenge_enabled IN (0,1));\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0090_analytics_tagging.sql",
+      "sha256": "9acd279167a6f246cc9d629eb2a0a8c40d4530082e75d01e81f4b0a92a089142",
+      "sql": "CREATE TABLE analytics_settings (\n  id INTEGER PRIMARY KEY CHECK (id = 1),\n  policy_json TEXT NOT NULL,\n  operator_id TEXT NOT NULL,\n  updated_at INTEGER NOT NULL\n);\n-- NULL preserves issued and historical message URLs and their approval digests.\nALTER TABLE campaign_revisions ADD COLUMN utm_policy_json TEXT;\nALTER TABLE tracked_links ADD COLUMN original_destination_url TEXT;\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

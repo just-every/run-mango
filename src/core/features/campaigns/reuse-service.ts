@@ -13,7 +13,7 @@ import { starterTemplates } from './starter-templates';
 export type UnscheduledStep = { channel: 'email' | 'sms'; timezone: string; whyThisTime: string };
 type Snapshot = { composition: DraftComposition; stepSettings: UnscheduledStep[] };
 type Template = { id: string; name: string; composition_json: string; updated_at: number };
-const contentFields = ['emailSubject','emailBody','emailText','preheader','smsBody','senderName','fromEmail','replyToEmail','smsSender','physicalAddress','messageCategory','inclusionRuleJson','exclusionRulesJson','trackingEnabled'] as const;
+const contentFields = ['emailSubject','emailBody','emailText','preheader','smsBody','senderName','fromEmail','replyToEmail','smsSender','physicalAddress','messageCategory','inclusionRuleJson','exclusionRulesJson','trackingEnabled','utmPolicyJson'] as const;
 
 export function createCampaignReuseService(database: Database, defaults: () => DraftComposition, timezone: string, sizeOptions: EmailSizeOptions = {}) {
   const db = database.$client;

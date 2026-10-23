@@ -150,6 +150,7 @@ export type LifecycleQueueBatch = { messages: QueueMessage[] };
 export type CampaignRevisionSnapshot = {
   revision: {
     dormancyPolicyJson?:string;
+    utmPolicyJson?:string;
     id: string;
     campaignId: string;
     state: string;

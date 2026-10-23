@@ -39,6 +39,7 @@ function revisionFromRow(row: Row) {
     smsSender: String(row.sms_sender),
     physicalAddress: String(row.physical_address),
     messageCategory: String(row.message_category),
+    ...(row.utm_policy_json==null?{}:{utmPolicyJson:String(row.utm_policy_json)}),
     trackingEnabled: bool(row.tracking_enabled),
     updatedAt: timestamp(row.updated_at),
   };
@@ -180,7 +181,7 @@ export function createRecipientLifecycleRepository(database: Database) {
         client.prepare(
           `SELECT r.*, v.name, v.email_subject, v.email_body, v.email_text, v.preheader, v.sms_body,
              v.sender_name, v.from_email, v.reply_to_email, v.sms_sender, v.physical_address,
-             v.dormancy_policy_json, v.tracking_enabled, v.source_types_json, v.inclusion_rule_json, v.exclusion_rules_json, s.timezone
+             v.dormancy_policy_json, v.utm_policy_json, v.tracking_enabled, v.source_types_json, v.inclusion_rule_json, v.exclusion_rules_json, s.timezone
            FROM recipient_steps r
            JOIN campaign_revisions v ON v.id = r.revision_id
            JOIN campaign_steps s ON s.id = r.step_id
@@ -200,6 +201,7 @@ export function createRecipientLifecycleRepository(database: Database) {
         inclusionRuleJson: String(row.inclusion_rule_json),
         exclusionRulesJson: String(row.exclusion_rules_json),
         revision: {
+          id:String(row.revision_id), ...(row.utm_policy_json==null?{}:{utmPolicyJson:String(row.utm_policy_json)}),
           name: String(row.name), emailSubject: String(row.email_subject), emailBody: String(row.email_body),
           emailText: String(row.email_text), preheader: String(row.preheader), smsBody: String(row.sms_body),
           senderName: String(row.sender_name), fromEmail: String(row.from_email), replyToEmail: String(row.reply_to_email),
@@ -234,15 +236,15 @@ export function createRecipientLifecycleRepository(database: Database) {
       id: string;
       leaseToken: string;
       requestJson: string;
-      trackedLinks: Array<{ tokenDigest: string; destinationUrl: string; expiresAt: Date }>;
+      trackedLinks: Array<{ tokenDigest: string; destinationUrl: string; originalDestinationUrl?:string; expiresAt: Date }>;
       now: Date;
     }) {
       const statements = input.trackedLinks.map((link) => client.prepare(
-        `INSERT INTO tracked_links (token_digest, recipient_step_id, destination_url, expires_at, created_at, revision_link_id)
-         VALUES (?, ?, ?, ?, ?, (SELECT MIN(l.id) FROM campaign_revision_links l
+        `INSERT INTO tracked_links (token_digest, recipient_step_id, destination_url, expires_at, created_at, original_destination_url, revision_link_id)
+         VALUES (?, ?, ?, ?, ?, ?, (SELECT MIN(l.id) FROM campaign_revision_links l
            JOIN recipient_steps r ON r.revision_id=l.revision_id
            WHERE r.id=? AND l.destination_url=? HAVING COUNT(*)=1)) ON CONFLICT(token_digest) DO NOTHING`,
-      ).bind(link.tokenDigest, input.id, link.destinationUrl, link.expiresAt.getTime(), input.now.getTime(), input.id, link.destinationUrl));
+      ).bind(link.tokenDigest, input.id, link.destinationUrl, link.expiresAt.getTime(), input.now.getTime(), link.originalDestinationUrl??link.destinationUrl, input.id, link.originalDestinationUrl??link.destinationUrl));
       statements.push(client.prepare(
         `UPDATE recipient_steps SET outbound_request_json = COALESCE(outbound_request_json, ?), updated_at = ?
          WHERE id = ? AND lease_token = ? AND transport_disposition = 'queued'`,
@@ -259,6 +261,7 @@ export function createRecipientLifecycleRepository(database: Database) {
       return row ? {
         recipientStepId: String(row.recipient_step_id),
         destinationUrl: String(row.destination_url),
+        originalDestinationUrl:String(row.original_destination_url??row.destination_url),
         revisionLinkId: row.revision_link_id == null ? undefined : String(row.revision_link_id),
         recordsClicksUntil: Number(row.expires_at),
       } : undefined;
