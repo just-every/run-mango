@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "e979d8c77a85e3c89e9f5d730c904e16a4ae599782dd531522a6d2344605635d",
+      "sha256": "bf04a81d85bb9baa74b1b3836f17f1dc80eec299a8376573de92656921704f80",
       "executable": false
     },
     "DEMO.md": {
@@ -7570,7 +7570,7 @@
       "executable": false
     },
     "tests/go-live/sending-connection-journey.ts": {
-      "sha256": "914712c0be9c3824c442256d4b1207d16508fb7d79fe09959e151295899fac9d",
+      "sha256": "fd6e1f6e1aec61e859106cd83bc58c1ac439215ef04d9a756873ab8d793ca39e",
       "executable": false
     },
     "tests/go-live/sms-bindings.ts": {
