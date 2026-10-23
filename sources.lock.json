@@ -8010,7 +8010,7 @@
       "executable": false
     },
     "tests/support/free-port.mjs": {
-      "sha256": "b6be931fcb1637ae974409893d30b856e24c44e30cd7fa299eadc625e296ca4a",
+      "sha256": "af1a1069833aed104d61892de37fd4198e10fb6023ebf63f52cd96703b9651b4",
       "executable": false
     },
     "tests/support/images.ts": {
