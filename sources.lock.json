@@ -1174,7 +1174,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "98b5981479b44279309977027c344849d188b8ac54af0e785f21829aca24ac17",
+      "sha256": "16c00ff7cf136d5176fc72029cf7ce8ae27c8434384247d7bb4431d4577c1dc9",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -2474,7 +2474,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "291b45be636292ccd318cf461415d8521aa9197b7752bb942ce156dbbfd2d493",
+      "sha256": "5869e29f94daf48aeb9d102fa823ddd724dfce4e1b454b4ae4e04e29cc6402b7",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -3326,7 +3326,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/decision-desk.tsx": {
-      "sha256": "f5e0091d90039549264791a81057152ac7acd144de76698b3ff0e2b402d655e2",
+      "sha256": "6e3f7946a90995b6e12454a5867204a6c9b74bbf677db9d9fba467df8d259ea7",
       "executable": false
     },
     "src/core/features/campaigns/ui/delivery-plan.tsx": {
@@ -4450,11 +4450,11 @@
       "executable": false
     },
     "src/core/features/sender-verification/service.ts": {
-      "sha256": "5702574b3a39804933aa12966d6c01bd26eb1309844b408618d3ab7e6b67dc5c",
+      "sha256": "99e286ff81e70c6ced10e1fe138bb43f60ffe18667e42942a437d165a09e0ea5",
       "executable": false
     },
     "src/core/features/sender-verification/setup-routes.ts": {
-      "sha256": "f0cdd60343a052af4a701e3faa6a6825adc157ffb0264359a0a74f100e8af272",
+      "sha256": "03e0b21ac8d2f36b3b93861bcbfbb1f3b9439ed2607a038677e5c541f3ac8e17",
       "executable": false
     },
     "src/core/features/sender-verification/spf.ts": {
@@ -7498,7 +7498,7 @@
       "executable": false
     },
     "tests/go-live/managed-mail.journeys.ts": {
-      "sha256": "94c97438d72f94b0b9e94a1fc663f2c4a180a15199cd9428446aab040bfa1031",
+      "sha256": "30b4e4aeec087426b815ca24f3a01ac23e381e6afc65cf9541233d4d84987032",
       "executable": false
     },
     "tests/go-live/multistep.journeys.ts": {
@@ -7962,11 +7962,11 @@
       "executable": false
     },
     "tests/sender-verification/worker-entry.ts": {
-      "sha256": "bb437ee4f00f57e2b0bce48b1f25b59ce58444faf22a6268d1c26f921e1f6395",
+      "sha256": "19ceb438f303dfc9df58e065c98a867216da8e17aa2166732c656232f8b315a2",
       "executable": false
     },
     "tests/sender-verification/worker.spec.ts": {
-      "sha256": "4d6abe5438dbf7de43c3d8c568e62b92b29761e2fee2847f7b159d5779bb7428",
+      "sha256": "12c2d5563a434e9c38b136c35fed5320e84a79dedd43915c0b9ff43de69a2ed9",
       "executable": false
     },
     "tests/settings-sender/config.js": {

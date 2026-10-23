@@ -1,3 +1,4 @@
+import {proveRenewal} from './renewal-proof';
 import { bootstrapSession } from '../support/operator-session';
 // Test-only Worker entry. All provider/receiver I/O is intercepted here; no test
 // connector, fixture or endpoint is imported by the production entry.
@@ -11,6 +12,7 @@ export default { async fetch(request: Request, env: { DB: D1Database }) {
   const f = composeFixture(env.DB);
   try {
     const path = new URL(request.url).pathname;
+    if(path==='/test-renewal-proof')return Response.json(await proveRenewal(f));
     if (path === '/test-proof') {
       const challenge = await f.prove();
       const campaign = await draft(f);
