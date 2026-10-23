@@ -62,6 +62,7 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     await json(await connect(replay.proposalId),200);expect(provider.state.mutations.filter(v=>v.method==='POST')).toHaveLength(creates);
     expect((await connect(replay.proposalId)).status).toBe(422);
     const email='synthetic-mango-86@example.test';await confirmedContact(site,edge,owner,email,'Synthetic Mango reader');
+    await site.control('/_golive/clock',{advanceMs:1000});
     await site.control('/_golive/sender-evidence');
     const campaign=await draftCampaign(site,owner,'Synthetic Mango connected send',[email],new Date(Date.now()+60000));
     const approval=await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId}});
@@ -75,6 +76,7 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     expect(await signedPost(site,'/webhooks/mail/sendgrid',unrelated,signer.headers(unrelated,String(Math.floor(Date.now()/1000)-301)))).toBe(401);expect(await site.count('provider_fact_inbox')).toBe(beforeEvents);
     expect(await signedPost(site,'/webhooks/mail/sendgrid',unrelated,signer.headers(unrelated))).toBe(204);
     expect((await json(await site.call('/api/settings/sending',{cookie:owner}),200)).connection.deliveryEventsVerified).toBe(false);
+    await site.control('/_golive/clock',{advanceMs:1000});
     await json(await site.call('/api/settings/sender/confirmation',{method:'POST',cookie:owner}),202);
     const check=edge.sends.findLast(send=>send.to==='owner@example.test');expect(check).toBeTruthy();
     const delivered=Buffer.from(JSON.stringify([event('delivered',check!.to,Date.now(),check!.messageId,{})]));
