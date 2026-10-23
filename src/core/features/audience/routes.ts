@@ -60,7 +60,7 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
       const input={...parsed.data,captureMethod:'operator-recorded',captureSource:`Operator:${operator.displayName || operator.email} (${operator.id})|${parsed.data.permissionMethod ?? parsed.data.captureMethod}|${parsed.data.channel==='sms'?'express-written|':''}${parsed.data.captureSource}`};
       let result;
       if(input.channel==='email'){
-        if(!input.contact.email||await service.publicSignupState(input.contact.email)!=='new')return context.json({error:'manual_entry_existing_restriction',detail:'This address is already subscribed, unsubscribed or suppressed. Hand entry cannot change that state.'},409);
+        if(!input.contact.email||!await service.canCaptureManualEmail(input.contact.email))return context.json({error:'manual_entry_existing_restriction',detail:'This address is already subscribed, unsubscribed or suppressed. Hand entry cannot change that state.'},409);
         await service.ensureContact(input.contact,new Date());
         result=await service.capturePublicSignup({...input,confirmationRequired:mode.mode==='double',optInPolicy:{mode,allowResubscribe:false,operator:authority}});
         if(!result)return context.json({error:'manual_entry_state_changed',detail:'The address or opt-in mode changed. Review it before trying again.'},409);

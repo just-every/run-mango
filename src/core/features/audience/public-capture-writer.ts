@@ -5,6 +5,7 @@ import type {OptInMode} from './opt-in-modes';
 import {recipientOptOutSql,recipientSuppressionSql} from './public-resubscribe-policy';
 import type {Database} from '@/core/platform/db/client';
 import type {consentEvidence} from './schema';
+import {manualEmailEligibility} from './manual-email-policy';
 
 /** Public capture records confirmed-only reconsent. All identity/profile/evidence
  * writes share the D1 transaction that checks the destination's current state. */
@@ -13,6 +14,7 @@ export function createPublicCaptureWriter(database: Database) {
   return async (evidence: typeof consentEvidence.$inferInsert, destinationHash: string, displayName?: string, captureIp?: string, policy?:{mode?:OptInMode;credentialId?:string;allowResubscribe?:boolean;operator?:SenderWriteAuthority}) => {
     const {id, contactId, destination} = evidence, now = evidence.createdAt.getTime(), occurred = evidence.occurredAt.getTime();
     const single=evidence.confirmationRequired===false;
+    const manual=policy?.mode?.point==='manual' && Boolean(policy.operator) && policy.allowResubscribe===false;
     const owner = `COALESCE((SELECT contact_id FROM contact_email_addresses WHERE email=?),
       (SELECT id FROM contacts WHERE email=?), ?)`;
     const ownerValues = [destination, destination, contactId];
@@ -26,12 +28,17 @@ export function createPublicCaptureWriter(database: Database) {
       AND NOT EXISTS(SELECT 1 FROM contacts WHERE (email=? OR id IN (SELECT contact_id FROM contact_email_addresses WHERE email=?))
         AND (email_status='subscribed' OR merge_lock IS NOT NULL OR (email_status='suppressed' AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email' AND ${recipientSuppressionSql}))))`;
     const guard = [id, destinationHash, occurred, destinationHash, occurred, destination, destinationHash, destination, destination, destinationHash];
+    if(manual){
+      const restriction=manualEmailEligibility(destination,destinationHash);
+      eligible=`NOT EXISTS(SELECT 1 FROM consent_evidence WHERE id=?) AND ${restriction.sql}`;
+      guard.splice(0,guard.length,id,...restriction.values);
+    }
     if(single){
       if(!policy?.mode)throw new Error('Single opt-in requires its current capture-point policy.');
       eligible+=" AND EXISTS(SELECT 1 FROM opt_in_modes WHERE point=? AND mode='single' AND version=?)";
       guard.push(policy.mode.point,policy.mode.version);
     }
-    if(single||policy?.allowResubscribe===false){
+    if(!manual && (single||policy?.allowResubscribe===false)){
       eligible+=" AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel='email') AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email') AND NOT EXISTS(SELECT 1 FROM contacts WHERE (email=? OR id IN (SELECT contact_id FROM contact_email_addresses WHERE email=?)) AND email_status IN ('unsubscribed','suppressed')) AND NOT EXISTS(SELECT 1 FROM contact_email_addresses WHERE email=? AND channel_status IN ('unsubscribed','suppressed'))";
       guard.push(destinationHash,destinationHash,destination,destination,destination);
     }
@@ -55,10 +62,10 @@ export function createPublicCaptureWriter(database: Database) {
         SELECT ?,${owner},?,CASE WHEN ${isResubscribe} THEN 'unsubscribed' ELSE 'pending' END,?,?,? WHERE ${eligible}
         AND EXISTS(SELECT 1 FROM contacts WHERE id=${owner}) ON CONFLICT(email) DO NOTHING`)
         .bind(`${id}_email`, ...ownerValues, destination, ...resubscribeValues, occurred, now, now, ...guard, ...ownerValues),
-      db.prepare(`UPDATE contacts SET display_name=COALESCE(NULLIF(?,''),display_name),email_status=CASE WHEN email_status IN ('unsubscribed','suppressed') THEN email_status ELSE 'pending' END,email_status_at=CASE WHEN email_status IN ('unsubscribed','suppressed') THEN email_status_at ELSE ? END,
+      db.prepare(`UPDATE contacts SET display_name=COALESCE(NULLIF(?,''),display_name),email_status=CASE WHEN email_status IN ('subscribed','unsubscribed','suppressed') THEN email_status ELSE 'pending' END,email_status_at=CASE WHEN email_status IN ('subscribed','unsubscribed','suppressed') THEN email_status_at ELSE ? END,
         last_activity_at=MAX(COALESCE(last_activity_at,?),?),updated_at=? WHERE id=${owner} AND ${eligible}`)
         .bind(displayName?.trim() ?? '', occurred, occurred, occurred, now, ...ownerValues, ...guard),
-      db.prepare(`UPDATE contact_email_addresses SET channel_status=CASE WHEN channel_status IN ('unsubscribed','suppressed') THEN channel_status ELSE 'pending' END,channel_status_at=CASE WHEN channel_status IN ('unsubscribed','suppressed') THEN channel_status_at ELSE ? END,updated_at=? WHERE email=? AND ${eligible}`)
+      db.prepare(`UPDATE contact_email_addresses SET channel_status=CASE WHEN channel_status IN ('subscribed','unsubscribed','suppressed') THEN channel_status ELSE 'pending' END,channel_status_at=CASE WHEN channel_status IN ('subscribed','unsubscribed','suppressed') THEN channel_status_at ELSE ? END,updated_at=? WHERE email=? AND ${eligible}`)
         .bind(occurred, now, destination, ...guard),
     ];
     if (captureIp) statements.push(db.prepare(`INSERT INTO consent_capture_metadata(id,contact_id,capture_ip,confirmation_ip,created_at,updated_at)

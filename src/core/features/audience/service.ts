@@ -260,6 +260,13 @@ export function createAudienceService(
     return await publicSignupState(email) !== 'refused';
   }
 
+  async function canCaptureManualEmail(email: string) {
+    const destination=canonicalEmail(email);
+    if(!destination)return false;
+    await repository.claimPortableRestrictions(requiredDependencies().contactHashSalt,[destination]);
+    return repository.canCaptureManualEmail(destination,await hashDestination(destination));
+  }
+
   async function recordPublicSignupRefusal(email: string, reason: string, now = new Date()) {
     const contact = await repository.findContactByEmail(canonicalEmail(email) ?? '');
     if (contact && contact.emailStatus!=='subscribed') await recordHistory(contact.id,'resubscribe-refused',reason,now);
@@ -267,9 +274,10 @@ export function createAudienceService(
 
   // Public reconsent creates evidence without relaxing the existing channel state.
   async function capturePublicSignup(input: ConsentCapture, now = new Date()) {
-    if (input.channel !== 'email' || !await canCapturePublicEmail(input.contact.email ?? '')) return undefined;
+    const manual=input.optInPolicy?.mode?.point==='manual' && Boolean(input.optInPolicy.operator) && input.optInPolicy.allowResubscribe===false;
+    if (input.channel !== 'email' || !await (manual?canCaptureManualEmail:canCapturePublicEmail)(input.contact.email ?? '')) return undefined;
     const destination = canonicalEmail(input.contact.email)!;
-    const publicInput = {...input, confirmationRequired: input.confirmationRequired!==false || await publicSignupState(destination)==='resubscribe'};
+    const publicInput = {...input, confirmationRequired: input.confirmationRequired!==false || (!manual && await publicSignupState(destination)==='resubscribe')};
     const values = consentValues(publicInput, ulid(now.getTime()), destination, now);
     const captured = await repository.capturePublicSignupAtomic(values, await hashDestination(destination), input.contact.displayName, input.captureIp,input.optInPolicy);
     if (!captured) return undefined;
@@ -277,7 +285,7 @@ export function createAudienceService(
     const contact = evidence && await repository.getContact(evidence.contactId);
     if (!evidence || !contact) return undefined;
     if(!evidence.confirmationRequired)return {contact,evidence,confirmation:undefined};
-    return sendConsentConfirmation(publicInput, contact, evidence, now, true);
+    return sendConsentConfirmation(publicInput, contact, evidence, now, !manual);
   }
 
   function consentValues(input: ConsentCapture, contactId: string, destination: string, now: Date) {
@@ -642,6 +650,7 @@ export function createAudienceService(
     ensureContact,
     captureConsent,
     canCapturePublicEmail,
+    canCaptureManualEmail,
     publicSignupState,
     recordPublicSignupRefusal,
     capturePublicSignup,

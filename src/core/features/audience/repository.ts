@@ -1,4 +1,5 @@
 import {recordManualSmsCapture} from './manual-sms-capture';
+import {manualEmailEligibility} from './manual-email-policy';
 import {createSegmentFacts} from './segment-facts';
 import {listGrowthEvents} from '@/core/features/insights/schema';
 import {recipientOptOutSql, recipientSuppressionSql} from './public-resubscribe-policy';
@@ -71,6 +72,10 @@ export function createAudienceRepository(database: Database) {
   return {
     ...createSegmentFacts(database.$client),
     capturePublicSignupAtomic: createPublicCaptureWriter(database),
+    async canCaptureManualEmail(destination:string,destinationHash:string){
+      const guard=manualEmailEligibility(destination,destinationHash);
+      return Boolean(await database.$client.prepare(`SELECT 1 WHERE ${guard.sql}`).bind(...guard.values).first());
+    },
     async recordPhoneLocation(phone:string,timeZone:string,source:string,at:Date){await database.update(contactPhones).set({timeZone,locationSource:source,locationRecordedAt:at}).where(eq(contactPhones.phoneE164,phone));},
     claimConfirmationHandoff: createConfirmationHandoff(database),
     async followupExists(cohort:string){return Boolean(await database.$client.prepare('SELECT id FROM campaign_followups WHERE id=?').bind(cohort).first());},
