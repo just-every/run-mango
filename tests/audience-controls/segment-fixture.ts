@@ -32,7 +32,8 @@ export async function segmentFixture() {
     const headers={Authorization:`Bearer ${credential.token}`};
     const people:Array<{id:string;email:string}>=[];
     for(let n=0;n<8;n++) {
-      await site.control('/_golive/clock',{advanceMs:1000,hold:true});
+      const pace=(await site.rows('SELECT max(next_at) due FROM provider_pacing'))[0]?.due??0,clock=await site.control('/_golive/clock');
+      await site.control('/_golive/clock',{advanceMs:Math.max(1000,pace-clock.now+1),hold:true});
       const contact=await json(await site.call('/api/integrations/v1/contacts',{method:'PUT',headers,body:{
         email:`synthetic-mango-${n+1}@example.test`,displayName:`Garden customer ${n+1}`,segmentName:'Garden customers',
         fields:{interest:n===0?'vegetables':'flowers'},tags:n===0?['market','local']:['market'],subscribe:true,
