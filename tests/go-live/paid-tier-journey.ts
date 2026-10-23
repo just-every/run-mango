@@ -97,6 +97,16 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
       status === 'paused' ? subscription('paid') : {id: `in_resume_${status}`, customer: 'cus_paid', subscription: 'sub_paid'}));
     await members(['paid']);
   }
+  // A failed refresh denies paid authority; the same verified event can recover.
+  const currentSubscription = edge.stripe.subscriptions.sub_paid;
+  delete edge.stripe.subscriptions.sub_paid;
+  const uncertain = event('evt_unavailable_refresh', 'invoice.paid', {id:'in_unavailable_refresh',customer:'cus_paid',subscription:'sub_paid'});
+  expect((await post(uncertain)).status).toBe(422);
+  await members([]);
+  edge.stripe.subscriptions.sub_paid = currentSubscription;
+  await site.control('/_golive/clock',{advanceMs:1});
+  await deliver(uncertain);
+  await members(['paid']);
   // A current paid reader receives the approved issue, and the free reader does not.
   await approve(site, owner, campaign);
   await site.control('/_golive/clock', {advanceMs: 3600001});

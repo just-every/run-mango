@@ -35,6 +35,15 @@ export function createPaidTier(db: D1Database, hasConsent?: (contactId: string) 
         'payment_method_types[0]': 'card', 'customer_email': email, 'success_url': origin + '/subscribe/info', 'cancel_url': origin + '/subscribe',
         'metadata[mango_paid_tier]': '1', 'subscription_data[metadata][mango_paid_tier]': '1'});
     },
+    async failClosed(event: StripeObject, readAt: number) {
+      const object = event.data.object;
+      const id = event.type.startsWith('customer.subscription.') ? object.id
+        : event.type === 'checkout.session.completed' && object.mode === 'subscription' ? object.subscription
+        : ['invoice.payment_failed', 'invoice.paid'].includes(event.type) ? object.subscription ?? object.parent?.subscription_details?.subscription : null;
+      if (typeof id !== 'string') return;
+      await db.prepare(`UPDATE paid_subscriptions SET state='payment-failed',stripe_status='unverified',read_started_at=?,updated_at=?
+        WHERE subscription_id=? AND read_started_at<=?`).bind(readAt, Date.now(), id, readAt).run();
+    },
     async read(event: StripeObject, lookup: (path: string) => Promise<StripeObject>) {
       const current = await tier();
       return current ? readPaidState(event, current.priceId, lookup) : null;

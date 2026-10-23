@@ -90,6 +90,7 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
       event = await verifyStripe(context.req.raw, await unseal(stored.signing_cipher, platform.config.sessionSigningKey));
       if (event.livemode !== (stored.mode === 'live')) throw new Error('mode');
     } catch {return context.json({error: 'invalid_stripe_signature'}, 401);}
+    const readStartedAt = Date.now();
     try {
       const receipt = 'stripe:' + event.id, digest = await sha256(JSON.stringify(event));
       const receiptId = await sha256(receipt);
@@ -120,6 +121,9 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
       await operations.recoverDeliveries([receipt], new Date());
       return context.body(null, 204);
     } catch (error) {
+      // Uncertain authority cannot preserve paid eligibility. Keep the event
+      // retryable, and never overwrite a newer successful observation.
+      await paid.failClosed(event, readStartedAt);
       // A verified event whose Stripe read failed is recorded once per event.
       if (error instanceof CommerceWebhookUnreadable) await operations.recordFailedOperation({operation: 'webhook', provider: 'stripe', sourceType: error.sourceType, deliveryKey: error.deliveryKey, error: error.message, now: new Date()});
       return context.json({error: 'stripe_ingestion_failed'}, 422);
