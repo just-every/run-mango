@@ -3846,7 +3846,7 @@
       "executable": false
     },
     "src/core/features/insights/cost-report.ts": {
-      "sha256": "24145648bc0d3a480f58dda38672a57ab913b187f57c8cac34a98dae83b20a03",
+      "sha256": "19bf6bc012a626b6d2189967c1c6e891f58933ef8dd929fcf5ac19ab30bcb699",
       "executable": false
     },
     "src/core/features/insights/index.ts": {
@@ -3874,7 +3874,7 @@
       "executable": false
     },
     "src/core/features/insights/repository.ts": {
-      "sha256": "2d37bf4eeda35ccad94054419d78c739c9284d071833f4274fd39a7b92641009",
+      "sha256": "5d3d5f662b433e374306137fc6d1f8f1f5cccb4ffa24f934757a1fd49a01a1cf",
       "executable": false
     },
     "src/core/features/insights/retention-routes.ts": {
@@ -3914,7 +3914,7 @@
       "executable": false
     },
     "src/core/features/insights/service.ts": {
-      "sha256": "2db483a18dd5c360061a050e220f711059213be15b79b3e5cf5e5a76c046ccc2",
+      "sha256": "b95f350f061f487670601537ee831187817c4db7f6cbb10e570babc3995bca14",
       "executable": false
     },
     "src/core/features/insights/ui/attribution-policy-note.tsx": {
@@ -3979,6 +3979,14 @@
     },
     "src/core/features/insights/ui/sender-rates.tsx": {
       "sha256": "7d889784c1591e5f98bfd1b1d863223130b5a209e66d7b0998801c83a813c2d7",
+      "executable": false
+    },
+    "src/core/features/insights/ui/settings-usage.tsx": {
+      "sha256": "edcd3758d0bdbacddae9141d6c3ac870e8d47f5d7c880b66f819fe12412a0c9e",
+      "executable": false
+    },
+    "src/core/features/insights/usage-report.ts": {
+      "sha256": "6785b4d47281d3d494906e64e5f0adbaf63af2a3171c60390d5f5625c13a8a63",
       "executable": false
     },
     "src/core/features/integrations/contacts.ts": {
@@ -5190,7 +5198,7 @@
       "executable": false
     },
     "src/routes/app.settings.tsx": {
-      "sha256": "b67264185095e5c23b595b07928efa66170174e7ef7041fa7e1ab8f051e10426",
+      "sha256": "af70d2f1ec594b076e8008598756e987d5728b72b52043d507dd11f78b90e33f",
       "executable": false
     },
     "src/routes/app.store.tsx": {
@@ -7306,11 +7314,11 @@
       "executable": false
     },
     "tests/campaign-results/cost-worker.ts": {
-      "sha256": "0d16b1edf05db408d785c7cd84057cf80673d93bdedbf967234bbb4e93565ed7",
+      "sha256": "4313c7576fa568a0eb9ff35872c402e8be8157f2591e0cc7c94675d8d15072bf",
       "executable": false
     },
     "tests/campaign-results/costs.journeys.ts": {
-      "sha256": "0df74a79dbd7e523aa9b658e118552120e137dba8e6035fe25263a6ad5f7bed4",
+      "sha256": "c3c71d4c3e59b057559c4fcf2ad84cd6150480cfa8cfbe3ed2f227cfa9d07a33",
       "executable": false
     },
     "tests/campaign-results/cross-channel-attribution.ts": {

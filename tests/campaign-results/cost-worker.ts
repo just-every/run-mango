@@ -42,6 +42,16 @@ export default { async fetch(request: Request, bindings: LocalAppBindings, conte
       return Response.json({ok:true});
     }
     if(path==='/_costs/records') return Response.json({costs:(await bindings.DB.prepare('SELECT * FROM external_cost_facts').all()).results,sends:(await bindings.DB.prepare('SELECT * FROM cost_test_sends').all()).results});
+    if(path==='/_costs/usage') {
+      const now=new Date(),start=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1));
+      for(const fact of [
+        {key:'usage-usd',billableUnits:2,reportedCostMicros:1000000,currency:'USD'},
+        {key:'usage-eur',billableUnits:3,reportedCostMicros:2000000,currency:'EUR'},
+        {key:'usage-unpriced',billableUnits:4,currency:'USD'},
+      ])await recordExternalCost(platform.database,{...fact,provider:'usage-mail',operation:'provider-handoff',modelOrChannel:'email',unitKind:'messages',occurredAt:start});
+      await services.audienceService.captureConsent({idempotencyKey:'usage-contact',contact:{email:'usage-reader@example.test',phone:'+15555550123',displayName:'Usage reader'},channel:'email',brandOrLegalSender:'Mango local',messageCategory:'newsletter',destinationJurisdiction:'US',frequencyDisclosure:'Weekly',captureMethod:'in-store',captureSource:'usage-fixture',consentText:'Receive this newsletter',consentVersion:'v1',occurredAt:now,confirmationRequired:false});
+      return Response.json({contacts:(await bindings.DB.prepare('SELECT id,email,email_status,sms_status FROM contacts ORDER BY id').all()).results});
+    }
     if(path==='/_costs/reports') {
       const {campaignId}=await request.json() as {campaignId:string};
       const day1=new Date('2031-10-04T23:59:59.999Z'),day2=new Date('2031-10-05T00:00:00Z');

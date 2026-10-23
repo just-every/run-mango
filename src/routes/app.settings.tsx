@@ -5,7 +5,7 @@ import {SignupCapacitySettings} from '@/core/features/audience/ui/signup-capacit
 import {SignupRefusalReport} from '@/core/features/audience/ui/signup-refusal-report';
 import {editorLeaf} from '@/core/features/editor/client';
 import { createFileRoute } from '@tanstack/react-router';
-import { SettingsPage } from '@/core/features/store/ui/settings-page';
+import { SettingsWithUsage } from '@/core/features/insights/ui/settings-usage';
 export const Route = createFileRoute('/app/settings')({component: editorLeaf(SettingsWithSignup)});
 
-function SettingsWithSignup(){return <><SettingsPage/><SignupCapacitySettings/><SignupRefusalReport/><AnalyticsSettingsPanel/><OptInSettings/><LinkHostSourcePanel/></>;}
+function SettingsWithSignup(){return <><SettingsWithUsage/><SignupCapacitySettings/><SignupRefusalReport/><AnalyticsSettingsPanel/><OptInSettings/><LinkHostSourcePanel/></>;}
