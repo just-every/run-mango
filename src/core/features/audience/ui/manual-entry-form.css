@@ -1,0 +1,6 @@
+.manual-entry-form,.manual-entry-form fieldset,.manual-entry-form fieldset>div { display:grid; gap:16px; }
+.manual-entry-form label { display:grid; gap:6px; }
+.manual-entry-form label:has(>input[type="checkbox"]) { display:flex; align-items:flex-start; gap:10px; }
+.manual-entry-form input[type="checkbox"] { flex:none; }
+.manual-entry-form button { justify-self:start; max-width:100%; white-space:normal; }
+.manual-entry-form fieldset { min-width:0; }
