@@ -4,6 +4,7 @@ import {audiencePreviewBudget} from './import-query-budget';
 import {sharedAudienceImport} from './import-authority';
 import {createAudienceStream,isAudienceStream,audienceStreamActions} from './import-stream';
 import {readAudiencePlan,saveAudiencePlan} from './import-plans';
+import type {IncumbentFile} from '../move-in/incumbent-policy';
 import {readImportState} from './import-state';
 import { Buffer } from 'node:buffer';
 import { canonicalJson, planD1Import, createD1ImportJob, applyD1ImportBatches, resumeD1Import, readD1ImportJob, type D1ImportContext } from '@/vendor/base/import-kit/src/d1/index';
@@ -55,8 +56,8 @@ export function createAudienceImportService(platform: Platform) {
      * contact changed since, keeps everything Mango holds; only an unsubscribed or suppressed
      * row still applies its opt-out to it. archive: a contact that existed before an archive
      * move-in keeps its name (the exported name stays in the import observation). */
-    async review(input: ImportInput, context: D1ImportContext, previewDb: D1Database = db, options: {archive?: boolean} = {}) {
-      const normalized = normalizeImport(input);
+    async review(input: ImportInput, context: D1ImportContext, previewDb: D1Database = db, options: {archive?: boolean;incumbentSources?:Record<string,IncumbentFile>} = {}) {
+      const normalized = normalizeImport(input,options.incumbentSources);
       const previewContext = {...context,storage:{...context.storage,database:previewDb}};
        const effects = new Map<string,TargetEffect>(); const now = Date.now();
       // One native effect per canonical identity, across every file. All restrictive
@@ -79,6 +80,7 @@ export function createAudienceImportService(platform: Platform) {
       normalized.rows.sort((a,b)=>restrictiveRank[b.status]-restrictiveRank[a.status]);
       const artifacts = await Promise.all(input.files.map(async file=>({name:file.name,sha256:await sha256(file.csv),size:new TextEncoder().encode(file.csv).length,original:{status:'available' as const,base64:Buffer.from(file.csv,'utf8').toString('base64')}})));
       const state=await readImportState(previewDb,[...winners.values()],platform.config.contactHashSalt,context.destination);
+      for(const source of Object.values(options.incumbentSources??{}))if(source.accepted)state.activeAttestations.add(source.id);
       const held=await heldContacts(previewDb,context.destination,state);
       // A contact an unfinished import has planned but not written yet is that import's to create.
       // Only an import that has written rows counts: a refused Start wrote nothing and holds nothing.
@@ -121,12 +123,12 @@ export function createAudienceImportService(platform: Platform) {
       }},previewContext);
       return {normalized,effects,source,plan,now};
     },
-    async preview(input: ImportInput, context: D1ImportContext, options: {archive?: boolean} = {}) {
+    async preview(input: ImportInput, context: D1ImportContext, options: {archive?: boolean;incumbentSources?:Record<string,IncumbentFile>} = {}) {
       const budget = audiencePreviewBudget(db);
       const previewDb = budget.db;
       // Review normalizes first, so an over-cap or malformed input is refused before any query.
       const {normalized,effects,source,plan,now}=await this.review(input,context,previewDb,options);
-      const sourceDigest=await sha256(canonicalJson(input));
+      const sourceDigest=await sha256(canonicalJson({input,incumbentSources:options.incumbentSources??null}));
       const existing=await previewDb.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE source_digest=? AND principal_id=?').bind(sourceDigest,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();
       if(existing){
         // Reuse a review while every row still targets the same contact revision, or

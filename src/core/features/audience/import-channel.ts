@@ -25,7 +25,7 @@ export function applyImportedChannel(state: ImportState, snapshot: AudienceSnaps
   if (externalBlocks.length) status='suppressed';
   else if (consent) { if (keptStatus) status=currentStatus!; }
   else if (existingOptOut && status !== 'suppressed') status='unsubscribed';
-  const evidence = snapshot.tables.consent_evidence.filter(item=>item.channel===channel && item.destination===destination && item.confirmed_at);
+  const evidence = snapshot.tables.consent_evidence.filter(item=>item.channel===channel && item.destination===destination && (item.confirmed_at||(channel==='email'&&item.capture_method==='incumbent-held'&&snapshot.tables.incumbent_consent_links.some(link=>link.id===item.id&&state.activeAttestations.has(String(link.attestation_id))))));
   if (status==='subscribed' && !evidence.some(item=>[...(channel === 'sms' ? ['sms_program'] : []),'brand_or_legal_sender','message_category','frequency_disclosure','destination_jurisdiction','capture_method','capture_source','consent_text','consent_version','occurred_at'].every(key=>Boolean(item[key])))) status='non-subscribed';
   contact[`${channel}_status`]=status;
   for (const address of addresses.filter(item=>item[addressKey]===destination)) address.channel_status=status;

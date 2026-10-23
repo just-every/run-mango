@@ -41,7 +41,7 @@ export async function selectedChannel(
       .sort((left, right) => (right.channelStatusAt?.getTime() ?? 0) - (left.channelStatusAt?.getTime() ?? 0))[0];
     if (!address || await isSuppressed('email', address.email)) return undefined;
     const consents = evidence
-      .filter((entry) => entry.channel === 'email' && entry.destination === address.email && entry.confirmedAt && entry.confirmedAt <= now)
+      .filter((entry) => entry.channel === 'email' && entry.destination === address.email && ((entry.confirmedAt && entry.confirmedAt <= now)||(entry.incumbentAt&&entry.incumbentAt<=now)))
       .map((entry) => ({
         destination: entry.destination,
         brandOrLegalSender: entry.brandOrLegalSender,
@@ -57,7 +57,7 @@ export async function selectedChannel(
     .sort((left, right) => (right.channelStatusAt?.getTime() ?? 0) - (left.channelStatusAt?.getTime() ?? 0))[0];
   if (!phone || await isSuppressed('sms', phone.phoneE164)) return undefined;
   const consents = evidence
-    .filter((entry) => entry.channel === 'sms' && entry.destination === phone.phoneE164 && entry.confirmedAt && entry.confirmedAt <= now)
+    .filter((entry) => entry.channel === 'sms' && entry.destination === phone.phoneE164 && ((entry.confirmedAt && entry.confirmedAt <= now)||(entry.incumbentAt&&entry.incumbentAt<=now)))
     .map((entry) => ({
       destination: entry.destination,
       brandOrLegalSender: entry.brandOrLegalSender,

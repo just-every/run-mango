@@ -15,6 +15,8 @@ export function validateSnapshot(value: unknown): asserts value is AudienceSnaps
   const snapshot=value as AudienceSnapshot;
   if(!Array.isArray(snapshot.hashes) || !Array.isArray(snapshot.identities)) throw new Error('Audience ledger requires portable destination identities.');
   const tables = snapshot.tables;
+  // Released audience ledgers predate incumbent links; upgrading this exact shape adds no authority.
+  if(tables&&!Object.hasOwn(tables,'incumbent_consent_links')&&Object.keys(tables).length===ownedTables.length-1&&ownedTables.filter(name=>name!=='incumbent_consent_links').every(name=>Array.isArray(tables[name])))tables.incumbent_consent_links=[];
   if (!tables || Object.keys(tables).length !== ownedTables.length || ownedTables.some(table => !Array.isArray(tables[table]))) throw new Error('Audience ledger snapshot has invalid tables.');
   if (tables.contacts.length !== 1 || !tables.contacts[0].id) throw new Error('Audience ledger snapshot requires exactly one contact.');
   for (const [table, rows] of Object.entries(tables)) {

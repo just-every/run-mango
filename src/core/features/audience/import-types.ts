@@ -9,6 +9,7 @@ export const presetStatuses: Record<string, string> = {
 };
 export const defaultMapping: Record<string, readonly string[]> = {
   email: ['email address', 'email'],
+  country: ['country','country code','country_code','cc'], last_changed: ['last_changed','last changed'],
   phone: ['phone', 'phone_e164', 'mobile', 'phone number'],
   sms_status: ['sms_status', 'sms marketing status'],
   sms_occurred_at: ['sms_occurred_at', 'sms optin time'], sms_confirmed_at: ['sms_confirmed_at', 'sms confirm time'],

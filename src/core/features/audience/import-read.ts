@@ -4,7 +4,7 @@ import {sha256} from '@/core/shared/ids';
 import type {AudienceSnapshot,NativeRow} from './import-types';
 import {restoredValues} from './import-recorded';
 
-export const ownedTables = ['contacts', 'contact_email_addresses', 'contact_phones', 'consent_evidence', 'contact_history', 'contact_suppressions', 'surviving_opt_outs', 'mango_audience_hashes', 'consent_capture_metadata', 'consent_confirmations', 'audience_import_observations'] as const;
+export const ownedTables = ['contacts', 'contact_email_addresses', 'contact_phones', 'consent_evidence', 'contact_history', 'contact_suppressions', 'surviving_opt_outs', 'mango_audience_hashes', 'consent_capture_metadata', 'consent_confirmations', 'audience_import_observations','incumbent_consent_links'] as const;
 
 // Cloudflare D1 limits checked 2026-10-07: 1000 queries/invocation on Paid,
 // 50 on Free, 100 bindings and 100 KB SQL per statement. A batch still counts
@@ -36,13 +36,16 @@ export async function readAudienceSnapshots(db:D1Database,salt:string,ids?:strin
  }
  return snapshots;
 }
-/** The snapshot as its recorded revision hashed it: revisions written on 71ec3d9
- * carried a null name key on every observation without a name. */
+/** Match only the exact historical shapes bound by the recorded revision hash:
+ * null source names from 0037, and the absent (empty) links table before 0088. */
 function recordedShape(value:AudienceSnapshot,valueHash:string|undefined){
- if(valueHash===undefined||!value.tables.audience_import_observations.some(row=>!Object.hasOwn(row,'source_display_name')))return value;
- const named=structuredClone(value);
- for(const row of named.tables.audience_import_observations)if(!Object.hasOwn(row,'source_display_name'))row.source_display_name=null;
- return digest(canonicalJson(named))===valueHash?named:value;
+ if(valueHash===undefined)return value;
+ const shapes=[value];
+ if(value.tables.audience_import_observations.some(row=>!Object.hasOwn(row,'source_display_name'))){
+  const named=structuredClone(value);for(const row of named.tables.audience_import_observations)if(!Object.hasOwn(row,'source_display_name'))row.source_display_name=null;shapes.push(named);
+ }
+ if(!value.tables.incumbent_consent_links.length)for(const shape of [...shapes]){const previous=structuredClone(shape);delete previous.tables.incumbent_consent_links;shapes.push(previous);}
+ return shapes.find(shape=>digest(canonicalJson(shape))===valueHash)??value;
 }
 /** restored: a contact whose only changes since its recorded revision are opt-outs or
  * suppressions and the statuses they raise still holds that revision (import-recorded), for

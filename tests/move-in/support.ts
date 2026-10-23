@@ -1,3 +1,5 @@
+import {createHash} from 'node:crypto';
+import type {AttestationInput} from '../../src/core/features/move-in/incumbent-policy';
 import { expect } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -13,11 +15,17 @@ export async function record(name: string, value: unknown) {
 }
 export const screenshotPath = (name: string, fallback: string) => evidence ? join(evidence, name) : fallback;
 
+const archiveAttestations=new Map<string,AttestationInput[]>();
+const archiveKey=(bytes:Uint8Array)=>createHash('sha256').update(bytes).digest('hex');
+const fixtureAudience='Mango Garden Letter';
+export const testAttestation:AttestationInput={nonce:crypto.randomUUID(),sourceKey:'audiences/'+fixtureAudience,typedSource:fixtureAudience,answers:{brand:'yes',category:'yes',frequency:'yes',jurisdiction:'yes',wording:'yes',notPurchased:'yes'}};
+export function setArchiveAttestations(bytes:Uint8Array,values:AttestationInput[]){archiveAttestations.set(archiveKey(bytes),values);}
 /** The archive through the authenticated multipart routes, as the Import page sends it. */
-export async function postArchive(site: Installation, cookie: string, path: string, bytes: Uint8Array, fingerprint?: string, consent: object = consentEvidence) {
+export async function postArchive(site: Installation, cookie: string, path: string, bytes: Uint8Array, fingerprint?: string, consent: object = consentEvidence,attestations:AttestationInput[] = archiveAttestations.get(archiveKey(bytes))??[testAttestation]) {
   const form = new FormData();
   form.set('archive', new File([bytes], 'account-export.zip', { type: 'application/zip' }));
   form.set('consent', JSON.stringify(consent));
+  form.set('attestations',JSON.stringify(attestations));
   if (fingerprint) form.set('fingerprint', fingerprint);
   const response = await site.call(path, { method: 'POST', cookie, raw: form });
   return { status: response.status, body: await response.json() };

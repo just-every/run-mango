@@ -1,3 +1,4 @@
+import type {AttestationInput} from '../../move-in/incumbent-policy';
 import type { ImportConsent } from './audience-import-types';
 
 // An account export travels as multipart form data; JSON requests cannot carry the archive.
@@ -9,6 +10,7 @@ export type ArchiveFileSummary = {
 export type ArchiveContentSummary = { path: string; kind: 'emails' | 'templates'; rows: number; created: number; duplicates: number; skipped: number; rejected: number; rejectedRows: Array<{ row: number; reason: string }>; error?: string };
 export type ArchiveSummary = {
   archive: { name: string; size: number; sha256: string; entries: number; folders: number };
+  attestationSources?:Array<{id:string;sourceKey:string;sourceName:string;accepted:boolean;reason?:string}>;
   audience: ArchiveFileSummary[]; content: ArchiveContentSummary[];
   records: Array<{ ordinal: number; kind: 'history' | 'draft'; sourcePath: string; sourceRow: number | null; title: string; subject: string; sentAt: string; removed: string[]; flagged: string[]; mergeTags: string[] }>;
   engagement?:{rows:number;imported:number;dropped:number;reasons:Record<string,number>};
@@ -24,10 +26,11 @@ export type ArchiveContentRow = { id: string; kind: 'history' | 'draft'; source_
   removed_json: string; flagged_json: string; merge_tags_json: string; campaign_id: string | null; state: 'imported' | 'removed' | 'kept' | 'held'; outcome: string | null };
 export type ArchiveError = { error?: string; detail?: string; code?: string };
 
-export async function postArchive<T>(path: string, archive: File, consent: ImportConsent, fingerprint?: string) {
+export async function postArchive<T>(path: string, archive: File, consent: ImportConsent, fingerprint?: string,attestations:AttestationInput[] = []) {
   const form = new FormData();
   form.set('archive', archive);
   form.set('consent', JSON.stringify(consent));
+  form.set('attestations',JSON.stringify(attestations));
   if (fingerprint) form.set('fingerprint', fingerprint);
   const response = await fetch(path, { method: 'POST', body: form, headers: { Accept: 'application/json' } });
   if (response.status === 401) window.dispatchEvent(new Event('mango-session-lost'));

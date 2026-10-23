@@ -1,3 +1,4 @@
+import {canonicalJson} from '@/vendor/base/import-kit/src/d1/index';
 import type {ImportState} from './import-state';
 import { sha256, ulid } from '@/core/shared/ids';
 import { ownedTables, validateSnapshot } from './import-target';
@@ -23,6 +24,7 @@ export async function importSnapshot(state: ImportState, row: NormalizedImportRo
   let snapshot: AudienceSnapshot;
   if (row.ledger) {
     validateSnapshot(row.ledger);
+    for(const link of row.ledger.tables.incumbent_consent_links){const original=state.incumbentLinks.get(String(link.id));if(!original||canonicalJson(original)!==canonicalJson(link))throw new Error('Incumbent evidence needs its original attestation and row link. Restore its DATA-001 archive instead.');}
     if(row.phone && !row.ledger.tables.contact_phones.some(item=>item.phone_e164===row.phone))throw new Error('Export phone identity does not match its ledger.');
     snapshot = structuredClone(row.ledger);
     const exported = snapshot.tables.contacts[0];
@@ -51,12 +53,13 @@ export async function importSnapshot(state: ImportState, row: NormalizedImportRo
     if(row.email && !snapshot.tables.contact_email_addresses.some(item=>item.email===row.email))throw new Error('This phone belongs to a contact with a different email. Resolve the identity explicitly.');
     const address = snapshot.tables.contact_email_addresses.find(item=>item.email === row.email)!;
     if(address) snapshot.tables.mango_audience_hashes = [...snapshot.tables.mango_audience_hashes.filter(item=>item.id !== `${address.id}_hash`),{id:`${address.id}_hash`,contact_id:id,channel:'email',destination_hash:hash,owned_opt_out_id:null,owned_suppression_ids:'[]'}];
-    const occurred = row.status==='subscribed' ? timestamp(row.values.occurred_at) : null;
-    const confirmed = row.status==='subscribed' ? timestamp(row.values.confirmed_at) : null;
+    const occurred = row.status==='subscribed' ? row.incumbent?.evidenceAt??timestamp(row.values.occurred_at) : null;
+    const confirmed = row.status==='subscribed'&&!row.incumbent ? timestamp(row.values.confirmed_at) : null;
     if (row.email && occurred && input.consent && row.status === 'subscribed') {
       const scope = input.consent; const evidenceId=ulid(now);
       snapshot.tables.contacts[0].last_activity_at=Math.max(Number(snapshot.tables.contacts[0].last_activity_at ?? 0),occurred);
-      snapshot.tables.consent_evidence.push({id:evidenceId,contact_id:id,channel:'email',destination:row.email,brand_or_legal_sender:scope.brandOrLegalSender,sms_program:null,message_category:scope.messageCategory,frequency_disclosure:scope.frequencyDisclosure,destination_jurisdiction:scope.destinationJurisdiction,capture_method:row.values.capture_method || 'csv-import',capture_source:row.values.capture_source || `CSV import: ${row.file}`,consent_text:scope.consentText,consent_version:scope.consentVersion,occurred_at:occurred,confirmation_required:1,confirmed_at:confirmed,created_at:now,updated_at:now});
+      snapshot.tables.consent_evidence.push({id:evidenceId,contact_id:id,channel:'email',destination:row.email,brand_or_legal_sender:scope.brandOrLegalSender,sms_program:null,message_category:scope.messageCategory,frequency_disclosure:scope.frequencyDisclosure,destination_jurisdiction:scope.destinationJurisdiction,capture_method:row.incumbent?'incumbent-held':row.values.capture_method || 'csv-import',capture_source:row.incumbent?.source||row.values.capture_source || `CSV import: ${row.file}`,consent_text:scope.consentText||(row.incumbent?'Original wording held by Mailchimp; unavailable.':''),consent_version:scope.consentVersion||(row.incumbent?'mailchimp-incumbent.v1':''),occurred_at:occurred,confirmation_required:row.incumbent?0:1,confirmed_at:confirmed,created_at:now,updated_at:now});
+      if(row.incumbent)snapshot.tables.incumbent_consent_links.push({id:evidenceId,contact_id:id,attestation_id:row.incumbent.id,evidence_at:row.incumbent.evidenceAt,time_quality:row.incumbent.timeQuality,source_facts_json:JSON.stringify(row.incumbent.facts)});
       snapshot.tables.consent_capture_metadata.push({id:evidenceId,contact_id:id,capture_ip:row.values.capture_ip || null,confirmation_ip:row.values.confirmation_ip || null,created_at:now,updated_at:now});
     }
     const sourceName=row.sourceDisplayName??row.displayName;

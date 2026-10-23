@@ -1,3 +1,5 @@
+import {incumbentJourney} from './incumbent-journey';
+import {setArchiveAttestations} from './support';
 import { openPage } from '../support/navigation';
 import { createHash } from 'node:crypto';
 import AxeBuilder from '@axe-core/playwright';
@@ -30,6 +32,7 @@ const facts = ['delivery_facts', 'campaign_results', 'attribution_facts', 'exter
 
 test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely', async ({ page }, info) => {
   const edge = await providerEdge(), signer = eventSigner();
+  await incumbentJourney(page,info,edge,signer);
   const calendarSite = await installation(edge, signer);
   try {
     const cookie = await calendarSite.open();
@@ -128,11 +131,20 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     const afterPreview = await tableCounts(site);
     expect(afterPreview).toEqual(before);
     await record('preview-writes-nothing.json', { tables: Object.keys(before).length, changed: Object.keys(before).filter(table => afterPreview[table] !== before[table]), before, afterPreview });
+    // The screen exposes six independent, initially unticked statements.
+    await expect(page.getByRole('heading',{name:'Mailchimp-held consent'})).toBeVisible();
+    for(const radio of await page.getByRole('radio',{name:'I attest',exact:true}).all()){await expect(radio).not.toBeChecked();await radio.check();}
+    await page.getByLabel('Type the source name to confirm: Mango Garden Letter',{exact:true}).fill('Mango Garden Letter');
+    const request=page.waitForRequest(request=>request.url().endsWith('/api/audience/archive-preview')&&request.method()==='POST');
+    await page.getByRole('button',{name:'Preview import'}).click();
+    const posted=await request;const form=await new Response(posted.postDataBuffer(),{headers:{'Content-Type':posted.headers()['content-type']}}).formData();
+    setArchiveAttestations(bytes,JSON.parse(String(form.get('attestations'))));
+    await expect(page.getByText('Attestation affirmed in the current preview.',{exact:false})).toBeVisible();
     await screens(page, 'preview', info);
 
     const reviewed = (await postArchive(site, cookie, '/api/audience/archive-preview', bytes)).body;
     const file = (name: string) => reviewed.summary.audience.find((item: { path: string }) => item.path.endsWith(name));
-    expect(file('subscribed.csv')).toMatchObject({ rows: 8, created: 4, updated: 1, duplicatesWithin: 1, duplicatesAcross: 1, rejected: 1, unknownConsent: 1 });
+    expect(file('subscribed.csv')).toMatchObject({ rows: 8, created: 4, updated: 1, duplicatesWithin: 1, duplicatesAcross: 1, rejected: 1, unknownConsent: 0 });
     expect(file('unsubscribed.csv')).toMatchObject({ rows: 2, created: 2, updated: 0, duplicatesWithin: 0, duplicatesAcross: 0, rejected: 0 });
     expect(file('cleaned.csv')).toMatchObject({ rows: 1, created: 1, outcomes: { suppressed: 1 } });
     expect(file('transactional.csv')).toMatchObject({ rows: 1, created: 1, outcomes: { 'non-subscribed': 1 } });
@@ -153,7 +165,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     expect(engagement.map(row=>row.link)).toEqual(['https://garden.example.test/spring','https://garden.example.test/winter',null]);
     const imported = await statuses(site);
     expect(imported).toEqual({ 'ada@example.test': 'subscribed', 'ben@example.test': 'subscribed', 'both@example.test': 'unsubscribed', 'cleo@example.test': 'suppressed',
-      'cy@example.test': 'non-subscribed', 'dup@example.test': 'subscribed', 'optedout@example.test': 'unsubscribed', 'tess@example.test': 'non-subscribed', 'uma@example.test': 'unsubscribed' });
+      'cy@example.test': 'subscribed', 'dup@example.test': 'subscribed', 'optedout@example.test': 'unsubscribed', 'tess@example.test': 'non-subscribed', 'uma@example.test': 'unsubscribed' });
     const detail = await json(await site.call(`/api/audience/archives/${archive.id}`, { cookie }), 200);
     expect(detail.entries).toHaveLength(reviewed.summary.archive.entries);
     for (const entry of detail.entries) expect(entry.sha256).toMatch(/^[0-9a-f]{64}$/);

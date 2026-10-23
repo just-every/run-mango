@@ -47,6 +47,7 @@ export async function archiveReport(db: D1Database, archive: ArchiveRecord, cont
       entry.rejection ? `rejected: ${entry.rejection}` : row.skipped ? `skipped: ${row.skipped}` : row.held ? `updated as ${row.status}: ${row.held.reason}` : entry.effects.length ? `${entry.effects[0].expectedRevision === undefined ? 'created' : 'updated'} as ${row.status}`
         : `duplicate of a row in ${winners.get(row.email) === row.file ? 'this file' : winners.get(row.email) ?? 'another file'}`])), '');
   } else if (planNote) lines.push(planNote, '');
+  lines.push('## Consent evidence', '', table(['File','Evidence kind','Rows'],summary.audience.flatMap(file=>Object.entries(file.evidenceKinds??{}).map(([kind,total])=>[file.path,kind,total]))), '',table(['File','Reason','Rows'],summary.audience.flatMap(file=>Object.entries(file.reasons??{}).map(([reason,total])=>[file.path,reason,total]))),'');
   if(summary.engagement)lines.push('## Imported engagement', '', `${summary.engagement.imported} engagement rows imported; ${summary.engagement.dropped} dropped of ${summary.engagement.rows} source rows. Opens are estimates and never engagement.`, '', table(['Drop reason','Rows'],Object.entries(summary.engagement.reasons)), '');
   const rejected = [...summary.audience.flatMap(file => file.rejectedRows.map(item => [file.path, item.row, item.reason])), ...summary.content.flatMap(file => file.rejectedRows.map(item => [file.path, item.row, item.reason]))];
   if (rejected.length) lines.push('## Rejected rows', '', table(['File', 'Row', 'Reason'], rejected), '');
