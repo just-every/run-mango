@@ -28,7 +28,7 @@ import {pendingErasure} from '@/core/features/audience/erasure/maintenance';
 import { createSegmentRoutes } from '@/core/features/audience/segments';
 import { senderIdentitySchema } from '@/core/features/settings/sender-validation';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
-import { createLinkHostRoutes, loadLinkHosts } from '@/core/features/settings/link-hosts';
+import { createLinkHostRoutes, loadLinkHosts, persistLinkHostSources } from '@/core/features/settings/link-hosts';
 import { createIntegrationService } from '@/core/features/integrations/service';
 import { createIntegrationApiRoutes, createIntegrationSettingsRoutes } from '@/core/features/integrations/routes';
 import { createAudienceImportRoutes } from '@/core/features/audience/import-routes';
@@ -199,7 +199,7 @@ export function createAppServices(platform: Platform, queueIdentity: object = pl
   const database = platform.database;
   const healthService = createHealthService(createHealthRepository(database), platform, queueIdentity);
   const authService = createAuthService(createAuthRepository(database), platform);
-  const storeService = createStoreService(createStoreRepository(database));
+  const storeService = createStoreService(createStoreRepository(database),()=>persistLinkHostSources(platform));
   let lifecycleRuntime: LifecycleRuntime | undefined;
   const audienceService = createAudienceService(createAudienceRepository(database), audienceDependencies(platform, storeService, () => {
     if (!lifecycleRuntime) throw new Error('Lifecycle runtime has not been composed.');
