@@ -8,12 +8,24 @@ test('newsletter link policy defaults to the app, persists owner changes and res
   try {
     assert.equal((await f.call(path)).status, 401);
     const cookie = await confirmedOwner(f);
+    const defaults = [
+      {host: 'mango.example.test', source: 'Deployment host'},
+      {host: 'www.instagram.com', source: 'Social defaults'},
+      {host: 'www.facebook.com', source: 'Social defaults'},
+      {host: 'www.tiktok.com', source: 'Social defaults'},
+      {host: 'www.youtube.com', source: 'Social defaults'},
+      {host: 'www.linkedin.com', source: 'Social defaults'},
+      {host: 'x.com', source: 'Social defaults'},
+      {host: 'www.pinterest.com', source: 'Social defaults'},
+    ];
+    const initial = await (await f.call(path, {cookie})).json();
     const read = async () => (await (await f.call(path, {cookie})).json()).hosts;
-    assert.deepEqual(await read(), ['mango.example.test']);
+    assert.deepEqual(initial.hosts, defaults.map(row => row.host));
+    assert.deepEqual(initial.sources, defaults);
     const save = (hosts, options = {}) => f.call(path, {method: 'PUT', cookie, body: {hosts}, ...options});
     assert.equal((await save('shop.example.test', {origin: 'https://attacker.test'})).status, 403);
     assert.equal((await save('https://shop.example.test/path')).status, 400);
-    assert.deepEqual(await read(), ['mango.example.test']);
+    assert.deepEqual(await read(), defaults.map(row => row.host));
     assert.equal((await save('Shop.Example.test, news.example.test, shop.example.test')).status, 200);
     assert.deepEqual(await read(), ['shop.example.test', 'news.example.test']);
     assert.equal((await save('')).status, 200);
