@@ -37,6 +37,7 @@ test('[FORM-008][FORM-009][FORM-010] shared kiosk clears every visitor, requires
     await kioskChallenge(page);
     for(let index=0;index<30;index++) {
       if(index<2)await page.setViewportSize({width:index===0?1440:390,height:1000});
+      if(index===2)await page.clock.install();
       if(index===0)await openPage(page,site.runtime.url+'/subscribe');
       await expect(page.getByRole('textbox',{name:'Email address'})).toHaveValue('');
       await expect(page.getByRole('textbox',{name:'Name',exact:true})).toHaveValue('');
@@ -53,6 +54,7 @@ test('[FORM-008][FORM-009][FORM-010] shared kiosk clears every visitor, requires
       expect((await response).status()).toBe(202);
       await expect(page.getByRole('status')).toContainText('Request received');
       if(index<2)await page.screenshot({path:info.outputPath(`kiosk-success-${index===0?1440:390}.png`)});
+      if(index>=2)await page.clock.fastForward(2000);
       await expect(page.getByRole('textbox',{name:'Email address'})).toHaveValue('',{timeout:5000});
       expect(await page.context().cookies()).toEqual([]);
       expect(await page.evaluate(()=>({local:localStorage.length,session:sessionStorage.length}))).toEqual({local:0,session:0});
