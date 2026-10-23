@@ -53,6 +53,10 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 
 | CONT-025 | Settings saves future-only Owner/Admin email modes for hosted, kiosk and manual points. Single captures retain full evidence and spend accepted capacity without confirmation reservations; public resubscription stays confirmed-only and API capture is fixed double. Connection-owned and absent sources remain partial. | partial | `tests/go-live/kiosk.journeys.ts`, `tests/go-live/opt-in-journey.ts`, `tests/go-live/integrations.journeys.ts`, `tests/portability.spec.ts` |
 
+| CONT-026 | Authors and above record hand-entry consent and properties; email uses the manual mode and labels the operator. SMS requires express written evidence and a signed reply to its exact confirmation; prior restrictions and Support refusal remain enforced. Topic scope and legacy API attestation remain open. | partial | `tests/go-live/integrations.journeys.ts`, `tests/go-live/manual-entry-journey.ts`, `tests/portability.spec.ts` |
+| MSG-014 | Fresh source-labelled deployment and social defaults, genuine connection hosts, durable removal across sync and audited review allowances. Existing explicit policies remain explicit; Shopify storefront/image data, builder sources and disconnect acceptance remain open. | partial | `tests/go-live/content-checks.journeys.ts`, `tests/go-live/content-hosts.ts`, `tests/portability.spec.ts` |
+| RESULT-008 | Message-bound link, one-click and signed SMS reply methods retain their first time, appear in list and CSV, and survive actual erasure as anonymous counts matching campaign totals. Historical methods, flows and role masking remain open. | partial | `tests/campaign-results/performance.journeys.ts`, `tests/campaign-results/recipient-method-journey.ts`, `tests/campaign-results/results.journeys.ts`, `tests/portability.spec.ts` |
+
 ## Adopted target defaults (23 October 2026)
 
 The text-only adoption changes no implementation status. No real provider call or consent was used.
@@ -83,3 +87,4 @@ The text-only adoption changes no implementation status. No real provider call o
 | MSG-014 | Fresh source-labelled deployment and social defaults, genuine connection hosts, durable removal across sync and audited review allowances. Existing explicit policies remain explicit; Shopify storefront/image data, builder sources and disconnect acceptance remain open. | partial | `tests/go-live/content-checks.journeys.ts`, `tests/go-live/content-hosts.ts`, `tests/portability.spec.ts` |
 
 | RESULT-008 | Message-bound link, one-click and signed SMS reply methods retain their first time, appear in list and CSV, and survive actual erasure as anonymous counts matching campaign totals. Historical methods, flows and role masking remain open. | partial | `tests/campaign-results/performance.journeys.ts`, `tests/campaign-results/recipient-method-journey.ts`, `tests/campaign-results/results.journeys.ts`, `tests/portability.spec.ts` |
+
