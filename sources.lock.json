@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "9bac044fab585a3278444b5bceac0ead73a574e3fbc1e8ee47815aa68cd73b30",
+      "sha256": "6f1f03202e7e45ee2a2e0000f6e759dbf5d889709c4fcb82622b20ab397dacad",
       "executable": false
     },
     "DEMO.md": {
@@ -1527,6 +1527,10 @@
     },
     "migrations/core/0087_paid_state_authority.sql": {
       "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
+      "executable": false
+    },
+    "migrations/core/0088_signup_capacity.sql": {
+      "sha256": "fad61e1f8590892158984333c0270437333faefa416d96fd7173ca016f285b13",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -2737,6 +2741,18 @@
       "sha256": "7ca155cc5782f6dccad8510bd91cae02845ce6e17a6dd9e190fd9feb9388757d",
       "executable": false
     },
+    "src/core/features/audience/signup-admission.ts": {
+      "sha256": "6fb1843d7fe8946a936aefdb1fec7f4b4e6a65c087466315245464df14d77162",
+      "executable": false
+    },
+    "src/core/features/audience/signup-capacity-routes.ts": {
+      "sha256": "0faaf794de831feb93e3a1bbd5aa89754034a4d6066d81739fdf1efd120c7336",
+      "executable": false
+    },
+    "src/core/features/audience/signup-capacity.ts": {
+      "sha256": "4a61dc74054e1f55357fc0000abb3fa017908f47691cc701dd2d356e051381be",
+      "executable": false
+    },
     "src/core/features/audience/signup-refusals.ts": {
       "sha256": "ec4bfc503c3bdc659edba05b0774bbb5b78965eb51a60eac1382a7867a512ff9",
       "executable": false
@@ -2839,6 +2855,10 @@
     },
     "src/core/features/audience/ui/saved-segments.tsx": {
       "sha256": "978802bc469225d73ed90f329ba3ffd9c6c26a9eb6785c2cfbb843d8829196c4",
+      "executable": false
+    },
+    "src/core/features/audience/ui/signup-capacity-settings.tsx": {
+      "sha256": "8fcbd06270350ac8ee81483bfb8c4472d5f342ce49f9fa32e39a61337f59f62b",
       "executable": false
     },
     "src/core/features/audience/ui/signup-challenge.tsx": {
@@ -7539,6 +7559,10 @@
     },
     "tests/go-live/sendgrid-events.ts": {
       "sha256": "06ab7572d3e1bbfe23b11e16e2fc044a9360cdbefb7c6c6777c95a3f62c15d08",
+      "executable": false
+    },
+    "tests/go-live/signup-capacity-journey.ts": {
+      "sha256": "bad05697e1a56483cb37af49051e20f04ee49c21b3ba699c931f411d602a111f",
       "executable": false
     },
     "tests/go-live/signup-refusal-screens.ts": {
