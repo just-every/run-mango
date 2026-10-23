@@ -1008,8 +1008,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | All | 97 | 62 | 84 | 243 |
 
 <!-- Historical c17 source-base counts (before main paid capture):
-| Target and push further | 17 | 55 | 84 | 156 |
-| All | 96 | 63 | 84 | 243 |
+> | Target and push further | 17 | 55 | 84 | 156 |
+> | All | 96 | 63 | 84 | 243 |
 -->
 
 | Clause | Title | Kind | Status | Evidence | Gap |
