@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "9387780f70c2c517c5304e89cf38f2f337e0198d7c3711b311c7e91cd41f49f1",
+      "sha256": "7d623fcc831b83c8c65637935d283b764c3e2328897911f0e2d38eb179b33e2d",
       "executable": false
     },
     "DEMO.md": {
@@ -2178,7 +2178,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "e32154cd4aacba19d2af3d9b69c7da98f0ad7171d265f91c38d1df367dcf9b67",
+      "sha256": "edd59bffab49637f7a29c7a94e9f6fd310af3699800f86fd5529bcb3cdb9adf6",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -2446,7 +2446,7 @@
       "executable": false
     },
     "src/core/features/audience/confirmation-handoff.ts": {
-      "sha256": "2f2b28b38eb1a358528466e155780d9abd7742390a30b9188b61aa56d426dcae",
+      "sha256": "db88ce4594d1735e79b45b4160a6d468950f6e4b09ffc5f6a56e815e51f9ab06",
       "executable": false
     },
     "src/core/features/audience/consent-metadata.ts": {
@@ -2701,6 +2701,10 @@
       "sha256": "d1f57e55bfe36cd63114f64d2b7e08527b6a61022683a01b3bf3361f1614317c",
       "executable": false
     },
+    "src/core/features/audience/manual-email-policy.ts": {
+      "sha256": "cd644f49d5da9a0b3efb9d7874882079cf72955037098d85df6d84dc2b4bf76c",
+      "executable": false
+    },
     "src/core/features/audience/manual-entry-schema.ts": {
       "sha256": "e8804e91703e1b6a2eea12b744d713fb12e1b30588d601057fa3657762f05f2a",
       "executable": false
@@ -2722,7 +2726,7 @@
       "executable": false
     },
     "src/core/features/audience/public-capture-writer.ts": {
-      "sha256": "384a540eb7b76784fb754113c8f75cc050858ed83a7d33bff423b11f58cbd3f5",
+      "sha256": "875650c7089bab6bd0a952477d2eb0da2293c013fc2ed7fbd5b597aa29961952",
       "executable": false
     },
     "src/core/features/audience/public-resubscribe-policy.ts": {
@@ -2734,11 +2738,11 @@
       "executable": false
     },
     "src/core/features/audience/repository.ts": {
-      "sha256": "22d0f3546447f9f8127645211145ca6e7d5bdc3d136344ecdba8add658af7d6c",
+      "sha256": "ae38584c2bee0354666421c98a1c9a1305c5782f35db2c6ae209819303291ecb",
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
-      "sha256": "7ad604a8de87718465ad2dbeb49ca64176124f362da2e0e50897773db52c52ef",
+      "sha256": "947012c2da05dc30c40daea28cd8222242ceac964d79fb9269f39a76d6837bd7",
       "executable": false
     },
     "src/core/features/audience/rule-matcher.ts": {
@@ -2766,7 +2770,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "8ca951885228201f01f5729b4ba0282a0cd0c4723243c1c3230b90f1675d0c1a",
+      "sha256": "bc373c7f99a954d0de568aa81e643aca5c532298515d9e04c75ff505bcf15083",
       "executable": false
     },
     "src/core/features/audience/signup-admission.ts": {
@@ -4522,7 +4526,7 @@
       "executable": false
     },
     "src/core/features/settings/link-host-sources.ts": {
-      "sha256": "44af434b19097fbad2e1851a5bc46279096345b08d9392f40e5d69149d91c80e",
+      "sha256": "fbba2634e016c3dc1d29f61fee4eef367b1cd9dbc3bd34f520a1962739cf58a3",
       "executable": false
     },
     "src/core/features/settings/link-hosts-validation.ts": {
@@ -4530,7 +4534,7 @@
       "executable": false
     },
     "src/core/features/settings/link-hosts.ts": {
-      "sha256": "9aeb80488410c19601416de79cca6655d97588267808ba89d291a649f0aea535",
+      "sha256": "f7cbddb21682dadaf93cc88d933bfdd1e094c99d5c2446ea15ea29aaa70f95a9",
       "executable": false
     },
     "src/core/features/settings/readiness.ts": {
@@ -4538,7 +4542,7 @@
       "executable": false
     },
     "src/core/features/settings/review-link-hosts.ts": {
-      "sha256": "5524e6e7ff88398ac80cdfae9126b1c46569a2a66e8764f02381085a8bc99d9c",
+      "sha256": "b974ff5b9676a677c78772043d7d9cf90f817ce477159fba8e98a9ff1542fa60",
       "executable": false
     },
     "src/core/features/settings/routes.ts": {
@@ -4766,7 +4770,7 @@
       "executable": false
     },
     "src/core/features/store/service.ts": {
-      "sha256": "df13d98a9b485977078dfff4feaf6082d40a3fba1771838a86749fad59d31829",
+      "sha256": "997f2a1c36a2d17ff17269223de48a76162d24c78cef2928e734ce3b15292782",
       "executable": false
     },
     "src/core/features/store/shopify/collector.ts": {
@@ -6862,7 +6866,7 @@
       "executable": false
     },
     "src/vendor/base/portability/backfills.mjs": {
-      "sha256": "6fedc77d03e64fd5a5f011e39c42454ee0c6cdb27e3086f7af8b1483cc2b88ac",
+      "sha256": "fe6a17327451d6dc5a22a8c2c374f365df7a508578ca57cd8147b54a83f16e4c",
       "executable": false
     },
     "src/vendor/base/portability/bookkeeping.mjs": {
@@ -6883,6 +6887,10 @@
     },
     "src/vendor/base/portability/cli.mjs": {
       "sha256": "c1d832e0f70bad3871902eceddb70ed2e8c2454c4c5ec2a91fad5c0ff726f692",
+      "executable": false
+    },
+    "src/vendor/base/portability/column-backfill.mjs": {
+      "sha256": "ea3c5c7fb0abdf26e320dd5a0b2fb05c346394f762c143be9caa7a1b76250de3",
       "executable": false
     },
     "src/vendor/base/portability/copies.mjs": {
@@ -7170,7 +7178,7 @@
       "executable": false
     },
     "tests/audience-import/opt-out-rollback.spec.ts": {
-      "sha256": "dd9016052d31f46f829438b91c0b7f16784e56c572c60a2278b973f74a0f7433",
+      "sha256": "8933c39bcaea78236553c87349620f9fa2be070fcb5a5f23a5f45f3a13f5b50b",
       "executable": false
     },
     "tests/audience-import/privacy-portability.spec.ts": {
@@ -7470,7 +7478,7 @@
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "4f278b38b61a7e4ba1669fef223aa71e51c9a9e43a65aa63cdd3749d049042bf",
+      "sha256": "4ec182c05fb1558d03e2e0e60c45e5ee52b180c36c85c606053f0ae77ac60a01",
       "executable": false
     },
     "tests/go-live/content-links.ts": {
@@ -7538,7 +7546,7 @@
       "executable": false
     },
     "tests/go-live/list-growth.journeys.ts": {
-      "sha256": "aa131d6925da8e3872d8c833a548a4164ee432a85a121f9d673315d782c99d96",
+      "sha256": "f9e0050a21bc00bc4462b371841b6085f3162f55009eff27d51ba6d466e0e811",
       "executable": false
     },
     "tests/go-live/mailbox-provider.journeys.ts": {
