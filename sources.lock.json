@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "90ebf232e2a7e45a2e3d8eea7bec3e138c1f0a4669e32fcc0509f06b50f5d8fe",
+      "sha256": "7b5372eb1b580f9e25a2951494a877e71c9f240ead79686b093907212bad639b",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "c77fcad7a37140c5bc324b22ce0e737d48a0c33b03e11a06a2b5362e22814f55",
+      "sha256": "79afd6a885e55e920c9db974c6105689d1ec3db1e5c2677f04d0851e93a05bfd",
       "executable": false
     },
     "DEMO.md": {
@@ -2843,6 +2843,10 @@
     },
     "src/core/features/audience/ui/signup-challenge.tsx": {
       "sha256": "1259d0e843109b230d6cc58f496b37e67f72013985f71638231a9b8baf14eb42",
+      "executable": false
+    },
+    "src/core/features/audience/ui/signup-refusal-report.tsx": {
+      "sha256": "e2443dd5db4616c1411b1f821cdde62b1b1e17feacf28c045457766fb9ffa415",
       "executable": false
     },
     "src/core/features/audience/ui/signup-settings-form.tsx": {
@@ -7535,6 +7539,10 @@
     },
     "tests/go-live/sendgrid-events.ts": {
       "sha256": "06ab7572d3e1bbfe23b11e16e2fc044a9360cdbefb7c6c6777c95a3f62c15d08",
+      "executable": false
+    },
+    "tests/go-live/signup-refusal-screens.ts": {
+      "sha256": "f14ce11d08abd72aa879baab47432eb4b6982300acf77dc7b046756314436801",
       "executable": false
     },
     "tests/go-live/sms-bindings.ts": {
