@@ -16,7 +16,9 @@ export async function paidSignupInfo(platform: Platform, tier: PaidTier, price: 
   const count=price.recurring.interval_count ?? 1;
   if (!Number.isSafeInteger(count) || count < 1) throw new Error('Paid signup interval is unavailable.');
   const money=new Intl.NumberFormat('en-US',{style:'currency',currency:price.currency.toUpperCase()});
-  const amount=money.format(price.unit_amount/10**money.resolvedOptions().maximumFractionDigits);
+  const digits=money.resolvedOptions().maximumFractionDigits;
+  if(digits===undefined)throw new Error('Paid signup currency is unavailable.');
+  const amount=money.format(price.unit_amount/10**digits);
   const description=await loadSignupDescription(platform);
   return {sender:description.sender,consentText:description.consentText,frequencyDisclosure:description.frequencyDisclosure,disclosure:JSON.stringify({newsletter:description.disclosure,priceId:tier.priceId,paidTopic:tier.paidTopic}),
     privacyNote:description.privacyNote,turnstileSiteKey:description.turnstileSiteKey,paidTopic:tier.paidTopic,
