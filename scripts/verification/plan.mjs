@@ -73,7 +73,7 @@ export function matrix(tier) {
     ...[...sharded].flatMap(stage => {
       // Native delivery journeys build and restart their own runtimes. Give
       // these files smaller groups so the complete push wall stays under 15 minutes.
-      const count = {main: 6, 'local-start': 3, 'go-live': 8}[stage];
+      const count = {main: 6, 'local-start': 3, 'go-live': 9}[stage];
       return Array.from({length: count}, (_, offset) => ({ name: `${stage}-${offset + 1}-of-${count}`, stage, shard: `${offset + 1}/${count}`, browser: true }));
     }),
     // Newsletter UI and campaign results each start their own runtimes. Separate

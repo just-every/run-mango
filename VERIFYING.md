@@ -9,7 +9,7 @@ and the build. Install Chromium once with `pnpm exec playwright install chromium
 before browser checks.
 
 Push and pull-request Verify split independent stages into parallel jobs.
-Main, local-start and go-live browser journeys use six, three and eight
+Main, local-start and go-live browser journeys use six, three and nine
 Playwright shards respectively; newsletter UI (with sender disclosure),
 campaign results and move-in run independently, alongside static/operations
 checks and the remaining native lifecycle journeys.
