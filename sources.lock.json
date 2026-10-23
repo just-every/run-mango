@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "683c0a6e814dc4c084b28e5a46d56760635a3fb3a6217664abce0c63e3ab1c65",
+      "sha256": "868bfbdc8abc8f2520679054345b27360ea4d09994653884111dea8f500b0d18",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "5cd3d1e0348b19c4964d01020d0062c92ed374e771979239660eff1c1337aa60",
+      "sha256": "1a6394a1bccac4b824a648b6001d6f741d84ee20009ad0c681a3d49521777b6e",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "9e46fa9e09461448535315c0ba7bbbddafd41d22c115129ae95e12863a8666e1",
+      "sha256": "09cfee962c0e18c23c1d7624b55d5c809cd3bac4be581c9ed2ec3cb73a5e088e",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -7182,11 +7182,11 @@
       "executable": false
     },
     "tests/audience-import/signup-reservation-clock.spec.ts": {
-      "sha256": "8ffb12c2c17db06b4d52609df7e8d1d98f9c81ea86955f642e13b30c6cc5f28b",
+      "sha256": "1a83fc65fe63222f1f858ae74ce0f89a1351168fc0af786ffc07965557ef19a7",
       "executable": false
     },
     "tests/audience-import/signup-security.spec.ts": {
-      "sha256": "f3c0698a9dfa692bff99718e1903e989448cd3aab957c9cc07eb76a32586dc2e",
+      "sha256": "552e59f5b200eb0953fa435f1921f57b11db39e8edf68ef7bbc3aaf00374370c",
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {
