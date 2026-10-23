@@ -43,6 +43,15 @@ export function createSenderVerification(options: VerificationOptions) {
   const challenges = createChallengeService({ options, repository, currentConfiguration, clock });
   return {
     ...challenges,
+    receiverConfigured:Boolean(options.receiver),
+    async renewUsingConnector(adapter:Parameters<typeof challenges.sendChallenge>[1]) {
+      if(!options.receiver)return {kind:'unavailable' as const};
+      const challenge=await challenges.prepareChallenge({recipient:options.receiver.recipient,
+        subject:'Renew newsletter sender evidence',text:'Authenticate this diagnostic message for the configured newsletter sender. No campaign or contact data is included.'});
+      await challenges.sendChallenge(challenge.id,adapter);
+      await challenges.acquireObservation(challenge.id);
+      return {kind:'renewed' as const};
+    },
     ...createOwnerConfirmation({ options, repository, currentConfiguration, clock, sendChallenge: challenges.sendChallenge }),
     async inspect(sender: string): Promise<SenderInspection> {
       const start = clock();

@@ -1,3 +1,4 @@
+import {proveSenderRenewal} from './sender-renewal-journey';
 import { openPage } from '../support/navigation';
 import { test, expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
@@ -8,13 +9,14 @@ import { installation, json, sender, consent, draftCampaign, approve, dispatch, 
 
 // One public flow proves the Managed transactional boundary and both supported
 // owner marketing connections. Only the paid provider/DNS/receiving edge is fake.
-test('[SEND-001][OPER-001] Managed relay confirms access and consent while the owner connection sends approved newsletters', async ({browser}) => {
+test('[SEND-001][OPER-001][DELIV-007] Managed relay confirms access and consent while the owner connection sends approved newsletters', async ({browser},info) => {
   const shots = process.env.MANGO_RELEASE_SHOTS;
   if (shots) await mkdir(shots, {recursive:true});
   for (const provider of ['none', 'sendgrid', 'resend'] as const) {
     const edge = await providerEdge(), signer = eventSigner();
     const site = await installation(edge, signer, {managed:provider === 'none' ? 'none' : 'connected', mailProvider:provider === 'resend' ? 'resend' : 'sendgrid'});
-    const page = await browser.newPage();
+    const context=await browser.newContext();
+    const page = await context.newPage();
     try {
       const cookie = await site.open();
       await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);
@@ -81,7 +83,8 @@ test('[SEND-001][OPER-001] Managed relay confirms access and consent while the o
         const letter = edge.sends.findLast(send=>send.to==='gardener@example.test')!;
         expect(letter.body.headers['List-Unsubscribe-Post']).toBe('List-Unsubscribe=One-Click');
       } else expect(edge.resend.sends.some(send=>send.body.to.includes('gardener@example.test'))).toBe(true);
+      if(provider==='resend')await proveSenderRenewal(page,site,edge,cookie,info);
       expect(edge.unexpected).toEqual([]);
-    } finally {await page.close();await site.runtime.close();await edge.close();}
+    } finally {await context.close();await site.runtime.close();await edge.close();}
   }
 });

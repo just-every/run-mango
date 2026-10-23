@@ -75,4 +75,6 @@ export const contactErasureTables:ErasureTable[]=[
   contact('paid_subscriptions'),
   {table:'audience_exclusion_settings',literal:true,mode:'redact'},
   contact('woocommerce_flow_enrollments'),
+  // Operator-only delivery markers contain no contact data: erasure is a no-op.
+  {table:'sender_renewal_deliveries',where:()=>({sql:'0',params:[]})},
 ];

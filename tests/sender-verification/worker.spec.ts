@@ -6,14 +6,15 @@ import { join } from 'node:path';
 const require = createRequire(import.meta.url);
 const { Miniflare } = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const { build } = createRequire(require.resolve('vite/package.json'))('esbuild');
-test('native Worker production services approve, hand off, and reload protected redacted evidence on real D1 [MSG-003]', async () => {
+test('native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period [MSG-003][DELIV-007]', async () => {
   const bundle = await build({ external:['node:*'],entryPoints:['tests/sender-verification/worker-entry.ts'], bundle:true,write:false,format:'esm',platform:'browser',alias:{'@':join(process.cwd(),'src')},logLevel:'silent' });
   const runtime = new Miniflare({host:'127.0.0.1',port: 0,cf:false,telemetry:{enabled:false},workers:[{config:{name:'sender-worker-proof',type:'worker',compatibilityDate:'2026-08-31',
     compatibilityFlags:['nodejs_compat'],
     manifest:{mainModule:'worker.js',modules:{'worker.js':{type:'esm',contents:bundle.outputFiles[0].text}}},env:{DB:{type:'d1',id:crypto.randomUUID()}}}}]});
   try {
     const db = await runtime.getD1Database('DB');
-    for(const file of (await readdir('migrations/core')).filter(file=>file.endsWith('.sql')).sort()) await db.batch(sqlStatements((await readFile(`migrations/core/${file}`,'utf8'))).map(sql=>db.prepare(sql)));
+    const migrations=(await readdir('migrations/core')).filter(file=>file.endsWith('.sql')).sort();
+    for(const file of migrations.filter(file=>!file.startsWith('0094_'))) await db.batch(sqlStatements((await readFile(`migrations/core/${file}`,'utf8'))).map(sql=>db.prepare(sql)));
     const response = await runtime.dispatchFetch('https://mango.example.test/test-proof');
     const proof = await response.json();
     expect(proof, JSON.stringify(proof)).toMatchObject({approval:{kind:'approved'}});
@@ -42,5 +43,16 @@ test('native Worker production services approve, hand off, and reload protected 
     expect(data.evidence.observation.observedAt).toBeTruthy();
     expect(JSON.stringify(data)).not.toContain('receiver@example.test');
     expect(await db.prepare('SELECT count(*) n FROM sender_verification_associations').first()).toEqual({n:2});
+    const populated=await db.prepare('SELECT (SELECT count(*) FROM contacts) contacts,(SELECT count(*) FROM campaigns) campaigns,(SELECT count(*) FROM sender_verification_observations) observations').first();
+    for(const file of migrations.filter(file=>file.startsWith('0094_')))await db.batch(sqlStatements(await readFile(`migrations/core/${file}`,'utf8')).map(sql=>db.prepare(sql)));
+    expect(await db.prepare('SELECT (SELECT count(*) FROM contacts) contacts,(SELECT count(*) FROM campaigns) campaigns,(SELECT count(*) FROM sender_verification_observations) observations').first()).toEqual(populated);
+    const renewed=await (await runtime.dispatchFetch('https://mango.example.test/test-renewal-proof')).json();
+    expect(renewed.day22).toMatchObject({due:false,ready:true});expect(renewed.sends22).toBe(0);
+    expect(renewed.day23).toMatchObject({due:true,stage:'renewal',ready:true});
+    expect(renewed.delivered23).toHaveLength(3);expect(renewed.delivered23.filter((row:any)=>row.subject.startsWith('Confirm '))).toHaveLength(1);
+    expect(renewed.replay).toBe(0);expect(renewed.sends29).toBe(2);
+    expect(renewed.day31).toMatchObject({due:true,stage:'lapsed',ready:false,reason:'sender-evidence-lapsed'});
+    expect(renewed.changed).toMatchObject({due:true,stage:'changed',ready:false});
+    expect(renewed.rows).toEqual(expect.arrayContaining([expect.objectContaining({kind:'diagnostic',state:'accepted',count:1}),expect.objectContaining({kind:'reminder',stage:'renewal',state:'accepted',count:2}),expect.objectContaining({kind:'reminder',stage:'final',state:'accepted',count:2})]));
   } finally { await runtime.dispose(); }
 });

@@ -1,3 +1,4 @@
+import {senderRenewalRoutes} from './renewal-routes';
 import {Hono} from 'hono';
 import {z} from 'zod';
 import type {Platform} from '@/core/shared/platform';
@@ -8,6 +9,7 @@ import {domainName, digest} from './identity';
 import {inspectTrackingDomain, trackingDomainStatus} from './tracking-domain';
 export function domainSetupRoutes(platform: Platform) {
   const routes = new Hono<{Variables: AuthVariables}>(), db = platform.database.$client;
+  routes.route('/',senderRenewalRoutes(platform));
   const domain = () => domainName(platform.config.mailSender.fromEmail.split('@')[1] ?? '');
   const eligible = () => platform.config.mailProvider === 'sendgrid' && !!platform.config.mailProviderApiKey;
   routes.get('/settings/sender/domain-guide', async context => {
