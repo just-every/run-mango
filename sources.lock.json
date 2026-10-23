@@ -4078,7 +4078,7 @@
       "executable": false
     },
     "src/core/features/integrations/reviews-loyalty/settings.tsx": {
-      "sha256": "e8e8d543f02a9cedee91fed8163c87c77edd7ea0f04efca9cdfe4a46908ca062",
+      "sha256": "b1697f76f8227a3fce443c12eafcdd125e6a54d131e31ca9bcc048afd24d3bbe",
       "executable": false
     },
     "src/core/features/integrations/reviews-loyalty/signatures.ts": {
@@ -7778,7 +7778,7 @@
       "executable": false
     },
     "tests/go-live/review-loyalty-journey.ts": {
-      "sha256": "a87b822651c15c1552cacce851645c6880b4352240d0afa9299947d9c65d30d5",
+      "sha256": "eb3202e693aa8b277a1db311a024468647639e17eb1bd3a4e154655f2f2ce548",
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {

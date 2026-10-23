@@ -25,11 +25,11 @@ export async function proveReviewLoyalty(site:Installation,owner:string,page:Pag
   const panel=page.getByRole('region',{name:'Reviews and loyalty'});
   await expect(panel.getByLabel('Review or loyalty app')).toBeEnabled();
   await panel.getByLabel('Account or store ID').fill('review-store');
-  await panel.getByLabel('Webhook signing secret').fill(secrets.judgeme);
+  await panel.getByLabel('Review and loyalty signing secret').fill(secrets.judgeme);
   await panel.getByLabel('I have checked that this secret').check();
   await panel.getByRole('button',{name:'Connect app',exact:true}).click();
   await expect(panel.getByRole('status')).toContainText('Connected to review-store');
-  await expect(panel.getByLabel('Webhook signing secret')).toHaveValue('');
+  await expect(panel.getByLabel('Review and loyalty signing secret')).toHaveValue('');
   for(const [app,cookie,accountId] of [['okendo',admin,'review-subscriber'],['smile',owner,'42']] as const)
     await json(await site.call(endpoint+'/'+app,{method:'PUT',cookie,body:{accountId,secret:secrets[app],exclusiveSecret:true}}),200);
   expect(await json(await site.call(endpoint+'/yotpo',{method:'PUT',cookie:owner,body:{accountId:'unverified',secret:'synthetic-unverified',exclusiveSecret:true}}),409)).toEqual({error:'adapter_signature_protocol_unverified'});
@@ -73,7 +73,7 @@ export async function proveReviewLoyalty(site:Installation,owner:string,page:Pag
     await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/settings');
     await expect(panel.getByLabel('Review or loyalty app')).toBeEnabled();
     await expect(panel.getByRole('status')).toContainText('1 unmatched events');
-    await expect(panel.getByLabel('Webhook signing secret')).toHaveValue('');
+    await expect(panel.getByLabel('Review and loyalty signing secret')).toHaveValue('');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
     await panel.scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath('review-loyalty-'+width+'.png'),fullPage:true});
