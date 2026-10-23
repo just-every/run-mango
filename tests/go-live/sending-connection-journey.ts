@@ -48,7 +48,10 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
       await panel.screenshot({path:info.outputPath(`sending-review-${width}.png`)});
     }
     expect(provider.state.mutations).toHaveLength(before);
-    await page.getByRole('button',{name:'Connect SendGrid',exact:true}).click();await expect(panel).toContainText('delivery-events-missing');
+    const connected=page.waitForResponse(response=>response.url().endsWith('/api/settings/sending/connect')&&response.request().method()==='POST');
+    await page.getByRole('button',{name:'Connect SendGrid',exact:true}).click();
+    const connectionResponse=await connected;expect(connectionResponse.status(),await connectionResponse.text()).toBe(200);
+    await expect(panel).toContainText('delivery-events-missing');await expect(panel.getByRole('group',{name:'Review SendGrid connection'})).toHaveCount(0);
     const created=provider.state.webhooks.find(row=>row.id!==provider.existing.id);expect(created).toMatchObject({enabled:true,public_key:signer.publicKey,url:site.origin+'/webhooks/mail/sendgrid',friendly_name:'Mango '+site.origin});
     expect(provider.state.webhooks.find(row=>row.id===provider.existing.id)).toEqual(provider.existing);
     const state=await json(await site.call('/api/settings/sending',{cookie:owner}),200);
