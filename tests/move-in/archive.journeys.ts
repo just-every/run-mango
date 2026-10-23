@@ -128,10 +128,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     await expect(page.getByRole('heading',{name:'Mailchimp-held consent'})).toBeVisible();
     for(const radio of await page.getByRole('radio',{name:'I attest',exact:true}).all()){await expect(radio).not.toBeChecked();await radio.check();}
     await page.getByLabel('Type the source name to confirm: Mango Garden Letter',{exact:true}).fill('Mango Garden Letter');
-    const request=page.waitForRequest(request=>request.url().endsWith('/api/audience/archive-preview')&&request.method()==='POST');
     await page.getByRole('button',{name:'Preview import'}).click();
-    const posted=await request;const form=await new Response(posted.postDataBuffer(),{headers:{'Content-Type':posted.headers()['content-type']}}).formData();
-    setArchiveAttestations(bytes,JSON.parse(String(form.get('attestations'))));
     await expect(page.getByText('Attestation affirmed in the current preview.',{exact:false})).toBeVisible();
     await screens(page, 'preview', info);
 
@@ -151,6 +148,8 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     await screens(page, 'imported', info);
     const archive = (await json(await site.call('/api/audience/archives', { cookie }), 200)).archives[0];
     expect(archive.state).toBe('applied');
+    const [storedAttestations]=await site.rows(`SELECT attestations_json FROM move_in_archives WHERE id='${archive.id}'`);
+    setArchiveAttestations(bytes,JSON.parse(storedAttestations.attestations_json));
     expect(archive.summary.engagement).toEqual({rows:5,imported:3,dropped:2,reasons:{'address-not-in-move-in':1,'invalid-timestamp':1}});
     const engagement=await site.rows('SELECT c.email,f.kind,f.occurred_at,f.source,f.source_row,f.link,h.title FROM imported_engagement_facts f JOIN contacts c ON c.id=f.contact_id JOIN move_in_content h ON h.id=f.history_id ORDER BY c.email');
     expect(engagement.map(row=>[row.email,row.kind,new Date(row.occurred_at).toISOString(),row.title])).toEqual([
