@@ -6,8 +6,8 @@ export function originalLinkHosts(platform:Pick<Platform,'config'>){let saved=or
 function urlHost(value:unknown){if(value instanceof URL)value=value.href;if(typeof value!=='string')return;try{const url=new URL(value);if(url.protocol==='https:'&&!url.username&&!url.password)return url.hostname;}catch{}}
 export async function derivedHostSources(platform:Pick<Platform,'config'|'database'|'commerce'>){
  const rows:HostSource[]=[{host:platform.config.publicBaseUrl.hostname,source:'Deployment host',sourceId:'deployment'},...social.map(host=>({host,source:'Social defaults',sourceId:'social-defaults'}))];
- const module=platform.config.modules.commerce;
- if(module.enabled&&platform.commerce?.capabilities().provider==='shopify'){const host=urlHost(module.config.storeUrl);if(host)rows.push({host,source:'Configured Shopify connection host',sourceId:'shopify-configuration'});}
+ const module=platform.config.modules?.commerce;
+ if(module?.enabled&&platform.commerce?.capabilities().provider==='shopify'){const host=urlHost(module.config?.storeUrl);if(host)rows.push({host,source:'Configured Shopify connection host',sourceId:'shopify-configuration'});}
  const db=platform.database.$client,woo=await db.prepare('SELECT id,url FROM woocommerce_connection WHERE slot=1').first<{id:string;url:string}>();
  if(woo){const host=urlHost(woo.url);if(host)rows.push({host,source:'WooCommerce storefront',sourceId:'woocommerce:'+woo.id});
   const sourceId='woocommerce:'+woo.id+':catalog',run=await db.prepare("SELECT id FROM source_sync_runs WHERE provider=? AND source_type='product' AND state='completed' ORDER BY completed_at DESC,id DESC LIMIT 1").bind('woocommerce:'+woo.id).first<{id:string}>(),version=run?.id??'none';
