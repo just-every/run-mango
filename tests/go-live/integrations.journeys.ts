@@ -14,9 +14,6 @@ test('[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-
   try {
     const cookie = await site.open();
     await browserPage.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
-    await openPage(browserPage,site.runtime.url+'/setup');
-    await expect(browserPage.getByLabel('Your name',{exact:true})).toHaveCount(0);
-    await expect(browserPage.getByLabel('Business display name',{exact:true})).toBeVisible();
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
     const signedInEntry=await site.call('/signin',{cookie});
     expect(signedInEntry.status).toBe(303);

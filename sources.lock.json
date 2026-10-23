@@ -7666,7 +7666,7 @@
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
-      "sha256": "51aa35647102252e65770597d5d506e435b19ca73de7b359bec55425d335a058",
+      "sha256": "1d7ae9bf4114c709a713275125747379e96dad89cfc56c43933e08d3d1c24a6c",
       "executable": false
     },
     "tests/go-live/kiosk-harness.ts": {
@@ -7886,7 +7886,7 @@
       "executable": false
     },
     "tests/local-start/config.js": {
-      "sha256": "d8bc678c7d2d646440c18a2511a54c4a4c6152083bc923ec8792997a7e171aa3",
+      "sha256": "0c80bba508cc55758e49244b8d2b38f54dd04bd83fc0a9de6d47567ce1e38561",
       "executable": false
     },
     "tests/local-start/dev-gate.mjs": {
@@ -7922,7 +7922,7 @@
       "executable": false
     },
     "tests/local-start/signin-hydration.journey.ts": {
-      "sha256": "67cc8a6343a756b92d66ffd62e0a8875f0d43c3e28bb34a68577d54be0323c76",
+      "sha256": "45dea6eb15bff012cd2b2ffa804a7104b1df39e04d49bf85e06fbdd3c2583be6",
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {

@@ -12,6 +12,8 @@ test('[OPER-001] one-click local owner sign-in works before JavaScript at 390px'
     await page.getByRole('link',{name:'Sign in as Owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
     await expect(page.getByRole('heading',{name:'Set up your sender identity'})).toBeVisible();
+    await expect(page.getByLabel('Your name',{exact:true})).toHaveCount(0);
+    await expect(page.getByLabel('Business display name',{exact:true})).toBeVisible();
     expect((await page.request.get(runtime.url+'/__dev/outbox')).status()).toBe(404);
   } finally {await context.close();}
 });
