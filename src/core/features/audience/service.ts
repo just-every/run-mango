@@ -380,7 +380,7 @@ export function createAudienceService(
     if (!publicCapture && input.captureMethod!=='operator-recorded') await repository.setPendingFromEvidence(contact.id, input.channel, input.occurredAt);
     if (!await dispatchAllowed()) return { contact, evidence, confirmation: undefined };
     const sent = await requiredDependencies().confirmationDispatcher.sendConfirmation({ channel: input.channel, destination, token, expiresAt, contactId:contact.id, consentId:evidence.id },
-      () => repository.claimConfirmationHandoff(confirmationId, destinationHash, input.channel, publicCapture));
+      () => repository.claimConfirmationHandoff(confirmationId, destinationHash, input.channel, publicCapture, destination));
     if (sent === false) return { contact, evidence, confirmation: undefined };
     await recordHistory(contact.id,'confirmation-handed-off',`${input.channel} confirmation handed to the mail provider; expires ${expiresAt.toISOString()}.`,new Date(),`${evidence.id}_handoff`);
     return { contact, evidence, confirmation: { token, expiresAt } };
