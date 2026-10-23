@@ -1,3 +1,4 @@
+import {loadSendingConnection} from '@/core/features/sending/load-connection';
 import {loadWooCommerce} from '@/core/features/store/woocommerce/connection';
 import { runScheduled } from './scheduled';
 import { dispatchDocuments } from './document-dispatch';
@@ -15,6 +16,7 @@ async function lifecycleRuntime(environment: AppBindings) {
   const platform = platformFor(environment);
   await loadSenderSettings(platform);
   await loadWooCommerce(platform);
+  await loadSendingConnection(platform);
   await loadLinkHosts(platform);
   return createAppServices(platform).lifecycleRuntime;
 }
@@ -39,7 +41,7 @@ return {
     // Admit the host and reject local-only routes before reading connection
     // authority. Construct services only after that authority has been loaded.
     const transport = {fetch: (incoming: Request, env: AppBindings, context: ExecutionContext) => createApp(bindings, platform).fetch(incoming, env, context)};
-    return dispatchDocuments(request, bindings, executionContext, platform, transport, () => loadWooCommerce(platform));
+    return dispatchDocuments(request, bindings, executionContext, platform, transport, async () => {await loadWooCommerce(platform);await loadSendingConnection(platform);});
   },
   async queue(batch, environment) {
     const messages = (batch as unknown as LifecycleQueueBatch).messages.filter(message => !acknowledgeHealthProbe(message));

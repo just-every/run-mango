@@ -1,3 +1,4 @@
+import {loadSendingConnection} from '../../src/core/features/sending/load-connection';
 import {loadWooCommerce} from '../../src/core/features/store/woocommerce/connection';
 import { withDevIdentity } from '../../src/vendor/base/operator-auth/dev/index.mjs';
 import {advanceClock} from './clock';
@@ -91,6 +92,7 @@ async function compose(bindings: Bindings) {
     : createSendgridAdapter({apiKey:platform.config.mailProviderApiKey,webhookPublicKey:platform.config.mailWebhookSecret,verification});
   platform.mailer=pacedAdapter(mailer,platform.database,platform.config);
   platform.senderVerification=verification;
+  await loadSendingConnection(platform);
   return { platform, verification };
 }
 

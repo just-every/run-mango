@@ -1,3 +1,4 @@
+import {sendingConnectionRoutes} from '@/core/features/sending/routes';
 import {wooFlowRoutes} from '@/core/features/store/woocommerce/flows';
 import {wooCommerceRoutes} from '@/core/features/store/woocommerce/routes';
 import { createAttributionPolicyRoutes } from '@/core/features/insights/attribution-policy-routes';
@@ -351,6 +352,7 @@ export function createApp(
   const lifecycleServices = registerLifecycleRoutes(app, lifecycleRuntime);
   app.route('/api',archiveOperatorRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
+  app.route('/api',sendingConnectionRoutes(platform));
   app.route('/api', createLinkHostRoutes(platform));
   app.route('/api',createDormancyRoutes(platform));
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));

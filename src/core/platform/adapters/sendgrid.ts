@@ -1,3 +1,4 @@
+import {HTTPException} from 'hono/http-exception';
 import { probeProvider } from './provider-health';
 import { readWebhookBytes } from './webhook-body';
 // @ts-expect-error Base mail ships runtime-validated portable ESM.
@@ -52,7 +53,7 @@ export function createSendgridAdapter(options: { apiKey: string; webhookPublicKe
       const bytes = await readWebhookBytes(request,32*1024*1024);
       const valid = await verifyWebhook({ provider: 'sendgrid', rawBody: bytes,
         headers: request.headers, key: options.webhookPublicKey, now: Date.now() });
-      if (!valid) throw new Error('SendGrid webhook signature is invalid.');
+      if (!valid) throw new HTTPException(401,{message:'SendGrid webhook signature is invalid.'});
       const rawBody=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
       return { provider: 'sendgrid', rawBody, receivedAt: new Date() };
     },

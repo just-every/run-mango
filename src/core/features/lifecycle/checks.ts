@@ -178,6 +178,7 @@ export async function runApprovalChecks(input: {
     if(sizeAdvisory)checks.push(sizeAdvisory);
     const inspection = mailInspection!;
     checks.push(...adapterChecks('email', mailCapabilities, requiredWindow('email')));
+    if(mailCapabilities.deliveryEventsVerified!==undefined)checks.push(check('delivery-events-missing',mailCapabilities.deliveryEventsVerified,'A signed delivered event for the Owner sender check is required.'));
     const holds=await activeProviderHolds(platform.database,mailCapabilities.provider??platform.config.mailProvider??'resend','email',snapshot.revision.fromEmail);
     checks.push(check('provider.restrictions',holds.length===0,holds.length?holds.map(h=>`${h.provider} ${h.scope}: ${h.detail}`).join('; '):'No observed provider restriction.'));
     if (mailCapabilities.configured) {

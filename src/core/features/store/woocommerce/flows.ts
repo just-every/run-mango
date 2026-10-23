@@ -33,6 +33,7 @@ export function wooFlowRoutes(platform: Platform) {
     if (!flow) return context.json({error: 'flow_not_found'}, 404);
     const connection = await readWooConnection(platform);
     if (!connection?.pluginEnabled || connection.id !== flow.connection_id) return context.json({error: 'trigger_source_unavailable'}, 409);
+    if(action==='activate'&&(await platform.mailer.capabilities()).deliveryEventsVerified===false)return context.json({error:'delivery-events-missing'},409);
     const actor = context.get('operator').id, now = Date.now();
     // Only the exact saved tag action is activated; a new draft has a new id.
     await db.batch([db.prepare('UPDATE woocommerce_flows SET state=?,activated_by=?,activated_at=? WHERE id=?').bind(action === 'activate' ? 'live' : 'paused', actor, now, flow.id),

@@ -183,3 +183,11 @@ A whole batch may include other applications' addresses. Mango retains unmatched
 Signed Inbound Parse authenticates received email, not outgoing delivery events. Mango has no Inbound Parse intake or reply inbox. Do not forward multipart Parse messages to the outgoing event URL or turn them into fabricated delivery facts. A separate receipt/reply integration would need its own public key, unchanged multipart body and boundary, replay handling and receiver trust design. See [SendGrid Parse security](https://www.twilio.com/docs/sendgrid/for-developers/parsing-email/securing-your-parse-webhooks).
 
 This forwarding design is locally signature-tested. Existing receiver access, live signed event ingestion and normal cron delivery remain unproven. The reviewed hosted installation required adjustments and manual Queue dispatch, and its account had both Event Webhook slots occupied. No live account configuration is changed by these instructions.
+
+## SendGrid from Settings
+
+An Owner can review a SendGrid key in Settings → Sending. Mango reads the key permissions first, then names the provider account, its own event webhook URL, event list and signing before Connect authorizes any provider change. The connection key is encrypted installation authority; exports and restored archives carry no active sending connection. A broader key is labelled with the restricted permission list.
+
+Mango creates its webhook disabled, enables signing and reads its verification key before enabling event delivery. If signing or key read-back fails, it deletes the webhook it created. It changes only its saved webhook id, preserves other webhooks and reuses its own on reconnect. A provider account with every enabled-webhook slot occupied is refused before a create call. Use the existing signed forwarding route in this guide when no slot is free; Mango never disables another webhook to make room.
+
+Campaign approval and flow activation remain blocked by `delivery-events-missing` until the Owner sender check has a verified signed delivered event. A provider test event, unrelated signed delivery or replay does not establish that proof. Disconnecting does not resume deployment-input sending.
