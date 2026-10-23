@@ -9,7 +9,7 @@ export async function wooPluginJourney(site: Site, page: Page, cookie: string, w
   const event = {version: 1, id: randomUUID(), kind: 'abandoned_checkout', occurredAt: at, customerId: '11', checkoutId: randomUUID(), checkoutStartedAt: new Date(Date.now()-3600000).toISOString(), products: ['21'], consent: {analytics: true, marketing: true}, gpc: false};
   const send = (value: unknown, signature?: string, timestamp = String(Math.floor(Date.now()/1000)), origin = site.origin) => {
     const raw = JSON.stringify(value);
-    return site.call(webhookPath + '/plugin', {method: 'POST', raw, headers: {'Content-Type': 'application/json', Origin: origin, 'X-GoLive-Host': new URL(site.origin).host, 'X-Test-Token':site.runtime.token, 'X-Mango-Timestamp': timestamp,
+    return site.call(webhookPath + '/plugin', {method: 'POST', raw, headers: {'Content-Type': 'application/json', Origin: origin, 'X-GoLive-Host': new URL(site.runtime.url).host, 'X-Test-Token':site.runtime.token, 'X-Mango-Timestamp': timestamp,
       'X-Mango-Signature': signature ?? createHmac('sha256', signingSecret).update('mango-plugin-v1\n' + timestamp + '.' + raw).digest('base64')}});
   };
   await openPage(page, site.runtime.url + '/app/settings');

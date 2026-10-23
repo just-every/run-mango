@@ -7586,7 +7586,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce-plugin-journey.ts": {
-      "sha256": "5415fbcfabbdc53bba11abb555aceb31c02343a0c31910a9302eab4df7dcd40b",
+      "sha256": "00f2f1a46001938e72ae50ce4c6db6695e0ea479ad4a9ea689faddf7c622d78d",
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
