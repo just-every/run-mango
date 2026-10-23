@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "2963c31e7757aa4824d51b272aff950af51b35f5b5f6a38c4c0ef29ac53f9cf8",
+      "sha256": "a99bc8820a4720ddfd2524f516f5b6ebebd603861c51d5a3edac575470ca355c",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "9c50874c7aa1061aeccb600a4d3ab9e052575c7272b13b56ce8962422f1c6159",
+      "sha256": "128379094b37aa9b4b9ead768a808441d93f96f9dae6dbcae4eff208442882e1",
       "executable": false
     },
     "DEMO.md": {
@@ -4794,7 +4794,7 @@
       "executable": false
     },
     "src/core/features/store/stripe/paid-signup.ts": {
-      "sha256": "d533f79ac7d3b3ee145112169c2be9aafa43324969635c50a15f9d611dcb051b",
+      "sha256": "43818183da1aad742d168832afe6139f4a248fb043b01529cfee3ce7114d2199",
       "executable": false
     },
     "src/core/features/store/stripe/paid-state.ts": {
@@ -4806,7 +4806,7 @@
       "executable": false
     },
     "src/core/features/store/stripe/routes.ts": {
-      "sha256": "66d53c258a742523d90964d3ba5d6abd8e12d9384829f58d13cf210302a407b8",
+      "sha256": "8e6e048356453fc1ade00bdaf4b0d4675fe04ade6981298a57dcfaeee04a66ed",
       "executable": false
     },
     "src/core/features/store/stripe/secrets.ts": {
@@ -7590,7 +7590,7 @@
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
-      "sha256": "40cbaf5d18474aab476304c80eccf589230683ff4f6482ac30b8c002df3dda5e",
+      "sha256": "a47bb58517eaeb40ead6f31821c813936c292d4db5fc15355211e940d84a6d52",
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
@@ -7646,7 +7646,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "04e63de8487b73b7b9d1314912c53ada2836cb9d9d38a9f3ad295420b6ae8978",
+      "sha256": "31743d30f936bb49d3b97592d027f6f88645a173b4367d0a4b4a96636028a4b5",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {

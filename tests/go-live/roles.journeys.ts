@@ -7,7 +7,7 @@ import {installation,json,sender,confirmedContact,draftCampaign,availableTranspo
 import {openPage} from '../support/navigation';
 import {type ProductRole} from '../../src/core/features/auth/permissions';
 
-test('[PUB-005][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
+test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
   const edge=await providerEdge(),site=await installation(edge,eventSigner());
   try {
     const owner=await site.open();

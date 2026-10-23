@@ -1,4 +1,4 @@
-import {paidSignupInfo, paidSignupConsent} from './paid-signup';
+import {paidSignupInfo, paidSignupConsent, PaidSignupCapacityError} from './paid-signup';
 import {limitedBody} from '@/core/features/audience/signup-routes';
 import {Hono} from 'hono';
 import type {AuthVariables} from '@/core/features/auth/routes';
@@ -93,12 +93,18 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
     if (!stored || !tier) return context.json({error: 'paid_tier_unavailable'}, 409);
     let admitted: Awaited<ReturnType<typeof signupConsent.admit>>;
     try {admitted = await signupConsent.admit(parsed.data, context.req.raw, tier);}
-    catch {return context.json({error:'signup_refused',detail:'Review the signup details and verification before continuing.'},400);}
+    catch (error) {
+      if(error instanceof PaidSignupCapacityError){context.header('Retry-After',String(error.retryAfter));return context.json({error:'rate_limited',reason:error.reason,detail:error.message},429);}
+      return context.json({error:'signup_refused',detail:'Review the signup details and verification before continuing.'},400);
+    }
     try {
       const session = await create('checkout/sessions', await unseal(stored.key_cipher, platform.config.sessionSigningKey), paid.checkout(tier, parsed.data.email, platform.config.publicBaseUrl.origin), parsed.data.requestId ? await sha256(`${parsed.data.email.toLowerCase()}:${tier.priceId}:${parsed.data.requestId}`) : undefined);
       if (admitted && typeof session.id === 'string' && typeof session.url === 'string' && new URL(session.url).origin === 'https://checkout.stripe.com') await signupConsent.capture(parsed.data, session.id, admitted);
       return typeof session.url === 'string' ? context.json({url: session.url}) : context.json({error: 'checkout_unavailable'}, 502);
-    } catch {return context.json({error: 'checkout_unavailable'}, 502);}
+    } catch (error) {
+      if(error instanceof PaidSignupCapacityError){context.header('Retry-After',String(error.retryAfter));return context.json({error:'rate_limited',reason:error.reason,detail:error.message},429);}
+      return context.json({error: 'checkout_unavailable'}, 502);
+    }
   });
   webhooks.post('/webhooks/commerce/stripe', async context => {
     const stored = await read();

@@ -4,7 +4,7 @@ import {type Installation,json,confirmedContact,draftCampaign,approve,dispatch} 
 import type {providerEdge} from './edge';
 import {openPage} from '../support/navigation';
 
-/** [PUB-005] Hosted page and real Worker doors; only Stripe and mail are network fakes. */
+/** [PUB-005][FORM-008][FORM-010] Hosted page and real Worker doors; only Stripe and mail are network fakes. */
 export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:Installation;page:Page;info:TestInfo;owner:string;edge:Awaited<ReturnType<typeof providerEdge>>;post:(event:unknown)=>Promise<Response>}) {
   const payer='synthetic-mango-51@example.test',unsubscribed='synthetic-mango-52@example.test',suppressed='synthetic-mango-53@example.test';
   const url=site.runtime.url+'/subscribe?paid=1';
@@ -80,13 +80,17 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   // A subscribed and confirmed reader needs no second confirmation.
   const start=async(email:string,requestId=crypto.randomUUID())=>json(await site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':'198.51.100.152'},body:{email,consent:true,disclosure:description.disclosure,requestId}}),200);
   await site.control('/_golive/clock',{advanceMs:2001});
+  const acceptedCount=async()=>(await site.rows("SELECT COALESCE(SUM(count),0) AS n FROM oa_limits WHERE key='signup-global'"))[0].n;
+  const beforeSubscribed=await acceptedCount();
   await start(payer);expect(confirmations(payer)).toHaveLength(1);
+  expect(await acceptedCount()).toBe(beforeSubscribed);
   await confirmedContact(site,edge,owner,unsubscribed,'Returning garden reader');
   const unsub=await contact(unsubscribed);
   await json(await site.call(`/api/contacts/${unsub.id}/opt-out`,{method:'POST',cookie:owner,body:{channel:'email'}}),200);
   await site.control('/_golive/clock',{advanceMs:2001});
   const count=confirmations(unsubscribed).length,requestId=crypto.randomUUID();
-  await start(unsubscribed,requestId);await start(unsubscribed,requestId);await complete(unsubscribed);
+  await start(unsubscribed,requestId);const afterReturning=await acceptedCount();
+  await start(unsubscribed,requestId);expect(await acceptedCount()).toBe(afterReturning);await complete(unsubscribed);
   expect((await contact(unsubscribed)).email_status).toBe('unsubscribed');
   expect(confirmations(unsubscribed)).toHaveLength(count+1);
   const returning=confirmations(unsubscribed).at(-1)!;
@@ -113,5 +117,28 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   expect(erasure.status).toBe(200);expect(receipt.receipt.state).toBe('complete');
   expect(await site.rows(`SELECT id FROM contacts WHERE email='${payer}'`)).toEqual([]);
   expect(await site.rows(`SELECT id FROM consent_evidence WHERE destination='${payer}'`)).toEqual([]);
+  // Paid and free capture consume the same accepted network allowance. Fill it
+  // through public doors, then both refuse without another Stripe hand-off.
+  const capacityIp='198.51.100.153';
+  const checkout=(email:string)=>site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':capacityIp},body:{email,consent:true,disclosure:description.disclosure,requestId:crypto.randomUUID()}});
+  const beforeCapacity=await acceptedCount();
+  await json(await checkout('synthetic-mango-capacity-paid@example.test'),200);
+  expect(await acceptedCount()).toBe(beforeCapacity+1);
+  const levels=await json(await site.call('/api/audience/signup-allowance',{cookie:owner}),200);
+  const freeDescription=await json(await site.call('/subscribe/info'),200);
+  const freeSignup=(email:string)=>site.call('/subscribe',{method:'POST',headers:{'CF-Connecting-IP':capacityIp},body:{email,consent:true,disclosure:freeDescription.disclosure}});
+  for(let index=1;index<levels.levels.networkUnchallenged;index++) {
+    await json(await freeSignup(`synthetic-mango-capacity-free-${index}@example.test`),202);
+  }
+  expect(await acceptedCount()).toBe(beforeCapacity+levels.levels.networkUnchallenged);
+  const sessionsBeforeRefusal=edge.stripe.sessions.length;
+  const refused=await checkout('synthetic-mango-capacity-over@example.test');
+  expect(refused.status).toBe(429);expect(Number(refused.headers.get('Retry-After'))).toBeGreaterThan(0);
+  expect(await refused.json()).toMatchObject({error:'rate_limited',reason:'network-rate-limit'});
+  expect(edge.stripe.sessions).toHaveLength(sessionsBeforeRefusal);
+  expect((await freeSignup('synthetic-mango-capacity-free-over@example.test')).status).toBe(429);
+  expect(await acceptedCount()).toBe(beforeCapacity+levels.levels.networkUnchallenged);
+  expect(await site.rows("SELECT id FROM contacts WHERE email='synthetic-mango-capacity-over@example.test'")).toEqual([]);
+  expect((await site.rows("SELECT SUM(refusals) AS n FROM signup_refusal_hours WHERE form='hosted' AND reason='network-rate-limit'"))[0].n).toBeGreaterThanOrEqual(2);
   await page.unroute('https://checkout.stripe.com/**');await page.context().setExtraHTTPHeaders({});
 }
