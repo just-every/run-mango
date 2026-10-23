@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "3f7bd4d2cbc03525183a396692fc209439edb37d01e0ce51b642e92c131fe0cf",
+      "sha256": "c2bf4aa2dcfffdf14dba3fcada1723feda518c2be8de10f8550d95ec25d3c048",
       "executable": false
     },
     "DEMO.md": {
@@ -1174,7 +1174,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "98b5981479b44279309977027c344849d188b8ac54af0e785f21829aca24ac17",
+      "sha256": "d2ae27cafdfcf13a62bc4861899d813411a3c745a64417c8e854d2b05571e5ec",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -4446,7 +4446,7 @@
       "executable": false
     },
     "src/core/features/sending/connection-service.ts": {
-      "sha256": "e56e132314994403474ef86338dff077e330fb91595c9c416593310be3dc9ae4",
+      "sha256": "9b9759231e4fc3a9f4a74d4a941cf88b727b86473be7bda1e8dc9978464d0542",
       "executable": false
     },
     "src/core/features/sending/load-connection.ts": {

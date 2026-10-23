@@ -542,6 +542,12 @@
       "name": "core-0087_paid_state_authority.sql",
       "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
       "sql": "-- Existing subscriptions retain their state; the first fresh read supersedes\n-- event-second ordering. No payment or consent record is recreated.\nALTER TABLE paid_subscriptions ADD COLUMN read_started_at INTEGER NOT NULL DEFAULT 0;\nALTER TABLE commerce_receipts ADD COLUMN stripe_applied_at INTEGER;\n-- The hand-off claim fences every paid-state write, including replay/restore.\nCREATE TRIGGER paid_subscriptions_audience_generation_insert AFTER INSERT ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\nCREATE TRIGGER paid_subscriptions_audience_generation_update AFTER UPDATE ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\nCREATE TRIGGER paid_subscriptions_audience_generation_delete AFTER DELETE ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0088_sending_connection.sql",
+      "sha256": "bf83e550874bf173e8e45c31d126144efc5adb8df3f8932866fdf6437c88be5a",
+      "sql": "-- Installation authority never travels in an audience export or restored archive.\nCREATE TABLE sending_proposals (\n id TEXT PRIMARY KEY, operator_id TEXT NOT NULL, secret_cipher TEXT NOT NULL,\n account_id TEXT NOT NULL, account_name TEXT NOT NULL, broader INTEGER NOT NULL,\n created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL\n);\nCREATE TABLE sending_connection (\n id INTEGER PRIMARY KEY CHECK(id=1), generation TEXT NOT NULL,\n state TEXT NOT NULL, account_id TEXT NOT NULL, account_name TEXT NOT NULL,\n secret_cipher TEXT NOT NULL, last_four TEXT NOT NULL, broader INTEGER NOT NULL,\n connected_by TEXT NOT NULL, connected_at INTEGER NOT NULL,\n webhook_id TEXT, delivery_proved_at INTEGER, last_error TEXT\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
