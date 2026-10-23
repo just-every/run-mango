@@ -88,9 +88,9 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     expect(JSON.stringify(allowed)).not.toContain('"kind":"delivery-events-missing","status":"blocked"');
     await openPage(page,site.runtime.url+'/app/settings');await expect(panel).toContainText('Signed delivery events verified.');
     for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);expect((await new AxeBuilder({page}).include('#sending').analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await panel.screenshot({path:info.outputPath(`sending-connected-${width}.png`)});}
-    const {id}=await json(await site.call('/api/portability/exports',{method:'POST',cookie:owner,body:{}}),201);
-    let progress;do {progress=await json(await site.call(`/api/portability/exports/${id}/advance`,{method:'POST',cookie:owner,body:{}}),200);}while(progress.phase!=='complete');
-    const archive=await site.call(`/api/portability/exports/${id}/download`,{cookie:owner});expect(archive.status).toBe(200);
+    const {id}=await json(await site.call('/api/portability/exports',{method:'POST',cookie:owner,headers:{Origin:site.runtime.url},body:{}}),201);
+    let progress;do {progress=await json(await site.call(`/api/portability/exports/${id}/advance`,{method:'POST',cookie:owner,headers:{Origin:site.runtime.url},body:{}}),200);}while(progress.phase!=='complete');
+    const archive=await site.call(`/api/portability/exports/${id}/download`,{cookie:owner,headers:{Origin:site.runtime.url}});expect(archive.status).toBe(200);
     const exported=[];for await(const record of readArchive(archive.body!))exported.push(record);
     expect(JSON.stringify(exported)).not.toContain(apiKey);expect(JSON.stringify(exported)).not.toContain(signer.publicKey);
     expect(edge.unexpected).toEqual([]);
