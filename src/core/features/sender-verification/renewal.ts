@@ -1,3 +1,4 @@
+import {confirmingOperatorBinding} from './operator-binding';
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
 import type {Platform,DeliveryRequest} from '@/core/shared/platform';
 import {ProviderTransportError} from '@/core/shared/platform';
@@ -22,7 +23,8 @@ export function createSenderRenewal(platform:Platform,clock=Date.now) {
     const evidence=verification?await verification.inspect(configuredFrom(platform.config)):undefined;
     const state=await db.prepare('SELECT observation_id,binding_digest,configuration_digest,revoked_at,reason FROM sender_verification_state WHERE id=?').bind(stateId).first<{observation_id:string|null;binding_digest:string;configuration_digest:string|null;revoked_at:number|null;reason:string}>();
     const prior=await db.prepare(`SELECT o.id,o.observed_at,o.expires_at,o.result_json FROM sender_verification_observations o JOIN sender_verification_challenges c ON c.id=o.challenge_id WHERE c.state_id=? ORDER BY o.observed_at DESC,o.id LIMIT 1`).bind(stateId).first<Observation>();
-    const confirmer=await db.prepare(`SELECT json_extract(o.result_json,'$.owner.recipient') email FROM sender_verification_observations o JOIN sender_verification_challenges c ON c.id=o.challenge_id WHERE c.state_id=? AND json_extract(o.result_json,'$.reason')='owner-confirmed' ORDER BY o.observed_at DESC,o.id LIMIT 1`).bind(stateId).first<{email:string|null}>();
+    const confirmer=await db.prepare(`SELECT json_extract(o.result_json,'$.owner.recipient') email,json_extract(o.result_json,'$.owner.nativeAuthority') nativeAuthority FROM sender_verification_observations o JOIN sender_verification_challenges c ON c.id=o.challenge_id WHERE c.state_id=? AND json_extract(o.result_json,'$.reason')='owner-confirmed' ORDER BY o.observed_at DESC,o.id LIMIT 1`).bind(stateId).first<{email:string|null;nativeAuthority:string|null}>();
+    const requiresConfirmation=Boolean(confirmer?.email&&(!confirmer.nativeAuthority||confirmer.nativeAuthority!==await confirmingOperatorBinding(db,confirmer.email)));
     const recent=await db.prepare("SELECT max(updated_at) at FROM sender_renewal_deliveries WHERE kind='connector' AND state='accepted' AND updated_at>=?").bind(now-3600000).first<{at:number|null}>();
     const changed=Boolean(prior&&state&&(state.observation_id!==prior.id||state.revoked_at));
     const lapsed=Boolean(prior&&prior.expires_at<=now),owner=prior?JSON.parse(prior.result_json).reason==='owner-confirmed':false;
@@ -37,13 +39,13 @@ export function createSenderRenewal(platform:Platform,clock=Date.now) {
     const status={visible:due||Boolean(recent?.at),due,stage,periodKey,ready:evidence?.ready??false,reason:changed?state?.reason:lapsed?'sender-evidence-lapsed':evidence?.reason??'observation-missing',
       observedAt:prior?.observed_at??null,expiresAt:prior?.expires_at??null,renewedAt:recent?.at??null,
       waitingMessages:changed||lapsed?waiting?.count??0:0,earliestDeadline:changed||lapsed?waiting?.deadline??null:null,
-      automaticRenewal:verification?.receiverConfigured??false,deliveries};
+      automaticRenewal:verification?.receiverConfigured??false,requiresConfirmation,deliveries};
     return {status,state,stateId,confirmer:confirmer?.email??null,now};
   }
   async function read(){return (await inspect()).status;}
   async function run() {
     const snapshot=await inspect(),{status,confirmer,now}=snapshot;
-    if(!status.due||!status.periodKey||!platform.senderVerification)return {status};
+    if(!status.due||!status.periodKey||status.requiresConfirmation||!platform.senderVerification)return {status};
     const recipients=(await db.prepare(`SELECT n.id,n.email ${operators} AND (${effectiveRole}='owner' OR lower(n.email)=lower(?)) ORDER BY n.id`).bind(confirmer??'').all<{id:string;email:string}>()).results;
     const reminderStage=status.stage==='changed'?'changed':status.stage==='final'||status.stage==='lapsed'?'final':'renewal';
     async function attempt(operatorId:string,kind:'reminder'|'diagnostic'|'connector',stage:string,work:()=>Promise<string|undefined>) {

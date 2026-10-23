@@ -1,3 +1,4 @@
+import {confirmingOperatorBinding} from './operator-binding';
 import { timingSafeEqual } from '@/core/platform/crypto';
 import type { SenderAdapter } from '@/core/shared/platform';
 import { digest, mailbox } from './identity';
@@ -82,7 +83,7 @@ export function createOwnerConfirmation(input: { options: VerificationOptions; r
       const authentication = { spf: true, dkim: true, dmarc: true, aligned: configuration.aligned };
       const reason = configuration.aligned ? 'owner-confirmed' : 'authentication-failed';
       const observationId = crypto.randomUUID();
-      const receipt = { connectorId: ownerConnectorId, challengeId: id, recipient: challenge.recipient, providerMessageId: challenge.providerMessageId, confirmedAt: now };
+      const receipt = { connectorId: ownerConnectorId, challengeId: id, recipient: challenge.recipient, providerMessageId: challenge.providerMessageId, confirmedAt: now, nativeAuthority:await confirmingOperatorBinding(db,challenge.recipient) };
       const [inserted, promoted] = await db.batch(observationStatements(db, state, { id: observationId, challengeId: id,
         receiptKey: await digest([ownerConnectorId, challenge.recipient, id]), receiptDigest: await digest(receipt),
         resultJson: JSON.stringify({ authentication, reason, owner: receipt }), reason,
