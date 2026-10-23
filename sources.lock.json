@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "013bdadb30c3e7ec5f5565ab4e68ab919f763142c7393151f3eb2e7a4a9a41b3",
+      "sha256": "529eec00e0cfe0c52e43aa8c1181d4fb306bc6d682dc26ff60f556e624e0c42c",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "62ce7c24d845a2c3f1e9e6aa939d933e41827b216cb93a2c736755bf4098c915",
+      "sha256": "78a1995ba22bdaa08da3678e92e1e38efd1e6a8287ba774050a70689eda043bb",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "97cc7686854adcef9a83f78372af9855d3ce7d1ea0551b61bf40219e6e102961",
+      "sha256": "b83ba1c753615988a83f5fd4ff5d5020cde83215a90fc0d693b575dbca15edc4",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -3801,6 +3801,14 @@
       "sha256": "b7d1daef3c7006b25790cd369b25c3d182714660755c0d0145ae1c16347b2468",
       "executable": false
     },
+    "src/core/features/insights/overview-period.ts": {
+      "sha256": "8ec4d6173496ce845bf693d385b92ae81155e6a9c090faa6311c6125b6be21b7",
+      "executable": false
+    },
+    "src/core/features/insights/overview-report.ts": {
+      "sha256": "3255badc697a44a9362c52656478c19f11901b568b9f9cbd18c505dae6f61c49",
+      "executable": false
+    },
     "src/core/features/insights/repository.ts": {
       "sha256": "30d8faf0158f942e2c6ac5c95010e2facf57d3dcdc1e88fa31f2d1416cf6d3dc",
       "executable": false
@@ -3839,6 +3847,10 @@
     },
     "src/core/features/insights/schema.ts": {
       "sha256": "246f9e77dff5790b5dc449ae4a1bfabd36423ba6dd3b167f4c023fde3167190c",
+      "executable": false
+    },
+    "src/core/features/insights/sender-rates-report.ts": {
+      "sha256": "583c166ca7c718df1a0e68c809136fa5e56272e44ae0884ba29d88587f704e34",
       "executable": false
     },
     "src/core/features/insights/service.ts": {
@@ -3891,6 +3903,10 @@
     },
     "src/core/features/insights/ui/open-estimates.tsx": {
       "sha256": "c18a94fc1acf8933e0f541ce2781937654bddebe08a3ececb5d49e0e7a780708",
+      "executable": false
+    },
+    "src/core/features/insights/ui/overview-dashboard.tsx": {
+      "sha256": "4a997cebc25352f5f58cace49773800fbbbe22fa7dfe693065d1890a722ed363",
       "executable": false
     },
     "src/core/features/insights/ui/report-tables.css": {
@@ -7235,6 +7251,14 @@
     },
     "tests/campaign-results/followup.journeys.ts": {
       "sha256": "1f40c2177faba6cd9bdffd86554f76ec0372b9ff7425499ddd638e7f5d97ad43",
+      "executable": false
+    },
+    "tests/campaign-results/overview-fixture.ts": {
+      "sha256": "f51de8741f9d485cc55c1ea603b5f8527bb6c8d5a2c92a89a8a3b870d99483d5",
+      "executable": false
+    },
+    "tests/campaign-results/overview-journey.ts": {
+      "sha256": "10e495c0977f2671ee360060575d6cae2fcc1bcd9475f42d1b04d20b2a5f40fc",
       "executable": false
     },
     "tests/campaign-results/performance-fixture.ts": {
