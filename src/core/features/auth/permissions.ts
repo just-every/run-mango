@@ -62,6 +62,7 @@ export function requiredPermission(method: string, path: string): Capability {
   if (/^\/api\/portability(?:\/|$)/.test(p)) {
     return /\/(?:import|restore)(?:\/|$)/.test(p) ? 'audience.import' : 'audience.export';
   }
+  if (read && p === '/api/audience/signup/refusals') return 'form.manage';
   if (/^\/api\/audience\/(?:signup-allowance|signup-limits)(?:\/|$)/.test(p)) return 'settings.manage';
   if (/^\/api\/(?:forms(?:\/[^/]+(?:\/(?:publish|kiosk))?)?|audience\/signup)$/.test(p)) return 'form.manage';
   if (/^\/api\/audience\/segments(?:\/[^/]+)?$/.test(p)) return read ? 'segment.read' : 'segment.manage';

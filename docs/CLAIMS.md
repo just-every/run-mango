@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 30 claims · 30 in code.**
+**Totals: 31 claims · 31 in code.**
 
 ## Mango integration claims
 
@@ -62,3 +62,5 @@ The text-only adoption changes no implementation status. No real provider call o
 | PUB-005 | missing | Hosted paid-signup and return pages, paid-checkout evidence and one confirmation are not implemented. |
 
 | PUB-002 | partial | Fresh Stripe-reported status orders paid membership; paid-only and free-topic delivery after cancellation are exercised at the network edge, with consent/suppression and the paid-state hand-off fence. Restricted-key sandbox proof and Nectar remain open. Evidence: `tests/go-live/paid-tier-journey.ts`, `tests/go-live/stripe-journey.ts`, `tests/portability.spec.ts`. No real provider call or consent was used. |
+
+| FORM-010 | Hosted and kiosk allowance refusals retain entries, show the error state and return 429 with Retry-After. Settings exposes hourly counts; Home links a rolling-hour alert to form and allowances. Destination-dependent confirmation refusals remain generic. FORM-005 report remains open. | partial | `tests/go-live/kiosk.journeys.ts`, `tests/audience-import/signup-security.spec.ts`, `tests/go-live/integrations.journeys.ts` |
