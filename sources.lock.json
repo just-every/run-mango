@@ -2438,7 +2438,7 @@
       "executable": false
     },
     "src/core/features/audience/contact-timeline.ts": {
-      "sha256": "5adc5af4ad4a7ecf50d142d3a3bf1ca9dc6e52592decfdc2a38f24e32fe73d39",
+      "sha256": "f19852c9f1f04330958206e33d75a4908df6774d5269e7e7a4d3aaeade3b6b0c",
       "executable": false
     },
     "src/core/features/audience/crypto.ts": {
@@ -2706,7 +2706,7 @@
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
-      "sha256": "295aa4c4fbacea7d48df23d3a8b8836175db70f307e5bf7152bca9c1ddc86453",
+      "sha256": "b426407c75c1fabf8df9ed79e2a773bfd491bc1097b629880d9ccfa618d5b5b4",
       "executable": false
     },
     "src/core/features/audience/rule-matcher.ts": {
@@ -2822,7 +2822,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/contact-detail.tsx": {
-      "sha256": "b954a65f425730325f050f1f4364217c6362e6cc79e6f09c924dfa8c7edb40e1",
+      "sha256": "3a0b7584abf746e53ff17f12f9a81cfec0a3eb0e1dabef7f75b1fceb9f8b7067",
       "executable": false
     },
     "src/core/features/audience/ui/contact-merge.tsx": {
@@ -6962,7 +6962,7 @@
       "executable": false
     },
     "tests/audience-controls/contact-history.spec.ts": {
-      "sha256": "0add95f956b15ca5fd076baf0159d5528c1d846dcacdd33da439f5e3691b1290",
+      "sha256": "cd7d4b76dae0237004bec54189ae01ddeb093b4415bcf4e5f932f2457ed364a8",
       "executable": false
     },
     "tests/audience-controls/erasure-dispatch.spec.ts": {
@@ -6970,7 +6970,7 @@
       "executable": false
     },
     "tests/audience-controls/history-worker.ts": {
-      "sha256": "e648308398608915bce75e90dee3cfe3563c6c58da17431d25660e79cc24aa65",
+      "sha256": "3939fa1ac2d5b32f6ec87865b5cd4f0f736db8a2d435ef0acaa8b886b892fe70",
       "executable": false
     },
     "tests/audience-controls/history.config.ts": {
