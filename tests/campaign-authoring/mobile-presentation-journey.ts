@@ -51,6 +51,7 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
     if(!stripped&&width===600)await expect(page.getByText('Hidden on desktop',{exact:true})).toBeHidden();else await expect(page.getByText('Hidden on desktop',{exact:true})).toBeVisible();
     if(!stripped&&width===375)expect(await page.getByText('Mobile font example',{exact:true}).evaluate(node=>getComputedStyle(node).fontSize)).toBe('24px');
     expect(await page.evaluate(()=>document.querySelectorAll('head > style').length)).toBe(stripped?0:1);
+    expect((await new AxeBuilder({page}).include('body').options({iframes:false}).analyze()).violations.filter(row=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
     await page.screenshot({path:info.outputPath(`mobile-email-${width}-${quirks?'quirks':'standards'}-${stripped?'stripped':'generated'}.png`),fullPage:true});
   }
   const cookie=headers.Cookie.split('=');await page.context().addCookies([{name:cookie[0],value:cookie.slice(1).join('='),url:origin}]);
@@ -60,7 +61,7 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
     await expect(page.getByText('Mobile overrides require the generated style block.',{exact:false})).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
-    expect((await new AxeBuilder({page}).analyze()).violations.filter(row=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
+    expect((await new AxeBuilder({page}).options({iframes:false}).analyze()).violations.filter(row=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
     await page.locator('[aria-label="Saved revision previews"]').screenshot({path:info.outputPath(`mobile-preview-${width}.png`)});
   }
 }
