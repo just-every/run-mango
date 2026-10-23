@@ -88,6 +88,7 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
             for (const observation of row.ledger?.tables?.audience_import_observations ?? []) if (observation.source_display_name === null) delete observation.source_display_name;
           } else if (incumbentSources[file.name]) {
             const source=incumbentSources[file.name];
+            if(!source.accepted&&row.smsStatus==='subscribed'){row.smsStatus='non-subscribed';row.warnings.push(source.reason??'attestation-not-affirmed');}
             if(!source.accepted&&!['unsubscribed','suppressed'].includes(row.status)){row.status='non-subscribed';row.warnings.push(source.reason??'attestation-not-affirmed');}
             if(row.status==='subscribed') {
               let reason=source.accepted?undefined:source.reason;
