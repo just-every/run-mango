@@ -1,3 +1,5 @@
+import type {SenderWriteAuthority} from '@/core/features/settings/sender-authority';
+import type {OptInMode} from './opt-in-modes';
 import {recipientOptOut, recipientSuppression} from './public-resubscribe-policy';
 import type { SyncWriteFence } from '@/core/features/store/sync-write-fence';
 import type { CommerceSourceType, NormalizedCommerceRecord, createStoreService } from '@/core/features/store/service';
@@ -53,6 +55,7 @@ export type ConsentCapture = {
   consentVersion: string;
   occurredAt: Date;
   confirmationRequired?: boolean;
+  optInPolicy?:{mode?:OptInMode;credentialId?:string;allowResubscribe?:boolean;operator?:SenderWriteAuthority};
   idempotencyKey?: string;
 };
 
@@ -266,13 +269,14 @@ export function createAudienceService(
   async function capturePublicSignup(input: ConsentCapture, now = new Date()) {
     if (input.channel !== 'email' || !await canCapturePublicEmail(input.contact.email ?? '')) return undefined;
     const destination = canonicalEmail(input.contact.email)!;
-    const publicInput = {...input, confirmationRequired: true};
+    const publicInput = {...input, confirmationRequired: input.confirmationRequired!==false || await publicSignupState(destination)==='resubscribe'};
     const values = consentValues(publicInput, ulid(now.getTime()), destination, now);
-    const captured = await repository.capturePublicSignupAtomic(values, await hashDestination(destination), input.contact.displayName, input.captureIp);
+    const captured = await repository.capturePublicSignupAtomic(values, await hashDestination(destination), input.contact.displayName, input.captureIp,input.optInPolicy);
     if (!captured) return undefined;
     const evidence = await repository.getConsent(values.id);
     const contact = evidence && await repository.getContact(evidence.contactId);
     if (!evidence || !contact) return undefined;
+    if(!evidence.confirmationRequired)return {contact,evidence,confirmation:undefined};
     return sendConsentConfirmation(publicInput, contact, evidence, now, true);
   }
 

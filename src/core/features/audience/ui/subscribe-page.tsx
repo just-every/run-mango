@@ -69,7 +69,7 @@ function NewsletterSubscribePage({ info }: { info: SubscribeInfo }) {
         }),
       });
       if (response.status === 202 && response.data.status === 'confirmation-required') {
-        setMessage(sms ? 'Request received. Open the confirmation text and reply as it asks. It arrives during the permitted local hours for your number.' : 'Request received. Open the confirmation email and press Confirm subscription.');
+        setMessage(sms ? 'Request received. Open the confirmation text and reply as it asks. It arrives during the permitted local hours for your number.' : 'Request received. If we send a confirmation email, press Confirm subscription in that email.');
         return;
       }
       setErrors(mapFieldErrors(response.data.fields, ['email','phone','timeZone','displayName','consent']));

@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
 import { activityJourney } from './activity-log';
-import { installation, json, sender, draftCampaign, approve, dispatch, signedPost } from './harness';
+import { installation, json, sender, availableTransport, draftCampaign, approve, dispatch, signedPost } from './harness';
 
-test('[INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
+test('[CONT-025] [INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
   const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer);
   try {
     const cookie = await site.open();
@@ -23,11 +23,19 @@ test('[INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, repla
     const consent = {source: 'Coffer signup', evidence: 'Please send the monthly Mango Garden newsletter.', brandOrLegalSender: 'Mango Garden',
       messageCategory: 'newsletter', frequencyDisclosure: 'Monthly', destinationJurisdiction: 'AU', consentVersion: 'v1', occurredAt: new Date(Date.now() - 1000).toISOString()};
     const contact = {email: 'alex@example.test', displayName: 'Alex River', segmentName: 'Coffer donors', fields: {cofferDonorId: 'alex'}, tags: ['donor'], subscribe: true, consent};
+    await availableTransport(site);
     const first = await json(await api('/contacts', 'PUT', contact), 200);
     const replay = await json(await api('/contacts', 'PUT', {...contact, email: ' ALEX@example.test '}), 200);
     expect(replay.contact.id).toBe(first.contact.id);
-    expect(replay.contact).toMatchObject({email: 'alex@example.test', emailStatus: 'subscribed', fields: {cofferDonorId: 'alex'}, tags: ['donor']});
+    expect(replay.contact).toMatchObject({email: 'alex@example.test', emailStatus: 'pending', fields: {cofferDonorId: 'alex'}, tags: ['donor']});
+    await availableTransport(site);
     await json(await api('/contacts', 'PUT', {...contact, email: 'blair@example.test', displayName: 'Blair Lane', segmentName: 'Coffer follow-up donors'}), 200);
+    for(const email of ['alex@example.test','blair@example.test']){
+      const confirmations=edge.sends.filter(send=>send.to===email&&send.body.subject==='Confirm your Mango Garden subscription');expect(confirmations).toHaveLength(1);
+      const link=/https:\/\/\S+\/consent\/confirm\/\S+/.exec(confirmations[0].body.content.find((part:any)=>part.type==='text/plain').value)![0];
+      expect((await fetch(site.local(link),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
+      expect((await json(await api('/contacts?email='+encodeURIComponent(email)),200)).contacts[0].emailStatus).toBe('subscribed');
+    }
     expect((await api('/contacts', 'PUT', {...contact, email: 'missing-evidence@example.test', consent: undefined})).status).toBe(400);
     const reader = await json(await site.call('/api/settings/integrations', {method: 'POST', cookie, body: {name: 'Read only', scopes: ['contacts:read']}}), 201);
     expect((await site.call('/api/integrations/v1/contacts', {method: 'PUT', headers: {Authorization: `Bearer ${reader.token}`}, body: contact})).status).toBe(403);

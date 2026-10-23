@@ -12,7 +12,7 @@ Two things must be in place first. Your sender identity must be fully saved in S
 
 The page is titled "Get the newsletter". It asks for an email address, an optional name, and a required checkbox reading "I agree to receive email newsletters from" your sender name, "I can unsubscribe at any time." The button is **Request confirmation**.
 
-Mango then sends one confirmation email. Opening the link only shows a page with a **Confirm subscription** button; the person is not subscribed until they press it, so mailbox scanners and link previewers cannot subscribe anyone. A link works once and expires after 30 days. Until confirmed, a new contact is "pending" and receives no marketing. A returning unsubscriber keeps their restricted state until confirmation.
+Under the default double opt-in mode, Mango then sends one confirmation email. Opening the link only shows a page with a **Confirm subscription** button; the person is not subscribed until they press it, so mailbox scanners and link previewers cannot subscribe anyone. A link works once and expires after 30 days. Until confirmed, a new contact is "pending" and receives no marketing. A returning unsubscriber keeps their restricted state until confirmation, even when this form uses single opt-in. An Owner or Admin can choose single opt-in for future hosted or kiosk captures in Settings → Opt-in. A new eligible person then subscribes with the saved affirmative evidence and receives no confirmation email; repeating a subscribed address changes nothing. The acknowledgment stays generic in every mode.
 
 ## What Mango records
 
@@ -22,7 +22,7 @@ Each consent record on a contact (Audience, then the contact) shows:
 - the capture method (`hosted-signup-form`), the capture source (your signup page URL) and the consent version;
 - the exact consent text and the time it was given;
 - the capture IP address, and the confirmation time and confirmation IP address;
-- whether it is "Confirmed" or "Awaiting confirmation". The destination jurisdiction is stored as "Not provided" for hosted signups.
+- whether it is confirmed, awaiting confirmation or single opt-in. The destination jurisdiction is stored as "Not provided" for hosted signups.
 
 ## Unsubscribing
 
@@ -187,3 +187,9 @@ ambiguous email handoffs retain their claim and are never automatically replayed
 In Audience → Hosted form and embed, turn on **Kiosk or event form**, name the device or event and save. Open the hosted form on the shared tablet. Configure the Turnstile site and secret keys first: a kiosk refuses signups without verification, and every person must complete a fresh challenge.
 
 After a successful request, the form clears within two seconds. It does not remember or pre-fill a previous visitor, set an identifying cookie or store a visitor in browser storage. Every signup still needs affirmative consent and email confirmation. Returning unsubscribers use the same confirmed-only resubscribe path; other suppressions stay blocked. The kiosk has separate allowances of 300 accepted requests per network and globally per hour; ordinary forms use their separate challenged or unchallenged allowances, and confirmation requests retain the per-destination daily allowance. Insights shows confirmed subscriptions under the kiosk device label and retains their consent disclosure. Kiosk setting changes are recorded with the operator and time.
+
+## Opt-in policy by capture point
+
+Settings → Opt-in records `contact.opt-in.v1` separately for hosted signup, kiosk forms and manual entry. Owner and Admin changes affect later captures, appear once in Activity and never downgrade an existing subscription. Single opt-in never overrules an unsubscribe or suppression. Public resubscription still requires the recipient’s confirmation; hand entry and API capture cannot reverse an existing restriction. SMS keeps its express-written-consent and carrier-confirmation requirements.
+
+API keys are shown at fixed double mode: a consent-bearing subscriber write creates a pending capture, sends one confirmation, and subscribes only after the recipient confirms. Identical replay sends no second message. Connected stores and move-in sources remain read-only here and are set by their connection or move-in. Popup/landing, Zapier/Crank and editable SMS modes are not built.

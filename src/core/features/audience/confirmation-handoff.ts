@@ -19,6 +19,9 @@ export function createConfirmationHandoff(database: Database) {
         JOIN contacts c ON c.id=e.contact_id
         WHERE e.id=consent_confirmations.consent_evidence_id AND e.contact_id=consent_confirmations.contact_id
           AND e.channel=? AND e.confirmed_at IS NULL AND c.merge_lock IS NULL
+          AND (e.capture_method!='api-capture' OR EXISTS(SELECT 1 FROM integration_credentials k WHERE k.revoked_at IS NULL
+            AND substr(e.capture_source,1,length('API key:'||k.id||'|'))='API key:'||k.id||'|'
+            AND EXISTS(SELECT 1 FROM json_each(k.scopes_json) WHERE value='contacts:write')))
           AND ${restriction(`c.${status}`, `c.${statusAt}`)}
           AND ${restriction('a.channel_status', 'a.channel_status_at')}
           AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel=? ${publicCapture ? `AND (NOT (${recipientSuppressionSql}) OR occurred_at>=e.occurred_at)` : ''})
