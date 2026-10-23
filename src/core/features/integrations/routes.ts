@@ -1,3 +1,8 @@
+import type {Platform} from '@/core/shared/platform';
+import {readProfileMemberships} from './profile-memberships';
+import {customEventInput,recordCustomEvent} from './custom-events';
+import {integrationOpenApi} from './openapi';
+import {clientSource} from './client-source';
 import { conversionEventInput } from '@/core/features/insights/conversion-events';
 import {hasPermission} from '@/core/features/auth/permissions';
 import { Hono, type Context, type MiddlewareHandler } from 'hono';
@@ -12,8 +17,10 @@ type Service = ReturnType<typeof createIntegrationService>;
 type Environment = {Variables: AuthVariables & {integrationCredential: Credential; integrationTarget: string}};
 type IntegrationContext = Context<Environment>;
 
-async function body<T>(context: IntegrationContext, schema: z.ZodType<T>) {
-  const result = schema.safeParse(await context.req.json().catch(() => null));
+async function body<T>(context: IntegrationContext, schema: z.ZodType<T>, consentEvidence = false) {
+  const value = await context.req.json().catch(() => null);
+  if (consentEvidence && value?.subscribe === true && !value.consent) throw new IntegrationError('consent_evidence_required', 400);
+  const result = schema.safeParse(value);
   if (!result.success) throw new IntegrationError('invalid_request', 400);
   return result.data;
 }
@@ -75,18 +82,21 @@ function routes() {
 const boundedBody = () => bodyLimit({maxSize: 64 * 1024, onError: context => context.json({error: 'request_too_large'}, 413)});
 
 /** Mount /api/integrations/v1 before operator-session middleware. Never sets an operator. */
-export function createIntegrationApiRoutes(service: Service) {
+export function createIntegrationApiRoutes(service: Service, platform: Platform) {
   const router = routes();
+  router.get('/openapi.json', context => context.json(integrationOpenApi));
+  router.get('/client.mjs', context => {context.header('Content-Type','text/javascript; charset=utf-8');return context.body(clientSource);});
   router.use('*', audited(service, false));
   router.use('*', boundedBody());
   router.get('/segments', scope('contacts:read'), async context => context.json(await service.contacts.segments(context.get('integrationCredential').id)));
+  router.get('/contacts/:id/segments', scope('contacts:read'), async context => context.json(await readProfileMemberships(platform,context.req.param('id'))));
   router.get('/contacts', scope('contacts:read'), async context => {
     const input = query(context, z.object({cursor: z.string().max(160).optional(), email: z.string().trim().toLowerCase().email().max(320).optional(),
       segmentId: z.string().max(160).optional(), limit: z.coerce.number().int().min(1).max(100).default(50)}).strict());
     return context.json(await service.contacts.list(context.get('integrationCredential').id, input));
   });
   router.put('/contacts', scope('contacts:write'), async context => {
-    const input = await body(context, contactInput);
+    const input = await body(context, contactInput, true);
     return context.json(await service.contacts.upsert(context.get('integrationCredential').id, input));
   });
   router.post('/suppressions', scope('contacts:write'), async context => {
@@ -94,8 +104,9 @@ export function createIntegrationApiRoutes(service: Service) {
     return context.json(await service.suppress(context.get('integrationCredential').id, input));
   });
   router.post('/events', scope('events:write'), async context => {
-    const input = await body(context, conversionEventInput);
-    return context.json(await service.recordEvent(context.get('integrationCredential').id, input));
+    const input = await body(context, z.union([conversionEventInput,customEventInput]));
+    const key=context.get('integrationCredential').id;
+    return context.json('name' in input ? await recordCustomEvent(platform.database.$client,key,input) : await service.recordEvent(key,input));
   });
   router.get('/events', scope('events:read'), async context => {
     const input = query(context, pageInput.strict());

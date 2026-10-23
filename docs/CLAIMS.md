@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 42 claims · 42 in code.**
+**Totals: 43 claims · 43 in code.**
 
 ## Mango integration claims
 
@@ -66,6 +66,8 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | DELIV-007 | Home exposes day-23 renewal, day-31 lapse and invalidating evidence changes. Durable claims send operator-only reminders and one diagnostic per evidence period; configured authenticated receiver renewal needs no human click. The existing minute Cron shares those durable claims; native confirming authority prevents restored reminders from resuming. Lifecycle hold/resume/deadline hooks and live flows remain outstanding. | partial | `src/core/features/sender-verification/renewal.ts`, `src/core/features/sender-verification/ui/renewal-card.tsx`, `tests/sender-verification/worker.spec.ts`, `tests/go-live/managed-mail.journeys.ts` |
 
 | REPORT-006 | Owner/Admin save aggregate provider-cost/unit or campaign-engagement reports and schedule operator-only weekly/monthly email. The shared report read supplies immutable delivery figures, durable replay claims, recorded refusals and restore-paused activation. Slack, other report families and middleware refusal activity remain outstanding. | partial | `src/core/features/insights/saved-report-read.ts`, `src/core/features/insights/report-scheduler.ts`, `src/core/features/insights/ui/saved-reports.tsx`, `tests/go-live/managed-mail.journeys.ts`, `tests/campaign-results/saved-report-metric-journey.ts` |
+
+| INT-007 | Versioned scoped profiles and general custom events retain key attribution, immutable replay and per-key limits. The delivered JavaScript client and OpenAPI description exercise identify/properties, membership reads and named consent refusal; contact event timeline at 1440/390. Website keys remain server-held behind the website's authenticated proxy. | done | `tests/go-live/integrations.journeys.ts`, `tests/go-live/custom-event-journey.ts`, `docs/integrations.md` |
 
 ## Adopted target defaults (23 October 2026)
 

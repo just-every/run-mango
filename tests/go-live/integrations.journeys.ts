@@ -1,11 +1,12 @@
 import {manualEntryJourney} from './manual-entry-journey';
+import {proveCustomEvents} from './custom-event-journey';
 import { test, expect } from '@playwright/test';
 import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
 import { activityJourney } from './activity-log';
 import { installation, json, sender, availableTransport, draftCampaign, approve, dispatch, signedPost } from './harness';
 
-test('[CONT-026][CONT-025] [INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
+test('[CONT-026][CONT-025] [INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
   const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer,{sms:true});
   try {
     const cookie = await site.open();
@@ -37,7 +38,8 @@ test('[CONT-026][CONT-025] [INT-007][INT-011][OPER-007][CONT-004][CONT-006] scop
       expect((await fetch(site.local(link),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
       expect((await json(await api('/contacts?email='+encodeURIComponent(email)),200)).contacts[0].emailStatus).toBe('subscribed');
     }
-    expect((await api('/contacts', 'PUT', {...contact, email: 'missing-evidence@example.test', consent: undefined})).status).toBe(400);
+    expect(await json(await api('/contacts', 'PUT', {...contact, email: 'missing-evidence@example.test', consent: undefined}),400)).toEqual({error:'consent_evidence_required'});
+    await proveCustomEvents(site,cookie,first.contact.id,first.contact.segmentIds[0],browserPage,info);
     const reader = await json(await site.call('/api/settings/integrations', {method: 'POST', cookie, body: {name: 'Read only', scopes: ['contacts:read']}}), 201);
     expect((await site.call('/api/integrations/v1/contacts', {method: 'PUT', headers: {Authorization: `Bearer ${reader.token}`}, body: contact})).status).toBe(403);
     const firstDue = new Date(Date.now() + 30000);

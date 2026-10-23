@@ -105,3 +105,26 @@ Settings → Web analytics tagging lets an Owner or Admin save static UTM defaul
 The adopted `campaign.analytics.v1` defaults are source `mango`, email medium `email`, SMS medium `sms`, campaign name as a bounded slug, and content as the message revision id. Explicit values are at most 64 characters, have no interpolation and cannot contain an email address. Contact fields, names, addresses, ids and consent tokens are never read to generate UTM values. Only HTTP/HTTPS links are tagged; managed unsubscribe, confirmation, preference and contact links and mailto/tel/SMS links retain their original destinations. Existing author UTM keys win. URL encoding preserves the query and fragment. Click reports still identify the original authored link by its position and destination.
 
 A sibling [Vane](https://github.com/just-every/run-vane) goal can use the existing scoped custom-conversion event door: `POST /api/integrations/v1/events`, scope `events:write`, a named metric such as `vane_goal`, a known contact id, immutable event id, occurrence time, kind `conversion`, valueMinor `0` and currency `USD`. Replaying the same event id and body creates no second event; an unknown contact returns `contact_not_found` and stores nothing. Missing contact input is invalid. The credential namespace, rate limit and integration audit apply. Mango makes no call to Vane. General custom-event tracking and flow dimensions remain unbuilt under INT-007 and FLOW-*; INT-013 remains partial pending approval of these conservative defaults.
+
+## General custom events and JavaScript
+
+`POST /api/integrations/v1/events` accepts a general fact with `events:write`:
+
+```json
+{"name":"sample.requested","contactId":"CONTACT_ID","idempotencyKey":"website:sample:42","occurredAt":"2026-10-23T10:00:00Z","properties":{"sample":"linen","quantity":2}}
+```
+
+The contact must already exist. This door never creates a contact, subscribes anyone or sends a message. A key and idempotency key identify one immutable fact: retry unchanged to receive `replayed`; different content returns `409 idempotency_conflict`. Facts retain their key source and occurrence time on the contact timeline. Properties are flat strings, finite numbers, booleans or null, at most 50 values and 16 KiB for the complete fact; strings are bounded to 2,000 characters. Future events are refused. Existing source-record merge, export, archive and erasure rules apply.
+
+The same route retains its financial-conversion format. `GET /contacts?email=...` returns a profile's integration `segmentIds`, and `GET /segments` names those lists. `GET /contacts/CONTACT_ID/segments` returns current rule-derived membership using the operator profile matcher, with unavailable source-dependent segments explicitly marked `unavailable`. A subscribe write without evidence returns `400 consent_evidence_required`; full evidence must still pass validation and existing opt-outs and suppressions win. Each key has its own 60-request UTC-minute allowance; `429 rate_limited` includes `Retry-After`.
+
+The machine-readable OpenAPI description is `/api/integrations/v1/openapi.json`. The dependency-free JavaScript module is `/api/integrations/v1/client.mjs`:
+
+```js
+import {createMangoClient} from '/api/integrations/v1/client.mjs';
+// Server-side: keep this key in your application's private settings.
+const mango = createMangoClient({baseUrl: mangoApiUrl, token: serverHeldKey});
+await mango.track(event);
+```
+
+Methods are `identify`, `profiles`, `memberships`, `segments`, `track`, `changes` and `suppress`. There is no automatic tracking, browser storage or automatic retry. A website must send through its own authenticated, consent-aware server proxy; omit `token` in its browser client and point `baseUrl` at that proxy. Never embed an installation key in public JavaScript. Mango does not grant cross-origin browser admission or collect anonymous visitors through this API. Host and server-proxy authorization are the website operator's responsibility.
