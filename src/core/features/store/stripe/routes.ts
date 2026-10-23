@@ -1,3 +1,5 @@
+import {paidSignupInfo, paidSignupConsent} from './paid-signup';
+import {limitedBody} from '@/core/features/audience/signup-routes';
 import {Hono} from 'hono';
 import type {AuthVariables} from '@/core/features/auth/routes';
 import {z} from 'zod';
@@ -15,6 +17,7 @@ type Stored = {key_cipher: string; signing_cipher: string; mode: string};
 export function stripeRoutes(platform: Platform, audience: ReturnType<typeof createAudienceService>, operations: FailedOperations) {
   const db = platform.database.$client;
   const read = () => db.prepare('SELECT key_cipher,signing_cipher,mode FROM stripe_connection WHERE id=1').first<Stored>();
+  const signupConsent = paidSignupConsent(platform, audience);
   const paid = createPaidTier(db, audience.hasConfirmedEmailConsent);
   async function api(path: string, key: string) {
     const response = await fetch('https://api.stripe.com/v1/' + path, {headers: {Authorization: 'Bearer ' + key}, signal: AbortSignal.timeout(10000)})
@@ -22,9 +25,9 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
     if (!response.ok) throw new Error(`Stripe API request failed (${response.status}).`);
     return response.json() as Promise<Record<string, any>>;
   }
-  async function create(path: string, key: string, form: URLSearchParams) {
+  async function create(path: string, key: string, form: URLSearchParams, idempotencyKey: string = crypto.randomUUID()) {
     const response = await fetch('https://api.stripe.com/v1/' + path, {method: 'POST', body: form, signal: AbortSignal.timeout(10000),
-      headers: {Authorization: 'Bearer ' + key, 'Content-Type': 'application/x-www-form-urlencoded', 'Idempotency-Key': crypto.randomUUID()}});
+      headers: {Authorization: 'Bearer ' + key, 'Content-Type': 'application/x-www-form-urlencoded', 'Idempotency-Key': idempotencyKey}});
     if (!response.ok) throw new Error(`Stripe API request failed (${response.status}).`);
     return response.json() as Promise<Record<string, any>>;
   }
@@ -72,13 +75,28 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
   const webhooks = new Hono();
   // A reader's checkout runs on the creator's own Stripe account with Stripe Tax;
   // Mango never sees card data and never holds funds.
+  webhooks.get('/paid/info', async context => {
+    const [stored, tier] = await Promise.all([read(), paid.tier()]);
+    if (!stored || !tier) return context.json({error: 'paid_tier_unavailable'}, 404);
+    try {
+      const price = await api('prices/' + encodeURIComponent(tier.priceId), await unseal(stored.key_cipher, platform.config.sessionSigningKey));
+      context.header('Cache-Control', 'no-store');
+      return context.json(await paidSignupInfo(platform, tier, price));
+    } catch {return context.json({error: 'paid_tier_unavailable'}, 503);}
+  });
   webhooks.post('/paid/checkout', async context => {
-    const parsed = z.object({email: z.string().trim().email().max(320)}).strict().safeParse(await context.req.json().catch(() => null));
+    const body = await limitedBody(context.req.raw).then(JSON.parse).catch(() => null);
+    const parsed = z.object({email: z.string().trim().email().max(320), consent: z.literal(true).optional(), disclosure: z.string().max(4096).optional(),
+      requestId: z.string().uuid().optional(), website: z.string().max(500).optional(), 'cf-turnstile-response': z.string().max(2048).optional()}).strict().safeParse(body);
     if (!parsed.success) return context.json({error: 'invalid_checkout'}, 400);
     const [stored, tier] = await Promise.all([read(), paid.tier()]);
     if (!stored || !tier) return context.json({error: 'paid_tier_unavailable'}, 409);
+    let admitted: Awaited<ReturnType<typeof signupConsent.admit>>;
+    try {admitted = await signupConsent.admit(parsed.data, context.req.raw, tier);}
+    catch {return context.json({error:'signup_refused',detail:'Review the signup details and verification before continuing.'},400);}
     try {
-      const session = await create('checkout/sessions', await unseal(stored.key_cipher, platform.config.sessionSigningKey), paid.checkout(tier, parsed.data.email, platform.config.publicBaseUrl.origin));
+      const session = await create('checkout/sessions', await unseal(stored.key_cipher, platform.config.sessionSigningKey), paid.checkout(tier, parsed.data.email, platform.config.publicBaseUrl.origin), parsed.data.requestId ? await sha256(`${parsed.data.email.toLowerCase()}:${tier.priceId}:${parsed.data.requestId}`) : undefined);
+      if (admitted && typeof session.id === 'string' && typeof session.url === 'string' && new URL(session.url).origin === 'https://checkout.stripe.com') await signupConsent.capture(parsed.data, session.id, admitted);
       return typeof session.url === 'string' ? context.json({url: session.url}) : context.json({error: 'checkout_unavailable'}, 502);
     } catch {return context.json({error: 'checkout_unavailable'}, 502);}
   });

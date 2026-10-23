@@ -1,16 +1,19 @@
 import {editorLeaf} from '@/core/features/editor/client';
 import { createFileRoute } from '@tanstack/react-router';
 
+import {PaidSubscribePage} from '@/core/features/audience/ui/paid-subscribe-page';
 import { SubscribePage } from '@/core/features/audience/ui/subscribe-page';
-import { loadSubscribeInfo } from '@/core/features/audience/ui/subscribe-loader';
+import { loadSubscribeInfo, loadPaidSubscribeInfo } from '@/core/features/audience/ui/subscribe-loader';
 import '@/core/app/client/ui/materials';
 
 export const Route = createFileRoute('/subscribe')({
-  loader: () => loadSubscribeInfo(),
+  validateSearch: (search: Record<string, unknown>) => ({paid: search.paid === '1', returned: search.returned === '1'}),
+  loaderDeps: ({search}) => ({paid: search.paid}),
+  loader: async ({deps}) => deps.paid ? {kind:'paid' as const, info: await loadPaidSubscribeInfo()} : {kind:'free' as const, info: await loadSubscribeInfo()},
   component: editorLeaf(SubscribeRoute),
 });
 
 function SubscribeRoute() {
-  const info = Route.useLoaderData();
-  return <SubscribePage info={info} />;
+  const data = Route.useLoaderData(), search = Route.useSearch();
+  return data.kind === 'paid' ? <PaidSubscribePage info={data.info} returned={search.returned}/> : <SubscribePage info={data.info} />;
 }

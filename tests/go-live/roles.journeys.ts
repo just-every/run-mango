@@ -1,13 +1,14 @@
 import {stripeJourney} from './stripe-journey';
 import {createHmac} from 'node:crypto';
-import {test,expect} from '@playwright/test';
+import {expect} from '@playwright/test';
+import {contract} from '../contract.js';
 import {providerEdge} from './edge';
 import {eventSigner} from './sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,availableTransport} from './harness';
 import {openPage} from '../support/navigation';
 import {type ProductRole} from '../../src/core/features/auth/permissions';
 
-test('[INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
+contract('PUB-005','[INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
   const edge=await providerEdge(),site=await installation(edge,eventSigner());
   try {
     const owner=await site.open();

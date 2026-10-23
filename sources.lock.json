@@ -2038,7 +2038,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "235d826a83ca0ee18843d1dc485bef48cc299d4dbe97e3e7f1ec583ca402fb90",
+      "sha256": "153ff9fe843a40efd90fd7c1ba9464b1846f0779a54a4f5ea3ab1de361711bbf",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -2342,7 +2342,7 @@
       "executable": false
     },
     "src/core/app/document-dispatch.ts": {
-      "sha256": "47af8d9f8f33f74e3a08b897555b454c47b90888165b07d0b11984cb3947463c",
+      "sha256": "1250b011b82d669859c1a8ae5e58835362a61f6a2694b532c8f60a78705ef29f",
       "executable": false
     },
     "src/core/app/loaders.ts": {
@@ -2833,6 +2833,10 @@
       "sha256": "9506fceaf14b122f9a3256a47f0399c7725ddd418cf20a00ef8701cfff03c861",
       "executable": false
     },
+    "src/core/features/audience/ui/paid-subscribe-page.tsx": {
+      "sha256": "a7fd0ac1253dbfbcec206c6d8fc8ac6a5d97d978ae16118de6f5469b36392ce1",
+      "executable": false
+    },
     "src/core/features/audience/ui/receipt-counts.ts": {
       "sha256": "b6e32f2e3f328141d4f1e6019c6a8d0ed4201a5b5b68da63cf3764b22f83ee65",
       "executable": false
@@ -2850,7 +2854,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/subscribe-loader.ts": {
-      "sha256": "d622d9986c9c8a37341cb8381b48fb0d95ac4cec10229bf8787976236db6bcc5",
+      "sha256": "30f048be484f78a8f6c8b2fe44943e9d1866641d69f5a933f47bb1cfff4a23da",
       "executable": false
     },
     "src/core/features/audience/ui/subscribe-page.tsx": {
@@ -4697,16 +4701,20 @@
       "sha256": "9192b0327f39b0ab02dee35be98a5e30f92be02f0bc24263998ba1fc81554add",
       "executable": false
     },
+    "src/core/features/store/stripe/paid-signup.ts": {
+      "sha256": "7bdbbe87d88f279bc5c3ae797f4179ce5bc6d6c4cc144cd97e50f6e742c9e5f5",
+      "executable": false
+    },
     "src/core/features/store/stripe/paid-state.ts": {
       "sha256": "d48e5b360a63566a0a40a9201f72695391e9d95d85666ebcc3e183d21a24dfef",
       "executable": false
     },
     "src/core/features/store/stripe/paid-tier.ts": {
-      "sha256": "fe2e7e664da185fff3764e36a847bdc225dad5372fda998d02bb708493fb7310",
+      "sha256": "aab6c007b587203123e062e9ed1508ad1fe27abe9453ad3ae80641fdbf2ab472",
       "executable": false
     },
     "src/core/features/store/stripe/routes.ts": {
-      "sha256": "ff08211f7d2868d484f9b17b71790daa5bbc13f3a0db8f06664b031661f1cfb1",
+      "sha256": "66d53c258a742523d90964d3ba5d6abd8e12d9384829f58d13cf210302a407b8",
       "executable": false
     },
     "src/core/features/store/stripe/secrets.ts": {
@@ -5130,7 +5138,7 @@
       "executable": false
     },
     "src/routes/subscribe.tsx": {
-      "sha256": "c8b072c632fa6ad6aa66cdbe09aa9d86cb8625cbe2b01b146c1ebe1f3ed745d4",
+      "sha256": "facee80aa2a49e8bad0e3049160c76567b41a691813687dd1415d877ca32bb9c",
       "executable": false
     },
     "src/routeTree.gen.ts": {
@@ -7410,7 +7418,7 @@
       "executable": false
     },
     "tests/go-live/edge.ts": {
-      "sha256": "d12a690f9d87b6ab50efb1de871c66bee9f795ce6ea773ce51820848a19d8fcf",
+      "sha256": "3d549c1fc579c889070b07a4db1cae8c572398c742f1d31d42e484b2bb3ef01a",
       "executable": false
     },
     "tests/go-live/email-size.journeys.ts": {
@@ -7473,8 +7481,12 @@
       "sha256": "6f90c73af11591e95b0f368400fc12c9136cd3c6795f2297115fe81537828074",
       "executable": false
     },
+    "tests/go-live/paid-signup-journey.ts": {
+      "sha256": "33b38ddfd498fcb1b3db89149abcc598c2207fe1e8a983d65975bc5c29386e04",
+      "executable": false
+    },
     "tests/go-live/paid-tier-journey.ts": {
-      "sha256": "c8f64f71fe3cae478b42fec6f4bb009c9eadfc48029a6f11da32c18d7b9085e2",
+      "sha256": "d7498dbcf17863b9142dbd4a8df36703bb660c775c2a2a03407d61cc803f62ad",
       "executable": false
     },
     "tests/go-live/pause.journeys.ts": {
@@ -7526,7 +7538,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "1fa4aff3fc09a59b391f12f44ea3eed382a618daf6c511e73c8c12fa12365455",
+      "sha256": "84de933280f30d308e7e8f07e96360da568b9288d7460518a0437b2b6afee2a3",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {
