@@ -18,6 +18,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   const initial=await json(await site.call('/api/settings/link-hosts',{cookie:owner}),200);
   expect(initial.sources).toContainEqual(expect.objectContaining({host:'mango.example.test',source:'Deployment host'}));
   expect(initial.sources).toContainEqual(expect.objectContaining({host:'www.instagram.com',source:'Social defaults'}));
+  expect(initial.sources.filter((row:any)=>row.source==='Configured Shopify connection host')).toEqual([{host:'mango-test.myshopify.com',source:'Configured Shopify connection host'}]);
   const freshReview=await draftCampaign(site,owner,'Synthetic Mango source review',['garden-reader@example.test'],new Date(now+3*3600000));
   await json(await site.call(`/api/campaigns/${freshReview.campaignId}/link-hosts`,{method:'POST',cookie:owner,body:{host:'fresh-review.example.test'}}),200);
   expect((await json(await site.call('/api/settings/link-hosts',{cookie:owner}),200)).sources).toContainEqual(expect.objectContaining({host:'www.instagram.com',source:'Social defaults'}));
