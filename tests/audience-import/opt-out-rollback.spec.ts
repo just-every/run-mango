@@ -2,28 +2,24 @@ import {test,expect} from '@playwright/test';
 import {native} from './native';
 import {authenticatedRequests} from './request-runtime';
 
-const scope={brandOrLegalSender:'Mango Garden',messageCategory:'newsletter',frequencyDisclosure:'Monthly',destinationJurisdiction:'AU',consentText:'Send me the Mango Garden letter.',consentVersion:'v1'};
-
 test('CONT-004/006 no undo or abandon makes an opted-out person mailable again, even when their address already had an older opt-out',async()=>{
  test.setTimeout(180000);
- const h=await native(),NativeDate=globalThis.Date;let clockOffset=0;
- const clockNow=()=>NativeDate.now()+clockOffset;
- globalThis.Date=new Proxy(NativeDate,{construct(target,args,newTarget){return Reflect.construct(target,args.length?args:[clockNow()],newTarget);},apply(){return new NativeDate(clockNow()).toString();},get(target,key,receiver){return key==='now'?clockNow:Reflect.get(target,key,receiver);}});
+ const h=await native();
  try{
   const http=await authenticatedRequests(h.f,h.f.db);
+  const description=await http.json('/subscribe/info');
   const status=(email:string)=>h.f.db.prepare('SELECT c.email_status AS contact,a.channel_status AS address FROM contacts c JOIN contact_email_addresses a ON a.contact_id=c.id AND a.email=c.email WHERE c.email=?').bind(email).first();
-  const tick=()=>{clockOffset+=1;};
   // Each person confirms consent, unsubscribes through their link, then confirms new consent:
   // subscribed again, and their address keeps the older opt-out row.
   for(const email of ['held@example.test','listed@example.test'])for(const step of ['consent','unsubscribe','consent']){
-   tick();
    if(step==='consent'){
     // Respect the real shared provider budget, including the earlier confirmation.
     const pacing=await h.f.db.prepare('SELECT MAX(next_at) AS next_at FROM provider_pacing').first<{next_at:number|null}>();
-    clockOffset=Math.max(clockOffset,(pacing?.next_at??Date.now())-NativeDate.now());
+    const delay=(pacing?.next_at??0)-Date.now();
+    if(delay>0)await new Promise(resolve=>setTimeout(resolve,Math.ceil(delay)));
     const sent=h.f.outbound.length;
-    const response=await http.response('/api/contacts/consent',{contact:{email,displayName:'Garden Person'},channel:'email',...scope,captureMethod:'operator-entry',captureSource:'Market stall sign-up sheet',occurredAt:new Date().toISOString()});
-    expect(response.status,await response.text()).toBe(201);
+    const response=await http.response('/subscribe',{email,displayName:'Garden Person',consent:true,disclosure:description.disclosure});
+    expect(response.status,await response.text()).toBe(202);
     const message=h.f.outbound.slice(sent).find((message:any)=>JSON.stringify(message.to).includes(email));
     expect(message).toBeDefined();
     const link=String(message!.text).match(/https:\/\/\S+\/consent\/confirm\/\S+/)![0];
@@ -54,5 +50,5 @@ test('CONT-004/006 no undo or abandon makes an opted-out person mailable again, 
   expect(abandon.state).toBe('rolled_back');
   for(const email of ['held@example.test','listed@example.test'])expect(await status(email)).toEqual({contact:'unsubscribed',address:'unsubscribed'});
   expect(abandon).toMatchObject({rolledBack:stopped.checkpoint,kept:0});
- }finally{globalThis.Date=NativeDate;await h.close();}
+ }finally{await h.close();}
 });
