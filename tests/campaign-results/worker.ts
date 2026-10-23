@@ -1,3 +1,4 @@
+import {seedOverview} from './overview-fixture';
 import { seedArchive } from './archive-fixture';
 import {seedFollowup,seedFollowupOpens} from './followup-fixture';
 import { seedRetention } from './retention-fixture';
@@ -38,6 +39,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       if(action==='followup-opens')return context.json(await seedFollowupOpens(bindings.DB,platform));
       if(action==='counts') return context.json((await bindings.DB.prepare(`SELECT campaign_id,revision_id,step_id,transport_disposition disposition,skip_reason reason,COUNT(*) count FROM recipient_steps GROUP BY campaign_id,revision_id,step_id,transport_disposition,skip_reason`).all()).results);
       await clearCampaigns(bindings.DB);
+      if(action==='overview')return context.json(await seedOverview(bindings.DB));
       if(action==='followup')return context.json(await seedFollowup(bindings.DB,platform));
       if(action==='retention') return context.json(await seedRetention(bindings.DB));
       if(action==='reporting') return context.json(await seedReporting(bindings.DB,platform));

@@ -1,3 +1,4 @@
+import {overviewQuery,overviewPeriod} from './overview-period';
 import { createListGrowthRoutes } from './list-growth-routes';
 import { createRetentionRoutes } from './retention-routes';
 import { createCampaignReportRoutes } from './campaign-report-routes';
@@ -13,7 +14,13 @@ export function createInsightsRoutes(service: ReturnType<typeof createInsightsSe
   routes.route('/',createCampaignPerformanceRoutes(database));
   routes.route('/',createRetentionRoutes(database));
   routes.route('/',createListGrowthRoutes(database));
-  routes.get('/insights', async (context) => context.json(await service.list()));
+  routes.get('/insights', async context => {
+    const parsed=overviewQuery.safeParse(context.req.query());
+    if(!parsed.success)return context.json({error:'invalid_overview_period'},400);
+    let period;try{period=overviewPeriod(parsed.data);}catch{return context.json({error:'invalid_overview_period'},400);}
+    context.header('Cache-Control','no-store');
+    return context.json(await service.list(period));
+  });
   routes.get('/campaigns/:id/results', async (context) => context.json(await service.campaignResult(context.req.param('id'))));
   routes.get('/insights/deliverability', async (context) => {
     const windowDays = Number(context.req.query('windowDays') ?? service.reportingWindowDays);
