@@ -1594,7 +1594,7 @@
       "executable": false
     },
     "operations/link-hosts.test.mjs": {
-      "sha256": "3397f235193c9c203a14698ce6d030cd0ca57e5dac78bb80a8e5eeb303cbb823",
+      "sha256": "97e4ddcdb739b1c6ff59bcf3697e7c63d17d73b7e4106c06fc7639d2fbd48dd0",
       "executable": false
     },
     "operations/local-setup.test.mjs": {
