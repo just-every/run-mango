@@ -40,7 +40,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
     expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
     await page.screenshot({path:info.outputPath(`paid-signup-${width}.png`),fullPage:true});
   }
-  await page.getByLabel('Email address (required)',{exact:true}).fill(payer);
+  await page.getByLabel('Email address',{exact:true}).fill(payer);
   await page.getByRole('checkbox').check();
   await page.getByRole('button',{name:'Continue to Stripe Checkout',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Stripe Checkout test edge',exact:true})).toBeVisible();
