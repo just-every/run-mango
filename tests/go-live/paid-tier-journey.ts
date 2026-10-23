@@ -1,3 +1,4 @@
+import {paidSignupJourney} from './paid-signup-journey';
 import {expect, type Page, type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {type Installation, json, confirmedContact, draftCampaign, approve, dispatch} from './harness';
@@ -13,6 +14,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   for (const cookie of [input.admin, input.author]) expect((await site.call('/api/settings/stripe/paid-tier', {method: 'PUT', cookie, body: tier})).status).toBe(403);
   expect((await site.call('/api/settings/stripe/paid-tier', {method: 'PUT', cookie: owner, body: {...tier, automaticTax: false}})).status).toBe(400);
   expect((await site.call('/paid/checkout', {method: 'POST', body: {email: 'paid-reader@example.test'}})).status).toBe(409);
+  expect((await site.call('/subscribe?paid=1')).status).toBe(404);
   await page.setViewportSize({width: 1440, height: 1000});
   await openPage(page, site.runtime.url + '/app/settings');
   await page.getByLabel('Paid topic', {exact: true}).fill(tier.paidTopic);
@@ -155,4 +157,5 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
     expect((await new AxeBuilder({page}).include('.timeline').analyze()).violations.filter(v => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
     await page.locator('.timeline').screenshot({path: info.outputPath(`paid-tier-timeline-${width}.png`)});
   }
+  await paidSignupJourney({site,page,info,owner,edge,post});
 }

@@ -678,6 +678,7 @@
       "/media/",
       "/webhooks/commerce/",
       "/paid/checkout",
+      "/paid/info",
       "/webhooks/mail/",
       "/webhooks/sms/",
       "/auth/bootstrap",

@@ -32,7 +32,7 @@ export function createPaidTier(db: D1Database, hasConsent?: (contactId: string) 
     },
     checkout(value: PaidTier, email: string, origin: string) {
       return new URLSearchParams({'mode': 'subscription', 'line_items[0][price]': value.priceId, 'line_items[0][quantity]': '1', 'automatic_tax[enabled]': 'true',
-        'payment_method_types[0]': 'card', 'customer_email': email, 'success_url': origin + '/subscribe/info', 'cancel_url': origin + '/subscribe',
+        'payment_method_types[0]': 'card', 'customer_email': email, 'success_url': origin + '/subscribe?paid=1&returned=1', 'cancel_url': origin + '/subscribe?paid=1',
         'metadata[mango_paid_tier]': '1', 'subscription_data[metadata][mango_paid_tier]': '1'});
     },
     async failClosed(event: StripeObject, readAt: number) {

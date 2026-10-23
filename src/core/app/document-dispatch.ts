@@ -58,7 +58,11 @@ export async function dispatchDocuments(
   }
   if (path.startsWith('/__dev') && platform.config.local !== true) return Response.json({error: 'not_found'}, {status: 404});
   if (path !== '/health') await prepareRequest?.();
-  if (path === '/archive/feed.xml' || path === '/archive/data' || path.startsWith('/archive/data/') || path === '/subscribe/info' || ((path === '/subscribe' || path === '/subscribe/sms' || path === '/paid/checkout') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
+  if (path === '/subscribe' && url.searchParams.get('paid') === '1') {
+    const available = await platform.database.$client.prepare('SELECT id FROM paid_tier WHERE id=1 AND EXISTS(SELECT 1 FROM stripe_connection WHERE id=1)').first();
+    if (!available) return new Response('Paid signup is unavailable.', {status:404,headers:{'Cache-Control':'no-store'}});
+  }
+  if (path === '/archive/feed.xml' || path === '/archive/data' || path.startsWith('/archive/data/') || path === '/subscribe/info' || path === '/paid/info' || ((path === '/subscribe' || path === '/subscribe/sms' || path === '/paid/checkout') && request.method === 'POST') || path === '/health' || honoPrefixes.some(prefix => path === prefix || path.startsWith(`${prefix}/`))) {
     return hono.fetch(request, environment, executionContext);
   }
   let admission: ReturnType<typeof documentAdmission.getStore>;
