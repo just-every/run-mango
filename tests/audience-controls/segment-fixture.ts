@@ -32,11 +32,16 @@ export async function segmentFixture() {
     const headers={Authorization:`Bearer ${credential.token}`};
     const people:Array<{id:string;email:string}>=[];
     for(let n=0;n<8;n++) {
+      await site.control('/_golive/clock',{advanceMs:1000,hold:true});
       const contact=await json(await site.call('/api/integrations/v1/contacts',{method:'PUT',headers,body:{
         email:`synthetic-mango-${n+1}@example.test`,displayName:`Garden customer ${n+1}`,segmentName:'Garden customers',
         fields:{interest:n===0?'vegetables':'flowers'},tags:n===0?['market','local']:['market'],subscribe:true,
         consent:{source:'Market signup',evidence:'Send the monthly garden letter.',brandOrLegalSender:sender.displayName,messageCategory:'newsletter',frequencyDisclosure:'Monthly',destinationJurisdiction:'US',consentVersion:'v1',occurredAt:new Date(now-1000).toISOString()},
       }}),200);
+      expect(contact.contact.emailStatus).toBe('pending');
+      const confirmation=edge.sends.findLast(send=>send.to===contact.contact.email&&send.body.subject==='Confirm your Mango Garden subscription');
+      const link=/https:\/\/\S+\/consent\/confirm\/\S+/.exec(confirmation!.body.content.find((part:any)=>part.type==='text/plain').value)![0];
+      expect((await fetch(site.local(link),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
       people.push(contact.contact);
       customers.push({...structuredClone(customer),id:id('Customer',n+100),email:contact.contact.email,phone:null as any,updatedAt:new Date(now).toISOString(),
         defaultAddress:{city:n===3?'New York':'San Francisco',provinceCode:n===3?'NY':'CA',countryCodeV2:'US',zip:n===3?'10001':n===4?'94103':'94102'}});
