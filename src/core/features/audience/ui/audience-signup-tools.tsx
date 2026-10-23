@@ -56,7 +56,7 @@ export function AudienceSignupTools() {
         </div>
         <a className="secondary-action" href={url} target="_blank" rel="noreferrer">Open hosted form</a>
       </div>
-      <p className="muted-copy audience-signup-tools__note">The hosted form collects affirmative consent and sends a separate confirmation link. The address is not subscribed until the person follows that link.</p>
+      <p className="muted-copy audience-signup-tools__note">The hosted form records affirmative consent. Its email opt-in mode controls whether confirmation is required; an unsubscribed address always requires confirmation.</p>
       <div className="audience-signup-grid">
         <dl className="audience-signup-details">
           <div><dt>Public form URL</dt><dd className="audience-signup-url"><a href={url} target="_blank" rel="noreferrer">{url}</a></dd></div>
