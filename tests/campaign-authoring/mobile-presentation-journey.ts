@@ -36,7 +36,7 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
   const saved=await patch({emailBody,emailSubject:'Responsive garden letter',name:'Responsive garden letter',emailMobile:[{block:1,hideOnMobile:true},{block:2,fontSize:24,lineHeight:1.5,padding:12,alignment:'center'},{block:3,hideOnDesktop:true}]});
   expect(saved.status(),await saved.text()).toBe(200);
   const revision=await read();expect(revision.emailText).toContain('Hidden on mobile');expect(revision.emailText).toContain('Hidden on desktop');
-  expect((await checks()).blockers.map((row:any)=>row.kind)).not.toContain('message.content');
+  const checked=(await checks()).blockers.map((row:any)=>row.kind);expect(checked).not.toContain('message.content');expect(checked).not.toContain('message.personalisation');
   const changed=await patch({emailBody:revision.emailBody.replace('font-size: 24px !important','font-size: 25px !important')});
   expect(changed.status()).toBe(400);expect((await changed.json()).detail).toContain('byte-identical');
   expect((await read()).emailBody).toBe(revision.emailBody);

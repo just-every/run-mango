@@ -3,7 +3,7 @@ import {appendOpenPixel} from '@/core/features/insights/open-tracking';
 import { managedSmsText } from '@/core/features/sms/content';
 import { smsProgrammeSchema } from '@/core/features/sms/policy';
 import {renderTracking} from './message-tracking';
-import { renderMessageContent, invalidPersonalisation } from '@/core/features/campaigns/message-content';
+import { renderMessageContent, invalidMessagePersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { confirmationUnsubscribePath, oneClickUnsubscribePath } from '@/core/features/audience/unsubscribe-paths';
 import type { DeliveryRequest, EligibilityResult, LifecycleRuntime } from './types';
@@ -34,7 +34,7 @@ export async function prepareDeliveryRequest(
     return { request, trackedLinks: [] };
   }
   const htmlPolicy = inspectEmailHtml(envelope.revision.emailBody);
-  const invalidTokens = invalidPersonalisation(`${envelope.revision.emailSubject}\n${envelope.revision.preheader}\n${envelope.revision.emailBody}\n${envelope.revision.emailText}\n${envelope.revision.smsBody}`);
+  const invalidTokens = invalidMessagePersonalisation(envelope.revision);
   if (invalidTokens.length || (envelope.recipient.channel === 'email' && htmlPolicy.issues.length)) {
     throw new Error(`Saved content is outside the allowed authoring set: ${[...htmlPolicy.issues, ...invalidTokens].join(' ')}`);
   }

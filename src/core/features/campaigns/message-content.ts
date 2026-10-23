@@ -36,6 +36,10 @@ export function invalidPersonalisation(template: string) {
   if (remainder.includes('{{') || remainder.includes('}}')) invalid.push('Unbalanced personalisation delimiter');
   return invalid;
 }
+/** Generated CSS is verified independently and is never a personalisation template. */
+export function invalidMessagePersonalisation(revision:Pick<MessageRevision,'emailSubject'|'preheader'|'emailBody'|'emailText'|'smsBody'>) {
+  return [revision.emailSubject,revision.preheader,mobileEnvelope(revision.emailBody).body,revision.emailText,revision.smsBody].flatMap(invalidPersonalisation);
+}
 /** Pure rendering: no capabilities, writes, contacts or network are acquired here. */
 export function renderMessageContent(revision: MessageRevision, options: {
   analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;

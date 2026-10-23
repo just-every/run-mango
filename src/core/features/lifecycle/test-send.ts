@@ -7,7 +7,7 @@ import { prepareTestHandoffCost, cancelHandoffCost, settleHandoffCost, settleHan
 import { ProviderTransportError, type DeliveryRequest, type ProviderHandoff } from '@/core/shared/platform';
 import { loadSenderSettings } from '@/core/features/settings/sender-persistence';
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
-import { messageRendererVersion, renderMessageContent, invalidPersonalisation } from '@/core/features/campaigns/message-content';
+import { messageRendererVersion, renderMessageContent, invalidMessagePersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { digestJson, sha256 } from './digest';
 import type { LifecycleRepository } from './repository';
@@ -68,7 +68,7 @@ export function createTestSender(runtime: LifecycleRuntime, repository: Lifecycl
       const capabilities = await sender.capabilities();
       if (!capabilities.configured || !capabilities.canSendMarketing) return { kind: 'blocked' as const, detail: capabilities.detail };
       const issues = input.channel === 'email' ? inspectEmailHtml(snapshot.revision.emailBody).issues : [];
-      issues.push(...invalidPersonalisation(`${snapshot.revision.emailSubject}\n${snapshot.revision.preheader}\n${snapshot.revision.emailBody}\n${snapshot.revision.emailText}\n${snapshot.revision.smsBody}`));
+      issues.push(...invalidMessagePersonalisation(snapshot.revision));
       if (issues.length) return {kind: 'blocked' as const, detail: issues.join(' ')};
       const smsPolicy=input.channel==='sms'?await smsPolicyAuthority(runtime.platform.config):undefined;
       if(smsPolicy&&snapshot.revision.smsSender!==smsPolicy.sender)return {kind:'blocked' as const,detail:'SMS sender changed. Save and review the current programme sender.'};
