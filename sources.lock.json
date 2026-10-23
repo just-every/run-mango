@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "da950efafbf8afb25c5511896a4da4d862541f0fbdbc0d48b644610f9411da89",
+      "sha256": "53ea6ab24880d7d82e08ad21e43d132055f4c2694f0a4364aaa40843a1fc31d7",
       "executable": false
     },
     "DEMO.md": {
@@ -3162,7 +3162,7 @@
       "executable": false
     },
     "src/core/features/campaigns/message-content.ts": {
-      "sha256": "2ca1a352fe3a5d46eb70469b6224371637d73fd538fc16d3cb087c6ebe1f0f3e",
+      "sha256": "8854afb75c77def25e81944a1802da72cd7b055baf2e4338915a6d11ac3877a8",
       "executable": false
     },
     "src/core/features/campaigns/message-links.ts": {
@@ -4118,7 +4118,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/checks.ts": {
-      "sha256": "f49aaa359ce9c681b270650d507e0d13bea028096d0b004896ff5d914dea6ba5",
+      "sha256": "bf4fa32fc8ed53d49e9e3355bc52b055d433feaaab963154df24cfe48b78a259",
       "executable": false
     },
     "src/core/features/lifecycle/delivery-eligibility.ts": {
@@ -4166,7 +4166,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/message-renderer.ts": {
-      "sha256": "fcf26a4d325de41a9987a1dd4c73eae4d7bf624bdc805c07b18a3a47629d89d3",
+      "sha256": "c251047e3bd343db925b8e19f5d6602e66272cfe763e5b43cc8731f646ca144b",
       "executable": false
     },
     "src/core/features/lifecycle/message-tracking.ts": {
@@ -4250,7 +4250,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/test-send.ts": {
-      "sha256": "353a28815b35a5d3f710b36fc83e36519edf74dddd7a4765c449faf753120ce3",
+      "sha256": "75b45faa6182283a4a4a6560a175026fed70ffa216ae410c6024c61de5f8db2a",
       "executable": false
     },
     "src/core/features/lifecycle/tracked-link-policy.ts": {
@@ -7170,7 +7170,7 @@
       "executable": false
     },
     "tests/campaign-authoring/mobile-presentation-journey.ts": {
-      "sha256": "6e231c1ea0424d3d2a8da60881a1953de92bad878513946128254874557bdea8",
+      "sha256": "a15dd09aec7882356c26f02aa09c1504e948aa5a439093c0fb8ea6de77a5ba8a",
       "executable": false
     },
     "tests/campaign-authoring/reuse-journey.ts": {
