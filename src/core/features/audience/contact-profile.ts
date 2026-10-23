@@ -2,6 +2,7 @@ import type { Platform } from '@/core/shared/platform';
 import { sha256 } from '@/core/shared/ids';
 import { createAudienceRepository } from './repository';
 import { createStoreRepository } from '@/core/features/store/repository';
+import {persistLinkHostSources} from '@/core/features/settings/link-hosts';
 import { createStoreService } from '@/core/features/store/service';
 import { createRuleMatcher } from './rule-matcher';
 import { selectedChannel } from './eligibility';
@@ -17,7 +18,7 @@ export type ContactProfile = {
 /** Uses the audience editor's matcher. Membership never grants sending authority. */
 export async function readContactProfile(platform:Platform, contactId:string):Promise<ContactProfile> {
   const db=platform.database.$client, repository=createAudienceRepository(platform.database);
-  const store=createStoreService(createStoreRepository(platform.database)), now=new Date();
+  const store=createStoreService(createStoreRepository(platform.database),()=>persistLinkHostSources(platform)), now=new Date();
   const [contact, profile, merged, saved]=await Promise.all([
     repository.getContact(contactId), repository.segmentProfile(contactId),
     db.prepare(`WITH RECURSIVE identities(id) AS (SELECT ? UNION SELECT m.merged_contact_id FROM contact_merges m JOIN identities i ON m.survivor_contact_id=i.id)

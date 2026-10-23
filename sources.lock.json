@@ -2470,7 +2470,7 @@
       "executable": false
     },
     "src/core/features/audience/contact-profile.ts": {
-      "sha256": "0098a9305225d1a5e7a650c487e06ae7defcba570249285159e5ca47acf774ac",
+      "sha256": "7657d8072dbfab79db8de79f2848812a57cc84a8394804ef59781dbd540e5704",
       "executable": false
     },
     "src/core/features/audience/contact-timeline.ts": {
@@ -7666,7 +7666,7 @@
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
-      "sha256": "862cc0c87a7b5d4c8ef567b588f5ab78a67c50c73e5056bb30b54b2171d99f26",
+      "sha256": "7233358695832891419a29a9fc88c795c0bf5fb9c804479df04ff1b121b838c9",
       "executable": false
     },
     "tests/go-live/kiosk-harness.ts": {

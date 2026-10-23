@@ -12,6 +12,9 @@ test('[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
+    const signedInEntry=await site.call('/signin',{cookie});
+    expect(signedInEntry.status).toBe(303);
+    expect(signedInEntry.headers.get('Location')).toBe('/app');
     await json(await site.call('/api/settings/sender/confirmation', {method: 'POST', cookie, body: {}}), 202);
     const message = edge.sends.findLast(send => send.to === 'owner@example.test')!;
     const check = /https:\/\/\S+\/sender-check\/\S+/.exec(message.body.content.find((part: any) => part.type === 'text/plain').value)![0];
