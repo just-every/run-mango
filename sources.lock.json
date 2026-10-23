@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "62b403aa23faee8715641cefd0d1308b67f507d6ffb0fe84f9d011001ab3cc03",
+      "sha256": "ac24bd52978ee3047cd9064837d882bb83b78588ad36f424c372fda08e2c535b",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "e5b5562f2ca404abce0e1c5bc245cc9bf84101af5557b79d9802251e5cce649c",
+      "sha256": "dbe9a98d2b9b952fa5e3304356b6ca66500a4a53aa5af30841272021b1524abb",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "1d7a946825fc3a0991d2fc6512441ef212f3e10b3eceff373bf4edc22fd23165",
+      "sha256": "407397c4449f34a3bbe189b981c9ac78f33edaf81ba13cde3ff7dcb2076386ec",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1090,7 +1090,7 @@
       "executable": false
     },
     "docs/integrations.md": {
-      "sha256": "ff319978a2df55528ed1b94d453ee85da73bc02f860b1b03ceb22a7c5a4fce29",
+      "sha256": "a0ff817ebf2ad262e7fbfd3d2abd472ea41cca7af825c1722782d4f01a36eb53",
       "executable": false
     },
     "docs/introduction.md": {
@@ -7482,7 +7482,7 @@
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
-      "sha256": "33b38ddfd498fcb1b3db89149abcc598c2207fe1e8a983d65975bc5c29386e04",
+      "sha256": "24d77d557d712c9c117de56b2ad7dba504c493b814a8dba987679ac337bfd16c",
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
