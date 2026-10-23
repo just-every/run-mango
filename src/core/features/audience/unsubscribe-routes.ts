@@ -44,8 +44,8 @@ function isOneClick(form: Record<string, unknown> | undefined) {
 }
 
 export function registerUnsubscribeRoutes(routes: Hono, service: ReturnType<typeof createAudienceService>) {
-  async function unsubscribe(context: Context, token: string) {
-    const result = await service.unsubscribeWithToken(token);
+  async function unsubscribe(context: Context, token: string, method: 'link' | 'one-click') {
+    const result = await service.unsubscribeWithToken(token, new Date(), method);
     if (result.kind === 'rate-limited') return tooManyRequests(context);
     if (result.kind === 'invalid') return invalidLink(context);
     return messagePage(context, 200, unsubscribedPage);
@@ -71,7 +71,7 @@ export function registerUnsubscribeRoutes(routes: Hono, service: ReturnType<type
     if ('error' in params) return invalidLink(context);
     const form = await readForm(context);
     if (!confirmation.safeParse(form).success && !isOneClick(form)) return context.json({ error: 'invalid_request' }, 400);
-    return unsubscribe(context, params.data.token);
+    return unsubscribe(context, params.data.token, isOneClick(form) ? 'one-click' : 'link');
   });
 
   // The List-Unsubscribe URL: a context-free RFC 8058 POST, answered without redirect.
@@ -79,6 +79,6 @@ export function registerUnsubscribeRoutes(routes: Hono, service: ReturnType<type
     const params = readParams(context, tokenParams);
     if ('error' in params) return invalidLink(context);
     if (!isOneClick(await readForm(context))) return context.json({ error: 'invalid_request' }, 400);
-    return unsubscribe(context, params.data.token);
+    return unsubscribe(context, params.data.token, 'one-click');
   });
 }

@@ -47,7 +47,7 @@ export function createCampaignService(
     const [savedChecks, scheduler, results, uncertainDeliveries, attribution] = await Promise.all([
       repository.listChecks(composition.revision.id),
       repository.scheduler(options.now?.() ?? new Date()),
-      !editable && composition.revision.state === 'approved'
+      !editable && ['approved','erasure-invalidated'].includes(composition.revision.state)
         ? repository.results(id, composition.revision.id, campaign.state, options.now?.() ?? new Date()) : undefined,
       repository.uncertainDeliveries(id),
       repository.attribution(id,composition.revision.id),
