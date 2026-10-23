@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "529eec00e0cfe0c52e43aa8c1181d4fb306bc6d682dc26ff60f556e624e0c42c",
+      "sha256": "84ef9f20a3ad8a176e8f17ba07893cdd71d0a7148c8289a734a08b5cd00ed9cf",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "78a1995ba22bdaa08da3678e92e1e38efd1e6a8287ba774050a70689eda043bb",
+      "sha256": "856611a0db6c02a8754e3769f64a3d7499f090bc97b959a7a7d874a8e93d9c31",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "b83ba1c753615988a83f5fd4ff5d5020cde83215a90fc0d693b575dbca15edc4",
+      "sha256": "d447020fdf4261b8431bd9815ed8e505412c7e7183401329498caa47ca76fa33",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1527,6 +1527,10 @@
     },
     "migrations/core/0087_paid_state_authority.sql": {
       "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
+      "executable": false
+    },
+    "migrations/core/0094_sender_renewal_deliveries.sql": {
+      "sha256": "9c816c8d74c513f9504a367fd1316fca05e8e0a360aed3f7b1d4111fe8f9fca3",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -4441,6 +4445,14 @@
       "sha256": "385c503a43e58004fa6922222d5bf4365da2c8044314a20d3743b38d3b79e645",
       "executable": false
     },
+    "src/core/features/sender-verification/renewal-routes.ts": {
+      "sha256": "dfd5c54d5e9ddc9577ad85e0d9fa712829a5379a563f510614ef1b6a25f296ad",
+      "executable": false
+    },
+    "src/core/features/sender-verification/renewal.ts": {
+      "sha256": "e5ce18e755ee18119d8440eefb1da70752c61b65bd07c573863864edae1a42b5",
+      "executable": false
+    },
     "src/core/features/sender-verification/repository.ts": {
       "sha256": "46460b09ab037e27358915a6900a877451f8f2883bbdbf625b96b939d55d7615",
       "executable": false
@@ -4467,6 +4479,10 @@
     },
     "src/core/features/sender-verification/types.ts": {
       "sha256": "4564e5a4e3e4e0850090e0aef565577794e5a5d6b19fb432bed5a3c1c0d5695a",
+      "executable": false
+    },
+    "src/core/features/sender-verification/ui/renewal-card.tsx": {
+      "sha256": "41999460f8d5393a9721da0109bfc7b68da3d29f1fdcb50167dc6fecf1359111",
       "executable": false
     },
     "src/core/features/settings/link-hosts-validation.ts": {
@@ -7569,6 +7585,10 @@
       "sha256": "70a202cdae2692db134178014484017db5f8f8797c12fb16a146308dc278bb46",
       "executable": false
     },
+    "tests/go-live/sender-renewal-journey.ts": {
+      "sha256": "43d0189d1011abfd185aff768492ba4a2f77aae0b21138883ec1bfe5c3d9b448",
+      "executable": false
+    },
     "tests/go-live/sendgrid-events.ts": {
       "sha256": "06ab7572d3e1bbfe23b11e16e2fc044a9360cdbefb7c6c6777c95a3f62c15d08",
       "executable": false
@@ -7939,6 +7959,10 @@
     },
     "tests/sender-verification/fixture.ts": {
       "sha256": "c328595d88f8897e5f622c5c0f411986c82b1d8336d5a831035661d597ac0073",
+      "executable": false
+    },
+    "tests/sender-verification/renewal-proof.ts": {
+      "sha256": "254fe4c3be5dc930855ac25cc96d8775800f788f4d9f9377f8b6b3fec8973896",
       "executable": false
     },
     "tests/sender-verification/restart.spec.ts": {
