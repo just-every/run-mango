@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "06d99931211197d663e2f2a376f72287be3004c971ac28254b419ae57cb6ff79",
+      "sha256": "bfac9ef560bc0282085489dd68da621f00113507dd40733fa098b9bf9bdca33f",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "48699301891f4a6a033161e14d93725e33a8c622c8e5c5102624f9fed4e0c0c3",
+      "sha256": "bf1e214ae211144fe92cab58b07b5504edfec6be638be23f0b554c731ecebfe6",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "407397c4449f34a3bbe189b981c9ac78f33edaf81ba13cde3ff7dcb2076386ec",
+      "sha256": "3bfbe34ec31a29b034b20f8866bf47e88d5ea17f585d4a5d8afe860c5844104e",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -4710,7 +4710,7 @@
       "executable": false
     },
     "src/core/features/store/stripe/paid-tier.ts": {
-      "sha256": "aab6c007b587203123e062e9ed1508ad1fe27abe9453ad3ae80641fdbf2ab472",
+      "sha256": "3d7a84ecb3ff3693bc7281040c676196f396662060a9bc30fd988a4ee6d79004",
       "executable": false
     },
     "src/core/features/store/stripe/routes.ts": {
@@ -4774,7 +4774,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-paid-tier.tsx": {
-      "sha256": "eff9d1de35124adc2153137c423f979267cc25694384ff6929327af1d3efc6de",
+      "sha256": "9f38de158c7f7c05d5041b3f78e992edbf8a41daf1f80d69ddcaade53a7fcbbf",
       "executable": false
     },
     "src/core/features/store/ui/settings-sender-form.tsx": {
@@ -7482,11 +7482,11 @@
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
-      "sha256": "24d77d557d712c9c117de56b2ad7dba504c493b814a8dba987679ac337bfd16c",
+      "sha256": "40cbaf5d18474aab476304c80eccf589230683ff4f6482ac30b8c002df3dda5e",
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
-      "sha256": "d7498dbcf17863b9142dbd4a8df36703bb660c775c2a2a03407d61cc803f62ad",
+      "sha256": "7ca94bea1181aa934185f45d3e015afe4aeb38da6023dfbf35e82a180deb1ff6",
       "executable": false
     },
     "tests/go-live/pause.journeys.ts": {

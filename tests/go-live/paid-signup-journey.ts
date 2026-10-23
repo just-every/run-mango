@@ -36,6 +36,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
     await expect(page.locator('main')).toContainText('Stripe Tax');
     await expect(page.getByRole('checkbox')).not.toBeChecked();
     expect(await page.locator('input').evaluateAll(inputs=>inputs.some(input=>/card|payment/i.test((input as HTMLInputElement).name)))).toBe(false);
+    expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
     await page.screenshot({path:info.outputPath(`paid-signup-${width}.png`),fullPage:true});
@@ -49,6 +50,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/subscribe?paid=1&returned=1');
     await expect(page.locator('main')).toContainText('Confirm subscription');
+    expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
     await page.screenshot({path:info.outputPath(`paid-signup-return-${width}.png`),fullPage:true});
@@ -56,6 +58,11 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   expect(confirmations(payer)).toHaveLength(1);
   expect((await contact(payer)).email_status).toBe('pending');
   expect((await site.rows(`SELECT capture_method,confirmed_at FROM consent_evidence WHERE destination='${payer}'`))).toEqual([{capture_method:'paid-checkout',confirmed_at:null}]);
+  const evidence=(await site.rows(`SELECT occurred_at,capture_source,consent_version,consent_text FROM consent_evidence WHERE destination='${payer}'`))[0];
+  expect(evidence.occurred_at).toBeGreaterThan(0);
+  expect(evidence.capture_source).toBe(site.origin+'/subscribe?paid=1');
+  expect(evidence.consent_version.length).toBeGreaterThan(0);
+  expect(evidence.consent_text).toBe(description.consentText);
   const before=(await json(await site.call('/api/settings/stripe',{cookie:owner}),200)).paidReaders;
   expect(before.consentMissing).toBeGreaterThan(0);
   const due=new Date((await site.control('/_golive/clock')).now+3600000);
