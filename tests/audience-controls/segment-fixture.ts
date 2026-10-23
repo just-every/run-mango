@@ -27,7 +27,7 @@ export async function segmentFixture() {
     const cookie=await site.open();
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
     await site.control('/_golive/sender-evidence');
-    const {now}=await site.control('/_golive/clock',{hold:true});
+    let {now}=await site.control('/_golive/clock',{hold:true});
     const credential=await json(await site.call('/api/settings/integrations',{method:'POST',cookie,body:{name:'Synthetic garden customers',scopes:['contacts:write']}}),201);
     const headers={Authorization:`Bearer ${credential.token}`};
     const people:Array<{id:string;email:string}>=[];
@@ -47,6 +47,7 @@ export async function segmentFixture() {
       customers.push({...structuredClone(customer),id:id('Customer',n+100),email:contact.contact.email,phone:null as any,updatedAt:new Date(now).toISOString(),
         defaultAddress:{city:n===3?'New York':'San Francisco',provinceCode:n===3?'NY':'CA',countryCodeV2:'US',zip:n===3?'10001':n===4?'94103':'94102'}});
     }
+    ({now}=await site.control('/_golive/clock',{hold:true}));
     // Real purchase times arrive via Shopify sync. No commerce or contact row is inserted.
     const day=86400000;
     const histories=[[[1,51],[90-1/day,60]],[[1,60],[90+1/day,60]],[[1,60],[2,50]],[[1,60],[2,60]],[[1,70],[2,80],[3,49]],[[1,60]],[[1,60],[-1/day,60]],[]];
