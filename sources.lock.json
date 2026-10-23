@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "53ea6ab24880d7d82e08ad21e43d132055f4c2694f0a4364aaa40843a1fc31d7",
+      "sha256": "b3f221e1a0df5db07ecd07d5d8ed0a1efecaeb836bd06bab40e64d9e7f2c11fa",
       "executable": false
     },
     "DEMO.md": {
@@ -7170,7 +7170,7 @@
       "executable": false
     },
     "tests/campaign-authoring/mobile-presentation-journey.ts": {
-      "sha256": "a15dd09aec7882356c26f02aa09c1504e948aa5a439093c0fb8ea6de77a5ba8a",
+      "sha256": "ce11eaa749a5912663e1a9756d4b8010ccbab96f2d2be2f315e955cdb56c0779",
       "executable": false
     },
     "tests/campaign-authoring/reuse-journey.ts": {
