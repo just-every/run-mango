@@ -78,8 +78,12 @@ export function createAudienceRepository(database: Database) {
       return database.select().from(contacts).orderBy(asc(contacts.displayName));
     },
 
-    searchContacts(address: string) {
-      return database.select().from(contacts).where(sql`EXISTS (SELECT 1 FROM contact_email_addresses a WHERE a.contact_id = ${contacts.id} AND instr(lower(a.email), ${address.toLowerCase()}) > 0) OR EXISTS (SELECT 1 FROM contact_phones p WHERE p.contact_id=${contacts.id} AND instr(p.phone_e164, ${address.replace(/[\s().-]/g,'')})>0)`).orderBy(asc(contacts.displayName)).limit(30);
+    /** `exact` matches only a complete normalized address, so a fragment reveals nothing about hidden destinations. */
+    searchContacts(address: string, exact: boolean) {
+      const email = address.toLowerCase(), phone = address.replace(/[\s().-]/g,'');
+      const emailMatch = exact ? sql`lower(a.email) = ${email}` : sql`instr(lower(a.email), ${email}) > 0`;
+      const phoneMatch = exact ? sql`p.phone_e164 = ${phone}` : sql`instr(p.phone_e164, ${phone}) > 0`;
+      return database.select().from(contacts).where(sql`EXISTS (SELECT 1 FROM contact_email_addresses a WHERE a.contact_id = ${contacts.id} AND ${emailMatch}) OR EXISTS (SELECT 1 FROM contact_phones p WHERE p.contact_id=${contacts.id} AND ${phoneMatch})`).orderBy(asc(contacts.displayName)).limit(30);
     },
 
     getContact(id: string) {

@@ -88,6 +88,11 @@ export function maskCampaignReportResponse(value: unknown): Row {
   };
 }
 
+/** The role whose grants govern contact data: an Analyst granted unmasked contacts reads them as an administrator does. */
+export function contactPrivacyRole(operator: {role: ProductRole; unmaskedContacts: boolean}): ProductRole {
+  return operator.role === 'analyst' && operator.unmaskedContacts ? 'admin' : operator.role;
+}
+
 /** Apply to successful JSON reads, after authorization and before serialization/SSR snapshots.
  * CSV is refused by requiredPermission; it must never bypass this JSON projection.
  */

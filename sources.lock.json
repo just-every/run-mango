@@ -2158,7 +2158,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "68f879f321ecbba0860eb60889fbb40cecf81762e81e20a9d43f131db025c936",
+      "sha256": "18c40484d7be3fa2c133b583d1f97a0fd1d381936e2f2d89b0bd3d785d188757",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -2702,11 +2702,11 @@
       "executable": false
     },
     "src/core/features/audience/repository.ts": {
-      "sha256": "1bca36b0db6c6434418ca318a279cfa25f73dee230fd601d034edc618b989724",
+      "sha256": "5d8a5bfa3caa577a4b288ab9c86db6a96b838ca501e7f6cf04f625b4f8f664be",
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
-      "sha256": "295aa4c4fbacea7d48df23d3a8b8836175db70f307e5bf7152bca9c1ddc86453",
+      "sha256": "9c1e85ef57f910f7fb810a97a38042cb8729a34a5c12f722ec62e694d654f556",
       "executable": false
     },
     "src/core/features/audience/rule-matcher.ts": {
@@ -2734,7 +2734,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "7ca155cc5782f6dccad8510bd91cae02845ce6e17a6dd9e190fd9feb9388757d",
+      "sha256": "d025742296ed828a918f38ebeee83fff9354534d2ca17cf047b210f012789890",
       "executable": false
     },
     "src/core/features/audience/signup-refusals.ts": {
@@ -2926,7 +2926,7 @@
       "executable": false
     },
     "src/core/features/auth/response-privacy.ts": {
-      "sha256": "ef607ed4c7f8621420e5e1dd8d4ad69243ed2163c24e18d146bc0c56dff2cdfd",
+      "sha256": "12229f4a1f4ccb62c7a2b7e002b7044d4f5c5b3c90a3967b848f86aec81e5e26",
       "executable": false
     },
     "src/core/features/auth/routes.ts": {
@@ -7526,7 +7526,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "1fa4aff3fc09a59b391f12f44ea3eed382a618daf6c511e73c8c12fa12365455",
+      "sha256": "3b53fca28226176e2f9474eb2afd65f0ddd00422d95835c69e5a773243ed6939",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {

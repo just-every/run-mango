@@ -51,12 +51,20 @@ test('[INT-004][OPER-003][OPER-004] roles govern native requests and removal ret
     await availableTransport(site);
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/test-send`,{method:'POST',cookie:cookies.manager,body:{revisionId:campaign.revisionId,channel:'email',to:['design@example.test','copy@example.test']}})).status).toBe(200);
     expect(edge.sends.filter(send=>['design@example.test','copy@example.test'].includes(send.to))).toHaveLength(2);
+    await site.runtime.sql(`INSERT INTO contact_phones (id,contact_id,phone_e164,channel_status,identity_status,created_at,updated_at) VALUES ('riley-phone','${contact}','+61422222222','non-subscribed','active',0,0) RETURNING id`);
+    const search=async(address:string,cookie:string)=>(await json(await site.call(`/api/contacts/search?address=${encodeURIComponent(address)}`,{cookie}),200)).contacts.map((row:any)=>row.id);
     for(const role of ['analyst','support'] as const) {
       const detail=await json(await site.call(`/api/contacts/${contact}`,{cookie:cookies[role]}),200);
       expect(detail.contact.email).toBe('••••');
       expect(JSON.stringify(detail)).not.toContain('riley@example.test');
       expect(detail.consent.every((row:any)=>row.captureIp===null&&row.confirmationIp===null)).toBe(true);
+      // A masked role finds a contact by its complete address only; a fragment matches nothing.
+      for(const fragment of ['riley','y@example.test','+614222','2222222'])expect(await search(fragment,cookies[role]!),`${role}: ${fragment}`).toEqual([]);
+      expect(await search('Riley@Example.test',cookies[role]!)).toEqual([contact]);
+      expect(await search('+61 422 222 222',cookies[role]!)).toEqual([contact]);
     }
+    expect(await search('riley',owner)).toEqual([contact]);
+    expect(await search('+614222',owner)).toEqual([contact]);
     expect((await site.call('/api/contacts/consent',{method:'POST',cookie:cookies.support,body:{}})).status).toBe(403);
     await json(await site.call(`/api/contacts/${contact}/privacy-requests`,{method:'POST',cookie:cookies.support,body:{kind:'erasure'}}),201);
     let uiChanges=false;

@@ -5,7 +5,7 @@ import {createDormancyRoutes} from '@/core/features/audience/dormancy-routes';
 import {domainSetupRoutes} from '@/core/features/sender-verification/setup-routes';
 import {stripeRoutes} from '@/core/features/store/stripe/routes';
 import {hasPermission,requiredPermission} from '@/core/features/auth/permissions';
-import {projectPrivateResponse} from '@/core/features/auth/response-privacy';
+import {contactPrivacyRole,projectPrivateResponse} from '@/core/features/auth/response-privacy';
 import {contactSupportRoutes} from '@/core/features/auth/contact-actions';
 import {approvalRequestRoutes} from '@/core/features/auth/approval-requests';
 import {activityRoutes} from '@/core/features/auth/activity';
@@ -326,7 +326,7 @@ export function createApp(
     await next();
     if(['GET','HEAD'].includes(context.req.method)&&context.res.ok&&context.res.headers.get('Content-Type')?.includes('application/json')) {
       const value=await context.res.json();
-      const projected=projectPrivateResponse(operator.role==='analyst'&&operator.unmaskedContacts?'admin':operator.role,context.req.url,value);
+      const projected=projectPrivateResponse(contactPrivacyRole(operator),context.req.url,value);
       context.res=new Response(JSON.stringify(projected),{status:context.res.status,headers:context.res.headers});
     }
   });

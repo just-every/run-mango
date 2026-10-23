@@ -647,7 +647,7 @@ export function createAudienceService(
     recordBounce,
     recordProviderDelivery,
     receiveSmsComplianceReply,
-    search: (address: string) => repository.searchContacts(address),
+    search: (address: string, exact: boolean) => repository.searchContacts(address, exact),
     async previewMerge(survivorContactId: string, mergedContactId: string) {
       if (survivorContactId === mergedContactId) throw new Error('Choose another contact as the survivor.');
       const [survivor, merged] = await Promise.all([repository.getContact(survivorContactId),repository.getContact(mergedContactId)]);

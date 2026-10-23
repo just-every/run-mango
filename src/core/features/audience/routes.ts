@@ -11,6 +11,8 @@ import { readJson } from '@/core/api/input';
 import type { createAudienceService } from './service';
 import { readContactTimeline } from './contact-timeline';
 import { recordActivity } from '@/core/features/auth/activity-record';
+import { hasPermission } from '@/core/features/auth/permissions';
+import { contactPrivacyRole } from '@/core/features/auth/response-privacy';
 
 const contactParams = z.object({ id: z.string().min(1) });
 const channel = z.enum(['email', 'sms']);
@@ -39,7 +41,9 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
   routes.get('/contacts/search', async context => {
     const query=z.object({address:z.string().trim().min(2).max(320)}).safeParse(context.req.query());
     if(!query.success)return context.json({error:'invalid_search'},400);
-    return context.json({contacts:await service.search(query.data.address)});
+    // Matches on fragments would reveal destinations a masked role cannot read.
+    const exact=!hasPermission(contactPrivacyRole(context.get('operator')),'contact.unmasked');
+    return context.json({contacts:await service.search(query.data.address,exact)});
   });
   routes.post('/contacts/merge-preview',async context=>{
     const parsed=await readJson(context,merge);if('error'in parsed)return parsed.error;
