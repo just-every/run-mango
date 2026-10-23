@@ -7050,7 +7050,7 @@
       "executable": false
     },
     "tests/audience-controls/segment-fixture.ts": {
-      "sha256": "f4795e46a9655d877ef16954b26c031cc274dd35d3e8f477bbf0fc70176ab9fa",
+      "sha256": "5d18bb85572ea704a5b20dbff2f95e3e42568ed62f2a49d29da191fcda1e8873",
       "executable": false
     },
     "tests/audience-controls/segment-journey.ts": {
