@@ -1,9 +1,10 @@
+import {capacityJourney} from './signup-capacity-journey';
 import {test,expect} from '@playwright/test';
 import {kioskInstallation,kioskChallenge} from './kiosk-harness';
 import {refusalScreens} from './signup-refusal-screens';
 import {openPage} from '../support/navigation';
 
-test('[FORM-009][FORM-010] shared kiosk clears every visitor, requires fresh verification and retains device consent source',async({page:operatorPage,browser},info)=>{
+test('[FORM-008][FORM-009][FORM-010] shared kiosk clears every visitor, requires fresh verification and retains device consent source',async({page:operatorPage,browser},info)=>{
   const visitor=await browser.newContext();const page=await visitor.newPage();
   const site=await kioskInstallation();
   const settings={frequencyDisclosure:'Monthly newsletter',embedOrigins:[],kioskEnabled:true,kioskDeviceLabel:'Market tablet'};
@@ -88,9 +89,10 @@ test('[FORM-009][FORM-010] shared kiosk clears every visitor, requires fresh ver
     await site.control('/_kiosk/challenge',{connected:true});
     await site.settings({...settings,kioskEnabled:false});
     const ordinary=await(await site.call('/subscribe/info')).json();
-    for(let index=0;index<5;index++)expect((await site.call('/subscribe',{email:`ordinary-${index}@example.test`,consent:true,disclosure:ordinary.disclosure,'cf-turnstile-response':`kiosk-token-${crypto.randomUUID()}`},{'CF-Connecting-IP':'192.0.2.77'})).status).toBe(202);
+    for(let index=0;index<120;index++){if(index===100)await site.control('/_kiosk/window',{kind:'minute'});expect((await site.call('/subscribe',{email:`ordinary-${index}@example.test`,consent:true,disclosure:ordinary.disclosure,'cf-turnstile-response':`kiosk-token-${crypto.randomUUID()}`},{'CF-Connecting-IP':'192.0.2.77'})).status).toBe(202);}
     expect((await site.call('/subscribe',{email:'ordinary-over@example.test',consent:true,disclosure:ordinary.disclosure,'cf-turnstile-response':`kiosk-token-${crypto.randomUUID()}`},{'CF-Connecting-IP':'192.0.2.77'})).status).toBe(429);
     await refusalScreens(site,page,operatorPage,info,'hosted','192.0.2.77');
+    await capacityJourney(site,operatorPage,info);
     await site.control('/_kiosk/clock',{advanceMs:3600001});
     await openPage(operatorPage,site.runtime.url+'/app');
     await expect(operatorPage.getByRole('heading',{name:'Decision Desk',exact:true})).toBeVisible();

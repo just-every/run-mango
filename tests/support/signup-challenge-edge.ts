@@ -12,6 +12,6 @@ export function installSignupChallengeEdge() {
     if (url.pathname !== '/turnstile/v0/siteverify' || request.method !== 'POST') throw new Error('Unexpected challenge request.');
     const form = new URLSearchParams(await request.text());
     if (form.get('secret') !== 'fixture-server-secret' || !form.get('remoteip')) throw new Error('Missing verification authority or IP.');
-    return Response.json({success:form.get('response') === 'browser-valid-token',action:'newsletter-signup',hostname:'127.0.0.1'});
+    return Response.json({success:/^browser-valid-token-[\w-]+$/.test(form.get('response')??''),challenge_ts:new Date().toISOString(),action:'newsletter-signup',hostname:'127.0.0.1'});
   };
 }

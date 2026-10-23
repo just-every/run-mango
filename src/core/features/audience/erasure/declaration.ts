@@ -34,7 +34,7 @@ export const contactErasureTables:ErasureTable[]=[
   contact('public_action_tokens'),contact('consent_confirmations'),contact('contact_bounce_facts'),contact('contact_bounce_states'),
   {...contact('sms_compliance_replies'),literal:true},contact('contact_import_rows'),
   {table:'audience_signup_requests',where:s=>set('destination_hash',s.signupHashes)},
-  {table:'oa_limits',where:s=>set('key',[...s.signupHashes.flatMap(hash=>[`signup-email:${hash}`,`signup-sms:${hash}`]),...s.networkKeys])},
+  {table:'oa_limits',where:s=>set('key',[...s.signupHashes.flatMap(hash=>[`signup-email:${hash}`,`signup-sms:${hash}`]),...s.networkKeys.flatMap(key=>[key,key.replace('signup:','signup-kiosk:'),key.replace('signup:','signup-refused:')])])},
   {table:'rer_mail_development_outbox',literal:true,where:s=>({sql:"EXISTS(SELECT 1 FROM json_tree(message,'$.to') t WHERE t.type='text' AND lower(t.atom) IN (SELECT value FROM json_each(?)))",params:[JSON.stringify(s.emails)]})},
   // An archive move-in that brought the contact in withdraws its whole original archive;
   // the entry list (paths and hashes) stays, and imported history keeps only redacted text.

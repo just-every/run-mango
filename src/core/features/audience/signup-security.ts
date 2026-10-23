@@ -1,6 +1,5 @@
+import {sha256} from '@/core/shared/ids';
 import type { Platform } from '@/core/shared/platform';
-
-export const signupLimits = { networkPerHour: 5, destinationPerDay: 3, globalPerHour: 50 } as const;
 
 // URL's IPv6 parser canonicalizes valid alternate forms; explicit character and
 // IPv4 checks prevent URL syntax, zones, abbreviated IPv4 and hostnames entering keys.
@@ -46,11 +45,17 @@ export async function reserveSignupAllowance(db: D1Database, key: string, period
     .bind(key, limit).first<{count: number; window: number; reservedAt: number}>();
 }
 
-export async function verifySignupChallenge(platform: Platform, token: unknown, ip: string) {
+export async function verifySignupChallenge(platform: Platform, token: unknown, ip: string, db?:D1Database) {
   const config = platform.config.signupTurnstile;
   if (!config) return true;
   if (!config.siteKey || !config.secretKey || typeof token !== 'string' || !token || token.length > 2048) return false;
   try {
+    if(db){
+      const key=`signup-challenge:${await sha256(token)}`;
+      const claimed=await db.prepare("INSERT INTO oa_limits(key,window,count) VALUES(?,CAST(strftime('%s','now') AS INTEGER),1) ON CONFLICT(key) DO NOTHING RETURNING key").bind(key).first();
+      if(!claimed)return false;
+      await db.prepare("DELETE FROM oa_limits WHERE key LIKE 'signup-challenge:%' AND window<CAST(strftime('%s','now') AS INTEGER)-300").run();
+    }
     // @ts-expect-error Base's portable fetch policy is runtime ESM.
     const { fetchDemoRead } = await import('@/vendor/base/demo/effects.mjs');
     const response = await fetchDemoRead('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
@@ -63,6 +68,11 @@ export async function verifySignupChallenge(platform: Platform, token: unknown, 
     if (!result || typeof result !== 'object' || !('success' in result) || result.success !== true) return false;
     // Demo config uses Cloudflare's published test keys, whose answer names example.com and no action.
     if (platform.config.demo && 'metadata' in result && (result.metadata as {result_with_testing_key?: unknown} | null)?.result_with_testing_key === true) return true;
+    if(db){
+      const at='challenge_ts' in result&&typeof result.challenge_ts==='string'?Date.parse(result.challenge_ts):NaN;
+      const now=(await db.prepare("SELECT CAST(strftime('%s','now') AS INTEGER)*1000 AS now").first<{now:number}>())!.now;
+      if(!Number.isFinite(at)||at>now+1000||now-at>300000)return false;
+    }
     return Boolean('action' in result && result.action === 'newsletter-signup'
       && 'hostname' in result && result.hostname === platform.config.publicBaseUrl.hostname);
   } catch { return false; }

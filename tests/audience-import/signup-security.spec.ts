@@ -9,7 +9,7 @@ function client(f: Awaited<ReturnType<typeof native>>['f']) {
  return (email: string, ip = '192.0.2.44', extra: object = {}) => app.request('https://mango.example.test/subscribe', {method:'POST', headers:{'Content-Type':'application/json','CF-Connecting-IP':ip}, body:JSON.stringify({email,consent:true,disclosure:signupDescription(f.platform).disclosure,...extra})});
 }
 async function snapshot(db:D1Database) {
- return Promise.all(['contacts','consent_evidence','consent_confirmations','consent_capture_metadata','contact_history','audience_signup_requests','oa_limits'].map(table=>db.prepare(`SELECT * FROM ${table} ORDER BY 1`).all().then(result=>result.results)));
+ return Promise.all(['contacts','consent_evidence','consent_confirmations','consent_capture_metadata','contact_history','audience_signup_requests','oa_limits'].map(table=>db.prepare(`SELECT * FROM ${table} ${table==='oa_limits'?"WHERE key NOT LIKE 'signup-challenge:%' AND key NOT LIKE 'signup-refused:%'":''} ORDER BY 1`).all().then(result=>result.results)));
 }
 function confirmationUrl(f:Awaited<ReturnType<typeof native>>['f']) { return f.outbound.at(-1)!.text.match(/https:\/\/\S+/)[0]; }
 
@@ -30,7 +30,12 @@ for(const state of ['subscribed','suppressed','erased-optout'])test(`security: p
   const contact=await h.f.db.prepare('SELECT id FROM contacts').first<{id:string}>();
   if(state==='erased-optout'){const action=await h.f.services.audienceService.issueUnsubscribeToken(contact!.id,'email');await h.f.services.audienceService.unsubscribeWithToken(action.token);}
   if(state==='suppressed')await h.f.services.audienceService.recordBounce({providerEventId:'hard-bounce',destination:'existing@example.test',kind:'hard',occurredAt:new Date()});
-  if(state==='erased-optout')await eraseFixture(h.f,contact!.id);
+  if(state==='erased-optout'){
+    await call('synthetic-mango-bot@example.test','192.0.2.44',{website:'robot'});
+    expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBeGreaterThan(0);
+    await eraseFixture(h.f,contact!.id);
+    expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBe(0);
+  }
   const before=await snapshot(h.f.db);const sent=h.f.outbound.length;
   expect((await call('existing@example.test','192.0.2.45')).status).toBe(202);expect(h.f.outbound).toHaveLength(sent);
   const after=await snapshot(h.f.db);
@@ -42,36 +47,38 @@ for(const state of ['subscribed','suppressed','erased-optout'])test(`security: p
 });
 test('security: IPv6 equivalent addresses and interface rotation share a /64 budget; invalid IP fails closed',async()=>{
  const h=await native();try{
-  const call=client(h.f);for(let i=0;i<5;i++)expect((await call(`v6-${i}@example.test`,`2001:db8:1:2::${i+1}`)).status).toBe(202);
+  const call=client(h.f);for(let i=0;i<30;i++)expect((await call(`v6-${i}@example.test`,`2001:db8:1:2::${i+1}`)).status).toBe(202);
   expect((await call('v6-block@example.test','2001:0db8:0001:0002:ffff:0:0:1')).status).toBe(429);
   for(const ip of ['invalid','999.1.2.3','2001:db8::1%eth0','192.0.2.1, 192.0.2.2'])expect((await call('invalid@example.test',ip)).status).toBe(400);
  }finally{await h.close();}
 });
 test('security: durable global last slot is atomic across addresses and networks and survives restart',async()=>{
  const h=await native();try{
-  await h.f.db.prepare('INSERT INTO oa_limits(key,window,count) VALUES(?,?,?)').bind('signup-global',Math.floor(Date.now()/3600000),49).run();
+  await h.f.db.prepare('INSERT INTO oa_limits(key,window,count) VALUES(?,?,?)').bind('signup-global',Math.floor(Date.now()/3600000),999).run();
   const results=await Promise.all(Array.from({length:6},(_,i)=>client(h.f)(`global-${i}@example.test`,`192.0.2.${60+i}`)));
-  expect(results.filter(r=>r.status===202)).toHaveLength(1);for(const response of results.filter(r=>r.status===429)){expect(Number(response.headers.get('Retry-After'))).toBeGreaterThan(0);expect(await response.json()).toMatchObject({error:'rate_limited'});}expect(h.f.outbound).toHaveLength(1);expect(await h.f.db.prepare("SELECT count FROM oa_limits WHERE key='signup-global'").first()).toEqual({count:50});
+  expect(results.filter(r=>r.status===202)).toHaveLength(1);for(const response of results.filter(r=>r.status===429)){expect(Number(response.headers.get('Retry-After'))).toBeGreaterThan(0);expect(await response.json()).toMatchObject({error:'rate_limited'});}expect(h.f.outbound).toHaveLength(1);expect(await h.f.db.prepare("SELECT count FROM oa_limits WHERE key='signup-global'").first()).toEqual({count:1000});
   const restarted=await h.restart();expect((await client(restarted)('restart@example.test','198.51.100.1')).status).toBe(429);expect(restarted.outbound).toHaveLength(0);
-  for(const [email,kind] of [['hard@example.test','hard'],['complaint@example.test','complaint']] as const){await restarted.services.audienceService.recordBounce({destination:email,kind,occurredAt:new Date(),providerEventId:`test-exhausted-${kind}`});const response=await client(restarted)(email,'198.51.100.2');expect(response.status).toBe(202);expect(await response.json()).toEqual({status:'confirmation-required'});}expect(restarted.outbound).toHaveLength(0);
+  for(const [email,kind] of [['hard@example.test','hard'],['complaint@example.test','complaint']] as const){await restarted.services.audienceService.recordBounce({destination:email,kind,occurredAt:new Date(),providerEventId:`test-exhausted-${kind}`});const response=await client(restarted)(email,'198.51.100.2');expect(response.status).toBe(429);expect(await response.json()).toMatchObject({error:'rate_limited'});}expect(restarted.outbound).toHaveLength(0);
  }finally{await h.close();}
 });
-test('security: configured Turnstile fails closed before storage for missing, bad, wrong scope, and unavailable verification',async()=>{
+test('security: configured Turnstile fails closed before contact storage for missing, bad, wrong scope, and unavailable verification',async()=>{
  const h=await native();try{
   Object.assign(h.f.platform.config,{signupTurnstile:{siteKey:'test-site',secretKey:'test-secret'}});const call=client(h.f);const before=await snapshot(h.f.db);
   expect((await call('missing@example.test')).status).toBe(400);expect(await snapshot(h.f.db)).toEqual(before);
   const original=globalThis.fetch;
   try{for(const reply of [{success:false},{success:true,action:'other',hostname:'mango.example.test'},{success:true,action:'newsletter-signup',hostname:'evil.example.test'},null]){
    globalThis.fetch=async (input,init)=>new URL(input instanceof Request ? input.url : String(input)).hostname === 'challenges.cloudflare.com' ? reply===null ? Promise.reject(new Error('unavailable')) : Response.json(reply) : original(input,init);
-   expect((await call('bad@example.test','192.0.2.45',{'cf-turnstile-response':'token'})).status).toBe(400);expect(await snapshot(h.f.db)).toEqual(before);
+   expect((await call('bad@example.test','192.0.2.45',{'cf-turnstile-response':crypto.randomUUID()})).status).toBe(400);expect(await snapshot(h.f.db)).toEqual(before);
   }
-  globalThis.fetch=async(input,init)=>{if(new URL(input instanceof Request ? input.url : String(input)).hostname !== 'challenges.cloudflare.com')return original(input,init);const form=new URLSearchParams(await new Request(input,init).text());expect(form.get('secret')).toBe('test-secret');expect(form.get('response')).toBe('good-token');return Response.json({success:true,action:'newsletter-signup',hostname:'mango.example.test'});};
+  globalThis.fetch=async(input,init)=>{if(new URL(input instanceof Request ? input.url : String(input)).hostname !== 'challenges.cloudflare.com')return original(input,init);const form=new URLSearchParams(await new Request(input,init).text());expect(form.get('secret')).toBe('test-secret');expect(['good-token','expired-token']).toContain(form.get('response'));return Response.json({success:true,challenge_ts:new Date(Date.now()-(form.get('response')==='expired-token'?301000:0)).toISOString(),action:'newsletter-signup',hostname:'mango.example.test'});};
   expect((await call('valid@example.test','192.0.2.46',{'cf-turnstile-response':'good-token'})).status).toBe(202);expect(h.f.outbound).toHaveLength(1);
+  expect((await call('expired@example.test','192.0.2.46',{'cf-turnstile-response':'expired-token'})).status).toBe(400);
+  expect((await call('reused@example.test','192.0.2.46',{'cf-turnstile-response':'good-token'})).status).toBe(400);expect(h.f.outbound).toHaveLength(1);
   }finally{globalThis.fetch=original;}
  }finally{await h.close();}
 });
 test('security: IPv4 mapped IPv6 shares the IPv4 budget',async()=>{
- const h=await native();try{const call=client(h.f);for(let i=0;i<5;i++)expect((await call(`mapped-${i}@example.test`,'192.0.2.44')).status).toBe(202);expect((await call('mapped-block@example.test','::ffff:c000:22c')).status).toBe(429);expect((await call('mapped-block2@example.test','::ffff:192.0.2.44')).status).toBe(429);}finally{await h.close();}
+ const h=await native();try{const call=client(h.f);for(let i=0;i<30;i++)expect((await call(`mapped-${i}@example.test`,'192.0.2.44')).status).toBe(202);expect((await call('mapped-block@example.test','::ffff:c000:22c')).status).toBe(429);expect((await call('mapped-block2@example.test','::ffff:192.0.2.44')).status).toBe(429);}finally{await h.close();}
 });
 test('security: production rejects one-sided Turnstile and exposes only the public key',async()=>{
  const {readProductionConfig}=await import('../../src/core/platform/config');
@@ -161,7 +168,7 @@ test('[CONT-027] repeated public requests share the durable UTC destination allo
   await h.f.services.audienceService.recordChannelOptOut({contactId:contact.id,channel:'email',reason:'recipient-unsubscribe',occurredAt:new Date(Date.now()-1000)});
   for(let request=0;request<4;request++) {
    const response=await client(h.f)('daily-return@example.test',`198.51.100.${request+1}`);
-   expect(response.status).toBe(202);expect(await response.json()).toEqual({status:'confirmation-required'});
+   expect(response.status).toBe(429);expect(await response.json()).toMatchObject({error:'rate_limited'});
    expect(h.f.outbound).toHaveLength(Math.min(request+1,3));
   }
   const restarted=await h.restart();
