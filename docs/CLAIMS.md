@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 31 claims · 31 in code.**
+**Totals: 32 claims · 32 in code.**
 
 ## Mango integration claims
 
@@ -48,6 +48,8 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | INT-002 | Owner-connected WooCommerce REST sync, encrypted keys, signed idempotent order/plugin ingress and explicitly activated abandoned-checkout tag-and-exit flow. Real WordPress plugin source includes consent/GPC gates, onsite observations and the native signup iframe. Ct approved the stated privacy and activation semantics on 22 October. | done | `tests/go-live/woocommerce.journeys.ts`, `tests/go-live/woocommerce-plugin-journey.ts`, `extensions/mango-woocommerce/INSTALL.md` |
 
 | CONT-017 | Contact profiles show stored identities, merges, channel/topic evidence, properties, segment membership and one original-source timeline, with masked Analyst/Support views at desktop and phone widths. Flow and prediction panels state their availability; the text carve remains pending. | partial | `src/core/features/audience/contact-profile.ts`, `src/core/features/audience/ui/contact-detail.tsx`, `tests/audience-controls/contact-history.spec.ts` |
+
+| REPORT-007 | Settings shows contacts by channel consent state, provider-reported campaign/day costs and a labeled UTC month run-rate projection. Currencies stay separate and unpriced facts stay counted; flow grouping awaits flows. | partial | `src/core/features/insights/usage-report.ts`, `src/core/features/insights/ui/settings-usage.tsx`, `tests/campaign-results/costs.journeys.ts` |
 
 ## Adopted target defaults (23 October 2026)
 
