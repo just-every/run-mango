@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "04384daea5397266fa2873847fa5d6cc9075a5f4d71c60cd05ea5c87e28f8fa6",
+      "sha256": "ebda41caf41c42cf2ad398fd046c7b2098e1400c57d5fc008cd94fe019d5022f",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "48f927e7171a4697dca109d1b4358ebf3b23648797e54843dabcd86ef4b1c43b",
+      "sha256": "73075caceffba8dd9cdac0cb57f64b42e05e5421ef6596d382bf07c4b3d7b7d4",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "21c10b8171cfe5347d29fa187e1af9f57b64ec898494b0b801ab415df2a88c01",
+      "sha256": "a7795feda2f7b633bfa7e3e3462a4578d12dd134933c72b5702c95665132cb41",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -3911,6 +3911,14 @@
     },
     "src/core/features/insights/ui/sender-rates.tsx": {
       "sha256": "7d889784c1591e5f98bfd1b1d863223130b5a209e66d7b0998801c83a813c2d7",
+      "executable": false
+    },
+    "src/core/features/insights/ui/settings-usage.tsx": {
+      "sha256": "edcd3758d0bdbacddae9141d6c3ac870e8d47f5d7c880b66f819fe12412a0c9e",
+      "executable": false
+    },
+    "src/core/features/insights/usage-report.ts": {
+      "sha256": "6785b4d47281d3d494906e64e5f0adbaf63af2a3171c60390d5f5625c13a8a63",
       "executable": false
     },
     "src/core/features/integrations/contacts.ts": {
