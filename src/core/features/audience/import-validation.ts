@@ -1,6 +1,7 @@
 import type {AudienceSnapshot} from './import-types';
 import {canonicalEmail,canonicalPhone} from './identity';
 const columns:Record<string,string>= {
+ incumbent_consent_links:'id,contact_id,attestation_id,evidence_at,time_quality,source_facts_json',
  audience_import_observations:'id,contact_id,source_file,source_row,source_status,source_display_name,capture_method,capture_source,optin_time,confirm_time,capture_ip,confirmation_ip,created_at,updated_at',
  consent_confirmations:'id,consent_evidence_id,contact_id,channel,token_digest,sent_at,expires_at,confirmed_at,created_at,updated_at',
  contacts:'id,email,display_name,email_status,sms_status,email_status_at,sms_status_at,source_customer_record_id,merge_lock,last_activity_at,created_at,updated_at',
@@ -47,7 +48,7 @@ export function validateLedger(snapshot:AudienceSnapshot){
  for(const metadata of snapshot.tables.consent_capture_metadata)if(!snapshot.tables.consent_evidence.some(evidence=>evidence.id===metadata.id))throw new Error('Capture metadata has no consent evidence.');
  for(const table of ['contact_email_addresses','contact_phones'])for(const address of snapshot.tables[table])if(address.channel_status==='subscribed'){
   const destination=table==='contact_email_addresses'?address.email:address.phone_e164;const channel=table==='contact_email_addresses'?'email':'sms';
-  if(!snapshot.tables.consent_evidence.some(evidence=>evidence.channel===channel&&evidence.destination===destination&&evidence.confirmed_at&&[...(channel==='sms'?['sms_program']:[]),'brand_or_legal_sender','message_category','frequency_disclosure','destination_jurisdiction','capture_method','capture_source','consent_text','consent_version','occurred_at'].every(key=>Boolean(evidence[key]))))throw new Error('Subscribed destination requires complete confirmed consent.');
+  if(!snapshot.tables.consent_evidence.some(evidence=>evidence.channel===channel&&evidence.destination===destination&&(evidence.confirmed_at||(channel==='email'&&evidence.capture_method==='incumbent-held'&&snapshot.tables.incumbent_consent_links.some(link=>link.id===evidence.id&&link.evidence_at===evidence.occurred_at)))&&[...(channel==='sms'?['sms_program']:[]),'brand_or_legal_sender','message_category','frequency_disclosure','destination_jurisdiction','capture_method','capture_source','consent_text','consent_version','occurred_at'].every(key=>Boolean(evidence[key]))))throw new Error('Subscribed destination requires complete confirmed consent.');
  }
  if(contact.merge_lock)throw new Error('A contact being merged cannot be imported.');
 }

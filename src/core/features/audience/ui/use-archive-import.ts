@@ -1,3 +1,4 @@
+import type {AttestationInput} from '../../move-in/incumbent-policy';
 import { useState } from 'react';
 
 import { requestJson } from '@/core/app/client/lib/api';
@@ -12,6 +13,7 @@ const message = (data: { detail?: string; error?: string }, fallback: string) =>
 /** Preview, import and undo of one account export; each step after the first is a bounded `continue`. */
 export function useArchiveImport({ setError, setNotice, owner }: Messages) {
   const archives = useResource<{ archives: ArchiveImport[] }>('/api/audience/archives');
+  const [attestations,setAttestations]=useState<AttestationInput[]>([]);
   const [archive, setArchive] = useState<File>();
   const [preview, setPreview] = useState<ArchivePreview>();
   const [current, setCurrent] = useState(false);
@@ -59,14 +61,15 @@ export function useArchiveImport({ setError, setNotice, owner }: Messages) {
   };
 
   return {
-    archives, archive, preview, current, busy, busyId,
-    choose(file?: File) { setArchive(file); setPreview(undefined); setCurrent(false); },
+    archives, archive, preview, current, busy, busyId,attestations,
+    changeAttestation(value:AttestationInput){setAttestations(rows=>[...rows.filter(row=>row.sourceKey!==value.sourceKey),value]);setCurrent(false);},
+    choose(file?: File) { setAttestations([]);setArchive(file); setPreview(undefined); setCurrent(false); },
     stale() { setCurrent(false); },
     async review(consent: ImportConsent) {
       if (!archive || busy) return;
       setBusy('preview'); setError(undefined); setNotice(undefined);
       try {
-        const response = await postArchive<ArchivePreview>('/api/audience/archive-preview', archive, consent);
+        const response = await postArchive<ArchivePreview>('/api/audience/archive-preview', archive, consent,undefined,attestations);
         if (response.status >= 300 || !response.data.fingerprint) { setCurrent(false); setError(message(response.data, 'The archive could not be reviewed.')); return; }
         setPreview(response.data); setCurrent(true);
         setNotice('Preview ready. Nothing has been imported or saved yet.');
@@ -77,7 +80,7 @@ export function useArchiveImport({ setError, setNotice, owner }: Messages) {
       if (!archive || !preview || !current || busy || busyId) return;
       await run(async operation => {
         setBusy('start');
-        const response = await postArchive<{ archive?: ArchiveImport; repeated?: boolean }>('/api/audience/archives', archive, consent, preview.fingerprint);
+        const response = await postArchive<{ archive?: ArchiveImport; repeated?: boolean }>('/api/audience/archives', archive, consent, preview.fingerprint,attestations);
         if (!owner.owns(operation)) return;
         if (response.status >= 300 || !response.data.archive) { if (response.status === 409) setCurrent(false); setError(message(response.data, 'The archive could not be imported. Preview it again before retrying.')); return; }
         if (response.data.repeated) { setNotice('This archive was already imported; nothing changed.'); return; }

@@ -1,3 +1,5 @@
+import {planAttestations,incumbentFiles,type PlannedAttestation} from './incumbent-attestation';
+import type {AttestationInput} from './incumbent-policy';
 import {engagementContacts,reviewEngagement,type EngagementSummary} from './archive-engagement';
 import { csvRows } from '@/core/features/audience/csv';
 import type { NormalizedImportRow } from '@/core/features/audience/import-normalize';
@@ -15,18 +17,19 @@ export type ArchiveConsent = Record<'brandOrLegalSender' | 'messageCategory' | '
 export type AudienceFileSummary = {
   path: string; status: AudienceStatus; rows: number; created: number; updated: number; duplicatesWithin: number; duplicatesAcross: number;
   rejected: number; skipped: number; unknownConsent: number; rejectedRows: Array<{ row: number; reason: string }>;
-  outcomes: Record<'subscribed' | 'pending' | 'non-subscribed' | 'unsubscribed' | 'suppressed', number>; error?: string;
+  evidenceKinds?:Record<string,number>; reasons?:Record<string,number>; outcomes: Record<'subscribed' | 'pending' | 'non-subscribed' | 'unsubscribed' | 'suppressed', number>; error?: string;
 };
 export type KeptRaw = { kind: RawKind; label: string; files: number; bytes: number };
 /** Everything Preview shows; it holds counts and row numbers, never addresses. */
 export type ArchiveSummary = {
   archive: { name: string; size: number; sha256: string; entries: number; folders: number };
+  attestationSources?:Array<{id:string;sourceKey:string;sourceName:string;accepted:boolean;reason?:string}>;
   audience: AudienceFileSummary[]; content: ContentFileSummary[];
   records: Array<Pick<ContentRecord, 'ordinal' | 'kind' | 'sourcePath' | 'sourceRow' | 'title' | 'subject' | 'sentAt' | 'removed' | 'flagged' | 'mergeTags'>>;
   engagement?: EngagementSummary; kept: KeptRaw[]; unmatchedContent: string[];
 };
 export type ArchiveReview = { summary: ArchiveSummary; fingerprint: string; consentDigest: string; entries: Array<{ entry: ArchiveEntry; part: ArchivePart }>;
-  audienceInput?: { files: ImportFile[]; consent: ArchiveConsent }; audiencePlan?: ImportPlan; records: ContentRecord[] };
+  audienceInput?: { files: ImportFile[]; consent: ArchiveConsent }; audiencePlan?: ImportPlan; attestations:PlannedAttestation[]; records: ContentRecord[] };
 
 export const presetFor: Record<AudienceStatus, string> = { subscribed: 'csv-subscribed', unsubscribed: 'csv-unsubscribed', cleaned: 'csv-cleaned', 'non-subscribed': 'csv-non-subscribed' };
 export const missingEvidence = 'Original consent scope, opt-in time and confirmation time are required before this contact can receive marketing.';
@@ -52,7 +55,9 @@ export function audienceCounts(path: string, status: AudienceStatus, plan: Impor
     const row = entry.source.payload as unknown as NormalizedImportRow;
     if (row.file !== path) continue;
     summary.rows++;
-    if (row.warnings.includes(missingEvidence)) summary.unknownConsent++;
+    const kind=row.incumbent?'incumbent-held':row.status==='subscribed'?'confirmed':'none';(summary.evidenceKinds??={})[kind]=((summary.evidenceKinds??={})[kind]??0)+1;
+    for(const reason of row.warnings)(summary.reasons??={})[reason]=((summary.reasons??={})[reason]??0)+1;
+    if (row.warnings.includes(missingEvidence)||row.warnings.some(reason=>reason.startsWith('attestation-')||reason==='source-export-creation-time-missing')) summary.unknownConsent++;
     if (entry.rejection) { summary.rejected++; summary.rejectedRows.push({ row: row.row, reason: entry.rejection }); continue; }
     const effect = entry.effects[0];
     if (row.skipped) { summary.skipped++; continue; }
@@ -66,7 +71,7 @@ export function audienceCounts(path: string, status: AudienceStatus, plan: Impor
 }
 
 export async function reviewArchive(name: string, bytes: Uint8Array<ArrayBuffer>, consent: ArchiveConsent,
-  audience: { service: ReturnType<typeof createAudienceImportService>; context: D1ImportContext; db: D1Database }): Promise<ArchiveReview> {
+  audience: { service: ReturnType<typeof createAudienceImportService>; context: D1ImportContext; db: D1Database },choices:AttestationInput[] = []): Promise<ArchiveReview> {
   const { read, entries } = await readArchiveParts(bytes);
   const summaries: AudienceFileSummary[] = [], files: ImportFile[] = [], statusOf = new Map<string, AudienceStatus>();
   for (const { entry, part } of entries) {
@@ -86,9 +91,10 @@ export async function reviewArchive(name: string, bytes: Uint8Array<ArrayBuffer>
   const audienceRows = summaries.reduce((sum, file) => sum + file.rows, 0) + files.reduce((sum, file) => sum + csvRows(file.csv).length - 1, 0);
   if (audienceRows > archiveLimits.audienceRows) throw new ArchiveRefused('too-many-entries', `This archive holds ${audienceRows} audience rows; Mango reviews up to ${archiveLimits.audienceRows} from one archive. Import the audience CSV files individually under Import contacts.`);
   if (files.length > 10) throw new ArchiveRefused('too-many-entries', `This archive holds ${files.length} audience files with contacts; Mango reviews at most 10 together. Import the audience CSV files individually.`);
+  const attestations=await planAttestations(files,read.sha256,consent,choices,audience.db);
   let audiencePlan: ImportPlan | undefined;
   if (files.length) {
-    audiencePlan = (await audience.service.review({ files, consent }, audience.context, audience.db, { archive: true })).plan;
+    audiencePlan = (await audience.service.review({ files, consent }, audience.context, audience.db, { archive: true,incumbentSources:incumbentFiles(files,attestations) })).plan;
     for (const file of files) summaries.push(audienceCounts(file.name, statusOf.get(file.name)!, audiencePlan));
   }
   summaries.sort((a, b) => a.path < b.path ? -1 : 1);
@@ -104,9 +110,10 @@ export async function reviewArchive(name: string, bytes: Uint8Array<ArrayBuffer>
     const slot = kept.get(kind) ?? { kind, label: rawLabels[kind], files: 0, bytes: 0 };
     slot.files++; slot.bytes += entry.size; kept.set(kind, slot);
   }
-  const consentDigest = await sha256(canonicalJson(consent));
+  const consentDigest = await sha256(canonicalJson({consent,choices,wording:attestations.map(record=>record.wordingHash)}));
   const summary: ArchiveSummary = {
     archive: { name, size: read.size, sha256: read.sha256, entries: read.entries.length, folders: read.folders },
+    attestationSources:attestations.map(({id,sourceKey,sourceName,accepted,reason})=>({id,sourceKey,sourceName,accepted,reason})),
     audience: summaries, content: content.files,
     engagement: reviewEngagement(entries,content.records,engagementContacts(audiencePlan)).summary,
     records: content.records.map(({ html: _html, text: _text, contentPaths: _paths, ...record }) => record),
@@ -117,5 +124,5 @@ export async function reviewArchive(name: string, bytes: Uint8Array<ArrayBuffer>
   const decisions = audiencePlan?.entries.map(entry => { const row = entry.source.payload as unknown as NormalizedImportRow, effect = entry.effects[0];
     return [row.file, row.row, row.status, entry.rejection ?? null, row.skipped ?? null, row.held ? `held:${row.held.contactId}` : effect ? (effect.expectedRevision === undefined ? 'new' : `${effect.targetId}@${effect.expectedRevision}`) : 'duplicate']; }) ?? [];
   const fingerprint = await sha256(canonicalJson({ archive: read.sha256, consent: consentDigest, audience: decisions, limits: archiveLimits }));
-  return { summary, fingerprint, consentDigest, entries, ...(files.length ? { audienceInput: { files, consent } } : {}), audiencePlan, records: content.records };
+  return { summary, fingerprint, consentDigest, entries, ...(files.length ? { audienceInput: { files, consent } } : {}), audiencePlan, attestations, records: content.records };
 }

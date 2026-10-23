@@ -1,3 +1,4 @@
+import type {IncumbentFile} from '../move-in/incumbent-policy';
 import { csvRows, parseCsv } from './csv';
 import { canonicalEmail, canonicalPhone } from './identity';
 import { presetStatuses, type ImportInput, type AudienceSnapshot } from './import-types';
@@ -8,6 +9,7 @@ import { optOutLedger, optOutStatus, type OptOutLine } from './import-opt-out-li
 export type NormalizedImportRow = {
   file: string; row: number; email: string; phone: string; smsStatus: string; displayName: string; status: string; reason?: string; skipped?: string; warnings: string[];
   values: Record<string, string>; ledger?: AudienceSnapshot;
+  incumbent?: {id:string;evidenceAt:number;timeQuality:string;source:string;facts:Record<string,string>};
   /** The original name stays in source observations when duplicates supply a fuller name. */
   sourceDisplayName?: string;
   /** A contact another import still attributes: only this row's opt-out or suppression is applied to it.
@@ -25,7 +27,7 @@ export function timestamp(value: string | undefined) {
   if (!Number.isFinite(time)) throw new Error(`Invalid timestamp: ${value}`);
   return time;
 }
-export function normalizeImport(input: ImportInput) {
+export function normalizeImport(input: ImportInput, incumbentSources:Record<string,IncumbentFile> = {}) {
   if (!Array.isArray(input.files) || !input.files.length || input.files.length > 10) throw new Error('Choose between one and ten CSV files.');
   if(new Set(input.files.map(file=>file.name)).size!==input.files.length)throw new Error('Choose distinct filenames for each CSV export.');
   const rows: NormalizedImportRow[] = []; const columns: Array<{name:string;headers:string[];mapping:Record<string,string>}> = [];
@@ -84,6 +86,22 @@ export function normalizeImport(input: ImportInput) {
             row.ledger = JSON.parse(values.ledger_json);
             // An observation without a name carries no name key, as Mango reads it (import-read).
             for (const observation of row.ledger?.tables?.audience_import_observations ?? []) if (observation.source_display_name === null) delete observation.source_display_name;
+          } else if (incumbentSources[file.name]) {
+            const source=incumbentSources[file.name];
+            if(!source.accepted&&!['unsubscribed','suppressed'].includes(row.status)){row.status='non-subscribed';row.warnings.push(source.reason??'attestation-not-affirmed');}
+            if(row.status==='subscribed') {
+              let reason=source.accepted?undefined:source.reason;
+              if(/^(abuse|postmaster)@/i.test(row.email))reason='reserved-role-mailbox';
+              const country=(values.country??'').trim().toUpperCase(),jurisdictions=(input.consent?.destinationJurisdiction??'').toUpperCase().split(/[,;\s]+/).filter(Boolean);
+              if(country&&!jurisdictions.includes(country))reason='outside-attested-jurisdiction';
+              const choices=[['CONFIRM_TIME',values.confirmed_at],['OPTIN_TIME',values.occurred_at],['LAST_CHANGED',values.last_changed]] as const;
+              const selected=choices.find(([,value])=>Boolean(value?.trim()));
+              const at=selected?timestamp(selected[1]):source.exportCreatedAt;
+              if(!at)reason??='source-export-creation-time-missing';
+              if(at&&at>Date.now())reason='source-evidence-time-in-future';
+              if(reason){row.status='non-subscribed';row.warnings.push(reason);}
+              else row.incumbent={id:source.id,evidenceAt:at!,timeQuality:selected?selected[0]:'time-unknown',source:`Mailchimp ${source.sourceName}; attestation ${source.id}`,facts:Object.fromEntries(choices.map(([name,value])=>[name,value??'']))};
+            }
           } else if (row.status === 'subscribed') {
             const evidence = ['brandOrLegalSender','messageCategory','frequencyDisclosure','destinationJurisdiction','consentText','consentVersion'];
             if (!timestamp(values.occurred_at) || !timestamp(values.confirmed_at) || evidence.some(field => !input.consent?.[field]?.trim())) {

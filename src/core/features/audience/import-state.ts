@@ -22,6 +22,9 @@ export async function readImportState(db:D1Database,rows:NormalizedImportRow[],s
   ...(await db.prepare(`SELECT * FROM ${table} WHERE destination_hash IN (SELECT value FROM json_each(?)) ORDER BY id`).bind(restored).all<NativeRow>()).results.map((row):NativeRow=>({...row,destination_hash:portable.get(String(row.destination_hash))!}))]
   .sort((a,b)=>String(a.id).localeCompare(String(b.id)));
  const optOuts=await read('surviving_opt_outs'),suppressions=await read('contact_suppressions');
- return {byIdentity,snapshots,targets,existingIds,optOuts,suppressions};
+ const attestationIds=[...new Set([...rows.flatMap(row=>row.incumbent?[row.incumbent.id]:[]),...rows.flatMap(row=>(row.ledger?.tables.incumbent_consent_links??[]).map(link=>String(link.attestation_id))),...[...snapshots.values()].flatMap(snapshot=>snapshot.tables.incumbent_consent_links.map(link=>String(link.attestation_id)))])];
+ const activeAttestations=new Set((await db.prepare('SELECT id FROM consent_attestations WHERE revoked_at IS NULL AND id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(attestationIds)).all<{id:string}>()).results.map(row=>row.id));
+ const incumbentLinks=new Map((await db.prepare('SELECT * FROM incumbent_consent_links WHERE id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(rows.flatMap(row=>(row.ledger?.tables.incumbent_consent_links??[]).map(link=>link.id)))).all<NativeRow>()).results.map(row=>[String(row.id),row]));
+ return {byIdentity,snapshots,targets,existingIds,optOuts,suppressions,activeAttestations,incumbentLinks};
 }
 export type ImportState=Awaited<ReturnType<typeof readImportState>>;

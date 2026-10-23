@@ -75,4 +75,5 @@ export const contactErasureTables:ErasureTable[]=[
   contact('paid_subscriptions'),
   {table:'audience_exclusion_settings',literal:true,mode:'redact'},
   contact('woocommerce_flow_enrollments'),
+  {...contact('incumbent_consent_links'),literal:true,mode:'contact-data'},
 ];

@@ -17,6 +17,7 @@ const shape=(row:NativeRow)=>{const copy={...row};if(copy.source_display_name===
 const channels:Record<string,string>={email_status:'email',sms_status:'sms'},tableChannels:Record<string,string>={contact_email_addresses:'email',contact_phones:'sms'};
 
 function onlyRestricted(current:AudienceSnapshot,recorded:AudienceSnapshot){
+ if(!Object.hasOwn(recorded.tables,'incumbent_consent_links')&&current.tables.incumbent_consent_links.length)return false;
  if(canonicalJson(current.identities)!==canonicalJson(recorded.identities)||canonicalJson(current.hashes)!==canonicalJson(recorded.hashes))return false;
  // A raised status is a restriction's only when an opt-out or suppression the recorded value
  // does not carry explains it; writing that value back keeps the status (import-restrictions).

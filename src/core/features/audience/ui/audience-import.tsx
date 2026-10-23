@@ -5,6 +5,7 @@ import { requestJson } from '@/core/app/client/lib/api';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState } from '@/core/app/client/ui/layout';
 
+import {IncumbentAttestations} from './incumbent-attestations';
 import { AudienceArchiveImports } from './audience-archive-imports';
 import { AudienceArchivePreview } from './audience-archive-preview';
 import { AudienceImportJobs, abandonNotice } from './audience-import-jobs';
@@ -291,6 +292,7 @@ export function AudienceImportPage() {
         onPreview={() => void review()}
       />
 
+      {archive.archive&&archive.preview?.summary.attestationSources?.length?<IncumbentAttestations sources={archive.preview.summary.attestationSources} scope={consent} values={archive.attestations} onChange={archive.changeAttestation} disabled={owner.busy}/>:null}
       {archive.archive && archive.preview ? <AudienceArchivePreview preview={archive.preview} isCurrent={archive.current} /> : null}
       {archive.archive && archive.preview ? (
         <section className="audience-import-final-action notice-note" aria-label="Import reviewed archive">

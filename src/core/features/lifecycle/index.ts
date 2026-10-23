@@ -1,3 +1,4 @@
+import {expireAttestations} from '../move-in/incumbent-attestation';
 import { resumeSmsServices } from '@/core/features/sms/service-delivery';
 import {withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
@@ -84,6 +85,7 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
   return withErasureWriteFence(runtime.platform.database.$client,async()=>{
   const now = new Date();
   await repository.expireDueRecipients(now);
+  await expireAttestations(runtime.platform.database.$client,now.getTime());
   // Dispatch due steps before optional source synchronization and reconciliation.
   const due = await repository.listDueSteps(now);
   for (const step of due) {

@@ -1,3 +1,5 @@
+import {planAttestations,incumbentFiles,attestationStatements} from './incumbent-attestation';
+import type {AttestationInput} from './incumbent-policy';
 import {engagementContacts,reviewEngagement,writeEngagement} from './archive-engagement';
 import { Buffer } from 'node:buffer';
 import type { Platform } from '@/core/shared/platform';
@@ -19,7 +21,7 @@ import { ArchiveRefused, sha256Hex } from './zip-reader';
 
 export class ArchiveReviewStale extends Error {}
 export type ArchiveRecord = {
-  id: string; principal_id: string; name: string; sha256: string; size: number; consent_digest: string; consent_json: string; fingerprint: string;
+  id: string; principal_id: string; name: string; sha256: string; size: number; consent_digest: string; consent_json: string; attestations_json:string; fingerprint: string;
   state: 'applying' | 'applied' | 'undoing' | 'undone'; audience_plan: string | null; audience_stream: string | null; summary_json: string;
   content_total: number; content_done: number; engagement_done: number; undo_json: string | null; created_at: number; updated_at: number; applied_at: number | null; undone_at: number | null;
 };
@@ -72,7 +74,8 @@ export function createArchiveService(platform: Platform) {
   async function startAudience(archive: ArchiveRecord, files: ImportFile[], context: D1ImportContext) {
     const consent = JSON.parse(archive.consent_json) as ArchiveConsent;
     if (!files.length) return;
-    const preview = await audience.preview({ files, consent, origin: `archive:${archive.id}` }, context, { archive: true });
+    const attestations=await planAttestations(files,archive.sha256,consent,JSON.parse(archive.attestations_json),db);
+    const preview = await audience.preview({ files, consent, origin: `archive:${archive.id}` }, context, { archive: true,incumbentSources:incumbentFiles(files,attestations) });
     const stored = (await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(preview.fingerprint).first<{ fingerprint: string; plan_json: string }>())!;
     const plan = await readAudiencePlan(db, stored);
     await applyStartRestrictions(db, platform.config.contactHashSalt, plan);
@@ -85,18 +88,18 @@ export function createArchiveService(platform: Platform) {
   const audiencePending = (archive: ArchiveRecord) => !archive.audience_stream && (JSON.parse(archive.summary_json) as ArchiveSummary).audience.some(file => file.rows > file.rejected);
 
   return {
-    async review(name: string, bytes: Uint8Array<ArrayBuffer>, consent: ArchiveConsent, operatorId: string, request: Request) {
+    async review(name: string, bytes: Uint8Array<ArrayBuffer>, consent: ArchiveConsent, operatorId: string, request: Request, choices:AttestationInput[] = []) {
       const context = await archiveContext(platform, operatorId, request);
-      const review = await reviewArchive(name, bytes, consent, { service: audience, context, db: audiencePreviewBudget(db).db });
+      const review = await reviewArchive(name, bytes, consent, { service: audience, context, db: audiencePreviewBudget(db).db },choices);
       const applied = await db.prepare("SELECT id,applied_at FROM move_in_archives WHERE sha256=? AND consent_digest=? AND state IN ('applying','applied','undoing')").bind(review.summary.archive.sha256, review.consentDigest).first<{ id: string; applied_at: number | null }>();
       return { fingerprint: review.fingerprint, summary: review.summary, alreadyImported: applied ?? null };
     },
 
     /** Custody, the record and the audience job; content and contacts then advance through `continue`. */
-    async apply(name: string, bytes: Uint8Array<ArrayBuffer>, consent: ArchiveConsent, fingerprint: string, operatorId: string, request: Request) {
+    async apply(name: string, bytes: Uint8Array<ArrayBuffer>, consent: ArchiveConsent, fingerprint: string, operatorId: string, request: Request, choices:AttestationInput[] = [], role="owner") {
       const context = await archiveContext(platform, operatorId, request);
       const sha = await sha256Hex(bytes);
-      const review = await reviewArchive(name, bytes, consent, { service: audience, context, db: audiencePreviewBudget(db).db });
+      const review = await reviewArchive(name, bytes, consent, { service: audience, context, db: audiencePreviewBudget(db).db },choices);
       const live = await db.prepare("SELECT * FROM move_in_archives WHERE sha256=? AND consent_digest=? AND state IN ('applying','applied','undoing')").bind(sha, review.consentDigest).first<ArchiveRecord>();
       if (live) return { archive: live, repeated: true };
       if (!review.audienceInput && !review.records.length) throw new ArchiveRefused('nothing-to-import', 'This archive holds no audience file, email or template that Mango imports, so nothing was saved.');
@@ -111,11 +114,14 @@ export function createArchiveService(platform: Platform) {
       const entries = review.entries.map(({ entry, part }, ordinal) => ({ ordinal, path: entry.path, size: entry.size, compressed: entry.compressedSize, sha256: entry.sha256,
         part: part.kind === 'raw' ? `raw:${part.raw}` : part.kind === 'audience' ? `audience:${part.status}` : part.kind,
         disposition: part.kind === 'raw' || review.summary.unmatchedContent.includes(entry.path) ? 'kept as raw source, not imported' : 'imported' }));
-      const statements = [db.prepare(`INSERT INTO move_in_archives(id,principal_id,name,sha256,size,consent_digest,consent_json,fingerprint,state,summary_json,content_total,created_at,updated_at)
-        VALUES(?,?,?,?,?,?,?,?,'applying',?,?,?,?)`).bind(id, operatorId, name, sha, bytes.byteLength, review.consentDigest, JSON.stringify(consent), fingerprint, JSON.stringify(review.summary), review.records.length, now, now)];
+      const statements = [db.prepare(`INSERT INTO move_in_archives(id,principal_id,name,sha256,size,consent_digest,consent_json,attestations_json,fingerprint,state,summary_json,content_total,created_at,updated_at)
+        VALUES(?,?,?,?,?,?,?,?,?,'applying',?,?,?,?)`).bind(id, operatorId, name, sha, bytes.byteLength, review.consentDigest, JSON.stringify(consent), JSON.stringify(choices),fingerprint, JSON.stringify(review.summary), review.records.length, now, now)];
       for (let start = 0; start < entries.length; start += 250) statements.push(db.prepare(`INSERT INTO move_in_archive_entries(archive_id,ordinal,path,size,compressed_size,sha256,part,disposition)
         SELECT ?,json_extract(value,'$.ordinal'),json_extract(value,'$.path'),json_extract(value,'$.size'),json_extract(value,'$.compressed'),json_extract(value,'$.sha256'),json_extract(value,'$.part'),json_extract(value,'$.disposition') FROM json_each(?)`)
         .bind(id, JSON.stringify(entries.slice(start, start + 250))));
+      const covered:Record<string,number>={};
+      for(const entry of review.audiencePlan?.entries??[]){const row=entry.source.payload as unknown as {incumbent?:{id:string}};if(row.incumbent)covered[row.incumbent.id]=(covered[row.incumbent.id]??0)+1;}
+      statements.push(...attestationStatements(db,review.attestations,id,{id:operatorId,role},request,platform.config.local===true,covered,now));
       await db.batch(statements);
       // A failure from here leaves the record applying; `continue` starts the audience again from custody.
       // Release the reviewed plan first: the audience is reviewed once more as its plan is saved.

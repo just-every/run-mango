@@ -215,8 +215,12 @@ export function createAudienceRepository(database: Database) {
       return {noHistory:coverage?.started!=null&&!coverage.hasHistory&&coverage.started>cutoff,importedOpens:Boolean(opens)};
     },
 
-    listConsent(contactId: string) {
-      return database.select().from(consentEvidence).where(eq(consentEvidence.contactId, contactId)).orderBy(desc(consentEvidence.occurredAt));
+    async listConsent(contactId: string) {
+      const [evidence,links]=await Promise.all([
+        database.select().from(consentEvidence).where(eq(consentEvidence.contactId, contactId)).orderBy(desc(consentEvidence.occurredAt)),
+        database.$client.prepare('SELECT l.id,l.attestation_id,l.evidence_at,l.time_quality,a.revoked_at FROM incumbent_consent_links l JOIN consent_attestations a ON a.id=l.attestation_id WHERE l.contact_id=?').bind(contactId).all<{id:string;attestation_id:string;evidence_at:number;time_quality:string;revoked_at:number|null}>(),
+      ]);
+      return evidence.map(row=>{const link=links.results.find(link=>link.id===row.id);return {...row,attestationId:link?.attestation_id,evidenceKind:link?'incumbent-held':undefined,timeQuality:link?.time_quality,incumbentAt:link&&link.revoked_at===null?new Date(link.evidence_at):undefined};});
     },
 
     async createConfirmation(values: typeof consentConfirmations.$inferInsert) {
@@ -491,7 +495,7 @@ export function createAudienceRepository(database: Database) {
         database.$client.prepare('UPDATE move_in_contact_history SET contact_id=? WHERE contact_id=?').bind(survivorContactId,mergedContactId),
       ]);
       await Promise.all([
-        database.$client.batch(['sms_frequency_claims','sms_service_messages','sms_inbound_receipts','consent_handoff_claims','imported_engagement_facts'].map(table=>
+        database.$client.batch(['incumbent_consent_links','sms_frequency_claims','sms_service_messages','sms_inbound_receipts','consent_handoff_claims','imported_engagement_facts'].map(table=>
           database.$client.prepare(`UPDATE ${table} SET contact_id=? WHERE contact_id=?`).bind(survivorContactId,mergedContactId))),
         database.update(contactImportRows).set({contactId:survivorContactId}).where(eq(contactImportRows.contactId,mergedContactId)),
         database.update(contactBounceFacts).set({contactId:survivorContactId}).where(eq(contactBounceFacts.contactId,mergedContactId)),

@@ -1,3 +1,5 @@
+import {attestationsSchema} from './incumbent-policy';
+import {revokeAttestation} from './incumbent-attestation';
 import { Hono, type Context } from 'hono';
 import type { AuthVariables } from '@/core/features/auth/routes';
 import type { Platform } from '@/core/shared/platform';
@@ -32,7 +34,8 @@ async function upload(context: RouteContext) {
   if (file.size > archiveLimits.archiveBytes) return { response: context.json(tooLarge(file.size), 413) };
   let consent: unknown = {};
   try { consent = JSON.parse(String(form.get('consent') ?? '{}')); } catch { return { response: context.json({ error: 'invalid_archive', detail: 'Consent evidence could not be read.' }, 400) }; }
-  return { name: file.name.slice(0, 200) || 'archive.zip', bytes: new Uint8Array(await file.arrayBuffer()), consent: normalizeConsent(consent), fingerprint: String(form.get('fingerprint') ?? '') };
+  let attestations;try{attestations=attestationsSchema.parse(JSON.parse(String(form.get('attestations')??'[]')));}catch{return {response:context.json({error:'invalid_attestation',detail:'Each source needs valid separate attestation answers.'},400)};}
+  return { attestations,name: file.name.slice(0, 200) || 'archive.zip', bytes: new Uint8Array(await file.arrayBuffer()), consent: normalizeConsent(consent), fingerprint: String(form.get('fingerprint') ?? '') };
 }
 function refused(context: RouteContext, error: unknown) {
   if (error instanceof ArchiveRefused) {
@@ -67,7 +70,7 @@ export function createMoveInRoutes(platform: Platform) {
   routes.post('/audience/archive-preview', async context => {
     const input = await upload(context);
     if ('response' in input) return input.response;
-    try { return context.json(await service.review(input.name, input.bytes, input.consent, context.get('operator').id, context.req.raw)); }
+    try { return context.json(await service.review(input.name, input.bytes, input.consent, context.get('operator').id, context.req.raw,input.attestations)); }
     catch (error) { return refused(context, error); }
   });
   routes.post('/audience/archives', async context => {
@@ -75,9 +78,14 @@ export function createMoveInRoutes(platform: Platform) {
     if ('response' in input) return input.response;
     if (!input.fingerprint) return context.json({ error: 'review_required', detail: 'Preview the archive before importing it.' }, 400);
     try {
-      const result = await service.apply(input.name, input.bytes, input.consent, input.fingerprint, context.get('operator').id, context.req.raw);
+      const result = await service.apply(input.name, input.bytes, input.consent, input.fingerprint, context.get('operator').id, context.req.raw,input.attestations,context.get('operator').role);
       return context.json({ archive: await view(result.archive, context), repeated: result.repeated });
     } catch (error) { return refused(context, error); }
+  });
+  routes.post('/audience/attestations/:id/revoke',async context=>{
+    const operator=context.get('operator');if(!['owner','admin'].includes(operator.role))return context.json({error:'forbidden'},403);
+    const id=context.req.param('id');if(!await platform.database.$client.prepare('SELECT 1 FROM consent_attestations WHERE id=?').bind(id).first())return context.json({error:'not_found'},404);
+    await revokeAttestation(platform.database.$client,id,operator.id);return context.json({revoked:true});
   });
   routes.get('/audience/archives', async context => context.json({ archives: (await Promise.all((await service.list()).map(archive => view(archive, context)))).filter(archive => archive !== null) }));
   routes.get('/audience/archives/:id', async context => {
