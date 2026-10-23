@@ -554,6 +554,12 @@
       "name": "core-0090_analytics_tagging.sql",
       "sha256": "9acd279167a6f246cc9d629eb2a0a8c40d4530082e75d01e81f4b0a92a089142",
       "sql": "CREATE TABLE analytics_settings (\n  id INTEGER PRIMARY KEY CHECK (id = 1),\n  policy_json TEXT NOT NULL,\n  operator_id TEXT NOT NULL,\n  updated_at INTEGER NOT NULL\n);\n-- NULL preserves issued and historical message URLs and their approval digests.\nALTER TABLE campaign_revisions ADD COLUMN utm_policy_json TEXT;\nALTER TABLE tracked_links ADD COLUMN original_destination_url TEXT;\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0091_capture_opt_in_modes.sql",
+      "sha256": "e38189b142cedb3dcb90979c8235e55050da31c757598156d1c396f61f7d32db",
+      "sql": "CREATE TABLE opt_in_modes (\n point TEXT PRIMARY KEY CHECK(point IN ('hosted','kiosk','manual')),\n mode TEXT NOT NULL CHECK(mode IN ('double','single')),\n version INTEGER NOT NULL,\n operator_id TEXT NOT NULL,\n updated_at INTEGER NOT NULL\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

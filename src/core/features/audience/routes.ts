@@ -1,3 +1,5 @@
+import {senderWriteAuthority} from '@/core/features/settings/sender-authority';
+import {loadOptInMode} from './opt-in-modes';
 import type { AuthVariables } from '@/core/features/auth/routes';
 import type {Platform,AppBindings} from '@/core/shared/platform';
 import {createContactErasure,ErasureAdmissionConflict,ErasureAmbiguousText} from './erasure/service';
@@ -64,7 +66,16 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
     const parsed = await readJson(context, consentCapture);
     if ('error' in parsed) return parsed.error;
     try {
-      const result = await service.captureConsent({ ...parsed.data, confirmationRequired: true });
+      const operator=context.get('operator'),mode=await loadOptInMode(database,'manual');
+      const authority=await senderWriteAuthority(platform,context.req.raw,operator.id);
+      const input={...parsed.data,...(mode.mode==='single'&&parsed.data.channel==='email'?{captureMethod:'operator-recorded',captureSource:`Operator:${operator.id}|${parsed.data.captureMethod}|${parsed.data.captureSource}`}:{})};
+      let result;
+      if(input.channel==='email'){
+        if(!input.contact.email||await service.publicSignupState(input.contact.email)!=='new')return context.json({error:'manual_entry_existing_restriction',detail:'This address is already subscribed, unsubscribed or suppressed. Hand entry cannot change that state.'},409);
+        await service.ensureContact(input.contact,new Date());
+        result=await service.capturePublicSignup({...input,confirmationRequired:mode.mode==='double',optInPolicy:{mode,allowResubscribe:false,operator:authority}});
+        if(!result)return context.json({error:'manual_entry_state_changed',detail:'The address or opt-in mode changed. Review it before trying again.'},409);
+      }else result=await service.captureConsent({...input,confirmationRequired:true});
       await recordActivity(database, {key: `consent-entered:${result.evidence.id}`, action: 'consent.entered', entityType: 'contact', entityId: result.contact.id, actorId: context.get('operator').id,
         detail: {channel: parsed.data.channel, captureMethod: parsed.data.captureMethod, captureSource: parsed.data.captureSource, messageCategory: parsed.data.messageCategory}});
       return context.json({ contact: result.contact, evidence: result.evidence, confirmationRequired: Boolean(result.confirmation) }, 201);

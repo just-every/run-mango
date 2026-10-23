@@ -1,10 +1,11 @@
+import {optInJourney} from './opt-in-journey';
 import {capacityJourney} from './signup-capacity-journey';
 import {test,expect} from '@playwright/test';
 import {kioskInstallation,kioskChallenge} from './kiosk-harness';
 import {refusalScreens} from './signup-refusal-screens';
 import {openPage} from '../support/navigation';
 
-test('[FORM-008][FORM-009][FORM-010] shared kiosk clears every visitor, requires fresh verification and retains device consent source',async({page:operatorPage,browser},info)=>{
+test('[CONT-025][FORM-008][FORM-009][FORM-010] shared kiosk clears every visitor, requires fresh verification and retains device consent source',async({page:operatorPage,browser},info)=>{
   const visitor=await browser.newContext();const page=await visitor.newPage();
   const site=await kioskInstallation();
   const settings={frequencyDisclosure:'Monthly newsletter',embedOrigins:[],kioskEnabled:true,kioskDeviceLabel:'Market tablet'};
@@ -95,6 +96,7 @@ test('[FORM-008][FORM-009][FORM-010] shared kiosk clears every visitor, requires
     expect((await site.call('/subscribe',{email:'ordinary-over@example.test',consent:true,disclosure:ordinary.disclosure,'cf-turnstile-response':`kiosk-token-${crypto.randomUUID()}`},{'CF-Connecting-IP':'192.0.2.77'})).status).toBe(429);
     await refusalScreens(site,page,operatorPage,info,'hosted','192.0.2.77');
     await capacityJourney(site,operatorPage,info);
+    await optInJourney(site,operatorPage,info);
     await site.control('/_kiosk/clock',{advanceMs:3600001});
     await openPage(operatorPage,site.runtime.url+'/app');
     await expect(operatorPage.getByRole('heading',{name:'Decision Desk',exact:true})).toBeVisible();
