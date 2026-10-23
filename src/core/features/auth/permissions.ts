@@ -55,6 +55,7 @@ export function requiredPermission(method: string, path: string): Capability {
   if (/^\/api\/(?:activity|activity-log)(?:\/|$)/.test(p)) return 'activity.read';
   if (/^\/api\/settings\/integrations\/audit(?:\/|$)/.test(p)) return 'activity.read';
   if (/^\/api\/settings\/integrations(?:\/[^/]+)?$/.test(p)
+    || /^\/api\/settings\/integrations\/reviews-loyalty\/[^/]+$/.test(p)
     || /^\/api\/store(?:\/(?:sync|observations))?$/.test(p)) return 'integration.manage';
   if (p === '/api/settings/link-hosts') return 'campaign.approve';
   if(p==='/api/editor/config')return 'provider.connect';

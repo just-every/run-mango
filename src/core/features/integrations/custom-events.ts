@@ -14,12 +14,13 @@ export type CustomEventInput=z.infer<typeof customEventInput>;
 
 /** Native source custody already covers export, merge, archive and erasure.
  * A custom fact never identifies a new contact, changes consent or sends mail. */
-export async function recordCustomEvent(db:D1Database,credentialId:string,input:CustomEventInput) {
+export async function recordCustomEvent(db:D1Database,credentialId:string,input:CustomEventInput,source?:{provider:string;namespace:string;receipt?:{id:string;digest:string;attemptId:string}}) {
   const now=Date.now(),at=Date.parse(input.occurredAt);
   if(at>now)throw new IntegrationError('event_in_future',400);
-  const provider=`integration:${credentialId}`,key=await sha256(input.idempotencyKey),id=`custom:${credentialId}:${key}`;
+  const provider=source?.provider??`integration:${credentialId}`,key=await sha256(input.idempotencyKey),namespace=source?.namespace??credentialId,id=`custom:${namespace}:${key}`;
+  const providerId=source?namespace+':'+key:key;
   const {idempotencyKey:_,...fact}=input;
-  const payload=stableJson({...fact,occurredAt:new Date(at).toISOString(),schema:'custom-event-v1'}),digest=await sha256(payload);
+  const payload=stableJson({...fact,occurredAt:new Date(at).toISOString(),schema:'custom-event-v1',credentialId}),digest=await sha256(payload);
   if(new TextEncoder().encode(payload).length>16*1024)throw new IntegrationError('event_properties_too_large',400);
   if(!await db.prepare('SELECT id FROM contacts WHERE id=? AND merge_lock IS NULL').bind(input.contactId).first())throw new IntegrationError('contact_not_found',404);
   const guard=`EXISTS(SELECT 1 FROM integration_credentials WHERE id=? AND revoked_at IS NULL
@@ -28,11 +29,15 @@ export async function recordCustomEvent(db:D1Database,credentialId:string,input:
     db.prepare(`INSERT INTO source_records(id,provider,source_type,provider_source_id,contact_id,occurred_at,payload,payload_digest,created_at,updated_at)
       SELECT ?,?,'custom-event',?,?,?,?,?,?,? WHERE ${guard}
         AND EXISTS(SELECT 1 FROM contacts WHERE id=? AND merge_lock IS NULL)
-      ON CONFLICT DO NOTHING`).bind(id,provider,key,input.contactId,at,payload,digest,now,now,credentialId,input.contactId),
+        ${source?.receipt?'AND NOT EXISTS(SELECT 1 FROM review_loyalty_receipts WHERE id=?)':''}
+      ON CONFLICT DO NOTHING`).bind(id,provider,providerId,input.contactId,at,payload,digest,now,now,credentialId,input.contactId,...(source?.receipt?[source.receipt.id]:[])),
     db.prepare(`SELECT payload_digest FROM source_records WHERE id=? AND ${guard}`).bind(id,credentialId),
     db.prepare(`INSERT INTO source_activities(id,contact_id,source_record_id,kind,activity_key,state,occurred_at,created_at,updated_at)
       SELECT ?,contact_id,id,?,'','recorded',?,?,? FROM source_records WHERE id=? AND payload_digest=? AND ${guard}
       ON CONFLICT DO NOTHING`).bind(id,input.name,at,now,now,id,digest,credentialId),
+    ...(source?.receipt?[db.prepare(`INSERT INTO review_loyalty_receipts(id,app,attempt_id,payload_digest,received_at)
+      SELECT ?,?,?,?,? FROM source_records WHERE id=? AND payload_digest=? AND ${guard} ON CONFLICT DO NOTHING`)
+      .bind(source.receipt.id,source.provider,source.receipt.attemptId,source.receipt.digest,now,id,digest,credentialId)]:[]),
   ]);
   if(!stored.results[0])throw new IntegrationError('event_authority_changed',409);
   if(stored.results[0].payload_digest!==digest)throw new IntegrationError('idempotency_conflict',409);

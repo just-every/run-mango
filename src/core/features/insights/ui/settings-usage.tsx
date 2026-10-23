@@ -1,3 +1,4 @@
+import {ReviewLoyaltySettings} from '@/core/features/integrations/reviews-loyalty/settings';
 import { SettingsPage } from '@/core/features/store/ui/settings-page';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { Can } from '@/core/features/auth/ui/permissions';
@@ -32,4 +33,4 @@ function UsagePanel() {
   </section>;
 }
 
-export function SettingsWithUsage(){return <div className="page-flow"><nav aria-label="Settings reports"><a href="#usage">Usage and costs</a></nav><SettingsPage/><SettingsUsage/></div>;}
+export function SettingsWithUsage(){return <div className="page-flow"><nav aria-label="Settings reports"><a href="#usage">Usage and costs</a></nav><SettingsPage/><ReviewLoyaltySettings/><SettingsUsage/></div>;}

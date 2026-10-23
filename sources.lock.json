@@ -1090,7 +1090,7 @@
       "executable": false
     },
     "docs/integrations.md": {
-      "sha256": "820d39e02e5b7c6a89f2f9fbaa47eb344dbb8c3b12bac9a38b75f907c866fd8f",
+      "sha256": "999e46fc45d5edc87b25e6411f3bb48dcf5e63b781e83bb56d4c253d5af33161",
       "executable": false
     },
     "docs/introduction.md": {
@@ -1174,7 +1174,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "cd7b55f799c8e4d0f62f75ec3ed6dc0810ec84df69256d8dc66750caaa418e0c",
+      "sha256": "9146fe4da757028fa5d164c04a67392c4fa1ecf068b3ad5124318edb28460ba9",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1535,6 +1535,10 @@
     },
     "migrations/core/0095_saved_report_schedules.sql": {
       "sha256": "8bc70f2d764513c3e61b900c6654c8604f5e54ea6dccb603f2e13af8fe0e0f05",
+      "executable": false
+    },
+    "migrations/core/0096_review_loyalty_adapters.sql": {
+      "sha256": "9bc5eba6e6ed737654e1e4f326652b0050ea4579a0e073a1c1767eae13f79e80",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -2166,7 +2170,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "fb1acf769c6537e4068439ef7670c9c1e489a3e912bad60fbf32bd145b8582aa",
+      "sha256": "a6cbb765dcafbcf8aea0c64b3a1d6b36e2f94a335617894a82a28ca77a6f5538",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -2482,7 +2486,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "fab38bc7739ba0e83a737a9db996fd610baed11656501582c4d998936410b042",
+      "sha256": "186341068d727b57bd8c64b7d9e4a2cbd28dd35e28232b51804b05e4441a2a6f",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -2930,7 +2934,7 @@
       "executable": false
     },
     "src/core/features/auth/permissions.ts": {
-      "sha256": "a8dab1dcab39240e4e8380e8d17f38ee72d3f5c6942898cf576d239252c84204",
+      "sha256": "e76254622b9af874d2ded98556c6f6597bece0c2e62646e9c32fff4ecf01e628",
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
@@ -3966,7 +3970,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/settings-usage.tsx": {
-      "sha256": "edcd3758d0bdbacddae9141d6c3ac870e8d47f5d7c880b66f819fe12412a0c9e",
+      "sha256": "e3dca9b7835fd47abbb7a22730db07542d7f66c9200f78eb03da3e8d4c7eb390",
       "executable": false
     },
     "src/core/features/insights/usage-report.ts": {
@@ -3986,7 +3990,7 @@
       "executable": false
     },
     "src/core/features/integrations/custom-events.ts": {
-      "sha256": "bcdc6d55ff0db231872a46c7f38c30a578bfacf1310b87f73c435fff704251a2",
+      "sha256": "151f1c8337062209c1687c4121fc091fe250416faaa1cca1c3f122d06108390b",
       "executable": false
     },
     "src/core/features/integrations/openapi.ts": {
@@ -3995,6 +3999,22 @@
     },
     "src/core/features/integrations/profile-memberships.ts": {
       "sha256": "3de1f696c4d656d9e9ccfd64b46f346932d255ed26b8e10c62eee007af1224bb",
+      "executable": false
+    },
+    "src/core/features/integrations/reviews-loyalty/payloads.ts": {
+      "sha256": "b5ccb7e46558d607cb6aeaaee60ff7780270c4254bf5b399e71686dd6376eee7",
+      "executable": false
+    },
+    "src/core/features/integrations/reviews-loyalty/routes.ts": {
+      "sha256": "d3d33d907a8ac15c9b6c157037bb1e06cc13404663461b572e34552e7590fceb",
+      "executable": false
+    },
+    "src/core/features/integrations/reviews-loyalty/settings.tsx": {
+      "sha256": "e8e8d543f02a9cedee91fed8163c87c77edd7ea0f04efca9cdfe4a46908ca062",
+      "executable": false
+    },
+    "src/core/features/integrations/reviews-loyalty/signatures.ts": {
+      "sha256": "62b11f55a8e59fe3c3c6b15c2c64ae548f456bc067362548ee3ba10427373af7",
       "executable": false
     },
     "src/core/features/integrations/routes.ts": {
@@ -4402,7 +4422,7 @@
       "executable": false
     },
     "src/core/features/portability/policy.ts": {
-      "sha256": "d2a426350085152eb5dccb9b23d928444cb19acccad3de7a4863c987daa541e0",
+      "sha256": "5927fde9768ca3ce4477289832eb471915109ce08bc392c5c231bad369ac36e2",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -7546,7 +7566,7 @@
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
-      "sha256": "4ac8bcc5fa5d102fc0a971ab1c2d76e8b962c32b27b777cb7f54603ee1da7c57",
+      "sha256": "166d88fa0c2c9bfdb86660b88b4d79a8c64dea05dc12c7fa9574127db847ebc1",
       "executable": false
     },
     "tests/go-live/kiosk-harness.ts": {
@@ -7647,6 +7667,10 @@
     },
     "tests/go-live/resubscribe.journeys.ts": {
       "sha256": "520af4428fd40cb03f8d33991fb2aaae68ee1e57a61b6accfb554f61b23fea33",
+      "executable": false
+    },
+    "tests/go-live/review-loyalty-journey.ts": {
+      "sha256": "a87b822651c15c1552cacce851645c6880b4352240d0afa9299947d9c65d30d5",
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
@@ -8054,7 +8078,7 @@
       "executable": false
     },
     "tests/sender-verification/worker.spec.ts": {
-      "sha256": "270762a0988d563b33c219d81b0393123ce99dffafaf82bd4f7ece27dc0a72f0",
+      "sha256": "f4f1553edd8a57cc63a947964bbb6e151352679dbe724b7edcfbcf3996f1c4c8",
       "executable": false
     },
     "tests/settings-sender/config.js": {

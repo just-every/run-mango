@@ -79,4 +79,6 @@ export const contactErasureTables:ErasureTable[]=[
   {table:'sender_renewal_deliveries',where:()=>({sql:'0',params:[]})},
   // Aggregate saved reports and operator-only schedules have no contact data.
   ...['insight_saved_reports','insight_report_schedules','insight_report_deliveries'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
+  // Inbound connection secrets and address-free replay digests hold no contact records.
+  ...['review_loyalty_connections','review_loyalty_receipts'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
 ];

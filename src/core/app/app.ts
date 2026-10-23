@@ -1,3 +1,4 @@
+import {reviewLoyaltyRoutes} from '@/core/features/integrations/reviews-loyalty/routes';
 import {wooFlowRoutes} from '@/core/features/store/woocommerce/flows';
 import {wooCommerceRoutes} from '@/core/features/store/woocommerce/routes';
 import { createAttributionPolicyRoutes } from '@/core/features/insights/attribution-policy-routes';
@@ -309,6 +310,8 @@ export function createApp(
   if (platform.commerce?.capabilities().provider === 'shopify') app.route('/', createCommerceWebhookRoutes(audienceService, platform.commerce, storeService.syncRuns));
   app.route('/',createOpenPixelRoutes(platform));
   app.route('/',archivePublicRoutes(environment.DB,platform.config.publicBaseUrl.origin));
+  const reviewLoyalty=reviewLoyaltyRoutes(platform,environment.MANGO_RESTORE_MODE==='1');
+  app.route('/',reviewLoyalty.webhooks);
   const integrations = createIntegrationService(platform, audienceService);
   app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations, platform));
   mountBeforeAuthentication?.(app, services);
@@ -335,6 +338,7 @@ export function createApp(
   app.route('/api',activityRoutes(environment.DB));
   app.route('/api', createOperatorRoutes(authService, { secureCookie }));
   app.route('/api', createIntegrationSettingsRoutes(integrations));
+  app.route('/api',reviewLoyalty.settings);
   app.get('/api/editor/config', async context => {
     context.header('Cache-Control', 'no-store');
     const operator = context.get('operator');
