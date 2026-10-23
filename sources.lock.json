@@ -3778,7 +3778,7 @@
       "executable": false
     },
     "src/core/features/insights/cost-report.ts": {
-      "sha256": "24145648bc0d3a480f58dda38672a57ab913b187f57c8cac34a98dae83b20a03",
+      "sha256": "19bf6bc012a626b6d2189967c1c6e891f58933ef8dd929fcf5ac19ab30bcb699",
       "executable": false
     },
     "src/core/features/insights/index.ts": {
@@ -3806,7 +3806,7 @@
       "executable": false
     },
     "src/core/features/insights/repository.ts": {
-      "sha256": "2d37bf4eeda35ccad94054419d78c739c9284d071833f4274fd39a7b92641009",
+      "sha256": "5d3d5f662b433e374306137fc6d1f8f1f5cccb4ffa24f934757a1fd49a01a1cf",
       "executable": false
     },
     "src/core/features/insights/retention-routes.ts": {
@@ -3846,7 +3846,7 @@
       "executable": false
     },
     "src/core/features/insights/service.ts": {
-      "sha256": "2db483a18dd5c360061a050e220f711059213be15b79b3e5cf5e5a76c046ccc2",
+      "sha256": "b95f350f061f487670601537ee831187817c4db7f6cbb10e570babc3995bca14",
       "executable": false
     },
     "src/core/features/insights/ui/attribution-policy-note.tsx": {
@@ -5098,7 +5098,7 @@
       "executable": false
     },
     "src/routes/app.settings.tsx": {
-      "sha256": "85f272d5c86d2683a71bbafa6c870a57e2eb2547e0317f0e253322228e6af4ca",
+      "sha256": "90ebe48c65da280c29840f64282fc7c22ba96263de62446d693d5c3fc1603072",
       "executable": false
     },
     "src/routes/app.store.tsx": {
@@ -7210,11 +7210,11 @@
       "executable": false
     },
     "tests/campaign-results/cost-worker.ts": {
-      "sha256": "0d16b1edf05db408d785c7cd84057cf80673d93bdedbf967234bbb4e93565ed7",
+      "sha256": "4313c7576fa568a0eb9ff35872c402e8be8157f2591e0cc7c94675d8d15072bf",
       "executable": false
     },
     "tests/campaign-results/costs.journeys.ts": {
-      "sha256": "0df74a79dbd7e523aa9b658e118552120e137dba8e6035fe25263a6ad5f7bed4",
+      "sha256": "c3c71d4c3e59b057559c4fcf2ad84cd6150480cfa8cfbe3ed2f227cfa9d07a33",
       "executable": false
     },
     "tests/campaign-results/cross-channel-attribution.ts": {
