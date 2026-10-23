@@ -21,6 +21,7 @@ function RenewalCard() {
     <p>{status.stage==='renewed'?'Sender evidence renewed from an authenticated receipt.':status.stage==='changed'?'Sender evidence changed. Inspect the provider and DNS records, then confirm a new diagnostic.':status.stage==='lapsed'?'Sender evidence has lapsed. Sending needs renewed evidence.':'Renew the sender evidence before it expires.'}</p>
     {status.expiresAt?<p>Evidence expires {new Date(status.expiresAt).toISOString()}.</p>:null}
     <p>{status.waitingMessages} queued email messages need current sender evidence.{status.earliestDeadline?` Earliest deadline: ${new Date(status.earliestDeadline).toISOString()}.`:''}</p>
+    {status.requiresConfirmation?<p role="status">This restored or older confirmation needs a fresh operator diagnostic from Settings before automatic renewal or reminders can resume.</p>:null}
     <p>{status.automaticRenewal?'The configured receipt connector can renew only from authenticated diagnostic results.':'A diagnostic goes to the operator who last confirmed; they must confirm its inbox receipt. Renewal never confirms on their behalf.'}</p>
     {status.deliveries.map(row=><p key={`${row.kind}:${row.state}:${row.reason}`}>{row.count} {row.kind} {row.state}{row.reason?` · ${row.reason}`:''}</p>)}
     {failure?<p role="alert">The renewal attempt could not be confirmed. Check Settings before trying again.</p>:null}
