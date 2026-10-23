@@ -1,3 +1,4 @@
+import {ManualEntryForm} from './manual-entry-form';
 import {Can} from '@/core/features/auth/ui/permissions';
 import { AudienceExport } from './audience-export';
 import { SavedSegments } from './saved-segments';
@@ -37,6 +38,7 @@ export function AudiencePage() {
           <AudienceExport />
         </div>
       </header>
+      <Can permission="contact.subscribe"><ManualEntryForm/></Can>
       <section className="summary-grid" aria-label="Audience summary">
         <article className="summary-grid__tile summary-grid__tile--total"><span>Total contacts</span><strong>{data.contacts.length}</strong></article>
         <article className="summary-grid__tile summary-grid__tile--email"><span>Email subscribed</span><strong>{subscribedEmail}</strong></article>

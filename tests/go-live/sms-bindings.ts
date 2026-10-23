@@ -17,7 +17,7 @@ export function smsProgramme(now=Date.now()) {
  * documentation makes NO numerical minimum lookup-retention promise. */
 export function smsBindings(retentionEvidence=true,policyAt=Date.now()):Partial<AppBindings> {
   return {SMS_PROVIDER_API_KEY:smsKey,SMS_WEBHOOK_SECRET:smsSecret,SMS_CONFIRMATION_SENDER:smsSender,
-    SMS_PROGRAMME_POLICY:JSON.stringify(smsProgramme(policyAt)),MANGO_TEST_SMS_ALLOWLIST:'+61411111111',
+    SMS_PROGRAMME_POLICY:JSON.stringify(smsProgramme(policyAt)),MANGO_TEST_SMS_ALLOWLIST:'+61411111111,+61422222222',
     MANGO_SMS_HANDOFFS_PER_MINUTE:'120',MANGO_ALLOWED_LINK_HOSTS:'localhost,shop.example.test',
     MANGO_DELIVERY_POLICY_JSON:JSON.stringify({'mobile-message':{
       credentialDigest:createHash('sha256').update(smsKey).digest('hex'),

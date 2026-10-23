@@ -1,11 +1,12 @@
+import {manualEntryJourney} from './manual-entry-journey';
 import { test, expect } from '@playwright/test';
 import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
 import { activityJourney } from './activity-log';
 import { installation, json, sender, availableTransport, draftCampaign, approve, dispatch, signedPost } from './harness';
 
-test('[CONT-025] [INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
-  const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer);
+test('[CONT-026][CONT-025] [INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
+  const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer,{sms:true});
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
@@ -92,6 +93,7 @@ test('[CONT-025] [INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client 
     expect(audit.audit.some((entry: any) => entry.credentialId === created.credential.id && entry.status === 401)).toBe(true);
     expect(JSON.stringify(audit)).not.toContain(created.token);
     await activityJourney(site, edge, cookie, browserPage, info, {sent});
+    await manualEntryJourney(site,edge,cookie,browserPage,info);
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close(); await edge.close();}
   const managedEdge = await providerEdge(), managed = await installation(managedEdge, eventSigner(), {managed: 'none'});

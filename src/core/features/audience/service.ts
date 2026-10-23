@@ -312,13 +312,16 @@ export function createAudienceService(
     const evidenceId = input.idempotencyKey ?? ulid(now.getTime());
     const confirmationRequired = input.confirmationRequired ?? true;
     if (confirmationRequired) requiredDependencies().confirmationDispatcher;
-    const evidence = await repository.recordConsent({...consentValues(input, contact.id, destination, now), id: evidenceId});
+    const manualSms=input.channel==='sms'&&input.captureMethod==='operator-recorded';
+    const values={...consentValues(input,contact.id,destination,now),id:evidenceId};
+    if(manualSms&&(!input.optInPolicy?.operator||!await repository.recordManualSmsCapture(values,await hashDestination(destination),input.optInPolicy.operator)))throw new Error('This phone is already subscribed, unsubscribed or suppressed, or operator authority changed. Hand entry cannot change that state.');
+    const evidence = manualSms?await repository.getConsent(evidenceId):await repository.recordConsent(values);
     if (!evidence) throw new Error('Consent evidence could not be persisted.');
     if (input.captureIp) await repository.recordConsentCaptureIp(evidence.id,contact.id,input.captureIp,now);
     if (evidence.contactId !== contact.id || !matchesConsentEvidence(evidence, input)) throw new Error('Consent idempotency key cannot be reused for different affirmative evidence.');
     await recordHistory(contact.id, 'consent-captured', `${input.channel} consent captured through ${input.captureMethod}.`, input.occurredAt, `${evidenceId}_captured`);
     const survivingOptOut = await repository.getSurvivingOptOut(await hashDestination(destination), input.channel);
-    if (!(created && survivingOptOut)) await repository.setDestinationStatus(input.channel, destination, 'pending', input.occurredAt);
+    if (!manualSms && !(created && survivingOptOut)) await repository.setDestinationStatus(input.channel, destination, 'pending', input.occurredAt);
     if (!contact.lastActivityAt || contact.lastActivityAt < input.occurredAt) {
       await repository.updateContact(contact.id, { lastActivityAt: input.occurredAt, updatedAt: now });
     }
@@ -327,7 +330,9 @@ export function createAudienceService(
       await repository.setDestinationStatus(input.channel, destination, 'subscribed', input.occurredAt);
       return { contact: subscribed ?? contact, evidence, confirmation: undefined };
     }
-    return sendConsentConfirmation(input, contact, evidence, now, false);
+    const dispatched=await sendConsentConfirmation(input,contact,evidence,now,false);
+    if(manualSms){const current=await repository.getContact(contact.id);if(!current)throw new Error('The contact changed during confirmation delivery.');return {...dispatched,contact:current};}
+    return dispatched;
   }
 
   async function sendConsentConfirmation(input: ConsentCapture, contact: NonNullable<Awaited<ReturnType<typeof repository.getContact>>>,
@@ -364,7 +369,7 @@ export function createAudienceService(
       createdAt: now,
       updatedAt: now,
     });
-    if (!publicCapture) await repository.setPendingFromEvidence(contact.id, input.channel, input.occurredAt);
+    if (!publicCapture && input.captureMethod!=='operator-recorded') await repository.setPendingFromEvidence(contact.id, input.channel, input.occurredAt);
     if (!await dispatchAllowed()) return { contact, evidence, confirmation: undefined };
     const sent = await requiredDependencies().confirmationDispatcher.sendConfirmation({ channel: input.channel, destination, token, expiresAt, contactId:contact.id, consentId:evidence.id },
       () => repository.claimConfirmationHandoff(confirmationId, destinationHash, input.channel, publicCapture));
@@ -380,7 +385,7 @@ export function createAudienceService(
     if (!confirmation || confirmation.id !== verified.id || confirmation.expiresAt <= now) return { kind: 'invalid' as const };
     if (confirmation.confirmedAt) return { kind: 'already-confirmed' as const };
     const evidence = await repository.getConsent(confirmation.consentEvidenceId);
-    if (!evidence) return { kind: 'invalid' as const };
+    if (!evidence || (evidence.channel==='sms'&&evidence.captureMethod==='operator-recorded')) return { kind: 'invalid' as const };
     const hash = await hashDestination(evidence.destination);
     const [owner, optOut, suppressed] = await Promise.all([
       confirmation.channel === 'email' ? repository.findContactByEmail(evidence.destination) : repository.findContactByPhone(evidence.destination),
@@ -404,7 +409,7 @@ export function createAudienceService(
     if (!confirmation || confirmation.id !== verified.id || confirmation.expiresAt <= now) return { kind: 'invalid' as const };
     if (confirmation.confirmedAt) return { kind: 'already-confirmed' as const };
     const evidence = await repository.getConsent(confirmation.consentEvidenceId);
-    if (!evidence) return { kind: 'invalid' as const };
+    if (!evidence || (evidence.channel==='sms'&&evidence.captureMethod==='operator-recorded')) return { kind: 'invalid' as const };
     const [activeOwner, optOut] = await Promise.all([
       confirmation.channel === 'email' ? repository.findContactByEmail(evidence.destination) : repository.findContactByPhone(evidence.destination),
       repository.getSurvivingOptOut(await hashDestination(evidence.destination), confirmation.channel as Channel),

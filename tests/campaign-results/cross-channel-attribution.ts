@@ -1,3 +1,4 @@
+import {confirmSmsReply} from '../go-live/sms-confirm-reply';
 import {createHmac} from 'node:crypto';
 import {expect, type Page, type TestInfo} from '@playwright/test';
 import {order, customer, id, page as shopifyPage} from '../shopify/fixtures';
@@ -28,7 +29,7 @@ export async function crossChannelAttributionJourney(input: {
   const programme = smsProgramme(now), disclosure = JSON.parse(smsDisclosure());
   const serviceCount = edge.sms.sends.length;
   const captured = await json(await site.call('/api/contacts/consent', {method: 'POST', cookie, body: {
-    ...consent, channel: 'sms', smsProgram: programme.programme, brandOrLegalSender: programme.brand,
+    ...consent,permissionMethod:'in-person',affirmed:true,expressWrittenConsent:true, channel: 'sms', smsProgram: programme.programme, brandOrLegalSender: programme.brand,
     messageCategory: programme.category, frequencyDisclosure: programme.frequency, destinationJurisdiction: programme.jurisdiction,
     consentText: disclosure.text, consentVersion: disclosure.version, captureSource: 'Market stall text sign-up',
     timeZone: 'Australia/Brisbane', locationSource: 'operator-entry', locationRecordedAt: new Date(now).toISOString(),
@@ -36,8 +37,7 @@ export async function crossChannelAttributionJourney(input: {
   }}), 201);
   await site.control('/_golive/cron');
   await expect.poll(() => edge.sms.sends.length, {timeout: 60000, intervals: [250, 1000]}).toBe(serviceCount + 1);
-  const confirmation = /https:\/\/\S+\/consent\/confirm\/\S+/.exec(edge.sms.sends.at(-1)!.body.messages[0].message)![0];
-  expect((await fetch(site.local(confirmation), {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}, body: 'confirm=true'})).status).toBe(200);
+  await confirmSmsReply(site,edge);
   const contact = await json(await site.call('/api/contacts/' + captured.contact.id, {cookie}), 200);
   expect(contact.contact).toMatchObject({id: captured.contact.id, email: person.email, smsStatus: 'subscribed'});
   await availableTransport(site);

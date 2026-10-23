@@ -1,3 +1,4 @@
+import {confirmOperatorSmsReply} from './confirm-reply';
 import { recordPortableHash } from '@/core/features/audience/portable-hashes';
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -24,7 +25,7 @@ export function createSmsInboundRoutes(platform:Platform){
   const occurred=Date.parse(value.received_at.replace(' ','T')+'Z');
   if(!Number.isFinite(occurred)||occurred>Date.now()+300000||new Date(occurred).toISOString().slice(0,19)!==value.received_at.replace(' ','T'))return context.json({error:'invalid_sms_event_time'},400);
   const keyword=value.message.trim().toUpperCase().split(/[^A-Z]+/)[0];
-  const action=value.type==='unsubscribe'||stop.has(keyword)?'opt-out':['HELP','INFO'].includes(keyword)?'help':['START','UNSTOP'].includes(keyword)?'fresh-consent':'none';
+  const action=value.type==='unsubscribe'||stop.has(keyword)?'opt-out':['HELP','INFO'].includes(keyword)?'help':['START','UNSTOP'].includes(keyword)?'fresh-consent':value.message.trim().toUpperCase()==='YES'?'confirm':'none';
   const reference=decodeProviderReference(value.original_custom_ref);
   if(!reference&&action!=='opt-out')return context.json({error:'sms_reply_unlinked'},400);
   const db=platform.database.$client,hash=await sha256(`${platform.config.contactHashSalt}:${destination}`);
@@ -37,6 +38,7 @@ export function createSmsInboundRoutes(platform:Platform){
   // No event ID exists in the documented inbound envelope; canonical immutable
   // fields plus account secret binding give stable identity across JSON reformatting.
   const id=`sms-inbound:${await sha256(`${await sha256(module.config.webhookSecret)}:${JSON.stringify([sender,destination,value.message,value.received_at,value.type,value.original_message_id,value.original_custom_ref])}`)}`;
+  if(action==='confirm'){const confirmed=await confirmOperatorSmsReply(platform,{id,reference:reference!,messageId:value.original_message_id,contactId:contact!.id,hash,destination,sender:module.config.confirmationSender,occurred});return confirmed?context.body(null,204):context.json({error:'sms_confirmation_reply_not_eligible'},400);}
   const now=Date.now();
   const restrict=()=>[
    recordPortableHash(db,hash,destination),

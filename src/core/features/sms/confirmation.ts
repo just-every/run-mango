@@ -14,8 +14,10 @@ export function validateSmsConsent(platform:Platform,input:ConsentCapture){
 export async function sendSmsConfirmation(platform:Platform,input:{destination:string;token:string;expiresAt:Date;contactId:string;consentId:string}){
  const policy=programme(platform),module=platform.config.modules.sms;if(!module.enabled)throw new Error(module.detail);
  const tokenDigest=input.consentId,url=new URL(`/consent/confirm/${encodeURIComponent(input.token)}`,platform.config.publicBaseUrl);
+ const evidence=await platform.database.$client.prepare('SELECT capture_method FROM consent_evidence WHERE id=?').bind(input.consentId).first<{capture_method:string}>();
+ const instruction=evidence?.capture_method==='operator-recorded'?`Reply YES to confirm your ${policy.category} subscription.`:`Confirm your ${policy.category} subscription: ${url}`;
  const request={purpose:'consent-confirmation' as const,recipientStepId:`consent-confirmation:${tokenDigest}`,idempotencyKey:`consent-confirmation:${tokenDigest}`,handoffStartedAt:new Date(),to:input.destination,sender:module.config.confirmationSender,
-  content:{text:`${policy.brand} - ${policy.programme}. ${policy.frequency}. Confirm your ${policy.category} subscription: ${url}\nReply STOP to unsubscribe. Help: ${policy.support}`},callbackUrl:new URL('/webhooks/sms/mobile-message',platform.config.publicBaseUrl).toString()};
+  content:{text:`${policy.brand} - ${policy.programme}. ${policy.frequency}. ${instruction}\nReply STOP to unsubscribe. Help: ${policy.support}`},callbackUrl:new URL('/webhooks/sms/mobile-message',platform.config.publicBaseUrl).toString()};
  const state=await queueSmsService(platform,request,{contactId:input.contactId,consentId:input.consentId,expiresAt:input.expiresAt});
  if(['blocked','expired','uncertain'].includes(state))throw new Error('SMS confirmation delivery is blocked or unconfirmed. Review the service-message status; an uncertain handoff is never repeated.');
  return state;

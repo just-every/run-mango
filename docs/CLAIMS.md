@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 34 claims · 34 in code.**
+**Totals: 35 claims · 35 in code.**
 
 ## Mango integration claims
 
@@ -67,3 +67,5 @@ The text-only adoption changes no implementation status. No real provider call o
 | CONT-024 | partial | Incumbent-held evidence kind and attestation record not built; conservative default (versioned per-source attestation with typed confirmation and 'not sure' choice, record kept 5 years after revocation, never-subscribed list incl. RFC 2142 roles and out-of-jurisdiction rows) named in the clause, awaiting ct approval as landed. |
 | PUB-005 | missing | Hosted paid-signup and return pages, paid-checkout evidence and one confirmation are not implemented. |
 | PUB-002 | partial | Fresh Stripe-reported status orders paid membership; paid-only and free-topic delivery after cancellation are exercised at the network edge, with consent/suppression and the paid-state hand-off fence. Restricted-key sandbox proof and Nectar remain open. Evidence: `tests/go-live/paid-tier-journey.ts`, `tests/go-live/stripe-journey.ts`, `tests/portability.spec.ts`. No real provider call or consent was used. |
+
+| CONT-026 | Authors and above record hand-entry consent and properties; email uses the manual mode and labels the operator. SMS requires express written evidence and a signed reply to its exact confirmation; prior restrictions and Support refusal remain enforced. Topic scope and legacy API attestation remain open. | partial | `tests/go-live/integrations.journeys.ts`, `tests/go-live/manual-entry-journey.ts`, `tests/portability.spec.ts` |
