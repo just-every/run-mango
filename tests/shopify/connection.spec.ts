@@ -21,11 +21,11 @@ async function webhook(f,body,options={}){
 function observation(name='product_viewed',eventId=crypto.randomUUID()){
   return {version:1,channel:'test-channel',id:eventId,name,timestamp:new Date(Date.now()-1000).toISOString(),privacy:{analytics:true,marketing:true,saleOfData:true},lines:[{productId:id('Product',21),variantId:id('ProductVariant',31),quantity:1}]};
 }
-async function proxy(f,body,context={}){
+async function proxy(f,body,context={},transport={}){
   const raw=JSON.stringify(body),params=new URLSearchParams({shop:'mango-shop.myshopify.com',logged_in_customer_id:'11',path_prefix:'/apps/mango-signals',timestamp:String(Math.floor(Date.now()/1000)),body_digest:digest(raw),event_id:body.id,...context});
   const canonical=[...params.keys()].map(key=>`${key}=${params.getAll(key).join(',')}`).sort().join('');
   params.set('signature',createHmac('sha256',secret).update(canonical).digest('hex'));
-  return f.call(`/webhooks/commerce/shopify/observations?${params}`,{method:'POST',raw});
+  return f.call(`/webhooks/commerce/shopify/observations?${params}`,{method:'POST',raw,...transport});
 }
 
 test('[STORE-004] native authenticated sync imports complete Shopify records and retains original purchase time through nested-page failures and retry',async()=>{
@@ -149,6 +149,10 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     await f.db.prepare('DROP TRIGGER test_activity_failure').run();
     expect((await proxy(f,fault)).status).toBe(204);
     expect(await f.db.prepare("SELECT count(*) n FROM commerce_observations WHERE event_id=?").bind(fault.id).first()).toEqual({n:1});
+    const insecure=observation();
+    expect((await proxy(f,insecure,{}, {headers:{Origin:'http://store.example.test'}})).status).toBe(422);
+    expect((await proxy(f,insecure,{}, {protocol:'http:'})).status).toBe(422);
+    expect(await f.db.prepare('SELECT count(*) n FROM commerce_observations WHERE event_id=?').bind(insecure.id).first()).toEqual({n:0});
     const event=observation();expect((await proxy(f,event)).status).toBe(204);expect((await proxy(f,event)).status).toBe(204);
     const contact=await f.db.prepare("SELECT contact_id FROM source_records WHERE source_type='customer'").first();
     expect(await f.db.prepare("SELECT count(*) n,contact_id FROM source_records WHERE source_type='browsing-event'").first()).toEqual({n:2,contact_id:contact.contact_id});
@@ -168,9 +172,12 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     const callbacks=new Map();let consentChanged;const produced=[];
     const source=await readFile('extensions/mango-pixel/src/index.js','utf8');
     const run=new Function('register','fetch',source.replace("import {register} from '@shopify/web-pixels-extension';",''));
-    run(callback=>callback({analytics:{subscribe(name,fn){callbacks.set(name,fn);}},init:{data:{shop:{myshopifyDomain:'mango-shop.myshopify.com',storefrontUrl:'https://store.example.test'},customer:{id:'999'}},customerPrivacy:{analyticsProcessingAllowed:true,marketingAllowed:true,saleOfDataAllowed:true}},customerPrivacy:{subscribe(_name,fn){consentChanged=fn;}},settings:{channel:'test-channel',proxyPath:'/apps/mango-signals'}}),async(url,request)=>{
+    run(callback=>callback({analytics:{subscribe(name,fn){callbacks.set(name,fn);}},init:{context:{document:{location:{protocol:'https:'}}},data:{shop:{myshopifyDomain:'mango-shop.myshopify.com',storefrontUrl:'https://store.example.test'},customer:{id:'999'}},customerPrivacy:{analyticsProcessingAllowed:true,marketingAllowed:true,saleOfDataAllowed:true}},customerPrivacy:{subscribe(_name,fn){consentChanged=fn;}},settings:{channel:'test-channel',proxyPath:'/apps/mango-signals'}}),async(url,request)=>{
       const body=JSON.parse(request.body);const response=await proxy(f,body);produced.push({body,url:String(url),status:response.status});return response;
     });
+    const insecureCallbacks=new Map();
+    run(callback=>callback({analytics:{subscribe(name,fn){insecureCallbacks.set(name,fn);}},init:{context:{document:{location:{protocol:'http:'}}}},customerPrivacy:{subscribe(){}},settings:{}}),async()=>{throw new Error('Insecure pixel sent a request.');});
+    expect(insecureCallbacks.size).toBe(0);
     callbacks.get('product_added_to_cart')({id:'producer-add',name:'product_added_to_cart',timestamp:new Date().toISOString(),clientId:'not-a-customer',data:{cartLine:{quantity:2,merchandise:{id:id('ProductVariant',31),product:{id:id('Product',21)}}}}});
     await expect.poll(()=>produced.length).toBe(1);
     expect(produced[0].status).toBe(204);
@@ -278,6 +285,24 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     expect(await f.db.prepare('SELECT count(*) n FROM source_records WHERE contact_id=?').bind(contact.contact_id).first()).toEqual({n:0});
     await f.db.prepare('UPDATE commerce_channels SET healthy_at=0').run();
     expect((await proxy(f,observation())).status).toBe(422);
+    // A fresh identified view expires through the installation maintenance door.
+    await f.fixture('customers:',{data:{customers:page([{...customer,email:'synthetic-mango-63@example.test'}])}});
+    await sync(f,session,'customer');await sync(f,session,'browsing-event');
+    const retainedView=observation();expect((await proxy(f,retainedView)).status).toBe(204);
+    const retainedContact=(await f.db.prepare('SELECT contact_id FROM source_records WHERE provider_source_id=?').bind(`shopify-observation:${retainedView.id}`).first()).contact_id;
+    const beforeRetention=await (await f.call(`/api/contacts/${retainedContact}`,{cookie:session})).json();
+    expect(beforeRetention.timeline.some(entry=>entry.detail.includes('product_viewed'))).toBe(true);
+    const expiredEntry=beforeRetention.timeline.find(entry=>entry.detail.includes('product_viewed'));
+    const advanced=await (await f.call('/test/clock',{method:'POST',body:{advanceMs:91*86400000}})).json();
+    const refreshed=await f.owner(false);
+    for(const type of ['product','variant','browsing-event'])await sync(f,refreshed,type);
+    const recentView={...observation(),timestamp:new Date(advanced.now).toISOString()};
+    expect((await proxy(f,recentView,{timestamp:String(Math.floor(advanced.now/1000))})).status).toBe(204);
+    await f.call('/test/maintenance',{method:'POST'});
+    const afterRetention=await (await f.call(`/api/contacts/${retainedContact}`,{cookie:refreshed})).json();
+    expect(afterRetention.timeline.some(entry=>entry.id===expiredEntry.id)).toBe(false);
+    expect(afterRetention.timeline.some(entry=>entry.detail.includes('product_viewed')&&entry.occurredAt===recentView.timestamp)).toBe(true);
+    expect(await f.db.prepare('SELECT count(*) n FROM source_records WHERE provider_source_id=?').bind(`shopify-observation:${retainedView.id}`).first()).toEqual({n:0});
   }finally{
     try {
       const race=await (await f.call('/test/erasure-race/status')).json();

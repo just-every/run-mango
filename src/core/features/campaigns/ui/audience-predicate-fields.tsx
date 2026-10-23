@@ -11,8 +11,9 @@ const booleans = ['consent','topic','clicked','paidMember'];
 const numericFields = ['count','distanceMiles','rfmRecencyDays','rfmRecencyScore','rfmFrequency','rfmFrequencyScore','rfmMonetaryScore','rfmMonetaryMinor'];
 
 export function PredicateFields({predicate,onChange,label}: {predicate:Predicate;onChange:(value:Predicate)=>void;label:string}) {
-  const [lookback,setLookback]=useState(String(predicate.lookbackDays??''));
-  useEffect(()=>setLookback(String(predicate.lookbackDays??'')),[predicate.lookbackDays]);
+  const onsite=['cart','browsing'].includes(predicate.sourceType), maxWindow=onsite?90:3650;
+  const [lookback,setLookback]=useState(String(predicate.lookbackDays??(onsite?90:'')));
+  useEffect(()=>setLookback(String(predicate.lookbackDays??(onsite?90:''))),[predicate.lookbackDays,onsite]);
   const boolean=predicate.sourceType==='contact'&&booleans.includes(predicate.field);
   const numeric=numericFields.includes(predicate.field)||['gt','gte','lt','lte'].includes(predicate.comparator);
   if(predicate.sourceType==='campaign')return <p>Saved non-engagement audience. Its source campaign and cutoff are shown above. Current consent and frequency protections still apply.</p>;
@@ -22,7 +23,7 @@ export function PredicateFields({predicate,onChange,label}: {predicate:Predicate
       const isBoolean=sourceType==='contact'&&booleans.includes(field);
       const next:Predicate={sourceType:sourceType as Predicate['sourceType'],field,comparator:isBoolean?'eq':numericFields.includes(field)?'gte':predicate.comparator,value:isBoolean?true:numericFields.includes(field)?1:typeof predicate.value==='boolean'?'':predicate.value};
       if(isBoolean)next.channel='email';
-      if(field==='clicked'||field==='count')next.lookbackDays=90;
+      if(field==='clicked'||field==='count'||['cart','browsing'].includes(sourceType))next.lookbackDays=90;
       if(field==='distanceMiles'){next.originZip='';next.comparator='lte';next.value=25;}
       if(field==='property')next.property='';
       if(field==='topic')next.topicId='';
@@ -41,9 +42,10 @@ export function PredicateFields({predicate,onChange,label}: {predicate:Predicate
     <label>{label} value{predicate.comparator==='contains'||predicate.comparator==='in'?' (required)':''}<Field name={`${label}.value`} label={`${label} value`} required={predicate.comparator==='contains'||predicate.comparator==='in'} validate={()=>incompleteCondition(predicate)?'Complete this audience condition.':numeric&&(String(predicate.value).trim()===''||!Number.isFinite(Number(predicate.value)))?'Enter a number for this comparison.':undefined}>
       {boolean?<select value={String(predicate.value)} onChange={event=>onChange({...predicate,value:event.target.value==='true'})}><option value="true">Yes</option><option value="false">No</option></select>:<input value={Array.isArray(predicate.value)?predicate.value.join(', '):String(predicate.value)} onChange={event=>onChange({...predicate,value:predicate.comparator==='in'?event.target.value.split(',').map(value=>value.trim()):numeric&&event.target.value.trim()&&Number.isFinite(Number(event.target.value))?Number(event.target.value):event.target.value})}/>}
     </Field></label>
-    {predicate.sourceType!=='contact'||predicate.field==='clicked'?<label>{label} lookback days<Field name={`${label}.lookbackDays`} label={`${label} lookback days`} validate={()=>lookback&&(!Number.isInteger(Number(lookback))||Number(lookback)<0||Number(lookback)>3650)?'Use a whole number of days between 0 and 3650.':undefined}><input type="number" min="0" max="3650" value={lookback} onChange={event=>{const value=event.target.value;setLookback(value);if(!value||(Number.isInteger(Number(value))&&Number(value)>=0&&Number(value)<=3650))onChange({...predicate,lookbackDays:value?Number(value):undefined});}}/></Field></label>:null}
+    {predicate.sourceType!=='contact'||predicate.field==='clicked'?<label>{label} lookback days<Field name={`${label}.lookbackDays`} label={`${label} lookback days`} validate={()=>lookback&&(!Number.isInteger(Number(lookback))||Number(lookback)<0||Number(lookback)>maxWindow)?`Use a whole number of days between 0 and ${maxWindow}.`:undefined}><input type="number" min="0" max={maxWindow} value={lookback} onChange={event=>{const value=event.target.value;setLookback(value);if(!value||(Number.isInteger(Number(value))&&Number(value)>=0&&Number(value)<=maxWindow))onChange({...predicate,lookbackDays:value?Number(value):undefined});}}/></Field></label>:null}
     {predicate.field.startsWith('rfmMonetary')?<label>{label} currency<input aria-label={`${label} currency`} value={predicate.currency??'USD'} maxLength={3} onChange={event=>onChange({...predicate,currency:event.target.value.toUpperCase()})}/></label>:null}
   </div>
+  {onsite?<p className="muted-copy">Onsite windows stop at 90 days because identified onsite events are deleted after 90 days.</p>:null}
   {predicate.sourceType==='order'&&predicate.field==='count'?<EventPropertyFilters predicate={predicate} label={label} onChange={onChange}/>:null}
   {predicate.field==='boughtCollectionId'||predicate.field==='boughtCategory'?<p className="muted-copy">Matches recorded purchases of products the synced catalog currently places in this {predicate.field==='boughtCollectionId'?'collection':'category'}. Use the catalog's {predicate.field==='boughtCollectionId'?'collection ID':'full category name'}.</p>:null}
   {predicate.field==='distanceMiles'?<p className="muted-copy">Approximate straight-line miles between Census ZIP-area representative points. Contacts without a recorded US ZIP or a matching area are excluded.</p>:null}

@@ -33,9 +33,9 @@ add_action('rest_api_init', function () {
                 $page = max(1, (int)$request->get_param('page'));
                 $size = max(1, min(100, (int)($request->get_param('per_page') ?: 10)));
                 // Read only observations whose consent remains granted. GPC withdrawal
-                // removes export eligibility without deleting the historical evidence.
+                // deletes the local history; withdrawal controls are delivered separately.
                 $condition = $source === 'checkouts' ? "e.checkout_id<>''" : "e.checkout_id=''";
-                $from = "FROM {$wpdb->prefix}mango_events e INNER JOIN {$wpdb->usermeta} u ON u.user_id=e.customer_id AND u.meta_key='_mango_consent' AND u.meta_value='granted' WHERE $condition AND e.delivered<>2 AND e.occurred_at>=" . (time()-30*DAY_IN_SECONDS);
+                $from = "FROM {$wpdb->prefix}mango_events e INNER JOIN {$wpdb->usermeta} u ON u.user_id=e.customer_id AND u.meta_key='_mango_consent' AND u.meta_value='granted' WHERE $condition AND e.kind<>'privacy_withdrawal' AND e.delivered<>2 AND e.occurred_at>=" . (time()-30*DAY_IN_SECONDS);
                 $total = (int)$wpdb->get_var("SELECT count(*) $from");
                 $rows = $wpdb->get_col($wpdb->prepare("SELECT e.payload $from ORDER BY e.occurred_at,e.id LIMIT %d OFFSET %d", $size, ($page-1)*$size));
                 $response = new WP_REST_Response(array_map(fn($raw) => json_decode($raw, true), $rows));

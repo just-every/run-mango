@@ -73,6 +73,7 @@ export const contactErasureTables:ErasureTable[]=[
   {...contact('imported_engagement_facts'),literal:true,mode:'contact-data'},
   contact('move_in_contact_history'),
   contact('paid_subscriptions'),
+  contact('woocommerce_privacy_controls'),
   {table:'audience_exclusion_settings',literal:true,mode:'redact'},
   contact('woocommerce_flow_enrollments'),
 ];

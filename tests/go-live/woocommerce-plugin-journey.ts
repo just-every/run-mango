@@ -7,9 +7,9 @@ type Site = Awaited<ReturnType<typeof installation>>;
 export async function wooPluginJourney(site: Site, page: Page, cookie: string, webhookPath: string, signingSecret: string) {
   const at = new Date(Date.now()-1000).toISOString();
   const event = {version: 1, id: randomUUID(), kind: 'abandoned_checkout', occurredAt: at, customerId: '11', checkoutId: randomUUID(), checkoutStartedAt: new Date(Date.now()-3600000).toISOString(), products: ['21'], consent: {analytics: true, marketing: true}, gpc: false};
-  const send = (value: unknown, signature?: string, timestamp = String(Math.floor(Date.now()/1000))) => {
+  const send = (value: unknown, signature?: string, timestamp = String(Math.floor(Date.now()/1000)), origin = site.origin) => {
     const raw = JSON.stringify(value);
-    return site.call(webhookPath + '/plugin', {method: 'POST', raw, headers: {'Content-Type': 'application/json', 'X-Mango-Timestamp': timestamp,
+    return site.call(webhookPath + '/plugin', {method: 'POST', raw, headers: {'Content-Type': 'application/json', Origin: origin, 'X-GoLive-Host': new URL(site.origin).host, 'X-Test-Token':site.runtime.token, 'X-Mango-Timestamp': timestamp,
       'X-Mango-Signature': signature ?? createHmac('sha256', signingSecret).update('mango-plugin-v1\n' + timestamp + '.' + raw).digest('base64')}});
   };
   await openPage(page, site.runtime.url + '/app/settings');
@@ -63,5 +63,15 @@ export async function wooBrowserConsent(page: Page) {
   await page.evaluate(() => {Object.defineProperty(navigator, 'globalPrivacyControl', {value: true, configurable: true}); window.dispatchEvent(new CustomEvent('mango:consent', {detail: {analytics: true, marketing: true}})); document.dispatchEvent(new Event('wc-blocks_added_to_cart'));});
   await expect.poll(() => observations.length).toBe(5);
   expect(observations[4].get('kind')).toBe('privacy_withdrawal'); expect(observations[4].get('gpc')).toBe('true');
+  const insecureRequests:string[]=[];
+  await page.route('http://store.example.test/**',async route=>{if(route.request().url().endsWith('/ajax'))insecureRequests.push(route.request().url());await route.fulfill({status:200,contentType:'text/html',body:'<!doctype html><html><body>Insecure store page</body></html>'});});
+  await page.goto('http://store.example.test/checkout');
+  await page.evaluate(()=>Object.assign(window,{mangoConsent:{analytics:true,marketing:true},mangoPlugin:{ajaxUrl:'http://store.example.test/ajax',nonce:'synthetic-mango-8',checkout:true,productId:'21'}}));
+  await page.addScriptTag({content:readFileSync('extensions/mango-woocommerce/observations.js','utf8')});
+  await page.evaluate(()=>window.dispatchEvent(new CustomEvent('mango:consent',{detail:{analytics:true,marketing:true}})));
+  expect(observations).toHaveLength(5);
+  expect(insecureRequests).toEqual([]);
+  expect(await page.context().cookies('http://store.example.test')).toEqual([]);
+  await page.unroute('http://store.example.test/**');
   await page.unroute('https://store.example.test/**');
 }

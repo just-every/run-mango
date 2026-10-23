@@ -136,6 +136,8 @@ export function createStoreRepository(database: Database) {
 
     async moveSourceData(mergedContactId: string, survivorContactId: string) {
       await database.$client.batch([
+        database.$client.prepare('INSERT INTO woocommerce_privacy_controls(connection_id,contact_id,revoked_at) SELECT connection_id,?,revoked_at FROM woocommerce_privacy_controls WHERE contact_id=? ON CONFLICT(connection_id,contact_id) DO UPDATE SET revoked_at=max(revoked_at,excluded.revoked_at)').bind(survivorContactId,mergedContactId),
+        database.$client.prepare('DELETE FROM woocommerce_privacy_controls WHERE contact_id=?').bind(mergedContactId),
         database.$client.prepare('UPDATE commerce_observations SET contact_id=? WHERE contact_id=?').bind(survivorContactId,mergedContactId),
         database.$client.prepare('INSERT INTO commerce_privacy_controls(contact_id,revoked_at) SELECT ?,revoked_at FROM commerce_privacy_controls WHERE contact_id=? ON CONFLICT(contact_id) DO UPDATE SET revoked_at=max(revoked_at,excluded.revoked_at)').bind(survivorContactId,mergedContactId),
         database.$client.prepare('DELETE FROM commerce_privacy_controls WHERE contact_id=?').bind(mergedContactId),

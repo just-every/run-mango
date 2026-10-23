@@ -21,10 +21,10 @@ export async function shopifyRuntime(){
     await db.prepare('CREATE TABLE test_shopify(id TEXT PRIMARY KEY,body TEXT NOT NULL,elapsed_ms INTEGER NOT NULL DEFAULT 0)').run();
     await db.prepare('CREATE TABLE test_shopify_http(request_key TEXT,started_at INTEGER,ended_at INTEGER,lease_expires_at INTEGER)').run();
     const settle=await nativeQueueSettlement(mf,db,queueName);
-    const call=(path,{method='GET',body,raw,cookie,headers={}}={})=>path==='/test/run-queue'?settle():mf.dispatchFetch('http://localhost/test-dispatch',{method:'POST',redirect:'manual',body:JSON.stringify({url:`https://mango.example.test${path}`,method,headers:{Host:'mango.example.test',Origin:'https://mango.example.test','CF-Connecting-IP':'192.0.2.1','Content-Type':'application/json',...(cookie?{Cookie:cookie}:{}),...headers},...(raw!==undefined?{body:raw}:body!==undefined?{body:JSON.stringify(body)}:{})})});
+    const call=(path,{method='GET',body,raw,cookie,headers={},protocol='https:'}={})=>path==='/test/run-queue'?settle():mf.dispatchFetch('http://localhost/test-dispatch',{method:'POST',redirect:'manual',body:JSON.stringify({url:`${protocol}//mango.example.test${path}`,method,headers:{Host:'mango.example.test',Origin:'https://mango.example.test','CF-Connecting-IP':'192.0.2.1','Content-Type':'application/json',...(cookie?{Cookie:cookie}:{}),...headers},...(raw!==undefined?{body:raw}:body!==undefined?{body:JSON.stringify(body)}:{})})});
     const fixture=(id,body,elapsedMs=0)=>db.prepare('INSERT INTO test_shopify(id,body,elapsed_ms) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET body=excluded.body,elapsed_ms=excluded.elapsed_ms').bind(id,JSON.stringify(body),elapsedMs).run();
-    return {db,call,fixture,close:()=>mf.dispose(),async owner(){
-      const bootstrap=await call('/auth/bootstrap',{method:'POST',body:{token:values.AUTH_SETUP_TOKEN,displayName:'Owner'}});if(bootstrap.status!==303)throw new Error(`Bootstrap ${bootstrap.status}`);
+    return {db,call,fixture,close:()=>mf.dispose(),async owner(bootstrapOwner=true){
+      if(bootstrapOwner) { const bootstrap=await call('/auth/bootstrap',{method:'POST',body:{token:values.AUTH_SETUP_TOKEN,displayName:'Owner'}});if(bootstrap.status!==303)throw new Error(`Bootstrap ${bootstrap.status}`); }
       const requested=await call('/auth/magic-link',{method:'POST',body:{email:'owner@example.test'}});if(requested.status!==202)throw new Error(`Magic link ${requested.status}`);
       const mail=await db.prepare('SELECT body FROM test_mail ORDER BY id DESC LIMIT 1').first();
       const token=new URL(JSON.parse(mail.body).content[0].value.match(/https:\/\/\S+/)[0]).searchParams.get('token');

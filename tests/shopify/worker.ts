@@ -31,6 +31,11 @@ export default {
   async fetch(envelope,env,context){
     installNetworkEdge(env);
     const input=await envelope.json();
+    if(input.url.includes('/test/clock')) { edgeClockOffset+=Number(JSON.parse(input.body).advanceMs); return Response.json({now:Date.now()}); }
+    if(input.url.includes('/test/maintenance')) {
+      const pending=[]; productionWorker.scheduled({scheduledTime:Date.now(),cron:'* * * * *',noRetry(){}},env,{waitUntil:work=>pending.push(work)});
+      await Promise.all(pending); return Response.json({ok:true});
+    }
     if(input.url.includes('/test/erasure-race/'))return Response.json(await erasureRace(new URL(input.url).pathname.split('/').at(-1)!));
     env={...env,DB:raceDatabase(env.DB)};
     return productionWorker.fetch(new Request(input.url,{method:input.method,headers:input.headers,...(input.body!==undefined?{body:input.body}:{})}),env,context);

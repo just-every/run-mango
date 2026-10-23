@@ -7,9 +7,9 @@ function mango_save_event($event) {
 function mango_deliver($id) {
     global $wpdb;
     $event = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}mango_events WHERE id=%s AND delivered=0", $id));
-    if (!$event || get_user_meta($event->customer_id, '_mango_consent', true) !== 'granted') { return; }
+    if (!$event || ($event->kind !== 'privacy_withdrawal' && get_user_meta($event->customer_id, '_mango_consent', true) !== 'granted')) { return; }
     $settings = get_option('mango_settings', []); $secret = mango_secret();
-    if (empty($settings['tracking']) || empty($settings['endpoint']) || !$secret) { return; }
+    if (empty($settings['tracking']) || empty($settings['endpoint']) || strtolower(wp_parse_url($settings['endpoint'], PHP_URL_SCHEME) ?? '') !== 'https' || !$secret) { return; }
     $timestamp = (string)time();
     $response = wp_safe_remote_post($settings['endpoint'], ['timeout'=>15,'redirection'=>0,'sslverify'=>true,'headers'=>[
         'Content-Type'=>'application/json','X-Mango-Timestamp'=>$timestamp,

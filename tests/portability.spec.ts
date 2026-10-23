@@ -64,6 +64,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
       .bind('synthetic-mango-11','https://woo.example.test/','synthetic-mango-12','synthetic-mango-13','portable-operator',1).run();
     await source.db.prepare('INSERT INTO tracking_domain(id,host,updated_at,operator_id) VALUES(1,?,?,?)')
       .bind('links.example.test',1,'portable-operator').run();
+    await source.db.prepare("INSERT INTO woocommerce_privacy_controls(connection_id,contact_id,revoked_at) VALUES('synthetic-mango-61','portable-contact',1)").run();
     const allTables = (await source.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND sql IS NOT NULL").all()).results;
     await command(['export', '--origin', source.origin, '--session-file', session, '--out', archive]);
     const records = [];
@@ -72,6 +73,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     // Inventory before export creates temporary snapshot tables. Every source
     // table is archived or explicitly excluded by the maintained policy.
     for (const { name } of allTables) expect([...manifest.tables.map(table => table.name), ...manifest.excludedTables]).toContain(name);
+    expect(original.some(row => row.table === 'woocommerce_privacy_controls')).toBe(false);
     expect(original.some(row => row.table === 'campaign_templates' && row.row.name === 'Portable newsletter template')).toBe(true);
     expect(original.some(row => row.table === 'campaign_followups' && row.row.campaign_id === followupDraft.campaignId)).toBe(true);
     expect(original.some(row => row.table === 'contacts' && row.row.id === 'portable-contact')).toBe(true);
@@ -176,6 +178,7 @@ test('[CONT-013] current erasure authority refuses an old archive on an empty re
     expect(job.state).toBe('completed');
     const contact=await source.db.prepare('SELECT id FROM contacts WHERE email=?').bind(email).first();
     await source.db.prepare("INSERT INTO paid_subscriptions(subscription_id,customer_id,contact_id,state,stripe_status,state_event_id,state_at,created_at,updated_at) VALUES('synthetic-mango-31','synthetic-mango-32',?,'active','active','synthetic-mango-33',1,1,1)").bind(contact.id).run();
+    await source.db.prepare("INSERT INTO woocommerce_privacy_controls(connection_id,contact_id,revoked_at) VALUES('synthetic-mango-62',?,1)").bind(contact.id).run();
     const before=await archive();expect(JSON.stringify(before)).toContain(email);
     expect(JSON.stringify(before)).toContain('synthetic-mango-31');
     const artifacts=(await source.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND (name GLOB 'rer_portability_snap_*' OR name GLOB 'rer_portability_stage_*')").all()).results.map(row=>row.name);
@@ -186,6 +189,8 @@ test('[CONT-013] current erasure authority refuses an old archive on an empty re
     while(receipt.state==='pending'){const next=await source.call(`/api/audience/erasures/${receipt.reference}/resume`,{cookie:source.cookie,method:'POST',body:{}});expect([200,202]).toContain(next.status);({receipt}=await next.json());}
     expect(receipt.removed.transfer_artifacts).toBe(discarded);
     expect(receipt.removed.paid_subscriptions).toBe(1);
+    expect(receipt.removed.woocommerce_privacy_controls).toBe(1);
+    expect((await source.db.prepare('SELECT count(*) n FROM woocommerce_privacy_controls WHERE contact_id=?').bind(contact.id).first()).n).toBe(0);
     expect((await source.db.prepare('SELECT count(*) AS n FROM paid_subscriptions WHERE contact_id=?').bind(contact.id).first()).n).toBe(0);
     const after=await archive();expect(JSON.stringify(after)).not.toContain('synthetic-mango-31');expect(JSON.stringify(after)).not.toContain(email);expect(JSON.stringify(after)).not.toContain(name);
     const latest=after[0];expect(latest.journal).toEqual([]);

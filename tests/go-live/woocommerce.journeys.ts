@@ -11,7 +11,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
   const woo = wooCommerceEdge(), edge = await providerEdge({woo: woo.handle, links: {'https://woo.example.test/': {}}});
   const site = await installation(edge, eventSigner(), {networkHosts: ['woo.example.test']});
   try {
-    const cookie = await site.open();
+    let cookie = await site.open();
     const connection = {url: 'https://woo.example.test/', key: 'synthetic-mango-1', secret: 'synthetic-mango-2', signingSecret: 'synthetic-mango-3', exclusiveSecret: true, pluginEnabled: true};
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
     await site.control('/_golive/sender-evidence');
@@ -120,6 +120,36 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       await page.screenshot({path: info.outputPath(`woocommerce-store-${width}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
+    // Identified onsite facts expire on the installation's clock, while store
+    // purchases and withdrawal authority keep their independent lifetimes.
+    const view={version:1,id:crypto.randomUUID(),kind:'viewed_product',customerId:'11',products:['21'],consent:{analytics:true,marketing:true},gpc:false,occurredAt:new Date((await site.control('/_golive/clock')).now).toISOString()};
+    const beforeInsecure=await site.count('source_records');
+    expect((await plugin.send({...view,id:crypto.randomUUID()},undefined,undefined,'http://woo.example.test')).status).toBe(401);
+    expect(await site.count('source_records')).toBe(beforeInsecure);
+    await json(await plugin.send(view),204);
+    expect((await json(await site.call(`/api/contacts/${contactId}`,{cookie}),200)).timeline.some((entry:any)=>entry.detail.includes('viewed_product'))).toBe(true);
+    const withdrawn={...view,id:crypto.randomUUID(),kind:'privacy_withdrawal',products:[],consent:{analytics:false,marketing:false},occurredAt:new Date((await site.control('/_golive/clock')).now+1).toISOString()};
+    await json(await plugin.send(withdrawn),204);
+    expect((await json(await site.call(`/api/contacts/${contactId}`,{cookie}),200)).timeline.some((entry:any)=>entry.detail.includes('viewed_product'))).toBe(false);
+    expect((await plugin.send(view)).status).toBe(422);
+    await site.control('/_golive/clock',{advanceMs:2000});
+    const later={...view,id:crypto.randomUUID(),occurredAt:new Date((await site.control('/_golive/clock')).now).toISOString()};
+    await json(await plugin.send(later),204);
+    const beforeExpiry=await json(await site.call(`/api/contacts/${contactId}`,{cookie}),200);
+    const expiredEntry=beforeExpiry.timeline.find((entry:any)=>entry.detail.includes('viewed_product'));
+    expect(expiredEntry).toBeTruthy();
+    const advanced=await site.control('/_golive/clock',{advanceMs:91*86400000,hold:true});
+    const recent={...later,id:crypto.randomUUID(),occurredAt:new Date(advanced.now).toISOString()};
+    await json(await plugin.send(recent,undefined,String(Math.floor(advanced.now/1000))),204);
+    await site.control('/_golive/cron');
+    cookie=await site.open();
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+    const retained=await json(await site.call(`/api/contacts/${contactId}`,{cookie}),200);
+    expect(retained.timeline.some((entry:any)=>entry.id===expiredEntry.id)).toBe(false);
+    expect(retained.timeline.some((entry:any)=>entry.detail.includes('viewed_product')&&entry.occurredAt===recent.occurredAt)).toBe(true);
+    expect((await site.rows(`SELECT payload FROM source_records WHERE contact_id='${contactId}' AND json_extract(payload,'$.identity')='woocommerce-signed-logged-in-customer'`)).map(row=>JSON.parse(row.payload).eventId)).toEqual([recent.id]);
+    expect(await site.rows(`SELECT revoked_at FROM woocommerce_privacy_controls WHERE contact_id='${contactId}'`)).toHaveLength(1);
+    expect(await site.rows(`SELECT id FROM source_records WHERE contact_id='${contactId}' AND source_type='order'`)).toHaveLength(1);
     await openPage(page, site.runtime.url + '/app/settings');
     await page.getByRole('button', {name: 'Disconnect WooCommerce', exact: true}).click();
     await expect(page.locator('#woocommerce [role=status]').filter({hasText: 'No WooCommerce connection.'})).toBeVisible();
@@ -127,8 +157,8 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect((await webhook()).status).toBe(409);
     expect((await site.call('/api/store/sync', {method: 'POST', cookie, body: {sourceType: 'order'}})).status).toBe(409);
     expect(await site.count('woocommerce_connection')).toBe(0);
-    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(5);
-    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(6);
+    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(6);
+    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(0);
     expect((await site.rows('SELECT state FROM woocommerce_flows'))).toEqual([{state: 'paused'}]);
     await wooBrowserConsent(page);
     expect(woo.state.authorizations.every(value => value === 'Basic ' + Buffer.from(connection.key + ':' + connection.secret).toString('base64'))).toBe(true);

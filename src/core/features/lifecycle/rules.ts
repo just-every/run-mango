@@ -29,6 +29,7 @@ const predicate = z.object({
     if(value.field==='clicked'&&value.lookbackDays===undefined)issue('Choose a click time window.');
     if(value.field==='distanceMiles'&&(!value.originZip||typeof value.value!=='number'||value.value<0||!['gt','gte','lt','lte','eq','neq'].includes(value.comparator)))issue('Choose an origin ZIP and a distance in miles.');
   }
+  if (['cart','browsing'].includes(value.sourceType) && value.lookbackDays !== undefined && value.lookbackDays > 90) issue('Onsite windows cannot exceed 90 days because identified onsite events are deleted after 90 days.');
   if(value.filters!==undefined&&value.sourceType!=='order')issue('Event property filters require an order condition.');
   if(value.sourceType==='order'&&value.field==='count'&&(typeof value.value!=='number'||!Number.isInteger(value.value)||value.value<0||['contains','in'].includes(value.comparator)))issue('Order count requires a non-negative whole number.');
 });

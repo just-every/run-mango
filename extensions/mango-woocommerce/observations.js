@@ -3,7 +3,9 @@
  * Missing consent is denied; identity is resolved only by WordPress. */
 (() => {
   const config = window.mangoPlugin;
-  if (!config) return;
+  if (!config || location.protocol !== 'https:') return;
+  const target = new URL(config.ajaxUrl, location.href);
+  if (target.protocol !== 'https:' || target.origin !== location.origin) return;
   let consent = window.mangoConsent ?? {}, started = false;
   const allowed = () => consent.analytics === true && consent.marketing === true && navigator.globalPrivacyControl !== true;
   async function observe(kind, productId) {

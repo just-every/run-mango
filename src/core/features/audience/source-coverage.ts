@@ -21,7 +21,8 @@ export async function ruleCoverage(store:CoverageStore,inclusion:InclusionRule,e
     }
     if(p.sourceType!=='cart'&&p.sourceType!=='browsing')continue;
     const sourceType=p.sourceType==='browsing'?'browsing-event':'cart';
-    const from=new Date(p.lookbackDays===undefined?0:now.getTime()-p.lookbackDays*86_400_000);
+    const window=p.lookbackDays??(['cart','browsing'].includes(p.sourceType)?90:undefined);
+    const from=new Date(window===undefined?0:now.getTime()-window*86_400_000);
     const purpose=p.comparator==='neq'?'absence':'positive';
     if(store.observationCoverage) issues.push(...await store.observationCoverage(sourceType,from,purpose));
     else issues.push({sourceType,reason:'source-unavailable',detail:'Observed source interval coverage is unavailable.'});

@@ -3,6 +3,7 @@ import {register} from '@shopify/web-pixels-extension';
 // Public settings only. Identity is supplied by Shopify's signed app-proxy
 // context at the receiver; no client-supplied customer ID is transmitted.
 register(({analytics,init,customerPrivacy,settings})=>{
+  if(init.context?.document?.location?.protocol!=='https:')return;
   let privacy=init.customerPrivacy;
   customerPrivacy.subscribe('visitorConsentCollected',event=>{
     const previouslyAllowed=privacy?.analyticsProcessingAllowed&&privacy?.marketingAllowed&&privacy?.saleOfDataAllowed;
@@ -37,6 +38,7 @@ register(({analytics,init,customerPrivacy,settings})=>{
     const storefront=new URL(init.data.shop.storefrontUrl);
     if(storefront.protocol!=='https:')return;
     const url=new URL(settings.proxyPath,storefront);
+    if(url.protocol!=='https:'||url.origin!==storefront.origin)return;
     url.searchParams.set('body_digest',digest);url.searchParams.set('event_id',body.id);
     // Recheck after asynchronous work so withdrawal stops collection immediately.
     if(body.name!=='privacy_revoked'&&(!privacy?.analyticsProcessingAllowed||!privacy?.marketingAllowed||!privacy?.saleOfDataAllowed))return;

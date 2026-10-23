@@ -109,6 +109,24 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     expect(selected.map(r=>r.contact_id)).toEqual([people[0].id,people[4].id].sort());
     expect((await json(await site.call('/api/audience/segments',{cookie}),200)).segments.find((s:any)=>s.id===saved.id)).toEqual(saved);
     await catalogSegmentJourney(page,info,f);
+    await openPage(page,site.runtime.url+'/app/audience');
+    await page.getByRole('button',{name:'Create segment',exact:true}).click();
+    await field('Include 1 field').selectOption('browsing:productId');
+    await field('Include 1 value').fill('gid://shopify/Product/21');
+    const lookback=field('Include 1 lookback days');
+    for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1000});
+      await expect(page.getByText('Onsite windows stop at 90 days because identified onsite events are deleted after 90 days.',{exact:true})).toBeVisible();
+      await lookback.fill('91');
+      expect(await lookback.evaluate((input:HTMLInputElement)=>input.validity.rangeOverflow)).toBe(true);
+      await lookback.fill('90');
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
+      expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+      await page.locator('[aria-labelledby="segments-title"]').screenshot({path:info.outputPath(`onsite-window-${width}.png`)});
+    }
+    const overlong={name:'Too old onsite audience',inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'browsing',field:'productId',comparator:'eq',value:'gid://shopify/Product/21',lookbackDays:91}]}),exclusionRulesJson:'[]'};
+    expect((await site.call('/api/audience/segments',{method:'POST',cookie,body:overlong})).status).toBe(400);
     expect(f.edge.unexpected).toEqual([]);
   }finally{await f.close();}
 }

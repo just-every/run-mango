@@ -1,7 +1,7 @@
 <?php
 if (!defined('ABSPATH')) { exit; }
 add_action('wp_enqueue_scripts', function () {
-    if (!function_exists('WC') || !is_user_logged_in() || empty(get_option('mango_settings', [])['tracking'])) { return; }
+    if (!is_ssl() || !function_exists('WC') || !is_user_logged_in() || empty(get_option('mango_settings', [])['tracking'])) { return; }
     $checkout = is_checkout() && !is_order_received_page() && !is_checkout_pay_page();
     wp_enqueue_script('mango-observations', plugins_url('observations.js', __FILE__), [], '1.0.0', true);
     wp_add_inline_script('mango-observations', 'window.mangoPlugin=' . wp_json_encode([
@@ -10,17 +10,21 @@ add_action('wp_enqueue_scripts', function () {
     ]) . ';', 'before');
 });
 add_action('wp_ajax_mango_observation', function () {
+    if (!is_ssl()) { wp_send_json_error(['error'=>'https_required'], 403); }
     check_ajax_referer('mango_observation', 'nonce');
     $customer = get_current_user_id();
     if (empty(get_option('mango_settings', [])['tracking'])) { wp_send_json_error(['error'=>'tracking_disabled'], 403); }
     $granted = ($_POST['analytics'] ?? '') === 'true' && ($_POST['marketing'] ?? '') === 'true' && ($_POST['gpc'] ?? '') === 'false' && ($_SERVER['HTTP_SEC_GPC'] ?? '') !== '1';
     if (!$granted) {
         update_user_meta($customer, '_mango_consent', 'denied');
+        setcookie('mango_session', '', ['expires'=>time()-3600,'path'=>'/','secure'=>true,'httponly'=>true,'samesite'=>'Lax']);
         global $wpdb;
-        $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}mango_events SET delivered=2 WHERE customer_id=%d AND delivered=0", $customer));
+        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}mango_events WHERE customer_id=%d", $customer));
+        $withdrawal = ['version'=>1,'id'=>wp_generate_uuid4(),'kind'=>'privacy_withdrawal','occurredAt'=>gmdate('Y-m-d\TH:i:s\Z'),'customerId'=>(string)$customer,'products'=>[],'consent'=>['analytics'=>false,'marketing'=>false],'gpc'=>($_POST['gpc'] ?? '') === 'true' || ($_SERVER['HTTP_SEC_GPC'] ?? '') === '1'];
+        if (!mango_save_event($withdrawal)) { wp_send_json_error(['error'=>'storage_failed'], 503); }
+        mango_deliver($withdrawal['id']);
         $pending = get_user_meta($customer, '_mango_checkout', true);
         if (is_array($pending)) { $pending['completed'] = true; update_user_meta($customer, '_mango_checkout', $pending); }
-        setcookie('mango_session', '', ['expires'=>time()-3600,'path'=>'/','secure'=>true,'httponly'=>true,'samesite'=>'Lax']);
         wp_send_json_error(['error'=>'consent_required'], 403);
     }
     update_user_meta($customer, '_mango_consent', 'granted');

@@ -1,3 +1,4 @@
+import {expireOnsiteEvents} from '@/core/features/store/onsite-retention';
 import { resumeSmsServices } from '@/core/features/sms/service-delivery';
 import {withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
@@ -83,6 +84,7 @@ export async function runLifecycleCron(_event: unknown, runtime: LifecycleRuntim
   const pending=await pendingErasure(runtime.platform.database.$client);if(pending){await continueErasure(runtime.platform,pending.reference);return 'blocked-erasure' as const;}
   return withErasureWriteFence(runtime.platform.database.$client,async()=>{
   const now = new Date();
+  await expireOnsiteEvents(runtime.platform.database.$client, now.getTime());
   await repository.expireDueRecipients(now);
   // Dispatch due steps before optional source synchronization and reconciliation.
   const due = await repository.listDueSteps(now);

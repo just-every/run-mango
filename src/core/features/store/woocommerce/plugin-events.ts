@@ -7,13 +7,17 @@ import type {WooConnection} from './connection';
 import {wooApi} from './http';
 import {identifier, object, wooIdentity} from './normalize';
 export const pluginEventSchema = z.object({
-  version: z.literal(1), id: z.string().uuid(), kind: z.enum(['active_on_site','viewed_product','added_to_cart','started_checkout','abandoned_checkout']),
+  version: z.literal(1), id: z.string().uuid(), kind: z.enum(['active_on_site','viewed_product','added_to_cart','started_checkout','abandoned_checkout','privacy_withdrawal']),
   occurredAt: z.string().datetime(), customerId: z.string().regex(/^[1-9]\d{0,30}$/),
   checkoutId: z.string().uuid().optional(), checkoutStartedAt: z.string().datetime().optional(), products: z.array(z.string().regex(/^[1-9]\d{0,30}$/)).max(50),
-  consent: z.object({analytics: z.literal(true), marketing: z.literal(true)}).strict(), gpc: z.literal(false),
-}).strict().superRefine((value, context) => {if (['started_checkout','abandoned_checkout'].includes(value.kind) && (!value.checkoutId || !value.checkoutStartedAt)) context.addIssue({code: 'custom', message: 'Checkout identity is required.'});});
+  consent: z.object({analytics: z.boolean(), marketing: z.boolean()}).strict(), gpc: z.boolean(),
+}).strict().superRefine((value, context) => {
+  if (value.kind !== 'privacy_withdrawal' && (!value.consent.analytics || !value.consent.marketing || value.gpc)) context.addIssue({code:'custom',message:'Observation consent is required.'});
+  if (value.kind === 'privacy_withdrawal' && (value.products.length || value.checkoutId || value.checkoutStartedAt)) context.addIssue({code:'custom',message:'Withdrawal cannot contain product or checkout facts.'});
+  if (['started_checkout','abandoned_checkout'].includes(value.kind) && (!value.checkoutId || !value.checkoutStartedAt)) context.addIssue({code: 'custom', message: 'Checkout identity is required.'});});
 export type PluginEvent = z.infer<typeof pluginEventSchema>;
 export async function verifyPluginEvent(request: Request, connection: WooConnection) {
+  if (new URL(request.url).protocol !== 'https:' || (request.headers.has('Origin') && new URL(request.headers.get('Origin')!).protocol !== 'https:')) throw new Error('Onsite observations require HTTPS.');
   const timestamp = request.headers.get('X-Mango-Timestamp') ?? '';
   if (!/^\d{10}$/.test(timestamp) || Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) throw new Error('Plugin signature expired.');
   const raw = new TextDecoder('utf-8', {fatal: true}).decode(await readWebhookBytes(request, 65536));

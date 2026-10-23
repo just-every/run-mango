@@ -15,6 +15,7 @@ const bodySchema = z.object({version:z.literal(1),channel:z.string().min(1).max(
 export function createShopifyCollector(options:{database:Database; shop:string; secret:string; channel:string; proxyPath:string; log:ReturnType<typeof createCommerceEventLog>}) {
   const db=options.database.$client;
   return async(request:Request):Promise<VerifiedCommerceWebhook>=>{
+    if(new URL(request.url).protocol!=='https:' || (request.headers.has('Origin') && new URL(request.headers.get('Origin')!).protocol!=='https:'))throw new Error('Onsite observations require HTTPS.');
     if(request.method!=='POST')throw new Error('Collector requires POST.');
     const rawBody=new TextDecoder('utf-8',{fatal:true}).decode(await readWebhookBytes(request,65536));
     const url=new URL(request.url), query=url.searchParams;

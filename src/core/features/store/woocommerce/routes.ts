@@ -1,3 +1,4 @@
+import {withdrawWooObservations} from './privacy';
 import {pluginRecord, verifyPluginEvent} from './plugin-events';
 import {enrollWooFlows} from './flows';
 import {Hono} from 'hono';
@@ -77,7 +78,12 @@ export function wooCommerceRoutes(platform: Platform, audience: ReturnType<typeo
     try {
       const prior = await db.prepare('SELECT digest FROM commerce_receipts WHERE id=?').bind(await sha256(verified.receipt.ids[0])).first<{digest: string}>();
       if (prior && prior.digest !== verified.receipt.digest) return context.json({error: 'plugin_event_conflict'}, 409);
-      const record = commerceProjection(await pluginRecord(verified.event, connection));
+      const observation = await pluginRecord(verified.event, connection);
+      if (verified.event.kind === 'privacy_withdrawal') {
+        await withdrawWooObservations(db, connection, verified.event, String((observation.payload.customer as {email:string}).email), verified.receipt);
+        return context.body(null, 204);
+      }
+      const record = commerceProjection(observation);
       await audience.ingestCommerceWebhook({provider: 'woocommerce:' + connection.id, completion: 'delta', adapterCompleted: false,
         sourceTypes: [record.sourceType], records: [record], receipt: verified.receipt});
       await enrollWooFlows(platform, connection, verified.event);

@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "62b403aa23faee8715641cefd0d1308b67f507d6ffb0fe84f9d011001ab3cc03",
+      "sha256": "f210d5284b9b8f2bdd51e75f7b2aa07e1c8596cb9773d48749bb06e28774c12f",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "e5b5562f2ca404abce0e1c5bc245cc9bf84101af5557b79d9802251e5cce649c",
+      "sha256": "1d65824b94d3b0ca76c7a499f94c000daadb4a4330b9884fd0501309a22c4e83",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "1d7a946825fc3a0991d2fc6512441ef212f3e10b3eceff373bf4edc22fd23165",
+      "sha256": "a3c5dff80e031e3640947d27eda5fd95b7b92ec4ce6bd60aad693fdaa31049b4",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1134,11 +1134,11 @@
       "executable": false
     },
     "extensions/mango-pixel/src/index.js": {
-      "sha256": "e74c4588c9c5b10588ff4b0ccc4422a8b6d01df4a794f2acb5a4595f6e7a8e26",
+      "sha256": "78c65cc10a167ec6d1ee17b8c4ca2251a23cc34e9cb7acb0e49b47c0bd13cd0c",
       "executable": false
     },
     "extensions/mango-woocommerce/delivery.php": {
-      "sha256": "76a2975c45286de3aa9f73345db80496068567e3931ff634f4b5ede43e114bd3",
+      "sha256": "98c90c89254e3ae29451832fba7a4aed000dffe4dc07b533663e534fdf429d4f",
       "executable": false
     },
     "extensions/mango-woocommerce/INSTALL.md": {
@@ -1146,15 +1146,15 @@
       "executable": false
     },
     "extensions/mango-woocommerce/mango-woocommerce.php": {
-      "sha256": "fe23ec208d3a293a6555986ff967a8cf350cca980b67a57000d7ce822bca8a0a",
+      "sha256": "5eea59c2b5b12f856ca14af0912d96dd44f9681ffd4ce484d93ad3f30c118553",
       "executable": false
     },
     "extensions/mango-woocommerce/observations.js": {
-      "sha256": "c48dca9277d140039c682e1a3b857365e97a36265622e9c028afa5b5695e0ea0",
+      "sha256": "d77ba9918e5a5cff4e1133cf2f9591a5dc4d7def232fe5e40a87006390703588",
       "executable": false
     },
     "extensions/mango-woocommerce/observations.php": {
-      "sha256": "6e4af2b0f0dab8394d83496877cad99a95032d2f100848e165df85f324ec73a0",
+      "sha256": "3496afa76f5064fedbf2eaa10f52446c046f4111b92e2aa811efdd0c7f334504",
       "executable": false
     },
     "extensions/mango-woocommerce/privacy.php": {
@@ -1527,6 +1527,10 @@
     },
     "migrations/core/0087_paid_state_authority.sql": {
       "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
+      "executable": false
+    },
+    "migrations/core/0088_woocommerce_privacy_controls.sql": {
+      "sha256": "bfab0e2133f948632fb2a2015143efca15907551bae69e1074206cbc999cae8e",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -2470,7 +2474,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "291b45be636292ccd318cf461415d8521aa9197b7752bb942ce156dbbfd2d493",
+      "sha256": "749ead6521a091a7fb4e142ce541d8840bc46b4c02c2f39f295990be62721cf6",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -2710,7 +2714,7 @@
       "executable": false
     },
     "src/core/features/audience/rule-matcher.ts": {
-      "sha256": "5d42e4850ad899d40510d38b8830292fa8038873fa4cce35575cb81f8ce7e28d",
+      "sha256": "a09f5e53aa15799a364f893a71ae00edfc8e441c7f28bcfcd059b9c432f88b12",
       "executable": false
     },
     "src/core/features/audience/rule-values.ts": {
@@ -2754,7 +2758,7 @@
       "executable": false
     },
     "src/core/features/audience/source-coverage.ts": {
-      "sha256": "53e4f5e5f6fdf888509b9158e80630e595a4af5fafd17f35f65c77a5bcfea444",
+      "sha256": "d21e7f78aab39da4138b1cc665a61ff2984b6b2c69b6080fe75a7c0f3fb2881d",
       "executable": false
     },
     "src/core/features/audience/suppression-writer.ts": {
@@ -3234,7 +3238,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/audience-predicate-fields.tsx": {
-      "sha256": "31cb3e29988916b2d700470372ad74c61268ad92e31d759e43979e8eab475dbe",
+      "sha256": "1107980ce212f00a3efdd1565db22fd69de7d2a085fa43dd458a8dbb3230cd7b",
       "executable": false
     },
     "src/core/features/campaigns/ui/audience-rule-editor.tsx": {
@@ -4150,7 +4154,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/index.ts": {
-      "sha256": "30d725115dc1e78ec141729d122ec46aceac6985060075bb0959acc2f1f76536",
+      "sha256": "8f0aa59206cb7a2166d96c8258a853f229d8bed50852023f207381a3ba6770e3",
       "executable": false
     },
     "src/core/features/lifecycle/link-checks.ts": {
@@ -4218,7 +4222,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/rules.ts": {
-      "sha256": "97eacc93c337bcbf3846125054bd0fb995e92f9f985b9273287d2443a1b0481e",
+      "sha256": "76a38b3e24f0ac4668e31df0e549c5999817b05c8b93d7c4c073a450e51d5947",
       "executable": false
     },
     "src/core/features/lifecycle/schedule.ts": {
@@ -4318,7 +4322,7 @@
       "executable": false
     },
     "src/core/features/portability/policy.ts": {
-      "sha256": "d2a426350085152eb5dccb9b23d928444cb19acccad3de7a4863c987daa541e0",
+      "sha256": "c989b6b33d46d9e34b20803724c5444ea4454b303b381b4dd989c0fdf94306ec",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -4654,7 +4658,7 @@
       "executable": false
     },
     "src/core/features/store/atomic-ingestion.ts": {
-      "sha256": "6839929e01ceb6d3782e451822d75241acba057718cb25f2d4398288c2402dc1",
+      "sha256": "0b31596cd55e3eeed15b621b3e9be6a542abaca155b9f29fb89bbcb4fa81103a",
       "executable": false
     },
     "src/core/features/store/commerce-contact.ts": {
@@ -4665,8 +4669,12 @@
       "sha256": "b606bdcf9eabe2ef7606652923c23acdfb1a12fba709b9c3711aaa7472a97151",
       "executable": false
     },
+    "src/core/features/store/onsite-retention.ts": {
+      "sha256": "3cda4b3809847e2c6c08fb46aef5086b180d25f18136d93770a99380d5becf44",
+      "executable": false
+    },
     "src/core/features/store/repository.ts": {
-      "sha256": "0bd8cd40baf606f73d3ff1c5e73b6734c56a8a75c2d8dec9a937bebc89128b7a",
+      "sha256": "3237982d964ea61fc662551bbdfababa916fec3c63a40ad34b537636fa4f9605",
       "executable": false
     },
     "src/core/features/store/routes.ts": {
@@ -4682,7 +4690,7 @@
       "executable": false
     },
     "src/core/features/store/shopify/collector.ts": {
-      "sha256": "76054f02dfdc61ca9b726f83bee3851feae9993b42518c56a227e7da50d32a24",
+      "sha256": "c736552a0d1eba52c58ee713a9ee17209377cb11e5b9753f43d1220bc88c045b",
       "executable": false
     },
     "src/core/features/store/shopify/event-log.ts": {
@@ -4826,11 +4834,15 @@
       "executable": false
     },
     "src/core/features/store/woocommerce/plugin-events.ts": {
-      "sha256": "bc3eb31725d74f8b5f9e98fbbd1627b20daa763eefe4f456baae9a2bbe9a9927",
+      "sha256": "d5e52946ae133a6e12b8c1255a639294ca0a43fc1c6355fe67c990129e28a6bc",
+      "executable": false
+    },
+    "src/core/features/store/woocommerce/privacy.ts": {
+      "sha256": "c7d8fc821468de698c2dc17cd93103ae465b1e8c62fd4298075ea7c9b57e0479",
       "executable": false
     },
     "src/core/features/store/woocommerce/routes.ts": {
-      "sha256": "e3e5a8c6d28a49f69e946592cb20d65df8e7bad0aead39985b550447b8d3c073",
+      "sha256": "e8336cffbcd4eaecdec394c9dbf4f1d985af7dd0857aa4f890b5259fc8a9c6c2",
       "executable": false
     },
     "src/core/platform/adapters/base-mail.ts": {
@@ -6994,7 +7006,7 @@
       "executable": false
     },
     "tests/audience-controls/segment-journey.ts": {
-      "sha256": "3787b56d8ea022e5396be72a60e113ddd5df557bc9f1d5011288932fb817c7bd",
+      "sha256": "bb72881372cde58c8fe9f46f2c339fc45780d1840a3367094c48d7cda9e7d44a",
       "executable": false
     },
     "tests/audience-controls/segments.spec.ts": {
@@ -7574,11 +7586,11 @@
       "executable": false
     },
     "tests/go-live/woocommerce-plugin-journey.ts": {
-      "sha256": "d42a17e255154c7ee7991b0a02131ed442d2f8c9b0da89ad15de590382db5779",
+      "sha256": "5415fbcfabbdc53bba11abb555aceb31c02343a0c31910a9302eab4df7dcd40b",
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "e5fa51f00f084528d04cfd50e80968a63823eb078f50462e7b46983893b92e5d",
+      "sha256": "d42afbd240fd68e66dfc7badeb20216aabcd6a8be83ea680cfce97c23c5e4069",
       "executable": false
     },
     "tests/go-live/worker.ts": {
@@ -7810,7 +7822,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "2b6f9bcc9689825edc01ca01396e86ec12321fdd61959cb434677e43291aae9c",
+      "sha256": "f32bd0f3f1d0876cfbed46e749d9a4336f44339ec6a90f0ac411c458f18c95a0",
       "executable": false
     },
     "tests/portability/flows.ts": {
@@ -7938,7 +7950,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "ad307ec52dc3c296453a1d95eee12f35c9474ce624cf24d8feb14b47804b4aef",
+      "sha256": "cc97f0d66d1032d1ac9f228425e28ce4805d6d9ca3403c237756523d3111544c",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
@@ -7954,11 +7966,11 @@
       "executable": false
     },
     "tests/shopify/runtime.mjs": {
-      "sha256": "f6fdffd5e6e6a4045418bf74df3e8e43e6c23747c65ca8b182bccfa3d4d002c9",
+      "sha256": "01de6dc01ad05f349950979b0e83e0b80b457dcb68700f612cb82280e0521542",
       "executable": false
     },
     "tests/shopify/worker.ts": {
-      "sha256": "d30f3d34fcce29d8b46237fbfdc62bbba8a8d0b5c41c163e5a0acc3b00990b89",
+      "sha256": "4dbdf996a180a7f54a11f6eec590d56f9a77fb87f21bb90a617b8da0680ac97d",
       "executable": false
     },
     "tests/single-attempt-delivery/delivery.spec.ts": {

@@ -73,7 +73,8 @@ export function createRuleMatcher(repository:Repository,store:Store,now:Date,cha
       return p.field==='tags'?memberMatch(value as unknown[],p):matchesComparator(value,p.comparator,p.value);
     }
     const sourceType=p.sourceType==='browsing'?'browsing-event':p.sourceType;
-    const earliest=p.lookbackDays===undefined?undefined:now.getTime()-p.lookbackDays*dayMs;
+    const window=p.lookbackDays??(['cart','browsing'].includes(p.sourceType)?90:undefined);
+    const earliest=window===undefined?undefined:now.getTime()-window*dayMs;
     const matching=(await records(id)).filter(source=>{
       if(source.sourceType!==sourceType)return false;
       const payload=asRecord(source.payload);

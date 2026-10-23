@@ -20,6 +20,7 @@ export function createAtomicCommerceIngestion(database: Database) {
       ON CONFLICT(id) DO UPDATE SET digest=CASE WHEN commerce_receipts.digest=excluded.digest THEN excluded.digest ELSE NULL END`).bind(await sha256(id),receipt!.digest,now.getTime()));
     for (const input of records) {
       const record={...input};
+      if (['shopify-signed-logged-in-customer','woocommerce-signed-logged-in-customer'].includes(String(record.payload.identity)) && record.occurredAt.getTime()<=now.getTime()-90*86400000) continue; // An old provider replay cannot recreate expired onsite history.
       const payload = stableJson(record.payload), digest = await sha256(payload);
       const prior = await db.prepare('SELECT id,coalesce(provider_updated_at,occurred_at) version FROM source_records WHERE provider=? AND source_type=? AND provider_source_id=?').bind(provider,record.sourceType,record.providerSourceId).first<{id:string;version:number}>();
       const id = prior?.id ?? `source_${await sha256(`${provider}:${record.sourceType}:${record.providerSourceId}`)}`, version = (record.providerUpdatedAt ?? record.occurredAt).getTime();
@@ -31,6 +32,9 @@ export function createAtomicCommerceIngestion(database: Database) {
       if(record.contactId)statements.push(db.prepare(`INSERT INTO commerce_transaction_guard SELECT CASE WHEN EXISTS(SELECT 1 FROM contacts WHERE id=? AND merge_lock IS NULL) AND NOT EXISTS(SELECT 1 FROM contacts WHERE merge_lock IS NOT NULL) THEN 1 ELSE 0 END`).bind(record.contactId));
       if (record.contactId && record.payload.identity === 'shopify-signed-logged-in-customer' && record.payload.observation !== 'privacy_revoked') {
         statements.push(db.prepare('INSERT INTO commerce_transaction_guard SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM commerce_privacy_controls WHERE contact_id=? AND revoked_at>=?) THEN 1 ELSE 0 END').bind(record.contactId,record.occurredAt.getTime()));
+      }
+      if (record.contactId && record.payload.identity === 'woocommerce-signed-logged-in-customer') {
+        statements.push(db.prepare('INSERT INTO commerce_transaction_guard SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM woocommerce_privacy_controls WHERE connection_id=? AND contact_id=? AND revoked_at>=?) THEN 1 ELSE 0 END').bind(provider.slice('woocommerce:'.length), record.contactId, record.occurredAt.getTime()));
       }
       statements.push(db.prepare(`INSERT INTO source_records(id,provider,source_type,provider_source_id,contact_id,occurred_at,payload,payload_digest,created_at,updated_at,provider_updated_at,snapshot_run_id)
         VALUES(?,?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(provider,source_type,provider_source_id) DO UPDATE SET
