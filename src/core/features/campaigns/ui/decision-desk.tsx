@@ -1,4 +1,5 @@
 import {SignupRefusalAlert} from '@/core/features/audience/ui/signup-refusal-report';
+import {SenderRenewalCard} from '@/core/features/sender-verification/ui/renewal-card';
 import { capabilityName, capabilityNextStep, plainServiceText } from '@/core/app/client/ui/product-copy';
 import { requestJson } from '@/core/app/client/lib/api';
 import { Link, useLoaderData } from '@tanstack/react-router';
@@ -77,6 +78,7 @@ export function DecisionDeskPage() {
         </div>
       </header>
       <SignupRefusalAlert />
+      <SenderRenewalCard/>
       {generationNotice?<p className={generationSuccess?'action-notice':'inline-error'} role={generationSuccess?'status':'alert'}>{plainServiceText(generationNotice)}</p>:null}
       {entry && selectedId ? (
         <div className="decision-desk__proposals">

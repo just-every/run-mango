@@ -1174,7 +1174,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "55b94ffa05beaa6cd2760ff67522d125b34375f9ed9a7c15d0b09e536a7142bb",
+      "sha256": "64fc75643449d6c7d257e3786c568112e85d1ad96778db78178f7b32a744f34f",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1547,6 +1547,10 @@
     },
     "migrations/core/0093_recipient_unsubscribe_method.sql": {
       "sha256": "816af91552d0c88a9b9bb57d18e027de7bf64700c2ce96191040f098d21b7550",
+      "executable": false
+    },
+    "migrations/core/0094_sender_renewal_deliveries.sql": {
+      "sha256": "9c816c8d74c513f9504a367fd1316fca05e8e0a360aed3f7b1d4111fe8f9fca3",
       "executable": false
     },
     "OPERATIONS.json": {
@@ -2494,7 +2498,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "2f3360292c66dee069162818fe656f98ede3c31e27ffcfae779209245bed4f3c",
+      "sha256": "379ef8f5996cef404933015b3976cf446dcb601cf1db8e6f02e68122a52539a8",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -3394,7 +3398,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/decision-desk.tsx": {
-      "sha256": "7eda3576e51501d092ff675fe229d150ad2f0e605d26ff20ce175d9bcb1166d2",
+      "sha256": "6da0a3439b9cbbd42692b6b0f77bdc1ee4ed2649ef7cfe6214edc67d19eadaae",
       "executable": false
     },
     "src/core/features/campaigns/ui/delivery-plan.tsx": {
@@ -4513,16 +4517,24 @@
       "sha256": "385c503a43e58004fa6922222d5bf4365da2c8044314a20d3743b38d3b79e645",
       "executable": false
     },
+    "src/core/features/sender-verification/renewal-routes.ts": {
+      "sha256": "dfd5c54d5e9ddc9577ad85e0d9fa712829a5379a563f510614ef1b6a25f296ad",
+      "executable": false
+    },
+    "src/core/features/sender-verification/renewal.ts": {
+      "sha256": "e5ce18e755ee18119d8440eefb1da70752c61b65bd07c573863864edae1a42b5",
+      "executable": false
+    },
     "src/core/features/sender-verification/repository.ts": {
       "sha256": "46460b09ab037e27358915a6900a877451f8f2883bbdbf625b96b939d55d7615",
       "executable": false
     },
     "src/core/features/sender-verification/service.ts": {
-      "sha256": "5702574b3a39804933aa12966d6c01bd26eb1309844b408618d3ab7e6b67dc5c",
+      "sha256": "99e286ff81e70c6ced10e1fe138bb43f60ffe18667e42942a437d165a09e0ea5",
       "executable": false
     },
     "src/core/features/sender-verification/setup-routes.ts": {
-      "sha256": "f0cdd60343a052af4a701e3faa6a6825adc157ffb0264359a0a74f100e8af272",
+      "sha256": "03e0b21ac8d2f36b3b93861bcbfbb1f3b9439ed2607a038677e5c541f3ac8e17",
       "executable": false
     },
     "src/core/features/sender-verification/spf.ts": {
@@ -4539,6 +4551,10 @@
     },
     "src/core/features/sender-verification/types.ts": {
       "sha256": "4564e5a4e3e4e0850090e0aef565577794e5a5d6b19fb432bed5a3c1c0d5695a",
+      "executable": false
+    },
+    "src/core/features/sender-verification/ui/renewal-card.tsx": {
+      "sha256": "41999460f8d5393a9721da0109bfc7b68da3d29f1fdcb50167dc6fecf1359111",
       "executable": false
     },
     "src/core/features/settings/analytics-policy.ts": {
@@ -7598,7 +7614,7 @@
       "executable": false
     },
     "tests/go-live/managed-mail.journeys.ts": {
-      "sha256": "94c97438d72f94b0b9e94a1fc663f2c4a180a15199cd9428446aab040bfa1031",
+      "sha256": "30b4e4aeec087426b815ca24f3a01ac23e381e6afc65cf9541233d4d84987032",
       "executable": false
     },
     "tests/go-live/manual-entry-journey.ts": {
@@ -7687,6 +7703,10 @@
     },
     "tests/go-live/scheduler.journeys.ts": {
       "sha256": "70a202cdae2692db134178014484017db5f8f8797c12fb16a146308dc278bb46",
+      "executable": false
+    },
+    "tests/go-live/sender-renewal-journey.ts": {
+      "sha256": "43d0189d1011abfd185aff768492ba4a2f77aae0b21138883ec1bfe5c3d9b448",
       "executable": false
     },
     "tests/go-live/sendgrid-events.ts": {
@@ -8073,6 +8093,10 @@
       "sha256": "c328595d88f8897e5f622c5c0f411986c82b1d8336d5a831035661d597ac0073",
       "executable": false
     },
+    "tests/sender-verification/renewal-proof.ts": {
+      "sha256": "254fe4c3be5dc930855ac25cc96d8775800f788f4d9f9377f8b6b3fec8973896",
+      "executable": false
+    },
     "tests/sender-verification/restart.spec.ts": {
       "sha256": "226d263a0f596f264b86e3d16551e0c851cfe791bc56e8a0c558827e096bf784",
       "executable": false
@@ -8082,11 +8106,11 @@
       "executable": false
     },
     "tests/sender-verification/worker-entry.ts": {
-      "sha256": "bb437ee4f00f57e2b0bce48b1f25b59ce58444faf22a6268d1c26f921e1f6395",
+      "sha256": "19ceb438f303dfc9df58e065c98a867216da8e17aa2166732c656232f8b315a2",
       "executable": false
     },
     "tests/sender-verification/worker.spec.ts": {
-      "sha256": "4d6abe5438dbf7de43c3d8c568e62b92b29761e2fee2847f7b159d5779bb7428",
+      "sha256": "12c2d5563a434e9c38b136c35fed5320e84a79dedd43915c0b9ff43de69a2ed9",
       "executable": false
     },
     "tests/settings-sender/config.js": {

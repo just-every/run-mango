@@ -80,4 +80,6 @@ export const contactErasureTables:ErasureTable[]=[
   {table:'link_host_exclusions',literal:true,mode:'redact'},
   {table:'link_host_sources',literal:true,mode:'redact'},
   {table:'link_host_source_versions',literal:true,mode:'redact'},
+  // Operator-only delivery markers contain no contact data: erasure is a no-op.
+  {table:'sender_renewal_deliveries',where:()=>({sql:'0',params:[]})},
 ];
