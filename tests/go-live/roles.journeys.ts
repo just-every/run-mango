@@ -45,7 +45,7 @@ test('[INT-004][OPER-003][OPER-004] roles govern native requests and removal ret
         expect((await response.json()).error).toBe('role_forbidden');
       } else if(response.status===403)expect((await response.json()).error).not.toBe('role_forbidden');
     }
-    const campaign=await draftCampaign(site,cookies.author!,'Weekend planting letter',['riley@example.test'],new Date(Date.now()+86400000));
+    const campaign=await draftCampaign(site,cookies.author!,'Weekend planting letter',['riley@example.test'],new Date((await site.control('/_golive/clock')).now+86400000));
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/request-approval`,{method:'POST',cookie:cookies.author,body:{revisionId:campaign.revisionId}})).status).toBe(200);
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/test-send`,{method:'POST',cookie:cookies.author,body:{revisionId:campaign.revisionId,channel:'email',to:['forbidden@example.test']}})).status).toBe(403);
     await availableTransport(site);
