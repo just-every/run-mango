@@ -1,3 +1,4 @@
+import {OverviewDashboard} from './overview-dashboard';
 import { ListGrowth } from './list-growth';
 import { RetentionAnalytics } from './retention-report';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
@@ -45,6 +46,7 @@ export function InsightsPage() {
           <p className="page-head__lead">{data.note}</p>
         </div>
       </header>
+      <OverviewDashboard/>
       <OpenEstimates onSettingsChanged={() => setSettingsVersion(version => version + 1)} />
       <AttributionSettings onSettingsChanged={() => setSettingsVersion(version => version + 1)} />
       <CampaignPerformance settingsVersion={settingsVersion} />

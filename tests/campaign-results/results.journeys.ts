@@ -1,3 +1,4 @@
+import {proveOverview} from './overview-journey';
 import { exerciseRetention } from './retention-journey';
 import { exerciseCampaignReports } from './reporting-journey';
 import { localSessionCookieName } from '../support/local-session';
@@ -21,7 +22,7 @@ function expectedLocalClockAndZone(value:string,timeZone:string) {
   return `${parts.hour}:${parts.minute} ${parts.dayPeriod} ${parts.timeZoneName}`;
 }
 for(const width of [1440,390]) {
-  contract('RESULT-001',`campaign names come from the collection when detail requests fail at ${width}`,async({page,request})=>{
+  contract('RESULT-001',`[REPORT-001] campaign names come from the collection when detail requests fail and overview matches period records at ${width}`,async({page,request})=>{
     await seed(request,'filters');await login(page,request);await page.setViewportSize({width,height:900});
     const response=await page.request.get(`${runtime.url}/api/campaigns`);expect(response.ok()).toBe(true);const collection=await response.json();
     const names=collection.campaigns.map((campaign:any)=>campaign.name);
@@ -36,6 +37,7 @@ for(const width of [1440,390]) {
     expect(await textContrast(cancelled)).toBeGreaterThanOrEqual(4.5);
     await accessible(page,width);
     await page.screenshot({path:test.info().outputPath(`campaign-names-${width}.png`),fullPage:true});
+    await proveOverview(page,request,runtime,width,test.info());
   });
   contract('CAMP-001',`[CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at ${width}`,async({page,request})=>{
     await seed(request,'outcomes');await login(page,request);await page.setViewportSize({width,height:900});
