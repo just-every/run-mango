@@ -48,10 +48,10 @@ export function createPublicCaptureWriter(database: Database) {
       eligible+=` AND ${senderWriteGuard} AND EXISTS(SELECT 1 FROM oa_operators n JOIN operators p ON p.id=n.id LEFT JOIN operator_product_roles r ON r.operator_id=n.id WHERE n.id=? AND n.status='active' AND ${effectiveRole} IN ('owner','admin','manager','author'))`;
       guard.push(actor.sessionId,actor.operatorId,actor.version,Date.now(),actor.operatorId);
     }
-    const isResubscribe = `EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel='email')
+    const isResubscribe = manual ? '0' : `EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel='email')
       OR EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email')
       OR EXISTS(SELECT 1 FROM contacts WHERE id=${owner} AND email_status IN ('unsubscribed','suppressed'))`;
-    const resubscribeValues = [destinationHash,destinationHash,...ownerValues];
+    const resubscribeValues = manual ? [] : [destinationHash,destinationHash,...ownerValues];
     const statements = [
       db.prepare(`INSERT INTO contacts(id,email,display_name,email_status,sms_status,email_status_at,sms_status_at,last_activity_at,created_at,updated_at)
         SELECT ?,?,?,CASE WHEN ${isResubscribe} THEN 'unsubscribed' ELSE 'pending' END,'non-subscribed',?,?,?,?,? WHERE ${eligible}
