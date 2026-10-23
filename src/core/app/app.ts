@@ -310,7 +310,7 @@ export function createApp(
   app.route('/',createOpenPixelRoutes(platform));
   app.route('/',archivePublicRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   const integrations = createIntegrationService(platform, audienceService);
-  app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations));
+  app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations, platform));
   mountBeforeAuthentication?.(app, services);
   if (!mountBeforeAuthentication) app.all('/api/_local/*', (context) => context.json({ error: 'not_found' }, 404));
 

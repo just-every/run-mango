@@ -947,8 +947,8 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 79 | 8 | 0 | 87 |
-| Target and push further | 18 | 55 | 83 | 156 |
-| All | 97 | 63 | 83 | 243 |
+| Target and push further | 19 | 54 | 83 | 156 |
+| All | 98 | 62 | 83 | 243 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -1151,7 +1151,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `INT-004` | Stripe | target | partial | `src/core/features/store/stripe/` · `tests/go-live/roles.journeys.ts` · `tests/portability.spec.ts` | Owner-only encrypted connection and signed once-only commerce event ingestion. Gap: required real-provider lifecycle proof cannot start as written: Stripe rejects metadata on a test clock (HTTP 400 parameter_unknown, metadata). No real lifecycle events or cleanup search proof claimed. FLOW-001/FLOW-002 inherit renewal-reminder enrolment without status changes. |
 | `INT-005` | Square | target | missing |  | not implemented |
 | `INT-006` | Stall and Orbit | target | missing |  | not implemented |
-| `INT-007` | Events and profiles API | target | partial | `tests/go-live/integrations.journeys.ts` · `docs/integrations.md` | Owner-created revocable scoped credentials, audited/rate-limited contact upsert with fields/tags and consent evidence, suppression, approved-segment dispatch and a replayable unsubscribe/bounce/complaint feed are implemented. General custom-event ingestion and its complete target acceptance remain unmet. |
+| `INT-007` | Events and profiles API | target | done | `tests/go-live/integrations.journeys.ts` via `tests/go-live/custom-event-journey.ts`: shipped JavaScript client records one general event on concurrent replay, rejects conflicting content, reads profile and rule-derived segment membership, refuses subscribe without evidence by name and exhausts one key without affecting another; timeline at 1440/390 passes axe, overflow and hydration checks. OpenAPI: `src/core/features/integrations/openapi.ts`; client: `src/core/features/integrations/client-source.ts`. Existing scoped profile/consent/suppression, conversion and refusal-feed journeys remain green. | Website keys stay on the website server; browser clients use an authenticated same-origin proxy. No automatic visitor collection or consent inference. |
 | `INT-008` | Outbound webhooks | target | missing |  | not implemented |
 | `INT-009` | Zapier and Crank | target | missing |  | not implemented |
 | `INT-010` | Segment | target | missing |  | not implemented |

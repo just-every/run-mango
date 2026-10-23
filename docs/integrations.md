@@ -97,3 +97,26 @@ In WooCommerce → Settings → Advanced → Webhooks, create active `customer.c
 Open Store and sync Customers, Products, Orders and Refunds. Each source retains its last completed sync and shows a failed operation if the provider refuses a page. Retry resumes its saved cursor. Source identifiers include the store identity; source creation and update times remain separate. A new connection requires fresh syncs. Disconnect cancels pending WooCommerce syncs and retains imported records. This connection uses Mango’s existing single-store snapshot authority; disconnect an installation-configured Shopify store before connecting WooCommerce.
 
 WooCommerce orders and refunds use the same financial projection as the existing store adapter. Refunds include merchant-recorded manual refunds; the source record separately retains whether the payment gateway API performed the refund. Install the [Mango WordPress plugin](https://github.com/just-every/run-mango/tree/main/extensions/mango-woocommerce) for onsite observations, checkout detection and the native signup form shortcode. Its [installation guide](https://github.com/just-every/run-mango/blob/main/extensions/mango-woocommerce/INSTALL.md) explains explicit store-owner enablement, consent-manager wiring, GPC, the 30-day first-party cookie and WordPress outbox retention. Tracking is off initially and identifies only signed-in store customers. Enable the verified plugin connection in Mango, then sync Cart and Browsing Event in Store. Save and explicitly activate a checkout flow revision in Settings: an eligible abandoned-checkout observation tags the contact once and exits without sending a message. A store customer remains non-subscribed unless Mango already holds their consent, and existing opt-outs and suppression remain unchanged.
+
+## General custom events and JavaScript
+
+`POST /api/integrations/v1/events` accepts a general fact with `events:write`:
+
+```json
+{"name":"sample.requested","contactId":"CONTACT_ID","idempotencyKey":"website:sample:42","occurredAt":"2026-10-23T10:00:00Z","properties":{"sample":"linen","quantity":2}}
+```
+
+The contact must already exist. This door never creates a contact, subscribes anyone or sends a message. A key and idempotency key identify one immutable fact: retry unchanged to receive `replayed`; different content returns `409 idempotency_conflict`. Facts retain their key source and occurrence time on the contact timeline. Properties are flat strings, finite numbers, booleans or null, at most 50 values and 16 KiB for the complete fact; strings are bounded to 2,000 characters. Future events are refused. Existing source-record merge, export, archive and erasure rules apply.
+
+The same route retains its financial-conversion format. `GET /contacts?email=...` returns a profile's integration `segmentIds`, and `GET /segments` names those lists. `GET /contacts/CONTACT_ID/segments` returns current rule-derived membership using the operator profile matcher, with unavailable source-dependent segments explicitly marked `unavailable`. A subscribe write without evidence returns `400 consent_evidence_required`; full evidence must still pass validation and existing opt-outs and suppressions win. Each key has its own 60-request UTC-minute allowance; `429 rate_limited` includes `Retry-After`.
+
+The machine-readable OpenAPI description is `/api/integrations/v1/openapi.json`. The dependency-free JavaScript module is `/api/integrations/v1/client.mjs`:
+
+```js
+import {createMangoClient} from '/api/integrations/v1/client.mjs';
+// Server-side: keep this key in your application's private settings.
+const mango = createMangoClient({baseUrl: mangoApiUrl, token: serverHeldKey});
+await mango.track(event);
+```
+
+Methods are `identify`, `profiles`, `memberships`, `segments`, `track`, `changes` and `suppress`. There is no automatic tracking, browser storage or automatic retry. A website must send through its own authenticated, consent-aware server proxy; omit `token` in its browser client and point `baseUrl` at that proxy. Never embed an installation key in public JavaScript. Mango does not grant cross-origin browser admission or collect anonymous visitors through this API. Host and server-proxy authorization are the website operator's responsibility.

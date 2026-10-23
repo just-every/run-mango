@@ -1,10 +1,11 @@
+import {proveCustomEvents} from './custom-event-journey';
 import { test, expect } from '@playwright/test';
 import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
 import { activityJourney } from './activity-log';
 import { installation, json, sender, draftCampaign, approve, dispatch, signedPost } from './harness';
 
-test('[INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
+test('[INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
   const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer);
   try {
     const cookie = await site.open();
@@ -28,7 +29,8 @@ test('[INT-007][INT-011][OPER-007][CONT-004][CONT-006] scoped client sync, repla
     expect(replay.contact.id).toBe(first.contact.id);
     expect(replay.contact).toMatchObject({email: 'alex@example.test', emailStatus: 'subscribed', fields: {cofferDonorId: 'alex'}, tags: ['donor']});
     await json(await api('/contacts', 'PUT', {...contact, email: 'blair@example.test', displayName: 'Blair Lane', segmentName: 'Coffer follow-up donors'}), 200);
-    expect((await api('/contacts', 'PUT', {...contact, email: 'missing-evidence@example.test', consent: undefined})).status).toBe(400);
+    expect(await json(await api('/contacts', 'PUT', {...contact, email: 'missing-evidence@example.test', consent: undefined}),400)).toEqual({error:'consent_evidence_required'});
+    await proveCustomEvents(site,cookie,first.contact.id,first.contact.segmentIds[0],browserPage,info);
     const reader = await json(await site.call('/api/settings/integrations', {method: 'POST', cookie, body: {name: 'Read only', scopes: ['contacts:read']}}), 201);
     expect((await site.call('/api/integrations/v1/contacts', {method: 'PUT', headers: {Authorization: `Bearer ${reader.token}`}, body: contact})).status).toBe(403);
     const firstDue = new Date(Date.now() + 30000);
