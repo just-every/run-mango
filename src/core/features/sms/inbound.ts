@@ -45,6 +45,8 @@ export function createSmsInboundRoutes(platform:Platform){
    db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES(?,?,'sms',?,?,?,?) ON CONFLICT DO NOTHING").bind(`${id}:optout`,hash,id,occurred,now,now),
    db.prepare("UPDATE contacts SET sms_status='unsubscribed',sms_status_at=max(coalesce(sms_status_at,0),?),updated_at=? WHERE id IN (SELECT contact_id FROM contact_phones WHERE phone_e164=?) AND sms_status<>'suppressed'").bind(occurred,now,destination),
    db.prepare("UPDATE contact_phones SET channel_status='unsubscribed',channel_status_at=max(channel_status_at,?),updated_at=? WHERE phone_e164=? AND channel_status<>'suppressed'").bind(occurred,now,destination),
+   db.prepare(`UPDATE recipient_steps SET message_unsubscribed_at=?,unsubscribe_method=3 WHERE (id=? OR idempotency_key=?) AND provider_message_id=? AND contact_id=? AND destination=? AND channel='sms' AND provider='mobile-message' AND revision_id IN (SELECT id FROM campaign_revisions WHERE sms_sender=?) AND (message_unsubscribed_at IS NULL OR ?<message_unsubscribed_at)`)
+    .bind(occurred,reference??null,reference??null,value.original_message_id,contact?.id??null,destination,module.config.confirmationSender,occurred),
   ];
   // The provider documents empty original fields for a sender without a prior
   // outbound message. Its authenticated originating phone may always opt out.

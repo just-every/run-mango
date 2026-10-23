@@ -1,3 +1,4 @@
+import {recipientMethodJourney} from './recipient-method-journey';
 import {expect, type Page, type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {providerEdge} from '../go-live/edge';
@@ -176,6 +177,7 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     await follow(links[1], 'Barracuda LinkProtect', 'synthetic-mango-window-closed-scanner');
     expect((await result()).engagement).toEqual(closing.engagement);
     expect(await site.count('link_click_facts')).toBe(facts);
+    await recipientMethodJourney(site,edge,cookie,sent,page,info);
     expect(edge.unexpected).toEqual([]);
   } finally {await prepared.close();}
 }

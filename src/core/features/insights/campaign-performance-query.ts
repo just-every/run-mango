@@ -45,8 +45,7 @@ export async function campaignPerformance(database: Database, filter: CampaignPe
       COUNT(r.id) recipients,
       SUM(CASE WHEN r.transport_disposition='delivered' THEN 1 ELSE 0 END) delivered,
       SUM(CASE WHEN r.complained_at IS NOT NULL THEN 1 ELSE 0 END) complaints,
-      SUM(CASE WHEN EXISTS(SELECT 1 FROM public_action_tokens t WHERE t.recipient_step_id=r.id AND t.purpose='unsubscribe' AND t.used_at IS NOT NULL)
-        OR EXISTS(SELECT 1 FROM delivery_facts f WHERE f.recipient_step_id=r.id AND f.kind='unsubscribed') THEN 1 ELSE 0 END) unsubscribes
+      SUM(CASE WHEN r.message_unsubscribed_at IS NOT NULL THEN 1 ELSE 0 END) unsubscribes
       FROM selected_steps s LEFT JOIN selected_recipients r ON r.step_id=s.id
       GROUP BY s.revision_id,s.channel`).all<Totals>(),
     query(`SELECT r.revision_id,r.channel,COUNT(*) total_clicks,COUNT(DISTINCT r.id) unique_clicks

@@ -34,8 +34,8 @@ export async function campaignRecipientReport(database: Database, campaignId: st
 }
 
 export type CampaignRecipientReport = NonNullable<Awaited<ReturnType<typeof campaignRecipientReport>>>;
-const csvHeaders = ['Recipient-step ID', 'Step ID', 'Contact ID', 'Name', 'Destination', 'Channel', 'Disposition', 'Bounce type', 'Reason', 'Complaint at', 'Suppression at', 'Message unsubscribe at'];
-const csvRows = (rows: CampaignRecipient[]) => rows.map(row => [row.recipientStepId, row.stepId, row.contactId, row.displayName, row.destination, row.channel, row.disposition, row.bounceType, row.reason, row.complainedAt, row.suppressedAt, row.unsubscribedAt]);
+const csvHeaders = ['Recipient-step ID', 'Step ID', 'Contact ID', 'Name', 'Destination', 'Channel', 'Disposition', 'Bounce type', 'Reason', 'Complaint at', 'Suppression at', 'Message unsubscribe at', 'Unsubscribe method'];
+const csvRows = (rows: CampaignRecipient[]) => rows.map(row => [row.recipientStepId, row.stepId, row.contactId, row.displayName, row.destination, row.channel, row.disposition, row.bounceType, row.reason, row.complainedAt, row.suppressedAt, row.unsubscribedAt, row.unsubscribeMethod]);
 
 /** Exports precisely the supplied visible page. */
 export function campaignRecipientsCsv(report: Pick<CampaignRecipientReport, 'rows'>) {

@@ -36,6 +36,8 @@ export const recipientSteps = sqliteTable(
     bouncedAt: integer('bounced_at', { mode: 'timestamp_ms' }),
     complainedAt: integer('complained_at', { mode: 'timestamp_ms' }),
     suppressedAt: integer('suppressed_at', { mode: 'timestamp_ms' }),
+    messageUnsubscribedAt: integer('message_unsubscribed_at', { mode: 'timestamp_ms' }),
+    unsubscribeMethod: integer('unsubscribe_method'),
     attemptCount: integer('attempt_count').notNull(),
     firstAttemptAt: integer('first_attempt_at',{mode:'timestamp_ms'}),
     actualSender: text('actual_sender'),
