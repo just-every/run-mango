@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "b332213b9df4b308ca7c2c17ff1090dd3bc9369296ee3386a674e9ab13aef0e0",
+      "sha256": "ff909c698d2bfbeaab1b030d11763c7aca665af064b5e8d19b2736f66eb87311",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "230bf08cfbdc83c149a6d12499c06537614bb1ad06afeb585d5825c830bd80ef",
+      "sha256": "fa8c8a149e8e680ef58e86e54628c4df1ac7051fc6a4e1a4a728d11d450b74e1",
       "executable": false
     },
     "DEMO.md": {
@@ -4702,11 +4702,11 @@
       "executable": false
     },
     "src/core/features/store/stripe/paid-tier.ts": {
-      "sha256": "d3d42b85068c0a69667296ffb8270d9446eac0e41cbbcd971ed1d1625bc45c5f",
+      "sha256": "fe2e7e664da185fff3764e36a847bdc225dad5372fda998d02bb708493fb7310",
       "executable": false
     },
     "src/core/features/store/stripe/routes.ts": {
-      "sha256": "cfe2795ffa4467e4635b1ae1bb12240e0112a317250d6a00939132ab2f2034b9",
+      "sha256": "ff08211f7d2868d484f9b17b71790daa5bbc13f3a0db8f06664b031661f1cfb1",
       "executable": false
     },
     "src/core/features/store/stripe/secrets.ts": {
@@ -7474,7 +7474,7 @@
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
-      "sha256": "7704eeb261d13e4651441b374ff70a95d7d129980b929d131549af3fce955c3d",
+      "sha256": "c8f64f71fe3cae478b42fec6f4bb009c9eadfc48029a6f11da32c18d7b9085e2",
       "executable": false
     },
     "tests/go-live/pause.journeys.ts": {
