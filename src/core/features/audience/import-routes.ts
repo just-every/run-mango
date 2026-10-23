@@ -1,3 +1,4 @@
+import {readSignupRefusals} from './signup-refusals';
 import { loadSignupSettings, saveSignupSettings, signupSettingsSchema } from './signup-settings';
 import { SenderAuthorityChanged } from '@/core/features/settings/sender-authority';
 import { Hono } from 'hono';
@@ -22,6 +23,7 @@ export function createAudienceImportRoutes(platform: Platform) {
     // SMS columns are offered only where text messages are enabled.
     fields:Object.keys(defaultMapping).filter(id=>platform.sms||!id.startsWith('sms_')).map(id=>({id,label:id.replaceAll('_',' ')}))});
   });
+  routes.get('/audience/signup/refusals',async context=>context.json(await readSignupRefusals(platform.database.$client)));
   routes.get('/audience/signup',async context=>{
     const origin=platform.config.local===true?new URL(context.req.url).origin:platform.config.publicBaseUrl;
     const url=new URL('/subscribe',origin).toString();
