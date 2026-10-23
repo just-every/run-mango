@@ -9,7 +9,7 @@ import {installation,json,sender,confirmedContact,draftCampaign,signedPost} from
 import {openPage} from '../support/navigation';
 
 export async function sendingConnectionJourney(page:Page,info:TestInfo) {
-  const signer=eventSigner(),provider=sendgridConnectionEdge(signer.publicKey),woo=wooCommerceEdge(),edge=await providerEdge({sending:provider.handle,woo:woo.handle}),site=await installation(edge,signer,{networkHosts:['woo.example.test']});
+  const signer=eventSigner(),provider=sendgridConnectionEdge(signer.publicKey),woo=wooCommerceEdge(),edge=await providerEdge({sending:provider.handle,woo:woo.handle,links:{'https://woo.example.test/':{}}}),site=await installation(edge,signer,{networkHosts:['woo.example.test']});
   try {
     const owner=await site.open(),apiKey='synthetic-mango-84';
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie:owner,body:sender}),200);
@@ -68,7 +68,7 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     const campaign=await draftCampaign(site,owner,'Synthetic Mango connected send',[email],new Date(Date.now()+60000));
     const approval=await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId}});
     expect(JSON.stringify(await json(approval,200))).toContain('delivery-events-missing');
-    await json(await site.call('/api/settings/woocommerce',{method:'PUT',cookie:owner,body:{url:'https://woo.example.test/',key:'synthetic-mango-87',secret:'synthetic-mango-88',signingSecret:'synthetic-mango-89',exclusiveSecret:true,pluginEnabled:true}}),200);
+    await json(await site.call('/api/settings/woocommerce',{method:'PUT',cookie:owner,body:{url:'https://woo.example.test/',key:'synthetic-mango-1',secret:'synthetic-mango-2',signingSecret:'synthetic-mango-89',exclusiveSecret:true,pluginEnabled:true}}),200);
     const flow=await json(await site.call('/api/flows',{method:'POST',cookie:owner,body:{kind:'woocommerce-abandoned-checkout',name:'Synthetic Mango checkout',tag:'synthetic-mango-checkout'}}),201);
     expect(await json(await site.call(`/api/flows/${flow.id}/activate`,{method:'POST',cookie:owner,body:{revisionId:flow.id}}),409)).toMatchObject({error:'delivery-events-missing'});
     const beforeEvents=await site.count('provider_fact_inbox');
