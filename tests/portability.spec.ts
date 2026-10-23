@@ -14,10 +14,15 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
   test.setTimeout(180000);
   const source = await portabilityRuntime({beforeMigration:async(file:string,db:D1Database)=>{
     if(file==='0081_imported_engagement.sql')await db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('prior-upgrade','prior@example.test','Prior data','unsubscribed','never-subscribed',1,1)").run();
+    if(file==='0087_paid_state_authority.sql') await db.batch([
+      db.prepare("INSERT INTO paid_subscriptions(subscription_id,customer_id,contact_id,state,stripe_status,tax_amount,currency,state_event_id,state_at,created_at,updated_at) VALUES('synthetic-mango-21','synthetic-mango-22','prior-upgrade','active','active',80,'usd','synthetic-mango-23',1,1,1)"),
+      db.prepare("INSERT INTO commerce_receipts(id,digest,received_at) VALUES('synthetic-mango-24','synthetic-mango-25',1)")]);
   }}), target = await portabilityRuntime({ restore: true });
   try {
     expect(await source.db.prepare("SELECT display_name FROM contacts WHERE id='prior-upgrade'").first()).toEqual({display_name:'Prior data'});
     expect((await source.db.prepare('SELECT count(*) n FROM imported_engagement_facts').first()).n).toBe(0);
+    expect(await source.db.prepare("SELECT state,tax_amount,read_started_at FROM paid_subscriptions WHERE subscription_id='synthetic-mango-21'").first()).toEqual({state:'active',tax_amount:80,read_started_at:0});
+    expect(await source.db.prepare("SELECT stripe_applied_at FROM commerce_receipts WHERE id='synthetic-mango-24'").first()).toEqual({stripe_applied_at:null});
     const bytesArchive=await accountExport();
     const uploadArchive=async(path:string,fingerprint?:string)=>{
       const form=new FormData();form.set('archive',new File([bytesArchive],'account-export.zip',{type:'application/zip'}));form.set('consent',JSON.stringify(consentEvidence));if(fingerprint)form.set('fingerprint',fingerprint);
@@ -141,6 +146,14 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     // Authentication adds only its current profile after import; domain records are unchanged.
     expect(rows.filter(row => row.table !== 'operators')).toEqual(original.filter(row => row.table !== 'operators'));
     expect((await target.db.prepare('SELECT id FROM oa_operators').all()).results).toEqual([{ id: target.actor.id }]);
+    // Restored triggers fence paid-state writes; restore itself resumes no sends.
+    const generation=async()=>Number((await target.db.prepare('SELECT generation FROM audience_source_authority WHERE id=1').first()).generation);
+    for (const sql of [
+      "UPDATE paid_subscriptions SET state='canceled' WHERE subscription_id='synthetic-mango-21'",
+      "DELETE FROM paid_subscriptions WHERE subscription_id='synthetic-mango-21'",
+      "INSERT INTO paid_subscriptions(subscription_id,customer_id,state,stripe_status,state_event_id,state_at,created_at,updated_at) VALUES('synthetic-mango-26','synthetic-mango-27','canceled','canceled','synthetic-mango-28',1,1,1)",
+    ]) {const before=await generation();await target.db.prepare(sql).run();expect(await generation()).toBeGreaterThan(before);}
+
   } finally { await source.close(); await target.close(); }
 });
 
@@ -161,16 +174,20 @@ test('[CONT-013] current erasure authority refuses an old archive on an empty re
     const started=await source.call('/api/audience/imports',{cookie:source.cookie,method:'POST',body:{fingerprint}});expect(started.status).toBe(200);let {job}=await started.json();
     while(['queued','applying'].includes(job.state)){const next=await source.call(`/api/audience/imports/${job.id}/resume`,{cookie:source.cookie,method:'POST',body:{}});expect(next.status).toBe(200);({job}=await next.json());}
     expect(job.state).toBe('completed');
+    const contact=await source.db.prepare('SELECT id FROM contacts WHERE email=?').bind(email).first();
+    await source.db.prepare("INSERT INTO paid_subscriptions(subscription_id,customer_id,contact_id,state,stripe_status,state_event_id,state_at,created_at,updated_at) VALUES('synthetic-mango-31','synthetic-mango-32',?,'active','active','synthetic-mango-33',1,1,1)").bind(contact.id).run();
     const before=await archive();expect(JSON.stringify(before)).toContain(email);
+    expect(JSON.stringify(before)).toContain('synthetic-mango-31');
     const artifacts=(await source.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND (name GLOB 'rer_portability_snap_*' OR name GLOB 'rer_portability_stage_*')").all()).results.map(row=>row.name);
     artifacts.push('rer_portability_segments','rer_portability_parts','rer_portability_owned','rer_portability_jobs');
     let discarded=0;for(const table of artifacts)discarded+=(await source.db.prepare(`SELECT count(*) AS n FROM "${table.replaceAll('"','""')}"`).first()).n;
     expect(discarded).toBeGreaterThan(0);
-    const contact=await source.db.prepare('SELECT id FROM contacts WHERE email=?').bind(email).first();
     const erased=await source.call(`/api/contacts/${contact.id}`,{cookie:source.cookie,method:'DELETE'});expect(erased.status).toBe(202);let {receipt}=await erased.json();
     while(receipt.state==='pending'){const next=await source.call(`/api/audience/erasures/${receipt.reference}/resume`,{cookie:source.cookie,method:'POST',body:{}});expect([200,202]).toContain(next.status);({receipt}=await next.json());}
     expect(receipt.removed.transfer_artifacts).toBe(discarded);
-    const after=await archive();expect(JSON.stringify(after)).not.toContain(email);expect(JSON.stringify(after)).not.toContain(name);
+    expect(receipt.removed.paid_subscriptions).toBe(1);
+    expect((await source.db.prepare('SELECT count(*) AS n FROM paid_subscriptions WHERE contact_id=?').bind(contact.id).first()).n).toBe(0);
+    const after=await archive();expect(JSON.stringify(after)).not.toContain('synthetic-mango-31');expect(JSON.stringify(after)).not.toContain(email);expect(JSON.stringify(after)).not.toContain(name);
     const latest=after[0];expect(latest.journal).toEqual([]);
     const request=(path:string,body:unknown,method='POST')=>target.call('/api/portability/'+path,{cookie:target.cookie,method,body});
     const created=await request('imports',{confirmed:true,manifest:before[0]});expect(created.status).toBe(201);const {id}=await created.json();

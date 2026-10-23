@@ -23,13 +23,13 @@ export async function verifyStripe(request: Request, secret: string, now = Date.
 /** The recorded source type and lifecycle state of a Stripe event, or null when it is not recorded. */
 export function stripeEventSource(type: string, object: ObjectValue): {sourceType: Extract<CommerceSourceType, typeof stripeSources[number]>; state: string} | null {
   if (type.startsWith('customer.subscription.')) return {sourceType: 'subscription',
-    state: type.endsWith('.deleted') ? 'subscription.canceled' : type.endsWith('.created') ? 'subscription.started' : object.status === 'past_due' ? 'subscription.past_due' : 'subscription.updated'};
+    state: type.endsWith('.deleted') ? 'subscription.canceled' : object.status === 'past_due' ? 'subscription.past_due' : type.endsWith('.created') ? 'subscription.started' : 'subscription.updated'};
   if (type.startsWith('customer.')) return {sourceType: 'customer', state: type};
   if (type.startsWith('checkout.session.')) return {sourceType: 'checkout-session', state: type};
   if (type.startsWith('refund.') || type === 'charge.refunded') return {sourceType: 'refund', state: type};
   if (type.startsWith('payment_intent.') || type.startsWith('charge.') || type.startsWith('invoice.')) {
     if (type === 'invoice.paid' || type === 'invoice.payment_succeeded') return {sourceType: 'payment', state: object.billing_reason === 'subscription_cycle' ? 'subscription.renewed' : 'payment.succeeded'};
-    if (type === 'invoice.payment_failed') return {sourceType: 'payment', state: 'subscription.past_due'};
+    if (type === 'invoice.payment_failed') return {sourceType: 'payment', state: 'invoice.payment_failed'};
     return {sourceType: 'payment', state: type === 'payment_intent.succeeded' || type === 'charge.succeeded' ? 'payment.succeeded' : type};
   }
   return null;

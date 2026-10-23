@@ -27,7 +27,8 @@ export async function stripeJourney(site: Installation, page: Page, info: TestIn
   const now = Math.floor(Date.now() / 1000);
   const events = ['created', 'deleted'].map((action, index) => ({id: 'evt_stripe' + index, type: 'customer.subscription.' + action, created: now, livemode: false,
     data: {object: {id: 'sub_synthetic', customer: {id: 'cus_synthetic', email: 'stripe-reader@example.test', name: 'Taylor Orchard'}, status: action === 'deleted' ? 'canceled' : 'active'}}}));
-  async function post(event: unknown, secret = body.signingSecret, at = Math.floor(Date.now() / 1000)) {
+  async function post(event: unknown, secret = body.signingSecret, at?: number) {
+    at ??= Math.floor((await site.control('/_golive/clock')).now / 1000);
     const raw = JSON.stringify(event), signature = createHmac('sha256', secret).update(at + '.' + raw).digest('hex');
     return site.call('/webhooks/commerce/stripe', {method: 'POST', raw, headers: {'Stripe-Signature': `t=${at},v1=${signature}`}});
   }
@@ -44,7 +45,7 @@ export async function stripeJourney(site: Installation, page: Page, info: TestIn
     {id:'evt_payment', type:'payment_intent.succeeded', object:{id:'pi_fixture', customer:'cus_fixture', amount_received:1200, currency:'usd', client_secret:'not-for-storage'}},
     {id:'evt_checkout', type:'checkout.session.completed', object:{id:'cs_fixture', customer:'cus_fixture', amount_total:1200, currency:'usd'}},
     {id:'evt_renewal', type:'invoice.paid', object:{id:'in_fixture', customer:'cus_fixture', billing_reason:'subscription_cycle', amount_paid:1200, currency:'usd'}},
-    {id:'evt_pastdue', type:'invoice.payment_failed', object:{id:'in_late', customer:'cus_fixture'}},
+    {id:'evt_pastdue', type:'customer.subscription.updated', object:{id:'sub_late', customer:'cus_fixture', status:'past_due'}},
     {id:'evt_refund', type:'refund.created', object:{id:'re_fixture', charge:'ch_fixture', amount:1200, currency:'usd'}},
   ];
   for (const fixture of additional) {

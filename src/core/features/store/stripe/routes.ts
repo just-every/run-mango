@@ -15,7 +15,7 @@ type Stored = {key_cipher: string; signing_cipher: string; mode: string};
 export function stripeRoutes(platform: Platform, audience: ReturnType<typeof createAudienceService>, operations: FailedOperations) {
   const db = platform.database.$client;
   const read = () => db.prepare('SELECT key_cipher,signing_cipher,mode FROM stripe_connection WHERE id=1').first<Stored>();
-  const paid = createPaidTier(db);
+  const paid = createPaidTier(db, audience.hasConfirmedEmailConsent);
   async function api(path: string, key: string) {
     const response = await fetch('https://api.stripe.com/v1/' + path, {headers: {Authorization: 'Bearer ' + key}, signal: AbortSignal.timeout(10000)})
       .catch(() => {throw new Error('Stripe API request failed (no response).');});
@@ -92,22 +92,30 @@ export function stripeRoutes(platform: Platform, audience: ReturnType<typeof cre
     } catch {return context.json({error: 'invalid_stripe_signature'}, 401);}
     try {
       const receipt = 'stripe:' + event.id, digest = await sha256(JSON.stringify(event));
-      const previous = await db.prepare('SELECT digest FROM commerce_receipts WHERE id=?').bind(await sha256(receipt)).first<{digest: string}>();
+      const receiptId = await sha256(receipt);
+      const previous = await db.prepare('SELECT digest,stripe_applied_at FROM commerce_receipts WHERE id=?').bind(receiptId).first<{digest: string; stripe_applied_at: number | null}>();
       if (previous && previous.digest !== digest) return context.json({error: 'stripe_event_conflict'}, 409);
+      if (previous?.stripe_applied_at != null) return context.body(null, 204);
       const key = await unseal(stored.key_cipher, platform.config.sessionSigningKey);
       const sourceType = stripeEventSource(event.type, event.data.object)?.sourceType ?? 'payment';
       const lookup = (path: string) => api(path, key).catch(error => {
         throw new CommerceWebhookUnreadable(error instanceof Error ? error.message : 'Stripe API request failed.', receipt, sourceType);
       });
+      const snapshot = await paid.read(event, lookup);
       if (!previous) {
-        const record = await stripeRecord(event, lookup);
+        const observed = snapshot && event.type.startsWith('customer.subscription.')
+          ? {...event, data: {...event.data, object: {...event.data.object, status: snapshot.subscription.status}}} : event;
+        const record = await stripeRecord(observed, lookup);
         if (!record) return context.body(null, 204);
-        if (!record.contact) return context.json({error: 'stripe_contact_unresolved'}, 422);
+        if (!record.contact && snapshot) {
+          const existing = await db.prepare('SELECT contact_id FROM paid_subscriptions WHERE subscription_id=?').bind(snapshot.subscription.id).first<{contact_id: string | null}>();
+          if (existing?.contact_id) record.contactId = existing.contact_id;
+        }
         await audience.ingestCommerceWebhook({provider: 'stripe', completion: 'delta', adapterCompleted: false, sourceTypes: [record.sourceType], records: [record], receipt: {ids: [receipt], digest}});
       }
-      // Paid-topic state follows the recorded event; a replay re-applies it without change.
+      // Paid membership follows the fresh read, including when Stripe deleted the customer.
       const contact = await db.prepare("SELECT contact_id AS id FROM source_records WHERE provider='stripe' AND provider_source_id=?").bind(event.id).first<{id: string | null}>();
-      await paid.apply(event, lookup, contact?.id ?? null);
+      await paid.apply(event, snapshot, contact?.id ?? null, receiptId);
       // Only a fully applied event completes a failed operation for this delivery.
       await operations.recoverDeliveries([receipt], new Date());
       return context.body(null, 204);

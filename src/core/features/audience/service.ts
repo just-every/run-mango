@@ -3,7 +3,7 @@ import type { SyncWriteFence } from '@/core/features/store/sync-write-fence';
 import type { CommerceSourceType, NormalizedCommerceRecord, createStoreService } from '@/core/features/store/service';
 import { sha256, ulid } from '@/core/shared/ids';
 
-import { createAudienceEligibility } from './eligibility';
+import { createAudienceEligibility, selectedChannel } from './eligibility';
 import { destinationForChannel, canonicalEmail, canonicalPhone } from './identity';
 import type { createAudienceRepository } from './repository';
 
@@ -655,6 +655,9 @@ export function createAudienceService(
       return {survivor,merged,emailStatus:mostRestrictive(survivor.emailStatus as ChannelStatus,merged.emailStatus as ChannelStatus),smsStatus:mostRestrictive(survivor.smsStatus as ChannelStatus,merged.smsStatus as ChannelStatus)};
     },
     mergeContacts,
+    async hasConfirmedEmailConsent(contactId: string) {
+      return Boolean(await selectedChannel(repository, contactId, 'email', new Date(), async (channel, destination) => repository.hasDestinationSuppression(await hashDestination(destination), channel)));
+    },
     recheckHandoffEligibility(input: Parameters<NonNullable<typeof eligibility>['recheckHandoffEligibility']>[0]) {
       return requiredDependencies() && eligibility!.recheckHandoffEligibility(input);
     },

@@ -21,7 +21,7 @@ function storeSourceType(sourceType: string): CommerceSourceType {
   return (sourceType === 'browsing' ? 'browsing-event' : sourceType) as CommerceSourceType;
 }
 
-async function selectedChannel(
+export async function selectedChannel(
   repository: AudienceRepository,
   contactId: string,
   channel: Channel,

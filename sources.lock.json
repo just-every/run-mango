@@ -2454,7 +2454,7 @@
       "executable": false
     },
     "src/core/features/audience/eligibility.ts": {
-      "sha256": "1f3bef67648eb61dbb8889c570239c1f51c8da61cb64ded40eeba7802a08d065",
+      "sha256": "0005a3d313d32f0bd1b5ed77bfdd220510270a7eb7ce036978ee46aedb48db74",
       "executable": false
     },
     "src/core/features/audience/erasure/batched-preparation.ts": {
@@ -2730,7 +2730,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "5291e201d6153fc5aeeb2efba4805b94785c7ebbd9dc5fa4104fcfae54e0bd33",
+      "sha256": "7ca155cc5782f6dccad8510bd91cae02845ce6e17a6dd9e190fd9feb9388757d",
       "executable": false
     },
     "src/core/features/audience/signup-refusals.ts": {
@@ -4690,15 +4690,15 @@
       "executable": false
     },
     "src/core/features/store/stripe/events.ts": {
-      "sha256": "40e0a17370ed6e00699a3aaa36e45adf38b79d8e0b11276be911f63db5bccfc6",
+      "sha256": "9192b0327f39b0ab02dee35be98a5e30f92be02f0bc24263998ba1fc81554add",
       "executable": false
     },
     "src/core/features/store/stripe/paid-tier.ts": {
-      "sha256": "e37a6013335995e9a502d765ebf74aefd6fa32d1e05adc23c4d5c3af7ca288df",
+      "sha256": "d3d42b85068c0a69667296ffb8270d9446eac0e41cbbcd971ed1d1625bc45c5f",
       "executable": false
     },
     "src/core/features/store/stripe/routes.ts": {
-      "sha256": "683501e96fa448dd3193f86c238e7240e1588cbabd71696c5f74e900a81a9e30",
+      "sha256": "cfe2795ffa4467e4635b1ae1bb12240e0112a317250d6a00939132ab2f2034b9",
       "executable": false
     },
     "src/core/features/store/stripe/secrets.ts": {
@@ -7466,7 +7466,7 @@
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
-      "sha256": "06159687884081fe2997a6eb82d7d6e55b3a3e8d8eceb5159c379aa55291e299",
+      "sha256": "5e567d9960118f0ed634996143c5b7f90fb401614c028693af4993a21c1a1c89",
       "executable": false
     },
     "tests/go-live/pause.journeys.ts": {
@@ -7554,7 +7554,7 @@
       "executable": false
     },
     "tests/go-live/stripe-journey.ts": {
-      "sha256": "3432fdde14336cca312b4dfedef96892136e1a868183c92fd07e1b4f5a1e79ad",
+      "sha256": "48cebe69560374a9a5c953138883fc3aa2a4fdec96345c717a5102d572eeaf7f",
       "executable": false
     },
     "tests/go-live/typed-tests.journeys.ts": {
@@ -7802,7 +7802,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "0e6f4490111ef76b8c2f8095e68c79acddd659a0952ec30674c145154837b75d",
+      "sha256": "2b6f9bcc9689825edc01ca01396e86ec12321fdd61959cb434677e43291aae9c",
       "executable": false
     },
     "tests/portability/flows.ts": {
