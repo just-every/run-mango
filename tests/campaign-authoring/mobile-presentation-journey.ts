@@ -9,11 +9,21 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
   const patch=(data:unknown)=>request.patch(`${origin}/api/campaign-revisions/${revisionId}`,{headers,data});
   const read=async()=>(await (await request.get(`${origin}/api/campaigns/${campaignId}`,{headers})).json()).revision;
   const checks=async()=>{const response=await request.post(`${origin}/api/campaigns/${campaignId}/checks`,{headers,data:{revisionId}});expect(response.status()).toBe(200);return response.json();};
-  for(const [name,emailBody] of rejectedPresentation) {
-    const saved=await patch({emailBody});
-    if(saved.status()===400)expect((await saved.json()).detail,name).toBeTruthy();
-    else {expect(saved.status(),name+': '+await saved.text()).toBe(200);expect((await checks()).blockers.map((row:any)=>row.kind),name).toContain('message.content');}
-  }
+  // Two independent drafts keep the public-door adversarial matrix bounded
+  // without concurrent writes to one revision or another test registration.
+  await Promise.all([0,1].map(async lane=>{
+    const created=await request.post(origin+'/api/campaigns',{headers,data:{}});expect(created.status()).toBe(201);
+    const target=await created.json();
+    for(const [name,emailBody] of rejectedPresentation.filter((_,index)=>index%2===lane)) {
+      const saved=await request.patch(`${origin}/api/campaign-revisions/${target.revisionId}`,{headers,data:{emailBody}});
+      if(saved.status()===400)expect((await saved.json()).detail,name).toBeTruthy();
+      else {
+        expect(saved.status(),name+': '+await saved.text()).toBe(200);
+        const response=await request.post(`${origin}/api/campaigns/${target.campaignId}/checks`,{headers,data:{revisionId:target.revisionId}});expect(response.status()).toBe(200);
+        expect((await response.json()).blockers.map((row:any)=>row.kind),name).toContain('message.content');
+      }
+    }
+  }));
   for(const emailBody of ['<style>p{color:red}</style><p>Authored style</p>','<p class="authored">Authored class</p>','<p style="font-size:16px!important">Authored priority</p>']) {
     const saved=await patch({emailBody});expect(saved.status()).toBe(400);expect((await saved.json()).detail).toBeTruthy();
   }
