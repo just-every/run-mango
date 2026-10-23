@@ -21,11 +21,12 @@ export function createPaidTier(db: D1Database, hasConsent?: (contactId: string) 
       .bind(value.paidTopic, value.freeTopic, value.priceId, operator, now),
     async readers() {
       if (!hasConsent) throw new Error('Paid reader counts require channel consent authority.');
-      const rows = await db.prepare('SELECT state,contact_id FROM paid_subscriptions').all<{state: string; contact_id: string | null}>();
-      const counts = {paidTopic: 0, consentMissing: 0, paymentFailed: 0, canceled: 0};
+      const rows = await db.prepare(`SELECT p.state,p.contact_id,p.stripe_status,json_extract(s.payload,'$.eventType') AS event_type
+        FROM paid_subscriptions p LEFT JOIN source_records s ON s.provider='stripe' AND s.provider_source_id=p.state_event_id`).all<{state: string; contact_id: string | null; stripe_status: string | null; event_type: string | null}>();
+      const counts = {paidTopic: 0, consentMissing: 0, paymentFailed: 0, statusUnconfirmed: 0, canceled: 0};
       for (const row of rows.results) {
         if (row.state === 'active') counts[row.contact_id && await hasConsent(row.contact_id) ? 'paidTopic' : 'consentMissing']++;
-        else if (row.state === 'payment-failed') counts.paymentFailed++;
+        else if (row.state === 'payment-failed') counts[row.stripe_status !== 'unverified' && row.event_type === 'invoice.payment_failed' ? 'paymentFailed' : 'statusUnconfirmed']++;
         else if (row.state === 'canceled') counts.canceled++;
       }
       return counts;

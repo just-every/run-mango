@@ -69,7 +69,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   }
   // A payer without consent is recorded as paying but never joins the paid topic.
   await members(['paid', 'optout']);
-  expect(await readers()).toEqual({paidTopic: 2, consentMissing: 1, paymentFailed: 0, canceled: 0});
+  expect(await readers()).toEqual({paidTopic: 2, consentMissing: 1, paymentFailed: 0, statusUnconfirmed: 0, canceled: 0});
   expect(await site.rows('SELECT subscription_id,customer_id,state,tax_amount,currency FROM paid_subscriptions ORDER BY subscription_id')).toEqual(
     ['optout', 'paid', 'unconsented'].map(key => ({subscription_id: `sub_${key}`, customer_id: `cus_${key}`, state: 'active', tax_amount: 80, currency: 'usd'})));
   // Opt-out wins over payment.
@@ -94,6 +94,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
     edge.stripe.subscriptions.sub_paid.status = status;
     await deliver(event(`evt_status_${status}`, status === 'paused' ? 'customer.subscription.paused' : 'customer.subscription.updated', subscription('paid')));
     await members([]);
+    if (['paused', 'incomplete'].includes(status)) expect(await readers()).toMatchObject({paymentFailed: 0, statusUnconfirmed: 1});
     edge.stripe.subscriptions.sub_paid.status = 'active';
     await deliver(event(`evt_resume_${status}`, status === 'paused' ? 'customer.subscription.resumed' : 'invoice.paid',
       status === 'paused' ? subscription('paid') : {id: `in_resume_${status}`, customer: 'cus_paid', subscription: 'sub_paid'}));
@@ -105,6 +106,18 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   const uncertain = event('evt_unavailable_refresh', 'invoice.paid', {id:'in_unavailable_refresh',customer:'cus_paid',subscription:'sub_paid'});
   expect((await post(uncertain)).status).toBe(422);
   await members([]);
+  expect(await readers()).toMatchObject({paymentFailed: 0, statusUnconfirmed: 1});
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({width, height: 1000});
+    await openPage(page, site.runtime.url + '/app/settings');
+    const list = page.getByRole('list', {name: 'Paid readers', exact: true});
+    await expect(list).toContainText('1 back on the free topic because paid status could not be confirmed');
+    await expect(list).toContainText('0 back on the free topic after an observed failed payment');
+    expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    expect((await new AxeBuilder({page}).include('#stripe').analyze()).violations.filter(v => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
+    await page.locator('#stripe').screenshot({path: info.outputPath(`paid-tier-unconfirmed-${width}.png`)});
+  }
   edge.stripe.subscriptions.sub_paid = currentSubscription;
   await site.control('/_golive/clock',{advanceMs:1});
   await deliver(uncertain);
@@ -127,7 +140,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   await approve(site, owner, campaign);
   edge.stripe.subscriptions.sub_paid.status = 'canceled';
   await deliver(event('evt_canceled', 'customer.subscription.deleted', subscription('paid')));
-  expect(await readers()).toEqual({paidTopic: 0, consentMissing: 2, paymentFailed: 0, canceled: 1});
+  expect(await readers()).toEqual({paidTopic: 0, consentMissing: 2, paymentFailed: 0, statusUnconfirmed: 0, canceled: 1});
   await site.control('/_golive/clock', {advanceMs: 3600001});
   expect((await dispatch(site, campaign.campaignId, due)).filter(row => row.transport_disposition === 'accepted')).toEqual([]);
   expect(edge.sends.filter(send => String(send.body.subject).startsWith('Cancelled paid garden notes'))).toEqual([]);
@@ -147,12 +160,14 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
     const readersList = page.getByRole('list', {name: 'Paid readers', exact: true});
     await expect(readersList).toContainText('2 paid, consent missing');
     await expect(readersList).toContainText('1 back on the free topic after cancellation');
+    expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).include('#stripe').analyze()).violations).toEqual([]);
     await page.locator('#stripe').screenshot({path: info.outputPath(`paid-tier-settings-${width}.png`)});
     await openPage(page, `${site.runtime.url}/app/audience/${contacts.paid}`);
     while (!(await page.locator('.timeline').innerText()).includes('subscription.past_due') && await page.getByRole('button', {name: /^Show more activity/}).count()) await page.getByRole('button', {name: /^Show more activity/}).click();
     for (const state of ['Cancelled paid garden notes · email · audience-no-longer-matches', 'subscription.canceled', 'subscription.past_due']) await expect(page.locator('.timeline')).toContainText(state);
+    expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).include('.timeline').analyze()).violations.filter(v => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
     await page.locator('.timeline').screenshot({path: info.outputPath(`paid-tier-timeline-${width}.png`)});
