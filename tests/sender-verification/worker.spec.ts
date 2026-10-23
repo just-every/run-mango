@@ -14,7 +14,7 @@ test('native Worker production services approve, hand off, reload protected evid
   try {
     const db = await runtime.getD1Database('DB');
     const migrations=(await readdir('migrations/core')).filter(file=>file.endsWith('.sql')).sort();
-    for(const file of migrations.filter(file=>!file.startsWith('0094_'))) await db.batch(sqlStatements((await readFile(`migrations/core/${file}`,'utf8'))).map(sql=>db.prepare(sql)));
+    for(const file of migrations.filter(file=>!file.endsWith('_sender_renewal_deliveries.sql')&&!file.endsWith('_saved_report_schedules.sql'))) await db.batch(sqlStatements((await readFile(`migrations/core/${file}`,'utf8'))).map(sql=>db.prepare(sql)));
     const response = await runtime.dispatchFetch('https://mango.example.test/test-proof');
     const proof = await response.json();
     expect(proof, JSON.stringify(proof)).toMatchObject({approval:{kind:'approved'}});
@@ -44,7 +44,7 @@ test('native Worker production services approve, hand off, reload protected evid
     expect(JSON.stringify(data)).not.toContain('receiver@example.test');
     expect(await db.prepare('SELECT count(*) n FROM sender_verification_associations').first()).toEqual({n:2});
     const populated=await db.prepare('SELECT (SELECT count(*) FROM contacts) contacts,(SELECT count(*) FROM campaigns) campaigns,(SELECT count(*) FROM sender_verification_observations) observations').first();
-    for(const file of migrations.filter(file=>file.startsWith('0094_')))await db.batch(sqlStatements(await readFile(`migrations/core/${file}`,'utf8')).map(sql=>db.prepare(sql)));
+    for(const file of migrations.filter(file=>file.endsWith('_sender_renewal_deliveries.sql')||file.endsWith('_saved_report_schedules.sql')))await db.batch(sqlStatements(await readFile(`migrations/core/${file}`,'utf8')).map(sql=>db.prepare(sql)));
     expect(await db.prepare('SELECT (SELECT count(*) FROM contacts) contacts,(SELECT count(*) FROM campaigns) campaigns,(SELECT count(*) FROM sender_verification_observations) observations').first()).toEqual(populated);
     const renewed=await (await runtime.dispatchFetch('https://mango.example.test/test-renewal-proof')).json();
     expect(renewed.day22).toMatchObject({due:false,ready:true});expect(renewed.sends22).toBe(0);

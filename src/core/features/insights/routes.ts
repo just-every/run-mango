@@ -1,3 +1,4 @@
+import {savedReportRoutes} from './saved-report-routes';
 import {overviewQuery,overviewPeriod} from './overview-period';
 import { createListGrowthRoutes } from './list-growth-routes';
 import { createRetentionRoutes } from './retention-routes';
@@ -10,6 +11,7 @@ import type { createInsightsService } from './service';
 
 export function createInsightsRoutes(service: ReturnType<typeof createInsightsService>, database:Database) {
   const routes = new Hono();
+  routes.route('/',savedReportRoutes(database));
   routes.route('/',createCampaignReportRoutes(database));
   routes.route('/',createCampaignPerformanceRoutes(database));
   routes.route('/',createRetentionRoutes(database));
