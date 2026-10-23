@@ -27,7 +27,7 @@ const milliseconds=(at:RecordedTime)=>at instanceof Date?at.getTime():new Date(a
 
 /** Read facts only. No provider payloads, message bodies, tokens or audit JSON enter this projection. */
 export async function readContactTimeline(db:D1Database, contactId:string, detail:Detail):Promise<ContactTimelineEntry[]> {
-  const [activity, decisions, transport, provider, clicks, actions] = await db.batch<Fact>([
+  const [activity, decisions, transport, provider, clicks, actions, replies] = await db.batch<Fact>([
     db.prepare(`${identities}
       SELECT 'source:'||a.id id, a.kind kind, a.kind||' · '||a.state detail,
         s.provider||' · '||s.source_type source, a.occurred_at occurredAt
@@ -103,6 +103,14 @@ export async function readContactTimeline(db:D1Database, contactId:string, detai
         'Operator', m.occurred_at, NULL
       FROM contact_merges m LEFT JOIN oa_operators o ON o.id=m.operator_id
       WHERE m.survivor_contact_id IN (SELECT id FROM identities)`).bind(contactId),
+    db.prepare(`${identities}
+      SELECT 'sms-reply:'||id id,'sms-reply' kind,'SMS · '||canonical_action detail,'SMS compliance ledger' source,occurred_at occurredAt
+      FROM sms_compliance_replies WHERE contact_id IN (SELECT id FROM identities)
+      UNION ALL SELECT 'sms-inbound:'||id,'sms-reply','SMS · '||action,'Signed SMS inbound receipt',occurred_at
+      FROM sms_inbound_receipts WHERE contact_id IN (SELECT id FROM identities)
+      UNION ALL SELECT 'conversion:'||a.id,'conversion',v.name||' · attributed order','Campaign attribution',a.attributed_at
+      FROM attribution_facts a JOIN recipient_steps r ON r.id=a.recipient_step_id JOIN campaign_revisions v ON v.id=r.revision_id
+      WHERE r.contact_id IN (SELECT id FROM identities)`).bind(contactId),
   ]);
   const entries:ContactTimelineEntry[]=[];
   const add=(entry:Omit<ContactTimelineEntry,'occurredAt'>,at:RecordedTime)=>entries.push({...entry,occurredAt:new Date(milliseconds(at)).toISOString()});
@@ -120,12 +128,13 @@ export async function readContactTimeline(db:D1Database, contactId:string, detai
   }
   for(const row of detail.consent) {
     const source=`${row.captureMethod} · ${captureSource(row.captureSource)}`;
+    if(['hosted-signup-form','kiosk','embedded-signup-form'].includes(row.captureMethod))add({id:`form:${row.id}`,kind:'form-submitted',detail:`${row.channel} · ${row.messageCategory}`,source},row.occurredAt);
     add({id:`consent:${row.id}`,kind:'consent-captured',detail:`${row.channel} · ${row.messageCategory}`,source},row.occurredAt);
     if(row.confirmedAt)add({id:`confirmation:${row.id}`,kind:'consent-confirmed',detail:`${row.channel} · ${row.messageCategory}`,source},row.confirmedAt);
   }
   for(const row of detail.suppressions)add({id:`suppression:${row.id}`,kind:'channel-suppressed',detail:`${row.channel} · ${row.cause}`,source:'Suppression ledger'},row.occurredAt);
   const imported=await db.prepare(`SELECT f.id,'imported-'||f.kind AS kind,h.title||' · imported '||CASE f.kind WHEN 'open' THEN 'open estimate' ELSE 'click' END AS detail,'Imported · '||f.source AS source,f.occurred_at AS occurredAt FROM imported_engagement_facts f JOIN move_in_content h ON h.id=f.history_id JOIN move_in_archives a ON a.id=f.archive_id WHERE f.contact_id=? AND a.state='applied'`).bind(contactId).all<Fact>();
-  for(const result of [activity,decisions,transport,provider,clicks,actions,imported]) {
+  for(const result of [activity,decisions,transport,provider,clicks,actions,replies,imported]) {
     for(const {occurredAt,...entry} of result.results)add(entry,occurredAt);
   }
   return entries.sort((a,b)=>Date.parse(b.occurredAt)-Date.parse(a.occurredAt)||a.id.localeCompare(b.id));

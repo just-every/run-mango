@@ -14,9 +14,12 @@ import { useResource } from '@/core/app/client/lib/use-resource';
 import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
 import { ContactConsentEvidencePanel, type ContactConsentEvidence, type ContactImportObservation } from './contact-consent-evidence';
 import type { ContactTimelineEntry } from '../contact-timeline';
+import type { ContactProfile } from '../contact-profile';
 
 type ContactDetail = {
   masked?:boolean;
+  profile?:ContactProfile;
+  emails:Array<{id:string;email:string;channelStatus:string}>;
   smsServices?:Array<{id:string;purpose:string;state:string;reason:string|null;provider_message_id:string|null;created_at:number}>;
   contact: Contact;
   phones:Array<{id:string;phoneE164:string;channelStatus:string}>;
@@ -67,6 +70,7 @@ function ContactPage() {
       </section>
       <div className="contact-layout">
         <div className="contact-layout__records">
+          <ContactProfilePanels data={data}/>
           <Can permission="report.read"><ContactRetention contactId={id} /></Can>
           <Can permission="contact.privacy-request"><ContactSupport contactId={id} reload={reload}/></Can>
           <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} restricted={data.masked} />
@@ -92,4 +96,33 @@ function ContactPage() {
       </div>
     </div>
   );
+}
+
+function ContactProfilePanels({data}:{data:ContactDetail}) {
+  const formatDate=useDateFormatter(),profile=data.profile;
+  return <>
+    <section className="panel" aria-label="Contact identities" style={{overflowWrap:'anywhere',minWidth:0}}><h2>Identities</h2>
+      {data.emails.map(email=><p key={email.id}>{email.email} · Email · {titleCase(email.channelStatus)}</p>)}
+      {data.phones.map(phone=><p key={phone.id}>{phone.phoneE164} · SMS · {titleCase(phone.channelStatus)}</p>)}
+      {data.masked?<p>Identity details restricted for this role.</p>:profile?.mergedIdentities.length?<><h3>Merged identities</h3>{profile.mergedIdentities.map(identity=><p key={identity.id}>{identity.id} · Merged {formatDate(new Date(identity.occurredAt).toISOString())}</p>)}</>:<p>No merged identities.</p>}
+    </section>
+    <section className="panel" aria-label="Topics and channel consent" style={{overflowWrap:'anywhere',minWidth:0}}><h2>Topics and channel consent</h2>
+      {(['email','sms'] as const).map(channel=><div key={channel}><h3>{channel==='email'?'Email':'SMS'} · {titleCase(channel==='email'?data.contact.emailStatus:data.contact.smsStatus)}</h3>
+        {data.consent.filter(e=>e.channel===channel).length?data.consent.filter(e=>e.channel===channel).map(e=><article key={e.id}>
+          <strong>{e.messageCategory}</strong><p>{titleCase(channel==='email'?data.contact.emailStatus:data.contact.smsStatus)} · {e.confirmedAt?'Confirmed evidence':'Confirmation pending'}</p>
+          <small>Evidence: {e.captureMethod} · {e.captureSource} · {formatDate(e.occurredAt)}</small>
+        </article>):<p>No topic consent recorded.</p>}
+      </div>)}<p className="muted-copy">Topic evidence never overrides a channel opt-out or suppression. Full evidence is shown below.</p>
+    </section>
+    <section className="panel" aria-label="Contact properties" style={{overflowWrap:'anywhere',minWidth:0}}><h2>Properties</h2>
+      {data.masked?<p>Properties restricted for this role.</p>:profile&&Object.keys(profile.properties).length?<dl>{Object.entries(profile.properties).map(([key,value])=><div key={key}><dt>{key}</dt><dd>{typeof value==='string'?value:JSON.stringify(value)}</dd></div>)}</dl>:<p>No properties recorded.</p>}
+      {!data.masked&&profile?.tags.length?<p>Tags: {profile.tags.join(' · ')}</p>:null}
+    </section>
+    <section className="panel" aria-label="Segment membership"><h2>Segment membership</h2>
+      {data.masked?<p>Segment details restricted for this role.</p>:profile?.segments.length?profile.segments.map(segment=><p key={segment.id}>{segment.name} · {segment.state==='member'?'Member':'Membership unavailable: required evidence is unavailable'}</p>):<p>No segment membership.</p>}
+      <p className="muted-copy">Calculated from current recorded facts using saved audience rules.</p>
+    </section>
+    <section className="panel" aria-label="Flow enrollments"><h2>Flow enrollments</h2><p>No flow enrollments.</p></section>
+    <section className="panel" aria-label="Contact predictions"><h2>Predictions</h2><p>Predictions not available.</p></section>
+  </>;
 }

@@ -1,3 +1,4 @@
+import {testIdentity} from '../support/test-identity';
 import authoringWorker from '../campaign-authoring/worker';
 import {createFixturePlatform} from '../support/local-platform';
 import {createAppServices} from '../../src/core/app/app';
@@ -14,11 +15,12 @@ async function seed(bindings:LocalAppBindings) {
   const at=(days:number)=>new Date(now-days*day);
   const capture=async(email:string,name:string)=>audienceService.captureConsent({
     contact:{email,displayName:name},channel:'email',brandOrLegalSender:'Harvest House',messageCategory:'newsletter',
-    frequencyDisclosure:'Weekly',destinationJurisdiction:'US',captureMethod:'in-store',
+    frequencyDisclosure:'Weekly',destinationJurisdiction:'US',captureMethod:'hosted-signup-form',
     captureSource:'https://harvest.example.test/signup?private=source-marker#private',consentText:'Send me weekly harvest news.',
     consentVersion:'harvest-v1',occurredAt:at(20),confirmationRequired:false,
   });
   const {contact}=await capture('nadia@example.test','Nadia Patel');
+  await audienceService.ensureContact({email:contact.email!,phone:'+15555550123'},new Date());
   const {contact:other}=await capture('unrelated-person@example.test','Unrelated person');
   const records:NormalizedCommerceRecord[]=[{sourceType:'order',providerSourceId:'harvest-order-1042',contactId:contact.id,
     occurredAt:at(7),payload:{id:'harvest-order-1042',email:contact.email,total:84,currency:'USD',private:'source-payload-marker'},
@@ -67,9 +69,29 @@ async function seed(bindings:LocalAppBindings) {
       VALUES('history-unrelated','history-unrelated','contact',?,'other-contact-marker','operator','authoring-operator','{}',?,?)`)
       .bind(other.id,at(2).getTime(),now),
   ]);
+  await db.batch([
+    db.prepare("INSERT INTO integration_contact_profiles(contact_id,fields_json,tags_json) VALUES(?,?,?)").bind(contact.id,JSON.stringify({favourite:'Autumn linen'}),JSON.stringify(['harvest-vip'])),
+    db.prepare("INSERT INTO audience_segments(id,name,inclusion_rule_json,exclusion_rules_json,created_by,created_at,updated_at) VALUES('history-segment','Harvest VIP',?,'[]','authoring-operator',?,?)").bind(JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'tags',comparator:'contains',value:'harvest-vip'}]}),now,now),
+    db.prepare("INSERT INTO link_click_facts(id,recipient_step_id,request_digest,occurred_at,automated,created_at) VALUES('history-click','history-delivered','history-click',?,0,?)").bind(at(3.5).getTime(),now),
+    db.prepare("INSERT INTO sms_inbound_receipts(id,contact_id,destination_hash,action,occurred_at,created_at) VALUES('history-reply',?,'synthetic-mango-history','HELP',?,?)").bind(contact.id,at(1.5).getTime(),now),
+  ]);
+  await storeService.ingestSuccessfulCommerceBatch('shopify',[{sourceType:'order',providerSourceId:'harvest-conversion',contactId:contact.id,
+    occurredAt:at(2.5),payload:{id:'harvest-conversion',email:contact.email,total:42,currency:'USD'},activity:{kind:'order',state:'completed'}}],'delta',['order'],true,new Date());
+  const conversion=await db.prepare("SELECT id FROM source_records WHERE provider='shopify' AND provider_source_id='harvest-conversion'").first<{id:string}>();
+  await db.prepare("INSERT INTO attribution_facts(id,order_source_record_id,campaign_id,recipient_step_id,click_fact_id,attribution_window_days,gross_amount_minor,currency,attributed_at,updated_at,created_at) VALUES('history-conversion',?,?,'history-delivered','history-click',7,4200,'USD',?,?,?)").bind(conversion!.id,campaign.campaignId,at(2.5).getTime(),now,now).run();
+  const {contact:merged}=await audienceService.ensureContact({email:'nadia-merged@example.test',displayName:'Nadia merged'},new Date());
+  await audienceService.mergeContacts(contact.id,merged.id,'authoring-operator');
+  const restricted=[];
+  for(const role of ['support','analyst']) {
+    const operator={id:`history-${role}`,email:`history-${role}@example.test`,displayName:role};
+    await testIdentity(platform).importLocalDemoOperator(operator,new Date());
+    await db.prepare("UPDATE oa_operators SET role='member' WHERE id=?").bind(operator.id).run();
+    await db.prepare('INSERT INTO operator_product_roles(operator_id,role,unmasked_contacts,updated_by,updated_at) VALUES(?,?,0,?,?)').bind(operator.id,role,'authoring-operator',now).run();
+    restricted.push({role,token:(await testIdentity(platform).createTestSession(operator.id)).token});
+  }
   await audienceService.recordChannelOptOut({contactId:contact.id,channel:'email',destination:contact.email!,reason:'recipient-unsubscribe',occurredAt:at(2)});
   await audienceService.recordProviderSuppression({destination:contact.email!,channel:'email',cause:'hard-bounce',occurredAt:at(0.5),providerEventId:'history-bounce'});
-  return {contactId:contact.id,campaignId:campaign.campaignId,orderAt:at(7).toISOString(),deliveryAt:new Date(at(4).getTime()+60000).toISOString()};
+  return {restricted,mergedId:merged.id,contactId:contact.id,campaignId:campaign.campaignId,orderAt:at(7).toISOString(),deliveryAt:new Date(at(4).getTime()+60000).toISOString()};
 }
 
 export default {
