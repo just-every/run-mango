@@ -1,3 +1,4 @@
+import {loadOptInMode} from './opt-in-modes';
 import {signupCapacity} from './signup-capacity';
 import {admitSignup,refundSignup,signupCapacityRefusal} from './signup-admission';
 import { ProviderDeferredError } from '@/core/shared/provider-deferred-error';
@@ -80,8 +81,10 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
     const prior=await db.prepare(`SELECT status FROM audience_signup_requests r WHERE destination_hash=? AND
       (id=? OR EXISTS(SELECT 1 FROM consent_confirmations c WHERE c.consent_evidence_id=r.id AND c.confirmed_at IS NULL AND c.expires_at>CAST(strftime('%s','now') AS INTEGER)*1000)) LIMIT 1`).bind(destinationHash,lookupId).first<{status:string}>();
     if(prior&&state!=='resubscribe')return success();
+    const optIn=await loadOptInMode(db,description.kioskEnabled?'kiosk':'hosted');
+    const confirmationRequired=state==='resubscribe'||optIn.mode==='double';
     const evidenceId=state==='resubscribe'?`resubscribe_${crypto.randomUUID()}`:lookupId;
-    const reservation=await admitSignup(db,{id:evidenceId,destinationHash,networkKey:key,kiosk:description.kioskEnabled,challenged,confirmation:true,levels:capacity.levels});
+    const reservation=await admitSignup(db,{id:evidenceId,destinationHash,networkKey:key,kiosk:description.kioskEnabled,challenged,confirmation:confirmationRequired,levels:capacity.levels});
     if(reservation.kind==='duplicate')return success();
     if(reservation.kind==='refused'){
       if(reservation.reason==='daily-allowance'){await badAttempt();await refuse('daily-allowance');await service.recordPublicSignupRefusal(email,'Daily confirmation allowance exhausted.');return success();}
@@ -93,7 +96,7 @@ export function createSignupRoutes(service: ReturnType<typeof createAudienceServ
         brandOrLegalSender: description.sender, messageCategory: 'newsletter', frequencyDisclosure: description.frequencyDisclosure,
         destinationJurisdiction: 'Not provided', captureMethod: description.kioskEnabled?'kiosk':'hosted-signup-form', captureSource: description.kioskEnabled?`Kiosk: ${description.kioskDeviceLabel}`:new URL('/subscribe', platform.config.local===true?new URL(context.req.url).origin:platform.config.publicBaseUrl).toString(),
         captureIp: ip, consentText: description.consentText, consentVersion: 'newsletter-signup-v1', occurredAt: new Date(now),
-        confirmationRequired: true, idempotencyKey: evidenceId }, new Date(now));
+        confirmationRequired, optInPolicy:{mode:optIn}, idempotencyKey: evidenceId }, new Date(now));
       if(!captured){await refundSignup(db,evidenceId,now,reservation.counters);return success();}
       await db.prepare("UPDATE audience_signup_requests SET status='sent' WHERE id=?").bind(evidenceId).run();
     } catch (error) {

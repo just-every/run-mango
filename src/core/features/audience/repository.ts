@@ -245,7 +245,9 @@ export function createAudienceRepository(database: Database) {
       const statusAt = email ? contacts.emailStatusAt : contacts.smsStatusAt;
       const publicResubscribe = sql`EXISTS(SELECT 1 FROM contact_history WHERE id=${`${evidence.id}_resubscribe`} AND kind='resubscribe-request')`;
       const resolvedSuppression = sql`(${publicResubscribe} AND EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND ${sql.raw(recipientSuppressionSql)}) AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND NOT (${sql.raw(recipientSuppressionSql)})))`;
-      const eligible = sql`EXISTS (SELECT 1 FROM consent_confirmations WHERE id=${confirmation.id} AND confirmed_at IS NULL AND expires_at>${now.getTime()})
+      const strictCapture=['api-capture','operator-recorded'].includes(evidence.captureMethod);
+      const eligible = sql`(${strictCapture?1:0}=0 OR (NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel}) AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel})))
+        AND EXISTS (SELECT 1 FROM consent_confirmations WHERE id=${confirmation.id} AND confirmed_at IS NULL AND expires_at>${now.getTime()})
         AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND occurred_at>=${evidence.occurredAt.getTime()})
         AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND NOT (${publicResubscribe} AND ${sql.raw(recipientSuppressionSql)}))
         AND NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel} AND ${publicResubscribe} AND NOT (${sql.raw(recipientOptOutSql)}))

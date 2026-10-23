@@ -8,7 +8,7 @@ import { IntegrationError } from './schema';
 
 export function createIntegrationService(platform: Platform, audience: ReturnType<typeof createAudienceService>) {
   const db = platform.database.$client;
-  const contacts = createIntegrationContacts(db, audience, platform.config.contactHashSalt);
+  const contacts = createIntegrationContacts(db, audience);
   return {
     credentials: createCredentialStore(db), audit: createIntegrationAudit(db), contacts,
     recordEvent: (credentialId: string, input: Parameters<typeof recordConversionEvent>[2]) => recordConversionEvent(db, credentialId, input),

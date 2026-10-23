@@ -24,7 +24,7 @@ export function KioskSignupPage({info}:{info:SubscribeInfo}) {
       <h1 id="subscribe-title" className="standalone-title">Get the newsletter</h1>
       <p>{info.frequencyDisclosure}</p>
       <p className="subscribe-privacy-note">{info.privacyNote}</p>
-      {success?<p role="status">Request received. Open the confirmation email and press Confirm subscription. The next visitor can sign up in a moment.</p>
+      {success?<p role="status">Request received. If we send a confirmation email, press Confirm subscription in that email. The next visitor can sign up in a moment.</p>
         :<KioskCapture key={generation} info={info} completed={()=>setSuccess(true)}/>}
     </section>
   }}/>;
