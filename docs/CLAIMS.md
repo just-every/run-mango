@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 38 claims · 38 in code.**
+**Totals: 39 claims · 39 in code.**
 
 ## Mango integration claims
 
@@ -58,6 +58,8 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | RESULT-008 | Message-bound link, one-click and signed SMS reply methods retain their first time, appear in list and CSV, and survive actual erasure as anonymous counts matching campaign totals. Historical methods, flows and role masking remain open. | partial | `tests/campaign-results/performance.journeys.ts`, `tests/campaign-results/recipient-method-journey.ts`, `tests/campaign-results/results.journeys.ts`, `tests/portability.spec.ts` |
 
 | CONT-017 | Contact profiles show stored identities, merges, channel/topic evidence, properties, segment membership and one original-source timeline, with masked Analyst/Support views at desktop and phone widths. Flow and prediction panels state their availability; the text carve remains pending. | partial | `src/core/features/audience/contact-profile.ts`, `src/core/features/audience/ui/contact-detail.tsx`, `tests/audience-controls/contact-history.spec.ts` |
+
+| REPORT-007 | Settings shows contacts by channel consent state, provider-reported campaign/day costs and a labeled UTC month run-rate projection. Currencies stay separate and unpriced facts stay counted; flow grouping awaits flows. | partial | `src/core/features/insights/usage-report.ts`, `src/core/features/insights/ui/settings-usage.tsx`, `tests/campaign-results/costs.journeys.ts` |
 
 ## Adopted target defaults (23 October 2026)
 
