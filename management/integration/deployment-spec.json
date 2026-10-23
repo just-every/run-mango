@@ -542,6 +542,12 @@
       "name": "core-0087_paid_state_authority.sql",
       "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
       "sql": "-- Existing subscriptions retain their state; the first fresh read supersedes\n-- event-second ordering. No payment or consent record is recreated.\nALTER TABLE paid_subscriptions ADD COLUMN read_started_at INTEGER NOT NULL DEFAULT 0;\nALTER TABLE commerce_receipts ADD COLUMN stripe_applied_at INTEGER;\n-- The hand-off claim fences every paid-state write, including replay/restore.\nCREATE TRIGGER paid_subscriptions_audience_generation_insert AFTER INSERT ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\nCREATE TRIGGER paid_subscriptions_audience_generation_update AFTER UPDATE ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\nCREATE TRIGGER paid_subscriptions_audience_generation_delete AFTER DELETE ON paid_subscriptions BEGIN UPDATE audience_source_authority SET generation=generation+1 WHERE id=1; END;\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0088_shopify_installation.sql",
+      "sha256": "c73b1f764a3c3ec22bb1446a95930e6d7e6a691e2dfff7c999e8e590a71723a1",
+      "sql": "-- Private installation authority is never exported or restored as a live connection.\nCREATE TABLE shopify_installation (\n id INTEGER PRIMARY KEY CHECK(id=1), shop TEXT NOT NULL, token_cipher TEXT NOT NULL,\n scopes_json TEXT NOT NULL, connected_by TEXT NOT NULL, connected_at INTEGER NOT NULL,\n expires_at INTEGER, channel_id TEXT NOT NULL, proxy_path TEXT NOT NULL, pixel_id TEXT, subscriptions_json TEXT NOT NULL DEFAULT '[]', checked_at INTEGER, last_error TEXT\n);\nCREATE TABLE shopify_oauth_states (\n id TEXT PRIMARY KEY, shop TEXT NOT NULL, operator_id TEXT NOT NULL, origin TEXT NOT NULL,\n scopes_json TEXT NOT NULL, expires_at INTEGER NOT NULL, used_at INTEGER\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
@@ -583,7 +589,8 @@
     "MAIL_API_KEY",
     "MAIL_PROVIDER_API_KEY",
     "MARKETING_MAIL_API_KEY",
-    "MARKETING_MAIL_WEBHOOK_SECRET"
+    "MARKETING_MAIL_WEBHOOK_SECRET",
+    "SHOPIFY_APP_SECRET"
   ],
   "schedules": [
     "* * * * *"
