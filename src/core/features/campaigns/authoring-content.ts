@@ -1,3 +1,4 @@
+import {assertMobileAuthority,applyMobileSettings,mobileEnvelope,mobileDocument} from './email-mobile';
 import { escapeHtml, inspectEmailHtml } from './email-html-policy';
 import { parseEmailHtml, type EmailNode } from './email-html-parse';
 import type { DraftComposition } from './draft-composition';
@@ -6,9 +7,10 @@ import type { DraftComposition } from './draft-composition';
 export const managedFooter = '<hr><p>{{physical_address}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>';
 /** The body without every managed footer in it, including one that removing another brings together. */
 export function authoredBody(html: string) {
-  let body = html;
+  const envelope=mobileEnvelope(html);
+  let body = envelope.body;
   while (body.includes(managedFooter)) body = body.split(managedFooter).join('');
-  return body;
+  return mobileDocument(body,envelope.style);
 }
 const lineEnds = new Set(['p', 'div', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'tr']);
 /** The plain-text part, read from the same tree as the HTML part: each link's text with its address, a line break
@@ -17,6 +19,7 @@ export function htmlToText(html: string) {
   const text = (nodes: EmailNode[]): string => nodes.map(node => {
     if (node.kind !== 'element') return node.kind === 'text' ? node.text : '';
     if (node.tag === 'br' || node.tag === 'hr') return '\n';
+    if(node.tag==='img')return node.attributes.get('alt')??'';
     const inner = text(node.children);
     if (node.tag === 'a' && node.attributes.has('href')) return `${inner} (${node.attributes.get('href')})`;
     return lineEnds.has(node.tag) ? `${inner}\n` : inner;
@@ -49,7 +52,8 @@ function canonicalBody(html: string) {
 /** One save of a body: the managed footer comes off, the body settles, missing links and compliance elements are
  * added after it, and the result settles again. */
 function savedBody(source: string, links: NonNullable<DraftComposition['links']>) {
-  let body = canonicalBody(authoredBody(source));
+  const envelope=mobileEnvelope(source);
+  let body = canonicalBody(mobileEnvelope(authoredBody(source)).body);
   if (links.length) {
     const present = inspectEmailHtml(body).destinations;
     const missing = links.filter(link => !present.includes(link.destinationUrl));
@@ -61,20 +65,24 @@ function savedBody(source: string, links: NonNullable<DraftComposition['links']>
     : `${body.includes('{{physical_address}}') ? '' : '<p>{{physical_address}}</p>'}${hasUnsubscribe ? '' : '<p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>'}`;
   // Parsers never close a plaintext element, so a footer after one is its text: it is not added again on every save,
   // and approval refuses the tag and the missing footer.
-  return !footer || parseEmailHtml(body).tags.has('plaintext') ? body : canonicalBody(body + footer);
+  return mobileDocument(!footer || parseEmailHtml(body).tags.has('plaintext') ? body : canonicalBody(body + footer),envelope.style);
 }
 /** Saving is a fixed point: the stored body saves to the same bytes, as does the body the editor shows (the stored
  * body without its managed footer). A body whose footer or links a parser moves on the next read is saved again
  * until it stays, so what is stored is what every later save stores. */
 export function normalizeAuthoredContent(composition: DraftComposition): DraftComposition {
   if (composition.emailBody === undefined) return composition;
-  let emailBody = savedBody(composition.emailBody, composition.links ?? []);
+  assertMobileAuthority(composition.emailBody);
+  const {emailMobile,...persisted}=composition;
+  const source=emailMobile===undefined?composition.emailBody:applyMobileSettings(authoredBody(composition.emailBody),emailMobile);
+  let emailBody = savedBody(source, composition.links ?? []);
   for (let round = 0; ; round++) {
     const again = savedBody(emailBody, []);
     if (again === emailBody) break;
     if (round === settleRounds) throw new UnsettledEmailBodyError('This email body reads differently every time it is saved. Rewrite it as plain email markup.');
     emailBody = again;
   }
+  assertMobileAuthority(emailBody);
   const links = authoredLinks(emailBody);
-  return {...composition, emailBody, emailText: htmlToText(emailBody), links};
+  return {...persisted, emailBody, emailText: htmlToText(emailBody), links};
 }

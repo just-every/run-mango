@@ -1,4 +1,5 @@
 import {analyticsUrl,type AnalyticsContext} from '@/core/features/settings/analytics-policy';
+import {mobileEnvelope,mobileDocument} from './email-mobile';
 import {rewriteTextLinks,textLinkDestinations} from './message-links';
 import { escapeHtml } from './email-html-policy';
 import { parsePersonalisationToken as parseToken } from './authoring-tokens';
@@ -57,9 +58,10 @@ export function renderMessageContent(revision: MessageRevision, options: {
     return replacement ? `href=${quote}${escapeHtml(replacement)}${quote}` : attribute;
   });
   const preheader = render(revision.preheader);
+  const envelope=mobileEnvelope(html);
   return {
     subject: render(revision.emailSubject), preheader,
-    html: `<div aria-hidden="true" style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(preheader)}</div>${html}`,
+    html: mobileDocument(`<div aria-hidden="true" style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(preheader)}</div>${envelope.body}`,envelope.style),
     text: replaceTextLinks(render(revision.emailText),'email'), sms: replaceTextLinks(render(revision.smsBody),'sms'),
   };
 }

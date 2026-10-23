@@ -34,11 +34,11 @@ function rowHtml(item: Row, hosted: ReadonlyMap<string, HostedImage>, href: stri
     return row(item.items.map(part => 'tag' in part ? textBlock(part) : part.inline ? `<div style="text-align:center">${imageTag(part, hosted, mediaOrigin)}</div>` : `<div style="padding:0 0 20px">${imageTag(part, hosted, mediaOrigin)}</div>`).join(''), header ? `24px ${gutter}px 24px` : undefined);
   }
   if (item.kind === 'columns') {
-    // Two cells of one row, each vertically centred on the other, as the design draws them. Only table cells hold a
-    // layout without display (MSG-012), so the columns stay side by side on phones too, narrowing with the email.
-    const cell = (inner: string) => `<td width="${columnWidth}" valign="middle">${inner}</td>`;
-    const photo = cell(imageTag(item.photo, hosted, mediaOrigin)), copy = cell(`<div style="padding:16px 0 0">${item.words.map(textBlock).join('')}</div>`);
-    return row(`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${item.side === 'left' ? photo : copy}<td width="${columnGap}"></td>${item.side === 'left' ? copy : photo}</tr></table>`);
+    // Fluid tables float left at their fixed desktop width and wrap naturally
+    // when the available line is narrower, including with all CSS stripped.
+    const column=(inner:string,first:boolean)=>`<table role="presentation" align="left" width="${columnWidth+columnGap/2}" cellpadding="0" cellspacing="0" border="0" style="width:${columnWidth+columnGap/2}px;max-width:100%"><tr><td valign="middle" style="padding:${first?`0 ${columnGap/2}px 0 0`:`0 0 0 ${columnGap/2}px`}">${inner}</td></tr></table>`;
+    const photo=imageTag(item.photo,hosted,mediaOrigin),copy=`<div style="padding:16px 0 0">${item.words.map(textBlock).join('')}</div>`;
+    return row(column(item.side==='left'?photo:copy,true)+column(item.side==='left'?copy:photo,false));
   }
   if (item.kind === 'button') {
     if (!href) throw new DesignImportError('invalid_layout', 'The design has a button, so it needs an HTTPS destination.');

@@ -1,4 +1,5 @@
 import {analyticsContext} from '@/core/features/settings/analytics-policy';
+import {mobileEnvelope} from '../email-mobile';
 import { contactLink } from '../contact-links';
 import type {SmsReviewPreview} from '@/core/features/sms/review-preview';
 import { useEffect, useMemo, useState } from 'react';
@@ -21,6 +22,8 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
     values: contact ? contactPersonalisation(contact, contact.email ?? '') : {displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
   }), [revision, contact]);
+  const responsive=mobileEnvelope(revision.emailBody);
+  const dependent=[responsive.settings.some(row=>row.hideOnMobile)?'hide on mobile':'',responsive.settings.some(row=>row.hideOnDesktop)?'hide on desktop':'',responsive.settings.some(row=>row.orientation)?'mobile orientation':'',responsive.settings.some(row=>row.fontSize!==undefined)?'mobile font size':'',responsive.settings.some(row=>row.lineHeight!==undefined)?'mobile line height':'',responsive.settings.some(row=>row.padding!==undefined)?'mobile padding':'',responsive.settings.some(row=>row.alignment)?'mobile alignment':''].filter(Boolean);
   const showEmail = selectedChannels?.includes('email') ?? true;
   const showSms = selectedChannels?.includes('sms') ?? Boolean(rendered.sms.trim() || revision.smsSender.trim());
   const issues = useMemo(() => inspectEmailHtml(revision.emailBody, mediaOrigin).issues, [revision.emailBody, mediaOrigin]);
@@ -45,6 +48,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
             <button type="button" className="secondary-action" aria-pressed={appearance === 'light'} onClick={() => setAppearance('light')}>Light mode</button>
             <button type="button" className="secondary-action" aria-pressed={appearance === 'dark'} onClick={() => setAppearance('dark')}>Dark approximation</button>
           </div> : null}
+          {responsive.style?<p className="muted-copy">Mobile overrides require the generated style block. Settings: {dependent.join(', ')}. A mail client that removes the block shows hidden content and uses the fluid layout.</p>:null}
           {appearance === 'dark' ? <p className="muted-copy">Approximate colour inversion; email clients apply dark mode differently. Check a test email in your target inboxes.</p> : null}
           {issues.length > 0 ? <p className="inline-error" role="alert">Unsafe or unsupported HTML is removed from this preview, which then shows no styling, and blocks approval: {issues.join(' ')}</p> : null}
           <div className={`email-preview-frame email-preview-frame--${width}`}>

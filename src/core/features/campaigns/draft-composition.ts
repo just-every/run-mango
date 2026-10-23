@@ -1,3 +1,4 @@
+import {mobileSettingsSchema} from './email-mobile';
 import { completeInclusionRuleSchema, completeExclusionRuleSchema } from '@/core/features/lifecycle/rules';
 import { z } from 'zod';
 import {parseAnalyticsPolicy} from '@/core/features/settings/analytics-policy';
@@ -56,6 +57,7 @@ export const draftCompositionSchema = z
     audienceRule: z.string().max(4_000).optional(),
     emailSubject: z.string().max(250).optional(),
     emailBody: z.string().optional(),
+    emailMobile: mobileSettingsSchema.optional(),
     emailText: z.string().optional(),
     preheader: z.string().max(250).optional(),
     smsBody: z.string().max(1_600).optional(),

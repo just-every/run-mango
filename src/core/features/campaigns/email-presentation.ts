@@ -1,3 +1,4 @@
+import {mobileOverrides,mobileClass,type MobileBlock} from './email-mobile';
 import { inspectInlineStyle } from './email-style-declarations';
 import { contrastRatio, minimumTextContrast } from './email-contrast';
 import { parseEmailHtml, type EmailElement, type EmailNode } from './email-html-parse';
@@ -19,7 +20,7 @@ const attributeRules: Record<string, Record<string, (value: string) => boolean>>
   div: {lang: value => /^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/i.test(value), dir: direction},
   img: {border: oneOf('0')},
 };
-const presentationNames = new Set(['style', 'bgcolor', 'role', 'cellpadding', 'cellspacing', 'border', 'align', 'valign', 'lang', 'dir']);
+const presentationNames = new Set(['class', 'style', 'bgcolor', 'role', 'cellpadding', 'cellspacing', 'border', 'align', 'valign', 'lang', 'dir']);
 /** Images and presentation are edited as HTML: rich editing keeps only the unstyled grammar (CAMP-002). */
 export function requiresHtmlEditing(html: string) {
   const presented = (nodes: EmailNode[]): boolean => nodes.some(node => node.kind === 'element'
@@ -46,7 +47,7 @@ const voidTags = new Set(['br', 'hr', 'img']);
  * cell's colour; on the outer wrapper it is the wrapper's colour and the page's white, since a long line or a floated
  * table can carry text out of a block (a cell grows to hold them); outside both, the page's white.
  * `lineHeight` is an inherited pixel line height; a unitless one scales with the text and is left out. */
-type Open = {colors: string[]; backgrounds: string[]; fontSize: number; lineHeight?: number; inCell: boolean; cellpadding?: string};
+type Open = {hidden?:boolean;colors: string[]; backgrounds: string[]; fontSize: number; lineHeight?: number; inCell: boolean; cellpadding?: string};
 const root: Open = {colors: [defaultTextColor], backgrounds: [pageBackground], fontSize: 16, inCell: false};
 
 /** Walks one parsed body (email-html-parse.ts) in tree order: callers report each element with its attributes
@@ -54,7 +55,7 @@ const root: Open = {colors: [defaultTextColor], backgrounds: [pageBackground], f
  * Text is judged against the background of its nearest painted cell, or outside any against the outer wrapper and the
  * page: the only places the tightened grammar lets it be drawn (email-placement.ts). inspectEmailHtml adds that styled
  * markup must be written the way parsers build it. */
-export function createPresentationCheck() {
+export function createPresentationCheck(settings:readonly MobileBlock[]=[],view:'mobile'|'desktop'='desktop') {
   const issues = new Set<string>(), structure = new Set<string>();
   const stack: Open[] = [root];
   let presented = false, wrapped = false;
@@ -64,6 +65,7 @@ export function createPresentationCheck() {
     get presented() { return presented; },
     /** Validates one attribute this checker owns; returns false for attributes it does not own. */
     attribute(tag: string, name: string, value: string) {
+      if(name==='class'&&settings.some(row=>mobileClass(row.block)===value)){presented=true;return true;}
       if (!isPresentationAttribute(tag, name)) return false;
       presented = true;
       if (name === 'style') for (const issue of inspectInlineStyle(value).issues) issues.add(issue);
@@ -72,7 +74,8 @@ export function createPresentationCheck() {
     },
     open(node: EmailElement) {
       const {tag, attributes} = node, parent = parentOf();
-      const declared = inspectInlineStyle(attributes.get('style') ?? '').declarations;
+      const responsive=mobileOverrides(settings,attributes.get('class'),view);
+      const declared = new Map([...inspectInlineStyle(attributes.get('style') ?? '').declarations,...responsive.values]);
       // The outer wrapper: the first div at the top level of the body that sets a background.
       const wrapper = tag === 'div' && parent === root && !wrapped;
       if (wrapper && declared.has('background-color')) wrapped = true;
@@ -83,6 +86,7 @@ export function createPresentationCheck() {
       if (voidTags.has(tag)) return;
       const color = declared.get('color'), painted = paintedBackground({tag, attributes, declared, wrapper}), lineHeight = declared.get('line-height');
       stack.push({
+        hidden:parent.hidden||responsive.hidden,
         colors: color ? [color] : tag === 'a' && attributes.has('href') ? [defaultLinkColor] : tag === 'table' ? [...new Set([...parent.colors, defaultTextColor])] : parent.colors,
         backgrounds: painted ? (cellTags.has(tag) ? [painted] : [...new Set([painted, pageBackground])]) : parent.backgrounds,
         // Quirks mode also starts a table again from the default 16px: the smaller of the two counts here.
@@ -97,7 +101,7 @@ export function createPresentationCheck() {
       if (!voidTags.has(tag)) stack.pop();
     },
     text(run: string) {
-      if (/^[ \t\n\r\f]*$/.test(run)) return;
+      if (parentOf().hidden||/^[ \t\n\r\f]*$/.test(run)) return;
       // The override characters reverse the letters readers see, as unicode-bidi:bidi-override would, while screen readers,
       // search and the plain-text part read them in their written order. Embeddings and isolates (U+202A to U+202C,
       // U+2066 to U+2069) only set direction, as dir does, and pasted right-to-left names carry them, so they stay.

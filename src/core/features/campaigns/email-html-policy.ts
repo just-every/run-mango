@@ -1,3 +1,4 @@
+import {mobileClass} from './email-mobile';
 import { safeEmailLink } from './contact-links';
 import { linkProblem } from './link-reasons';
 import { parseEmailHtml, type EmailElement, type EmailNode } from './email-html-parse';
@@ -46,14 +47,18 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
   for (const tag of parsed.tags) if (!emailTags.has(tag)) issues.add(`Tag <${tag}> is not allowed.`);
   const destinations = new Set<string>(), rejectedLinks = new Set<string>(), images = new Set<string>();
   const anchors: Array<{href: string; label: string}> = [];
-  const presentation = createPresentationCheck(), localImages = new Set<string>();
-  const visit = (node: EmailNode, inLink: boolean) => {
-    if (node.kind === 'text') { presentation.text(node.text); return; }
+  const presentations=[createPresentationCheck(parsed.mobile?.settings,'desktop'),...(parsed.mobile?[createPresentationCheck(parsed.mobile.settings,'mobile')]:[])],localImages=new Set<string>();
+  const presentation={attribute:(tag:string,name:string,value:string)=>{const accepted=presentations.map(check=>check.attribute(tag,name,value));return accepted.some(Boolean);},open:(node:EmailElement)=>presentations.forEach(check=>check.open(node)),close:(tag:string)=>presentations.forEach(check=>check.close(tag)),text:(run:string)=>presentations.forEach(check=>check.text(run)),finish:()=>presentations.flatMap(check=>check.finish()),get presented(){return presentations.some(check=>check.presented);}};
+  const visit = (node: EmailNode, inLink: boolean, hidden=false) => {
+    if (node.kind === 'text') {if(hidden&&node.text.includes('{{physical_address}}'))issues.add('Postal address and compliance text cannot be in a block hidden on either viewport.');presentation.text(node.text); return; }
     if (node.kind === 'comment') { issues.add('HTML comments are not allowed, including conditional comments.'); return; }
-    element(node, inLink);
+    element(node, inLink,hidden);
   };
-  const element = (node: EmailElement, inLink: boolean) => {
+  const element = (node: EmailElement, inLink: boolean, ancestorHidden:boolean) => {
     const {tag, attributes} = node;
+    const setting=parsed.mobile?.settings.find(row=>mobileClass(row.block)===attributes.get("class"));
+    const hidden=ancestorHidden||Boolean(setting?.hideOnMobile||setting?.hideOnDesktop);
+    if(hidden&&tag==="a"&&attributes.get("href")==="{{unsubscribe_url}}")issues.add("The unsubscribe link cannot sit in a block hidden on either viewport.");
     if (!node.html || !emailTags.has(tag)) issues.add(`Tag <${tag}> is not allowed${node.html ? '' : ' (SVG and MathML are not email markup)'}.`);
     if (inLink && tag === 'a') issues.add('Nested links are not allowed.');
     else if (inLink && !linkContent.has(tag)) issues.add('Links may contain only text and basic inline formatting.');
@@ -77,7 +82,7 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
       anchors.push({href: attributes.get('href') ?? '', label});
     }
     presentation.open(node);
-    for (const child of node.children) visit(child, inLink || tag === 'a');
+    for (const child of node.children) visit(child, inLink || tag === 'a',hidden);
     presentation.close(tag);
   };
   for (const node of parsed.nodes) visit(node, false);

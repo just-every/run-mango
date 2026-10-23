@@ -22,7 +22,7 @@ import {
   campaignSteps,
 } from './campaign-schema';
 
-type MutableRevisionField = Exclude<keyof DraftComposition, 'links' | 'steps' | 'designTemplateKey'>;
+type MutableRevisionField = Exclude<keyof DraftComposition, 'links' | 'steps' | 'designTemplateKey' | 'emailMobile'>;
 
 const revisionColumns: Record<MutableRevisionField, string> = {
   name: 'name',
