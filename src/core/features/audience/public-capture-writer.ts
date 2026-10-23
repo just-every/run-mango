@@ -87,9 +87,9 @@ export function createPublicCaptureWriter(database: Database) {
     );
     const evidenceIndex=statements.length-1;
     if(single)statements.push(
-      db.prepare(`UPDATE contacts SET email_status='subscribed',email_status_at=?,last_activity_at=MAX(COALESCE(last_activity_at,0),?),updated_at=?
+      db.prepare(`UPDATE contacts SET email_status='subscribed',email_status_at=CASE WHEN email_status='subscribed' THEN email_status_at ELSE ? END,last_activity_at=MAX(COALESCE(last_activity_at,0),?),updated_at=?
         WHERE changes()=1 AND id=(SELECT contact_id FROM consent_evidence WHERE id=? AND confirmation_required=0) AND email_status NOT IN ('unsubscribed','suppressed')`).bind(occurred,occurred,now,id),
-      db.prepare(`UPDATE contact_email_addresses SET channel_status='subscribed',channel_status_at=?,updated_at=?
+      db.prepare(`UPDATE contact_email_addresses SET channel_status='subscribed',channel_status_at=CASE WHEN channel_status='subscribed' THEN channel_status_at ELSE ? END,updated_at=?
         WHERE changes()=1 AND email=? AND contact_id=(SELECT contact_id FROM consent_evidence WHERE id=? AND confirmation_required=0) AND channel_status NOT IN ('unsubscribed','suppressed')`).bind(occurred,now,destination,id)
     );
     const result = await db.batch(statements);
