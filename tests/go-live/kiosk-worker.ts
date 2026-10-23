@@ -19,7 +19,7 @@ globalThis.fetch=async(input,init)=>{
     const form=new URLSearchParams(await request.text()),token=form.get('response')??'';
     const valid=form.get('secret')==='kiosk-test-secret'&&Boolean(form.get('remoteip'))&&/^kiosk-token-[\w-]+$/.test(token)&&!usedTokens.has(token);
     if(valid)usedTokens.add(token);
-    return Response.json({success:valid,action:'newsletter-signup',hostname:'127.0.0.1'});
+    return Response.json({success:valid,challenge_ts:new Date(realNow()).toISOString(),action:'newsletter-signup',hostname:'127.0.0.1'});
   }
   if(url.hostname==='api.resend.com') {
     if(url.pathname!=='/emails'||request.method!=='POST'||request.headers.get('Authorization')!=='Bearer kiosk-test-mail-key')throw new Error('Unexpected mail operation.');
@@ -41,8 +41,16 @@ export default {
     if(path.startsWith('/_kiosk/')) {
       if(request.headers.get('X-Test-Token')!==bindings.LOCAL_BOOTSTRAP_TOKEN)return new Response('Forbidden',{status:403});
       if(path==='/_kiosk/open') {
-        await testIdentity(platform).importLocalDemoOperator({id:'kiosk-owner',email:'owner@example.test',displayName:'Kiosk Owner'},new Date());
-        return Response.json(await testIdentity(platform).createTestSession('kiosk-owner'));
+        const {id='kiosk-owner'}=await request.json() as {id?:string};
+        await testIdentity(platform).importLocalDemoOperator({id,email:`${id}@example.test`,displayName:id},new Date());
+        return Response.json(await testIdentity(platform).createTestSession(id));
+      }
+      if(path==='/_kiosk/window') {
+        const body=await request.json() as {kind:'minute'|'hour'};
+        if(!['minute','hour'].includes(body.kind))return new Response('Invalid clock window',{status:400});
+        await bindings.DB.prepare(body.kind==='minute'?"UPDATE oa_limits SET window=window-1 WHERE key IN ('signup-global-minute','signup-challenged-minute')":"UPDATE oa_limits SET window=window-1 WHERE key LIKE 'signup%' AND key NOT LIKE 'signup-challenge:%' AND key NOT LIKE 'signup-refusal-alert:%'").run();
+        await bindings.DB.prepare(`UPDATE signup_allowance_levels SET effective_at=effective_at-? WHERE effective_at>CAST(strftime('%s','now') AS INTEGER)*1000`).bind(body.kind==='minute'?60000:3600000).run();
+        return Response.json({advanced:true});
       }
       if(path==='/_kiosk/clock') {clockOffset+=(await request.json() as {advanceMs:number}).advanceMs;return Response.json({now:Date.now()});}
       if(path==='/_kiosk/challenge') {challengeConnected=(await request.json() as {connected:boolean}).connected;return Response.json({connected:challengeConnected});}

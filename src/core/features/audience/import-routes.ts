@@ -23,7 +23,7 @@ export function createAudienceImportRoutes(platform: Platform) {
     // SMS columns are offered only where text messages are enabled.
     fields:Object.keys(defaultMapping).filter(id=>platform.sms||!id.startsWith('sms_')).map(id=>({id,label:id.replaceAll('_',' ')}))});
   });
-  routes.get('/audience/signup/refusals',async context=>context.json(await readSignupRefusals(platform.database.$client)));
+  routes.get('/audience/signup/refusals',async context=>context.json({...await readSignupRefusals(platform.database.$client),challengeConfigured:Boolean(platform.config.signupTurnstile)}));
   routes.get('/audience/signup',async context=>{
     const origin=platform.config.local===true?new URL(context.req.url).origin:platform.config.publicBaseUrl;
     const url=new URL('/subscribe',origin).toString();
@@ -36,7 +36,7 @@ export function createAudienceImportRoutes(platform: Platform) {
     const parsed=signupSettingsSchema.safeParse(await context.req.json().catch(()=>null));
     if(!parsed.success)return context.json({error:'invalid_signup_settings',fields:parsed.error.flatten().fieldErrors},400);
     try {return context.json(await saveSignupSettings(platform,parsed.data,operator.id,context.req.raw));}
-    catch(error){return context.json({error:error instanceof SenderAuthorityChanged?'authority_changed':'signup_settings_save_failed'},error instanceof SenderAuthorityChanged?403:500);}
+    catch(error){return context.json({error:error instanceof SenderAuthorityChanged?'challenge_change_owner_or_admin_required':error instanceof Error&&error.message==='kiosk_challenge_required'?'kiosk_challenge_required':'signup_settings_save_failed'},error instanceof SenderAuthorityChanged?403:error instanceof Error&&error.message==='kiosk_challenge_required'?400:500);}
   });
   routes.get('/audience/export',async context=>{
     context.header('Cache-Control','no-store');

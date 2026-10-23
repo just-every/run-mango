@@ -32,7 +32,7 @@ export async function refusalScreens(site:Awaited<ReturnType<typeof kioskInstall
     await alert.screenshot({path:info.outputPath(`refusal-home-${form}-${width}.png`)});
     expect(await operator.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await openPage(operator,site.runtime.url+'/app/settings');
-    await expect(operator.locator('#signup-allowances')).toContainText(form);
-    await operator.locator('#signup-allowances').screenshot({path:info.outputPath(`refusal-report-${form}-${width}.png`)});
+    await expect(operator.locator('#signup-refusals')).toContainText(form);
+    await operator.locator('#signup-refusals').screenshot({path:info.outputPath(`refusal-report-${form}-${width}.png`)});
   }
 }

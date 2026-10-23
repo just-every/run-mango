@@ -40,15 +40,22 @@ Every valid request has the same acknowledgment regardless of the address's stat
 
 ## Spam protection and limits
 
-Mango stores these limits, so a restart does not reset them:
+Mango stores accepted-signup allowances durably, so restarting does not reset a window. Settings → Signup allowances shows the active level, floor, ceiling and any next-window change:
 
-- five signup attempts per network per UTC hour (IPv6 addresses are grouped by /64);
-- three confirmation requests per email address per UTC day;
-- fifty confirmation requests across the whole deployment per UTC hour.
+- challenged traffic has its own 1,000 accepted signups per UTC hour and 100 per UTC minute;
+- unchallenged traffic has a separate pool at those same floors, so it cannot use challenged capacity;
+- each ordinary network has one accepted count per UTC hour: an unchallenged request is admitted below 30, and a verified request below 120 (IPv6 addresses share a /64);
+- a separate network counter admits up to 60 refused attempts per UTC hour; after that, unchallenged requests are refused, while a freshly verified request can still proceed;
+- each destination keeps three confirmation reservations per UTC day;
+- kiosks have independent 300-per-network and 300-installation-wide hourly pools and never spend the ordinary pools.
 
-Failed or duplicate attempts can use up capacity. Requests over 8,192 bytes are rejected, and the form includes a hidden field that quietly discards bot submissions.
+Only an Owner changes an allowance, never below its floor or above the email hand-off ceiling (3,000 per minute, or its hourly equivalent). An Admin receives a named refusal. A change starts with the next UTC window and records the operator and effective time in Activity.
 
-Optional Cloudflare Turnstile adds a challenge. Set `TURNSTILE_SITE_KEY` (a plain variable) and `TURNSTILE_SECRET_KEY` (a secret) together, and configure the widget for the hostname in `MANGO_PUBLIC_BASE_URL`. The challenge script loads only after a trusted keyboard or pointer interaction with the form. Verification sends the challenge token and visitor IP to Cloudflare. Mango verifies the action `newsletter-signup`, the hostname and a five-second timeout, and rejects the signup if verification fails. Setting only one key makes startup fail. With neither, the form has no challenge but keeps the consent, suppression and rate limits above.
+Sender, body, challenge, honeypot, field, disclosure and destination checks precede accepted admission. A bot, invalid request, protected destination or pending duplicate spends no accepted allowance. The unique request claim and all its counters are atomic: concurrent duplicates spend one reservation. A capture that loses before hand-off is refunded in its original windows; an attempted or uncertain hand-off remains spent. Requests over 8,192 bytes are refused.
+
+Every existing form defaults to requiring verification. An Owner or Admin may turn it off under Signup-form settings; Authors and Managers cannot, and kiosks always require it. Set `TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY` together for the hostname in `MANGO_PUBLIC_BASE_URL`. The script loads only after a trusted interaction. Mango sends the token and visitor IP to Cloudflare once, verifies action, hostname and challenge time within five minutes, and fails closed for missing, reused, expired or unverifiable tokens. One-sided configuration fails startup. Without keys, ordinary forms use their unchallenged partition and Home shows a warning; kiosks remain blocked.
+
+An address-independent allowance refusal returns 429 with `Retry-After` in seconds to that window's end. Hosted and kiosk forms retain the visitor's entries and show “Too many signups right now. Please try again in a few minutes.” They show no success or incentive. Destination-dependent confirmation refusals retain the same generic acknowledgment, without mail or subscription authority. Settings lists refusals by UTC hour, form and reason; Home shows the rolling-hour allowance count with links, and Activity records one address-free summary per closed hour. FORM-005's wider form report remains outstanding.
 
 > **Tip:** Open your own signup page before you share it, check that the consent text names the right sender, and sign yourself up once to see the confirmation email.
 
@@ -179,4 +186,4 @@ ambiguous email handoffs retain their claim and are never automatically replayed
 
 In Audience → Hosted form and embed, turn on **Kiosk or event form**, name the device or event and save. Open the hosted form on the shared tablet. Configure the Turnstile site and secret keys first: a kiosk refuses signups without verification, and every person must complete a fresh challenge.
 
-After a successful request, the form clears within two seconds. It does not remember or pre-fill a previous visitor, set an identifying cookie or store a visitor in browser storage. Every signup still needs affirmative consent and email confirmation. Returning unsubscribers use the same confirmed-only resubscribe path; other suppressions stay blocked. The kiosk has separate allowances of 300 accepted requests per network and globally per hour; ordinary forms retain their existing allowances, and confirmation requests retain the per-destination daily allowance. Insights shows confirmed subscriptions under the kiosk device label and retains their consent disclosure. Kiosk setting changes are recorded with the operator and time.
+After a successful request, the form clears within two seconds. It does not remember or pre-fill a previous visitor, set an identifying cookie or store a visitor in browser storage. Every signup still needs affirmative consent and email confirmation. Returning unsubscribers use the same confirmed-only resubscribe path; other suppressions stay blocked. The kiosk has separate allowances of 300 accepted requests per network and globally per hour; ordinary forms use their separate challenged or unchallenged allowances, and confirmation requests retain the per-destination daily allowance. Insights shows confirmed subscriptions under the kiosk device label and retains their consent disclosure. Kiosk setting changes are recorded with the operator and time.

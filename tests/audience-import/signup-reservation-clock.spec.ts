@@ -57,13 +57,13 @@ test('security: ascending old streamed-body groups spend only the actual D1 rese
       group.forEach(request => request.release());
       statuses.push(...(await Promise.all(group.map(request => request.response))).map(response => response.status));
     }
-    expect(statuses.filter(status=>status===202)).toHaveLength(50);expect(statuses.filter(status=>status===429)).toHaveLength(2);
-    expect(h.f.outbound).toHaveLength(50);
-    expect(await h.f.db.prepare("SELECT window,count FROM oa_limits WHERE key='signup-global'").first()).toEqual({window: actual.hour, count: 50});
+    expect(statuses.filter(status=>status===202)).toHaveLength(52);expect(statuses.filter(status=>status===429)).toHaveLength(0);
+    expect(h.f.outbound).toHaveLength(52);
+    expect(await h.f.db.prepare("SELECT window,count FROM oa_limits WHERE key='signup-global'").first()).toEqual({window: actual.hour, count: 52});
     const limits = await h.f.db.prepare('SELECT key,window FROM oa_limits').all<{key: string; window: number}>();
-    for (const limit of limits.results.filter(row=>!row.key.startsWith('signup-refusal-alert:'))) expect(limit.window).toBe(limit.key.startsWith('signup-email:') ? actual.day : actual.hour);
+    for (const limit of limits.results.filter(row=>!row.key.startsWith('signup-refusal-alert:'))) expect(limit.window).toBe(limit.key.startsWith('signup-email:') ? actual.day : limit.key.endsWith('-minute')?actual.hour*60+Math.floor((3600-actual.remaining)/60):actual.hour);
     const evidence = await h.f.db.prepare('SELECT r.id,r.destination_hash,r.created_at,e.occurred_at FROM audience_signup_requests r JOIN consent_evidence e ON e.id=r.id').all<{id: string; destination_hash: string; created_at: number; occurred_at: number}>();
-    expect(evidence.results).toHaveLength(50);
+    expect(evidence.results).toHaveLength(52);
     for (const row of evidence.results) {
       expect(Math.floor(row.created_at / 3_600_000)).toBe(actual.hour);
       expect(row.occurred_at).toBe(row.created_at);
@@ -71,8 +71,8 @@ test('security: ascending old streamed-body groups spend only the actual D1 rese
     }
     const fresh = await heldSignup(h, 'fresh-after-held@example.test', '198.51.100.1');
     fresh.release();
-    expect((await fresh.response).status).toBe(429);
-    expect(h.f.outbound).toHaveLength(50);
+    expect((await fresh.response).status).toBe(202);
+    expect(h.f.outbound).toHaveLength(53);
   } finally { Date.now = realNow; await h.close(); }
 });
 
@@ -84,7 +84,7 @@ test('security: delayed bodies share the actual D1 network hour despite older in
     const groups: Awaited<ReturnType<typeof heldSignup>>[][] = [];
     for (const offset of [2, 1]) {
       Date.now = () => (actual.hour-offset)*3_600_000+1;
-      groups.push(await Promise.all(Array.from({length: 3}, (_, i) => heldSignup(h, `network-${offset}-${i}@example.test`, '192.0.2.99'))));
+      groups.push(await Promise.all(Array.from({length: 16}, (_, i) => heldSignup(h, `network-${offset}-${i}@example.test`, '192.0.2.99'))));
     }
     Date.now = realNow;
     const statuses: number[] = [];
@@ -92,9 +92,9 @@ test('security: delayed bodies share the actual D1 network hour despite older in
       group.forEach(request => request.release());
       statuses.push(...(await Promise.all(group.map(request => request.response))).map(response => response.status));
     }
-    expect(statuses.filter(status => status === 202)).toHaveLength(5);
-    expect(statuses.filter(status => status === 429)).toHaveLength(1);
-    expect(h.f.outbound).toHaveLength(5);
+    expect(statuses.filter(status => status === 202)).toHaveLength(30);
+    expect(statuses.filter(status => status === 429)).toHaveLength(2);
+    expect(h.f.outbound).toHaveLength(30);
   } finally { Date.now = realNow; await h.close(); }
 });
 
@@ -104,7 +104,7 @@ test('security: application clock skew cannot move the durable admission clock o
   const realNow = Date.now;
   try {
     const actual = await databaseWindow(h.f.db);
-    await h.f.db.prepare('INSERT INTO oa_limits(key,window,count) VALUES(?,?,49)').bind('signup-global', actual.hour).run();
+    await h.f.db.prepare('INSERT INTO oa_limits(key,window,count) VALUES(?,?,999)').bind('signup-global', actual.hour).run();
     Date.now = () => (actual.hour + 48) * 3_600_000 + 1;
     const held = await Promise.all([0, 1].map(i => heldSignup(h, `skew-${i}@example.test`, `198.51.100.${i+1}`)));
     held.forEach(request => request.release());
@@ -112,6 +112,6 @@ test('security: application clock skew cannot move the durable admission clock o
     Date.now = realNow;
     expect(responses.map(response=>response.status).sort()).toEqual([202,429]);for(const response of responses.filter(response=>response.status===429))expect(Number(response.headers.get('Retry-After'))).toBeGreaterThan(0);
     expect(h.f.outbound).toHaveLength(1);
-    expect(await h.f.db.prepare("SELECT window,count FROM oa_limits WHERE key='signup-global'").first()).toEqual({window: actual.hour, count: 50});
+    expect(await h.f.db.prepare("SELECT window,count FROM oa_limits WHERE key='signup-global'").first()).toEqual({window: actual.hour, count: 1000});
   } finally { Date.now = realNow; await h.close(); }
 });
