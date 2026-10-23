@@ -80,6 +80,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
       .bind('synthetic-encrypted-api-key','synthetic-encrypted-signing-key','test','1234','owner@example.test',1).run();
     await source.db.prepare('INSERT INTO woocommerce_connection(slot,id,url,credentials,generation,connected_by,connected_at) VALUES(1,?,?,?,?,?,?)')
       .bind('synthetic-mango-11','https://woo.example.test/','synthetic-mango-12','synthetic-mango-13','portable-operator',1).run();
+    await source.db.prepare("INSERT INTO sending_connection(id,generation,state,account_id,account_name,secret_cipher,last_four,broader,connected_by,connected_at) VALUES(1,'synthetic-mango-91','connected','synthetic-mango-92','Synthetic Mango','synthetic-mango-93','o-93',0,'portable-operator',1)").run();
     await source.db.prepare('INSERT INTO tracking_domain(id,host,updated_at,operator_id) VALUES(1,?,?,?)')
       .bind('links.example.test',1,'portable-operator').run();
     const allTables = (await source.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND sql IS NOT NULL").all()).results;
@@ -97,6 +98,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(original.some(row => row.table.startsWith('oa_'))).toBe(false);
     expect(original.some(row => row.table === 'stripe_connection')).toBe(false);
     expect(original.some(row => row.table === 'woocommerce_connection')).toBe(false);
+    expect(original.some(row=>row.table==='sending_connection'||row.table==='sending_proposals')).toBe(false);
+    expect(JSON.stringify(original)).not.toContain('synthetic-mango-82');
     expect(JSON.stringify(original)).not.toContain('synthetic-mango-12');
     expect(JSON.stringify(original)).not.toContain('synthetic-encrypted-api-key');
     expect(original.filter(row => row.table === 'tracking_domain').map(row => row.row.host)).toEqual(['links.example.test']);
@@ -135,6 +138,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await target.db.prepare('SELECT count(*) AS n FROM audience_erasures').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT count(*) AS n FROM stripe_connection').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT count(*) AS n FROM woocommerce_connection').first()).n).toBe(0);
+    expect((await target.db.prepare('SELECT count(*) AS n FROM sending_connection').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT host FROM tracking_domain WHERE id=1').first()).host).toBe('links.example.test');
     expect(await target.db.prepare("SELECT value FROM signup_allowance_levels WHERE name='globalHour'").first()).toEqual({value:1200});
     expect(JSON.parse((await target.db.prepare('SELECT policy_json FROM analytics_settings WHERE id=1').first()).policy_json)).toEqual(analytics);

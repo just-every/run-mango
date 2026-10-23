@@ -1,3 +1,4 @@
+import {SettingsSending} from './settings-sending';
 import {SettingsWooCommerce} from './settings-woocommerce';
 import {SettingsAudienceExclusions} from './settings-audience-exclusions';
 import {SettingsDomainGuide} from './settings-domain-guide';
@@ -30,6 +31,7 @@ export function SettingsPage() {
           <p className="page-head__lead">Operator identity and sending connections.</p>
         </div>
       </header>
+      <Can permission="provider.connect"><SettingsSending /></Can>
       <Can permission="settings.manage"><SettingsSender operatorEmail={operator.data.operator.email} /></Can>
       <Can permission="settings.manage"><SettingsLinkHosts /></Can>
       <Can permission="settings.manage"><SettingsAudienceExclusions /></Can>

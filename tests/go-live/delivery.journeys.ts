@@ -1,3 +1,4 @@
+import {sendingConnectionJourney} from './sending-connection-journey';
 import {test,expect} from '@playwright/test';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -160,7 +161,8 @@ test('[SEND-003][SEND-006] concurrent campaigns and HTTP confirmation share the 
   }
 });
 
-test('[MSG-011] signed account restrictions bind before recipient parsing and fence approval and an in-flight dispatch below volume thresholds',async({page})=>{
+test('[MSG-011] signed account restrictions bind before recipient parsing and fence approval and an in-flight dispatch below volume thresholds',async({page},info)=>{
+  await sendingConnectionJourney(page,info);
   const edge=await providerEdge(),signer=eventSigner(),site=await installation(edge,signer);
   try {
     const cookie=await setup(site),email='account-hold@example.test';

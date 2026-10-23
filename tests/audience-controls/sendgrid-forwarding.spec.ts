@@ -25,6 +25,8 @@ test('SEND-006 CONT-006 signed existing-hook forwarding preserves bytes, rejects
       [Buffer.from(JSON.stringify(JSON.parse(raw.toString()))),signature],
       [Buffer.from(raw.toString().replace('forwarded@example.test','tampered@example.test')),signature],
       [raw,headers(raw,now,other.privateKey)],
+      [raw,{}],
+      [raw,headers(raw,String(Number(now)+600))],
       [raw,headers(raw,String(Number(now)-600))],
       [Buffer.from([0xff,0xfe,0x7b]),headers(Buffer.from([0xff,0xfe,0x7b]))],
       [Buffer.from('--boundary\r\nContent-Disposition: form-data; name="email"\r\n\r\nmessage\r\n--boundary--'),headers(Buffer.from('--boundary\r\nContent-Disposition: form-data; name="email"\r\n\r\nmessage\r\n--boundary--'))],

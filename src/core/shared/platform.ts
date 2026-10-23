@@ -53,6 +53,7 @@ export type ProviderReconciliation = {
 };
 
 export type SenderCapabilities = {
+  deliveryEventsVerified?: boolean;
   handoffPolicy?: 'single-attempt';
   configured: boolean;
   canSendMarketing: boolean;
