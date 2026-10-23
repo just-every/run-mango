@@ -41,7 +41,7 @@ test('[REPORT-005] native membership changes reconcile by day and consent source
     expect(after.rows.filter((row:any)=>row.kind==='unsubscribe').reduce((n:number,row:any)=>n+row.net,0)).toBe(-1);
     expect(after.rows.filter((row:any)=>row.kind==='suppression').reduce((n:number,row:any)=>n+row.net,0)).toBe(-1);
     expect(after.rows.filter((row:any)=>row.kind==='erasure').reduce((n:number,row:any)=>n+row.net,0)).toBe(-1);
-    expect(after.rows.some((row:any)=>row.source==='Market stall sign-up sheet'&&row.version==='v1'&&row.consentText)).toBe(true);
+    expect(after.rows.some((row:any)=>row.source==='Operator:Owner (go-live-owner)|operator-entry|Market stall sign-up sheet'&&row.version==='v1'&&row.consentText)).toBe(true);
     expect(JSON.stringify(after)).not.toMatch(/alice@example|bob@example|carla@example|Carla Fields/);
     expect((await site.rows(`SELECT count(*) n FROM list_growth_attribution WHERE contact_id='${carlaId}'`))[0].n).toBe(0);
     const old=await json(await site.call('/api/insights/list-growth?from=2000-01-01&to=2000-01-02',{cookie}),200);
