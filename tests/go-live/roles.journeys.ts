@@ -1,3 +1,4 @@
+import {shopifyInstallJourney} from './shopify-install-journey';
 import {stripeJourney} from './stripe-journey';
 import {createHmac} from 'node:crypto';
 import {test,expect} from '@playwright/test';
@@ -8,7 +9,7 @@ import {openPage} from '../support/navigation';
 import {type ProductRole} from '../../src/core/features/auth/permissions';
 
 test('[INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
-  const edge=await providerEdge(),site=await installation(edge,eventSigner());
+  const edge=await providerEdge({shopifyInstall:true}),site=await installation(edge,eventSigner(),{shopifyApp:true});
   try {
     const owner=await site.open();
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie:owner,body:sender}),200);
@@ -22,6 +23,7 @@ test('[INT-004][OPER-003][OPER-004] roles govern native requests and removal ret
       expect((await json(await site.call('/api/operator',{cookie:cookies[role]}),200)).operator.role).toBe(role);
     }
     await stripeJourney(site, page, info, owner, cookies.admin!, cookies.author!, edge);
+    await shopifyInstallJourney(site,page,info,owner,cookies.admin!,cookies.author!,edge);
     await site.runtime.sql("UPDATE oa_operators SET display_name=CASE id WHEN 'go-live-owner' THEN 'Jordan Green' WHEN 'role-admin' THEN 'Noah Brooks' WHEN 'role-manager' THEN 'Maya Torres' WHEN 'role-author' THEN 'Lena Chen' WHEN 'role-analyst' THEN 'Ari Patel' ELSE 'Sam Rivera' END RETURNING id");
     // Existing native sessions remain signed in, but cannot retain an old grant.
     expect((await site.call('/api/operators/go-live-owner/role',{method:'PUT',cookie:owner,body:{role:'author'}})).status).toBe(409);

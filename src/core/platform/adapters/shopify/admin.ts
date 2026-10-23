@@ -1,13 +1,14 @@
 import {connection, object, text, type Node} from './values';
 import {querySpecs, pageInfo, lineFields, refundLineFields, levelFields, returnFields, returnLineFields, transactionFields, type AdminSource} from './queries';
 
-export function createShopifyAdmin(options: {storeUrl: URL; accessToken: string}) {
+export function createShopifyAdmin(options: {storeUrl: URL; accessToken: string; accessTokenExpiresAt?: number}) {
   const endpoint = new URL('/admin/api/2026-07/graphql.json', options.storeUrl);
   async function query(document: string, variables: Record<string, unknown> = {}, progress?:()=>Promise<void>) {
+    if(options.accessTokenExpiresAt!==undefined&&options.accessTokenExpiresAt<=Date.now())throw new Error('Shopify authorization expired. Connect Shopify again.');
     await progress?.();
     const response = await fetch(endpoint, {method: 'POST', signal: AbortSignal.timeout(15000), headers: {'Content-Type': 'application/json', 'X-Shopify-Access-Token': options.accessToken}, body: JSON.stringify({query: document, variables})});
     if (!response.ok) throw new Error(`Shopify Admin request failed (${response.status}). Check scopes and protected customer access.`);
-    const root = object(await response.json(), 'GraphQL response');
+    const root = object(await response.json().catch(() => {throw new Error('Shopify Admin response was not valid JSON.');}), 'GraphQL response');
     await progress?.();
     if (root.errors !== undefined && (!Array.isArray(root.errors) || root.errors.length)) throw new Error('Shopify GraphQL returned errors; the source is incomplete. Check scopes and schema.');
     return object(root.data, 'GraphQL data');

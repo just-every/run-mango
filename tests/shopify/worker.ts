@@ -13,9 +13,27 @@ function installNetworkEdge(env){
       if(String(url)==='https://api.sendgrid.com/v3/mail/send'){
         await env.DB.prepare('INSERT INTO test_mail(body) VALUES(?)').bind(options.body).run();return new Response(null,{status:202,headers:{'x-message-id':'test-mail'}});
       }
+      if(String(url)==='https://mango-shop.myshopify.com/admin/oauth/access_token'){
+        await env.DB.prepare('INSERT INTO test_shopify_http(request_key,started_at,ended_at) VALUES(?,?,?)').bind('OAuthToken',Date.now(),Date.now()).run();
+        const row=await env.DB.prepare("SELECT body FROM test_shopify WHERE id='OAuthToken'").first();
+        if(!row)throw new Error('OAuth token edge not configured');return new Response(row.body,{headers:{'Content-Type':'application/json'}});
+      }
       if(String(url)!=='https://mango-shop.myshopify.com/admin/api/2026-07/graphql.json')throw new Error('Unexpected network edge');
       const {query,variables}=JSON.parse(options.body);
-      const operation=query.match(/query (\w+)/)?.[1];
+      const operation=query.match(/(?:query|mutation) (\w+)/)?.[1];
+      if(operation==='MangoCreatePixel') {
+        const row=await env.DB.prepare("SELECT body FROM test_shopify WHERE id='MangoInstalledAccess'").first();
+        const body=JSON.parse(row.body),pixel={id:'gid://shopify/WebPixel/2',settings:variables.pixel.settings};body.data.webPixel=pixel;
+        await env.DB.prepare("UPDATE test_shopify SET body=? WHERE id='MangoInstalledAccess'").bind(JSON.stringify(body)).run();
+        return Response.json({data:{webPixelCreate:{webPixel:pixel,userErrors:[]}}});
+      }
+      if(operation==='MangoCreateSubscription') {
+        const stored=await env.DB.prepare("SELECT body FROM test_shopify WHERE id='MangoSubscriptions'").first();
+        const body=JSON.parse(stored.body),nodes=body.data.webhookSubscriptions.nodes;
+        const created={id:'gid://shopify/WebhookSubscription/'+(nodes.length+100),topic:variables.topic,uri:variables.subscription.uri,filter:null,includeFields:[],format:'JSON',apiVersion:{handle:'2026-07'}};
+        nodes.push(created);await env.DB.prepare("UPDATE test_shopify SET body=? WHERE id='MangoSubscriptions'").bind(JSON.stringify(body)).run();
+        return Response.json({data:{webhookSubscriptionCreate:{webhookSubscription:created,userErrors:[]}}});
+      }
       const connection=query.match(/\{ (customers|products|productVariants|inventoryItems|orders)\(/)?.[1];
       const key=operation==='MangoSource'?`${connection}:${variables.cursor??''}`:operation==='MangoNested'?`${variables.id}:${variables.cursor}`:operation==='MangoNode'?`node:${variables.id}`:operation;
       const result=await env.DB.prepare('SELECT body,elapsed_ms FROM test_shopify WHERE id=?').bind(key).first();
@@ -32,6 +50,7 @@ export default {
     installNetworkEdge(env);
     const input=await envelope.json();
     if(input.url.includes('/test/erasure-race/'))return Response.json(await erasureRace(new URL(input.url).pathname.split('/').at(-1)!));
+    if(input.url.endsWith('/test/clock')){edgeClockOffset+=JSON.parse(input.body??'{}').advanceMs??0;return Response.json({now:Date.now()});}
     env={...env,DB:raceDatabase(env.DB)};
     return productionWorker.fetch(new Request(input.url,{method:input.method,headers:input.headers,...(input.body!==undefined?{body:input.body}:{})}),env,context);
   },

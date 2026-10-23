@@ -7,10 +7,13 @@ const require=createRequire(import.meta.url);
 const {Miniflare,_enableControlEndpoints}=createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const {build}=createRequire(require.resolve('vite/package.json'))('esbuild');
 export const secret='shopify-test-only-secret';
-export async function shopifyRuntime(){
+export const appSecret='synthetic-mango-72';
+export async function shopifyRuntime({oauthOnly=false}={}){
   // API and Queue proof does not load the separate TanStack document renderer.
   const bundled=await build({entryPoints:[resolve('tests/shopify/worker.ts')],bundle:true,write:false,format:'esm',platform:'browser',external:['node:*','@tanstack/react-start/server-entry',resolve('src/core/app/private-server.tsx')],alias:{'@':resolve('src')}});
   const values={SESSION_SIGNING_KEY:'synthetic-test-session-secret-more-than-thirty-two-bytes',AUTH_SETUP_TOKEN:'synthetic-test-setup-secret-more-than-thirty-two-bytes',INITIAL_OPERATOR_EMAILS:'owner@example.test',CONTACT_HASH_SALT:'test-contact-salt',MAIL_PROVIDER:'sendgrid',MAIL_PROVIDER_API_KEY:'test-api-key',MAIL_AUTH_FROM:'owner@example.test',MAIL_WEBHOOK_SECRET:'test-key',MAIL_WEBHOOK_ID:'test-hook',MANGO_PUBLIC_BASE_URL:'https://mango.example.test',MANGO_APP_VERSION:'test',MANGO_ALLOWED_LINK_HOSTS:'example.test',MANGO_TEST_EMAIL_ALLOWLIST:'owner@example.test',MANGO_RECONCILIATION_INTERVAL_MINUTES:'15',MANGO_UNRESOLVED_OUTCOME_HOURS:'48',MANGO_EMAIL_HANDOFFS_PER_MINUTE:'10',MANGO_DELIVERABILITY_WINDOW_DAYS:'30',MAIL_SENDER_NAME:'Example',MAIL_REPLY_TO:'owner@example.test',MAIL_PHYSICAL_ADDRESS:'Test address',COMMERCE_STORE_URL:'https://mango-shop.myshopify.com',COMMERCE_EXCLUSIVE_SHOP:'mango-shop.myshopify.com',COMMERCE_API_TOKEN:'test-admin-key',COMMERCE_WEBHOOK_SECRET:secret,COMMERCE_OBSERVATION_CHANNEL:'test-channel',COMMERCE_APP_INSTALLATION_ID:'gid://shopify/AppInstallation/1',COMMERCE_PIXEL_ID:'gid://shopify/WebPixel/2',COMMERCE_PROXY_PATH:'/apps/mango-signals'};
+  values.SHOPIFY_APP_ID='synthetic-mango-71';values.SHOPIFY_APP_SECRET=appSecret;
+  if(oauthOnly)for(const key of Object.keys(values))if(key.startsWith('COMMERCE_'))delete values[key];
   _enableControlEndpoints();
   const queueName='shopify-native-jobs';
   const mf=new Miniflare({host:'127.0.0.1',cf:false,telemetry:{enabled:false},workers:[{config:{name:'shopify-connection-test',type:'worker',triggers:[{type:'queue',name:queueName,maxBatchSize:1}],compatibilityDate:'2026-09-01',compatibilityFlags:['nodejs_compat'],manifest:{mainModule:'worker.js',modules:{'worker.js':{type:'esm',contents:bundled.outputFiles[0].text}}},env:{...Object.fromEntries(Object.entries(values).map(([key,value])=>[key,{type:'json',value}])),MANGO_JOBS:{type:'queue',name:queueName},DB:{type:'d1',id:crypto.randomUUID()},ASSETS_BUCKET:{type:'r2',name:crypto.randomUUID()}}}}]});

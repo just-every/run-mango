@@ -1,3 +1,4 @@
+import {shopifyInstallRoutes} from '@/core/features/store/shopify/install-routes';
 import {wooFlowRoutes} from '@/core/features/store/woocommerce/flows';
 import {wooCommerceRoutes} from '@/core/features/store/woocommerce/routes';
 import { createAttributionPolicyRoutes } from '@/core/features/insights/attribution-policy-routes';
@@ -296,6 +297,8 @@ export function createApp(
     return context.json({local: platform.config.local === true,
       editorEligible: editorConfigured && await authService.isNativeOwner(context.req.raw)});
   });
+  const shopifyInstallation = shopifyInstallRoutes(platform, environment, authService);
+  app.route('/', shopifyInstallation.callbacks);
   app.route('/', createPublicAuthRoutes(authService, { secureCookie }));
   app.route('/', createAudiencePublicRoutes(audienceService));
   app.route('/', createSenderCheckRoutes(platform));
@@ -355,6 +358,7 @@ export function createApp(
   app.route('/api',createDormancyRoutes(platform));
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
   app.route('/api', stripe.settings);
+  app.route('/api', shopifyInstallation.settings);
   app.route('/api', woo.settings);
   app.route('/api', wooFlowRoutes(platform));
   app.route('/api', domainSetupRoutes(platform));

@@ -1,6 +1,11 @@
+import {ensureInstallationPixel} from './pixel-installation';
+import type {Platform} from '@/core/shared/platform';
+import {readShopifyInstallation} from './installation';
+import {installationScopes} from './install-security';
+import {reconcileSubscriptions} from './subscriptions';
 import type {Database} from '@/core/platform/db/client';
-import type {createShopifyAdmin} from '@/core/platform/adapters/shopify/admin';
-import {connection,object,text,list} from '@/core/platform/adapters/shopify/values';
+import {createShopifyAdmin} from '@/core/platform/adapters/shopify/admin';
+import {object,text,list} from '@/core/platform/adapters/shopify/values';
 export type ShopifyObservationConfig={channel:string;installationId:string;pixelId:string;proxyPath:string;webhookUrl:string};
 export function createShopifyHealth(database:Database,admin:ReturnType<typeof createShopifyAdmin>,shop:string,config:ShopifyObservationConfig){
   return async(progress?:()=>Promise<void>)=>{
@@ -14,14 +19,7 @@ export function createShopifyHealth(database:Database,admin:ReturnType<typeof cr
       for(const scope of ['read_customers','read_products','read_inventory','read_locations','read_orders','read_all_orders','read_returns','read_pixels','read_customer_events','write_app_proxy'])if(!scopes.has(scope))throw new Error(`Shopify is missing required ${scope} scope.`);
       const settings=object(typeof pixel.settings==='string'?JSON.parse(pixel.settings):pixel.settings);
       if(settings.channel!==config.channel||settings.proxyPath!==config.proxyPath)throw new Error('Installed Shopify pixel settings do not match this collector.');
-      const topics=new Set<string>();let cursor:string|undefined;const seen=new Set<string>();
-      do{
-        const result=await admin.query(`query MangoSubscriptions($cursor:String){webhookSubscriptions(first:100,after:$cursor){nodes{topic uri filter includeFields format apiVersion{handle}}pageInfo{hasNextPage endCursor}}}`,{cursor:cursor??null},progress);
-        const page=connection(result.webhookSubscriptions,'webhook subscriptions');
-        for(const node of page.nodes)if(node.uri===config.webhookUrl && node.filter===null && Array.isArray(node.includeFields) && node.includeFields.length===0 && node.format==='JSON' && object(node.apiVersion).handle==='2026-07')topics.add(text(node.topic,'webhook topic'));
-        cursor=page.cursor;if(cursor&&seen.has(cursor))throw new Error('Shopify subscription pagination repeated.');if(cursor)seen.add(cursor);
-      }while(cursor);
-      if(!topics.has('CARTS_CREATE')||!topics.has('CARTS_UPDATE'))throw new Error('Both Online Store cart subscriptions must target this Mango deployment.');
+      await reconcileSubscriptions(admin,config.webhookUrl,['CARTS_CREATE','CARTS_UPDATE'],progress);
       await db.prepare(`INSERT INTO commerce_channels(id,shop,installation_id,pixel_id,coverage_start,retention_start,healthy_at,supported_events,purpose)
         VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET healthy_at=excluded.healthy_at,last_error=NULL
         WHERE shop=excluded.shop AND installation_id=excluded.installation_id AND pixel_id=excluded.pixel_id`).bind(config.channel,shop,config.installationId,config.pixelId,now,now,now,JSON.stringify(['carts/create','carts/update','product_viewed','cart_viewed','product_added_to_cart']),'analytics+marketing+sale-of-data').run();
@@ -31,4 +29,21 @@ export function createShopifyHealth(database:Database,admin:ReturnType<typeof cr
       await db.prepare('UPDATE commerce_channels SET last_error=? WHERE id=?').bind(error instanceof Error?error.message:'Shopify health failed.',config.channel).run();throw error;
     }
   };
+}
+
+export async function checkShopifyInstallation(platform:Pick<Platform,'database'|'config'>,progress?:()=>Promise<void>){
+  const stored=await readShopifyInstallation(platform);if(!stored)return null;
+  const db=platform.database.$client;
+  try {
+    if(stored.expires_at!==null&&stored.expires_at<=Date.now())throw new Error('Shopify authorization expired. Connect Shopify again.');
+    const admin=createShopifyAdmin({storeUrl:new URL('https://'+stored.shop),accessToken:stored.accessToken,accessTokenExpiresAt:stored.expires_at??undefined});
+    const data=await admin.query('query MangoInstalledAccess { shop { myshopifyDomain } currentAppInstallation { id accessScopes { handle } } webPixel { id settings } }',{},progress);
+    if(object(data.shop).myshopifyDomain!==stored.shop)throw new Error('Shopify token belongs to another shop.');
+    const granted=new Set(list(object(data.currentAppInstallation).accessScopes,'access scopes').map(s=>String(s.handle)));
+    for(const scope of installationScopes)if(!granted.has(scope))throw new Error(`Shopify is missing ${scope}. Re-approve its permissions.`);
+    const pixelId=await ensureInstallationPixel(admin,data.webPixel,stored.channel_id,stored.proxy_path);
+    const subscriptions=await reconcileSubscriptions(admin,new URL('/webhooks/commerce/shopify',platform.config.publicBaseUrl).href,undefined,progress);
+    await db.prepare('UPDATE shopify_installation SET scopes_json=?,subscriptions_json=?,pixel_id=?,checked_at=?,last_error=NULL WHERE id=1 AND shop=?').bind(JSON.stringify([...granted]),JSON.stringify(subscriptions),pixelId,Date.now(),stored.shop).run();
+    return subscriptions;
+  }catch(error){const message=error instanceof Error?error.message:'Shopify installation check failed.';await db.prepare('UPDATE shopify_installation SET last_error=? WHERE id=1').bind(message).run();throw error;}
 }

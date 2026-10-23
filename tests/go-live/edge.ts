@@ -1,3 +1,4 @@
+import {shopifyInstallEdge} from './shopify-install-edge';
 import {providerBehavior} from './provider-behavior';
 import {smsProviderEdge} from './sms-provider-edge';
 import {resendProviderEdge} from './resend-provider-edge';
@@ -15,8 +16,9 @@ type Answer = { type: number; data: string };
 const quoted = (value: string) => (value.match(/.{1,255}/g) ?? []).map(part => JSON.stringify(part)).join(' ');
 const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).publicKey.export({ type: 'spki', format: 'der' }).toString('base64');
 
-export async function providerEdge(options:{commerce?:(request:Record<string,unknown>)=>unknown; links?:Record<string,{status?:number;location?:string}>; woo?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>}={}) {
+export async function providerEdge(options:{commerce?:(request:Record<string,unknown>)=>unknown; links?:Record<string,{status?:number;location?:string}>; shopifyInstall?:boolean; woo?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>}={}) {
   const behavior=providerBehavior();
+  const shopifyInstall=shopifyInstallEdge();
   const sms=smsProviderEdge();
   const keys = [dkimKey(), dkimKey()];
   const resend=resendProviderEdge(keys[0]);
@@ -71,6 +73,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
     if(await options.woo?.(original,request,response))return;
     if(await sms.handle(original,request,response))return;
     if(await resend.handle(original,request,response))return;
+    if(options.shopifyInstall && await shopifyInstall.handle(original,request,response))return;
     const linked = options.links?.[original.href];
     if(linked && request.method==='HEAD') {response.writeHead(linked.status ?? (linked.location ? 302 : 200), linked.location ? {Location:linked.location} : {});response.end();return;}
     if(original.hostname==='shop.example.test'&&request.method==='HEAD'){response.writeHead(200);response.end();return;}
@@ -121,7 +124,7 @@ export async function providerEdge(options:{commerce?:(request:Record<string,unk
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('Edge server has no port.');
-  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,domainSetup,stripe,
+  return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,domainSetup,stripe,shopifyInstall,
     loseResponseFor: (address: string) => lost.add(address),
     close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
 }

@@ -241,12 +241,13 @@
       "why": "Mango needs the buyer's real customers, products, carts, browsing signals, orders, refunds, and inventory to identify and recheck opportunities.",
       "data": [
         "Webhook acknowledgements sent back to the store confirming receipt of an event",
-        "Explicit adapter requests for source records (customers, products, orders, refunds, carts, browsing events), including authenticated Stripe customer reads for payment, Checkout and subscription event identity"
+        "Explicit adapter requests for source records (customers, products, orders, refunds, carts, browsing events), including authenticated Stripe customer reads for payment, Checkout and subscription event identity",
+        "Owner/Admin-authorized Shopify OAuth code and app credentials sent to Shopify for token exchange; the installation token sent only to Shopify Admin for scope, webhook subscription and app-scoped pixel checks and creation"
       ],
       "adapters": [
         "commerce.store.v1"
       ],
-      "requiredWhen": "Corresponding optional module or Settings Stripe/WooCommerce connection is enabled"
+      "requiredWhen": "Corresponding optional module, Settings Stripe/WooCommerce connection, or Shopify installation OAuth/check is enabled"
     },
     {
       "id": "ai-provider",
@@ -376,6 +377,15 @@
         "sender-verification.receiver.v1"
       ],
       "requiredWhen": "The authenticated sender receipt connector is configured and an operator verifies a diagnostic challenge"
+    },
+    {
+      "id": "shopify-connector",
+      "required": false,
+      "why": "INT-015 declares the future shared app connector; it is not built or contacted by the installation-side OAuth increment.",
+      "data": [
+        "When built: shop domain, shop ID, installation origin, routing token, forwarding key and delivery counts; forwarded bodies in transit only, never stored. No shop access token."
+      ],
+      "requiredWhen": "The shared Mango for Shopify connector is implemented and explicitly enabled by an Owner or Admin."
     }
   ],
   "env": [
@@ -658,6 +668,20 @@
       "secret": false,
       "why": "HTTPS Managed mail relay endpoint assigned by RER.",
       "requiredWhen": "MAIL_PROVIDER is rer"
+    },
+    {
+      "name": "SHOPIFY_APP_ID",
+      "required": false,
+      "secret": false,
+      "why": "Client ID for the bounded installation-side Shopify OAuth app; shared connector not yet built.",
+      "requiredWhen": "Shopify installation OAuth is used"
+    },
+    {
+      "name": "SHOPIFY_APP_SECRET",
+      "required": false,
+      "secret": true,
+      "why": "Server-only Shopify app secret for callback HMAC and OAuth code exchange.",
+      "requiredWhen": "Shopify installation OAuth is used"
     }
   ],
   "deploy": {

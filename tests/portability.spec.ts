@@ -62,6 +62,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
       .bind('synthetic-encrypted-api-key','synthetic-encrypted-signing-key','test','1234','owner@example.test',1).run();
     await source.db.prepare('INSERT INTO woocommerce_connection(slot,id,url,credentials,generation,connected_by,connected_at) VALUES(1,?,?,?,?,?,?)')
       .bind('synthetic-mango-11','https://woo.example.test/','synthetic-mango-12','synthetic-mango-13','portable-operator',1).run();
+    await source.db.prepare("INSERT INTO shopify_installation(id,shop,token_cipher,scopes_json,connected_by,connected_at,channel_id,proxy_path) VALUES(1,'synthetic-mango-81.myshopify.com','synthetic-mango-82','[]','portable-operator',1,'synthetic-mango-84','/apps/mango-signals')").run();
+    await source.db.prepare("INSERT INTO shopify_oauth_states(id,shop,operator_id,origin,scopes_json,expires_at) VALUES('synthetic-mango-83','synthetic-mango-81.myshopify.com','portable-operator','https://mango.example.test','[]',1)").run();
     await source.db.prepare('INSERT INTO tracking_domain(id,host,updated_at,operator_id) VALUES(1,?,?,?)')
       .bind('links.example.test',1,'portable-operator').run();
     const allTables = (await source.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND sql IS NOT NULL").all()).results;
@@ -79,6 +81,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(original.some(row => row.table.startsWith('oa_'))).toBe(false);
     expect(original.some(row => row.table === 'stripe_connection')).toBe(false);
     expect(original.some(row => row.table === 'woocommerce_connection')).toBe(false);
+    expect(original.some(row => row.table === 'shopify_installation' || row.table === 'shopify_oauth_states')).toBe(false);
+    expect(JSON.stringify(original)).not.toContain('synthetic-mango-82');
     expect(JSON.stringify(original)).not.toContain('synthetic-mango-12');
     expect(JSON.stringify(original)).not.toContain('synthetic-encrypted-api-key');
     expect(original.filter(row => row.table === 'tracking_domain').map(row => row.row.host)).toEqual(['links.example.test']);
@@ -117,6 +121,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await target.db.prepare('SELECT count(*) AS n FROM audience_erasures').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT count(*) AS n FROM stripe_connection').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT count(*) AS n FROM woocommerce_connection').first()).n).toBe(0);
+    expect((await target.db.prepare('SELECT count(*) AS n FROM shopify_installation').first()).n).toBe(0);
+    expect((await target.db.prepare('SELECT count(*) AS n FROM shopify_oauth_states').first()).n).toBe(0);
     expect((await target.db.prepare('SELECT host FROM tracking_domain WHERE id=1').first()).host).toBe('links.example.test');
     expect((await target.db.prepare('SELECT * FROM imported_engagement_facts ORDER BY id').all()).results).toEqual(importedFacts);
     expect((await target.db.prepare('SELECT * FROM move_in_contact_history ORDER BY id').all()).results).toEqual(importedCoverage);

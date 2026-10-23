@@ -1,3 +1,4 @@
+import {installJourney} from './install-journey';
 // @ts-nocheck -- Native Worker/D1 integration; only Shopify and mail network edges are doubled.
 import {expect,test} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
@@ -134,7 +135,7 @@ test('signed carts preserve string identity, multiple lines and ordering; confli
   }finally{await f.close();}
 });
 
-test('signed pixel collector binds actual proxy customer, rejects forged identity/catalog/purposes/replays and keeps quiet replay and withdrawal truthful',async()=>{
+test('[INT-015] install-side OAuth and signed pixel collector binds actual proxy customer, rejects forged identity/catalog/purposes/replays and keeps quiet replay and withdrawal truthful',async()=>{
   const f=await shopifyRuntime();
   try{
     await seedShopify(f.fixture);const session=await f.owner();
@@ -278,6 +279,7 @@ test('signed pixel collector binds actual proxy customer, rejects forged identit
     expect(await f.db.prepare('SELECT count(*) n FROM source_records WHERE contact_id=?').bind(contact.contact_id).first()).toEqual({n:0});
     await f.db.prepare('UPDATE commerce_channels SET healthy_at=0').run();
     expect((await proxy(f,observation())).status).toBe(422);
+    await installJourney();
   }finally{
     try {
       const race=await (await f.call('/test/erasure-race/status')).json();

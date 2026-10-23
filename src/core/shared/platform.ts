@@ -378,6 +378,8 @@ export interface AppBindings {
   INITIAL_OPERATOR_EMAILS: string;
   CONTACT_HASH_SALT: string;
   MANGO_LOCAL_HASH_AUTHORITY?: string;
+  SHOPIFY_APP_ID?: string;
+  SHOPIFY_APP_SECRET?: string;
   COMMERCE_STORE_URL?: string;
   COMMERCE_API_TOKEN?: string;
   COMMERCE_WEBHOOK_SECRET?: string;

@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "62b403aa23faee8715641cefd0d1308b67f507d6ffb0fe84f9d011001ab3cc03",
+      "sha256": "3abd7ed2940ce6c9c7eb151cd89af290f1e5df38ef76087a7340805657c084d0",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "e5b5562f2ca404abce0e1c5bc245cc9bf84101af5557b79d9802251e5cce649c",
+      "sha256": "ff517fe3da61284a2c96f015fea21cdc6f151b79d225e3473df015cafea2c9b8",
       "executable": false
     },
     "DEMO.md": {
@@ -1042,7 +1042,7 @@
       "executable": false
     },
     "deploy.json": {
-      "sha256": "0df58b712b8ccdc3a2b662580c5d4371a1837a96d8e79f5bbb1751cf011cd9db",
+      "sha256": "01a28078d8dc9da5d4e412ce9d50b85cd5a38d4f5e9a39fc7d8c392abe050a52",
       "executable": false
     },
     "deploy/wrangler.local.template.toml": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "1d7a946825fc3a0991d2fc6512441ef212f3e10b3eceff373bf4edc22fd23165",
+      "sha256": "7198ea8126a59af9b3b4e0ddbfb405bded9e1a8ad5706afc01a98dff9f59d0bc",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1078,7 +1078,7 @@
       "executable": false
     },
     "docs/going-live.md": {
-      "sha256": "325cd656421f838c2f946a61838a8db0f0588067ebfb0542bbba99c95bca80f0",
+      "sha256": "c2d0ca44a832d7fa9ca1e5d8152ca8b8d0e29a544e2dbb78ab667d7378fdd4c4",
       "executable": false
     },
     "docs/importing-contacts.md": {
@@ -1529,6 +1529,10 @@
       "sha256": "7cdc251e1bc22bc338734e3a8520f619dcee75a8ea477ec9a113e6af8b04618a",
       "executable": false
     },
+    "migrations/core/0088_shopify_installation.sql": {
+      "sha256": "c73b1f764a3c3ec22bb1446a95930e6d7e6a691e2dfff7c999e8e590a71723a1",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -1754,7 +1758,7 @@
       "executable": false
     },
     "scripts/delivery/base/packaging.json": {
-      "sha256": "0a666c5ff6fc3b07da694ee644c2d80a59d5346c52c4ccb1107ddf1e72465953",
+      "sha256": "eaee5eb6212584f6172805f52f37e570f12c2143b3490676be95b48866b6b3f1",
       "executable": false
     },
     "scripts/delivery/base/paths.mjs": {
@@ -2038,7 +2042,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "235d826a83ca0ee18843d1dc485bef48cc299d4dbe97e3e7f1ec583ca402fb90",
+      "sha256": "4a509f36b67b99ffde7bac05880e43ae8a7c0439a4bee08f7cf8467447b6d739",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -2158,7 +2162,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "68f879f321ecbba0860eb60889fbb40cecf81762e81e20a9d43f131db025c936",
+      "sha256": "265925f546f01c0c7c00462b8cabe15e1f25ec48ec49afd563aa0f92eb863e1b",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -4318,7 +4322,7 @@
       "executable": false
     },
     "src/core/features/portability/policy.ts": {
-      "sha256": "d2a426350085152eb5dccb9b23d928444cb19acccad3de7a4863c987daa541e0",
+      "sha256": "ad6fa5cdaa502abc5d63a180a56bd98045a1785069f7eb69460ef60db40b8bfb",
       "executable": false
     },
     "src/core/features/portability/retire-transfers.ts": {
@@ -4690,7 +4694,27 @@
       "executable": false
     },
     "src/core/features/store/shopify/health.ts": {
-      "sha256": "3c843bbdaa53852eb028bf4aaedcc7269bab6f3124418b363b6011236e0496b2",
+      "sha256": "fbffb701e367e460d5ecd973a7762e37e986610fe87846fcd378206ad582afbd",
+      "executable": false
+    },
+    "src/core/features/store/shopify/install-routes.ts": {
+      "sha256": "f769e12e3fa903ed1fee3d1b1aa2214c21e2a6c593c28cf6565c56a4d2c802ec",
+      "executable": false
+    },
+    "src/core/features/store/shopify/install-security.ts": {
+      "sha256": "425020b4dbbf69c7587fac12313ab02f83976bc8da38b8fe83ab15e201a576b7",
+      "executable": false
+    },
+    "src/core/features/store/shopify/installation.ts": {
+      "sha256": "9269ea2718c20cfe33803f97509f01151d52a995ff77432f5d6cfdd29098a68d",
+      "executable": false
+    },
+    "src/core/features/store/shopify/pixel-installation.ts": {
+      "sha256": "201588640047db2f691a4774da9e301fac8a88cd99959530eabeadda1017b5b3",
+      "executable": false
+    },
+    "src/core/features/store/shopify/subscriptions.ts": {
+      "sha256": "5ea95c52482a77b3d0c83b612c1e207d7e1cbbb5ea989e498b2632a33e3be1d5",
       "executable": false
     },
     "src/core/features/store/stripe/events.ts": {
@@ -4762,7 +4786,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-page.tsx": {
-      "sha256": "84456b7278f943c8185e9815f2a7b4b680d4787e7bd73b1afa67f062e97e201b",
+      "sha256": "9149740323c79e2c742460646fcf75c72d73327af0b1d81ef9abd31b49bbff62",
       "executable": false
     },
     "src/core/features/store/ui/settings-paid-tier.tsx": {
@@ -4775,6 +4799,10 @@
     },
     "src/core/features/store/ui/settings-sender.tsx": {
       "sha256": "c7cde36d780b717b7d434e975ca31169c77e90c502af32dc077bfe686267e1d1",
+      "executable": false
+    },
+    "src/core/features/store/ui/settings-shopify.tsx": {
+      "sha256": "aa28a460774453bcdb22fb18e507d495af7bef64fce5303a33308853580c26f9",
       "executable": false
     },
     "src/core/features/store/ui/settings-stripe.tsx": {
@@ -4894,7 +4922,7 @@
       "executable": false
     },
     "src/core/platform/adapters/shopify/admin.ts": {
-      "sha256": "953c1c0aa34e4faca9ccd926be35255975dd0066ae4373061901d011262bdc63",
+      "sha256": "7027d8257850baca461ee762b36dad0a8d26c64a694b5eb0b6d4d3223f212ec9",
       "executable": false
     },
     "src/core/platform/adapters/shopify/normalize.ts": {
@@ -5006,7 +5034,7 @@
       "executable": false
     },
     "src/core/shared/platform.ts": {
-      "sha256": "7c694a425b166066758819015c9b448a5cb83e8ca2861a9d395ae987514d1aa8",
+      "sha256": "12b8061fcf670f8ff6df0c8de5b32bc55dcc4ca5f2091439fd3d40fbcfe923e2",
       "executable": false
     },
     "src/core/shared/product-config.ts": {
@@ -7410,7 +7438,7 @@
       "executable": false
     },
     "tests/go-live/edge.ts": {
-      "sha256": "d12a690f9d87b6ab50efb1de871c66bee9f795ce6ea773ce51820848a19d8fcf",
+      "sha256": "d8c17145b380bfa8bd29d2329fb929f6ec74d7aeced33e37e099b2084b862f9d",
       "executable": false
     },
     "tests/go-live/email-size.journeys.ts": {
@@ -7422,7 +7450,7 @@
       "executable": false
     },
     "tests/go-live/harness.ts": {
-      "sha256": "1ab78b5d4a5d77eb650e0b988f5943bec74eebe482b08e6768101aa0431e8ccd",
+      "sha256": "f62ce5176dcc21e1830bdd74010740ee7dc6af396e5a767dcddd5d48506579e7",
       "executable": false
     },
     "tests/go-live/integrations.journeys.ts": {
@@ -7526,7 +7554,7 @@
       "executable": false
     },
     "tests/go-live/roles.journeys.ts": {
-      "sha256": "1fa4aff3fc09a59b391f12f44ea3eed382a618daf6c511e73c8c12fa12365455",
+      "sha256": "454980b88b54c00abfbfb2faf138326198831636e990eff7b87a12346adb9980",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {
@@ -7535,6 +7563,14 @@
     },
     "tests/go-live/sendgrid-events.ts": {
       "sha256": "06ab7572d3e1bbfe23b11e16e2fc044a9360cdbefb7c6c6777c95a3f62c15d08",
+      "executable": false
+    },
+    "tests/go-live/shopify-install-edge.ts": {
+      "sha256": "692c616e8fa7dd20b90ddef26a46a9556ebd97ab89974125fb0afa8a8058862f",
+      "executable": false
+    },
+    "tests/go-live/shopify-install-journey.ts": {
+      "sha256": "b13213bc2778f0aba09745daf53cd188eec61cfe81da86a8c89b370bd73ea639",
       "executable": false
     },
     "tests/go-live/sms-bindings.ts": {
@@ -7810,7 +7846,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "2b6f9bcc9689825edc01ca01396e86ec12321fdd61959cb434677e43291aae9c",
+      "sha256": "74bdfcff66bf28f842262de73795a333c63d38bc247510d59e0652dc890b1b29",
       "executable": false
     },
     "tests/portability/flows.ts": {
@@ -7938,7 +7974,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "ad307ec52dc3c296453a1d95eee12f35c9474ce624cf24d8feb14b47804b4aef",
+      "sha256": "5af209f6873fba1bab697f1164afb700388a9a8c5b50aa64352cbc5d4e625aa0",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
@@ -7949,16 +7985,20 @@
       "sha256": "01abdb9c112281aa524d723adedf6b2bf0adc863c2e9e1c39ad323f6930a4820",
       "executable": false
     },
+    "tests/shopify/install-journey.ts": {
+      "sha256": "b7cf31a985d9939cb5f711a6891601488532d388ac7976e2d83a8b87fc224baf",
+      "executable": false
+    },
     "tests/shopify/native-queue.mjs": {
       "sha256": "30cab2ab116fb0333fb459097916aeaf0afc16186574b04000df516fd08eb4b9",
       "executable": false
     },
     "tests/shopify/runtime.mjs": {
-      "sha256": "f6fdffd5e6e6a4045418bf74df3e8e43e6c23747c65ca8b182bccfa3d4d002c9",
+      "sha256": "8d1340d3012d11f2c303347491b17d8884b2ac25a0bda767c55301e724ff9a75",
       "executable": false
     },
     "tests/shopify/worker.ts": {
-      "sha256": "d30f3d34fcce29d8b46237fbfdc62bbba8a8d0b5c41c163e5a0acc3b00990b89",
+      "sha256": "63c3ec337f491fc7d64edd285174dd24e4da5b3139d1441d964be0cb9d07a882",
       "executable": false
     },
     "tests/single-attempt-delivery/delivery.spec.ts": {

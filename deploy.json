@@ -117,6 +117,16 @@
       "binding": "MARKETING_MAIL_WEBHOOK_SECRET",
       "environment": "MARKETING_MAIL_WEBHOOK_SECRET",
       "optional": true
+    },
+    {
+      "binding": "SHOPIFY_APP_ID",
+      "environment": "SHOPIFY_APP_ID",
+      "optional": true
+    },
+    {
+      "binding": "SHOPIFY_APP_SECRET",
+      "environment": "SHOPIFY_APP_SECRET",
+      "optional": true
     }
   ],
   "vars": {

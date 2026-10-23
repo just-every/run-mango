@@ -69,7 +69,8 @@
         "MAIL_FROM",
         "MAIL_RELAY_URL",
         "MARKETING_MAIL_PROVIDER",
-        "MARKETING_MAIL_WEBHOOK_ID"
+        "MARKETING_MAIL_WEBHOOK_ID",
+        "SHOPIFY_APP_ID"
       ],
       "secretNames": [
         "SESSION_SECRET",
@@ -91,7 +92,8 @@
         "MAIL_API_KEY",
         "MAIL_PROVIDER_API_KEY",
         "MARKETING_MAIL_API_KEY",
-        "MARKETING_MAIL_WEBHOOK_SECRET"
+        "MARKETING_MAIL_WEBHOOK_SECRET",
+        "SHOPIFY_APP_SECRET"
       ],
       "healthPath": "/health",
       "migrationPrefix": "core-",
