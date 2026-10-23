@@ -2,7 +2,7 @@
 
 This inventory records Mango’s scoped integration and daily-use capabilities against the code in this repository. The wider product requirements and their acceptance status remain in CONTRACT.md and ACCEPTANCE.md.
 
-**Totals: 40 claims · 40 in code.**
+**Totals: 41 claims · 41 in code.**
 
 ## Mango integration claims
 
@@ -62,6 +62,8 @@ These rows describe the scoped integration delivered in Mango. The broader targe
 | REPORT-007 | Settings shows contacts by channel consent state, provider-reported campaign/day costs and a labeled UTC month run-rate projection. Currencies stay separate and unpriced facts stay counted; flow grouping awaits flows. | partial | `src/core/features/insights/usage-report.ts`, `src/core/features/insights/ui/settings-usage.tsx`, `tests/campaign-results/costs.journeys.ts` |
 
 | REPORT-001 | Insights opens with equal-period UTC comparisons of USD campaign attribution, human engagement, source growth, reported costs, sender health and top campaigns, composed from existing report reads. Holdout lift and flows are explicitly unavailable. | partial | `src/core/features/insights/overview-report.ts`, `src/core/features/insights/ui/overview-dashboard.tsx`, `tests/campaign-results/overview-journey.ts`, `tests/campaign-results/results.journeys.ts` |
+
+| DELIV-007 | Home exposes day-23 renewal, day-31 lapse and invalidating evidence changes. Durable claims send operator-only reminders and one diagnostic per evidence period; configured authenticated receiver renewal needs no human click. Lifecycle hold/resume/deadline hooks and live flows remain outstanding. | partial | `src/core/features/sender-verification/renewal.ts`, `src/core/features/sender-verification/ui/renewal-card.tsx`, `tests/sender-verification/worker.spec.ts`, `tests/go-live/managed-mail.journeys.ts` |
 
 ## Adopted target defaults (23 October 2026)
 
