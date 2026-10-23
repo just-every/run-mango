@@ -85,16 +85,19 @@ jobs:
         if: matrix.browser
         shell: bash
         run: |
-          # The runner's default Azure mirror can serve package indexes while
-          # its package downloads hang, so retrying the same host does not
-          # help: attempts 2 and 3 use other mirrors of the same Ubuntu-signed
-          # archive (apt still verifies every Release signature). Same mirror
-          # order and attempt budget as Base's verify workflow.
-          mirrors=(runner-default http://mirrors.edge.kernel.org/ubuntu http://us-east-1.ec2.archive.ubuntu.com/ubuntu)
+          # The runner default hit its 90-second deadline on two heads;
+          # kernel.org completed both. Keep the same three signed archives
+          # and attempt budget, starting with that working mirror.
+          original_sources=$(mktemp)
+          sudo cp /etc/apt/sources.list.d/ubuntu.sources "$original_sources"
+          trap 'rm -f -- "$original_sources"' EXIT
+          mirrors=(http://mirrors.edge.kernel.org/ubuntu http://us-east-1.ec2.archive.ubuntu.com/ubuntu runner-default)
           started=$SECONDS
           for attempt in 1 2 3; do
             mirror=${mirrors[attempt - 1]}
-            if [[ $mirror != runner-default ]]; then
+            if [[ $mirror == runner-default ]]; then
+              sudo cp "$original_sources" /etc/apt/sources.list.d/ubuntu.sources
+            else
               sudo sed -i -E "s@^(URIs:[[:space:]]*)(mirror\+file:/etc/apt/apt-mirrors\.txt|https?://(([a-z0-9.-]+\.)?archive\.ubuntu\.com|security\.ubuntu\.com|mirrors\.edge\.kernel\.org)/ubuntu/?)@\1${mirror}/@" /etc/apt/sources.list.d/ubuntu.sources
             fi
             printf 'Chromium apt: attempt %s/3 (90s deadline; mirror %s; sources %s)\n' "$attempt" "$mirror" "$(grep -h '^URIs:' /etc/apt/sources.list.d/ubuntu.sources | sort -u | tr '\n' ' ')"
