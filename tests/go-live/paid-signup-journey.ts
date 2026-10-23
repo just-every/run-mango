@@ -97,7 +97,13 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   // ct 23 October: erasure also removes the paid-signup address and evidence.
   const erasedPayer = await contact(payer);
   const freshOwner = await site.open();
-  expect((await site.call(`/api/contacts/${erasedPayer.id}`,{method:'DELETE',cookie:freshOwner})).status).toBe(200);
+  let erasure = await site.call(`/api/contacts/${erasedPayer.id}`,{method:'DELETE',cookie:freshOwner});
+  let receipt = await erasure.json();
+  for(let step=0;erasure.status===202&&step<400;step++) {
+    erasure=await site.call(`/api/audience/erasures/${receipt.receipt.reference}/resume`,{method:'POST',cookie:freshOwner,body:{}});
+    receipt=await erasure.json();
+  }
+  expect(erasure.status).toBe(200);expect(receipt.receipt.state).toBe('complete');
   expect(await site.rows(`SELECT id FROM contacts WHERE email='${payer}'`)).toEqual([]);
   expect(await site.rows(`SELECT id FROM consent_evidence WHERE destination='${payer}'`)).toEqual([]);
   await page.unroute('https://checkout.stripe.com/**');await page.context().setExtraHTTPHeaders({});
