@@ -1,7 +1,9 @@
-import {rewriteTextLinks} from './message-links';
+import {analyticsUrl,type AnalyticsContext} from '@/core/features/settings/analytics-policy';
+import {rewriteTextLinks,textLinkDestinations} from './message-links';
 import { escapeHtml } from './email-html-policy';
 import { parsePersonalisationToken as parseToken } from './authoring-tokens';
 export type MessageRevision = {
+  utmPolicyJson?:string|null; name?:string; id?:string;
   emailSubject: string; emailBody: string; emailText: string; preheader: string; smsBody: string; physicalAddress: string;
 };
 export const messageRendererVersion = 'mango-message-v2';
@@ -35,7 +37,7 @@ export function invalidPersonalisation(template: string) {
 }
 /** Pure rendering: no capabilities, writes, contacts or network are acquired here. */
 export function renderMessageContent(revision: MessageRevision, options: {
-  values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
+  analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
 }) {
   const values = options.values ?? {};
   const render = (template: string, html = false) => {
@@ -48,15 +50,16 @@ export function renderMessageContent(revision: MessageRevision, options: {
       return encode(parsed.managed === 'unsubscribe_url' ? options.unsubscribeUrl : parsed.managed === 'physical_address' ? revision.physicalAddress : value || parsed.fallback!);
     });
   };
-  const replaceTextLinks = (text: string) => rewriteTextLinks(text,options.rewrittenLinks);
+  const replaceTextLinks = (text:string,channel:'email'|'sms') => {const links=new Map(textLinkDestinations(text).map(url=>[url,analyticsUrl(url,options.analytics,channel)]));for(const [url,target] of options.rewrittenLinks??[])links.set(url,target);return rewriteTextLinks(text,links);};
   const html = render(revision.emailBody, true).replace(/\bhref\s*=\s*(["'])(.*?)\1/gi, (attribute, quote: string, url: string) => {
-    const replacement = options.rewrittenLinks?.get(url.replaceAll('&amp;', '&'));
+    const decoded=url.replaceAll('&amp;', '&');
+    const replacement = options.rewrittenLinks?.get(decoded)??analyticsUrl(decoded,options.analytics,'email');
     return replacement ? `href=${quote}${escapeHtml(replacement)}${quote}` : attribute;
   });
   const preheader = render(revision.preheader);
   return {
     subject: render(revision.emailSubject), preheader,
     html: `<div aria-hidden="true" style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(preheader)}</div>${html}`,
-    text: replaceTextLinks(render(revision.emailText)), sms: replaceTextLinks(render(revision.smsBody)),
+    text: replaceTextLinks(render(revision.emailText),'email'), sms: replaceTextLinks(render(revision.smsBody),'sms'),
   };
 }

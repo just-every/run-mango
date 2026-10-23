@@ -1,3 +1,4 @@
+import {analyticsContext} from '@/core/features/settings/analytics-policy';
 import { contactLink } from '../contact-links';
 import type {SmsReviewPreview} from '@/core/features/sms/review-preview';
 import { useEffect, useMemo, useState } from 'react';
@@ -16,6 +17,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const [contact, setContact] = useState<Contact>();
   const [loadImages, setLoadImages] = useState(false);
   const rendered = useMemo(() => renderMessageContent({...revision, preheader: revision.preheader ?? '', physicalAddress: revision.physicalAddress ?? ''}, {
+    analytics:analyticsContext(revision),
     values: contact ? contactPersonalisation(contact, contact.email ?? '') : {displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
   }), [revision, contact]);

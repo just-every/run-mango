@@ -54,7 +54,11 @@ export async function crossChannelAttributionJourney(input: {
   const follow = async (link: string, automated = false) => {
     const response = await site.call(new URL(link).pathname, {headers: {'User-Agent': automated ? 'Barracuda LinkProtect' : 'Mozilla/5.0 Garden reader'}});
     expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toBe(destination);
+    const target=new URL(response.headers.get('Location')!);const original=new URL(destination);
+    expect(target.origin+target.pathname).toBe(original.origin+original.pathname);
+    expect(target.searchParams.get('utm_source')).toBe('author');
+    expect(['email','sms']).toContain(target.searchParams.get('utm_medium'));
+    expect(target.searchParams.get('collection')).toBe('autumn');expect(target.hash).toBe(original.hash);
     expect(response.headers.get('Set-Cookie')).toBeNull();
   };
   await follow(emailLink);

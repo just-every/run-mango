@@ -1,3 +1,4 @@
+import {defaultAnalyticsPolicy} from '@/core/features/settings/analytics-policy';
 import {completeInclusionRuleSchema,completeExclusionRuleSchema} from '@/core/features/lifecycle/rules';
 import { recordExternalCost } from '@/core/features/insights/cost-recording';
 import type { AiGenerationResult } from '@/core/shared/platform';
@@ -66,14 +67,14 @@ export function createProposalRepository(database: Database) {
           `INSERT INTO campaign_revisions
            (id, campaign_id, version, state, name, email_subject, email_body, email_text, preheader, sms_body,
             sender_name, from_email, audience_rule, reply_to_email, sms_sender, physical_address, message_category,
-            inclusion_rule_json, exclusion_rules_json, source_types_json, tracking_enabled, created_at, updated_at, dormancy_policy_json)
-           VALUES (?, ?, 1, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, COALESCE((SELECT policy_json FROM audience_exclusion_settings WHERE id=1),'{"enabled":true,"windowDays":365,"includeOpenOnly":false}'))`,
+            inclusion_rule_json, exclusion_rules_json, source_types_json, tracking_enabled, created_at, updated_at, dormancy_policy_json, utm_policy_json)
+           VALUES (?, ?, 1, 'draft', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, COALESCE((SELECT policy_json FROM audience_exclusion_settings WHERE id=1),'{"enabled":true,"windowDays":365,"includeOpenOnly":false}'), COALESCE((SELECT policy_json FROM analytics_settings WHERE id=1),?))`,
         ).bind(
           input.revisionId, input.campaignId, title, output.email?.subject ?? '', content.emailBody!,
           content.emailText!, output.email?.preheader ?? '', output.sms?.body ?? '', output.sender.displayName,
           output.sender.fromEmail, audienceRule, output.sender.replyToEmail, output.sender.smsSender,
           output.sender.physicalAddress, output.messageCategory, JSON.stringify(output.audience.inclusion), JSON.stringify(output.audience.exclusions),
-          JSON.stringify(sourceTypes), now.getTime(), now.getTime(),
+          JSON.stringify(sourceTypes), now.getTime(), now.getTime(), JSON.stringify(defaultAnalyticsPolicy),
         ),
       ];
       for (const [index, step] of output.steps.entries()) {

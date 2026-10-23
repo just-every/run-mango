@@ -108,7 +108,7 @@ export function createCampaignService(
       const composition:DraftComposition={name:revision.name,emailSubject:revision.emailSubject,emailBody:revision.emailBody,emailText:revision.emailText,
         preheader:revision.preheader,smsBody:revision.smsBody,senderName:revision.senderName,fromEmail:revision.fromEmail,replyToEmail:revision.replyToEmail,
         smsSender:revision.smsSender,physicalAddress:revision.physicalAddress,messageCategory:revision.messageCategory,inclusionRuleJson:revision.inclusionRuleJson,
-        exclusionRulesJson:revision.exclusionRulesJson,sourceTypesJson:revision.sourceTypesJson,trackingEnabled:revision.trackingEnabled,
+        exclusionRulesJson:revision.exclusionRulesJson,sourceTypesJson:revision.sourceTypesJson,trackingEnabled:revision.trackingEnabled,utmPolicyJson:revision.utmPolicyJson,
         links:links.map(({label,destinationUrl})=>({label,destinationUrl})),
         steps:steps.map(step=>({channel:step.channel as 'email'|'sms',timezone:step.timezone,scheduledAt:step.scheduledAt.toISOString(),sendByAt:step.sendByAt.toISOString(),whyThisTime:step.whyThisTime}))};
       return compositionRepository.editSchedule(id,composition,operatorId);

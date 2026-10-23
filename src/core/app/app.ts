@@ -1,3 +1,4 @@
+import {analyticsSettingsRoutes} from '@/core/features/settings/analytics-settings';
 import {signupCapacityRoutes} from '@/core/features/audience/signup-capacity-routes';
 import {wooFlowRoutes} from '@/core/features/store/woocommerce/flows';
 import {wooCommerceRoutes} from '@/core/features/store/woocommerce/routes';
@@ -364,6 +365,7 @@ export function createApp(
   app.route('/api', createSegmentRoutes(environment.DB));
   app.route('/api', createAudienceRoutes(audienceService,environment.DB,platform,environment));
   app.route('/api', createAudienceImportRoutes(platform));
+  app.route('/api', analyticsSettingsRoutes(platform));
   app.route('/api', signupCapacityRoutes(platform));
   app.route('/api', createMoveInRoutes(platform));
   app.route('/api', createCampaignAssetRoutes(environment.DB, platform.blobs, platform.config.publicBaseUrl));

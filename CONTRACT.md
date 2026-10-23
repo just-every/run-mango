@@ -960,6 +960,11 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | Target and push further | 18 | 54 | 84 | 156 |
 | All | 97 | 62 | 84 | 243 |
 
+<!-- Historical c17 source-base counts (before main paid capture):
+| Target and push further | 17 | 55 | 84 | 156 |
+| All | 96 | 63 | 84 | 243 |
+-->
+
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
 | `HOME-001` | Lobby and public landing | published | done | `tests/local-start/local.journey.ts` · `src/site/pages.tsx` |  |
@@ -1167,7 +1172,7 @@ Round 2 of the buyer review added CONT-024, CONT-025, MOVE-012 and SCALE-001, ea
 | `INT-010` | Segment | target | missing |  | not implemented |
 | `INT-011` | CRM sync | target | partial | `tests/go-live/integrations.journeys.ts` · `docs/integrations.md` | Scoped subscriber sync and a cursor-paged refusal feed support a sibling CRM client. The Coffer client is supplied as a patch in the integration round, not landed in Coffer here. Full CRM field mapping UI and flow-created CRM tasks remain unmet. |
 | `INT-012` | Ad audiences | target | missing |  | not implemented |
-| `INT-013` | Web analytics tagging | target | missing |  | not implemented |
+| `INT-013` | Web analytics tagging | target | partial | `tests/campaign-results/performance.journeys.ts` — INT-013 / REPORT-002 at 1440 via `tests/campaign-results/tracking-journey.ts` and `tests/campaign-results/custom-attribution.ts`: sent UTM destinations, original click identity, author values, managed/contact exclusions, campaign off, Settings at 1440/390 and one idempotent Vane goal on the contact timeline; `tests/portability.spec.ts` — native settings restore. | Defaults ADOPTED (`campaign.analytics.v1`): source mango, medium by channel, campaign name slug, message revision content; static bounded values, HTTP/HTTPS only, managed links excluded, author keys win, no contact interpolation. Defaults freeze into new drafts and changes require review. Flow dimensions and INT-007's general custom-event track API remain open; the acceptance goal uses its existing scoped custom-conversion slice. ct approval pending; no Vane or real provider call was made. |
 | `INT-014` | Reviews and loyalty apps | target | missing |  | not implemented |
 | `INT-015` | Shopify connection a merchant installs | target | partial | `src/core/features/store/shopify/health.ts` · `src/core/features/store/shopify/collector.ts` · `tests/shopify/connection.spec.ts` | Connector not built; conservative default (opt-in per installation, Shopify OAuth/HMAC/state checks, fail-closed 401 routing, compliance topics acknowledged after installation receipt, connector state deleted on disconnect, removed subscriptions re-created) named in the clause, awaiting ct approval as landed. |
 | `MOVE-001` | From Mailchimp | target | partial | `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts` | acceptance not yet met: `tests/move-in/archive.journeys.ts` runs on synthetic exports, extended with checked-in Mailchimp-format fixtures for a saved segment with a campaign-activity condition, a classic automation, a `granular_activity` file, two overlapping audiences with conflicting statuses and a template with merge tags and a `<style>` block. Each fixture shows its expected lines in the reconciliation report (MOVE-007 to MOVE-011). The CONT-024 subscribed-file fixture and the MOVE-012 full-scale export run through the same journey. The same journey also runs on one real, owner-supplied Mailchimp export with its reconciliation report. |

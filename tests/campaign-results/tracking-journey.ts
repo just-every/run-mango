@@ -28,7 +28,10 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     const people = ['reader', 'scanner', 'untracked'].map((kind, index) => ({email: `synthetic-mango-${index + 1}@example.test`, name: `Mango ${kind}`}));
     for (const person of people) await confirmedContact(site, edge, cookie, person.email, person.name);
     const clock = await site.control('/_golive/clock', {hold: true});
-    const destination = 'https://mango-test.myshopify.com/products/garden?collection=autumn#details';
+    const analytics={enabled:true,source:'synthetic-mango',emailMedium:'email',smsMedium:'sms',campaign:'',content:''};
+    await json(await site.call('/api/settings/analytics',{method:'PUT',cookie,body:analytics}),200);
+    expect((await site.rows("SELECT actor_id FROM lifecycle_audit_entries WHERE action='analytics.settings.changed'"))).toHaveLength(1);
+    const destination = 'https://mango-test.myshopify.com/products/garden?collection=autumn&utm_source=author#details';
     // Contact links (MSG-013) travel in the same tracked message as the store link.
     const contactLinks = ['mailto:hello@myshop.example?subject=Order%20question&body=Can%20you%20help%3F', 'tel:+15555550123', 'sms:+15555550123?body=Hi'];
     const contactAnchors = contactLinks.map((href, index) => `<a href="${href.replaceAll('&', '&amp;')}">${['Email', 'Call', 'Text'][index]} the garden</a>`);
@@ -37,6 +40,7 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     await json(await site.call('/api/campaign-revisions/' + campaign.revisionId, {method: 'PATCH', cookie, body: {
       emailBody: `<p><a href="${destination}">Garden collection</a></p><p>${contactAnchors.join(' ')}</p>`, trackingEnabled: true,
     }}), 200);
+    const tagged=new URL(destination);tagged.searchParams.set('utm_medium','email');tagged.searchParams.set('utm_campaign','tracked-garden-letter');tagged.searchParams.set('utm_content',campaign.revisionId);
     await approve(site, cookie, campaign);
     await site.control('/_golive/clock', {advanceMs: 3600001, hold: false});
     const recipients = await dispatch(site, campaign.campaignId, due);
@@ -66,7 +70,7 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     const follow = async (link: string, agent: string, ray: string) => {
       const response = await site.call(new URL(link).pathname, {headers: {'User-Agent': agent, 'CF-Ray': ray}});
       expect(response.status).toBe(302);
-      expect(response.headers.get('Location')).toBe(destination);
+      expect(response.headers.get('Location')).toBe(tagged.href);
       expect(response.headers.get('Set-Cookie')).toBeNull();
       expect(await response.text()).toBe('');
     };
@@ -77,7 +81,7 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     // Contact links are authored links with no redirect behind them, so they never record a click.
     expect(map.links).toEqual([expect.objectContaining({destinationUrl: destination, totalClicks: 1, uniqueClicks: 1, automatedRequests: 1}),
       ...contactLinks.map(href => expect.objectContaining({destinationUrl: href, totalClicks: 0, uniqueClicks: 0, automatedRequests: 0}))]);
-    expect((await site.rows('SELECT DISTINCT destination_url FROM tracked_links')).map(row => row.destination_url)).toEqual([destination]);
+    expect((await site.rows('SELECT DISTINCT destination_url FROM tracked_links')).map(row => row.destination_url)).toEqual([tagged.href]);
     const csv = parseCsv(await (await site.call(engagementPath + '?format=csv', {cookie})).text());
     expect(csv).toHaveLength(1 + contactLinks.length);
     expect(csv[0]).toMatchObject({clicks: '1', 'unique clickers': '1', 'automated requests': '1'});
@@ -104,12 +108,26 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
       expect((await json(await site.call(`/api/campaigns/${disabled.campaignId}`, {cookie}), 200)).revision.trackingEnabled).toBe(false);
       await page.screenshot({path: info.outputPath(`tracking-control-${width}.png`), fullPage: true});
     }
+    await openPage(page,site.runtime.url+'/app/settings');
+    const analyticsPanel=page.getByRole('region',{name:'Web analytics tagging',exact:true});
+    await analyticsPanel.getByLabel('Campaign draft',{exact:true}).selectOption(disabled.revisionId);
+    await analyticsPanel.getByRole('checkbox',{name:"Tag this campaign's links",exact:true}).uncheck();
+    await analyticsPanel.getByRole('button',{name:'Save campaign tagging',exact:true}).click();
+    await expect(analyticsPanel.getByRole('status')).toContainText('Campaign tagging saved.');
+    for(const width of [1440,390]){
+      await page.setViewportSize({width,height:1000});
+      await expect(analyticsPanel.getByLabel('UTM source',{exact:true})).toHaveValue('synthetic-mango');
+      await expect(analyticsPanel.getByRole('checkbox',{name:"Tag this campaign's links",exact:true})).not.toBeChecked();
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>['serious','critical'].includes(v.impact??''))).toEqual([]);
+      await analyticsPanel.screenshot({path:info.outputPath(`analytics-settings-${width}.png`)});
+    }
     await approve(site, cookie, disabled);
     await site.control('/_golive/clock', {advanceMs: 3600001, hold: false});
     expect((await dispatch(site, disabled.campaignId, disabledDue))[0].transport_disposition).toBe('accepted');
     const untracked = edge.sends.findLast(send => send.to === people[2].email && send.body.headers?.['List-Unsubscribe'])!;
     const html = String(untracked.body.content.find((part: any) => part.type === 'text/html').value);
-    expect(html).toContain(`href="${destination}"`);
+    expect(html).toContain(`href="${destination.replaceAll('&','&amp;')}"`);
     expect(html).not.toContain('/l/');
     const before = await result();
     await page.route(destination.split('#')[0], route => route.fulfill({status: 200, contentType: 'text/html', body: '<p>Garden collection</p>'}));

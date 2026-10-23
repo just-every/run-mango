@@ -1,5 +1,6 @@
 import { completeInclusionRuleSchema, completeExclusionRuleSchema } from '@/core/features/lifecycle/rules';
 import { z } from 'zod';
+import {parseAnalyticsPolicy} from '@/core/features/settings/analytics-policy';
 import { resolveLocalInstant } from '@/core/features/lifecycle/schedule';
 
 const channel = z.enum(['email', 'sms']);
@@ -67,6 +68,7 @@ export const draftCompositionSchema = z
     exclusionRulesJson: z.string().min(2).max(20_000).refine(value=>{try{const result=z.array(completeExclusionRuleSchema).max(50).safeParse(JSON.parse(value));return result.success;}catch{return false;}}, 'Use valid structured exclusions.').optional(),
     sourceTypesJson: z.string().min(2).max(2_000).optional(),
     trackingEnabled: z.boolean().optional(),
+    utmPolicyJson: z.string().max(2000).nullable().refine(value=>{try{if(value!==null)parseAnalyticsPolicy(JSON.parse(value));return true;}catch{return false;}},'Use valid static analytics defaults.').optional(),
     links: z.array(draftLink).max(50).optional(),
     steps: z.array(draftStep).max(25).optional(),
   })

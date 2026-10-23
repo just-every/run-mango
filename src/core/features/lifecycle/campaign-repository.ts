@@ -41,6 +41,7 @@ function revisionFromRow(row: Row) {
     smsSender: String(row.sms_sender),
     physicalAddress: String(row.physical_address),
     messageCategory: String(row.message_category),
+    ...(row.utm_policy_json==null?{}:{utmPolicyJson:String(row.utm_policy_json)}),
     trackingEnabled: bool(row.tracking_enabled),
     updatedAt: timestamp(row.updated_at),
   };
