@@ -52,6 +52,8 @@ test('security: ascending old streamed-body groups spend only the actual D1 rese
     }
     Date.now = realNow;
     const statuses: number[] = [];
+    const minuteNow=async()=>Number((await h.f.db.prepare("SELECT CAST(strftime('%s','now') AS INTEGER)/60 AS minute").first<{minute:number}>())!.minute);
+    const releaseMinute=await minuteNow();
     // Release the oldest ingress group first: monotonic windows alone cannot stop this attack.
     for (const group of groups) {
       group.forEach(request => request.release());
@@ -60,8 +62,14 @@ test('security: ascending old streamed-body groups spend only the actual D1 rese
     expect(statuses.filter(status=>status===202)).toHaveLength(52);expect(statuses.filter(status=>status===429)).toHaveLength(0);
     expect(h.f.outbound).toHaveLength(52);
     expect(await h.f.db.prepare("SELECT window,count FROM oa_limits WHERE key='signup-global'").first()).toEqual({window: actual.hour, count: 52});
+    const completedMinute=await minuteNow();
     const limits = await h.f.db.prepare('SELECT key,window FROM oa_limits').all<{key: string; window: number}>();
-    for (const limit of limits.results.filter(row=>!row.key.startsWith('signup-refusal-alert:'))) expect(limit.window).toBe(limit.key.startsWith('signup-email:') ? actual.day : limit.key.endsWith('-minute')?actual.hour*60+Math.floor((3600-actual.remaining)/60):actual.hour);
+    // The new minute partition may roll while bodies are released. Its durable
+    // clock must fall within the measured D1 admission interval, never the old ingress clocks.
+    for (const limit of limits.results.filter(row=>!row.key.startsWith('signup-refusal-alert:'))) {
+      if(limit.key.endsWith('-minute')){expect(limit.window).toBeGreaterThanOrEqual(releaseMinute);expect(limit.window).toBeLessThanOrEqual(completedMinute);}
+      else expect(limit.window).toBe(limit.key.startsWith('signup-email:')?actual.day:actual.hour);
+    }
     const evidence = await h.f.db.prepare('SELECT r.id,r.destination_hash,r.created_at,e.occurred_at FROM audience_signup_requests r JOIN consent_evidence e ON e.id=r.id').all<{id: string; destination_hash: string; created_at: number; occurred_at: number}>();
     expect(evidence.results).toHaveLength(52);
     for (const row of evidence.results) {

@@ -168,7 +168,7 @@ test('[CONT-027] repeated public requests share the durable UTC destination allo
   await h.f.services.audienceService.recordChannelOptOut({contactId:contact.id,channel:'email',reason:'recipient-unsubscribe',occurredAt:new Date(Date.now()-1000)});
   for(let request=0;request<4;request++) {
    const response=await client(h.f)('daily-return@example.test',`198.51.100.${request+1}`);
-   expect(response.status).toBe(429);expect(await response.json()).toMatchObject({error:'rate_limited'});
+   expect(response.status).toBe(202);expect(await response.json()).toEqual({status:'confirmation-required'});
    expect(h.f.outbound).toHaveLength(Math.min(request+1,3));
   }
   const restarted=await h.restart();
