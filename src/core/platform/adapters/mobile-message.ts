@@ -4,6 +4,7 @@ import {smsSegments} from '@/core/features/sms/segments';
 import {boundPolicy} from '@/core/features/lifecycle/transport-policy';
 import type {DeliveryPolicy} from '@/core/shared/platform';
 import {boundedJson} from './bounded-read';
+import {readWebhookBytes} from './webhook-body';
 import { probeProvider } from './provider-health';
 import {
   ProviderTransportError,
@@ -183,7 +184,8 @@ export function createMobileMessageAdapter(options: {
       if (!timestamp || !signature || !/^\d+$/.test(timestamp)) throw new Error('Mobile Message webhook signature headers are missing.');
       const timestampMs = Number(timestamp) * 1000;
       if (Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) throw new Error('Mobile Message webhook timestamp is outside the five-minute acceptance window.');
-      const rawBody = await request.text();
+      // The same bound the inbound SMS route applies to its webhook path.
+      const rawBody = new TextDecoder().decode(await readWebhookBytes(request, 16384));
       const expected = await hmacSha256Hex(options.webhookSecret, `${timestamp}.${rawBody}`);
       if (!timingSafeEqual(signature.toLowerCase(), expected)) throw new Error('Mobile Message webhook signature is invalid.');
       return { rawBody, receivedAt: new Date(timestampMs) };

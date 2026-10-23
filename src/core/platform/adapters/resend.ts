@@ -1,6 +1,7 @@
 import {senderDomain} from '@/core/features/lifecycle/provider-holds';
 import {boundedSubmission} from './bounded-submission';
 import {reconcileResend} from './resend-reconciliation';
+import {readWebhookBytes} from './webhook-body';
 import {boundPolicy} from '@/core/features/lifecycle/transport-policy';
 import type {DeliveryPolicy} from '@/core/shared/platform';
 import { probeProvider } from './provider-health';
@@ -128,7 +129,8 @@ export function createResendAdapter(options: {
       if (!Number.isFinite(timestampMs) || Math.abs(Date.now() - timestampMs) > 5 * 60 * 1000) {
         throw new Error('Resend webhook timestamp is outside the five-minute acceptance window.');
       }
-      const rawBody = await request.text();
+      // Resend delivers one event per request.
+      const rawBody = new TextDecoder().decode(await readWebhookBytes(request, 1048576));
       const secret = options.webhookSecret.startsWith('whsec_') ? options.webhookSecret.slice('whsec_'.length) : options.webhookSecret;
       const expected = await hmacSha256Base64Key(secret, `${id}.${timestamp}.${rawBody}`);
       const signatures = signature.split(' ').filter((part) => part.startsWith('v1,')).map((part) => part.slice(3));

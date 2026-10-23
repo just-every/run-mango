@@ -1,4 +1,5 @@
 import {timingSafeEqual} from '@/core/platform/crypto';
+import {readWebhookBytes} from '@/core/platform/adapters/webhook-body';
 import type {NormalizedCommerceRecord, CommerceSourceType} from '../service';
 export const stripeSources = ['customer', 'payment', 'checkout-session', 'subscription', 'refund'] as const;
 type ObjectValue = Record<string, any>;
@@ -8,8 +9,7 @@ export async function verifyStripe(request: Request, secret: string, now = Date.
   const timestamps = parts.filter(([name]) => name === 't');
   const timestamp = timestamps[0]?.[1] ?? '';
   if (timestamps.length !== 1 || !/^\d+$/.test(timestamp) || Math.abs(now / 1000 - Number(timestamp)) > 300) throw new Error('signature');
-  const body = new Uint8Array(await request.arrayBuffer());
-  if (body.byteLength > 1048576) throw new Error('size');
+  const body = await readWebhookBytes(request, 1048576);
   const prefix = new TextEncoder().encode(timestamp + '.');
   const signed = new Uint8Array(prefix.length + body.length); signed.set(prefix); signed.set(body, prefix.length);
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), {name: 'HMAC', hash: 'SHA-256'}, false, ['sign']);

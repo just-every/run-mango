@@ -9,10 +9,12 @@ import { readFile, readdir } from 'node:fs/promises';
 import { createApp, createAppServices } from '../src/core/app/app';
 import { syntheticReviewPlatform } from './review/platform';
 import { createResendAdapter } from '../src/core/platform/adapters/resend';
+import { seal } from '../src/core/features/store/stripe/secrets';
 
 const require = createRequire(import.meta.url);
 const {Miniflare} = createRequire(require.resolve('wrangler/package.json'))('miniflare');
 const secret = Buffer.from('task-owned-synthetic-webhook-secret').toString('base64');
+const smsSecret = 'synthetic-task-owned-sms-secret';
 async function fixture() {
   const worker = new Miniflare({workers: [{config: {name: 'suppression-ingress', type: 'worker', compatibilityDate: '2026-09-08',
     manifest: {mainModule: 'worker.js', modules: {'worker.js': {type: 'esm', contents: 'export default {fetch(){return new Response("synthetic")}}'}}},
@@ -41,7 +43,24 @@ async function fixture() {
       occurredAt: new Date(), confirmationRequired: false});
   }
   const count = async (table: string) => Number((await binding.prepare(`SELECT COUNT(*) AS n FROM ${table}`).first<{n: number}>())?.n ?? 0);
-  return {worker, binding, platform, app, services, body, post, subscribe, count};
+  /** Enables SMS with a Mobile Message adapter that never sends; returns the module it replaced. */
+  function enableSms() {
+    const disabled = platform.config.modules.sms, now = new Date();
+    const windows = [{days: [0, 1, 2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 20 * 60}];
+    platform.config.modules.sms = {enabled: true, requiredInputs: disabled.requiredInputs, missingInputs: [], config: {
+      providerApiKey: 'unused:fixture', webhookSecret: smsSecret, confirmationSender: '61400000010',
+      testAllowlist: ['+61400123456'], handoffsPerMinute: 1,
+      programme: {brand: 'Synthetic Mango', programme: 'Synthetic programme', category: 'offers', frequency: 'Weekly',
+        jurisdiction: 'AU', support: 'help@example.test', providerAlreadyReplies: true,
+        policySource: 'https://policy.example.test/synthetic-sms', policyVerifiedAt: new Date(now.getTime() - 1000).toISOString(),
+        policyExpiresAt: new Date(now.getTime() + 86400000).toISOString(),
+        providerWindows: windows, jurisdictionWindows: windows, recipientWindows: windows},
+    }};
+    platform.sms = createMobileMessageAdapter({credentials: 'unused:fixture', webhookSecret: smsSecret});
+    platform.sms.send = async () => {throw new Error('Sending forbidden in suppression tests')};
+    return disabled;
+  }
+  return {worker, binding, platform, app, services, body, post, subscribe, count, enableSms};
 }
 
 test('[CONT-006][SEND-006] signed unmatched destination suppression is durable before acknowledgement and replay creates no delivery', async () => {
@@ -88,6 +107,24 @@ test('[CONT-006] invalid signatures, ambiguous destinations and mutated replay i
   try {
     await f.subscribe('first@example.test'); await f.subscribe('second@example.test');
     expect((await f.post(f.body('first@example.test'), 'bad-signature', false)).status).toBe(500);
+    expect(await f.count('provider_fact_inbox')).toBe(0);
+    // A forged body past its provider's limit is refused without being read whole.
+    f.enableSms();
+    const sealed = (value: string) => seal(value, f.platform.config.sessionSigningKey);
+    await f.binding.prepare("INSERT INTO stripe_connection (id,key_cipher,signing_cipher,mode,last_four,connected_by,connected_at) VALUES (1,?,?,'test','0001','owner@example.test',?)")
+      .bind(await sealed('synthetic-mango-1'), await sealed('synthetic-mango-2'), Date.now()).run();
+    const timestamp = String(Math.floor(Date.now() / 1000)), forged = '0'.repeat(64);
+    const doors = {'/webhooks/mail/resend': {'svix-id': 'oversized', 'svix-timestamp': timestamp, 'svix-signature': `v1,${forged}`},
+      '/webhooks/sms/status': {'X-MM-Timestamp': timestamp, 'X-MM-Signature': forged},
+      '/webhooks/commerce/stripe': {'Stripe-Signature': `t=${timestamp},v1=${forged}`}};
+    const reads = [];
+    for (const [path, headers] of Object.entries(doors)) {
+      const read = {chunks: 0, cancelled: false};
+      const stream = new ReadableStream({pull(controller) {if (++read.chunks > 8) controller.close(); else controller.enqueue(new Uint8Array(1024 * 1024));}, cancel() {read.cancelled = true;}});
+      const response = await f.app.request(path, {method: 'POST', body: stream, duplex: 'half', headers} as RequestInit);
+      reads.push({path, refused: response.status >= 400, cancelled: read.cancelled, stoppedEarly: read.chunks < 4});
+    }
+    expect(reads).toEqual(Object.keys(doors).map(path => ({path, refused: true, cancelled: true, stoppedEarly: true})));
     expect(await f.count('provider_fact_inbox')).toBe(0);
     expect((await f.post(f.body('first@example.test', 'suppressed', {to: ['first@example.test', 'second@example.test']}), 'ambiguous')).status).toBe(500);
     expect(await f.count('contact_suppressions')).toBe(0);
@@ -164,21 +201,8 @@ test('[CONT-006] replay enriches older normalized inbox evidence without changin
 test('[CONT-004][CONT-013] erasure removes signed unmatched SMS facts with canonical and historical formatted destinations', async () => {
   const f = await fixture();
   try {
-    const smsSecret = 'synthetic-task-owned-sms-secret';
-    const disabledSms = f.platform.config.modules.sms;
+    const disabledSms = f.enableSms();
     const now = new Date();
-    const windows = [{days: [0, 1, 2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 20 * 60}];
-    f.platform.config.modules.sms = {enabled: true, requiredInputs: disabledSms.requiredInputs, missingInputs: [], config: {
-      providerApiKey: 'unused:fixture', webhookSecret: smsSecret, confirmationSender: '61400000010',
-      testAllowlist: ['+61400123456'], handoffsPerMinute: 1,
-      programme: {brand: 'Synthetic Mango', programme: 'Synthetic programme', category: 'offers', frequency: 'Weekly',
-        jurisdiction: 'AU', support: 'help@example.test', providerAlreadyReplies: true,
-        policySource: 'https://policy.example.test/synthetic-sms', policyVerifiedAt: new Date(now.getTime() - 1000).toISOString(),
-        policyExpiresAt: new Date(now.getTime() + 86400000).toISOString(),
-        providerWindows: windows, jurisdictionWindows: windows, recipientWindows: windows},
-    }};
-    f.platform.sms = createMobileMessageAdapter({credentials: 'unused:fixture', webhookSecret: smsSecret});
-    f.platform.sms.send = async () => {throw new Error('Sending forbidden in suppression tests')};
     // A known phone can opt out without prior SMS consent or an outbound message.
     const {contact} = await f.services.audienceService.captureConsent({contact: {email: 'sms-erasure@example.test', phone: '+61400123456'}, channel: 'email', brandOrLegalSender: 'Synthetic Mango',
       messageCategory: 'offers', frequencyDisclosure: 'Weekly', destinationJurisdiction: 'AU', captureMethod: 'task-fixture',
