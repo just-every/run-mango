@@ -7,10 +7,10 @@ There are two ways to run Mango. Run it on your computer to look around and writ
 One line installs `rer`, clones Mango and starts it:
 
 ```bash
-npx -y @runeditrun/rer dev just-every/run-mango
+curl -fsSL https://runeditrun.com/install.sh | sh -s -- dev just-every/run-mango
 ```
 
-To start it again later, run `cd run-mango && rer dev`. To choose the owner yourself, work from the checkout. The one line needs **Node 22 or later**: rer runs on it, and it stops with `node is required` without it. Get it from [nodejs.org](https://nodejs.org/en/download) (or `brew install node` on a Mac, or a version manager such as nvm), or start without Node with `curl -fsSL https://runeditrun.com/install.sh | sh -s -- dev just-every/run-mango`, which brings its own. The one line installs `rer` once per computer. In this checkout it selects pinned rer **0.2.76**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
+Git is required; rer brings Node and pnpm. Already have Node 22 or later? `npx -y @runeditrun/rer dev just-every/run-mango` does the same. If the installer prints a line that puts `rer` on your PATH, run that line too. To start it again later, run the same line from the same folder, or `cd run-mango && rer dev`. To choose the owner yourself, work from the checkout. The one line installs `rer` once per computer. In this checkout it selects pinned rer **0.2.76**, which acquires and uses Node **22.20.0** and pnpm **10.12.4** for this project and installs the locked dependencies; you do not install pnpm yourself. Run from the project root and supply your own owner email. `rer dev` alone also works in a fresh clone: it installs, sets up a local owner and picks a free port for you.
 
 ```bash
 rer install
@@ -29,7 +29,9 @@ To run Mango's own checks, install the headless browser its tests use with `pnpm
 
 ## Deploy to your Cloudflare account
 
-You need a Cloudflare account, its account ID, an API token scoped for the work, and an account with SendGrid or Resend.
+**Or let Run Edit Run host it.** [Run Edit Run](https://app.runeditrun.com/?product=mango&plan=assisted) can set Mango up on your own Cloudflare account and keep it updated; sign-ups are by request for now.
+
+To deploy it yourself, you need a Cloudflare account, its account ID, an API token scoped for the work, and an account with SendGrid or Resend.
 
 First, set `storeTimezone`, `organizationName` and `landingSummary` in `src/ext/config.ts`. Schedules use `storeTimezone`; the default is Australia/Brisbane. Commit that configuration edit locally before running either deploy command; no push is needed:
 

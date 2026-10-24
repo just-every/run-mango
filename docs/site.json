@@ -10,6 +10,12 @@
           "description": "What Mango is, how a newsletter moves through it, and what you need to run your own copy."
         },
         {
+          "slug": "getting-started",
+          "source": "docs/getting-started.md",
+          "label": "Getting started",
+          "description": "Start Mango on your own computer with one line."
+        },
+        {
           "slug": "install",
           "source": "docs/install.md",
           "label": "Install and deploy",

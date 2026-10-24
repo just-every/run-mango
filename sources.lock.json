@@ -1077,6 +1077,10 @@
       "sha256": "0e5e634c9f207779f9bc1e73ac3301f1bcc4122b6c5bd8e399b05ef8737206f1",
       "executable": false
     },
+    "docs/getting-started.md": {
+      "sha256": "be47efdadd3089f068ef53efb8214bfdc9f673a76475d96faea2555dcdebb898",
+      "executable": false
+    },
     "docs/going-live.md": {
       "sha256": "325cd656421f838c2f946a61838a8db0f0588067ebfb0542bbba99c95bca80f0",
       "executable": false
@@ -1086,7 +1090,7 @@
       "executable": false
     },
     "docs/install.md": {
-      "sha256": "12b9ea13e34800d4513cf3bca62eac5b4678ff985e9c5a5f7822e7dec574f8a0",
+      "sha256": "efec4584f9fdf2b0d6c3559f192eb1a499dd5622f79bb35b1c9266f6a585c004",
       "executable": false
     },
     "docs/integrations.md": {
@@ -1094,7 +1098,7 @@
       "executable": false
     },
     "docs/introduction.md": {
-      "sha256": "9d7982bd355193995582e53167b480fdd1ab86a7104eedade7e92e3ff284a569",
+      "sha256": "fd08faaccafbc091e855d871b8ddd71041c1868b91e56dbd1775ab8158f080f8",
       "executable": false
     },
     "docs/moving-in.md": {
@@ -1106,7 +1110,7 @@
       "executable": false
     },
     "docs/site.json": {
-      "sha256": "0887e3ecc890f68d31f34dc3b33f1b762230ba5959cab1194fef9ef274c5f241",
+      "sha256": "41b746cdedfdf932e08fee4bdbff4262d5f33be304624df346e54863ee93ced0",
       "executable": false
     },
     "docs/team-and-settings.md": {
