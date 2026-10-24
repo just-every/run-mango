@@ -45,7 +45,8 @@ export async function proveSavedReports(page:Page,site:Installation,edge:Awaited
   await site.control('/_golive/cron',{scheduledTime:schedule.nextAt-1});expect(reportMail()).toHaveLength(0);
   await site.control('/_golive/clock',{advanceMs:1,hold:true});
   await Promise.all([site.control('/_golive/cron',{scheduledTime:schedule.nextAt}),site.control('/_golive/cron',{scheduledTime:schedule.nextAt})]);
-  expect(reportMail()).toHaveLength(1);expect(reportMail()[0].body.to).toContain('owner@example.test');expect(reportMail()[0].body.text).toContain(JSON.stringify(report,null,2));
+  const dispositions=await site.rows(`SELECT state,reason,next_at FROM insight_report_deliveries WHERE schedule_id='${schedule.id}'`);
+  expect(reportMail(),JSON.stringify(dispositions)).toHaveLength(1);expect(reportMail()[0].body.to).toContain('owner@example.test');expect(reportMail()[0].body.text).toContain(JSON.stringify(report,null,2));
   await site.control('/_golive/cron',{scheduledTime:schedule.nextAt});expect(reportMail()).toHaveLength(1);
   expect(await site.rows(`SELECT state,count(*) count FROM insight_report_deliveries WHERE schedule_id='${schedule.id}' GROUP BY state`)).toEqual([{state:'accepted',count:1}]);
   cookie=await site.open();await page.context().setExtraHTTPHeaders({Cookie:cookie});
