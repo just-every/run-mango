@@ -1,8 +1,10 @@
 import {test,expect} from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import {eraseHttp} from '../audience-import/erase';
 import seed from '../../seed.json' with {type:'json'};
 import {providerEdge} from './edge';
 import {event,eventSigner} from './sendgrid-events';
-import {installation,json,sender,draftCampaign,availableTransport,signedPost} from './harness';
+import {installation,json,sender,draftCampaign,availableTransport,signedPost,confirmedContact} from './harness';
 import {openPage} from '../support/navigation';
 
 test('[CAMP-019] typed email tests enforce restrictions, daily allowance and recorded destinations',async({page},info)=>{
@@ -48,6 +50,36 @@ test('[CAMP-019] typed email tests enforce restrictions, daily allowance and rec
     expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).campaign.state).toBe('draft');
     const history=await json(await site.call(`/api/campaigns/${campaign.campaignId}/test-sends`,{cookie}),200);
     expect(history.tests.map((item:any)=>item.destination).sort()).toEqual(sent.map(item=>item.to).sort());
+    const activityPath=`/api/activity?action=test-send&object=${campaign.revisionId}`;
+    const activity=async()=>json(await site.call(activityPath,{cookie}),200);
+    const entries=(await activity()).entries;
+    expect(entries.map((entry:any)=>entry.detail.destination).sort()).toEqual(sent.map(item=>item.to).sort());
+    for(const entry of entries) {
+      expect(entry).toMatchObject({actorType:'operator',operatorId:'go-live-owner',objectType:'campaign-revision',objectId:campaign.revisionId,action:'test-send'});
+      expect(entry.occurredAt).toBeGreaterThanOrEqual(clock.now);
+      expect(entry.occurredAt).toBeLessThanOrEqual((await site.control('/_golive/clock')).now);
+    }
+    const exportActivity=async()=>{
+      const response=await site.call(`/api/activity/export?action=test-send&object=${campaign.revisionId}`,{cookie});
+      expect(response.status).toBe(200);return response.text();
+    };
+    const csv=await exportActivity();
+    for(const item of sent)expect(csv).toContain(item.to);
+    for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1000});
+      await openPage(page,site.runtime.url+'/app/activity');
+      await page.getByLabel('Action',{exact:true}).fill('test-send');
+      await page.getByLabel('Object',{exact:true}).fill(campaign.revisionId);
+      await page.getByRole('button',{name:'Apply filters',exact:true}).click();
+      const region=page.getByRole('region',{name:'Activity entries',exact:true});
+      await expect(region).toHaveAttribute('aria-busy','false');
+      await expect(region.locator('tbody tr')).toHaveCount(4);
+      for(const item of sent)await expect(region).toContainText(item.to);
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
+      expect((await new AxeBuilder({page}).include('.activity-page').analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+      await page.screenshot({path:info.outputPath(`typed-test-activity-${width}.png`),fullPage:true});
+    }
     await site.open('colleague@example.test','colleague');
     await site.runtime.sql("UPDATE oa_operators SET role='member' WHERE id='go-live-owner' RETURNING id");
     cookie=await site.open();
@@ -90,5 +122,15 @@ test('[CAMP-019] typed email tests enforce restrictions, daily allowance and rec
     await availableTransport(site);
     expect((await send(['new-day@example.test'])).status).toBe(200);
     expect((await allowance()).remaining).toBe(seed.limits.maxTestSendsPerDay-2);
+    // Erasure redacts a typed destination without removing its actor/time receipt.
+    const erasedAddress='design1440@example.test';
+    await confirmedContact(site,edge,cookie,erasedAddress,'Synthetic Mango 25');
+    const contact=(await site.rows(`SELECT id FROM contacts WHERE email='${erasedAddress}'`))[0];
+    expect((await eraseHttp(site,cookie,contact.id)).state).toBe('complete');
+    const retained=(await activity()).entries;
+    expect(retained).toHaveLength((await json(await site.call(`/api/campaigns/${campaign.campaignId}/test-sends`,{cookie}),200)).tests.length);
+    expect(JSON.stringify(retained)).not.toContain(erasedAddress);
+    expect(await exportActivity()).not.toContain(erasedAddress);
+    expect(retained.find((entry:any)=>entry.id===entries.find((entry:any)=>entry.detail.destination===erasedAddress).id)).toMatchObject({operatorId:'go-live-owner',occurredAt:entries.find((entry:any)=>entry.detail.destination===erasedAddress).occurredAt});
   } finally {await site.runtime.close();await edge.close();}
 });

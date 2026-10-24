@@ -1,3 +1,6 @@
+import { normalizeAuthoredContent } from '@/core/features/campaigns/authoring-content';
+import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
+import { campaignTemplates } from '@/core/features/campaigns/reuse-schema';
 import { EmailTooLargeError } from '@/core/features/campaigns/email-size';
 import { ulid } from '@/core/shared/ids';
 import type { Platform } from '@/core/shared/platform';
@@ -25,8 +28,14 @@ export async function writeContent(platform: Platform, archiveId: string, record
   if (await db.$client.prepare('SELECT 1 FROM move_in_content WHERE archive_id=? AND ordinal=?').bind(archiveId, record.ordinal).first()) return;
   const at = Date.now();
   if (record.kind === 'history') { await db.insert(moveInContent).values(row(archiveId, record, at)).onConflictDoNothing(); return; }
-  try { await createDraft(db, { ...senderDefaults(platform), name: record.title, emailSubject: record.subject, emailBody: record.html }, operatorId,
-    draft => [db.insert(moveInContent).values({ ...row(archiveId, record, at), campaignId: draft.campaignId, revisionId: draft.revisionId, revisionUpdatedAt: draft.createdAt.getTime() })], {publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
+  try {
+    const composition=normalizeAuthoredContent({...senderDefaults(platform),name:record.title,emailSubject:record.subject,emailBody:record.html});
+    await savedEmailSize(db,{emailSubject:'',emailBody:'',emailText:'',preheader:'',physicalAddress:'',smsBody:'',...composition},{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
+    const content=row(archiveId,record,at);
+    await db.batch([
+      db.insert(campaignTemplates).values({id:content.id,name:record.title,compositionJson:JSON.stringify({composition,stepSettings:[]}),createdBy:operatorId,updatedBy:operatorId,createdAt:at,updatedAt:at}),
+      db.insert(moveInContent).values(content),
+    ]);
   } catch (error) {
     if (!(error instanceof EmailTooLargeError)) throw error;
     // A held conversion is source custody, never a campaign revision. The
@@ -64,6 +73,15 @@ async function keptReason(db: D1Database, campaignId: string, revisionId: string
 /** Undo one content record. History is read-only, so it is always removed; a draft only when untouched. */
 export async function undoContent(db: D1Database, record: { id: string; kind: string; campaign_id: string | null; revision_id: string | null; revision_updated_at: number | null }) {
   const at = Date.now();
+  if(record.kind==='draft'&&!record.campaign_id) {
+    // New archive templates share the custody row's id. Legacy imported drafts
+    // retain the independent campaign-aware undo path below.
+    await db.batch([
+      db.prepare("UPDATE move_in_content SET state=CASE WHEN EXISTS(SELECT 1 FROM campaign_templates WHERE id=?1 AND updated_at<>created_at) THEN 'kept' ELSE 'removed' END,outcome=CASE WHEN EXISTS(SELECT 1 FROM campaign_templates WHERE id=?1 AND updated_at<>created_at) THEN 'Kept: template edited after the import.' ELSE 'Removed: unchanged since the import.' END,updated_at=?2 WHERE id=?1 AND state='imported'").bind(record.id,at),
+      db.prepare("DELETE FROM campaign_templates WHERE id=? AND updated_at=created_at AND EXISTS(SELECT 1 FROM move_in_content WHERE id=? AND state='removed')").bind(record.id,record.id),
+    ]);
+    return;
+  }
   if (record.kind === 'history' || !record.campaign_id) {
     await db.prepare("UPDATE move_in_content SET state='removed',outcome='Removed: unchanged since the import.',html='',text='',updated_at=? WHERE id=? AND state='imported'").bind(at, record.id).run();
     return;

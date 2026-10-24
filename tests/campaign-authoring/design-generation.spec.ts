@@ -147,6 +147,16 @@ test('[DESIGN-002] Design with 12ui turns a brief into an unsaved body through t
     await page.getByRole('button', { name: 'Save full draft', exact: true }).click();
     await expect(page.getByRole('status').filter({ hasText: 'Draft saved.' })).toBeVisible();
     const detail = await read();
+    const library=await (await api.get(runtime.url+'/api/campaign-templates')).json();
+    const filed=library.templates.filter((item:any)=>item.kind==='saved');
+    expect(filed).toHaveLength(1);
+    expect(filed[0].name).toBe('Orchard letter');
+    const copy=await api.post(`${runtime.url}/api/campaign-templates/${encodeURIComponent(filed[0].id)}/start`,{headers});
+    expect(copy.status()).toBe(201);
+    const copied=await (await api.get(`${runtime.url}/api/campaigns/${(await copy.json()).campaignId}`)).json();
+    expect(copied.campaign.state).toBe('draft');expect(copied.steps).toEqual([]);
+    expect(copied.revision.emailBody).toBe(detail.revision.emailBody);
+
     expect(detail.campaign.state).toBe('draft');
     expect(detail.revision.emailBody).toBe(imported);
     // The generated body is saved through the ordinary save path, in the canonical form parsers read (CAMP-003, MSG-009).

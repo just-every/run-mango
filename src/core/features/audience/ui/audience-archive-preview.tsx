@@ -50,14 +50,14 @@ export function AudienceArchivePreview({ preview, isCurrent }: { preview: Archiv
         {summary.content.length ? (
           <div className="table-scroll audience-import-table-scroll" tabIndex={0} role="region" aria-label="Emails and templates in the archive">
             <table className="responsive-table audience-import-table">
-              <caption className="visually-hidden">Emails become read-only imported history; templates become draft starters</caption>
+              <caption className="visually-hidden">Emails become read-only imported history; templates become library templates</caption>
               <thead><tr><th scope="col">Content file</th><th scope="col">Rows</th><th scope="col">Becomes</th><th scope="col">Duplicates</th><th scope="col">Rejected</th></tr></thead>
               <tbody>
                 {summary.content.map(file => (
                   <tr key={file.path}>
                     <td data-label="Content file"><span className="audience-import-row-file">{file.path}</span></td>
                     <td data-label="Rows">{count(file.rows)}</td>
-                    <td data-label="Becomes">{file.kind === 'emails' ? plural(file.created, 'imported history record', 'imported history records') : plural(file.created, 'draft starter', 'draft starters')}</td>
+                    <td data-label="Becomes">{file.kind === 'emails' ? plural(file.created, 'imported history record', 'imported history records') : plural(file.created, 'library template', 'library templates')}</td>
                     <td data-label="Duplicates">{count(file.duplicates)}</td>
                     <td data-label="Rejected">{count(file.rejected)}{file.rejectedRows.length ? <ul className="audience-import-row-warnings">{file.rejectedRows.map(item => <li key={item.row}>{item.reason}</li>)}</ul> : null}</td>
                   </tr>

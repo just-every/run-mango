@@ -296,7 +296,7 @@ export function AudienceImportPage() {
         <section className="audience-import-final-action notice-note" aria-label="Import reviewed archive">
           <div>
             <p className="eyebrow">Review complete</p>
-            <p>{archive.current ? 'Importing brings in contacts by status, imported history and draft starters. It grants no schedule, approval or send.' : 'This preview is out of date. Preview the archive again before importing it.'}</p>
+            <p>{archive.current ? 'Importing brings in contacts by status, imported history and library templates. It grants no schedule, approval or send.' : 'This preview is out of date. Preview the archive again before importing it.'}</p>
             {busyJobId ? <p role="status">An import is still running. Wait for it to finish or press Stop in Imports below before starting another.</p> : archive.busyId ? <p role="status">An archive import is still running. Wait for it to finish before starting another.</p> : null}
           </div>
           <button className="primary-action" type="button" onClick={() => { if (!busy && !busyJobId) void archive.start(consent); }} disabled={!archive.current || Boolean(busy) || owner.busy || Boolean(busyJobId) || Boolean(archive.busy) || Boolean(archive.busyId)}>

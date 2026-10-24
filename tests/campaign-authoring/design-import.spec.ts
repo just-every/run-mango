@@ -138,6 +138,16 @@ for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as a
     await expect(summary).toHaveCount(0);
     await expect(summaries.locator('mark').filter({ hasText: 'Our early varieties are ready' })).toBeVisible();
     const detail = await read();
+    const library=await (await api.get(runtime.url+'/api/campaign-templates')).json();
+    const filed=library.templates.filter((item:any)=>item.kind==='saved');
+    expect(filed).toHaveLength(1);
+    expect(filed[0].name).toBe('Orchard letter');
+    const copy=await api.post(`${runtime.url}/api/campaign-templates/${encodeURIComponent(filed[0].id)}/start`,{headers});
+    expect(copy.status()).toBe(201);
+    const copied=await (await api.get(`${runtime.url}/api/campaigns/${(await copy.json()).campaignId}`)).json();
+    expect(copied.campaign.state).toBe('draft');expect(copied.steps).toEqual([]);
+    expect(copied.revision.emailBody).toBe(detail.revision.emailBody);
+
     expect(detail.campaign.state).toBe('draft');
     expect(detail.revision.emailBody).toBe(imported);
     expect(detail.revision.emailBody.match(/\{\{unsubscribe_url\}\}/g)).toHaveLength(1);

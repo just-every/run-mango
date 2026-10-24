@@ -1,5 +1,6 @@
 import { openPage } from '../support/navigation';
 import { createHash } from 'node:crypto';
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { providerEdge } from '../go-live/edge';
 import { eventSigner } from '../go-live/sendgrid-events';
@@ -88,6 +89,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     await drive(calendarSite, cookie, moved.archive.id, 'undo');
     expect(await stored()).toEqual([]);
     expect(await calendarSite.count('move_in_contact_history')).toBe(0);
+    expect(await calendarSite.count('campaign_templates')).toBe(0);
     const reapplied = await importArchive(calendarSite, cookie, bytes);
     expect(reapplied.preview.summary.engagement).toEqual(expected);
     expect(reapplied.archive.summary.engagement).toEqual(expected);
@@ -161,10 +163,31 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     for (const table of facts) expect((await site.rows(`SELECT count(*) AS n FROM ${table}`))[0].n, table).toBe(0);
     const campaigns = await json(await site.call('/api/campaigns', { cookie }), 200);
     const starter = detail.content.find((row: { kind: string }) => row.kind === 'draft');
-    const results = await json(await site.call(`/api/campaigns/${starter.campaign_id}/results`, { cookie }), 200);
+    expect(starter.campaign_id).toBeNull();
+    const templates=(await json(await site.call('/api/campaign-templates',{cookie}),200)).templates;
+    const template=templates.find((item:any)=>item.id===starter.id);
+    expect(template).toMatchObject({name:'Welcome letter',kind:'saved'});
+    expect(campaigns.campaigns).toEqual([]);
+    for(const width of [1440,390]) {
+      await page.setViewportSize({width,height:1000});
+      await openPage(page,site.runtime.url+'/app/campaigns');
+      await page.getByRole('button',{name:'New campaign',exact:true}).click();
+      await expect(page.getByRole('button',{name:'Use Welcome letter',exact:true})).toBeVisible();
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
+      expect((await new AxeBuilder({page}).include('#campaign-starters').analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+      await page.screenshot({path:info.outputPath(`archive-library-${width}.png`),fullPage:true});
+    }
+    await page.getByRole('button',{name:'Use Welcome letter',exact:true}).click();
+    await expect(page).toHaveURL(/\/app\/campaigns\/[^/]+\/review/);
+    const startedId=new URL(page.url()).pathname.split('/')[3];
+    const started=await json(await site.call(`/api/campaigns/${startedId}`,{cookie}),200);
+    expect(started.campaign.state).toBe('draft');expect(started.steps).toEqual([]);
+    expect(started.revision.emailBody).toContain('Welcome to the garden');
+    const results = await json(await site.call(`/api/campaigns/${startedId}/results`, { cookie }), 200);
     const insights = await json(await site.call('/api/insights', { cookie }), 200);
     expect(JSON.stringify([campaigns, results, insights])).not.toMatch(/\b(412|388|250|201)\b/);
-    expect(campaigns.campaigns.map((item: { state: string }) => item.state)).toEqual(['draft']);
+    expect(campaigns.campaigns.map((item: { state: string }) => item.state)).toEqual([]);
     await record('no-facts-from-archive.json', { factTables: Object.fromEntries(await Promise.all(facts.map(async table => [table, (await site.rows(`SELECT count(*) AS n FROM ${table}`))[0].n]))), campaigns, results, insights });
 
     // A foreign merge tag stays visible and blocks approval through the personalisation check.
@@ -180,8 +203,9 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     await record('merge-tag-check.json', { approvalStatus: approval.status, blockers: blocked.blockers });
 
     // The operator edits one imported draft and one contact; another person unsubscribes through their link.
-    const [{ id: starterRevision }] = await site.rows(`SELECT active_revision_id AS id FROM campaigns WHERE id='${starter.campaign_id}'`);
+    const starterRevision=started.revision.id;
     await json(await site.call(`/api/campaign-revisions/${starterRevision}`, { method: 'PATCH', cookie, body: { name: 'Welcome letter (edited)' } }), 200);
+    await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:starterRevision,name:'Welcome letter (edited)',templateId:template.id,updatedAt:Date.parse(template.updatedAt)}}),200);
     await json(await site.call('/api/contacts/consent', { method: 'POST', cookie, body: { contact: { email: 'cy@example.test', displayName: 'Cy Confirmed' }, channel: 'email', ...consentEvidence,
       captureMethod: 'operator-entry', captureSource: 'Market stall sign-up sheet', occurredAt: new Date().toISOString() } }), 201);
     const ben = (await site.rows("SELECT id FROM contacts WHERE email='ben@example.test'"))[0].id;
@@ -193,7 +217,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     await page.getByRole('button', { name: 'Undo this import' }).click();
     await page.getByRole('button', { name: 'Confirm undo' }).click();
     await expect(page.getByText(/is undone/)).toBeVisible({ timeout: 300000 });
-    await page.getByRole('button', { name: 'Show imported history and drafts' }).first().click();
+    await page.getByRole('button', { name: 'Show imported history and templates' }).first().click();
     await screens(page, 'undo', info);
     const undone = (await json(await site.call(`/api/audience/archives/${archive.id}`, { cookie }), 200)).archive;
     expect(await site.count('imported_engagement_facts')).toBe(0);

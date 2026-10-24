@@ -14,7 +14,7 @@ export async function oversizedImports(site:Installation,cookie:string,page:Page
     {name:'emails.csv',data:'Title,Subject,Campaign ID\nOversized garden history,Garden history,oversized-history'},
     {name:'campaigns_content/oversized-history.html',data:source},
   ]);
-  const before=await site.count('campaigns');
+  const before=await site.count('campaigns'),templatesBefore=await site.count('campaign_templates');
   const preview=await postArchive(site,cookie,'/api/audience/archive-preview',bytes);
   expect(preview.status,JSON.stringify(preview.body)).toBe(200);
   expect(await site.count('campaigns')).toBe(before);
@@ -28,7 +28,7 @@ export async function oversizedImports(site:Installation,cookie:string,page:Page
   expect(held.outcome).toContain('Email is too large.');
   expect(held.outcome).toContain('Largest blocks:');
   expect(held.outcome).toContain('bytes');
-  expect(await site.count('campaigns')).toBe(before+1);
+  expect(await site.count('campaigns')).toBe(before);
   const history=detail.content.find((row:any)=>row.kind==='history');
   const original=await json(await site.call(`/api/imported-history/${history.id}`,{cookie}),200);
   expect(original.record.html).toContain(oversized);
@@ -44,26 +44,30 @@ export async function oversizedImports(site:Installation,cookie:string,page:Page
   expect(report).toContain(held.outcome.replaceAll('|','\\|').replace(/\s+/g,' ').trim());
   expect(report).toContain('held');
   expect(report).toContain('Held conversions');
-  // Replay does not retry a held conversion or create another small draft.
+  // Replay does not retry a held conversion or create another small template.
   await drive(site,cookie,id,'continue');
-  expect(await site.count('campaigns')).toBe(before+1);
+  expect(await site.count('campaigns')).toBe(before);
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});
     await openPage(page,`${site.runtime.url}/app/audience/import`);
-    await page.getByRole('button',{name:'Show imported history and drafts',exact:true}).click();
-    const region=page.getByRole('region',{name:'Imported history and drafts from account-export.zip'});
+    await page.getByRole('button',{name:'Show imported history and templates',exact:true}).click();
+    const region=page.getByRole('region',{name:'Imported history and templates from account-export.zip'});
     await expect(region).toContainText(held.outcome);
     await region.getByRole('button',{name:'Copy into a new draft',exact:true}).click();
     await expect(region.getByRole('alert')).toContainText(refused.detail);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await region.screenshot({path:info.outputPath(`oversized-import-${width}.png`)});
   }
-  expect(await site.count('campaigns')).toBe(before+1);
+  expect(await site.count('campaigns')).toBe(before);
   const small=detail.content.find((row:any)=>row.source_path==='templates/small.html');
-  const smallDetail=await json(await site.call(`/api/campaigns/${small.campaign_id}`,{cookie}),200);
+  expect(small.campaign_id).toBeNull();
+  expect(await site.count('campaign_templates')).toBe(templatesBefore+1);
+  const started=await json(await site.call(`/api/campaign-templates/${small.id}/start`,{method:'POST',cookie}),201);
+  const smallDetail=await json(await site.call(`/api/campaigns/${started.campaignId}`,{cookie}),200);
   expect(smallDetail.revision).toMatchObject({state:'draft',approvedAt:null,emailBody:expect.stringContaining('A small garden letter.')});
   await drive(site,cookie,id,'undo');
   const undone=await json(await site.call(`/api/audience/archives/${id}`,{cookie}),200);
   expect(undone.content.every((row:any)=>row.state==='removed')).toBe(true);
-  expect(await site.count('campaigns')).toBe(before);
+  expect(await site.count('campaign_templates')).toBe(templatesBefore);
+  expect(await site.count('campaigns')).toBe(before+1);
 }

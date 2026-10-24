@@ -22,7 +22,7 @@ import {
   campaignSteps,
 } from './campaign-schema';
 
-type MutableRevisionField = Exclude<keyof DraftComposition, 'links' | 'steps'>;
+type MutableRevisionField = Exclude<keyof DraftComposition, 'links' | 'steps' | 'designTemplateKey'>;
 
 const revisionColumns: Record<MutableRevisionField, string> = {
   name: 'name',
@@ -218,6 +218,14 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
         prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
           SELECT ?,?,'campaign-revision',?,'draft.saved','operator',?,json_object('campaignId',?),?,? WHERE ${guard}`,
           operation, operation, id, actorId, storedRevision.campaignId, updatedAt.getTime(), updatedAt.getTime());
+      }
+      if(composition.designTemplateKey&&actorId) {
+        const source={...storedRevision,...composition};
+        const fields=['name','emailSubject','emailBody','emailText','preheader','smsBody','senderName','fromEmail','replyToEmail','smsSender','physicalAddress','messageCategory','inclusionRuleJson','exclusionRulesJson','trackingEnabled','utmPolicyJson'] as const;
+        const value={composition:Object.fromEntries(fields.map(key=>[key,source[key]])),stepSettings:[]};
+        const templateId=`design:${id}:${composition.designTemplateKey}`;
+        prepare(`INSERT INTO campaign_templates(id,name,composition_json,created_by,updated_by,created_at,updated_at)
+          SELECT ?,?,?,?,?,?,? WHERE ${guard} ON CONFLICT(id) DO NOTHING`,templateId,source.name,JSON.stringify(value),actorId,actorId,updatedAt.getTime(),updatedAt.getTime());
       }
       const update = revisionUpdate(composition, updatedAt, id, storedRevision.updatedAt);
       prepare(update.sql, ...update.values);

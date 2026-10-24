@@ -11,7 +11,7 @@
     },
     "OPER-007": {
       "change": "changed",
-      "summary": "Activity log: the Owner and Admins read Settings → Activity, filtered by operator, agent, action, object and date with a CSV of the filtered view. The clause now names that flow activations and pauses (FLOW-008) and agent actions (AGENT-010) join the log when those clauses are built. Status stays partial: a completed restore has no activity entry yet."
+      "summary": "Activity log: the Owner and Admins read Settings \u2192 Activity, filtered by operator, agent, action, object and date with a CSV of the filtered view. The clause now names that flow activations and pauses (FLOW-008) and agent actions (AGENT-010) join the log when those clauses are built. Status stays partial: a completed restore has no activity entry yet."
     },
     "AUD-003": {
       "change": "status",
@@ -58,6 +58,14 @@
     "AGENT-010": {
       "change": "changed",
       "summary": "Agent authority and guardrails: every agent action will be an OPER-007 activity entry under the agent's grant; status unchanged (partial)."
+    },
+    "CAMP-019": {
+      "change": "changed",
+      "summary": "Status stays partial. Extend the existing typed-test journey with Activity actor/time, action/object filters, CSV and erased-contact redaction at desktop and phone widths."
+    },
+    "BUILD-002": {
+      "change": "changed",
+      "summary": "Status stays partial. Archive templates enter the library with untouched-only undo; the first save of an imported or generated design files an independent template. Existing archive draft custody retains its undo path. No migration is needed."
     }
   },
   "extensionPointChanges": [],

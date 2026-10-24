@@ -19,12 +19,13 @@ export type DraftComposition = Pick<
   | 'replyToEmail'
   | 'smsSender'
 > & {
+  designTemplateKey?: string;
   trackingEnabled: boolean;
   links: DraftLink[];
   steps: DraftStep[];
 };
 
-export type DraftScalarField = Exclude<keyof DraftComposition, 'links' | 'steps' | 'trackingEnabled'>;
+export type DraftScalarField = Exclude<keyof DraftComposition, 'links' | 'steps' | 'trackingEnabled' | 'designTemplateKey'>;
 
 export function toDraftComposition(
   revision: Revision,

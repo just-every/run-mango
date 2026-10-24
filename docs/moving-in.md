@@ -41,7 +41,7 @@ The synthetic examples cover all four files. The three existing subscribed, unsu
 
 ## Mailchimp full account export
 
-Mailchimp's [account export](https://mailchimp.com/help/export-back-up-data/) puts audiences, emails, templates and more into one ZIP. Mango reads that ZIP in one review: audiences by status, sent emails as imported history and templates as draft starters, with a reconciliation report and an undo. This route is a **documented format, tested on synthetic files shaped from the published help page, not on a real export**. No real export has been reconciled yet.
+Mailchimp's [account export](https://mailchimp.com/help/export-back-up-data/) puts audiences, emails, templates and more into one ZIP. Mango reads that ZIP in one review: audiences by status, sent emails as imported history and templates as library templates, with a reconciliation report and an undo. This route is a **documented format, tested on synthetic files shaped from the published help page, not on a real export**. No real export has been reconciled yet.
 
 ### Request the export
 
@@ -64,7 +64,7 @@ Mango recognises each part from its folder names, file names and CSV headers, ne
 
 Mailchimp's export does not contain deleted audiences, billing receipts, third-party data, or website, landing-page and ad content, so none of these can move in.
 
-Imported history and draft starters carry no schedule, approval or delivery authority. Reports and "sent" rows stay source records: they never create a delivery, acceptance, campaign count, result figure or revenue in Mango.
+Imported history and library templates carry no schedule, approval or delivery authority. Reports and "sent" rows stay source records: they never create a delivery, acceptance, campaign count, result figure or revenue in Mango.
 
 Imported clicks count for dormancy at their original times. Imported opens are estimates and never engagement. The contact timeline labels both as imported and names their source file. Unknown addresses, invalid times, unsupported actions, malformed rows, invalid links and missing campaign identities are counted and dropped by named reason in reconciliation. The importer never creates Mango send facts, results or attribution, and never changes consent from activity rows. The Mailchimp API activity pull and other incumbents’ history remain unimplemented. Scoring, activity segments, sunsetting and send-time optimization still owe consumption of these facts.
 
@@ -101,7 +101,7 @@ One archive is read inside a single Worker request (128 MB memory). These limits
 | Expanded text read for review | 12 MB | Audience CSVs, the emails CSV, content and templates are held as text. The worst case measured, 5,000 rows plus 600 HTML files and 11.25 MB of text, peaked at about 75 MB. |
 | Audience rows | 5,000 per archive | Each reviewed row holds a snapshot: 5,000 rows peaked at about 81 MB, and 10,000 ran out of memory under a 150 MB heap. A larger audience imports as individual CSV files, up to 50,000 rows per review. |
 | Compression ratio | 100 to 1 for entries over 1 MB | Refuses expansion bombs before inflating them. |
-| History records / draft starters | 500 / 100 per archive | Content is written in pages of 20 after the import starts; a larger export is refused with a request to export a shorter time frame. |
+| History records / library templates | 500 / 100 per archive | Content is written in pages of 20 after the import starts; a larger export is refused with a request to export a shorter time frame. |
 
 Mango refuses an archive, saving nothing and naming the reason, when it is not a ZIP or is truncated, split or ZIP64, or when an entry has an absolute or `..` path, a duplicate name, a symbolic link or encryption. Entries that overlap, use an unknown compression method, fail their CRC, disagree with their header or exceed a limit are refused the same way. Archives nested inside the export are never opened: they are skipped and counted as kept as raw source. A larger export gets a plain message: unzip it and import the audience CSV files individually above, or export again with a shorter time frame and without the gallery.
 

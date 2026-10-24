@@ -35,12 +35,12 @@ export function CampaignCompositionEditor({
   serverErrors?: FieldErrors;
   validationRequest?: number;
 }) {
-  const setField = (field: DraftScalarField, value: string) => {
+  const setField = (field: DraftScalarField, value: string, imported = false) => {
     if(field!=='emailBody') {onChange({...draft,[field]:value});return;}
     const previous=new Set(authoredLinks(draft.emailBody).map(link=>link.destinationUrl));
     const current=authoredLinks(value),destinations=new Set(current.map(link=>link.destinationUrl));
     const pending=draft.links.filter(link=>!previous.has(link.destinationUrl)&&!destinations.has(link.destinationUrl));
-    onChange({...draft,emailBody:value,links:[...current,...pending]});
+    onChange({...draft,...(imported?{designTemplateKey:crypto.randomUUID()}:{}),emailBody:value,links:[...current,...pending]});
   };
   const setLink = (index: number, field: keyof DraftLink, value: string) => {
     const links = draft.links.map((link, itemIndex) =>

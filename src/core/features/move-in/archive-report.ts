@@ -30,9 +30,9 @@ export async function archiveReport(db: D1Database, archive: ArchiveRecord, cont
       summary.audience.map(file => [file.path, file.status, file.rows, file.created, file.updated, file.duplicatesWithin, file.duplicatesAcross, file.rejected, file.skipped,
         file.rows === file.created + file.updated + file.duplicatesWithin + file.duplicatesAcross + file.rejected + file.skipped ? 'yes' : 'NO',
         file.unknownConsent, file.outcomes.unsubscribed, file.outcomes.suppressed, file.outcomes.subscribed])),
-    '', '## Emails and templates', '', 'Imported history and draft starters carry no schedule, approval or delivery authority, and no report figures.', '',
+    '', '## Emails and templates', '', 'Imported history and library templates carry no schedule, approval or delivery authority, and no report figures.', '',
     table(['File', 'Kind', 'Source rows', 'Created', 'Held conversions', 'Duplicates', 'Rejected', 'Skipped', 'Adds up'],
-      summary.content.map(file => [file.path, file.kind === 'emails' ? 'imported history' : 'draft starters', file.rows, file.created - (file.kind==='templates'?held.length:0), file.kind==='templates'?held.length:0, file.duplicates, file.rejected, file.skipped,
+      summary.content.map(file => [file.path, file.kind === 'emails' ? 'imported history' : 'library templates', file.rows, file.created - (file.kind==='templates'?held.length:0), file.kind==='templates'?held.length:0, file.duplicates, file.rejected, file.skipped,
         file.rows === file.created + file.duplicates + file.rejected + file.skipped ? 'yes' : 'NO'])),
     '', '## Kept as raw source, not imported', '', 'These stay in the archive Mango keeps; nothing in them becomes a contact, a send fact or a report figure.', '',
     table(['Kind', 'Files', 'Bytes'], summary.kept.map(kind => [kind.label, kind.files, kind.bytes])),
@@ -50,7 +50,7 @@ export async function archiveReport(db: D1Database, archive: ArchiveRecord, cont
   if(summary.engagement)lines.push('## Imported engagement', '', `${summary.engagement.imported} engagement rows imported; ${summary.engagement.dropped} dropped of ${summary.engagement.rows} source rows. Opens are estimates and never engagement.`, '', table(['Drop reason','Rows'],Object.entries(summary.engagement.reasons)), '');
   const rejected = [...summary.audience.flatMap(file => file.rejectedRows.map(item => [file.path, item.row, item.reason])), ...summary.content.flatMap(file => file.rejectedRows.map(item => [file.path, item.row, item.reason]))];
   if (rejected.length) lines.push('## Rejected rows', '', table(['File', 'Row', 'Reason'], rejected), '');
-  if (content.length) lines.push('## History and drafts', '', table(['Kind', 'Source', 'Title', 'State', 'Outcome'], content.map(item => [item.kind === 'history' ? 'imported history' : 'draft starter',
+  if (content.length) lines.push('## History and templates', '', table(['Kind', 'Source', 'Title', 'State', 'Outcome'], content.map(item => [item.kind === 'history' ? 'imported history' : 'library template',
     item.source_row ? `${item.source_path} row ${item.source_row}` : item.source_path, item.title, item.state, item.outcome ?? ''])), '');
   if (undo) {
     lines.push('## Undo', '', `${undo.contacts.removed} imported contacts were removed. Opt-out and suppression records are never removed by undo.`, '');

@@ -51,6 +51,7 @@ const draftLink = z.object({
 export const draftCompositionSchema = z
   .object({
     name: z.string().max(160).optional(),
+    designTemplateKey: z.string().uuid().optional(),
     // Accepted for older clients only. Persistence always overwrites it from the rules.
     audienceRule: z.string().max(4_000).optional(),
     emailSubject: z.string().max(250).optional(),
