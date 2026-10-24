@@ -1,3 +1,4 @@
+import {SendingWebhookError} from '@/core/features/sending/webhook-error';
 import { collectSenderTimings } from '@/core/features/sender-verification/timings';
 import { z } from 'zod';
 
@@ -146,9 +147,14 @@ export function registerLifecycleHttpRoutes(
   });
 
   app.post('/webhooks/mail/*', async (context: any) => {
-    const result = await delivery.handleWebhook('email', context.req.raw);
-    if (result.kind === 'unavailable') return context.json({ error: 'mail_webhook_unavailable' }, 404);
-    return context.body(null, 204);
+    try {
+      const result = await delivery.handleWebhook('email', context.req.raw);
+      if (result.kind === 'unavailable') return context.json({ error: 'mail_webhook_unavailable' }, 404);
+      return context.body(null, 204);
+    } catch(error) {
+      if(error instanceof SendingWebhookError)return context.json({error:'mail_webhook_untrusted'},401);
+      throw error;
+    }
   });
   app.post('/webhooks/sms/*', async (context: any) => {
     const result = await delivery.handleWebhook('sms', context.req.raw);

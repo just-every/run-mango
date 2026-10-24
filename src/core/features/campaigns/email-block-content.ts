@@ -1,5 +1,5 @@
 import {parseFragment,type DefaultTreeAdapterTypes as Tree} from 'parse5';
-import {escapeBlock,type BlockKind} from './email-blocks';
+import {emailButton,escapeBlock,type BlockKind} from './email-blocks';
 const descendants=(node:Tree.ParentNode):Tree.Element[]=>node.childNodes.flatMap(child=>'tagName'in child?[child,...descendants(child)]:[]);
 const text=(node:Tree.ChildNode):string=>'value'in node?node.value:'childNodes'in node?node.childNodes.map(text).join(''):'';
 export type BlockFields={text:string;title:string;price:string;description:string;src:string;alt:string;width:string;height:string;href:string;label:string};
@@ -12,7 +12,7 @@ export function writeBlockFields(kind:BlockKind,fields:BlockFields){
   const e=escapeBlock,image=`<img src="${e(fields.src)}" width="${e(fields.width)}" height="${e(fields.height)}" alt="${e(fields.alt)}">`,button=`<a href="${e(fields.href)}">${e(fields.label)}</a>`;
   switch(kind){
     case 'image':return image;
-    case 'button':return button;
+    case 'button':return emailButton(fields.href,fields.label);
     case 'header':return '<h1>'+e(fields.text).replaceAll('\n','<br>')+'</h1>';
     case 'footer':return '<h6 style="font-size:16px">'+e(fields.text).replaceAll('\n','<br>')+'</h6>';
     case 'product':return image+'<h3>'+e(fields.title)+'</h3><p>'+e(fields.price)+'</p><p>'+e(fields.description).replaceAll('\n','<br>')+'</p>'+button;

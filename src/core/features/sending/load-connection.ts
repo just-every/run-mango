@@ -1,3 +1,4 @@
+import {SendingWebhookError} from './webhook-error';
 import {monitorSendingConnection,notifySendingAlerts} from './monitor';
 import {createResendAdapter} from '@/core/platform/adapters/resend';
 import {createSendgridAdapter} from '@/core/platform/adapters/sendgrid';
@@ -41,7 +42,7 @@ export async function loadSendingConnection(platform:Platform) {
     },
     async verifyWebhook(request) {
       if(!await current())throw new Error('No active signed sending connection.');
-      const verified=await adapter.verifyWebhook(request);
+      let verified;try{verified=await adapter.verifyWebhook(request);}catch{throw new SendingWebhookError('The sending webhook signature was refused.');}
       const resend=provider==='resend'?JSON.parse(verified.rawBody):null;
       const facts=resend?(resend.type==='email.delivered'?[{kind:'delivered',providerMessageId:resend.data?.email_id,detail:{destination:resend.data?.to?.[0]}}]:[]):await parseSendgridFacts(verified);
       const delivered=facts.filter(fact=>fact.kind==='delivered'&&fact.providerMessageId);

@@ -4,11 +4,12 @@ export const blockKinds=['text','image','button','columns','spacer','divider','h
 export type BlockKind=typeof blockKinds[number];
 export type EditorBlock={id:string;html:string;mobile?:Omit<MobileBlock,'block'>};
 export const escapeBlock=(value:string)=>value.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
+export const emailButton=(href:string,label:string)=>`<table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:12px;background-color:#000000;border-radius:6px;color:#ffffff;font-size:16px"><a href="${escapeBlock(href)}" style="color:#ffffff;text-decoration:none">${escapeBlock(label)}</a></td></tr></table>`;
 const table=(content:string,padding=16)=>`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:${padding}px;text-align:left;background-color:#ffffff;color:#000000;font-size:16px">${content}</td></tr></table>`;
 export function blockContent(kind:BlockKind):string{
   switch(kind){
     case 'image':return '<img src="https://example.test/garden.png" width="240" height="160" alt="Garden">';
-    case 'button':return '<a href="https://example.test/garden">Explore the garden</a>';
+    case 'button':return emailButton('https://example.test/garden','Explore the garden');
     case 'header':return '<h1>Garden news</h1>';
     case 'footer':return '<h6 style="font-size:16px">Thank you for reading.</h6>';
     case 'product':return '<img src="https://example.test/garden.png" width="200" height="160" alt="Garden seeds"><h3>Garden seeds</h3><p>Product price</p><p>Product description</p><a href="https://example.test/garden">View product</a>';
@@ -42,7 +43,8 @@ export function writeEmailBlocks(blocks:EditorBlock[]){
 export function blockInfo(block:EditorBlock){
   const nodes=descendants(parseFragment(block.html)),cell=nodes.find(node=>node.tagName==='td');
   const content=cell?.childNodes.map(node=>serializeOuter(node)).join('')??block.html;
-  const kind:BlockKind=/<table/.test(content)?'columns':/<h1\b/.test(content)?'header':/<h6\b/.test(content)?'footer':/<img\b/.test(content)?/<h3\b/.test(content)?'product':'image':/<a\b/.test(content)&&!/<p\b/.test(content)?'button':/<hr\b/.test(content)?'divider':/^<br\s*\/?>(?:\s*)$/.test(content)?'spacer':'text';
+  const childTables=cell?.childNodes.filter((node):node is Tree.Element=>'tagName'in node&&node.tagName==='table')??[];
+  const kind:BlockKind=childTables.some(node=>node.attrs.some(attr=>attr.name==='align'&&attr.value==='left'))?'columns':childTables.length===1&&/<a\b/.test(content)&&!/<img\b|<p\b/.test(content)?'button':/<table/.test(content)?'columns':/<h1\b/.test(content)?'header':/<h6\b/.test(content)?'footer':/<img\b/.test(content)?/<h3\b/.test(content)?'product':'image':/<a\b/.test(content)&&!/<p\b/.test(content)?'button':/<hr\b/.test(content)?'divider':/^<br\s*\/?>(?:\s*)$/.test(content)?'spacer':'text';
   const style=cell?.attrs.find(attr=>attr.name==='style')?.value??'';
   const values=Object.fromEntries(style.split(';').map(part=>part.split(':').map(value=>value.trim())).filter(part=>part.length===2));
   const columns=cell?.childNodes.filter((node):node is Tree.Element=>'tagName'in node&&node.tagName==='table').map(node=>{const td=descendants(node).find(child=>child.tagName==='td');return td?.childNodes.map(child=>serializeOuter(child)).join('')??'';})??[];
