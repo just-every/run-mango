@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "52a9f0a84ed8e7af707abce9bbf3909e1a7f816a07711981e3c64fc17e25321f",
+      "sha256": "2d9b69cbafd830d0749d1c33cd1b5a641d6cd784a2d5f5e5b92eb995e2c5c9dc",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "33c081cb8a2b1a2f084ee03b321f9aa704c6893d143a368b9b8d23cfc39d4cce",
+      "sha256": "2fd61c2aa78da02b1fda4bb643581ed76e068d076a381595c01b72f66d25b18f",
       "executable": false
     },
     "DEMO.md": {
@@ -2834,7 +2834,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/audience-archive-imports.tsx": {
-      "sha256": "bf5e4d659c5a1391a9d80cf97ec0d2c609f58efcbd4d0551dfb2d6e8467163e9",
+      "sha256": "3d7e86bf509a953a90d69c85d981b590972727c4d0fb682688057af3bb9d3675",
       "executable": false
     },
     "src/core/features/audience/ui/audience-archive-preview.tsx": {
@@ -4466,7 +4466,7 @@
       "executable": false
     },
     "src/core/features/move-in/archive-report.ts": {
-      "sha256": "37645be0e09b0f1eb2bf7bf04e7b88de895b4a0aae19c878fcf7a3cebd727b4e",
+      "sha256": "d0d892781326a7a60d952e5acc5522002a00d258b4d733bc032a14bfaa8900d5",
       "executable": false
     },
     "src/core/features/move-in/archive-review.ts": {
@@ -7370,7 +7370,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
-      "sha256": "d10dec89224a1fce156e5c8f40303e4a3868dadf7b25383fb1918a4388648cf1",
+      "sha256": "f970e64b8d8e73cfb6912e4b2cf1dfccf63f4475529daf891dbd026149f8d971",
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
@@ -7858,7 +7858,7 @@
       "executable": false
     },
     "tests/go-live/typed-tests.journeys.ts": {
-      "sha256": "8c353c63d87ad0da7e11869261f94c5cf8eacbef42efdea8ba07c660fbc013f3",
+      "sha256": "fc5e98c0230f7fbd80f70ce81cd42a68990deca664d02c8bf2131513257cbc18",
       "executable": false
     },
     "tests/go-live/woocommerce-edge.ts": {
@@ -7942,7 +7942,7 @@
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
-      "sha256": "3f324abe764aa020ae9b5156ccedcf28919e3a98c7089858f0e55f05a8414182",
+      "sha256": "d297472a54538c774a059c48f2146c8018bd8baff11151fdd8528f99f040522c",
       "executable": false
     },
     "tests/move-in/archive.ts": {
