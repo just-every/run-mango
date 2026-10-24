@@ -5,8 +5,9 @@ import {json,type Installation} from './harness';
 import {sourceIdentity} from '../../src/core/features/move-in/csv-sources';
 export async function sourceCsvJourney(site:Installation,page:Page,info:TestInfo,cookie:string){
   await page.context().clearCookies();await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+  const recentSourceTime=new Date(Date.now()-24*60*60*1000).toISOString();
   for(const [index,preset] of ['beehiiv','omnisend','customerio'].entries()){
-    const name=`synthetic-mango-${110+index}.csv`,prefix=`synthetic-mango-${110+index}`,csv='email,status,subscription_tier,unsubscribed,bounced,updated_at,tags\n'+[`${prefix}-active@example.test,active,premium,false,false,2026-03-01T00:00:00Z,garden`,`${prefix}-out@example.test,active,free,true,false,2026-03-01T00:00:00Z,garden`,`${prefix}-bounce@example.test,active,free,false,true,2026-03-01T00:00:00Z,garden`].join('\n');
+    const name=`synthetic-mango-${110+index}.csv`,prefix=`synthetic-mango-${110+index}`,csv='email,status,subscription_tier,unsubscribed,bounced,updated_at,tags\n'+[`${prefix}-active@example.test,active,premium,false,false,${recentSourceTime},garden`,`${prefix}-out@example.test,active,free,true,false,${recentSourceTime},garden`,`${prefix}-bounce@example.test,active,free,false,true,${recentSourceTime},garden`].join('\n');
     await openPage(page,site.runtime.url+'/app/audience/import');
     await page.getByLabel('Choose CSV files',{exact:true}).setInputFiles({name,mimeType:'text/csv',buffer:Buffer.from(csv)});
     await page.getByRole('combobox',{name:'Preset for '+name,exact:true}).selectOption(preset);
