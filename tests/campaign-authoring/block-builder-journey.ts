@@ -52,4 +52,3 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     const approval=await page.request.post(`${runtime.url}/api/campaigns/${campaignId}/approve`,{headers,data:{revisionId,idempotencyKey:'synthetic-mango-140'}});expect(approval.status(),await approval.text()).toBe(200);expect((await read()).emailBody).toBe(saved.emailBody);
     return {revisionId,headers};
 }
-
