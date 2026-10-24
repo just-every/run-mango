@@ -65,6 +65,7 @@ for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as a
     const tooLarge=JSON.parse(layerdoc);
     const inflate=(nodes:any[])=>nodes.forEach(node=>{if(['text','heading','paragraph'].includes(node.kind))node.content='🌱'.repeat(1900);if(node.children)inflate(node.children);});
     inflate(tooLarge.layers);
+    tooLarge.layers.push(...Array.from({length:6},(_,index)=>({kind:'paragraph',content:'🌱'.repeat(1900),box:[20,1300+index*20,900,20],fontSizePx:16,color:'#222222'})));
     const oversizedDoc=JSON.stringify(tooLarge);
     await files(page,oversizedDoc);
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);

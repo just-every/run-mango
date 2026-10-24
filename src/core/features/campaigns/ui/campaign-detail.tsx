@@ -26,9 +26,9 @@ export function CampaignDetailPage() {
 
   const hasResults = Boolean(data.results);
   const edit=async()=>{
-    try {const response=await requestJson<{campaignId:string}>(`/api/campaigns/${id}/edit-schedule`,{method:'POST'});
-      if(response.status!==201)throw new Error();await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId}});
-    }catch{setEditError('The editable copy could not be confirmed. Reload before trying again.');}
+    try {const response=await requestJson<{campaignId:string;detail?:string}>(`/api/campaigns/${id}/edit-schedule`,{method:'POST'});
+      if(response.status!==201)throw new Error(response.data.detail ?? 'The editable copy could not be confirmed. Reload before trying again.');await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId}});
+    }catch(error){setEditError(error instanceof Error?error.message:'The editable copy could not be confirmed. Reload before trying again.');}
   };
   return (
     <div className="page-flow campaign-detail-page">

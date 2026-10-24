@@ -102,7 +102,9 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     return detail ? context.json({ ...detail, mediaOrigin }) : context.json({ error: 'not_found' }, 404);
   });
   routes.post('/campaigns/:id/edit-schedule',async context=>{
-    const result=await service.editSchedule(context.req.param('id'),context.get('operator').id);
+    const outcome=await settled(service.editSchedule(context.req.param('id'),context.get('operator').id));
+    if ('refused' in outcome) return context.json(outcome.refused,400);
+    const result=outcome.saved;
     return result?context.json(result,201):context.json({error:'not_found'},404);
   });
   routes.get('/campaigns/:id/review', async (context) => {
