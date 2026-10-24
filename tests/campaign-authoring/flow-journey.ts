@@ -22,6 +22,7 @@ export async function flowJourney(page:Page,info:TestInfo,url:string,width:numbe
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
   expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+  await canvas.evaluate(el=>el.scrollTo(0,0));await page.evaluate(()=>{(document.activeElement as HTMLElement)?.blur();window.scrollTo(0,0);});
   await page.screenshot({path:info.outputPath(`flow-draft-${width}.png`),fullPage:true});
   console.log(`Flow proof ${width}: saved, inspect reload`);
   await reloadPage(page);await page.getByRole('combobox',{name:'Saved revision',exact:true}).selectOption({label:await page.getByRole('combobox',{name:'Saved revision',exact:true}).locator('option').nth(1).textContent() as string});

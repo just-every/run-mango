@@ -9,9 +9,10 @@ const { build } = createRequire(require.resolve('vite/package.json'))('esbuild')
 for (const conflict of [false, true]) test(`operator Settings ${conflict ? 'refetches authority after a racing confirmation' : 'names pending cancellation and removes the row'}`, async () => {
   const output = await build({ entryPoints: [resolve('operations/fixtures/settings-invitation-client.tsx')], bundle: true, write: false,
     format: 'iife', platform: 'browser', jsx: 'automatic', alias: { '@': resolve('src') } });
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({headless:true,args:['--use-mock-keychain','--password-store=basic']});
   try {
-    const page = await browser.newPage();
+    const context = await browser.newContext();
+    const page = await context.newPage();
     let status = 'invited', reads = 0;
     await page.route('http://mango-ui.test/**', async route => {
       const url = new URL(route.request().url());

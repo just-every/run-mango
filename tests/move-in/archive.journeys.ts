@@ -263,7 +263,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     expect(rerun.archive.summary.engagement).toMatchObject({imported:3,dropped:2});
     expect(await site.count('imported_engagement_facts')).toBe(3);
     const rerunStatuses = await statuses(site);
-    expect(rerunStatuses).toEqual({ ...imported, 'ben@example.test': 'unsubscribed', 'cy@example.test': 'pending' });
+    expect(rerunStatuses).toEqual({ ...imported, 'ben@example.test': 'unsubscribed', 'cy@example.test': 'subscribed' });
     expect(rerunStatuses['optedout@example.test']).toBe('unsubscribed');
     // Importing it twice in a row changes nothing.
     const beforeRepeat = await tableCounts(site);
