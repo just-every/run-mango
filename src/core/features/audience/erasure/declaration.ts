@@ -86,4 +86,6 @@ export const contactErasureTables:ErasureTable[]=[
   ...['insight_saved_reports','insight_report_schedules','insight_report_deliveries'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
   // Inbound connection secrets and address-free replay digests hold no contact records.
   ...['review_loyalty_connections','review_loyalty_receipts'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
+  // Sending account authority has no contact records; retain it through contact erasure.
+  ...['sending_connection','sending_proposals'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
 ];

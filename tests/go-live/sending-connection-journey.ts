@@ -18,7 +18,11 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     const transportReady=async()=>{const clock=await site.control('/_golive/clock'),[pacing]=await site.rows('SELECT max(next_at) due FROM provider_pacing');if(Number(pacing.due??0)>=clock.now)await site.control('/_golive/clock',{advanceMs:Number(pacing.due)-clock.now+1});};
     const admin=await site.open('synthetic-mango-85@example.test','synthetic-mango-85');
     await json(await site.call('/api/operators/synthetic-mango-85/role',{method:'PUT',cookie:owner,body:{role:'admin'}}),200);
-    expect((await site.call('/api/settings/sending/review',{method:'POST',cookie:admin,body:{apiKey}})).status).toBe(403);
+    for(const [method,path,body] of [
+      ['POST','/api/settings/sending/review',{apiKey}],
+      ['POST','/api/settings/sending/connect',{proposalId:crypto.randomUUID()}],
+      ['DELETE','/api/settings/sending',undefined],
+    ] as const) expect(await json(await site.call(path,{method,cookie:admin,body}),403)).toMatchObject({error:'role_forbidden'});
     provider.state.scopes=['mail.send'];
     const missing=await json(await prepare(),422);expect(missing.missing).toEqual(expect.arrayContaining(['user.webhooks.event.settings.create','user.webhooks.event.test.create']));
     expect(provider.state.mutations).toEqual([]);
@@ -53,6 +57,11 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     await page.getByRole('button',{name:'Connect SendGrid',exact:true}).click();
     const connectionResponse=await connected;expect(connectionResponse.status(),await connectionResponse.text()).toBe(200);
     await expect(panel).toContainText('delivery-events-missing');await expect(panel.getByRole('group',{name:'Review SendGrid connection'})).toHaveCount(0);
+    const connectedActivity=(await json(await site.call('/api/activity?action=sending-connected&object=sendgrid',{cookie:owner}),200)).entries;
+    expect(connectedActivity).toHaveLength(1);
+    expect(connectedActivity[0]).toMatchObject({actorType:'operator',operatorId:'go-live-owner',action:'sending-connected',objectType:'integration',objectId:'sendgrid',detail:{provider:'sendgrid',lastFour:apiKey.slice(-4)}});
+    expect(connectedActivity[0].occurredAt).toBeGreaterThan(0);
+    expect(JSON.stringify(connectedActivity)).not.toContain(apiKey);
     const created=provider.state.webhooks.find(row=>row.id!==provider.existing.id);expect(created).toMatchObject({enabled:true,public_key:signer.publicKey,url:site.origin+'/webhooks/mail/sendgrid',friendly_name:'Mango '+site.origin});
     expect(provider.state.webhooks.find(row=>row.id===provider.existing.id)).toEqual(provider.existing);
     const state=await json(await site.call('/api/settings/sending',{cookie:owner}),200);

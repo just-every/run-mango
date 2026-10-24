@@ -68,8 +68,12 @@ export function sendingConnectionService(platform:Platform) {
         await api.request(path,'PATCH',{enabled:true,url,friendly_name:'Mango '+origin,...Object.fromEntries(sendingEvents.map(event=>[event,true]))});
         const checked=await api.request(path);
         if(checked.id!==webhookId||checked.enabled!==true||checked.url!==url||checked.public_key!==signed.public_key||sendingEvents.some(event=>checked[event]!==true))throw new SendingConnectionError('SendGrid did not confirm the signed event webhook configuration.');
-        await db.prepare("UPDATE sending_connection SET state='connected',secret_cipher=?,last_error=NULL WHERE id=1 AND generation=? AND state='connecting'")
-          .bind(await sealSendingSecret({apiKey:secret.apiKey,publicKey:signed.public_key},key),generation).run();
+        await db.batch([
+          db.prepare("UPDATE sending_connection SET state='connected',secret_cipher=?,last_error=NULL WHERE id=1 AND generation=? AND state='connecting'")
+            .bind(await sealSendingSecret({apiKey:secret.apiKey,publicKey:signed.public_key},key),generation),
+          activityStatement(db,{key:`sending-connected:${generation}`,action:'sending-connected',entityType:'integration',entityId:'sendgrid',actorId:operator.id,
+            detail:{provider:'sendgrid',account:identity.accountName,lastFour:secret.apiKey.slice(-4),webhookId},at:Date.now()}),
+        ]);
         return {connected:true,deliveryEventsVerified:false};
       } catch(error) {
         let cause=error instanceof SendingConnectionError?error.message:'The SendGrid connection could not complete.';
