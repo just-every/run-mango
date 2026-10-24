@@ -15,12 +15,14 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
     const created=await request.post(origin+'/api/campaigns',{headers,data:{}});expect(created.status()).toBe(201);
     const target=await created.json();
     for(const [name,emailBody] of rejectedPresentation.filter((_,index)=>index%2===lane)) {
-      const saved=await request.patch(`${origin}/api/campaign-revisions/${target.revisionId}`,{headers,data:{emailBody}});
+      // Use the same combined save/check/read door as Save full draft. The old
+      // sequence paid for a full read twice for every adversarial body.
+      const saved=await request.patch(`${origin}/api/campaign-revisions/${target.revisionId}?review=true`,{headers,data:{emailBody}});
       if(saved.status()===400)expect((await saved.json()).detail,name).toBeTruthy();
       else {
         expect(saved.status(),name+': '+await saved.text()).toBe(200);
-        const response=await request.post(`${origin}/api/campaigns/${target.campaignId}/checks`,{headers,data:{revisionId:target.revisionId}});expect(response.status()).toBe(200);
-        expect((await response.json()).blockers.map((row:any)=>row.kind),name).toContain('message.content');
+        const result=await saved.json();expect(result.checksRefreshed,name).toBe(true);
+        expect([...result.review.checks,...result.review.blockers].filter((row:any)=>row.status==='blocked').map((row:any)=>row.kind),name).toContain('message.content');
       }
     }
   }));
@@ -37,6 +39,13 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
   expect(saved.status(),await saved.text()).toBe(200);
   const revision=await read();expect(revision.emailText).toContain('Hidden on mobile');expect(revision.emailText).toContain('Hidden on desktop');
   const checked=(await checks()).blockers.map((row:any)=>row.kind);expect(checked).not.toContain('message.content');expect(checked).not.toContain('message.personalisation');
+  const withoutGenerated=revision.emailBody.replace(/^<!doctype html><html><head>[\s\S]*?<\/head><body>/,'').replace(/<\/body><\/html>$/,'').replace(/ class="mgo-b\d+"/g,'');
+  const size=async(emailBody:string)=>{
+    const response=await request.post(origin+'/api/campaign-authoring/email-size',{headers,data:{emailBody,emailSubject:revision.emailSubject,emailText:revision.emailText,preheader:revision.preheader,physicalAddress:revision.physicalAddress,trackingEnabled:false}});
+    expect(response.status()).toBe(200);return response.json();
+  };
+  const [generatedSize,plainSize]=await Promise.all([size(revision.emailBody),size(withoutGenerated)]);
+  expect(generatedSize.htmlBytes-plainSize.htmlBytes).toBe(Buffer.byteLength(revision.emailBody)-Buffer.byteLength(withoutGenerated));
   const changed=await patch({emailBody:revision.emailBody.replace('font-size: 24px !important','font-size: 25px !important')});
   expect(changed.status()).toBe(400);expect((await changed.json()).detail).toContain('byte-identical');
   expect((await read()).emailBody).toBe(revision.emailBody);
@@ -58,7 +67,9 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});await openPage(page,`${origin}/app/campaigns/${campaignId}`);
     await expect(page.locator('iframe[title="Saved email preview"]')).toBeVisible();
+    await expect(page.frameLocator('iframe[title="Saved email preview"]').getByText('Left column',{exact:true})).toBeVisible();
     await expect(page.getByText('Mobile overrides require the generated style block.',{exact:false})).toBeVisible();
+    for(const setting of ['hide on mobile','hide on desktop','mobile font size','mobile line height','mobile padding','mobile alignment'])await expect(page.getByRole('region',{name:'Saved revision previews'})).toContainText(setting);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
     expect((await new AxeBuilder({page}).options({iframes:false}).analyze()).violations.filter(row=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
