@@ -1,3 +1,4 @@
+import {incumbentReliance} from '../move-in/incumbent-review';
 import { digestJson } from './digest';
 import { messageRendererVersion } from '@/core/features/campaigns/message-content';
 import { smsPolicyAuthority } from '@/core/features/sms/content';
@@ -18,13 +19,14 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       if (!snapshot) return {kind: 'not_found' as const};
       if (snapshot.revision.state !== 'draft') return {kind: 'conflict' as const};
       const {candidates, checkResult, audience, exclusionCounts, personalisationUsage} = await evaluateApproval(runtime, repository, snapshot, now);
+      const incumbentHeldCount=await incumbentReliance(runtime.platform.database.$client,candidates,now);
       const channelCounts = personalisationUsage.map(usage => ({...usage, recipientStepCount: snapshot.steps.filter(step => step.channel === usage.channel).length * candidates.filter(candidate => candidate.channels[usage.channel]).length}));
       const exclusions = [...exclusionCounts].map(([reason, count]) => ({reason, count}));
       const candidateCount = audience.status === 'ok' ? (audience.candidateCount ?? audience.candidates.length) : null;
-      const saved = await repository.saveDraftReview({snapshot, checks: checkResult.checks, now, audience: candidateCount === null ? undefined : {candidateCount, eligibleCount: candidates.length, exclusions, channelCounts, dormancyIncludedCount:audience.status==='ok'?candidates.filter(c=>audience.dormancyIncludedContactIds?.includes(c.contactId)).length:0,noHistoryCount:audience.status==='ok'?candidates.filter(c=>audience.noHistoryContactIds?.includes(c.contactId)).length:0, openOnlyCount:audience.status==='ok'?audience.openOnlyCount??0:0}});
+      const saved = await repository.saveDraftReview({snapshot, checks: checkResult.checks, now, audience: candidateCount === null ? undefined : {incumbentHeldCount,candidateCount, eligibleCount: candidates.length, exclusions, channelCounts, dormancyIncludedCount:audience.status==='ok'?candidates.filter(c=>audience.dormancyIncludedContactIds?.includes(c.contactId)).length:0,noHistoryCount:audience.status==='ok'?candidates.filter(c=>audience.noHistoryContactIds?.includes(c.contactId)).length:0, openOnlyCount:audience.status==='ok'?audience.openOnlyCount??0:0}});
       if (!saved) return {kind: 'conflict' as const};
       const projection=await campaignClaimProjection(runtime.platform.database,input.revisionId);
-      return {kind: 'preview' as const, asOf: now, sourceStatus: audience.status,
+      return {kind: 'preview' as const, incumbentHeldCount, asOf: now, sourceStatus: audience.status,
         candidateCount, eligibleCount: candidateCount === null ? null : candidates.length,
         exclusions: candidateCount === null ? null : projection?exclusions.map(item=>({...item,reason:projection.reason(item.reason)})):exclusions,
         dormancyIncludedCount:audience.status==='ok'?candidates.filter(c=>audience.dormancyIncludedContactIds?.includes(c.contactId)).length:0,noHistoryCount:audience.status==='ok'?candidates.filter(c=>audience.noHistoryContactIds?.includes(c.contactId)).length:0,openOnlyCount:audience.status==='ok'?audience.openOnlyCount??0:0,
@@ -97,6 +99,7 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
         idempotencyKey: input.idempotencyKey,
         candidates,
         audienceSummary: audience.status === 'ok' ? {
+          incumbentHeldCount:await incumbentReliance(runtime.platform.database.$client,candidates,now),
           dormancyIncludedCount:candidates.filter(c=>audience.dormancyIncludedContactIds?.includes(c.contactId)).length,noHistoryCount:candidates.filter(c=>audience.noHistoryContactIds?.includes(c.contactId)).length,openOnlyCount:audience.openOnlyCount??0,
           candidateCount: audience.candidateCount ?? audience.candidates.length,
           exclusions: Object.fromEntries(exclusionCounts),

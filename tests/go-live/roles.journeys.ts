@@ -1,3 +1,4 @@
+import {flowJourney} from '../campaign-authoring/flow-journey';
 import {stripeJourney} from './stripe-journey';
 import {createHmac} from 'node:crypto';
 import {test,expect} from '@playwright/test';
@@ -21,6 +22,8 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
       expect((await site.call(`/api/operators/role-${role}/role`,{method:'PUT',cookie:owner,body:{role}})).status).toBe(200);
       expect((await json(await site.call('/api/operator',{cookie:cookies[role]}),200)).operator.role).toBe(role);
     }
+    await page.context().addCookies([{name:owner.split('=')[0],value:owner.split('=')[1],url:site.runtime.url}]);
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await flowJourney(page,info,site.runtime.url,width);}
     await stripeJourney(site, page, info, owner, cookies.admin!, cookies.author!, edge);
     await site.runtime.sql("UPDATE oa_operators SET display_name=CASE id WHEN 'go-live-owner' THEN 'Jordan Green' WHEN 'role-admin' THEN 'Noah Brooks' WHEN 'role-manager' THEN 'Maya Torres' WHEN 'role-author' THEN 'Lena Chen' WHEN 'role-analyst' THEN 'Ari Patel' ELSE 'Sam Rivera' END RETURNING id");
     // Existing native sessions remain signed in, but cannot retain an old grant.

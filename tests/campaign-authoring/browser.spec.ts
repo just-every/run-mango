@@ -1,4 +1,3 @@
-import {flowJourney} from './flow-journey';
 import {oversizedAdoption,oversizedSignalStarter} from './email-size-adoption';
 import { exerciseCampaignReuse } from './reuse-journey';
 import { hydrated, openPage, reloadPage } from '../support/navigation';
@@ -16,7 +15,6 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     const {token}=await open.json();await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,url:runtime.url}]);
     expect((await request.post(runtime.url+'/api/campaigns',{data:{}})).status()).toBe(401);
     const call=(path:string,body:unknown)=>page.evaluate(async({path,body})=>{const response=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});return {status:response.status,data:await response.json()};},{path,body});
-    await flowJourney(page,testInfo,runtime.url,width);
     await openPage(page, runtime.url+'/app/campaigns');
     await expect(page.getByText('No campaigns yet. Start with New campaign.')).toBeVisible();
     await page.getByRole('button',{name:'New campaign',exact:true}).click();

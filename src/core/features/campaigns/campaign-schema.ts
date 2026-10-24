@@ -146,6 +146,7 @@ export const campaignAudiences = sqliteTable(
     excludedCount: integer('excluded_count').notNull(),
     eligibleCount: integer('eligible_count').notNull(),
     dormancyIncludedCount: integer('dormancy_included_count').notNull().default(0),
+    incumbentHeldCount: integer('incumbent_held_count'),
     noHistoryCount: integer('no_history_count').notNull().default(0),
     openOnlyCount: integer('open_only_count').notNull().default(0),
     exclusions: text('exclusions').notNull(),

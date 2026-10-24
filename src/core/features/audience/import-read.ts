@@ -37,7 +37,7 @@ export async function readAudienceSnapshots(db:D1Database,salt:string,ids?:strin
  return snapshots;
 }
 /** Match only the exact historical shapes bound by the recorded revision hash:
- * null source names from 0037, and the absent (empty) links table before 0088. */
+ * null source names from 0037, and the absent (empty) links table before 0098. */
 function recordedShape(value:AudienceSnapshot,valueHash:string|undefined){
  if(valueHash===undefined)return value;
  const shapes=[value];

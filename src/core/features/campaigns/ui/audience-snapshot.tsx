@@ -85,6 +85,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
         {channelCounts.some(count => count.eligibleContactCount == null || count.fallbackContactCount == null) ? <p className="muted-copy">Fallback usage was not recorded for this snapshot.</p> : null}
       </div>
       <p>Included by this campaign’s inactivity choice: <strong>{audience.dormancyIncludedCount??0}</strong></p>
+      <p>Eligible contacts relying on incumbent-held consent: <strong>{audience.incumbentHeldCount??"Not recorded for this review"}</strong></p>
       <p>No-history among included contacts: <strong>{audience.noHistoryCount??0}</strong></p>
       {exclusionNotice ? <p className="notice-note">{exclusionNotice}</p> : null}
       {exclusions.length ? (

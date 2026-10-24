@@ -19,7 +19,7 @@ export type SourceSync = {
 };
 
 export type Audience = {
-  noHistoryCount?:number;dormancyIncludedCount?:number;openOnlyCount?:number;
+  incumbentHeldCount?:number|null;noHistoryCount?:number;dormancyIncludedCount?:number;openOnlyCount?:number;
   id: string;
   revisionId: string;
   asOfAt: string;
