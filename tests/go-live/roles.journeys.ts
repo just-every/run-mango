@@ -26,6 +26,8 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
     // Existing native sessions remain signed in, but cannot retain an old grant.
     expect((await site.call('/api/operators/go-live-owner/role',{method:'PUT',cookie:owner,body:{role:'author'}})).status).toBe(409);
     const cases=[
+      ['GET','/api/flow-drafts',['owner','admin','manager','author','analyst']],
+      ['POST','/api/flow-drafts',['owner','admin','manager','author']],
       ['POST','/api/campaigns/absent/approve',['owner','admin','manager']],
       ['PUT','/api/campaigns/absent/dormancy',['owner','admin','manager']],
       ['PUT','/api/settings/audience-exclusions',['owner','admin']],
@@ -45,6 +47,11 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
         expect((await response.json()).error).toBe('role_forbidden');
       } else if(response.status===403)expect((await response.json()).error).not.toBe('role_forbidden');
     }
+    const flow={name:'synthetic-mango-102',trigger:'Confirmed subscription',nodes:[{id:'start',kind:'trigger',label:'Start',next:['end']},{id:'end',kind:'exit',label:'End',next:[]}]};
+    await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.author,body:flow}),201);
+    expect((await json(await site.call('/api/flow-drafts',{cookie:cookies.analyst}),200)).revisions[0].graph).toEqual(flow);
+    await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.analyst,body:flow}),403);
+    await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.author,body:{...flow,nodes:[{...flow.nodes[0],next:['start']},flow.nodes[1]]}}),422);
     const campaign=await draftCampaign(site,cookies.author!,'Weekend planting letter',['riley@example.test'],new Date((await site.control('/_golive/clock')).now+86400000));
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/request-approval`,{method:'POST',cookie:cookies.author,body:{revisionId:campaign.revisionId}})).status).toBe(200);
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/test-send`,{method:'POST',cookie:cookies.author,body:{revisionId:campaign.revisionId,channel:'email',to:['forbidden@example.test']}})).status).toBe(403);

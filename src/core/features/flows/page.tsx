@@ -1,0 +1,32 @@
+import {useRef,useState} from 'react';
+import {useLoaderData} from '@tanstack/react-router';
+import {hasPermission} from '@/core/features/auth/permissions';
+import {useResource} from '@/core/app/client/lib/use-resource';
+import {requestJson} from '@/core/app/client/lib/api';
+import {LoadState} from '@/core/app/client/ui/layout';
+import {nodeKinds,validateGraph,type FlowGraph,type NodeKind} from './graph';
+import './styles.css';
+const initial:FlowGraph={name:'Welcome flow',trigger:'Contact confirms an email subscription',nodes:[{id:'trigger',kind:'trigger',label:'Subscription confirmed',next:[]}]};
+export function FlowsPage(){
+  const operator=useLoaderData({from:'/app'}),write=hasPermission(operator.role,'draft.write');
+  const {data,error,reload}=useResource<{revisions:Array<{id:string;name:string;graph:FlowGraph}>}>('/api/flow-drafts');
+  const [graph,setGraph]=useState<FlowGraph>(initial),[kind,setKind]=useState<NodeKind>('email'),[selected,setSelected]=useState('trigger'),[zoom,setZoom]=useState(1),[notice,setNotice]=useState(''),[errors,setErrors]=useState<string[]>([]),[busy,setBusy]=useState(false);
+  const canvas=useRef<HTMLDivElement>(null),drag=useRef<{x:number;y:number;left:number;top:number}|undefined>(undefined);
+  const node=graph.nodes.find(n=>n.id===selected);
+  const patch=(update:Partial<FlowGraph['nodes'][number]>)=>setGraph({...graph,nodes:graph.nodes.map(n=>n.id===selected?{...n,...update}:n)});
+  const save=async()=>{const issues=validateGraph(graph);setErrors(issues);setNotice('');if(issues.length)return;setBusy(true);
+    try{const response=await requestJson<{revisionId?:string;errors?:string[]}>('/api/flow-drafts',{method:'POST',body:JSON.stringify(graph)});if(response.status===201){setNotice('Draft revision saved. Nothing enrolled or sent.');await reload();}else setErrors(response.data.errors??['Draft could not be saved.']);}
+    catch{setErrors(['Saving could not be confirmed. Reload saved revisions before retrying.']);}finally{setBusy(false);}};
+  if(error)return <LoadState error={error}/>;
+  if(!hasPermission(operator.role,'flow.read'))return <LoadState error="Your role cannot read flows."/>;
+  return <div className="page-flow flow-page"><header className="page-head"><div><h1>Flows</h1><p>Build and save a draft. Triggers, enrolment and activation are not available yet.</p></div></header>
+    <section className="panel"><h2>Draft revisions</h2><label>Saved revision<select value="" onChange={e=>{const r=data?.revisions.find(r=>r.id===e.target.value);if(r){setGraph(r.graph);setSelected(r.graph.nodes[0].id);setNotice('Saved draft loaded.');}}}><option value="">Choose a saved draft</option>{data?.revisions.map(r=><option key={r.id} value={r.id}>{r.name} · {r.id.slice(0,8)}</option>)}</select></label></section>
+    <section className="panel flow-editor"><h2>Flow canvas</h2><label>Flow name<input value={graph.name} readOnly={!write} onChange={e=>setGraph({...graph,name:e.target.value})}/></label><label>Trigger event<input value={graph.trigger} readOnly={!write} onChange={e=>setGraph({...graph,trigger:e.target.value})}/></label>
+    <div className="flow-toolbar"><label>Node kind<select value={kind} disabled={!write} onChange={e=>setKind(e.target.value as NodeKind)}>{Object.entries(nodeKinds).filter(([key])=>key!=='trigger').map(([key,[title]])=><option key={key} value={key}>{title}</option>)}</select></label><button type="button" className="secondary-action" disabled={!write} onClick={()=>{const id=crypto.randomUUID();setGraph({...graph,nodes:[...graph.nodes,{id,kind,label:nodeKinds[kind][0],next:[]}]});setSelected(id);}}>Add node</button><button type="button" className="secondary-action" onClick={()=>setZoom(Math.max(.5,zoom-.25))}>Zoom out</button><button type="button" className="secondary-action" onClick={()=>setZoom(Math.min(2,zoom+.25))}>Zoom in</button><span>{Math.round(zoom*100)}%</span></div>
+    <p>{nodeKinds[kind][1]} Every node is draft only.</p><p>Use Tab to select nodes and edit their connections below. Use arrow keys on the canvas to pan, or drag its empty space.</p>
+    <div className="flow-canvas" ref={canvas} tabIndex={0} role="region" aria-label="Flow canvas" onKeyDown={e=>{const move={ArrowLeft:[-80,0],ArrowRight:[80,0],ArrowUp:[0,-80],ArrowDown:[0,80]}[e.key];if(e.target===e.currentTarget&&move){e.preventDefault();e.currentTarget.scrollBy(move[0],move[1]);}}} onPointerDown={e=>{if(e.target!==e.currentTarget)return;drag.current={x:e.clientX,y:e.clientY,left:e.currentTarget.scrollLeft,top:e.currentTarget.scrollTop};e.currentTarget.setPointerCapture(e.pointerId);}} onPointerMove={e=>{if(drag.current){e.currentTarget.scrollLeft=drag.current.left+drag.current.x-e.clientX;e.currentTarget.scrollTop=drag.current.top+drag.current.y-e.clientY;}}} onPointerUp={()=>{drag.current=undefined;}} onPointerCancel={()=>{drag.current=undefined;}}>
+      <ol className="flow-nodes" style={{zoom}}>{graph.nodes.map(n=><li key={n.id}><button type="button" className="secondary-action" aria-pressed={selected===n.id} onClick={()=>setSelected(n.id)}>{n.label}</button><p>{nodeKinds[n.kind][1]}</p><p>Next: {n.next.map(id=>graph.nodes.find(n=>n.id===id)?.label??'Missing node').join(', ')||'No connection'}</p></li>)}</ol>
+    </div>
+    {node?<fieldset><legend>Node details</legend><p>{nodeKinds[node.kind][1]}</p><label>Node name<input value={node.label} readOnly={!write} onChange={e=>patch({label:e.target.value})}/></label>{node.kind!=='exit'?<fieldset><legend>Continue to</legend>{graph.nodes.map(target=><label className="flow-connection" key={target.id}><input type="checkbox" disabled={!write} checked={node.next.includes(target.id)} onChange={e=>patch({next:e.target.checked?[...node.next,target.id]:node.next.filter(id=>id!==target.id)})}/>{target.label}</label>)}</fieldset>:null}{node.kind!=='trigger'?<button className="secondary-action" type="button" disabled={!write} onClick={()=>{setGraph({...graph,nodes:graph.nodes.filter(n=>n.id!==selected).map(n=>({...n,next:n.next.filter(id=>id!==selected)}))});setSelected('trigger');}}>Remove node</button>:null}</fieldset>:null}
+    {errors.length?<div role="alert"><h3>Fix these connections</h3><ul>{errors.map(error=><li key={error}>{error}</li>)}</ul></div>:null}{notice?<p role="status">{notice}</p>:null}<button className="primary-action" type="button" disabled={!write||busy} onClick={()=>void save()}>Save draft revision</button></section></div>;
+}

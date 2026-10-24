@@ -18,6 +18,7 @@ import { Route as SubscribeRouteImport } from './routes/subscribe'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAudienceRouteImport } from './routes/app.audience'
 import { Route as AppCampaignsRouteImport } from './routes/app.campaigns'
+import { Route as AppFlowsRouteImport } from './routes/app.flows'
 import { Route as AppInsightsRouteImport } from './routes/app.insights'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppStoreRouteImport } from './routes/app.store'
@@ -75,6 +76,11 @@ const AppAudienceRoute = AppAudienceRouteImport.update({
 const AppCampaignsRoute = AppCampaignsRouteImport.update({
   id: '/campaigns',
   path: '/campaigns',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFlowsRoute = AppFlowsRouteImport.update({
+  id: '/flows',
+  path: '/flows',
   getParentRoute: () => AppRoute,
 } as any)
 const AppInsightsRoute = AppInsightsRouteImport.update({
@@ -152,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/subscribe': typeof SubscribeRoute
   '/app/audience': typeof AppAudienceRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/flows': typeof AppFlowsRoute
   '/app/insights': typeof AppInsightsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/store': typeof AppStoreRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/subscribe': typeof SubscribeRoute
   '/app/audience': typeof AppAudienceRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/flows': typeof AppFlowsRoute
   '/app/insights': typeof AppInsightsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/store': typeof AppStoreRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/subscribe': typeof SubscribeRoute
   '/app/audience': typeof AppAudienceRoute
   '/app/campaigns': typeof AppCampaignsRoute
+  '/app/flows': typeof AppFlowsRoute
   '/app/insights': typeof AppInsightsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/store': typeof AppStoreRoute
@@ -224,6 +233,7 @@ export interface FileRouteTypes {
     | '/subscribe'
     | '/app/audience'
     | '/app/campaigns'
+    | '/app/flows'
     | '/app/insights'
     | '/app/settings'
     | '/app/store'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/subscribe'
     | '/app/audience'
     | '/app/campaigns'
+    | '/app/flows'
     | '/app/insights'
     | '/app/settings'
     | '/app/store'
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | '/subscribe'
     | '/app/audience'
     | '/app/campaigns'
+    | '/app/flows'
     | '/app/insights'
     | '/app/settings'
     | '/app/store'
@@ -357,6 +369,13 @@ declare module '@tanstack/react-router' {
       path: '/campaigns'
       fullPath: '/app/campaigns'
       preLoaderRoute: typeof AppCampaignsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/flows': {
+      id: '/app/flows'
+      path: '/flows'
+      fullPath: '/app/flows'
+      preLoaderRoute: typeof AppFlowsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/insights': {
@@ -456,6 +475,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppAudienceRoute: typeof AppAudienceRoute
   AppCampaignsRoute: typeof AppCampaignsRoute
+  AppFlowsRoute: typeof AppFlowsRoute
   AppInsightsRoute: typeof AppInsightsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppStoreRoute: typeof AppStoreRoute
@@ -471,6 +491,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppAudienceRoute: AppAudienceRoute,
   AppCampaignsRoute: AppCampaignsRoute,
+  AppFlowsRoute: AppFlowsRoute,
   AppInsightsRoute: AppInsightsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppStoreRoute: AppStoreRoute,

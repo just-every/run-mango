@@ -41,6 +41,8 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(hand.status,await hand.clone().text()).toBe(201);const handEvidence=(await hand.json()).evidence;
     expect(await source.db.prepare('SELECT hosts,auto_sources FROM link_host_settings WHERE id=1').first()).toEqual({hosts:'legacy.example.test',auto_sources:0});
     expect((await source.call('/api/settings/link-hosts',{method:'PUT',cookie:source.cookie,body:{hosts:'portable.example.test'}})).status).toBe(200);
+    const flowDraft={name:'synthetic-mango-103',trigger:'Email confirmation',nodes:[{id:'start',kind:'trigger',label:'Confirmed',next:['end']},{id:'end',kind:'exit',label:'Exit',next:[]}]};
+    expect((await source.call('/api/flow-drafts',{method:'POST',cookie:source.cookie,body:flowDraft})).status).toBe(201);
     const bytesArchive=await accountExport();
     const uploadArchive=async(path:string,fingerprint?:string)=>{
       const form=new FormData();form.set('archive',new File([bytesArchive],'account-export.zip',{type:'application/zip'}));form.set('consent',JSON.stringify(consentEvidence));if(fingerprint)form.set('fingerprint',fingerprint);
@@ -91,6 +93,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     // Inventory before export creates temporary snapshot tables. Every source
     // table is archived or explicitly excluded by the maintained policy.
     for (const { name } of allTables) expect([...manifest.tables.map(table => table.name), ...manifest.excludedTables]).toContain(name);
+    expect(original.some(row=>row.table==='flow_draft_revisions'&&JSON.parse(row.row.graph_json).name===flowDraft.name)).toBe(true);
     expect(original.some(row => row.table === 'campaign_templates' && row.row.name === 'Portable newsletter template')).toBe(true);
     expect(original.some(row => row.table === 'campaign_followups' && row.row.campaign_id === followupDraft.campaignId)).toBe(true);
     expect(original.some(row => row.table === 'contacts' && row.row.id === 'portable-contact')).toBe(true);

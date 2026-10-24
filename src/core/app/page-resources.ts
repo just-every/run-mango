@@ -19,6 +19,7 @@ function pathsFor(pathname: string, search: string) {
     case '/app/audience': return ['/api/audience', '/api/audience/segments', '/api/audience/signup'];
     case '/app/audience/import': return ['/api/audience/import-presets', '/api/audience/imports', '/api/audience/archives'];
     case '/app/insights': return ['/api/insights', '/api/insights/open-tracking', '/api/insights/deliverability'];
+    case '/app/flows': return ['/api/flow-drafts'];
     case '/app/store': return ['/api/store'];
     case '/app/settings': return ['/api/operator', '/api/settings/providers', '/api/settings/sender', '/api/settings/link-hosts', '/api/operators'];
   }
