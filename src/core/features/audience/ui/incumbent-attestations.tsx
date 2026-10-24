@@ -1,14 +1,14 @@
 import {attestationKeys,attestationWording,type AttestationInput,type AttestationScope} from '../../move-in/incumbent-policy';
 
 type Source={sourceKey:string;sourceName:string;accepted:boolean;reason?:string};
-type Props={sources:Source[];scope:AttestationScope;values:AttestationInput[];onChange:(value:AttestationInput)=>void;disabled:boolean};
+type Props={sources:Source[];scope:AttestationScope;values:AttestationInput[];onChange:(value:AttestationInput)=>void;disabled:boolean;title?:string};
 /** Every statement starts unanswered; source consent is never inferred from a file. */
-export function IncumbentAttestations({sources,scope,values,onChange,disabled}:Props) {
-  const wording=attestationWording(scope);
+export function IncumbentAttestations({sources,scope,values,onChange,disabled,title='Mailchimp-held consent'}:Props) {
   return <section className="panel audience-import-panel" aria-labelledby="incumbent-title">
-    <h2 id="incumbent-title">Mailchimp-held consent</h2>
+    <h2 id="incumbent-title">{title}</h2>
     <p>Review each moved audience separately. An unanswered statement or “not sure” keeps its rows non-subscribed. Restrictions always win. This records your attestation and sends no confirmation message.</p>
     {sources.map((source,index)=>{
+      const wording=attestationWording(scope,source.sourceName.includes(' — ')?source.sourceName.split(' — ')[0]:'Mailchimp');
       const value=values.find(row=>row.sourceKey===source.sourceKey);
       const update=(change:Partial<AttestationInput>)=>onChange({...value??{nonce:crypto.randomUUID(),sourceKey:source.sourceKey,typedSource:'',answers:{brand:'',category:'',frequency:'',jurisdiction:'',wording:'',notPurchased:''}},...change});
       return <fieldset className="audience-import-mapping-file" key={source.sourceKey} disabled={disabled}><legend>{source.sourceName}</legend>

@@ -141,3 +141,34 @@ A subscribed candidate needs valid original opt-in and confirmation timestamps, 
 Across presets, status columns and duplicate rows, the most restrictive state wins: **suppressed → unsubscribed → non-subscribed → pending → subscribed**. Cleaned, bounced, hard-bounce, complained and blocked become suppressed; transactional becomes non-subscribed; unconfirmed and pending confirmation become pending. Unknown status words reject the row for review. Existing opt-outs remain opted out, including when the address has an erasure opt-out record.
 
 Only contacts with confirmed consent can enter a send. Campaign review excludes opted-out contacts, and dispatch checks their status again. Importing a file or choosing a preset never grants permission to send.
+
+## beehiiv, Omnisend and Customer.io CSV exports
+
+Under Audience → Import contacts, choose the matching source preset for each CSV.
+Use the original `email` (or `Email Address`) and marketing `status`,
+`subscription_status` or `emailStatus` columns. beehiiv `active` and explicit
+subscribed states can carry source-held email evidence after the separate source
+attestation. Customer.io's `unsubscribed=false` alone does not assert a subscription;
+without an explicit subscribed state the contact stays non-subscribed.
+
+Unsubscribed, bounced, cleaned, complained and suppressed states always restrict
+sending, including a separate true `unsubscribed`, `bounced` or `suppressed` flag.
+Missing or unfamiliar states stay non-subscribed. A mapping cannot hide those
+source restrictions. Existing Mango opt-outs and suppressions still win.
+
+Each original attribute, including beehiiv's `subscription_tier`, is retained in the
+contact profile; `attributes` or `properties` may contain a JSON object. `tags`
+accepts a JSON array of names or comma/semicolon-separated names. Lists and segments
+are retained as `importedTopics` for review; membership alone grants no consent.
+Original `consent_timestamp`, `email_consent_timestamp`, `subscribed_at` and
+`updated_at` are read as source facts. If no source time exists, explicitly supply
+the export creation time in the attestation; Mango labels that evidence time unknown.
+
+Preview first. The source-held consent section starts unanswered and requires each
+statement and the typed source name; “Not sure” keeps the source non-subscribed.
+Preview again after changing answers. Preview and the downloadable reconciliation
+report count incumbent-held, confirmed and absent evidence separately. Apply only
+starts the reviewed contact import: it creates no campaign, flow or delivery.
+These presets read CSV files; they do not pull APIs or run parallel synchronization
+(MOVE-013). SMS still requires its independent original evidence and never inherits
+an email subscription.

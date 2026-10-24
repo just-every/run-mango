@@ -26,6 +26,7 @@ export type ImportPresetsResponse = {
 };
 
 export type ImportPreview = {
+  attestationSources?:Array<{sourceKey:string;sourceName:string;accepted:boolean;reason?:string}>;evidenceKinds?:Record<string,number>;
   fingerprint: string;
   counts: {
     created: number;

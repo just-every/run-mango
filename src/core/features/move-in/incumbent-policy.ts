@@ -8,13 +8,13 @@ export const attestationInputSchema=z.object({nonce:z.string().uuid(),sourceKey:
 export const attestationsSchema=z.array(attestationInputSchema).max(10).refine(rows=>new Set(rows.map(row=>row.sourceKey)).size===rows.length,'Each source needs one attestation.');
 export type AttestationInput=z.infer<typeof attestationInputSchema>;
 export type AttestationScope=Record<'brandOrLegalSender'|'messageCategory'|'frequencyDisclosure'|'destinationJurisdiction'|'consentText'|'consentVersion',string>;
-export function attestationWording(scope:AttestationScope) {
+export function attestationWording(scope:AttestationScope,holder='Mailchimp') {
   return {
     brand:`This audience was collected by ${scope.brandOrLegalSender||'the brand or legal sender named above'}.`,
     category:`The source consent covered ${scope.messageCategory||'the message category named above'}.`,
     frequency:`The disclosed frequency was ${scope.frequencyDisclosure||'the frequency named above'}.`,
     jurisdiction:`The consent covered destinations in ${scope.destinationJurisdiction||'the jurisdiction named above'}.`,
-    wording:scope.consentText?`The original consent wording was: ${scope.consentText}`:'The original consent wording is held by Mailchimp and is not available.',
+    wording:scope.consentText?`The original consent wording was: ${scope.consentText}`:`The original consent wording is held by ${holder} and is not available.`,
     notPurchased:'This list was not purchased, rented or scraped.',
   };
 }

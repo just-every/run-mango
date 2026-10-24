@@ -3,11 +3,11 @@ import {sha256} from '@/core/shared/ids';
 import {activityStatement} from '@/core/features/auth/activity-record';
 import {attestationKeys,attestationVersion,attestationWording,sourceOf,type AttestationInput,type AttestationScope,type IncumbentFile} from './incumbent-policy';
 
-export async function planAttestations(files:{name:string}[],archiveSha:string,scope:AttestationScope,input:AttestationInput[],db:D1Database) {
-  const sources=new Map<string,{sourceKey:string;sourceName:string}>();for(const file of files){const source=sourceOf(file.name);sources.set(source.key,{sourceKey:source.key,sourceName:source.name});}
+export async function planAttestations(files:{name:string;sourceKey?:string;sourceName?:string;provider?:string}[],archiveSha:string,scope:AttestationScope,input:AttestationInput[],db:D1Database) {
+  const sources=new Map<string,{sourceKey:string;sourceName:string;provider?:string}>();for(const file of files){const source=sourceOf(file.name),sourceKey=file.sourceKey??source.key;sources.set(sourceKey,{sourceKey,sourceName:file.sourceName??source.name,provider:file.provider});}
   const records=[];
   for(const source of sources.values()) {
-    const choice=input.find(row=>row.sourceKey===source.sourceKey),wording=attestationWording(scope),wordingJson=canonicalJson({version:attestationVersion,statements:wording});
+    const choice=input.find(row=>row.sourceKey===source.sourceKey),wording=attestationWording(scope,source.provider?source.sourceName.split(' — ')[0]:'Mailchimp'),wordingJson=canonicalJson({version:source.provider?`${source.provider}-incumbent.v1`:attestationVersion,statements:wording});
     const id=choice?await sha256(archiveSha+'\n'+source.sourceKey+'\n'+choice.nonce):'';
     const existing=id?await db.prepare('SELECT revoked_at,wording_hash,answers_json,source_created_at FROM consent_attestations WHERE id=?').bind(id).first<{revoked_at:number|null;wording_hash:string;answers_json:string;source_created_at:number|null}>():null;
     const scopeComplete=[scope.brandOrLegalSender,scope.messageCategory,scope.frequencyDisclosure,scope.destinationJurisdiction].every(Boolean);
@@ -15,7 +15,7 @@ export async function planAttestations(files:{name:string}[],archiveSha:string,s
     const accepted=Boolean(!mismatch&&choice&&scopeComplete&&choice.typedSource===source.sourceName&&attestationKeys.every(key=>choice.answers[key]==='yes')&&!existing?.revoked_at);
     const reason=mismatch?'attestation-record-changed':existing?.revoked_at?'attestation-revoked':choice?.answers&&attestationKeys.some(key=>choice.answers[key]==='not-sure')?'attestation-not-sure':!choice?'attestation-missing':!scopeComplete?'attestation-scope-missing':choice.typedSource!==source.sourceName?'attestation-source-name-mismatch':'attestation-not-affirmed';
     records.push({...source,id,sourceIdentifier:archiveSha,accepted,reason:accepted?undefined:reason,exportCreatedAt:choice?.exportCreatedAt?Date.parse(choice.exportCreatedAt):undefined,
-      wordingVersion:attestationVersion,wordingJson,wordingHash:await sha256(wordingJson),answers:choice?.answers??null,scope});
+      wordingVersion:source.provider?`${source.provider}-incumbent.v1`:attestationVersion,wordingJson,wordingHash:await sha256(wordingJson),answers:choice?.answers??null,scope});
   }
   return records;
 }

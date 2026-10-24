@@ -1,3 +1,4 @@
+import {sourceCsvJourney} from './source-csv-journey';
 import {domainJourney} from './domain-journey';
 import { test, expect } from '@playwright/test';
 import { providerEdge } from './edge';
@@ -11,6 +12,7 @@ test('[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact ap
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);
     await site.control('/_golive/sender-evidence');
+    await sourceCsvJourney(site,page,info,cookie);
     await confirmedContact(site, edge, cookie, 'iris@example.test', 'Iris');
     const clock = await site.control('/_golive/clock', {hold:true});
     const due = new Date(clock.now + 3600000);

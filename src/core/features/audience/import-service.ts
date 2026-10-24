@@ -1,3 +1,5 @@
+import {csvReview,csvReconciliation,recordCsvAttestations} from '../move-in/csv-review';
+import {csvAttestations,sourceIdentity} from '../move-in/csv-sources';
 // @ts-expect-error Portable Base ESM has no separate declaration for this helper.
 import { localCookieName } from '@/vendor/base/operator-auth/http.mjs';
 import {audiencePreviewBudget} from './import-query-budget';
@@ -57,7 +59,11 @@ export function createAudienceImportService(platform: Platform) {
      * row still applies its opt-out to it. archive: a contact that existed before an archive
      * move-in keeps its name (the exported name stays in the import observation). */
     async review(input: ImportInput, context: D1ImportContext, previewDb: D1Database = db, options: {archive?: boolean;incumbentSources?:Record<string,IncumbentFile>} = {}) {
-      const normalized = normalizeImport(input,options.incumbentSources);
+      const csvProof=options.incumbentSources?[]:await csvAttestations(input,previewDb);
+      const csvSources=Object.fromEntries(input.files.flatMap(file=>{const id=sourceIdentity(file.preset,file.name),record=csvProof.find(r=>r.sourceKey===id.sourceKey);return record?[[file.name,{...record,exportCreatedAt:record.exportCreatedAt}]]:[];}));
+      const incumbentSources=options.incumbentSources??csvSources;
+      const normalized = normalizeImport(input,incumbentSources);
+      for(const proof of csvProof){const file=input.files.find(f=>sourceIdentity(f.preset,f.name).sourceKey===proof.sourceKey);const row=normalized.rows.find(r=>r.file===file?.name);if(row)row.sourceAttestation=proof;}
       const previewContext = {...context,storage:{...context.storage,database:previewDb}};
        const effects = new Map<string,TargetEffect>(); const now = Date.now();
       // One native effect per canonical identity, across every file. All restrictive
@@ -80,7 +86,7 @@ export function createAudienceImportService(platform: Platform) {
       normalized.rows.sort((a,b)=>restrictiveRank[b.status]-restrictiveRank[a.status]);
       const artifacts = await Promise.all(input.files.map(async file=>({name:file.name,sha256:await sha256(file.csv),size:new TextEncoder().encode(file.csv).length,original:{status:'available' as const,base64:Buffer.from(file.csv,'utf8').toString('base64')}})));
       const state=await readImportState(previewDb,[...winners.values()],platform.config.contactHashSalt,context.destination);
-      for(const source of Object.values(options.incumbentSources??{}))if(source.accepted)state.activeAttestations.add(source.id);
+      for(const source of Object.values(incumbentSources))if(source.accepted)state.activeAttestations.add(source.id);
       const held=await heldContacts(previewDb,context.destination,state);
       // A contact an unfinished import has planned but not written yet is that import's to create.
       // Only an import that has written rows counts: a refused Start wrote nothing and holds nothing.
@@ -141,7 +147,7 @@ export function createAudienceImportService(platform: Platform) {
         const users=await previewDb.prepare("SELECT j.state FROM ik_jobs j WHERE j.destination=? AND j.principal_id=? AND (j.operation_key=? OR j.id IN (SELECT p.job_id FROM ik_d1_stream_pages p JOIN ik_d1_streams s ON s.id=p.stream_id WHERE s.destination=? AND s.principal_id=? AND s.operation_key=?))").bind(context.destination,context.authorization.principalId,existing.fingerprint,context.destination,context.authorization.principalId,existing.fingerprint).all<{state:string}>();
         const used=users.results.length>0,reversed=used&&users.results.every(row=>['rolled_back','undone'].includes(row.state));
         if(reversed)await previewDb.prepare("UPDATE audience_import_plans SET source_digest=source_digest||':reversed:'||fingerprint WHERE fingerprint=?").bind(existing.fingerprint).run();
-        else if(current||used){const rows=cached.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);return {fingerprint:cached.fingerprint,counts:previewCounts(cached),columns:normalized.columns,rows:rows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:rows.flatMap(row=>row.warnings)};}
+        else if(current||used){const rows=cached.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);return {...csvReview(cached),fingerprint:cached.fingerprint,counts:previewCounts(cached),columns:normalized.columns,rows:rows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:rows.flatMap(row=>row.warnings)};}
         else{
           const unused="NOT EXISTS(SELECT 1 FROM ik_jobs WHERE operation_key=?) AND NOT EXISTS(SELECT 1 FROM ik_d1_streams WHERE operation_key=?)";
           await previewDb.batch(['audience_import_plan_chunks','audience_import_plan_contacts','audience_import_plans'].map(table=>previewDb.prepare(`DELETE FROM ${table} WHERE fingerprint=? AND ${unused}`).bind(existing.fingerprint,existing.fingerprint,existing.fingerprint)));
@@ -150,17 +156,26 @@ export function createAudienceImportService(platform: Platform) {
       await saveAudiencePlan(previewDb,plan,context.authorization.principalId,sourceDigest,now,budget);
       const saved=await previewDb.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE source_digest=? AND principal_id=?').bind(sourceDigest,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();
       const retained=await readAudiencePlan(previewDb,saved!);const retainedRows=retained.entries.map(entry=>entry.source.payload as unknown as typeof normalized.rows[number]);
-      return {fingerprint:retained.fingerprint,counts:previewCounts(retained),columns:normalized.columns,rows:retainedRows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:retainedRows.flatMap(row=>row.warnings)};
+      return {...csvReview(retained),fingerprint:retained.fingerprint,counts:previewCounts(retained),columns:normalized.columns,rows:retainedRows.map(({values,ledger,optOuts,...row})=>({...row,...(optOuts?{optOut:true}:{})})),warnings:retainedRows.flatMap(row=>row.warnings)};
     },
-    async create(fingerprint: string, context: D1ImportContext) {
+    async create(fingerprint: string, context: D1ImportContext, actor?:{operator:{id:string;role:string};request:Request}) {
       const row=await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=? AND principal_id=?').bind(fingerprint,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();
       if(!row) throw new Error('Review this import before applying it.');
       const plan=await readAudiencePlan(db,row);
+      if(plan.entries.some(e=>(e.source.payload as unknown as {sourceAttestation?:unknown}).sourceAttestation)){if(!actor)throw new Error('Source attestation requires the applying operator.');await recordCsvAttestations(db,plan,actor.operator,actor.request,platform.config.local===true);}
       await applyStartRestrictions(db,platform.config.contactHashSalt,plan);
       if(plan.entries.length>10000)return createAudienceStream(plan,context);
       const reviewed={...context,reviewedFingerprint:fingerprint,operationKey:fingerprint};
       const job=await createD1ImportJob(plan,reviewed);
       return applyD1ImportBatches(job,reviewed);
+    },
+    report:async(id:string,input:D1ImportContext)=>{
+      const context=await sharedAudienceImport(id,input);
+      if(await isAudienceStream(id,context))await audienceStreamActions.read(id,context);else await readD1ImportJob(id,context);
+      const job=await db.prepare('SELECT operation_key FROM ik_jobs WHERE id=? UNION ALL SELECT operation_key FROM ik_d1_streams WHERE id=?').bind(id,id).first<{operation_key:string}>();
+      const stored=job?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(job.operation_key).first<{fingerprint:string;plan_json:string}>():null;
+      if(!stored)throw new Error('The reviewed source is no longer held.');
+      return csvReconciliation(await readAudiencePlan(db,stored));
     },
     read:async(id:string,input:D1ImportContext)=>{
       const context=await sharedAudienceImport(id,input);

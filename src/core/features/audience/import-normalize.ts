@@ -1,3 +1,5 @@
+import {csvSourceRow,sourcePresets} from '../move-in/csv-sources';
+import type {PlannedAttestation} from '../move-in/incumbent-attestation';
 import type {IncumbentFile} from '../move-in/incumbent-policy';
 import { csvRows, parseCsv } from './csv';
 import { canonicalEmail, canonicalPhone } from './identity';
@@ -9,6 +11,7 @@ import { optOutLedger, optOutStatus, type OptOutLine } from './import-opt-out-li
 export type NormalizedImportRow = {
   file: string; row: number; email: string; phone: string; smsStatus: string; displayName: string; status: string; reason?: string; skipped?: string; warnings: string[];
   values: Record<string, string>; ledger?: AudienceSnapshot;
+  sourceAttestation?:PlannedAttestation;
   incumbent?: {id:string;evidenceAt:number;timeQuality:string;source:string;facts:Record<string,string>};
   /** The original name stays in source observations when duplicates supply a fuller name. */
   sourceDisplayName?: string;
@@ -40,10 +43,12 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
     for (const [index, original] of parseCsv(file.csv).entries()) {
       const values = { ...original };
       for (const [field, header] of Object.entries(mapping)) values[field] = original[header.trim().toLowerCase()] ?? '';
+      let sourceRow:ReturnType<typeof csvSourceRow>|undefined;
       const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',phone:'',smsStatus:'non-subscribed',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values};
       try {
         if (original.__parse_error) throw new Error(original.__parse_error);
         // An opt-out whose address no contact holds carries only its portable identity (import-opt-out-lines).
+        if(Object.hasOwn(sourcePresets,file.preset)){sourceRow=csvSourceRow(file.preset,original,values);Object.assign(values,sourceRow.values);row.status=sourceRow.status;if(sourceRow.unknown)row.warnings.push('Unknown source subscription state; kept non-subscribed.');}
         const optOuts = file.preset === 'mango' && values.ledger_json ? optOutLedger(JSON.parse(values.ledger_json)) : undefined;
         if (optOuts) { row.optOuts = optOuts; row.status = optOutStatus(optOuts); values.source_status = row.status; }
         else {
@@ -75,12 +80,12 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
             ...Object.entries(original).filter(([header]) => isStatusHeader(header)).map(([, value]) => value),
           ].filter(Boolean).map(value => value.trim().toLowerCase().replace(/[_\s]+/g, '-'));
           // A mapping never hides another source column's opt-out or suppression.
-          for (const rawStatus of sourceStatuses) {
+          for (const rawStatus of sourceRow?[]:sourceStatuses) {
             const mapped = statusAliases[rawStatus] ?? rawStatus;
             if (!Object.hasOwn(restrictiveRank, mapped)) throw new Error(`Unknown source email status: ${rawStatus}`);
             if (restrictiveRank[mapped] > restrictiveRank[row.status]) row.status = mapped;
           }
-          values.source_status=sourceStatuses.join('; ') || file.preset.replace('csv-','');
+          values.source_status=sourceRow?.values.source_status??(sourceStatuses.join('; ') || file.preset.replace('csv-',''));
           if (file.preset === 'mango') {
             if (!values.ledger_json) throw new Error('Mango exports require the lossless ledger_json column.');
             row.ledger = JSON.parse(values.ledger_json);
@@ -101,7 +106,7 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
               if(!at)reason??='source-export-creation-time-missing';
               if(at&&at>Date.now())reason='source-evidence-time-in-future';
               if(reason){row.status='non-subscribed';row.warnings.push(reason);}
-              else row.incumbent={id:source.id,evidenceAt:at!,timeQuality:selected?selected[0]:'time-unknown',source:`Mailchimp ${source.sourceName}; attestation ${source.id}`,facts:Object.fromEntries(choices.map(([name,value])=>[name,value??'']))};
+              else row.incumbent={id:source.id,evidenceAt:at!,timeQuality:selected?selected[0]:'time-unknown',source:`${source.sourceName}; attestation ${source.id}`,facts:Object.fromEntries(choices.map(([name,value])=>[name,value??'']))};
             }
           } else if (row.status === 'subscribed') {
             const evidence = ['brandOrLegalSender','messageCategory','frequencyDisclosure','destinationJurisdiction','consentText','consentVersion'];

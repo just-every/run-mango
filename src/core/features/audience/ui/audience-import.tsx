@@ -1,3 +1,4 @@
+import type {AttestationInput} from '../../move-in/incumbent-policy';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 
@@ -31,6 +32,7 @@ const maxImportBytes = 10_000_000;
 type ImportPayload = {
   files: Array<{ name: string; csv: string; preset: string; mapping?: Record<string, string> }>;
   consent: ImportConsent;
+  attestations:AttestationInput[];
 };
 
 function requestError(data: ImportApiError, fallback: string) {
@@ -40,6 +42,7 @@ function requestError(data: ImportApiError, fallback: string) {
 export function AudienceImportPage() {
   const presets = useResource<ImportPresetsResponse>('/api/audience/import-presets');
   const jobsResource = useResource<{ jobs: ImportJob[] }>('/api/audience/imports');
+  const [attestations,setAttestations]=useState<AttestationInput[]>([]);
   const [files, setFiles] = useState<SelectedImportFile[]>([]);
   const [mappings, setMappings] = useState<Record<string, Record<string, string>>>({});
   const [consent, setConsent] = useState<ImportConsent>(emptyConsent);
@@ -150,7 +153,7 @@ export function AudienceImportPage() {
         ...(Object.keys(mapping).length ? { mapping } : {}),
       };
     }));
-    return { files: requestFiles, consent };
+    return { files: requestFiles, consent,attestations };
   };
 
   const review = async () => {
@@ -306,6 +309,7 @@ export function AudienceImportPage() {
           </button>
         </section>
       ) : null}
+      {!archive.archive&&preview?.attestationSources?.length?<IncumbentAttestations title="Source-held consent" sources={preview.attestationSources} scope={consent} values={attestations} onChange={value=>{setAttestations(rows=>[...rows.filter(r=>r.sourceKey!==value.sourceKey),value]);markPreviewStale();}} disabled={owner.busy}/>:null}
       {!archive.archive && preview ? <AudienceImportPreview preview={preview} isCurrent={previewIsCurrent} /> : null}
       {!archive.archive && preview ? (
         <section className="audience-import-final-action notice-note" aria-label="Start reviewed import">

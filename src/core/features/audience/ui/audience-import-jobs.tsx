@@ -85,6 +85,7 @@ export function AudienceImportJobs({ jobs, loading, error, busyJobId, actionsBus
                 </div>
                 <strong>{progress} of {job.total} rows</strong>
               </div>
+              <a className="text-link" href={`/api/audience/imports/${encodeURIComponent(job.id)}/report`}>Download reconciliation report</a>
               <progress max={job.total || 1} value={progress} aria-label={`Import ${job.id}: ${progress} of ${job.total} rows`} />
               {job.error ? <p className="inline-error" role="alert">{job.error}</p> : null}
               {job.abandonedAt ? <p className="muted-copy">{label === 'abandoned' ? 'Abandoned' : 'Abandon started'} {dateTime(job.abandonedAt)}{job.abandonedBy ? ` by ${job.abandonedBy}` : ''}. {abandonOutcome(job)}</p> : null}

@@ -61,6 +61,7 @@ export function AudienceImportPreview({ preview, isCurrent }: { preview: ImportP
           <div><dt>Unsubscribed</dt><dd>{count(preview.counts.unsubscribed)}</dd></div>
           <div className={preview.counts.suppressed ? 'audience-import-stat--alert' : undefined}><dt>Suppressed</dt><dd>{count(preview.counts.suppressed)}</dd></div>
         </dl>
+        {preview.evidenceKinds?<div aria-label="Consent evidence counts">{Object.entries(preview.evidenceKinds).map(([kind,total])=><p key={kind}>{titleCase(kind)} evidence: <strong>{total}</strong></p>)}</div>:null}
         <section className="audience-import-mapped-review" aria-labelledby="mapped-source-title">
           <div>
             <p className="eyebrow">Consent and status fields</p>
