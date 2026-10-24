@@ -22,7 +22,17 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     await page.setViewportSize({width:1440,height:1000});await openPage(page,`${runtime.url}/app/campaigns/${campaignId}/review`);
     console.log('Block proof: build');
     await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption('columns');await page.getByRole('button',{name:'Add block',exact:true}).click();
-    await page.getByRole('textbox',{name:'Image URL',exact:true}).fill(asset.url);await page.getByRole('textbox',{name:'Product price',exact:true}).fill('$20.00');
+    for(const name of ['Product name','Product price','Product description','Image URL','Image description','Button text','Button destination'])await expect(page.getByRole('textbox',{name,exact:true})).toHaveValue('');
+    for(const name of ['Image width','Image height'])await expect(page.getByRole('spinbutton',{name,exact:true})).toHaveValue('');
+    await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+    const incomplete=await page.request.post(`${runtime.url}/api/campaigns/${campaignId}/checks`,{headers,data:{revisionId}});expect(incomplete.status()).toBe(200);const incompleteChecks=JSON.stringify(await incomplete.json());expect(incompleteChecks).toContain('Image source');expect(incompleteChecks).toContain('visible text label');
+    const refused=await page.request.post(`${runtime.url}/api/campaigns/${campaignId}/approve`,{headers,data:{revisionId,idempotencyKey:'synthetic-mango-141'}});expect(refused.status()).toBe(409);
+    await page.getByRole('button',{name:'Block 1: columns',exact:true}).click();
+    await page.getByRole('textbox',{name:'Product name',exact:true}).fill('Garden seeds');await page.getByRole('textbox',{name:'Product price',exact:true}).fill('$20.00');await page.getByRole('textbox',{name:'Product description',exact:true}).fill('synthetic-mango-140');
+    await page.getByRole('textbox',{name:'Image URL',exact:true}).fill(asset.url);await page.getByRole('textbox',{name:'Image description',exact:true}).fill('Garden seeds');await page.getByRole('spinbutton',{name:'Image width',exact:true}).fill('200');await page.getByRole('spinbutton',{name:'Image height',exact:true}).fill('160');
+    await page.getByRole('textbox',{name:'Button text',exact:true}).fill('View product');await page.getByRole('textbox',{name:'Button destination',exact:true}).fill('https://example.test/garden');
+    await page.getByRole('combobox',{name:'Selected column',exact:true}).selectOption('1');await expect(page.getByRole('textbox',{name:'Button text',exact:true})).toHaveValue('');await expect(page.getByRole('textbox',{name:'Button destination',exact:true})).toHaveValue('');await page.getByRole('textbox',{name:'Button text',exact:true}).fill('Explore the garden');await page.getByRole('textbox',{name:'Button destination',exact:true}).fill('https://example.test/garden');
+    await page.getByRole('combobox',{name:'Selected column',exact:true}).selectOption('0');
     await page.getByLabel('Block padding',{exact:true}).fill('8');await page.getByRole('combobox',{name:'Block alignment',exact:true}).selectOption('center');
     await page.getByRole('combobox',{name:'Mobile column orientation',exact:true}).selectOption('stack-columns');
     await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption('text');await page.getByRole('button',{name:'Add block',exact:true}).click();await page.getByRole('textbox',{name:'Block text',exact:true}).fill('Synthetic second block');

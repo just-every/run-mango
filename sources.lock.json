@@ -3218,7 +3218,7 @@
       "executable": false
     },
     "src/core/features/campaigns/email-blocks.ts": {
-      "sha256": "72514295774e629396e5ee972047c911a73c146c3b443446cb04e78ab05d13e8",
+      "sha256": "f478a37a3a6f0910970e3ce41aadf4f936e8a5f1680f31e1e1a7f79f8b494027",
       "executable": false
     },
     "src/core/features/campaigns/email-contrast.ts": {
@@ -7486,7 +7486,7 @@
       "executable": false
     },
     "tests/campaign-authoring/block-builder-journey.ts": {
-      "sha256": "9b0eadf936eb21f449182691b61001b5810377945d16a4bd28f828ab9947e3db",
+      "sha256": "075c44d87a13cbde927ec39ff2e3d5978dd0f4339d33c8980eb7c44e5ecd6087",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
