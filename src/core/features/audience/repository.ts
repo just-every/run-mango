@@ -209,14 +209,14 @@ export function createAudienceRepository(database: Database) {
 
     async lastQualifyingActivity(contactId: string, now: Date) {
       const row = await database.$client.prepare(`SELECT MAX(at) at FROM (
-        SELECT confirmed_at at FROM consent_evidence WHERE contact_id=? AND confirmed_at<=?
-        UNION ALL SELECT l.evidence_at FROM incumbent_consent_links l JOIN consent_attestations a ON a.id=l.attestation_id
-          WHERE l.contact_id=? AND a.revoked_at IS NULL AND l.time_quality IN ('OPTIN_TIME','CONFIRM_TIME') AND l.evidence_at<=?
+        SELECT CASE WHEN e.confirmed_at<=? THEN e.confirmed_at
+          WHEN l.time_quality IN ('OPTIN_TIME','CONFIRM_TIME') AND a.revoked_at IS NULL AND l.evidence_at<=? THEN l.evidence_at END at
+        FROM consent_evidence e LEFT JOIN incumbent_consent_links l ON l.id=e.id LEFT JOIN consent_attestations a ON a.id=l.attestation_id WHERE e.contact_id=?
         UNION ALL SELECT occurred_at FROM contact_history WHERE contact_id=? AND kind IN ('consent-captured','consent-confirmed','opt-out') AND occurred_at<=?
         UNION ALL SELECT c.occurred_at FROM link_click_facts c JOIN recipient_steps r ON r.id=c.recipient_step_id WHERE r.contact_id=? AND c.automated=0 AND c.occurred_at<=?
         UNION ALL SELECT f.occurred_at FROM imported_engagement_facts f JOIN move_in_archives a ON a.id=f.archive_id WHERE f.contact_id=? AND f.kind='click' AND f.occurred_at<=? AND a.state='applied'
         UNION ALL SELECT purchased_at FROM commerce_orders WHERE contact_id=? AND qualifying=1 AND purchased_at<=?
-      )`).bind(contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime()).first<{at:number|null}>();
+      )`).bind(now.getTime(),now.getTime(),contactId,contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime(),contactId,now.getTime()).first<{at:number|null}>();
       return row?.at == null ? undefined : new Date(row.at);
     },
 
