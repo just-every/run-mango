@@ -15,7 +15,7 @@ export async function readSourceExport(provider:'activecampaign'|'klaviyo',endpo
   const get=async(path:string)=>{
     if(++requests>100)throw new Error('Source export exceeds the request budget.');
     const url=new URL(path,origin);
-    if(url.origin!==origin||!url.pathname.startsWith(prefix)||url.username||url.password)throw new Error('Source pagination left the declared API.');
+    if(url.origin!==origin||!url.pathname.startsWith(prefix)||url.username||url.password||url.hash||decodeURIComponent(url.href).includes(key))throw new Error('Source pagination left the declared API.');
     const result=record(await boundedJson(url.toString(),provider==='activecampaign'?{'Api-Token':key}:{Authorization:'Klaviyo-API-Key '+key,revision:'2025-01-15',accept:'application/json'},{maxBytes:2_000_000,deadlineMs:10000}));
     totalBytes+=new TextEncoder().encode(JSON.stringify(result)).byteLength;if(totalBytes>8_000_000)throw new Error('Source export exceeds the read budget.');return result;
   };
