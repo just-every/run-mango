@@ -18,6 +18,7 @@ export function writeBlockFields(kind:BlockKind,fields:BlockFields){
     case 'product':return image+'<h3>'+e(fields.title)+'</h3><p>'+e(fields.price)+'</p><p>'+e(fields.description).replaceAll('\n','<br>')+'</p>'+button;
     case 'spacer':return '<br>';
     case 'divider':return '<hr>';
-    default:return '<p>'+e(fields.text).replaceAll('\n','<br>')+'</p>';
+    case 'text':return '<p>'+e(fields.text).replaceAll('\n','<br>')+'</p>';
+    case 'columns':throw new Error('Column content uses the column editor.');
   }
 }

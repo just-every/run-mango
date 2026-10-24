@@ -1,4 +1,3 @@
-import {flowTemplateJourney} from './flow-template-journey';
 import {oversizedAdoption,oversizedSignalStarter} from './email-size-adoption';
 import { exerciseCampaignReuse } from './reuse-journey';
 import { hydrated, openPage, reloadPage } from '../support/navigation';
@@ -185,6 +184,5 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     expect((await state()).jobs).toEqual([]);
     await oversizedAdoption(page,runtime.url,unlinked.id,width,testInfo,runtime.sql);
 
-    await flowTemplateJourney(page,testInfo,runtime.url,width);
   } finally {await runtime.close();}
 });

@@ -13,7 +13,7 @@ export const mobileClass=(block:number)=>'mgo-b'+String(block).padStart(3,'0');
 function declarations(row:MobileBlock) {
   const values=new Map<string,string>();
   if(row.hideOnMobile)values.set('display','none');
-  else if(row.orientation==='stack'||row.orientation==='stack-columns'){values.set('display','block');values.set('width','100%');}
+  else if(row.orientation==='stack'){values.set('display','block');values.set('width','100%');}
   if(row.fontSize!==undefined)values.set('font-size',row.fontSize+'px');
   if(row.lineHeight!==undefined)values.set('line-height',String(row.lineHeight));
   if(row.padding!==undefined)values.set('padding',row.padding+'px');
@@ -24,7 +24,7 @@ function declarations(row:MobileBlock) {
 export function generateMobileStyle(input:unknown) {
   const parsed=mobileSettingsSchema.safeParse(input);
   if(!parsed.success)throw new MobileEmailError('Invalid mobile block settings: '+parsed.error.issues.map(issue=>issue.message).join(' '));
-  const rows=[...parsed.data].filter(row=>declarations(row).size||row.hideOnDesktop).sort((a,b)=>a.block-b.block);
+  const rows=[...parsed.data].filter(row=>declarations(row).size||row.hideOnDesktop||row.orientation==='stack-columns').sort((a,b)=>a.block-b.block);
   const columnRules=rows.filter(row=>row.orientation==='stack-columns').map(row=>'.'+mobileClass(row.block)+(row.contentCell?' > table':' > tbody > tr > td > table')+'{display: block !important;width: 100% !important;}').join('');
   const rules=rows.map(row=>{const values=declarations(row);return values.size?'.'+mobileClass(row.block)+'{'+[...values].map(([name,value])=>`${name}: ${value} !important;`).join('')+'}':'';}).join('')+columnRules;
   const hidden=rows.filter(row=>row.hideOnDesktop).map(row=>'.'+mobileClass(row.block)+'{display: none !important;}').join('');
@@ -91,7 +91,7 @@ export function applyMobileSettings(source:string,input:unknown) {
   const fragment=parseFragment(old.body),blocks=fragment.childNodes.filter((node):node is Tree.Element=>'tagName'in node);
   for(const node of elements(fragment))node.attrs=node.attrs.filter(attr=>attr.name!=='class');
   for(const setting of settings) {
-    if(!declarations(setting).size&&!setting.hideOnDesktop)continue;
+    if(!declarations(setting).size&&!setting.hideOnDesktop&&setting.orientation!=='stack-columns')continue;
     const block=blocks[setting.block];if(!block)throw new MobileEmailError(`Mobile block ${setting.block+1} does not exist in this email.`);
     const target=setting.contentCell&&block.tagName==='table'?elements(block).find(node=>node.tagName==='td')??block:block;
     target.attrs.push({name:'class',value:mobileClass(setting.block)});

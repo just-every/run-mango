@@ -1,3 +1,4 @@
+import {flowTemplateJourney} from '../campaign-authoring/flow-template-journey';
 import {localBootstrapToken} from '../local-bootstrap.js';
 import {blockBuilderJourney} from '../campaign-authoring/block-builder-journey';
 import {expect,test} from '@playwright/test';
@@ -220,14 +221,18 @@ test('[PROP-003] generated audience counts apply real consent exclusions and cou
   }finally{await runtime.close();}
 });
 
-test('[PROP-004][BUILD-001] accepted content and sender are previewable and editable as a saved draft',async({page,baseURL},info)=>{
-  const runtime=await decisionRuntime();
+test.describe('Saved content',()=>{
+  let savedRuntime:Awaited<ReturnType<typeof decisionRuntime>>|undefined,renderSavedProposal:Awaited<ReturnType<typeof proposalRenderer>>;
+  test.beforeAll(async()=>{savedRuntime=await decisionRuntime();renderSavedProposal=await proposalRenderer();});
+  test.afterAll(async()=>{await savedRuntime?.close();});
+test('[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft',async({page,baseURL},info)=>{
+  const runtime=savedRuntime!;
   try {
     runtime.controls.alter=output=>{output.links=[{label:'Garden collection',destinationUrl:'https://store.example.test/garden'}];};
     const proposal=await generated(runtime),detail=(await runtime.call(`/api/proposals/${proposal.proposalId}`)).body;
     expect(detail.composition.revision).toMatchObject({name:detail.proposal.title,emailSubject:'From the garden',emailBody:expect.stringContaining('Garden news'),senderName:runtime.platform.config.mailSender.displayName,fromEmail:runtime.platform.config.mailSender.fromEmail,state:'draft'});
     expect(detail.composition.links).toEqual([expect.objectContaining({destinationUrl:'https://store.example.test/garden'})]);
-    const render=await proposalRenderer(),html=await render(detail);
+    const render=renderSavedProposal,html=await render(detail);
     for(const value of ['Saved email preview','From the garden','Garden collection','https://store.example.test/garden',runtime.platform.config.mailSender.fromEmail])expect(html).toContain(value);
     expect(detail.steps.map((step:any)=>step.channel)).toEqual(['email']);
     expect(detail.composition.revision).toMatchObject({smsBody:'',smsSender:'MANGO'});
@@ -259,8 +264,12 @@ test('[PROP-004][BUILD-001] accepted content and sender are previewable and edit
       }
     }
     expect(runtime.jobs).toEqual([]);
-  }finally{await runtime.close();}
-  await blockBuilderJourney(page,info,{url:baseURL!,token:await localBootstrapToken()});
+  }finally{await runtime.close();savedRuntime=undefined;}
+  const block=await blockBuilderJourney(page,info,{url:baseURL!,token:await localBootstrapToken()});
+  const library=await page.request.post(baseURL!+'/api/campaign-templates',{headers:block.headers,data:{revisionId:block.revisionId,name:'synthetic-mango-145'}});expect(library.status()).toBe(201);
+  await flowTemplateJourney(page,info,baseURL!,block.headers);
+});
+
 });
 
 test('[PROP-008] forecasts use owned mature history including failed and zero-revenue recipients, and refuse thin or mixed-currency history',async()=>{
