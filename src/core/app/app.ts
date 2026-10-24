@@ -1,3 +1,4 @@
+import {reusableBlockRoutes} from '@/core/features/campaigns/reusable-block-routes';
 import {flowDraftRoutes} from '@/core/features/flows/routes';
 import {optInRoutes} from '@/core/features/audience/opt-in-modes';
 import {analyticsSettingsRoutes} from '@/core/features/settings/analytics-settings';
@@ -366,6 +367,7 @@ export function createApp(
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
   app.route('/api', stripe.settings);
   app.route('/api', woo.settings);
+  app.route('/api', reusableBlockRoutes(platform));
   app.route('/api', flowDraftRoutes(platform));
   app.route('/api', wooFlowRoutes(platform));
   app.route('/api', domainSetupRoutes(platform));

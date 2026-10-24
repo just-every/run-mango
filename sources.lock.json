@@ -1581,6 +1581,10 @@
       "sha256": "659a6a1c73a292cb6fc96087c6f031331cf4d7635b119f6f72cf8a997d0fa211",
       "executable": false
     },
+    "migrations/core/0101_reusable_email_blocks.sql": {
+      "sha256": "4963633b5962855de1cceb7d825f385e108e980318fbe7b7a89f4f16cd3c8a29",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -2210,7 +2214,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "08dadad33c5ea022a0ef3a3ce71ece41185b94eb849824c65ef7bf176a12018e",
+      "sha256": "f91abd4264a971322566c0b097858d8b3a9465c82f4c12056dd8e5addb74b5cf",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -3030,7 +3034,7 @@
       "executable": false
     },
     "src/core/features/auth/permissions.ts": {
-      "sha256": "32c9fd3d04dc712d636a84c2112e138924d29e76ee330ca821bf053c41971121",
+      "sha256": "55adaf76d5b2aac651d88533a3cbeb41b45d171836792dcaad13fff091157d2c",
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
@@ -3313,6 +3317,26 @@
       "sha256": "e404e7f09c5878ae0fd7e02fef94d4d845c2ac8405a8095f5c79b8dcf37d6321",
       "executable": false
     },
+    "src/core/features/campaigns/reusable-block-copy.ts": {
+      "sha256": "6e1ad2fbf7d0f2457b3f1b053b939d4959a4505e7e1ac4308da97778a044c63f",
+      "executable": false
+    },
+    "src/core/features/campaigns/reusable-block-model.ts": {
+      "sha256": "d0f691f003c745c61ff227b13f5cf06bd033f39f1ddc9a250ea0cd302f24cf2d",
+      "executable": false
+    },
+    "src/core/features/campaigns/reusable-block-routes.ts": {
+      "sha256": "cd0eabeb09bf7619341d62423b21e9bc7c03374683968d9a1771a06589c37c3e",
+      "executable": false
+    },
+    "src/core/features/campaigns/reusable-block-service.ts": {
+      "sha256": "333f6fc25f96a8ece8a4db497ac53529049a9e2439e71990e887ab70cede0fd2",
+      "executable": false
+    },
+    "src/core/features/campaigns/reusable-block-targets.ts": {
+      "sha256": "e46313d555efe2bd957271c66de46fe41ddd7be734b026c9e9785638975f81ed",
+      "executable": false
+    },
     "src/core/features/campaigns/reuse-routes.ts": {
       "sha256": "d1a6cdc006c0e4177ba5761c6b78d2106592d048419a7e73d2495da726e357a0",
       "executable": false
@@ -3422,7 +3446,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/composition-content-fields.tsx": {
-      "sha256": "32821beae7e53520f71338acbd731cf44d6bba3a1137bbece7ca09f12aa86721",
+      "sha256": "65948edbbeafea478a0043c2022f480e3cde1dbe9ccf8177ef766099f833c8d3",
       "executable": false
     },
     "src/core/features/campaigns/ui/composition-editor.tsx": {
@@ -3466,7 +3490,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/email-block-editor.tsx": {
-      "sha256": "2c769d70c714b418d7c95e177db32d4b6de2673201ff15e9fb6bb9f3e066cfb9",
+      "sha256": "41cc39d5974186fba517e097bbfe9ef13ad23a831a35e46aabddfd87bc6dbd09",
       "executable": false
     },
     "src/core/features/campaigns/ui/email-block-fields.tsx": {
@@ -3505,12 +3529,16 @@
       "sha256": "1507cd6e982797974a223468dd3ffc985a0cd6cbfce1105c6b205821f981521e",
       "executable": false
     },
+    "src/core/features/campaigns/ui/reusable-block-controls.tsx": {
+      "sha256": "cf9790a9b11131994dd3afee9dd4dfe21ab325f65aa29f63f9e2f1548e6f407a",
+      "executable": false
+    },
     "src/core/features/campaigns/ui/revision-previews.tsx": {
       "sha256": "a5d02be54993a40a1ae1e46a7d1bf08b7a8b53c8867522e57a0f34cefa67a4ad",
       "executable": false
     },
     "src/core/features/campaigns/ui/rich-email-editor.tsx": {
-      "sha256": "4587086ba58d0e62682d83d547c1f7523c3da7963bfb315be9c916a7f32c073b",
+      "sha256": "545977a8529496d0d11f874ecec52c2e47c6f87c7de97736fee520cc46933ec3",
       "executable": false
     },
     "src/core/features/campaigns/ui/sanitize-email-preview.ts": {

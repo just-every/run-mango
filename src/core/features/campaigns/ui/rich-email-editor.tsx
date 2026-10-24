@@ -7,7 +7,7 @@ import { authoredBody, htmlToText } from '../authoring-content';
 import { authoredEditorHtml, editorHtml } from './editor-html';
 import { InsertImage } from '@/core/features/campaign-assets/ui/insert-image';
 
-export function RichEmailEditor({value, onChange, busy, designImport}: {value:string; busy:boolean; onChange:(value:string)=>void; designImport?: ReactNode}) {
+export function RichEmailEditor({value, onChange, busy, designImport,campaignId}: {campaignId?:string;value:string; busy:boolean; onChange:(value:string)=>void; designImport?: ReactNode}) {
   const [mode,setMode] = useState<'rich'|'html'|'blocks'>('rich');
   const editor = useRef<HTMLDivElement>(null), caret = useRef<number>(undefined);
   const body = authoredBody(value);
@@ -36,7 +36,7 @@ export function RichEmailEditor({value, onChange, busy, designImport}: {value:st
     <button type="button" className="secondary-action" disabled={busy} aria-pressed={mode==='blocks'} onClick={()=>setMode('blocks')}>Block builder</button>
     {designImport}
     {htmlOnly&&mode!=='blocks'?<p className="muted-copy">This email contains images or styling. Edit its HTML to keep that markup exactly, without loading remote images.</p>:null}
-    {mode==='blocks'?<EmailBlockEditor value={body} onChange={onChange} busy={busy}/>:htmlMode ? <>
+    {mode==='blocks'?<EmailBlockEditor campaignId={campaignId} value={body} onChange={onChange} busy={busy}/>:htmlMode ? <>
       <div className="detail-actions"><InsertImage disabled={busy} onInsert={insertHtml} /></div>
       <label>HTML email body<Field name="emailBody" label="Email body" required advisory validate={() => htmlToText(body).trim() ? undefined : "Write the email body."}><textarea aria-label="Email body" value={body} onChange={event=>onChange(event.target.value)} onSelect={event=>{caret.current=event.currentTarget.selectionEnd;}} rows={9}/></Field></label>
     </> : <>
