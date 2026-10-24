@@ -9,7 +9,7 @@ import {resendWebhookSecret} from './resend-bindings';
 import {json,sender,draftCampaign,type Installation} from './harness';
 import {openPage} from '../support/navigation';
 export async function resendConnectionJourney(site:Installation,edge:Awaited<ReturnType<typeof providerEdge>>,page:Page,info:TestInfo,owner:string,admin:string){
-    const key='synthetic-mango-130',state=edge.resend.connection;
+    const key='synthetic-mango-131',state=edge.resend.connection;
     await json(await site.call('/api/settings/sending',{method:'DELETE',cookie:owner}),200);
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie:owner,body:sender}),200);
     await json(await site.call('/api/settings/sending/review',{method:'POST',cookie:admin,body:{provider:'resend',apiKey:key}}),403);
