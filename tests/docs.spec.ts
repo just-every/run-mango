@@ -91,12 +91,13 @@ test.describe('public documentation', () => {
   });
 
   contract('DOCS-001', 'the docs fit the screen at desktop and phone widths and the phone shows a Contents disclosure', async ({ page }) => {
-    for (const [width, route] of [[1440, '/docs'], [390, '/docs'], [390, path(pages[1].slug)]] as const) {
+    for (const [width, route] of [[1440, '/docs'], [390, '/docs'], [390, path(pages[1].slug)], [1440, '/docs/moving-in'], [390, '/docs/moving-in']] as const) {
       await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
       await page.goto(route);
       await expect(page.locator('main h1')).toBeVisible();
       await expectDocumentToFit(page, width);
       await expectNoSeriousAxeViolations(page, `docs-${width}-${route.replace(/\W+/g, '-')}`);
+      if(route==='/docs/moving-in'){expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);await page.screenshot({path:test.info().outputPath(`moving-in-${width}.png`),fullPage:true});}
       const contents = page.locator('summary', { hasText: 'Contents' });
       if (width === 390) {
         await expect(contents).toBeVisible();

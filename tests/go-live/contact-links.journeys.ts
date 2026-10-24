@@ -25,6 +25,7 @@ test('[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact ap
     const importedReader='synthetic-mango-110-active@example.test';
     expect((await site.rows("SELECT c.email_status FROM contacts c JOIN incumbent_consent_links l ON l.contact_id=c.id JOIN consent_attestations a ON a.id=l.attestation_id WHERE c.email='synthetic-mango-110-active@example.test' AND a.revoked_at IS NULL"))[0].email_status).toBe('subscribed');
     const campaign = await draftCampaign(site, cookie, 'Ask the garden team', [importedReader], due);
+    const importedReview=await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:campaign.revisionId}}),200);expect(importedReview.eligibleCount).toBe(1);expect(importedReview.incumbentHeldCount).toBe(1);
     await page.context().addCookies([{name:cookie.split('=')[0], value:cookie.split('=')[1], url:site.runtime.url}]);
     const path = `/api/campaign-revisions/${campaign.revisionId}`;
     // The same public save/check/approve doors judge authored HTML, not only the link tool.
