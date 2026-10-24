@@ -1,3 +1,4 @@
+import {resendEvents} from './resend-account';
 import {resendConnectionService} from './resend-connection';
 import type {Platform} from '@/core/shared/platform';
 import {activityStatement} from '@/core/features/auth/activity-record';
@@ -21,7 +22,7 @@ export function sendingConnectionService(platform:Platform) {
   return {
     async status() {
       const row=await read();
-      return {...disclosure,developerRoute:!row,connection:row?{provider:row.account_id==='resend'?'Resend':'SendGrid',state:row.state,account:row.account_name,lastFour:row.last_four,
+      return {...(row?.account_id==='resend'?{provider:'Resend',webhookUrl:new URL('/webhooks/mail/resend',origin).href,events:resendEvents,signing:true,requiredScopes:['Full access API key: webhook management']}:disclosure),developerRoute:!row,connection:row?{provider:row.account_id==='resend'?'Resend':'SendGrid',state:row.state,account:row.account_name,lastFour:row.last_four,
         connectedBy:row.connected_by,connectedAt:row.connected_at,broader:row.broader===1,deliveryEventsVerified:Boolean(row.delivery_proved_at),error:row.last_error}:null};
     },
     async prepare(apiKey:string,operatorId:string,provider='sendgrid') {

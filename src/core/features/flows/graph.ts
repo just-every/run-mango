@@ -1,5 +1,6 @@
 import {z} from 'zod';
 export const nodeKinds = {
+  unavailable: ['Unavailable source step', 'Unavailable: this imported source step has no executable Mango equivalent.'],
   trigger: ['Trigger', 'Starts when the chosen event occurs. Enrolment is not available yet.'],
   delay: ['Time delay', 'Waits for a duration before continuing.'],
   'wait-until': ['Wait until', 'Waits until a chosen date or condition.'],

@@ -89,7 +89,7 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
     await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 3: text',exact:true}).click();
     await page.getByLabel('Hide on mobile',{exact:true}).check();await page.getByLabel('Hide on mobile',{exact:true}).uncheck();
     await page.getByLabel('Hide on desktop',{exact:true}).check();await page.getByLabel('Hide on desktop',{exact:true}).uncheck();
-    await page.getByLabel('Mobile font size',{exact:true}).fill('26');await page.getByLabel('Mobile line height',{exact:true}).fill('1.6');await page.getByLabel('Mobile padding',{exact:true}).fill('14');await page.getByLabel('Mobile alignment',{exact:true}).selectOption('right');
+    await page.getByLabel('Mobile font size',{exact:true}).fill('26');await page.getByLabel('Mobile line height',{exact:true}).fill('1.6');await page.getByLabel('Mobile padding',{exact:true}).fill('14');await page.getByRole('combobox',{name:'Mobile alignment',exact:true}).selectOption('right');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
     const updated=await read();expect(updated.emailBody).toContain('font-size: 26px !important');
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);

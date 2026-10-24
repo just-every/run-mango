@@ -4,6 +4,7 @@ import { copyFile, mkdtemp, readFile, rm, stat } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { resolveDeclaration } from '../scripts/installer/deploy-declaration.mjs';
+import { productionMail } from '../node_modules/@runeditrun/rer/cli/production-mail.mjs';
 import { ownerPlan } from '@runeditrun/rer/modules/deploy-kit/owner';
 // Exercise the pinned kit's actual upload boundary; no account is contacted.
 import { secretBindings, uploadWorker } from '../node_modules/@runeditrun/rer/modules/deploy-kit/worker.mjs';
@@ -14,6 +15,9 @@ const challenge = { TURNSTILE_SITE_KEY: 'test-turnstile-site', TURNSTILE_SECRET_
 const optionalInputs = { ...design, ...receiver, ...challenge };
 
 test('optional design, receiver and signup challenge inputs reach deploy, partial pairs fail, and later deploys preserve configured secrets', async () => {
+  const declaration=JSON.parse(await readFile('deploy.json','utf8'));
+  const mail=await productionMail(process.cwd(),{...declaration,vars:{...declaration.vars,MAIL_PROVIDER:'later'}},{MAIL_FROM:'synthetic-mango-150@example.test',MAIL_API_KEY:'synthetic-mango-150'});
+  assert.equal(mail.configured(),true,'Deferred direct-provider mail is configured by declared canonical inputs without a Managed relay.');
   const root = await mkdtemp(join(tmpdir(), 'mango-declaration-'));
   try {
     await copyFile('deploy.json', join(root, 'deploy.json'));
@@ -65,5 +69,11 @@ test('optional design, receiver and signup challenge inputs reach deploy, partia
     assert.deepEqual(verify.secrets, off.secrets);
     const resolved = await readFile(join(root, '.rer/declarations/deploy.json'), 'utf8');
     for (const value of Object.values(optionalInputs)) assert.ok(!resolved.includes(value));
+    held.clear();
+    await deploy({...required,MAIL_FROM:'synthetic-mango-150@example.test',MAIL_API_KEY:'synthetic-mango-150'});
+    assert.equal(held.get('MAIL_FROM'),'synthetic-mango-150@example.test');
+    assert.equal(held.get('MAIL_API_KEY'),'synthetic-mango-150');
+    assert.ok(!held.has('MAIL_AUTH_FROM'));
+    assert.ok(!held.has('MAIL_PROVIDER_API_KEY'));
   } finally { await rm(root, { recursive: true, force: true }); }
 });

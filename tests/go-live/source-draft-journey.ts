@@ -4,6 +4,7 @@ import {openPage} from '../support/navigation';
 import {json,type Installation,draftCampaign} from './harness';
 /** Membership-only snapshots pass through preview/apply without consent authority. */
 export async function sourceDraftJourney(site:Installation,page:Page,info:TestInfo,cookie:string,provider:string){
+  console.log(provider+': membership consent');
   const before=await site.rows('SELECT * FROM consent_evidence ORDER BY id');
   const states=await site.rows('SELECT id,email_status,sms_status FROM contacts ORDER BY id');
   const emails=await site.rows('SELECT email FROM contacts WHERE email IS NOT NULL ORDER BY email');
@@ -15,16 +16,22 @@ export async function sourceDraftJourney(site:Installation,page:Page,info:TestIn
   expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(before);
   const after=await site.rows('SELECT id,email_status,sms_status FROM contacts ORDER BY id');
   expect(after.filter(row=>states.some(old=>old.id===row.id))).toEqual(states);
+  console.log(provider+': topic-only campaign');
   const campaign=await draftCampaign(site,cookie,'Synthetic topic-only review',[topicOnly],new Date(Date.now()+3600000));
+  console.log(provider+': topic-only checks');
   const review=await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:campaign.revisionId}}),200);
   expect(review.eligibleCount).toBe(0);
+  console.log(provider+': draft API');
   const flows=await json(await site.call('/api/flow-drafts',{cookie}),200);
   const name=provider==='activecampaign'?'Welcome series':'Abandoned cart';
   const draft=flows.revisions.find((row:any)=>row.name===name);expect(draft).toBeTruthy();
   expect(draft.graph.nodes.some((node:any)=>node.label.includes('Unavailable'))).toBe(true);
   if(provider==='klaviyo')expect(JSON.stringify(draft.graph)).toContain('send-sms');
+  console.log(provider+': draft UI');
+  page.once('pageerror',error=>console.log('Draft UI error: '+error.message));
   await openPage(page,site.runtime.url+'/app/flows');
-  await page.getByLabel('Saved revision',{exact:true}).selectOption(draft.id);
+  console.log(provider+': draft hydrated');
+  await page.getByRole('combobox',{name:'Saved revision',exact:true}).selectOption(draft.id);
   await expect(page.getByLabel('Flow name',{exact:true})).toHaveValue(name);
   for(const width of [1440,390]){
     await page.setViewportSize({width,height:1000});
