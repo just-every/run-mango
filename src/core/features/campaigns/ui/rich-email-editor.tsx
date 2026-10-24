@@ -32,7 +32,7 @@ export function RichEmailEditor({value, onChange, busy, designImport}: {value:st
   };
   const format = (command:string) => { editor.current?.focus(); document.execCommand(command); if (editor.current) onChange(authoredEditorHtml(editor.current)); };
   return <fieldset className="composition-fieldset rich-email-fieldset"><legend>Email body (required for approval)</legend>
-    <div className="detail-actions editor-mode"><button type="button" className="secondary-action" disabled={htmlOnly} aria-pressed={!htmlMode} onClick={()=>setMode('rich')}>Rich text</button><button type="button" className="secondary-action" aria-pressed={htmlMode} onClick={()=>setMode('html')}>HTML mode</button></div>
+    <div className="detail-actions editor-mode"><button type="button" className="secondary-action" disabled={htmlOnly} aria-pressed={mode!=='blocks'&&!htmlMode} onClick={()=>setMode('rich')}>Rich text</button><button type="button" className="secondary-action" aria-pressed={mode!=='blocks'&&htmlMode} onClick={()=>setMode('html')}>HTML mode</button></div>
     <button type="button" className="secondary-action" disabled={busy} aria-pressed={mode==='blocks'} onClick={()=>setMode('blocks')}>Block builder</button>
     {designImport}
     {htmlOnly&&mode!=='blocks'?<p className="muted-copy">This email contains images or styling. Edit its HTML to keep that markup exactly, without loading remote images.</p>:null}

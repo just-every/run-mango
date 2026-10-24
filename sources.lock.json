@@ -3510,7 +3510,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/rich-email-editor.tsx": {
-      "sha256": "99410ee57f06bb603f87219959683167f6fc1640bb4d3aac4f6ffaef3406057a",
+      "sha256": "4587086ba58d0e62682d83d547c1f7523c3da7963bfb315be9c916a7f32c073b",
       "executable": false
     },
     "src/core/features/campaigns/ui/sanitize-email-preview.ts": {
@@ -7482,7 +7482,7 @@
       "executable": false
     },
     "tests/campaign-authoring/block-builder-journey.ts": {
-      "sha256": "9d24431a43fa715d335730d201e2337ad83ead9fa5a1174933af2d8cec937e17",
+      "sha256": "3d72d53397b4fe4901288788eae6af00443841f79cffee0f016f24dfea3d8eda",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
@@ -8330,7 +8330,7 @@
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
-      "sha256": "dd98b6cf3a808776ebc7d878a2f75aded8d705ab49efa527b1ec68b1a1e4eddf",
+      "sha256": "5e7af73f215557841b776c8a3fbe31853591388c579c04343a8ad2eb4e5b48e0",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
