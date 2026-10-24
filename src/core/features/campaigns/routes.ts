@@ -57,7 +57,9 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     return dismissed?context.json({kind:'dismissed'}):context.json({kind:'unavailable',detail:'Only a live proposed suggestion can be dismissed.'},409);
   });
   routes.post('/proposals/:id/adopt', async context => {
-    const result = await authoring.adopt(context.req.param('id'), context.get('operator').id);
+    const outcome = await settled(authoring.adopt(context.req.param('id'), context.get('operator').id));
+    if ('refused' in outcome) return context.json(outcome.refused,400);
+    const result = outcome.saved;
     return context.json(result, result.kind === 'not_found' ? 404 : result.kind === 'unavailable' ? 409 : 200);
   });
   routes.get('/decision-desk', async (context) => context.json(await service.decisionDesk()));

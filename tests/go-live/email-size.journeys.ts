@@ -1,3 +1,4 @@
+import {oversizedReuse} from './email-size-reuse';
 import {oversizedImports} from './email-size-imports';
 import {expect} from '@playwright/test';
 import {contract} from '../contract.js';
@@ -20,10 +21,20 @@ contract('BUILD-012','large newsletters save by transmitted bytes, retain refuse
     const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000);
     const campaign=await draftCampaign(site,cookie,'Summer garden journal',[email],due);
     const patch=(body:unknown)=>site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body});
-    const body='<h1>Summer garden journal</h1><p>Hello {{displayName | fallback: Garden friend}}</p>'+('<p>Garden notes: herbs, seedlings and the summer market. </p>'.repeat(500))+'<p><a href="https://shop.example.test/market">Market details</a></p>';
+    const body='<h1>Summer garden journal</h1><p>Hello {{displayName | fallback: Garden friend}}</p>'+('<p>Garden notes: herbs, seedlings and the summer market. </p>'.repeat(500))+'<p><a href="https://shop.example.test/market">Market details</a></p>'+ '<p>'+'{{displayName | fallback: friend}} '.repeat(800)+'</p>';
     await json(await patch({emailBody:body,trackingEnabled:true}),200);
     const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
     expect(detail.revision.emailBody.length).toBeGreaterThan(20000);
+    const template=await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:campaign.revisionId,name:'Large garden letter'}}),201);
+    for(const path of [`/api/campaign-templates/${template.id}/start`,`/api/campaigns/${campaign.campaignId}/duplicate`]) {
+      const copy=await json(await site.call(path,{method:'POST',cookie,body:{}}),201);
+      expect((await json(await site.call(`/api/campaigns/${copy.campaignId}`,{cookie}),200)).revision).toMatchObject({emailBody:detail.revision.emailBody,state:'draft',approvedAt:null});
+    }
+    const plainRefused=await json(await patch({emailText:'🌱'.repeat(28160)}),400);
+    expect(plainRefused).toMatchObject({error:'email_too_large',size:{exceedsLimit:true}});
+    expect(plainRefused.size.textBytes).toBeGreaterThan(plainRefused.size.limitBytes);
+    expect(plainRefused.size.htmlBytes).toBeLessThanOrEqual(plainRefused.size.limitBytes);
+    expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).revision).toEqual(detail.revision);
     const measured=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{emailBody:body,preheader:detail.revision.preheader,physicalAddress:sender.physicalAddress,trackingEnabled:true}}),200);
     expect(measured.exceedsLimit).toBe(false);
     expect(measured.largestBlocks.length).toBeGreaterThan(0);
@@ -79,5 +90,6 @@ contract('BUILD-012','large newsletters save by transmitted bytes, retain refuse
     const skipped=await dispatch(site,next.campaignId,nextDue);
     expect(skipped[0]).toMatchObject({transport_disposition:'skipped',skip_reason:'email-too-large'});
     expect(edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe'])).toHaveLength(1);
+    await oversizedReuse(site,cookie,page,info,campaign,template.id);
   } finally {await page.close();await site.runtime.close();await edge.close();}
 });

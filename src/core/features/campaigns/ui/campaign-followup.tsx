@@ -11,8 +11,8 @@ export function CampaignFollowup({campaignId}:{campaignId:string}) {
   const create=async()=>{
     setBusy(true);setError('');
     try {
-      const response=await requestJson<{kind:string;campaignId:string;availableAt?:string}>(`/api/campaigns/${campaignId}/followup`,{method:'POST',body:JSON.stringify({subject,delayHours:Number(hours),metric})});
-      if(response.status!==201)throw new Error(response.data.kind==='too-early'?`Wait until ${response.data.availableAt} before creating this follow-up.`:'The follow-up could not be confirmed. Check Campaigns before trying again.');
+      const response=await requestJson<{kind:string;campaignId:string;availableAt?:string;detail?:string}>(`/api/campaigns/${campaignId}/followup`,{method:'POST',body:JSON.stringify({subject,delayHours:Number(hours),metric})});
+      if(response.status!==201)throw new Error(response.data.detail ?? (response.data.kind==='too-early'?`Wait until ${response.data.availableAt} before creating this follow-up.`:'The follow-up could not be confirmed. Check Campaigns before trying again.'));
       await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId},reloadDocument:true});
     } catch(cause){setError(cause instanceof Error?cause.message:'Follow-up could not be created.');setBusy(false);}
   };

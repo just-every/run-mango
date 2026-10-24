@@ -1,3 +1,7 @@
+import {eq} from 'drizzle-orm';
+import {campaignRevisions} from './campaign-schema';
+import {savedEmailSize} from './saved-email-size';
+import type {EmailSizeOptions} from './email-size';
 import {defaultAnalyticsPolicy} from '@/core/features/settings/analytics-policy';
 import { createProposalRepository } from '@/core/features/proposals/repository';
 import { parseStructuredRules } from '../lifecycle/rules';
@@ -10,7 +14,7 @@ import { createCampaignRepository } from './repository';
 import { persistedProposalClaims, unavailableProposalClaims } from './persisted-proposal-claims';
 
 /** The link claim and every insert share one transaction. Racing callers reuse its winner. */
-export async function adoptProposal(database: Database, proposalId: string, operatorId: string, sender: DraftComposition) {
+export async function adoptProposal(database: Database, proposalId: string, operatorId: string, sender: DraftComposition, sizeOptions: EmailSizeOptions = {}) {
   const db = database.$client, campaignId = ulid(), revisionId = ulid(), now = Date.now();
   await createProposalRepository(database).expireDue(new Date(now));
   const proposal = await db.prepare('SELECT state, send_by_at, campaign_id, inclusion_rule_json, exclusion_rules_json FROM proposals WHERE id = ?')
@@ -23,6 +27,9 @@ export async function adoptProposal(database: Database, proposalId: string, oper
   const [saved, savedSteps, evidence]=await Promise.all([repository.getProposal(proposalId,new Date(now)),repository.listProposalSteps(proposalId),repository.proposalEvidence(proposalId)]);
   const claims=saved&&persistedProposalClaims(saved,savedSteps.length,evidence.evidenceItems);
   if(!claims)return {kind:'unavailable' as const,detail:unavailableProposalClaims};
+  const linked = proposal.campaign_id ? await repository.getCampaign(proposal.campaign_id) : undefined;
+  const revision = linked?.activeRevisionId ? await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,linked.activeRevisionId)}) : undefined;
+  if (revision || !proposal.campaign_id) await savedEmailSize(database,revision ?? {emailSubject:'',emailBody:managedFooter,emailText:htmlToText(managedFooter),preheader:'',smsBody:'',physicalAddress:sender.physicalAddress??''},sizeOptions);
   const audienceRule = summarizeAudienceRules(proposal.inclusion_rule_json, proposal.exclusion_rules_json);
   const sourceTypesJson = JSON.stringify(rules.ok ? rules.sourceTypes : []);
   const guard = `EXISTS (SELECT 1 FROM proposals WHERE id = ? AND campaign_id = ?)`;

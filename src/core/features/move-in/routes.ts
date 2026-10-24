@@ -1,3 +1,4 @@
+import { EmailTooLargeError } from '@/core/features/campaigns/email-size';
 import { Hono, type Context } from 'hono';
 import type { AuthVariables } from '@/core/features/auth/routes';
 import type { Platform } from '@/core/shared/platform';
@@ -104,8 +105,13 @@ export function createMoveInRoutes(platform: Platform) {
     return record ? context.json({ record }) : context.json({ error: 'not_found' }, 404);
   });
   routes.post('/imported-history/:id/copy', async context => {
-    const draft = await copyHistory(platform, context.req.param('id'), context.get('operator').id);
-    return draft ? context.json(draft, 201) : context.json({ error: 'not_found' }, 404);
+    try {
+      const draft = await copyHistory(platform, context.req.param('id'), context.get('operator').id);
+      return draft ? context.json(draft, 201) : context.json({ error: 'not_found' }, 404);
+    } catch (error) {
+      if (error instanceof EmailTooLargeError) return context.json({error:'email_too_large',detail:error.message,size:error.size},400);
+      throw error;
+    }
   });
   return routes;
 }

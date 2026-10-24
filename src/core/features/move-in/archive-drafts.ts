@@ -1,3 +1,4 @@
+import { EmailTooLargeError } from '@/core/features/campaigns/email-size';
 import { ulid } from '@/core/shared/ids';
 import type { Platform } from '@/core/shared/platform';
 import { createDraft } from '@/core/features/campaigns/create-draft';
@@ -24,8 +25,14 @@ export async function writeContent(platform: Platform, archiveId: string, record
   if (await db.$client.prepare('SELECT 1 FROM move_in_content WHERE archive_id=? AND ordinal=?').bind(archiveId, record.ordinal).first()) return;
   const at = Date.now();
   if (record.kind === 'history') { await db.insert(moveInContent).values(row(archiveId, record, at)).onConflictDoNothing(); return; }
-  await createDraft(db, { ...senderDefaults(platform), name: record.title, emailSubject: record.subject, emailBody: record.html }, operatorId,
+  try { await createDraft(db, { ...senderDefaults(platform), name: record.title, emailSubject: record.subject, emailBody: record.html }, operatorId,
     draft => [db.insert(moveInContent).values({ ...row(archiveId, record, at), campaignId: draft.campaignId, revisionId: draft.revisionId, revisionUpdatedAt: draft.createdAt.getTime() })], {publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
+  } catch (error) {
+    if (!(error instanceof EmailTooLargeError)) throw error;
+    // A held conversion is source custody, never a campaign revision. The
+    // ordinary content row lets continuation, reconciliation and undo finish.
+    await db.insert(moveInContent).values({...row(archiveId,record,at),outcome:`Held conversion: ${error.message} The original file is retained in this archive. Reduce it in the source file and import it again.`}).onConflictDoNothing();
+  }
 }
 
 /** Copy one imported history record into a new, ordinary draft. */
@@ -57,7 +64,7 @@ async function keptReason(db: D1Database, campaignId: string, revisionId: string
 /** Undo one content record. History is read-only, so it is always removed; a draft only when untouched. */
 export async function undoContent(db: D1Database, record: { id: string; kind: string; campaign_id: string | null; revision_id: string | null; revision_updated_at: number | null }) {
   const at = Date.now();
-  if (record.kind === 'history') {
+  if (record.kind === 'history' || !record.campaign_id) {
     await db.prepare("UPDATE move_in_content SET state='removed',outcome='Removed: unchanged since the import.',html='',text='',updated_at=? WHERE id=? AND state='imported'").bind(at, record.id).run();
     return;
   }

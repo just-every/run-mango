@@ -182,7 +182,7 @@ export function createArchiveService(platform: Platform) {
       return (await db.prepare('SELECT ordinal,path,size,compressed_size,sha256,part,disposition FROM move_in_archive_entries WHERE archive_id=? ORDER BY ordinal').bind(id).all()).results;
     },
     async content(id: string) {
-      return (await db.prepare('SELECT id,ordinal,kind,source_path,source_row,title,subject,sent_at_source,removed_json,flagged_json,merge_tags_json,campaign_id,state,outcome FROM move_in_content WHERE archive_id=? ORDER BY ordinal').bind(id).all()).results;
+      return (await db.prepare(`SELECT id,ordinal,kind,source_path,source_row,title,subject,sent_at_source,removed_json,flagged_json,merge_tags_json,campaign_id,CASE WHEN kind='draft' AND campaign_id IS NULL AND state='imported' AND outcome IS NOT NULL THEN 'held' ELSE state END AS state,outcome FROM move_in_content WHERE archive_id=? ORDER BY ordinal`).bind(id).all()).results;
     },
     summary: (archive: ArchiveRecord) => JSON.parse(archive.summary_json) as ArchiveSummary,
   };

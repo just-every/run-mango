@@ -21,7 +21,7 @@ export type ArchiveImport = {
   progress: { contentDone: number; contentTotal: number; audience: { state: string; checkpoint: number; total: number } | null };
 };
 export type ArchiveContentRow = { id: string; kind: 'history' | 'draft'; source_path: string; source_row: number | null; title: string; subject: string; sent_at_source: string;
-  removed_json: string; flagged_json: string; merge_tags_json: string; campaign_id: string | null; state: 'imported' | 'removed' | 'kept'; outcome: string | null };
+  removed_json: string; flagged_json: string; merge_tags_json: string; campaign_id: string | null; state: 'imported' | 'removed' | 'kept' | 'held'; outcome: string | null };
 export type ArchiveError = { error?: string; detail?: string; code?: string };
 
 export async function postArchive<T>(path: string, archive: File, consent: ImportConsent, fingerprint?: string) {

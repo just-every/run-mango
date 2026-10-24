@@ -1,3 +1,4 @@
+import {oversizedAdoption} from './email-size-adoption';
 import { exerciseCampaignReuse } from './reuse-journey';
 import { hydrated, openPage, reloadPage } from '../support/navigation';
 import { localSessionCookieName } from '../support/local-session';
@@ -180,6 +181,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await expect(page.getByRole('heading',{name:'Recorded suggestion',exact:true})).toBeVisible();
     const adoptedUrl=page.url();await openPage(page, runtime.url+'/app');await page.locator(`[data-proposal-id="${unlinked.id}"]`).click();await page.getByRole('button',{name:'Use this',exact:true}).click();await expect(page).toHaveURL(adoptedUrl);
     expect((await state()).jobs).toEqual([]);
+    await oversizedAdoption(page,runtime.url,unlinked.id,width,testInfo,runtime.sql);
 
   } finally {await runtime.close();}
 });

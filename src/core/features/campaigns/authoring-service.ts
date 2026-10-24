@@ -46,7 +46,7 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
       await repository.expireDue(new Date());
       return repository.transition(id,'dismissed',operatorId,reason,new Date());
     },
-    adopt: (id: string, operatorId: string) => adoptProposal(platform.database, id, operatorId, defaults()),
+    adopt: (id: string, operatorId: string) => adoptProposal(platform.database, id, operatorId, defaults(),{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true}),
     async audience(draft: {inclusionRuleJson:string; exclusionRulesJson:string; channels:('email'|'sms')[]; stepCounts?:{email:number;sms:number}}) {
       const unavailableCounts = {candidateCount:null, excludedCount:null, eligibleCount:null, channelCounts:null};
       const channels = [...new Set(draft.channels)];

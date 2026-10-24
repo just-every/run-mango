@@ -19,9 +19,9 @@ function ArchiveContent({ archive }: { archive: ArchiveImport }) {
   };
   const copy = async (id: string) => {
     setCopying(id); setError(undefined);
-    const response = await requestJson<{ campaignId?: string }>(`/api/imported-history/${encodeURIComponent(id)}/copy`, { method: 'POST' });
+    const response = await requestJson<{ campaignId?: string; detail?: string }>(`/api/imported-history/${encodeURIComponent(id)}/copy`, { method: 'POST' });
     setCopying(undefined);
-    if (response.status >= 300 || !response.data.campaignId) { setError('The draft could not be created.'); return; }
+    if (response.status >= 300 || !response.data.campaignId) { setError(response.data.detail ?? 'The draft could not be created.'); return; }
     await navigate({ to: '/app/campaigns/$id', params: { id: response.data.campaignId } });
   };
   if (!rows) return <button className="secondary-action" type="button" onClick={() => void load()}>Show imported history and drafts</button>;

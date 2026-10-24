@@ -14,10 +14,10 @@ function DuplicateCampaignContent({campaignId,disabled=false}:{campaignId:string
   const duplicate=async()=>{
     setBusy(true);setError('');
     try {
-      const response=await requestJson<{campaignId:string}>(`/api/campaigns/${campaignId}/duplicate`,{method:'POST'});
-      if(response.status!==201)throw new Error();
+      const response=await requestJson<{campaignId:string;detail?:string}>(`/api/campaigns/${campaignId}/duplicate`,{method:'POST'});
+      if(response.status!==201)throw new Error(response.data.detail ?? 'The copy could not be confirmed. Check campaign history before trying again.');
       await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId},reloadDocument:true});
-    } catch {setError('The copy could not be confirmed. Check campaign history before trying again.');setBusy(false);}
+    } catch(error) {setError(error instanceof Error?error.message:'The copy could not be confirmed. Check campaign history before trying again.');setBusy(false);}
   };
   return <div><button type="button" className="secondary-action" disabled={disabled||busy} onClick={()=>void duplicate()}>{busy?'Copying…':'Duplicate'}</button>{error?<p role="alert">{error}</p>:null}</div>;
 }
@@ -29,8 +29,8 @@ function SaveCampaignTemplateContent({revisionId,name,disabled}:{revisionId:stri
     setBusy(true);setNotice('');setFailed(false);
     try {
       const selected=library.data?.templates.find(item=>item.id===templateId);
-      const response=await requestJson<{kind:string}>('/api/campaign-templates',{method:'POST',body:JSON.stringify({revisionId,name:templateName,templateId:templateId||undefined,updatedAt:selected?.updatedAt?Date.parse(selected.updatedAt):undefined})});
-      if(response.status!==201)throw new Error(response.status===409?'This template changed. Reload the library before replacing it.':'Template could not be saved.');
+      const response=await requestJson<{kind:string;detail?:string}>('/api/campaign-templates',{method:'POST',body:JSON.stringify({revisionId,name:templateName,templateId:templateId||undefined,updatedAt:selected?.updatedAt?Date.parse(selected.updatedAt):undefined})});
+      if(response.status!==201)throw new Error(response.data.detail ?? (response.status===409?'This template changed. Reload the library before replacing it.':'Template could not be saved.'));
       setNotice('Template saved. Existing drafts and approved revisions keep their own content.');await library.reload();
     } catch(error) {setFailed(true);setNotice(error instanceof Error?error.message:'Template could not be saved.');}
     finally {setBusy(false);}
@@ -52,10 +52,10 @@ export function TemplateLibrary() {
   const start=async(id:string)=>{
     setBusy(id);setError('');
     try {
-      const response=await requestJson<{campaignId:string}>(`/api/campaign-templates/${encodeURIComponent(id)}/start`,{method:'POST'});
-      if(response.status!==201)throw new Error();
+      const response=await requestJson<{campaignId:string;detail?:string}>(`/api/campaign-templates/${encodeURIComponent(id)}/start`,{method:'POST'});
+      if(response.status!==201)throw new Error(response.data.detail ?? 'The draft could not be confirmed. Check campaign history before trying again.');
       await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId},reloadDocument:true});
-    } catch {setError('The draft could not be confirmed. Check campaign history before trying again.');setBusy('');}
+    } catch(error) {setError(error instanceof Error?error.message:'The draft could not be confirmed. Check campaign history before trying again.');setBusy('');}
   };
   return <section aria-labelledby="template-library-title" style={{borderTop:'1px solid #ead8ae',marginTop:24,paddingTop:24}}><h3 id="template-library-title">Template library</h3>
     <p>Choose a starting point, or edit a saved template in a new draft and save it back. Campaigns keep independent snapshots.</p>

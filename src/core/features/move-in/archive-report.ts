@@ -20,6 +20,7 @@ export async function archiveReport(db: D1Database, archive: ArchiveRecord, cont
     const stored = await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(archive.audience_plan).first<{ fingerprint: string; plan_json: string }>();
     if (stored) plan = await readAudiencePlan(db, stored); else planNote = 'The reviewed audience plan was withdrawn by a contact deletion, so row-level audience outcomes are no longer available.';
   }
+  const held = content.filter(item=>item.state==='held');
   const lines = [`# Move-in reconciliation: ${cell(archive.name)}`, '',
     `- Archive SHA-256: \`${archive.sha256}\` (${archive.size} bytes, ${summary.archive.entries} files)`,
     `- State: ${archive.state}; started ${time(archive.created_at)}${archive.applied_at ? `; imported ${time(archive.applied_at)}` : ''}${archive.undone_at ? `; undone ${time(archive.undone_at)}` : ''}`,
@@ -30,8 +31,8 @@ export async function archiveReport(db: D1Database, archive: ArchiveRecord, cont
         file.rows === file.created + file.updated + file.duplicatesWithin + file.duplicatesAcross + file.rejected + file.skipped ? 'yes' : 'NO',
         file.unknownConsent, file.outcomes.unsubscribed, file.outcomes.suppressed, file.outcomes.subscribed])),
     '', '## Emails and templates', '', 'Imported history and draft starters carry no schedule, approval or delivery authority, and no report figures.', '',
-    table(['File', 'Kind', 'Source rows', 'Created', 'Duplicates', 'Rejected', 'Skipped', 'Adds up'],
-      summary.content.map(file => [file.path, file.kind === 'emails' ? 'imported history' : 'draft starters', file.rows, file.created, file.duplicates, file.rejected, file.skipped,
+    table(['File', 'Kind', 'Source rows', 'Created', 'Held conversions', 'Duplicates', 'Rejected', 'Skipped', 'Adds up'],
+      summary.content.map(file => [file.path, file.kind === 'emails' ? 'imported history' : 'draft starters', file.rows, file.created - (file.kind==='templates'?held.length:0), file.kind==='templates'?held.length:0, file.duplicates, file.rejected, file.skipped,
         file.rows === file.created + file.duplicates + file.rejected + file.skipped ? 'yes' : 'NO'])),
     '', '## Kept as raw source, not imported', '', 'These stay in the archive Mango keeps; nothing in them becomes a contact, a send fact or a report figure.', '',
     table(['Kind', 'Files', 'Bytes'], summary.kept.map(kind => [kind.label, kind.files, kind.bytes])),

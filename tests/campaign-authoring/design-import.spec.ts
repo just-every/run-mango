@@ -60,6 +60,30 @@ for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as a
     await expect(dialog.getByRole('alert').first()).toContainText('HTTPS');
     expect(uploads).toEqual([]);
 
+    // A legal LayerDoc can compile beyond the delivery limit without any one
+    // text layer exceeding the input grammar's bound. Keep both selected files.
+    const tooLarge=JSON.parse(layerdoc);
+    const inflate=(nodes:any[])=>nodes.forEach(node=>{if(['text','heading','paragraph'].includes(node.kind))node.content='🌱'.repeat(1900);if(node.children)inflate(node.children);});
+    inflate(tooLarge.layers);
+    const oversizedDoc=JSON.stringify(tooLarge);
+    await files(page,oversizedDoc);
+    await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
+    await dialog.getByRole('button',{name:'Import design',exact:true}).click();
+    await page.getByRole('alertdialog',{name:'Replace the email body?'}).getByRole('button',{name:'Replace',exact:true}).click();
+    const sizeError=dialog.getByRole('alert');
+    await expect(sizeError).toContainText('Email is too large.');
+    await expect(sizeError).toContainText('Largest blocks:');
+    await expect(sizeError).toContainText('bytes');
+    expect(await dialog.getByLabel('LayerDoc',{exact:true}).evaluate(async element=>(element as HTMLInputElement).files![0].text())).toBe(oversizedDoc);
+    expect(await dialog.getByLabel('Design image',{exact:true}).evaluate(element=>(element as HTMLInputElement).files![0].size)).toBe(candidate.length);
+    expect((await read()).revision.emailBody).toBe(savedBody);
+    expect(saves).toEqual([]);
+    await sizeError.screenshot({path:testInfo.outputPath(`design-oversize-refused-${width}.png`)});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+    // Image custody can precede compilation; retain the original successful-import counts below.
+    expect(uploads).toHaveLength(4);
+    uploads.length=0;
+    await files(page,layerdoc);
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
     const confirm = page.getByRole('alertdialog', { name: 'Replace the email body?' });
     const summaries = page.locator('section.design-import-summary');
