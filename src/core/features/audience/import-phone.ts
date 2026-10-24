@@ -5,7 +5,7 @@ import { sha256, ulid } from '@/core/shared/ids';
 import { applyImportedChannel } from './import-channel';
 
 /** SMS evidence is deliberately read only from independently mapped SMS columns. */
-export async function addImportedPhone(state: ImportState, snapshot: AudienceSnapshot, before: AudienceSnapshot | undefined, row: NormalizedImportRow, salt: string, now: number, identity: string, id: string) {
+export async function addImportedPhone(state: ImportState, snapshot: AudienceSnapshot, before: AudienceSnapshot | undefined, row: NormalizedImportRow, salt: string, now: number, identity: string, id: string, preserveState = false) {
  const phone=row.phone, hash=await sha256(`${salt}:${phone}`), values=row.values;
  let address=snapshot.tables.contact_phones.find(item=>item.phone_e164===phone);
  if(!address){
@@ -19,7 +19,8 @@ export async function addImportedPhone(state: ImportState, snapshot: AudienceSna
   snapshot.tables.consent_evidence.push({id:evidenceId,contact_id:id,channel:'sms',destination:phone,brand_or_legal_sender:values.sms_brand,sms_program:values.sms_program,message_category:values.sms_category,frequency_disclosure:values.sms_frequency,destination_jurisdiction:values.sms_jurisdiction,capture_method:values.sms_capture_method,capture_source:values.sms_capture_source,consent_text:values.sms_consent_text,consent_version:values.sms_consent_version,occurred_at:occurred,confirmation_required:1,confirmed_at:confirmed,created_at:now,updated_at:now});
   snapshot.tables.consent_capture_metadata.push({id:evidenceId,contact_id:id,capture_ip:values.sms_capture_ip||null,confirmation_ip:values.sms_confirmation_ip||null,created_at:now,updated_at:now});
  }
- const result=applyImportedChannel(state,snapshot,before,'sms',phone,hash,row.smsStatus,Boolean(row.ledger),now,identity,id);
+ const previous=before?.tables.contact_phones.find(item=>item.phone_e164===phone);
+ const result=preserveState&&previous?{status:String(previous.channel_status),kept:undefined}:applyImportedChannel(state,snapshot,before,'sms',phone,hash,row.smsStatus,Boolean(row.ledger),now,identity,id);
  row.smsStatus=result.status;if(result.kept)row.warnings.push(`SMS: ${result.kept}`);
  if(!snapshot.tables.mango_audience_hashes.some(item=>item.id===`${address.id}_hash`))snapshot.tables.mango_audience_hashes.push({id:`${address.id}_hash`,contact_id:id,channel:'sms',destination_hash:hash,owned_opt_out_id:null,owned_suppression_ids:'[]'});
 }
