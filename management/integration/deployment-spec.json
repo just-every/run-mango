@@ -596,6 +596,24 @@
       "name": "core-0097_sending_connection.sql",
       "sha256": "bf83e550874bf173e8e45c31d126144efc5adb8df3f8932866fdf6437c88be5a",
       "sql": "-- Installation authority never travels in an audience export or restored archive.\nCREATE TABLE sending_proposals (\n id TEXT PRIMARY KEY, operator_id TEXT NOT NULL, secret_cipher TEXT NOT NULL,\n account_id TEXT NOT NULL, account_name TEXT NOT NULL, broader INTEGER NOT NULL,\n created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL\n);\nCREATE TABLE sending_connection (\n id INTEGER PRIMARY KEY CHECK(id=1), generation TEXT NOT NULL,\n state TEXT NOT NULL, account_id TEXT NOT NULL, account_name TEXT NOT NULL,\n secret_cipher TEXT NOT NULL, last_four TEXT NOT NULL, broader INTEGER NOT NULL,\n connected_by TEXT NOT NULL, connected_at INTEGER NOT NULL,\n webhook_id TEXT, delivery_proved_at INTEGER, last_error TEXT\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0098_incumbent_attestations.sql",
+      "sha256": "7839af769e74f81c8d0416194b91892d0c8be9d6fcd4315254d785e2d0d52608",
+      "sql": "CREATE TABLE consent_attestations (\n id TEXT PRIMARY KEY, archive_id TEXT NOT NULL, source_identifier TEXT NOT NULL,\n source_key TEXT NOT NULL, source_name TEXT NOT NULL, source_created_at INTEGER, operator_id TEXT NOT NULL,\n operator_role TEXT NOT NULL, session_ip TEXT NOT NULL, user_agent TEXT NOT NULL,\n wording_version TEXT NOT NULL, wording_json TEXT NOT NULL, wording_hash TEXT NOT NULL,\n answers_json TEXT NOT NULL, scope_json TEXT NOT NULL, covered_rows INTEGER NOT NULL,\n created_at INTEGER NOT NULL, revoked_at INTEGER, revoked_by TEXT, retain_until INTEGER\n);\nCREATE TABLE incumbent_consent_links (\n id TEXT PRIMARY KEY, contact_id TEXT NOT NULL, attestation_id TEXT NOT NULL,\n evidence_at INTEGER NOT NULL, time_quality TEXT NOT NULL, source_facts_json TEXT NOT NULL\n);\nCREATE INDEX incumbent_consent_attestation ON incumbent_consent_links(attestation_id,contact_id);\nALTER TABLE move_in_archives ADD COLUMN attestations_json TEXT NOT NULL DEFAULT '[]';\nCREATE TRIGGER consent_attestation_audience_generation AFTER UPDATE OF revoked_at ON consent_attestations BEGIN\n UPDATE audience_source_authority SET generation=generation+1 WHERE id=1;\nEND;\n-- A reviewed import cannot restore subscription from authority revoked while\n-- its native stream was paused. Historical evidence may remain non-subscribed.\nCREATE TRIGGER incumbent_consent_active_write BEFORE INSERT ON incumbent_consent_links\nWHEN NOT EXISTS(SELECT 1 FROM consent_attestations a WHERE a.id=NEW.attestation_id AND a.revoked_at IS NULL)\n AND EXISTS(SELECT 1 FROM contacts c WHERE c.id=NEW.contact_id AND c.email_status='subscribed')\n AND NOT EXISTS(SELECT 1 FROM consent_evidence e WHERE e.contact_id=NEW.contact_id AND e.channel='email' AND e.confirmed_at IS NOT NULL)\nBEGIN SELECT RAISE(ABORT,'incumbent attestation is revoked or missing'); END;\nCREATE TRIGGER incumbent_consent_growth AFTER INSERT ON incumbent_consent_links BEGIN\n UPDATE list_growth_events SET kind='incumbent-held' WHERE kind='capture'\n AND id IN (SELECT event_id FROM list_growth_attribution WHERE evidence_id=NEW.id);\n UPDATE list_growth_attribution SET evidence_id=NEW.id WHERE contact_id=NEW.contact_id AND evidence_id IS NULL\n AND event_id=(SELECT max(a.event_id) FROM list_growth_attribution a JOIN list_growth_events e ON e.id=a.event_id WHERE a.contact_id=NEW.contact_id AND e.channel='email' AND e.delta=1);\nEND;\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0099_flow_draft_revisions.sql",
+      "sha256": "cdfa1ef25f2afc82fa3f2a49a107c3a91fb6293e482acc1fc428993381ebb236",
+      "sql": "-- Inert visual flow revisions. They grant no enrolment or delivery authority.\nCREATE TABLE flow_draft_revisions (\n  id TEXT PRIMARY KEY,\n  name TEXT NOT NULL,\n  graph_json TEXT NOT NULL CHECK(json_valid(graph_json)),\n  created_by TEXT NOT NULL,\n  created_at INTEGER NOT NULL\n);\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0100_incumbent_review_counts.sql",
+      "sha256": "659a6a1c73a292cb6fc96087c6f031331cf4d7635b119f6f72cf8a997d0fa211",
+      "sql": "-- Historical reviews do not assert a count that was never calculated.\nALTER TABLE campaign_audiences ADD COLUMN incumbent_held_count INTEGER;\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
