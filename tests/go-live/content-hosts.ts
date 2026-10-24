@@ -97,14 +97,19 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await json(await site.call(`/api/campaign-revisions/${evil.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:'<p><a href="https://myshop.com/offer">Bare shop</a></p>'}}),200);
   const bare = await json(await site.call(`/api/campaigns/${evil.campaignId}/approve`,{method:'POST',cookie:manager,body:{revisionId:evil.revisionId,idempotencyKey:'bare-domain-blocked'}}),409);
   expect(JSON.stringify(bare.blockers)).toContain('myshop.com');
-  // A real Mailchimp-shaped archive creates the draft starter; no handcrafted campaign substitutes for the import.
+  // A real Mailchimp-shaped archive files a library template; its public start door creates the draft.
   const hosts = ['partners.garden.example','workshops.market.example','seeds.community.example'];
   const html = `<html><head><title>Community garden partners</title></head><body><h2>Meet our garden partners</h2>${hosts.map((host,index)=>`<p><a href="https://${host}/visit">Garden partner ${index+1}</a></p>`).join('')}</body></html>`;
-  await importArchive(site,owner,zip([{name:'templates/Community partners.html',data:html}]));
-  const [imported] = await site.rows("SELECT campaign_id,revision_id FROM move_in_content WHERE title='Community garden partners'");
+  const moved=await importArchive(site,owner,zip([{name:'templates/Community partners.html',data:html}]));
+  const archive=await json(await site.call(`/api/audience/archives/${moved.archive.id}`,{cookie:owner}),200);
+  const imported=archive.content.find((row:any)=>row.title==='Community garden partners');
+  expect(imported.campaign_id).toBeNull();
+  const library=await json(await site.call('/api/campaign-templates',{cookie:manager}),200);
+  expect(library.templates).toContainEqual(expect.objectContaining({id:imported.id,name:'Community garden partners',kind:'saved'}));
+  const draft=await json(await site.call(`/api/campaign-templates/${imported.id}/start`,{method:'POST',cookie:manager}),201);
   await page.context().clearCookies();
   await page.context().addCookies([{name:manager.split('=')[0],value:manager.split('=')[1],url:site.runtime.url}]);
-  await openPage(page,`${site.runtime.url}/app/campaigns/${imported.campaign_id}/review`);
+  await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);
   for (const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});
     for (const [index,host] of hosts.entries()) {
