@@ -66,6 +66,10 @@
     "BUILD-002": {
       "change": "changed",
       "summary": "Status stays partial. Archive templates enter the library with untouched-only undo; the first save of an imported or generated design files an independent template. Existing archive draft custody retains its undo path. No migration is needed."
+    },
+    "DELIV-008": {
+      "change": "changed",
+      "summary": "Status stays partial. Carry the SendGrid Settings connection and signed webhook flow with a completed Activity receipt, Owner-only mutations and named Admin refusals. Migration 0097 is additive; existing developer inputs remain until a Settings connection is made. Resend, fresh Free/Assisted sign-in, alerts, full developer labeling, domain creation and provider sandbox proof remain open."
     }
   },
   "extensionPointChanges": [],
