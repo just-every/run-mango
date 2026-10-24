@@ -17,7 +17,7 @@ export async function native(legacy = false) {
       manifest:{mainModule:'index.js',modules:{'index.js':{type:'esm',contents:'export default {fetch(){return new Response("native D1")}}'}}},
       env:{DB:{type:'d1',id:crypto.randomUUID()},ASSETS_BUCKET:{type:'r2',name:crypto.randomUUID()}}}}]});
   const db = await worker.getD1Database('DB') as D1Database;
-  await migrate(db, 0, legacy ? 12 : 99);
+  await migrate(db, 0, legacy ? 12 : undefined);
   const f = composeFixture(db);
   const bucket=await worker.getR2Bucket('ASSETS_BUCKET') as R2Bucket;f.bindings.ASSETS_BUCKET=bucket;f.platform.blobs=createBlobStore(bucket);
   return {f, upgrade:()=>migrate(db,13), async dispose(){await f.dispose();await worker.dispose();await rm(path,{recursive:true,force:true});}};

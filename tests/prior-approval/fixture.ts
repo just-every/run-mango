@@ -8,7 +8,7 @@ export {draft} from './historical-draft';
 export {legacyApproval, approvalBytes, recipientBytesAfterAuthorityMigration} from './legacy';
 const require = createRequire(import.meta.url);
 const {Miniflare} = createRequire(require.resolve('wrangler/package.json'))('miniflare');
-export async function migrate(db: D1Database, from = 0, until = 99) {
+export async function migrate(db: D1Database, from = 0, until = Number.POSITIVE_INFINITY) {
   for (const file of (await readdir('migrations/core')).filter(file => file.endsWith('.sql')).sort()) {
     const number = Number(file.slice(0,4));
     if (number < from || number > until) continue;
@@ -23,7 +23,7 @@ export async function fixture(legacy = true) {
       env:{DB:{type:'d1',id:'prior-approval'}}}}]};
   let worker = new Miniflare(options);
   let db = await worker.getD1Database('DB') as D1Database;
-  await migrate(db,0,legacy ? 12 : 99);
+  await migrate(db,0,legacy ? 12 : undefined);
   let runtime = composeFixture(db);
   return {get current(){return runtime;},
     async upgrade(){await migrate(db,13);},
