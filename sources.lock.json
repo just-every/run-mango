@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "969a2e4f0908d0d46a8c5034143b72edfb4cc0724d82a9d1a00ad6f5f875883c",
+      "sha256": "c2e74fbc4662a4a688abea3a2d0427daa12633fa8b39e8a8679b06c42b323fb4",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "912b1ea3aa45c8200e7e32291f544c41f323a80cd59af5514f39b8ea1124b945",
+      "sha256": "f882de688df7e885546cf3b795a97c288caaf0c091fca538facb33dd9c026d28",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -7658,7 +7658,7 @@
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "4ec182c05fb1558d03e2e0e60c45e5ee52b180c36c85c606053f0ae77ac60a01",
+      "sha256": "febfd9355e35b44169e04687757557c9c9c40f07ac16a9e41adbbcc30b21e447",
       "executable": false
     },
     "tests/go-live/content-links.ts": {
@@ -7830,7 +7830,7 @@
       "executable": false
     },
     "tests/go-live/saved-report-journey.ts": {
-      "sha256": "e8a483ff72cbfe174122051b5aad61a41934ce44e7b2c375302f158ee2f690cc",
+      "sha256": "92b4d5be6b5d45ebbbc3d6af213c65d78e96b0d1bfb4ea9cc002c6a7cecf7fb2",
       "executable": false
     },
     "tests/go-live/scheduler.journeys.ts": {
