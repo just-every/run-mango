@@ -590,6 +590,12 @@
       "name": "core-0096_review_loyalty_adapters.sql",
       "sha256": "9bc5eba6e6ed737654e1e4f326652b0050ea4579a0e073a1c1767eae13f79e80",
       "sql": "-- Encrypted inbound-only connection authority is excluded from account exports.\n-- Receipt identifiers/digests contain no address, payload or contact link.\nCREATE TABLE review_loyalty_connections (\n app TEXT PRIMARY KEY NOT NULL CHECK(app IN ('judgeme','okendo','smile')),\n account_id TEXT NOT NULL, secret_cipher TEXT NOT NULL,\n credential_id TEXT NOT NULL REFERENCES integration_credentials(id),\n connected_by TEXT NOT NULL, connected_at INTEGER NOT NULL,\n unmatched_count INTEGER NOT NULL DEFAULT 0\n);\nCREATE TABLE review_loyalty_receipts (\n id TEXT PRIMARY KEY NOT NULL, app TEXT NOT NULL, attempt_id TEXT NOT NULL,\n payload_digest TEXT NOT NULL, received_at INTEGER NOT NULL\n);\nCREATE TRIGGER review_loyalty_connections_erasure_insert BEFORE INSERT ON review_loyalty_connections\nWHEN EXISTS(SELECT 1 FROM audience_erasures WHERE state='pending') AND NOT EXISTS(SELECT 1 FROM audience_erasure_guard WHERE value=1)\nBEGIN SELECT RAISE(ABORT,'CONTACT_ERASURE_PENDING'); END;\nCREATE TRIGGER review_loyalty_receipts_erasure_insert BEFORE INSERT ON review_loyalty_receipts\nWHEN EXISTS(SELECT 1 FROM audience_erasures WHERE state='pending') AND NOT EXISTS(SELECT 1 FROM audience_erasure_guard WHERE value=1)\nBEGIN SELECT RAISE(ABORT,'CONTACT_ERASURE_PENDING'); END;\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0097_sending_connection.sql",
+      "sha256": "bf83e550874bf173e8e45c31d126144efc5adb8df3f8932866fdf6437c88be5a",
+      "sql": "-- Installation authority never travels in an audience export or restored archive.\nCREATE TABLE sending_proposals (\n id TEXT PRIMARY KEY, operator_id TEXT NOT NULL, secret_cipher TEXT NOT NULL,\n account_id TEXT NOT NULL, account_name TEXT NOT NULL, broader INTEGER NOT NULL,\n created_at INTEGER NOT NULL, expires_at INTEGER NOT NULL\n);\nCREATE TABLE sending_connection (\n id INTEGER PRIMARY KEY CHECK(id=1), generation TEXT NOT NULL,\n state TEXT NOT NULL, account_id TEXT NOT NULL, account_name TEXT NOT NULL,\n secret_cipher TEXT NOT NULL, last_four TEXT NOT NULL, broader INTEGER NOT NULL,\n connected_by TEXT NOT NULL, connected_at INTEGER NOT NULL,\n webhook_id TEXT, delivery_proved_at INTEGER, last_error TEXT\n);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",
