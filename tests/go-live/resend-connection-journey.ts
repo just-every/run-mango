@@ -16,6 +16,7 @@ export async function resendConnectionJourney(site:Installation,edge:Awaited<Ret
     await site.open('synthetic-mango-132@example.test','synthetic-mango-132');await json(await site.call('/api/operators/synthetic-mango-132/role',{method:'PUT',cookie:owner,body:{role:'author'}}),200);
     const prepare=()=>site.call('/api/settings/sending/review',{method:'POST',cookie:owner,body:{provider:'resend',apiKey:key}});
     state.fullAccess=false;expect((await json(await prepare(),422)).missing).toContain('Full access API key: webhook management');expect(state.mutations).toEqual([]);state.fullAccess=true;
+    const unauthorized=await json(await prepare(),200);await json(await site.call('/api/settings/sending/connect',{method:'POST',cookie:admin,body:{proposalId:unauthorized.proposalId}}),403);await json(await site.call('/api/settings/sending',{method:'DELETE',cookie:admin}),403);expect(state.mutations).toEqual([]);
     await page.context().clearCookies();await page.context().addCookies([{name:owner.split('=')[0],value:owner.split('=')[1],url:site.runtime.url}]);
     await openPage(page,site.runtime.url+'/app/settings');await page.getByRole('combobox',{name:'Sending provider',exact:true}).selectOption('resend');await page.getByLabel('Resend API key',{exact:true}).fill(key);await page.getByRole('button',{name:'Review Resend key',exact:true}).click();
     const panel=page.locator('#sending');await expect(panel.getByRole('group',{name:'Review Resend connection'})).toContainText('/webhooks/mail/resend');expect(state.mutations).toEqual([]);
@@ -37,11 +38,12 @@ export async function resendConnectionJourney(site:Installation,edge:Awaited<Ret
     const delivered=JSON.stringify({type:'email.delivered',data:{email_id:ownerCheck!.messageId,to:['owner@example.test']}}),deliveryId='synthetic-mango-130-delivered',deliveryTimestamp=String(Math.floor((await site.control('/_golive/clock')).now/1000)),deliverySignature=createHmac('sha256',Buffer.from(resendWebhookSecret.slice(6),'base64')).update(deliveryId+'.'+deliveryTimestamp+'.'+delivered).digest('base64');
     expect((await site.call('/webhooks/mail/resend',{method:'POST',raw:delivered,headers:{'svix-id':deliveryId,'svix-timestamp':deliveryTimestamp,'svix-signature':'v1,'+deliverySignature}})).status).toBe(204);
     expect((await json(await site.call('/api/settings/sending',{cookie:owner}),200)).connection.deliveryEventsVerified).toBe(true);
-    const campaign=await draftCampaign(site,owner,'Synthetic Resend health',[],new Date(Date.now()+3600000));
+    const campaign=await draftCampaign(site,owner,'Synthetic Resend health',['synthetic-mango-133@example.test'],new Date(Date.now()+3600000));
     for(const failure of [401,403,404]){
       state.readStatus=failure;await site.control('/_golive/clock',{advanceMs:300001});
       const reason=failure===404?'delivery-webhook-missing':'sending-key-revoked';
       const checks=await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId}}),200);expect(JSON.stringify(checks)).toContain(reason);
+      const blocked=await json(await site.call(`/api/campaigns/${campaign.campaignId}/approve`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId,idempotencyKey:'synthetic-mango-133-'+failure}}),409);expect(JSON.stringify(blocked)).toContain(reason);
       const status=await json(await site.call('/api/settings/sending',{cookie:owner}),200);expect(status.connection.error).toBe(reason);
       await openPage(page,site.runtime.url+'/app');await expect(page.getByRole('alert',{name:'Sending connection',exact:true})).toContainText(reason);
       for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document.querySelector('main'),{iframes:false}));expect(audit.violations.filter((v:any)=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.screenshot({path:info.outputPath(`sending-alert-${failure}-${width}.png`),fullPage:true});}
