@@ -1,3 +1,4 @@
+import {installation} from './support';
 import {incumbentJourney} from './incumbent-journey';
 import {setArchiveAttestations} from './support';
 import { openPage } from '../support/navigation';
@@ -6,7 +7,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { providerEdge } from '../go-live/edge';
 import { eventSigner } from '../go-live/sendgrid-events';
-import { installation, json, sender, confirmedContact, draftCampaign, approve, dispatch, type Installation } from '../go-live/harness';
+import { json, sender, confirmedContact, draftCampaign, approve, dispatch, type Installation } from '../go-live/harness';
 import { accountExport } from './archive';
 import { archiveRecords } from '../portability/flows';
 import { consentEvidence, drive, importArchive, postArchive, record, screenshotPath, tableCounts } from './support';

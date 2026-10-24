@@ -1,8 +1,9 @@
+import {installation} from './support';
 import { expect, test } from '@playwright/test';
 import { randomBytes } from 'node:crypto';
 import { providerEdge } from '../go-live/edge';
 import { eventSigner } from '../go-live/sendgrid-events';
-import { installation } from '../go-live/harness';
+
 import { accountExport, zip } from './archive';
 import {openPage} from '../support/navigation';
 import { postArchive, record, tableCounts, screenshotPath } from './support';

@@ -1,9 +1,10 @@
 import {expectCampaignAxe} from '../newsletter-ui/campaign-axe';
+import {installation} from './support';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import type {providerEdge} from '../go-live/edge';
 import type {eventSigner} from '../go-live/sendgrid-events';
-import {installation,json,sender,draftCampaign} from '../go-live/harness';
+import {json,sender,draftCampaign} from '../go-live/harness';
 import {archiveRecords,stageArchive} from '../portability/flows';
 import {zip} from './archive';
 import {postArchive,drive,consentEvidence} from './support';

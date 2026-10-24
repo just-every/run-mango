@@ -3,7 +3,10 @@ import type {AttestationInput} from '../../src/core/features/move-in/incumbent-p
 import { expect } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { Installation } from '../go-live/harness';
+import { installation as nativeInstallation, type Installation } from '../go-live/harness';
+
+/** Isolated native copies of an empty migrated database save repeated schema startup. */
+export const installation: typeof nativeInstallation = (edge, signer, options = {}) => nativeInstallation(edge, signer, {...options, reuseEmptySchema:true});
 
 export const consentEvidence = { brandOrLegalSender: 'Mango Garden', messageCategory: 'newsletter', frequencyDisclosure: 'Monthly',
   destinationJurisdiction: 'AU', consentText: 'Send me the Mango Garden letter once a month.', consentVersion: 'garden-2026' };

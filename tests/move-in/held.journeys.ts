@@ -1,7 +1,8 @@
+import {installation} from './support';
 import { expect, test } from '@playwright/test';
 import { providerEdge } from '../go-live/edge';
 import { eventSigner } from '../go-live/sendgrid-events';
-import { approve, confirmedContact, dispatch, draftCampaign, installation, json, sender, type Installation } from '../go-live/harness';
+import { approve, confirmedContact, dispatch, draftCampaign, json, sender, type Installation } from '../go-live/harness';
 import { zip } from './archive';
 import { consentEvidence, drive, importArchive, postArchive, record } from './support';
 

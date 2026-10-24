@@ -1,5 +1,12 @@
-import { mkdir, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, writeFile, rm, cp } from 'node:fs/promises';
 import { once } from 'node:events';
+import { rmSync } from 'node:fs';
+
+// Only empty, fully migrated native fixtures are reused. Every caller gets its own
+// copied state before the worker boots; no sessions or application writes are shared.
+const emptySchemas = new Map();
+const schemaDirectories = new Set();
+process.once('exit', () => { for (const directory of schemaDirectories) rmSync(directory, {recursive:true, force:true}); });
 import { basename, join } from 'node:path';
 import { freePort } from '../support/free-port.mjs';
 import { scratchDirectory } from '../support/artifacts.mjs';
@@ -15,6 +22,7 @@ export async function authoringRuntime({
   stateDirectory,
   parallelQueue = false,
   queueConsumers,
+  reuseEmptySchema = false,
 } = {}) {
   const scratch = scratchDirectory(suite);
   await mkdir(scratch, { recursive: true });
@@ -55,7 +63,22 @@ max_retries = 5
     await writeFile(config, `${template}\n${concurrentQueue}\n[vars]\nLOCAL_BOOTSTRAP_TOKEN = ${JSON.stringify(token)}\n${extra}`, { mode: 0o600 });
     commands = await createCommands(directory, { logs: [] }, { terminal: text => { logs += text; } });
     commands.addSecrets([token]);
-    await commands.run('Migrating authoring fixture', 'pnpm', ['exec', 'wrangler', 'd1', 'migrations', 'apply', 'mango-local', '--local', '--config', config, '--persist-to', state], options);
+    const migrate = () => commands.run('Migrating authoring fixture', 'pnpm', ['exec', 'wrangler', 'd1', 'migrations', 'apply', 'mango-local', '--local', '--config', config, '--persist-to', state], options);
+    if (reuseEmptySchema && !stateDirectory) {
+      const key = process.cwd();
+      let schema = emptySchemas.get(key);
+      if (!schema) {
+        schema = (async () => {
+          await migrate();
+          const directory = await mkdtemp(join(scratch, 'empty-schema-'));
+          schemaDirectories.add(directory);
+          await cp(state, join(directory, 'state'), {recursive:true});
+          return join(directory, 'state');
+        })();
+        emptySchemas.set(key, schema);
+        await schema;
+      } else await cp(await schema, state, {recursive:true});
+    } else await migrate();
     const dev = commands.spawn('Starting authoring fixture', 'pnpm', ['exec', 'vite', 'dev', '--port', String(port), '--strictPort'], options);
     const sql = async command => {
       if (closing) throw new Error('Authoring fixture SQL failed: runtime is closing.');
