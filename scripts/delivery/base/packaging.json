@@ -119,7 +119,8 @@
       "recovery": "Preserve source, applied migration history and matching CONTACT_HASH_SALT and session authority. Restore D1 and R2 into empty resources and compare exports before routing traffic.",
       "mail": {
         "providers": [
-          "rer"
+          "sendgrid",
+          "resend"
         ]
       }
     }

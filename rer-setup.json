@@ -184,7 +184,7 @@
       "label": "Allowed newsletter link hosts",
       "kind": "text",
       "required": false,
-      "help": "Defaults to this app’s own host. Change it later in Mango Settings, or enter comma-separated host names such as shop.example.com.",
+      "help": "Defaults to this app\u2019s own host. Change it later in Mango Settings, or enter comma-separated host names such as shop.example.com.",
       "group": "mail"
     },
     {
@@ -290,6 +290,24 @@
         }
       ],
       "group": "marketing-mail"
+    },
+    {
+      "name": "MAIL_AUTH_FROM",
+      "label": "Legacy sign-in sender email",
+      "help": "Optional compatibility input for existing direct-provider installations. Prefer Sign-in sender email for new installations.",
+      "kind": "email",
+      "required": false,
+      "group": "mail"
+    },
+    {
+      "name": "MAIL_PROVIDER_API_KEY",
+      "label": "Legacy mail provider API key",
+      "help": "Optional compatibility input for existing SendGrid or Resend installations. Prefer Mail provider API key for new installations.",
+      "kind": "secret",
+      "required": false,
+      "ownerVisible": true,
+      "input": "entered",
+      "group": "mail"
     }
   ],
   "steps": [
