@@ -9,12 +9,14 @@ import {authoredBody} from '../../src/core/features/campaigns/authoring-content'
 import {parseEmailHtml} from '../../src/core/features/campaigns/email-html-parse';
 export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:string;token:string}){
     console.log('Block proof: open');
+    page.on('requestfailed',request=>{if(new URL(request.url()).pathname.startsWith('/media/'))console.log('Image network failure: '+request.failure()?.errorText);});
+    page.on('console',message=>{if(message.type()==='error'&&/Content Security Policy|CORS|media\//.test(message.text()))console.log('Image browser diagnostic: '+message.text());});
     const headers={Origin:runtime.url,'X-Mango-Authoring-Fixture':runtime.token,'X-Mango-Block-Fixture':'1'};
     await page.context().setExtraHTTPHeaders(headers);
     const open=await page.request.post(runtime.url+'/_authoring/open',{headers:{...headers,'X-Test-Token':runtime.token}});expect(open.status()).toBe(200);const {token}=await open.json();
     await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,url:runtime.url}]);
     const uploaded=await page.request.post(runtime.url+'/api/campaign-assets',{headers,multipart:{file:{name:'synthetic-mango-140.png',mimeType:'image/png',buffer:Buffer.from(png(200,160))}}});expect(uploaded.status()).toBe(201);const {asset}=await uploaded.json();expect(new URL(asset.url).protocol).toBe('https:');
-    await page.route(new URL(asset.url).origin+'/media/**',async route=>{const response=await page.request.get(runtime.url+new URL(route.request().url()).pathname,{headers});expect(response.status()).toBe(200);await route.fulfill({response});});
+    await page.route(new URL(asset.url).origin+'/media/**',async route=>{const response=await page.request.get(runtime.url+new URL(route.request().url()).pathname,{headers});expect(response.status()).toBe(200);console.log('Image edge: '+response.headers()['content-type']+' '+response.headers()['cross-origin-resource-policy']);await route.fulfill({response});});
     const create=await page.request.post(runtime.url+'/api/campaigns',{headers,data:{}});expect(create.status()).toBe(201);const {campaignId,revisionId}=await create.json();
     const configured=await page.request.patch(runtime.url+'/api/campaign-revisions/'+revisionId,{headers,data:{name:'Synthetic block letter',emailSubject:'Garden seeds',preheader:'From our garden',emailBody:'',steps:[{channel:'email',timezone:'Australia/Brisbane',scheduledAt:'2031-06-07T00:00:00.000Z',sendByAt:'2031-06-07T13:59:00.000Z',whyThisTime:'Operator selected'}]}});expect(configured.status()).toBe(200);
     await page.setViewportSize({width:1440,height:1000});await openPage(page,`${runtime.url}/app/campaigns/${campaignId}/review`);

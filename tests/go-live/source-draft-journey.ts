@@ -29,6 +29,7 @@ export async function sourceDraftJourney(site:Installation,page:Page,info:TestIn
   const draft=flows.revisions.find((row:any)=>row.name===name);expect(draft).toBeTruthy();
   expect(draft.graph.nodes.some((node:any)=>node.label.includes('Unavailable'))).toBe(true);
   if(provider==='klaviyo')expect(JSON.stringify(draft.graph)).toContain('send-sms');
+  expect(await site.count('woocommerce_flow_enrollments')).toBe(0);expect(await site.count('recipient_steps')).toBe(0);
   console.log(provider+': draft UI');
   page.once('pageerror',error=>console.log('Draft UI error: '+error.message));
   await openPage(page,site.runtime.url+'/app/flows');
