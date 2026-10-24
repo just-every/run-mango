@@ -50,5 +50,32 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     const product=await page.getByRole('heading',{name:'Garden seeds',exact:true}).boundingBox(),button=await page.getByRole('link',{name:'Explore the garden',exact:true}).boundingBox();expect(product).toBeTruthy();expect(button).toBeTruthy();expect(button!.y).toBeGreaterThan(product!.y);await page.screenshot({path:info.outputPath('block-email-375.png'),fullPage:true});
     console.log('Block proof: approve');
     const approval=await page.request.post(`${runtime.url}/api/campaigns/${campaignId}/approve`,{headers,data:{revisionId,idempotencyKey:'synthetic-mango-140'}});expect(approval.status(),await approval.text()).toBe(200);expect((await read()).emailBody).toBe(saved.emailBody);
+    await blockMobileControlsJourney(page,info,runtime,headers);
     return {revisionId,headers};
+}
+
+async function blockMobileControlsJourney(page:Page,info:TestInfo,runtime:{url:string;token:string},headers:Record<string,string>){
+  const origin=runtime.url,request=page.request;
+  const created=await request.post(origin+'/api/campaigns',{headers,data:{}});expect(created.status()).toBe(201);
+  const {campaignId,revisionId}=await created.json();
+  const read=async()=>(await (await request.get(`${origin}/api/campaigns/${campaignId}`,{headers})).json()).revision;
+  const column=(text:string)=>`<table role="presentation" align="left" width="280" cellpadding="0" cellspacing="0" border="0" style="width:280px;max-width:100%"><tr><td><p>${text}</p></td></tr></table>`;
+  const emailBody=`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>${column('Left column')}${column('Right column')}</td></tr></table><p>Hidden on mobile</p><p>Mobile font example</p><p>Hidden on desktop</p>`;
+  const saved=await request.patch(`${origin}/api/campaign-revisions/${revisionId}`,{headers,data:{emailBody,emailSubject:'Responsive garden letter',name:'Responsive garden letter',emailMobile:[{block:1,hideOnMobile:true},{block:2,fontSize:24,lineHeight:1.5,padding:12,alignment:'center'},{block:3,hideOnDesktop:true}]}});
+  expect(saved.status(),await saved.text()).toBe(200);
+  for(const width of [1440,390]){
+    await page.setViewportSize({width,height:1000});await openPage(page,`${origin}/app/campaigns/${campaignId}/review`);
+    await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 3: text',exact:true}).click();
+    await page.getByLabel('Hide on mobile',{exact:true}).check();await page.getByLabel('Hide on mobile',{exact:true}).uncheck();
+    await page.getByLabel('Hide on desktop',{exact:true}).check();await page.getByLabel('Hide on desktop',{exact:true}).uncheck();
+    await page.getByLabel('Mobile font size',{exact:true}).fill('26');await page.getByLabel('Mobile line height',{exact:true}).fill('1.6');await page.getByLabel('Mobile padding',{exact:true}).fill('14');await page.getByRole('combobox',{name:'Mobile alignment',exact:true}).selectOption('right');
+    await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+    const updated=await read();expect(updated.emailBody).toContain('font-size: 26px !important');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
+    await page.evaluate(axeSource);const shell=await page.evaluate(async()=>(window as any).axe.run(document,{iframes:false}));expect(shell.violations.filter((row:any)=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
+    await page.screenshot({path:info.outputPath(`mobile-block-controls-${width}.png`),fullPage:true});
+  }
+  const controlled=await read();await page.setViewportSize({width:375,height:1000});await page.setContent(controlled.emailBody);
+  const computed=await page.getByText('Mobile font example',{exact:true}).evaluate(node=>{const s=getComputedStyle(node);return {font:s.fontSize,line:s.lineHeight,padding:s.padding,text:s.textAlign};});
+  expect(computed).toEqual({font:'26px',line:'41.6px',padding:'14px',text:'right'});
 }
