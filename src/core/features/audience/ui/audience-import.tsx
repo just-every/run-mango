@@ -34,7 +34,7 @@ const maxImportBytes = 10_000_000;
 type ImportPayload = {
   files: Array<{ name: string; csv: string; preset: string; mapping?: Record<string, string> }>;
   consent: ImportConsent;
-  attestations:AttestationInput[];
+  attestations?:AttestationInput[];
   sourceExtras?:SourceExtras;
 };
 
@@ -158,7 +158,7 @@ export function AudienceImportPage() {
         ...(Object.keys(mapping).length ? { mapping } : {}),
       };
     }));
-    return { files: requestFiles, consent,attestations,sourceExtras };
+    return { files: requestFiles, consent,...(attestations.length?{attestations}:{}),...(sourceExtras?{sourceExtras}:{}) };
   };
 
   const review = async () => {

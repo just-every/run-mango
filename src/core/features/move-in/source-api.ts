@@ -16,6 +16,7 @@ export async function readSourceExport(provider:'activecampaign'|'klaviyo',endpo
     if(url.origin!==origin||!url.pathname.startsWith(prefix)||url.username||url.password)throw new Error('Source pagination left the declared API.');
     return record(await boundedJson(url.toString(),provider==='activecampaign'?{'Api-Token':key}:{Authorization:'Klaviyo-API-Key '+key,revision:'2025-01-15',accept:'application/json'},{maxBytes:2_000_000,deadlineMs:10000}));
   };
+  const deliver=(value:SourceExport)=>{if(JSON.stringify(value).includes(key))throw new Error('Source reflected the credential.');return value;};
   const extras:SourceExtras={notes:[],templates:[],segments:[],history:[]};
   if(provider==='activecampaign'){
     const collection=async(name:string)=>{const all:Record<string,any>[]=[];for(let page=0;page<50;page++){
@@ -34,7 +35,7 @@ export async function readSourceExport(provider:'activecampaign'|'klaviyo',endpo
       const properties=Object.fromEntries(values.filter(v=>String(v.contact)===String(contact.id)).map(v=>[String(fields.find(f=>String(f.id)===String(v.field))?.title??('Source field '+v.field)),v.value]));
       return [contact.email,status,contact.firstName??'',contact.lastName??'',contact.udate??'',JSON.stringify(properties),JSON.stringify(contactTags.filter(t=>String(t.contact)===String(contact.id)).map(t=>String(tags.find(tag=>String(tag.id)===String(t.tag))?.tag??t.tag))),JSON.stringify(links.map(m=>String(lists.find(l=>String(l.id)===String(m.list))?.name??m.list)))];
     });
-    return {files:[{name:'activecampaign-export.csv',preset:provider,csv:encodeCsv([['email','status','first name','last name','updated_at','properties','tags','lists'],...rows])}],sourceExtras:extras};
+    return deliver({files:[{name:'activecampaign-export.csv',preset:provider,csv:encodeCsv([['email','status','first name','last name','updated_at','properties','tags','lists'],...rows])}],sourceExtras:extras});
   }
   const collection=async(path:string)=>{const all:Record<string,any>[]=[];let next:string|undefined=prefix+path;const seen=new Set<string>();for(let page=0;page<50&&next;page++){
     if(seen.has(next))throw new Error('Source pagination loop.');seen.add(next);
@@ -62,5 +63,5 @@ export async function readSourceExport(provider:'activecampaign'|'klaviyo',endpo
     if(sms?.consent==='SUBSCRIBED')extras.notes.push(`SMS for source profile ${String(profile.id)} is held non-subscribed unless independently complete original SMS evidence is supplied. Source time: ${String(sms.consent_timestamp??'missing')}; collection point: ${String(sms.method??'missing')}.`);
     return [a.email,status,a.first_name??'',a.last_name??'',marketing?.consent_timestamp??'',marketing?.method??'',a.updated??'',a.phone_number??'','non-subscribed',JSON.stringify({...record(a.properties??{}),sourceEmailMethod:marketing?.method??null,sourceSmsEvidence:sms??null}),JSON.stringify(memberships.get(String(profile.id))??[])];
   });
-  return {files:[{name:'klaviyo-export.csv',preset:provider,csv:encodeCsv([['email','status','first name','last name','consent_timestamp','capture_method','updated_at','phone','sms_status','properties','lists'],...rows])}],sourceExtras:extras};
+  return deliver({files:[{name:'klaviyo-export.csv',preset:provider,csv:encodeCsv([['email','status','first name','last name','consent_timestamp','capture_method','updated_at','phone','sms_status','properties','lists'],...rows])}],sourceExtras:extras});
 }

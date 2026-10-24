@@ -21,7 +21,7 @@ export function createAudienceImportRoutes(platform: Platform) {
   routes.post('/audience/import-source',async context=>{
     const input=z.object({provider:z.enum(['activecampaign','klaviyo']),endpoint:z.string().url().max(300),key:z.string().trim().min(1).max(512)}).strict().safeParse(await context.req.json().catch(()=>null));
     if(!input.success)return context.json({error:'invalid_source_export'},400);
-    try{return context.json(await readSourceExport(input.data.provider,input.data.endpoint,input.data.key));}
+    try{const result=await readSourceExport(input.data.provider,input.data.endpoint,input.data.key);sourceExtrasSchema.parse(result.sourceExtras);return context.json(result);}
     catch{return context.json({error:'source_export_refused',detail:'The endpoint, credential or export could not be verified. Nothing was imported.'},422);}
   });
   routes.get('/audience/import-presets',async context=>{

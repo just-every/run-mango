@@ -7,7 +7,7 @@ export function createSegmentFacts(db:D1Database) {
     async segmentProfile(contactId:string) {
       const row=await db.prepare('SELECT fields_json fields,tags_json tags FROM integration_contact_profiles WHERE contact_id=?').bind(contactId).first<{fields:string;tags:string}>();
       const imported=(await db.prepare("SELECT detail FROM contact_history WHERE contact_id=? AND kind='incumbent-profile' ORDER BY occurred_at,id").bind(contactId).all<{detail:string}>()).results;
-      const fields:Record<string,unknown>={},tags=new Set<string>();
+      const fields:Record<string,unknown>=Object.create(null),tags=new Set<string>();
       for(const record of imported){const profile=JSON.parse(record.detail);Object.assign(fields,profile.fields,{importedTopics:profile.topics});for(const topic of profile.topics)fields['imported-topic:'+topic]=true;for(const tag of profile.tags)tags.add(tag);}
       if(row){Object.assign(fields,JSON.parse(row.fields));for(const tag of JSON.parse(row.tags))tags.add(tag);}
       return {fields,tags:[...tags].sort()};
