@@ -208,3 +208,5 @@ confirmation columns can use the existing CSV path. Review snapshot topics do
 not create additional category-specific consent. APIs read at most 5,000 records
 per collection, 50 pages per collection and 100 templates per export. Each page is bounded to 2 MB, all provider reads together to 8 MB, and the reviewed template/history payload to 1 MB. These
 are reviewed one-time imports, not a parallel-run synchronization (MOVE-013).
+
+API source reads stop at 100 requests for one reviewed export. An incomplete or oversized read is refused as a whole; it does not import a partial audience.
