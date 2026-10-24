@@ -3030,7 +3030,7 @@
       "executable": false
     },
     "src/core/features/auth/permissions.ts": {
-      "sha256": "1fd840872e670739f7521277bc8f8149aa652f7b049d57ca9b3b5a42777f1458",
+      "sha256": "32c9fd3d04dc712d636a84c2112e138924d29e76ee330ca821bf053c41971121",
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
@@ -3818,7 +3818,7 @@
       "executable": false
     },
     "src/core/features/flows/page.tsx": {
-      "sha256": "8620dc14b17b6f03e6666dc150840a93ea6e0368245cf0c0a308032371c6f8f6",
+      "sha256": "be0f79a5c69a037971a3c21c8f56b2694ed0bc7144d96dc71811c941364527b8",
       "executable": false
     },
     "src/core/features/flows/routes.ts": {
@@ -4726,7 +4726,7 @@
       "executable": false
     },
     "src/core/features/sending/connection-service.ts": {
-      "sha256": "b6a1c955b7ffd6442c93c4b59d746c0dc81f698133a552349ade7200b8c82b30",
+      "sha256": "dcbc90a195f1f58dfe046e790b4583a26503793cdf61ada8756af5f8163da375",
       "executable": false
     },
     "src/core/features/sending/load-connection.ts": {
@@ -4734,15 +4734,15 @@
       "executable": false
     },
     "src/core/features/sending/monitor.ts": {
-      "sha256": "1e85670be5c09689bf138c17589769818354451e7998cb46434383e2164c07cd",
+      "sha256": "dd887f7b3b7837ed61f040e166c4ee3d3c196fe6373fecfad58a9b394d821d46",
       "executable": false
     },
     "src/core/features/sending/resend-account.ts": {
-      "sha256": "7438882a396e38f28ca6cf35ef3c63c807b619192961bd2ab2c1775ed89b0737",
+      "sha256": "0024769fe842614c8d375245e04537241114089da264d9a318ea3571af9ae211",
       "executable": false
     },
     "src/core/features/sending/resend-connection.ts": {
-      "sha256": "9cb51a2ccf95126917897d6c70514cf503ceeb800060b0c21289ff1ab935636c",
+      "sha256": "5052caf28dbaeadcf2f1f7dfdc916c414309602083a3fa43aa76766606aeaf76",
       "executable": false
     },
     "src/core/features/sending/routes.ts": {
@@ -4754,7 +4754,7 @@
       "executable": false
     },
     "src/core/features/sending/sendgrid-account.ts": {
-      "sha256": "34b5dd4a6ba94ea4bd9e91d3365d6bcedc1f637a397af17167404d7b0536f920",
+      "sha256": "89ca8e92e66af92dd3c20d054f61829ee4c84856217e19b6602edc4626ffcde8",
       "executable": false
     },
     "src/core/features/settings/analytics-policy.ts": {
@@ -5122,7 +5122,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-sending.tsx": {
-      "sha256": "f12b597116a8c9bf43f0035db6c8d2da377e4b93e2b79c16d828b198a627e934",
+      "sha256": "26b717adbec623262f7233f54dd70fcc4d9d5aed725da1356c6d2faad5b70e52",
       "executable": false
     },
     "src/core/features/store/ui/settings-stripe.tsx": {
@@ -7914,7 +7914,7 @@
       "executable": false
     },
     "tests/go-live/resend-connection-journey.ts": {
-      "sha256": "78dd578485fbb6453041d323eaa564c09431a0c997b81a969ac643c4b9b9c894",
+      "sha256": "3eb5cd78bb7d7f49f1dafac9ff107d67989747bfd9da161a9f7ea7ba204c54e1",
       "executable": false
     },
     "tests/go-live/resend-delivery.journeys.ts": {
@@ -7966,7 +7966,7 @@
       "executable": false
     },
     "tests/go-live/sending-connection-journey.ts": {
-      "sha256": "048b278a4f79d6a7f56b55a3bf87ef8e2a0dd09fc7d1ebd505e397122ee31b72",
+      "sha256": "a3ad821a7533ed14f42b84b1ceeef08401421b3bda2d5d6271f29693d3ee2b1c",
       "executable": false
     },
     "tests/go-live/shared-kiosk.journeys.ts": {
@@ -8002,7 +8002,7 @@
       "executable": false
     },
     "tests/go-live/source-api-journey.ts": {
-      "sha256": "5e723a45c5a9571efd35d24f44d7ced32ad0cfec627f8a918e4044cdb6a00025",
+      "sha256": "ed099a98de504e8de97eb0018bf6a1ec1fc2408e8b72a4301495e80cdf6691c5",
       "executable": false
     },
     "tests/go-live/source-csv-journey.ts": {

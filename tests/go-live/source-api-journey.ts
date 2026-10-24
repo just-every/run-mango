@@ -39,11 +39,14 @@ export async function sourceApiJourney(site:Installation,page:Page,info:TestInfo
     }
 
   }
-  for(const role of ['author','analyst','support']){
-    const roleCookie=await site.open(`synthetic-mango-${role}@example.test`,'synthetic-mango-'+role);
-    await json(await site.call('/api/operators/synthetic-mango-'+role+'/role',{method:'PUT',cookie,body:{role}}),200);
+  for(const role of ['manager','author','analyst','support']){
+    const roleId=role==='manager'?'synthetic-mango-151':'synthetic-mango-'+role;
+    const roleCookie=await site.open(roleId+'@example.test',roleId);
+    await json(await site.call('/api/operators/'+roleId+'/role',{method:'PUT',cookie,body:{role}}),200);
+    for(const path of ['/api/flow-drafts/templates','/api/flow-drafts/templates/starter-newsletter']){const response=await site.call(path,{cookie:roleCookie});await json(response,role==='manager'||role==='author'?200:403);}
     expect((await site.call('/api/audience/import-source',{method:'POST',cookie:roleCookie,body:{provider:'klaviyo',endpoint:'https://a.klaviyo.com',key:'synthetic-mango-121-key'}})).status).toBe(403);
   }
+  expect((await site.call('/api/flow-drafts/templates')).status).toBe(401);
   const admin=await site.open('synthetic-mango-admin@example.test','synthetic-mango-admin');await json(await site.call('/api/operators/synthetic-mango-admin/role',{method:'PUT',cookie,body:{role:'admin'}}),200);
   expect((await site.call('/api/audience/import-source',{method:'POST',cookie:admin,body:{provider:'activecampaign',endpoint:'https://synthetic-mango-120.api-us1.com',key:'synthetic-mango-120-key'}})).status).toBe(200);
   expect((await site.call('/api/audience/import-source',{method:'POST',body:{provider:'klaviyo',endpoint:'https://a.klaviyo.com',key:'synthetic-mango-121-key'}})).status).toBe(401);

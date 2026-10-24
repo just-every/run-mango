@@ -3,13 +3,13 @@ export const sendingScopes=['mail.send','user.username.read','whitelabel.read','
   'user.webhooks.event.settings.delete','user.webhooks.event.test.create'] as const;
 export const sendingEvents=['delivered','bounce','dropped','deferred','spam_report','unsubscribe','group_unsubscribe'] as const;
 export class SendingConnectionError extends Error {
-  constructor(readonly reason:string,readonly missing:string[]=[]) {super(reason);}
+  constructor(readonly reason:string,readonly missing:string[]=[],readonly status?:number) {super(reason);}
 }
 export function sendgridAccount(apiKey:string) {
   async function request(path:string,method='GET',body?:unknown) {
-    const response=await fetch('https://api.sendgrid.com/v3'+path,{method,headers:{Authorization:'Bearer '+apiKey,
+    const response=await fetch('https://api.sendgrid.com/v3'+path,{method,redirect:'manual',headers:{Authorization:'Bearer '+apiKey,
       ...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(15000)});
-    if(!response.ok)throw new SendingConnectionError(response.status===401||response.status===403?'SendGrid refused this key or its permission.':`SendGrid request failed (${response.status}).`);
+    if(!response.ok)throw new SendingConnectionError(response.status===401||response.status===403?'SendGrid refused this key or its permission.':`SendGrid request failed (${response.status}).`,[],response.status);
     if(response.status===204)return null;
     return response.json().catch(()=>{throw new SendingConnectionError('SendGrid returned invalid connection JSON.');}) as Promise<any>;
   }

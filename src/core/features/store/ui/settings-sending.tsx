@@ -25,7 +25,7 @@ export function SettingsSending() {
     {status.error?<p role="alert">Sending status is unavailable. <button onClick={()=>void status.reload()}>Try again</button></p>:null}
     {connection?<div role="status"><p>{connection.provider} account <strong>{connection.account}</strong> · key ending <code>{connection.lastFour}</code> · {connection.state}</p>
       <p>Connected by {connection.connectedBy} on {new Date(connection.connectedAt).toLocaleString()}.</p>
-      {connection.broader?<p>Broader than Mango needs. Use a restricted key with the permissions listed in the connection review.</p>:null}
+      {connection.broader?<p>{connection.provider==='Resend'?'Resend requires Full access for webhook management. Use a dedicated key for Mango.':'Broader than Mango needs. Use a restricted key with the permissions listed in the connection review.'}</p>:null}
       {connection.deliveryEventsVerified?<p>Signed delivery events verified.</p>:<p>delivery-events-missing: send the Owner sender check in Settings. Campaign approval and flow activation stay blocked until its signed delivered event arrives.</p>}
       {connection.error?<p role="alert">{connection.error}</p>:null}
       <button className="secondary-action" type="button" disabled={busy||connection.state==='connecting'} onClick={()=>void act('',undefined,'DELETE')}>Disconnect {connection.provider}</button></div>:null}
@@ -34,7 +34,7 @@ export function SettingsSending() {
       <p>Webhook: <span >{review.webhookUrl}</span></p><p>Name: Mango {new URL(review.webhookUrl).origin}</p>
       <p>Signing will be on. Mango creates or reuses its own webhook and changes no other webhook.</p>
       <p>Events: {review.events.join(', ')}.</p>
-      {review.broader?<p>Broader than Mango needs.</p>:null}<p>Restricted permissions:</p><ul>{review.requiredScopes.map(scope=><li key={scope}><code>{scope}</code></li>)}</ul>
+      {review.broader?<p>{review.provider==='Resend'?'Resend requires Full access for webhook management. Use a dedicated key for Mango.':'Broader than Mango needs.'}</p>:null}<p>Required permissions:</p><ul>{review.requiredScopes.map(scope=><li key={scope}><code>{scope}</code></li>)}</ul>
       <button className="primary-action" disabled={busy} onClick={()=>void act('/connect',{proposalId:review.proposalId})}>Connect {review.provider}</button>
       <button className="secondary-action" disabled={busy} onClick={()=>setReview(null)}>Cancel review</button>
     </div>:<form className="integration-create" onSubmit={event=>{event.preventDefault();void act('/review',{apiKey,provider});}}>

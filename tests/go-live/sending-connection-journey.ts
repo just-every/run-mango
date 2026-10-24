@@ -103,7 +103,8 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     const archive=await site.call(`/api/portability/exports/${id}/download`,{cookie:owner,headers:{Origin:site.runtime.url}});expect(archive.status).toBe(200);
     const exported=[];for await(const record of readArchive(archive.body!))exported.push(record);
     expect(JSON.stringify(exported)).not.toContain(apiKey);expect(JSON.stringify(exported)).not.toContain(signer.publicKey);
+    await resendConnectionJourney(site,edge,page,info,owner,admin);
+    expect(provider.state.webhooks).toEqual([provider.existing]);
     expect(edge.unexpected).toEqual([]);
   }finally{await site.runtime.close();await edge.close();}
-  await resendConnectionJourney(page,info);
 }

@@ -96,7 +96,7 @@ export function sendingConnectionService(platform:Platform) {
       if(row.state==='connecting')throw new SendingConnectionError('The connection is still in progress. Wait for its result before disconnecting.');
       if(row.webhook_id) {
         const secret=await openSendingSecret(row.secret_cipher,key);
-        await sendgridAccount(secret.apiKey).request('/user/webhooks/event/settings/'+encodeURIComponent(row.webhook_id),'DELETE');
+        try{await sendgridAccount(secret.apiKey).request('/user/webhooks/event/settings/'+encodeURIComponent(row.webhook_id),'DELETE');}catch(error){if(!(error instanceof SendingConnectionError&&error.status===404))throw error;}
       }
       await db.batch([db.prepare("UPDATE sending_connection SET state='disconnected',generation=?,secret_cipher=?,webhook_id=NULL,delivery_proved_at=NULL,last_error=NULL WHERE id=1 AND generation=?")
         .bind(crypto.randomUUID(),await sealSendingSecret({apiKey:''},key),row.generation),

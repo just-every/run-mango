@@ -24,7 +24,7 @@ export async function monitorSendingConnection(platform:Platform,row:{generation
     }
   }catch(error){
     if(error instanceof ResendConnectionError)code=error.status===401||error.status===403?'sending-key-revoked':error.status===404?'delivery-webhook-missing':undefined;
-    else if(error instanceof SendingConnectionError)code=error.message.includes('refused this key')?'sending-key-revoked':error.message.includes('(404)')?'delivery-webhook-missing':undefined;
+    else if(error instanceof SendingConnectionError)code=error.status===401||error.status===403?'sending-key-revoked':error.status===404?'delivery-webhook-missing':undefined;
     // A transient or indeterminate read blocks approval; it never certifies health.
     if(!code)code='sending-health-unknown';
   }
