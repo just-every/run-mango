@@ -124,7 +124,7 @@ test('[CAMP-019] typed email tests enforce restrictions, daily allowance and rec
     expect((await allowance()).remaining).toBe(seed.limits.maxTestSendsPerDay-2);
     // Erasure redacts a typed destination without removing its actor/time receipt.
     const erasedAddress='design1440@example.test';
-    await confirmedContact(site,edge,cookie,erasedAddress,'Synthetic Mango 25');
+    await confirmedContact(site,edge,cookie,erasedAddress,'synthetic-mango-25');
     const contact=(await site.rows(`SELECT id FROM contacts WHERE email='${erasedAddress}'`))[0];
     expect((await eraseHttp(site,cookie,contact.id)).state).toBe('complete');
     const retained=(await activity()).entries;
