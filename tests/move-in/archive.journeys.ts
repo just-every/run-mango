@@ -18,6 +18,11 @@ const screens = async (page: Page, name: string, info: { outputPath(name: string
     await page.setViewportSize({ width, height: 900 });
     // Full-page captures start at the top with nothing focused, so the sticky header and skip link stay in place.
     await page.evaluate(() => { (document.activeElement as HTMLElement | null)?.blur(); window.scrollTo(0, 0); });
+    if(['preview','imported','undo','surviving-archive-after-erasure'].includes(name)) {
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
+      expect((await new AxeBuilder({page}).include('main').options({iframes:false}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+    }
     await page.screenshot({ path: screenshotPath(`${name}-${width}.png`, info.outputPath(`${name}-${width}.png`)), fullPage: true });
   }
 };
