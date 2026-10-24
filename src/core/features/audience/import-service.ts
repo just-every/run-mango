@@ -54,7 +54,7 @@ export function createAudienceImportService(platform: Platform) {
   // An archive's contacts are continued and undone with the archive, never as a separate CSV import.
   const finish=async<T extends {id:string;state:string}>(job:T,context:D1ImportContext,plan?:ImportPlan)=>{
     if(!['completed','undone','rolled_back'].includes(job.state))return job;
-    if(!plan){const key=await db.prepare('SELECT operation_key FROM ik_jobs WHERE id=? UNION ALL SELECT operation_key FROM ik_d1_streams WHERE id=?').bind(job.id,job.id).first<{operation_key:string}>();const stored=key?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(key.operation_key).first<{fingerprint:string;plan_json:string}>():null;if(stored)plan=await readAudiencePlan(db,stored);}
+    if(!plan){const key=await db.prepare('SELECT operation_key FROM ik_jobs WHERE id=? UNION ALL SELECT operation_key FROM ik_d1_streams WHERE id=?').bind(job.id,job.id).first<{operation_key:string}>();const stored=key?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(key.operation_key).first<{fingerprint:string;plan_json:string}>():null;if(stored&&JSON.parse(stored.plan_json).hasSourceExtras===true)plan=await readAudiencePlan(db,stored);}
     if(plan){if(job.state==='completed')await applySourceExtras(platform,plan,context.authorization.principalId);else await undoSourceExtras(platform,plan);}
     return job;
   };

@@ -132,3 +132,6 @@
   .audience-import-job__heading { flex-direction: column; align-items: start; }
   .audience-import-job__actions > *, .audience-import-undo-confirm > button { flex: 1; }
 }
+
+/* Keep the source-import review legible at the product's 13px floor. */
+.audience-import-page :is(.eyebrow, .audience-import-mapped-file dt, .audience-import-job__heading code, .audience-import-status) { font-size: 13px; }

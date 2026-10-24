@@ -21,7 +21,8 @@ export async function saveAudiencePlan(db:D1Database,plan:ImportPlan,principalId
  const content=canonicalJson(plan),chunks:string[]=[];
  // A UTF-16 code unit uses at most three UTF-8 bytes. Do not split surrogate pairs.
  for(let offset=0;offset<content.length;){let end=Math.min(offset+512000,content.length);if(end<content.length&&/[\uD800-\uDBFF]/u.test(content[end-1]))end--;chunks.push(content.slice(offset,end));offset=end;}
- const manifest=JSON.stringify({format,chunks:chunks.length,sha256:sha256(content)});
+ const hasSourceExtras=plan.entries.some(e=>Boolean((e.source.payload as Record<string,unknown>).sourceExtras));
+ const manifest=JSON.stringify({format,chunks:chunks.length,sha256:sha256(content),...(hasSourceExtras?{hasSourceExtras:true}:{})});
  const statements=[db.prepare('INSERT INTO audience_import_plans(fingerprint,principal_id,plan_json,source_digest,created_at) VALUES(?,?,?,?,?) ON CONFLICT(source_digest,principal_id) DO NOTHING').bind(plan.fingerprint,principalId,manifest,sourceDigest,now)];
  for(const [ordinal,chunk] of chunks.entries())statements.push(db.prepare('INSERT INTO audience_import_plan_chunks(fingerprint,ordinal,content) SELECT ?,?,? WHERE EXISTS(SELECT 1 FROM audience_import_plans WHERE fingerprint=? AND principal_id=?) ON CONFLICT(fingerprint,ordinal) DO NOTHING').bind(plan.fingerprint,ordinal,chunk,plan.fingerprint,principalId));
  const identityRows=plan.entries.flatMap(entry=>{

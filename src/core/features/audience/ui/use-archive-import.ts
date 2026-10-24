@@ -62,6 +62,7 @@ export function useArchiveImport({ setError, setNotice, owner }: Messages) {
 
   return {
     archives, archive, preview, current, busy, busyId,attestations,
+    resetAttestations(){setAttestations([]);setCurrent(false);},
     changeAttestation(value:AttestationInput){setAttestations(rows=>[...rows.filter(row=>row.sourceKey!==value.sourceKey),value]);setCurrent(false);},
     choose(file?: File) { setAttestations([]);setArchive(file); setPreview(undefined); setCurrent(false); },
     stale() { setCurrent(false); },

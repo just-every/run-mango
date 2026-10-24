@@ -4,7 +4,7 @@ import {activityStatement} from '@/core/features/auth/activity-record';
 import {attestationKeys,attestationVersion,attestationWording,sourceOf,type AttestationInput,type AttestationScope,type IncumbentFile} from './incumbent-policy';
 
 export async function planAttestations(files:{name:string;sourceKey?:string;sourceName?:string;provider?:string}[],archiveSha:string,scope:AttestationScope,input:AttestationInput[],db:D1Database) {
-  const sources=new Map<string,{sourceKey:string;sourceName:string;provider?:string}>();for(const file of files){const source=sourceOf(file.name),sourceKey=file.sourceKey??source.key;sources.set(sourceKey,{sourceKey,sourceName:file.sourceName??source.name,provider:file.provider});}
+  const sources=new Map<string,{sourceKey:string;sourceName:string;provider?:string}>();for(const file of files){const source=sourceOf(file.name),sourceKey=file.sourceKey??source.key;sources.set(sourceKey,{sourceKey,sourceName:file.sourceName??source.name,...(file.provider?{provider:file.provider}:{})});}
   const records=[];
   for(const source of sources.values()) {
     const choice=input.find(row=>row.sourceKey===source.sourceKey),wording=attestationWording(scope,source.provider?source.sourceName.split(' — ')[0]:'Mailchimp'),wordingJson=canonicalJson({version:source.provider?`${source.provider}-incumbent.v1`:attestationVersion,statements:wording});
@@ -14,7 +14,7 @@ export async function planAttestations(files:{name:string;sourceKey?:string;sour
     const mismatch=Boolean(existing&&choice&&(existing.wording_hash!==await sha256(wordingJson)||existing.answers_json!==canonicalJson(choice.answers)||existing.source_created_at!==(choice.exportCreatedAt?Date.parse(choice.exportCreatedAt):null)));
     const accepted=Boolean(!mismatch&&choice&&scopeComplete&&choice.typedSource===source.sourceName&&attestationKeys.every(key=>choice.answers[key]==='yes')&&!existing?.revoked_at);
     const reason=mismatch?'attestation-record-changed':existing?.revoked_at?'attestation-revoked':choice?.answers&&attestationKeys.some(key=>choice.answers[key]==='not-sure')?'attestation-not-sure':!choice?'attestation-missing':!scopeComplete?'attestation-scope-missing':choice.typedSource!==source.sourceName?'attestation-source-name-mismatch':'attestation-not-affirmed';
-    records.push({...source,id,sourceIdentifier:archiveSha,accepted,reason:accepted?undefined:reason,exportCreatedAt:choice?.exportCreatedAt?Date.parse(choice.exportCreatedAt):undefined,
+    records.push({...source,id,sourceIdentifier:archiveSha,accepted,...(!accepted?{reason}:{}),...(choice?.exportCreatedAt?{exportCreatedAt:Date.parse(choice.exportCreatedAt)}:{}),
       wordingVersion:source.provider?`${source.provider}-incumbent.v1`:attestationVersion,wordingJson,wordingHash:await sha256(wordingJson),answers:choice?.answers??null,scope});
   }
   return records;

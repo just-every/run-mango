@@ -143,6 +143,7 @@ export function AudienceImportPage() {
   };
 
   const changeConsent = (field: keyof ImportConsent, value: string) => {
+    setAttestations([]);archive.resetAttestations();
     setConsent((current) => ({ ...current, [field]: value }));
     markPreviewStale();
   };
