@@ -121,6 +121,17 @@ export async function readContactTimeline(db:D1Database, contactId:string, detai
     ...(c.confirmedAt?[`consent-confirmed:${milliseconds(c.confirmedAt)}`]:[]),
   ]));
   for(const row of detail.history) {
+    // Imported profile objects belong in the profile view, never as raw JSON in
+    // the activity feed. History shows source facts without provider payloads.
+    if(row.kind==='incumbent-profile')continue;
+    if(['incumbent-order','incumbent-click','incumbent-open','incumbent-event'].includes(row.kind)){
+      const facts=JSON.parse(row.detail) as Record<string,unknown>;
+      const title=row.kind==='incumbent-order'?'Imported order':row.kind==='incumbent-click'?'Imported email click':row.kind==='incumbent-open'?'Imported open estimate; not a click or purchase':'Imported source event';
+      const order=typeof facts.order_id==='string'?` · source order ${facts.order_id.slice(0,160)}`:'';
+      const amount=typeof facts.value==='number'&&Number.isFinite(facts.value)&&typeof facts.currency==='string'&&/^[A-Z]{3}$/.test(facts.currency)?` · ${facts.value} ${facts.currency}`:'';
+      add({id:`history:${row.id}`,kind:row.kind,detail:title+(row.kind==='incumbent-order'?order+amount:''),source:'Incumbent export'},row.occurredAt);continue;
+    }
+
     if(consentTimes.has(`${row.kind}:${milliseconds(row.occurredAt)}`))continue;
     if(row.kind==='suppression'&&detail.suppressions.some(s=>s.cause===row.detail&&milliseconds(s.occurredAt)===milliseconds(row.occurredAt)))continue;
     if(row.kind==='contact-merged'&&actions.results.some(a=>a.kind==='contact-merged'&&a.occurredAt===milliseconds(row.occurredAt)))continue;

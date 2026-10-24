@@ -25,6 +25,14 @@ export async function sourceApiJourney(site:Installation,page:Page,info:TestInfo
     else{expect((await site.rows("SELECT source_facts_json FROM incumbent_consent_links WHERE contact_id=(SELECT id FROM contacts WHERE email='synthetic-mango-121-active@example.test')")).some(r=>JSON.parse(r.source_facts_json).SOURCE_METHOD==='signup form')).toBe(true);expect(report).toContain('Abandoned cart');expect(report).toContain('send-sms');expect(report).toContain('unsupported-source-condition');expect(JSON.stringify(await json(await site.call('/api/campaign-templates',{cookie}),200))).toContain('Garden imported template');expect(await site.rows("SELECT kind,occurred_at FROM contact_history WHERE kind IN ('incumbent-order','incumbent-click') ORDER BY occurred_at")).toEqual([{kind:'incumbent-order',occurred_at:Date.parse('2026-03-01T00:00:00Z')},{kind:'incumbent-click',occurred_at:Date.parse('2026-03-02T00:00:00Z')}]);}
     const custody=await site.rows('SELECT content FROM audience_import_plan_chunks');expect(JSON.stringify(custody)).not.toContain(key);
     expect((await json(await site.call('/api/audience/segments',{cookie}),200)).segments.some((s:any)=>s.name.startsWith('Imported snapshot ·'))).toBe(true);
+    if(provider==='klaviyo'){
+      const [contact]=await site.rows("SELECT id FROM contacts WHERE email='synthetic-mango-121-active@example.test'");
+      await openPage(page,site.runtime.url+'/app/audience/'+contact.id);
+      await expect(page.locator('[data-timeline-kind="incumbent-order"]')).toContainText('Imported order');
+      await expect(page.locator('[data-timeline-kind="incumbent-click"]')).toContainText('Imported email click');
+      for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);expect((await new AxeBuilder({page}).include('main').options({iframes:false}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.evaluate(()=>{(document.activeElement as HTMLElement)?.blur();window.scrollTo(0,0);});await page.screenshot({path:info.outputPath(`klaviyo-contact-history-${width}.png`),fullPage:true});}
+    }
+
   }
   for(const role of ['author','analyst','support']){
     const roleCookie=await site.open(`synthetic-mango-${role}@example.test`,'synthetic-mango-'+role);
