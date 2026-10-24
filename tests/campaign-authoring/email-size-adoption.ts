@@ -45,7 +45,9 @@ export async function oversizedSignalStarter(page:Page,baseURL:string,width:numb
   const quote=(value:string)=>`'${value.replaceAll("'","''")}'`;
   const campaigns=async()=>(await (await page.request.get(baseURL+'/api/campaigns')).json()).campaigns;
   const before=await campaigns();
-  await sql(`UPDATE source_records SET payload=${quote(payload)} WHERE id=${quote(source.id)}`);
+  // Build the synthetic field inside D1: its bound value exceeds the SQL
+  // statement-length limit while remaining a legitimate source-record value.
+  await sql(`UPDATE source_records SET payload=json_set(payload,'$.title',replace(hex(zeroblob(${Array.from(title).length})),'00','🌱')) WHERE id=${quote(source.id)}`);
   try {
     const result=await page.request.post(baseURL+'/api/campaigns',{headers:{Origin:baseURL},data:{starterSourceId:source.id}});
     expect(result.status()).toBe(400);

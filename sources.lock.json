@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "9c871bb7e5c4d9c1560f514d3bcb8828ececd0ad7cb9dc53a183f95354d55ff7",
+      "sha256": "f9decc9adcf50b2fcf1656e4b6be0aba2a6e7ea8e0145dcc82f1b949b392e18d",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "d2e124721bcdef329326cfad87bfbe4fe1b1edb23da80facddcc4bf2b3713e45",
+      "sha256": "7f4df36e8d883ae438e51379a82d4ca767e66456b6ea48fe93c1eb71747fff34",
       "executable": false
     },
     "DEMO.md": {
@@ -2290,7 +2290,7 @@
       "executable": false
     },
     "src/core/app/client/styles/pages/campaigns.css": {
-      "sha256": "1388090a8e633ad255b297d469e699daf90aa639095d497c668594cabd9a120e",
+      "sha256": "c7f8ced8b6cd2dae60bdac66b42b315fe52f8386789869dd98f2f31139447607",
       "executable": false
     },
     "src/core/app/client/styles/pages/design-generation.css": {
@@ -7374,7 +7374,7 @@
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
-      "sha256": "dad936e3123c6e0c6aab5ad3f6f4de57462d606701bd6e41f12b7a4fda3fe341",
+      "sha256": "9274a168e280f9bca5cab7701de41b47674c823e289abcff05b0dccdcdf8ef08",
       "executable": false
     },
     "tests/campaign-authoring/fixtures/orchard.layerdoc.json": {
