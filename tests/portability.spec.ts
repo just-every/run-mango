@@ -43,6 +43,9 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await source.call('/api/settings/link-hosts',{method:'PUT',cookie:source.cookie,body:{hosts:'portable.example.test'}})).status).toBe(200);
     const flowDraft={name:'synthetic-mango-103',trigger:'Email confirmation',nodes:[{id:'start',kind:'trigger',label:'Confirmed',next:['end']},{id:'end',kind:'exit',label:'Exit',next:[]}]};
     expect((await source.call('/api/flow-drafts',{method:'POST',cookie:source.cookie,body:flowDraft})).status).toBe(201);
+    const sourceBundle={files:[{name:'synthetic-mango-150.csv',preset:'klaviyo',csv:'email,status,consent_timestamp,capture_method,lists\nsynthetic-mango-150@example.test,subscribed,2026-03-01T00:00:00Z,signup form,Garden topic'}],consent:consentEvidence,attestations:[{nonce:crypto.randomUUID(),sourceKey:'klaviyo:synthetic-mango-150.csv',typedSource:'Klaviyo — synthetic-mango-150.csv',answers:{brand:'yes',category:'yes',frequency:'yes',jurisdiction:'yes',wording:'yes',notPurchased:'yes'}}],sourceExtras:{notes:['Abandoned cart stays an unsupported outline.'],templates:[{name:'synthetic-mango-150-template',html:'<p>Portable source template</p>'}],segments:[{name:'Garden topic',conditions:'Imported membership snapshot.'}],history:[{email:'synthetic-mango-150@example.test',kind:'order',occurredAt:'2026-03-02T00:00:00Z',data:{orderId:'synthetic-mango-150-order'}}]}};
+    const sourcePreview=await source.call('/api/audience/import-preview',{method:'POST',cookie:source.cookie,body:sourceBundle});expect(sourcePreview.status,await sourcePreview.clone().text()).toBe(200);
+    const sourceImport=await source.call('/api/audience/imports',{method:'POST',cookie:source.cookie,body:{fingerprint:(await sourcePreview.json()).fingerprint}});expect(sourceImport.status,await sourceImport.clone().text()).toBe(200);expect((await sourceImport.json()).job.state).toBe('completed');
     const bytesArchive=await accountExport();
     const uploadArchive=async(path:string,fingerprint?:string)=>{
       const form=new FormData();form.set('archive',new File([bytesArchive],'account-export.zip',{type:'application/zip'}));form.set('consent',JSON.stringify(consentEvidence));if(fingerprint)form.set('fingerprint',fingerprint);
@@ -93,6 +96,9 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     // Inventory before export creates temporary snapshot tables. Every source
     // table is archived or explicitly excluded by the maintained policy.
     for (const { name } of allTables) expect([...manifest.tables.map(table => table.name), ...manifest.excludedTables]).toContain(name);
+    expect(original.some(row=>row.table==='consent_attestations'&&row.row.source_name==='Klaviyo — synthetic-mango-150.csv')).toBe(true);
+    expect(original.some(row=>row.table==='campaign_templates'&&row.row.name==='synthetic-mango-150-template')).toBe(true);
+    expect(original.some(row=>row.table==='contact_history'&&row.row.kind==='incumbent-order'&&row.row.occurred_at===Date.parse('2026-03-02T00:00:00Z'))).toBe(true);
     expect(original.some(row=>row.table==='flow_draft_revisions'&&JSON.parse(row.row.graph_json).name===flowDraft.name)).toBe(true);
     expect(original.some(row => row.table === 'campaign_templates' && row.row.name === 'Portable newsletter template')).toBe(true);
     expect(original.some(row => row.table === 'campaign_followups' && row.row.campaign_id === followupDraft.campaignId)).toBe(true);

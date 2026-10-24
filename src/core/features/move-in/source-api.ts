@@ -10,11 +10,13 @@ export async function readSourceExport(provider:'activecampaign'|'klaviyo',endpo
   if(base.protocol!=='https:'||base.port||base.username||base.password||base.search||base.hash)throw new Error('Invalid source endpoint.');
   if(provider==='activecampaign'?!/^[a-z0-9-]+\.(?:api-us1|api-us2|api-eu1|activehosted)\.com$/.test(base.hostname):base.origin!=='https://a.klaviyo.com')throw new Error('Source host is not permitted.');
   if(!['','/','/api','/api/','/api/3','/api/3/'].includes(base.pathname))throw new Error('Use the account API origin.');
+  let totalBytes=0;
   const origin=base.origin,prefix=provider==='activecampaign'?'/api/3/':'/api/';
   const get=async(path:string)=>{
     const url=new URL(path,origin);
     if(url.origin!==origin||!url.pathname.startsWith(prefix)||url.username||url.password)throw new Error('Source pagination left the declared API.');
-    return record(await boundedJson(url.toString(),provider==='activecampaign'?{'Api-Token':key}:{Authorization:'Klaviyo-API-Key '+key,revision:'2025-01-15',accept:'application/json'},{maxBytes:2_000_000,deadlineMs:10000}));
+    const result=record(await boundedJson(url.toString(),provider==='activecampaign'?{'Api-Token':key}:{Authorization:'Klaviyo-API-Key '+key,revision:'2025-01-15',accept:'application/json'},{maxBytes:2_000_000,deadlineMs:10000}));
+    totalBytes+=new TextEncoder().encode(JSON.stringify(result)).byteLength;if(totalBytes>8_000_000)throw new Error('Source export exceeds the read budget.');return result;
   };
   const deliver=(value:SourceExport)=>{if(JSON.stringify(value).includes(key))throw new Error('Source reflected the credential.');return value;};
   const extras:SourceExtras={notes:[],templates:[],segments:[],history:[]};

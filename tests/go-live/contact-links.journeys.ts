@@ -20,7 +20,11 @@ test('[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact ap
     await confirmedContact(site, edge, cookie, 'iris@example.test', 'Iris');
     const clock = await site.control('/_golive/clock', {hold:true});
     const due = new Date(clock.now + 3600000);
-    const campaign = await draftCampaign(site, cookie, 'Ask the garden team', ['iris@example.test'], due);
+    // The source-import acceptance continues through the existing approved
+    // campaign and real mail-edge handoff, rather than ending at a profile row.
+    const importedReader='synthetic-mango-110-active@example.test';
+    expect((await site.rows("SELECT c.email_status FROM contacts c JOIN incumbent_consent_links l ON l.contact_id=c.id JOIN consent_attestations a ON a.id=l.attestation_id WHERE c.email='synthetic-mango-110-active@example.test' AND a.revoked_at IS NULL"))[0].email_status).toBe('subscribed');
+    const campaign = await draftCampaign(site, cookie, 'Ask the garden team', [importedReader], due);
     await page.context().addCookies([{name:cookie.split('=')[0], value:cookie.split('=')[1], url:site.runtime.url}]);
     const path = `/api/campaign-revisions/${campaign.revisionId}`;
     // The same public save/check/approve doors judge authored HTML, not only the link tool.
@@ -74,7 +78,7 @@ test('[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact ap
     await approve(site, cookie, campaign);
     await site.control('/_golive/clock', {advanceMs:3600001});
     expect((await dispatch(site, campaign.campaignId, due))[0].transport_disposition).toBe('accepted');
-    const sent = edge.sends.findLast(send => send.to === 'iris@example.test' && send.body.headers?.['List-Unsubscribe'])!;
+    const sent = edge.sends.findLast(send => send.to === importedReader && send.body.headers?.['List-Unsubscribe'])!;
     const html = sent.body.content.find((part:any) => part.type === 'text/html').value;
     const plain = sent.body.content.find((part:any) => part.type === 'text/plain').value;
     for (const link of links) {

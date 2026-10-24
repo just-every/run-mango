@@ -6,7 +6,7 @@ import {writeContent,undoContent} from './archive-drafts';
 import {importHtml} from './html-import';
 import {htmlToText} from '../campaigns/authoring-content';
 import {sha256} from '@/core/shared/ids';
-export const sourceExtrasSchema=z.object({notes:z.array(z.string().max(5000)).max(1000),templates:z.array(z.object({name:z.string().min(1).max(200),html:z.string().max(500000)}).strict()).max(100),segments:z.array(z.object({name:z.string().min(1).max(140),conditions:z.string().max(10000)}).strict()).max(100),history:z.array(z.object({email:z.string().email(),kind:z.enum(['order','click','open','event']),occurredAt:z.string().datetime({offset:true}),data:z.record(z.string(),z.unknown())}).strict()).max(5000)}).strict();
+export const sourceExtrasSchema=z.object({notes:z.array(z.string().max(5000)).max(1000),templates:z.array(z.object({name:z.string().min(1).max(200),html:z.string().max(500000)}).strict()).max(100),segments:z.array(z.object({name:z.string().min(1).max(140),conditions:z.string().max(10000)}).strict()).max(100),history:z.array(z.object({email:z.string().email(),kind:z.enum(['order','click','open','event']),occurredAt:z.string().datetime({offset:true}),data:z.record(z.string(),z.unknown())}).strict()).max(5000)}).strict().refine(value=>new TextEncoder().encode(JSON.stringify(value)).byteLength<=1_000_000,'Source templates and history exceed one review payload.');
 export const extrasOf=(plan:ImportPlan)=>plan.entries.flatMap(e=>{const row=e.source.payload as unknown as NormalizedImportRow;return row.sourceExtras?[row.sourceExtras]:[];})[0];
 export async function applySourceExtras(platform:Platform,plan:ImportPlan,operatorId:string){
   const extras=extrasOf(plan);if(!extras)return;
