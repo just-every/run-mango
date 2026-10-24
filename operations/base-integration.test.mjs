@@ -112,14 +112,27 @@ test('CONT-006/SEND-006: Base-verified SendGrid events persist before acknowledg
   const headersFor=events => ({'x-twilio-email-event-webhook-timestamp':timestamp,
    'x-twilio-email-event-webhook-signature':sign('sha256',Buffer.from(timestamp+JSON.stringify(events)),privateKey).toString('base64')});
   const signed=headersFor(body);
-  assert.equal((await r.call('/webhooks/mail/sendgrid',{method:'POST',body,headers:{...signed,'x-twilio-email-event-webhook-signature':'invalid'}})).status,500);
-  assert.equal((await r.db.prepare('SELECT count(*) AS count FROM provider_fact_inbox').first()).count,0);
+  const changed=[{...row,email:'different@example.test'}];
+  // DELIV-008 deliberately refuses unverified requests with 401 before any
+  // provider fact, suppression or operator Activity can be written.
+  for (const refused of [
+   {body,headers:{...signed,'x-twilio-email-event-webhook-signature':'invalid'}},
+   {body,headers:{}},
+   {body:changed,headers:signed},
+  ]) {
+   assert.equal((await r.call('/webhooks/mail/sendgrid',{method:'POST',...refused})).status,401);
+   assert.equal((await r.db.prepare('SELECT count(*) AS count FROM provider_fact_inbox').first()).count,0);
+   assert.equal((await r.db.prepare('SELECT count(*) AS count FROM contact_suppressions').first()).count,0);
+   assert.equal((await r.db.prepare('SELECT count(*) AS count FROM lifecycle_audit_entries').first()).count,0);
+   assert.equal((await r.db.prepare('SELECT count(*) AS count FROM integration_audit').first()).count,0);
+  }
   assert.equal((await r.call('/webhooks/mail/sendgrid',{method:'POST',body,headers:signed})).status,204);
   const persisted=await r.db.prepare('SELECT provider,kind FROM provider_fact_inbox').first();
   assert.deepEqual(persisted,{provider:'sendgrid',kind:'bounced'});
   assert.equal((await r.call('/webhooks/mail/sendgrid',{method:'POST',body,headers:signed})).status,204);
   assert.equal((await r.db.prepare('SELECT count(*) AS count FROM provider_fact_inbox').first()).count,1);
-  const changed=[{...row,email:'different@example.test'}];
+  // A newly signed changed body passes signature verification, but its reused
+  // event identity still conflicts with the immutable provider evidence.
   assert.equal((await r.call('/webhooks/mail/sendgrid',{method:'POST',body:changed,headers:headersFor(changed)})).status,500);
   assert.equal((await r.db.prepare('SELECT count(*) AS count FROM provider_fact_inbox').first()).count,1);
   const suppression=await r.db.prepare('SELECT COUNT(*) AS count FROM contact_suppressions').first();

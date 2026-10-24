@@ -1578,7 +1578,7 @@
       "executable": false
     },
     "operations/base-integration.test.mjs": {
-      "sha256": "770c93c3b087d531977c5ad3ec36253c8b2c00d30a1c3e9ff4bba73ed3f4b166",
+      "sha256": "612995d41760bc0bb0064f8c8686a24c579653eaa96a0723445e13f70e25ac23",
       "executable": false
     },
     "operations/base-runtime.mjs": {
