@@ -184,7 +184,7 @@
       "label": "Allowed newsletter link hosts",
       "kind": "text",
       "required": false,
-      "help": "Defaults to this app\u2019s own host. Change it later in Mango Settings, or enter comma-separated host names such as shop.example.com.",
+      "help": "Defaults to this app’s own host. Change it later in Mango Settings, or enter comma-separated host names such as shop.example.com.",
       "group": "mail"
     },
     {

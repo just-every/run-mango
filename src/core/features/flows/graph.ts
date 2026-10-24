@@ -1,5 +1,6 @@
 import {z} from 'zod';
 export const nodeKinds = {
+  unavailable: ['Unavailable source step', 'Unavailable: this imported source step has no executable Mango equivalent.'],
   trigger: ['Trigger', 'Starts when the chosen event occurs. Enrolment is not available yet.'],
   delay: ['Time delay', 'Waits for a duration before continuing.'],
   'wait-until': ['Wait until', 'Waits until a chosen date or condition.'],
@@ -18,7 +19,7 @@ export const nodeKinds = {
 } as const;
 export type NodeKind = keyof typeof nodeKinds;
 const kind = z.enum(Object.keys(nodeKinds) as [NodeKind,...NodeKind[]]);
-export const graphSchema = z.object({name:z.string().trim().min(1).max(100),trigger:z.string().trim().min(1).max(300),nodes:z.array(z.object({id:z.string().regex(/^[a-zA-Z0-9-]{1,64}$/),kind,email:z.object({templateId:z.string().min(1).max(200),subject:z.string().max(250),preheader:z.string().max(500),html:z.string().max(500000),text:z.string().max(500000)}).strict().optional(),label:z.string().trim().min(1).max(300),next:z.array(z.string()).max(100)}).strict()).min(2).max(100)}).strict();
+export const graphSchema = z.object({name:z.string().trim().min(1).max(100),trigger:z.string().trim().min(1).max(300),nodes:z.array(z.object({id:z.string().regex(/^[a-zA-Z0-9-]{1,64}$/),kind,email:z.object({templateId:z.string().min(1).max(200),subject:z.string().max(250),preheader:z.string().max(500),html:z.string().max(500000),text:z.string().max(500000)}).strict().optional(),label:z.string().trim().min(1).max(300),next:z.array(z.string()).max(100)}).strict()).min(2).max(100)}).strict().refine(graph=>new TextEncoder().encode(JSON.stringify(graph)).byteLength<=1_000_000,'The saved flow draft exceeds one review payload.');
 export type FlowGraph = z.infer<typeof graphSchema>;
 export function validateGraph(graph: FlowGraph): string[] {
   const errors:string[]=[], nodes=new Map(graph.nodes.map(n=>[n.id,n])), roots=graph.nodes.filter(n=>n.kind==='trigger');

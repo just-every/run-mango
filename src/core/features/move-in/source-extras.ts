@@ -19,7 +19,7 @@ export async function applySourceExtras(platform:Platform,plan:ImportPlan,operat
   const now=Date.now(),db=platform.database.$client;
   for(const [ordinal,flow] of (extras.flows??[]).entries()){
     const id=await sha256('source-flow:'+plan.fingerprint+':'+ordinal);
-    const steps=flow.unsupported.map((label,index)=>({id:'source-'+index,kind:'task',label,next:[index===flow.unsupported.length-1?'exit':'source-'+(index+1)]}));
+    const steps=flow.unsupported.map((label,index)=>({id:'source-'+index,kind:'unavailable',label,next:[index===flow.unsupported.length-1?'exit':'source-'+(index+1)]}));
     const graph={name:flow.name,trigger:flow.trigger,nodes:[{id:'trigger',kind:'trigger',label:flow.trigger,next:[steps.length?'source-0':'exit']},...steps,{id:'exit',kind:'exit',label:'Draft only; nothing enrolled or sent',next:[]}]};
     await db.prepare('INSERT INTO flow_draft_revisions(id,name,graph_json,created_by,created_at) VALUES(?,?,?,?,?) ON CONFLICT(id) DO NOTHING').bind(id,flow.name,JSON.stringify(graph),operatorId,now).run();
   }
