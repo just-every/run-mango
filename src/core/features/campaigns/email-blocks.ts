@@ -27,7 +27,8 @@ export function readEmailBlocks(source:string):EditorBlock[]{
   return parsed.childNodes.map(node=>{
     const at=node.sourceCodeLocation;
     let html=at?envelope.body.slice(at.startOffset,at.endOffset):serializeOuter(node);
-    const setting='tagName'in node?envelope.settings.find(row=>row.block===index++):undefined;
+    const blockIndex='tagName'in node?index++:undefined;
+    const setting=blockIndex===undefined?undefined:envelope.settings.find(row=>row.block===blockIndex);
     if(setting)html=html.replace(' class="'+mobileClass(setting.block)+'"','');
     const {block:_block,...mobile}=setting??{block:0};
     return {id:crypto.randomUUID(),html,...(setting?{mobile}:{})};
