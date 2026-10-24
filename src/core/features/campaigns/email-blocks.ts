@@ -8,11 +8,11 @@ export const emailButton=(href:string,label:string)=>`<table role="presentation"
 const table=(content:string,padding=16)=>`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:${padding}px;text-align:left;background-color:#ffffff;color:#000000;font-size:16px">${content}</td></tr></table>`;
 export function blockContent(kind:BlockKind):string{
   switch(kind){
-    case 'image':return '<img src="https://example.test/garden.png" width="240" height="160" alt="Garden">';
-    case 'button':return emailButton('https://example.test/garden','Explore the garden');
-    case 'header':return '<h1>Garden news</h1>';
+    case 'image':return '<img src="" width="" height="" alt="">';
+    case 'button':return emailButton('','');
+    case 'header':return '<h1>Write your heading.</h1>';
     case 'footer':return '<h6 style="font-size:16px">Thank you for reading.</h6>';
-    case 'product':return '<img src="https://example.test/garden.png" width="200" height="160" alt="Garden seeds"><h3>Garden seeds</h3><p>Product price</p><p>Product description</p><a href="https://example.test/garden">View product</a>';
+    case 'product':return '<img src="" width="" height="" alt=""><h3></h3><p></p><p></p><a href=""></a>';
     case 'spacer':return '<br>';
     case 'divider':return '<hr>';
     case 'columns':return columnsContent([blockContent('product'),blockContent('button')]);
