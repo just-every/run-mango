@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "f9decc9adcf50b2fcf1656e4b6be0aba2a6e7ea8e0145dcc82f1b949b392e18d",
+      "sha256": "7118f603655366c77c1af51637746312343936bb2508286e327950e262a1d8fa",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "7f4df36e8d883ae438e51379a82d4ca767e66456b6ea48fe93c1eb71747fff34",
+      "sha256": "786c155a43caa936751128749a26c7a7dc0ead50ffaa6f2725a9f7b451def049",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,7 +1066,7 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "281f479e6c0ff3bcd0e3c3255df926877c335b697fbe40d80be47eff79c8d2da",
+      "sha256": "887fca9c0c3a94e09f78f322d9327bec73abcd92c55aeab3967d939ab786e15b",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -7677,20 +7677,12 @@
       "sha256": "1ab78b5d4a5d77eb650e0b988f5943bec74eebe482b08e6768101aa0431e8ccd",
       "executable": false
     },
-    "tests/go-live/integrations.journeys.ts": {
-      "sha256": "1d7ae9bf4114c709a713275125747379e96dad89cfc56c43933e08d3d1c24a6c",
-      "executable": false
-    },
     "tests/go-live/kiosk-harness.ts": {
       "sha256": "de57a31d61a0a30fdaf9d27da04e1b4222fedf2caac53ec7b93daea83ddcdc71",
       "executable": false
     },
     "tests/go-live/kiosk-worker.ts": {
       "sha256": "7f99eeac62a9d3a59e3bfdfaa115ea5d89bf977dc8c60197d6a0665a0f2ab60a",
-      "executable": false
-    },
-    "tests/go-live/kiosk.journeys.ts": {
-      "sha256": "d333f224c1ab8014f005be17cb3b5d228847bbb0bdf1d7a70cd1e5418ca3d942",
       "executable": false
     },
     "tests/go-live/list-growth-support.ts": {
@@ -7813,6 +7805,10 @@
       "sha256": "06ab7572d3e1bbfe23b11e16e2fc044a9360cdbefb7c6c6777c95a3f62c15d08",
       "executable": false
     },
+    "tests/go-live/shared-kiosk.journeys.ts": {
+      "sha256": "d333f224c1ab8014f005be17cb3b5d228847bbb0bdf1d7a70cd1e5418ca3d942",
+      "executable": false
+    },
     "tests/go-live/signup-capacity-journey.ts": {
       "sha256": "7d2f59ebc0b36f0fefb65c09486535a9b14678426672bc36a92b3b34610dc905",
       "executable": false
@@ -7851,6 +7847,10 @@
     },
     "tests/go-live/stripe-journey.ts": {
       "sha256": "48cebe69560374a9a5c953138883fc3aa2a4fdec96345c717a5102d572eeaf7f",
+      "executable": false
+    },
+    "tests/go-live/sync-integrations.journeys.ts": {
+      "sha256": "1d7ae9bf4114c709a713275125747379e96dad89cfc56c43933e08d3d1c24a6c",
       "executable": false
     },
     "tests/go-live/typed-tests.journeys.ts": {
