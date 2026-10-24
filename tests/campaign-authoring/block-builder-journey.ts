@@ -1,5 +1,7 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import {createRequire} from 'node:module';
+const localRequire=createRequire(import.meta.url);
+const axeSource=createRequire(localRequire.resolve('@axe-core/playwright'))('axe-core').source as string;
 import {localSessionCookieName} from '../support/local-session';
 import {openPage,reloadPage} from '../support/navigation';
 import {png} from '../support/images';
@@ -11,13 +13,13 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     await page.context().setExtraHTTPHeaders(headers);
     const open=await page.request.post(runtime.url+'/_authoring/open',{headers:{...headers,'X-Test-Token':runtime.token}});expect(open.status()).toBe(200);const {token}=await open.json();
     await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,url:runtime.url}]);
-    const uploaded=await page.request.post(runtime.url+'/api/campaign-assets',{headers,multipart:{file:{name:'synthetic-mango-140.png',mimeType:'image/png',buffer:Buffer.from(png(200,160))}}});expect(uploaded.status()).toBe(201);const {asset}=await uploaded.json();
+    const uploaded=await page.request.post(runtime.url+'/api/campaign-assets',{headers,multipart:{file:{name:'synthetic-mango-140.png',mimeType:'image/png',buffer:Buffer.from(png(200,160))}}});expect(uploaded.status()).toBe(201);const {asset}=await uploaded.json();expect(new URL(asset.url).origin).toBe(runtime.url);
     const create=await page.request.post(runtime.url+'/api/campaigns',{headers,data:{}});expect(create.status()).toBe(201);const {campaignId,revisionId}=await create.json();
     const configured=await page.request.patch(runtime.url+'/api/campaign-revisions/'+revisionId,{headers,data:{name:'Synthetic block letter',emailSubject:'Garden seeds',preheader:'From our garden',emailBody:'',steps:[{channel:'email',timezone:'Australia/Brisbane',scheduledAt:'2031-06-07T00:00:00.000Z',sendByAt:'2031-06-07T13:59:00.000Z',whyThisTime:'Operator selected'}]}});expect(configured.status()).toBe(200);
     await page.setViewportSize({width:1440,height:1000});await openPage(page,`${runtime.url}/app/campaigns/${campaignId}/review`);
     console.log('Block proof: build');
     await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption('columns');await page.getByRole('button',{name:'Add block',exact:true}).click();
-    await page.getByRole('textbox',{name:'Image URL',exact:true}).fill(asset.url);
+    await page.getByRole('textbox',{name:'Image URL',exact:true}).fill(asset.url);await page.getByRole('textbox',{name:'Product price',exact:true}).fill('$20.00');
     await page.getByLabel('Block padding',{exact:true}).fill('8');await page.getByRole('combobox',{name:'Block alignment',exact:true}).selectOption('center');
     await page.getByRole('combobox',{name:'Mobile column orientation',exact:true}).selectOption('stack-columns');
     await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption('text');await page.getByRole('button',{name:'Add block',exact:true}).click();await page.getByRole('textbox',{name:'Block text',exact:true}).fill('Synthetic second block');
@@ -34,8 +36,9 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();expect((await read()).emailBody).toBe(saved.emailBody);
     await expect(page.getByRole('status',{name:'Email sent size',exact:true})).toContainText('Sent size upper bound:');
     console.log('Block proof: screens');
-    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);expect((await new AxeBuilder({page}).include('main').options({iframes:false}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.screenshot({path:info.outputPath(`block-builder-${width}.png`),fullPage:true});}
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document.querySelector('main'),{iframes:false}));expect(audit.violations.filter((v:any)=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.screenshot({path:info.outputPath(`block-builder-${width}.png`),fullPage:true});}
     await page.setViewportSize({width:375,height:1000});await page.setContent(saved.emailBody);
+    expect(await page.getByRole('img',{name:'Garden seeds',exact:true}).evaluate(node=>(node as HTMLImageElement).complete&&(node as HTMLImageElement).naturalWidth===200)).toBe(true);
     const product=await page.getByRole('heading',{name:'Garden seeds',exact:true}).boundingBox(),button=await page.getByRole('link',{name:'Explore the garden',exact:true}).boundingBox();expect(product).toBeTruthy();expect(button).toBeTruthy();expect(button!.y).toBeGreaterThan(product!.y);await page.screenshot({path:info.outputPath('block-email-375.png'),fullPage:true});
     console.log('Block proof: approve');
     const approval=await page.request.post(`${runtime.url}/api/campaigns/${campaignId}/approve`,{headers,data:{revisionId,idempotencyKey:'synthetic-mango-140'}});expect(approval.status(),await approval.text()).toBe(200);expect((await read()).emailBody).toBe(saved.emailBody);

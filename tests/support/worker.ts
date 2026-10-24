@@ -19,7 +19,7 @@ export default {
       if (request.headers.get('X-Mango-Authoring-Fixture') !== bindings.LOCAL_BOOTSTRAP_TOKEN) return new Response('Forbidden', { status: 403 });
       // Only fixture selection uses this token. The unchanged authoring worker
       // still authenticates every product route with its native session cookie.
-      return authoringWorker.fetch(request, { ...bindings, DB: bindings.AUTHORING_DB, ...(request.headers.get('X-Mango-Block-Fixture')==='1'?{AUTHORING_LINK_HOST:'example.test'}:{}) }, executionContext);
+      return authoringWorker.fetch(request, { ...bindings, DB: bindings.AUTHORING_DB, MANGO_PUBLIC_BASE_URL:new URL(request.url).origin, ...(request.headers.get('X-Mango-Block-Fixture')==='1'?{AUTHORING_LINK_HOST:'example.test'}:{}) }, executionContext);
     }
     const platform = createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
     if (bindings.MANGO_FIXTURE_TURNSTILE === '1') {

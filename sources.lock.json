@@ -7482,7 +7482,7 @@
       "executable": false
     },
     "tests/campaign-authoring/block-builder-journey.ts": {
-      "sha256": "94c2014748bda079ee801fd327f4aa208824cb3e962e749b0b79f8a6fa15d578",
+      "sha256": "709ec085955c953e6e71a84c67932907cf05a9b7957a5475689c713718b2a568",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
@@ -8530,7 +8530,7 @@
       "executable": false
     },
     "tests/support/worker.ts": {
-      "sha256": "85c86e0f684a7f8a6f18884c2f0d20d2709f8f84c26545a52626fb1a8d134af7",
+      "sha256": "449b2401f791984e8b46dcea74c28a211c369a8d553f14be580b478e0d6343ec",
       "executable": false
     },
     "tsconfig.json": {
