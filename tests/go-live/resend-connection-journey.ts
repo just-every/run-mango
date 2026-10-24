@@ -31,6 +31,12 @@ export async function resendConnectionJourney(page:Page,info:TestInfo){
     expect((await site.call('/webhooks/mail/resend',{method:'POST',raw})).status).toBe(401);
     const id='synthetic-mango-130-event',timestamp=String(Math.floor(Date.now()/1000)-600),signature=createHmac('sha256',Buffer.from(resendWebhookSecret.slice(6),'base64')).update(id+'.'+timestamp+'.'+raw).digest('base64');
     expect((await site.call('/webhooks/mail/resend',{method:'POST',raw,headers:{'svix-id':id,'svix-timestamp':timestamp,'svix-signature':'v1,'+signature}})).status).toBe(401);expect(await site.count('provider_fact_inbox')).toBe(before);
+    const clock=await site.control('/_golive/clock'),[pacing]=await site.rows('SELECT MAX(next_at) AS due FROM provider_pacing');if(Number(pacing.due??0)>=clock.now)await site.control('/_golive/clock',{advanceMs:Number(pacing.due)-clock.now+1});
+    await json(await site.call('/api/settings/sender/confirmation',{method:'POST',cookie:owner}),202);
+    const ownerCheck=edge.resend.sends.findLast(send=>send.body.to.includes('owner@example.test'));expect(ownerCheck).toBeTruthy();
+    const delivered=JSON.stringify({type:'email.delivered',data:{email_id:ownerCheck!.messageId,to:['owner@example.test']}}),deliveryId='synthetic-mango-130-delivered',deliveryTimestamp=String(Math.floor((await site.control('/_golive/clock')).now/1000)),deliverySignature=createHmac('sha256',Buffer.from(resendWebhookSecret.slice(6),'base64')).update(deliveryId+'.'+deliveryTimestamp+'.'+delivered).digest('base64');
+    expect((await site.call('/webhooks/mail/resend',{method:'POST',raw:delivered,headers:{'svix-id':deliveryId,'svix-timestamp':deliveryTimestamp,'svix-signature':'v1,'+deliverySignature}})).status).toBe(204);
+    expect((await json(await site.call('/api/settings/sending',{cookie:owner}),200)).connection.deliveryEventsVerified).toBe(true);
     const campaign=await draftCampaign(site,owner,'Synthetic Resend health',[],new Date(Date.now()+3600000));
     for(const failure of [401,403,404]){
       state.readStatus=failure;await site.control('/_golive/clock',{advanceMs:300001});

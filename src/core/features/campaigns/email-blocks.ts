@@ -11,7 +11,7 @@ export function blockContent(kind:BlockKind):string{
     case 'button':return '<a href="https://example.test/garden">Explore the garden</a>';
     case 'header':return '<h1>Garden news</h1>';
     case 'footer':return '<h6 style="font-size:16px">Thank you for reading.</h6>';
-    case 'product':return '<img src="https://example.test/garden.png" width="200" height="160" alt="Garden seeds"><h3>Garden seeds</h3><p>Describe the product and its price.</p><a href="https://example.test/garden">View product</a>';
+    case 'product':return '<img src="https://example.test/garden.png" width="200" height="160" alt="Garden seeds"><h3>Garden seeds</h3><p>Product price</p><p>Product description</p><a href="https://example.test/garden">View product</a>';
     case 'spacer':return '<br>';
     case 'divider':return '<hr>';
     case 'columns':return columnsContent([blockContent('product'),blockContent('button')]);
