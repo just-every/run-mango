@@ -48,8 +48,22 @@ export async function oversizedReuse(site:Installation,cookie:string,page:Page,i
     await page.getByText('Follow up with non-engaged readers',{exact:true}).click();
     await page.getByLabel('New follow-up subject',{exact:true}).fill('Garden follow-up');
     await page.getByLabel('Follow-up delay hours',{exact:true}).fill('1');
-    await page.getByRole('button',{name:'Create follow-up draft',exact:true}).click();
+    // Observe the refusing write itself before asserting its rendered diagnostic.
+    // A slow response must not spend the alert assertion's rendering budget.
+    const [response]=await Promise.all([
+      page.waitForResponse(response=>response.url()===`${site.runtime.url}/api/campaigns/${campaign.campaignId}/followup`&&response.request().method()==='POST'),
+      page.getByRole('button',{name:'Create follow-up draft',exact:true}).click(),
+    ]);
+    expect(response.request().postDataJSON()).toEqual({subject:'Garden follow-up',delayHours:1,metric:'click'});
+    expect(response.status()).toBe(400);
+    const refused=await response.json();
+    expect(refused).toMatchObject({error:'email_too_large',size:{exceedsLimit:true}});
+    expect(refused.size.htmlBytes).toBeGreaterThan(refused.size.limitBytes);
+    expect(refused.size.largestBlocks).toHaveLength(3);
+    await info.attach(`followup-response-${width}`,{body:JSON.stringify({status:response.status(),...refused}),contentType:'application/json'});
     await expect(page.getByRole('alert').filter({hasText:'Email is too large.'})).toHaveCount(1);
+    await expect(page.getByRole('alert').filter({hasText:'Email is too large.'})).toHaveText(refused.detail);
+    await expect(page.getByLabel('Follow-up delay hours',{exact:true})).toHaveValue('1');
     await expect(page.getByLabel('New follow-up subject',{exact:true})).toHaveValue('Garden follow-up');
     for(const [index,alert] of (await page.getByRole('alert').filter({hasText:'Email is too large.'}).all()).entries()) {
       await expect(alert).toContainText('Largest blocks:');

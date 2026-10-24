@@ -41,9 +41,16 @@ contract('BUILD-012','large newsletters save by transmitted bytes, retain refuse
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
+      // The debounced meter is asynchronous even after document hydration.
+      const report=page.waitForResponse(response=>response.url()===`${site.runtime.url}/api/campaign-authoring/email-size`&&response.request().method()==='POST');
       await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
       await page.getByRole('button',{name:'HTML mode',exact:true}).click();
       await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(body);
+      const measuredResponse=await report;
+      await info.attach(`meter-response-${width}`,{body:JSON.stringify({status:measuredResponse.status(),matchesSavedBody:measuredResponse.request().postDataJSON().emailBody===detail.revision.emailBody,requestBodyCharacters:measuredResponse.request().postDataJSON().emailBody?.length}),contentType:'application/json'});
+      expect(measuredResponse.request().postDataJSON().emailBody).toBe(detail.revision.emailBody);
+      expect(measuredResponse.status()).toBe(200);
+      expect(await measuredResponse.json()).toMatchObject({exceedsLimit:false});
       await expect(page.getByRole('status',{name:'Email sent size'})).toContainText('Sent size upper bound');
       await page.locator('.editor-panel').screenshot({path:info.outputPath(`large-email-${width}.png`)});
       await page.getByRole('status',{name:'Email sent size'}).screenshot({path:info.outputPath(`email-size-meter-${width}.png`)});
