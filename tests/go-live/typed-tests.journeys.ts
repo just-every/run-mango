@@ -67,7 +67,7 @@ test('[CAMP-019] typed email tests enforce restrictions, daily allowance and rec
     for(const item of sent)expect(csv).toContain(item.to);
     for(const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
-      await openPage(page,site.runtime.url+'/app/activity');
+      await openPage(page,site.runtime.url+'/app/settings/activity');
       await page.getByLabel('Action',{exact:true}).fill('test-send');
       await page.getByLabel('Object',{exact:true}).fill(campaign.revisionId);
       await page.getByRole('button',{name:'Apply filters',exact:true}).click();

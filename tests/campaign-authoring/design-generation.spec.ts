@@ -72,7 +72,7 @@ test('[DESIGN-002] Design with 12ui turns a brief into an unsaved body through t
       if (!item.url().startsWith(runtime.url)) outbound.push(item.url());
       if (item.method() === 'PATCH' && item.url().includes('/api/campaign-revisions/')) saves.push(item.url());
     });
-    const { campaignId, read } = await openDraft(runtime, page, request);
+    const { api, headers, campaignId, read } = await openDraft(runtime, page, request);
     const review = `${runtime.url}/app/campaigns/${campaignId}/review`;
     await openPage(page, review);
     const body = page.getByLabel('Email body', { exact: true });
