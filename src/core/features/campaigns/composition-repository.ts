@@ -130,7 +130,7 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
     async saveDraft(id: string, composition: DraftComposition, updatedAt: Date, deferRead = false, actorId?: string) {
       // Saving uses raw persisted authority, never the display-only claim projection.
       const storedRevision = await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,id),
-        extras:fields=>({reusablePlacements:sql<string>`(SELECT COALESCE(json_group_array(json_object('position',u.position,'block_json',u.block_json)),'[]') FROM reusable_email_block_placements u WHERE u.target_kind='campaign' AND u.target_id=${fields.id})`.as('reusable_placements')})});
+        extras:{reusablePlacements:sql<string>`(SELECT COALESCE(json_group_array(json_object('position',u.position,'block_json',u.block_json)),'[]') FROM reusable_email_block_placements u WHERE u.target_kind='campaign' AND u.target_id=${id})`.as('reusable_placements')}});
       if (!storedRevision) return { kind: 'not_found' as const };
       if (storedRevision.state !== 'draft') return { kind: 'not_draft' as const };
       const [storedLinks, storedSteps] = await Promise.all([

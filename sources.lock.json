@@ -3182,7 +3182,7 @@
       "executable": false
     },
     "src/core/features/campaigns/composition-repository.ts": {
-      "sha256": "f9745240f3b61618bc10c88f09828392f0174cdf08e4b514c0e4f03bad51984a",
+      "sha256": "626c9927ab6a89b75f42671152107d1d90a254baaec6c12e0f1fe952a5849715",
       "executable": false
     },
     "src/core/features/campaigns/contact-links.ts": {
