@@ -109,7 +109,7 @@ function ContactProfilePanels({data}:{data:ContactDetail}) {
     <section className="panel" aria-label="Topics and channel consent" style={{overflowWrap:'anywhere',minWidth:0}}><h2>Topics and channel consent</h2>
       {(['email','sms'] as const).map(channel=><div key={channel}><h3>{channel==='email'?'Email':'SMS'} · {titleCase(channel==='email'?data.contact.emailStatus:data.contact.smsStatus)}</h3>
         {data.consent.filter(e=>e.channel===channel).length?data.consent.filter(e=>e.channel===channel).map(e=><article key={e.id}>
-          <strong>{e.messageCategory}</strong><p>{titleCase(channel==='email'?data.contact.emailStatus:data.contact.smsStatus)} · {e.confirmedAt?'Confirmed evidence':'Confirmation pending'}</p>
+          <strong>{e.messageCategory}</strong><p>{titleCase(channel==='email'?data.contact.emailStatus:data.contact.smsStatus)} · {e.captureMethod==='incumbent-held'?'Incumbent-held evidence':e.confirmedAt?'Confirmed evidence':'Confirmation pending'}</p>
           <small>Evidence: {e.captureMethod} · {e.captureSource} · {formatDate(e.occurredAt)}</small>
         </article>):<p>No topic consent recorded.</p>}
       </div>)}<p className="muted-copy">Topic evidence never overrides a channel opt-out or suppression. Full evidence is shown below.</p>

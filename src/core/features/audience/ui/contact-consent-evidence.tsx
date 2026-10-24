@@ -36,7 +36,7 @@ export type ContactImportObservation = {
 };
 
 function ConfirmationState({ evidence }: { evidence: ContactConsentEvidence }) {
-  const value = !evidence.confirmationRequired ? (evidence.captureMethod==='operator-recorded'?'Operator-recorded single opt-in':'Single opt-in') : evidence.confirmedAt
+  const value = evidence.captureMethod==='incumbent-held'?'Incumbent-held':!evidence.confirmationRequired ? (evidence.captureMethod==='operator-recorded'?'Operator-recorded single opt-in':'Single opt-in') : evidence.confirmedAt
     ? 'Confirmed'
     : evidence.confirmationRequired ? 'Awaiting confirmation' : 'Confirmation not required';
   const style = evidence.confirmedAt ? 'good' : evidence.confirmationRequired ? 'pending' : 'neutral';
@@ -66,8 +66,8 @@ export function ContactConsentEvidencePanel({ consent, observations, restricted=
                   <ConfirmationState evidence={evidence} />
                 </div>
                 <dl className="contact-evidence-fields">
-                  <div><dt>Captured</dt><dd>{formatDate(evidence.occurredAt)}</dd></div>
-                  <div><dt>{evidence.confirmationRequired?'Confirmed':'Consent effective'}</dt><dd>{formatDate(evidence.confirmedAt)}</dd></div>
+                  <div><dt>{evidence.captureMethod==='incumbent-held'?'Source evidence time':'Captured'}</dt><dd>{formatDate(evidence.occurredAt)}</dd></div>
+                  <div><dt>{evidence.captureMethod==='incumbent-held'?'Mango confirmation':evidence.confirmationRequired?'Confirmed':'Consent effective'}</dt><dd>{formatDate(evidence.confirmedAt)}</dd></div>
                   <div><dt>Destination</dt><dd>{evidence.destination}</dd></div>
                   {evidence.channel==='sms'?<div><dt>SMS programme</dt><dd>{evidence.smsProgram || 'Not recorded'}</dd></div>:null}
                   <div><dt>Destination jurisdiction</dt><dd>{evidence.destinationJurisdiction}</dd></div>
