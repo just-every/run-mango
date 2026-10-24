@@ -1,3 +1,4 @@
+import type {SourceExtras} from '../move-in/source-api';
 import {csvSourceRow,sourcePresets} from '../move-in/csv-sources';
 import type {PlannedAttestation} from '../move-in/incumbent-attestation';
 import type {IncumbentFile} from '../move-in/incumbent-policy';
@@ -11,6 +12,7 @@ import { optOutLedger, optOutStatus, type OptOutLine } from './import-opt-out-li
 export type NormalizedImportRow = {
   file: string; row: number; email: string; phone: string; smsStatus: string; displayName: string; status: string; reason?: string; skipped?: string; warnings: string[];
   values: Record<string, string>; ledger?: AudienceSnapshot;
+  sourceExtras?:SourceExtras;
   sourceAttestation?:PlannedAttestation;
   incumbent?: {id:string;evidenceAt:number;timeQuality:string;source:string;facts:Record<string,string>};
   /** The original name stays in source observations when duplicates supply a fuller name. */

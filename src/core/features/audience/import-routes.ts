@@ -1,3 +1,5 @@
+import {readSourceExport} from '../move-in/source-api';
+import {sourceExtrasSchema} from '../move-in/source-extras';
 import {sourcePresets} from '../move-in/csv-sources';
 import {attestationsSchema} from '../move-in/incumbent-policy';
 import {readSignupRefusals} from './signup-refusals';
@@ -13,9 +15,15 @@ import { loadSignupDescription } from './signup-routes';
 import { AudienceCsvUnavailable } from './import-opt-out-lines';
 import { importConflict } from './import-conflict';
 import { recordActivity } from '@/core/features/auth/activity-record';
-const inputSchema=z.object({files:z.array(z.object({name:z.string().min(1).max(200),csv:z.string().min(1),preset:z.enum(['csv-subscribed','csv-unsubscribed','csv-cleaned','csv-non-subscribed','mango','beehiiv','omnisend','customerio','activecampaign','klaviyo']),mapping:z.record(z.string(),z.string()).optional()})).min(1).max(10),consent:z.record(z.string(),z.string()).optional(),attestations:attestationsSchema.optional()});
+const inputSchema=z.object({files:z.array(z.object({name:z.string().min(1).max(200),csv:z.string().min(1),preset:z.enum(['csv-subscribed','csv-unsubscribed','csv-cleaned','csv-non-subscribed','mango','beehiiv','omnisend','customerio','activecampaign','klaviyo']),mapping:z.record(z.string(),z.string()).optional()})).min(1).max(10),consent:z.record(z.string(),z.string()).optional(),attestations:attestationsSchema.optional(),sourceExtras:sourceExtrasSchema.optional()});
 export function createAudienceImportRoutes(platform: Platform) {
   const routes=new Hono<{Variables:AuthVariables}>(); const service=createAudienceImportService(platform);
+  routes.post('/audience/import-source',async context=>{
+    const input=z.object({provider:z.enum(['activecampaign','klaviyo']),endpoint:z.string().url().max(300),key:z.string().trim().min(1).max(512)}).strict().safeParse(await context.req.json().catch(()=>null));
+    if(!input.success)return context.json({error:'invalid_source_export'},400);
+    try{return context.json(await readSourceExport(input.data.provider,input.data.endpoint,input.data.key));}
+    catch{return context.json({error:'source_export_refused',detail:'The endpoint, credential or export could not be verified. Nothing was imported.'},422);}
+  });
   routes.get('/audience/import-presets',async context=>{
     const categories=await platform.database.$client.prepare(`SELECT 'newsletter' AS category
       UNION SELECT message_category FROM campaign_revisions WHERE TRIM(message_category) <> ''

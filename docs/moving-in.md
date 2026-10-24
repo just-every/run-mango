@@ -172,3 +172,39 @@ starts the reviewed contact import: it creates no campaign, flow or delivery.
 These presets read CSV files; they do not pull APIs or run parallel synchronization
 (MOVE-013). SMS still requires its independent original evidence and never inherits
 an email subscription.
+
+## Read an ActiveCampaign or Klaviyo API export
+
+The Import page can read one export using an Owner/Admin credential. Supply the
+ActiveCampaign account API origin under `api-us1.com`, `api-us2.com`, `api-eu1.com`
+or `activehosted.com`, or Klaviyo's `https://a.klaviyo.com`. The key goes only in
+that provider's HTTPS authentication header and is cleared from the form after
+the read. Mango does not retain a connection, log the key, follow redirects or
+accept pagination to another origin. A refused, incomplete or over-limit read
+imports nothing; there is no background retry.
+
+The read creates a reviewable CSV bundle, not contacts. Preview its original
+scope and source attestation, then explicitly start the reviewed import.
+ActiveCampaign reads contacts, restrictive list statuses, list names, tags,
+custom fields and automation names/statuses. Automations remain an outline;
+trigger and action definitions unavailable from this API are named as such.
+CSV exports can use the ActiveCampaign preset too, with the same restrictions.
+
+Klaviyo reads profiles and their email subscription method/time, suppressions,
+custom properties, list and segment membership, templates, metric-labelled
+order/engagement events and flow-action outlines. Lists and segments become
+explicitly named import-time review snapshots. Unsupported source conditions
+remain in the report; they are not silently translated into live rules. Neither
+membership nor payment grants consent. Templates go through Mango's existing
+restricted HTML conversion into the library. Source history retains its original
+time; opens do not count as a click or purchase. Nothing activates an abandoned
+cart flow. CSV exports can use the Klaviyo preset too.
+
+Conservative SMS default: the API export preserves source SMS evidence for
+review but leaves the phone non-subscribed. A missing per-row time or collection
+point never becomes positive SMS consent. Positive incumbent SMS activation
+remains held under CONT-024/A2P; independently complete original native SMS
+confirmation columns can use the existing CSV path. Review snapshot topics do
+not create additional category-specific consent. APIs read at most 5,000 records
+per collection, 50 pages per collection and 100 templates per export. These
+are reviewed one-time imports, not a parallel-run synchronization (MOVE-013).

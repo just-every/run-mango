@@ -1,3 +1,4 @@
+import {applySourceExtras,undoSourceExtras} from '../move-in/source-extras';
 import {csvReview,csvReconciliation,recordCsvAttestations} from '../move-in/csv-review';
 import {csvAttestations,sourceIdentity} from '../move-in/csv-sources';
 // @ts-expect-error Portable Base ESM has no separate declaration for this helper.
@@ -51,6 +52,12 @@ export async function audienceImportContext(platform: Platform, principalId: str
 export function createAudienceImportService(platform: Platform) {
   const db = platform.database.$client;
   // An archive's contacts are continued and undone with the archive, never as a separate CSV import.
+  const finish=async<T extends {id:string;state:string}>(job:T,context:D1ImportContext,plan?:ImportPlan)=>{
+    if(!['completed','undone','rolled_back'].includes(job.state))return job;
+    if(!plan){const key=await db.prepare('SELECT operation_key FROM ik_jobs WHERE id=? UNION ALL SELECT operation_key FROM ik_d1_streams WHERE id=?').bind(job.id,job.id).first<{operation_key:string}>();const stored=key?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(key.operation_key).first<{fingerprint:string;plan_json:string}>():null;if(stored)plan=await readAudiencePlan(db,stored);}
+    if(plan){if(job.state==='completed')await applySourceExtras(platform,plan,context.authorization.principalId);else await undoSourceExtras(platform,plan);}
+    return job;
+  };
   const notArchive=async(id:string)=>{if(await db.prepare('SELECT 1 FROM move_in_archives WHERE audience_stream=?').bind(id).first())throw new Error('This import belongs to an archive move-in. Continue or undo it from the archive.');};
   return {
     /** Everything Preview shows, computed with reads only. */
@@ -63,6 +70,7 @@ export function createAudienceImportService(platform: Platform) {
       const csvSources=Object.fromEntries(input.files.flatMap(file=>{const id=sourceIdentity(file.preset,file.name),record=csvProof.find(r=>r.sourceKey===id.sourceKey);return record?[[file.name,{...record,exportCreatedAt:record.exportCreatedAt}]]:[];}));
       const incumbentSources=options.incumbentSources??csvSources;
       const normalized = normalizeImport(input,incumbentSources);
+      if(input.sourceExtras&&normalized.rows.length)normalized.rows[0].sourceExtras=input.sourceExtras;
       for(const proof of csvProof){const file=input.files.find(f=>sourceIdentity(f.preset,f.name).sourceKey===proof.sourceKey);const row=normalized.rows.find(r=>r.file===file?.name);if(row)row.sourceAttestation=proof;}
       const previewContext = {...context,storage:{...context.storage,database:previewDb}};
        const effects = new Map<string,TargetEffect>(); const now = Date.now();
@@ -167,7 +175,7 @@ export function createAudienceImportService(platform: Platform) {
       if(plan.entries.length>10000)return createAudienceStream(plan,context);
       const reviewed={...context,reviewedFingerprint:fingerprint,operationKey:fingerprint};
       const job=await createD1ImportJob(plan,reviewed);
-      return applyD1ImportBatches(job,reviewed);
+      return finish(await applyD1ImportBatches(job,reviewed),context,plan);
     },
     report:async(id:string,input:D1ImportContext)=>{
       const context=await sharedAudienceImport(id,input);
@@ -188,9 +196,9 @@ export function createAudienceImportService(platform: Platform) {
       const stream=await isAudienceStream(id,context);
       // An undo continues through Undo's own steps, never the kit's plain resume.
       if((stream?await audienceStreamActions.read(id,context):await readD1ImportJob(id,context)).state==='undoing')return undoImport(db,platform.config.contactHashSalt,id,context);
-      return stream?audienceStreamActions.resume(id,context):resumeD1Import(id,context);
+      return finish(await (stream?audienceStreamActions.resume(id,context):resumeD1Import(id,context)),context);
     },
-    undo:async(id:string,context:D1ImportContext)=>{await notArchive(id);return undoImport(db,platform.config.contactHashSalt,id,await sharedAudienceImport(id,context));},
+    undo:async(id:string,context:D1ImportContext)=>{await notArchive(id);const shared=await sharedAudienceImport(id,context);return finish(await undoImport(db,platform.config.contactHashSalt,id,shared),shared);},
     abandon:async(id:string,context:D1ImportContext)=>{await notArchive(id);return abandonImport(db,platform.config.contactHashSalt,id,await sharedAudienceImport(id,context));},
     abandonments:(ids:string[])=>abandonments(db,ids),
     async jobs() {

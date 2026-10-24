@@ -1,3 +1,5 @@
+import {SourceApiForm} from './source-api-form';
+import type {SourceExtras} from '../../move-in/source-api';
 import type {AttestationInput} from '../../move-in/incumbent-policy';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
@@ -33,6 +35,7 @@ type ImportPayload = {
   files: Array<{ name: string; csv: string; preset: string; mapping?: Record<string, string> }>;
   consent: ImportConsent;
   attestations:AttestationInput[];
+  sourceExtras?:SourceExtras;
 };
 
 function requestError(data: ImportApiError, fallback: string) {
@@ -42,6 +45,7 @@ function requestError(data: ImportApiError, fallback: string) {
 export function AudienceImportPage() {
   const presets = useResource<ImportPresetsResponse>('/api/audience/import-presets');
   const jobsResource = useResource<{ jobs: ImportJob[] }>('/api/audience/imports');
+  const [sourceExtras,setSourceExtras]=useState<SourceExtras>();
   const [attestations,setAttestations]=useState<AttestationInput[]>([]);
   const [files, setFiles] = useState<SelectedImportFile[]>([]);
   const [mappings, setMappings] = useState<Record<string, Record<string, string>>>({});
@@ -80,6 +84,7 @@ export function AudienceImportPage() {
 
   const addFiles = (selected: File[]) => {
     if (!selected.length) return;
+    setSourceExtras(undefined);setAttestations([]);
     setFileError(undefined);
     const zips = selected.filter((file) => file.name.toLowerCase().endsWith('.zip'));
     if (zips.length) {
@@ -153,7 +158,7 @@ export function AudienceImportPage() {
         ...(Object.keys(mapping).length ? { mapping } : {}),
       };
     }));
-    return { files: requestFiles, consent,attestations };
+    return { files: requestFiles, consent,attestations,sourceExtras };
   };
 
   const review = async () => {
@@ -273,6 +278,8 @@ export function AudienceImportPage() {
       {error ? <p className="inline-error" role="alert">{error}</p> : null}
       {notice ? <p className="action-notice" role="status">{notice}</p> : null}
 
+      <SourceApiForm disabled={owner.busy||Boolean(busy)||Boolean(archive.busy)} onExport={value=>{archive.choose(undefined);setFiles(value.files.map(file=>({name:file.name,preset:file.preset,file:new File([file.csv],file.name,{type:'text/csv'})})));setSourceExtras(value.sourceExtras);setAttestations([]);setMappings({});setPreview(undefined);setPreviewIsCurrent(false);setNotice('Source export read. Review the original scope and make the source attestation before applying it.');}}/>
+      {sourceExtras?<section className="panel audience-import-panel"><h2>Source outlines and review notes</h2><ul>{sourceExtras.notes.map((note,index)=><li key={index}>{note}</li>)}{sourceExtras.segments.map((segment,index)=><li key={'segment-'+index}>{segment.name}: {segment.conditions}</li>)}</ul><p>{sourceExtras.templates.length} templates and {sourceExtras.history.length} recorded history events wait for the reviewed import.</p></section>:null}
       <AudienceImportSourceForm
         files={files}
         archive={archive.archive}

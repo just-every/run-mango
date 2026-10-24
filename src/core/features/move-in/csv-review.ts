@@ -1,3 +1,4 @@
+import {extrasOf} from './source-extras';
 import type {ImportPlan} from '@/vendor/base/import-kit/src/types';
 import type {NormalizedImportRow} from '../audience/import-normalize';
 import {attestationStatements,type PlannedAttestation} from './incumbent-attestation';
@@ -15,5 +16,6 @@ export async function recordCsvAttestations(db:D1Database,plan:ImportPlan,operat
 }
 export function csvReconciliation(plan:ImportPlan){
   const summary=csvReview(plan),cell=(value:unknown)=>String(value??'').replaceAll('|','\\|').replace(/[\r\n]+/g,' ');
-  return ['# Import reconciliation','','No campaign or flow was scheduled or activated.','', '## Consent evidence','','| Kind | Rows |','| --- | ---: |',...Object.entries(summary.evidenceKinds).map(([kind,total])=>`| ${cell(kind)} | ${total} |`),'','## Source attestations','',...summary.attestationSources.map(s=>`${s.sourceName}: ${s.accepted?'affirmed':s.reason??'not affirmed'}`),'','## Row outcomes','','| File | Row | Status | Reason |','| --- | ---: | --- | --- |',...plan.entries.map(entry=>{const row=entry.source.payload as unknown as NormalizedImportRow;return `| ${cell(row.file)} | ${row.row} | ${cell(row.status)} | ${cell(entry.rejection??row.reason??row.warnings.join('; '))} |`;})].join('\n')+'\n';
+  const extras=extrasOf(plan);
+  return ['# Import reconciliation','','No campaign or flow was scheduled or activated.','', '## Consent evidence','','| Kind | Rows |','| --- | ---: |',...Object.entries(summary.evidenceKinds).map(([kind,total])=>`| ${cell(kind)} | ${total} |`),'','## Source attestations','',...summary.attestationSources.map(s=>`${s.sourceName}: ${s.accepted?'affirmed':s.reason??'not affirmed'}`),'','## Source outlines and review snapshots','',...(extras?.notes??[]),...(extras?.segments.map(s=>`${s.name}: ${s.conditions}`)??[]),'','## Templates','',...(extras?.templates.map(t=>`${t.name}: imported through the restricted template-library conversion; unsafe markup is removed and unsupported merge tags remain held for review.`)??[]),'','## Row outcomes','','| File | Row | Status | Reason |','| --- | ---: | --- | --- |',...plan.entries.map(entry=>{const row=entry.source.payload as unknown as NormalizedImportRow;return `| ${cell(row.file)} | ${row.row} | ${cell(row.status)} | ${cell(entry.rejection??row.reason??row.warnings.join('; '))} |`;})].join('\n')+'\n';
 }

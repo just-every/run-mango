@@ -1,3 +1,5 @@
+import {sourceApiEdge,sourceHosts} from './source-api-edge';
+import {sourceApiJourney} from './source-api-journey';
 import {sourceCsvJourney} from './source-csv-journey';
 import {domainJourney} from './domain-journey';
 import { test, expect } from '@playwright/test';
@@ -7,12 +9,14 @@ import { installation, json, sender, confirmedContact, draftCampaign, approve, d
 import { openPage, reloadPage } from '../support/navigation';
 
 test('[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking', async ({page}, info) => {
-  const edge = await providerEdge(), site = await installation(edge, eventSigner());
+  const source=sourceApiEdge(),edge = await providerEdge({incumbent:source.handle}), site = await installation(edge, eventSigner(),{networkHosts:sourceHosts});
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);
     await site.control('/_golive/sender-evidence');
     await sourceCsvJourney(site,page,info,cookie);
+    const sendsBeforeSources=edge.sends.length;await sourceApiJourney(site,page,info,cookie);expect(edge.sends).toHaveLength(sendsBeforeSources);
+    source.setForeignNext(true);expect((await site.call('/api/audience/import-source',{method:'POST',cookie,body:{provider:'klaviyo',endpoint:'https://a.klaviyo.com',key:'synthetic-mango-121-key'}})).status).toBe(422);source.setForeignNext(false);
     await confirmedContact(site, edge, cookie, 'iris@example.test', 'Iris');
     const clock = await site.control('/_golive/clock', {hold:true});
     const due = new Date(clock.now + 3600000);

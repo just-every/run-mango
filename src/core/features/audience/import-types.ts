@@ -1,9 +1,10 @@
+import type {SourceExtras} from '../move-in/source-api';
 import type {AttestationInput} from '../move-in/incumbent-policy';
 export type NativeRow = Record<string, string | number | null>;
 export type AudienceSnapshot = { tables: Record<string, NativeRow[]>; hashes: string[]; identities: Array<{channel: string; destination: string; hash: string}> };
 export type ImportFile = { name: string; csv: string; preset: string; mapping?: Record<string, string> };
 /** `origin` names a source reviewed elsewhere (an archive move-in): each origin gets its own plan. */
-export type ImportInput = { files: ImportFile[]; consent?: Record<string, string>; fingerprint?: string; origin?: string; attestations?:AttestationInput[] };
+export type ImportInput = { files: ImportFile[]; consent?: Record<string, string>; fingerprint?: string; origin?: string; attestations?:AttestationInput[];sourceExtras?:SourceExtras };
 export const presetStatuses: Record<string, string> = {
   beehiiv:'subscribed',omnisend:'subscribed',customerio:'subscribed',activecampaign:'subscribed',klaviyo:'subscribed',
   'csv-subscribed': 'subscribed', 'csv-unsubscribed': 'unsubscribed',
