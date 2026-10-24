@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "20c23825a99e5edac474c96232f8402f2b534264720ddce13d6e9579a99845af",
+      "sha256": "e28302046207b1b6665d03399d5e3ab29165ec77a3814322c919c24dd167333e",
       "executable": false
     },
     "DEMO.md": {
@@ -7486,7 +7486,7 @@
       "executable": false
     },
     "tests/campaign-authoring/block-builder-journey.ts": {
-      "sha256": "ed4812b4362cf967d8e7a266e465e211bd0833b208af3876d20590296386aee6",
+      "sha256": "9b0eadf936eb21f449182691b61001b5810377945d16a4bd28f828ab9947e3db",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
@@ -7542,7 +7542,7 @@
       "executable": false
     },
     "tests/campaign-authoring/mobile-presentation-journey.ts": {
-      "sha256": "97865fdde9da6201f62669f266ca894a1db88301b0bac9b090855b84a6d1a4c0",
+      "sha256": "b03a70c6b5f2d9c063a02709a5de07a5acbcc618563f8bc4dd97ae33b388ea46",
       "executable": false
     },
     "tests/campaign-authoring/reuse-journey.ts": {
