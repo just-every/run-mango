@@ -12,7 +12,7 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     page.on('requestfailed',request=>{if(new URL(request.url()).pathname.startsWith('/media/'))console.log('Image network failure: '+request.failure()?.errorText);});
     page.on('console',message=>{if(message.type()==='error'&&/Content Security Policy|CORS|media\//.test(message.text()))console.log('Image browser diagnostic: '+message.text());});
     const headers={Origin:runtime.url,'X-Mango-Authoring-Fixture':runtime.token,'X-Mango-Block-Fixture':'1'};
-    await page.context().setExtraHTTPHeaders(headers);
+    await page.context().setExtraHTTPHeaders({'X-Mango-Authoring-Fixture':runtime.token,'X-Mango-Block-Fixture':'1'});
     const open=await page.request.post(runtime.url+'/_authoring/open',{headers:{...headers,'X-Test-Token':runtime.token}});expect(open.status()).toBe(200);const {token}=await open.json();
     await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,url:runtime.url}]);
     const uploaded=await page.request.post(runtime.url+'/api/campaign-assets',{headers,multipart:{file:{name:'synthetic-mango-140.png',mimeType:'image/png',buffer:Buffer.from(png(200,160))}}});expect(uploaded.status()).toBe(201);const {asset}=await uploaded.json();expect(new URL(asset.url).protocol).toBe('https:');
