@@ -164,13 +164,25 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).include('#stripe').analyze()).violations).toEqual([]);
     await page.locator('#stripe').screenshot({path: info.outputPath(`paid-tier-settings-${width}.png`)});
+    const throttle=await page.context().newCDPSession(page);
+    await throttle.send('Emulation.setCPUThrottlingRate',{rate:6});
     await openPage(page, `${site.runtime.url}/app/audience/${contacts.paid}`);
-    while (!(await page.locator('.timeline').innerText()).includes('subscription.past_due') && await page.getByRole('button', {name: /^Show more activity/}).count()) await page.getByRole('button', {name: /^Show more activity/}).click();
+    const recorded=(await json(await site.call(`/api/contacts/${contacts.paid}`,{cookie:owner}),200)).timeline;
+    expect(recorded.some((entry:any)=>entry.detail==='subscription · subscription.past_due')).toBe(true);
+    const events=page.locator('.timeline__event');
+    // The resource refresh can remove the button between two reads. Wait for
+    // each committed batch instead of treating a transient absence as the end.
+    await expect(events).toHaveCount(Math.min(40,recorded.length));
+    for(let visible=40;visible<recorded.length&&!(await page.locator('.timeline').innerText()).includes('subscription.past_due');visible+=40) {
+      await page.getByRole('button',{name:/^Show more activity/}).click();
+      await expect(events).toHaveCount(Math.min(visible+40,recorded.length));
+    }
     for (const state of ['Cancelled paid garden notes · email · audience-no-longer-matches', 'subscription.canceled', 'subscription.past_due']) await expect(page.locator('.timeline')).toContainText(state);
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect((await new AxeBuilder({page}).include('.timeline').analyze()).violations.filter(v => v.impact === 'serious' || v.impact === 'critical')).toEqual([]);
     await page.locator('.timeline').screenshot({path: info.outputPath(`paid-tier-timeline-${width}.png`)});
+    await throttle.send('Emulation.setCPUThrottlingRate',{rate:1});await throttle.detach();
   }
   await paidSignupJourney({site,page,info,owner,edge,post});
 }
