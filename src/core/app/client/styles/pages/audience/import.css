@@ -137,3 +137,5 @@
 .audience-import-page :is(.eyebrow, .audience-import-mapped-file dt, .audience-import-job__heading code, .audience-import-status) { font-size: 13px; }
 .audience-import-page :is(p, li, dd, legend) { overflow-wrap: anywhere; }
 .audience-import-page :is(th, small, .audience-import-file__icon) { font-size: 13px; }
+/* Email and SMS status together must remain readable in a stacked phone row. */
+.audience-import-table .audience-import-status { max-width: 100%; white-space: normal; }
