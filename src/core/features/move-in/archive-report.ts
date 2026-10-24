@@ -10,7 +10,7 @@ const cell = (value: unknown) => String(value ?? '').replaceAll('|', '\\|').repl
 const table = (headers: string[], rows: unknown[][]) => [`| ${headers.join(' | ')} |`, `| ${headers.map(() => '---').join(' | ')} |`, ...rows.map(row => `| ${row.map(cell).join(' | ')} |`)].join('\n');
 const time = (value: number | null) => value ? new Date(value).toISOString() : '';
 
-type ContentRow = { kind: string; source_path: string; source_row: number | null; title: string; state: string; outcome: string | null };
+type ContentRow = { campaign_id?: string | null; kind: string; source_path: string; source_row: number | null; title: string; state: string; outcome: string | null };
 
 export async function archiveReport(db: D1Database, archive: ArchiveRecord, content: ContentRow[]) {
   const summary = JSON.parse(archive.summary_json) as ArchiveSummary;
@@ -50,7 +50,7 @@ export async function archiveReport(db: D1Database, archive: ArchiveRecord, cont
   if(summary.engagement)lines.push('## Imported engagement', '', `${summary.engagement.imported} engagement rows imported; ${summary.engagement.dropped} dropped of ${summary.engagement.rows} source rows. Opens are estimates and never engagement.`, '', table(['Drop reason','Rows'],Object.entries(summary.engagement.reasons)), '');
   const rejected = [...summary.audience.flatMap(file => file.rejectedRows.map(item => [file.path, item.row, item.reason])), ...summary.content.flatMap(file => file.rejectedRows.map(item => [file.path, item.row, item.reason]))];
   if (rejected.length) lines.push('## Rejected rows', '', table(['File', 'Row', 'Reason'], rejected), '');
-  if (content.length) lines.push('## History and templates', '', table(['Kind', 'Source', 'Title', 'State', 'Outcome'], content.map(item => [item.kind === 'history' ? 'imported history' : 'library template',
+  if (content.length) lines.push('## History and templates', '', table(['Kind', 'Source', 'Title', 'State', 'Outcome'], content.map(item => [item.kind === 'history' ? 'imported history' : item.campaign_id ? 'imported draft' : 'library template',
     item.source_row ? `${item.source_path} row ${item.source_row}` : item.source_path, item.title, item.state, item.outcome ?? ''])), '');
   if (undo) {
     lines.push('## Undo', '', `${undo.contacts.removed} imported contacts were removed. Opt-out and suppression records are never removed by undo.`, '');

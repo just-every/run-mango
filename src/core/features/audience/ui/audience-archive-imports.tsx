@@ -34,7 +34,7 @@ function ArchiveContent({ archive }: { archive: ArchiveImport }) {
         <tbody>
           {rows.map(row => (
             <tr key={row.id}>
-              <td data-label="Record"><strong>{row.title}</strong><small>{row.kind === 'history' ? `Imported history · ${row.subject || 'No subject stated'}` : 'Library template'}</small>
+              <td data-label="Record"><strong>{row.title}</strong><small>{row.kind === 'history' ? `Imported history · ${row.subject || 'No subject stated'}` : row.campaign_id ? 'Imported draft' : 'Library template'}</small>
                 {JSON.parse(row.merge_tags_json).length ? <small>Unrecognised merge tags: {(JSON.parse(row.merge_tags_json) as string[]).join(', ')}</small> : null}</td>
               <td data-label="Sent">{row.kind === 'history' ? row.sent_at_source || 'Not stated' : '—'}</td>
               <td data-label="State"><span className={`audience-import-status audience-import-status--${row.state === 'imported' ? 'good' : 'neutral'}`}>{row.state}</span>{row.outcome ? <small>{row.outcome}</small> : null}</td>
