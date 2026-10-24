@@ -1,3 +1,4 @@
+import {oversizedImports} from './email-size-imports';
 import {expect} from '@playwright/test';
 import {contract} from '../contract.js';
 import {providerEdge} from './edge';
@@ -14,6 +15,8 @@ contract('BUILD-012','large newsletters save by transmitted bytes, retain refuse
     await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie,body:{hosts:'shop.example.test'}}),200);
     const email='summer-reader@example.test',name='Iris & Renée <Garden>';
     await confirmedContact(site,edge,cookie,email,name);
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+    await oversizedImports(site,cookie,page,info,'<p>'+ '🌱'.repeat(28160)+'</p>');
     const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000);
     const campaign=await draftCampaign(site,cookie,'Summer garden journal',[email],due);
     const patch=(body:unknown)=>site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body});
