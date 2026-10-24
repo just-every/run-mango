@@ -19,7 +19,7 @@ function DuplicateCampaignContent({campaignId,disabled=false}:{campaignId:string
       await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId},reloadDocument:true});
     } catch(error) {setError(error instanceof Error?error.message:'The copy could not be confirmed. Check campaign history before trying again.');setBusy(false);}
   };
-  return <div><button type="button" className="secondary-action" disabled={disabled||busy} onClick={()=>void duplicate()}>{busy?'Copying…':'Duplicate'}</button>{error?<p role="alert">{error}</p>:null}</div>;
+  return <div className={`campaign-reuse-action${error?' campaign-reuse-action--error':''}`}><button type="button" className="secondary-action" disabled={disabled||busy} onClick={()=>void duplicate()}>{busy?'Copying…':'Duplicate'}</button>{error?<p className="inline-error" role="alert">{error}</p>:null}</div>;
 }
 
 function SaveCampaignTemplateContent({revisionId,name,disabled}:{revisionId:string;name:string;disabled:boolean}) {

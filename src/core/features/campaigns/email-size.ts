@@ -1,7 +1,7 @@
 import {analyticsContext,analyticsUrl} from '@/core/features/settings/analytics-policy';
 import seed from '../../../../seed.json' with {type:'json'};
 import { parseEmailHtml, type EmailNode } from './email-html-parse';
-import { escapeHtml } from './email-html-policy';
+import { escapeHtml, voidEmailTags } from './email-html-policy';
 import { parsePersonalisationToken } from './authoring-tokens';
 import { renderMessageContent, type MessageRevision } from './message-content';
 import { contactLink } from './contact-links';
@@ -19,7 +19,7 @@ function tokenLength(idLength: number, purpose: string) {
 const tokenUrl = (origin: string, path: string, idLength: number, purpose: string) => `${origin}${path}${'x'.repeat(tokenLength(idLength, purpose))}`;
 function largestBlocks(body: string) {
   const tree = parseEmailHtml(body);
-  const serialized = (node: EmailNode): string => node.kind === 'text' ? escapeHtml(node.text) : node.kind === 'comment' ? '<!---->' : `<${node.tag}${[...node.attributes].map(([key,value])=>` ${key}="${escapeHtml(value)}"`).join('')}>${node.children.map(serialized).join('')}</${node.tag}>`;
+  const serialized = (node: EmailNode): string => node.kind === 'text' ? escapeHtml(node.text) : node.kind === 'comment' ? '<!---->' : `<${node.tag}${[...node.attributes].map(([key,value])=>` ${key}="${escapeHtml(value)}"`).join('')}>${node.children.map(serialized).join('')}${node.html && voidEmailTags.has(node.tag) ? '' : `</${node.tag}>`}`;
   const blocks: Array<{location:string;bytes:number}> = [];
   const visit = (nodes: EmailNode[], path = 'body') => nodes.forEach((node,index) => {
     if (node.kind !== 'element') return;
@@ -56,10 +56,21 @@ export function measureEmailSize(revision: MessageRevision & {trackingEnabled?: 
     const visit = (nodes: EmailNode[]) => nodes.forEach(node=>{if(node.kind==='element') {const url=node.tag==='a'?node.attributes.get('href'):undefined;if(url && url !== '{{unsubscribe_url}}' && !contactLink(url)){const tagged=analyticsUrl(url,analyticsContext(bounded),'email');rewritten.set(url,utf8Bytes(tagged)>utf8Bytes(tracked)?tagged:tracked);}visit(node.children);}});
     visit(parseEmailHtml(bounded.emailBody).nodes);
   }
-  const rendered = renderMessageContent(bounded,{analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten});
-  const html = rendered.html + (options.openTrackingEnabled ? `<img data-mango-open-estimate="1" src="${tokenUrl(origin,'/o/',36,'open-estimate')}" width="1" height="1" alt="" />` : '');
+  const renderOptions={analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten};
+  const rendered = renderMessageContent(bounded,renderOptions);
+  const pixel = options.openTrackingEnabled ? `<img data-mango-open-estimate="1" src="${tokenUrl(origin,'/o/',36,'open-estimate')}" width="1" height="1" alt="" />` : '';
+  const html=rendered.html+pixel;
+  // Totals retain the per-occurrence upper bound above. Diagnostics compare
+  // real fallback and saved-name renderings, so a growing personalised section
+  // is not reported at its much smaller fallback size.
+  const sections=new Map<string,{location:string;bytes:number}>();
+  const renderings=Object.keys(values).length?[html,renderMessageContent(bounded,{...renderOptions,values}).html+pixel]:[html];
+  for(const content of renderings)for(const block of largestBlocks(content)) {
+    if(block.bytes>(sections.get(block.location)?.bytes??-1))sections.set(block.location,block);
+  }
+  const largest=[...sections.values()].sort((a,b)=>b.bytes-a.bytes).slice(0,3);
   const htmlBytes=utf8Bytes(html)+growth(revision.emailBody,true)+growth(revision.preheader,true),textBytes=utf8Bytes(rendered.text)+growth(revision.emailText,false);
-  return {htmlBytes,textBytes,limitBytes:emailByteLimit,largestBlocks:largestBlocks(html),exceedsLimit:htmlBytes>emailByteLimit||textBytes>emailByteLimit};
+  return {htmlBytes,textBytes,limitBytes:emailByteLimit,largestBlocks:largest,exceedsLimit:htmlBytes>emailByteLimit||textBytes>emailByteLimit};
 }
 export function formatEmailSize(size: EmailSize) {
   return `HTML ${(size.htmlBytes/1024).toFixed(1)} KB (${size.htmlBytes} bytes); plain text ${(size.textBytes/1024).toFixed(1)} KB (${size.textBytes} bytes); limit ${(size.limitBytes/1024).toFixed(1)} KB (${size.limitBytes} bytes) per part. Largest blocks: ${size.largestBlocks.map(block=>`${block.location}: ${block.bytes} bytes`).join('; ')}.`;

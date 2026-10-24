@@ -100,8 +100,12 @@ for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as a
     await page.getByRole('button', { name: 'Import 12ui design', exact: true }).click();
     await files(page, layerdoc);
     await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
+    // Wait for this import's actual size-check response before asserting its UI.
+    // The cold hosted-image uploads remain real, with every old assertion intact.
+    const checked=page.waitForResponse(response=>response.url().endsWith('/api/campaign-authoring/email-size')&&response.request().method()==='POST'&&response.request().postDataJSON()?.emailBody?.includes('<table')&&response.request().postDataJSON()?.emailBody?.includes(destination));
     await dialog.getByRole('button', { name: 'Import design', exact: true }).click();
     await confirm.getByRole('button', { name: 'Replace', exact: true }).click();
+    expect((await checked).status()).toBe(200);
     await expect(page.getByRole('heading', { name: 'Check the imported email before you save' })).toBeVisible();
     await expect(dialog).toHaveCount(0);
     const summary = page.getByRole('region', { name: 'Check the imported email before you save' });

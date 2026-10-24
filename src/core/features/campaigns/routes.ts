@@ -73,7 +73,9 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     const body = await readJson(context, createDraftSchema);
     if ('error' in body) return body.error;
     if (body.data.mode === 'store-signal') {
-      const result = await authoring.fromSignal(body.data.starterSourceId,context.get('operator').id);
+      const outcome = await settled(authoring.fromSignal(body.data.starterSourceId,context.get('operator').id));
+      if ('refused' in outcome) return context.json(outcome.refused,400);
+      const result = outcome.saved;
       return context.json(result,result.kind==='draft'?201:409);
     }
     const composition = body.data.mode === 'blank' ? { name: 'Untitled campaign' } : body.data.composition;

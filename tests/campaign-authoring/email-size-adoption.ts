@@ -37,3 +37,30 @@ export async function oversizedAdoption(page:Page,baseURL:string,proposalId:stri
     for(const row of names)await sql(`UPDATE contacts SET display_name=${row.display_name===null?'NULL':`'${row.display_name.replaceAll("'","''")}'`} WHERE id='${row.id}'`);
   }
 }
+
+/** The store record remains the source when its derived newsletter is refused. */
+export async function oversizedSignalStarter(page:Page,baseURL:string,width:number,info:TestInfo,sql:(command:string)=>Promise<any>) {
+  const [source]=await sql("SELECT id,payload FROM source_records WHERE source_type='product' LIMIT 1");
+  const title='🌱'.repeat(28160),payload=JSON.stringify({...JSON.parse(source.payload),title});
+  const quote=(value:string)=>`'${value.replaceAll("'","''")}'`;
+  const campaigns=async()=>(await (await page.request.get(baseURL+'/api/campaigns')).json()).campaigns;
+  const before=await campaigns();
+  await sql(`UPDATE source_records SET payload=${quote(payload)} WHERE id=${quote(source.id)}`);
+  try {
+    const result=await page.request.post(baseURL+'/api/campaigns',{headers:{Origin:baseURL},data:{starterSourceId:source.id}});
+    expect(result.status()).toBe(400);
+    const refused=await result.json();
+    expect(refused).toMatchObject({error:'email_too_large',size:{exceedsLimit:true}});
+    expect(refused.size.htmlBytes).toBeGreaterThan(refused.size.limitBytes);
+    expect(refused.size.largestBlocks[0].bytes).toBeGreaterThan(refused.size.limitBytes);
+    await openPage(page,baseURL+'/app/campaigns');
+    await page.getByRole('button',{name:'New campaign',exact:true}).click();
+    await page.getByRole('button',{name:/^Product newsletter:/}).click();
+    const alert=page.getByRole('alert').filter({hasText:'Email is too large.'});
+    await expect(alert).toContainText(refused.detail);
+    await alert.screenshot({path:info.outputPath(`store-starter-refused-${width}.png`)});
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    expect(await sql(`SELECT payload FROM source_records WHERE id=${quote(source.id)}`)).toEqual([{payload}]);
+    expect(await campaigns()).toEqual(before);
+  } finally {await sql(`UPDATE source_records SET payload=${quote(source.payload)} WHERE id=${quote(source.id)}`);}
+}

@@ -1,3 +1,8 @@
+/* Measured copy refusals stay inside the existing action header. */
+.page-head__actions:has(.campaign-reuse-action--error) { min-width: 0; max-width: 100%; align-items: flex-start; }
+.campaign-reuse-action--error { min-width: 0; max-width: min(32rem, 100%); }
+.campaign-reuse-action--error [role="alert"] { overflow-wrap: anywhere; font-size: 14px; }
+
 /* Campaigns page group: the campaign list and its starters, campaign detail and the scheduled results page. */
 
 /* Campaign starters, opened by "New campaign": three ways in, side by side. */

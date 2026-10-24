@@ -24,6 +24,7 @@ export async function oversizedReuse(site:Installation,cookie:string,page:Page,i
     expect(refused.detail).toContain(String(refused.size.htmlBytes));
     expect(refused.detail).toContain(String(refused.size.limitBytes));
     expect(refused.size.largestBlocks).toHaveLength(3);
+    expect(refused.size.largestBlocks[0].bytes).toBeGreaterThan(refused.size.limitBytes);
     for(const block of refused.size.largestBlocks)expect(refused.detail).toContain(`${block.location}: ${block.bytes} bytes`);
   }
   for(const width of [1440,390]) {
