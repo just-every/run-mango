@@ -7362,7 +7362,7 @@
       "executable": false
     },
     "tests/campaign-authoring/create-api.spec.ts": {
-      "sha256": "8725992f6a42b0c1c5624449ae2b46349153cf3f9063f4e1f232e85ed0010317",
+      "sha256": "e34013368ab9109b52392b82e39c7d97dd8997ba41d72448c9e8ae2b13eaa3c7",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
@@ -7371,6 +7371,10 @@
     },
     "tests/campaign-authoring/design-import.spec.ts": {
       "sha256": "00d45e27f87e534d8bdd121a668f56064c0d45a3c4a335660bfbe13cffb4c6b2",
+      "executable": false
+    },
+    "tests/campaign-authoring/email-size-adoption.ts": {
+      "sha256": "12656ae127c0b21af41cb9112b1c502a855bed63702cf987f8bf674c0799cce6",
       "executable": false
     },
     "tests/campaign-authoring/fixtures/orchard.layerdoc.json": {
@@ -7657,8 +7661,12 @@
       "sha256": "e5cd4f89f32d11e88868af30229d55316da336dd6a310f70e43d38610d8655b1",
       "executable": false
     },
+    "tests/go-live/email-size-reuse.ts": {
+      "sha256": "314e3049e0aa31003501f3e8af9728d3f52f8b32b73848d58048d4aab3dc455c",
+      "executable": false
+    },
     "tests/go-live/email-size.journeys.ts": {
-      "sha256": "c8ec827ada06efc33adeb263c5865db1e84b1911e7cb47e5f7919a45dc4fa970",
+      "sha256": "0ee5e8c647716efd727ce0c3edc377201da4b50df74ebd201466b9770085eee0",
       "executable": false
     },
     "tests/go-live/go-live.journeys.ts": {

@@ -60,6 +60,13 @@ test('[CAMP-002][CAMP-003][CAMP-004] native API persists blank and complete draf
       { composition: { ...complete, steps: [] } }, { composition: { ...complete, inclusionRuleJson: '{}' } },
       { mode: 'blank', composition: complete }, { starterSourceId: 'missing', composition: complete },
     ]) expect((await create(body)).status()).toBe(400);
+    const oversized=await create({composition:{...complete,emailBody:'<p>'+'🌱'.repeat(28160)+'</p>'}});
+    expect(oversized.status()).toBe(400);
+    const refused=await oversized.json();
+    expect(refused).toMatchObject({error:'email_too_large',size:{exceedsLimit:true}});
+    expect(refused.size.htmlBytes).toBeGreaterThan(refused.size.limitBytes);
+    expect(refused.detail).toContain('Largest blocks:');
+    for(const block of refused.size.largestBlocks)expect(refused.detail).toContain(`${block.location}: ${block.bytes} bytes`);
     const completeResponse = await create({ composition: complete });
     expect(completeResponse.status(), await completeResponse.text()).toBe(201);
     const completeIds = await completeResponse.json();

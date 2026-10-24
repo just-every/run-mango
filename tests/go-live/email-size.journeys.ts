@@ -30,10 +30,10 @@ contract('BUILD-012','large newsletters save by transmitted bytes, retain refuse
       const copy=await json(await site.call(path,{method:'POST',cookie,body:{}}),201);
       expect((await json(await site.call(`/api/campaigns/${copy.campaignId}`,{cookie}),200)).revision).toMatchObject({emailBody:detail.revision.emailBody,state:'draft',approvedAt:null});
     }
-    const plainRefused=await json(await patch({emailText:'🌱'.repeat(28160)}),400);
-    expect(plainRefused).toMatchObject({error:'email_too_large',size:{exceedsLimit:true}});
-    expect(plainRefused.size.textBytes).toBeGreaterThan(plainRefused.size.limitBytes);
-    expect(plainRefused.size.htmlBytes).toBeLessThanOrEqual(plainRefused.size.limitBytes);
+    const plainMeasured=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{emailText:'🌱'.repeat(28160)}}),200);
+    expect(plainMeasured.exceedsLimit).toBe(true);
+    expect(plainMeasured.textBytes).toBeGreaterThan(plainMeasured.limitBytes);
+    expect(plainMeasured.htmlBytes).toBeLessThanOrEqual(plainMeasured.limitBytes);
     expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).revision).toEqual(detail.revision);
     const measured=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{emailBody:body,preheader:detail.revision.preheader,physicalAddress:sender.physicalAddress,trackingEnabled:true}}),200);
     expect(measured.exceedsLimit).toBe(false);

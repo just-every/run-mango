@@ -7,10 +7,12 @@ export async function oversizedReuse(site:Installation,cookie:string,page:Page,i
   const before=await site.count('campaigns');
   const source=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
   const templates=await site.rows('SELECT * FROM campaign_templates ORDER BY id');
+  const savedTemplate=templates.find(row=>row.id===templateId)!;
   const followups=await site.count('campaign_followups');
   const inputs=[
     [`/api/campaigns/${campaign.campaignId}/duplicate`,{}],
     ['/api/campaign-templates',{revisionId:campaign.revisionId,name:'Refused garden template'}],
+    ['/api/campaign-templates',{revisionId:campaign.revisionId,name:'Refused replacement',templateId,updatedAt:savedTemplate.updated_at}],
     [`/api/campaign-templates/${templateId}/start`,{}],
     [`/api/campaigns/${campaign.campaignId}/followup`,{subject:'Garden follow-up',delayHours:1,metric:'click'}],
   ] as const;
