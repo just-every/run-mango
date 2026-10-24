@@ -18,13 +18,14 @@ export const nodeKinds = {
 } as const;
 export type NodeKind = keyof typeof nodeKinds;
 const kind = z.enum(Object.keys(nodeKinds) as [NodeKind,...NodeKind[]]);
-export const graphSchema = z.object({name:z.string().trim().min(1).max(100),trigger:z.string().trim().min(1).max(300),nodes:z.array(z.object({id:z.string().regex(/^[a-zA-Z0-9-]{1,64}$/),kind,label:z.string().trim().min(1).max(300),next:z.array(z.string()).max(100)}).strict()).min(2).max(100)}).strict();
+export const graphSchema = z.object({name:z.string().trim().min(1).max(100),trigger:z.string().trim().min(1).max(300),nodes:z.array(z.object({id:z.string().regex(/^[a-zA-Z0-9-]{1,64}$/),kind,email:z.object({templateId:z.string().min(1).max(200),subject:z.string().max(250),preheader:z.string().max(500),html:z.string().max(500000),text:z.string().max(500000)}).strict().optional(),label:z.string().trim().min(1).max(300),next:z.array(z.string()).max(100)}).strict()).min(2).max(100)}).strict();
 export type FlowGraph = z.infer<typeof graphSchema>;
 export function validateGraph(graph: FlowGraph): string[] {
   const errors:string[]=[], nodes=new Map(graph.nodes.map(n=>[n.id,n])), roots=graph.nodes.filter(n=>n.kind==='trigger');
   if(nodes.size!==graph.nodes.length)errors.push('Each node needs a distinct identity.');
   if(roots.length!==1)errors.push('Choose exactly one trigger node.');
   for(const node of graph.nodes) {
+    if(node.email&&node.kind!=='email')errors.push(`${node.label}: only email nodes can keep an email copy.`);
     if(node.next.some(id=>!nodes.has(id)))errors.push(`${node.label}: a connection names a missing node.`);
     if(node.kind==='exit'&&node.next.length)errors.push(`${node.label}: an exit cannot continue.`);
     if(node.kind!=='exit'&&!node.next.length)errors.push(`${node.label}: unended path; connect it to an exit.`);

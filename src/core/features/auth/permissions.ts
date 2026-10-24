@@ -105,6 +105,7 @@ export function requiredPermission(method: string, path: string): Capability {
     || /^\/api\/proposals\/[^/]+\/(?:dismiss|adopt)$/.test(p))) return 'draft.write';
   if (/^\/api\/imported-history(?:\/|$)/.test(p)) return 'audience.import';
   if (/^\/api\/flows\/[^/]+\/(?:activate|pause|resume|stop)$/.test(p) && !read) return 'flow.activate';
+  if (/^\/api\/flow-drafts\/templates(?:\/[^/]+)?$/.test(p)) return read ? 'flow.read' : 'unclassified';
   if (p === '/api/flow-drafts') return read ? 'flow.read' : verb === 'POST' ? 'draft.write' : 'unclassified';
   if (read && /^\/api\/flows(?:\/[^/]+)?$/.test(p)) return 'flow.read';
   if ((p === '/api/flows' && verb === 'POST') || (/^\/api\/flows\/[^/]+$/.test(p) && verb === 'PATCH')) return 'draft.write';

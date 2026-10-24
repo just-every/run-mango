@@ -1,3 +1,4 @@
+import {sourceDraftJourney} from './source-draft-journey';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {openPage} from '../support/navigation';
@@ -25,6 +26,7 @@ export async function sourceApiJourney(site:Installation,page:Page,info:TestInfo
     const jobs=await json(await site.call('/api/audience/imports',{cookie}),200);const report=await (await site.call(`/api/audience/imports/${jobs.jobs[0].id}/report`,{cookie})).text();expect(report).toContain('incumbent-held | 1');expect(report).not.toContain(key);
     if(provider==='activecampaign'){expect(report).toContain('Welcome series');expect(report).toContain('Garden topic');}
     else{expect((await site.rows("SELECT source_facts_json FROM incumbent_consent_links WHERE contact_id=(SELECT id FROM contacts WHERE email='synthetic-mango-121-active@example.test')")).some(r=>JSON.parse(r.source_facts_json).SOURCE_METHOD==='signup form')).toBe(true);expect(report).toContain('Abandoned cart');expect(report).toContain('send-sms');expect(report).toContain('unsupported-source-condition');expect(JSON.stringify(await json(await site.call('/api/campaign-templates',{cookie}),200))).toContain('Garden imported template');expect(await site.rows("SELECT kind,occurred_at FROM contact_history WHERE kind IN ('incumbent-order','incumbent-click') ORDER BY occurred_at")).toEqual([{kind:'incumbent-order',occurred_at:Date.parse('2026-03-01T00:00:00Z')},{kind:'incumbent-click',occurred_at:Date.parse('2026-03-02T00:00:00Z')}]);}
+    await sourceDraftJourney(site,page,info,cookie,provider);
     const custody=await site.rows('SELECT content FROM audience_import_plan_chunks');expect(JSON.stringify(custody)).not.toContain(key);
     expect((await json(await site.call('/api/audience/segments',{cookie}),200)).segments.some((s:any)=>s.name.startsWith('Imported snapshot ·'))).toBe(true);
     if(provider==='klaviyo'){

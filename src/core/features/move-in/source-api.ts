@@ -1,6 +1,6 @@
 import {boundedJson} from '@/core/platform/adapters/bounded-read';
 import {encodeCsv} from '../audience/csv';
-export type SourceExtras={notes:string[];templates:Array<{name:string;html:string}>;segments:Array<{name:string;conditions:string}>;history:Array<{email:string;kind:'order'|'click'|'open'|'event';occurredAt:string;data:Record<string,unknown>}>};
+export type SourceExtras={flows?:Array<{name:string;trigger:string;unsupported:string[]}>;notes:string[];templates:Array<{name:string;html:string}>;segments:Array<{name:string;conditions:string}>;history:Array<{email:string;kind:'order'|'click'|'open'|'event';occurredAt:string;data:Record<string,unknown>}>};
 export type SourceExport={files:Array<{name:string;preset:string;csv:string}>;sourceExtras:SourceExtras};
 const record=(value:unknown):Record<string,any>=>{if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Invalid source record.');return value as Record<string,any>;};
 const array=(value:unknown):Record<string,any>[]=>{if(!Array.isArray(value))throw new Error('Incomplete source collection.');return value.map(record);};
@@ -20,7 +20,7 @@ export async function readSourceExport(provider:'activecampaign'|'klaviyo',endpo
     totalBytes+=new TextEncoder().encode(JSON.stringify(result)).byteLength;if(totalBytes>8_000_000)throw new Error('Source export exceeds the read budget.');return result;
   };
   const deliver=(value:SourceExport)=>{if(JSON.stringify(value).includes(key))throw new Error('Source reflected the credential.');return value;};
-  const extras:SourceExtras={notes:[],templates:[],segments:[],history:[]};
+  const extras:SourceExtras={flows:[],notes:[],templates:[],segments:[],history:[]};
   if(provider==='activecampaign'){
     const collection=async(name:string)=>{const all:Record<string,any>[]=[];for(let page=0;page<50;page++){
       const result=await get(prefix+name+'?limit=100&offset='+page*100),rows=array(result[name]),total=Number(result.meta?.total);
@@ -30,10 +30,10 @@ export async function readSourceExport(provider:'activecampaign'|'klaviyo',endpo
     }throw new Error('Source collection exceeds the page limit.');};
     const contacts=await collection('contacts'),lists=await collection('lists'),memberships=await collection('contactLists'),tags=await collection('tags'),contactTags=await collection('contactTags'),fields=await collection('fields'),values=await collection('fieldValues'),automations=await collection('automations');
     for(const list of lists)extras.segments.push({name:String(list.name),conditions:'Imported list membership snapshot; not a new consent grant.'});
-    for(const flow of automations)extras.notes.push(`Automation ${String(flow.name)}: source status ${String(flow.status)}. Trigger and action definitions are unavailable in this API export; activation and conversion to executable flows are unsupported.`);
+    for(const flow of automations){extras.flows!.push({name:String(flow.name).slice(0,100),trigger:'Unavailable: source trigger definition',unsupported:['Unavailable: source action definitions']});extras.notes.push(`Automation ${String(flow.name)}: source status ${String(flow.status)}. Trigger and action definitions are unavailable in this API export; activation and conversion to executable flows are unsupported.`);}
     const rows=contacts.map(contact=>{
       const links=memberships.filter(m=>String(m.contact)===String(contact.id)),states=links.map(m=>String(m.status));
-      let status=states.includes('3')?'suppressed':states.includes('2')?'unsubscribed':states.includes('1')?'subscribed':'non-subscribed';
+      let status=states.includes('3')?'suppressed':states.includes('2')?'unsubscribed':['1','subscribed'].includes(String(contact.status))?'subscribed':'non-subscribed';
       if(['2','unsubscribed'].includes(String(contact.status)))status='unsubscribed';if(['3','bounced','suppressed'].includes(String(contact.status)))status='suppressed';
       const properties=Object.fromEntries(values.filter(v=>String(v.contact)===String(contact.id)).map(v=>[String(fields.find(f=>String(f.id)===String(v.field))?.title??('Source field '+v.field)),v.value]));
       return [contact.email,status,contact.firstName??'',contact.lastName??'',contact.udate??'',JSON.stringify(properties),JSON.stringify(contactTags.filter(t=>String(t.contact)===String(contact.id)).map(t=>String(tags.find(tag=>String(tag.id)===String(t.tag))?.tag??t.tag))),JSON.stringify(links.map(m=>String(lists.find(l=>String(l.id)===String(m.list))?.name??m.list)))];
@@ -55,7 +55,7 @@ export async function readSourceExport(provider:'activecampaign'|'klaviyo',endpo
   }
   if(templates.length>100)throw new Error('Too many templates for one reviewed export.');
   for(const template of templates){const full=record((await get(prefix+'templates/'+encodeURIComponent(String(template.id)))).data),attributes=record(full.attributes);if(typeof attributes.html!=='string')throw new Error('Template HTML is unavailable.');extras.templates.push({name:String(attributes.name??template.id),html:attributes.html});}
-  for(const flow of flows){const actions=await collection('flows/'+encodeURIComponent(String(flow.id))+'/flow-actions');extras.notes.push(`Flow ${String(flow.attributes?.name??flow.id)}: trigger ${String(flow.attributes?.trigger_type??'not exposed')}; source status ${String(flow.attributes?.status??'not exposed')}. Unsupported executable steps: ${actions.map(a=>String(a.attributes?.action_type??a.type)).join(', ')||'step definitions not exposed'}. Kept as an outline; nothing enrolled or activated.`);}
+  for(const flow of flows){const actions=await collection('flows/'+encodeURIComponent(String(flow.id))+'/flow-actions');extras.flows!.push({name:String(flow.attributes?.name??flow.id).slice(0,100),trigger:String(flow.attributes?.trigger_type??'Unavailable: source trigger definition').slice(0,300),unsupported:actions.map(a=>'Unavailable source step: '+String(a.attributes?.action_type??a.type)).concat('Unavailable: source conditions and execution')});extras.notes.push(`Flow ${String(flow.attributes?.name??flow.id)}: trigger ${String(flow.attributes?.trigger_type??'not exposed')}; source status ${String(flow.attributes?.status??'not exposed')}. Unsupported executable steps: ${actions.map(a=>String(a.attributes?.action_type??a.type)).join(', ')||'step definitions not exposed'}. Kept as an outline; nothing enrolled or activated.`);}
   for(const event of events){const attributes=record(event.attributes),profileId=String(event.relationships?.profile?.data?.id??''),email=profiles.find(p=>String(p.id)===profileId)?.attributes?.email,metricId=String(event.relationships?.metric?.data?.id??''),name=String(metrics.find(m=>String(m.id)===metricId)?.attributes?.name??'Unknown source event'),occurredAt=String(attributes.datetime??'');
     if(!Number.isFinite(Date.parse(occurredAt)))throw new Error('Source event time is unavailable.');
     if(!email){extras.notes.push(`Unmatched source event ${String(event.id)} (${name}) was not attached to a contact.`);continue;}
