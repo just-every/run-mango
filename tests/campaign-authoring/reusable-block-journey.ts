@@ -40,4 +40,14 @@ export async function verifyReusableProof(request:APIRequestContext,origin:strin
   const flows=await request.get(origin+'/api/flow-drafts',{headers});expect(flows.status()).toBe(200);const flow=(await flows.json()).revisions.find((flow:any)=>flow.id===proof.flowId);expect(flow.graph.nodes.find((node:any)=>node.id==='email').email.html).toContain('font-size: 25px !important');
   const stale=await request.patch(origin+'/api/reusable-email-blocks/'+source.id,{headers,data:{version:source.version,name:source.name,block:source.block}});expect(stale.status()).toBe(409);
   expect((await proof.read(proof.drafts[0].campaignId)).emailBody).toBe(after[0].emailBody);expect((await proof.read(proof.drafts[2].campaignId)).emailBody).toBe(proof.before[2].emailBody);
+  const localBody=after[0].emailBody.replace('Mobile font example','synthetic-mango-160 independent footer');
+  const local=await request.patch(origin+'/api/campaign-revisions/'+proof.drafts[0].revisionId,{headers,data:{emailBody:localBody}});expect(local.status()).toBe(400);expect((await local.json()).detail).toContain('Keep independent copy');
+  expect((await proof.read(proof.drafts[0].campaignId)).emailBody).toBe(after[0].emailBody);expect((await proof.read(proof.drafts[1].campaignId)).emailBody).toBe(after[1].emailBody);
+  const detached=await request.delete(origin+'/api/reusable-email-blocks/'+source.id+'/placements',{headers,data:{target:{kind:'campaign',id:proof.drafts[0].revisionId}}});expect(detached.status()).toBe(200);
+  const independent=await request.patch(origin+'/api/campaign-revisions/'+proof.drafts[0].revisionId,{headers,data:{emailBody:localBody}});expect(independent.status()).toBe(200);
+  const library=await request.get(origin+'/api/reusable-email-blocks',{headers});expect(library.status()).toBe(200);const current=(await library.json()).blocks.find((block:any)=>block.id===source.id);
+  const repeated=await request.patch(origin+'/api/reusable-email-blocks/'+source.id,{headers,data:{version:current.version,name:current.name,block:{...current.block,mobile:{...current.block.mobile,fontSize:24}}}});expect(repeated.status(),await repeated.text()).toBe(200);expect((await repeated.json()).draftRevisions).toEqual([]);
+  const [independentAfter,linkedAfter,approvedAfter,editableAfter]=await Promise.all([proof.read(proof.drafts[0].campaignId),proof.read(proof.drafts[1].campaignId),proof.read(proof.drafts[2].campaignId),proof.read(proof.drafts[2].campaignId,true)]);
+  expect(independentAfter.emailBody).toBe(localBody);expect(linkedAfter.emailBody).toContain('font-size: 24px !important');expect(approvedAfter.emailBody).toBe(proof.before[2].emailBody);expect(editableAfter.id).toBe(editable.id);expect(editableAfter.emailBody).toContain('font-size: 24px !important');
+
 }

@@ -1,3 +1,4 @@
+import {assertReusableDraft} from './reusable-block-draft-guard';
 import { ulid } from '@/core/shared/ids';
 import { savedEmailSize } from './saved-email-size';
 import type { EmailSizeOptions } from './email-size';
@@ -139,6 +140,7 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
       ]);
 
       composition = normalizeAuthoredContent({...composition, emailBody:composition.emailBody ?? storedRevision.emailBody, links:composition.links ?? (composition.emailBody !== undefined ? [] : storedLinks.map(({label,destinationUrl})=>({label,destinationUrl})))});
+      await assertReusableDraft(database,id,composition.emailBody!);
       await savedEmailSize(database, {...storedRevision,...composition}, sizeOptions);
       // Persist the complete rule pair and its summary in the same guarded update.
       // Partial edits and concurrent saves must never combine prose with another rule pair.

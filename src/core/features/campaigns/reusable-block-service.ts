@@ -1,3 +1,4 @@
+import {graphSchema} from '../flows/graph';
 import type {Platform} from '@/core/shared/platform';
 import {authoredBody,normalizeAuthoredContent} from './authoring-content';
 import {readEmailBlocks,writeEmailBlocks} from './email-blocks';
@@ -52,6 +53,7 @@ export function reusableBlockService(platform:Platform){
       const flows=new Map<string,{value:ReusableTarget;graph:any}>();
       for(const group of targets){
         const {value,uses:placements}=group;
+        if(value.target.kind==='campaign'&&!['draft','approved'].includes(value.row.state))continue;
         if(value.target.kind==='campaign'&&value.row.state==='approved'){
           const linkedDraft=targets.find(other=>other.value.target.kind==='campaign'&&other.value.row.state==='draft'&&other.value.row.campaign_id===value.row.campaign_id);
           const active=await db.prepare('SELECT active_revision_id FROM campaigns WHERE id=?').bind(value.row.campaign_id).first<{active_revision_id:string}>();
@@ -69,7 +71,7 @@ export function reusableBlockService(platform:Platform){
         }else writes.push(...targetWrites(platform,value,changed.content,guard,actor,now));
         for(const [index,use] of placements.entries())writes.push(db.prepare(`UPDATE reusable_email_block_placements SET position=?,block_json=? WHERE id=? AND ${guard}`).bind(changed.positions[index],json,use.id));
       }
-      for(const flow of flows.values())writes.push(db.prepare(`UPDATE flow_draft_revisions SET graph_json=? WHERE id=? AND ${guard}`).bind(JSON.stringify(flow.graph),flow.value.target.id));
+      for(const flow of flows.values())writes.push(db.prepare(`UPDATE flow_draft_revisions SET graph_json=? WHERE id=? AND ${guard}`).bind(JSON.stringify(graphSchema.parse(flow.graph)),flow.value.target.id));
       // Both the target snapshots and the complete placement set are fenced in
       // the source CAS. D1 executes this and every dependent write atomically.
       const useGuard=`(SELECT COUNT(*) FROM reusable_email_block_placements WHERE block_id=?)=? AND NOT EXISTS(SELECT 1 FROM json_each(?) p WHERE NOT EXISTS(SELECT 1 FROM reusable_email_block_placements u WHERE u.id=json_extract(p.value,'$.id') AND u.block_json=json_extract(p.value,'$.block_json') AND u.position=json_extract(p.value,'$.position'))) `;

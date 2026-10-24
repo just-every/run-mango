@@ -1,3 +1,4 @@
+import {graphSchema} from '../flows/graph';
 import type {Platform} from '@/core/shared/platform';
 import {savedEmailSize} from './saved-email-size';
 import {ReusableBlockError,type PlacementTarget} from './reusable-block-model';
@@ -7,7 +8,7 @@ export async function readReusableTarget(platform:Platform,target:PlacementTarge
   const db=platform.database.$client;
   if(target.kind==='campaign'){
     const row=await db.prepare(`SELECT r.*,c.active_revision_id AS current_active_revision_id,(SELECT COUNT(*) FROM campaign_revisions d WHERE d.campaign_id=r.campaign_id AND d.state='draft') AS draft_count FROM campaign_revisions r JOIN campaigns c ON c.id=r.campaign_id WHERE r.id=?`).bind(target.id).first<Record<string,any>>();
-    if(!row||!['draft','approved'].includes(row.state))throw new ReusableBlockError('This campaign revision cannot receive reusable blocks.');
+    if(!row)throw new ReusableBlockError('This campaign revision is unavailable.');
     return {target,body:row.email_body,stamp:row.updated_at,row};
   }
   if(target.kind==='template'){
@@ -41,7 +42,7 @@ export function targetWrites(platform:Platform,value:ReusableTarget,content:Draf
   if(value.target.kind==='flow'){
     const container=structuredClone(value.container),node=container.nodes.find((n:any)=>n.id===value.target.nodeId);
     node.email.html=content.emailBody;node.email.text=content.emailText;
-    return [db.prepare(`UPDATE flow_draft_revisions SET graph_json=? WHERE id=? AND ${guard}`).bind(JSON.stringify(container),id)];
+    return [db.prepare(`UPDATE flow_draft_revisions SET graph_json=? WHERE id=? AND ${guard}`).bind(JSON.stringify(graphSchema.parse(container)),id)];
   }
   const writes=[db.prepare(`DELETE FROM campaign_checks WHERE revision_id=? AND ${guard}`).bind(id),
     db.prepare(`DELETE FROM campaign_audience_channel_counts WHERE audience_id IN(SELECT id FROM campaign_audiences WHERE revision_id=?) AND ${guard}`).bind(id),
