@@ -68,7 +68,8 @@ export async function importSnapshot(state: ImportState, row: NormalizedImportRo
     snapshot.tables.audience_import_observations.push({id:ulid(now),contact_id:id,source_file:row.file,source_row:row.row,source_status:row.values.source_status,...(sourceName?{source_display_name:sourceName}:{}),capture_method:'csv-import',capture_source:`CSV import: ${row.file}`,optin_time:row.values.occurred_at || null,confirm_time:row.values.confirmed_at || null,capture_ip:row.values.capture_ip || null,confirmation_ip:row.values.confirmation_ip || null,created_at:now,updated_at:now});
     snapshot.tables.contact_history.push({id:ulid(now),contact_id:id,kind:'audience-import',detail:`${row.file} row ${row.row}: ${row.status}`,occurred_at:now,created_at:now,updated_at:now});
   }
-  const emailResult = row.email ? applyImportedChannel(state,snapshot,before,'email',row.email,hash,row.status,Boolean(row.ledger),now,identity,id) : {status:'non-subscribed'};
+  const membershipOnly=Boolean(before&&row.values.source_topics_json&&JSON.parse(row.values.source_topics_json).length&&row.values.source_status==='source-status-missing'&&row.status==='non-subscribed'&&!row.phone);
+  const emailResult = membershipOnly?{status:String(before!.tables.contacts[0].email_status)}:row.email ? applyImportedChannel(state,snapshot,before,'email',row.email,hash,row.status,Boolean(row.ledger),now,identity,id) : {status:'non-subscribed'};
   if(row.phone) await addImportedPhone(state,snapshot,before,row,salt,now,identity,id);
   const {status,kept}=emailResult;
   if(!before)for(const identity of snapshot.identities){

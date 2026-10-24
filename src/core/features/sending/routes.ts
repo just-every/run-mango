@@ -9,11 +9,12 @@ export function sendingConnectionRoutes(platform:Platform) {
   const routes=new Hono<{Variables:AuthVariables}>(),service=sendingConnectionService(platform);
   const failure=(context:any,error:unknown)=>context.json({error:'sending_connection_refused',detail:error instanceof SendingConnectionError?error.reason:'The sending connection could not complete.',
     missing:error instanceof SendingConnectionError?error.missing:[]},422);
+  routes.get('/sending-alert',async context=>{const row=await platform.database.$client.prepare('SELECT last_error FROM sending_connection WHERE id=1').first<{last_error:string|null}>();return context.json({reason:row?.last_error??null});});
   routes.get('/settings/sending',async context=>context.json(await service.status()));
   routes.post('/settings/sending/review',async context=>{
-    const body=z.object({apiKey:z.string().trim().min(1).max(4096)}).strict().safeParse(await context.req.json().catch(()=>null));
+    const body=z.object({provider:z.enum(['sendgrid','resend']).optional(),apiKey:z.string().trim().min(1).max(4096)}).strict().safeParse(await context.req.json().catch(()=>null));
     if(!body.success)return context.json({error:'invalid_sending_key'},400);
-    try {return context.json(await service.prepare(body.data.apiKey,context.get('operator').id));}catch(error){return failure(context,error);}
+    try {return context.json(await service.prepare(body.data.apiKey,context.get('operator').id,body.data.provider));}catch(error){return failure(context,error);}
   });
   routes.post('/settings/sending/connect',async context=>{
     const body=z.object({proposalId:z.string().uuid()}).strict().safeParse(await context.req.json().catch(()=>null));

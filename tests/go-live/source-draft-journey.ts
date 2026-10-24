@@ -8,9 +8,10 @@ export async function sourceDraftJourney(site:Installation,page:Page,info:TestIn
   const states=await site.rows('SELECT id,email_status,sms_status FROM contacts ORDER BY id');
   const emails=await site.rows('SELECT email FROM contacts WHERE email IS NOT NULL ORDER BY email');
   const topicOnly=`synthetic-mango-${provider==='activecampaign'?122:123}@example.test`;
-  const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie,body:{files:[{name:'synthetic-mango-124.csv',preset:provider,csv:'email,lists\n'+[...emails.map(row=>row.email),topicOnly].map(email=>`${email},Garden review only`).join('\n')}],sourceExtras:{notes:[],templates:[],history:[],segments:[{name:'Garden review only',conditions:'Membership snapshot only; no consent.'}]}}}),200);
+  const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie,body:{consent:{brandOrLegalSender:'Mango Garden',messageCategory:'newsletter',frequencyDisclosure:'Monthly',destinationJurisdiction:'AU',consentText:'Send the monthly garden letter.',consentVersion:'synthetic-mango-v1'},files:[{name:'synthetic-mango-124.csv',preset:provider,csv:'email,lists\n'+[...emails.map(row=>row.email),topicOnly].map(email=>`${email},Garden review only`).join('\n')}],sourceExtras:{notes:[],templates:[],history:[],segments:[{name:'Garden review only',conditions:'Membership snapshot only; no consent.'}]}}}),200);
   const started=await json(await site.call('/api/audience/imports',{method:'POST',cookie,body:{fingerprint:preview.fingerprint}}),200);
-  await expect.poll(async()=> (await json(await site.call(`/api/audience/imports/${started.job.id}`,{cookie}),200)).job.state).toBe('completed');
+  let job=started.job;while(['queued','applying'].includes(job.state))job=(await json(await site.call(`/api/audience/imports/${job.id}/resume`,{method:'POST',cookie,body:{}}),200)).job;
+  expect(job.state).toBe('completed');
   expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(before);
   const after=await site.rows('SELECT id,email_status,sms_status FROM contacts ORDER BY id');
   expect(after.filter(row=>states.some(old=>old.id===row.id))).toEqual(states);

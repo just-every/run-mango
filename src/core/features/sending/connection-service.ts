@@ -1,3 +1,4 @@
+import {resendConnectionService} from './resend-connection';
 import type {Platform} from '@/core/shared/platform';
 import {activityStatement} from '@/core/features/auth/activity-record';
 import {openSendingSecret,sealSendingSecret} from './secrets';
@@ -20,10 +21,11 @@ export function sendingConnectionService(platform:Platform) {
   return {
     async status() {
       const row=await read();
-      return {...disclosure,developerRoute:!row,connection:row?{provider:'SendGrid',state:row.state,account:row.account_name,lastFour:row.last_four,
+      return {...disclosure,developerRoute:!row,connection:row?{provider:row.account_id==='resend'?'Resend':'SendGrid',state:row.state,account:row.account_name,lastFour:row.last_four,
         connectedBy:row.connected_by,connectedAt:row.connected_at,broader:row.broader===1,deliveryEventsVerified:Boolean(row.delivery_proved_at),error:row.last_error}:null};
     },
-    async prepare(apiKey:string,operatorId:string) {
+    async prepare(apiKey:string,operatorId:string,provider='sendgrid') {
+      if(provider==='resend')return resendConnectionService(platform).prepare(apiKey,operatorId);
       const api=sendgridAccount(apiKey),account=await api.inspect();
       await inspectCapacity(api,await read(),account.accountId);
       const id=crypto.randomUUID(),now=Date.now();
@@ -33,6 +35,8 @@ export function sendingConnectionService(platform:Platform) {
       return {...disclosure,proposalId:id,account:account.accountName,lastFour:apiKey.slice(-4),broader:account.broader};
     },
     async connect(proposalId:string,operator:{id:string;email:string}) {
+      const selected=await db.prepare('SELECT account_id FROM sending_proposals WHERE id=? AND operator_id=?').bind(proposalId,operator.id).first<{account_id:string}>();
+      if(selected?.account_id==='resend')return resendConnectionService(platform).connect(proposalId,operator);
       const proposal=await db.prepare('DELETE FROM sending_proposals WHERE id=? AND operator_id=? AND expires_at>? RETURNING *').bind(proposalId,operator.id,Date.now()).first<{secret_cipher:string;account_id:string;account_name:string;broader:number}>();
       if(!proposal)throw new SendingConnectionError('The connection review expired or was already used. Review the key again.');
       const secret=await openSendingSecret(proposal.secret_cipher,key),api=sendgridAccount(secret.apiKey),identity=await api.inspect();
@@ -87,6 +91,7 @@ export function sendingConnectionService(platform:Platform) {
     },
     async disconnect(operatorId:string) {
       const row=await read();if(!row)return {disconnected:true};
+      if(row.account_id==='resend')return resendConnectionService(platform).disconnect(operatorId);
       if(row.state==='connecting')throw new SendingConnectionError('The connection is still in progress. Wait for its result before disconnecting.');
       if(row.webhook_id) {
         const secret=await openSendingSecret(row.secret_cipher,key);

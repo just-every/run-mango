@@ -630,7 +630,6 @@
     "MANGO_UNRESOLVED_OUTCOME_HOURS": "24",
     "MANGO_EMAIL_HANDOFFS_PER_MINUTE": "10",
     "MANGO_DELIVERABILITY_WINDOW_DAYS": "30",
-    "MAIL_FROM": "",
     "MAIL_RELAY_URL": "",
     "MARKETING_MAIL_PROVIDER": "",
     "MARKETING_MAIL_WEBHOOK_ID": ""
@@ -685,7 +684,8 @@
   },
   "mail": {
     "providers": [
-      "rer"
+      "sendgrid",
+      "resend"
     ]
   }
 }
