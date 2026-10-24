@@ -1,5 +1,8 @@
 import {expect,type APIRequestContext,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import {createRequire} from 'node:module';
+const localRequire=createRequire(import.meta.url);
+const axeSource=createRequire(localRequire.resolve('@axe-core/playwright'))('axe-core').source as string;
 import {rejectedPresentation} from '../support/adversarial-email.mjs';
 import {openPage} from '../support/navigation';
 
@@ -67,12 +70,18 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});await openPage(page,`${origin}/app/campaigns/${campaignId}`);
     await expect(page.locator('iframe[title="Saved email preview"]')).toBeVisible();
+    await expect(page.locator('iframe[title="Saved email preview"]')).toHaveAttribute('sandbox','');
     await expect(page.frameLocator('iframe[title="Saved email preview"]').getByText('Left column',{exact:true})).toBeVisible();
     await expect(page.getByText('Mobile overrides require the generated style block.',{exact:false})).toBeVisible();
     for(const setting of ['hide on mobile','hide on desktop','mobile font size','mobile line height','mobile padding','mobile alignment'])await expect(page.getByRole('region',{name:'Saved revision previews'})).toContainText(setting);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
-    expect((await new AxeBuilder({page}).options({iframes:false}).analyze()).violations.filter(row=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
+    // AxeBuilder discovers child frames before it passes iframes:false to axe.
+    // Run axe on the shell directly: this keeps every shell/iframe-element rule,
+    // while the email itself retains all eight complete browser audits above.
+    await page.evaluate(axeSource);
+    const shell=await page.evaluate(async()=>(window as any).axe.run(document,{iframes:false}));
+    expect(shell.violations.filter((row:any)=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
     await page.locator('[aria-label="Saved revision previews"]').screenshot({path:info.outputPath(`mobile-preview-${width}.png`)});
   }
 }
