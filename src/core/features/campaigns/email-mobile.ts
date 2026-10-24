@@ -2,7 +2,7 @@ import {parseFragment,serialize,type DefaultTreeAdapterTypes as Tree} from 'pars
 import {z} from 'zod';
 
 export const mobileBlockSchema=z.object({block:z.number().int().min(0).max(127),hideOnMobile:z.boolean().optional(),hideOnDesktop:z.boolean().optional(),
-  orientation:z.literal('stack').optional(),fontSize:z.number().int().min(10).max(72).optional(),lineHeight:z.number().min(1).max(3).multipleOf(0.01).optional(),
+  orientation:z.enum(['stack','stack-columns']).optional(),contentCell:z.literal(true).optional(),fontSize:z.number().int().min(10).max(72).optional(),lineHeight:z.number().min(1).max(3).multipleOf(0.01).optional(),
   padding:z.number().int().min(0).max(64).optional(),alignment:z.enum(['left','center','right']).optional()}).strict();
 export const mobileSettingsSchema=z.array(mobileBlockSchema).max(128).refine(rows=>new Set(rows.map(row=>row.block)).size===rows.length,'Each mobile block occurs once.');
 export type MobileBlock=z.infer<typeof mobileBlockSchema>;
@@ -13,7 +13,7 @@ export const mobileClass=(block:number)=>'mgo-b'+String(block).padStart(3,'0');
 function declarations(row:MobileBlock) {
   const values=new Map<string,string>();
   if(row.hideOnMobile)values.set('display','none');
-  else if(row.orientation==='stack'){values.set('display','block');values.set('width','100%');}
+  else if(row.orientation==='stack'||row.orientation==='stack-columns'){values.set('display','block');values.set('width','100%');}
   if(row.fontSize!==undefined)values.set('font-size',row.fontSize+'px');
   if(row.lineHeight!==undefined)values.set('line-height',String(row.lineHeight));
   if(row.padding!==undefined)values.set('padding',row.padding+'px');
@@ -25,7 +25,8 @@ export function generateMobileStyle(input:unknown) {
   const parsed=mobileSettingsSchema.safeParse(input);
   if(!parsed.success)throw new MobileEmailError('Invalid mobile block settings: '+parsed.error.issues.map(issue=>issue.message).join(' '));
   const rows=[...parsed.data].filter(row=>declarations(row).size||row.hideOnDesktop).sort((a,b)=>a.block-b.block);
-  const rules=rows.map(row=>{const values=declarations(row);return values.size?'.'+mobileClass(row.block)+'{'+[...values].map(([name,value])=>`${name}: ${value} !important;`).join('')+'}':'';}).join('');
+  const columnRules=rows.filter(row=>row.orientation==='stack-columns').map(row=>'.'+mobileClass(row.block)+(row.contentCell?' > table':' > tbody > tr > td > table')+'{display: block !important;width: 100% !important;}').join('');
+  const rules=rows.map(row=>{const values=declarations(row);return values.size?'.'+mobileClass(row.block)+'{'+[...values].map(([name,value])=>`${name}: ${value} !important;`).join('')+'}':'';}).join('')+columnRules;
   const hidden=rows.filter(row=>row.hideOnDesktop).map(row=>'.'+mobileClass(row.block)+'{display: none !important;}').join('');
   const encoded=btoa(JSON.stringify(rows)).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'');
   const style=rules||hidden?'<style data-mango-mobile="'+encoded+'">'+(rules?mobile+rules+'}':'')+(hidden?desktop+hidden+'}':'')+'</style>':'';
@@ -92,7 +93,8 @@ export function applyMobileSettings(source:string,input:unknown) {
   for(const setting of settings) {
     if(!declarations(setting).size&&!setting.hideOnDesktop)continue;
     const block=blocks[setting.block];if(!block)throw new MobileEmailError(`Mobile block ${setting.block+1} does not exist in this email.`);
-    block.attrs.push({name:'class',value:mobileClass(setting.block)});
+    const target=setting.contentCell&&block.tagName==='table'?elements(block).find(node=>node.tagName==='td')??block:block;
+    target.attrs.push({name:'class',value:mobileClass(setting.block)});
   }
   return mobileDocument(serialize(fragment),style);
 }

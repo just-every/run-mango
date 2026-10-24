@@ -1,3 +1,4 @@
+import {resendConnectionJourney} from './resend-connection-journey';
 import {wooCommerceEdge} from './woocommerce-edge';
 import {readArchive} from '../../src/vendor/base/portability/index.mjs';
 import {expect,type Page,type TestInfo} from '@playwright/test';
@@ -104,4 +105,5 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     expect(JSON.stringify(exported)).not.toContain(apiKey);expect(JSON.stringify(exported)).not.toContain(signer.publicKey);
     expect(edge.unexpected).toEqual([]);
   }finally{await site.runtime.close();await edge.close();}
+  await resendConnectionJourney(page,info);
 }

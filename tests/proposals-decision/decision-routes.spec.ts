@@ -1,3 +1,4 @@
+import {blockBuilderJourney} from '../campaign-authoring/block-builder-journey';
 import {expect,test} from '@playwright/test';
 import {decisionRuntime,generated} from './runtime';
 import {proposalCustomer,synchronizeProposalSource} from './shopify-edge';
@@ -218,7 +219,7 @@ test('[PROP-003] generated audience counts apply real consent exclusions and cou
   }finally{await runtime.close();}
 });
 
-test('[PROP-004] accepted generated content and sender are previewable and editable as a saved draft',async()=>{
+test('[PROP-004][BUILD-001] accepted content and sender are previewable and editable as a saved draft',async({page},info)=>{
   const runtime=await decisionRuntime();
   try {
     runtime.controls.alter=output=>{output.links=[{label:'Garden collection',destinationUrl:'https://store.example.test/garden'}];};
@@ -258,6 +259,7 @@ test('[PROP-004] accepted generated content and sender are previewable and edita
     }
     expect(runtime.jobs).toEqual([]);
   }finally{await runtime.close();}
+  await blockBuilderJourney(page,info);
 });
 
 test('[PROP-008] forecasts use owned mature history including failed and zero-revenue recipients, and refuse thin or mixed-currency history',async()=>{

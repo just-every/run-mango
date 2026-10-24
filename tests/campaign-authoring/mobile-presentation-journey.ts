@@ -84,4 +84,20 @@ export async function mobilePresentationJourney(request:APIRequestContext,page:P
     expect(shell.violations.filter((row:any)=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
     await page.locator('[aria-label="Saved revision previews"]').screenshot({path:info.outputPath(`mobile-preview-${width}.png`)});
   }
+  for(const width of [1440,390]){
+    await page.setViewportSize({width,height:1000});await openPage(page,`${origin}/app/campaigns/${campaignId}/review`);
+    await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 3: text',exact:true}).click();
+    await page.getByLabel('Hide on mobile',{exact:true}).check();await page.getByLabel('Hide on mobile',{exact:true}).uncheck();
+    await page.getByLabel('Hide on desktop',{exact:true}).check();await page.getByLabel('Hide on desktop',{exact:true}).uncheck();
+    await page.getByLabel('Mobile font size',{exact:true}).fill('26');await page.getByLabel('Mobile line height',{exact:true}).fill('1.6');await page.getByLabel('Mobile padding',{exact:true}).fill('14');await page.getByRole('combobox',{name:'Mobile alignment',exact:true}).selectOption('right');
+    await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+    const updated=await read();expect(updated.emailBody).toContain('font-size: 26px !important');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
+    await page.evaluate(axeSource);const shell=await page.evaluate(async()=>(window as any).axe.run(document,{iframes:false}));expect(shell.violations.filter((row:any)=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
+    await page.screenshot({path:info.outputPath(`mobile-block-controls-${width}.png`),fullPage:true});
+  }
+  const controlled=await read();await page.setViewportSize({width:375,height:1000});await page.setContent(controlled.emailBody);
+  const computed=await page.getByText('Mobile font example',{exact:true}).evaluate(node=>{const s=getComputedStyle(node);return {font:s.fontSize,line:s.lineHeight,padding:s.padding,text:s.textAlign};});
+  expect(computed).toEqual({font:'26px',line:'41.6px',padding:'14px',text:'right'});
+
 }
