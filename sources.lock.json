@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "ef69add2492ce9013e1245c76b0ca2cd5360036321a09c51b0733e300684747b",
+      "sha256": "45572d379a128a1ced92892eb3f19af351cfdba09abe4cc2cd5fe0736449992c",
       "executable": false
     },
     "DEMO.md": {
@@ -3182,7 +3182,7 @@
       "executable": false
     },
     "src/core/features/campaigns/composition-repository.ts": {
-      "sha256": "a8500c1daf2e59dd8f4fe084179a8d3458138001b6339185939782f851734418",
+      "sha256": "f9745240f3b61618bc10c88f09828392f0174cdf08e4b514c0e4f03bad51984a",
       "executable": false
     },
     "src/core/features/campaigns/contact-links.ts": {
@@ -3322,7 +3322,7 @@
       "executable": false
     },
     "src/core/features/campaigns/reusable-block-draft-guard.ts": {
-      "sha256": "155a2f95a34d84658fbfb723737e714f00be5b58455b8b076f5a2a658ae77028",
+      "sha256": "a527b253283f90822b803fd11c45d2736005f580892414bd8d1a497828b53c4a",
       "executable": false
     },
     "src/core/features/campaigns/reusable-block-model.ts": {
