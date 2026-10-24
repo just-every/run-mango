@@ -337,7 +337,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
       expect(JSON.stringify(surviving)).not.toContain('ada@example.test');
     }
     await openPage(page, `${site.runtime.url}/app/audience/import`);
-    await expect(page.getByRole('link', { name: 'Download reconciliation report' })).toHaveCount(1);
+    await expect(page.getByRole('region', {name:'Archive imports',exact:true}).getByRole('link', { name: 'Download reconciliation report' })).toHaveCount(1);
     await screens(page, 'surviving-archive-after-erasure', info);
     expect(await authority()).toEqual(authorityBefore);
     expect((await site.call(`/api/contacts/${ada}`, { cookie })).status).toBe(404);
