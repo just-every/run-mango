@@ -1,16 +1,16 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-import {authoringRuntime} from './browser-runtime.mjs';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage,reloadPage} from '../support/navigation';
 import {png} from '../support/images';
 import {authoredBody} from '../../src/core/features/campaigns/authoring-content';
 import {parseEmailHtml} from '../../src/core/features/campaigns/email-html-parse';
-export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:Awaited<ReturnType<typeof authoringRuntime>>){
+export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:string;token:string}){
     console.log('Block proof: open');
-    const open=await page.request.post(runtime.url+'/_authoring/open',{headers:{'X-Test-Token':runtime.token}});expect(open.status()).toBe(200);const {token}=await open.json();
+    const headers={Origin:runtime.url,'X-Mango-Authoring-Fixture':runtime.token,'X-Mango-Block-Fixture':'1'};
+    await page.context().setExtraHTTPHeaders(headers);
+    const open=await page.request.post(runtime.url+'/_authoring/open',{headers:{...headers,'X-Test-Token':runtime.token}});expect(open.status()).toBe(200);const {token}=await open.json();
     await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,url:runtime.url}]);
-    const headers={Origin:runtime.url};
     const uploaded=await page.request.post(runtime.url+'/api/campaign-assets',{headers,multipart:{file:{name:'synthetic-mango-140.png',mimeType:'image/png',buffer:Buffer.from(png(200,160))}}});expect(uploaded.status()).toBe(201);const {asset}=await uploaded.json();
     const create=await page.request.post(runtime.url+'/api/campaigns',{headers,data:{}});expect(create.status()).toBe(201);const {campaignId,revisionId}=await create.json();
     const configured=await page.request.patch(runtime.url+'/api/campaign-revisions/'+revisionId,{headers,data:{name:'Synthetic block letter',emailSubject:'Garden seeds',preheader:'From our garden',emailBody:'',steps:[{channel:'email',timezone:'Australia/Brisbane',scheduledAt:'2031-06-07T00:00:00.000Z',sendByAt:'2031-06-07T13:59:00.000Z',whyThisTime:'Operator selected'}]}});expect(configured.status()).toBe(200);
@@ -26,7 +26,7 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:Awaite
     await page.getByRole('button',{name:'Duplicate block 1',exact:true}).click();await expect(page.getByRole('button',{name:'Delete block 3',exact:true})).toBeVisible();await page.getByRole('button',{name:'Delete block 2',exact:true}).click();await page.getByRole('button',{name:'Undo block change',exact:true}).click();await expect(page.getByRole('button',{name:'Delete block 3',exact:true})).toBeVisible();await page.getByRole('button',{name:'Redo block change',exact:true}).click();await expect(page.getByRole('button',{name:'Delete block 3',exact:true})).toHaveCount(0);
     console.log('Block proof: save');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
-    const read=async()=>{const response=await page.request.get(`${runtime.url}/api/campaigns/${campaignId}`);expect(response.status()).toBe(200);return (await response.json()).revision;};
+    const read=async()=>{const response=await page.request.get(`${runtime.url}/api/campaigns/${campaignId}`,{headers});expect(response.status()).toBe(200);return (await response.json()).revision;};
     console.log('Block proof: reopen');
     const saved=await read();expect(parseEmailHtml(saved.emailBody).canonical).toBe(saved.emailBody);
     await reloadPage(page);await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 1: columns',exact:true}).click();await expect(page.getByRole('combobox',{name:'Column count',exact:true})).toHaveValue('2');await expect(page.getByRole('combobox',{name:'Mobile column orientation',exact:true})).toHaveValue('stack-columns');

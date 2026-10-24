@@ -7482,7 +7482,7 @@
       "executable": false
     },
     "tests/campaign-authoring/block-builder-journey.ts": {
-      "sha256": "3d72d53397b4fe4901288788eae6af00443841f79cffee0f016f24dfea3d8eda",
+      "sha256": "94c2014748bda079ee801fd327f4aa208824cb3e962e749b0b79f8a6fa15d578",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
@@ -8330,7 +8330,7 @@
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
-      "sha256": "5e7af73f215557841b776c8a3fbe31853591388c579c04343a8ad2eb4e5b48e0",
+      "sha256": "dea624d2ca07a98079c6e37da3aef6a823859b08f60fd34645b0d62c2119ef2b",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
@@ -8530,7 +8530,7 @@
       "executable": false
     },
     "tests/support/worker.ts": {
-      "sha256": "7ff579b8a5ea6943517bc496076fe57bebc44b19b32a40e02ebb4b9ab9d45d56",
+      "sha256": "85c86e0f684a7f8a6f18884c2f0d20d2709f8f84c26545a52626fb1a8d134af7",
       "executable": false
     },
     "tsconfig.json": {
