@@ -24,6 +24,7 @@ export const defaultMapping: Record<string, readonly string[]> = {
   sms_time_zone: ['sms_time_zone'], sms_location_source: ['sms_location_source'], sms_location_recorded_at: ['sms_location_recorded_at'],
   status: ['email marketing status', 'email marketing', 'marketing status', 'status', 'email_status'],
   first_name: ['first name'], last_name: ['last name'],
+  capture_method: ['capture_method','consent_method','email_consent_method'],
   occurred_at: ['optin_time', 'occurred_at'], capture_ip: ['optin_ip', 'capture_ip'],
   confirmed_at: ['confirm_time', 'confirmed_at'], confirmation_ip: ['confirm_ip', 'confirmation_ip'],
 };

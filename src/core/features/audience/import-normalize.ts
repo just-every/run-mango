@@ -108,7 +108,7 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
               if(!at)reason??='source-export-creation-time-missing';
               if(at&&at>Date.now())reason='source-evidence-time-in-future';
               if(reason){row.status='non-subscribed';row.warnings.push(reason);}
-              else row.incumbent={id:source.id,evidenceAt:at!,timeQuality:selected?selected[0]:'time-unknown',source:`${source.sourceName}; attestation ${source.id}`,facts:Object.fromEntries(choices.map(([name,value])=>[name,value??'']))};
+              else row.incumbent={id:source.id,evidenceAt:at!,timeQuality:selected?selected[0]:'time-unknown',source:`${source.sourceName}; attestation ${source.id}`,facts:{...Object.fromEntries(choices.map(([name,value])=>[name,value??''])),SOURCE_METHOD:values.capture_method??''}};
             }
           } else if (row.status === 'subscribed') {
             const evidence = ['brandOrLegalSender','messageCategory','frequencyDisclosure','destinationJurisdiction','consentText','consentVersion'];

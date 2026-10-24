@@ -135,3 +135,5 @@
 
 /* Keep the source-import review legible at the product's 13px floor. */
 .audience-import-page :is(.eyebrow, .audience-import-mapped-file dt, .audience-import-job__heading code, .audience-import-status) { font-size: 13px; }
+.audience-import-page :is(p, li, dd, legend) { overflow-wrap: anywhere; }
+.audience-import-page :is(th, small, .audience-import-file__icon) { font-size: 13px; }
