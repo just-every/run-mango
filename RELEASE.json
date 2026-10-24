@@ -70,6 +70,12 @@
     "DELIV-008": {
       "change": "changed",
       "summary": "Status stays partial. Carry the SendGrid Settings connection and signed webhook flow with a completed Activity receipt, Owner-only mutations and named Admin refusals. Migration 0097 is additive; existing developer inputs remain until a Settings connection is made. Resend, fresh Free/Assisted sign-in, alerts, full developer labeling, domain creation and provider sandbox proof remain open."
+    },
+    "BUILD-010": {
+      "change": "status",
+      "was": "missing",
+      "now": "partial",
+      "summary": "Generated responsive CSS and both-tree checks pass the existing 180-second canonical-save registration, including 138 adversarial cases, stored-body 375/600 standards/quirks renders with and without style, transmitted-byte accounting and Preview at 1440/390. The audit avoids sandbox child-frame discovery without losing shell rules or the eight direct email audits. Per-block controls, nested orientation and full editor acceptance remain open."
     }
   },
   "extensionPointChanges": [],
