@@ -5,6 +5,7 @@ import {json,type Installation} from './harness';
 import {sourceIdentity} from '../../src/core/features/move-in/csv-sources';
 export async function sourceApiJourney(site:Installation,page:Page,info:TestInfo,cookie:string){
   for(const [index,provider] of ['activecampaign','klaviyo'].entries()){
+    console.log(`Source API ${provider}: read`);
     const key=`synthetic-mango-${120+index}-key`;
     await openPage(page,site.runtime.url+'/app/audience/import');
     await page.getByRole('combobox',{name:'Source API',exact:true}).selectOption(provider);
@@ -17,6 +18,7 @@ export async function sourceApiJourney(site:Installation,page:Page,info:TestInfo
     for(const radio of await page.getByRole('radio',{name:'I attest',exact:true}).all())await radio.check();
     const identity=sourceIdentity(provider,provider+'-export.csv');await page.getByRole('textbox',{name:'Type the source name to confirm: '+identity.sourceName,exact:true}).fill(identity.sourceName);
     await page.getByRole('button',{name:'Preview import',exact:true}).click();await expect(page.getByLabel('Consent evidence counts')).toContainText('Incumbent Held evidence: 1');
+    console.log(`Source API ${provider}: review`);
     for(const width of [1440,390]){await page.setViewportSize({width,height:1000});const layout=await page.evaluate(()=>({width:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('main *')].filter(el=>el.getBoundingClientRect().right>window.innerWidth+1).slice(0,8).map(el=>({tag:el.tagName,style:el.className,right:Math.round(el.getBoundingClientRect().right)}))}));expect(layout.width,JSON.stringify(layout.overflow)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);expect((await new AxeBuilder({page}).include('main').options({iframes:false}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.evaluate(()=>{(document.activeElement as HTMLElement)?.blur();window.scrollTo(0,0);});await page.screenshot({path:info.outputPath(`${provider}-api-${width}.png`),fullPage:true});}
     await page.getByRole('button',{name:'Start import',exact:true}).click();await expect(page.getByRole('button',{name:'Import started',exact:true})).toBeVisible();await expect(page.getByText('completed',{exact:true}).last()).toBeVisible();
     const prefix=`synthetic-mango-${120+index}`,rows=await site.rows(`SELECT email,email_status,sms_status FROM contacts WHERE email LIKE '${prefix}-%' ORDER BY email`);expect(rows.map(r=>r.email_status)).toEqual(['subscribed','suppressed','unsubscribed']);expect(rows.every(r=>r.sms_status!=='subscribed')).toBe(true);
