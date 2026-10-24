@@ -6,6 +6,11 @@ export async function flowJourney(page:Page,info:TestInfo,url:string,width:numbe
   await openPage(page,url+'/app/flows');
   await expect(page.getByRole('heading',{name:'Flows',exact:true})).toBeVisible();
   await page.getByLabel('Flow name',{exact:true}).fill('synthetic-mango-101');
+  // Every advertised kind has an inline explanation, including unavailable actions.
+  const kinds=page.getByRole('combobox',{name:'Node kind',exact:true});
+  await expect(kinds.locator('option')).toHaveText(['Time delay','Wait until','Conditional split','Trigger split','Random or A/B split','Send email','Send SMS','Send push','Update property','Tag','Webhook','Notify team','Create CRM task','Exit']);
+  for(const [kind,reason] of [['sms','SMS flow transport and consent admission are not connected'],['push','no push transport is connected'],['webhook','outbound webhook authority is not connected'],['notify','team notification delivery is not connected'],['task','no CRM task connection is configured']]){await kinds.selectOption(kind);await expect(page.getByText('Unavailable: '+reason+'. Every node is draft only.',{exact:true})).toBeVisible();}
+
   const add=async(kind:string,name:string)=>{await page.getByRole('combobox',{name:'Node kind',exact:true}).selectOption(kind);await page.getByRole('button',{name:'Add node',exact:true}).click();await page.getByLabel('Node name',{exact:true}).fill(name);};
   console.log(`Flow proof ${width}: build`);
   await add('email','Welcome email 1');await add('condition','Welcome split');await add('email','Welcome email 2');await add('email','Welcome email 3');await add('exit','Welcome exit');

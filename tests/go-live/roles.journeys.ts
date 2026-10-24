@@ -56,7 +56,11 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
     await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.author,body:flow}),201);
     expect((await json(await site.call('/api/flow-drafts',{cookie:cookies.analyst}),200)).revisions[0].graph).toEqual(flow);
     await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.analyst,body:flow}),403);
-    await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.author,body:{...flow,nodes:[{...flow.nodes[0],next:['start']},flow.nodes[1]]}}),422);
+    const loop=await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.author,body:{...flow,nodes:[{...flow.nodes[0],next:['start']},flow.nodes[1]]}}),422);
+    expect(loop.errors).toEqual(expect.arrayContaining(['Start: loop without a time delay.','End: unreachable node.','Start: no path reaches an exit.']));
+    const unended=await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.author,body:{...flow,nodes:[{...flow.nodes[0],next:[]},flow.nodes[1]]}}),422);
+    expect(unended.errors).toContain('Start: unended path; connect it to an exit.');
+    await json(await site.call('/api/flow-drafts',{method:'POST',cookie:cookies.author,body:{...flow,nodes:[{...flow.nodes[0],next:['pause']},{id:'pause',kind:'delay',label:'Pause',next:['pause','end']},flow.nodes[1]]}}),201);
     const campaign=await draftCampaign(site,cookies.author!,'Weekend planting letter',['riley@example.test'],new Date((await site.control('/_golive/clock')).now+86400000));
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/request-approval`,{method:'POST',cookie:cookies.author,body:{revisionId:campaign.revisionId}})).status).toBe(200);
     expect((await site.call(`/api/campaigns/${campaign.campaignId}/test-send`,{method:'POST',cookie:cookies.author,body:{revisionId:campaign.revisionId,channel:'email',to:['forbidden@example.test']}})).status).toBe(403);
