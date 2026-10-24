@@ -6,7 +6,7 @@ export type ReusableTarget={target:PlacementTarget;body:string;stamp:string|numb
 export async function readReusableTarget(platform:Platform,target:PlacementTarget):Promise<ReusableTarget>{
   const db=platform.database.$client;
   if(target.kind==='campaign'){
-    const row=await db.prepare('SELECT r.*,c.active_revision_id AS current_active_revision_id,(SELECT COUNT(*) FROM campaign_revisions d WHERE d.campaign_id=r.campaign_id AND d.state='draft') AS draft_count FROM campaign_revisions r JOIN campaigns c ON c.id=r.campaign_id WHERE r.id=?').bind(target.id).first<Record<string,any>>();
+    const row=await db.prepare(`SELECT r.*,c.active_revision_id AS current_active_revision_id,(SELECT COUNT(*) FROM campaign_revisions d WHERE d.campaign_id=r.campaign_id AND d.state='draft') AS draft_count FROM campaign_revisions r JOIN campaigns c ON c.id=r.campaign_id WHERE r.id=?`).bind(target.id).first<Record<string,any>>();
     if(!row||!['draft','approved'].includes(row.state))throw new ReusableBlockError('This campaign revision cannot receive reusable blocks.');
     return {target,body:row.email_body,stamp:row.updated_at,row};
   }

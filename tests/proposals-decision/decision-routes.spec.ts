@@ -1,3 +1,4 @@
+import {reusableRoleProof} from '../campaign-authoring/reusable-block-journey';
 import {flowTemplateJourney} from '../campaign-authoring/flow-template-journey';
 import {localBootstrapToken} from '../local-bootstrap.js';
 import {blockBuilderJourney} from '../campaign-authoring/block-builder-journey';
@@ -264,6 +265,7 @@ test('[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewab
       }
     }
     expect(runtime.jobs).toEqual([]);
+    await reusableRoleProof(runtime);
   }finally{await runtime.close();savedRuntime=undefined;}
   const block=await blockBuilderJourney(page,info,{url:baseURL!,token:await localBootstrapToken()});
   const library=await page.request.post(baseURL!+'/api/campaign-templates',{headers:block.headers,data:{revisionId:block.revisionId,name:'synthetic-mango-145'}});expect(library.status()).toBe(201);

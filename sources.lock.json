@@ -3334,7 +3334,7 @@
       "executable": false
     },
     "src/core/features/campaigns/reusable-block-targets.ts": {
-      "sha256": "e46313d555efe2bd957271c66de46fe41ddd7be734b026c9e9785638975f81ed",
+      "sha256": "1174dcd2fc7807ef9cf619125ebffd049ca6cc7b387b174a46406943e3e6bbd2",
       "executable": false
     },
     "src/core/features/campaigns/reuse-routes.ts": {
@@ -7514,7 +7514,7 @@
       "executable": false
     },
     "tests/campaign-authoring/block-builder-journey.ts": {
-      "sha256": "075c44d87a13cbde927ec39ff2e3d5978dd0f4339d33c8980eb7c44e5ecd6087",
+      "sha256": "bce7e1eeb4eebfeeacead2041913da241b5d95293a75c853cc1809472904f6a2",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
@@ -7571,6 +7571,10 @@
     },
     "tests/campaign-authoring/mobile-presentation-journey.ts": {
       "sha256": "b03a70c6b5f2d9c063a02709a5de07a5acbcc618563f8bc4dd97ae33b388ea46",
+      "executable": false
+    },
+    "tests/campaign-authoring/reusable-block-journey.ts": {
+      "sha256": "6aaeae80fcd7e017018c9246a4251dc4570f2dbc01f66130a2eda9f1496cd2e3",
       "executable": false
     },
     "tests/campaign-authoring/reuse-journey.ts": {
@@ -8314,7 +8318,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "d62ca4842a9bdda0c8b771dc3dd9961d15c2f03ed76d698ca016c462c64b629d",
+      "sha256": "299a8a366dae27ca379d5e62868668000d97c88f1f8c334e068f2c7712f42437",
       "executable": false
     },
     "tests/portability/flows.ts": {
@@ -8362,7 +8366,7 @@
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
-      "sha256": "407fb6adfe50434c94eafa82eaa9a2d447af9fd09a5b92e8cdbb55e8440ee7a1",
+      "sha256": "904455a005685ebac1d5445210009b70ed43d52577a8627780b45d50a3a906a3",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
