@@ -222,6 +222,9 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     const starterRevision=started.revision.id;
     await json(await site.call(`/api/campaign-revisions/${starterRevision}`, { method: 'PATCH', cookie, body: { name: 'Welcome letter (edited)' } }), 200);
     await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:starterRevision,name:'Welcome letter (edited)',templateId:template.id,updatedAt:Date.parse(template.updatedAt)}}),201);
+    // The carried source attestation already covers Cy. A new pending native capture
+    // cannot downgrade that active incumbent evidence, including through undo.
+    expect((await site.rows("SELECT c.email_status FROM contacts c JOIN incumbent_consent_links l ON l.contact_id=c.id JOIN consent_attestations a ON a.id=l.attestation_id WHERE c.email='cy@example.test' AND a.revoked_at IS NULL"))[0].email_status).toBe('subscribed');
     await json(await site.call('/api/contacts/consent', { method: 'POST', cookie, body: { contact: { email: 'cy@example.test', displayName: 'Cy Confirmed' }, channel: 'email', ...consentEvidence,
       captureMethod: 'operator-entry', captureSource: 'Market stall sign-up sheet', occurredAt: new Date().toISOString() } }), 201);
     const ben = (await site.rows("SELECT id FROM contacts WHERE email='ben@example.test'"))[0].id;
@@ -244,7 +247,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     await record('reconciliation-report.md', report);
     await page.setContent(`<pre style="font:13px/1.4 monospace;white-space:pre-wrap;padding:16px">${report.replaceAll('&', '&amp;').replaceAll('<', '&lt;')}</pre>`);
     await screens(page, 'report', info);
-    expect(afterUndo).toEqual({ 'ben@example.test': 'unsubscribed', 'cy@example.test': 'pending', 'optedout@example.test': 'unsubscribed' });
+    expect(afterUndo).toEqual({ 'ben@example.test': 'unsubscribed', 'cy@example.test': 'subscribed', 'optedout@example.test': 'unsubscribed' });
     // Kept: the address that existed before, the one who unsubscribed and the one the operator edited, each with a reason.
     const keptIds = (await site.rows("SELECT id FROM contacts WHERE email IN ('optedout@example.test','ben@example.test','cy@example.test')")).map(row => row.id).sort();
     expect(undone.undo.contacts.kept.map((item: { contactId: string }) => item.contactId).sort()).toEqual(keptIds);
