@@ -210,7 +210,7 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     // The operator edits one imported draft and one contact; another person unsubscribes through their link.
     const starterRevision=started.revision.id;
     await json(await site.call(`/api/campaign-revisions/${starterRevision}`, { method: 'PATCH', cookie, body: { name: 'Welcome letter (edited)' } }), 200);
-    await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:starterRevision,name:'Welcome letter (edited)',templateId:template.id,updatedAt:Date.parse(template.updatedAt)}}),200);
+    await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:starterRevision,name:'Welcome letter (edited)',templateId:template.id,updatedAt:Date.parse(template.updatedAt)}}),201);
     await json(await site.call('/api/contacts/consent', { method: 'POST', cookie, body: { contact: { email: 'cy@example.test', displayName: 'Cy Confirmed' }, channel: 'email', ...consentEvidence,
       captureMethod: 'operator-entry', captureSource: 'Market stall sign-up sheet', occurredAt: new Date().toISOString() } }), 201);
     const ben = (await site.rows("SELECT id FROM contacts WHERE email='ben@example.test'"))[0].id;
