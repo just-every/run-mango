@@ -5,7 +5,8 @@ type Review={proposalId:string;provider:string;account:string;lastFour:string;br
 type Status={developerRoute:boolean;connection:null|{provider:string;state:string;account:string;lastFour:string;connectedBy:string;connectedAt:number;broader:boolean;deliveryEventsVerified:boolean;error:string|null}};
 export function SettingsSending() {
   const status=useResource<Status>('/api/settings/sending');
-  const [provider,setProvider]=useState('sendgrid');
+  const [chosenProvider,setProvider]=useState<string|null>(null);
+  const provider=chosenProvider??(status.data?.connection?.provider==='Resend'?'resend':'sendgrid');
   const providerName=provider==='resend'?'Resend':'SendGrid';
   const [apiKey,setApiKey]=useState(''),[review,setReview]=useState<Review|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false);
   async function act(path:string,body?:unknown,method='POST') {
