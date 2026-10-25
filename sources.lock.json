@@ -2050,7 +2050,7 @@
       "executable": false
     },
     "scripts/verification/main-shard.mjs": {
-      "sha256": "3201d53578c3f3db78c3fe128eddbe8f5a05d62d1695c9a8c1dcccb193f4f0e2",
+      "sha256": "cbe85f50e9dbfc27a06316fb86da0cd26531e6f84305d149b39da0e75b7983d0",
       "executable": false
     },
     "scripts/verification/node-reporter.mjs": {
@@ -2058,7 +2058,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "584c1580537010410cb33010969ab554fe87a557d6f190848a9bd657c605310b",
+      "sha256": "0c9f807bfd9a9f1fe43c7564588040974fe08219c7eaa24b7a57561c7dd9699e",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -7566,7 +7566,7 @@
       "executable": false
     },
     "tests/audience-import/sms-edge.ts": {
-      "sha256": "167879fb9f9615c05f54705b11de5f0fd4928eb95e1ac6cf87794ba7bf5cdbb3",
+      "sha256": "16cf27f07fbf1890f2e960a7a019e81ea20f682b0cc36081896f9bcf46e561d0",
       "executable": false
     },
     "tests/audience-summary/proposal-render.ts": {
@@ -7598,7 +7598,7 @@
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
-      "sha256": "16c3a13a82f795b7326243543f3b7a833ddda8e2eceb4a6847475df31229e857",
+      "sha256": "79b555af3d6e80fcad8fb21c9734d0b4e66471ebac1f9e677de0e52622c32252",
       "executable": false
     },
     "tests/campaign-authoring/config.js": {
@@ -7634,7 +7634,7 @@
       "executable": false
     },
     "tests/campaign-authoring/full-promotional-email-journey.ts": {
-      "sha256": "e08dc664bf62469db6fdfc06dace3a17327c02d1f29c8378cf6297c154caa1d7",
+      "sha256": "c9b8226437705fa924e66997fe7b31eaa43998dba993dc2e6c033b04c8098116",
       "executable": false
     },
     "tests/campaign-authoring/import-category.spec.ts": {
@@ -7878,7 +7878,7 @@
       "executable": false
     },
     "tests/go-live/chosen-catalog-journey.ts": {
-      "sha256": "b34b65215d4094bdd6327a4e03a4fea782e3a200d1912b247921761819685bf3",
+      "sha256": "7574cb32e4ef8bb49baab2e78a1f7841979351e24a8a89224de74edf1d5a7135",
       "executable": false
     },
     "tests/go-live/clock.ts": {

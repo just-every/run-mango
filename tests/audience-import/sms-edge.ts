@@ -5,9 +5,12 @@ import { createHmac, createHash } from 'node:crypto';
 /** Paid network edge only: production adapter, routes and D1 remain real. */
 export function smsEdge(h:Awaited<ReturnType<typeof native>>){
  const NativeDate=globalThis.Date;let clockOffset=(Math.floor(NativeDate.now()/86400000)+1)*86400000-NativeDate.now();
- const clockNow=()=>NativeDate.now()+clockOffset;
+ let heldClock:number|undefined;
+ const clockNow=()=>heldClock??NativeDate.now()+clockOffset;
  globalThis.Date=new Proxy(NativeDate,{construct(target,args,newTarget){return Reflect.construct(target,args.length?args:[clockNow()],newTarget);},apply(){return new NativeDate(clockNow()).toString();},get(target,key,receiver){return key==='now'?clockNow:Reflect.get(target,key,receiver);}});
- const setClock=(value:number)=>{clockOffset=value-NativeDate.now();};
+ // Boundary probes hold the network-edge clock until the next explicit transition.
+ // Wall-clock work before the designated sender read must not cross that boundary.
+ const setClock=(value:number)=>{heldClock=value;};
  let loseResponse=false,senderRead:(()=>void)|undefined;
  const requests:Array<Record<string,any>>=[],baseFetch=globalThis.fetch;
  const days=[0,1,2,3,4,5,6],windows=[{days,startMinute:0,endMinute:1440}];
