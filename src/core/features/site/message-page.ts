@@ -51,7 +51,7 @@ const pencil = (w: number, h: number, seed: number) => `<svg class="paper-pencil
 function fieldMarkup(field:MessageField,index:number) {
   const id='preference-field-'+index;
   const control=field.kind==='text'?`<input id="${id}" name="${escape(field.name)}" value="${escape(field.value)}" maxlength="${field.maxLength}">`:`<select id="${id}" name="${escape(field.name)}"${field.disabled?' disabled':''}>${field.options.map(option=>`<option value="${escape(option.value)}"${option.value===field.value?' selected':''}${option.disabled?' disabled':''}>${escape(option.label)}</option>`).join('')}</select>`;
-  return `<label for="${id}">${escape(field.label)}${control}</label>`;
+  return `<div class="message-field"><label for="${id}">${escape(field.label)}</label>${control}</div>`;
 }
 function body({ heading, text, form, links, mark: drawn }: Omit<MessagePage, 'title'>) {
   const face = (drawn ? stamp : '') + (drawn === 'posted' ? posted : '')

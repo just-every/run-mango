@@ -25,13 +25,17 @@ async function accessible(page:Page,width:number) {
   const violations=await page.evaluate(async()=>(await (window as any).axe.run(document.querySelector('main'),{iframes:false})).violations.filter((v:any)=>['serious','critical'].includes(v.impact??'')));
   expect(violations).toEqual([]);
 }
-export async function preferenceCenterJourney(site:Installation,edge:Awaited<ReturnType<typeof providerEdge>>,cookie:string,page:Page,info:TestInfo,original:EdgeSend) {
+export async function preferenceCenterJourney(site:Installation,edge:Awaited<ReturnType<typeof providerEdge>>,cookie:string,page:Page,info:TestInfo,original:EdgeSend,originalCampaign:{campaignId:string}) {
   console.log('Preference proof: delivered link');
   const tracked=edge.sends.findLast(send=>send.to==='ordinary@example.test'&&send.body.headers?.['List-Unsubscribe'])!;
   expect(tracked).toBeTruthy();
   expect(tracked.body.content.find((part:any)=>part.type==='text/html').value).toContain('/l/');
   const link=preferenceLink(tracked),otherLink=preferenceLink(edge.sends.findLast(send=>send.to==='branded@example.test'&&send.body.headers?.['List-Unsubscribe'])!);
   preferenceLink(original);
+  const originalDetail=await json(await site.call('/api/campaigns/'+originalCampaign.campaignId,{cookie}),200),revision=originalDetail.revision;
+  const size=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{campaignId:originalCampaign.campaignId,...revision}}),200);
+  expect(Buffer.byteLength(original.body.content.find((part:any)=>part.type==='text/html').value)).toBeLessThanOrEqual(size.htmlBytes);
+  expect(Buffer.byteLength(original.body.content.find((part:any)=>part.type==='text/plain').value)).toBeLessThanOrEqual(size.textBytes);
   edge.domainSetup.dnsPass=true;edge.domainSetup.trackingHttps=true;
   const clock=await site.control('/_golive/clock',{hold:true});
   const captured=await json(await site.call('/api/contacts/consent',{method:'POST',cookie,body:{...consent,messageCategory:'promotions',contact:{email:tracked.to,displayName:'Preference reader'},occurredAt:new Date(clock.now).toISOString()}}),201);

@@ -91,6 +91,6 @@ test('[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact ap
     expect(await site.count('tracked_links')).toBe(0);
     expect(await site.count('link_click_facts')).toBe(0);
     await domainJourney(site, edge, cookie, page, info);
-    await preferenceCenterJourney(site,edge,cookie,page,info,sent);
+    await preferenceCenterJourney(site,edge,cookie,page,info,sent,campaign);
   } finally {await site.runtime.close(); await edge.close();}
 });
