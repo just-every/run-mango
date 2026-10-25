@@ -160,12 +160,12 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     const again=await call(`/api/campaigns/${campaignId}/approve`,{revisionId:detail.revision.id,idempotencyKey:'authoring-repeat-approval'});expect(again.status).toBe(200);expect(again.data.idempotent).toBe(true);
     // Future approval persists recipients and authority; Cron enqueues dispatch only when due.
     const final=await state();expect(final.jobs).toEqual([]);expect(final.recipients).toHaveLength(1);expect(final.recipients[0].transport_disposition).toBe('queued');expect(final.approvals).toHaveLength(1);
-    await exerciseCampaignReuse(page,campaignId,runtime.url,width,testInfo,runtime.sql);
+    await exerciseCampaignReuse(page,campaignId,runtime.url,width,testInfo,runtime.token);
     // Store starter comes from an actual Shopify-shaped imported product, without an AI adapter.
     expect((await request.post(runtime.url+'/_authoring/source',{headers:{'X-Test-Token':runtime.token}})).status()).toBe(200);
     await openPage(page, runtime.url+'/app/campaigns');await page.getByRole('button',{name:'New campaign',exact:true}).click();await page.getByRole('button',{name:'Product newsletter: Garden linen',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Product newsletter: Garden linen',exact:true})).toBeVisible();await expect(page.getByLabel('Audience summary',{exact:true})).toContainText('Email subscription status is "subscribed"');
-    await oversizedSignalStarter(page,runtime.url,width,testInfo,runtime.sql);
+    await oversizedSignalStarter(page,runtime.url,width,testInfo,runtime.token);
     expect((await request.post(runtime.url+'/_authoring/stale',{headers:{'X-Test-Token':runtime.token}})).status()).toBe(200);
     const stale=await call('/api/campaign-authoring/audience',{inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'product',field:'title',comparator:'eq',value:'Garden linen'}]}),exclusionRulesJson:'[]',channels:['email']});
     expect(stale.data).toMatchObject({status:'stale',candidateCount:null,eligibleCount:null});
@@ -182,7 +182,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await expect(page.getByRole('heading',{name:'Recorded suggestion',exact:true})).toBeVisible();
     const adoptedUrl=page.url();await openPage(page, runtime.url+'/app');await page.locator(`[data-proposal-id="${unlinked.id}"]`).click();await page.getByRole('button',{name:'Use this',exact:true}).click();await expect(page).toHaveURL(adoptedUrl);
     expect((await state()).jobs).toEqual([]);
-    await oversizedAdoption(page,runtime.url,unlinked.id,width,testInfo,runtime.sql);
+    await oversizedAdoption(page,runtime.url,unlinked.id,width,testInfo,runtime.token);
 
   } finally {await runtime.close();}
 });
