@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "15b662aa348acc2b75708b13a02832b9a05a83d20fe1c0cc4d04149dd7e2231b",
+      "sha256": "9231f02fe07a7e8163bb3b0d1545fa701b1b8677564e51f1a18175b67059c492",
       "executable": false
     },
     "DEMO.md": {
@@ -2049,12 +2049,16 @@
       "sha256": "a240085a32cbaae07653127c827c6b7eac266790a97873400f04613e1e6eae48",
       "executable": false
     },
+    "scripts/verification/main-shard.mjs": {
+      "sha256": "3201d53578c3f3db78c3fe128eddbe8f5a05d62d1695c9a8c1dcccb193f4f0e2",
+      "executable": false
+    },
     "scripts/verification/node-reporter.mjs": {
       "sha256": "731be53482378ba17231c28a816471cea9e5053be859f472b5982f0cd361d63b",
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "0e45d28a5e38dee3a2fa05dd9d29c18850cc0f5556268af77bc90767b1320656",
+      "sha256": "584c1580537010410cb33010969ab554fe87a557d6f190848a9bd657c605310b",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {

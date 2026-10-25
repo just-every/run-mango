@@ -40,6 +40,13 @@ export function options(args, env = {}) {
 export function verificationGroups({ stage, shard, testsOnly }, cpuBudget) {
   const mainWorkers = Math.min(2, cpuBudget);
   const browser = name => {
+    // Keep the unchanged design-generation file off the longest authoring shard.
+    // The adapter proves the exact native selection plus/minus that whole file.
+    if (name === 'main' && ['3/7', '4/7'].includes(shard)) return {
+      name: `main-${shard.replace('/', '-of-')}`, command: process.execPath,
+      args: ['scripts/verification/main-shard.mjs', shard, `--workers=${mainWorkers}`,
+        '--reporter=list,./scripts/verification/reporter.mjs'], timingRequired: true,
+    };
     const args = ['exec', 'playwright', 'test', '--config', configs[name],
       `--workers=${name === 'main' ? mainWorkers : 1}`, '--reporter=list,./scripts/verification/reporter.mjs'];
     // Only local.journey.ts clones and installs from scratch. The other native
