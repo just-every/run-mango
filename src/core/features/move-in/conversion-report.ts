@@ -28,7 +28,8 @@ export async function describeConversion(platform: Platform, record: ContentReco
   const composition = normalizeAuthoredContent({ name: record.title, emailSubject: record.subject, emailBody: record.html, physicalAddress: platform.config.mailSender.physicalAddress });
   const size = await savedEmailSize(platform.database, { emailSubject: '', emailBody: '', emailText: '', preheader: '', physicalAddress: '', smsBody: '', ...composition }, { publicBaseUrl: platform.config.publicBaseUrl.toString(), openTrackingEnabled: true }, false);
   changes.push(`Sent size: ${formatEmailSize(size)}${size.exceedsLimit ? ' Held conversion; trim before saving as a template.' : ''}`);
-  const issues = [...inspectEmailHtml(record.html).issues, ...invalidPersonalisation(record.html)];
-  changes.push(`MSG-012 checker: ${inspectEmailHtml(record.html).issues.length ? 'fail' : 'pass'}; personalization: ${invalidPersonalisation(record.html).length ? 'blocked' : 'pass'}`);
+  const htmlIssues = inspectEmailHtml(record.html).issues, personalisationIssues = invalidPersonalisation(record.html);
+  const issues = [...htmlIssues, ...personalisationIssues];
+  changes.push(`MSG-012 checker: ${htmlIssues.length ? 'fail' : 'pass'}; personalization: ${personalisationIssues.length ? 'blocked' : 'pass'}`);
   return { ...record, removed: changes, flagged: [...new Set([...record.flagged, ...issues])] };
 }
