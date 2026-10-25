@@ -108,6 +108,7 @@ export function convertTemplateStyles(source: string) {
       }
       if (Object.keys(setting).length > 1 && !mobile.includes(setting)) mobile.push(setting);
     }
+    if (attr(node, 'class')) note(`Removed class ${attr(node, 'class')} at ${location}`);
     node.attrs = node.attrs.filter(item => item.name !== 'class');
     for (const child of node.childNodes) if ('tagName' in child) visit(child, { color: next, backgrounds, inCell: inherited.inCell || ['td', 'th'].includes(node.tagName) });
   }

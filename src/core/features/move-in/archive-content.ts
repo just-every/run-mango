@@ -1,3 +1,4 @@
+import { convertTemplateTokens } from './template-tokens';
 import { parseCsv } from '@/core/features/audience/csv';
 import { htmlToText } from '@/core/features/campaigns/authoring-content';
 import { foreignMergeTags } from '@/core/features/campaigns/message-content';
@@ -61,9 +62,9 @@ export function reviewContent(parts: Array<{ entry: ArchiveEntry; part: ArchiveP
       const files = key ? content.get(key)! : {};
       if (key) used.add(key);
       const imported = files.html ? importHtml(files.html.text!) : { html: '', removed: [], flagged: [], mergeTags: [] };
-      const text = files.text?.text?.trim() ?? (imported.html ? htmlToText(imported.html) : '');
+      const text = files.text ? convertTemplateTokens(files.text.text!.trim()).html : (imported.html ? htmlToText(imported.html) : '');
       const campaignKey=column(['campaignid','uniqueid','id']);
-      records.push({ sourceCampaignId:campaignKey?row[campaignKey]?.trim():undefined, ordinal: 0, kind: 'history', sourcePath: entry.path, sourceRow: line, title: title || subject || key || `Row ${line}`, subject, sentAt,
+      records.push({ sourceCampaignId:campaignKey?row[campaignKey]?.trim():undefined, ordinal: 0, kind: 'history', sourcePath: entry.path, sourceRow: line, title: title || subject || key || `Row ${line}`, subject: convertTemplateTokens(subject).html, sentAt,
         html: imported.html, text, removed: imported.removed, flagged: imported.flagged,
         mergeTags: [...new Set([...imported.mergeTags, ...foreignMergeTags(`${subject}\n${text}`)])],
         contentPaths: [files.html?.path, files.text?.path].filter((path): path is string => Boolean(path)) });

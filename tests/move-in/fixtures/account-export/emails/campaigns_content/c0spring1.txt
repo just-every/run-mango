@@ -1,4 +1,4 @@
-Hello *|FNAME|*,
+Hello *|FNAME|*, *|FOO|*
 
 The spring beds are in. Read the full note: https://garden.example.test/spring
 

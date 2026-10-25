@@ -207,16 +207,17 @@ test('[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEN
     expect(campaigns.campaigns.map((item: { state: string }) => item.state)).toEqual([]);
     await record('no-facts-from-archive.json', { factTables: Object.fromEntries(await Promise.all(facts.map(async table => [table, (await site.rows(`SELECT count(*) AS n FROM ${table}`))[0].n]))), campaigns, results, insights });
 
-    // A foreign merge tag stays visible and blocks approval through the personalisation check.
+    // An unsupported foreign merge tag stays visible and blocks approval through the personalisation check.
     const spring = detail.content.find((row: { title: string }) => row.title === 'Spring letter');
     const copy = await json(await site.call(`/api/imported-history/${spring.id}/copy`, { method: 'POST', cookie }), 201);
     const checks = await json(await site.call(`/api/campaigns/${copy.campaignId}/checks`, { method: 'POST', cookie, body: { revisionId: copy.revisionId } }), 200);
-    // The source's merge tag is left as written and named by the blocked personalisation check.
-    expect(JSON.stringify(checks)).toContain('*|FNAME|*');
+    // Supported name tags now map; an unknown field remains visible and blocks.
+    expect(JSON.stringify(checks)).toContain('*|FOO|*');
+    expect(JSON.stringify(checks)).not.toContain('*|FNAME|*');
     const approval = await site.call(`/api/campaigns/${copy.campaignId}/approve`, { method: 'POST', cookie, body: { revisionId: copy.revisionId, idempotencyKey: `approve-${copy.revisionId}` } });
     const blocked = await approval.json();
     expect(approval.status).toBe(409);
-    expect(blocked.blockers.find((item: { kind: string }) => item.kind === 'message.personalisation')).toMatchObject({ status: 'blocked', detail: expect.stringContaining('*|FNAME|*') });
+    expect(blocked.blockers.find((item: { kind: string }) => item.kind === 'message.personalisation')).toMatchObject({ status: 'blocked', detail: expect.stringContaining('*|FOO|*') });
     await record('merge-tag-check.json', { approvalStatus: approval.status, blockers: blocked.blockers });
 
     // The operator edits one imported draft and one contact; another person unsubscribes through their link.

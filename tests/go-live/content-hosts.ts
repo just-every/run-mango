@@ -1,3 +1,4 @@
+import {templateConversionJourney} from './template-conversion';
 import AxeBuilder from '@axe-core/playwright';
 import {syncSource} from './source-edge';
 import { expect, type Page, type TestInfo } from '@playwright/test';
@@ -104,6 +105,8 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   const archive=await json(await site.call(`/api/audience/archives/${moved.archive.id}`,{cookie:owner}),200);
   const imported=archive.content.find((row:any)=>row.title==='Community garden partners');
   expect(imported.campaign_id).toBeNull();
+  const reconciliation = await (await site.call(`/api/audience/archives/${moved.archive.id}/report`,{cookie:owner})).text();
+  for (const host of hosts) { expect(JSON.parse(imported.removed_json)).toContain(`Outside host ${host}: 1 uses`); expect(reconciliation).toContain(`| ${host} | 1 |`); }
   const library=await json(await site.call('/api/campaign-templates',{cookie:manager}),200);
   expect(library.templates).toContainEqual(expect.objectContaining({id:imported.id,name:'Community garden partners',kind:'saved'}));
   const draft=await json(await site.call(`/api/campaign-templates/${imported.id}/start`,{method:'POST',cookie:manager}),201);
@@ -121,4 +124,5 @@ export async function blockedHostJourney(site: Installation, owner: string, page
     await page.locator('[aria-label="Blocked link hosts"]').screenshot({path:info.outputPath(`imported-hosts-${width}.png`)});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   }
+  await templateConversionJourney(site,owner,page,info);
 }
