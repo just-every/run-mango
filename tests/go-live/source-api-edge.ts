@@ -13,7 +13,7 @@ export function sourceApiEdge(){
     if(url.hostname===sourceHosts[0]){expect(request.headers['api-token']).toBe('synthetic-mango-120-key');const name=url.pathname.replace('/api/3/','');expect(Object.hasOwn(active,name)).toBe(true);send(response,{[name]:active[name],meta:{total:String(active[name].length)}});return true;}
     expect(request.headers.authorization).toBe('Klaviyo-API-Key synthetic-mango-121-key');expect(request.headers.revision).toBe('2025-01-15');
     const path=url.pathname.replace('/api/','');
-    if(path==='templates/t1'){send(response,{data:{type:'template',id:'t1',attributes:{name:'Garden imported template',html:'<html><head><style>p{color:red}</style></head><body><p>Garden template</p><script>bad()</script></body></html>'}}});return true;}
+    if(path==='templates/t1'){send(response,{data:{type:'template',id:'t1',attributes:{name:'Garden imported template',html:'<html><head><style>p{color:red}</style></head><body><p>Garden template synthetic-mango-155 {{ first_name }}</p><script>bad()</script></body></html>'}}});return true;}
     expect(Object.hasOwn(klaviyo,path)).toBe(true);send(response,{data:klaviyo[path],links:{next:foreignNext?'https://foreign.example/api/profiles':null}});return true;
   }};
 }
