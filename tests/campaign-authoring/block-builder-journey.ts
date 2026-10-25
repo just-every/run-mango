@@ -51,7 +51,24 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     await expect(page.getByRole('status',{name:'Email sent size',exact:true})).toContainText('Sent size upper bound:');
     await page.getByRole('button',{name:'Block 1: columns',exact:true}).click();
     console.log('Block proof: screens');
-    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document.querySelector('main'),{iframes:false}));expect(audit.violations.filter((v:any)=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.getByRole('region',{name:'Email blocks',exact:true}).screenshot({path:info.outputPath(`block-builder-${width}.png`)});}
+    let reusable:any,proof:Awaited<ReturnType<typeof prepareReusableProof>>|undefined;
+    for(const width of [1440,390]){
+      await page.setViewportSize({width,height:1000});
+      await page.getByRole('button',{name:'Block 2: text',exact:true}).click();
+      if(width===1440){
+        await page.getByRole('textbox',{name:'Reusable block name',exact:true}).fill('synthetic-mango-160 footer');
+        await page.getByRole('button',{name:'Save reusable block',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Reusable block saved.'})).toBeVisible();
+        const library=await page.request.get(runtime.url+'/api/reusable-email-blocks',{headers});expect(library.status()).toBe(200);
+        reusable=(await library.json()).blocks.find((block:any)=>block.name==='synthetic-mango-160 footer');expect(reusable).toBeTruthy();proof=await prepareReusableProof(page.request,runtime.url,headers,reusable);
+      }else{
+        await page.getByLabel('Mobile font size',{exact:true}).fill('25');await page.getByRole('button',{name:'Update reusable block',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Reusable block updated.'})).toBeVisible();
+        await verifyReusableProof(page.request,runtime.url,headers,reusable,proof!);
+      }
+      await page.getByRole('button',{name:'Block 1: columns',exact:true}).click();
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
+      await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document.querySelector('main'),{iframes:false}));expect(audit.violations.filter((v:any)=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
+      await page.getByRole('region',{name:'Email blocks',exact:true}).screenshot({path:info.outputPath(`block-builder-${width}.png`)});
+    }
     await page.getByRole('button',{name:'Mobile email',exact:true}).click();await page.getByRole('button',{name:'Load 1 remote image',exact:true}).click();
     const preview=page.locator('iframe[title="Saved email preview"]');await expect(preview).toHaveAttribute('sandbox','');
     const previewFrame=page.frameLocator('iframe[title="Saved email preview"]');await expect(previewFrame.getByRole('img',{name:'Garden seeds',exact:true})).toBeVisible();await expect(previewFrame.getByRole('img',{name:'Garden seeds',exact:true})).toHaveJSProperty('naturalWidth',200);
@@ -61,11 +78,10 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     const product=await page.getByRole('heading',{name:'Garden seeds',exact:true}).boundingBox(),button=await page.getByRole('link',{name:'Explore the garden',exact:true}).boundingBox();expect(product).toBeTruthy();expect(button).toBeTruthy();expect(button!.y).toBeGreaterThan(product!.y);await page.screenshot({path:info.outputPath('block-email-375.png'),fullPage:true});
     console.log('Block proof: approve');
     const approval=await page.request.post(`${runtime.url}/api/campaigns/${campaignId}/approve`,{headers,data:{revisionId,idempotencyKey:'synthetic-mango-140'}});expect(approval.status(),await approval.text()).toBe(200);expect((await read()).emailBody).toBe(saved.emailBody);
-    await blockMobileControlsJourney(page,info,runtime,headers);
     return {revisionId,headers};
 }
 
-async function blockMobileControlsJourney(page:Page,info:TestInfo,runtime:{url:string;token:string},headers:Record<string,string>){
+export async function blockMobileControlsJourney(page:Page,info:TestInfo,runtime:{url:string;token:string},headers:Record<string,string>){
   const origin=runtime.url,request=page.request;
   const created=await request.post(origin+'/api/campaigns',{headers,data:{}});expect(created.status()).toBe(201);
   const {campaignId,revisionId}=await created.json();
@@ -74,26 +90,14 @@ async function blockMobileControlsJourney(page:Page,info:TestInfo,runtime:{url:s
   const emailBody=`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>${column('Left column')}${column('Right column')}</td></tr></table><p>Hidden on mobile</p><p>Mobile font example</p><p>Hidden on desktop</p>`;
   const saved=await request.patch(`${origin}/api/campaign-revisions/${revisionId}`,{headers,data:{emailBody,emailSubject:'Responsive garden letter',name:'Responsive garden letter',emailMobile:[{block:1,hideOnMobile:true},{block:2,fontSize:24,lineHeight:1.5,padding:12,alignment:'center'},{block:3,hideOnDesktop:true}]}});
   expect(saved.status(),await saved.text()).toBe(200);
-  let reusable:any,proof:Awaited<ReturnType<typeof prepareReusableProof>>|undefined;
   for(const width of [1440,390]){
-    await page.setViewportSize({width,height:1000});
-    if(width===1440){await openPage(page,`${origin}/app/campaigns/${campaignId}/review`);await page.getByRole('button',{name:'Block builder',exact:true}).click();}
-    await page.getByRole('button',{name:'Block 3: text',exact:true}).click();
+    await page.setViewportSize({width,height:1000});await openPage(page,`${origin}/app/campaigns/${campaignId}/review`);
+    await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 3: text',exact:true}).click();
     await page.getByLabel('Hide on mobile',{exact:true}).check();await page.getByLabel('Hide on mobile',{exact:true}).uncheck();
     await page.getByLabel('Hide on desktop',{exact:true}).check();await page.getByLabel('Hide on desktop',{exact:true}).uncheck();
-    if(width===390){
-      await page.getByRole('combobox',{name:'Saved reusable block',exact:true}).selectOption(reusable.id);
-      await page.getByLabel('Mobile font size',{exact:true}).fill('25');await page.getByRole('button',{name:'Update reusable block',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Reusable block updated.'})).toBeVisible();
-      await verifyReusableProof(request,origin,headers,reusable,proof!);
-    }
     await page.getByLabel('Mobile font size',{exact:true}).fill('26');await page.getByLabel('Mobile line height',{exact:true}).fill('1.6');await page.getByLabel('Mobile padding',{exact:true}).fill('14');await page.getByRole('combobox',{name:'Mobile alignment',exact:true}).selectOption('right');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
     const updated=await read();expect(updated.emailBody).toContain('font-size: 26px !important');
-    if(width===1440){
-      await page.getByRole('button',{name:'Block 3: text',exact:true}).click();await page.getByRole('textbox',{name:'Reusable block name',exact:true}).fill('synthetic-mango-160 footer');await page.getByRole('button',{name:'Save reusable block',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Reusable block saved.'})).toBeVisible();
-      const library=await request.get(origin+'/api/reusable-email-blocks',{headers});expect(library.status()).toBe(200);reusable=(await library.json()).blocks.find((block:any)=>block.name==='synthetic-mango-160 footer');expect(reusable).toBeTruthy();proof=await prepareReusableProof(request,origin,headers,reusable);
-    }
-
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
     await page.evaluate(axeSource);const shell=await page.evaluate(async()=>(window as any).axe.run(document,{iframes:false}));expect(shell.violations.filter((row:any)=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
     await page.getByRole('region',{name:'Email blocks',exact:true}).screenshot({path:info.outputPath(`mobile-block-controls-${width}.png`)});

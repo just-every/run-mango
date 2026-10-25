@@ -40,7 +40,7 @@ export async function verifyReusableProof(request:APIRequestContext,origin:strin
   const flows=await request.get(origin+'/api/flow-drafts',{headers});expect(flows.status()).toBe(200);const flow=(await flows.json()).revisions.find((flow:any)=>flow.id===proof.flowId);expect(flow.graph.nodes.find((node:any)=>node.id==='email').email.html).toContain('font-size: 25px !important');
   const stale=await request.patch(origin+'/api/reusable-email-blocks/'+source.id,{headers,data:{version:source.version,name:source.name,block:source.block}});expect(stale.status()).toBe(409);
   expect((await proof.read(proof.drafts[0].campaignId)).emailBody).toBe(after[0].emailBody);expect((await proof.read(proof.drafts[2].campaignId)).emailBody).toBe(proof.before[2].emailBody);
-  const localBody=after[0].emailBody.replace('Mobile font example','synthetic-mango-160 independent footer');
+  const localBody=after[0].emailBody.replace('Synthetic second block','synthetic-mango-160 independent footer');
   const local=await request.patch(origin+'/api/campaign-revisions/'+proof.drafts[0].revisionId,{headers,data:{emailBody:localBody}});expect(local.status()).toBe(400);expect((await local.json()).detail).toContain('Keep independent copy');
   expect((await proof.read(proof.drafts[0].campaignId)).emailBody).toBe(after[0].emailBody);expect((await proof.read(proof.drafts[1].campaignId)).emailBody).toBe(after[1].emailBody);
   const detached=await request.delete(origin+'/api/reusable-email-blocks/'+source.id+'/placements',{headers,data:{target:{kind:'campaign',id:proof.drafts[0].revisionId}}});expect(detached.status()).toBe(200);

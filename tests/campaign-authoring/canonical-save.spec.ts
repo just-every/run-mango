@@ -1,3 +1,4 @@
+import {blockMobileControlsJourney} from './block-builder-journey';
 import {mobilePresentationJourney} from './mobile-presentation-journey';
 import { localSessionCookieName } from '../support/local-session';
 import { test, expect } from '@playwright/test';
@@ -50,6 +51,7 @@ test('[BUILD-010][CAMP-003][MSG-009][MSG-012] saving stores the body as mail cli
     expect(visible).not.toMatch(/display:none|<td/);
     expect(await blockers()).not.toContain('message.content');
     await mobilePresentationJourney(request,page,info,runtime.url,headers);
+    await blockMobileControlsJourney(page,info,runtime,headers);
   } finally {
     await runtime.close();
   }
