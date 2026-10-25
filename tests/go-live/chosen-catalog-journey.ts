@@ -43,7 +43,21 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
   console.log('Chosen catalog proof: current previews');
   const preview=page.locator('section[aria-label="Saved revision previews"]');await expect(preview.getByRole('status')).toContainText('Catalog read at');
   await preview.getByRole('button',{name:'Load 2 remote images',exact:true}).click();
-  for(const width of [1440,390]){await page.setViewportSize({width,height:1000});const frame=preview.frameLocator('iframe[title="Saved email preview"]');await expect(frame.getByText('Synthetic Basil',{exact:true})).toBeVisible();await expect(frame.getByText('Synthetic Mint',{exact:true})).toBeVisible();await expect(frame.locator('img')).toHaveCount(2);expect(await frame.locator('img').evaluateAll(nodes=>nodes.every(node=>(node as HTMLImageElement).complete&&(node as HTMLImageElement).naturalWidth>0))).toBe(true);await screen(page,info,'catalog-preview',width);await preview.locator('iframe').scrollIntoViewIfNeeded();await preview.locator('.message-preview--email').screenshot({path:info.outputPath(`catalog-email-${width}.png`)});}
+  for(const width of [1440,390]){
+   await page.setViewportSize({width,height:1000});
+   await preview.getByRole('button',{name:width===390?'Mobile email':'Desktop email',exact:true}).press('Enter');
+   const frame=preview.frameLocator('iframe[title="Saved email preview"]');
+   for(const [title,n] of [['Synthetic Basil',160],['Synthetic Mint',161]] as const){
+    const item=frame.getByRole('heading',{name:title,exact:true}).locator('..');
+    await expect(item).toContainText('AUD 24.00');await expect(item.locator('s')).toHaveText('AUD 30.00');
+    await expect(item.locator('img')).toHaveAttribute('src',`https://cdn.shopify.com/synthetic-mango-${n}.png`);
+    await expect(item.locator('img')).toHaveJSProperty('naturalWidth',300);
+    await expect(item.locator('a')).toHaveAttribute('title',`https://myshop.com/products/product-${n}`);
+    expect(await item.locator('a').getAttribute('href')).toBeNull();
+   }
+   await expect(frame.locator('img')).toHaveCount(2);
+   await screen(page,info,'catalog-preview',width);await preview.locator('iframe').scrollIntoViewIfNeeded();await preview.locator('.message-preview--email').screenshot({path:info.outputPath(`catalog-email-${width}.png`)});
+  }
   console.log('Chosen catalog proof: fresh hand-off');
   await approve(site,cookie,campaign);console.log('Chosen catalog proof: approved identifiers');
   const locked=await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body:{emailBody:saved.revision.emailBody.replace(encoded,Buffer.from(JSON.stringify({...state,empty:'skip'})).toString('base64'))}});expect(locked.status).toBe(409);console.log('Chosen catalog proof: identifiers locked');
@@ -54,13 +68,22 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
   console.log('Chosen catalog proof: terminal availability cases');
   const sendCase=async(name:string,change:()=>void,empty:'hide'|'skip'='hide')=>{
    catalog.reset();const now=await site.control('/_golive/clock',{advanceMs:25*3600000,hold:true}),at=new Date(now.now+5000),next=await draftCampaign(site,cookie,'synthetic-mango-'+name,['synthetic-mango-160@example.test'],at),body=empty==='hide'?saved.revision.emailBody:saved.revision.emailBody.replace(encoded,Buffer.from(JSON.stringify({...state,empty})).toString('base64'));
-   await json(await site.call(`/api/campaign-revisions/${next.revisionId}`,{method:'PATCH',cookie,body:{emailBody:body}}),200);await site.control('/_golive/sender-evidence');await approve(site,cookie,next);change();const sent=marketing().length;await site.control('/_golive/clock',{advanceMs:at.getTime()-(await site.control('/_golive/clock')).now+1});const rows=await dispatch(site,next.campaignId,at);return {rows,sends:marketing().slice(sent),detail:await json(await site.call(`/api/campaigns/${next.campaignId}`,{cookie}),200)};
+   await json(await site.call(`/api/campaign-revisions/${next.revisionId}`,{method:'PATCH',cookie,body:{emailBody:body}}),200);await site.control('/_golive/sender-evidence');await approve(site,cookie,next);change();const sent=marketing().length;await site.control('/_golive/clock',{advanceMs:at.getTime()-(await site.control('/_golive/clock')).now+1});const rows=await dispatch(site,next.campaignId,at);return {campaign:next,rows,sends:marketing().slice(sent),detail:await json(await site.call(`/api/campaigns/${next.campaignId}`,{cookie}),200)};
   };
   const deleted=await sendCase('161',()=>catalog.delete(160));expect(deleted.sends).toHaveLength(1);expect(deleted.detail.catalogSummary.hidden).toEqual([{reason:'deleted',count:1}]);
   const stock=await sendCase('162',()=>catalog.stock(1601,0));expect(stock.sends).toHaveLength(1);expect(stock.detail.catalogSummary.hidden).toEqual([{reason:'out-of-stock',count:1}]);
   const hide=await sendCase('163',()=>{catalog.unpublish(160);catalog.unpublish(161);});expect(hide.sends).toHaveLength(1);expect(hide.detail.catalogSummary.emptyBlocks).toBe(1);
   const skip=await sendCase('164',()=>{catalog.unpublish(160);catalog.unpublish(161);},'skip');expect(skip.sends).toHaveLength(0);expect(skip.rows.map(row=>row.skip_reason)).toEqual(['catalog-empty']);expect(skip.detail.catalogSummary.skipped).toEqual([{reason:'catalog-empty',count:1}]);
   const unavailable=await sendCase('165',()=>catalog.fail());expect(unavailable.sends).toHaveLength(0);expect(unavailable.rows.map(row=>row.skip_reason)).toEqual(['catalog-unavailable']);expect(unavailable.detail.catalogSummary.skipped).toEqual([{reason:'catalog-unavailable',count:1}]);
+  await openPage(page,`${site.runtime.url}/app/campaigns/${unavailable.campaign.campaignId}/scheduled`);
+  for(const width of [1440,390]){
+   await expect(page.getByRole('table',{name:'Recipient outcomes',exact:true}).getByRole('row').filter({hasText:'synthetic-mango-160@example.test'})).toContainText('catalog-unavailable');
+   await screen(page,info,'catalog-unavailable-recipient',width);
+  }
+  const recovered=await sendCase('166',()=>catalog.price(1601,'38.00'));
+  expect({staleReadSkipped:unavailable.rows.map(row=>row.skip_reason),recoveredSends:recovered.sends.length}).toEqual({staleReadSkipped:['catalog-unavailable'],recoveredSends:1});
+  expect(recovered.sends[0].body.content.find((part:any)=>part.type==='text/html').value).toContain('AUD 38.00');
+  expect(recovered.rows.map(row=>row.transport_disposition)).toEqual(['accepted']);
   expect(edge.unexpected).toEqual([]);
  }finally{await site.runtime.close();await edge.close();}
 }
