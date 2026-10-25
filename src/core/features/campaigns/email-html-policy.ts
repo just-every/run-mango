@@ -11,7 +11,7 @@ import { createPresentationCheck } from './email-presentation';
  * Attribute values are judged decoded, as mail clients read them. */
 export const emailTags = new Set('p div span br hr strong b em i u s ul ol li blockquote h1 h2 h3 h4 h5 h6 table thead tbody tfoot tr td th a img'.split(' '));
 export const voidEmailTags = new Set(['br', 'hr', 'img']);
-const linkContent = new Set(['span', 'strong', 'b', 'em', 'i', 'u', 's', 'br']);
+const linkContent = new Set(['span', 'strong', 'b', 'em', 'i', 'u', 's', 'br', 'img']);
 export function escapeHtml(value: string) {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 }
@@ -41,7 +41,7 @@ export function allowedEmailAttribute(tag: string, name: string, value: string, 
 /** Where a value is written with a character reference, a non-HTML5 reader may see other characters.
  * Text attributes may use any; elsewhere only the references the stored form itself writes (`&amp;`, `&quot;`). */
 const writtenWithReferences = (name: string, written: string) => !['alt', 'title'].includes(name) && written.replaceAll('&amp;', '').replaceAll('&quot;', '').includes('&');
-const textOf = (nodes: EmailNode[]): string => nodes.map(node => node.kind === 'text' ? node.text : node.kind === 'element' ? textOf(node.children) : '').join('');
+const textOf = (nodes: EmailNode[]): string => nodes.map(node => node.kind === 'text' ? node.text : node.kind === 'element' ? node.tag === 'img' ? node.attributes.get('alt') ?? '' : textOf(node.children) : '').join('');
 
 export function inspectEmailHtml(source: string, mediaOrigin?: string) {
   const parsed = parseEmailHtml(source);
@@ -64,7 +64,7 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
     if(hidden&&tag==="a"&&attributes.get("href")==="{{unsubscribe_url}}")issues.add("The unsubscribe link cannot sit in a block hidden on either viewport.");
     if (!node.html || !emailTags.has(tag)) issues.add(`Tag <${tag}> is not allowed${node.html ? '' : ' (SVG and MathML are not email markup)'}.`);
     if (inLink && tag === 'a') issues.add('Nested links are not allowed.');
-    else if (inLink && !linkContent.has(tag)) issues.add('Links may contain only text and basic inline formatting.');
+    else if (inLink && !linkContent.has(tag)) issues.add('Links may contain only text, images and basic inline formatting.');
     for (const [name, value] of attributes) {
       const written = node.written.get(name);
       if (written !== undefined && writtenWithReferences(name, written)) issues.add(`Attribute ${name} on <${tag}> is written with a character reference; write the character itself.`);

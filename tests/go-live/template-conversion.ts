@@ -1,3 +1,4 @@
+import { incumbentImageJourney } from './incumbent-image-journey';
 import { createRequire } from 'node:module';
 const localRequire = createRequire(import.meta.url);
 const axeSource = createRequire(localRequire.resolve('@axe-core/playwright'))('axe-core').source as string;
@@ -110,4 +111,5 @@ export async function templateConversionJourney(site: Installation, owner: strin
   await json(await site.call(`/api/campaign-revisions/${d.revisionId}`, { method: 'PATCH', cookie: owner, body: { emailBody: d.revision.emailBody.replace('#767676', '#999999') } }), 200);
   const undone = await json(await site.call(`/api/campaigns/${d.campaignId}/checks`, { method: 'POST', cookie: owner, body: { revisionId: d.revisionId } }), 200);
   expect(undone.checks.find((row: any) => row.kind === 'message.content')).toMatchObject({ status: 'blocked', detail: expect.stringContaining('contrast') });
+  await incumbentImageJourney(site,owner,page,info);
 }
