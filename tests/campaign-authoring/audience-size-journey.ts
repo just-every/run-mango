@@ -1,3 +1,4 @@
+import type {Response as BrowserResponse} from '@playwright/test';
 import {authoredBody} from '../../src/core/features/campaigns/authoring-content';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {createRequire} from 'node:module';
@@ -38,9 +39,10 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
     expect((await read()).revision).toEqual(before);
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+    const savedMeter=(response:BrowserResponse)=>{if(response.url()!==site.runtime.url+'/api/campaign-authoring/email-size'||response.request().method()!=='POST')return false;const data=response.request().postDataJSON();return data.campaignId===draft.campaignId&&data.emailBody===before.emailBody&&data.inclusionRuleJson===before.inclusionRuleJson;};
     for(const width of [1440,390]){
       await page.setViewportSize({width,height:1000});
-      const response=page.waitForResponse(r=>r.url().endsWith('/api/campaign-authoring/email-size')&&r.request().method()==='POST');
+      const response=page.waitForResponse(savedMeter);
       await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);
       expect(await (await response).json()).toMatchObject({htmlBytes:measured.htmlBytes,exceedsLimit:false});
       await expect(page.getByRole('status',{name:'Email sent size'})).toContainText('Sent size upper bound');
@@ -63,11 +65,20 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
       await expect(page.getByRole('textbox',{name:'Include 2 value',exact:true})).toHaveValue(long);
       expect((await read()).revision).toEqual(before);
       await page.locator('.editor-panel').screenshot({path:info.outputPath(`audience-size-refused-${width}.png`)});
+      const restoredMeter=page.waitForResponse(savedMeter);
       await page.getByRole('button',{name:'Discard changes',exact:true}).click();
+      expect(await (await restoredMeter).json()).toMatchObject({htmlBytes:measured.htmlBytes,exceedsLimit:false});
       await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(authoredBody(before.emailBody));
 
     }
     expect(errors).toEqual([]);
+    const advisoryBytes=Math.floor(measured.limitBytes*0.95),padding=advisoryBytes-measured.htmlBytes-7;
+    const advisoryBody=emailBody+'<p>'+'Synthetic garden notes. '.repeat(Math.ceil(padding/24)).slice(0,padding)+'</p>';
+    await json(await patch({emailBody:advisoryBody}),200);
+    await json(await site.call(`/api/campaigns/${draft.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:draft.revisionId}}),200);
+    const warning=(await read()).checks.find((check:any)=>check.kind==='message.email-size-advisory');expect(warning).toBeTruthy();expect(warning.detail).toContain(`${advisoryBytes} bytes`);expect(warning.findingIdentity).toMatch(/^[a-f0-9]{64}$/);
+    await json(await site.call(`/api/campaigns/${draft.campaignId}/checks/${warning.id}/acknowledge`,{method:'POST',cookie,body:{revisionId:draft.revisionId,findingIdentity:warning.findingIdentity}}),200);
+    await json(await patch({emailBody}),200);expect((await read()).revision.emailBody).toBe(before.emailBody);
     await approve(site,cookie,draft);
     await site.control('/_golive/clock',{advanceMs:3600001});
     const recipients=await dispatch(site,draft.campaignId,due);
