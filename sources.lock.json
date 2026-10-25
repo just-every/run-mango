@@ -7610,7 +7610,7 @@
       "executable": false
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {
-      "sha256": "dac9dfb4b982b93ddeff386416324d1fcaf576b295bc592121927832a214d085",
+      "sha256": "5fd6bc6dfd2b84ddf97b7116593d152d33670908073326edd7c235213b440b4d",
       "executable": false
     },
     "tests/campaign-authoring/config.js": {
@@ -7886,7 +7886,7 @@
       "executable": false
     },
     "tests/go-live/chosen-catalog-edge.ts": {
-      "sha256": "6d7167ecf11bf78bc5ca449cd13078afd5f69e136cc1ca77e54cc839d24cb555",
+      "sha256": "89f55f2389ac2f42ccfd72cf22ece649c30c8d1bc41bc055f9185a0ec94869bb",
       "executable": false
     },
     "tests/go-live/chosen-catalog-journey.ts": {
