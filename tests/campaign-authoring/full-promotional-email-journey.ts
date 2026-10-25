@@ -10,9 +10,11 @@ import {parseEmailHtml} from '../../src/core/features/campaigns/email-html-parse
 const localRequire=createRequire(import.meta.url),axeSource=createRequire(localRequire.resolve('@axe-core/playwright'))('axe-core').source as string;
 
 export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
+  const began=Date.now(),mark=(phase:string)=>console.log(`Full promotion proof: ${phase}; elapsed=${Date.now()-began}ms`);mark('start');
   const social='https://www.instagram.com/synthetic-mango-180',shop='https://shop.example.test/garden';
-  const edge=await providerEdge({links:{[social]:{status:200}}}),site=await installation(edge,eventSigner(),{networkHosts:['www.instagram.com']});
+  const edge=await providerEdge({links:{[social]:{status:200}}}),site=await installation(edge,eventSigner(),{networkHosts:['www.instagram.com'],reuseEmptySchema:true});
   try{
+    mark('runtime ready');
     await page.context().setExtraHTTPHeaders({});
     const cookie=await site.open(),headers={Cookie:cookie,Origin:site.origin};
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);await site.control('/_golive/sender-evidence');
@@ -36,12 +38,12 @@ export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
     await add('image');await image('Synthetic garden hero');await add('button');await page.getByRole('textbox',{name:'Button text',exact:true}).fill('Explore the garden');await page.getByRole('textbox',{name:'Button destination',exact:true}).fill(shop);
     await add('columns');
     for(const column of [0,1]){await page.getByRole('combobox',{name:'Selected column',exact:true}).selectOption(String(column));await page.getByRole('combobox',{name:'Column block kind',exact:true}).selectOption('text');await page.getByRole('textbox',{name:'Block text',exact:true}).fill(`Synthetic garden section ${column+1}. `+'Seasonal garden notes from our seed beds. '.repeat(300));}
-    await add('product-grid');
+    mark('build six products');await add('product-grid');
     for(let item=0;item<6;item++){
       await page.getByRole('combobox',{name:'Selected product',exact:true}).selectOption(String(item));
       await page.getByRole('textbox',{name:'Product name',exact:true}).fill('synthetic-mango-'+(item+182));await page.getByRole('textbox',{name:'Product price',exact:true}).fill('$'+(item+10)+'.00');await page.getByRole('textbox',{name:'Product description',exact:true}).fill('Seeds for the seasonal garden.');await image('Synthetic product '+(item+1));if(item===0){await page.getByRole('spinbutton',{name:'Image width',exact:true}).fill('600');await page.getByRole('spinbutton',{name:'Image height',exact:true}).fill('480');}await page.getByRole('textbox',{name:'Button text',exact:true}).fill('View garden product '+(item+1));await page.getByRole('textbox',{name:'Button destination',exact:true}).fill(shop);
     }
-    await add('social-links');await page.getByRole('textbox',{name:'Profile path',exact:true}).fill('synthetic-mango-180');
+    mark('build social links');await add('social-links');await page.getByRole('textbox',{name:'Profile path',exact:true}).fill('synthetic-mango-180');
     let releaseIcon!:()=>void,noticeIcon!:()=>void;const iconGate=new Promise<void>(resolve=>{releaseIcon=resolve;}),iconRequested=new Promise<void>(resolve=>{noticeIcon=resolve;});
     await page.route(site.runtime.url+'/api/campaign-assets',async route=>{noticeIcon();await iconGate;await route.continue();},{times:1});
     const iconResponse=page.waitForResponse(response=>response.url().endsWith('/api/campaign-assets')&&response.request().method()==='POST');await page.getByRole('button',{name:'Use network icon',exact:true}).click();await iconRequested;
@@ -53,18 +55,21 @@ export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
       await page.getByRole('button',{name:`Move block ${index} up`,exact:true}).focus();await page.keyboard.press('Enter');await expect(page.getByRole('button',{name:`Block ${index-1}: ${kind}`,exact:true})).toBeVisible();await page.getByRole('button',{name:`Move block ${index-1} down`,exact:true}).click();
       const preceding=index===5?'columns':'product-grid';await page.getByRole('button',{name:`Block ${index}: ${kind}`,exact:true}).dragTo(page.getByRole('button',{name:`Block ${index-1}: ${preceding}`,exact:true}));await expect(page.getByRole('button',{name:`Block ${index-1}: ${kind}`,exact:true})).toBeVisible();await page.getByRole('button',{name:`Block ${index-1}: ${kind}`,exact:true}).dragTo(page.getByRole('button',{name:`Block ${index}: ${preceding}`,exact:true}));
     }
+    mark('save draft');
     const save=async()=>{await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();};await save();
     const read=async()=>(await json(await site.call(`/api/campaigns/${draft.campaignId}`,{cookie}),200)).revision;
     const saved=await read();expect(saved.emailBody.length).toBeGreaterThan(20000);expect(parseEmailHtml(saved.emailBody).canonical).toBe(saved.emailBody);expect(saved.emailBody.match(/\{\{unsubscribe_url\}\}/g)).toHaveLength(1);expect(saved.emailBody).toContain('{{physical_address}}');expect(saved.emailBody).toContain('font-size: 24px !important');
-    await reloadPage(page);await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 5: product-grid',exact:true}).click();await expect(page.getByRole('combobox',{name:'Selected product',exact:true}).getByRole('option')).toHaveCount(6);
+    mark('reload saved draft');await reloadPage(page);await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 5: product-grid',exact:true}).click();await expect(page.getByRole('combobox',{name:'Selected product',exact:true}).getByRole('option')).toHaveCount(6);
     await page.getByRole('button',{name:'HTML mode',exact:true}).click();await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(authoredBody(saved.emailBody));await page.getByRole('button',{name:'Block builder',exact:true}).click();await save();expect((await read()).emailBody).toBe(saved.emailBody);
+    mark('round trip complete');
     const measured=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{campaignId:draft.campaignId,name:saved.name,emailBody:saved.emailBody,preheader:saved.preheader,physicalAddress:saved.physicalAddress,trackingEnabled:saved.trackingEnabled,inclusionRuleJson:saved.inclusionRuleJson,exclusionRulesJson:saved.exclusionRulesJson}}),200);expect(measured.exceedsLimit).toBe(false);expect(measured.htmlBytes).toBeLessThanOrEqual(measured.limitBytes);
+    mark('screen proofs');
     for(const width of [1440,390]){
       await page.setViewportSize({width,height:1000});await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 5: product-grid',exact:true}).click();
       await expect(page.getByRole('status',{name:'Email sent size',exact:true})).toContainText(`${measured.htmlBytes} bytes`);expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document,{iframes:false}));expect(audit.violations.filter((row:any)=>['serious','critical'].includes(row.impact??''))).toEqual([]);await page.locator('.editor-panel').screenshot({path:info.outputPath(`full-promotion-${width}.png`)});
       await page.getByRole('button',{name:'Block 6: social-links',exact:true}).click();await expect(page.getByRole('textbox',{name:'Profile path',exact:true})).toHaveValue('synthetic-mango-180');await page.getByRole('region',{name:'Email blocks',exact:true}).screenshot({path:info.outputPath(`social-block-${width}.png`)});
     }
-    expect(errors).toEqual([]);
+    mark('render complete email');expect(errors).toEqual([]);
     await page.setViewportSize({width:375,height:1000});await page.setContent(saved.emailBody);expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
     let previous=-1;for(let item=1;item<=6;item++){const box=await page.getByRole('heading',{name:'synthetic-mango-'+(item+181),exact:true}).boundingBox();expect(box).toBeTruthy();expect(box!.y).toBeGreaterThan(previous);previous=box!.y;const cell=page.getByRole('heading',{name:'synthetic-mango-'+(item+181),exact:true}).locator('..');await expect(cell).toContainText('$'+(item+9)+'.00');await expect(cell.getByRole('img')).toHaveAttribute('src',asset.url);await expect(cell.getByRole('img')).toHaveJSProperty('naturalWidth',asset.width);const imageBox=await cell.getByRole('img').boundingBox(),cellBox=await cell.boundingBox();expect(imageBox!.width).toBeLessThanOrEqual(cellBox!.width);await expect(cell.getByRole('link')).toHaveAttribute('href',shop);}
     await expect(page.getByRole('img',{name:'Synthetic garden hero',exact:true})).toHaveJSProperty('naturalWidth',asset.width);
@@ -72,6 +77,7 @@ export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
     expect(await page.getByRole('heading',{name:'Synthetic spring letter',exact:true}).evaluate(node=>{const style=getComputedStyle(node.closest('td')!);return {font:style.fontSize,alignment:style.textAlign};})).toEqual({font:'24px',alignment:'center'});
     expect(await page.getByRole('img',{name:'Instagram',exact:true}).evaluate(node=>getComputedStyle(node.closest('td')!).textAlign)).toBe('center');
     await page.screenshot({path:info.outputPath('full-promotion-email-375.png'),fullPage:true});
+    mark('approve and dispatch');
     await json(await site.call(`/api/campaigns/${draft.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:draft.revisionId}}),200);
     const checked=await json(await site.call(`/api/campaigns/${draft.campaignId}`,{cookie}),200);
     for(const check of checked.checks.filter((check:any)=>check.status==='advisory')){expect(check.blocking).toBe(false);await json(await site.call(`/api/campaigns/${draft.campaignId}/checks/${check.id}/acknowledge`,{method:'POST',cookie,body:{revisionId:draft.revisionId,findingIdentity:check.findingIdentity}}),200);}

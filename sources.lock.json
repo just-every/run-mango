@@ -7598,7 +7598,7 @@
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
-      "sha256": "16c3a13a82f795b7326243543f3b7a833ddda8e2eceb4a6847475df31229e857",
+      "sha256": "79b555af3d6e80fcad8fb21c9734d0b4e66471ebac1f9e677de0e52622c32252",
       "executable": false
     },
     "tests/campaign-authoring/config.js": {
@@ -7634,7 +7634,7 @@
       "executable": false
     },
     "tests/campaign-authoring/full-promotional-email-journey.ts": {
-      "sha256": "e08dc664bf62469db6fdfc06dace3a17327c02d1f29c8378cf6297c154caa1d7",
+      "sha256": "c9b8226437705fa924e66997fe7b31eaa43998dba993dc2e6c033b04c8098116",
       "executable": false
     },
     "tests/campaign-authoring/import-category.spec.ts": {

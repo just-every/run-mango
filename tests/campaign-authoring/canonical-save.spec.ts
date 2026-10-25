@@ -13,7 +13,7 @@ const closeTags = ['</ span>', '< /span>', '<\t/span>', '<\n/span>', '</\tspan>'
 
 test('[BUILD-010][CAMP-003][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree', async ({ request,page },info) => {
   test.setTimeout(180000);
-  const runtime = await authoringRuntime({ suite: 'authoring-canonical-save' });
+  const runtime = await authoringRuntime({ suite: 'authoring-canonical-save', reuseEmptySchema: true });
   try {
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
     expect(open.status()).toBe(200);
@@ -57,6 +57,7 @@ test('[BUILD-010][CAMP-003][MSG-009][MSG-012] saving stores the body as mail cli
   } finally {
     await runtime.close();
   }
+  console.log('Canonical proof: start full promotion');
   await fullPromotionalEmailJourney(page,info);
 });
 
@@ -74,7 +75,7 @@ const unsettled = [
 
 test('[CAMP-003][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it', async ({ request,page },info) => {
   test.setTimeout(180000);
-  const runtime = await authoringRuntime({ suite: 'authoring-canonical-save' });
+  const runtime = await authoringRuntime({ suite: 'authoring-canonical-save', reuseEmptySchema: true });
   try {
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
     expect(open.status()).toBe(200);
