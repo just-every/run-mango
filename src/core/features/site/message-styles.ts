@@ -55,4 +55,5 @@ const content = 'h1{margin:0;font:400 clamp(36px,4vw,48px)/1.04 var(--serif);let
   + '@media(max-width:480px){button{width:100%}}'
   + '@media(prefers-reduced-motion:reduce){button,a{transition:none}}';
 
-export const messageStyles = palette + frame + paper + stamp + postmark + content;
+const preferenceFields='.message-fields{display:grid;gap:18px;margin-bottom:24px}.message-fields label{display:grid;gap:6px;font-size:17px}.message-fields input,.message-fields select{width:100%;min-width:0;min-height:44px;padding:8px;border:1px solid var(--pencil);border-radius:4px;background:var(--paper);color:var(--ink);font:inherit}.message-fields :is(input,select):focus-visible{outline:3px solid var(--ink);outline-offset:2px}.message-secondary{margin-top:16px;background:transparent;border-color:var(--ink)}';
+export const messageStyles = palette + frame + paper + stamp + postmark + content + preferenceFields;

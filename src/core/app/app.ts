@@ -1,3 +1,5 @@
+import {preferencePublicRoutes} from '@/core/features/audience/preference-routes';
+import {preferenceSettingsRoutes} from '@/core/features/settings/preference-settings';
 import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
 import {registerCatalogReader,liveCatalogValues} from '@/core/features/campaigns/catalog-values';
 import {catalogSummary} from '@/core/features/campaigns/catalog-outcomes';
@@ -311,6 +313,7 @@ export function createApp(
   });
   app.route('/', createPublicAuthRoutes(authService, { secureCookie }));
   app.route('/', createAudiencePublicRoutes(audienceService));
+  app.route('/',preferencePublicRoutes(platform,audienceService));
   app.route('/', createSenderCheckRoutes(platform));
   app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
   app.route('/', createSmsSignupRoutes(platform,audienceService));
@@ -369,6 +372,7 @@ export function createApp(
   app.route('/api', createSettingsRoutes(createSettingsService(platform)));
   app.route('/api',sendingConnectionRoutes(platform));
   app.route('/api', createLinkHostRoutes(platform));
+  app.route('/api',preferenceSettingsRoutes(platform));
   app.route('/api',createDormancyRoutes(platform));
   app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
   app.route('/api', stripe.settings);

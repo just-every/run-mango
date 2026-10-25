@@ -124,6 +124,12 @@ export async function readContactTimeline(db:D1Database, contactId:string, detai
     // Imported profile objects belong in the profile view, never as raw JSON in
     // the activity feed. History shows source facts without provider payloads.
     if(row.kind==='incumbent-profile')continue;
+    if(['preference-topic-withdrawal','preference-pause','preference-profile','preference-unsubscribe-all'].includes(row.kind)) {
+      const value=JSON.parse(row.detail) as {topicId?:string;pauseUntil?:number;field?:string};
+      const description=row.kind==='preference-topic-withdrawal'?`Unsubscribed from ${value.topicId}.`:row.kind==='preference-pause'?`Email paused until ${new Date(value.pauseUntil!).toISOString()}.`:row.kind==='preference-profile'?'Updated display name.':'Unsubscribed from all email.';
+      add({id:`history:${row.id}`,kind:row.kind,detail:description,source:'preference center'},row.occurredAt);continue;
+    }
+
     if(['incumbent-order','incumbent-click','incumbent-open','incumbent-event'].includes(row.kind)){
       const facts=JSON.parse(row.detail) as Record<string,unknown>;
       const title=row.kind==='incumbent-order'?'Imported order':row.kind==='incumbent-click'?'Imported email click':row.kind==='incumbent-open'?'Imported open estimate; not a click or purchase':'Imported source event';

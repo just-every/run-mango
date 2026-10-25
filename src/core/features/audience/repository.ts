@@ -1,3 +1,4 @@
+import {preferenceFactsReader} from './preference-facts';
 import {recordManualSmsCapture} from './manual-sms-capture';
 import {manualEmailEligibility} from './manual-email-policy';
 import {createSegmentFacts} from './segment-facts';
@@ -71,6 +72,7 @@ export function createAudienceRepository(database: Database) {
 
   return {
     ...createSegmentFacts(database.$client),
+    recipientPreferences:preferenceFactsReader(database.$client),
     capturePublicSignupAtomic: createPublicCaptureWriter(database),
     async canCaptureManualEmail(destination:string,destinationHash:string){
       const guard=manualEmailEligibility(destination,destinationHash);

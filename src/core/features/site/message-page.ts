@@ -15,11 +15,12 @@ import { fontHead } from './font-head';
  * markup follows the site's Paper, Stamp and Postmark components (paper/Paper.ts, paper/Stamp.ts, drawings/Postmark.tsx)
  * so message-styles.ts can draw it the same way; keep them in step.
  */
+export type MessageField = {kind:'text';name:string;label:string;value:string;maxLength:number} | {kind:'select';name:string;label:string;value:string;disabled?:boolean;options:Array<{value:string;label:string;disabled?:boolean}>};
 export type MessagePage = {
   title: string;
   heading: string;
   text?: string;
-  form?: { action: string; button: string };
+  form?: { action: string; button: string; fields?:MessageField[]; secondaryButton?:{name:string;value:string;label:string} };
   links?: { href: string; label: string }[];
   mark?: 'stamp' | 'posted';
 };
@@ -47,12 +48,17 @@ const posted = (() => {
 const pencil = (w: number, h: number, seed: number) => `<svg class="paper-pencil" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true" focusable="false">`
   + `<path d="${pencilPath(w, h, seed)}"/><path class="paper-pencil-ghost" d="${pencilPath(w, h, seed + 17)}"/></svg>`;
 
+function fieldMarkup(field:MessageField,index:number) {
+  const id='preference-field-'+index;
+  const control=field.kind==='text'?`<input id="${id}" name="${escape(field.name)}" value="${escape(field.value)}" maxlength="${field.maxLength}">`:`<select id="${id}" name="${escape(field.name)}"${field.disabled?' disabled':''}>${field.options.map(option=>`<option value="${escape(option.value)}"${option.value===field.value?' selected':''}${option.disabled?' disabled':''}>${escape(option.label)}</option>`).join('')}</select>`;
+  return `<label for="${id}">${escape(field.label)}${control}</label>`;
+}
 function body({ heading, text, form, links, mark: drawn }: Omit<MessagePage, 'title'>) {
   const face = (drawn ? stamp : '') + (drawn === 'posted' ? posted : '')
     + `<h1>${escape(heading)}</h1>`
     + (text ? `<p>${escape(text)}</p>` : '')
     + (links?.length ? `<p class="links">${links.map(({ href, label }) => `<a href="${escape(href)}">${escape(label)}</a>`).join('')}</p>` : '')
-    + (form ? `<form method="post" action="${escape(form.action)}"><button type="submit" name="confirm" value="true">${escape(form.button)}</button></form>` : '');
+    + (form ? `<form method="post" action="${escape(form.action)}">${form.fields?`<div class="message-fields">${form.fields.map(fieldMarkup).join('')}</div>`:''}<button type="submit" name="confirm" value="true">${escape(form.button)}</button>${form.secondaryButton?`<button class="message-secondary" type="submit" name="${escape(form.secondaryButton.name)}" value="${escape(form.secondaryButton.value)}">${escape(form.secondaryButton.label)}</button>`:''}</form>` : '');
   return `<header class="head"><span class="brand">${mark('brand-mark')}${escape(productConfig.productName)}</span></header>`
     + `<main><div class="paper"><div class="paper-face">${face}</div>${pencil(480, 300, 59)}</div></main>`;
 }

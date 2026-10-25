@@ -32,7 +32,7 @@ export function contactLink(value: string): ContactLink | undefined {
 }
 
 export function safeEmailLink(value: string, managed = false) {
-  if (managed && value === '{{unsubscribe_url}}') return true;
+  if (managed && ['{{unsubscribe_url}}','{{preferences_url}}'].includes(value)) return true;
   if (contactLink(value)) return true;
   if (/[\u0000- \u007f-\u00a0{}"<>]/.test(value)) return false;
   try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password; } catch { return false; }

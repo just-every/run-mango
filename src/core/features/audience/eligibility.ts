@@ -118,6 +118,12 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     if (contact.mergeLock) return {eligible:false as const,reason:'contact-merging',detail:'The contact is being merged.'};
     const channelData = await selectedChannel(repository, contact.id, input.channel, now, isSuppressed);
     if (!channelData) return { eligible: false as const, reason: 'channel-not-subscribed', detail: 'Only a subscribed destination with confirmed consent is eligible for marketing.' };
+    if(input.channel==='email') {
+      const preferences=await repository.recipientPreferences(contact.id,now,sourceGeneration);
+      const topics=input.inclusionRule?flattenPredicates(input.inclusionRule).filter(predicate=>predicate.field==='topic'&&predicate.channel==='email'&&predicate.comparator==='eq'&&predicate.value===true).map(predicate=>predicate.topicId!):[];
+      if(topics.some(topic=>preferences.withdrawnTopics.includes(topic)))return {eligible:false as const,reason:'topic-unsubscribed',detail:'The recipient withdrew consent for this topic in the preference center.'};
+      if(preferences.pauseUntil>now.getTime())return {eligible:false as const,reason:'paused-by-recipient',detail:'The recipient paused email until '+new Date(preferences.pauseUntil).toISOString()};
+    }
     if ((await dormancy(contact.id,now,input.dormancyPolicyJson)).excluded) {
       return { eligible: false as const, reason: 'dormant', detail: 'No click, order, or consent change was recorded in the dormancy window.' };
     }

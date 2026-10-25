@@ -54,7 +54,7 @@ export function measureEmailSize(revision: MessageRevision & {trackingEnabled?: 
   const rewritten = new Map<string,string>();
   if (options.trackingEnabled ?? revision.trackingEnabled) {
     const tracked = tokenUrl(origin,'/l/',36,'link');
-    const visit = (nodes: EmailNode[]) => nodes.forEach(node=>{if(node.kind==='element') {const url=node.tag==='a'?node.attributes.get('href'):undefined;if(url && url !== '{{unsubscribe_url}}' && !contactLink(url)){const tagged=analyticsUrl(url,analyticsContext(bounded),'email');rewritten.set(url,utf8Bytes(tagged)>utf8Bytes(tracked)?tagged:tracked);}visit(node.children);}});
+    const visit = (nodes: EmailNode[]) => nodes.forEach(node=>{if(node.kind==='element') {const url=node.tag==='a'?node.attributes.get('href'):undefined;if(url && !['{{unsubscribe_url}}','{{preferences_url}}'].includes(url) && !contactLink(url)){const tagged=analyticsUrl(url,analyticsContext(bounded),'email');rewritten.set(url,utf8Bytes(tagged)>utf8Bytes(tracked)?tagged:tracked);}visit(node.children);}});
     visit(parseEmailHtml(bounded.emailBody).nodes);
   }
   const renderOptions={catalog:options.catalog,analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten};

@@ -15,7 +15,7 @@ import { openPage } from '../support/navigation';
 /** Original fixtures authored from MOVE-011's behavioral description. No
  * incumbent markup is copied or adapted. Extend the existing host journey. */
 export async function templateConversionJourney(site: Installation, owner: string, page: Page, info: TestInfo) {
-  const source = `<html><head><title>synthetic-mango-151</title><style>.intro { color: #202020; font-size: 18px; display: none; } @media screen and (max-width: 480px) { .intro { font-size: 16px; } }</style></head><body><p class="intro">Hello *|FNAME|*. *|FOO|* *|ARCHIVE|*</p><p>*|LIST:ADDRESS|*</p><p><a href="*|UNSUB|*">Unsubscribe</a></p></body></html>`;
+  const source = `<html><head><title>synthetic-mango-151</title><style>.intro { color: #202020; font-size: 18px; display: none; } @media screen and (max-width: 480px) { .intro { font-size: 16px; } }</style></head><body><p class="intro">Hello *|FNAME|*. *|FOO|* *|ARCHIVE|*</p><p>*|LIST:ADDRESS|*</p><p><a href="*|UNSUB|*">Unsubscribe</a></p><p><a href="*|UPDATE_PROFILE|*">Update profile</a></p></body></html>`;
   const fixture = zip([
     { name: 'templates/synthetic-mango-151.html', data: source },
     { name: 'templates/synthetic-mango-152.html', data: '<html><head><title>synthetic-mango-152</title></head><body><p style="color:#999999">Our original synthetic footer.</p></body></html>' },
@@ -29,6 +29,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
   await page.getByRole('button', { name: 'Preview import', exact: true }).click();
   const changes = page.getByRole('status', { name: 'Content changes', exact: true });
   await expect(changes).toContainText('Mapped *|FNAME|*');
+  await expect(changes).toContainText('Mapped *|UPDATE_PROFILE|*');
   await expect(changes).toContainText('display: none');
   await expect(changes).toContainText('Mapped mobile');
   await expect(changes).toContainText('Recolored #999999 to #767676');
@@ -52,7 +53,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
   expect(report).toContain('Held conversion');
   expect(item(153)).toMatchObject({ state: 'held', campaign_id: null });
   expect(item(153).outcome).toContain('Largest blocks:');
-  for (const tag of ['*|LNAME|*', '*|UPDATE_PROFILE|*', '*|DATE|*', '*|CURRENT_YEAR|*']) expect(JSON.parse(item(154).removed_json).join(' ')).toContain(`Unmapped ${tag}`);
+  for (const tag of ['*|LNAME|*', '*|DATE|*', '*|CURRENT_YEAR|*']) expect(JSON.parse(item(154).removed_json).join(' ')).toContain(`Unmapped ${tag}`);
   expect(JSON.parse(item(154).removed_json).join(' ')).toContain('Mapped *|LIST:ADDRESSLINE|*');
   const body = async (number: number) => {
     console.log('Conversion proof: start template ' + number);
@@ -65,6 +66,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
   expect(a.revision.emailBody).toContain('{{displayName | fallback: "there"}}');
   expect(a.revision.emailBody).toContain('{{physical_address}}');
   expect(a.revision.emailBody).toContain('{{unsubscribe_url}}');
+  expect(a.revision.emailBody).toContain('{{preferences_url}}');
   expect(a.revision.emailBody).toContain('color: #202020');
   expect(a.revision.emailBody).toContain('font-size: 18px');
   expect(a.revision.emailBody).toContain('data-mango-mobile=');
@@ -82,6 +84,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
     await page.getByRole('button', { name: width === 390 ? 'Mobile email' : 'Desktop email', exact: true }).press('Enter');
     const frame = page.frameLocator('iframe[title="Saved email preview"]');
     await expect(frame.getByText('Hello Alex Example.', { exact: false })).toBeVisible();
+    await expect(frame.getByRole('link',{name:'Update profile',exact:true})).toHaveAttribute('href','#');
     await expect(frame.locator('p').first()).toHaveCSS('color', 'rgb(32, 32, 32)');
     await expect(frame.locator('p').first()).toHaveCSS('font-size', width === 390 ? '16px' : '18px');
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);

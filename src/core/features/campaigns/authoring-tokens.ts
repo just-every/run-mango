@@ -4,7 +4,7 @@ export function protectAuthoringTokens(source:string, keepManaged=false) {
   while(source.includes(prefix))prefix+='x';
   const tokens:string[]=[];
   const html=source.replace(/\{\{([\s\S]*?)\}\}/g,(token,inner:string)=>{
-    if(keepManaged&&['unsubscribe_url','physical_address'].includes(inner.trim()))return token;
+    if(keepManaged&&['unsubscribe_url','preferences_url','physical_address'].includes(inner.trim()))return token;
     const index=tokens.push(token)-1;return `${prefix}${index}\uE001`;
   });
   return {html,restore:(text:string,encode:(token:string)=>string=token=>token)=>tokens.reduce((result,token,index)=>result.replaceAll(`${prefix}${index}\uE001`,()=>encode(token)),text)};
@@ -12,7 +12,7 @@ export function protectAuthoringTokens(source:string, keepManaged=false) {
 /** One `{{…}}` token's inner text: a managed token, a personalisation key with its fallback, or undefined when invalid. */
 export function parsePersonalisationToken(source: string) {
   const token = source.trim();
-  if (token === 'unsubscribe_url' || token === 'physical_address') return {managed: token};
+  if (token === 'unsubscribe_url' || token === 'preferences_url' || token === 'physical_address') return {managed: token};
   const match = /^([a-zA-Z0-9_.-]+)\s*\|\s*(?:fallback|default)\s*:\s*(?:"([^"\r\n]*)"|'([^'\r\n]*)'|([^"'{}\r\n]*))$/.exec(token);
   if (!match) return undefined;
   const fallback = match[2] ?? match[3] ?? match[4].trim();

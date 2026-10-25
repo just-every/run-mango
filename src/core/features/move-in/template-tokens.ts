@@ -6,6 +6,7 @@ export function convertTemplateTokens(source: string) {
   const targets: Record<string, string> = {
     '*|FNAME|*': '{{displayName | fallback: "there"}}',
     '*|UNSUB|*': '{{unsubscribe_url}}',
+    '*|UPDATE_PROFILE|*': '{{preferences_url}}',
     '*|LIST:ADDRESS|*': '{{physical_address}}',
     '*|LIST:ADDRESSLINE|*': '{{physical_address}}',
     '{{ first_name }}': '{{displayName | fallback: "there"}}',

@@ -5,7 +5,7 @@ import { parseEmailHtml, type EmailNode } from './email-html-parse';
 import type { DraftComposition } from './draft-composition';
 
 // Exact managed fragment: no arbitrary authored markup is stripped or rewritten.
-export const managedFooter = '<hr><p>{{physical_address}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>';
+export const managedFooter = '<hr><p>{{physical_address}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe</a></p><p><a href="{{preferences_url}}">Manage preferences</a></p>';
 /** The body without every managed footer in it, including one that removing another brings together. */
 export function authoredBody(html: string) {
   const envelope=mobileEnvelope(html);
@@ -30,7 +30,7 @@ export function htmlToText(html: string) {
   return text(parseEmailHtml(html).nodes).replaceAll(' ', ' ').replace(/\n[ \t]+/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
 export function authoredLinks(html:string) {
-  return [...new Map(inspectEmailHtml(html).anchors.filter(anchor=>anchor.href !== '{{unsubscribe_url}}' && anchor.href).map(anchor=>[anchor.href,{label:anchor.label,destinationUrl:anchor.href}])).values()];
+  return [...new Map(inspectEmailHtml(html).anchors.filter(anchor=>!['{{unsubscribe_url}}','{{preferences_url}}'].includes(anchor.href) && anchor.href).map(anchor=>[anchor.href,{label:anchor.label,destinationUrl:anchor.href}])).values()];
 }
 /** Rounds of parsing and serialising that a body, and then a saved body, may take to reach a form that saves to itself. */
 const settleRounds = 16;
@@ -64,8 +64,9 @@ function savedBody(source: string, links: NonNullable<DraftComposition['links']>
   }
   // Preserve old valid managed footers; add only missing compliance elements.
   const hasUnsubscribe = inspectEmailHtml(body).anchors.some(anchor => anchor.href === '{{unsubscribe_url}}' && anchor.label);
-  const footer = !hasUnsubscribe && !body.includes('{{physical_address}}') ? managedFooter
-    : `${body.includes('{{physical_address}}') ? '' : '<p>{{physical_address}}</p>'}${hasUnsubscribe ? '' : '<p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>'}`;
+  const hasPreferences=inspectEmailHtml(body).anchors.some(anchor=>anchor.href==='{{preferences_url}}'&&anchor.label);
+  const footer = !hasUnsubscribe && !hasPreferences && !body.includes('{{physical_address}}') ? managedFooter
+    : `${body.includes('{{physical_address}}') ? '' : '<p>{{physical_address}}</p>'}${hasUnsubscribe ? '' : '<p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>'}${hasPreferences ? '' : '<p><a href="{{preferences_url}}">Manage preferences</a></p>'}`;
   // Parsers never close a plaintext element, so a footer after one is its text: it is not added again on every save,
   // and approval refuses the tag and the missing footer.
   return mobileDocument(!footer || parseEmailHtml(body).tags.has('plaintext') ? body : canonicalBody(body + footer),envelope.style);

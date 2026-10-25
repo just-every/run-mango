@@ -47,6 +47,7 @@ export function renderMessageContent(revision: MessageRevision, options: {
 }) {
   const chosen=catalogBlocks(revision.emailBody);
   if(chosen.length&&(!options.catalog||chosen.some(row=>!options.catalog![row.key])))throw new CatalogUnavailable();
+  const preferencesUrl=options.unsubscribeUrl.replace('/unsubscribe/','/preferences/');
   const values = options.values ?? {};
   const render = (template: string, html = false, catalogText = false) => {
     const encode = html ? escapeHtml : (value: string) => value;
@@ -56,13 +57,14 @@ export function renderMessageContent(revision: MessageRevision, options: {
       const parsed = parseToken(token!);
       if (!parsed) return match;
       const value = personalisationValue(values, parsed.key);
-      return encode(parsed.managed === 'unsubscribe_url' ? options.unsubscribeUrl : parsed.managed === 'physical_address' ? revision.physicalAddress : value || parsed.fallback!);
+      return encode(parsed.managed === 'unsubscribe_url' ? options.unsubscribeUrl : parsed.managed === 'preferences_url' ? preferencesUrl : parsed.managed === 'physical_address' ? revision.physicalAddress : value || parsed.fallback!);
     });
   };
-  const replaceTextLinks = (text:string,channel:'email'|'sms') => {const links=new Map(textLinkDestinations(text).map(url=>[url,analyticsUrl(url,options.analytics,channel)]));for(const [url,target] of options.rewrittenLinks??[])links.set(url,target);return rewriteTextLinks(text,links);};
+  const replaceTextLinks = (text:string,channel:'email'|'sms') => {const links=new Map(textLinkDestinations(text).map(url=>[url,[options.unsubscribeUrl,preferencesUrl].includes(url)?url:analyticsUrl(url,options.analytics,channel)]));for(const [url,target] of options.rewrittenLinks??[])links.set(url,target);return rewriteTextLinks(text,links);};
   const personalHtml=render(revision.emailBody,true);
   const html = (chosen.length?insertCatalogHtml(personalHtml,options.catalog!):personalHtml).replace(/\bhref\s*=\s*(["'])(.*?)\1/gi, (attribute, quote: string, url: string) => {
     const decoded=url.replaceAll('&amp;', '&');
+    if([options.unsubscribeUrl,preferencesUrl].includes(decoded))return attribute;
     const replacement = options.rewrittenLinks?.get(decoded)??analyticsUrl(decoded,options.analytics,'email');
     return replacement ? `href=${quote}${escapeHtml(replacement)}${quote}` : attribute;
   });
