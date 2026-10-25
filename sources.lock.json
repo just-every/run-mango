@@ -7878,7 +7878,7 @@
       "executable": false
     },
     "tests/go-live/chosen-catalog-journey.ts": {
-      "sha256": "b34b65215d4094bdd6327a4e03a4fea782e3a200d1912b247921761819685bf3",
+      "sha256": "7574cb32e4ef8bb49baab2e78a1f7841979351e24a8a89224de74edf1d5a7135",
       "executable": false
     },
     "tests/go-live/clock.ts": {

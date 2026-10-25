@@ -18,6 +18,7 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
  try{
   const cookie=await site.open();await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);await site.control('/_golive/sender-evidence');await confirmedContact(site,edge,cookie,'synthetic-mango-160@example.test','Synthetic reader');
   await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie,body:{hosts:'mango.example.test,myshop.com,cdn.shopify.com'}}),200);
+  await json(await site.call('/api/settings/analytics',{method:'PUT',cookie,body:{enabled:true,source:'synthetic-mango-160',emailMedium:'email',smsMedium:'sms',campaign:'catalog-proof',content:'chosen-products'}}),200);
   await syncSource(site,cookie,'product');await syncSource(site,cookie,'variant');
   const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000),campaign=await draftCampaign(site,cookie,'synthetic-mango-160',['synthetic-mango-160@example.test'],due);
   await page.context().clearCookies();await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
@@ -52,7 +53,7 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
     await expect(item).toContainText('AUD 24.00');await expect(item.locator('s')).toHaveText('AUD 30.00');
     await expect(item.locator('img')).toHaveAttribute('src',`https://cdn.shopify.com/synthetic-mango-${n}.png`);
     await expect(item.locator('img')).toHaveJSProperty('naturalWidth',300);
-    await expect(item.locator('a')).toHaveAttribute('title',`https://myshop.com/products/product-${n}`);
+    await expect(item.locator('a')).toHaveAttribute('title',`https://myshop.com/products/product-${n}?utm_source=synthetic-mango-160&utm_medium=email&utm_campaign=catalog-proof&utm_content=chosen-products`);
     expect(await item.locator('a').getAttribute('href')).toBeNull();
    }
    await expect(frame.locator('img')).toHaveCount(2);
