@@ -1,8 +1,11 @@
 import { spawnSync } from 'node:child_process';
 
 const [shard, ...forwarded] = process.argv.slice(2);
-if (!['3/7', '4/7'].includes(shard)) throw new Error('Adjusted main shard must be 3/7 or 4/7.');
-const movedFile = 'campaign-authoring/design-generation.spec.ts';
+if (!['3/7', '4/7', '7/7'].includes(shard)) throw new Error('Adjusted main shard must be 3/7, 4/7 or 7/7.');
+const moves = [
+  {file: 'campaign-authoring/design-generation.spec.ts', from: '4/7', to: '3/7'},
+  {file: 'campaign-authoring/browser.spec.ts', from: '4/7', to: '7/7'},
+];
 const base = ['exec', 'playwright', 'test', '--config', 'playwright.config.js'];
 function collect(extra) {
   const result = spawnSync('pnpm', [...base, ...extra, '--list', '--reporter=json'], {
@@ -24,12 +27,20 @@ function collect(extra) {
   return rows;
 }
 const native = collect([`--shard=${shard}`]);
-const moved = collect([`tests/${movedFile}`]);
-if (moved.some(row => row.file !== movedFile)) throw new Error('Moved file collection included another file.');
 const nativeIds = new Set(native.map(row => row.id));
-if (shard === '4/7' && moved.some(row => !nativeIds.has(row.id))) throw new Error('The whole moved file must belong to native main 4/7.');
-if (shard === '3/7' && moved.some(row => nativeIds.has(row.id))) throw new Error('Moved file already belongs to native main 3/7.');
-const selected = shard === '3/7' ? [...native, ...moved] : native.filter(row => row.file !== movedFile);
+const incoming = [], outgoing = new Set();
+for (const move of moves.filter(move => move.from === shard || move.to === shard)) {
+  const moved = collect([`tests/${move.file}`]);
+  if (moved.some(row => row.file !== move.file)) throw new Error('Moved file collection included another file.');
+  if (shard === move.from) {
+    if (moved.some(row => !nativeIds.has(row.id))) throw new Error(`The whole moved file must belong to native main ${move.from}.`);
+    outgoing.add(move.file);
+  } else {
+    if (moved.some(row => nativeIds.has(row.id))) throw new Error(`Moved file already belongs to native main ${move.to}.`);
+    incoming.push(...moved);
+  }
+}
+const selected = [...native.filter(row => !outgoing.has(row.file)), ...incoming];
 const escape = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const grep = `(?:^| )(?:${selected.map(row => escape(row.title)).join('|')})(?: @\\S+)*$`;
 // Verify the final public CLI selection before running any test. In particular,
@@ -38,7 +49,7 @@ const grep = `(?:^| )(?:${selected.map(row => escape(row.title)).join('|')})(?: 
 const actual = collect(['--grep', grep]);
 const expectedIds = new Set(selected.map(row => row.id));
 if (actual.length !== selected.length || actual.some(row => !expectedIds.has(row.id))) throw new Error(`Adjusted main shard lost or duplicated a registration: expected ${selected.length}, found ${actual.length}.`);
-if (!forwarded.includes('--list')) console.log(`MAIN_SHARD ${shard}: ${selected.length} registrations; whole ${movedFile} moves 4/7 -> 3/7`);
+if (!forwarded.includes('--list')) console.log(`MAIN_SHARD ${shard}: ${selected.length} registrations; ${moves.map(move => `whole ${move.file} moves ${move.from} -> ${move.to}`).join('; ')}`);
 const result = spawnSync('pnpm', [...base, ...forwarded, '--grep', grep], { stdio: 'inherit' });
 if (result.error) throw result.error;
 process.exitCode = result.status ?? 1;

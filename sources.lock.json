@@ -2050,7 +2050,7 @@
       "executable": false
     },
     "scripts/verification/main-shard.mjs": {
-      "sha256": "3201d53578c3f3db78c3fe128eddbe8f5a05d62d1695c9a8c1dcccb193f4f0e2",
+      "sha256": "cbe85f50e9dbfc27a06316fb86da0cd26531e6f84305d149b39da0e75b7983d0",
       "executable": false
     },
     "scripts/verification/node-reporter.mjs": {
@@ -2058,7 +2058,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "584c1580537010410cb33010969ab554fe87a557d6f190848a9bd657c605310b",
+      "sha256": "0c9f807bfd9a9f1fe43c7564588040974fe08219c7eaa24b7a57561c7dd9699e",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
