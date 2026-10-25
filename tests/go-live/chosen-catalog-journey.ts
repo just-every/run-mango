@@ -13,7 +13,7 @@ async function screen(page:Page,info:TestInfo,name:string,width:number){
 }
 export async function chosenCatalogJourney(page:Page,info:TestInfo){
  console.log('Chosen catalog proof: setup');
- const catalog=chosenCatalogEdge(),edge=await providerEdge({commerce:request=>catalog.commerce(request),links:catalog.links}),site=await installation(edge,eventSigner(),{commerce:true});
+ const catalog=chosenCatalogEdge(),edge=await providerEdge({commerce:request=>catalog.commerce(request),links:catalog.links}),site=await installation(edge,eventSigner(),{commerce:true,networkHosts:['myshop.com','cdn.shopify.com']});
  const marketing=()=>edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);
  try{
   const cookie=await site.open();await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);await site.control('/_golive/sender-evidence');await confirmedContact(site,edge,cookie,'synthetic-mango-160@example.test','Synthetic reader');
