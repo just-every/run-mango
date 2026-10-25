@@ -50,6 +50,16 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       await services.storeService.ingestSuccessfulCommerceBatch('shopify',[{sourceType:'product',providerSourceId:'gid://shopify/Product/1',payload:{id:'gid://shopify/Product/1',title:'Garden linen',handle:'garden-linen',status:'ACTIVE'},occurredAt:new Date()}],'full',['product'],true,new Date());
       return Response.json({ok:true});
     }
+    // Historical states are fixture arrangement only. The product copy still
+    // enters through its native API against this same D1 binding.
+    if(path==='/_authoring/campaign-state'&&request.method==='POST') {
+      const value:unknown=await request.json().catch(()=>null);
+      if(!value||typeof value!=='object'||Array.isArray(value))return new Response('Invalid fixture state',{status:400});
+      const body=value as Record<string,unknown>;
+      if(Object.keys(body).some(key=>!['id','state'].includes(key))||typeof body.id!=='string'||!body.id||body.id.length>200||typeof body.state!=='string'||!['draft','approved','scheduled','completed','cancelled','dispatching','paused','failed'].includes(body.state))return new Response('Invalid fixture state',{status:400});
+      await bindings.DB.prepare('UPDATE campaigns SET state=? WHERE id=?').bind(body.state,body.id).run();
+      return Response.json({ok:true});
+    }
     if(path==='/_authoring/stale') {await bindings.DB.prepare("UPDATE source_syncs SET last_successful_at=? WHERE source_type='product'").bind(Date.now()-25*3600000).run();return Response.json({ok:true});}
     if(path==='/_authoring/proposal') {
       const id=crypto.randomUUID(),now=Date.now(),rules=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'}]});

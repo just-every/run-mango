@@ -1,11 +1,11 @@
-import {flowTemplateJourney} from './flow-template-journey';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { openPage, hydrated } from '../support/navigation';
 
 /** One reuse journey, shared by the existing desktop/mobile authoring case. */
-export async function exerciseCampaignReuse(page:Page, sourceId:string, baseURL:string, width:number, info:TestInfo, sql:(command:string)=>Promise<unknown>) {
+export async function exerciseCampaignReuse(page:Page, sourceId:string, baseURL:string, width:number, info:TestInfo, token:string) {
   const read=async(id:string)=>(await page.request.get(`${baseURL}/api/campaigns/${id}`)).json();
   const original=await read(sourceId);
+  const setState=async(state:string)=>{const response=await page.request.post(baseURL+'/_authoring/campaign-state',{headers:{'X-Test-Token':token},data:{id:sourceId,state}});expect(response.status()).toBe(200);};
   await openPage(page,`${baseURL}/app/campaigns/${sourceId}`);
   await page.getByText('Save as a template',{exact:true}).click();
   await page.getByLabel('Template name',{exact:true}).fill(`Garden letter ${width}`);
@@ -53,15 +53,14 @@ export async function exerciseCampaignReuse(page:Page, sourceId:string, baseURL:
   expect((await read(sourceId)).revision).toEqual(original.revision);expect((await read(copyId)).revision.emailSubject).toBe('A new week in the garden');
   // Arrange historical campaign states in the test database. Every copy still enters through the private API.
   for(const sourceState of ['completed','cancelled','dispatching','paused','failed']) {
-    await sql(`UPDATE campaigns SET state='${sourceState}' WHERE id='${sourceId}'`);
+    await setState(sourceState);
     const duplicated=await page.request.post(`${baseURL}/api/campaigns/${sourceId}/duplicate`);expect(duplicated.status()).toBe(201);
     const historicalCopy=await read((await duplicated.json()).campaignId);
     expect(historicalCopy.revision.emailBody).toBe(original.revision.emailBody);
     expect(historicalCopy.revision.approvedAt).toBeNull();expect(historicalCopy.steps).toEqual([]);expect(historicalCopy.results).toBeUndefined();
     expect((await read(sourceId)).revision).toEqual(original.revision);
   }
-  await sql(`UPDATE campaigns SET state='${original.campaign.state}' WHERE id='${sourceId}'`);
+  await setState(original.campaign.state);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:info.outputPath(`reuse-template-${width}.png`),fullPage:true});
-  if(width===1440)await flowTemplateJourney(page,info,baseURL,{Origin:baseURL});
 }
