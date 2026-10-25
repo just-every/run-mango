@@ -7566,7 +7566,7 @@
       "executable": false
     },
     "tests/audience-import/sms-edge.ts": {
-      "sha256": "167879fb9f9615c05f54705b11de5f0fd4928eb95e1ac6cf87794ba7bf5cdbb3",
+      "sha256": "16cf27f07fbf1890f2e960a7a019e81ea20f682b0cc36081896f9bcf46e561d0",
       "executable": false
     },
     "tests/audience-summary/proposal-render.ts": {
