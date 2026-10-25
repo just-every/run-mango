@@ -3330,7 +3330,7 @@
       "executable": false
     },
     "src/core/features/campaigns/reusable-block-routes.ts": {
-      "sha256": "cd0eabeb09bf7619341d62423b21e9bc7c03374683968d9a1771a06589c37c3e",
+      "sha256": "ccb213cf8ff23452a51d0e9418c16c2adc3202046cb25819caf2ed6380df77e0",
       "executable": false
     },
     "src/core/features/campaigns/reusable-block-service.ts": {
@@ -7579,6 +7579,10 @@
     },
     "tests/campaign-authoring/reusable-block-journey.ts": {
       "sha256": "d62074ba7d51511f57b63dd76a99bc449a560b20665005089d711159bd7082ca",
+      "executable": false
+    },
+    "tests/campaign-authoring/reusable-size-journey.ts": {
+      "sha256": "4c8eeb8412eda745d64e4ec5501744cee5f2f8e32fb1bdd5417fd2afd9251b32",
       "executable": false
     },
     "tests/campaign-authoring/reuse-journey.ts": {

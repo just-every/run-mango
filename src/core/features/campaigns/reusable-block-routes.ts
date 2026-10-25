@@ -23,7 +23,8 @@ export function reusableBlockRoutes(platform:Platform){
   });
   routes.onError((error,c)=>{
     if(error instanceof ReusableBlockError)return c.json({error:'reusable_block_conflict',detail:error.message},409);
-    if(error instanceof EmailTooLargeError||error instanceof MobileEmailError||error instanceof UnsettledEmailBodyError)return c.json({error:'invalid_reusable_block',detail:error.message},400);
+    if(error instanceof EmailTooLargeError)return c.json({error:'email_too_large',detail:error.message,size:error.size},400);
+    if(error instanceof MobileEmailError||error instanceof UnsettledEmailBodyError)return c.json({error:'invalid_reusable_block',detail:error.message},400);
     if(error instanceof z.ZodError)return c.json({error:'invalid_reusable_block',detail:error.issues.map(issue=>issue.path.join('.')+': '+issue.message).join(' ')},400);
     throw error;
   });
