@@ -102,7 +102,7 @@ export async function preferenceCenterJourney(site:Installation,edge:Awaited<Ret
   // Topic withdrawal wins over a simultaneous pause. Campaigns name their send
   // topic through the existing affirmative topic-consent audience condition.
   console.log('Preference proof: campaign exclusions');
-  await site.control('/_golive/clock',{advanceMs:7*86400000});
+  await site.control('/_golive/clock',{advanceMs:7*86400000});owner=await site.open();
   for(const [topic,reason] of [['newsletter','topic-unsubscribed'],['promotions','paused-by-recipient']]){
     const now=(await site.control('/_golive/clock')).now,campaign=await draftCampaign(site,owner,'Preference '+topic,[tracked.to],new Date(now+3600000));
     const inclusion={version:1,operator:'all',predicates:[{sourceType:'contact',field:'email',comparator:'eq',value:tracked.to},{sourceType:'contact',field:'topic',channel:'email',topicId:topic,comparator:'eq',value:true}]};
