@@ -10,7 +10,7 @@ const cell = (value: unknown) => String(value ?? '').replaceAll('|', '\\|').repl
 const table = (headers: string[], rows: unknown[][]) => [`| ${headers.join(' | ')} |`, `| ${headers.map(() => '---').join(' | ')} |`, ...rows.map(row => `| ${row.map(cell).join(' | ')} |`)].join('\n');
 const time = (value: number | null) => value ? new Date(value).toISOString() : '';
 
-type ContentRow = { campaign_id?: string | null; kind: string; source_path: string; source_row: number | null; title: string; state: string; outcome: string | null };
+type ContentRow = { campaign_id?: string | null; kind: string; source_path: string; source_row: number | null; title: string; state: string; outcome: string | null; removed_json?: string; flagged_json?: string; merge_tags_json?: string };
 
 export async function archiveReport(db: D1Database, archive: ArchiveRecord, content: ContentRow[]) {
   const summary = JSON.parse(archive.summary_json) as ArchiveSummary;
@@ -53,6 +53,16 @@ export async function archiveReport(db: D1Database, archive: ArchiveRecord, cont
   if (rejected.length) lines.push('## Rejected rows', '', table(['File', 'Row', 'Reason'], rejected), '');
   if (content.length) lines.push('## History and templates', '', table(['Kind', 'Source', 'Title', 'State', 'Outcome'], content.map(item => [item.kind === 'history' ? 'imported history' : item.campaign_id ? 'imported draft' : 'library template',
     item.source_row ? `${item.source_path} row ${item.source_row}` : item.source_path, item.title, item.state, item.outcome ?? ''])), '');
+  if (content.length) {
+    lines.push('## Template conversion reports', '');
+    for (const item of content) lines.push(`### ${cell(item.source_path)}`, '', ...[item.removed_json, item.flagged_json, item.merge_tags_json].flatMap(value => value ? (JSON.parse(value) as string[]).map(note => `- ${cell(note)}`) : []), '');
+    const hosts = new Map<string, number>();
+    for (const item of content) for (const note of JSON.parse(item.removed_json ?? '[]') as string[]) {
+      const match = /^Outside host (\S+): (\d+) uses$/.exec(note);
+      if (match) hosts.set(match[1], (hosts.get(match[1]) ?? 0) + Number(match[2]));
+    }
+    lines.push('## Outside hosts across templates and campaigns', '', table(['Host', 'Uses'], [...hosts]), '');
+  }
   if (undo) {
     lines.push('## Undo', '', `${undo.contacts.removed} imported contacts were removed. Opt-out and suppression records are never removed by undo.`, '');
     if (undo.contacts.kept.length) {

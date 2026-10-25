@@ -1,3 +1,4 @@
+import { describeConversion } from './conversion-report';
 import {planAttestations,incumbentFiles,attestationStatements} from './incumbent-attestation';
 import type {AttestationInput} from './incumbent-policy';
 import {engagementContacts,reviewEngagement,writeEngagement} from './archive-engagement';
@@ -91,6 +92,8 @@ export function createArchiveService(platform: Platform) {
     async review(name: string, bytes: Uint8Array<ArrayBuffer>, consent: ArchiveConsent, operatorId: string, request: Request, choices:AttestationInput[] = []) {
       const context = await archiveContext(platform, operatorId, request);
       const review = await reviewArchive(name, bytes, consent, { service: audience, context, db: audiencePreviewBudget(db).db },choices);
+      review.records = await Promise.all(review.records.map(record => describeConversion(platform, record)));
+      review.summary.records = review.records;
       const applied = await db.prepare("SELECT id,applied_at FROM move_in_archives WHERE sha256=? AND consent_digest=? AND state IN ('applying','applied','undoing')").bind(review.summary.archive.sha256, review.consentDigest).first<{ id: string; applied_at: number | null }>();
       return { fingerprint: review.fingerprint, summary: review.summary, alreadyImported: applied ?? null };
     },
@@ -100,6 +103,8 @@ export function createArchiveService(platform: Platform) {
       const context = await archiveContext(platform, operatorId, request);
       const sha = await sha256Hex(bytes);
       const review = await reviewArchive(name, bytes, consent, { service: audience, context, db: audiencePreviewBudget(db).db },choices);
+      review.records = await Promise.all(review.records.map(record => describeConversion(platform, record)));
+      review.summary.records = review.records;
       const live = await db.prepare("SELECT * FROM move_in_archives WHERE sha256=? AND consent_digest=? AND state IN ('applying','applied','undoing')").bind(sha, review.consentDigest).first<ArchiveRecord>();
       if (live) return { archive: live, repeated: true };
       if (!review.audienceInput && !review.records.length) throw new ArchiveRefused('nothing-to-import', 'This archive holds no audience file, email or template that Mango imports, so nothing was saved.');

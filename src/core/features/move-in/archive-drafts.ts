@@ -1,3 +1,4 @@
+import { describeConversion } from './conversion-report';
 import { normalizeAuthoredContent } from '@/core/features/campaigns/authoring-content';
 import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
 import { campaignTemplates } from '@/core/features/campaigns/reuse-schema';
@@ -26,6 +27,7 @@ const row = (archiveId: string, record: ContentRecord, at: number) => ({
 export async function writeContent(platform: Platform, archiveId: string, record: ContentRecord, operatorId: string) {
   const db = platform.database;
   if (await db.$client.prepare('SELECT 1 FROM move_in_content WHERE archive_id=? AND ordinal=?').bind(archiveId, record.ordinal).first()) return;
+  record = await describeConversion(platform, record);
   const at = Date.now();
   if (record.kind === 'history') { await db.insert(moveInContent).values(row(archiveId, record, at)).onConflictDoNothing(); return; }
   try {

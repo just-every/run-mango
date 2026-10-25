@@ -74,7 +74,7 @@ export function AudienceArchivePreview({ preview, isCurrent }: { preview: Archiv
               {[...history, ...drafts].filter(record => record.removed.length || record.flagged.length || record.mergeTags.length).map(record => (
                 <li key={record.ordinal}>
                   <strong>{record.title}</strong>
-                  {record.removed.length ? <> Removed: {record.removed.join('; ')}.</> : null}
+                  {record.removed.length ? <> Conversion: {record.removed.join('; ')}.</> : null}
                   {record.flagged.length ? <> Still blocked by the HTML policy: {record.flagged.join(' ')}</> : null}
                   {record.mergeTags.length ? <> Merge tags left as written; approval stays blocked until you replace them: {record.mergeTags.join(', ')}.</> : null}
                 </li>
