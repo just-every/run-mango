@@ -28,3 +28,7 @@ ALTER TABLE campaign_assets_import RENAME TO campaign_assets;
 CREATE TRIGGER campaign_assets_immutable_update BEFORE UPDATE ON campaign_assets BEGIN SELECT RAISE(ABORT,'CAMPAIGN_ASSET_IMMUTABLE'); END;
 --> statement-breakpoint
 CREATE TRIGGER campaign_assets_immutable_delete BEFORE DELETE ON campaign_assets BEGIN SELECT RAISE(ABORT,'CAMPAIGN_ASSET_IMMUTABLE'); END;
+
+-- Recovery: stop writers and restore the matching pre-upgrade D1/R2 backup
+-- through rer import into an empty deployment. Never delete or rewrite stored
+-- campaign image objects to roll back this metadata expansion.

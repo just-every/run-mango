@@ -308,9 +308,9 @@
     {
       "id": "link-dns-resolver",
       "required": true,
-      "why": "A public DNS-over-HTTPS resolver verifies that each approved external link, image and redirect target resolves outside private networks before dispatch. Images this deployment stores itself at /media/ are verified in its own storage and never resolved or fetched.",
+      "why": "A public DNS-over-HTTPS resolver verifies that each approved external link, image and redirect target resolves outside private networks before dispatch. Images this deployment stores itself at /media/ are verified in its own storage and never resolved or fetched. Explicit move-in application also inspects missing incumbent-image host names before reading an image.",
       "data": [
-        "Approved link host names only"
+        "Approved link host names and incumbent-image host names during explicit move-in application only"
       ],
       "adapters": [
         "platform.link-inspector.v1"
@@ -343,9 +343,10 @@
     {
       "id": "approved-content-destinations",
       "required": true,
-      "why": "Dispatch preflight checks explicitly approved external links and images, including each allowed redirect, for reachability after DNS safety checks.",
+      "why": "Dispatch preflight checks explicitly approved external links and images, including each allowed redirect, for reachability after DNS safety checks. During explicit move-in application, missing images on mcusercontent.com, its subdomains or gallery.mailchimp.com are read once by GET after public-network DNS inspection, without redirects and within campaign image limits.",
       "data": [
-        "Full approved destination URLs including paths and query parameters sent as HEAD requests to configured allowed hosts. No operator cookie or provider credential is attached. Deployment-hosted /media/ images use local storage instead."
+        "Full approved destination URLs including paths and query parameters sent as HEAD requests to configured allowed hosts. No operator cookie or provider credential is attached. Deployment-hosted /media/ images use local storage instead.",
+        "Original incumbent image URLs, including source paths and query parameters, are sent in that import-time GET. No operator cookie, provider credential or Mango recipient data is attached; preview, review and hand-off do not fetch these images."
       ],
       "adapters": [
         "platform.link-inspector.v1"
