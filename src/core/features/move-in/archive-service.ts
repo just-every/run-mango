@@ -93,7 +93,7 @@ export function createArchiveService(platform: Platform) {
       const context = await archiveContext(platform, operatorId, request);
       const review = await reviewArchive(name, bytes, consent, { service: audience, context, db: audiencePreviewBudget(db).db },choices);
       review.records = await Promise.all(review.records.map(record => describeConversion(platform, record)));
-      review.summary.records = review.records;
+      review.summary.records = review.records.map(({html: _html, text: _text, contentPaths: _paths, ...record}) => record);
       const applied = await db.prepare("SELECT id,applied_at FROM move_in_archives WHERE sha256=? AND consent_digest=? AND state IN ('applying','applied','undoing')").bind(review.summary.archive.sha256, review.consentDigest).first<{ id: string; applied_at: number | null }>();
       return { fingerprint: review.fingerprint, summary: review.summary, alreadyImported: applied ?? null };
     },
@@ -104,7 +104,7 @@ export function createArchiveService(platform: Platform) {
       const sha = await sha256Hex(bytes);
       const review = await reviewArchive(name, bytes, consent, { service: audience, context, db: audiencePreviewBudget(db).db },choices);
       review.records = await Promise.all(review.records.map(record => describeConversion(platform, record)));
-      review.summary.records = review.records;
+      review.summary.records = review.records.map(({html: _html, text: _text, contentPaths: _paths, ...record}) => record);
       const live = await db.prepare("SELECT * FROM move_in_archives WHERE sha256=? AND consent_digest=? AND state IN ('applying','applied','undoing')").bind(sha, review.consentDigest).first<ArchiveRecord>();
       if (live) return { archive: live, repeated: true };
       if (!review.audienceInput && !review.records.length) throw new ArchiveRefused('nothing-to-import', 'This archive holds no audience file, email or template that Mango imports, so nothing was saved.');

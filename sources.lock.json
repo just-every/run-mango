@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "2d0884032dc1c0027be4ed0dfce4894fd628d769edffdedbe61a127b76c11b5e",
+      "sha256": "bd64764834459c4e5897bde099251337dc7e4ab851da23b67ff1738c190d0d04",
       "executable": false
     },
     "DEMO.md": {
@@ -2862,7 +2862,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/audience-archive-preview.tsx": {
-      "sha256": "9a916996881511a9887c0311a9abfe7f6c66fdf88749e1831b6b63586e8ad391",
+      "sha256": "9ddff9346d94b4fd6a153dd0a688c3c53bc41ee0c668e1ca4aece24d2b0768f7",
       "executable": false
     },
     "src/core/features/audience/ui/audience-empty-art.tsx": {
@@ -4558,11 +4558,11 @@
       "executable": false
     },
     "src/core/features/move-in/archive-content.ts": {
-      "sha256": "b4c2f84d0195fa2fcb2e2caa9b5ac2339f1f3866dd228da1ec98e8faa366ff0c",
+      "sha256": "84cb6f6bf8e5de514230f49b48572bd24592a716c31331dee972615afe1cc605",
       "executable": false
     },
     "src/core/features/move-in/archive-drafts.ts": {
-      "sha256": "c26eef41bd1e334d0b2e54e58c688e0bbbff7a729580add03904d64b8cefe03d",
+      "sha256": "6c9eb151aba3316eb0450eecb56e26e568c187b18dc0cfbbdbe948cc2f89027e",
       "executable": false
     },
     "src/core/features/move-in/archive-engagement.ts": {
@@ -4578,7 +4578,7 @@
       "executable": false
     },
     "src/core/features/move-in/archive-report.ts": {
-      "sha256": "0f13dd6940cb3db8023514c3b9023b7c29c82f21fc9a35a305b1a7d9c4057e63",
+      "sha256": "e4fa8116f293b1046b9528cb27f61b3c0174bdd66235f4b9094a4206e0da52d9",
       "executable": false
     },
     "src/core/features/move-in/archive-review.ts": {
@@ -4586,7 +4586,11 @@
       "executable": false
     },
     "src/core/features/move-in/archive-service.ts": {
-      "sha256": "60df80981ddebacc2bfbe6429efaf5dcbc74b1ed8e7323119a2e28097c7eb469",
+      "sha256": "a749bd681baacc104e3c85ee81dfac6587d3211d5fd6218884434419c49848d7",
+      "executable": false
+    },
+    "src/core/features/move-in/conversion-report.ts": {
+      "sha256": "984cc8a307e8e4cc9994a5b23c954968c796b8b4fca00133f3ea84a03efb6352",
       "executable": false
     },
     "src/core/features/move-in/csv-review.ts": {
@@ -4598,7 +4602,7 @@
       "executable": false
     },
     "src/core/features/move-in/html-import.ts": {
-      "sha256": "f5041f0d21080d05a98aca3d6a47066b8d2f9533da6ae9e294c66986f8da25b3",
+      "sha256": "a94b8b21aa847903dc4be4c1dea97a82f4bcd3a00220bee260cd64884049ca0e",
       "executable": false
     },
     "src/core/features/move-in/incumbent-attestation.ts": {
@@ -4627,6 +4631,14 @@
     },
     "src/core/features/move-in/source-extras.ts": {
       "sha256": "83a1e38777ffeeac7609e3e209a10612fdadcfdea2cd80252bf1a547511916fd",
+      "executable": false
+    },
+    "src/core/features/move-in/template-styles.ts": {
+      "sha256": "514fd624935082cb3c85b9b9811b93dce94c1a259ba5bcaff38b20e91034e276",
+      "executable": false
+    },
+    "src/core/features/move-in/template-tokens.ts": {
+      "sha256": "27bb6900946096777cfb1afc8e0ac2aba653e6d84b74f23f7da4bf50007b5430",
       "executable": false
     },
     "src/core/features/move-in/zip-reader.ts": {
@@ -7846,7 +7858,7 @@
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "febfd9355e35b44169e04687757557c9c9c40f07ac16a9e41adbbcc30b21e447",
+      "sha256": "d385ace028b12ff1ec741e9bd4c0b1d2a23f2842a0a6557824e454c23c2b154f",
       "executable": false
     },
     "tests/go-live/content-links.ts": {
@@ -8109,6 +8121,10 @@
       "sha256": "1d7ae9bf4114c709a713275125747379e96dad89cfc56c43933e08d3d1c24a6c",
       "executable": false
     },
+    "tests/go-live/template-conversion.ts": {
+      "sha256": "47e22836dae417a31142d728682405f18de6ee90e6753216b4ee1ab66c956ff6",
+      "executable": false
+    },
     "tests/go-live/typed-tests.journeys.ts": {
       "sha256": "fc5e98c0230f7fbd80f70ce81cd42a68990deca664d02c8bf2131513257cbc18",
       "executable": false
@@ -8194,7 +8210,7 @@
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
-      "sha256": "f0e5096ab760a3aa6b5ff55b95177160f1275f4ea95c539518baa78eba8ad510",
+      "sha256": "0b2b340600b5ff179f1efd0fd10d52a1af0df15e90065d5172bdfbe8660e242c",
       "executable": false
     },
     "tests/move-in/archive.ts": {
@@ -8234,11 +8250,11 @@
       "executable": false
     },
     "tests/move-in/fixtures/account-export/emails/campaigns_content/c0spring1.html": {
-      "sha256": "a0ded9cfd9bde41d20ef3e6d9311046d4bf24764e73afc6f7537561d462a8a8f",
+      "sha256": "c1f21f79c0274ba1f235d052c62e46119e4fc2205d8c32c91a881874e6681982",
       "executable": false
     },
     "tests/move-in/fixtures/account-export/emails/campaigns_content/c0spring1.txt": {
-      "sha256": "3df91bd3c073af69dc944f6748afdbf8ef42114732d42650e798cc9e1ae5bd4a",
+      "sha256": "212bcc8843232a752abc44f1a08adccea5a98abe4935b293937cf321c8cab5c6",
       "executable": false
     },
     "tests/move-in/fixtures/account-export/emails/campaigns_content/c0winter2.html": {
