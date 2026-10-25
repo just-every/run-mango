@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "1ae2b397ba24b9183f8b62caa93bc9cee613be7c5e912c6a7b95bed845cb904a",
+      "sha256": "7e814cc1b9dea9f8c8cd01d71744584a71e068b429c921c59bdc8d781a47f2af",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "734317427b1b4bc4395fc97012321646041597220f4eeb0755d53c682eecd87a",
+      "sha256": "97d47f925317e515af895a0bd65bd7e0fec050dc71031aacf28e46f023a28e30",
       "executable": false
     },
     "DEMO.md": {
@@ -3530,7 +3530,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/email-block-editor.tsx": {
-      "sha256": "9e4beae968fbabaff6fa35f69b46b1ea38ebb4c15d46d711a38b8bf6494c00ca",
+      "sha256": "1bee2d401d19e9e86e8771d9c148c94805a8e0676d9d62ec7adfea3b81037258",
       "executable": false
     },
     "src/core/features/campaigns/ui/email-block-fields.tsx": {
