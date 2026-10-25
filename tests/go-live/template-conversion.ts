@@ -86,7 +86,8 @@ export async function templateConversionJourney(site: Installation, owner: strin
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
     expect(await shellAccessibility(page)).toEqual([]);
-    await page.screenshot({ path: info.outputPath(`template-conversion-tokens-${width}.png`), fullPage: true });
+    await page.locator('iframe[title="Saved email preview"]').scrollIntoViewIfNeeded();
+    await page.locator('.message-preview--email').screenshot({ path: info.outputPath(`template-conversion-tokens-${width}.png`) });
   }
   console.log('Conversion proof: corrected footer');
   const d = await body(152);
@@ -99,7 +100,8 @@ export async function templateConversionJourney(site: Installation, owner: strin
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
     expect(await shellAccessibility(page)).toEqual([]);
-    await page.screenshot({ path: info.outputPath(`template-conversion-preview-${width}.png`), fullPage: true });
+    await page.locator('iframe[title="Saved email preview"]').scrollIntoViewIfNeeded();
+    await page.locator('.message-preview--email').screenshot({ path: info.outputPath(`template-conversion-preview-${width}.png`) });
   }
   const dChecks = await json(await site.call(`/api/campaigns/${d.campaignId}/checks`, { method: 'POST', cookie: owner, body: { revisionId: d.revisionId } }), 200);
   expect(dChecks.checks.find((row: any) => row.kind === 'message.content')).toMatchObject({ status: 'passed' });
