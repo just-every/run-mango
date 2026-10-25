@@ -17,6 +17,7 @@ export async function chosenSizeJourney(page:Page,info:TestInfo){
   mark('runtime ready');const cookie=await site.open(),email='synthetic-mango-390@example.test';
   await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);await site.control('/_golive/sender-evidence');await confirmedContact(site,edge,cookie,email,'Synthetic reader');
   const hosts=await json(await site.call('/api/settings/link-hosts',{cookie}),200);await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie,body:{hosts:[...hosts.hosts,'myshop.com','cdn.shopify.com'].join(',')}}),200);
+  await json(await site.call('/api/settings/analytics',{method:'PUT',cookie,body:{enabled:true,source:'synthetic-mango-390',emailMedium:'email',smsMedium:'sms',campaign:'catalog-size-proof',content:'chosen-products'}}),200);
   await json(await site.call('/api/insights/open-tracking',{method:'PUT',cookie,body:{enabled:true}}),200);
   await syncSource(site,cookie,'product');await syncSource(site,cookie,'variant');mark('catalog synced');
   const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000),draft=await draftCampaign(site,cookie,'synthetic-mango-390',[email],due);

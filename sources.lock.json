@@ -7610,7 +7610,7 @@
       "executable": false
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {
-      "sha256": "4cc75c51efaa39d7131b6f221beca744d56782c78f9ed6544bbd5ca7e8eb6158",
+      "sha256": "d1239f89dbbb9367fc805e91e6be7b0f5c1b8222257f83606d4895c33f7ff68e",
       "executable": false
     },
     "tests/campaign-authoring/config.js": {
