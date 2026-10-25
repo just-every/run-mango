@@ -8,8 +8,10 @@ CREATE TABLE move_in_image_attempts (
   PRIMARY KEY(archive_id,source_url)
 );
 
--- Expand provenance without changing existing asset identities, bytes or timestamps.
-CREATE TABLE campaign_assets_import (
+-- Keep the restore engine's proven CHECK-only rebuild shape and every rowid.
+CREATE TABLE mango_asset_source_expansion AS SELECT rowid AS retained_rowid,* FROM campaign_assets;
+DROP TABLE campaign_assets;
+CREATE TABLE campaign_assets (
   id TEXT PRIMARY KEY NOT NULL,
   sha256 TEXT NOT NULL UNIQUE CHECK(length(sha256) = 64 AND sha256 NOT GLOB '*[^0-9a-f]*'),
   content_type TEXT NOT NULL CHECK(content_type IN ('image/jpeg','image/png','image/gif','image/webp')),
@@ -21,9 +23,8 @@ CREATE TABLE campaign_assets_import (
   created_at INTEGER NOT NULL
 );
 
-INSERT INTO campaign_assets_import SELECT * FROM campaign_assets;
-DROP TABLE campaign_assets;
-ALTER TABLE campaign_assets_import RENAME TO campaign_assets;
+INSERT INTO campaign_assets (rowid,id,sha256,content_type,bytes,width,height,source,created_by,created_at) SELECT retained_rowid,id,sha256,content_type,bytes,width,height,source,created_by,created_at FROM mango_asset_source_expansion;
+DROP TABLE mango_asset_source_expansion;
 --> statement-breakpoint
 CREATE TRIGGER campaign_assets_immutable_update BEFORE UPDATE ON campaign_assets BEGIN SELECT RAISE(ABORT,'CAMPAIGN_ASSET_IMMUTABLE'); END;
 --> statement-breakpoint
