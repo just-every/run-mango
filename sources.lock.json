@@ -7886,7 +7886,7 @@
       "executable": false
     },
     "tests/go-live/chosen-catalog-edge.ts": {
-      "sha256": "a09abbb1de32aad7e0b08144cda53340790cc2c35998aaeabe0aa3e675ef1a6e",
+      "sha256": "6d7167ecf11bf78bc5ca449cd13078afd5f69e136cc1ca77e54cc839d24cb555",
       "executable": false
     },
     "tests/go-live/chosen-catalog-journey.ts": {
