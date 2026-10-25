@@ -43,7 +43,7 @@ export function invalidMessagePersonalisation(revision:Pick<MessageRevision,'ema
 }
 /** Pure rendering: no capabilities, writes, contacts or network are acquired here. */
 export function renderMessageContent(revision: MessageRevision, options: {
-  catalog?:CatalogRenderings; analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
+  catalog?:CatalogRenderings; catalogDiagnostics?:boolean; analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
 }) {
   const chosen=catalogBlocks(revision.emailBody);
   if(chosen.length&&(!options.catalog||chosen.some(row=>!options.catalog![row.key])))throw new CatalogUnavailable();
@@ -61,7 +61,7 @@ export function renderMessageContent(revision: MessageRevision, options: {
   };
   const replaceTextLinks = (text:string,channel:'email'|'sms') => {const links=new Map(textLinkDestinations(text).map(url=>[url,analyticsUrl(url,options.analytics,channel)]));for(const [url,target] of options.rewrittenLinks??[])links.set(url,target);return rewriteTextLinks(text,links);};
   const personalHtml=render(revision.emailBody,true);
-  const html = (chosen.length?insertCatalogHtml(personalHtml,options.catalog!):personalHtml).replace(/\bhref\s*=\s*(["'])(.*?)\1/gi, (attribute, quote: string, url: string) => {
+  const html = (chosen.length?insertCatalogHtml(personalHtml,options.catalog!,options.catalogDiagnostics):personalHtml).replace(/\bhref\s*=\s*(["'])(.*?)\1/gi, (attribute, quote: string, url: string) => {
     const decoded=url.replaceAll('&amp;', '&');
     const replacement = options.rewrittenLinks?.get(decoded)??analyticsUrl(decoded,options.analytics,'email');
     return replacement ? `href=${quote}${escapeHtml(replacement)}${quote}` : attribute;

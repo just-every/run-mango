@@ -1,4 +1,4 @@
-import {insertCatalogHtml,catalogTextValues,type CatalogRenderings} from './catalog-blocks';
+import {insertCatalogHtml,decodeCatalogBlock,type CatalogRenderings} from './catalog-blocks';
 import {analyticsContext,analyticsUrl} from '@/core/features/settings/analytics-policy';
 import seed from '../../../../seed.json' with {type:'json'};
 import { parseEmailHtml, type EmailNode } from './email-html-parse';
@@ -25,6 +25,8 @@ function largestBlocks(body: string) {
   const visit = (nodes: EmailNode[], path = 'body') => nodes.forEach((node,index) => {
     if (node.kind !== 'element') return;
     const location = `${path}/${node.tag}[${index+1}]`;
+    const chosen=node.attributes.get('data-mango-catalog'),state=chosen?decodeCatalogBlock(chosen):undefined;
+    if(state){blocks.push({location:`${path}/catalog-${state.layout}[${index+1}]`,bytes:utf8Bytes(node.children.map(serialized).join(''))});return;}
     // Leaf content blocks avoid reporting a whole nested table three times.
     if (['p','h1','h2','h3','h4','h5','h6','img','li','pre','blockquote'].includes(node.tag) || !node.children.some(child=>child.kind==='element')) blocks.push({location,bytes:utf8Bytes(serialized(node))});
     else visit(node.children,location);
@@ -55,7 +57,7 @@ export function measureEmailSize(revision: MessageRevision & {trackingEnabled?: 
   if (options.trackingEnabled ?? revision.trackingEnabled) {
     const tracked = tokenUrl(origin,'/l/',36,'link');
     const visit = (nodes: EmailNode[]) => nodes.forEach(node=>{if(node.kind==='element') {const url=node.tag==='a'?node.attributes.get('href'):undefined;if(url && url !== '{{unsubscribe_url}}' && !contactLink(url)){const tagged=analyticsUrl(url,analyticsContext(bounded),'email');rewritten.set(url,utf8Bytes(tagged)>utf8Bytes(tracked)?tagged:tracked);}visit(node.children);}});
-    visit(parseEmailHtml(bounded.emailBody).nodes);
+    visit(parseEmailHtml(options.catalog?insertCatalogHtml(bounded.emailBody,options.catalog):bounded.emailBody).nodes);
   }
   const renderOptions={catalog:options.catalog,analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten};
   const rendered = renderMessageContent(bounded,renderOptions);
@@ -65,12 +67,14 @@ export function measureEmailSize(revision: MessageRevision & {trackingEnabled?: 
   // real fallback and saved-name renderings, so a growing personalised section
   // is not reported at its much smaller fallback size.
   const sections=new Map<string,{location:string;bytes:number}>();
-  const renderings=Object.keys(values).length?[html,renderMessageContent(bounded,{...renderOptions,values}).html+pixel]:[html];
+  const diagnosticOptions={...renderOptions,catalogDiagnostics:true};
+  const diagnostic=options.catalog?renderMessageContent(bounded,diagnosticOptions).html+pixel:html;
+  const renderings=Object.keys(values).length?[diagnostic,renderMessageContent(bounded,{...diagnosticOptions,values}).html+pixel]:[diagnostic];
   for(const content of renderings)for(const block of largestBlocks(content)) {
     if(block.bytes>(sections.get(block.location)?.bytes??-1))sections.set(block.location,block);
   }
   const largest=[...sections.values()].sort((a,b)=>b.bytes-a.bytes).slice(0,3);
-  const htmlBytes=utf8Bytes(html)+growth(options.catalog?insertCatalogHtml(revision.emailBody,options.catalog):revision.emailBody,true)+growth(revision.preheader,true),textBytes=utf8Bytes(rendered.text)+growth(options.catalog?catalogTextValues(revision.emailText,options.catalog):revision.emailText,false);
+  const htmlBytes=utf8Bytes(html)+growth(revision.emailBody,true)+growth(revision.preheader,true),textBytes=utf8Bytes(rendered.text)+growth(revision.emailText,false);
   return {htmlBytes,textBytes,limitBytes:emailByteLimit,largestBlocks:largest,exceedsLimit:htmlBytes>emailByteLimit||textBytes>emailByteLimit};
 }
 export function formatEmailSize(size: EmailSize) {

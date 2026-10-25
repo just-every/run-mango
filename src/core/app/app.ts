@@ -1,5 +1,5 @@
 import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
-import {registerCatalogReader,liveCatalogValues} from '@/core/features/campaigns/catalog-values';
+import {registerCatalogReader,configuredCatalogValues} from '@/core/features/campaigns/catalog-values';
 import {catalogSummary} from '@/core/features/campaigns/catalog-outcomes';
 import {advisorySizeOptions} from '@/core/features/lifecycle/advisory-size-options';
 import {reusableBlockRoutes} from '@/core/features/campaigns/reusable-block-routes';
@@ -204,7 +204,7 @@ type AppServices = {
 type BeforeAuthenticationRoutes = (app: Hono<AppEnvironment>, services: AppServices) => void;
 
 export function createAppServices(platform: Platform, queueIdentity: object = platform.jobs): AppServices {
-  registerCatalogReader(platform.database,source=>liveCatalogValues(platform,source));
+  registerCatalogReader(platform.database,source=>configuredCatalogValues(platform,source));
   const database = platform.database;
   const healthService = createHealthService(createHealthRepository(database), platform, queueIdentity);
   const authService = createAuthService(createAuthRepository(database), platform);

@@ -7,6 +7,7 @@ import {syncSource} from '../go-live/source-edge';
 import {openPage,reloadPage} from '../support/navigation';
 import {png} from '../support/images';
 import {authoredBody} from '../../src/core/features/campaigns/authoring-content';
+import {mobileEnvelope,mobileDocument} from '../../src/core/features/campaigns/email-mobile';
 
 /** Original synthetic-mango fixtures reach the real authoring and delivery doors. */
 export async function chosenSizeJourney(page:Page,info:TestInfo){
@@ -41,6 +42,7 @@ export async function chosenSizeJourney(page:Page,info:TestInfo){
   expect(state).toEqual({version:1,provider:'shopify',layout:'product-grid',empty:'hide',items:Array.from({length:6},(_,index)=>({productId:`gid://shopify/Product/${160+index}`,variantId:`gid://shopify/ProductVariant/${(160+index)*10+1}`}))});
   const template=await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:draft.revisionId,name:'synthetic-mango-390'}}),201);
   const visible=await meter();mark('visible bound');expect(visible.exceedsLimit).toBe(false);
+  catalog.delete(165);const deleted=await meter();expect(deleted.htmlBytes).toBeLessThan(visible.htmlBytes);catalog.reset();
   catalog.unpublish(160);catalog.stock(1611,0);await save();const hidden=await meter();
   if(hidden.htmlBytes!==visible.htmlBytes){
    catalog.reset();await approve(site,cookie,draft);await site.control('/_golive/clock',{advanceMs:3600001});const baselineRows=await dispatch(site,draft.campaignId,due);expect(baselineRows.map(row=>row.transport_disposition)).toEqual(['accepted']);const baselineSend=edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);expect(baselineSend).toHaveLength(1);const actual=Buffer.byteLength(baselineSend[0].body.content.find((part:any)=>part.type==='text/html').value);console.log(`Configured-item failure receipt: savedBound=${hidden.htmlBytes}; actualHandoff=${actual}`);expect(actual,'restored configured products must not exceed the saved bound').toBeLessThanOrEqual(hidden.htmlBytes);
@@ -53,10 +55,10 @@ export async function chosenSizeJourney(page:Page,info:TestInfo){
   const before=await site.count('campaigns'),templates=await site.rows('SELECT * FROM campaign_templates ORDER BY id');
   for(const [path,body] of [[`/api/campaigns/${draft.campaignId}/duplicate`,{}],['/api/campaign-templates',{revisionId:draft.revisionId,name:'synthetic-mango-392'}],[`/api/campaign-templates/${template.id}/start`,{}]] as const){const refusal=await json(await site.call(path,{method:'POST',cookie,body}),400);expect(refusal).toMatchObject({error:'email_too_large',size:{htmlBytes:over.htmlBytes}});}
   expect(await site.count('campaigns')).toBe(before);expect(await site.rows('SELECT * FROM campaign_templates ORDER BY id')).toEqual(templates);
-  await page.getByRole('button',{name:'HTML mode',exact:true}).click();const unsaved=authoredBody(saved.emailBody)+'<p>Synthetic unsaved catalog change.</p>';
+  await page.getByRole('button',{name:'HTML mode',exact:true}).click();const envelope=mobileEnvelope(authoredBody(saved.emailBody)),unsaved=mobileDocument(envelope.body+'<p>Synthetic unsaved catalog change.</p>',envelope.style);
   for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await page.getByRole('textbox',{name:'Email body',exact:true}).fill(unsaved);await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByText(/Email is too large\./).first()).toBeVisible();await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(unsaved);await page.locator('.editor-panel').screenshot({path:info.outputPath(`chosen-refused-${width}.png`)});}
   expect((await read()).emailBody).toBe(saved.emailBody);catalog.reset();await page.getByRole('textbox',{name:'Email body',exact:true}).fill(authoredBody(saved.emailBody));await save();await approve(site,cookie,draft);await site.control('/_golive/clock',{advanceMs:3600001});const rows=await dispatch(site,draft.campaignId,due);expect(rows.map(row=>row.transport_disposition)).toEqual(['accepted']);
-  const marketing=()=>edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);expect(marketing()).toHaveLength(1);const html=marketing()[0].body.content.find((part:any)=>part.type==='text/html').value;expect(Buffer.byteLength(html)).toBe(hidden.htmlBytes);for(let n=160;n<166;n++)expect(html).toContain(`synthetic-mango-${n}`);
+  const marketing=()=>edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);expect(marketing()).toHaveLength(1);const html=marketing()[0].body.content.find((part:any)=>part.type==='text/html').value;expect(Buffer.byteLength(html)).toBe(hidden.htmlBytes);expect([...html.matchAll(/<h3>([^<]*)<\/h3>/g)].map(match=>match[1])).toEqual(Array.from({length:6},(_,index)=>`synthetic-mango-${160+index}`));
   console.log(`Chosen six-item promotion: storedCharacters=${saved.emailBody.length}; bound=${hidden.htmlBytes}; edgeBytes=${Buffer.byteLength(html)}`);
   const smallClock=await site.control('/_golive/clock',{advanceMs:25*3600000,hold:true});await site.control('/_golive/sender-evidence');const smallDue=new Date(smallClock.now+3600000),small=await draftCampaign(site,cookie,'synthetic-mango-393',[email],smallDue);
   await json(await site.call(`/api/campaign-revisions/${small.revisionId}`,{method:'PATCH',cookie,body:{emailBody:saved.emailBody,trackingEnabled:true}}),200);
