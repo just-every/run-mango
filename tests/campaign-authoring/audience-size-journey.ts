@@ -1,5 +1,7 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import {createRequire} from 'node:module';
+const localRequire=createRequire(import.meta.url);
+const axeSource=createRequire(localRequire.resolve('@axe-core/playwright'))('axe-core').source as string;
 import {providerEdge} from '../go-live/edge';
 import {eventSigner} from '../go-live/sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,approve,dispatch,rule} from '../go-live/harness';
@@ -14,14 +16,12 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
     await site.control('/_golive/sender-evidence');
     const short='synthetic-mango-171@example.test',long='synthetic-mango-172@example.test';
     await confirmedContact(site,edge,cookie,short,'Iris & Renée');
-    await confirmedContact(site,edge,cookie,long,'synthetic-mango-172');
-    // Arrange a recorded extreme name without bypassing any save or approval door.
-    await site.runtime.sql(`UPDATE contacts SET display_name='${'&'.repeat(180)}' WHERE email='${long}'`);
+    await confirmedContact(site,edge,cookie,long,'synthetic-mango-172'+'&'.repeat(160));
     const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000);
     const draft=await draftCampaign(site,cookie,'synthetic-mango-173',[short],due);
     const emailBody='<h1>Garden news</h1>'+[1,2,3].map(n=>'<p>'+`Garden ${n}: `+'{{displayName | fallback: friend}} '.repeat(80)+'</p>').join('');
     const patch=(body:unknown)=>site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body});
-    const measure=(inclusionRuleJson?:string)=>site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{emailBody,physicalAddress:sender.physicalAddress,...(inclusionRuleJson?{inclusionRuleJson,exclusionRulesJson:'[]'}:{})}});
+    const measure=(inclusionRuleJson?:string)=>site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{emailBody,preheader:'Seeds, beds and a spring market',physicalAddress:sender.physicalAddress,...(inclusionRuleJson?{inclusionRuleJson,exclusionRulesJson:'[]'}:{})}});
     const global=await json(await measure(),200);expect(global.exceedsLimit).toBe(true);
     await json(await patch({emailBody}),200);
     const read=async()=>json(await site.call(`/api/campaigns/${draft.campaignId}`,{cookie}),200);
@@ -44,7 +44,9 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
       expect(await (await response).json()).toMatchObject({htmlBytes:measured.htmlBytes,exceedsLimit:false});
       await expect(page.getByRole('status',{name:'Email sent size'})).toContainText('Sent size upper bound');
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-      expect((await new AxeBuilder({page}).exclude('iframe').analyze()).violations.filter(v=>['serious','critical'].includes(v.impact??''))).toEqual([]);
+      await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document,{iframes:false}));
+      expect(audit.violations.filter((v:any)=>['serious','critical'].includes(v.impact??''))).toEqual([]);
+      expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
       await page.locator('.editor-panel').screenshot({path:info.outputPath(`audience-size-${width}.png`)});
     }
     expect(errors).toEqual([]);
