@@ -1,4 +1,4 @@
-import {liveCatalogValues} from '@/core/features/campaigns/catalog-values';
+import {liveCatalogValues,CatalogBlocked} from '@/core/features/campaigns/catalog-values';
 import {catalogBlocks,insertCatalogHtml,catalogTextValues,type CatalogRenderings} from '@/core/features/campaigns/catalog-blocks';
 import {CatalogDeliverySkip} from '@/core/features/campaigns/catalog-outcomes';
 import {inspectRevisionLinks} from './link-checks';
@@ -39,7 +39,7 @@ export async function prepareDeliveryRequest(
   }
   let catalog:CatalogRenderings|undefined;
   if(catalogBlocks(envelope.revision.emailBody).length){
-    try{catalog=await liveCatalogValues(runtime.platform,envelope.revision.emailBody);}catch{throw new CatalogDeliverySkip('catalog-unavailable');}
+    try{catalog=await liveCatalogValues(runtime.platform,envelope.revision.emailBody);}catch(error){throw new CatalogDeliverySkip(error instanceof CatalogBlocked?'catalog-blocked':'catalog-unavailable');}
     if(Object.values(catalog).some(value=>value.skip))throw new CatalogDeliverySkip('catalog-empty');
     const expanded={emailBody:insertCatalogHtml(envelope.revision.emailBody,catalog),emailText:catalogTextValues(envelope.revision.emailText,catalog),smsBody:envelope.revision.smsBody};
     if(inspectEmailHtml(expanded.emailBody).issues.length||(await inspectRevisionLinks({revision:expanded,links:[]},runtime.platform)).some(row=>!row.inspection.ok))throw new CatalogDeliverySkip('catalog-blocked');
