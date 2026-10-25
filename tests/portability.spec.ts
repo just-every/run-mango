@@ -10,6 +10,36 @@ import { readArchive } from '../src/vendor/base/portability/index.mjs';
 import { stageArchive } from './portability/flows';
 import { png } from './support/images';
 
+// Admission refusals reuse the smaller archives already produced by the erasure
+// journey, leaving the populated CLI round-trip within its existing time budget.
+async function refuseWrongPrivateAuthority(records: any[]) {
+    const manifest = records[0];
+    const wrong = await portabilityRuntime({ restore: true, key: 'different-private-key-at-least-thirty-two-bytes' });
+    try {
+      const request = (path: string, body: unknown, method = 'POST') => wrong.call('/api/portability/' + path, { method, cookie: wrong.cookie, body });
+      const id = (await (await request('imports', { confirmed: true, manifest })).json()).id;
+      for (const part of records.filter(record => record.kind === 'part')) expect((await request(`imports/${id}/parts/${part.index}`, part, 'PUT')).status).toBe(200);
+      expect((await request(`imports/${id}/finalize`, { contentHash: records.at(-1).contentHash, archiveHash: records.at(-1).archiveHash })).status).toBe(409);
+      expect((await wrong.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
+      expect((await wrong.bucket.list()).objects).toEqual([]);
+    } finally { await wrong.close(); }
+}
+
+async function refuseOpeningHistory(target: Awaited<ReturnType<typeof portabilityRuntime>>, records: any[]) {
+    // A migration baseline with former subscribers is real history, even when
+    // no contacts remain. Only the fresh zero-count baseline is replaceable.
+    await target.db.prepare("UPDATE list_growth_baseline SET subscribed=1 WHERE channel='email'").run();
+    const historicalId = await stageArchive(target, records);
+    const historical = await target.call(`/api/portability/imports/${historicalId}/finalize`, {method:'POST',cookie:target.cookie,
+      body:{contentHash:records.at(-1).contentHash,archiveHash:records.at(-1).archiveHash}});
+    expect(historical.status).toBe(409);
+    expect(await historical.json()).toEqual({error:'target_not_empty:list_growth_baseline'});
+    expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
+    expect(await target.db.prepare("SELECT subscribed FROM list_growth_baseline WHERE channel='email'").first()).toEqual({subscribed:1});
+    expect((await target.call(`/api/portability/imports/${historicalId}/abort`, {method:'POST',cookie:target.cookie,body:{}})).status).toBe(200);
+    await target.db.prepare("UPDATE list_growth_baseline SET subscribed=0 WHERE channel='email'").run();
+}
+
 test('[DATA-001] complete native records and uploaded assets round-trip without restoring login authority', async () => {
   test.setTimeout(180000);
   const source = await portabilityRuntime({beforeMigration:async(file:string,db:D1Database)=>{
@@ -121,27 +151,6 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect((await target.call('/subscribe/info')).status).toBe(503);
     expect((await target.call('/api/portability/exports', { method: 'POST', body: {} })).status).toBe(401);
     expect((await target.call('/api/portability/exports', { method: 'POST', cookie: target.cookie, body: {}, origin: 'https://other.example.test' })).status).toBe(403);
-    const wrong = await portabilityRuntime({ restore: true, key: 'different-private-key-at-least-thirty-two-bytes' });
-    try {
-      const request = (path: string, body: unknown, method = 'POST') => wrong.call('/api/portability/' + path, { method, cookie: wrong.cookie, body });
-      const id = (await (await request('imports', { confirmed: true, manifest })).json()).id;
-      for (const part of records.filter(record => record.kind === 'part')) expect((await request(`imports/${id}/parts/${part.index}`, part, 'PUT')).status).toBe(200);
-      expect((await request(`imports/${id}/finalize`, { contentHash: records.at(-1).contentHash, archiveHash: records.at(-1).archiveHash })).status).toBe(409);
-      expect((await wrong.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
-      expect((await wrong.bucket.list()).objects).toEqual([]);
-    } finally { await wrong.close(); }
-    // A migration baseline with former subscribers is real history, even when
-    // no contacts remain. Only the fresh zero-count baseline is replaceable.
-    await target.db.prepare("UPDATE list_growth_baseline SET subscribed=1 WHERE channel='email'").run();
-    const historicalId = await stageArchive(target, records);
-    const historical = await target.call(`/api/portability/imports/${historicalId}/finalize`, {method:'POST',cookie:target.cookie,
-      body:{contentHash:records.at(-1).contentHash,archiveHash:records.at(-1).archiveHash}});
-    expect(historical.status).toBe(409);
-    expect(await historical.json()).toEqual({error:'target_not_empty:list_growth_baseline'});
-    expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
-    expect(await target.db.prepare("SELECT subscribed FROM list_growth_baseline WHERE channel='email'").first()).toEqual({subscribed:1});
-    expect((await target.call(`/api/portability/imports/${historicalId}/abort`, {method:'POST',cookie:target.cookie,body:{}})).status).toBe(200);
-    await target.db.prepare("UPDATE list_growth_baseline SET subscribed=0 WHERE channel='email'").run();
     await writeFile(session, target.cookie, { mode: 0o600 });
     await command(['import', '--origin', target.origin, '--session-file', session, '--from', archive]);
     // Restore and erasure cannot share a running app: only restore mode can
@@ -219,8 +228,11 @@ test('[CONT-013] current erasure authority refuses an old archive on an empty re
     expect(job.state).toBe('completed');
     const contact=await source.db.prepare('SELECT id FROM contacts WHERE email=?').bind(email).first();
     await source.db.prepare("INSERT INTO paid_subscriptions(subscription_id,customer_id,contact_id,state,stripe_status,state_event_id,state_at,created_at,updated_at) VALUES('synthetic-mango-31','synthetic-mango-32',?,'active','active','synthetic-mango-33',1,1,1)").bind(contact.id).run();
-    const before=await archive();expect(JSON.stringify(before)).toContain(email);
+    // A failed private-authority restore must also refuse a real R2 object.
+    await source.bucket.put('synthetic-mango-171-original.png', png(5, 4), {httpMetadata:{contentType:'image/png'}});
+    const before=await archive();expect(before[0].objects.length).toBeGreaterThan(0);expect(JSON.stringify(before)).toContain(email);
     expect(JSON.stringify(before)).toContain('synthetic-mango-31');
+    await refuseWrongPrivateAuthority(before);
     const artifacts=(await source.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND (name GLOB 'rer_portability_snap_*' OR name GLOB 'rer_portability_stage_*')").all()).results.map(row=>row.name);
     artifacts.push('rer_portability_segments','rer_portability_parts','rer_portability_owned','rer_portability_jobs');
     let discarded=0;for(const table of artifacts)discarded+=(await source.db.prepare(`SELECT count(*) AS n FROM "${table.replaceAll('"','""')}"`).first()).n;
@@ -241,6 +253,7 @@ test('[CONT-013] current erasure authority refuses an old archive on an empty re
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
     expect((await target.call('/api/operator',{cookie:target.cookie})).status).toBe(200);
     expect((await request(`imports/${id}/abort`,{})).status).toBe(200);
+    await refuseOpeningHistory(target,after);
     const currentId=await stageArchive(target,after);
     const current=await request(`imports/${currentId}/finalize`,{contentHash:after.at(-1).contentHash,archiveHash:after.at(-1).archiveHash,laterJournal:{sourceIdentity:latest.sourceIdentity,epoch:latest.epoch,journal:[]}});
     expect(current.status,await current.clone().text()).toBe(200);
