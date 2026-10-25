@@ -71,7 +71,9 @@ export async function incumbentImageJourney(site:Installation,cookie:string,page
   const report=async()=> (await site.call(`/api/audience/archives/${moved.archive.id}/report`,{cookie})).text();
   expect(await report()).toContain('synthetic-mango-161');
   expect(await report()).toContain('HTTP 404');
-  expect(await report()).toContain('still on an incumbent host');
+  expect(await report()).toContain('8 re-hosted; 7 failed; 8 still on an incumbent host');
+  expect(await report()).toContain('| Template | synthetic-mango-161 |');
+  expect(await report()).toContain('| draft | synthetic-mango-161 |');
   const checks=await json(await site.call(`/api/campaigns/${saved.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:saved.revisionId}}),200);
   expect(checks.checks.find((check:any)=>check.kind==='message.content')).toMatchObject({status:'passed'});
   await openPage(page,site.runtime.url+'/app/audience/import');
@@ -96,12 +98,15 @@ export async function incumbentImageJourney(site:Installation,cookie:string,page
   await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:failed.revisionId,name:existing.name,templateId:existing.id,updatedAt:Date.parse(existing.updatedAt)}}),201);
   expect((await json(await site.call(`/api/audience/archives/${moved.archive.id}`,{cookie}),200)).content.find((row:any)=>row.id===existing.id).removed_json).not.toContain('Image failed:');
   expect(await report()).not.toContain('HTTP 404');
+  expect(await report()).toContain('8 re-hosted; 6 failed; 6 still on an incumbent host');
   const source=await json(await site.call('/api/audience/import-source',{method:'POST',cookie,body:{provider:'klaviyo',endpoint:'https://a.klaviyo.com',key:'synthetic-mango-164-key'}}),200);
   const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie,body:{...source,consent:consentEvidence}}),200);
   let job=(await json(await site.call('/api/audience/imports',{method:'POST',cookie,body:{fingerprint:preview.fingerprint}}),200)).job;
   while(['queued','applying'].includes(job.state))job=(await json(await site.call(`/api/audience/imports/${job.id}/resume`,{method:'POST',cookie,body:{}}),200)).job;
   expect(job.state).toBe('completed');
-  expect(await (await site.call(`/api/audience/imports/${job.id}/report`,{cookie})).text()).toContain('Image re-hosted:');
+  const apiReport=await (await site.call(`/api/audience/imports/${job.id}/report`,{cookie})).text();
+  expect(apiReport).toContain('Image re-hosted:');
+  expect(apiReport).toContain('1 re-hosted; 0 failed; 0 still on an incumbent host');
   expect(imageCalls['https://gallery.mailchimp.com/synthetic-mango-160.png']).toBe(2);
   const apiTemplate=(await json(await site.call('/api/campaign-templates',{cookie}),200)).templates.find((row:any)=>row.name==='synthetic-mango-164 API image');
   const apiStarted=await json(await site.call(`/api/campaign-templates/${apiTemplate.id}/start`,{method:'POST',cookie}),201);

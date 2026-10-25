@@ -7962,7 +7962,7 @@
       "executable": false
     },
     "tests/go-live/incumbent-image-journey.ts": {
-      "sha256": "5ef0be7a82cbf9ae3cb3cc5f36a087fcbd028fe3fd968e71795d06fe53bc93e3",
+      "sha256": "19925bdf5ab9ed31b56541158f2d01926876cb0e1e455def6e130516b8fba5df",
       "executable": false
     },
     "tests/go-live/kiosk-harness.ts": {
