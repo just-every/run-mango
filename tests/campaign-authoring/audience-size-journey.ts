@@ -55,7 +55,7 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
       await page.getByRole('button',{name:'Add inclusion condition',exact:true}).click();
       await page.getByRole('combobox',{name:'Include 2 field',exact:true}).selectOption('contact:email');
       await page.getByRole('textbox',{name:'Include 2 value',exact:true}).fill(long);
-      const refusal=page.waitForResponse(response=>response.url()===`${site.runtime.url}/api/campaign-revisions/${draft.revisionId}`&&response.request().method()==='PATCH');
+      const refusal=page.waitForResponse(response=>response.url()===`${site.runtime.url}/api/campaign-revisions/${draft.revisionId}?review=true`&&response.request().method()==='PATCH');
       await page.getByRole('button',{name:'Save full draft',exact:true}).click();
       const refusedResponse=await refusal;expect(refusedResponse.status()).toBe(400);
       const retained=await refusedResponse.json();expect(retained).toMatchObject({error:'email_too_large',size:{exceedsLimit:true}});expect(retained.size.htmlBytes).toBeGreaterThan(retained.size.limitBytes);expect(retained.size.largestBlocks).toHaveLength(3);
