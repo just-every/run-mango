@@ -75,7 +75,8 @@ export async function incumbentImageJourney(site:Installation,cookie:string,page
   const checks=await json(await site.call(`/api/campaigns/${saved.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:saved.revisionId}}),200);
   expect(checks.checks.find((check:any)=>check.kind==='message.content')).toMatchObject({status:'passed'});
   await openPage(page,site.runtime.url+'/app/audience/import');
-  await page.getByRole('button',{name:'Show imported history and templates',exact:true}).first().click();
+  const archivePanel=page.locator('.audience-import-job').filter({has:page.locator(`a[href="/api/audience/archives/${moved.archive.id}/report"]`)});
+  await archivePanel.getByRole('button',{name:'Show imported history and templates',exact:true}).click();
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});
     await expect(page.getByText(/Image failed:.*synthetic-mango-161/)).toBeVisible();
