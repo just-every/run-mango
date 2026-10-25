@@ -10,7 +10,7 @@ import { linkRulesJourney, linkNetwork } from './content-links';
 import { smsReviewJourney } from './sms-review';
 import { openPage, reloadPage } from '../support/navigation';
 
-contract('MSG-014][MSG-015][MSG-006][MSG-007][MSG-005', 'review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out', async ({page}, info) => {
+contract('MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014', 'review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out', async ({page}, info) => {
   const commerce=sourceEdge();
   const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:imageHosts});
   try {

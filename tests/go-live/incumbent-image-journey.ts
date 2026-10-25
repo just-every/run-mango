@@ -31,7 +31,7 @@ export async function incumbentImageJourney(site:Installation,cookie:string,page
     {name:'campaigns_content/synthetic-mango-159.html',data:body},
     {name:'templates/synthetic-mango-160.html',data:'<p>synthetic-mango-160 network</p>'+image('https://gallery.mailchimp.com/synthetic-mango-160.png')},
     {name:'templates/synthetic-mango-161.html',data:missing},
-    {name:'templates/synthetic-mango-162.html',data:'<p>synthetic-mango-162 redirect</p>'+image('https://gallery.mailchimp.com/synthetic-mango-162.png')},
+    {name:'templates/synthetic-mango-162.html',data:'<p>synthetic-mango-162 redirect</p>'+image('https://gallery.mailchimp.com/synthetic-mango-162.png')+image('https://gallery.mailchimp.com/synthetic-mango-160.png')},
   ]);
   const attemptsBefore = {...imageCalls};
   await postArchive(site,cookie,'/api/audience/archive-preview',fixture);
