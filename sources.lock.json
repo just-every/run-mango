@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "2c58bc64533cfa7ecf188c8f4eedd324759bb732b47140df90e3c65e03e8030c",
+      "sha256": "638df4cf41768f19c2986f333534eeeb83305df98ae7a8e8114a4ae087bace5c",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "bd64764834459c4e5897bde099251337dc7e4ab851da23b67ff1738c190d0d04",
+      "sha256": "5fddcf31e480b36f36664f44b3a1f033872fcf3f55c84472ffd56d07264afea8",
       "executable": false
     },
     "DEMO.md": {
@@ -4586,11 +4586,11 @@
       "executable": false
     },
     "src/core/features/move-in/archive-service.ts": {
-      "sha256": "a749bd681baacc104e3c85ee81dfac6587d3211d5fd6218884434419c49848d7",
+      "sha256": "94f9855c49f3bb068fa0e92e86dde802bafdb7c2c6cfccd11456706f6260c7e5",
       "executable": false
     },
     "src/core/features/move-in/conversion-report.ts": {
-      "sha256": "984cc8a307e8e4cc9994a5b23c954968c796b8b4fca00133f3ea84a03efb6352",
+      "sha256": "760a015c1f58c7b08b078b97cd34e32319b6764f4ddc1aa1834c312caad6ff45",
       "executable": false
     },
     "src/core/features/move-in/csv-review.ts": {
@@ -7858,7 +7858,7 @@
       "executable": false
     },
     "tests/go-live/content-hosts.ts": {
-      "sha256": "d385ace028b12ff1ec741e9bd4c0b1d2a23f2842a0a6557824e454c23c2b154f",
+      "sha256": "34dc985fee7e8130d69ceb6ee6de5f51bf2a1d2a1055208fa8c9b32d2fff9166",
       "executable": false
     },
     "tests/go-live/content-links.ts": {
@@ -8086,11 +8086,11 @@
       "executable": false
     },
     "tests/go-live/source-api-edge.ts": {
-      "sha256": "ce3271076906e7c41a38957987a625033f1e06df1b005326ce9b55e6d2fc3596",
+      "sha256": "d93fd747a0af5ea1923157f8b850c77d495773fa2251f72d01edbfb7fe0c6890",
       "executable": false
     },
     "tests/go-live/source-api-journey.ts": {
-      "sha256": "ed099a98de504e8de97eb0018bf6a1ec1fc2408e8b72a4301495e80cdf6691c5",
+      "sha256": "85ab45897c0b408c10c5ef3296912655092538f08154e5955d321e2677c96864",
       "executable": false
     },
     "tests/go-live/source-csv-journey.ts": {
@@ -8122,7 +8122,7 @@
       "executable": false
     },
     "tests/go-live/template-conversion.ts": {
-      "sha256": "47e22836dae417a31142d728682405f18de6ee90e6753216b4ee1ab66c956ff6",
+      "sha256": "2fe8ab4f8c037836a928aeb22e5d82bc6aaaebeba9bc3718270e4aaa558c659c",
       "executable": false
     },
     "tests/go-live/typed-tests.journeys.ts": {
