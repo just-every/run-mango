@@ -3,7 +3,7 @@ import {createAudienceRepository} from '@/core/features/audience/repository';
 import {createRuleMatcher} from '@/core/features/audience/rule-matcher';
 import {selectedChannel} from '@/core/features/audience/eligibility';
 import {createStoreRepository} from '@/core/features/store/repository';
-import {parseStructuredRules} from '@/core/features/lifecycle/rules';
+import {flattenPredicates,parseStructuredRules} from '@/core/features/lifecycle/rules';
 
 export type SizeAudience = {inclusionRuleJson?:string;exclusionRulesJson?:string};
 /** Bound all selected members, including temporarily ineligible ones. A later
@@ -15,6 +15,11 @@ export async function sizeAudience(database:Database,revision:SizeAudience){
   // An unfinished/unavailable selection must keep the deployment-wide bound.
   if(!rules.ok)return undefined;
   const repository=createAudienceRepository(database),store=createStoreRepository(database),now=new Date();
+  // New follow-up cohorts are inserted beside the draft, after its size check.
+  // Until that authority exists, an empty match is not a known empty audience.
+  for(const predicate of [...flattenPredicates(rules.inclusion),...rules.exclusions.map(rule=>rule.predicate)]){
+    if(predicate.sourceType==='campaign'&&!await repository.followupExists(String(predicate.value)))return undefined;
+  }
   const matcher=createRuleMatcher(repository,{sourceRecords:store.listSourceRecords,sourceActivities:store.listSourceActivities},now,
     (id,channel)=>selectedChannel(repository,id,channel,now,async()=>false));
   const members:string[]=[];

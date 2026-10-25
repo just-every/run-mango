@@ -1,3 +1,4 @@
+import {loadAnalyticsPolicy} from '@/core/features/settings/analytics-settings';
 import { savedEmailSize } from './saved-email-size';
 import { normalizeAuthoredContent } from './authoring-content';
 import { createCampaignReuseService } from './reuse-service';
@@ -29,9 +30,11 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
   return {
     reuse:createCampaignReuseService(platform.database,defaults,timezone,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true}),
     starters:starters.list,
-    async emailSize(draft: DraftComposition) {
-      const value=normalizeAuthoredContent({...defaults(),...draft});
-      return savedEmailSize(platform.database,{emailSubject:value.emailSubject??'',emailBody:value.emailBody??'',emailText:value.emailText??'',preheader:value.preheader??'',physicalAddress:value.physicalAddress??'',smsBody:'',trackingEnabled:value.trackingEnabled,inclusionRuleJson:value.inclusionRuleJson,exclusionRulesJson:value.exclusionRulesJson,utmPolicyJson:value.utmPolicyJson,name:value.name},{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);
+    async emailSize(draft: DraftComposition, campaignId?:string) {
+      const saved=campaignId?(await composition.editable(campaignId))?.revision:undefined;
+      if(campaignId&&!saved)return undefined;
+      const value=normalizeAuthoredContent({...defaults(),...saved,...draft});
+      return savedEmailSize(platform.database,{emailSubject:value.emailSubject??'',emailBody:value.emailBody??'',emailText:value.emailText??'',preheader:value.preheader??'',physicalAddress:value.physicalAddress??'',smsBody:'',trackingEnabled:value.trackingEnabled,inclusionRuleJson:value.inclusionRuleJson,exclusionRulesJson:value.exclusionRulesJson,utmPolicyJson:value.utmPolicyJson===undefined?JSON.stringify(await loadAnalyticsPolicy(platform.database.$client)):value.utmPolicyJson,name:value.name,id:saved?.id??'x'.repeat(26)},{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);
     },
     async fromSignal(id:string,operatorId:string) {
       const source=await starters.read(id);

@@ -1,11 +1,10 @@
-import {audienceSizeJourney} from './audience-size-journey';
 import {reusableSizeJourney} from './reusable-size-journey';
 import { localSessionCookieName } from '../support/local-session';
 import { summarizeAudienceRules } from '../../src/core/features/campaigns/audience-summary';
 import { test, expect } from '@playwright/test';
 import { authoringRuntime } from './browser-runtime.mjs';
 
-test('[CAMP-002][CAMP-003][CAMP-004] native API persists blank and complete drafts while rejecting incomplete explicit creates', async ({ request, page }, info) => {
+test('[CAMP-002][CAMP-003][CAMP-004] native API persists blank and complete drafts while rejecting incomplete explicit creates', async ({ request }) => {
   test.setTimeout(120000);
   const runtime = await authoringRuntime();
   try {
@@ -100,5 +99,4 @@ test('[CAMP-002][CAMP-003][CAMP-004] native API persists blank and complete draf
     const state = await (await request.get(runtime.url + '/_authoring/state', { headers: { 'X-Test-Token': runtime.token } })).json();
     expect(state).toEqual({ jobs: [], recipients: [], approvals: [] });
   } finally { await runtime.close(); }
-  await audienceSizeJourney(page,info);
 });

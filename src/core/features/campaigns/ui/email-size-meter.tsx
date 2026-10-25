@@ -3,9 +3,9 @@ import { requestJson } from '@/core/app/client/lib/api';
 import type { DraftComposition } from './draft-composition';
 import type { EmailSize } from '../email-size';
 
-export function EmailSizeMeter({draft}:{draft:DraftComposition}) {
+export function EmailSizeMeter({draft,campaignId}:{draft:DraftComposition;campaignId?:string}) {
   const [report,setReport]=useState<EmailSize>(),[error,setError]=useState(false),[pending,setPending]=useState(true);
-  const input=JSON.stringify({emailSubject:draft.emailSubject,emailBody:draft.emailBody,preheader:draft.preheader,physicalAddress:draft.physicalAddress,trackingEnabled:draft.trackingEnabled,inclusionRuleJson:draft.inclusionRuleJson,exclusionRulesJson:draft.exclusionRulesJson});
+  const input=JSON.stringify({campaignId,name:draft.name,emailSubject:draft.emailSubject,emailBody:draft.emailBody,preheader:draft.preheader,physicalAddress:draft.physicalAddress,trackingEnabled:draft.trackingEnabled,inclusionRuleJson:draft.inclusionRuleJson,exclusionRulesJson:draft.exclusionRulesJson});
   useEffect(()=>{
     let current=true;setPending(true);setError(false);
     const timer=setTimeout(async()=>{

@@ -45,10 +45,10 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
     return context.json(await authoring.audience(body.data));
   });
   routes.post('/campaign-authoring/email-size',async context=>{
-    const body=await readJson(context,draftCompositionSchema);
+    const body=await readJson(context,draftCompositionSchema.extend({campaignId:z.string().min(1).max(200).optional()}));
     if('error' in body)return body.error;
-    const result=await settled(authoring.emailSize(body.data));
-    return 'refused' in result?context.json(result.refused,400):context.json(result.saved);
+    const result=await settled(authoring.emailSize(body.data,body.data.campaignId));
+    return 'refused' in result?context.json(result.refused,400):result.saved?context.json(result.saved):context.json({error:'campaign_draft_unavailable'},404);
   });
   routes.post('/proposals/generate', async context => {
     const result = await authoring.generate(context.get('operator').id);

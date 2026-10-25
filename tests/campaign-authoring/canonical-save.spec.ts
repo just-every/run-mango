@@ -1,3 +1,4 @@
+import {audienceSizeJourney} from './audience-size-journey';
 import {flowTemplateJourney} from './flow-template-journey';
 import {blockMobileControlsJourney,fullPromotionalEmailJourney} from './block-builder-journey';
 import {mobilePresentationJourney} from './mobile-presentation-journey';
@@ -102,4 +103,5 @@ test('[CAMP-003][MSG-009] a saved body saves to the same bytes, whether saved as
   } finally {
     await runtime.close();
   }
+  await audienceSizeJourney(page,info);
 });
