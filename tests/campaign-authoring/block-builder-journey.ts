@@ -51,7 +51,7 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     await expect(page.getByRole('status',{name:'Email sent size',exact:true})).toContainText('Sent size upper bound:');
     await page.getByRole('button',{name:'Block 1: columns',exact:true}).click();
     console.log('Block proof: screens');
-    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document.querySelector('main'),{iframes:false}));expect(audit.violations.filter((v:any)=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.screenshot({path:info.outputPath(`block-builder-${width}.png`),fullPage:true});}
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document.querySelector('main'),{iframes:false}));expect(audit.violations.filter((v:any)=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.getByRole('region',{name:'Email blocks',exact:true}).screenshot({path:info.outputPath(`block-builder-${width}.png`)});}
     await page.getByRole('button',{name:'Mobile email',exact:true}).click();await page.getByRole('button',{name:'Load 1 remote image',exact:true}).click();
     const preview=page.locator('iframe[title="Saved email preview"]');await expect(preview).toHaveAttribute('sandbox','');
     const previewFrame=page.frameLocator('iframe[title="Saved email preview"]');await expect(previewFrame.getByRole('img',{name:'Garden seeds',exact:true})).toBeVisible();await expect(previewFrame.getByRole('img',{name:'Garden seeds',exact:true})).toHaveJSProperty('naturalWidth',200);
@@ -76,8 +76,9 @@ async function blockMobileControlsJourney(page:Page,info:TestInfo,runtime:{url:s
   expect(saved.status(),await saved.text()).toBe(200);
   let reusable:any,proof:Awaited<ReturnType<typeof prepareReusableProof>>|undefined;
   for(const width of [1440,390]){
-    await page.setViewportSize({width,height:1000});await openPage(page,`${origin}/app/campaigns/${campaignId}/review`);
-    await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 3: text',exact:true}).click();
+    await page.setViewportSize({width,height:1000});
+    if(width===1440){await openPage(page,`${origin}/app/campaigns/${campaignId}/review`);await page.getByRole('button',{name:'Block builder',exact:true}).click();}
+    await page.getByRole('button',{name:'Block 3: text',exact:true}).click();
     await page.getByLabel('Hide on mobile',{exact:true}).check();await page.getByLabel('Hide on mobile',{exact:true}).uncheck();
     await page.getByLabel('Hide on desktop',{exact:true}).check();await page.getByLabel('Hide on desktop',{exact:true}).uncheck();
     if(width===390){
@@ -95,7 +96,7 @@ async function blockMobileControlsJourney(page:Page,info:TestInfo,runtime:{url:s
 
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
     await page.evaluate(axeSource);const shell=await page.evaluate(async()=>(window as any).axe.run(document,{iframes:false}));expect(shell.violations.filter((row:any)=>row.impact==='serious'||row.impact==='critical')).toEqual([]);
-    await page.screenshot({path:info.outputPath(`mobile-block-controls-${width}.png`),fullPage:true});
+    await page.getByRole('region',{name:'Email blocks',exact:true}).screenshot({path:info.outputPath(`mobile-block-controls-${width}.png`)});
   }
   const controlled=await read();await page.setViewportSize({width:375,height:1000});await page.setContent(controlled.emailBody);
   const computed=await page.getByText('Mobile font example',{exact:true}).evaluate(node=>{const s=getComputedStyle(node);return {font:s.fontSize,line:s.lineHeight,padding:s.padding,text:s.textAlign};});
