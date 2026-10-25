@@ -64,3 +64,23 @@ export async function bringImagesHome(platform: Platform, archiveId: string, rec
   }
   return {...record,html,text:htmlToText(html),removed:[...record.removed,...reports]};
 }
+
+/** Conversion diagnostics for API move-ins use their stored import rows, never a
+ * fresh source read. Current templates decide whether a failed source remains. */
+export async function apiImageReport(db: D1Database, archiveId: string) {
+  const records = (await db.prepare("SELECT id,title,source_path,removed_json FROM move_in_content WHERE archive_id=? AND state='imported' ORDER BY ordinal").bind(archiveId).all<{id:string;title:string;source_path:string;removed_json:string}>()).results;
+  const lines = ['## Incumbent images', ''];
+  let rehosted = 0, failed = 0, remaining = 0;
+  for (const record of records) {
+    const current = await db.prepare('SELECT composition_json FROM campaign_templates WHERE id=?').bind(record.id).first<{composition_json:string}>();
+    const sources = current ? incumbentImages(JSON.parse(current.composition_json).composition.emailBody ?? '') : [];
+    remaining += sources.length;
+    const notes = (JSON.parse(record.removed_json) as string[]).filter(note => note.startsWith('Image ') && (!note.startsWith('Image failed: ') || sources.some(source => note.startsWith(`Image failed: ${source};`))));
+    rehosted += notes.filter(note => note.startsWith('Image re-hosted: ')).length;
+    failed += notes.filter(note => note.startsWith('Image failed: ')).length;
+    const cell = (value:string) => value.replace(/[\r\n]+/g,' ').replaceAll('|','\\|');
+    lines.push(`### ${cell(record.title)} (${cell(record.source_path)})`, '', ...notes.map(note => '- '+cell(note)), ...sources.map(source => '- Still on incumbent host: '+cell(source)), '');
+  }
+  lines.splice(2,0,`${rehosted} re-hosted; ${failed} failed; ${remaining} still on an incumbent host in imported templates.`, '');
+  return lines.join('\n')+'\n';
+}

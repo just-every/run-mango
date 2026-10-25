@@ -1,3 +1,4 @@
+import { apiImageReport } from '../move-in/incumbent-images';
 import {applySourceExtras,undoSourceExtras} from '../move-in/source-extras';
 import {csvReview,csvReconciliation,recordCsvAttestations} from '../move-in/csv-review';
 import {csvAttestations,sourceIdentity} from '../move-in/csv-sources';
@@ -183,7 +184,8 @@ export function createAudienceImportService(platform: Platform) {
       const job=await db.prepare('SELECT operation_key FROM ik_jobs WHERE id=? UNION ALL SELECT operation_key FROM ik_d1_streams WHERE id=?').bind(id,id).first<{operation_key:string}>();
       const stored=job?await db.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE fingerprint=?').bind(job.operation_key).first<{fingerprint:string;plan_json:string}>():null;
       if(!stored)throw new Error('The reviewed source is no longer held.');
-      return csvReconciliation(await readAudiencePlan(db,stored));
+      const plan = await readAudiencePlan(db,stored);
+      return csvReconciliation(plan)+'\n'+await apiImageReport(db,'csv:'+plan.fingerprint);
     },
     read:async(id:string,input:D1ImportContext)=>{
       const context=await sharedAudienceImport(id,input);

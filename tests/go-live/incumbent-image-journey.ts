@@ -99,6 +99,7 @@ export async function incumbentImageJourney(site:Installation,cookie:string,page
   let job=(await json(await site.call('/api/audience/imports',{method:'POST',cookie,body:{fingerprint:preview.fingerprint}}),200)).job;
   while(['queued','applying'].includes(job.state))job=(await json(await site.call(`/api/audience/imports/${job.id}/resume`,{method:'POST',cookie,body:{}}),200)).job;
   expect(job.state).toBe('completed');
+  expect(await (await site.call(`/api/audience/imports/${job.id}/report`,{cookie})).text()).toContain('Image re-hosted:');
   expect(imageCalls['https://gallery.mailchimp.com/synthetic-mango-160.png']).toBe(2);
   const apiTemplate=(await json(await site.call('/api/campaign-templates',{cookie}),200)).templates.find((row:any)=>row.name==='synthetic-mango-164 API image');
   const apiStarted=await json(await site.call(`/api/campaign-templates/${apiTemplate.id}/start`,{method:'POST',cookie}),201);

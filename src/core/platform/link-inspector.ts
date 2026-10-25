@@ -79,7 +79,8 @@ export async function readInspectedImage(value: string, allowedHosts: string[], 
   if (url.protocol !== 'https:' || url.username || url.password || url.port || !allowedLinkHost(url.hostname, allowedHosts)) throw new Error('Image host is not permitted.');
   if (privateAddress(url.hostname)) throw new Error('Image host is a private-network address.');
   const addresses = await addressesFor(url.hostname, request);
-  if (!addresses.length || addresses.some(privateAddress)) throw new Error('Image DNS failed public-network inspection.');
+  if (!addresses.length) throw new Error('Image host did not resolve.');
+  if (addresses.some(privateAddress)) throw new Error('Image host resolves to a private-network address.');
   const response = await request(url, {redirect:'manual', signal:AbortSignal.timeout(timeoutMs)});
   if (!response.ok) { await response.body?.cancel(); throw new Error(`Image returned HTTP ${response.status}.`); }
   if (Number(response.headers.get('Content-Length') ?? 0) > limit) { await response.body?.cancel(); throw new Error('Image exceeds the byte limit.'); }
