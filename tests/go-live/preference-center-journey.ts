@@ -97,16 +97,19 @@ export async function preferenceCenterJourney(site:Installation,edge:Awaited<Ret
     expect(checks.eligibleCount).toBe(0);expect(checks.exclusions).toContainEqual({reason,count:1});
     const saved=await jsonResponse(`/api/campaigns/${campaign.campaignId}`);expect(JSON.parse(saved.audience.exclusions)).toEqual({[reason]:1});
   }
-  await site.control('/_golive/clock',{advanceMs:24*86400000});owner=await site.open();
-  expect((await detail()).consent).toEqual(before.consent);expect((await detail()).history).toEqual(changed.history);
   const foreignToken=new URL(confirmationUrl).pathname.split('/').at(-1)!;
   const foreign=await site.call('/preferences/'+foreignToken);expect(foreign.status).toBe(404);expect(await foreign.text()).not.toContain('Updated preference reader');
+  const unknownToken=await site.call('/preferences/synthetic-mango-180-unknown-token');expect(unknownToken.status).toBe(404);expect(await unknownToken.text()).not.toContain('Updated preference reader');
+  await site.control('/_golive/clock',{advanceMs:24*86400000});owner=await site.open();
+  expect((await detail()).consent).toEqual(before.consent);expect((await detail()).history).toEqual(changed.history);
   const all=await fetch(site.local(link),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'unsubscribeAll=true'});expect(all.status).toBe(200);expect(await all.text()).toContain('You are unsubscribed');
   expect((await detail()).contact.emailStatus).toBe('unsubscribed');
   await site.control('/_golive/clock',{advanceMs:60000});
   for(let count=0;count<seed.limits.unsubscribeRequestsPerMinutePerToken;count++)expect((await fetch(site.local(link))).status).toBe(200);
   expect((await fetch(site.local(link))).status).toBe(429);expect((await fetch(site.local(otherLink))).status).toBe(200);
   const otherId=(await site.rows("SELECT id FROM contacts WHERE email='branded@example.test'"))[0].id;
+  const otherBefore=await jsonResponse('/api/contacts/'+otherId),pauseClock=(await site.control('/_golive/clock')).now;
+  for(const days of [60,90]){expect((await fetch(site.local(otherLink),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true&pauseDays='+days})).status).toBe(200);const updated=await jsonResponse('/api/contacts/'+otherId);expect(updated.consent).toEqual(otherBefore.consent);expect(updated.history.some((row:any)=>row.kind==='preference-pause'&&JSON.parse(row.detail).pauseUntil===pauseClock+days*86400000)).toBe(true);}
   let erased=await site.call('/api/contacts/'+otherId,{method:'DELETE',cookie:owner}),receipt=await erased.json();
   while(erased.status===202){erased=await site.call('/api/audience/erasures/'+receipt.receipt.reference+'/resume',{method:'POST',cookie:owner,body:{}});receipt=await erased.json();}
   expect(erased.status).toBe(200);expect((await fetch(site.local(otherLink))).status).toBe(404);
