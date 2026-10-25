@@ -7538,7 +7538,7 @@
       "executable": false
     },
     "tests/campaign-authoring/create-api.spec.ts": {
-      "sha256": "e34013368ab9109b52392b82e39c7d97dd8997ba41d72448c9e8ae2b13eaa3c7",
+      "sha256": "3a614bc827673a5da02b9cb64408bf9a7af0e4eff75f06c7c05190eaef34ac89",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
