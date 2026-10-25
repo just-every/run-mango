@@ -7610,7 +7610,7 @@
       "executable": false
     },
     "tests/campaign-authoring/catalog-guard-journey.ts": {
-      "sha256": "0bed0005a60e75084c0a9f8171429427b2350941a453e9d8eff80fd0149a224f",
+      "sha256": "9fd2dd896069a695192f4b552c55ad4462b6e9cdda0cda8587e7572c29247c8e",
       "executable": false
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {
