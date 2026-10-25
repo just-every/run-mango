@@ -7,6 +7,16 @@ import type { ArchiveContentRow, ArchiveImport } from './archive-client';
 type Props = { archives: ArchiveImport[]; busyId?: string; actionsBusy?: boolean; onUndo: (id: string) => void; onContinue: (id: string) => void };
 const tone = (state: ArchiveImport['state']) => state === 'applied' ? 'good' : state === 'undone' ? 'neutral' : 'pending';
 
+function ImageConversions({ notesJson }: { notesJson: string }) {
+  const notes = (JSON.parse(notesJson) as string[]).filter(note => note.startsWith('Image '));
+  if (!notes.length) return null;
+  const failed = notes.filter(note => note.startsWith('Image failed: ')).length;
+  return <details style={{overflowWrap: 'anywhere'}}>
+    <summary>Image conversions · {notes.length - failed} re-hosted · {failed} failed</summary>
+    <ul>{notes.map(note => <li key={note}>{note}</li>)}</ul>
+  </details>;
+}
+
 function ArchiveContent({ archive }: { archive: ArchiveImport }) {
   const navigate = useNavigate();
   const [rows, setRows] = useState<ArchiveContentRow[]>();
@@ -35,7 +45,7 @@ function ArchiveContent({ archive }: { archive: ArchiveImport }) {
           {rows.map(row => (
             <tr key={row.id}>
               <td data-label="Record"><strong>{row.title}</strong><small>{row.kind === 'history' ? `Imported history · ${row.subject || 'No subject stated'}` : row.campaign_id ? 'Imported draft' : 'Library template'}</small>
-                {(JSON.parse(row.removed_json) as string[]).filter(note => note.startsWith('Image ')).map(note => <p key={note} style={{overflowWrap: 'anywhere'}}>{note}</p>)}
+                <ImageConversions notesJson={row.removed_json} />
                 {JSON.parse(row.merge_tags_json).length ? <small>Unrecognised merge tags: {(JSON.parse(row.merge_tags_json) as string[]).join(', ')}</small> : null}</td>
               <td data-label="Sent">{row.kind === 'history' ? row.sent_at_source || 'Not stated' : '—'}</td>
               <td data-label="State"><span className={`audience-import-status audience-import-status--${row.state === 'imported' ? 'good' : 'neutral'}`}>{row.state}</span>{row.outcome ? <small>{row.outcome}</small> : null}</td>

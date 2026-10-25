@@ -3,7 +3,7 @@ import {expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {png,pngHeaderOnly} from '../support/images';
 import {zip} from '../move-in/archive';
-import {importArchive,postArchive,drive} from '../move-in/support';
+import {importArchive,postArchive,drive,consentEvidence} from '../move-in/support';
 import {json,type Installation} from './harness';
 import {openPage} from '../support/navigation';
 
@@ -77,6 +77,7 @@ export async function incumbentImageJourney(site:Installation,cookie:string,page
   await openPage(page,site.runtime.url+'/app/audience/import');
   const archivePanel=page.locator('.audience-import-job').filter({has:page.locator(`a[href="/api/audience/archives/${moved.archive.id}/report"]`)});
   await archivePanel.getByRole('button',{name:'Show imported history and templates',exact:true}).click();
+  await archivePanel.locator('tr').filter({hasText:'synthetic-mango-161'}).locator('summary').click();
   for(const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});
     await expect(page.getByText(/Image failed:.*synthetic-mango-161/)).toBeVisible();
@@ -96,7 +97,7 @@ export async function incumbentImageJourney(site:Installation,cookie:string,page
   expect((await json(await site.call(`/api/audience/archives/${moved.archive.id}`,{cookie}),200)).content.find((row:any)=>row.id===existing.id).removed_json).not.toContain('Image failed:');
   expect(await report()).not.toContain('HTTP 404');
   const source=await json(await site.call('/api/audience/import-source',{method:'POST',cookie,body:{provider:'klaviyo',endpoint:'https://a.klaviyo.com',key:'synthetic-mango-164-key'}}),200);
-  const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie,body:source}),200);
+  const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie,body:{...source,consent:consentEvidence}}),200);
   let job=(await json(await site.call('/api/audience/imports',{method:'POST',cookie,body:{fingerprint:preview.fingerprint}}),200)).job;
   while(['queued','applying'].includes(job.state))job=(await json(await site.call(`/api/audience/imports/${job.id}/resume`,{method:'POST',cookie,body:{}}),200)).job;
   expect(job.state).toBe('completed');
