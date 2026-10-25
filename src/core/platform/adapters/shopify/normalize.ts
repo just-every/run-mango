@@ -1,3 +1,4 @@
+import {productCatalog,variantCatalog} from './catalog';
 import type {SourceRecordInput} from '@/core/shared/platform';
 import {sha256} from '@/core/shared/ids';
 import {date, gid, integer, list, moneyBag, object, text, type Node} from './values';
@@ -59,10 +60,10 @@ export function normalizeAdmin(type: AdminSource, n: Node): SourceRecordInput[] 
   if (type === 'customer') facts = {...customer(n), customer: customer(n)};
   // Current catalog placement: every collection page is drained, and Shopify
   // reports an uncategorized product's taxonomy category as null.
-  else if (type === 'product') facts = {title: text(n.title, 'product title'), handle: text(n.handle, 'product handle'), status: text(n.status, 'product status'),
+  else if (type === 'product') facts = {catalog:productCatalog(n),title: text(n.title, 'product title'), handle: text(n.handle, 'product handle'), status: text(n.status, 'product status'),
     collectionIds: list(n.collections, 'product collections').map(item => gid('Collection', item.id)),
     category: n.category === null ? null : text(object(n.category, 'product category').fullName, 'product category')};
-  else if (type === 'variant') facts = {productId: gid('Product', object(n.product).id), inventoryItemId: gid('InventoryItem', object(n.inventoryItem).id), title: text(n.title,'variant title'), sku: nullableString(n.sku,'variant SKU')};
+  else if (type === 'variant') facts = {catalog:variantCatalog(n),productId: gid('Product', object(n.product).id), inventoryItemId: gid('InventoryItem', object(n.inventoryItem).id), title: text(n.title,'variant title'), sku: nullableString(n.sku,'variant SKU')};
   else if (type === 'inventory') {
     if (typeof n.tracked !== 'boolean') throw new Error('Shopify inventory tracking state is missing.');
     facts = {tracked: n.tracked, sku: nullableString(n.sku,'inventory SKU'), variantId: gid('ProductVariant', object(n.variant).id), productId: gid('Product', object(object(n.variant).product).id),

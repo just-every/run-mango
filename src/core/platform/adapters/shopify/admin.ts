@@ -24,7 +24,7 @@ export function createShopifyAdmin(options: {storeUrl: URL; accessToken: string}
   }
   async function hydrate(type: AdminSource, node: Node, progress?:()=>Promise<void>) {
     if (type === 'inventory') await nested(node, 'InventoryItem', 'inventoryLevels', levelFields,progress);
-    if (type === 'product') await nested(node, 'Product', 'collections', 'id', progress);
+    if (type === 'product') await nested(node, 'Product', 'collections', 'id title', progress);
     if (type === 'order' || type === 'refund') {
       await nested(node, 'Order', 'lineItems', lineFields,progress);
       await nested(node, 'Order', 'returns', returnFields,progress);
@@ -48,6 +48,11 @@ export function createShopifyAdmin(options: {storeUrl: URL; accessToken: string}
       const nodes: Node[] = [];
       for (const node of page.nodes) nodes.push(await hydrate(type, node,progress));
       return {nodes, nextCursor: page.cursor};
+    },
+    async catalogNode(type: 'product'|'variant', id: string) {
+      const spec=querySpecs[type];
+      const data=await query(`query MangoCatalogNode($id: ID!) { node(id: $id) { ... on ${spec.kind} { ${spec.fields} } } }`,{id});
+      return data.node===null?null:hydrate(type,object(data.node,'catalog node'));
     },
     async node(type: AdminSource, id: string) {
       const spec = querySpecs[type];

@@ -129,6 +129,7 @@ export type VerifiedCommerceWebhook = VerifiedWebhook & {
 export type CommerceCoverage = {mode:'snapshot'|'observations'; exhaustive:boolean; from?:number; channel?:string; through?:number; complete:boolean};
 
 export interface CommerceStore {
+  readCatalog?(items:Array<{productId:string;variantId:string}>):Promise<SourceRecordInput[]>;
   collectObservation?(request: Request): Promise<VerifiedCommerceWebhook>;
   refreshHealth?(progress?: () => Promise<void>): Promise<void>;
   recordObservation?(record: SourceRecordInput, eventId: string, digest: string): Promise<void>;

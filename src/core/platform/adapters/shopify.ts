@@ -66,6 +66,14 @@ export function createShopifyAdapter(options:{storeUrl:URL;accessToken:string;we
       return {...records[0],records,rawBody:'',receivedAt:new Date(),providerEventId:event,
         receipt:{ids:[`shopify:delivery:${delivery}`,`shopify:event:${topic}:${event}`],digest}};
     },
+    async readCatalog(items){
+      await verifyAccess();
+      const records=[];
+      for(const [type,ids] of [['product',[...new Set(items.map(item=>item.productId))]],['variant',[...new Set(items.map(item=>item.variantId))]]] as const){
+        for(const id of ids){const node=await admin.catalogNode(type,id);if(node)records.push(...normalizeAdmin(type,node));}
+      }
+      return records;
+    },
     async synchronize(type,cursor,progress){
       if(type==='cart'||type==='browsing-event'){
         if(!log)throw new Error('Shopify observation channel is not configured.');
