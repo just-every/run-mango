@@ -22,14 +22,15 @@ export function catalogBlockContent(state:CatalogBlock){return `<div data-mango-
 export const catalogTextMarker=(key:string)=>'MANGO_CATALOG_'+key;
 /** Expand only typed placeholder elements, after ordinary personalization has
  * rendered, so catalog titles can never introduce managed or contact tokens. */
-export function insertCatalogHtml(source:string,renderings:CatalogRenderings){
+export function insertCatalogHtml(source:string,renderings:CatalogRenderings,retainBlocks=false){
   const envelope=mobileEnvelope(source),fragment=parseFragment(envelope.body);
   for(const node of elements(fragment)){
     const key=node.attrs.find(attr=>attr.name==='data-mango-catalog')?.value;if(!key||!node.parentNode)continue;
     const value=renderings[key];if(!value)throw new CatalogUnavailable();
     const children=parseFragment(value.html).childNodes,parent=node.parentNode,index=parent.childNodes.indexOf(node);
     for(const child of children)child.parentNode=parent;
-    parent.childNodes.splice(index,1,...children);
+    if(retainBlocks){node.childNodes=children;for(const child of children)child.parentNode=node;}
+    else parent.childNodes.splice(index,1,...children);
   }
   return mobileDocument(serialize(fragment),envelope.style);
 }
