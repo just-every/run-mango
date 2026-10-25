@@ -6,11 +6,12 @@ import {chosenCatalogEdge} from '../go-live/chosen-catalog-edge';
 import {syncSource} from '../go-live/source-edge';
 import {openPage,reloadPage} from '../support/navigation';
 import {png} from '../support/images';
+import {authoredBody} from '../../src/core/features/campaigns/authoring-content';
 
 /** Original synthetic-mango fixtures reach the real authoring and delivery doors. */
 export async function chosenSizeJourney(page:Page,info:TestInfo){
  const began=Date.now(),catalog=chosenCatalogEdge({six:true});
- const edge=await providerEdge({commerce:request=>catalog.commerce(request),links:catalog.links}),site=await installation(edge,eventSigner(),{commerce:true,networkHosts:['myshop.com','cdn.shopify.com'],reuseEmptySchema:true});
+ const edge=await providerEdge({commerce:request=>catalog.commerce(request),links:{...catalog.links,'https://www.instagram.com/synthetic-mango-390':{status:200}}}),site=await installation(edge,eventSigner(),{commerce:true,networkHosts:['myshop.com','cdn.shopify.com','www.instagram.com'],reuseEmptySchema:true});
  try{
   const cookie=await site.open(),email='synthetic-mango-390@example.test';
   await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);await site.control('/_golive/sender-evidence');await confirmedContact(site,edge,cookie,email,'Synthetic reader');
@@ -35,6 +36,7 @@ export async function chosenSizeJourney(page:Page,info:TestInfo){
   await reloadPage(page);await page.getByRole('button',{name:'Block builder',exact:true}).click();await save();expect((await read()).emailBody).toBe(saved.emailBody);
   const meter=async()=>json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{campaignId:draft.campaignId,emailBody:saved.emailBody,preheader:saved.preheader,physicalAddress:saved.physicalAddress,trackingEnabled:false}}),200);
   const encoded=/data-mango-catalog="([^"]+)"/.exec(saved.emailBody)![1],state=JSON.parse(Buffer.from(encoded,'base64').toString());
+  expect(state).toEqual({version:1,provider:'shopify',layout:'product-grid',empty:'hide',items:Array.from({length:6},(_,index)=>({productId:`gid://shopify/Product/${160+index}`,variantId:`gid://shopify/ProductVariant/${(160+index)*10+1}`}))});
   for(const invalid of [{...state,items:[...state.items,state.items[0]]},{...state,layout:'product',items:state.items.slice(0,2)}]){const refused=await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{emailBody:saved.emailBody.replace(encoded,Buffer.from(JSON.stringify(invalid)).toString('base64'))}}),400);expect(refused.detail).toContain('data-mango-catalog');expect((await read()).emailBody).toBe(saved.emailBody);}
   const template=await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:draft.revisionId,name:'synthetic-mango-390'}}),201);
   const visible=await meter();expect(visible.exceedsLimit).toBe(false);
@@ -46,7 +48,9 @@ export async function chosenSizeJourney(page:Page,info:TestInfo){
   const before=await site.count('campaigns'),templates=await site.rows('SELECT * FROM campaign_templates ORDER BY id');
   for(const [path,body] of [[`/api/campaigns/${draft.campaignId}/duplicate`,{}],['/api/campaign-templates',{revisionId:draft.revisionId,name:'synthetic-mango-392'}],[`/api/campaign-templates/${template.id}/start`,{}]] as const){const refusal=await json(await site.call(path,{method:'POST',cookie,body}),400);expect(refusal).toMatchObject({error:'email_too_large',size:{htmlBytes:over.htmlBytes}});}
   expect(await site.count('campaigns')).toBe(before);expect(await site.rows('SELECT * FROM campaign_templates ORDER BY id')).toEqual(templates);
-  catalog.reset();await approve(site,cookie,draft);await site.control('/_golive/clock',{advanceMs:3600001});const rows=await dispatch(site,draft.campaignId,due);expect(rows.map(row=>row.transport_disposition)).toEqual(['accepted']);
+  await page.getByRole('button',{name:'HTML mode',exact:true}).click();const unsaved=authoredBody(saved.emailBody)+'<p>Synthetic unsaved catalog change.</p>';
+  for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await page.getByRole('textbox',{name:'Email body',exact:true}).fill(unsaved);await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByText(/Email is too large\./).first()).toBeVisible();await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(unsaved);await page.locator('.editor-panel').screenshot({path:info.outputPath(`chosen-refused-${width}.png`)});}
+  expect((await read()).emailBody).toBe(saved.emailBody);catalog.reset();await page.getByRole('textbox',{name:'Email body',exact:true}).fill(authoredBody(saved.emailBody));await save();await approve(site,cookie,draft);await site.control('/_golive/clock',{advanceMs:3600001});const rows=await dispatch(site,draft.campaignId,due);expect(rows.map(row=>row.transport_disposition)).toEqual(['accepted']);
   const marketing=()=>edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);expect(marketing()).toHaveLength(1);const html=marketing()[0].body.content.find((part:any)=>part.type==='text/html').value;expect(Buffer.byteLength(html)).toBe(hidden.htmlBytes);for(let n=160;n<166;n++)expect(html).toContain(`synthetic-mango-${n}`);
   console.log(`Chosen six-item promotion: storedCharacters=${saved.emailBody.length}; bound=${hidden.htmlBytes}; edgeBytes=${Buffer.byteLength(html)}`);
   const smallClock=await site.control('/_golive/clock',{advanceMs:25*3600000,hold:true});await site.control('/_golive/sender-evidence');const smallDue=new Date(smallClock.now+3600000),small=await draftCampaign(site,cookie,'synthetic-mango-393',[email],smallDue);
