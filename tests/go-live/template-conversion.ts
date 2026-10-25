@@ -72,7 +72,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
     await page.setViewportSize({ width, height: 1000 });
     console.log('Conversion proof: mapped preview ' + width);
     await expect(page.getByRole('button', { name: width === 390 ? 'Mobile email' : 'Desktop email', exact: true })).toBeVisible();
-    await page.getByRole('button', { name: width === 390 ? 'Mobile email' : 'Desktop email', exact: true }).click();
+    await page.getByRole('button', { name: width === 390 ? 'Mobile email' : 'Desktop email', exact: true }).press('Enter');
     const frame = page.frameLocator('iframe[title="Saved email preview"]');
     await expect(frame.getByText('Hello Alex Example.', { exact: false })).toBeVisible();
     await expect(frame.locator('p').first()).toHaveCSS('color', 'rgb(32, 32, 32)');
