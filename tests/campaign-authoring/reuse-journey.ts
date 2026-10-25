@@ -1,3 +1,4 @@
+import {flowTemplateJourney} from './flow-template-journey';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { openPage, hydrated } from '../support/navigation';
 
@@ -62,4 +63,5 @@ export async function exerciseCampaignReuse(page:Page, sourceId:string, baseURL:
   await sql(`UPDATE campaigns SET state='${original.campaign.state}' WHERE id='${sourceId}'`);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:info.outputPath(`reuse-template-${width}.png`),fullPage:true});
+  if(width===1440)await flowTemplateJourney(page,info,baseURL,{Origin:baseURL});
 }
