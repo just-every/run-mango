@@ -109,7 +109,7 @@ export async function preferenceCenterJourney(site:Installation,edge:Awaited<Ret
     await json(await site.call('/api/campaign-revisions/'+campaign.revisionId,{method:'PATCH',cookie:owner,body:{inclusionRuleJson:JSON.stringify(inclusion)}}),200);
     const checks=await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId}}),200);
     expect(checks.eligibleCount).toBe(0);expect(checks.exclusions).toContainEqual({reason,count:1});
-    const saved=await jsonResponse(`/api/campaigns/${campaign.campaignId}`);expect(JSON.parse(saved.audience.exclusions)).toEqual({[reason]:1});
+    const saved=await jsonResponse(`/api/campaigns/${campaign.campaignId}`);expect(JSON.parse(saved.audience.exclusions)).toEqual([{reason,count:1}]);
   }
   const foreignToken=new URL(confirmationUrl).pathname.split('/').at(-1)!;
   const foreign=await site.call('/preferences/'+foreignToken);expect(foreign.status).toBe(404);expect(await foreign.text()).not.toContain('Updated preference reader');
