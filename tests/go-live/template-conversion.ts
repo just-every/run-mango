@@ -13,7 +13,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
     { name: 'templates/synthetic-mango-151.html', data: source },
     { name: 'templates/synthetic-mango-152.html', data: '<html><head><title>synthetic-mango-152</title></head><body><p style="color:#999999">Our original synthetic footer.</p></body></html>' },
     { name: 'templates/synthetic-mango-153.html', data: '<p>' + 'synthetic-mango-153 '.repeat(9000) + '</p>' },
-    { name: 'templates/synthetic-mango-154.html', data: '<p>Hello {{ first_name }}. *|LNAME|* *|UPDATE_PROFILE|* *|DATE|* *|CURRENT_YEAR|*</p>' },
+    { name: 'templates/synthetic-mango-154.html', data: '<p>Hello {{ first_name }}. *|LNAME|* *|UPDATE_PROFILE|* *|DATE|* *|CURRENT_YEAR|* *|LIST:ADDRESSLINE|*</p>' },
   ]);
   await page.context().clearCookies();
   await page.context().addCookies([{ name: owner.split('=')[0], value: owner.split('=')[1], url: site.runtime.url }]);
@@ -43,6 +43,8 @@ export async function templateConversionJourney(site: Installation, owner: strin
   expect(report).toContain('Held conversion');
   expect(item(153)).toMatchObject({ state: 'held', campaign_id: null });
   expect(item(153).outcome).toContain('Largest blocks:');
+  for (const tag of ['*|LNAME|*', '*|UPDATE_PROFILE|*', '*|DATE|*', '*|CURRENT_YEAR|*']) expect(JSON.parse(item(154).removed_json).join(' ')).toContain(`Unmapped ${tag}`);
+  expect(JSON.parse(item(154).removed_json).join(' ')).toContain('Mapped *|LIST:ADDRESSLINE|*');
   const body = async (number: number) => {
     const started = await json(await site.call(`/api/campaign-templates/${item(number).id}/start`, { method: 'POST', cookie: owner }), 201);
     const detail = await json(await site.call(`/api/campaigns/${started.campaignId}`, { cookie: owner }), 200);

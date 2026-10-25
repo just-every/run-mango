@@ -100,15 +100,15 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   expect(JSON.stringify(bare.blockers)).toContain('myshop.com');
   // A real Mailchimp-shaped archive files a library template; its public start door creates the draft.
   const hosts = ['partners.garden.example','workshops.market.example','seeds.community.example'];
-  const html = `<html><head><title>Community garden partners</title></head><body><h2>Meet our garden partners</h2>${hosts.map((host,index)=>`<p><a href="https://${host}/visit">Garden partner ${index+1}</a></p>`).join('')}</body></html>`;
-  const moved=await importArchive(site,owner,zip([{name:'templates/Community partners.html',data:html}]));
+  const html = `<html><head><title>synthetic-mango-156</title></head><body><h2>Meet our garden partners</h2>${hosts.map((host,index)=>`<p><a href="https://${host}/visit">Garden partner ${index+1}</a></p>`).join('')}</body></html>`;
+  const moved=await importArchive(site,owner,zip([{name:'templates/synthetic-mango-156.html',data:html},{name:'emails.csv',data:'Title,Subject,Campaign ID\nsynthetic-mango-157,Synthetic archive history,synthetic-mango-157'},{name:'campaigns_content/synthetic-mango-157.html',data:`<p><a href="https://${hosts[0]}/visit">First use</a> <a href="https://${hosts[0]}/visit-again">Second use</a></p>`}]));
   const archive=await json(await site.call(`/api/audience/archives/${moved.archive.id}`,{cookie:owner}),200);
-  const imported=archive.content.find((row:any)=>row.title==='Community garden partners');
+  const imported=archive.content.find((row:any)=>row.title==='synthetic-mango-156');
   expect(imported.campaign_id).toBeNull();
   const reconciliation = await (await site.call(`/api/audience/archives/${moved.archive.id}/report`,{cookie:owner})).text();
-  for (const host of hosts) { expect(JSON.parse(imported.removed_json)).toContain(`Outside host ${host}: 1 uses`); expect(reconciliation).toContain(`| ${host} | 1 |`); }
+  for (const host of hosts) { expect(JSON.parse(imported.removed_json)).toContain(`Outside host ${host}: 1 uses`); expect(reconciliation).toContain(`| ${host} | ${host === hosts[0] ? 3 : 1} |`); }
   const library=await json(await site.call('/api/campaign-templates',{cookie:manager}),200);
-  expect(library.templates).toContainEqual(expect.objectContaining({id:imported.id,name:'Community garden partners',kind:'saved'}));
+  expect(library.templates).toContainEqual(expect.objectContaining({id:imported.id,name:'synthetic-mango-156',kind:'saved'}));
   const draft=await json(await site.call(`/api/campaign-templates/${imported.id}/start`,{method:'POST',cookie:manager}),201);
   await page.context().clearCookies();
   await page.context().addCookies([{name:manager.split('=')[0],value:manager.split('=')[1],url:site.runtime.url}]);
