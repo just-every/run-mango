@@ -50,11 +50,13 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
    const frame=preview.frameLocator('iframe[title="Saved email preview"]');
    for(const [title,n] of [['Synthetic Basil',160],['Synthetic Mint',161]] as const){
     const item=frame.getByRole('heading',{name:title,exact:true}).locator('..');
+    await item.scrollIntoViewIfNeeded();await expect(item.locator('img')).toBeInViewport();await expect(item.locator('p').first()).toBeInViewport();
     await expect(item).toContainText('AUD 24.00');await expect(item.locator('s')).toHaveText('AUD 30.00');
     await expect(item.locator('img')).toHaveAttribute('src',`https://cdn.shopify.com/synthetic-mango-${n}.png`);
     await expect(item.locator('img')).toHaveJSProperty('naturalWidth',300);
     await expect(item.locator('a')).toHaveAttribute('title',`https://myshop.com/products/product-${n}?utm_source=synthetic-mango-160&utm_medium=email&utm_campaign=catalog-proof&utm_content=chosen-products`);
     expect(await item.locator('a').getAttribute('href')).toBeNull();
+    await preview.locator('.message-preview--email').screenshot({path:info.outputPath(`catalog-email-${n}-${width}.png`)});
    }
    await expect(frame.locator('img')).toHaveCount(2);
    await screen(page,info,'catalog-preview',width);await preview.locator('iframe').scrollIntoViewIfNeeded();await preview.locator('.message-preview--email').screenshot({path:info.outputPath(`catalog-email-${width}.png`)});
