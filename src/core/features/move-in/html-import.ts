@@ -1,11 +1,14 @@
 import { safeEmailLink } from '@/core/features/campaigns/contact-links';
 import { allowedEmailAttribute, emailTags, escapeHtml, inspectEmailHtml, safeEmailUrl, voidEmailTags } from '@/core/features/campaigns/email-html-policy';
 import { parseEmailHtml } from '@/core/features/campaigns/email-html-parse';
+import { convertTemplateTokens } from './template-tokens';
+import { convertTemplateStyles, importedMobileStyles } from './template-styles';
+import { createPresentationCheck } from '@/core/features/campaigns/email-presentation';
 import { foreignMergeTags } from '@/core/features/campaigns/message-content';
 
 // Imported HTML is reduced to Mango's restricted email grammar. Every removal is
 // counted in a visible list, anything the policy still rejects is flagged, and
-// merge tags from another tool stay in the text so the personalisation check blocks approval.
+// only supported incumbent merge tags map; unknown fields stay visible and block approval.
 export type ImportedHtml = { html: string; removed: string[]; flagged: string[]; mergeTags: string[] };
 
 // Text between tags keeps its entities; a stray angle bracket becomes one.
@@ -15,7 +18,10 @@ const dropped = ['script', 'style', 'noscript', 'iframe', 'object', 'embed', 'sv
 export function importHtml(source: string): ImportedHtml {
   const removed = new Map<string, number>();
   const note = (message: string) => removed.set(message, (removed.get(message) ?? 0) + 1);
-  let html = source;
+  const tokens = convertTemplateTokens(source);
+  const styled = convertTemplateStyles(tokens.html);
+  [...tokens.mapped, ...tokens.unmapped, ...styled.report].forEach(note);
+  let html = styled.html;
   const body = /<body\b[^>]*>([\s\S]*?)(?:<\/body\s*>|$)/i.exec(html);
   if (body) { if (/<head\b/i.test(html)) note('Document head (styles, title and meta tags)'); html = body[1]; }
   html = html.replace(/<!--[\s\S]*?(?:-->|$)/g, () => { note('HTML comment'); return ''; }).replace(/<!doctype[^>]*>/gi, '');
@@ -37,7 +43,9 @@ export function importHtml(source: string): ImportedHtml {
       const name = attribute[1].toLowerCase(), value = (attribute[2] ?? attribute[3] ?? attribute[4] ?? '').trim();
       if (values.has(name)) continue;
       values.set(name, value);
-      if (allowedEmailAttribute(tag, name, value.replaceAll('&amp;', '&'))) attributes.push(`${name}="${escapeHtml(value.replaceAll('&amp;', '&'))}"`);
+      const presentation = createPresentationCheck();
+      const present = presentation.attribute(tag, name, value) && presentation.finish().length === 0;
+      if (allowedEmailAttribute(tag, name, value.replaceAll('&amp;', '&')) || present) attributes.push(`${name}="${escapeHtml(value.replaceAll('&amp;', '&'))}"`);
       else if (!(tag === 'a' && name === 'href') && !(tag === 'img' && name === 'src')) note(`${name} attribute`);
     }
     if (tag === 'a') {
@@ -62,7 +70,9 @@ export function importHtml(source: string): ImportedHtml {
   // Stored in the canonical form saving uses; a tag mail clients would ignore here takes its attributes with it.
   const parsed = parseEmailHtml(out.join('').replace(/[ \t]*\r?\n[\s]*/g, '\n').replace(/\n{2,}/g, '\n').trim());
   parsed.lost.forEach(() => note('Attribute on a tag mail clients ignore where it stands'));
-  const cleaned = parsed.canonical;
+  let cleaned = parsed.canonical;
+  try { cleaned = importedMobileStyles(cleaned, styled.mobile); }
+  catch { note('Dropped mobile settings: sanitized block positions no longer match the source.'); }
   return {
     html: cleaned,
     removed: [...removed].map(([message, count]) => count > 1 ? `${message} (${count})` : message),
