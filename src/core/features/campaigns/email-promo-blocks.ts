@@ -7,16 +7,16 @@ const attr=(node:Tree.Element,name:string)=>node.attrs.find(a=>a.name===name)?.v
 export type SocialLink={network:number;path:string;src:string;alt:string};
 export function readSocialLinks(html:string):SocialLink[]{
   return nodes(parseFragment(html)).filter(n=>n.tagName==='a').flatMap(anchor=>{
-    try{const url=new URL(attr(anchor,'href')),network=socialNetworks.findIndex(n=>n.host===url.hostname),image=nodes(anchor).find(n=>n.tagName==='img');
+    try{const url=new URL(attr(anchor,'href')),network=socialNetworks.findIndex(n=>n.host===url.hostname),image=nodes(anchor).find(n=>n.tagName==='img')??(anchor.parentNode?nodes(anchor.parentNode).find(n=>n.tagName==='img'):undefined);
       return network<0||!image?[]:[{network,path:(url.pathname+url.search+url.hash).replace(/^\//,''),src:attr(image,'src'),alt:attr(image,'alt')}];
     }catch{return [];}
   });
 }
 export function socialLinksContent(links:SocialLink[]){
-  return '<p>'+links.map(link=>{const network=socialNetworks[link.network];if(!network)throw new Error('Choose a supported social network.');
+  return links.map(link=>{const network=socialNetworks[link.network];if(!network)throw new Error('Choose a supported social network.');
     const url=new URL('/'+link.path.replace(/^\/+/,''),'https://'+network.host);
-    return `<a href="${escapeHtml(url.href)}"><img src="${escapeHtml(link.src)}" width="32" height="32" alt="${escapeHtml(link.alt)}"> ${network.name}</a>`;
-  }).join(' ')+'</p>';
+    return `<p><img src="${escapeHtml(link.src)}" width="32" height="32" alt="${escapeHtml(link.alt)}"> <a href="${escapeHtml(url.href)}">${network.name}</a></p>`;
+  }).join('');
 }
 export function productGridContent(products:string[]){
   if(products.length!==6)throw new Error('A product grid has six products.');
