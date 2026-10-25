@@ -1,3 +1,4 @@
+import {reusableSizeJourney} from './reusable-size-journey';
 import { localSessionCookieName } from '../support/local-session';
 import { summarizeAudienceRules } from '../../src/core/features/campaigns/audience-summary';
 import { test, expect } from '@playwright/test';
@@ -78,6 +79,7 @@ test('[CAMP-002][CAMP-003][CAMP-004] native API persists blank and complete draf
     expect(savedComplete.revision.emailText).not.toContain('Client supplied text');
     expect(savedComplete.links).toHaveLength(1);
     expect(savedComplete.steps).toHaveLength(1);
+    await reusableSizeJourney(request,runtime.url,headers,completeIds);
     expect((await create({ starterSourceId: 'missing' })).status()).toBe(409);
     expect((await request.post(runtime.url + '/_authoring/source', { headers: { 'X-Test-Token': runtime.token } })).status()).toBe(200);
     const { starters } = await (await request.get(runtime.url + '/api/campaign-starters', { headers })).json();
