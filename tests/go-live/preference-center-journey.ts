@@ -33,7 +33,7 @@ export async function preferenceCenterJourney(site:Installation,edge:Awaited<Ret
   const link=preferenceLink(tracked),otherLink=preferenceLink(edge.sends.findLast(send=>send.to==='branded@example.test'&&send.body.headers?.['List-Unsubscribe'])!);
   preferenceLink(original);
   const originalDetail=await json(await site.call('/api/campaigns/'+originalCampaign.campaignId,{cookie}),200),revision=originalDetail.revision;
-  const size=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{campaignId:originalCampaign.campaignId,...revision}}),200);
+  const size=await json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{campaignId:originalCampaign.campaignId,emailBody:revision.emailBody,preheader:revision.preheader,physicalAddress:revision.physicalAddress,trackingEnabled:revision.trackingEnabled,utmPolicyJson:revision.utmPolicyJson,inclusionRuleJson:revision.inclusionRuleJson,exclusionRulesJson:revision.exclusionRulesJson}}),200);
   expect(Buffer.byteLength(original.body.content.find((part:any)=>part.type==='text/html').value)).toBeLessThanOrEqual(size.htmlBytes);
   expect(Buffer.byteLength(original.body.content.find((part:any)=>part.type==='text/plain').value)).toBeLessThanOrEqual(size.textBytes);
   edge.domainSetup.dnsPass=true;edge.domainSetup.trackingHttps=true;
