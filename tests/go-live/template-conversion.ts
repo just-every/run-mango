@@ -33,7 +33,9 @@ export async function templateConversionJourney(site: Installation, owner: strin
     expect((await new AxeBuilder({ page }).include('main').options({ iframes: false }).analyze()).violations.filter(row => ['serious', 'critical'].includes(row.impact ?? ''))).toEqual([]);
     await page.screenshot({ path: info.outputPath(`template-conversion-report-${width}.png`), fullPage: true });
   }
+  console.log('Conversion proof: apply archive');
   const moved = await importArchive(site, owner, fixture);
+  console.log('Conversion proof: read archive');
   const archive = await json(await site.call(`/api/audience/archives/${moved.archive.id}`, { cookie: owner }), 200);
   const item = (number: number) => archive.content.find((row: any) => row.source_path === `templates/synthetic-mango-${number}.html`);
   const report = await (await site.call(`/api/audience/archives/${moved.archive.id}/report`, { cookie: owner })).text();
@@ -46,11 +48,13 @@ export async function templateConversionJourney(site: Installation, owner: strin
   for (const tag of ['*|LNAME|*', '*|UPDATE_PROFILE|*', '*|DATE|*', '*|CURRENT_YEAR|*']) expect(JSON.parse(item(154).removed_json).join(' ')).toContain(`Unmapped ${tag}`);
   expect(JSON.parse(item(154).removed_json).join(' ')).toContain('Mapped *|LIST:ADDRESSLINE|*');
   const body = async (number: number) => {
+    console.log('Conversion proof: start template ' + number);
     const started = await json(await site.call(`/api/campaign-templates/${item(number).id}/start`, { method: 'POST', cookie: owner }), 201);
     const detail = await json(await site.call(`/api/campaigns/${started.campaignId}`, { cookie: owner }), 200);
     return { ...started, revision: detail.revision };
   };
   const a = await body(151);
+  console.log('Conversion proof: inspect mapped body');
   expect(a.revision.emailBody).toContain('{{displayName | fallback: "there"}}');
   expect(a.revision.emailBody).toContain('{{physical_address}}');
   expect(a.revision.emailBody).toContain('{{unsubscribe_url}}');
@@ -58,12 +62,16 @@ export async function templateConversionJourney(site: Installation, owner: strin
   expect(a.revision.emailBody).toContain('font-size: 18px');
   expect(a.revision.emailBody).toContain('data-mango-mobile=');
   expect(a.revision.emailBody).not.toContain('class="intro"');
+  console.log('Conversion proof: run mapped checks');
   const checks = await json(await site.call(`/api/campaigns/${a.campaignId}/checks`, { method: 'POST', cookie: owner, body: { revisionId: a.revisionId } }), 200);
   expect(checks.checks.find((row: any) => row.kind === 'message.personalisation')).toMatchObject({ status: 'blocked', detail: expect.stringContaining('*|FOO|*') });
   expect(checks.checks.find((row: any) => row.kind === 'message.content')).toMatchObject({ status: 'passed' });
+  console.log('Conversion proof: open mapped preview');
   await openPage(page, `${site.runtime.url}/app/campaigns/${a.campaignId}/review`);
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
+    console.log('Conversion proof: mapped preview ' + width);
+    await expect(page.getByRole('button', { name: width === 390 ? 'Mobile email' : 'Desktop email', exact: true })).toBeVisible();
     await page.getByRole('button', { name: width === 390 ? 'Mobile email' : 'Desktop email', exact: true }).click();
     const frame = page.frameLocator('iframe[title="Saved email preview"]');
     await expect(frame.getByText('Hello Alex Example.', { exact: false })).toBeVisible();
@@ -74,6 +82,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
     expect((await new AxeBuilder({ page }).include('main').options({ iframes: false }).analyze()).violations.filter(row => ['serious', 'critical'].includes(row.impact ?? ''))).toEqual([]);
     await page.screenshot({ path: info.outputPath(`template-conversion-tokens-${width}.png`), fullPage: true });
   }
+  console.log('Conversion proof: corrected footer');
   const d = await body(152);
   expect(d.revision.emailBody).toContain('color: #767676');
   await openPage(page, `${site.runtime.url}/app/campaigns/${d.campaignId}/review`);
