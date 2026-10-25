@@ -1,4 +1,4 @@
-import type { EmailSizeOptions } from '@/core/features/campaigns/email-size';
+import type {AdvisorySizeOptions} from './advisory-acknowledgements';
 import type { Database } from '@/core/platform/db/client';
 
 import { createCampaignControls } from './campaign-controls';
@@ -9,7 +9,7 @@ import { createRecipientLifecycleRepository } from './recipient-repository';
 
 export type { ApprovalCheck } from './campaign-repository';
 
-export function createLifecycleRepository(database: Database,sizeOptions:EmailSizeOptions = {}) {
+export function createLifecycleRepository(database: Database,sizeOptions:AdvisorySizeOptions = {}) {
   return {
     controls: createCampaignControls(database),
     ...createAdvisoryAcknowledgementRepository(database,sizeOptions),

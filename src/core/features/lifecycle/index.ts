@@ -1,3 +1,4 @@
+import {advisorySizeOptions} from './advisory-size-options';
 import {expireAttestations} from '../move-in/incumbent-attestation';
 import { resumeSmsServices } from '@/core/features/sms/service-delivery';
 import {withErasureWriteFence} from '@/core/features/audience/erasure/write-fence';
@@ -20,7 +21,7 @@ export { parseStructuredRules, productIdFromRules, productIdsFromRules, inclusio
 export type { InclusionRule, ExclusionRule } from './rules';
 
 export function createLifecycleServices(runtime: LifecycleRuntime) {
-  const repository = createLifecycleRepository(runtime.platform.database,{publicBaseUrl:runtime.platform.config.publicBaseUrl.toString(),openTrackingEnabled:true});
+  const repository = createLifecycleRepository(runtime.platform.database,advisorySizeOptions(runtime));
   const approval = createApprovalService(runtime, repository);
   const delivery = createDeliveryService(runtime, repository);
   return { repository, approval, delivery };

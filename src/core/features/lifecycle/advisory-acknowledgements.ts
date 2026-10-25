@@ -8,6 +8,8 @@ import { digestJson } from './digest';
 import { advisorySnapshot } from './advisory-snapshot';
 import { emailSubjectAdvisory, isAcknowledgableFinding } from './advisory-policy';
 
+export type AdvisorySizeOptions=EmailSizeOptions&{resolveAudience?:(revision:{inclusionRuleJson:string;exclusionRulesJson:string;dormancyPolicyJson?:string})=>Promise<readonly string[]|undefined>};
+
 type Finding = {id: string; kind: string; status: string; detail: string; blocking: boolean};
 type Acknowledgement = {operatorId: string; acknowledgedAt: string};
 const operationKey = (identity: string) => `advisory-acknowledgement:${identity}`;
@@ -21,16 +23,21 @@ async function recorded(database: Database, identity: string): Promise<Acknowled
   return row ? {operatorId: row.actor_id, acknowledgedAt: new Date(row.occurred_at).toISOString()} : undefined;
 }
 
-async function currentFindings(database: Database, snapshot: NonNullable<Awaited<ReturnType<typeof advisorySnapshot>>>, sizeOptions: EmailSizeOptions, includeSize: boolean) {
+async function currentFindings(database: Database, snapshot: NonNullable<Awaited<ReturnType<typeof advisorySnapshot>>>, sizeOptions: AdvisorySizeOptions, includeSize: boolean) {
   const row=snapshot.revision;
-  const revision={emailSubject:String(row.email_subject),emailBody:String(row.email_body),emailText:String(row.email_text),preheader:String(row.preheader??''),physicalAddress:String(row.physical_address),smsBody:String(row.sms_body),trackingEnabled:Boolean(row.tracking_enabled)};
+  const revision={id:String(row.id),name:String(row.name??''),utmPolicyJson:typeof row.utm_policy_json==='string'?row.utm_policy_json:null,inclusionRuleJson:String(row.inclusion_rule_json??''),exclusionRulesJson:String(row.exclusion_rules_json??'[]'),dormancyPolicyJson:typeof row.dormancy_policy_json==='string'?row.dormancy_policy_json:undefined,emailSubject:String(row.email_subject),emailBody:String(row.email_body),emailText:String(row.email_text),preheader:String(row.preheader??''),physicalAddress:String(row.physical_address),smsBody:String(row.sms_body),trackingEnabled:Boolean(row.tracking_enabled)};
   const findings=[emailSubjectAdvisory(revision.emailSubject),...emailContentAdvisories(revision)];
-  if(includeSize)findings.push(emailSizeAdvisory(await savedEmailSize(database,revision,sizeOptions,false)));
+  if(includeSize){
+    const {resolveAudience,...measurement}=sizeOptions;
+    const audienceContactIds=resolveAudience?await resolveAudience(revision):measurement.audienceContactIds;
+    const current=resolveAudience&&audienceContactIds===undefined?{...revision,inclusionRuleJson:undefined}:revision;
+    findings.push(emailSizeAdvisory(await savedEmailSize(database,current,{...measurement,audienceContactIds},false)));
+  }
   return findings.filter((finding):finding is NonNullable<typeof finding>=>Boolean(finding));
 }
 const matchesCurrent = (check:Finding, findings:Awaited<ReturnType<typeof currentFindings>>) => isAcknowledgableFinding(check) && findings.some(current=>current.kind===check.kind&&current.detail===check.detail);
 
-export async function enrichAdvisoryAcknowledgements<T extends Finding>(database: Database, revisionId: string, checks: T[], sizeOptions:EmailSizeOptions = {}) {
+export async function enrichAdvisoryAcknowledgements<T extends Finding>(database: Database, revisionId: string, checks: T[], sizeOptions:AdvisorySizeOptions = {}) {
   const snapshot = await advisorySnapshot(database, revisionId);
   const findings=snapshot?await currentFindings(database,snapshot,sizeOptions,checks.some(check=>check.kind==='message.email-size-advisory')):[];
   return Promise.all(checks.map(async check => {
@@ -40,7 +47,7 @@ export async function enrichAdvisoryAcknowledgements<T extends Finding>(database
   }));
 }
 
-export function createAdvisoryAcknowledgementRepository(database: Database,sizeOptions:EmailSizeOptions = {}) {
+export function createAdvisoryAcknowledgementRepository(database: Database,sizeOptions:AdvisorySizeOptions = {}) {
   return {
     async acknowledgeAdvisory(input: {campaignId: string; revisionId: string; checkId: string; findingIdentity: string; operatorId: string}) {
       const snapshot = await advisorySnapshot(database, input.revisionId);

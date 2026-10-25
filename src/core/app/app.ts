@@ -1,3 +1,4 @@
+import {advisorySizeOptions} from '@/core/features/lifecycle/advisory-size-options';
 import {reusableBlockRoutes} from '@/core/features/campaigns/reusable-block-routes';
 import {flowDraftRoutes} from '@/core/features/flows/routes';
 import {optInRoutes} from '@/core/features/audience/opt-in-modes';
@@ -217,7 +218,7 @@ export function createAppServices(platform: Platform, queueIdentity: object = pl
       : undefined,
   };
   const campaignService = createCampaignService(
-    createCampaignRepository(database,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true}),
+    createCampaignRepository(database,advisorySizeOptions(lifecycleRuntime)),
     createCampaignCompositionRepository(database,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true}),
     storeService,
     { smsEnabled: platform.config.modules.sms.enabled, commerceEnabled:!!platform.commerce, aiEnabled:platform.config.modules.ai.enabled,

@@ -1,5 +1,5 @@
 import { exportCampaignsCsv } from './export';
-import type { EmailSizeOptions } from './email-size';
+import type {AdvisorySizeOptions} from '@/core/features/lifecycle/advisory-acknowledgements';
 import { schedulerObservation } from '@/core/features/lifecycle/scheduler-observation';
 import { createProposalRepository } from '@/core/features/proposals/repository';
 import { enrichAdvisoryAcknowledgements } from '@/core/features/lifecycle/advisory-acknowledgements';
@@ -21,7 +21,7 @@ import {
   proposalSteps,
 } from './proposal-schema';
 
-export function createCampaignRepository(database: Database,sizeOptions:EmailSizeOptions = {}) {
+export function createCampaignRepository(database: Database,sizeOptions:AdvisorySizeOptions = {}) {
   return {
     exportCsv: (actorId: string) => exportCampaignsCsv(database, actorId),
     ...createCampaignResultRepository(database),
