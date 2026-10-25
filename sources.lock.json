@@ -7526,7 +7526,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "57fe075a65466dcad1654750259113a73f25952dfad9d5c9a932b54623c73e0d",
+      "sha256": "0c4b7937ecf35d9cd8533840b5356dd4428ca88ffc6c4236db60a87fbfd6ed69",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {

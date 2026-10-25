@@ -165,7 +165,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     expect((await request.post(runtime.url+'/_authoring/source',{headers:{'X-Test-Token':runtime.token}})).status()).toBe(200);
     await openPage(page, runtime.url+'/app/campaigns');await page.getByRole('button',{name:'New campaign',exact:true}).click();await page.getByRole('button',{name:'Product newsletter: Garden linen',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Product newsletter: Garden linen',exact:true})).toBeVisible();await expect(page.getByLabel('Audience summary',{exact:true})).toContainText('Email subscription status is "subscribed"');
-    await oversizedSignalStarter(page,runtime.url,width,testInfo,runtime.token);
+    await oversizedSignalStarter(page,runtime.url,width,testInfo,runtime.sql);
     expect((await request.post(runtime.url+'/_authoring/stale',{headers:{'X-Test-Token':runtime.token}})).status()).toBe(200);
     const stale=await call('/api/campaign-authoring/audience',{inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'product',field:'title',comparator:'eq',value:'Garden linen'}]}),exclusionRulesJson:'[]',channels:['email']});
     expect(stale.data).toMatchObject({status:'stale',candidateCount:null,eligibleCount:null});
@@ -182,7 +182,7 @@ for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CA
     await expect(page.getByRole('heading',{name:'Recorded suggestion',exact:true})).toBeVisible();
     const adoptedUrl=page.url();await openPage(page, runtime.url+'/app');await page.locator(`[data-proposal-id="${unlinked.id}"]`).click();await page.getByRole('button',{name:'Use this',exact:true}).click();await expect(page).toHaveURL(adoptedUrl);
     expect((await state()).jobs).toEqual([]);
-    await oversizedAdoption(page,runtime.url,unlinked.id,width,testInfo,runtime.token);
+    await oversizedAdoption(page,runtime.url,unlinked.id,width,testInfo,runtime.sql);
 
   } finally {await runtime.close();}
 });
