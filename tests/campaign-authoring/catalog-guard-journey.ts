@@ -31,7 +31,7 @@ export async function catalogGuardJourney(site:Installation,catalog:Catalog,edge
  const role=await catalogRoleProof(site,catalog,cookie,body),original=state(body),key=encoded(body);
  const invalid:Array<{name:string;value:string;reads?:boolean}>=[
   {name:'non-canonical',value:Buffer.from(JSON.stringify(original,null,2)).toString('base64')},
-  {name:'overlong',value:'A'.repeat(8193)},
+  {name:'overlong canonical state',value:packed({...original,items:[{...original.items[0],productId:'gid://shopify/Product/'+'1'.repeat(6500)}]})},
   {name:'non-Shopify gid',value:packed({...original,items:[{...original.items[0],productId:'gid://other/Product/160'}]})},
   {name:'malformed gid',value:packed({...original,items:[{...original.items[0],variantId:'gid://shopify/ProductVariant/not-a-number'}]})},
   {name:'foreign variant',value:packed({...original,items:[{...original.items[0],variantId:'gid://shopify/ProductVariant/1611'}]}),reads:true},
@@ -41,7 +41,7 @@ export async function catalogGuardJourney(site:Installation,catalog:Catalog,edge
   {name:'extra block key',value:packed({...original,title:'copied value'})},
   {name:'extra item key',value:packed({...original,items:[{...original.items[0],price:'copied value'}]})},
  ];
- for(const input of invalid){const before=catalog.requests();expect(await json(await site.call(`/api/campaign-revisions/${role.draft.revisionId}`,{method:'PATCH',cookie:role.author,body:{emailBody:body.replace(key,input.value)}}),400),input.name).toMatchObject(refusal);expect((await json(await site.call(`/api/campaigns/${role.draft.campaignId}`,{cookie}),200)).revision).toEqual(role.stored);if(!input.reads)expect(catalog.requests(),input.name).toBe(before);}
+ for(const input of invalid){if(input.name==='overlong canonical state')expect(input.value.length).toBeGreaterThan(8192);const before=catalog.requests();expect(await json(await site.call(`/api/campaign-revisions/${role.draft.revisionId}`,{method:'PATCH',cookie:role.author,body:{emailBody:body.replace(key,input.value)}}),400),input.name).toMatchObject(refusal);expect((await json(await site.call(`/api/campaigns/${role.draft.campaignId}`,{cookie}),200)).revision).toEqual(role.stored);if(!input.reads)expect(catalog.requests(),input.name).toBe(before);}
  const before=catalog.requests();expect(await json(await site.call('/api/catalog/products?q='+'x'.repeat(201),{cookie}),400)).toEqual({error:'invalid_catalog_query'});expect(catalog.requests()).toBe(before);
  console.log('Catalog guard: malformed payloads preserve the exact stored revision');
  const marketing=()=>edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);
