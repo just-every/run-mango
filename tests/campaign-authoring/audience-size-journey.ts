@@ -1,3 +1,4 @@
+import {authoredBody} from '../../src/core/features/campaigns/authoring-content';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {createRequire} from 'node:module';
 const localRequire=createRequire(import.meta.url);
@@ -48,6 +49,23 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
       expect(audit.violations.filter((v:any)=>['serious','critical'].includes(v.impact??''))).toEqual([]);
       expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
       await page.locator('.editor-panel').screenshot({path:info.outputPath(`audience-size-${width}.png`)});
+      await page.getByRole('button',{name:'HTML mode',exact:true}).click();
+      const unsaved=emailBody+'<p>synthetic-mango-174 unsaved audience edit</p>';
+      await page.getByRole('textbox',{name:'Email body',exact:true}).fill(unsaved);
+      await page.getByRole('button',{name:'Add inclusion condition',exact:true}).click();
+      await page.getByRole('combobox',{name:'Include 2 field',exact:true}).selectOption('contact:email');
+      await page.getByRole('textbox',{name:'Include 2 value',exact:true}).fill(long);
+      const refusal=page.waitForResponse(response=>response.url()===`${site.runtime.url}/api/campaign-revisions/${draft.revisionId}`&&response.request().method()==='PATCH');
+      await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+      const refusedResponse=await refusal;expect(refusedResponse.status()).toBe(400);
+      const retained=await refusedResponse.json();expect(retained).toMatchObject({error:'email_too_large',size:{exceedsLimit:true}});expect(retained.size.htmlBytes).toBeGreaterThan(retained.size.limitBytes);expect(retained.size.largestBlocks).toHaveLength(3);
+      await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(unsaved);
+      await expect(page.getByRole('textbox',{name:'Include 2 value',exact:true})).toHaveValue(long);
+      expect((await read()).revision).toEqual(before);
+      await page.locator('.editor-panel').screenshot({path:info.outputPath(`audience-size-refused-${width}.png`)});
+      await page.getByRole('button',{name:'Discard changes',exact:true}).click();
+      await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toHaveValue(authoredBody(before.emailBody));
+
     }
     expect(errors).toEqual([]);
     await approve(site,cookie,draft);
