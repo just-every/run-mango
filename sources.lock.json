@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "ca3ed8901216753b88ec2372f0e8f59692e89afff2684b06edd0901b0bb684b4",
+      "sha256": "acc291f8f1f684ca70c14882459f6b2003879af11f705cdd1c041326d773a435",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "4792cbe214a156ad3939c72c2320c5b5fab59eec9bb45d0c6092729903bfb29c",
+      "sha256": "126e4ffd4840b82510de45e2dac51c2e375306b26a9f48ef9585afdd7042b5a2",
       "executable": false
     },
     "DEMO.md": {
@@ -7610,7 +7610,7 @@
       "executable": false
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {
-      "sha256": "d1239f89dbbb9367fc805e91e6be7b0f5c1b8222257f83606d4895c33f7ff68e",
+      "sha256": "dac9dfb4b982b93ddeff386416324d1fcaf576b295bc592121927832a214d085",
       "executable": false
     },
     "tests/campaign-authoring/config.js": {
@@ -7886,7 +7886,7 @@
       "executable": false
     },
     "tests/go-live/chosen-catalog-edge.ts": {
-      "sha256": "a09abbb1de32aad7e0b08144cda53340790cc2c35998aaeabe0aa3e675ef1a6e",
+      "sha256": "6d7167ecf11bf78bc5ca449cd13078afd5f69e136cc1ca77e54cc839d24cb555",
       "executable": false
     },
     "tests/go-live/chosen-catalog-journey.ts": {
