@@ -1,5 +1,7 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
-import AxeBuilder from '@axe-core/playwright';
+import {createRequire} from 'node:module';
+const localRequire=createRequire(import.meta.url);
+const axeSource=createRequire(localRequire.resolve('@axe-core/playwright'))('axe-core').source as string;
 import seed from '../../seed.json' with {type:'json'};
 import {json,consent,draftCampaign,type Installation} from './harness';
 import {providerEdge,type EdgeSend} from './edge';
@@ -19,9 +21,12 @@ const preferenceLink=(sent:EdgeSend)=>{
 async function accessible(page:Page,width:number) {
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
-  expect((await new AxeBuilder({page}).include('main').options({iframes:false}).analyze()).violations.filter(v=>['serious','critical'].includes(v.impact??''))).toEqual([]);
+  await page.evaluate(axeSource);
+  const violations=await page.evaluate(async()=>(await (window as any).axe.run(document.querySelector('main'),{iframes:false})).violations.filter((v:any)=>['serious','critical'].includes(v.impact??'')));
+  expect(violations).toEqual([]);
 }
 export async function preferenceCenterJourney(site:Installation,edge:Awaited<ReturnType<typeof providerEdge>>,cookie:string,page:Page,info:TestInfo,original:EdgeSend) {
+  console.log('Preference proof: delivered link');
   const tracked=edge.sends.findLast(send=>send.to==='ordinary@example.test'&&send.body.headers?.['List-Unsubscribe'])!;
   expect(tracked).toBeTruthy();
   expect(tracked.body.content.find((part:any)=>part.type==='text/html').value).toContain('/l/');
@@ -39,6 +44,7 @@ export async function preferenceCenterJourney(site:Installation,edge:Awaited<Ret
   let owner=cookie;
   const detail=()=>jsonResponse(`/api/contacts/${contactId}`);
   const jsonResponse=async(path:string)=>json(await site.call(path,{cookie:owner}),200);
+  console.log('Preference proof: scanner and settings');
   const before=await detail();
   const scanner=await fetch(site.local(link));expect(scanner.status).toBe(200);
   expect(await scanner.text()).not.toContain('name="displayName"');
@@ -63,17 +69,20 @@ export async function preferenceCenterJourney(site:Installation,edge:Awaited<Ret
     const denied=await json(await site.call('/api/settings/preferences',{method:'PUT',cookie:other,body:{editableFields:[]}}),403);
     expect(denied.error).toBe('role_forbidden');
   }
+  console.log('Preference proof: recipient page');
   await page.context().clearCookies();
   expect((await page.goto(site.local(link)))?.status()).toBe(200);
   await expect(page.getByRole('heading',{name:'Email preferences',exact:true})).toBeVisible();
   await expect(page.getByLabel('Display name',{exact:true})).toHaveValue(before.contact.displayName);
   expect(await page.locator('main').innerText()).not.toContain('iris@example.test');
   for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await accessible(page,width);await page.screenshot({path:info.outputPath(`recipient-preferences-${width}.png`),fullPage:true});}
+  console.log('Preference proof: confirm changes');
   await page.getByLabel('Topic: newsletter',{exact:true}).selectOption('withdraw');
   await page.getByLabel('Pause email',{exact:true}).selectOption('30');
   await page.getByLabel('Display name',{exact:true}).fill('Updated preference reader');
   await page.getByRole('button',{name:'Confirm changes',exact:true}).press('Enter');
   await expect(page.getByRole('heading',{name:'Preferences saved',exact:true})).toBeVisible();
+  console.log('Preference proof: read consent evidence');
   const changed=await detail();
   expect(changed.contact.displayName).toBe('Updated preference reader');
   expect(changed.consent).toEqual(before.consent);
@@ -88,6 +97,7 @@ export async function preferenceCenterJourney(site:Installation,edge:Awaited<Ret
   expect((await detail()).consent).toEqual(before.consent);expect((await detail()).history).toEqual(changed.history);
   // Topic withdrawal wins over a simultaneous pause. Campaigns name their send
   // topic through the existing affirmative topic-consent audience condition.
+  console.log('Preference proof: campaign exclusions');
   await site.control('/_golive/clock',{advanceMs:7*86400000});
   for(const [topic,reason] of [['newsletter','topic-unsubscribed'],['promotions','paused-by-recipient']]){
     const now=(await site.control('/_golive/clock')).now,campaign=await draftCampaign(site,owner,'Preference '+topic,[tracked.to],new Date(now+3600000));
@@ -102,6 +112,7 @@ export async function preferenceCenterJourney(site:Installation,edge:Awaited<Ret
   const unknownToken=await site.call('/preferences/synthetic-mango-180-unknown-token');expect(unknownToken.status).toBe(404);expect(await unknownToken.text()).not.toContain('Updated preference reader');
   await site.control('/_golive/clock',{advanceMs:24*86400000});owner=await site.open();
   expect((await detail()).consent).toEqual(before.consent);expect((await detail()).history).toEqual(changed.history);
+  console.log('Preference proof: unsubscribe and token isolation');
   const all=await fetch(site.local(link),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'unsubscribeAll=true'});expect(all.status).toBe(200);expect(await all.text()).toContain('You are unsubscribed');
   expect((await detail()).contact.emailStatus).toBe('unsubscribed');
   await site.control('/_golive/clock',{advanceMs:60000});
