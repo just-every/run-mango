@@ -1,3 +1,7 @@
+import {liveCatalogValues} from '@/core/features/campaigns/catalog-values';
+import {catalogBlocks,insertCatalogHtml,catalogTextValues,type CatalogRenderings} from '@/core/features/campaigns/catalog-blocks';
+import {CatalogDeliverySkip} from '@/core/features/campaigns/catalog-outcomes';
+import {inspectRevisionLinks} from './link-checks';
 import {analyticsContext} from '@/core/features/settings/analytics-policy';
 import {appendOpenPixel} from '@/core/features/insights/open-tracking';
 import { managedSmsText } from '@/core/features/sms/content';
@@ -27,11 +31,18 @@ export async function prepareDeliveryRequest(
   eligibility: EligibleContact,
   now: Date,
 ) {
-  if (envelope.recipient.outboundRequestJson) {
+  if (envelope.recipient.outboundRequestJson && (!envelope.recipient.outboundRequestJson.includes('\"catalog\":') || envelope.recipient.attemptCount>0)) {
     const request=parseDeliveryRequest(envelope.recipient.outboundRequestJson);
     // Keep the provider's idempotent request byte-for-byte stable. Revocation is
     // enforced when an existing pixel is fetched, without changing saved mail.
     return { request, trackedLinks: [] };
+  }
+  let catalog:CatalogRenderings|undefined;
+  if(catalogBlocks(envelope.revision.emailBody).length){
+    try{catalog=await liveCatalogValues(runtime.platform,envelope.revision.emailBody);}catch{throw new CatalogDeliverySkip('catalog-unavailable');}
+    if(Object.values(catalog).some(value=>value.skip))throw new CatalogDeliverySkip('catalog-empty');
+    const expanded={emailBody:insertCatalogHtml(envelope.revision.emailBody,catalog),emailText:catalogTextValues(envelope.revision.emailText,catalog),smsBody:envelope.revision.smsBody};
+    if(inspectEmailHtml(expanded.emailBody).issues.length||(await inspectRevisionLinks({revision:expanded,links:[]},runtime.platform)).some(row=>!row.inspection.ok))throw new CatalogDeliverySkip('catalog-blocked');
   }
   const htmlPolicy = inspectEmailHtml(envelope.revision.emailBody);
   const invalidTokens = invalidMessagePersonalisation(envelope.revision);
@@ -45,10 +56,10 @@ export async function prepareDeliveryRequest(
     recipientStepId: envelope.recipient.id,
     expiresAt: new Date(now.getTime() + 365 * 86_400_000),
   });
-  const {trackedLinks,rewritten}=await renderTracking(runtime.platform,{analytics:analyticsContext(envelope.revision),channel:envelope.recipient.channel,enabled:envelope.revision.trackingEnabled,smsBody:envelope.revision.smsBody,links:envelope.links,sendByAt:envelope.recipient.sendByAt});
+  const {trackedLinks,rewritten}=await renderTracking(runtime.platform,{analytics:analyticsContext(envelope.revision),channel:envelope.recipient.channel,enabled:envelope.revision.trackingEnabled,smsBody:envelope.revision.smsBody,links:[...envelope.links,...Object.values(catalog??{}).flatMap(value=>value.items.map(item=>({destinationUrl:item.url})))],sendByAt:envelope.recipient.sendByAt});
   const unsubscribeUrl = `${publicBaseUrl}${confirmationUnsubscribePath(unsubscribe.token)}`;
   const oneClickUrl = `${publicBaseUrl}${oneClickUnsubscribePath(unsubscribe.token)}`;
-  const rendered = renderMessageContent(envelope.revision, {analytics:analyticsContext(envelope.revision), values: eligibility.contact.personalisation, unsubscribeUrl, rewrittenLinks: rewritten});
+  const rendered = renderMessageContent(envelope.revision, {catalog,analytics:analyticsContext(envelope.revision), values: eligibility.contact.personalisation, unsubscribeUrl, rewrittenLinks: rewritten});
   const smsApproval=envelope.recipient.channel==='sms'?await runtime.platform.database.$client.prepare('SELECT policy_digest,sender,policy_json FROM sms_approval_policies WHERE revision_id=?').bind(envelope.recipient.revisionId).first<{policy_digest:string;sender:string;policy_json:string}>():undefined;
   if(envelope.recipient.channel==='sms'&&!smsApproval)throw new Error('SMS approval lacks its frozen programme policy; review the revision again.');
   const smsPolicy=smsApproval?smsProgrammeSchema.parse(JSON.parse(smsApproval.policy_json).policy):undefined;
@@ -61,6 +72,7 @@ export async function prepareDeliveryRequest(
     : {text: managedSmsText(rendered.sms,smsPolicy!,smsApproval!.sender)};
   const request: DeliveryRequest = {
     purpose:'marketing',
+    ...(catalog?{catalog:{readAt:Object.values(catalog)[0].readAt,hidden:catalogBlocks(envelope.revision.emailBody).flatMap(row=>catalog![row.key].hidden),emptyBlocks:catalogBlocks(envelope.revision.emailBody).filter(row=>catalog![row.key].items.length===0).length}}:{}),
     ...(smsApproval?{smsAuthority:{policyDigest:smsApproval.policy_digest,expiresAt:envelope.recipient.sendByAt.getTime()}}:{}),
     recipientStepId: envelope.recipient.id,
     idempotencyKey: envelope.recipient.idempotencyKey,

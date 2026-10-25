@@ -1,3 +1,4 @@
+import {decodeCatalogBlock,catalogTextMarker} from './catalog-blocks';
 import {assertMobileAuthority,applyMobileSettings,mobileEnvelope,mobileDocument} from './email-mobile';
 import { escapeHtml, inspectEmailHtml } from './email-html-policy';
 import { parseEmailHtml, type EmailNode } from './email-html-parse';
@@ -18,6 +19,8 @@ const lineEnds = new Set(['p', 'div', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
 export function htmlToText(html: string) {
   const text = (nodes: EmailNode[]): string => nodes.map(node => {
     if (node.kind !== 'element') return node.kind === 'text' ? node.text : '';
+    const catalog=node.attributes.get('data-mango-catalog');
+    if(catalog&&decodeCatalogBlock(catalog))return catalogTextMarker(catalog)+'\n';
     if (node.tag === 'br' || node.tag === 'hr') return '\n';
     if(node.tag==='img')return node.attributes.get('alt')??'';
     const inner = text(node.children);

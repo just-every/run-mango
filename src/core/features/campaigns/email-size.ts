@@ -1,3 +1,4 @@
+import {insertCatalogHtml,catalogTextValues,type CatalogRenderings} from './catalog-blocks';
 import {analyticsContext,analyticsUrl} from '@/core/features/settings/analytics-policy';
 import seed from '../../../../seed.json' with {type:'json'};
 import { parseEmailHtml, type EmailNode } from './email-html-parse';
@@ -8,7 +9,7 @@ import { contactLink } from './contact-links';
 
 export const emailByteLimit = seed.limits.maxEmailHtmlBytes;
 export const utf8Bytes = (value: string) => new TextEncoder().encode(value).length;
-export type EmailSizeOptions = {audienceContactIds?: readonly string[]; publicBaseUrl?: string; values?: Record<string, string | null | undefined>; trackingEnabled?: boolean; openTrackingEnabled?: boolean};
+export type EmailSizeOptions = {catalog?:CatalogRenderings;audienceContactIds?: readonly string[]; publicBaseUrl?: string; values?: Record<string, string | null | undefined>; trackingEnabled?: boolean; openTrackingEnabled?: boolean};
 export type EmailSize = {htmlBytes: number; textBytes: number; limitBytes: number; largestBlocks: Array<{location: string; bytes: number}>; exceedsLimit: boolean};
 // The encrypted public-token wire format: 12-byte IV, AES-GCM ciphertext +
 // 16-byte tag and 32-byte HMAC, all unpadded base64url. No token is issued.
@@ -56,7 +57,7 @@ export function measureEmailSize(revision: MessageRevision & {trackingEnabled?: 
     const visit = (nodes: EmailNode[]) => nodes.forEach(node=>{if(node.kind==='element') {const url=node.tag==='a'?node.attributes.get('href'):undefined;if(url && url !== '{{unsubscribe_url}}' && !contactLink(url)){const tagged=analyticsUrl(url,analyticsContext(bounded),'email');rewritten.set(url,utf8Bytes(tagged)>utf8Bytes(tracked)?tagged:tracked);}visit(node.children);}});
     visit(parseEmailHtml(bounded.emailBody).nodes);
   }
-  const renderOptions={analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten};
+  const renderOptions={catalog:options.catalog,analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten};
   const rendered = renderMessageContent(bounded,renderOptions);
   const pixel = options.openTrackingEnabled ? `<img data-mango-open-estimate="1" src="${tokenUrl(origin,'/o/',36,'open-estimate')}" width="1" height="1" alt="" />` : '';
   const html=rendered.html+pixel;
@@ -69,7 +70,7 @@ export function measureEmailSize(revision: MessageRevision & {trackingEnabled?: 
     if(block.bytes>(sections.get(block.location)?.bytes??-1))sections.set(block.location,block);
   }
   const largest=[...sections.values()].sort((a,b)=>b.bytes-a.bytes).slice(0,3);
-  const htmlBytes=utf8Bytes(html)+growth(revision.emailBody,true)+growth(revision.preheader,true),textBytes=utf8Bytes(rendered.text)+growth(revision.emailText,false);
+  const htmlBytes=utf8Bytes(html)+growth(options.catalog?insertCatalogHtml(revision.emailBody,options.catalog):revision.emailBody,true)+growth(revision.preheader,true),textBytes=utf8Bytes(rendered.text)+growth(options.catalog?catalogTextValues(revision.emailText,options.catalog):revision.emailText,false);
   return {htmlBytes,textBytes,limitBytes:emailByteLimit,largestBlocks:largest,exceedsLimit:htmlBytes>emailByteLimit||textBytes>emailByteLimit};
 }
 export function formatEmailSize(size: EmailSize) {

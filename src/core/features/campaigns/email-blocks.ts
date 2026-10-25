@@ -1,3 +1,4 @@
+import {catalogBlocks} from './catalog-blocks';
 import {productGridContent,socialLinksContent,readSocialLinks,readGridProducts} from './email-promo-blocks';
 import {parseFragment,serializeOuter,type DefaultTreeAdapterTypes as Tree} from 'parse5';
 import {applyMobileSettings,mobileEnvelope,mobileClass,type MobileBlock} from './email-mobile';
@@ -47,7 +48,7 @@ export function blockInfo(block:EditorBlock){
   const nodes=descendants(parseFragment(block.html)),cell=nodes.find(node=>node.tagName==='td');
   const content=cell?.childNodes.map(node=>serializeOuter(node)).join('')??block.html;
   const childTables=cell?.childNodes.filter((node):node is Tree.Element=>'tagName'in node&&node.tagName==='table')??[];
-  const kind:BlockKind=readGridProducts(content).length===6&&nodes.filter(node=>node.tagName==='h3').length===6?'product-grid':readSocialLinks(content).length>0&&readSocialLinks(content).length===nodes.filter(node=>node.tagName==='a').length?'social-links':childTables.some(node=>node.attrs.some(attr=>attr.name==='align'&&attr.value==='left'))?'columns':childTables.length===1&&/<a\b/.test(content)&&!/<img\b|<p\b/.test(content)?'button':/<table/.test(content)?'columns':/<h1\b/.test(content)?'header':/<h6\b/.test(content)?'footer':/<img\b/.test(content)?/<h3\b/.test(content)?'product':'image':/<a\b/.test(content)&&!/<p\b/.test(content)?'button':/<hr\b/.test(content)?'divider':/^<br\s*\/?>(?:\s*)$/.test(content)?'spacer':'text';
+  const kind:BlockKind=catalogBlocks(content).at(0)?.state.layout??(readGridProducts(content).length===6&&nodes.filter(node=>node.tagName==='h3').length===6?'product-grid':readSocialLinks(content).length>0&&readSocialLinks(content).length===nodes.filter(node=>node.tagName==='a').length?'social-links':childTables.some(node=>node.attrs.some(attr=>attr.name==='align'&&attr.value==='left'))?'columns':childTables.length===1&&/<a\b/.test(content)&&!/<img\b|<p\b/.test(content)?'button':/<table/.test(content)?'columns':/<h1\b/.test(content)?'header':/<h6\b/.test(content)?'footer':/<img\b/.test(content)?/<h3\b/.test(content)?'product':'image':/<a\b/.test(content)&&!/<p\b/.test(content)?'button':/<hr\b/.test(content)?'divider':/^<br\s*\/?>(?:\s*)$/.test(content)?'spacer':'text');
   const style=cell?.attrs.find(attr=>attr.name==='style')?.value??'';
   const values=Object.fromEntries(style.split(';').map(part=>part.split(':').map(value=>value.trim())).filter(part=>part.length===2));
   const columns=cell?.childNodes.filter((node):node is Tree.Element=>'tagName'in node&&node.tagName==='table').map(node=>{const td=descendants(node).find(child=>child.tagName==='td');return td?.childNodes.map(child=>serializeOuter(child)).join('')??'';})??[];

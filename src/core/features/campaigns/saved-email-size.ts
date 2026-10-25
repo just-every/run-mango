@@ -1,3 +1,4 @@
+import {savedCatalogValues} from './catalog-values';
 import {sizeAudience,type SizeAudience} from './size-audience';
 import type { Database } from '@/core/platform/db/client';
 import { assertEmailSize, measureEmailSize, EmailTooLargeError, type EmailSizeOptions } from './email-size';
@@ -7,6 +8,7 @@ import type { MessageRevision } from './message-content';
  * D1, not the full contact list; names never leave this service. Separate raw
  * and escaped maxima bound the HTML and text parts even for different people. */
 export async function savedEmailSize(database: Database, revision: MessageRevision & SizeAudience & {trackingEnabled?:boolean}, options: EmailSizeOptions = {}, enforce = true) {
+  if(revision.emailBody.includes('data-mango-catalog')&&!options.catalog)options={...options,catalog:await savedCatalogValues(database,revision.emailBody)};
   const values=options.values;
   if (/\{\{\s*displayName\b/.test(`${revision.emailBody}${revision.emailText}${revision.preheader}`)) {
     const members=options.audienceContactIds??await sizeAudience(database,revision);

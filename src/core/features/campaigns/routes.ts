@@ -1,3 +1,4 @@
+import {CatalogUnavailable} from './catalog-blocks';
 import {ReusableBlockError} from './reusable-block-model';
 import {MobileEmailError} from './email-mobile';
 import { CampaignExportLimitError } from './export';
@@ -23,6 +24,7 @@ const identifier = z.object({ id: z.string().min(1) });
 /** A body that never settles into a form that saves to itself is refused by name (CAMP-003); no such body is known. */
 const settled = async <T,>(save: Promise<T>) => {
   try { return { saved: await save }; } catch (error) {
+    if (error instanceof CatalogUnavailable) return {refused:{error:'catalog_unavailable',detail:error.message,fields:{emailBody:error.message}}};
     if (error instanceof ReusableBlockError) return {refused:{error:'reusable_block_conflict',detail:error.message,fields:{emailBody:error.message}}};
     if (error instanceof EmailTooLargeError) return {refused:{error:'email_too_large',detail:error.message,fields:{emailBody:error.message},size:error.size}};
     if (error instanceof MobileEmailError) return {refused:{error:"invalid_mobile_email",detail:error.message}};

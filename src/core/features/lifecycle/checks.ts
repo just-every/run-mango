@@ -1,3 +1,4 @@
+import {CatalogUnavailable} from '@/core/features/campaigns/catalog-blocks';
 import { emailContentAdvisories } from '@/core/features/campaigns/email-advisories';
 import { emailSizeAdvisory } from '@/core/features/campaigns/email-size-advisory';
 import { savedEmailSize } from '@/core/features/campaigns/saved-email-size';
@@ -171,10 +172,12 @@ export async function runApprovalChecks(input: {
     blockedHosts: blockedLinkHosts(blockedDestinations)});
   const configured = platform.config.mailSender;
   if (selected.has('email')) {
+    try{
     const size=await savedEmailSize(platform.database,snapshot.revision,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true,audienceContactIds:input.candidates.filter(candidate=>candidate.channels.email).map(candidate=>candidate.contactId)},false);
     checks.push(check('message.email-size',!size.exceedsLimit,formatEmailSize(size)));
     const sizeAdvisory=emailSizeAdvisory(size);
     if(sizeAdvisory)checks.push(sizeAdvisory);
+    }catch(error){if(error instanceof CatalogUnavailable)checks.push(check('message.catalog',false,error.message));else throw error;}
     const inspection = mailInspection!;
     checks.push(...adapterChecks('email', mailCapabilities, requiredWindow('email')));
     if(mailCapabilities.deliveryEventsVerified!==undefined)checks.push(check('delivery-events-missing',mailCapabilities.deliveryEventsVerified,'A signed delivered event for the Owner sender check is required.'));

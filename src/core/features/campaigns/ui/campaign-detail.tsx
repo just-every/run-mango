@@ -1,3 +1,4 @@
+import {CatalogCounts} from './catalog-counts';
 import { CampaignAttributionSummary } from './campaign-attribution';
 import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
@@ -74,6 +75,7 @@ export function CampaignDetailPage() {
         <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} {...savedAudienceExclusions(data.audience)} />
         <DeliveryPlan steps={data.steps} />
       </div>
+      <CatalogCounts summary={data.catalogSummary}/>
       <RevisionPreviews revision={data.revision} links={data.links} mediaOrigin={data.mediaOrigin} />
       <ApprovalCheckList checks={data.checks} />
     </div>

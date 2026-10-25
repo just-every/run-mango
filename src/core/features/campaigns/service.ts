@@ -16,7 +16,7 @@ export function createCampaignService(
   repository: ReturnType<typeof createCampaignRepository>,
   compositionRepository: ReturnType<typeof createCampaignCompositionRepository>,
   store: ReturnType<typeof createStoreService>,
-  options: { smsEnabled: boolean; commerceEnabled?: boolean; aiEnabled?: boolean; marketingConnectionRequired?: boolean; now?: () => Date; blockedHosts?:(input:LinkCheckInput)=>Promise<ReturnType<typeof blockedLinkHosts>>; smsPreview?:(campaignId:string,revisionId:string)=>Promise<import('@/core/features/sms/review-preview').SmsReviewPreview|undefined> } = { smsEnabled: false },
+  options: { catalogSummary?:(campaignId:string)=>Promise<import('./catalog-outcomes').CatalogSummary>; smsEnabled: boolean; commerceEnabled?: boolean; aiEnabled?: boolean; marketingConnectionRequired?: boolean; now?: () => Date; blockedHosts?:(input:LinkCheckInput)=>Promise<ReturnType<typeof blockedLinkHosts>>; smsPreview?:(campaignId:string,revisionId:string)=>Promise<import('@/core/features/sms/review-preview').SmsReviewPreview|undefined> } = { smsEnabled: false },
 ) {
   async function campaignDetail(id: string, preferEditable = false) {
     const [campaignRead, editableRead] = await Promise.allSettled([
@@ -53,7 +53,7 @@ export function createCampaignService(
       repository.attribution(id,composition.revision.id),
     ]);
     const checks=savedChecks.map(check=>authoringSourceCheck(check,rules.ok?rules.sourceTypes:[]));
-    return { campaign, ...composition,
+    return { campaign, ...composition, catalogSummary:composition.revision.emailBody.includes('data-mango-catalog')?await options.catalogSummary?.(id):undefined,
       scheduler,
       revision: {...composition.revision, audienceRule:summarizeAudienceRules(composition.revision.inclusionRuleJson,composition.revision.exclusionRulesJson)},
       results, uncertainDeliveries, checks, attribution };

@@ -5,6 +5,7 @@ import type { SenderVerification } from '@/core/features/sender-verification/ser
 export type Channel = 'email' | 'sms';
 
 export type DeliveryRequest = {
+  catalog?: {readAt:string;hidden:Array<{productId:string;variantId:string;reason:string}>;emptyBlocks:number};
   smsAuthority?: {policyDigest:string;expiresAt:number};
   purpose?: 'marketing' | 'consent-confirmation' | 'sms-compliance';
   recipientStepId: string;

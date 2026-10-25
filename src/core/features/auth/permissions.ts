@@ -44,6 +44,8 @@ export function requiredPermission(method: string, path: string): Capability {
   const p = location.pathname.replace(/\/+$/, '') || '/';
   const verb = method.toUpperCase();
   const read = verb === 'GET' || verb === 'HEAD';
+  if(read&&p==='/api/catalog/products')return 'draft.write';
+  if(verb==='POST'&&p==='/api/catalog/preview')return 'campaign.read';
   if ((read && p === '/api/operator') || (verb === 'POST' && p === '/api/auth/signout')) return 'session.self';
   if (/^\/api\/(?:operator\/sessions|sessions\/self)(?:\/[^/]+)?$/.test(p)) return 'session.self';
 

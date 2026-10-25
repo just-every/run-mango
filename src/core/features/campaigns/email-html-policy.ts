@@ -1,3 +1,4 @@
+import {decodeCatalogBlock} from './catalog-blocks';
 import {mobileClass} from './email-mobile';
 import { safeEmailLink } from './contact-links';
 import { linkProblem } from './link-reasons';
@@ -29,6 +30,7 @@ export function localMediaUrl(value: string, mediaOrigin?: string) {
 const insecureMedia = (value: string) => { try { const url = new URL(value); return url.protocol === 'http:' && mediaPath.test(url.pathname) && !url.search && !url.hash; } catch { return false; } };
 /** `mediaOrigin` is this deployment's own origin, passed only where a draft is saved or previewed. */
 export function allowedEmailAttribute(tag: string, name: string, value: string, mediaOrigin?: string) {
+  if (tag === 'div' && name === 'data-mango-catalog') return Boolean(decodeCatalogBlock(value));
   if (name === 'title' || (tag === 'img' && name === 'alt')) return !value.includes('{{');
   if (tag === 'a' && name === 'href') return safeEmailLink(value, true);
   if (tag === 'img' && name === 'src') return safeEmailUrl(value) || localMediaUrl(value, mediaOrigin);
@@ -56,6 +58,7 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
   };
   const element = (node: EmailElement, inLink: boolean, ancestorHidden:boolean) => {
     const {tag, attributes} = node;
+    if (attributes.has('data-mango-catalog') && node.children.length) issues.add('Chosen catalog blocks store identifiers only and cannot contain copied content.');
     const setting=parsed.mobile?.settings.find(row=>mobileClass(row.block)===attributes.get("class"));
     const hidden=ancestorHidden||Boolean(setting?.hideOnMobile||setting?.hideOnDesktop);
     if(hidden&&tag==="a"&&attributes.get("href")==="{{unsubscribe_url}}")issues.add("The unsubscribe link cannot sit in a block hidden on either viewport.");

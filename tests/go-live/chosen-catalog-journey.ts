@@ -1,0 +1,63 @@
+import {expect,type Page,type TestInfo} from '@playwright/test';
+import {createRequire} from 'node:module';
+import {providerEdge} from './edge';
+import {eventSigner} from './sendgrid-events';
+import {installation,json,sender,confirmedContact,draftCampaign,approve,dispatch} from './harness';
+import {syncSource} from './source-edge';
+import {chosenCatalogEdge} from './chosen-catalog-edge';
+import {openPage} from '../support/navigation';
+import {png} from '../support/images';
+const require=createRequire(import.meta.url),axeSource=createRequire(require.resolve('@axe-core/playwright'))('axe-core').source as string;
+async function screen(page:Page,info:TestInfo,name:string,width:number){
+ await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);await page.evaluate(axeSource);expect(await page.evaluate(async()=>(await (window as any).axe.run(document.querySelector('main'),{iframes:false})).violations.filter((row:any)=>['serious','critical'].includes(row.impact)))).toEqual([]);await page.screenshot({path:info.outputPath(`${name}-${width}.png`),fullPage:true});
+}
+export async function chosenCatalogJourney(page:Page,info:TestInfo){
+ console.log('Chosen catalog proof: setup');
+ const catalog=chosenCatalogEdge(),edge=await providerEdge({commerce:request=>catalog.commerce(request),links:catalog.links}),site=await installation(edge,eventSigner(),{commerce:true});
+ const marketing=()=>edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);
+ try{
+  const cookie=await site.open();await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);await site.control('/_golive/sender-evidence');await confirmedContact(site,edge,cookie,'synthetic-mango-160@example.test','Synthetic reader');
+  await json(await site.call('/api/settings/link-hosts',{method:'PUT',cookie,body:{hosts:'mango.example.test,myshop.com,cdn.shopify.com'}}),200);
+  await syncSource(site,cookie,'product');await syncSource(site,cookie,'variant');
+  const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000),campaign=await draftCampaign(site,cookie,'synthetic-mango-160',['synthetic-mango-160@example.test'],due);
+  await page.context().clearCookies();await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+  await page.route('https://cdn.shopify.com/**',route=>route.fulfill({status:200,contentType:'image/png',body:Buffer.from(png(300,240))}));
+  await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);await page.getByRole('button',{name:'Block builder',exact:true}).click();
+  await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption('product');await page.getByRole('button',{name:'Add block',exact:true}).click();
+  const search=async(q:string,expected:string[])=>{await expect(page.getByRole('textbox',{name:'Search catalog',exact:true})).toBeVisible();await page.getByRole('textbox',{name:'Search catalog',exact:true}).fill(q);const pending=page.waitForResponse(response=>new URL(response.url()).pathname==='/api/catalog/products'&&new URL(response.url()).searchParams.get('q')===q);await page.getByRole('button',{name:'Search catalog',exact:true}).press('Enter');const response=await pending;expect(response.status()).toBe(200);expect((await response.json()).products.map((item:any)=>item.title)).toEqual(expected);};
+  console.log('Chosen catalog proof: search and product picker');
+  await search('Synthetic Basil',['Synthetic Basil']);await page.getByRole('button',{name:'Choose Synthetic Basil',exact:true}).press('Enter');await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+  const single=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);expect(single.revision.emailBody).toContain('data-mango-catalog=');
+  await page.getByRole('button',{name:'Delete block 2',exact:true}).click();await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption('product-grid');await page.getByRole('button',{name:'Add block',exact:true}).click();
+  await search('Summer harvest',['Synthetic Basil','Synthetic Mint']);await search('Mango Workshop',['Synthetic Basil','Synthetic Mint']);await search('Synthetic Basil',['Synthetic Basil']);await page.getByRole('button',{name:'Choose Synthetic Basil',exact:true}).press('Enter');
+  await search('mint-green-bundle',['Synthetic Mint']);await page.getByRole('combobox',{name:'Variant for Synthetic Mint',exact:true}).selectOption('gid://shopify/ProductVariant/1612');await page.getByRole('button',{name:'Choose Synthetic Mint',exact:true}).press('Enter');
+  for(const width of [1440,390])await screen(page,info,'catalog-picker',width);
+  await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+  let saved=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
+  const encoded=/data-mango-catalog="([^"]+)"/.exec(saved.revision.emailBody)![1],state=JSON.parse(Buffer.from(encoded,'base64').toString());
+  expect(state).toEqual({version:1,provider:'shopify',layout:'product-grid',empty:'hide',items:[{productId:'gid://shopify/Product/160',variantId:'gid://shopify/ProductVariant/1601'},{productId:'gid://shopify/Product/161',variantId:'gid://shopify/ProductVariant/1612'}]});
+  for(const copied of ['Synthetic Basil','Synthetic Mint','24.00','myshop.com/products/','cdn.shopify.com/'])expect(saved.revision.emailBody).not.toContain(copied);
+  await page.getByRole('button',{name:'HTML mode',exact:true}).click();const original=await page.getByRole('textbox',{name:'HTML email body',exact:true}).inputValue();await page.getByRole('textbox',{name:'HTML email body',exact:true}).fill(original);await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+  expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).revision.emailBody).toBe(saved.revision.emailBody);
+  console.log('Chosen catalog proof: current previews');
+  const preview=page.locator('section[aria-label="Saved revision previews"]');await expect(preview.getByRole('status')).toContainText('Catalog read at');
+  await preview.getByRole('button',{name:'Load 2 remote images',exact:true}).click();
+  for(const width of [1440,390]){await page.setViewportSize({width,height:1000});const frame=preview.frameLocator('iframe[title="Saved email preview"]');await expect(frame.getByText('Synthetic Basil',{exact:true})).toBeVisible();await expect(frame.getByText('Synthetic Mint',{exact:true})).toBeVisible();await expect(frame.locator('img')).toHaveCount(2);expect(await frame.locator('img').evaluateAll(nodes=>nodes.every(node=>(node as HTMLImageElement).complete&&(node as HTMLImageElement).naturalWidth>0))).toBe(true);await screen(page,info,'catalog-preview',width);await preview.locator('iframe').scrollIntoViewIfNeeded();await preview.locator('.message-preview--email').screenshot({path:info.outputPath(`catalog-email-${width}.png`)});}
+  await approve(site,cookie,campaign);
+  const locked=await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie,body:{emailBody:saved.revision.emailBody.replace(encoded,Buffer.from(JSON.stringify({...state,empty:'skip'})).toString('base64'))}});expect(locked.status).toBe(409);
+  catalog.price(1601,'36.00');catalog.unpublish(161);const before=marketing().length;await dispatch(site,campaign.campaignId,due);const delivered=marketing().slice(before);expect(delivered).toHaveLength(1);const html=delivered[0].body.content.find((part:any)=>part.type==='text/html').value;expect(html).toContain('AUD 36.00');expect(html).not.toContain('Synthetic Mint');
+  const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);expect(detail.catalogSummary.hidden).toEqual([{reason:'unpublished',count:1}]);
+  catalog.reset();await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}`);for(const width of [1440,390]){await expect(page.getByRole('region',{name:'Catalog outcomes',exact:true})).toContainText('unpublished');await screen(page,info,'catalog-outcomes',width);}
+  console.log('Chosen catalog proof: terminal availability cases');
+  const sendCase=async(name:string,change:()=>void,empty:'hide'|'skip'='hide')=>{
+   catalog.reset();const now=await site.control('/_golive/clock',{hold:true}),at=new Date(now.now+5000),next=await draftCampaign(site,cookie,'synthetic-mango-'+name,['synthetic-mango-160@example.test'],at),body=empty==='hide'?saved.revision.emailBody:saved.revision.emailBody.replace(encoded,Buffer.from(JSON.stringify({...state,empty})).toString('base64'));
+   await json(await site.call(`/api/campaign-revisions/${next.revisionId}`,{method:'PATCH',cookie,body:{emailBody:body}}),200);await approve(site,cookie,next);change();const sent=marketing().length;const rows=await dispatch(site,next.campaignId,at);return {rows,sends:marketing().slice(sent),detail:await json(await site.call(`/api/campaigns/${next.campaignId}`,{cookie}),200)};
+  };
+  const deleted=await sendCase('161',()=>catalog.delete(160));expect(deleted.sends).toHaveLength(1);expect(deleted.detail.catalogSummary.hidden).toEqual([{reason:'deleted',count:1}]);
+  const stock=await sendCase('162',()=>catalog.stock(1601,0));expect(stock.sends).toHaveLength(1);expect(stock.detail.catalogSummary.hidden).toEqual([{reason:'out-of-stock',count:1}]);
+  const hide=await sendCase('163',()=>{catalog.unpublish(160);catalog.unpublish(161);});expect(hide.sends).toHaveLength(1);expect(hide.detail.catalogSummary.emptyBlocks).toBe(1);
+  const skip=await sendCase('164',()=>{catalog.unpublish(160);catalog.unpublish(161);},'skip');expect(skip.sends).toHaveLength(0);expect(skip.rows.map(row=>row.skip_reason)).toEqual(['catalog-empty']);expect(skip.detail.catalogSummary.skipped).toEqual([{reason:'catalog-empty',count:1}]);
+  const unavailable=await sendCase('165',()=>catalog.fail());expect(unavailable.sends).toHaveLength(0);expect(unavailable.rows.map(row=>row.skip_reason)).toEqual(['catalog-unavailable']);expect(unavailable.detail.catalogSummary.skipped).toEqual([{reason:'catalog-unavailable',count:1}]);
+  expect(edge.unexpected).toEqual([]);
+ }finally{await site.runtime.close();await edge.close();}
+}

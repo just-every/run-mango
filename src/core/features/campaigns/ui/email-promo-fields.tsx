@@ -1,3 +1,5 @@
+import {CatalogPicker} from './catalog-picker';
+import {catalogBlocks} from '../catalog-blocks';
 import {useState,useRef,useEffect} from 'react';
 import {socialNetworks} from '@/core/shared/social-networks';
 import {uploadCampaignImage} from '@/core/features/campaign-assets/ui/upload';
@@ -41,7 +43,9 @@ export function SocialLinksFields({html,busy,onChange}:{html:string;busy:boolean
 }
 export function ProductGridFields({html,busy,onChange}:{html:string;busy:boolean;onChange:(html:string)=>void}){
   const products=readGridProducts(html),[selected,setSelected]=useState(0);
+  if(catalogBlocks(html).length)return <CatalogPicker kind="product-grid" html={html} busy={busy} onChange={onChange}/>;
   return <fieldset><legend>Product grid</legend><label>Selected product<select value={selected} disabled={busy} onChange={e=>setSelected(Number(e.target.value))}>{products.map((_,index)=><option key={index} value={index}>Product {index+1}</option>)}</select></label>
-    <EmailBlockFields kind="product" html={products[selected]??''} busy={busy} onChange={content=>onChange(productGridContent(products.map((product,index)=>index===selected?content:product)))}/>
+    <EmailBlockFields kind="product" allowCatalog={false} html={products[selected]??''} busy={busy} onChange={content=>onChange(productGridContent(products.map((product,index)=>index===selected?content:product)))}/>
+    <CatalogPicker kind="product-grid" html={html} busy={busy} onChange={onChange}/>
   </fieldset>;
 }

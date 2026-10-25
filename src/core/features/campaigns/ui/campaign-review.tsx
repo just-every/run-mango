@@ -1,3 +1,4 @@
+import {CatalogCounts} from './catalog-counts';
 import {DormancyControls} from './dormancy-controls';
 import { BlockedLinkHosts } from './blocked-link-hosts';
 import { CampaignAttributionSummary } from './campaign-attribution';
@@ -259,6 +260,7 @@ export function CampaignReviewPage() {
       <BlockedLinkHosts campaignId={id} blockedHosts={data.blockedHosts} findings={findings} links={data.links} canAllow={can('campaign.approve')} disabled={Boolean(busy) || dirty || needsCanonicalRead} onAllowed={async () => {await reload(); setActionBlockers(undefined);}} />
       <p className="saved-audience-summary notice-note"><strong>Saved audience:</strong> {revision.audienceMasked?'Audience conditions are restricted by your role.':summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p>
       <SaveCampaignTemplate key={revision.id} revisionId={revision.id} name={revision.name} disabled={dirty||needsCanonicalRead||Boolean(busy)}/>
+      <CatalogCounts summary={data.catalogSummary}/>
       <div className="review-layout">
         {editable ? authoring.loading ? <LoadState /> : authoring.error || !authoring.data?.timezone
           ? <LoadState error="Campaign authoring is unavailable: the configured store time zone could not be loaded." />

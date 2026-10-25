@@ -1,3 +1,4 @@
+import {chosenCatalogJourney} from './chosen-catalog-journey';
 import {test, expect} from '@playwright/test';
 import {providerEdge} from './edge';
 import {eventSigner} from './sendgrid-events';
@@ -90,6 +91,7 @@ test('[AUD-006] later steps reapply ordinary inclusion, custom exclusions and co
       await page.screenshot({path: info.outputPath(`multistep-completed-${width}.png`), fullPage: true});
     }
     expect(edge.unexpected).toEqual([]);
+    await chosenCatalogJourney(page,info);
   } finally {
     await page.close();
     await site.runtime.close();

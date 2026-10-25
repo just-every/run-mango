@@ -1,3 +1,4 @@
+import {catalogBlocks,decodeCatalogBlock,insertCatalogHtml,CatalogUnavailable,type CatalogRenderings} from './catalog-blocks';
 import {analyticsUrl,type AnalyticsContext} from '@/core/features/settings/analytics-policy';
 import {mobileEnvelope,mobileDocument} from './email-mobile';
 import {rewriteTextLinks,textLinkDestinations} from './message-links';
@@ -42,21 +43,25 @@ export function invalidMessagePersonalisation(revision:Pick<MessageRevision,'ema
 }
 /** Pure rendering: no capabilities, writes, contacts or network are acquired here. */
 export function renderMessageContent(revision: MessageRevision, options: {
-  analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
+  catalog?:CatalogRenderings; analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
 }) {
+  const chosen=catalogBlocks(revision.emailBody);
+  if(chosen.length&&(!options.catalog||chosen.some(row=>!options.catalog![row.key])))throw new CatalogUnavailable();
   const values = options.values ?? {};
-  const render = (template: string, html = false) => {
+  const render = (template: string, html = false, catalogText = false) => {
     const encode = html ? escapeHtml : (value: string) => value;
     // One pass prevents contact values and fallbacks from introducing new managed tokens.
-    return template.replace(/\{\{([\s\S]*?)\}\}/g, (match, token: string) => {
-      const parsed = parseToken(token);
+    return template.replace(/\{\{([\s\S]*?)\}\}|MANGO_CATALOG_([A-Za-z0-9+/]+={0,2})/g, (match, token: string|undefined, key:string|undefined) => {
+      if(key){if(!catalogText||!decodeCatalogBlock(key))return match;const value=options.catalog?.[key];if(!value)throw new CatalogUnavailable();return value.text;}
+      const parsed = parseToken(token!);
       if (!parsed) return match;
       const value = personalisationValue(values, parsed.key);
       return encode(parsed.managed === 'unsubscribe_url' ? options.unsubscribeUrl : parsed.managed === 'physical_address' ? revision.physicalAddress : value || parsed.fallback!);
     });
   };
   const replaceTextLinks = (text:string,channel:'email'|'sms') => {const links=new Map(textLinkDestinations(text).map(url=>[url,analyticsUrl(url,options.analytics,channel)]));for(const [url,target] of options.rewrittenLinks??[])links.set(url,target);return rewriteTextLinks(text,links);};
-  const html = render(revision.emailBody, true).replace(/\bhref\s*=\s*(["'])(.*?)\1/gi, (attribute, quote: string, url: string) => {
+  const personalHtml=render(revision.emailBody,true);
+  const html = (chosen.length?insertCatalogHtml(personalHtml,options.catalog!):personalHtml).replace(/\bhref\s*=\s*(["'])(.*?)\1/gi, (attribute, quote: string, url: string) => {
     const decoded=url.replaceAll('&amp;', '&');
     const replacement = options.rewrittenLinks?.get(decoded)??analyticsUrl(decoded,options.analytics,'email');
     return replacement ? `href=${quote}${escapeHtml(replacement)}${quote}` : attribute;
@@ -66,6 +71,6 @@ export function renderMessageContent(revision: MessageRevision, options: {
   return {
     subject: render(revision.emailSubject), preheader,
     html: mobileDocument(`<div aria-hidden="true" style="display:none;max-height:0;overflow:hidden;opacity:0">${escapeHtml(preheader)}</div>${envelope.body}`,envelope.style),
-    text: replaceTextLinks(render(revision.emailText),'email'), sms: replaceTextLinks(render(revision.smsBody),'sms'),
+    text: replaceTextLinks(render(revision.emailText,false,true),'email'), sms: replaceTextLinks(render(revision.smsBody),'sms'),
   };
 }

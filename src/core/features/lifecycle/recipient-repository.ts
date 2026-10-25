@@ -246,9 +246,9 @@ export function createRecipientLifecycleRepository(database: Database) {
            WHERE r.id=? AND l.destination_url=? HAVING COUNT(*)=1)) ON CONFLICT(token_digest) DO NOTHING`,
       ).bind(link.tokenDigest, input.id, link.destinationUrl, link.expiresAt.getTime(), input.now.getTime(), link.originalDestinationUrl??link.destinationUrl, input.id, link.originalDestinationUrl??link.destinationUrl));
       statements.push(client.prepare(
-        `UPDATE recipient_steps SET outbound_request_json = COALESCE(outbound_request_json, ?), updated_at = ?
+        `UPDATE recipient_steps SET outbound_request_json = CASE WHEN attempt_count=0 AND handoff_started_at IS NULL AND json_type(outbound_request_json,'$.catalog')='object' THEN ? ELSE COALESCE(outbound_request_json, ?) END, updated_at = ?
          WHERE id = ? AND lease_token = ? AND transport_disposition = 'queued'`,
-      ).bind(input.requestJson, input.now.getTime(), input.id, input.leaseToken));
+      ).bind(input.requestJson, input.requestJson, input.now.getTime(), input.id, input.leaseToken));
       const results = await client.batch(statements);
       return results.at(-1)?.meta.changes === 1;
     },

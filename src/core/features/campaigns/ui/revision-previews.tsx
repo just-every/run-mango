@@ -1,3 +1,5 @@
+import {catalogBlocks,type CatalogRenderings} from '../catalog-blocks';
+import {requestJson} from '@/core/app/client/lib/api';
 import {analyticsContext} from '@/core/features/settings/analytics-policy';
 import {mobileEnvelope} from '../email-mobile';
 import { contactLink } from '../contact-links';
@@ -17,11 +19,17 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
   const [contact, setContact] = useState<Contact>();
   const [loadImages, setLoadImages] = useState(false);
-  const rendered = useMemo(() => renderMessageContent({...revision, preheader: revision.preheader ?? '', physicalAddress: revision.physicalAddress ?? ''}, {
-    analytics:analyticsContext(revision),
+  const needsCatalog=catalogBlocks(revision.emailBody).length>0;
+  const [catalog,setCatalog]=useState<{body:string;values:CatalogRenderings}>(),[catalogError,setCatalogError]=useState('');
+  useEffect(()=>{let current=true;setCatalogError('');if(!needsCatalog)return;void requestJson<{renderings?:CatalogRenderings}>('/api/catalog/preview',{method:'POST',body:JSON.stringify({emailBody:revision.emailBody})}).then(result=>{if(!current)return;if(result.status!==200||!result.data.renderings){setCatalogError('Current catalog values are unavailable.');return;}setCatalog({body:revision.emailBody,values:result.data.renderings});}).catch(()=>{if(current)setCatalogError('Current catalog values are unavailable.');});return()=>{current=false;};},[revision.id,revision.updatedAt,revision.emailBody]);
+  const catalogValues=catalog?.body===revision.emailBody?catalog.values:undefined;
+  const previewRevision=needsCatalog&&!catalogValues?{...revision,emailBody:'<p>Catalog preview is unavailable until current values are read.</p>',emailText:'Catalog preview unavailable.'}:revision;
+
+  const rendered = useMemo(() => renderMessageContent({...previewRevision, preheader: revision.preheader ?? '', physicalAddress: revision.physicalAddress ?? ''}, {
+    catalog:catalogValues,analytics:analyticsContext(revision),
     values: contact ? contactPersonalisation(contact, contact.email ?? '') : {displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
-  }), [revision, contact]);
+  }), [revision, contact, catalogValues]);
   const responsive=mobileEnvelope(revision.emailBody);
   const dependent=[responsive.settings.some(row=>row.hideOnMobile)?'hide on mobile':'',responsive.settings.some(row=>row.hideOnDesktop)?'hide on desktop':'',responsive.settings.some(row=>row.orientation)?'mobile orientation':'',responsive.settings.some(row=>row.fontSize!==undefined)?'mobile font size':'',responsive.settings.some(row=>row.lineHeight!==undefined)?'mobile line height':'',responsive.settings.some(row=>row.padding!==undefined)?'mobile padding':'',responsive.settings.some(row=>row.alignment)?'mobile alignment':''].filter(Boolean);
   const showEmail = selectedChannels?.includes('email') ?? true;
@@ -32,6 +40,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const preview = useMemo(() => sanitizeEmailPreview(rendered.html, loadImages, issues.length === 0, mediaOrigin), [rendered.html, loadImages, issues, mediaOrigin]);
   return (
     <section className="preview-grid" aria-label="Saved revision previews">
+      {needsCatalog?<p role={catalogError?'alert':'status'}>{catalogError||(!catalogValues?'Reading current catalog values…':'Catalog read at '+new Date(Object.values(catalogValues)[0]?.readAt).toLocaleString())}</p>:null}
       {showEmail ? <article className="message-preview message-preview--email">
         <Paper w={640} h={760} seed={41} className="app-sheet email-sheet">
           <p className="eyebrow">Email · saved revision</p>

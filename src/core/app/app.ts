@@ -1,3 +1,6 @@
+import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
+import {registerCatalogReader,liveCatalogValues} from '@/core/features/campaigns/catalog-values';
+import {catalogSummary} from '@/core/features/campaigns/catalog-outcomes';
 import {advisorySizeOptions} from '@/core/features/lifecycle/advisory-size-options';
 import {reusableBlockRoutes} from '@/core/features/campaigns/reusable-block-routes';
 import {flowDraftRoutes} from '@/core/features/flows/routes';
@@ -201,6 +204,7 @@ type AppServices = {
 type BeforeAuthenticationRoutes = (app: Hono<AppEnvironment>, services: AppServices) => void;
 
 export function createAppServices(platform: Platform, queueIdentity: object = platform.jobs): AppServices {
+  registerCatalogReader(platform.database,source=>liveCatalogValues(platform,source));
   const database = platform.database;
   const healthService = createHealthService(createHealthRepository(database), platform, queueIdentity);
   const authService = createAuthService(createAuthRepository(database), platform);
@@ -224,6 +228,7 @@ export function createAppServices(platform: Platform, queueIdentity: object = pl
     { smsEnabled: platform.config.modules.sms.enabled, commerceEnabled:!!platform.commerce, aiEnabled:platform.config.modules.ai.enabled,
       marketingConnectionRequired:platform.config.authMail !== undefined && platform.config.mailProvider === 'rer',
       smsPreview:(campaignId,revisionId)=>smsReviewPreview(lifecycleRuntime!,campaignId,revisionId),
+      catalogSummary:campaignId=>catalogSummary(platform.database,campaignId),
       blockedHosts:async input=>blockedLinkHosts(await inspectRevisionLinks(input,platform)) },
   );
   const insightsService = createInsightsService(createInsightsRepository(database), platform.config.deliverabilityReportingWindowDays);
@@ -383,6 +388,7 @@ export function createApp(
   app.route('/api', createMoveInRoutes(platform));
   app.route('/api', createCampaignAssetRoutes(environment.DB, platform.blobs, platform.config.publicBaseUrl));
   app.route('/api', createDesignGenerationRoutes(environment.DB, platform));
+  app.route('/api',createCatalogRoutes(platform));
   app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin,
     (campaignId, revisionId) => lifecycleServices.approval.preview({campaignId, revisionId})));
   app.route('/api', createInsightsRoutes(insightsService,platform.database));

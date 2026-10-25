@@ -117,6 +117,7 @@ export type Check = {
 };
 
 export type CampaignDetail = {
+  catalogSummary?:import('@/core/features/campaigns/catalog-outcomes').CatalogSummary;
   blockedHosts?: BlockedHost[];
   attribution?: import('@/core/features/campaigns/campaign-attribution').CampaignAttribution;
   smsPreview?: import('@/core/features/sms/review-preview').SmsReviewPreview;

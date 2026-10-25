@@ -1,3 +1,4 @@
+import {liveCatalogValues} from '@/core/features/campaigns/catalog-values';
 import {analyticsContext} from '@/core/features/settings/analytics-policy';
 import { testDestination, testDestinationBlock, waitForTestSlot, testSendAccess } from './test-destinations';
 import { utf8Bytes, emailByteLimit } from '@/core/features/campaigns/email-size';
@@ -73,7 +74,7 @@ export function createTestSender(runtime: LifecycleRuntime, repository: Lifecycl
       const smsPolicy=input.channel==='sms'?await smsPolicyAuthority(runtime.platform.config):undefined;
       if(smsPolicy&&snapshot.revision.smsSender!==smsPolicy.sender)return {kind:'blocked' as const,detail:'SMS sender changed. Save and review the current programme sender.'};
       const marker = '[MANGO TEST — NOT A CAMPAIGN SEND]';
-      const rendered = renderMessageContent(snapshot.revision, {analytics:analyticsContext(snapshot.revision), values: {displayName: 'Test recipient'}, unsubscribeUrl: 'https://preview.invalid/unsubscribe/test-example'});
+      const rendered = renderMessageContent(snapshot.revision, {catalog:await liveCatalogValues(runtime.platform,snapshot.revision.emailBody),analytics:analyticsContext(snapshot.revision), values: {displayName: 'Test recipient'}, unsubscribeUrl: 'https://preview.invalid/unsubscribe/test-example'});
       const content = input.channel === 'email'
         ? {subject: `${marker} ${rendered.subject}`, html: `<p><strong>${marker}</strong></p>${rendered.html}`, text: `${marker}\n\n${rendered.text}`, preheader: `${marker} ${rendered.preheader}`, test: true,
           from: {name: snapshot.revision.senderName, email: snapshot.revision.fromEmail}, replyTo: snapshot.revision.replyToEmail}

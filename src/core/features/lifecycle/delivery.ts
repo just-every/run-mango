@@ -1,3 +1,4 @@
+import {CatalogDeliverySkip} from '@/core/features/campaigns/catalog-outcomes';
 import { utf8Bytes, emailByteLimit } from '@/core/features/campaigns/email-size';
 import {aggregateMobileMessageParts,matchesMobileMessagePart} from './mobile-message-status';
 import {reputationRestricted} from './reputation-guard';
@@ -147,7 +148,9 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
         return;
       }
     }
-    const prepared = await prepareDeliveryRequest(runtime, {...beforeClaim,recipient:{...beforeClaim.recipient,outboundRequestJson:claimed.outboundRequestJson}}, eligibility, now);
+    let prepared;
+    try{prepared=await prepareDeliveryRequest(runtime,{...beforeClaim,recipient:{...beforeClaim.recipient,outboundRequestJson:claimed.outboundRequestJson}},eligibility,now);}
+    catch(error){if(error instanceof CatalogDeliverySkip){await repository.markSkipped(claimed.id,claimed.leaseToken,error.reason,now);return;}throw error;}
     // Persisted outbound JSON is authoritative on restart, including content.from.
     const request = prepared.request;
     if(claimed.channel==='email' && 'html' in request.content && (utf8Bytes(request.content.html ?? '')>emailByteLimit||utf8Bytes(request.content.text)>emailByteLimit)) {

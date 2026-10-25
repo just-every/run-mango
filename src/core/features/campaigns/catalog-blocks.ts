@@ -15,6 +15,7 @@ export function decodeCatalogBlock(value:string):CatalogBlock|undefined {
 }
 const elements=(node:Tree.ParentNode):Tree.Element[]=>node.childNodes.flatMap(child=>'tagName'in child?[child,...elements(child)]:[]);
 export function catalogBlocks(source:string){
+  if(!source.includes('data-mango-catalog'))return [];
   return elements(parseFragment(mobileEnvelope(source).body)).flatMap(node=>{const key=node.attrs.find(attr=>attr.name==='data-mango-catalog')?.value;if(!key)return [];const state=decodeCatalogBlock(key);if(!state)throw new CatalogUnavailable();return [{key,state}];});
 }
 export function catalogBlockContent(state:CatalogBlock){return `<div data-mango-catalog="${encodeCatalogBlock(state)}"></div>`;}
@@ -32,3 +33,6 @@ export function insertCatalogHtml(source:string,renderings:CatalogRenderings){
   }
   return mobileDocument(serialize(fragment),envelope.style);
 }
+/** Used only for link inspection and byte accounting, never as a second
+ * personalization pass over recipient or catalog values. */
+export function catalogTextValues(source:string,values:CatalogRenderings){return source.replace(/MANGO_CATALOG_([A-Za-z0-9+/]+={0,2})/g,(match,key:string)=>decodeCatalogBlock(key)?values[key]?.text??match:match);}
