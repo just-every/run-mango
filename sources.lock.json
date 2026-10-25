@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "6aec3ba02baf6ffceb0233530a8f8f797beeca52ff37aa1402de5be5cccf3bac",
+      "sha256": "734317427b1b4bc4395fc97012321646041597220f4eeb0755d53c682eecd87a",
       "executable": false
     },
     "DEMO.md": {
@@ -7878,7 +7878,7 @@
       "executable": false
     },
     "tests/go-live/chosen-catalog-journey.ts": {
-      "sha256": "f9abe0a809187f7820b409979735ba10ac88ab3e1c90b2e8fc201fd360a59136",
+      "sha256": "b34b65215d4094bdd6327a4e03a4fea782e3a200d1912b247921761819685bf3",
       "executable": false
     },
     "tests/go-live/clock.ts": {
