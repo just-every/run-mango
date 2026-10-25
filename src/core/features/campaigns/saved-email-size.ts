@@ -1,3 +1,4 @@
+import {sizeAudience,type SizeAudience} from './size-audience';
 import type { Database } from '@/core/platform/db/client';
 import { assertEmailSize, measureEmailSize, EmailTooLargeError, type EmailSizeOptions } from './email-size';
 import type { MessageRevision } from './message-content';
@@ -5,12 +6,15 @@ import type { MessageRevision } from './message-content';
 /** Only displayName is currently a supported recipient value. Read maxima in
  * D1, not the full contact list; names never leave this service. Separate raw
  * and escaped maxima bound the HTML and text parts even for different people. */
-export async function savedEmailSize(database: Database, revision: MessageRevision & {trackingEnabled?:boolean}, options: EmailSizeOptions = {}, enforce = true) {
+export async function savedEmailSize(database: Database, revision: MessageRevision & SizeAudience & {trackingEnabled?:boolean}, options: EmailSizeOptions = {}, enforce = true) {
   const values=options.values;
   if (/\{\{\s*displayName\b/.test(`${revision.emailBody}${revision.emailText}${revision.preheader}`)) {
-    const rows=await database.$client.prepare(`SELECT display_name FROM contacts WHERE display_name IS NOT NULL AND TRIM(display_name)<>''
-      ORDER BY LENGTH(CAST(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(display_name,'&','&amp;'),'<','&lt;'),'>','&gt;'),'"','&quot;'),'''','&#39;') AS BLOB)) DESC LIMIT 1`).all<{display_name:string}>();
-    const raw=await database.$client.prepare('SELECT display_name FROM contacts ORDER BY LENGTH(CAST(display_name AS BLOB)) DESC LIMIT 1').first<{display_name:string}>();
+    const members=options.audienceContactIds??await sizeAudience(database,revision);
+    const membership=members===undefined?'':" AND id IN (SELECT value FROM json_each(?))";
+    const parameters=members===undefined?[]:[JSON.stringify(members)];
+    const rows=await database.$client.prepare(`SELECT display_name FROM contacts WHERE display_name IS NOT NULL AND TRIM(display_name)<>''${membership}
+      ORDER BY LENGTH(CAST(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(display_name,'&','&amp;'),'<','&lt;'),'>','&gt;'),'"','&quot;'),'''','&#39;') AS BLOB)) DESC LIMIT 1`).bind(...parameters).all<{display_name:string}>();
+    const raw=await database.$client.prepare(`SELECT display_name FROM contacts WHERE 1=1${membership} ORDER BY LENGTH(CAST(display_name AS BLOB)) DESC LIMIT 1`).bind(...parameters).first<{display_name:string}>();
     const htmlName=rows.results[0]?.display_name??'',rawName=raw?.display_name??'';
     // Taking the larger rendered total of both independently measured maxima
     // handles raw text and HTML escaping without inventing a contact value.

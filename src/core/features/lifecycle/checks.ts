@@ -171,7 +171,7 @@ export async function runApprovalChecks(input: {
     blockedHosts: blockedLinkHosts(blockedDestinations)});
   const configured = platform.config.mailSender;
   if (selected.has('email')) {
-    const size=await savedEmailSize(platform.database,snapshot.revision,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true},false);
+    const size=await savedEmailSize(platform.database,snapshot.revision,{publicBaseUrl:platform.config.publicBaseUrl.toString(),openTrackingEnabled:true,audienceContactIds:input.candidates.filter(candidate=>candidate.channels.email).map(candidate=>candidate.contactId)},false);
     checks.push(check('message.email-size',!size.exceedsLimit,formatEmailSize(size)));
     const sizeAdvisory=emailSizeAdvisory(size);
     if(sizeAdvisory)checks.push(sizeAdvisory);

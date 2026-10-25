@@ -8,7 +8,7 @@ import { contactLink } from './contact-links';
 
 export const emailByteLimit = seed.limits.maxEmailHtmlBytes;
 export const utf8Bytes = (value: string) => new TextEncoder().encode(value).length;
-export type EmailSizeOptions = {publicBaseUrl?: string; values?: Record<string, string | null | undefined>; trackingEnabled?: boolean; openTrackingEnabled?: boolean};
+export type EmailSizeOptions = {audienceContactIds?: readonly string[]; publicBaseUrl?: string; values?: Record<string, string | null | undefined>; trackingEnabled?: boolean; openTrackingEnabled?: boolean};
 export type EmailSize = {htmlBytes: number; textBytes: number; limitBytes: number; largestBlocks: Array<{location: string; bytes: number}>; exceedsLimit: boolean};
 // The encrypted public-token wire format: 12-byte IV, AES-GCM ciphertext +
 // 16-byte tag and 32-byte HMAC, all unpadded base64url. No token is issued.

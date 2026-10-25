@@ -5,7 +5,7 @@ import type { EmailSize } from '../email-size';
 
 export function EmailSizeMeter({draft}:{draft:DraftComposition}) {
   const [report,setReport]=useState<EmailSize>(),[error,setError]=useState(false),[pending,setPending]=useState(true);
-  const input=JSON.stringify({emailSubject:draft.emailSubject,emailBody:draft.emailBody,preheader:draft.preheader,physicalAddress:draft.physicalAddress,trackingEnabled:draft.trackingEnabled});
+  const input=JSON.stringify({emailSubject:draft.emailSubject,emailBody:draft.emailBody,preheader:draft.preheader,physicalAddress:draft.physicalAddress,trackingEnabled:draft.trackingEnabled,inclusionRuleJson:draft.inclusionRuleJson,exclusionRulesJson:draft.exclusionRulesJson});
   useEffect(()=>{
     let current=true;setPending(true);setError(false);
     const timer=setTimeout(async()=>{
