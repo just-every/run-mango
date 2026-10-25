@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "4824b04aa0d7c3253ab98d5c06c057ca22b73f3df427823518918b3ff893f516",
+      "sha256": "f91c7b8eab3929243c1248a172136b5025539f4df7906437d405041467b80c36",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "23606e89cfcc6c2851880dfac11def1239923cb6e2c2a79ab5c7075d76847e6d",
+      "sha256": "bf51e823823ad034dea81e7e6cb2a79c2edf2ecf5f0ff3bf1f35f14b559c2ecf",
       "executable": false
     },
     "DEMO.md": {
@@ -7582,7 +7582,7 @@
       "executable": false
     },
     "tests/campaign-authoring/reuse-journey.ts": {
-      "sha256": "c6153e47a1d4d463cf9cf751fc0dd2bbc92706cd41fd6e196ebe014c294ce22a",
+      "sha256": "8d3a99e03688cf062437466fab563f245fa8c704fe30f0e6112bfb7d3dfc10f4",
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
@@ -8370,7 +8370,7 @@
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
-      "sha256": "904455a005685ebac1d5445210009b70ed43d52577a8627780b45d50a3a906a3",
+      "sha256": "014e253f71626064e347bfbbd272be3eb2cf72764c18bd530f79f1201f4d2c32",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
