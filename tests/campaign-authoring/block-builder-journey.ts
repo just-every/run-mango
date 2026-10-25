@@ -1,3 +1,4 @@
+export {fullPromotionalEmailJourney} from './full-promotional-email-journey';
 import {prepareReusableProof,verifyReusableProof} from './reusable-block-journey';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {createRequire} from 'node:module';

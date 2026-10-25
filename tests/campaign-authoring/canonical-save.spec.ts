@@ -1,5 +1,5 @@
 import {flowTemplateJourney} from './flow-template-journey';
-import {blockMobileControlsJourney} from './block-builder-journey';
+import {blockMobileControlsJourney,fullPromotionalEmailJourney} from './block-builder-journey';
 import {mobilePresentationJourney} from './mobile-presentation-journey';
 import { localSessionCookieName } from '../support/local-session';
 import { test, expect } from '@playwright/test';
@@ -56,6 +56,7 @@ test('[BUILD-010][CAMP-003][MSG-009][MSG-012] saving stores the body as mail cli
   } finally {
     await runtime.close();
   }
+  await fullPromotionalEmailJourney(page,info);
 });
 
 // Bodies whose first save once stored the managed footer where the next save moved it: markup a parser rebuilds
