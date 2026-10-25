@@ -1,3 +1,4 @@
+import {flowTemplateJourney} from './flow-template-journey';
 import {blockMobileControlsJourney} from './block-builder-journey';
 import {mobilePresentationJourney} from './mobile-presentation-journey';
 import { localSessionCookieName } from '../support/local-session';
@@ -69,7 +70,7 @@ const unsettled = [
   { body: '<script><hr><p>{{physical_address}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe</a></p></script><p>Seasonal news</p>', approvable: false },
 ];
 
-test('[CAMP-003][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it', async ({ request }) => {
+test('[CAMP-003][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it', async ({ request,page },info) => {
   test.setTimeout(180000);
   const runtime = await authoringRuntime({ suite: 'authoring-canonical-save' });
   try {
@@ -92,6 +93,11 @@ test('[CAMP-003][MSG-009] a saved body saves to the same bytes, whether saved as
       if (approvable) expect(blockers, body).not.toContain('message.content');
       else expect(blockers, body).toContain('message.content');
     }
+    await save('<p>synthetic-mango-125 library copy</p>');
+    const named=await request.patch(`${runtime.url}/api/campaign-revisions/${revisionId}`,{headers,data:{name:'synthetic-mango-125',emailSubject:'Synthetic library copy',preheader:'Synthetic flow copy'}});expect(named.status()).toBe(200);
+    const template=await request.post(runtime.url+'/api/campaign-templates',{headers,data:{revisionId,name:'synthetic-mango-125-template'}});expect(template.status()).toBe(201);
+    const cookie=headers.Cookie.split('=');await page.context().addCookies([{name:cookie[0],value:cookie.slice(1).join('='),url:runtime.url}]);
+    await flowTemplateJourney(page,info,runtime.url,headers);
   } finally {
     await runtime.close();
   }
