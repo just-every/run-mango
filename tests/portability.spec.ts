@@ -63,6 +63,9 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(draft.status).toBe(201);
     const reusable=await source.call('/api/campaign-templates',{method:'POST',cookie:source.cookie,body:{revisionId:(await draft.clone().json()).revisionId,name:'Portable newsletter template'}});
     expect(reusable.status).toBe(201);
+    const portableReusable=await source.call('/api/reusable-email-blocks',{method:'POST',cookie:source.cookie,body:{name:'synthetic-mango-154 footer',block:{html:'<p>synthetic-mango-154 reusable footer</p>'}}});expect(portableReusable.status).toBe(201);const portableBlock=await portableReusable.json();
+    const portablePlacement=await source.call(`/api/reusable-email-blocks/${portableBlock.id}/place`,{method:'POST',cookie:source.cookie,body:{version:portableBlock.version,target:{kind:'campaign',id:(await draft.clone().json()).revisionId}}});expect(portablePlacement.status).toBe(200);
+
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('portable-contact','contact@example.test','Contact','unsubscribed','never-subscribed',1,1)").run();
     await source.db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES('portable-opt-out','already-hashed','email','unsubscribed',1,1,1)").run();
     const followupSource=await seedFollowup(source.db,{config:{mailSender:{displayName:'Orchard Studio'}}} as any);
@@ -101,6 +104,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     expect(original.some(row=>row.table==='contact_history'&&row.row.kind==='incumbent-order'&&row.row.occurred_at===Date.parse('2026-03-02T00:00:00Z'))).toBe(true);
     expect(original.some(row=>row.table==='flow_draft_revisions'&&JSON.parse(row.row.graph_json).name===flowDraft.name)).toBe(true);
     expect(original.some(row => row.table === 'campaign_templates' && row.row.name === 'Portable newsletter template')).toBe(true);
+    expect(original.some(row=>row.table==='reusable_email_blocks'&&row.row.id===portableBlock.id)).toBe(true);expect(original.some(row=>row.table==='reusable_email_block_placements'&&row.row.block_id===portableBlock.id)).toBe(true);
     expect(original.some(row => row.table === 'campaign_followups' && row.row.campaign_id === followupDraft.campaignId)).toBe(true);
     expect(original.some(row => row.table === 'contacts' && row.row.id === 'portable-contact')).toBe(true);
     expect(original.some(row => row.table === 'surviving_opt_outs' && row.row.id === 'portable-opt-out')).toBe(true);

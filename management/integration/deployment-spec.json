@@ -614,6 +614,12 @@
       "name": "core-0100_incumbent_review_counts.sql",
       "sha256": "659a6a1c73a292cb6fc96087c6f031331cf4d7635b119f6f72cf8a997d0fa211",
       "sql": "-- Historical reviews do not assert a count that was never calculated.\nALTER TABLE campaign_audiences ADD COLUMN incumbent_held_count INTEGER;\n"
+    },
+    {
+      "binding": "DB",
+      "name": "core-0101_reusable_email_blocks.sql",
+      "sha256": "4963633b5962855de1cceb7d825f385e108e980318fbe7b7a89f4f16cd3c8a29",
+      "sql": "CREATE TABLE reusable_email_blocks (\n  id TEXT PRIMARY KEY,\n  name TEXT NOT NULL,\n  block_json TEXT NOT NULL,\n  version INTEGER NOT NULL DEFAULT 1 CHECK(version > 0),\n  edit_token TEXT NOT NULL,\n  created_by TEXT NOT NULL,\n  updated_by TEXT NOT NULL,\n  created_at INTEGER NOT NULL,\n  updated_at INTEGER NOT NULL\n);\nCREATE TABLE reusable_email_block_placements (\n  id TEXT PRIMARY KEY,\n  block_id TEXT NOT NULL REFERENCES reusable_email_blocks(id),\n  target_kind TEXT NOT NULL CHECK(target_kind IN ('campaign','template','flow')),\n  target_id TEXT NOT NULL,\n  node_id TEXT NOT NULL DEFAULT '',\n  position INTEGER NOT NULL CHECK(position >= 0),\n  block_json TEXT NOT NULL,\n  replacement_revision_id TEXT,\n  UNIQUE(target_kind,target_id,node_id,position)\n);\nCREATE INDEX reusable_email_block_placements_block ON reusable_email_block_placements(block_id);\n"
     }
   ],
   "compatibilityDate": "2026-09-08",

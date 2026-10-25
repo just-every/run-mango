@@ -1,3 +1,4 @@
+import {assertReusableDraft} from './reusable-block-draft-guard';
 import { ulid } from '@/core/shared/ids';
 import { savedEmailSize } from './saved-email-size';
 import type { EmailSizeOptions } from './email-size';
@@ -8,7 +9,7 @@ import { parseStructuredRules } from '@/core/features/lifecycle/rules';
 import { createDraft } from './create-draft';
 import { authoredExclusionReasons, persistedClaimIsGrounded, restoreExclusionClaims, unavailableTimingClaim } from './persisted-proposal-claims';
 import { campaignClaimProjection } from './campaign-claim-projection';
-import { asc, eq } from 'drizzle-orm';
+import { asc, eq, sql } from 'drizzle-orm';
 
 import type { Database } from '@/core/platform/db/client';
 
@@ -128,7 +129,8 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
 
     async saveDraft(id: string, composition: DraftComposition, updatedAt: Date, deferRead = false, actorId?: string) {
       // Saving uses raw persisted authority, never the display-only claim projection.
-      const storedRevision = await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,id)});
+      const storedRevision = await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,id),
+        extras:{reusablePlacements:sql<string>`(SELECT COALESCE(json_group_array(json_object('position',u.position,'block_json',u.block_json)),'[]') FROM reusable_email_block_placements u WHERE u.target_kind='campaign' AND u.target_id=${id})`.as('reusable_placements')}});
       if (!storedRevision) return { kind: 'not_found' as const };
       if (storedRevision.state !== 'draft') return { kind: 'not_draft' as const };
       const [storedLinks, storedSteps] = await Promise.all([
@@ -139,6 +141,7 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
       ]);
 
       composition = normalizeAuthoredContent({...composition, emailBody:composition.emailBody ?? storedRevision.emailBody, links:composition.links ?? (composition.emailBody !== undefined ? [] : storedLinks.map(({label,destinationUrl})=>({label,destinationUrl})))});
+      assertReusableDraft(JSON.parse(storedRevision.reusablePlacements),composition.emailBody!);
       await savedEmailSize(database, {...storedRevision,...composition}, sizeOptions);
       // Persist the complete rule pair and its summary in the same guarded update.
       // Partial edits and concurrent saves must never combine prose with another rule pair.
