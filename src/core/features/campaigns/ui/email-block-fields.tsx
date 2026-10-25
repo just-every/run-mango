@@ -1,7 +1,10 @@
+import {SocialLinksFields,ProductGridFields} from './email-promo-fields';
 import {InsertImage} from '@/core/features/campaign-assets/ui/insert-image';
 import {readBlockFields,writeBlockFields,type BlockFields} from '../email-block-content';
 import type {BlockKind} from '../email-blocks';
 export function EmailBlockFields({kind,html,busy,onChange}:{kind:BlockKind;html:string;busy:boolean;onChange:(html:string)=>void}){
+  if(kind==='social-links')return <SocialLinksFields html={html} busy={busy} onChange={onChange}/>;
+  if(kind==='product-grid')return <ProductGridFields html={html} busy={busy} onChange={onChange}/>;
   const fields=readBlockFields(html),change=(patch:Partial<BlockFields>)=>onChange(writeBlockFields(kind,{...fields,...patch}));
   if(kind==='divider'||kind==='spacer')return <p>{kind==='divider'?'A divider separates sections.':'A spacer leaves room between sections.'} Adjust its padding below.</p>;
   return <fieldset><legend>Block content</legend>

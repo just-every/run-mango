@@ -19,6 +19,7 @@ export function writeBlockFields(kind:BlockKind,fields:BlockFields){
     case 'spacer':return '<br>';
     case 'divider':return '<hr>';
     case 'text':return '<p>'+e(fields.text).replaceAll('\n','<br>')+'</p>';
+    case 'product-grid':case 'social-links':throw new Error('Use the specialised block editor.');
     case 'columns':throw new Error('Column content uses the column editor.');
   }
 }

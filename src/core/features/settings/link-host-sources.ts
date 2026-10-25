@@ -1,6 +1,7 @@
 import type {Platform} from '@/core/shared/platform';
 export type HostSource={host:string;source:string;sourceId:string};
-const social=['www.instagram.com','www.facebook.com','www.tiktok.com','www.youtube.com','www.linkedin.com','x.com','www.pinterest.com'];
+import {socialNetworks} from '@/core/shared/social-networks';
+const social=socialNetworks.map(network=>network.host);
 const originals=new WeakMap<object,string[]>();
 export function originalLinkHosts(platform:Pick<Platform,'config'>){let saved=originals.get(platform.config);if(!saved){saved=[...platform.config.allowedLinkHosts];originals.set(platform.config,saved);}return saved;}
 function urlHost(value:unknown){if(value instanceof URL)value=value.href;if(typeof value!=='string')return;try{const url=new URL(value);if(url.protocol==='https:'&&!url.username&&!url.password)return url.hostname;}catch{}}
