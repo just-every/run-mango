@@ -74,14 +74,15 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
       revision.emailSubject.trim() && revision.emailBody.trim() && revision.emailText.trim() && revision.preheader.trim()
       && revision.senderName.trim() && revision.fromEmail.trim() && revision.replyToEmail.trim() && revision.physicalAddress.trim(),
     );
-    const required = {subject:revision.emailSubject, 'message body':htmlToText(authoredBody(revision.emailBody)).replace(/\{\{(?:physical_address|unsubscribe_url)\}\}/g, '').replace(/Unsubscribe|[()]/g, '').trim(), 'plain-text body':revision.emailText, preheader:revision.preheader, 'sender name':revision.senderName, 'from email':revision.fromEmail, 'reply-to email':revision.replyToEmail, 'postal address':revision.physicalAddress};
+    const required = {subject:revision.emailSubject, 'message body':htmlToText(authoredBody(revision.emailBody)).replace(/\{\{(?:physical_address|unsubscribe_url|preferences_url)\}\}/g, '').replace(/Unsubscribe|Manage preferences|[()]/g, '').trim(), 'plain-text body':revision.emailText, preheader:revision.preheader, 'sender name':revision.senderName, 'from email':revision.fromEmail, 'reply-to email':revision.replyToEmail, 'postal address':revision.physicalAddress};
     const missingContent = Object.entries(required).filter(([,value]) => !value.trim()).map(([name]) => name);
     findings.push(check('message.email-identity', emailComplete && !missingContent.length, missingContent.length ? `Add the missing ${missingContent.join(', ')} before approval.` : 'All required email content and identity fields are present.'));
     const hasUnsubscribe = htmlPolicy.anchors.some(anchor => anchor.href === '{{unsubscribe_url}}' && anchor.label.length > 0) && revision.emailText.includes('{{unsubscribe_url}}');
-    findings.push(check('message.email-unsubscribe', hasUnsubscribe, 'HTML requires a visibly labelled managed unsubscribe link; plain text must carry the same managed URL.'));
+    const hasPreferences=htmlPolicy.anchors.some(anchor=>anchor.href==='{{preferences_url}}'&&anchor.label.length>0)&&revision.emailText.includes('{{preferences_url}}');
+    findings.push(check('message.email-unsubscribe',hasUnsubscribe&&hasPreferences,'HTML requires visibly labelled managed unsubscribe and preference links; plain text must carry the same managed URLs.'));
     const hasPhysicalAddress = revision.emailBody.includes('{{physical_address}}') && revision.emailText.includes('{{physical_address}}');
     findings.push(check('message.email-address', hasPhysicalAddress, 'HTML and plain-text email bodies must both carry the managed physical postal address.'));
-    const htmlDestinations = new Set(htmlPolicy.anchors.filter(anchor => anchor.href !== '{{unsubscribe_url}}').map(anchor => anchor.href.replaceAll('&amp;', '&')));
+    const htmlDestinations = new Set(htmlPolicy.anchors.filter(anchor => !['{{unsubscribe_url}}','{{preferences_url}}'].includes(anchor.href)).map(anchor => anchor.href.replaceAll('&amp;', '&')));
     const textDestinations = new Set([...textLinkDestinations(revision.emailText), ...links.filter(link => contactLink(link.destinationUrl) && revision.emailText.includes(`(${link.destinationUrl})`)).map(link => link.destinationUrl)]);
     const savedDestinations = new Set(links.map(link => link.destinationUrl));
     const missing = [...new Set([...htmlDestinations, ...textDestinations, ...savedDestinations])].filter(destination => !htmlDestinations.has(destination) || !textDestinations.has(destination) || !savedDestinations.has(destination));
