@@ -20,7 +20,11 @@ export function socialLinksContent(links:SocialLink[]){
 }
 export function productGridContent(products:string[]){
   if(products.length!==6)throw new Error('A product grid has six products.');
-  return [products.slice(0,3),products.slice(3)].map(row=>'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>'+columnsContent(row)+'</td></tr></table>').join('');
+  const fluid=products.map(product=>{const fragment=parseFragment(product);for(const image of nodes(fragment).filter(node=>node.tagName==='img')){
+    const declarations=new Map(attr(image,'style').split(';').filter(Boolean).map(part=>{const [name,...value]=part.split(':');return [name.trim(),value.join(':').trim()];}));
+    declarations.set('max-width','100%');declarations.set('height','auto');image.attrs=image.attrs.filter(a=>a.name!=='style');image.attrs.push({name:'style',value:[...declarations].map(([name,value])=>name+':'+value).join(';')});
+  }return fragment.childNodes.map(node=>serializeOuter(node)).join('');});
+  return [fluid.slice(0,3),fluid.slice(3)].map(row=>'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td>'+columnsContent(row)+'</td></tr></table>').join('');
 }
 export function readGridProducts(html:string){
   return nodes(parseFragment(html)).filter(n=>n.tagName==='table'&&attr(n,'align')==='left').map(table=>{
