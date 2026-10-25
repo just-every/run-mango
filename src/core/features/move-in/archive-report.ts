@@ -1,3 +1,4 @@
+import { incumbentImages } from './incumbent-images';
 import type { NormalizedImportRow } from '@/core/features/audience/import-normalize';
 import { readAudiencePlan } from '@/core/features/audience/import-plans';
 import type { ImportPlan } from '@/vendor/base/import-kit/src/types';
@@ -63,6 +64,13 @@ export async function archiveReport(db: D1Database, archive: ArchiveRecord, cont
     }
     lines.push('## Outside hosts across templates and campaigns', '', table(['Host', 'Uses'], [...hosts]), '');
   }
+  const liveImages: unknown[][] = [];
+  const templates = (await db.prepare('SELECT name,composition_json FROM campaign_templates').all<{name:string;composition_json:string}>()).results;
+  for (const template of templates) for (const source of incumbentImages(JSON.parse(template.composition_json).composition.emailBody ?? '')) liveImages.push(['Template',template.name,source]);
+  const campaigns = (await db.prepare("SELECT c.state,r.name,r.email_body FROM campaigns c JOIN campaign_revisions r ON r.id=c.active_revision_id WHERE c.state IN ('draft','scheduled')").all<{state:string;name:string;email_body:string}>()).results;
+  for (const campaign of campaigns) for (const source of incumbentImages(campaign.email_body)) liveImages.push([campaign.state,campaign.name,source]);
+  const notes = content.flatMap(item => JSON.parse(item.removed_json ?? '[]') as string[]);
+  lines.push('## Incumbent images', '', `${notes.filter(note=>note.startsWith('Image re-hosted: ')).length} re-hosted; ${notes.filter(note=>note.startsWith('Image failed: ')).length} failed; ${liveImages.length} still on an incumbent host in templates, drafts and scheduled campaigns.`, '', table(['Location','Name','Image'],liveImages), '', 'This list is not a cutover checklist. Mark cutover complete and flow-message checks remain unavailable.', '');
   if (undo) {
     lines.push('## Undo', '', `${undo.contacts.removed} imported contacts were removed. Opt-out and suppression records are never removed by undo.`, '');
     if (undo.contacts.kept.length) {

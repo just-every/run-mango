@@ -1,3 +1,4 @@
+import { bringImagesHome } from './incumbent-images';
 import {z} from 'zod';
 import type {Platform} from '@/core/shared/platform';
 import type {ImportPlan} from '@/vendor/base/import-kit/src/types';
@@ -14,7 +15,7 @@ export async function applySourceExtras(platform:Platform,plan:ImportPlan,operat
   for(const [ordinal,template] of extras.templates.entries()){
     const html=importHtml(template.html);
     if(!htmlToText(html.html).trim())continue;
-    await writeContent(platform,archiveId,{ordinal,kind:'draft',sourcePath:`templates/${ordinal}.html`,sourceRow:null,title:template.name,subject:'',sentAt:'',html:html.html,text:htmlToText(html.html),removed:html.removed,flagged:html.flagged,mergeTags:html.mergeTags,contentPaths:[]},operatorId);
+    await writeContent(platform,archiveId,await bringImagesHome(platform,archiveId,{ordinal,kind:'draft',sourcePath:`templates/${ordinal}.html`,sourceRow:null,title:template.name,subject:'',sentAt:'',html:html.html,text:htmlToText(html.html),removed:html.removed,flagged:html.flagged,mergeTags:html.mergeTags,contentPaths:[]},operatorId),operatorId);
   }
   const now=Date.now(),db=platform.database.$client;
   for(const [ordinal,flow] of (extras.flows??[]).entries()){

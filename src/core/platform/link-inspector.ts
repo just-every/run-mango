@@ -71,3 +71,27 @@ export function createLinkInspector(allowedHosts: string[], request: typeof fetc
     },
   };
 }
+
+/** Import-time image read: the same DNS/private-address policy as link checks,
+ * with no redirects and a bounded body. No credentials or cookies are sent. */
+export async function readInspectedImage(value: string, allowedHosts: string[], limit: number, request: typeof fetch = fetch) {
+  const url = new URL(value);
+  if (url.protocol !== 'https:' || url.username || url.password || url.port || !allowedLinkHost(url.hostname, allowedHosts)) throw new Error('Image host is not permitted.');
+  if (privateAddress(url.hostname)) throw new Error('Image host is a private-network address.');
+  const addresses = await addressesFor(url.hostname, request);
+  if (!addresses.length || addresses.some(privateAddress)) throw new Error('Image DNS failed public-network inspection.');
+  const response = await request(url, {redirect:'manual', signal:AbortSignal.timeout(timeoutMs)});
+  if (!response.ok) { await response.body?.cancel(); throw new Error(`Image returned HTTP ${response.status}.`); }
+  if (Number(response.headers.get('Content-Length') ?? 0) > limit) { await response.body?.cancel(); throw new Error('Image exceeds the byte limit.'); }
+  const reader = response.body?.getReader(), chunks: Uint8Array[] = [];
+  let total = 0;
+  if (reader) try { for (;;) {
+    const {done,value} = await reader.read(); if (done) break;
+    total += value.length;
+    if (total > limit) throw new Error('Image exceeds the byte limit.');
+    chunks.push(value);
+  } } catch (error) { await reader.cancel().catch(() => undefined); throw error; }
+  const bytes = new Uint8Array(total); let offset = 0;
+  for (const chunk of chunks) { bytes.set(chunk,offset); offset += chunk.length; }
+  return bytes;
+}

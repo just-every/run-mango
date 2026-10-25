@@ -1,3 +1,4 @@
+import { bringImagesHome, incumbentImages } from './incumbent-images';
 import { describeConversion } from './conversion-report';
 import {planAttestations,incumbentFiles,attestationStatements} from './incumbent-attestation';
 import type {AttestationInput} from './incumbent-policy';
@@ -150,7 +151,8 @@ export function createArchiveService(platform: Platform) {
         if (archive.content_done < archive.content_total) {
           const { entries } = await readArchiveParts(await custody(archive));
           const records = reviewContent(entries).records.slice(archive.content_done, archive.content_done + contentPage);
-          for (const item of records) await writeContent(platform, archive.id, item, operatorId);
+          const gallery = entries.filter(item => item.part.kind === 'raw' && item.part.raw === 'gallery').map(item => item.entry);
+          for (const item of records) await writeContent(platform, archive.id, await bringImagesHome(platform, archive.id, item, operatorId, gallery), operatorId);
           await touch(id, 'content_done=?', archive.content_done + records.length);
           return record(id);
         }
@@ -193,7 +195,15 @@ export function createArchiveService(platform: Platform) {
       return (await db.prepare('SELECT ordinal,path,size,compressed_size,sha256,part,disposition FROM move_in_archive_entries WHERE archive_id=? ORDER BY ordinal').bind(id).all()).results;
     },
     async content(id: string) {
-      return (await db.prepare(`SELECT id,ordinal,kind,source_path,source_row,title,subject,sent_at_source,removed_json,flagged_json,merge_tags_json,campaign_id,CASE WHEN kind='draft' AND campaign_id IS NULL AND state='imported' AND outcome IS NOT NULL THEN 'held' ELSE state END AS state,outcome FROM move_in_content WHERE archive_id=? ORDER BY ordinal`).bind(id).all()).results;
+      const rows = (await db.prepare(`SELECT id,ordinal,kind,source_path,source_row,title,subject,sent_at_source,removed_json,flagged_json,merge_tags_json,campaign_id,CASE WHEN kind='draft' AND campaign_id IS NULL AND state='imported' AND outcome IS NOT NULL THEN 'held' ELSE state END AS state,outcome FROM move_in_content WHERE archive_id=? ORDER BY ordinal`).bind(id).all<{ id: string; kind: string; removed_json: string }>()).results;
+      for (const item of rows) {
+        if (item.kind !== 'draft') continue;
+        const current = await db.prepare('SELECT composition_json FROM campaign_templates WHERE id=?').bind(item.id).first<{composition_json:string}>();
+        if (!current) continue;
+        const sources = incumbentImages(JSON.parse(current.composition_json).composition.emailBody ?? '');
+        item.removed_json = JSON.stringify((JSON.parse(item.removed_json) as string[]).filter(note => !note.startsWith('Image failed: ') || sources.some(source => note.startsWith(`Image failed: ${source};`))));
+      }
+      return rows;
     },
     summary: (archive: ArchiveRecord) => JSON.parse(archive.summary_json) as ArchiveSummary,
   };

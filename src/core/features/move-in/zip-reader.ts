@@ -19,6 +19,7 @@ export type ArchiveEntry = {
   path: string; size: number; compressedSize: number; sha256: string;
   /** Present only for entries the caller asked to keep as text. */
   text?: string;
+  bytes?: Uint8Array<ArrayBuffer>;
 };
 export type ReadArchive = { sha256: string; size: number; entries: ArchiveEntry[]; folders: number };
 
@@ -53,13 +54,15 @@ export function entryPath(name: string) {
 }
 
 /** Stream one entry: count, CRC and hash every byte; decode text only when kept. */
-async function expand(data: Uint8Array<ArrayBuffer>, method: number, declared: number, name: string, keep: boolean) {
+async function expand(data: Uint8Array<ArrayBuffer>, method: number, declared: number, name: string, keep: boolean, keepBytes = false) {
   const hash = createHash('sha256'), decoder = keep ? new TextDecoder('utf-8') : undefined, text: string[] = [];
+  const chunks: Uint8Array[] = [];
   let total = 0, crc = 0xffffffff;
   const take = (chunk: Uint8Array) => {
     total += chunk.byteLength;
     if (total > declared) throw new ArchiveRefused('inconsistent-header', `${name} expands past the size its header declares.`, name);
     crc = crc32(crc, chunk); hash.update(chunk);
+    if (keepBytes) chunks.push(chunk.slice());
     if (decoder) text.push(decoder.decode(chunk, { stream: true }));
   };
   if (method === 0) for (let offset = 0; offset < data.byteLength; offset += 1 << 20) take(data.subarray(offset, offset + (1 << 20)));
@@ -73,7 +76,10 @@ async function expand(data: Uint8Array<ArrayBuffer>, method: number, declared: n
     }
   }
   if (decoder) text.push(decoder.decode());
-  return { size: total, crc: (crc ^ 0xffffffff) >>> 0, sha256: hash.digest('hex'), text: decoder ? text.join('').replace(/^\uFEFF/, '') : undefined };
+  const bytes = keepBytes ? new Uint8Array(total) : undefined;
+  let offset = 0;
+  for (const chunk of chunks) { bytes!.set(chunk, offset); offset += chunk.length; }
+  return { bytes, size: total, crc: (crc ^ 0xffffffff) >>> 0, sha256: hash.digest('hex'), text: decoder ? text.join('').replace(/^\uFEFF/, '') : undefined };
 }
 
 /** Validate and expand every entry. `keepText` selects entries returned as decoded text. */
@@ -144,11 +150,12 @@ export async function readZip(archive: Uint8Array<ArrayBuffer>, keepText: (path:
     const nameLength = view.getUint16(header.local + 26, true), extraLength = view.getUint16(header.local + 28, true);
     const start = header.local + 30 + nameLength + extraLength;
     const keep = keepText(header.path);
-    if (keep && (retained += header.size) > archiveLimits.retainedTextBytes) throw new ArchiveRefused('retained-text-too-large', 'retained-text-too-large');
-    const expanded = await expand(archive.subarray(start, start + header.compressedSize), header.method, header.size, header.path, keep);
+    const keepBytes = header.path.toLowerCase().split('/').slice(0, -1).some(part => part.split(/[^a-z0-9]+/).includes('gallery')) && header.size <= 10_485_760;
+    if ((keep || keepBytes) && (retained += header.size) > archiveLimits.retainedTextBytes) throw new ArchiveRefused('retained-text-too-large', 'retained-text-too-large');
+    const expanded = await expand(archive.subarray(start, start + header.compressedSize), header.method, header.size, header.path, keep, keepBytes);
     if (expanded.size !== header.size) throw new ArchiveRefused('truncated', `${header.path} ended before its declared size.`, header.path);
     if (expanded.crc !== header.crc) throw new ArchiveRefused('corrupt-entry', `${header.path} fails its CRC check.`, header.path);
-    const entry: ArchiveEntry = { path: header.path, size: header.size, compressedSize: header.compressedSize, sha256: expanded.sha256, ...(keep ? { text: expanded.text } : {}) };
+    const entry: ArchiveEntry = { path: header.path, size: header.size, compressedSize: header.compressedSize, sha256: expanded.sha256, ...(keepBytes ? { bytes: expanded.bytes } : {}), ...(keep ? { text: expanded.text } : {}) };
     entries.push(entry);
   }
   entries.sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
