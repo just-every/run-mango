@@ -3202,7 +3202,7 @@
       "executable": false
     },
     "src/core/features/campaigns/catalog-values.ts": {
-      "sha256": "3b3343f2cd6a22657742b5d59496002a53b54803c89afe37f64987fbdedb9c03",
+      "sha256": "fd6851ffe7556a524d0c52c7a148ea5f2ef89f4ef804adf5c40c525d2e51406c",
       "executable": false
     },
     "src/core/features/campaigns/composition-repository.ts": {
@@ -4478,7 +4478,7 @@
       "executable": false
     },
     "src/core/features/lifecycle/message-renderer.ts": {
-      "sha256": "6cce3090d10b4299f388c665c544c962cf897b4713723a7fcad0c9e9daf16f45",
+      "sha256": "7518a119812a1416c798a506204769e74d90560b8b07fb180b8a178b0647aebd",
       "executable": false
     },
     "src/core/features/lifecycle/message-tracking.ts": {
@@ -7609,8 +7609,12 @@
       "sha256": "79b555af3d6e80fcad8fb21c9734d0b4e66471ebac1f9e677de0e52622c32252",
       "executable": false
     },
+    "tests/campaign-authoring/catalog-guard-journey.ts": {
+      "sha256": "c72f450a294f558fc3fa4f65fea61beb4a70cd838f12c4f4cede9c6f768655f8",
+      "executable": false
+    },
     "tests/campaign-authoring/chosen-size-journey.ts": {
-      "sha256": "dac9dfb4b982b93ddeff386416324d1fcaf576b295bc592121927832a214d085",
+      "sha256": "5fd6bc6dfd2b84ddf97b7116593d152d33670908073326edd7c235213b440b4d",
       "executable": false
     },
     "tests/campaign-authoring/config.js": {
@@ -7886,7 +7890,7 @@
       "executable": false
     },
     "tests/go-live/chosen-catalog-edge.ts": {
-      "sha256": "6d7167ecf11bf78bc5ca449cd13078afd5f69e136cc1ca77e54cc839d24cb555",
+      "sha256": "89f55f2389ac2f42ccfd72cf22ece649c30c8d1bc41bc055f9185a0ec94869bb",
       "executable": false
     },
     "tests/go-live/chosen-catalog-journey.ts": {

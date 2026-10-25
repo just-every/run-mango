@@ -1,3 +1,4 @@
+import {catalogGuardJourney} from './catalog-guard-journey';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {providerEdge} from '../go-live/edge';
 import {eventSigner} from '../go-live/sendgrid-events';
@@ -67,6 +68,6 @@ export async function chosenSizeJourney(page:Page,info:TestInfo){
   const nextClock=await site.control('/_golive/clock',{advanceMs:25*3600000,hold:true});await site.control('/_golive/sender-evidence');const nextDue=new Date(nextClock.now+3600000),next=await draftCampaign(site,cookie,'synthetic-mango-391',[email],nextDue);
   await json(await site.call(`/api/campaign-revisions/${next.revisionId}`,{method:'PATCH',cookie,body:{emailBody:saved.emailBody,trackingEnabled:false}}),200);await approve(site,cookie,next);catalog.title(160,'Synthetic garden '.repeat(8000));await site.control('/_golive/clock',{advanceMs:3600001});const skipped=await dispatch(site,next.campaignId,nextDue);expect(skipped.map(row=>({disposition:row.transport_disposition,reason:row.skip_reason}))).toEqual([{disposition:'skipped',reason:'email-too-large'}]);expect(marketing()).toHaveLength(2);
   const detail=await json(await site.call(`/api/campaigns/${next.campaignId}`,{cookie}),200);expect(detail.results.steps.flatMap((step:any)=>step.counts)).toContainEqual(expect.objectContaining({disposition:'skipped',reason:'email-too-large',count:1}));
-  console.log(`Chosen size journey elapsed=${Date.now()-began}ms`);
+  console.log(`Chosen size journey elapsed=${Date.now()-began}ms`);await page.close();await catalogGuardJourney(site,catalog,edge,cookie,saved.emailBody,email,{original:draft,tracked:small});console.log(`Combined catalog journey elapsed=${Date.now()-began}ms`);
  }finally{await site.runtime.close();await edge.close();}
 }
