@@ -1,4 +1,10 @@
-import AxeBuilder from '@axe-core/playwright';
+import { createRequire } from 'node:module';
+const localRequire = createRequire(import.meta.url);
+const axeSource = createRequire(localRequire.resolve('@axe-core/playwright'))('axe-core').source as string;
+async function shellAccessibility(page: Page) {
+  await page.evaluate(axeSource);
+  return page.evaluate(async () => (await (window as any).axe.run(document.querySelector('main'), { iframes: false })).violations.filter((row: any) => ['serious', 'critical'].includes(row.impact)));
+}
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { json, type Installation } from './harness';
 import { importArchive } from '../move-in/support';
@@ -30,7 +36,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
     await page.setViewportSize({ width, height: 1000 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
-    expect((await new AxeBuilder({ page }).include('main').options({ iframes: false }).analyze()).violations.filter(row => ['serious', 'critical'].includes(row.impact ?? ''))).toEqual([]);
+    expect(await shellAccessibility(page)).toEqual([]);
     await page.screenshot({ path: info.outputPath(`template-conversion-report-${width}.png`), fullPage: true });
   }
   console.log('Conversion proof: apply archive');
@@ -79,7 +85,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
     await expect(frame.locator('p').first()).toHaveCSS('font-size', width === 390 ? '16px' : '18px');
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
-    expect((await new AxeBuilder({ page }).include('main').options({ iframes: false }).analyze()).violations.filter(row => ['serious', 'critical'].includes(row.impact ?? ''))).toEqual([]);
+    expect(await shellAccessibility(page)).toEqual([]);
     await page.screenshot({ path: info.outputPath(`template-conversion-tokens-${width}.png`), fullPage: true });
   }
   console.log('Conversion proof: corrected footer');
@@ -92,7 +98,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
     await expect(page.frameLocator('iframe[title="Saved email preview"]').getByText('Our original synthetic footer.')).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
-    expect((await new AxeBuilder({ page }).include('main').options({ iframes: false }).analyze()).violations.filter(row => ['serious', 'critical'].includes(row.impact ?? ''))).toEqual([]);
+    expect(await shellAccessibility(page)).toEqual([]);
     await page.screenshot({ path: info.outputPath(`template-conversion-preview-${width}.png`), fullPage: true });
   }
   const dChecks = await json(await site.call(`/api/campaigns/${d.campaignId}/checks`, { method: 'POST', cookie: owner, body: { revisionId: d.revisionId } }), 200);
