@@ -7614,7 +7614,7 @@
       "executable": false
     },
     "tests/campaign-authoring/catalog-riders-journey.ts": {
-      "sha256": "bb6d30c3db7b80cde566465389a1e177b61db86c8107ed64d333fb7fb7864b0d",
+      "sha256": "d15e2712feef48db781dfc71d854dd462c7451589bef70c52ff6bd92f8f5ff2c",
       "executable": false
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {

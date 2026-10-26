@@ -24,7 +24,7 @@ export async function catalogRidersJourney(page:Page,info:TestInfo,site:Installa
   await page.setViewportSize({width,height:1000});
   for(const reason of ['deleted','unpublished','out-of-stock']){
    const line=chosen.locator(`[data-catalog-state="${reason}"]`);expect.soft(await line.count()).toBe(1);
-   if(await line.count()){await expect(line).toBeVisible();const index=await line.evaluate(node=>Array.from(node.parentElement!.parentElement!.children).indexOf(node.parentElement!));expect.soft(await line.textContent()).not.toBe(failedRead[index]);expect(await line.evaluate(node=>parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(13);}
+   if(await line.count()){await expect(line).toBeVisible();const index=await line.evaluate(node=>Array.from(node.parentElement!.parentElement!.children).indexOf(node.parentElement!));expect.soft((await line.textContent())!.toLowerCase()).not.toContain(failedRead[index].toLowerCase());expect(await line.evaluate(node=>parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(13);}
   }
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   await chosen.screenshot({path:info.outputPath(`catalog-riders-${width}.png`)});
@@ -55,7 +55,7 @@ export async function catalogRidersJourney(page:Page,info:TestInfo,site:Installa
  await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:/^Block \d+: product-grid$/}).click();
  await chosen.getByRole('button',{name:'Remove chosen product 1',exact:true}).click();await save(200);
  const removed=await read();expect(catalogBlocks(removed.emailBody)[0].state.items).toEqual(items.slice(1));expect(catalogBlocks(removed.emailBody).flatMap(block=>block.state.items)).not.toContainEqual(items[0]);
- await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{emailBody:saved.emailBody}}),200);
+ catalog.reset();await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{emailBody:saved.emailBody}}),200);catalog.unpublish(160);catalog.url(160,'');
  await reopen();await page.getByRole('button',{name:'HTML mode',exact:true}).click();await page.getByRole('textbox',{name:'Email body',exact:true}).fill(unsaved);
  catalog.reset();
  const meter=async()=>json(await site.call('/api/campaign-authoring/email-size',{method:'POST',cookie,body:{campaignId:draft.campaignId,emailBody:unsaved,preheader:saved.preheader,physicalAddress:saved.physicalAddress,trackingEnabled:false}}),200);
