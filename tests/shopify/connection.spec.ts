@@ -1,4 +1,4 @@
-import {builtConnectionsSourceJourney} from '../go-live/built-source-journey';
+import {prepareBuiltConnectionsSourceJourney} from '../go-live/built-source-journey';
 import {exportedStoreRecords,assertSourceFacts} from '../store/source-export-proof';
 // @ts-nocheck -- Native Worker/D1 integration; only Shopify and mail network edges are doubled.
 import {expect,test} from '@playwright/test';
@@ -9,6 +9,9 @@ import {portableHash} from '../../src/core/features/audience/portable-hashes';
 import {seedShopify,page,order,customer,product,variant,inventory,id,at,line,bag} from './fixtures';
 
 const digest=(raw:string)=>createHash('sha256').update(raw).digest('hex');
+let builtSourceProof:Awaited<ReturnType<typeof prepareBuiltConnectionsSourceJourney>>;
+test.beforeAll(async()=>{builtSourceProof=await prepareBuiltConnectionsSourceJourney();});
+test.afterAll(async()=>{await builtSourceProof?.close();});
 async function sync(f,session,type){
   const queued=await f.call('/api/store/sync',{method:'POST',cookie:session,body:{sourceType:type}});
   expect(queued.status,await queued.clone().text()).toBe(202);
@@ -147,7 +150,7 @@ test('signed carts preserve string identity, multiple lines and ordering; confli
       {type:'browsing-event',id:'shopify-observation:'+event.id,at:event.timestamp},
     ],status.sourceCapabilities.filter(row=>row.available).map(row=>row.sourceType));
     console.log('Shopify source proof: every declared snapshot and observation type retains its identifier, connection and edge occurrence time through the owner export');
-    await builtConnectionsSourceJourney();
+    await builtSourceProof.prove();
   }finally{await f.close();}
 });
 

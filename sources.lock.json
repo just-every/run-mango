@@ -7894,7 +7894,7 @@
       "executable": false
     },
     "tests/go-live/built-source-journey.ts": {
-      "sha256": "2cfe2422cb70e76a1b2e437a9b0376b83dbb88f742c473a555725e96ca004d80",
+      "sha256": "49793705689974f009c62b49f493b170d9fb9580e9d3692a101e73bfe22bdd59",
       "executable": false
     },
     "tests/go-live/chosen-catalog-edge.ts": {
@@ -8182,7 +8182,7 @@
       "executable": false
     },
     "tests/go-live/store-source-journey.ts": {
-      "sha256": "5d19196d5723b00d5113272ee334ba1b179cd15d0478a184c39a19a438957268",
+      "sha256": "9b426dc3e00f9a61743bbc752debc0aacea2f657f01fc6b59058cafc9e96b750",
       "executable": false
     },
     "tests/go-live/stripe-journey.ts": {
@@ -8578,7 +8578,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "a893cd4168bce6237cc2e0a7434f83c8b9d49401c37e0060f8a55fef33d779fd",
+      "sha256": "7665fc48c5b7e9820316bed9ec43f83da648f8a166563d211604063ae85e6f8b",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
