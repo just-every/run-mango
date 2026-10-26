@@ -13,6 +13,7 @@ export async function catalogRidersJourney(page:Page,info:TestInfo,site:Installa
  await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{emailBody:saved.emailBody}}),200);
  await reopen();
  const chosen=page.getByRole('group',{name:'Connected catalog',exact:true});
+ await expect(chosen.getByText(/^Catalog read at /)).toBeVisible();
  for(const width of [1440,390]){
   await page.setViewportSize({width,height:1000});
   for(const reason of ['deleted','unpublished','out-of-stock']){
