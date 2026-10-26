@@ -6,7 +6,7 @@ import {json,sender} from './harness';
 import {sourceRuntime} from './source-runtime.mjs';
 import {builtStoreSourceJourney} from './store-source-journey';
 
-export async function prepareBuiltConnectionsSourceJourney(){
+async function prepareBuiltConnectionsSourceJourney(){
  const began=Date.now(),mark=(phase:string)=>console.log(`Built source phase ${phase} elapsed=${Date.now()-began}ms`);
  const woo=wooCommerceEdge(),identity='synthetic-mango-421'.replaceAll('-','_');
  const edge=await providerEdge({links:{'https://woo.example.test/':{}},woo:async(url,request,response)=>{
@@ -29,3 +29,5 @@ export async function prepareBuiltConnectionsSourceJourney(){
   return {async prove(){await builtStoreSourceJourney(site,woo,edge,cookie,provider,cart,queue,finished);expect(edge.unexpected).toEqual([]);},async close(){await site.close();await edge.close();}};
  }catch(error){await site.close();await edge.close();throw error;}
 }
+
+export async function builtConnectionsSourceJourney(){const fixture=await prepareBuiltConnectionsSourceJourney();try{await fixture.prove();}finally{await fixture.close();}}

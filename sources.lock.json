@@ -7894,7 +7894,7 @@
       "executable": false
     },
     "tests/go-live/built-source-journey.ts": {
-      "sha256": "49793705689974f009c62b49f493b170d9fb9580e9d3692a101e73bfe22bdd59",
+      "sha256": "b0326161c3b06ee3e2ed3305a912ed05789cb2a23d21552758240354b44f162a",
       "executable": false
     },
     "tests/go-live/chosen-catalog-edge.ts": {
@@ -8174,7 +8174,7 @@
       "executable": false
     },
     "tests/go-live/source-runtime.mjs": {
-      "sha256": "9d16ae401c14fffe241cb50cbb22e5e6c560d9505f195b6360496d0a168687ae",
+      "sha256": "f07805e1e1bb582e846566b07d10f5f809fb77e690bb2f80cfa3864af5732017",
       "executable": false
     },
     "tests/go-live/stale-sources.journeys.ts": {
@@ -8578,7 +8578,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "7665fc48c5b7e9820316bed9ec43f83da648f8a166563d211604063ae85e6f8b",
+      "sha256": "9f070832b757eecbe19a39e9c7e723c2e1f1942a70d34d7f3e934742b1a4a1db",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
@@ -8606,7 +8606,7 @@
       "executable": false
     },
     "tests/store/source-export-proof.ts": {
-      "sha256": "2d20084d71842340becfa397ccbc443db09d3356ea8b03ffe098be7c71d7051b",
+      "sha256": "617c62e0732332432c6ecc7a09b7ae71f769af58ae78d8159feab61b18b7d86e",
       "executable": false
     },
     "tests/support/adversarial-email.mjs": {
