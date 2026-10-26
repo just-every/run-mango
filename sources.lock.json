@@ -7598,11 +7598,11 @@
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
-      "sha256": "0fb28eae10971eca58337b9a33292f024280cf7c0fc08c3cea89062186c52e5d",
+      "sha256": "b13250bc1e2c892a5dff641e69335b87d6d2621ec8115c8b3f4ec810317357b0",
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "69c8939e7971e3abc1613b8a95e45d9a341eef1ae473527a4104867eba9f3f72",
+      "sha256": "c9f780a9d84e287d0cf22e04dc5d28d2136fafd959232e3094c5f49236c9776a",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {

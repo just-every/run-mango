@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, writeFile, rm, cp } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, writeFile, rm, cp, readdir } from 'node:fs/promises';
 import { once } from 'node:events';
 import { rmSync } from 'node:fs';
 
@@ -23,6 +23,7 @@ export async function authoringRuntime({
   parallelQueue = false,
   queueConsumers,
   reuseEmptySchema = false,
+  batchMigrations = false,
 } = {}) {
   const scratch = scratchDirectory(suite);
   await mkdir(scratch, { recursive: true });
@@ -63,7 +64,16 @@ max_retries = 5
     await writeFile(config, `${template}\n${concurrentQueue}\n[vars]\nLOCAL_BOOTSTRAP_TOKEN = ${JSON.stringify(token)}\n${extra}`, { mode: 0o600 });
     commands = await createCommands(directory, { logs: [] }, { terminal: text => { logs += text; } });
     commands.addSecrets([token]);
-    const migrate = () => commands.run('Migrating authoring fixture', 'pnpm', ['exec', 'wrangler', 'd1', 'migrations', 'apply', 'mango-local', '--local', '--config', config, '--persist-to', state], options);
+    const migrate = async () => {
+      if (!batchMigrations) return commands.run('Migrating authoring fixture', 'pnpm', ['exec', 'wrangler', 'd1', 'migrations', 'apply', 'mango-local', '--local', '--config', config, '--persist-to', state], options);
+      // Empty fixture only: retain every migration byte and its order, while
+      // avoiding a separate Wrangler execution for each migration file.
+      const migrationFile = join(directory, 'synthetic-mango-441-migrations.sql');
+      const files = (await readdir('migrations/core')).filter(name => name.endsWith('.sql')).sort();
+      const statements = await Promise.all(files.map(name => readFile(join('migrations/core', name), 'utf8')));
+      await writeFile(migrationFile, statements.join('\n'));
+      return commands.run('Migrating isolated authoring fixture', 'pnpm', ['exec', 'wrangler', 'd1', 'execute', 'mango-local', '--file', migrationFile, '--local', '--config', config, '--persist-to', state], options);
+    };
     if (reuseEmptySchema && !stateDirectory) {
       const key = process.cwd();
       let schema = emptySchemas.get(key);
