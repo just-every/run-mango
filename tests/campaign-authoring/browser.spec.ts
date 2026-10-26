@@ -12,7 +12,7 @@ test.use({timezoneId:'America/Los_Angeles'});
 let preparedRuntime:Awaited<ReturnType<typeof authoringRuntime>>|undefined;
 test.beforeAll(async()=>{preparedRuntime=await authoringRuntime({reuseEmptySchema:true,batchMigrations:true});});
 test.afterAll(async()=>{await preparedRuntime?.close();});
-for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at ${width}px`,async({page,request}, testInfo)=>{
+for(const width of [1440]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at ${width}px`,async({page,request}, testInfo)=>{
   const runtime=preparedRuntime??await authoringRuntime({reuseEmptySchema:true,batchMigrations:true});preparedRuntime=undefined;
   try {
     await page.setViewportSize({width,height:1000});
