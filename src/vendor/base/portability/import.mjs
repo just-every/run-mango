@@ -28,6 +28,8 @@ export async function createImport(context,manifest,actor='direct',legacyRecover
   const original=manifest;manifest=await restorableManifest(original);
   const skippedTables=original.tables.filter(table=>platformTable(table.name)).map(table=>table.name);
   const cat=await catalogue(db,config),upgrade=config.acceptedSchemas[original.schema];
+  // Table definitions and migration names cannot attest missing schema objects.
+  insist(manifest.schemaObjects!==undefined || legacyRecovery,'schema_mismatch:legacy_schema',409);
   const same=manifest.schema===cat.identity,history=()=>archivedHistory(original,ledgers);
   const {replays,...bridge}=upgrade?{}:same?(await sameSchemaMigrations(db,manifest,cat,context.migrations,history)??{}):await additiveBridge(db,manifest,cat,context.migrations,history);
   if(!bridge.fromSchema)insist(canonicalJson(manifest.tables.map(x=>x.name))===canonicalJson(cat.tables.map(x=>x.name)),'table_inventory');

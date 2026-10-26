@@ -565,6 +565,7 @@
             "modules/portability/generated.mjs",
             "modules/portability/hash.mjs",
             "modules/portability/http-client.mjs",
+            "modules/portability/http-errors.mjs",
             "modules/portability/http.mjs",
             "modules/portability/import-lease.mjs",
             "modules/portability/import-safety.mjs",
@@ -612,6 +613,10 @@
           {
             "path": "src/vendor/base/portability/README.md",
             "originPath": "modules/portability/README.md"
+          },
+          {
+            "path": "src/vendor/base/portability/http-errors.mjs",
+            "originPath": "modules/portability/http-errors.mjs"
           }
         ]
       }

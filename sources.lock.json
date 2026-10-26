@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "parent": null,
   "edition": "just-every/mango",
-  "manifest": "d3454853246d409d1039cb6c67f679ecf344a0d3978a49a3735df264088adc68",
+  "manifest": "11788885539a88c4d09de3581d0e40c0e46b764904e2a106c1ea591e8cd08873",
   "toolchain": {
     "id": "runeditrun/edition-authoring",
     "version": "1.1.0",
@@ -583,6 +583,7 @@
             "modules/portability/generated.mjs",
             "modules/portability/hash.mjs",
             "modules/portability/http-client.mjs",
+            "modules/portability/http-errors.mjs",
             "modules/portability/http.mjs",
             "modules/portability/import-lease.mjs",
             "modules/portability/import-safety.mjs",
@@ -630,13 +631,17 @@
           {
             "path": "src/vendor/base/portability/README.md",
             "originPath": "modules/portability/README.md"
+          },
+          {
+            "path": "src/vendor/base/portability/http-errors.mjs",
+            "originPath": "modules/portability/http-errors.mjs"
           }
         ]
       },
       "baseline": {
-        "key": "e0a94106f71bcd75818ba8f43427833a1661f4870b98a3a00c87e71b805c9aef",
-        "digest": "f83b215cd5cdf749463c84a1ddf82e05af2139fd3d19264c0e075918e0270322",
-        "sha256": "ce419c91ec8c56fc70bfa1aaa9405ac74bb924405da4f822253cf1cfe317ee72"
+        "key": "90e63c30b5fc985868636f45795a5a5b26ce431a33ce5c89c18877a61980cb9b",
+        "digest": "b35862d350ce47a6903290b40346938bb8e93b994d8972bef630b77d99d748f5",
+        "sha256": "db0775c0a785d14790788db38257efcae31e9efc4c8aecaa0dc57e285ea2d27e"
       }
     },
     {
@@ -1115,7 +1120,7 @@
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "14b55b8ba4657fbadae43cb94e149ff1c75648aa8c1ee17768d4dcc8d31b21fd",
+      "sha256": "9c8ebca04e49f705e38d93a0ae8046d8a916b3da1c60fb0844c81e3cb4f9b7eb",
       "executable": false
     },
     "BASELINE.md": {
@@ -1231,7 +1236,7 @@
       "executable": false
     },
     "edition.json": {
-      "sha256": "d3454853246d409d1039cb6c67f679ecf344a0d3978a49a3735df264088adc68",
+      "sha256": "11788885539a88c4d09de3581d0e40c0e46b764904e2a106c1ea591e8cd08873",
       "executable": false
     },
     "extensions/mango-pixel/INSTALL.md": {
@@ -7571,7 +7576,7 @@
       "executable": false
     },
     "src/vendor/base/portability/http-errors.mjs": {
-      "sha256": "b7d0ab905e81728c9b5cda2e7f7e045c872b0bb07fc0943d98cd8faca557664c",
+      "sha256": "819cdd909fcefe1028bc11e8f30e5da855c20cd7e987b82f3e9a41e7e3f530a5",
       "executable": false
     },
     "src/vendor/base/portability/http.mjs": {
@@ -7591,7 +7596,7 @@
       "executable": false
     },
     "src/vendor/base/portability/import.mjs": {
-      "sha256": "8d14320c62b38e68b912441a6b1a42deafb2ff41c33eaae1c6dd224368c939a7",
+      "sha256": "0120bc4dc896ca3318cfec1c143ea06b76c69c956df336cf292910fee6595b8c",
       "executable": false
     },
     "src/vendor/base/portability/index.d.mts": {

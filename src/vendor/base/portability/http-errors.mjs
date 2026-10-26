@@ -1,7 +1,9 @@
 import { importRunningMetadata } from './import-lease.mjs';
+import { portabilityErrorCode } from './storage.mjs';
 
 // A code's spelling is not evidence that it is public. Keep the established
-// vocabulary closed, and discard diagnostic suffixes containing schema/input.
+// vocabulary closed, and discard diagnostic suffixes containing schema or input
+// except the named nonempty-table refusal required by the restore contract.
 const publicCodes = new Set(`
  D1_RPC_TRANSPORT_LIMIT advance_limit archive_checksum archive_format archive_incomplete archive_json
  binary_checksum binary_inventory binary_order binary_size body_too_large bucket_inventory bucket_not_empty
@@ -27,7 +29,14 @@ const publicCodes = new Set(`
  upgrade_row_must_be_pure virtual_table wrong_product
  unauthenticated forbidden owner_required authority_changed step_up_required rate_limited operation_failed
 `.trim().split(/\s+/));
-const publicCode = code => typeof code === 'string' && publicCodes.has(code.split(':')[0]) ? code.split(':')[0] : 'operation_failed';
+const publicCode = error => {
+ // Only an original verifier or policy error may name the occupied destination
+ // table. Native errors and mutable code properties cannot approve a suffix.
+ const original = portabilityErrorCode(error);
+ if (typeof original === 'string' && /^target_not_empty:[A-Za-z_][A-Za-z0-9_]*$/.test(original)) return original;
+ const code = error.code;
+ return typeof code === 'string' && publicCodes.has(code.split(':')[0]) ? code.split(':')[0] : 'operation_failed';
+};
 
 // Public errors use the existing {error:code} vocabulary. Native messages can
 // contain SQL, row values or credentials; inspect causes only to choose status.
@@ -36,7 +45,7 @@ export function httpFailure(error,{actor=null}={}) {
  for (let cause = error; cause && !seen.has(cause) && seen.size < 5; cause = cause.cause) {
   seen.add(cause);
   if (Number.isInteger(cause.status) && cause.status >= 400 && cause.status <= 599) {
-   const code = publicCode(cause.code);
+   const code = publicCode(cause);
    // A generic server wrapper must not turn a known authority refusal into 500.
    if (!typed || typed.status >= 500 && cause.status < 500) typed = { status: cause.status, body: { error: code,
     ...(cause.status === 409 && cause.code === 'import_running' ? importRunningMetadata(cause,actor) : {}) } };

@@ -4046,6 +4046,15 @@
       },
       "modes": {
         "src/vendor/base/portability/http-errors.mjs": "100644"
+      },
+      "adapted": {
+        "src/vendor/base/portability/http-errors.mjs": "11f94fec479228d71ba6d7dd6ea7796c0d42c544"
+      },
+      "acknowledged": {
+        "src/vendor/base/portability/http-errors.mjs": {
+          "sha256": "819cdd909fcefe1028bc11e8f30e5da855c20cd7e987b82f3e9a41e7e3f530a5",
+          "mode": "100644"
+        }
       }
     },
     {
