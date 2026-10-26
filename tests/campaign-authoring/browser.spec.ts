@@ -7,8 +7,7 @@ import {authoringRuntime} from './browser-runtime.mjs';
 
 test.describe.configure({mode:'serial',timeout:120000});
 test.use({timezoneId:'America/Los_Angeles'});
-// Prepare the first isolated runtime once and clone only its pristine migrated
-// schema for the second width; no sessions or application writes are shared.
+// Prepare the isolated migrated runtime before the fresh authoring journey.
 let preparedRuntime:Awaited<ReturnType<typeof authoringRuntime>>|undefined;
 test.beforeAll(async()=>{preparedRuntime=await authoringRuntime({reuseEmptySchema:true,batchMigrations:true});});
 test.afterAll(async()=>{await preparedRuntime?.close();});
