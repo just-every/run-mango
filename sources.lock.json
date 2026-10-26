@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "57e17d191ee11ad838429799a226c6926e9820cbfc66adc005b0639a969dcee6",
+      "sha256": "f614632e56c47f5537a4dc644d235485bc23698775bb87c52208b18bf6c95c65",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "40eb85b673a451c20e7b60bd9db188c1b422bef4969b75c2ab3f5d65a5a307ca",
+      "sha256": "039c23012c9c8c33a475c058d09c45ea347c74909090afe8a247f1d75a57e58d",
       "executable": false
     },
     "DEMO.md": {
@@ -7406,7 +7406,7 @@
       "executable": false
     },
     "test-budget.json": {
-      "sha256": "0b89ead26f116912a866ce6f580a6fda90cc738c3fb8d786199086e87364d760",
+      "sha256": "d6bb479fcbae77e58820a091c1624923ec997b7f222b396ec0545a2f464ceda2",
       "executable": false
     },
     "tests/approval-binding/config.js": {
@@ -7566,7 +7566,7 @@
       "executable": false
     },
     "tests/audience-import/signup-security.spec.ts": {
-      "sha256": "552e59f5b200eb0953fa435f1921f57b11db39e8edf68ef7bbc3aaf00374370c",
+      "sha256": "864a0f4cce959372c6d3d4d60d4a1e70bc30bd4f15f47cd85352c26b877dc950",
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {
@@ -7602,7 +7602,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "c9f780a9d84e287d0cf22e04dc5d28d2136fafd959232e3094c5f49236c9776a",
+      "sha256": "bbc45283b682fa86853a1f0ebce1d91f262e7d459b1372323cbeaead763b1331",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
@@ -7690,7 +7690,7 @@
       "executable": false
     },
     "tests/campaign-results/archive.journeys.ts": {
-      "sha256": "314ccaff08b85980fdb1216d69b85b21391ce329df27c4d744cf2629ee217a28",
+      "sha256": "f5e828821a8908dc6e14f69e08d9c1aafb5918ae363eed2ab639057226256d19",
       "executable": false
     },
     "tests/campaign-results/attribution-report-ui.ts": {
@@ -7734,7 +7734,7 @@
       "executable": false
     },
     "tests/campaign-results/followup.journeys.ts": {
-      "sha256": "1f40c2177faba6cd9bdffd86554f76ec0372b9ff7425499ddd638e7f5d97ad43",
+      "sha256": "19d19ca15001049f407eefd16c7beaa78ca86ab669917401cbed302eac6eb1c1",
       "executable": false
     },
     "tests/campaign-results/overview-fixture.ts": {
@@ -7750,7 +7750,7 @@
       "executable": false
     },
     "tests/campaign-results/performance.journeys.ts": {
-      "sha256": "6264e02c8654cc930ab138fad0af1c8e4746c5b4821a5ded65199e329ebd5be2",
+      "sha256": "7d7a9970d1f9341e6a40124fdc4c12a6a15f8c390716bff5e1e68acdfa38254c",
       "executable": false
     },
     "tests/campaign-results/playwright.config.js": {
@@ -7774,7 +7774,7 @@
       "executable": false
     },
     "tests/campaign-results/results.journeys.ts": {
-      "sha256": "a2c5ac671b1de987157802003136bdf1841752d4aa3130294efe5fb575fd8fc6",
+      "sha256": "e3c791c55af23ceed5cb9931d6ec980f66840b551ef17ec45d8f27b9d0ea8fc3",
       "executable": false
     },
     "tests/campaign-results/retention-fixture.ts": {
@@ -8038,7 +8038,7 @@
       "executable": false
     },
     "tests/go-live/pause.journeys.ts": {
-      "sha256": "8401949c8820fc346c54d34c89cb90ac3395e4e2438e6d2a78c37fece406d69c",
+      "sha256": "193ceccf6e52b2282785e8fa096e35e718fe7e7919b1124514d090f1b66b2a27",
       "executable": false
     },
     "tests/go-live/personalisation.journeys.ts": {
