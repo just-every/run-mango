@@ -1,3 +1,5 @@
+import {builtConnectionsSourceJourney} from '../go-live/built-source-journey';
+import {exportedStoreRecords,assertSourceFacts} from '../store/source-export-proof';
 // @ts-nocheck -- Native Worker/D1 integration; only Shopify and mail network edges are doubled.
 import {expect,test} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
@@ -131,6 +133,21 @@ test('signed carts preserve string identity, multiple lines and ordering; confli
     expect((await webhook(f,raw,{'X-Shopify-Webhook-Id':'large','X-Shopify-Event-Id':'large'})).status).toBe(204);
     const payloads=JSON.stringify((await f.db.prepare("SELECT payload FROM source_records WHERE source_type='cart'").all()).results);
     expect(payloads).toContain('gid://shopify/Product/9007199254740993');
+    for(const type of ['customer','product','variant','inventory','order','refund'])expect(await sync(f,session,type)).toEqual([expect.objectContaining({ack:true})]);
+    const event={...observation('product_viewed','synthetic-mango-430'),timestamp:new Date(Date.now()-60000).toISOString()};expect((await proxy(f,event)).status).toBe(204);
+    const exported=await exportedStoreRecords(f.call,session),status=await (await f.call('/api/store',{cookie:session})).json();
+    assertSourceFacts(exported.sources,'shopify',[
+      {type:'customer',id:customer.id,at},
+      {type:'product',id:product().id,at},
+      {type:'variant',id:variant().id,at},
+      {type:'inventory',id:inventory.id,at},
+      {type:'order',id:order.id,at},
+      {type:'refund',id:order.refunds[0].id,at},
+      {type:'cart',id:'shopify-cart:'+digest(cart.id),at:cart.created_at},
+      {type:'browsing-event',id:'shopify-observation:'+event.id,at:event.timestamp},
+    ],status.sourceCapabilities.filter(row=>row.available).map(row=>row.sourceType));
+    console.log('Shopify source proof: every declared snapshot and observation type retains its identifier, connection and edge occurrence time through the owner export');
+    await builtConnectionsSourceJourney();
   }finally{await f.close();}
 });
 

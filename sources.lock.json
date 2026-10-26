@@ -8566,7 +8566,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "ad307ec52dc3c296453a1d95eee12f35c9474ce624cf24d8feb14b47804b4aef",
+      "sha256": "a893cd4168bce6237cc2e0a7434f83c8b9d49401c37e0060f8a55fef33d779fd",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
