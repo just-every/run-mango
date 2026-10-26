@@ -8,7 +8,7 @@ import {builtStoreSourceJourney} from './store-source-journey';
 
 export async function builtConnectionsSourceJourney(){
  const woo=wooCommerceEdge(),identity='synthetic-mango-421'.replaceAll('-','_');
- const edge=await providerEdge({woo:async(url,request,response)=>{
+ const edge=await providerEdge({links:{'https://woo.example.test/':{}},woo:async(url,request,response)=>{
   if(url.hostname==='api.stripe.com'&&url.pathname==='/v1/charges/'+identity+'_charge'&&request.method==='GET'){
    response.writeHead(200,{'Content-Type':'application/json'});response.end(JSON.stringify({id:identity+'_charge',customer:identity+'_customer'}));return true;
   }

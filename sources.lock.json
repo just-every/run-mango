@@ -7893,6 +7893,10 @@
       "sha256": "1c0dd68d3d5b58a9132e98b16d646babee265c39309f7962e04b6c3f060ddb9c",
       "executable": false
     },
+    "tests/go-live/built-source-journey.ts": {
+      "sha256": "2cfe2422cb70e76a1b2e437a9b0376b83dbb88f742c473a555725e96ca004d80",
+      "executable": false
+    },
     "tests/go-live/chosen-catalog-edge.ts": {
       "sha256": "89f55f2389ac2f42ccfd72cf22ece649c30c8d1bc41bc055f9185a0ec94869bb",
       "executable": false
@@ -8169,8 +8173,16 @@
       "sha256": "1a6fc0974be067350489ee2fb6c5e9ba15f4b13923482b9b0d1ebd3846df7a03",
       "executable": false
     },
+    "tests/go-live/source-runtime.mjs": {
+      "sha256": "9d16ae401c14fffe241cb50cbb22e5e6c560d9505f195b6360496d0a168687ae",
+      "executable": false
+    },
     "tests/go-live/stale-sources.journeys.ts": {
       "sha256": "0d63219fef6af1ff59789df58c7c445acede2165cc2782cc5d7bbf3420d2e8c1",
+      "executable": false
+    },
+    "tests/go-live/store-source-journey.ts": {
+      "sha256": "5d19196d5723b00d5113272ee334ba1b179cd15d0478a184c39a19a438957268",
       "executable": false
     },
     "tests/go-live/stripe-journey.ts": {
@@ -8591,6 +8603,10 @@
     },
     "tests/single-attempt-delivery/delivery.spec.ts": {
       "sha256": "f103082f96dd462fe4e9528d861537a9f6d7a94db3fca5ceb26b83a70997874e",
+      "executable": false
+    },
+    "tests/store/source-export-proof.ts": {
+      "sha256": "2d20084d71842340becfa397ccbc443db09d3356ea8b03ffe098be7c71d7051b",
       "executable": false
     },
     "tests/support/adversarial-email.mjs": {
