@@ -13,7 +13,7 @@
     "operations": {
       "setup": "pnpm install --frozen-lockfile",
       "build": "pnpm run build",
-      "verify": "pnpm run verify:managed",
+      "verify": "pnpm run verify:managed && pnpm check:deployment-spec",
       "artifact": "node scripts/build-delivery-artifact.mjs",
       "recovery": "Read OPERATIONS.md: stop writes and scheduled work, preserve exact source, applied migrations and matching private authority; export D1 and R2, restore into fresh resources, compare exports and verify native sessions and publication before routing traffic."
     }
@@ -69,7 +69,8 @@
         "MAIL_FROM",
         "MAIL_RELAY_URL",
         "MARKETING_MAIL_PROVIDER",
-        "MARKETING_MAIL_WEBHOOK_ID"
+        "MARKETING_MAIL_WEBHOOK_ID",
+        "AUTH_ORIGIN"
       ],
       "secretNames": [
         "SESSION_SECRET",
@@ -113,12 +114,13 @@
       "surfaces": {
         "app": {
           "path": "/signin",
-          "originVariable": "MANGO_PUBLIC_BASE_URL"
+          "originVariable": "AUTH_ORIGIN"
         }
       },
       "recovery": "Preserve source, applied migration history and matching CONTACT_HASH_SALT and session authority. Restore D1 and R2 into empty resources and compare exports before routing traffic.",
       "mail": {
         "providers": [
+          "rer",
           "sendgrid",
           "resend"
         ]

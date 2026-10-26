@@ -1,7 +1,7 @@
 {
   "id": "mango",
   "name": "Mango",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "maturity": "newsletter-release-candidate",
   "category": "marketing",
   "spine": {
@@ -194,8 +194,7 @@
       "id": "portable-data",
       "description": "Exports every contact, source record, consent record, campaign, and audit entry as JSON alongside uploaded campaign assets. Private export/restore data includes signup_settings (frequency disclosure, exact embed origins, kiosk and challenge defaults), signup_allowance_levels (non-personal capacity revisions and operator attribution), analytics_settings (static UTM defaults), opt_in_modes (future capture modes and operator attribution), campaign_revisions.utm_policy_json (frozen defaults) and tracked_links.original_destination_url (authored click identity), open_tracking_settings (operator preference/audit, disabled by default, generation), open_tracking_tokens (signed token digest, recipient-step, generation and expiry) and open_estimate_facts (recipient-step and first occurrence only). Contact erasure removes linked open tokens/facts; no IP, user agent or cookie is stored for open estimates.",
       "clauses": [
-        "DATA-001",
-        "BASE-DATA-001"
+        "DATA-001"
       ]
     },
     {
@@ -383,7 +382,7 @@
       "required": false,
       "why": "On an explicit Owner/Admin import action, reads an ActiveCampaign account under *.api-us1.com, *.api-us2.com, *.api-eu1.com or *.activehosted.com, or Klaviyo at a.klaviyo.com. HTTPS only; no redirects or cross-origin pagination. No live sync or outbound marketing.",
       "data": [
-        "The source API key, only in that read’s authentication header; never stored or logged by Mango",
+        "The source API key, only in that read\u2019s authentication header; never stored or logged by Mango",
         "Account-relative pagination and source record identifiers for requested contacts, lists, tags, fields, segments, templates, events and flow outlines"
       ],
       "adapters": [
@@ -556,7 +555,7 @@
       "name": "MANGO_ALLOWED_LINK_HOSTS",
       "required": false,
       "secret": false,
-      "why": "Optional initial comma-separated destination hosts; defaults to the app’s own host and remains editable in Mango Settings. Checked before an approved revision can send."
+      "why": "Optional initial comma-separated destination hosts; defaults to the app\u2019s own host and remains editable in Mango Settings. Checked before an approved revision can send."
     },
     {
       "name": "MANGO_TEST_EMAIL_ALLOWLIST",

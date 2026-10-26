@@ -11,7 +11,7 @@ import { all, insist } from '../../src/vendor/base/portability/storage.mjs';
 // Core files carry that prefixed alias; optional extra directories only exist
 // on Platform. Statements are split as the installation's runner stored them.
 async function inventory(root, split) {
-  const { migrationPrefix = '', extraMigrationDirectories = [] } = JSON.parse(await readFile(join(root, 'scripts/delivery/base/packaging.json'), 'utf8')).artifact.specInputs;
+  const { migrationPrefix = '', extraMigrationDirectories = [] } = JSON.parse(await readFile(join(root, 'packaging.json'), 'utf8')).artifact.specInputs;
   const directories = [{ path: 'migrations/core', prefix: migrationPrefix, native: true }, ...extraMigrationDirectories.filter(directory => directory.binding === 'DB')];
   const files = [];
   for (const { path, prefix, native, optional } of directories) {

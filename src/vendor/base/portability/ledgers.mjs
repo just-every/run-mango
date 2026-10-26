@@ -22,10 +22,13 @@ export async function destinationLedger(db) {
   if(found.includes('_rer_deploy_migrations'))return (await all(db,"SELECT * FROM _rer_deploy_migrations WHERE state='applied' ORDER BY name")).map(entry);
   if(found.includes('d1_migrations')) {
     const columns=(await all(db,'PRAGMA table_info(d1_migrations)')).map(x=>x.name);
+    insist(['id','name','applied_at'].every(name=>columns.includes(name)),'schema_mismatch:migration_history',409);
     const tracked=columns.includes('state') || columns.includes('sha256');
     if(tracked)insist(columns.includes('state') && columns.includes('sha256'),'schema_mismatch:migration_history',409);
     const rows=await all(db,`SELECT name${tracked?',state,sha256':''} FROM d1_migrations ORDER BY id`);
+    insist(rows.every(row=>typeof row.name==='string') && new Set(rows.map(row=>row.name)).size===rows.length,'schema_mismatch:migration_history',409);
     if(tracked)insist(rows.every(row=>row.state==='applied'),'schema_mismatch:uncertain_migrations',409);
+    if(tracked)insist(rows.every(row=>typeof row.sha256==='string' && /^[a-f0-9]{64}$/.test(row.sha256)),'schema_mismatch:migration_history',409);
     return rows.map(entry);
   }
   if(!found.includes('rer_migrations'))return;
@@ -34,6 +37,7 @@ export async function destinationLedger(db) {
   // cloudflare-migrations.ts:34-44), so rowid order is application order.
   insist(shape(await all(db,'PRAGMA table_info(rer_migrations)'))===platformShape,'schema_mismatch:migration_history',409);
   const rows=await all(db,'SELECT name,sha256 FROM rer_migrations ORDER BY rowid');
+  insist(rows.every(row=>typeof row.name==='string' && typeof row.sha256==='string' && /^[a-f0-9]{64}$/.test(row.sha256)) && new Set(rows.map(row=>row.name)).size===rows.length,'schema_mismatch:migration_history',409);
   insist(!rows.some(row=>partial(row.name)),'schema_mismatch:uncertain_migrations',409);
   return rows.map(entry);
 }
@@ -44,7 +48,7 @@ const entry=row=>({name:row.name,...(typeof row.sha256==='string'?{sha256:row.sh
 // confirm that file, but cannot point at another one. Hashless rows use exact
 // names or seed-declared aliases. The caller keeps the destination replay order.
 export function matchMigrationLedger(entries,files,{dataOnly=[]}={}) {
-  return entries.flatMap(m=>{
+  const matched=entries.flatMap(m=>{
     const named=files.filter(file=>file.name===m.name || file.aliases?.includes(m.name));
     insist(named.length<=1,'migration_ledger:ambiguous:'+m.name,409);
     if(m.sha256===undefined) {
@@ -59,6 +63,8 @@ export function matchMigrationLedger(entries,files,{dataOnly=[]}={}) {
     insist(!named.length || named[0]===matches[0],'migration_ledger:conflict:'+m.name,409);
     return [matches[0].name];
   });
+  insist(new Set(matched).size===matched.length,'migration_ledger:ambiguous',409);
+  return matched;
 }
 
 /** The ledger tables an archive carries (old archives carried rer_migrations before it became bookkeeping). */

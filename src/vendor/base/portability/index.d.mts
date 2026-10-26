@@ -2,11 +2,14 @@ export type Cell = null | string | number | { blob: string };
 export type Row = Record<string, Cell>;
 export interface Column { name: string; type: string; notnull: number; pk: number; generated?: 'virtual'|'stored' }
 export interface Table { name: string; sql: string; columns: Column[]; dependencies: string[]; count: number; rowidAlias: string|null }
+export interface SchemaObject { name: string; type: 'index'|'view'|'trigger'; table: string; sql: string }
 export interface ObjectDescriptor { bucket: string; key: string; size: number; sha256: string; httpMetadata: Omit<R2HTTPMetadata,'cacheExpiry'> & {cacheExpiry?:string}; customMetadata: Record<string,string> }
 export interface PayloadDescriptor { name: string; size: number; sha256: string }
 export interface Manifest {
   kind: 'manifest'; format: 'runeditrun-portability'; version: 2; product: string; exportedAt: string; sourceIdentity: string;
   schema: string; tables: Table[]; objects: ObjectDescriptor[]; payloads: PayloadDescriptor[];
+  /** Complete behavioral object definitions; absent from older table-only archives. */
+  schemaObjects?: SchemaObject[];
   excludedTables: string[]; excludedColumns: Record<string,string[]>; requiredConfiguration: string[]; partCount: number; epoch: number; journal: string[];
   /** Applied product migrations; absent from archives made before additive restore. */
   migrations?: string[];

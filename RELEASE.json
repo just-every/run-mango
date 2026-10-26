@@ -1,7 +1,7 @@
 {
-  "version": "0.4.0",
-  "previousVersion": "0.3.0",
-  "date": "2026-10-21",
+  "version": "0.4.1",
+  "previousVersion": "0.4.0",
+  "date": "2026-10-26",
   "contractChanges": {
     "OPER-003": {
       "change": "status",
@@ -81,23 +81,91 @@
   "extensionPointChanges": [],
   "migrations": [
     {
-      "id": "0077_signup_refusal_hours.sql",
-      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the hourly public-signup refusal counts that the Activity log summarises."
+      "id": "0081_imported_engagement.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
     },
     {
-      "id": "0078_stripe_connection.sql",
-      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the optional Stripe connection, stored encrypted and owned by this installation: it is never exported or restored."
+      "id": "0082_campaign_attribution_policy.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
     },
     {
-      "id": "0079_tracking_domain.sql",
-      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the branded tracking host that domain setup records."
+      "id": "0083_failed_operations.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
     },
     {
-      "id": "0080_portability_import_leases.sql",
-      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds restore bookkeeping before any archive is admitted, so a refused restore never changes the database's schema. It uses CREATE TABLE IF NOT EXISTS."
+      "id": "0084_paid_tier.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0085_woocommerce_connection.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0086_woocommerce_plugin_flows.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0087_paid_state_authority.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0089_signup_capacity.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0090_analytics_tagging.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0091_capture_opt_in_modes.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0092_link_host_sources.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0093_recipient_unsubscribe_method.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0094_sender_renewal_deliveries.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0095_saved_report_schedules.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0096_review_loyalty_adapters.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0097_sending_connection.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0098_incumbent_attestations.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0099_flow_draft_revisions.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0100_incumbent_review_counts.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0101_reusable_email_blocks.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
+    },
+    {
+      "id": "0102_incumbent_images.sql",
+      "buyerSteps": "Back up matching source, data and private settings, then apply this additive migration in filename order before starting the application. Preserve every previously applied migration byte."
     }
   ],
   "breaking": false,
-  "agentUpdateInstructions": "Preserve owner customizations, applied migration bytes and matching source/D1/R2/private-settings backups. Mango 0.4.0 uses pinned @runeditrun/rer 0.2.76, Node 22.20.0 and pnpm 10.12.4. Stop dev and writers before upgrading. Back up first, then git pull --ff-only (or merge/reapply customizations deliberately), rer install, and apply migrations 0077_signup_refusal_hours through 0080_portability_import_leases in filename order (rer setup locally; rer deploy --environment NAME hosted). Earlier migration files are unchanged; never rename or renumber a migration. Run rer build before a fresh export. Base portability copies are recorded at rer-v0.2.76 (base-copies.json, verify-base drift 0); import.mjs, journal.mjs, copies.mjs and backfills.mjs are Mango adaptations recorded in edition.json. backfills.mjs keeps a write that reads a table the applied history created and dropped out of restore replays; once Base ships that rule, readopt its verbatim file. The local restore door replays this checkout's migrations, resolves Platform rer_migrations entries by SHA-256 with core- aliases, and on a Platform-migrated database skips Wrangler after checking every migration file is applied; keep that preflight. Stripe connections and role grants belong to the destination and are not restored from an archive. Keep confirmed-only resubscription, consent and opt-out precedence, suppression, exact-revision approval and uncertain-handoff fences intact. Local rer dev admits the owner through the private RER_OPEN entry; never add a captured-mail inbox or outbox. Use affected public-flow checks and CI Verify; local proof is not hosted acceptance. Refresh source:lock and integration declarations for intentional source changes.",
-  "publicReleaseNotes": "Mango 0.4.0 (21 October 2026) adds an activity log for the Owner and Admins with filters and CSV export, keeps a removed operator's name on their work, names every blocked link and image in review and lets a Manager allow an unlisted host there, shows the SMS opt-out wording in review, and lists commerce and dormancy exclusions. It also adds an optional Stripe connection and SendGrid domain setup, both partial. A backup from an earlier Mango, including the build Run Edit Run Managed lists, now restores with rer import, also into a database Run Edit Run Platform migrated. Back up first: four additive migrations (0077-0080) apply in filename order and a 0.3.0 install keeps all its data. It pins rer 0.2.76 and adapts one Base restore rule until Base ships it. Hosted backup and restore are not built in, and Delivered, bounce and complaint reports need a SendGrid signed Event Webhook. Product screenshot: .github/assets/release/mango-0.4.0-activity-1440.png"
+  "agentUpdateInstructions": "Preserve owner customizations, applied migration bytes and matching source, D1, R2 and private settings. Install the locked dependencies, apply pending migrations in filename order, build and check the deployment specification. This version pins rer 0.2.80 and retains Mango adaptations for native restore and destination authority. Newsletter provider consent and approval fences remain required. No release tag is prepared by these instructions.",
+  "publicReleaseNotes": "Mango 0.4.1 prepares hosted installation with explicit deployment inputs, Managed transactional mail, a current deployment specification and rer 0.2.80. Preserve source, data and private settings before upgrading. Newsletter delivery still requires an owner-connected provider; existing product capability statuses are unchanged."
 }

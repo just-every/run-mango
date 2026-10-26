@@ -41,7 +41,7 @@ export interface D1UndoSnapshot {
   /** Domain-required atomic reversal units, e.g. required MANY owner + joins.
    * Overlapping groups are united. Retaining any member retains the unit. */
   atomicGroups?: string[][];
-  /** Nonempty scalar predicates fencing the WHOLE observed native/dependency
+  /** Nonempty scalar predicates fencing the WHOLE observed native and dependency
    * set, including absent/incoming edges and cardinalities. No mutations. */
   guards: D1Sql[];
 }
@@ -70,7 +70,9 @@ export interface D1UndoDisposition {
   targetId: string;
   entity: D1UndoEntity;
   disposition: 'reversed' | 'retained';
-  reason: 'unchanged' | 'edited' | 'dependency';
+  /** 'superseded': a later import's effect over it was kept for the owner, so
+   * it can never be restored; it is reversed in provenance and kept. */
+  reason: 'unchanged' | 'edited' | 'dependency' | 'superseded';
   expected: D1UndoEvidence;
   observed: D1UndoEvidence;
   protectedBy: D1UndoDependency[];
@@ -82,5 +84,27 @@ export interface D1UndoReport {
   cursor: number;
   total: number;
   nextOffset: number | null;
+  dispositions: D1UndoDisposition[];
+  conversion?: D1ReversalPolicyConversion;
+  /** Engine state is a progress checkpoint; retained effects mean compensated. */
+  outcome: 'pending' | 'undone' | 'compensated';
+}
+export interface D1ReversalPolicyConversion {
+  jobId: string;
+  jobFingerprint: string;
+  from: 'strict';
+  to: 'preserve-conflicts';
+  state: 'completed' | 'undoing';
+  fence: number;
+  actorDigest: string;
+  recordedAt: string;
+  reviewedFingerprint: string;
+  policyHash: string;
+  previouslyReversed: number;
+}
+export interface D1PreservedUndoPreview {
+  job: ImportJob;
+  policy: D1ReversalPolicy;
+  reviewedFingerprint: string;
   dispositions: D1UndoDisposition[];
 }

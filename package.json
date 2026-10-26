@@ -1,7 +1,7 @@
 {
   "name": "mango",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.4.1",
   "packageManager": "pnpm@10.12.4",
   "engines": {
     "node": "22.20.0"
@@ -44,15 +44,17 @@
     "rer": "rer",
     "artifact:delivery": "node scripts/build-delivery-artifact.mjs",
     "hosted": "node scripts/installer/hosted.mjs",
-    "integration:sync": "node scripts/sync-integration.mjs --write",
-    "integration:check": "node scripts/sync-integration.mjs --check"
+    "integration:sync": "pnpm delivery:spec",
+    "integration:check": "pnpm check:deployment-spec",
+    "delivery:spec": "node scripts/build-deployment-spec.mjs --write",
+    "check:deployment-spec": "node scripts/build-deployment-spec.mjs --check"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@cloudflare/vite-plugin": "^1.54.5",
     "@cloudflare/workers-types": "^5.20260831.1",
     "@playwright/test": "^1.64.1",
-    "@runeditrun/rer": "0.2.76",
+    "@runeditrun/rer": "0.2.80",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.3.0",
     "@types/react": "^19.2.18",

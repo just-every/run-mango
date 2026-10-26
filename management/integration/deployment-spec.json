@@ -636,7 +636,7 @@
   "durableObjectMigrations": [],
   "publicVariables": {
     "MAIL_PROVIDER": "sendgrid",
-    "MANGO_APP_VERSION": "0.4.0",
+    "MANGO_APP_VERSION": "0.4.1",
     "MANGO_RESTORE_MODE": "0",
     "MANGO_RECONCILIATION_INTERVAL_MINUTES": "5",
     "MANGO_UNRESOLVED_OUTCOME_HOURS": "24",
@@ -644,7 +644,9 @@
     "MANGO_DELIVERABILITY_WINDOW_DAYS": "30",
     "MAIL_RELAY_URL": "",
     "MARKETING_MAIL_PROVIDER": "",
-    "MARKETING_MAIL_WEBHOOK_ID": ""
+    "MARKETING_MAIL_WEBHOOK_ID": "",
+    "MAIL_FROM": "",
+    "AUTH_ORIGIN": ""
   },
   "secretNames": [
     "SESSION_SECRET",
@@ -691,11 +693,12 @@
   "surfaces": {
     "app": {
       "path": "/signin",
-      "originVariable": "MANGO_PUBLIC_BASE_URL"
+      "originVariable": "AUTH_ORIGIN"
     }
   },
   "mail": {
     "providers": [
+      "rer",
       "sendgrid",
       "resend"
     ]

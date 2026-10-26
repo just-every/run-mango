@@ -1,0 +1,103 @@
+{
+  "version": "0.4.0",
+  "previousVersion": "0.3.0",
+  "date": "2026-10-21",
+  "contractChanges": {
+    "OPER-003": {
+      "change": "status",
+      "was": "partial",
+      "now": "done",
+      "summary": "Removal does not rewrite history: removing an operator revokes their sessions and keeps their name on campaigns, approval requests, approvals, revisions and audit records, proven through review, detail and activity at 1440 and 390."
+    },
+    "OPER-007": {
+      "change": "changed",
+      "summary": "Activity log: the Owner and Admins read Settings \u2192 Activity, filtered by operator, agent, action, object and date with a CSV of the filtered view. The clause now names that flow activations and pauses (FLOW-008) and agent actions (AGENT-010) join the log when those clauses are built. Status stays partial: a completed restore has no activity entry yet."
+    },
+    "AUD-003": {
+      "change": "status",
+      "was": "partial",
+      "now": "done",
+      "summary": "Commerce and dormancy exclusions: review lists recent-purchase, unresolved-refund, unresolved-return and dormant exclusions with their counts at 1440 and 390."
+    },
+    "MSG-005": {
+      "change": "status",
+      "was": "partial",
+      "now": "done",
+      "summary": "SMS opt-out: review of an SMS step shows the program identity, Reply STOP to unsubscribe, the frequency disclosure, the help contact and the segment count."
+    },
+    "MSG-006": {
+      "change": "status",
+      "was": "partial",
+      "now": "done",
+      "summary": "Links: review and approval name every blocked link and image with the scheme, fault or host that blocks it; only unlisted HTTPS hosts offer Allow this host."
+    },
+    "MSG-015": {
+      "change": "status",
+      "was": "missing",
+      "now": "done",
+      "summary": "Allow a blocked host from review: a Manager allows an unlisted host from review, Authors cannot, checks rerun, and the allowance is recorded with operator, host and campaign."
+    },
+    "INT-004": {
+      "change": "status",
+      "was": "missing",
+      "now": "partial",
+      "summary": "Stripe: an owner-only encrypted Stripe connection and signed once-only commerce event ingestion. A real Stripe subscription lifecycle is not proven yet."
+    },
+    "FLOW-001": {
+      "change": "changed",
+      "summary": "Visual flow builder: inherits INT-004's Stripe renewal-reminder enrolment for when flows are built; status unchanged (missing)."
+    },
+    "FLOW-002": {
+      "change": "changed",
+      "summary": "Triggers: inherits INT-004's Stripe subscription-event enrolment for when flows are built; status unchanged (missing)."
+    },
+    "FLOW-008": {
+      "change": "changed",
+      "summary": "Reviewed activation: activation, pause and archive of a flow revision will each be an OPER-007 activity entry; status unchanged (missing)."
+    },
+    "AGENT-010": {
+      "change": "changed",
+      "summary": "Agent authority and guardrails: every agent action will be an OPER-007 activity entry under the agent's grant; status unchanged (partial)."
+    },
+    "CAMP-019": {
+      "change": "changed",
+      "summary": "Status stays partial. Extend the existing typed-test journey with Activity actor/time, action/object filters, CSV and erased-contact redaction at desktop and phone widths."
+    },
+    "BUILD-002": {
+      "change": "changed",
+      "summary": "Status stays partial. Archive templates enter the library with untouched-only undo; the first save of an imported or generated design files an independent template. Existing archive draft custody retains its undo path. No migration is needed."
+    },
+    "DELIV-008": {
+      "change": "changed",
+      "summary": "Status stays partial. Carry the SendGrid Settings connection and signed webhook flow with a completed Activity receipt, Owner-only mutations and named Admin refusals. Migration 0097 is additive; existing developer inputs remain until a Settings connection is made. Resend, fresh Free/Assisted sign-in, alerts, full developer labeling, domain creation and provider sandbox proof remain open."
+    },
+    "BUILD-010": {
+      "change": "status",
+      "was": "missing",
+      "now": "partial",
+      "summary": "Generated responsive CSS and both-tree checks pass the existing 180-second canonical-save registration, including 138 adversarial cases, stored-body 375/600 standards/quirks renders with and without style, transmitted-byte accounting and Preview at 1440/390. The audit avoids sandbox child-frame discovery without losing shell rules or the eight direct email audits. Per-block controls, nested orientation and full editor acceptance remain open."
+    }
+  },
+  "extensionPointChanges": [],
+  "migrations": [
+    {
+      "id": "0077_signup_refusal_hours.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the hourly public-signup refusal counts that the Activity log summarises."
+    },
+    {
+      "id": "0078_stripe_connection.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the optional Stripe connection, stored encrypted and owned by this installation: it is never exported or restored."
+    },
+    {
+      "id": "0079_tracking_domain.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds the branded tracking host that domain setup records."
+    },
+    {
+      "id": "0080_portability_import_leases.sql",
+      "buyerSteps": "Back up the matching source, D1/R2 data and private settings, then apply all pending migrations in filename order (rer setup locally, rer deploy hosted) before starting this release. Additive; existing rows are unchanged. Adds restore bookkeeping before any archive is admitted, so a refused restore never changes the database's schema. It uses CREATE TABLE IF NOT EXISTS."
+    }
+  ],
+  "breaking": false,
+  "agentUpdateInstructions": "Preserve owner customizations, applied migration bytes and matching source/D1/R2/private-settings backups. Mango 0.4.0 uses pinned @runeditrun/rer 0.2.76, Node 22.20.0 and pnpm 10.12.4. Stop dev and writers before upgrading. Back up first, then git pull --ff-only (or merge/reapply customizations deliberately), rer install, and apply migrations 0077_signup_refusal_hours through 0080_portability_import_leases in filename order (rer setup locally; rer deploy --environment NAME hosted). Earlier migration files are unchanged; never rename or renumber a migration. Run rer build before a fresh export. Base portability copies are recorded at rer-v0.2.76 (base-copies.json, verify-base drift 0); import.mjs, journal.mjs, copies.mjs and backfills.mjs are Mango adaptations recorded in edition.json. backfills.mjs keeps a write that reads a table the applied history created and dropped out of restore replays; once Base ships that rule, readopt its verbatim file. The local restore door replays this checkout's migrations, resolves Platform rer_migrations entries by SHA-256 with core- aliases, and on a Platform-migrated database skips Wrangler after checking every migration file is applied; keep that preflight. Stripe connections and role grants belong to the destination and are not restored from an archive. Keep confirmed-only resubscription, consent and opt-out precedence, suppression, exact-revision approval and uncertain-handoff fences intact. Local rer dev admits the owner through the private RER_OPEN entry; never add a captured-mail inbox or outbox. Use affected public-flow checks and CI Verify; local proof is not hosted acceptance. Refresh source:lock and integration declarations for intentional source changes.",
+  "publicReleaseNotes": "Mango 0.4.0 (21 October 2026) adds an activity log for the Owner and Admins with filters and CSV export, keeps a removed operator's name on their work, names every blocked link and image in review and lets a Manager allow an unlisted host there, shows the SMS opt-out wording in review, and lists commerce and dormancy exclusions. It also adds an optional Stripe connection and SendGrid domain setup, both partial. A backup from an earlier Mango, including the build Run Edit Run Managed lists, now restores with rer import, also into a database Run Edit Run Platform migrated. Back up first: four additive migrations (0077-0080) apply in filename order and a 0.3.0 install keeps all its data. It pins rer 0.2.76 and adapts one Base restore rule until Base ships it. Hosted backup and restore are not built in, and Delivered, bounce and complaint reports need a SendGrid signed Event Webhook. Product screenshot: .github/assets/release/mango-0.4.0-activity-1440.png"
+}

@@ -4,9 +4,9 @@ import { runtime, secret, setup } from './base-runtime.mjs';
 
 test('Managed sign-in uses the published relay, retries fresh links after Retry-After, and reports credential refusal', async () => {
   const relayUrl = 'https://manage.example.test/api/managed-mail/send';
-  const relayKey = 'synthetic-installation-mail-key';
+  const relayKey = 'synthetic-mango-1';
   const r = await runtime('unused', false, { OWNER_EMAIL: 'owner@example.test', SESSION_SECRET: secret, SETUP_TOKEN: setup,
-    MAIL_PROVIDER: 'rer', MAIL_FROM: 'signin@example.test', MAIL_API_KEY: relayKey, MAIL_RELAY_URL: relayUrl,
+    AUTH_ORIGIN: 'https://mango.example.test', MANGO_PUBLIC_BASE_URL: '', MAIL_PROVIDER: 'rer', MAIL_FROM: 'signin@example.test', MAIL_API_KEY: relayKey, MAIL_RELAY_URL: relayUrl,
     MAIL_PROVIDER_API_KEY: '', MAIL_AUTH_FROM: '', MAIL_WEBHOOK_SECRET: '', MAIL_WEBHOOK_ID: '', MANGO_EMAIL_HANDOFFS_PER_MINUTE: '60000' });
   const send = (relayStatus = 202) => r.call('/auth/magic-link', { method: 'POST', form: true, body: {email:'owner@example.test'}, relayStatus });
   try {

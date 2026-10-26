@@ -34,7 +34,8 @@
           "deploy-site.json",
           "vite.site.config.ts",
           "management/integration",
-          "scripts/sync-integration.mjs"
+          "packaging.json",
+          "scripts/build-deployment-spec.mjs"
         ]
       }
     },
@@ -48,12 +49,14 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "LICENSE",
+            "edition-authoring/adopt.mjs",
             "edition-authoring/base-copies.mjs",
             "edition-authoring/cli.mjs",
             "edition-authoring/files.mjs",
+            "edition-authoring/lock.mjs",
             "edition-authoring/manifest.mjs",
             "edition-authoring/parent-comparison.mjs",
             "edition-authoring/projection-lock.mjs",
@@ -61,7 +64,17 @@
             "edition-authoring/sources.mjs",
             "edition-authoring/updates.mjs"
           ]
-        }
+        },
+        "mappings": [
+          {
+            "path": "scripts/edition-authoring/adopt.mjs",
+            "originPath": "edition-authoring/adopt.mjs"
+          },
+          {
+            "path": "scripts/edition-authoring/lock.mjs",
+            "originPath": "edition-authoring/lock.mjs"
+          }
+        ]
       }
     },
     {
@@ -74,9 +87,10 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "modules/operator-auth/README.md",
+            "modules/operator-auth/SCHEDULED-POLICY.md",
             "modules/operator-auth/accounts/adapter.mjs",
             "modules/operator-auth/accounts/admin.mjs",
             "modules/operator-auth/accounts/credentials.mjs",
@@ -157,13 +171,40 @@
             "modules/operator-auth/policy.d.mts",
             "modules/operator-auth/policy.mjs",
             "modules/operator-auth/rejected-response.mjs",
+            "modules/operator-auth/representation.mjs",
             "modules/operator-auth/routes.mjs",
             "modules/operator-auth/service.mjs",
             "modules/operator-auth/signin/index.d.mts",
             "modules/operator-auth/signin/index.mjs",
             "modules/operator-auth/signin/one-click.mjs"
           ]
-        }
+        },
+        "mappings": [
+          {
+            "path": "src/vendor/base/operator-auth/README.md",
+            "originPath": "modules/operator-auth/README.md"
+          },
+          {
+            "path": "src/vendor/base/operator-auth/SCHEDULED-POLICY.md",
+            "originPath": "modules/operator-auth/SCHEDULED-POLICY.md"
+          },
+          {
+            "path": "src/vendor/base/operator-auth/conformance/README.md",
+            "originPath": "modules/operator-auth/conformance/README.md"
+          },
+          {
+            "path": "src/vendor/base/operator-auth/docs/native-accounts.md",
+            "originPath": "modules/operator-auth/docs/native-accounts.md"
+          },
+          {
+            "path": "src/vendor/base/operator-auth/docs/vite-spa.md",
+            "originPath": "modules/operator-auth/docs/vite-spa.md"
+          },
+          {
+            "path": "src/vendor/base/operator-auth/representation.mjs",
+            "originPath": "modules/operator-auth/representation.mjs"
+          }
+        ]
       }
     },
     {
@@ -176,7 +217,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "modules/mail/.gitignore",
             "modules/mail/LICENSE",
@@ -244,7 +285,13 @@
             "modules/mail/src/sendgrid-email/index.mjs",
             "modules/mail/src/unsubscribe/index.mjs"
           ]
-        }
+        },
+        "mappings": [
+          {
+            "path": "src/vendor/base/mail/README.md",
+            "originPath": "modules/mail/README.md"
+          }
+        ]
       }
     },
     {
@@ -257,7 +304,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "modules/import-kit/CONTRACT.md",
             "modules/import-kit/FIXTURES.md",
@@ -357,6 +404,7 @@
             "modules/import-kit/src/d1/retirement.ts",
             "modules/import-kit/src/d1/reversal-fence-schema.ts",
             "modules/import-kit/src/d1/reversal-fence.ts",
+            "modules/import-kit/src/d1/reversal-journal.ts",
             "modules/import-kit/src/d1/reverse.ts",
             "modules/import-kit/src/d1/reviewed-source.ts",
             "modules/import-kit/src/d1/sets.ts",
@@ -395,6 +443,7 @@
             "modules/import-kit/src/d1/undo-snapshot.ts",
             "modules/import-kit/src/d1/undo-state.ts",
             "modules/import-kit/src/d1/undo-types.ts",
+            "modules/import-kit/src/door/ADOPTING.md",
             "modules/import-kit/src/door/README.md",
             "modules/import-kit/src/door/authority.ts",
             "modules/import-kit/src/door/grants.ts",
@@ -402,6 +451,7 @@
             "modules/import-kit/src/door/inventory.ts",
             "modules/import-kit/src/door/jobs.ts",
             "modules/import-kit/src/door/planning.ts",
+            "modules/import-kit/src/door/refusals.ts",
             "modules/import-kit/src/door/schema.ts",
             "modules/import-kit/src/door/store.ts",
             "modules/import-kit/src/door/types.ts",
@@ -450,7 +500,41 @@
             "modules/import-kit/src/storage/sqlite.ts",
             "modules/import-kit/src/types.ts"
           ]
-        }
+        },
+        "mappings": [
+          {
+            "path": "src/vendor/base/import-kit/CONTRACT.md",
+            "originPath": "modules/import-kit/CONTRACT.md"
+          },
+          {
+            "path": "src/vendor/base/import-kit/README.md",
+            "originPath": "modules/import-kit/README.md"
+          },
+          {
+            "path": "src/vendor/base/import-kit/src/d1/README.md",
+            "originPath": "modules/import-kit/src/d1/README.md"
+          },
+          {
+            "path": "src/vendor/base/import-kit/src/d1/reversal-journal.ts",
+            "originPath": "modules/import-kit/src/d1/reversal-journal.ts"
+          },
+          {
+            "path": "src/vendor/base/import-kit/src/d1/undo-types.ts",
+            "originPath": "modules/import-kit/src/d1/undo-types.ts"
+          },
+          {
+            "path": "src/vendor/base/import-kit/src/door/ADOPTING.md",
+            "originPath": "modules/import-kit/src/door/ADOPTING.md"
+          },
+          {
+            "path": "src/vendor/base/import-kit/src/door/refusals.ts",
+            "originPath": "modules/import-kit/src/door/refusals.ts"
+          },
+          {
+            "path": "src/vendor/base/import-kit/src/provenance/credentials.ts",
+            "originPath": "modules/import-kit/src/provenance/credentials.ts"
+          }
+        ]
       }
     },
     {
@@ -463,7 +547,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "91c082876d6560150f3dc012ec57b92bd9895228",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "modules/portability/README.md",
             "modules/portability/backfills.mjs",
@@ -524,6 +608,10 @@
           {
             "path": "src/vendor/base/portability/backfills.mjs",
             "originPath": "modules/portability/backfills.mjs"
+          },
+          {
+            "path": "src/vendor/base/portability/README.md",
+            "originPath": "modules/portability/README.md"
           }
         ]
       }
@@ -594,7 +682,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "export/RUN-LOCALLY.md",
             "export/SEED-COMMAND-CONTRACT.md"
@@ -622,11 +710,12 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "foundation/runtime/actor.ts",
             "foundation/runtime/command-receipts.sql",
             "foundation/runtime/command-receipts.ts",
+            "foundation/runtime/contract-style.ts",
             "foundation/runtime/deployment-health.ts",
             "foundation/runtime/dispatch.ts",
             "foundation/runtime/font-head.ts",
@@ -664,7 +753,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "modules/delivery-producer/artifact.mjs",
             "modules/delivery-producer/bindings.mjs",
@@ -687,6 +776,7 @@
             "modules/delivery-producer/spec.mjs",
             "modules/delivery-producer/sql-statements.mjs",
             "schema/SETUP.schema.json",
+            "schema/business-field-inputs.mjs",
             "schema/dependencies.mjs",
             "schema/json-schema.mjs",
             "schema/setup-validation.mjs"
@@ -760,6 +850,10 @@
           {
             "path": "scripts/delivery/base/mail.mjs",
             "originPath": "modules/delivery-producer/mail.mjs"
+          },
+          {
+            "path": "scripts/delivery/base/schema/business-field-inputs.mjs",
+            "originPath": "schema/business-field-inputs.mjs"
           }
         ]
       }
@@ -823,7 +917,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "3351abcb026662a9b8750125017b12185f1df3a5",
+          "revision": "11f94fec479228d71ba6d7dd6ea7796c0d42c544",
           "paths": [
             "modules/dependencies/README.md",
             "modules/dependencies/approval.mjs",
@@ -837,9 +931,24 @@
             "modules/dependencies/protocol.mjs",
             "modules/dependencies/schema/approval-attempt.sql",
             "modules/dependencies/schema/dependencies.sql",
+            "modules/dependencies/sealing.mjs",
             "modules/dependencies/store.mjs"
           ]
-        }
+        },
+        "mappings": [
+          {
+            "path": "src/vendor/base/dependencies/README.md",
+            "originPath": "modules/dependencies/README.md"
+          },
+          {
+            "path": "src/vendor/base/dependencies/sealing.mjs",
+            "originPath": "modules/dependencies/sealing.mjs"
+          },
+          {
+            "path": "src/vendor/base/dependencies/store.mjs",
+            "originPath": "modules/dependencies/store.mjs"
+          }
+        ]
       }
     },
     {

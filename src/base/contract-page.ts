@@ -6,7 +6,7 @@
 // It works without scripts; contract-filter.ts adds the status chips and search.
 // This file is copied unchanged to src/base by both maintained exporters.
 import { checkIdentity, type EditionIdentity } from './identity'
-import { checkRunData, document, escape, header, siteLinks, type RunData } from './run-site'
+import { checkRunData, document, escape, header, siteLinks, type HomepageHeader, type RunData } from './run-site'
 import { CONTRACT_STYLE } from './contract-style'
 import { CONTRACT_FILTER } from './contract-filter'
 import type { ClauseStatus, ContractClause, SeedContract } from './seed-contract.mjs'
@@ -14,10 +14,8 @@ import type { ClauseStatus, ContractClause, SeedContract } from './seed-contract
 type Counts = SeedContract['counts']
 const order: ClauseStatus[] = ['done', 'partial', 'missing']
 const word: Record<ClauseStatus, string> = { done: 'Done', partial: 'Partial', missing: 'Missing' }
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-
-/** "2026-10-16" as "16 October 2026". */
-const longDate = (iso: string) => { const [year, month, day] = iso.split('-').map(Number); return `${day} ${months[month - 1]} ${year}` }
+// The judged date is a calendar day, independent of the build machine's zone.
+const dateFormat = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
 
 /** Whole percentages of the total by largest remainder, so the three add to 100; a non-zero share under 1% reads "<1%". */
 export function shares(counts: Counts): Record<ClauseStatus, string> {
@@ -60,12 +58,12 @@ function clauseRow(clause: ContractClause, contractUrl: string): string {
     + `<td class="status"><span class="st ink-${clause.status}">${glyph(clause.status, 16)}${word[clause.status]}</span></td><td class="ev">${evidence}${gap}</td></tr>`
 }
 
-/** /contract: what the seed is being built to do, and how much of it the code does today. */
-export function contractPageHtml(identity: EditionIdentity, run: RunData, contract: SeedContract): string {
+/** /contract: what the seed is being built to do, and how much of it the code does today. `homepage` replaces Base's header. */
+export function contractPageHtml(identity: EditionIdentity, run: RunData, contract: SeedContract, homepage?: HomepageHeader): string {
   checkIdentity(identity); checkRunData(run)
   const product = escape(identity.product), { counts, target } = contract
   const repository = run.repository.replace(/\/+$/, ''), contractUrl = `${repository}/blob/main/CONTRACT.md`
-  const short = contract.commit.slice(0, 7), date = longDate(contract.date)
+  const short = contract.commit.slice(0, 7), date = dateFormat.format(new Date(`${contract.date}T00:00:00Z`))
   const areaOrder = new Map(contract.areas.map((area, index) => [area.name, index]))
   const clauses = [...contract.clauses].sort((a, b) => areaOrder.get(a.area)! - areaOrder.get(b.area)! || a.line - b.line)
   const published = tally(clauses.filter(clause => clause.kind === 'published')), targeted = tally(clauses.filter(clause => clause.kind !== 'published'))
@@ -113,9 +111,9 @@ export function contractPageHtml(identity: EditionIdentity, run: RunData, contra
   const footer = `<footer class="foot"><div class="foot-brand"><a class="brand" href="/"><img src="${escape(identity.mark)}" alt="" width="28" height="28"><span>${product}</span></a><p>${escape(identity.tagline)}</p></div>`
     + `<nav aria-label="Footer">${siteLinks(run, contract)}</nav><p class="licence">${escape(run.licence)} licensed</p></footer>`
 
-  const body = `${SYMBOLS}${header(identity, run, contract, 'contract')}<main><p class="eyebrow">Contract</p><h1>What ${product} is being built to do</h1>`
+  const body = `${SYMBOLS}${homepage?.html ?? header(identity, run, contract, 'contract')}<main><p class="eyebrow">Contract</p><h1>What ${product} is being built to do</h1>`
     + `<p class="lead">Every clause of the product ${product} is building toward, and how much of it the code does today. Judged from the code and tests, not from plans.</p>`
     + `${progress}<div class="layout">${kinds}${productTarget}${areaCard}${clauseCard}</div>${judging}${footer}</main>`
   const description = `What ${identity.product} is being built to do, and how much of it the code does today: ${counts.done} of ${counts.total} clauses done, judged at ${short} on ${date}.`
-  return document({ ...identity, band: undefined }, `Contract · ${identity.product}`, description, CONTRACT_STYLE, body, CONTRACT_FILTER)
+  return document({ ...identity, band: undefined }, `Contract · ${identity.product}`, description, CONTRACT_STYLE, body, CONTRACT_FILTER, homepage?.styles)
 }
