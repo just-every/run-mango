@@ -47,12 +47,11 @@ test('security: public capture preserves subscribed, suppressed and erased-optou
  }finally{await h.close();}
  });
 });
-test('security: equivalent IPv6 and IPv4-mapped addresses share network budgets; invalid IP fails closed',async()=>{
+test('security: IPv6 equivalent addresses and interface rotation share a /64 budget; invalid IP fails closed',async()=>{
  const h=await native();try{
   const call=client(h.f);for(let i=0;i<30;i++)expect((await call(`v6-${i}@example.test`,`2001:db8:1:2::${i+1}`)).status).toBe(202);
   expect((await call('v6-block@example.test','2001:0db8:0001:0002:ffff:0:0:1')).status).toBe(429);
   for(const ip of ['invalid','999.1.2.3','2001:db8::1%eth0','192.0.2.1, 192.0.2.2'])expect((await call('invalid@example.test',ip)).status).toBe(400);
-  await test.step('IPv4 mapped IPv6 shares the IPv4 budget',async()=>{const call=client(h.f);for(let i=0;i<30;i++)expect((await call(`mapped-${i}@example.test`,'192.0.2.44')).status).toBe(202);expect((await call('mapped-block@example.test','::ffff:c000:22c')).status).toBe(429);expect((await call('mapped-block2@example.test','::ffff:192.0.2.44')).status).toBe(429);});
  }finally{await h.close();}
 });
 test('security: durable global allowance advances monotonically, reserves its last slot atomically and survives restart',async()=>{
@@ -89,6 +88,10 @@ test('security: sender and Turnstile preflight fail closed before contact storag
   expect((await call('reused@example.test','192.0.2.46',{'cf-turnstile-response':'good-token'})).status).toBe(400);expect(h.f.outbound).toHaveLength(1);
   }finally{globalThis.fetch=original;}
  }finally{await h.close();}
+});
+
+test('security: IPv4 mapped IPv6 shares the IPv4 budget',async()=>{
+ const h=await native();try{const call=client(h.f);for(let i=0;i<30;i++)expect((await call(`mapped-${i}@example.test`,'192.0.2.44')).status).toBe(202);expect((await call('mapped-block@example.test','::ffff:c000:22c')).status).toBe(429);expect((await call('mapped-block2@example.test','::ffff:192.0.2.44')).status).toBe(429);}finally{await h.close();}
 });
 
 test('security: production rejects one-sided Turnstile and publishes only the public widget key and action',async()=>{
