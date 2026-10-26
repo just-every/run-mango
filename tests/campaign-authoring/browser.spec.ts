@@ -100,7 +100,7 @@ for(const width of [1440]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-0
     await page.getByLabel('Email body',{exact:true}).fill(authored);
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
     detail=await read();expect(detail.revision.emailBody).toContain(authored);expect(detail.revision.emailText).toContain('Read our letter (https://example.test/read)');expect(detail.links[0].destinationUrl).toBe('https://example.test/read');
-    if(width===390)await page.getByRole('button',{name:'Remove link 1',exact:true}).click();
+    await page.getByRole('button',{name:'Remove link 1',exact:true}).click();
     await page.getByRole('button',{name:'HTML mode',exact:true}).click();
     await page.getByLabel('Email body',{exact:true}).fill('<h2>Garden news</h2><p><strong>Written by the operator.</strong></p>');
     await page.getByLabel('Include 1 field',{exact:true}).selectOption('contact:email');
