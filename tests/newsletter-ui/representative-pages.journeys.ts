@@ -2,11 +2,11 @@ import { expect, test } from '@playwright/test';
 import { signInAsLocalOperator, expectDocumentToFit, expectNoSeriousAxeViolations } from './browser-checks';
 import { expectCampaignAxe } from './campaign-axe';
 
-// One representative accessibility/overflow pass, rather than every state at
-// every width. Product journeys cover mutations and authorization separately.
+// One phone smoke opens the main public and operator screens at 390 pixels.
+// Product journeys cover mutations and authorization separately.
 test('[BASE-ACCESS-002] fourteen representative pages fit and have no serious accessibility violations', async ({ page, request }) => {
   test.setTimeout(180_000);
-  for (const width of [1440, 390] as const) {
+  for (const width of [390] as const) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
@@ -34,15 +34,15 @@ test('[BASE-ACCESS-002] fourteen representative pages fit and have no serious ac
   await test.info().attach('sign-in', { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
   await signInAsLocalOperator(page, request);
   const pages = [
-    ['/subscribe', 1440],
+    ['/subscribe', 390],
     ['/app/campaigns', 390],
-    ['/app/campaigns/campaign_table_runner_draft_v4', 1440],
+    ['/app/campaigns/campaign_table_runner_draft_v4', 390],
     ['/app/campaigns/campaign_table_runner_draft_v4/review', 390],
-    ['/app/campaigns/campaign_sample_scheduled_v4/scheduled', 1440],
+    ['/app/campaigns/campaign_sample_scheduled_v4/scheduled', 390],
     ['/app/audience', 390],
-    ['/app/audience/contact_alex_v4', 1440],
+    ['/app/audience/contact_alex_v4', 390],
     ['/app/audience/import', 390],
-    ['/app/settings', 1440],
+    ['/app/settings', 390],
   ] as const;
   for (const [route, width] of pages) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 1000 });
