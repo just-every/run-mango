@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "abfe94f9fbfb385b86a00c0456b632b567e91bc56322a2868fd129e8a58356a9",
+      "sha256": "64acc30d26b662e6f98de45676d735b5b30e6f98f46a5ba81873d785c8e151b7",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "b437c6120e739ae2e5f0b4a9d93da48d87d6fdeb2484262fc495ef7431a99e50",
+      "sha256": "15e70fe4b9565aed3ecc502af99b942c1762d15481dbf48292067a2eb69cdbb8",
       "executable": false
     },
     "DEMO.md": {
@@ -3202,7 +3202,7 @@
       "executable": false
     },
     "src/core/features/campaigns/catalog-values.ts": {
-      "sha256": "fd6851ffe7556a524d0c52c7a148ea5f2ef89f4ef804adf5c40c525d2e51406c",
+      "sha256": "4243153f3d4add74193a69d2db7873813acf068ecb0a5b0eb7eeda5dcb78ca92",
       "executable": false
     },
     "src/core/features/campaigns/composition-repository.ts": {
@@ -3486,7 +3486,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/catalog-picker.tsx": {
-      "sha256": "6741d0185a8127a88c04ddd827dcc2b2a0b1a7cd1ae4a50a7326fd0d94b40dde",
+      "sha256": "20c524e466453124e11c9d678ce328ae46300cdcc192855c5a98fc4f069dd283",
       "executable": false
     },
     "src/core/features/campaigns/ui/composition-content-fields.tsx": {
@@ -7613,8 +7613,12 @@
       "sha256": "9fd2dd896069a695192f4b552c55ad4462b6e9cdda0cda8587e7572c29247c8e",
       "executable": false
     },
+    "tests/campaign-authoring/catalog-riders-journey.ts": {
+      "sha256": "48b7f070fd7b48a13d1109904e23bc66101b0390112b5b611937585d292a841a",
+      "executable": false
+    },
     "tests/campaign-authoring/chosen-size-journey.ts": {
-      "sha256": "5fd6bc6dfd2b84ddf97b7116593d152d33670908073326edd7c235213b440b4d",
+      "sha256": "c606fe7340e7b2edb6eb42114707d87973989764cca4e7b22f48a925be19176d",
       "executable": false
     },
     "tests/campaign-authoring/config.js": {

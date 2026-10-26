@@ -5,6 +5,9 @@ import {escapeHtml,safeEmailUrl} from './email-html-policy';
 import {columnsContent} from './email-blocks';
 import {CatalogUnavailable,catalogBlocks,type CatalogBlock,type CatalogRenderings,type CatalogRendering} from './catalog-blocks';
 export class CatalogBlocked extends CatalogUnavailable {}
+class CatalogPublicationRequired extends CatalogUnavailable {
+  constructor(title:string){super();this.message=`The chosen product “${title}” has no product URL. Publish it in the store or remove it from the block, then save again.`;}
+}
 const productSchema=z.object({title:z.string(),status:z.string(),catalog:z.object({publishedAt:z.string().nullable(),url:z.string().nullable(),currency:z.string().regex(/^[A-Z]{3}$/),image:z.object({url:z.string(),alt:z.string().nullable(),width:z.number().int().min(2),height:z.number().int().min(2)}).nullable()})});
 const variantSchema=z.object({productId:z.string(),title:z.string(),catalog:z.object({price:z.string().regex(/^\d+(?:\.\d{1,4})?$/),compareAtPrice:z.string().regex(/^\d+(?:\.\d{1,4})?$/).nullable(),quantity:z.number().int(),tracked:z.boolean()})});
 const amount=(currency:string,value:string)=>currency+' '+value;
@@ -18,7 +21,7 @@ function compile(state:CatalogBlock,records:SourceRecordInput[],readAt:string,co
     const current=product.data,catalog=current.catalog,chosen=variant.data.catalog;
     if(!configured&&(current.status!=='ACTIVE'||!catalog.publishedAt||!catalog.url)){hidden.push({...reference,reason:'unpublished'});continue;}
     if(!configured&&chosen.tracked&&chosen.quantity<=0){hidden.push({...reference,reason:'out-of-stock'});continue;}
-    if(!catalog.url)throw new CatalogUnavailable();
+    if(!catalog.url)throw configured?new CatalogPublicationRequired(current.title):new CatalogUnavailable();
     if(!safeEmailUrl(catalog.url)||catalog.image&&!safeEmailUrl(catalog.image.url))throw new CatalogBlocked();
     const title=current.title,price=amount(catalog.currency,chosen.price),compare=chosen.compareAtPrice===null?null:amount(catalog.currency,chosen.compareAtPrice);
     let image='';if(catalog.image){const width=Math.min(256,catalog.image.width),height=Math.max(2,Math.round(catalog.image.height*width/catalog.image.width));if(height>9999)throw new CatalogBlocked();image=`<img src="${escapeHtml(catalog.image.url)}" width="${width}" height="${height}" style="max-width:100%;height:auto" alt="${escapeHtml(catalog.image.alt??title)}">`;}
@@ -41,7 +44,7 @@ async function readCatalogValues(platform:Platform,source:string,configured:bool
   const blocks=catalogBlocks(source);if(!blocks.length)return {};
   const commerce=platform.commerce;
   if(!commerce||commerce.capabilities().provider!=='shopify'||!commerce.readCatalog)throw new CatalogUnavailable();
-  try{return compileCatalog(source,await commerce.readCatalog(blocks.flatMap(({state})=>state.items)),new Date().toISOString(),configured);}catch(error){if(error instanceof CatalogBlocked)throw error;throw new CatalogUnavailable();}
+  try{return compileCatalog(source,await commerce.readCatalog(blocks.flatMap(({state})=>state.items)),new Date().toISOString(),configured);}catch(error){if(error instanceof CatalogBlocked||configured&&error instanceof CatalogPublicationRequired)throw error;throw new CatalogUnavailable();}
 }
 /** Delivery hides unavailable items; saves count every configured current record. */
 export const liveCatalogValues=(platform:Platform,source:string)=>readCatalogValues(platform,source,false);
