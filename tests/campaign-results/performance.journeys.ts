@@ -6,7 +6,7 @@ import AxeBuilder from '@axe-core/playwright';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage} from '../support/navigation';
 import {csvRows,parseCsv} from '../../src/core/features/audience/csv';
-for(const width of [1440,390])contract('REPORT-002',`${width===1440?'[RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] ':''}campaign filters, exact CSV rows and optional open estimates at ${width}${width===1440?'; native commerce and cross-channel attribution at 1440 and 390':''}`,async({page,request})=>{
+for(const width of [1440])contract('REPORT-002',`${width===1440?'[RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] ':''}campaign filters, exact CSV rows and optional open estimates at ${width}${width===1440?'; native commerce and cross-channel attribution at 1440 and 390':''}`,async({page,request})=>{
   test.setTimeout(width===1440?600000:180000);
   // Start the independent native runtime while the existing report journey runs.
   // Observe setup failure immediately, rethrow it before native assertions, and

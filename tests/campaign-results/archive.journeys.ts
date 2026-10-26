@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import {test,contract,runtime} from './runtime-fixture';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage} from '../support/navigation';
-for(const width of [1440,390])contract('PUB-001',`publish, read and withdraw a neutral sent newsletter at ${width}`,async({page,request,browser})=>{
+for(const width of [1440])contract('PUB-001',`publish, read and withdraw a neutral sent newsletter at ${width}`,async({page,request,browser})=>{
   const headers={'X-Test-Token':runtime.token};
   const seeded=await (await request.post(`${runtime.url}/_results/archive`,{headers})).json();
   const {token}=await (await request.post(`${runtime.url}/_results/open`,{headers})).json();

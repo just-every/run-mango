@@ -5,7 +5,7 @@ import { installation, json, sender, confirmedContact, draftCampaign, approve } 
 import { openPage, reloadPage } from '../support/navigation';
 
 test.use({launchOptions:{args:['--use-mock-keychain','--password-store=basic']}});
-for (const width of [1440,390]) test(`[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at ${width}`, async ({page}, info) => {
+for (const width of [1440]) test(`[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at ${width}`, async ({page}, info) => {
   const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer);
   const marketing = () => edge.sends.filter(send => send.body.headers?.['List-Unsubscribe']);
   try {

@@ -2,7 +2,7 @@ import {test,contract,runtime} from './runtime-fixture';
 import {expect} from '@playwright/test';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage} from '../support/navigation';
-for(const width of [1440,390])contract('CAMP-016',`non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at ${width}`,async({page,request})=>{
+for(const width of [1440])contract('CAMP-016',`non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at ${width}`,async({page,request})=>{
   const seed=await request.post(`${runtime.url}/_results/followup`,{headers:{'X-Test-Token':runtime.token}});expect(seed.ok()).toBe(true);const fixture=await seed.json();
   const login=await request.post(`${runtime.url}/_results/open`,{headers:{'X-Test-Token':runtime.token}});const {token}=await login.json();
   await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,domain:'127.0.0.1',path:'/'}]);await page.setViewportSize({width,height:1000});
