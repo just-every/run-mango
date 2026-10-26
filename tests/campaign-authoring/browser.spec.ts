@@ -7,8 +7,13 @@ import {authoringRuntime} from './browser-runtime.mjs';
 
 test.describe.configure({mode:'serial',timeout:120000});
 test.use({timezoneId:'America/Los_Angeles'});
+// Prepare the first isolated runtime once and clone only its pristine migrated
+// schema for the second width; no sessions or application writes are shared.
+let preparedRuntime:Awaited<ReturnType<typeof authoringRuntime>>|undefined;
+test.beforeAll(async()=>{preparedRuntime=await authoringRuntime({reuseEmptySchema:true});});
+test.afterAll(async()=>{await preparedRuntime?.close();});
 for(const width of [1440,390]) test(`[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at ${width}px`,async({page,request}, testInfo)=>{
-  const runtime=await authoringRuntime();
+  const runtime=preparedRuntime??await authoringRuntime({reuseEmptySchema:true});preparedRuntime=undefined;
   try {
     await page.setViewportSize({width,height:1000});
     const open=await request.post(runtime.url+'/_authoring/open',{headers:{'X-Test-Token':runtime.token}});expect(open.status(),await open.text()).toBe(200);
