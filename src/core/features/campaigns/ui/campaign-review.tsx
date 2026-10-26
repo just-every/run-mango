@@ -15,7 +15,7 @@ import { compositionFieldErrors } from './composition-field-errors';
 import { approvalFieldErrors } from './approval-field-errors';
 import { summarizeAudienceRules } from '../audience-summary';
 import { Link, useParams, useBlocker, useLoaderData } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { requestJson } from '@/core/app/client/lib/api';
 import type { ApprovalBlocker, CampaignDetail, Check, Revision } from '@/core/app/client/lib/types';
@@ -41,6 +41,17 @@ export function CampaignReviewPage() {
   const authoring = useResource<{timezone:string}>('/api/campaign-authoring');
   const [draft, setDraft] = useState<DraftComposition | undefined>(() => data?.revision ? toDraftComposition(data.revision, data.links, data.steps) : undefined);
   const [notice, setNotice] = useState<string>();
+  const noticeRef = useRef<HTMLParagraphElement>(null);
+  const [focusRefusal, setFocusRefusal] = useState(false);
+  useEffect(() => {
+    if (!focusRefusal || !notice) return;
+    // Let mounted fields render their feedback and retain their existing focus.
+    const frame = requestAnimationFrame(() => {
+      if (!document.querySelector('#campaign-composer .field-error')) noticeRef.current?.focus();
+      setFocusRefusal(false);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [focusRefusal, notice]);
   const [noticeKind, setNoticeKind] = useState<'success'|'error'>('error');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [validationRequest, setValidationRequest] = useState(0);
@@ -196,7 +207,9 @@ export function CampaignReviewPage() {
       return;
     }
     setBusy(undefined);
+    setFocusRefusal(true);
     setFieldErrors(compositionFieldErrors(response.data.fields ?? response.data.fieldErrors, response.data.issues, draft));
+    if(response.data.error==='catalog_unavailable' && response.data.detail) {setNotice(response.data.detail);return;}
     if(response.data.error==='email_too_large') {setNotice(response.data.detail ?? 'Email is too large. Your changes are still here.');return;}
     if (response.data.error === 'stale_revision') {setNotice('Another operator changed this draft. Your edits are still here. Copy any changes you want to keep, then discard your edits and reload the saved revision before editing again.'); return;}
     setNotice(response.data.error === 'revision_not_draft' ? 'Only draft revisions can be changed.' : 'Draft was not saved. Your changes are still here.');
@@ -249,7 +262,7 @@ export function CampaignReviewPage() {
       <CampaignAttributionSummary attribution={data.attribution} version={revision.version}/>
       {editable && blockingFindings.length ? <p id="approval-blocked-reason" className="notice-note" role="status">Approval blocked: {approvalFindingDescription(blockingFindings[0])}{blockingFindings.length > 1 ? ` Review all ${blockingFindings.length} blocking checks below.` : ''}</p> : null}
       {dirty ? <div className="unsaved-notice" role="status"><span>Unsaved changes. Save before approving.</span><button type="button" className="text-link" disabled={Boolean(busy)} onClick={() => {setDraft(savedDraft); setNotice(undefined);}}>Discard changes</button></div> : null}
-      {notice ? <p className={noticeKind === 'success' ? 'action-notice' : 'inline-error'} role={noticeKind === 'success' ? 'status' : 'alert'}>{notice}</p> : null}
+      {notice ? <p ref={noticeRef} tabIndex={-1} className={noticeKind === 'success' ? 'action-notice' : 'inline-error'} role={noticeKind === 'success' ? 'status' : 'alert'}>{notice}</p> : null}
       {needsCanonicalRead ? <section className="panel" role="region" aria-labelledby="canonical-read-title">
         <p className="eyebrow" id="canonical-read-title">Saved revision needs reloading</p>
         <p>The displayed saved preview and checks are out of date. Approval and test sends are unavailable until the saved revision is reloaded.</p>

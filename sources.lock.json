@@ -3458,7 +3458,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-review.tsx": {
-      "sha256": "3143d70c31901c842c4ddf116793ee108bb9c0b07815b6523e88c71a2108dd6e",
+      "sha256": "e48a4a65f8d721aba6eabdfad0f6106c6dacc74a1cbf902be8a8106ad848a7ac",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-scheduled.tsx": {
@@ -7614,7 +7614,7 @@
       "executable": false
     },
     "tests/campaign-authoring/catalog-riders-journey.ts": {
-      "sha256": "cf4781bc4014dc50094b73e7ebce6451d04a9bc2807f4427d7e2f012f8cfe2a9",
+      "sha256": "bb6d30c3db7b80cde566465389a1e177b61db86c8107ed64d333fb7fb7864b0d",
       "executable": false
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {
