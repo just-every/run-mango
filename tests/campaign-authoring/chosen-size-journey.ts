@@ -1,3 +1,4 @@
+import {catalogRidersJourney} from './catalog-riders-journey';
 import {catalogGuardJourney} from './catalog-guard-journey';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {providerEdge} from '../go-live/edge';
@@ -45,6 +46,7 @@ export async function chosenSizeJourney(page:Page,info:TestInfo){
   const template=await json(await site.call('/api/campaign-templates',{method:'POST',cookie,body:{revisionId:draft.revisionId,name:'synthetic-mango-390'}}),201);
   const visible=await meter();mark('visible bound');expect(visible.exceedsLimit).toBe(false);
   catalog.delete(165);const deleted=await meter();expect(deleted.htmlBytes).toBeLessThan(visible.htmlBytes);catalog.reset();
+  await catalogRidersJourney(page,info,site,catalog,cookie,draft,saved);
   catalog.unpublish(160);catalog.stock(1611,0);await save();const hidden=await meter();
   if(hidden.htmlBytes!==visible.htmlBytes){
    catalog.reset();await approve(site,cookie,draft);await site.control('/_golive/clock',{advanceMs:3600001});const baselineRows=await dispatch(site,draft.campaignId,due);expect(baselineRows.map(row=>row.transport_disposition)).toEqual(['accepted']);const baselineSend=edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);expect(baselineSend).toHaveLength(1);const actual=Buffer.byteLength(baselineSend[0].body.content.find((part:any)=>part.type==='text/html').value);console.log(`Configured-item failure receipt: savedBound=${hidden.htmlBytes}; actualHandoff=${actual}`);expect(actual,'restored configured products must not exceed the saved bound').toBeLessThanOrEqual(hidden.htmlBytes);
