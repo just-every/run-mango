@@ -9,8 +9,8 @@ export const configs = {
   'go-live': 'tests/go-live/playwright.config.js',
   'move-in': 'tests/move-in/playwright.config.js',
 };
-const sharded = new Set(['main', 'local-start', 'go-live']);
-export const stageNames = ['static', ...sharded, 'newsletter-ui', 'campaign-results', 'move-in', 'local-start-slow'];
+const sharded = new Set(['main', 'local-start', 'go-live', 'campaign-results']);
+export const stageNames = ['static', ...sharded, 'newsletter-ui', 'move-in', 'local-start-slow'];
 
 export function options(args, env = {}) {
   const result = { stage: env.MANGO_VERIFY_STAGE, shard: env.MANGO_VERIFY_SHARD, testsOnly: false };
@@ -32,7 +32,7 @@ export function options(args, env = {}) {
   if (result.shard) {
     const match = /^([1-9]\d*)\/([1-9]\d*)$/.exec(result.shard);
     if (!match || !Number.isSafeInteger(Number(match[2])) || Number(match[1]) > Number(match[2])) throw new Error('Shard must be i/n with 1 <= i <= n.');
-    if (!sharded.has(result.stage)) throw new Error('--shard requires --stage main, local-start or go-live.');
+    if (!sharded.has(result.stage)) throw new Error('--shard requires --stage main, local-start, go-live or campaign-results.');
   }
   return result;
 }
@@ -45,6 +45,11 @@ export function verificationGroups({ stage, shard, testsOnly }, cpuBudget) {
     if (name === 'main' && ['3/7', '4/7', '7/7'].includes(shard)) return {
       name: `main-${shard.replace('/', '-of-')}`, command: process.execPath,
       args: ['scripts/verification/main-shard.mjs', shard, `--workers=${mainWorkers}`,
+        '--reporter=list,./scripts/verification/reporter.mjs'], timingRequired: true,
+    };
+    if (name === 'go-live' && shard?.endsWith('/11')) return {
+      name: `go-live-${shard.replace('/', '-of-')}`, command: process.execPath,
+      args: ['scripts/verification/go-live-shard.mjs', shard, '--workers=1',
         '--reporter=list,./scripts/verification/reporter.mjs'], timingRequired: true,
     };
     const args = ['exec', 'playwright', 'test', '--config', configs[name],
@@ -80,12 +85,11 @@ export function matrix(tier) {
     ...[...sharded].flatMap(stage => {
       // Native delivery journeys build and restart their own runtimes. Give
       // these files smaller groups so the complete push wall stays under 15 minutes.
-      const count = {main: 7, 'local-start': 3, 'go-live': 9}[stage];
+      const count = {main: 7, 'local-start': 3, 'go-live': 11, 'campaign-results': 2}[stage];
       return Array.from({length: count}, (_, offset) => ({ name: `${stage}-${offset + 1}-of-${count}`, stage, shard: `${offset + 1}/${count}`, browser: true }));
     }),
-    // Newsletter UI and campaign results each start their own runtimes. Separate
-    // jobs keep both within the per-job limit on slower runners.
-    ...['newsletter-ui', 'campaign-results', 'move-in'].map(stage => ({ name: stage, stage, browser: true })),
+    // Newsletter UI and move-in each retain their own runtime job.
+    ...['newsletter-ui', 'move-in'].map(stage => ({ name: stage, stage, browser: true })),
   ];
   const slow = [{ name: 'local-start-slow', stage: 'local-start-slow', browser: true }];
   return { include: tier === 'push' ? push : tier === 'slow' ? slow : [...push, ...slow] };

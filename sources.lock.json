@@ -2049,6 +2049,10 @@
       "sha256": "00338f7b94d8d78835b586b787ed93ba53318f5d96db3a1210766731eec88fe7",
       "executable": false
     },
+    "scripts/verification/go-live-shard.mjs": {
+      "sha256": "681434fe9099e788b74e3d7f45ef22c3b5e87a668f03b6a3d2496fd3254d8b07",
+      "executable": false
+    },
     "scripts/verification/local-start.config.mjs": {
       "sha256": "a240085a32cbaae07653127c827c6b7eac266790a97873400f04613e1e6eae48",
       "executable": false
@@ -2062,7 +2066,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "0c9f807bfd9a9f1fe43c7564588040974fe08219c7eaa24b7a57561c7dd9699e",
+      "sha256": "46a2efac7c35966e81239d4e0638b8c7d328afebfa3c91a4fe2923486f8cefa3",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
