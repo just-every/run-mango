@@ -24,7 +24,8 @@ test('security: confirmation scanner GET and HEAD write nothing; affirmative POS
   expect((await app.request(url,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(410);
  }finally{await h.close();}
 });
-for(const state of ['subscribed','suppressed','erased-optout'])test(`security: public capture preserves ${state} without mail or evidence`,async()=>{
+test('security: public capture preserves subscribed, suppressed and erased-optout states without mail or evidence',async()=>{
+ for(const state of ['subscribed','suppressed','erased-optout'])await test.step(`public capture preserves ${state}`,async()=>{
  const h=await native();try{
   const call=client(h.f);await call('existing@example.test');const token=confirmationUrl(h.f).split('/').at(-1)!;await h.f.services.audienceService.confirmConsent(token);
   const contact=await h.f.db.prepare('SELECT id FROM contacts').first<{id:string}>();
@@ -44,16 +45,25 @@ for(const state of ['subscribed','suppressed','erased-optout'])test(`security: p
     if(state==='suppressed'){expect(after[4]).toHaveLength(before[4].length+1);expect(after[4]).toContainEqual(expect.objectContaining({kind:'resubscribe-refused'}));}
     else expect(after[4]).toEqual(before[4]);}
  }finally{await h.close();}
+ });
 });
-test('security: IPv6 equivalent addresses and interface rotation share a /64 budget; invalid IP fails closed',async()=>{
+test('security: equivalent IPv6 and IPv4-mapped addresses share network budgets; invalid IP fails closed',async()=>{
  const h=await native();try{
   const call=client(h.f);for(let i=0;i<30;i++)expect((await call(`v6-${i}@example.test`,`2001:db8:1:2::${i+1}`)).status).toBe(202);
   expect((await call('v6-block@example.test','2001:0db8:0001:0002:ffff:0:0:1')).status).toBe(429);
   for(const ip of ['invalid','999.1.2.3','2001:db8::1%eth0','192.0.2.1, 192.0.2.2'])expect((await call('invalid@example.test',ip)).status).toBe(400);
+  await test.step('IPv4 mapped IPv6 shares the IPv4 budget',async()=>{const call=client(h.f);for(let i=0;i<30;i++)expect((await call(`mapped-${i}@example.test`,'192.0.2.44')).status).toBe(202);expect((await call('mapped-block@example.test','::ffff:c000:22c')).status).toBe(429);expect((await call('mapped-block2@example.test','::ffff:192.0.2.44')).status).toBe(429);});
  }finally{await h.close();}
 });
-test('security: durable global last slot is atomic across addresses and networks and survives restart',async()=>{
+test('security: durable global allowance advances monotonically, reserves its last slot atomically and survives restart',async()=>{
  const h=await native();try{
+  await test.step('durable allowance never resets from a late older request',async()=>{
+ const {takeSignupAllowance}=await import('../../src/core/features/audience/signup-security');
+  expect(await takeSignupAllowance(h.f.db,'window-race',10,1)).toBe(true);expect(await takeSignupAllowance(h.f.db,'window-race',10,1)).toBe(false);
+  expect(await takeSignupAllowance(h.f.db,'window-race',11,1)).toBe(true);expect(await takeSignupAllowance(h.f.db,'window-race',10,1)).toBe(false);expect(await takeSignupAllowance(h.f.db,'window-race',11,1)).toBe(false);
+  expect(await h.f.db.prepare("SELECT window,count FROM oa_limits WHERE key='window-race'").first()).toEqual({window:11,count:1});
+
+  });
   await h.f.db.prepare('INSERT INTO oa_limits(key,window,count) VALUES(?,?,?)').bind('signup-global',Math.floor(Date.now()/3600000),999).run();
   const results=await Promise.all(Array.from({length:6},(_,i)=>client(h.f)(`global-${i}@example.test`,`192.0.2.${60+i}`)));
   expect(results.filter(r=>r.status===202)).toHaveLength(1);for(const response of results.filter(r=>r.status===429)){expect(Number(response.headers.get('Retry-After'))).toBeGreaterThan(0);expect(await response.json()).toMatchObject({error:'rate_limited'});}expect(h.f.outbound).toHaveLength(1);expect(await h.f.db.prepare("SELECT count FROM oa_limits WHERE key='signup-global'").first()).toEqual({count:1000});
@@ -61,8 +71,11 @@ test('security: durable global last slot is atomic across addresses and networks
   for(const [email,kind] of [['hard@example.test','hard'],['complaint@example.test','complaint']] as const){await restarted.services.audienceService.recordBounce({destination:email,kind,occurredAt:new Date(),providerEventId:`test-exhausted-${kind}`});const response=await client(restarted)(email,'198.51.100.2');expect(response.status).toBe(429);expect(await response.json()).toMatchObject({error:'rate_limited'});}expect(restarted.outbound).toHaveLength(0);
  }finally{await h.close();}
 });
-test('security: configured Turnstile fails closed before contact storage for missing, bad, wrong scope, and unavailable verification',async()=>{
+test('security: sender and Turnstile preflight fail closed before contact storage; valid challenge is single use',async()=>{
  const h=await native();try{
+  const originalIdentity={...h.f.platform.config.mailSender};
+  await test.step('sender preflight refuses each missing field without storage',async()=>{const identity={...h.f.platform.config.mailSender};for(const field of ['displayName','fromEmail','replyToEmail','physicalAddress'] as const){Object.assign(h.f.platform.config.mailSender,identity,{[field]:''});const before=await snapshot(h.f.db);expect((await client(h.f)('no-identity@example.test')).status).toBe(503);expect(await snapshot(h.f.db)).toEqual(before);}expect(h.f.outbound).toHaveLength(0);});
+  Object.assign(h.f.platform.config.mailSender,originalIdentity);
   Object.assign(h.f.platform.config,{signupTurnstile:{siteKey:'test-site',secretKey:'test-secret'}});const call=client(h.f);const before=await snapshot(h.f.db);
   expect((await call('missing@example.test')).status).toBe(400);expect(await snapshot(h.f.db)).toEqual(before);
   const original=globalThis.fetch;
@@ -77,10 +90,8 @@ test('security: configured Turnstile fails closed before contact storage for mis
   }finally{globalThis.fetch=original;}
  }finally{await h.close();}
 });
-test('security: IPv4 mapped IPv6 shares the IPv4 budget',async()=>{
- const h=await native();try{const call=client(h.f);for(let i=0;i<30;i++)expect((await call(`mapped-${i}@example.test`,'192.0.2.44')).status).toBe(202);expect((await call('mapped-block@example.test','::ffff:c000:22c')).status).toBe(429);expect((await call('mapped-block2@example.test','::ffff:192.0.2.44')).status).toBe(429);}finally{await h.close();}
-});
-test('security: production rejects one-sided Turnstile and exposes only the public key',async()=>{
+
+test('security: production rejects one-sided Turnstile and publishes only the public widget key and action',async()=>{
  const {readProductionConfig}=await import('../../src/core/platform/config');
  const env={SESSION_SIGNING_KEY:'test-signing-key-at-least-32-characters',INITIAL_OPERATOR_EMAILS:'operator@example.test',CONTACT_HASH_SALT:'test-salt',MAIL_PROVIDER: 'resend', MAIL_PROVIDER_API_KEY:'test-key',MAIL_AUTH_FROM:'sender@example.test',MAIL_WEBHOOK_SECRET:'test-webhook',MAIL_WEBHOOK_ID:'test-hook',MANGO_PUBLIC_BASE_URL:'https://mango.example.test',MANGO_APP_VERSION:'test',MANGO_ALLOWED_LINK_HOSTS:'example.test',MANGO_TEST_EMAIL_ALLOWLIST:'receiver@example.test',MANGO_RECONCILIATION_INTERVAL_MINUTES:'15',MANGO_UNRESOLVED_OUTCOME_HOURS:'1',MANGO_EMAIL_HANDOFFS_PER_MINUTE:'10',MANGO_DELIVERABILITY_WINDOW_DAYS:'30'};
  const parse=(extra:object)=>readProductionConfig({...env,...extra} as Parameters<typeof readProductionConfig>[0]);
@@ -88,8 +99,18 @@ test('security: production rejects one-sided Turnstile and exposes only the publ
  expect(parse({})).not.toHaveProperty('signupTurnstile');
  const configured=parse({TURNSTILE_SITE_KEY:'site',TURNSTILE_SECRET_KEY:'secret'});expect(configured).toHaveProperty('signupTurnstile',{siteKey:'site',secretKey:'secret'});
  const h=await native();try{Object.assign(h.f.platform.config,{signupTurnstile:{siteKey:'site',secretKey:'secret'}});expect(signupDescription(h.f.platform)).toHaveProperty('turnstileSiteKey','site');expect(JSON.stringify(signupDescription(h.f.platform))).not.toContain('secret');}finally{await h.close();}
+ await test.step('hosted form exposes only the public widget key and action',async()=>{
+ const {createRequire}=await import('node:module');const {resolve}=await import('node:path');const require=createRequire(import.meta.url);
+ const {build}=createRequire(require.resolve('wrangler'))('esbuild');
+ const result=await build({stdin:{contents:`import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {SubscribePage} from './src/core/features/audience/ui/subscribe-page';export function render(info){return renderToStaticMarkup(<SubscribePage info={info}/>);}`,resolveDir:process.cwd(),sourcefile:'signup-render.tsx',loader:'tsx'},bundle:true,write:false,format:'cjs',platform:'node',jsx:'automatic',alias:{'@':resolve('src')}});
+ const compiled={exports:{} as {render:(info:object)=>string}};new Function('require','module','exports',result.outputFiles[0].text)(require,compiled,compiled.exports);
+ const info={sender:'Newsletter',consentText:'I agree',frequencyDisclosure:'Weekly',disclosure:'test',privacyNote:'Stored by operator'};
+ expect(compiled.exports.render(info)).not.toContain('data-sitekey');
+ const html=compiled.exports.render({...info,turnstileSiteKey:'public-site-key'});expect(html).toContain('data-sitekey="public-site-key"');expect(html).toContain('data-action="newsletter-signup"');
+ });
 });
-for(const guard of ['expiry','optout','suppression'])test(`security: confirmation POST preserves ${guard} guard`,async()=>{
+test('security: confirmation POST preserves expiry, optout and suppression guards',async()=>{
+ for(const guard of ['expiry','optout','suppression'])await test.step(`confirmation preserves ${guard} guard`,async()=>{
  const h=await native();try{
   await client(h.f)(`guard-${guard}@example.test`);const url=confirmationUrl(h.f);const app=createAudiencePublicRoutes(h.f.services.audienceService);const contact=await h.f.db.prepare('SELECT id FROM contacts').first<{id:string}>();
   if(guard==='expiry')await h.f.db.prepare('UPDATE consent_confirmations SET expires_at=?').bind(Date.now()-1).run();
@@ -100,26 +121,9 @@ for(const guard of ['expiry','optout','suppression'])test(`security: confirmatio
   expect(await h.f.db.prepare('SELECT confirmed_at FROM consent_evidence').first()).toEqual({confirmed_at:null});
   expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:guard==='expiry'?'pending':guard==='optout'?'unsubscribed':'suppressed'});
  }finally{await h.close();}
+ });
 });
-test('security: sender identity preflight rejects each missing required field without storage',async()=>{
- const h=await native();try{const identity={...h.f.platform.config.mailSender};for(const field of ['displayName','fromEmail','replyToEmail','physicalAddress'] as const){Object.assign(h.f.platform.config.mailSender,identity,{[field]:''});const before=await snapshot(h.f.db);expect((await client(h.f)('no-identity@example.test')).status).toBe(503);expect(await snapshot(h.f.db)).toEqual(before);}expect(h.f.outbound).toHaveLength(0);}finally{await h.close();}
-});
-test('security: configured hosted form publishes widget action and only public site key; default form omits widget',async()=>{
- const {createRequire}=await import('node:module');const {resolve}=await import('node:path');const require=createRequire(import.meta.url);
- const {build}=createRequire(require.resolve('wrangler'))('esbuild');
- const result=await build({stdin:{contents:`import React from 'react';import {renderToStaticMarkup} from 'react-dom/server';import {SubscribePage} from './src/core/features/audience/ui/subscribe-page';export function render(info){return renderToStaticMarkup(<SubscribePage info={info}/>);}`,resolveDir:process.cwd(),sourcefile:'signup-render.tsx',loader:'tsx'},bundle:true,write:false,format:'cjs',platform:'node',jsx:'automatic',alias:{'@':resolve('src')}});
- const compiled={exports:{} as {render:(info:object)=>string}};new Function('require','module','exports',result.outputFiles[0].text)(require,compiled,compiled.exports);
- const info={sender:'Newsletter',consentText:'I agree',frequencyDisclosure:'Weekly',disclosure:'test',privacyNote:'Stored by operator'};
- expect(compiled.exports.render(info)).not.toContain('data-sitekey');
- const html=compiled.exports.render({...info,turnstileSiteKey:'public-site-key'});expect(html).toContain('data-sitekey="public-site-key"');expect(html).toContain('data-action="newsletter-signup"');
-});
-test('security: durable allowance rolls forward only and never resets from a late older request',async()=>{
- const {takeSignupAllowance}=await import('../../src/core/features/audience/signup-security');const h=await native();try{
-  expect(await takeSignupAllowance(h.f.db,'window-race',10,1)).toBe(true);expect(await takeSignupAllowance(h.f.db,'window-race',10,1)).toBe(false);
-  expect(await takeSignupAllowance(h.f.db,'window-race',11,1)).toBe(true);expect(await takeSignupAllowance(h.f.db,'window-race',10,1)).toBe(false);expect(await takeSignupAllowance(h.f.db,'window-race',11,1)).toBe(false);
-  expect(await h.f.db.prepare("SELECT window,count FROM oa_limits WHERE key='window-race'").first()).toEqual({window:11,count:1});
- }finally{await h.close();}
-});
+
 test('security: explicit ledger reconsent remains logged and confirmable after optout, but suppression never dispatches',async()=>{
  const h=await native();try{
   const input={contact:{email:'explicit@example.test'},channel:'email' as const,brandOrLegalSender:'Mango',messageCategory:'newsletter',frequencyDisclosure:'Weekly',destinationJurisdiction:'AU',captureMethod:'operator-recorded-affirmative-request',captureSource:'recipient-written-request',consentText:'Please resubscribe me to the weekly newsletter.',consentVersion:'v1',occurredAt:new Date(Date.now()-2000)};
@@ -130,7 +134,6 @@ test('security: explicit ledger reconsent remains logged and confirmable after o
   const blocked=await h.f.services.audienceService.captureConsent({...input,occurredAt:new Date(Date.now()+1)});expect(blocked.confirmation).toBeUndefined();expect(h.f.outbound).toHaveLength(sent);expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'suppressed'});
  }finally{await h.close();}
 });
-
 
 test('[CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot',async()=>{
  const h=await native();try {
