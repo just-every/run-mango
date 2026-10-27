@@ -84,25 +84,27 @@ export function matrix(tier) {
     ...['newsletter-ui', 'campaign-results', 'move-in'].map(stage => ({ name: stage, stage, browser: true })),
   ];
   const slow = [{ name: 'local-start-slow', stage: 'local-start-slow', browser: true }];
-  // 2026-10-26 green run 40421992456: 141m10s of member execution.
-  // Fourteen members take >=321s; the smallest pair takes 684s, so at
-  // 672s/member-group capacity fourteen jobs is the minimum. These packs
-  // leave ~48s for setup inside 12m; native runtimes must run sequentially.
+  // Use the larger member duration from green run 40421992456 and candidate
+  // 40428704988. Fifteen members exceed 335s, so fifteen jobs is the minimum
+  // at 670s execution capacity. Native runtimes must run sequentially.
   const packs = [
-    ['static', 'main-1-of-7', 'go-live-9-of-9'],
-    ['go-live-1-of-9', 'go-live-6-of-9'],
-    ['main-3-of-7', 'main-5-of-7'],
+    ['static', 'main-1-of-7', 'local-start-3-of-3'],
+    ['go-live-1-of-9', 'main-5-of-7'],
+    ['main-3-of-7', 'go-live-9-of-9'],
     ['local-start-2-of-3', 'main-7-of-7'],
     ['main-4-of-7', 'newsletter-ui'],
     ['move-in', 'main-2-of-7'],
-    ['go-live-3-of-9', 'local-start-3-of-3'],
-    ['go-live-8-of-9', 'main-6-of-7'],
-    ['local-start-1-of-3'], ['go-live-2-of-9'], ['campaign-results'],
-    ['go-live-7-of-9'], ['go-live-4-of-9'], ['go-live-5-of-9'],
+    ['go-live-6-of-9', 'main-6-of-7'],
+    ['go-live-3-of-9'], ['local-start-1-of-3'], ['go-live-2-of-9'],
+    ['go-live-8-of-9'], ['go-live-7-of-9'], ['campaign-results'],
+    ['go-live-5-of-9'], ['go-live-4-of-9'],
   ];
   const grouped = packs.map((names, index) => ({
     name: index === 0 ? 'static' : names.length === 1 ? names[0] : `group-${index + 1}`,
     browser: true,
+    // Budget for runner variation and artifact teardown without changing any
+    // test timeout. Measured execution plus setup still targets under 12m.
+    timeout: names.length > 1 ? 14 : 12,
     members: names.map(name => push.find(row => row.name === name)),
   }));
   const slowGroups = slow.map(row => ({ ...row, members: [row] }));

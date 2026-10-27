@@ -40,7 +40,7 @@ jobs:
     needs: plan
     name: Verify / ${{ matrix.name }}
     runs-on: ubuntu-24.04
-    timeout-minutes: ${{ inputs.timeout || 12 }}
+    timeout-minutes: ${{ inputs.timeout || matrix.timeout || 12 }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
