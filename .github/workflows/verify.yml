@@ -114,7 +114,7 @@ jobs:
           node-version: '22.20.0'
           package-manager-cache: false
       - name: Check edition source lock freshness
-        if: ${{ hashFiles('edition.json', 'sources.lock.json') != '' }}
+        if: ${{ matrix.name == 'static' && hashFiles('edition.json', 'sources.lock.json') != '' }}
         run: node scripts/edition-authoring/cli.mjs check
       - run: npm install --global pnpm@10.12.4
       - name: Cache frozen dependencies and Chromium
