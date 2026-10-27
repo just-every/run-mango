@@ -24,13 +24,57 @@ concurrency:
 jobs:
   plan:
     runs-on: ubuntu-24.04
-    timeout-minutes: 1
+    timeout-minutes: 30
     outputs:
       matrix: ${{ steps.plan.outputs.matrix }}
+      skip: ${{ steps.reuse.outputs.skip }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
+          fetch-depth: 2
           persist-credentials: false
+      - id: reuse
+        # workflow_call always supplies the tier/timeout inputs, even at their defaults.
+        # Its caller event can itself be push: only our own push/PR runs may reuse evidence.
+        if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request') && toJSON(inputs) == '{}' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+          WF_REF: ${{ github.workflow_ref }}
+        run: |
+          set -euo pipefail
+          wf="${WF_REF%@*}"; wf="${wf##*/}"
+          # Only the newest same-repository push run of this workflow is evidence, never this run.
+          # PR runs test a merge ref; dispatch runs can select a subset; a PR run may itself skip.
+          # This public repository permits reading runs without actions:read. Keep contents:read
+          # so the nightly caller can retain its permissions; API failures always run all shards.
+          newest_push() {
+            gh api "repos/$GITHUB_REPOSITORY/actions/workflows/$wf/runs?head_sha=$1&event=push&per_page=100" \
+              --jq "[.workflow_runs[] | select(.head_repository.full_name == \"$GITHUB_REPOSITORY\" and .id != $GITHUB_RUN_ID)] | max_by(.id) | select(. != null) | \"\(.status) \(.conclusion)\"" || true
+          }
+          green() { [ "$(newest_push "$1")" = "completed success" ]; }
+          skip=false
+          # C1: main push of a SHA whose newest branch push Verify is green.
+          if [ "$EVENT" = push ] && [ "$REF" = refs/heads/main ] && green "$GITHUB_SHA"; then skip=true; fi
+          # C3 (exact): unchanged tree and a green newest push Verify of the parent.
+          if [ "$skip" = false ] && [ "$EVENT" = push ] && parent=$(git rev-parse -q --verify HEAD~1) \
+             && [ "$(git rev-parse 'HEAD^{tree}')" = "$(git rev-parse 'HEAD~1^{tree}')" ] && green "$parent"; then skip=true; fi
+          # C2: wait at most 25 minutes for a same-repository PR head's push Verify.
+          # Missing, red or expired evidence runs every shard.
+          if [ "$EVENT" = pull_request ] && [ "$SAME_REPO" = true ]; then
+            for _ in $(seq 1 50); do
+              state=$(newest_push "$PR_HEAD")
+              case "$state" in
+                'completed success') skip=true; break ;;
+                ''|completed\ *) break ;;
+                *) sleep 30 ;;
+              esac
+            done
+          fi
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
       - id: plan
         env:
           TIER: ${{ inputs.tier || 'push' }}
@@ -38,6 +82,7 @@ jobs:
 
   shards:
     needs: plan
+    if: needs.plan.outputs.skip != 'true'
     name: Verify / ${{ matrix.name }}
     runs-on: ubuntu-24.04
     timeout-minutes: ${{ inputs.timeout || matrix.timeout || 12 }}
@@ -112,8 +157,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 1
     steps:
-      - name: Require every shard
+      - name: Require the plan and every shard
         env:
           PLAN: ${{ needs.plan.result }}
+          SKIP: ${{ needs.plan.outputs.skip }}
           SHARDS: ${{ needs.shards.result }}
-        run: test "$PLAN" = success && test "$SHARDS" = success
+        run: |
+          test "$PLAN" = success
+          if [ "$SKIP" = true ]; then exit 0; fi
+          test "$SHARDS" = success
