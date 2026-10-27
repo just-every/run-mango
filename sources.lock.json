@@ -978,7 +978,7 @@
       "executable": false
     },
     ".github/workflows/verify.yml": {
-      "sha256": "0410cbe30d356a166da5c28e38314d10ba246be3ac56612aa907b846fead385d",
+      "sha256": "786bbbd5ba393a8ee97f2ca8d0d47e532c9675d586670f80eb2bf282519e938b",
       "executable": false
     },
     ".gitignore": {
@@ -2066,7 +2066,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "ac04ffac9280b93966c97ee6ef72bf4418a1de0d0659a28dfcce73ddbeb3b53e",
+      "sha256": "3b99761bcc78958be82db0b632a1d1c2caa8091aa9eec0fb5bfcee6d40d5ddd2",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
