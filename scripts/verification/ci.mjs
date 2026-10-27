@@ -1,17 +1,36 @@
 import { spawnSync } from 'node:child_process';
+import { mkdir, readlink, symlink } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 import { matrix } from './plan.mjs';
 
 const [mode, tier, ...extra] = process.argv.slice(2);
 if (mode === '--matrix' && !extra.length) console.log(JSON.stringify(matrix(tier)));
 else {
-  const selected = matrix('all').include.find(row => row.name === mode);
+  const groups = matrix('all').include;
+  const selected = groups.find(row => row.name === mode)
+    ?? groups.flatMap(row => row.members).find(row => row.name === mode);
   if (!selected || tier) throw new Error('Usage: ci.mjs --matrix push|slow|all OR ci.mjs MATRIX_NAME');
-  // Keep rer's built-output, local-only boundary and hydration checks in the
-  // static job. Its app hook selects exactly the same static stage as the CLI.
-  const command = selected.hosted ? 'pnpm' : process.execPath;
-  const args = selected.hosted ? ['exec', 'rer', 'verify'] : ['scripts/verification/run.mjs'];
-  const child = spawnSync(command, args, { stdio: 'inherit', env: { ...process.env,
-    MANGO_VERIFY_STAGE: selected.stage, MANGO_VERIFY_SHARD: selected.shard ?? '' } });
-  if (child.error) throw child.error;
-  process.exitCode = child.status ?? 1;
+  const root = resolve(process.env.MANGO_TEST_WORK_DIR ?? join('..', 'mango-verification', selected.name));
+  for (const member of selected.members ?? [selected]) {
+    // Isolate native runtimes and retain all member diagnostics in the one
+    // group evidence directory uploaded by the workflow.
+    const workDir = join(root, 'members', member.name);
+    const evidence = join(root, 'evidence', member.name);
+    await mkdir(workDir, { recursive: true });
+    await mkdir(evidence, { recursive: true });
+    const link = join(workDir, 'evidence');
+    try { await symlink(evidence, link, 'dir'); }
+    catch (error) {
+      if (error.code !== 'EEXIST' || await readlink(link) !== evidence) throw error;
+    }
+    // Only static owns rer's built-output, local-only and hydration checks.
+    const command = member.hosted ? 'pnpm' : process.execPath;
+    const args = member.hosted ? ['exec', 'rer', 'verify'] : ['scripts/verification/run.mjs'];
+    console.log(`VERIFY_MEMBER ${member.name}`);
+    const child = spawnSync(command, args, { stdio: 'inherit', env: { ...process.env,
+      MANGO_TEST_WORK_DIR: workDir,
+      MANGO_VERIFY_STAGE: member.stage, MANGO_VERIFY_SHARD: member.shard ?? '' } });
+    if (child.error) console.error(child.error);
+    if (child.error || child.status !== 0) process.exitCode = 1;
+  }
 }
