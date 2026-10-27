@@ -138,42 +138,17 @@ jobs:
           pnpm install --frozen-lockfile
           if [ -n "$reclaim_pid" ]; then wait "$reclaim_pid"; fi
       - run: pnpm run deps
-      - name: Install Chromium and system libraries
+      - name: Install Chromium
         if: matrix.browser
         shell: bash
         run: |
-          # The runner default hit its 90-second deadline on two heads;
-          # kernel.org completed both. Keep the same three signed archives
-          # and attempt budget, starting with that working mirror.
-          original_sources=$(mktemp)
-          sudo cp /etc/apt/sources.list.d/ubuntu.sources "$original_sources"
-          trap 'rm -f -- "$original_sources"' EXIT
-          mirrors=(http://mirrors.edge.kernel.org/ubuntu http://us-east-1.ec2.archive.ubuntu.com/ubuntu runner-default)
-          started=$SECONDS
-          for attempt in 1 2 3; do
-            mirror=${mirrors[attempt - 1]}
-            if [[ $mirror == runner-default ]]; then
-              sudo cp "$original_sources" /etc/apt/sources.list.d/ubuntu.sources
-            else
-              sudo sed -i -E "s@^(URIs:[[:space:]]*)(mirror\+file:/etc/apt/apt-mirrors\.txt|https?://(([a-z0-9.-]+\.)?archive\.ubuntu\.com|security\.ubuntu\.com|mirrors\.edge\.kernel\.org)/ubuntu/?)@\1${mirror}/@" /etc/apt/sources.list.d/ubuntu.sources
-            fi
-            printf 'Chromium apt: attempt %s/3 (90s deadline; mirror %s; sources %s)\n' "$attempt" "$mirror" "$(grep -h '^URIs:' /etc/apt/sources.list.d/ubuntu.sources | sort -u | tr '\n' ' ')"
-            # Root owns the timeout so a stalled apt, dpkg and their locks die
-            # with the attempt instead of blocking the next mirror.
-            if sudo env "PATH=$PATH" HOME=/root timeout --kill-after=5s 90s bash -ec '
-              dpkg --configure -a
-              pnpm exec playwright install-deps chromium
-            '; then
-              printf 'Chromium apt: complete (attempts=%s mirror=%s seconds=%s)\n' "$attempt" "$mirror" "$((SECONDS - started))"
-              break
-            else
-              status=$?
-              printf 'Chromium apt: attempt %s/3 failed (mirror %s, exit %s, seconds=%s)\n' "$attempt" "$mirror" "$status" "$((SECONDS - started))" >&2
-            fi
-            if (( attempt == 3 )); then exit "$status"; fi
-            sleep "$((attempt * 2))"
-          done
+          set -euo pipefail
           pnpm exec playwright install chromium
+          # Hosted ubuntu-24.04 already carries Chromium's libraries. Use apt only when a real launch fails.
+          node scripts/ci/chromium-probe.mjs || {
+            timeout 420 pnpm exec playwright install-deps chromium
+            node scripts/ci/chromium-probe.mjs
+          }
       - name: Run this shard
         env:
           SHARD: ${{ matrix.name }}
