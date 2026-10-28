@@ -1,3 +1,5 @@
+import {nativeActor} from '../agent-door/native-context';
+import {custodyStatement} from '../agent-door/custody';
 import {reputationGuard} from './reputation-guard';
 import {providerHoldGuard} from './provider-holds';
 import { leaseGuard, leaseValues, associationStatement } from '@/core/features/sender-verification/repository';
@@ -147,11 +149,11 @@ export function createCampaignLifecycleRepository(database: Database) {
       await client.prepare(
         `INSERT INTO lifecycle_audit_entries
          (id, operation_key, entity_type, entity_id, action, actor_type, actor_id, detail_json, occurred_at, created_at)
-         VALUES (?, ?, 'campaign-revision', ?, 'test-send', 'operator', ?, ?, ?, ?)
+         VALUES (?, ?, 'campaign-revision', ?, 'test-send', '${nativeActor(operatorId).type}', ?, ?, ?, ?)
          ON CONFLICT(operation_key) DO NOTHING`,
       ).bind(
-        ulid(now.getTime()), operationKey, revisionId, operatorId,
-        JSON.stringify({ channel, destination, destinationDigest, revisionDigest, test: true }), now.getTime(), now.getTime(),
+        ulid(now.getTime()), operationKey, revisionId, nativeActor(operatorId).id,
+        JSON.stringify({...nativeActor(operatorId).detail, channel, destination, destinationDigest, revisionDigest, test: true }), now.getTime(), now.getTime(),
       ).run();
     },
 
@@ -449,12 +451,12 @@ export function createCampaignLifecycleRepository(database: Database) {
         client.prepare(
           `INSERT INTO campaign_state_transitions
            (id, campaign_id, from_state, to_state, actor_type, actor_id, reason, occurred_at, created_at)
-           SELECT ?, ?, ?, 'scheduled', 'operator', ?, ?, ?, ?
+           SELECT ?, ?, ?, 'scheduled', '${nativeActor(operatorId).type}', ?, ?, ?, ?
            WHERE ${approvalGuard}
              AND NOT EXISTS (SELECT 1 FROM campaign_state_transitions WHERE campaign_id = ? AND reason = ?)
           `,
         ).bind(
-          ulid(nowMs), snapshot.campaign.id, snapshot.campaign.state, operatorId,
+          ulid(nowMs), snapshot.campaign.id, snapshot.campaign.state, nativeActor(operatorId).id,
           `approval:${snapshot.revision.id}`, nowMs, nowMs,
           ...approvalGuardValues(), snapshot.campaign.id, `approval:${snapshot.revision.id}`,
         ),
@@ -463,18 +465,20 @@ export function createCampaignLifecycleRepository(database: Database) {
         client.prepare(
           `INSERT INTO lifecycle_audit_entries
            (id, operation_key, entity_type, entity_id, action, actor_type, actor_id, detail_json, occurred_at, created_at)
-           SELECT ?, ?, 'campaign-revision', ?, 'approved', 'operator', ?, ${needsSender ? senderEvidenceDetail : '?'}, ?, ?
+           SELECT ?, ?, 'campaign-revision', ?, 'approved', '${nativeActor(operatorId).type}', ?, ${needsSender ? senderEvidenceDetail : '?'}, ?, ?
            WHERE ${approvalGuard}
            ON CONFLICT(operation_key) DO NOTHING`,
         ).bind(
-          ulid(nowMs), `approval:${idempotencyKey}`, snapshot.revision.id, operatorId,
-          JSON.stringify({ revisionDigest, previousRevision, dormancyPolicy:snapshot.revision.dormancyPolicyJson?JSON.parse(snapshot.revision.dormancyPolicyJson):undefined,
+          ulid(nowMs), `approval:${idempotencyKey}`, snapshot.revision.id, nativeActor(operatorId).id,
+          JSON.stringify({...nativeActor(operatorId).detail, revisionDigest, previousRevision, dormancyPolicy:snapshot.revision.dormancyPolicyJson?JSON.parse(snapshot.revision.dormancyPolicyJson):undefined,
             approval: {idempotency_key: idempotencyKey, campaign_id: snapshot.campaign.id, revision_id: snapshot.revision.id,
               revision_digest: revisionDigest, write_token: writeToken, operator_id: operatorId, approved_at: nowMs, created_at: nowMs},
             ...(needsSender ? {approvedFrom, senderEvidence: input.senderLease} : {}),
           }), ...(needsSender ? [input.senderLease!.id] : []), authorityTime, authorityTime, ...approvalGuardValues(),
         ),
       );
+      const custody=custodyStatement(client,'campaign',snapshot.revision.id,approvalGuard,[...approvalGuardValues()]);
+      if(custody)statements.push(custody);
       await client.batch(statements);
       const approval = await client.prepare(
         `SELECT * FROM campaign_approval_requests

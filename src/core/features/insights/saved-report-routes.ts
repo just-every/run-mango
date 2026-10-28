@@ -1,3 +1,4 @@
+import {custodyStatement} from '../agent-door/custody';
 import {Hono} from 'hono';
 import {z} from 'zod';
 import type {Database} from '@/core/platform/db/client';
@@ -38,7 +39,9 @@ export function savedReportRoutes(database:Database) {
     const active=(await db.prepare("SELECT id FROM oa_operators WHERE status='active' AND id IN (SELECT value FROM json_each(?))").bind(JSON.stringify(parsed.data.recipients)).all()).results;
     if(active.length!==parsed.data.recipients.length)return context.json({error:'existing_operators_only'},400);
     const id=crypto.randomUUID(),now=Date.now(),nextAt=nextReportTime(parsed.data.cadence,now);
-    await db.prepare('INSERT INTO insight_report_schedules(id,report_id,cadence,recipients_json,next_at,enabled,authority_binding,created_by,created_at,updated_at) VALUES(?,?,?,?,?,1,?,?,?,?)').bind(id,parsed.data.reportId,parsed.data.cadence,JSON.stringify(parsed.data.recipients),nextAt,authority.binding,actor.id,now,now).run();
+    const insert=db.prepare('INSERT INTO insight_report_schedules(id,report_id,cadence,recipients_json,next_at,enabled,authority_binding,created_by,created_at,updated_at) VALUES(?,?,?,?,?,1,?,?,?,?)').bind(id,parsed.data.reportId,parsed.data.cadence,JSON.stringify(parsed.data.recipients),nextAt,authority.binding,actor.id,now,now);
+    const custody=custodyStatement(db,'report',id,'EXISTS(SELECT 1 FROM insight_report_schedules WHERE id=?)',[id]);
+    await db.batch([insert,...(custody?[custody]:[])]);
     await recordActivity(db,{key:`report-schedule:${id}`,action:'report.scheduled',entityType:'report-schedule',entityId:id,actorId:actor.id,detail:{cadence:parsed.data.cadence,reportId:parsed.data.reportId,recipientCount:active.length}});
     return context.json({id,nextAt,period:reportSchedulePeriod(parsed.data.cadence,nextAt)},201);
   });

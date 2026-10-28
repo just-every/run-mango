@@ -7,6 +7,7 @@ import {createReportScheduler} from './report-scheduler';
 export async function runScheduledReports(controller:ScheduledController,environment:AppBindings,platformFor:(environment:AppBindings)=>Platform) {
   if(environment.MANGO_RESTORE_MODE==='1')return;
   const platform=platformFor(environment);await loadSenderSettings(platform);
+  if(!platform.agentDoor)(await import('@/core/app/app')).createApp(environment,platform);
   await createReportScheduler(platform).run(controller.scheduledTime);
   const confirmed=await platform.database.$client.prepare("SELECT 1 FROM sender_verification_observations WHERE json_extract(result_json,'$.reason')='owner-confirmed' LIMIT 1").first();
   try {if(confirmed)await createSenderRenewal(platform).run();}

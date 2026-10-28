@@ -1,3 +1,4 @@
+import {attributeContent,campaignPreparer} from '../agent-door/outbound';
 import {liveCatalogValues,CatalogBlocked} from '@/core/features/campaigns/catalog-values';
 import {catalogBlocks,insertCatalogHtml,catalogTextValues,type CatalogRenderings} from '@/core/features/campaigns/catalog-blocks';
 import {CatalogDeliverySkip} from '@/core/features/campaigns/catalog-outcomes';
@@ -80,7 +81,7 @@ export async function prepareDeliveryRequest(
     sender: envelope.recipient.channel === 'email'
       ? `${envelope.revision.senderName} <${envelope.revision.fromEmail}>`
       : envelope.revision.smsSender,
-    content,
+    content:attributeContent(content,await campaignPreparer(runtime.platform.database.$client,envelope.recipient.revisionId)),
     callbackUrl: `${publicBaseUrl}/webhooks/${envelope.recipient.channel === 'email' ? 'mail' : 'sms'}/status`,
     handoffStartedAt: now,
   };

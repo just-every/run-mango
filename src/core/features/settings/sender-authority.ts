@@ -1,3 +1,4 @@
+import {nativeAgent} from '../agent-door/native-context';
 // @ts-expect-error Portable Base ESM has no separate declaration for this helper.
 import { localCookieName } from '@/vendor/base/operator-auth/http.mjs';
 import { hmacSha256Hex } from '@/core/platform/crypto';
@@ -8,6 +9,16 @@ export class SenderAuthorityChanged extends Error {}
 
 /** The native middleware already authenticates; capture its exact session for the write fence. */
 export async function senderWriteAuthority(platform: Pick<Platform, 'config' | 'database'>, request: Request, operatorId: string) {
+  const agent=nativeAgent.getStore();
+  if(agent){
+    if(agent.context.person.id!==operatorId)throw new SenderAuthorityChanged();
+    const authority=await platform.database.$client.prepare(`SELECT 'agent:'||e.id AS sessionId,o.id AS operatorId,o.version
+      FROM mango_agent_executions e JOIN oa_operators o ON o.id=e.sponsor_id WHERE e.id=? AND o.id=?
+      AND e.state='running' AND e.expires_at>? AND e.sponsor_version=o.version AND o.status='active'`)
+      .bind(agent.executionId,operatorId,Date.now()).first<SenderWriteAuthority>();
+    if(!authority)throw new SenderAuthorityChanged();
+    return authority;
+  }
   const cookies = request.headers.get('Cookie') ?? '';
   const local = platform.config.local === true;
   const name = local ? localCookieName('operator_session_local', request.url) : '__Host-operator_session';
@@ -23,6 +34,9 @@ export async function senderWriteAuthority(platform: Pick<Platform, 'config' | '
   return authority;
 }
 
-export const senderWriteGuard = `EXISTS (SELECT 1 FROM oa_sessions s JOIN oa_operators o ON o.id=s.operator_id
+export const senderWriteGuard = `EXISTS (SELECT 1 FROM (
+  SELECT id,operator_id,operator_version,revoked_at,expires_at FROM oa_sessions
+  UNION ALL SELECT 'agent:'||id,sponsor_id,sponsor_version,NULL,expires_at FROM mango_agent_executions WHERE state='running'
+  ) s JOIN oa_operators o ON o.id=s.operator_id
   WHERE s.id=? AND o.id=? AND o.version=? AND s.operator_version=o.version AND o.status='active'
     AND s.revoked_at IS NULL AND s.expires_at > MAX(?,CAST((julianday('now')-2440587.5)*86400000 AS INTEGER)))`;

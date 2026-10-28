@@ -19,7 +19,7 @@ async function lifecycleRuntime(environment: AppBindings) {
   await loadWooCommerce(platform);
   await loadSendingConnection(platform);
   await loadLinkHosts(platform);
-  return createAppServices(platform).lifecycleRuntime;
+  return createApp(environment,platform).mangoServices.lifecycleRuntime;
 }
 
 return {

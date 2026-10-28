@@ -3,7 +3,7 @@ import { withDemo } from '../../vendor/base/demo/index.mjs';
 import { seedDemo } from '../../demo';
 import { dispatchDocuments } from './document-dispatch';
 import { createLocalWorkerPlatform as createLocalPlatform } from '@/core/platform/worker-runtime';
-import { createAppServices } from './app';
+import { createAppServices,createApp } from './app';
 import { createLocalApp } from './local-app';
 import type { LocalAppBindings } from './local-app';
 import { consumeLifecycleQueue, type LifecycleQueueBatch } from '@/core/features/lifecycle';
@@ -25,14 +25,14 @@ const worker = {
     const bindings = environment as LocalAppBindings;
     const platform = createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY);
     await loadWooCommerce(platform);
-    const runtime = createAppServices(platform).lifecycleRuntime;
+    const runtime = createApp(bindings,platform).mangoServices.lifecycleRuntime;
     await consumeLifecycleQueue({ messages }, runtime, bindings.RER_DEMO === '1' ? undefined : [...designCommandKinds, 'source.sync']);
   },
   // rer dev fires the Cron Trigger every minute: record the tick and run the same lifecycle work, which sends nothing here.
   scheduled(controller, environment, executionContext) {
     const bindings = environment as LocalAppBindings;
     executionContext.waitUntil(runScheduled(controller, bindings,
-      async () => {const platform = createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY); await loadWooCommerce(platform); return createAppServices(platform).lifecycleRuntime;}));
+      async () => {const platform = createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY); await loadWooCommerce(platform); return createApp(bindings,platform).mangoServices.lifecycleRuntime;}));
   },
 } satisfies ExportedHandler<LocalAppBindings>;
 

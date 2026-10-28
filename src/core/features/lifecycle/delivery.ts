@@ -1,3 +1,4 @@
+import {nativeAgent} from '../agent-door/native-context';
 import {CatalogDeliverySkip} from '@/core/features/campaigns/catalog-outcomes';
 import { utf8Bytes, emailByteLimit } from '@/core/features/campaigns/email-size';
 import {aggregateMobileMessageParts,matchesMobileMessagePart} from './mobile-message-status';
@@ -47,6 +48,7 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
   const recheck=(envelope:NonNullable<Awaited<ReturnType<typeof repository.getDeliveryEnvelope>>>,now:Date)=>recheckDeliveryEligibility(runtime,repository,envelope,now);
 
   async function dispatchRecipient(recipientId: string, now: Date) {
+    if(!nativeAgent.getStore()&&await runtime.admitAgentDispatch?.(recipientId))return;
     const beforeClaim = await repository.getDeliveryEnvelope(recipientId);
     if (!beforeClaim) return;
     const outage=await repository.channelOutage(adapterName(beforeClaim.recipient.channel),beforeClaim.recipient.channel);
@@ -282,8 +284,10 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
         ? smsModule.config.handoffsPerMinute
         : unavailableRecipientBatchSize;
     }
+    const admission=await runtime.admitAgentStep?.(stepId,revisionId)??'native';
+    if(admission==='held')return;
     await repository.expireDueRecipients(now);
-    const began = await repository.beginStep(stepId, revisionId, now, now);
+    const began = admission==='done'||await repository.beginStep(stepId, revisionId, now, now);
     if (!began) {await repository.completeCampaigns(now);return;}
     await refreshDeliveryProgress(runtime,channel);
     const recipientIds = await repository.listDueRecipientIds(stepId, now, Math.min(rate,100));
@@ -419,6 +423,7 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
 
   return {
     dispatchStep,
+    dispatchRecipient,
     reconcileRecipient,
     importFacts,
 

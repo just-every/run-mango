@@ -1,3 +1,4 @@
+import {nativeExecutionGuard} from '../agent-door/native-context';
 import {savedSenderRevisionGuard} from '@/core/features/settings/sender-persistence';
 import {approvalAuthorityGuard} from '@/core/features/sender-verification/approval-authority';
 import {providerHoldGuard} from './provider-holds';
@@ -32,6 +33,7 @@ export function recipientHandoffGuard(senderGuard: string, provider: string, rep
         json_extract(outbound_request_json, '$.sender')) = av.sender_name || ' <' || av.from_email || '>')`,
   ]);
   return all([
+    nativeExecutionGuard(),
     'id = ?',
     'lease_token = ?',
     "transport_disposition = 'queued'",

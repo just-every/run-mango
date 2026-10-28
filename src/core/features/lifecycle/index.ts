@@ -1,3 +1,5 @@
+import {retainedPrincipal} from '../agent-door/custody';
+import {nativeAgent} from '../agent-door/native-context';
 import {advisorySizeOptions} from './advisory-size-options';
 import {expireAttestations} from '../move-in/incumbent-attestation';
 import { resumeSmsServices } from '@/core/features/sms/service-delivery';
@@ -43,6 +45,20 @@ export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime:
       if(message.body.kind==='contact.erase'){await continueErasure(runtime.platform,String(message.body.payload.reference??''));message.ack();continue;}
       if(await pendingErasure(runtime.platform.database.$client)){message.retry({delaySeconds:30});continue;}
       await withErasureWriteFence(runtime.platform.database.$client,async()=>{
+      if(!nativeAgent.getStore()&&(isDesignCommand(message.body)||message.body.kind==='source.sync')){
+        const design=isDesignCommand(message.body),target=String(design?message.body.payload.jobId:message.body.payload.runId);
+        const principal=await retainedPrincipal(runtime.platform.database.$client,design?'design':'source',target);
+        if(principal){
+          if(!runtime.platform.agentDoor)throw new Error('Native agent door is not composed for queued work.');
+          const args=design?{id:target,phase:message.body.kind==='design.draft'?'draft':'layout'}:{id:target};
+          const revision=await runtime.platform.database.$client.prepare(`SELECT updated_at FROM ${design?'design_jobs':'source_sync_runs'} WHERE id=?`).bind(target).first<{updated_at:number}>();
+          const result=await runtime.platform.agentDoor.invoke(design?'mango.designs.advance':'mango.store.advance',{
+            ...args,idempotency_key:`${message.body.idempotencyKey}:${revision?.updated_at??0}`,
+          },principal);
+          if(result.code==='execution_failed')throw new Error('Native queued operation needs recovery.');
+          message.ack();return;
+        }
+      }
       if (isDesignCommand(message.body)) {await advanceDesignJob(runtime.platform, message.body); message.ack(); return;}
       if (!['source.sync', 'campaign.dispatch', 'delivery.reconcile', 'provider.outage-probe'].includes(message.body.kind)) throw new Error('Unknown queue command.');
       if (message.body.kind === 'source.sync') {

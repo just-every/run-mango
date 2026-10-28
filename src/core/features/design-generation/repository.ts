@@ -1,3 +1,4 @@
+import {custodyStatement} from '../agent-door/custody';
 import { recordExternalCost } from '@/core/features/insights/cost-recording';
 import type { DesignFailureCode, DesignJobState, DesignWaitCode } from './model';
 
@@ -37,9 +38,11 @@ export function createDesignRepository(db: D1Database) {
     update,
     async create(job: Pick<DesignJob, 'id' | 'campaignId' | 'provider' | 'brief' | 'candidateCount' | 'deadlineAt' | 'createdBy' | 'createdAt'>) {
       // At most one run waits on the service per campaign, so a double click never buys twice.
-      const inserted = await db.prepare(`INSERT INTO design_jobs (id, campaign_id, state, provider, brief, candidate_count, deadline_at, created_by, created_at, updated_at)
+      const insert = db.prepare(`INSERT INTO design_jobs (id, campaign_id, state, provider, brief, candidate_count, deadline_at, created_by, created_at, updated_at)
         SELECT ?, ?, 'drafting', ?, ?, ?, ?, ?, ?, ? WHERE NOT EXISTS (SELECT 1 FROM design_jobs WHERE campaign_id = ? AND state IN ('drafting','preparing'))`)
-        .bind(job.id, job.campaignId, job.provider, job.brief, job.candidateCount, job.deadlineAt, job.createdBy, job.createdAt, job.createdAt, job.campaignId).run();
+        .bind(job.id, job.campaignId, job.provider, job.brief, job.candidateCount, job.deadlineAt, job.createdBy, job.createdAt, job.createdAt, job.campaignId);
+      const custody=custodyStatement(db,'design',job.id,'EXISTS(SELECT 1 FROM design_jobs WHERE id=?)',[job.id]);
+      const [inserted]=await db.batch([insert,...(custody?[custody]:[])]);
       // Earlier runs keep their designs on offer: a new run never sets paid designs aside.
       return inserted.meta.changes === 1;
     },

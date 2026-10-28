@@ -45,3 +45,5 @@
   .empty-state > .empty-art { width: 120px; }
 }
 @media (max-width: 400px) { .panel { padding: var(--sp-4); } }
+
+.operator-business-name { display: block; max-width: 16rem; overflow-wrap: anywhere; font-size: .75rem; line-height: 1.3; }
