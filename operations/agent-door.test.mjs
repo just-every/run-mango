@@ -97,8 +97,13 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal(invited.status,303,await invited.clone().text());
   const memberCookie=invited.headers.get('set-cookie').split(';')[0];
   const member=(await (await app.call('/api/operator',{cookie:memberCookie})).json()).operator;
-  const narrowing=await app.call('/api/operators/'+member.id+'/role',{method:'PUT',cookie,body:{role:'support',unmaskedContacts:false}});
-  assert.equal(narrowing.status,200,await narrowing.clone().text());
+  const narrowing=await call('mango.access.update',{id:member.id,role:'support',unmaskedContacts:false,idempotency_key:'narrow-teammate'});
+  assert.equal(narrowing.message.result.isError,false,JSON.stringify(narrowing.message));
+  assert.equal((await app.db.prepare('SELECT role FROM operator_product_roles WHERE operator_id=?').bind(member.id).first()).role,'support');
+  const witness=await call('mango.witness.read',{});
+  assert.equal(witness.message.result.isError,false,JSON.stringify(witness.message));
+  assert.ok(witness.message.result.structuredContent.objects.campaign_revisions);
+  assert.ok(witness.message.result.structuredContent.objects.campaign_revision_candidates,'Frozen audience custody belongs in the witness');
   const denied=await call('mango.campaigns.create',{idempotency_key:'member-draft'},{sub:memberSub,email:c.person.email,act:{sub:randomUUID(),name:'Casey assistant',specialist:'marketer'}});
   assert.ok(denied.message.result,JSON.stringify(denied.message));
   assert.equal(denied.message.result._meta['com.runeditrun/error'].code,'role_forbidden',JSON.stringify(denied.message));

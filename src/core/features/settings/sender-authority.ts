@@ -19,7 +19,7 @@ export async function senderWriteAuthority(platform: Pick<Platform, 'config' | '
     const key=crypto.randomUUID();
     await db.prepare(`INSERT INTO mango_agent_write_admissions(id,sponsor_id,sponsor_version,product_role,agent_id,client_id,consent,policy_state,expires_at)
       SELECT ?,?,?,?,?,?,?,json_array(envelope,local_document,local_paused),? FROM agent_door_state WHERE id=1 AND local_paused=0`)
-      .bind(key,operatorId,operator.version,authority.role,agent.agent.id,agent.clientId??null,agent.consent??null,Date.now()+60000).run();
+      .bind(key,operatorId,operator.version,authority.role,agent.agent.id,agent.agent.id==='integration:'+agent.clientId?agent.clientId:null,agent.consent??null,Date.now()+60000).run();
     return {sessionId:key,operatorId,version:operator.version};
   }
   const cookies = request.headers.get('Cookie') ?? '';

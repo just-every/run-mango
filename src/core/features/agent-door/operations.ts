@@ -1866,10 +1866,10 @@ export default [
         "slot": {
           "type": "string",
           "enum": [
-            "A",
-            "B",
-            "C",
-            "D"
+            "a",
+            "b",
+            "c",
+            "d"
           ]
         }
       },

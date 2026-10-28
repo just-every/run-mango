@@ -34,7 +34,9 @@
           "deploy-site.json",
           "vite.site.config.ts",
           "management/integration",
-          "scripts/sync-integration.mjs"
+          "scripts/sync-integration.mjs",
+          "agent-surface.json",
+          "scripts/agent-surface.mjs"
         ]
       }
     },

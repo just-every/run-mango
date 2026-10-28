@@ -82,7 +82,7 @@ async function classes(platform: Platform, kind: string, args: Args, ctx: ToolCo
   if (['campaigns.pause','campaigns.resume','campaigns.cancel'].includes(kind)) {
     const record = await db.prepare('SELECT state FROM campaigns WHERE id=?').bind(args.id).first<{state:string}>();
     if (!record) throw new ToolRefusal('not_found');
-    return kind === 'campaigns.cancel' && record.state === 'draft' ? standard() : [{class:'live',facts:{measure:1,service:'newsletter-dispatch'}}];
+    return kind === 'campaigns.cancel' && record.state === 'scheduled' && !await db.prepare('SELECT 1 FROM step_dispatches WHERE revision_id=(SELECT active_revision_id FROM campaigns WHERE id=?) AND started_at IS NOT NULL').bind(args.id).first() ? standard() : [{class:'live',facts:{measure:1,service:'newsletter-dispatch'}}];
   }
   if (kind.startsWith('flows.') && ['activate','pause'].includes(kind.split('.')[1])) return [{class:'live',facts:{measure:1,service:'woocommerce-tag-and-exit'}}];
   if(kind==='signup.update'){

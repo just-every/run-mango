@@ -32,8 +32,8 @@ export function mangoAgentDoor(environment: AppBindings, platform: Platform, aut
     trust: installationTrust(environment, origin), people, ...mangoCredentials(integrations), tools, resources: mangoResources(platform),
     notTools: [
       {clauses: ['DATA-001', 'MOVE-001'], reason: 'import-door'},
-      {clauses: ['OPER-001', 'BASE-ACCESS-001'], reason: 'screen'},
-      {clauses: ['BASE-OPS-002'], reason: 'installation'},
+      {clauses: ['OPER-001'], reason: 'screen'},
+      {clauses: ['DATA-001'], reason: 'installation'},
     ],
     prompts: [{name: 'newsletter', title: 'Prepare a newsletter', description: 'Read sender and audience evidence, prepare an exact newsletter revision, then use company policy for authorization. Consent and current sender checks still apply.',
       clauses: ['CAMP-004','AUD-005','SEND-001'], messages: () => [{role: 'user', content: {type: 'text',

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "parent": null,
   "edition": "just-every/mango",
-  "manifest": "4d863ff8a4fd3f99c283fe019428508868b435d9824b3dc7292deded8e13c28d",
+  "manifest": "a3d7d66af8e02300aefed8d651248720150da01333dc7d190d0c8fb6990f46d8",
   "toolchain": {
     "id": "runeditrun/edition-authoring",
     "version": "1.1.0",
@@ -36,7 +36,9 @@
           "deploy-site.json",
           "vite.site.config.ts",
           "management/integration",
-          "scripts/sync-integration.mjs"
+          "scripts/sync-integration.mjs",
+          "agent-surface.json",
+          "scripts/agent-surface.mjs"
         ]
       },
       "baseline": null
@@ -1276,6 +1278,10 @@
       "sha256": "cbd7e2b069dcada5ffd6ec946541c2d6d51fc583762fd23c19b23e6927d7f416",
       "executable": false
     },
+    "agent-surface.json": {
+      "sha256": "947d44d037a15abb27f2a5754e94fdcced38a62fd78d264559b69519f5481ba1",
+      "executable": false
+    },
     "AGENTS.consumer.md": {
       "sha256": "00a73c76c6a88ebd08f1c68753f5f98d0b216d42daf57f980cff8a8c71d9d7dd",
       "executable": false
@@ -1336,6 +1342,10 @@
       "sha256": "90df46706e3f0f876dc73a1418e835ba16d1d1d83549e7f921f56e26b0b29032",
       "executable": false
     },
+    "docs/agents.md": {
+      "sha256": "b120fd06dec5bf86b890eac346a7f83c800a3b473858985c44b3318380a076cd",
+      "executable": false
+    },
     "docs/approval-and-sending.md": {
       "sha256": "72100149b5453deb68d99009df84589d2bdf2324960b9a1d545725081817b169",
       "executable": false
@@ -1389,7 +1399,7 @@
       "executable": false
     },
     "docs/site.json": {
-      "sha256": "41b746cdedfdf932e08fee4bdbff4262d5f33be304624df346e54863ee93ced0",
+      "sha256": "1c8246e11d74b0734e9f53f5180b90aad4d31430afbc2f306c32aa3e4422a899",
       "executable": false
     },
     "docs/team-and-settings.md": {
@@ -1401,7 +1411,7 @@
       "executable": false
     },
     "edition.json": {
-      "sha256": "4d863ff8a4fd3f99c283fe019428508868b435d9824b3dc7292deded8e13c28d",
+      "sha256": "a3d7d66af8e02300aefed8d651248720150da01333dc7d190d0c8fb6990f46d8",
       "executable": false
     },
     "extensions/mango-pixel/INSTALL.md": {
@@ -1893,7 +1903,7 @@
       "executable": false
     },
     "operations/agent-door.test.mjs": {
-      "sha256": "078439b72a53aaa0a924b4abef515adb44214ef232e368952dc5d93c2c52b1b4",
+      "sha256": "89d67be52dc354146c928ec78b5537915dd5fbfabcb5cb2a666f5519788663f7",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -2029,7 +2039,7 @@
       "executable": false
     },
     "RELEASE.json": {
-      "sha256": "ba5a30ad39e79a63a573b8cee6c66b0098bdf15747e7345a17b88e5b85fad334",
+      "sha256": "6455bb9cf9f627762ec988dd40608c4d9ae674b46a2543e6ce457d2fb5ca1907",
       "executable": false
     },
     "RENDERING.md": {
@@ -2050,6 +2060,10 @@
     },
     "sample-data/initial.json": {
       "sha256": "589c8c2af2d93fc4cd578b0a2835fce5273b378e22ffd48d7f82e6e958946cf5",
+      "executable": false
+    },
+    "scripts/agent-surface.mjs": {
+      "sha256": "52cb5fdd99f810e80ba0ad7d7163bec41c53653577d8f04de5eb562b2bf60652",
       "executable": false
     },
     "scripts/build-delivery-artifact.mjs": {
@@ -2769,15 +2783,15 @@
       "executable": false
     },
     "src/core/features/agent-door/index.ts": {
-      "sha256": "4f2d4e8adf5455199075dae69dfddae01075bff2396b7e4446b42022d790f804",
+      "sha256": "069b9b13663c414f5a79b893b81061358b465ca165510314f3edc7429d198157",
       "executable": false
     },
     "src/core/features/agent-door/native.ts": {
-      "sha256": "cecb99487a77ccf011448e4b1b14d80e59814d6b49d93913e366f5a89068629d",
+      "sha256": "421139b84df63f42bfeb46ec4ab85b17c3b95e70f774095d78f67851e5832e13",
       "executable": false
     },
     "src/core/features/agent-door/operations.ts": {
-      "sha256": "9e2c32f7d950a09cd264823d47df86c4a3b5173cfe724ea477a54ee7540ea04d",
+      "sha256": "c2741809954e02dca0a37b06c1892e4cb200182783e1dec57dca8ebb7408e54e",
       "executable": false
     },
     "src/core/features/agent-door/people.ts": {
@@ -2793,11 +2807,11 @@
       "executable": false
     },
     "src/core/features/agent-door/tools.ts": {
-      "sha256": "176a8a43fef412c37a2bd6e6da1264ab72ee9e95371dae2874292f27a0a5d9b8",
+      "sha256": "b917a52936778e8799d12b7c534a85e5589b12baa599eaf49c1c0333759322ea",
       "executable": false
     },
     "src/core/features/agent-door/witness.ts": {
-      "sha256": "2d9331eb52196705c0bd056762ef666685267cb1ed2a136038682bc4478c964e",
+      "sha256": "b822682d98091ecd44b3c187f90650c1987b700411ff29c40bb3e9d05fe6c4dc",
       "executable": false
     },
     "src/core/features/agent-door/worker-tools.ts": {
@@ -2829,7 +2843,7 @@
       "executable": false
     },
     "src/core/features/archive/service.ts": {
-      "sha256": "c0f220659b7b8e4f34eb3a9645063477d59f58b75b2281a7717a2f99465e8e33",
+      "sha256": "dbd8e9c5891d0de9ef48cc179dddcb404119bc381a4088d9f8b730f863696726",
       "executable": false
     },
     "src/core/features/audience/commerce-exclusions.ts": {
@@ -3533,7 +3547,7 @@
       "executable": false
     },
     "src/core/features/campaigns/campaign-attribution.ts": {
-      "sha256": "ab7b07276d4ccacc81c65834ca68417d3eb24cbf579a307ff7e40d3db76380ff",
+      "sha256": "971c74d3451376e1995721330999e550cb77076b5b2b2deab08b38db4fe7c48a",
       "executable": false
     },
     "src/core/features/campaigns/campaign-claim-projection.ts": {
@@ -3793,7 +3807,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-attribution.tsx": {
-      "sha256": "7a53ff8518bd845e379ce1a569bd0a338954f307d9852caf12aaf1274b470e9b",
+      "sha256": "452f540d467a380d17c09bd1156b07208625d5bc24b374cebf7794e8dfbfffb9",
       "executable": false
     },
     "src/core/features/campaigns/ui/campaign-detail.tsx": {
@@ -5253,7 +5267,7 @@
       "executable": false
     },
     "src/core/features/settings/sender-authority.ts": {
-      "sha256": "8a56c9e22678b96ace4062181f4b2402f28253270ac8fa3ad46e1128173f43cd",
+      "sha256": "62f9929b960fd0ec1b5bf6bdcdc9662561227ab4351c0252ae697c8ca49188f8",
       "executable": false
     },
     "src/core/features/settings/sender-check-routes.ts": {
@@ -8546,6 +8560,22 @@
     },
     "test-budget.json": {
       "sha256": "d6bb479fcbae77e58820a091c1624923ec997b7f222b396ec0545a2f464ceda2",
+      "executable": false
+    },
+    "tests/agent-door/journey.json": {
+      "sha256": "fb71c869caf7a90791652627bbbd9efdc23d8675995e67aeb099de645eed18c4",
+      "executable": false
+    },
+    "tests/agent-door/network.mjs": {
+      "sha256": "049ecfbb51740a42a766f253114af274f520622f4838200ea75365f34cdb4b79",
+      "executable": false
+    },
+    "tests/agent-door/owner.mjs": {
+      "sha256": "29f1c778aed11762ab2054779268cf4871425ab5bc4c1f437763d03a89d78618",
+      "executable": false
+    },
+    "tests/agent-door/pending.json": {
+      "sha256": "75f855b1e17cfdb09f6de18cdb02a1992f03d1ad6ada303c65973b3f0a465b63",
       "executable": false
     },
     "tests/approval-binding/config.js": {

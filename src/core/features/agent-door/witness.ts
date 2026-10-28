@@ -3,20 +3,24 @@ import type { Platform } from '@/core/shared/platform';
 import { nativeOperator } from './native';
 import { fingerprint } from './digest';
 
-// Product state only. Credential bytes, auth session activity, rate counters and
-// the door's own admission/audit bookkeeping are outside the returned witness.
-const tables = [
-  'campaigns','campaign_revisions','campaign_steps','campaign_revision_links','campaign_state_transitions',
-  'campaign_approval_requests','campaign_audiences','campaign_audience_channel_counts','campaign_checks',
-  'recipient_steps','step_dispatches','delivery_facts','lifecycle_audit_entries',
-  'contacts','contact_email_addresses','contact_phones','consent_evidence','consent_capture_metadata',
-  'contact_history','contact_suppressions','contact_merges','surviving_opt_outs','audience_segments',
-  'audience_erasures','integration_contact_profiles','source_records','source_sync_runs',
-  'proposals','proposal_transitions','design_jobs','design_candidates','campaign_assets','campaign_templates',
-  'reusable_email_blocks','reusable_email_block_placements','flow_draft_revisions','woocommerce_flows',
-  'woocommerce_flow_enrollments','newsletter_archive','insight_report_schedules','insight_report_deliveries',
-  'signup_settings','opt_in_modes','operator_product_roles','sending_connection','mango_agent_work',
-] as const;
+// Include the whole native product schema, including frozen recipients, native
+// provider attempts, settings and authority. Authentication use and the shared
+// door's own decision bookkeeping must not make a refused call look effective.
+const omittedTables = new Set([
+  'operator_sessions','operator_magic_links','operator_bootstraps','auth_rate_limits',
+  'public_token_rate_limits','mango_agent_write_admissions','d1_migrations',
+]);
+function nativeTable(name: string) {
+  if (!/^[a-z][a-z0-9_]*$/.test(name) || omittedTables.has(name)) return false;
+  if (/^(sqlite_|_cf_|agent_door_|test_)/.test(name)) return false;
+  return !name.startsWith('oa_') || ['oa_operators','oa_auth_settings','oa_domain_rules'].includes(name);
+}
+function stableRow(table: string, row: Record<string, unknown>) {
+  // Credential use is authentication bookkeeping; revocation and scope changes
+  // remain in the witness. No row or credential is returned to the caller.
+  return JSON.stringify(Object.fromEntries(Object.entries(row).filter(([key]) =>
+    table !== 'integration_credentials' || key !== 'last_used_at').sort(([a],[b])=>a.localeCompare(b))));
+}
 export function witnessTool(platform: Platform): ToolDefinition {
   return {name:'mango.witness.read',title:'Read native change witness',description:'Read native object counts and digests without network effects or credential disclosure.',
     scope:'mango.witness.read',readOnly:true,classes:['standard'],clauses:['OPER-007','BASE-OPS-003'],
@@ -25,11 +29,11 @@ export function witnessTool(platform: Platform): ToolDefinition {
     async run(_args,ctx){
       const operator=await nativeOperator(platform,ctx.person.id);
       if(!['owner','admin'].includes(operator.role))throw new ToolRefusal('role_forbidden');
-      const available=new Set((await platform.database.$client.prepare("SELECT name FROM sqlite_master WHERE type='table'").all<{name:string}>()).results.map(row=>row.name));
+      const available=(await platform.database.$client.prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name").all<{name:string}>()).results;
       const objects:Record<string,{count:number;sha256:string}>={};
-      for(const name of tables.filter(name=>available.has(name))){
-        const values=(await platform.database.$client.prepare('SELECT * FROM "'+name+'" ORDER BY rowid').all()).results;
-        objects[name]={count:values.length,sha256:await fingerprint(values)};
+      for(const {name} of available.filter(({name})=>nativeTable(name))){
+        const values=(await platform.database.$client.prepare('SELECT * FROM "'+name+'"').all<Record<string,unknown>>()).results;
+        objects[name]={count:values.length,sha256:await fingerprint(values.map(row=>stableRow(name,row)).sort())};
       }
       return {result:{objects}};
     }};

@@ -41,6 +41,7 @@ export function nativeGateway(platform: Platform, native: Hono<any>) {
     const value = await response.json().catch(()=>({error:'native_unavailable'})) as Record<string, unknown>;
     if (!response.ok) throw new ToolRefusal(typeof value.error === 'string' ? value.error
       : typeof value.kind === 'string' ? value.kind : 'native_refused', 'Native action refused', {status: response.status});
+    if(path==='/api/settings/sending'&&value.connection&&typeof value.connection==='object')delete (value.connection as Record<string,unknown>).lastFour;
     return method === 'GET' ? projectPrivateResponse(contactPrivacyRole(operator), path, value) : value;
   };
 }
