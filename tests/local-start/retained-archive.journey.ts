@@ -32,6 +32,7 @@ async function restore(runtime: Awaited<ReturnType<typeof authorityRuntime>>, fi
   await prepare();
   await mkdir(join(runtime.checkout, 'exports'));
   await writeFile(join(runtime.checkout, 'exports/retained.rer'), source, { mode: 0o600 });
+  await expect(runtime.command(['import', '--input', 'exports/retained.rer', '--yes'])).rejects.toBeInstanceOf(Error);
   // These retained v2 fixtures predate schema-object verification. Exercise
   // the explicit owner recovery door while retaining every restored-row check.
   await runtime.command(['import', '--input', 'exports/retained.rer', '--yes', '--acknowledge-unverified-schema-objects']);
