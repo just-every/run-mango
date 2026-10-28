@@ -10,7 +10,7 @@ export type Feature = { icon: IconName; title: string; text: string };
 // (nominative use) and makes no comparison; the owner approved these exact words on 12 October 2026. The sentence is
 // built here once: the meta description uses it as plain text and the hero shows the two product names in bold.
 const replacedProducts = ['Mailchimp', 'Klaviyo'] as const;
-const replaces = `100% free, open source alternative to ${replacedProducts[0]} and ${replacedProducts[1]}`;
+const replaces = `Open source alternative to ${replacedProducts[0]} and ${replacedProducts[1]}`;
 
 export const copy = {
   meta: {

@@ -4242,7 +4242,7 @@
       "executable": false
     },
     "src/core/features/landing/copy.ts": {
-      "sha256": "e967c62529ba679e947e6f8ce309534b9ced943bba5d956e87a9bc6bbd540eff",
+      "sha256": "39e624ea2ddf27fa91e0df81345d03539dce976ce40a9d466f7b04e454beafd3",
       "executable": false
     },
     "src/core/features/landing/drawings/AccountArt.tsx": {
