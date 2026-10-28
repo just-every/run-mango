@@ -82,7 +82,7 @@ function routes() {
 const boundedBody = () => bodyLimit({maxSize: 64 * 1024, onError: context => context.json({error: 'request_too_large'}, 413)});
 
 /** Mount /api/integrations/v1 before operator-session middleware. Never sets an operator. */
-export function createIntegrationApiRoutes(service: Service, platform: Platform) {
+export function createIntegrationApiRoutes(service: Service, platform: Platform, enqueue: (credential: Credential,campaignId:string,input:z.infer<typeof sendInput>)=>Promise<unknown>) {
   const router = routes();
   router.get('/openapi.json', context => context.json(integrationOpenApi));
   router.get('/client.mjs', context => {context.header('Content-Type','text/javascript; charset=utf-8');return context.body(clientSource);});
@@ -115,7 +115,7 @@ export function createIntegrationApiRoutes(service: Service, platform: Platform)
   router.post('/campaigns/:id/send', scope('campaigns:send'), async context => {
     if (context.req.param('id').length > 160) throw new IntegrationError('invalid_request', 400);
     const input = await body(context, sendInput);
-    return context.json(await service.send(context.get('integrationCredential').id, context.req.param('id'), input), 202);
+    return context.json(await enqueue(context.get('integrationCredential'), context.req.param('id'), input), 202);
   });
   router.all('*', context => context.json({error: 'not_found'}, 404));
   return router;

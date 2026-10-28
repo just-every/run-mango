@@ -54,7 +54,8 @@ export function activitySelect(filters: ActivityFilters, before?: string) {
 }
 
 export function readEntry({detailJson, ...entry}: Omit<ActivityEntry, 'detail'> & {detailJson: string}): ActivityEntry {
-  return {...entry, detail: JSON.parse(detailJson)};
+  const detail=JSON.parse(detailJson);
+  return {...entry,operatorName:entry.actorType==='agent'&&typeof detail?.preparedBy?.label==='string'?detail.preparedBy.label:entry.operatorName, detail};
 }
 
 /** A cell that begins like a formula is read by a spreadsheet as one; the leading quote keeps it text. */
