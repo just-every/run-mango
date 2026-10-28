@@ -5,7 +5,7 @@ import {expect,test} from '@playwright/test';
 type Entry = { slug: string; label: string; hidden?: boolean };
 const manifest = JSON.parse(readFileSync(new URL('../docs/site.json', import.meta.url), 'utf8')) as { sections: { pages: Entry[] }[] };
 const pages = manifest.sections.flatMap(section => section.pages).filter(page => !page.hidden);
-const path = (slug: string) => (slug ? `/docs/${slug}` : '/docs');
+const route = (slug: string) => (slug ? `/docs/${slug}` : '/docs');
 
 test('[DOCS-001][HOME-001] visitors browse public documentation, navigate after hydration and find a real 404 while the app requires sign-in',async({page,request,context,baseURL})=>{
   await page.setViewportSize({width:1440,height:1000});

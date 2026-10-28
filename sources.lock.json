@@ -978,7 +978,7 @@
       "executable": false
     },
     ".github/workflows/verify.yml": {
-      "sha256": "f46ed5df4c439d6ec13ecf97d78cba1fca1442f7391bf419c5a60fd983fe9f21",
+      "sha256": "8a245567855fc315ef29b4a4f320e979f27f92c9ab8b260e5f18658277c9edfa",
       "executable": false
     },
     ".gitignore": {
@@ -1010,7 +1010,7 @@
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "7bb89ae4f7f070a7d3351ca8ad1ae3d7d17b48140d77c3897e3ad75d786c38e2",
+      "sha256": "0288191e30031f7e8b9242a5a803295c344e72166a35b42498400e2227b8109a",
       "executable": false
     },
     "BASELINE.md": {
@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "1db32b9ed365e1cf18d65746f928a6342f42f34f30985185fc380127468eb7bf",
+      "sha256": "aea7a349e8c66e092a8c0537ce8f3fde3264a1cf5a93af8af03afec2d83d1d8a",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8321,6 +8321,10 @@
       "sha256": "70206b91d1359d69a46c7fb7e1ff4af5f74135f2130cd04169be734826b8c889",
       "executable": false
     },
+    "tests/campaign-authoring/block-builder-journey.ts": {
+      "sha256": "93c6d004abe1a1863f4e2dbf19999539fcb5172e5eda1f7277b40ebf72148752",
+      "executable": false
+    },
     "tests/campaign-authoring/browser-runtime.mjs": {
       "sha256": "1235904759a16f2996cbdc7257cdcf20319ad29b61b2889837d54a468f892d1b",
       "executable": false
@@ -8383,6 +8387,10 @@
     },
     "tests/campaign-authoring/local-images.spec.ts": {
       "sha256": "3b20989ab62960e13ac171e210aa9bf5943da825707cfcb06b7298ff66259ddc",
+      "executable": false
+    },
+    "tests/campaign-authoring/mobile-presentation-journey.ts": {
+      "sha256": "b03a70c6b5f2d9c063a02709a5de07a5acbcc618563f8bc4dd97ae33b388ea46",
       "executable": false
     },
     "tests/campaign-authoring/reusable-block-journey.ts": {
@@ -8522,7 +8530,7 @@
       "executable": false
     },
     "tests/docs.spec.ts": {
-      "sha256": "efc91e920d9887130c09dadc68330e88552b46ce1feabbc5d7c94383b7422c67",
+      "sha256": "aa85b49745074f1e239f8c6fb018e5be210ab06aed998e21195fbcc88c77938a",
       "executable": false
     },
     "tests/evidence/allowed-host-approved-1440.png": {
@@ -9402,7 +9410,7 @@
       "executable": false
     },
     "vite.config.ts": {
-      "sha256": "661870e26abf8e2d092a65a3abe181b56c5525564c485d5d81168d18d70b359d",
+      "sha256": "dc2500f5ddecee8e4213d4815be2d8a98d31f3f9a9bb6f21a1c3bfd20630235c",
       "executable": false
     },
     "vite.site.config.ts": {

@@ -69,6 +69,9 @@ jobs:
       WRANGLER_SEND_METRICS: 'false'
       PLAYWRIGHT_SKIP_BROWSER_GC: '1'
     steps:
+      # Job env is evaluated before the runner context is available.
+      - name: Set runner-owned browser cache
+        run: printf 'PLAYWRIGHT_BROWSERS_PATH=%s/ms-playwright\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
@@ -76,16 +79,34 @@ jobs:
         with:
           node-version: '22.20.0'
           package-manager-cache: false
+      - name: Check generated contract documents
+        run: node src/base/contract-docs.mjs check
+      - name: Check edition source lock freshness
+        run: node scripts/edition-authoring/cli.mjs check
       - run: npm install --global pnpm@10.12.4
+      - name: Set runner-owned pnpm store
+        run: pnpm config set store-dir "$RUNNER_TEMP/pnpm-store"
+      - name: Prepare runner-owned browser and apt caches
+        run: |
+          set -euo pipefail
+          id
+          printf 'Runner HOME=%s\n' "$HOME"
+          if [ -e "$HOME/.cache" ]; then
+            stat -c 'Home cache: %n uid=%u gid=%g mode=%a' "$HOME/.cache"
+          else
+            printf 'Home cache: absent\n'
+          fi
+          mkdir -p "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
+      # Save completed packages; apt keeps partial downloads private to _apt.
       - name: Cache frozen dependencies and Chromium
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
         with:
           path: |
-            ~/.local/share/pnpm/store
-            ~/.cache/ms-playwright
-          key: seed-ubuntu24-${{ runner.arch }}-browser-true-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            seed-ubuntu24-${{ runner.arch }}-browser-true-
+            ${{ runner.temp }}/pnpm-store
+            ${{ runner.temp }}/ms-playwright
+            ${{ runner.temp }}/rer-apt/archives/*.deb
+          # Old snapshots contain absolute HOME paths; do not restore them here.
+          key: seed-ubuntu24-temp-store-${{ runner.arch }}-browser-true-${{ hashFiles('pnpm-lock.yaml', 'package.json') }}
       - name: Install frozen dependencies and reserve native runtime disk
         shell: bash
         run: |
@@ -99,20 +120,22 @@ jobs:
           fi
           pnpm install --frozen-lockfile
           if [ -n "$reclaim_pid" ]; then wait "$reclaim_pid"; fi
-      - name: Install Chromium
-        shell: bash
+      - run: pnpm run deps
+      - name: Install and probe Chromium before system dependencies
         run: |
           set -euo pipefail
+          stat -c 'Before browser: %n uid=%u gid=%g mode=%a' "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
           pnpm exec playwright install chromium
-          # Hosted ubuntu-24.04 already carries Chromium's libraries. Use apt only when a real launch fails.
-          node scripts/ci/chromium-probe.mjs || {
-            timeout 420 pnpm exec playwright install-deps chromium
-            node scripts/ci/chromium-probe.mjs
-          }
-      - name: Check generated contract documents
-        run: node src/base/contract-docs.mjs check
-      - name: Check edition source lock freshness
-        run: node scripts/edition-authoring/cli.mjs check
+          probe() { node --input-type=module -e "import { chromium } from '@playwright/test'; try { const browser = await chromium.launch({headless: true}); await browser.close(); } catch (error) { console.error(error); process.exit(/EACCES|permission denied/i.test(String(error)) ? 77 : 1); }"; }
+          if probe; then
+            :
+          else
+            status=$?
+            if [ "$status" -eq 77 ]; then exit "$status"; fi
+            sudo env "PATH=$PATH" "APT_ARCHIVES=$RUNNER_TEMP/rer-apt/archives" python3 scripts/ci/install-chromium-deps.py
+            stat -c 'After apt: %n uid=%u gid=%g mode=%a' "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
+            probe
+          fi
       - name: Run this shard
         env:
           SHARD: static
