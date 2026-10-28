@@ -2698,7 +2698,7 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 *Tier:* Core
 
-**Requirement.** Through the owner's WhatsApp Business account (Twilio or Meta's Cloud API), Mango sends pre-approved WhatsApp templates to contacts with WhatsApp-specific opt-in evidence, with delivery and read receipts as provider facts and opt-out replies honored like SMS.
+**Requirement.** Through the owner's WhatsApp Business account (Twilio or Meta's Cloud API), Mango sends WhatsApp templates approved by the provider to contacts with WhatsApp-specific opt-in evidence, with delivery and read receipts as provider facts and opt-out replies honored like SMS.
 
 **Acceptance.**
 1. a template campaign to an opted-in contact hands off through the provider edge, records the delivered fact, and an opt-out reply excludes the contact from the next send.
