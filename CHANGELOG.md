@@ -379,6 +379,122 @@ Imported clicks use their original times; opens never qualify. The tagged move-i
 
 - **2026-10-08 local authority clarification (CONT-004/006, OPER-001):** Refreshing local session/setup credentials while retaining D1 preserves the effective contact hash authority, including suppression and surviving opt-out records without contact rows. New local installations record a versioned independent contact salt in `.dev.vars`; missing, empty, unknown-version or unversioned authority fails closed. Explicit conversion of a verified legacy session-key installation retains its original effective session authority before rotating authentication credentials. An upgrade must never select a previously unused secret merely because it exists.
 
+### HOME-001
+
+**HOME-001 — Lobby and public landing** (done). The local journey sees the Lobby with Finish setup before sender setup and Sign in after; the run-site build serves the landing. Evidence: `tests/local-start/local.journey.ts` · `src/site/pages.tsx`.
+
+### DOCS-001
+
+**DOCS-001 — Public documentation** (done). `tests/docs.spec.ts` builds and serves every published page and fails on unlisted files, broken links and raw HTML. Evidence: `tests/docs.spec.ts`.
+
+### OPER-001
+
+**OPER-001 — Operators and the default role** (done). Fresh install completes sender setup after native owner sign-in at 1440 and 390; production entry refuses local bootstrap. Evidence: `tests/local-start/local.journey.ts` · `tests/production-entry.spec.ts`.
+
+### OPER-002
+
+**OPER-002 — Management** (done). The invitation journey: fresh email proof, affirmative confirmation, removal with session and link revocation, setup self-only removal. Evidence: `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/service.ts`.
+
+### OPER-003
+
+**OPER-003 — Removal does not rewrite history** (done). The Author drafts and requests approval; the Manager approves; the Owner obtains fresh native authority and removes both. Their sessions receive 401 and removed_at is set. Campaign, request, approval, revision, transitions and audit records retain attribution through review/detail and activity APIs at 1440/390. Evidence: `tests/go-live/roles.journeys.ts`.
+
+### OPER-004
+
+**OPER-004 — Roles and permissions** (partial). A route-level journey signs in one operator per role and calls each protected operation (approve, activate, import, export, erase, invite, connect integration, connect sending provider, view unmasked contact), asserting 403 with a named reason exactly where the matrix denies, at 1440 and 390 pixels for the visible controls. The six product roles are separate from Base's unchanged owner/admin/member roles; the journey protects the last product Owner from removal or demotion, retains CSV export for Owner/Admin only and proves restored source assignments grant no product authority in the destination installation. Current newsletter-role evidence: `tests/go-live/roles.journeys.ts`; full flow, provider-connection and installation-erasure role journeys remain outstanding, and CSV exports stay Owner/Admin only.
+
+### OPER-005
+
+**OPER-005 — Separation of approval** (missing). With the policy on, an Author saves a revision and a Manager approves it; the same Manager editing then approving their own revision is refused with `separation-required`.
+
+### OPER-006
+
+**OPER-006 — Single sign-on and deprovisioning** (missing). A journey against a test OIDC issuer and SCIM client at the network edge signs an operator in with a mapped role, deprovisions them, and shows their next request refused and their past approvals still attributed.
+
+### OPER-007
+
+**OPER-007 — Activity log** (partial). Gap: actual restore completion must be recorded with actor and time and visible, filterable and exportable in Activity. A journey performs one of each action Mango performs today (drafts saved, approval requests and approvals, pause, resume and cancel, an import, an audience and an account export, a consent hand entry, an opt-out, an erasure, signup-allowance and kiosk-form changes, role changes and an hourly signup-refusal summary), then filters by operator, agent, action, object and date, exports the filtered view as CSV and checks every action appears once with actor and time; an Author is refused on the screen's API; the Activity screen is inspected at 1440 and 390 with axe. FLOW-008 (activations, pauses) and AGENT-010 (agent actions and the agent filter's values) inherit the obligation. Evidence: `tests/go-live/sync-integrations.journeys.ts`.
+
+### STORE-001
+
+**STORE-001 — Store and event connections** (partial). Each connection (INT-001 to INT-006) syncs every declared source type through its edge with source identity and occurrence time; Shopify is proved today. Evidence: `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts`. Evidence: the existing signed carts identity registration in `tests/shopify/connection.spec.ts`, via `tests/store/source-export-proof.ts`, `tests/go-live/built-source-journey.ts`, `tests/go-live/store-source-journey.ts` and `tests/go-live/source-runtime.mjs`, proves every declared type of the built Shopify, WooCommerce and Stripe connections through their network edges and the owner export with source identity, connection and source occurrence time, including one contact retaining both WooCommerce and Stripe records; the existing Stripe Owner Settings proof remains in `tests/go-live/stripe-journey.ts`.
+
+### STORE-002
+
+**STORE-002 — Source identity** (done). Replayed and resynced Shopify records update one source record each. Evidence: `tests/shopify/connection.spec.ts`.
+
+### STORE-003
+
+**STORE-003 — Freshness** (done). The native Worker/D1/Queue journey imports each Admin source, retains its last completed sync through a later failed page, shows the failure and unaffected sources on Decision Desk at 1440 and 390, and clears it only on completed recovery. Unstarted sources show no successful sync; authoring keeps provider diagnostics private. Evidence: `tests/go-live/source-freshness.journeys.ts`.
+
+### STORE-004
+
+**STORE-004 — Source failure** (done). Evidence: `tests/go-live/source-freshness.journeys.ts` — “[STORE-003] [STORE-004] Decision Desk retains each completed sync through a later failed page and recovery”: a failed product sync records its failed operation carrying the adapter error and recovers through Store/Decision Desk at 1440/390; proposal generation refused by the failed source records one failed generation operation carrying the adapter's last error, with no proposal, cost or send; during a Shopify Admin API outage a correctly signed webhook keeps its 401 answer and records exactly one failed webhook operation carrying the adapter error per delivery (a replay adds none, a forged delivery records nothing), and Shopify's retry after recovery ingests the record once and completes the operation; failed-operation text carries no upstream diagnostic, secret, token or record payload; the Store page lists the failed generation and webhook operations at 1440 and 390 with no overflow or accessibility violations; saved draft edits, readable recorded outcomes/history and zero new mail handoffs with a scheduled campaign. `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” (via `tests/go-live/stripe-journey.ts`): during a Stripe API outage a correctly signed Stripe event that needs a Stripe read keeps its 422 answer and records exactly one failed webhook operation carrying the adapter error (a replay adds none, a forged event records nothing), and Stripe's retry after recovery ingests it once and completes the operation. `tests/shopify/connection.spec.ts` — “[STORE-004] native authenticated sync imports complete Shopify records and retains original purchase time through nested-page failures and retry” proves failed operation diagnostics and retry. `tests/go-live/stale-sources.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions” retains the stored-source gate. Failed webhook and generation operations share the failed-sync operation record; webhooks keep their existing HTTP answers so providers retry them.
+
+### STORE-005
+
+**STORE-005 — Stale sources block approval** (done). The native Worker/D1/Queue journey refuses both inclusion-dependent and exclusion-dependent campaigns against aged and failed Shopify data. Counts remain unavailable, approval writes no authority or recipients, and review names the source and safe cause at 1440 and 390. A completed sync and explicit recheck allow the same saved revision to pass its ordinary approval checks. Evidence: `tests/go-live/stale-sources.journeys.ts`.
+
+### STORE-006
+
+**STORE-006 — Declared adapter capability** (done). The native Shopify adapter declares cart and browsing observations unavailable without their installation. Inclusion and exclusion review name the missing source at 1440 and 390, keep counts unknown and refuse approval without authority, snapshots or recipients. The public AI proposal-generation door also names an unsupplied source and saves no campaign or partial audience. Evidence: `tests/go-live/stale-sources.journeys.ts`.
+
+### STORE-007
+
+**STORE-007 — Ingestion latency** (partial). A webhook source record is readable within 60 seconds of acknowledgment, measured at the stated limits. Evidence: `src/core/features/audience/commerce-webhook-routes.ts`.
+
+### CONT-001
+
+**CONT-001 — Contact identity** (done). Canonical identity on import and capture. Evidence: `tests/move-in/archive.journeys.ts`.
+
+### CONT-002
+
+**CONT-002 — Channel status** (done). Independent channel states across imports and opt-outs. Evidence: `tests/move-in/held.journeys.ts` · `tests/move-in/archive.journeys.ts`.
+
+### CONT-003
+
+**CONT-003 — Consent evidence** (done). Consent evidence fields on capture and import; stale disclosures cannot create evidence. Incumbent-held evidence is proved under CONT-024. Evidence: `tests/audience-import/signup.spec.ts` · `tests/campaign-authoring/import-category.spec.ts`.
+
+### CONT-004
+
+**CONT-004 — Opt-out precedence** (done). Opt-out before acknowledgment; no import, undo or merge lifts it. Evidence: `tests/go-live/go-live.journeys.ts` · `tests/provider-suppression-ingress.spec.ts` · `tests/move-in/held.journeys.ts`.
+
+### CONT-005
+
+**CONT-005 — Resubscription** (done). Resubscription only from new confirmed evidence. Evidence: `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts`.
+
+### CONT-006
+
+**CONT-006 — Email suppression** (done). Hard bounce, complaint and provider suppression before the next hand-off; soft-bounce policy. Evidence: `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/go-live.journeys.ts`.
+
+### CONT-007
+
+**CONT-007 — SMS compliance replies** (partial). Signed SMS replies: STOP family opts out before acknowledgment, HELP and START never subscribe; proved on the Mobile Message adapter, Twilio pending (SMS-001). Evidence: `src/core/features/sms/inbound.ts` · `tests/audience-import/signup.spec.ts`.
+
+### CONT-008
+
+**CONT-008 — Contact history** (done). One time-ordered contact timeline combines original source activity, consent and confirmations, suppressions, approved audience decisions, dispatch exclusions, channel handoffs and provider outcomes, clicks and attributed operator actions. The native Worker/D1 journey proves original times, contact isolation, payload privacy and access to older events at 1440 and 390 pixels. CONT-017’s wider profile obligations remain separate. Evidence: `tests/audience-controls/contact-history.spec.ts`.
+
+### CONT-009
+
+**CONT-009 — Confirmation** (done). Pending until single-use, expiring, POST-only confirmation. Single or double opt-in per form and source is proved under CONT-025. Evidence: `tests/go-live/go-live.journeys.ts` · `tests/audience-import/signup.spec.ts`.
+
+### CONT-010
+
+**CONT-010 — Import** (done). Reviewed CSV import with row outcomes, idempotent reruns and undo. Named-source files with incumbent-held evidence are proved under CONT-024, and review size under SCALE-001. Evidence: `tests/audience-import/routes.spec.ts` · `tests/move-in/archive.journeys.ts`.
+
+### CONT-011
+
+**CONT-011 — Merge** (done). Merge keeps the most restrictive state per channel. Evidence: `tests/audience-controls/merge.spec.ts`.
+
+### CONT-012
+
+**CONT-012 — Dormancy without deletion** (done). Dormant contacts are labeled and excluded, never deleted; imported clicks, orders and consent changes count at their original times, and a move-in contact without history is `no-history`, not dormant, while a dormant contact with only imported opens is labeled `open-only` (journey under AUD-008). Current evidence: `tests/move-in/archive.journeys.ts` · `tests/go-live/stale-sources.journeys.ts`. Imported clicks use their original times; opens never qualify. The tagged move-in/review journey proves a three-month click eligible, no-history eligible from move-in completion until its window elapses, a thirteen-month click dormant, and an opens-only contact within dormant. The unchanged AUD-003 native journey retains thirteen-month dormancy. Inactivity never changes consent or deletes/suppresses a contact.
+
+### CONT-013
+
+**CONT-013 — Erasure and surviving opt-out** (done). Erasure within five minutes with surviving opt-out hashes. Evidence: `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts`.
+
 ## Capability inventory retained from 28 October 2026
 
 # Mango claims → code

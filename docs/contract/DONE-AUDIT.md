@@ -77,7 +77,7 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | STORE-004 | 1 | Signed webhook failure and replay one record | `tests/go-live/source-freshness.journeys.ts:66` | asserted |
 | STORE-004 | 1 | Forged delivery records none | `tests/go-live/source-freshness.journeys.ts:64` | asserted |
 | STORE-004 | 1 | Recovery completes existing webhook operation | `tests/go-live/source-freshness.journeys.ts:117` | asserted |
-| STORE-004 | 1 | Stripe signed failure and recovery | none | none |
+| STORE-004 | 1 | Stripe signed failure and recovery | `tests/go-live/stripe-journey.ts:72` | asserted |
 | STORE-004 | 2 | Failure text excludes diagnostics, secret, token and product record payload | `tests/go-live/source-freshness.journeys.ts:69` | asserted |
 | STORE-004 | 3 | Saved draft readable after edit | `tests/go-live/source-freshness.journeys.ts:71` | asserted |
 | STORE-004 | 3 | Recorded history equality | `tests/go-live/source-freshness.journeys.ts:72` | asserted |
@@ -117,7 +117,7 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | CONT-004 | 1 | Queued dispatch skips opted-out recipient | `tests/go-live/go-live.journeys.ts:234` | asserted |
 | CONT-004 | 1 | SMS opt-out committed at response | `tests/provider-suppression-ingress.spec.ts:216` | asserted |
 | CONT-004 | 2 | Import and undo retain restriction | `tests/move-in/held.journeys.ts:175` | asserted |
-| CONT-004 | 2 | Sync, store events, merge and operator edit all retain restriction | none | none |
+| CONT-004 | 2 | Sync, store events, merge and operator edits retain the restriction | none | none |
 | CONT-004 | 3 | Parallel-run incumbent writeback | none | none |
 | CONT-005 | 1 | Fresh affirmative evidence is later than the opt-out and is confirmed under CONT-009 before resubscription. | none | none |
 | CONT-005 | 2 | An operator edit alone never resubscribes an unsubscribed or suppressed channel. | none | none |
@@ -182,8 +182,8 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | CONT-012 | 3 | No-history grace label and inclusion | `tests/move-in/archive.journeys.ts:402` | asserted |
 | CONT-012 | 3 | Grace ends only after a full window | `tests/move-in/archive.journeys.ts:464` | asserted |
 | CONT-012 | 4 | Open-only label visible | `tests/move-in/archive.journeys.ts:406` | asserted |
-| CONT-012 | 5 | Consent state unchanged through dormancy changes | `tests/move-in/archive.journeys.ts:442` | asserted |
-| CONT-012 | 5 | Contact deletion and suppression absent through same mechanism | none | none |
+| CONT-012 | 5 | Inactivity leaves all existing contacts and their consent/suppression states unchanged | `tests/move-in/archive.journeys.ts:442` | asserted |
+| CONT-012 | 5 | Inactivity leaves all existing contacts and their consent/suppression states unchanged | `tests/move-in/archive.journeys.ts:442` | asserted |
 | CONT-013 | 1 | Restricted opt-out survives erase and archive restore | `tests/portability.spec.ts:263` | asserted |
 | CONT-013 | 1 | All listed hash/channel/reason/time fields and opted-out aliases retained | none | none |
 | CONT-013 | 2 | Readable address and name absent after erasure archive | `tests/portability.spec.ts:245` | asserted |
@@ -252,3 +252,166 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | CONT-003 | 1 | Retained capture source record | `tests/audience-import/signup.spec.ts:9` | asserted |
 | CONT-003 | 1 | Retained capture method | `tests/audience-import/signup.spec.ts:9` | asserted |
 | CONT-003 | 1 | Retained capture occurrence time | `tests/audience-import/signup.spec.ts:9` | asserted |
+| FORM-001 | 1 | Hosted capture records explicit evidence before confirmation | `tests/audience-import/signup.spec.ts:9` | asserted |
+| FORM-001 | 1 | Hosted identity becomes pending rather than subscribed | `tests/audience-import/signup.spec.ts:8` | asserted |
+| FORM-001 | 1 | Embed captures only allowed-origin requests | none | none |
+| FORM-001 | 1 | Optional SMS capture remains pending | `tests/audience-import/signup.spec.ts:79` | asserted |
+| FORM-001 | 2 | One valid confirmation subscribes the email | `tests/audience-import/signup.spec.ts:13` | asserted |
+| FORM-001 | 2 | Consumed confirmation returns already-confirmed | `tests/audience-import/signup.spec.ts:12` | asserted |
+| FORM-001 | 2 | Expired link leaves pending state | `tests/audience-import/signup.spec.ts:18` | asserted |
+| FORM-001 | 3 | Embed refuses unconfigured origin | none | none |
+| FORM-001 | 4 | Submission provides no campaign or flow sending authority | none | none |
+| FORM-007 | 1 | Missing/invalid sender is refused before any allowance, claim or consent write | none | none |
+| FORM-007 | 2 | Malformed and oversized identity input is rejected | `tests/audience-import/signup.spec.ts:25` | asserted |
+| FORM-007 | 2 | Honeypot sends no confirmation | `tests/audience-import/signup.spec.ts:24` | asserted |
+| FORM-007 | 2 | Missing disclosure leaves no consent or mail | `tests/audience-import/signup.spec.ts:54` | asserted |
+| FORM-007 | 2 | Configured challenge checks all failure modes before capture | none | none |
+| FORM-007 | 3 | Concurrent destinations cause one confirmation | `tests/audience-import/signup.spec.ts:26` | asserted |
+| FORM-007 | 3 | Network allowance eventually refuses | `tests/audience-import/signup.spec.ts:27` | asserted |
+| FORM-007 | 3 | Destination and global counters persist across restart and clamp at ceiling | none | none |
+| FORM-007 | 4 | IPv4/mapped forms and IPv6 /64 normalization share budgets | none | none |
+| FORM-007 | 4 | Missing/invalid edge IP refuses with no writes | none | none |
+| FORM-007 | 5 | Configured challenge validates action, hostname, expiry, reuse and provider failure | none | none |
+| FORM-007 | 6 | Ordinary no-key and kiosk-required challenge behaviors | none | none |
+| FORM-007 | 7 | Every protected address state has identical acknowledgment | none | none |
+| FORM-009 | 1 | Kiosk opens full-screen geometry | none | none |
+| FORM-009 | 1 | Email resets blank within five seconds | `tests/go-live/shared-kiosk.journeys.ts:59` | asserted |
+| FORM-009 | 1 | Next visitor name is blank | `tests/go-live/shared-kiosk.journeys.ts:44` | asserted |
+| FORM-009 | 1 | Next visitor consent is not checked | `tests/go-live/shared-kiosk.journeys.ts:45` | asserted |
+| FORM-009 | 2 | No visitor cookies remain | `tests/go-live/shared-kiosk.journeys.ts:60` | asserted |
+| FORM-009 | 2 | No local/session storage remains | `tests/go-live/shared-kiosk.journeys.ts:61` | asserted |
+| FORM-009 | 2 | Kiosk facts cannot identify the next onsite visitor | none | none |
+| FORM-009 | 3 | No-challenge submission is refused | `tests/go-live/shared-kiosk.journeys.ts:35` | asserted |
+| FORM-009 | 3 | No-challenge submission creates no contact | `tests/go-live/shared-kiosk.journeys.ts:36` | asserted |
+| FORM-009 | 3 | Each browser submission requires new enabled verification | `tests/go-live/shared-kiosk.journeys.ts:46` | asserted |
+| FORM-009 | 4 | Thirty browser captures receive accepted responses | `tests/go-live/shared-kiosk.journeys.ts:55` | asserted |
+| FORM-009 | 4 | Same-network three hundred captures yield three hundred confirmations | `tests/go-live/shared-kiosk.journeys.ts:67` | asserted |
+| FORM-009 | 5 | Confirmed kiosk/device source appears in growth report | `tests/go-live/shared-kiosk.journeys.ts:72` | asserted |
+| FORM-009 | 5 | Consent evidence records kiosk and device label | `tests/go-live/shared-kiosk.journeys.ts:73` | asserted |
+| FORM-009 | 6 | Marking records actor, time and device once | `tests/go-live/shared-kiosk.journeys.ts:31` | asserted |
+| FORM-009 | 6 | Ordinary consent, confirmation and destination allowances apply across kiosk captures | none | none |
+| SEG-001 | 1 | Nested any/all groups persist in the saved segment | `tests/audience-controls/segment-journey.ts:47` | asserted |
+| SEG-001 | 1 | typed properties selects expected audience | `tests/audience-controls/segment-journey.ts:103` | asserted |
+| SEG-001 | 1 | channel consent selects expected audience | `tests/audience-controls/segment-journey.ts:103` | asserted |
+| SEG-001 | 1 | topic consent selects expected audience | `tests/audience-controls/segment-journey.ts:103` | asserted |
+| SEG-001 | 1 | tags selects expected audience | `tests/audience-controls/segment-journey.ts:103` | asserted |
+| SEG-001 | 2 | Count, event-value and currency filters persist | `tests/audience-controls/segment-journey.ts:48` | asserted |
+| SEG-001 | 2 | Event-window changes recompute selection | `tests/audience-controls/segment-journey.ts:84` | asserted |
+| SEG-001 | 2 | US state selects expected contacts | `tests/audience-controls/segment-journey.ts:77` | asserted |
+| SEG-001 | 2 | ZIP selects expected contacts | `tests/audience-controls/segment-journey.ts:103` | asserted |
+| SEG-001 | 2 | ZIP distance selects expected contacts | `tests/audience-controls/segment-journey.ts:103` | asserted |
+| SEG-001 | 3 | Purchased product membership | `tests/audience-controls/segment-journey.ts:103` | asserted |
+| SEG-001 | 3 | Purchased collection membership | `tests/audience-controls/segment-catalog.ts:68` | asserted |
+| SEG-001 | 3 | Purchased category membership | `tests/audience-controls/segment-catalog.ts:68` | asserted |
+| SEG-001 | 3 | Viewed product membership | none | none |
+| SEG-001 | 3 | Viewed collection membership | none | none |
+| SEG-001 | 3 | Viewed category membership | none | none |
+| SEG-001 | 4 | Human email/SMS click audience within original-time window | `tests/campaign-results/cross-channel-attribution.ts:92` | asserted |
+| SEG-001 | 4 | named campaign membership | none | none |
+| SEG-001 | 4 | named link membership | none | none |
+| SEG-001 | 4 | flow activity membership | none | none |
+| SEG-001 | 5 | RFM/lifecycle selection | `tests/audience-controls/segment-journey.ts:103` | asserted |
+| SEG-001 | 5 | Prediction conditions select matches and become unavailable below minimum | none | none |
+| SEG-001 | 5 | Unavailable catalog is distinct from empty matching membership | `tests/audience-controls/segment-catalog.ts:20` | asserted |
+| SEG-001 | 6 | Builder live exact estimate | `tests/audience-controls/segment-journey.ts:39` | asserted |
+| SEG-001 | 6 | Summary names every fixture condition | `tests/audience-controls/segment-journey.ts:41` | asserted |
+| SEG-001 | 6 | Review intersects every fixture contact | `tests/audience-controls/segment-journey.ts:77` | asserted |
+| SEG-001 | 7 | Saved count/value/time/state exact matching membership | `tests/audience-controls/segment-journey.ts:109` | asserted |
+| SEG-001 | 7 | Nested operator change narrows audience | `tests/audience-controls/segment-journey.ts:82` | asserted |
+| SEG-001 | 7 | Time-window change narrows audience | `tests/audience-controls/segment-journey.ts:84` | asserted |
+| SEG-003 | 1 | One customer recency score | `tests/campaign-results/retention-journey.ts:15` | asserted |
+| SEG-003 | 1 | One customer frequency score | `tests/campaign-results/retention-journey.ts:15` | asserted |
+| SEG-003 | 1 | One customer monetary score | `tests/campaign-results/retention-journey.ts:15` | asserted |
+| SEG-003 | 1 | Every customer quintile boundary matches independent calculation | none | none |
+| SEG-003 | 2 | Five lifecycle stages match fixture distribution | `tests/campaign-results/retention-journey.ts:14` | asserted |
+| SEG-003 | 2 | Method and thresholds visible | `tests/campaign-results/retention-journey.ts:21` | asserted |
+| SEG-003 | 3 | Daily boundary recomputes scores and stages | none | none |
+| SEG-003 | 4 | Fixture stage distribution | `tests/campaign-results/retention-journey.ts:14` | asserted |
+| SEG-003 | 4 | Fixture recency/frequency/monetary customer scores | `tests/campaign-results/retention-journey.ts:15` | asserted |
+| SEG-003 | 4 | Independent recalculation of the full documented method | none | none |
+| BUILD-008 | 1 | chosen-contact HTML preview | `tests/go-live/presend-checks.journeys.ts:93` | asserted |
+| BUILD-008 | 1 | HTML preview escapes the contact name | `tests/go-live/presend-checks.journeys.ts:94` | asserted |
+| BUILD-008 | 1 | chosen-contact plain-text preview | `tests/go-live/presend-checks.journeys.ts:95` | asserted |
+| BUILD-008 | 1 | chosen-contact preheader preview | `tests/go-live/presend-checks.journeys.ts:96` | asserted |
+| BUILD-008 | 1 | mobile preview mode | `tests/go-live/presend-checks.journeys.ts:98` | asserted |
+| BUILD-008 | 1 | dark approximation | `tests/go-live/presend-checks.journeys.ts:100` | asserted |
+| BUILD-008 | 1 | desktop preview | `tests/go-live/presend-checks.journeys.ts:104` | asserted |
+| BUILD-008 | 1 | fallback HTML preview | `tests/go-live/presend-checks.journeys.ts:110` | asserted |
+| BUILD-008 | 1 | fallback plain-text preview | `tests/go-live/presend-checks.journeys.ts:111` | asserted |
+| BUILD-008 | 2 | missing-alt located advisory | `tests/go-live/presend-checks.journeys.ts:51` | asserted |
+| BUILD-008 | 2 | heading-order located advisory | `tests/go-live/presend-checks.journeys.ts:53` | asserted |
+| BUILD-008 | 2 | link-text located advisory | `tests/go-live/presend-checks.journeys.ts:54` | asserted |
+| BUILD-008 | 2 | spam-wording located advisory | `tests/go-live/presend-checks.journeys.ts:55` | asserted |
+| BUILD-008 | 2 | advisories are nonblocking | `tests/go-live/presend-checks.journeys.ts:47` | asserted |
+| BUILD-008 | 3 | 95 KB measured body | `tests/go-live/presend-checks.journeys.ts:42` | asserted |
+| BUILD-008 | 3 | size advisory names measured size and limit | `tests/go-live/presend-checks.journeys.ts:57` | asserted |
+| BUILD-008 | 3 | size advisory identifies the three largest blocks | `tests/go-live/presend-checks.journeys.ts:58` | asserted |
+| BUILD-008 | 4 | contrast remains a blocking finding | `tests/go-live/presend-checks.journeys.ts:60` | asserted |
+| BUILD-008 | 4 | failed approval creates no recipient steps | `tests/go-live/presend-checks.journeys.ts:70` | asserted |
+| BUILD-008 | 4 | corrected revision has no blocking findings | `tests/go-live/presend-checks.journeys.ts:77` | asserted |
+| BUILD-008 | 5 | over-limit HTML save reports the named oversized error | `tests/go-live/email-size.journeys.ts:61` | asserted |
+| BUILD-008 | 5 | oversize is measured above the byte limit | `tests/go-live/email-size.journeys.ts:63` | asserted |
+| DELIV-005 | 1 | delivered count by mailbox | `tests/go-live/mailbox-provider.journeys.ts:58` | asserted |
+| DELIV-005 | 1 | bounced count by mailbox | `tests/go-live/mailbox-provider.journeys.ts:58` | asserted |
+| DELIV-005 | 1 | complaint count by mailbox | `tests/go-live/mailbox-provider.journeys.ts:58` | asserted |
+| DELIV-005 | 1 | unique click count by mailbox | `tests/go-live/mailbox-provider.journeys.ts:58` | asserted |
+| DELIV-005 | 1 | total click count by mailbox | `tests/go-live/mailbox-provider.journeys.ts:58` | asserted |
+| DELIV-005 | 1 | browser table carries the same Gmail outcome counts | `tests/go-live/mailbox-provider.journeys.ts:71` | asserted |
+| DELIV-005 | 1 | Gmail provider attribution | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 1 | Outlook and Hotmail provider attribution | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 1 | Yahoo and AOL provider attribution | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 1 | Apple iCloud provider attribution | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 1 | Other provider attribution | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 2 | invalid-address bounce category | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 2 | mailbox-full bounce category | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 2 | policy-block bounce category | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 2 | reputation bounce category | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 2 | content bounce category | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 2 | other bounce category | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| DELIV-005 | 2 | reason totals reconcile to bounced count for every provider | `tests/go-live/mailbox-provider.journeys.ts:60` | asserted |
+| DELIV-005 | 2 | Gmail and Outlook signed bounce categories | `tests/go-live/mailbox-provider.journeys.ts:59` | asserted |
+| INT-002 | 1 | Owner Settings connection succeeds | `tests/go-live/woocommerce.journeys.ts:38` | asserted |
+| INT-002 | 1 | customer sync stored | `tests/go-live/woocommerce.journeys.ts:49` | asserted |
+| INT-002 | 1 | paginated product sync stored | `tests/go-live/woocommerce.journeys.ts:49` | asserted |
+| INT-002 | 1 | order sync stored | `tests/go-live/woocommerce.journeys.ts:49` | asserted |
+| INT-002 | 1 | refund sync stored | `tests/go-live/woocommerce.journeys.ts:49` | asserted |
+| INT-002 | 2 | replay retains complete source records | `tests/go-live/woocommerce.journeys.ts:64` | asserted |
+| INT-002 | 2 | one receipt after replay | `tests/go-live/woocommerce.journeys.ts:65` | asserted |
+| INT-002 | 2 | conflicting webhook content refuses | `tests/go-live/woocommerce.journeys.ts:68` | asserted |
+| INT-002 | 2 | forged provider signature refuses | `tests/go-live/woocommerce.journeys.ts:69` | asserted |
+| INT-002 | 2 | foreign store origin refuses | `tests/go-live/woocommerce.journeys.ts:70` | asserted |
+| INT-002 | 3 | exact activated revision and event exit once | `tests/go-live/woocommerce-plugin-journey.ts:36` | asserted |
+| INT-002 | 3 | one contact tag | `tests/go-live/woocommerce-plugin-journey.ts:37` | asserted |
+| INT-002 | 3 | one completion history row | `tests/go-live/woocommerce-plugin-journey.ts:38` | asserted |
+| INT-002 | 3 | draft does not enroll | `tests/go-live/woocommerce-plugin-journey.ts:22` | asserted |
+| INT-002 | 3 | stale event does not add enrollment | `tests/go-live/woocommerce-plugin-journey.ts:41` | asserted |
+| INT-002 | 3 | purchased contact does not add enrollment | `tests/go-live/woocommerce.journeys.ts:84` | asserted |
+| INT-002 | 3 | opted-out contact does not add enrollment | `tests/go-live/woocommerce.journeys.ts:94` | asserted |
+| INT-002 | 4 | default collection denied | `tests/go-live/woocommerce-plugin-journey.ts:58` | asserted |
+| INT-002 | 4 | explicit consent emits declared observations | `tests/go-live/woocommerce-plugin-journey.ts:61` | asserted |
+| INT-002 | 4 | GPC withdrawal recorded | `tests/go-live/woocommerce-plugin-journey.ts:65` | asserted |
+| INT-002 | 4 | observation sends no customer id or email | `tests/go-live/woocommerce-plugin-journey.ts:62` | asserted |
+| INT-002 | 4 | no cross-site observation throughout the plugin journey | none | none |
+| INT-002 | 4 | plugin event cannot widen existing Mango subscription evidence | `tests/go-live/woocommerce.journeys.ts:96` | asserted |
+| INT-002 | 5 | public signup remains pending before confirmation | `tests/audience-import/signup.spec.ts:8` | asserted |
+| INT-002 | 5 | affirmative confirmation subscribes | `tests/audience-import/signup.spec.ts:13` | asserted |
+| INT-002 | 5 | confirmation replay does not subscribe twice | `tests/audience-import/signup.spec.ts:12` | asserted |
+| INT-002 | 5 | expired confirmation remains pending | `tests/audience-import/signup.spec.ts:18` | asserted |
+| INT-007 | 1 | one identified contact retained across replay | `tests/go-live/sync-integrations.journeys.ts:55` | asserted |
+| INT-007 | 1 | updated custom contact property retained | `tests/go-live/sync-integrations.journeys.ts:56` | asserted |
+| INT-007 | 2 | concurrent client event replay returns one identity | `tests/go-live/custom-event-journey.ts:18` | asserted |
+| INT-007 | 2 | one stored custom event | `tests/go-live/custom-event-journey.ts:20` | asserted |
+| INT-007 | 2 | conflicting client event content refuses | `tests/go-live/custom-event-journey.ts:19` | asserted |
+| INT-007 | 3 | profile lists rule-derived membership | `tests/go-live/custom-event-journey.ts:23` | asserted |
+| INT-007 | 3 | membership client lists matching member state | `tests/go-live/custom-event-journey.ts:24` | asserted |
+| INT-007 | 4 | missing subscription evidence names the required error | `tests/go-live/sync-integrations.journeys.ts:65` | asserted |
+| INT-007 | 5 | key exhausts into 429 while allowed requests remain valid | `tests/go-live/custom-event-journey.ts:40` | asserted |
+| INT-007 | 5 | rate-limit refusal code and retry guidance | `tests/go-live/custom-event-journey.ts:41` | asserted |
+| INT-007 | 5 | other key remains usable | `tests/go-live/custom-event-journey.ts:43` | asserted |
+| INT-007 | 6 | custom-event write retains key attribution and occurrence time | `tests/go-live/custom-event-journey.ts:22` | asserted |
+| INT-007 | 6 | public description declares the event-write scope | `tests/go-live/custom-event-journey.ts:10` | asserted |
+| BUILD-008 | 4 | approval persists for the corrected and acknowledged revision | none | none |
+| INT-007 | 6 | contact create/update write retains its key attribution | none | none |
+| INT-007 | 6 | property write retains its key attribution | none | none |
+| INT-007 | 6 | consent/subscription write retains its key attribution | none | none |
+| INT-007 | 6 | public description covers all named contact and membership operations | none | none |

@@ -206,9 +206,16 @@
       ]
     },
     "CONT-018": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CONT-018"
+        "CONT-018",
+        "CONT-031",
+        "CONT-032",
+        "CONT-033",
+        "CONT-034",
+        "CONT-035",
+        "CONT-036",
+        "CONT-037"
       ]
     },
     "CONT-019": {
@@ -242,9 +249,12 @@
       ]
     },
     "CONT-024": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CONT-024"
+        "CONT-024",
+        "CONT-038",
+        "CONT-039",
+        "CONT-040"
       ]
     },
     "CONT-025": {
@@ -260,9 +270,12 @@
       ]
     },
     "CONT-027": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CONT-027"
+        "CONT-027",
+        "CONT-041",
+        "CONT-042",
+        "CONT-043"
       ]
     },
     "PROP-001": {
@@ -758,9 +771,12 @@
       ]
     },
     "FORM-008": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "FORM-008"
+        "FORM-008",
+        "FORM-011",
+        "FORM-012",
+        "FORM-013"
       ]
     },
     "FORM-009": {
@@ -866,9 +882,11 @@
       ]
     },
     "BUILD-010": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "BUILD-010"
+        "BUILD-010",
+        "BUILD-013",
+        "BUILD-014"
       ]
     },
     "BUILD-011": {
@@ -1118,9 +1136,11 @@
       ]
     },
     "DELIV-008": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "DELIV-008"
+        "DELIV-008",
+        "DELIV-009",
+        "DELIV-010"
       ]
     },
     "REPORT-001": {
@@ -1250,9 +1270,14 @@
       ]
     },
     "INT-015": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "INT-015"
+        "INT-015",
+        "INT-016",
+        "INT-017",
+        "INT-018",
+        "INT-019",
+        "INT-020"
       ]
     },
     "MOVE-001": {

@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "a24f31df154f5f3932d12296dde4c3344859f782e3a27ed1353c6fe386bef077",
+      "sha256": "68ad8820d7585d4d62d717b6a8f787489f4fe861ad21e5bbb0d3563605cde71e",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1014,7 +1014,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "508a5af0a6e2098d3618a18e6081a3d345a0f83715c1c95307d443943f3c7b1e",
+      "sha256": "a2afb06c5f450fe0cb9e689844b638893f9b934227692ba75b42d3778532454c",
       "executable": false
     },
     "CLAUDE.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "9a3b6d4cff60b7626acf054e9183c46fef5c7bc2d532fcbb89639576d6e00b24",
+      "sha256": "4ae71c361a87153f957df705674816721d1ca804f6aec3b5ca98b7e9b95378b2",
       "executable": false
     },
     "DEMO.md": {
@@ -1070,19 +1070,19 @@
       "executable": false
     },
     "docs/contract/COVERAGE.json": {
-      "sha256": "269145564d89843f5c4b08450205034ac068a0f32e1bf9f96dab917b2cd9b014",
+      "sha256": "81e1409e6b9c903728f90df6376e52b0793c5fb308311a4cdc4d4396966e84ea",
       "executable": false
     },
     "docs/contract/DONE-AUDIT.md": {
-      "sha256": "9f353ae519962fde9fbf7a9b24df1d9cec468f83430d5cf8b4b36cb12d45c32c",
+      "sha256": "bd04b4992a452c8b301ea826a6f24702f0905c8e9570224fd2c0e0243eec658f",
       "executable": false
     },
     "docs/contract/ID-MAP.json": {
-      "sha256": "86f93df388b71c24ccd637f00155ddc39f1155b307cd8c070c8f2b4762a206c2",
+      "sha256": "7c171afb12745079cefbe71c6c07298deecac36e9c86f85b21d95e968124b09c",
       "executable": false
     },
     "docs/contract/mechanism.md": {
-      "sha256": "6df493a4f5123db3f1cfe1e83f5881eeac497fb725cddbbb9c56981133d900f3",
+      "sha256": "7ecbdd84e13e54b8b14913b99a6ff5f04192bc2413edced8322046eb297b244e",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1126,11 +1126,15 @@
       "executable": false
     },
     "docs/site.json": {
-      "sha256": "f1a2ee77be4c15b455b947454974d79cbae9d95839d1e578ad41b09bdf5fa83c",
+      "sha256": "6e7e2d07d9267ffc0b71854ceec714ce5d34a07d849927920acb4314e07e90c5",
       "executable": false
     },
     "docs/team-and-settings.md": {
       "sha256": "33305e5da346db86f73e5c778b6eaf6bb82cd962c0761bd44ce45ab31ae29d6f",
+      "executable": false
+    },
+    "docs/verify.md": {
+      "sha256": "cbd7e2b069dcada5ffd6ec946541c2d6d51fc583762fd23c19b23e6927d7f416",
       "executable": false
     },
     "drizzle.config.ts": {
@@ -1762,7 +1766,7 @@
       "executable": false
     },
     "RULINGS.md": {
-      "sha256": "5d0c25325f8c57f6e807c7820ff16aee6fd701d733aaa86df81d5390bcbd37fe",
+      "sha256": "72f006020e51e4e69d349b3cf5f00bac8c8ba213ded5222156af6ecf90e27278",
       "executable": false
     },
     "RUN-LOCALLY.md": {

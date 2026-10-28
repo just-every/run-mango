@@ -10,6 +10,22 @@ The installed root is Base’s shared Lobby: Finish setup until the sender ident
 
 - **CONT-005/009 concurrency:** Public eligibility, contact/profile changes, consent evidence, capture IP, history and pending status commit in one guarded D1 transaction. A destination barred by current consent, suppression or identity guards at that transaction causes no new consent writes. Under the approved CONT-027 rule, a surviving erasure hash with an unsubscribe or erasure reason may recreate an unsubscribed profile holding only new request evidence and send its confirmation email within the shared UTC-day allowance; only the person's own affirmative POST can subscribe it, with no history restored. A surviving suppression hash permits neither consent nor confirmation mail. Confirmation message preparation completes before a database-authoritative handoff check, and the adapter is invoked immediately after that check. Suppression, an opt-out later than the request evidence or confirmation committed before the check prevents handoff. A provider handoff already authorized and concurrently in progress cannot be recalled by a later database transition.
 
+### RL-81 — Generated mobile email presentation
+
+The responsive block is generated from a closed vocabulary, never merged with authored text. Its absence loses no content. Mobile and desktop hiding are applied only by their generated rules; style-stripping clients show the content and preview names that fallback. The generated block is bounded and adds no author-controlled selector or remote load.
+
+### RL-82 — Owner-authorized sending connection
+
+Before provider creation, Settings discloses the account, webhook destination, event list, signing and unchanged settings. The Owner’s Connect action authorizes that exact connection. Signing is required or Mango removes its new webhook; ownership is by stored provider identifier, and restricted permissions and overbroad keys are named. Company policy determines the classes of an agent’s equivalent action.
+
+### RL-83 — WooCommerce plugin semantic
+
+Ct approved the INT-002 semantic on 22 October 2026 at 20:20Z: store-admin enablement is off initially; only signed-in store customers; explicit analytics and marketing consent before the one Secure HttpOnly SameSite=Lax first-party cookie, expiring after 30 days; GPC records no observation and revokes pending eligibility; no cross-site tracking or subscription-consent widening; WordPress observations expire after 30 days. The allowlisted signup iframe uses Mango’s own confirmation. A saved tag-and-exit flow revision must be explicitly activated; it sends no marketing message. CONT-018 and FORM-008 retain their other acceptance obligations and statuses; FLOW clauses retain their graph/message obligations.
+
+### RL-84 — Chosen catalog unavailable and deleted states
+
+Ct’s 25 October 2026 23:46Z ruling retains deleted selections visibly, distinguishes unpublished and out-of-stock selections and includes them in the save bound. A catalog-unavailable save refusal names the current product and directs publication or removal, retains unsaved edits and remeasures after publication. An unavailable hand-off skips the recipient-step and never sends stale values.
+
 ### RL-101 — CONT-025: Opt-in mode per form and source
 
 **Date:** 2026-10-28  
