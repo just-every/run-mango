@@ -9238,7 +9238,7 @@
       "executable": false
     },
     "tests/newsletter-ui/representative-pages.journeys.ts": {
-      "sha256": "655659589c85f60f8b4b4a21b5f4df7897367c450fea8acc7328e88e41aaa9b9",
+      "sha256": "796dd899ecefd3568e917fc08eada79ec02c303a7607e919b6c12d4961436a70",
       "executable": false
     },
     "tests/newsletter-ui/review-layout-support.ts": {

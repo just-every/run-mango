@@ -68,7 +68,7 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
     await expectDocumentToFit(page, 390);
     await expectNoSeriousAxeViolations(page, route);
     await test.info().attach(route === '/' ? 'lobby-390' : route.replaceAll('/', '-'), { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
-    if (route === '/docs/install') {
+    if (route === '/docs/getting-started') {
       const contents = page.getByRole('navigation', { name: 'Documentation' }).locator('summary').filter({ visible: true });
       await contents.focus();
       await contents.press('Enter');
