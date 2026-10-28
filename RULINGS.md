@@ -30,7 +30,7 @@ The owner decision “Tighten the style rules” replaces modeled arbitrary layo
 
 **Date:** 2026-10-13  
 **Ruled by:** owner (owner-approved current-release policy)  
-**Governs:** MSG-009, MSG-012, MSG-016, CAMP-003
+**Governs:** MSG-009, MSG-012, MSG-016, CAMP-003, CAMP-022
 
 Approval, test send, delivery, preview, plain text and editor HTML mode read one parsed structure. New saves canonicalize the body; earlier approvals retain their exact bytes except the specifically refused parser-ambiguity families, and every old draft canonicalizes on its next save. Normalization does not repair a hiding declaration. The original source text, named compatibility cases, security consequences and dependency record are retained in docs/contract/mechanism.md. No status changes follow from this ruling.
 
