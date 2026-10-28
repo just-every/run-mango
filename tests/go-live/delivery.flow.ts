@@ -89,6 +89,36 @@ export const walk1 = async()=>{
     const index=emissions.findIndex((e:any)=>e.command.kind==='campaign.dispatch'&&e.command.payload.revisionId===campaign.revisionId);
     await site.control('/_golive/replay',{index});await site.control('/_golive/cron');
     expect(edge.sends.filter(s=>s.to===email&&s.body.headers?.['List-Unsubscribe'])).toEqual([]);
+    // Erasure during a queued handoff invalidates the approved revision and
+    // removes its destination before a consumer may reach the provider.
+    const erasedEmail='erase-before-handoff@example.test';
+    await confirmedContact(site,edge,cookie,erasedEmail,'Erasure reader');
+    const erasedContact=(await site.rows(`SELECT id FROM contacts WHERE email='${erasedEmail}'`))[0];
+    const erasureTime=new Date(Date.now()+12000);
+    const doomed=await draftCampaign(site,cookie,'Erase pending delivery',[erasedEmail],erasureTime);
+    await approve(site,cookie,doomed);
+    const [doomedRecipient]=await site.rows(`SELECT id FROM recipient_steps WHERE revision_id='${doomed.revisionId}'`);
+    await barrier(site,'handoff',doomedRecipient.id);
+    await due(erasureTime);await site.control('/_golive/cron');await waiting(site);
+    const removal=await site.call(`/api/contacts/${erasedContact.id}`,{method:'DELETE',cookie});
+    expect(removal.status).toBe(202);
+    let {receipt}=await removal.json();
+    // The consumer must observe the erasure generation before its asynchronous
+    // receipt can finish; release its transport boundary after admission.
+    await release(site);
+    while(receipt.state==='pending') {
+      const resumed=await site.call(`/api/audience/erasures/${receipt.reference}/resume`,{method:'POST',cookie});
+      expect([200,202]).toContain(resumed.status);({receipt}=await resumed.json());
+    }
+    expect(receipt.state).toBe('complete');
+    const pending=await site.control('/_golive/emissions');
+    const pendingIndex=pending.findIndex((entry:any)=>entry.command.kind==='campaign.dispatch'&&entry.command.payload.revisionId===doomed.revisionId);
+    expect(pendingIndex).toBeGreaterThanOrEqual(0);
+    await site.control('/_golive/replay',{index:pendingIndex});
+    expect(await site.rows(`SELECT destination,outbound_request_json,provider_message_id FROM recipient_steps WHERE id='${doomedRecipient.id}'`)).toEqual([{destination:'',outbound_request_json:null,provider_message_id:null}]);
+    expect((await site.rows(`SELECT state FROM campaign_revisions WHERE id='${doomed.revisionId}'`))[0].state).toBe('erasure-invalidated');
+    expect((await site.call(`/api/campaigns/${doomed.campaignId}/approve`,{method:'POST',cookie,body:{revisionId:doomed.revisionId,idempotencyKey:'erasure-cannot-reapprove'}})).status).toBe(409);
+    expect(edge.sends.filter(send=>send.to===erasedEmail&&send.body.headers?.['List-Unsubscribe'])).toEqual([]);
     expect(edge.unexpected).toEqual([]);
   } finally {await release(site).catch(()=>{});await site.runtime.close();await edge.close();}
 };

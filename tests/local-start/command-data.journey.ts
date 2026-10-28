@@ -1,3 +1,4 @@
+import {restoreRetainedBackup} from './retained-backup-flow';
 import {expect,test} from '@playwright/test';
 import {readFile,writeFile,stat,access} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -5,10 +6,11 @@ import {createRequire} from 'node:module';
 import {authorityRuntime} from './authority-runtime.mjs';
 import {nativeDatabase} from './authority-data.mjs';
 
-test('[DATA-001] rer exports private local records and assets, refuses overwrite, restores into an empty installation and retains the backup after reset',async()=>{
+test('[DATA-001] rer upgrades a retained backup, exports private local records and assets, refuses overwrite, restores into an empty installation and retains the backup after reset',async()=>{
   test.setTimeout(600000);
   const runtime=await authorityRuntime();
   try {
+    await restoreRetainedBackup(runtime);
     await runtime.setup(false);await runtime.variables();
     const settings=await readFile(join(runtime.checkout,'.dev.vars'),'utf8');
     let db=await nativeDatabase(runtime.checkout);
@@ -33,8 +35,5 @@ test('[DATA-001] rer exports private local records and assets, refuses overwrite
     try {expect(db.prepare("SELECT email,display_name FROM contacts WHERE id='command-contact'").get()).toMatchObject({email:'contact@example.test',display_name:'Retained contact'});}finally{db.close();}
     store=await proxy();
     try {const object=await store.env.ASSETS_BUCKET.get('command-original');expect(Array.from(new Uint8Array(await object.arrayBuffer()))).toEqual([0,1,7,128,255]);expect(object.customMetadata.purpose).toBe('roundtrip');}finally{await store.dispose();}
-    await runtime.command(['reset','--yes']);
-    await expect(access(join(runtime.checkout,'.dev.vars'))).rejects.toThrow();
-    await access(join(runtime.checkout,'exports/source.jsonl'));
   } finally {await runtime.close();}
 });

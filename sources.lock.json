@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "11e584a30016a202859d1bb547d908f2c8e545079503e961cadae9ffe9b755cd",
+      "sha256": "1db32b9ed365e1cf18d65746f928a6342f42f34f30985185fc380127468eb7bf",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8237,6 +8237,14 @@
       "sha256": "11676b25e05cd94d1b3595fccf46355b8d0e3d380dfed78fb84a485316ffe180",
       "executable": false
     },
+    "tests/audience-controls/contact-profile-flow.ts": {
+      "sha256": "e876e1e9b5ac588a28114f1cfb32d76174a6551df74b2424be29a7919252d66a",
+      "executable": false
+    },
+    "tests/audience-controls/history-worker.ts": {
+      "sha256": "3939fa1ac2d5b32f6ec87865b5cd4f0f736db8a2d435ef0acaa8b886b892fe70",
+      "executable": false
+    },
     "tests/audience-controls/merge.flow.ts": {
       "sha256": "18d8f5695144ed0f79778edb467c426e2114ecfd102aac57c73392e3637afc21",
       "executable": false
@@ -8262,7 +8270,7 @@
       "executable": false
     },
     "tests/audience-controls/segments.spec.ts": {
-      "sha256": "94912e58a24bf66a559f31a9681dc8b6526ba397e900aa125d18de005b78073b",
+      "sha256": "959131f45e6ef13cbe845a1bafcf97c6c6837eb1a4a41fc7a0388f7496f2d754",
       "executable": false
     },
     "tests/audience-import/config.js": {
@@ -8686,11 +8694,11 @@
       "executable": false
     },
     "tests/go-live/delivery.flow.ts": {
-      "sha256": "b677aaa7e0643cbc8a6a3c6281a44480a4b6a09ed930f61d0a370f88dfb8a536",
+      "sha256": "2f706542c7621bd0fa858e37caa12237cc16c32f1e5187e516af2532fb7aba10",
       "executable": false
     },
     "tests/go-live/delivery.journeys.ts": {
-      "sha256": "41d75f2c1c3f2e5e33b658e6ca6ebf131899e50d0eef212b4482a4047396dab2",
+      "sha256": "f119e7a6eb7e9ca5efedc8d10ce6f782383d9889d7d4ca6cecb50b77afcef62e",
       "executable": false
     },
     "tests/go-live/domain-journey.ts": {
@@ -9018,7 +9026,7 @@
       "executable": false
     },
     "tests/local-start/command-data.journey.ts": {
-      "sha256": "152f870e9dae20ea71e5e09de0bcc75fd888e13ae62df463de6238654e90b884",
+      "sha256": "39af65e7b6eea29a8d5b9b802ee33e3b519416cb54a03fbefffd65aaa3592c9a",
       "executable": false
     },
     "tests/local-start/config.js": {
@@ -9051,6 +9059,10 @@
     },
     "tests/local-start/retained-archive.journey.ts": {
       "sha256": "b4791d77630dc7c0906eee9bb42d6a1648a890898c1688ab6bed57f849187d2f",
+      "executable": false
+    },
+    "tests/local-start/retained-backup-flow.ts": {
+      "sha256": "3467e029d105989336889efe3dbf5986ef6e828429ff27a5b2e19191fbca49f6",
       "executable": false
     },
     "tests/move-in/archive.flow.ts": {
