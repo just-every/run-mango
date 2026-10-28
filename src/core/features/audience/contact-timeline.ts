@@ -77,12 +77,13 @@ export async function readContactTimeline(db:D1Database, contactId:string, detai
       UNION SELECT revision_id FROM recipient_steps WHERE contact_id IN (SELECT id FROM identities)
     ), related_campaigns(id) AS (SELECT campaign_id FROM campaign_revisions WHERE id IN (SELECT id FROM revisions))
       SELECT 'action:'||a.id id, 'operator-action' kind,
-        a.action||' · '||COALESCE(o.display_name,a.actor_id) detail,
+        a.action||' · '||COALESCE(json_extract(a.detail_json,'$.preparedBy.label'),g.name||' for '||g.sponsor_name,o.display_name,a.actor_id) detail,
         CASE WHEN a.actor_type='operator' THEN 'Operator' ELSE a.actor_type END source,
         a.occurred_at occurredAt,
         CASE WHEN a.entity_type='campaign' THEN a.entity_id
           WHEN a.entity_type='campaign-revision' THEN (SELECT campaign_id FROM campaign_revisions WHERE id=a.entity_id) END campaignId
       FROM lifecycle_audit_entries a LEFT JOIN oa_operators o ON o.id=a.actor_id AND a.actor_type='operator'
+      LEFT JOIN agent_door_agents g ON a.actor_type='agent' AND g.id=a.actor_id
       WHERE (a.entity_type='contact' AND a.entity_id IN (SELECT id FROM identities))
         OR (a.entity_type='campaign' AND a.entity_id IN (SELECT id FROM related_campaigns))
         OR (a.entity_type='campaign-revision' AND a.entity_id IN (SELECT id FROM revisions))
