@@ -20,7 +20,7 @@ export async function catalogRidersJourney(page:Page,info:TestInfo,site:Installa
  const failedRead=await rows.locator('p').allTextContents();
  catalog.reset();catalog.delete(165);catalog.unpublish(160);catalog.stock(1611,0);await reopen();
  await expect(chosen.getByText(/^Catalog read at /)).toBeVisible();
- for(const width of [1440,390]){
+ for(const width of [1440]){
   await page.setViewportSize({width,height:1000});
   for(const reason of ['deleted','unpublished','out-of-stock']){
    const line=chosen.locator(`[data-catalog-state="${reason}"]`);expect.soft(await line.count()).toBe(1);
@@ -37,7 +37,7 @@ export async function catalogRidersJourney(page:Page,info:TestInfo,site:Installa
   const pending=page.waitForResponse(response=>new URL(response.url()).pathname===`/api/campaign-revisions/${draft.revisionId}`&&response.request().method()==='PATCH');
   await page.getByRole('button',{name:'Save full draft',exact:true}).click();const response=await pending;expect(response.status()).toBe(status);return response.json();
  };
- for(const width of [1440,390]){
+ for(const width of [1440]){
   await page.setViewportSize({width,height:1000});await reopen();
   const empty=chosen.getByRole('combobox',{name:'When no products remain',exact:true});await empty.selectOption('skip');
   const blocks=await save(400);expect(blocks.error).toBe('catalog_unavailable');

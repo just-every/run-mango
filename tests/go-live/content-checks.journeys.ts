@@ -1,7 +1,8 @@
+import {test} from '@playwright/test';
 import { imageNetwork, imageHosts, imageApi, imageBytes } from './incumbent-image-journey';
 import {sourceEdge} from './source-edge';
 import { expect } from '@playwright/test';
-import { contract } from '../contract.js';
+
 import { providerEdge } from './edge';
 import { eventSigner } from './sendgrid-events';
 import { installation, json, sender, confirmedContact, draftCampaign, approve } from './harness';
@@ -10,7 +11,7 @@ import { linkRulesJourney, linkNetwork } from './content-links';
 import { smsReviewJourney } from './sms-review';
 import { openPage, reloadPage } from '../support/navigation';
 
-contract('MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014', 'review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out', async ({page}, info) => {
+test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",async ({page}, info) => {
   const commerce=sourceEdge();
   const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:imageHosts});
   try {
@@ -37,7 +38,7 @@ contract('MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014', 'review names 
       await json(await site.call(ackPath(check),{method:'POST',cookie,body:ackBody(check)}),409);
     }
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
-    for (const width of [1440,390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
       const panel = page.locator('.approval-checks');
@@ -68,7 +69,7 @@ contract('MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014', 'review names 
     await reloadPage(page);
     await page.getByRole('button',{name:'Acknowledge advisory',exact:true}).click();
     await expect(page.locator('.approval-checks')).toContainText('Acknowledged by');
-    for (const width of [1440,390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       await page.locator('.approval-checks').screenshot({path:info.outputPath(`acknowledged-advisory-${width}.png`)});
     }

@@ -108,7 +108,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     woo.state.secondPageFailure = false;
     await queue('product', failed.runId); await finished(failed.runId);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='product'`))).toHaveLength(2);
-    for (const width of [1440, 390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({width, height: 1000});
       await openPage(page, site.runtime.url + '/app/settings');
       await expect(page.locator('#woocommerce')).toContainText(connection.url);

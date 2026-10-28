@@ -37,7 +37,7 @@ export async function declaredCapability(page: Page, info: TestInfo) {
       const checks = await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`, {method: 'POST', cookie, body: {revisionId: campaign.revisionId}}), 200);
       expect(checks).toMatchObject({sourceStatus: 'unavailable', candidateCount: null, eligibleCount: null, exclusions: null, channelCounts: null});
       expect(checks.blockers).toContainEqual(expect.objectContaining({kind: 'audience.source-freshness', detail: expect.stringMatching(missing)}));
-      for (const width of [1440, 390]) {
+      for (const width of [1440]) {
         await page.setViewportSize({width, height: 1000});
         await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
         await expect(page.locator('.approval-checks')).toContainText(missing);

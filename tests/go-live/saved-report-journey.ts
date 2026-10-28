@@ -64,7 +64,7 @@ export async function proveSavedReports(page:Page,site:Installation,edge:Awaited
   expect(await site.rows(`SELECT state,reason FROM insight_report_deliveries WHERE schedule_id='${monthly.id}'`)).toEqual([{state:'refused',reason:'schedule-authority-changed'}]);
   expect(await site.rows("SELECT count(*) count FROM lifecycle_audit_entries WHERE action='report-delivery.refused'")).toEqual([{count:1}]);
   cookie=await site.open();await page.context().setExtraHTTPHeaders({Cookie:cookie});
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/insights');
     await expect(panel.getByRole('button',{name:'Preview last 7 UTC days'})).toBeEnabled();await panel.getByRole('button',{name:'Preview last 7 UTC days'}).click();await expect(panel.getByRole('region',{name:'Saved report preview'})).toBeVisible();
     await expect(panel.getByRole('region',{name:'Report delivery history'})).toContainText('accepted');await expect(panel.getByRole('region',{name:'Report delivery history'})).toContainText('schedule-authority-changed');

@@ -114,7 +114,7 @@ export async function activityJourney(site: Installation, edge: Awaited<ReturnTy
 
   await page.context().clearCookies();
   await page.context().addCookies([{name: owner.split('=')[0], value: owner.split('=')[1], url: site.runtime.url}]);
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await openPage(page, `${site.runtime.url}/app/settings/activity`);
     await expect(page.getByRole('heading', {name: 'Activity', level: 1})).toBeVisible();

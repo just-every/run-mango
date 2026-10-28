@@ -101,7 +101,7 @@ Core · published · **partial** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
 4. Reading or inspecting the confirmation link has no effect; only its affirmative submission supplies proof.
 5. Only the operator established at setup may remove that operator.
 
-**Evidence.** `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/service.ts`
+**Evidence.** `tests/go-live/go-live.journeys.ts` · `src/core/features/auth/service.ts`
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Settings can invite an operator and remove an operator.; A session without fresh email proof cannot grant another operator access.; Settings can request a confirmation link bound to the current session; completing it permits an invitation retry.; Reading or inspecting the confirmation link has no effect; only its affirmative submission supplies proof.; Only the operator established at setup may remove that operator.. Missing public-door journey: “Management — complete acceptance”, covering the unasserted outcomes above.
 
 #### OPER-003 — Removal does not rewrite history
@@ -177,7 +177,7 @@ Core · published · **done** · Cites BASE-OPS-004 · Rules D-1
 4. The Store view shows generation and webhook failures at desktop and phone widths.
 5. Webhook failure responses remain retryable under their provider’s protocol.
 
-**Evidence.** `tests/go-live/source-freshness.journeys.ts` — “[STORE-003] [STORE-004] Decision Desk retains each completed sync through a later failed page and recovery” · `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/stripe-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/shopify/connection.spec.ts` · `tests/go-live/stale-sources.journeys.ts`
+**Evidence.** `tests/go-live/source-freshness.journeys.ts` — “[STORE-003] [STORE-004] Decision Desk retains each completed sync through a later failed page and recovery” · `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/stripe-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/shopify/connection.spec.ts` · `tests/go-live/source-freshness.journeys.ts`
 **Gap.** None.
 
 #### STORE-005 — Stale sources block approval
@@ -192,7 +192,7 @@ Core · published · **done** · Rules D-1
 3. At desktop and phone widths the review labels stale data and prevents approval.
 4. After a completed sync and explicit recheck, the same saved revision can pass its ordinary approval checks.
 
-**Evidence.** `tests/go-live/stale-sources.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions” · `src/core/features/lifecycle/evaluate-approval.ts`
+**Evidence.** `tests/go-live/source-freshness.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions” · `src/core/features/lifecycle/evaluate-approval.ts`
 **Gap.** None.
 
 #### STORE-006 — Declared adapter capability
@@ -207,7 +207,7 @@ Core · published · **partial** · Rules D-1
 3. Inclusion and exclusion reviews name the missing source, keep counts unknown and save no approval authority, snapshot or recipients.
 4. The AI proposal-generation door names the missing source and saves neither campaign nor partial audience.
 
-**Evidence.** `tests/go-live/stale-sources.journeys.ts` · `src/core/features/audience/source-coverage.ts` · `src/core/features/campaigns/authoring-service.ts`
+**Evidence.** `tests/go-live/source-freshness.journeys.ts` · `src/core/features/audience/source-coverage.ts` · `src/core/features/campaigns/authoring-service.ts`
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Source capability declared unavailable; Unsupported requirement refused; Reviews name missing source and leave no snapshots; Generation source refusal without campaign or audience. Assertions for the unsupported-source journey are in tests/go-live/declared-capability.ts outside the old Evidence set. Missing public-door journey: “Declared adapter capability — complete acceptance”, covering the unasserted outcomes above.
 
 #### STORE-007 — Ingestion latency
@@ -265,7 +265,7 @@ Core · published · **partial** · Rules D-2
 4. A reassigned phone or one no longer belonging to the recipient becomes non-subscribed until fresh evidence is captured.
 5. A stale or missing rendered disclosure cannot create consent evidence.
 
-**Evidence.** `tests/audience-import/signup.spec.ts` — “CONT-003 a stale or missing rendered disclosure cannot capture changed sender consent”; “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP” · `tests/campaign-authoring/import-category.spec.ts` — “[CONT-003][CONT-010][CAMP-004] imported category choices match the saved draft and explain approval mismatches”
+**Evidence.** `tests/audience-import/signup.spec.ts` — “CONT-003 a stale or missing rendered disclosure cannot capture changed sender consent”; “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP” · `tests/campaign-authoring/browser.spec.ts` — “[CONT-003][CONT-010][CAMP-004] imported category choices match the saved draft and explain approval mismatches”
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Recipient scope maintained; Missing evidence creates a non-subscribed contact, except for the incumbent-held evidence CONT-024 defines.; A reassigned phone or one no longer belonging to the recipient becomes non-subscribed until fresh evidence is captured.; Retained channel on capture and import; Retained brand or legal sender on capture and import; Retained SMS sender or program on capture and import; Retained message subject or category on capture and import; Retained frequency disclosure on capture and import; Retained destination jurisdiction on capture and import; Retained consent text on capture and import; Retained consent version on capture and import; Retained confirmation evidence on capture and import. Missing public-door journey: “Consent evidence — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-004 — Opt-out precedence
@@ -279,7 +279,7 @@ Core · published · **partial** · Rules D-2
 2. Imports, syncs, store events, merges and operator edits never reverse the opt-out.
 3. During a parallel run, incumbent opt-outs and suppressions apply the same precedence, and Mango writes its own restrictions back to the incumbent.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/provider-suppression-ingress.spec.ts` — “[CONT-004][CONT-013] erasure removes signed unmatched SMS facts with canonical and historical formatted destinations” · `tests/move-in/held.journeys.ts` — “[CONT-004][CONT-010] undoing a CSV unsubscribe or cleaned list, or an archive, never lifts an opt-out” · `tests/go-live/sync-integrations.journeys.ts`
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/go-live/delivery.journeys.ts` — “[CONT-004][CONT-013] erasure removes signed unmatched SMS facts with canonical and historical formatted destinations” · `tests/move-in/held.journeys.ts` — “[CONT-004][CONT-010] undoing a CSV unsubscribe or cleaned list, or an archive, never lifts an opt-out” · `tests/go-live/sync-integrations.journeys.ts`
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Sync, store events, merge and operator edits retain the restriction; Parallel-run incumbent writeback. Missing public-door journey: “Opt-out precedence — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-005 — Resubscription
@@ -294,7 +294,7 @@ Core · published · **partial** · Rules D-2
 3. A suppression cause must be resolved before that channel becomes subscribed.
 4. During parallel run, a confirmed resubscribe writes subscribed state back where the incumbent API allows; otherwise the cutover report lists it.
 
-**Evidence.** `tests/provider-suppression-ingress.spec.ts` — “[CONT-006][CONT-005][CONT-013] suppression preceding contact creation blocks fresh capture and erasure removes raw unmatched ingress” · `tests/go-live/opt-out-reasons.journeys.ts`
+**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CONT-006][CONT-005][CONT-013] suppression preceding contact creation blocks fresh capture and erasure removes raw unmatched ingress” · `tests/go-live/opt-out-reasons.journeys.ts`
 **Gap.** Fresh-recipient consent and suppression resolution remain the required resubscription route. Unasserted in the cited evidence: confirmation later than the opt-out, refusal of an operator-only resubscription, and parallel-run subscribed-state writeback or its named fallback. Public-form and guarded-capture proof belongs to CONT-027 and CONT-028. Missing public-door journey: “Resubscription — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-006 — Email suppression
@@ -311,7 +311,7 @@ Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001 · Rules D
 5. Refreshing local authentication/setup credentials preserves existing contact-hash restrictions, including restrictions without a remaining contact row.
 6. Legacy local authority conversion preserves the original verified contact authority before credential rotation; unknown or missing authority refuses work rather than selecting an unused secret.
 
-**Evidence.** `tests/provider-suppression-ingress.spec.ts` — “[CONT-006][SEND-006] signed unmatched destination suppression is durable before acknowledgement and replay creates no delivery” · `tests/go-live/go-live.journeys.ts` — “[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts replayed through the public webhook keep delivery truth separate” · `tests/go-live/sync-integrations.journeys.ts`
+**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CONT-006][SEND-006] signed unmatched destination suppression is durable before acknowledgement and replay creates no delivery” · `tests/go-live/go-live.journeys.ts` — “[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts replayed through the public webhook keep delivery truth separate” · `tests/go-live/sync-integrations.journeys.ts`
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Soft-bounce recorded and visible; Consecutive soft-bounce policy suppresses; Confirmed delivery resets consecutive soft-bounce count; Incomplete provider webhook setup blocks approval; Refreshing local authentication/setup credentials preserves existing contact-hash restrictions, including restrictions without a remaining contact row.; Legacy local authority conversion preserves the original verified contact authority before credential rotation; unknown or missing authority refuses work rather than selecting an unused secret.. Soft-bounce progression and reset assertions are in tests/go-live/opt-out-reasons.journeys.ts outside the old Evidence set. Missing public-door journey: “Email suppression — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-007 — SMS compliance replies
@@ -340,7 +340,7 @@ Core · published · **partial** · Rules D-2
 3. Older events remain reachable at desktop and phone widths.
 4. Unrelated contacts and private source, provider and audit payloads remain absent.
 
-**Evidence.** `tests/audience-controls/contact-history.spec.ts` — “[CONT-008] [CONT-017] a contact profile combines identities, properties, segments and original source, consent, suppression, eligibility, delivery and operator facts with masked role views”
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[CONT-008] [CONT-017] a contact profile combines identities, properties, segments and original source, consent, suppression, eligibility, delivery and operator facts with masked role views”
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every other event retains its source. Missing public-door journey: “Contact history — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-009 — Confirmation
@@ -374,7 +374,7 @@ Core · published · **partial** · From CONT-005, CONT-009 · Rules D-2
 4. Confirmation preparation finishes before the authoritative handoff check; suppression, a later opt-out or an already committed confirmation prevents handoff when present at that check.
 5. The adapter is invoked immediately after the authoritative check; a provider handoff already authorized and in progress cannot be recalled by a later transition.
 
-**Evidence.** `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts`
+**Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/opt-out-reasons.journeys.ts`
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Public eligibility, profile changes, consent evidence, capture metadata, history and pending status commit together, or a currently barred destination gains none of the new consent records.; A surviving unsubscribe or erasure restriction may recreate an unsubscribed profile containing only new post-opt-out request evidence, without restoring history; confirmation mail stays within CONT-027’s shared allowance.; Surviving suppression blocks fresh capture eligibility; Confirmation preparation finishes before the authoritative handoff check; suppression, a later opt-out or an already committed confirmation prevents handoff when present at that check.; The adapter is invoked immediately after the authoritative check; a provider handoff already authorized and in progress cannot be recalled by a later transition.. Missing public-door journey: “Guarded consent capture — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-010 — Import
@@ -405,7 +405,7 @@ Core · published · **partial** · Rules D-2
 2. For each channel, suppression wins over unsubscribe, non-subscription, pending and subscription, in that order.
 3. A merge never resubscribes a restricted channel.
 
-**Evidence.** `tests/audience-controls/merge.spec.ts` — “CONT-011 CONT-004 CONT-009 AUD-005 merge preserves restrictions, links and immutable recipients through authenticated public routes”
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “CONT-011 CONT-004 CONT-009 AUD-005 merge preserves restrictions, links and immutable recipients through authenticated public routes”
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every channel preserves the restrictive order. Missing public-door journey: “Merge — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-012 — Dormancy without deletion
@@ -421,7 +421,7 @@ Core · published · **partial** · Cites BASE-DATA-002 · Rules D-2
 4. An otherwise dormant contact with only imported opens inside the window is labeled open-only.
 5. Inactivity never unsubscribes or suppresses a contact; clearing a dormant list is an operator action.
 
-**Evidence.** `tests/move-in/archive.journeys.ts` — “[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immutable dispatch policy without changing consent” · `tests/go-live/stale-sources.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions”
+**Evidence.** `tests/move-in/archive.journeys.ts` — “[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immutable dispatch policy without changing consent” · `tests/go-live/source-freshness.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions”
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Imported order and consent changes retain original times for dormancy. Missing public-door journey: “Dormancy without deletion — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-013 — Erasure and surviving opt-out
@@ -437,7 +437,7 @@ Core · published · **partial** · Cites BASE-DATA-003, BASE-INPUT-001 · Rules
 4. An import, sync or capture matching a retained local or portable identity preserves its restriction; an erasure opt-out means unsubscribed.
 5. Only the recipient’s own confirmed public-form resubscribe can clear an unsubscribe or erasure restriction under CONT-027; it cannot clear suppression.
 
-**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/audience-import/erasure-merge.spec.ts`
+**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/move-in/archive.journeys.ts`
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: All listed hash/channel/reason/time fields and opted-out aliases retained; Installation-keyed one-way destination hash; Subscribed identity has no row tombstone; An import, sync or capture matching a retained local or portable identity preserves its restriction; an erasure opt-out means unsubscribed.; Only the recipient’s own confirmed public-form resubscribe can clear an unsubscribe or erasure restriction under CONT-027; it cannot clear suppression.. Missing public-door journey: “Erasure and surviving opt-out — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-029 — Portable surviving restrictions
@@ -453,7 +453,7 @@ Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-D
 4. Documentation explains that a mapping or export holder can test guessed destinations or an address dictionary without the installation secret and can match stable hashes across installations and exports.
 5. The retained mappings and exports are handled as sensitive personal data.
 
-**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/audience-import/erasure-merge.spec.ts`
+**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/move-in/archive.journeys.ts`
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Local-to-portable mapping retained specifically; Audience CSV exports carry surviving restrictions by their portable hash after erasure.; Documentation explains that a mapping or export holder can test guessed destinations or an address dictionary without the installation secret and can match stable hashes across installations and exports.; The retained mappings and exports are handled as sensitive personal data.. Missing public-door journey: “Portable surviving restrictions — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-030 — Erasure-safe restore authority
@@ -468,7 +468,7 @@ Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-D
 3. Upgrade retires legacy journals and transfers only after advancing every known source floor.
 4. An offline copy without current authority makes no claim to detect later erasure.
 
-**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/audience-import/erasure-merge.spec.ts`
+**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/move-in/archive.journeys.ts`
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Nonempty legacy row journals are refused before staging.; Upgrade retires legacy journals and transfers only after advancing every known source floor.; An offline copy without current authority makes no claim to detect later erasure.. Missing public-door journey: “Erasure-safe restore authority — complete acceptance”, covering the unasserted outcomes above.
 
 ### Proposals
@@ -567,7 +567,7 @@ Core · published · **partial** · Cites BASE-OPS-004 · Rules D-1
 2. A configured AI provider that does not complete within 60 seconds fails the proposal with its provider error.
 3. Failure creates no semantic substitute and leaves existing proposals and campaigns unaffected.
 
-**Evidence.** `tests/proposals-decision/proposal-states.spec.ts` — “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft”
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft”
 **Gap.** Asserted: Provider error recorded; No substitute campaign. Unasserted: Invalid AI output fails proposal; 60-second timeout fails with provider error; Existing proposals preserved; Existing campaigns preserved. Missing public-door journey: “Generation failure — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-008 — Forecast provenance
@@ -595,7 +595,7 @@ Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1
 2. Only a proposed proposal can be approved or dismissed.
 3. Each transition records its actor and time once.
 
-**Evidence.** `tests/proposals-decision/proposal-states.spec.ts` — “[PROP-009] authenticated decisions record actor/time once and all request paths fence expiry and competing decisions”; “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft”
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-009] authenticated decisions record actor/time once and all request paths fence expiry and competing decisions”; “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft”
 **Gap.** Asserted: Approved state with linked campaign; Dismissed state; Dismissal reason read back; Expired state; Failed state; Dismissed or expired proposal refuses approval; Approved proposal refuses dismissal; Actor; Single transition under competing decisions. Unasserted: Proposed state; Time. Missing public-door journey: “Proposal states — complete acceptance”, covering the unasserted outcomes above.
 
 ### Audiences
@@ -637,7 +637,7 @@ Core · published · **done** · Rules D-2
 2. The default excludes a contact for seven days after buying that campaign’s product, while its refund or return is unresolved, and while dormant under CONT-012’s twelve-month window.
 3. Resolved commerce and eleven-month activity remain eligible; thirteen-month activity is dormant.
 
-**Evidence.** `tests/go-live/stale-sources.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions”
+**Evidence.** `tests/go-live/source-freshness.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions”
 **Gap.** None.
 
 #### AUD-004 — Frequency protection
@@ -664,7 +664,7 @@ Core · published · **partial** · Rules D-2
 2. A purchase, refund, opt-out, bounce, complaint, consent change, merge or frequency-window change after approval prevents that delivery and records its exclusion reason.
 3. Every audience source still satisfies STORE-005; a failed refresh or stale source pauses its affected channel before any further hand-off, and only a successful refresh permits resumption.
 
-**Evidence.** `tests/audience-controls/merge.spec.ts` — “CONT-011 CONT-004 CONT-009 AUD-005 merge preserves restrictions, links and immutable recipients through authenticated public routes” · `tests/go-live/delivery.journeys.ts` — “[SEND-004] a signed restriction committed while dispatch waits at its real D1 fence prevents the provider request”
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “CONT-011 CONT-004 CONT-009 AUD-005 merge preserves restrictions, links and immutable recipients through authenticated public routes” · `tests/go-live/delivery.journeys.ts` — “[SEND-004] a signed restriction committed while dispatch waits at its real D1 fence prevents the provider request”
 **Gap.** Asserted: Immediate hand-off eligibility recheck; Complaint after approval prevents hand-off; Merge after approval prevents hand-off; Merge skip reason is recorded. Unasserted: Dispatch-start eligibility recheck; Purchase after approval prevents hand-off; Purchase skip reason is recorded; Refund after approval prevents hand-off; Refund skip reason is recorded; Opt-out after approval prevents hand-off; Opt-out skip reason is recorded; Bounce after approval prevents hand-off; Bounce skip reason is recorded; Complaint skip reason is recorded; Consent change after approval prevents hand-off; Consent change skip reason is recorded; Frequency-window change after approval prevents hand-off; Frequency-window change skip reason is recorded; Source freshness holds at hand-off; Failed refresh pauses channel before more hand-offs; Stale source pauses channel before more hand-offs; Only successful refresh resumes. Missing public-door journey: “Dispatch recheck — complete acceptance”, covering the unasserted outcomes above.
 
 #### AUD-006 — Multi-step exit
@@ -1182,7 +1182,7 @@ Core · published · **partial**
 1. Each email carries the configured business display name, From address, reply-to address and physical postal address.
 2. Each SMS uses a sender registered for the recipient's country.
 
-**Evidence.** `src/core/features/settings/sender-validation.ts` · `tests/settings-sender/routes.spec.ts`
+**Evidence.** `src/core/features/settings/sender-validation.ts` · `tests/go-live/go-live.journeys.ts`
 **Gap.** acceptance not yet met: Email identity is proved; per-country registered SMS senders await SMS-001 and SMS-002.
 
 #### MSG-002 — Email authentication
@@ -1198,7 +1198,7 @@ Core · published · **partial**
 4. Scheduling is refused when the visible From domain does not align with an authenticated domain.
 5. A message whose domain passes all four checks can be scheduled.
 
-**Evidence.** `tests/sender-verification/worker.spec.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]”
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]”
 **Gap.** Old evidence asserts Passing sender schedules. Unasserted: Scheduling is refused when the sending domain does not pass SPF.; Scheduling is refused when the sending domain does not pass DKIM.; Scheduling is refused when the sending domain does not pass DMARC.; Scheduling is refused when the visible From domain does not align with an authenticated domain.. Missing public-door journey: “Email authentication — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-003 — Email unsubscribe
@@ -1215,7 +1215,7 @@ Core · published · **partial** · Cites BASE-ACCESS-003, BASE-OPS-003
 5. Neither channel requires a session or cookie.
 6. A token reveals no contact other than its own.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/sender-verification/worker.spec.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]”
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/go-live/go-live.journeys.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]”
 **Gap.** Old evidence asserts Visible link; One-click declaration; Opt-out ledger is changed before success; Context-free one-click body; Scanner and prefetch do not unsubscribe. Unasserted: Opaque HTTPS mail-client URL; DKIM covers both headers; No redirect; Visible confirmation action alone opts out; A token changes only its contact. Missing public-door journey: “Email unsubscribe — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-004 — SMS permission
@@ -1581,7 +1581,7 @@ Core · published · **partial**
 3. UTC-day totals reconcile those facts, keeping currencies and unknown reported prices distinct.
 4. A design purchase records one purchased-candidate unit and a converted layout records one layout unit, each once for its deduplication identity; a timed-out purchase counts only after the provider shows it occurred.
 
-**Evidence.** `tests/campaign-results/costs.journeys.ts` — “[RESULT-004][REPORT-007] Settings consent counts, currency-separated projection and rejected AI spend, distinct handoffs and replayed purchases retain truthful campaign and UTC-day totals”
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[RESULT-004][REPORT-007] Settings consent counts, currency-separated projection and rejected AI spend, distinct handoffs and replayed purchases retain truthful campaign and UTC-day totals”
 **Gap.** Old evidence asserts AI billable units; Provider units, currency and cost; Campaign totals; UTC day boundary; Day/currency/unknown-price groups. Unasserted: Model or channel on each fact; Timed-out purchase proven before counting; Layout unit once. Missing public-door journey: “Cost — complete acceptance”, covering the unasserted outcomes above.
 
 #### RESULT-005 — Link tracking
@@ -1833,7 +1833,7 @@ Core · target · **partial** · Cites BASE-ROLE-001 · Rules D-2
 3. A contact who submits a form, places an order, enters a flow and clicks a message shows the profile facts in order at 1440 and 390.
 4. Analyst and Support see the contact-specific masked profile at both widths.
 
-**Evidence.** `tests/audience-controls/contact-history.spec.ts`
+**Evidence.** `tests/audience-controls/segments.spec.ts`
 **Gap.** Identities, channel/topic evidence, properties, segment membership, original-time events and masked Analyst/Support views are exercised. Apply the recorded routing of enrollment/current-node display to FLOW-002 and predictions to SEG-004; independent topic withdrawal remains CONT-015/016. No unavailable panel establishes completion.
 
 #### CONT-018 — Onsite behavior
@@ -2158,7 +2158,7 @@ Core · target · **partial** · Rules D-2
 5. A single-mode form also keeps an earlier unsubscriber unconfirmed until this recipient action.
 6. History shows the request, email and confirmation or expiry; form and source-growth reports count resubscriptions separately.
 
-**Evidence.** `tests/go-live/resubscribe.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
+**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
 **Gap.** Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked.
 
 #### CONT-041 — Destination-private resubscription refusals
@@ -2175,7 +2175,7 @@ Core · target · **partial** · From CONT-027 · Cites BASE-ACCESS-003 · Rules
 5. Neither a fresh signup nor a previously issued confirmation bypasses suppression or releases an incentive.
 6. An SMS opt-out requires new express-written permission and the confirming reply under CONT-019.
 
-**Evidence.** `tests/go-live/resubscribe.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
+**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
 **Gap.** Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked.
 
 #### CONT-042 — Shared destination confirmation allowance
@@ -2190,7 +2190,7 @@ Core · target · **partial** · From CONT-027 · Rules D-2
 3. An uncertain or failed confirmation hand-off is not retried automatically under the unchanged signup delivery rule.
 4. The cross-carrier journey reads the exact email count before and after exhaustion and next-day reset.
 
-**Evidence.** `tests/go-live/resubscribe.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
+**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
 **Gap.** Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked.
 
 #### CONT-043 — Resubscription after erasure
@@ -2206,7 +2206,7 @@ Core · target · **missing** · From CONT-027 · Rules D-2
 4. If no confirmation arrives before expiry, the recreated contact and request are removed and the surviving opt-out is unchanged.
 5. The erased-contact journey reads both the newly subscribed empty-history profile and expired-request cleanup.
 
-**Evidence.** `tests/go-live/resubscribe.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
+**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
 **Gap.** Hosted/kiosk confirmed resubscription is exercised. Erasure reason preservation, supersession and expired recreated-contact cleanup remain unbuilt/unproved; ambiguous legacy erasure-only restrictions remain refused.
 
 ### Target: Audiences
@@ -2285,7 +2285,7 @@ Core · target · **partial** · Cites BASE-OPS-005 · Rules D-1, D-3
 2. Resume continues remaining recipient-steps with AUD-005 rechecks and CAMP-010 deadlines; a two-step mid-dispatch pause sends nothing while paused and hands off each eligible recipient-step once after resumption.
 3. Pause and resume each record their actor.
 
-**Evidence.** `tests/go-live/pause.journeys.ts` — “[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at 1440”
+**Evidence.** `tests/go-live/multistep.journeys.ts` — “[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at 1440”
 **Gap.** The 1440 pause/resume journey asserts fencing of new hand-offs within 30 seconds, retained handed-off dispositions, resumption of remaining recipients with current consent and deadlines, once-only eligible steps, and pause/resume actor history. Missing public-door journey: “Pause and resume — complete acceptance at 390”, including the same pause/resume flow and retained outcomes in a phone browser. No 390 execution is recorded in the old evidence.
 
 #### CAMP-015 — Marketing calendar
@@ -2314,7 +2314,7 @@ Core · target · **partial** · Rules D-1, D-3
 2. A follow-up at 48 hours targets exactly the original non-clickers less current review exclusions.
 3. The new campaign passes its own approval and frequency checks.
 
-**Evidence.** `tests/campaign-results/followup.journeys.ts` — “[CAMP-016] non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at 1440” · `tests/portability.spec.ts`
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-016] non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at 1440” · `tests/portability.spec.ts`
 **Gap.** Asserted: Linked follow-up and selected delay; New subject; Non-opener estimate label; 48-hour non-clicker candidates; Current exclusions including frequency; Independent approval; Independent frequency check. Unasserted: Exact non-clicker recipient identities after current exclusions. Missing public-door journey: “Follow-up to non-engaged recipients — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-017 — Recurring and RSS-to-email campaigns
@@ -2695,7 +2695,7 @@ Core · target · **partial** · Cites BASE-OPS-004, BASE-AUDIT-001 · Rules D-2
 5. Each hour with refusals has one activity summary with counts by form and reason and no addresses.
 6. The over-limit and fourth-destination journeys read the appropriate response and report, Home and activity counts for both cases.
 
-**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/signup-refusal-screens.ts` · `tests/audience-import/signup-security.spec.ts` · `tests/audience-import/signup-reservation-clock.spec.ts` · `tests/go-live/resubscribe.journeys.ts` · `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/activity-log.ts`
+**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/signup-refusal-screens.ts` · `tests/audience-import/signup-security.spec.ts` · `tests/audience-import/signup-reservation-clock.spec.ts` · `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/activity-log.ts`
 **Gap.** Hosted/kiosk errors, retained entries, generic destination acknowledgment, Home and activity are exercised. FORM-005’s per-form report remains required and unbuilt under RL-104; Settings counts do not replace it. Other growth carriers remain open.
 
 ### Segments and predictions
@@ -2810,7 +2810,7 @@ Core · target · **partial** · Cites BASE-INPUT-002, BASE-INPUT-003, BASE-ACCE
 4. The builder shows sent size throughout composition.
 5. Every listed block and setting supports drag, keyboard, duplicate, delete, undo and redo without losing grammar-valid content in an HTML-view round trip.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/full-promotional-email-journey.ts`
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/full-promotional-email-journey.ts`
 **Gap.** The editor offers text, image, button, 1–4 columns, spacer, divider, header, footer, product, a six-item manual product grid and a closed-list social links block, with existing per-block and mobile settings through the MSG-009/012 grammar. Gap: video thumbnail, cart items, coupon and restricted HTML blocks remain unbuilt; exhaustive public-door coverage of every block/settings combination and the complete builder acceptance remain unproved.
 
 #### BUILD-002 — Template library
@@ -2846,7 +2846,7 @@ Core · target · **partial** · Cites BASE-AGENT-007 · Rules D-1
 **Acceptance.**
 1. editing a reusable footer updates two drafts and creates a new draft revision of one live flow message, while the live revision keeps sending the old footer until activation.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/reusable-block-journey.ts` · `tests/portability.spec.ts`
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/reusable-block-journey.ts` · `tests/portability.spec.ts`
 **Gap.** Gap: live flow revisions and activation (FLOW-008 unbuilt) and template-library sync beyond BUILD-002's copy rule.
 
 #### BUILD-005 — Conditional content
@@ -2930,7 +2930,7 @@ Core · target · **partial** · Cites BASE-INPUT-002 · Rules D-1
 3. Removing stylesheet support still stacks phone-width columns without losing content.
 4. Preview names the mobile settings that depend on stylesheet support.
 
-**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
+**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
 **Gap.** Per-block mobile controls are available. Preview names the style-dependent hide, font-size, line-height, padding and alignment choices. Remaining: nested and horizontal orientation and the complete responsive editor acceptance are unbuilt or unproved.
 
 #### BUILD-013 — Mobile and desktop message checks
@@ -2944,7 +2944,7 @@ Core · target · **partial** · From BUILD-010 · Cites BASE-INPUT-002 · Rules
 2. Unsubscribe, postal address and compliance text cannot be hidden.
 3. Every other hidden block is visible and checked at the other width and retained in plain text.
 
-**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
+**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
 **Gap.** Per-block responsive choices save and Preview names their style dependence. Remaining: nested and horizontal orientation and complete responsive generation through the editor are unbuilt or unproved.
 
 #### BUILD-014 — Generated mobile presentation
@@ -2960,7 +2960,7 @@ Core · target · **partial** · From BUILD-010 · Cites BASE-INPUT-002 · Rules
 4. The generated block is placed in the document head and refuses an over-limit configuration with measured size.
 5. Generated selectors and declarations introduce no remote load or author-controlled tracking channel.
 
-**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
+**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
 **Gap.** Generated and authored presentation checks and style-dependent Preview are delivered for the existing block controls. Remaining: complete editor acceptance, including nested and horizontal orientation, is unbuilt or unproved.
 
 #### BUILD-011 — Chosen catalog products
@@ -2993,7 +2993,7 @@ Core · target · **partial** · Rules D-1
 5. Every listed reuse and generation door applies the same bound, including the configured maximum dynamic or selected products and audience-derived personalization.
 6. Approval, test send and hand-off remeasure; a later expansion over the limit sends nothing for that recipient and is counted on campaign or flow detail.
 
-**Evidence.** `tests/go-live/email-size.journeys.ts` · `tests/go-live/email-size-imports.ts` · `tests/go-live/email-size-reuse.ts` · `tests/campaign-authoring/create-api.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/email-size-adoption.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/reusable-size-journey.ts` · `tests/campaign-authoring/audience-size-journey.ts` · `tests/campaign-authoring/full-promotional-email-journey.ts` · `tests/local-start/signin-hydration.journey.ts` · `tests/campaign-authoring/chosen-size-journey.ts` · `tests/go-live/chosen-catalog-edge.ts` · `tests/campaign-authoring/catalog-riders-journey.ts`
+**Evidence.** `tests/go-live/email-size.journeys.ts` · `tests/go-live/email-size-imports.ts` · `tests/go-live/email-size-reuse.ts` · `tests/campaign-authoring/create-api.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/email-size-adoption.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/reusable-size-journey.ts` · `tests/campaign-authoring/audience-size-journey.ts` · `tests/campaign-authoring/full-promotional-email-journey.ts` · `tests/local-start/signin-hydration.journey.ts` · `tests/campaign-authoring/chosen-size-journey.ts` · `tests/go-live/chosen-catalog-edge.ts` · `tests/campaign-authoring/catalog-riders-journey.ts`
 **Gap.** Today's draft/create, store-signal starter, template save/replace/start, duplication, replacement-schedule copy, follow-up, imported-history copy and proposal-adoption doors use measured sent-size refusals with the limit and largest available HTML sections, comparing fallback and expanded saved-name renderings. Browser edits, selected design files and saved source snapshots survive refusal at 1440 and 390. Oversized archive template conversions are held with their measured diagnostic and original archive custody; the import continues, reconciliation distinguishes held conversions from created library templates, and undo removes unchanged held copies. In-limit content saves, reopens, approves and reaches the provider edge within its bound; a later oversized hand-off skips with email-too-large. Saved rule and exclusion membership now bounds displayName through the shared audience evaluator; approval measures its frozen email candidates. Separate raw and escaped maxima stay in D1. Only displayName currently supplies recipient values; other valid keys render their authored fallback. An unresolved new follow-up cohort retains the conservative deployment-wide bound until its membership authority exists. Size advisories retain saved audience and analytics context and recheck the eligible email identities used by approval. Gap: configured dynamic product maxima (BUILD-006), flow messages (FLOW-008), and the Mailchimp `base_boxed_3column_query.html` blueprint acceptance through MOVE-011 remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision. Existing LayerDoc application shares the design-import compiler; no real design or proposal generation/provider acceptance is claimed.
 
 ### Automated flows
@@ -3542,7 +3542,7 @@ Core · target · **partial** · Cites BASE-MAIL-001, BASE-OPS-003
 4. A changed DNS signing record raises the same card immediately and holds the next message; a deadline passed during the lapse records its skip cause.
 5. With an authenticated receipt-connector fixture, day-23 renewal requires no click.
 
-**Evidence.** `tests/sender-verification/worker.spec.ts` · `tests/go-live/managed-mail.journeys.ts`
+**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/go-live/managed-mail.journeys.ts`
 **Gap.** Home renewal status and reminder/diagnostic preparation are delivered. Renewal failures are named by readiness checks. Remaining: lifecycle approval and hand-off enforcement, deadline skips and ordered resumption; the dispatch hooks are not installed. Live welcome-flow wait/resume history also requires FLOW-*.
 
 #### DELIV-008 — Sending connection an owner makes in Settings
@@ -3558,7 +3558,7 @@ Core · target · **partial** · Cites BASE-SECRET-001, BASE-ROLE-001 · Registe
 4. A SendGrid key missing webhook permissions and a sending-only Resend key are each named and create no webhook; broader SendGrid permission is labelled with the restricted list.
 5. Admin, Manager and Author cannot connect, replace or disconnect.
 
-**Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
+**Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/segments.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
 **Gap.** Settings connections for SendGrid and Resend are exercised at the provider and mail edges; Settings labels the active configuration route and the developer route. Remaining: a fresh installation without deployment mail inputs, Free sign-in through the connection, replacement after an unknown hand-off, full developer-route authority coverage, read-only developer operation without a Settings connection, domain creation through this connection (DELIV-002), and provider sandbox proof.
 
 #### DELIV-009 — Sending-connection watch and replacement
@@ -3575,7 +3575,7 @@ Core · target · **partial** · From DELIV-008 · Cites BASE-SECRET-001, BASE-M
 5. Every connect, replace and disconnect records the actor, time and provider in OPER-007’s activity.
 6. Settings shows which configuration route applies, reads the developer route only without a Settings connection and applies equivalent event checks.
 
-**Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
+**Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/segments.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
 **Gap.** Request-driven connection health detects revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners and Admins; unknown hand-offs are not replayed. Remaining: silent delivery-event detection, scheduled daily read-back, replacement after an unknown hand-off, full developer-route authority checks and provider sandbox proof. The related fresh-install, Free sign-in and domain-creation journeys remain open under DELIV-008 and DELIV-002.
 
 #### DELIV-010 — Signed delivery-event connection
@@ -3593,7 +3593,7 @@ Core · target · **partial** · From DELIV-008 · Cites BASE-SECRET-001, BASE-O
 6. No free webhook slot leaves the provider unchanged and shows its limit plus the forwarding route.
 7. Settings shows each permission, domain, DNS, webhook, signing, first-event and sender-check step with its state and fix; Home shows failed steps and reports distinguish unconnected events from zero outcomes.
 
-**Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
+**Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/segments.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
 **Gap.** SendGrid and Resend event connections are exercised at synthetic provider and mail edges. Remaining: silent delivery-event detection, scheduled daily connection read-back, replacement after an unknown hand-off, full developer-route authority coverage and provider sandbox proof. Fresh-install and Free sign-in journeys, read-only developer operation without a Settings connection and domain creation remain open under DELIV-008 and DELIV-002.
 
 ### Reporting and attribution
@@ -3670,7 +3670,7 @@ Core · target · **partial**
 5. The source reconciliation includes the dedicated forms, landing pages and kiosks of FORM-002, FORM-004 and FORM-009 and the full CONT-027 resubscription journey.
 
 **Evidence.** `tests/go-live/list-growth.journeys.ts` · `src/core/features/insights/list-growth.ts` · `migrations/core/0074_list_growth_retained_history.sql`
-**Gap.** Insights reconciles opening/net/closing subscribed membership by UTC day and separates captures/confirmations, opt-outs, suppression and removal, retaining source/version disclosures and anonymous counts after erasure. Real hosted and embedded form capture/confirmation journeys reconcile. Upgrade recovers retained pre-baseline consent captures/confirmations, explicitly labeled with zero inferred membership change; imported dates do not invent earlier local growth. Unavailable pre-baseline membership history is outside the amended history requirement; kiosk capture and confirmation are exercised by tests/go-live/shared-kiosk.journeys.ts. Hosted/kiosk public resubscribe confirmation and separate growth counts are exercised by tests/go-live/resubscribe.journeys.ts. Remaining: dedicated popup/landing-page attribution (FORM-002/004) and the full CONT-027 incentive/topic/flow and erasure-expiry acceptance.
+**Gap.** Insights reconciles opening/net/closing subscribed membership by UTC day and separates captures/confirmations, opt-outs, suppression and removal, retaining source/version disclosures and anonymous counts after erasure. Real hosted and embedded form capture/confirmation journeys reconcile. Upgrade recovers retained pre-baseline consent captures/confirmations, explicitly labeled with zero inferred membership change; imported dates do not invent earlier local growth. Unavailable pre-baseline membership history is outside the amended history requirement; kiosk capture and confirmation are exercised by tests/go-live/shared-kiosk.journeys.ts. Hosted/kiosk public resubscribe confirmation and separate growth counts are exercised by tests/go-live/shared-kiosk.journeys.ts. Remaining: dedicated popup/landing-page attribution (FORM-002/004) and the full CONT-027 incentive/topic/flow and erasure-expiry acceptance.
 
 #### REPORT-006 — Scheduled and custom reports
 
@@ -3682,7 +3682,7 @@ Core · target · **partial** · Cites BASE-MAIL-001
 1. Any report can be scheduled weekly or monthly by email or Slack to chosen operators, with no contact identities.
 2. A weekly report reaches the mail provider once at its scheduled time with the same figures as the saved report.
 
-**Evidence.** `tests/go-live/managed-mail.journeys.ts` · `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/saved-report-metric-journey.ts` · `tests/sender-verification/worker.spec.ts`
+**Evidence.** `tests/go-live/managed-mail.journeys.ts` · `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/saved-report-metric-journey.ts` · `tests/go-live/go-live.journeys.ts`
 **Gap.** Email scheduling covers saved provider cost/units and campaign click/conversion/USD attribution reports, plus built-in cost and engagement reports; sends and delivery refusals are durable and audited. Remaining: Slack delivery, every other report family and dimension, and Activity records for authorization/input refusals.
 
 #### REPORT-007 — Usage and cost transparency
@@ -3697,7 +3697,7 @@ Core · target · **partial**
 3. Campaign and day totals reconcile with RESULT-004 provider facts; a flow shows its own costs.
 4. The projected month uses the disclosed priced month-to-date UTC run rate, keeps each reported currency separate without conversion and counts unpriced facts rather than treating them as zero.
 
-**Evidence.** `tests/campaign-results/costs.journeys.ts`
+**Evidence.** `tests/campaign-results/results.journeys.ts`
 **Gap.** Provider cost facts, separately reported currencies and unpriced-fact counts are available. Remaining: flow cost grouping and its report proof depend on flows.
 
 ### Integrations
@@ -3882,7 +3882,7 @@ Core · target · **partial**
 **Acceptance.**
 1. a review-submitted fixture exits the contact from the review-request flow as converted.
 
-**Evidence.** `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/review-loyalty-journey.ts` · `tests/sender-verification/worker.spec.ts`
+**Evidence.** `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/review-loyalty-journey.ts` · `tests/go-live/go-live.journeys.ts`
 **Gap.** Smile exposes customer profile and balance observations; earned-points and tier-transition observations are not inferred. Yotpo remains disabled pending a verified signing protocol. Remaining: live provider payload confirmation and review-request flow conversion/exit through FLOW-*.
 
 #### INT-015 — Shopify connection a merchant installs
@@ -4145,7 +4145,7 @@ Core · target · **partial** · Rules D-2
 4. Imported clicks count for CONT-012 and AUD-008 dormancy; imported opens remain estimates and never count as engagement.
 5. Importing facts creates no Mango send facts, results or attribution and changes no consent; existing populated campaign results remain identical.
 
-**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”; “[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immutable dispatch policy without changing consent” · `tests/move-in/hostile.journeys.ts` · `tests/portability.spec.ts`
+**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”; “[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immutable dispatch policy without changing consent” · `tests/move-in/held.journeys.ts` · `tests/portability.spec.ts`
 **Gap.** Historical contact/time/campaign/link facts, imported/dropped reconciliation, dormancy distinctions and populated native result preservation are asserted. The cited evidence does not compare consent state and consent-evidence rows before and after the initial historical-event import; its after-import status snapshot cannot prove that import changes no consent. Missing public-door journey: “Incumbent engagement history — complete acceptance”, covering the unasserted outcomes above.
 
 #### MOVE-010 — Several audiences

@@ -1,0 +1,49 @@
+const width = 1440;
+import { expect } from '@playwright/test';
+import {test,contract,runtime} from './runtime-fixture';
+import {localSessionCookieName} from '../support/local-session';
+import {openPage} from '../support/navigation';
+
+
+export const walk0 = async({page,request,browser})=>{
+  const headers={'X-Test-Token':runtime.token};
+  const seeded=await (await request.post(`${runtime.url}/_results/archive`,{headers})).json();
+  const {token}=await (await request.post(`${runtime.url}/_results/open`,{headers})).json();
+  await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:token,domain:'127.0.0.1',path:'/'}]);
+  await page.setViewportSize({width,height:900});
+  const anonymous=await browser.newContext({viewport:{width,height:900}});
+  try {
+    const publicPage=await anonymous.newPage();
+    expect((await anonymous.request.post(`${runtime.url}/api/campaigns/orchard-letter/publications`,{data:{revisionId:'orchard-letter-revision'}})).status()).toBe(401);
+    expect((await page.request.post(`${runtime.url}/api/campaigns/orchard-letter/publications`,{headers:{Origin:'https://foreign.example.test'},data:{revisionId:'orchard-letter-revision'}})).status()).toBe(403);
+    for(const id of ['unsent-letter','empty-letter'])expect((await page.request.post(`${runtime.url}/api/campaigns/${id}/publications`,{data:{revisionId:`${id}-revision`}})).status()).toBe(409);
+    const confirmed=await page.request.post(`${runtime.url}/api/campaigns/confirmed-letter/publications`,{data:{revisionId:'confirmed-letter-revision'}});expect(confirmed.status()).toBe(201);
+    await page.request.delete(`${runtime.url}/api/campaigns/confirmed-letter/publications/${(await confirmed.json()).id}`);
+    await openPage(page,`${runtime.url}/app/campaigns/orchard-letter/scheduled`);
+    await page.getByRole('button',{name:'Publish web version',exact:true}).click();
+    const link=page.getByRole('link',{name:'Read public newsletter',exact:true});await expect(link).toBeVisible();
+    const path=(await link.getAttribute('href'))!;
+    const again=await page.request.post(`${runtime.url}/api/campaigns/orchard-letter/publications`,{data:{revisionId:'orchard-letter-revision'}});expect(again.status()).toBe(201);expect(path).toBe(`/archive/${(await again.json()).id}`);
+    const source=await (await page.request.get(`${runtime.url}/api/campaigns/orchard-letter`)).json();expect(source.revision.emailBody).toBe(seeded.body);
+    const publications=await (await page.request.get(`${runtime.url}/api/campaigns/orchard-letter/publications`)).json();expect(publications.publications).toHaveLength(1);
+    await page.locator('#publication-title').scrollIntoViewIfNeeded();await page.screenshot({path:test.info().outputPath(`publication-${width}.png`)});
+    const response=await anonymous.request.get(`${runtime.url}${path}`);expect(response.status()).toBe(200);const html=await response.text();expect(response.headers()['set-cookie']).toBeUndefined();expect(html).toContain('og:title');
+    for(const privateValue of ['Private fallback','Private subject','private-click-token','private-pixel','unsubscribe_url','physical_address','first_name','utm_source'])expect(html).not.toContain(privateValue);
+    await openPage(publicPage,`${runtime.url}/archive`);await expect(publicPage.getByRole('heading',{name:'Newsletter archive',exact:true})).toBeVisible();
+    await publicPage.getByRole('link',{name:'Harvest notes for Reader',exact:true}).click();
+    await expect(publicPage.getByRole('heading',{level:1,name:'Harvest notes for Reader',exact:true})).toBeVisible();
+    await expect(publicPage.getByText('Hello Reader,',{exact:true})).toBeVisible();
+    await expect(publicPage.getByRole('link',{name:'Explore this week’s harvest'})).toHaveAttribute('href','https://shop.example.test/harvest');
+    await expect(publicPage.getByRole('link',{name:'Private tracking destination'})).toHaveCount(0);
+    expect(await publicPage.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+    await publicPage.waitForLoadState('networkidle');await publicPage.evaluate(()=>document.fonts.ready);
+    await publicPage.screenshot({path:test.info().outputPath(`issue-${width}.png`),fullPage:true});
+    await openPage(publicPage,`${runtime.url}/archive`);await publicPage.screenshot({path:test.info().outputPath(`archive-${width}.png`),fullPage:true});
+    const feed=await anonymous.request.get(`${runtime.url}/archive/feed.xml`);expect(feed.status()).toBe(200);expect(feed.headers()['content-type']).toContain('application/rss+xml');expect(await feed.text()).toContain(path);
+    await page.getByRole('button',{name:'Unpublish',exact:true}).click();await expect(link).toHaveCount(0);
+    expect((await anonymous.request.get(`${runtime.url}${path}`)).status()).toBe(404);
+    expect(await (await anonymous.request.get(`${runtime.url}/archive/feed.xml`)).text()).not.toContain(path);
+    await openPage(publicPage,`${runtime.url}/archive`);await expect(publicPage.getByText('No newsletters have been published yet.')).toBeVisible();
+    await publicPage.waitForLoadState('networkidle');await publicPage.screenshot({path:test.info().outputPath(`archive-empty-${width}.png`),fullPage:true});
+  }finally{await anonymous.close();}
+};

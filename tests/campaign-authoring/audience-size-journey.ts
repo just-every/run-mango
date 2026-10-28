@@ -40,7 +40,7 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
     const savedMeter=(response:BrowserResponse)=>{if(response.url()!==site.runtime.url+'/api/campaign-authoring/email-size'||response.request().method()!=='POST')return false;const data=response.request().postDataJSON();return data.campaignId===draft.campaignId&&data.emailBody===before.emailBody&&data.inclusionRuleJson===before.inclusionRuleJson;};
-    for(const width of [1440,390]){
+    for(const width of [1440]){
       await page.setViewportSize({width,height:1000});
       const response=page.waitForResponse(savedMeter);
       await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);

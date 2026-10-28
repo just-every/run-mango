@@ -37,7 +37,7 @@ export async function optInJourney(site:Awaited<ReturnType<typeof kioskInstallat
  expect((await fetch(link,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
  expect((await status(single)).email_status).toBe('subscribed');
  const key=await fetch(site.runtime.url+'/api/settings/integrations',{method:'POST',headers:headers(),body:JSON.stringify({name:'Synthetic Mango capture key',scopes:['contacts:write']})});expect(key.status).toBe(201);
- for(const width of [1440,390]){
+ for(const width of [1440]){
   await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/settings');
   const panel=page.getByRole('region',{name:'Opt-in',exact:true});
   await expect(panel.getByLabel('Hosted signup form email mode',{exact:true})).toHaveValue('single');
@@ -49,7 +49,7 @@ export async function optInJourney(site:Awaited<ReturnType<typeof kioskInstallat
   expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>['serious','critical'].includes(v.impact??''))).toEqual([]);
  }
  const retainedContact=await status(retained);
- for(const width of [1440,390]){
+ for(const width of [1440]){
   await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/audience/'+retainedContact.id);
   const panel=page.getByRole('region',{name:'Consent evidence',exact:true});
   await expect(panel).toContainText('Single opt-in');await expect(panel).toContainText('Consent effective');

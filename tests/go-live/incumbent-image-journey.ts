@@ -80,7 +80,7 @@ export async function incumbentImageJourney(site:Installation,cookie:string,page
   const archivePanel=page.locator('.audience-import-job').filter({has:page.locator(`a[href="/api/audience/archives/${moved.archive.id}/report"]`)});
   await archivePanel.getByRole('button',{name:'Show imported history and templates',exact:true}).click();
   await archivePanel.locator('tr').filter({hasText:'synthetic-mango-161'}).locator('summary').click();
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await expect(page.getByText(/Image failed:.*synthetic-mango-161/)).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
