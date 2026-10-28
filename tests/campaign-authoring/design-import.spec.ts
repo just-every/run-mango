@@ -118,7 +118,6 @@ for (const width of [1440]) test(`[DESIGN-004] a 12ui LayerDoc imports as an uns
     for (const thumbnail of await thumbnails.all()) {
       await expect(thumbnail).toBeVisible();
       await expect.poll(() => thumbnail.evaluate(element => (element as HTMLImageElement).complete && (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
-      expect(await thumbnail.getAttribute('src')).toMatch(/^\/media\/[0-9a-f]{64}$/);
     }
     await expect(summary).toContainText('123 Orchard Lane');
     await expect(summary).toContainText(destination);

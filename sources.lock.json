@@ -2022,7 +2022,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "46f3e51fedf358af9ab0345714ca6f963855c6a0983c44c990fadaf47adc6104",
+      "sha256": "11e584a30016a202859d1bb547d908f2c8e545079503e961cadae9ffe9b755cd",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -7458,7 +7458,7 @@
       "executable": false
     },
     "tests/campaign-authoring/audience-size-journey.ts": {
-      "sha256": "c37dc80f4ea7e37ce2763376397d7996d8feed3882c4da46c616f82ad04c851f",
+      "sha256": "70206b91d1359d69a46c7fb7e1ff4af5f74135f2130cd04169be734826b8c889",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
@@ -7474,7 +7474,7 @@
       "executable": false
     },
     "tests/campaign-authoring/catalog-riders-journey.ts": {
-      "sha256": "22ef923859a1b316e343d82becff058d9c40e0eec2ec63a8e56d9727059c2e28",
+      "sha256": "8808c9d3ca9fadc61db812ff1f147f6fa29b25f3f603b2f83368d3eb33e24baf",
       "executable": false
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {
@@ -7494,7 +7494,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
-      "sha256": "c9436bb5d1e7901b84415c32863a91c9a689125093a77137bff315e5803df664",
+      "sha256": "dc0a0e3ae56ebdf45f8ab0d8edee61d006e6085b3ff0f055be55c393ec19a265",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
@@ -7798,7 +7798,7 @@
       "executable": false
     },
     "tests/go-live/delivery.flow.ts": {
-      "sha256": "201939c1480bb3b5902fef2ee1c9db161c014f4431404080a78c3500ae85b1b6",
+      "sha256": "b677aaa7e0643cbc8a6a3c6281a44480a4b6a09ed930f61d0a370f88dfb8a536",
       "executable": false
     },
     "tests/go-live/delivery.journeys.ts": {
@@ -7891,6 +7891,10 @@
     },
     "tests/go-live/open-estimates.journeys.ts": {
       "sha256": "7d33d9f92b11550c589e31049137ac3f565f3d5393e46d14a77b89d90a0f67d7",
+      "executable": false
+    },
+    "tests/go-live/operator-access-journey.ts": {
+      "sha256": "bb7840f60f6fc2e2a4941fac188f2468b7956f92a757866695caea6bde878541",
       "executable": false
     },
     "tests/go-live/opt-in-journey.ts": {
@@ -8514,7 +8518,7 @@
       "executable": false
     },
     "VERIFYING.md": {
-      "sha256": "6a871e95e615eab68f4fdc575dc8142e6b93a33c34ba8b7c26bf0268a156b225",
+      "sha256": "a831999119dab4982911bf90bd9b98cf4a1817d9ef07fb5fc0a4633d33aa2db9",
       "executable": false
     },
     "vite.config.ts": {
