@@ -219,10 +219,7 @@ export const walk3 = async({page},info)=>{
     expect(await signedFacts([event('spamreport',email,eventClock.now-500,sent(email).messageId,sent(email).body.personalizations[0].custom_args)])).toBe(204);
     await expect(reputation.locator('td').nth(1)).toHaveText(/^1 \/ 1 /,{timeout:30000});
     await expect(reputation.locator('td').first()).toHaveText('sendgrid');
-    const desktop=page.viewportSize()!;
     await page.screenshot({path:test.info().outputPath('email-domain-rates-desktop.png'),fullPage:true});
-    await page.setViewportSize({width:1440,height:844});
-    await page.screenshot({path:test.info().outputPath('email-domain-rates-mobile.png'),fullPage:true});
     const window=page.locator('section').filter({has:reputation}).locator('time');
     await expect(window).toBeVisible();expect(Date.parse((await window.getAttribute('datetime'))!)).toBeLessThan(eventClock.now);
     // Fresh signed facts can arrive after the original attempts have left the
@@ -241,14 +238,11 @@ export const walk3 = async({page},info)=>{
     expect(lateReporting.senders.find((row:any)=>row.channel==='email'&&row.sender==='example.test')).toMatchObject({
       delivered:1,complained:0,hardBounced:1,attempted:0,complaintRate:0,hardBounceRate:null,
     });
-    await page.setViewportSize(desktop);
     await page.goto(`${site.runtime.url}/app/insights`);
     await expect(reputation.locator('td').nth(1)).toHaveText(/^0 \/ 1 /,{timeout:30000});
     await expect(reputation.locator('td').nth(2)).toHaveText(/^1 \/ 0 /,{timeout:30000});
     await expect(reputation.locator('td').nth(2)).not.toHaveText(/%/);
     await page.screenshot({path:test.info().outputPath('email-late-facts-unavailable-rate-desktop.png'),fullPage:true});
-    await page.setViewportSize({width:1440,height:844});
-    await page.screenshot({path:test.info().outputPath('email-late-facts-unavailable-rate-mobile.png'),fullPage:true});
     expect(edge.sends).toHaveLength(sendsBeforeLateFacts);
     expect(edge.unexpected).toEqual([]);
   } finally {await page.close();await release(site).catch(()=>{});await site.runtime.close();await edge.close();}
