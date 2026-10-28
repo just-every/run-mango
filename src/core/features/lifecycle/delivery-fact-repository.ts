@@ -1,3 +1,4 @@
+import {readReputationRates} from './reputation-report';
 import {outageRepository} from './provider-outages';
 import {marketingOccurrenceSql} from './marketing-history';
 import { recordExternalCost } from '@/core/features/insights/cost-recording';
@@ -91,31 +92,10 @@ export function createDeliveryFactRepository(database: Database) {
     },
 
     async reputation(sender: string, channel: Channel, since: Date) {
-      const row = await client.prepare(
-        `SELECT
-           COUNT(DISTINCT CASE WHEN f.kind = 'delivered' THEN f.recipient_step_id END) delivered,
-           COUNT(DISTINCT CASE WHEN f.kind = 'complained' THEN f.recipient_step_id END) complained,
-           COUNT(DISTINCT CASE WHEN f.kind = 'bounced' AND json_extract(f.detail_json, '$.hard') = 1 THEN f.recipient_step_id END) hard_bounced,
-           COUNT(DISTINCT CASE WHEN r.first_attempt_at >= ? THEN r.id END) attempted,
-           COUNT(DISTINCT CASE WHEN r.transport_disposition = 'failed' THEN r.id END) failed
-         FROM recipient_steps r
-         JOIN campaign_revisions v ON v.id = r.revision_id
-         LEFT JOIN delivery_facts f ON f.recipient_step_id = r.id AND f.provider_occurred_at >= ?
-         WHERE r.channel = ? AND (CASE WHEN ? = 'email' THEN lower(substr(v.from_email,instr(v.from_email,'@')+1)) ELSE v.sms_sender END) = ?`,
-      ).bind(since.getTime(),since.getTime(), channel, channel, channel==='email'?sender.toLowerCase().split('@').at(-1):sender).first<Row>();
-      const delivered = Number(row?.delivered ?? 0);
-      const complained = Number(row?.complained ?? 0);
-      const hardBounced = Number(row?.hard_bounced ?? 0);
-      const attempted = Number(row?.attempted ?? 0);
-      return {
-        delivered,
-        complained,
-        hardBounced,
-        attempted,
-        failed: Number(row?.failed ?? 0),
-        complaintRate: delivered ? complained / delivered : null,
-        hardBounceRate: attempted ? hardBounced / attempted : null,
-      };
+      const rows = await readReputationRates(database,since,undefined,{channel,
+        sender:channel==='email'?sender.toLowerCase().split('@').at(-1)!:sender});
+      return rows[0] ?? {delivered:0,complained:0,hardBounced:0,attempted:0,failed:0,
+        complaintRate:null,hardBounceRate:null,windowStart:since.toISOString()};
     },
 
     async recordProviderFact(recipientStepId: string, provider: string, fact: ProviderFact, now: Date) {
