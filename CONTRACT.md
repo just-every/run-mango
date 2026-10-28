@@ -3616,9 +3616,9 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 - **gated:** provider authorization consent, identity or carrier verification and hosted payment entry use the provider and personal step its route or response requires; the permitted provider API route keeps its own actual classes.
 - **access:** operator membership and roles, integration credentials’ scopes and routine grants use the people or grants changed and whether authority widens or narrows.
 - **security:** provider secrets, sender authentication, webhook signing, allowed-host protections and protective capture or tracking settings use the changed protective setting.
-- **destructive:** irreversible contact erasure, including selected bulk erasure and contact-owned custom objects, and permanent retained-data removal use their affected-item count; reversible draft removal remains standard.
+- **destructive:** irreversible contact erasure and merging, including selected bulk erasure and contact-owned custom objects, and permanent retained-data removal use their affected-item count; reversible draft removal remains standard.
 - **sensitive:** reading or handling CONT-029’s retained portable restriction mappings or carrier-registration identity data uses the record count and data kind; a masked summary that contains none of that data does not carry sensitive.
-- **live:** changes to active flows, campaign schedules, capture forms, tracking switches, connector behavior or sending routes use the affected running service.
+- **live:** changes to active flows, campaign schedules, capture forms, tracking switches, connector behavior, sending routes or scheduled routine jobs use the affected running service.
 
 | Tool | Does | Core clauses | Risk class | Today |
 | --- | --- | --- | --- | --- |
@@ -3627,7 +3627,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 | `mango.sources.connect` | Configure a commerce source | STORE-001 | accounts · security (+ gated) (+ live) (+ external) | Not implemented |
 | `mango.sources.sync` | Sync and reconcile source records | STORE-002, STORE-003, STORE-004, STORE-005, STORE-006, STORE-007 | standard or live | Not implemented |
 | `mango.contacts.read` | Read contact identity, channel state and history | CONT-001, CONT-002, CONT-003, CONT-008, CONT-014, CONT-017, CONT-022 | standard | Scoped profile API; no MCP adapter |
-| `mango.contacts.update` | Manage profiles, properties, bulk tags, topics and consent evidence | CONT-004, CONT-005, CONT-028, CONT-006, CONT-007, CONT-009, CONT-011, CONT-012, CONT-014, CONT-015, CONT-016, CONT-019, CONT-020, CONT-022, CONT-023, CONT-024, CONT-038, CONT-039, CONT-040, CONT-026, CONT-027, CONT-041, CONT-042, CONT-043 | standard or external (+ money) (+ commitment) (+ live) | Scoped contact and suppression APIs; no MCP adapter |
+| `mango.contacts.update` | Manage profiles, merges, properties, bulk tags, topics and consent evidence | CONT-004, CONT-005, CONT-028, CONT-006, CONT-007, CONT-009, CONT-011, CONT-012, CONT-014, CONT-015, CONT-016, CONT-019, CONT-020, CONT-022, CONT-023, CONT-024, CONT-038, CONT-039, CONT-040, CONT-026, CONT-027, CONT-041, CONT-042, CONT-043 | standard or external (+ money) (+ commitment) (+ live) (+ destructive) | Scoped contact and suppression APIs; no MCP adapter |
 | `mango.contacts.import` | Prepare and apply a contact import plan | CONT-010 | standard | Not implemented |
 | `mango.contacts.erase` | Erase contact data and exercise privacy requests | CONT-013, CONT-029, CONT-030, CONT-021, CONT-022, CONT-023 | standard or destructive (+ sensitive) (+ external) | Not implemented |
 | `mango.tracking.configure` | Configure permitted onsite behavior capture | CONT-018, CONT-031, CONT-032, CONT-033, CONT-034, CONT-035, CONT-036, CONT-037 | live · security | Not implemented |
@@ -3682,7 +3682,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 | `mango.content.draft` | Draft grounded campaign and flow content | AGENT-007 | standard or external (+ money) | Not implemented |
 | `mango.questions.answer` | Prepare natural-language segments and cited answers | AGENT-008 | standard or external (+ money) | Not implemented |
 | `mango.routines.manage` | Set schedules, thresholds and editable routine memory | AGENT-009 | standard (+ live) (+ external) (+ money) | Not implemented |
-| `mango.routines.authority` | Configure routine jobs, budget and disabling | AGENT-010 | access (+ money) (+ security) | Not implemented |
+| `mango.routines.authority` | Configure routine jobs, budget and disabling | AGENT-010 | access (+ money) (+ security) (+ live) | Not implemented |
 | `mango.move.assist` | Explain incumbent mappings and import anomalies | AGENT-011 | standard or live (+ external) (+ money) | Not implemented |
 
 **Tool scope.** A clause may name both a read and a write: contact search uses `mango.contacts.read`, bulk tags and topic changes use `mango.contacts.update`, bulk erasure uses `mango.contacts.erase`, and bulk export uses `mango.data.export`. Form measurement reads referral results; `mango.forms.referrals` configures and fulfills rewards. Audience-policy changes use `mango.audiences.configure`, and attribution-policy changes use `mango.reports.configure`. Reading a record or preparing a draft does not perform its later sign-off, activation or delivery. Proposal adoption that binds a campaign uses `mango.campaigns.signoff`; retention and content specialists activate through `mango.flows.activate` and send through `mango.delivery.dispatch`. Running non-message flow actions use `mango.flows.run`. Each call computes every class of the effects it actually performs, including selected model work, public asset exposure, provider purchases and paid handoffs; a draft with none of those effects stays standard. Configuring a connector does not itself perform a later privacy callback or timed purge, and an outbound webhook without a paid provider operation adds no money.
@@ -3762,9 +3762,9 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 **Acceptance.**
 1. Inviting an operator or enlarging another integration grant is access with the number of people or grants and widening direction; removing membership or narrowing a grant records narrowing.
 2. Changing a sender secret, webhook-signing secret, allowed-host protection or capture-mode setting under CONT-025 is security with its setting name; changing running capture also adds live.
-3. Erasing one contact or a selected bulk set under CONT-022, removing contact-owned custom objects or permanently purging retained marketing data is destructive with its affected-item count; a reversible draft removal stays standard.
+3. Erasing one contact or a selected bulk set under CONT-022, irreversibly merging contacts under CONT-011, removing contact-owned custom objects or permanently purging retained marketing data is destructive with its affected-item count; a reversible draft removal stays standard.
 4. The contact-erasure fixture removes that contact’s Mango data while retaining the particular surviving opt-out custody CONT-013 requires.
-5. A routine disable changes access for that routine and prevents its next scheduled run.
+5. A routine disable changes access for that routine and adds live for stopping its scheduled job, preventing its next scheduled run.
 6. Reading or exporting CONT-029’s retained portable restriction mappings carries sensitive with the mapping-record count and data kind; the same classification applies when erasure handles those retained mappings.
 
 #### SURFACE-005 — Paid marketing and exact-revision commitments
@@ -3791,7 +3791,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 **Acceptance.**
 1. Activating, pausing, resuming, archiving or changing a running flow carries live with the flow service identity.
-2. Changing a running campaign schedule, active intake setting or onsite-tracking switch carries live with the affected campaign or site.
+2. Changing a running campaign schedule, active intake setting, onsite-tracking switch or scheduled routine’s timing or disabled state carries live with the affected campaign, site or routine.
 3. Changing an active sending route or connector behavior, including ending a parallel incumbent sync under MOVE-025, carries live in addition to any other class that the same operation meets.
 4. The same flow draft before activation stays standard, and its activation adds live without losing the exact-revision checks in FLOW-008.
 5. The company-policy fixture’s repair replay changes only the declared source window and eligible enrollments, leaving previously delivered messages intact.
