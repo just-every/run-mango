@@ -1,3 +1,5 @@
+import {propertyWriteStatements,validatePropertyFields} from '@/core/features/audience/properties/write';
+import {propertyDefinitions} from '@/core/features/audience/properties/read';
 import {z} from 'zod';
 import {sha256,stableJson} from '@/core/shared/ids';
 import {IntegrationError} from './schema';
@@ -9,6 +11,7 @@ export const customEventInput=z.object({
   occurredAt:z.iso.datetime({offset:true}),
   properties:z.record(z.string().min(1).max(100),z.union([z.string().max(2000),z.number().finite(),z.boolean(),z.null()]))
     .refine(value=>Object.keys(value).length<=50).default({}),
+  contactProperties:z.record(z.string().min(1).max(100),z.union([z.string().max(2000),z.number().finite(),z.boolean(),z.array(z.string().max(160)).max(100),z.null()])).refine(value=>Object.keys(value).length<=50).optional(),
 }).strict();
 export type CustomEventInput=z.infer<typeof customEventInput>;
 
@@ -25,7 +28,10 @@ export async function recordCustomEvent(db:D1Database,credentialId:string,input:
   if(!await db.prepare('SELECT id FROM contacts WHERE id=? AND merge_lock IS NULL').bind(input.contactId).first())throw new IntegrationError('contact_not_found',404);
   const guard=`EXISTS(SELECT 1 FROM integration_credentials WHERE id=? AND revoked_at IS NULL
     AND EXISTS(SELECT 1 FROM json_each(scopes_json) WHERE value='events:write'))`;
-  const [written,stored]=await db.batch<{payload_digest:string}>([
+  const credential=await db.prepare('SELECT name FROM integration_credentials WHERE id=?').bind(credentialId).first<{name:string}>();
+  const propertyWrites=input.contactProperties?await propertyWriteStatements(db,input.contactId,validatePropertyFields(await propertyDefinitions(db),input.contactProperties),{kind:'api',label:credential?.name??credentialId,reference:credentialId},now,false,{sql:`${guard} AND NOT EXISTS(SELECT 1 FROM source_records WHERE id=?) AND EXISTS(SELECT 1 FROM contacts WHERE id=? AND merge_lock IS NULL)`,params:[credentialId,id,input.contactId]}):{statements:[]};
+  const results=await db.batch<{payload_digest:string}>([
+    ...propertyWrites.statements,
     db.prepare(`INSERT INTO source_records(id,provider,source_type,provider_source_id,contact_id,occurred_at,payload,payload_digest,created_at,updated_at)
       SELECT ?,?,'custom-event',?,?,?,?,?,?,? WHERE ${guard}
         AND EXISTS(SELECT 1 FROM contacts WHERE id=? AND merge_lock IS NULL)
@@ -39,6 +45,7 @@ export async function recordCustomEvent(db:D1Database,credentialId:string,input:
       SELECT ?,?,?,?,? FROM source_records WHERE id=? AND payload_digest=? AND ${guard} ON CONFLICT DO NOTHING`)
       .bind(source.receipt.id,source.provider,source.receipt.attemptId,source.receipt.digest,now,id,digest,credentialId)]:[]),
   ]);
+  const [written,stored]=results.slice(propertyWrites.statements.length);
   if(!stored.results[0])throw new IntegrationError('event_authority_changed',409);
   if(stored.results[0].payload_digest!==digest)throw new IntegrationError('idempotency_conflict',409);
   return {id,status:written.meta.changes?'recorded':'replayed'};

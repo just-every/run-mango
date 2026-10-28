@@ -15,7 +15,7 @@ export const consentInput = z.object({
 export const contactInput = z.object({
   email: z.string().trim().toLowerCase().email().max(320),
   displayName: z.string().trim().min(1).max(200).optional(),
-  fields: z.record(z.string().min(1).max(100), z.union([z.string().max(2000), z.number().finite(), z.boolean(), z.null()])).refine(value => Object.keys(value).length <= 50).optional(),
+  fields: z.record(z.string().min(1).max(100), z.union([z.string().max(2000), z.number().finite(), z.boolean(), z.array(z.string().max(160)).max(100), z.null()])).refine(value => Object.keys(value).length <= 50).optional(),
   tags: z.array(z.string().trim().min(1).max(100)).max(50).transform(values => [...new Set(values)].sort()).optional(),
   segmentId: z.string().min(1).max(160).optional(),
   segmentName: z.string().trim().min(1).max(160).optional(),

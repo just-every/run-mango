@@ -29,7 +29,10 @@ export function validateProperty(definition:PropertyDefinition,value:unknown,mod
     if(typeof value==='boolean')return value;
     if(mode!=='api'&&typeof value==='string'&&/^(true|false)$/i.test(value.trim()))return value.trim().toLowerCase()==='true';
   }
-  if(type==='list'&&typeof value==='string'&&definition.options.includes(value))return value;
+  if(type==='list'){
+    const choices=Array.isArray(value)?value:typeof value==='string'?(mode==='import'?value.split(';').map(v=>v.trim()):[value]):undefined;
+    if(choices&&choices.length<=definition.options.length&&choices.every(v=>typeof v==='string'&&definition.options.includes(v)))return [...new Set(choices as string[])].sort();
+  }
   throw new PropertyError(`property_invalid_${type}`,key);
 }
 export function formatProperty(definition:PropertyDefinition,value:PropertyValue):string|undefined {
@@ -38,5 +41,5 @@ export function formatProperty(definition:PropertyDefinition,value:PropertyValue
     const minor=BigInt(value as number),absolute=minor<0n?-minor:minor;
     return `${minor<0n?'-':''}$${(absolute/100n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,',')}.${(absolute%100n).toString().padStart(2,'0')}`;
   }
-  return String(value);
+  return Array.isArray(value)?value.join('; '):String(value);
 }

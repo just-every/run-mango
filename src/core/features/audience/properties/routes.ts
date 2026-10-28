@@ -6,7 +6,7 @@ import {propertyDefinitions,readPropertyFields,propertyPersonalisation} from './
 import {definitionInput,definitionUsage,saveDefinition,deleteDefinition,propertyLimit} from './definitions';
 import {editContactProperties} from './write';
 import {contactPersonalisation} from '../contact-personalisation';
-const values=z.object({fields:z.record(z.string().min(1).max(100),z.union([z.string().max(2000),z.number().finite(),z.boolean(),z.null()])).refine(f=>Object.keys(f).length<=100)}).strict();
+const values=z.object({fields:z.record(z.string().min(1).max(100),z.union([z.string().max(2000),z.number().finite(),z.boolean(),z.array(z.string().max(160)).max(100),z.null()])).refine(f=>Object.keys(f).length<=100)}).strict();
 export function createPropertyRoutes(db:D1Database) {
   const routes=new Hono<{Variables:AuthVariables}>();
   routes.onError((error,c)=>error instanceof PropertyError?c.json({error:error.code,property:error.key},error.status):c.json({error:'property_operation_failed'},500));

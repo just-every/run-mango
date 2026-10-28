@@ -18,6 +18,8 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const [width, setWidth] = useState<'desktop' | 'mobile'>('desktop');
   const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
   const [contact, setContact] = useState<Contact>();
+  const [propertyValues,setPropertyValues]=useState<{id:string;values:Record<string,string|undefined>}>(),[propertyError,setPropertyError]=useState('');
+  useEffect(()=>{let active=true;setPropertyValues(undefined);setPropertyError('');if(!contact)return;void getJson<{values:Record<string,string|undefined>}>(`/api/contacts/${encodeURIComponent(contact.id)}/personalisation`).then(result=>{if(active)setPropertyValues({id:contact.id,values:result.values});}).catch(()=>{if(active)setPropertyError('Contact property values could not be loaded. Select the contact again.');});return()=>{active=false;};},[contact?.id]);
   const [loadImages, setLoadImages] = useState(false);
   const needsCatalog=catalogBlocks(revision.emailBody).length>0;
   const [catalog,setCatalog]=useState<{body:string;values:CatalogRenderings}>(),[catalogError,setCatalogError]=useState('');
@@ -27,9 +29,9 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
 
   const rendered = useMemo(() => renderMessageContent({...previewRevision, preheader: revision.preheader ?? '', physicalAddress: revision.physicalAddress ?? ''}, {
     catalog:catalogValues,analytics:analyticsContext(revision),
-    values: contact ? contactPersonalisation(contact, contact.email ?? '') : {displayName: 'Alex Example'},
+    values: contact ? propertyValues?.id===contact.id?propertyValues.values:contactPersonalisation(contact, contact.email ?? '') : {displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
-  }), [revision, contact, catalogValues]);
+  }), [revision, contact, catalogValues,propertyValues]);
   const responsive=mobileEnvelope(revision.emailBody);
   const dependent=[responsive.settings.some(row=>row.hideOnMobile)?'hide on mobile':'',responsive.settings.some(row=>row.hideOnDesktop)?'hide on desktop':'',responsive.settings.some(row=>row.orientation)?'mobile orientation':'',responsive.settings.some(row=>row.fontSize!==undefined)?'mobile font size':'',responsive.settings.some(row=>row.lineHeight!==undefined)?'mobile line height':'',responsive.settings.some(row=>row.padding!==undefined)?'mobile padding':'',responsive.settings.some(row=>row.alignment)?'mobile alignment':''].filter(Boolean);
   const showEmail = selectedChannels?.includes('email') ?? true;
@@ -40,6 +42,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const preview = useMemo(() => sanitizeEmailPreview(rendered.html, loadImages, issues.length === 0, mediaOrigin), [rendered.html, loadImages, issues, mediaOrigin]);
   return (
     <section className="preview-grid" aria-label="Saved revision previews">
+      {propertyError?<p role="alert">{propertyError}</p>:contact&&propertyValues?.id!==contact.id?<p role="status">Reading contact property values…</p>:null}
       {needsCatalog?<p role={catalogError?'alert':'status'}>{catalogError||(!catalogValues?'Reading current catalog values…':'Catalog read at '+new Date(Object.values(catalogValues)[0]?.readAt).toLocaleString())}</p>:null}
       {showEmail ? <article className="message-preview message-preview--email">
         <Paper w={640} h={760} seed={41} className="app-sheet email-sheet">
@@ -125,7 +128,7 @@ function PreviewContact({selected, onSelect}: {selected?: Contact; onSelect: (co
       {contacts.map(contact => <option key={contact.id} value={contact.id}>{contact.displayName}{contact.email ? ` (${contact.email})` : ''}</option>)}
     </select></label> : null}
     {selected ? <button type="button" className="text-link" onClick={() => onSelect(undefined)}>Use example contact</button> : null}
-    <p className="muted-copy">Uses the saved name and the same missing-name fallback as delivery. Preview selection does not change the campaign audience.</p>
+    <p className="muted-copy">Uses saved contact values and the same property formatting and fallbacks as delivery. Preview selection does not change the campaign audience.</p>
   </details>;
 }
 

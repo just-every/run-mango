@@ -1,3 +1,4 @@
+import {preparePropertyMerge} from './properties/merge';
 import {recordManualSmsCapture} from './manual-sms-capture';
 import {manualEmailEligibility} from './manual-email-policy';
 import {createSegmentFacts} from './segment-facts';
@@ -497,6 +498,7 @@ export function createAudienceRepository(database: Database) {
     },
 
     async moveContactData(mergedContactId: string, survivorContactId: string, occurredAt: Date, operatorId?: string) {
+      const propertyMerge=await preparePropertyMerge(database.$client,survivorContactId,mergedContactId,occurredAt.getTime());
       const [mergedEmails, mergedPhones] = await Promise.all([this.listEmails(mergedContactId), this.listPhones(mergedContactId)]);
       for (const email of mergedEmails) {
         await database.update(contactEmailAddresses).set({ contactId: survivorContactId, updatedAt: occurredAt }).where(eq(contactEmailAddresses.id, email.id));
@@ -525,6 +527,7 @@ export function createAudienceRepository(database: Database) {
         SELECT ${survivorContactId},consecutive_soft_bounces,${occurredAt.getTime()} FROM contact_bounce_states WHERE contact_id=${mergedContactId}
         ON CONFLICT(contact_id) DO UPDATE SET consecutive_soft_bounces=max(contact_bounce_states.consecutive_soft_bounces,excluded.consecutive_soft_bounces),updated_at=excluded.updated_at`);
       await database.delete(contactBounceStates).where(eq(contactBounceStates.contactId,mergedContactId));
+      await database.$client.batch(propertyMerge);
       await database.insert(contactMerges).values({
         id: `${mergedContactId}_merged_${occurredAt.getTime()}`,
         survivorContactId,
