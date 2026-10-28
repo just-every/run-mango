@@ -19,7 +19,8 @@
           "slug": "install",
           "source": "docs/install.md",
           "label": "Install and deploy",
-          "description": "Run Mango on your computer, then deploy it to your own Cloudflare account."
+          "description": "Run Mango on your computer, then deploy it to your own Cloudflare account.",
+          "hidden": true
         },
         {
           "slug": "first-newsletter",

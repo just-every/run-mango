@@ -62,13 +62,13 @@ async function menuStates(page: Page): Promise<PhoneState[]> {
 test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator page fit with accessible phone states', async ({ page, request }) => {
   test.setTimeout(180_000);
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const route of ['/', '/docs', '/docs/install', '/signin']) {
+  for (const route of ['/', '/docs', '/docs/install', '/docs/getting-started', '/signin']) {
     await page.goto(route);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expectDocumentToFit(page, 390);
     await expectNoSeriousAxeViolations(page, route);
     await test.info().attach(route === '/' ? 'lobby-390' : route.replaceAll('/', '-'), { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
-    if (route === '/docs/install') {
+    if (route === '/docs/getting-started') {
       const contents = page.getByRole('navigation', { name: 'Documentation' }).locator('summary').filter({ visible: true });
       await contents.focus();
       await contents.press('Enter');

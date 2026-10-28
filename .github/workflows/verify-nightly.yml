@@ -4,7 +4,7 @@ on:
   push:
     tags: ['v*']
   schedule:
-    - cron: '23 3 * * *'
+    - cron: '23 5 * * 1,4'
   workflow_dispatch:
 
 permissions:
@@ -12,7 +12,12 @@ permissions:
 
 jobs:
   verify:
+    # A called workflow can only keep or reduce its caller's token permissions,
+    # and Verify's plan job reads Actions runs for the main short-circuit.
+    permissions:
+      contents: read
+      actions: read
     uses: ./.github/workflows/verify.yml
     with:
-      tier: all
+      tier: ${{ github.event_name == 'schedule' && 'nightly' || 'all' }}
       timeout: 30
