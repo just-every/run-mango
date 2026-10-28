@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "9259ab1b4268405dcf1fd048c3dadab87441e2364344a84d997f3e9140d5d7ff",
+      "sha256": "8d0272f572c19d583edda5d6d20f4e1623a343f9d64816ccaac659fbc517c0a2",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8317,6 +8317,10 @@
       "sha256": "1982743cf19ecb78d5ca7eb15e1ca78c376644f0e78fa89f35a82e4a46953c9f",
       "executable": false
     },
+    "tests/campaign-authoring/advisory-worker.ts": {
+      "sha256": "daa38dcdae51f8860bfb759397adde2be2f6d46cf823df1e69112206db4452ae",
+      "executable": false
+    },
     "tests/campaign-authoring/audience-size-journey.ts": {
       "sha256": "70206b91d1359d69a46c7fb7e1ff4af5f74135f2130cd04169be734826b8c889",
       "executable": false
@@ -8530,7 +8534,7 @@
       "executable": false
     },
     "tests/docs.spec.ts": {
-      "sha256": "4fdbb2847f1c5a2106ac6c36cdafd06e2d140f78a288fcf50d6888cc5f73d867",
+      "sha256": "89be542a5be926991a08d126734d000f58b40cdb2b2cdd7247d7fb7b33476fcb",
       "executable": false
     },
     "tests/evidence/allowed-host-approved-1440.png": {
