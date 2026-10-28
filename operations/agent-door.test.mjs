@@ -8,6 +8,15 @@ import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../sr
 import {validateAgentSurface} from '../src/vendor/base/agent-door/conformance/surface.mjs';
 
 test('Mango shared door: signed native owner, durable Business people, native draft custody, policy, replay and role narrowing',async()=>{
+ const editor=await runtime(undefined,false,{RER_MANAGEMENT_ORIGIN:'https://editor.example.test',RER_INSTALLATION_ID:'native-editor'});
+ try{
+  assert.equal((await editor.call('/api/operator')).status,401,'Editor metadata alone permits native startup without granting a session');
+  const mcp=await editor.call('/mcp',{method:'POST',headers:{'MCP-Protocol-Version':'2026-07-28','Mcp-Method':'tools/list'},body:{jsonrpc:'2.0',id:1,method:'tools/list',params:{_meta:{'io.modelcontextprotocol/protocolVersion':'2026-07-28'}}}});
+  assert.equal(mcp.status,401,'An unpaired editor installation grants no agent credential');
+ }finally{await editor.close();}
+ const partial=await runtime(undefined,false,{RER_OWNER_CLAIM_ISSUER:'https://business.example.test',RER_INSTALLATION_ID:'native-editor'});
+ try{assert.equal((await partial.call('/api/operator')).status,500,'Explicit partial owner-claim trust remains inadmissible');}
+ finally{await partial.close();}
  const origin='https://mango.example.test',issuer='https://business.example.test',installationId=randomUUID(),kid=randomUUID(),sub=randomUUID();
  const pair=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
  const publicKeys={[kid]:{...await webcrypto.subtle.exportKey('jwk',pair.publicKey),kid,alg:'ES256',use:'sig'}};

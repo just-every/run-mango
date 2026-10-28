@@ -1924,7 +1924,7 @@
       "executable": false
     },
     "operations/agent-door.test.mjs": {
-      "sha256": "32cfff71ce27b3a38cd1ac83b8f260b3805d17bc46e7b27604868207c5d6ed41",
+      "sha256": "b7c3276ea02212b76d681ea78546753c27f29766dc845a7445eab25eb17e09ee",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -3400,7 +3400,7 @@
       "executable": false
     },
     "src/core/features/agent-door/index.ts": {
-      "sha256": "38c52f8ac39f033eb2760eeaf8812674290aec3b922b27ea044aeba7fc16da49",
+      "sha256": "f39172fb93f31e9db83d9f99710be3a4aa42b48f3b770dcfea90b8c1227c1407",
       "executable": false
     },
     "src/core/features/agent-door/integration-tools.ts": {

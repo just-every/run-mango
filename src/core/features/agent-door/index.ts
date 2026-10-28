@@ -17,7 +17,10 @@ export function installationTrust(environment: AppBindings, origin: string): Tru
   const issuer = environment.RER_OWNER_CLAIM_ISSUER;
   const installationId = environment.RER_INSTALLATION_ID ?? environment.RER_OWNER_CLAIM_INSTALLATION_ID;
   const publicKeys = environment.RER_OWNER_CLAIM_PUBLIC_KEYS;
-  if (![issuer, installationId, publicKeys, environment.RER_OWNER_CLAIM_APP_ORIGIN].some(Boolean)) return null;
+  // The native editor also has an installation ID, without Business pairing.
+  // Only owner-claim fields declare agent credential trust; any partial set
+  // of those fields still fails closed below.
+  if (![issuer, environment.RER_OWNER_CLAIM_INSTALLATION_ID, publicKeys, environment.RER_OWNER_CLAIM_APP_ORIGIN].some(Boolean)) return null;
   if (!issuer || !installationId || !publicKeys || environment.RER_OWNER_CLAIM_APP_ORIGIN && environment.RER_OWNER_CLAIM_APP_ORIGIN !== origin)
     throw new Error('Incomplete or inconsistent agent door trust configuration');
   return {issuer, installationId, appOrigin: origin, publicKeys: JSON.parse(publicKeys)};
