@@ -30,8 +30,8 @@ Core · published · **partial** · Cites BASE-PUBLIC-001, BASE-ACCESS-003
 2. Before sender setup, the only action finishes setup; after saved setup, it signs in.
 3. The setup-state reading agrees with the Lobby before and after claim.
 
-**Evidence.** `tests/local-start/local.journey.ts` · `src/site/pages.tsx`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Mango’s mark, name and one newsletter description identify the installation.; The Lobby has only one action.
+**Evidence.** `tests/local-start/local.journey.ts` — “[OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440 and 390” · `src/site/pages.tsx`
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Mango’s mark, name and one newsletter description identify the installation.; The Lobby has only one action. Missing public-door journey: “Installation Lobby — complete acceptance”, covering the unasserted outcomes above.
 
 #### HOME-002 — Newsletter landing
 
@@ -50,7 +50,7 @@ Core · published · **partial** · From HOME-001 · Cites BASE-PUBLIC-001, BASE
 8. The fixed light palette remains readable in a dark-themed browser, without scripts and with reduced motion. Its licensed, self-hosted faces and inline drawings follow the landing specification; motion is CSS-only, plays once only without reduced-motion preference, moves only drawings and never hides content.
 
 **Evidence.** `tests/local-start/local.journey.ts` · `src/site/pages.tsx`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: The primary action opens the Run page; the run-site landing has no sign-in link.; The hero is the only top-level heading; the alternative sentence also ends the metadata description and names both replacement products.; The sections explain collection, writing, exact-letter approval, scheduling, delivery reporting and ownership, followed by a closing action.; The optional product credit appears only when the owner enables it; illustrative addresses, names, counts and dates are never records.; The static landing reads no operator, contact, campaign or session data and is written once by the site build.; Header Mango identity and links; Hero identity and exact alternative sentence; Hero actions and destinations; Footer deployment-owner name and description; Fixed page rather than a buyer page builder; No vendor pricing; No testimonials; No customer logos; No ratings; No metrics; No cross-store claims; No third-party brand logos; No optional commerce, SMS or AI advertising; No per-reader-send-time or provider-neutral-delivery advertising; Only specified link destinations; Fixed light palette in a dark-themed browser; Readable without scripts; Readable with reduced motion; Licensed self-hosted faces; Inline drawings without raster or embedded images; CSS-only once-only drawing motion; No motion for reduced preference; Motion never hides content.
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: The primary action opens the Run page; the run-site landing has no sign-in link.; The hero is the only top-level heading; the alternative sentence also ends the metadata description and names both replacement products.; The sections explain collection, writing, exact-letter approval, scheduling, delivery reporting and ownership, followed by a closing action.; The optional product credit appears only when the owner enables it; illustrative addresses, names, counts and dates are never records.; The static landing reads no operator, contact, campaign or session data and is written once by the site build.; Header Mango identity and links; Hero identity and exact alternative sentence; Hero actions and destinations; Footer deployment-owner name and description; Fixed page rather than a buyer page builder; No vendor pricing; No testimonials; No customer logos; No ratings; No metrics; No cross-store claims; No third-party brand logos; No optional commerce, SMS or AI advertising; No per-reader-send-time or provider-neutral-delivery advertising; Only specified link destinations; Fixed light palette in a dark-themed browser; Readable without scripts; Readable with reduced motion; Licensed self-hosted faces; Inline drawings without raster or embedded images; CSS-only once-only drawing motion; No motion for reduced preference; Motion never hides content. Missing public-door journey: “Newsletter landing — complete acceptance”, covering the unasserted outcomes above.
 
 #### DOCS-001 — Public documentation
 
@@ -68,8 +68,8 @@ Core · published · **partial** · Cites BASE-DOCS-001, BASE-PUBLIC-001, BASE-A
 7. Unknown, miscased, nested and reserved slugs show a not-found page in the shared frame with links to the docs home and landing; other hosts follow the installation’s ordinary host rule.
 8. Documentation is compiled before serving; Worker and browser outputs contain no Markdown or highlighter code, and individual page chunks are loaded lazily.
 
-**Evidence.** `tests/docs.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Sole Sign in link; Shared footer, palette, faces and drawings; Every root, docs and top-level readme Markdown file is published or explicitly excluded with a reason; undeclared files, broken links or anchors, links to unpublished pages, raw HTML, forbidden images and absolute build-machine paths fail validation.; Published pages describe the default newsletter profile, expose no maintainer material and have no source-repository or edit link.; No documentation request reads workspace, session or database records.; Other-host behavior; Documentation is compiled before serving; Worker and browser outputs contain no Markdown or highlighter code, and individual page chunks are loaded lazily..
+**Evidence.** `tests/docs.spec.ts` — “[DOCS-001] the docs home answers at /docs and /docs/; unknown, miscased, nested and index slugs are a 404 in the shared frame”; “[DOCS-001] every manifest page renders with one h1, section navigation, previous and next, and no cookie or foreign request”; “[DOCS-001] lists the page sections under On this page and links the header to the app”; “[DOCS-001] the docs fit the screen at desktop and phone widths and the phone shows a Contents disclosure”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Sole Sign in link; Shared footer, palette, faces and drawings; Every root, docs and top-level readme Markdown file is published or explicitly excluded with a reason; undeclared files, broken links or anchors, links to unpublished pages, raw HTML, forbidden images and absolute build-machine paths fail validation.; Published pages describe the default newsletter profile, expose no maintainer material and have no source-repository or edit link.; No documentation request reads workspace, session or database records.; Other-host behavior; Documentation is compiled before serving; Worker and browser outputs contain no Markdown or highlighter code, and individual page chunks are loaded lazily.. Missing public-door journey: “Public documentation — complete acceptance”, covering the unasserted outcomes above.
 
 ### Operators
 
@@ -85,8 +85,8 @@ Core · published · **partial** · Cites BASE-ACCESS-002, BASE-ROLE-001
 3. Valid identity already configured for the installation also completes setup.
 4. Authenticated configuration APIs remain usable during setup, and completing setup does not claim provider readiness.
 
-**Evidence.** `tests/local-start/local.journey.ts` · `tests/production-entry.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Before role assignment, an operator can see and act on proposals, campaigns, flows, contacts and settings as Admin.; Valid identity already configured for the installation also completes setup.; Authenticated configuration APIs remain usable during setup, and completing setup does not claim provider readiness..
+**Evidence.** `tests/local-start/local.journey.ts` — “[OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440 and 390” · `tests/production-entry.spec.ts`
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Before role assignment, an operator can see and act on proposals, campaigns, flows, contacts and settings as Admin.; Valid identity already configured for the installation also completes setup.; Authenticated configuration APIs remain usable during setup, and completing setup does not claim provider readiness.. Missing public-door journey: “Operators and the default role — complete acceptance”, covering the unasserted outcomes above.
 
 #### OPER-002 — Management
 
@@ -102,7 +102,7 @@ Core · published · **partial** · Cites BASE-ACCESS-004, BASE-SIGNIN-001
 5. Only the operator established at setup may remove that operator.
 
 **Evidence.** `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/service.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Settings can invite an operator and remove an operator.; A session without fresh email proof cannot grant another operator access.; Settings can request a confirmation link bound to the current session; completing it permits an invitation retry.; Reading or inspecting the confirmation link has no effect; only its affirmative submission supplies proof.; Only the operator established at setup may remove that operator..
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Settings can invite an operator and remove an operator.; A session without fresh email proof cannot grant another operator access.; Settings can request a confirmation link bound to the current session; completing it permits an invitation retry.; Reading or inspecting the confirmation link has no effect; only its affirmative submission supplies proof.; Only the operator established at setup may remove that operator.. Missing public-door journey: “Management — complete acceptance”, covering the unasserted outcomes above.
 
 #### OPER-003 — Removal does not rewrite history
 
@@ -115,8 +115,8 @@ Core · published · **partial** · Cites BASE-ACCESS-002, BASE-AUDIT-001
 2. Campaign approvals, revisions, approval requests, transitions and audit entries retain the removed author’s and approver’s identity.
 3. Review, campaign detail and activity expose that retained attribution at desktop and phone widths.
 
-**Evidence.** `tests/go-live/roles.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every proposal remains attributed to the removed operator..
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every proposal remains attributed to the removed operator.. Missing public-door journey: “Removal does not rewrite history — complete acceptance”, covering the unasserted outcomes above.
 
 ### Store signals
 
@@ -145,8 +145,8 @@ Core · published · **partial** · Cites BASE-OPS-003 · Rules D-1
 **Acceptance.**
 1. A replayed webhook or repeated scheduled sync updates the existing customer, order, cart, refund or browsing-event source record without creating a duplicate.
 
-**Evidence.** `tests/shopify/connection.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Customer and refund replay update existing contents without duplicates.
+**Evidence.** `tests/shopify/connection.spec.ts` — “[STORE-004] native authenticated sync imports complete Shopify records and retains original purchase time through nested-page failures and retry”; “signed carts preserve string identity, multiple lines and ordering; conflicting delivery, tenant and topics cannot mutate source facts”; “signed pixel collector binds actual proxy customer, rejects forged identity/catalog/purposes/replays and keeps quiet replay and withdrawal truthful”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Customer and refund replay update existing contents without duplicates. Missing public-door journey: “Source identity — complete acceptance”, covering the unasserted outcomes above.
 
 #### STORE-003 — Freshness
 
@@ -161,7 +161,7 @@ Core · published · **done** · Cites BASE-OPS-004 · Rules D-1
 4. Completed recovery clears the error and advances the successful-completion time.
 5. Desktop and phone Decision Desk views show the source, safe failure cause and retained completion time without provider-private diagnostics.
 
-**Evidence.** `tests/go-live/source-freshness.journeys.ts` · `src/core/features/campaigns/ui/source-freshness.tsx`
+**Evidence.** `tests/go-live/source-freshness.journeys.ts` — “[STORE-003] [STORE-004] Decision Desk retains each completed sync through a later failed page and recovery” · `src/core/features/campaigns/ui/source-freshness.tsx`
 **Gap.** None.
 
 #### STORE-004 — Source failure
@@ -177,7 +177,7 @@ Core · published · **done** · Cites BASE-OPS-004 · Rules D-1
 4. The Store view shows generation and webhook failures at desktop and phone widths.
 5. Webhook failure responses remain retryable under their provider’s protocol.
 
-**Evidence.** `tests/go-live/source-freshness.journeys.ts` · `tests/go-live/roles.journeys.ts` · `tests/go-live/stripe-journey.ts` · `tests/shopify/connection.spec.ts` · `tests/go-live/stale-sources.journeys.ts`
+**Evidence.** `tests/go-live/source-freshness.journeys.ts` — “[STORE-003] [STORE-004] Decision Desk retains each completed sync through a later failed page and recovery” · `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/stripe-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/shopify/connection.spec.ts` · `tests/go-live/stale-sources.journeys.ts`
 **Gap.** None.
 
 #### STORE-005 — Stale sources block approval
@@ -192,7 +192,7 @@ Core · published · **done** · Rules D-1
 3. At desktop and phone widths the review labels stale data and prevents approval.
 4. After a completed sync and explicit recheck, the same saved revision can pass its ordinary approval checks.
 
-**Evidence.** `tests/go-live/stale-sources.journeys.ts` · `src/core/features/lifecycle/evaluate-approval.ts`
+**Evidence.** `tests/go-live/stale-sources.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions” · `src/core/features/lifecycle/evaluate-approval.ts`
 **Gap.** None.
 
 #### STORE-006 — Declared adapter capability
@@ -208,7 +208,7 @@ Core · published · **partial** · Rules D-1
 4. The AI proposal-generation door names the missing source and saves neither campaign nor partial audience.
 
 **Evidence.** `tests/go-live/stale-sources.journeys.ts` · `src/core/features/audience/source-coverage.ts` · `src/core/features/campaigns/authoring-service.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Source capability declared unavailable; Unsupported requirement refused; Reviews name missing source and leave no snapshots; Generation source refusal without campaign or audience. Assertions for the unsupported-source journey are in tests/go-live/declared-capability.ts outside the old Evidence set.
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Source capability declared unavailable; Unsupported requirement refused; Reviews name missing source and leave no snapshots; Generation source refusal without campaign or audience. Assertions for the unsupported-source journey are in tests/go-live/declared-capability.ts outside the old Evidence set. Missing public-door journey: “Declared adapter capability — complete acceptance”, covering the unasserted outcomes above.
 
 #### STORE-007 — Ingestion latency
 
@@ -235,8 +235,8 @@ Core · published · **partial** · Rules D-2
 2. Phone identities use the documented international canonical form.
 3. Each canonical email or phone identity belongs to at most one contact on capture and import.
 
-**Evidence.** `tests/move-in/archive.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Case and whitespace canonicalization; Phone canonicalization; Phone identity uniqueness on capture and import.
+**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Case and whitespace canonicalization; Phone canonicalization; Phone identity uniqueness on capture and import. Missing public-door journey: “Contact identity — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-002 — Channel status
 
@@ -249,8 +249,8 @@ Core · published · **partial** · Rules D-2
 2. Only subscribed channels are eligible for a marketing send.
 3. Store activity or consent on one channel never changes the other channel’s state.
 
-**Evidence.** `tests/move-in/held.journeys.ts` · `tests/move-in/archive.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Independent pending and SMS states; Cross-channel independence under store activity and consent.
+**Evidence.** `tests/move-in/held.journeys.ts` — “[CONT-002][CONT-004][CONT-010] an export's unsubscribe or cleaned status reaches a contact an earlier import holds, and keeps their own edits” · `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Independent pending and SMS states; Cross-channel independence under store activity and consent. Missing public-door journey: “Channel status — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-003 — Consent evidence
 
@@ -265,8 +265,8 @@ Core · published · **partial** · Rules D-2
 4. A reassigned phone or one no longer belonging to the recipient becomes non-subscribed until fresh evidence is captured.
 5. A stale or missing rendered disclosure cannot create consent evidence.
 
-**Evidence.** `tests/audience-import/signup.spec.ts` · `tests/campaign-authoring/import-category.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Recipient scope maintained; Missing evidence creates a non-subscribed contact, except for the incumbent-held evidence CONT-024 defines.; A reassigned phone or one no longer belonging to the recipient becomes non-subscribed until fresh evidence is captured.; Retained channel on capture and import; Retained brand or legal sender on capture and import; Retained SMS sender or program on capture and import; Retained message subject or category on capture and import; Retained frequency disclosure on capture and import; Retained destination jurisdiction on capture and import; Retained consent text on capture and import; Retained consent version on capture and import; Retained confirmation evidence on capture and import.
+**Evidence.** `tests/audience-import/signup.spec.ts` — “CONT-003 a stale or missing rendered disclosure cannot capture changed sender consent”; “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP” · `tests/campaign-authoring/import-category.spec.ts` — “[CONT-003][CONT-010][CAMP-004] imported category choices match the saved draft and explain approval mismatches”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Recipient scope maintained; Missing evidence creates a non-subscribed contact, except for the incumbent-held evidence CONT-024 defines.; A reassigned phone or one no longer belonging to the recipient becomes non-subscribed until fresh evidence is captured.; Retained channel on capture and import; Retained brand or legal sender on capture and import; Retained SMS sender or program on capture and import; Retained message subject or category on capture and import; Retained frequency disclosure on capture and import; Retained destination jurisdiction on capture and import; Retained consent text on capture and import; Retained consent version on capture and import; Retained confirmation evidence on capture and import. Missing public-door journey: “Consent evidence — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-004 — Opt-out precedence
 
@@ -279,8 +279,8 @@ Core · published · **partial** · Rules D-2
 2. Imports, syncs, store events, merges and operator edits never reverse the opt-out.
 3. During a parallel run, incumbent opt-outs and suppressions apply the same precedence, and Mango writes its own restrictions back to the incumbent.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/provider-suppression-ingress.spec.ts` · `tests/move-in/held.journeys.ts` · `tests/go-live/sync-integrations.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Sync, store events, merge and operator edits retain the restriction; Parallel-run incumbent writeback.
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/provider-suppression-ingress.spec.ts` — “[CONT-004][CONT-013] erasure removes signed unmatched SMS facts with canonical and historical formatted destinations” · `tests/move-in/held.journeys.ts` — “[CONT-004][CONT-010] undoing a CSV unsubscribe or cleaned list, or an archive, never lifts an opt-out” · `tests/go-live/sync-integrations.journeys.ts`
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Sync, store events, merge and operator edits retain the restriction; Parallel-run incumbent writeback. Missing public-door journey: “Opt-out precedence — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-005 — Resubscription
 
@@ -294,8 +294,8 @@ Core · published · **partial** · Rules D-2
 3. A suppression cause must be resolved before that channel becomes subscribed.
 4. During parallel run, a confirmed resubscribe writes subscribed state back where the incumbent API allows; otherwise the cutover report lists it.
 
-**Evidence.** `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts`
-**Gap.** Fresh-recipient consent and suppression resolution remain the required resubscription route. Unasserted in the cited evidence: confirmation later than the opt-out, refusal of an operator-only resubscription, and parallel-run subscribed-state writeback or its named fallback. Public-form and guarded-capture proof belongs to CONT-027 and CONT-028.
+**Evidence.** `tests/provider-suppression-ingress.spec.ts` — “[CONT-006][CONT-005][CONT-013] suppression preceding contact creation blocks fresh capture and erasure removes raw unmatched ingress” · `tests/go-live/opt-out-reasons.journeys.ts`
+**Gap.** Fresh-recipient consent and suppression resolution remain the required resubscription route. Unasserted in the cited evidence: confirmation later than the opt-out, refusal of an operator-only resubscription, and parallel-run subscribed-state writeback or its named fallback. Public-form and guarded-capture proof belongs to CONT-027 and CONT-028. Missing public-door journey: “Resubscription — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-006 — Email suppression
 
@@ -311,8 +311,8 @@ Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001 · Rules D
 5. Refreshing local authentication/setup credentials preserves existing contact-hash restrictions, including restrictions without a remaining contact row.
 6. Legacy local authority conversion preserves the original verified contact authority before credential rotation; unknown or missing authority refuses work rather than selecting an unused secret.
 
-**Evidence.** `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/go-live/sync-integrations.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Soft-bounce recorded and visible; Consecutive soft-bounce policy suppresses; Confirmed delivery resets consecutive soft-bounce count; Incomplete provider webhook setup blocks approval; Refreshing local authentication/setup credentials preserves existing contact-hash restrictions, including restrictions without a remaining contact row.; Legacy local authority conversion preserves the original verified contact authority before credential rotation; unknown or missing authority refuses work rather than selecting an unused secret.. Soft-bounce progression and reset assertions are in tests/go-live/opt-out-reasons.journeys.ts outside the old Evidence set.
+**Evidence.** `tests/provider-suppression-ingress.spec.ts` — “[CONT-006][SEND-006] signed unmatched destination suppression is durable before acknowledgement and replay creates no delivery” · `tests/go-live/go-live.journeys.ts` — “[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts replayed through the public webhook keep delivery truth separate” · `tests/go-live/sync-integrations.journeys.ts`
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Soft-bounce recorded and visible; Consecutive soft-bounce policy suppresses; Confirmed delivery resets consecutive soft-bounce count; Incomplete provider webhook setup blocks approval; Refreshing local authentication/setup credentials preserves existing contact-hash restrictions, including restrictions without a remaining contact row.; Legacy local authority conversion preserves the original verified contact authority before credential rotation; unknown or missing authority refuses work rather than selecting an unused secret.. Soft-bounce progression and reset assertions are in tests/go-live/opt-out-reasons.journeys.ts outside the old Evidence set. Missing public-door journey: “Email suppression — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-007 — SMS compliance replies
 
@@ -340,8 +340,8 @@ Core · published · **partial** · Rules D-2
 3. Older events remain reachable at desktop and phone widths.
 4. Unrelated contacts and private source, provider and audit payloads remain absent.
 
-**Evidence.** `tests/audience-controls/contact-history.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every other event retains its source.
+**Evidence.** `tests/audience-controls/contact-history.spec.ts` — “[CONT-008] [CONT-017] a contact profile combines identities, properties, segments and original source, consent, suppression, eligibility, delivery and operator facts with masked role views”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every other event retains its source. Missing public-door journey: “Contact history — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-009 — Confirmation
 
@@ -358,8 +358,8 @@ Core · published · **partial** · Cites BASE-MAIL-001 · Rules D-2
 6. Opening or inspecting a confirmation link previews a form without changing consent, consuming its token or changing channel state; only its explicit affirmative submission confirms.
 7. Active-identity, later-opt-out and suppression guards remain mandatory; operator-recorded SMS uses its separately authenticated exact-message reply under CONT-026 rather than a URL confirmation.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/audience-import/signup.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Confirming request time read back; Pending channel cannot receive marketing; When confirmation is not required, recorded consent under CONT-003 subscribes the channel directly.; Reading and HEAD do not consume confirmation token; Suppression guard cannot be bypassed; Inactive identity cannot be confirmed; Operator-recorded SMS exact authenticated reply.
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/audience-import/signup.spec.ts` — “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP”; “CONT-007/009 signed SMS signup confirms once; linked STOP is durable and HELP/START cannot subscribe or duplicate replies”; “CONT-004/006/009 later optout blocks confirmation and uncertain confirmation delivery is never automatically repeated”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Confirming request time read back; Pending channel cannot receive marketing; When confirmation is not required, recorded consent under CONT-003 subscribes the channel directly.; Reading and HEAD do not consume confirmation token; Suppression guard cannot be bypassed; Inactive identity cannot be confirmed; Operator-recorded SMS exact authenticated reply. Missing public-door journey: “Confirmation — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-028 — Guarded consent capture
 
@@ -375,7 +375,7 @@ Core · published · **partial** · From CONT-005, CONT-009 · Rules D-2
 5. The adapter is invoked immediately after the authoritative check; a provider handoff already authorized and in progress cannot be recalled by a later transition.
 
 **Evidence.** `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Public eligibility, profile changes, consent evidence, capture metadata, history and pending status commit together, or a currently barred destination gains none of the new consent records.; A surviving unsubscribe or erasure restriction may recreate an unsubscribed profile containing only new post-opt-out request evidence, without restoring history; confirmation mail stays within CONT-027’s shared allowance.; Surviving suppression blocks fresh capture eligibility; Confirmation preparation finishes before the authoritative handoff check; suppression, a later opt-out or an already committed confirmation prevents handoff when present at that check.; The adapter is invoked immediately after the authoritative check; a provider handoff already authorized and in progress cannot be recalled by a later transition..
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Public eligibility, profile changes, consent evidence, capture metadata, history and pending status commit together, or a currently barred destination gains none of the new consent records.; A surviving unsubscribe or erasure restriction may recreate an unsubscribed profile containing only new post-opt-out request evidence, without restoring history; confirmation mail stays within CONT-027’s shared allowance.; Surviving suppression blocks fresh capture eligibility; Confirmation preparation finishes before the authoritative handoff check; suppression, a later opt-out or an already committed confirmation prevents handoff when present at that check.; The adapter is invoked immediately after the authoritative check; a provider handoff already authorized and in progress cannot be recalled by a later transition.. Missing public-door journey: “Guarded consent capture — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-010 — Import
 
@@ -391,8 +391,8 @@ Core · published · **partial** · Cites BASE-INPUT-001 · Rules D-2
 5. A named incumbent export may use incumbent-held consent only under the owner’s once-per-source attestation; an unnamed file remains under the per-row consent rule.
 6. Import undo preserves restrictions and the reviewed capacity meets SCALE-001.
 
-**Evidence.** `tests/audience-import/routes.spec.ts` · `tests/move-in/archive.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Phone-only CSV validated; Each rejected row reason read back; Unnamed-file per-row rule; Full review capacity.
+**Evidence.** `tests/audience-import/routes.spec.ts` · `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Phone-only CSV validated; Each rejected row reason read back; Unnamed-file per-row rule; Full review capacity. Missing public-door journey: “Import — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-011 — Merge
 
@@ -405,8 +405,8 @@ Core · published · **partial** · Rules D-2
 2. For each channel, suppression wins over unsubscribe, non-subscription, pending and subscription, in that order.
 3. A merge never resubscribes a restricted channel.
 
-**Evidence.** `tests/audience-controls/merge.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every channel preserves the restrictive order.
+**Evidence.** `tests/audience-controls/merge.spec.ts` — “CONT-011 CONT-004 CONT-009 AUD-005 merge preserves restrictions, links and immutable recipients through authenticated public routes”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every channel preserves the restrictive order. Missing public-door journey: “Merge — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-012 — Dormancy without deletion
 
@@ -421,8 +421,8 @@ Core · published · **partial** · Cites BASE-DATA-002 · Rules D-2
 4. An otherwise dormant contact with only imported opens inside the window is labeled open-only.
 5. Inactivity never unsubscribes or suppresses a contact; clearing a dormant list is an operator action.
 
-**Evidence.** `tests/move-in/archive.journeys.ts` · `tests/go-live/stale-sources.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Imported order and consent changes retain original times for dormancy.
+**Evidence.** `tests/move-in/archive.journeys.ts` — “[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immutable dispatch policy without changing consent” · `tests/go-live/stale-sources.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions”
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Imported order and consent changes retain original times for dormancy. Missing public-door journey: “Dormancy without deletion — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-013 — Erasure and surviving opt-out
 
@@ -437,8 +437,8 @@ Core · published · **partial** · Cites BASE-DATA-003, BASE-INPUT-001 · Rules
 4. An import, sync or capture matching a retained local or portable identity preserves its restriction; an erasure opt-out means unsubscribed.
 5. Only the recipient’s own confirmed public-form resubscribe can clear an unsubscribe or erasure restriction under CONT-027; it cannot clear suppression.
 
-**Evidence.** `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: All listed hash/channel/reason/time fields and opted-out aliases retained; Installation-keyed one-way destination hash; Subscribed identity has no row tombstone; An import, sync or capture matching a retained local or portable identity preserves its restriction; an erasure opt-out means unsubscribed.; Only the recipient’s own confirmed public-form resubscribe can clear an unsubscribe or erasure restriction under CONT-027; it cannot clear suppression..
+**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/audience-import/erasure-merge.spec.ts`
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: All listed hash/channel/reason/time fields and opted-out aliases retained; Installation-keyed one-way destination hash; Subscribed identity has no row tombstone; An import, sync or capture matching a retained local or portable identity preserves its restriction; an erasure opt-out means unsubscribed.; Only the recipient’s own confirmed public-form resubscribe can clear an unsubscribe or erasure restriction under CONT-027; it cannot clear suppression.. Missing public-door journey: “Erasure and surviving opt-out — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-029 — Portable surviving restrictions
 
@@ -453,8 +453,8 @@ Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-D
 4. Documentation explains that a mapping or export holder can test guessed destinations or an address dictionary without the installation secret and can match stable hashes across installations and exports.
 5. The retained mappings and exports are handled as sensitive personal data.
 
-**Evidence.** `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Local-to-portable mapping retained specifically; Audience CSV exports carry surviving restrictions by their portable hash after erasure.; Documentation explains that a mapping or export holder can test guessed destinations or an address dictionary without the installation secret and can match stable hashes across installations and exports.; The retained mappings and exports are handled as sensitive personal data..
+**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/audience-import/erasure-merge.spec.ts`
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Local-to-portable mapping retained specifically; Audience CSV exports carry surviving restrictions by their portable hash after erasure.; Documentation explains that a mapping or export holder can test guessed destinations or an address dictionary without the installation secret and can match stable hashes across installations and exports.; The retained mappings and exports are handled as sensitive personal data.. Missing public-door journey: “Portable surviving restrictions — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-030 — Erasure-safe restore authority
 
@@ -468,8 +468,8 @@ Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-D
 3. Upgrade retires legacy journals and transfers only after advancing every known source floor.
 4. An offline copy without current authority makes no claim to detect later erasure.
 
-**Evidence.** `tests/portability.spec.ts` · `tests/audience-import/erasure-merge.spec.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Nonempty legacy row journals are refused before staging.; Upgrade retires legacy journals and transfers only after advancing every known source floor.; An offline copy without current authority makes no claim to detect later erasure..
+**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/audience-import/erasure-merge.spec.ts`
+**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Nonempty legacy row journals are refused before staging.; Upgrade retires legacy journals and transfers only after advancing every known source floor.; An offline copy without current authority makes no claim to detect later erasure.. Missing public-door journey: “Erasure-safe restore authority — complete acceptance”, covering the unasserted outcomes above.
 
 ### Proposals
 
@@ -483,7 +483,7 @@ Core · published · **done** · Rules D-1
 1. The Decision Desk lists only proposed proposals.
 2. The ordering policy ranks by expected revenue when this deployment has enough of its own attribution history (RESULT-003), then by the earliest send-by instant; proposals with neither rank last.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001] Decision Desk returns only proposed suggestions in revenue then deadline order”
 **Gap.** None.
 
 #### PROP-002 — Evidence
@@ -498,8 +498,8 @@ Core · published · **partial** · Rules D-1
 3. It shows the send-by instant, proposed channels and each step instant.
 4. Every forecast or confidence label names its method.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Asserted: Triggering source events; Lookback window; Source-data as-of; Inclusion rule; Exclusion rule; Send-by instant and scheduled instant relationship; Proposed channels; Forecast method displayed. Unasserted: Confidence-label method.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-002] proposal route and detail show observed values, event IDs, lookback, rules, as-of, timing and methods”; “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”
+**Gap.** Asserted: Triggering source events; Lookback window; Source-data as-of; Inclusion rule; Exclusion rule; Send-by instant and scheduled instant relationship; Proposed channels; Forecast method displayed. Unasserted: Confidence-label method. Missing public-door journey: “Evidence — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-003 — Counts
 
@@ -511,8 +511,8 @@ Core · published · **partial** · Rules D-1
 1. A proposal distinguishes candidate, excluded and eligible contact counts.
 2. It reports per-channel recipient-step counts, and labels no count recipients before exclusions have been applied.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Asserted: Candidate count; Excluded contact count; Eligible contact count; Per-channel recipient-step count. Unasserted: No recipients label before exclusions.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-003] generated audience counts apply real consent exclusions and count each eligible channel step”
+**Gap.** Asserted: Candidate count; Excluded contact count; Eligible contact count; Per-channel recipient-step count. Unasserted: No recipients label before exclusions. Missing public-door journey: “Counts — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-004 — Content
 
@@ -526,8 +526,8 @@ Core · published · **partial** · Rules D-1
 3. The sender identity and destination links are editable.
 4. Each selected channel has a preview of its saved content.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Asserted: Editable campaign name; Editable email subject; Saved email preview; Saved SMS preview. Unasserted: Editable email body; Editable proposed SMS body; Editable sender identity; Editable destination links.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”
+**Gap.** Asserted: Editable campaign name; Editable email subject; Saved email preview; Saved SMS preview. Unasserted: Editable email body; Editable proposed SMS body; Editable sender identity; Editable destination links. Missing public-door journey: “Content — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-005 — Owner control
 
@@ -539,8 +539,8 @@ Core · published · **partial** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-A
 1. Creating or adopting a generated proposal creates an editable draft without itself scheduling or sending.
 2. Under a company policy that holds activation for approval, the particular saved revision runs only after the named person approves it.
 
-**Evidence.** `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Asserted: Adoption retains draft state; Generation and adoption enqueue nothing. Unasserted: Held company policy binds the exact saved revision.
+**Evidence.** `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”
+**Gap.** Asserted: Adoption retains draft state; Generation and adoption enqueue nothing. Unasserted: Held company policy binds the exact saved revision. Missing public-door journey: “Owner control — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-006 — Grounded generation
 
@@ -554,7 +554,7 @@ Core · published · **partial** · Rules D-1
 3. Rejected generation is not replaced with generic marketing copy.
 
 **Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Grounded source observations accepted; Own imported data and configured knowledge only; Fabricated or malformed claims rejected; Rejected proposal failed; No substituted composition.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Grounded source observations accepted; Own imported data and configured knowledge only; Fabricated or malformed claims rejected; Rejected proposal failed; No substituted composition. Missing public-door journey: “Grounded generation — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-007 — Generation failure
 
@@ -567,8 +567,8 @@ Core · published · **partial** · Cites BASE-OPS-004 · Rules D-1
 2. A configured AI provider that does not complete within 60 seconds fails the proposal with its provider error.
 3. Failure creates no semantic substitute and leaves existing proposals and campaigns unaffected.
 
-**Evidence.** `tests/proposals-decision/proposal-states.spec.ts`
-**Gap.** Asserted: Provider error recorded; No substitute campaign. Unasserted: Invalid AI output fails proposal; 60-second timeout fails with provider error; Existing proposals preserved; Existing campaigns preserved.
+**Evidence.** `tests/proposals-decision/proposal-states.spec.ts` — “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft”
+**Gap.** Asserted: Provider error recorded; No substitute campaign. Unasserted: Invalid AI output fails proposal; 60-second timeout fails with provider error; Existing proposals preserved; Existing campaigns preserved. Missing public-door journey: “Generation failure — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-008 — Forecast provenance
 
@@ -581,8 +581,8 @@ Core · published · **partial** · Rules D-1
 2. No forecast presents a benchmark from another store.
 3. Insufficient own history is stated explicitly instead of a displayed range.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range. Unasserted: Every recovery-rate and confidence figure identifies source history; Other-store benchmark rejected.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-008] forecasts use owned mature history including failed and zero-revenue recipients, and refuse thin or mixed-currency history”
+**Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range. Unasserted: Every recovery-rate and confidence figure identifies source history; Other-store benchmark rejected. Missing public-door journey: “Forecast provenance — complete acceptance”, covering the unasserted outcomes above.
 
 #### PROP-009 — Proposal states
 
@@ -595,8 +595,8 @@ Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1
 2. Only a proposed proposal can be approved or dismissed.
 3. Each transition records its actor and time once.
 
-**Evidence.** `tests/proposals-decision/proposal-states.spec.ts`
-**Gap.** Asserted: Approved state with linked campaign; Dismissed state; Dismissal reason read back; Expired state; Failed state; Dismissed or expired proposal refuses approval; Approved proposal refuses dismissal; Actor; Single transition under competing decisions. Unasserted: Proposed state; Time.
+**Evidence.** `tests/proposals-decision/proposal-states.spec.ts` — “[PROP-009] authenticated decisions record actor/time once and all request paths fence expiry and competing decisions”; “[PROP-007] provider rejection produces an auditable failed proposal, unknown cost and no substitute draft”
+**Gap.** Asserted: Approved state with linked campaign; Dismissed state; Dismissal reason read back; Expired state; Failed state; Dismissed or expired proposal refuses approval; Approved proposal refuses dismissal; Actor; Single transition under competing decisions. Unasserted: Proposed state; Time. Missing public-door journey: “Proposal states — complete acceptance”, covering the unasserted outcomes above.
 
 ### Audiences
 
@@ -611,8 +611,8 @@ Core · published · **partial** · Rules D-2
 2. It shows candidate count, each exclusion reason with its count, and eligible contact count.
 3. It shows recipient-step count separately for each channel.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** Asserted: Candidate count; Eligible contact count; Every exclusion reason and count. Unasserted: Audience rule; Audience as-of time; Per-channel recipient-step count.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable”
+**Gap.** Asserted: Candidate count; Eligible contact count; Every exclusion reason and count. Unasserted: Audience rule; Audience as-of time; Per-channel recipient-step count. Missing public-door journey: “Review snapshot — complete acceptance”, covering the unasserted outcomes above.
 
 #### AUD-002 — Consent and suppression
 
@@ -624,7 +624,7 @@ Core · published · **partial** · Rules D-2
 1. Pending, non-subscribed, unsubscribed and suppressed contacts are excluded on that channel, regardless of segment membership or an operator-authored inclusion rule.
 
 **Evidence.** `src/core/features/audience/eligibility.ts` · `tests/go-live/delivery.journeys.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Pending channel exclusion; Non-subscribed channel exclusion; Unsubscribed channel exclusion; Suppressed channel exclusion; Segment or explicit inclusion cannot override channel exclusion.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Pending channel exclusion; Non-subscribed channel exclusion; Unsubscribed channel exclusion; Suppressed channel exclusion; Segment or explicit inclusion cannot override channel exclusion. Missing public-door journey: “Consent and suppression — complete acceptance”, covering the unasserted outcomes above.
 
 #### AUD-003 — Commerce and dormancy exclusions
 
@@ -637,7 +637,7 @@ Core · published · **done** · Rules D-2
 2. The default excludes a contact for seven days after buying that campaign’s product, while its refund or return is unresolved, and while dormant under CONT-012’s twelve-month window.
 3. Resolved commerce and eleven-month activity remain eligible; thirteen-month activity is dormant.
 
-**Evidence.** `tests/go-live/stale-sources.journeys.ts`
+**Evidence.** `tests/go-live/stale-sources.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions”
 **Gap.** None.
 
 #### AUD-004 — Frequency protection
@@ -651,7 +651,7 @@ Core · published · **partial** · Rules D-2
 2. The default windows are 24 hours since the last marketing email and 72 hours since the last marketing SMS.
 
 **Evidence.** `src/core/features/audience/eligibility.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Frequency-window exclusion; Recorded frequency-window reason; No silent deferral; 24-hour email window; 72-hour SMS window.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Frequency-window exclusion; Recorded frequency-window reason; No silent deferral; 24-hour email window; 72-hour SMS window. Missing public-door journey: “Frequency protection — complete acceptance”, covering the unasserted outcomes above.
 
 #### AUD-005 — Dispatch recheck
 
@@ -664,8 +664,8 @@ Core · published · **partial** · Rules D-2
 2. A purchase, refund, opt-out, bounce, complaint, consent change, merge or frequency-window change after approval prevents that delivery and records its exclusion reason.
 3. Every audience source still satisfies STORE-005; a failed refresh or stale source pauses its affected channel before any further hand-off, and only a successful refresh permits resumption.
 
-**Evidence.** `tests/audience-controls/merge.spec.ts` · `tests/go-live/delivery.journeys.ts`
-**Gap.** Asserted: Immediate hand-off eligibility recheck; Complaint after approval prevents hand-off; Merge after approval prevents hand-off; Merge skip reason is recorded. Unasserted: Dispatch-start eligibility recheck; Purchase after approval prevents hand-off; Purchase skip reason is recorded; Refund after approval prevents hand-off; Refund skip reason is recorded; Opt-out after approval prevents hand-off; Opt-out skip reason is recorded; Bounce after approval prevents hand-off; Bounce skip reason is recorded; Complaint skip reason is recorded; Consent change after approval prevents hand-off; Consent change skip reason is recorded; Frequency-window change after approval prevents hand-off; Frequency-window change skip reason is recorded; Source freshness holds at hand-off; Failed refresh pauses channel before more hand-offs; Stale source pauses channel before more hand-offs; Only successful refresh resumes.
+**Evidence.** `tests/audience-controls/merge.spec.ts` — “CONT-011 CONT-004 CONT-009 AUD-005 merge preserves restrictions, links and immutable recipients through authenticated public routes” · `tests/go-live/delivery.journeys.ts` — “[SEND-004] a signed restriction committed while dispatch waits at its real D1 fence prevents the provider request”
+**Gap.** Asserted: Immediate hand-off eligibility recheck; Complaint after approval prevents hand-off; Merge after approval prevents hand-off; Merge skip reason is recorded. Unasserted: Dispatch-start eligibility recheck; Purchase after approval prevents hand-off; Purchase skip reason is recorded; Refund after approval prevents hand-off; Refund skip reason is recorded; Opt-out after approval prevents hand-off; Opt-out skip reason is recorded; Bounce after approval prevents hand-off; Bounce skip reason is recorded; Complaint skip reason is recorded; Consent change after approval prevents hand-off; Consent change skip reason is recorded; Frequency-window change after approval prevents hand-off; Frequency-window change skip reason is recorded; Source freshness holds at hand-off; Failed refresh pauses channel before more hand-offs; Stale source pauses channel before more hand-offs; Only successful refresh resumes. Missing public-door journey: “Dispatch recheck — complete acceptance”, covering the unasserted outcomes above.
 
 #### AUD-006 — Multi-step exit
 
@@ -678,8 +678,8 @@ Core · published · **partial** · Rules D-2
 2. After the first send, changes to inclusion, a custom exclusion and consent yield named skips at the second step, with only the still-eligible control sent.
 3. A contact newly matching the rule remains outside the frozen audience.
 
-**Evidence.** `tests/go-live/multistep.journeys.ts`
-**Gap.** Asserted: Changed eligibility prevents later step; Changed inclusion yields named skip; Custom exclusion yields named skip; Consent change yields named skip; Only eligible control receives second step; Newly matching contact never added. Unasserted: Conversion prevents later step.
+**Evidence.** `tests/go-live/multistep.journeys.ts` — “[AUD-006] later steps reapply ordinary inclusion, custom exclusions and consent without adding new candidates”
+**Gap.** Asserted: Changed eligibility prevents later step; Changed inclusion yields named skip; Custom exclusion yields named skip; Consent change yields named skip; Only eligible control receives second step; Newly matching contact never added. Unasserted: Conversion prevents later step. Missing public-door journey: “Multi-step exit — complete acceptance”, covering the unasserted outcomes above.
 
 #### AUD-007 — Frozen candidate set
 
@@ -691,8 +691,8 @@ Core · published · **partial** · Rules D-2
 1. Approval freezes the candidate set resolved at that instant; contacts first matching later are not added.
 2. Each contact creates at most one recipient-step per channel per step even when matching the rule more than once.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** Asserted: Frozen candidate set survives segment changes. Unasserted: Newly matching contacts not added; At most one recipient-step per contact per channel per step under overlapping matches.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable”
+**Gap.** Asserted: Frozen candidate set survives segment changes. Unasserted: Newly matching contacts not added; At most one recipient-step per contact per channel per step under overlapping matches. Missing public-door journey: “Frozen candidate set — complete acceptance”, covering the unasserted outcomes above.
 
 ### Campaigns
 
@@ -706,8 +706,8 @@ Core · published · **partial** · Cites BASE-OPS-005 · Rules D-1, D-3
 1. The states are draft with nothing scheduled, scheduled with an approved revision and future step, dispatching once hand-off begins, paused under SEND-009, completed under SEND-007, canceled under CAMP-009, or failed when the first step misses its deadline because its required provider or sender registration is unavailable.
 2. Each transition records its actor or acting feature and its time, and an invalid transition is rejected.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts`
-**Gap.** Asserted: Scheduled state; Dispatching state; Completed state; Canceled state. Unasserted: Draft state; Paused state; Failed after missing first-step deadline; Actor or feature recorded for each transition; Time recorded for each transition; Invalid transition rejected.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
+**Gap.** Asserted: Scheduled state; Dispatching state; Completed state; Canceled state. Unasserted: Draft state; Paused state; Failed after missing first-step deadline; Actor or feature recorded for each transition; Time recorded for each transition; Invalid transition rejected. Missing public-door journey: “States — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-002 — Draft editing
 
@@ -721,8 +721,8 @@ Core · published · **partial** · Rules D-1, D-3
 3. The composer shows the derived audience summary described by AUD-010 live instead of authoring audience prose; each new saved revision stores it and ignores caller-supplied audience text as authority.
 4. Earlier revisions display the derived summary without rewriting immutable approvals; readiness requires valid structured rules and approval binds the exact saved rules.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** Asserted: Persisted Campaign name; Persisted Message content; Persisted Links; Persisted Schedule. Unasserted: Persisted Channels; Persisted Audience rule; Persisted Sender identity; Body within sent-size limit saves; Oversized body refused with measured size; Refusal names limit; Oversized body not truncated. Missing public-door journey: the composer derives the live summary, new saved revisions store it and ignore caller prose, and earlier revisions display it without changing immutable approvals; readiness validates structured rules and approval binds the exact saved rules.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px”
+**Gap.** Asserted: Persisted Campaign name; Persisted Message content; Persisted Links; Persisted Schedule. Unasserted: Persisted Channels; Persisted Audience rule; Persisted Sender identity; Body within sent-size limit saves; Oversized body refused with measured size; Refusal names limit; Oversized body not truncated. Missing public-door journey: the composer derives the live summary, new saved revisions store it and ignore caller prose, and earlier revisions display it without changing immutable approvals; readiness validates structured rules and approval binds the exact saved rules. Missing public-door journey: “Draft editing — complete acceptance”, covering the unasserted outcomes above.
 
 ### Audiences — Derived audience rule summaries
 
@@ -737,7 +737,7 @@ Core · published · **partial** · From AUD-001 · Rules D-2
 2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
 
 **Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** Related audience-rule implementation is present. Missing public-door journey: review, approval checks, scheduled pages, campaign lists and audience snapshots derive the complete summary, including every condition, comparison, value, lookback, editor label and all-or-any matching.
+**Gap.** Related audience-rule implementation is present. Missing public-door journey: review, approval checks, scheduled pages, campaign lists and audience snapshots derive the complete summary, including every condition, comparison, value, lookback, editor label and all-or-any matching. Missing public-door journey: “Derived audience rule summaries — complete acceptance”, covering the unasserted outcomes above.
 
 ### Campaigns — Live audience authoring counts
 
@@ -752,8 +752,8 @@ Core · published · **partial** · From CAMP-002 · Rules D-1, D-3
 2. Missing or stale required commerce shows unavailable counts.
 3. An older in-flight count request cannot replace the result for a newer rule.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** Asserted: Structured inclusion updates; Real source counts; Unavailable missing source counts; Unavailable stale counts; Late old request cannot replace new count. Unasserted: Structured exclusion updates.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px”
+**Gap.** Asserted: Structured inclusion updates; Real source counts; Unavailable missing source counts; Unavailable stale counts; Late old request cannot replace new count. Unasserted: Structured exclusion updates. Missing public-door journey: “Live audience authoring counts — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-021 — Start and adopt newsletters
 
@@ -767,8 +767,8 @@ Core · published · **partial** · From CAMP-002 · Cites BASE-ACCESS-002 · Ru
 3. Creating, selecting and saving do not themselves approve or enqueue delivery; incomplete drafts can save while approval names missing content.
 4. Rich text is the initial editor and retains unstyled markup; HTML mode preserves allowed authored markup, and images or presentation use HTML mode without fetching remote images.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** Asserted: Blank newsletter without AI or commerce; Real source starter; Same editable Review; Linked proposal reused; Concurrent adoption creates one campaign; Create has no authority; Select and save enqueue nothing; Incomplete draft saves; Approval names missing content; Rich text initial editor; Optional HTML mode preserves authored markup; Styled and image content stays in HTML mode; No image fetch while authoring. Unasserted: At most three clicks; Expired proposal not adopted.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px”
+**Gap.** Asserted: Blank newsletter without AI or commerce; Real source starter; Same editable Review; Linked proposal reused; Concurrent adoption creates one campaign; Create has no authority; Select and save enqueue nothing; Incomplete draft saves; Approval names missing content; Rich text initial editor; Optional HTML mode preserves authored markup; Styled and image content stays in HTML mode; No image fetch while authoring. Unasserted: At most three clicks; Expired proposal not adopted. Missing public-door journey: “Start and adopt newsletters — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-003 — Revision preview
 
@@ -781,8 +781,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. The previews include resolved personalization examples and the compliance footer or SMS opt-out text that will be sent.
 3. Saved-revision previews preserve validated styles; a body the checker refuses appears unstyled with its warning.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts`
-**Gap.** Asserted: Desktop saved preview. Unasserted: Mobile saved preview; Plain-text saved preview; Resolved personalization examples; Compliance footer; SMS opt-out text; Validated styles in saved preview; Failing body unstyled with warning.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px” · `tests/campaign-authoring/canonical-save.spec.ts`
+**Gap.** Asserted: Desktop saved preview. Unasserted: Mobile saved preview; Plain-text saved preview; Resolved personalization examples; Compliance footer; SMS opt-out text; Validated styles in saved preview; Failing body unstyled with warning. Missing public-door journey: “Revision preview — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-022 — Canonical saved email bytes
 
@@ -798,8 +798,8 @@ Core · published · **partial** · From CAMP-003 · Rules D-1, D-3
 5. Leading newlines in preformatted controls and unclosed plaintext settle without growing or moving the footer; a form that has not settled after sixteen rounds is refused rather than saved unstably.
 6. All newly saved drafts, including older drafts saved through other field edits, use this canonical form; plain text comes from the same parse.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts`
-**Gap.** Asserted: One managed unsubscribe footer; Derived text contains destination URL; Stored body resaves byte-identically; Editor body resaves byte-identically; First duplicate attribute kept; Ignored misplaced tags absent; Checker judges stored tree. Unasserted: One managed postal footer; HTML-body parse with scripting off; Kept attribute values preserved; Kept styles preserved; Comments preserved but refused; Personalization tokens preserved; Refused markup not repaired; Noncanonical syntax saves; Closing-tag attributes dropped; Leading newline stable; Plaintext stable without footer growth; Sixteen-round instability refusal; Older draft canonicalized on any-field save; Plain text comes from same parse.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px” · `tests/campaign-authoring/canonical-save.spec.ts` — “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree”; “[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it”
+**Gap.** Asserted: One managed unsubscribe footer; Derived text contains destination URL; Stored body resaves byte-identically; Editor body resaves byte-identically; First duplicate attribute kept; Ignored misplaced tags absent; Checker judges stored tree. Unasserted: One managed postal footer; HTML-body parse with scripting off; Kept attribute values preserved; Kept styles preserved; Comments preserved but refused; Personalization tokens preserved; Refused markup not repaired; Noncanonical syntax saves; Closing-tag attributes dropped; Leading newline stable; Plaintext stable without footer growth; Sixteen-round instability refusal; Older draft canonicalized on any-field save; Plain text comes from same parse. Missing public-door journey: “Canonical saved email bytes — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-004 — Approval checks
 
@@ -814,8 +814,8 @@ Core · published · **partial** · Rules D-1, D-3
 4. Any failed check leaves the campaign a draft and names every blocking check.
 5. Missing subject, body, preheader or sender remains a named blocker; optional AI or commerce absence does not block manually authored mail-only rules, while required source dependencies still block.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/create-api.spec.ts`
-**Gap.** Asserted: Refusal leaves campaign in draft; Every blocking check named; Missing subject named; Missing body named; Missing preheader named; Optional AI or commerce absence permits manual mail-only draft; Required source dependency blocks. Unasserted: Atomic audience validation; Atomic consent validation; Source freshness including parallel incumbent sync; Sender registration; Email authentication; Sending reputation; Compliance content; Personalization; All named link rules; Schedule; Provider configuration; Effective deduplication; Provider reconciliation; Missing sender named.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px” · `tests/campaign-authoring/create-api.spec.ts`
+**Gap.** Asserted: Refusal leaves campaign in draft; Every blocking check named; Missing subject named; Missing body named; Missing preheader named; Optional AI or commerce absence permits manual mail-only draft; Required source dependency blocks. Unasserted: Atomic audience validation; Atomic consent validation; Source freshness including parallel incumbent sync; Sender registration; Email authentication; Sending reputation; Compliance content; Personalization; All named link rules; Schedule; Provider configuration; Effective deduplication; Provider reconciliation; Missing sender named. Missing public-door journey: “Approval checks — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-005 — Idempotent approval
 
@@ -826,8 +826,8 @@ Core · published · **partial** · Rules D-1, D-3
 **Acceptance.**
 1. Repeated requests for the same campaign and revision produce one scheduled campaign, one set of steps and one set of recipient-steps regardless of request count.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** Asserted: One scheduled campaign; One recipient-step set; One approval after repeat. Unasserted: One set of steps.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px”
+**Gap.** Asserted: One scheduled campaign; One recipient-step set; One approval after repeat. Unasserted: One set of steps. Missing public-door journey: “Idempotent approval — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-006 — Schedule
 
@@ -843,8 +843,8 @@ Core · published · **partial** · Rules D-1, D-3
 5. UI and API refuse nonexistent and ambiguous times, including non-hour daylight-saving transitions.
 6. Existing clients may still supply an explicit instant with its IANA zone; supplied local and UTC values must agree.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** Asserted: IANA zone retained; Resolved UTC retained; Ambiguous local time refused; Nonexistent local time refused; Store-zone default; Store zone independent of browser zone; Read-only resolved UTC; 23:59 local deadline; UI daylight-saving refusal; API non-hour DST refusal. Unasserted: Explicit instant compatibility; Local and UTC disagreement refused.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px”
+**Gap.** Asserted: IANA zone retained; Resolved UTC retained; Ambiguous local time refused; Nonexistent local time refused; Store-zone default; Store zone independent of browser zone; Read-only resolved UTC; 23:59 local deadline; UI daylight-saving refusal; API non-hour DST refusal. Unasserted: Explicit instant compatibility; Local and UTC disagreement refused. Missing public-door journey: “Schedule — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-007 — Scheduled edits
 
@@ -857,8 +857,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. Replacement approval atomically makes the new revision the only active schedule and cancels every prior pending recipient-step.
 3. After any step begins dispatching, an edit creates a different campaign; the original campaign and later steps stay active until explicitly canceled.
 
-**Evidence.** `tests/go-live/delivery.journeys.ts`
-**Gap.** Asserted: Editing produces draft replacement; Only replacement schedule hands off; Prior pending recipients canceled; Replacement atomic with dispatch race; Post-dispatch edit creates another campaign. Unasserted: Original remains active before replacement approval; Original and later steps stay active until cancellation.
+**Evidence.** `tests/go-live/delivery.journeys.ts` — “[CAMP-007] replacement and dispatch each win a forced real D1 ordering without mixing revisions”
+**Gap.** Asserted: Editing produces draft replacement; Only replacement schedule hands off; Prior pending recipients canceled; Replacement atomic with dispatch race; Post-dispatch edit creates another campaign. Unasserted: Original remains active before replacement approval; Original and later steps stay active until cancellation. Missing public-door journey: “Scheduled edits — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-008 — Test send
 
@@ -871,8 +871,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. Test content and campaign history identify it as a test.
 3. A test changes no contact activity, reporting, attribution or frequency protection.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts`
-**Gap.** Asserted: Test content is marked; No contact activity change; No reporting change. Unasserted: Configured operator email destination only; Configured operator phone destination only; Only admitted typed destinations; Campaign history identifies test; No attribution change; No frequency protection change.
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts replayed through the public webhook keep delivery truth separate”
+**Gap.** Asserted: Test content is marked; No contact activity change; No reporting change. Unasserted: Configured operator email destination only; Configured operator phone destination only; Only admitted typed destinations; Campaign history identifies test; No attribution change; No frequency protection change. Missing public-door journey: “Test send — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-009 — Cancellation
 
@@ -885,8 +885,8 @@ Core · published · **partial** · Rules D-1, D-3
 2. Provider-confirmed hand-offs remain separate; in-flight requests stay uncertain until SEND-008 reconciliation, without a claim to recall delivered mail.
 3. Campaign detail shows the time remaining until the next step dispatches.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts`
-**Gap.** Asserted: Accepted hand-offs remain separate; In-flight uncertainty retained; Countdown to next dispatch. Unasserted: Scheduled cancellation stops within 30 seconds; Dispatching cancellation stops within 30 seconds; Paused cancellation stops within 30 seconds; Every unsent step stopped; Delivered mail is not recalled.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-009] cancel dialog contains focus, Escape cancels and returns focus; confirmed cancel retains uncertain handoffs”; “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
+**Gap.** Asserted: Accepted hand-offs remain separate; In-flight uncertainty retained; Countdown to next dispatch. Unasserted: Scheduled cancellation stops within 30 seconds; Dispatching cancellation stops within 30 seconds; Paused cancellation stops within 30 seconds; Every unsent step stopped; Delivered mail is not recalled. Missing public-door journey: “Cancellation — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-010 — Step deadline
 
@@ -900,7 +900,7 @@ Core · published · **partial** · Rules D-1, D-3
 3. A step whose deadline passed before dispatch begins sends nothing.
 
 **Evidence.** `tests/go-live/scheduler.journeys.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Step send-by instant; Default end of local scheduled day; Missed recipient deadline is skipped with named reason; No send when deadline predates dispatch.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Step send-by instant; Default end of local scheduled day; Missed recipient deadline is skipped with named reason; No send when deadline predates dispatch. Missing public-door journey: “Step deadline — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-011 — Dispatch punctuality
 
@@ -912,7 +912,7 @@ Core · published · **done** · Rules D-1, D-3
 1. Dispatch begins within 60 seconds of the step’s resolved UTC instant.
 2. Two scheduler runs still dispatch that step instant exactly once.
 
-**Evidence.** `tests/go-live/scheduler.journeys.ts`
+**Evidence.** `tests/go-live/scheduler.journeys.ts` — “[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and preserve provider delivery truth”
 **Gap.** None.
 
 #### CAMP-012 — Campaign images
@@ -931,8 +931,8 @@ Core · published · **partial** · Cites BASE-ACCESS-003, BASE-INPUT-003, BASE-
 7. DATA-001 exports each image as its original file.
 8. Image delivery is not an open-tracking signal; pending erasure or restore makes it unavailable, and restoration to a different origin preserves the saved absolute image address.
 
-**Evidence.** `tests/campaign-assets.spec.ts` · `tests/campaign-authoring/local-images.spec.ts`
-**Gap.** Asserted: Signed-in image upload; PNG accepted; Header type overrides declared type; Truncated upload refused; Byte limit; Pixel limit; Refusals store nothing; Store once by hash; Image bytes immutable; Exact image type; No-sniff; Immutable public cache; Unknown image not found; Per-image refusal; Other image unaffected. Unasserted: JPEG accepted; GIF accepted; WebP accepted; Erasure removes matching image bytes; Erased image answers gone; Erased image blocks approval; Not keyed by client address; No requester identification is recorded; Original bytes exported; Image fetch is not an open signal; Pending erasure image unavailable; Restore image unavailable; Cross-origin restore retains original absolute URLs; Sandboxed no-content-execution policy.
+**Evidence.** `tests/campaign-assets.spec.ts` — “[CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free”; “[CAMP-012] uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing”; “[CAMP-012] an image past its per-minute allowance answers 429 without affecting other images” · `tests/campaign-authoring/local-images.spec.ts`
+**Gap.** Asserted: Signed-in image upload; PNG accepted; Header type overrides declared type; Truncated upload refused; Byte limit; Pixel limit; Refusals store nothing; Store once by hash; Image bytes immutable; Exact image type; No-sniff; Immutable public cache; Unknown image not found; Per-image refusal; Other image unaffected. Unasserted: JPEG accepted; GIF accepted; WebP accepted; Erasure removes matching image bytes; Erased image answers gone; Erased image blocks approval; Not keyed by client address; No requester identification is recorded; Original bytes exported; Image fetch is not an open signal; Pending erasure image unavailable; Restore image unavailable; Cross-origin restore retains original absolute URLs; Sandboxed no-content-execution policy. Missing public-door journey: “Campaign images — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-023 — Insert and preview campaign images
 
@@ -946,8 +946,8 @@ Core · published · **partial** · From CAMP-012 · Rules D-1, D-3 · Register 
 3. A local computer’s own HTTP-origin media images save and preview with validated styles after image opt-in; other HTTP origins remain refused.
 4. Approval, test send and delivery refuse those local HTTP images with the named HTTPS requirement; HTTPS deployments are unaffected.
 
-**Evidence.** `tests/campaign-assets.spec.ts` · `tests/campaign-authoring/local-images.spec.ts`
-**Gap.** Asserted: Insert image uploads and inserts header-derived dimensions; At most 600-pixel width; Public address in response; Stored-type extension serves same bytes; Wrong extension not found; Local own HTTP image saves; Styled local preview loads after opt-in; Local HTTP image approval refusal; HTTPS deployment unaffected. Unasserted: Description required; Other HTTP origins refused; Local HTTP image test refusal; Local HTTP image delivery refusal.
+**Evidence.** `tests/campaign-assets.spec.ts` — “[CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free”; “[CAMP-012] approval verifies this deployment's own images in storage, never through a network inspection” · `tests/campaign-authoring/local-images.spec.ts` — “[CAMP-023] on a local copy, Insert image adds an own-origin image that saves, previews after opt-in and blocks only approval”
+**Gap.** Asserted: Insert image uploads and inserts header-derived dimensions; At most 600-pixel width; Public address in response; Stored-type extension serves same bytes; Wrong extension not found; Local own HTTP image saves; Styled local preview loads after opt-in; Local HTTP image approval refusal; HTTPS deployment unaffected. Unasserted: Description required; Other HTTP origins refused; Local HTTP image test refusal; Local HTTP image delivery refusal. Missing public-door journey: “Insert and preview campaign images — complete acceptance”, covering the unasserted outcomes above.
 
 ### Designs
 
@@ -963,8 +963,8 @@ Core · published · **partial** · Cites BASE-SECRET-002, BASE-DATA-004 · Rule
 3. Disabled design generation constructs no provider, shows no generation control, contacts no design service and refuses runs with an unavailable explanation naming its inputs.
 4. Enabled generation uses the owner’s key only when an operator starts a run or chooses a candidate.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: Default-off when both inputs absent; No generation control; Unavailable run refusal names input; Configured owner key used. Unasserted: Partial configuration requires both; HTTPS origin without path; Local-only loopback HTTP exception; No provider construction or contact; Only explicitly started or chosen design work contacts service.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001] without the design module the editor offers no generation and the API refuses to start one”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
+**Gap.** Asserted: Default-off when both inputs absent; No generation control; Unavailable run refusal names input; Configured owner key used. Unasserted: Partial configuration requires both; HTTPS origin without path; Local-only loopback HTTP exception; No provider construction or contact; Only explicitly started or chosen design work contacts service. Missing public-door journey: “Optional design module — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-005 — Owner-selected design provider
 
@@ -979,7 +979,7 @@ Core · published · **partial** · From DESIGN-001 · Cites BASE-DATA-004, BASE
 4. The owner is told that the brief and selected image reach 12ui and its declared subprocessors, may remain in its evaluation corpus until owner-requested deletion, and reveal when this installation designs email.
 
 **Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: No 12ui request when absent; Only operator run requests; No startup request; No independent-schedule request; No unrelated request; Refusal fails only that run; Outage fails only that run; Design-authoring role authority; Provider wallet and allowance honored; Per-paid-step estimate; Request recorded; Subprocessors disclosure; Evaluation-corpus retention disclosure; Design-timing disclosure.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: No 12ui request when absent; Only operator run requests; No startup request; No independent-schedule request; No unrelated request; Refusal fails only that run; Outage fails only that run; Design-authoring role authority; Provider wallet and allowance honored; Per-paid-step estimate; Request recorded; Subprocessors disclosure; Evaluation-corpus retention disclosure; Design-timing disclosure. Missing public-door journey: “Owner-selected design provider — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-006 — Optional design deployment credentials
 
@@ -993,7 +993,7 @@ Core · published · **partial** · From DESIGN-001 · Cites BASE-SECRET-002 · 
 3. The local design consumer processes design work only; unrelated queued commands remain unconsumed for retry.
 
 **Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Local optional input reading; First-deploy supplied optional upload; Later-deploy supplied optional upload; Never required; Later deploy preserves secrets; Verification inputs absent keeps module off; Local consumer only design work; Other queue work left for retry.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Local optional input reading; First-deploy supplied optional upload; Later-deploy supplied optional upload; Never required; Later deploy preserves secrets; Verification inputs absent keeps module off; Local consumer only design work; Other queue work left for retry. Missing public-door journey: “Optional design deployment credentials — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-002 — Draft-only design generation
 
@@ -1006,8 +1006,8 @@ Core · published · **partial** · Cites BASE-DATA-004 · Rules D-1
 2. Before drawing candidates or preparing a chosen layout, the operator sees the estimated spend on their design-service account.
 3. The run belongs to the draft and continues in the background; candidates appear as delivered and reappear after reload.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: Subject in brief; Current text in brief; Brief editable; Candidate-drawing spend estimate; Draft-owned run survives reload; Candidates appear progressively; Later candidate appears. Unasserted: Draft name in brief; Preheader in brief; Sender name in brief; Two-to-four design choice; Layout spend estimate.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
+**Gap.** Asserted: Subject in brief; Current text in brief; Brief editable; Candidate-drawing spend estimate; Draft-owned run survives reload; Candidates appear progressively; Later candidate appears. Unasserted: Draft name in brief; Preheader in brief; Sender name in brief; Two-to-four design choice; Layout spend estimate. Missing public-door journey: “Draft-only design generation — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-007 — Design provider retries and deadlines
 
@@ -1023,8 +1023,8 @@ Core · published · **partial** · From DESIGN-002 · Cites BASE-OPS-004 · Rul
 5. Minute scheduling and reading a draft both fail overdue runs; scheduling also resumes live work quiet for two minutes unless awaiting the provider’s declared retry time.
 6. A new run cannot start while another of that draft waits on the provider; a design already offered may still prepare its layout.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: Same key on rate retry; Notice stays until answer; Untimed refusal fails quota; Wallet refusal fails quota; Failed design reason; Read deadline settlement. Unasserted: Ordinary 30-second request bound; 60-second download bound; 150-second purchase bound; Retry-After honored; Relative retry time notice; Beyond-deadline wait fails quota; Network failure retries; Server failure retries; Request timeout retries; Three-pass bound; Five- and ten-second spacing; Unavailable final failure; Unauthorized reason; Rejected request reason; Unreadable reason; Forbidden redirect reason; Expired layout reason; Cron deadline settlement; Quiet work resumed after two minutes; Declared provider wait respected; New run refused while same draft waits; Offered design may prepare during wait.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
+**Gap.** Asserted: Same key on rate retry; Notice stays until answer; Untimed refusal fails quota; Wallet refusal fails quota; Failed design reason; Read deadline settlement. Unasserted: Ordinary 30-second request bound; 60-second download bound; 150-second purchase bound; Retry-After honored; Relative retry time notice; Beyond-deadline wait fails quota; Network failure retries; Server failure retries; Request timeout retries; Three-pass bound; Five- and ten-second spacing; Unavailable final failure; Unauthorized reason; Rejected request reason; Unreadable reason; Forbidden redirect reason; Expired layout reason; Cron deadline settlement; Quiet work resumed after two minutes; Declared provider wait respected; New run refused while same draft waits; Offered design may prepare during wait. Missing public-door journey: “Design provider retries and deadlines — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-008 — Save generated design through ordinary authoring
 
@@ -1037,8 +1037,8 @@ Core · published · **partial** · From DESIGN-002 · Rules D-1
 2. A run itself does not save, approve, schedule or send; an operator’s Save uses the ordinary draft-save path and all approval checks still apply.
 3. A failed or overdue run visibly states Mango’s reason and leaves the draft unchanged, without substituting content the service did not deliver.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: Generated body canonical; No implicit save; No approval; No schedule; No delivery; Save uses ordinary draft path; Failed run safe reason; Timeout reason; Failure leaves draft unchanged; No semantic content substitute. Unasserted: All ordinary approval checks.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
+**Gap.** Asserted: Generated body canonical; No implicit save; No approval; No schedule; No delivery; Save uses ordinary draft path; Failed run safe reason; Timeout reason; Failure leaves draft unchanged; No semantic content substitute. Unasserted: All ordinary approval checks. Missing public-door journey: “Save generated design through ordinary authoring — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-009 — Apply a chosen design without stealing focus
 
@@ -1052,8 +1052,8 @@ Core · published · **partial** · From DESIGN-002 · Rules D-1
 3. The browser-built result uses hosted campaign photos, the operator’s HTTPS button destination and the managed footer, highlighting every design line absent from the brief.
 4. The result is an unsaved body edit that replaces prior content only after confirmation.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: Choose beside candidate image; Chosen layout enters import; Untouched choice opens import; Unrelated typing prevents automatic opening; Focus remains in body; Ready notice offers explicit opening; Operator destination retained; Non-brief lines highlighted; Unsaved edit. Unasserted: Hosted photos; Managed footer; Replacement confirmation required.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”; “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”
+**Gap.** Asserted: Choose beside candidate image; Chosen layout enters import; Untouched choice opens import; Unrelated typing prevents automatic opening; Focus remains in body; Ready notice offers explicit opening; Operator destination retained; Non-brief lines highlighted; Unsaved edit. Unasserted: Hosted photos; Managed footer; Replacement confirmation required. Missing public-door journey: “Apply a chosen design without stealing focus — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-010 — Keep paid design candidates
 
@@ -1068,8 +1068,8 @@ Core · published · **partial** · From DESIGN-002 · Rules D-1
 4. Earlier runs’ designs remain reachable under the latest run.
 5. When the service holds a run, the editor states why and when Mango will ask again until the service answers.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: Discarding edit retains paid design; Reload retains candidates; Failed layout retains candidates; New run retains paid design; Save or discard ends offer; Prepared design reuse has no further purchase; Failed layout step shown; Wallet or allowance reason; New paid layout retry; Choose another design; Earlier designs reachable; Hold reason visible; Hold cleared only after answer. Unasserted: Next retry time visible.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run”; “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
+**Gap.** Asserted: Discarding edit retains paid design; Reload retains candidates; Failed layout retains candidates; New run retains paid design; Save or discard ends offer; Prepared design reuse has no further purchase; Failed layout step shown; Wallet or allowance reason; New paid layout retry; Choose another design; Earlier designs reachable; Hold reason visible; Hold cleared only after answer. Unasserted: Next retry time visible. Missing public-door journey: “Keep paid design candidates — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-003 — Design data and records
 
@@ -1084,8 +1084,8 @@ Core · published · **partial** · Cites BASE-DATA-001, BASE-DATA-004, BASE-OPS
 4. Candidate images and layouts are retained as authoring evidence and exported under DATA-001.
 5. Each paid request records its RESULT-004 cost fact.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request. Unasserted: Brief retained; Provider run identifier; Provider layout identifier; Candidate size; Operator; Times; Run never deleted; Candidate originals retained; Layout retained; Candidate and layout export.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
+**Gap.** Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request. Unasserted: Brief retained; Provider run identifier; Provider layout identifier; Candidate size; Operator; Times; Run never deleted; Candidate originals retained; Layout retained; Candidate and layout export. Missing public-door journey: “Design data and records — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-011 — Design provider custody
 
@@ -1101,8 +1101,8 @@ Core · published · **partial** · From DESIGN-003 · Cites BASE-ACCESS-002, BA
 5. Each candidate offers its full-size image; up to ten older runs with drawn designs remain reachable with their own choice controls.
 6. Queue work carries only the run identity, performs the requests still needed, and obeys contact-erasure and restore fences; erasure redacts run briefs like campaign text.
 
-**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** Asserted: Provider error text never shown; Separate old-run choice controls. Unasserted: 64 KB JSON stream cap; 40 MB candidate stream cap; 4,096-pixel bound; Declared oversize refused unread; Published layout digest verified; Version-2 layout parser; Same-origin read redirects only; Purchase redirects refused; Provider error text never stored; Safe Mango reason; Candidate requires session; Layout requires session; Only selected crops public; Full-size candidate link; Up to ten older offered runs; Queue contains only run identity; Only still-needed requests; Erasure write fence; Restore fence; Erasure redacts briefs.
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”
+**Gap.** Asserted: Provider error text never shown; Separate old-run choice controls. Unasserted: 64 KB JSON stream cap; 40 MB candidate stream cap; 4,096-pixel bound; Declared oversize refused unread; Published layout digest verified; Version-2 layout parser; Same-origin read redirects only; Purchase redirects refused; Provider error text never stored; Safe Mango reason; Candidate requires session; Layout requires session; Only selected crops public; Full-size candidate link; Up to ten older offered runs; Queue contains only run identity; Only still-needed requests; Erasure write fence; Restore fence; Erasure redacts briefs. Missing public-door journey: “Design provider custody — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-004 — Design import
 
@@ -1119,8 +1119,8 @@ Core · published · **partial** · Rules D-1 · Register R-201
 6. Each HTML and plain-text part is at most 102,400 UTF-8 bytes under BUILD-012’s measured per-part check.
 7. Import makes no request to 12ui; generation is DESIGN-001, DESIGN-002 and DESIGN-010 to DESIGN-008.
 
-**Evidence.** `tests/campaign-authoring/design-import.spec.ts`
-**Gap.** Asserted: Version-2 LayerDoc and PNG imported; Hosted photos; Operator HTTPS button; Managed unsubscribe footer; Saved postal-address footer; Unsupported layer text listed; Novel design line highlighted; Brief line not falsely highlighted; Unsupported version visibly refused; Non-HTTPS button visibly refused; Saved body unchanged after refusal; Unsaved edit leaves saved revision intact; No import save; Ordinary exact-revision approval succeeds; Measured HTML-part size refusal; No request to 12ui. Unasserted: Browser compiles email grammar; Unrepresentable grammar refused; Nothing outside grammar saved; No import approval; No import schedule; No import send; Measured plain-text-part size refusal.
+**Evidence.** `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440/390px”
+**Gap.** Asserted: Version-2 LayerDoc and PNG imported; Hosted photos; Operator HTTPS button; Managed unsubscribe footer; Saved postal-address footer; Unsupported layer text listed; Novel design line highlighted; Brief line not falsely highlighted; Unsupported version visibly refused; Non-HTTPS button visibly refused; Saved body unchanged after refusal; Unsaved edit leaves saved revision intact; No import save; Ordinary exact-revision approval succeeds; Measured HTML-part size refusal; No request to 12ui. Unasserted: Browser compiles email grammar; Unrepresentable grammar refused; Nothing outside grammar saved; No import approval; No import schedule; No import send; Measured plain-text-part size refusal. Missing public-door journey: “Design import — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-012 — Compile the imported layout
 
@@ -1137,7 +1137,7 @@ Core · published · **partial** · From DESIGN-004 · Rules D-1 · Register R-2
 6. Two-column sections remain side by side on phones and narrow with the email.
 
 **Evidence.** `tests/campaign-authoring/design-import.spec.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Centered 600-pixel layout; Header emblem and lettering; Full-width photos; Two-column vertical alignment; One button; Managed footer; Tightened email grammar; Only cells paint backgrounds; Images keep natural inline display; Button corners within padding; Escaped text; Long-word wrapping; Closed hex colors; At least 4.5:1; Georgia-or-Helvetica stacks; Mango sizes and spacing; Full-resolution crop; At most twice displayed width; JPEG uploaded; No server image codec; Compiler size check; Save size check; Approval size check; Test size check; Delivery size check; Oversize recipient skipped; No truncation; Phone columns side by side; Phone columns narrow with email.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Centered 600-pixel layout; Header emblem and lettering; Full-width photos; Two-column vertical alignment; One button; Managed footer; Tightened email grammar; Only cells paint backgrounds; Images keep natural inline display; Button corners within padding; Escaped text; Long-word wrapping; Closed hex colors; At least 4.5:1; Georgia-or-Helvetica stacks; Mango sizes and spacing; Full-resolution crop; At most twice displayed width; JPEG uploaded; No server image codec; Compiler size check; Save size check; Approval size check; Test size check; Delivery size check; Oversize recipient skipped; No truncation; Phone columns side by side; Phone columns narrow with email. Missing public-door journey: “Compile the imported layout — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-013 — Review imported design content
 
@@ -1151,8 +1151,8 @@ Core · published · **partial** · From DESIGN-004 · Rules D-1
 3. The summary distinguishes unsaved and edited-since-import state and disappears when Discard changes restores the prior body.
 4. An abandoned import leaves its uploaded public images under CAMP-012; the design’s model-written claims are not verified by approval.
 
-**Evidence.** `tests/campaign-authoring/design-import.spec.ts`
-**Gap.** Asserted: Hosted image thumbnail; Text novel-line highlighting; Unsaved state shown; Discard removes summary. Unasserted: Image description highlighting; Icons omitted and listed; Dividers omitted and listed; Shapes omitted and listed; Destinationless links omitted and listed; Extra buttons omitted and listed; Footer links omitted and listed; Digit-bearing footer lines omitted and listed; Edited-since state shown; Abandoned uploaded images remain; Approval does not verify model claims.
+**Evidence.** `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440/390px”
+**Gap.** Asserted: Hosted image thumbnail; Text novel-line highlighting; Unsaved state shown; Discard removes summary. Unasserted: Image description highlighting; Icons omitted and listed; Dividers omitted and listed; Shapes omitted and listed; Destinationless links omitted and listed; Extra buttons omitted and listed; Footer links omitted and listed; Digit-bearing footer lines omitted and listed; Edited-since state shown; Abandoned uploaded images remain; Approval does not verify model claims. Missing public-door journey: “Review imported design content — complete acceptance”, covering the unasserted outcomes above.
 
 #### DESIGN-014 — Bounded local design input
 
@@ -1168,7 +1168,7 @@ Core · published · **partial** · From DESIGN-004 · Cites BASE-INPUT-001, BAS
 5. Signed design URLs are never fetched, no design value escapes the compiler, and the importer loads only when opened.
 
 **Evidence.** `tests/campaign-authoring/design-import.spec.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: 2 MB bound; 2,000-layer bound; 64-level nesting bound; Deep input named refusal without overflow; Unsupported input not guessed; PNG canvas shape matched; Personalization delimiter rejected; Editable draft-derived brief; Whole-line whole-word matching; Case/spacing/typographic-quote matching; Signed URLs never fetched; Every value stays within compiler; Lazy importer load.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: 2 MB bound; 2,000-layer bound; 64-level nesting bound; Deep input named refusal without overflow; Unsupported input not guessed; PNG canvas shape matched; Personalization delimiter rejected; Editable draft-derived brief; Whole-line whole-word matching; Case/spacing/typographic-quote matching; Signed URLs never fetched; Every value stays within compiler; Lazy importer load. Missing public-door journey: “Bounded local design input — complete acceptance”, covering the unasserted outcomes above.
 
 ### Message safety
 
@@ -1198,8 +1198,8 @@ Core · published · **partial**
 4. Scheduling is refused when the visible From domain does not align with an authenticated domain.
 5. A message whose domain passes all four checks can be scheduled.
 
-**Evidence.** `tests/sender-verification/worker.spec.ts`
-**Gap.** Old evidence asserts Passing sender schedules. Unasserted: Scheduling is refused when the sending domain does not pass SPF.; Scheduling is refused when the sending domain does not pass DKIM.; Scheduling is refused when the sending domain does not pass DMARC.; Scheduling is refused when the visible From domain does not align with an authenticated domain..
+**Evidence.** `tests/sender-verification/worker.spec.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]”
+**Gap.** Old evidence asserts Passing sender schedules. Unasserted: Scheduling is refused when the sending domain does not pass SPF.; Scheduling is refused when the sending domain does not pass DKIM.; Scheduling is refused when the sending domain does not pass DMARC.; Scheduling is refused when the visible From domain does not align with an authenticated domain.. Missing public-door journey: “Email authentication — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-003 — Email unsubscribe
 
@@ -1215,8 +1215,8 @@ Core · published · **partial** · Cites BASE-ACCESS-003, BASE-OPS-003
 5. Neither channel requires a session or cookie.
 6. A token reveals no contact other than its own.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/sender-verification/worker.spec.ts`
-**Gap.** Old evidence asserts Visible link; One-click declaration; Opt-out ledger is changed before success; Context-free one-click body; Scanner and prefetch do not unsubscribe. Unasserted: Opaque HTTPS mail-client URL; DKIM covers both headers; No redirect; Visible confirmation action alone opts out; A token changes only its contact.
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[MSG-003][CONT-004][CONT-009][CAMP-008] the List-Unsubscribe one-click works as a mail client sends it and nothing else unsubscribes” · `tests/sender-verification/worker.spec.ts` — “native Worker production services approve, hand off, reload protected evidence and renew sender reminders once per period with populated adapter upgrade [MSG-003][DELIV-007][INT-014]”
+**Gap.** Old evidence asserts Visible link; One-click declaration; Opt-out ledger is changed before success; Context-free one-click body; Scanner and prefetch do not unsubscribe. Unasserted: Opaque HTTPS mail-client URL; DKIM covers both headers; No redirect; Visible confirmation action alone opts out; A token changes only its contact. Missing public-door journey: “Email unsubscribe — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-004 — SMS permission
 
@@ -1244,7 +1244,7 @@ Core · published · **partial**
 4. Review shows the exact compliance text and the resulting segment count, including the help contact.
 
 **Evidence.** `tests/go-live/content-checks.journeys.ts` · `src/core/features/sms/review-preview.ts` · `src/core/features/sms/content.ts`
-**Gap.** Assertions in tests/go-live/sms-review.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Configured program identity; STOP or jurisdiction equivalent; Frequency disclosure; URL never replaces reply opt-out; Compliance text; Segment count; Help contact.
+**Gap.** Assertions in tests/go-live/sms-review.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Configured program identity; STOP or jurisdiction equivalent; Frequency disclosure; URL never replaces reply opt-out; Compliance text; Segment count; Help contact. Missing public-door journey: “SMS opt-out — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-006 — Links
 
@@ -1261,8 +1261,8 @@ Core · published · **partial**
 6. Campaign approval, flow activation, the link inspector and tracking enforce the same rule.
 7. A link or image pointing to this deployment's own campaign asset is checked against its record and stored bytes without a same-host network lookup; a missing asset blocks approval and is named.
 
-**Evidence.** `tests/go-live/content-checks.journeys.ts` · `src/core/features/campaigns/link-reasons.ts` · `src/core/features/lifecycle/checks.ts`
-**Gap.** Assertions in tests/go-live/content-links.ts and tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts Campaign approval. Unasserted: Malformed links named and blocked; Forbidden schemes named and blocked; Unlisted link and redirect hosts named and blocked; Image scheme and host named and blocked; Allow action only for host; Contact links need no allowance; Flow activation; Link inspection; Tracking; Own asset checked without DNS; Own asset checked without same-host request; Missing own asset blocks and is named.
+**Evidence.** `tests/go-live/content-checks.journeys.ts` — “[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out” · `src/core/features/campaigns/link-reasons.ts` · `src/core/features/lifecycle/checks.ts`
+**Gap.** Assertions in tests/go-live/content-links.ts and tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts Campaign approval. Unasserted: Malformed links named and blocked; Forbidden schemes named and blocked; Unlisted link and redirect hosts named and blocked; Image scheme and host named and blocked; Allow action only for host; Contact links need no allowance; Flow activation; Link inspection; Tracking; Own asset checked without DNS; Own asset checked without same-host request; Missing own asset blocks and is named. Missing public-door journey: “Links — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-007 — Content checks
 
@@ -1277,8 +1277,8 @@ Core · published · **partial**
 4. Consent, sender registration, opt-out, authentication, links, personalization and reputation findings cannot be acknowledged away.
 5. Approval stays blocked until each blocking finding is corrected.
 
-**Evidence.** `tests/go-live/content-checks.journeys.ts`
-**Gap.** Old evidence asserts Blocking findings shown; Advisory findings shown; Acknowledgment survives reload; Replay produces one audit entry; Actor. Unasserted: Every channel.
+**Evidence.** `tests/go-live/content-checks.journeys.ts` — “[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out”
+**Gap.** Old evidence asserts Blocking findings shown; Advisory findings shown; Acknowledgment survives reload; Replay produces one audit entry; Actor. Unasserted: Every channel. Missing public-door journey: “Content checks — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-008 — Personalization
 
@@ -1294,8 +1294,8 @@ Core · published · **partial**
 5. Preview uses an illustrative display name only for the name field delivery supports; unavailable properties use their saved fallbacks in preview and delivered content.
 6. Editor, preview and review expose the same fallback outcomes at desktop and phone widths.
 
-**Evidence.** `tests/go-live/personalisation.journeys.ts`
-**Gap.** Old evidence asserts Bare token blocks checks; Approval refusal leaves no recipient steps; Saved fallback rendered; Eligible person counts exclude pending people and token occurrences; Approval preserves counts. Unasserted: Bare token when every eligible person resolves it; Scheduling refusal.
+**Evidence.** `tests/go-live/personalisation.journeys.ts` — “[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation”
+**Gap.** Old evidence asserts Bare token blocks checks; Approval refusal leaves no recipient steps; Saved fallback rendered; Eligible person counts exclude pending people and token occurrences; Approval preserves counts. Unasserted: Bare token when every eligible person resolves it; Scheduling refusal. Missing public-door journey: “Personalization — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-009 — Email body
 
@@ -1313,8 +1313,8 @@ Core · published · **partial** · Cites BASE-INPUT-002
 7. Preview uses that parse under the cited HTML duty, retains styles only after the checker passes, and derives plain text from the same parse.
 8. Link and image addresses are judged decoded and refuse literal quote or angle-bracket characters and no-break space; normalization never changes a hiding declaration to make it pass.
 
-**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts`
-**Gap.** Old evidence asserts Stored parser structure; Save stability. Unasserted: Decoded destination checks; Literal quote refusal; Literal angle-bracket refusal; No-break space refusal; Normalization does not repair hiding declarations; Multipart alternative; Equivalent offer in HTML and text; Equivalent links in HTML and text; Unsubscribe link in both parts; Saved preheader delivered; Saved HTML bytes delivered; Only token and tracking substitutions; Admitted tag set; Admitted attribute set; Admitted inline-style set; BUILD-012 size bar; Script refusal; Form refusal; Stylesheet refusal; Class refusal; CSS-function refusal; Responsive block generated only by builder; Responsive block regenerated on save; Check with responsive block; Check without responsive block; Same stored-parse checker for approval; Same stored-parse checker for test send; Same stored-parse checker for delivery; Preview uses shared parse; Preview styles only after checker success; Plain text derives from same parse.
+**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` — “[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it”; “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree”
+**Gap.** Old evidence asserts Stored parser structure; Save stability. Unasserted: Decoded destination checks; Literal quote refusal; Literal angle-bracket refusal; No-break space refusal; Normalization does not repair hiding declarations; Multipart alternative; Equivalent offer in HTML and text; Equivalent links in HTML and text; Unsubscribe link in both parts; Saved preheader delivered; Saved HTML bytes delivered; Only token and tracking substitutions; Admitted tag set; Admitted attribute set; Admitted inline-style set; BUILD-012 size bar; Script refusal; Form refusal; Stylesheet refusal; Class refusal; CSS-function refusal; Responsive block generated only by builder; Responsive block regenerated on save; Check with responsive block; Check without responsive block; Same stored-parse checker for approval; Same stored-parse checker for test send; Same stored-parse checker for delivery; Preview uses shared parse; Preview styles only after checker success; Plain text derives from same parse. Missing public-door journey: “Email body — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-010 — Unsubscribe availability
 
@@ -1329,8 +1329,8 @@ Core · published · **partial** · Cites BASE-ACCESS-003
 4. Confirmation and success pages fit desktop and phone widths.
 5. Both opt-outs prevent already-approved delivery and survive later provider reconciliation.
 
-**Evidence.** `tests/go-live/opt-out-reasons.journeys.ts` · `src/core/features/audience/unsubscribe-routes.ts`
-**Gap.** Old evidence asserts Complete response below two seconds; Shared GET allowance excess; Shared POST allowance excess; Another token at the same client address actually opts out; Confirmation at both widths. Unasserted: Visible confirmation alone prevents approved delivery (the cited journey confirms only after its one-click opt-out).
+**Evidence.** `tests/go-live/opt-out-reasons.journeys.ts` — “[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs survive three signed soft bounces and a signed delivery” · `src/core/features/audience/unsubscribe-routes.ts`
+**Gap.** Old evidence asserts Complete response below two seconds; Shared GET allowance excess; Shared POST allowance excess; Another token at the same client address actually opts out; Confirmation at both widths. Unasserted: Visible confirmation alone prevents approved delivery (the cited journey confirms only after its one-click opt-out). Missing public-door journey: “Unsubscribe availability — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-011 — Sending reputation
 
@@ -1346,7 +1346,7 @@ Core · published · **partial**
 5. Late facts recompute the block, which clears only when every applicable threshold is below its limit.
 
 **Evidence.** `tests/go-live/delivery.journeys.ts`
-**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: At 1,000 or more marketing deliveries in the reporting window, a complaint rate at or above 0.3% blocks scheduling.; At that volume, a hard-bounce rate at or above 5% of attempted marketing hand-offs blocks scheduling.; Provider hold blocks approval; Each block names its numerator, denominator, reporting window and provider rule and cannot be acknowledged away.; Late facts recompute the block, which clears only when every applicable threshold is below its limit..
+**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: At 1,000 or more marketing deliveries in the reporting window, a complaint rate at or above 0.3% blocks scheduling.; At that volume, a hard-bounce rate at or above 5% of attempted marketing hand-offs blocks scheduling.; Provider hold blocks approval; Each block names its numerator, denominator, reporting window and provider rule and cannot be acknowledged away.; Late facts recompute the block, which clears only when every applicable threshold is below its limit.. Missing public-door journey: “Sending reputation — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-012 — Hidden or deceptive presentation
 
@@ -1362,8 +1362,8 @@ Core · published · **partial**
 5. Styled markup that differs from the structure parsers build, or markup mail clients read differently from its apparent structure, is blocked.
 6. The same presentation rule protects the unsubscribe link and postal address.
 
-**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts`
-**Gap.** Old evidence asserts Parser tree controls approval; Low-contrast text blocked; Misparsed styled markup blocks. Unasserted: Test-send tree; Delivery tree; Hidden text refused; Clipped text refused; Faded text refused; Under-10px text refused; Moved text refused; Overlaid text refused; Reversed text refused; Reason named; Background outside painted cells/wrapper refused; Display changes refused; Constraining dimensions refused; Inline borders refused; Painted rounded corner over text refused; Direction outside cell refused; Overlapping styled cells refused; Unsubscribe presentation protected; Postal-address presentation protected; Painted-cell contrast; Outer-wrapper contrast; White-page contrast; Standards-rendering contrast; Quirks-rendering contrast.
+**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` — “[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree”
+**Gap.** Old evidence asserts Parser tree controls approval; Low-contrast text blocked; Misparsed styled markup blocks. Unasserted: Test-send tree; Delivery tree; Hidden text refused; Clipped text refused; Faded text refused; Under-10px text refused; Moved text refused; Overlaid text refused; Reversed text refused; Reason named; Background outside painted cells/wrapper refused; Display changes refused; Constraining dimensions refused; Inline borders refused; Painted rounded corner over text refused; Direction outside cell refused; Overlapping styled cells refused; Unsubscribe presentation protected; Postal-address presentation protected; Painted-cell contrast; Outer-wrapper contrast; White-page contrast; Standards-rendering contrast; Quirks-rendering contrast. Missing public-door journey: “Hidden or deceptive presentation — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-016 — Legacy approved email and draft compatibility
 
@@ -1379,7 +1379,7 @@ Core · published · **partial** · From MSG-009, MSG-012 · Cites BASE-INPUT-00
 5. Any save of an older draft stores canonical markup regardless of which fields changed; spelling alone never prevents a draft save.
 
 **Evidence.** `tests/campaign-authoring/canonical-save.spec.ts`
-**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Legacy plain approval remains byte-identical; Legacy parser-stable styled approval remains byte-identical; No re-approval of valid legacy body; Malformed-close legacy refusal; Out-of-table attribute legacy refusal; Undersized nested-heading legacy refusal; Direction-override legacy refusal; Reason named; New approval needed; Literal-text legacy forms deliver unchanged; Tightened placement preserves plain approvals; Old prohibited style refused at test send; Old prohibited style refused at delivery; Earlier design re-imported; Older draft canonicalized on any save; Markup spelling does not refuse save.
+**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Legacy plain approval remains byte-identical; Legacy parser-stable styled approval remains byte-identical; No re-approval of valid legacy body; Malformed-close legacy refusal; Out-of-table attribute legacy refusal; Undersized nested-heading legacy refusal; Direction-override legacy refusal; Reason named; New approval needed; Literal-text legacy forms deliver unchanged; Tightened placement preserves plain approvals; Old prohibited style refused at test send; Old prohibited style refused at delivery; Earlier design re-imported; Older draft canonicalized on any save; Markup spelling does not refuse save. Missing public-door journey: “Legacy approved email and draft compatibility — complete acceptance”, covering the unasserted outcomes above.
 
 ### Delivery
 
@@ -1398,8 +1398,8 @@ Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001 · Rules D
 6. Timeout, connection reset, provider uncertainty or missing message identity, and eviction after the fence remain uncertain with operator review named.
 7. Retried jobs, redelivered queue messages and resumed dispatch create no second provider message.
 
-**Evidence.** `tests/go-live/managed-mail.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts`
-**Gap.** Old evidence asserts Email adapter hand-off; Reconciliation-window coverage; Resumed dispatch does not duplicate. Unasserted: SMS adapter hand-off; Campaign/revision/step/contact identity; Provider-effective deduplication; Deadline coverage; Durable fence precedes SendGrid request; Correlation key is not provider deduplication; Provider identifier stored before handed-off state; Definite nonacceptance may retry; Accepted hand-off never retried; Uncertain hand-off never retried; Timeout remains uncertain; Reset remains uncertain; Uncertain provider response remains uncertain; Missing message identifier remains uncertain; Eviction after fence remains uncertain; Operator review is named; Job retry does not duplicate; Queue replay does not duplicate.
+**Evidence.** `tests/go-live/managed-mail.journeys.ts` — “[SEND-001][OPER-001][DELIV-007][REPORT-006] Managed relay confirms access and consent while the owner connection sends approved newsletters” · `tests/go-live/resend-delivery.journeys.ts` — “[SEND-001][SEND-008][SEND-006] native Resend reconciliation resumes exact paged lookup, distinguishes event payloads and closes expired uncertainty”
+**Gap.** Old evidence asserts Email adapter hand-off; Reconciliation-window coverage; Resumed dispatch does not duplicate. Unasserted: SMS adapter hand-off; Campaign/revision/step/contact identity; Provider-effective deduplication; Deadline coverage; Durable fence precedes SendGrid request; Correlation key is not provider deduplication; Provider identifier stored before handed-off state; Definite nonacceptance may retry; Accepted hand-off never retried; Uncertain hand-off never retried; Timeout remains uncertain; Reset remains uncertain; Uncertain provider response remains uncertain; Missing message identifier remains uncertain; Eviction after fence remains uncertain; Operator review is named; Job retry does not duplicate; Queue replay does not duplicate. Missing public-door journey: “Provider hand-off — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEND-002 — Quiet hours
 
@@ -1427,8 +1427,8 @@ Core · published · **partial** · Rules D-2, D-3
 2. Campaign status shows an estimated completion instant.
 3. Handed-off, delivered, skipped and failed counts refresh within 30 seconds of each change.
 
-**Evidence.** `tests/go-live/delivery.journeys.ts`
-**Gap.** Old evidence asserts Provider pacing; Estimated completion; Accepted count refresh within 30 seconds. Unasserted: Carrier pacing; Delivered count refresh; Skipped count refresh; Failed count refresh.
+**Evidence.** `tests/go-live/delivery.journeys.ts` — “[SEND-003][SEND-006] concurrent campaigns and HTTP confirmation share the durable budget across restart; the open screen refreshes”
+**Gap.** Old evidence asserts Provider pacing; Estimated completion; Accepted count refresh within 30 seconds. Unasserted: Carrier pacing; Delivered count refresh; Skipped count refresh; Failed count refresh. Missing public-door journey: “Throttling and progress — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEND-004 — Transport failure
 
@@ -1442,8 +1442,8 @@ Core · published · **partial** · Cites BASE-OPS-004, BASE-MAIL-001 · Rules D
 3. Permanent rejection or an exhausted retry budget leaves a failed recipient-step with its provider error shown on campaign detail.
 4. Hard rejection, complaint and provider suppression update CONT-006 atomically before another hand-off.
 
-**Evidence.** `tests/go-live/delivery-recovery.journeys.ts` · `tests/go-live/delivery.journeys.ts`
-**Gap.** Old evidence asserts Five retries then failure; Within original hour; Increasing delays; Exhaustion failed state; Error visible in detail. Unasserted: Uncertainty reconciled without retry; Permanent rejection terminal; Atomic suppression for hard rejection; Atomic suppression for complaint; Atomic provider suppression.
+**Evidence.** `tests/go-live/delivery-recovery.journeys.ts` — “[SEND-004] definite provider refusals use increasing retries within the original hour and expose the terminal reason” · `tests/go-live/delivery.journeys.ts`
+**Gap.** Old evidence asserts Five retries then failure; Within original hour; Increasing delays; Exhaustion failed state; Error visible in detail. Unasserted: Uncertainty reconciled without retry; Permanent rejection terminal; Atomic suppression for hard rejection; Atomic suppression for complaint; Atomic provider suppression. Missing public-door journey: “Transport failure — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEND-005 — Provider-event identity
 
@@ -1456,8 +1456,8 @@ Core · published · **partial** · Cites BASE-OPS-003 · Rules D-2, D-3
 2. Replayed and reordered delivery, bounce, complaint, suppression and SMS-reply facts leave the same derived delivery disposition and contact state.
 3. An older fact never downgrades a later provider disposition.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/go-live/delivery-recovery.journeys.ts`
-**Gap.** Old evidence asserts Signed event accepted; Replay and reorder preserve recipient disposition; Older fact does not downgrade delivery. Unasserted: Strongest adapter identity and immutable fact; Replay and reorder preserve every contact state; SMS reply identity.
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts replayed through the public webhook keep delivery truth separate” · `tests/go-live/delivery-recovery.journeys.ts`
+**Gap.** Old evidence asserts Signed event accepted; Replay and reorder preserve recipient disposition; Older fact does not downgrade delivery. Unasserted: Strongest adapter identity and immutable fact; Replay and reorder preserve every contact state; SMS reply identity. Missing public-door journey: “Provider-event identity — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEND-006 — Delivery truth
 
@@ -1471,8 +1471,8 @@ Core · published · **partial** · Cites BASE-MAIL-001 · Rules D-2, D-3
 3. A later complaint stays visible without erasing the earlier delivery fact.
 4. A skipped disposition carries its reason.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/go-live/scheduler.journeys.ts`
-**Gap.** Old evidence asserts Accepted and uncertain states; Independent complaint; Delivery retained after complaint. Unasserted: All remaining disposition states; Independent suppression; Skipped reason retained.
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts replayed through the public webhook keep delivery truth separate” · `tests/go-live/scheduler.journeys.ts`
+**Gap.** Old evidence asserts Accepted and uncertain states; Independent complaint; Delivery retained after complaint. Unasserted: All remaining disposition states; Independent suppression; Skipped reason retained. Missing public-door journey: “Delivery truth — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEND-007 — Partial completion
 
@@ -1485,8 +1485,8 @@ Core · published · **partial** · Cites BASE-MAIL-001 · Rules D-2, D-3
 2. The summary separately reports delivered, skipped, failed, bounced, complained and suppressed totals without one combined success figure.
 3. Later complaint or suppression facts update both the completed campaign summary and contact ledger.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/campaign-results/results.journeys.ts`
-**Gap.** Old evidence asserts Per-disposition visible counts; Late complaint updates campaign summary; Late complaint updates ledger. Unasserted: Uncertainty is not terminal; Every terminal disposition gates completion; All overlapping complaint/suppression totals separate; No combined success figure; Late suppression updates completed summary.
+**Evidence.** `tests/go-live/go-live.journeys.ts` — “[SEND-005][SEND-006][SEND-007][SEND-008][CONT-006] signed SendGrid facts replayed through the public webhook keep delivery truth separate” · `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
+**Gap.** Old evidence asserts Per-disposition visible counts; Late complaint updates campaign summary; Late complaint updates ledger. Unasserted: Uncertainty is not terminal; Every terminal disposition gates completion; All overlapping complaint/suppression totals separate; No combined success figure; Late suppression updates completed summary. Missing public-door journey: “Partial completion — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEND-008 — Resumable dispatch and reconciliation
 
@@ -1503,8 +1503,8 @@ Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001 · Rules D
 6. For other providers, unresolved messages past their declared lookup window fail with an unconfirmed-outcome reason, without delivery credit or blind retry.
 7. A campaign never remains dispatching with neither work nor reconciliation in progress.
 
-**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts`
-**Gap.** Old evidence asserts Restart resumes; No duplicate send; Provider lookup reconciles uncertainty; Missed provider facts imported; Activity unavailable retains uncertainty. Unasserted: Eviction resumes; Redeployment resumes; Queue redelivery preserves fence; No operator restart action; Other unresolved lookup; Signed SendGrid event correlation; Activity identity correlation; Expired SendGrid lookup retains uncertainty; No invented delivery; No invented failure; No automatic retry control; Receiver evidence available; Provider identifiers available; No delivery credit.
+**Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts` — “[SEND-001][SEND-008][SEND-006] native Resend reconciliation resumes exact paged lookup, distinguishes event payloads and closes expired uncertainty”
+**Gap.** Old evidence asserts Restart resumes; No duplicate send; Provider lookup reconciles uncertainty; Missed provider facts imported; Activity unavailable retains uncertainty. Unasserted: Eviction resumes; Redeployment resumes; Queue redelivery preserves fence; No operator restart action; Other unresolved lookup; Signed SendGrid event correlation; Activity identity correlation; Expired SendGrid lookup retains uncertainty; No invented delivery; No invented failure; No automatic retry control; Receiver evidence available; Provider identifiers available; No delivery credit. Missing public-door journey: “Resumable dispatch and reconciliation — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEND-009 — Provider outage
 
@@ -1519,8 +1519,8 @@ Core · published · **partial** · Cites BASE-OPS-004, BASE-MAIL-001 · Rules D
 4. Campaign detail shows the pause and provider error.
 5. Each operator receives one outage email as soon as the mail provider is available.
 
-**Evidence.** `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts`
-**Gap.** Old evidence asserts Adapter unavailable pauses channel; No recipient hand-off while paused; Bounded non-recipient probe; Probe cadence survives restart; Automatic probe recovery. Unasserted: Five-minute continuous transient trigger; Audience recheck after recovery; Provider error visible.
+**Evidence.** `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts` — “[SEND-005] authenticated probes pause without recipients, obey durable cadence and recover without duplicate uncertain notices”
+**Gap.** Old evidence asserts Adapter unavailable pauses channel; No recipient hand-off while paused; Bounded non-recipient probe; Probe cadence survives restart; Automatic probe recovery. Unasserted: Five-minute continuous transient trigger; Audience recheck after recovery; Provider error visible. Missing public-door journey: “Provider outage — complete acceptance”, covering the unasserted outcomes above.
 
 ### Results
 
@@ -1536,8 +1536,8 @@ Core · published · **partial**
 3. The campaign exposes its delivery timeline and cancellation.
 4. Per-channel outcome totals remain individually inspectable.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts`
-**Gap.** Old evidence asserts State and channel filters; Cancellation outcome; Delivery schedule/timeline; Per-channel disposition totals. Unasserted: The opened body is the approved revision; Full audience snapshot is inspectable.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[RESULT-001] every combined campaign state/channel filter, counts, history and empty state at 1440”; “[CAMP-009] cancel dialog contains focus, Escape cancels and returns focus; confirmed cancel retains uncertain handoffs”; “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
+**Gap.** Old evidence asserts State and channel filters; Cancellation outcome; Delivery schedule/timeline; Per-channel disposition totals. Unasserted: The opened body is the approved revision; Full audience snapshot is inspectable. Missing public-door journey: “Campaign history — complete acceptance”, covering the unasserted outcomes above.
 
 #### RESULT-002 — Engagement
 
@@ -1551,8 +1551,8 @@ Core · published · **partial**
 3. Enabled opens are labeled privacy-sensitive estimates.
 4. Open estimates never support confidence, deliverability or attribution figures.
 
-**Evidence.** `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Old evidence asserts Default off and explicit enablement; Privacy-sensitive estimate label; Other result fields unchanged after pixel fetch. Unasserted: Observed click labels; Observed conversion labels.
+**Evidence.** `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased”
+**Gap.** Old evidence asserts Default off and explicit enablement; Privacy-sensitive estimate label; Other result fields unchanged after pixel fetch. Unasserted: Observed click labels; Observed conversion labels. Missing public-door journey: “Engagement — complete acceptance”, covering the unasserted outcomes above.
 
 #### RESULT-003 — Attribution
 
@@ -1566,7 +1566,7 @@ Core · published · **done**
 3. The default attribution policy selects the latest non-automated tracked click in the seven days before purchase.
 4. A cancellation or refund subtracts the corresponding attributed amount.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/performance-fixture.ts`
+**Evidence.** `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/campaign-results/performance-fixture.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390”
 **Gap.** None.
 
 #### RESULT-004 — Cost
@@ -1581,8 +1581,8 @@ Core · published · **partial**
 3. UTC-day totals reconcile those facts, keeping currencies and unknown reported prices distinct.
 4. A design purchase records one purchased-candidate unit and a converted layout records one layout unit, each once for its deduplication identity; a timed-out purchase counts only after the provider shows it occurred.
 
-**Evidence.** `tests/campaign-results/costs.journeys.ts`
-**Gap.** Old evidence asserts AI billable units; Provider units, currency and cost; Campaign totals; UTC day boundary; Day/currency/unknown-price groups. Unasserted: Model or channel on each fact; Timed-out purchase proven before counting; Layout unit once.
+**Evidence.** `tests/campaign-results/costs.journeys.ts` — “[RESULT-004][REPORT-007] Settings consent counts, currency-separated projection and rejected AI spend, distinct handoffs and replayed purchases retain truthful campaign and UTC-day totals”
+**Gap.** Old evidence asserts AI billable units; Provider units, currency and cost; Campaign totals; UTC day boundary; Day/currency/unknown-price groups. Unasserted: Model or channel on each fact; Timed-out purchase proven before counting; Layout unit once. Missing public-door journey: “Cost — complete acceptance”, covering the unasserted outcomes above.
 
 #### RESULT-005 — Link tracking
 
@@ -1599,8 +1599,8 @@ Core · published · **partial**
 6. Email, phone and text contact links are unchanged and record no click.
 7. The delivered link continues forwarding after its recording window, thirty days after the send-by instant, closes, recording no further person or scanner fact.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Old evidence asserts Opaque first-party redirect; Distinct recipient-step redirect; Original destination forwarding; No cookie; No loaded body. Unasserted: CONT-018 token not yet built; Scanner excluded from attribution.
+**Evidence.** `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/campaign-results/tracking-journey.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts`
+**Gap.** Old evidence asserts Opaque first-party redirect; Distinct recipient-step redirect; Original destination forwarding; No cookie; No loaded body. Unasserted: CONT-018 token not yet built; Scanner excluded from attribution. Missing public-door journey: “Link tracking — complete acceptance”, covering the unasserted outcomes above.
 
 #### RESULT-009 — Open-estimate lifecycle
 
@@ -1615,8 +1615,8 @@ Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-003, BASE
 4. Repeated requests record at most one estimate per recipient-step, without an IP address, user agent or cookie.
 5. Private open tokens and facts remain until contact erasure removes them.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Old evidence asserts Unique first-party pixels after opt-in; Pixel changes only estimate results; Disable revokes issued pixels; Reenable does not readmit old pixels; One estimate after repeated requests. Unasserted: Ordinary images remain untracked; No IP retained; No user agent retained.
+**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased”
+**Gap.** Old evidence asserts Unique first-party pixels after opt-in; Pixel changes only estimate results; Disable revokes issued pixels; Reenable does not readmit old pixels; One estimate after repeated requests. Unasserted: Ordinary images remain untracked; No IP retained; No user agent retained. Missing public-door journey: “Open-estimate lifecycle — complete acceptance”, covering the unasserted outcomes above.
 
 #### RESULT-010 — Ordinary campaign images are untracked
 
@@ -1630,7 +1630,7 @@ Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
 3. An ordinary image fetch is never counted or shown as an open.
 
 **Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open.
+**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open. Missing public-door journey: “Ordinary campaign images are untracked — complete acceptance”, covering the unasserted outcomes above.
 
 #### RESULT-006 — Deliverability reporting
 
@@ -1658,8 +1658,8 @@ Core · published · **partial** · Cites BASE-DATA-001
 2. Each uploaded campaign asset is retained as its original file.
 3. Signed first-owner admission authority, authentication credentials, sessions and transfer bookkeeping are excluded; operator profiles retain attribution only.
 
-**Evidence.** `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts`
-**Gap.** Old evidence asserts Archive includes contacts; Archive includes consent; Archive includes suppressions; Archive includes surviving opt-outs; Archive includes recipient-step outcomes. Unasserted: Archive includes source records; Archive includes proposals; Archive includes campaigns; Archive includes revisions; Archive includes audience decisions; Archive includes messages; Archive includes attribution events; Archive includes settings; Archive includes audit entries; Signed first-owner authority excluded; Authentication credentials excluded; Sessions excluded; Transfer bookkeeping excluded; Operator profiles attribution-only.
+**Evidence.** `tests/portability.spec.ts` — “[DATA-001] complete native records and uploaded assets round-trip without restoring login authority” · `tests/go-live/go-live.journeys.ts` — “[DATA-001][CONT-004][SEND-005] an installation with real history restores into an empty one without its sending authority” · `tests/local-start/command-data.journey.ts`
+**Gap.** Old evidence asserts Archive includes contacts; Archive includes consent; Archive includes suppressions; Archive includes surviving opt-outs; Archive includes recipient-step outcomes. Unasserted: Archive includes source records; Archive includes proposals; Archive includes campaigns; Archive includes revisions; Archive includes audience decisions; Archive includes messages; Archive includes attribution events; Archive includes settings; Archive includes audit entries; Signed first-owner authority excluded; Authentication credentials excluded; Sessions excluded; Transfer bookkeeping excluded; Operator profiles attribution-only. Missing public-door journey: “Export contents — complete acceptance”, covering the unasserted outcomes above.
 
 #### DATA-002 — Marketing restore custody
 
@@ -1674,8 +1674,8 @@ Core · published · **partial** · From DATA-001 · Cites BASE-DATA-001
 4. A nonempty legacy journal is refused before staging.
 5. A current post-erasure export restores with matching private authority and preserves surviving opt-outs.
 
-**Evidence.** `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts`
-**Gap.** Old evidence asserts Every older archive refused by current erasure floor; Nonempty legacy journal refused before staging; Current post-erasure export restores; Surviving opt-outs preserved. Unasserted: Empty maintenance destination; Explicit confirmation; Fresh destination native authentication; Contact keys match before record restore; Link keys match before object restore.
+**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts` — “[DATA-001] rer commands restore complete local D1 and R2 with matching authority, then reset to one empty native owner”
+**Gap.** Old evidence asserts Every older archive refused by current erasure floor; Nonempty legacy journal refused before staging; Current post-erasure export restores; Surviving opt-outs preserved. Unasserted: Empty maintenance destination; Explicit confirmation; Fresh destination native authentication; Contact keys match before record restore; Link keys match before object restore. Missing public-door journey: “Marketing restore custody — complete acceptance”, covering the unasserted outcomes above.
 
 ### Managed installation and editor
 
@@ -1708,8 +1708,8 @@ Core · published · **partial** · Cites BASE-ACCESS-002, BASE-ROLE-001
 5. Mango's six product roles remain separate from Base owner, admin and member roles.
 6. The last product Owner is protected, restored authority belongs to the destination, and CSV export is restricted to Owner or Admin.
 
-**Evidence.** `tests/local-start/editor.journey.ts`
-**Gap.** Old evidence asserts Owner editor present; Anonymous no widget; Logout removes widget. Unasserted: Short-lived grant; Configured management frame origin; Foreign frame/message rejected; Authorization loss removes widget; Grant expiry removes widget; Compiled edits after route hydration; Six product roles separate from Base roles; Last product Owner protected; Destination-owned restore authority; Owner/Admin CSV restriction.
+**Evidence.** `tests/local-start/editor.journey.ts` — “[MGMT-002] native owner editor mounts at 1440 and 390, refuses visitors and loses its grant on sign-out”
+**Gap.** Old evidence asserts Owner editor present; Anonymous no widget; Logout removes widget. Unasserted: Short-lived grant; Configured management frame origin; Foreign frame/message rejected; Authorization loss removes widget; Grant expiry removes widget; Compiled edits after route hydration; Six product roles separate from Base roles; Last product Owner protected; Destination-owned restore authority; Owner/Admin CSV restriction. Missing public-door journey: “Native owner editor — complete acceptance”, covering the unasserted outcomes above.
 
 ### Target: Operators
 
@@ -2285,7 +2285,7 @@ Core · target · **done** · Cites BASE-OPS-005 · Rules D-1, D-3
 2. Resume continues remaining recipient-steps with AUD-005 rechecks and CAMP-010 deadlines; a two-step mid-dispatch pause sends nothing while paused and hands off each eligible recipient-step once after resumption.
 3. Pause and resume each record their actor.
 
-**Evidence.** `tests/go-live/pause.journeys.ts`
+**Evidence.** `tests/go-live/pause.journeys.ts` — “[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at 1440”
 **Gap.** None.
 
 #### CAMP-015 — Marketing calendar
@@ -2314,8 +2314,8 @@ Core · target · **partial** · Rules D-1, D-3
 2. A follow-up at 48 hours targets exactly the original non-clickers less current review exclusions.
 3. The new campaign passes its own approval and frequency checks.
 
-**Evidence.** `tests/campaign-results/followup.journeys.ts` · `tests/portability.spec.ts`
-**Gap.** Asserted: Linked follow-up and selected delay; New subject; Non-opener estimate label; 48-hour non-clicker candidates; Current exclusions including frequency; Independent approval; Independent frequency check. Unasserted: Exact non-clicker recipient identities after current exclusions.
+**Evidence.** `tests/campaign-results/followup.journeys.ts` — “[CAMP-016] non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at 1440” · `tests/portability.spec.ts`
+**Gap.** Asserted: Linked follow-up and selected delay; New subject; Non-opener estimate label; 48-hour non-clicker candidates; Current exclusions including frequency; Independent approval; Independent frequency check. Unasserted: Exact non-clicker recipient identities after current exclusions. Missing public-door journey: “Follow-up to non-engaged recipients — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-017 — Recurring and RSS-to-email campaigns
 
@@ -2344,7 +2344,7 @@ Core · target · **partial** · Rules D-1, D-3
 4. Its own approval checks current settings, consent and audience; editing and approving it leaves the source’s approved revision and results unchanged.
 
 **Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Duplication from every campaign state; Copy-of name; New independent draft; Copied channels; Copied audience rule; Copied content bytes; Copied sender; Copied preheader; Copied tracking choice; Copied step settings; No copied schedule; No copied approval; No copied snapshot; No copied test; No copied result; Current settings checked; Current consent checked; Current audience checked; Source revision unchanged; Source results unchanged. Assertions in tests/campaign-authoring/reuse-journey.ts are outside the old Evidence cell.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Duplication from every campaign state; Copy-of name; New independent draft; Copied channels; Copied audience rule; Copied content bytes; Copied sender; Copied preheader; Copied tracking choice; Copied step settings; No copied schedule; No copied approval; No copied snapshot; No copied test; No copied result; Current settings checked; Current consent checked; Current audience checked; Source revision unchanged; Source results unchanged. Assertions in tests/campaign-authoring/reuse-journey.ts are outside the old Evidence cell. Missing public-door journey: “Duplicate a campaign — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-019 — Test send to typed addresses
 
@@ -2393,8 +2393,8 @@ Core · target · **partial**
 5. Delivered HTML and plain text preserve each contact link unchanged; the plain-text part exposes its address or number.
 6. Contact links require no allowed-host entry, are never rewritten and record no click; malformed contact links still block, and image sources remain HTTPS only.
 
-**Evidence.** `tests/go-live/contact-links.journeys.ts`
-**Gap.** Old evidence asserts Multiple addresses blocked; Disallowed parameters blocked; Email subject/body form saved; E.164 phone and SMS body saved; Invalid phone blocked. Unasserted: Ten-digit US and visual separators; Web kind; HTTPS-only image sources.
+**Evidence.** `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking”
+**Gap.** Old evidence asserts Multiple addresses blocked; Disallowed parameters blocked; Email subject/body form saved; E.164 phone and SMS body saved; Invalid phone blocked. Unasserted: Ten-digit US and visual separators; Web kind; HTTPS-only image sources. Missing public-door journey: “Contact links (mailto:, tel:, sms:) — complete acceptance”, covering the unasserted outcomes above.
 
 #### MSG-014 — Allowed link and image hosts
 
@@ -2430,7 +2430,7 @@ Core · target · **partial** · Cites BASE-ROLE-001, BASE-AUDIT-001
 6. An imported Mailchimp template using three outside hosts reaches review with all three hosts and allow actions.
 
 **Evidence.** `tests/go-live/content-checks.journeys.ts`
-**Gap.** Assertions in tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Campaign blocked-host list; Flow blocked-host list; Every affected link; Redirect host list; Manager exact-host allowance; Admin exact-host allowance; Owner exact-host allowance; Explicit subdomain allowance; Review source retained; Campaign/flow retained; Operator retained; Immediate recheck; Append-only activity; Operator field; Host field; Campaign/flow field; Activity view; Operator filter; Action filter; Object filter; Author sees blocked hosts; Author can request named approval; No Author allow control; Author allowance refused; Contact links need no allowance; Remaining safety inspections retained; All three imported outside hosts listed; Allow action for each imported outside host.
+**Gap.** Assertions in tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Campaign blocked-host list; Flow blocked-host list; Every affected link; Redirect host list; Manager exact-host allowance; Admin exact-host allowance; Owner exact-host allowance; Explicit subdomain allowance; Review source retained; Campaign/flow retained; Operator retained; Immediate recheck; Append-only activity; Operator field; Host field; Campaign/flow field; Activity view; Operator filter; Action filter; Object filter; Author sees blocked hosts; Author can request named approval; No Author allow control; Author allowance refused; Contact links need no allowance; Remaining safety inspections retained; All three imported outside hosts listed; Allow action for each imported outside host. Missing public-door journey: “Allow a blocked host from review — complete acceptance”, covering the unasserted outcomes above.
 
 ### Target: Results
 
@@ -2501,8 +2501,8 @@ Core · target · **partial** · Cites BASE-PUBLIC-002 · Rules D-2
 3. An embed accepts only configured allowed origins.
 4. No submission by itself authorizes a campaign or flow hand-off.
 
-**Evidence.** `src/core/features/audience/signup-routes.ts` · `tests/audience-import/signup.spec.ts`
-**Gap.** The cited signup journey asserts pending consent, one confirmation, replay and expiry. It does not assert an embedded-origin refusal or absence of campaign/flow authority after submission; the old evidence set has no embed-origin journey.
+**Evidence.** `src/core/features/audience/signup-routes.ts` · `tests/audience-import/signup.spec.ts` — “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP”; “CONT-007/009 signed SMS signup confirms once; linked STOP is durable and HELP/START cannot subscribe or duplicate replies”
+**Gap.** The cited signup journey asserts pending consent, one confirmation, replay and expiry. It does not assert an embedded-origin refusal or absence of campaign/flow authority after submission; the old evidence set has no embed-origin journey. Missing public-door journey: “Hosted and embedded signup — complete acceptance”, covering the unasserted outcomes above.
 
 #### FORM-002 — Popups, flyouts and full-page forms
 
@@ -2595,8 +2595,8 @@ Core · target · **partial** · Cites BASE-INPUT-001, BASE-ACCESS-003 · Rules 
 6. An ordinary installation without challenge keys retains all consent, suppression and rate guards; kiosk always requires a fresh challenge.
 7. No public response reveals whether an address is already subscribed, unsubscribed or suppressed; FORM-010 owns address-independent rate errors.
 
-**Evidence.** `src/core/features/audience/signup-security.ts` · `tests/audience-import/signup.spec.ts`
-**Gap.** The cited signup test asserts body/disclosure rejection, honeypot no-mail, duplicate mail and durable network refusal. It does not assert every sender-before-claim guard, network normalization/restart/counter ceiling, Turnstile action/hostname/reuse/failure mode or status-free acknowledgment for all protected address states; additional challenge tests exist outside the old Evidence cell.
+**Evidence.** `src/core/features/audience/signup-security.ts` · `tests/audience-import/signup.spec.ts` — “CONT-009 durable signup limits, body bounds, honeypot and concurrent destination claim prevent extra provider calls”; “CONT-003 a stale or missing rendered disclosure cannot capture changed sender consent”
+**Gap.** The cited signup test asserts body/disclosure rejection, honeypot no-mail, duplicate mail and durable network refusal. It does not assert every sender-before-claim guard, network normalization/restart/counter ceiling, Turnstile action/hostname/reuse/failure mode or status-free acknowledgment for all protected address states; additional challenge tests exist outside the old Evidence cell. Missing public-door journey: “Abuse resistance — complete acceptance”, covering the unasserted outcomes above.
 
 #### FORM-008 — Signup intake capacity
 
@@ -2678,8 +2678,8 @@ Core · target · **partial** · Rules D-2
 5. Consent evidence records kiosk capture and its device label; confirmed-source growth reports show that source separately.
 6. Ordinary consent, confirmation and destination allowances still apply, and marking/unmarking a kiosk records its operator and time in activity.
 
-**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` · `src/core/features/audience/signup-routes.ts` · `src/core/features/audience/ui/kiosk-signup-page.tsx` · `migrations/core/0075_kiosk_forms.sql`
-**Gap.** The cited kiosk journey asserts blank fields/consent controls, 300 confirmations from one network, no cookies/storage, mandatory challenge/no contact, source report and attributed marking. It does not assert full-screen geometry or prove that kiosk facts cannot identify a later CONT-018 visitor; screenshots and empty browser storage alone do not prove the latter. Original FORM-008 provisioning and ordinary intake obligations stay there.
+**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` — “[CONT-025][FORM-008][FORM-009][FORM-010] shared kiosk clears every visitor, requires fresh verification and retains device consent source” · `src/core/features/audience/signup-routes.ts` · `src/core/features/audience/ui/kiosk-signup-page.tsx` · `migrations/core/0075_kiosk_forms.sql`
+**Gap.** The cited kiosk journey asserts blank fields/consent controls, 300 confirmations from one network, no cookies/storage, mandatory challenge/no contact, source report and attributed marking. It does not assert full-screen geometry or prove that kiosk facts cannot identify a later CONT-018 visitor; screenshots and empty browser storage alone do not prove the latter. Original FORM-008 provisioning and ordinary intake obligations stay there. Missing public-door journey: “Kiosk and event forms — complete acceptance”, covering the unasserted outcomes above.
 
 #### FORM-010 — Refused signups are never silent
 
@@ -2715,8 +2715,8 @@ Core · target · **partial**
 6. The builder’s live estimate and plain-text summary name every condition, while campaign review recomputes exact eligible membership.
 7. A saved count/value/time/state segment selects exactly the seeded contacts through review, and changing a nested operator or time window changes only the matching cohort.
 
-**Evidence.** `tests/audience-controls/segments.spec.ts` · `tests/audience-controls/segment-journey.ts` · `tests/audience-controls/segment-catalog.ts` · `tests/audience-controls/segment-fixture.ts` · `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/cross-channel-attribution.ts`
-**Gap.** Nested property/tag/consent/geographic/order/catalog and human click selection, summaries, live estimate and per-contact exact review are asserted. Cited old evidence does not assert viewed product/collection/category selection, full named campaign/link/flow activity or prediction-based matching; their dependencies being unfinished does not remove them from this clause. RFM and unavailable-catalog cases are asserted; predictive evidence remains SEG-004.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable” · `tests/audience-controls/segment-journey.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable” · `tests/audience-controls/segment-catalog.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable” · `tests/audience-controls/segment-fixture.ts` · `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/campaign-results/cross-channel-attribution.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390”
+**Gap.** Nested property/tag/consent/geographic/order/catalog and human click selection, summaries, live estimate and per-contact exact review are asserted. Cited old evidence does not assert viewed product/collection/category selection, full named campaign/link/flow activity or prediction-based matching; their dependencies being unfinished does not remove them from this clause. RFM and unavailable-catalog cases are asserted; predictive evidence remains SEG-004. Missing public-door journey: “Segment builder — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEG-002 — Live membership
 
@@ -2745,8 +2745,8 @@ Core · target · **partial**
 3. Scores and stages are recomputed daily.
 4. On seeded order history, the stage distribution and a contact’s scores match an independent calculation of the documented method.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/retention-journey.ts`
-**Gap.** The old retention journey asserts the five-stage distribution, a customer’s order/recency/frequency/monetary scores and displayed method. It does not advance a daily boundary or assert daily recomputation; the fixed fixture also does not independently recalculate every quintile boundary.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440” · `tests/campaign-results/retention-journey.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
+**Gap.** The old retention journey asserts the five-stage distribution, a customer’s order/recency/frequency/monetary scores and displayed method. It does not advance a daily boundary or assert daily recomputation; the fixed fixture also does not independently recalculate every quintile boundary. Missing public-door journey: “RFM and lifecycle stages — complete acceptance”, covering the unasserted outcomes above.
 
 #### SEG-004 — Predictions
 
@@ -2903,8 +2903,8 @@ Core · target · **partial** · Rules D-1
 4. Acknowledging advisories does not bypass a contrast blocker; correcting the blocker and acknowledging the current revision permits approval.
 5. A 110 KB body is refused at save under BUILD-012.
 
-**Evidence.** `tests/go-live/presend-checks.journeys.ts` · `tests/go-live/email-size.journeys.ts`
-**Gap.** The cited journeys assert safe contact/fallback previews, each located advisory, size detail and largest blocks, contrast refusal, no recipient effect on refusal and oversized save rejection. Gap: after correcting and acknowledging findings, approval is called and returns success but the cited files do not assert the persisted approval state or saved approval record; rendering a preview region is not that assertion.
+**Evidence.** `tests/go-live/presend-checks.journeys.ts` — “[BUILD-008] saved contact previews and located advisories remain separate from contrast blockers” · `tests/go-live/email-size.journeys.ts` — “[BUILD-012] large newsletters save by transmitted bytes, retain refused edits and recheck expansion at handoff”
+**Gap.** The cited journeys assert safe contact/fallback previews, each located advisory, size detail and largest blocks, contrast refusal, no recipient effect on refusal and oversized save rejection. Gap: after correcting and acknowledging findings, approval is called and returns success but the cited files do not assert the persisted approval state or saved approval record; rendering a preview region is not that assertion. Missing public-door journey: “Previews and pre-send checks — complete acceptance”, covering the unasserted outcomes above.
 
 #### BUILD-009 — SMS and MMS composer
 
@@ -3514,7 +3514,7 @@ Core · target · **done**
 1. Signed recipient outcomes report delivered, bounced, complained and clicked separately for Gmail, Outlook/Hotmail, Yahoo/AOL, Apple iCloud and other mailboxes.
 2. Bounce reasons classify invalid address, mailbox full, policy block, reputation, content and other; seeded Gmail and Outlook bounce facts appear under the right provider and reason.
 
-**Evidence.** `tests/go-live/mailbox-provider.journeys.ts`
+**Evidence.** `tests/go-live/mailbox-provider.journeys.ts` — “[DELIV-005] signed mailbox outcomes and diagnostic categories survive replay without multiplying clicks”
 **Gap.** None.
 
 #### DELIV-006 — Address quality at intake
@@ -3639,8 +3639,8 @@ Core · target · **partial**
 3. Every revenue figure shows its metric and window; changing the window to one day recalculates reports without changing stored events.
 4. Flows use the same attribution policy and carry their revenue through the flow reports.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/cross-channel-attribution.ts` · `tests/campaign-results/custom-attribution.ts` · `tests/campaign-results/attribution-report-ui.ts`
-**Gap.** Campaign and SMS attribution, window/metric edits, refunds, cancellations and immutable source records are asserted. Flow attribution and flow revenue reporting are not asserted by the old evidence; FLOW-001/FLOW-002 remain missing.
+**Evidence.** `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/campaign-results/cross-channel-attribution.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/campaign-results/custom-attribution.ts` · `tests/campaign-results/attribution-report-ui.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390”
+**Gap.** Campaign and SMS attribution, window/metric edits, refunds, cancellations and immutable source records are asserted. Flow attribution and flow revenue reporting are not asserted by the old evidence; FLOW-001/FLOW-002 remain missing. Missing public-door journey: “Attribution for campaigns, flows and SMS — complete acceptance”, covering the unasserted outcomes above.
 
 #### REPORT-004 — Customer and retention analytics
 
@@ -3653,8 +3653,8 @@ Core · target · **partial**
 2. Reports show median days between orders and customer value by acquisition source and form.
 3. Product affinity shows products bought together and the next product bought.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/retention-journey.ts`
-**Gap.** Repeat-purchase rate, cohort retention, median order interval, value for one form and products bought together are asserted. Value grouped by acquisition source and the next-product-bought outcome have no assertion in the old evidence.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440” · `tests/campaign-results/retention-journey.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440”
+**Gap.** Repeat-purchase rate, cohort retention, median order interval, value for one form and products bought together are asserted. Value grouped by acquisition source and the next-product-bought outcome have no assertion in the old evidence. Missing public-door journey: “Customer and retention analytics — complete acceptance”, covering the unasserted outcomes above.
 
 #### REPORT-005 — List growth and consent sources
 
@@ -3730,8 +3730,8 @@ Core · target · **partial** · Cites BASE-SECRET-001, BASE-OPS-003
 4. The shipped plugin script uses explicit consent, default-deny collection and GPC withdrawal without cross-site or subscription-permission widening.
 5. The plugin’s signup form remains pending until Mango’s affirmative single-use confirmation.
 
-**Evidence.** `tests/go-live/woocommerce.journeys.ts` · `tests/go-live/woocommerce-plugin-journey.ts` · `extensions/mango-woocommerce/mango-woocommerce.php` · `extensions/mango-woocommerce/INSTALL.md` · `tests/audience-import/signup.spec.ts`
-**Gap.** The cited edge and browser journeys assert owner connection, source synchronization, replay preservation, exact activated tag-and-exit flow, default-deny collection, explicit consent and GPC withdrawal, plus unchanged subscription evidence and confirmation. Gap: the cited evidence does not assert absence of cross-site observation throughout the plugin journey. No completion is carried for that unasserted privacy outcome.
+**Evidence.** `tests/go-live/woocommerce.journeys.ts` — “[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery” · `tests/go-live/woocommerce-plugin-journey.ts` — “[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery” · `extensions/mango-woocommerce/mango-woocommerce.php` · `extensions/mango-woocommerce/INSTALL.md` · `tests/audience-import/signup.spec.ts` — “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP”
+**Gap.** The cited edge and browser journeys assert owner connection, source synchronization, replay preservation, exact activated tag-and-exit flow, default-deny collection, explicit consent and GPC withdrawal, plus unchanged subscription evidence and confirmation. Gap: the cited evidence does not assert absence of cross-site observation throughout the plugin journey. No completion is carried for that unasserted privacy outcome. Missing public-door journey: “WooCommerce — complete acceptance”, covering the unasserted outcomes above.
 
 #### INT-003 — BigCommerce
 
@@ -3795,8 +3795,8 @@ Core · target · **partial** · Cites BASE-ACCESS-004, BASE-INPUT-001, BASE-OPS
 5. Exhausting one key returns a named rate-limit refusal with retry guidance while another key remains usable.
 6. Writes retain their integration-key attribution, and the public API description declares their scopes.
 
-**Evidence.** `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/custom-event-journey.ts` · `src/core/features/integrations/openapi.ts` · `src/core/features/integrations/client-source.ts`
-**Gap.** The cited journeys assert profile properties, contact identity, event idempotency and key attribution, membership reads, consent refusal and independent per-key rate limits. Gap: the cited files do not assert integration-key attribution on contact/property/subscription writes or full public-description coverage for all named contact and membership operations; event-write scope and event attribution alone do not prove those outcomes. Website keys remain server-held behind an authenticated same-origin proxy; no automatic collection or consent inference is authorized.
+**Evidence.** `tests/go-live/sync-integrations.journeys.ts` — “[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression” · `tests/go-live/custom-event-journey.ts` — “[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression” · `src/core/features/integrations/openapi.ts` · `src/core/features/integrations/client-source.ts`
+**Gap.** The cited journeys assert profile properties, contact identity, event idempotency and key attribution, membership reads, consent refusal and independent per-key rate limits. Gap: the cited files do not assert integration-key attribution on contact/property/subscription writes or full public-description coverage for all named contact and membership operations; event-write scope and event attribution alone do not prove those outcomes. Website keys remain server-held behind an authenticated same-origin proxy; no automatic collection or consent inference is authorized. Missing public-door journey: “Events and profiles API — complete acceptance”, covering the unasserted outcomes above.
 
 #### INT-008 — Outbound webhooks
 
@@ -4145,8 +4145,8 @@ Core · target · **partial** · Rules D-2
 4. Imported clicks count for CONT-012 and AUD-008 dormancy; imported opens remain estimates and never count as engagement.
 5. Importing facts creates no Mango send facts, results or attribution and changes no consent; existing populated campaign results remain identical.
 
-**Evidence.** `tests/move-in/archive.journeys.ts` · `tests/move-in/hostile.journeys.ts` · `tests/portability.spec.ts`
-**Gap.** Historical contact/time/campaign/link facts, imported/dropped reconciliation, dormancy distinctions and populated native result preservation are asserted. The cited evidence does not compare consent state and consent-evidence rows before and after the initial historical-event import; its after-import status snapshot cannot prove that import changes no consent.
+**Evidence.** `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”; “[CONT-012][AUD-008][MOVE-009] imported engagement governs review and immutable dispatch policy without changing consent” · `tests/move-in/hostile.journeys.ts` · `tests/portability.spec.ts`
+**Gap.** Historical contact/time/campaign/link facts, imported/dropped reconciliation, dormancy distinctions and populated native result preservation are asserted. The cited evidence does not compare consent state and consent-evidence rows before and after the initial historical-event import; its after-import status snapshot cannot prove that import changes no consent. Missing public-door journey: “Incumbent engagement history — complete acceptance”, covering the unasserted outcomes above.
 
 #### MOVE-010 — Several audiences
 
@@ -4423,8 +4423,8 @@ Core · target · **partial** · Cites BASE-PUBLIC-001 · Rules D-2
 2. The RSS feed includes the published issue and the public page carries search-engine metadata.
 3. Personalization becomes neutral text; public output contains no recipient token or personal value, unsubscribe link or private tracking link.
 
-**Evidence.** `tests/campaign-results/archive.journeys.ts` · `tests/audience-import/erasure.spec.ts`
-**Gap.** Publication, index navigation, RSS, metadata, neutral personalization and removal of representative private/tracking values are asserted. The cited evidence checks absence of the unsubscribe template token, but does not assert that the actual unsubscribe anchor is absent from the public page.
+**Evidence.** `tests/campaign-results/archive.journeys.ts` — “[PUB-001] publish, read and withdraw a neutral sent newsletter at 1440” · `tests/audience-import/erasure.spec.ts`
+**Gap.** Publication, index navigation, RSS, metadata, neutral personalization and removal of representative private/tracking values are asserted. The cited evidence checks absence of the unsubscribe template token, but does not assert that the actual unsubscribe anchor is absent from the public page. Missing public-door journey: “Web archive — complete acceptance”, covering the unasserted outcomes above.
 
 #### PUB-002 — Paid newsletters
 
@@ -4480,8 +4480,8 @@ Core · target · **partial** · Rules D-2
 3. Checkout returns the reader to a Mango explanation of the next step.
 4. Opening checkout records permission timestamp, source and wording version; only one confirmation per payer address per checkout session is authorized.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` · `tests/go-live/paid-signup-journey.ts`
-**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered.
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
+**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. Missing public-door journey: “Paid signup page and payer consent — complete acceptance”, covering the unasserted outcomes above.
 
 #### PUB-006 — Paid-reader consent and restrictions
 
@@ -4496,8 +4496,8 @@ Core · target · **partial** · From PUB-005 · Cites BASE-DATA-003 · Rules D-
 4. An already confirmed subscriber needs no second confirmation; payment events alone never create or widen permission.
 5. Contact erasure removes the paid-signup address and consent evidence under CONT-013.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` · `tests/go-live/paid-signup-journey.ts`
-**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: No free newsletters before confirmation.
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
+**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: No free newsletters before confirmation. Missing public-door journey: “Paid-reader consent and restrictions — complete acceptance”, covering the unasserted outcomes above.
 
 ### Installation services
 
