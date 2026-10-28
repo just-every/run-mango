@@ -24,7 +24,7 @@ function installationTrust(environment:AppBindings,origin:string):Trust|null{
 }
 export function createMangoDoor(environment:AppBindings,platform:Platform,auth:ReturnType<typeof createAuthService>,native:NativeRequest,
  dispatch:(id:string)=>Promise<void>,prepare:(id:string,revisionId:string)=>Promise<unknown>,update:(id:string,args:Record<string,unknown>,actor:string)=>Promise<unknown>,sync:(id:string)=>Promise<unknown>){
- const origin=platform.config.publicBaseUrl.origin,db=environment.DB,people=mangoPeople(db,auth);
+ const origin=platform.config.publicBaseUrl.origin,db=environment.DB,people=mangoPeople(db,auth),trust=installationTrust(environment,origin);
  const resources:ResourceDefinition[]=resourceTemplates.map(uriTemplate=>({
   ...(uriTemplate.startsWith('mango://operations/')?{}:{scope:uriTemplate.startsWith('mango://assets/')?'mango:assets:attach':`mango:${uriTemplate.split('://')[1].split('/')[0]}:read`}),
   uriTemplate,name:uriTemplate,mimeType:'application/json',classes:['standard','sensitive'],
@@ -35,7 +35,7 @@ export function createMangoDoor(environment:AppBindings,platform:Platform,auth:R
    catch(error){if(error instanceof ToolRefusal)return null;throw error;}
   },
  }));
- const door=createAgentDoor({seed:'mango',name:'Mango',specialist:'marketer',db,origin,trust:installationTrust(environment,origin),people,
+ const door=createAgentDoor({seed:'mango',name:'Mango',specialist:'marketer',db,origin,trust,people,
   tools:mangoTools(native,dispatch,prepare,update,async(kind,args,ctx)=>{
     if(kind==='design-advance'){
       await advanceDesignJob(platform,designCommand(args.phase==='draft'?'design.draft':'design.layout',String(args.id)));
@@ -47,6 +47,7 @@ export function createMangoDoor(environment:AppBindings,platform:Platform,auth:R
     throw new ToolRefusal('not_found');
   }),resources,notTools,
   async currentScopes(principal){
+    if(trust&&!await people.businessMember!(principal.person))return [];
     const current=await productAuthority(db,principal.person.id);if(!current)return [];
     const scopes=new Set(nativeToolSpecs.filter(spec=>hasPermission(current.role,toolPermission(spec))).map(spec=>spec.scope));
     scopes.add('events:read');

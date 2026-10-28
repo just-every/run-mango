@@ -2,7 +2,7 @@
 
 Mango exposes a marketer's native operations through `/mcp`. Discovery lives at `/.well-known/oauth-protected-resource/mcp`; the supported MCP versions are `2026-07-28` and `2025-11-25`. The signed-in **Agents** page shows policy, agent activity, pending approvals and reviews. An agent cannot use its token to change policy or Pause.
 
-Business connects a person by their durable Business ID through signed settings. A matching email address grants no authority. Each request re-reads that person's current Mango role. Owner-only connections and erasure stay owner-only. Contacts retain the person's native visibility restrictions. Installation, imports, credentials and provider callbacks keep their existing doors and purposes.
+Business connects a person by their durable Business ID through signed settings. A matching email address grants no authority. Each request re-reads that person's current Mango role. Detached or inactive Business mappings stop new and retained agent calls without signing people out. Owner-only connections and erasure stay owner-only. Contacts retain the person's native visibility restrictions. Installation, imports, credentials and provider callbacks keep their existing doors and purposes.
 
 The company chooses autonomous, review, approval or blocked behavior for each class. With no current policy, an unanswered class, an expired policy or Pause, agent effects stop. Approval shows a server-built summary bound to the saved native evidence. Only the named eligible person can decide it. Changed content, sender evidence or native revisions require a new decision. Agent authorization is recorded as **agent for person**; real approvers remain separate.
 

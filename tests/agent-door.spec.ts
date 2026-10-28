@@ -183,5 +183,16 @@ test('Mango agent door: signed native owner, durable Business person, policy-dec
   // Current native authority is re-read, including retained-key retries.
   await policy(autonomousPolicy(),5,{agents:['orchard-marketer'],consents:[]});
   expect((await call('mango.campaigns.create',{mode:'blank',idempotency_key:'one-draft'})).status).toBe(401);
+  expect((await mcp('tools/call',{name:'mango.campaigns.list',arguments:{}},memberToken)).status).toBe(200);
+  const retained={person:{id:teammate!.id},agent:{id:'casey-marketer',name:'Finch',specialist:'marketer'},consent:'orchard-consent',scopes,clientId:'orchard-client'};
+  const retainedArgs={mode:'blank',idempotency_key:'retained-casey-draft'};
+  expect((await platform.agentDoor!.invoke('mango.campaigns.create',retainedArgs,retained)).outcome).toBe('done');
+  const beforeDetach=(await db.prepare('SELECT count(*) AS n FROM campaigns').first()).n;
+  const detached=await signJws(pair.privateKey,kid,'rer-business-settings+jwt',{v:1,iss:issuer,aud:origin,sub:installationId,business:'orchard',email:'owner@example.test',jti:crypto.randomUUID(),iat:now,exp:now+3600,rev:2,values:{},logo:null,team:null,owner_id:sub,detached:true});
+  expect((await request('/api/rer/business-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings:detached})})).status).toBe(200);
+  expect((await mcp('tools/call',{name:'mango.campaigns.list',arguments:{}},memberToken)).status).toBe(401);
+  expect(await platform.agentDoor!.invoke('mango.campaigns.create',retainedArgs,retained)).toMatchObject({outcome:'refused',code:'insufficient_scope'});
+  expect((await db.prepare('SELECT count(*) AS n FROM campaigns').first()).n).toBe(beforeDetach);
+  expect((await request('/api/campaigns',{headers:{Cookie:cookie}})).status).toBe(200);
  }finally{await fixture?.dispose();await worker.dispose();}
 });
