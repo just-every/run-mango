@@ -95,17 +95,6 @@
       }
     },
     {
-      "path": "SEED-COMMAND-CONTRACT.md",
-      "originPath": "export/SEED-COMMAND-CONTRACT.md",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "SEED-COMMAND-CONTRACT.md": "6a2f0904612eacdb7cd82f987e20a3f06be2a2e43357db6e8a678fc9948dada4"
-      },
-      "modes": {
-        "SEED-COMMAND-CONTRACT.md": "100644"
-      }
-    },
-    {
       "path": "migrations/core/0016_invitation_cancellation.sql",
       "originPath": "modules/operator-auth/accounts/schema/invitation-cancellation.sql",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -477,17 +466,6 @@
       }
     },
     {
-      "path": "scripts/delivery/base/schema/SETUP.schema.json",
-      "originPath": "schema/SETUP.schema.json",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "scripts/delivery/base/schema/SETUP.schema.json": "ac52bac39e7e7e4dace1c22dce370f76df52e7f5bb167730ecfd96b0b7961c86"
-      },
-      "modes": {
-        "scripts/delivery/base/schema/SETUP.schema.json": "100644"
-      }
-    },
-    {
       "path": "scripts/delivery/base/schema/business-field-inputs.mjs",
       "originPath": "schema/business-field-inputs.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -532,6 +510,17 @@
       }
     },
     {
+      "path": "scripts/delivery/base/schema/SETUP.schema.json",
+      "originPath": "schema/SETUP.schema.json",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/delivery/base/schema/SETUP.schema.json": "ac52bac39e7e7e4dace1c22dce370f76df52e7f5bb167730ecfd96b0b7961c86"
+      },
+      "modes": {
+        "scripts/delivery/base/schema/SETUP.schema.json": "100644"
+      }
+    },
+    {
       "path": "scripts/delivery/base/sign-in.mjs",
       "originPath": "modules/delivery-producer/sign-in.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -562,17 +551,6 @@
       },
       "modes": {
         "scripts/delivery/base/sql-statements.mjs": "100644"
-      }
-    },
-    {
-      "path": "scripts/edition-authoring/LICENSE",
-      "originPath": "LICENSE",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "scripts/edition-authoring/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
-      },
-      "modes": {
-        "scripts/edition-authoring/LICENSE": "100644"
       }
     },
     {
@@ -650,6 +628,17 @@
       },
       "modes": {
         "scripts/edition-authoring/files.mjs": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/LICENSE",
+      "originPath": "LICENSE",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
+      },
+      "modes": {
+        "scripts/edition-authoring/LICENSE": "100644"
       }
     },
     {
@@ -804,28 +793,6 @@
       },
       "modes": {
         "scripts/edition-authoring/updates.mjs": "100644"
-      }
-    },
-    {
-      "path": "scripts/edition-authoring/vendor/babel-parser/LICENSE",
-      "originPath": "edition-authoring/vendor/babel-parser/LICENSE",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "scripts/edition-authoring/vendor/babel-parser/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
-      },
-      "modes": {
-        "scripts/edition-authoring/vendor/babel-parser/LICENSE": "100644"
-      }
-    },
-    {
-      "path": "scripts/edition-authoring/vendor/babel-parser/README.md",
-      "originPath": "edition-authoring/vendor/babel-parser/README.md",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "scripts/edition-authoring/vendor/babel-parser/README.md": "e7ee8625baac8ac14c2d458dd719de1551317ba8b640614bfcadd6dc4b6af857"
-      },
-      "modes": {
-        "scripts/edition-authoring/vendor/babel-parser/README.md": "100644"
       }
     },
     {
@@ -1324,25 +1291,25 @@
       }
     },
     {
-      "path": "scripts/edition-authoring/vendor/yaml/LICENSE",
-      "originPath": "edition-authoring/vendor/yaml/LICENSE",
+      "path": "scripts/edition-authoring/vendor/babel-parser/LICENSE",
+      "originPath": "edition-authoring/vendor/babel-parser/LICENSE",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
       "files": {
-        "scripts/edition-authoring/vendor/yaml/LICENSE": "5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869"
+        "scripts/edition-authoring/vendor/babel-parser/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
       },
       "modes": {
-        "scripts/edition-authoring/vendor/yaml/LICENSE": "100644"
+        "scripts/edition-authoring/vendor/babel-parser/LICENSE": "100644"
       }
     },
     {
-      "path": "scripts/edition-authoring/vendor/yaml/README.md",
-      "originPath": "edition-authoring/vendor/yaml/README.md",
+      "path": "scripts/edition-authoring/vendor/babel-parser/README.md",
+      "originPath": "edition-authoring/vendor/babel-parser/README.md",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
       "files": {
-        "scripts/edition-authoring/vendor/yaml/README.md": "7d1979439cb82d413f9e97c6c0cfd0ca3027e662e2ce574fddc7ec7860363d01"
+        "scripts/edition-authoring/vendor/babel-parser/README.md": "e7ee8625baac8ac14c2d458dd719de1551317ba8b640614bfcadd6dc4b6af857"
       },
       "modes": {
-        "scripts/edition-authoring/vendor/yaml/README.md": "100644"
+        "scripts/edition-authoring/vendor/babel-parser/README.md": "100644"
       }
     },
     {
@@ -1522,17 +1489,6 @@
       }
     },
     {
-      "path": "scripts/edition-authoring/vendor/yaml/doc/Document.mjs",
-      "originPath": "edition-authoring/vendor/yaml/doc/Document.mjs",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "scripts/edition-authoring/vendor/yaml/doc/Document.mjs": "008ef5d6c1f75e9250f9b89d1ef6feb304da97bbce03d9066de32ae9b38bd10c"
-      },
-      "modes": {
-        "scripts/edition-authoring/vendor/yaml/doc/Document.mjs": "100644"
-      }
-    },
-    {
       "path": "scripts/edition-authoring/vendor/yaml/doc/anchors.mjs",
       "originPath": "edition-authoring/vendor/yaml/doc/anchors.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -1577,6 +1533,17 @@
       }
     },
     {
+      "path": "scripts/edition-authoring/vendor/yaml/doc/Document.mjs",
+      "originPath": "edition-authoring/vendor/yaml/doc/Document.mjs",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/doc/Document.mjs": "008ef5d6c1f75e9250f9b89d1ef6feb304da97bbce03d9066de32ae9b38bd10c"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/doc/Document.mjs": "100644"
+      }
+    },
+    {
       "path": "scripts/edition-authoring/vendor/yaml/errors.mjs",
       "originPath": "edition-authoring/vendor/yaml/errors.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -1599,6 +1566,17 @@
       }
     },
     {
+      "path": "scripts/edition-authoring/vendor/yaml/LICENSE",
+      "originPath": "edition-authoring/vendor/yaml/LICENSE",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/LICENSE": "5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/LICENSE": "100644"
+      }
+    },
+    {
       "path": "scripts/edition-authoring/vendor/yaml/log.mjs",
       "originPath": "edition-authoring/vendor/yaml/log.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -1607,6 +1585,17 @@
       },
       "modes": {
         "scripts/edition-authoring/vendor/yaml/log.mjs": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/vendor/yaml/nodes/addPairToJSMap.mjs",
+      "originPath": "edition-authoring/vendor/yaml/nodes/addPairToJSMap.mjs",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/nodes/addPairToJSMap.mjs": "43b2c31ac993d29f828595f4a5b9c025b97bf7f50dd8a6cbd810405f18ee3105"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/nodes/addPairToJSMap.mjs": "100644"
       }
     },
     {
@@ -1629,6 +1618,17 @@
       },
       "modes": {
         "scripts/edition-authoring/vendor/yaml/nodes/Collection.mjs": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/vendor/yaml/nodes/identity.mjs",
+      "originPath": "edition-authoring/vendor/yaml/nodes/identity.mjs",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/nodes/identity.mjs": "da71af70da393500ab6e3cdbceba9c66965bc89c3401388c9ad422c91abf467f"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/nodes/identity.mjs": "100644"
       }
     },
     {
@@ -1665,6 +1665,17 @@
       }
     },
     {
+      "path": "scripts/edition-authoring/vendor/yaml/nodes/toJS.mjs",
+      "originPath": "edition-authoring/vendor/yaml/nodes/toJS.mjs",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/nodes/toJS.mjs": "4d41d68a91607838600d813d08800e99cb52e1dd8da518fcba3049724914ff81"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/nodes/toJS.mjs": "100644"
+      }
+    },
+    {
       "path": "scripts/edition-authoring/vendor/yaml/nodes/YAMLMap.mjs",
       "originPath": "edition-authoring/vendor/yaml/nodes/YAMLMap.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -1684,39 +1695,6 @@
       },
       "modes": {
         "scripts/edition-authoring/vendor/yaml/nodes/YAMLSeq.mjs": "100644"
-      }
-    },
-    {
-      "path": "scripts/edition-authoring/vendor/yaml/nodes/addPairToJSMap.mjs",
-      "originPath": "edition-authoring/vendor/yaml/nodes/addPairToJSMap.mjs",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "scripts/edition-authoring/vendor/yaml/nodes/addPairToJSMap.mjs": "43b2c31ac993d29f828595f4a5b9c025b97bf7f50dd8a6cbd810405f18ee3105"
-      },
-      "modes": {
-        "scripts/edition-authoring/vendor/yaml/nodes/addPairToJSMap.mjs": "100644"
-      }
-    },
-    {
-      "path": "scripts/edition-authoring/vendor/yaml/nodes/identity.mjs",
-      "originPath": "edition-authoring/vendor/yaml/nodes/identity.mjs",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "scripts/edition-authoring/vendor/yaml/nodes/identity.mjs": "da71af70da393500ab6e3cdbceba9c66965bc89c3401388c9ad422c91abf467f"
-      },
-      "modes": {
-        "scripts/edition-authoring/vendor/yaml/nodes/identity.mjs": "100644"
-      }
-    },
-    {
-      "path": "scripts/edition-authoring/vendor/yaml/nodes/toJS.mjs",
-      "originPath": "edition-authoring/vendor/yaml/nodes/toJS.mjs",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "scripts/edition-authoring/vendor/yaml/nodes/toJS.mjs": "4d41d68a91607838600d813d08800e99cb52e1dd8da518fcba3049724914ff81"
-      },
-      "modes": {
-        "scripts/edition-authoring/vendor/yaml/nodes/toJS.mjs": "100644"
       }
     },
     {
@@ -1808,14 +1786,14 @@
       }
     },
     {
-      "path": "scripts/edition-authoring/vendor/yaml/schema/Schema.mjs",
-      "originPath": "edition-authoring/vendor/yaml/schema/Schema.mjs",
+      "path": "scripts/edition-authoring/vendor/yaml/README.md",
+      "originPath": "edition-authoring/vendor/yaml/README.md",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
       "files": {
-        "scripts/edition-authoring/vendor/yaml/schema/Schema.mjs": "15aed0d6ba9a45fce5bfd1c91351595b39006bdefb6be2c35506e5fc93eb9682"
+        "scripts/edition-authoring/vendor/yaml/README.md": "7d1979439cb82d413f9e97c6c0cfd0ca3027e662e2ce574fddc7ec7860363d01"
       },
       "modes": {
-        "scripts/edition-authoring/vendor/yaml/schema/Schema.mjs": "100644"
+        "scripts/edition-authoring/vendor/yaml/README.md": "100644"
       }
     },
     {
@@ -1915,6 +1893,17 @@
       },
       "modes": {
         "scripts/edition-authoring/vendor/yaml/schema/json/schema.mjs": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/vendor/yaml/schema/Schema.mjs",
+      "originPath": "edition-authoring/vendor/yaml/schema/Schema.mjs",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/schema/Schema.mjs": "15aed0d6ba9a45fce5bfd1c91351595b39006bdefb6be2c35506e5fc93eb9682"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/schema/Schema.mjs": "100644"
       }
     },
     {
@@ -2171,6 +2160,17 @@
       }
     },
     {
+      "path": "SEED-COMMAND-CONTRACT.md",
+      "originPath": "export/SEED-COMMAND-CONTRACT.md",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "SEED-COMMAND-CONTRACT.md": "6a2f0904612eacdb7cd82f987e20a3f06be2a2e43357db6e8a678fc9948dada4"
+      },
+      "modes": {
+        "SEED-COMMAND-CONTRACT.md": "100644"
+      }
+    },
+    {
       "path": "src/base/actor.ts",
       "originPath": "foundation/runtime/actor.ts",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -2303,17 +2303,6 @@
       }
     },
     {
-      "path": "src/base/hydration/README.md",
-      "originPath": "foundation/runtime/hydration/README.md",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "src/base/hydration/README.md": "a25e8a1a787e141590c9b46efb313b8ba6d9b135fad880d3aacfd5289c205244"
-      },
-      "modes": {
-        "src/base/hydration/README.md": "100644"
-      }
-    },
-    {
       "path": "src/base/hydration/intro-guard.ts",
       "originPath": "foundation/runtime/hydration/intro-guard.ts",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -2322,6 +2311,17 @@
       },
       "modes": {
         "src/base/hydration/intro-guard.ts": "100644"
+      }
+    },
+    {
+      "path": "src/base/hydration/README.md",
+      "originPath": "foundation/runtime/hydration/README.md",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "src/base/hydration/README.md": "a25e8a1a787e141590c9b46efb313b8ba6d9b135fad880d3aacfd5289c205244"
+      },
+      "modes": {
+        "src/base/hydration/README.md": "100644"
       }
     },
     {
@@ -2534,23 +2534,12 @@
       }
     },
     {
-      "path": "src/vendor/base/LICENSE",
-      "originPath": "LICENSE",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "src/vendor/base/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
-      },
-      "modes": {
-        "src/vendor/base/LICENSE": "100644"
-      }
-    },
-    {
       "path": "src/vendor/base/agent-door",
       "originPath": "modules/agent-door",
-      "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
+      "revision": "f96363bf919ea3e7ed1837daba6894810a50e4a6",
       "files": {
         "src/vendor/base/agent-door/admission.ts": "c67ee28a1ae61b963619ffc64807baaa37b618aec41d6a2d90f1852f5beebf9e",
-        "src/vendor/base/agent-door/ADOPTING.md": "32226371c21871a96294e5fb7b4b0669e0ee48c576b56db0d91ca649db1d0d12",
+        "src/vendor/base/agent-door/ADOPTING.md": "4c2308559c5d989c2547805aeb4a42b1cb06939942e79a44b6a36c0b9a71c0be",
         "src/vendor/base/agent-door/approval-execution.ts": "184b7fd7f016fb58121746873f4bf8fab621c4d09a1a00e61cf53eedad2fc3b3",
         "src/vendor/base/agent-door/approvals.ts": "45757936fac519de054ca754fd45ea3e6def75f18f1e71cb6a651e6451bf767c",
         "src/vendor/base/agent-door/audit.ts": "dba2eec2f97a5580af7b2b0a997617ef0aed8bcd4a36467914aeeb7b439b94ed",
@@ -3431,6 +3420,17 @@
       }
     },
     {
+      "path": "src/vendor/base/LICENSE",
+      "originPath": "LICENSE",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "src/vendor/base/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
+      },
+      "modes": {
+        "src/vendor/base/LICENSE": "100644"
+      }
+    },
+    {
       "path": "src/vendor/base/mail/.gitignore",
       "originPath": "modules/mail/.gitignore",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -3439,28 +3439,6 @@
       },
       "modes": {
         "src/vendor/base/mail/.gitignore": "100644"
-      }
-    },
-    {
-      "path": "src/vendor/base/mail/LICENSE",
-      "originPath": "modules/mail/LICENSE",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "src/vendor/base/mail/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
-      },
-      "modes": {
-        "src/vendor/base/mail/LICENSE": "100644"
-      }
-    },
-    {
-      "path": "src/vendor/base/mail/README.md",
-      "originPath": "modules/mail/README.md",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "src/vendor/base/mail/README.md": "00154803c5caf2fa952b4b1a26f849dc44fd9fbbc23db18a5715eb592f63fef9"
-      },
-      "modes": {
-        "src/vendor/base/mail/README.md": "100644"
       }
     },
     {
@@ -3483,6 +3461,17 @@
       },
       "modes": {
         "src/vendor/base/mail/index.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/LICENSE",
+      "originPath": "modules/mail/LICENSE",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "src/vendor/base/mail/LICENSE": "2f5076ef027045b9e0e72df8aa61ca8551e54b1877d531656d6e7985b2c32324"
+      },
+      "modes": {
+        "src/vendor/base/mail/LICENSE": "100644"
       }
     },
     {
@@ -3518,6 +3507,17 @@
       },
       "modes": {
         "src/vendor/base/mail/pnpm-lock.yaml": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/mail/README.md",
+      "originPath": "modules/mail/README.md",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "src/vendor/base/mail/README.md": "00154803c5caf2fa952b4b1a26f849dc44fd9fbbc23db18a5715eb592f63fef9"
+      },
+      "modes": {
+        "src/vendor/base/mail/README.md": "100644"
       }
     },
     {
@@ -4369,17 +4369,6 @@
       }
     },
     {
-      "path": "src/vendor/base/portability/README.md",
-      "originPath": "modules/portability/README.md",
-      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
-      "files": {
-        "src/vendor/base/portability/README.md": "c0a41c6ebb25b2e40aad834151ed2aadea3e2860d63d0ae824dbea62371e901a"
-      },
-      "modes": {
-        "src/vendor/base/portability/README.md": "100644"
-      }
-    },
-    {
       "path": "src/vendor/base/portability/bookkeeping.mjs",
       "originPath": "modules/portability/bookkeeping.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -4718,6 +4707,17 @@
       },
       "modes": {
         "src/vendor/base/portability/provider-data.mjs": "100644"
+      }
+    },
+    {
+      "path": "src/vendor/base/portability/README.md",
+      "originPath": "modules/portability/README.md",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "src/vendor/base/portability/README.md": "c0a41c6ebb25b2e40aad834151ed2aadea3e2860d63d0ae824dbea62371e901a"
+      },
+      "modes": {
+        "src/vendor/base/portability/README.md": "100644"
       }
     },
     {

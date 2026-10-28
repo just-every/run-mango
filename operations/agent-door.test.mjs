@@ -123,6 +123,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   }
   const surface=JSON.parse(await readFile('agent-surface.json','utf8'));
   const declaration=validateAgentSurface(surface,{contract:await readFile('CONTRACT.md','utf8')});
+  assert.deepEqual(declaration.points.filter(point=>!point.ok&&point.id.includes('.clause.')),[], 'The landed contract resolves every declared tool and inherited Base clause');
   for(const name of ['mango.access.update','mango.connections.update','mango.signup.update']){
    assert.equal(surface.tools.find(tool=>tool.name===name).sponsorEscalation,false);
    assert.equal(declaration.points.find(point=>point.id==='BASE-AGENT-005.surface.'+name+'.coverage')?.ok,true);
