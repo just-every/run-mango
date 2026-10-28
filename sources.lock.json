@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "aea7a349e8c66e092a8c0537ce8f3fde3264a1cf5a93af8af03afec2d83d1d8a",
+      "sha256": "27f06c442493b7790f38befa73154021059b4a3e4d6567a06ce410e7e4338023",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8358,7 +8358,7 @@
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
-      "sha256": "bb54af2db1cad75adf39de8a126a67425905c992f351e8d10550e83b53cbc61c",
+      "sha256": "1e2b356da71cd1ac61098084b96493fbe430621ca9148ae77b741d2c59a5a48b",
       "executable": false
     },
     "tests/campaign-authoring/catalog-guard-journey.ts": {
@@ -9434,7 +9434,7 @@
       "executable": false
     },
     "VERIFYING.md": {
-      "sha256": "a831999119dab4982911bf90bd9b98cf4a1817d9ef07fb5fc0a4633d33aa2db9",
+      "sha256": "ee3a7e2a693e5a7194092b16ca67bf220e9619098f708b1d76c64b7a2e285dac",
       "executable": false
     },
     "vite.config.ts": {
