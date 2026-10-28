@@ -84,18 +84,22 @@ export function matrix(tier) {
     ...['newsletter-ui', 'campaign-results', 'move-in'].map(stage => ({ name: stage, stage, browser: true })),
   ];
   const slow = [{ name: 'local-start-slow', stage: 'local-start-slow', browser: true }];
-  // Use the larger member duration from green run 40421992456 and candidate
-  // 40428704988. Fifteen members exceed 335s, so fifteen jobs is the minimum
-  // at 670s execution capacity. Native runtimes must run sequentially.
+  // Use each member's worst duration from 40688815772, 40692382998 and
+  // 40711572645, including both newsletter-ui and sender-disclosure stages.
+  // Keep every combined pack below 660s (largest: static + go-live-3 = 657s)
+  // so runner setup, variation and artifact cleanup retain room. The 532s
+  // go-live-1 member runs alone; native runtimes remain sequential in each job.
   const packs = [
-    ['static', 'main-1-of-7', 'local-start-3-of-3'],
-    ['go-live-1-of-9', 'main-5-of-7'],
-    ['main-3-of-7', 'go-live-9-of-9'],
-    ['local-start-2-of-3', 'main-7-of-7'],
-    ['main-4-of-7', 'newsletter-ui'],
-    ['move-in', 'main-2-of-7'],
-    ['go-live-6-of-9', 'main-6-of-7'],
-    ['go-live-3-of-9'], ['local-start-1-of-3'], ['go-live-2-of-9'],
+    ['static', 'go-live-3-of-9'],
+    ['go-live-1-of-9'],
+    ['main-1-of-7', 'go-live-9-of-9'],
+    ['local-start-2-of-3', 'main-2-of-7'],
+    ['main-4-of-7', 'local-start-3-of-3'],
+    ['move-in'],
+    ['go-live-6-of-9', 'main-7-of-7'],
+    ['main-3-of-7', 'main-6-of-7'],
+    ['main-5-of-7', 'newsletter-ui'],
+    ['local-start-1-of-3'], ['go-live-2-of-9'],
     ['go-live-8-of-9'], ['go-live-7-of-9'], ['campaign-results'],
     ['go-live-5-of-9'], ['go-live-4-of-9'],
   ];

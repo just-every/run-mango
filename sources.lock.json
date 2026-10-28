@@ -1658,7 +1658,7 @@
       "executable": false
     },
     "playwright.config.js": {
-      "sha256": "1446bb4a409db01b47624831ae932f326ab85bf35111be72e417e67fa048ec52",
+      "sha256": "8114d5307b84b2a8795ff7105200a597d1c6910bcc8559fc1d89c70021172563",
       "executable": false
     },
     "pnpm-lock.yaml": {
@@ -2070,7 +2070,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "3b99761bcc78958be82db0b632a1d1c2caa8091aa9eec0fb5bfcee6d40d5ddd2",
+      "sha256": "297affb7550efdac309fbbcbc4a5e15a2912db4330c9435253906b6b78c97b3d",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -7658,7 +7658,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
-      "sha256": "b13250bc1e2c892a5dff641e69335b87d6d2621ec8115c8b3f4ec810317357b0",
+      "sha256": "d07d0e50cfbcdae577990460bde78a8998750e9255245f3c56057b404e1b08f2",
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
@@ -8014,7 +8014,7 @@
       "executable": false
     },
     "tests/go-live/delivery-recovery.journeys.ts": {
-      "sha256": "ba5aab0427fa008871a7837d95745ff00c1aae10d0a826a29033cffe183f817c",
+      "sha256": "2849f51dc4f32bae4a03502dfdb0a03aa4668d72d6224462ec3c2ef03680e012",
       "executable": false
     },
     "tests/go-live/delivery.journeys.ts": {
@@ -8118,7 +8118,7 @@
       "executable": false
     },
     "tests/go-live/playwright.config.js": {
-      "sha256": "f6ea4f35ce8c1fab7bd1e3d9002c6a2f9ba4c76b7cb4fdea78b9b4e4df878ce5",
+      "sha256": "c842e6e8e902abb6bbaa7cb9df4b1a97d92df5ca540724a876c97c63eda807bc",
       "executable": false
     },
     "tests/go-live/presend-checks.journeys.ts": {
@@ -8650,7 +8650,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "9f070832b757eecbe19a39e9c7e723c2e1f1942a70d34d7f3e934742b1a4a1db",
+      "sha256": "64d802dd7ea20e661d35d128602d406422936dbe2ed408c459b97b07e8397bac",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
