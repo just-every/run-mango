@@ -4,9 +4,9 @@ import { contract } from './contract.js';
 import { expectDocumentToFit, expectNoSeriousAxeViolations } from './newsletter-ui/browser-checks';
 
 // DOCS-001: the public documentation, through the real runtime. The pages are the ones docs/site.json lists, in its order.
-type Entry = { slug: string; label: string };
+type Entry = { slug: string; label: string; hidden?: boolean };
 const manifest = JSON.parse(readFileSync(new URL('../docs/site.json', import.meta.url), 'utf8')) as { sections: { pages: Entry[] }[] };
-const pages = manifest.sections.flatMap(section => section.pages);
+const pages = manifest.sections.flatMap(section => section.pages).filter(page => !page.hidden);
 const path = (slug: string) => (slug ? `/docs/${slug}` : '/docs');
 
 async function visit(page: Page, route: string, baseURL: string) {

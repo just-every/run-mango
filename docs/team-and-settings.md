@@ -46,7 +46,7 @@ There are no passwords. Go to `/signin`, enter your address and press **Email si
 
 By default a link works once and expires after 15 minutes, and a session lasts 7 days. Requests for links are rate limited, and the page shows "Too many requests. Try again later." when you hit the limit. **Sign out** is in the main menu.
 
-On a deployment, if sign-in mail never arrives, correct the mail connection in Configure and check the provider’s sender verification (see [Install and deploy](./install.md#if-sign-in-email-does-not-arrive)), then request a fresh email. Managed sign-in uses the RER relay separately from newsletter mail. Locally, `rer dev` and its private `RER_OPEN` development entry open a native owner session without email. Local development exposes no captured-mail page; the development key is not an emailed one-use sign-in link.
+On a deployment, if sign-in mail never arrives, correct the mail connection in Configure and check the provider’s sender verification (see [Getting started](./getting-started.md#if-sign-in-email-does-not-arrive)), then request a fresh email. Managed sign-in uses the RER relay separately from newsletter mail. Locally, `rer dev` and its private `RER_OPEN` development entry open a native owner session without email. Local development exposes no captured-mail page; the development key is not an emailed one-use sign-in link.
 
 ## Sender identity
 
