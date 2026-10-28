@@ -14,9 +14,10 @@ export async function readReputationRates(database:Database,since:Date,until?:Da
          FROM recipient_steps r JOIN campaign_revisions v ON v.id = r.revision_id
          LEFT JOIN delivery_facts f ON f.recipient_step_id = r.id AND f.provider_occurred_at >= ? AND f.provider_occurred_at < ?
          -- Attempted handoffs include uncertainty; only provider facts establish delivery.
-         WHERE (? IS NULL OR r.channel=?) AND (? IS NULL OR (CASE WHEN r.channel='email' THEN lower(substr(v.from_email,instr(v.from_email,'@')+1)) ELSE v.sms_sender END)=?)
+         WHERE ((r.first_attempt_at>=? AND r.first_attempt_at<?) OR f.recipient_step_id IS NOT NULL)
+           AND (? IS NULL OR r.channel=?) AND (? IS NULL OR (CASE WHEN r.channel='email' THEN lower(substr(v.from_email,instr(v.from_email,'@')+1)) ELSE v.sms_sender END)=?)
          GROUP BY r.channel,sender ORDER BY r.channel,sender`,
-      ).bind(since.getTime(),end,since.getTime(),end,scope?.channel??null,scope?.channel??null,scope?.sender??null,scope?.sender??null).all<Record<string, unknown>>();
+      ).bind(since.getTime(),end,since.getTime(),end,since.getTime(),end,scope?.channel??null,scope?.channel??null,scope?.sender??null,scope?.sender??null).all<Record<string, unknown>>();
       return rows.results.map((row) => {
         const delivered = Number(row.delivered);
         const complained = Number(row.complained);

@@ -16,11 +16,11 @@ function safeToken(value: string) {
 
 const alreadyUsed = { title: 'Link already used', heading: 'This confirmation link has already been used' };
 
-export function createAudiencePublicRoutes(service: ReturnType<typeof createAudienceService>) {
+export function createAudiencePublicRoutes(service: ReturnType<typeof createAudienceService>, database?:D1Database) {
   const routes = new Hono();
   routes.use('*',async(context,next)=>{context.header('Cache-Control','no-store');context.header('Referrer-Policy','no-referrer');await next();});
 
-  registerUnsubscribeRoutes(routes, service);
+  registerUnsubscribeRoutes(routes, service, database);
 
   routes.get('/consent/confirm/:token', async (context) => {
     const params = readParams(context, tokenParams);

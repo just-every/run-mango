@@ -310,7 +310,7 @@ export function createApp(
       editorEligible: editorConfigured && await authService.isNativeOwner(context.req.raw)});
   });
   app.route('/', createPublicAuthRoutes(authService, { secureCookie }));
-  app.route('/', createAudiencePublicRoutes(audienceService));
+  app.route('/', createAudiencePublicRoutes(audienceService,platform.database.$client));
   app.route('/', createSenderCheckRoutes(platform));
   app.route('/', createSignupRoutes(audienceService, platform, environment.DB));
   app.route('/', createSmsSignupRoutes(platform,audienceService));

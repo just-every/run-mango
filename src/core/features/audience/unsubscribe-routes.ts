@@ -1,3 +1,4 @@
+import {recordUnsubscribeCompletion} from './unsubscribe-timing';
 import type { Context, Hono } from 'hono';
 import { z } from 'zod';
 
@@ -43,11 +44,13 @@ function isOneClick(form: Record<string, unknown> | undefined) {
   return typeof value === 'string' && value.trim() === 'One-Click';
 }
 
-export function registerUnsubscribeRoutes(routes: Hono, service: ReturnType<typeof createAudienceService>) {
+export function registerUnsubscribeRoutes(routes: Hono, service: ReturnType<typeof createAudienceService>, database?:D1Database) {
   async function unsubscribe(context: Context, token: string, method: 'link' | 'one-click') {
-    const result = await service.unsubscribeWithToken(token, new Date(), method);
+    const requestedAt=new Date();
+    const result = await service.unsubscribeWithToken(token, requestedAt, method);
     if (result.kind === 'rate-limited') return tooManyRequests(context);
     if (result.kind === 'invalid') return invalidLink(context);
+    if(database)await recordUnsubscribeCompletion(database,token,requestedAt);
     return messagePage(context, 200, unsubscribedPage);
   }
 

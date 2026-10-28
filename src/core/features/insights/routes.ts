@@ -1,3 +1,4 @@
+import {complianceReport} from './compliance-report';
 import {savedReportRoutes} from './saved-report-routes';
 import {overviewQuery,overviewPeriod} from './overview-period';
 import { createListGrowthRoutes } from './list-growth-routes';
@@ -31,7 +32,9 @@ export function createInsightsRoutes(service: ReturnType<typeof createInsightsSe
     }
     const now=new Date();
     const [senders,mailboxes]=await Promise.all([service.deliverability(windowDays,now),service.mailboxes(windowDays,now)]);
-    return context.json({windowDays,senders,mailboxes});
+    const compliance=await complianceReport(database,senders,windowDays,now);
+    context.header('Cache-Control','no-store');
+    return context.json({windowDays,senders,mailboxes,compliance});
   });
   return routes;
 }

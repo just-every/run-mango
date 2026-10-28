@@ -1,3 +1,4 @@
+import {complianceJourney} from './compliance-journey';
 import {test,expect} from '@playwright/test';
 import {providerEdge} from './edge';
 import {event,eventSigner} from './sendgrid-events';
@@ -19,6 +20,9 @@ test('[DELIV-005] signed mailbox outcomes and diagnostic categories survive repl
       const section=page.locator('section').filter({has:page.getByRole('heading',{name:'Recipient mailbox providers',exact:true})});
       await expect(section.getByText('Delivery events not connected: no signed email outcomes have been recorded.')).toBeVisible();
       await section.screenshot({path:info.outputPath(`mailbox-empty-${width}.png`)});
+      const compliance=page.locator('section').filter({has:page.getByRole('heading',{name:'Bulk-sender compliance',exact:true})});
+      if(width===1440){const row=compliance.locator('[data-requirement=complaints]');await expect(row).toHaveAttribute('data-state','unknown');await expect(row).toContainText('delivery events not connected');await expect(row.locator('td').last()).not.toContainText(/\d+(?:\.\d+)?%/);}
+      await compliance.screenshot({path:info.outputPath(`bulk-compliance-unconnected-${width}.png`)});
     }
     await page.goto('about:blank');
 
@@ -72,6 +76,7 @@ test('[DELIV-005] signed mailbox outcomes and diagnostic categories survive repl
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       await section.scrollIntoViewIfNeeded();await page.waitForLoadState('networkidle');await section.screenshot({path:info.outputPath(`mailbox-providers-${width}.png`)});
     }
+    await complianceJourney(page,info,site,cookie,signer,campaign.revisionId);
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close();await edge.close();}
 });

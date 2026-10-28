@@ -1,3 +1,4 @@
+import {reputationFigures,reputationRule} from './reputation-figures';
 import {CatalogUnavailable} from '@/core/features/campaigns/catalog-blocks';
 import { emailContentAdvisories } from '@/core/features/campaigns/email-advisories';
 import { emailSizeAdvisory } from '@/core/features/campaigns/email-size-advisory';
@@ -198,7 +199,7 @@ export async function runApprovalChecks(input: {
       new Date(now.getTime() - platform.config.deliverabilityReportingWindowDays * 86_400_000));
     const internalBlock = reputationRestricted(reputation);
     checks.push(check('message.sending-reputation', !internalBlock,
-      `Window ${platform.config.deliverabilityReportingWindowDays}d: complaints ${reputation.complained}/${reputation.delivered}; hard bounces ${reputation.hardBounced}/${reputation.attempted}.`));
+      `${reputationFigures(reputation,platform.config.deliverabilityReportingWindowDays)} ${reputationRule}`));
   }
   if (selected.has('sms')) {
     const smsModule=platform.config.modules.sms,policy=smsModule.enabled?smsProgrammeSchema.safeParse(smsModule.config.programme):undefined;
