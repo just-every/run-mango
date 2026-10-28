@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "parent": null,
   "edition": "just-every/mango",
-  "manifest": "a3d7d66af8e02300aefed8d651248720150da01333dc7d190d0c8fb6990f46d8",
+  "manifest": "4c43c8c0da22fa6ad4dd6314beb6c538498dea40fcb2dd076a9332cc70ff04a7",
   "toolchain": {
     "id": "runeditrun/edition-authoring",
     "version": "1.1.0",
@@ -82,7 +82,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "modules/operator-auth/README.md",
             "modules/operator-auth/SCHEDULED-POLICY.md",
@@ -293,9 +293,9 @@
         }
       },
       "baseline": {
-        "key": "2647c49ceb93ee47e4290c3328e744796bff6e0e7e772e4a2caaa86b804ffd62",
+        "key": "0cdb1a698f65d50be28ba81f7e4972a4218ad8690570e00dc9b8b881c9978c05",
         "digest": "d38c7ec728bcbda9e636ce66ee54f17e659256c8fb2298f8e39017be530d3db6",
-        "sha256": "046e86fc01b9116f74cc47f9e127025395f799e6d01730016476dcc34dd4c05a"
+        "sha256": "86168dc42d2085b7fe9f9ff8929b999787fd2c7a9f59aabbbe6d565ea969914a"
       }
     },
     {
@@ -1049,15 +1049,18 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "modules/agent-door/ADOPTING.md",
+            "modules/agent-door/CLAUSES.md",
             "modules/agent-door/README.md",
             "modules/agent-door/admission.ts",
             "modules/agent-door/approval-execution.ts",
             "modules/agent-door/approvals.ts",
             "modules/agent-door/audit.ts",
             "modules/agent-door/conformance/audit.mjs",
+            "modules/agent-door/conformance/authority.d.mts",
+            "modules/agent-door/conformance/authority.mjs",
             "modules/agent-door/conformance/crypto.mjs",
             "modules/agent-door/conformance/discovery.mjs",
             "modules/agent-door/conformance/index.mjs",
@@ -1070,10 +1073,15 @@
             "modules/agent-door/conformance/network-runtime.mjs",
             "modules/agent-door/conformance/policy-phases.mjs",
             "modules/agent-door/conformance/protocol.mjs",
+            "modules/agent-door/conformance/replay.mjs",
             "modules/agent-door/conformance/schema.mjs",
+            "modules/agent-door/conformance/security.mjs",
+            "modules/agent-door/conformance/sponsors.mjs",
             "modules/agent-door/conformance/surface.mjs",
+            "modules/agent-door/conformance/target.mjs",
             "modules/agent-door/conformance/tool-name.d.mts",
             "modules/agent-door/conformance/tool-name.mjs",
+            "modules/agent-door/conformance/webhooks.mjs",
             "modules/agent-door/counting.ts",
             "modules/agent-door/credentials.ts",
             "modules/agent-door/errors.ts",
@@ -1082,6 +1090,7 @@
             "modules/agent-door/index.ts",
             "modules/agent-door/json-schema.ts",
             "modules/agent-door/native-proof.ts",
+            "modules/agent-door/operation.ts",
             "modules/agent-door/operator-people.ts",
             "modules/agent-door/page-style.ts",
             "modules/agent-door/pages.ts",
@@ -1101,14 +1110,22 @@
             "modules/agent-door/reviews.ts",
             "modules/agent-door/schema/agent-door.sql",
             "modules/agent-door/subscriptions.ts",
+            "modules/agent-door/target.ts",
             "modules/agent-door/tests/adoption-gaps.test.ts",
             "modules/agent-door/tests/door.test.ts",
             "modules/agent-door/tests/execution.test.ts",
             "modules/agent-door/tests/identity.test.ts",
             "modules/agent-door/tests/principal.test.ts",
+            "modules/agent-door/tests/queued-context.test.ts",
             "modules/agent-door/tests/runtime.mjs",
             "modules/agent-door/tests/schema.test.ts",
             "modules/agent-door/tests/seed.ts",
+            "modules/agent-door/tests/sponsor-surface.fixture.mjs",
+            "modules/agent-door/tests/sponsor-surface.test.ts",
+            "modules/agent-door/tests/sponsor-tools.ts",
+            "modules/agent-door/tests/target.fixture.mjs",
+            "modules/agent-door/tests/target.test.ts",
+            "modules/agent-door/tests/types.check.mts",
             "modules/agent-door/transport.ts",
             "modules/agent-door/types.ts",
             "modules/agent-door/wire.ts"
@@ -1116,9 +1133,9 @@
         }
       },
       "baseline": {
-        "key": "a6ea04aeed303441ab0a2cff267250550167e38fd4f46d669599974962b233ee",
-        "digest": "09766abcb9a08171d52b2a5e6c65f72b09d2d72fc423f1d5bde63e23b54a6de9",
-        "sha256": "83ee5e84ce1ec2f58aeb125b260f4cbeadcc69a5c9629732cf05ce72fedfbb31"
+        "key": "d5826308684b833813236e4ee6763a7966a9d5be8ffb419bc0f09db3ef1ef519",
+        "digest": "dd0bfb469b9be71c3989af1dccbbc635d679daab7612d2eb1acb06559df6fbb6",
+        "sha256": "e02a48c07fef5413347c58970e498f588c8e6d9cf66c91f183e016966a586ed7"
       }
     },
     {
@@ -1130,7 +1147,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "modules/business-settings/ADOPTING.md",
             "modules/business-settings/README.md",
@@ -1153,9 +1170,9 @@
         }
       },
       "baseline": {
-        "key": "5263c10fe6b1d95e4628c6cb039c7f3286c9cc7900b2f81cc8822f62f8a6229d",
+        "key": "5dfec1fdf26d4a5cdaeb31a00ceb45cc8153b4cdd9f69190e9cfe05dc4cbf511",
         "digest": "41941bf0b18865ae66ce363c451d990814baad2e84a2b7086ab8f9f787fb29e5",
-        "sha256": "677fba51183cbb89c9c179f3b71d1ee6ccd2c3163a3b0908b40c6d65f691e9ac"
+        "sha256": "ae4e6b4ae6b6c8d2aff513274f80203c2911b27f4782b0cadf97ad6dd746de0f"
       }
     },
     {
@@ -1167,16 +1184,16 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "foundation/runtime/theme-frame.ts"
           ]
         }
       },
       "baseline": {
-        "key": "c3a3245828e78061bcf0979b12451bdd48dd3cd64cefee12a2d779193f7d439a",
+        "key": "6c041842921cad0c00aaf504a081ad92a91ae137b33acc7d332462b6e3b8b21f",
         "digest": "5b89509ddd55a6b12d6ef0cc258197dafc9739a87ea9daf8a3d76860c4fb0974",
-        "sha256": "e5875853f31bd5ee3b904e9ae6fea9ce556cc4ef9180e32014ca5846fb5fa8f4"
+        "sha256": "a6f225648d6567b8f1baa3390ada8f634d190f16c3fb1f3477d48107eb9f6b4c"
       }
     },
     {
@@ -1188,16 +1205,16 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "foundation/runtime/icon-head.ts"
           ]
         }
       },
       "baseline": {
-        "key": "9cd66b88e0a132dd9e0f39b522e2c1fbe3bcaced246890346b90f1f797609e52",
+        "key": "fa664977b4a6c05e6ba603cd7d8867f252c3c3cb47c0183a243c03fa75148dc2",
         "digest": "8116f17ee9e035d91045a5bf2aca2f269d6a9626b601fc8ef7ca42215daaf733",
-        "sha256": "b0a0e9f2fed804c7e48d8c1494e1d4673f25cd6159382836cfe29c9037e4e74e"
+        "sha256": "4661f10d6c706e1821d22988e71ffd13d1aca16ff244ede77ab50917c60e09ad"
       }
     }
   ],
@@ -1295,7 +1312,7 @@
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "37b8bc83a588a2dad4604765e654ac037662156a1f3a505e3264734dd306a31f",
+      "sha256": "a3e63bd9097ef2d400c8655a2fad34dbb619197d0d01076cfd3f80a6ae8e1cce",
       "executable": false
     },
     "BASELINE.md": {
@@ -1415,7 +1432,7 @@
       "executable": false
     },
     "edition.json": {
-      "sha256": "a3d7d66af8e02300aefed8d651248720150da01333dc7d190d0c8fb6990f46d8",
+      "sha256": "4c43c8c0da22fa6ad4dd6314beb6c538498dea40fcb2dd076a9332cc70ff04a7",
       "executable": false
     },
     "extensions/mango-pixel/INSTALL.md": {
@@ -6591,23 +6608,23 @@
       "executable": false
     },
     "src/vendor/base/agent-door/ADOPTING.md": {
-      "sha256": "1a6101adf25fc5721284409a4a11eb65bd7d193cc5025c57a4ec72f815742145",
+      "sha256": "32226371c21871a96294e5fb7b4b0669e0ee48c576b56db0d91ca649db1d0d12",
       "executable": false
     },
     "src/vendor/base/agent-door/approval-execution.ts": {
-      "sha256": "0276a29194970c2e651cf53cea0db61b8e0733937e3c38f3a4ef915e2c3fbebd",
+      "sha256": "184b7fd7f016fb58121746873f4bf8fab621c4d09a1a00e61cf53eedad2fc3b3",
       "executable": false
     },
     "src/vendor/base/agent-door/approvals.ts": {
-      "sha256": "ae4f26a37221f804bbed6015fbb5fb1d258df1576694f1f1a8e10688851938cc",
+      "sha256": "45757936fac519de054ca754fd45ea3e6def75f18f1e71cb6a651e6451bf767c",
       "executable": false
     },
     "src/vendor/base/agent-door/audit.ts": {
-      "sha256": "7d155639458ef38ac693bb5d39d388b77d691bc3f32769b613aaea7810df4407",
+      "sha256": "dba2eec2f97a5580af7b2b0a997617ef0aed8bcd4a36467914aeeb7b439b94ed",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/audit.mjs": {
-      "sha256": "efb081da23741eef1ba02ebf04807415bd5ea5a5528e8ae33b8588ce5cc3ad26",
+      "sha256": "38b0db5f06440f33a7bbf8b636fd3ff002edfdb66bb5add45093090456025e47",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/crypto.mjs": {
@@ -6615,11 +6632,11 @@
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/discovery.mjs": {
-      "sha256": "2a4aafd7c4bd5abffba6248c9436ca4fb9d7debfb5f023921b3f5cd27e2c91f4",
+      "sha256": "39910b2ebd4226b51e74f5d875af0b564a0bb2c050f29b8f072363d17a9b97c3",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/index.mjs": {
-      "sha256": "f5310bed1453364ffe8f758396ecd506fd731a48eddda74007bff1165229b518",
+      "sha256": "f69300742f548a1fb2a4062fc8d3c484f03cb479683d58f5692b11f373074b03",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/invocation.mjs": {
@@ -6627,7 +6644,7 @@
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/journey.mjs": {
-      "sha256": "e6eee7acebdd6162e743c4afb53113968d51703830aa5a372b522a5f1c000162",
+      "sha256": "de2dc19508735ab8718d86792564c3fc3e77e2743af2263368ee1f624d4a9abd",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/narrowing.d.mts": {
@@ -6639,7 +6656,7 @@
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/negative.mjs": {
-      "sha256": "c6ec83ec2204bd4d0e00874e0caf6276c8f94a558b950190e8027f513e58b399",
+      "sha256": "4a24acbdc25d56f91a7562238615f00935e0f22958618a5ab8658944eb993b09",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/network-modules.mjs": {
@@ -6647,15 +6664,15 @@
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/network-runtime.mjs": {
-      "sha256": "b4683771e604d99a8f6eb12fa4b5d75748c0412ddf85383aa4d7357a0937a217",
+      "sha256": "8478493f22c364c6030f9f205f98919267f7df7080d520463af4a749ae69bcfa",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/policy-phases.mjs": {
-      "sha256": "422d7b8d76b9e53ee2e96f4a04182088a55408a2d50c90f2cdada56d548acb5e",
+      "sha256": "060bfaa2a57828c5e7fec3f5eceadea1272ad4ecb81d8b6c3846bfc89fed3bd2",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/protocol.mjs": {
-      "sha256": "6f81148ae812391f8be48e9197963be74435d6046b54105b13e7c9d9afefc9e5",
+      "sha256": "3c3440866a0b58bfa916253649c139b510d609b790c3c7921f1c58e83f1f76e6",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/schema.mjs": {
@@ -6663,7 +6680,7 @@
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/surface.mjs": {
-      "sha256": "7afb0ceaddbc141d3ccc3c783c4645ebde6ba75c367aaea7de729dd171fe7d7f",
+      "sha256": "141ff0be59cf442feb3d0fb3246391c9a0b31277f9a33f443b1ea4759f44f762",
       "executable": false
     },
     "src/vendor/base/agent-door/conformance/tool-name.d.mts": {
@@ -6687,15 +6704,15 @@
       "executable": false
     },
     "src/vendor/base/agent-door/events.ts": {
-      "sha256": "7045f3e3f486584c345269838260b6ccbc4f6f7ded7e0b2421d1d13d66966bcb",
+      "sha256": "c5e911d9b692551224ae02e564232cfef2c6462dbe91a5d7e07ea0571a85cab9",
       "executable": false
     },
     "src/vendor/base/agent-door/execution.ts": {
-      "sha256": "cf9b97e8437e187b290ce1979d137e964d35a258a97a3dd2a0365eb1142db72b",
+      "sha256": "d7229a76a2d90524438ece35666cc22a221e54d38348ff00b1298be077a4f892",
       "executable": false
     },
     "src/vendor/base/agent-door/index.ts": {
-      "sha256": "34d415b1ed90bb8db12f05e312a04d0d5c08ad2ae7c9f828599f1caae82abf83",
+      "sha256": "427638bef5f92370a48c832749f8ba327b6692ae8f9479511bcc83d814881a91",
       "executable": false
     },
     "src/vendor/base/agent-door/json-schema.ts": {
@@ -6715,7 +6732,7 @@
       "executable": false
     },
     "src/vendor/base/agent-door/pages.ts": {
-      "sha256": "d271d05493c06588677c30c3f4797135c53e79d33e45cc4a38c0d9fa1c2107bf",
+      "sha256": "a7feefe27dbdffa0b8e0c09fda373f3f89620fc3d78ce77febca67585d4ac716",
       "executable": false
     },
     "src/vendor/base/agent-door/people.ts": {
@@ -6727,7 +6744,7 @@
       "executable": false
     },
     "src/vendor/base/agent-door/pipeline.ts": {
-      "sha256": "0344aa56348eafd0810cb61792c569ebc0f1f0eda61888e70379b2c25eafa9bc",
+      "sha256": "af86f17e9b57c5eda4a8cf08a3e2000c1264363dc3038f31a5ddc942120ba10a",
       "executable": false
     },
     "src/vendor/base/agent-door/policy-store.ts": {
@@ -6767,11 +6784,11 @@
       "executable": false
     },
     "src/vendor/base/agent-door/registry.ts": {
-      "sha256": "9d9eb81bd7e3fc4fc6aded277e100bd4f0f237cabe8a7c0ec6ae8e7f17f3acca",
+      "sha256": "3cc54b546689922f0a94a6801fd23e40139b4af91660e3f5ac24b98442907b91",
       "executable": false
     },
     "src/vendor/base/agent-door/resource-tool.ts": {
-      "sha256": "10f04e438f6ebda40d016bd41b37e0d8f40387be06d98af2e616818e3ad468f9",
+      "sha256": "7a94e16130d4c895bcf8e9a5f378aef6e07099613665b43ab09ca855ef9bfada",
       "executable": false
     },
     "src/vendor/base/agent-door/reviews.ts": {
@@ -6795,7 +6812,7 @@
       "executable": false
     },
     "src/vendor/base/agent-door/tests/execution.test.ts": {
-      "sha256": "52c15b90065de7289ada568a3ae981b9806d01ffd27bc414a2bec8d5f4b827a3",
+      "sha256": "91268d1f7446cd95ac117823b0e73bdc97b8bace9ba47ce77a54c11c06211450",
       "executable": false
     },
     "src/vendor/base/agent-door/tests/identity.test.ts": {
@@ -6807,7 +6824,7 @@
       "executable": false
     },
     "src/vendor/base/agent-door/tests/runtime.mjs": {
-      "sha256": "52334e2d19d1a127a669f93f950353a24a3be77792a8ad3dc0485c858db5bd4e",
+      "sha256": "b2651541158bc28bf6c5f33a75ed7839c90e600d4082f55d0bc8cf5f275021cd",
       "executable": false
     },
     "src/vendor/base/agent-door/tests/schema.test.ts": {
@@ -6815,15 +6832,15 @@
       "executable": false
     },
     "src/vendor/base/agent-door/tests/seed.ts": {
-      "sha256": "9a1d16a6525de4e1a6c6fc7181176bdbea2d369c853dd9b4ea8fd0514d469071",
+      "sha256": "e390e19782dc2b2abfbec6ed1d37d126856e86c425f34c168d17ab15301ba061",
       "executable": false
     },
     "src/vendor/base/agent-door/transport.ts": {
-      "sha256": "4bb5bd708d8e4f5616be61afc73df75b8a475bd7b8e189e525929c5f43fea672",
+      "sha256": "7e2b93ae7858eb1a78d87c865930f3798d7ea124271b000a3bd043a1b6861ab3",
       "executable": false
     },
     "src/vendor/base/agent-door/types.ts": {
-      "sha256": "8a447d56c5b513bf51a2e15e01472036a82699d41d1904cbbbfba3dd131647d9",
+      "sha256": "c7bda0e72cefbec1e8f066ebfe5980e60762e30b68a5f33a4d07df7144a5a13e",
       "executable": false
     },
     "src/vendor/base/agent-door/wire.ts": {

@@ -76,7 +76,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "modules/operator-auth/README.md",
             "modules/operator-auth/SCHEDULED-POLICY.md",
@@ -991,15 +991,18 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "modules/agent-door/ADOPTING.md",
+            "modules/agent-door/CLAUSES.md",
             "modules/agent-door/README.md",
             "modules/agent-door/admission.ts",
             "modules/agent-door/approval-execution.ts",
             "modules/agent-door/approvals.ts",
             "modules/agent-door/audit.ts",
             "modules/agent-door/conformance/audit.mjs",
+            "modules/agent-door/conformance/authority.d.mts",
+            "modules/agent-door/conformance/authority.mjs",
             "modules/agent-door/conformance/crypto.mjs",
             "modules/agent-door/conformance/discovery.mjs",
             "modules/agent-door/conformance/index.mjs",
@@ -1012,10 +1015,15 @@
             "modules/agent-door/conformance/network-runtime.mjs",
             "modules/agent-door/conformance/policy-phases.mjs",
             "modules/agent-door/conformance/protocol.mjs",
+            "modules/agent-door/conformance/replay.mjs",
             "modules/agent-door/conformance/schema.mjs",
+            "modules/agent-door/conformance/security.mjs",
+            "modules/agent-door/conformance/sponsors.mjs",
             "modules/agent-door/conformance/surface.mjs",
+            "modules/agent-door/conformance/target.mjs",
             "modules/agent-door/conformance/tool-name.d.mts",
             "modules/agent-door/conformance/tool-name.mjs",
+            "modules/agent-door/conformance/webhooks.mjs",
             "modules/agent-door/counting.ts",
             "modules/agent-door/credentials.ts",
             "modules/agent-door/errors.ts",
@@ -1024,6 +1032,7 @@
             "modules/agent-door/index.ts",
             "modules/agent-door/json-schema.ts",
             "modules/agent-door/native-proof.ts",
+            "modules/agent-door/operation.ts",
             "modules/agent-door/operator-people.ts",
             "modules/agent-door/page-style.ts",
             "modules/agent-door/pages.ts",
@@ -1043,14 +1052,22 @@
             "modules/agent-door/reviews.ts",
             "modules/agent-door/schema/agent-door.sql",
             "modules/agent-door/subscriptions.ts",
+            "modules/agent-door/target.ts",
             "modules/agent-door/tests/adoption-gaps.test.ts",
             "modules/agent-door/tests/door.test.ts",
             "modules/agent-door/tests/execution.test.ts",
             "modules/agent-door/tests/identity.test.ts",
             "modules/agent-door/tests/principal.test.ts",
+            "modules/agent-door/tests/queued-context.test.ts",
             "modules/agent-door/tests/runtime.mjs",
             "modules/agent-door/tests/schema.test.ts",
             "modules/agent-door/tests/seed.ts",
+            "modules/agent-door/tests/sponsor-surface.fixture.mjs",
+            "modules/agent-door/tests/sponsor-surface.test.ts",
+            "modules/agent-door/tests/sponsor-tools.ts",
+            "modules/agent-door/tests/target.fixture.mjs",
+            "modules/agent-door/tests/target.test.ts",
+            "modules/agent-door/tests/types.check.mts",
             "modules/agent-door/transport.ts",
             "modules/agent-door/types.ts",
             "modules/agent-door/wire.ts"
@@ -1068,7 +1085,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "modules/business-settings/ADOPTING.md",
             "modules/business-settings/README.md",
@@ -1101,7 +1118,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "foundation/runtime/theme-frame.ts"
           ]
@@ -1118,7 +1135,7 @@
         ],
         "origin": {
           "repository": "https://github.com/runeditrun/base.git",
-          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "revision": "e1b4265eb0d839a67dae3c36a04f83fa48c9d480",
           "paths": [
             "foundation/runtime/icon-head.ts"
           ]
