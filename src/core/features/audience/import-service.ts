@@ -1,3 +1,5 @@
+import {agentAction} from '../agent-door/context';
+import {senderWriteAuthority,senderWriteGuard} from '../settings/sender-authority';
 import { apiImageReport } from '../move-in/incumbent-images';
 import {applySourceExtras,undoSourceExtras} from '../move-in/source-extras';
 import {csvReview,csvReconciliation,recordCsvAttestations} from '../move-in/csv-review';
@@ -39,6 +41,13 @@ function previewCounts(plan:ImportPlan) {
 }
 
 export async function audienceImportContext(platform: Platform, principalId: string, request: Request): Promise<D1ImportContext> {
+  const agent=agentAction.getStore();
+  if(agent){
+    const authority=await senderWriteAuthority(platform,request,principalId);
+    return {destination:'mango',namespace:'mango-audience-v1',mappingVersion:'mango-audience-v1',batchSize:10,maxBatches:1,
+      storage:{database:platform.database.$client,targets:createAudienceImportTarget(platform.config.contactHashSalt)},
+      authorization:{principalId,predicate:()=>({sql:senderWriteGuard,params:[authority.sessionId,authority.operatorId,authority.version,Date.now()]})}};
+  }
   const name = platform.config.local === true ? localCookieName('operator_session_local', request.url) : '__Host-operator_session';
   const cookies=(request.headers.get('cookie') ?? '').split(';').map(value=>value.trim());
   const names=[name];

@@ -1,3 +1,4 @@
+import {actorType,actorId} from '../agent-door/custody';
 import { Hono } from 'hono';
 import { ulid } from '@/core/shared/ids';
 import { z } from 'zod';
@@ -39,7 +40,7 @@ export function createSegmentRoutes(database:D1Database) {
     const params=readParams(context,identifier);if('error'in params)return params.error;
     const id=params.data.id,now=Date.now(),audit=ulid();
     const result=await database.batch([
-      database.prepare("INSERT INTO lifecycle_audit_entries (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'audience-segment',id,'segment.deleted','operator',?,'{}',?,? FROM audience_segments WHERE id=?").bind(audit,audit,context.get('operator').id,now,now,id),
+      database.prepare(`INSERT INTO lifecycle_audit_entries (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'audience-segment',id,'segment.deleted','${actorType()}',?,'{}',?,? FROM audience_segments WHERE id=?`).bind(audit,audit,context.get('operator').id,now,now,id),
       database.prepare('DELETE FROM audience_segments WHERE id=?').bind(id),
     ]);
     return result[1].meta.changes?context.json({kind:'deleted'}):context.json({error:'not_found'},404);

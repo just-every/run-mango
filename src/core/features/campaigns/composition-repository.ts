@@ -1,3 +1,4 @@
+import {actorType as nativeActorType,actorId as nativeActorId} from '../agent-door/custody';
 import {assertReusableDraft} from './reusable-block-draft-guard';
 import { ulid } from '@/core/shared/ids';
 import { savedEmailSize } from './saved-email-size';
@@ -219,8 +220,8 @@ export function createCampaignCompositionRepository(database: Database, sizeOpti
       if (actorId) {
         const operation = ulid(updatedAt.getTime());
         prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-          SELECT ?,?,'campaign-revision',?,'draft.saved','operator',?,json_object('campaignId',?),?,? WHERE ${guard}`,
-          operation, operation, id, actorId, storedRevision.campaignId, updatedAt.getTime(), updatedAt.getTime());
+          SELECT ?,?,'campaign-revision',?,'draft.saved','${nativeActorType()}',?,json_object('campaignId',?),?,? WHERE ${guard}`,
+          operation, operation, id, nativeActorId(actorId), storedRevision.campaignId, updatedAt.getTime(), updatedAt.getTime());
       }
       if(composition.designTemplateKey&&actorId) {
         const source={...storedRevision,...composition};

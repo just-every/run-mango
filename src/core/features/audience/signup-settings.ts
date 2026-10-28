@@ -1,3 +1,4 @@
+import {actorType,actorId} from '../agent-door/custody';
 import { z } from 'zod';
 import {effectiveRole,productAuthority} from '@/core/features/auth/product-roles';
 import { ulid } from '@/core/shared/ids';
@@ -24,19 +25,19 @@ export async function saveSignupSettings(platform: Platform, value: unknown, ope
   const challengeGuard=`EXISTS(SELECT 1 FROM oa_operators n JOIN operators p ON p.id=n.id LEFT JOIN operator_product_roles r ON r.operator_id=n.id WHERE n.id=? AND n.status='active' AND ${effectiveRole} IN ('owner','admin'))`;
   const result = await db.batch([
     db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-      SELECT ?,?,'signup-form','newsletter','signup.challenge.changed','operator',?,?,?,? WHERE ${senderWriteGuard} AND ${challengeGuard}
+      SELECT ?,?,'signup-form','newsletter','signup.challenge.changed','${actorType()}',?,?,?,? WHERE ${senderWriteGuard} AND ${challengeGuard}
       AND COALESCE((SELECT challenge_enabled FROM signup_settings WHERE id='newsletter'),1)<>?`)
-      .bind(challengeChange,challengeChange,operatorId,JSON.stringify({challengeEnabled:settings.challengeEnabled}),now,now,...guard,operatorId,Number(settings.challengeEnabled)),
+      .bind(challengeChange,challengeChange,actorId(operatorId),JSON.stringify({challengeEnabled:settings.challengeEnabled}),now,now,...guard,operatorId,Number(settings.challengeEnabled)),
     db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-      SELECT ?,?,'signup-form','newsletter','signup.kiosk.changed','operator',?,?,?,? WHERE ${senderWriteGuard}
+      SELECT ?,?,'signup-form','newsletter','signup.kiosk.changed','${actorType()}',?,?,?,? WHERE ${senderWriteGuard}
       AND (COALESCE((SELECT kiosk_enabled FROM signup_settings WHERE id='newsletter'),0)<>?
         OR COALESCE((SELECT kiosk_device_label FROM signup_settings WHERE id='newsletter'),'')<>?)`)
-      .bind(id,id,operatorId,JSON.stringify({kioskEnabled:settings.kioskEnabled,deviceLabel:settings.kioskDeviceLabel}),now,now,...guard,Number(settings.kioskEnabled),settings.kioskDeviceLabel),
+      .bind(id,id,actorId(operatorId),JSON.stringify({kioskEnabled:settings.kioskEnabled,deviceLabel:settings.kioskDeviceLabel}),now,now,...guard,Number(settings.kioskEnabled),settings.kioskDeviceLabel),
     db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-      SELECT ?,?,'signup-form','newsletter','signup.settings.changed','operator',?,?,?,? WHERE ${senderWriteGuard}
+      SELECT ?,?,'signup-form','newsletter','signup.settings.changed','${actorType()}',?,?,?,? WHERE ${senderWriteGuard}
       AND (COALESCE((SELECT frequency_disclosure FROM signup_settings WHERE id='newsletter'),'Occasional newsletters')<>?
         OR COALESCE((SELECT embed_origins FROM signup_settings WHERE id='newsletter'),'[]')<>?)`)
-      .bind(settingsChange,settingsChange,operatorId,JSON.stringify({frequencyDisclosure:settings.frequencyDisclosure,embedOrigins:origins}),now,now,...guard,settings.frequencyDisclosure,JSON.stringify(origins)),
+      .bind(settingsChange,settingsChange,actorId(operatorId),JSON.stringify({frequencyDisclosure:settings.frequencyDisclosure,embedOrigins:origins}),now,now,...guard,settings.frequencyDisclosure,JSON.stringify(origins)),
     db.prepare(`INSERT INTO signup_settings(id,frequency_disclosure,embed_origins,kiosk_enabled,kiosk_device_label,challenge_enabled,updated_by,updated_at)
       SELECT 'newsletter',?,?,?,?,?,?,? WHERE ((${senderWriteGuard}) OR EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE id=?)) AND (COALESCE((SELECT challenge_enabled FROM signup_settings WHERE id='newsletter'),1)=? OR EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE id=?))
       ON CONFLICT(id) DO UPDATE SET frequency_disclosure=excluded.frequency_disclosure,embed_origins=excluded.embed_origins,
