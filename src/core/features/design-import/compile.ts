@@ -61,7 +61,7 @@ function rowHtml(item: Row, hosted: ReadonlyMap<string, HostedImage>, href: stri
 /** Writes the 600px table email for a plan whose images are hosted. The output is checked with the same
  * checker approval uses before it is offered, so nothing outside the grammar ever reaches the editor.
  * `mediaOrigin` is the deployment's own origin: on a copy running on a computer its images are http,
- * which a draft may hold and approval refuses (CAMP-012). */
+ * which a draft may hold and approval refuses (CAMP-023). */
 export function compileDesignEmail(plan: DesignPlan, hosted: ReadonlyMap<string, HostedImage>, buttonHref?: string, mediaOrigin?: string) {
   if (plan.buttonLabel && (!buttonHref || !safeEmailUrl(buttonHref))) throw new DesignImportError('invalid_layout', 'The button destination must be an HTTPS address.');
   // The outer wrapper is the one cell of a full-width table: it carries the design's page colour (only cells paint,
@@ -69,7 +69,7 @@ export function compileDesignEmail(plan: DesignPlan, hosted: ReadonlyMap<string,
   const html = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td bgcolor="${plan.background}" style="background-color:${plan.background};padding:16px 0;overflow-wrap:anywhere">`
     + `<table role="presentation" width="${emailWidth}" align="center" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:${emailWidth}px">`
     + plan.rows.map(item => rowHtml(item, hosted, buttonHref, mediaOrigin)).join('') + '</table></td></tr></table>';
-  // The editor receives the form saving stores (CAMP-003), so saving the import changes nothing in it.
+  // The editor receives the form saving stores (CAMP-022), so saving the import changes nothing in it.
   const {canonical} = parseEmailHtml(html);
   const issues = inspectEmailHtml(canonical, mediaOrigin).issues;
   if (issues.length) throw new DesignImportError('invalid_layout', `The compiled email would not pass approval: ${issues.join(' ')}`);

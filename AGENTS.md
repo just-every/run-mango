@@ -63,3 +63,7 @@ Shared source and extension contracts are optional mechanisms, with no quotas or
 ## Release and updates
 
 Preserve source ownership, customizations, privacy, migration history and recorded owner decisions. RELEASE.json records clause/extension/schema changes and agent update instructions using its real schema. Verify the complete candidate and emitted owner guide, including intentional divergence. Screenshots exclude personal data and third-party artwork. Publishing, tagging and deployment need session authority; work explicitly parked by its owner remains parked. Do not assume a push deploys, a PR creates a preview or a package proves live operation.
+
+Lander-Regenerate: node src/base/contract-docs.mjs write
+Lander-Regenerate: node src/base/contract-docs.mjs check
+Lander-Regenerate: node scripts/edition-authoring/cli.mjs lock

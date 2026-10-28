@@ -182,6 +182,26 @@
     {
       "source": "docs/CLAIMS.md",
       "reason": "Maintainer claim inventory supplied by the sibling integration brief; product instructions are in Connect another application."
+    },
+    {
+      "source": "RULINGS.md",
+      "reason": "Contract rulings, mechanisms and acceptance proof for maintainers."
+    },
+    {
+      "source": "docs/contract/DONE-AUDIT.md",
+      "reason": "Contract rulings, mechanisms and acceptance proof for maintainers."
+    },
+    {
+      "source": "docs/contract/mechanism.md",
+      "reason": "Contract rulings, mechanisms and acceptance proof for maintainers."
+    },
+    {
+      "source": "docs/contract/health-readiness.md",
+      "reason": "Contract supporting mechanism and original acceptance descriptions for maintainers."
+    },
+    {
+      "source": "docs/contract/managed-mail.md",
+      "reason": "Contract supporting mechanism and original acceptance descriptions for maintainers."
     }
   ]
 }

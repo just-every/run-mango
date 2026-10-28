@@ -21,7 +21,7 @@ const attributeRules: Record<string, Record<string, (value: string) => boolean>>
   img: {border: oneOf('0')},
 };
 const presentationNames = new Set(['class', 'style', 'bgcolor', 'role', 'cellpadding', 'cellspacing', 'border', 'align', 'valign', 'lang', 'dir']);
-/** Images and presentation are edited as HTML: rich editing keeps only the unstyled grammar (CAMP-002). */
+/** Images and presentation are edited as HTML: rich editing keeps only the unstyled grammar (CAMP-021). */
 export function requiresHtmlEditing(html: string) {
   const presented = (nodes: EmailNode[]): boolean => nodes.some(node => node.kind === 'element'
     && (node.tag === 'img' || [...node.attributes.keys()].some(name => presentationNames.has(name)) || presented(node.children)));

@@ -11,7 +11,7 @@ const status: Record<Exclude<ImportState, 'discarded'>, string> = {
   unsaved: 'not saved yet', saved: 'saved', edited: 'edited since import, not saved yet', 'edited-saved': 'edited since import and saved',
 };
 
-/** What an import changed, shown beside the editor until dismissed or discarded (DESIGN-004). Highlights
+/** What an import changed, shown beside the editor until dismissed or discarded (DESIGN-013). Highlights
  * live only here; they never enter the email body. */
 export function ImportSummaryPanel({ summary, state, onDismiss }: { summary: ImportSummary; state: Exclude<ImportState, 'discarded'>; onDismiss: () => void }) {
   const total = summary.images.reduce((sum, image) => sum + image.bytes, 0);

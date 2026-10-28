@@ -13,7 +13,7 @@ export function imageTag(asset: UploadedAsset, alt: string) {
   return `<img src="${escapeHtml(asset.url)}" width="${width}" height="${height}" alt="${escapeHtml(alt)}">`;
 }
 
-/** "Insert image" in the HTML-mode email editor (CAMP-012): the operator's file is uploaded through the
+/** "Insert image" in the HTML-mode email editor (CAMP-023): the operator's file is uploaded through the
  * campaign image door and its own-origin /media address is written into the body at the cursor. */
 export function InsertImage({ disabled, onInsert }: { disabled: boolean; onInsert: (html: string) => void }) {
   const [open, setOpen] = useState(false);
