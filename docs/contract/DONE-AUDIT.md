@@ -673,12 +673,12 @@ Old reference: `d9108966f802c37e5b1cd80e63c358883a762fe4`.
 | AUD-010 | 2 | Lookback | none | none |
 | AUD-010 | 2 | Editor labels | none | none |
 | AUD-010 | 2 | All-or-any matching | none | none |
-| AUD-010 | 3 | Composer live summary | none | none |
-| AUD-010 | 3 | New saved revision summary | none | none |
-| AUD-010 | 3 | Caller prose not authority | none | none |
-| AUD-010 | 4 | Old summary derives without approval rewrite | none | none |
-| AUD-010 | 4 | Readiness requires structured rules | none | none |
-| AUD-010 | 4 | Approval binds saved rules | none | none |
+| CAMP-002 | 3 | Composer live summary | none | none |
+| CAMP-002 | 3 | New saved revision summary | none | none |
+| CAMP-002 | 3 | Caller prose not authority | none | none |
+| CAMP-002 | 4 | Old summary derives without approval rewrite | none | none |
+| CAMP-002 | 4 | Readiness requires structured rules | none | none |
+| CAMP-002 | 4 | Approval binds saved rules | none | none |
 | CAMP-023 | 1 | Insert image uploads and inserts header-derived dimensions | `tests/campaign-authoring/local-images.spec.ts:36` | asserted |
 | CAMP-023 | 1 | At most 600-pixel width | `tests/campaign-authoring/local-images.spec.ts:36` | asserted |
 | CAMP-023 | 1 | Description required | none | none |

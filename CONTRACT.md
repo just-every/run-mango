@@ -126,7 +126,7 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 - `AUD-007`: *Tier:* Core · *Rules:* D-2
 - `CAMP-001`: *Tier:* Core · *Cites:* BASE-OPS-005 · *Rules:* D-1, D-3
 - `CAMP-002`: *Tier:* Core · *Rules:* D-1, D-3
-- `AUD-010`: *Tier:* Core · *From:* AUD-001, CAMP-002 · *Rules:* D-2
+- `AUD-010`: *Tier:* Core · *From:* AUD-001 · *Rules:* D-2
 - `CAMP-020`: *Tier:* Core · *From:* CAMP-002 · *Rules:* D-1, D-3
 - `CAMP-021`: *Tier:* Core · *From:* CAMP-002 · *Cites:* BASE-ACCESS-002 · *Rules:* D-1, D-3
 - `CAMP-003`: *Tier:* Core · *Rules:* D-1, D-3
@@ -659,6 +659,8 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 **Acceptance.**
 1. Draft edits persist the campaign name, channels, audience rule, message content, sender identity, links and schedule.
 2. An email within BUILD-012’s sent-size limit saves; one above it is refused with its measured size and limit, without truncation.
+3. The composer shows the derived audience summary described by AUD-010 live instead of authoring audience prose; each new saved revision stores it and ignores caller-supplied audience text as authority.
+4. Earlier revisions display the derived summary without rewriting immutable approvals; readiness requires valid structured rules and approval binds the exact saved rules.
 
 ### Audiences — Derived audience rule summaries
 
@@ -669,8 +671,6 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 **Acceptance.**
 1. Review, approval checks, scheduled pages, campaign lists and audience snapshots show the plain-text summary derived from the inclusion and exclusion rules.
 2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
-3. The composer shows that summary live instead of authoring audience prose; each new saved revision stores it and ignores caller-supplied audience text as authority.
-4. Earlier revisions display the derived summary without rewriting immutable approvals; readiness requires valid structured rules and approval binds the exact saved rules.
 
 ### Campaigns — Live audience authoring counts
 
@@ -4089,8 +4089,8 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `AUD-006` | Multi-step exit | published | partial | `tests/go-live/multistep.journeys.ts` | Asserted: Changed eligibility prevents later step; Changed inclusion yields named skip; Custom exclusion yields named skip; Consent change yields named skip; Only eligible control receives second step; Newly matching contact never added. Unasserted: Conversion prevents later step. |
 | `AUD-007` | Frozen candidate set | published | partial | `tests/audience-controls/segments.spec.ts` | Asserted: Frozen candidate set survives segment changes. Unasserted: Newly matching contacts not added; At most one recipient-step per contact per channel per step under overlapping matches. |
 | `CAMP-001` | States | published | partial | `tests/campaign-results/results.journeys.ts` | Asserted: Scheduled state; Dispatching state; Completed state; Canceled state. Unasserted: Draft state; Paused state; Failed after missing first-step deadline; Actor or feature recorded for each transition; Time recorded for each transition; Invalid transition rejected. |
-| `CAMP-002` | Draft editing | published | partial | `tests/campaign-authoring/browser.spec.ts` | Asserted: Persisted Campaign name; Persisted Message content; Persisted Links; Persisted Schedule. Unasserted: Persisted Channels; Persisted Audience rule; Persisted Sender identity; Body within sent-size limit saves; Oversized body refused with measured size; Refusal names limit; Oversized body not truncated. |
-| `AUD-010` | Derived audience rule summaries | published | partial | `tests/audience-controls/segments.spec.ts` | Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Review summary; Approval checks summary; Scheduled page summary; Campaign list summary; Audience snapshot summary; Every condition; Comparison; Value; Lookback; Editor labels; All-or-any matching; Composer live summary; New saved revision summary; Caller prose not authority; Old summary derives without approval rewrite; Readiness requires structured rules; Approval binds saved rules. |
+| `CAMP-002` | Draft editing | published | partial | `tests/campaign-authoring/browser.spec.ts` | Asserted: Persisted Campaign name; Persisted Message content; Persisted Links; Persisted Schedule. Unasserted: Persisted Channels; Persisted Audience rule; Persisted Sender identity; Body within sent-size limit saves; Oversized body refused with measured size; Refusal names limit; Oversized body not truncated. Missing public-door journey: the composer derives the live summary, new saved revisions store it and ignore caller prose, and earlier revisions display it without changing immutable approvals; readiness validates structured rules and approval binds the exact saved rules. |
+| `AUD-010` | Derived audience rule summaries | published | partial | `tests/audience-controls/segments.spec.ts` | Related audience-rule implementation is present. Missing public-door journey: review, approval checks, scheduled pages, campaign lists and audience snapshots derive the complete summary, including every condition, comparison, value, lookback, editor label and all-or-any matching. |
 | `CAMP-020` | Live audience authoring counts | published | partial | `tests/campaign-authoring/browser.spec.ts` | Asserted: Structured inclusion updates; Real source counts; Unavailable missing source counts; Unavailable stale counts; Late old request cannot replace new count. Unasserted: Structured exclusion updates. |
 | `CAMP-021` | Start and adopt newsletters | published | partial | `tests/campaign-authoring/browser.spec.ts` | Asserted: Blank newsletter without AI or commerce; Real source starter; Same editable Review; Linked proposal reused; Concurrent adoption creates one campaign; Create has no authority; Select and save enqueue nothing; Incomplete draft saves; Approval names missing content; Rich text initial editor; Optional HTML mode preserves authored markup; Styled and image content stays in HTML mode; No image fetch while authoring. Unasserted: At most three clicks; Expired proposal not adopted. |
 | `CAMP-003` | Revision preview | published | partial | `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` | Asserted: Desktop saved preview. Unasserted: Mobile saved preview; Plain-text saved preview; Resolved personalization examples; Compliance footer; SMS opt-out text; Validated styles in saved preview; Failing body unstyled with warning. |

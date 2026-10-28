@@ -718,26 +718,26 @@ Core · published · **partial** · Rules D-1, D-3
 **Acceptance.**
 1. Draft edits persist the campaign name, channels, audience rule, message content, sender identity, links and schedule.
 2. An email within BUILD-012’s sent-size limit saves; one above it is refused with its measured size and limit, without truncation.
+3. The composer shows the derived audience summary described by AUD-010 live instead of authoring audience prose; each new saved revision stores it and ignores caller-supplied audience text as authority.
+4. Earlier revisions display the derived summary without rewriting immutable approvals; readiness requires valid structured rules and approval binds the exact saved rules.
 
 **Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** Asserted: Persisted Campaign name; Persisted Message content; Persisted Links; Persisted Schedule. Unasserted: Persisted Channels; Persisted Audience rule; Persisted Sender identity; Body within sent-size limit saves; Oversized body refused with measured size; Refusal names limit; Oversized body not truncated.
+**Gap.** Asserted: Persisted Campaign name; Persisted Message content; Persisted Links; Persisted Schedule. Unasserted: Persisted Channels; Persisted Audience rule; Persisted Sender identity; Body within sent-size limit saves; Oversized body refused with measured size; Refusal names limit; Oversized body not truncated. Missing public-door journey: the composer derives the live summary, new saved revisions store it and ignore caller prose, and earlier revisions display it without changing immutable approvals; readiness validates structured rules and approval binds the exact saved rules.
 
 ### Audiences — Derived audience rule summaries
 
 #### AUD-010 — Derived audience rule summaries
 
-Core · published · **partial** · From AUD-001, CAMP-002 · Rules D-2
+Core · published · **partial** · From AUD-001 · Rules D-2
 
 **Requirement.** Every displayed audience explanation derives from the rules that actually select recipients.
 
 **Acceptance.**
 1. Review, approval checks, scheduled pages, campaign lists and audience snapshots show the plain-text summary derived from the inclusion and exclusion rules.
 2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
-3. The composer shows that summary live instead of authoring audience prose; each new saved revision stores it and ignores caller-supplied audience text as authority.
-4. Earlier revisions display the derived summary without rewriting immutable approvals; readiness requires valid structured rules and approval binds the exact saved rules.
 
 **Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Review summary; Approval checks summary; Scheduled page summary; Campaign list summary; Audience snapshot summary; Every condition; Comparison; Value; Lookback; Editor labels; All-or-any matching; Composer live summary; New saved revision summary; Caller prose not authority; Old summary derives without approval rewrite; Readiness requires structured rules; Approval binds saved rules.
+**Gap.** Related audience-rule implementation is present. Missing public-door journey: review, approval checks, scheduled pages, campaign lists and audience snapshots derive the complete summary, including every condition, comparison, value, lookback, editor label and all-or-any matching.
 
 ### Campaigns — Live audience authoring counts
 
