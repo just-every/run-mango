@@ -1422,6 +1422,15 @@
       "to": "clause",
       "ids": [
         "RESULT-002"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "SURFACE-004",
+            "SURFACE-006"
+          ]
+        }
       ]
     },
     {
@@ -1458,6 +1467,15 @@
       "to": "clause",
       "ids": [
         "RESULT-010"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "SURFACE-004",
+            "SURFACE-006"
+          ]
+        }
       ]
     },
     {
@@ -1467,6 +1485,15 @@
       "to": "clause",
       "ids": [
         "RESULT-009"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "SURFACE-004",
+            "SURFACE-006"
+          ]
+        }
       ]
     },
     {

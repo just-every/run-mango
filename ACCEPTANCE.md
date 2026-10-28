@@ -4760,8 +4760,8 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-005, BASE
 
 **Acceptance.**
 1. Inviting an operator or enlarging another integration grant is access with the number of people or grants and widening direction; removing membership or narrowing a grant records narrowing.
-2. Changing a sender secret, webhook-signing secret, allowed-host protection or capture-mode setting under CONT-025 is security with its setting name; changing running capture also adds live.
-3. Erasing one contact or a selected bulk set under CONT-022, irreversibly merging contacts under CONT-011, removing contact-owned custom objects or permanently purging retained marketing data is destructive with its affected-item count; a reversible draft removal stays standard.
+2. Changing a sender secret, webhook-signing secret, allowed-host protection, capture-mode setting under CONT-025 or open-estimate setting under RESULT-002 and RESULT-009 is security with its setting name; changing running capture also adds live.
+3. Erasing one contact or a selected bulk set under CONT-022, irreversibly merging contacts under CONT-011, removing contact-owned custom objects, permanently purging retained marketing data or revoking issued open-estimate pixels under RESULT-009 is destructive with its affected-item count; a reversible draft removal stays standard.
 4. The contact-erasure fixture removes that contact’s Mango data while retaining the particular surviving opt-out custody CONT-013 requires.
 5. A routine disable changes access for that routine and adds live for stopping its scheduled job, preventing its next scheduled run.
 6. Reading or exporting CONT-029’s retained portable restriction mappings carries sensitive with the mapping-record count and data kind; the same classification applies when erasure handles those retained mappings.
@@ -4796,7 +4796,7 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-006, BASE
 
 **Acceptance.**
 1. Activating, pausing, resuming, archiving or changing a running flow carries live with the flow service identity.
-2. Changing a running campaign schedule, active intake setting, onsite-tracking switch or scheduled routine’s timing or disabled state carries live with the affected campaign, site or routine.
+2. Changing a running campaign schedule, active intake setting, tracking switch (including onsite tracking and open estimates) or scheduled routine’s timing or disabled state carries live with the affected campaign, site, open-estimate service or routine.
 3. Changing an active sending route or connector behavior, including ending a parallel incumbent sync under MOVE-025, carries live in addition to any other class that the same operation meets.
 4. The same flow draft before activation stays standard, and its activation adds live without losing the exact-revision checks in FLOW-008.
 5. The company-policy fixture’s repair replay changes only the declared source window and eligible enrollments, leaving previously delivered messages intact.
