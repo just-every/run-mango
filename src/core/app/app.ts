@@ -1,3 +1,13 @@
+import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
+import agentOperations from '@/core/features/agent-door/operations.ts';
+import {resourceLink} from '@/core/features/agent-door/resource-links';
+import {credentialScopes} from '@/core/features/agent-door/credentials';
+import {IntegrationError} from '@/core/features/integrations/schema';
+import {sha256} from '@/core/shared/ids';
+import {mangoAgentDoor} from '@/core/features/agent-door';
+import {assertAgentHandoff} from '@/core/features/settings/sender-authority';
+import {agentAction,agentAttribution} from '@/core/features/agent-door/context';
+import {nativeOperator} from '@/core/features/agent-door/native';
 import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
 import {registerCatalogReader,configuredCatalogValues} from '@/core/features/campaigns/catalog-values';
 import {catalogSummary} from '@/core/features/campaigns/catalog-outcomes';
@@ -90,6 +100,20 @@ import { initialReads, initialReadOnce } from './request-platform';
 
 export type AppEnvironment = { Bindings: AppBindings; Variables: AuthVariables };
 
+async function integrationOperator(platform:Platform,id:string){
+  try{return await nativeOperator(platform,id);}
+  catch(error){if(error instanceof ToolRefusal&&error.code==='unauthenticated')throw new IntegrationError('credential_sponsor_inactive',401);throw error;}
+}
+
+function integrationRefusal(code:string|undefined,status:unknown,fallback:string){
+  // Shared decision capacity has no effect; retain the public API's 429 contract.
+  return code==='decision_busy'?new IntegrationError('rate_limited',429):new IntegrationError(code??fallback,integrationRefusalStatus(status));
+}
+
+function integrationRefusalStatus(value:unknown):400|401|403|404|409|429|503 {
+  return [400,401,403,404,409,429,503].includes(Number(value))?Number(value) as 400|401|403|404|409|429|503:409;
+}
+
 function isSafeMethod(method: string) {
   return method === 'GET' || method === 'HEAD' || method === 'OPTIONS';
 }
@@ -147,6 +171,8 @@ function audienceDependencies(
               },
           callbackUrl: new URL('/webhooks/mail/resend', platform.config.publicBaseUrl).toString(),
         };
+        const attribution=agentAttribution();
+        if(attribution){request.content.text+='\n\nPrepared by '+attribution.label;request.content.html+='<p>Prepared by '+escape(attribution.label)+'</p>';}
         const adapter = platform.confirmationMailer ?? platform.mailer;
         const provider = (await adapter.capabilities()).provider ?? (platform.config.mailProvider ?? 'unreported');
         const costContext = {
@@ -156,6 +182,7 @@ function audienceDependencies(
         // No asynchronous preparation may occur between this D1 authorization
         // and adapter invocation. A provider handoff already in progress cannot
         // be recalled by a later database transition.
+        await assertAgentHandoff(platform);
         if (!await authorizeHandoff()) {
           await cancelHandoffCost(platform.database, costContext.key);
           return false;
@@ -218,7 +245,7 @@ export function createAppServices(platform: Platform, queueIdentity: object = pl
     platform,
     audience: createLifecycleAudience(audienceService),
     synchronizeCommerce: platform.commerce
-      ? createCommerceSynchronizer(platform.commerce, storeService, audienceService)
+      ? createCommerceSynchronizer(platform.commerce, storeService, audienceService,{admit:()=>assertAgentHandoff(platform)})
       : undefined,
   };
   const campaignService = createCampaignService(
@@ -278,6 +305,34 @@ export function createApp(
     lifecycleRuntime,
   } = services;
   const secureCookie = platform.config.publicBaseUrl.protocol === 'https:';
+  const integrations = createIntegrationService(platform, audienceService);
+  const native = new Hono<AppEnvironment>();
+  const {door, settings: businessSettings} = mangoAgentDoor(environment, platform, authService, native, lifecycleRuntime, integrations);
+  native.use('/api/*', async (context, next) => {
+    const principal = agentAction.getStore();
+    if (principal) {
+      if (environment.MANGO_RESTORE_MODE === '1') return context.json({error:'restore_in_progress'},503);
+      if (await pendingErasure(environment.DB)) return context.json({error:'contact_erasure_in_progress'},503);
+      const operator = await nativeOperator(platform, principal.person.id);
+      const required = requiredPermission(context.req.method, context.req.url);
+      if (!hasPermission(operator.role, required)) return context.json({error:'role_forbidden'},403);
+      context.set('operator', operator);
+    }
+    if (!context.get('operator')) return context.json({error:'unauthenticated'},401);
+    await next();
+    if(!principal&&!isSafeMethod(context.req.method)&&context.res.ok){
+      const operation=agentOperations.find(op=>op.method===context.req.method&&new RegExp('^'+op.path.replace(/\{[^}]+\}/g,'[^/]+')+'$').test(context.req.path));
+      if(operation){
+        const names=[...operation.path.matchAll(/\{([^}]+)\}/g)].map(match=>match[1]),pattern=new RegExp('^'+operation.path.replace(/\{[^}]+\}/g,'([^/]+)')+'$'),values=pattern.exec(context.req.path);
+        const args=Object.fromEntries(names.map((name,index)=>[name,values?.[index+1]]));
+        const value=await context.res.clone().json().catch(()=>({}));
+        const uri=await resourceLink(platform,operation.kind,args,value);
+        const operator=context.get('operator');
+        if(uri)await door.emit({type:operation.kind.split('.')[0]+'.changed',uri,person:{id:operator.id,email:operator.email,name:operator.displayName,role:operator.role,active:true}});
+      }
+    }
+  });
+
 
   app.use('*', async (context, next) => {
     const path = context.req.path;
@@ -299,6 +354,11 @@ export function createApp(
     ]);
     for (const result of settings) if (result.status === 'rejected') throw result.reason;
     context.header('X-Mango-Version', platform.config.appVersion);
+    await next();
+  });
+  app.use('*', async (context, next) => {
+    const response = await businessSettings.handle(context.req.raw) ?? await door.handle(context.req.raw);
+    if (response) return response;
     await next();
   });
   app.all('/auth/owner-claim', context => ownerClaim(context.req.raw, environment, platform));
@@ -324,8 +384,19 @@ export function createApp(
   app.route('/',archivePublicRoutes(environment.DB,platform.config.publicBaseUrl.origin));
   const reviewLoyalty=reviewLoyaltyRoutes(platform,environment.MANGO_RESTORE_MODE==='1');
   app.route('/',reviewLoyalty.webhooks);
-  const integrations = createIntegrationService(platform, audienceService);
-  app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations, platform));
+  app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations, platform,async(credential,campaignId,input)=>{
+    const operator=await integrationOperator(platform,credential.createdBy);
+    const result=await door.invoke('mango.campaigns.enqueue',{id:campaignId,...input,idempotency_key:'integration-send:'+await sha256(JSON.stringify([credential.id,campaignId,input]))},
+      {person:{id:operator.id},agent:{id:'integration:'+credential.id,name:credential.name,specialist:'marketer'},clientId:credential.id,scopes:credentialScopes(credential.scopes)});
+    if(result.outcome==='refused')throw integrationRefusal(result.code,result.fields?.status,'send_refused');
+    return result.outcome==='pending'?{status:'approval_required',approval:result.approval}:result.result;
+  },async(credential,kind,args)=>{
+    const operator=await integrationOperator(platform,credential.createdBy);
+    const result=await door.invoke('mango.integrations.'+kind,args,
+      {person:{id:operator.id},agent:{id:'integration:'+credential.id,name:credential.name,specialist:'marketer'},clientId:credential.id,scopes:credentialScopes(credential.scopes)});
+    if(result.outcome==='refused')throw integrationRefusal(result.code,result.fields?.status,'read_refused');
+    return result.outcome==='pending'?{status:'approval_required',approval:result.approval}:result.result;
+  }));
   mountBeforeAuthentication?.(app, services);
   if (!mountBeforeAuthentication) app.all('/api/_local/*', (context) => context.json({ error: 'not_found' }, 404));
 
@@ -345,13 +416,13 @@ export function createApp(
       context.res=new Response(JSON.stringify(projected),{status:context.res.status,headers:context.res.headers});
     }
   });
-  app.route('/api',contactSupportRoutes(environment.DB,audienceService));
-  app.route('/api',approvalRequestRoutes(environment.DB));
-  app.route('/api',activityRoutes(environment.DB));
-  app.route('/api', createOperatorRoutes(authService, { secureCookie }));
-  app.route('/api', createIntegrationSettingsRoutes(integrations));
-  app.route('/api',reviewLoyalty.settings);
-  app.get('/api/editor/config', async context => {
+  native.route('/api',contactSupportRoutes(environment.DB,audienceService));
+  native.route('/api',approvalRequestRoutes(environment.DB));
+  native.route('/api',activityRoutes(environment.DB));
+  native.route('/api', createOperatorRoutes(authService, { secureCookie }));
+  native.route('/api', createIntegrationSettingsRoutes(integrations));
+  native.route('/api',reviewLoyalty.settings);
+  native.get('/api/editor/config', async context => {
     context.header('Cache-Control', 'no-store');
     const operator = context.get('operator');
     const authority = await environment.DB.prepare('SELECT role,status FROM oa_operators WHERE id=?').bind(operator.id).first<{role: string; status: string}>();
@@ -362,38 +433,40 @@ export function createApp(
       return context.json({config, expiresAt: Date.now() + 30_000});
     } catch { return context.json({error: 'editor_not_configured'}, 503); }
   });
-  app.route('/api', createPortabilityRoutes(environment, platform));
-  app.route('/',createSmsInboundRoutes(platform));
-  const lifecycleServices = registerLifecycleRoutes(app, lifecycleRuntime);
-  app.route('/api',archiveOperatorRoutes(environment.DB,platform.config.publicBaseUrl.origin));
-  app.route('/api', createSettingsRoutes(createSettingsService(platform)));
-  app.route('/api',sendingConnectionRoutes(platform));
-  app.route('/api', createLinkHostRoutes(platform));
-  app.route('/api',createDormancyRoutes(platform));
-  app.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
-  app.route('/api', stripe.settings);
-  app.route('/api', woo.settings);
-  app.route('/api', reusableBlockRoutes(platform));
-  app.route('/api', flowDraftRoutes(platform));
-  app.route('/api', wooFlowRoutes(platform));
-  app.route('/api', domainSetupRoutes(platform));
-  app.route('/api', createStoreRoutes(storeService,platform.commerce));
-  app.route('/api', createSyncRoutes(platform, services.storeService));
-  app.route('/api', createSegmentRoutes(environment.DB));
-  app.route('/api', createAudienceRoutes(audienceService,environment.DB,platform,environment));
-  app.route('/api', createAudienceImportRoutes(platform));
-  app.route('/api', optInRoutes(platform));
-  app.route('/api', analyticsSettingsRoutes(platform));
-  app.route('/api', signupCapacityRoutes(platform));
-  app.route('/api', createMoveInRoutes(platform));
-  app.route('/api', createCampaignAssetRoutes(environment.DB, platform.blobs, platform.config.publicBaseUrl));
-  app.route('/api', createDesignGenerationRoutes(environment.DB, platform));
-  app.route('/api',createCatalogRoutes(platform));
-  app.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin,
+  native.route('/api', createPortabilityRoutes(environment, platform));
+  native.route('/',createSmsInboundRoutes(platform));
+  const lifecycleServices = registerLifecycleRoutes(native, lifecycleRuntime);
+  native.route('/api',archiveOperatorRoutes(environment.DB,platform.config.publicBaseUrl.origin));
+  native.route('/api', createSettingsRoutes(createSettingsService(platform)));
+  native.route('/api',sendingConnectionRoutes(platform));
+  native.route('/api', createLinkHostRoutes(platform));
+  native.route('/api',createDormancyRoutes(platform));
+  native.route('/api', reviewLinkHostRoutes(platform,lifecycleServices.approval));
+  native.route('/api', stripe.settings);
+  native.route('/api', woo.settings);
+  native.route('/api', reusableBlockRoutes(platform));
+  native.route('/api', flowDraftRoutes(platform));
+  native.route('/api', wooFlowRoutes(platform));
+  native.route('/api', domainSetupRoutes(platform));
+  native.route('/api', createStoreRoutes(storeService,platform.commerce));
+  native.route('/api', createSyncRoutes(platform, services.storeService));
+  native.route('/api', createSegmentRoutes(environment.DB));
+  native.route('/api', createAudienceRoutes(audienceService,environment.DB,platform,environment));
+  native.route('/api', createAudienceImportRoutes(platform));
+  native.route('/api', optInRoutes(platform));
+  native.route('/api', analyticsSettingsRoutes(platform));
+  native.route('/api', signupCapacityRoutes(platform));
+  native.route('/api', createMoveInRoutes(platform));
+  native.route('/api', createCampaignAssetRoutes(environment.DB, platform.blobs, platform.config.publicBaseUrl));
+  native.route('/api', createDesignGenerationRoutes(environment.DB, platform));
+  native.route('/api',createCatalogRoutes(platform));
+  native.route('/api', createCampaignRoutes(campaignService, createAuthoringService(platform, lifecycleRuntime, storeService), platform.config.publicBaseUrl.origin,
     (campaignId, revisionId) => lifecycleServices.approval.preview({campaignId, revisionId})));
-  app.route('/api', createInsightsRoutes(insightsService,platform.database));
-  app.route('/api', createOpenTrackingSettingsRoutes(platform));
-  app.route('/api', createAttributionPolicyRoutes(platform));
+  native.route('/api', createInsightsRoutes(insightsService,platform.database));
+  native.route('/api', createOpenTrackingSettingsRoutes(platform));
+  native.route('/api', createAttributionPolicyRoutes(platform));
+
+  app.route('/',native);
 
   app.all('*', (context) => context.json({ error: 'not_found' }, 404));
 

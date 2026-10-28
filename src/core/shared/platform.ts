@@ -321,6 +321,7 @@ export type OptionalModuleConfig<Config> =
     };
 
 export interface Platform {
+  agentDoor?: import('@/vendor/base/agent-door/index.ts').AgentDoor;
   database: Database;
   config: AppConfig;
   commerce?: CommerceStore;
@@ -340,6 +341,8 @@ export interface Platform {
 export interface AppBindings {
   RER_DEMO?: string;
   RER_OWNER_CLAIM_INSTALLATION_ID?: string;
+  RER_OWNER_CLAIM_APP_ORIGIN?: string;
+  RER_BUSINESS_TRUST?: string;
   MANGO_DELIVERY_POLICY_JSON?: string;
   MANGO_LOCAL_CONFIG_VERSION?: string;
   OWNER_EMAIL?: string;
