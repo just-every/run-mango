@@ -1770,7 +1770,7 @@
       "executable": false
     },
     "scripts/ci/mango-plan.mjs": {
-      "sha256": "1c1483c441b61daa4501f2d7e10c71093eb62374ace3f6198aab8b1686933ac2",
+      "sha256": "c3ad52ffa51bc9da474fa7d0949b6bc4f7fe18e243e3abcf4aba022be100a892",
       "executable": false
     },
     "scripts/ci/verify-app.mjs": {
@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "77c83720878f1c7a3029cd0b75f6de68a04bedbdee72e9d00e74727db98f18d0",
+      "sha256": "d3c9dccfd24eb96b26cb520e052260db74dd0c080aa93f0008b8bfb03aa73fd8",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -9070,7 +9070,7 @@
       "executable": false
     },
     "tests/local-start/retained-backup-flow.ts": {
-      "sha256": "3467e029d105989336889efe3dbf5986ef6e828429ff27a5b2e19191fbca49f6",
+      "sha256": "aee13c36a45c6842d43118ed93f15bfeeedbf970902f71dcc1a59486a3bf722f",
       "executable": false
     },
     "tests/move-in/archive.flow.ts": {

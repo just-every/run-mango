@@ -15,8 +15,15 @@ const decision = calledPush
 // Base selects coverage; Mango retains every measured partition and timeout.
 const partitions = new Map([...plan.push, ...plan.nightly].map(shard => [shard.name, shard]));
 const matrix = { include: decision.matrix.include.map(shard => ({
-  name: shard.name, browser: shard.browser, timeout: partitions.get(shard.name).timeout ?? 12,
+  name: shard.name, browser: shard.browser, timeout: partitions.get(shard.name).timeout ?? 12, members: partitions.get(shard.name).members,
 })) };
+if (decision.tier === 'all' && decision.coverage === 'full') {
+ const native=matrix.include.find(row=>row.name==='native');
+ const slow=matrix.include.find(row=>row.name==='local-start-slow');
+ if(native&&slow)matrix.include=matrix.include.filter(row=>row!==native&&row!==slow).concat({
+  ...slow,timeout:30,members:[...native.members,...slow.members],
+ });
+}
 const output = Object.entries({ coverage: decision.coverage, skip: decision.skip, tier: decision.tier,
   matrix: JSON.stringify(matrix), readers: JSON.stringify(decision.readers), has_shards: matrix.include.length > 0,
 }).map(([key, value]) => `${key}=${value}\n`).join('');
