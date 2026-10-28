@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, writeFile, rm, cp, readdir } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, writeFile, rm, cp, readdir, stat } from 'node:fs/promises';
 import { once } from 'node:events';
 import { rmSync } from 'node:fs';
 
@@ -22,7 +22,7 @@ export async function authoringRuntime({
   stateDirectory,
   parallelQueue = false,
   queueConsumers,
-  reuseEmptySchema = false,
+  reuseEmptySchema = suite === 'go-live',
   batchMigrations = false,
 } = {}) {
   const scratch = scratchDirectory(suite);
@@ -74,7 +74,14 @@ max_retries = 5
       await writeFile(migrationFile, statements.join('\n'));
       return commands.run('Migrating isolated authoring fixture', 'pnpm', ['exec', 'wrangler', 'd1', 'execute', 'mango-local', '--file', migrationFile, '--local', '--config', config, '--persist-to', state], options);
     };
-    if (reuseEmptySchema && !stateDirectory) {
+    // Go-live repeatedly boots fresh installations to prove isolation and
+    // recovery. Copy only a fully migrated, unused schema; a caller-owned
+    // state path that already exists must still migrate its own durable data.
+    const freshState = !stateDirectory || await stat(state).then(() => false, error => {
+      if (error.code === 'ENOENT') return true;
+      throw error;
+    });
+    if (reuseEmptySchema && freshState) {
       const key = process.cwd();
       let schema = emptySchemas.get(key);
       if (!schema) {

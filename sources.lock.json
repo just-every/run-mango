@@ -7658,7 +7658,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
-      "sha256": "b13250bc1e2c892a5dff641e69335b87d6d2621ec8115c8b3f4ec810317357b0",
+      "sha256": "9f33e84f3179ccd49b04d19d2dae30cb1e33b1b4fcadbaccfd3336fed6ff7763",
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
