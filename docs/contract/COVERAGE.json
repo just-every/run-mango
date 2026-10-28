@@ -2810,6 +2810,14 @@
       "to": "clause",
       "ids": [
         "MSG-014"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "SURFACE-004"
+          ]
+        }
       ]
     },
     {
@@ -2819,6 +2827,14 @@
       "to": "clause",
       "ids": [
         "MSG-014"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "SURFACE-004"
+          ]
+        }
       ]
     },
     {
@@ -2828,6 +2844,14 @@
       "to": "clause",
       "ids": [
         "MSG-014"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "SURFACE-004"
+          ]
+        }
       ]
     },
     {
@@ -3593,6 +3617,14 @@
       "to": "clause",
       "ids": [
         "BUILD-003"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "SURFACE-004"
+          ]
+        }
       ]
     },
     {

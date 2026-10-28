@@ -4760,7 +4760,7 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-005, BASE
 
 **Acceptance.**
 1. Inviting an operator or enlarging another integration grant is access with the number of people or grants and widening direction; removing membership or narrowing a grant records narrowing.
-2. Changing a sender secret, webhook-signing secret, allowed-host protection, capture-mode setting under CONT-025 or open-estimate setting under RESULT-002 and RESULT-009 is security with its setting name; changing running capture also adds live.
+2. Changing a sender secret, webhook-signing secret, allowed-host protection (including brand-kit or social-block host additions or changes and catalog-derived host refreshes), capture-mode setting under CONT-025 or open-estimate setting under RESULT-002 and RESULT-009 is security with its setting name; changing running capture also adds live.
 3. Erasing one contact or a selected bulk set under CONT-022, irreversibly merging contacts under CONT-011, removing contact-owned custom objects, permanently purging retained marketing data or revoking issued open-estimate pixels under RESULT-009 is destructive with its affected-item count; a reversible draft removal stays standard.
 4. The contact-erasure fixture removes that contact’s Mango data while retaining the particular surviving opt-out custody CONT-013 requires.
 5. A routine disable changes access for that routine and adds live for stopping its scheduled job, preventing its next scheduled run.
