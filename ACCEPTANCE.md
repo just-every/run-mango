@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 11 | 207 | 89 | 307 |
+| Core | 9 | 209 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 11 | 207 | 98 | 316 |
+| Full target | 9 | 209 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -4136,7 +4136,7 @@ Core · target · **missing** · From MOVE-008 · Rules D-2
 
 #### MOVE-009 — Incumbent engagement history
 
-Core · target · **done** · Rules D-2
+Core · target · **partial** · Rules D-2
 
 **Requirement.** Mailchimp export engagement becomes historical imported facts, separate from native sending and consent.
 
@@ -4149,7 +4149,7 @@ Core · target · **done** · Rules D-2
 6. MOVE-015 owns API-key activity, other incumbents and the remaining engagement uses.
 
 **Evidence.** `tests/move-in/archive.journeys.ts` · `tests/move-in/hostile.journeys.ts` · `tests/portability.spec.ts`
-**Gap.** None.
+**Gap.** Historical contact/time/campaign/link facts, imported/dropped reconciliation, dormancy distinctions and populated native result preservation are asserted. The cited evidence does not compare consent state and consent-evidence rows before and after the initial historical-event import; its after-import status snapshot cannot prove that import changes no consent.
 
 #### MOVE-010 — Several audiences
 
@@ -4417,7 +4417,7 @@ Core · target · **missing** · Cites BASE-ROLE-001 · Register R-703
 
 #### PUB-001 — Web archive
 
-Core · target · **done** · Cites BASE-PUBLIC-001 · Rules D-2
+Core · target · **partial** · Cites BASE-PUBLIC-001 · Rules D-2
 
 **Requirement.** A sent newsletter can be shared as a neutral public web version.
 
@@ -4427,7 +4427,7 @@ Core · target · **done** · Cites BASE-PUBLIC-001 · Rules D-2
 3. Personalization becomes neutral text; public output contains no recipient token or personal value, unsubscribe link or private tracking link.
 
 **Evidence.** `tests/campaign-results/archive.journeys.ts` · `tests/audience-import/erasure.spec.ts`
-**Gap.** None.
+**Gap.** Publication, index navigation, RSS, metadata, neutral personalization and removal of representative private/tracking values are asserted. The cited evidence checks absence of the unsubscribe template token, but does not assert that the actual unsubscribe anchor is absent from the public page.
 
 #### PUB-002 — Paid newsletters
 

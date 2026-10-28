@@ -1422,15 +1422,15 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | MOVE-009 | 4 | Open-only and no-history are distinct | `tests/move-in/archive.journeys.ts:402` | asserted |
 | MOVE-009 | 5 | No native send facts or attribution are created | `tests/move-in/archive.journeys.ts:180` | asserted |
 | MOVE-009 | 5 | Populated campaign result remains unchanged | `tests/move-in/archive.journeys.ts:399` | asserted |
-| MOVE-009 | 5 | Consent unchanged by historical-event import | `tests/move-in/archive.journeys.ts:106` | asserted |
+| MOVE-009 | 5 | Consent unchanged by historical-event import | none | none |
 | MOVE-009 | 6 | Pointer to MOVE-015 owns additional import uses | moved | moved |
-| PUB-001 | 1 | Sent issue public page | `tests/campaign-results/archive.journeys.ts:27` | asserted |
-| PUB-001 | 1 | Archive index entry | `tests/campaign-results/archive.journeys.ts:29` | asserted |
+| PUB-001 | 1 | Sent issue public page | `tests/campaign-results/archive.journeys.ts:31` | asserted |
+| PUB-001 | 1 | Archive index entry | `tests/campaign-results/archive.journeys.ts:31` | asserted |
 | PUB-001 | 2 | RSS item | `tests/campaign-results/archive.journeys.ts:39` | asserted |
 | PUB-001 | 2 | Search metadata | `tests/campaign-results/archive.journeys.ts:27` | asserted |
 | PUB-001 | 3 | Neutral personalization | `tests/campaign-results/archive.journeys.ts:32` | asserted |
 | PUB-001 | 3 | No recipient token or personal value | `tests/campaign-results/archive.journeys.ts:28` | asserted |
-| PUB-001 | 3 | No unsubscribe token | `tests/campaign-results/archive.journeys.ts:28` | asserted |
+| PUB-001 | 3 | Unsubscribe link removed from public output | none | none |
 | PUB-001 | 3 | No private tracking link | `tests/campaign-results/archive.journeys.ts:34` | asserted |
 | PUB-005 | 1 | Only Owner-saved tier can be offered | none | none |
 | PUB-005 | 1 | Exact price and frequency | `tests/go-live/paid-signup-journey.ts:35` | asserted |
