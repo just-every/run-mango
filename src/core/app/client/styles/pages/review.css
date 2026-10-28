@@ -18,7 +18,7 @@
 .check-list > .check-list__item:first-child, .check-list > .passed-checks:first-child { border-top: 0; }
 .check-list__item > span { display: contents; color: var(--ms-ink-soft); }
 .check-list__item strong { color: var(--ms-ink); font-weight: 500; }
-.check-list__item b { color: var(--ms-tomato-deep); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.check-list__item b { color: var(--ms-tomato-deep); font-size: var(--ms-caption-size, 13px); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
 .check-list__item:not(.check-list__item--passed) b { justify-self: start; padding: 1px 8px; border: 1px solid var(--ms-tomato-line); border-radius: 999px; background: var(--ms-tomato-wash); line-height: 1.5; }
 .check-list__item--passed b { color: var(--ms-leaf-deep); }
 .check-list__item--advisory b { border-color: var(--ms-sun-line); background: var(--ms-sun-wash); color: var(--ms-wait); }
@@ -163,7 +163,7 @@
 .delivery-plan > div { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 2px var(--sp-3); padding: 14px 0; border-top: 1px solid var(--ms-hairline); }
 .delivery-plan > div:first-child { padding-top: 0; border-top: 0; }
 .delivery-plan > .muted-copy { margin: 0; }
-.delivery-plan strong { color: var(--ms-amber); font-size: 12px; font-weight: 600; letter-spacing: .1em; line-height: 1.6; text-transform: uppercase; }
+.delivery-plan strong { color: var(--ms-amber); font-size: var(--ms-caption-size, 13px); font-weight: 600; letter-spacing: .1em; line-height: 1.6; text-transform: uppercase; }
 .delivery-plan time { font-size: 15px; font-weight: 500; }
 .delivery-plan > div > small { grid-column: 2; color: var(--ms-muted); }
 .delivery-plan > div > p { grid-column: 2; margin: var(--sp-1) 0 0; color: var(--ms-ink-soft); font-size: 14px; }

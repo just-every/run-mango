@@ -44,7 +44,7 @@
   .audience-ledger .table-scroll { overflow: visible; }
   .audience-ledger__table, .audience-ledger__table tbody, .audience-ledger__table tr, .audience-ledger__table th, .audience-ledger__table td { display: block; width: 100%; min-width: 0; }
   .audience-ledger__table thead { display: none; }
-  .audience-ledger__table tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3) var(--sp-4); padding: 14px 0; border-bottom: 1px solid var(--ms-hairline); }
+  .audience-ledger__table tbody tr { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: var(--sp-3) var(--sp-4); padding: 14px 0; border-bottom: 1px solid var(--ms-hairline); }
   .audience-ledger__table tbody tr:hover { background: none; }
   .audience-ledger__table tbody tr:last-child { padding-bottom: 0; border-bottom: 0; }
   .audience-ledger__table tbody :is(th, td) { padding: 0; border: 0; }
