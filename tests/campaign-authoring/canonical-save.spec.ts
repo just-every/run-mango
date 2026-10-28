@@ -11,7 +11,7 @@ import { authoringRuntime } from './browser-runtime.mjs';
 // clients read a comment or text and keep the span open over the claim.
 const closeTags = ['</ span>', '< /span>', '<\t/span>', '<\n/span>', '</\tspan>', '</\nspan>'];
 
-test('[BUILD-010][CAMP-003][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree', async ({ request,page },info) => {
+test('[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree', async ({ request,page },info) => {
   test.setTimeout(180000);
   const runtime = await authoringRuntime({ suite: 'authoring-canonical-save', reuseEmptySchema: true });
   try {
@@ -73,7 +73,7 @@ const unsettled = [
   { body: '<script><hr><p>{{physical_address}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe</a></p></script><p>Seasonal news</p>', approvable: false },
 ];
 
-test('[CAMP-003][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it', async ({ request,page },info) => {
+test('[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it', async ({ request,page },info) => {
   test.setTimeout(180000);
   const runtime = await authoringRuntime({ suite: 'authoring-canonical-save', reuseEmptySchema: true });
   try {

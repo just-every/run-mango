@@ -28,7 +28,7 @@ async function hex(bytes: Uint8Array<ArrayBuffer>) {
 type Pass = { again?: number };
 
 /** 12ui answered a request of this pass: a wait it imposed is over, so the editor stops saying Mango is waiting
- * while 12ui draws or converts (DESIGN-002). The transient attempt count is kept: it bounds a flapping service. */
+ * while 12ui draws or converts (DESIGN-007). The transient attempt count is kept: it bounds a flapping service. */
 async function answered(platform: Platform, job: DesignJob, stage: 'drafting' | 'preparing') {
   if (!job.waitCode && !job.retryAt) return;
   await createDesignRepository(platform.database.$client).update(job.id, [stage], { waitCode: null, retryAt: null }, Date.now());

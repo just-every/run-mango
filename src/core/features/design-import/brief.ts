@@ -1,4 +1,4 @@
-/** Which design lines did not come from the operator's brief (DESIGN-004, decision D7a). A line counts as
+/** Which design lines did not come from the operator's brief (DESIGN-014, decision D7a). A line counts as
  * from the brief only when the whole line appears in it as whole words, ignoring case, spacing and
  * typographic quotes: "Ripe" does not come from "Ripening". Image models invent copy, so every other line
  * is shown for review; Mango never verifies a claim. */

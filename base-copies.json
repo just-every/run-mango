@@ -56,7 +56,7 @@
       },
       "acknowledged": {
         ".github/workflows/verify.yml": {
-          "sha256": "961df898ebcbb5356ad58a6b14fba1631f757e5d03d590a5837fd30bc8fc2d96",
+          "sha256": "ae9acf0a6439ec5d9c60dd854ee333c0a8193ca815365cebedc8749728fe4286",
           "mode": "100644"
         }
       }
@@ -2201,6 +2201,17 @@
       },
       "modes": {
         "src/base/command-receipts.ts": "100644"
+      }
+    },
+    {
+      "path": "src/base/contract-docs.mjs",
+      "originPath": "foundation/runtime/contract-docs.mjs",
+      "revision": "0fe27af9a5cb1bd9dc5e41da024784082e609010",
+      "files": {
+        "src/base/contract-docs.mjs": "d98e14f489c57f60446c2cc68310db09f298f7974d77026dbaa2c62868cc4838"
+      },
+      "modes": {
+        "src/base/contract-docs.mjs": "100644"
       }
     },
     {

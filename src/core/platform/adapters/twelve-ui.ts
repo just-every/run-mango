@@ -7,7 +7,7 @@ import { DesignProviderError, type DesignCandidateStatus, type DesignLayout, typ
 const layerDocMediaType = 'application/vnd.12ui.layerdoc+json;version=2';
 const candidateStatuses = new Set<DesignCandidateStatus>(['pending', 'dispatched', 'succeeded', 'failed']);
 const layoutStatuses = new Set<DesignLayout['status']>(['queued', 'running', 'succeeded', 'failed', 'expired']);
-/** Every request has a deadline, so a service that stops answering fails the run within minutes (DESIGN-002).
+/** Every request has a deadline, so a service that stops answering fails the run within minutes (DESIGN-007).
  * A candidate POST answers once its image is drawn (about 45 s); past its deadline the next run read says what happened.
  * Images and the LayerDoc are downloads of up to 40 MB and 2 MB; every other request answers at once. */
 const dispatchTimeoutMs = 150_000;

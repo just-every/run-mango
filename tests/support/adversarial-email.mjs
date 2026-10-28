@@ -159,7 +159,7 @@ export const rejectedPresentation = [
 
 /**
  * Styled markup that mail clients read differently from how it is written, so approval refuses it as written.
- * Saving stores the tree HTML parsers build in its canonical form (CAMP-003), which states that structure
+ * Saving stores the tree HTML parsers build in its canonical form (CAMP-022), which states that structure
  * explicitly: every client then reads the same boxes, and the checker judges them as they render.
  * @type {Array<[string, string]>}
  */

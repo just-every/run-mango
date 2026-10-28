@@ -82,6 +82,9 @@ jobs:
         with:
           node-version: '22.20.0'
           package-manager-cache: false
+      - name: Check generated contract documents
+        if: matrix.name == 'static'
+        run: node src/base/contract-docs.mjs check
       - name: Check edition source lock freshness
         if: ${{ matrix.name == 'static' && hashFiles('edition.json', 'sources.lock.json') != '' }}
         run: node scripts/edition-authoring/cli.mjs check

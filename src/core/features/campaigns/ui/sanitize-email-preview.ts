@@ -40,7 +40,7 @@ export function sanitizeEmailPreview(source: string, loadImages = false, approva
   return {html: mobileDocument(nodes.map(serialize).join(''),styled?parsed.mobile?.style??'':''), imagesBlocked};
 }
 /** Images load only after the operator opts in (BASE-INPUT-002): then from HTTPS hosts and from this
- * deployment's own origin, which serves its campaign images over http on a computer (CAMP-012). */
+ * deployment's own origin, which serves its campaign images over http on a computer (CAMP-023). */
 export function previewDocument(html: string, loadImages: boolean, mediaOrigin?: string, appearance: 'light' | 'dark' = 'light') {
   const images = loadImages ? ['https:', ...(mediaOrigin && /^https?:\/\/[a-z0-9.[\]:-]+$/i.test(mediaOrigin) ? [mediaOrigin] : [])].join(' ') : "'none'";
   const envelope=mobileEnvelope(html);

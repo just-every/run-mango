@@ -21,7 +21,7 @@ export function safeEmailUrl(value: string) {
   try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password; } catch { return false; }
 }
 const mediaPath = /^\/media\/[0-9a-f]{64}(?:\.[a-z]{3,4})?$/;
-/** A copy running on this computer serves its own campaign images (CAMP-012) over http. A draft may carry
+/** A copy running on this computer serves its own campaign images (CAMP-023) over http. A draft may carry
  * exactly those, so the operator can save and preview a designed email there. Approval, test sends and
  * delivery pass no origin and refuse them: recipients' mail needs HTTPS. */
 export function localMediaUrl(value: string, mediaOrigin?: string) {

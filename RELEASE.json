@@ -76,6 +76,14 @@
       "was": "missing",
       "now": "partial",
       "summary": "Generated responsive CSS and both-tree checks pass the existing 180-second canonical-save registration, including 138 adversarial cases, stored-body 375/600 standards/quirks renders with and without style, transmitted-byte accounting and Preview at 1440/390. The audit avoids sandbox child-frame discovery without losing shell rules or the eight direct email audits. Per-block controls, nested orientation and full editor acceptance remain open."
+    },
+    "BUILD-013": {
+      "change": "changed",
+      "summary": "Receiving part of BUILD-010: the generated responsive CSS and exact-byte save guard described in the BUILD-010 release receipt apply here. Status stays partial; the complete responsive authoring workflow remains open."
+    },
+    "BUILD-014": {
+      "change": "changed",
+      "summary": "Receiving part of BUILD-010: both-tree checks and hidden-compliance refusal, the 138 adversarial cases and stored-body standards/quirks renders described in the BUILD-010 release receipt apply here. Status stays partial; complete editor acceptance remains open."
     }
   },
   "extensionPointChanges": [],
