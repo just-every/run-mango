@@ -8,6 +8,6 @@ export const run: RunData = {
   clone: 'npx -y @runeditrun/rer dev just-every/run-mango',
   licence: 'MIT',
   docs: true,
-  paths: { product: null },
+  paths: { product: 'mango' },
   pricing: runPricing,
 };
