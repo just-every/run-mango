@@ -1,3 +1,4 @@
+import {launchOptions} from './tests/support/browser.mjs';
 import { evidenceDirectory } from './tests/support/artifacts.mjs';
 import { defineConfig } from '@playwright/test';
 
@@ -13,9 +14,10 @@ export default defineConfig({
   retries: 0,
   reporter: process.env.CI ? 'github' : 'list',
   use: {
-    launchOptions: {args: ['--use-mock-keychain', '--password-store=basic']},
+    launchOptions,
+    viewport:{width:1440,height:1000},
     baseURL,
     trace: 'off',
   },
-  webServer,
+  webServer: process.env.MANGO_NO_FIXTURE_SERVER === '1' ? undefined : webServer,
 });

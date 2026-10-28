@@ -26,7 +26,7 @@ export async function authorityRuntime() {
   }
   await symlink(resolve('node_modules'), join(checkout, 'node_modules'));
   const port = await freePort(), url = `http://127.0.0.1:${port}`;
-  const env = { ...process.env, CI: '1', RER_SERVER_JOURNEY: '1', WRANGLER_SEND_METRICS: 'false', CLOUDFLARE_INCLUDE_PROCESS_ENV: 'false' };
+  const env = { ...process.env, CI: 'true', RER_SERVER_JOURNEY: '1', WRANGLER_SEND_METRICS: 'false', CLOUDFLARE_INCLUDE_PROCESS_ENV: 'false' };
   for (const key of Object.keys(env)) if (key !== 'MANGO_TEST_WORK_DIR' && /^(MANGO_|PLAYWRIGHT_PORT|MAIL_|AUTH_|INITIAL_OPERATOR|SESSION_|CONTACT_)/.test(key)) delete env[key];
   delete env.RER_LOCAL_OPERATION;
   let output = '', dev, secrets = [];

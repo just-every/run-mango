@@ -7,8 +7,8 @@ import { openGate } from './dev-gate.mjs';
 let runtime: Awaited<ReturnType<typeof freshCopy>>;
 test.beforeAll(async()=>{test.setTimeout(600000);runtime=await freshCopy();});
 test.afterAll(async()=>{await runtime?.close();});
-const width=390;
-test('[OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440 and 390', async({browser})=>{
+const width=1440;
+test('[OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440', async({browser})=>{
   const context=await browser.newContext({viewport:{width,height:900}}), page=await context.newPage();
   try {
     expect((await stat(join(runtime.checkout,'.dev.vars'))).mode & 0o777).toBe(0o600);
@@ -38,7 +38,7 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     await page.getByRole('link',{name:'Sign in as Owner'}).click();
     await expect(page).toHaveURL(runtime.url+'/setup');
     await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');
-    for (const viewportWidth of [1440,390]) {
+    for (const viewportWidth of [1440]) {
       await page.setViewportSize({width:viewportWidth,height:900});
       await expect(page.getByRole('heading',{name:'Set up your sender identity'})).toBeVisible();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

@@ -58,9 +58,85 @@ jobs:
           REUSABLE: ${{ toJSON(inputs) != '{}' }}
         run: node scripts/ci/mango-plan.mjs
 
+  build:
+    needs: plan
+    if: needs.plan.outputs.coverage == 'full'
+    name: Build and public command checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      CI: 'true'
+      WRANGLER_SEND_METRICS: 'false'
+      PLAYWRIGHT_SKIP_BROWSER_GC: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22.20.0'
+          package-manager-cache: false
+      - run: npm install --global pnpm@10.12.4
+      - name: Cache frozen dependencies and Chromium
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: |
+            ~/.local/share/pnpm/store
+            ~/.cache/ms-playwright
+          key: seed-ubuntu24-${{ runner.arch }}-browser-true-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            seed-ubuntu24-${{ runner.arch }}-browser-true-
+      - name: Install frozen dependencies and reserve native runtime disk
+        shell: bash
+        run: |
+          # Native rer journeys require 15 GiB. Only remove .NET if needed,
+          # overlapping it with install instead of reclaiming every toolchain.
+          reclaim_pid=
+          free_kib=$(df -Pk "$GITHUB_WORKSPACE" | awk 'END { print $4 }')
+          if [ "$free_kib" -lt "$((20 * 1024 * 1024))" ]; then
+            sudo rm -rf -- /usr/share/dotnet &
+            reclaim_pid=$!
+          fi
+          pnpm install --frozen-lockfile
+          if [ -n "$reclaim_pid" ]; then wait "$reclaim_pid"; fi
+      - name: Install Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm exec playwright install chromium
+          # Hosted ubuntu-24.04 already carries Chromium's libraries. Use apt only when a real launch fails.
+          node scripts/ci/chromium-probe.mjs || {
+            timeout 420 pnpm exec playwright install-deps chromium
+            node scripts/ci/chromium-probe.mjs
+          }
+      - name: Check generated contract documents
+        run: node src/base/contract-docs.mjs check
+      - name: Check edition source lock freshness
+        run: node scripts/edition-authoring/cli.mjs check
+      - name: Run this shard
+        env:
+          SHARD: static
+          MANGO_TEST_WORK_DIR: ${{ runner.temp }}/mango-verification/static
+        run: node scripts/verification/ci.mjs "$SHARD"
+      - name: Keep this shard's timings and diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-static
+          path: ${{ runner.temp }}/mango-verification/static/evidence
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Share the verified production build
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: dist
+          retention-days: 1
+
   shards:
     name: shards (${{ matrix.name }})
-    needs: plan
+    needs: [plan, build]
     if: ${{ needs.plan.outputs.has_shards == 'true' }}
     runs-on: ubuntu-24.04
     timeout-minutes: ${{ inputs.timeout || matrix.timeout || 12 }}
@@ -143,6 +219,11 @@ jobs:
             stat -c 'After apt: %n uid=%u gid=%g mode=%a' "$PLAYWRIGHT_BROWSERS_PATH" "$RUNNER_TEMP/rer-apt/archives"
             probe
           fi
+      - name: Restore the verified production build
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: dist
       - name: Run this shard
         env:
           SHARD: ${{ matrix.name }}
@@ -183,7 +264,7 @@ jobs:
         run: node scripts/ci/verify-ci.mjs --light
 
   full-push-proof:
-    needs: [plan, shards]
+    needs: [plan, build, shards]
     if: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/heads/') && needs.plan.outputs.tier == 'push' && needs.plan.outputs.coverage == 'full' && needs.shards.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 1
@@ -191,7 +272,7 @@ jobs:
       - run: test '${{ needs.shards.result }}' = success
 
   nightly-proof:
-    needs: [plan, shards]
+    needs: [plan, build, shards]
     if: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (needs.plan.outputs.tier == 'nightly' || needs.plan.outputs.tier == 'all') && needs.plan.outputs.coverage == 'full' && needs.shards.result == 'success' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 1
@@ -204,7 +285,7 @@ jobs:
           key: nightly-green-${{ github.sha }}
 
   verify:
-    needs: [plan, shards, light, full-push-proof, nightly-proof]
+    needs: [plan, build, shards, light, full-push-proof, nightly-proof]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 1
@@ -212,6 +293,7 @@ jobs:
       - name: Require the selected coverage and its proof
         env:
           PLAN: ${{ needs.plan.result }}
+          BUILD: ${{ needs.build.result }}
           SHARDS: ${{ needs.shards.result }}
           LIGHT: ${{ needs.light.result }}
           PUSH_PROOF: ${{ needs.full-push-proof.result }}
@@ -228,6 +310,6 @@ jobs:
           case "$COVERAGE" in
             reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;
             light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;
-            full) test "$LIGHT" = skipped && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;
+            full) test "$BUILD" = success && test "$LIGHT" = skipped && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;
             *) exit 1 ;;
           esac

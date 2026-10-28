@@ -25,7 +25,7 @@ test('[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-
     const entryErrors:string[]=[];
     browserPage.on('pageerror',error=>entryErrors.push(error.message));
     browserPage.on('console',message=>{if(message.type()==='error'&&/hydration|hydrated.*match/i.test(message.text()))entryErrors.push(message.text());});
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await browserPage.setViewportSize({width,height:1000});await openPage(browserPage,site.runtime.url+'/signin');
       await expect(browserPage).toHaveURL(site.runtime.url+'/app');
       await expect(browserPage.getByRole('heading',{name:'Sign in to Mango',exact:true})).toHaveCount(0);

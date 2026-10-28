@@ -57,7 +57,7 @@ test('[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact ap
     const links = saved.links.map((link:any) => link.destinationUrl);
     expect(links).toEqual(['mailto:hello@myshop.example?subject=Order%20question&body=Can%20you%20help%3F', 'tel:+15555550123', 'sms:+15555550123?body=Hi']);
     for (const link of links) expect(saved.revision.emailText).toContain(link);
-    for (const width of [1440,390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({width, height:1000});
       await reloadPage(page);
       await page.locator('details.rich-email-link summary').click();

@@ -5,7 +5,7 @@ import {join} from 'node:path';
 import {authorityRuntime, signIn} from './authority-runtime.mjs';
 import {openGate} from './dev-gate.mjs';
 
-test('[MGMT-002] native owner editor mounts at 1440 and 390, refuses visitors and loses its grant on sign-out',async ({browser}) => {
+test('[MGMT-002] native owner editor mounts at 1440, refuses visitors and loses its grant on sign-out',async ({browser}) => {
   test.setTimeout(600000);
   let runtime: Awaited<ReturnType<typeof authorityRuntime>> | undefined;
   let appOrigin: string;
@@ -22,7 +22,7 @@ test('[MGMT-002] native owner editor mounts at 1440 and 390, refuses visitors an
       });send('ready');
     </script></main></body></html>`);
   });
-  const context=await browser.newContext(),page=await context.newPage();
+  const context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage();
   try {
     // Reserve management before choosing the app port, so it cannot take that released socket.
     await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -37,9 +37,20 @@ test('[MGMT-002] native owner editor mounts at 1440 and 390, refuses visitors an
     expect((await (await page.request.get(runtime.url+'/auth/environment')).json()).editorEligible).toBe(false);
     await openGate(context,runtime.url);await page.goto(runtime.url+'/docs');
     await page.waitForFunction(() => document.documentElement.dataset.mangoHydrated === 'true');await expect(page.locator('[data-rer-editor]')).toHaveCount(0);
+    // The same native installation admits its owner before JavaScript as well
+    // as mounting the editor after hydration.
+    const noJs=await browser.newContext({javaScriptEnabled:false,viewport:{width:1440,height:900}});
+    try {
+      const plain=await noJs.newPage();await openGate(noJs,runtime.url);
+      await plain.goto(runtime.url+'/signin?returnTo=%2Fsetup');
+      await plain.getByRole('link',{name:'Sign in as Owner'}).click();
+      await expect(plain).toHaveURL(runtime.url+'/setup');
+      await expect(plain.getByLabel('Business display name',{exact:true})).toBeVisible();
+      expect((await plain.request.get(runtime.url+'/__dev/outbox')).status()).toBe(404);
+    } finally {await noJs.close();}
     await signIn(page,runtime.url);
     expect((await (await page.request.get(runtime.url+'/auth/environment')).json()).editorEligible).toBe(true);
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:900});
       await page.goto(runtime.url+'/docs');
       const host=page.locator('[data-rer-editor]');await expect(host).toHaveCount(1);

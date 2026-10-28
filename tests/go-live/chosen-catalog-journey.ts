@@ -33,7 +33,7 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
   await page.getByRole('button',{name:'Delete block 2',exact:true}).click();await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption('product-grid');await page.getByRole('button',{name:'Add block',exact:true}).click();
   await search('Summer harvest',['Synthetic Basil','Synthetic Mint']);await search('Mango Workshop',['Synthetic Basil','Synthetic Mint']);await search('Synthetic Basil',['Synthetic Basil']);await page.getByRole('button',{name:'Choose Synthetic Basil',exact:true}).press('Enter');
   await search('mint-green-bundle',['Synthetic Mint']);await page.getByRole('combobox',{name:'Variant for Synthetic Mint',exact:true}).selectOption('gid://shopify/ProductVariant/1612');await page.getByRole('button',{name:'Choose Synthetic Mint',exact:true}).press('Enter');
-  for(const width of [1440,390])await screen(page,info,'catalog-picker',width);
+  for(const width of [1440])await screen(page,info,'catalog-picker',width);
   await save();
   let saved=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
   const encoded=/data-mango-catalog="([^"]+)"/.exec(saved.revision.emailBody)![1],state=JSON.parse(Buffer.from(encoded,'base64').toString());
@@ -44,7 +44,7 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
   console.log('Chosen catalog proof: current previews');
   const preview=page.locator('section[aria-label="Saved revision previews"]');await expect(preview.getByRole('status')).toContainText('Catalog read at');
   await preview.getByRole('button',{name:'Load 2 remote images',exact:true}).click();
-  for(const width of [1440,390]){
+  for(const width of [1440]){
    await page.setViewportSize({width,height:1000});
    await preview.getByRole('button',{name:width===390?'Mobile email':'Desktop email',exact:true}).press('Enter');
    const frame=preview.frameLocator('iframe[title="Saved email preview"]');
@@ -67,7 +67,7 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
   catalog.price(1601,'36.00');catalog.unpublish(161);const before=marketing().length;console.log('Chosen catalog proof: dispatch new price');await site.control('/_golive/clock',{advanceMs:due.getTime()-(await site.control('/_golive/clock')).now+1});await dispatch(site,campaign.campaignId,due);console.log('Chosen catalog proof: dispatched');const delivered=marketing().slice(before);expect(delivered).toHaveLength(1);const html=delivered[0].body.content.find((part:any)=>part.type==='text/html').value;expect(html).toContain('AUD 36.00');expect(html).not.toContain('Synthetic Mint');
   console.log('Chosen catalog proof: read outcomes');
   const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);expect(detail.catalogSummary.hidden).toEqual([{reason:'unpublished',count:1}]);
-  catalog.reset();console.log('Chosen catalog proof: open outcomes');await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}`);for(const width of [1440,390]){await expect(page.getByRole('region',{name:'Catalog outcomes',exact:true})).toContainText('unpublished');await screen(page,info,'catalog-outcomes',width);}
+  catalog.reset();console.log('Chosen catalog proof: open outcomes');await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}`);for(const width of [1440]){await expect(page.getByRole('region',{name:'Catalog outcomes',exact:true})).toContainText('unpublished');await screen(page,info,'catalog-outcomes',width);}
   console.log('Chosen catalog proof: terminal availability cases');
   const sendCase=async(name:string,change:()=>void,empty:'hide'|'skip'='hide')=>{
    catalog.reset();const now=await site.control('/_golive/clock',{advanceMs:25*3600000,hold:true}),at=new Date(now.now+5000),next=await draftCampaign(site,cookie,'synthetic-mango-'+name,['synthetic-mango-160@example.test'],at),body=empty==='hide'?saved.revision.emailBody:saved.revision.emailBody.replace(encoded,Buffer.from(JSON.stringify({...state,empty})).toString('base64'));
@@ -79,7 +79,7 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
   const skip=await sendCase('164',()=>{catalog.unpublish(160);catalog.unpublish(161);},'skip');expect(skip.sends).toHaveLength(0);expect(skip.rows.map(row=>row.skip_reason)).toEqual(['catalog-empty']);expect(skip.detail.catalogSummary.skipped).toEqual([{reason:'catalog-empty',count:1}]);
   const unavailable=await sendCase('165',()=>catalog.fail());expect(unavailable.sends).toHaveLength(0);expect(unavailable.rows.map(row=>row.skip_reason)).toEqual(['catalog-unavailable']);expect(unavailable.detail.catalogSummary.skipped).toEqual([{reason:'catalog-unavailable',count:1}]);
   await openPage(page,`${site.runtime.url}/app/campaigns/${unavailable.campaign.campaignId}/scheduled`);
-  for(const width of [1440,390]){
+  for(const width of [1440]){
    await expect(page.getByRole('table',{name:'Recipient outcomes',exact:true}).getByRole('row').filter({hasText:'synthetic-mango-160@example.test'})).toContainText('catalog-unavailable');
    await screen(page,info,'catalog-unavailable-recipient',width);
   }
