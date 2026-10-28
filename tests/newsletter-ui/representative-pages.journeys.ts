@@ -15,7 +15,7 @@ test('[BASE-ACCESS-002] fourteen representative pages fit and have no serious ac
     await test.info().attach(`lobby-${width}`, { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
   }
   await page.setViewportSize({ width: 390, height: 844 });
-  for (const route of ['/docs', '/docs/install']) {
+  for (const route of ['/docs', '/docs/install', '/docs/getting-started']) {
     await page.goto(route);
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     await expectDocumentToFit(page, 390);
