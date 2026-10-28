@@ -1,3 +1,4 @@
+import {nativeActor} from '../agent-door/native-context';
 import {Hono} from 'hono';
 import {z} from 'zod';
 import type {AuthVariables} from './routes';
@@ -18,7 +19,7 @@ export function contactSupportRoutes(db:D1Database, audience:ReturnType<typeof c
     const id=crypto.randomUUID(),now=Date.now();
     await db.batch([
       db.prepare("INSERT INTO operator_privacy_requests(id,contact_id,kind,actor_id,created_at) VALUES(?,?,'erasure',?,?)").bind(id,contactId,actor,now),
-      db.prepare("INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) VALUES(?,?,'operator',?,'contact.erasure-requested','contact',?,'{}',?,?)").bind(id,id,actor,contactId,now,now),
+      db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) VALUES(?,?,'${nativeActor(actor).type}',?,'contact.erasure-requested','contact',?,'{}',?,?)`).bind(id,id,nativeActor(actor).id,contactId,now,now),
     ]);
     return context.json({id,kind:'erasure',createdAt:now},201);
   });
@@ -32,7 +33,7 @@ export function contactSupportRoutes(db:D1Database, audience:ReturnType<typeof c
     if(!destination)return context.json({error:'channel_destination_missing'},409);
     try {await audience.recordChannelOptOut({contactId,channel:body.data.channel,reason:'operator-recorded-opt-out',occurredAt:now,stableId:id});}
     catch{return context.json({error:'opt_out_unavailable'},503);}
-    await db.prepare("INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) VALUES(?,?,'operator',?,'contact.opt-out-recorded','contact',?,json_object('channel',?),?,?)").bind(id,id,actor,contactId,body.data.channel,now.getTime(),now.getTime()).run();
+    await db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) VALUES(?,?,'${nativeActor(actor).type}',?,'contact.opt-out-recorded','contact',?,json_object('channel',?),?,?)`).bind(id,id,nativeActor(actor).id,contactId,body.data.channel,now.getTime(),now.getTime()).run();
     return context.json({status:'unsubscribed'});
   });
   return routes;

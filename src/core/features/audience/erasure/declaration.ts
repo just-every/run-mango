@@ -90,4 +90,6 @@ export const contactErasureTables:ErasureTable[]=[
   ...['sending_connection','sending_proposals'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
   {...contact('incumbent_consent_links'),literal:true,mode:'contact-data'},
   {table:'flow_draft_revisions',literal:true,mode:'redact'},
+  // Agent results and held summaries cannot keep erased contact literals.
+  ...['agent_door_audit','agent_door_calls','agent_door_approvals','agent_door_reviews','agent_door_events','mango_agent_operations'].map(table=>({table,literal:true,mode:'redact' as const})),
 ];

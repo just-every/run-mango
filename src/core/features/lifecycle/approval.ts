@@ -1,3 +1,4 @@
+import {nativeAgent} from '../agent-door/native-context';
 import {incumbentReliance} from '../move-in/incumbent-review';
 import { digestJson } from './digest';
 import { messageRendererVersion } from '@/core/features/campaigns/message-content';
@@ -75,6 +76,8 @@ export function createApprovalService(runtime: LifecycleRuntime, repository: Lif
       const smsPolicy=snapshot.steps.some(step=>step.channel==='sms')?await smsPolicyAuthority(runtime.platform.config):undefined;
       const openTracking = await openTrackingSettings(runtime.platform.database.$client);
       const revisionDigest = await digestJson({
+        preparedBy:nativeAgent.getStore()?.context.actor,
+        approvers:nativeAgent.getStore()?.context.approvers,
         smsPolicy: smsPolicy?.digest,
         openTracking,
         rendererVersion: messageRendererVersion,

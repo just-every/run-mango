@@ -21,6 +21,8 @@
   transition: background-color .18s, border-color .18s, box-shadow .18s;
 }
 @media (pointer: coarse) { .primary-action, .secondary-action, .danger-action, .danger-action--line, .audience-import-upload { min-height: 44px; } }
+.operator-layout :is(button, .primary-action, .secondary-action, .danger-action, .danger-action--line, .audience-import-upload) { min-height: 44px; }
+.operator-layout .back-link { min-height: 44px; align-items: center; }
 
 .primary-action { border-color: var(--ms-sun); background: var(--ms-sun); }
 .primary-action:hover:not(:disabled) { border-color: var(--ms-sun-hover); background: var(--ms-sun-hover); }

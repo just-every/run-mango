@@ -6,6 +6,9 @@ import {activityStatement} from '@/core/features/auth/activity-record';
 import {sha256} from '@/core/shared/ids';
 import {readWooConnection, type WooConnection} from './connection';
 import type {PluginEvent} from './plugin-events';
+import {custodyStatement,retainedPrincipal} from '../../agent-door/custody';
+import {nativeAgent,nativeExecutionGuard,nativeActor} from '../../agent-door/native-context';
+import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
 
 /** A concrete tag-and-exit starter. The visual graph editor and message nodes
  * retain their own FLOW-* obligations; this revision never sends a message. */
@@ -36,14 +39,15 @@ export function wooFlowRoutes(platform: Platform) {
     if(action==='activate'&&(await platform.mailer.capabilities()).deliveryEventsVerified===false)return context.json({error:'delivery-events-missing'},409);
     const actor = context.get('operator').id, now = Date.now();
     // Only the exact saved tag action is activated; a new draft has a new id.
-    await db.batch([db.prepare('UPDATE woocommerce_flows SET state=?,activated_by=?,activated_at=? WHERE id=?').bind(action === 'activate' ? 'live' : 'paused', actor, now, flow.id),
+    const custody=custodyStatement(db,'flow',flow.id)??db.prepare("DELETE FROM mango_agent_custody WHERE kind='flow' AND target_id=?").bind(flow.id);
+    await db.batch([db.prepare('UPDATE woocommerce_flows SET state=?,activated_by=?,activated_at=? WHERE id=?').bind(action === 'activate' ? 'live' : 'paused', actor, now, flow.id),custody,
       activityStatement(db, {key: crypto.randomUUID(), action: 'flow-' + action, entityType: 'flow', entityId: flow.id, actorId: actor, detail: {revisionId: flow.id}, at: now})]);
     return context.json({revisionId: flow.id, state: action === 'activate' ? 'live' : 'paused'});
   });
   return routes;
 }
 
-export async function enrollWooFlows(platform: Platform, connection: WooConnection, event: PluginEvent) {
+export async function enrollWooFlows(platform: Platform, connection: WooConnection, event: PluginEvent,onlyFlow?:string) {
   if (event.kind !== 'abandoned_checkout') return;
   const db = platform.database.$client, now = Date.now();
   const sourceId = `woocommerce:${connection.id}:cart:${event.checkoutId}`;
@@ -53,6 +57,15 @@ export async function enrollWooFlows(platform: Platform, connection: WooConnecti
 
   const flows = (await db.prepare("SELECT id,tag FROM woocommerce_flows WHERE connection_id=? AND state='live'").bind(connection.id).all<{id: string; tag: string}>()).results;
   for (const flow of flows) {
+    if(onlyFlow&&flow.id!==onlyFlow)continue;
+    if(!nativeAgent.getStore()){
+      const principal=await retainedPrincipal(db,'flow',flow.id);
+      if(principal){
+        if(!platform.agentDoor)throw new Error('Native flow agent door is not composed.');
+        await platform.agentDoor.invoke('mango.flows.enroll',{id:flow.id,eventId:event.id,idempotency_key:`flow:${flow.id}:${event.id}`},principal);
+        continue;
+      }
+    }
     const id = await sha256(flow.id + ':' + event.id);
     const eligible = `SELECT s.id AS source_id,s.contact_id FROM source_records s JOIN contacts c ON c.id=s.contact_id
       WHERE s.provider=? AND s.source_type='cart' AND s.provider_source_id=? AND json_extract(s.payload,'$.eventId')=?
@@ -62,7 +75,8 @@ export async function enrollWooFlows(platform: Platform, connection: WooConnecti
       AND NOT EXISTS(SELECT 1 FROM contact_suppressions x WHERE x.contact_id=c.id OR (x.channel='email' AND x.destination_hash=?))
       AND EXISTS(SELECT 1 FROM woocommerce_connection WHERE id=? AND generation=?)
       AND EXISTS(SELECT 1 FROM woocommerce_flows WHERE id=? AND state='live' AND activated_at<=?)
-      AND NOT EXISTS(SELECT 1 FROM commerce_orders o WHERE o.contact_id=c.id AND o.qualifying=1 AND o.purchased_at>=?)`;
+      AND NOT EXISTS(SELECT 1 FROM commerce_orders o WHERE o.contact_id=c.id AND o.qualifying=1 AND o.purchased_at>=?)
+      AND ${nativeExecutionGuard()}`;
     const bindings = ['woocommerce:' + connection.id, sourceId, event.id, contact.email, now, destinationHash, connection.id, connection.generation, flow.id, Date.parse(event.occurredAt), Date.parse(event.checkoutStartedAt!)];
     await db.batch([
       db.prepare(`INSERT INTO woocommerce_flow_enrollments(id,revision_id,event_id,contact_id,source_record_id,current_node,state,occurred_at)
@@ -72,8 +86,24 @@ export async function enrollWooFlows(platform: Platform, connection: WooConnecti
         ON CONFLICT(contact_id) DO UPDATE SET tags_json=CASE WHEN EXISTS(SELECT 1 FROM json_each(tags_json) WHERE value=?) THEN tags_json ELSE json_insert(tags_json,'$[#]',?) END`).bind(flow.tag, id, flow.tag, flow.tag),
       db.prepare(`INSERT INTO contact_history(id,contact_id,kind,detail,occurred_at,created_at,updated_at)
         SELECT ?,contact_id,'flow-completed',?,?,?,? FROM woocommerce_flow_enrollments WHERE id=? AND state='entered'
-        ON CONFLICT(id) DO NOTHING`).bind('flow:' + id, JSON.stringify({flowRevisionId: flow.id, trigger: 'abandoned_checkout', action: 'tag', tag: flow.tag, currentNode: 'exit'}), Date.parse(event.occurredAt), now, now, id),
+        ON CONFLICT(id) DO NOTHING`).bind('flow:' + id, JSON.stringify({flowRevisionId: flow.id, trigger: 'abandoned_checkout', action: 'tag', tag: flow.tag, currentNode: 'exit',...nativeActor('woocommerce').detail}), Date.parse(event.occurredAt), now, now, id),
       db.prepare("UPDATE woocommerce_flow_enrollments SET state='completed',current_node='exit',completed_at=? WHERE id=? AND state='entered'").bind(now, id),
     ]);
   }
+}
+
+/** Re-read the retained, signed store observation; a tool cannot manufacture an event. */
+export async function advanceWooFlow(platform:Platform,id:string,eventId:string){
+ const db=platform.database.$client,connection=await readWooConnection(platform);
+ if(!connection?.pluginEnabled)throw new ToolRefusal('trigger_source_unavailable');
+ const flow=await db.prepare("SELECT id FROM woocommerce_flows WHERE id=? AND connection_id=? AND state='live'").bind(id,connection.id).first();
+ if(!flow)throw new ToolRefusal('not_found');
+ const row=await db.prepare("SELECT payload,occurred_at FROM source_records WHERE provider=? AND source_type='cart' AND json_extract(payload,'$.eventId')=?").bind('woocommerce:'+connection.id,eventId).first<{payload:string;occurred_at:number}>();
+ if(!row)throw new ToolRefusal('not_found');
+ const payload=JSON.parse(row.payload);
+ if(payload.schema!=='woocommerce-observation-v1'||payload.identity!=='woocommerce-signed-logged-in-customer'||payload.observation!=='abandoned_checkout'||payload.gpc!==false||payload.consent?.marketing!==true||!payload.checkoutStartedAt)throw new ToolRefusal('trigger_source_unavailable');
+ const event={id:eventId,kind:'abandoned_checkout',occurredAt:new Date(row.occurred_at).toISOString(),checkoutId:payload.checkoutId,checkoutStartedAt:payload.checkoutStartedAt} as PluginEvent;
+ await enrollWooFlows(platform,connection,event,id);
+ const enrollment=await db.prepare('SELECT id,revision_id,event_id,state,current_node,completed_at FROM woocommerce_flow_enrollments WHERE revision_id=? AND event_id=?').bind(id,eventId).first();
+ return {enrollment};
 }

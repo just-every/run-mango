@@ -132,6 +132,9 @@ export type LifecycleJobs = JobDispatcher;
 export type LifecyclePlatform = Platform;
 
 export type LifecycleRuntime = {
+  /** Returns true when the retained agent door handled or refused this recipient. */
+  admitAgentDispatch?(recipientId:string):Promise<boolean>;
+  admitAgentStep?(stepId:string,revisionId:string):Promise<'native'|'done'|'held'>;
   synchronizeCommerce?: (payload: Record<string, unknown>) => Promise<unknown>;
   platform: LifecyclePlatform;
   audience: LifecycleAudience;

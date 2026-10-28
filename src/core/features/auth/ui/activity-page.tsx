@@ -15,6 +15,7 @@ function query(filters: Filters, extra: Record<string, string> = {}) {
 }
 
 function actor(entry: Entry) {
+  if(entry.actorType==='agent')return (entry.detail as {preparedBy?:{label?:string}})?.preparedBy?.label??`Agent ${entry.operatorId}`;
   if (entry.actorType === 'operator') return entry.operatorName ?? 'Removed operator';
   return entry.actorType === 'system' ? 'Mango' : `${entry.actorType} ${entry.operatorId}`;
 }
@@ -40,7 +41,7 @@ export function ActivityPage() {
     <header className="page-head page-head--actions">
       <div className="page-head__text">
         <h1>Activity</h1>
-        <p className="page-head__lead">Every action by an operator, an integration or Mango itself, newest first. Entries stay after an operator is removed.</p>
+        <p className="page-head__lead">Every action by an operator, an agent for its sponsor, an integration or Mango itself, newest first. Entries stay after an operator is removed.</p>
       </div>
       <div className="page-head__actions"><a className="secondary-action" href={`/api/activity/export?${query(applied)}`} download="mango-activity.csv">Export CSV</a></div>
     </header>
@@ -63,7 +64,7 @@ export function ActivityPage() {
             <td>{actor(entry)}<small>{entry.operatorId}</small></td>
             <td>{entry.action}</td>
             <td>{entry.objectType}<small>{entry.objectId}</small></td>
-            <td><code className="activity-detail">{JSON.stringify(entry.detail)}</code></td>
+            <td><details className="activity-facts"><summary>Recorded facts</summary><code className="activity-detail">{JSON.stringify(entry.detail)}</code></details></td>
           </tr>)}</tbody>
         </table>
       </div> : <p className="muted-copy">{loading ? 'Loading activity…' : 'No activity matches these filters.'}</p>}

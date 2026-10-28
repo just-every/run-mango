@@ -1,3 +1,4 @@
+import {nativeAgent} from '../agent-door/native-context';
 import { apiImageReport } from '../move-in/incumbent-images';
 import {applySourceExtras,undoSourceExtras} from '../move-in/source-extras';
 import {csvReview,csvReconciliation,recordCsvAttestations} from '../move-in/csv-review';
@@ -39,6 +40,15 @@ function previewCounts(plan:ImportPlan) {
 }
 
 export async function audienceImportContext(platform: Platform, principalId: string, request: Request): Promise<D1ImportContext> {
+  const agent=nativeAgent.getStore();
+  if(agent){
+    if(agent.context.person.id!==principalId)throw new Error('Native sponsor mismatch.');
+    return {destination:'mango',namespace:'mango-audience-v1',mappingVersion:'mango-audience-v1',batchSize:10,maxBatches:1,
+      storage:{database:platform.database.$client,targets:createAudienceImportTarget(platform.config.contactHashSalt)},
+      authorization:{principalId,predicate:()=>({sql:`EXISTS(SELECT 1 FROM mango_agent_executions e JOIN oa_operators o ON o.id=e.sponsor_id
+        WHERE e.id=? AND e.state='running' AND e.expires_at>CAST(ROUND((julianday('now')-2440587.5)*86400000) AS INTEGER)
+        AND o.id=? AND o.status='active' AND e.sponsor_version=o.version)`,params:[agent.executionId,principalId]})}};
+  }
   const name = platform.config.local === true ? localCookieName('operator_session_local', request.url) : '__Host-operator_session';
   const cookies=(request.headers.get('cookie') ?? '').split(';').map(value=>value.trim());
   const names=[name];

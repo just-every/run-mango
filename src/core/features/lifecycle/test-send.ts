@@ -1,3 +1,4 @@
+import {attributeContent,currentPreparer} from '../agent-door/outbound';
 import {liveCatalogValues} from '@/core/features/campaigns/catalog-values';
 import {analyticsContext} from '@/core/features/settings/analytics-policy';
 import { testDestination, testDestinationBlock, waitForTestSlot, testSendAccess } from './test-destinations';
@@ -94,7 +95,7 @@ export function createTestSender(runtime: LifecycleRuntime, repository: Lifecycl
         ...(smsPolicy?{smsAuthority:{policyDigest:smsPolicy.digest,expiresAt:now.getTime()+15*60000}}:{}),
         recipientStepId: `test:${input.revisionId}`, idempotencyKey, to: destination,
         sender: input.channel === 'email' ? `${snapshot.revision.senderName} <${snapshot.revision.fromEmail}>` : snapshot.revision.smsSender,
-        content, callbackUrl: `${publicBaseUrl}/webhooks/${input.channel === 'email' ? 'mail' : 'sms'}/status`, handoffStartedAt: now,
+        content:attributeContent(content,currentPreparer()), callbackUrl: `${publicBaseUrl}/webhooks/${input.channel === 'email' ? 'mail' : 'sms'}/status`, handoffStartedAt: now,
       };
       const costContext: HandoffCostContext = {key:`test-handoff:${idempotencyKey}`,provider:capabilities.provider ?? (input.channel==='email'?'mail.sender.v1':'sms.sender.v1'),operation:'test-handoff',campaignId:input.campaignId};
       await waitForTestSlot(runtime,input.channel);

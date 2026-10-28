@@ -321,6 +321,8 @@ export type OptionalModuleConfig<Config> =
     };
 
 export interface Platform {
+  /** Server-only composition; durable native workers enter the same agent door. */
+  agentDoor?: import('@/vendor/base/agent-door/index.ts').AgentDoor;
   database: Database;
   config: AppConfig;
   commerce?: CommerceStore;
@@ -353,6 +355,7 @@ export interface AppBindings {
   RER_DEV_IDENTITY?: string;
   RER_MANAGEMENT_ORIGIN?: string;
   RER_INSTALLATION_ID?: string;
+  RER_BUSINESS_TRUST?: string;
   RER_OWNER_CLAIM_ISSUER?: string;
   RER_OWNER_CLAIM_PUBLIC_KEYS?: string;
   /** Owner-controlled maintenance mode: restart all writers before restoring. */

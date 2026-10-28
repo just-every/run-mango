@@ -41,9 +41,10 @@ export function OperatorLayout() {
   useEffect(() => {if (open) nav.current?.querySelector<HTMLAnchorElement>('a')?.focus();}, [open]);
   const content = (resources: Record<string, unknown>) => <ResourceSnapshot.Provider value={resources}><Outlet /></ResourceSnapshot.Provider>;
   return <div className="operator-layout mango-app"><SkipLink /><header className="operator-header" onKeyDown={event => {if (event.key === 'Escape' && open) {event.preventDefault(); close();}}}>
-    <Link className="operator-header__brand" to={operator.role==='support'?'/app/audience':operator.role==='analyst'?'/app/insights':'/app'} aria-label="Mango"><Brand /></Link>
+    <Link className="operator-header__brand" to={operator.role==='support'?'/app/audience':operator.role==='analyst'?'/app/insights':'/app'} aria-label={operator.businessName?`Mango · ${operator.businessName}`:'Mango'}><Brand />{operator.businessName?<small className="operator-business-name">{operator.businessName}</small>:null}</Link>
     <button ref={trigger} className="operator-menu-toggle secondary-action" type="button" aria-expanded={open} aria-controls="operator-navigation" onClick={() => open ? close() : setOpen(true)}>{current ? `Menu · ${current}` : 'Menu'}</button>
     <nav ref={nav} id="operator-navigation" className={`operator-nav${open ? ' is-open' : ''}`} aria-label="Operator navigation" onKeyDown={event => {if (event.key === 'Escape' && open) {event.preventDefault(); close();}}} onClick={event => {if ((event.target as Element).closest('a')) setOpen(false);}}>
+      <a className="operator-nav__link" href="/agents">Agents</a>
       {destinations.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}
       <form method="post" action="/auth/signout" className="operator-signout"><input type="hidden" name="returnTo" value="/signin" /><span>{operator.displayName}</span><button type="submit" className="operator-nav__link">Sign out</button></form>
     </nav>

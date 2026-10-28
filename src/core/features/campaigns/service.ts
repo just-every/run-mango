@@ -114,7 +114,7 @@ export function createCampaignService(
       return compositionRepository.editSchedule(id,composition,operatorId);
     },
 
-    async review(id: string) {
+    async review(id: string, inspectLinks = true) {
       const [detailRead, blockersRead] = await Promise.allSettled([campaignDetail(id, true), store.providerBlockers()]);
       if (detailRead.status === 'rejected') throw detailRead.reason;
       const detail = detailRead.value;
@@ -127,7 +127,7 @@ export function createCampaignService(
       const checks=detail.checks.map(check=>authoringSourceCheck(check,rules?.ok?rules.sourceTypes:[]));
       const [smsPreview, blockedHosts] = await Promise.all([
         detail.revision && detail.steps.some(step=>step.channel==='sms') ? options.smsPreview?.(id,detail.revision.id) : undefined,
-        detail.revision ? options.blockedHosts?.({revision:detail.revision,links:detail.links}) : undefined,
+        inspectLinks && detail.revision ? options.blockedHosts?.({revision:detail.revision,links:detail.links}) : undefined,
       ]);
       return { ...detail, checks, smsPreview, blockedHosts: blockedHosts ?? [], blockers: blockers.filter(blocker=>required.has(blocker.kind)) };
     },

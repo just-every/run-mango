@@ -1,3 +1,7 @@
+import {retainedPrincipal} from '../agent-door/custody';
+import {nativeAgent} from '../agent-door/native-context';
+import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
+import {attributeContent,currentPreparer} from '../agent-door/outbound';
 import type {Platform,DeliveryRequest} from '@/core/shared/platform';
 import {ProviderTransportError} from '@/core/shared/platform';
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
@@ -12,6 +16,14 @@ type Delivery={id:string;schedule_id:string;due_at:number;recipient_id:string;re
 export function createReportScheduler(platform:Platform,clock=Date.now) {
   const db=platform.database.$client;
   async function send(schedule:Schedule,delivery:Delivery) {
+    if(!nativeAgent.getStore()){
+      const principal=await retainedPrincipal(db,'report',schedule.id);
+      if(principal){
+        if(!platform.agentDoor)throw new Error('Native report agent door is not composed.');
+        await platform.agentDoor.invoke('mango.reports.dispatch',{id:delivery.id,idempotency_key:`report-send:${delivery.id}`},principal);
+        return;
+      }
+    }
     const now=clock(),authority=await reportAuthority(platform.database,schedule.created_by);
     let reason=!schedule.enabled?'schedule-paused':authority?.binding!==schedule.authority_binding?'schedule-authority-changed':undefined;
     const recipient=await db.prepare("SELECT email FROM oa_operators WHERE id=? AND status='active'").bind(delivery.recipient_id).first<{email:string}>();
@@ -20,6 +32,7 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
     const report=JSON.parse(delivery.report_json) as SavedReportData;
     const request:DeliveryRequest={recipientStepId:`scheduled-report:${delivery.id}`,idempotencyKey:`scheduled-report:${schedule.id}:${delivery.due_at}:${delivery.recipient_id}`,handoffStartedAt:new Date(now),to:recipient!.email,sender:configuredFrom(platform.config),callbackUrl:platform.config.publicBaseUrl.origin,
       content:{subject:`Mango scheduled report: ${report.title}`,text:[`${report.title} · ${report.from} to ${report.to} (UTC)`,report.note,'',JSON.stringify(report,null,2),'','Manage this operator-only report schedule in Insights.',new URL('/app/insights',platform.config.publicBaseUrl).toString()].join('\n')}};
+    request.content=attributeContent(request.content,currentPreparer());
     const provider=(await platform.mailer.capabilities()).provider??platform.config.mailProvider??'unreported',cost={key:request.idempotencyKey,provider,operation:'provider-handoff' as const};
     try {
       await prepareHandoffCost(platform.database,platform.mailer,request,cost);
@@ -59,5 +72,12 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
       await db.prepare('UPDATE insight_report_schedules SET next_at=?,updated_at=? WHERE id=? AND next_at=?').bind(followingReportTime(schedule.cadence,schedule.next_at),now,schedule.id,schedule.next_at).run();
     }
   }
-  return {run};
+  return {run,async dispatch(id:string){
+    const delivery=await db.prepare("SELECT * FROM insight_report_deliveries WHERE id=? AND state IN ('prepared','deferred')").bind(id).first<Delivery>();
+    if(!delivery)throw new ToolRefusal('not_found');
+    const schedule=await db.prepare('SELECT * FROM insight_report_schedules WHERE id=?').bind(delivery.schedule_id).first<Schedule>();
+    if(!schedule)throw new ToolRefusal('not_found');
+    await send(schedule,delivery);
+    return {delivery:await db.prepare('SELECT id,schedule_id,state,reason,provider_message_id,updated_at FROM insight_report_deliveries WHERE id=?').bind(id).first()};
+  }};
 }

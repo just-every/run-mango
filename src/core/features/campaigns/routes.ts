@@ -118,7 +118,7 @@ export function createCampaignRoutes(service: ReturnType<typeof createCampaignSe
   routes.get('/campaigns/:id/review', async (context) => {
     const parsed = readParams(context, identifier);
     if ('error' in parsed) return parsed.error;
-    const review = await service.review(parsed.data.id);
+    const review = await service.review(parsed.data.id, context.req.query('stored')!=='true');
     return review ? context.json({ ...review, mediaOrigin }) : context.json({ error: 'not_found' }, 404);
   });
   routes.patch('/campaign-revisions/:id', async (context) => {

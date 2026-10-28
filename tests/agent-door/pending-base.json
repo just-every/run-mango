@@ -1,0 +1,37 @@
+[
+  {
+    "id": "mango-native-target-audit",
+    "since": "2026-10-28",
+    "base": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+    "assertion": "Every tool and resource audit carries its native target",
+    "upstream": "modules/agent-door/audit.ts:15"
+  },
+  {
+    "id": "mango-resource-error-code",
+    "since": "2026-10-28",
+    "base": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+    "assertion": "Restricted and absent resources return identical JSON-RPC error.data.code",
+    "upstream": "modules/agent-door/transport.ts:50"
+  },
+  {
+    "id": "mango-replay-native-authority",
+    "since": "2026-10-28",
+    "base": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+    "assertion": "Mutation replay rechecks native target authorization before returning retained content",
+    "upstream": "modules/agent-door/pipeline.ts:62"
+  },
+  {
+    "id": "mango-setting-authority-fixtures",
+    "since": "2026-10-28",
+    "base": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+    "assertion": "Setting and provider tools without a sponsor-widening target retain their genuine native operations",
+    "upstream": "modules/agent-door/conformance/surface.mjs:63"
+  },
+  {
+    "id": "mango-native-reviewer-lifecycle",
+    "since": "2026-10-28",
+    "base": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+    "assertion": "The production CLI drives native named reviewers and approvers",
+    "upstream": "Base combined door v2"
+  }
+]

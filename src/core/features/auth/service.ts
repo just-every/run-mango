@@ -1,3 +1,4 @@
+import {nativeAgent} from '../agent-door/native-context';
 import type { InferSelectModel } from 'drizzle-orm';
 import { createOperatorAuth, createAuthHandler, AuthError, securityHeaders, type Operator } from '@/vendor/base/operator-auth/index.mjs';
 // @ts-expect-error Base's shared wire parser is portable ESM without declarations.
@@ -57,15 +58,19 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     MAIL_FROM: config.mailAuthFrom || undefined, local,
     branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
   });
-  function core(request: Request) {
+  function core(request: Request, businessTeam = false) {
     return createOperatorAuth({ db, config: authConfig(request), mailSender: local || config.demo ? { async send() { return { status: 'accepted' as const, provider: 'development', providerMessageId: null }; } } : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
         const profile = await project(actor);
-        if (action === 'operators:role') return false;
+        if (action === 'operators:role') return businessTeam && (role === 'admin' || role === 'member');
         if (['providers:manage','domains:manage'].includes(action)) return profile.role === 'owner';
         if (action.startsWith('operators:') && !hasPermission(profile.role,'operators.manage')) return false;
-        if (action === 'operators:invite') return role === 'owner';
+        // The person API still chooses its existing owner-store role (projected
+        // as a Mango Admin). Signed team reconciliation also issues narrower
+        // admin/member grants. Their ordinary confirmation rechecks this same
+        // policy after the settings transaction, without its preparation flag.
+        if (action === 'operators:invite') return role === 'owner' || role === 'admin' || role === 'member';
         if (action === 'operators:deactivate' && target) {
           const original = await repository.getOperator(target.id);
           if (original?.isInitial && target.id !== actor.id) return false;
@@ -77,6 +82,12 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     });
   }
   return {
+    async operatorById(id: string) {
+      const row=await db.prepare('SELECT * FROM oa_operators WHERE id=? AND status=\'active\'').bind(id).first();
+      if(!row)return undefined;
+      return project({id:String(row.id),email:String(row.email),displayName:String(row.display_name),role:String(row.role),status:String(row.status)} as Operator);
+    },
+    businessTeam(request: Request) { return core(request,true).businessTeam!; },
     async handle(request: Request) {
       if (new URL(request.url).pathname === '/auth/environment') return Response.json({ local });
       // Administrative APIs are mediated by Mango's operator policy.
@@ -116,6 +127,8 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       return response;
     },
     async authenticate(request: Request) {
+      const agent=nativeAgent.getStore()?.context;
+      if(agent)return this.operatorById(agent.person.id);
       const normalized = normalize(request);
       const session = await core(normalized).getSession(normalized);
       return session ? project(session.operator) : undefined;

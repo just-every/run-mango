@@ -19,7 +19,8 @@ async function operatorState(setup = false) {
   const identity = admitted ? platform.config.mailSender : await loadSenderSettings(platform);
   // Optional modules shown in navigation and on the desk only when this installation enables them.
   const modules = {store: Boolean(platform.commerce), ai: Boolean(platform.ai), sms: Boolean(platform.sms)};
-  return {operator, displayName: operator.displayName, email: operator.email, identity, modules,
+  const business=await platform.database.$client.prepare("SELECT json_extract(document,'$.values.display_name') AS name FROM bs_settings WHERE singleton=1 AND stopped=0").first<{name:string|null}>();
+  return {businessName:business?.name??null,operator, displayName: operator.displayName, email: operator.email, identity, modules,
     setupComplete: senderIdentitySchema.safeParse(identity).success};
 }
 export const loadOperator = createServerFn({method: 'GET'}).validator((value: unknown) => {
@@ -37,7 +38,7 @@ export const loadOperator = createServerFn({method: 'GET'}).validator((value: un
   // Stream the head and its route assets while the fresh page reads finish.
   // The page's Suspense boundary resolves only with the complete snapshot.
   const resources = data ? readPageResources(data, state.operator) : Promise.resolve({});
-  return {displayName: state.displayName, email: state.email, role: state.operator.role, unmaskedContacts: state.operator.unmaskedContacts, modules: state.modules,
+  return {businessName:state.businessName,displayName: state.displayName, email: state.email, role: state.operator.role, unmaskedContacts: state.operator.unmaskedContacts, modules: state.modules,
     locationKey: data ? data.pathname + data.search : '', resources};
 });
 export const loadSetup = createServerFn({method: 'GET'}).handler(async () => {

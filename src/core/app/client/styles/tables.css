@@ -33,3 +33,7 @@
 .activity-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--sp-4); align-items: end; }
 .activity-filters .detail-actions { grid-column: 1 / -1; }
 .activity-detail { display: block; max-width: 28rem; overflow-wrap: anywhere; font-size: var(--ms-caption-size, 13px); }
+.activity-facts summary { display: flex; min-height: 44px; align-items: center; cursor: pointer; }
+.activity-facts summary::before { content: '▸'; margin-right: .5rem; }
+.activity-facts[open] summary::before { content: '▾'; }
+.activity-filters input { min-height: 44px; }

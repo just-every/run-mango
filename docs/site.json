@@ -96,6 +96,12 @@
           "source": "docs/integrations.md",
           "label": "Connect another application",
           "description": "Scoped credentials, subscriber sync and the unsubscribe change feed, with curl examples."
+        },
+        {
+          "slug": "agents",
+          "source": "docs/agents.md",
+          "label": "Agents and company policy",
+          "description": "Connect a marketer agent through MCP while preserving native consent, roles, sender evidence and delivery truth."
         }
       ]
     }

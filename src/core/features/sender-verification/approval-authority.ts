@@ -1,3 +1,4 @@
+import {nativeActor} from '../agent-door/native-context';
 import type { Database } from '@/core/platform/db/client';
 import type { CampaignRevisionSnapshot } from '@/core/features/lifecycle/types';
 import { associationStatement, leaseGuard, leaseValues } from './repository';
@@ -11,8 +12,13 @@ export type ApprovalIdentity = {
 };
 const identityColumns = ['idempotency_key', 'campaign_id', 'revision_id', 'revision_digest',
   'write_token', 'operator_id', 'approved_at', 'created_at'] as const;
-const recordedIdentity = identityColumns.map(column =>
-  `json_extract(ae.detail_json, '$.approval.${column}') = ar.${column}`).join(' AND ');
+function all(predicates: string[]): string {
+  if(predicates.length===1)return `(${predicates[0]})`;
+  const middle=Math.floor(predicates.length/2);
+  return `(${all(predicates.slice(0,middle))} AND ${all(predicates.slice(middle))})`;
+}
+const recordedIdentity = all(identityColumns.map(column =>
+  `json_extract(ae.detail_json, '$.approval.${column}') = ar.${column}`));
 
 export const senderFromGuard = `EXISTS (SELECT 1 FROM sender_verification_inspections chosen
   WHERE chosen.id = ? AND json_extract(chosen.result_json, '$.evidence.binding.from') = ?)`;
@@ -22,22 +28,29 @@ export const senderFromGuard = `EXISTS (SELECT 1 FROM sender_verification_inspec
 // at dispatch. Expiry is intentionally not compared with the current clock here.
 export const senderEvidenceDetail = `json_set(?, '$.senderEvidence.checkedAt',
   (SELECT checked_at FROM sender_verification_inspections WHERE id = ?))`;
-const historicalEvidence = `si.ready = 1 AND si.observation_id IS NOT NULL
-  AND si.expires_at > si.checked_at
-  AND so.id = si.observation_id AND so.binding_digest = si.binding_digest
-  AND so.configuration_digest = si.configuration_digest
-  AND so.observed_at <= si.checked_at AND so.expires_at > si.checked_at
-  AND json_extract(ae.detail_json, '$.approvedFrom') = av.sender_name || ' <' || av.from_email || '>'
-  AND json_extract(si.result_json, '$.evidence.binding.from') = json_extract(ae.detail_json, '$.approvedFrom')
-  AND json_extract(ae.detail_json, '$.senderEvidence.id') = si.id
-  AND json_extract(ae.detail_json, '$.senderEvidence.stateId') = si.state_id
-  AND json_extract(ae.detail_json, '$.senderEvidence.generation') = si.generation
-  AND json_extract(ae.detail_json, '$.senderEvidence.bindingDigest') = si.binding_digest
-  AND json_extract(ae.detail_json, '$.senderEvidence.configurationDigest') = si.configuration_digest
-  AND json_extract(ae.detail_json, '$.senderEvidence.observationId') = si.observation_id
-  AND json_extract(ae.detail_json, '$.senderEvidence.checkedAt') = si.checked_at
-  AND si.checked_at <= ae.occurred_at AND ae.occurred_at = ae.created_at
-  AND ae.created_at >= ar.approved_at AND sa.created_at = ae.created_at`;
+const historicalEvidence = all([
+  `si.ready = 1`,
+  `si.observation_id IS NOT NULL`,
+  `si.expires_at > si.checked_at`,
+  `so.id = si.observation_id`,
+  `so.binding_digest = si.binding_digest`,
+  `so.configuration_digest = si.configuration_digest`,
+  `so.observed_at <= si.checked_at`,
+  `so.expires_at > si.checked_at`,
+  `json_extract(ae.detail_json, '$.approvedFrom') = av.sender_name || ' <' || av.from_email || '>'`,
+  `json_extract(si.result_json, '$.evidence.binding.from') = json_extract(ae.detail_json, '$.approvedFrom')`,
+  `json_extract(ae.detail_json, '$.senderEvidence.id') = si.id`,
+  `json_extract(ae.detail_json, '$.senderEvidence.stateId') = si.state_id`,
+  `json_extract(ae.detail_json, '$.senderEvidence.generation') = si.generation`,
+  `json_extract(ae.detail_json, '$.senderEvidence.bindingDigest') = si.binding_digest`,
+  `json_extract(ae.detail_json, '$.senderEvidence.configurationDigest') = si.configuration_digest`,
+  `json_extract(ae.detail_json, '$.senderEvidence.observationId') = si.observation_id`,
+  `json_extract(ae.detail_json, '$.senderEvidence.checkedAt') = si.checked_at`,
+  `si.checked_at <= ae.occurred_at`,
+  `ae.occurred_at = ae.created_at`,
+  `ae.created_at >= ar.approved_at`,
+  `sa.created_at = ae.created_at`,
+]);
 
 export function approvalAuthorityGuard(campaign: string, revision: string, eventId?: string) {
   return `EXISTS (
@@ -51,12 +64,17 @@ export function approvalAuthorityGuard(campaign: string, revision: string, event
       AND av.state = 'approved' AND av.content_digest = ar.revision_digest
       AND av.approved_at = ar.approved_at AND av.updated_at = ar.approved_at
       AND av.approved_by_operator_id = ar.operator_id
-      AND ae.actor_type = 'operator' AND ae.actor_id IS NOT NULL AND ae.actor_id <> ''
+      AND ae.actor_id IS NOT NULL AND ae.actor_id <> ''
+      AND ((ae.actor_type='operator' AND ae.actor_id=ar.operator_id) OR
+        (ae.actor_type='agent' AND json_extract(ae.detail_json,'$.preparedBy.for.id')=ar.operator_id
+          AND EXISTS(SELECT 1 FROM mango_agent_custody ac WHERE ac.kind='campaign' AND ac.target_id=ar.revision_id
+            AND json_extract(ac.principal_json,'$.person.id')=ar.operator_id
+            AND json_extract(ac.prepared_by_json,'$.agent.id')=ae.actor_id)))
       ${eventId ? `AND ae.id = ${eventId}` : ''}
       AND ${recordedIdentity} AND ${historicalEvidence}
       AND (
         (ae.action = 'approved' AND ae.operation_key = 'approval:' || ar.idempotency_key
-          AND ae.actor_id = ar.operator_id AND sa.attempt_key = ar.idempotency_key
+          AND sa.attempt_key = ar.idempotency_key
           AND json_extract(ae.detail_json, '$.revisionDigest') = ar.revision_digest)
         OR (ae.action = 'sender-reapproved' AND sa.attempt_key = ae.operation_key
           AND json_extract(ae.detail_json, '$.campaignId') = ar.campaign_id
@@ -112,14 +130,14 @@ export function createApprovalAuthorityRepository(database: Database) {
       const values = [snapshot.campaign.id, snapshot.revision.id, ...identityColumns.map(column => approval[column]),
         snapshot.revision.updatedAt.getTime(), approvedFrom, snapshot.campaign.updatedAt.getTime(), now,
         ...leaseValues(senderLease, now), senderLease.id, approvedFrom];
-      const detail = JSON.stringify({campaignId: snapshot.campaign.id, approvalKey: approval.idempotency_key,
+      const detail = JSON.stringify({...nativeActor(operatorId).detail,campaignId: snapshot.campaign.id, approvalKey: approval.idempotency_key,
         revisionDigest, approval, approvedFrom, senderEvidence: senderLease});
       const inserted = `EXISTS (SELECT 1 FROM lifecycle_audit_entries WHERE id = ? AND operation_key = ?)`;
       const statements = [client.prepare(`INSERT INTO lifecycle_audit_entries
         (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-        SELECT ?,?,'campaign-revision',?,'sender-reapproved','operator',?,${senderEvidenceDetail},?,?
+        SELECT ?,?,'campaign-revision',?,'sender-reapproved','${nativeActor(operatorId).type}',?,${senderEvidenceDetail},?,?
         WHERE ${guard} ON CONFLICT(operation_key) DO NOTHING`)
-        .bind(id, operationKey, snapshot.revision.id, operatorId, detail, senderLease.id, now, now, ...values),
+        .bind(id, operationKey, snapshot.revision.id, nativeActor(operatorId).id, detail, senderLease.id, now, now, ...values),
       associationStatement(client, senderLease, 'approval', snapshot.revision.id, operationKey, now, inserted, [id, operationKey])];
       statements.push(client.prepare(`SELECT ra.id FROM lifecycle_audit_entries ra
         WHERE ra.operation_key = ? AND ra.entity_id = ? AND ra.action = 'sender-reapproved'

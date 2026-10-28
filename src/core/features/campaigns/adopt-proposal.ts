@@ -1,3 +1,4 @@
+import {nativeActor} from '../agent-door/native-context';
 import {eq} from 'drizzle-orm';
 import {campaignRevisions} from './campaign-schema';
 import {savedEmailSize} from './saved-email-size';
