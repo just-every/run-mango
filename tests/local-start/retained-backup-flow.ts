@@ -29,7 +29,8 @@ async function restore(runtime: Awaited<ReturnType<typeof authorityRuntime>>, fi
   await runtime.variables();
   await mkdir(join(runtime.checkout, 'exports'));
   await writeFile(join(runtime.checkout, 'exports/retained.rer'), source, { mode: 0o600 });
-  await runtime.command(['import', '--input', 'exports/retained.rer', '--yes']);
+  await expect(runtime.command(['import','--input','exports/retained.rer','--yes'])).rejects.toBeInstanceOf(Error);
+  await runtime.command(['import','--input','exports/retained.rer','--yes','--acknowledge-unverified-schema-objects']);
   return source.toString('utf8').trim().split('\n').map(line => JSON.parse(line));
 }
 

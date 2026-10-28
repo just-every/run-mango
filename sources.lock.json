@@ -8214,7 +8214,7 @@
       "executable": false
     },
     "tests/audience-controls/contact-profile-flow.ts": {
-      "sha256": "e876e1e9b5ac588a28114f1cfb32d76174a6551df74b2424be29a7919252d66a",
+      "sha256": "146fbbfa467687cb64280dd46f3c07c03bb725d9f3a13915e9c11ca870edfefa",
       "executable": false
     },
     "tests/audience-controls/history-worker.ts": {
@@ -9034,7 +9034,7 @@
       "executable": false
     },
     "tests/local-start/retained-backup-flow.ts": {
-      "sha256": "3467e029d105989336889efe3dbf5986ef6e828429ff27a5b2e19191fbca49f6",
+      "sha256": "22cf0798c4a746825e83c969f354da1fb333568008763dfda3138aefc3ead190",
       "executable": false
     },
     "tests/move-in/archive.flow.ts": {
@@ -9170,7 +9170,7 @@
       "executable": false
     },
     "tests/newsletter-ui/representative-pages.journeys.ts": {
-      "sha256": "52a30a5840a97d80e5e5e56f573cb90340041939ed97a212da4094a7004a73b5",
+      "sha256": "895c48d6fc4214d71dd2ac49b8e3fb63cdce770786ff2b08ac508e47981e73be",
       "executable": false
     },
     "tests/newsletter-ui/sender-playwright.config.js": {
