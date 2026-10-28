@@ -8,12 +8,12 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 71 | 119 | 82 | 272 |
+| Core | 11 | 205 | 89 | 305 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 71 | 119 | 91 | 281 |
+| Full target | 11 | 205 | 98 | 314 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). The sd-mango-c31 candidate carries the reusable-block changes and repairs the native round-trip timing. BUILD-012 retains partial with measured reusable-source refusals. BUILD-004 is proposed partial, uncounted pending exact-SHA verification and landing; its live-flow and template-copy gaps remain stated below. The sd-mango-c26b candidate adds inert FLOW-001 draft revisions, CONT-024 source attestation and review reliance counts, and partial MOVE-002/003/005 import paths; the scoped evidence and gaps below describe the candidate, pending exact-SHA branch Verify and Mac publication/landing checks. PUB-005 moved to done with its hosted paid signup page, Worker Checkout and payer-consent journey. INT-002 moved to done with its Owner connection, store sync, signed replay and activated plugin checkout-flow journey; DELIV-002 and PUB-002 remain partial. SEG-001, STORE-004 and PUB-002 were reviewed at `4c4749cf2b4fb6584483bd1fc95f7af964b12335`: SEG-001 moved to done with its collection and category purchase conditions, STORE-004 moved to done with failed webhook and generation operations carrying the adapter's error, and PUB-002 moved to partial with its paid tier proved at the Stripe network edge (sandbox proof pending); REPORT-003 was reviewed at `2ecfa8e031c3a91bfc04bfd1bef2a26bb5d15bea` (22 October 2026); other rows retain their prior review boundaries. MOVE-009, CONT-012 and AUD-008 were reviewed against the candidate source based on `b40be01dcfcf8d793a92780252859eeccdaeb754` on 21 October 2026; their evidence and gaps below supersede only those earlier status entries. Published clause wording and the issued v0.4.0 release envelope are unchanged. MOVE-009 moved to done at d21d9e2b; its unproved remainder became MOVE-015 (missing), 22 October 2026. The sd-mango-c28 candidate adds hosting hygiene, consent-neutral source draft outlines, immutable flow template copies, Resend Settings connection monitoring and native block/mobile authoring; scoped evidence below remains subject to exact-SHA Verify and Mac publication/landing checks. The sd-mango-c32 candidate adds audience-specific name bounds, native social links and a manual six-item product grid, and the provider-edge promotional-email journey. BUILD-001 and BUILD-012 remain partial and UNCOUNTED pending exact-SHA verification and Mac publication/landing checks. The sd-mango-c37 continuation proposes conservative incumbent conversion and identifier-only Shopify catalog authoring with fresh hand-off reads; MOVE-011 remains partial and BUILD-011 is proposed partial, both UNCOUNTED pending exact-SHA Verify and Mac publication/landing checks. sd-mango-c38 proposes MOVE-014 missing to partial for inspected image import and live incumbent-host diagnostics; its cutover, flow and other-host gaps remain, and this proposal is UNCOUNTED until ct reads the landing line. sd-mango-c39 extends BUILD-011 and BUILD-012 evidence for configured chosen-item size bounds, the Shopify six-item promotion, catalog authorization and adversarial payloads, and identifier-only template/start/duplicate/follow-up doors, with both clauses remaining partial and UNCOUNTED pending exact-SHA Verify and Mac publication/landing checks. This round records and proves ct's two BUILD-012 catalog save riders and STORE-001 source identity, connection and occurrence time across the built connections without changing clause statuses or counts. Field proof register: 5 rows; 0 passed, 0 failed, 5 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). The sd-mango-c31 candidate carries the reusable-block changes and repairs the native round-trip timing. BUILD-012 retains partial with measured reusable-source refusals. BUILD-004 is proposed partial, uncounted pending exact-SHA verification and landing; its live-flow and template-copy gaps remain stated below. The sd-mango-c26b candidate adds inert FLOW-001 draft revisions, CONT-024 source attestation and review reliance counts, and partial MOVE-002/003/005 import paths; the scoped evidence and gaps below describe the candidate, pending exact-SHA branch Verify and Mac publication/landing checks. PUB-005 moved to done with its hosted paid signup page, Worker Checkout and payer-consent journey. INT-002 moved to done with its Owner connection, store sync, signed replay and activated plugin checkout-flow journey; DELIV-002 and PUB-002 remain partial. SEG-001, STORE-004 and PUB-002 were reviewed at `4c4749cf2b4fb6584483bd1fc95f7af964b12335`: SEG-001 moved to done with its collection and category purchase conditions, STORE-004 moved to done with failed webhook and generation operations carrying the adapter's error, and PUB-002 moved to partial with its paid tier proved at the Stripe network edge (sandbox proof pending); REPORT-003 was reviewed at `2ecfa8e031c3a91bfc04bfd1bef2a26bb5d15bea` (22 October 2026); other rows retain their prior review boundaries. MOVE-009, CONT-012 and AUD-008 were reviewed against the candidate source based on `b40be01dcfcf8d793a92780252859eeccdaeb754` on 21 October 2026; their evidence and gaps below supersede only those earlier status entries. Published clause wording and the issued v0.4.0 release envelope are unchanged. MOVE-009 moved to done at d21d9e2b; its unproved remainder became MOVE-015 (missing), 22 October 2026. The sd-mango-c28 candidate adds hosting hygiene, consent-neutral source draft outlines, immutable flow template copies, Resend Settings connection monitoring and native block/mobile authoring; scoped evidence below remains subject to exact-SHA Verify and Mac publication/landing checks. The sd-mango-c32 candidate adds audience-specific name bounds, native social links and a manual six-item product grid, and the provider-edge promotional-email journey. BUILD-001 and BUILD-012 remain partial and UNCOUNTED pending exact-SHA verification and Mac publication/landing checks. The sd-mango-c37 continuation proposes conservative incumbent conversion and identifier-only Shopify catalog authoring with fresh hand-off reads; MOVE-011 remains partial and BUILD-011 is proposed partial, both UNCOUNTED pending exact-SHA Verify and Mac publication/landing checks. sd-mango-c38 proposes MOVE-014 missing to partial for inspected image import and live incumbent-host diagnostics; its cutover, flow and other-host gaps remain, and this proposal is UNCOUNTED until ct reads the landing line. sd-mango-c39 extends BUILD-011 and BUILD-012 evidence for configured chosen-item size bounds, the Shopify six-item promotion, catalog authorization and adversarial payloads, and identifier-only template/start/duplicate/follow-up doors, with both clauses remaining partial and UNCOUNTED pending exact-SHA Verify and Mac publication/landing checks. This round records and proves ct's two BUILD-012 catalog save riders and STORE-001 source identity, connection and occurrence time across the built connections without changing clause statuses or counts. Field proof register: 11 rows; 0 passed, 0 failed, 11 not run.
 
 ## Core
 
@@ -479,458 +479,698 @@ Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-D
 
 Core · published · **done**
 
-**Requirement.** The Decision Desk lists proposals in the *proposed* state ordered by the proposal policy, highest-ranked first. *Policy: `proposal.selection.v1`; default: rank by expected revenue where this deployment has enough of its own attribution history (RESULT-003) to estimate it, then by the earliest send-by instant; proposals with neither rank last.*
+**Requirement.** The Decision Desk presents the highest-ranked proposed work first.
 
 **Acceptance.**
-1. (done).
-2. Decision Desk orders proposed suggestions by revenue then deadline.
-3. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.
+1. The Decision Desk lists only proposed proposals.
+2. The ordering policy ranks by expected revenue when this deployment has enough of its own attribution history (RESULT-003), then by the earliest send-by instant; proposals with neither rank last.
 
 **Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
 **Gap.** None.
 
 #### PROP-002 — Evidence
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** A proposal names its triggering source events, lookback window, inclusion rule, exclusion rule, source-data as-of time, send-by instant, proposed channels and step instants, and the method behind every forecast or confidence label.
+**Requirement.** A proposal makes the source evidence and reasoning behind its audience, timing and forecasts inspectable.
 
 **Acceptance.**
-1. (done).
-2. Proposal detail shows observed values, event IDs, lookback, rules, as-of and methods.
-3. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.
+1. The proposal names its triggering source events, lookback window and source-data as-of time.
+2. It shows the inclusion rule and exclusion rule.
+3. It shows the send-by instant, proposed channels and each step instant.
+4. Every forecast or confidence label names its method.
 
 **Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Triggering source events; Lookback window; Source-data as-of; Inclusion rule; Exclusion rule; Send-by instant and scheduled instant relationship; Proposed channels; Forecast method displayed. Unasserted: Confidence-label method.
 
 #### PROP-003 — Counts
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** A proposal distinguishes candidates, excluded contacts, eligible contacts, and per-channel recipient-steps. No count is labeled recipients until exclusions have been applied.
+**Requirement.** Proposal counts distinguish the successive audience populations and the channel work they imply.
 
 **Acceptance.**
-1. (done).
-2. Counts apply real consent exclusions.
-3. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.
+1. A proposal distinguishes candidate, excluded and eligible contact counts.
+2. It reports per-channel recipient-step counts, and labels no count recipients before exclusions have been applied.
 
 **Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Candidate count; Excluded contact count; Eligible contact count; Per-channel recipient-step count. Unasserted: No recipients label before exclusions.
 
 #### PROP-004 — Content
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** A proposal contains an editable campaign name, email subject and body, SMS body when SMS is proposed, sender identity, destination links, and a preview for every selected channel.
+**Requirement.** A proposal provides an editable draft and a preview for every selected channel.
 
 **Acceptance.**
-1. (done).
-2. Generated content and sender are previewable and editable as a saved draft.
-3. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.
+1. The campaign name, email subject and email body are editable.
+2. When SMS is proposed its body is editable.
+3. The sender identity and destination links are editable.
+4. Each selected channel has a preview of its saved content.
 
 **Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Editable campaign name; Editable email subject; Saved email preview; Saved SMS preview. Unasserted: Editable email body; Editable proposed SMS body; Editable sender identity; Editable destination links.
 
 #### PROP-005 — Owner control
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008
 
-**Requirement.** A generated proposal is a draft and cannot schedule or send anything until an operator explicitly approves a particular saved revision.
+**Requirement.** A generated proposal preserves draft provenance and exact-revision control. An agent’s scheduling or sending call carries external, with money when it incurs provider spend; the company’s policy decides that call. A person’s campaign approval binds the particular saved revision they approved.
 
 **Acceptance.**
-1. (done).
-2. A proposal schedules nothing until a saved revision is approved.
-3. Evidence: `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts`.
+1. Creating or adopting a generated proposal creates an editable draft without itself scheduling or sending.
+2. Under a company policy that holds activation for approval, the particular saved revision runs only after the named person approves it.
 
 **Evidence.** `src/core/features/campaigns/adopt-proposal.ts` · `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Adoption retains draft state; Generation and adoption enqueue nothing. Unasserted: Held company policy binds the exact saved revision.
 
 #### PROP-006 — Grounded generation
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** AI-generated audience explanations, timing claims, and forecasts use only this deployment's imported store data and configured knowledge, supplied to `ai.provider.v1`. A generation containing a claim not derivable from that evidence is rejected and the proposal is marked failed per PROP-007; no generic marketing copy is substituted.
+**Requirement.** Generated audience explanations, timing claims and forecasts are grounded in this deployment’s imported store data and configured knowledge.
 
 **Acceptance.**
-1. (done).
-2. Fabricated claims are rejected even with valid citations.
-3. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.
+1. Generation uses only the deployment’s imported store data and configured knowledge as evidence.
+2. A claim not derivable from that evidence is rejected and the proposal is failed under PROP-007.
+3. Rejected generation is not replaced with generic marketing copy.
 
 **Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Grounded source observations accepted; Own imported data and configured knowledge only; Fabricated or malformed claims rejected; Rejected proposal failed; No substituted composition.
 
 #### PROP-007 — Generation failure
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-OPS-004
 
-**Requirement.** If the configured AI adapter returns invalid output or does not complete within 60 seconds, the proposal is marked failed carrying the provider error, no semantic fallback is created, and existing proposals and campaigns are unaffected.
+**Requirement.** Invalid or overdue generation fails visibly while preserving existing work.
 
 **Acceptance.**
-1. (done).
-2. Provider rejection yields a failed proposal with no substitute.
-3. Evidence: `tests/proposals-decision/proposal-states.spec.ts`.
+1. Invalid output from the configured AI provider fails the proposal with its provider error.
+2. A configured AI provider that does not complete within 60 seconds fails the proposal with its provider error.
+3. Failure creates no semantic substitute and leaves existing proposals and campaigns unaffected.
 
 **Evidence.** `tests/proposals-decision/proposal-states.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Provider error recorded; No substitute campaign. Unasserted: Invalid AI output fails proposal; 60-second timeout fails with provider error; Existing proposals preserved; Existing campaigns preserved.
 
 #### PROP-008 — Forecast provenance
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Every revenue, recovery-rate, or confidence figure names the deployment's own campaigns and store events it was computed from and the number of them. Mango never presents a benchmark drawn from other stores, and where its own history is too thin to compute a figure it says so instead of showing a range.
+**Requirement.** Forecasts distinguish this deployment’s own measured history from insufficient evidence.
 
 **Acceptance.**
-1. (done).
-2. Forecasts use only owned mature history and refuse thin history.
-3. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.
+1. Every revenue, recovery-rate and confidence figure identifies the deployment’s own campaigns and store events behind it, with their counts.
+2. No forecast presents a benchmark from another store.
+3. Insufficient own history is stated explicitly instead of a displayed range.
 
 **Evidence.** `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range. Unasserted: Every recovery-rate and confidence figure identifies source history; Other-store benchmark rejected.
 
 #### PROP-009 — Proposal states
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-OPS-005
 
-**Requirement.** A proposal is *proposed*, *approved* (an operator approved a revision and a campaign exists), *dismissed* (an operator rejected it, with the reason recorded), *expired* (its send-by instant passed), or *failed* (PROP-007). Only a proposed proposal can be approved or dismissed, and every transition records its actor and time.
+**Requirement.** The proposal lifecycle records decisions and fences competing or expired decisions.
 
 **Acceptance.**
-1. (done).
-2. Decisions record actor and time once.
-3. Evidence: `tests/proposals-decision/proposal-states.spec.ts`.
+1. A proposal is proposed, approved when a revision is approved and its campaign exists, dismissed with a recorded reason, expired after its send-by instant, or failed under PROP-007.
+2. Only a proposed proposal can be approved or dismissed.
+3. Each transition records its actor and time once.
 
 **Evidence.** `tests/proposals-decision/proposal-states.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Approved state with linked campaign; Dismissed state; Dismissal reason read back; Expired state; Failed state; Dismissed or expired proposal refuses approval; Approved proposal refuses dismissal; Actor; Single transition under competing decisions. Unasserted: Proposed state; Time.
 
 ### Audiences
 
 #### AUD-001 — Review snapshot
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Campaign review shows the audience rule and as-of time, candidate count, each exclusion reason with its count, eligible contact count, and the recipient-step count per channel.
+**Requirement.** Campaign review makes the frozen audience and its exclusions inspectable.
 
 **Acceptance.**
-1. (done).
-2. Review snapshot counts per exclusion reason.
-3. Evidence: `tests/audience-controls/segments.spec.ts`.
+1. Review shows the audience rule and its as-of time.
+2. It shows candidate count, each exclusion reason with its count, and eligible contact count.
+3. It shows recipient-step count separately for each channel.
 
 **Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Candidate count; Eligible contact count; Every exclusion reason and count. Unasserted: Audience rule; Audience as-of time; Per-channel recipient-step count.
 
 #### AUD-002 — Consent and suppression
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Contacts whose state on a channel is pending, non-subscribed, unsubscribed, or suppressed are excluded from that channel regardless of segment membership or an operator-authored inclusion rule.
+**Requirement.** Channel consent and suppression take precedence over any audience inclusion.
 
 **Acceptance.**
-1. (done).
-2. Non-subscribed states are excluded regardless of rule.
-3. Evidence: `src/core/features/audience/eligibility.ts` · `tests/go-live/delivery.journeys.ts`.
+1. Pending, non-subscribed, unsubscribed and suppressed contacts are excluded on that channel, regardless of segment membership or an operator-authored inclusion rule.
 
 **Evidence.** `src/core/features/audience/eligibility.ts` · `tests/go-live/delivery.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Pending channel exclusion; Non-subscribed channel exclusion; Unsubscribed channel exclusion; Suppressed channel exclusion; Segment or explicit inclusion cannot override channel exclusion.
 
 #### AUD-003 — Commerce and dormancy exclusions
 
 Core · published · **done**
 
-**Requirement.** Contacts excluded by the audience policy are listed in review with their reason and count. *Policy: `audience.exclusions.v1`; default: exclude a contact from a product campaign for seven days after purchasing that product, while a refund or return of it is unresolved, and while the contact is dormant under a twelve-month dormancy window (CONT-012).* AUD-008 states which inactivity rule governs a send, what counts for migrated contacts and how an operator turns the dormancy exclusion off for one campaign.
+**Requirement.** Product review explains commerce and dormancy exclusions. AUD-008 governs campaign inactivity controls.
 
 **Acceptance.**
-1. (done).
-2. One Shopify-backed product review lists recent-product-purchase (seven days), unresolved-refund, unresolved-return and dormant (twelve months), each with its count, at 1440/390.
-3. Resolved commerce and eleven-month activity stay eligible; thirteen-month activity is dormant.
-4. AUD-008 states how an operator turns the dormancy exclusion off for one campaign and retains that switch.
-5. Evidence: `tests/go-live/stale-sources.journeys.ts`.
+1. Review lists every audience-policy exclusion with its reason and count.
+2. The default excludes a contact for seven days after buying that campaign’s product, while its refund or return is unresolved, and while dormant under CONT-012’s twelve-month window.
+3. Resolved commerce and eleven-month activity remain eligible; thirteen-month activity is dormant.
 
 **Evidence.** `tests/go-live/stale-sources.journeys.ts`
-**Gap.** One Shopify-backed product review lists recent-product-purchase (seven days), unresolved-refund, unresolved-return and dormant (twelve months), each with its count, at 1440/390. Resolved commerce and eleven-month activity stay eligible; thirteen-month activity is dormant. AUD-008 states how an operator turns the dormancy exclusion off for one campaign and retains that switch.
+**Gap.** None.
 
 #### AUD-004 — Frequency protection
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** A contact inside the channel's frequency window is excluded from that step and recorded with the reason `frequency-window`, never silently deferred to a later time. *Policy: `audience.frequency.v1`; default: 24 hours since the contact's last marketing email and 72 hours since their last marketing SMS.* AUD-009 states how these windows combine with FLOW-014 caps and how an operator overrides them for one campaign, with the override recorded.
+**Requirement.** Frequency protection excludes a recipient from the current step rather than silently rescheduling it. AUD-009 governs overrides and the combination with FLOW-014 caps.
 
 **Acceptance.**
-1. (done).
-2. Frequency-window exclusions recorded, never deferred.
-3. Evidence: `src/core/features/audience/eligibility.ts` · `tests/go-live/open-estimates.journeys.ts`.
+1. A contact inside the channel’s frequency window is excluded from that step with a frequency-window reason and is never silently deferred.
+2. The default windows are 24 hours since the last marketing email and 72 hours since the last marketing SMS.
 
 **Evidence.** `src/core/features/audience/eligibility.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Frequency-window exclusion; Recorded frequency-window reason; No silent deferral; 24-hour email window; 72-hour SMS window.
 
 #### AUD-005 — Dispatch recheck
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Eligibility is recalculated when a step's dispatch begins and again immediately before each provider hand-off, so a purchase, refund, opt-out, bounce, complaint, consent change, merge, or frequency-window change after approval prevents that delivery and is recorded as the exclusion reason. Every source type used by the audience must still satisfy STORE-005; if refresh fails or the source becomes stale, the affected channel pauses before any further hand-off and resumes only after a successful refresh.
+**Requirement.** Dispatch evaluates current eligibility throughout the provider hand-off boundary.
 
 **Acceptance.**
-1. (done).
-2. Eligibility rechecked at dispatch and before each hand-off.
-3. Evidence: `tests/audience-controls/merge.spec.ts` · `tests/go-live/delivery.journeys.ts`.
+1. Eligibility is recalculated when step dispatch begins and immediately before each provider hand-off.
+2. A purchase, refund, opt-out, bounce, complaint, consent change, merge or frequency-window change after approval prevents that delivery and records its exclusion reason.
+3. Every audience source still satisfies STORE-005; a failed refresh or stale source pauses its affected channel before any further hand-off, and only a successful refresh permits resumption.
 
 **Evidence.** `tests/audience-controls/merge.spec.ts` · `tests/go-live/delivery.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: Immediate hand-off eligibility recheck; Complaint after approval prevents hand-off; Merge after approval prevents hand-off; Merge skip reason is recorded. Unasserted: Dispatch-start eligibility recheck; Purchase after approval prevents hand-off; Purchase skip reason is recorded; Refund after approval prevents hand-off; Refund skip reason is recorded; Opt-out after approval prevents hand-off; Opt-out skip reason is recorded; Bounce after approval prevents hand-off; Bounce skip reason is recorded; Complaint skip reason is recorded; Consent change after approval prevents hand-off; Consent change skip reason is recorded; Frequency-window change after approval prevents hand-off; Frequency-window change skip reason is recorded; Source freshness holds at hand-off; Failed refresh pauses channel before more hand-offs; Stale source pauses channel before more hand-offs; Only successful refresh resumes.
 
 #### AUD-006 — Multi-step exit
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Each later step re-applies its audience and exclusion rules; a contact who converts or becomes ineligible after an earlier step receives no later step.
+**Requirement.** Every later step applies its own current inclusion and exclusion rules to the frozen audience.
 
 **Acceptance.**
-1. (done).
-2. Each later step re-applies its audience and exclusion rules; a contact who converts or becomes ineligible after an earlier step receives no later step.
-3. The two-step journey changes inclusion, a custom exclusion and consent after the first send, verifies named skip reasons at the second step, sends only to the still-eligible control, and keeps newly matching contacts outside the frozen audience.
-4. Evidence: `tests/go-live/multistep.journeys.ts`.
+1. A conversion or other loss of eligibility after an earlier step prevents every later affected step.
+2. After the first send, changes to inclusion, a custom exclusion and consent yield named skips at the second step, with only the still-eligible control sent.
+3. A contact newly matching the rule remains outside the frozen audience.
 
 **Evidence.** `tests/go-live/multistep.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: Changed eligibility prevents later step; Changed inclusion yields named skip; Custom exclusion yields named skip; Consent change yields named skip; Only eligible control receives second step; Newly matching contact never added. Unasserted: Conversion prevents later step.
 
 #### AUD-007 — Frozen candidate set
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Approval freezes the candidate set resolved at that instant. A contact who first matches the inclusion rule after approval is never added to the approved campaign, and each contact yields at most one recipient-step per channel per step even when they match the rule more than once. Exclusions still apply at dispatch (AUD-005).
+**Requirement.** Approval fixes the campaign’s candidates without disabling dispatch-time exclusions under AUD-005.
 
 **Acceptance.**
-1. (done).
-2. Approval freezes the candidate set.
-3. Evidence: `tests/audience-controls/segments.spec.ts`.
+1. Approval freezes the candidate set resolved at that instant; contacts first matching later are not added.
+2. Each contact creates at most one recipient-step per channel per step even when matching the rule more than once.
 
 **Evidence.** `tests/audience-controls/segments.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Frozen candidate set survives segment changes. Unasserted: Newly matching contacts not added; At most one recipient-step per contact per channel per step under overlapping matches.
 
 ### Campaigns
 
 #### CAMP-001 — States
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-OPS-005
 
-**Requirement.** A campaign is *draft* (editable, nothing scheduled), *scheduled* (an approved revision with a future step instant), *dispatching* (a step has begun handing off), *paused* (dispatch stopped by SEND-009), *completed* (SEND-007), *canceled* (CAMP-009), or *failed* (its first step could not begin before its deadline because a required adapter or sender registration was unavailable). Every transition records its actor or the feature that acted, and its time; an invalid transition is rejected.
+**Requirement.** A campaign’s lifecycle distinguishes editable work, dispatch progress, stops and terminal outcomes.
 
 **Acceptance.**
-1. (done).
-2. Campaign state transitions with actor and time.
-3. Evidence: `tests/campaign-results/results.journeys.ts`.
+1. The states are draft with nothing scheduled, scheduled with an approved revision and future step, dispatching once hand-off begins, paused under SEND-009, completed under SEND-007, canceled under CAMP-009, or failed when the first step misses its deadline because its required provider or sender registration is unavailable.
+2. Each transition records its actor or acting feature and its time, and an invalid transition is rejected.
 
 **Evidence.** `tests/campaign-results/results.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: Scheduled state; Dispatching state; Completed state; Canceled state. Unasserted: Draft state; Paused state; Failed after missing first-step deadline; Actor or feature recorded for each transition; Time recorded for each transition; Invalid transition rejected.
 
 #### CAMP-002 — Draft editing
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Operators can edit and persist the campaign name, selected channels, audience rule, message content, sender identity, links, and schedule while a campaign is a draft. An email body saves whenever its sent size is within BUILD-012's limit; a larger one is refused with its measured size and the limit named, never truncated.
+**Requirement.** An operator can persist the complete draft without losing an otherwise valid email to a character-count limit.
 
 **Acceptance.**
-1. (done).
-2. Draft editing persists every field; the body size limit is proved under BUILD-012.
-3. Evidence: `tests/campaign-authoring/browser.spec.ts`.
+1. Draft edits persist the campaign name, channels, audience rule, message content, sender identity, links and schedule.
+2. An email within BUILD-012’s sent-size limit saves; one above it is refused with its measured size and limit, without truncation.
 
 **Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Persisted Campaign name; Persisted Message content; Persisted Links; Persisted Schedule. Unasserted: Persisted Channels; Persisted Audience rule; Persisted Sender identity; Body within sent-size limit saves; Oversized body refused with measured size; Refusal names limit; Oversized body not truncated.
+
+### Audiences — Derived audience rule summaries
+
+#### AUD-010 — Derived audience rule summaries
+
+Core · published · **partial** · From AUD-001, CAMP-002
+
+**Requirement.** Every displayed audience explanation derives from the rules that actually select recipients.
+
+**Acceptance.**
+1. Review, approval checks, scheduled pages, campaign lists and audience snapshots show the plain-text summary derived from the inclusion and exclusion rules.
+2. The summary includes every condition, comparison, value and lookback, with editor field labels and explicit all-or-any matching.
+3. The composer shows that summary live instead of authoring audience prose; each new saved revision stores it and ignores caller-supplied audience text as authority.
+4. Earlier revisions display the derived summary without rewriting immutable approvals; readiness requires valid structured rules and approval binds the exact saved rules.
+
+**Evidence.** `tests/audience-controls/segments.spec.ts`
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Review summary; Approval checks summary; Scheduled page summary; Campaign list summary; Audience snapshot summary; Every condition; Comparison; Value; Lookback; Editor labels; All-or-any matching; Composer live summary; New saved revision summary; Caller prose not authority; Old summary derives without approval rewrite; Readiness requires structured rules; Approval binds saved rules.
+
+### Campaigns — Live audience authoring counts
+
+#### CAMP-020 — Live audience authoring counts
+
+Core · published · **partial** · From CAMP-002
+
+**Requirement.** Audience controls always show counts for the newest structured rule and its real source evidence.
+
+**Acceptance.**
+1. Editing inclusion and exclusion controls changes the versioned structured rules and refreshes counts from real contacts and recorded source evidence.
+2. Missing or stale required commerce shows unavailable counts.
+3. An older in-flight count request cannot replace the result for a newer rule.
+
+**Evidence.** `tests/campaign-authoring/browser.spec.ts`
+**Gap.** Asserted: Structured inclusion updates; Real source counts; Unavailable missing source counts; Unavailable stale counts; Late old request cannot replace new count. Unasserted: Structured exclusion updates.
+
+#### CAMP-021 — Start and adopt newsletters
+
+Core · published · **partial** · From CAMP-002 · Cites BASE-ACCESS-002
+
+**Requirement.** An operator can start a newsletter without optional providers and reuse existing proposal work.
+
+**Acceptance.**
+1. A signed-in operator reaches the same editable Review within three clicks from Campaigns by choosing a blank newsletter without AI or commerce, or an available starter from this deployment’s real store signals.
+2. Decision Desk Use this reuses the linked campaign or atomically adopts an unlinked, unexpired proposal once.
+3. Creating, selecting and saving do not themselves approve or enqueue delivery; incomplete drafts can save while approval names missing content.
+4. Rich text is the initial editor and retains unstyled markup; HTML mode preserves allowed authored markup, and images or presentation use HTML mode without fetching remote images.
+
+**Evidence.** `tests/campaign-authoring/browser.spec.ts`
+**Gap.** Asserted: Blank newsletter without AI or commerce; Real source starter; Same editable Review; Linked proposal reused; Concurrent adoption creates one campaign; Create has no authority; Select and save enqueue nothing; Incomplete draft saves; Approval names missing content; Rich text initial editor; Optional HTML mode preserves authored markup; Styled and image content stays in HTML mode; No image fetch while authoring. Unasserted: At most three clicks; Expired proposal not adopted.
 
 #### CAMP-003 — Revision preview
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Desktop, mobile, and plain-text previews render from the saved revision that will be approved, including resolved personalization examples and the compliance footer or SMS opt-out text that will be sent.
+**Requirement.** Approval previews represent the exact saved message.
 
 **Acceptance.**
-1. (done).
-2. Previews render from the saved revision.
-3. Evidence: `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts`.
+1. Desktop, mobile and plain-text previews render the saved revision that will be approved.
+2. The previews include resolved personalization examples and the compliance footer or SMS opt-out text that will be sent.
+3. Saved-revision previews preserve validated styles; a body the checker refuses appears unstyled with its warning.
 
 **Evidence.** `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Desktop saved preview. Unasserted: Mobile saved preview; Plain-text saved preview; Resolved personalization examples; Compliance footer; SMS opt-out text; Validated styles in saved preview; Failing body unstyled with warning.
+
+#### CAMP-022 — Canonical saved email bytes
+
+Core · published · **partial** · From CAMP-003
+
+**Requirement.** One canonical saved body is the authority for preview, checking and exact-revision approval.
+
+**Acceptance.**
+1. Create and save normalize the managed unsubscribe and postal footer once and derive plain text with actual destination URLs from that saved body.
+2. The body is parsed as mail clients read an HTML body with scripting off, then serialized until its written form reparses to itself; a save of that result or its editor form stores identical bytes.
+3. Normalization preserves kept attribute values and styles, comments and personalization tokens, never repairs refused markup and never refuses merely noncanonical authoring syntax.
+4. Parser-discarded structure is absent exactly as for recipients: the first duplicate attribute survives, closing-tag attributes and ignored misplaced tags are absent, and the checker judges the stored tree.
+5. Leading newlines in preformatted controls and unclosed plaintext settle without growing or moving the footer; a form that has not settled after sixteen rounds is refused rather than saved unstably.
+6. All newly saved drafts, including older drafts saved through other field edits, use this canonical form; plain text comes from the same parse.
+
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts`
+**Gap.** Asserted: One managed unsubscribe footer; Derived text contains destination URL; Stored body resaves byte-identically; Editor body resaves byte-identically; First duplicate attribute kept; Ignored misplaced tags absent; Checker judges stored tree. Unasserted: One managed postal footer; HTML-body parse with scripting off; Kept attribute values preserved; Kept styles preserved; Comments preserved but refused; Personalization tokens preserved; Refused markup not repaired; Noncanonical syntax saves; Closing-tag attributes dropped; Leading newline stable; Plaintext stable without footer growth; Sixteen-round instability refusal; Older draft canonicalized on any-field save; Plain text comes from same parse.
 
 #### CAMP-004 — Approval checks
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Approval atomically validates the audience, consent, source freshness (STORE-005, including incumbent sync freshness during a parallel run, MOVE-013), sender registration, email authentication, sending reputation (MSG-011), compliance content, personalization, links (MSG-006, MSG-013 to MSG-015), schedule, and adapter configuration. A sender adapter must provide effective deduplication and provider reconciliation as required by SEND-001 and SEND-008. Any failure leaves the campaign a draft and names every blocking check.
+**Requirement.** Approval either validates all sending prerequisites together or leaves the campaign in draft with every blocker visible.
 
 **Acceptance.**
-1. (done).
-2. Approval names every blocking check.
-3. Evidence: `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/create-api.spec.ts`.
+1. Approval atomically validates audience, consent, source freshness including MOVE-013 parallel-run freshness, sender registration, email authentication and MSG-011 reputation.
+2. It also validates compliance content, personalization, MSG-006 and MSG-013 to MSG-015 links, schedule and provider configuration.
+3. The sender provides the effective deduplication and provider reconciliation SEND-001 and SEND-008 require.
+4. Any failed check leaves the campaign a draft and names every blocking check.
+5. Missing subject, body, preheader or sender remains a named blocker; optional AI or commerce absence does not block manually authored mail-only rules, while required source dependencies still block.
 
 **Evidence.** `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/create-api.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Refusal leaves campaign in draft; Every blocking check named; Missing subject named; Missing body named; Missing preheader named; Optional AI or commerce absence permits manual mail-only draft; Required source dependency blocks. Unasserted: Atomic audience validation; Atomic consent validation; Source freshness including parallel incumbent sync; Sender registration; Email authentication; Sending reputation; Compliance content; Personalization; All named link rules; Schedule; Provider configuration; Effective deduplication; Provider reconciliation; Missing sender named.
 
 #### CAMP-005 — Idempotent approval
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Repeated approval requests carrying the same campaign and revision identifier produce one scheduled campaign and one set of steps and recipient-steps, whatever the number of requests.
+**Requirement.** Approval retries do not duplicate scheduled work.
 
 **Acceptance.**
-1. (done).
-2. Repeated approval produces one schedule.
-3. Evidence: `tests/campaign-authoring/browser.spec.ts`.
+1. Repeated requests for the same campaign and revision produce one scheduled campaign, one set of steps and one set of recipient-steps regardless of request count.
 
 **Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: One scheduled campaign; One recipient-step set; One approval after repeat. Unasserted: One set of steps.
 
 #### CAMP-006 — Schedule
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Each step stores an IANA time zone and the resolved UTC instant. A local time that does not exist or is ambiguous under daylight saving is rejected until the operator chooses an unambiguous instant. *Policy: `campaign.send-time.v1`; default: resolve every step against the store time zone and the operator-selected local time.*
+**Requirement.** Every schedule retains an unambiguous local time and its resolved instant.
 
 **Acceptance.**
-1. (done).
-2. DST-invalid local times are rejected.
-3. Evidence: `tests/campaign-authoring/browser.spec.ts`.
+1. Each step stores its IANA time zone and resolved UTC instant.
+2. A nonexistent or ambiguous daylight-saving local time is rejected until an unambiguous instant is chosen.
+3. The default resolves the operator-selected local time in the store time zone.
+4. Local dates use the configured IANA store zone independently of the browser zone, and resolved UTC fields are read-only; the deadline defaults to 23:59 on the chosen local day.
+5. UI and API refuse nonexistent and ambiguous times, including non-hour daylight-saving transitions.
+6. Existing clients may still supply an explicit instant with its IANA zone; supplied local and UTC values must agree.
 
 **Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: IANA zone retained; Resolved UTC retained; Ambiguous local time refused; Nonexistent local time refused; Store-zone default; Store zone independent of browser zone; Read-only resolved UTC; 23:59 local deadline; UI daylight-saving refusal; API non-hour DST refusal. Unasserted: Explicit instant compatibility; Local and UTC disagreement refused.
 
 #### CAMP-007 — Scheduled edits
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Editing a scheduled campaign creates a new draft revision and leaves the approved revision active until the replacement passes approval. Replacement approval atomically makes the new revision the campaign's only active schedule and cancels every pending recipient-step of the prior revision. Once any step has begun dispatching, edits can only create a new campaign; the original campaign and its later steps remain active until the operator explicitly cancels them.
+**Requirement.** Editing a scheduled campaign preserves its approved work until a replacement is approved, and cannot rewrite a dispatch already begun.
 
 **Acceptance.**
-1. (done).
-2. Replacement approval wins a forced D1 ordering without mixing revisions.
-3. Evidence: `tests/go-live/delivery.journeys.ts`.
+1. An edit creates a draft revision while the approved revision remains active.
+2. Replacement approval atomically makes the new revision the only active schedule and cancels every prior pending recipient-step.
+3. After any step begins dispatching, an edit creates a different campaign; the original campaign and later steps stay active until explicitly canceled.
 
 **Evidence.** `tests/go-live/delivery.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: Editing produces draft replacement; Only replacement schedule hands off; Prior pending recipients canceled; Replacement atomic with dispatch race; Post-dispatch edit creates another campaign. Unasserted: Original remains active before replacement approval; Original and later steps stay active until cancellation.
 
 #### CAMP-008 — Test send
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** A test sends only to the configured operator test addresses or phone numbers, or to the typed addresses CAMP-019 admits, is visibly marked as a test in its content and in campaign history, and changes no contact activity, reporting, attribution, or frequency protection.
+**Requirement.** Test sends remain visibly separate from audience delivery and campaign results. CAMP-019 governs typed destinations.
 
 **Acceptance.**
-1. (done).
-2. Test sends reach only operator addresses and change no reporting.
-3. Evidence: `tests/go-live/go-live.journeys.ts`.
+1. A test goes only to configured operator test email addresses or phone numbers, or the typed destinations admitted under CAMP-019.
+2. Test content and campaign history identify it as a test.
+3. A test changes no contact activity, reporting, attribution or frequency protection.
 
 **Evidence.** `tests/go-live/go-live.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: Test content is marked; No contact activity change; No reporting change. Unasserted: Configured operator email destination only; Configured operator phone destination only; Only admitted typed destinations; Campaign history identifies test; No attribution change; No frequency protection change.
 
 #### CAMP-009 — Cancellation
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Canceling a scheduled, dispatching, or paused campaign stops every step and every recipient-step confirmed not handed to a provider within 30 seconds, records provider-confirmed hand-offs separately, and leaves an in-flight request in `handoff-unknown` until SEND-008 reconciles it. It never claims to recall a delivered message. Campaign detail shows the time remaining until the next step dispatches.
+**Requirement.** Cancellation distinguishes stopped work from provider hand-offs and uncertainty.
 
 **Acceptance.**
-1. (done).
-2. Cancellation stops unsent recipient-steps within 30 seconds.
-3. Evidence: `tests/campaign-results/results.journeys.ts`.
+1. Canceling scheduled, dispatching or paused work stops every step and recipient-step confirmed not handed off within 30 seconds.
+2. Provider-confirmed hand-offs remain separate; in-flight requests stay uncertain until SEND-008 reconciliation, without a claim to recall delivered mail.
+3. Campaign detail shows the time remaining until the next step dispatches.
 
 **Evidence.** `tests/campaign-results/results.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: Accepted hand-offs remain separate; In-flight uncertainty retained; Countdown to next dispatch. Unasserted: Scheduled cancellation stops within 30 seconds; Dispatching cancellation stops within 30 seconds; Paused cancellation stops within 30 seconds; Every unsent step stopped; Delivered mail is not recalled.
 
 #### CAMP-010 — Step deadline
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Each step carries a send-by instant, defaulting to the end of that step's scheduled local day. Recipient-steps not handed to a provider by then are skipped and recorded as `deadline-passed`; a step whose deadline passes before dispatch begins does not send.
+**Requirement.** Steps never begin sending after their send-by deadline.
 
 **Acceptance.**
-1. (done).
-2. Missed deadlines skip with `deadline-passed`.
-3. Evidence: `tests/go-live/scheduler.journeys.ts`.
+1. Each step has a send-by instant defaulting to the end of its scheduled local day.
+2. A recipient-step not handed off by that instant is skipped with a deadline-passed reason.
+3. A step whose deadline passed before dispatch begins sends nothing.
 
 **Evidence.** `tests/go-live/scheduler.journeys.ts`
-**Gap.** None.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Step send-by instant; Default end of local scheduled day; Missed recipient deadline is skipped with named reason; No send when deadline predates dispatch.
 
 #### CAMP-011 — Dispatch punctuality
 
 Core · published · **done**
 
-**Requirement.** Dispatch of a scheduled step begins within 60 seconds of its resolved UTC instant, and each step's instant dispatches exactly once even if the scheduler runs twice.
+**Requirement.** The scheduler starts each due step promptly and once.
 
 **Acceptance.**
-1. (done).
-2. Each step dispatches once within 60 seconds.
-3. Evidence: `tests/go-live/scheduler.journeys.ts`.
+1. Dispatch begins within 60 seconds of the step’s resolved UTC instant.
+2. Two scheduler runs still dispatch that step instant exactly once.
 
 **Evidence.** `tests/go-live/scheduler.journeys.ts`
 **Gap.** None.
 
 #### CAMP-012 — Campaign images
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-ACCESS-003, BASE-INPUT-003, BASE-DATA-001, BASE-DATA-003, BASE-PUBLIC-001 · Register R-202
 
-**Requirement.** A signed-in operator can upload a JPEG, PNG, GIF or WebP image within the byte and pixel limits in `seed.json`. Its type is read from the file's own header, never from the name or type the client declares, and the file must be complete; anything else is refused and nothing is stored. Each image is stored once under its SHA-256 and is never changed or deleted, so the bytes behind an approved revision cannot change, except that contact erasure (CONT-013) removes the bytes of an image holding an erased contact's identifier; such an image then answers 410 and blocks approval. It is served without a session at `/media/<sha256>` on this deployment with its exact content type, `X-Content-Type-Options: nosniff`, an immutable public cache and no cookie, answers 404 for an unknown name, and is rate-limited per image at the limit in `seed.json`, not per client address, returning 429 without affecting other images. Serving an image records nothing about who requested it. Every image is exported as its original file (DATA-001).
+**Requirement.** Campaign images preserve the bytes of an approved revision throughout their lifecycle. Public image serving is the authorized exception to BASE-INPUT-003’s session-bound download duty.
 
 **Acceptance.**
-1. (done).
-2. Image upload, immutable serving and erasure.
-3. Evidence: `tests/campaign-assets.spec.ts` · `tests/campaign-authoring/local-images.spec.ts`.
+1. A signed-in operator can upload complete JPEG, PNG, GIF or WebP within the declared byte and pixel limits; the file header determines its type, and refused input stores nothing.
+2. An image is stored once by its SHA-256 and its bytes remain immutable.
+3. Erasing an identified contact removes an image holding that contact’s identifier; the erased image then answers gone and blocks approval.
+4. Public image serving uses the exact content type, no-sniff protection, a sandboxed no-content-execution policy and immutable public caching; an unknown image is not found.
+5. The declared per-image rate bound returns a rate refusal without affecting other images or varying by client address.
+6. Serving records nothing identifying its requester.
+7. DATA-001 exports each image as its original file.
+8. Image delivery is not an open-tracking signal; pending erasure or restore makes it unavailable, and restoration to a different origin preserves the saved absolute image address.
 
 **Evidence.** `tests/campaign-assets.spec.ts` · `tests/campaign-authoring/local-images.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Signed-in image upload; PNG accepted; Header type overrides declared type; Truncated upload refused; Byte limit; Pixel limit; Refusals store nothing; Store once by hash; Image bytes immutable; Exact image type; No-sniff; Immutable public cache; Unknown image not found; Per-image refusal; Other image unaffected. Unasserted: JPEG accepted; GIF accepted; WebP accepted; Erasure removes matching image bytes; Erased image answers gone; Erased image blocks approval; Not keyed by client address; No requester identification is recorded; Original bytes exported; Image fetch is not an open signal; Pending erasure image unavailable; Restore image unavailable; Cross-origin restore retains original absolute URLs; Sandboxed no-content-execution policy.
+
+#### CAMP-023 — Insert and preview campaign images
+
+Core · published · **partial** · From CAMP-012 · Register R-202
+
+**Requirement.** The editor can insert a scaled image and preview local-copy assets without granting them sending authority.
+
+**Acceptance.**
+1. Insert image uploads one file, requires its description, and inserts it at the cursor with header-derived proportions scaled to at most the 600-pixel email width.
+2. The image response supplies its public address; the stored-type file extension serves the same bytes and a different extension is not found.
+3. A local computer’s own HTTP-origin media images save and preview with validated styles after image opt-in; other HTTP origins remain refused.
+4. Approval, test send and delivery refuse those local HTTP images with the named HTTPS requirement; HTTPS deployments are unaffected.
+
+**Evidence.** `tests/campaign-assets.spec.ts` · `tests/campaign-authoring/local-images.spec.ts`
+**Gap.** Asserted: Insert image uploads and inserts header-derived dimensions; At most 600-pixel width; Public address in response; Stored-type extension serves same bytes; Wrong extension not found; Local own HTTP image saves; Styled local preview loads after opt-in; Local HTTP image approval refusal; HTTPS deployment unaffected. Unasserted: Description required; Other HTTP origins refused; Local HTTP image test refusal; Local HTTP image delivery refusal.
 
 ### Designs
 
 #### DESIGN-001 — Optional design module
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-SECRET-002, BASE-DATA-004 · Register R-203
 
-**Requirement.** The design module is disabled while both `DESIGN_PROVIDER_API_KEY` and `DESIGN_PROVIDER_ORIGIN` are absent; supplying either requires both, and startup fails naming what is missing. The origin must be an HTTPS origin with no path; only a copy running on a computer may name a loopback `http:` origin. A disabled module constructs no adapter, shows no design-generation control, contacts no design service, and its routes refuse to start a run with `design_unavailable` naming the inputs. An enabled module contacts the design service only with the owner's own key and only because an operator started a design run or chose one of its candidates.
+**Requirement.** Design generation is optional and uses only an intentionally configured owner connection.
 
 **Acceptance.**
-1. (done).
-2. Disabled design module offers nothing and refuses runs.
-3. Evidence: `tests/campaign-authoring/design-generation.spec.ts`.
+1. With neither design key nor origin the module is disabled; supplying either enables the connection and requires both.
+2. The origin is HTTPS without a path, except that a local computer may use loopback HTTP.
+3. Disabled design generation constructs no provider, shows no generation control, contacts no design service and refuses runs with an unavailable explanation naming its inputs.
+4. Enabled generation uses the owner’s key only when an operator starts a run or chooses a candidate.
 
 **Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Default-off when both inputs absent; No generation control; Unavailable run refusal names input; Configured owner key used. Unasserted: Partial configuration requires both; HTTPS origin without path; Local-only loopback HTTP exception; No provider construction or contact; Only explicitly started or chosen design work contacts service.
+
+#### DESIGN-005 — Owner-selected design provider
+
+Core · published · **partial** · From DESIGN-001 · Cites BASE-DATA-004, BASE-DATA-005 · Register R-203
+
+**Requirement.** Supersedes BASE-DATA-005 only for the owner-configured default-off design provider under the recorded 13 October 2026 decision. This is an operator-commissioned provider connection on the owner’s account, with candidate work, chosen layouts and resumption of those same runs carrying only DESIGN-003’s data.
+
+**Acceptance.**
+1. With the module absent no request goes to 12ui; enabled requests occur only for an operator’s design run, never at startup, on an independent schedule or for unrelated deployment activity.
+2. A provider refusal or outage fails only that run.
+3. An operator with design-authoring rights may commission within the provider wallet and allowance; Mango shows each paid-step estimate and records the request. Business limits and spend caps follow the company’s policy.
+4. The owner is told that the brief and selected image reach 12ui and its declared subprocessors, may remain in its evaluation corpus until owner-requested deletion, and reveal when this installation designs email.
+
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: No 12ui request when absent; Only operator run requests; No startup request; No independent-schedule request; No unrelated request; Refusal fails only that run; Outage fails only that run; Design-authoring role authority; Provider wallet and allowance honored; Per-paid-step estimate; Request recorded; Subprocessors disclosure; Evaluation-corpus retention disclosure; Design-timing disclosure.
+
+#### DESIGN-006 — Optional design deployment credentials
+
+Core · published · **partial** · From DESIGN-001 · Cites BASE-SECRET-002 · Register R-203
+
+**Requirement.** Local and hosted installations can intentionally configure the default-off design connection.
+
+**Acceptance.**
+1. Local copies read both optional design inputs from private local settings; hosted deployment uploads a supplied optional secret on first or later deploy, never requires it and retains it on later deploys.
+2. Verification runs with design inputs absent keep the module disabled.
+3. The local design consumer processes design work only; unrelated queued commands remain unconsumed for retry.
+
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Local optional input reading; First-deploy supplied optional upload; Later-deploy supplied optional upload; Never required; Later deploy preserves secrets; Verification inputs absent keeps module off; Local consumer only design work; Other queue work left for retry.
 
 #### DESIGN-002 — Draft-only design generation
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-DATA-004
 
-**Requirement.** From a draft's email editor an operator can ask the design service for two to four designs from a brief that starts as the draft's name, subject, preheader, sender name and current text and that the operator may edit. An estimate of the spend on the owner's design-service account is shown before each paid step: drawing the candidates and preparing the chosen layout. The run belongs to the draft and continues in the background: candidates appear as they land and the run is shown again after a reload. The operator chooses one with **Use this design** beside its image; Mango fetches its layout and then opens the design import path (DESIGN-004), where the browser builds the email; it opens by itself only as the continuation of that choice while the operator has done nothing else in the page, and otherwise the run shows a notice whose action opens it, so nothing opens over, or takes focus from, an operator who is working: photos hosted as campaign images, the HTTPS button destination the operator enters, the managed footer, and every design line not in the brief highlighted. The result is an unsaved edit of the email body that replaces existing content only after confirmation. The run and its candidates stay on offer until the draft is saved with the design or the operator discards them, so discarding the edit, reloading, a failed layout step or starting another run never loses a design that was paid for, and using the same prepared design again buys nothing. After a failed layout step the run says which step failed and whether the design service's allowance or wallet is the cause, and offers to try the layout again (a new paid layout) or choose a different design; a new run leaves earlier runs' designs reachable under the latest run. While the design service holds a run back, the editor says why and when Mango asks again, until the service answers. A run never saves, approves, schedules or sends; the body reaches the editor already in the canonical form saving stores (CAMP-003 policy), and the operator's Save stores it through the ordinary draft save path, where it passes every approval check like any other draft. A run that fails or outlives its deadline is shown as failed with Mango's own reason and changes nothing in the draft; Mango never substitutes content of its own for a design the service did not deliver.
+**Requirement.** A draft’s editor can commission designs from an editable brief and see paid work progress.
 
 **Acceptance.**
-1. (done).
-2. A brief becomes an unsaved body through the import path.
-3. Evidence: `tests/campaign-authoring/design-generation.spec.ts`.
+1. The editable brief starts from the draft’s name, subject, preheader, sender name and current text; it requests two to four designs.
+2. Before drawing candidates or preparing a chosen layout, the operator sees the estimated spend on their design-service account.
+3. The run belongs to the draft and continues in the background; candidates appear as delivered and reappear after reload.
 
 **Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Subject in brief; Current text in brief; Brief editable; Candidate-drawing spend estimate; Draft-owned run survives reload; Candidates appear progressively; Later candidate appears. Unasserted: Draft name in brief; Preheader in brief; Sender name in brief; Two-to-four design choice; Layout spend estimate.
+
+#### DESIGN-007 — Design provider retries and deadlines
+
+Core · published · **partial** · From DESIGN-002 · Cites BASE-OPS-004
+
+**Requirement.** Design runs settle predictably when the provider holds, refuses or stops answering.
+
+**Acceptance.**
+1. Every request is bounded: 30 seconds ordinarily, 60 seconds for downloads and 150 seconds for a candidate purchase.
+2. A rate refusal naming a retry time waits until that time with the same purchase key and visible relative-time notice that remains until the next answer; a wait beyond the run deadline fails as quota.
+3. A refusal without a retry time or an empty wallet fails immediately as quota; network, server and request-timeout failures retry at most three passes five and ten seconds apart, then visibly fail unavailable.
+4. A refused key or request, unreadable answer, forbidden redirect, failed design or expired layout fails with its specific safe Mango reason.
+5. Minute scheduling and reading a draft both fail overdue runs; scheduling also resumes live work quiet for two minutes unless awaiting the provider’s declared retry time.
+6. A new run cannot start while another of that draft waits on the provider; a design already offered may still prepare its layout.
+
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
+**Gap.** Asserted: Same key on rate retry; Notice stays until answer; Untimed refusal fails quota; Wallet refusal fails quota; Failed design reason; Read deadline settlement. Unasserted: Ordinary 30-second request bound; 60-second download bound; 150-second purchase bound; Retry-After honored; Relative retry time notice; Beyond-deadline wait fails quota; Network failure retries; Server failure retries; Request timeout retries; Three-pass bound; Five- and ten-second spacing; Unavailable final failure; Unauthorized reason; Rejected request reason; Unreadable reason; Forbidden redirect reason; Expired layout reason; Cron deadline settlement; Quiet work resumed after two minutes; Declared provider wait respected; New run refused while same draft waits; Offered design may prepare during wait.
+
+#### DESIGN-008 — Save generated design through ordinary authoring
+
+Core · published · **partial** · From DESIGN-002
+
+**Requirement.** Generated design bodies follow the normal draft lifecycle.
+
+**Acceptance.**
+1. The generated body reaches the editor in the canonical form ordinary saving stores.
+2. A run itself does not save, approve, schedule or send; an operator’s Save uses the ordinary draft-save path and all approval checks still apply.
+3. A failed or overdue run visibly states Mango’s reason and leaves the draft unchanged, without substituting content the service did not deliver.
+
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
+**Gap.** Asserted: Generated body canonical; No implicit save; No approval; No schedule; No delivery; Save uses ordinary draft path; Failed run safe reason; Timeout reason; Failure leaves draft unchanged; No semantic content substitute. Unasserted: All ordinary approval checks.
+
+#### DESIGN-009 — Apply a chosen design without stealing focus
+
+Core · published · **partial** · From DESIGN-002
+
+**Requirement.** Choosing a candidate leads into design import without interrupting unrelated editing.
+
+**Acceptance.**
+1. Use this design appears beside each candidate image and fetches the selected layout through DESIGN-004’s import path.
+2. Import opens automatically only as a continuation of that choice while the operator has done nothing else; otherwise a ready notice offers an action without opening over work or stealing focus.
+3. The browser-built result uses hosted campaign photos, the operator’s HTTPS button destination and the managed footer, highlighting every design line absent from the brief.
+4. The result is an unsaved body edit that replaces prior content only after confirmation.
+
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
+**Gap.** Asserted: Choose beside candidate image; Chosen layout enters import; Untouched choice opens import; Unrelated typing prevents automatic opening; Focus remains in body; Ready notice offers explicit opening; Operator destination retained; Non-brief lines highlighted; Unsaved edit. Unasserted: Hosted photos; Managed footer; Replacement confirmation required.
+
+#### DESIGN-010 — Keep paid design candidates
+
+Core · published · **partial** · From DESIGN-002
+
+**Requirement.** Paid designs remain recoverable until used or discarded.
+
+**Acceptance.**
+1. Runs and candidates remain available until the draft is saved with the design or they are discarded; discarding an edit, reloading, a failed layout and a new run do not lose paid designs.
+2. Reusing the same prepared design buys nothing again.
+3. A failed layout identifies its failed step and whether allowance or wallet caused it, and offers a newly paid retry or another design.
+4. Earlier runs’ designs remain reachable under the latest run.
+5. When the service holds a run, the editor states why and when Mango will ask again until the service answers.
+
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
+**Gap.** Asserted: Discarding edit retains paid design; Reload retains candidates; Failed layout retains candidates; New run retains paid design; Save or discard ends offer; Prepared design reuse has no further purchase; Failed layout step shown; Wallet or allowance reason; New paid layout retry; Choose another design; Earlier designs reachable; Hold reason visible; Hold cleared only after answer. Unasserted: Next retry time visible.
 
 #### DESIGN-003 — Design data and records
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-DATA-001, BASE-DATA-004, BASE-OPS-003, BASE-OPS-005
 
-**Requirement.** A run sends the design service only Mango's fixed description of an email layout with the operator's brief, every `{{…}}` token removed, and then only the chosen candidate image: never a contact, audience, personalization value or token. Every paid request carries an idempotency key derived from the run, so a retried or replayed request never buys again. Each run records its brief, the service's run and layout identifiers, each candidate's outcome, SHA-256 and size, the chosen candidate, the operator, its times and a safe failure code, and is never deleted; the candidate images and the layout are stored in R2 as authoring evidence and exported with everything else (DATA-001). Each paid request records a cost fact (RESULT-004).
+**Requirement.** The design connection discloses only commissioned design material, avoids repurchasing retries and retains its authoring record.
 
 **Acceptance.**
-1. (done).
-2. A run sends only the brief, never buys twice and records costs.
-3. Evidence: `tests/campaign-authoring/design-generation.spec.ts`.
+1. The service receives only Mango’s fixed email-layout description with the operator’s brief stripped of every personalization token, then only the chosen candidate image; no contact, audience or personalization value or token is sent.
+2. Every paid request has a run-derived idempotency key; a retry or replay buys nothing again.
+3. The retained run records the brief, provider run and layout identifiers, each candidate’s outcome, SHA-256 and size, chosen candidate, operator, times and safe failure code, and is never deleted.
+4. Candidate images and layouts are retained as authoring evidence and exported under DATA-001.
+5. Each paid request records its RESULT-004 cost fact.
 
 **Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request. Unasserted: Brief retained; Provider run identifier; Provider layout identifier; Candidate size; Operator; Times; Run never deleted; Candidate originals retained; Layout retained; Candidate and layout export.
+
+#### DESIGN-011 — Design provider custody
+
+Core · published · **partial** · From DESIGN-003 · Cites BASE-ACCESS-002, BASE-SECRET-001, BASE-INPUT-001, BASE-DATA-003
+
+**Requirement.** Untrusted provider outputs remain bounded and private until their selected crops become campaign images.
+
+**Acceptance.**
+1. JSON answers are streamed within 64 KB; candidate PNG downloads within 40 MB and 4,096 pixels per side, with over-declared lengths refused unread.
+2. A layout matches the provider’s published SHA-256 and passes the version-2 import parser; downloads redirect only on the configured origin and purchase redirects are refused.
+3. Provider-owned error text is never stored or displayed; operators see the corresponding safe Mango reason.
+4. Candidate PNGs and layouts require a signed-in operator; only selected cropped campaign images become public.
+5. Each candidate offers its full-size image; up to ten older runs with drawn designs remain reachable with their own choice controls.
+6. Queue work carries only the run identity, performs the requests still needed, and obeys contact-erasure and restore fences; erasure redacts run briefs like campaign text.
+
+**Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
+**Gap.** Asserted: Provider error text never shown; Separate old-run choice controls. Unasserted: 64 KB JSON stream cap; 40 MB candidate stream cap; 4,096-pixel bound; Declared oversize refused unread; Published layout digest verified; Version-2 layout parser; Same-origin read redirects only; Purchase redirects refused; Provider error text never stored; Safe Mango reason; Candidate requires session; Layout requires session; Only selected crops public; Full-size candidate link; Up to ten older offered runs; Queue contains only run identity; Only still-needed requests; Erasure write fence; Restore fence; Erasure redacts briefs.
 
 #### DESIGN-004 — Design import
 
-Core · published · **done**
+Core · published · **partial** · Register R-201
 
-**Requirement.** An operator editing a draft can import a design made with their own 12ui CLI: a LayerDoc version 2 file and the PNG candidate it was converted from. Mango compiles it in the operator's browser into the same email grammar every authored body uses (MSG-009, MSG-012): the photos become campaign images hosted by this deployment (CAMP-012), the design's button links to an HTTPS destination the operator enters, and its footer becomes the managed unsubscribe link and saved postal address. Layers Mango does not import are listed by their LayerDoc text, and every line of the design that does not appear in the operator's brief is highlighted for review. An unsupported version, a non-HTTPS button destination or a design the grammar cannot hold is refused visibly with the body unchanged; nothing outside the grammar is ever saved. Import only produces an unsaved edit of a draft's email body: it never saves, approves, schedules or sends, and the result passes every approval check and exact-revision approval like any other draft. Import itself makes no request to 12ui; generating designs inside Mango is DESIGN-001 to DESIGN-003.
+**Requirement.** A local design file and its candidate PNG become an unsaved campaign-body edit through the email grammar.
 
 **Acceptance.**
-1. (done).
-2. A LayerDoc imports as an unsaved body that passes approval and BUILD-012's measured per-part UTF-8 size check: at most 102,400 bytes for each of the HTML and plain-text parts (`seed.json → limits.maxEmailHtmlBytes`, `src/core/features/campaigns/email-size.ts`), replacing the historical 20,000-character cap of the 13 October 2026 policy.
-3. Evidence: `tests/campaign-authoring/design-import.spec.ts`.
+1. A version-2 LayerDoc and its source PNG compile in the browser into the same email grammar MSG-009 and MSG-012 require.
+2. Photos become hosted campaign images under CAMP-012, the button uses the operator’s HTTPS destination, and the footer becomes the managed unsubscribe link and saved postal address.
+3. The import lists unsupported layers by their text and highlights every design line absent from the operator’s brief.
+4. An unsupported version, non-HTTPS button or unrepresentable grammar is refused visibly with the saved body unchanged; nothing outside the grammar saves.
+5. Import yields only an unsaved body edit, without saving, approving, scheduling or sending; ordinary approval checks and exact-revision approval still apply.
+6. Each HTML and plain-text part is at most 102,400 UTF-8 bytes under BUILD-012’s measured per-part check.
+7. Import makes no request to 12ui; generation is DESIGN-001, DESIGN-002 and DESIGN-010 to DESIGN-008.
 
 **Evidence.** `tests/campaign-authoring/design-import.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Version-2 LayerDoc and PNG imported; Hosted photos; Operator HTTPS button; Managed unsubscribe footer; Saved postal-address footer; Unsupported layer text listed; Novel design line highlighted; Brief line not falsely highlighted; Unsupported version visibly refused; Non-HTTPS button visibly refused; Saved body unchanged after refusal; Unsaved edit leaves saved revision intact; No import save; Ordinary exact-revision approval succeeds; Measured HTML-part size refusal; No request to 12ui. Unasserted: Browser compiles email grammar; Unrepresentable grammar refused; Nothing outside grammar saved; No import approval; No import schedule; No import send; Measured plain-text-part size refusal.
+
+#### DESIGN-012 — Compile the imported layout
+
+Core · published · **partial** · From DESIGN-004 · Register R-201
+
+**Requirement.** The compiler produces a readable bounded email layout from supported design elements.
+
+**Acceptance.**
+1. The layout is a centered 600-pixel table containing emblem and lettering, full-width or two-column photos aligned vertically, one button and the managed footer under MSG-012’s tightened grammar.
+2. Only cells paint the page and button backgrounds; images use their natural inline box, and rounded button corners remain inside its side padding.
+3. Text is escaped and long words wrap; only closed hex colors are used and moved to at least 4.5:1 contrast, faces map to Georgia or Helvetica stacks, and Mango supplies sizes and spacing.
+4. Photos are cropped from the full-resolution PNG at up to twice displayed width and uploaded as JPEG; no image codec runs on the server.
+5. The compiler and server enforce the measured per-part BUILD-012 limit before editing, saving, approval, tests and delivery; oversized recipient hand-offs are skipped without truncation.
+6. Two-column sections remain side by side on phones and narrow with the email.
+
+**Evidence.** `tests/campaign-authoring/design-import.spec.ts`
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Centered 600-pixel layout; Header emblem and lettering; Full-width photos; Two-column vertical alignment; One button; Managed footer; Tightened email grammar; Only cells paint backgrounds; Images keep natural inline display; Button corners within padding; Escaped text; Long-word wrapping; Closed hex colors; At least 4.5:1; Georgia-or-Helvetica stacks; Mango sizes and spacing; Full-resolution crop; At most twice displayed width; JPEG uploaded; No server image codec; Compiler size check; Save size check; Approval size check; Test size check; Delivery size check; Oversize recipient skipped; No truncation; Phone columns side by side; Phone columns narrow with email.
+
+#### DESIGN-013 — Review imported design content
+
+Core · published · **partial** · From DESIGN-004
+
+**Requirement.** An imported design exposes what was omitted or invented before saving.
+
+**Acceptance.**
+1. The summary shows each hosted image as a thumbnail from its own address and highlights image descriptions and text absent from the brief.
+2. Unsupported icons, dividers, shapes, destinationless links, further buttons, footer links and footer lines containing digits are omitted and listed by text.
+3. The summary distinguishes unsaved and edited-since-import state and disappears when Discard changes restores the prior body.
+4. An abandoned import leaves its uploaded public images under CAMP-012; the design’s model-written claims are not verified by approval.
+
+**Evidence.** `tests/campaign-authoring/design-import.spec.ts`
+**Gap.** Asserted: Hosted image thumbnail; Text novel-line highlighting; Unsaved state shown; Discard removes summary. Unasserted: Image description highlighting; Icons omitted and listed; Dividers omitted and listed; Shapes omitted and listed; Destinationless links omitted and listed; Extra buttons omitted and listed; Footer links omitted and listed; Digit-bearing footer lines omitted and listed; Edited-since state shown; Abandoned uploaded images remain; Approval does not verify model claims.
+
+#### DESIGN-014 — Bounded local design input
+
+Core · published · **partial** · From DESIGN-004 · Cites BASE-INPUT-001, BASE-DATA-004
+
+**Requirement.** A design import accepts only a bounded, shape-matched file pair.
+
+**Acceptance.**
+1. LayerDoc version 2 is bounded to 2 MB, 2,000 layers and 64 nesting levels; a deep file is refused by name without a stack overflow and unsupported input is not guessed.
+2. The PNG shape matches the LayerDoc canvas.
+3. Design text containing personalization-token delimiters is refused.
+4. The brief starts from name, subject, preheader and sender name and is editable; a line is from it only when the whole line occurs as whole words ignoring case, spacing and typographic quotes.
+5. Signed design URLs are never fetched, no design value escapes the compiler, and the importer loads only when opened.
+
+**Evidence.** `tests/campaign-authoring/design-import.spec.ts`
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: 2 MB bound; 2,000-layer bound; 64-level nesting bound; Deep input named refusal without overflow; Unsupported input not guessed; PNG canvas shape matched; Personalization delimiter rejected; Editable draft-derived brief; Whole-line whole-word matching; Case/spacing/typographic-quote matching; Signed URLs never fetched; Every value stays within compiler; Lazy importer load.
 
 ### Message safety
 
@@ -938,388 +1178,471 @@ Core · published · **done**
 
 Core · published · **partial**
 
-**Requirement.** Every email uses the configured business display name, From address, reply-to address, and physical postal address; every SMS uses a sender registered for the recipient's country.
+**Requirement.** Email and SMS identify the configured business sender.
 
 **Acceptance.**
-1. (partial).
-2. Email identity is proved; per-country registered SMS senders await SMS-001 and SMS-002.
-3. Evidence: `src/core/features/settings/sender-validation.ts` · `tests/settings-sender/routes.spec.ts`.
+1. Each email carries the configured business display name, From address, reply-to address and physical postal address.
+2. Each SMS uses a sender registered for the recipient's country.
 
 **Evidence.** `src/core/features/settings/sender-validation.ts` · `tests/settings-sender/routes.spec.ts`
 **Gap.** acceptance not yet met: Email identity is proved; per-country registered SMS senders await SMS-001 and SMS-002.
 
 #### MSG-002 — Email authentication
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** A marketing email cannot be scheduled unless the mail adapter reports SPF, DKIM, and DMARC passing for the sending domain and the visible From domain aligns with an authenticated domain.
+**Requirement.** Marketing email scheduling requires passing authentication and an aligned visible From domain.
 
 **Acceptance.**
-1. (done).
-2. SPF, DKIM and DMARC alignment gate scheduling.
-3. Evidence: `tests/sender-verification/worker.spec.ts`.
+1. Scheduling is refused when the sending domain does not pass SPF.
+2. Scheduling is refused when the sending domain does not pass DKIM.
+3. Scheduling is refused when the sending domain does not pass DMARC.
+4. Scheduling is refused when the visible From domain does not align with an authenticated domain.
+5. A message whose domain passes all four checks can be scheduled.
 
 **Evidence.** `tests/sender-verification/worker.spec.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Passing sender schedules. Unasserted: Scheduling is refused when the sending domain does not pass SPF.; Scheduling is refused when the sending domain does not pass DKIM.; Scheduling is refused when the sending domain does not pass DMARC.; Scheduling is refused when the visible From domain does not align with an authenticated domain..
 
 #### MSG-003 — Email unsubscribe
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-ACCESS-003, BASE-OPS-003
 
-**Requirement.** Every marketing email carries a visible unsubscribe link and an opaque per-recipient HTTPS `List-Unsubscribe` URL with `List-Unsubscribe-Post: List-Unsubscribe=One-Click`; DKIM covers both headers. The one-click URL accepts a context-free HTTPS POST body of `List-Unsubscribe=One-Click`, does not redirect, and applies CONT-004 before returning success. The visible link opens a page that applies CONT-004 on a single confirming action and never on page load, so a mailbox scanner or link prefetcher cannot unsubscribe anyone. Both paths are idempotent under repeats, need no session or cookie, and reveal no contact other than their own.
+**Requirement.** Marketing email offers both a visible confirmation and the mail-client one-click unsubscribe channel. Protocol details are in [message and delivery mechanisms](docs/contract/mechanism.md).
 
 **Acceptance.**
-1. (done).
-2. One-click and visible unsubscribe behave as mail clients send them.
-3. Evidence: `tests/go-live/go-live.journeys.ts` · `tests/sender-verification/worker.spec.ts`.
+1. Every marketing email carries a visible unsubscribe link and an opaque per-recipient HTTPS mail-client unsubscribe URL with the one-click declaration; DKIM covers both headers.
+2. A context-free one-click POST applies CONT-004 before success and answers without a redirect.
+3. The visible link requires one confirming action; page load, scanner fetch and prefetch alone do not unsubscribe.
+4. Repeated requests through either channel have one opt-out effect.
+5. Neither channel requires a session or cookie.
+6. A token reveals no contact other than its own.
 
 **Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/sender-verification/worker.spec.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Visible link; One-click declaration; Opt-out ledger is changed before success; Context-free one-click body; Scanner and prefetch do not unsubscribe. Unasserted: Opaque HTTPS mail-client URL; DKIM covers both headers; No redirect; Visible confirmation action alone opts out; A token changes only its contact.
 
 #### MSG-004 — SMS permission
 
 Core · published · **partial**
 
-**Requirement.** An SMS is eligible only when its phone number is subscribed for the recorded consent scope and the SMS adapter confirms an approved sender for that recipient's country. For every permitted sender and jurisdiction, the adapter must be able to receive and enforce the standard opt-out and help keywords in CONT-007; otherwise SMS is blocked for that recipient.
+**Requirement.** SMS eligibility combines the recorded subscription scope with the sender's jurisdictional capability.
 
 **Acceptance.**
-1. (partial).
-2. SMS eligibility needs subscribed scope and an approved sender; US registration pending.
-3. Evidence: `src/core/features/sms/transport-guard.ts`.
+1. Hand-off requires the phone number to be subscribed for the recorded consent scope and the sender to be approved for the recipient's country.
+2. A sender unable to receive and enforce CONT-007 opt-out and help keywords is refused for that recipient.
 
 **Evidence.** `src/core/features/sms/transport-guard.ts`
 **Gap.** acceptance not yet met: SMS eligibility needs subscribed scope and an approved sender; US registration pending.
 
 #### MSG-005 — SMS opt-out
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Every marketing SMS carries the configured program identity and `Reply STOP to unsubscribe`, or the jurisdiction's required equivalent, and the configured frequency disclosure where required. An opaque unsubscribe URL may be additional but never replaces reply-based opt-out. Review shows the exact compliance text and resulting segment count.
+**Requirement.** Marketing SMS carries its program and reply-based compliance text, and review exposes the message recipients will receive.
 
 **Acceptance.**
-1. (done).
-2. On the Mobile Message edge, review of an SMS step for a confirmed SMS contact shows the rendered example with the configured program identity, `Reply STOP to unsubscribe`, the configured frequency disclosure, the help contact and the exact segment count at 1440 and 390.
-3. Evidence: `tests/go-live/content-checks.journeys.ts`, `src/core/features/sms/review-preview.ts`.
+1. Each message names its configured program and says 'Reply STOP to unsubscribe', or the jurisdiction's required equivalent.
+2. Each message carries the configured frequency disclosure where required.
+3. An optional opaque unsubscribe URL never replaces reply-based opt-out.
+4. Review shows the exact compliance text and the resulting segment count, including the help contact.
 
 **Evidence.** `tests/go-live/content-checks.journeys.ts` · `src/core/features/sms/review-preview.ts` · `src/core/features/sms/content.ts`
-**Gap.** On the Mobile Message edge, review of an SMS step for a confirmed SMS contact shows the rendered example with the configured program identity, Reply STOP to unsubscribe, the configured frequency disclosure, the help contact and the exact segment count at 1440 and 390. Mobile Message is the proved adapter; Twilio acceptance stays with SMS-008.
+**Gap.** Assertions in tests/go-live/sms-review.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Configured program identity; STOP or jurisdiction equivalent; Frequency disclosure; URL never replaces reply opt-out; Compliance text; Segment count; Help contact.
 
 #### MSG-006 — Links
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Scheduling is blocked when a destination link is malformed; uses a scheme other than HTTPS or the contact schemes MSG-013 admits (`http:`, `javascript:`, `data:`, `file:` and every other scheme block); or resolves, on the link itself or on any redirect it follows, to a host outside the allowed link hosts MSG-014 sets out. Image sources must be HTTPS on an allowed host. Review names every blocked link with the scheme or host that blocks it, and offers MSG-015's allow action for each blocked host. Approval (CAMP-004), flow activation (FLOW-008), the link inspector and tracking (RESULT-005) apply this one rule.
+**Requirement.** One link and image rule governs campaign approval, scheduling, flow activation, inspection and tracking, with allowed hosts from MSG-014 and contact forms from MSG-013.
 
 **Acceptance.**
-1. (done).
-2. One draft with a malformed link, `http:`, `javascript:`, `data:` and `file:` links, a redirect to an unlisted host, an `http:` image and an HTTPS image on an unlisted host is blocked at review and approval; every blocked link is named with its scheme, fault or host, only unlisted HTTPS hosts offer Allow this host, and `mailto:`/`tel:` links never need it, at 1440 and 390.
-3. FLOW-008 and RESULT-005 inherit the rule.
-4. Evidence: `tests/go-live/content-checks.journeys.ts`, `src/core/features/campaigns/link-reasons.ts`.
+1. A malformed destination blocks scheduling and is named in review.
+2. A destination using a scheme other than HTTPS or an admitted MSG-013 contact scheme blocks scheduling, with its scheme named.
+3. A link or any followed redirect on an unlisted host blocks scheduling, with that host named.
+4. An image outside HTTPS or the allowed-host list blocks scheduling, with its fault or host named.
+5. Review offers MSG-015's allow action for blocked hosts, and never for a blocked scheme or a valid contact link.
+6. Campaign approval, flow activation, the link inspector and tracking enforce the same rule.
+7. A link or image pointing to this deployment's own campaign asset is checked against its record and stored bytes without a same-host network lookup; a missing asset blocks approval and is named.
 
 **Evidence.** `tests/go-live/content-checks.journeys.ts` · `src/core/features/campaigns/link-reasons.ts` · `src/core/features/lifecycle/checks.ts`
-**Gap.** One draft carries a malformed link, http:, javascript:, data: and file: links, a link whose redirect lands on an unlisted host, an http: image and an HTTPS image on an unlisted host, with mailto: and tel: contact links beside them. Review and approval block it and name every blocked link with the scheme, fault or host that blocks it; only the unlisted HTTPS hosts (the redirect's and the image's) offer Allow this host, never a scheme, at 1440 and 390. Contact links never need it. FLOW-008 (flow activation) and RESULT-005 (tracking) inherit this one rule in their own text.
+**Gap.** Assertions in tests/go-live/content-links.ts and tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts Campaign approval. Unasserted: Malformed links named and blocked; Forbidden schemes named and blocked; Unlisted link and redirect hosts named and blocked; Image scheme and host named and blocked; Allow action only for host; Contact links need no allowance; Flow activation; Link inspection; Tracking; Own asset checked without DNS; Own asset checked without same-host request; Missing own asset blocks and is named.
 
 #### MSG-007 — Content checks
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Review names blocking and advisory content findings per channel. An operator can acknowledge an advisory finding; the consent, sender registration, opt-out, authentication, link, personalization, and reputation checks are blocking and cannot be overridden.
+**Requirement.** Review separates blocking content findings from advisories in every channel.
 
 **Acceptance.**
-1. (done).
-2. The native Worker/D1 journey shows advisory and blocking findings, acknowledges only the exact saved advisory, retains its actor and time across reload and replay, invalidates it after an edit, refuses safety-check acknowledgments and still blocks approval until the content is corrected.
-3. Review is exercised at 1440 and 390 pixels.
-4. Evidence: `tests/go-live/content-checks.journeys.ts`.
+1. Review names each blocking and advisory finding per channel.
+2. An operator can acknowledge an advisory for its exact saved finding, with actor and time retained through reload and replay.
+3. An edit invalidates the old advisory acknowledgment.
+4. Consent, sender registration, opt-out, authentication, links, personalization and reputation findings cannot be acknowledged away.
+5. Approval stays blocked until each blocking finding is corrected.
 
 **Evidence.** `tests/go-live/content-checks.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Blocking findings shown; Advisory findings shown; Acknowledgment survives reload; Replay produces one audit entry; Actor. Unasserted: Every channel.
 
 #### MSG-008 — Personalization
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Every personalization token carries a fallback value. A bare token is refused by the authoring checks and blocks approval and scheduling even when every current eligible contact resolves it, because the audience can change before send. When a contact has no value for a valid token, its saved fallback is rendered and the count of eligible contacts using a fallback is shown in review.
+**Requirement.** Saved personalization always has a fallback, and review counts affected eligible people.
 
 **Acceptance.**
-1. (done).
-2. The native Worker/D1 journey refuses tokens without fallbacks even on an audience where every eligible contact resolves the token, counts eligible fallback recipients rather than token occurrences, excludes pending contacts from those counts and preserves the counts on approval.
-3. Names render escaped in HTML and unchanged in text; a contact labeled only by their destination uses the saved fallback.
-4. Preview supplies an illustrative value only for `displayName`, the name field available to delivery; `first_name`, `name` and other unavailable properties use their saved fallbacks in preview and provider output.
-5. Editor, preview and review are exercised at 1440 and 390 pixels, then the provider payloads are checked.
-6. Evidence: `tests/go-live/personalisation.journeys.ts`.
+1. Authoring refuses a token without a fallback and blocks approval and scheduling even when every eligible contact currently resolves it.
+2. A missing contact value renders the saved fallback.
+3. Review counts eligible people using a fallback, rather than token occurrences, excluding pending contacts; approval preserves those counts.
+4. Delivered names are escaped in HTML and unchanged in plain text; a contact labeled only by its destination uses the fallback.
+5. Preview uses an illustrative display name only for the name field delivery supports; unavailable properties use their saved fallbacks in preview and delivered content.
+6. Editor, preview and review expose the same fallback outcomes at desktop and phone widths.
 
 **Evidence.** `tests/go-live/personalisation.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Bare token blocks checks; Approval refusal leaves no recipient steps; Saved fallback rendered; Eligible person counts exclude pending people and token occurrences; Approval preserves counts. Unasserted: Bare token when every eligible person resolves it; Scheduling refusal.
 
 #### MSG-009 — Email body
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-INPUT-002
 
-**Requirement.** Every marketing email is sent as multipart/alternative with an HTML part and a plain-text part carrying the same offer, links, and unsubscribe link, plus the preheader text set on the revision. Operator-authored HTML is saved as the WHATWG HTML parser reads it and transmitted exactly as saved within the allowed tag, attribute, and inline-style set and within the size limit BUILD-012 derives from delivery, which admits no script, form, stylesheet, class, or CSS function. The single exception is the responsive block BUILD-010 generates from builder settings: no author writes it, saving regenerates it, and the checker judges the email with and without it. One checker, reading the stored body with that parser, decides approval, test send, and delivery; the preview renders the HTML sanitized per BASE-INPUT-002 from the same parse and keeps its styles only when that checker passes, and the plain-text part is derived from the same parse.
+**Requirement.** Marketing email delivers the exact saved body as recipients parse it, with equivalent HTML and plain-text offers. The accepted grammar and normalization rules are in [message and delivery mechanisms](docs/contract/mechanism.md).
 
 **Acceptance.**
-1. (done).
-2. One parser and checker decide approval, test send and delivery; the size limit is proved under BUILD-012.
-3. Evidence: `tests/campaign-authoring/canonical-save.spec.ts`.
+1. The delivered multipart message has HTML and plain-text parts carrying the same offer, links and unsubscribe link, and the saved preheader.
+2. Saving canonicalizes authored markup to the structure mail clients parse and later saves keep those bytes stable.
+3. Delivery transmits the saved authored HTML unchanged apart from managed token substitution and tracked-link rewriting, within the admitted tags, attributes, inline styles and BUILD-012 size.
+4. Authored scripts, forms, stylesheets, classes and CSS functions are refused.
+5. Only BUILD-010 may generate a responsive block; saving regenerates it and checking judges the message with and without it.
+6. Approval, test send and delivery use the same checker of the stored parse.
+7. Preview uses that parse under the cited HTML duty, retains styles only after the checker passes, and derives plain text from the same parse.
+8. Link and image addresses are judged decoded and refuse literal quote or angle-bracket characters and no-break space; normalization never changes a hiding declaration to make it pass.
 
 **Evidence.** `tests/campaign-authoring/canonical-save.spec.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Stored parser structure; Save stability. Unasserted: Decoded destination checks; Literal quote refusal; Literal angle-bracket refusal; No-break space refusal; Normalization does not repair hiding declarations; Multipart alternative; Equivalent offer in HTML and text; Equivalent links in HTML and text; Unsubscribe link in both parts; Saved preheader delivered; Saved HTML bytes delivered; Only token and tracking substitutions; Admitted tag set; Admitted attribute set; Admitted inline-style set; BUILD-012 size bar; Script refusal; Form refusal; Stylesheet refusal; Class refusal; CSS-function refusal; Responsive block generated only by builder; Responsive block regenerated on save; Check with responsive block; Check without responsive block; Same stored-parse checker for approval; Same stored-parse checker for test send; Same stored-parse checker for delivery; Preview uses shared parse; Preview styles only after checker success; Plain text derives from same parse.
 
 #### MSG-010 — Unsubscribe availability
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-ACCESS-003
 
-**Requirement.** The unsubscribe path answers within 2 seconds and is rate-limited per unsubscribe token at the limit in `seed.json`, not per client IP address. The token is the rate-limit key declared for this public path under BASE-ACCESS-003, so mailbox-provider requests for unrelated recipients cannot consume one another's allowance; an exceeded token allowance returns 429 without affecting other tokens.
+**Requirement.** Unsubscribe capacity is partitioned by token so a shared mailbox-provider address cannot spend another recipient's allowance.
 
 **Acceptance.**
-1. (done).
-2. The native Worker journey measures complete confirmation GET and one-click POST responses below 2 seconds, exhausts one token's shared GET/POST allowance from `seed.json`, and receives 429 without affecting another recipient's token from the same client IP.
-3. Confirmation and success pages fit 1440 and 390; both opt-outs prevent already-approved deliveries and survive provider reconciliation.
-4. This is a local measured path, not a hosted latency measurement.
-5. Evidence: `tests/go-live/opt-out-reasons.journeys.ts`.
+1. The complete unsubscribe response arrives within two seconds in the measured journey.
+2. GET and POST share the configured per-token allowance, with excess requests refused.
+3. Exhausting one token's allowance leaves another token usable from the same client address.
+4. Confirmation and success pages fit desktop and phone widths.
+5. Both opt-outs prevent already-approved delivery and survive later provider reconciliation.
 
 **Evidence.** `tests/go-live/opt-out-reasons.journeys.ts` · `src/core/features/audience/unsubscribe-routes.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Complete response below two seconds; Shared GET allowance excess; Shared POST allowance excess; Another token at the same client address actually opts out; Confirmation at both widths. Unasserted: Visible confirmation alone prevents approved delivery (the cited journey confirms only after its one-click opt-out).
 
 #### MSG-011 — Sending reputation
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Once a sending domain has at least 1,000 marketing deliveries in the reporting window, scheduling a marketing email from it is blocked while provider-reported complaints divided by delivered marketing emails are at or above 0.3%, or hard bounces divided by attempted marketing hand-offs are at or above 5% (RESULT-006). A provider's stricter block applies at any volume. The block names each numerator, denominator, reporting window, and provider rule, cannot be acknowledged away, recomputes when late facts arrive, and clears only when every applicable threshold is below its limit.
+**Requirement.** Scheduling is gated by the sending domain's measured complaint and hard-bounce rates and any stricter provider hold.
 
 **Acceptance.**
-1. (done).
-2. Complaint and bounce-rate blocks with named figures.
-3. Evidence: `tests/go-live/delivery.journeys.ts`.
+1. At 1,000 or more marketing deliveries in the reporting window, a complaint rate at or above 0.3% blocks scheduling.
+2. At that volume, a hard-bounce rate at or above 5% of attempted marketing hand-offs blocks scheduling.
+3. A stricter provider block applies at any volume.
+4. Each block names its numerator, denominator, reporting window and provider rule and cannot be acknowledged away.
+5. Late facts recompute the block, which clears only when every applicable threshold is below its limit.
 
 **Evidence.** `tests/go-live/delivery.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: At 1,000 or more marketing deliveries in the reporting window, a complaint rate at or above 0.3% blocks scheduling.; At that volume, a hard-bounce rate at or above 5% of attempted marketing hand-offs blocks scheduling.; Provider hold blocks approval; Each block names its numerator, denominator, reporting window and provider rule and cannot be acknowledged away.; Late facts recompute the block, which clears only when every applicable threshold is below its limit..
 
 #### MSG-012 — Hidden or deceptive presentation
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Authored presentation cannot hide or disguise content. Approval, test send, and delivery judge the tree mail clients build from the stored body. Only table cells and the email's outer wrapper paint a background, no element changes its display, and nothing in the grammar can carry text out of the table cell that holds it, so every text run is drawn on the background of its nearest table cell that paints one, or outside any on the wrapper or the white page; they are blocked, with the reason named, when text sits below 3:1 contrast against that background (text on the wrapper also against the white page, since a block does not hold what overflows it) in standards or quirks rendering, when a style hides, clips, fades, shrinks below 10px, moves, overlays, or reverses text, when presentation stands where the grammar does not admit it (a background outside a table cell or the outer wrapper, any display, a width or height that could make a box smaller than its text, a border on an inline element, a rounded painted corner over the text it holds, right-to-left text outside a cell, overlapping styled cells), when styled markup is not written the way HTML parsers build it, or when markup is written in a way mail clients read differently from how it looks. The unsubscribe link and postal address fall under the same rule.
+**Requirement.** Authored presentation cannot hide or disguise the marketing content, unsubscribe link or postal address. The full presentation grammar and legacy-revision rules are specified in [message and delivery mechanisms](docs/contract/mechanism.md).
 
 **Acceptance.**
-1. (done).
-2. Hidden or low-contrast text blocks approval.
-3. Evidence: `tests/campaign-authoring/canonical-save.spec.ts`.
+1. Approval, test send and delivery judge the tree mail clients build from the saved message.
+2. Text is blocked below 3:1 contrast against its nearest painted table-cell background, otherwise its outer wrapper or the white page; wrapper text is also checked against the white page in standards and quirks rendering.
+3. Styles that hide, clip, fade, shrink below 10px, move, overlay or reverse text are blocked with the reason named.
+4. Backgrounds outside cells or the outer wrapper, display changes, text-constraining dimensions, inline borders, painted rounded corners over text, direction outside a cell and overlapping styled cells are blocked.
+5. Styled markup that differs from the structure parsers build, or markup mail clients read differently from its apparent structure, is blocked.
+6. The same presentation rule protects the unsubscribe link and postal address.
 
 **Evidence.** `tests/campaign-authoring/canonical-save.spec.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Parser tree controls approval; Low-contrast text blocked; Misparsed styled markup blocks. Unasserted: Test-send tree; Delivery tree; Hidden text refused; Clipped text refused; Faded text refused; Under-10px text refused; Moved text refused; Overlaid text refused; Reversed text refused; Reason named; Background outside painted cells/wrapper refused; Display changes refused; Constraining dimensions refused; Inline borders refused; Painted rounded corner over text refused; Direction outside cell refused; Overlapping styled cells refused; Unsubscribe presentation protected; Postal-address presentation protected; Painted-cell contrast; Outer-wrapper contrast; White-page contrast; Standards-rendering contrast; Quirks-rendering contrast.
+
+#### MSG-016 — Legacy approved email and draft compatibility
+
+Core · published · **partial** · From MSG-009, MSG-012 · Cites BASE-INPUT-002
+
+**Requirement.** Existing approvals preserve their exact bytes while legacy parser ambiguities receive the specific compatibility treatment recorded by the owner. The full accepted grammar and legacy cases are in [message and delivery mechanisms](docs/contract/mechanism.md).
+
+**Acceptance.**
+1. An earlier valid plain revision remains deliverable byte for byte without normalization or re-approval, including parser-stable legacy styled output.
+2. Delivery refuses a legacy approved revision that uses a comment-like malformed close tag, attributes on a table cell or row outside a table, undersized unstyled nested headings, or a direction-override character; it names the reason and requires a new approval.
+3. Legacy apparent tags that mail clients read as literal text remain deliverable as approved; tighter placement rules do not invalidate earlier plain approvals.
+4. A styled revision that uses presentation the owner later prohibited is refused at test send and delivery and needs new approval; earlier incompatible design output is imported again.
+5. Any save of an older draft stores canonical markup regardless of which fields changed; spelling alone never prevents a draft save.
+
+**Evidence.** `tests/campaign-authoring/canonical-save.spec.ts`
+**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Legacy plain approval remains byte-identical; Legacy parser-stable styled approval remains byte-identical; No re-approval of valid legacy body; Malformed-close legacy refusal; Out-of-table attribute legacy refusal; Undersized nested-heading legacy refusal; Direction-override legacy refusal; Reason named; New approval needed; Literal-text legacy forms deliver unchanged; Tightened placement preserves plain approvals; Old prohibited style refused at test send; Old prohibited style refused at delivery; Earlier design re-imported; Older draft canonicalized on any save; Markup spelling does not refuse save.
 
 ### Delivery
 
 #### SEND-001 — Provider hand-off
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001
 
-**Requirement.** Email uses `mail.sender.v1` and SMS uses `sms.sender.v1`. Every recipient-step carries a provider-effective idempotency key derived from the campaign, revision, step, and contact. Mango stores the provider message identifier before treating it as handed off. A timeout or lost response becomes `handoff-unknown` and is reconciled by provider lookup before any retry; an adapter whose deduplication retention cannot cover the campaign deadline and reconciliation window cannot pass CAMP-004. A retried job, redelivered queue message, or resumed dispatch therefore never produces a second provider message.
+**Requirement.** Campaign recipient-steps retain the declared provider deduplication guarantee, with SendGrid's explicitly authorized at-most-once exception. [Message and delivery mechanisms](docs/contract/mechanism.md) records the fence and provider correlation details.
 
 **Acceptance.**
-1. (done).
-2. Hand-off fencing and idempotency.
-3. Evidence: `tests/go-live/managed-mail.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts`.
+1. Email and SMS use their declared adapters, and each recipient-step binds campaign, revision, step and contact in its hand-off identity.
+2. Outside the SendGrid exception, approval requires provider-effective deduplication lasting through the campaign deadline and reconciliation window.
+3. A durable recipient-step fence precedes each at-most-once SendGrid hand-off; a correlation key is never presented as provider deduplication.
+4. Success persists the provider message identifier before treating the step as handed off.
+5. A definite SendGrid nonacceptance, including a rate rejection, may retry within the existing deadline; accepted or uncertain hand-offs are never automatically retried.
+6. Timeout, connection reset, provider uncertainty or missing message identity, and eviction after the fence remain uncertain with operator review named.
+7. Retried jobs, redelivered queue messages and resumed dispatch create no second provider message.
 
 **Evidence.** `tests/go-live/managed-mail.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Email adapter hand-off; Reconciliation-window coverage; Resumed dispatch does not duplicate. Unasserted: SMS adapter hand-off; Campaign/revision/step/contact identity; Provider-effective deduplication; Deadline coverage; Durable fence precedes SendGrid request; Correlation key is not provider deduplication; Provider identifier stored before handed-off state; Definite nonacceptance may retry; Accepted hand-off never retried; Uncertain hand-off never retried; Timeout remains uncertain; Reset remains uncertain; Uncertain provider response remains uncertain; Missing message identifier remains uncertain; Eviction after fence remains uncertain; Operator review is named; Job retry does not duplicate; Queue replay does not duplicate.
 
 #### SEND-002 — Quiet hours
 
 Core · published · **partial**
 
-**Requirement.** SMS is handed off only inside the recipient-local legal and provider-required windows. The recipient time zone is resolved from recorded location evidence with its source and freshness, never substituted with the store time zone; an unknown or stale zone blocks hand-off; the US area-code evidence SMS-003 defines counts as recorded location evidence. Legal and provider windows are mandatory minima that a policy cannot weaken. *Policy: `sms.quiet-hours.v1`; default: defer until the next allowed instant at or before the step's send-by instant (CAMP-010), otherwise skip and record `quiet-hours-deadline`.*
+**Requirement.** SMS scheduling respects recipient-local legal and provider windows, with a bounded defer-or-skip policy.
 
 **Acceptance.**
-1. (partial).
-2. Recipient-local SMS windows; US defaults in SMS-003.
-3. Evidence: `src/core/features/sms/policy.ts`.
+1. Hand-off occurs only inside all legal and provider-required recipient-local windows, which installation policy cannot weaken.
+2. The recipient time zone comes from recorded location evidence with source and freshness, including SMS-003 area-code evidence, never a store-time-zone substitution.
+3. Unknown or stale location evidence blocks hand-off.
+4. The replaceable quiet-hours policy defers to the next allowed instant at or before CAMP-010's deadline; otherwise the step is skipped with its quiet-hours deadline reason.
 
 **Evidence.** `src/core/features/sms/policy.ts`
 **Gap.** acceptance not yet met: Recipient-local SMS windows; US defaults in SMS-003.
 
 #### SEND-003 — Throttling and progress
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Dispatch paces hand-offs to the provider and carrier rate limits in `seed.json`. Campaign status shows the estimated completion instant and updates the handed-off, delivered, skipped, and failed counts within 30 seconds of each change.
+**Requirement.** Provider and carrier pacing keeps dispatch within configured capacity while campaign progress remains current.
 
 **Acceptance.**
-1. (done).
-2. Paced hand-offs with live progress.
-3. Evidence: `tests/go-live/delivery.journeys.ts`.
+1. Hand-offs are paced to the configured provider and carrier limits.
+2. Campaign status shows an estimated completion instant.
+3. Handed-off, delivered, skipped and failed counts refresh within 30 seconds of each change.
 
 **Evidence.** `tests/go-live/delivery.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Provider pacing; Estimated completion; Accepted count refresh within 30 seconds. Unasserted: Carrier pacing; Delivered count refresh; Skipped count refresh; Failed count refresh.
 
 #### SEND-004 — Transport failure
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-OPS-004, BASE-MAIL-001
 
-**Requirement.** A transient provider or network failure on a recipient-step is retried up to 5 times over 1 hour with increasing delay, except that `handoff-unknown` is reconciled rather than retried. A permanent rejection or exhausted retry budget marks that recipient-step failed with the provider's error and campaign detail shows it; a hard rejection, complaint, or provider suppression also updates CONT-006 atomically before another hand-off.
+**Requirement.** Transient failures consume a bounded increasing retry schedule, while permanent failure and suppression remain visible in the recipient-step.
 
 **Acceptance.**
-1. (done).
-2. Increasing retries within the hour and terminal reasons.
-3. Evidence: `tests/go-live/delivery-recovery.journeys.ts` · `tests/go-live/delivery.journeys.ts`.
+1. A transient provider or network failure retries at most five times over one hour with increasing delay.
+2. An uncertain hand-off is reconciled rather than retried.
+3. Permanent rejection or an exhausted retry budget leaves a failed recipient-step with its provider error shown on campaign detail.
+4. Hard rejection, complaint and provider suppression update CONT-006 atomically before another hand-off.
 
 **Evidence.** `tests/go-live/delivery-recovery.journeys.ts` · `tests/go-live/delivery.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Five retries then failure; Within original hour; Increasing delays; Exhaustion failed state; Error visible in detail. Unasserted: Uncertainty reconciled without retry; Permanent rejection terminal; Atomic suppression for hard rejection; Atomic suppression for complaint; Atomic provider suppression.
 
 #### SEND-005 — Provider-event identity
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-OPS-003
 
-**Requirement.** Every signed provider webhook is stored once as an immutable fact using the strongest identity that adapter declares: provider event identifier where supplied, otherwise provider message identifier, event kind, provider event time or version, and a stable payload digest. Replaying or reordering delivery, bounce, complaint, suppression, and SMS reply facts produces the same derived delivery disposition and contact state, and an older fact never downgrades a later provider disposition.
+**Requirement.** Provider facts retain adapter-declared identity and event order independently of their arrival order. Identity fields are documented in [message and delivery mechanisms](docs/contract/mechanism.md).
 
 **Acceptance.**
-1. (done).
-2. Signed provider facts stored once.
-3. Evidence: `tests/go-live/go-live.journeys.ts` · `tests/go-live/delivery-recovery.journeys.ts`.
+1. Each signed webhook becomes one immutable fact using the strongest identity the adapter supplies.
+2. Replayed and reordered delivery, bounce, complaint, suppression and SMS-reply facts leave the same derived delivery disposition and contact state.
+3. An older fact never downgrades a later provider disposition.
 
 **Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/go-live/delivery-recovery.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Signed event accepted; Replay and reorder preserve recipient disposition; Older fact does not downgrade delivery. Unasserted: Strongest adapter identity and immutable fact; Replay and reorder preserve every contact state; SMS reply identity.
 
 #### SEND-006 — Delivery truth
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-MAIL-001
 
-**Requirement.** A recipient-step has a transport disposition of queued, handoff-unknown, handed-off, accepted, delivered, bounced, skipped, or failed, plus independent complaint and suppression facts. *Delivered* is recorded only from a provider fact asserting delivery; provider acceptance is never reported as delivery. A later complaint remains visible without erasing the earlier delivery fact, and a skipped disposition carries its reason.
+**Requirement.** Each recipient-step combines a transport disposition with independent complaint and suppression facts, under the cited truthful-mail duty.
 
 **Acceptance.**
-1. (done).
-2. Delivered only from a provider delivery fact.
-3. Evidence: `tests/go-live/go-live.journeys.ts` · `tests/go-live/scheduler.journeys.ts`.
+1. Transport dispositions distinguish queued, uncertain hand-off, handed off, accepted, delivered, bounced, skipped and failed.
+2. Complaint and suppression remain independent facts.
+3. A later complaint stays visible without erasing the earlier delivery fact.
+4. A skipped disposition carries its reason.
 
 **Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/go-live/scheduler.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Accepted and uncertain states; Independent complaint; Delivery retained after complaint. Unasserted: All remaining disposition states; Independent suppression; Skipped reason retained.
 
 #### SEND-007 — Partial completion
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-MAIL-001
 
-**Requirement.** A campaign becomes completed only once every recipient-step has a terminal transport disposition; `handoff-unknown` is not terminal. Its summary keeps delivered, skipped, failed, bounced, complained, and suppressed totals separate and never sums them into a single success figure. Later complaint or suppression facts update the completed campaign's summary and the contact ledger.
+**Requirement.** Completed campaign reporting reconciles every recipient-step while keeping overlapping facts separate.
 
 **Acceptance.**
-1. (done).
-2. Completion needs terminal dispositions; totals stay separate.
-3. Evidence: `tests/go-live/go-live.journeys.ts` · `tests/campaign-results/results.journeys.ts`.
+1. Completion requires every recipient-step to have a terminal transport disposition; an uncertain hand-off remains nonterminal.
+2. The summary separately reports delivered, skipped, failed, bounced, complained and suppressed totals without one combined success figure.
+3. Later complaint or suppression facts update both the completed campaign summary and contact ledger.
 
 **Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/campaign-results/results.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Per-disposition visible counts; Late complaint updates campaign summary; Late complaint updates ledger. Unasserted: Uncertainty is not terminal; Every terminal disposition gates completion; All overlapping complaint/suppression totals separate; No combined success figure; Late suppression updates completed summary.
 
 #### SEND-008 — Resumable dispatch and reconciliation
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-OPS-003, BASE-MAIL-001
 
-**Requirement.** Dispatch survives worker eviction, redeployment, and restart: it resumes from recipient-steps without a terminal transport disposition, sends nothing twice (SEND-001), and needs no operator action. At the reconciliation interval in `seed.json`, it queries the provider for handoff-unknown and other unresolved messages and imports missed provider facts. After the provider's declared lookup window expires, an unresolved message becomes failed with `outcome-unconfirmed`; it is never counted as delivered or retried blindly. A campaign never remains dispatching with no work or reconciliation in progress.
+**Requirement.** Dispatch resumes and reconciles unresolved provider work, preserving SendGrid's single-attempt fence and truthful uncertainty. [Message and delivery mechanisms](docs/contract/mechanism.md) specifies the provider correlation policy.
 
 **Acceptance.**
-1. (done).
-2. Resumable dispatch and reconciliation.
-3. Evidence: `tests/go-live/go-live.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts`.
+1. Worker eviction, redeployment, restart, queue redelivery and resumed dispatch preserve nonterminal recipient-steps and the existing fence, without duplicate sends or operator restart action.
+2. At the configured interval, provider lookup resolves uncertain and other unresolved messages and imports missed facts.
+3. SendGrid reconciliation correlates submission identity with signed provider event message identifiers and Activity data when available.
+4. Unavailable SendGrid Activity or an expired lookup window leaves uncertainty visible for operator review, without inventing delivery or failure, resubmission or an automatic retry control.
+5. Operators can review receiver evidence and provider message identifiers for uncertainty.
+6. For other providers, unresolved messages past their declared lookup window fail with an unconfirmed-outcome reason, without delivery credit or blind retry.
+7. A campaign never remains dispatching with neither work nor reconciliation in progress.
 
 **Evidence.** `tests/go-live/go-live.journeys.ts` · `tests/go-live/resend-delivery.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Restart resumes; No duplicate send; Provider lookup reconciles uncertainty; Missed provider facts imported; Activity unavailable retains uncertainty. Unasserted: Eviction resumes; Redeployment resumes; Queue redelivery preserves fence; No operator restart action; Other unresolved lookup; Signed SendGrid event correlation; Activity identity correlation; Expired SendGrid lookup retains uncertainty; No invented delivery; No invented failure; No automatic retry control; Receiver evidence available; Provider identifiers available; No delivery credit.
 
 #### SEND-009 — Provider outage
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-OPS-004, BASE-MAIL-001
 
-**Requirement.** When hand-offs to a provider fail transiently for 5 continuous minutes, or the adapter reports the provider unavailable, the affected campaign channel moves to paused and no recipient hand-offs are attempted on it. The adapter runs a bounded health probe or non-recipient canary at the reconciliation interval in `seed.json`; a successful probe resumes dispatch automatically, subject to CAMP-010 and AUD-005. The pause and provider error are shown on campaign detail, and each operator is emailed once as soon as the mail provider is available.
+**Requirement.** A provider outage pauses only its affected campaign channel, then recovers through bounded probes.
 
 **Acceptance.**
-1. (done).
-2. Outage pause and probe-driven resume.
-3. Evidence: `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts`.
+1. Five continuous minutes of transient hand-off failure or an adapter unavailable report pauses the affected channel and stops recipient hand-offs.
+2. A bounded health probe or non-recipient canary runs at the configured reconciliation interval.
+3. A successful probe resumes dispatch automatically subject to CAMP-010 and AUD-005.
+4. Campaign detail shows the pause and provider error.
+5. Each operator receives one outage email as soon as the mail provider is available.
 
 **Evidence.** `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Adapter unavailable pauses channel; No recipient hand-off while paused; Bounded non-recipient probe; Probe cadence survives restart; Automatic probe recovery. Unasserted: Five-minute continuous transient trigger; Audience recheck after recovery; Provider error visible.
 
 ### Results
 
 #### RESULT-001 — Campaign history
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Operators can list campaigns by state and channel, open the approved revision, and inspect its audience snapshot, delivery timeline, cancellation, and per-channel outcome totals.
+**Requirement.** Operators inspect campaign history by state and channel, including the exact approved work and its delivery results.
 
 **Acceptance.**
-1. (done).
-2. Campaign history by state and channel.
-3. Evidence: `tests/campaign-results/results.journeys.ts`.
+1. The campaign list filters by state and channel.
+2. An operator can open the approved revision and its audience snapshot.
+3. The campaign exposes its delivery timeline and cancellation.
+4. Per-channel outcome totals remain individually inspectable.
 
 **Evidence.** `tests/campaign-results/results.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts State and channel filters; Cancellation outcome; Delivery schedule/timeline; Per-channel disposition totals. Unasserted: The opened body is the approved revision; Full audience snapshot is inspectable.
 
 #### RESULT-002 — Engagement
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Clicks and store conversions are shown as observed events. Open tracking is off by default; when an operator enables it, opens are labeled privacy-sensitive estimates and never support a confidence, deliverability, or attribution figure.
+**Requirement.** Engagement distinguishes observed clicks and store conversions from optional privacy-sensitive open estimates.
 
 **Acceptance.**
-1. (done).
-2. Opens off by default and labeled estimates when enabled.
-3. Evidence: `tests/go-live/open-estimates.journeys.ts`.
+1. Clicks and store conversions are labeled as observed events.
+2. Open tracking begins off and enables only after an operator chooses it.
+3. Enabled opens are labeled privacy-sensitive estimates.
+4. Open estimates never support confidence, deliverability or attribution figures.
 
 **Evidence.** `tests/go-live/open-estimates.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Default off and explicit enablement; Privacy-sensitive estimate label; Other result fields unchanged after pixel fetch. Unasserted: Observed click labels; Observed conversion labels.
 
 #### RESULT-003 — Attribution
 
 Core · published · **done**
 
-**Requirement.** Revenue attributed to a campaign names the qualifying store event and attribution window, is reported separately from any forecast, and is assigned at most once per order. *Policy: `campaign.attribution.v1`; default: the most recent non-automated tracked click in the seven days before purchase wins; a cancellation or refund subtracts the corresponding attributed amount.*
+**Requirement.** Campaign revenue identifies its source event and attribution window, independently of forecasts. The replaceable attribution policy is specified in [message and delivery mechanisms](docs/contract/mechanism.md).
 
 **Acceptance.**
-1. (done).
-2. Evidence: `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/performance-fixture.ts`: signed Shopify orders, latest qualifying click across two campaigns, webhook replay and later sync without duplicate or moved attribution, expired/scanner-only/no-click exclusions, partial/full refunds and cancellation in USD/JPY, API/CSV/Insights net amounts and the existing campaign-results drill-down naming each Shopify order and seven-day window separately from forecasts; 1440/390 overflow and axe checks).
+1. Attributed revenue names the qualifying store event and attribution window, separately from forecasts.
+2. Each order is attributed at most once.
+3. The default attribution policy selects the latest non-automated tracked click in the seven days before purchase.
+4. A cancellation or refund subtracts the corresponding attributed amount.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/performance-fixture.ts`
+**Evidence.** `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/performance-fixture.ts`: signed Shopify orders, latest qualifying click across two campaigns, webhook replay and later sync without duplicate or moved attribution, expired/scanner-only/no-click exclusions, partial/full refunds and cancellation in USD/JPY, API/CSV/Insights net amounts and the existing campaign-results drill-down naming each Shopify order and seven-day window separately from forecasts; 1440/390 overflow and axe checks).
 **Gap.** None.
 
 #### RESULT-004 — Cost
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** Each AI call and provider hand-off records the external provider, model or channel, billable units, and reported cost; totals are visible by campaign and by day.
+**Requirement.** Provider usage and reported cost remain inspectable by campaign and day, including AI work and hand-offs.
 
 **Acceptance.**
-1. (done).
-2. Provider and AI costs by campaign and UTC day.
-3. Evidence: `tests/campaign-results/costs.journeys.ts`.
+1. Each AI call and provider hand-off records the external provider, model or channel, billable units and reported cost.
+2. Campaign totals reconcile those recorded cost facts.
+3. UTC-day totals reconcile those facts, keeping currencies and unknown reported prices distinct.
+4. A design purchase records one purchased-candidate unit and a converted layout records one layout unit, each once for its deduplication identity; a timed-out purchase counts only after the provider shows it occurred.
 
 **Evidence.** `tests/campaign-results/costs.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts AI billable units; Provider units, currency and cost; Campaign totals; UTC day boundary; Day/currency/unknown-price groups. Unasserted: Model or channel on each fact; Timed-out purchase proven before counting; Layout unit once.
 
 #### RESULT-005 — Link tracking
 
-Core · published · **done**
+Core · published · **partial**
 
-**Requirement.** A tracked link is rewritten to an opaque per-recipient-step redirect on this deployment that records the request and forwards to the original URL. The redirect sets no cookie, loads nothing, and carries no address, name or contact ID in the destination URL; the only thing it adds is CONT-018's opaque, expiring click token, and only to a connected store's storefront host. Known mailbox security scanners and bot requests are retained as automated events but excluded from engagement and attribution. An operator can disable tracking per campaign, which sends the original URLs and records no clicks. Contact links (`mailto:`, `tel:`, `sms:`; MSG-013) are never rewritten and record no click.
+**Requirement.** Per-recipient-step click redirects preserve destination privacy and distinguish people from automated scanners. CONT-018 owns its click-token outcome; ordinary image and optional open-estimate lifecycles are RESULT-010 and RESULT-009.
 
 **Acceptance.**
-1. (done).
-2. Evidence: `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/tracking-journey.ts`: actual per-recipient-step links without recipient/campaign/revision identity, exact connected-store redirect with no cookie or body, retained scanner excluded from totals/unique clicks/click map/CSV/attribution, the same delivered link still forwarding exactly with no cookie or body after its click-recording window (30 days after send-by) closes, while recording nothing for a person or a scanner, “mailto:”, “tel:” and “sms:” links in the same tracked message delivered byte for byte with no redirect and zero clicks in the API, CSV and click map, and the operator tracking-off control through delivery and destination request).
-3. `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking” proves the same contact links through the link tool and approval with tracking off.
-4. `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” retains the 13 October policy.
-5. CONT-018 owns its unbuilt click token, which this redirect consumes; until it is built these redirects add nothing.
+1. Each tracked link becomes an opaque first-party recipient-step redirect that records the request and forwards to the original URL.
+2. A redirect sets no cookie, loads nothing and exposes no address, name or contact identifier in its destination.
+3. Only a connected storefront whose site tracking is enabled may receive CONT-018's opaque, random, single-use token, exchangeable for seven days after send; automated clicks and Global Privacy Control requests receive no token.
+4. Known scanner and bot requests are retained as automated events and excluded from engagement and attribution.
+5. Disabling campaign tracking sends the original URLs and records no clicks.
+6. Email, phone and text contact links are unchanged and record no click.
+7. The delivered link continues forwarding after its recording window, thirty days after the send-by instant, closes, recording no further person or scanner fact.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts`
-**Gap.** None.
+**Evidence.** `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/tracking-journey.ts`: actual per-recipient-step links without recipient/campaign/revision identity, exact connected-store redirect with no cookie or body, retained scanner excluded from totals/unique clicks/click map/CSV/attribution, the same delivered link still forwarding exactly with no cookie or body after its click-recording window (30 days after send-by) closes, while recording nothing for a person or a scanner, “mailto:”, “tel:” and “sms:” links in the same tracked message delivered byte for byte with no redirect and zero clicks in the API, CSV and click map, and the operator tracking-off control through delivery and destination request). `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking” proves the same contact links through the link tool and approval with tracking off. `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” retains the 13 October policy. CONT-018 owns its unbuilt click token, which this redirect consumes; until it is built these redirects add nothing.
+**Gap.** Old evidence asserts Opaque first-party redirect; Distinct recipient-step redirect; Original destination forwarding; No cookie; No loaded body. Unasserted: CONT-018 token not yet built; Scanner excluded from attribution.
+
+#### RESULT-009 — Open-estimate lifecycle
+
+Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-003, BASE-MAIL-001
+
+**Requirement.** Optional first-party open estimates are revocable and isolated from observed marketing outcomes, under RESULT-002.
+
+**Acceptance.**
+1. Enabling estimates affects newly prepared marketing messages, with a signed recipient-specific first-party pixel; ordinary campaign images remain untracked.
+2. Image requests establish only privacy-sensitive estimates, never reads or evidence for clicks, conversions, delivery, confidence, deliverability or attribution.
+3. Disabling revokes every issued pixel; enabling again accepts only newly prepared messages.
+4. Repeated requests record at most one estimate per recipient-step, without an IP address, user agent or cookie.
+5. Private open tokens and facts remain until contact erasure removes them.
+
+**Evidence.** `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/tracking-journey.ts`: actual per-recipient-step links without recipient/campaign/revision identity, exact connected-store redirect with no cookie or body, retained scanner excluded from totals/unique clicks/click map/CSV/attribution, the same delivered link still forwarding exactly with no cookie or body after its click-recording window (30 days after send-by) closes, while recording nothing for a person or a scanner, “mailto:”, “tel:” and “sms:” links in the same tracked message delivered byte for byte with no redirect and zero clicks in the API, CSV and click map, and the operator tracking-off control through delivery and destination request). `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking” proves the same contact links through the link tool and approval with tracking off. `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” retains the 13 October policy. CONT-018 owns its unbuilt click token, which this redirect consumes; until it is built these redirects add nothing.
+**Gap.** Old evidence asserts Unique first-party pixels after opt-in; Pixel changes only estimate results; Disable revokes issued pixels; Reenable does not readmit old pixels; One estimate after repeated requests. Unasserted: Ordinary images remain untracked; No IP retained; No user agent retained.
+
+#### RESULT-010 — Ordinary campaign images are untracked
+
+Core · published · **partial** · From RESULT-005 · Cites BASE-DATA-005
+
+**Requirement.** An ordinary campaign image is shared content and never an open tracker.
+
+**Acceptance.**
+1. Every recipient receives the same campaign-image URL.
+2. A fetch retains no address, user agent, cookie, recipient or request time, only the current-minute per-image rate counter.
+3. An ordinary image fetch is never counted or shown as an open.
+
+**Evidence.** `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/tracking-journey.ts`: actual per-recipient-step links without recipient/campaign/revision identity, exact connected-store redirect with no cookie or body, retained scanner excluded from totals/unique clicks/click map/CSV/attribution, the same delivered link still forwarding exactly with no cookie or body after its click-recording window (30 days after send-by) closes, while recording nothing for a person or a scanner, “mailto:”, “tel:” and “sms:” links in the same tracked message delivered byte for byte with no redirect and zero clicks in the API, CSV and click map, and the operator tracking-off control through delivery and destination request). `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking” proves the same contact links through the link tool and approval with tracking off. `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” retains the 13 October policy. CONT-018 owns its unbuilt click token, which this redirect consumes; until it is built these redirects add nothing.
+**Gap.** Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open.
 
 #### RESULT-006 — Deliverability reporting
 
 Core · published · **partial**
 
-**Requirement.** Per sending domain and SMS sender, Mango shows the delivered, bounced, complained, and failed counts and the resulting hard-bounce and spam-complaint rates over the reporting window in `seed.json`, and the rates MSG-011 is currently evaluating.
+**Requirement.** Sending-domain and SMS-sender reports show the rates that currently govern MSG-011.
 
 **Acceptance.**
-1. (partial).
-2. Per-domain rates shown; SMS sender rates await SMS-001.
-3. Evidence: `src/core/features/insights/ui/sender-rates.tsx` · `tests/go-live/delivery.journeys.ts`.
+1. Each sending domain and SMS sender lists delivered, bounced, complained and failed counts for the configured reporting window.
+2. Hard-bounce and spam-complaint rates expose the same numerators, denominators and window MSG-011 evaluates.
 
 **Evidence.** `src/core/features/insights/ui/sender-rates.tsx` · `tests/go-live/delivery.journeys.ts`
 **Gap.** acceptance not yet met: Per-domain rates shown; SMS sender rates await SMS-001.
@@ -1328,52 +1651,67 @@ Core · published · **partial**
 
 #### DATA-001 — Export contents
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-DATA-001
 
-**Requirement.** The export contains every contact, source record, consent record, suppression and surviving opt-out record (CONT-013), proposal, campaign, revision, audience decision, message, recipient-step outcome, attribution event, setting, and audit entry as JSON, and every uploaded campaign asset as its original file.
+**Requirement.** Mango's portable export includes its marketing records and original campaign assets. The schema and excluded admission credentials are in [message and delivery mechanisms](docs/contract/mechanism.md).
 
 **Acceptance.**
-1. (done).
-2. Complete export and restore into an empty installation.
-3. Evidence: `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts`.
+1. The archive includes contacts, source records, consent, suppression, surviving opt-outs, proposals, campaigns, revisions, audience decisions, messages, recipient-step outcomes, attribution events, settings and audit entries.
+2. Each uploaded campaign asset is retained as its original file.
+3. Signed first-owner admission authority, authentication credentials, sessions and transfer bookkeeping are excluded; operator profiles retain attribution only.
 
 **Evidence.** `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Archive includes contacts; Archive includes consent; Archive includes suppressions; Archive includes surviving opt-outs; Archive includes recipient-step outcomes. Unasserted: Archive includes source records; Archive includes proposals; Archive includes campaigns; Archive includes revisions; Archive includes audience decisions; Archive includes messages; Archive includes attribution events; Archive includes settings; Archive includes audit entries; Signed first-owner authority excluded; Authentication credentials excluded; Sessions excluded; Transfer bookkeeping excluded; Operator profiles attribution-only.
+
+#### DATA-002 — Marketing restore custody
+
+Core · published · **partial** · From DATA-001 · Cites BASE-DATA-001
+
+**Requirement.** Marketing restore preserves the destination's own authority and current source-wide erasure floor. The private-key and maintenance sequence is documented in [message and delivery mechanisms](docs/contract/mechanism.md).
+
+**Acceptance.**
+1. Restore stages an archive into an empty maintenance-mode destination, with explicit confirmation and fresh destination native authentication.
+2. Privately backed-up contact and link keys must match before an archive can restore records or original objects.
+3. A source-wide erasure floor refuses every older archive against current authority.
+4. A nonempty legacy journal is refused before staging.
+5. A current post-erasure export restores with matching private authority and preserves surviving opt-outs.
+
+**Evidence.** `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts`
+**Gap.** Old evidence asserts Every older archive refused by current erasure floor; Nonempty legacy journal refused before staging; Current post-erasure export restores; Surviving opt-outs preserved. Unasserted: Empty maintenance destination; Explicit confirmation; Fresh destination native authentication; Contact keys match before record restore; Link keys match before object restore.
 
 ### Managed installation and editor
 
 #### MGMT-001 — Signed first-owner admission
 
-Core · published · **partial**
+Core · published · **partial** · Cites BASE-ACCESS-001, BASE-ACCESS-002, BASE-ACCESS-004
 
-**Requirement.** A claim is bound to the trusted management issuer, installation, configured app origin and owner email, expires promptly, and can initialize an installation only once. GET and HEAD never initialize it. Admission uses ordinary Base operator-auth and its native owner session. An existing installation cannot claim another first owner.
+**Requirement.** First-owner admission binds the trusted management claim to one installation and its intended owner.
 
 **Acceptance.**
-1. (partial).
-2. Signed first-owner admission once per installation; hosted proof pending.
-3. Evidence: `src/core/features/auth/owner-claim.ts`.
+1. The claim binds issuer, installation, configured app origin and owner email and expires promptly.
+2. A claim initializes an installation only once, and no existing installation acquires another first owner.
+3. GET and HEAD cannot initialize ownership.
+4. Admission uses the cited native operator authentication and creates its native owner session.
 
 **Evidence.** `src/core/features/auth/owner-claim.ts`
 **Gap.** acceptance not yet met: Signed first-owner admission once per installation; hosted proof pending.
 
 #### MGMT-002 — Native owner editor
 
-Core · published · **done**
+Core · published · **partial** · Cites BASE-ACCESS-002, BASE-ROLE-001
 
-**Requirement.** Only an active native owner receives a short-lived editor grant. The frame loads from the exact configured management origin and trusts messages only from that frame and origin. Anonymous visitors receive no widget. Logout, authorization loss and grant expiry remove it. Compiled visual edits apply after the real route leaf has hydrated. Mango product authority follows OPER-004's six roles (Owner, Admin, Manager, Author, Analyst and Support), separately from Base's unchanged owner/admin/member roles. The last product Owner is always protected, and product authority on restore belongs to the destination installation. CSV export remains Owner/Admin only.
+**Requirement.** The native owner can edit Mango through a management frame while product permissions stay those of OPER-004.
 
 **Acceptance.**
-1. (done).
-2. The native owner editor mounts for the native owner only.
-3. Product authority follows OPER-004's six roles separately from Base's unchanged owner/admin/member roles, with last-product-Owner protection, destination-owned authority on restore and CSV export restricted to Owner/Admin.
-4. Evidence: `tests/local-start/editor.journey.ts`.
-5. The PUB-001 journey (`tests/campaign-results/archive.journeys.ts`) exercises publication from a completed campaign, neutral anonymous SSR and browser reading, search metadata, RSS, idempotent publication and withdrawal at 1440 and 390.
-6. Draft and no-handoff campaigns, anonymous mutations and foreign-origin mutations are refused.
-7. The contact erasure cascade includes published reading copies; the existing native erasure journey includes an attributed public copy.
-8. This is local Worker/D1 evidence, not hosted or live-provider acceptance. The DELIV-005 journey (`tests/go-live/mailbox-provider.journeys.ts`) sends a native approved campaign through the provider edge, applies cryptographically signed Gmail, Outlook, Yahoo, iCloud and custom-domain outcomes, and verifies each bounce category, overlapping delivery/complaint counts, repeated human clicks, scanner exclusion, replay and the absence of recipient identities in the report. Insights is exercised at 1440 and 390, including the no-events state. The existing Resend reconciliation journey remains green after bounded diagnostic preservation. These are locally signed-edge outcomes, not acceptance from a live provider account. Typed email tests are exercised through the real saved-draft route and provider edge by `tests/go-live/typed-tests.journeys.ts`, including two recipients, opt-out and suppression refusal, competing requests at the daily allowance, recorded destinations, no campaign send authority, and review at 1440 and 390. Typed SMS and the target Manager/Author controls and general activity log remain open.
+1. Only an active native owner receives a short-lived editor grant; anonymous visitors have no widget.
+2. The frame loads from exactly the configured management origin and accepts messages only from that frame and origin.
+3. Logout, loss of authorization and grant expiry remove the editor.
+4. Compiled visual edits apply after the actual route leaf hydrates.
+5. Mango's six product roles remain separate from Base owner, admin and member roles.
+6. The last product Owner is protected, restored authority belongs to the destination, and CSV export is restricted to Owner or Admin.
 
 **Evidence.** `tests/local-start/editor.journey.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Owner editor present; Anonymous no widget; Logout removes widget. Unasserted: Short-lived grant; Configured management frame origin; Foreign frame/message rejected; Authorization loss removes widget; Grant expiry removes widget; Compiled edits after route hydration; Six product roles separate from Base roles; Last product Owner protected; Destination-owned restore authority; Owner/Admin CSV restriction.
 
 ### Target: Operators
 
@@ -1514,7 +1852,7 @@ Core · target · **partial** · Cites BASE-PUBLIC-001, BASE-PUBLIC-002
 5. The same journeys apply to all four carriers; one carrier’s result does not establish another’s.
 
 **Evidence.** `tests/shopify/connection.spec.ts`
-**Gap.** Default in force (owner direction 19 Oct 2026), written into the clause: site tracking off per site until an Owner or Admin turns it on (Manager may turn it off; OPER-007); consent only from the store's consent tool (Shopify Customer Privacy API, WP Consent API, Stall, the snippet's consent call), none or no decision = refused; GPC (`Sec-GPC: 1` or `navigator.globalPrivacyControl`), sale-or-share opt-outs and CONT-021 do-not-share always refuse; one cookie `mgo_s` (Secure, SameSite=Lax, Path=/, no Domain, at most 30 days, HttpOnly where server-set, at most 2,048 bytes; no other browser storage); nothing sent to or held by Mango for an unidentified visitor (up to 20 events wait in the cookie until identification); `mgo_c` is 32 random bytes, single-use, host-bound, digest-only, 7 days, never for automated clicks, GPC or tracking off; identified onsite events kept 90 days; erasure under CONT-013. ct approval of the landed default: pending. Built and exercised: Shopify signed pixel ingest and current privacy controls (`tests/shopify/connection.spec.ts`); the separately approved INT-002 plugin semantic stays DONE. Acceptance not yet met: the snippet and Stall surfaces; the shared site switch, click-token journey and exchange on every surface; consent buffering, cookie parity, anonymous-request refusal, 90-day retention, erasure, segment-window and cross-site browser assertions on each surface. The Shopify pixel and WooCommerce plugin have not run this expanded acceptance. RESULT-005's redirect consumes this clause's click token: it adds `mgo_c` to connected-store destinations once the token is built; until then the redirect adds nothing.
+**Gap.** Shopify signed identified ingest and current privacy controls are exercised. The snippet and Stall carriers, expanded WooCommerce parity, shared switch/click identity and full four-carrier browser journeys remain unproved. INT-002’s separately approved plugin semantic remains distinct. The owner’s tracking default is already in force; no ct approval remains pending.
 
 #### CONT-031 — Per-site tracking switch
 
@@ -1530,7 +1868,7 @@ Core · target · **partial** · From CONT-018 · Cites BASE-ROLE-001, BASE-PUBL
 5. Disabling ends identified sessions; re-enabling cannot identify a prior browser without a fresh permitted identification.
 
 **Evidence.** `tests/shopify/connection.spec.ts`
-**Gap.** Default in force (owner direction 19 Oct 2026), written into the clause: site tracking off per site until an Owner or Admin turns it on (Manager may turn it off; OPER-007); consent only from the store's consent tool (Shopify Customer Privacy API, WP Consent API, Stall, the snippet's consent call), none or no decision = refused; GPC (`Sec-GPC: 1` or `navigator.globalPrivacyControl`), sale-or-share opt-outs and CONT-021 do-not-share always refuse; one cookie `mgo_s` (Secure, SameSite=Lax, Path=/, no Domain, at most 30 days, HttpOnly where server-set, at most 2,048 bytes; no other browser storage); nothing sent to or held by Mango for an unidentified visitor (up to 20 events wait in the cookie until identification); `mgo_c` is 32 random bytes, single-use, host-bound, digest-only, 7 days, never for automated clicks, GPC or tracking off; identified onsite events kept 90 days; erasure under CONT-013. ct approval of the landed default: pending. Built and exercised: Shopify signed pixel ingest and current privacy controls (`tests/shopify/connection.spec.ts`); the separately approved INT-002 plugin semantic stays DONE. Acceptance not yet met: the snippet and Stall surfaces; the shared site switch, click-token journey and exchange on every surface; consent buffering, cookie parity, anonymous-request refusal, 90-day retention, erasure, segment-window and cross-site browser assertions on each surface. The Shopify pixel and WooCommerce plugin have not run this expanded acceptance. RESULT-005's redirect consumes this clause's click token: it adds `mgo_c` to connected-store destinations once the token is built; until then the redirect adds nothing.
+**Gap.** Shopify pixel controls exercise part of the privacy rule. The shared per-site Mango switch, full role/control/activity matrix, off/on identity reset and every-carrier journey remain unproved.
 
 #### CONT-032 — Onsite consent and opt-out precedence
 
@@ -1547,7 +1885,7 @@ Core · target · **partial** · From CONT-018 · Cites BASE-PUBLIC-001
 6. Consent given on the landing page may identify the visitor then; before it, the token leaves the address bar and waits only in page memory, and otherwise is dropped.
 
 **Evidence.** `tests/shopify/connection.spec.ts`
-**Gap.** Default in force (owner direction 19 Oct 2026), written into the clause: site tracking off per site until an Owner or Admin turns it on (Manager may turn it off; OPER-007); consent only from the store's consent tool (Shopify Customer Privacy API, WP Consent API, Stall, the snippet's consent call), none or no decision = refused; GPC (`Sec-GPC: 1` or `navigator.globalPrivacyControl`), sale-or-share opt-outs and CONT-021 do-not-share always refuse; one cookie `mgo_s` (Secure, SameSite=Lax, Path=/, no Domain, at most 30 days, HttpOnly where server-set, at most 2,048 bytes; no other browser storage); nothing sent to or held by Mango for an unidentified visitor (up to 20 events wait in the cookie until identification); `mgo_c` is 32 random bytes, single-use, host-bound, digest-only, 7 days, never for automated clicks, GPC or tracking off; identified onsite events kept 90 days; erasure under CONT-013. ct approval of the landed default: pending. Built and exercised: Shopify signed pixel ingest and current privacy controls (`tests/shopify/connection.spec.ts`); the separately approved INT-002 plugin semantic stays DONE. Acceptance not yet met: the snippet and Stall surfaces; the shared site switch, click-token journey and exchange on every surface; consent buffering, cookie parity, anonymous-request refusal, 90-day retention, erasure, segment-window and cross-site browser assertions on each surface. The Shopify pixel and WooCommerce plugin have not run this expanded acceptance. RESULT-005's redirect consumes this clause's click token: it adds `mgo_c` to connected-store destinations once the token is built; until then the redirect adds nothing.
+**Gap.** Shopify privacy consent/GPC controls are exercised. Snippet, Stall and expanded WooCommerce parity, every consent-tool failure/withdrawal branch and every-carrier refusal/deletion journey remain unproved.
 
 #### CONT-033 — Onsite session storage
 
@@ -1564,7 +1902,7 @@ Core · target · **partial** · From CONT-018 · Cites BASE-PUBLIC-001
 6. The browser proof reads cookie attributes and storage after consent, expiry and withdrawal.
 
 **Evidence.** `tests/shopify/connection.spec.ts`
-**Gap.** Default in force (owner direction 19 Oct 2026), written into the clause: site tracking off per site until an Owner or Admin turns it on (Manager may turn it off; OPER-007); consent only from the store's consent tool (Shopify Customer Privacy API, WP Consent API, Stall, the snippet's consent call), none or no decision = refused; GPC (`Sec-GPC: 1` or `navigator.globalPrivacyControl`), sale-or-share opt-outs and CONT-021 do-not-share always refuse; one cookie `mgo_s` (Secure, SameSite=Lax, Path=/, no Domain, at most 30 days, HttpOnly where server-set, at most 2,048 bytes; no other browser storage); nothing sent to or held by Mango for an unidentified visitor (up to 20 events wait in the cookie until identification); `mgo_c` is 32 random bytes, single-use, host-bound, digest-only, 7 days, never for automated clicks, GPC or tracking off; identified onsite events kept 90 days; erasure under CONT-013. ct approval of the landed default: pending. Built and exercised: Shopify signed pixel ingest and current privacy controls (`tests/shopify/connection.spec.ts`); the separately approved INT-002 plugin semantic stays DONE. Acceptance not yet met: the snippet and Stall surfaces; the shared site switch, click-token journey and exchange on every surface; consent buffering, cookie parity, anonymous-request refusal, 90-day retention, erasure, segment-window and cross-site browser assertions on each surface. The Shopify pixel and WooCommerce plugin have not run this expanded acceptance. RESULT-005's redirect consumes this clause's click token: it adds `mgo_c` to connected-store destinations once the token is built; until then the redirect adds nothing.
+**Gap.** Existing Shopify and separately approved INT-002 storage behavior are exercised. The unified cookie attributes, rotated identity, bounded payload/lifetimes and no-other-storage assertions across all carriers remain unproved.
 
 #### CONT-034 — Storefront click identity
 
@@ -1770,7 +2108,7 @@ Core · target · **partial** · From CONT-024 · Cites BASE-AUDIT-001
 5. The revoke-and-review journey reads the changed subscription state and retained independent evidence.
 
 **Evidence.** `tests/move-in/archive.journeys.ts` account-export registration via `tests/move-in/incumbent-journey.ts` (Verify move-in): attestation, restrictive states, native export/restore, revocation and retained audit fact; campaign review records eligible contacts relying on that evidence at 1440/390. `tests/portability.spec.ts` (Verify main 4/6 for DATA-001; main 5/6 for erasure authority) proves populated native restoration.  `tests/go-live/contact-links.journeys.ts` (Verify go-live 1/9) extends the source attestation to the three CSV source presets and both API edge exports.
-**Gap.** Mailchimp archive and named CSV/API source attestation and incumbent-held email evidence are exercised through the public preview, apply, campaign-review, native export/restore, revocation and erasure doors at 1440/390. Store connections (INT-001 to INT-006), five-year expiry and positive SMS evidence (A2P hold) remain unproved. A source without a row time requires an explicitly supplied export creation time. No real provider call or consent was used.
+**Gap.** Archive and named CSV/API incumbent-held evidence, revocation and campaign-review counts are exercised. Complete source/privacy/report labeling and independent-evidence revocation behavior across store connections and every incumbent remain unproved.
 
 #### CONT-025 — Opt-in mode per form and source
 
@@ -1877,31 +2215,50 @@ Core · target · **missing** · From CONT-027
 
 #### AUD-008 — Inactivity rules in review
 
-Core · target · **partial**
+Core · target · **partial** · Cites BASE-OPS-005
 
-**Requirement.** One inactivity rule governs each send, and the operator sees and controls it. By default every campaign step and flow message excludes contacts dormant under CONT-012 (twelve-month window, reason `dormant`). Only a campaign step or flow message that opts in to engaged-only sending also excludes contacts CONT-020 labels unengaged (reason `unengaged`). Review lists the two reasons separately and counts a contact under only one of them (`dormant` when both apply). It also shows how many included contacts are `no-history` (CONT-012) and therefore not excluded, and, within `dormant`, how many are `open-only` (CONT-012), with a one-click action to include just those. An operator with approval rights (OPER-004) can turn the dormancy exclusion off for one campaign in review, as Mailchimp applies no inactivity exclusion unless the sender segments on engagement. An Owner or Admin can also set the installation-wide default (dormancy exclusion on or off, and the window, under `audience.exclusions.v1`), recorded in the activity log, so a sender who never excludes on inactivity does not repeat the step on every send. That choice is part of the approved revision, shows the number of contacts it brings back, is honored by the dispatch recheck (AUD-005) and is recorded with its approver in the activity log (OPER-007). It never affects consent, topic, suppression or opt-out exclusions (AUD-002, CONT-004, CONT-015).
+**Requirement.** One visible inactivity rule governs each campaign or flow message without changing consent protections.
 
 **Acceptance.**
-1. a Mailchimp move-in fixture of contacts subscribed two years ago reaches the first campaign's review with no `dormant` exclusion, both for contacts whose `granular_activity` shows a click three months ago and for contacts with no activity rows (counted as `no-history`); a contact whose last imported click is 13 months old is excluded as `dormant`; turning the exclusion off for that campaign includes them, and the approved revision and activity log record the choice and its approver.
-2. The review also counts `open-only` contacts within `dormant` and includes them in one action, and an Owner or Admin's installation-wide default is recorded in the activity log.
+1. Campaign steps and flow messages default to CONT-012’s twelve-month dormancy exclusion; engaged-only messages additionally exclude CONT-020 unengaged contacts.
+2. Review lists dormant and unengaged separately, counts an overlap only as dormant, shows included no-history contacts, and counts open-only contacts inside dormant with one action to include just those.
+3. An approver can disable dormancy for one campaign; an Owner or Admin can change its installation default and window with an activity record.
+4. The approved revision retains that choice and restored-contact count, AUD-005 honors it, and the activity log names its approver; consent, topics, suppression and opt-outs are unaffected.
+5. In a two-year-old Mailchimp audience, a click three months ago and no activity history avoid dormant exclusion, with the latter counted no-history; a thirteen-month-old click is dormant until the campaign override includes it.
 
 **Evidence.** `tests/move-in/archive.journeys.ts` · `tests/go-live/roles.journeys.ts`
 **Gap.** Review shows dormant/open-only and included no-history counts. An approver can include open-only or disable dormancy for the campaign, with the restored count saved; Owner/Admin defaults under audience.exclusions.v1 copy into new drafts. The immutable approved policy, actor audit and dispatch recheck are exercised. Gap: unengaged (CONT-020), dormant precedence over unengaged, and flow-message inactivity controls remain owed. Existing fieldset, checkbox, numeric input and action patterns suffice; no new design pattern is introduced.
 
 #### AUD-009 — Frequency protection: one policy and a recorded override
 
-Core · target · **partial**
+Core · target · **partial** · Cites BASE-OPS-005
 
-**Requirement.** Campaigns and flows share one frequency policy. Until an operator sets cross-message caps (FLOW-014), AUD-004's default windows apply to every campaign step and flow message. Once caps are set, they replace AUD-004's default windows for campaigns and flows alike, review names the governing rule, and excluded contacts carry `frequency-window` or `frequency-cap` to match. In review, an operator with approval rights (OPER-004) can choose **Ignore frequency protection** for one campaign step, and a flow message can be set the same way in its flow revision, activated under FLOW-008; Klaviyo's Smart Sending can likewise be switched off per message. The choice is part of the approved revision, shows the number of contacts it brings back, is honored by the dispatch recheck (AUD-005) and is recorded with its approver in the activity log (OPER-007). Messages sent under it still count towards later messages' windows and caps. It never overrides consent, topic, suppression or opt-out (AUD-002, CONT-004, CONT-006, CONT-015), SMS quiet hours and state frequency limits (SEND-002, SMS-003), the global holdout (EXP-004) or the SMS spend cap (SMS-006). *Cart and moved-in flows:* campaign sends never block the messages of the abandoned-checkout, abandoned-cart, browse-abandonment, back-in-stock and price-drop library flows (FLOW-012), or of draft flows recreated from Mailchimp journeys and automations (MOVE-008), since Mailchimp does not suppress journeys for campaign sends. Those messages are created with the window set to count only other flow messages, shown in the flow revision and changeable before activation. Every flow's activation shows how many of its sends the governing window would have skipped over the last 30 days of this deployment's own events, and the count it would skip with the setting changed.
+**Requirement.** Campaigns and flows share a visible frequency policy and exact-revision override. AUD-011 governs cart-flow counting and activation impact.
 
 **Acceptance.**
-1. two campaigns to the same audience are approved four hours apart.
-2. With the default, the second excludes everyone the first emailed, with `frequency-window`.
-3. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded.
-4. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, and a draft flow made from a Mailchimp journey fixture carries the same setting; its activation shows the 30-day skip count from seeded sends.
+1. AUD-004 windows apply to campaign steps and flow messages until FLOW-014 caps replace them for both; review names the governing rule and distinguishes frequency-window from frequency-cap exclusions.
+2. A campaign approver can ignore frequency protection for a step; a flow message can choose the same in its FLOW-008 activation revision.
+3. The approved revision records the choice and restored-contact count, dispatch honors it, and the activity log names the approver; those sends count toward later windows and caps.
+4. An override never changes consent, topic, suppression, opt-out, SMS quiet hours, state frequency limits, global holdout or SMS spend cap.
+5. With two campaigns four hours apart the default excludes the first’s recipients from the second; a recorded override sends to them but still excludes anyone who unsubscribed between sends.
 
 **Evidence.** `src/core/features/lifecycle/policies.ts` · `src/core/features/audience/eligibility.ts`
-**Gap.** acceptance not yet met: Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with frequency-window. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, a draft flow made from a Mailchimp journey fixture carries the same setting, and its activation shows the 30-day skip count from seeded sends.
+**Gap.** acceptance not yet met: Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, a draft flow made from a Mailchimp journey fixture carries the same setting, and its activation shows the 30-day skip count from seeded sends.
+
+#### AUD-011 — Cart-flow frequency and impact
+
+Core · target · **missing** · From AUD-009
+
+**Requirement.** Library and moved-in flows show their campaign-versus-flow counting rule before activation.
+
+**Acceptance.**
+1. Campaign sends do not block abandoned-checkout, abandoned-cart, browse-abandonment, back-in-stock and price-drop library messages, or draft flows recreated under MOVE-008.
+2. Those messages initially count only other flow messages; the flow revision shows that setting and permits changing it before activation.
+3. Every flow activation shows the count its governing window would have skipped over the last 30 days of this deployment’s events and the count with the changed setting.
+4. A morning campaign does not stop an afternoon abandoned-cart message; a Mailchimp journey fixture carries the same setting and activation shows the seeded 30-day skip count.
+
+**Evidence.** `src/core/features/lifecycle/policies.ts` · `src/core/features/audience/eligibility.ts`
+**Gap.** No delivered flow-message frequency workflow is proved: cart/library and moved-in-flow counting, visible changeable settings and the 30-day activation impact comparison are wholly absent in the old gap.
 
 ### Target: Campaigns
 
@@ -1909,22 +2266,26 @@ Core · target · **partial**
 
 Core · target · **missing**
 
-**Requirement.** A campaign step can send at a chosen local time in each recipient's own time zone (for example 10:00 wherever they are), resolved from recorded location evidence with its source and freshness; recipients without a known zone send at that time in the store zone and are counted as such in review. Dispatch starts with the earliest zone, so the campaign is approved at least 26 hours before the earliest local instant or review names the zones that will be missed.
+**Requirement.** Campaigns can schedule in each recipient’s evidenced local time.
 
 **Acceptance.**
-1. a campaign approved for 10:00 recipient-local hands off New York, Chicago and Los Angeles recipients at their own 10:00 in the scheduler journey, and an unknown-zone recipient at 10:00 store time with review showing that count.
+1. A chosen recipient-local time resolves from recorded location evidence with source and freshness; New York, Chicago and Los Angeles recipients hand off at their own chosen time.
+2. Recipients without a known zone use the store zone and review counts them.
+3. Approval is at least 26 hours before the earliest recipient-local instant, or review names the zones that will be missed; dispatch starts with the earliest zone.
 
 **Evidence.** None.
 **Gap.** not implemented
 
 #### CAMP-014 — Pause and resume
 
-Core · target · **done**
+Core · target · **done** · Cites BASE-OPS-005
 
-**Requirement.** An operator can pause a scheduled or dispatching campaign; no further hand-off begins within 30 seconds, recipient-steps already handed off keep their dispositions, and resume continues from the remaining recipient-steps subject to AUD-005 rechecks and the step deadline (CAMP-010). Pause and resume are recorded with their actor.
+**Requirement.** An operator can pause and resume campaign work without duplicating hand-offs.
 
 **Acceptance.**
-1. the scheduler journey pauses a two-step campaign mid-dispatch, shows no hand-off during the pause, resumes, and completes with each recipient-step handed off once.
+1. Pausing scheduled or dispatching work prevents further hand-offs within 30 seconds while retaining already handed-off dispositions.
+2. Resume continues remaining recipient-steps with AUD-005 rechecks and CAMP-010 deadlines; a two-step mid-dispatch pause sends nothing while paused and hands off each eligible recipient-step once after resumption.
+3. Pause and resume each record their actor.
 
 **Evidence.** `tests/go-live/pause.journeys.ts`
 **Gap.** None.
@@ -1933,139 +2294,145 @@ Core · target · **done**
 
 Core · target · **missing**
 
-**Requirement.** A month and week calendar shows scheduled and sent campaigns, live flows' expected daily volume and US retail dates (Black Friday, Cyber Monday, Mother's Day, Father's Day, Back to School, Prime Day as the operator configures), with per-day contact pressure so an operator sees when frequency protection (AUD-004) will exclude people. Drag-to-reschedule on a scheduled campaign creates a new draft revision (CAMP-007).
+**Requirement.** A calendar exposes planned marketing pressure and preserves scheduled-revision control.
 
 **Acceptance.**
-1. the calendar shows a scheduled campaign, a sent campaign and a live flow's estimate on the right days; dragging the scheduled one opens a new draft revision while the approved one stays active.
+1. Month and week views place scheduled and sent campaigns, live-flow expected daily volume and configured US retail dates on their days.
+2. The retail dates include Black Friday, Cyber Monday, Mother’s Day, Father’s Day, Back to School and operator-configured Prime Day.
+3. Each day shows contact pressure and prospective AUD-004 exclusions.
+4. Dragging a scheduled campaign opens a new CAMP-007 draft revision while its approved revision remains active.
 
 **Evidence.** None.
 **Gap.** not implemented
 
 #### CAMP-016 — Follow-up to non-engaged recipients
 
-Core · target · **done**
+Core · target · **partial**
 
-**Requirement.** From a sent campaign an operator can create a linked follow-up to recipients who did not click (or, labeled as an estimate under RESULT-002, did not open) after a chosen delay, with a new subject; it is a new campaign that passes its own approval and frequency checks.
+**Requirement.** An operator can create a linked, independently approved follow-up from a sent campaign.
 
 **Acceptance.**
-1. a follow-up created 48 hours after a send targets exactly the non-clickers minus those excluded at review, and requires its own approval.
+1. A chosen delay and new subject create a follow-up for non-clickers, or for non-openers explicitly labeled an estimate under RESULT-002.
+2. A follow-up at 48 hours targets exactly the original non-clickers less current review exclusions.
+3. The new campaign passes its own approval and frequency checks.
 
 **Evidence.** `tests/campaign-results/followup.journeys.ts` · `tests/portability.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: Linked follow-up and selected delay; New subject; Non-opener estimate label; 48-hour non-clicker candidates; Current exclusions including frequency; Independent approval; Independent frequency check. Unasserted: Exact non-clicker recipient identities after current exclusions.
 
 #### CAMP-017 — Recurring and RSS-to-email campaigns
 
-Core · target · **missing**
+Core · target · **missing** · Cites BASE-AGENT-006, BASE-AGENT-007
 
-**Requirement.** A campaign can recur (daily, weekly, monthly) or be built from an RSS or Atom feed's new items since the last send. Each instance is a new revision. *Policy: `campaign.recurring.v1`; default: every instance needs approval.* An owner may instead grant standing approval for a recurrence: then each instance sends only if its audience rule and template are unchanged from the approved revision and every approval check (CAMP-004) passes; any failure holds that instance for review.
+**Requirement.** Campaigns can recur or derive new editions from feeds while preserving authorized revision scope. An agent’s recurrence or activation call carries standard for draft preparation and external for sending, with money for provider spend; the company’s policy decides the call.
 
 **Acceptance.**
-1. an RSS campaign with two new feed items builds a draft containing both, and under standing approval the next instance sends while a changed template holds it for review.
+1. Daily, weekly and monthly recurrence and RSS or Atom intake each create a new revision; feed editions contain only items new since the previous send.
+2. A person can require approval of each instance or authorize recurrence from one exact audience rule and template; any changed audience or template needs a new authorization and all CAMP-004 checks still pass.
+3. In an RSS fixture two new items produce a draft containing both; under a company policy that permits the authorized recurrence the next unchanged instance sends, while a changed template is held under that policy.
 
 **Evidence.** None.
 **Gap.** not implemented
 
 #### CAMP-018 — Duplicate a campaign
 
-Core · target · **done**
+Core · target · **partial**
 
-**Requirement.** From a campaign in any state, an operator can choose **Duplicate**. The new draft, named "Copy of" the source, carries the source revision's channels, audience rule, content, sender, preheader, tracking choice and step settings. It copies no schedule, approval, audience snapshot, test or result, and it passes its own approval checks against the settings, consent and audience current at that time.
+**Requirement.** Duplication creates an independent draft while leaving the source’s results and approval intact.
 
 **Acceptance.**
-1. duplicating last week's sent campaign yields a draft with no schedule or approval, whose stored body re-parses to the source revision's bytes and whose audience rule and sender match.
-2. Editing and approving the copy leaves the source's approved revision and results unchanged.
+1. A campaign in any state can be duplicated into a draft named Copy of its source.
+2. The copy retains channels, audience rule, content, sender, preheader, tracking choice and step settings, and its stored body reparses to the source revision’s bytes.
+3. It copies no schedule, approval, audience snapshot, test or result.
+4. Its own approval checks current settings, consent and audience; editing and approving it leaves the source’s approved revision and results unchanged.
 
 **Evidence.** `tests/campaign-authoring/browser.spec.ts`
-**Gap.** None.
+**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Duplication from every campaign state; Copy-of name; New independent draft; Copied channels; Copied audience rule; Copied content bytes; Copied sender; Copied preheader; Copied tracking choice; Copied step settings; No copied schedule; No copied approval; No copied snapshot; No copied test; No copied result; Current settings checked; Current consent checked; Current audience checked; Source revision unchanged; Source results unchanged. Assertions in tests/campaign-authoring/reuse-journey.ts are outside the old Evidence cell.
 
 #### CAMP-019 — Test send to typed addresses
 
-Core · target · **partial**
+Core · target · **partial** · Cites BASE-ROLE-001, BASE-OPS-005
 
-**Requirement.** Beside the configured test addresses (CAMP-008), an operator whose role may approve (OPER-004) can type up to 5 further email addresses or phone numbers for one test send.
-- A typed address that is unsubscribed or suppressed on that channel is refused, with the reason named. An SMS test to a typed number also needs that number's CONT-019 consent.
-- All test sends, configured and typed, share the installation-wide daily allowance in `seed.json → limits.maxTestSendsPerDay`, default 100 attempted recipient hand-offs per UTC calendar day. One hand-off to one recipient consumes one unit, including a hand-off whose provider outcome is uncertain; a test to two recipients consumes two units. The allowance resets at 00:00 UTC. Before sending, the owner sees the remaining count. A test send whose recipient count exceeds the remaining allowance is refused in full before any hand-off, with the remaining count named. The owner can change the limit by editing `maxTestSendsPerDay` in the source and rebuilding/redeploying; there is currently no Settings control for it.
-- Typed sends are marked as tests like every CAMP-008 send. Each typed address is recorded in campaign history and in the activity log (OPER-007).
-- This clause is done only when OPER-004 (Manager/Author assignment), OPER-007 (general activity UI), SMS-001 (typed SMS transport) and CONT-019 (typed SMS consent) are done.
--
+**Requirement.** Approvers can direct a visibly marked test to a bounded set of typed destinations. CAMP-024 governs the shared daily allowance. Its full workflow includes OPER-004 role assignment, OPER-007 activity, SMS-001 typed SMS transport and CONT-019 SMS consent.
 
 **Acceptance.**
-1. a Manager types two addresses, and both receive the marked test at the mail edge.
-2. A third, unsubscribed address is refused and named.
-3. An Author has no typed-address field, and the route refuses it with 403.
-4. The activity log lists the typed addresses.
-5. Before sending, the owner sees the allowance remaining; a two-recipient test reduces it by two, and a hand-off with an uncertain provider outcome still consumes one unit.
-6. With one unit left, a two-recipient test is refused before either hand-off and names the remaining one.
-7. Crossing 00:00 UTC restores the configured allowance without carrying the prior day's attempts forward.
-8. Configured-address tests and typed-address tests draw from the same count.
+1. An operator with approval rights may type up to five additional email addresses or phone numbers for one test; an Author has no typed field and their typed request is refused.
+2. An unsubscribed or suppressed typed destination is refused with its reason; a typed SMS additionally needs CONT-019 consent.
+3. Each typed destination is marked as a test and recorded in campaign history and the OPER-007 activity log with its actor.
+4. A Manager’s two typed addresses receive marked tests, while a third unsubscribed address is refused and named.
 
 **Evidence.** `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts`
-**Gap.** Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the default 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by tests/go-live/roles.journeys.ts. Activity lists each typed destination with actor and time, action/object filters and CSV export; contact erasure redacts the destination while retaining the receipt (tests/go-live/typed-tests.journeys.ts, push Verify go-live 8/9, 1440/390). Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004).
+**Gap.** Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the default 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity lists each typed destination with actor and time, action/object filters and CSV export; contact erasure redacts the destination while retaining the receipt (`tests/go-live/typed-tests.journeys.ts`, push Verify go-live 8/9, 1440/390). Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004).
+
+#### CAMP-024 — Shared daily test allowance
+
+Core · target · **partial** · From CAMP-019
+
+**Requirement.** Configured and typed tests consume the same installation-wide attempt allowance.
+
+**Acceptance.**
+1. The default allowance is 100 attempted recipient hand-offs per UTC calendar day; one recipient consumes one unit, including an uncertain provider outcome, and two recipients consume two.
+2. Before sending, the owner sees the remaining count; a request exceeding it is wholly refused before any hand-off with the remaining count named.
+3. At midnight UTC the configured allowance resets without carrying attempts forward.
+4. The owner can change the source-configured limit and rebuild or redeploy; there is no Settings control.
+5. With one unit remaining a two-recipient test is refused before either hand-off; configured and typed tests draw from that same count.
+
+**Evidence.** `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts`
+**Gap.** Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the default 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity lists each typed destination with actor and time, action/object filters and CSV export; contact erasure redacts the destination while retaining the receipt (`tests/go-live/typed-tests.journeys.ts`, push Verify go-live 8/9, 1440/390). Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004).
 
 ### Target: Message safety
 
 #### MSG-013 — Contact links (mailto:, tel:, sms:)
 
-Core · target · **done**
+Core · target · **partial**
 
-**Requirement.** Besides HTTPS, a link destination may be one of these:
-- `mailto:` with exactly one address that passes CONT-001's address check and, optionally, `subject` and `body` parameters. `cc`, `bcc`, any other parameter and several addresses block.
-- `tel:` with one phone number, in E.164 form (`+1…`) or as a 10-digit US number, with visual separators allowed.
-- `sms:` with one such number and, optionally, a `body` parameter.
-- The builder's link tool (BUILD-001) offers Web, Email, Phone and Text links as first-class kinds and writes these forms; the HTML view accepts them as written.
-- A contact link has no host, so it needs no MSG-014 entry. It is never rewritten for tracking and records no click (RESULT-005). The plain-text part shows its address or number. Review lists every contact link with its decoded address or number, subject and body, and MSG-006's malformed-link check applies to each. Image sources stay HTTPS only.
--
+**Requirement.** The link tool and authored HTML admit single-recipient email, phone and text contact links as well as HTTPS. Their exact grammar and fixture examples are in [message and delivery mechanisms](docs/contract/mechanism.md).
 
 **Acceptance.**
-1. a draft with `mailto:hello@myshop.example?subject=Order%20question`, `tel:+15555550123` and `sms:+15555550123?body=Hi` approves.
-2. Review lists each contact link decoded, and the delivered HTML and plain text carry each one unchanged and unrewritten.
-3. `mailto:a@x.example,b@x.example`, `mailto:a@x.example?bcc=c@x.example`, `tel:call-me`, `javascript:alert(1)` and `http://myshop.example` each block approval with the reason named.
+1. Email links admit one validated address, with optional subject and body; additional addresses, cc, bcc and every other parameter block approval with a named reason.
+2. Phone links admit one E.164 number or ten-digit US number, with visual separators; text links admit the same and an optional body.
+3. The builder offers Web, Email, Phone and Text as first-class link kinds and writes those forms; HTML mode accepts them.
+4. Review decodes and lists each contact address or number, subject and body.
+5. Delivered HTML and plain text preserve each contact link unchanged; the plain-text part exposes its address or number.
+6. Contact links require no allowed-host entry, are never rewritten and record no click; malformed contact links still block, and image sources remain HTTPS only.
 
 **Evidence.** `tests/go-live/contact-links.journeys.ts`
-**Gap.** None.
+**Gap.** Old evidence asserts Multiple addresses blocked; Disallowed parameters blocked; Email subject/body form saved; E.164 phone and SMS body saved; Invalid phone blocked. Unasserted: Ten-digit US and visual separators; Web kind; HTTPS-only image sources.
 
 #### MSG-014 — Allowed link and image hosts
 
 Core · target · **partial**
 
-**Requirement.** Settings → Link hosts lists every allowed host with the source it came from. The list starts populated, so a store's normal email needs no settings change:
-- *Deployment:* this deployment's own host (its `/media/` images follow the MSG-006 policy).
-- *Connected stores:* each connected store's storefront domains (primary and additional) and the hosts its synced catalog uses for product, collection and image URLs. From INT-001 these are, for example, `myshop.com`, `www.myshop.com` and `cdn.shopify.com`; WooCommerce, BigCommerce, Stall and the other store connections (INT-002 to INT-006) contribute theirs the same way. They are refreshed on each catalog sync.
-- *Social links:* the web hosts of every network the BUILD-001 social links block offers (for example `www.instagram.com`, `www.facebook.com`, `www.tiktok.com` and `www.youtube.com`). The block's icons are served from the deployment's own media, so they add no image host.
-- *Brand kit:* the website and social link hosts named in the brand kit (BUILD-003).
-- *Operator entries:* hosts typed in settings, allowed from review (MSG-015) or allowed from a move-in report (MOVE-011).
-- *Matching:* each entry is an exact host, unless an operator explicitly enters a subdomain entry such as `*.myshop.com`, which covers every subdomain of `myshop.com` but not `myshop.com` itself. Approval, flow activation, the link inspector and tracking use this one matching rule.
-- *Changes:* removing an entry is recorded and keeps it removed, so a later store sync does not re-add a host an operator removed. Disconnecting a source removes its derived entries from later checks. Every change is in the activity log (OPER-007). An allowed host still passes the rest of MSG-006: redirects are followed and checked, and private-network addresses and unreachable links still block.
--
+**Requirement.** Settings lists every allowed link and image host with its source, starting with normal connected-store and brand hosts rather than requiring manual setup.
 
 **Acceptance.**
-1. on a fresh installation with a connected Shopify edge store, settings lists the deployment host, `myshop.com`, `www.myshop.com`, `cdn.shopify.com` and the social link hosts, each with its source.
-2. A campaign with a catalog product block (a `cdn.shopify.com` image and a `myshop.com` link), a social links block and `mailto:` and `tel:` footer links (MSG-013) approves with no settings change.
-3. A `shop.myshop.com` link blocks until an operator adds `*.myshop.com`, and then passes.
-4. `myshop.com.evil.example` still blocks.
-5. A host the operator removed is not restored by the next store sync.
+1. The initial list includes this deployment, connected stores' primary and additional storefronts and catalog product, collection and image hosts; catalog sync refreshes those derived entries.
+2. Social-block web hosts are listed and their icons use deployment media; brand-kit website and social hosts are listed.
+3. Operators can add hosts in settings, campaign review or the move-in report, with their source shown.
+4. Entries match exact hosts; an explicitly entered wildcard covers subdomains but excludes the bare parent, consistently in approval, flow activation, inspection and tracking.
+5. Operator removal survives later catalog sync; disconnecting a source removes its derived entries from later checks.
+6. Every source or operator change is recorded under OPER-007.
+7. Allowed hosts still pass every MSG-006 inspection: redirects are followed, and private-network or unreachable destinations block.
+8. A fresh connected-store fixture sends catalog, social, email-contact and phone-contact links without a settings change; an unlisted subdomain blocks until explicitly allowed, and deceptive suffixes remain blocked.
 
-**Evidence.** `tests/go-live/content-checks.journeys.ts` · `tests/go-live/content-hosts.ts` · `tests/portability.spec.ts`
+**Evidence.** `tests/go-live/content-checks.journeys.ts` — [MSG-014] content checks and allowed sources; `tests/go-live/content-hosts.ts` — blockedHostJourney (1440 and 390); `tests/portability.spec.ts` — complete native archive
 **Gap.** Fresh installations list deployment, conservative social defaults and genuine configured connection hosts with sources. Exact and explicit wildcard matching stays shared; durable operator removals survive catalog sync, review allowances retain source/operator/campaign, and source changes are audited. Existing explicit policies remain explicit. Acceptance remains unmet: Shopify does not store primary/additional storefront or catalog image domains; product/social blocks (BUILD-001), brand kit (BUILD-003), Shopify disconnect and flow activation are absent. The existing store-owned editor help incorrectly describes implicit subdomain matching and is not changed in this writer. Social vocabulary approval is pending.
 
 #### MSG-015 — Allow a blocked host from review
 
-Core · target · **done**
+Core · target · **partial** · Cites BASE-ROLE-001, BASE-AUDIT-001
 
-**Requirement.** Campaign review and flow activation list each blocked host with the links that use it.
-- An operator whose role may approve (Manager, Admin or Owner; OPER-004) can choose **Allow this host**, or the subdomain entry for its domain, beside it. The host joins MSG-014's list with the source `allowed in review`, the campaign or flow and the operator. The change is recorded in the activity log (OPER-007), and the checks run again at once.
-- An Author sees the blocked hosts and can request approval, with the blocked hosts named for the approver, but cannot allow a host.
-- Contact links (MSG-013) never need this. A host allowed this way still passes every other MSG-006 inspection.
--
+**Requirement.** Review lets an authorized approver resolve an unlisted host without bypassing the rest of message safety.
 
 **Acceptance.**
-1. a link to an unlisted `partner.example` host blocks approval with the host named.
-2. An Author's session shows no allow action, and the route refuses it with 403.
-3. A Manager's **Allow this host** clears the block, approval passes, and the activity log records the Manager, the host and the campaign.
-4. A MOVE-011 imported Mailchimp template with links to three outside hosts reaches review with those three hosts listed, each with the allow action.
+1. Campaign review and flow activation list every blocked host with its affected links, including redirect hosts.
+2. A Manager, Admin or Owner can allow an exact host or explicit subdomain entry, retaining its review source, campaign or flow, and operator; checks rerun immediately.
+3. The append-only activity entry records the operator, host and campaign or flow and remains available through the OPER-007 activity views and filters.
+4. An Author sees the blocked hosts and can request approval naming them, but has no allow action and cannot allow a host.
+5. Valid contact links need no allowance, and an allowed host still passes all other MSG-006 inspections.
+6. An imported Mailchimp template using three outside hosts reaches review with all three hosts and allow actions.
 
 **Evidence.** `tests/go-live/content-checks.journeys.ts`
-**Gap.** Review names each blocked host and its links, including redirect hosts. Authors see no allow action and receive 403; a Manager allows a host, the stored list appends it, checks rerun and approval passes. The append-only row names operator, host and campaign through Owner/Admin GET /api/activity, newest first with operator/action/object filters. An imported Mailchimp template lists three outside hosts with allow actions at 1440/390. Exact and explicit wildcard matching agree across approval, inspection and tracking; deceptive suffixes remain blocked. OPER-007 inherits the full cross-product screen, CSV and every action type (ct pattern 2, c4 authorized default).
+**Gap.** Assertions in tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Campaign blocked-host list; Flow blocked-host list; Every affected link; Redirect host list; Manager exact-host allowance; Admin exact-host allowance; Owner exact-host allowance; Explicit subdomain allowance; Review source retained; Campaign/flow retained; Operator retained; Immediate recheck; Append-only activity; Operator field; Host field; Campaign/flow field; Activity view; Operator filter; Action filter; Object filter; Author sees blocked hosts; Author can request named approval; No Author allow control; Author allowance refused; Contact links need no allowance; Remaining safety inspections retained; All three imported outside hosts listed; Allow action for each imported outside host.
 
 ### Target: Results
 
@@ -2073,27 +2440,35 @@ Core · target · **done**
 
 Core · target · **partial**
 
-**Requirement.** Each tracked link in a sent campaign or flow message is identified within its revision by position and destination, and every click fact records the link it came from. Campaign and flow-message reports show, per link, total and unique non-automated clicks, plus the automated requests retained but excluded (RESULT-005). They show this as a table and as a click map over the saved revision's preview. Each link opens the list of contacts who clicked it, with first and last click times. An operator whose role permits it (OPER-004; masked for Analyst) can export that list as CSV or start a segment from it (SEG-006). Unique counts count each contact once per link and per campaign. Erased contacts leave only anonymous counts (CONT-013).
+**Requirement.** Campaign and flow-message reports connect each link's non-automated clicks to its saved revision, contact cohort and anonymous retained counts.
 
 **Acceptance.**
-1. a seeded send has three links; some recipients click one link twice, and a known scanner requests every link.
-2. The report shows each link's total and unique clicks, with the scanner excluded.
-3. One link's clicker list equals the seeded clickers and exports as CSV with the same rows, and a segment started from it holds exactly those contacts.
+1. Each link is identified by position and destination within its revision, and each click retains that identity.
+2. Campaign and flow-message reports show total and unique human clicks per link, with automated requests retained separately and excluded.
+3. The table and click map use the saved revision preview.
+4. Each link opens its exact clicker list with first and last click time.
+5. An authorized operator can export that cohort as matching CSV or start a segment with exactly those contacts, with Analyst masking under OPER-004.
+6. Unique counts count a contact once per link and once per campaign.
+7. Erased contacts leave only anonymous counts under CONT-013.
+8. On a three-link fixture with repeated human clicks and a scanner on every link, every count and exported or segmented cohort equals the fixture.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/reporting-journey.ts`
+**Evidence.** `tests/campaign-results/results.journeys.ts`, `tests/campaign-results/reporting-journey.ts`
 **Gap.** Campaign links show human totals, unique identified clickers, automated requests, a saved-revision click map, matching clicker CSV and exact saved ID cohorts. Gap: repeated positions with one destination share counts; legacy clicks without destination identity remain unassigned; erased click facts are removed rather than retained as anonymous link counts; campaign-wide unique rollups, flow reports and role masking are absent; very large saved cohorts require CSV.
 
 #### RESULT-008 — Recipients per outcome
 
 Core · target · **partial**
 
-**Requirement.** Each sent campaign and flow message lists its recipients by outcome: delivered; bounced, hard or soft, with the provider's reason; complained; unsubscribed from this send, by link, one-click or reply, with the time; skipped, with the SEND-006 reason; and failed, with the provider error. Each list can be filtered, exported as CSV and used to start a segment, under the role and masking rules of RESULT-007. Its counts equal the campaign's totals (SEND-007), and erased contacts leave only anonymous counts (CONT-013).
+**Requirement.** Campaign and flow-message recipient reports reconcile each outcome with the campaign summary and retain anonymous counts after erasure.
 
 **Acceptance.**
-1. a seeded send has one hard bounce, one complaint, one unsubscribe from the message and one quiet-hours skip.
-2. Each contact is listed under its outcome with the reason, the CSV export matches the lists, and every list count equals the campaign summary.
+1. The report lists delivered recipients, hard and soft bounces with provider reasons, complaints, send-bound unsubscribes with method and first time, skips with reason, and failures with provider error.
+2. Every list can be filtered, exported as matching CSV or used to create its exact contact segment under RESULT-007's role and masking rules.
+3. Every list count equals SEND-007 campaign totals, including a fixture with hard bounce, complaint, unsubscribe and quiet-hours skip.
+4. Send-bound visible-link, one-click and authenticated reply attribution survives replay without changing its first method or time.
+5. Actual erasure retains only anonymous outcome counts under CONT-013.
 
-**Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/recipient-method-journey.ts` · `tests/campaign-results/results.journeys.ts` · `tests/portability.spec.ts`
+**Evidence.** `tests/campaign-results/performance.journeys.ts` — [RESULT-008] native commerce and cross-channel attribution; `tests/campaign-results/recipient-method-journey.ts` — link/one-click/signed reply, replay, CSV, 1440 and 390, actual erasure; `tests/campaign-results/results.journeys.ts` — recipient outcomes and totals; `tests/portability.spec.ts` — populated unsubscribe upgrade and restore
 **Gap.** Message-bound link, one-click and signed SMS reply methods are retained with their first recorded time, shown in the recipient list and CSV and preserved as anonymous counts after erasure. Historical methods remain unknown. Flow messages and role masking remain absent; very large saved cohorts require CSV.
 
 ### Capacity
@@ -2102,19 +2477,14 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** One installation holds and sends to the whole first buyer the Product statement names, up to 250,000 contacts, and `seed.json → limits` is at least these floors:
-- 250,000 contacts (`maxContacts`) and 250,000 eligible contacts per campaign (`maxEligibleContactsPerCampaign`);
-- 250,000 rows per contact import review (`maxContactImportRows`), and the move-in sizes in MOVE-012;
-- 25,000,000 stored commerce, onsite and imported activity events (`maxStoredCommerceEvents`).
-- 102,400 bytes per email HTML part as sent (`maxEmailHtmlBytes`), with the save limit derived from it (BUILD-012), not set below it.
-- 1,000 accepted public signups per hour, sustained, and 100 in one minute across the installation (`signupGlobalPerHour`, `signupGlobalPerMinute`). Per network, 30 accepted signups an hour, 120 when each passes the challenge, and 300 for a kiosk form (FORM-008, FORM-009). The confirmation hand-offs they allow fit inside the email hand-off rate.
-- Review computes the exact eligible count for a 250,000-contact audience within 60 seconds. A campaign to it hands off completely within the time the email hand-off rate in `seed.json` allows (under 90 minutes at 3,000 per minute), with SEND-003 progress. Segment membership (SEG-002) and flow triggers (FLOW-002) keep their stated times at that size.
-- The limits' `status` becomes load-tested, with the recorded run named in the release evidence. These are floors for the first buyer, not a ceiling: a later raise follows the same load-test evidence.
--
+**Requirement.** Mango serves the full first buyer at the published capacity floors; raises require another recorded load run.
 
 **Acceptance.**
-1. a generated installation of 250,000 contacts with a year of order and activity events passes the MOVE-012 move-in, an exact review count within 60 seconds, a complete hand-off to the provider edge at the declared rate with no duplicate (SEND-001), and a segment update within SEG-002's time, with wall time and peak memory recorded against `seed.json → limits`.
-2. The intake floor is proved by FORM-008's volume journey.
+1. One installation holds 250,000 contacts and selects up to 250,000 eligible people for one campaign; one contact-import review holds 250,000 rows, with the move-in sizes in MOVE-012.
+2. It retains 25,000,000 commerce, onsite and imported activity events and supports an email HTML part of 102,400 bytes as sent, with BUILD-012 deriving the save allowance.
+3. FORM-008 sustains 1,000 accepted signups per hour and 100 in a minute, with network allowances of 30 per hour, 120 challenged and 300 kiosk; confirmation handoffs fit the mail rate.
+4. A generated installation with 250,000 contacts and a year of orders and activity completes MOVE-012, computes an independently exact eligible count within 60 seconds and hands off completely at its declared rate, under 90 minutes at 3,000 per minute, with SEND-003 progress and no duplicate.
+5. At that size, SEG-002 membership and FLOW-002 triggers keep their stated times; the run records wall time and peak memory, and release evidence identifies the load-tested limits.
 
 **Evidence.** `seed.json` · `src/core/features/audience/import-limits.ts`
 **Gap.** acceptance not yet met: A generated installation of 250,000 contacts with a year of order and activity events passes the MOVE-012 move-in, an exact review count within 60 seconds, a complete hand-off to the provider edge at the declared rate with no duplicate (SEND-001), and a segment update within SEG-002's time, with wall time and peak memory recorded against seed.json → limits; the per-email size floor is proved under BUILD-012, and the intake floor under FORM-008.
@@ -2262,7 +2632,7 @@ Core · target · **partial** · From FORM-008
 6. The race fixture leaves exactly one reservation spent and reads counters around bot and duplicate traffic.
 
 **Evidence.** `tests/go-live/shared-kiosk.journeys.ts` via `tests/go-live/signup-capacity-journey.ts` — 600 hosted captures on 200 networks, 100-request minute bursts, 200 bot attempts, duplicate claim, shared network, unchallenged isolation, Owner/Admin settings and 1440/390; `tests/audience-import/signup-security.spec.ts`; `tests/audience-import/signup-reservation-clock.spec.ts` — actual D1 admission interval across minute rollover — global last slot, IP grouping and token replay/expiry; `tests/audience-import/signup-reservation-clock.spec.ts` — database admission clock; `tests/portability.spec.ts` — populated upgrade and capacity restore.
-**Gap.** Built: separate challenged/unchallenged 1,000/hour and 100/minute pools, one network accepted count at 30/120, separate 60 refused attempts, destination 3/day, kiosk 300 partitions, atomic accepted-only claims and pre-handoff loser refunds, Owner-only next-window raises with floor/ceiling and activity, per-form challenge default and Owner/Admin toggles, mandatory kiosk verification, five-minute one-use tokens and missing-key Home warning. Defaults ADOPTED per ct's landed text; ct approval of the landed default remains pending. Popup/flyout/full-page/landing carriers (FORM-002 to FORM-004), FORM-005's report surface remain open. Single-opt-in accepted captures are exercised under CONT-025. Hosted form is the existing volume/shared-network door; no clause sentence changed. No real provider call or consent was used.
+**Gap.** Hosted/kiosk accepted-only claims, bot isolation, duplicate refunds and single-mode admission are exercised. Accounting across popup, flyout, full-page and landing carriers remains unproved; no local proof promotes this split of a partial clause.
 
 #### FORM-012 — Owner-controlled signup allowance raises
 
@@ -2278,7 +2648,7 @@ Core · target · **partial** · From FORM-008 · Cites BASE-ROLE-001, BASE-AUDI
 5. Confirmation hand-offs admitted by raised limits remain inside the declared hand-off rate.
 
 **Evidence.** `tests/go-live/shared-kiosk.journeys.ts` via `tests/go-live/signup-capacity-journey.ts` — 600 hosted captures on 200 networks, 100-request minute bursts, 200 bot attempts, duplicate claim, shared network, unchallenged isolation, Owner/Admin settings and 1440/390; `tests/audience-import/signup-security.spec.ts`; `tests/audience-import/signup-reservation-clock.spec.ts` — actual D1 admission interval across minute rollover — global last slot, IP grouping and token replay/expiry; `tests/audience-import/signup-reservation-clock.spec.ts` — database admission clock; `tests/portability.spec.ts` — populated upgrade and capacity restore.
-**Gap.** Built: separate challenged/unchallenged 1,000/hour and 100/minute pools, one network accepted count at 30/120, separate 60 refused attempts, destination 3/day, kiosk 300 partitions, atomic accepted-only claims and pre-handoff loser refunds, Owner-only next-window raises with floor/ceiling and activity, per-form challenge default and Owner/Admin toggles, mandatory kiosk verification, five-minute one-use tokens and missing-key Home warning. Defaults ADOPTED per ct's landed text; ct approval of the landed default remains pending. Popup/flyout/full-page/landing carriers (FORM-002 to FORM-004), FORM-005's report surface remain open. Single-opt-in accepted captures are exercised under CONT-025. Hosted form is the existing volume/shared-network door; no clause sentence changed. No real provider call or consent was used.
+**Gap.** Owner-only next-window raises, floor/ceiling validation, activity and Settings are exercised on hosted/kiosk capacity. This remains a carried partial part; capacity disclosure and delivery-ceiling behavior across every promised carrier remain unproved.
 
 #### FORM-013 — Signup challenge defaults and configuration
 
@@ -3234,10 +3604,12 @@ Core · target · **partial** · From DELIV-008 · Cites BASE-SECRET-001, BASE-O
 
 Core · target · **partial**
 
-**Requirement.** One page shows, for a chosen period against the previous one: attributed revenue in USD split by campaigns and flows, holdout-measured incremental revenue where a holdout exists (EXP-003, EXP-004), list growth by source, engagement (clicks, conversions), deliverability health, provider costs and top campaigns and flows. Forecasts are never shown as results (PROP-008).
+**Requirement.** The overview compares a chosen period with the previous one and keeps observed results separate from forecasts.
 
 **Acceptance.**
-1. with a seeded month of sends, orders and holdout data, each figure on the page matches the underlying records and the incremental figure is labeled separately from attribution.
+1. For a seeded month of sends, orders and holdouts, each displayed figure reconciles to the underlying records.
+2. Attributed USD revenue is split between campaigns and flows, and incremental revenue measured by a holdout is labelled separately.
+3. The page also compares list growth by source, clicks, conversions, deliverability health, provider cost and top campaigns and flows; PROP-008 forecasts are never results.
 
 **Evidence.** `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/overview-journey.ts`
 **Gap.** Default ADOPTED: holdout-measured incremental revenue says no holdout configured until EXP-003/004; flows and top flows say no flows yet. No forecast is presented as a result. Campaign attribution/engagement use the detailed performance table’s scheduled-step period; costs, growth and provider facts use occurrence days, with each basis disclosed. Flow and holdout acceptance remains open.
@@ -3246,65 +3618,71 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** Sortable tables list recipients, delivered, clicks and unique clicks, click rate, unsubscribes, complaints, conversions, revenue and revenue per recipient for every campaign, flow and flow message, filterable by channel, topic and date, exportable as CSV; each campaign and flow message opens its per-link detail (RESULT-007). When an operator has turned open estimates on (RESULT-002), the tables add an open-rate column headed and exported as an estimate, which is never used for ranking a test winner or for attribution.
+**Requirement.** Campaign, flow and flow-message performance can be inspected, sorted, filtered and exported.
 
 **Acceptance.**
-1. the CSV export of the table equals the on-screen rows for the same filter; with open estimates on, the estimated open-rate column appears on screen and in the CSV labeled as an estimate, and is absent with them off.
+1. Tables list recipients, delivered, clicks, unique clicks, click rate, unsubscribes, complaints, conversions, revenue and revenue per recipient for each campaign, flow and flow message.
+2. Channel, topic and date filters affect the on-screen table and CSV identically; the CSV rows equal the visible filtered rows.
+3. Each campaign and flow message opens its RESULT-007 per-link detail.
+4. When RESULT-002 open estimates are enabled, the screen and CSV label the added open-rate column as an estimate; when disabled, both omit it. Estimates never rank an experiment winner or determine attribution.
 
 **Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/results.journeys.ts`
 **Gap.** Campaign revision/channel tables, sorting, topic/channel/UTC date filters, matched CSV, optional open-rate estimates, per-link detail and net attributed revenue by currency are exercised. Gap: flow and flow-message performance awaits the flow engine.
 
 #### REPORT-003 — Attribution for campaigns, flows and SMS
 
-Core · target · **done**
+Core · target · **partial**
 
-**Requirement.** RESULT-003's policy extends to flows and SMS: one conversion metric (Placed Order by default, or a custom event), a click window per channel (default seven days for email and SMS), at most one attribution per order, refunds and cancellations subtracting, and automated clicks excluded (RESULT-005). The window and metric are shown beside every revenue figure and can be changed, which recalculates reports without changing stored events.
+**Requirement.** Attribution extends RESULT-003 to flows and SMS, with an editable reporting policy that leaves source facts unchanged.
 
 **Acceptance.**
-1. an order following an SMS click and an earlier email click is attributed once, to the most recent qualifying click; changing the window to one day recalculates the report.
+1. One conversion metric is used: Placed Order unless the operator selects a custom event. Each channel has a click window, initially seven days for email and SMS.
+2. An order following an SMS click and an earlier email click is attributed once to the most recent qualifying non-automated click; refunds and cancellations subtract.
+3. Every revenue figure shows its metric and window; changing the window to one day recalculates reports without changing stored events.
+4. Flows use the same attribution policy and carry their revenue through the flow reports.
 
 **Evidence.** `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/cross-channel-attribution.ts` · `tests/campaign-results/custom-attribution.ts` · `tests/campaign-results/attribution-report-ui.ts`
-**Gap.** Flow attribution is inherited by FLOW-001/FLOW-002, which remain missing.
+**Gap.** Campaign and SMS attribution, window/metric edits, refunds, cancellations and immutable source records are asserted. Flow attribution and flow revenue reporting are not asserted by the old evidence; FLOW-001/FLOW-002 remain missing.
 
 #### REPORT-004 — Customer and retention analytics
 
-Core · target · **done**
+Core · target · **partial**
 
-**Requirement.** Reports show repeat-purchase rate, cohort retention by first-order month, median days between orders, customer value by acquisition source and form, and product affinity (products bought together and next product bought).
+**Requirement.** Retention reports describe customers and purchasing patterns using recorded orders.
 
 **Acceptance.**
-1. on a seeded order history, the cohort table and repeat-purchase rate match an independent calculation.
+1. The seeded order history produces an independently reconciled repeat-purchase rate and first-order-month cohort retention table.
+2. Reports show median days between orders and customer value by acquisition source and form.
+3. Product affinity shows products bought together and the next product bought.
 
 **Evidence.** `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/retention-journey.ts`
-**Gap.** None.
+**Gap.** Repeat-purchase rate, cohort retention, median order interval, value for one form and products bought together are asserted. Value grouped by acquisition source and the next-product-bought outcome have no assertion in the old evidence.
 
 #### REPORT-005 — List growth and consent sources
 
 Core · target · **partial**
 
-**Requirement.** Subscriptions, confirmations, resubscribes (CONT-027, counted apart from new subscribers) and unsubscriptions by day, form, landing page, kiosk form (FORM-009), import and integration, with the consent text version each used, so an owner can show where every subscriber came from.
-- The membership-history requirement applies from migration 0073 onward. Deleted, erased or merged membership history recorded before migration 0073 cannot be reconstructed and is not claimed. Retained earlier consent captures and confirmations recovered by migration 0074 are labeled as retained evidence and do not imply earlier membership changes.
-- This clause is done only when FORM-002 (popup and other dedicated forms), FORM-004 (landing pages), FORM-009 (kiosk capture) and CONT-027 (approved confirmed-only public-form resubscribe) are done.
--
+**Requirement.** List growth reconciles subscriptions and removals with their consent sources. Earlier membership history that cannot be reconstructed is outside the history boundary.
 
 **Acceptance.**
-1. growth by source over a seeded period from migration 0073 onward sums to the change in subscribed contacts, and each source links to its consent text version.
-2. The period includes captures and confirmations, resubscribes counted separately, unsubscriptions, suppression and removal, across forms, landing pages, kiosk forms, imports and integrations.
-3. Opening membership plus the recorded deltas equals closing membership.
-4. Deleted, erased or merged membership history recorded before migration 0073 cannot be reconstructed and is not claimed; retained earlier consent evidence is labeled without inferred membership changes.
-5. Anonymous counts survive erasure while the erased evidence links do not.
+1. By day and by form, landing page, kiosk, import and integration, the report separates subscriptions, confirmations, resubscriptions and unsubscriptions and links each source to its consent wording version.
+2. For a seeded period from the recorded membership-history baseline onward, opening subscribed membership plus captures, confirmations, resubscriptions, opt-outs, suppression and removal equals closing membership.
+3. Retained evidence from before the baseline is labelled as evidence and implies no earlier membership change; deleted, erased or merged earlier membership history is not reconstructed.
+4. Anonymous counts survive erasure while links to erased evidence do not.
+5. The source reconciliation includes the dedicated forms, landing pages and kiosks of FORM-002, FORM-004 and FORM-009 and the full CONT-027 resubscription journey.
 
 **Evidence.** `tests/go-live/list-growth.journeys.ts` · `src/core/features/insights/list-growth.ts` · `migrations/core/0074_list_growth_retained_history.sql`
 **Gap.** Insights reconciles opening/net/closing subscribed membership by UTC day and separates captures/confirmations, opt-outs, suppression and removal, retaining source/version disclosures and anonymous counts after erasure. Real hosted and embedded form capture/confirmation journeys reconcile. Upgrade recovers retained pre-baseline consent captures/confirmations, explicitly labeled with zero inferred membership change; imported dates do not invent earlier local growth. Unavailable pre-baseline membership history is outside the amended history requirement; kiosk capture and confirmation are exercised by tests/go-live/shared-kiosk.journeys.ts. Hosted/kiosk public resubscribe confirmation and separate growth counts are exercised by tests/go-live/resubscribe.journeys.ts. Remaining: dedicated popup/landing-page attribution (FORM-002/004) and the full CONT-027 incentive/topic/flow and erasure-expiry acceptance.
 
 #### REPORT-006 — Scheduled and custom reports
 
-Core · target · **partial**
+Core · target · **partial** · Cites BASE-MAIL-001
 
-**Requirement.** Operators save custom reports (a metric by dimensions over time) and schedule any report as a weekly or monthly email or Slack message to chosen operators; scheduled reports contain no contact identities.
+**Requirement.** Operators save a metric by dimensions over time and deliver saved reports on a schedule.
 
 **Acceptance.**
-1. a weekly scheduled report is delivered once at its time through the mail edge with the same figures as the saved report.
+1. Any report can be scheduled weekly or monthly by email or Slack to chosen operators, with no contact identities.
+2. A weekly report reaches the mail provider once at its scheduled time with the same figures as the saved report.
 
 **Evidence.** `tests/go-live/managed-mail.journeys.ts` · `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/saved-report-metric-journey.ts` · `tests/sender-verification/worker.spec.ts`
 **Gap.** PARTIAL: Slack requires an unavailable webhook; scheduling currently covers saved provider cost/units and campaign click/conversion/USD attribution reports plus the built-in cost and engagement reports, not every report family or dimension. Default ADOPTED: Owner/Admin only, existing active operator IDs only, email only, no contact identities or per-contact rows, no currency conversion; weekly Monday 09:00 UTC / monthly first-day 09:00 UTC. Delivery refusals and sends are durable/audited; authorization/input refusals intercepted by the existing shared middleware are not yet activity records. Restored or revoked native authority requires explicit enable; uncertain provider outcomes never automatically resend.
@@ -3313,10 +3691,13 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** Mango never bills or limits sending by contact count. Settings shows contacts by consent state, and RESULT-004's provider costs (email, SMS, AI, design) by campaign, flow and day with a projected month in USD, so an owner sees exactly what each send cost on their own provider accounts.
+**Requirement.** Owners can see use and actual provider cost without contact-count billing or sending limits.
 
 **Acceptance.**
-1. `tests/campaign-results/costs.journeys.ts` for campaign and day totals; a flow's costs appear under that flow.
+1. Mango never bills or limits sending by contact count.
+2. Settings shows contact counts by consent state and email, SMS, AI and design cost by campaign, flow and day.
+3. Campaign and day totals reconcile with RESULT-004 provider facts; a flow shows its own costs.
+4. The projected month uses the disclosed priced month-to-date UTC run rate, keeps each reported currency separate without conversion and counts unpriced facts rather than treating them as zero.
 
 **Evidence.** `tests/campaign-results/costs.journeys.ts`
 **Gap.** Flow cost grouping waits on flows. Default ADOPTED: projected month is the priced month-to-date UTC run rate extended linearly; each reported currency stays separate with no conversion, and unpriced facts are counted rather than zero.
@@ -3606,15 +3987,18 @@ Core · target · **missing** · From INT-015 · Cites BASE-OPS-004
 
 #### MOVE-001 — From Mailchimp
 
-Core · target · **partial**
+Core · target · **partial** · Register R-701
 
-**Requirement.** An owner moves in a Mailchimp audience export (subscribed, unsubscribed, non-subscribed and cleaned files), the full account export ZIP (audiences, sent campaigns as history, templates and reports, including `granular_activity`) or, with a Mailchimp API key, a live pull. Merge fields become properties, tags become tags and groups become topics. Subscribed rows become subscribed with incumbent-held evidence (CONT-024) from their `OPTIN_TIME`, `CONFIRM_TIME` or `LAST_CHANGED` under the owner's once-per-audience attestation, and no status is ever upgraded. The move-in runs at the scale MOVE-012 commits to (SCALE-001), whichever route is used. The move-in also carries what a Mailchimp account uses every week: saved segments (MOVE-007), classic automations and Customer Journeys (MOVE-008), per-contact open and click history (MOVE-009, MOVE-015), several audiences (MOVE-010) and templates converted into the email grammar (MOVE-011). Each appears in the reconciliation report (MOVE-006). An API-key move-in then keeps Mango and Mailchimp in step on consent, both ways, until the owner marks the cutover complete (MOVE-013).
+**Requirement.** Owners move their Mailchimp audiences and account history to Mango by export or live pull without upgrading any consent.
 
 **Acceptance.**
-1. `tests/move-in/archive.journeys.ts` runs on synthetic exports, extended with checked-in Mailchimp-format fixtures for a saved segment with a campaign-activity condition, a classic automation, a `granular_activity` file, two overlapping audiences with conflicting statuses and a template with merge tags and a `<style>` block.
-2. Each fixture shows its expected lines in the reconciliation report (MOVE-007 to MOVE-011).
-3. The CONT-024 subscribed-file fixture and the MOVE-012 full-scale export run through the same journey.
-4. The same journey also runs on one real, owner-supplied Mailchimp export with its reconciliation report.
+1. Audience CSV exports preserve subscribed, unsubscribed, non-subscribed and cleaned states; a full account ZIP also carries audiences, sent-campaign history, templates, reports and granular activity.
+2. A key-authorized live pull carries the same scope at MOVE-012 capacity. Merge fields become properties, tags become tags and groups become topics.
+3. Subscribed rows carry CONT-024 incumbent-held evidence using source opt-in, confirmation or last-changed time under one owner attestation per audience; no status is upgraded.
+4. Saved segments, classic automations, Customer Journeys, engagement history, overlapping audiences, converted templates and re-hosted images appear under MOVE-007 to MOVE-011, MOVE-014 and MOVE-015 with MOVE-006 reconciliation.
+5. An API move-in keeps consent synchronized both ways until cutover under MOVE-013.
+6. Mailchimp-format fixtures include a campaign-activity segment, classic automation, granular activity, overlapping audiences with conflicting statuses and a template with merge tags and styles; each yields its expected reconciliation lines through the same move-in journey.
+7. The CONT-024 subscribed-file fixture and MOVE-012 full-scale generated export pass that journey.
 
 **Evidence.** `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts`
 **Gap.** acceptance not yet met: tests/move-in/archive.journeys.ts runs on synthetic exports, extended with checked-in Mailchimp-format fixtures for a saved segment with a campaign-activity condition, a classic automation, a granular_activity file, two overlapping audiences with conflicting statuses and a template with merge tags and a <style> block. Each fixture shows its expected lines in the reconciliation report (MOVE-007 to MOVE-011). The CONT-024 subscribed-file fixture and the MOVE-012 full-scale export run through the same journey. The same journey also runs on one real, owner-supplied Mailchimp export with its reconciliation report.
@@ -3623,10 +4007,12 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** With a Klaviyo private API key or CSV exports, Mango imports profiles with email and SMS consent and their timestamps (subscribed profiles as incumbent-held evidence, CONT-024), custom properties, list and segment definitions (recreated as segments for review), suppressions, templates (as templates) and historical order and engagement events, and recreates flows as draft flows with every unsupported step named. Until cutover, the parallel-run sync keeps consent in step both ways where this incumbent's API allows it, with any gap named (MOVE-013).
+**Requirement.** Klaviyo profiles and marketing assets move by private-key pull or CSV, retaining source restrictions and naming unsupported flow steps.
 
 **Acceptance.**
-1. an edge journey against a Klaviyo API fixture imports profiles with consent, a segment definition and an abandoned-cart flow as a draft with its unsupported steps listed.
+1. Email and SMS consent and timestamps carry CONT-024 evidence; custom properties, lists, suppressions, historical orders and engagement retain their source meaning.
+2. Lists and segment definitions become reviewable segments, templates become templates and flows become draft flows with each unsupported step named.
+3. The API fixture carries profiles, a segment and an abandoned-cart draft with its unmapped steps; MOVE-013 maintains two-way consent where the API permits it and names every gap.
 
 **Evidence.** `tests/go-live/contact-links.journeys.ts` · `tests/go-live/source-csv-journey.ts` · `tests/go-live/source-api-journey.ts` · `tests/go-live/source-draft-journey.ts`
 **Gap.** Owner/Admin one-time Klaviyo API read and CSV preset retain email source method/time, restrictive suppressions, properties, list/segment review snapshots, library templates and original-time order/engagement history. Unsupported conditions and abandoned-cart action steps are named in the report. tests/portability.spec.ts preserves these records on native restore. Gap: executable flows (FLOW-002/008), parallel-run sync (MOVE-013) and real-provider sandbox proof. Positive incumbent SMS remains held under CONT-024/A2P; missing row time or collection point never grants SMS consent. Snapshot membership grants no additional category consent.  The source outline is now also an inert saved FLOW-001 draft revision; source trigger/action execution is unavailable.
@@ -3635,10 +4021,12 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** Contacts, lists (as topics), tags, custom fields, unsubscribes and bounces import by CSV or API; automations are imported as a readable outline and recreated as draft flows. Until cutover, the parallel-run sync keeps consent in step both ways where this incumbent's API allows it, with any gap named (MOVE-013).
+**Requirement.** ActiveCampaign contacts and automations move by CSV or API.
 
 **Acceptance.**
-1. an API fixture import keeps an unsubscribed contact unsubscribed and produces a draft flow for a seeded automation.
+1. Lists become topics and tags, custom fields, unsubscribes and bounces retain their meaning.
+2. Automations become a readable outline and draft flows; the API fixture preserves an unsubscribed contact and produces a draft flow for its automation.
+3. MOVE-013 keeps consent synchronized both ways until cutover where the API allows it and names each gap.
 
 **Evidence.** `tests/go-live/contact-links.journeys.ts` · `tests/go-live/source-csv-journey.ts` · `tests/go-live/source-api-journey.ts` · `tests/go-live/source-draft-journey.ts`
 **Gap.** Owner/Admin one-time ActiveCampaign API read and CSV preset retain contacts, list membership as review topics, tags, custom fields, unsubscribes and bounces. The key is used only in bounded declared-host HTTPS reads and is not stored or logged. Automation names/statuses form a readable report outline; unavailable trigger/action definitions are named. Gap: executable automations (FLOW-002/008), parallel-run sync (MOVE-013) and real-provider sandbox proof. Review topics grant no additional category consent.  The source outline is now also an inert saved FLOW-001 draft revision; source trigger/action execution is unavailable.
@@ -3647,10 +4035,12 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** Subscribers with their states (active, canceled, bounced, complained), tags, custom fields and sequences import by CSV or API; sequences become draft sequences (FLOW-015). Until cutover, the parallel-run sync keeps consent in step both ways where this incumbent's API allows it, with any gap named (MOVE-013).
+**Requirement.** Kit subscribers and sequences move by CSV or API.
 
 **Acceptance.**
-1. the move-in journey's Kit-format synthetic files (`docs/moving-in.md`) keep every restrictive state, plus a sequence fixture becomes a draft sequence.
+1. Active, cancelled, bounced and complained states, tags and custom fields retain every restriction; sequences become FLOW-015 draft sequences.
+2. Kit-format synthetic files preserve every restrictive state and a sequence fixture becomes a draft sequence.
+3. MOVE-013 keeps consent synchronized both ways until cutover where the API permits it and names each gap.
 
 **Evidence.** `docs/moving-in.md` · `tests/move-in/held.journeys.ts`
 **Gap.** acceptance not yet met: The move-in journey's Kit-format synthetic files (docs/moving-in.md) keep every restrictive state, plus a sequence fixture becomes a draft sequence.
@@ -3659,10 +4049,12 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** Subscriber and profile exports with their statuses, tiers or attributes and consent evidence import by CSV or API, with the same restrictive mapping; active subscribers carry incumbent-held evidence (CONT-024), as they do from ActiveCampaign (MOVE-003) and Kit (MOVE-004). Until cutover, the parallel-run sync keeps consent in step both ways where this incumbent's API allows it, with any gap named (MOVE-013).
+**Requirement.** beehiiv, Omnisend and Customer.io subscribers move by export or API without upgrading restrictions.
 
 **Acceptance.**
-1. one synthetic export per product imports with every unsubscribed or suppressed row restricted.
+1. Statuses, tiers, attributes and consent evidence retain their source meaning; active subscribers carry CONT-024 incumbent-held evidence as for ActiveCampaign and Kit.
+2. One synthetic export per product leaves every unsubscribed or suppressed row restricted.
+3. MOVE-013 keeps consent synchronized both ways until cutover where the API permits it and names each gap.
 
 **Evidence.** `tests/go-live/contact-links.journeys.ts` · `tests/go-live/source-csv-journey.ts` · `tests/go-live/source-api-journey.ts`
 **Gap.** beehiiv, Omnisend and Customer.io documented CSV presets retain source status, tiers, attributes and tags; explicit source attestation carries incumbent-held email evidence and reconciliation counts evidence kinds. Unsubscribed, bounced and suppressed rows remain restricted. Gap: API pulls and parallel-run sync (MOVE-013); real-provider export proof pending. Missing or unfamiliar subscription states remain non-subscribed.
@@ -3671,10 +4063,27 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** Every move-in ends with a reconciliation report (rows read, created, updated, rejected with reasons, consent mapped with a count per evidence kind (Mango-captured, incumbent-held with each time source, `time-unknown`, and non-subscribed for want of an attestation; CONT-024) and the attestation each relies on, suppressions carried, engagement rows imported and dropped (MOVE-009), audiences and their overlaps (MOVE-010), segments recreated with each unsupported condition (MOVE-007), automations and journeys mapped with each unmapped step (MOVE-008) and each template's conversion findings (MOVE-011)) and a cutover checklist: DNS records for the sending domain, forms replaced on the site, flows recreated and reviewed, no template or live message still loading images from an incumbent host (MOVE-014), a parallel-run week with the two-way sync on (MOVE-013) or, for an export-only move-in, a re-import before each Mango send, the old platform's sending turned off, and **Mark cutover complete**, which ends the sync. Nothing imported sends until it is approved or activated.
+**Requirement.** Each move-in has a reconciliation report that accounts for the source data and every conversion finding.
 
 **Acceptance.**
-1. after a move-in, the report's counts reconcile to the files and contact table, and no campaign or flow is scheduled or live.
+1. Rows read, created, updated and rejected reconcile to the files and contact table; rejections name reasons.
+2. Consent is counted separately for Mango-captured, incumbent-held with each time source, time-unknown and non-subscribed for want of attestation, naming each supporting attestation.
+3. The report counts suppressions, imported and dropped engagement rows, audiences and overlaps, recreated segments and unsupported conditions, automations and journeys and unmapped steps, and template conversion findings.
+4. Nothing imported is scheduled, sent or live until its campaign approval or flow activation; MOVE-016 governs cutover.
+
+**Evidence.** `src/core/features/move-in/archive-report.ts` · `tests/move-in/archive.journeys.ts`
+**Gap.** acceptance not yet met: After a move-in, the report's counts reconcile to the files and contact table, and no campaign or flow is scheduled or live. The report counts consent per evidence kind (CONT-024) and names the attestation each relies on. The cutover checklist shows the parallel-run sync (MOVE-013), or the re-import advice for an export-only move-in, and Mark cutover complete ends the sync. The checklist names any template or live message still loading images from an incumbent host (MOVE-014).
+
+#### MOVE-016 — Move-in cutover checklist
+
+Core · target · **partial** · From MOVE-006
+
+**Requirement.** An owner completes an inspectable cutover checklist before closing the incumbent account.
+
+**Acceptance.**
+1. The checklist covers sender-domain DNS, replaced forms, recreated and reviewed flows, a parallel week under MOVE-013 synchronization or export re-import before each Mango send, and the old platform’s sending switched off.
+2. It names each template, draft, scheduled campaign or live message that still uses an incumbent image host, as MOVE-014 requires.
+3. Marking cutover complete ends the parallel sync under MOVE-025.
 
 **Evidence.** `src/core/features/move-in/archive-report.ts` · `tests/move-in/archive.journeys.ts`
 **Gap.** acceptance not yet met: After a move-in, the report's counts reconcile to the files and contact table, and no campaign or flow is scheduled or live. The report counts consent per evidence kind (CONT-024) and names the attestation each relies on. The cutover checklist shows the parallel-run sync (MOVE-013), or the re-import advice for an export-only move-in, and Mark cutover complete ends the sync. The checklist names any template or live message still loading images from an incumbent host (MOVE-014).
@@ -3683,12 +4092,15 @@ Core · target · **partial**
 
 Core · target · **missing**
 
-**Requirement.** With an API key, every saved segment of each moved audience is read from the Mailchimp Marketing API with its match type and conditions. It is recreated as a draft segment for review, which no campaign uses until an operator saves it. Conditions map as follows: merge fields to properties; tags to tags; groups to topics; signup date and location to SEG-001 conditions; contact rating and engagement (often, sometimes, rarely) to the SEG-006 engagement level; and ecommerce conditions to SEG-001 event conditions over the imported store data. Campaign-activity conditions (was sent, opened, clicked or did not click a named campaign, or any of the last 5 campaigns) map to SEG-006 conditions over the campaign history MOVE-009 imports. Automation-activity conditions (started or completed a classic automation) map to SEG-006 flow conditions over the draft flow MOVE-008 creates and the imported history. Every condition Mango cannot express is named in the segment and in the report, and the recreated segment's count is shown beside the count Mailchimp reported. An export-only move-in carries no segment definitions: it brings static segments across as tags and says that saved segments need the API pull.
+**Requirement.** Mailchimp saved segments become reviewable draft segments with visible differences from the original.
 
 **Acceptance.**
-1. a Mailchimp API fixture has two saved segments.
-2. One, "clicked campaign X and engagement is often", is recreated as a draft segment whose membership over the imported history equals the fixture's expected members.
-3. The other has an unsupported condition, which is named in the segment and the report.
+1. A key-authorized pull reads every moved audience’s saved segments with their match type and conditions; no campaign uses one until an operator saves it.
+2. Merge fields, tags, groups, signup date, location, contact rating, engagement and ecommerce conditions map respectively to properties, tags, topics and SEG-001/SEG-006 conditions over imported facts.
+3. Sent, open, click and no-click conditions for a named campaign or any of the last five map over MOVE-009 history; classic-automation started/completed conditions map over MOVE-017 history and drafts.
+4. Each unsupported condition is named in the segment and report; its recreated count is displayed beside Mailchimp’s count.
+5. Export-only moves carry static segments as tags and explain that definitions require an API pull.
+6. The fixture recreates “clicked campaign X and engagement is often” with independently expected membership and separately reports the other segment’s unsupported condition.
 
 **Evidence.** None.
 **Gap.** not implemented
@@ -3697,12 +4109,27 @@ Core · target · **missing**
 
 Core · target · **missing**
 
-**Requirement.** Classic automations, which the Mailchimp API reads with their trigger, delays and emails, are recreated as draft flows (FLOW-001). Each email's content is converted under MOVE-011, and every unmapped trigger, delay or setting is named. Customer Journeys have no export or read API, so Mango builds a journey inventory from two sources. The first is what Mailchimp does expose: journey emails' reports and content, in the API and the account export, name their journey. The second is the owner, who confirms or adds each live journey by name and starting point from a checklist that mirrors Mailchimp's starting points. Each starting point is mapped to the matching FLOW-012 library flow (for example abandoned cart to the abandoned-cart flow, joins audience to the welcome series, and date-based to birthday or anniversary). That flow is installed as a draft with the journey's readable email content carried over, and every step Mango could not read or map (rules, branches, actions) is named for the owner to rebuild. Each recreated draft carries AUD-009's setting for moved-in flows, so campaign sends do not block it, as they did not in Mailchimp. Nothing activates until FLOW-008.
+**Requirement.** Classic Mailchimp automations become inspectable draft flows.
 
 **Acceptance.**
-1. a Mailchimp API fixture with one classic two-email welcome automation yields a draft flow with both emails' converted content and named delays.
-2. A journey fixture whose two emails name an abandoned-cart journey yields an abandoned-cart draft flow with those emails, and a report line names its unreadable branch.
-3. Neither flow is live.
+1. Triggers, delays and emails are read through the available API, each email is converted under MOVE-011, and every unmapped trigger, delay or setting is named.
+2. A two-email welcome automation fixture produces a draft with both converted messages and named delays; it is not live.
+3. Moved-in drafts carry AUD-009’s moved-flow frequency setting and cannot activate before FLOW-008.
+
+**Evidence.** None.
+**Gap.** not implemented
+
+#### MOVE-017 — Customer Journey inventory and drafts
+
+Core · target · **missing** · From MOVE-008
+
+**Requirement.** Customer Journeys without a read API are rebuilt from an explicit inventory.
+
+**Acceptance.**
+1. Journey email reports and content in the API and export supply journey names; the owner confirms or adds each live journey’s name and starting point using a checklist matching Mailchimp’s starting points.
+2. Each starting point selects its FLOW-012 library draft, including abandoned-cart, welcome, birthday and anniversary flows, and carries over readable email content.
+3. Every unreadable or unmapped rule, branch and action is named for rebuilding.
+4. The two-email abandoned-cart fixture becomes a draft with both messages and an unreadable-branch report line; nothing is live before FLOW-008, and AUD-009’s moved-flow setting applies.
 
 **Evidence.** None.
 **Gap.** not implemented
@@ -3711,26 +4138,30 @@ Core · target · **missing**
 
 Core · target · **done**
 
-**Requirement.** The Mailchimp account export's `granular_activity` files import as historical click and open facts on the matching contacts at their original times. Each fact is linked to the imported campaign history (sent campaigns and their links) and labeled `imported` with its source. Imported clicks count as engagement for dormancy (CONT-012, AUD-008). Imported opens are kept as estimates (RESULT-002) and count for none of them. Imported facts never become Mango send facts, results or attribution (Archive move-in policy) and never change consent. Activity rows for addresses that are not in the move-in are counted and dropped. MOVE-015 carries API-key activity, the other incumbents' history and the remaining engagement uses.
+**Requirement.** Mailchimp export engagement becomes historical imported facts, separate from native sending and consent.
 
 **Acceptance.**
-1. a `granular_activity` fixture with clicks and opens for three contacts and one unknown address imports one click or open fact per row on the right contacts at their original times.
-2. The reconciliation report counts imported and dropped rows, the contacts' timelines show the facts as imported, and no campaign result figure changes.
+1. Granular-activity clicks and opens for three known contacts and one unknown address produce one fact per accepted row on the matching contact at its original time.
+2. Each fact links to imported campaign history and links, and the timeline labels it imported with its source.
+3. The reconciliation report counts imported and dropped rows, including unknown addresses.
+4. Imported clicks count for CONT-012 and AUD-008 dormancy; imported opens remain estimates and never count as engagement.
+5. Importing facts creates no Mango send facts, results or attribution and changes no consent; existing populated campaign results remain identical.
+6. MOVE-015 owns API-key activity, other incumbents and the remaining engagement uses.
 
 **Evidence.** `tests/move-in/archive.journeys.ts` · `tests/move-in/hostile.journeys.ts` · `tests/portability.spec.ts`
-**Gap.** Mailchimp-format granular activity imports one durable click/open fact per accepted row, with original time, imported campaign/link and source. Reconciliation names imported/dropped counts; timeline, repeat, undo, merge, erasure and populated upgrade/restore are exercised. Per archive: 10,000 engagement rows within existing ZIP/text limits, visibly refused beyond that limit. Imported clicks govern CONT-012/AUD-008 dormancy; opens stay open-only, never engagement; no send fact, result, attribution or consent changes. API-key activity, other incumbents' history and CONT-020/SEG-005/SEG-006/EXP-006 uses are MOVE-015.
+**Gap.** None.
 
 #### MOVE-010 — Several audiences
 
 Core · target · **partial**
 
-**Requirement.** A move-in with more than one Mailchimp audience, or more than one Klaviyo or ActiveCampaign list, asks the owner what each audience becomes. By default it becomes a topic in this installation; alternatively it belongs to a separate brand that moves into its own installation (Honest boundaries: one brand per installation). An address present in two audiences becomes one contact (CONT-001), with its status per topic taken from each audience. Within a topic and channel the most restrictive status wins, in CONT-011's order. A cleaned or complained address is suppressed for the channel across every topic (CONT-006). Conflicting merge-field values are listed, and the owner chooses which audience wins for each field.
+**Requirement.** Several incumbent audiences reconcile into one brand without losing topic-specific restrictions.
 
 **Acceptance.**
-1. a fixture has two audiences that share addresses: one address subscribed in A and unsubscribed in B, one cleaned in B, and one with a different first name in each.
-2. Each address becomes one contact.
-3. The first is subscribed to topic A and unsubscribed from topic B, the cleaned one is suppressed on email, and the first-name conflict is listed.
-4. The report counts each audience and their overlap.
+1. The owner chooses what every Mailchimp audience or Klaviyo/ActiveCampaign list becomes: a topic by default, or a separate brand in its own installation.
+2. Overlapping addresses become one CONT-001 contact, retaining per-topic source states; within a topic/channel CONT-011’s most restrictive status wins and cleaned or complained addresses remain channel-suppressed across topics.
+3. Conflicting merge-field values are listed and the owner selects the winning audience per field.
+4. The overlapping-audience fixture preserves subscribed topic A and unsubscribed topic B, channel suppression and the listed first-name conflict, with each audience and overlap counted.
 
 **Evidence.** `src/core/features/move-in/archive-service.ts` · `tests/move-in/archive.journeys.ts`
 **Gap.** acceptance not yet met: A fixture has two audiences that share addresses: one address subscribed in A and unsubscribed in B, one cleaned in B, and one with a different first name in each. Each address becomes one contact. The first is subscribed to topic A and unsubscribed from topic B, the cleaned one is suppressed on email, and the first-name conflict is listed. The report counts each audience and their overlap.
@@ -3739,25 +4170,45 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** Imported Mailchimp templates and campaign bodies, and Klaviyo, ActiveCampaign and Kit templates, become builder templates (BUILD-002) in the email grammar.
-- *Merge tags* map to Mango tokens with fallbacks the owner confirms (MSG-008): `*|FNAME|*` and `*|LNAME|*` to name tokens; other merge fields to their mapped properties; `*|UNSUB|*` to the managed unsubscribe link; `*|UPDATE_PROFILE|*` to the preference center (CONT-016); `*|LIST:ADDRESS|*` and `*|LIST:ADDRESSLINE|*` to the saved postal address; `*|ARCHIVE|*` to the campaign's web version (PUB-001); and `*|DATE|*` and `*|CURRENT_YEAR|*` to date tokens. Klaviyo-style `{{ first_name }}` tags map the same way.
-- *Styles:* `<style>` rules are inlined onto the elements they select and kept only where the grammar admits them. Media-query rules become BUILD-010 mobile settings where they map. Classes and everything else are removed.
-- *Report:* each template's conversion report lists every mapped and unmapped merge tag, every dropped rule, property or block with its location, every link and image host it uses outside MSG-014's list, its sent size against BUILD-012's limit, and whether the result passes the MSG-012 checker.
-- *Readability:* a text run below MSG-012's 3:1 contrast is recolored to the nearest shade of its own hue that reaches 4.5:1 against the background it is judged on, as Mango's design compiler aims. For example, `#999999` on white becomes `#767676`. Each recoloring is listed in the report with its location and its before and after colors. The operator can undo one in the builder, and the run then blocks approval under MSG-012 as it does today.
-- *Size:* inlining grows a template, so conversion measures each result's sent size (BUILD-012). A result over the limit is never dropped: it is kept as a held conversion, listed in its report and in the reconciliation report (MOVE-006) with its size and its largest blocks, and opens in the builder for the operator to trim before it can be saved as a template.
-- *Images:* each template's images come home under MOVE-014.
-- *Outside hosts:* the reconciliation report (MOVE-006) gathers those hosts across every imported template and campaign, with a count of uses each. The owner can allow the chosen ones there in one step (MSG-014, recorded in OPER-007). Any not allowed are listed again with MSG-015's allow action when a campaign or flow message built from the template reaches review. An unmapped merge tag stays visible and blocks approval through the personalization check, as it does today.
--
+**Requirement.** Imported templates and campaign bodies become builder templates with mapped personalization and visible unmapped content.
 
 **Acceptance.**
-1. a Mailchimp template fixture contains `*|FNAME|*`, `*|UNSUB|*`, `*|LIST:ADDRESS|*`, `*|ARCHIVE|*`, an unknown `*|FOO|*`, and a `<style>` block with class rules, a `display: none` rule and a media query.
-2. It becomes a template whose tokens resolve in preview and whose inlined colors and sizes match the source.
-3. Its report names the unknown tag, the dropped `display: none` rule and the mapped mobile rule.
-4. The template passes the checker apart from the unknown-tag block.
-5. A second fixture with links to three outside hosts lists them in its report and in the reconciliation report, and a campaign built from it reaches review with the three hosts and their allow actions (MSG-015).
-6. Mailchimp's `base_boxed_3column_query.html` blueprint, filled with fixture content, converts to a template whose report states its sent size, and it starts a draft that saves and reaches approval (BUILD-012).
-7. A fixture inflated past the limit is listed with its size as a held conversion, not dropped.
-8. A fixture whose footer is `#999999` on white converts with that text at `#767676`, listed in its report, and passes the checker.
+1. Mailchimp templates and campaign bodies and Klaviyo, ActiveCampaign and Kit templates become BUILD-002 templates in the email grammar.
+2. Name, other merge-field properties, unsubscribe, preference-center, postal-address, archive, date and year tags map to their Mango equivalents with owner-confirmed fallbacks; Klaviyo-style name tags map the same way.
+3. The report names each mapped and unmapped tag and its location; an unknown tag stays visible and blocks personalization approval.
+4. The fixture resolves the mapped name, unsubscribe, postal-address and archive tags in preview and reports its unknown tag; MOVE-018 governs its styles and MOVE-019 the remaining conversion findings.
+
+**Evidence.** `src/core/features/move-in/html-import.ts` · `tests/move-in/archive.journeys.ts` · `tests/go-live/content-checks.journeys.ts` · `tests/go-live/content-hosts.ts` · `tests/go-live/template-conversion.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/source-api-journey.ts`
+**Gap.** Gap: Campaign bodies remain imported history copied into drafts rather than automatically becoming library templates. Only FNAME, Klaviyo first_name, UNSUB and LIST:ADDRESS/ADDRESSLINE map to existing rendering targets; LNAME, DATE, CURRENT_YEAR, ARCHIVE, UPDATE_PROFILE (CONT-016), arbitrary property mapping and unknown fields remain visible and block personalization approval. The conservative name fallback is there; per-owner fallback configuration is unproved. CSS supports simple element/class selectors and top-level 480px mobile font size, line height, padding and alignment; other selectors, media widths, nested rules and orientation/hiding mappings remain unproved. Source-body inherited styles, complete per-location dropped-block diagnostics, general same-hue nearest-shade correctness across all backgrounds, a dedicated per-recoloring builder undo control and complete ActiveCampaign/Kit template conversion remain unproved; Klaviyo coverage currently proves only its supported name tag. Oversized results retain measured size, limit and largest blocks in custody/reconciliation, but cannot yet open directly in the builder for trimming. Mailchimp-host images in converted templates are re-hosted through the MOVE-014 journey; the rest follows MOVE-014's Gap. Host use counts and campaign review actions are covered by the existing imported-host journey; one-step reconciliation allowance/audit and flow-message review remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision.
+
+#### MOVE-018 — Converted template styles and readability
+
+Core · target · **partial** · From MOVE-011
+
+**Requirement.** Template conversion preserves admitted styles and makes readability changes inspectable.
+
+**Acceptance.**
+1. Style rules are inlined on the elements they select only where the grammar admits them; mappable media queries become BUILD-010 mobile settings and classes and other rules are removed.
+2. The report lists every dropped rule, property or block with its location and the mapped mobile rules.
+3. Text below MSG-012’s contrast bar is recoloured to the nearest shade of its hue reaching 4.5:1 against its judged background, with before/after colours and location reported.
+4. An operator can undo a recolouring in the builder, after which MSG-012 blocks approval when required.
+5. The fixture preserves source-admitted colours and sizes, reports the dropped hidden-display rule and mapped mobile rule, and passes the checker apart from its unknown-tag block; the grey-on-white footer fixture becomes the stated darker grey and passes.
+
+**Evidence.** `src/core/features/move-in/html-import.ts` · `tests/move-in/archive.journeys.ts` · `tests/go-live/content-checks.journeys.ts` · `tests/go-live/content-hosts.ts` · `tests/go-live/template-conversion.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/source-api-journey.ts`
+**Gap.** Gap: Campaign bodies remain imported history copied into drafts rather than automatically becoming library templates. Only FNAME, Klaviyo first_name, UNSUB and LIST:ADDRESS/ADDRESSLINE map to existing rendering targets; LNAME, DATE, CURRENT_YEAR, ARCHIVE, UPDATE_PROFILE (CONT-016), arbitrary property mapping and unknown fields remain visible and block personalization approval. The conservative name fallback is there; per-owner fallback configuration is unproved. CSS supports simple element/class selectors and top-level 480px mobile font size, line height, padding and alignment; other selectors, media widths, nested rules and orientation/hiding mappings remain unproved. Source-body inherited styles, complete per-location dropped-block diagnostics, general same-hue nearest-shade correctness across all backgrounds, a dedicated per-recoloring builder undo control and complete ActiveCampaign/Kit template conversion remain unproved; Klaviyo coverage currently proves only its supported name tag. Oversized results retain measured size, limit and largest blocks in custody/reconciliation, but cannot yet open directly in the builder for trimming. Mailchimp-host images in converted templates are re-hosted through the MOVE-014 journey; the rest follows MOVE-014's Gap. Host use counts and campaign review actions are covered by the existing imported-host journey; one-step reconciliation allowance/audit and flow-message review remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision.
+
+#### MOVE-019 — Held conversions and outside hosts
+
+Core · target · **partial** · From MOVE-011
+
+**Requirement.** Conversion keeps oversize content and outside hosts visible through review and cutover.
+
+**Acceptance.**
+1. Each report lists outside link/image hosts, sent size against BUILD-012 and MSG-012 checker results; MOVE-014 brings images home.
+2. An oversize conversion is held rather than dropped, listed with measured size and largest blocks in both reports, and opens in the builder for trimming before template save.
+3. The filled Mailchimp three-column blueprint converts, reports size and starts a draft that saves and reaches approval; an inflated fixture is held and reported.
+4. Reconciliation aggregates outside hosts across all templates and campaign bodies with use counts; the owner can allow chosen hosts in one recorded action.
+5. Unallowed hosts appear again with MSG-015 allowance actions when a resulting campaign or flow message reaches review; the three-host fixture proves both report and review paths.
 
 **Evidence.** `src/core/features/move-in/html-import.ts` · `tests/move-in/archive.journeys.ts` · `tests/go-live/content-checks.journeys.ts` · `tests/go-live/content-hosts.ts` · `tests/go-live/template-conversion.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/source-api-journey.ts`
 **Gap.** Gap: Campaign bodies remain imported history copied into drafts rather than automatically becoming library templates. Only FNAME, Klaviyo first_name, UNSUB and LIST:ADDRESS/ADDRESSLINE map to existing rendering targets; LNAME, DATE, CURRENT_YEAR, ARCHIVE, UPDATE_PROFILE (CONT-016), arbitrary property mapping and unknown fields remain visible and block personalization approval. The conservative name fallback is there; per-owner fallback configuration is unproved. CSS supports simple element/class selectors and top-level 480px mobile font size, line height, padding and alignment; other selectors, media widths, nested rules and orientation/hiding mappings remain unproved. Source-body inherited styles, complete per-location dropped-block diagnostics, general same-hue nearest-shade correctness across all backgrounds, a dedicated per-recoloring builder undo control and complete ActiveCampaign/Kit template conversion remain unproved; Klaviyo coverage currently proves only its supported name tag. Oversized results retain measured size, limit and largest blocks in custody/reconciliation, but cannot yet open directly in the builder for trimming. Mailchimp-host images in converted templates are re-hosted through the MOVE-014 journey; the rest follows MOVE-014's Gap. Host use counts and campaign review actions are covered by the existing imported-host journey; one-step reconciliation allowance/audit and flow-message review remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision.
@@ -3766,21 +4217,43 @@ Core · target · **partial**
 
 Core · target · **partial**
 
-**Requirement.** Every Mailchimp route (MOVE-001), and every other incumbent's (MOVE-002 to MOVE-005), completes a move-in at the SCALE-001 floors rather than within one Worker request:
-- *Account export:* a ZIP of up to 2 GB holding up to 250,000 audience rows and a year of weekly campaigns with `granular_activity` (up to 25,000,000 activity rows) uploads from the browser straight to object storage in resumable parts, and a part that fails is re-sent alone. Mango reads it as a stream in bounded, durable steps (Queues or Workflows), staging rows in storage rather than holding the archive, its text or per-row snapshots in memory. Preview writes no contact, shows every count with the row-level detail as a download, and keeps the custody hashes, undo and idempotent re-run of the Archive move-in policy.
-- *API pull:* with a Mailchimp API key, members, merge fields, tags, segments, automations, campaigns and each campaign's email activity are read with paginated or batch operations within Mailchimp's connection and rate limits, from a saved cursor, at the same counts.
-- *CSV files:* each audience file of up to the SCALE-001 import-row floor is one review.
-- *Resumable:* an interruption (worker eviction, deploy, provider rate limit or a closed browser) resumes from the last committed step, as CONT-010 imports do, with no duplicate contact or activity fact and no operator re-upload. The move-in page shows progress per part and an estimated finish, and nothing sends until approved or activated (MOVE-006).
-- Archives and pulls beyond these sizes are refused before any write with a named reason and the limit, as oversized archives are today.
--
+**Requirement.** Full-size move-in uploads and previews stay bounded and durable.
 
 **Acceptance.**
-1. a generated Mailchimp account export with 250,000 contacts across the subscribed, unsubscribed, non-subscribed and cleaned files and 52 weekly campaigns with `granular_activity` moves in through the journey.
-2. It is interrupted once by a forced worker restart during the activity import and resumes to completion with no re-upload.
-3. Its reconciliation report adds up per file, evidence kind and activity rows.
-4. A campaign to the whole subscribed audience then reaches review with an eligible count equal to an independent count over the generated files.
-5. The run records its wall time and peak memory.
-6. A generated API-pull fixture of the same size completes the same way.
+1. Every incumbent route completes at SCALE-001 floors, including a Mailchimp account ZIP up to 2 GB, 250,000 audience rows and 52 weekly campaigns with up to 25,000,000 activity rows.
+2. Browser uploads go directly to object storage in resumable parts and only a failed part is resent; processing streams through bounded durable steps with staged rows rather than whole archives, text or row snapshots in memory.
+3. Preview writes no contact, displays every count with downloadable row details, and preserves archive custody hashes, undo and idempotent rerun.
+4. A CSV audience file up to the SCALE-001 row floor is one review; oversize archives and pulls refuse before any write with their reason and limit.
+5. The generated subscribed/unsubscribed/non-subscribed/cleaned export completes the real move-in journey; MOVE-021 governs interrupted completion and exact review.
+
+**Evidence.** `src/core/features/move-in/archive-limits.ts` · `tests/move-in/archive.journeys.ts`
+**Gap.** acceptance not yet met: A generated Mailchimp account export with 250,000 contacts across the subscribed, unsubscribed, non-subscribed and cleaned files and 52 weekly campaigns with granular_activity moves in through the journey. It is interrupted once by a forced worker restart during the activity import and resumes to completion with no re-upload. Its reconciliation report adds up per file, evidence kind and activity rows. A campaign to the whole subscribed audience then reaches review with an eligible count equal to an independent count over the generated files. The run records its wall time and peak memory. A generated API-pull fixture of the same size completes the same way.
+
+#### MOVE-020 — Full-size API move-in
+
+Core · target · **partial** · From MOVE-012
+
+**Requirement.** Full-size API migration keeps its position within the incumbent’s limits.
+
+**Acceptance.**
+1. A key-authorized Mailchimp pull reads members, merge fields, tags, segments, automations, campaigns and campaign activity through bounded pagination or batches within provider connection/rate limits.
+2. Its saved cursor supports the same contact/activity counts as MOVE-012; every other incumbent route meets the same SCALE-001 floors.
+3. A generated API fixture at full export size completes under the same reconciliation and resumption acceptance as MOVE-012 and MOVE-021.
+
+**Evidence.** `src/core/features/move-in/archive-limits.ts` · `tests/move-in/archive.journeys.ts`
+**Gap.** acceptance not yet met: A generated Mailchimp account export with 250,000 contacts across the subscribed, unsubscribed, non-subscribed and cleaned files and 52 weekly campaigns with granular_activity moves in through the journey. It is interrupted once by a forced worker restart during the activity import and resumes to completion with no re-upload. Its reconciliation report adds up per file, evidence kind and activity rows. A campaign to the whole subscribed audience then reaches review with an eligible count equal to an independent count over the generated files. The run records its wall time and peak memory. A generated API-pull fixture of the same size completes the same way.
+
+#### MOVE-021 — Move-in resumption and reconciliation
+
+Core · target · **partial** · From MOVE-012
+
+**Requirement.** Interrupted move-ins resume from committed progress without duplicate work.
+
+**Acceptance.**
+1. Worker eviction, deployment, provider rate limits and a closed browser resume from the last committed step with no duplicate contact or activity fact and no re-upload.
+2. The move-in page shows progress by part and an estimated finish; no imported content sends before MOVE-006 approval or activation.
+3. A forced worker restart during full-scale activity import resumes to completion; reconciliation adds up per file, evidence kind and activity rows.
+4. A campaign over the whole subscribed audience reaches review with an eligible count equal to an independent count over the generated files; the run records wall time and peak memory.
 
 **Evidence.** `src/core/features/move-in/archive-limits.ts` · `tests/move-in/archive.journeys.ts`
 **Gap.** acceptance not yet met: A generated Mailchimp account export with 250,000 contacts across the subscribed, unsubscribed, non-subscribed and cleaned files and 52 weekly campaigns with granular_activity moves in through the journey. It is interrupted once by a forced worker restart during the activity import and resumes to completion with no re-upload. Its reconciliation report adds up per file, evidence kind and activity rows. A campaign to the whole subscribed audience then reaches review with an eligible count equal to an independent count over the generated files. The run records its wall time and peak memory. A generated API-pull fixture of the same size completes the same way.
@@ -3789,43 +4262,91 @@ Core · target · **partial**
 
 Core · target · **missing**
 
-**Requirement.** From the moment a move-in with API access completes until the owner marks the cutover complete (MOVE-006), Mango and the incumbent stay in step on consent. An opt-out in either is an opt-out in both, as CAN-SPAM treats them for one business.
-- *Mailchimp in:* a Mailchimp API-key move-in (MOVE-001) registers an audience webhook on each moved audience for subscribe, unsubscribe, profile, email-change and cleaned events from every source (subscriber, admin and API).
-  - Mailchimp does not sign audience webhooks, so each webhook URL carries an unguessable secret for that move-in. Mango reads the member back from the Marketing API before applying an event. When that read fails, an unsubscribe or clean still applies, because opt-out precedence wins; a subscribe or profile change waits for the next read.
-  - Every 15 minutes, a cursor re-pull of the members changed since the last pull (`since_last_changed`) applies anything a webhook missed. It uses the same idempotent path, so a dropped or repeated event never changes anything twice.
-- *Applying incoming changes:*
-  - An unsubscribe applies CONT-004, and an unsubscribe Mailchimp marks as `abuse` is a complaint that applies CONT-006. A clean applies CONT-006. Each is recorded with the incumbent as its source and applies before Mango's next hand-off to that contact.
-  - A new subscriber arrives subscribed with incumbent-held evidence (CONT-024) under the audience's existing attestation, and a `pending` member stays pending. Either enters the flows whose triggers admit them (FLOW-002), such as the welcome series.
-  - A profile change updates the mapped properties (MOVE-001). An email change moves the address under CONT-001 and keeps its consent.
-  - No incoming change ever upgrades a status Mango holds as unsubscribed or suppressed (CONT-004).
-- *Freshness before sending:* while the sync is on, the incumbent is a source under STORE-005.
-  - A campaign step begins dispatch only after a re-pull completed within the previous 15 minutes, and runs one first if needed.
-  - A flow hand-off waits with `incumbent-sync-stale` while the last successful re-pull is more than 30 minutes old, until a re-pull succeeds or its deadline passes (CAMP-010).
-  - Approval names a stale incumbent sync as a blocking check (CAMP-004).
-- *Mango out:* every Mango unsubscribe, one-click unsubscribe, preference-center opt-out and suppression (CONT-004, CONT-006, CONT-016) is written back as an unsubscribed member, through the Marketing API, to each moved audience that holds the address. So is an erasure request (CONT-013), written before the erasure completes.
-  - Transient failures are retried up to 5 times over 1 hour. A write-back that still fails is shown on the move-in page and on Home with its count, its error and a retry action, and the pending write-backs can be downloaded as a CSV to import into the incumbent by hand.
-  - The webhook echo of Mango's own write-back is recognized and recorded once.
-- *Export-only move-ins:* the move-in page states that, without an API key, Mango cannot see later incumbent changes, and that the export must be re-imported before each Mango send during the parallel week.
-  - A re-import of a newer export is a delta under the same idempotent rules: new restrictive statuses apply, new subscribers arrive as incumbent-held under the attestation, and nothing is upgraded.
-  - Approval shows an advisory finding (MSG-007), which the approver acknowledges on record, when the last incumbent import is older than the last incumbent send Mango knows of. That is the latest send in the imported campaign history. While the MOVE-008 journey inventory lists a journey the owner has not marked turned off, it is 24 hours after the last import.
-- *Ending the sync:* **Mark cutover complete** (Owner or Admin; OPER-004) works in this order:
-  - It first flushes pending write-backs, and lists any that still fail.
-  - It then deletes the registered webhooks at the incumbent, stops the re-pull and write-back, and deletes the stored incumbent API key.
-  - The event and its operator are recorded in the activity log (OPER-007). A later call to an old webhook URL is answered 410 and changes nothing.
-  - Until the cutover is marked, Home shows the parallel run's day count and the sync's last success.
-- *Other incumbents:* the same sync runs for every incumbent whose API allows it. The move-in page names, for each incumbent, the mechanism used in each direction and any gap.
-  - Klaviyo: a 15-minute re-pull of profiles and subscription changes in, and write-back through its unsubscribe and suppression jobs (MOVE-002).
-  - ActiveCampaign: its unsubscribe, subscribe, bounce and contact-update webhooks plus the re-pull in, and write-back by setting each list status to unsubscribed (MOVE-003).
-  - Kit: its subscriber activate, unsubscribe, bounce and complaint webhooks plus the re-pull in, and write-back through its unsubscribe endpoint (MOVE-004).
-  - beehiiv, Omnisend and Customer.io: their subscription webhooks, or a re-pull where they have none, in, and write-back by their subscription or attribute updates (MOVE-005).
-  - Where an incumbent, or the buyer's plan with it, offers no write-back, the move-in page says so and the cutover checklist adds a suppression-CSV import into that incumbent.
--
+**Requirement.** During a parallel run, incumbent and Mango consent stay synchronized until explicit cutover.
 
 **Acceptance.**
-1. after a Mailchimp API-fixture move-in, the Mailchimp edge emits three webhook events: an unsubscribe for contact A, a cleaned event for B and a subscribe for new address C.   - A Mango campaign approved and dispatched straight afterwards excludes A as `unsubscribed` and B as `suppressed`.
-2. C is subscribed with incumbent-held evidence and enters the live welcome flow.   - With the webhooks dropped, the same three changes made at the edge are applied by the 15-minute re-pull before the next dispatch.
-3. An event sent to a URL with the wrong secret changes nothing.   - An unsubscribe from a Mango email appears as an unsubscribed member at the Mailchimp edge.
-4. A forced edge failure shows the write-back retried and then failed on the move-in page.   - Marking the cutover complete deletes the webhooks at the edge, and a later Mailchimp event changes nothing in Mango.   - An export-only move-in shows the approval advisory once the imported history holds a send after the import.   - A Klaviyo API fixture and a Kit webhook fixture each carry one unsubscribe in and one write-back out.
+1. An API move-in registers Mailchimp audience changes from subscribers, admins and API users for subscribe, unsubscribe, profile, email-change and cleaned outcomes.
+2. Incoming unsubscribes and abuse complaints apply CONT-004/CONT-006, and cleaned members are suppressed before the next Mango handoff.
+3. New subscribers carry CONT-024 evidence under the audience attestation, pending stays pending and admitted triggers enter FLOW-002, including welcome.
+4. Profile changes update mapped properties; address changes retain CONT-001 consent, and no incoming event upgrades a Mango opt-out or suppression.
+5. The API fixture’s unsubscribe and cleaned contacts are excluded with the corresponding reasons and its newly subscribed contact enters the live welcome flow.
+
+**Evidence.** None.
+**Gap.** not implemented
+
+#### MOVE-022 — Parallel-run verification and freshness
+
+Core · target · **missing** · From MOVE-013
+
+**Requirement.** The parallel sync authenticates and verifies changes and catches up before sending.
+
+**Acceptance.**
+1. Mailchimp’s unsigned webhook uses a secret unique to that move-in; a wrong secret changes nothing. Mango rereads the member before applying, allowing unsubscribe or clean during failed reads but holding subscribe/profile changes.
+2. A cursor repull every 15 minutes recovers missed changes idempotently; dropping the fixture webhooks yields the same unsubscribe, clean and subscribe outcomes before dispatch.
+3. Campaign dispatch first completes a repull from the preceding 15 minutes; a flow handoff with no successful repull in 30 minutes waits for recovery until CAMP-010’s deadline.
+4. Approval identifies stale incumbent synchronization as a blocking CAMP-004 check.
+
+**Evidence.** None.
+**Gap.** not implemented
+
+#### MOVE-023 — Restriction writeback
+
+Core · target · **missing** · From MOVE-013
+
+**Requirement.** Mango restrictions are written back to every moved audience that holds the address.
+
+**Acceptance.**
+1. Every unsubscribe, one-click unsubscribe, preference opt-out, suppression and erasure is written as unsubscribed; the erasure write precedes completion.
+2. Transient writeback failures retry up to five times over an hour. Exhaustion appears on move-in and Home with count, error, retry action and downloadable pending-suppression CSV.
+3. The echo of Mango’s writeback is recognized once.
+4. The fixture carries an email unsubscribe to Mailchimp and a forced provider failure through retries to a visible failed writeback.
+
+**Evidence.** None.
+**Gap.** not implemented
+
+#### MOVE-024 — Export-only parallel-run custody
+
+Core · target · **missing** · From MOVE-013
+
+**Requirement.** An export-only move makes its consent-freshness limits explicit through the parallel week.
+
+**Acceptance.**
+1. Without a key, the move-in page explains that later incumbent changes are unseen and requires a newer export before each Mango send.
+2. Reimports are idempotent deltas: restrictions apply, source-attested new subscribers arrive and no status upgrades.
+3. Approval records an advisory acknowledgment when the latest known incumbent send follows the import, or after 24 hours when an inventoried journey has not been marked off.
+4. The export-only fixture with later sent history displays that advisory.
+
+**Evidence.** None.
+**Gap.** not implemented
+
+#### MOVE-025 — End the parallel run
+
+Core · target · **missing** · From MOVE-013 · Cites BASE-AUDIT-001
+
+**Requirement.** Owner or Admin cutover ends synchronization in a recorded sequence.
+
+**Acceptance.**
+1. Marking cutover complete first flushes pending writebacks and lists any still failing.
+2. It then deletes incumbent webhooks, stops repulls and writebacks and removes the stored incumbent key; the activity log records the operator and event.
+3. A later event at the old webhook receives a gone response and changes nothing; the fixture proves remote webhook removal and no later Mango effect.
+4. Until cutover, Home shows parallel-run day count and last sync success.
+
+**Evidence.** None.
+**Gap.** not implemented
+
+#### MOVE-026 — Other-incumbent parallel sync
+
+Core · target · **missing** · From MOVE-013
+
+**Requirement.** Each supported incumbent uses its available consent-synchronization route and exposes any missing direction.
+
+**Acceptance.**
+1. Klaviyo uses a 15-minute profile/subscription repull and unsubscribe/suppression writeback jobs.
+2. ActiveCampaign uses subscribe, unsubscribe, bounce and contact-update webhooks plus repull, with unsubscribed list-status writeback.
+3. Kit uses activate, unsubscribe, bounce and complaint webhooks plus repull and unsubscribe writeback.
+4. beehiiv, Omnisend and Customer.io use subscription webhooks or repull and subscription/attribute writeback.
+5. An absent writeback API or buyer-plan permission is named and adds a suppression-CSV import to cutover; each incumbent’s move-in page states both mechanisms and gaps.
+6. The Klaviyo API fixture and Kit webhook fixture each carry one unsubscribe in and one writeback out.
 
 **Evidence.** None.
 **Gap.** not implemented
@@ -3834,29 +4355,29 @@ Core · target · **missing**
 
 Core · target · **partial**
 
-**Requirement.** Images that imported templates, campaign bodies and flow messages load from an incumbent's hosts (for Mailchimp, `mcusercontent.com` and `gallery.mailchimp.com`; for every other incumbent, the image hosts its move-in fixtures name) are re-hosted as campaign images (CAMP-012) before the incumbent account can close.
-- *Source:* from an account export, the gallery files it already carries, matched to each image address by file name and content; from an API move-in, or for an image the export lacks, one fetch per image under MSG-006's network inspection, within CAMP-012's type, byte and pixel limits.
-- *Rewrite:* each matching `img src` is rewritten to the deployment's `/media/<sha256>` address, with its alt text, size and link unchanged, and the conversion report lists each image re-hosted or failed with its reason. A failed image stays on its incumbent host and is listed for the operator to upload a replacement.
-- *Cutover:* the reconciliation report counts images re-hosted, failed and still on an incumbent host, and the cutover checklist (MOVE-006) confirms that no template, draft, scheduled campaign or live flow message still uses an incumbent image host before **Mark cutover complete**, naming each one that does.
--
+**Requirement.** Imported images are brought home before an incumbent account closes.
 
 **Acceptance.**
-1. a Mailchimp account-export fixture with three gallery images used by a template and a campaign moves in, and every image source is rewritten to `/media/`, serving the same bytes.
-2. An API-fixture template's image is fetched from the edge and re-hosted the same way.
-3. An image the edge answers 404 for is listed as failed and blocks the cutover checklist item until replaced, and the checklist names the template using it.
+1. Templates, campaign bodies and flow messages use re-hosted CAMP-012 images for every incumbent host named by its migration fixtures.
+2. Export galleries match by file name and content; API and missing-gallery images are fetched once under MSG-006 inspection within CAMP-012 type, byte and pixel bounds.
+3. Image sources are rewritten to this deployment’s content-addressed media while alt text, size, link and bytes stay unchanged; the report names each re-hosted or failed image and reason.
+4. A failed image stays at its old host until an operator uploads a replacement; cutover counts re-hosted, failed and remaining hosts and names every template, draft, schedule or live flow still using one.
+5. The export fixture’s three gallery images and the API image return identical re-hosted bytes; the not-found image is reported and blocks the checklist item until replaced, naming its template.
 
 **Evidence.** `tests/go-live/content-checks.journeys.ts` · `tests/go-live/template-conversion.ts` · `tests/go-live/incumbent-image-journey.ts`
 **Gap.** Gap: The cutover checklist item and its block on Mark cutover complete (MOVE-006 checklist unbuilt; MOVE-013 owner-held), flow messages (FLOW-*), and every other incumbent's image hosts beyond the Mailchimp-host fixtures proved here remain unproved. Large galleries remain subject to the existing retained archive-data budget. Scheduled-campaign enumeration beyond the proved template and draft list remains unproved.
 
 #### MOVE-015 — Incumbent engagement history beyond the Mailchimp export
 
-Core · target · **missing**
+Core · target · **missing** · Register R-702
 
-**Requirement.** Each sent campaign's email activity imports as historical click and open facts on the matching contacts at their original times when a Mailchimp move-in uses an API key, under every MOVE-009 rule. Imported clicks, from every move-in, count as engagement for sunsetting (CONT-020), campaign-activity segments (SEG-006), engagement scores (SEG-005) and send-time optimization (EXP-006); imported opens count for none of them. Klaviyo, ActiveCampaign, Kit and the other incumbents bring their engagement history the same way where their exports or APIs carry it (MOVE-002 to MOVE-005).
+**Requirement.** API-key activity and other incumbents’ histories retain MOVE-009 custody and support the remaining engagement uses.
 
 **Acceptance.**
-1. a Mailchimp API fixture at the network edge with email activity for three contacts across two sent campaigns and one unknown address imports one click or open fact per activity on the right contacts at their original times, with MOVE-009's reconciliation, timeline and no-result-change checks; each other incumbent's fixture, where its export or API carries engagement, does the same; and the imported-history acceptance of CONT-020, SEG-005, SEG-006 and EXP-006 passes.
-2. Provider acceptance repeats the API-key import with a real Mailchimp account.
+1. Mailchimp API activity becomes one historical click/open fact per activity for matching contacts at original times, with MOVE-009 reconciliation, timeline and unchanged-result outcomes.
+2. Unknown addresses are dropped and counted; the fixture has three contacts, two sent campaigns and an unknown address.
+3. All imported clicks feed CONT-020 sunsetting, SEG-005 scores, SEG-006 activity segments and EXP-006 send-time optimization; imported opens feed none of them.
+4. Klaviyo, ActiveCampaign, Kit and the other incumbents’ export/API fixtures carry the same history where the provider exposes it.
 
 **Evidence.** None.
 **Gap.** not implemented
@@ -3865,24 +4386,29 @@ Core · target · **missing**
 
 #### MOBILE-001 — Responsive operator app
 
-Core · target · **partial**
+Core · target · **partial** · Cites BASE-ACCESSIBILITY-001
 
-**Requirement.** Every operator page works at 390 pixels wide with no horizontal scroll: dashboards, reports, contact lookup, review and approval of campaigns, flow status and pause, forms and settings; the flow canvas is readable with node details.
+**Requirement.** Every operator page is usable at phone width, including the flow canvas and its node details.
 
 **Acceptance.**
-1. the representative-pages journey (`tests/newsletter-ui/representative-pages.journeys.ts`) extended to every operator page at 390 pixels with axe and overflow checks.
+1. At 390 pixels the dashboards, reports, contact lookup, campaign review/approval, flow status/pause, forms and settings have no horizontal scroll.
+2. The flow canvas is readable and node details are available; each page meets the shared Base accessibility bar.
 
 **Evidence.** `tests/newsletter-ui/representative-pages.journeys.ts`
 **Gap.** acceptance not yet met: The representative-pages journey (tests/newsletter-ui/representative-pages.journeys.ts) extended to every operator page at 390 pixels with axe and overflow checks.
 
 #### MOBILE-002 — Native iOS and Android app
 
-Core · target · **missing**
+Core · target · **missing** · Cites BASE-ROLE-001 · Register R-703
 
-**Requirement.** A native app for operators shows the overview dashboard and campaign and flow reports; opens any revision awaiting approval with its full previews and checks and lets a permitted role approve it; pauses a flow or presses Stop all sending (FLOW-011); answers SMS conversations (SMS-004); and receives push alerts for approval requests, flow errors, deliverability blocks and provider outages. It uses the same server authority and roles (OPER-004) and never sends anything offline.
+**Requirement.** Native iOS and Android apps carry the operator’s first-week work.
 
 **Acceptance.**
-1. an app test against a test installation signs in, approves a revision with the same checks the web app shows, receives an outage alert from the push edge, and a role without approval rights sees no approve control and is refused by the server.
+1. The app shows overview, campaign and flow reports; an authorized role opens a waiting revision with its full web-equivalent previews/checks and approves it.
+2. An operator pauses a flow, stops sending under FLOW-011 and answers SMS under SMS-004.
+3. Push alerts cover approval requests, flow errors, deliverability blocks and provider outages.
+4. An app journey signs into a test installation, approves a revision with the web checks, receives an outage push from the provider edge and proves an unauthorized role has no approval control and server refusal.
+5. The app never sends offline.
 
 **Evidence.** None.
 **Gap.** not implemented
@@ -3891,24 +4417,30 @@ Core · target · **missing**
 
 #### PUB-001 — Web archive
 
-Core · target · **done**
+Core · target · **done** · Cites BASE-PUBLIC-001
 
-**Requirement.** Sent newsletters can be published as public web pages with an archive index, RSS feed and search-engine metadata; personalization is replaced by neutral text and unsubscribe and tracking links are removed.
+**Requirement.** A sent newsletter can be shared as a neutral public web version.
 
 **Acceptance.**
-1. publishing a sent campaign creates a page and feed item with no recipient token or personal value.
+1. Publishing a sent campaign creates its public page and archive-index entry.
+2. The RSS feed includes the published issue and the public page carries search-engine metadata.
+3. Personalization becomes neutral text; public output contains no recipient token or personal value, unsubscribe link or private tracking link.
 
 **Evidence.** `tests/campaign-results/archive.journeys.ts` · `tests/audience-import/erasure.spec.ts`
 **Gap.** None.
 
 #### PUB-002 — Paid newsletters
 
-Core · target · **partial**
+Core · target · **partial** · Cites BASE-SECRET-001
 
-**Requirement.** Creators offer paid tiers through Stripe Checkout and Stripe Billing on their own Stripe account (or Nectar), with US sales tax by Stripe Tax; paying subscribers join a paid topic, paid-only content is sent only to them, and cancellation or failed payment moves them back to the free topic. Mango never holds funds.
+**Requirement.** Creators sell paid newsletter tiers on their own Stripe or Nectar connection without Mango holding funds.
 
 **Acceptance.**
-1. a Stripe test-mode checkout journey subscribes a reader to the paid topic, a paid-only campaign reaches them and not free readers, and a cancellation webhook moves them back.
+1. Stripe Checkout/Billing or Nectar enrolls paying readers into a paid topic; Stripe Tax handles US sales tax, and paid-only content reaches paying subscribers rather than free readers.
+2. A cancellation or failed payment returns a reader to the free topic. Fresh provider state, not webhook arrival time, determines membership under the recorded paid-tier rule.
+3. Payment never creates/widens consent; a paid topic requires the reader’s own confirmed channel permission, and opt-outs and suppression always win.
+4. A test-mode checkout subscribes the reader to the topic, a paid-only send excludes free readers and a cancellation webhook moves the reader back.
+5. Provider uncertainty removes paid eligibility and remains a visible failed operation; card details and funds stay with the payment provider.
 
 **Evidence.** `tests/go-live/roles.journeys.ts` · `tests/go-live/stripe-journey.ts` · `tests/go-live/paid-tier-journey.ts` · `tests/portability.spec.ts` · `tests/local-start/retained-archive.journey.ts`
 **Gap.** Sandbox proof pending: the acceptance's Stripe test-mode checkout needs a held restricted test key (rk_test_) for Mango's Owner connection; the held test keys are unrestricted (sk_test_), which the connection refuses by design. Stripe Tax's test-account state is ct's 23 October source read, not a live-provider receipt from this round. The Nectar rail is not connected (INT-004). Policy ruled by ct (22 October 20:05Z): payment never creates or widens consent; a paid topic needs the reader's own confirmed channel consent, opt-out and suppression win, and a payer without it is counted as paid, consent missing and never mailed. Paid membership follows a fresh Stripe read for checkout completed, customer.subscription.* including paused/resumed, invoice.payment_failed and invoice.paid: active/trialing is paid; past_due, unpaid, paused, incomplete, incomplete_expired and canceled leave; a later active/trialing read rejoins. Read-start time orders overlapping reads, never the event's created second; equally fresh conflicting reads leave the paid topic. Failed Stripe reads remove paid eligibility, move the source-authority fence, record a failed operation and return a retryable refusal; the same event can recover after a successful fresh read. Cancellation ends paid membership only, while consent withdrawal stops every send on the channel. Immediate-confirmation card methods only; delayed methods are not supported. Paid writes move the source-authority fence, including a change after the final recheck. Mango stores Stripe ids, states and Stripe-reported tax, never card data or funds. Payer signup/consent capture is PUB-005's separate obligation under ct's approved 23 October 04:38Z defaults; its implementation status is PUB-005's own row. No real provider call, store, account or consent was used.
@@ -3917,10 +4449,11 @@ Core · target · **partial**
 
 Core · target · **missing**
 
-**Requirement.** At signup a creator can recommend partner newsletters they choose (reciprocal or not); a subscriber who ticks one is passed to that partner's own signup with explicit consent, and both sides see subscribers gained.
+**Requirement.** Creators can recommend chosen partner newsletters when someone signs up.
 
 **Acceptance.**
-1. ticking a partner at signup posts to the partner's signup edge with the consent text and records one recommendation.
+1. A reader explicitly choosing a reciprocal or nonreciprocal partner is sent to the partner’s own signup with the consent text.
+2. The fixture records one recommendation at that provider edge and both sides can see subscribers gained.
 
 **Evidence.** None.
 **Gap.** not implemented
@@ -3929,25 +4462,45 @@ Core · target · **missing**
 
 Core · target · **missing**
 
-**Requirement.** Creators sell sponsor placements: a sponsor block in a chosen campaign or issue, a booking calendar of available slots, tracked sponsor clicks and a sponsor report to share.
+**Requirement.** Creators book and report direct sponsorships in their newsletters.
 
 **Acceptance.**
-1. a booked slot inserts the sponsor block into that issue's draft, and the sponsor report lists the issue's tracked clicks.
+1. A booking calendar shows available campaign/issue slots; booking a slot inserts that sponsor block into the chosen draft.
+2. Sponsor clicks are tracked and the shareable sponsor report lists the issue’s recorded clicks.
 
 **Evidence.** None.
 **Gap.** not implemented
 
 #### PUB-005 — Paid signup page and payer consent
 
-Core · target · **done**
+Core · target · **partial**
 
-**Requirement.** A hosted paid-signup page shows the paid tier's price, Stripe Tax notice and consent wording, starts Stripe Checkout, and Checkout returns the reader to a Mango page that says what happens next. A payer without confirmed email consent gets CONT-003 evidence labelled `paid-checkout` and one CONT-009 confirmation, and joins the paid topic only after confirming; unsubscribed and suppressed addresses follow CONT-027.
+**Requirement.** A hosted paid signup leads from a saved tier to provider checkout and tells the reader what happens next.
 
 **Acceptance.**
-1. a first-time payer completes checkout from the page, appears as “paid, consent missing”, receives one confirmation at the mail edge and, after confirming, the next paid-only send; an unsubscribed payer stays unsubscribed until their own confirmation.
+1. The page offers only the Owner-saved tier and displays its exact price/frequency, tax notice and explicit newsletter consent wording before checkout.
+2. Newsletter consent is a separate, initially unchecked choice; the payment provider hosts card fields and Mango has none.
+3. Checkout returns the reader to a Mango explanation of the next step.
+4. Opening checkout records permission timestamp, source and wording version; only one confirmation per payer address per checkout session is authorized.
 
 **Evidence.** `tests/go-live/roles.journeys.ts` · `tests/go-live/paid-signup-journey.ts`
-**Gap.** Default ADOPTED, approved by ct 23 October 04:38Z: page only for an Owner-saved tier, displaying exact price/frequency before Checkout; newsletter consent is unchecked and separate from payment, recorded with timestamp, source and wording version when Checkout opens and authorizing only one confirmation per payer address per Checkout session. Already subscribed/confirmed needs no second confirmation. Never-confirmed payers receive no paid or free newsletters. Payment events never create or widen consent; unsubscribe and suppression win and resubscription requires the person’s own POST confirmation. Stripe hosts the card fields; Mango has none. Erasure follows the existing audit-fact rule and removes address and consent evidence. PUB-002’s restricted-key sandbox and Nectar gaps are separate; no real provider call or consent was used.
+**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered.
+
+#### PUB-006 — Paid-reader consent and restrictions
+
+Core · target · **partial** · From PUB-005 · Cites BASE-DATA-003
+
+**Requirement.** A paying reader joins the mailing audience only with their own channel confirmation.
+
+**Acceptance.**
+1. A first-time payer without confirmed email consent receives labelled paid-checkout evidence and one confirmation and remains paid with consent missing until they confirm.
+2. After their affirmative confirmation the next paid-only send reaches them; before it no paid or free newsletter does.
+3. An unsubscribed payer stays unsubscribed until their own affirmative confirmation under CONT-027; suppression receives no confirmation and no newsletter.
+4. An already confirmed subscriber needs no second confirmation; payment events alone never create or widen permission.
+5. Contact erasure removes the paid-signup address and consent evidence under CONT-013.
+
+**Evidence.** `tests/go-live/roles.journeys.ts` · `tests/go-live/paid-signup-journey.ts`
+**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: No free newsletters before confirmation.
 
 ### Agents
 
@@ -4273,7 +4826,13 @@ None.
 | ID | Proof | Clauses | State | Date | Receipt |
 | --- | --- | --- | --- | --- | --- |
 | R-101 | Real Okta, Microsoft Entra ID, Google Workspace and JumpCloud tenant receipts for configured sign-in, group mapping and deprovisioning. | OPER-006 | not run |  |  |
+| R-201 | Gmail, Apple Mail and Outlook rendering of imported designs through test sends. | DESIGN-004, DESIGN-012 | not run |  |  |
+| R-202 | Hosted campaign-image serving, mailbox image-proxy behavior at the declared rate and real inbox rendering. | CAMP-012, CAMP-023 | not run |  |  |
+| R-203 | A paid live 12ui run, provider acceptance without corpus references, hosted secret custody and provider acceptance of server-held personal-key use. | DESIGN-001, DESIGN-006, DESIGN-005 | not run |  |  |
 | R-501 | Mango for Shopify public App Store listing and Shopify protected-customer-data and all-order-history approvals. | INT-015 | not run |  |  |
 | R-502 | A real SendGrid and Resend account completes the owner connection, signed-event and branded-host TLS journeys. | DELIV-008, DELIV-002 | not run |  |  |
 | R-503 | Zapier marketplace app availability and a real platform account receipt. | INT-009 | not run |  |  |
 | R-601 | Mango’s remote MCP door works in the supported Claude, ChatGPT, Codex and Copilot clients. | SURFACE-001, SURFACE-008 | not run |  |  |
+| R-701 | One real owner-supplied Mailchimp export completes move-in with its reconciliation report. | MOVE-001 | not run |  |  |
+| R-702 | A real Mailchimp account repeats the API-key engagement-history import. | MOVE-015 | not run |  |  |
+| R-703 | The native iOS and Android apps obtain their real store listings. | MOBILE-002 | not run |  |  |

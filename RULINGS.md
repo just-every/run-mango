@@ -10,6 +10,14 @@ The installed root is Base’s shared Lobby: Finish setup until the sender ident
 
 - **CONT-005/009 concurrency:** Public eligibility, contact/profile changes, consent evidence, capture IP, history and pending status commit in one guarded D1 transaction. A destination barred by current consent, suppression or identity guards at that transaction causes no new consent writes. Under the approved CONT-027 rule, a surviving erasure hash with an unsubscribe or erasure reason may recreate an unsubscribed profile holding only new request evidence and send its confirmation email within the shared UTC-day allowance; only the person's own affirmative POST can subscribe it, with no history restored. A surviving suppression hash permits neither consent nor confirmation mail. Confirmation message preparation completes before a database-authoritative handoff check, and the adapter is invoked immediately after that check. Suppression, an opt-out later than the request evidence or confirmation committed before the check prevents handoff. A provider handoff already authorized and concurrently in progress cannot be recalled by a later database transition.
 
+### RL-41 — Email presentation grammar tightened
+
+The owner decision “Tighten the style rules” replaces modeled arbitrary layout with the narrower table-cell and outer-wrapper grammar. Saved styled markup is judged as parsed, with the contrast, geometry and exact-byte compatibility outcomes stated in the governing clauses. The full original grammar, replaced behavior, security argument, residuals and evidence are retained in docs/contract/mechanism.md. No status changes follow from this ruling.
+
+### RL-42 — One email parser and preserved approval bytes
+
+Approval, test send, delivery, preview, plain text and editor HTML mode read one parsed structure. New saves canonicalize the body; earlier approvals retain their exact bytes except the specifically refused parser-ambiguity families, and every old draft canonicalizes on its next save. Normalization does not repair a hiding declaration. The original source text, named compatibility cases, security consequences and dependency record are retained in docs/contract/mechanism.md. No status changes follow from this ruling.
+
 ### RL-81 — Generated mobile email presentation
 
 The responsive block is generated from a closed vocabulary, never merged with authored text. Its absence loses no content. Mobile and desktop hiding are applied only by their generated rules; style-stripping clients show the content and preview names that fallback. The generated block is bounded and adds no author-controlled selector or remote load.

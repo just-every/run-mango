@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "68ad8820d7585d4d62d717b6a8f787489f4fe861ad21e5bbb0d3563605cde71e",
+      "sha256": "095eeda6037425a7c167ece8ea2e7ab9419d9f0403923a22dd66a3d03b47438c",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1014,7 +1014,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "a2afb06c5f450fe0cb9e689844b638893f9b934227692ba75b42d3778532454c",
+      "sha256": "1dd2d7e0f2094eed7e5bb5dfc3302f770296291fcc0029c06db11b2af6bf4bfe",
       "executable": false
     },
     "CLAUDE.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "4ae71c361a87153f957df705674816721d1ca804f6aec3b5ca98b7e9b95378b2",
+      "sha256": "6f26c7ff49889ce8872ccc0a5d835338aa0f5c05f64d056beef9307b7a7abe08",
       "executable": false
     },
     "DEMO.md": {
@@ -1070,19 +1070,19 @@
       "executable": false
     },
     "docs/contract/COVERAGE.json": {
-      "sha256": "81e1409e6b9c903728f90df6376e52b0793c5fb308311a4cdc4d4396966e84ea",
+      "sha256": "51de2231de17bb67c892c9e993660ea89a050a927fa43b59570b63854dd3b5dc",
       "executable": false
     },
     "docs/contract/DONE-AUDIT.md": {
-      "sha256": "bd04b4992a452c8b301ea826a6f24702f0905c8e9570224fd2c0e0243eec658f",
+      "sha256": "26eca05ca902059b078328d19902cd5a71c843c6bc88884b065e11a7b8b7e062",
       "executable": false
     },
     "docs/contract/ID-MAP.json": {
-      "sha256": "7c171afb12745079cefbe71c6c07298deecac36e9c86f85b21d95e968124b09c",
+      "sha256": "b2388c14a0adac46f4946c7bd729b97b39f61b2f70316acc5acdd524293321ea",
       "executable": false
     },
     "docs/contract/mechanism.md": {
-      "sha256": "7ecbdd84e13e54b8b14913b99a6ff5f04192bc2413edced8322046eb297b244e",
+      "sha256": "37c84e8df967ec080be9a3b16ca17efd158ce0cf8a12487888c7d7da5d04cadd",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1766,7 +1766,7 @@
       "executable": false
     },
     "RULINGS.md": {
-      "sha256": "72f006020e51e4e69d349b3cf5f00bac8c8ba213ded5222156af6ecf90e27278",
+      "sha256": "c22eb5a6a58c219e3fcd775bbb3c0b7d5a30ab3ada24d32c3c0861562d9dde41",
       "executable": false
     },
     "RUN-LOCALLY.md": {

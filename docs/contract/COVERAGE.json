@@ -926,7 +926,8 @@
       "text": "**AUD-001 \u2014 Review snapshot.** Campaign review shows the audience rule and as-of time, candidate count, each exclusion reason with its count, eligible contact count, and the recipient-step count per channel.",
       "to": "clause",
       "ids": [
-        "AUD-001"
+        "AUD-001",
+        "AUD-010"
       ]
     },
     {
@@ -1007,7 +1008,10 @@
       "text": "**CAMP-002 \u2014 Draft editing.** Operators can edit and persist the campaign name, selected channels, audience rule, message content, sender identity, links, and schedule while a campaign is a draft. An email body saves whenever its sent size is within BUILD-012's limit; a larger one is refused with its measured size and the limit named, never truncated.",
       "to": "clause",
       "ids": [
-        "CAMP-002"
+        "CAMP-002",
+        "CAMP-021",
+        "CAMP-020",
+        "AUD-010"
       ]
     },
     {
@@ -1016,7 +1020,8 @@
       "text": "**CAMP-003 \u2014 Revision preview.** Desktop, mobile, and plain-text previews render from the saved revision that will be approved, including resolved personalization examples and the compliance footer or SMS opt-out text that will be sent.",
       "to": "clause",
       "ids": [
-        "CAMP-003"
+        "CAMP-003",
+        "CAMP-022"
       ]
     },
     {
@@ -1094,10 +1099,30 @@
     {
       "file": "CONTRACT.md",
       "line": 177,
-      "text": "**CAMP-012 \u2014 Campaign images.** A signed-in operator can upload a JPEG, PNG, GIF or WebP image within the byte and pixel limits in `seed.json`. Its type is read from the file's own header, never from the name or type the client declares, and the file must be complete; anything else is refused and nothing is stored. Each image is stored once under its SHA-256 and is never changed or deleted, so the bytes behind an approved revision cannot change, except that contact erasure (CONT-013) removes the bytes of an image holding an erased contact's identifier; such an image then answers 410 and blocks approval. It is served without a session at `/media/<sha256>` on this deployment with its exact content type, `X-Content-Type-Options: nosniff`, an immutable public cache and no cookie, answers 404 for an unknown name, and is rate-limited per image at the limit in `seed.json`, not per client address, returning 429 without affecting other images. Serving an image records nothing about who requested it. Every image is exported as its original file (DATA-001).",
+      "text": "**CAMP-012 \u2014 Campaign images.** A signed-in operator can upload a JPEG, PNG, GIF or WebP image within the byte and pixel limits in `seed.json`. Its type is read from the file's own header, never from the name or type the client declares, and the file must be complete; anything else is refused and nothing is stored. Each image is stored once under its SHA-256 and is never changed or deleted, so the bytes behind an approved revision cannot change, except that contact erasure (CONT-013) removes the bytes of an image holding an erased contact's identifier; such an image then answers 410 and blocks approval. It is served without a session at `/media/<sha256>` on this deployment with its exact content type, `X-Content-Type-Options: nosniff`, an immutable public cache ",
       "to": "clause",
       "ids": [
-        "CAMP-012"
+        "CAMP-012",
+        "CAMP-023"
+      ]
+    },
+    {
+      "file": "CONTRACT.md",
+      "line": 177,
+      "text": "and no cookie",
+      "to": "base",
+      "ids": [
+        "BASE-PUBLIC-001"
+      ]
+    },
+    {
+      "file": "CONTRACT.md",
+      "line": 177,
+      "text": ", answers 404 for an unknown name, and is rate-limited per image at the limit in `seed.json`, not per client address, returning 429 without affecting other images. Serving an image records nothing about who requested it. Every image is exported as its original file (DATA-001).",
+      "to": "clause",
+      "ids": [
+        "CAMP-012",
+        "CAMP-023"
       ]
     },
     {
@@ -1106,7 +1131,9 @@
       "text": "**DESIGN-001 \u2014 Optional design module.** The design module is disabled while both `DESIGN_PROVIDER_API_KEY` and `DESIGN_PROVIDER_ORIGIN` are absent; supplying either requires both, and startup fails naming what is missing. The origin must be an HTTPS origin with no path; only a copy running on a computer may name a loopback `http:` origin. A disabled module constructs no adapter, shows no design-generation control, contacts no design service, and its routes refuse to start a run with `design_unavailable` naming the inputs. An enabled module contacts the design service only with the owner's own key and only because an operator started a design run or chose one of its candidates.",
       "to": "clause",
       "ids": [
-        "DESIGN-001"
+        "DESIGN-001",
+        "DESIGN-006",
+        "DESIGN-005"
       ]
     },
     {
@@ -1115,7 +1142,11 @@
       "text": "**DESIGN-002 \u2014 Draft-only design generation.** From a draft's email editor an operator can ask the design service for two to four designs from a brief that starts as the draft's name, subject, preheader, sender name and current text and that the operator may edit. An estimate of the spend on the owner's design-service account is shown before each paid step: drawing the candidates and preparing the chosen layout. The run belongs to the draft and continues in the background: candidates appear as they land and the run is shown again after a reload. The operator chooses one with **Use this design** beside its image; Mango fetches its layout and then opens the design import path (DESIGN-004), where the browser builds the email; it opens by itself only as the continuation of that choice while the operator has done nothing else in the page, and otherwise the run shows a notice whose action opens it, so nothing opens over, or takes focus from, an operator who is working: photos hosted as campaign images, the HTTPS button destination the operator enters, the managed footer, and every design line not in the brief highlighted. The result is an unsaved edit of the email body that replaces existing content only after confirmation. The run and its candidates stay on offer until the draft is saved with the design or the operator discards them, so discarding the edit, reloading, a failed layout step or starting another run never loses a design that was paid for, and using the same prepared design again buys nothing. After a failed layout step the run says which step failed and whether the design service's allowance or wallet is the cause, and offers to try the layout again (a new paid layout) or choose a different design; a new run leaves earlier runs' designs reachable under the latest run. While the design service holds a run back, the editor says why and when Mango asks again, until the service answers. A run never saves, approves, schedules or sends; the body reaches the editor already in the canonical form saving stores (CAMP-003 policy), and the operator's Save stores it through the ordinary draft save path, where it passes every approval check like any other draft. A run that fails or outlives its deadline is shown as failed with Mango's own reason and changes nothing in the draft; Mango never substitutes content of its own for a design the service did not deliver.",
       "to": "clause",
       "ids": [
-        "DESIGN-002"
+        "DESIGN-002",
+        "DESIGN-010",
+        "DESIGN-009",
+        "DESIGN-008",
+        "DESIGN-007"
       ]
     },
     {
@@ -1124,7 +1155,8 @@
       "text": "**DESIGN-003 \u2014 Design data and records.** A run sends the design service only Mango's fixed description of an email layout with the operator's brief, every `{{\u2026}}` token removed, and then only the chosen candidate image: never a contact, audience, personalization value or token. Every paid request carries an idempotency key derived from the run, so a retried or replayed request never buys again. Each run records its brief, the service's run and layout identifiers, each candidate's outcome, SHA-256 and size, the chosen candidate, the operator, its times and a safe failure code, and is never deleted; the candidate images and the layout are stored in R2 as authoring evidence and exported with everything else (DATA-001). Each paid request records a cost fact (RESULT-004).",
       "to": "clause",
       "ids": [
-        "DESIGN-003"
+        "DESIGN-003",
+        "DESIGN-011"
       ]
     },
     {
@@ -1133,7 +1165,10 @@
       "text": "**DESIGN-004 \u2014 Design import.** An operator editing a draft can import a design made with their own 12ui CLI: a LayerDoc version 2 file and the PNG candidate it was converted from. Mango compiles it in the operator's browser into the same email grammar every authored body uses (MSG-009, MSG-012): the photos become campaign images hosted by this deployment (CAMP-012), the design's button links to an HTTPS destination the operator enters, and its footer becomes the managed unsubscribe link and saved postal address. Layers Mango does not import are listed by their LayerDoc text, and every line of the design that does not appear in the operator's brief is highlighted for review. An unsupported version, a non-HTTPS button destination or a design the grammar cannot hold is refused visibly with the body unchanged; nothing outside the grammar is ever saved. Import only produces an unsaved edit of a draft's email body: it never saves, approves, schedules or sends, and the result passes every approval check and exact-revision approval like any other draft. Import itself makes no request to 12ui; generating designs inside Mango is DESIGN-001 to DESIGN-003.",
       "to": "clause",
       "ids": [
-        "DESIGN-004"
+        "DESIGN-004",
+        "DESIGN-014",
+        "DESIGN-013",
+        "DESIGN-012"
       ]
     },
     {
@@ -1292,7 +1327,25 @@
     {
       "file": "CONTRACT.md",
       "line": 208,
-      "text": "**SEND-006 \u2014 Delivery truth.** A recipient-step has a transport disposition of queued, handoff-unknown, handed-off, accepted, delivered, bounced, skipped, or failed, plus independent complaint and suppression facts. *Delivered* is recorded only from a provider fact asserting delivery; provider acceptance is never reported as delivery. A later complaint remains visible without erasing the earlier delivery fact, and a skipped disposition carries its reason.",
+      "text": "**SEND-006 \u2014 Delivery truth.** A recipient-step has a transport disposition of queued, handoff-unknown, handed-off, accepted, delivered, bounced, skipped, or failed, plus independent complaint and suppression facts.",
+      "to": "clause",
+      "ids": [
+        "SEND-006"
+      ]
+    },
+    {
+      "file": "CONTRACT.md",
+      "line": 208,
+      "text": "*Delivered* is recorded only from a provider fact asserting delivery; provider acceptance is never reported as delivery.",
+      "to": "base",
+      "ids": [
+        "BASE-MAIL-001"
+      ]
+    },
+    {
+      "file": "CONTRACT.md",
+      "line": 208,
+      "text": "A later complaint remains visible without erasing the earlier delivery fact, and a skipped disposition carries its reason.",
       "to": "clause",
       "ids": [
         "SEND-006"
@@ -1373,10 +1426,19 @@
     {
       "file": "CONTRACT.md",
       "line": 220,
-      "text": "**RESULT-005 policy (13 October 2026):** Campaign images served at `/media/<sha256>` (CAMP-012) are not tracking: every recipient's email carries the same image URL, a fetch records nothing about who asked for it (no address, user agent, cookie, recipient or time; only the per-image rate counter for the current minute), and an image fetch is never counted or shown as an open. Tracked links remain the click and attribution evidence. Separately, RESULT-002 permits an operator to enable privacy-sensitive open estimates in Insights; this is off by default. Future marketing email preparation then adds a signed, recipient-specific first-party `/o/:token` pixel; ordinary `/media/` images remain untracked. Image requests establish only privacy-sensitive estimates, never reads or evidence for clicks, conversions, delivery, confidence, deliverability or attribution. Disabling revokes every previously issued pixel; re-enabling admits only newly prepared messages. Repeated pixel requests record at most one estimate per recipient-step, no IP address, user agent or cookie. Private open tokens and facts are retained until contact erasure removes them.",
+      "text": "**RESULT-005 policy (13 October 2026):** Campaign images served at `/media/<sha256>` (CAMP-012) are not tracking: every recipient's email carries the same image URL, a fetch records nothing about who asked for it (no address, user agent, cookie, recipient or time; only the per-image rate counter for the current minute), and an image fetch is never counted or shown as an open. Tracked links remain the click and attribution evidence.",
       "to": "clause",
       "ids": [
-        "RESULT-005"
+        "RESULT-010"
+      ]
+    },
+    {
+      "file": "CONTRACT.md",
+      "line": 220,
+      "text": "Separately, RESULT-002 permits an operator to enable privacy-sensitive open estimates in Insights; this is off by default. Future marketing email preparation then adds a signed, recipient-specific first-party `/o/:token` pixel; ordinary `/media/` images remain untracked. Image requests establish only privacy-sensitive estimates, never reads or evidence for clicks, conversions, delivery, confidence, deliverability or attribution. Disabling revokes every previously issued pixel; re-enabling admits only newly prepared messages. Repeated pixel requests record at most one estimate per recipient-step, no IP address, user agent or cookie. Private open tokens and facts are retained until contact erasure removes them.",
+      "to": "clause",
+      "ids": [
+        "RESULT-009"
       ]
     },
     {
@@ -2471,7 +2533,8 @@
       "text": "**AUD-009 \u2014 Frequency protection: one policy and a recorded override.** Campaigns and flows share one frequency policy. Until an operator sets cross-message caps (FLOW-014), AUD-004's default windows apply to every campaign step and flow message. Once caps are set, they replace AUD-004's default windows for campaigns and flows alike, review names the governing rule, and excluded contacts carry `frequency-window` or `frequency-cap` to match. In review, an operator with approval rights (OPER-004) can choose **Ignore frequency protection** for one campaign step, and a flow message can be set the same way in its flow revision, activated under FLOW-008; Klaviyo's Smart Sending can likewise be switched off per message. The choice is part of the approved revision, shows the number of contacts it brings back, is honored by the dispatch recheck (AUD-005) and is recorded with its approver in the activity log (OPER-007). Messages sent under it still count towards later messages' windows and caps. It never overrides consent, topic, suppression or opt-out (AUD-002, CONT-004, CONT-006, CONT-015), SMS quiet hours and state frequency limits (SEND-002, SMS-003), the global holdout (EXP-004) or the SMS spend cap (SMS-006). *Cart and moved-in flows:* campaign sends never block the messages of the abandoned-checkout, abandoned-cart, browse-abandonment, back-in-stock and price-drop library flows (FLOW-012), or of draft flows recreated from Mailchimp journeys and automations (MOVE-008), since Mailchimp does not suppress journeys for campaign sends. Those messages are created with the window set to count only other flow messages, shown in the flow revision and changeable before activation. Every flow's activation shows how many of its sends the governing window would have skipped over the last 30 days of this deployment's own events, and the count it would skip with the setting changed. *Acceptance:* two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, and a draft flow made from a Mailchimp journey fixture carries the same setting; its activation shows the 30-day skip count from seeded sends.",
       "to": "clause",
       "ids": [
-        "AUD-009"
+        "AUD-009",
+        "AUD-011"
       ]
     },
     {
@@ -2543,7 +2606,8 @@
       "text": "**CAMP-019 \u2014 Test send to typed addresses.** Beside the configured test addresses (CAMP-008), an operator whose role may approve (OPER-004) can type up to 5 further email addresses or phone numbers for one test send.",
       "to": "clause",
       "ids": [
-        "CAMP-019"
+        "CAMP-019",
+        "CAMP-024"
       ]
     },
     {
@@ -2552,7 +2616,8 @@
       "text": "A typed address that is unsubscribed or suppressed on that channel is refused, with the reason named. An SMS test to a typed number also needs that number's CONT-019 consent.",
       "to": "clause",
       "ids": [
-        "CAMP-019"
+        "CAMP-019",
+        "CAMP-024"
       ]
     },
     {
@@ -2561,7 +2626,8 @@
       "text": "All test sends, configured and typed, share the installation-wide daily allowance in `seed.json \u2192 limits.maxTestSendsPerDay`, default 100 attempted recipient hand-offs per UTC calendar day. One hand-off to one recipient consumes one unit, including a hand-off whose provider outcome is uncertain; a test to two recipients consumes two units. The allowance resets at 00:00 UTC. Before sending, the owner sees the remaining count. A test send whose recipient count exceeds the remaining allowance is refused in full before any hand-off, with the remaining count named. The owner can change the limit by editing `maxTestSendsPerDay` in the source and rebuilding/redeploying; there is currently no Settings control for it.",
       "to": "clause",
       "ids": [
-        "CAMP-019"
+        "CAMP-019",
+        "CAMP-024"
       ]
     },
     {
@@ -2570,7 +2636,8 @@
       "text": "Typed sends are marked as tests like every CAMP-008 send. Each typed address is recorded in campaign history and in the activity log (OPER-007).",
       "to": "clause",
       "ids": [
-        "CAMP-019"
+        "CAMP-019",
+        "CAMP-024"
       ]
     },
     {
@@ -2579,7 +2646,8 @@
       "text": "This clause is done only when OPER-004 (Manager/Author assignment), OPER-007 (general activity UI), SMS-001 (typed SMS transport) and CONT-019 (typed SMS consent) are done.",
       "to": "clause",
       "ids": [
-        "CAMP-019"
+        "CAMP-019",
+        "CAMP-024"
       ]
     },
     {
@@ -2588,7 +2656,8 @@
       "text": "*Acceptance:* a Manager types two addresses, and both receive the marked test at the mail edge. A third, unsubscribed address is refused and named. An Author has no typed-address field, and the route refuses it with 403. The activity log lists the typed addresses. Before sending, the owner sees the allowance remaining; a two-recipient test reduces it by two, and a hand-off with an uncertain provider outcome still consumes one unit. With one unit left, a two-recipient test is refused before either hand-off and names the remaining one. Crossing 00:00 UTC restores the configured allowance without carrying the prior day's attempts forward. Configured-address tests and typed-address tests draw from the same count.",
       "to": "clause",
       "ids": [
-        "CAMP-019"
+        "CAMP-019",
+        "CAMP-024"
       ]
     },
     {
@@ -2676,10 +2745,8 @@
       "file": "CONTRACT.md",
       "line": 377,
       "text": "*Deployment:* this deployment's own host (its `/media/` images follow the MSG-006 policy).",
-      "to": "clause",
-      "ids": [
-        "MSG-014"
-      ]
+      "to": "docs",
+      "path": "docs/contract/mechanism.md"
     },
     {
       "file": "CONTRACT.md",
@@ -5526,7 +5593,8 @@
       "text": "**MOVE-006 \u2014 Reconciliation and cutover.** Every move-in ends with a reconciliation report (rows read, created, updated, rejected with reasons, consent mapped with a count per evidence kind (Mango-captured, incumbent-held with each time source, `time-unknown`, and non-subscribed for want of an attestation; CONT-024) and the attestation each relies on, suppressions carried, engagement rows imported and dropped (MOVE-009), audiences and their overlaps (MOVE-010), segments recreated with each unsupported condition (MOVE-007), automations and journeys mapped with each unmapped step (MOVE-008) and each template's conversion findings (MOVE-011)) and a cutover checklist: DNS records for the sending domain, forms replaced on the site, flows recreated and reviewed, no template or live message still loading images from an incumbent host (MOVE-014), a parallel-run week with the two-way sync on (MOVE-013) or, for an export-only move-in, a re-import before each Mango send, the old platform's sending turned off, and **Mark cutover complete**, which ends the sync. Nothing imported sends until it is approved or activated. *Acceptance:* after a move-in, the report's counts reconcile to the files and contact table, and no campaign or flow is scheduled or live.",
       "to": "clause",
       "ids": [
-        "MOVE-006"
+        "MOVE-006",
+        "MOVE-016"
       ]
     },
     {
@@ -5544,7 +5612,8 @@
       "text": "**MOVE-008 \u2014 Mailchimp automations and Customer Journeys.** Classic automations, which the Mailchimp API reads with their trigger, delays and emails, are recreated as draft flows (FLOW-001). Each email's content is converted under MOVE-011, and every unmapped trigger, delay or setting is named. Customer Journeys have no export or read API, so Mango builds a journey inventory from two sources. The first is what Mailchimp does expose: journey emails' reports and content, in the API and the account export, name their journey. The second is the owner, who confirms or adds each live journey by name and starting point from a checklist that mirrors Mailchimp's starting points. Each starting point is mapped to the matching FLOW-012 library flow (for example abandoned cart to the abandoned-cart flow, joins audience to the welcome series, and date-based to birthday or anniversary). That flow is installed as a draft with the journey's readable email content carried over, and every step Mango could not read or map (rules, branches, actions) is named for the owner to rebuild. Each recreated draft carries AUD-009's setting for moved-in flows, so campaign sends do not block it, as they did not in Mailchimp. Nothing activates until FLOW-008. *Acceptance:* a Mailchimp API fixture with one classic two-email welcome automation yields a draft flow with both emails' converted content and named delays. A journey fixture whose two emails name an abandoned-cart journey yields an abandoned-cart draft flow with those emails, and a report line names its unreadable branch. Neither flow is live.",
       "to": "clause",
       "ids": [
-        "MOVE-008"
+        "MOVE-008",
+        "MOVE-017"
       ]
     },
     {
@@ -5571,7 +5640,9 @@
       "text": "**MOVE-011 \u2014 Incumbent template conversion.** Imported Mailchimp templates and campaign bodies, and Klaviyo, ActiveCampaign and Kit templates, become builder templates (BUILD-002) in the email grammar.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5580,7 +5651,9 @@
       "text": "*Merge tags* map to Mango tokens with fallbacks the owner confirms (MSG-008): `*|FNAME|*` and `*|LNAME|*` to name tokens; other merge fields to their mapped properties; `*|UNSUB|*` to the managed unsubscribe link; `*|UPDATE_PROFILE|*` to the preference center (CONT-016); `*|LIST:ADDRESS|*` and `*|LIST:ADDRESSLINE|*` to the saved postal address; `*|ARCHIVE|*` to the campaign's web version (PUB-001); and `*|DATE|*` and `*|CURRENT_YEAR|*` to date tokens. Klaviyo-style `{{ first_name }}` tags map the same way.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5589,7 +5662,9 @@
       "text": "*Styles:* `<style>` rules are inlined onto the elements they select and kept only where the grammar admits them. Media-query rules become BUILD-010 mobile settings where they map. Classes and everything else are removed.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5598,7 +5673,9 @@
       "text": "*Report:* each template's conversion report lists every mapped and unmapped merge tag, every dropped rule, property or block with its location, every link and image host it uses outside MSG-014's list, its sent size against BUILD-012's limit, and whether the result passes the MSG-012 checker.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5607,7 +5684,9 @@
       "text": "*Readability:* a text run below MSG-012's 3:1 contrast is recolored to the nearest shade of its own hue that reaches 4.5:1 against the background it is judged on, as Mango's design compiler aims. For example, `#999999` on white becomes `#767676`. Each recoloring is listed in the report with its location and its before and after colors. The operator can undo one in the builder, and the run then blocks approval under MSG-012 as it does today.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5616,7 +5695,9 @@
       "text": "*Size:* inlining grows a template, so conversion measures each result's sent size (BUILD-012). A result over the limit is never dropped: it is kept as a held conversion, listed in its report and in the reconciliation report (MOVE-006) with its size and its largest blocks, and opens in the builder for the operator to trim before it can be saved as a template.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5625,7 +5706,9 @@
       "text": "*Images:* each template's images come home under MOVE-014.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5634,7 +5717,9 @@
       "text": "*Outside hosts:* the reconciliation report (MOVE-006) gathers those hosts across every imported template and campaign, with a count of uses each. The owner can allow the chosen ones there in one step (MSG-014, recorded in OPER-007). Any not allowed are listed again with MSG-015's allow action when a campaign or flow message built from the template reaches review. An unmapped merge tag stays visible and blocks approval through the personalization check, as it does today.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5643,7 +5728,9 @@
       "text": "*Acceptance:* a Mailchimp template fixture contains `*|FNAME|*`, `*|UNSUB|*`, `*|LIST:ADDRESS|*`, `*|ARCHIVE|*`, an unknown `*|FOO|*`, and a `<style>` block with class rules, a `display: none` rule and a media query. It becomes a template whose tokens resolve in preview and whose inlined colors and sizes match the source. Its report names the unknown tag, the dropped `display: none` rule and the mapped mobile rule. The template passes the checker apart from the unknown-tag block. A second fixture with links to three outside hosts lists them in its report and in the reconciliation report, and a campaign built from it reaches review with the three hosts and their allow actions (MSG-015). Mailchimp's `base_boxed_3column_query.html` blueprint, filled with fixture content, converts to a template whose report states its sent size, and it starts a draft that saves and reaches approval (BUILD-012). A fixture inflated past the limit is listed with its size as a held conversion, not dropped. A fixture whose footer is `#999999` on white converts with that text at `#767676`, listed in its report, and passes the checker.",
       "to": "clause",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -5652,7 +5739,9 @@
       "text": "**MOVE-012 \u2014 Move-in at the buyer's scale.** Every Mailchimp route (MOVE-001), and every other incumbent's (MOVE-002 to MOVE-005), completes a move-in at the SCALE-001 floors rather than within one Worker request:",
       "to": "clause",
       "ids": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     {
@@ -5661,7 +5750,9 @@
       "text": "*Account export:* a ZIP of up to 2 GB holding up to 250,000 audience rows and a year of weekly campaigns with `granular_activity` (up to 25,000,000 activity rows) uploads from the browser straight to object storage in resumable parts, and a part that fails is re-sent alone. Mango reads it as a stream in bounded, durable steps (Queues or Workflows), staging rows in storage rather than holding the archive, its text or per-row snapshots in memory. Preview writes no contact, shows every count with the row-level detail as a download, and keeps the custody hashes, undo and idempotent re-run of the Archive move-in policy.",
       "to": "clause",
       "ids": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     {
@@ -5670,7 +5761,9 @@
       "text": "*API pull:* with a Mailchimp API key, members, merge fields, tags, segments, automations, campaigns and each campaign's email activity are read with paginated or batch operations within Mailchimp's connection and rate limits, from a saved cursor, at the same counts.",
       "to": "clause",
       "ids": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     {
@@ -5679,7 +5772,9 @@
       "text": "*CSV files:* each audience file of up to the SCALE-001 import-row floor is one review.",
       "to": "clause",
       "ids": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     {
@@ -5688,7 +5783,9 @@
       "text": "*Resumable:* an interruption (worker eviction, deploy, provider rate limit or a closed browser) resumes from the last committed step, as CONT-010 imports do, with no duplicate contact or activity fact and no operator re-upload. The move-in page shows progress per part and an estimated finish, and nothing sends until approved or activated (MOVE-006).",
       "to": "clause",
       "ids": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     {
@@ -5697,7 +5794,9 @@
       "text": "Archives and pulls beyond these sizes are refused before any write with a named reason and the limit, as oversized archives are today.",
       "to": "clause",
       "ids": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     {
@@ -5706,7 +5805,9 @@
       "text": "*Acceptance:* a generated Mailchimp account export with 250,000 contacts across the subscribed, unsubscribed, non-subscribed and cleaned files and 52 weekly campaigns with `granular_activity` moves in through the journey. It is interrupted once by a forced worker restart during the activity import and resumes to completion with no re-upload. Its reconciliation report adds up per file, evidence kind and activity rows. A campaign to the whole subscribed audience then reaches review with an eligible count equal to an independent count over the generated files. The run records its wall time and peak memory. A generated API-pull fixture of the same size completes the same way.",
       "to": "clause",
       "ids": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     {
@@ -5715,7 +5816,12 @@
       "text": "**MOVE-013 \u2014 Two-way sync during the parallel run.** From the moment a move-in with API access completes until the owner marks the cutover complete (MOVE-006), Mango and the incumbent stay in step on consent. An opt-out in either is an opt-out in both, as CAN-SPAM treats them for one business.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5724,7 +5830,12 @@
       "text": "*Mailchimp in:* a Mailchimp API-key move-in (MOVE-001) registers an audience webhook on each moved audience for subscribe, unsubscribe, profile, email-change and cleaned events from every source (subscriber, admin and API).",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5733,7 +5844,12 @@
       "text": "Mailchimp does not sign audience webhooks, so each webhook URL carries an unguessable secret for that move-in. Mango reads the member back from the Marketing API before applying an event. When that read fails, an unsubscribe or clean still applies, because opt-out precedence wins; a subscribe or profile change waits for the next read.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5742,7 +5858,12 @@
       "text": "Every 15 minutes, a cursor re-pull of the members changed since the last pull (`since_last_changed`) applies anything a webhook missed. It uses the same idempotent path, so a dropped or repeated event never changes anything twice.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5751,7 +5872,12 @@
       "text": "*Applying incoming changes:*",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5760,7 +5886,12 @@
       "text": "An unsubscribe applies CONT-004, and an unsubscribe Mailchimp marks as `abuse` is a complaint that applies CONT-006. A clean applies CONT-006. Each is recorded with the incumbent as its source and applies before Mango's next hand-off to that contact.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5769,7 +5900,12 @@
       "text": "A new subscriber arrives subscribed with incumbent-held evidence (CONT-024) under the audience's existing attestation, and a `pending` member stays pending. Either enters the flows whose triggers admit them (FLOW-002), such as the welcome series.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5778,7 +5914,12 @@
       "text": "A profile change updates the mapped properties (MOVE-001). An email change moves the address under CONT-001 and keeps its consent.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5787,7 +5928,12 @@
       "text": "No incoming change ever upgrades a status Mango holds as unsubscribed or suppressed (CONT-004).",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5796,7 +5942,12 @@
       "text": "*Freshness before sending:* while the sync is on, the incumbent is a source under STORE-005.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5805,7 +5956,12 @@
       "text": "A campaign step begins dispatch only after a re-pull completed within the previous 15 minutes, and runs one first if needed.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5814,7 +5970,12 @@
       "text": "A flow hand-off waits with `incumbent-sync-stale` while the last successful re-pull is more than 30 minutes old, until a re-pull succeeds or its deadline passes (CAMP-010).",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5823,7 +5984,12 @@
       "text": "Approval names a stale incumbent sync as a blocking check (CAMP-004).",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5832,7 +5998,12 @@
       "text": "*Mango out:* every Mango unsubscribe, one-click unsubscribe, preference-center opt-out and suppression (CONT-004, CONT-006, CONT-016) is written back as an unsubscribed member, through the Marketing API, to each moved audience that holds the address. So is an erasure request (CONT-013), written before the erasure completes.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5841,7 +6012,12 @@
       "text": "Transient failures are retried up to 5 times over 1 hour. A write-back that still fails is shown on the move-in page and on Home with its count, its error and a retry action, and the pending write-backs can be downloaded as a CSV to import into the incumbent by hand.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5850,7 +6026,12 @@
       "text": "The webhook echo of Mango's own write-back is recognized and recorded once.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5859,7 +6040,12 @@
       "text": "*Export-only move-ins:* the move-in page states that, without an API key, Mango cannot see later incumbent changes, and that the export must be re-imported before each Mango send during the parallel week.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5868,7 +6054,12 @@
       "text": "A re-import of a newer export is a delta under the same idempotent rules: new restrictive statuses apply, new subscribers arrive as incumbent-held under the attestation, and nothing is upgraded.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5877,7 +6068,12 @@
       "text": "Approval shows an advisory finding (MSG-007), which the approver acknowledges on record, when the last incumbent import is older than the last incumbent send Mango knows of. That is the latest send in the imported campaign history. While the MOVE-008 journey inventory lists a journey the owner has not marked turned off, it is 24 hours after the last import.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5886,7 +6082,12 @@
       "text": "*Ending the sync:* **Mark cutover complete** (Owner or Admin; OPER-004) works in this order:",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5895,7 +6096,12 @@
       "text": "It first flushes pending write-backs, and lists any that still fail.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5904,7 +6110,12 @@
       "text": "It then deletes the registered webhooks at the incumbent, stops the re-pull and write-back, and deletes the stored incumbent API key.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5913,7 +6124,12 @@
       "text": "The event and its operator are recorded in the activity log (OPER-007). A later call to an old webhook URL is answered 410 and changes nothing.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5922,7 +6138,12 @@
       "text": "Until the cutover is marked, Home shows the parallel run's day count and the sync's last success.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5931,7 +6152,12 @@
       "text": "*Other incumbents:* the same sync runs for every incumbent whose API allows it. The move-in page names, for each incumbent, the mechanism used in each direction and any gap.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5940,7 +6166,12 @@
       "text": "Klaviyo: a 15-minute re-pull of profiles and subscription changes in, and write-back through its unsubscribe and suppression jobs (MOVE-002).",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5949,7 +6180,12 @@
       "text": "ActiveCampaign: its unsubscribe, subscribe, bounce and contact-update webhooks plus the re-pull in, and write-back by setting each list status to unsubscribed (MOVE-003).",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5958,7 +6194,12 @@
       "text": "Kit: its subscriber activate, unsubscribe, bounce and complaint webhooks plus the re-pull in, and write-back through its unsubscribe endpoint (MOVE-004).",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5967,7 +6208,12 @@
       "text": "beehiiv, Omnisend and Customer.io: their subscription webhooks, or a re-pull where they have none, in, and write-back by their subscription or attribute updates (MOVE-005).",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5976,7 +6222,12 @@
       "text": "Where an incumbent, or the buyer's plan with it, offers no write-back, the move-in page says so and the cutover checklist adds a suppression-CSV import into that incumbent.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5985,7 +6236,12 @@
       "text": "*Acceptance:* after a Mailchimp API-fixture move-in, the Mailchimp edge emits three webhook events: an unsubscribe for contact A, a cleaned event for B and a subscribe for new address C.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -5994,7 +6250,12 @@
       "text": "A Mango campaign approved and dispatched straight afterwards excludes A as `unsubscribed` and B as `suppressed`. C is subscribed with incumbent-held evidence and enters the live welcome flow.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -6003,7 +6264,12 @@
       "text": "With the webhooks dropped, the same three changes made at the edge are applied by the 15-minute re-pull before the next dispatch. An event sent to a URL with the wrong secret changes nothing.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -6012,7 +6278,12 @@
       "text": "An unsubscribe from a Mango email appears as an unsubscribed member at the Mailchimp edge. A forced edge failure shows the write-back retried and then failed on the move-in page.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -6021,7 +6292,12 @@
       "text": "Marking the cutover complete deletes the webhooks at the edge, and a later Mailchimp event changes nothing in Mango.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -6030,7 +6306,12 @@
       "text": "An export-only move-in shows the approval advisory once the imported history holds a send after the import.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -6039,7 +6320,12 @@
       "text": "A Klaviyo API fixture and a Kit webhook fixture each carry one unsubscribe in and one write-back out.",
       "to": "clause",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -6165,7 +6451,8 @@
       "text": "**PUB-005 \u2014 Paid signup page and payer consent.** A hosted paid-signup page shows the paid tier's price, Stripe Tax notice and consent wording, starts Stripe Checkout, and Checkout returns the reader to a Mango page that says what happens next. A payer without confirmed email consent gets CONT-003 evidence labelled `paid-checkout` and one CONT-009 confirmation, and joins the paid topic only after confirming; unsubscribed and suppressed addresses follow CONT-027. *Acceptance:* a first-time payer completes checkout from the page, appears as \u201cpaid, consent missing\u201d, receives one confirmation at the mail edge and, after confirming, the next paid-only send; an unsubscribed payer stays unsubscribed until their own confirmation.",
       "to": "clause",
       "ids": [
-        "PUB-005"
+        "PUB-005",
+        "PUB-006"
       ]
     },
     {
@@ -6392,13 +6679,31 @@
       "file": "CONTRACT.md",
       "line": 834,
       "text": "**SEND-001 policy:** Mango durably fences each recipient-step before an at-most-once SendGrid handoff. Success stores the provider message ID. A definite nonacceptance (including a rate-limit rejection) is retry-safe within the existing deadline; no accepted or uncertain handoff is automatically retried. Timeouts, connection resets, HTTP 408 and 5xx, missing message IDs, and eviction after the handoff fence remain `handoff-unknown`, presented as **uncertain \u00b7 operator review required**. A correlation key is not provider deduplication.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "SEND-001"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 835,
       "text": "**SEND-008 policy:** Restart, redelivered queue jobs, and resumed dispatch preserve the fence and never resubmit uncertain messages. Reconciliation correlates the submission ID with signed SendGrid event message IDs and Activity data where available. Unavailable Activity access or an expired lookup window leaves uncertainty visible for operator review rather than authorizing another send or inventing a delivery/failure. Operators review receiver evidence and provider IDs; no automatic retry control is exposed for uncertainty.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "SEND-008"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
@@ -6410,37 +6715,93 @@
       "file": "CONTRACT.md",
       "line": 841,
       "text": "**CAMP-002 policy:** Every signed-in operator can create a blank newsletter without AI or commerce, or select an available starter derived from this deployment's recorded store signals, and reach the same editable Review in at most three clicks from Campaigns. Decision Desk \u201cUse this\u201d reuses its linked campaign or atomically adopts an unlinked, unexpired proposal once. Creating, selecting and saving never approve or enqueue delivery. Incomplete drafts may be saved; approval names missing content. Rich text is the default, with an optional HTML mode preserving allowed authored markup in the canonical form saving stores (CAMP-003 policy). Rich text keeps only unstyled markup, so emails containing images or inline styles and presentational attributes use HTML editing, which also avoids fetching remote images during authoring.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "CAMP-021"
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 842,
       "text": "**CAMP-003 policy:** Draft create/save normalizes the managed unsubscribe and postal footer once, derives plain text with actual destination URLs, and persists that normalized revision for preview and approval. Create/save also stores the email body in canonical form (13 October 2026): it is parsed with the WHATWG HTML parsing algorithm (parse5) as the content of `<body>` with scripting off, as mail clients read it, and the tree is written back with the HTML fragment serialization algorithm, so every element is closed explicitly where parsers keep it, attribute values are double-quoted, character references are decoded (text escapes only `&`, `<`, `>` and no-break spaces; attribute values `&`, `\"` and no-break spaces), comments stay comments and personalization tokens stay exactly as written. This is parse and serialize only: it never changes a style declaration or the value of an attribute it keeps, never removes what the checker refuses (comments, refused tags and attributes stay and are refused), and never refuses a body for how it is written. What parsers drop is absent from the stored body as it is from every recipient's tree: of an attribute written twice the first is kept, and attributes on a closing tag, or a tag parsers ignore where it stands (a cell or row outside a table, a `<body>` tag) together with its attributes, are gone; the checker then judges exactly that tree, so a hiding style is still refused, never repaired. The stored form parses back to itself, so saving it again stores the same bytes: an HTML `pre`, `textarea` or `listing` whose text starts with a line break is written with the extra one parsers drop, and nothing follows the text of an HTML `plaintext` element (neither its end tag nor its ancestors'), which parsers never close and which would turn the managed footer into its text on every save (the body is stored without the footer and refused at approval for the tag and the missing footer). Because writing a tree out and parsing it again can build a different tree (an element moved out of a table into a MathML text integration point changes namespace, and raw text becomes markup), the body is parsed and written again until its written form parses back to itself before the managed footer is placed after it, and a save is repeated on its own result until it stores what it read, so saving the stored body, or the body the editor shows (the stored body with every managed footer removed), stores the same bytes for every input. Every body tried settles within two rounds; one that has not settled after sixteen is refused with `invalid_email_body` (400) rather than stored in a form the next save would change. *Replaced behavior (13 October 2026, hardening):* the footer was appended to a body after one round of parsing and writing, so for such a body the first save placed it inside an element and the next save moved it (`<math><mtext><table><mglyph><style><li style=\"color:#ffffff\">` stored the footer inside the list item, then after the math element), a managed footer written with single quotes ahead of the content moved to the end on the second save (now the first save stores it there), a `plaintext` inside SVG's own `plaintext` grew on every save, and an SVG or MathML element named `template` failed the save; such bodies were and remain refused at approval. *Security consequences:* none weakened: saving stays parse and serialize only, the checker judges the stored tree as before, and approval binds bytes that a later save of the same draft cannot move. *Replaced behavior (13 October 2026):* such a body was refused with a 400 instead of saved, and a draft stored before canonical saving that held one could not be saved at all. The plain-text part is derived from the same parse. The saved-revision preview renders the validated set: it shows the saved body with its styles when the approval checker passes it, and shows a failing body unstyled with its warning. Existing approval content/link checks remain strict for every stored revision. Editing inclusion and exclusion controls changes version-1 structured rules and refreshes counts from real contacts and source evidence. Missing or stale commerce blocks the result with unavailable counts; superseded requests cannot replace a newer rule's count.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "CAMP-022",
+        "CAMP-003",
+        "CAMP-020"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 843,
       "text": "**CAMP-004 policy:** Missing subject, message body, preheader or sender identity remains a named approval blocker. Optional AI/commerce absence does not block a manually authored mail-only audience; required source dependencies still block. Explicit Decision Desk generation uses configured AI and deployment-owned evidence, with unavailable/failed states and no semantic fallback. SendGrid follows the single-attempt and sender-evidence requirements above.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "CAMP-004",
+        "PROP-006",
+        "PROP-007"
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 844,
       "text": "**MSG-009 and MSG-012 policy (13 October 2026; tightened the same day by owner decision):** Besides the unstyled tags and attributes listed under \"Email authoring and preview\" in README.md, operator HTML may carry a `style` attribute on any allowed tag and these presentational attributes: `table` `role=\"presentation\"`, `width`, `cellpadding`, `cellspacing`, `border=\"0\"`, `align` (`left` or `center`); `td`/`th` `align`, `valign`, `bgcolor`, `width`, `dir` (`ltr` or `rtl`); `div` `lang` and `dir`; `img` `border=\"0\"`. A `style` value is at most 600 characters of `property: value` declarations drawn only from letters, digits, spaces, `#`, `%`, `.`, `,`, `:`, `;`, `-` and quotes, so no comment, escape, entity, function (`url()`, `calc()`, `expression()`), at-rule, block, custom property or `!important` can be written, and a property may appear once. Values are judged decoded, as mail clients read them, and a style or presentational attribute written with a character reference (other than the `&quot;` the canonical form writes for a quote) is refused as written. Property names are written in lower case; values are compared in lower case, as CSS keywords and hex colors are. Allowed properties (`email-style-declarations.ts`): `color` and `background-color` as hex colors (background also `transparent`); `font-family` as a stack of ordinary text faces from a fixed list (Arial, Helvetica, Verdana, Georgia, Times New Roman, Courier New and similar; no symbol or redaction fonts) ending in `serif`, `sans-serif` or `monospace`; `font-size` 10\u201372px; `font-weight`; `font-style`; `line-height` `normal`, unitless from 1 to 3 or 10\u2013120px, and a pixel line height never below the text size; `letter-spacing` `normal`, `0` or \u22122px to 10px; `text-align`; `text-decoration`; `text-transform`; `vertical-align`; `width`, `min-width`, `max-width` and `height` in px, % or `auto`; `padding` and `margin` 0\u201380px (margin also `auto`); `border` as 0\u20138px solid, dashed or dotted with a hex color; `border-radius` 0\u201340px; `border-collapse`; `table-layout` `auto` only; `white-space` (normal or nowrap); `word-break`; `overflow-wrap`. Every other property and value is rejected, including `display`, `table-layout: fixed`, `position`, offsets, `z-index`, `float`, `opacity`, `visibility`, `overflow`, `max-height`, `clip`, `transform`, `filter`, `direction`, `unicode-bidi`, `text-indent`, `background`, `background-image` and `mso-hide`. *Where presentation may stand* (`email-placement.ts`; each rule is a step of the argument under *Security consequences*): (1) only a table cell (`td`, `th`) paints a background, by `background-color` or `bgcolor` (a declared `background-color: transparent` paints nothing whatever `bgcolor` says), and the email's outer wrapper, the first `div` at the top level of the body that sets a `background-color`; no other `div`, no table, row, inline element or other element may set either. A cell's background fills its box and the cell grows to hold everything in it; any other element's background covers only part of what it holds (an inline's line boxes, not the blocks inside it), which is how the last bypass hid its text. The wrapper is a block, which does not hold a line too long for the screen or a table floated out of its bottom, so text on the wrapper is judged on the white page around it too (readability below). Mango's design compiler instead writes the page color on the one cell of a full-width table around its 600px column, which needs no second color, and an author can do the same; (2) no element declares `display`, so every element keeps its native display, every cell is a table cell; (3) `width` and `min-width` only on tables, cells and images, and `max-width` only on tables and images: in automatic table layout (fixed layout is not in the grammar) a table never narrows below its content and a cell's width is only its least width, so both grow to hold what they contain, and images hold no text, while a width on any other box, or a maximum width on a cell (a real limit in browsers), could make it narrower than its text; (4) `height` only on tables, rows, cells, images and empty boxes: a table part with its own display treats a height as its least height, images hold no text and an empty box (a rule drawn as a border) holds nothing, while any other box with a height lets what it holds run out below it (text onto whatever follows its cell, an image over the text below); (5) a table or image whose width or minimum width is a percentage (style or `width` attribute) sets no left or right margin, padding or border, which would come on top of its share of the room and push it out of its cell; (6) inline elements (`span`, `strong`, `b`, `em`, `i`, `u`, `s`, `a`) set no border: an inline box's top and bottom borders take no room in its line, so a top border paints over the line above, drawn earlier (an inline element's padding paints nothing, since it has no background); (7) a cell that paints a background rounds its corners by at most its padding on the left and right, or on the top and bottom (its own style padding, else its table's `cellpadding`, else the browser's 1px), so nothing it holds sits in a corner the rounding leaves unpainted; (8) `dir=\"rtl\"` only on a table cell or inside one: right-to-left content wider than its box runs out on the left, past the left edge of the email, where no reader can scroll, while a cell grows to hold it; for the same reason a table is not aligned `right` (a right float wider than its room runs out on the left); (9) in styled markup the cells of one table may not cover the same slot where a row span meets a column span (`email-table-slots.ts`, the HTML table processing model): browsers draw both, and the later paints its background over the other's text; (10) a pixel line height is never below the text size it sets (unitless ones are at least 1), so no line is shorter than its text and no glyph spills out of its cell; fixed table layout, where a cell keeps its width and its text runs out of it, is refused, so every table is laid out automatically. Other spacing (`padding`, `margin`, block borders, `cellpadding`, `cellspacing`) and `white-space: nowrap` stay: they take room in layout, which the cell around them grows to give. *Readability* (`email-presentation.ts`): every text run must reach 3:1 contrast against the background of its nearest ancestor table cell that paints one; outside any painted cell, against the outer wrapper's color and the page's white `#ffffff`, or the page's white alone outside the wrapper; in every color it may take: its own declared or inherited `color`, default `#000000`, or the browser's `#0000ee` for a link with an address (visited links are darker and read wherever it does; an anchor without an address inherits its parent's color, as browsers show it). Many mail clients render a body without a doctype in quirks mode, where a table does not inherit `color`, so text in a table that sets no color between the table and the text must also reach 3:1 in default black. No text renders below 10px, headings included (they scale with the text around them, and a quirks-mode table starts again from 16px; the smaller size counts); an image's styled width or height must be at least 2px; and the direction override characters U+202D and U+202E in text are refused, since they reverse the letters readers see as `unicode-bidi:bidi-override` would while screen readers, search and the plain-text part read them in written order (embeddings and isolates, U+202A to U+202C and U+2066 to U+2069, only set direction, as `dir` does, and pasted right-to-left names carry them). The unsubscribe link and the postal address are text runs under the same rule, so they are visible on their own background. Mango's design compiler aims for 4.5:1. When a body uses any of this presentation, it must be written the way HTML parsers build it: every element closed in order where parsers keep it (no implicit closing, table foster parenting, misnesting, or a tag parsers ignore or rename; a `tbody` parsers add around table rows is the one allowance), so the cell each text run is judged in is the one recipients see in quirks and standards rendering alike. The canonical form saving stores always meets this (CAMP-003 policy); the earlier unstyled grammar keeps its looser nesting. Anything outside this set is rejected, never repaired. BUILD-010's generated responsive block is the one named exception, and it is never authored text. *Replaced behavior (13 October 2026, owner decision \"Tighten the style rules\"):* the grammar first let any element paint a background and admitted `display` (block, inline, inline-block, table, table-cell, table-row), fixed table layout, widths and heights on any element, borders on inline elements, a table `bgcolor` and a table aligned `right`, and judged text against its nearest declared background. Keeping that sound took modeling which elements paint behind which descendants (`email-ink.ts`) and laying every body out across a 600px column with measured glyph widths to follow text that could leave its box (`email-geometry.ts`, `email-geometry-boxes.ts`, `email-glyph-widths.ts`, the generated glyph table and `scripts/measure-email-glyphs.mjs`). Each modeling round leaked a new hiding family; the last was an element set `display:inline` with a background, which paints none behind the block inside it, so white text inherited into that block was judged against a black background no browser paints and reached recipients white on white, with approval, test send, delivery and the styled preview passing. Now the grammar removes what the modeling followed, the modeling is removed with it, and readability is the one contrast check above. A rule kept from before still needs its own small model: a pixel line height is compared with the text size inherited through the tree. The narrower set refuses a background on anything but `td`/`th` and the outer wrapper (whose text must now also read on white), every `display`, `table-layout: fixed`, `width` and `min-width` outside tables, cells and images, `max-width` outside tables and images, `height` outside table parts, images and empty boxes, any border on an inline element, a table `bgcolor`, `align=\"right\"` on a table, `dir=\"rtl\"` outside a cell, a percentage-wide table or image with side spacing, a rounded painted cell padded less than its radius and overlapping styled cells; `dir` is newly allowed on cells. The structure rule that kept blocks out of phrasing elements and table parts in their tables for styled markup went with inline backgrounds: the parser places table parts, and the written-as-parsed rule stays. Text is no longer judged against every background it could land on, since it can land on none but its own. *Security consequences:* hiding by color has one place to happen and one check. The only painted boxes are table cells and the wrapper; a cell's background fills its whole box (rounded corners are padded clear); a cell and its table grow to hold everything inside them, and what the wrapper cannot hold lands on the page, against which its text is judged too; and nothing inside can be sized, displayed, positioned or bordered so as to leave its cell or be painted over (inline borders, overlapping cells), so the background behind every text run is read from the tree alone, in standards and quirks rendering: sound by construction rather than by modeling. This was compared with Chromium's rendering pixel by pixel (every glyph made transparent, in quirks and standards mode at 800px and 375px) on every earlier bypass family, the adversarial suite and the new grammar's edge cases: no approvable body hid a word. There is still no remote load other than `img src` and link `href`, both inspected under MSG-006; no style can express an at-rule, so no CSS tracking channel exists. *Residuals:* text that runs past the right edge of the email (a long word or a table wider than a phone) lands on the page, where it is read like any other text, but a reader must scroll to it; a large unitless `line-height: 1` can let a few pixels of tall glyphs overlap the line above, which stays readable; list markers (not authored text) can hang outside a cell when a list's padding is removed; padding on a link or cell makes a large tap target, but its visible label is still required and its destination is still inspected under MSG-006; clients render differently (classic Outlook ignores `border-radius` and `max-width`; dark mode recolors), so approval binds the exact bytes, not every client's look; a personalization value can be longer than its fallback, and its cell grows to hold it; the checker is security-critical code with adversarial tests in an executed spec that consumes `tests/support/adversarial-email.mjs` (see Evidence) (shared cases in `tests/support/adversarial-email.mjs`, which `scripts/prove-email-preview.mjs` also saves and previews in a browser). The renderer and `messageRendererVersion` are unchanged, and every revision that was valid under the earlier unstyled grammar remains valid, so no approved plain revision needs re-approval, except markup the earlier checker read differently from mail clients (parsing policy below). A revision approved under the styled grammar before it was tightened (unreleased, so in practice only on review copies) that uses what is now refused is refused at test send and delivery with the reason named and needs a new approval; a design imported before is imported again, since it was built with inline blocks, block images and a table background. Move-in import keeps its stricter unstyled output.",
-      "to": "changelog"
+      "to": "rulings",
+      "ids": [
+        "RL-41"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "MSG-009",
+            "MSG-012",
+            "MSG-016"
+          ]
+        },
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 845,
       "text": "**MSG-009, MSG-012 and CAMP-003 parsing policy (13 October 2026):** One parser reads every email body: parse5, an implementation of the WHATWG HTML parsing algorithm that runs in the Worker and the browser, reading the body as the content of `<body>` with scripting off, as mail clients do, and keeping personalization tokens whole as written (`src/core/features/campaigns/email-html-parse.ts`). The approval checker (`inspectEmailHtml`, used by approval, test send and delivery), the preview sanitizer, the plain-text part and the editor's switch to HTML mode all walk that tree. *Replaced behavior:* the checker walked tags with its own tokenizer, which read `< /span>` and `</ span>` as closing tags while HTML parsers read text and a comment and keep the element open, so text styled to be hidden passed approval while recipients saw it hidden; the plain-text part was derived with regular expressions and dropped text such as `1 < 2 and 3 > 2` that the HTML part shows. Refused as written, with the place named: tag-level parse errors (malformed tags, comments and doctypes), unquoted attribute values, attributes parsers drop, any tag outside the grammar wherever parsers place, rename or ignore it (the attributes of a `<body>` tag, which a document parser applies to the whole email, included), comments, and for styled markup any difference between the markup as written and as parsed. Character-level parse errors (a missing semicolon after a character reference, a control character) are read as parsers read them, as before, and so is a `<` that starts no tag (`< p>`, `< /span>`), which every parser shows as text. Text below 10px is now refused in unstyled markup too, because the tree shows a heading nested inside a heading. Saving stores the canonical form (CAMP-003 policy), so every revision saved from now on reads the same in every HTML parser, in quirks and standards mode; markup that differed only in how it was written (an element left open, a reference in a style) is approvable once saved, because its saved form states the structure recipients see. Normalization never changes a declaration: a style that hides text is stored as written and refused. Delivery transmits the stored bytes unchanged (managed tokens substituted, tracked hrefs rewritten, as before) and never re-serializes them, so the exact approved revision is what is sent; delivery checks those bytes again with the same parser. *Revisions approved before this change* stay deliverable byte for byte and are not normalized, since that would change approved bytes: the earlier checker admitted only quoted attributes, no comments and, for styled markup, explicit in-order nesting, which the parser reads as written (the 12ui design compiled before this change, with implied table bodies and HTML-escaped quotes, is delivered unchanged under test). Refused at delivery, needing a new approval, are only revisions that used a close tag written `</ tag>`, which every parser reads as a comment, that wrote an attribute on a table cell or row outside any table, which parsers ignore together with its attributes, that set unstyled text below 10px with nested headings, or that wrote a direction override character (U+202D, U+202E). A `< tag>` or `< /tag>` the earlier reader took for a tag is text to mail clients and is delivered as approved, with the element it meant to close left open, as recipients always saw it; unstyled text has no presentation for the placement rules to refuse and no background to hide against, so the tightened MSG-012 rules refuse no earlier plain approval. Link and image addresses are judged decoded; besides the earlier rules they may not contain a literal `\"`, `<`, `>` or no-break space. Drafts saved before this change are stored in canonical form on their next save, whichever fields that save changes; no draft is refused for how its body is written. *Security consequences:* the checker, preview and plain text no longer disagree with HTML parsers about structure, and saved bodies give clients that do not implement the HTML parser (classic Outlook's Word engine) explicit structure. *Residuals:* the renderer still substitutes tokens and rewrites tracked `href` values in the stored string; values are HTML-escaped and attributes in the canonical form are double-quoted, so a substitution stays inside its text or attribute value. The move-in importer keeps its own tag reader to reduce foreign HTML; its output is stored in canonical form and judged by this parser before approval. parse5 and its `entities` dependency are security-critical third-party code, pinned by the lockfile. *Dependency:* `parse5` ^8.0.1 (MIT; maintained; the parser jsdom, Angular and rehype use; passes the html5lib tree-construction tests; pure ECMAScript modules with no Node API, so it runs in workerd and browsers) adds about 154 KB minified (43 KB gzip) to the Worker and to the campaign editor's client code. The browser's own parser is unavailable in the Worker, Cloudflare's HTMLRewriter tokenizes without building the tree, and htmlparser2 does not follow the parsing algorithm.",
-      "to": "changelog"
+      "to": "rulings",
+      "ids": [
+        "RL-42"
+      ],
+      "also": [
+        {
+          "to": "clause",
+          "ids": [
+            "MSG-009",
+            "MSG-012",
+            "MSG-016"
+          ]
+        },
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 846,
       "text": "**CAMP-006 policy:** The editor uses local dates and times in the configured IANA store zone, independent of the browser zone, shows read-only resolved UTC instants, and defaults the deadline to 23:59 on the chosen local day. UI and API reject nonexistent and ambiguous local times, including non-hour DST transitions, until the operator chooses an unambiguous time. Existing API clients supplying an explicit resolved instant and IANA zone remain compatible; local and UTC values, when both supplied, must agree.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "CAMP-006"
+      ]
     },
     {
       "file": "CONTRACT.md",
@@ -6625,25 +6986,50 @@
       "file": "CONTRACT.md",
       "line": 893,
       "text": "**CAMP-012 policy (13 October 2026):** `/media/` is declared in `seed.json \u2192 deploy.publicPaths`. The image is the rate-limit key declared for this public path under `BASE-ACCESS-003` (`limits.mediaRequestsPerMinutePerAsset`, twice the declared email hand-off rate), because mailbox image proxies fetch for many recipients from few addresses. Upload is `POST /api/campaign-assets` with the image as the single `file` part of a multipart/form-data body, under an operator session and the same-origin check; the response names the image's public URL, `/media/<sha256>`, and the same image is also served at `/media/<sha256>.<ext>` with its stored type's extension (`png`, `jpg` or `jpeg`, `gif`, `webp`; another extension is 404). A file must run to its format's end marker (PNG IEND, JPEG EOI, GIF trailer, WebP RIFF length), so a truncated upload is refused. In HTML mode the email editor's **Insert image** uploads one file through this route and writes `<img src width height alt>` at the cursor, sized from the server's reading of the header and scaled down to the 600px email width when wider; the description (alt text) is required. Design import (DESIGN-004) uploads its photos with `?source=design-import`, which the image record keeps (`upload` otherwise). There is no deletion route, and the database refuses to change or delete an image record. The rate counter is the only write a fetch makes, and it holds a count for the current minute, nothing about the requester; it is outside the contact-erasure write fence for that reason.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "CAMP-012",
+        "CAMP-023"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 894,
       "text": "**MSG-006 policy:** an image or link whose address is exactly this deployment's `/media/<sha256>` is checked against its record and stored object directly, with no DNS lookup and no request to the deployment's own hostname (Cloudflare restricts same-zone subrequests). A missing image blocks approval and is named. Every other destination keeps the network inspection.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "MSG-006"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 895,
       "text": "**Security consequences:** `/media/` is a new anonymous surface serving operator-uploaded bytes. Only the four raster types are accepted, checked by header and never decoded by Mango; they are served with the stored type, `nosniff` and `Content-Security-Policy: default-src 'none'; sandbox`, so an upload cannot be served or sniffed as HTML, SVG or script on Mango's origin. A file with a valid header is stored as uploaded; the recipient's mail client decodes it. It is not a tracking channel: every recipient gets the same URL, the route records no address, user agent, cookie, recipient or per-request time, these campaign image fetches are never counted as opens (Apple Mail Privacy Protection prefetches images anyway); the separate opt-in pixel is governed by RESULT-002. Images are public by design: the SHA-256 name is unguessable, but an image in a sent letter can be fetched by anyone holding it, and an uploaded image cannot be withdrawn in this release, so operators upload only what they would publish. Contact erasure scans every stored object, campaign images included, for an erased contact's exact id, address or phone in readable bytes such as image metadata, and removes a matching image's bytes; the record stays, `/media/` answers 410 for it and approval names it missing. Pixels are not inspected. Unknown names cost one database read and write nothing; anyone holding an image URL can spend that image's allowance for the rest of a minute, which shows a broken image to recipients fetching it then (the MSG-010 trade-off). Each fetch of a known image writes its rate counter, so anyone holding one image URL can make up to that per-minute limit of database writes for it, which counts against the deployment's D1 write quota or bill. The pixel limit is checked on the header's declared size; Mango never decodes the image, so a recipient's client may decode a larger image than the header declares. Erasure's 410 reaches only requests that come to this deployment: copies already held under the immutable year-long cache by browsers, mailbox proxies or CDNs keep the image. While a contact erasure is pending or restore mode is on, `/media/` answers 503 like the other public paths. Saved revisions keep absolute image URLs, so a restore onto another origin keeps pointing at the original origin.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "CAMP-012"
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 896,
       "text": "**Copies running on a computer:** a local copy's public origin is `http:` (`rer dev`), so its own images are `http://<host>:<port>/media/<sha256>`. A draft may hold exactly those: saving, the editor's import and the preview pass the deployment's own origin to the MSG-009 checker, which then also admits an `img src` that is that origin plus a `/media/` image path, keeps the preview's validated styles, and after the operator opts in to images adds that origin to the preview's image policy beside `https:`. Approval, test send and delivery never pass it, so they refuse those images and name the reason: approval needs images at an HTTPS address, so a designed email is approved from an HTTPS deployment. *Security consequences:* nothing changes on an HTTPS deployment, where own images are already HTTPS; on a local copy the exception covers only the deployment's own origin and media path, never another `http:` host, and never reaches a recipient.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "CAMP-023"
+      ]
     },
     {
       "file": "CONTRACT.md",
@@ -6655,13 +7041,31 @@
       "file": "CONTRACT.md",
       "line": 901,
       "text": "**DESIGN-004 policy (13 October 2026):** The operator runs `12ui draft` and `12ui convert <candidate.png> --engine api --output layerdoc --model fast` on their own machine and account, then chooses **Import 12ui design** in the draft's email editor. Mango reads only LayerDoc version `\"2\"` (at most 2 MB, 2,000 layers and 64 levels of nesting, counted with an explicit stack before the layer schema reads the tree, so a deeply nested file is refused by name rather than overflowing the stack; anything else is `invalid_layout`, never guessed) and a PNG whose shape matches the LayerDoc canvas. It lays the design out as a 600px centered table: header emblem and lettering, full-width or two-column photo sections (two cells of one row, vertically centered on each other as the design draws them), one bulletproof button, and the footer, all in the tightened MSG-012 grammar: the email's outer wrapper is the one cell of a full-width table and carries the design's page color (only cells paint), images keep their inline box aligned to the bottom of their line instead of a `display`, and the button's fill and rounded corners are its cell's, with the radius held to the cell's 32px side padding (at the button's height any larger radius draws the same pill). Text is HTML-escaped, and the wrapper sets `overflow-wrap:anywhere`, so a design word too long for its column wraps inside it; colors are used only when they are `#rgb`/`#rrggbb` and are moved to at least 4.5:1 against their background; type faces map to two fixed stacks (Georgia or Helvetica); sizes and spacing are Mango's own. Icons, dividers, shapes, links with no destination, a second button, footer links and any footer line with a digit (the address the design invented) are left out and listed. Design text containing `{{` or `}}` is refused, so a design cannot write personalization or managed tokens. A line counts as from the brief only when the whole line appears in the brief as whole words, ignoring case, spacing and typographic quotes; the brief starts as the draft's name, subject, preheader and sender name and the operator may edit it. Photos are cropped from the full-resolution PNG on a canvas at up to twice their displayed width, encoded as JPEG and uploaded through `POST /api/campaign-assets`; no image codec runs in the Worker. The compiled body is checked with the approval checker and BUILD-012's measured per-part UTF-8 size limit before it reaches the editor: at most 102,400 bytes for each of the HTML and plain-text parts, from `seed.json \u2192 limits.maxEmailHtmlBytes` through `src/core/features/campaigns/email-size.ts`. This supersedes this policy's historical 20,000-character save cap of 13 October 2026. The server re-measures at save, approval, test send and delivery; oversize content is refused without truncation, and a recipient whose hand-off exceeds the limit is skipped under BUILD-012. Replacing a body that already has content asks for confirmation first. The change summary beside the editor shows a thumbnail of every hosted image, loaded from its own `/media/` address, so the operator sees the pixels recipients will see (the PNG is checked only for the LayerDoc's shape, so a different candidate of the same size crops the wrong pixels), and highlights an image description (it becomes the alt text) that is not in the brief; it says whether the imported body is saved yet or has been edited since, and disappears when Discard changes restores the earlier body. The importer's code loads only when the operator opens it.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "DESIGN-004",
+        "DESIGN-014",
+        "DESIGN-013",
+        "DESIGN-012"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 902,
       "text": "**Security consequences:** the LayerDoc and PNG are untrusted operator files. No LayerDoc value reaches the email unmatched: text is escaped, colors must match a closed hex shape and are rewritten, font names select one of two fixed stacks, and the signed 12ui URLs a LayerDoc carries are never fetched by the browser or the Worker. Import itself uses no 12ui key and makes no request to 12ui; generating designs inside Mango is the optional design module (DESIGN-001 to DESIGN-003), with its own declared external (`seed.json \u2192 externals \u2192 design-provider`) and the BASE-DATA-005 policy below. Images uploaded by an import that is then abandoned stay stored and public under CAMP-012. *Residuals:* the design's words are model-written and can make claims the operator never made; highlighting lines not in the brief and the operator's review are the safeguard, and approval never verifies marketing claims. Two-column sections stay side by side on phones, narrowing with the email: without `display` (MSG-012) only table cells hold a row of columns, and there are no media queries; until the grammar was tightened (13 October 2026) they stacked on phones as inline blocks. Real inbox rendering is unverified.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "DESIGN-004",
+        "DESIGN-014",
+        "DESIGN-013",
+        "DESIGN-012"
+      ]
     },
     {
       "file": "CONTRACT.md",
@@ -6673,25 +7077,68 @@
       "file": "CONTRACT.md",
       "line": 907,
       "text": "**DESIGN-001 to DESIGN-003 policy (13 October 2026):** The adapter `design.provider.v1` (`src/core/platform/adapters/twelve-ui.ts`) calls 12ui's hosted `/api/v1` with plain `fetch` and `Authorization: Bearer <DESIGN_PROVIDER_API_KEY>` at `DESIGN_PROVIDER_ORIGIN` (`https://12ui.com`): `POST /api/v1/create` claims a run and buys nothing (`concept`, `aspect: portrait`, `mode: inspiration`, slots `a` to `d`); `POST /api/v1/create/<run>/candidates/<slot>` buys one image; `GET` reads the run and each candidate PNG; `POST /api/v1/convert` (multipart: the chosen PNG, `output=layerdoc`, `model=fast`) buys the layout; `GET /api/v1/convert/<id>` reads the operation and then its LayerDoc, which must match the SHA-256 12ui publishes and parse as LayerDoc version 2 (anything else is `invalid_layout`). Every `POST` carries `Idempotency-Key: mango-design-<run>-draft`, `-draft-<slot>` or `-layout-<slot>`, and `-layout-<slot>-<round>` for a layout the operator asks for again after a failed layout step (`layout_round`, migration 0042), so a new try is one new purchase and never a replay of the failure. Queue commands `design.draft` and `design.layout` carry only the run's ID; each pass makes only the requests the run's state still needs, stores each candidate PNG as it lands (read with a streamed 40 MB cap, refused unread when its declared length is larger, and at most 4,096 pixels a side, checked by its header, as campaign images are, since the editor decodes it to crop photos), and re-enqueues itself after 5 seconds until the run settles. Every JSON answer (a run, a purchase, a convert operation) is read with a streamed 64 KB cap in the same way, so no answer from 12ui is read without a limit; a larger one is `provider_invalid`. Consumers are idempotent and run under the contact-erasure write fence and restore mode like every queue command. Every request has a deadline: 30 seconds, 60 for a candidate image or LayerDoc download, and 150 for a candidate purchase, which answers once the image is drawn (past it the next run read says what happened). A 429 that names a time to ask again (`Retry-After`) delays the run that long with the same idempotency keys, recorded as its wait (`wait_code`, `retry_at`, migration 0041) and shown in the editor as a calm, muted alert with the time relative to now, kept until 12ui answers the request that follows (past that time the editor says Mango is asking again, so the panel never flips back to ordinary progress while a retried request is unanswered; once 12ui answers, the wait is cleared and the editor shows the run's ordinary progress), and fails it as `provider_quota` when that time is past its deadline; a 429 without a time (the daily allowance) or a 402 (the wallet) fails it at once as `provider_quota`; a network failure, a 5xx answer or a request past its deadline is retried on up to three passes 5 and 10 seconds apart (shown as a status line with the time, cleared in the same way), then fails as `provider_unavailable`, so a service that stops answering fails a run within about two minutes (five while a purchase is drawing); a refused key, request or unreadable answer fails at once (`provider_unauthorized`, `provider_rejected`, `provider_invalid`; a redirect is followed only by a read and only on the configured origin, so a redirect elsewhere, or one answering a purchase, is `provider_invalid` and the key never leaves for another host); a candidate or layout 12ui could not make is `provider_failed`, and an expired layout operation `provider_timeout`. The every-minute (`* * * * *`) cron fails runs past their deadline as `provider_timeout` and re-enqueues live runs that have been quiet for two minutes and are not waiting for 12ui's time to ask again; reading a draft's run applies the same deadline, so a copy without a cron also settles. A new run cannot start while another run of the draft waits on the service (a run on offer may still prepare a layout meanwhile). Starting a run never sets aside an earlier one: the status route returns the latest run and, as `earlier`, up to ten older runs whose drawn designs are still on offer (`choosing`, `preparing`, `ready`, or `failed` with designs drawn), which the editor shows, with their own **Use this design** buttons, under **Earlier designs** (the operator may fold them away), and the brief dialog says the designs already on offer stay. A `failed` run with drawn designs can still be chosen from: choosing after a failed layout step increments `layout_round`. In the editor, **Use this design** beside a candidate's image chooses it (or opens the import path for the design already prepared, buying nothing); once the layout is ready the import path opens as the continuation of that choice only if the operator has pressed no key, pointer or wheel in the tab since (the awaited design is kept per tab in sessionStorage, so a reload while preparing keeps it); otherwise the run shows a notice whose button opens it, and nothing opens or moves focus while the operator works. The run stays `ready` while its design is only an unsaved edit, and the editor records it `applied` once the draft is saved with that design (or an edit of it); closing the import path keeps the run on offer. Each candidate also links to its full-size image. Operator routes, all behind the session and same-origin checks: `GET` and `POST /api/campaigns/:id/design-jobs`, `POST /api/design-jobs/:id/choose`, `POST /api/design-jobs/:id/close` (`discarded` by the operator, `applied` by the editor once the draft is saved with the design), `GET /api/design-jobs/:id/candidates/:slot/image` and `GET /api/design-jobs/:id/layerdoc`. Records: `design_jobs` and `design_candidates` (migration 0040, with the wait columns of migration 0041 and the layout round of migration 0042) and R2 `design-jobs/<run>/`; `design_jobs` briefs are redacted by contact erasure like campaign text. Shown estimates use 12ui's list prices of 12 October 2026 (about $0.03 per candidate and $0.05 per fast layout; free within 20 images and 50 layouts a day); Mango sets no cap of its own (decision D6a). A copy running on a computer reads both inputs from `.dev.vars` (decision D8a), and its queue consumer runs design commands only; every other command is left for retry, unconsumed as on a copy before this module. `deploy.json` declares both inputs as secrets marked `\"optional\": true`. Mango's deploy step (`scripts/installer/deploy-declaration.mjs`) hands the unchanged rer deploy kit a declaration under `.rer/declarations/` holding the required secrets plus each optional one whose environment input is set, so `deploy` uploads them once the owner sets them (on the first deploy or a later one), never requires them, and later deploys keep them; `rer verify` serves the build without them, so the module stays off there. Setting them with `wrangler secret put` works too.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "DESIGN-002",
+        "DESIGN-003",
+        "DESIGN-010",
+        "DESIGN-009",
+        "DESIGN-008",
+        "DESIGN-007",
+        "DESIGN-011",
+        "DESIGN-006"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 908,
       "text": "**BASE-DATA-005 policy (13 October 2026, deliberate requirement change):** 12ui's packages name Just Every as their author and Mango's public source is `just-every/run-mango`, so the literal baseline text would forbid any request to it. Replacement requirement: the deployment makes no request to the marketplace or the seed author. A design service the owner configured with the owner's own credentials in the default-off design module (DESIGN-001), contacted only for a design run an operator started, is not a request to the seed author: it is the owner's own provider, called on the owner's account at an operator's request. Those requests are the run's candidate purchases and reads, the layout of the candidate an operator chose, and the cron's resumption of those same runs, and they carry only the DESIGN-003 data. There is still no telemetry, phone-home, license check or kill switch: with the module absent Mango makes no request to 12ui at all; nothing is sent at startup, on a schedule of its own or about anything but an operator's run; and a 12ui refusal or outage fails only that run. *Security consequences:* the owner's 12ui key is a Worker secret, never sent to the browser, logged or exported; an operator whose product role permits design authoring under OPER-004 can spend from the owner's 12ui account within its wallet and daily allowance, with an estimate before each paid step and each request recorded (RESULT-004); the brief and the chosen image leave the deployment for 12ui and its sub-processors (OpenAI, fal.ai, Google, Cloudflare), and 12ui may keep them in its evaluation corpus until the account owner asks for deletion; 12ui learns that, and when, this deployment designs email. *Residual:* 12ui's terms forbid sharing a key and do not address a personal key held as a server secret that teammates use; that remains between the owner and 12ui.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "DESIGN-005"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 909,
       "text": "**RESULT-004 policy (13 October 2026):** A design run records `external_cost_facts` rows with provider `12ui`, operation `design-draft` (tier `standard`, one billable unit per candidate image bought) or `design-layout` (tier `fast`, one unit), and the draft's campaign ID, once per idempotency key: a candidate image when 12ui answers its purchase or a later read of the run shows the slot bought (a purchase whose answer timed out counts once 12ui shows it happened, and never otherwise), and the layout when 12ui answers the convert request. 12ui's API reports no per-request price, so the reported cost stays empty; campaign and daily totals count these units with the other costs.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "RESULT-004"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 910,
       "text": "**Security consequences:** design generation adds one declared outbound flow (`seed.json \u2192 externals \u2192 design-provider`, BASE-DATA-004). 12ui's answers are untrusted: run and operation shapes are validated, downloads are read with a streamed size cap and follow no redirect off the configured origin, candidate images must be PNGs within the byte and pixel limits, the LayerDoc must match its published digest and pass the import parser, and its values reach the email only through the DESIGN-004 compiler and the MSG-009/MSG-012 checker. 12ui's own error text is never stored or shown; the editor shows Mango's reason for each failure code. Candidate PNGs and the layout are served only to signed-in operators; only the crops the operator uses become public `/media/` images (CAMP-012). *Residuals:* the design's words are model-written (highlighted for review, never verified); a run can buy candidates nobody uses; the 15-minute deadline can fail a slow but healthy run, whose purchase is still recorded.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "DESIGN-011"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
@@ -6703,13 +7150,26 @@
       "file": "CONTRACT.md",
       "line": 915,
       "text": "**AUD-001 and CAMP-002 policy:** The audience rule shown in campaign review, approval checks, the scheduled page, campaign lists and audience snapshots is the plain-text summary derived from the structured inclusion and exclusion rules that select recipients. It includes every condition, comparison, value and lookback, with the same field labels as the editor and explicit all/any matching. The composer shows that summary live and does not author audience prose. Every newly saved revision stores its derived summary; caller-supplied audience text is ignored as authority. Earlier revisions display the derived summary without rewriting immutable approval records. Readiness requires valid structured rules, and approval continues to bind the exact saved rules.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "AUD-010"
+      ]
     },
     {
       "file": "CONTRACT.md",
       "line": 917,
       "text": "**DATA-001 implementation:** Maintained Base portability archives all product D1 rows and original R2 assets, with staged restore into an empty maintenance-mode destination. Authentication credentials, sessions and transfer bookkeeping are excluded; operator profiles remain attribution only. Restore requires matching privately backed-up contact/link keys, explicit confirmation and fresh destination Base authentication. Mango adapts the journal to source-wide erasure floors (CONT-013), deliberately refusing all older archives against current authority and refusing nonempty legacy journals before staging; current post-erasure exports remain restorable with matching authority.",
-      "to": "changelog"
+      "to": "clause",
+      "ids": [
+        "DATA-001",
+        "DATA-002"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        }
+      ]
     },
     {
       "file": "CONTRACT.md",
@@ -7268,10 +7728,7 @@
       "line": 1071,
       "cell": "gap",
       "text": "One Shopify-backed product review lists recent-product-purchase (seven days), unresolved-refund, unresolved-return and dormant (twelve months), each with its count, at 1440/390. Resolved commerce and eleven-month activity stay eligible; thirteen-month activity is dormant. AUD-008 states how an operator turns the dormancy exclusion off for one campaign and retains that switch.",
-      "to": "gap",
-      "ids": [
-        "AUD-003"
-      ]
+      "to": "changelog"
     },
     {
       "file": "CONTRACT.md",
@@ -7290,7 +7747,8 @@
       "text": "acceptance not yet met: Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, a draft flow made from a Mailchimp journey fixture carries the same setting, and its activation shows the 30-day skip count from seeded sends.",
       "to": "gap",
       "ids": [
-        "AUD-009"
+        "AUD-009",
+        "AUD-011"
       ]
     },
     {
@@ -7330,7 +7788,8 @@
       "text": "Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the default 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity lists each typed destination with actor and time, action/object filters and CSV export; contact erasure redacts the destination while retaining the receipt (`tests/go-live/typed-tests.journeys.ts`, push Verify go-live 8/9, 1440/390). Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004).",
       "to": "gap",
       "ids": [
-        "CAMP-019"
+        "CAMP-019",
+        "CAMP-024"
       ]
     },
     {
@@ -7358,20 +7817,14 @@
       "line": 1105,
       "cell": "gap",
       "text": "On the Mobile Message edge, review of an SMS step for a confirmed SMS contact shows the rendered example with the configured program identity, `Reply STOP to unsubscribe`, the configured frequency disclosure, the help contact and the exact segment count at 1440 and 390. Mobile Message is the proved adapter; Twilio acceptance stays with SMS-008.",
-      "to": "gap",
-      "ids": [
-        "MSG-005"
-      ]
+      "to": "changelog"
     },
     {
       "file": "CONTRACT.md",
       "line": 1106,
       "cell": "gap",
       "text": "One draft carries a malformed link, `http:`, `javascript:`, `data:` and `file:` links, a link whose redirect lands on an unlisted host, an `http:` image and an HTTPS image on an unlisted host, with `mailto:` and `tel:` contact links beside them. Review and approval block it and name every blocked link with the scheme, fault or host that blocks it; only the unlisted HTTPS hosts (the redirect's and the image's) offer Allow this host, never a scheme, at 1440 and 390. Contact links never need it. FLOW-008 (flow activation) and RESULT-005 (tracking) inherit this one rule in their own text.",
-      "to": "gap",
-      "ids": [
-        "MSG-006"
-      ]
+      "to": "changelog"
     },
     {
       "file": "CONTRACT.md",
@@ -7388,10 +7841,7 @@
       "line": 1115,
       "cell": "gap",
       "text": "Review names each blocked host and its links, including redirect hosts. Authors see no allow action and receive 403; a Manager allows a host, the stored list appends it, checks rerun and approval passes. The append-only row names operator, host and campaign through Owner/Admin GET /api/activity, newest first with operator/action/object filters. An imported Mailchimp template lists three outside hosts with allow actions at 1440/390. Exact and explicit wildcard matching agree across approval, inspection and tracking; deceptive suffixes remain blocked. OPER-007 inherits the full cross-product screen, CSV and every action type (ct pattern 2, c4 authorized default).",
-      "to": "gap",
-      "ids": [
-        "MSG-015"
-      ]
+      "to": "changelog"
     },
     {
       "file": "CONTRACT.md",
@@ -8105,10 +8555,8 @@
       "line": 1205,
       "cell": "gap",
       "text": "Flow attribution is inherited by FLOW-001/FLOW-002, which remain missing.",
-      "to": "gap",
-      "ids": [
-        "REPORT-003"
-      ]
+      "to": "docs",
+      "path": "docs/contract/mechanism.md"
     },
     {
       "file": "CONTRACT.md",
@@ -8342,7 +8790,8 @@
       "text": "acceptance not yet met: After a move-in, the report's counts reconcile to the files and contact table, and no campaign or flow is scheduled or live. The report counts consent per evidence kind (CONT-024) and names the attestation each relies on. The cutover checklist shows the parallel-run sync (MOVE-013), or the re-import advice for an export-only move-in, and **Mark cutover complete** ends the sync. The checklist names any template or live message still loading images from an incumbent host (MOVE-014).",
       "to": "gap",
       "ids": [
-        "MOVE-006"
+        "MOVE-006",
+        "MOVE-016"
       ]
     },
     {
@@ -8362,7 +8811,8 @@
       "text": "not implemented",
       "to": "gap",
       "ids": [
-        "MOVE-008"
+        "MOVE-008",
+        "MOVE-017"
       ]
     },
     {
@@ -8370,10 +8820,8 @@
       "line": 1233,
       "cell": "gap",
       "text": "Mailchimp-format granular activity imports one durable click/open fact per accepted row, with original time, imported campaign/link and source. Reconciliation names imported/dropped counts; timeline, repeat, undo, merge, erasure and populated upgrade/restore are exercised. Per archive: 10,000 engagement rows within existing ZIP/text limits, visibly refused beyond that limit. Imported clicks govern CONT-012/AUD-008 dormancy; opens stay open-only, never engagement; no send fact, result, attribution or consent changes. API-key activity, other incumbents' history and CONT-020/SEG-005/SEG-006/EXP-006 uses are MOVE-015.",
-      "to": "gap",
-      "ids": [
-        "MOVE-009"
-      ]
+      "to": "docs",
+      "path": "docs/contract/mechanism.md"
     },
     {
       "file": "CONTRACT.md",
@@ -8392,7 +8840,9 @@
       "text": "Gap: Campaign bodies remain imported history copied into drafts rather than automatically becoming library templates. Only FNAME, Klaviyo first_name, UNSUB and LIST:ADDRESS/ADDRESSLINE map to existing rendering targets; LNAME, DATE, CURRENT_YEAR, ARCHIVE, UPDATE_PROFILE (CONT-016), arbitrary property mapping and unknown fields remain visible and block personalization approval. The conservative name fallback is there; per-owner fallback configuration is unproved. CSS supports simple element/class selectors and top-level 480px mobile font size, line height, padding and alignment; other selectors, media widths, nested rules and orientation/hiding mappings remain unproved. Source-body inherited styles, complete per-location dropped-block diagnostics, general same-hue nearest-shade correctness across all backgrounds, a dedicated per-recoloring builder undo control and complete ActiveCampaign/Kit template conversion remain unproved; Klaviyo coverage currently proves only its supported name tag. Oversized results retain measured size, limit and largest blocks in custody/reconciliation, but cannot yet open directly in the builder for trimming. Mailchimp-host images in converted templates are re-hosted through the MOVE-014 journey; the rest follows MOVE-014's Gap. Host use counts and campaign review actions are covered by the existing imported-host journey; one-step reconciliation allowance/audit and flow-message review remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision.",
       "to": "gap",
       "ids": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     {
@@ -8402,7 +8852,9 @@
       "text": "acceptance not yet met: A generated Mailchimp account export with 250,000 contacts across the subscribed, unsubscribed, non-subscribed and cleaned files and 52 weekly campaigns with `granular_activity` moves in through the journey. It is interrupted once by a forced worker restart during the activity import and resumes to completion with no re-upload. Its reconciliation report adds up per file, evidence kind and activity rows. A campaign to the whole subscribed audience then reaches review with an eligible count equal to an independent count over the generated files. The run records its wall time and peak memory. A generated API-pull fixture of the same size completes the same way.",
       "to": "gap",
       "ids": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     {
@@ -8412,7 +8864,12 @@
       "text": "not implemented",
       "to": "gap",
       "ids": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     {
@@ -8490,10 +8947,8 @@
       "line": 1246,
       "cell": "gap",
       "text": "Default ADOPTED, approved by ct 23 October 04:38Z: page only for an Owner-saved tier, displaying exact price/frequency before Checkout; newsletter consent is unchecked and separate from payment, recorded with timestamp, source and wording version when Checkout opens and authorizing only one confirmation per payer address per Checkout session. Already subscribed/confirmed needs no second confirmation. Never-confirmed payers receive no paid or free newsletters. Payment events never create or widen consent; unsubscribe and suppression win and resubscription requires the person\u2019s own POST confirmation. Stripe hosts the card fields; Mango has none. Erasure follows the existing audit-fact rule and removes address and consent evidence. PUB-002\u2019s restricted-key sandbox and Nectar gaps are separate; no real provider call or consent was used.",
-      "to": "gap",
-      "ids": [
-        "PUB-005"
-      ]
+      "to": "docs",
+      "path": "docs/contract/mechanism.md"
     },
     {
       "file": "CONTRACT.md",
@@ -9248,520 +9703,1049 @@
     {
       "file": "ACCEPTANCE.md",
       "line": 122,
-      "text": "**PROP-001 \u2014 Decision Desk** (done). Decision Desk orders proposed suggestions by revenue then deadline. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-001 \u2014 Decision Desk** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 122,
+      "text": "Decision Desk orders proposed suggestions by revenue then deadline. ",
+      "to": "clause",
+      "ids": [
+        "PROP-001"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 122,
+      "text": "Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 123,
-      "text": "**PROP-002 \u2014 Evidence** (done). Proposal detail shows observed values, event IDs, lookback, rules, as-of and methods. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-002 \u2014 Evidence** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 123,
+      "text": "Proposal detail shows observed values, event IDs, lookback, rules, as-of and methods. ",
+      "to": "clause",
+      "ids": [
+        "PROP-002"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 123,
+      "text": "Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 124,
-      "text": "**PROP-003 \u2014 Counts** (done). Counts apply real consent exclusions. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-003 \u2014 Counts** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 124,
+      "text": "Counts apply real consent exclusions. ",
+      "to": "clause",
+      "ids": [
+        "PROP-003"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 124,
+      "text": "Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 125,
-      "text": "**PROP-004 \u2014 Content** (done). Generated content and sender are previewable and editable as a saved draft. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-004 \u2014 Content** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 125,
+      "text": "Generated content and sender are previewable and editable as a saved draft. ",
+      "to": "clause",
+      "ids": [
+        "PROP-004"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 125,
+      "text": "Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 126,
-      "text": "**PROP-005 \u2014 Owner control** (done). A proposal schedules nothing until a saved revision is approved. Evidence: `src/core/features/campaigns/adopt-proposal.ts` \u00b7 `tests/proposals-decision/decision-routes.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-005 \u2014 Owner control** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 126,
+      "text": "A proposal schedules nothing until a saved revision is approved. ",
+      "to": "clause",
+      "ids": [
+        "PROP-005"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 126,
+      "text": "Evidence: `src/core/features/campaigns/adopt-proposal.ts` \u00b7 `tests/proposals-decision/decision-routes.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 127,
-      "text": "**PROP-006 \u2014 Grounded generation** (done). Fabricated claims are rejected even with valid citations. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-006 \u2014 Grounded generation** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 127,
+      "text": "Fabricated claims are rejected even with valid citations. ",
+      "to": "clause",
+      "ids": [
+        "PROP-006"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 127,
+      "text": "Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 128,
-      "text": "**PROP-007 \u2014 Generation failure** (done). Provider rejection yields a failed proposal with no substitute. Evidence: `tests/proposals-decision/proposal-states.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-007 \u2014 Generation failure** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 128,
+      "text": "Provider rejection yields a failed proposal with no substitute. ",
+      "to": "clause",
+      "ids": [
+        "PROP-007"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 128,
+      "text": "Evidence: `tests/proposals-decision/proposal-states.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 129,
-      "text": "**PROP-008 \u2014 Forecast provenance** (done). Forecasts use only owned mature history and refuse thin history. Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-008 \u2014 Forecast provenance** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 129,
+      "text": "Forecasts use only owned mature history and refuse thin history. ",
+      "to": "clause",
+      "ids": [
+        "PROP-008"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 129,
+      "text": "Evidence: `tests/proposals-decision/decision-routes.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 130,
-      "text": "**PROP-009 \u2014 Proposal states** (done). Decisions record actor and time once. Evidence: `tests/proposals-decision/proposal-states.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**PROP-009 \u2014 Proposal states** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 130,
+      "text": "Decisions record actor and time once. ",
+      "to": "clause",
+      "ids": [
+        "PROP-009"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 130,
+      "text": "Evidence: `tests/proposals-decision/proposal-states.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 134,
-      "text": "**AUD-001 \u2014 Review snapshot** (done). Review snapshot counts per exclusion reason. Evidence: `tests/audience-controls/segments.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-001 \u2014 Review snapshot** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 134,
+      "text": "Review snapshot counts per exclusion reason. ",
+      "to": "clause",
+      "ids": [
+        "AUD-001",
+        "AUD-010"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 134,
+      "text": "Evidence: `tests/audience-controls/segments.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 135,
-      "text": "**AUD-002 \u2014 Consent and suppression** (done). Non-subscribed states are excluded regardless of rule. Evidence: `src/core/features/audience/eligibility.ts` \u00b7 `tests/go-live/delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-002 \u2014 Consent and suppression** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 135,
+      "text": "Non-subscribed states are excluded regardless of rule. ",
+      "to": "clause",
+      "ids": [
+        "AUD-002"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 135,
+      "text": "Evidence: `src/core/features/audience/eligibility.ts` \u00b7 `tests/go-live/delivery.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 136,
-      "text": "**AUD-003 \u2014 Commerce and dormancy exclusions** (done). One Shopify-backed product review lists recent-product-purchase (seven days), unresolved-refund, unresolved-return and dormant (twelve months), each with its count, at 1440/390. Resolved commerce and eleven-month activity stay eligible; thirteen-month activity is dormant. AUD-008 states how an operator turns the dormancy exclusion off for one campaign and retains that switch. Evidence: `tests/go-live/stale-sources.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-003 \u2014 Commerce and dormancy exclusions** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 136,
+      "text": "One Shopify-backed product review lists recent-product-purchase (seven days), unresolved-refund, unresolved-return and dormant (twelve months), each with its count, at 1440/390. Resolved commerce and eleven-month activity stay eligible; thirteen-month activity is dormant. AUD-008 states how an operator turns the dormancy exclusion off for one campaign and retains that switch. ",
+      "to": "clause",
+      "ids": [
+        "AUD-003"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 136,
+      "text": "Evidence: `tests/go-live/stale-sources.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 137,
-      "text": "**AUD-004 \u2014 Frequency protection** (done). Frequency-window exclusions recorded, never deferred. Evidence: `src/core/features/audience/eligibility.ts` \u00b7 `tests/go-live/open-estimates.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-004 \u2014 Frequency protection** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 137,
+      "text": "Frequency-window exclusions recorded, never deferred. ",
+      "to": "clause",
+      "ids": [
+        "AUD-004"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 137,
+      "text": "Evidence: `src/core/features/audience/eligibility.ts` \u00b7 `tests/go-live/open-estimates.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 138,
-      "text": "**AUD-005 \u2014 Dispatch recheck** (done). Eligibility rechecked at dispatch and before each hand-off. Evidence: `tests/audience-controls/merge.spec.ts` \u00b7 `tests/go-live/delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-005 \u2014 Dispatch recheck** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 138,
+      "text": "Eligibility rechecked at dispatch and before each hand-off. ",
+      "to": "clause",
+      "ids": [
+        "AUD-005"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 138,
+      "text": "Evidence: `tests/audience-controls/merge.spec.ts` \u00b7 `tests/go-live/delivery.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 139,
-      "text": "**AUD-006 \u2014 Multi-step exit** (done). Each later step re-applies its audience and exclusion rules; a contact who converts or becomes ineligible after an earlier step receives no later step. The two-step journey changes inclusion, a custom exclusion and consent after the first send, verifies named skip reasons at the second step, sends only to the still-eligible control, and keeps newly matching contacts outside the frozen audience. Evidence: `tests/go-live/multistep.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-006 \u2014 Multi-step exit** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 139,
+      "text": "Each later step re-applies its audience and exclusion rules; a contact who converts or becomes ineligible after an earlier step receives no later step. The two-step journey changes inclusion, a custom exclusion and consent after the first send, verifies named skip reasons at the second step, sends only to the still-eligible control, and keeps newly matching contacts outside the frozen audience. ",
+      "to": "clause",
+      "ids": [
+        "AUD-006"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 139,
+      "text": "Evidence: `tests/go-live/multistep.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 140,
-      "text": "**AUD-007 \u2014 Frozen candidate set** (done). Approval freezes the candidate set. Evidence: `tests/audience-controls/segments.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-007 \u2014 Frozen candidate set** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 140,
+      "text": "Approval freezes the candidate set. ",
+      "to": "clause",
+      "ids": [
+        "AUD-007"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 140,
+      "text": "Evidence: `tests/audience-controls/segments.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 141,
-      "text": "**AUD-008 \u2014 Inactivity rules in review** (partial). A Mailchimp move-in fixture of contacts subscribed two years ago reaches the first campaign's review with no `dormant` exclusion, both for contacts whose `granular_activity` shows a click three months ago and for contacts with no activity rows (counted as `no-history`); a contact whose last imported click is 13 months old is excluded as `dormant`; turning the exclusion off for that campaign includes them, and the approved revision and activity log record the choice and its approver. The review also counts `open-only` contacts within `dormant` and includes them in one action, and an Owner or Admin's installation-wide default is recorded in the activity log. Current evidence: `tests/move-in/archive.journeys.ts` \u00b7 `tests/go-live/roles.journeys.ts`. Review shows dormant/open-only and included no-history counts. An approver can include open-only or disable dormancy for the campaign, with the restored count saved; Owner/Admin defaults under audience.exclusions.v1 copy into new drafts. The immutable approved policy, actor audit and dispatch recheck are exercised. Gap: unengaged (CONT-020), dormant precedence over unengaged, and flow-message inactivity controls remain owed. Existing fieldset, checkbox, numeric input and action patterns suffice; no new design pattern is introduced.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-008 \u2014 Inactivity rules in review** (partial). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 141,
+      "text": "A Mailchimp move-in fixture of contacts subscribed two years ago reaches the first campaign's review with no `dormant` exclusion, both for contacts whose `granular_activity` shows a click three months ago and for contacts with no activity rows (counted as `no-history`); a contact whose last imported click is 13 months old is excluded as `dormant`; turning the exclusion off for that campaign includes them, and the approved revision and activity log record the choice and its approver. The review also counts `open-only` contacts within `dormant` and includes them in one action, and an Owner or Admin's installation-wide default is recorded in the activity log. Current evidence: `tests/move-in/archive.journeys.ts` \u00b7 `tests/go-live/roles.journeys.ts`. Review shows dormant/open-only and included no-history counts. An approver can include open-only or disable dormancy for the campaign, with the restored count saved; Owner/Admin defaults under audience.exclusions.v1 copy into new drafts. The immutable approved policy, actor audit and dispatch recheck are exercised. Gap: unengaged (CONT-020), dormant precedence over unengaged, and flow-message inactivity controls remain owed. Existing fieldset, checkbox, numeric input and action patterns suffice; no new design pattern is introduced.",
+      "to": "clause",
+      "ids": [
+        "AUD-008"
+      ]
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 142,
-      "text": "**AUD-009 \u2014 Frequency protection: one policy and a recorded override** (partial). Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, a draft flow made from a Mailchimp journey fixture carries the same setting, and its activation shows the 30-day skip count from seeded sends. Evidence: `src/core/features/lifecycle/policies.ts` \u00b7 `src/core/features/audience/eligibility.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**AUD-009 \u2014 Frequency protection: one policy and a recorded override** (partial). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 142,
+      "text": "Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, a draft flow made from a Mailchimp journey fixture carries the same setting, and its activation shows the 30-day skip count from seeded sends. ",
+      "to": "clause",
+      "ids": [
+        "AUD-009",
+        "AUD-011"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 142,
+      "text": "Evidence: `src/core/features/lifecycle/policies.ts` \u00b7 `src/core/features/audience/eligibility.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 146,
-      "text": "**CAMP-001 \u2014 States** (done). Campaign state transitions with actor and time. Evidence: `tests/campaign-results/results.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-001 \u2014 States** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 146,
+      "text": "Campaign state transitions with actor and time. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-001"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 146,
+      "text": "Evidence: `tests/campaign-results/results.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 147,
-      "text": "**CAMP-002 \u2014 Draft editing** (done). Draft editing persists every field; the body size limit is proved under BUILD-012. Evidence: `tests/campaign-authoring/browser.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-002 \u2014 Draft editing** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 147,
+      "text": "Draft editing persists every field; the body size limit is proved under BUILD-012. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-002",
+        "CAMP-021",
+        "CAMP-020",
+        "AUD-010"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 147,
+      "text": "Evidence: `tests/campaign-authoring/browser.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 148,
-      "text": "**CAMP-003 \u2014 Revision preview** (done). Previews render from the saved revision. Evidence: `tests/campaign-authoring/browser.spec.ts` \u00b7 `tests/campaign-authoring/canonical-save.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-003 \u2014 Revision preview** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 148,
+      "text": "Previews render from the saved revision. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-003",
+        "CAMP-022"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 148,
+      "text": "Evidence: `tests/campaign-authoring/browser.spec.ts` \u00b7 `tests/campaign-authoring/canonical-save.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 149,
-      "text": "**CAMP-004 \u2014 Approval checks** (done). Approval names every blocking check. Evidence: `tests/campaign-authoring/browser.spec.ts` \u00b7 `tests/campaign-authoring/create-api.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-004 \u2014 Approval checks** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 149,
+      "text": "Approval names every blocking check. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-004"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 149,
+      "text": "Evidence: `tests/campaign-authoring/browser.spec.ts` \u00b7 `tests/campaign-authoring/create-api.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 150,
-      "text": "**CAMP-005 \u2014 Idempotent approval** (done). Repeated approval produces one schedule. Evidence: `tests/campaign-authoring/browser.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-005 \u2014 Idempotent approval** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 150,
+      "text": "Repeated approval produces one schedule. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-005"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 150,
+      "text": "Evidence: `tests/campaign-authoring/browser.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 151,
-      "text": "**CAMP-006 \u2014 Schedule** (done). DST-invalid local times are rejected. Evidence: `tests/campaign-authoring/browser.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-006 \u2014 Schedule** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 151,
+      "text": "DST-invalid local times are rejected. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-006"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 151,
+      "text": "Evidence: `tests/campaign-authoring/browser.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 152,
-      "text": "**CAMP-007 \u2014 Scheduled edits** (done). Replacement approval wins a forced D1 ordering without mixing revisions. Evidence: `tests/go-live/delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-007 \u2014 Scheduled edits** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 152,
+      "text": "Replacement approval wins a forced D1 ordering without mixing revisions. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-007"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 152,
+      "text": "Evidence: `tests/go-live/delivery.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 153,
-      "text": "**CAMP-008 \u2014 Test send** (done). Test sends reach only operator addresses and change no reporting. Evidence: `tests/go-live/go-live.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-008 \u2014 Test send** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 153,
+      "text": "Test sends reach only operator addresses and change no reporting. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-008"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 153,
+      "text": "Evidence: `tests/go-live/go-live.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 154,
-      "text": "**CAMP-009 \u2014 Cancellation** (done). Cancellation stops unsent recipient-steps within 30 seconds. Evidence: `tests/campaign-results/results.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-009 \u2014 Cancellation** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 154,
+      "text": "Cancellation stops unsent recipient-steps within 30 seconds. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-009"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 154,
+      "text": "Evidence: `tests/campaign-results/results.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 155,
-      "text": "**CAMP-010 \u2014 Step deadline** (done). Missed deadlines skip with `deadline-passed`. Evidence: `tests/go-live/scheduler.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-010 \u2014 Step deadline** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 155,
+      "text": "Missed deadlines skip with `deadline-passed`. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-010"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 155,
+      "text": "Evidence: `tests/go-live/scheduler.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 156,
-      "text": "**CAMP-011 \u2014 Dispatch punctuality** (done). Each step dispatches once within 60 seconds. Evidence: `tests/go-live/scheduler.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-011 \u2014 Dispatch punctuality** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 156,
+      "text": "Each step dispatches once within 60 seconds. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-011"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 156,
+      "text": "Evidence: `tests/go-live/scheduler.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 157,
-      "text": "**CAMP-012 \u2014 Campaign images** (done). Image upload, immutable serving and erasure. Evidence: `tests/campaign-assets.spec.ts` \u00b7 `tests/campaign-authoring/local-images.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-012 \u2014 Campaign images** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 157,
+      "text": "Image upload, immutable serving and erasure. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-012",
+        "CAMP-023"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 157,
+      "text": "Evidence: `tests/campaign-assets.spec.ts` \u00b7 `tests/campaign-authoring/local-images.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 158,
-      "text": "**CAMP-013 \u2014 Recipient-local send time** (missing). A campaign approved for 10:00 recipient-local hands off New York, Chicago and Los Angeles recipients at their own 10:00 in the scheduler journey, and an unknown-zone recipient at 10:00 store time with review showing that count.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-013 \u2014 Recipient-local send time** (missing). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 158,
+      "text": "A campaign approved for 10:00 recipient-local hands off New York, Chicago and Los Angeles recipients at their own 10:00 in the scheduler journey, and an unknown-zone recipient at 10:00 store time with review showing that count.",
+      "to": "clause",
+      "ids": [
+        "CAMP-013"
+      ]
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 159,
-      "text": "**CAMP-014 \u2014 Pause and resume** (done). The two-step Worker/Queue journey pauses before dispatch and at a handoff fence, resumes with current consent and frequency checks, preserves accepted handoffs and actor history, and skips an expired send window, at 1440 and 390 pixels. Evidence: `tests/go-live/pause.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-014 \u2014 Pause and resume** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 159,
+      "text": "The two-step Worker/Queue journey pauses before dispatch and at a handoff fence, resumes with current consent and frequency checks, preserves accepted handoffs and actor history, and skips an expired send window, at 1440 and 390 pixels. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-014"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 159,
+      "text": "Evidence: `tests/go-live/pause.journeys.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 160,
-      "text": "**CAMP-015 \u2014 Marketing calendar** (missing). The calendar shows a scheduled campaign, a sent campaign and a live flow's estimate on the right days; dragging the scheduled one opens a new draft revision while the approved one stays active.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-015 \u2014 Marketing calendar** (missing). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 160,
+      "text": "The calendar shows a scheduled campaign, a sent campaign and a live flow's estimate on the right days; dragging the scheduled one opens a new draft revision while the approved one stays active.",
+      "to": "clause",
+      "ids": [
+        "CAMP-015"
+      ]
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 161,
-      "text": "**CAMP-016 \u2014 Follow-up to non-engaged recipients** (done). A follow-up created 48 hours after a send targets exactly the non-clickers minus those excluded at review, and requires its own approval. The journey also covers labeled non-open estimates, scanner-only readers, current consent and frequency exclusions, independent approval, source revision preservation and portability. Evidence: `tests/campaign-results/followup.journeys.ts` \u00b7 `tests/portability.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-016 \u2014 Follow-up to non-engaged recipients** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 161,
+      "text": "A follow-up created 48 hours after a send targets exactly the non-clickers minus those excluded at review, and requires its own approval. The journey also covers labeled non-open estimates, scanner-only readers, current consent and frequency exclusions, independent approval, source revision preservation and portability. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-016"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 161,
+      "text": "Evidence: `tests/campaign-results/followup.journeys.ts` \u00b7 `tests/portability.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 162,
-      "text": "**CAMP-017 \u2014 Recurring and RSS-to-email campaigns** (missing). An RSS campaign with two new feed items builds a draft containing both, and under standing approval the next instance sends while a changed template holds it for review.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-017 \u2014 Recurring and RSS-to-email campaigns** (missing). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 162,
+      "text": "An RSS campaign with two new feed items builds a draft containing both, and under standing approval the next instance sends while a changed template holds it for review.",
+      "to": "clause",
+      "ids": [
+        "CAMP-017"
+      ]
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 163,
-      "text": "**CAMP-018 \u2014 Duplicate a campaign** (done). Duplicating last week's sent campaign yields a draft with no schedule or approval, whose stored body re-parses to the source revision's bytes and whose audience rule and sender match; editing and approving the copy leaves the source's approved revision and results unchanged. Evidence: `tests/campaign-authoring/browser.spec.ts` \u00b7 `tests/campaign-authoring/reuse-journey.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-018 \u2014 Duplicate a campaign** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 163,
+      "text": "Duplicating last week's sent campaign yields a draft with no schedule or approval, whose stored body re-parses to the source revision's bytes and whose audience rule and sender match; editing and approving the copy leaves the source's approved revision and results unchanged. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-018"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 163,
+      "text": "Evidence: `tests/campaign-authoring/browser.spec.ts` \u00b7 `tests/campaign-authoring/reuse-journey.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 164,
-      "text": "**CAMP-019 \u2014 Test send to typed addresses** (partial). A Manager types two addresses and both receive the marked test at the mail edge; a third, unsubscribed address is refused and named; an Author has no typed-address field and the route answers 403; the activity log lists the typed addresses. Before sending, the owner sees the allowance remaining; a two-recipient test reduces it by two, and a hand-off with an uncertain provider outcome still consumes one unit. With one unit left, a two-recipient test is refused before either hand-off and names the remaining one. Crossing 00:00 UTC restores the configured allowance without carrying the prior day's attempts forward. Configured-address tests and typed-address tests draw from the same count. This clause is done only when OPER-004 (Manager/Author assignment), OPER-007 (general activity UI), SMS-001 (typed SMS transport) and CONT-019 (typed SMS consent) are done. Evidence for the implemented email scope: `tests/go-live/typed-tests.journeys.ts` \u00b7 `src/core/features/lifecycle/test-send-allowance.ts` \u00b7 `src/core/features/lifecycle/test-destinations.ts`. Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the UTC-day count, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity actor/time, action/object filters, CSV and erased-contact destination redaction are exercised in that same go-live 8/9 registration at 1440/390. Typed SMS consent/transport and full role acceptance remain outstanding.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**CAMP-019 \u2014 Test send to typed addresses** (partial). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 164,
+      "text": "A Manager types two addresses and both receive the marked test at the mail edge; a third, unsubscribed address is refused and named; an Author has no typed-address field and the route answers 403; the activity log lists the typed addresses. Before sending, the owner sees the allowance remaining; a two-recipient test reduces it by two, and a hand-off with an uncertain provider outcome still consumes one unit. With one unit left, a two-recipient test is refused before either hand-off and names the remaining one. Crossing 00:00 UTC restores the configured allowance without carrying the prior day's attempts forward. Configured-address tests and typed-address tests draw from the same count. This clause is done only when OPER-004 (Manager/Author assignment), OPER-007 (general activity UI), SMS-001 (typed SMS transport) and CONT-019 (typed SMS consent) are done. Evidence for the implemented email scope: `tests/go-live/typed-tests.journeys.ts` \u00b7 `src/core/features/lifecycle/test-send-allowance.ts` \u00b7 `src/core/features/lifecycle/test-destinations.ts`. Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the UTC-day count, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity actor/time, action/object filters, CSV and erased-contact destination redaction are exercised in that same go-live 8/9 registration at 1440/390. Typed SMS consent/transport and full role acceptance remain outstanding.",
+      "to": "clause",
+      "ids": [
+        "CAMP-019",
+        "CAMP-024"
+      ]
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 168,
-      "text": "**DESIGN-001 \u2014 Optional design module** (done). Disabled design module offers nothing and refuses runs. Evidence: `tests/campaign-authoring/design-generation.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**DESIGN-001 \u2014 Optional design module** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 168,
+      "text": "Disabled design module offers nothing and refuses runs. ",
+      "to": "clause",
+      "ids": [
+        "DESIGN-001",
+        "DESIGN-006",
+        "DESIGN-005"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 168,
+      "text": "Evidence: `tests/campaign-authoring/design-generation.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 169,
-      "text": "**DESIGN-002 \u2014 Draft-only design generation** (done). A brief becomes an unsaved body through the import path. Evidence: `tests/campaign-authoring/design-generation.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**DESIGN-002 \u2014 Draft-only design generation** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 169,
+      "text": "A brief becomes an unsaved body through the import path. ",
+      "to": "clause",
+      "ids": [
+        "DESIGN-002",
+        "DESIGN-010",
+        "DESIGN-009",
+        "DESIGN-008",
+        "DESIGN-007"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 169,
+      "text": "Evidence: `tests/campaign-authoring/design-generation.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 170,
-      "text": "**DESIGN-003 \u2014 Design data and records** (done). A run sends only the brief, never buys twice and records costs. Evidence: `tests/campaign-authoring/design-generation.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**DESIGN-003 \u2014 Design data and records** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 170,
+      "text": "A run sends only the brief, never buys twice and records costs. ",
+      "to": "clause",
+      "ids": [
+        "DESIGN-003",
+        "DESIGN-011"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 170,
+      "text": "Evidence: `tests/campaign-authoring/design-generation.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 171,
-      "text": "**DESIGN-004 \u2014 Design import** (done). A LayerDoc imports as an unsaved body that passes approval and BUILD-012's measured per-part UTF-8 size check: at most 102,400 bytes for each of the HTML and plain-text parts (`seed.json \u2192 limits.maxEmailHtmlBytes`, `src/core/features/campaigns/email-size.ts`), replacing the historical 20,000-character cap of the 13 October 2026 policy. Evidence: `tests/campaign-authoring/design-import.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "text": "**DESIGN-004 \u2014 Design import** (done). ",
+      "to": "changelog"
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 171,
+      "text": "A LayerDoc imports as an unsaved body that passes approval and BUILD-012's measured per-part UTF-8 size check: at most 102,400 bytes for each of the HTML and plain-text parts (`seed.json \u2192 limits.maxEmailHtmlBytes`, `src/core/features/campaigns/email-size.ts`), replacing the historical 20,000-character cap of the 13 October 2026 policy. ",
+      "to": "clause",
+      "ids": [
+        "DESIGN-004",
+        "DESIGN-014",
+        "DESIGN-013",
+        "DESIGN-012"
+      ]
+    },
+    {
+      "file": "ACCEPTANCE.md",
+      "line": 171,
+      "text": "Evidence: `tests/campaign-authoring/design-import.spec.ts`.",
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 175,
       "text": "**MSG-001 \u2014 Sender identity** (partial). Email identity is proved; per-country registered SMS senders await SMS-001 and SMS-002. Evidence: `src/core/features/settings/sender-validation.ts` \u00b7 `tests/settings-sender/routes.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 176,
       "text": "**MSG-002 \u2014 Email authentication** (done). SPF, DKIM and DMARC alignment gate scheduling. Evidence: `tests/sender-verification/worker.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 177,
       "text": "**MSG-003 \u2014 Email unsubscribe** (done). One-click and visible unsubscribe behave as mail clients send them. Evidence: `tests/go-live/go-live.journeys.ts` \u00b7 `tests/sender-verification/worker.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 178,
       "text": "**MSG-004 \u2014 SMS permission** (partial). SMS eligibility needs subscribed scope and an approved sender; US registration pending. Evidence: `src/core/features/sms/transport-guard.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 179,
       "text": "**MSG-005 \u2014 SMS opt-out** (done). On the Mobile Message edge, review of an SMS step for a confirmed SMS contact shows the rendered example with the configured program identity, `Reply STOP to unsubscribe`, the configured frequency disclosure, the help contact and the exact segment count at 1440 and 390. Evidence: `tests/go-live/content-checks.journeys.ts`, `src/core/features/sms/review-preview.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 180,
       "text": "**MSG-006 \u2014 Links** (done). One draft with a malformed link, `http:`, `javascript:`, `data:` and `file:` links, a redirect to an unlisted host, an `http:` image and an HTTPS image on an unlisted host is blocked at review and approval; every blocked link is named with its scheme, fault or host, only unlisted HTTPS hosts offer Allow this host, and `mailto:`/`tel:` links never need it, at 1440 and 390. FLOW-008 and RESULT-005 inherit the rule. Evidence: `tests/go-live/content-checks.journeys.ts`, `src/core/features/campaigns/link-reasons.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 181,
       "text": "**MSG-007 \u2014 Content checks** (done). The native Worker/D1 journey shows advisory and blocking findings, acknowledges only the exact saved advisory, retains its actor and time across reload and replay, invalidates it after an edit, refuses safety-check acknowledgments and still blocks approval until the content is corrected. Review is exercised at 1440 and 390 pixels. Evidence: `tests/go-live/content-checks.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 182,
       "text": "**MSG-008 \u2014 Personalization** (done). The native Worker/D1 journey refuses tokens without fallbacks even on an audience where every eligible contact resolves the token, counts eligible fallback recipients rather than token occurrences, excludes pending contacts from those counts and preserves the counts on approval. Names render escaped in HTML and unchanged in text; a contact labeled only by their destination uses the saved fallback. Preview supplies an illustrative value only for `displayName`, the name field available to delivery; `first_name`, `name` and other unavailable properties use their saved fallbacks in preview and provider output. Editor, preview and review are exercised at 1440 and 390 pixels, then the provider payloads are checked. Evidence: `tests/go-live/personalisation.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 183,
       "text": "**MSG-009 \u2014 Email body** (done). One parser and checker decide approval, test send and delivery; the size limit is proved under BUILD-012. Evidence: `tests/campaign-authoring/canonical-save.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 184,
       "text": "**MSG-010 \u2014 Unsubscribe availability** (done). The native Worker journey measures complete confirmation GET and one-click POST responses below 2 seconds, exhausts one token's shared GET/POST allowance from `seed.json`, and receives 429 without affecting another recipient's token from the same client IP. Confirmation and success pages fit 1440 and 390; both opt-outs prevent already-approved deliveries and survive provider reconciliation. This is a local measured path, not a hosted latency measurement. Evidence: `tests/go-live/opt-out-reasons.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 185,
       "text": "**MSG-011 \u2014 Sending reputation** (done). Complaint and bounce-rate blocks with named figures. Evidence: `tests/go-live/delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 186,
       "text": "**MSG-012 \u2014 Hidden or deceptive presentation** (done). Hidden or low-contrast text blocks approval. Evidence: `tests/campaign-authoring/canonical-save.spec.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 187,
       "text": "**MSG-013 \u2014 Contact links (`mailto:`, `tel:`, `sms:`)** (done). A draft with `mailto:hello@myshop.example?subject=Order%20question`, `tel:+15555550123` and `sms:+15555550123?body=Hi` approves; review lists each decoded, and the delivered HTML and plain text carry each unchanged and unrewritten. `mailto:a@x.example,b@x.example`, `mailto:a@x.example?bcc=c@x.example`, `tel:call-me`, `javascript:alert(1)` and `http://myshop.example` each block with the reason named. The journey exercises the Web, Email, Phone and Text link tool and authored HTML through saved review, exact-revision approval and provider-edge delivery, with no tracked-link or click fact for contact links. Evidence: `tests/go-live/contact-links.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 188,
       "text": "**MSG-014 \u2014 Allowed link and image hosts** (partial). Fresh installations expose deployment, conservative social defaults and genuine configured connection hosts with source labels; operator removal is durable across a real catalog sync. The existing exact/wildcard, deceptive-suffix, review allowance and audit assertions remain. Evidence: `tests/go-live/content-checks.journeys.ts` / `tests/go-live/content-hosts.ts` (1440 and 390), `tests/portability.spec.ts` (populated upgrade, exclusion restore). Gap: Shopify storefront/additional/image host data is not stored; product/social blocks, brand kit, flow activation and Shopify disconnect remain unproved. Existing explicit policies are preserved. The store-owned editor help about subdomains needs its owner's correction; approval of the closed social vocabulary is pending. No real provider call or consent was used.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 189,
       "text": "**MSG-015 \u2014 Allow a blocked host from review** (done). Review names each blocked host and its links, including redirect hosts. Authors see no allow action and receive 403; a Manager allows a host, the stored list appends it, checks rerun and approval passes. The append-only row names operator, host and campaign through Owner/Admin GET /api/activity, newest first with operator/action/object filters. An imported Mailchimp template lists three outside hosts with allow actions at 1440/390. Exact and explicit wildcard matching agree across approval, inspection and tracking; deceptive suffixes remain blocked. OPER-007 inherits the full cross-product screen, CSV and every action type (ct pattern 2, c4 authorized default). Evidence: `tests/go-live/content-checks.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 193,
       "text": "**SEND-001 \u2014 Provider hand-off** (done). Hand-off fencing and idempotency. Evidence: `tests/go-live/managed-mail.journeys.ts` \u00b7 `tests/go-live/resend-delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 194,
       "text": "**SEND-002 \u2014 Quiet hours** (partial). Recipient-local SMS windows; US defaults in SMS-003. Evidence: `src/core/features/sms/policy.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 195,
       "text": "**SEND-003 \u2014 Throttling and progress** (done). Paced hand-offs with live progress. Evidence: `tests/go-live/delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 196,
       "text": "**SEND-004 \u2014 Transport failure** (done). Increasing retries within the hour and terminal reasons. Evidence: `tests/go-live/delivery-recovery.journeys.ts` \u00b7 `tests/go-live/delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 197,
       "text": "**SEND-005 \u2014 Provider-event identity** (done). Signed provider facts stored once. Evidence: `tests/go-live/go-live.journeys.ts` \u00b7 `tests/go-live/delivery-recovery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 198,
       "text": "**SEND-006 \u2014 Delivery truth** (done). Delivered only from a provider delivery fact. Evidence: `tests/go-live/go-live.journeys.ts` \u00b7 `tests/go-live/scheduler.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 199,
       "text": "**SEND-007 \u2014 Partial completion** (done). Completion needs terminal dispositions; totals stay separate. Evidence: `tests/go-live/go-live.journeys.ts` \u00b7 `tests/campaign-results/results.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 200,
       "text": "**SEND-008 \u2014 Resumable dispatch and reconciliation** (done). Resumable dispatch and reconciliation. Evidence: `tests/go-live/go-live.journeys.ts` \u00b7 `tests/go-live/resend-delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 201,
       "text": "**SEND-009 \u2014 Provider outage** (done). Outage pause and probe-driven resume. Evidence: `src/core/features/lifecycle/provider-outages.ts` \u00b7 `tests/go-live/delivery-recovery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 205,
       "text": "**RESULT-001 \u2014 Campaign history** (done). Campaign history by state and channel. Evidence: `tests/campaign-results/results.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 206,
       "text": "**RESULT-002 \u2014 Engagement** (done). Opens off by default and labeled estimates when enabled. Evidence: `tests/go-live/open-estimates.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 207,
       "text": "**RESULT-003 \u2014 Attribution** (done). Evidence: `tests/campaign-results/performance.journeys.ts` \u2014 \u201c[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390\u201d (via `tests/campaign-results/performance-fixture.ts`: signed Shopify orders, latest qualifying click across two campaigns, webhook replay and later sync without duplicate or moved attribution, expired/scanner-only/no-click exclusions, partial/full refunds and cancellation in USD/JPY, API/CSV/Insights net amounts and the existing campaign-results drill-down naming each Shopify order and seven-day window separately from forecasts; 1440/390 overflow and axe checks).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 208,
       "text": "**RESULT-004 \u2014 Cost** (done). Provider and AI costs by campaign and UTC day. Evidence: `tests/campaign-results/costs.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 209,
       "text": "**RESULT-005 \u2014 Link tracking** (done). Evidence: `tests/campaign-results/performance.journeys.ts` \u2014 \u201c[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390\u201d (via `tests/campaign-results/tracking-journey.ts`: actual per-recipient-step links without recipient/campaign/revision identity, exact connected-store redirect with no cookie or body, retained scanner excluded from totals/unique clicks/click map/CSV/attribution, the same delivered link still forwarding exactly with no cookie or body after its click-recording window (30 days after send-by) closes, while recording nothing for a person or a scanner, \u201cmailto:\u201d, \u201ctel:\u201d and \u201csms:\u201d links in the same tracked message delivered byte for byte with no redirect and zero clicks in the API, CSV and click map, and the operator tracking-off control through delivery and destination request). `tests/go-live/contact-links.journeys.ts` \u2014 \u201c[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking\u201d proves the same contact links through the link tool and approval with tracking off. `tests/go-live/open-estimates.journeys.ts` \u2014 \u201c[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased\u201d retains the 13 October policy. CONT-018 owns its unbuilt click token, which this redirect consumes; until it is built these redirects add nothing.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 210,
       "text": "**RESULT-006 \u2014 Deliverability reporting** (partial). Per-domain rates shown; SMS sender rates await SMS-001. Evidence: `src/core/features/insights/ui/sender-rates.tsx` \u00b7 `tests/go-live/delivery.journeys.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 211,
       "text": "**RESULT-007 \u2014 Click map, per-link clicks and clicker lists** (partial). A seeded send has three links; some recipients click one link twice, and a known scanner requests every link. The report shows each link's total and unique clicks, with the scanner excluded. One link's clicker list equals the seeded clickers and exports as CSV with the same rows, and a segment started from it holds exactly those contacts. Evidence: `tests/campaign-results/results.journeys.ts` \u00b7 `tests/campaign-results/reporting-journey.ts`. Current scope and remaining work: Campaign links show human totals, unique identified clickers, automated requests, a saved-revision click map, matching clicker CSV and exact saved ID cohorts. Gap: repeated positions with one destination share counts; legacy clicks without destination identity remain unassigned; erased click facts are removed rather than retained as anonymous link counts; campaign-wide unique rollups, flow reports and role masking are absent; very large saved cohorts require CSV.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 212,
       "text": "**RESULT-008 \u2014 Recipients per outcome** (partial). Message-bound visible link, RFC 8058 one-click and authenticated SMS marketing reply retain their method and first time. Replays do not change attribution. The recipient list and CSV agree, and actual erasure keeps anonymous unsubscribe counts equal to campaign performance. Historical methods remain unrecorded. Evidence: `tests/campaign-results/performance.journeys.ts`, `tests/campaign-results/recipient-method-journey.ts` (1440 and 390), `tests/campaign-results/results.journeys.ts`, `tests/portability.spec.ts` (populated upgrade and restore). Gap: flow messages, role masking and very large saved cohorts beyond CSV. No real provider call or consent was used.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 216,
       "text": "**DATA-001 \u2014 Export contents** (done). Complete export and restore into an empty installation. Evidence: `tests/portability.spec.ts` \u00b7 `tests/go-live/go-live.journeys.ts` \u00b7 `tests/local-start/command-data.journey.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
@@ -10952,15 +11936,13 @@
       "file": "ACCEPTANCE.md",
       "line": 386,
       "text": "**MGMT-001 \u2014 Signed first-owner admission** (partial). Signed first-owner admission once per installation; hosted proof pending. Evidence: `src/core/features/auth/owner-claim.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
       "line": 387,
       "text": "**MGMT-002 \u2014 Native owner editor** (done). The native owner editor mounts for the native owner only. Product authority follows OPER-004's six roles separately from Base's unchanged owner/admin/member roles, with last-product-Owner protection, destination-owned authority on restore and CSV export restricted to Owner/Admin. Evidence: `tests/local-start/editor.journey.ts`.",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog"
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11052,7 +12034,25 @@
     {
       "file": "docs/CLAIMS.md",
       "line": 24,
-      "text": "| AUD-006 | Every later step rechecks saved inclusion, custom exclusions and current consent; skipped contacts have a named reason and newly matching contacts stay outside the frozen audience. | in code | `src/core/features/audience/eligibility.ts`, `tests/go-live/multistep.journeys.ts` |",
+      "text": "| AUD-006 |",
+      "to": "clause",
+      "ids": [
+        "AUD-006"
+      ]
+    },
+    {
+      "file": "docs/CLAIMS.md",
+      "line": 24,
+      "text": " Every later step rechecks saved inclusion, custom exclusions and current consent; skipped contacts have a named reason and newly matching contacts stay outside the frozen audience. ",
+      "to": "clause",
+      "ids": [
+        "AUD-006"
+      ]
+    },
+    {
+      "file": "docs/CLAIMS.md",
+      "line": 24,
+      "text": "| in code | `src/core/features/audience/eligibility.ts`, `tests/go-live/multistep.journeys.ts` |",
       "to": "changelog"
     },
     {
@@ -11118,7 +12118,27 @@
     {
       "file": "docs/CLAIMS.md",
       "line": 35,
-      "text": "| CAMP-019 | Saved-draft email tests show remaining allowance and atomically refuse an over-quota batch before any hand-off. Configured and typed destinations share the default 100 attempted hand-offs per UTC day; uncertainty counts and midnight resets. Restrictions and recorded destination/actor history remain, with typed fields hidden and refused for Authors. Manager/Author email test controls are exercised by the roles journey; the Activity log includes each destination with actor/time, action/object filtering, CSV and erasure redaction at 1440/390. Typed SMS and full role acceptance remain outstanding. | partial | `src/core/features/lifecycle/test-send-allowance.ts`, `src/core/features/lifecycle/test-destinations.ts`, `src/core/features/campaigns/ui/test-send-history.tsx`, `tests/go-live/typed-tests.journeys.ts` |",
+      "text": "| CAMP-019 |",
+      "to": "clause",
+      "ids": [
+        "CAMP-019",
+        "CAMP-024"
+      ]
+    },
+    {
+      "file": "docs/CLAIMS.md",
+      "line": 35,
+      "text": " Saved-draft email tests show remaining allowance and atomically refuse an over-quota batch before any hand-off. Configured and typed destinations share the default 100 attempted hand-offs per UTC day; uncertainty counts and midnight resets. Restrictions and recorded destination/actor history remain, with typed fields hidden and refused for Authors. Manager/Author email test controls are exercised by the roles journey; the Activity log includes each destination with actor/time, action/object filtering, CSV and erasure redaction at 1440/390. Typed SMS and full role acceptance remain outstanding. ",
+      "to": "clause",
+      "ids": [
+        "CAMP-019",
+        "CAMP-024"
+      ]
+    },
+    {
+      "file": "docs/CLAIMS.md",
+      "line": 35,
+      "text": "| partial | `src/core/features/lifecycle/test-send-allowance.ts`, `src/core/features/lifecycle/test-destinations.ts`, `src/core/features/campaigns/ui/test-send-history.tsx`, `tests/go-live/typed-tests.journeys.ts` |",
       "to": "changelog"
     },
     {
@@ -11154,7 +12174,25 @@
     {
       "file": "docs/CLAIMS.md",
       "line": 41,
-      "text": "| AUD-003 | One Shopify-backed product review lists recent-product-purchase (seven days), unresolved-refund, unresolved-return and dormant (twelve months), each with its count, at 1440/390. Resolved commerce and eleven-month activity stay eligible; thirteen-month activity is dormant. AUD-008 states how an operator turns the dormancy exclusion off for one campaign and retains that switch. | done | `tests/go-live/stale-sources.journeys.ts` |",
+      "text": "| AUD-003 |",
+      "to": "clause",
+      "ids": [
+        "AUD-003"
+      ]
+    },
+    {
+      "file": "docs/CLAIMS.md",
+      "line": 41,
+      "text": " One Shopify-backed product review lists recent-product-purchase (seven days), unresolved-refund, unresolved-return and dormant (twelve months), each with its count, at 1440/390. Resolved commerce and eleven-month activity stay eligible; thirteen-month activity is dormant. AUD-008 states how an operator turns the dormancy exclusion off for one campaign and retains that switch. ",
+      "to": "clause",
+      "ids": [
+        "AUD-003"
+      ]
+    },
+    {
+      "file": "docs/CLAIMS.md",
+      "line": 41,
+      "text": "| done | `tests/go-live/stale-sources.journeys.ts` |",
       "to": "changelog"
     },
     {

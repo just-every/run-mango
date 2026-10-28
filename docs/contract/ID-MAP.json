@@ -333,9 +333,10 @@
       ]
     },
     "AUD-001": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "AUD-001"
+        "AUD-001",
+        "AUD-010"
       ]
     },
     "AUD-002": {
@@ -381,9 +382,10 @@
       ]
     },
     "AUD-009": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "AUD-009"
+        "AUD-009",
+        "AUD-011"
       ]
     },
     "CAMP-001": {
@@ -393,15 +395,19 @@
       ]
     },
     "CAMP-002": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CAMP-002"
+        "CAMP-002",
+        "AUD-010",
+        "CAMP-020",
+        "CAMP-021"
       ]
     },
     "CAMP-003": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CAMP-003"
+        "CAMP-003",
+        "CAMP-022"
       ]
     },
     "CAMP-004": {
@@ -453,9 +459,10 @@
       ]
     },
     "CAMP-012": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CAMP-012"
+        "CAMP-012",
+        "CAMP-023"
       ]
     },
     "CAMP-013": {
@@ -495,33 +502,44 @@
       ]
     },
     "CAMP-019": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CAMP-019"
+        "CAMP-019",
+        "CAMP-024"
       ]
     },
     "DESIGN-001": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "DESIGN-001"
+        "DESIGN-001",
+        "DESIGN-005",
+        "DESIGN-006"
       ]
     },
     "DESIGN-002": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "DESIGN-002"
+        "DESIGN-002",
+        "DESIGN-007",
+        "DESIGN-008",
+        "DESIGN-009",
+        "DESIGN-010"
       ]
     },
     "DESIGN-003": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "DESIGN-003"
+        "DESIGN-003",
+        "DESIGN-011"
       ]
     },
     "DESIGN-004": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "DESIGN-004"
+        "DESIGN-004",
+        "DESIGN-012",
+        "DESIGN-013",
+        "DESIGN-014"
       ]
     },
     "MSG-001": {
@@ -573,9 +591,10 @@
       ]
     },
     "MSG-009": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "MSG-009"
+        "MSG-009",
+        "MSG-016"
       ]
     },
     "MSG-010": {
@@ -591,9 +610,10 @@
       ]
     },
     "MSG-012": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "MSG-012"
+        "MSG-012",
+        "MSG-016"
       ]
     },
     "MSG-013": {
@@ -693,9 +713,11 @@
       ]
     },
     "RESULT-005": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "RESULT-005"
+        "RESULT-005",
+        "RESULT-009",
+        "RESULT-010"
       ]
     },
     "RESULT-006": {
@@ -717,9 +739,10 @@
       ]
     },
     "DATA-001": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "DATA-001"
+        "DATA-001",
+        "DATA-002"
       ]
     },
     "SCALE-001": {
@@ -1311,9 +1334,10 @@
       ]
     },
     "MOVE-006": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "MOVE-006"
+        "MOVE-006",
+        "MOVE-016"
       ]
     },
     "MOVE-007": {
@@ -1323,9 +1347,10 @@
       ]
     },
     "MOVE-008": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "MOVE-008"
+        "MOVE-008",
+        "MOVE-017"
       ]
     },
     "MOVE-009": {
@@ -1341,21 +1366,30 @@
       ]
     },
     "MOVE-011": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "MOVE-011"
+        "MOVE-011",
+        "MOVE-018",
+        "MOVE-019"
       ]
     },
     "MOVE-012": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "MOVE-012"
+        "MOVE-012",
+        "MOVE-020",
+        "MOVE-021"
       ]
     },
     "MOVE-013": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "MOVE-013"
+        "MOVE-013",
+        "MOVE-022",
+        "MOVE-023",
+        "MOVE-024",
+        "MOVE-025",
+        "MOVE-026"
       ]
     },
     "MOVE-014": {
@@ -1407,9 +1441,10 @@
       ]
     },
     "PUB-005": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "PUB-005"
+        "PUB-005",
+        "PUB-006"
       ]
     },
     "AGENT-001": {
