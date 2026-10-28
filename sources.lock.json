@@ -1062,7 +1062,7 @@
       "executable": false
     },
     "agent-surface.json": {
-      "sha256": "1dfb64d8f96743921adcd011713ff6ed81ebe91fcd882da2bd43f430f807c04c",
+      "sha256": "d574ea78263b106a50415c5d00f18736910c141a9afbabb8c042bbf569cf6120",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -2622,7 +2622,7 @@
       "executable": false
     },
     "src/core/features/archive/service.ts": {
-      "sha256": "fe6a31fa0b2c02c396359391402089d02b93611e428e72add42e02835e886587",
+      "sha256": "758b12c2ba57fc095aad6ef83a96f580162ff3ee2e924a5836d189a56d35bebe",
       "executable": false
     },
     "src/core/features/audience/commerce-exclusions.ts": {
@@ -8354,7 +8354,7 @@
       "executable": false
     },
     "tests/agent-door/journey.json": {
-      "sha256": "49d5112d05941cfc1d6c984290b87dd25fa773d527f2b0ecb1bd5717cc15ce04",
+      "sha256": "71d6c96071eadd9a0dbc3bf10ee7f9f52e85e189ba5eb731199e03cb17fde7bf",
       "executable": false
     },
     "tests/agent-door/newsletter.mjs": {
@@ -8362,7 +8362,7 @@
       "executable": false
     },
     "tests/agent-door/pending-base.json": {
-      "sha256": "251c6984d4552a575f0ab13c9706593f7e7fa794eb7f8017e2b35772eb11e90b",
+      "sha256": "228598da1773bc89e4e88a42a855909c5ff8bb82d23aba251dc725f9aaeb5ca4",
       "executable": false
     },
     "tests/agent-door/provider-edge.mjs": {
