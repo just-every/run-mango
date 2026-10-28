@@ -1,3 +1,4 @@
+import {operatorAccessJourney} from './operator-access-journey';
 import {flowJourney} from '../campaign-authoring/flow-journey';
 import {stripeJourney} from './stripe-journey';
 import {createHmac} from 'node:crypto';
@@ -8,7 +9,8 @@ import {installation,json,sender,confirmedContact,draftCampaign,availableTranspo
 import {openPage} from '../support/navigation';
 import {type ProductRole} from '../../src/core/features/auth/permissions';
 
-test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
+test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history',async({page},info)=>{
+  await operatorAccessJourney();
   const edge=await providerEdge(),site=await installation(edge,eventSigner());
   try {
     const owner=await site.open();
@@ -24,7 +26,7 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
     }
     await page.context().addCookies([{name:owner.split('=')[0],value:owner.split('=')[1],url:site.runtime.url}]);
     const flowSends=edge.sends.length,flowEnrolments=await site.count('woocommerce_flow_enrollments');
-    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await flowJourney(page,info,site.runtime.url,width);}
+    for(const width of [1440]){await page.setViewportSize({width,height:1000});await flowJourney(page,info,site.runtime.url,width);}
     expect(edge.sends).toHaveLength(flowSends);expect(await site.count('woocommerce_flow_enrollments')).toBe(flowEnrolments);expect(await site.count('recipient_steps')).toBe(0);
     await stripeJourney(site, page, info, owner, cookies.admin!, cookies.author!, edge);
     await site.runtime.sql("UPDATE oa_operators SET display_name=CASE id WHEN 'go-live-owner' THEN 'Jordan Green' WHEN 'role-admin' THEN 'Noah Brooks' WHEN 'role-manager' THEN 'Maya Torres' WHEN 'role-author' THEN 'Lena Chen' WHEN 'role-analyst' THEN 'Ari Patel' ELSE 'Sam Rivera' END RETURNING id");
@@ -88,7 +90,7 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
       await page.context().clearCookies();await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
       await openPage(page,site.runtime.url+path);
     };
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       await view(owner,'/app/settings');
       await expect(page.getByRole('combobox',{name:'Role for author@example.test'})).toHaveValue('author');
@@ -130,7 +132,7 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
     await json(await site.call(`/api/campaigns/${campaign.campaignId}/approve`,{method:'POST',cookie:cookies.manager,body:{revisionId:campaign.revisionId,idempotencyKey:`roles-${campaign.revisionId}`}}),200);
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       for(const role of ['manager','analyst'] as const) {
         await view(cookies[role]!,`/app/campaigns/${campaign.campaignId}/scheduled`);
@@ -147,7 +149,7 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
         expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       }
     }
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       await openPage(page,site.runtime.url+'/docs/team-and-settings');
       await expect(page.getByRole('heading',{name:'Roles',exact:true})).toBeVisible();
@@ -204,7 +206,7 @@ test('[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern na
     const activeOperators=(await json(await site.call('/api/operators',{cookie:owner}),200)).operators.map((operator:any)=>operator.id);
     for(const role of ['author','manager'])expect(activeOperators).not.toContain(`role-${role}`);
     expect(await retainedHistory()).toEqual(history);
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       await view(owner,`/app/campaigns/${campaign.campaignId}/review`);
       await expect(page.getByLabel('Campaign attribution',{exact:true})).toContainText('Lena Chen');

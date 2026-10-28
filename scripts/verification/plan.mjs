@@ -1,112 +1,59 @@
+// Playwright positional arguments are regexes: select each whole declared path.
+const filePattern = file => '(?:^|/)' + file.split('.').join(String.fromCharCode(92) + '.') + '$';
 const pnpm = (name, args) => ({ name, command: 'pnpm', args });
 export const configs = {
   main: 'playwright.config.js',
   'local-start': 'scripts/verification/local-start.config.mjs',
   'local-start-slow': 'tests/local-start/config.js',
   'newsletter-ui': 'tests/newsletter-ui/playwright.config.js',
-  'sender-disclosure': 'tests/newsletter-ui/sender-playwright.config.js',
   'campaign-results': 'tests/campaign-results/playwright.config.js',
   'go-live': 'tests/go-live/playwright.config.js',
   'move-in': 'tests/move-in/playwright.config.js',
 };
-const sharded = new Set(['main', 'local-start', 'go-live']);
-export const stageNames = ['static', ...sharded, 'newsletter-ui', 'campaign-results', 'move-in', 'local-start-slow'];
+export const stageNames = ['static', ...Object.keys(configs)];
+const member = (stage, files) => ({name: stage, stage, files});
+// Whole journeys stay together. Two workers use separate installations;
+// migrations and commands inside each installation remain ordered.
+export const packs = [
+  {name:'authoring',members:[member('main',['campaign-authoring/browser.spec.ts','campaign-authoring/design-import.spec.ts','campaign-authoring/design-generation.spec.ts']),member('go-live',['content-checks.journeys.ts','woocommerce.journeys.ts'])]},
+  {name:'identity-data',members:[member('main',['audience-controls/segments.spec.ts','audience-import/signup.spec.ts','docs.spec.ts','rendering.spec.ts','portability.spec.ts','production-entry.spec.ts','shopify/connection.spec.ts','proposals-decision/decision-routes.spec.ts']),member('local-start',['editor.journey.ts'])]},
+  {name:'native',members:[member('local-start',['authority.journey.ts','command-data.journey.ts']),member('go-live',['mailbox-provider.journeys.ts'])]},
+  {name:'reports',members:[member('campaign-results'),member('newsletter-ui'),member('go-live',['shared-kiosk.journeys.ts','opt-out-reasons.journeys.ts'])]},
+  {name:'move-in',members:[member('move-in'),member('go-live',['personalisation.journeys.ts'])]},
+  {name:'campaigns',members:[member('go-live',['go-live.journeys.ts','contact-links.journeys.ts','presend-checks.journeys.ts','typed-tests.journeys.ts','resend-delivery.journeys.ts'])]},
+  {name:'delivery',members:[member('go-live',['delivery.journeys.ts','delivery-recovery.journeys.ts','multistep.journeys.ts','scheduler.journeys.ts','open-estimates.journeys.ts'])]},
+  {name:'connections',members:[member('go-live',['source-freshness.journeys.ts','managed-mail.journeys.ts','roles.journeys.ts','sync-integrations.journeys.ts'])]},
+];
 
 export function options(args, env = {}) {
-  const result = { stage: env.MANGO_VERIFY_STAGE, shard: env.MANGO_VERIFY_SHARD, testsOnly: false };
-  const seen = new Set();
-  for (let index = 0; index < args.length; index++) {
-    const flag = args[index];
-    if (seen.has(flag)) throw new Error(`Duplicate verification option: ${flag}`);
-    seen.add(flag);
-    if (flag === '--help') result.help = true;
-    else if (flag === '--tests-only') result.testsOnly = true;
-    else if (flag === '--stage' || flag === '--shard') {
-      const value = args[++index];
-      if (!value || value.startsWith('--')) throw new Error(`Missing value for ${flag}`);
-      result[flag.slice(2)] = value;
-    } else throw new Error(`Unknown verification option: ${flag}`);
+  const result = {stage:env.MANGO_VERIFY_STAGE, shard:env.MANGO_VERIFY_SHARD, files:env.MANGO_VERIFY_FILES ? JSON.parse(env.MANGO_VERIFY_FILES) : undefined, testsOnly:false};
+  for(let index=0;index<args.length;index++) {
+    const flag=args[index];
+    if(flag==='--help')result.help=true;
+    else if(flag==='--tests-only')result.testsOnly=true;
+    else if(flag==='--stage'||flag==='--shard')result[flag.slice(2)]=args[++index];
+    else throw new Error(`Unknown verification option: ${flag}`);
   }
-  if (result.stage && !stageNames.includes(result.stage)) throw new Error(`Unknown verification stage: ${result.stage}`);
-  if (result.testsOnly && result.stage) throw new Error('--tests-only cannot be combined with a selected stage.');
-  if (result.shard) {
-    const match = /^([1-9]\d*)\/([1-9]\d*)$/.exec(result.shard);
-    if (!match || !Number.isSafeInteger(Number(match[2])) || Number(match[1]) > Number(match[2])) throw new Error('Shard must be i/n with 1 <= i <= n.');
-    if (!sharded.has(result.stage)) throw new Error('--shard requires --stage main, local-start or go-live.');
-  }
+  if(result.stage&&!stageNames.includes(result.stage))throw new Error(`Unknown verification stage: ${result.stage}`);
+  if(result.testsOnly&&result.stage)throw new Error('--tests-only cannot select a stage.');
+  if(result.shard&&!/^([1-9]\d*)\/([1-9]\d*)$/.test(result.shard))throw new Error('Shard must be i/n.');
   return result;
 }
-
-export function verificationGroups({ stage, shard, testsOnly }, cpuBudget) {
-  const mainWorkers = Math.min(2, cpuBudget);
-  const browser = name => {
-    // Keep unchanged long authoring files from competing on the same shard.
-    // The adapter proves the exact native selection plus/minus that whole file.
-    if (name === 'main' && ['3/7', '4/7', '7/7'].includes(shard)) return {
-      name: `main-${shard.replace('/', '-of-')}`, command: process.execPath,
-      args: ['scripts/verification/main-shard.mjs', shard, `--workers=${mainWorkers}`,
-        '--reporter=list,./scripts/verification/reporter.mjs'], timingRequired: true,
-    };
-    const args = ['exec', 'playwright', 'test', '--config', configs[name],
-      `--workers=${name === 'main' ? mainWorkers : 1}`, '--reporter=list,./scripts/verification/reporter.mjs'];
-    // Only local.journey.ts clones and installs from scratch. The other native
-    // journeys reuse dependencies and retain routine auth/data-loss coverage.
-    if (name === 'local-start-slow') args.push('local.journey.ts');
-    if (shard) args.push(`--shard=${shard}`);
-    return { ...pnpm(shard ? `${name}-${shard.replace('/', '-of-')}` : name, args), timingRequired: true };
-  };
-  const staticGroups = [
-    [{ name: 'test-budget', command: process.execPath, args: ['scripts/verification/test-budget.mjs'] }],
-    [{ name: 'command-contract', command: process.execPath, args: ['node_modules/@runeditrun/rer/bin/rer.mjs', 'check', '--profile', 'first-party'] }, pnpm('source', ['run', 'source:check'])],
-    [pnpm('typecheck', ['run', 'typecheck'])],
-    [pnpm('build', ['run', 'build'])],
+export function verificationGroups({stage,shard,files,testsOnly}, cpuBudget) {
+  const browser=(stage,files,shard)=>({
+    ...pnpm(stage,['exec','playwright','test','--config',configs[stage],...(files??[]).map(filePattern),`--workers=${['main','go-live','campaign-results','move-in','local-start'].includes(stage)?Math.min(2,cpuBudget):1}`,'--reporter=list,./scripts/verification/reporter.mjs',...(shard?[`--shard=${shard}`]:[])]),timingRequired:true,
+  });
+  const staticGroups=[
+    [{name:'command-contract',command:process.execPath,args:['node_modules/@runeditrun/rer/bin/rer.mjs','check','--profile','first-party']},pnpm('source',['run','source:check'])],
+    [pnpm('typecheck',['run','typecheck']),pnpm('integration',['run','integration:check'])],
+    [pnpm('build',['run','build'])],
   ];
-  const operations = [{ ...pnpm('operations', ['run', 'test:operations']), timingRequired: true }];
-  const integration = [pnpm('integration', ['run', 'integration:check'])];
-  const ui = ['newsletter-ui', 'sender-disclosure'].map(name => [browser(name)]);
-  if (stage === 'static') return [...staticGroups, operations, integration];
-  if (stage === 'newsletter-ui') return ui;
-  if (stage) return [[browser(stage)]];
-  const main = browser('main'), native = browser('local-start');
-  return [...(testsOnly ? [] : staticGroups), operations,
-    ...(cpuBudget >= mainWorkers + 1 ? [[main, native]] : [[main], [native]]),
-    ...ui, [browser('campaign-results')], [browser('go-live')], [browser('move-in')], integration];
+  if(stage==='static')return staticGroups;
+  if(stage)return [[browser(stage,files??(stage==='local-start-slow'?['local.journey.ts']:undefined),shard)]];
+  return [...(testsOnly?[]:staticGroups),...Object.keys(configs).filter(name=>name!=='local-start-slow').map(name=>[browser(name)])];
 }
-
 export function matrix(tier) {
-  if (!['push', 'slow', 'all'].includes(tier)) throw new Error('Matrix tier must be push, slow or all.');
-  const push = [
-    { name: 'static', stage: 'static', browser: true, hosted: true },
-    ...[...sharded].flatMap(stage => {
-      const count = {main: 7, 'local-start': 3, 'go-live': 9}[stage];
-      return Array.from({length: count}, (_, offset) => ({ name: `${stage}-${offset + 1}-of-${count}`, stage, shard: `${offset + 1}/${count}`, browser: true }));
-    }),
-    ...['newsletter-ui', 'campaign-results', 'move-in'].map(stage => ({ name: stage, stage, browser: true })),
-  ];
-  const slow = [{ name: 'local-start-slow', stage: 'local-start-slow', browser: true }];
-  // Use the larger member duration from green run 40421992456 and candidate
-  // 40428704988. Fifteen members exceed 335s, so fifteen jobs is the minimum
-  // at 670s execution capacity. Native runtimes must run sequentially.
-  const packs = [
-    ['static', 'main-1-of-7', 'local-start-3-of-3'],
-    ['go-live-1-of-9', 'main-5-of-7'],
-    ['main-3-of-7', 'go-live-9-of-9'],
-    ['local-start-2-of-3', 'main-7-of-7'],
-    ['main-4-of-7', 'newsletter-ui'],
-    ['move-in', 'main-2-of-7'],
-    ['go-live-6-of-9', 'main-6-of-7'],
-    ['go-live-3-of-9'], ['local-start-1-of-3'], ['go-live-2-of-9'],
-    ['go-live-8-of-9'], ['go-live-7-of-9'], ['campaign-results'],
-    ['go-live-5-of-9'], ['go-live-4-of-9'],
-  ];
-  const grouped = packs.map((names, index) => ({
-    name: index === 0 ? 'static' : names.length === 1 ? names[0] : `group-${index + 1}`,
-    browser: true,
-    // Budget for runner variation and artifact teardown without changing any
-    // test timeout. Measured execution plus setup still targets under 12m.
-    timeout: names.length > 1 ? 14 : 12,
-    members: names.map(name => push.find(row => row.name === name)),
-  }));
-  const slowGroups = slow.map(row => ({ ...row, members: [row] }));
-  return { include: tier === 'push' ? grouped : tier === 'slow' ? slowGroups : [...grouped, ...slowGroups] };
+  if(!['push','slow','all'].includes(tier))throw new Error('Matrix tier must be push, slow or all.');
+  const slow={name:'local-start-slow',members:[member('local-start-slow',['local.journey.ts'])]};
+  return {include:(tier==='push'?packs:tier==='slow'?[slow]:packs.map(row=>row.name==='native'?{...row,members:[...row.members,...slow.members]}:row)).map(row=>({...row,browser:true,timeout:tier==='all'&&row.name==='native'?30:15}))};
 }

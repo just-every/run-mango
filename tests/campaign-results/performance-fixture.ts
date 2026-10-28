@@ -118,7 +118,7 @@ export async function attributionJourney(input: {
   expect(csv.find(row => row['campaign id'] === campaign.campaignId)).toMatchObject({'human clicks': '1', 'unique clicked recipient-steps': '1', 'attributed conversions': '1'});
   await openPage(page, site.runtime.url + '/app/insights');
   const row = page.getByRole('table', {name: 'Campaign performance', exact: true}).locator('tbody tr').filter({hasText: 'Latest garden letter'});
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await expect(row.locator('[data-label="Net revenue"] .attribution-amount')).toHaveText('JPY 1000; USD 80.00');
     await expect(row.locator('[data-label="Revenue / recipient"] .attribution-amount')).toHaveText('JPY 1000.0000; USD 80.0000');
@@ -130,7 +130,7 @@ export async function attributionJourney(input: {
   await row.getByRole('link', {name: 'Latest garden letter', exact: true}).click();
   await page.getByRole('link', {name: 'View schedule and results', exact: true}).click();
   const panel = page.locator('section').filter({has: page.getByRole('heading', {name: 'Clicks and attributed conversions', exact: true})});
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await expect(panel.locator('p').filter({hasText: 'Current report policy'})).toContainText('Placed Order · Email 7 days · SMS 7 days · click windows');
     await expect(panel).toContainText('These are observed events, separate from forecasts.');

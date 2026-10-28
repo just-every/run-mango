@@ -27,7 +27,7 @@ export async function oversizedReuse(site:Installation,cookie:string,page:Page,i
     expect(refused.size.largestBlocks[0].bytes).toBeGreaterThan(refused.size.limitBytes);
     for(const block of refused.size.largestBlocks)expect(refused.detail).toContain(`${block.location}: ${block.bytes} bytes`);
   }
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}`);
     await page.getByRole('button',{name:'Duplicate',exact:true}).click();

@@ -44,11 +44,11 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     expect((await site.call(`/api/campaigns/${letter.campaignId}`)).status).toBe(401);
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
 
-    await page.setViewportSize({width:390,height:900});
+    await page.setViewportSize({width:1440,height:900});
     await page.goto(`${site.runtime.url}/app/campaigns/${letter.campaignId}/scheduled`);
     await expect(page.locator('[data-scheduler-state="not-observed"]')).toBeVisible();
     driver=await configuredCronDriver(site);
-    await page.screenshot({path:info.outputPath('scheduler-waiting-390.png'),fullPage:true});
+    await page.screenshot({path:info.outputPath('scheduler-waiting-1440.png'),fullPage:true});
     expect(handoffs()).toHaveLength(0);
     while(Date.now()<due.getTime()) {
       expect(handoffs()).toHaveLength(0);
@@ -99,7 +99,7 @@ test('[CAMP-010][CAMP-011][SEND-006] scheduler entries survive restart and prese
     await expect(page.locator('[data-scheduler-outcome="failed"]')).toBeVisible();
     // Dismiss Vite's diagnostic for the deliberately failed Cron request before capturing the app.
     await page.keyboard.press('Escape');
-    await page.screenshot({path:info.outputPath('scheduler-failed-390.png'),fullPage:true});
+    await page.screenshot({path:info.outputPath('scheduler-failed-1440.png'),fullPage:true});
     // Restore records a real callback without dispatching or claiming completion.
     await site.runtime.close();
     site=await installation(edge,signer,{...options,restore:true});

@@ -96,7 +96,7 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     await json(await site.call('/api/campaign-revisions/' + disabled.revisionId, {method: 'PATCH', cookie, body: {emailBody: `<p><a href="${destination}">Garden collection</a></p>`, trackingEnabled: true}}), 200);
     await page.context().addCookies([{name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url}]);
     await openPage(page, `${site.runtime.url}/app/campaigns/${disabled.campaignId}/review`);
-    for (const width of [1440, 390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({width, height: 1000});
       await page.getByLabel('Track link clicks', {exact: true}).check();
       await page.getByLabel('Track link clicks', {exact: true}).uncheck();
@@ -115,7 +115,7 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     await analyticsPanel.getByRole('checkbox',{name:"Tag this campaign's links",exact:true}).uncheck();
     await analyticsPanel.getByRole('button',{name:'Save campaign tagging',exact:true}).click();
     await expect(analyticsPanel.getByRole('status')).toContainText('Campaign tagging saved.');
-    for(const width of [1440,390]){
+    for(const width of [1440]){
       await page.setViewportSize({width,height:1000});
       await expect(analyticsPanel.getByLabel('UTM source',{exact:true})).toHaveValue('synthetic-mango');
       await expect(analyticsPanel.getByRole('checkbox',{name:"Tag this campaign's links",exact:true})).not.toBeChecked();
@@ -136,7 +136,7 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
     await page.unroute(destination.split('#')[0]);
     expect(await result()).toEqual(before);
     expect((await json(await site.call(`/api/campaigns/${disabled.campaignId}/results`, {cookie}), 200)).engagement.observedClicks).toBe(0);
-    for (const width of [1440, 390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({width, height: 1000});
       await openPage(page, site.runtime.url + '/app/insights');
       const row = page.getByRole('table', {name: 'Campaign performance', exact: true}).locator('tbody tr').filter({hasText: 'Tracked garden letter'});

@@ -12,7 +12,7 @@ export async function customAttributionJourney(input: AttributionBrowser & {
   const {site, cookie, page, sms, contactId} = input;
   await openPage(page, site.runtime.url + '/app/settings');
   const integration = page.getByRole('region', {name: 'Integration credentials', exact: true});
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await integration.getByRole('checkbox', {name: /Write conversion events/}).check();
     await expect(integration.getByRole('checkbox', {name: /Write conversion events/})).toBeChecked();

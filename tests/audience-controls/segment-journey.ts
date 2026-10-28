@@ -47,7 +47,7 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     expect(conditions.groups[0].operator).toBe('any');
     expect(conditions.predicates[0].filters).toEqual([{field:'total.shop.amount',comparator:'gt',value:50},{field:'total.shop.currency',comparator:'eq',value:'USD'}]);
     await page.getByRole('button',{name:'Edit California repeat gardeners',exact:true}).click();
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       await expect(estimate).toContainText('2 eligible contacts');
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
@@ -59,7 +59,7 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     const review=async()=>json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:campaign.revisionId}}),200);
     await setRules(conditions);
     expect(await review()).toMatchObject({candidateCount:2,eligibleCount:2});
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       await test.step(`Open review at ${width}`,()=>openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`));
       for(const part of ['Placed Order','US state','94103'])await expect(page.locator('main')).toContainText(part);

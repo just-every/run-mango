@@ -43,7 +43,7 @@ export async function invitationRuntime({ contactHashSalt = secret, environment 
     MANGO_APP_VERSION: 'integration', MANGO_ALLOWED_LINK_HOSTS: 'example.test', MANGO_TEST_EMAIL_ALLOWLIST: 'owner@example.test',
     MANGO_RECONCILIATION_INTERVAL_MINUTES: '15', MANGO_UNRESOLVED_OUTCOME_HOURS: '48', MANGO_EMAIL_HANDOFFS_PER_MINUTE: '100000',
     MANGO_DELIVERABILITY_WINDOW_DAYS: '30', MAIL_SENDER_NAME: 'Example', MAIL_REPLY_TO: 'owner@example.test', MAIL_PHYSICAL_ADDRESS: 'Test address', ...environment };
-  const mf = new Miniflare({ host: '127.0.0.1', cf: false, telemetry: { enabled: false }, workers: [{ config: {
+  const mf = new Miniflare({ host: '127.0.0.1', port: 0, cf: false, telemetry: { enabled: false }, workers: [{ config: {
     name: 'invitation-cancellation-test', type: 'worker', compatibilityDate: '2026-09-01', compatibilityFlags: ['nodejs_compat'],
     manifest: { mainModule: 'worker.js', modules: { 'worker.js': { type: 'esm', contents: bundled.outputFiles[0].text } } },
     env: { ...Object.fromEntries(Object.entries(bindings).map(([key, value]) => [key, { type: 'json', value }])), DB: { type: 'd1', id: crypto.randomUUID() }, ASSETS_BUCKET:{type:'r2',name:crypto.randomUUID()} },

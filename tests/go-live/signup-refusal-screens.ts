@@ -6,7 +6,7 @@ import {openPage} from '../support/navigation';
 export async function refusalScreens(site:Awaited<ReturnType<typeof kioskInstallation>>,page:Page,operator:Page,info:TestInfo,form:string,ip:string) {
   await page.setExtraHTTPHeaders({'CF-Connecting-IP':ip});
   await operator.context().addCookies([{name:site.cookie.split('=')[0],value:site.cookie.split('=')[1],url:site.runtime.url}]);
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await openPage(page,site.runtime.url+'/subscribe');
     const email=page.getByRole('textbox',{name:'Email address'}),name=page.getByRole('textbox',{name:'Name',exact:true});

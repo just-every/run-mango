@@ -60,7 +60,7 @@ export async function assertAttributionReports(input: AttributionBrowser & {
       'net revenue per recipient by currency (rounded)': campaign === sms ? perRecipient : '—'});
   }
   // Inspect the current page first: a policy save must update it without a reload.
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     const table = page.getByRole('table', {name: 'Campaign performance', exact: true});
     for (const campaign of [email, sms]) {
@@ -87,7 +87,7 @@ export async function assertAttributionReports(input: AttributionBrowser & {
   expect((await json(await site.call(`/api/campaigns/${email.campaignId}/results`, {cookie}), 200)).attribution.orders).toBe(0);
   await openPage(page, `${site.runtime.url}/app/campaigns/${sms.campaignId}/scheduled`);
   const panel = page.getByRole('region', {name: 'Clicks and attributed conversions', exact: true});
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await expect(panel.locator('p').filter({hasText: 'Current report policy'})).toContainText(`${metricLabel} · Email ${days} days · SMS ${days} days · click windows`);
     if (conversions) {

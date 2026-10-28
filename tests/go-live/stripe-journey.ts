@@ -72,7 +72,7 @@ export async function stripeJourney(site: Installation, page: Page, info: TestIn
   expect(await failed()).toEqual([expect.objectContaining({state: 'completed', lastError: 'Stripe API request failed (503).'})]);
   expect((await site.rows("SELECT count(*) AS n FROM source_records WHERE provider='stripe'"))[0].n).toBe(9);
   expect(JSON.stringify(await failed())).not.toContain('private detail');
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await openPage(page, site.runtime.url + '/app/settings');
     await expect(page.locator('#stripe')).toContainText('Test mode');

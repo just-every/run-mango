@@ -80,8 +80,80 @@ jobs:
           TIER: ${{ inputs.tier || 'push' }}
         run: echo "matrix=$(node scripts/verification/ci.mjs --matrix "$TIER")" >> "$GITHUB_OUTPUT"
 
-  shards:
+  build:
     needs: plan
+    if: needs.plan.outputs.skip != 'true'
+    name: Build and public command checks
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      CI: 'true'
+      WRANGLER_SEND_METRICS: 'false'
+      PLAYWRIGHT_SKIP_BROWSER_GC: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '22.20.0'
+          package-manager-cache: false
+      - run: npm install --global pnpm@10.12.4
+      - name: Cache frozen dependencies and Chromium
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
+        with:
+          path: |
+            ~/.local/share/pnpm/store
+            ~/.cache/ms-playwright
+          key: seed-ubuntu24-${{ runner.arch }}-browser-true-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            seed-ubuntu24-${{ runner.arch }}-browser-true-
+      - name: Install frozen dependencies and reserve native runtime disk
+        shell: bash
+        run: |
+          # Native rer journeys require 15 GiB. Only remove .NET if needed,
+          # overlapping it with install instead of reclaiming every toolchain.
+          reclaim_pid=
+          free_kib=$(df -Pk "$GITHUB_WORKSPACE" | awk 'END { print $4 }')
+          if [ "$free_kib" -lt "$((20 * 1024 * 1024))" ]; then
+            sudo rm -rf -- /usr/share/dotnet &
+            reclaim_pid=$!
+          fi
+          pnpm install --frozen-lockfile
+          if [ -n "$reclaim_pid" ]; then wait "$reclaim_pid"; fi
+      - name: Install Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm exec playwright install chromium
+          # Hosted ubuntu-24.04 already carries Chromium's libraries. Use apt only when a real launch fails.
+          node scripts/ci/chromium-probe.mjs || {
+            timeout 420 pnpm exec playwright install-deps chromium
+            node scripts/ci/chromium-probe.mjs
+          }
+      - name: Run this shard
+        env:
+          SHARD: static
+          MANGO_TEST_WORK_DIR: ${{ runner.temp }}/mango-verification/static
+        run: node scripts/verification/ci.mjs "$SHARD"
+      - name: Keep this shard's timings and diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: verify-static
+          path: ${{ runner.temp }}/mango-verification/static/evidence
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Share the verified production build
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: dist
+          retention-days: 1
+
+  shards:
+    needs: [plan, build]
     if: needs.plan.outputs.skip != 'true'
     name: Verify / ${{ matrix.name }}
     runs-on: ubuntu-24.04
@@ -101,9 +173,6 @@ jobs:
         with:
           node-version: '22.20.0'
           package-manager-cache: false
-      - name: Check edition source lock freshness
-        if: ${{ matrix.name == 'static' && hashFiles('edition.json', 'sources.lock.json') != '' }}
-        run: node scripts/edition-authoring/cli.mjs check
       - run: npm install --global pnpm@10.12.4
       - name: Cache frozen dependencies and Chromium
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684
@@ -111,7 +180,9 @@ jobs:
           path: |
             ~/.local/share/pnpm/store
             ~/.cache/ms-playwright
-          key: seed-ubuntu24-${{ runner.arch }}-browser-${{ matrix.browser }}-${{ hashFiles('pnpm-lock.yaml', 'package.json') }}
+          key: seed-ubuntu24-${{ runner.arch }}-browser-${{ matrix.browser }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            seed-ubuntu24-${{ runner.arch }}-browser-true-
       - name: Install frozen dependencies and reserve native runtime disk
         shell: bash
         run: |
@@ -125,7 +196,6 @@ jobs:
           fi
           pnpm install --frozen-lockfile
           if [ -n "$reclaim_pid" ]; then wait "$reclaim_pid"; fi
-      - run: pnpm run deps
       - name: Install Chromium
         if: matrix.browser
         shell: bash
@@ -137,9 +207,15 @@ jobs:
             timeout 420 pnpm exec playwright install-deps chromium
             node scripts/ci/chromium-probe.mjs
           }
+      - name: Restore the verified production build
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: dist
       - name: Run this shard
         env:
           SHARD: ${{ matrix.name }}
+          MANGO_VERIFY_MEMBERS: ${{ toJSON(matrix.members) }}
           MANGO_TEST_WORK_DIR: ${{ runner.temp }}/mango-verification/${{ matrix.name }}
         run: node scripts/verification/ci.mjs "$SHARD"
       - name: Keep this shard's timings and diagnostics
@@ -152,7 +228,7 @@ jobs:
           retention-days: 7
 
   verify:
-    needs: [plan, shards]
+    needs: [plan, build, shards]
     if: ${{ always() }}
     runs-on: ubuntu-24.04
     timeout-minutes: 1
@@ -161,8 +237,10 @@ jobs:
         env:
           PLAN: ${{ needs.plan.result }}
           SKIP: ${{ needs.plan.outputs.skip }}
+          BUILD: ${{ needs.build.result }}
           SHARDS: ${{ needs.shards.result }}
         run: |
           test "$PLAN" = success
           if [ "$SKIP" = true ]; then exit 0; fi
+          test "$BUILD" = success
           test "$SHARDS" = success

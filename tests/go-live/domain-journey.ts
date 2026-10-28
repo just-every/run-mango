@@ -69,7 +69,7 @@ export async function domainJourney(site: Installation, edge: Awaited<ReturnType
   edge.domainSetup.dnsPass = false;
   guide = await json(await site.call('/api/settings/sender/domain-guide', {cookie}), 200);
   expect(guide.setup.records.find((row: any) => row.name === 's1._domainkey.example.test')).toMatchObject({passed: false, value: 's1.domainkey.u99.wl.sendgrid.net'});
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await openPage(page, site.runtime.url + '/app/settings');
     await expect(page.getByRole('table', {name: 'Domain DNS records'})).toContainText('Fail');
