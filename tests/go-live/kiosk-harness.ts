@@ -18,17 +18,25 @@ export async function kioskInstallation(challenge=true) {
 export async function signupCounterWindow(site:Awaited<ReturnType<typeof kioskInstallation>>,key:string) {
   const read=async()=>(await site.rows(`SELECT CAST(strftime('%s','now') AS INTEGER)/3600 AS hour,
     3600-CAST(strftime('%s','now') AS INTEGER)%3600 AS remaining,
-    COALESCE((SELECT count FROM oa_limits WHERE key='${key}' AND window=CAST(strftime('%s','now') AS INTEGER)/3600),0) AS n`))[0];
+    COALESCE((SELECT count FROM oa_limits WHERE key='${key}'),0) AS n,
+    (SELECT window FROM oa_limits WHERE key='${key}') AS counterHour`))[0];
   let window=await read();
   // Reserve three minutes for a counter burst on the real D1 clock. When too
   // close to rollover, wait exactly to the next hour: at most 180 seconds of
   // the existing 900-second journey timeout, without changing any limit.
   if(window.remaining<=180){await delay(window.remaining*1000);window=await read();}
   expect(window.remaining).toBeGreaterThan(180);
-  return async()=>{
-    const current=await read();
-    expect(current.hour).toBe(window.hour);
-    return current.n;
+  // Only the baseline may belong to an expired bucket. Every later count must
+  // retain both the reservation hour and the counter's actual stored hour.
+  expect(window.counterHour??window.hour).toBeLessThanOrEqual(window.hour);
+  return {
+    before:window.counterHour===window.hour?window.n:0,
+    async count(){
+      const current=await read();
+      expect(current.hour).toBe(window.hour);
+      expect(current.counterHour).toBe(window.hour);
+      return current.n;
+    },
   };
 }
 export async function kioskChallenge(page:Page) {
