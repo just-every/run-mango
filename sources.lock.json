@@ -1606,7 +1606,7 @@
       "executable": false
     },
     "operations/deploy-optional-secrets.test.mjs": {
-      "sha256": "6ee66517c2e2fe5fa07b1d7b3dda04c8070744a2a8161430b6feb45d5f3b60b1",
+      "sha256": "536fbe13bbb45a088de7d627cd3aafede7f4042e413cc067deb42cd3077c6e6b",
       "executable": false
     },
     "operations/fixtures/invitation-runtime.mjs": {
