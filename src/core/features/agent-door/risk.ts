@@ -1,7 +1,7 @@
 import {loadOptInMode} from '../audience/opt-in-modes';
 import {ToolRefusal,type ClassAndFacts,type ToolContext,type ApprovalSummary} from '@/vendor/base/agent-door/index.ts';
 import type {NativeToolSpec} from './catalogue';
-import {hasPermission,type ProductRole, type Capability} from '../auth/permissions';
+import {hasPermission,productCapabilities,type ProductRole} from '../auth/permissions';
 import {productAuthority} from '../auth/product-roles';
 import {protectedRecords} from './records';
 import type {NativeRequest} from './native';
@@ -17,9 +17,8 @@ export async function authority(spec:NativeToolSpec,args:Record<string,unknown>,
  if(spec.effect==='access'){
   const current=await productAuthority(ctx.db,String(args.id));
   if(!current)throw new ToolRefusal('not_found');
-  const capabilities:Capability[]=['campaign.approve','campaign.send','draft.write','flow.activate','contact.unmasked','operators.manage','provider.connect','installation.erase'];
   const role=args.role as ProductRole;
-  const widens=capabilities.some(cap=>hasPermission(role,cap)&&!hasPermission(current.role,cap))||(args.unmaskedContacts===true||hasPermission(role,'contact.unmasked'))&&!(current.unmaskedContacts||hasPermission(current.role,'contact.unmasked'));
+  const widens=productCapabilities.some(cap=>hasPermission(role,cap)&&!hasPermission(current.role,cap))||(args.unmaskedContacts===true||hasPermission(role,'contact.unmasked'))&&!(current.unmaskedContacts||hasPermission(current.role,'contact.unmasked'));
   return {subject:String(args.id),widens};
  }
  if(spec.effect==='consent'){

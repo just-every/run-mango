@@ -3178,7 +3178,7 @@
       "executable": false
     },
     "src/core/features/agent-door/people.ts": {
-      "sha256": "d75d6b60529f21c7c8ebe74e1fcf4afe45ef2835f05fe4bbf0a4c3fff187689a",
+      "sha256": "b6f3e0febdd702fbac8c836decfe83275f48a2a98dd4df4c5d81310f0c99bfb5",
       "executable": false
     },
     "src/core/features/agent-door/records.ts": {
@@ -3186,7 +3186,7 @@
       "executable": false
     },
     "src/core/features/agent-door/risk.ts": {
-      "sha256": "82d3e47d66f1f038e0ddf6d277ebb103a8e50213a58be62cfcbb2d1344cc3eed",
+      "sha256": "a2b6049141a072cdb6698b22f036be49cb5bd4fdb09a5dce41fbd6854d417361",
       "executable": false
     },
     "src/core/features/agent-door/tools.ts": {
@@ -3786,7 +3786,7 @@
       "executable": false
     },
     "src/core/features/auth/permissions.ts": {
-      "sha256": "aa8e955574bc9df4fe3f49e5e9102dffa9bcd5915826ece7bb68fabc3e181ee7",
+      "sha256": "eb792a944e851c69de1b5e55094c59012f3e2dc7e9858ad4caf443337347a8a6",
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
@@ -9062,7 +9062,7 @@
       "executable": false
     },
     "tests/agent-door.spec.ts": {
-      "sha256": "34571fdd0279552aa67cdfa3f43f22940371c0d00f8a682dd7231fcc2e6350fe",
+      "sha256": "ff6a4ae10099c87d351d97f9cf3028477ccaee648e14e51969b323cd27610aff",
       "executable": false
     },
     "tests/agent-door/design-fixture.mjs": {
@@ -9087,6 +9087,10 @@
     },
     "tests/agent-door/provider-edge.mjs": {
       "sha256": "d7741e60acbcda396bf1b7d8e7da7dcfe9482fde4fa2a046f13a5d18b2d6f487",
+      "executable": false
+    },
+    "tests/agent-door/worker.ts": {
+      "sha256": "6d829df32ad0bcd235965c2446d93169e3452bfba8840699d6abaf9d3630244f",
       "executable": false
     },
     "tests/approval-binding/config.js": {

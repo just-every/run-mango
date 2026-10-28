@@ -1,13 +1,15 @@
 export const productRoles = ['owner', 'admin', 'manager', 'author', 'analyst', 'support'] as const;
 export type ProductRole = typeof productRoles[number];
 
-export type Capability =
-  | 'session.self' | 'campaign.read' | 'draft.write' | 'campaign.approve' | 'campaign.send' | 'campaign.test'
-  | 'flow.read' | 'flow.activate' | 'report.read' | 'contact.read' | 'contact.unmasked'
-  | 'contact.subscribe' | 'contact.optout' | 'contact.privacy-request' | 'contact.erase'
-  | 'audience.import' | 'audience.export' | 'segment.read' | 'segment.manage' | 'form.manage'
-  | 'integration.manage' | 'activity.read' | 'operators.manage' | 'settings.manage'
-  | 'provider.connect' | 'installation.erase' | 'unclassified';
+export const productCapabilities = [
+  'session.self', 'campaign.read', 'draft.write', 'campaign.approve', 'campaign.send', 'campaign.test',
+  'flow.read', 'flow.activate', 'report.read', 'contact.read', 'contact.unmasked',
+  'contact.subscribe', 'contact.optout', 'contact.privacy-request', 'contact.erase',
+  'audience.import', 'audience.export', 'segment.read', 'segment.manage', 'form.manage',
+  'integration.manage', 'activity.read', 'operators.manage', 'settings.manage',
+  'provider.connect', 'installation.erase', 'unclassified',
+] as const;
+export type Capability = typeof productCapabilities[number];
 
 const grants: Record<Exclude<ProductRole, 'owner' | 'admin'>, readonly Capability[]> = {
   manager: ['session.self', 'campaign.read', 'draft.write', 'campaign.approve', 'campaign.send', 'campaign.test',

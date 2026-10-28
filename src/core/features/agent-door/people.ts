@@ -1,5 +1,7 @@
 import { operatorAuthPeople, type PeopleAdapter, type Person } from '@/vendor/base/agent-door/index.ts';
 import { isActiveOperator, type Operator } from '@/vendor/base/operator-auth/index.mjs';
+import {effectiveRole} from '../auth/product-roles';
+import type {ProductRole} from '../auth/permissions';
 import type { createAuthService } from '../auth/service';
 
 export function mangoPeople(db: D1Database, auth: ReturnType<typeof createAuthService>): PeopleAdapter {
@@ -10,10 +12,11 @@ export function mangoPeople(db: D1Database, auth: ReturnType<typeof createAuthSe
     return Boolean(await db.prepare("SELECT operator_id FROM bs_team WHERE business_id=? AND state IN('active','invited') AND operator_id IS NOT NULL").bind(sub).first());
   }
   async function read(id:string):Promise<Person|null> {
-    const row=await db.prepare('SELECT id,email,display_name AS displayName,role,status FROM oa_operators WHERE id=?').bind(id).first<Operator>();
+    const row=await db.prepare(`SELECT n.id,n.email,n.display_name AS displayName,n.role,n.status,${effectiveRole} AS productRole
+      FROM oa_operators n LEFT JOIN operator_product_roles r ON r.operator_id=n.id WHERE n.id=?`)
+      .bind(id).first<Operator&{productRole:ProductRole}>();
     if(!row||!isActiveOperator(row))return null;
-    const native=await auth.operatorById(id);
-    return native?{id:row.id,email:row.email,name:row.displayName,role:native.role,active:true}:null;
+    return {id:row.id,email:row.email,name:row.displayName,role:row.productRole,active:true};
   }
   const mapping=operatorAuthPeople({db,session:async request=>{
     const operator=await auth.authenticate(request);
