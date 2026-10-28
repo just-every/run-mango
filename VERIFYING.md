@@ -1,6 +1,6 @@
 # Verification profiles
 
-`rer verify` runs routine acceptance: command/source checks, operations,
+`rer verify` runs routine acceptance: command/source checks,
 typecheck, production build and public API/browser journeys. It covers native
 operator authority, sender and approval checks, consent and suppression,
 imports, erasure, delivery uncertainty, signed provider facts and local
@@ -8,16 +8,14 @@ export/restore. `pnpm test` runs routine tests without repeating static checks
 and the build. Install Chromium once with `pnpm exec playwright install chromium`
 before browser checks.
 
-Push and pull-request Verify split independent stages into parallel jobs.
-Main, local-start and go-live browser journeys use six, three and nine
-Playwright shards respectively; newsletter UI (with sender disclosure),
-campaign results and move-in run independently, alongside static/operations
-checks and the remaining native lifecycle journeys.
-Shared mutable browser state stays within one isolated
-job, and each job retains its own database, caches and temporary checkouts.
-Slow frozen fresh-install and README clone journeys run on release tags and
-nightly, outside the ordinary push wall. The push rule is fifteen minutes;
-a measured green workflow establishes that wall, not the intended shard layout.
+Push and pull-request Verify build once, check the built output and hydration,
+and share that production build with eight jobs of whole public-door journeys.
+`scripts/verification/plan.mjs` declares the file selections for each job; files
+run with bounded workers against separate installations. Shared mutable browser
+state stays within its journey, and each job retains its own database, caches
+and temporary checkouts. Frozen fresh-install and production secret-scan journeys
+run on release tags and nightly, outside the ordinary push wall. The target is
+ten minutes or less; a measured green workflow establishes the actual wall.
 
 The coordinator supports selecting a stage and, for shardable browser stages,
 a Playwright shard. A full local invocation still covers the routine stages
@@ -52,24 +50,16 @@ clean frozen-install clone. No separate release-capacity script or capacity
 workload is part of its receipt. Existing import limits are unchanged; prior
 capacity measurements retain their named revision and scope and are not fresh
 release evidence. Tag/nightly installer checks remain separate from capacity
-claims. The default budget is 200 cases. Mango's narrow complex-seed exception in
-`test-budget.json` caps the aggregate at 214: the inherited 211 plus the health
-probe and erasure-aware export regressions, plus one MOVE-009/CONT-012/AUD-008
-imported-engagement review, approval and dispatch journey. Its controlled clock,
-populated native results and immutable delivery policy are independently useful
-coverage alongside archive custody, repeat, undo and erasure. The six-role authorization matrix,
-consent/suppression, migration custody, erasure, delivery evidence and native
-restore flows retain their independent fixtures and assertions. Restructuring
-thirteen cases across these flows would exceed the bounded health correction;
-this exception grants no speculative headroom and changes no test discovery.
+claims.
 
-`node scripts/verification/test-budget.mjs` collects every configured Playwright
-category (including the slow installer tier) and all top-level Node operation
-registrations, expanding their matrices without executing test bodies. It checks
-the aggregate against the written cap before the static CI stage. A collection
-error fails the check. Actual test execution keeps the existing runners, fixtures
-and cleanup. Prove changed public flows; do not add copy, version, hash or file-list
-pin tests.
+Keep a small set of whole user and business flows through HTTP routes, native
+commands and the browser. The six-role authorization, consent/suppression,
+migration custody, erasure, delivery evidence and native restore flows retain
+their behaviour assertions. One phone smoke uses a 390-pixel viewport; other
+browser journeys use 1440 pixels. There is no registration cap or cap-check
+script. Prove changed public flows and fold useful behaviour into a surviving
+journey before deleting duplicate coverage. Do not add copy, version, hash,
+file-list or presentation-threshold pins.
 
 Native startup waits for the CLI's complete `RER_READY` line after health checks
 and stops owned processes on exit, error or cancellation. Authentication uses
