@@ -50,13 +50,15 @@ export function approvalAuthorityGuard(campaign: string, revision: string, event
     WHERE ar.campaign_id = ${campaign} AND ar.revision_id = ${revision}
       AND av.state = 'approved' AND av.content_digest = ar.revision_digest
       AND av.approved_at = ar.approved_at AND av.updated_at = ar.approved_at
-      AND av.approved_by_operator_id = ar.operator_id
-      AND ae.actor_type = 'operator' AND ae.actor_id IS NOT NULL AND ae.actor_id <> ''
+      AND ((av.approved_by_operator_id = ar.operator_id AND ae.actor_type='operator')
+        OR (av.approved_by_operator_id IS NULL AND av.agent_sponsor_id=ar.operator_id
+          AND av.authorized_by_agent_id=ae.actor_id AND ae.actor_type='agent'))
+      AND ae.actor_id IS NOT NULL AND ae.actor_id <> ''
       ${eventId ? `AND ae.id = ${eventId}` : ''}
       AND ${recordedIdentity} AND ${historicalEvidence}
       AND (
-        (ae.action = 'approved' AND ae.operation_key = 'approval:' || ar.idempotency_key
-          AND ae.actor_id = ar.operator_id AND sa.attempt_key = ar.idempotency_key
+        (ae.action IN ('approved','authorized') AND ae.operation_key = 'approval:' || ar.idempotency_key
+          AND (ae.actor_id = ar.operator_id OR ae.actor_id=av.authorized_by_agent_id) AND sa.attempt_key = ar.idempotency_key
           AND json_extract(ae.detail_json, '$.revisionDigest') = ar.revision_digest)
         OR (ae.action = 'sender-reapproved' AND sa.attempt_key = ae.operation_key
           AND json_extract(ae.detail_json, '$.campaignId') = ar.campaign_id

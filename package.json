@@ -45,7 +45,7 @@
     "artifact:delivery": "node scripts/build-delivery-artifact.mjs",
     "hosted": "node scripts/installer/hosted.mjs",
     "integration:sync": "node scripts/sync-integration.mjs --write",
-    "integration:check": "node scripts/sync-integration.mjs --check"
+    "integration:check": "node scripts/sync-integration.mjs --check && node scripts/agent-surface.mjs --check"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

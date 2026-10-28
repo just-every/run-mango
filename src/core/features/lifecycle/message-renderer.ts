@@ -1,3 +1,5 @@
+import {agentAttribution} from '../agent-door/context';
+import {escapeHtml} from '../campaigns/email-html-policy';
 import {liveCatalogValues,CatalogBlocked} from '@/core/features/campaigns/catalog-values';
 import {catalogBlocks,insertCatalogHtml,catalogTextValues,type CatalogRenderings} from '@/core/features/campaigns/catalog-blocks';
 import {CatalogDeliverySkip} from '@/core/features/campaigns/catalog-outcomes';
@@ -70,6 +72,12 @@ export async function prepareDeliveryRequest(
         headers: {'List-Unsubscribe': `<${oneClickUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click'},
       }
     : {text: managedSmsText(rendered.sms,smsPolicy!,smsApproval!.sender)};
+  const attribution=agentAttribution();
+  if(attribution){
+    content.text += '\n\nPrepared by '+attribution.label;
+    if('html' in content)content.html=(content.html??'')+'<p>Prepared by '+escapeHtml(attribution.label)+'</p>';
+    if('headers' in content)content.headers={...content.headers,'X-Mango-Prepared-By':attribution.label.replace(/[\r\n]/g,' ')};
+  }
   const request: DeliveryRequest = {
     purpose:'marketing',
     ...(catalog?{catalog:{readAt:Object.values(catalog)[0].readAt,hidden:catalogBlocks(envelope.revision.emailBody).flatMap(row=>catalog![row.key].hidden),emptyBlocks:catalogBlocks(envelope.revision.emailBody).filter(row=>catalog![row.key].items.length===0).length}}:{}),
