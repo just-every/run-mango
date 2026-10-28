@@ -8106,7 +8106,7 @@
       "executable": false
     },
     "src/vendor/base/portability/import.mjs": {
-      "sha256": "8d14320c62b38e68b912441a6b1a42deafb2ff41c33eaae1c6dd224368c939a7",
+      "sha256": "f7c2cd22ddb89bcce91fea1016bb68553db8ae1c657cff941fb94f8cf9fd3bcd",
       "executable": false
     },
     "src/vendor/base/portability/index.d.mts": {
