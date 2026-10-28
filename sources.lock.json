@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "9259ab1b4268405dcf1fd048c3dadab87441e2364344a84d997f3e9140d5d7ff",
+      "sha256": "8d0272f572c19d583edda5d6d20f4e1623a343f9d64816ccaac659fbc517c0a2",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8558,7 +8558,7 @@
       "executable": false
     },
     "tests/docs.spec.ts": {
-      "sha256": "4fdbb2847f1c5a2106ac6c36cdafd06e2d140f78a288fcf50d6888cc5f73d867",
+      "sha256": "89be542a5be926991a08d126734d000f58b40cdb2b2cdd7247d7fb7b33476fcb",
       "executable": false
     },
     "tests/evidence/allowed-host-approved-1440.png": {

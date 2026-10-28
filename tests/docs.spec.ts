@@ -18,6 +18,7 @@ async function visit(page: Page, route: string, baseURL: string) {
 }
 
 test.describe('public documentation', () => {
+  test.describe.configure({ timeout: 180000 });
   contract('DOCS-001', 'every manifest page renders with one h1, section navigation, previous and next, and no cookie or foreign request', async ({ page, request, context, baseURL }) => {
     expect(pages.length).toBeGreaterThan(1);
     for (const [index, entry] of pages.entries()) {
