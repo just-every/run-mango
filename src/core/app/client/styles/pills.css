@@ -13,7 +13,7 @@
   color: var(--ms-ink-soft);
   background: var(--ms-paper-deep);
   font-family: var(--ms-sans);
-  font-size: 12px;
+  font-size: var(--ms-caption-size, 13px);
   font-weight: 600;
   letter-spacing: .06em;
   line-height: 1.2;

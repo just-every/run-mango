@@ -59,7 +59,7 @@ export function StorePage() {
               return <article key={source.id} className="store-source" aria-label={`${titleCase(source.sourceType)} sync`}>
                 <div className="store-source__head">
                   <strong>{titleCase(source.sourceType)}</strong>
-                  <span><StatusPill value={source.lastError || stale ? 'needs-sync' : 'fresh'} /></span>
+                  <span role="status"><StatusPill value={source.lastError || stale ? 'needs-sync' : 'fresh'} /></span>
                 </div>
                 <p className="store-source__meta">{source.lastSuccessfulAt ? `Last completed ${formatDate(source.lastSuccessfulAt)}` : 'No successful sync'}</p>
                 {source.lastError && source.lastError !== run?.lastError ? <small className="store-source__error">{source.lastError}</small> : null}
@@ -80,7 +80,7 @@ export function StorePage() {
               </article>;
             })}
           </div>
-        ) : <p className="notice-note">No commerce source types have been declared by the server.</p>}
+        ) : <p className="notice-note" role="status">No commerce source types have been declared by the server.</p>}
       </section>
       <StoreOperations operations={data.syncRuns.filter((run): run is SyncRun & OperationRun => run.operation !== 'sync')} />
       {data.channels?.map(channel => <section className="panel" key={channel.id}>

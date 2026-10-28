@@ -32,3 +32,29 @@ export async function expectNoSeriousAxeViolations(page: import('@playwright/tes
   await test.info().attach(`axe-${name}`, { body: JSON.stringify({ url: page.url(), seriousOrCritical: violations.length, violations }), contentType: 'application/json' });
   expect(violations, `${name}: ${JSON.stringify(violations.map(({ id, impact, nodes }) => ({ id, impact, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })) })), null, 2)}`).toEqual([]);
 }
+
+export async function expectWithinViewportWidth(locator: import('@playwright/test').Locator) {
+  await expect(locator).toBeVisible();
+  const bounds = await locator.evaluate(element => {
+    const { left, right } = element.getBoundingClientRect();
+    return { left, right, viewport: window.innerWidth };
+  });
+  expect(bounds.left).toBeGreaterThanOrEqual(0);
+  expect(bounds.right).toBeLessThanOrEqual(bounds.viewport);
+}
+
+export async function expectReason(locator: import('@playwright/test').Locator) {
+  await expect(locator).toBeVisible();
+  await expect(locator).toHaveText(/\S/);
+  await expectWithinViewportWidth(locator);
+}
+
+export async function expectOutcomeInView(locator: import('@playwright/test').Locator) {
+  await expectWithinViewportWidth(locator);
+  const bounds = await locator.evaluate(element => {
+    const { top, bottom } = element.getBoundingClientRect();
+    return { top, bottom, viewport: window.innerHeight };
+  });
+  expect(bounds.top).toBeGreaterThanOrEqual(0);
+  expect(bounds.bottom).toBeLessThanOrEqual(bounds.viewport);
+}
