@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "46f3e51fedf358af9ab0345714ca6f963855c6a0983c44c990fadaf47adc6104",
+      "sha256": "11e584a30016a202859d1bb547d908f2c8e545079503e961cadae9ffe9b755cd",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8334,7 +8334,7 @@
       "executable": false
     },
     "tests/campaign-authoring/audience-size-journey.ts": {
-      "sha256": "c37dc80f4ea7e37ce2763376397d7996d8feed3882c4da46c616f82ad04c851f",
+      "sha256": "70206b91d1359d69a46c7fb7e1ff4af5f74135f2130cd04169be734826b8c889",
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
@@ -8354,7 +8354,7 @@
       "executable": false
     },
     "tests/campaign-authoring/catalog-riders-journey.ts": {
-      "sha256": "22ef923859a1b316e343d82becff058d9c40e0eec2ec63a8e56d9727059c2e28",
+      "sha256": "8808c9d3ca9fadc61db812ff1f147f6fa29b25f3f603b2f83368d3eb33e24baf",
       "executable": false
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {
@@ -8374,7 +8374,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
-      "sha256": "37def4e9a3686eee40874125672590ef696ae985c5e2ff7aa2306639cae442f4",
+      "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
@@ -8686,7 +8686,7 @@
       "executable": false
     },
     "tests/go-live/delivery.flow.ts": {
-      "sha256": "201939c1480bb3b5902fef2ee1c9db161c014f4431404080a78c3500ae85b1b6",
+      "sha256": "b677aaa7e0643cbc8a6a3c6281a44480a4b6a09ed930f61d0a370f88dfb8a536",
       "executable": false
     },
     "tests/go-live/delivery.journeys.ts": {
@@ -9414,7 +9414,7 @@
       "executable": false
     },
     "VERIFYING.md": {
-      "sha256": "6a871e95e615eab68f4fdc575dc8142e6b93a33c34ba8b7c26bf0268a156b225",
+      "sha256": "a831999119dab4982911bf90bd9b98cf4a1817d9ef07fb5fc0a4633d33aa2db9",
       "executable": false
     },
     "vite.config.ts": {

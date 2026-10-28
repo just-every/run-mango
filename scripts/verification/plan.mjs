@@ -45,8 +45,8 @@ export function verificationGroups({stage,shard,files,testsOnly}, cpuBudget) {
   });
   const staticGroups=[
     [{name:'command-contract',command:process.execPath,args:['node_modules/@runeditrun/rer/bin/rer.mjs','check','--profile','first-party']},pnpm('source',['run','source:check'])],
-    [pnpm('typecheck',['run','typecheck']),pnpm('integration',['run','integration:check'])],
-    [pnpm('build',['run','build'])],
+    [pnpm('typecheck',['run','typecheck']),pnpm('build',['run','build'])],
+    [pnpm('integration',['run','integration:check'])],
   ];
   if(stage==='static')return staticGroups;
   if(stage)return [[browser(stage,files??(stage==='local-start-slow'?['local.journey.ts']:undefined),shard)]];

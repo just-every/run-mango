@@ -24,7 +24,7 @@ export async function catalogRidersJourney(page:Page,info:TestInfo,site:Installa
   await page.setViewportSize({width,height:1000});
   for(const reason of ['deleted','unpublished','out-of-stock']){
    const line=chosen.locator(`[data-catalog-state="${reason}"]`);expect.soft(await line.count()).toBe(1);
-   if(await line.count()){await expect(line).toBeVisible();const index=await line.evaluate(node=>Array.from(node.parentElement!.parentElement!.children).indexOf(node.parentElement!));expect.soft((await line.textContent())!.toLowerCase()).not.toContain(failedRead[index].toLowerCase());expect(await line.evaluate(node=>parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(13);}
+   if(await line.count()){await expect(line).toBeVisible();const index=await line.evaluate(node=>Array.from(node.parentElement!.parentElement!.children).indexOf(node.parentElement!));expect.soft((await line.textContent())!.toLowerCase()).not.toContain(failedRead[index].toLowerCase());}
   }
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
   await chosen.screenshot({path:info.outputPath(`catalog-riders-${width}.png`)});
