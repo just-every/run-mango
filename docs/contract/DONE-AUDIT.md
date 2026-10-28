@@ -1,4 +1,4 @@
-Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
+Old reference: `d9108966f802c37e5b1cd80e63c358883a762fe4`.
 # Carried-done outcome audit
 | Clause | Point | Outcome | Asserting test | Result |
 | --- | --- | --- | --- | --- |

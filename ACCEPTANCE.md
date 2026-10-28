@@ -4391,8 +4391,8 @@ Core · target · **partial** · Cites BASE-ACCESSIBILITY-001 · Register R-801,
 1. At 390 pixels the dashboards, reports, contact lookup, campaign review/approval, flow status/pause, forms and settings have no horizontal scroll.
 2. The flow canvas is readable and node details are available; each page meets the shared Base accessibility bar.
 
-**Evidence.** `tests/newsletter-ui/representative-pages.journeys.ts`
-**Gap.** acceptance not yet met: The representative-pages journey (tests/newsletter-ui/representative-pages.journeys.ts) extended to every operator page at 390 pixels with axe and overflow checks.
+**Evidence.** `tests/newsletter-ui/representative-pages.journeys.ts`: every operator page at 390 pixels through the Menu and detail routes, open panels and dialogs, empty and populated records, read-only and unavailable states, keyboard flow selection and panning, saved draft loading after validation refusal, axe and document overflow checks
+**Gap.** Flows are draft revisions only; live status and pause remain unavailable until FLOW-008.
 
 #### MOBILE-002 — Native iOS and Android app
 

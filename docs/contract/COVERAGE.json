@@ -2,7 +2,7 @@
   "schema": 1,
   "seed": "contract-md-mango",
   "old": {
-    "commit": "6d9fc12eeae3b7ae661508996201cb8d008895af",
+    "commit": "d9108966f802c37e5b1cd80e63c358883a762fe4",
     "files": [
       "CONTRACT.md",
       "ACCEPTANCE.md",
@@ -8958,16 +8958,6 @@
     },
     {
       "file": "CONTRACT.md",
-      "line": 1240,
-      "cell": "gap",
-      "text": "acceptance not yet met: The representative-pages journey (`tests/newsletter-ui/representative-pages.journeys.ts`) extended to every operator page at 390 pixels with axe and overflow checks.",
-      "to": "gap",
-      "ids": [
-        "MOBILE-001"
-      ]
-    },
-    {
-      "file": "CONTRACT.md",
       "line": 1241,
       "cell": "gap",
       "text": "not implemented",
@@ -13431,6 +13421,16 @@
       "line": 105,
       "text": "| FLOW-001 | partial | Draft revisions only. Trigger enrolment, including the INT-004 renewal reminder (FLOW-002), and activation (FLOW-008) remain unbuilt. All node kinds have plain explanations; unavailable transports/actions are identified. No flow is enrolled, activated or sent. Evidence: `tests/go-live/roles.journeys.ts` via `tests/campaign-authoring/flow-journey.ts` (Verify go-live 6/9): three-message welcome graph with split, unreachable-node validation and repair, keyboard pan/zoom, saved revision reload and 1440/390 accessibility/overflow/hydration; all node-kind explanations, named loop/unended-path validation and delay-cycle acceptance; Author saves, Analyst reads, Support named 403. `tests/portability.spec.ts` (Verify main 4/6 for DATA-001; main 5/6 for erasure authority) exports/restores the draft revision with prior data. |",
       "to": "changelog"
+    },
+    {
+      "file": "CONTRACT.md",
+      "line": 1240,
+      "cell": "gap",
+      "text": "Flows are draft revisions only; live status and pause remain unavailable until FLOW-008.",
+      "to": "gap",
+      "ids": [
+        "MOBILE-001"
+      ]
     }
   ]
 }
