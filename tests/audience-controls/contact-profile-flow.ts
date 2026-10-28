@@ -6,7 +6,7 @@ import {openPage} from '../support/navigation';
 import type {ContactTimelineEntry} from '../../src/core/features/audience/contact-timeline';
 
 export const contactProfileJourney = async ({page,request},testInfo)=>{
-  
+
   const hydrationErrors:string[]=[];
   page.on('console',message=>{if(/hydration|hydrated.*match/i.test(message.text())&&message.type()==='error')hydrationErrors.push(message.text());});
   page.on('pageerror',error=>hydrationErrors.push(error.message));

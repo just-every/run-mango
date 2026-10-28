@@ -24,6 +24,9 @@ test('[BASE-ACCESS-002][MOBILE-001] phone visitors reach public docs and operato
   await installContents.focus(); await installContents.press('Enter');
   await expect(page.getByRole('navigation', {name:'Documentation'}).locator('details[open]')).toHaveCount(1);
   await audit('install-docs');
+  const command=page.locator('.docs-prose pre').first();
+  await expect(command).toBeVisible();
+  expect(await command.evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
   expect((await request.get('/app',{maxRedirects:0})).status()).toBe(303);
   await signInAsLocalOperator(page,request);
   await openPage(page,'/app');
