@@ -1192,6 +1192,17 @@
       }
     },
     {
+      "path": "scripts/edition-authoring/vendor/babel-parser/babel-parser/types.mjs",
+      "originPath": "edition-authoring/vendor/babel-parser/babel-parser/types.mjs",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/babel-parser/babel-parser/types.mjs": "7220719c4d56a39b2b63d28ebe4131f2b59e55c7de96533cd4b1dcdc3a2e02d0"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/babel-parser/babel-parser/types.mjs": "100644"
+      }
+    },
+    {
       "path": "scripts/edition-authoring/vendor/babel-parser/babel-parser/util/class-scope.mjs",
       "originPath": "edition-authoring/vendor/babel-parser/babel-parser/util/class-scope.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -1277,6 +1288,28 @@
       },
       "modes": {
         "scripts/edition-authoring/vendor/babel-parser/babel-parser/util/whitespace.mjs": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/vendor/babel-parser/LICENSE",
+      "originPath": "edition-authoring/vendor/babel-parser/LICENSE",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/babel-parser/LICENSE": "117da2af0d4ce0fe1c8e19b5cff9dcd806adf973d328d27b11d4448c4ff24f76"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/babel-parser/LICENSE": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/vendor/babel-parser/README.md",
+      "originPath": "edition-authoring/vendor/babel-parser/README.md",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/babel-parser/README.md": "e7ee8625baac8ac14c2d458dd719de1551317ba8b640614bfcadd6dc4b6af857"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/babel-parser/README.md": "100644"
       }
     },
     {
@@ -1533,6 +1566,17 @@
       }
     },
     {
+      "path": "scripts/edition-authoring/vendor/yaml/LICENSE",
+      "originPath": "edition-authoring/vendor/yaml/LICENSE",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/LICENSE": "5bba27375d93e9119f76c1015f7672cf9ad5f70952296e0842fb2243d6376869"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/LICENSE": "100644"
+      }
+    },
+    {
       "path": "scripts/edition-authoring/vendor/yaml/log.mjs",
       "originPath": "edition-authoring/vendor/yaml/log.mjs",
       "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
@@ -1739,6 +1783,17 @@
       },
       "modes": {
         "scripts/edition-authoring/vendor/yaml/public-api.mjs": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/vendor/yaml/README.md",
+      "originPath": "edition-authoring/vendor/yaml/README.md",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/README.md": "7d1979439cb82d413f9e97c6c0cfd0ca3027e662e2ce574fddc7ec7860363d01"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/README.md": "100644"
       }
     },
     {
@@ -2058,6 +2113,17 @@
       },
       "modes": {
         "scripts/edition-authoring/vendor/yaml/stringify/stringifyString.mjs": "100644"
+      }
+    },
+    {
+      "path": "scripts/edition-authoring/vendor/yaml/util.mjs",
+      "originPath": "edition-authoring/vendor/yaml/util.mjs",
+      "revision": "25d370982f5bd8afbe650b82cb58adc2137d10e9",
+      "files": {
+        "scripts/edition-authoring/vendor/yaml/util.mjs": "365dc12f67de4e3a8d31ceb6f86986879d745e4d65fa3e6f3b6df577ef0ca667"
+      },
+      "modes": {
+        "scripts/edition-authoring/vendor/yaml/util.mjs": "100644"
       }
     },
     {
