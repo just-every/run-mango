@@ -8313,8 +8313,20 @@
       "sha256": "9da6d86d97d3a21f1fc0da042ddf56185c161edc8551643065578169d1904a08",
       "executable": false
     },
+    "tests/audience-import/signup-reservation-clock.spec.ts": {
+      "sha256": "1a83fc65fe63222f1f858ae74ce0f89a1351168fc0af786ffc07965557ef19a7",
+      "executable": false
+    },
+    "tests/audience-import/signup-security.spec.ts": {
+      "sha256": "2dd14eb5f387de74a637dab685557ea02beababbe8e6ce481d8b5e14bf1db8bb",
+      "executable": false
+    },
     "tests/audience-import/signup.spec.ts": {
       "sha256": "1982743cf19ecb78d5ca7eb15e1ca78c376644f0e78fa89f35a82e4a46953c9f",
+      "executable": false
+    },
+    "tests/campaign-assets.spec.ts": {
+      "sha256": "519251f5a407cc61090b2b9bd417873bd6449d0de85c45e5dce2046c0fc330d6",
       "executable": false
     },
     "tests/campaign-authoring/advisory-worker.ts": {
