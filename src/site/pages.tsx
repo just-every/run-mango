@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { contractPageHtml } from '@/base/contract-page';
+import { hostingPageHtml } from '@/base/hosting-page';
 import { runPageHtml, siteNotFoundHtml, type SiteBuild, type SiteContext } from '@/base/run-site';
 import '@/core/app/client/styles.css';
 import { DocsPage } from '@/core/features/docs/DocsPage';
@@ -10,6 +11,7 @@ import { Landing } from '@/core/features/landing/Landing';
 import { copy } from '@/core/features/landing/copy';
 import { PublicPage } from '@/core/features/site/PublicPage';
 import { RunSite } from '@/core/features/site/run-site';
+import { SiteHeader } from '@/core/features/site/SiteHeader';
 import { fontLinks } from '@/core/features/site/font-head';
 import { identity } from '@/identity';
 import { run } from './run';
@@ -22,7 +24,11 @@ const icons = ['favicon.svg', 'favicon-32.png', 'favicon.ico', 'apple-touch-icon
  * page at `/run`; the docs at `/docs` and `/docs/<slug>`, rendered by the same components and docs module as an installed
  * Mango's docs routes; and the not-found page. Every page is static and links to no instance-only route.
  */
-export async function sitePages({ styles, contract }: SiteContext): Promise<SiteBuild> {
+export async function sitePages({ styles, contract, hosting }: SiteContext): Promise<SiteBuild> {
+  const homepageHeader = (current: 'docs' | 'other') => ({
+    html: renderToStaticMarkup(<RunSite.Provider value={true}><div className="mango-site" style={{ minHeight: 0 }}><SiteHeader current={current} /></div></RunSite.Provider>),
+    styles,
+  });
   const document = (title: string, description: string, body: ReactElement) => '<!doctype html>' + renderToStaticMarkup(
     <html lang="en">
       <head>
@@ -51,7 +57,8 @@ export async function sitePages({ styles, contract }: SiteContext): Promise<Site
   return {
     pages: [
       { path: '/', html: document(copy.meta.title, copy.meta.description, <Landing />) },
-      { path: '/run', html: runPageHtml(identity, run, contract) },
+      { path: '/run', html: runPageHtml(identity, run, contract, homepageHeader('other')) },
+      ...(hosting !== undefined ? [{ path: '/docs/hosting', html: hostingPageHtml(identity, run, hosting, contract, homepageHeader('docs')) }] : []),
       ...(contract ? [{ path: '/contract', html: contractPageHtml(identity, run, contract) }] : []),
       ...docs,
       { path: '/404', html: siteNotFoundHtml(identity, run, contract) },
