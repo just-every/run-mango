@@ -9,7 +9,7 @@ and the build. Install Chromium once with `pnpm exec playwright install chromium
 before browser checks.
 
 Push and pull-request Verify build once, check the built output and hydration,
-and share that production build with nine jobs of whole public-door journeys.
+and share that production build with ten jobs of whole public-door journeys.
 `scripts/verification/plan.mjs` declares the file selections for each job; files
 run with bounded workers against separate installations. Shared mutable browser
 state stays within its journey, and each job retains its own database, caches

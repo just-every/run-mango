@@ -21,7 +21,8 @@ export const packs = [
   {name:'native',members:[member('local-start',['authority.journey.ts','command-data.journey.ts','retained-archive.journey.ts']),member('go-live',['mailbox-provider.journeys.ts'])]},
   {name:'reports',members:[member('campaign-results'),member('go-live',['managed-mail.journeys.ts','shared-kiosk.journeys.ts','opt-out-reasons.journeys.ts'])]},
   {name:'move-in',members:[member('move-in'),member('go-live',['personalisation.journeys.ts','open-estimates.journeys.ts'])]},
-  {name:'campaigns',members:[member('go-live',['go-live.journeys.ts','contact-links.journeys.ts','presend-checks.journeys.ts','typed-tests.journeys.ts'])]},
+  {name:'campaigns',members:[member('go-live',['go-live.journeys.ts'])]},
+  {name:'campaign-checks',members:[member('go-live',['contact-links.journeys.ts','presend-checks.journeys.ts','typed-tests.journeys.ts'])]},
   {name:'delivery',members:[member('go-live',['delivery.journeys.ts','delivery-recovery.journeys.ts','multistep.journeys.ts'])]},
   {name:'connections',members:[member('go-live',['source-freshness.journeys.ts','roles.journeys.ts','sync-integrations.journeys.ts'])]},
 ];
