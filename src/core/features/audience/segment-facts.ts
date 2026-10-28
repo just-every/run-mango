@@ -1,16 +1,20 @@
+import {propertyDefinitions,propertyFields,propertyPersonalisation} from './properties/read';
 import { readContactRfm } from '@/core/features/insights/retention';
 
 /** Real local facts shared by the rule resolver, with no provider inference. */
 export function createSegmentFacts(db:D1Database) {
   return {
+    async propertyPersonalisation(contactId:string){const profile=await this.segmentProfile(contactId);return propertyPersonalisation(profile.definitions,profile.fields);},
     segmentRfm:(now:Date)=>readContactRfm(db,now),
     async segmentProfile(contactId:string) {
       const row=await db.prepare('SELECT fields_json fields,tags_json tags FROM integration_contact_profiles WHERE contact_id=?').bind(contactId).first<{fields:string;tags:string}>();
       const imported=(await db.prepare("SELECT detail FROM contact_history WHERE contact_id=? AND kind='incumbent-profile' ORDER BY occurred_at,id").bind(contactId).all<{detail:string}>()).results;
       const fields:Record<string,unknown>=Object.create(null),tags=new Set<string>();
       for(const record of imported){const profile=JSON.parse(record.detail);Object.assign(fields,profile.fields,{importedTopics:profile.topics});for(const topic of profile.topics)fields['imported-topic:'+topic]=true;for(const tag of profile.tags)tags.add(tag);}
+      const history=(await db.prepare("SELECT detail FROM contact_history WHERE contact_id=? AND kind='property-change' ORDER BY occurred_at,id").bind(contactId).all<{detail:string}>()).results;
       if(row){Object.assign(fields,JSON.parse(row.fields));for(const tag of JSON.parse(row.tags))tags.add(tag);}
-      return {fields,tags:[...tags].sort()};
+      const values=propertyFields(fields,history);
+      return {fields:values,tags:[...tags].sort(),definitions:await propertyDefinitions(db)};
     },
     async segmentClicked(contactId:string,channel:'email'|'sms',from:Date,now:Date) {
       const native=await db.prepare(`SELECT 1 FROM link_click_facts c JOIN recipient_steps r ON r.id=c.recipient_step_id

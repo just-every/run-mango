@@ -11,7 +11,7 @@ import { optOutLedger, optOutStatus, type OptOutLine } from './import-opt-out-li
 
 export type NormalizedImportRow = {
   file: string; row: number; email: string; phone: string; smsStatus: string; displayName: string; status: string; reason?: string; skipped?: string; warnings: string[];
-  values: Record<string, string>; ledger?: AudienceSnapshot;
+  values: Record<string, string>; propertyColumns?:Record<string,string>; ledger?: AudienceSnapshot;
   sourceExtras?:SourceExtras;
   sourceAttestation?:PlannedAttestation;
   incumbent?: {id:string;evidenceAt:number;timeQuality:string;source:string;facts:Record<string,string>};
@@ -44,9 +44,9 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
     columns.push({name:file.name,headers,mapping});
     for (const [index, original] of parseCsv(file.csv).entries()) {
       const values = { ...original };
-      for (const [field, header] of Object.entries(mapping)) values[field] = original[header.trim().toLowerCase()] ?? '';
+      for (const [field, header] of Object.entries(mapping)) if(!field.startsWith('property:')||header)values[field] = original[header.trim().toLowerCase()] ?? '';
       let sourceRow:ReturnType<typeof csvSourceRow>|undefined;
-      const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',phone:'',smsStatus:'non-subscribed',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values};
+      const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',phone:'',smsStatus:'non-subscribed',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values,propertyColumns:Object.fromEntries(Object.entries(mapping).filter(([key,header])=>key.startsWith('property:')&&header).map(([key,header])=>[key.slice(9),header]))};
       try {
         if (original.__parse_error) throw new Error(original.__parse_error);
         // An opt-out whose address no contact holds carries only its portable identity (import-opt-out-lines).

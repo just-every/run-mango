@@ -1,3 +1,5 @@
+import {propertyDefinitions,readPropertyFields} from '@/core/features/audience/properties/read';
+import {propertyWriteStatements,validatePropertyFields} from '@/core/features/audience/properties/write';
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
 import type { createAudienceService } from '@/core/features/audience/service';
 import { sha256, stableJson } from '@/core/shared/ids';
@@ -33,16 +35,21 @@ export function createIntegrationContacts(db: D1Database, audience: ReturnType<t
         WHERE c.id>? AND (? IS NULL OR EXISTS(SELECT 1 FROM contact_email_addresses a WHERE a.contact_id=c.id AND a.email=?))
         AND (? IS NULL OR EXISTS(SELECT 1 FROM integration_segment_members m WHERE m.contact_id=c.id AND m.segment_id=?))
         ORDER BY c.id LIMIT ?`).bind(query.cursor ?? '', query.email ?? null, query.email ?? null, query.segmentId ?? null, query.segmentId ?? null, query.limit).all<ContactRow>()).results;
-      return {contacts: rows.map(project), nextCursor: rows.at(-1)?.id ?? query.cursor ?? ''};
+      return {contacts: await Promise.all(rows.map(async row=>({...project(row),fields:await readPropertyFields(db,row.id)}))), nextCursor: rows.at(-1)?.id ?? query.cursor ?? ''};
     },
     async upsert(credentialId: string, input: ContactInput) {
       const now = Date.now();
+      if(input.fields)input={...input,fields:validatePropertyFields(await propertyDefinitions(db),input.fields) as ContactInput['fields']};
       if (input.consent && Date.parse(input.consent.occurredAt) > now) throw new IntegrationError('consent_in_future', 400);
       if (input.segmentId) await ownedSegment(credentialId, input.segmentId);
       const segmentId = input.segmentId ?? `integration_${(await sha256(input.segmentName!)).slice(0, 40)}`;
       const {contact} = await audience.ensureContact({email: input.email, displayName: input.displayName}, new Date(now));
       if (contact.mergeLock) throw new IntegrationError('contact_merge_in_progress', 409);
       const statements: D1PreparedStatement[] = [];
+      if(input.fields){
+        const credential=await db.prepare('SELECT name FROM integration_credentials WHERE id=?').bind(credentialId).first<{name:string}>();
+        statements.push(...(await propertyWriteStatements(db,contact.id,input.fields,{kind:'api',label:credential?.name??credentialId,reference:credentialId},now,true)).statements);
+      }
       if (input.segmentName) {
         const emptyRule = JSON.stringify({version: 1, operator: 'all', predicates: [{sourceType: 'contact', field: 'id', comparator: 'in', value: [contact.id]}]});
         statements.push(db.prepare(`INSERT INTO audience_segments(id,name,inclusion_rule_json,exclusion_rules_json,created_by,created_at,updated_at)
@@ -69,7 +76,7 @@ export function createIntegrationContacts(db: D1Database, audience: ReturnType<t
 
       const row = await db.prepare(`SELECT ${projection} FROM contacts c LEFT JOIN integration_contact_profiles p ON p.contact_id=c.id WHERE c.id=?`).bind(contact.id).first<ContactRow>();
       if (!row) throw new IntegrationError('contact_changed', 409);
-      return {contact: project(row)};
+      return {contact: {...project(row),fields:await readPropertyFields(db,row.id)}};
     },
   };
 }

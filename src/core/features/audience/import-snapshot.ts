@@ -1,3 +1,4 @@
+import {appendImportProperties} from './properties/import';
 import {canonicalJson} from '@/vendor/base/import-kit/src/d1/index';
 import type {ImportState} from './import-state';
 import { sha256, ulid } from '@/core/shared/ids';
@@ -64,6 +65,7 @@ export async function importSnapshot(state: ImportState, row: NormalizedImportRo
       if(row.incumbent)snapshot.tables.incumbent_consent_links.push({id:evidenceId,contact_id:id,attestation_id:row.incumbent.id,evidence_at:row.incumbent.evidenceAt,time_quality:row.incumbent.timeQuality,source_facts_json:JSON.stringify(row.incumbent.facts)});
       snapshot.tables.consent_capture_metadata.push({id:evidenceId,contact_id:id,capture_ip:row.values.capture_ip || null,confirmation_ip:row.values.confirmation_ip || null,created_at:now,updated_at:now});
     }
+    appendImportProperties(snapshot,row,state.definitions,state.propertyOpening.get(id)??{},identity,now);
     const sourceName=row.sourceDisplayName??row.displayName;
     snapshot.tables.audience_import_observations.push({id:ulid(now),contact_id:id,source_file:row.file,source_row:row.row,source_status:row.values.source_status,...(sourceName?{source_display_name:sourceName}:{}),capture_method:'csv-import',capture_source:`CSV import: ${row.file}`,optin_time:row.values.occurred_at || null,confirm_time:row.values.confirmed_at || null,capture_ip:row.values.capture_ip || null,confirmation_ip:row.values.confirmation_ip || null,created_at:now,updated_at:now});
     snapshot.tables.contact_history.push({id:ulid(now),contact_id:id,kind:'audience-import',detail:`${row.file} row ${row.row}: ${row.status}`,occurred_at:now,created_at:now,updated_at:now});

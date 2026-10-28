@@ -124,6 +124,11 @@ export async function readContactTimeline(db:D1Database, contactId:string, detai
     // Imported profile objects belong in the profile view, never as raw JSON in
     // the activity feed. History shows source facts without provider payloads.
     if(row.kind==='incumbent-profile')continue;
+    if(row.kind==='property-change'){
+      const change=JSON.parse(row.detail) as import('./properties/types').PropertyChange;
+      const job=change.source.kind==='import'&&change.source.reference?await db.prepare("SELECT job_id FROM ik_provenance WHERE json_extract(record_json,'$.sourceId')=? LIMIT 1").bind(change.source.reference).first<{job_id:string}>():null;
+      add({id:`history:${row.id}`,kind:row.kind,detail:`${change.key}: ${JSON.stringify(change.oldValue)} → ${JSON.stringify(change.newValue)}`,source:`${change.source.kind} · ${change.source.label}${job?' · import '+job.job_id:''}${change.source.column?' · column '+change.source.column:''}`},row.occurredAt);continue;
+    }
     if(['incumbent-order','incumbent-click','incumbent-open','incumbent-event'].includes(row.kind)){
       const facts=JSON.parse(row.detail) as Record<string,unknown>;
       const title=row.kind==='incumbent-order'?'Imported order':row.kind==='incumbent-click'?'Imported email click':row.kind==='incumbent-open'?'Imported open estimate; not a click or purchase':'Imported source event';

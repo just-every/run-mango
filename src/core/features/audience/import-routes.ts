@@ -1,3 +1,4 @@
+import {propertyDefinitions} from './properties/read';
 import {readSourceExport} from '../move-in/source-api';
 import {sourceExtrasSchema} from '../move-in/source-extras';
 import {sourcePresets} from '../move-in/csv-sources';
@@ -31,7 +32,7 @@ export function createAudienceImportRoutes(platform: Platform) {
       ORDER BY category`).all<{category:string}>();
     return context.json({messageCategories:categories.results.map(row=>row.category),presets:Object.entries(presetStatuses).map(([id,status])=>({id,status,label:sourcePresets[id]?`${sourcePresets[id]} CSV export`:id==='mango'?'Mango audience export':id.replace('csv-','CSV: '),description:sourcePresets[id]?'Original source statuses and attributes are retained. Active rows need your source attestation; every opt-out and suppression stays restricted.':id==='mango'?'Lossless Mango consent ledger':'Choose the status this CSV represents. Preview import then shows how its columns map, and you can change them. Restrictive row statuses always take precedence.'})),
     // SMS columns are offered only where text messages are enabled.
-    fields:Object.keys(defaultMapping).filter(id=>platform.sms||!id.startsWith('sms_')).map(id=>({id,label:id.replaceAll('_',' ')}))});
+    fields:Object.keys(defaultMapping).filter(id=>platform.sms||!id.startsWith('sms_')).map(id=>({id,label:id.replaceAll('_',' ')})).concat((await propertyDefinitions(platform.database.$client)).map(d=>({id:'property:'+d.key,label:`${d.label} (${d.type==='money'?'USD money':d.type})` })))});
   });
   routes.get('/audience/signup/refusals',async context=>context.json({...await readSignupRefusals(platform.database.$client),challengeConfigured:Boolean(platform.config.signupTurnstile)}));
   routes.get('/audience/signup',async context=>{

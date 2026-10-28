@@ -157,7 +157,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
         timeZone: channelData.timeZone,
         timeZoneEvidenceAt: channelData.timeZoneEvidenceAt,
         timeZoneEvidenceSource: channelData.timeZoneEvidenceSource,
-        personalisation: contactPersonalisation(contact, channelData.destination),
+        personalisation: {...await repository.propertyPersonalisation(contact.id),...contactPersonalisation(contact, channelData.destination)},
       },
     };
   }

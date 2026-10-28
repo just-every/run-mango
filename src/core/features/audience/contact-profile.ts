@@ -1,3 +1,4 @@
+import {readTypedProperty} from './properties/read';
 import type { Platform } from '@/core/shared/platform';
 import { sha256 } from '@/core/shared/ids';
 import { createAudienceRepository } from './repository';
@@ -10,7 +11,7 @@ import { segmentAvailability } from './segment-availability';
 import { parseStructuredRules } from '@/core/features/lifecycle/rules';
 
 export type ContactProfile = {
-  properties: Record<string, unknown>; tags: string[];
+  properties: Record<string, unknown>; tags: string[]; definitions: import('./properties/types').PropertyDefinition[]; propertyErrors:Record<string,string>;
   mergedIdentities: Array<{id:string;occurredAt:number}>;
   segments: Array<{id:string;name:string;state:'member'|'unavailable'}>;
 };
@@ -38,5 +39,6 @@ export async function readContactProfile(platform:Platform, contactId:string):Pr
       !(await Promise.all(rules.exclusions.map(rule=>matcher.predicateMatches(contactId,rule.predicate,contact)))).some(Boolean))
       segments.push({id:segment.id,name:segment.name,state:'member'});
   }
-  return {properties:profile.fields,tags:profile.tags,mergedIdentities:merged.results,segments};
+  const propertyErrors=Object.fromEntries(profile.definitions.flatMap(d=>{const read=readTypedProperty(d,profile.fields);return read.error?[[d.key,read.error]]:[];}));
+  return {definitions:profile.definitions,propertyErrors,properties:profile.fields,tags:profile.tags,mergedIdentities:merged.results,segments};
 }

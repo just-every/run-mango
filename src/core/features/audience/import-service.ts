@@ -1,3 +1,4 @@
+import {propertyDefinitions} from './properties/read';
 import { apiImageReport } from '../move-in/incumbent-images';
 import {applySourceExtras,undoSourceExtras} from '../move-in/source-extras';
 import {csvReview,csvReconciliation,recordCsvAttestations} from '../move-in/csv-review';
@@ -143,7 +144,7 @@ export function createAudienceImportService(platform: Platform) {
       const previewDb = budget.db;
       // Review normalizes first, so an over-cap or malformed input is refused before any query.
       const {normalized,effects,source,plan,now}=await this.review(input,context,previewDb,options);
-      const sourceDigest=await sha256(canonicalJson({input,incumbentSources:options.incumbentSources??null}));
+      const sourceDigest=await sha256(canonicalJson({input,incumbentSources:options.incumbentSources??null,propertyDefinitions:await propertyDefinitions(previewDb)}));
       const existing=await previewDb.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE source_digest=? AND principal_id=?').bind(sourceDigest,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();
       if(existing){
         // Reuse a review while every row still targets the same contact revision, or
