@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "1288a35ec56624e73df535fb345b894eef431add8de6bebbff31d61458c1ece9",
+      "sha256": "46a2d78457eae7ab18a6680375aeaf858a3d8d67c6d10df2d24d23e7ad9379e4",
       "executable": false
     },
     "DEMO.md": {
@@ -2282,7 +2282,7 @@
       "executable": false
     },
     "src/core/app/client/styles/base.css": {
-      "sha256": "d525ce6ddae3c6136fcf6bbf810f80b357cbc004f7bae5e47fdc092264549a27",
+      "sha256": "70d6a176368344e9d4afb575e1a2b8d18be383f1683665d90e54c585badeac9e",
       "executable": false
     },
     "src/core/app/client/styles/buttons.css": {
@@ -2306,7 +2306,7 @@
       "executable": false
     },
     "src/core/app/client/styles/page.css": {
-      "sha256": "f6d2ab00c5fe4884c1871e23b48d08e90bce2bcb7d2bb945295e27d3444a809c",
+      "sha256": "25a543f71e2dd3fa4e1e4efcb290f4e5a26fa7e9e7b2de250a4790f5bcae5bfe",
       "executable": false
     },
     "src/core/app/client/styles/pages/audience.css": {
@@ -2318,11 +2318,11 @@
       "executable": false
     },
     "src/core/app/client/styles/pages/audience/import.css": {
-      "sha256": "211930ec831dbf373c288e851e9f64a089e5cbfc4bf12d44731102018d353cd5",
+      "sha256": "2724547a663cad88254071c9257dbcff66d851397f99fbe8773bf1a57817ef9a",
       "executable": false
     },
     "src/core/app/client/styles/pages/audience/list.css": {
-      "sha256": "bb588a1bc53ad1d066291db6b22a10b0f122dff538bf5f5583b430600fafed15",
+      "sha256": "cb56655bcf618e6e0c860888b31b15e98a6e519be6702745e520f5f36a636d49",
       "executable": false
     },
     "src/core/app/client/styles/pages/audience/signup.css": {
@@ -2350,7 +2350,7 @@
       "executable": false
     },
     "src/core/app/client/styles/pages/review.css": {
-      "sha256": "ee9b65f513530b6d534c4ac2de8854b8d633481ac138e4250c66af65cbbe274e",
+      "sha256": "208e0a372f42482a194583cc0852870f4fcf0629200342dd6d2e1ec5ce094bec",
       "executable": false
     },
     "src/core/app/client/styles/pages/settings.css": {
@@ -2362,7 +2362,7 @@
       "executable": false
     },
     "src/core/app/client/styles/pills.css": {
-      "sha256": "ef639afcdc98ff74e4f861880cffdf95cd69e8271e90ad00a1726d4b81c47917",
+      "sha256": "abdf8e87f888347dd9cf657a5efec71144c08e85bde01b01ffd94e5ebf1051a6",
       "executable": false
     },
     "src/core/app/client/styles/shell.css": {
@@ -2374,7 +2374,7 @@
       "executable": false
     },
     "src/core/app/client/styles/tables.css": {
-      "sha256": "b0f6877f65e5900aa66f1e3c1598856602df7f368312a724223894f5be76733d",
+      "sha256": "da76981c1b9972ba8f3dad2aad0bdcb77518f759051a0f32b18471249541f1b6",
       "executable": false
     },
     "src/core/app/client/ui/disclosure.tsx": {
@@ -3570,7 +3570,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/decision-desk.tsx": {
-      "sha256": "86a3e0b0c4c4625cc766aff1e5233ec35b4ee80cba022c5415c62ba7140b8dd9",
+      "sha256": "5861c6a4163ed80fd5383755933b1cab2d40de07a8437e777c317432633b2946",
       "executable": false
     },
     "src/core/features/campaigns/ui/delivery-plan.tsx": {
@@ -3950,7 +3950,7 @@
       "executable": false
     },
     "src/core/features/flows/page.tsx": {
-      "sha256": "be0f79a5c69a037971a3c21c8f56b2694ed0bc7144d96dc71811c941364527b8",
+      "sha256": "8d152e5d57aa4c60767d31704758d6be0f06d0f4d4abe41b4d6d96ae600ae34e",
       "executable": false
     },
     "src/core/features/flows/routes.ts": {
@@ -3958,7 +3958,7 @@
       "executable": false
     },
     "src/core/features/flows/styles.css": {
-      "sha256": "7988088aa639900aca733b008dc6f0c413015d0cb2c51f399d0bc7fc05184cb3",
+      "sha256": "082d126d266ac5650306894203448b338c9b96c766ff5ba602cdb1da3a3c8a37",
       "executable": false
     },
     "src/core/features/health/queue-probe.ts": {
@@ -4194,7 +4194,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/insights-page.tsx": {
-      "sha256": "f92200c494142dc92efa507c73a8331681c44f75df67a3863e8d45d3bded4672",
+      "sha256": "6076d69ba2100b789ddeb565c2d38c7abac7c394394ea11adfb65d6cf9228284",
       "executable": false
     },
     "src/core/features/insights/ui/list-growth.tsx": {
@@ -5298,7 +5298,7 @@
       "executable": false
     },
     "src/core/features/store/ui/store-page.tsx": {
-      "sha256": "934eb361f831bcb3f56fa2c4f95a3709aa6b002ccdb14d415666528eb7f3834c",
+      "sha256": "996de54086433d1efcde239db2532ff2655138762154766afd74b54b0ba7366e",
       "executable": false
     },
     "src/core/features/store/ui/woocommerce-flows.tsx": {
@@ -8478,7 +8478,7 @@
       "executable": false
     },
     "tests/newsletter-ui/browser-checks.ts": {
-      "sha256": "347cd51c6ea75dc9dfeb161c379c45233fe71605f0b468a3fe8c476c2e192a5e",
+      "sha256": "7ce7e347389c30e130dff65c6659b2366fe51166718d795c0b880591682450b3",
       "executable": false
     },
     "tests/newsletter-ui/campaign-axe.ts": {
@@ -8498,7 +8498,7 @@
       "executable": false
     },
     "tests/newsletter-ui/representative-pages.journeys.ts": {
-      "sha256": "313faf358dc5a8e960e68abf5274a82c953916b844fa92ae0fa05d9cd1aef902",
+      "sha256": "3d505b79b4270285779343ce918efc763cbb3c4520e15d4e81d5519f926311a2",
       "executable": false
     },
     "tests/newsletter-ui/review-layout-support.ts": {

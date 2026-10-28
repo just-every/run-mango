@@ -44,7 +44,7 @@ export function InsightsPage() {
         <div className="page-head__text">
           <p className="eyebrow">Insights</p>
           <h1>Observed outcomes, never invented forecasts.</h1>
-          <p className="page-head__lead">{data.note}</p>
+          <p className="page-head__lead" role="status">{data.note}</p>
         </div>
       </header>
       <OverviewDashboard/>

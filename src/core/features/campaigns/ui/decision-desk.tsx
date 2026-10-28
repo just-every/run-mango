@@ -26,9 +26,9 @@ function ProposalCapabilityState({ providers, suggestions }: { providers: Decisi
   );
   return (
     <EmptyState id="proposal-empty-title" title={suggestions ? 'No campaign suggestions yet' : 'Write your next letter'} className="desk-empty" art={art} action={<Link className="secondary-action" to="/app/campaigns">Review campaigns</Link>}>
-      {!suggestions ? <p>Write a campaign, preview it on desktop and mobile, then approve the exact saved version. Nothing sends until you do.</p> : unavailable.length ? (
+      {!suggestions ? <p role="status">Write a campaign, preview it on desktop and mobile, then approve the exact saved version. Nothing sends until you do.</p> : unavailable.length ? (
         <>
-          <p>These connections need attention before suggestions are available.</p>
+          <p role="status">These connections need attention before suggestions are available.</p>
           <ul className="capability-list">
             {unavailable.map((provider) => (
               <li key={provider.id}>
@@ -39,7 +39,7 @@ function ProposalCapabilityState({ providers, suggestions }: { providers: Decisi
           </ul>
         </>
       ) : (
-        <p>You can still review your saved campaigns.</p>
+        <p role="status">You can still review your saved campaigns.</p>
       )}
     </EmptyState>
   );
