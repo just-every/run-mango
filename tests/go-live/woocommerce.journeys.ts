@@ -1,3 +1,4 @@
+import {builtConnectionsSourceJourney} from './built-source-journey';
 import {wooPluginJourney, wooBrowserConsent} from './woocommerce-plugin-journey';
 import {test, expect} from '@playwright/test';
 import {createHmac} from 'node:crypto';
@@ -133,5 +134,8 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     await wooBrowserConsent(page);
     expect(woo.state.authorizations.every(value => value === 'Basic ' + Buffer.from(connection.key + ':' + connection.secret).toString('base64'))).toBe(true);
     expect(edge.unexpected).toEqual([]);
+    // The cross-connection owner-export proof owns a separate native runtime.
+    // Keep it with the built-store journey, outside Shopify's signed-cart budget.
+    await builtConnectionsSourceJourney();
   } finally {await site.runtime.close(); await edge.close();}
 });

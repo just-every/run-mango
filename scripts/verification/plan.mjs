@@ -87,7 +87,9 @@ export function matrix(tier) {
   // Use each member's worst duration from 40688815772, 40692382998 and
   // 40711572645, including both newsletter-ui and sender-disclosure stages.
   // Keep every combined pack below 660s (largest: static + go-live-3 = 657s)
-  // so runner setup, variation and artifact cleanup retain room. The 532s
+  // Reserve another full 30s signed-cart budget in go-live-9 for its moved
+  // source proof (main-1 + go-live-9 <= 647s); keep main-7's old estimate.
+  // Runner setup, variation and artifact cleanup retain room. The 532s
   // go-live-1 member runs alone; native runtimes remain sequential in each job.
   const packs = [
     ['static', 'go-live-3-of-9'],

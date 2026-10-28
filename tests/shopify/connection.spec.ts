@@ -1,5 +1,4 @@
 // @ts-nocheck -- Native Worker/D1 integration; only Shopify and mail network edges are doubled.
-import {builtConnectionsSourceJourney} from '../go-live/built-source-journey';
 import {exportedStoreRecords,assertSourceFacts} from '../store/source-export-proof';
 import {expect,test} from '@playwright/test';
 import {readFile} from 'node:fs/promises';
@@ -147,7 +146,6 @@ test('signed carts preserve string identity, multiple lines and ordering; confli
       {type:'browsing-event',id:'shopify-observation:'+event.id,at:event.timestamp},
     ],status.sourceCapabilities.filter(row=>row.available).map(row=>row.sourceType));
     console.log('Shopify source proof: every declared snapshot and observation type retains its identifier, connection and edge occurrence time through the owner export');
-    await builtConnectionsSourceJourney();
   }finally{await f.close();}
 });
 

@@ -1658,7 +1658,7 @@
       "executable": false
     },
     "playwright.config.js": {
-      "sha256": "8114d5307b84b2a8795ff7105200a597d1c6910bcc8559fc1d89c70021172563",
+      "sha256": "1446bb4a409db01b47624831ae932f326ab85bf35111be72e417e67fa048ec52",
       "executable": false
     },
     "pnpm-lock.yaml": {
@@ -2070,7 +2070,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "297affb7550efdac309fbbcbc4a5e15a2912db4330c9435253906b6b78c97b3d",
+      "sha256": "959e80fb73611ec44a04a22975b3a6f31491261423c5f5eebb3ae1f816266934",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -7658,7 +7658,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
-      "sha256": "d07d0e50cfbcdae577990460bde78a8998750e9255245f3c56057b404e1b08f2",
+      "sha256": "b13250bc1e2c892a5dff641e69335b87d6d2621ec8115c8b3f4ec810317357b0",
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
@@ -8014,7 +8014,7 @@
       "executable": false
     },
     "tests/go-live/delivery-recovery.journeys.ts": {
-      "sha256": "2849f51dc4f32bae4a03502dfdb0a03aa4668d72d6224462ec3c2ef03680e012",
+      "sha256": "4fbe2c58b0f8dc8a6b279238b9ca8b222f4d1159dcca20d41ad23b9f15bea91b",
       "executable": false
     },
     "tests/go-live/delivery.journeys.ts": {
@@ -8118,7 +8118,7 @@
       "executable": false
     },
     "tests/go-live/playwright.config.js": {
-      "sha256": "c842e6e8e902abb6bbaa7cb9df4b1a97d92df5ca540724a876c97c63eda807bc",
+      "sha256": "f6ea4f35ce8c1fab7bd1e3d9002c6a2f9ba4c76b7cb4fdea78b9b4e4df878ce5",
       "executable": false
     },
     "tests/go-live/presend-checks.journeys.ts": {
@@ -8282,7 +8282,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "e5fa51f00f084528d04cfd50e80968a63823eb078f50462e7b46983893b92e5d",
+      "sha256": "273c1263e6fbeaa6203125685d0f8c7abfd1948658eef332d6b31b93a67669d9",
       "executable": false
     },
     "tests/go-live/worker.ts": {
@@ -8650,7 +8650,7 @@
       "executable": false
     },
     "tests/shopify/connection.spec.ts": {
-      "sha256": "64d802dd7ea20e661d35d128602d406422936dbe2ed408c459b97b07e8397bac",
+      "sha256": "4d2651a352d96a004e634ca2a0def61228c8fefd19e1f35cd552797dc8111fc7",
       "executable": false
     },
     "tests/shopify/erasure-race.ts": {
