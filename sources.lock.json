@@ -1761,6 +1761,34 @@
       "sha256": "b660d6603c7038f2846a37836c10061b7c7b678d041b6075c461251e12264adc",
       "executable": false
     },
+    "scripts/ci/install-chromium-deps.py": {
+      "sha256": "d3027108ad8e08ceeddb0ed477d967b1207e40bb6bf5ae941854c534c2cf4004",
+      "executable": false
+    },
+    "scripts/ci/mango-plan.mjs": {
+      "sha256": "1c1483c441b61daa4501f2d7e10c71093eb62374ace3f6198aab8b1686933ac2",
+      "executable": false
+    },
+    "scripts/ci/verify-app.mjs": {
+      "sha256": "ae27ec8ff2ff32975048bf208898f9ee2f716ed06bb89b6ad7d205023ed46c91",
+      "executable": false
+    },
+    "scripts/ci/verify-ci.mjs": {
+      "sha256": "cf1ceb8773ed276f82245fb8fb4c4bdc95bff40ecc0e8ca8ac9e776978b17340",
+      "executable": false
+    },
+    "scripts/ci/verify-evidence.mjs": {
+      "sha256": "9224f772d6a17f043448694eca3c149df83070417b995a2840497e36a9ad0100",
+      "executable": false
+    },
+    "scripts/ci/verify-light.mjs": {
+      "sha256": "3f58865aa32380d48d8320f3a1f520c0663e4f17d82f7f5ccd4cb0448feff197",
+      "executable": false
+    },
+    "scripts/ci/verify-plan.mjs": {
+      "sha256": "45fe2ab9c5cbc72d0186bf77fab32c985605caae6ecee50676dd618612c3e78f",
+      "executable": false
+    },
     "scripts/delivery/base/artifact.mjs": {
       "sha256": "129f210f1556e816ba94ffe74359ac553cd26466aaf8c6c299765e9cea29aa07",
       "executable": false
