@@ -2,7 +2,7 @@ import { DesignImportError, type LayerDoc, type LayerNode } from './layerdoc';
 import { fontStack, hexColour, readable } from './palette';
 import { emailColumnPixels } from '../campaigns/email-limits';
 
-/** How a LayerDoc becomes rows of a 600px email (DESIGN-004). Pure: the browser crops the images this
+/** How a LayerDoc becomes rows of a 600px email (DESIGN-012). Pure: the browser crops the images this
  * plan asks for, and compile.ts writes the HTML. */
 export const emailWidth = emailColumnPixels, gutter = 20, innerWidth = emailWidth - gutter * 2, columnGap = 20;
 export const columnWidth = (innerWidth - columnGap) / 2;

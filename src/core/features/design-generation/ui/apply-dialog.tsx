@@ -19,7 +19,7 @@ async function readSource(job: DesignJobView): Promise<Source> {
   return { layerDocText, candidate: await candidate.blob(), buttonLabel: planDesign(parseLayerDoc(layerDocText)).buttonLabel };
 }
 
-/** The last step of Design with 12ui (DESIGN-002), opened from a ready run's notice or as the continuation of "Use this
+/** The last step of Design with 12ui (DESIGN-009, DESIGN-010), opened from a ready run's notice or as the continuation of "Use this
  * design" (see design-generation.tsx): it goes through the
  * same browser path as Import 12ui design (DESIGN-004), with the operator's button destination, and becomes an unsaved
  * edit of the email body. Closing it keeps the run, so the design can be used later without buying it again. */

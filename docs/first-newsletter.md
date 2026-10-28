@@ -76,7 +76,7 @@ Nothing is saved until you choose **Save full draft**, and the summary says when
 
 ## Design with 12ui
 
-If your Mango holds your own 12ui API key (see [Install and deploy](./install.md#optional-email-design-with-12ui)), the email editor also shows **Design with 12ui**, so you can make a design without leaving Mango. Without that key the button does not appear and Mango never contacts 12ui.
+If your Mango holds your own 12ui API key (see [Getting started](./getting-started.md#optional-email-design-with-12ui)), the email editor also shows **Design with 12ui**, so you can make a design without leaving Mango. Without that key the button does not appear and Mango never contacts 12ui.
 
 1. Choose **Design with 12ui**. The **Brief** starts as the draft's name, subject, preheader, sender name and current text; add the words the email must say and a note on style. Personalisation such as `{{first_name}}` is removed before anything is sent: 12ui receives only Mango's description of an email layout and your brief, never your contacts. Pick 2 to 4 designs and read the estimate, then choose **Generate designs**.
 2. The designs appear under the editor as 12ui draws them, usually within a minute. You can keep editing or leave the page; the run belongs to the draft and is there when you come back.

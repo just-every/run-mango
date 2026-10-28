@@ -20,7 +20,7 @@
 .back-link { display: inline-flex; gap: 6px; margin-bottom: var(--sp-3); color: var(--ms-muted); font-size: 14px; font-weight: 500; line-height: 1.3; text-decoration: none; }
 .back-link:hover { color: var(--ms-ink); text-decoration: underline 2px var(--ms-mango); text-underline-offset: 4px; }
 
-.eyebrow { margin: 0 0 var(--sp-2); color: var(--ms-amber); font-size: 12px; font-weight: 600; letter-spacing: 0.14em; line-height: 1.3; text-transform: uppercase; }
+.eyebrow { margin: 0 0 var(--sp-2); color: var(--ms-amber); font-size: var(--ms-caption-size, 13px); font-weight: 600; letter-spacing: 0.14em; line-height: 1.3; text-transform: uppercase; }
 /* Over a panel or section title the eyebrow sits close, so the pair reads as one heading. */
 .eyebrow:has(+ h2) { margin-bottom: var(--sp-1); }
 .muted-copy, .quiet-caption { color: var(--ms-muted); font-size: 13px; line-height: 1.45; }

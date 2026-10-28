@@ -19,7 +19,7 @@
 .audience-import-file__details > div { display: grid; min-width: 0; gap: 2px; }
 .audience-import-file__details strong { font-size: 15px; font-weight: 500; overflow-wrap: anywhere; }
 .audience-import-file__details small { color: var(--ms-muted); }
-.audience-import-file__icon { display: grid; flex: none; width: 40px; height: 40px; place-items: center; border-radius: var(--ms-radius-control); background: var(--ms-paper-deep); color: var(--ms-ink-soft); font-size: 11px; font-weight: 600; letter-spacing: .08em; }
+.audience-import-file__icon { display: grid; flex: none; width: 40px; height: 40px; place-items: center; border-radius: var(--ms-radius-control); background: var(--ms-paper-deep); color: var(--ms-ink-soft); font-size: var(--ms-caption-size, 13px); font-weight: 600; letter-spacing: .08em; }
 .audience-import-file__preset, .audience-import-mapping-grid label, .audience-import-consent-grid label { display: grid; min-width: 0; gap: 6px; }
 /* Remove is a text link (buttons.css), with room to tap. */
 .audience-import-file .audience-import-file__remove { justify-self: end; padding: var(--sp-2) var(--sp-1); font-size: 14px; }
@@ -66,7 +66,7 @@
 .audience-import-mapped-file h4 { margin: 0 0 var(--sp-2); font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
 .audience-import-mapped-file dl { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--sp-2) var(--sp-4); margin: 0; }
 .audience-import-mapped-file dl > div { min-width: 0; }
-.audience-import-mapped-file dt { color: var(--ms-muted); font-size: 12px; font-weight: 500; line-height: 1.35; }
+.audience-import-mapped-file dt { color: var(--ms-muted); font-size: var(--ms-caption-size, 13px); font-weight: 500; line-height: 1.35; }
 .audience-import-mapped-file dd { margin: 2px 0 0; font-size: 14px; overflow-wrap: anywhere; }
 
 /* The row table: the system table (tables.css), wider, with stacked labelled rows on a phone. */
@@ -90,7 +90,7 @@
 .audience-import-job:last-child { padding-bottom: 0; }
 .audience-import-job__heading, .audience-import-job__heading > div, .audience-import-job__actions { display: flex; min-width: 0; align-items: center; justify-content: space-between; gap: var(--sp-3); }
 .audience-import-job__heading > div { flex-wrap: wrap; justify-content: start; }
-.audience-import-job__heading code { max-width: 100%; color: var(--ms-muted); font-size: 12px; overflow-wrap: anywhere; }
+.audience-import-job__heading code { max-width: 100%; color: var(--ms-muted); font-size: var(--ms-caption-size, 13px); overflow-wrap: anywhere; }
 .audience-import-job__heading > strong { flex: none; font-size: 14px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .audience-import-job progress { display: block; width: 100%; height: 6px; margin: var(--sp-3) 0; overflow: hidden; border: 0; border-radius: 999px; background: var(--ms-paper-deep); color: var(--ms-leaf); -webkit-appearance: none; appearance: none; }
 .audience-import-job progress::-webkit-progress-bar { border-radius: 999px; background: var(--ms-paper-deep); }

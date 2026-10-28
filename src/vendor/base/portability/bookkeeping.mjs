@@ -1,4 +1,4 @@
-import { canonicalJson, sha256 } from './hash.mjs';
+import { schemaIdentityOf } from './schema-identity.mjs';
 import { insist } from './storage.mjs';
 
 // Installation authority and transient working state, never product data.
@@ -23,8 +23,8 @@ export async function restorableManifest(manifest) {
   for(const table of manifest.tables)if(identifier(table.name)==='ik_d1_assertions')
     insist(table.count===0,'invalid_bookkeeping_rows:'+table.name,409);
   const tables=manifest.tables.filter(table=>!platformTable(table.name));
-  if(tables.length===manifest.tables.length)return manifest;
-  return {...manifest,tables,schema:await sha256(canonicalJson(tables.map(({name,sql})=>({name,sql})))),
+  const schemaObjects=manifest.schemaObjects?.filter(object=>!manifest.tables.some(table=>platformTable(table.name) && table.name===object.table));
+  return {...manifest,tables,...(schemaObjects?{schemaObjects}:{}),schema:await schemaIdentityOf(tables,schemaObjects),
     excludedColumns:Object.fromEntries(Object.entries(manifest.excludedColumns).filter(([name])=>!platformTable(name)))};
 }
 export const skippedTablesLine=tables=>'Skipped platform bookkeeping tables: '+tables.join(', ')+'.';

@@ -19,7 +19,8 @@
       "id": "public-landing",
       "description": "Base's Lobby at an installed Mango's `/` (Finish setup until the sender identity is saved, then Sign in) with `GET /setup/state`, and the static, hand-illustrated landing page at the run site's `/` (run-mango.com, Run Mango to `/run`) for the newsletter profile: Mango's mark and name, a hero, how a letter leaves Mango, consent, approval of the exact letter, scheduling, delivery reports, ownership and a closing call to action, linking to the Run page and the first-party docs, with the owner's configured name, one-line description and optional credit in the footer. It reads no record or session, sets no cookie, and loads only same-origin fonts, styles, scripts and favicons.",
       "clauses": [
-        "HOME-001"
+        "HOME-001",
+        "HOME-002"
       ]
     },
     {
@@ -61,6 +62,7 @@
         "CONT-003",
         "CONT-004",
         "CONT-005",
+        "CONT-028",
         "CONT-006",
         "CONT-007",
         "CONT-008",
@@ -68,7 +70,9 @@
         "CONT-010",
         "CONT-011",
         "CONT-012",
-        "CONT-013"
+        "CONT-013",
+        "CONT-029",
+        "CONT-030"
       ]
     },
     {
@@ -91,6 +95,7 @@
       "description": "Resolves and rechecks campaign audiences against consent, commerce, dormancy, and frequency rules, freezing the candidate set at approval and re-excluding at dispatch.",
       "clauses": [
         "AUD-001",
+        "AUD-010",
         "AUD-002",
         "AUD-003",
         "AUD-004",
@@ -105,7 +110,11 @@
       "clauses": [
         "CAMP-001",
         "CAMP-002",
+        "AUD-010",
+        "CAMP-020",
+        "CAMP-021",
         "CAMP-003",
+        "CAMP-022",
         "CAMP-004",
         "CAMP-005",
         "CAMP-006",
@@ -116,6 +125,7 @@
         "CAMP-011",
         "CAMP-014",
         "CAMP-019",
+        "CAMP-024",
         "BUILD-012"
       ]
     },
@@ -123,14 +133,18 @@
       "id": "campaign-images",
       "description": "Signed-in operators upload JPEG, PNG, GIF or WebP campaign images, checked by their own header bytes, size and pixel dimensions. Each is stored once in R2 under its SHA-256, never changed or deleted except by contact erasure of bytes holding an erased identifier, and served publicly at `/media/<sha256>` with an immutable cache, its exact content type, no cookie and no session, rate-limited per image rather than per client address, recording nothing about who fetched it. Approval verifies these images in storage instead of fetching the deployment's own hostname.",
       "clauses": [
-        "CAMP-012"
+        "CAMP-012",
+        "CAMP-023"
       ]
     },
     {
       "id": "design-import",
       "description": "An operator imports a design made with their own 12ui CLI (a LayerDoc version 2 file and its PNG candidate) into a draft's email body. The browser crops the photos and stores them as campaign images, compiles a 600px table email in the validated email grammar with the operator's HTTPS button link and Mango's managed footer, and highlights every line not in the operator's brief. Import only makes an unsaved edit and itself makes no request to 12ui.",
       "clauses": [
-        "DESIGN-004"
+        "DESIGN-004",
+        "DESIGN-012",
+        "DESIGN-013",
+        "DESIGN-014"
       ]
     },
     {
@@ -138,8 +152,15 @@
       "description": "With the optional design module configured (the owner's own 12ui API key and origin), an operator editing a draft can ask for designs from a brief prefilled from the draft. A background run on the owner's 12ui account draws two to four candidates, shown as they land and kept across reloads; the operator picks one with Use this design, Mango fetches its layout as a LayerDoc and the browser then builds the email through the design import path, keeping the run on offer until the draft is saved with it. Estimates come before each paid step, each paid request records a cost fact, a rate-limit wait and every failure are shown with Mango's own reason, every request to 12ui has a time limit, and nothing is saved, approved, scheduled or sent by the run. With the module off, nothing is shown and 12ui is never contacted.",
       "clauses": [
         "DESIGN-001",
+        "DESIGN-005",
+        "DESIGN-006",
         "DESIGN-002",
-        "DESIGN-003"
+        "DESIGN-007",
+        "DESIGN-008",
+        "DESIGN-009",
+        "DESIGN-010",
+        "DESIGN-003",
+        "DESIGN-011"
       ]
     },
     {
@@ -155,6 +176,7 @@
         "MSG-007",
         "MSG-008",
         "MSG-009",
+        "MSG-016",
         "MSG-010",
         "MSG-011",
         "MSG-012",
@@ -186,6 +208,8 @@
         "RESULT-003",
         "RESULT-004",
         "RESULT-005",
+        "RESULT-009",
+        "RESULT-010",
         "RESULT-006",
         "REPORT-005"
       ]
@@ -195,6 +219,7 @@
       "description": "Exports every contact, source record, consent record, campaign, and audit entry as JSON alongside uploaded campaign assets. Private export/restore data includes signup_settings (frequency disclosure, exact embed origins, kiosk and challenge defaults), signup_allowance_levels (non-personal capacity revisions and operator attribution), analytics_settings (static UTM defaults), opt_in_modes (future capture modes and operator attribution), campaign_revisions.utm_policy_json (frozen defaults) and tracked_links.original_destination_url (authored click identity), open_tracking_settings (operator preference/audit, disabled by default, generation), open_tracking_tokens (signed token digest, recipient-step, generation and expiry) and open_estimate_facts (recipient-step and first occurrence only). Contact erasure removes linked open tokens/facts; no IP, user agent or cookie is stored for open estimates.",
       "clauses": [
         "DATA-001",
+        "DATA-002",
         "BASE-DATA-001"
       ]
     },
@@ -383,7 +408,7 @@
       "required": false,
       "why": "On an explicit Owner/Admin import action, reads an ActiveCampaign account under *.api-us1.com, *.api-us2.com, *.api-eu1.com or *.activehosted.com, or Klaviyo at a.klaviyo.com. HTTPS only; no redirects or cross-origin pagination. No live sync or outbound marketing.",
       "data": [
-        "The source API key, only in that read’s authentication header; never stored or logged by Mango",
+        "The source API key, only in that read\u2019s authentication header; never stored or logged by Mango",
         "Account-relative pagination and source record identifiers for requested contacts, lists, tags, fields, segments, templates, events and flow outlines"
       ],
       "adapters": [
@@ -556,7 +581,7 @@
       "name": "MANGO_ALLOWED_LINK_HOSTS",
       "required": false,
       "secret": false,
-      "why": "Optional initial comma-separated destination hosts; defaults to the app’s own host and remains editable in Mango Settings. Checked before an approved revision can send."
+      "why": "Optional initial comma-separated destination hosts; defaults to the app\u2019s own host and remains editable in Mango Settings. Checked before an approved revision can send."
     },
     {
       "name": "MANGO_TEST_EMAIL_ALLOWLIST",

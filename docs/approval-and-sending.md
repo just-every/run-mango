@@ -34,7 +34,7 @@ Approval needs evidence that your sender works. In **Settings**, once **Provider
 
 The confirmation lasts 30 days, or until the provider's domain records or your DNS change, and Mango checks the provider and public DNS (SPF, DKIM, DMARC and alignment with the From domain) again at approval and at every handoff. If the evidence is not passing when a message is due, the message waits and is retried on your reconciliation interval until its deadline. **Settings** shows each check and when it expires.
 
-An installation can instead trust a receipt connector that reports the receiving mailbox's own authentication results; [Install and deploy](./install.md#optional-a-trusted-receipt-connector) describes it.
+An installation can instead trust a receipt connector that reports the receiving mailbox's own authentication results; [Getting started](./getting-started.md#optional-a-trusted-receipt-connector) describes it.
 
 ## Inactivity in review
 

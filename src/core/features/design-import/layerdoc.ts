@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-/** The subset of 12ui's public LayerDoc v2 that Mango's design import reads (DESIGN-004).
+/** The subset of 12ui's public LayerDoc v2 that Mango's design import reads (DESIGN-014).
  * Every other field (signed artifact URLs, extraction metadata, icon SVG) is ignored and never fetched. */
 export type LayerNode = {
   kind: string;

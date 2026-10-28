@@ -12,8 +12,8 @@ async function* records(path) {
   try {yield* readArchive(Readable.toWeb(stream));}finally{stream.destroy();await file.close();}
 }
 /** File custody around Base's service, without another archive format or restore engine. */
-export async function transferArchive(service,direction,path,signal) {
-  let id,manifest,closing,file,temporary,complete=false;
+export async function transferArchive(service,direction,path,signal,options={}) {
+  let id,manifest,closing,file,temporary,status,complete=false;
   try {
     if(direction==='export') {
       await mkdir(dirname(path),{recursive:true,mode:0o700});temporary=path+'.'+randomUUID()+'.partial';file=await open(temporary,'wx',0o600);
@@ -28,13 +28,13 @@ export async function transferArchive(service,direction,path,signal) {
       for await(const record of records(path)){signal?.throwIfAborted();history.add(record);}
       for await(const record of records(path)) {
         signal?.throwIfAborted();
-        if(record.kind==='manifest'){manifest=record;id=await service.imports.create(manifest,undefined,{ledgers:history.ledgers()});}
+        if(record.kind==='manifest'){manifest=record;id=await service.imports.create(manifest,undefined,{ledgers:history.ledgers(),acknowledgeUnverifiedSchemaObjects:options.acknowledgeUnverifiedSchemaObjects===true});}
         else if(record.kind==='part')await service.imports.uploadPart(id,record.index,record);
         else closing=record;
       }
-      await service.imports.finalize(id,{contentHash:closing.contentHash,archiveHash:closing.archiveHash});complete=true;
+      status=await service.imports.finalize(id,{contentHash:closing.contentHash,archiveHash:closing.archiveHash});complete=true;
     }
-    return {target:'local',contentHash:closing.contentHash,tables:manifest.tables.map(({name,count})=>({name,count})),objects:manifest.objects.length,payloads:manifest.payloads.length,requiredConfiguration:manifest.requiredConfiguration,exclusions:{tables:manifest.excludedTables,columns:manifest.excludedColumns,configuration:true,transient:['local caches and logs']}};
+    return {target:'local',contentHash:closing.contentHash,tables:manifest.tables.map(({name,count})=>({name,count})),objects:manifest.objects.length,payloads:manifest.payloads.length,requiredConfiguration:manifest.requiredConfiguration,exclusions:{tables:manifest.excludedTables,columns:manifest.excludedColumns,configuration:true,transient:['local caches and logs']},...(status?.schemaUnverified?{schemaUnverified:status.schemaUnverified}:{})};
   } finally {
     await file?.close();if(temporary)await unlink(temporary).catch(error=>{if(error.code!=='ENOENT')throw error;});
     if(id&&(direction==='export'||!complete))await (direction==='export'?service.exports:service.imports).abort(id);

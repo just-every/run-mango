@@ -19,7 +19,8 @@
           "slug": "install",
           "source": "docs/install.md",
           "label": "Install and deploy",
-          "description": "Run Mango on your computer, then deploy it to your own Cloudflare account."
+          "description": "Run Mango on your computer, then deploy it to your own Cloudflare account.",
+          "hidden": true
         },
         {
           "slug": "first-newsletter",
@@ -175,6 +176,26 @@
     {
       "source": "docs/CLAIMS.md",
       "reason": "Maintainer claim inventory supplied by the sibling integration brief; product instructions are in Connect another application."
+    },
+    {
+      "source": "RULINGS.md",
+      "reason": "Contract rulings, mechanisms and acceptance proof for maintainers."
+    },
+    {
+      "source": "docs/contract/DONE-AUDIT.md",
+      "reason": "Contract rulings, mechanisms and acceptance proof for maintainers."
+    },
+    {
+      "source": "docs/contract/mechanism.md",
+      "reason": "Contract rulings, mechanisms and acceptance proof for maintainers."
+    },
+    {
+      "source": "docs/contract/health-readiness.md",
+      "reason": "Contract supporting mechanism and original acceptance descriptions for maintainers."
+    },
+    {
+      "source": "docs/contract/managed-mail.md",
+      "reason": "Contract supporting mechanism and original acceptance descriptions for maintainers."
     }
   ]
 }

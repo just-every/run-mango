@@ -44,7 +44,7 @@ export function createDesignRepository(db: D1Database) {
       return inserted.meta.changes === 1;
     },
     get: (id: string) => db.prepare(`SELECT ${jobColumns} FROM design_jobs WHERE id = ?`).bind(id).first<DesignJob>(),
-    /** Earlier runs of a draft whose paid designs are still on offer (DESIGN-002): designs landed, and the run is neither
+    /** Earlier runs of a draft whose paid designs are still on offer (DESIGN-010): designs landed, and the run is neither
      * used nor discarded. A failed run counts: its designs stay usable after a failed layout step or a later slot's failure. */
     async onOffer(campaignId: string, exceptId: string) {
       return (await db.prepare(`SELECT ${jobColumns} FROM design_jobs WHERE campaign_id = ? AND id <> ? AND state IN ('choosing','preparing','ready','failed')

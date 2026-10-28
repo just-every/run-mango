@@ -3,7 +3,7 @@ import { DesignImportError } from '../layerdoc';
 import type { DesignPlan } from '../plan';
 import type { HostedImage } from '../compile';
 
-/** Browser half of design import (DESIGN-004): photos are cut from the full-resolution candidate PNG on a
+/** Browser half of design import (DESIGN-012): photos are cut from the full-resolution candidate PNG on a
  * canvas, encoded as JPEG and uploaded through the campaign image door (CAMP-012), which re-checks every
  * file. No image codec runs in the Worker, and nothing is fetched from the design service. */
 export type UploadedImage = HostedImage & { alt: string; bytes: number; width: number; height: number };

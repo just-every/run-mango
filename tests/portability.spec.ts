@@ -7,6 +7,7 @@ import { resolve, join } from 'node:path';
 import { portabilityRuntime } from './portability/runtime.mjs';
 import { runCommand } from '../scripts/installer/run-command.mjs';
 import { readArchive } from '../src/vendor/base/portability/index.mjs';
+import { platformTable } from '../src/vendor/base/portability/bookkeeping.mjs';
 import { stageArchive } from './portability/flows';
 import { png } from './support/images';
 
@@ -33,7 +34,7 @@ async function refuseOpeningHistory(target: Awaited<ReturnType<typeof portabilit
     const historical = await target.call(`/api/portability/imports/${historicalId}/finalize`, {method:'POST',cookie:target.cookie,
       body:{contentHash:records.at(-1).contentHash,archiveHash:records.at(-1).archiveHash}});
     expect(historical.status).toBe(409);
-    expect(await historical.json()).toEqual({error:'target_not_empty:list_growth_baseline'});
+    expect(await historical.json()).toEqual({error:'target_not_empty'});
     expect((await target.db.prepare('SELECT count(*) AS n FROM contacts').first()).n).toBe(0);
     expect(await target.db.prepare("SELECT subscribed FROM list_growth_baseline WHERE channel='email'").first()).toEqual({subscribed:1});
     expect((await target.call(`/api/portability/imports/${historicalId}/abort`, {method:'POST',cookie:target.cookie,body:{}})).status).toBe(200);
@@ -127,8 +128,9 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
     for await (const record of readArchive(new Response(await readFile(archive)).body!)) records.push(record);
     const manifest = records[0], original = records.filter(record => record.kind === 'part').flatMap(part => part.items).filter(item => item.kind === 'row');
     // Inventory before export creates temporary snapshot tables. Every source
-    // table is archived or explicitly excluded by the maintained policy.
-    for (const { name } of allTables) expect([...manifest.tables.map(table => table.name), ...manifest.excludedTables]).toContain(name);
+    // product table is archived or explicitly excluded by the maintained policy.
+    // Platform bookkeeping is intentionally outside the portable catalogue.
+    for (const { name } of allTables.filter(({name})=>!platformTable(name))) expect([...manifest.tables.map(table => table.name), ...manifest.excludedTables]).toContain(name);
     expect(original.some(row=>row.table==='consent_attestations'&&row.row.source_name==='Klaviyo — synthetic-mango-150.csv')).toBe(true);
     expect(original.some(row=>row.table==='campaign_templates'&&row.row.name==='synthetic-mango-150-template')).toBe(true);
     expect(original.some(row=>row.table==='contact_history'&&row.row.kind==='incumbent-order'&&row.row.occurred_at===Date.parse('2026-03-02T00:00:00Z'))).toBe(true);
@@ -209,7 +211,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
   } finally { await source.close(); await target.close(); }
 });
 
-test('[CONT-013] current erasure authority refuses an old archive on an empty restore target', async () => {
+test('[CONT-030] current erasure authority refuses an old archive on an empty restore target', async () => {
   test.setTimeout(180000);
   const source=await portabilityRuntime(),target=await portabilityRuntime({restore:true});
   const archive=async()=>{
