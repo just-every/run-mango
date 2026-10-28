@@ -4,8 +4,10 @@ import { dispatchDocuments } from '../../src/core/app/document-dispatch';
 import { createFixturePlatform } from './local-platform';
 import { createLocalApp } from './fixture-app';
 import type { LocalAppBindings } from './fixture-app';
+import authoringWorker from '../campaign-authoring/advisory-worker';
 
 interface FixtureBindings extends LocalAppBindings {
+  AUTHORING_DB: D1Database;
   MANGO_FIXTURE_TURNSTILE?: string;
   MANGO_FIXTURE_SIGNUP_MAIL?: string;
 }
@@ -13,6 +15,12 @@ interface FixtureBindings extends LocalAppBindings {
 export default {
   fetch(request, environment, executionContext) {
     const bindings = environment as FixtureBindings;
+    if (request.headers.has('X-Mango-Authoring-Fixture')) {
+      if (request.headers.get('X-Mango-Authoring-Fixture') !== bindings.LOCAL_BOOTSTRAP_TOKEN) return new Response('Forbidden', { status: 403 });
+      // Only fixture selection uses this token. The unchanged authoring worker
+      // still authenticates every product route with its native session cookie.
+      return authoringWorker.fetch(request, { ...bindings, DB: bindings.AUTHORING_DB, MANGO_PUBLIC_BASE_URL:request.headers.get('X-Mango-Block-Fixture')==='1'?'https://mango.example.test':new URL(request.url).origin, ...(request.headers.get('X-Mango-Block-Fixture')==='1'?{AUTHORING_LINK_HOST:'example.test'}:{}) }, executionContext);
+    }
     const platform = createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
     if (bindings.MANGO_FIXTURE_TURNSTILE === '1') {
       installSignupChallengeEdge();

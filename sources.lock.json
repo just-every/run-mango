@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "d3c9dccfd24eb96b26cb520e052260db74dd0c080aa93f0008b8bfb03aa73fd8",
+      "sha256": "9259ab1b4268405dcf1fd048c3dadab87441e2364344a84d997f3e9140d5d7ff",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8341,6 +8341,10 @@
       "sha256": "1982743cf19ecb78d5ca7eb15e1ca78c376644f0e78fa89f35a82e4a46953c9f",
       "executable": false
     },
+    "tests/campaign-authoring/advisory-worker.ts": {
+      "sha256": "daa38dcdae51f8860bfb759397adde2be2f6d46cf823df1e69112206db4452ae",
+      "executable": false
+    },
     "tests/campaign-authoring/audience-size-journey.ts": {
       "sha256": "70206b91d1359d69a46c7fb7e1ff4af5f74135f2130cd04169be734826b8c889",
       "executable": false
@@ -8358,7 +8362,7 @@
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
-      "sha256": "bb54af2db1cad75adf39de8a126a67425905c992f351e8d10550e83b53cbc61c",
+      "sha256": "f1394e6f7382132c88805404746d708b1808e1b4435127a52b6f5b37689b20cc",
       "executable": false
     },
     "tests/campaign-authoring/catalog-guard-journey.ts": {
@@ -9206,7 +9210,7 @@
       "executable": false
     },
     "tests/newsletter-ui/representative-pages.journeys.ts": {
-      "sha256": "796dd899ecefd3568e917fc08eada79ec02c303a7607e919b6c12d4961436a70",
+      "sha256": "3123dbfb890562e704df69464cb00d263e9b90b03c232bac17005f326839ed9f",
       "executable": false
     },
     "tests/newsletter-ui/sender-playwright.config.js": {
@@ -9418,7 +9422,7 @@
       "executable": false
     },
     "tests/support/start-fixture-runtime.mjs": {
-      "sha256": "02d73f668782d681a1984cb4bd87687f14a22690c3cab38be26b7281a338d9e6",
+      "sha256": "d49d278a21f130e1ad0dcddb4599deb98351de8f367b031ecdbae94605313d7b",
       "executable": false
     },
     "tests/support/test-identity.ts": {
@@ -9426,7 +9430,7 @@
       "executable": false
     },
     "tests/support/worker.ts": {
-      "sha256": "0cfd182eeb7f485ebbe8e4ed73b3395e14e1c4bfabe0125a7cea213c152e676a",
+      "sha256": "35423a56b52604cea9e2ee26defd3e1c1fb5402d90879b2a98a5a306d651cc5b",
       "executable": false
     },
     "tsconfig.json": {
@@ -9434,7 +9438,7 @@
       "executable": false
     },
     "VERIFYING.md": {
-      "sha256": "a831999119dab4982911bf90bd9b98cf4a1817d9ef07fb5fc0a4633d33aa2db9",
+      "sha256": "5f773d34986d2ef91fc0eb8392be962f24c59f71cec74b0c0cf19fcd07a4723d",
       "executable": false
     },
     "vite.config.ts": {
