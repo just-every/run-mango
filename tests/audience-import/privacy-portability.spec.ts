@@ -20,7 +20,7 @@ async function importCsv(f: any, cookie: string, csv: string, preset = 'mango') 
   }
   expect(job.state).toBe('completed'); return { job, preview };
 }
-for (const passedMappingStage of [false, true]) test(`CONT-013 different-salt imported subscribed erasure removes every mapping alias and source custody${passedMappingStage ? ' after a pre-upgrade mapping cursor' : ''}`, async () => {
+for (const passedMappingStage of [false, true]) test(`CONT-013 CONT-029 different-salt imported subscribed erasure removes every mapping alias and source custody${passedMappingStage ? ' after a pre-upgrade mapping cursor' : ''}`, async () => {
   const sourceSalt = 'source-installation-private-contact-salt-123456';
   const destinationSalt = 'destination-installation-private-contact-salt-123456';
   const email = 'subscribed-erasure@example.test', survivor = 'independent-survivor@example.test';

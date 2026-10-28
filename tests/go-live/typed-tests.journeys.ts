@@ -7,7 +7,7 @@ import {event,eventSigner} from './sendgrid-events';
 import {installation,json,sender,draftCampaign,availableTransport,signedPost,confirmedContact} from './harness';
 import {openPage} from '../support/navigation';
 
-test('[CAMP-019] typed email tests enforce restrictions, daily allowance and recorded destinations',async({page},info)=>{
+test('[CAMP-019 CAMP-024] typed email tests enforce restrictions, daily allowance and recorded destinations',async({page},info)=>{
   page.setDefaultTimeout(15000);
   const edge=await providerEdge(),signer=eventSigner(),site=await installation(edge,signer);
   try {

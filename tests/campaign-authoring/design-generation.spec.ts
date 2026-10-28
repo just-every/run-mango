@@ -62,7 +62,7 @@ test('[DESIGN-001] without the design module the editor offers no generation and
   } finally { await runtime.close(); }
 });
 
-test('[DESIGN-002] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run', async ({ page, request }, testInfo) => {
+test('[DESIGN-002 DESIGN-008 DESIGN-009 DESIGN-010] Design with 12ui turns a brief into an unsaved body through the import path, and only Save uses the run', async ({ page, request }, testInfo) => {
   const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc, drawMs: { a: 0, b: 15000 }, layoutMs: 12000 });
   const runtime = await designRuntime(fake.origin);
   try {
@@ -159,7 +159,7 @@ test('[DESIGN-002] Design with 12ui turns a brief into an unsaved body through t
 
     expect(detail.campaign.state).toBe('draft');
     expect(detail.revision.emailBody).toBe(imported);
-    // The generated body is saved through the ordinary save path, in the canonical form parsers read (CAMP-003, MSG-009).
+    // The generated body is saved through the ordinary save path, in the canonical form parsers read (CAMP-022, MSG-009).
     expect(parseEmailHtml(authoredBody(detail.revision.emailBody)).canonical).toBe(authoredBody(detail.revision.emailBody));
     expect(detail.links.map((link: { destinationUrl: string }) => link.destinationUrl)).toEqual([destination]);
     // Nothing was approved, scheduled or sent along the way.
@@ -175,7 +175,7 @@ test('[DESIGN-002] Design with 12ui turns a brief into an unsaved body through t
   } finally { await runtime.close(); await fake.close(); }
 });
 
-test('[DESIGN-003] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft', async ({ page, request }) => {
+test('[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft', async ({ page, request }) => {
   const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
   const runtime = await designRuntime(fake.origin);
   try {

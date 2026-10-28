@@ -63,7 +63,7 @@ test('CONT-030/DATA-001 populated upgrade retires legacy custody and resumes a p
   } finally {await f.close();}
 });
 
-test('CONT-013/DATA-001 invalid archive authority is refused before any durable admission mutation', async () => {
+test('CONT-030/DATA-001 invalid archive authority is refused before any durable admission mutation', async () => {
   const [source, target] = await Promise.all([portabilityRuntime(), portabilityRuntime({restore:true})]);
   try {
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();

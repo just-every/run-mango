@@ -36,7 +36,7 @@ export function authoredLinks(html:string) {
 const settleRounds = 16;
 /** Thrown when a body does not settle within `settleRounds`; no body is known to need more than two. */
 export class UnsettledEmailBodyError extends Error {}
-/** The body as the HTML fragment serialisation algorithm writes the tree a spec parser builds from it (CAMP-003):
+/** The body as the HTML fragment serialisation algorithm writes the tree a spec parser builds from it (CAMP-022):
  * every element closed where parsers keep it, attribute values double-quoted, character references decoded, and
  * whatever parsers drop (a repeated attribute, a tag ignored where it stands) gone, as it is for every recipient.
  * Writing a tree out and parsing it again can build another tree (an element moved out of a table into a MathML

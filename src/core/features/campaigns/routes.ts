@@ -21,7 +21,7 @@ import { draftCompositionSchema } from './draft-composition';
 import type { createCampaignService } from './service';
 
 const identifier = z.object({ id: z.string().min(1) });
-/** A body that never settles into a form that saves to itself is refused by name (CAMP-003); no such body is known. */
+/** A body that never settles into a form that saves to itself is refused by name (CAMP-022); no such body is known. */
 const settled = async <T,>(save: Promise<T>) => {
   try { return { saved: await save }; } catch (error) {
     if (error instanceof CatalogUnavailable) return {refused:{error:'catalog_unavailable',detail:error.message,fields:{emailBody:error.message}}};
@@ -33,7 +33,7 @@ const settled = async <T,>(save: Promise<T>) => {
   }
 };
 
-/** `mediaOrigin` is the deployment's own origin: campaign pages use it to recognise the draft's own images (CAMP-012). */
+/** `mediaOrigin` is the deployment's own origin: campaign pages use it to recognise the draft's own images (CAMP-023). */
 export function createCampaignRoutes(service: ReturnType<typeof createCampaignService>, authoring: ReturnType<typeof createAuthoringService>, mediaOrigin: string,
   refreshChecks: (campaignId: string, revisionId: string) => Promise<{kind: string}>) {
   const routes = new Hono<{Variables:AuthVariables}>();

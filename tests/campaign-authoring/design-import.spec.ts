@@ -19,7 +19,7 @@ const files = (page: Page, doc: string) => Promise.all([
   page.getByLabel('Design image', { exact: true }).setInputFiles({ name: 'B.png', mimeType: 'image/png', buffer: candidate }),
 ]);
 
-for (const width of [1440, 390]) test(`[DESIGN-004] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at ${width}px`, async ({ page, request }, testInfo) => {
+for (const width of [1440, 390]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at ${width}px`, async ({ page, request }, testInfo) => {
   const runtime = await authoringRuntime({ suite: 'design-import', vars: { MANGO_PUBLIC_BASE_URL: publicOrigin, AUTHORING_LINK_HOST: 'shop.example.test' } });
   try {
     await page.setViewportSize({ width, height: 1000 });

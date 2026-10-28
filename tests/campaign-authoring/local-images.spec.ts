@@ -8,7 +8,7 @@ import { png } from '../support/images';
 test.describe.configure({ timeout: 180000 });
 
 // A copy running on a computer, as `rer dev` starts it: the public origin is the runtime's own http address.
-test('[CAMP-012] on a local copy, Insert image adds an own-origin image that saves, previews after opt-in and blocks only approval', async ({ page, request }) => {
+test('[CAMP-023] on a local copy, Insert image adds an own-origin image that saves, previews after opt-in and blocks only approval', async ({ page, request }) => {
   const runtime = await authoringRuntime({ suite: 'local-images', vars: (url: string) => ({ MANGO_PUBLIC_BASE_URL: url }) });
   try {
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
