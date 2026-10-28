@@ -23,8 +23,8 @@ test('[DELIV-005][DELIV-003] signed mailbox outcomes and diagnostic categories s
       const compliance=page.locator('section').filter({has:page.getByRole('heading',{name:'Bulk-sender compliance',exact:true})});
       if(width===1440){const row=compliance.locator('[data-requirement=complaints]');await expect(row).toHaveAttribute('data-state','unknown');await expect(row).toContainText('delivery events not connected');await expect(row.locator('td').last()).not.toContainText(/\d+(?:\.\d+)?%/);}
       const capture=info.outputPath(`bulk-compliance-unconnected-${width}.png`);
-      if(width===1440)await compliance.screenshot({path:capture});
-      else {await compliance.locator('[data-requirement=complaints]').scrollIntoViewIfNeeded();await page.screenshot({path:capture});}
+      await compliance.scrollIntoViewIfNeeded();await compliance.locator('[data-requirement=complaints]').scrollIntoViewIfNeeded();
+      await page.waitForLoadState('networkidle');await page.screenshot({path:capture});
     }
     await page.goto('about:blank');
 

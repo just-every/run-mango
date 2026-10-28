@@ -1,5 +1,6 @@
 import type {Database} from '@/core/platform/db/client';
 import type {SenderInspection} from '../sender-verification/types';
+import type {ObservationResult} from '../sender-verification/receiver';
 import type {ConfigurationInspection} from '../sender-verification/configuration';
 import type {SenderBinding} from '../sender-verification/types';
 import type {readSenderRates} from './sender-rates-report';
@@ -18,9 +19,10 @@ export async function complianceReport(database:Database,senders:Rate[],windowDa
   const [domains,inspections,outcomes,unsubscribes,connection]=await db.batch<Record<string,unknown>>([
     db.prepare(`SELECT lower(substr(from_email,instr(from_email,'@')+1)) domain FROM sender_settings
       UNION SELECT lower(substr(from_email,instr(from_email,'@')+1)) FROM campaign_revisions WHERE from_email<>''`),
-    db.prepare(`SELECT i.result_json FROM sender_verification_inspections i JOIN sender_verification_state s ON s.id=i.state_id
+    db.prepare(`SELECT i.result_json,o.result_json observation_json FROM sender_verification_inspections i JOIN sender_verification_state s ON s.id=i.state_id
       AND s.generation=i.generation AND s.binding_digest=i.binding_digest AND s.configuration_digest=i.configuration_digest
-      AND s.observation_id=i.observation_id WHERE s.revoked_at IS NULL AND i.expires_at>? AND i.checked_at<=?
+      AND s.observation_id=i.observation_id JOIN sender_verification_observations o ON o.id=s.observation_id
+      WHERE s.revoked_at IS NULL AND i.expires_at>? AND i.checked_at<=?
       ORDER BY i.checked_at DESC,i.rowid DESC`).bind(now.getTime(),now.getTime()),
     db.prepare(`SELECT DISTINCT lower(substr(v.from_email,instr(v.from_email,'@')+1)) domain,f.provider
       FROM delivery_facts f JOIN recipient_steps r ON r.id=f.recipient_step_id JOIN campaign_revisions v ON v.id=r.revision_id
@@ -36,7 +38,8 @@ export async function complianceReport(database:Database,senders:Rate[],windowDa
       WHERE r.channel='email' GROUP BY domain`).bind(now.getTime()-windowDays*86400000),
     db.prepare('SELECT state,account_id,delivery_proved_at,last_error FROM sending_connection WHERE id=1'),
   ]);
-  const saved=inspections.results.map(row=>JSON.parse(String(row.result_json)) as StoredInspection);
+  const saved=inspections.results.map(row=>({...JSON.parse(String(row.result_json)) as StoredInspection,
+    authentication:(JSON.parse(String(row.observation_json)) as ObservationResult).authentication}));
   const active=connection.results[0];
   return domains.results.filter(row=>row.domain).map(({domain:value})=>{
     const domain=String(value),rate=senders.find(row=>row.channel==='email'&&row.sender===domain);

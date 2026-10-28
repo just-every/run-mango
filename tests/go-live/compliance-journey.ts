@@ -39,7 +39,7 @@ export async function complianceJourney(page:Page,info:TestInfo,site:Installatio
     await page.setViewportSize({width:1440,height:1000});await openPage(page,site.runtime.url+'/app/insights');
     await expect(complaint).toHaveAttribute('data-state',state);
     // Browser proof at both widths; the permanent state assertion is desktop.
-    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);const capture=info.outputPath(`bulk-compliance-${state}-${width}.png`);if(width===1440)await section.screenshot({path:capture});else {await complaint.scrollIntoViewIfNeeded();await page.screenshot({path:capture});}}
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);const capture=info.outputPath(`bulk-compliance-${state}-${width}.png`);await section.scrollIntoViewIfNeeded();await complaint.scrollIntoViewIfNeeded();await page.waitForLoadState('networkidle');await page.screenshot({path:capture});}
     await page.setViewportSize({width:1440,height:1000});
   };
   await show('warn');
@@ -70,4 +70,11 @@ export async function complianceJourney(page:Page,info:TestInfo,site:Installatio
   await post([fact(seeded[4],'spamreport')]);
   expect((await read()).compliance.find((row:any)=>row.domain==='example.test').figures).toBe(updatedFigures);
   expect(JSON.stringify(reporting.compliance)).not.toContain('@');
+  // A failed stored receiver result must preserve the independent SPF outcome.
+  // The cached inspection deliberately remains stale: reporting reads evidence.
+  await site.runtime.sql(`UPDATE sender_verification_observations SET result_json=json_set(result_json,'$.authentication.dkim',json('false'),'$.reason','authentication-failed')
+    WHERE id IN (SELECT observation_id FROM sender_verification_state) RETURNING id`);
+  await openPage(page,site.runtime.url+'/app/insights');
+  await expect(domain.locator('[data-requirement=spf]')).toHaveAttribute('data-state','pass');
+  await expect(domain.locator('[data-requirement=dkim]')).toHaveAttribute('data-state','fail');
 }

@@ -3994,7 +3994,7 @@
       "executable": false
     },
     "src/core/features/insights/compliance-report.ts": {
-      "sha256": "25731a8b2159215ef826685294f1f2baff3721a6060b776be1df9fb2493f4f99",
+      "sha256": "b39a7c2cbaa8082e97979617177a08065a06f3130326497b919aea8adffeb8b9",
       "executable": false
     },
     "src/core/features/insights/conversion-events.ts": {
@@ -7938,7 +7938,7 @@
       "executable": false
     },
     "tests/go-live/compliance-journey.ts": {
-      "sha256": "e4dd06eaa436477171a12fcf0ac18a3308240dc8c7b94259dac332138455ee0b",
+      "sha256": "867b47415bcf0feebf0e58d3af9db44450994961e3fec3efd457fb193a2bb8c8",
       "executable": false
     },
     "tests/go-live/contact-links.journeys.ts": {
@@ -8030,7 +8030,7 @@
       "executable": false
     },
     "tests/go-live/mailbox-provider.journeys.ts": {
-      "sha256": "cad574faf475b39229b100fc840b3f2cf8b647837cc41e7da82b58c41a9b4fc2",
+      "sha256": "ef20e2431363ce91c811f41011301e1ed288f93485fc18b5419dfcc19d84612a",
       "executable": false
     },
     "tests/go-live/managed-mail.journeys.ts": {
