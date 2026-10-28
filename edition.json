@@ -859,6 +859,58 @@
           ]
         }
       }
+    },
+    {
+      "id": "runeditrun/agent-door",
+      "role": "module",
+      "source": {
+        "kind": "local",
+        "paths": [
+          "src/vendor/base/agent-door"
+        ],
+        "origin": {
+          "repository": "https://github.com/runeditrun/base.git",
+          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "paths": [
+            "modules/agent-door"
+          ]
+        }
+      }
+    },
+    {
+      "id": "runeditrun/business-settings",
+      "role": "module",
+      "source": {
+        "kind": "local",
+        "paths": [
+          "src/vendor/base/business-settings"
+        ],
+        "origin": {
+          "repository": "https://github.com/runeditrun/base.git",
+          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "paths": [
+            "modules/business-settings"
+          ]
+        }
+      }
+    },
+    {
+      "id": "runeditrun/business-theme",
+      "role": "module",
+      "source": {
+        "kind": "local",
+        "paths": [
+          "src/vendor/foundation/runtime"
+        ],
+        "origin": {
+          "repository": "https://github.com/runeditrun/base.git",
+          "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+          "paths": [
+            "foundation/runtime/theme-frame.ts",
+            "foundation/runtime/icon-head.ts"
+          ]
+        }
+      }
     }
   ]
 }
