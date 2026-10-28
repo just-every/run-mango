@@ -966,19 +966,19 @@
       "executable": false
     },
     ".github/workflows/run-demo.yml": {
-      "sha256": "41365ec7c002e9451166313b085f9e64ed2e3ea002c27f3d5ead845bc9c302b2",
+      "sha256": "cd478e5acaa5b7ecac7c8d93069a928886b59bc48e72c495700e42aa3c1b5232",
       "executable": false
     },
     ".github/workflows/run-site.yml": {
-      "sha256": "1466e0cc78eeee30a85f1602c0b4bbb74f053fc9f1aa723635c5f0fc5a0f19b0",
+      "sha256": "3e4af8c2770ce5d7ce91ad59bfe1c637d454cef160eec63d0ea11735b6a1cf08",
       "executable": false
     },
     ".github/workflows/verify-nightly.yml": {
-      "sha256": "6885920a29ef2e83fcc2d73f829ac6ad77f99710f026abf837c4ddc1becd67e4",
+      "sha256": "a3d2a819f819cc485347c6fdde31a0f799ab21457875d6e5b2bb504ffcefc136",
       "executable": false
     },
     ".github/workflows/verify.yml": {
-      "sha256": "15e76fc6923ed8560f770efdb22ec938ba050f0c04d6db31735424277d965fc1",
+      "sha256": "961df898ebcbb5356ad58a6b14fba1631f757e5d03d590a5837fd30bc8fc2d96",
       "executable": false
     },
     ".gitignore": {
@@ -1006,7 +1006,7 @@
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "0ec6102d33286e397bee7b4fc2122fbe62e36ecb80dafa59a57befe91ba005a8",
+      "sha256": "9af4d0404062c87e599f97a1f45bed1eb1307bfc13b3b49171b4232b4939c31f",
       "executable": false
     },
     "BASELINE.md": {
@@ -1759,6 +1759,34 @@
     },
     "scripts/ci/chromium-probe.mjs": {
       "sha256": "b660d6603c7038f2846a37836c10061b7c7b678d041b6075c461251e12264adc",
+      "executable": false
+    },
+    "scripts/ci/install-chromium-deps.py": {
+      "sha256": "d3027108ad8e08ceeddb0ed477d967b1207e40bb6bf5ae941854c534c2cf4004",
+      "executable": false
+    },
+    "scripts/ci/mango-plan.mjs": {
+      "sha256": "1c1483c441b61daa4501f2d7e10c71093eb62374ace3f6198aab8b1686933ac2",
+      "executable": false
+    },
+    "scripts/ci/verify-app.mjs": {
+      "sha256": "ae27ec8ff2ff32975048bf208898f9ee2f716ed06bb89b6ad7d205023ed46c91",
+      "executable": false
+    },
+    "scripts/ci/verify-ci.mjs": {
+      "sha256": "cf1ceb8773ed276f82245fb8fb4c4bdc95bff40ecc0e8ca8ac9e776978b17340",
+      "executable": false
+    },
+    "scripts/ci/verify-evidence.mjs": {
+      "sha256": "9224f772d6a17f043448694eca3c149df83070417b995a2840497e36a9ad0100",
+      "executable": false
+    },
+    "scripts/ci/verify-light.mjs": {
+      "sha256": "3f58865aa32380d48d8320f3a1f520c0663e4f17d82f7f5ccd4cb0448feff197",
+      "executable": false
+    },
+    "scripts/ci/verify-plan.mjs": {
+      "sha256": "45fe2ab9c5cbc72d0186bf77fab32c985605caae6ecee50676dd618612c3e78f",
       "executable": false
     },
     "scripts/delivery/base/artifact.mjs": {
