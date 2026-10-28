@@ -9062,7 +9062,7 @@
       "executable": false
     },
     "tests/agent-door.spec.ts": {
-      "sha256": "4b18e22fcb1566a0a85b545774b9d995313b7272fee5f1ff39e0fde3f577f9e6",
+      "sha256": "03844a5cbe4ad25e0e768fd72494761617f456eec028dc61e3cfb88d19d8b600",
       "executable": false
     },
     "tests/agent-door/design-fixture.mjs": {

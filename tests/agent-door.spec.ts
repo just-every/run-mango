@@ -5,6 +5,7 @@ import {sqlStatements} from '../operations/sql-statements.mjs';
 import {createApp} from '../src/core/app/app';
 import {composeFixture} from './sender-verification/test-runtime';
 import {nativeToolSpecs} from '../src/core/features/agent-door/catalogue';
+import {createLifecycleServices} from '../src/core/features/lifecycle';
 import {autonomousPolicy,heldPolicy,policyEnvelope,signJws} from '../src/vendor/base/agent-door/conformance/crypto.mjs';
 
 const require=createRequire(import.meta.url);
@@ -146,7 +147,29 @@ test('Mango agent door: signed native owner, durable Business person, policy-dec
   const recipientTruth=(await db.prepare('SELECT contact_id,transport_disposition,skip_reason,attempt_count FROM recipient_steps WHERE campaign_id=?').bind(campaign.campaignId).all()).results;
   expect(recipientTruth.find(row=>row.contact_id===people[0])?.transport_disposition).toBe('skipped');
   expect(recipientTruth.find(row=>row.contact_id===people[1])?.attempt_count).toBe(1);
-  await policy(heldPolicy(),2);
+  await createLifecycleServices(app.mangoServices.lifecycleRuntime).delivery.dispatchStep({stepId:step.id,revisionId:campaign.revisionId,channel:'email'});
+  expect(fixture.outbound.length-beforeDelivery).toBe(1);
+  expect((await db.prepare('SELECT state FROM campaigns WHERE id=?').bind(campaign.campaignId).first()).state).toBe('completed');
+  const blocked=autonomousPolicy();blocked.rules.push({id:'block-publication',class:'external',do:'blocked'});
+  await policy(blocked,2);
+  const publicArgs={id:campaign.campaignId,revisionId:campaign.revisionId,idempotency_key:'publish-newsletter'};
+  const publicRefusal=await call('mango.publications.publish',publicArgs);
+  expect(publicRefusal.body.result._meta['com.runeditrun/error'].code).toBe('policy_blocked');
+  expect((await db.prepare('SELECT count(*) AS n FROM newsletter_archive').first()).n).toBe(0);
+  await policy(autonomousPolicy(),3);
+  const published=await call('mango.publications.publish',{...publicArgs,idempotency_key:'allowed-publication'});
+  expect(published.body.result.isError,JSON.stringify(published.body.result._meta)).not.toBe(true);
+  expect((await call('mango.publications.publish',{...publicArgs,idempotency_key:'allowed-publication'})).body.result.structuredContent).toEqual(published.body.result.structuredContent);
+  expect((await db.prepare('SELECT count(*) AS n FROM newsletter_archive').first()).n).toBe(1);
+  const publicationId=published.body.result.structuredContent.id;
+  const publicPage=await request('/archive/data/'+publicationId);expect(publicPage.status).toBe(200);
+  const publicContent=await publicPage.json() as any;
+  expect(publicContent.body).toContain('Rowan for Jordan Orchard');
+  expect(JSON.stringify(publicContent)).not.toMatch(/avery@example\.test|sage@example\.test|\{\{|recipient_steps/);
+  const withdrawn=await call('mango.publications.withdraw',{id:campaign.campaignId,publication:publicationId,idempotency_key:'withdraw-newsletter'});
+  expect(withdrawn.body.result.isError).not.toBe(true);
+  expect((await request('/archive/data/'+publicationId)).status).toBe(404);
+  await policy(heldPolicy(),4);
   const pending=await call('mango.campaigns.create',{mode:'blank',idempotency_key:'held-draft'});
   expect(pending.body.result.structuredContent).toBeTruthy();
   const reviewed=await call('mango.campaigns.update',{id:pending.body.result.structuredContent.revisionId,name:'A reviewable private draft',idempotency_key:'reviewed-edit'});
@@ -158,7 +181,7 @@ test('Mango agent door: signed native owner, durable Business person, policy-dec
   const undoActor=await db.prepare("SELECT actor_type,actor_id,detail_json FROM lifecycle_audit_entries WHERE action='campaign.draft.undo'").first();
   expect(undoActor.actor_type).toBe('operator');expect(undoActor.actor_id).toBe(operator!.id);expect(JSON.parse(undoActor.detail_json).preparedBy).toBeUndefined();
   // Current native authority is re-read, including retained-key retries.
-  await policy(autonomousPolicy(),3,{agents:['orchard-marketer'],consents:[]});
+  await policy(autonomousPolicy(),5,{agents:['orchard-marketer'],consents:[]});
   expect((await call('mango.campaigns.create',{mode:'blank',idempotency_key:'one-draft'})).status).toBe(401);
  }finally{await fixture?.dispose();await worker.dispose();}
 });
