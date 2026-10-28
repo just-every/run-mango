@@ -209,7 +209,7 @@ test('[DATA-001] complete native records and uploaded assets round-trip without 
   } finally { await source.close(); await target.close(); }
 });
 
-test('[CONT-013] current erasure authority refuses an old archive on an empty restore target', async () => {
+test('[CONT-030] current erasure authority refuses an old archive on an empty restore target', async () => {
   test.setTimeout(180000);
   const source=await portabilityRuntime(),target=await portabilityRuntime({restore:true});
   const archive=async()=>{

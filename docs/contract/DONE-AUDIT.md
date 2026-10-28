@@ -1417,15 +1417,15 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | MOVE-009 | 2 | Original clicked link | `tests/move-in/archive.journeys.ts:165` | asserted |
 | MOVE-009 | 2 | Timeline imported label and source record | `tests/move-in/archive.journeys.ts:424` | asserted |
 | MOVE-009 | 3 | Imported and dropped counts including unknown address | `tests/move-in/archive.journeys.ts:161` | asserted |
-| MOVE-009 | 4 | Imported clicks participate in dormancy | `tests/move-in/archive.journeys.ts:403` | asserted |
-| MOVE-009 | 4 | Imported opens remain open-only estimates | `tests/move-in/archive.journeys.ts:403` | asserted |
-| MOVE-009 | 4 | Open-only and no-history are distinct | `tests/move-in/archive.journeys.ts:403` | asserted |
+| MOVE-009 | 4 | Imported clicks participate in dormancy | `tests/move-in/archive.journeys.ts:402` | asserted |
+| MOVE-009 | 4 | Imported opens remain open-only estimates | `tests/move-in/archive.journeys.ts:402` | asserted |
+| MOVE-009 | 4 | Open-only and no-history are distinct | `tests/move-in/archive.journeys.ts:402` | asserted |
 | MOVE-009 | 5 | No native send facts or attribution are created | `tests/move-in/archive.journeys.ts:180` | asserted |
 | MOVE-009 | 5 | Populated campaign result remains unchanged | `tests/move-in/archive.journeys.ts:399` | asserted |
 | MOVE-009 | 5 | Consent unchanged by historical-event import | `tests/move-in/archive.journeys.ts:106` | asserted |
 | MOVE-009 | 6 | Pointer to MOVE-015 owns additional import uses | moved | moved |
 | PUB-001 | 1 | Sent issue public page | `tests/campaign-results/archive.journeys.ts:27` | asserted |
-| PUB-001 | 1 | Archive index entry | `tests/campaign-results/archive.journeys.ts:30` | asserted |
+| PUB-001 | 1 | Archive index entry | `tests/campaign-results/archive.journeys.ts:29` | asserted |
 | PUB-001 | 2 | RSS item | `tests/campaign-results/archive.journeys.ts:39` | asserted |
 | PUB-001 | 2 | Search metadata | `tests/campaign-results/archive.journeys.ts:27` | asserted |
 | PUB-001 | 3 | Neutral personalization | `tests/campaign-results/archive.journeys.ts:32` | asserted |

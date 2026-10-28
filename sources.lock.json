@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "095eeda6037425a7c167ece8ea2e7ab9419d9f0403923a22dd66a3d03b47438c",
+      "sha256": "7618a82ee0066741baf97573f343271b78945ae95ca916f4ed19e7522126bfaa",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1014,7 +1014,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "1dd2d7e0f2094eed7e5bb5dfc3302f770296291fcc0029c06db11b2af6bf4bfe",
+      "sha256": "7fb2f19812996cbdb1039aa899dc565626dcbd3e8da0fb63589386cbc13c1ad5",
       "executable": false
     },
     "CLAUDE.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "6f26c7ff49889ce8872ccc0a5d835338aa0f5c05f64d056beef9307b7a7abe08",
+      "sha256": "4ecff6dddc31d2aefd07543c6e705db772b8047fe0bf79dd8531c6c7c03a6c30",
       "executable": false
     },
     "DEMO.md": {
@@ -1066,23 +1066,31 @@
       "executable": false
     },
     "docs/CLAIMS.md": {
-      "sha256": "2d8c1739ddefba5b056ab6aacc80639c669d2a192f6936c572a7ecf91567e78e",
+      "sha256": "81654346a60879a04461d614977c554c5b4b44daa4c1a6ed884d9c1475143e9d",
       "executable": false
     },
     "docs/contract/COVERAGE.json": {
-      "sha256": "51de2231de17bb67c892c9e993660ea89a050a927fa43b59570b63854dd3b5dc",
+      "sha256": "c170a4ca6e7f95ee0701457bdfb336874ed24bd2c89f78c0091f98ccf57da029",
       "executable": false
     },
     "docs/contract/DONE-AUDIT.md": {
-      "sha256": "26eca05ca902059b078328d19902cd5a71c843c6bc88884b065e11a7b8b7e062",
+      "sha256": "80701268e6b288b565016bb9dc4ebc320a9c39b818a199b2b1932456bb9bf1f4",
+      "executable": false
+    },
+    "docs/contract/health-readiness.md": {
+      "sha256": "bcad944be6df3f9d897e28be49f4a9ec44dd767c9b359a371acb21ac9e06aee9",
       "executable": false
     },
     "docs/contract/ID-MAP.json": {
       "sha256": "b2388c14a0adac46f4946c7bd729b97b39f61b2f70316acc5acdd524293321ea",
       "executable": false
     },
+    "docs/contract/managed-mail.md": {
+      "sha256": "4a2151e907160238d6268b73aecaec2225b47fc0ec944e3fefa161d0c3b920fe",
+      "executable": false
+    },
     "docs/contract/mechanism.md": {
-      "sha256": "37c84e8df967ec080be9a3b16ca17efd158ce0cf8a12487888c7d7da5d04cadd",
+      "sha256": "54b4dae6eb4e4bb2ce4f3cc74999e9c2ef066a3898b06603689b1a00c59e5adf",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1126,7 +1134,7 @@
       "executable": false
     },
     "docs/site.json": {
-      "sha256": "6e7e2d07d9267ffc0b71854ceec714ce5d34a07d849927920acb4314e07e90c5",
+      "sha256": "79a436c921eeedb0ee9eb43238bdc08de6a16b461048804843e1dd8be764fee1",
       "executable": false
     },
     "docs/team-and-settings.md": {
@@ -1766,7 +1774,7 @@
       "executable": false
     },
     "RULINGS.md": {
-      "sha256": "c22eb5a6a58c219e3fcd775bbb3c0b7d5a30ab3ada24d32c3c0861562d9dde41",
+      "sha256": "854d0516dd1d198fa2e109f4c93df548896e565effe4a99a1cab3313f53a50e1",
       "executable": false
     },
     "RUN-LOCALLY.md": {
@@ -2130,7 +2138,7 @@
       "executable": false
     },
     "seed.json": {
-      "sha256": "d5640fee9db1d8a6aa51e61673abf5065a295ad99407ea4db2deee33ffffa7a8",
+      "sha256": "f54ae800bc54dd3efa7769c4e8cbaf8de79d993e2abb4de635e818ebd5d581e9",
       "executable": false
     },
     "src/base/actor.ts": {
@@ -4270,7 +4278,7 @@
       "executable": false
     },
     "src/core/features/landing/copy.ts": {
-      "sha256": "e967c62529ba679e947e6f8ce309534b9ced943bba5d956e87a9bc6bbd540eff",
+      "sha256": "b68f59a2aaba373eb26e2657ffda8ddc8acb4e1cf79fab342f8ac3d58a1149db",
       "executable": false
     },
     "src/core/features/landing/drawings/AccountArt.tsx": {
@@ -4330,7 +4338,7 @@
       "executable": false
     },
     "src/core/features/landing/Landing.tsx": {
-      "sha256": "261a6194427390afc0bea7846ba9b8bca3467fadfda8eb1c5b6c98f2a9259425",
+      "sha256": "54d9b87e0509aac9541bb4c207593a92dcdbfea89fb1cbcafae5fc5da512c50a",
       "executable": false
     },
     "src/core/features/landing/parts/FeatureList.tsx": {
@@ -8478,7 +8486,7 @@
       "executable": false
     },
     "tests/portability.spec.ts": {
-      "sha256": "983aa9ab62c182e353892a1d662bb96572f140a228c53c7db242301eab63686d",
+      "sha256": "c93f4e9f149f8870f7d3a0c017e8bc7c1fea166949d7dcebde36e5bc95063f16",
       "executable": false
     },
     "tests/portability/flows.ts": {
@@ -8486,7 +8494,7 @@
       "executable": false
     },
     "tests/portability/privacy.spec.ts": {
-      "sha256": "15aa3351927d036878b1f97e3e447a0390770ab79f241fc00bfa98c2f63f0d66",
+      "sha256": "9003ccd590adecf538fb166ba2c814245682e5bec885aa299dbc3b491ce8af45",
       "executable": false
     },
     "tests/portability/runtime.mjs": {

@@ -1,36 +1,31 @@
-# CONTRACT.md — Mango target product contract
+# Mango target product contract
 
-Run and verify through `rer`; AGENTS.md gives the local sequence and OPERATIONS.md describes configuration, recovery and data movement.
+Mango is an email and SMS marketing platform for US ecommerce operators and creator-led businesses switching from Mailchimp, Klaviyo, ActiveCampaign or Kit. It grows consented audiences, prepares campaigns and lifecycle flows, sends through the owner’s providers and measures repeat purchases separately from forecasts and attributed revenue.
 
 ## Product target
-
-Mango is an email and SMS marketing platform that a US small or mid-size business can switch to from Mailchimp, Klaviyo, ActiveCampaign or Kit (ConvertKit) without losing a capability it uses every week. It grows a consented audience through signup forms, popups and landing pages; builds campaigns in a drag-and-drop editor with a template library and brand kit; selects people with behavior-driven segments fed by the store and other business events; runs always-on automated flows (welcome, abandoned cart and checkout, browse abandonment, post-purchase, win-back and more) that start, wait, branch and exit on real events; sends SMS alongside email under US consent and carrier rules; tests and optimizes what it sends; and reports revenue attributed to each campaign and flow, with holdout-measured lift kept separate from attribution. Agents go further than today's up-and-comers (beehiiv, Customer.io, Omnisend): they find a retention gap in connected purchase and engagement data, propose a journey with its audience, stop rules and holdout, run it only once a person approves it, and judge it on measured repeat purchases rather than open rates (see [Agents](#agents)).
 
 | | |
 | --- | --- |
 | Category | Email marketing and marketing automation |
-| Incumbents a buyer switches from | Mailchimp, Klaviyo, ActiveCampaign, Kit (ConvertKit); up-and-comers beehiiv, Customer.io, Omnisend |
-| First buyer | A US ecommerce operator or creator-led business (about 1,000 to 250,000 contacts, one brand, one to ten people sending marketing) paying in USD |
+| Incumbents a buyer switches from | Mailchimp, Klaviyo, ActiveCampaign, Kit (ConvertKit) |
+| Up-and-comers it must also beat | beehiiv, Customer.io, Omnisend |
+| First buyer | A US ecommerce operator or creator-led business with 1,000–250,000 contacts, one brand and one to ten marketing operators; USD and an operator-selected IANA time zone, with US consent, privacy, carrier and sender rules |
 
-This document is the product Mango is building towards, not only what exists today. Every clause carries a status in the [status table](#status) at the end: **done** (implemented and exercised by a cited test), **partial** (some of the behavior exists, cited) or **missing**. A missing clause is a release obligation of the target, not a waiver; difficulty (carrier registration, provider apps, native apps, payments) is engineering work recorded in a clause, never a reason to cut scope. ACCEPTANCE.md lists every clause's acceptance evidence and status for build rounds to work towards.
-
-The first buyer is a US ecommerce operator or creator-led business (about 1,000 to 250,000 contacts, one brand, one to ten people sending marketing) paying in USD. US norms are the default: CAN-SPAM sender and unsubscribe rules, TCPA express written consent and quiet hours for marketing texts, CTIA and carrier 10DLC or toll-free registration, Gmail, Yahoo and Microsoft bulk-sender requirements, CCPA/CPRA and other US state privacy rights, and USD money with US sales tax handled by the payment provider. Mango states these as product rules; it does not give legal advice.
-
-**Scope before (newsletter release, 6 October 2026):** operators collect confirmed consent, author and preview newsletters, approve one exact revision, freeze and recheck the recipient set and send on a timezone schedule with authenticated senders, unsubscribe handling and truthful delivery reporting; commerce, SMS and design are optional modules; visual journey automation, A/B testing, landing pages, roles and native apps were declared out of scope.
-
-**Scope after (this contract):** the complete category job above. Visual flows, experiments, send-time optimization, landing pages and popups, roles and permissions, multiple commerce connections, SMS for the US, migration from every named incumbent and a native mobile app are now in scope. Every existing clause still holds: exact-revision approval for campaigns, reviewed activation for flows, consent and opt-out precedence, suppression, delivery truth, erasure, audit and portability are the guarantees the larger product is built on, not its whole job.
-
-Neighboring products stay separate products, as the market separates them. Mango links to them rather than rebuilding them: the storefront and checkout are Stall's (`just-every/run-stall`) or Shopify's; the sales pipeline is Orbit's (`just-every/run-orbit`); full websites are Pane's; surveys and quizzes are Pencil's; cross-app workflow automation is Crank's; product feedback is Penny's; the support inbox is HappyToHelp's; subscription billing is Nectar's or Stripe's; payroll is Envelope's (`just-every/run-envelope`); work and project management is Pegboard's (`just-every/run-pegboard`); metrics, logs, traces and alerts are Porthole's (`just-every/run-porthole`). See [Honest boundaries](#honest-boundaries).
-
-The primary journey: Exercise the capabilities and acceptance journeys below.
+The primary journey: Connect the business’s sources and sender, grow a consented audience, prepare and review an exact campaign or flow revision, schedule its eligible recipients, deliver through the chosen provider, and inspect recorded outcomes and measured retention lift.
 
 ## How to read this contract
 
-- This follows the RER contract standard.
-- Core, Agent surface and Later are reported separately.
-- Done means every acceptance point has recorded proof.
-- Field proof is kept in its register.
-- ACCEPTANCE.md and the homepage claims document are generated from this file.
+- This follows the RER contract standard; Core is the first-week switching job plus push-further work, Agent surface offers those jobs to specialists, and Later retains uncommon work.
+- Done means every acceptance point has asserting evidence; partial names delivered behavior and what remains, and missing means no delivered workflow.
+- The Field proof register holds dated real-world proof that the repository cannot produce; it never blocks done.
+- Base duties are cited once; Mango clauses describe their product-specific delta and door rules state repeated Mango rules.
+- ACCEPTANCE.md, docs/CLAIMS.md and the status summary are generated from this file.
+
+## Door rules
+
+- **D-1.** Optional marketing modules. A disabled commerce, SMS or design module is unavailable, constructs or contacts no adapter and invents no facts, content, forecast or delivery. Commerce-dependent audience inclusion and exclusion remain blocked without their required current source; manual mail-only work uses recorded contact and permission evidence.
+- **D-2.** Permission precedence. Audience selection, review, activation and every handoff honor current channel/topic permission, opt-out, suppression and surviving restrictions; an import, payment, source event or agent output never grants permission by itself.
+- **D-3.** Exact marketing authority. A draft, preview, source outline or generated suggestion grants no delivery authority. A person’s campaign approval or flow activation binds its saved revision; an agent’s equivalent binding action carries commitment, adding external or live for exposure or a running service, and the company’s policy decides its disposition.
 
 ## Shared duties (Base)
 
@@ -38,22 +33,22 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 | --- | --- | --- | --- |
 | BASE-ACCESS-001 | Sign-in | MGMT-001 | not run |
 | BASE-ACCESS-002 | Sessions | OPER-001, OPER-003, CAMP-021, DESIGN-011, MGMT-001, MGMT-002, OPER-006 | not run |
-| BASE-ACCESS-003 | Public endpoints | HOME-001, HOME-002, DOCS-001, CAMP-012, MSG-003, MSG-010, CONT-041, FORM-007 | not run |
+| BASE-ACCESS-003 | Public endpoints | HOME-001, HOME-002, DOCS-001, CAMP-012, MSG-003, MSG-010, CONT-041, FORM-007, HEALTH-001 | not run |
 | BASE-ACCESS-004 | Server-side authorisation | OPER-002, MGMT-001, OPER-004, INT-007 | not run |
 | BASE-INPUT-001 | Validation | CONT-010, CONT-013, DESIGN-011, DESIGN-014, FORM-007, INT-007 | not run |
 | BASE-INPUT-002 | HTML | MSG-009, MSG-016, BUILD-001, BUILD-010, BUILD-013, BUILD-014 | not run |
 | BASE-INPUT-003 | Uploads | CAMP-012, BUILD-001 | not run |
-| BASE-SECRET-001 | No leakage | DESIGN-011, SMS-008, PUSH-002, DELIV-008, DELIV-009, DELIV-010, INT-002, INT-015, INT-017, INT-018, PUB-002 | not run |
+| BASE-SECRET-001 | No leakage | DESIGN-011, SMS-008, PUSH-002, DELIV-008, DELIV-009, DELIV-010, INT-002, INT-015, INT-017, INT-018, PUB-002, HEALTH-001 | not run |
 | BASE-SECRET-002 | Startup | DESIGN-001, DESIGN-006, FORM-013 | not run |
 | BASE-DATA-001 | Export and import | CONT-030, CAMP-012, DESIGN-003, DATA-001, DATA-002, CONT-023, CONT-038, BUILD-002, FLOW-016 | not run |
 | BASE-DATA-002 | Retention | CONT-012 | not run |
 | BASE-DATA-003 | Erasure | CONT-013, CONT-029, CONT-030, CAMP-012, DESIGN-011, RESULT-009, OPER-007, CONT-036, CONT-021, CONT-023, INT-016, PUB-006 | not run |
-| BASE-DATA-004 | Outbound flows | CONT-029, DESIGN-001, DESIGN-005, DESIGN-002, DESIGN-003, DESIGN-014, CONT-037, BUILD-003, INT-015, INT-018 | not run |
-| BASE-DATA-005 | Independence | HOME-002, DESIGN-005, RESULT-010, INT-018 | not run |
+| BASE-DATA-004 | Outbound flows | CONT-029, DESIGN-001, DESIGN-005, DESIGN-002, DESIGN-003, DESIGN-014, CONT-037, BUILD-003, INT-015, INT-018, MAIL-001 | not run |
+| BASE-DATA-005 | Independence | HOME-002, DESIGN-005, RESULT-010, INT-018, MAIL-001 | not run |
 | BASE-PUBLIC-001 | Privacy | HOME-001, HOME-002, DOCS-001, CAMP-012, CONT-016, CONT-018, CONT-032, CONT-033, CONT-037, FORM-004, PUB-001 | not run |
 | BASE-PUBLIC-002 | Origins | CONT-018, CONT-031, FORM-001, FORM-002 | not run |
 | BASE-PUBLIC-003 | Accessibility | HOME-002 | not run |
-| BASE-OPS-001 | Health | none | not run |
+| BASE-OPS-001 | Health | HEALTH-001 | not run |
 | BASE-OPS-002 | Migrations | none | not run |
 | BASE-OPS-003 | Idempotency | STORE-002, CONT-006, CONT-007, DESIGN-003, MSG-003, SEND-001, SEND-005, SEND-008, FLOW-006, FLOW-010, SMS-001, DELIV-007, DELIV-010, INT-002, INT-007, INT-008, INT-017, INT-018, INT-019 | not run |
 | BASE-OPS-004 | Failure is visible | STORE-003, STORE-004, PROP-007, DESIGN-007, SEND-004, SEND-009, CONT-022, FORM-010, INT-008, INT-020 | not run |
@@ -65,8 +60,8 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 | BASE-SIGNIN-001 | Standards-based SSO and lifecycle | OPER-002, OPER-006 | not run |
 | BASE-SIGNIN-002 | Native multi-factor authentication | none | not run |
 | BASE-INSTALL-001 | Free self-host and removal | none | not run |
-| BASE-MAIL-001 | Truthful mail outcomes | CONT-006, CONT-009, SEND-001, SEND-004, SEND-006, SEND-007, SEND-008, SEND-009, RESULT-009, SMS-001, DELIV-001, DELIV-007, DELIV-009, DELIV-010, REPORT-006 | not run |
-| BASE-ACCESSIBILITY-001 | One accessibility bar | FORM-002, BUILD-001, FLOW-001, MOBILE-001 | not run |
+| BASE-MAIL-001 | Truthful mail outcomes | CONT-006, CONT-009, SEND-001, SEND-004, SEND-006, SEND-007, SEND-008, SEND-009, RESULT-009, SMS-001, DELIV-001, DELIV-007, DELIV-009, DELIV-010, REPORT-006, MAIL-001 | not run |
+| BASE-ACCESSIBILITY-001 | One accessibility bar | HOME-002, DOCS-001, FORM-002, BUILD-001, FLOW-001, MOBILE-001 | not run |
 | BASE-DOCS-001 | On-site docs from one contract | DOCS-001 | not run |
 | BASE-AGENT-001 | One MCP door per seed | SURFACE-001 | not run |
 | BASE-AGENT-002 | The seed's jobs are tools, through the UI's own actions | SURFACE-001, SURFACE-008, AGENT-007 | not run |
@@ -85,81 +80,81 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 ## Published clauses
 
 - `HOME-001`: *Tier:* Core · *Cites:* BASE-PUBLIC-001, BASE-ACCESS-003
-- `HOME-002`: *Tier:* Core · *From:* HOME-001 · *Cites:* BASE-PUBLIC-001, BASE-DATA-005, BASE-PUBLIC-003, BASE-ACCESS-003
-- `DOCS-001`: *Tier:* Core · *Cites:* BASE-DOCS-001, BASE-PUBLIC-001, BASE-ACCESS-003
+- `HOME-002`: *Tier:* Core · *From:* HOME-001 · *Cites:* BASE-PUBLIC-001, BASE-DATA-005, BASE-PUBLIC-003, BASE-ACCESS-003, BASE-ACCESSIBILITY-001 · *Register:* R-801, R-802
+- `DOCS-001`: *Tier:* Core · *Cites:* BASE-DOCS-001, BASE-PUBLIC-001, BASE-ACCESS-003, BASE-ACCESSIBILITY-001 · *Register:* R-801, R-802
 - `OPER-001`: *Tier:* Core · *Cites:* BASE-ACCESS-002, BASE-ROLE-001
 - `OPER-002`: *Tier:* Core · *Cites:* BASE-ACCESS-004, BASE-SIGNIN-001
 - `OPER-003`: *Tier:* Core · *Cites:* BASE-ACCESS-002, BASE-AUDIT-001
-- `STORE-001`: *Tier:* Core
-- `STORE-002`: *Tier:* Core · *Cites:* BASE-OPS-003
-- `STORE-003`: *Tier:* Core · *Cites:* BASE-OPS-004
-- `STORE-004`: *Tier:* Core · *Cites:* BASE-OPS-004
-- `STORE-005`: *Tier:* Core
-- `STORE-006`: *Tier:* Core
-- `STORE-007`: *Tier:* Core
-- `CONT-001`: *Tier:* Core
-- `CONT-002`: *Tier:* Core
-- `CONT-003`: *Tier:* Core
-- `CONT-004`: *Tier:* Core
-- `CONT-005`: *Tier:* Core
-- `CONT-006`: *Tier:* Core · *Cites:* BASE-OPS-003, BASE-MAIL-001
-- `CONT-007`: *Tier:* Core · *Cites:* BASE-OPS-003
-- `CONT-008`: *Tier:* Core
-- `CONT-009`: *Tier:* Core · *Cites:* BASE-MAIL-001
-- `CONT-028`: *Tier:* Core · *From:* CONT-005, CONT-009
-- `CONT-010`: *Tier:* Core · *Cites:* BASE-INPUT-001
-- `CONT-011`: *Tier:* Core
-- `CONT-012`: *Tier:* Core · *Cites:* BASE-DATA-002
-- `CONT-013`: *Tier:* Core · *Cites:* BASE-DATA-003, BASE-INPUT-001
-- `CONT-029`: *Tier:* Core · *From:* CONT-013 · *Cites:* BASE-DATA-003, BASE-DATA-004
-- `CONT-030`: *Tier:* Core · *From:* CONT-013 · *Cites:* BASE-DATA-003, BASE-DATA-001
-- `PROP-001`: *Tier:* Core
-- `PROP-002`: *Tier:* Core
-- `PROP-003`: *Tier:* Core
-- `PROP-004`: *Tier:* Core
-- `PROP-005`: *Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008
-- `PROP-006`: *Tier:* Core
-- `PROP-007`: *Tier:* Core · *Cites:* BASE-OPS-004
-- `PROP-008`: *Tier:* Core
-- `PROP-009`: *Tier:* Core · *Cites:* BASE-OPS-005
-- `AUD-001`: *Tier:* Core
-- `AUD-002`: *Tier:* Core
-- `AUD-003`: *Tier:* Core
-- `AUD-004`: *Tier:* Core
-- `AUD-005`: *Tier:* Core
-- `AUD-006`: *Tier:* Core
-- `AUD-007`: *Tier:* Core
-- `CAMP-001`: *Tier:* Core · *Cites:* BASE-OPS-005
-- `CAMP-002`: *Tier:* Core
-- `AUD-010`: *Tier:* Core · *From:* AUD-001, CAMP-002
-- `CAMP-020`: *Tier:* Core · *From:* CAMP-002
-- `CAMP-021`: *Tier:* Core · *From:* CAMP-002 · *Cites:* BASE-ACCESS-002
-- `CAMP-003`: *Tier:* Core
-- `CAMP-022`: *Tier:* Core · *From:* CAMP-003
-- `CAMP-004`: *Tier:* Core
-- `CAMP-005`: *Tier:* Core
-- `CAMP-006`: *Tier:* Core
-- `CAMP-007`: *Tier:* Core
-- `CAMP-008`: *Tier:* Core
-- `CAMP-009`: *Tier:* Core
-- `CAMP-010`: *Tier:* Core
-- `CAMP-011`: *Tier:* Core
-- `CAMP-012`: *Tier:* Core · *Cites:* BASE-ACCESS-003, BASE-INPUT-003, BASE-DATA-001, BASE-DATA-003, BASE-PUBLIC-001 · *Register:* R-202
-- `CAMP-023`: *Tier:* Core · *From:* CAMP-012 · *Register:* R-202
-- `DESIGN-001`: *Tier:* Core · *Cites:* BASE-SECRET-002, BASE-DATA-004 · *Register:* R-203
-- `DESIGN-005`: *Tier:* Core · *From:* DESIGN-001 · *Cites:* BASE-DATA-004, BASE-DATA-005 · *Register:* R-203
-- `DESIGN-006`: *Tier:* Core · *From:* DESIGN-001 · *Cites:* BASE-SECRET-002 · *Register:* R-203
-- `DESIGN-002`: *Tier:* Core · *Cites:* BASE-DATA-004
-- `DESIGN-007`: *Tier:* Core · *From:* DESIGN-002 · *Cites:* BASE-OPS-004
-- `DESIGN-008`: *Tier:* Core · *From:* DESIGN-002
-- `DESIGN-009`: *Tier:* Core · *From:* DESIGN-002
-- `DESIGN-010`: *Tier:* Core · *From:* DESIGN-002
-- `DESIGN-003`: *Tier:* Core · *Cites:* BASE-DATA-001, BASE-DATA-004, BASE-OPS-003, BASE-OPS-005
-- `DESIGN-011`: *Tier:* Core · *From:* DESIGN-003 · *Cites:* BASE-ACCESS-002, BASE-SECRET-001, BASE-INPUT-001, BASE-DATA-003
-- `DESIGN-004`: *Tier:* Core · *Register:* R-201
-- `DESIGN-012`: *Tier:* Core · *From:* DESIGN-004 · *Register:* R-201
-- `DESIGN-013`: *Tier:* Core · *From:* DESIGN-004
-- `DESIGN-014`: *Tier:* Core · *From:* DESIGN-004 · *Cites:* BASE-INPUT-001, BASE-DATA-004
+- `STORE-001`: *Tier:* Core · *Rules:* D-1
+- `STORE-002`: *Tier:* Core · *Cites:* BASE-OPS-003 · *Rules:* D-1
+- `STORE-003`: *Tier:* Core · *Cites:* BASE-OPS-004 · *Rules:* D-1
+- `STORE-004`: *Tier:* Core · *Cites:* BASE-OPS-004 · *Rules:* D-1
+- `STORE-005`: *Tier:* Core · *Rules:* D-1
+- `STORE-006`: *Tier:* Core · *Rules:* D-1
+- `STORE-007`: *Tier:* Core · *Rules:* D-1
+- `CONT-001`: *Tier:* Core · *Rules:* D-2
+- `CONT-002`: *Tier:* Core · *Rules:* D-2
+- `CONT-003`: *Tier:* Core · *Rules:* D-2
+- `CONT-004`: *Tier:* Core · *Rules:* D-2
+- `CONT-005`: *Tier:* Core · *Rules:* D-2
+- `CONT-006`: *Tier:* Core · *Cites:* BASE-OPS-003, BASE-MAIL-001 · *Rules:* D-2
+- `CONT-007`: *Tier:* Core · *Cites:* BASE-OPS-003 · *Rules:* D-2
+- `CONT-008`: *Tier:* Core · *Rules:* D-2
+- `CONT-009`: *Tier:* Core · *Cites:* BASE-MAIL-001 · *Rules:* D-2
+- `CONT-028`: *Tier:* Core · *From:* CONT-005, CONT-009 · *Rules:* D-2
+- `CONT-010`: *Tier:* Core · *Cites:* BASE-INPUT-001 · *Rules:* D-2
+- `CONT-011`: *Tier:* Core · *Rules:* D-2
+- `CONT-012`: *Tier:* Core · *Cites:* BASE-DATA-002 · *Rules:* D-2
+- `CONT-013`: *Tier:* Core · *Cites:* BASE-DATA-003, BASE-INPUT-001 · *Rules:* D-2
+- `CONT-029`: *Tier:* Core · *From:* CONT-013 · *Cites:* BASE-DATA-003, BASE-DATA-004 · *Rules:* D-2
+- `CONT-030`: *Tier:* Core · *From:* CONT-013 · *Cites:* BASE-DATA-003, BASE-DATA-001 · *Rules:* D-2
+- `PROP-001`: *Tier:* Core · *Rules:* D-1
+- `PROP-002`: *Tier:* Core · *Rules:* D-1
+- `PROP-003`: *Tier:* Core · *Rules:* D-1
+- `PROP-004`: *Tier:* Core · *Rules:* D-1
+- `PROP-005`: *Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · *Rules:* D-1
+- `PROP-006`: *Tier:* Core · *Rules:* D-1
+- `PROP-007`: *Tier:* Core · *Cites:* BASE-OPS-004 · *Rules:* D-1
+- `PROP-008`: *Tier:* Core · *Rules:* D-1
+- `PROP-009`: *Tier:* Core · *Cites:* BASE-OPS-005 · *Rules:* D-1
+- `AUD-001`: *Tier:* Core · *Rules:* D-2
+- `AUD-002`: *Tier:* Core · *Rules:* D-2
+- `AUD-003`: *Tier:* Core · *Rules:* D-2
+- `AUD-004`: *Tier:* Core · *Rules:* D-2
+- `AUD-005`: *Tier:* Core · *Rules:* D-2
+- `AUD-006`: *Tier:* Core · *Rules:* D-2
+- `AUD-007`: *Tier:* Core · *Rules:* D-2
+- `CAMP-001`: *Tier:* Core · *Cites:* BASE-OPS-005 · *Rules:* D-1, D-3
+- `CAMP-002`: *Tier:* Core · *Rules:* D-1, D-3
+- `AUD-010`: *Tier:* Core · *From:* AUD-001, CAMP-002 · *Rules:* D-2
+- `CAMP-020`: *Tier:* Core · *From:* CAMP-002 · *Rules:* D-1, D-3
+- `CAMP-021`: *Tier:* Core · *From:* CAMP-002 · *Cites:* BASE-ACCESS-002 · *Rules:* D-1, D-3
+- `CAMP-003`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-022`: *Tier:* Core · *From:* CAMP-003 · *Rules:* D-1, D-3
+- `CAMP-004`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-005`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-006`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-007`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-008`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-009`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-010`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-011`: *Tier:* Core · *Rules:* D-1, D-3
+- `CAMP-012`: *Tier:* Core · *Cites:* BASE-ACCESS-003, BASE-INPUT-003, BASE-DATA-001, BASE-DATA-003, BASE-PUBLIC-001 · *Rules:* D-1, D-3 · *Register:* R-202
+- `CAMP-023`: *Tier:* Core · *From:* CAMP-012 · *Rules:* D-1, D-3 · *Register:* R-202
+- `DESIGN-001`: *Tier:* Core · *Cites:* BASE-SECRET-002, BASE-DATA-004 · *Rules:* D-1 · *Register:* R-203
+- `DESIGN-005`: *Tier:* Core · *From:* DESIGN-001 · *Cites:* BASE-DATA-004, BASE-DATA-005 · *Rules:* D-1 · *Register:* R-203
+- `DESIGN-006`: *Tier:* Core · *From:* DESIGN-001 · *Cites:* BASE-SECRET-002 · *Rules:* D-1 · *Register:* R-203
+- `DESIGN-002`: *Tier:* Core · *Cites:* BASE-DATA-004 · *Rules:* D-1
+- `DESIGN-007`: *Tier:* Core · *From:* DESIGN-002 · *Cites:* BASE-OPS-004 · *Rules:* D-1
+- `DESIGN-008`: *Tier:* Core · *From:* DESIGN-002 · *Rules:* D-1
+- `DESIGN-009`: *Tier:* Core · *From:* DESIGN-002 · *Rules:* D-1
+- `DESIGN-010`: *Tier:* Core · *From:* DESIGN-002 · *Rules:* D-1
+- `DESIGN-003`: *Tier:* Core · *Cites:* BASE-DATA-001, BASE-DATA-004, BASE-OPS-003, BASE-OPS-005 · *Rules:* D-1
+- `DESIGN-011`: *Tier:* Core · *From:* DESIGN-003 · *Cites:* BASE-ACCESS-002, BASE-SECRET-001, BASE-INPUT-001, BASE-DATA-003 · *Rules:* D-1
+- `DESIGN-004`: *Tier:* Core · *Rules:* D-1 · *Register:* R-201
+- `DESIGN-012`: *Tier:* Core · *From:* DESIGN-004 · *Rules:* D-1 · *Register:* R-201
+- `DESIGN-013`: *Tier:* Core · *From:* DESIGN-004 · *Rules:* D-1
+- `DESIGN-014`: *Tier:* Core · *From:* DESIGN-004 · *Cites:* BASE-INPUT-001, BASE-DATA-004 · *Rules:* D-1
 - `MSG-001`: *Tier:* Core
 - `MSG-002`: *Tier:* Core
 - `MSG-003`: *Tier:* Core · *Cites:* BASE-ACCESS-003, BASE-OPS-003
@@ -173,15 +168,15 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 - `MSG-011`: *Tier:* Core
 - `MSG-012`: *Tier:* Core
 - `MSG-016`: *Tier:* Core · *From:* MSG-009, MSG-012 · *Cites:* BASE-INPUT-002
-- `SEND-001`: *Tier:* Core · *Cites:* BASE-OPS-003, BASE-MAIL-001
-- `SEND-002`: *Tier:* Core
-- `SEND-003`: *Tier:* Core
-- `SEND-004`: *Tier:* Core · *Cites:* BASE-OPS-004, BASE-MAIL-001
-- `SEND-005`: *Tier:* Core · *Cites:* BASE-OPS-003
-- `SEND-006`: *Tier:* Core · *Cites:* BASE-MAIL-001
-- `SEND-007`: *Tier:* Core · *Cites:* BASE-MAIL-001
-- `SEND-008`: *Tier:* Core · *Cites:* BASE-OPS-003, BASE-MAIL-001
-- `SEND-009`: *Tier:* Core · *Cites:* BASE-OPS-004, BASE-MAIL-001
+- `SEND-001`: *Tier:* Core · *Cites:* BASE-OPS-003, BASE-MAIL-001 · *Rules:* D-2, D-3
+- `SEND-002`: *Tier:* Core · *Rules:* D-2, D-3
+- `SEND-003`: *Tier:* Core · *Rules:* D-2, D-3
+- `SEND-004`: *Tier:* Core · *Cites:* BASE-OPS-004, BASE-MAIL-001 · *Rules:* D-2, D-3
+- `SEND-005`: *Tier:* Core · *Cites:* BASE-OPS-003 · *Rules:* D-2, D-3
+- `SEND-006`: *Tier:* Core · *Cites:* BASE-MAIL-001 · *Rules:* D-2, D-3
+- `SEND-007`: *Tier:* Core · *Cites:* BASE-MAIL-001 · *Rules:* D-2, D-3
+- `SEND-008`: *Tier:* Core · *Cites:* BASE-OPS-003, BASE-MAIL-001 · *Rules:* D-2, D-3
+- `SEND-009`: *Tier:* Core · *Cites:* BASE-OPS-004, BASE-MAIL-001 · *Rules:* D-2, D-3
 - `RESULT-001`: *Tier:* Core
 - `RESULT-002`: *Tier:* Core
 - `RESULT-003`: *Tier:* Core
@@ -1398,7 +1393,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-014 — Custom properties
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Operators define and maintain typed contact properties whose provenance remains visible without changing consent.
 
@@ -1410,7 +1405,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-015 — Topics and tags
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Topic permissions remain distinct from channel permission and from free-form tags.
 
@@ -1422,7 +1417,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-016 — Preference center
 
-*Tier:* Core · *Cites:* BASE-PUBLIC-001
+*Tier:* Core · *Cites:* BASE-PUBLIC-001 · *Rules:* D-2
 
 **Requirement.** A recipient uses the preference link in a marketing message without signing in to control only their own preferences.
 
@@ -1434,7 +1429,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-017 — Contact profile and event timeline
 
-*Tier:* Core · *Cites:* BASE-ROLE-001
+*Tier:* Core · *Cites:* BASE-ROLE-001 · *Rules:* D-2
 
 **Requirement.** A contact profile brings identities, channel permission, properties, segments and a time-ordered history together. FLOW-002 owns the current flow-enrollment panel, and SEG-004 owns predictions, following ct’s recorded routing.
 
@@ -1446,7 +1441,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-018 — Onsite behavior
 
-*Tier:* Core · *Cites:* BASE-PUBLIC-001, BASE-PUBLIC-002
+*Tier:* Core · *Cites:* BASE-PUBLIC-001, BASE-PUBLIC-002 · *Rules:* D-2
 
 **Requirement.** Identified onsite behavior is recorded consistently by the first-party snippet, Shopify pixel, WooCommerce plugin and Stall integration. A site uses exactly one carrier; store record synchronization remains STORE-001 rather than onsite tracking. These are product privacy rules, without a claim of legal compliance.
 
@@ -1459,7 +1454,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-031 — Per-site tracking switch
 
-*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-ROLE-001, BASE-PUBLIC-002, BASE-AUDIT-001
+*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-ROLE-001, BASE-PUBLIC-002, BASE-AUDIT-001 · *Rules:* D-2
 
 **Requirement.** Site tracking is off until an authorized operator enables that individual site and is reset off on reconnection.
 
@@ -1472,7 +1467,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-032 — Onsite consent and opt-out precedence
 
-*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-PUBLIC-001
+*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-PUBLIC-001 · *Rules:* D-2
 
 **Requirement.** A carrier tracks only while the store’s consent tool permits analytics and marketing and reports no sale-or-sharing opt-out.
 
@@ -1486,7 +1481,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-033 — Onsite session storage
 
-*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-PUBLIC-001
+*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-PUBLIC-001 · *Rules:* D-2
 
 **Requirement.** One host-bound tracking cookie holds a limited session and optional earlier browsing; carrier code stores no other tracking identity.
 
@@ -1500,7 +1495,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-034 — Storefront click identity
 
-*Tier:* Core · *From:* CONT-018
+*Tier:* Core · *From:* CONT-018 · *Rules:* D-2
 
 **Requirement.** A tracked click can identify the recipient at the connected storefront without exposing personal data or granting consent.
 
@@ -1514,7 +1509,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-035 — Earlier browsing stays on the visitor’s device
 
-*Tier:* Core · *From:* CONT-018
+*Tier:* Core · *From:* CONT-018 · *Rules:* D-2
 
 **Requirement.** Consented earlier browsing stays inside the unidentified visitor’s browser and reaches Mango only with permitted identification.
 
@@ -1526,7 +1521,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-036 — Onsite retention and erasure
 
-*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-DATA-003
+*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-DATA-003 · *Rules:* D-2
 
 **Requirement.** Identified onsite records have bounded retention and follow the contact’s erasure, while tracking never creates permission or undoes restrictions.
 
@@ -1541,7 +1536,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-037 — No cross-site onsite identity
 
-*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-DATA-004, BASE-PUBLIC-001
+*Tier:* Core · *From:* CONT-018 · *Cites:* BASE-DATA-004, BASE-PUBLIC-001 · *Rules:* D-2
 
 **Requirement.** Onsite identity belongs to one storefront, never a cross-site identity or an ad-network feed.
 
@@ -1553,7 +1548,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-019 — US SMS consent capture
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** US SMS capture records express written permission and the recipient’s own confirmation.
 
@@ -1565,7 +1560,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-020 — Engagement-based sunsetting
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** An engagement-based sunsetting label is separate from dormancy and preserves every contact.
 
@@ -1578,7 +1573,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-021 — US privacy requests
 
-*Tier:* Core · *Cites:* BASE-DATA-003, BASE-AUDIT-001
+*Tier:* Core · *Cites:* BASE-DATA-003, BASE-AUDIT-001 · *Rules:* D-2
 
 **Requirement.** Contact privacy requests expose that contact’s own data and exclude requested sharing.
 
@@ -1590,7 +1585,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-022 — Contact search and bulk actions
 
-*Tier:* Core · *Cites:* BASE-OPS-004
+*Tier:* Core · *Cites:* BASE-OPS-004 · *Rules:* D-2
 
 **Requirement.** Operators find contacts and apply selected bulk changes with a durable receipt.
 
@@ -1602,7 +1597,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-023 — Custom objects
 
-*Tier:* Core · *Cites:* BASE-DATA-001, BASE-DATA-003
+*Tier:* Core · *Cites:* BASE-DATA-001, BASE-DATA-003 · *Rules:* D-2
 
 **Requirement.** Contact-related custom object types make business records usable in targeting and content.
 
@@ -1614,7 +1609,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-024 — Incumbent-held consent
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** A source-reported subscriber may enter without Mango reconfirmation only with distinct incumbent-held evidence and the source attestation in CONT-038. This is the named amendment to the earlier archive move-in interpretation.
 
@@ -1627,7 +1622,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-038 — Source consent attestation
 
-*Tier:* Core · *From:* CONT-024 · *Cites:* BASE-AUDIT-001, BASE-DATA-001
+*Tier:* Core · *From:* CONT-024 · *Cites:* BASE-AUDIT-001, BASE-DATA-001 · *Rules:* D-2
 
 **Requirement.** An Owner or Admin attests separately to each source’s subscription scope with a versioned, reviewable record.
 
@@ -1641,7 +1636,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-039 — Incumbent evidence restrictions
 
-*Tier:* Core · *From:* CONT-024
+*Tier:* Core · *From:* CONT-024 · *Rules:* D-2
 
 **Requirement.** Source permission never removes a restriction or supplies missing SMS proof.
 
@@ -1654,7 +1649,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-040 — Incumbent evidence labeling and revocation
 
-*Tier:* Core · *From:* CONT-024 · *Cites:* BASE-AUDIT-001
+*Tier:* Core · *From:* CONT-024 · *Cites:* BASE-AUDIT-001 · *Rules:* D-2
 
 **Requirement.** Incumbent-held evidence remains labeled and can be revoked without disturbing independent Mango-captured permission.
 
@@ -1667,7 +1662,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-025 — Opt-in mode per form and source
 
-*Tier:* Core · *Cites:* BASE-ROLE-001, BASE-AUDIT-001
+*Tier:* Core · *Cites:* BASE-ROLE-001, BASE-AUDIT-001 · *Rules:* D-2
 
 **Requirement.** Owners and Admins configure capture modes prospectively per source and channel, including manual entry under RL-101. A change never upgrades existing contacts or silently downgrades earlier subscriptions.
 
@@ -1683,7 +1678,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-026 — Contact added by hand
 
-*Tier:* Core · *Cites:* BASE-ROLE-001, BASE-AUDIT-001
+*Tier:* Core · *Cites:* BASE-ROLE-001, BASE-AUDIT-001 · *Rules:* D-2
 
 **Requirement.** An Author or higher role records a hand-captured contact’s permission, with prospective mode authority inherited solely from CONT-025 under RL-102.
 
@@ -1697,7 +1692,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-027 — Resubscribe through a public form
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** A past email unsubscriber may return through new recipient-confirmed consent, with the same public acknowledgment for every address state. This applies to every public form carrier and both single and double capture modes.
 
@@ -1711,7 +1706,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-041 — Destination-private resubscription refusals
 
-*Tier:* Core · *From:* CONT-027 · *Cites:* BASE-ACCESS-003
+*Tier:* Core · *From:* CONT-027 · *Cites:* BASE-ACCESS-003 · *Rules:* D-2
 
 **Requirement.** Public resubscription cannot disclose a destination’s state or bypass suppression.
 
@@ -1725,7 +1720,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-042 — Shared destination confirmation allowance
 
-*Tier:* Core · *From:* CONT-027
+*Tier:* Core · *From:* CONT-027 · *Rules:* D-2
 
 **Requirement.** Confirmation admission bounds mail to one address across every public capture carrier without revealing whether admission succeeded.
 
@@ -1737,7 +1732,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CONT-043 — Resubscription after erasure
 
-*Tier:* Core · *From:* CONT-027
+*Tier:* Core · *From:* CONT-027 · *Rules:* D-2
 
 **Requirement.** An erased person may give new consent without reviving their former history.
 
@@ -1752,7 +1747,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### AUD-008 — Inactivity rules in review
 
-*Tier:* Core · *Cites:* BASE-OPS-005
+*Tier:* Core · *Cites:* BASE-OPS-005 · *Rules:* D-2
 
 **Requirement.** One visible inactivity rule governs each campaign or flow message without changing consent protections.
 
@@ -1765,7 +1760,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### AUD-009 — Frequency protection: one policy and a recorded override
 
-*Tier:* Core · *Cites:* BASE-OPS-005
+*Tier:* Core · *Cites:* BASE-OPS-005 · *Rules:* D-2
 
 **Requirement.** Campaigns and flows share a visible frequency policy and exact-revision override. AUD-011 governs cart-flow counting and activation impact.
 
@@ -1778,7 +1773,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### AUD-011 — Cart-flow frequency and impact
 
-*Tier:* Core · *From:* AUD-009
+*Tier:* Core · *From:* AUD-009 · *Rules:* D-2
 
 **Requirement.** Library and moved-in flows show their campaign-versus-flow counting rule before activation.
 
@@ -1792,7 +1787,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CAMP-013 — Recipient-local send time
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1, D-3
 
 **Requirement.** Campaigns can schedule in each recipient’s evidenced local time.
 
@@ -1803,7 +1798,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CAMP-014 — Pause and resume
 
-*Tier:* Core · *Cites:* BASE-OPS-005
+*Tier:* Core · *Cites:* BASE-OPS-005 · *Rules:* D-1, D-3
 
 **Requirement.** An operator can pause and resume campaign work without duplicating hand-offs.
 
@@ -1814,7 +1809,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CAMP-015 — Marketing calendar
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1, D-3
 
 **Requirement.** A calendar exposes planned marketing pressure and preserves scheduled-revision control.
 
@@ -1826,7 +1821,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CAMP-016 — Follow-up to non-engaged recipients
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1, D-3
 
 **Requirement.** An operator can create a linked, independently approved follow-up from a sent campaign.
 
@@ -1837,7 +1832,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CAMP-017 — Recurring and RSS-to-email campaigns
 
-*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007
+*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007 · *Rules:* D-1, D-3
 
 **Requirement.** Campaigns can recur or derive new editions from feeds while preserving authorized revision scope. An agent’s recurrence or activation call carries standard for draft preparation and external for sending, with money for provider spend; the company’s policy decides the call.
 
@@ -1848,7 +1843,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CAMP-018 — Duplicate a campaign
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1, D-3
 
 **Requirement.** Duplication creates an independent draft while leaving the source’s results and approval intact.
 
@@ -1860,7 +1855,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CAMP-019 — Test send to typed addresses
 
-*Tier:* Core · *Cites:* BASE-ROLE-001, BASE-OPS-005
+*Tier:* Core · *Cites:* BASE-ROLE-001, BASE-OPS-005 · *Rules:* D-1, D-3
 
 **Requirement.** Approvers can direct a visibly marked test to a bounded set of typed destinations. CAMP-024 governs the shared daily allowance. Its full workflow includes OPER-004 role assignment, OPER-007 activity, SMS-001 typed SMS transport and CONT-019 SMS consent.
 
@@ -1872,7 +1867,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### CAMP-024 — Shared daily test allowance
 
-*Tier:* Core · *From:* CAMP-019
+*Tier:* Core · *From:* CAMP-019 · *Rules:* D-1, D-3
 
 **Requirement.** Configured and typed tests consume the same installation-wide attempt allowance.
 
@@ -1979,7 +1974,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-001 — Hosted and embedded signup
 
-*Tier:* Core · *Cites:* BASE-PUBLIC-002
+*Tier:* Core · *Cites:* BASE-PUBLIC-002 · *Rules:* D-2
 
 **Requirement.** Hosted and embeddable signup capture email and optional SMS permission without granting marketing-send authority.
 
@@ -1991,7 +1986,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-002 — Popups, flyouts and full-page forms
 
-*Tier:* Core · *Cites:* BASE-ACCESSIBILITY-001, BASE-PUBLIC-002
+*Tier:* Core · *Cites:* BASE-ACCESSIBILITY-001, BASE-PUBLIC-002 · *Rules:* D-2
 
 **Requirement.** Operators build and display branded growth forms through the storefront carrier appropriate to their site.
 
@@ -2005,7 +2000,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-003 — Multi-step capture and incentives
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Multi-step forms collect permission and release a promised incentive only after recipient confirmation.
 
@@ -2017,7 +2012,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-004 — Landing pages
 
-*Tier:* Core · *Cites:* BASE-PUBLIC-001
+*Tier:* Core · *Cites:* BASE-PUBLIC-001 · *Rules:* D-2
 
 **Requirement.** Branded hosted growth pages support a campaign’s capture task, without becoming a general website builder.
 
@@ -2029,7 +2024,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-005 — Form performance and tests
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** A form reports its own acquisition funnel and compares deliberate variants without premature winner claims.
 
@@ -2040,7 +2035,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-006 — Referral program
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Confirmed referrals can unlock the operator’s chosen milestone reward.
 
@@ -2052,7 +2047,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-007 — Abuse resistance
 
-*Tier:* Core · *Cites:* BASE-INPUT-001, BASE-ACCESS-003
+*Tier:* Core · *Cites:* BASE-INPUT-001, BASE-ACCESS-003 · *Rules:* D-2
 
 **Requirement.** Public capture separates abuse admission from subscription authority and preserves address privacy. The detailed edge and challenge protocol is documented in [the consent mechanism](docs/contract/mechanism.md).
 
@@ -2067,7 +2062,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-008 — Signup intake capacity
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Legitimate signup capacity has published accepted-signup floors with isolated bot and carrier budgets under RL-103.
 
@@ -2081,7 +2076,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-011 — Accepted-only signup accounting
 
-*Tier:* Core · *From:* FORM-008
+*Tier:* Core · *From:* FORM-008 · *Rules:* D-2
 
 **Requirement.** Signup allowances charge accepted captures rather than bot failures, retain uncertain hand-off reservations and protect each destination.
 
@@ -2095,7 +2090,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-012 — Owner-controlled signup allowance raises
 
-*Tier:* Core · *From:* FORM-008 · *Cites:* BASE-ROLE-001, BASE-AUDIT-001
+*Tier:* Core · *From:* FORM-008 · *Cites:* BASE-ROLE-001, BASE-AUDIT-001 · *Rules:* D-2
 
 **Requirement.** Owners may raise published signup allowances prospectively within the delivery ceiling, preserving their floors.
 
@@ -2108,7 +2103,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-013 — Signup challenge defaults and configuration
 
-*Tier:* Core · *From:* FORM-008 · *Cites:* BASE-ROLE-001, BASE-AUDIT-001, BASE-SECRET-002
+*Tier:* Core · *From:* FORM-008 · *Cites:* BASE-ROLE-001, BASE-AUDIT-001, BASE-SECRET-002 · *Rules:* D-2
 
 **Requirement.** Growth carriers start with a verified challenge and expose configuration problems before traffic is accepted.
 
@@ -2121,7 +2116,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-009 — Kiosk and event forms
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** A shared kiosk captures one visitor at a time without carrying identity to the next.
 
@@ -2135,7 +2130,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FORM-010 — Refused signups are never silent
 
-*Tier:* Core · *Cites:* BASE-OPS-004, BASE-AUDIT-001
+*Tier:* Core · *Cites:* BASE-OPS-004, BASE-AUDIT-001 · *Rules:* D-2
 
 **Requirement.** A refusal is visible to the affected visitor where privacy permits and to the operator on every promised report surface. RL-104 retains FORM-005’s per-form report, Home alert and hourly activity summary.
 
@@ -2230,7 +2225,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-001 — Drag-and-drop email builder
 
-*Tier:* Core · *Cites:* BASE-INPUT-002, BASE-INPUT-003, BASE-ACCESSIBILITY-001
+*Tier:* Core · *Cites:* BASE-INPUT-002, BASE-INPUT-003, BASE-ACCESSIBILITY-001 · *Rules:* D-1
 
 **Requirement.** Operators compose email by dragging, reordering, duplicating and deleting text, image, button, one-to-four-column, spacer, divider, social-link, linked video thumbnail, header, footer, product, product-grid, cart-item, coupon and restricted-HTML blocks. Blocks and sections offer padding, alignment, background and the mobile controls in BUILD-010. Undo, redo and keyboard operation preserve the message. Web, Email, Phone and Text links follow MSG-013 and social hosts follow MSG-014. The builder and HTML view share MSG-009 and MSG-012’s grammar and exact-revision approval, with lossless round trips for valid content.
 
@@ -2243,7 +2238,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-002 — Template library
 
-*Tier:* Core · *Cites:* BASE-DATA-001
+*Tier:* Core · *Cites:* BASE-DATA-001 · *Rules:* D-1
 
 **Requirement.** A library of starter templates for each common job (newsletter, promotion, product launch, welcome, abandoned cart, browse abandonment, post-purchase thank-you, review request, win-back, event invitation, re-permission) and the operator's own saved templates; a template starts a draft or a flow message, and later edits to a template never change saved or approved revisions. Imported designs (DESIGN-004), generated designs (DESIGN-002) and migrated templates (MOVE-001 to MOVE-005) land as templates.
 
@@ -2252,7 +2247,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-003 — Brand kit
 
-*Tier:* Core · *Cites:* BASE-DATA-004
+*Tier:* Core · *Cites:* BASE-DATA-004 · *Rules:* D-1
 
 **Requirement.** The brand kit holds logo, colors, fonts (with email-safe fallback stacks), button style, link color, footer and social links. Given the store's website address, Mango can propose a brand kit by fetching that page once on the operator's request and extracting logo, colors and fonts for the operator to accept or edit. New templates, forms and landing pages start from the kit; changing the kit never alters saved or approved revisions. The kit's website and social link hosts join the allowed link hosts (MSG-014).
 
@@ -2261,7 +2256,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-004 — Reusable blocks
 
-*Tier:* Core · *Cites:* BASE-AGENT-007
+*Tier:* Core · *Cites:* BASE-AGENT-007 · *Rules:* D-1
 
 **Requirement.** A saved block (for example a footer, promotion banner or shipping notice) can be placed in many templates, drafts and flow messages. Editing it updates drafts; for approved campaign revisions and live flow revisions it creates new draft revisions that must pass approval or activation (CAMP-007, FLOW-008).
 
@@ -2270,7 +2265,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-005 — Conditional content
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1
 
 **Requirement.** A block can be shown or hidden by segment, property, topic, predicted stage or the trigger event's properties, with an "otherwise" alternative; the plain-text part follows the same choice. Preview can render as any chosen contact or as each branch.
 
@@ -2279,7 +2274,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-006 — Dynamic product content
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1
 
 **Requirement.** At hand-off, product blocks render the trigger’s cart or checkout items with image, title, variant, quantity and current price, the viewed product, or connected-catalog recommendations: bestsellers, new arrivals, recently viewed, frequently bought together and purchase-history personalization. Unpublished or out-of-stock items are omitted. An empty result hides the block or skips the message as chosen. MSG-006 and MSG-014 govern links and images, including connected storefront and asset hosts; a disallowed item is omitted and counted with its reason. Operators can also select products under BUILD-011.
 
@@ -2291,7 +2286,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-007 — Coupons
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1
 
 **Requirement.** A message carries a static code or a unique single-use discount or Stripe promotion code created at hand-off through Shopify, WooCommerce, BigCommerce or Stall. The exact revision contains the discount, expiry and usage limit. Failed creation skips the recipient-step with a named reason; no message without its code is sent. Shopify’s installation authority is part of INT-015.
 
@@ -2302,7 +2297,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-008 — Previews and pre-send checks
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1
 
 **Requirement.** Previews show desktop, mobile, dark-mode approximation and plain text as a chosen contact under CAMP-003. Review locates advisory findings for missing image alt text, heading order, link text, likely spam triggers and sent size at or above 90 percent of BUILD-012’s limit, alongside MSG-006 to MSG-012’s blocking checks. A size advisory identifies measured size, limit and the three largest blocks.
 
@@ -2315,7 +2310,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-009 — SMS and MMS composer
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1
 
 **Requirement.** The SMS editor counts characters and GSM-7 or UCS-2 segments, estimates per-recipient and total USD cost under SMS-006, uses the branded tracked links in RESULT-005, attaches one carrier-compliant MMS image, applies personalization fallbacks and appends MSG-005’s compliance text.
 
@@ -2324,7 +2319,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-010 — Mobile layout the checker can prove
 
-*Tier:* Core · *Cites:* BASE-INPUT-002
+*Tier:* Core · *Cites:* BASE-INPUT-002 · *Rules:* D-1
 
 **Requirement.** Built email columns remain readable with or without stylesheet support: they appear side by side at desktop email width and stack in their chosen order on a phone. Responsive settings and the checker follow BUILD-014 and BUILD-013; the detailed compiler authority is recorded in [the mobile mechanism](docs/contract/mechanism.md).
 
@@ -2336,7 +2331,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-013 — Mobile and desktop message checks
 
-*Tier:* Core · *From:* BUILD-010 · *Cites:* BASE-INPUT-002
+*Tier:* Core · *From:* BUILD-010 · *Cites:* BASE-INPUT-002 · *Rules:* D-1
 
 **Requirement.** The MSG-012 checker evaluates desktop and mobile email trees in standards and quirks rendering. Compliance content remains visible, and a block hidden at one width passes at the other and remains in plain text.
 
@@ -2347,7 +2342,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-014 — Generated mobile presentation
 
-*Tier:* Core · *From:* BUILD-010 · *Cites:* BASE-INPUT-002
+*Tier:* Core · *From:* BUILD-010 · *Cites:* BASE-INPUT-002 · *Rules:* D-1
 
 **Requirement.** The builder alone generates responsive presentation from the stored block and section controls. Authors cannot supply a competing style block or hidden-content rule. RL-81 records the closed compiler authority and fallback rules; [the mobile mechanism](docs/contract/mechanism.md) specifies it.
 
@@ -2360,7 +2355,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-011 — Chosen catalog products
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1
 
 **Requirement.** Operators search the connected catalog by title, SKU, collection or vendor and choose products and variants for a product or product-grid block. Choices retain identifiers; image, title, price, compare-at price and URL come fresh from the catalog at hand-off, while review and preview show current values and read time. Unpublished, deleted and out-of-stock items are omitted and counted; empty blocks hide or skip as chosen. RL-84 records the unavailable-read and save-state treatment.
 
@@ -2373,7 +2368,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### BUILD-012 — Email size the builder and imported templates fit in
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-1
 
 **Requirement.** A full promotional email built in Mango or moved from an incumbent saves, approves and sends within one transmitted-byte limit shared by authoring, imports, generation, templates, duplication, follow-ups and flow messages. The bound includes personalization, tracking, compliance content, responsive styles and each configured product maximum; plain text has its own equal byte limit. The builder and HTML view show the bound while editing. Oversize refusal names measured size, limit and three largest blocks and retains unsaved content. Approval, test send and hand-off remeasure; oversize rendered recipients skip with a counted cause rather than clipped content. [The size mechanism](docs/contract/mechanism.md) specifies measurement.
 
@@ -2389,7 +2384,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-001 — Visual flow builder
 
-*Tier:* Core · *Cites:* BASE-ACCESSIBILITY-001
+*Tier:* Core · *Cites:* BASE-ACCESSIBILITY-001 · *Rules:* D-2, D-3
 
 **Requirement.** A visual canvas builds an explained flow graph before any activation.
 
@@ -2402,7 +2397,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-002 — Triggers
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Events, dates and source changes start the flow they match and expose its current enrollment state on the contact profile under ct’s CONT-017 routing.
 
@@ -2417,7 +2412,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-003 — Entry filters and re-entry
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Entry and continuing eligibility govern enrollment and bounded re-entry.
 
@@ -2429,7 +2424,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-004 — Delays and waits
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Durable waits choose the right instant or event branch across interruptions.
 
@@ -2441,7 +2436,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-005 — Splits
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Every split records the evaluated facts behind the contact’s branch.
 
@@ -2452,7 +2447,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-006 — Actions
 
-*Tier:* Core · *Cites:* BASE-OPS-003
+*Tier:* Core · *Cites:* BASE-OPS-003 · *Rules:* D-2, D-3
 
 **Requirement.** Non-message flow actions update business records while preserving permission boundaries.
 
@@ -2464,7 +2459,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-007 — Exits and goals
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Goals and explicit exits stop an enrollment with a readable reason.
 
@@ -2475,7 +2470,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-008 — Reviewed activation
 
-*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007, BASE-AUDIT-001
+*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007, BASE-AUDIT-001 · *Rules:* D-2, D-3
 
 **Requirement.** An exact flow revision is activated with its declared audience, content and limits. An agent’s activation carries live and external classes; the company’s policy determines its disposition under AGENT-010.
 
@@ -2490,7 +2485,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-009 — Per-send rechecks
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Each flow hand-off rechecks current recipient eligibility and records a skip’s consequences.
 
@@ -2501,7 +2496,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-010 — Exactly-once execution
 
-*Tier:* Core · *Cites:* BASE-OPS-003
+*Tier:* Core · *Cites:* BASE-OPS-003 · *Rules:* D-2, D-3
 
 **Requirement.** Enrollment-node execution preserves source order and never replays obsolete marketing after an interruption.
 
@@ -2513,7 +2508,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-011 — Pause, manual review and stop
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Operators can suspend selected flow work or stop all marketing hand-offs.
 
@@ -2525,7 +2520,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-012 — Flow library
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** The flow library installs explained editable lifecycle journeys as drafts.
 
@@ -2537,7 +2532,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-013 — Flow analytics and path inspection
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Flow and node reports explain counts, revenue and a contact’s entire route.
 
@@ -2548,7 +2543,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-014 — Priority and cross-message frequency
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** Ranked competing messages honor shared per-contact frequency choices.
 
@@ -2560,7 +2555,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-015 — Sequences
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2, D-3
 
 **Requirement.** A linear sequence offers the Kit/ActiveCampaign day-by-day authoring journey on the same flow behavior.
 
@@ -2571,7 +2566,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### FLOW-016 — Flow portability
 
-*Tier:* Core · *Cites:* BASE-DATA-001
+*Tier:* Core · *Cites:* BASE-DATA-001 · *Rules:* D-2, D-3
 
 **Requirement.** Restored flow work remains safely paused until the operator resumes it.
 
@@ -3167,7 +3162,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-001 — From Mailchimp
 
-*Tier:* Core · *Register:* R-701
+*Tier:* Core · *Rules:* D-2 · *Register:* R-701
 
 **Requirement.** Owners move their Mailchimp audiences and account history to Mango by export or live pull without upgrading any consent.
 
@@ -3182,7 +3177,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-002 — From Klaviyo
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Klaviyo profiles and marketing assets move by private-key pull or CSV, retaining source restrictions and naming unsupported flow steps.
 
@@ -3193,7 +3188,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-003 — From ActiveCampaign
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** ActiveCampaign contacts and automations move by CSV or API.
 
@@ -3204,7 +3199,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-004 — From Kit (ConvertKit)
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Kit subscribers and sequences move by CSV or API.
 
@@ -3215,7 +3210,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-005 — From beehiiv, Omnisend and Customer.io
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** beehiiv, Omnisend and Customer.io subscribers move by export or API without upgrading restrictions.
 
@@ -3226,7 +3221,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-006 — Reconciliation and cutover
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Each move-in has a reconciliation report that accounts for the source data and every conversion finding.
 
@@ -3238,7 +3233,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-016 — Move-in cutover checklist
 
-*Tier:* Core · *From:* MOVE-006
+*Tier:* Core · *From:* MOVE-006 · *Rules:* D-2
 
 **Requirement.** An owner completes an inspectable cutover checklist before closing the incumbent account.
 
@@ -3249,7 +3244,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-007 — Mailchimp saved segments
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Mailchimp saved segments become reviewable draft segments with visible differences from the original.
 
@@ -3263,7 +3258,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-008 — Mailchimp automations and Customer Journeys
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Classic Mailchimp automations become inspectable draft flows.
 
@@ -3274,7 +3269,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-017 — Customer Journey inventory and drafts
 
-*Tier:* Core · *From:* MOVE-008
+*Tier:* Core · *From:* MOVE-008 · *Rules:* D-2
 
 **Requirement.** Customer Journeys without a read API are rebuilt from an explicit inventory.
 
@@ -3286,7 +3281,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-009 — Incumbent engagement history
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Mailchimp export engagement becomes historical imported facts, separate from native sending and consent.
 
@@ -3300,7 +3295,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-010 — Several audiences
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Several incumbent audiences reconcile into one brand without losing topic-specific restrictions.
 
@@ -3312,7 +3307,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-011 — Incumbent template conversion
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Imported templates and campaign bodies become builder templates with mapped personalization and visible unmapped content.
 
@@ -3324,7 +3319,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-018 — Converted template styles and readability
 
-*Tier:* Core · *From:* MOVE-011
+*Tier:* Core · *From:* MOVE-011 · *Rules:* D-2
 
 **Requirement.** Template conversion preserves admitted styles and makes readability changes inspectable.
 
@@ -3337,7 +3332,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-019 — Held conversions and outside hosts
 
-*Tier:* Core · *From:* MOVE-011
+*Tier:* Core · *From:* MOVE-011 · *Rules:* D-2
 
 **Requirement.** Conversion keeps oversize content and outside hosts visible through review and cutover.
 
@@ -3350,7 +3345,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-012 — Move-in at the buyer's scale
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Full-size move-in uploads and previews stay bounded and durable.
 
@@ -3363,7 +3358,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-020 — Full-size API move-in
 
-*Tier:* Core · *From:* MOVE-012
+*Tier:* Core · *From:* MOVE-012 · *Rules:* D-2
 
 **Requirement.** Full-size API migration keeps its position within the incumbent’s limits.
 
@@ -3374,7 +3369,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-021 — Move-in resumption and reconciliation
 
-*Tier:* Core · *From:* MOVE-012
+*Tier:* Core · *From:* MOVE-012 · *Rules:* D-2
 
 **Requirement.** Interrupted move-ins resume from committed progress without duplicate work.
 
@@ -3386,7 +3381,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-013 — Two-way sync during the parallel run
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** During a parallel run, incumbent and Mango consent stay synchronized until explicit cutover.
 
@@ -3399,7 +3394,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-022 — Parallel-run verification and freshness
 
-*Tier:* Core · *From:* MOVE-013
+*Tier:* Core · *From:* MOVE-013 · *Rules:* D-2
 
 **Requirement.** The parallel sync authenticates and verifies changes and catches up before sending.
 
@@ -3411,7 +3406,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-023 — Restriction writeback
 
-*Tier:* Core · *From:* MOVE-013
+*Tier:* Core · *From:* MOVE-013 · *Rules:* D-2
 
 **Requirement.** Mango restrictions are written back to every moved audience that holds the address.
 
@@ -3423,7 +3418,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-024 — Export-only parallel-run custody
 
-*Tier:* Core · *From:* MOVE-013
+*Tier:* Core · *From:* MOVE-013 · *Rules:* D-2
 
 **Requirement.** An export-only move makes its consent-freshness limits explicit through the parallel week.
 
@@ -3435,7 +3430,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-025 — End the parallel run
 
-*Tier:* Core · *From:* MOVE-013 · *Cites:* BASE-AUDIT-001
+*Tier:* Core · *From:* MOVE-013 · *Cites:* BASE-AUDIT-001 · *Rules:* D-2
 
 **Requirement.** Owner or Admin cutover ends synchronization in a recorded sequence.
 
@@ -3447,7 +3442,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-026 — Other-incumbent parallel sync
 
-*Tier:* Core · *From:* MOVE-013
+*Tier:* Core · *From:* MOVE-013 · *Rules:* D-2
 
 **Requirement.** Each supported incumbent uses its available consent-synchronization route and exposes any missing direction.
 
@@ -3461,7 +3456,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-014 — Incumbent images brought home
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Imported images are brought home before an incumbent account closes.
 
@@ -3474,7 +3469,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOVE-015 — Incumbent engagement history beyond the Mailchimp export
 
-*Tier:* Core · *Register:* R-702
+*Tier:* Core · *Rules:* D-2 · *Register:* R-702
 
 **Requirement.** API-key activity and other incumbents’ histories retain MOVE-009 custody and support the remaining engagement uses.
 
@@ -3488,7 +3483,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### MOBILE-001 — Responsive operator app
 
-*Tier:* Core · *Cites:* BASE-ACCESSIBILITY-001
+*Tier:* Core · *Cites:* BASE-ACCESSIBILITY-001 · *Register:* R-801, R-802
 
 **Requirement.** Every operator page is usable at phone width, including the flow canvas and its node details.
 
@@ -3513,7 +3508,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### PUB-001 — Web archive
 
-*Tier:* Core · *Cites:* BASE-PUBLIC-001
+*Tier:* Core · *Cites:* BASE-PUBLIC-001 · *Rules:* D-2
 
 **Requirement.** A sent newsletter can be shared as a neutral public web version.
 
@@ -3524,7 +3519,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### PUB-002 — Paid newsletters
 
-*Tier:* Core · *Cites:* BASE-SECRET-001
+*Tier:* Core · *Cites:* BASE-SECRET-001 · *Rules:* D-2
 
 **Requirement.** Creators sell paid newsletter tiers on their own Stripe or Nectar connection without Mango holding funds.
 
@@ -3537,7 +3532,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### PUB-003 — Recommendations
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Creators can recommend chosen partner newsletters when someone signs up.
 
@@ -3547,7 +3542,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### PUB-004 — Direct sponsorships
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** Creators book and report direct sponsorships in their newsletters.
 
@@ -3557,7 +3552,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### PUB-005 — Paid signup page and payer consent
 
-*Tier:* Core
+*Tier:* Core · *Rules:* D-2
 
 **Requirement.** A hosted paid signup leads from a saved tier to provider checkout and tells the reader what happens next.
 
@@ -3569,7 +3564,7 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 
 #### PUB-006 — Paid-reader consent and restrictions
 
-*Tier:* Core · *From:* PUB-005 · *Cites:* BASE-DATA-003
+*Tier:* Core · *From:* PUB-005 · *Cites:* BASE-DATA-003 · *Rules:* D-2
 
 **Requirement.** A paying reader joins the mailing audience only with their own channel confirmation.
 
@@ -3579,6 +3574,35 @@ The primary journey: Exercise the capabilities and acceptance journeys below.
 3. An unsubscribed payer stays unsubscribed until their own affirmative confirmation under CONT-027; suppression receives no confirmation and no newsletter.
 4. An already confirmed subscriber needs no second confirmation; payment events alone never create or widen permission.
 5. Contact erasure removes the paid-signup address and consent evidence under CONT-013.
+
+### Installation services
+
+#### HEALTH-001 — Bounded dependency readiness
+
+*Tier:* Core · *From:* new · *Cites:* BASE-OPS-001, BASE-ACCESS-003, BASE-SECRET-001
+
+**Requirement.** Supersedes `BASE-OPS-001` under the recorded 21 October health ruling: Mango reports dependency readiness within two seconds, using the bounded Queue observation described in [health readiness](docs/contract/health-readiness.md).
+
+**Acceptance.**
+1. Database, object-storage and Queue acceptance observations run concurrently with 1,500-millisecond dependency deadlines; all succeeding returns ready, while each failed or expired dependency is named as unreachable or timeout.
+2. Database and object storage are read fresh for each request. Queue success or failure is reused for 60 seconds from its start, within one binding and isolate only; new deployments and isolates start fresh.
+3. Each waiting request has its own deadline; the shared Queue observation and its slot release survive cancellation by the originating caller.
+4. An expired Queue result starts another observation while at most two sends per binding/isolate are outstanding. At that cap the last timed-out failure is reused beyond its window without moving expiry until a slot frees.
+5. A late send releases only its slot and cannot rewrite a returned observation or a later result; the next eligible request after release can start a fresh check.
+6. The readiness response identifies elapsed Queue observation time, slow responses and cached reuse; it distinguishes producer acceptance from consumer processing or delivery and discloses the cap’s potentially indefinite stale failure.
+7. The public check reads no private record, mutates no database or object-storage data and exposes no upstream diagnostic. Binding-edge journeys cover slow success, rejection, deadlines, concurrent reuse, expiry, recovery, cap, cancellation and isolation inside the two-second response.
+
+#### MAIL-001 — Selected Managed service mail
+
+*Tier:* Core · *From:* new · *Cites:* BASE-DATA-005, BASE-DATA-004, BASE-MAIL-001
+
+**Requirement.** Supersedes `BASE-DATA-005` only for the owner-selected Managed transactional-mail connection. The exception is limited to sign-in and subscription confirmation; its authorization and failure boundary are recorded in [Managed mail](docs/contract/managed-mail.md).
+
+**Acceptance.**
+1. The configured RER relay receives only the transactional message’s one recipient, subject, text and optional HTML with the installation credential; it owns that sending identity.
+2. Free and Assisted installations keep their own-provider choices and have no RER relay dependency.
+3. Inactive Managed service, revoked credentials or a relay failure is visible through the normal delivery policy and never causes provider substitution or a local outbox.
+4. This connection grants no newsletter sender, authentication, unsubscribe, deduplication or delivery-evidence authority; MSG-001 to MSG-003 and SEND-001/SEND-008 retain their separate gates.
 
 ### Agent surface
 
@@ -3605,27 +3629,27 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 | `mango.sources.connect` | Configure a commerce source | STORE-001 | accounts · security (+ gated) | Not implemented |
 | `mango.sources.sync` | Sync and reconcile source records | STORE-002, STORE-003, STORE-004, STORE-005, STORE-006, STORE-007 | standard or live | Not implemented |
 | `mango.contacts.read` | Read contact identity, channel state and history | CONT-001, CONT-002, CONT-003, CONT-008, CONT-014, CONT-017, CONT-022 | standard | Scoped profile API; no MCP adapter |
-| `mango.contacts.update` | Manage reversible profile, topic and consent evidence | CONT-004, CONT-005, CONT-006, CONT-007, CONT-009, CONT-011, CONT-012, CONT-015, CONT-016, CONT-019, CONT-020, CONT-023, CONT-024, CONT-025, CONT-026, CONT-027 | standard or external | Scoped contact and suppression APIs; no MCP adapter |
+| `mango.contacts.update` | Manage reversible profile, topic and consent evidence | CONT-004, CONT-005, CONT-028, CONT-006, CONT-007, CONT-009, CONT-011, CONT-012, CONT-015, CONT-016, CONT-019, CONT-020, CONT-023, CONT-024, CONT-038, CONT-039, CONT-040, CONT-025, CONT-026, CONT-027, CONT-041, CONT-042, CONT-043 | standard or external | Scoped contact and suppression APIs; no MCP adapter |
 | `mango.contacts.import` | Prepare and apply a contact import plan | CONT-010 | standard | Not implemented |
-| `mango.contacts.erase` | Erase contact data and exercise privacy requests | CONT-013, CONT-021 | destructive | Not implemented |
-| `mango.tracking.configure` | Configure permitted onsite behavior capture | CONT-018 | live · security | Not implemented |
+| `mango.contacts.erase` | Erase contact data and exercise privacy requests | CONT-013, CONT-029, CONT-030, CONT-021 | destructive | Not implemented |
+| `mango.tracking.configure` | Configure permitted onsite behavior capture | CONT-018, CONT-031, CONT-032, CONT-033, CONT-034, CONT-035, CONT-036, CONT-037 | live · security | Not implemented |
 | `mango.proposals.prepare` | Prepare grounded observations, forecasts and content | PROP-001, PROP-002, PROP-003, PROP-004, PROP-005, PROP-006, PROP-007, PROP-008, PROP-009 | standard or external | Proposal service; no MCP adapter |
-| `mango.audiences.evaluate` | Inspect eligibility, counts and exclusions | AUD-001, AUD-002, AUD-003, AUD-004, AUD-005, AUD-006, AUD-007, AUD-008, AUD-009 | standard | Not implemented |
-| `mango.campaigns.read` | Inspect campaign state, history and preview | CAMP-001, CAMP-003 | standard | Not implemented |
-| `mango.campaigns.draft` | Edit, duplicate and prepare campaigns or images | CAMP-002, CAMP-007, CAMP-012, CAMP-018 | standard | Not implemented |
+| `mango.audiences.evaluate` | Inspect eligibility, counts and exclusions | AUD-001, AUD-010, AUD-002, AUD-003, AUD-004, AUD-005, AUD-006, AUD-007, AUD-008, AUD-009, AUD-011 | standard | Not implemented |
+| `mango.campaigns.read` | Inspect campaign state, history and preview | CAMP-001, CAMP-003, CAMP-022 | standard | Not implemented |
+| `mango.campaigns.draft` | Edit, duplicate and prepare campaigns or images | CAMP-002, AUD-010, CAMP-020, CAMP-021, CAMP-007, CAMP-012, CAMP-023, CAMP-018 | standard | Not implemented |
 | `mango.campaigns.signoff` | Sign off the exact campaign revision | CAMP-004, CAMP-005 | commitment | Not implemented |
 | `mango.campaigns.schedule` | Schedule, cancel, pause or resume campaigns | CAMP-006, CAMP-009, CAMP-010, CAMP-011, CAMP-013, CAMP-014, CAMP-015, CAMP-016, CAMP-017 | live (+ external) | Not implemented |
-| `mango.campaigns.test` | Send a campaign test to chosen recipients | CAMP-008, CAMP-019 | external | Not implemented |
-| `mango.designs.prepare` | Generate or import editable designs | DESIGN-001, DESIGN-002, DESIGN-003, DESIGN-004 | standard or external | Not implemented |
-| `mango.messages.check` | Check message identity, safety and rendering | MSG-001, MSG-002, MSG-003, MSG-004, MSG-005, MSG-006, MSG-007, MSG-008, MSG-009, MSG-010, MSG-011, MSG-012, MSG-013, MSG-014, MSG-015 | standard (+ security) | Not implemented |
+| `mango.campaigns.test` | Send a campaign test to chosen recipients | CAMP-008, CAMP-019, CAMP-024 | external | Not implemented |
+| `mango.designs.prepare` | Generate or import editable designs | DESIGN-001, DESIGN-005, DESIGN-006, DESIGN-002, DESIGN-007, DESIGN-008, DESIGN-009, DESIGN-010, DESIGN-003, DESIGN-011, DESIGN-004, DESIGN-012, DESIGN-013, DESIGN-014 | standard or external | Not implemented |
+| `mango.messages.check` | Check message identity, safety and rendering | MSG-001, MSG-002, MSG-003, MSG-004, MSG-005, MSG-006, MSG-007, MSG-008, MSG-009, MSG-016, MSG-010, MSG-011, MSG-012, MSG-013, MSG-014, MSG-015 | standard (+ security) | Not implemented |
 | `mango.delivery.dispatch` | Dispatch eligible messages and reconcile outcomes | SEND-001, SEND-002, SEND-003, SEND-004, SEND-005, SEND-006, SEND-007, SEND-008, SEND-009 | external | Scoped campaign-send API; no MCP adapter |
-| `mango.results.read` | Inspect marketing results, links, revenue and cost | RESULT-001, RESULT-002, RESULT-003, RESULT-004, RESULT-005, RESULT-006, RESULT-007, RESULT-008 | standard | Not implemented |
-| `mango.data.export` | Prepare a portable account export | DATA-001 | standard | Not implemented |
+| `mango.results.read` | Inspect marketing results, links, revenue and cost | RESULT-001, RESULT-002, RESULT-003, RESULT-004, RESULT-005, RESULT-009, RESULT-010, RESULT-006, RESULT-007, RESULT-008 | standard | Not implemented |
+| `mango.data.export` | Prepare a portable account export | DATA-001, DATA-002 | standard | Not implemented |
 | `mango.forms.publish` | Prepare and publish signup forms and landing pages | FORM-001, FORM-002, FORM-003, FORM-004, FORM-009 | standard or external (+ live) | Not implemented |
 | `mango.forms.measure` | Inspect form performance, referrals and refusal reports | FORM-005, FORM-006, FORM-010 | standard | Not implemented |
-| `mango.forms.configure` | Configure abuse controls and intake capacity | FORM-007, FORM-008 | security · live | Not implemented |
+| `mango.forms.configure` | Configure abuse controls and intake capacity | FORM-007, FORM-008, FORM-011, FORM-012, FORM-013 | security · live | Not implemented |
 | `mango.segments.manage` | Prepare and evaluate segments, predictions and scores | SEG-001, SEG-002, SEG-003, SEG-004, SEG-005, SEG-006 | standard | Not implemented |
-| `mango.content.edit` | Prepare templates, blocks, product and channel content | BUILD-001, BUILD-002, BUILD-003, BUILD-004, BUILD-005, BUILD-006, BUILD-008, BUILD-009, BUILD-010, BUILD-011, BUILD-012 | standard | Not implemented |
+| `mango.content.edit` | Prepare templates, blocks, product and channel content | BUILD-001, BUILD-002, BUILD-003, BUILD-004, BUILD-005, BUILD-006, BUILD-008, BUILD-009, BUILD-010, BUILD-013, BUILD-014, BUILD-011, BUILD-012 | standard | Not implemented |
 | `mango.coupons.prepare` | Prepare and issue catalog-grounded coupons | BUILD-007 | standard or money (+ external) | Not implemented |
 | `mango.flows.draft` | Prepare triggers, filters, waits, branches and goals | FLOW-001, FLOW-002, FLOW-003, FLOW-004, FLOW-005, FLOW-006, FLOW-007, FLOW-012, FLOW-015, FLOW-016 | standard | Not implemented |
 | `mango.flows.activate` | Sign off and activate a saved flow revision | FLOW-008 | commitment · live (+ external) | Not implemented |
@@ -3635,17 +3659,17 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 | `mango.sms.compose` | Inspect quiet hours, two-way messages, links and MMS | SMS-003, SMS-004, SMS-005, SMS-007 | standard or external | Not implemented |
 | `mango.sms.budget` | Change the business’s SMS spending commitment | SMS-006 | money | Not implemented |
 | `mango.push.publish` | Configure and deliver web and app notifications | PUSH-001, PUSH-002 | external · live | Not implemented |
-| `mango.deliverability.configure` | Configure sender providers, domains and warm-up | DELIV-001, DELIV-002, DELIV-003, DELIV-004, DELIV-007, DELIV-008 | accounts or security (+ live) (+ gated) | Not implemented |
+| `mango.deliverability.configure` | Configure sender providers, domains and warm-up | DELIV-001, DELIV-002, DELIV-003, DELIV-004, DELIV-007, DELIV-008, DELIV-009, DELIV-010 | accounts or security (+ live) (+ gated) | Not implemented |
 | `mango.deliverability.read` | Inspect mailbox-provider outcomes and address quality | DELIV-005, DELIV-006 | standard | Not implemented |
 | `mango.reports.read` | Inspect marketing and retention reports | REPORT-001, REPORT-002, REPORT-003, REPORT-004, REPORT-005, REPORT-007 | standard | Not implemented |
 | `mango.reports.schedule` | Schedule delivery of a custom report | REPORT-006 | external · live | Not implemented |
-| `mango.connections.configure` | Configure commerce, CRM and marketing connectors | INT-001, INT-002, INT-003, INT-004, INT-005, INT-006, INT-009, INT-010, INT-011, INT-014, INT-015 | accounts · security (+ access) (+ gated) | Not implemented |
+| `mango.connections.configure` | Configure commerce, CRM and marketing connectors | INT-001, INT-002, INT-003, INT-004, INT-005, INT-006, INT-009, INT-010, INT-011, INT-014, INT-015, INT-016, INT-017, INT-018, INT-019, INT-020 | accounts · security (+ access) (+ gated) | Not implemented |
 | `mango.events.manage` | Record source events and configure outbound subscriptions | INT-007, INT-008 | standard or external (+ access) | Scoped custom-event API; no MCP adapter |
 | `mango.ad-audiences.sync` | Publish consented ad audiences | INT-012 | external | Not implemented |
 | `mango.links.tag` | Prepare static campaign analytics tags | INT-013 | standard | Not implemented |
-| `mango.move.plan` | Prepare an incumbent move-in with mapping and reconciliation | MOVE-001, MOVE-002, MOVE-003, MOVE-004, MOVE-005, MOVE-006, MOVE-007, MOVE-008, MOVE-009, MOVE-010, MOVE-011, MOVE-012, MOVE-013, MOVE-014, MOVE-015 | standard or accounts (+ security) (+ gated) | Not implemented |
+| `mango.move.plan` | Prepare an incumbent move-in with mapping and reconciliation | MOVE-001, MOVE-002, MOVE-003, MOVE-004, MOVE-005, MOVE-006, MOVE-016, MOVE-007, MOVE-008, MOVE-017, MOVE-009, MOVE-010, MOVE-011, MOVE-018, MOVE-019, MOVE-012, MOVE-020, MOVE-021, MOVE-013, MOVE-022, MOVE-023, MOVE-024, MOVE-025, MOVE-026, MOVE-014, MOVE-015 | standard or accounts (+ security) (+ gated) | Not implemented |
 | `mango.archive.publish` | Publish a campaign in the public archive | PUB-001 | external · live | Not implemented |
-| `mango.paid.configure` | Configure a paid tier and payer signup | PUB-002, PUB-005 | money · commitment (+ accounts) (+ gated) | Not implemented |
+| `mango.paid.configure` | Configure a paid tier and payer signup | PUB-002, PUB-005, PUB-006 | money · commitment (+ accounts) (+ gated) | Not implemented |
 | `mango.recommendations.publish` | Publish newsletter recommendations | PUB-003 | external | Not implemented |
 | `mango.sponsorships.manage` | Prepare and accept direct sponsorship terms | PUB-004 | standard or commitment (+ money) (+ external) | Not implemented |
 | `mango.retention.find` | Find retention gaps and supporting cohorts | AGENT-001 | standard | Not implemented |
@@ -3667,12 +3691,14 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 **Prompts.** Prepare a consented campaign → CAMP-002, CAMP-004, AUD-001; plan a retention journey → AGENT-001, AGENT-002; diagnose a delivery gap → AGENT-004, AGENT-005; judge incremental retention → AGENT-003, EXP-003; plan an incumbent move-in → AGENT-011, MOVE-006; audit the marketing account → AGENT-006.
 
 **Not tools, and why.**
-- HOME-001: The installed Lobby and static marketing landing are public presentation and installation facts.
+- HOME-001, HOME-002: The installed Lobby and static marketing landing are public presentation and installation facts.
 - DOCS-001: The public documentation reading screen and build-time publishing are presentation and installation facts.
 - SCALE-001: Capacity and seeded performance are installation facts proved by the declared scale journey.
 - MGMT-001: First-owner admission is the person’s installation-claim screen.
 - MGMT-002: The native owner editor is a person’s interactive coding screen.
 - MOBILE-001: The responsive operator display is a person’s screen; its record actions use the tools above.
+- HEALTH-001: Dependency readiness is an installation fact; the check itself reads no marketing record.
+- MAIL-001: Selection of Managed transactional-mail service is an installation fact; marketing-provider jobs use the tools above.
 - MOBILE-002: The iOS and Android apps’ notification and device interfaces run on the device; their server jobs use the same tools.
 
 **Limits.** Mango’s declared capacity limits bound request rate, input size, import size, recipient batch size and retained file bytes; the marketing installation publishes those capacities alongside its existing scale and intake limits. Business thresholds and provider-spend caps are the company’s policy.
@@ -3799,13 +3825,14 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 3. A delivered message, consent withdrawal, lapsed-cohort finding and completed flow goal produce the documented marketing event types with their Mango record links.
 4. The same source event replay produces one marketing effect and preserves the original source time in the affected record.
 
+
 ## Push further
 
 ### Agents
 
 #### AGENT-001 — Retention-gap finder
 
-*Tier:* Core · *Cites:* BASE-AGENT-003, BASE-AGENT-007, BASE-AGENT-011
+*Tier:* Core · *Cites:* BASE-AGENT-003, BASE-AGENT-007, BASE-AGENT-011 · *Rules:* D-2, D-3
 
 **Requirement.** On the schedule the owner sets, initially weekly, a retention agent works on Mango’s recorded orders, events, segments, live flows and results to find cohorts whose missing or inactive journeys leave repeat purchases at stake. Each finding carries its data, period, cohort size and revenue estimate from this installation’s own history.
 
@@ -3816,7 +3843,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-002 — Journey proposal with holdout and stop rules
 
-*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008
+*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008 · *Rules:* D-2, D-3
 
 **Requirement.** For a chosen retention finding, the agent prepares a FLOW-001 journey with catalog-grounded brand content, exits, a powered randomized holdout, a declared outcome and measurement period, and stop rules. Activating the exact saved revision carries commitment and live; any resulting outside message also carries external. The company’s policy decides those calls, including the person’s step when its rule asks for one.
 
@@ -3829,7 +3856,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-003 — Outcome judge
 
-*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007
+*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007 · *Rules:* D-2, D-3
 
 **Requirement.** For an agent-proposed or other holdout-carrying flow, Mango’s outcome agent compares the declared outcome in the messaged and held-out groups at the declared checkpoints. It explains lift and its interval and recommends keeping, changing or retiring the flow using measured repeat purchases or revenue. Pause, resume and widening carry live, with external added when the change reaches recipients; the company’s policy decides each call.
 
@@ -3841,7 +3868,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-004 — Lifecycle failure diagnosis and repair
 
-*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-012
+*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-012 · *Rules:* D-2, D-3
 
 **Requirement.** The lifecycle agent identifies disconnected or lagging integrations, webhook sequence or timestamp gaps, stuck waits, rising skip reasons, coupon-creation failures and provider errors. Its repair plan names the cause, affected contacts and flows and the source-window resync, event replay or eligible re-enrollment needed. Repair carries live, adding external when it creates outside messages, and the company’s policy decides whether it runs or awaits the person its rule names.
 
@@ -3853,7 +3880,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-005 — Deliverability diagnostician
 
-*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007
+*Tier:* Core · *Cites:* BASE-AGENT-006, BASE-AGENT-007 · *Rules:* D-2, D-3
 
 **Requirement.** A deliverability agent explains changes using bounce codes, complaints, DELIV-005 mailbox-provider breakdowns, DNS state and Postmaster data. It links each diagnosis to its evidence and prepares sunset-segment, ramp or DNS fixes. Applying a fix carries standard, live or security according to the setting it changes, and the company’s policy decides its execution.
 
@@ -3864,7 +3891,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-006 — Account audit
 
-*Tier:* Core · *Cites:* BASE-AGENT-003, BASE-AGENT-007
+*Tier:* Core · *Cites:* BASE-AGENT-003, BASE-AGENT-007 · *Rules:* D-2, D-3
 
 **Requirement.** On request, Mango’s account auditor checks live flows, recent campaigns, forms and settings against working marketing practice and this installation’s data. It identifies missing core flows, flows without exit goals, messages without plain-text alternatives, unbalanced frequency, forms without SMS capture, untested subject lines and expired coupons, linking each finding to its object and an editable draft fix.
 
@@ -3875,7 +3902,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-007 — Grounded content drafting
 
-*Tier:* Core · *Cites:* BASE-AGENT-002, BASE-AGENT-006, BASE-AGENT-007
+*Tier:* Core · *Cites:* BASE-AGENT-002, BASE-AGENT-006, BASE-AGENT-007 · *Rules:* D-2, D-3
 
 **Requirement.** For campaigns and flow messages, an agent prepares subject lines, preheaders, body copy, SMS text and product selections in the brand’s voice, using its brand kit, catalog, past messages and measured results. Product, price and offer claims retain PROP-006’s evidence rule. Sending or activating drafted work carries external and, for changing a running flow, live; the company’s policy decides those calls.
 
@@ -3887,7 +3914,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-008 — Natural-language segments and questions
 
-*Tier:* Core · *Cites:* BASE-AGENT-003, BASE-AGENT-006, BASE-AGENT-007
+*Tier:* Core · *Cites:* BASE-AGENT-003, BASE-AGENT-006, BASE-AGENT-007 · *Rules:* D-2, D-3
 
 **Requirement.** An operator describes an audience or asks a marketing question in words. The agent produces an editable structured segment or report with its plain-language summary, count and cited report evidence. Saving the prepared segment is a standard call whose execution the company’s policy decides.
 
@@ -3898,7 +3925,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-009 — Scheduled routines and editable memory
 
-*Tier:* Core · *Cites:* BASE-AGENT-007, BASE-AGENT-011
+*Tier:* Core · *Cites:* BASE-AGENT-007, BASE-AGENT-011 · *Rules:* D-2, D-3
 
 **Requirement.** Owners set scheduled routines such as a weekly performance digest, threshold-based revenue, unsubscribe or complaint alerts and pre-holiday checks. The routine uses the cost limit the owner sets through the company’s policy. Its remembered operator notes and decisions remain readable, editable and deletable and shape every agent’s subsequent work.
 
@@ -3910,7 +3937,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-010 — Retention-routine authority and activity
 
-*Tier:* Core · *Cites:* BASE-AGENT-005, BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008, BASE-AGENT-009, BASE-AGENT-011
+*Tier:* Core · *Cites:* BASE-AGENT-005, BASE-AGENT-006, BASE-AGENT-007, BASE-AGENT-008, BASE-AGENT-009, BASE-AGENT-011 · *Rules:* D-2, D-3
 
 **Requirement.** Mango’s retention routines bind their requested read scope, output jobs and owner-set monthly USD model budget to their routine identity. Their campaign approval or activation, send or test-send, consent, suppression, discount, targeting and spend changes carry the classes declared in the Agent surface and take the company’s policy decision. The Activity screen distinguishes each routine grant in its agent filter, and disabling a routine prevents its next scheduled run.
 
@@ -3923,7 +3950,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 #### AGENT-011 — Migration agent
 
-*Tier:* Core · *Cites:* BASE-AGENT-003, BASE-AGENT-006, BASE-AGENT-007
+*Tier:* Core · *Cites:* BASE-AGENT-003, BASE-AGENT-006, BASE-AGENT-007 · *Rules:* D-2, D-3
 
 **Requirement.** During move-in, the agent reads an incumbent export or API under MOVE-001 to MOVE-005, proposes field, topic and tag mappings with reasons, translates automations into draft flows and explains unsupported steps. It checks the reconciliation report for anomalies, including any mapping that would upgrade consent. Applying its plan carries standard, adding live for changing a running parallel sync; the company’s policy decides whether the import plan runs or awaits its named person.
 
@@ -3948,10 +3975,10 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 | R-701 | One real owner-supplied Mailchimp export completes move-in with its reconciliation report. | MOVE-001 | not run |  |  |
 | R-702 | A real Mailchimp account repeats the API-key engagement-history import. | MOVE-015 | not run |  |  |
 | R-703 | The native iOS and Android apps obtain their real store listings. | MOBILE-002 | not run |  |  |
+| R-801 | A human screen-reader pass through the operator and public journeys. | MOBILE-001, HOME-002, DOCS-001 | not run |  |  |
+| R-802 | A completed VPAT for the Mango installation. | MOBILE-001, HOME-002, DOCS-001 | not run |  |  |
 
 ## Boundaries
-
-What Mango does not do, and how a US buyer gets it:
 
 - **A bulk mail delivery network or guaranteed inbox placement.** Mango sends through the owner's own email provider, which the owner connects from Settings (DELIV-001, DELIV-008), and follows Gmail, Yahoo and Microsoft sender requirements; it authenticates, records bounces and complaints, and reports outcomes. Inbox-placement seed testing and rendering previews in dozens of real mail clients come from Litmus or Email on Acid, linked from review.
 - **An SMS carrier, or sending without US registration.** Messages go through the owner's Twilio account under their 10DLC, toll-free or short-code registration; carrier fees and registration are on that account (SMS-002).
@@ -3966,19 +3993,56 @@ What Mango does not do, and how a US buyer gets it:
 - **Legal advice or a compliance guarantee.** Mango enforces stated product rules for CAN-SPAM, TCPA, carrier rules and US state privacy laws; the owner remains responsible for their program. Rules for other jurisdictions (EU/UK GDPR and PECR, Canada's CASL) are honored through confirmed opt-in today and need their own clauses before Mango claims them.
 - **Causal claims from attribution or opens.** Attributed revenue is a rule-based assignment (REPORT-003); lift is claimed only from randomized holdouts (EXP-003, EXP-004), and opens are estimates (RESULT-002).
 
+- The newsletter release profile is a delivery subset, not a waiver of the full marketing target. Missing providers stay unavailable; local or synthetic receipts prove only their stated scope.
+- A provider handoff already authorized and in progress cannot be recalled by a later database transition.
+- Membership history predating the recorded growth baseline cannot be reconstructed; retained consent evidence is labelled without inventing historical membership changes.
+
 ## Homepage claims
 
-No homepage claims are mapped yet.
+| # | Claim | Clauses |
+| --- | --- | --- |
+| 1 | Newsletters people are glad to get. | HOME-002 |
+| 2 | Write it, approve exactly what goes out, and send it only to people who said yes. Your list stays yours. | CAMP-002, AUD-010, CAMP-020, CAMP-021, CAMP-004, AUD-002, DATA-001, DATA-002 |
+| 3 | 100% free, open source alternative to Mailchimp and Klaviyo | HOME-002, DATA-001, DATA-002 |
+| 4 | Five calm steps, and you are in charge of every one. | CAMP-002, AUD-010, CAMP-020, CAMP-021, CAMP-004, CAMP-006, SEND-001 |
+| 5 | Readers join on your hosted signup page and confirm by email. | FORM-001, CONT-009, CONT-028 |
+| 6 | Draft in the rich-text editor or in HTML mode, then preview it at desktop and phone widths. | CAMP-002, AUD-010, CAMP-020, CAMP-021, CAMP-003, CAMP-022 |
+| 7 | An operator approves the exact saved letter, and that is the letter that goes. | CAMP-004, CAMP-007 |
+| 8 | Pick the local date and time for each step, in your newsletter's time zone. | CAMP-006 |
+| 9 | Mango hands each letter to your mail provider and records what the provider confirms. | SEND-001, SEND-006 |
+| 10 | Every reader said yes. Your list is built on consent, not assumptions. | CONT-003, AUD-002 |
+| 11 | Share your hosted signup page; new readers confirm their address before they get a single letter. | FORM-001, CONT-009, CONT-028, AUD-002 |
+| 12 | Mango keeps when and how each reader agreed, and the exact wording they saw. | CONT-003 |
+| 13 | Bring your list as CSV. Opt-outs and suppressions are applied first and never undone by a later import. | CONT-004, CONT-006, CONT-010 |
+| 14 | Every letter carries a visible unsubscribe link, and an opt-out is recorded before the reader is told it worked. | MSG-003, MSG-010, CONT-004 |
+| 15 | What you approve is exactly what goes out. | CAMP-003, CAMP-022, CAMP-004, CAMP-007 |
+| 16 | Mango records who approved the letter and when, against the exact content they saw. | CAMP-004, CAMP-005 |
+| 17 | After approval the letter can't be edited. To send something different, write it and approve it on its own. | CAMP-007 |
+| 18 | Mango blocks approval until the sender, the unsubscribe link, the links and the audience rules are right. | CAMP-004, MSG-001, MSG-003, MSG-006, AUD-001, AUD-010 |
+| 19 | Choose the local time; Mango works out the exact moment. | CAMP-006 |
+| 20 | Each step is set in your newsletter's time zone, with the exact UTC moment shown beside it. | CAMP-006 |
+| 21 | Campaign history shows each step's time, state and recipient outcomes. | RESULT-001 |
+| 22 | Cancel queued work while it is waiting. Mango never pretends to recall a letter already sent. | CAMP-009 |
+| 23 | Reports show what your mail provider confirmed, never guesses. | SEND-006, RESULT-006 |
+| 24 | A letter counts as delivered only when the provider says so. Accepted is not delivered. | SEND-006 |
+| 25 | A hard bounce or complaint suppresses that address before the next send. | CONT-006 |
+| 26 | No forecasts or modelled numbers. An unconfirmed send stays unconfirmed. | SEND-006, RESULT-001 |
+| 27 | Your list stays yours. Nobody else holds your readers. | DATA-001, DATA-002, MGMT-001 |
+| 28 | Your readers, letters and history stay in your own database. | DATA-001, DATA-002, MGMT-001 |
+| 29 | Download your audience with its consent history as CSV, ready to import again. | DATA-001, DATA-002, CONT-010 |
+| 30 | The owner gives each operator one of six roles, and approvals and cancellations record who made them. | OPER-004, CAMP-004, CAMP-009 |
+| 31 | MIT-licensed source you can customise with your own agents. | MGMT-002, AGENT-010 |
+| 32 | Set up Mango and send a newsletter people are glad to get. | OPER-001, CAMP-002, AUD-010, CAMP-020, CAMP-021, CAMP-004, SEND-001 |
 
 ## Status
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). The sd-mango-c31 candidate carries the reusable-block changes and repairs the native round-trip timing. BUILD-012 retains partial with measured reusable-source refusals. BUILD-004 is proposed partial, uncounted pending exact-SHA verification and landing; its live-flow and template-copy gaps remain stated below. The sd-mango-c26b candidate adds inert FLOW-001 draft revisions, CONT-024 source attestation and review reliance counts, and partial MOVE-002/003/005 import paths; the scoped evidence and gaps below describe the candidate, pending exact-SHA branch Verify and Mac publication/landing checks. PUB-005 moved to done with its hosted paid signup page, Worker Checkout and payer-consent journey. INT-002 moved to done with its Owner connection, store sync, signed replay and activated plugin checkout-flow journey; DELIV-002 and PUB-002 remain partial. SEG-001, STORE-004 and PUB-002 were reviewed at `4c4749cf2b4fb6584483bd1fc95f7af964b12335`: SEG-001 moved to done with its collection and category purchase conditions, STORE-004 moved to done with failed webhook and generation operations carrying the adapter's error, and PUB-002 moved to partial with its paid tier proved at the Stripe network edge (sandbox proof pending); REPORT-003 was reviewed at `2ecfa8e031c3a91bfc04bfd1bef2a26bb5d15bea` (22 October 2026); other rows retain their prior review boundaries. MOVE-009, CONT-012 and AUD-008 were reviewed against the candidate source based on `b40be01dcfcf8d793a92780252859eeccdaeb754` on 21 October 2026; their evidence and gaps below supersede only those earlier status entries. Published clause wording and the issued v0.4.0 release envelope are unchanged. MOVE-009 moved to done at d21d9e2b; its unproved remainder became MOVE-015 (missing), 22 October 2026. The sd-mango-c28 candidate adds hosting hygiene, consent-neutral source draft outlines, immutable flow template copies, Resend Settings connection monitoring and native block/mobile authoring; scoped evidence below remains subject to exact-SHA Verify and Mac publication/landing checks. The sd-mango-c32 candidate adds audience-specific name bounds, native social links and a manual six-item product grid, and the provider-edge promotional-email journey. BUILD-001 and BUILD-012 remain partial and UNCOUNTED pending exact-SHA verification and Mac publication/landing checks. The sd-mango-c37 continuation proposes conservative incumbent conversion and identifier-only Shopify catalog authoring with fresh hand-off reads; MOVE-011 remains partial and BUILD-011 is proposed partial, both UNCOUNTED pending exact-SHA Verify and Mac publication/landing checks. sd-mango-c38 proposes MOVE-014 missing to partial for inspected image import and live incumbent-host diagnostics; its cutover, flow and other-host gaps remain, and this proposal is UNCOUNTED until ct reads the landing line. sd-mango-c39 extends BUILD-011 and BUILD-012 evidence for configured chosen-item size bounds, the Shopify six-item promotion, catalog authorization and adversarial payloads, and identifier-only template/start/duplicate/follow-up doors, with both clauses remaining partial and UNCOUNTED pending exact-SHA Verify and Mac publication/landing checks. This round records and proves ct's two BUILD-012 catalog save riders and STORE-001 source identity, connection and occurrence time across the built connections without changing clause statuses or counts.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026).
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 7 | 103 | 0 | 110 |
-| Target and push further | 4 | 102 | 98 | 204 |
-| All | 11 | 205 | 98 | 314 |
+| Target and push further | 4 | 104 | 98 | 206 |
+| All | 11 | 207 | 98 | 316 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -3988,10 +4052,10 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `OPER-001` | Operators and the default role | published | partial | `tests/local-start/local.journey.ts` · `tests/production-entry.spec.ts` | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Before role assignment, an operator can see and act on proposals, campaigns, flows, contacts and settings as Admin.; Valid identity already configured for the installation also completes setup.; Authenticated configuration APIs remain usable during setup, and completing setup does not claim provider readiness.. |
 | `OPER-002` | Management | published | partial | `tests/settings-sender/routes.spec.ts` · `src/core/features/auth/service.ts` | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Settings can invite an operator and remove an operator.; A session without fresh email proof cannot grant another operator access.; Settings can request a confirmation link bound to the current session; completing it permits an invitation retry.; Reading or inspecting the confirmation link has no effect; only its affirmative submission supplies proof.; Only the operator established at setup may remove that operator.. |
 | `OPER-003` | Removal does not rewrite history | published | partial | `tests/go-live/roles.journeys.ts` | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Every proposal remains attributed to the removed operator.. |
-| `STORE-001` | Store and event connections | published | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` — signed carts preserve string identity, multiple lines and ordering; conflicting delivery, tenant and topics cannot mutate source facts, via `tests/store/source-export-proof.ts`, `tests/go-live/built-source-journey.ts`, `tests/go-live/store-source-journey.ts` and `tests/go-live/source-runtime.mjs`, proves every declared Shopify snapshot and observation type, every declared WooCommerce type with the plugin enabled and every declared Stripe event type through their network edges and the owner export, retaining source identifiers, connections and edge occurrence times; one address has one contact carrying both WooCommerce and Stripe customer records and the Stripe events. WooCommerce's existing Owner Settings proof is `tests/go-live/woocommerce.journeys.ts` — [INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery. Stripe's existing Owner Settings proof is `tests/go-live/roles.journeys.ts` — [PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history, via `tests/go-live/stripe-journey.ts`. | Gap: BigCommerce (INT-003), Square (INT-005) and Stall (INT-006) remain unbuilt; Shopify's Owner Settings connection without a developer step remains unproved under INT-015. |
+| `STORE-001` | Store and event connections | published | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` · `tests/store/source-export-proof.ts` · `tests/go-live/built-source-journey.ts` · `tests/go-live/store-source-journey.ts` · `tests/go-live/source-runtime.mjs` · `tests/go-live/woocommerce.journeys.ts` · `tests/go-live/roles.journeys.ts` · `tests/go-live/stripe-journey.ts` | Gap: BigCommerce (INT-003), Square (INT-005) and Stall (INT-006) remain unbuilt; Shopify's Owner Settings connection without a developer step remains unproved under INT-015. |
 | `STORE-002` | Source identity | published | partial | `tests/shopify/connection.spec.ts` | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Customer and refund replay update existing contents without duplicates. |
 | `STORE-003` | Freshness | published | done | `tests/go-live/source-freshness.journeys.ts` · `src/core/features/campaigns/ui/source-freshness.tsx` |  |
-| `STORE-004` | Source failure | published | done | `tests/go-live/source-freshness.journeys.ts` — “[STORE-003] [STORE-004] Decision Desk retains each completed sync through a later failed page and recovery”: a failed product sync records its failed operation carrying the adapter error and recovers through Store/Decision Desk at 1440/390; proposal generation refused by the failed source records one failed generation operation carrying the adapter's last error, with no proposal, cost or send; during a Shopify Admin API outage a correctly signed webhook keeps its 401 answer and records exactly one failed webhook operation carrying the adapter error per delivery (a replay adds none, a forged delivery records nothing), and Shopify's retry after recovery ingests the record once and completes the operation; failed-operation text carries no upstream diagnostic, secret, token or record payload; the Store page lists the failed generation and webhook operations at 1440 and 390 with no overflow or accessibility violations; saved draft edits, readable recorded outcomes/history and zero new mail handoffs with a scheduled campaign. `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” (via `tests/go-live/stripe-journey.ts`): during a Stripe API outage a correctly signed Stripe event that needs a Stripe read keeps its 422 answer and records exactly one failed webhook operation carrying the adapter error (a replay adds none, a forged event records nothing), and Stripe's retry after recovery ingests it once and completes the operation. `tests/shopify/connection.spec.ts` — “[STORE-004] native authenticated sync imports complete Shopify records and retains original purchase time through nested-page failures and retry” proves failed operation diagnostics and retry. `tests/go-live/stale-sources.journeys.ts` — “[STORE-005] [STORE-006][AUD-003] sources recover only after completed sync and review counts commerce and dormancy exclusions” retains the stored-source gate. |  |
+| `STORE-004` | Source failure | published | done | `tests/go-live/source-freshness.journeys.ts` · `tests/go-live/roles.journeys.ts` · `tests/go-live/stripe-journey.ts` · `tests/shopify/connection.spec.ts` · `tests/go-live/stale-sources.journeys.ts` |  |
 | `STORE-005` | Stale sources block approval | published | done | `tests/go-live/stale-sources.journeys.ts` · `src/core/features/lifecycle/evaluate-approval.ts` |  |
 | `STORE-006` | Declared adapter capability | published | partial | `tests/go-live/stale-sources.journeys.ts` · `src/core/features/audience/source-coverage.ts` · `src/core/features/campaigns/authoring-service.ts` | Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Source capability declared unavailable; Unsupported requirement refused; Reviews name missing source and leave no snapshots; Generation source refusal without campaign or audience. Assertions for the unsupported-source journey are in tests/go-live/declared-capability.ts outside the old Evidence set. |
 | `STORE-007` | Ingestion latency | published | partial | `src/core/features/audience/commerce-webhook-routes.ts` | acceptance not yet met: A webhook source record is readable within 60 seconds of acknowledgment, measured at the stated limits. |
@@ -4082,24 +4146,24 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `SEND-009` | Provider outage | published | partial | `src/core/features/lifecycle/provider-outages.ts` · `tests/go-live/delivery-recovery.journeys.ts` | Old evidence asserts Adapter unavailable pauses channel; No recipient hand-off while paused; Bounded non-recipient probe; Probe cadence survives restart; Automatic probe recovery. Unasserted: Five-minute continuous transient trigger; Audience recheck after recovery; Provider error visible. |
 | `RESULT-001` | Campaign history | published | partial | `tests/campaign-results/results.journeys.ts` | Old evidence asserts State and channel filters; Cancellation outcome; Delivery schedule/timeline; Per-channel disposition totals. Unasserted: The opened body is the approved revision; Full audience snapshot is inspectable. |
 | `RESULT-002` | Engagement | published | partial | `tests/go-live/open-estimates.journeys.ts` | Old evidence asserts Default off and explicit enablement; Privacy-sensitive estimate label; Other result fields unchanged after pixel fetch. Unasserted: Observed click labels; Observed conversion labels. |
-| `RESULT-003` | Attribution | published | done | `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/performance-fixture.ts`: signed Shopify orders, latest qualifying click across two campaigns, webhook replay and later sync without duplicate or moved attribution, expired/scanner-only/no-click exclusions, partial/full refunds and cancellation in USD/JPY, API/CSV/Insights net amounts and the existing campaign-results drill-down naming each Shopify order and seven-day window separately from forecasts; 1440/390 overflow and axe checks). |  |
+| `RESULT-003` | Attribution | published | done | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/performance-fixture.ts` |  |
 | `RESULT-004` | Cost | published | partial | `tests/campaign-results/costs.journeys.ts` | Old evidence asserts AI billable units; Provider units, currency and cost; Campaign totals; UTC day boundary; Day/currency/unknown-price groups. Unasserted: Model or channel on each fact; Timed-out purchase proven before counting; Layout unit once. |
-| `RESULT-005` | Link tracking | published | partial | `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/tracking-journey.ts`: actual per-recipient-step links without recipient/campaign/revision identity, exact connected-store redirect with no cookie or body, retained scanner excluded from totals/unique clicks/click map/CSV/attribution, the same delivered link still forwarding exactly with no cookie or body after its click-recording window (30 days after send-by) closes, while recording nothing for a person or a scanner, “mailto:”, “tel:” and “sms:” links in the same tracked message delivered byte for byte with no redirect and zero clicks in the API, CSV and click map, and the operator tracking-off control through delivery and destination request). `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking” proves the same contact links through the link tool and approval with tracking off. `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” retains the 13 October policy. CONT-018 owns its unbuilt click token, which this redirect consumes; until it is built these redirects add nothing. | Old evidence asserts Opaque first-party redirect; Distinct recipient-step redirect; Original destination forwarding; No cookie; No loaded body. Unasserted: CONT-018 token not yet built; Scanner excluded from attribution. |
-| `RESULT-009` | Open-estimate lifecycle | published | partial | `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/tracking-journey.ts`: actual per-recipient-step links without recipient/campaign/revision identity, exact connected-store redirect with no cookie or body, retained scanner excluded from totals/unique clicks/click map/CSV/attribution, the same delivered link still forwarding exactly with no cookie or body after its click-recording window (30 days after send-by) closes, while recording nothing for a person or a scanner, “mailto:”, “tel:” and “sms:” links in the same tracked message delivered byte for byte with no redirect and zero clicks in the API, CSV and click map, and the operator tracking-off control through delivery and destination request). `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking” proves the same contact links through the link tool and approval with tracking off. `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” retains the 13 October policy. CONT-018 owns its unbuilt click token, which this redirect consumes; until it is built these redirects add nothing. | Old evidence asserts Unique first-party pixels after opt-in; Pixel changes only estimate results; Disable revokes issued pixels; Reenable does not readmit old pixels; One estimate after repeated requests. Unasserted: Ordinary images remain untracked; No IP retained; No user agent retained. |
-| `RESULT-010` | Ordinary campaign images are untracked | published | partial | `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/tracking-journey.ts`: actual per-recipient-step links without recipient/campaign/revision identity, exact connected-store redirect with no cookie or body, retained scanner excluded from totals/unique clicks/click map/CSV/attribution, the same delivered link still forwarding exactly with no cookie or body after its click-recording window (30 days after send-by) closes, while recording nothing for a person or a scanner, “mailto:”, “tel:” and “sms:” links in the same tracked message delivered byte for byte with no redirect and zero clicks in the API, CSV and click map, and the operator tracking-off control through delivery and destination request). `tests/go-live/contact-links.journeys.ts` — “[DELIV-002][MSG-013][RESULT-005] contact links survive authoring, exact approval and delivery without tracking” proves the same contact links through the link tool and approval with tracking off. `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” retains the 13 October policy. CONT-018 owns its unbuilt click token, which this redirect consumes; until it is built these redirects add nothing. | Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open. |
+| `RESULT-005` | Link tracking | published | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts` | Old evidence asserts Opaque first-party redirect; Distinct recipient-step redirect; Original destination forwarding; No cookie; No loaded body. Unasserted: CONT-018 token not yet built; Scanner excluded from attribution. |
+| `RESULT-009` | Open-estimate lifecycle | published | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts` | Old evidence asserts Unique first-party pixels after opt-in; Pixel changes only estimate results; Disable revokes issued pixels; Reenable does not readmit old pixels; One estimate after repeated requests. Unasserted: Ordinary images remain untracked; No IP retained; No user agent retained. |
+| `RESULT-010` | Ordinary campaign images are untracked | published | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts` | Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open. |
 | `RESULT-006` | Deliverability reporting | published | partial | `src/core/features/insights/ui/sender-rates.tsx` · `tests/go-live/delivery.journeys.ts` | acceptance not yet met: Per-domain rates shown; SMS sender rates await SMS-001. |
 | `DATA-001` | Export contents | published | partial | `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts` | Old evidence asserts Archive includes contacts; Archive includes consent; Archive includes suppressions; Archive includes surviving opt-outs; Archive includes recipient-step outcomes. Unasserted: Archive includes source records; Archive includes proposals; Archive includes campaigns; Archive includes revisions; Archive includes audience decisions; Archive includes messages; Archive includes attribution events; Archive includes settings; Archive includes audit entries; Signed first-owner authority excluded; Authentication credentials excluded; Sessions excluded; Transfer bookkeeping excluded; Operator profiles attribution-only. |
 | `DATA-002` | Marketing restore custody | published | partial | `tests/portability.spec.ts` · `tests/go-live/go-live.journeys.ts` · `tests/local-start/command-data.journey.ts` | Old evidence asserts Every older archive refused by current erasure floor; Nonempty legacy journal refused before staging; Current post-erasure export restores; Surviving opt-outs preserved. Unasserted: Empty maintenance destination; Explicit confirmation; Fresh destination native authentication; Contact keys match before record restore; Link keys match before object restore. |
 | `MGMT-001` | Signed first-owner admission | published | partial | `src/core/features/auth/owner-claim.ts` | acceptance not yet met: Signed first-owner admission once per installation; hosted proof pending. |
 | `MGMT-002` | Native owner editor | published | partial | `tests/local-start/editor.journey.ts` | Old evidence asserts Owner editor present; Anonymous no widget; Logout removes widget. Unasserted: Short-lived grant; Configured management frame origin; Foreign frame/message rejected; Authorization loss removes widget; Grant expiry removes widget; Compiled edits after route hydration; Six product roles separate from Base roles; Last product Owner protected; Destination-owned restore authority; Owner/Admin CSV restriction. |
-| `OPER-004` | Roles and permissions | target | partial | `tests/go-live/roles.journeys.ts` · `src/core/features/auth/permissions.ts` · `src/core/features/auth/product-roles.ts` · `migrations/core/0076_operator_product_roles.sql`  · `tests/go-live/delivery.journeys.ts` via `tests/go-live/sending-connection-journey.ts` (Verify go-live 2/9: SendGrid Owner connection, Admin named 403 on review/connect/disconnect)  · `tests/go-live/roles.journeys.ts` flow-draft Author save, Analyst read and Support named 403 (Verify go-live 6/9; 1440/390) · `tests/go-live/contact-links.journeys.ts` via `tests/go-live/source-api-journey.ts` (Verify go-live 1/9): Manager/Author library snapshots allowed, Analyst/Support refused and anonymous denied; MSG-011 Resend extension (go-live 2/9) limits connection mutation to Owner and health notices to current Owners/Admins. | Six persisted roles, Owner assignment and Analyst unmasking grant, next-request API/server-function enforcement, role-change audits, last-owner protection, Author draft/request/configured-test controls, Manager typed tests and approval, restricted contact views, Support opt-out/request recording and visible controls at 1440/390 are exercised. Gap: full flow activation, billing-bearing provider connect/replace/disconnect and installation-erasure journeys await their owning product implementations; masked CSV export is not implemented (exports remain Owner/Admin only). Authentication role grants stay destination-owned on restore. |
+| `OPER-004` | Roles and permissions | target | partial | `tests/go-live/roles.journeys.ts` · `src/core/features/auth/permissions.ts` · `src/core/features/auth/product-roles.ts` · `migrations/core/0076_operator_product_roles.sql` · `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/source-api-journey.ts` | Six persisted roles, Owner assignment and Analyst unmasking grant, next-request API/server-function enforcement, role-change audits, last-owner protection, Author draft/request/configured-test controls, Manager typed tests and approval, restricted contact views, Support opt-out/request recording and visible controls at 1440/390 are exercised. Gap: full flow activation, billing-bearing provider connect/replace/disconnect and installation-erasure journeys await their owning product implementations; masked CSV export is not implemented (exports remain Owner/Admin only). Authentication role grants stay destination-owned on restore. |
 | `OPER-005` | Separation of approval | target | missing |  | not implemented |
 | `OPER-006` | Single sign-on and deprovisioning | target | missing |  | not implemented |
 | `OPER-007` | Activity log | target | partial | `tests/go-live/sync-integrations.journeys.ts` · `src/core/features/auth/activity.ts` · `src/core/features/auth/activity-query.ts` · `src/core/features/auth/ui/activity-page.tsx` · `src/core/features/auth/activity-record.ts` | Owner and Admin read Activity under Settings (Authors and signed-out requests are refused on both doors): every `lifecycle_audit_entries` row and every integration-audit call, newest first, filtered by operator, agent, action, object and date, with older pages and a CSV of the filtered view that keeps a formula-like cell as text. One journey performs drafts saved, approval requests and approvals, pause, resume and cancel, an import, an audience export, an account export, a consent hand entry, an opt-out, an erasure (anonymised afterwards), signup-allowance and kiosk-form changes, role changes and an hourly signup-refusal summary (counts by form and reason, no addresses), then checks each appears once with actor and time, every filter and the export, at 1440 and 390 with axe. Each action's record is written with the action it records: in its own batch where the action is one (draft save, signup settings), otherwise immediately after it succeeds. FLOW-008 (activation, pause and archive of flows) and AGENT-010 (agent actions and the agent filter's values) inherit the obligation in their text (ct pattern 1). The product has no approval-rejection operation, so none is recorded. Gap: actual restore completion must be recorded with actor and time and visible, filterable and exportable in Activity. |
 | `CONT-014` | Custom properties | target | partial | `tests/go-live/sync-integrations.journeys.ts` · `src/core/features/integrations/contacts.ts` | The scoped API persists contact fields with contact identity and consent source. Typed property definitions, UI editing, date/money semantics, segments and personalization remain unimplemented. |
 | `CONT-015` | Topics and tags | target | partial | `tests/go-live/sync-integrations.journeys.ts` · `src/core/features/integrations/contacts.ts` · `src/core/features/lifecycle/email-consent-scope.ts` | Scoped subscriber sync stores deduplicated tags without granting consent, and maintains saved integration lists. Topic preference-center acceptance and general tag-driven segmentation remain unmet. |
 | `CONT-016` | Preference center | target | missing |  | not implemented |
-| `CONT-017` | Contact profile and event timeline | target | partial | `tests/audience-controls/contact-history.spec.ts` — “[CONT-008] [CONT-017] a contact profile combines identities, properties, segments and original source, consent, suppression, eligibility, delivery and operator facts with masked role views”: identities and merges, per-channel consent/topic evidence, properties and rule-derived segment membership; form, order, conversion, click, SMS-reply and consent facts in original time/source order; Analyst and Support masking, axe, overflow and hydration at 1440/390. | Identities, channel/topic evidence, properties, segment membership, original-time events and masked Analyst/Support views are exercised. Apply the recorded routing of enrollment/current-node display to FLOW-002 and predictions to SEG-004; independent topic withdrawal remains CONT-015/016. No unavailable panel establishes completion. |
+| `CONT-017` | Contact profile and event timeline | target | partial | `tests/audience-controls/contact-history.spec.ts` | Identities, channel/topic evidence, properties, segment membership, original-time events and masked Analyst/Support views are exercised. Apply the recorded routing of enrollment/current-node display to FLOW-002 and predictions to SEG-004; independent topic withdrawal remains CONT-015/016. No unavailable panel establishes completion. |
 | `CONT-018` | Onsite behavior | target | partial | `tests/shopify/connection.spec.ts` | Shopify signed identified ingest and current privacy controls are exercised. The snippet and Stall carriers, expanded WooCommerce parity, shared switch/click identity and full four-carrier browser journeys remain unproved. INT-002’s separately approved plugin semantic remains distinct. The owner’s tracking default is already in force; no ct approval remains pending. |
 | `CONT-031` | Per-site tracking switch | target | partial | `tests/shopify/connection.spec.ts` | Shopify pixel controls exercise part of the privacy rule. The shared per-site Mango switch, full role/control/activity matrix, off/on identity reset and every-carrier journey remain unproved. |
 | `CONT-032` | Onsite consent and opt-out precedence | target | partial | `tests/shopify/connection.spec.ts` | Shopify privacy consent/GPC controls are exercised. Snippet, Stall and expanded WooCommerce parity, every consent-tool failure/withdrawal branch and every-carrier refusal/deletion journey remain unproved. |
@@ -4110,15 +4174,15 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `CONT-037` | No cross-site onsite identity | target | partial | `tests/shopify/connection.spec.ts` | Shopify signed ingest and current privacy controls exist. Cross-site cookie, destination, credential and replay assertions across every carrier remain unproved. |
 | `CONT-019` | US SMS consent capture | target | partial | `src/core/features/sms/signup.ts` · `tests/audience-import/signup.spec.ts` | acceptance not yet met: A form with phone capture shows the disclosure, the submission stores every evidence field, the confirmation text is sent once through the provider edge, and only a signed confirming reply subscribes; a pre-checked or missing disclosure blocks the form from publishing. |
 | `CONT-020` | Engagement-based sunsetting | target | missing |  | not implemented |
-| `CONT-021` | US privacy requests | target | partial | `src/core/features/audience/erasure` · `tests/audience-import/erasure.spec.ts` | acceptance not yet met: A Support operator records an access request and a do-not-share request; the export contains every record type for that contact and no other contact; the next ad-audience sync omits the contact. |
+| `CONT-021` | US privacy requests | target | partial | `tests/audience-import/erasure.spec.ts` | acceptance not yet met: A Support operator records an access request and a do-not-share request; the export contains every record type for that contact and no other contact; the next ad-audience sync omits the contact. |
 | `CONT-022` | Contact search and bulk actions | target | partial | `src/core/features/audience/ui/contact-merge.tsx` | acceptance not yet met: A search for a property value returns the matching contacts; a bulk tag of 5,000 contacts completes as a job with a receipt; a bulk "add to topic" refuses contacts without covering evidence and names them. |
 | `CONT-023` | Custom objects | target | missing |  | not implemented |
-| `CONT-024` | Incumbent-held consent | target | partial | `tests/move-in/archive.journeys.ts` account-export registration via `tests/move-in/incumbent-journey.ts` (Verify move-in): attestation, restrictive states, native export/restore, revocation and retained audit fact; campaign review records eligible contacts relying on that evidence at 1440/390. `tests/portability.spec.ts` (Verify main 4/6 for DATA-001; main 5/6 for erasure authority) proves populated native restoration.  `tests/go-live/contact-links.journeys.ts` (Verify go-live 1/9) extends the source attestation to the three CSV source presets and both API edge exports. | Mailchimp archive and named CSV/API source attestation and incumbent-held email evidence are exercised through the public preview, apply, campaign-review, native export/restore, revocation and erasure doors at 1440/390. Store connections (INT-001 to INT-006), five-year expiry and positive SMS evidence (A2P hold) remain unproved. A source without a row time requires an explicitly supplied export creation time. No real provider call or consent was used. |
-| `CONT-038` | Source consent attestation | target | partial | `tests/move-in/archive.journeys.ts` account-export registration via `tests/move-in/incumbent-journey.ts` (Verify move-in): attestation, restrictive states, native export/restore, revocation and retained audit fact; campaign review records eligible contacts relying on that evidence at 1440/390. `tests/portability.spec.ts` (Verify main 4/6 for DATA-001; main 5/6 for erasure authority) proves populated native restoration.  `tests/go-live/contact-links.journeys.ts` (Verify go-live 1/9) extends the source attestation to the three CSV source presets and both API edge exports. | Mailchimp archive and named CSV/API attestation, native export/restore and erasure are exercised. Store-connection attestation and five-year retention/expiry remain unproved; no real provider consent was used. |
-| `CONT-039` | Incumbent evidence restrictions | target | partial | `tests/move-in/archive.journeys.ts` account-export registration via `tests/move-in/incumbent-journey.ts` (Verify move-in): attestation, restrictive states, native export/restore, revocation and retained audit fact; campaign review records eligible contacts relying on that evidence at 1440/390. `tests/portability.spec.ts` (Verify main 4/6 for DATA-001; main 5/6 for erasure authority) proves populated native restoration.  `tests/go-live/contact-links.journeys.ts` (Verify go-live 1/9) extends the source attestation to the three CSV source presets and both API edge exports. | Mailchimp archive and named CSV/API restrictive-state, revocation and campaign review journeys are exercised. Connected-store intake, full cross-incumbent fields and positive SMS evidence remain unproved; no real consent was used. |
-| `CONT-040` | Incumbent evidence labeling and revocation | target | partial | `tests/move-in/archive.journeys.ts` account-export registration via `tests/move-in/incumbent-journey.ts` (Verify move-in): attestation, restrictive states, native export/restore, revocation and retained audit fact; campaign review records eligible contacts relying on that evidence at 1440/390. `tests/portability.spec.ts` (Verify main 4/6 for DATA-001; main 5/6 for erasure authority) proves populated native restoration.  `tests/go-live/contact-links.journeys.ts` (Verify go-live 1/9) extends the source attestation to the three CSV source presets and both API edge exports. | Archive and named CSV/API incumbent-held evidence, revocation and campaign-review counts are exercised. Complete source/privacy/report labeling and independent-evidence revocation behavior across store connections and every incumbent remain unproved. |
-| `CONT-025` | Opt-in mode per form and source | target | partial | `tests/go-live/shared-kiosk.journeys.ts` via `tests/go-live/opt-in-journey.ts` — hosted default and single capture, accepted-only capacity, protected resubscription, Admin/Author/Manager/Support permissions, future-only mode changes, activity and Settings at 1440/390; `tests/go-live/sync-integrations.journeys.ts` — API capture fixed double mode, one confirmation and replay; `tests/portability.spec.ts` — native policy restore. | Hosted, kiosk and manual email default/single capture, future-only Owner/Admin changes, activity and restoration are exercised. API mode editing, Shopify incumbent-held/Pending/Non-subscribed acceptance, popup/landing carriers, Zapier/Crank and SMS mode editing remain open. RL-101 settles manual-mode authority without changing status; no real provider consent was used. |
-| `CONT-026` | Contact added by hand | target | partial | `tests/go-live/sync-integrations.journeys.ts` via `tests/go-live/manual-entry-journey.ts` — Author hand entry, permission method/time/wording and properties, default confirmation, operator-recorded single mode, exact-message signed SMS YES replies, restriction reasons, Support/Analyst 403 and 1440/390 form/evidence/absent controls; `tests/portability.spec.ts` — operator evidence restore; the same hand-entry journey proves evidence, profile and SMS-sidecar erasure | Author entry, permission fields, properties, default confirmation, operator-recorded single mode, authenticated SMS reply and restricted-role views are exercised. Topic-specific permission awaits CONT-015; unauthenticated access follows BASE-ACCESS-002; legacy API evidence may omit new form-attestation fields. RL-102 adopts CONT-025’s Owner/Admin prospective authority; no real provider consent was used. |
+| `CONT-024` | Incumbent-held consent | target | partial | `tests/move-in/archive.journeys.ts` · `tests/move-in/incumbent-journey.ts` · `tests/portability.spec.ts` · `tests/go-live/contact-links.journeys.ts` | Mailchimp archive and named CSV/API source attestation and incumbent-held email evidence are exercised through the public preview, apply, campaign-review, native export/restore, revocation and erasure doors at 1440/390. Store connections (INT-001 to INT-006), five-year expiry and positive SMS evidence (A2P hold) remain unproved. A source without a row time requires an explicitly supplied export creation time. No real provider call or consent was used. |
+| `CONT-038` | Source consent attestation | target | partial | `tests/move-in/archive.journeys.ts` · `tests/move-in/incumbent-journey.ts` · `tests/portability.spec.ts` · `tests/go-live/contact-links.journeys.ts` | Mailchimp archive and named CSV/API attestation, native export/restore and erasure are exercised. Store-connection attestation and five-year retention/expiry remain unproved; no real provider consent was used. |
+| `CONT-039` | Incumbent evidence restrictions | target | partial | `tests/move-in/archive.journeys.ts` · `tests/move-in/incumbent-journey.ts` · `tests/portability.spec.ts` · `tests/go-live/contact-links.journeys.ts` | Mailchimp archive and named CSV/API restrictive-state, revocation and campaign review journeys are exercised. Connected-store intake, full cross-incumbent fields and positive SMS evidence remain unproved; no real consent was used. |
+| `CONT-040` | Incumbent evidence labeling and revocation | target | partial | `tests/move-in/archive.journeys.ts` · `tests/move-in/incumbent-journey.ts` · `tests/portability.spec.ts` · `tests/go-live/contact-links.journeys.ts` | Archive and named CSV/API incumbent-held evidence, revocation and campaign-review counts are exercised. Complete source/privacy/report labeling and independent-evidence revocation behavior across store connections and every incumbent remain unproved. |
+| `CONT-025` | Opt-in mode per form and source | target | partial | `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/opt-in-journey.ts` · `tests/go-live/sync-integrations.journeys.ts` · `tests/portability.spec.ts` | Hosted, kiosk and manual email default/single capture, future-only Owner/Admin changes, activity and restoration are exercised. API mode editing, Shopify incumbent-held/Pending/Non-subscribed acceptance, popup/landing carriers, Zapier/Crank and SMS mode editing remain open. RL-101 settles manual-mode authority without changing status; no real provider consent was used. |
+| `CONT-026` | Contact added by hand | target | partial | `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/manual-entry-journey.ts` · `tests/portability.spec.ts` | Author entry, permission fields, properties, default confirmation, operator-recorded single mode, authenticated SMS reply and restricted-role views are exercised. Topic-specific permission awaits CONT-015; unauthenticated access follows BASE-ACCESS-002; legacy API evidence may omit new form-attestation fields. RL-102 adopts CONT-025’s Owner/Admin prospective authority; no real provider consent was used. |
 | `CONT-027` | Resubscribe through a public form | target | partial | `tests/go-live/resubscribe.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts` | Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked. |
 | `CONT-041` | Destination-private resubscription refusals | target | partial | `tests/go-live/resubscribe.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts` | Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked. |
 | `CONT-042` | Shared destination confirmation allowance | target | partial | `tests/go-live/resubscribe.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts` | Owner-approved confirmed-only hosted/kiosk resubscription retains the opt-out until recipient POST, records request/handoff/confirmation history, silently caps destination confirmation reservations at three per UTC day and refuses hard-bounce, complaint and owner suppressions. Generic acknowledgments include destination-dependent intake refusals and uncertain/failed delivery without automatic retries. Local browser journeys cover 1440/390 and separate resubscribe growth. Remaining full-clause acceptance: popup/landing and incentive/topic/flow integration, erasure reason preservation and supersession, and expired recreated-contact cleanup; ambiguous legacy erasure-only restrictions remain blocked. |
@@ -4135,10 +4199,10 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `CAMP-019` | Test send to typed addresses | target | partial | `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts` | Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the default 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity lists each typed destination with actor and time, action/object filters and CSV export; contact erasure redacts the destination while retaining the receipt (`tests/go-live/typed-tests.journeys.ts`, push Verify go-live 8/9, 1440/390). Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004). |
 | `CAMP-024` | Shared daily test allowance | target | partial | `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts` | Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the default 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity lists each typed destination with actor and time, action/object filters and CSV export; contact erasure redacts the destination while retaining the receipt (`tests/go-live/typed-tests.journeys.ts`, push Verify go-live 8/9, 1440/390). Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004). |
 | `MSG-013` | Contact links (mailto:, tel:, sms:) | target | partial | `tests/go-live/contact-links.journeys.ts` | Old evidence asserts Multiple addresses blocked; Disallowed parameters blocked; Email subject/body form saved; E.164 phone and SMS body saved; Invalid phone blocked. Unasserted: Ten-digit US and visual separators; Web kind; HTTPS-only image sources. |
-| `MSG-014` | Allowed link and image hosts | target | partial | `tests/go-live/content-checks.journeys.ts` — [MSG-014] content checks and allowed sources; `tests/go-live/content-hosts.ts` — blockedHostJourney (1440 and 390); `tests/portability.spec.ts` — complete native archive | Fresh installations list deployment, conservative social defaults and genuine configured connection hosts with sources. Exact and explicit wildcard matching stays shared; durable operator removals survive catalog sync, review allowances retain source/operator/campaign, and source changes are audited. Existing explicit policies remain explicit. Acceptance remains unmet: Shopify does not store primary/additional storefront or catalog image domains; product/social blocks (BUILD-001), brand kit (BUILD-003), Shopify disconnect and flow activation are absent. The existing store-owned editor help incorrectly describes implicit subdomain matching and is not changed in this writer. Social vocabulary approval is pending. |
+| `MSG-014` | Allowed link and image hosts | target | partial | `tests/go-live/content-checks.journeys.ts` · `tests/go-live/content-hosts.ts` · `tests/portability.spec.ts` | Fresh installations list deployment, conservative social defaults and genuine configured connection hosts with sources. Exact and explicit wildcard matching stays shared; durable operator removals survive catalog sync, review allowances retain source/operator/campaign, and source changes are audited. Existing explicit policies remain explicit. Acceptance remains unmet: Shopify does not store primary/additional storefront or catalog image domains; product/social blocks (BUILD-001), brand kit (BUILD-003), Shopify disconnect and flow activation are absent. The existing store-owned editor help incorrectly describes implicit subdomain matching and is not changed in this writer. Social vocabulary approval is pending. |
 | `MSG-015` | Allow a blocked host from review | target | partial | `tests/go-live/content-checks.journeys.ts` | Assertions in tests/go-live/content-hosts.ts are outside this clause's old Evidence set. Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Campaign blocked-host list; Flow blocked-host list; Every affected link; Redirect host list; Manager exact-host allowance; Admin exact-host allowance; Owner exact-host allowance; Explicit subdomain allowance; Review source retained; Campaign/flow retained; Operator retained; Immediate recheck; Append-only activity; Operator field; Host field; Campaign/flow field; Activity view; Operator filter; Action filter; Object filter; Author sees blocked hosts; Author can request named approval; No Author allow control; Author allowance refused; Contact links need no allowance; Remaining safety inspections retained; All three imported outside hosts listed; Allow action for each imported outside host. |
-| `RESULT-007` | Click map, per-link clicks and clicker lists | target | partial | `tests/campaign-results/results.journeys.ts`, `tests/campaign-results/reporting-journey.ts` | Campaign links show human totals, unique identified clickers, automated requests, a saved-revision click map, matching clicker CSV and exact saved ID cohorts. Gap: repeated positions with one destination share counts; legacy clicks without destination identity remain unassigned; erased click facts are removed rather than retained as anonymous link counts; campaign-wide unique rollups, flow reports and role masking are absent; very large saved cohorts require CSV. |
-| `RESULT-008` | Recipients per outcome | target | partial | `tests/campaign-results/performance.journeys.ts` — [RESULT-008] native commerce and cross-channel attribution; `tests/campaign-results/recipient-method-journey.ts` — link/one-click/signed reply, replay, CSV, 1440 and 390, actual erasure; `tests/campaign-results/results.journeys.ts` — recipient outcomes and totals; `tests/portability.spec.ts` — populated unsubscribe upgrade and restore | Message-bound link, one-click and signed SMS reply methods are retained with their first recorded time, shown in the recipient list and CSV and preserved as anonymous counts after erasure. Historical methods remain unknown. Flow messages and role masking remain absent; very large saved cohorts require CSV. |
+| `RESULT-007` | Click map, per-link clicks and clicker lists | target | partial | `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/reporting-journey.ts` | Campaign links show human totals, unique identified clickers, automated requests, a saved-revision click map, matching clicker CSV and exact saved ID cohorts. Gap: repeated positions with one destination share counts; legacy clicks without destination identity remain unassigned; erased click facts are removed rather than retained as anonymous link counts; campaign-wide unique rollups, flow reports and role masking are absent; very large saved cohorts require CSV. |
+| `RESULT-008` | Recipients per outcome | target | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/recipient-method-journey.ts` · `tests/campaign-results/results.journeys.ts` · `tests/portability.spec.ts` | Message-bound link, one-click and signed SMS reply methods are retained with their first recorded time, shown in the recipient list and CSV and preserved as anonymous counts after erasure. Historical methods remain unknown. Flow messages and role masking remain absent; very large saved cohorts require CSV. |
 | `SCALE-001` | Capacity for the first buyer | target | partial | `seed.json` · `src/core/features/audience/import-limits.ts` | acceptance not yet met: A generated installation of 250,000 contacts with a year of order and activity events passes the MOVE-012 move-in, an exact review count within 60 seconds, a complete hand-off to the provider edge at the declared rate with no duplicate (SEND-001), and a segment update within SEG-002's time, with wall time and peak memory recorded against seed.json → limits; the per-email size floor is proved under BUILD-012, and the intake floor under FORM-008. |
 | `FORM-001` | Hosted and embedded signup | target | partial | `src/core/features/audience/signup-routes.ts` · `tests/audience-import/signup.spec.ts` | The cited signup journey asserts pending consent, one confirmation, replay and expiry. It does not assert an embedded-origin refusal or absence of campaign/flow authority after submission; the old evidence set has no embed-origin journey. |
 | `FORM-002` | Popups, flyouts and full-page forms | target | missing |  | not implemented |
@@ -4147,33 +4211,33 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `FORM-005` | Form performance and tests | target | missing |  | not implemented |
 | `FORM-006` | Referral program | target | missing |  | not implemented |
 | `FORM-007` | Abuse resistance | target | partial | `src/core/features/audience/signup-security.ts` · `tests/audience-import/signup.spec.ts` | The cited signup test asserts body/disclosure rejection, honeypot no-mail, duplicate mail and durable network refusal. It does not assert every sender-before-claim guard, network normalization/restart/counter ceiling, Turnstile action/hostname/reuse/failure mode or status-free acknowledgment for all protected address states; additional challenge tests exist outside the old Evidence cell. |
-| `FORM-008` | Signup intake capacity | target | partial | `tests/go-live/shared-kiosk.journeys.ts` via `tests/go-live/signup-capacity-journey.ts` — 600 hosted captures on 200 networks, 100-request minute bursts, 200 bot attempts, duplicate claim, shared network, unchallenged isolation, Owner/Admin settings and 1440/390; `tests/audience-import/signup-security.spec.ts`; `tests/audience-import/signup-reservation-clock.spec.ts` — actual D1 admission interval across minute rollover — global last slot, IP grouping and token replay/expiry; `tests/audience-import/signup-reservation-clock.spec.ts` — database admission clock; `tests/portability.spec.ts` — populated upgrade and capacity restore. | Hosted capacity, separate pools, shared network, bot isolation, duplicate claims and settings are exercised. Popup/flyout/full-page/landing carriers remain open; their absence does not waive the published sustained 1,000/hour floor. RL-103 adopts these capacity choices without promoting status. |
-| `FORM-011` | Accepted-only signup accounting | target | partial | `tests/go-live/shared-kiosk.journeys.ts` via `tests/go-live/signup-capacity-journey.ts` — 600 hosted captures on 200 networks, 100-request minute bursts, 200 bot attempts, duplicate claim, shared network, unchallenged isolation, Owner/Admin settings and 1440/390; `tests/audience-import/signup-security.spec.ts`; `tests/audience-import/signup-reservation-clock.spec.ts` — actual D1 admission interval across minute rollover — global last slot, IP grouping and token replay/expiry; `tests/audience-import/signup-reservation-clock.spec.ts` — database admission clock; `tests/portability.spec.ts` — populated upgrade and capacity restore. | Hosted/kiosk accepted-only claims, bot isolation, duplicate refunds and single-mode admission are exercised. Accounting across popup, flyout, full-page and landing carriers remains unproved; no local proof promotes this split of a partial clause. |
-| `FORM-012` | Owner-controlled signup allowance raises | target | partial | `tests/go-live/shared-kiosk.journeys.ts` via `tests/go-live/signup-capacity-journey.ts` — 600 hosted captures on 200 networks, 100-request minute bursts, 200 bot attempts, duplicate claim, shared network, unchallenged isolation, Owner/Admin settings and 1440/390; `tests/audience-import/signup-security.spec.ts`; `tests/audience-import/signup-reservation-clock.spec.ts` — actual D1 admission interval across minute rollover — global last slot, IP grouping and token replay/expiry; `tests/audience-import/signup-reservation-clock.spec.ts` — database admission clock; `tests/portability.spec.ts` — populated upgrade and capacity restore. | Owner-only next-window raises, floor/ceiling validation, activity and Settings are exercised on hosted/kiosk capacity. This remains a carried partial part; capacity disclosure and delivery-ceiling behavior across every promised carrier remain unproved. |
-| `FORM-013` | Signup challenge defaults and configuration | target | partial | `tests/go-live/shared-kiosk.journeys.ts` via `tests/go-live/signup-capacity-journey.ts` — 600 hosted captures on 200 networks, 100-request minute bursts, 200 bot attempts, duplicate claim, shared network, unchallenged isolation, Owner/Admin settings and 1440/390; `tests/audience-import/signup-security.spec.ts`; `tests/audience-import/signup-reservation-clock.spec.ts` — actual D1 admission interval across minute rollover — global last slot, IP grouping and token replay/expiry; `tests/audience-import/signup-reservation-clock.spec.ts` — database admission clock; `tests/portability.spec.ts` — populated upgrade and capacity restore. | Hosted/kiosk challenge defaults, toggles, token replay and missing-key warning are exercised. Popup/flyout/full-page/landing carriers and their provisioning proof remain open; RL-103 preserves all those obligations. |
+| `FORM-008` | Signup intake capacity | target | partial | `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/signup-capacity-journey.ts` · `tests/audience-import/signup-security.spec.ts` · `tests/audience-import/signup-reservation-clock.spec.ts` · `tests/portability.spec.ts` | Hosted capacity, separate pools, shared network, bot isolation, duplicate claims and settings are exercised. Popup/flyout/full-page/landing carriers remain open; their absence does not waive the published sustained 1,000/hour floor. RL-103 adopts these capacity choices without promoting status. |
+| `FORM-011` | Accepted-only signup accounting | target | partial | `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/signup-capacity-journey.ts` · `tests/audience-import/signup-security.spec.ts` · `tests/audience-import/signup-reservation-clock.spec.ts` · `tests/portability.spec.ts` | Hosted/kiosk accepted-only claims, bot isolation, duplicate refunds and single-mode admission are exercised. Accounting across popup, flyout, full-page and landing carriers remains unproved; no local proof promotes this split of a partial clause. |
+| `FORM-012` | Owner-controlled signup allowance raises | target | partial | `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/signup-capacity-journey.ts` · `tests/audience-import/signup-security.spec.ts` · `tests/audience-import/signup-reservation-clock.spec.ts` · `tests/portability.spec.ts` | Owner-only next-window raises, floor/ceiling validation, activity and Settings are exercised on hosted/kiosk capacity. This remains a carried partial part; capacity disclosure and delivery-ceiling behavior across every promised carrier remain unproved. |
+| `FORM-013` | Signup challenge defaults and configuration | target | partial | `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/signup-capacity-journey.ts` · `tests/audience-import/signup-security.spec.ts` · `tests/audience-import/signup-reservation-clock.spec.ts` · `tests/portability.spec.ts` | Hosted/kiosk challenge defaults, toggles, token replay and missing-key warning are exercised. Popup/flyout/full-page/landing carriers and their provisioning proof remain open; RL-103 preserves all those obligations. |
 | `FORM-009` | Kiosk and event forms | target | partial | `tests/go-live/shared-kiosk.journeys.ts` · `src/core/features/audience/signup-routes.ts` · `src/core/features/audience/ui/kiosk-signup-page.tsx` · `migrations/core/0075_kiosk_forms.sql` | The cited kiosk journey asserts blank fields/consent controls, 300 confirmations from one network, no cookies/storage, mandatory challenge/no contact, source report and attributed marking. It does not assert full-screen geometry or prove that kiosk facts cannot identify a later CONT-018 visitor; screenshots and empty browser storage alone do not prove the latter. Original FORM-008 provisioning and ordinary intake obligations stay there. |
-| `FORM-010` | Refused signups are never silent | target | partial | `tests/go-live/shared-kiosk.journeys.ts` — shared kiosk / refusal screens at 1440 and 390; `tests/go-live/signup-refusal-screens.ts`; `tests/audience-import/signup-security.spec.ts` — “security: durable global allowance advances monotonically, reserves its last slot atomically and survives restart”; `tests/audience-import/signup-reservation-clock.spec.ts` — D1 clock; `tests/go-live/resubscribe.journeys.ts` — fourth destination request; `tests/go-live/sync-integrations.journeys.ts` via `tests/go-live/activity-log.ts` — hourly summary. | Hosted/kiosk errors, retained entries, generic destination acknowledgment, Home and activity are exercised. FORM-005’s per-form report remains required and unbuilt under RL-104; Settings counts do not replace it. Other growth carriers remain open. |
-| `SEG-001` | Segment builder | target | partial | `tests/audience-controls/segments.spec.ts` — “AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable”, via `tests/audience-controls/segment-journey.ts`: nested all/any builder, every summary condition, live estimate, exact per-contact review and approved membership at count/value/time/state boundaries; properties, tags, consent/topics, ZIP/distance, RFM and bought products through review; builder and review at 1440/390 with overflow and accessibility assertions. Collections and categories bought: `tests/audience-controls/segment-catalog.ts` (same case) syncs a Shopify catalog through the sync door (collection IDs drained across pages, taxonomy categories, uncategorized products recorded as null); before the catalog is recorded both conditions report unavailable with no count; the builder at 1440/390 nests US state with an any-group of bought collection and bought category, its plain-text summary names both and its live estimate equals review; review intersects each condition with every contact (bought from the collection on its second page, only from another collection, in the category, only in other categories, in the category only in a future order, no purchase), and after Shopify removes a product from the collection its earlier buyer leaves on recount; review at 1440/390 with overflow and accessibility assertions. `tests/audience-controls/segment-fixture.ts` supplies contacts through scoped integration and products and purchases through Shopify sync; no direct rows. `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” (via `tests/campaign-results/cross-channel-attribution.ts`) selects a contact by a human email or SMS click in the last 7 days through the campaign-authoring audience door and no longer once those clicks are older. | Nested property/tag/consent/geographic/order/catalog and human click selection, summaries, live estimate and per-contact exact review are asserted. Cited old evidence does not assert viewed product/collection/category selection, full named campaign/link/flow activity or prediction-based matching; their dependencies being unfinished does not remove them from this clause. RFM and unavailable-catalog cases are asserted; predictive evidence remains SEG-004. |
+| `FORM-010` | Refused signups are never silent | target | partial | `tests/go-live/shared-kiosk.journeys.ts` · `tests/go-live/signup-refusal-screens.ts` · `tests/audience-import/signup-security.spec.ts` · `tests/audience-import/signup-reservation-clock.spec.ts` · `tests/go-live/resubscribe.journeys.ts` · `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/activity-log.ts` | Hosted/kiosk errors, retained entries, generic destination acknowledgment, Home and activity are exercised. FORM-005’s per-form report remains required and unbuilt under RL-104; Settings counts do not replace it. Other growth carriers remain open. |
+| `SEG-001` | Segment builder | target | partial | `tests/audience-controls/segments.spec.ts` · `tests/audience-controls/segment-journey.ts` · `tests/audience-controls/segment-catalog.ts` · `tests/audience-controls/segment-fixture.ts` · `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/cross-channel-attribution.ts` | Nested property/tag/consent/geographic/order/catalog and human click selection, summaries, live estimate and per-contact exact review are asserted. Cited old evidence does not assert viewed product/collection/category selection, full named campaign/link/flow activity or prediction-based matching; their dependencies being unfinished does not remove them from this clause. RFM and unavailable-catalog cases are asserted; predictive evidence remains SEG-004. |
 | `SEG-002` | Live membership | target | missing |  | not implemented |
-| `SEG-003` | RFM and lifecycle stages | target | partial | `tests/campaign-results/results.journeys.ts`, `tests/campaign-results/retention-journey.ts` | The old retention journey asserts the five-stage distribution, a customer’s order/recency/frequency/monetary scores and displayed method. It does not advance a daily boundary or assert daily recomputation; the fixed fixture also does not independently recalculate every quintile boundary. |
+| `SEG-003` | RFM and lifecycle stages | target | partial | `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/retention-journey.ts` | The old retention journey asserts the five-stage distribution, a customer’s order/recency/frequency/monetary scores and displayed method. It does not advance a daily boundary or assert daily recomputation; the fixed fixture also does not independently recalculate every quintile boundary. |
 | `SEG-004` | Predictions | target | missing |  | not implemented |
 | `SEG-005` | Engagement and lead scoring | target | missing |  | not implemented |
 | `SEG-006` | Campaign and flow activity conditions | target | missing |  | not implemented |
-| `BUILD-001` | Drag-and-drop email builder | target | partial | `tests/proposals-decision/decision-routes.spec.ts` — existing PROP-004 saved-content registration via `tests/campaign-authoring/block-builder-journey.ts` (Verify main 6/7): native two-column product/button composition, uploaded image, drag and keyboard reorder, duplicate/delete, undo/redo, padding/alignment, byte-identical save/reopen and HTML-mode round trip, sent-size display, decoded uploaded image in the inert Saved Preview, stacked 375px render and approval; editor at 1440/390 with overflow, hydration and serious/critical axe checks. `tests/campaign-authoring/canonical-save.spec.ts` — existing canonical-save-tree registration via `tests/campaign-authoring/block-builder-journey.ts` and `tests/campaign-authoring/full-promotional-email-journey.ts` (Verify main 4/7): native header, hero, button, two text columns, six manually entered products, social links with deployment-owned icons beside grammar-valid text links, managed footer and mobile controls; drag/keyboard reorder, duplicate/delete for both new blocks, including a reorder while the native icon upload is held; byte-identical reopen and HTML-view round trip; 32,117 stored characters and 33,768 shown/provider-edge HTML bytes within the 102,400-byte limit; 1440/390 overflow, hydration and serious/critical axe checks; stacked 375px rendering with every image decoded and a fluid 600px product image. | The editor offers text, image, button, 1–4 columns, spacer, divider, header, footer, product, a six-item manual product grid and a closed-list social links block, with existing per-block and mobile settings through the MSG-009/012 grammar. Gap: video thumbnail, cart items, coupon and restricted HTML blocks remain unbuilt; exhaustive public-door coverage of every block/settings combination and the complete builder acceptance remain unproved. |
-| `BUILD-002` | Template library | target | partial | `tests/campaign-authoring/browser.spec.ts` · `tests/portability.spec.ts` · `tests/move-in/archive.journeys.ts` (Verify move-in) · `tests/campaign-authoring/design-import.spec.ts` · `tests/campaign-authoring/design-generation.spec.ts` (Verify main 3/7)  `tests/go-live/contact-links.journeys.ts` (Verify go-live 1/9) imports a restricted-conversion Klaviyo template into the library; `tests/portability.spec.ts` preserves it on native restore.  `tests/campaign-authoring/canonical-save.spec.ts` — existing saved-body round-trip registration via `tests/campaign-authoring/flow-template-journey.ts` (Verify main 4/7; 1440/390) starts a Flows email node from a library template, saves its independent copy, edits the library and reloads the byte-identical flow revision. | Starter and saved templates create independent unscheduled campaigns; updating a template preserves existing drafts and approvals. Mailchimp archive templates enter the library, held conversions stay held, and undo removes an untouched template while preserving edits and independent drafts. The first saved DESIGN-004 import or DESIGN-002 application files its own library template. Library proof at 1440/390 is in the archive journey. Gap: executable migrated flows (FLOW-002), full importer coverage and real-provider sandbox proof remain; MOVE-002/003/005 now have the partial import paths recorded in their own rows.  FLOW-001 email nodes now retain independent subject, preheader, HTML and plain-text copies from the library; they remain draft only. |
+| `BUILD-001` | Drag-and-drop email builder | target | partial | `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/full-promotional-email-journey.ts` | The editor offers text, image, button, 1–4 columns, spacer, divider, header, footer, product, a six-item manual product grid and a closed-list social links block, with existing per-block and mobile settings through the MSG-009/012 grammar. Gap: video thumbnail, cart items, coupon and restricted HTML blocks remain unbuilt; exhaustive public-door coverage of every block/settings combination and the complete builder acceptance remain unproved. |
+| `BUILD-002` | Template library | target | partial | `tests/campaign-authoring/browser.spec.ts` · `tests/portability.spec.ts` · `tests/move-in/archive.journeys.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/campaign-authoring/design-generation.spec.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/flow-template-journey.ts` | Starter and saved templates create independent unscheduled campaigns; updating a template preserves existing drafts and approvals. Mailchimp archive templates enter the library, held conversions stay held, and undo removes an untouched template while preserving edits and independent drafts. The first saved DESIGN-004 import or DESIGN-002 application files its own library template. Library proof at 1440/390 is in the archive journey. Gap: executable migrated flows (FLOW-002), full importer coverage and real-provider sandbox proof remain; MOVE-002/003/005 now have the partial import paths recorded in their own rows.  FLOW-001 email nodes now retain independent subject, preheader, HTML and plain-text copies from the library; they remain draft only. |
 | `BUILD-003` | Brand kit | target | missing |  | not implemented |
-| `BUILD-004` | Reusable blocks | target | partial | `tests/proposals-decision/decision-routes.spec.ts` — existing PROP-004 saved-content registration via `tests/campaign-authoring/block-builder-journey.ts` and `tests/campaign-authoring/reusable-block-journey.ts` (Verify main 6/7; 1440/390): native named reusable footer save/edit, Author mutation refusals, placement in two drafts, a saved template and a FLOW-001 draft email, linked draft-body updates, unchanged approved campaign bytes and a fresh unapproved replacement, stale-version refusal, explicit independent copies and repeated edits reusing the pending replacement. `tests/portability.spec.ts` — DATA-001 complete native records registration (Verify main 5/7) retains prior data and round-trips definitions and placements through native export/restoration. | Gap: live flow revisions and activation (FLOW-008 unbuilt) and template-library sync beyond BUILD-002's copy rule. |
+| `BUILD-004` | Reusable blocks | target | partial | `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/reusable-block-journey.ts` · `tests/portability.spec.ts` | Gap: live flow revisions and activation (FLOW-008 unbuilt) and template-library sync beyond BUILD-002's copy rule. |
 | `BUILD-005` | Conditional content | target | missing |  | not implemented |
 | `BUILD-006` | Dynamic product content | target | missing |  | not implemented |
 | `BUILD-007` | Coupons | target | missing |  | not implemented |
 | `BUILD-008` | Previews and pre-send checks | target | partial | `tests/go-live/presend-checks.journeys.ts` · `tests/go-live/email-size.journeys.ts` | The cited journeys assert safe contact/fallback previews, each located advisory, size detail and largest blocks, contrast refusal, no recipient effect on refusal and oversized save rejection. Gap: after correcting and acknowledging findings, approval is called and returns success but the cited files do not assert the persisted approval state or saved approval record; rendering a preview region is not that assertion. |
 | `BUILD-009` | SMS and MMS composer | target | partial | `src/core/features/sms/content.ts` · `src/core/features/sms/review-preview.ts` | acceptance not yet met: A message with an emoji switches to UCS-2 and shows the new segment count and cost; the preview shows the short link and STOP text that will be sent. |
-| `BUILD-010` | Mobile layout the checker can prove | target | partial | `tests/campaign-authoring/canonical-save.spec.ts` — existing saving/approval-tree registration (Verify main 4/7), via `tests/campaign-authoring/mobile-presentation-journey.ts`: all 138 `tests/support/adversarial-email.mjs` cases, generated/authored CSS and hidden-compliance refusals, exact generated bytes in sent-size accounting, eight stored-body 375/600 standards/quirks renders with/without style, nonblank inert Preview and serious-axe/overflow/hydration proof at 1440/390. `tests/campaign-authoring/canonical-save.spec.ts` — existing saving/approval-tree registration via `tests/campaign-authoring/block-builder-journey.ts` · blockMobileControlsJourney (Verify main 4/7) edits hide on mobile/desktop, font size, line height, padding and alignment through the native block editor at 1440/390, checks the saved generated body and the resulting 375px computed styles, and audits overflow, hydration and serious axe findings; shell axe runs directly to avoid sandbox child-frame discovery. `tests/campaign-authoring/design-import.spec.ts` exercises the fluid column compiler. `tests/proposals-decision/decision-routes.spec.ts` via `tests/campaign-authoring/block-builder-journey.ts` (Verify main 6/7) exercises generated column stacking. | Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised. |
-| `BUILD-013` | Mobile and desktop message checks | target | partial | `tests/campaign-authoring/canonical-save.spec.ts` — existing saving/approval-tree registration (Verify main 4/7), via `tests/campaign-authoring/mobile-presentation-journey.ts`: all 138 `tests/support/adversarial-email.mjs` cases, generated/authored CSS and hidden-compliance refusals, exact generated bytes in sent-size accounting, eight stored-body 375/600 standards/quirks renders with/without style, nonblank inert Preview and serious-axe/overflow/hydration proof at 1440/390. `tests/campaign-authoring/canonical-save.spec.ts` — existing saving/approval-tree registration via `tests/campaign-authoring/block-builder-journey.ts` · blockMobileControlsJourney (Verify main 4/7) edits hide on mobile/desktop, font size, line height, padding and alignment through the native block editor at 1440/390, checks the saved generated body and the resulting 375px computed styles, and audits overflow, hydration and serious axe findings; shell axe runs directly to avoid sandbox child-frame discovery. `tests/campaign-authoring/design-import.spec.ts` exercises the fluid column compiler. `tests/proposals-decision/decision-routes.spec.ts` via `tests/campaign-authoring/block-builder-journey.ts` (Verify main 6/7) exercises generated column stacking. | Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised. |
-| `BUILD-014` | Generated mobile presentation | target | partial | `tests/campaign-authoring/canonical-save.spec.ts` — existing saving/approval-tree registration (Verify main 4/7), via `tests/campaign-authoring/mobile-presentation-journey.ts`: all 138 `tests/support/adversarial-email.mjs` cases, generated/authored CSS and hidden-compliance refusals, exact generated bytes in sent-size accounting, eight stored-body 375/600 standards/quirks renders with/without style, nonblank inert Preview and serious-axe/overflow/hydration proof at 1440/390. `tests/campaign-authoring/canonical-save.spec.ts` — existing saving/approval-tree registration via `tests/campaign-authoring/block-builder-journey.ts` · blockMobileControlsJourney (Verify main 4/7) edits hide on mobile/desktop, font size, line height, padding and alignment through the native block editor at 1440/390, checks the saved generated body and the resulting 375px computed styles, and audits overflow, hydration and serious axe findings; shell axe runs directly to avoid sandbox child-frame discovery. `tests/campaign-authoring/design-import.spec.ts` exercises the fluid column compiler. `tests/proposals-decision/decision-routes.spec.ts` via `tests/campaign-authoring/block-builder-journey.ts` (Verify main 6/7) exercises generated column stacking. | Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised. |
-| `BUILD-011` | Chosen catalog products | target | partial | `tests/go-live/multistep.journeys.ts` — [AUD-006] later steps reapply ordinary inclusion, custom exclusions and consent without adding new candidates via `tests/go-live/chosen-catalog-journey.ts` and `tests/go-live/chosen-catalog-edge.ts` (Verify go-live 9/9): original synthetic-mango Shopify catalog fixtures prove title/SKU/collection/vendor searches, product and grid selection with a chosen variant, identifier-only HTML round-trip, current values/read time, revision locking, changed price at provider hand-off, unpublished/deleted/out-of-stock hiding, empty hide/skip, unavailable-read skip, visible per-recipient reasons, recovery with a fresh read and campaign counts; picker, previews and outcomes at 1440/390. `tests/local-start/signin-hydration.journey.ts` — [OPER-001][BUILD-011][BUILD-012] one-click local owner sign-in works before JavaScript at 390px; chosen catalog promotions bound configured items and recheck handoff, via `tests/campaign-authoring/chosen-size-journey.ts` and `tests/go-live/chosen-catalog-edge.ts` (Verify local-start 3/3): original synthetic-mango fixtures drive the six-item Shopify picker in a full promotional email above 20,000 stored characters, unchanged reopen and approval; unpublished and out-of-stock selections remain in the save bound, seven-item grids and two-item product layouts are refused, oversize catalog diagnostics name the grid as one block, template/start/duplicate refusals preserve records, browser refusals retain unsaved HTML at 1440/390, restored six-item hand-off bytes equal the shown bound, in-limit tracked title growth sends, and oversized live title growth skips with email-too-large counted on campaign detail. `tests/local-start/signin-hydration.journey.ts` — [OPER-001][BUILD-011][BUILD-012] one-click local owner sign-in works before JavaScript at 390px; chosen catalog promotions bound configured items and recheck handoff, via `tests/campaign-authoring/catalog-guard-journey.ts` (Verify local-start 3/3): six roles and anonymous have exact search/preview permissions without denied edge reads; an Author places identifiers but cannot approve; non-canonical/overlong state, foreign or malformed gids, mismatched variants, invalid item counts/layouts/providers and extra keys refuse without storing changes, and oversized queries refuse before an edge read; markup and managed-token title payloads stay escaped and opaque, unsafe product URLs and image hosts skip catalog-blocked with campaign counts; template save/start, duplication and follow-up retain identifier-only blocks, measure hidden configured items and read fresh title, price and image values at hand-off. | Gap: WooCommerce catalog picking and hand-off are unimplemented. Imported and flow authoring doors remain unproved; native imported history and MOVE-011 conversion do not create catalog choices. Unavailable hand-off reads skip the recipient-step with catalog-unavailable, counted on campaign detail; stale values never send (ct ruling 25 October). |
-| `BUILD-012` | Email size the builder and imported templates fit in | target | partial | `tests/go-live/email-size.journeys.ts` — large newsletters save by transmitted bytes, retain refused edits and recheck expansion at handoff (helpers `tests/go-live/email-size-imports.ts`, `tests/go-live/email-size-reuse.ts`); `tests/campaign-authoring/create-api.spec.ts`; `tests/campaign-authoring/browser.spec.ts` (helper `tests/campaign-authoring/email-size-adoption.ts`); `tests/campaign-authoring/design-import.spec.ts`  · `tests/campaign-authoring/canonical-save.spec.ts` via `tests/campaign-authoring/mobile-presentation-journey.ts` (Verify main 4/7: generated responsive bytes count in sent size) · `tests/proposals-decision/decision-routes.spec.ts` via `tests/campaign-authoring/block-builder-journey.ts` (Verify main 6/7, existing PROP-004 saved-content registration): native block-editor sent-size display and unchanged approved body at 1440/390; `tests/campaign-authoring/canonical-save.spec.ts` via `tests/campaign-authoring/block-builder-journey.ts` · blockMobileControlsJourney (Verify main 4/7) proves saved generated bytes after mobile-control edits at 1440/390 and 375px computed styles. `tests/campaign-authoring/create-api.spec.ts` — existing native create registration via `tests/campaign-authoring/reusable-size-journey.ts` (Verify main 4/7) proves an oversized reusable edit reports measured HTML/text bytes, the derived limit and largest sections, preserves the exact linked draft and saved source version, and permits a later valid edit. `tests/campaign-authoring/canonical-save.spec.ts` — existing saved-body round-trip registration via `tests/campaign-authoring/audience-size-journey.ts` (Verify main 4/7): audience-selected save and live meter at 1440/390, widened-audience refusal with measured bytes, limit and three largest blocks, unchanged saved revision, frozen approval and every provider-edge hand-off within the bound; deployment-wide fallback without a selection. The audience journey also proves refused unsaved HTML and widened rules remain in the editor at 1440/390, the 95 KB advisory is acknowledged against the same eligible email identities as approval, and a valid edit recovers. `tests/campaign-authoring/canonical-save.spec.ts` — existing canonical-save-tree registration via `tests/campaign-authoring/full-promotional-email-journey.ts` (Verify main 4/7): a complete manually populated promotional email stores 32,117 characters; the shown 33,768 HTML bytes equal the provider-edge part, including saved analytics expansion, generated responsive styles, managed footer and open-estimate pixel; plain-text bytes also match. `tests/go-live/email-size.journeys.ts` via `tests/go-live/email-size-reuse.ts` retains every reuse refusal, including a new follow-up whose cohort authority is not yet inserted. `tests/local-start/signin-hydration.journey.ts` — [OPER-001][BUILD-011][BUILD-012] one-click local owner sign-in works before JavaScript at 390px; chosen catalog promotions bound configured items and recheck handoff, via `tests/campaign-authoring/chosen-size-journey.ts` and `tests/go-live/chosen-catalog-edge.ts` (Verify local-start 3/3): original synthetic-mango fixtures drive the six-item Shopify picker in a full promotional email above 20,000 stored characters, unchanged reopen and approval; unpublished and out-of-stock selections remain in the save bound, seven-item grids and two-item product layouts are refused, oversize catalog diagnostics name the grid as one block, template/start/duplicate refusals preserve records, browser refusals retain unsaved HTML at 1440/390, restored six-item hand-off bytes equal the shown bound, in-limit tracked title growth sends, and oversized live title growth skips with email-too-large counted on campaign detail. Under ct's ruling of 25 October 2026 at 23:46Z, the existing local-start chosen catalog registration via `tests/campaign-authoring/catalog-riders-journey.ts` proves that a deleted selection remains stored and visibly removed, while unpublished and out-of-stock selections have distinct states at 1440 and 390 and still count in the save bound. Under the same ct ruling of 25 October 2026 at 23:46Z, that registration proves a catalog_unavailable save refusal names the current product and directs publication or removal before saving again, retains unsaved edits without storing changes at 1440 and 390, and re-measures the item after publication; existing email-too-large hand-off refusal proof remains unchanged. | Today's draft/create, store-signal starter, template save/replace/start, duplication, replacement-schedule copy, follow-up, imported-history copy and proposal-adoption doors use measured sent-size refusals with the limit and largest available HTML sections, comparing fallback and expanded saved-name renderings. Browser edits, selected design files and saved source snapshots survive refusal at 1440 and 390. Oversized archive template conversions are held with their measured diagnostic and original archive custody; the import continues, reconciliation distinguishes held conversions from created library templates, and undo removes unchanged held copies. In-limit content saves, reopens, approves and reaches the provider edge within its bound; a later oversized hand-off skips with email-too-large. Saved rule and exclusion membership now bounds displayName through the shared audience evaluator; approval measures its frozen email candidates. Separate raw and escaped maxima stay in D1. Only displayName currently supplies recipient values; other valid keys render their authored fallback. An unresolved new follow-up cohort retains the conservative deployment-wide bound until its membership authority exists. Size advisories retain saved audience and analytics context and recheck the eligible email identities used by approval. Gap: configured dynamic product maxima (BUILD-006), flow messages (FLOW-008), and the Mailchimp `base_boxed_3column_query.html` blueprint acceptance through MOVE-011 remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision. Existing LayerDoc application shares the design-import compiler; no real design or proposal generation/provider acceptance is claimed. |
-| `FLOW-001` | Visual flow builder | target | partial | `tests/go-live/roles.journeys.ts` via `tests/campaign-authoring/flow-journey.ts` (Verify go-live 6/9): three-message welcome graph with split, unreachable-node validation and repair, keyboard pan/zoom, saved revision reload and 1440/390 accessibility/overflow/hydration; all node-kind explanations, named loop/unended-path validation and delay-cycle acceptance; Author saves, Analyst reads, Support named 403. `tests/portability.spec.ts` (Verify main 4/6 for DATA-001; main 5/6 for erasure authority) exports/restores the draft revision with prior data. | Draft revisions only. Trigger enrolment, including the INT-004 renewal reminder (FLOW-002), and activation (FLOW-008) remain unbuilt. All node kinds have plain explanations; unavailable transports/actions are identified. No flow is enrolled, activated or sent. |
+| `BUILD-010` | Mobile layout the checker can prove | target | partial | `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts` | Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised. |
+| `BUILD-013` | Mobile and desktop message checks | target | partial | `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts` | Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised. |
+| `BUILD-014` | Generated mobile presentation | target | partial | `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts` | Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised. |
+| `BUILD-011` | Chosen catalog products | target | partial | `tests/go-live/multistep.journeys.ts` · `tests/go-live/chosen-catalog-journey.ts` · `tests/go-live/chosen-catalog-edge.ts` · `tests/local-start/signin-hydration.journey.ts` · `tests/campaign-authoring/chosen-size-journey.ts` · `tests/campaign-authoring/catalog-guard-journey.ts` | Gap: WooCommerce catalog picking and hand-off are unimplemented. Imported and flow authoring doors remain unproved; native imported history and MOVE-011 conversion do not create catalog choices. Unavailable hand-off reads skip the recipient-step with catalog-unavailable, counted on campaign detail; stale values never send (ct ruling 25 October). |
+| `BUILD-012` | Email size the builder and imported templates fit in | target | partial | `tests/go-live/email-size.journeys.ts` · `tests/go-live/email-size-imports.ts` · `tests/go-live/email-size-reuse.ts` · `tests/campaign-authoring/create-api.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/email-size-adoption.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/reusable-size-journey.ts` · `tests/campaign-authoring/audience-size-journey.ts` · `tests/campaign-authoring/full-promotional-email-journey.ts` · `tests/local-start/signin-hydration.journey.ts` · `tests/campaign-authoring/chosen-size-journey.ts` · `tests/go-live/chosen-catalog-edge.ts` · `tests/campaign-authoring/catalog-riders-journey.ts` | Today's draft/create, store-signal starter, template save/replace/start, duplication, replacement-schedule copy, follow-up, imported-history copy and proposal-adoption doors use measured sent-size refusals with the limit and largest available HTML sections, comparing fallback and expanded saved-name renderings. Browser edits, selected design files and saved source snapshots survive refusal at 1440 and 390. Oversized archive template conversions are held with their measured diagnostic and original archive custody; the import continues, reconciliation distinguishes held conversions from created library templates, and undo removes unchanged held copies. In-limit content saves, reopens, approves and reaches the provider edge within its bound; a later oversized hand-off skips with email-too-large. Saved rule and exclusion membership now bounds displayName through the shared audience evaluator; approval measures its frozen email candidates. Separate raw and escaped maxima stay in D1. Only displayName currently supplies recipient values; other valid keys render their authored fallback. An unresolved new follow-up cohort retains the conservative deployment-wide bound until its membership authority exists. Size advisories retain saved audience and analytics context and recheck the eligible email identities used by approval. Gap: configured dynamic product maxima (BUILD-006), flow messages (FLOW-008), and the Mailchimp `base_boxed_3column_query.html` blueprint acceptance through MOVE-011 remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision. Existing LayerDoc application shares the design-import compiler; no real design or proposal generation/provider acceptance is claimed. |
+| `FLOW-001` | Visual flow builder | target | partial | `tests/go-live/roles.journeys.ts` · `tests/campaign-authoring/flow-journey.ts` · `tests/portability.spec.ts` | Draft revisions only. Trigger enrolment, including the INT-004 renewal reminder (FLOW-002), and activation (FLOW-008) remain unbuilt. All node kinds have plain explanations; unavailable transports/actions are identified. No flow is enrolled, activated or sent. |
 | `FLOW-002` | Triggers | target | missing |  | not implemented |
 | `FLOW-003` | Entry filters and re-entry | target | missing |  | not implemented |
 | `FLOW-004` | Delays and waits | target | missing |  | not implemented |
@@ -4211,10 +4275,10 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `DELIV-004` | Domain warm-up | target | missing |  | not implemented |
 | `DELIV-005` | Mailbox-provider breakdown | target | done | `tests/go-live/mailbox-provider.journeys.ts` |  |
 | `DELIV-006` | Address quality at intake | target | missing |  | not implemented |
-| `DELIV-007` | Sender evidence renewal without stopping live flows | target | partial | `tests/sender-verification/worker.spec.ts` — native Worker renewal proof (day 22/23/29/31, last confirmer and all Owners, diagnostic and reminder replay, provider evidence change, populated 0094 upgrade); `tests/go-live/managed-mail.journeys.ts` — managed relay and authenticated connector renewal, Home at 1440/390 with axe, overflow and hydration checks | PARTIAL: lifecycle approval/hand-off, deadline skip and ordered resume hooks remain in concurrent writers’ lifecycle files; `sender-evidence-lapsed`/`sender-evidence-deadline` are named by the renewal read only, not installed dispatch hooks. Live welcome-flow history waits on FLOW-*. Home/public renewal and the existing minute Cron share the same durable claims. Automatic renewal/reminders require the confirming native operator authority; legacy or restored confirmations need a fresh diagnostic before outbound renewal resumes. Default ADOPTED: last confirmer and every Owner receive reminders, once per evidence period; renewal never confirms on their behalf; configured connector renews only from authenticated diagnostic results. No provider account was used. |
-| `DELIV-008` | Sending connection an owner makes in Settings | target | partial | `tests/go-live/delivery.journeys.ts` — MSG-011 case calls `tests/go-live/sending-connection-journey.ts` for completed Connect Activity actor/time, named Admin 403 refusals on review/connect/disconnect (also OPER-004), key scopes/account review before create, signed-or-delete failures, existing-hook preservation/reconnect, encrypted key and export secrecy, signed Owner-check delivery gate and Settings Sending at 1440/390 (Verify go-live 2/9); `tests/audience-controls/sendgrid-forwarding.spec.ts` for unsigned/stale/future signatures and replay; `tests/portability.spec.ts` for populated migration, private connection exclusion and restore without resumed sending. `tests/go-live/resend-connection-journey.ts` extends that MSG-011 registration (Verify go-live 2/9): sending-only key refusal before mutation, six-event disclosed webhook creation, encrypted secret/reconnect reuse including recovery after refused configuration confirmation, unrelated-hook preservation, unsigned/stale rejection, named 401/403/deleted-hook approval blocks and Owner/Admin mail notices, with Settings and Home at 1440/390. | SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending. |
-| `DELIV-009` | Sending-connection watch and replacement | target | partial | `tests/go-live/delivery.journeys.ts` — MSG-011 case calls `tests/go-live/sending-connection-journey.ts` for completed Connect Activity actor/time, named Admin 403 refusals on review/connect/disconnect (also OPER-004), key scopes/account review before create, signed-or-delete failures, existing-hook preservation/reconnect, encrypted key and export secrecy, signed Owner-check delivery gate and Settings Sending at 1440/390 (Verify go-live 2/9); `tests/audience-controls/sendgrid-forwarding.spec.ts` for unsigned/stale/future signatures and replay; `tests/portability.spec.ts` for populated migration, private connection exclusion and restore without resumed sending. `tests/go-live/resend-connection-journey.ts` extends that MSG-011 registration (Verify go-live 2/9): sending-only key refusal before mutation, six-event disclosed webhook creation, encrypted secret/reconnect reuse including recovery after refused configuration confirmation, unrelated-hook preservation, unsigned/stale rejection, named 401/403/deleted-hook approval blocks and Owner/Admin mail notices, with Settings and Home at 1440/390. | SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending. |
-| `DELIV-010` | Signed delivery-event connection | target | partial | `tests/go-live/delivery.journeys.ts` — MSG-011 case calls `tests/go-live/sending-connection-journey.ts` for completed Connect Activity actor/time, named Admin 403 refusals on review/connect/disconnect (also OPER-004), key scopes/account review before create, signed-or-delete failures, existing-hook preservation/reconnect, encrypted key and export secrecy, signed Owner-check delivery gate and Settings Sending at 1440/390 (Verify go-live 2/9); `tests/audience-controls/sendgrid-forwarding.spec.ts` for unsigned/stale/future signatures and replay; `tests/portability.spec.ts` for populated migration, private connection exclusion and restore without resumed sending. `tests/go-live/resend-connection-journey.ts` extends that MSG-011 registration (Verify go-live 2/9): sending-only key refusal before mutation, six-event disclosed webhook creation, encrypted secret/reconnect reuse including recovery after refused configuration confirmation, unrelated-hook preservation, unsigned/stale rejection, named 401/403/deleted-hook approval blocks and Owner/Admin mail notices, with Settings and Home at 1440/390. | SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending. |
+| `DELIV-007` | Sender evidence renewal without stopping live flows | target | partial | `tests/sender-verification/worker.spec.ts` · `tests/go-live/managed-mail.journeys.ts` | PARTIAL: lifecycle approval/hand-off, deadline skip and ordered resume hooks remain in concurrent writers’ lifecycle files; `sender-evidence-lapsed`/`sender-evidence-deadline` are named by the renewal read only, not installed dispatch hooks. Live welcome-flow history waits on FLOW-*. Home/public renewal and the existing minute Cron share the same durable claims. Automatic renewal/reminders require the confirming native operator authority; legacy or restored confirmations need a fresh diagnostic before outbound renewal resumes. Default ADOPTED: last confirmer and every Owner receive reminders, once per evidence period; renewal never confirms on their behalf; configured connector renews only from authenticated diagnostic results. No provider account was used. |
+| `DELIV-008` | Sending connection an owner makes in Settings | target | partial | `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts` | SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending. |
+| `DELIV-009` | Sending-connection watch and replacement | target | partial | `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts` | SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending. |
+| `DELIV-010` | Signed delivery-event connection | target | partial | `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts` | SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending. |
 | `REPORT-001` | Overview dashboard | target | partial | `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/overview-journey.ts` | Default ADOPTED: holdout-measured incremental revenue says no holdout configured until EXP-003/004; flows and top flows say no flows yet. No forecast is presented as a result. Campaign attribution/engagement use the detailed performance table’s scheduled-step period; costs, growth and provider facts use occurrence days, with each basis disclosed. Flow and holdout acceptance remains open. |
 | `REPORT-002` | Campaign and flow performance tables | target | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/results.journeys.ts` | Campaign revision/channel tables, sorting, topic/channel/UTC date filters, matched CSV, optional open-rate estimates, per-link detail and net attributed revenue by currency are exercised. Gap: flow and flow-message performance awaits the flow engine. |
 | `REPORT-003` | Attribution for campaigns, flows and SMS | target | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/cross-channel-attribution.ts` · `tests/campaign-results/custom-attribution.ts` · `tests/campaign-results/attribution-report-ui.ts` | Campaign and SMS attribution, window/metric edits, refunds, cancellations and immutable source records are asserted. Flow attribution and flow revenue reporting are not asserted by the old evidence; FLOW-001/FLOW-002 remain missing. |
@@ -4223,19 +4287,19 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `REPORT-006` | Scheduled and custom reports | target | partial | `tests/go-live/managed-mail.journeys.ts` · `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/saved-report-metric-journey.ts` · `tests/sender-verification/worker.spec.ts` | PARTIAL: Slack requires an unavailable webhook; scheduling currently covers saved provider cost/units and campaign click/conversion/USD attribution reports plus the built-in cost and engagement reports, not every report family or dimension. Default ADOPTED: Owner/Admin only, existing active operator IDs only, email only, no contact identities or per-contact rows, no currency conversion; weekly Monday 09:00 UTC / monthly first-day 09:00 UTC. Delivery refusals and sends are durable/audited; authorization/input refusals intercepted by the existing shared middleware are not yet activity records. Restored or revoked native authority requires explicit enable; uncertain provider outcomes never automatically resend. |
 | `REPORT-007` | Usage and cost transparency | target | partial | `tests/campaign-results/costs.journeys.ts` | Flow cost grouping waits on flows. Default ADOPTED: projected month is the priced month-to-date UTC run rate extended linearly; each reported currency stays separate with no conversion, and unpriced facts are counted rather than zero. |
 | `INT-001` | Shopify | target | partial | `src/core/platform/adapters/shopify.ts` · `tests/shopify/connection.spec.ts` | acceptance not yet met: Done only once INT-015 is done. `tests/shopify/connection.spec.ts` (native sync, signed carts, signed pixel), run on a connection made through INT-015's install journey, plus a consent write-back journey: a Mango unsubscribe appears as unsubscribed in the Shopify edge's customer record; and the CONT-025 Shopify opt-in journey. |
-| `INT-002` | WooCommerce | target | partial | `tests/go-live/woocommerce.journeys.ts` — “[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery”: Owner connects encrypted REST/signing credentials through Settings; seeded customers, paginated products, orders and refunds sync through Store with original identity/occurrence times and financial projection; the signed order webhook replays once without duplicate facts and rejects conflicting bytes; the installed-plugin edge supplies abandoned checkouts, whose signed event enters only an explicitly activated exact flow revision, adds one contact tag and exits once. Draft, stale, purchased and opted-out cases never enroll; forged, expired, nonconsented and GPC events are refused. `tests/go-live/woocommerce-plugin-journey.ts` runs the shipped browser script against the WordPress network edge for default-deny, explicit consent and GPC withdrawal. Settings/Store are exercised at 1440/390. The real plugin source is `extensions/mango-woocommerce/mango-woocommerce.php` with `extensions/mango-woocommerce/INSTALL.md`; its shortcode uses the existing confirmed signup door proved by `tests/audience-import/signup.spec.ts` — “CONT-003/009 public signup remains pending until single-use expiring confirmation and records source time method IP”. Ct approved the INT-002 semantic on 22 October 2026 at 20:20Z: store-admin enablement is off initially; only signed-in store customers; explicit analytics and marketing consent before the one Secure HttpOnly SameSite=Lax first-party cookie, expiring after 30 days; GPC records no observation and revokes pending eligibility; no cross-site tracking or subscription-consent widening; WordPress observations expire after 30 days. The allowlisted signup iframe uses Mango’s own confirmation. A saved tag-and-exit flow revision must be explicitly activated; it sends no marketing message. CONT-018 and FORM-008 retain their other acceptance obligations and statuses; FLOW clauses retain their graph/message obligations. | The cited edge and browser journeys assert owner connection, source synchronization, replay preservation, exact activated tag-and-exit flow, default-deny collection, explicit consent and GPC withdrawal, plus unchanged subscription evidence and confirmation. Gap: the cited evidence does not assert absence of cross-site observation throughout the plugin journey. No completion is carried for that unasserted privacy outcome. |
+| `INT-002` | WooCommerce | target | partial | `tests/go-live/woocommerce.journeys.ts` · `tests/go-live/woocommerce-plugin-journey.ts` · `extensions/mango-woocommerce/mango-woocommerce.php` · `extensions/mango-woocommerce/INSTALL.md` · `tests/audience-import/signup.spec.ts` | The cited edge and browser journeys assert owner connection, source synchronization, replay preservation, exact activated tag-and-exit flow, default-deny collection, explicit consent and GPC withdrawal, plus unchanged subscription evidence and confirmation. Gap: the cited evidence does not assert absence of cross-site observation throughout the plugin journey. No completion is carried for that unasserted privacy outcome. |
 | `INT-003` | BigCommerce | target | missing |  | not implemented |
-| `INT-004` | Stripe | target | partial | `src/core/features/store/stripe/` · `tests/go-live/roles.journeys.ts` · `tests/portability.spec.ts` | Owner-only encrypted connection and signed once-only commerce event ingestion. Gap: required real-provider lifecycle proof cannot start as written: Stripe rejects metadata on a test clock (HTTP 400 parameter_unknown, metadata). No real lifecycle events or cleanup search proof claimed. FLOW-001/FLOW-002 inherit renewal-reminder enrolment without status changes. |
+| `INT-004` | Stripe | target | partial | `tests/go-live/roles.journeys.ts` · `tests/portability.spec.ts` | Owner-only encrypted connection and signed once-only commerce event ingestion. Gap: required real-provider lifecycle proof cannot start as written: Stripe rejects metadata on a test clock (HTTP 400 parameter_unknown, metadata). No real lifecycle events or cleanup search proof claimed. FLOW-001/FLOW-002 inherit renewal-reminder enrolment without status changes. |
 | `INT-005` | Square | target | missing |  | not implemented |
 | `INT-006` | Stall and Orbit | target | missing |  | not implemented |
-| `INT-007` | Events and profiles API | target | partial | `tests/go-live/sync-integrations.journeys.ts` via `tests/go-live/custom-event-journey.ts`: shipped JavaScript client records one general event on concurrent replay, rejects conflicting content, reads profile and rule-derived segment membership, refuses subscribe without evidence by name and exhausts one key without affecting another; timeline at 1440/390 passes axe, overflow and hydration checks. OpenAPI: `src/core/features/integrations/openapi.ts`; client: `src/core/features/integrations/client-source.ts`. Existing scoped profile/consent/suppression, conversion and refusal-feed journeys remain green. | The cited journeys assert profile properties, contact identity, event idempotency and key attribution, membership reads, consent refusal and independent per-key rate limits. Gap: the cited files do not assert integration-key attribution on contact/property/subscription writes or full public-description coverage for all named contact and membership operations; event-write scope and event attribution alone do not prove those outcomes. Website keys remain server-held behind an authenticated same-origin proxy; no automatic collection or consent inference is authorized. |
+| `INT-007` | Events and profiles API | target | partial | `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/custom-event-journey.ts` · `src/core/features/integrations/openapi.ts` · `src/core/features/integrations/client-source.ts` | The cited journeys assert profile properties, contact identity, event idempotency and key attribution, membership reads, consent refusal and independent per-key rate limits. Gap: the cited files do not assert integration-key attribution on contact/property/subscription writes or full public-description coverage for all named contact and membership operations; event-write scope and event attribution alone do not prove those outcomes. Website keys remain server-held behind an authenticated same-origin proxy; no automatic collection or consent inference is authorized. |
 | `INT-008` | Outbound webhooks | target | missing |  | not implemented |
 | `INT-009` | Zapier and Crank | target | missing |  | not implemented |
 | `INT-010` | Segment | target | missing |  | not implemented |
 | `INT-011` | CRM sync | target | partial | `tests/go-live/sync-integrations.journeys.ts` · `docs/integrations.md` | Scoped subscriber sync and a cursor-paged refusal feed support a sibling CRM client. The Coffer client is supplied as a patch in the integration round, not landed in Coffer here. Full CRM field mapping UI and flow-created CRM tasks remain unmet. |
 | `INT-012` | Ad audiences | target | missing |  | not implemented |
-| `INT-013` | Web analytics tagging | target | partial | `tests/go-live/contact-links.journeys.ts` via `tests/go-live/domain-journey.ts` — configured UTM redirect on the branded tracking host; `tests/campaign-results/performance.journeys.ts` — INT-013 / REPORT-002 at 1440 via `tests/campaign-results/tracking-journey.ts` and `tests/campaign-results/custom-attribution.ts`: sent UTM destinations, original click identity, author values, managed/contact exclusions, campaign off, Settings at 1440/390 and one idempotent Vane goal on the contact timeline; `tests/portability.spec.ts` — native settings restore. | Static campaign defaults freeze into new drafts, preserve author values and managed/contact exclusions, and the scoped Vane conversion fixture is recorded. Gap: flow dimensions and INT-007’s general custom-event goal path remain unfinished; no real Vane or provider call is claimed. |
-| `INT-014` | Reviews and loyalty apps | target | partial | `tests/go-live/sync-integrations.journeys.ts` via `tests/go-live/review-loyalty-journey.ts`; `tests/sender-verification/worker.spec.ts` — populated 0096 upgrade. Owner/Admin inbound Judge.me review, Okendo review/earned-points/tier-entry and Smile customer-profile adapters verify native signatures and use the INT-007 event writer. Existing contacts only; no consent or outbound action. Signed replay, account/timestamp refusal, concurrent unmatched count, encrypted export-excluded secrets, populated receipt restore, erasure/reconnection replay protection and Settings at 1440/390 are exercised. | PARTIAL: Yotpo stays disabled with adapter_signature_protocol_unverified because its signing protocol could not be verified from this VM; Smile customer/updated supports profile/balance observations, not inferred points earned or tier transitions. Live provider payload confirmation remains open. Review-request flow conversion/exit waits on FLOW-*. Default ADOPTED: Owner/Admin under integration.manage, existing encrypted credential custody, no new contact/consent/send, unknown addresses counted without storage. No provider account was used. |
+| `INT-013` | Web analytics tagging | target | partial | `tests/go-live/contact-links.journeys.ts` · `tests/go-live/domain-journey.ts` · `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/campaign-results/custom-attribution.ts` · `tests/portability.spec.ts` | Static campaign defaults freeze into new drafts, preserve author values and managed/contact exclusions, and the scoped Vane conversion fixture is recorded. Gap: flow dimensions and INT-007’s general custom-event goal path remain unfinished; no real Vane or provider call is claimed. |
+| `INT-014` | Reviews and loyalty apps | target | partial | `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/review-loyalty-journey.ts` · `tests/sender-verification/worker.spec.ts` | PARTIAL: Yotpo stays disabled with adapter_signature_protocol_unverified because its signing protocol could not be verified from this VM; Smile customer/updated supports profile/balance observations, not inferred points earned or tier transitions. Live provider payload confirmation remains open. Review-request flow conversion/exit waits on FLOW-*. Default ADOPTED: Owner/Admin under integration.manage, existing encrypted credential custody, no new contact/consent/send, unknown addresses counted without storage. No provider account was used. |
 | `INT-015` | Shopify connection a merchant installs | target | missing | `src/core/features/store/shopify/health.ts` · `src/core/features/store/shopify/collector.ts` · `tests/shopify/connection.spec.ts` | The shared public-app connector and merchant-install route are not built. Existing developer-adapter sync and signed-event evidence do not prove merchant authorization, App Store start or provider scope admission. |
 | `INT-016` | Shopify mandatory privacy intake | target | missing | `src/core/features/store/shopify/health.ts` · `src/core/features/store/shopify/collector.ts` · `tests/shopify/connection.spec.ts` | Mandatory privacy intake, durable acknowledgment and delayed post-uninstall redaction remain unbuilt; RL-106 requires protected residual routing rather than deleting reachability with live credentials. |
 | `INT-017` | Shopify disconnection and reinstall | target | missing | `src/core/features/store/shopify/health.ts` · `src/core/features/store/shopify/collector.ts` · `tests/shopify/connection.spec.ts` | The connector disconnect, post-disconnect custody and reinstall journey are not built; retaining late mandatory routing is required by RL-106, not permission for live forwarding. |
@@ -4276,6 +4340,8 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `PUB-004` | Direct sponsorships | target | missing |  | not implemented |
 | `PUB-005` | Paid signup page and payer consent | target | partial | `tests/go-live/roles.journeys.ts` · `tests/go-live/paid-signup-journey.ts` | Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. |
 | `PUB-006` | Paid-reader consent and restrictions | target | partial | `tests/go-live/roles.journeys.ts` · `tests/go-live/paid-signup-journey.ts` | Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: No free newsletters before confirmation. |
+| `HEALTH-001` | Bounded dependency readiness | target | partial | `tests/production-entry.spec.ts` | Binding-edge health cases are exercised. Real elapsed workerd cancellation, actual Queue latency, hosted isolate behavior and the deploy probe are not established by those cases. |
+| `MAIL-001` | Selected Managed service mail | target | partial | `tests/go-live/managed-mail.journeys.ts` | Configured Managed service-mail journeys exercise the selected relay. Full hosted revocation and service-availability acceptance remains unproved. |
 | `SURFACE-001` | The marketing registry and conformance journey | target | missing |  | The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented. |
 | `SURFACE-002` | Drafts and outside marketing exposure | target | missing |  | The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented. |
 | `SURFACE-003` | Sending-provider setup classes | target | missing |  | The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented. |

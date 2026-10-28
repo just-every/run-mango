@@ -191,6 +191,14 @@
     {
       "source": "docs/verify.md",
       "reason": "Original contract acceptance and evidence descriptions retained during generation migration."
+    },
+    {
+      "source": "docs/contract/health-readiness.md",
+      "reason": "Contract supporting mechanism and original acceptance descriptions for maintainers."
+    },
+    {
+      "source": "docs/contract/managed-mail.md",
+      "reason": "Contract supporting mechanism and original acceptance descriptions for maintainers."
     }
   ]
 }

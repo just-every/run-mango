@@ -10,7 +10,7 @@ const hash = (value: string) => createHash('sha256').update(value).digest('hex')
 // Each test starts two native Worker runtimes; the default 30s is too tight on a loaded runner.
 test.describe.configure({ timeout: 240000 });
 
-test('CONT-013/DATA-001 populated upgrade retires legacy custody and resumes a pending old erasure cursor', async () => {
+test('CONT-030/DATA-001 populated upgrade retires legacy custody and resumes a pending old erasure cursor', async () => {
   const email = 'legacy-journal-person@example.test', portable = hash(`mango-audience-export-v1:${email}`);
   const local = hash(`${privateKey}:${email}`), prior = hash(`prior-source-salt:${email}`);
   const tombstone = hash(JSON.stringify(['old-source','audience_portable_hashes',{destination_hash: portable}]));
@@ -77,7 +77,7 @@ test('CONT-013/DATA-001 invalid archive authority is refused before any durable 
   } finally {await source.close();await target.close();}
 });
 
-test('CONT-013/DATA-001 restore refuses a tampered or stale archive by name with no persistent effect, then restores a current one', async () => {
+test('CONT-030/DATA-001 restore refuses a tampered or stale archive by name with no persistent effect, then restores a current one', async () => {
   const [source, target] = await Promise.all([portabilityRuntime(), portabilityRuntime({restore:true})]);
   try {
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('erased-reader','reader@example.test','Erased reader','unsubscribed','never-subscribed',1,1)").run();
@@ -122,7 +122,7 @@ test('CONT-013/DATA-001 restore refuses a tampered or stale archive by name with
   } finally {await source.close();await target.close();}
 });
 
-test('CONT-013/DATA-001 atomic epoch race refuses stale readmission and current archive recovery preserves rows', async () => {
+test('CONT-030/DATA-001 atomic epoch race refuses stale readmission and current archive recovery preserves rows', async () => {
   const [source, target] = await Promise.all([portabilityRuntime(), portabilityRuntime({restore:true})]);
   try {
     await source.db.prepare("INSERT INTO contacts(id,email,display_name,email_status,sms_status,created_at,updated_at) VALUES('current-survivor','survivor@example.test','Survivor','subscribed','never-subscribed',1,1)").run();

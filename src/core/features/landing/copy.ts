@@ -1,7 +1,7 @@
 import type { IconName } from './icons/iconPaths';
 
 // Every sentence of the landing's prose. Each claim is true of Mango's default newsletter profile; change the words
-// freely, but keep them to what the deployment actually does (CONTRACT.md HOME-001). Sample names, addresses, counts
+// freely, but keep them to what the deployment actually does (CONTRACT.md HOME-002). Sample names, addresses, counts
 // and dates live in the drawings (drawings/sample.ts) and are pictures, never records.
 
 export type Feature = { icon: IconName; title: string; text: string };

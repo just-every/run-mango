@@ -2,9 +2,17 @@
 
 ### RL-1 — Installation Lobby and run-site landing
 
+**Date:** 2026-10-12  
+**Ruled by:** Owner  
+**Governs:** HOME-001, HOME-002
+
 The installed root is Base’s shared Lobby: Finish setup until the sender identity is saved, then Sign in. The newsletter landing belongs to the run site. The original clause records this as “owner decision, 12 October 2026”.
 
 ### RL-2 — Recipient-confirmed public resubscription
+
+**Date:** 2026-10-19  
+**Ruled by:** Owner  
+**Governs:** CONT-005, CONT-009, CONT-027, CONT-028
 
 - **CONT-005 public capture policy, as amended by CONT-027 (owner decision, 19 Oct 2026):** Public signup returns the same generic acknowledgment whether or not an address is suppressed. An already subscribed address receives no mail or new consent and is never downgraded. A previously unsubscribed person, including an address with a surviving unsubscribe or erasure hash, may supply new logged post-opt-out request evidence and receive a confirmation email sent to that address, at most three confirmations per destination address per UTC calendar day across public signup surfaces. Only that person's own affirmative POST from the confirmation email resubscribes them; submission, GET and HEAD do not. An exhausted allowance returns the same generic acknowledgment and sends no further confirmation. Nothing bypasses suppression: bounces, complaints, provider or operator suppressions and legal holds remain suppressed, including their surviving hashes, and receive no confirmation mail. Other explicit logged post-opt-out evidence through the ledger remains subject to confirmation and suppression resolution. The CONT-027 Status row records implementation of this approved rule.
 
@@ -12,27 +20,67 @@ The installed root is Base’s shared Lobby: Finish setup until the sender ident
 
 ### RL-41 — Email presentation grammar tightened
 
+**Date:** 2026-10-13  
+**Ruled by:** owner  
+**Governs:** MSG-009, MSG-012, MSG-016
+
 The owner decision “Tighten the style rules” replaces modeled arbitrary layout with the narrower table-cell and outer-wrapper grammar. Saved styled markup is judged as parsed, with the contrast, geometry and exact-byte compatibility outcomes stated in the governing clauses. The full original grammar, replaced behavior, security argument, residuals and evidence are retained in docs/contract/mechanism.md. No status changes follow from this ruling.
 
 ### RL-42 — One email parser and preserved approval bytes
+
+**Date:** 2026-10-13  
+**Ruled by:** owner (owner-approved current-release policy)  
+**Governs:** MSG-009, MSG-012, MSG-016, CAMP-003
 
 Approval, test send, delivery, preview, plain text and editor HTML mode read one parsed structure. New saves canonicalize the body; earlier approvals retain their exact bytes except the specifically refused parser-ambiguity families, and every old draft canonicalizes on its next save. Normalization does not repair a hiding declaration. The original source text, named compatibility cases, security consequences and dependency record are retained in docs/contract/mechanism.md. No status changes follow from this ruling.
 
 ### RL-81 — Generated mobile email presentation
 
+**Date:** 2026-10-19  
+**Ruled by:** Owner  
+**Governs:** BUILD-010, BUILD-014, BUILD-013
+
 The responsive block is generated from a closed vocabulary, never merged with authored text. Its absence loses no content. Mobile and desktop hiding are applied only by their generated rules; style-stripping clients show the content and preview names that fallback. The generated block is bounded and adds no author-controlled selector or remote load.
 
 ### RL-82 — Owner-authorized sending connection
+
+**Date:** 2026-10-19  
+**Ruled by:** Owner  
+**Governs:** DELIV-008, DELIV-010, DELIV-009
 
 Before provider creation, Settings discloses the account, webhook destination, event list, signing and unchanged settings. The Owner’s Connect action authorizes that exact connection. Signing is required or Mango removes its new webhook; ownership is by stored provider identifier, and restricted permissions and overbroad keys are named. Company policy determines the classes of an agent’s equivalent action.
 
 ### RL-83 — WooCommerce plugin semantic
 
+**Date:** 2026-10-22  
+**Ruled by:** ct  
+**Governs:** INT-002
+
 Ct approved the INT-002 semantic on 22 October 2026 at 20:20Z: store-admin enablement is off initially; only signed-in store customers; explicit analytics and marketing consent before the one Secure HttpOnly SameSite=Lax first-party cookie, expiring after 30 days; GPC records no observation and revokes pending eligibility; no cross-site tracking or subscription-consent widening; WordPress observations expire after 30 days. The allowlisted signup iframe uses Mango’s own confirmation. A saved tag-and-exit flow revision must be explicitly activated; it sends no marketing message. CONT-018 and FORM-008 retain their other acceptance obligations and statuses; FLOW clauses retain their graph/message obligations.
 
 ### RL-84 — Chosen catalog unavailable and deleted states
 
+**Date:** 2026-10-25  
+**Ruled by:** ct  
+**Governs:** BUILD-011, BUILD-012
+
 Ct’s 25 October 2026 23:46Z ruling retains deleted selections visibly, distinguishes unpublished and out-of-stock selections and includes them in the save bound. A catalog-unavailable save refusal names the current product and directs publication or removal, retains unsaved edits and remeasures after publication. An unavailable hand-off skips the recipient-step and never sends stale values.
+
+### RL-3 — Bounded health readiness
+
+**Date:** 2026-10-21  
+**Ruled by:** ct and sd  
+**Governs:** HEALTH-001
+
+The recorded ct deadline ruling and sd outstanding-send decision replace BASE-OPS-001’s one-second response with a two-second response and a Queue observation reused for 60 seconds, with the two-outstanding-send exception. The complete replacement, security consequences, limits and evidence boundary are retained in docs/contract/health-readiness.md. This records the incumbent ruling without a status promotion.
+
+### RL-4 — Managed transactional-mail exception
+
+**Date:** 2026-10-28  
+**Ruled by:** Owner (recorded Managed-mail direction; original direction undated)  
+**Governs:** MAIL-001
+
+The incumbent contract records the owner’s direction allowing the selected Managed relay for sign-in and subscription confirmation as a narrow BASE-DATA-005 exception. 28 October is the migration-record date; the original direction supplies no ruling date. Own-provider Free and Assisted installations retain independence. The full exception and its consequences are retained in docs/contract/managed-mail.md.
 
 ### RL-101 — CONT-025: Opt-in mode per form and source
 
