@@ -1,0 +1,3 @@
+.bulk-compliance :is(th, td, p) { font-size: 14px; }
+.bulk-compliance thead th, .bulk-compliance .status-pill { font-size: 13px; }
+.bulk-compliance [data-reputation-figures] { overflow-wrap: anywhere; }

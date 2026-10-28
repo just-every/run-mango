@@ -5,7 +5,7 @@ import {event,eventSigner} from './sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,approve,dispatch,signedPost} from './harness';
 import {openPage} from '../support/navigation';
 
-test('[DELIV-005] signed mailbox outcomes and diagnostic categories survive replay without multiplying clicks',async({page},info)=>{
+test('[DELIV-005][DELIV-003] signed mailbox outcomes and diagnostic categories survive replay without multiplying clicks',async({page},info)=>{
   const edge=await providerEdge(),signer=eventSigner(),site=await installation(edge,signer);
   try {
     const cookie=await site.open();
@@ -22,7 +22,9 @@ test('[DELIV-005] signed mailbox outcomes and diagnostic categories survive repl
       await section.screenshot({path:info.outputPath(`mailbox-empty-${width}.png`)});
       const compliance=page.locator('section').filter({has:page.getByRole('heading',{name:'Bulk-sender compliance',exact:true})});
       if(width===1440){const row=compliance.locator('[data-requirement=complaints]');await expect(row).toHaveAttribute('data-state','unknown');await expect(row).toContainText('delivery events not connected');await expect(row.locator('td').last()).not.toContainText(/\d+(?:\.\d+)?%/);}
-      await compliance.screenshot({path:info.outputPath(`bulk-compliance-unconnected-${width}.png`)});
+      const capture=info.outputPath(`bulk-compliance-unconnected-${width}.png`);
+      if(width===1440)await compliance.screenshot({path:capture});
+      else {await compliance.locator('[data-requirement=complaints]').scrollIntoViewIfNeeded();await page.screenshot({path:capture});}
     }
     await page.goto('about:blank');
 

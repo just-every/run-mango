@@ -39,7 +39,7 @@ export async function complianceJourney(page:Page,info:TestInfo,site:Installatio
     await page.setViewportSize({width:1440,height:1000});await openPage(page,site.runtime.url+'/app/insights');
     await expect(complaint).toHaveAttribute('data-state',state);
     // Browser proof at both widths; the permanent state assertion is desktop.
-    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);await section.screenshot({path:info.outputPath(`bulk-compliance-${state}-${width}.png`)});}
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);const capture=info.outputPath(`bulk-compliance-${state}-${width}.png`);if(width===1440)await section.screenshot({path:capture});else {await complaint.scrollIntoViewIfNeeded();await page.screenshot({path:capture});}}
     await page.setViewportSize({width:1440,height:1000});
   };
   await show('warn');

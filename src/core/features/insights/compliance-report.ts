@@ -8,7 +8,7 @@ import {COMPLAINT_RATE_LIMIT,HARD_BOUNCE_RATE_LIMIT} from '../lifecycle/reputati
 
 export type ComplianceState='pass'|'warn'|'fail'|'unknown';
 export type ComplianceRow={requirement:string;key:string;state:ComplianceState;value:string;gmail:string;yahoo:string;microsoft:string};
-export type DomainCompliance={domain:string;figures:string;rows:ComplianceRow[]};
+export type DomainCompliance={domain:string;hasSignedOutcomes:boolean;figures:string;rows:ComplianceRow[]};
 type StoredInspection=SenderInspection&{evidence?:{binding?:SenderBinding;configuration?:ConfigurationInspection}};
 type Rate=Awaited<ReturnType<typeof readSenderRates>>[number];
 /** Reporting only: five aggregate reads, no DNS, provider call or state mutation.
@@ -59,7 +59,7 @@ export async function complianceReport(database:Database,senders:Rate[],windowDa
         value:!hasSignedOutcomes?'delivery events not connected':`${reputationRate(value??null)}; ${complaint?(rate?.complained??0):(rate?.hardBounced??0)} / ${complaint?(rate?.delivered??0):(rate?.attempted??0)} ${complaint?'delivered marketing emails':'attempted marketing hand-offs'}. ${reputationRule}`};
     };
     const policy=configuration?.dmarc;
-    return {domain,figures:!hasSignedOutcomes?'delivery events not connected':rate?reputationFigures(rate,windowDays):'Unmeasured: no marketing outcomes or attempts in this reporting window.',rows:[
+    return {domain,hasSignedOutcomes,figures:!hasSignedOutcomes?'delivery events not connected':rate?reputationFigures(rate,windowDays):'Unmeasured: no marketing outcomes or attempts in this reporting window.',rows:[
       authentication('spf'),authentication('dkim'),
       {key:'dmarc',requirement:'DMARC policy and alignment',gmail:'At least p=none; aligned From',yahoo:'At least p=none; aligned From',microsoft:'At least p=none; aligned From',
         state:auth&&policy?(auth.dmarc&&auth.aligned?'pass':'fail'):'unknown',value:auth&&policy?`p=${policy.policy.p}; SPF ${policy.spfAligned?'aligned':'not aligned'}; DKIM ${policy.dkimAligned?'aligned':'not aligned'}; DMARC ${auth.dmarc?'pass':'fail'}.`:'Unknown: no current DMARC policy and alignment observation.'},

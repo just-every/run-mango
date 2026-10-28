@@ -3994,7 +3994,7 @@
       "executable": false
     },
     "src/core/features/insights/compliance-report.ts": {
-      "sha256": "35e3287639cfdf138835e20bee6630e8bbdddb969f2878bc16ab524fedc0895f",
+      "sha256": "25731a8b2159215ef826685294f1f2baff3721a6060b776be1df9fb2493f4f99",
       "executable": false
     },
     "src/core/features/insights/conversion-events.ts": {
@@ -4145,8 +4145,12 @@
       "sha256": "14286e2d74964a44e2daa71ffc62008b2c120132849400b2fc3a3dbe5fccc9d1",
       "executable": false
     },
+    "src/core/features/insights/ui/compliance-dashboard.css": {
+      "sha256": "853af7585b661220a29200668b9772174eb425810bd3ecbd1ac7fccb7e32ce1a",
+      "executable": false
+    },
     "src/core/features/insights/ui/compliance-dashboard.tsx": {
-      "sha256": "1dc67b6b06c94839e89ff566efb0c4c1e06a5a37089f2d7114a6cd26addb3258",
+      "sha256": "adab91bd736b301eeb4ea21eeeb63e31ce674ec80cf5b644aa7d2e0b0dff85a8",
       "executable": false
     },
     "src/core/features/insights/ui/cost-totals.tsx": {
@@ -4190,7 +4194,7 @@
       "executable": false
     },
     "src/core/features/insights/ui/sender-rates.tsx": {
-      "sha256": "2040e4c9edf075fa6486f712e2dec8394d990c9937b5ad366daecb77b66a69a6",
+      "sha256": "d96f1b3b37a07a59e6150a9de95b4a2a73160fcd69ab7c8b449c900383381d50",
       "executable": false
     },
     "src/core/features/insights/ui/settings-usage.tsx": {
@@ -7934,7 +7938,7 @@
       "executable": false
     },
     "tests/go-live/compliance-journey.ts": {
-      "sha256": "a3efcadb42de6d537262ae43dffd6ac0c84b35eea082129632b049a5f46e2381",
+      "sha256": "e4dd06eaa436477171a12fcf0ac18a3308240dc8c7b94259dac332138455ee0b",
       "executable": false
     },
     "tests/go-live/contact-links.journeys.ts": {
@@ -8026,7 +8030,7 @@
       "executable": false
     },
     "tests/go-live/mailbox-provider.journeys.ts": {
-      "sha256": "5d300f69ff08fcb67ad51c4217601867fcfa974070ebb2fb9d3173c405c21c8e",
+      "sha256": "cad574faf475b39229b100fc840b3f2cf8b647837cc41e7da82b58c41a9b4fc2",
       "executable": false
     },
     "tests/go-live/managed-mail.journeys.ts": {
