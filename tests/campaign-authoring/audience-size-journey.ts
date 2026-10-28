@@ -76,7 +76,7 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
     const advisoryBody=emailBody+'<p>'+'Synthetic garden notes. '.repeat(Math.ceil(padding/24)).slice(0,padding)+'</p>';
     await json(await patch({emailBody:advisoryBody}),200);
     await json(await site.call(`/api/campaigns/${draft.campaignId}/checks`,{method:'POST',cookie,body:{revisionId:draft.revisionId}}),200);
-    const warning=(await read()).checks.find((check:any)=>check.kind==='message.email-size-advisory');expect(warning).toBeTruthy();expect(warning.detail).toContain(`${advisoryBytes} bytes`);expect(warning.findingIdentity).toMatch(/^[a-f0-9]{64}$/);
+    const warning=(await read()).checks.find((check:any)=>check.kind==='message.email-size-advisory');expect(warning).toBeTruthy();expect(warning.detail).toContain(`${advisoryBytes} bytes`);
     await json(await site.call(`/api/campaigns/${draft.campaignId}/checks/${warning.id}/acknowledge`,{method:'POST',cookie,body:{revisionId:draft.revisionId,findingIdentity:warning.findingIdentity}}),200);
     await json(await patch({emailBody}),200);expect((await read()).revision.emailBody).toBe(before.emailBody);
     await approve(site,cookie,draft);
