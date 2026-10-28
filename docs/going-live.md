@@ -17,9 +17,9 @@ Before the first real send to a real list, a sender needs a few things in place.
 | A visible unsubscribe link and your postal address | Built in; you save the address | Approval blocks a campaign without both. |
 | A sending jurisdiction | You decide | Mango does not record which country's rules apply to your list. See below. |
 
-Run the sender check from **Settings** on your deployment: no command line is needed. [Install and deploy](./install.md#verify-your-sender) walks through it.
+Run the sender check from **Settings** on your deployment: no command line is needed. [Getting started](./getting-started.md#verify-your-sender) walks through it.
 
-Text messages, AI writing and a store connection are optional modules, off unless you configure them; a newsletter needs none of them. [Install and deploy](./install.md) and the repository's `OPERATIONS.md` describe their settings.
+Text messages, AI writing and a store connection are optional modules, off unless you configure them; a newsletter needs none of them. [Getting started](./getting-started.md) and the repository's `OPERATIONS.md` describe their settings.
 
 ## What Gmail requires
 

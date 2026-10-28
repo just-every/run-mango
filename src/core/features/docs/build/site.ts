@@ -6,6 +6,8 @@ import { manifestPath, readManifest } from './manifest.ts';
 import type { ManifestPage } from './manifest.ts';
 import { renderPage } from './render.ts';
 import type { RenderedPage } from './render.ts';
+import { startLine, runRequirements } from '../../../../base/run-site';
+import { run } from '../../../../site/run';
 
 // The whole docs site from the tree as it is: every page listed in docs/site.json rendered, every link and anchor
 // checked across pages, and nothing that names a build machine's paths. The Vite plugin and the tests share this.
@@ -33,7 +35,12 @@ export function buildSite(root: string): Site {
     return readFileSync(join(root, source), 'utf8');
   };
   const pages: SitePage[] = manifest.pages.map(page => {
-    const rendered = renderPage(read(page.source), context(page.source));
+    let markdown = read(page.source);
+    if (page.source === 'docs/getting-started.md') {
+      const recipe = `\`\`\`bash\n${startLine(run)}\n\`\`\`\n\n${runRequirements} Already have Node 22 or later? \`${run.clone}\` does the same.`;
+      markdown = markdown.replace(/<!-- run-recipe -->[\s\S]*?<!-- \/run-recipe -->/, recipe);
+    }
+    const rendered = renderPage(markdown, context(page.source));
     return { ...page, ...rendered, description: page.description ?? rendered.description };
   });
   const problems: string[] = [];
@@ -48,7 +55,7 @@ export function buildSite(root: string): Site {
   }
   const sections = manifest.sections.map(section => ({
     title: section.title,
-    pages: section.pages.map(({ slug, label, href, source }) => ({ slug, label, href, source })),
+    pages: section.pages.filter(page => !page.hidden).map(({ slug, label, href, source }) => ({ slug, label, href, source })),
   }));
   return { sections, pages, problems, files: [...new Set(files)] };
 }

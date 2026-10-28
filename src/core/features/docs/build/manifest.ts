@@ -7,7 +7,7 @@ import { join } from 'node:path';
 export const manifestPath = 'docs/site.json';
 
 /** `description` is the page's meta description; without one the page's first paragraph is used. */
-export type ManifestPage = { section: string; slug: string; label: string; source: string; href: string; description?: string };
+export type ManifestPage = { section: string; slug: string; label: string; source: string; href: string; description?: string; hidden?: boolean };
 export type ManifestSection = { title: string; pages: ManifestPage[] };
 export type GithubOnlyEntry = { source: string; reason: string };
 export type Manifest = { sections: ManifestSection[]; pages: ManifestPage[]; githubOnly: GithubOnlyEntry[] };
@@ -47,7 +47,7 @@ export function readManifest(root: string): Manifest {
       if (!label) problems.push(`${where}: no label`);
       useSource(source, where);
       const description = text(page.description).trim();
-      return { section: title, slug, label, source, href: docsHref(slug), ...(description && { description }) };
+      return { section: title, slug, label, source, href: docsHref(slug), ...(description && { description }), ...(page.hidden === true && { hidden: true }) };
     });
     return { title, pages };
   });

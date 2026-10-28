@@ -20,10 +20,10 @@ export function DocsPage({ page, sections, version }: DocsView) {
   return (
     <div className="mango-docs">
       <DocsSidebar sections={sections} current={page.slug} />
-      <DocsMenu sections={sections} current={page.slug} label={current.label} />
+      <DocsMenu sections={sections} current={page.slug} label={current?.label ?? page.title} />
       <div className="docs-main">
-        <DocsArticle page={page} section={current.section} welcome={!page.slug} />
-        <DocsPager previous={order[index - 1]} next={order[index + 1]} />
+        <DocsArticle page={page} section={current?.section ?? sections[0].title} welcome={!page.slug} />
+        <DocsPager previous={index >= 0 ? order[index - 1] : undefined} next={index >= 0 ? order[index + 1] : undefined} />
       </div>
       <DocsToc toc={page.toc} />
     </div>
