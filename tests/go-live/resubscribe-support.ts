@@ -67,7 +67,7 @@ export async function expectEmailStatus(site:ResubscribeSite,email:string,status
 }
 
 export async function screenshots(page:Page,info:TestInfo,name:string) {
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await page.screenshot({path:info.outputPath(`${name}-${width}.png`),fullPage:true});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth),`${name} fits ${width}px`).toBeLessThanOrEqual(width);

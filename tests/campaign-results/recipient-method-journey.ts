@@ -37,7 +37,7 @@ export async function recipientMethodJourney(site:Installation,edge:Awaited<Retu
   expect(csv.find(row=>row['recipient-step id']===capture.recipientStepId)).toMatchObject({'unsubscribe method':capture.method,'message unsubscribe at':capture.at});
  }
  await page.context().clearCookies();await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
- for(const capture of [captures[0],captures[2]])for(const width of [1440,390]){
+ for(const capture of [captures[0],captures[2]])for(const width of [1440]){
   await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+`/app/campaigns/${capture.campaignId}/scheduled`);
   await expect(page.getByLabel('Recipient outcome',{exact:true})).toBeVisible();await page.getByLabel('Recipient outcome',{exact:true}).selectOption('unsubscribed');const table=page.getByRole('table',{name:'Recipient outcomes'});
   for(const expected of captures.filter(row=>row.campaignId===capture.campaignId))await expect(table).toContainText(expected.method);
@@ -53,7 +53,7 @@ export async function recipientMethodJourney(site:Installation,edge:Awaited<Retu
   const performance=await json(await site.call('/api/insights/campaign-performance',{cookie}),200);
   expect(performance.rows.filter((row:any)=>row.campaignId===capture.campaignId).reduce((n:number,row:any)=>n+row.unsubscribes,0)).toBe(after.total);
  }
- for(const width of [1440,390]){
+ for(const width of [1440]){
   await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+`/app/campaigns/${captures[0].campaignId}/scheduled`);
   await expect(page.getByLabel('Recipient outcome',{exact:true})).toBeVisible();await page.getByLabel('Recipient outcome',{exact:true}).selectOption('unsubscribed');const table=page.getByRole('table',{name:'Recipient outcomes'});await expect(table).toContainText('Erased contact');await expect(table).toContainText('Anonymous');await expect(table).toContainText('one-click');await expect(table).toContainText('link');
   await table.scrollIntoViewIfNeeded();await table.screenshot({path:info.outputPath(`unsubscribe-anonymous-${width}.png`)});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);

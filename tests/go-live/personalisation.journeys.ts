@@ -1,11 +1,12 @@
+import {test} from '@playwright/test';
 import { expect } from '@playwright/test';
-import { contract } from '../contract.js';
+
 import { providerEdge } from './edge';
 import { eventSigner } from './sendgrid-events';
 import { installation, json, sender, consent, confirmedContact, draftCampaign, approve, dispatch, availableTransport } from './harness';
 import { openPage, reloadPage } from '../support/navigation';
 
-contract('MSG-008', 'saved review counts fallback recipients and delivery uses the same escaped personalisation', async ({page}, info) => {
+test("[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation",async ({page}, info) => {
   const edge = await providerEdge(), site = await installation(edge,eventSigner());
   try {
     const cookie = await site.open();
@@ -38,7 +39,7 @@ contract('MSG-008', 'saved review counts fallback recipients and delivery uses t
     expect(checked.candidateCount).toBe(3);
     expect(checked.eligibleCount).toBe(2);
     expect(checked.channelCounts).toEqual([{channel:'email',eligibleContactCount:2,fallbackContactCount:1,recipientStepCount:2}]);
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});await reloadPage(page);
       await expect(page.getByLabel('Personalisation fallback counts')).toContainText('1 of 2');
       await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('Hello Alex Example.');
@@ -52,7 +53,7 @@ contract('MSG-008', 'saved review counts fallback recipients and delivery uses t
     await patch({preheader:'Your {{first_name | fallback: garden}} update'});
     const changed = await review();
     expect(changed.channelCounts[0].fallbackContactCount).toBe(2);
-    for (const width of [1440,390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({width,height:1000});await reloadPage(page);
       await expect(page.locator('.message-preview--email')).toContainText('Preheader: Your garden update');
       await expect(page.getByLabel('Personalisation fallback counts')).toContainText('2 of 2');

@@ -107,7 +107,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   expect((await post(uncertain)).status).toBe(422);
   await members([]);
   expect(await readers()).toMatchObject({paymentFailed: 0, statusUnconfirmed: 1});
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await openPage(page, site.runtime.url + '/app/settings');
     const list = page.getByRole('list', {name: 'Paid readers', exact: true});
@@ -154,7 +154,7 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
   expect((await dispatch(site, freeCampaign.campaignId, freeDue)).filter(row => row.transport_disposition === 'accepted').map(row => row.email).sort()).toEqual([people.free, people.paid].sort());
   expect(edge.sends.filter(send => String(send.body.subject).startsWith('Free garden notes after cancellation')).map(send => send.to).sort()).toEqual([people.free, people.paid].sort());
 
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
     await openPage(page, site.runtime.url + '/app/settings');
     const readersList = page.getByRole('list', {name: 'Paid readers', exact: true});

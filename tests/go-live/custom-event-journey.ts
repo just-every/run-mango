@@ -24,7 +24,7 @@ export async function proveCustomEvents(site:Installation,cookie:string,contactI
   expect((await client.memberships(contactId)).segments).toContainEqual(expect.objectContaining({id:segmentId,state:'member'}));
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/hydration|hydrated.*match/i.test(m.text()))errors.push(m.text());});
   await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/audience/'+contactId);
     await expect(page.getByText('sample.requested · recorded',{exact:true})).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

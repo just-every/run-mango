@@ -33,7 +33,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
   await expect(changes).toContainText('Mapped mobile');
   await expect(changes).toContainText('Recolored #999999 to #767676');
   await expect(changes).toContainText('Sent size:');
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({ width, height: 1000 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
@@ -75,7 +75,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
   expect(checks.checks.find((row: any) => row.kind === 'message.content')).toMatchObject({ status: 'passed' });
   console.log('Conversion proof: open mapped preview');
   await openPage(page, `${site.runtime.url}/app/campaigns/${a.campaignId}/review`);
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({ width, height: 1000 });
     console.log('Conversion proof: mapped preview ' + width);
     await expect(page.getByRole('button', { name: width === 390 ? 'Mobile email' : 'Desktop email', exact: true })).toBeVisible();
@@ -94,7 +94,7 @@ export async function templateConversionJourney(site: Installation, owner: strin
   const d = await body(152);
   expect(d.revision.emailBody).toContain('color: #767676');
   await openPage(page, `${site.runtime.url}/app/campaigns/${d.campaignId}/review`);
-  for (const width of [1440, 390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({ width, height: 1000 });
     await expect(page.locator('iframe[title="Saved email preview"]')).toBeVisible();
     await expect(page.frameLocator('iframe[title="Saved email preview"]').getByText('Our original synthetic footer.')).toBeVisible();

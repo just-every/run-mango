@@ -24,7 +24,7 @@ const handlers = new Map(['SIGINT', 'SIGTERM'].map(signal => [signal, () => cont
 for (const [signal, handler] of handlers) process.on(signal, handler);
 try {
   await runStages(groups, { directory, signal: controller.signal,
-    schedule: { selection: identity, cpuBudget, mainWorkers: Math.min(2, cpuBudget), nativeWorkers: 1 } });
+    schedule: { selection: identity, cpuBudget, mainWorkers: Math.min(2, cpuBudget), nativeWorkers: Math.min(2, cpuBudget) } });
 }
 catch (error) {
   process.exitCode = 1;

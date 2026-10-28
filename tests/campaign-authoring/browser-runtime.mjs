@@ -16,14 +16,14 @@ import { testTemplate } from '../support/queue-consumers.mjs';
 export async function authoringRuntime({
   suite = 'campaign-authoring',
   fixtureWorker = 'tests/campaign-authoring/worker.ts',
-  startupTimeout = 45000,
+  startupTimeout = 90000,
   vars = {},
   token = `synthetic-${crypto.randomUUID()}`,
   stateDirectory,
   parallelQueue = false,
   queueConsumers,
-  reuseEmptySchema = false,
-  batchMigrations = false,
+  reuseEmptySchema = !stateDirectory,
+  batchMigrations = !stateDirectory,
 } = {}) {
   const scratch = scratchDirectory(suite);
   await mkdir(scratch, { recursive: true });

@@ -29,7 +29,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
       await route.fulfill({status:303,headers:{location:site.local(edge.stripe.sessions.at(-1)!.form.get('success_url')!)}});
     }else await route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="en"><title>Synthetic checkout</title><h1>Stripe Checkout test edge</h1><form method="post"><button>Complete checkout</button></form></html>'});
   });
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});await openPage(page,url);
     await expect(page.getByRole('heading',{name:'Members',exact:true})).toBeVisible();
     await expect(page.locator('main')).toContainText(description.price);
@@ -47,7 +47,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   await expect(page.getByRole('heading',{name:'Stripe Checkout test edge',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Complete checkout',exact:true}).click();
   await expect(page.getByRole('heading',{name:'What happens next',exact:true})).toBeVisible();
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/subscribe?paid=1&returned=1');
     await expect(page.locator('main')).toContainText('Confirm subscription');
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);

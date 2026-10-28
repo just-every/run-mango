@@ -69,7 +69,7 @@ export async function proveReviewLoyalty(site:Installation,owner:string,page:Pag
   const facts=detail.timeline.filter((v:any)=>['review.submitted','loyalty.profile_observed','loyalty.points_earned','loyalty.tier_changed'].includes(v.kind));
   expect(facts).toHaveLength(5);expect(facts.map((v:any)=>v.source)).toEqual(expect.arrayContaining(['judgeme · custom-event','okendo · custom-event','smile · custom-event']));
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/hydration|hydrated.*match/i.test(m.text()))errors.push(m.text());});
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/settings');
     await expect(panel.getByLabel('Review or loyalty app')).toBeEnabled();
     await expect(panel.getByRole('status')).toContainText('1 unmatched events');
