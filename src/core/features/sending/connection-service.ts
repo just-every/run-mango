@@ -1,3 +1,4 @@
+import {agentAttribution} from '../agent-door/context';
 import {resendEvents} from './resend-account';
 import {resendConnectionService} from './resend-connection';
 import type {Platform} from '@/core/shared/platform';
@@ -47,7 +48,7 @@ export function sendingConnectionService(platform:Platform) {
         VALUES(1,?,'connecting',?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET generation=excluded.generation,state='connecting',account_id=excluded.account_id,
         account_name=excluded.account_name,secret_cipher=excluded.secret_cipher,last_four=excluded.last_four,broader=excluded.broader,connected_by=excluded.connected_by,
         connected_at=excluded.connected_at,webhook_id=excluded.webhook_id,delivery_proved_at=NULL,last_error=NULL WHERE sending_connection.state<>'connecting' RETURNING id`)
-        .bind(generation,identity.accountId,identity.accountName,proposal.secret_cipher,secret.apiKey.slice(-4),identity.broader?1:0,operator.email,now,reuse).first();
+        .bind(generation,identity.accountId,identity.accountName,proposal.secret_cipher,secret.apiKey.slice(-4),identity.broader?1:0,agentAttribution()?.label??operator.email,now,reuse).first();
       if(!reserved)throw new SendingConnectionError('Another connection is in progress. Complete or disconnect it first.');
       await activityStatement(db,{key:crypto.randomUUID(),action:'sending-connect-authorized',entityType:'integration',entityId:'sendgrid',actorId:operator.id,
         detail:{provider:'sendgrid',account:identity.accountName,lastFour:secret.apiKey.slice(-4),webhookUrl:url,events:sendingEvents,signing:true},at:now}).run();

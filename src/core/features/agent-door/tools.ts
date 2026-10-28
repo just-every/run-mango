@@ -60,7 +60,7 @@ async function classes(platform: Platform, kind: string, args: Args, ctx: ToolCo
   // Protected metadata actually present in a permitted contact projection.
   if (kind === 'contacts.read') {
     const operator = await nativeOperator(platform,ctx.person.id);
-    const protectedRow = hasPermission(operator.role,'contact.unmasked') && await db.prepare(
+    const protectedRow = hasPermission(contactPrivacyRole(operator),'contact.unmasked') && await db.prepare(
       'SELECT 1 FROM consent_capture_metadata WHERE contact_id=? AND (capture_ip IS NOT NULL OR confirmation_ip IS NOT NULL) LIMIT 1').bind(args.id).first();
     return protectedRow ? [{class:'sensitive',facts:{measure:1,kind:'consent-network-evidence'}}] : standard();
   }

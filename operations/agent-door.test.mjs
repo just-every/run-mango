@@ -142,6 +142,21 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await clientPaused.json()).error,'agents_paused');
   assert.equal((await app.call('/api/settings/integrations/'+key.credential.id,{method:'DELETE',cookie})).status,200);
   assert.equal((await app.call('/api/integrations/v1/contacts',{headers:keyHeaders})).status,401);
+  assert.equal((await adopt(autonomousPolicy())).response.status,200);
+  assert.equal((await app.call('/api/settings/opt-in/hosted',{method:'PUT',cookie,body:{mode:'single'}})).status,200);
+  const disclosure=await (await app.call('/subscribe/info')).json();
+  const signup=await app.call('/subscribe',{method:'POST',body:{email:'protected@example.test',displayName:'Protected reader',consent:true,disclosure:disclosure.disclosure}});
+  assert.equal(signup.status,202,await signup.clone().text());
+  const protectedContact=await app.db.prepare("SELECT id FROM contacts WHERE email='protected@example.test'").first();assert.ok(protectedContact);
+  assert.equal((await app.call('/api/operators/'+member.id+'/role',{method:'PUT',cookie,body:{role:'analyst',unmaskedContacts:true}})).status,200);
+  const analyst={sub:memberSub,act:{sub:randomUUID(),name:'Evidence assistant',specialist:'marketer'}};
+  const protectedRead=await call('mango.contacts.read',{id:protectedContact.id},analyst);
+  assert.equal(protectedRead.message.result.isError,false,JSON.stringify(protectedRead.message));
+  assert.deepEqual(protectedRead.message.result._meta['com.runeditrun/decision'].classes.map(item=>item.class),['sensitive']);
+  assert.equal(protectedRead.message.result.structuredContent.consent[0].captureIp,'192.0.2.1');
+  assert.equal((await adopt({...autonomousPolicy(),rules:[{id:'all',class:'*',do:'autonomous'},{id:'no-protected-reads',class:'sensitive',do:'blocked'}]})).response.status,200);
+  const protectedBlocked=await call('mango.contacts.read',{id:protectedContact.id},analyst);
+  assert.equal(protectedBlocked.message.result._meta['com.runeditrun/error'].code,'policy_blocked');
   assert.equal(owner.role,'owner');
  }finally{await app.close();}
 });

@@ -3648,6 +3648,7 @@
   ],
   "escalations": [],
   "verification": {
+    "journey": "tests/agent-door/native-journey.mjs",
     "owner": {
       "bindings": {
         "RER_MANAGEMENT_ORIGIN": "issuer",
