@@ -1,4 +1,4 @@
-import {nativeAgent} from '../agent-door/native-context';
+import {nativeAgent,executionState,executionPolicyAvailable} from '../agent-door/native-context';
 // @ts-expect-error Portable Base ESM has no separate declaration for this helper.
 import { localCookieName } from '@/vendor/base/operator-auth/http.mjs';
 import { hmacSha256Hex } from '@/core/platform/crypto';
@@ -36,7 +36,9 @@ export async function senderWriteAuthority(platform: Pick<Platform, 'config' | '
 
 export const senderWriteGuard = `EXISTS (SELECT 1 FROM (
   SELECT id,operator_id,operator_version,revoked_at,expires_at FROM oa_sessions
-  UNION ALL SELECT 'agent:'||id,sponsor_id,sponsor_version,NULL,expires_at FROM mango_agent_executions WHERE state='running'
+  UNION ALL SELECT 'agent:'||e.id,e.sponsor_id,e.sponsor_version,NULL,e.expires_at FROM mango_agent_executions e
+    JOIN oa_operators n ON n.id=e.sponsor_id LEFT JOIN operator_product_roles r ON r.operator_id=n.id
+    WHERE e.state='running' AND e.policy_state=${executionState('n','r')} AND ${executionPolicyAvailable}
   ) s JOIN oa_operators o ON o.id=s.operator_id
   WHERE s.id=? AND o.id=? AND o.version=? AND s.operator_version=o.version AND o.status='active'
     AND s.revoked_at IS NULL AND s.expires_at > MAX(?,CAST((julianday('now')-2440587.5)*86400000 AS INTEGER)))`;

@@ -64,7 +64,7 @@ export function ActivityPage() {
             <td>{actor(entry)}<small>{entry.operatorId}</small></td>
             <td>{entry.action}</td>
             <td>{entry.objectType}<small>{entry.objectId}</small></td>
-            <td><code className="activity-detail">{JSON.stringify(entry.detail)}</code></td>
+            <td><details className="activity-facts"><summary>Recorded facts</summary><code className="activity-detail">{JSON.stringify(entry.detail)}</code></details></td>
           </tr>)}</tbody>
         </table>
       </div> : <p className="muted-copy">{loading ? 'Loading activity…' : 'No activity matches these filters.'}</p>}

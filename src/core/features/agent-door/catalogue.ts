@@ -111,7 +111,7 @@ export const nativeToolSpecs:NativeToolSpec[]=[
  read('access','read','native:access',{},[],['OPER-001']),
  write('access','update','PUT','/api/operators/{id}/role',{id:string,role:enumeration('owner','admin','manager','author','analyst','support'),unmaskedContacts:bool},['id','role'],['access'],['OPER-001'],'access','access'),
  read('imports','read','native:imports',{id:string},['id'],['MOVE-001']),
- read('activity','read','/api/activity',{agent:string,action:string,object:string},[],['OPER-007']),
+ read('activity','read','/api/activity?stored=true',{agent:string,action:string,object:string},[],['OPER-007']),
  read('witness','read','native:witness',{},[],['OPER-007']),
  read('delivery','read','native:recipients',{id:string},['id'],['SEND-005','SEND-006']),
  write('delivery','prepare','POST','native:prepare',{id:string,revisionId:string},['id','revisionId'],['live'],['SEND-005']),

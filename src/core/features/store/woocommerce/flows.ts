@@ -96,6 +96,8 @@ export async function enrollWooFlows(platform: Platform, connection: WooConnecti
 export async function advanceWooFlow(platform:Platform,id:string,eventId:string){
  const db=platform.database.$client,connection=await readWooConnection(platform);
  if(!connection?.pluginEnabled)throw new ToolRefusal('trigger_source_unavailable');
+ const flow=await db.prepare("SELECT id FROM woocommerce_flows WHERE id=? AND connection_id=? AND state='live'").bind(id,connection.id).first();
+ if(!flow)throw new ToolRefusal('not_found');
  const row=await db.prepare("SELECT payload,occurred_at FROM source_records WHERE provider=? AND source_type='cart' AND json_extract(payload,'$.eventId')=?").bind('woocommerce:'+connection.id,eventId).first<{payload:string;occurred_at:number}>();
  if(!row)throw new ToolRefusal('not_found');
  const payload=JSON.parse(row.payload);

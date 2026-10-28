@@ -374,7 +374,8 @@ export function createApp(
     if(!hasPermission(operator.role,required))return context.json({error:'role_forbidden',requiredPermission:required},403);
     if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
     const changed=!nativePrincipals.has(context.req.raw)&&!isSafeMethod(context.req.method)?nativePersonEffect(context.req.method,context.req.path):null;
-    const input=changed?await context.req.raw.clone().json().catch(()=>({})):{};
+    const proposed=changed?await context.req.raw.clone().json().catch(()=>null):null;
+    const input=proposed&&typeof proposed==='object'&&!Array.isArray(proposed)?proposed as Record<string,unknown>:{};
     await next();
     if(changed&&context.res.ok){
       const value=await context.res.clone().json().catch(()=>null);

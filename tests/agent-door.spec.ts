@@ -17,9 +17,10 @@ test('Mango agent door: signed native owner, durable Business person, policy-dec
  let fixture:ReturnType<typeof composeFixture>|undefined;
  try{
   const db=await worker.getD1Database('DB');
-  for(const file of(await readdir('migrations/core')).filter(name=>name.endsWith('.sql')).sort())
-   await db.batch(sqlStatements(await readFile(`migrations/core/${file}`,'utf8')).map(sql=>db.prepare(sql)));
-  const origin='https://mango.example.test',issuer='https://business.example.invalid',installationId=crypto.randomUUID(),sub=crypto.randomUUID();
+  const migrations=await Promise.all((await readdir('migrations/core')).filter(name=>name.endsWith('.sql')).sort().map(file=>readFile(`migrations/core/${file}`,'utf8')));
+  const statements=migrations.flatMap(source=>sqlStatements(source));
+  for(let offset=0;offset<statements.length;offset+=50)await db.batch(statements.slice(offset,offset+50).map(sql=>db.prepare(sql)));
+  const origin='https://mango.example.test',issuer='https://business.example.invalid',installationId=crypto.randomUUID(),sub=crypto.randomUUID(),memberSub=crypto.randomUUID();
   const pair=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
   const kid=crypto.randomUUID(),key=await crypto.subtle.exportKey('jwk',pair.publicKey),publicKeys={[kid]:key};
   fixture=composeFixture(db,false);
@@ -37,19 +38,34 @@ test('Mango agent door: signed native owner, durable Business person, policy-dec
   expect(claimed.status,claimed.status===303?'':await claimed.clone().text()).toBe(303);const cookie=claimed.headers.get('Set-Cookie')!.split(';')[0];
   const operator=await app.mangoServices.authService.authenticate(new Request(origin+'/api/operator',{headers:{Host:new URL(origin).host,Cookie:cookie}}));
   expect(operator).toBeTruthy();
-  const settings=await signJws(pair.privateKey,kid,'rer-business-settings+jwt',{v:1,iss:issuer,aud:origin,sub:installationId,business:'orchard',email:'owner@example.test',jti:crypto.randomUUID(),iat:now,exp:now+3600,rev:1,values:{display_name:'Orchard Studio'},logo:null,team:[],owner_id:sub});
+  const settings=await signJws(pair.privateKey,kid,'rer-business-settings+jwt',{v:1,iss:issuer,aud:origin,sub:installationId,business:'orchard',email:'owner@example.test',jti:crypto.randomUUID(),iat:now,exp:now+3600,rev:1,values:{display_name:'Orchard Studio'},logo:null,team:[{id:memberSub,email:'casey@example.test',name:'Casey Grove',role:'admin',invite:1}],owner_id:sub});
   const adopted=await request('/api/rer/business-settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({settings})});
   expect(adopted.status).toBe(200);
+  const invitation=fixture.outbound.find(item=>JSON.stringify(item.to).includes('casey@example.test'));
+  const invitationLink=JSON.stringify(invitation).match(/https:[^\s"<>\\]+\/auth\/confirm\?token=[^\s"<>\\]+/);
+  expect(invitationLink,'Signed team settings must issue the ordinary native invitation').toBeTruthy();
+  const inviteToken=new URL(invitationLink![0]).searchParams.get('token');
+  const joined=await request('/auth/confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:inviteToken})});
+  expect(joined.status,String((await joined.clone().json().catch(()=>({}))).error??'native invitation confirmation')).toBe(303);
+  const memberCookie=joined.headers.get('Set-Cookie')!.split(';')[0];
+  const teammate=await app.mangoServices.authService.authenticate(new Request(origin+'/api/operator',{headers:{Host:new URL(origin).host,'CF-Connecting-IP':'192.0.2.31',Cookie:memberCookie}}));
+  expect(teammate?.displayName).toBe('Casey Grove');expect(teammate?.id).not.toBe(operator!.id);expect(teammate?.role).toBe('admin');
+  expect((await db.prepare('SELECT operator_id FROM bs_team WHERE business_id=?').bind(memberSub).first()).operator_id).toBe(teammate!.id);
   const scopes=[...new Set([...nativeToolSpecs.map(tool=>tool.scope),'events:read'])];
   const signer={issuer,installationId,kid,privateKey:pair.privateKey,publicKeys};
   const claims={iss:issuer,aud:origin+'/mcp',sub,email:'owner@example.test',act:{sub:'orchard-marketer',name:'Rowan',specialist:'marketer'},client_id:'orchard-client',business:'orchard',scope:scopes.join(' '),consent:'orchard-consent',iat:now,exp:now+300,jti:crypto.randomUUID()};
   const token=await signJws(pair.privateKey,kid,'at+jwt',claims);
   let sequence=0;
-  async function mcp(method:string,params:unknown,access=token){
-   const response=await request('/mcp',{method:'POST',headers:{Authorization:'Bearer '+access,'Content-Type':'application/json','MCP-Protocol-Version':'2026-07-28','Mcp-Method':method,'Mcp-Name':(params as {name?:string}).name??''},body:JSON.stringify({jsonrpc:'2.0',id:++sequence,method,params:{...(params as Record<string,unknown>),_meta:{'io.modelcontextprotocol/protocolVersion':'2026-07-28'}}})});
+  async function mcp(method:string,params:unknown,access=token,version='2026-07-28'){
+   const response=await request('/mcp',{method:'POST',headers:{Authorization:'Bearer '+access,'Content-Type':'application/json','MCP-Protocol-Version':version,'Mcp-Method':method,'Mcp-Name':(params as {name?:string}).name??''},body:JSON.stringify({jsonrpc:'2.0',id:++sequence,method,params:{...(params as Record<string,unknown>),_meta:{'io.modelcontextprotocol/protocolVersion':version}}})});
    return {status:response.status,body:await response.json() as any};
   }
   const call=(name:string,args:unknown)=>mcp('tools/call',{name,arguments:args});
+  for(const version of ['2026-07-28','2025-11-25']){
+   expect((await mcp('initialize',{protocolVersion:version,capabilities:{},clientInfo:{name:'Orchard client',version:'1'}},token,version)).body.result.protocolVersion).toBe(version);
+   expect((await mcp('server/discover',{},token,version)).body.result.supportedVersions).toContain(version);
+  }
+  const metadata=await request('/.well-known/oauth-protected-resource/mcp');expect(metadata.status).toBe(200);expect((await metadata.json() as any).resource).toBe(origin+'/mcp');
   for(const overrides of [{aud:'https://another.invalid/mcp'},{sub:crypto.randomUUID()}]){
    const invalid=await signJws(pair.privateKey,kid,'at+jwt',{...claims,...overrides});
    expect((await mcp('tools/call',{name:'mango.campaigns.create',arguments:{mode:'blank',idempotency_key:'unmapped'}},invalid)).status).toBe(401);
@@ -63,6 +79,16 @@ test('Mango agent door: signed native owner, durable Business person, policy-dec
    expect(response.status).toBe(200);const ack=await response.json() as any;expect(Object.keys(ack).sort()).toEqual(['adopted','door']);
   }
   await policy(autonomousPolicy(),1);
+  const memberToken=await signJws(pair.privateKey,kid,'at+jwt',{...claims,sub:memberSub,email:'owner@example.test',act:{sub:'casey-marketer',name:'Finch',specialist:'marketer'}});
+  const memberRead=await mcp('tools/call',{name:'mango.campaigns.list',arguments:{}},memberToken);
+  expect(memberRead.status).toBe(200);expect(memberRead.body.result.isError).not.toBe(true);
+  const selfWiden=await mcp('tools/call',{name:'mango.access.update',arguments:{id:teammate!.id,role:'owner',unmaskedContacts:true,idempotency_key:'casey-self-widen'}},memberToken);
+  expect(selfWiden.body.result._meta['com.runeditrun/error'].code).toBe('self_escalation');
+  expect((await app.mangoServices.authService.operatorById(teammate!.id))?.role).toBe('admin');
+  const narrowed=await call('mango.access.update',{id:teammate!.id,role:'author',unmaskedContacts:false,idempotency_key:'casey-narrow'});
+  expect(narrowed.body.result.isError,JSON.stringify(narrowed.body.result._meta)).not.toBe(true);
+  expect(narrowed.body.result._meta['com.runeditrun/decision'].classes).toContainEqual(expect.objectContaining({class:'access',facts:expect.objectContaining({direction:'narrows'})}));
+  expect((await mcp('tools/call',{name:'mango.reports.read',arguments:{}},memberToken)).status).toBe(403);
   const initial=await mcp('tools/list',{});expect(initial.status).toBe(200);
   expect(initial.body.result.tools.map((tool:any)=>tool.name)).toEqual([...nativeToolSpecs.map(tool=>tool.name),'mango.events.list'].sort());
 
@@ -123,6 +149,14 @@ test('Mango agent door: signed native owner, durable Business person, policy-dec
   await policy(heldPolicy(),2);
   const pending=await call('mango.campaigns.create',{mode:'blank',idempotency_key:'held-draft'});
   expect(pending.body.result.structuredContent).toBeTruthy();
+  const reviewed=await call('mango.campaigns.update',{id:pending.body.result.structuredContent.revisionId,name:'A reviewable private draft',idempotency_key:'reviewed-edit'});
+  expect(reviewed.body.result.isError).not.toBe(true);
+  const review=reviewed.body.result._meta['com.runeditrun/review'];expect(review.id).toBeTruthy();
+  const undone=await request('/agents/api/reviews/'+review.id+'/undo',{method:'POST',headers:{Cookie:cookie,'Content-Type':'application/json'},body:'{}'});
+  expect(undone.status,await undone.clone().text()).toBe(200);
+  expect((await db.prepare('SELECT name FROM campaign_revisions WHERE id=?').bind(pending.body.result.structuredContent.revisionId).first()).name).toBe('Untitled campaign');
+  const undoActor=await db.prepare("SELECT actor_type,actor_id,detail_json FROM lifecycle_audit_entries WHERE action='campaign.draft.undo'").first();
+  expect(undoActor.actor_type).toBe('operator');expect(undoActor.actor_id).toBe(operator!.id);expect(JSON.parse(undoActor.detail_json).preparedBy).toBeUndefined();
   // Current native authority is re-read, including retained-key retries.
   await policy(autonomousPolicy(),3,{agents:['orchard-marketer'],consents:[]});
   expect((await call('mango.campaigns.create',{mode:'blank',idempotency_key:'one-draft'})).status).toBe(401);

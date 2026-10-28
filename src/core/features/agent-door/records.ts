@@ -1,4 +1,5 @@
-import {currentAuthority} from './authorization';
+import {currentAuthority,toolPermission} from './authorization';
+import {nativeToolSpecs} from './catalogue';
 import {ToolRefusal,type ResourceContext,type ToolContext} from '@/vendor/base/agent-door/index.ts';
 import {hasPermission,type Capability,type ProductRole} from '../auth/permissions';
 import {sha256} from '@/core/shared/ids';
@@ -119,13 +120,16 @@ export async function readResource(uri:string,ctx:Context,native:NativeRequest):
   const record=await ctx.db.prepare(value.sql).bind(target).first();if(!record)throw new ToolRefusal('not_found');return {record};
  }
  if(url.hostname==='activity'&&id){
-  const result=await native('/api/activity','GET',{object:id},ctx) as {entries:unknown[]};
+  const result=await native('/api/activity?stored=true','GET',{object:id},ctx) as {entries:unknown[]};
   if(!result.entries.length)throw new ToolRefusal('not_found');return result;
  }
  if(url.hostname==='operations'&&id){
-  permit(ctx,'activity.read');
-  const row=await ctx.db.prepare('SELECT id,tool,target_uri,attribution_json,result_json,created_at FROM mango_agent_operations WHERE id=?').bind(id).first();
-  if(!row)throw new ToolRefusal('not_found');return {operation:row};
+  const row=await ctx.db.prepare('SELECT id,tool,sponsor_id,target_uri,attribution_json,result_json,created_at FROM mango_agent_operations WHERE id=?').bind(id).first<{id:string;tool:string;sponsor_id:string}>();
+  if(!row)throw new ToolRefusal('not_found');
+  const spec=nativeToolSpecs.find(spec=>spec.name===row.tool);
+  if(row.sponsor_id===ctx.person.id&&spec&&ctx.scopes.includes(spec.scope))await currentAuthority(ctx,toolPermission(spec));
+  else {if(!ctx.scopes.includes('mango:activity:read'))throw new ToolRefusal('not_found');await currentAuthority(ctx,'activity.read');}
+  return {operation:row};
  }
  throw new ToolRefusal('not_found');
 }

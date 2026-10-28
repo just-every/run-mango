@@ -4,7 +4,7 @@ import {nativeToolSpecs} from './catalogue';
 export function nativeEffect(spec:NativeToolSpec,args:Record<string,unknown>,value:unknown){
  const data=value&&typeof value==='object'?value as Record<string,unknown>:{};
  let entity=spec.entity;
- let target=String((data.job as {id?:string}|undefined)?.id??(data.segment as {id?:string}|undefined)?.id??(data.revision as {campaignId?:string}|undefined)?.campaignId??data.campaignId??data.id??args.survivorContactId??args.id??data.revisionId??entity);
+ let target=String((data.job as {id?:string}|undefined)?.id??(data.contact as {id?:string}|undefined)?.id??(data.asset as {id?:string}|undefined)?.id??(data.segment as {id?:string}|undefined)?.id??(data.revision as {campaignId?:string}|undefined)?.campaignId??(data.composition as {revision?:{campaignId:string}}|undefined)?.revision?.campaignId??data.campaignId??data.id??args.survivorContactId??args.id??data.revisionId??entity);
  if(spec.name==='mango.delivery.dispatch')target=String((data.recipient as {campaign_id:string}).campaign_id);
  if(spec.name==='mango.reports.dispatch')target=String((data.delivery as {schedule_id:string}).schedule_id);
  if(data.campaignId&&['templates','proposals'].includes(entity))entity='campaigns';
@@ -18,7 +18,7 @@ export function nativeEffect(spec:NativeToolSpec,args:Record<string,unknown>,val
 export function nativePersonEffect(method:string,path:string){
  for(const spec of nativeToolSpecs){
   if(spec.readOnly||spec.method!==method)continue;
-  const route=spec.path==='native:draft-update'?'/api/campaigns/{id}':spec.path;
+  const route=spec.path==='native:draft-update'?'/api/campaign-revisions/{id}':spec.path;
   if(!route.startsWith('/'))continue;
   const keys:string[]=[];
   const pattern=route.split('?')[0].split(/(\{\w+\})/).map(part=>{

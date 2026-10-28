@@ -26,7 +26,7 @@ export function createMangoDoor(environment:AppBindings,platform:Platform,auth:R
  dispatch:(id:string)=>Promise<void>,prepare:(id:string,revisionId:string)=>Promise<unknown>,update:(id:string,args:Record<string,unknown>,actor:string)=>Promise<unknown>,sync:(id:string)=>Promise<unknown>){
  const origin=platform.config.publicBaseUrl.origin,db=environment.DB,people=mangoPeople(db,auth);
  const resources:ResourceDefinition[]=resourceTemplates.map(uriTemplate=>({
-  scope:uriTemplate.startsWith('mango://assets/')?'mango:assets:attach':`mango:${uriTemplate.split('://')[1].split('/')[0]==='operations'?'activity':uriTemplate.split('://')[1].split('/')[0]}:read`,
+  ...(uriTemplate.startsWith('mango://operations/')?{}:{scope:uriTemplate.startsWith('mango://assets/')?'mango:assets:attach':`mango:${uriTemplate.split('://')[1].split('/')[0]}:read`}),
   uriTemplate,name:uriTemplate,mimeType:'application/json',classes:['standard','sensitive'],
   async classify(record){const count=protectedRecords(record.json);return [{class:'standard',facts:{measure:1}},...(count?[{class:'sensitive' as const,facts:{measure:count,kind:'contact-permission-evidence'}}]:[])];},
   async read(uri,ctx){

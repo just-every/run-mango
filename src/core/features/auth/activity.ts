@@ -14,7 +14,7 @@ export function activityRoutes(db: D1Database) {
     if (!hasPermission(context.get('operator').role, 'activity.read')) return context.json({error: 'role_forbidden'}, 403);
     const query = activityPage.safeParse(context.req.query());
     if (!query.success) return context.json({error: 'invalid_activity_filter'}, 400);
-    await summariseSignupRefusals(db);
+    if(context.req.query('stored')!=='true')await summariseSignupRefusals(db);
     const {limit, before, ...filters} = query.data, {sql, bindings} = activitySelect(filters, before);
     const rows = (await read(`${sql} LIMIT ?`, [...bindings, limit + 1])).results, page = rows.slice(0, limit).map(readEntry), last = page.at(-1);
     return context.json({entries: page, nextCursor: rows.length > limit && last ? `${last.occurredAt}:${last.id}` : null});

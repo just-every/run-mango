@@ -66,7 +66,11 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
         if (action === 'operators:role') return businessTeam && (role === 'admin' || role === 'member');
         if (['providers:manage','domains:manage'].includes(action)) return profile.role === 'owner';
         if (action.startsWith('operators:') && !hasPermission(profile.role,'operators.manage')) return false;
-        if (action === 'operators:invite') return businessTeam ? role === 'admin' || role === 'member' : role === 'owner';
+        // The person API still chooses its existing owner-store role (projected
+        // as a Mango Admin). Signed team reconciliation also issues narrower
+        // admin/member grants. Their ordinary confirmation rechecks this same
+        // policy after the settings transaction, without its preparation flag.
+        if (action === 'operators:invite') return role === 'owner' || role === 'admin' || role === 'member';
         if (action === 'operators:deactivate' && target) {
           const original = await repository.getOperator(target.id);
           if (original?.isInitial && target.id !== actor.id) return false;

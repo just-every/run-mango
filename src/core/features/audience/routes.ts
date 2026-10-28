@@ -18,6 +18,7 @@ import { readContactTimeline } from './contact-timeline';
 import { recordActivity } from '@/core/features/auth/activity-record';
 import { hasPermission } from '@/core/features/auth/permissions';
 import { contactPrivacyRole } from '@/core/features/auth/response-privacy';
+import {nativeActor} from '../agent-door/native-context';
 
 const contactParams = z.object({ id: z.string().min(1) });
 
@@ -62,7 +63,8 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
     try {
       const operator=context.get('operator'),mode=await loadOptInMode(database,'manual');
       const authority=await senderWriteAuthority(platform,context.req.raw,operator.id);
-      const input={...parsed.data,captureMethod:'operator-recorded',captureSource:`Operator:${operator.displayName || operator.email} (${operator.id})|${parsed.data.permissionMethod ?? parsed.data.captureMethod}|${parsed.data.channel==='sms'?'express-written|':''}${parsed.data.captureSource}`};
+      const actor=nativeActor(operator.id);
+      const input={...parsed.data,captureMethod:'operator-recorded',captureSource:`${actor.type==='agent'?actor.label:'Operator:'+ (operator.displayName || operator.email)} (${operator.id})|${parsed.data.permissionMethod ?? parsed.data.captureMethod}|${parsed.data.channel==='sms'?'express-written|':''}${parsed.data.captureSource}`};
       let result;
       if(input.channel==='email'){
         if(!input.contact.email||!await service.canCaptureManualEmail(input.contact.email))return context.json({error:'manual_entry_existing_restriction',detail:'This address is already subscribed, unsubscribed or suppressed. Hand entry cannot change that state.'},409);

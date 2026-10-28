@@ -33,12 +33,5 @@
     "base": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
     "assertion": "The production CLI drives native named reviewers and approvers",
     "upstream": "Base combined door v2"
-  },
-  {
-    "id": "mango-hosted-optional-binding-profile",
-    "since": "2026-10-28",
-    "base": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
-    "assertion": "Normal hosted conformance uses one valid native authentication/mail configuration profile and can leave optional provider bindings empty",
-    "upstream": "cli/hosted-output.mjs standIn generates nonempty optional MARKETING_MAIL_* for MAIL_PROVIDER=sendgrid; verification.owner.bindings cannot declare static empty values"
   }
 ]

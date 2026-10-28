@@ -11,7 +11,7 @@ export function toolPermission(spec:NativeToolSpec,args:Record<string,unknown>={
  const path=spec.path.replace(/\{\w+\}/g,'native-record');
  return requiredPermission(spec.method,path);
 }
-export async function currentAuthority(ctx:ResourceContext|ToolContext,capability:Capability) {
+export async function currentAuthority(ctx:Pick<ToolContext,'db'|'person'>,capability:Capability) {
  const native=await ctx.db.prepare("SELECT id FROM oa_operators WHERE id=? AND status='active'").bind(ctx.person.id).first();
  const authority=native?await productAuthority(ctx.db,ctx.person.id):null;
  if(!authority||!hasPermission(authority.role,capability))throw new ToolRefusal('not_found');
