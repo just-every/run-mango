@@ -47,8 +47,8 @@ export async function sitePages({ styles, contract, hosting }: SiteContext): Pro
       <body><RunSite.Provider value={true}>{body}</RunSite.Provider></body>
     </html>,
   );
-  const { sections } = await import('virtual:mango-docs');
-  const docs = await Promise.all(sections.flatMap(section => section.pages).map(async ({ slug }) => {
+  const { pages } = await import('virtual:mango-docs');
+  const docs = await Promise.all(Object.keys(pages).map(async slug => {
     const view = await loadDocsPage(slug);
     const meta = docsHead(view.page).meta ?? [];
     const title = meta.find(row => 'title' in row)?.title ?? 'Mango docs';
