@@ -1,5 +1,6 @@
 import {retainedPrincipal} from '../agent-door/custody';
 import {nativeAgent} from '../agent-door/native-context';
+import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
 import {attributeContent,currentPreparer} from '../agent-door/outbound';
 import type {Platform,DeliveryRequest} from '@/core/shared/platform';
 import {ProviderTransportError} from '@/core/shared/platform';
@@ -73,9 +74,10 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
   }
   return {run,async dispatch(id:string){
     const delivery=await db.prepare("SELECT * FROM insight_report_deliveries WHERE id=? AND state IN ('prepared','deferred')").bind(id).first<Delivery>();
-    if(!delivery)return {status:'unavailable'};
+    if(!delivery)throw new ToolRefusal('not_found');
     const schedule=await db.prepare('SELECT * FROM insight_report_schedules WHERE id=?').bind(delivery.schedule_id).first<Schedule>();
-    if(!schedule)return {status:'unavailable'};
-    await send(schedule,delivery);return {status:'processed',id};
+    if(!schedule)throw new ToolRefusal('not_found');
+    await send(schedule,delivery);
+    return {delivery:await db.prepare('SELECT id,schedule_id,state,reason,provider_message_id,updated_at FROM insight_report_deliveries WHERE id=?').bind(id).first()};
   }};
 }

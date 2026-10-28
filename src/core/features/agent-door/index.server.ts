@@ -1,4 +1,5 @@
 import {advanceDesignJob,designCommand} from '../design-generation/advance';
+import {advanceWooFlow} from '../store/woocommerce/flows';
 import {createReportScheduler} from '../insights/report-scheduler';
 import {nativeToolSpecs} from './catalogue';
 import {toolPermission} from './authorization';
@@ -25,7 +26,7 @@ export function createMangoDoor(environment:AppBindings,platform:Platform,auth:R
  dispatch:(id:string)=>Promise<void>,prepare:(id:string,revisionId:string)=>Promise<unknown>,update:(id:string,args:Record<string,unknown>,actor:string)=>Promise<unknown>,sync:(id:string)=>Promise<unknown>){
  const origin=platform.config.publicBaseUrl.origin,db=environment.DB,people=mangoPeople(db,auth);
  const resources:ResourceDefinition[]=resourceTemplates.map(uriTemplate=>({
-  scope:`mango:${uriTemplate.split('://')[1].split('/')[0]==='operations'?'activity':uriTemplate.split('://')[1].split('/')[0]}:read`,
+  scope:uriTemplate.startsWith('mango://assets/')?'mango:assets:attach':`mango:${uriTemplate.split('://')[1].split('/')[0]==='operations'?'activity':uriTemplate.split('://')[1].split('/')[0]}:read`,
   uriTemplate,name:uriTemplate,mimeType:'application/json',classes:['standard','sensitive'],
   async classify(record){const count=protectedRecords(record.json);return [{class:'standard',facts:{measure:1}},...(count?[{class:'sensitive' as const,facts:{measure:count,kind:'contact-permission-evidence'}}]:[])];},
   async read(uri,ctx){
@@ -41,6 +42,7 @@ export function createMangoDoor(environment:AppBindings,platform:Platform,auth:R
       return readResource(`mango://designs/${encodeURIComponent(String(args.id))}`,ctx,native);
     }
     if(kind==='source-advance')return sync(String(args.id));
+    if(kind==='flow-enroll')return advanceWooFlow(platform,String(args.id),String(args.eventId));
     if(kind==='report-dispatch')return createReportScheduler(platform).dispatch(String(args.id));
     throw new ToolRefusal('not_found');
   }),resources,notTools,

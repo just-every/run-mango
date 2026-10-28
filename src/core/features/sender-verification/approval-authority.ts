@@ -12,8 +12,13 @@ export type ApprovalIdentity = {
 };
 const identityColumns = ['idempotency_key', 'campaign_id', 'revision_id', 'revision_digest',
   'write_token', 'operator_id', 'approved_at', 'created_at'] as const;
-const recordedIdentity = identityColumns.map(column =>
-  `json_extract(ae.detail_json, '$.approval.${column}') = ar.${column}`).join(' AND ');
+function all(predicates: string[]): string {
+  if(predicates.length===1)return `(${predicates[0]})`;
+  const middle=Math.floor(predicates.length/2);
+  return `(${all(predicates.slice(0,middle))} AND ${all(predicates.slice(middle))})`;
+}
+const recordedIdentity = all(identityColumns.map(column =>
+  `json_extract(ae.detail_json, '$.approval.${column}') = ar.${column}`));
 
 export const senderFromGuard = `EXISTS (SELECT 1 FROM sender_verification_inspections chosen
   WHERE chosen.id = ? AND json_extract(chosen.result_json, '$.evidence.binding.from') = ?)`;
@@ -23,22 +28,29 @@ export const senderFromGuard = `EXISTS (SELECT 1 FROM sender_verification_inspec
 // at dispatch. Expiry is intentionally not compared with the current clock here.
 export const senderEvidenceDetail = `json_set(?, '$.senderEvidence.checkedAt',
   (SELECT checked_at FROM sender_verification_inspections WHERE id = ?))`;
-const historicalEvidence = `si.ready = 1 AND si.observation_id IS NOT NULL
-  AND si.expires_at > si.checked_at
-  AND so.id = si.observation_id AND so.binding_digest = si.binding_digest
-  AND so.configuration_digest = si.configuration_digest
-  AND so.observed_at <= si.checked_at AND so.expires_at > si.checked_at
-  AND json_extract(ae.detail_json, '$.approvedFrom') = av.sender_name || ' <' || av.from_email || '>'
-  AND json_extract(si.result_json, '$.evidence.binding.from') = json_extract(ae.detail_json, '$.approvedFrom')
-  AND json_extract(ae.detail_json, '$.senderEvidence.id') = si.id
-  AND json_extract(ae.detail_json, '$.senderEvidence.stateId') = si.state_id
-  AND json_extract(ae.detail_json, '$.senderEvidence.generation') = si.generation
-  AND json_extract(ae.detail_json, '$.senderEvidence.bindingDigest') = si.binding_digest
-  AND json_extract(ae.detail_json, '$.senderEvidence.configurationDigest') = si.configuration_digest
-  AND json_extract(ae.detail_json, '$.senderEvidence.observationId') = si.observation_id
-  AND json_extract(ae.detail_json, '$.senderEvidence.checkedAt') = si.checked_at
-  AND si.checked_at <= ae.occurred_at AND ae.occurred_at = ae.created_at
-  AND ae.created_at >= ar.approved_at AND sa.created_at = ae.created_at`;
+const historicalEvidence = all([
+  `si.ready = 1`,
+  `si.observation_id IS NOT NULL`,
+  `si.expires_at > si.checked_at`,
+  `so.id = si.observation_id`,
+  `so.binding_digest = si.binding_digest`,
+  `so.configuration_digest = si.configuration_digest`,
+  `so.observed_at <= si.checked_at`,
+  `so.expires_at > si.checked_at`,
+  `json_extract(ae.detail_json, '$.approvedFrom') = av.sender_name || ' <' || av.from_email || '>'`,
+  `json_extract(si.result_json, '$.evidence.binding.from') = json_extract(ae.detail_json, '$.approvedFrom')`,
+  `json_extract(ae.detail_json, '$.senderEvidence.id') = si.id`,
+  `json_extract(ae.detail_json, '$.senderEvidence.stateId') = si.state_id`,
+  `json_extract(ae.detail_json, '$.senderEvidence.generation') = si.generation`,
+  `json_extract(ae.detail_json, '$.senderEvidence.bindingDigest') = si.binding_digest`,
+  `json_extract(ae.detail_json, '$.senderEvidence.configurationDigest') = si.configuration_digest`,
+  `json_extract(ae.detail_json, '$.senderEvidence.observationId') = si.observation_id`,
+  `json_extract(ae.detail_json, '$.senderEvidence.checkedAt') = si.checked_at`,
+  `si.checked_at <= ae.occurred_at`,
+  `ae.occurred_at = ae.created_at`,
+  `ae.created_at >= ar.approved_at`,
+  `sa.created_at = ae.created_at`,
+]);
 
 export function approvalAuthorityGuard(campaign: string, revision: string, eventId?: string) {
   return `EXISTS (

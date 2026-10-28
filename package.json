@@ -19,7 +19,7 @@
     "db:generate": "drizzle-kit generate",
     "test": "node scripts/verification/run.mjs --tests-only",
     "verify": "rer verify",
-    "verify:managed": "rer check --profile first-party && pnpm run source:check && pnpm run typecheck && pnpm run integration:check",
+    "verify:managed": "rer check --profile first-party && pnpm run source:check && pnpm run typecheck && pnpm run integration:check && pnpm run agent-surface:check",
     "review:synthetic": "node scripts/start-synthetic-review.mjs",
     "source:inspect": "node scripts/edition-authoring/cli.mjs inspect",
     "source:lock": "node scripts/edition-authoring/cli.mjs lock",
@@ -45,7 +45,9 @@
     "artifact:delivery": "node scripts/build-delivery-artifact.mjs",
     "hosted": "node scripts/installer/hosted.mjs",
     "integration:sync": "node scripts/sync-integration.mjs --write",
-    "integration:check": "node scripts/sync-integration.mjs --check"
+    "integration:check": "node scripts/sync-integration.mjs --check",
+    "agent-surface:generate": "node scripts/generate-agent-surface.mjs",
+    "agent-surface:check": "node scripts/generate-agent-surface.mjs --check"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

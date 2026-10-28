@@ -133,7 +133,7 @@ export function createCampaignLifecycleRepository(database: Database) {
       return (await client.prepare(`SELECT a.actor_id,a.occurred_at,a.detail_json,o.display_name AS operator_name FROM lifecycle_audit_entries a
         JOIN campaign_revisions r ON r.id=a.entity_id LEFT JOIN operators o ON o.id=a.actor_id WHERE r.campaign_id=? AND a.action='test-send'
         ORDER BY a.occurred_at DESC,a.id DESC LIMIT 100`).bind(campaignId).all<{actor_id:string;occurred_at:number;detail_json:string;operator_name:string|null}>()).results
-        .map(row=>({operatorId:row.actor_id,operatorName:row.operator_name??'Removed operator',occurredAt:new Date(row.occurred_at).toISOString(),...JSON.parse(row.detail_json)}));
+        .map(row=>{const detail=JSON.parse(row.detail_json);return {operatorId:row.actor_id,operatorName:detail.preparedBy?.label??row.operator_name??'Removed operator',occurredAt:new Date(row.occurred_at).toISOString(),...detail};});
     },
 
     async recordTestSend(

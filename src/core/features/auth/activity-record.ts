@@ -10,7 +10,7 @@ export function activityStatement(db: D1Database, record: ActivityRecord) {
   const actor=nativeActor(record.actorId);
   return db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
     VALUES(?,?,?,?,?,?,?,?,?,?) ON CONFLICT(operation_key) DO NOTHING`)
-    .bind(crypto.randomUUID(), record.key, record.entityType, record.entityId, record.action, record.actorType ?? actor.type, record.actorType?record.actorId:actor.id, JSON.stringify({...record.detail,...actor.detail}), at, at);
+    .bind(crypto.randomUUID(), record.key, record.entityType, record.entityId, record.action, actor.type==='agent'?'agent':record.actorType ?? actor.type, actor.type==='agent'?actor.id:record.actorType?record.actorId:actor.id, JSON.stringify({...record.detail,...actor.detail}), at, at);
 }
 
 export async function recordActivity(db: D1Database, record: ActivityRecord) {

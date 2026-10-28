@@ -1,4 +1,5 @@
 import {nativeActor} from '../agent-door/native-context';
+import {escapeHtml} from '../campaigns/email-html-policy';
 import { neutralText, publicBody } from './public-content';
 export type PublicIssue = { id: string; title: string; description: string; sender: string; body: string; sentAt: number; publishedAt: number };
 type StoredIssue = {id:string;title:string;description:string;sender:string;body:string;sent_at:number;published_at:number};
@@ -19,12 +20,13 @@ export function archiveService(db: D1Database, origin: string) {
         .bind(campaignId,revisionId).first<{email_subject:string;preheader:string;sender_name:string;email_body:string;sent_at:number|null}>();
       if(!revision||revision.sent_at===null)return null;
       const now=Date.now(), id=crypto.randomUUID();
-      const body=publicBody(revision.email_body,origin);
+      const preparer=nativeActor(actor);
+      const body=publicBody(revision.email_body,origin)+(preparer.type==='agent'?`<p>Prepared by ${escapeHtml(preparer.label)}</p>`:'');
       await db.batch([
         db.prepare('INSERT OR IGNORE INTO newsletter_archive(id,campaign_id,revision_id,title,description,sender,body,sent_at,published_at) VALUES(?,?,?,?,?,?,?,?,?)')
           .bind(id,campaignId,revisionId,neutralText(revision.email_subject),neutralText(revision.preheader),neutralText(revision.sender_name),body,revision.sent_at,now),
-        db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) SELECT ?,?,'${nativeActor(actor).type}',?,'newsletter.published','campaign',?,json_object('revisionId',?,'archiveId',?),?,? WHERE EXISTS(SELECT 1 FROM newsletter_archive WHERE id=?)`)
-          .bind(crypto.randomUUID(),crypto.randomUUID(),nativeActor(actor).id,campaignId,revisionId,id,now,now,id),
+        db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) SELECT ?,?,'${preparer.type}',?,'newsletter.published','campaign',?,?,?,? WHERE EXISTS(SELECT 1 FROM newsletter_archive WHERE id=?)`)
+          .bind(crypto.randomUUID(),crypto.randomUUID(),preparer.id,campaignId,JSON.stringify({revisionId,archiveId:id,...preparer.detail}),now,now,id),
       ]);
       return db.prepare('SELECT id FROM newsletter_archive WHERE revision_id=?').bind(revisionId).first<{id:string}>();
     },

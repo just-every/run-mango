@@ -5,6 +5,7 @@ import type {NativeToolSpec} from './catalogue';
 import {nativeToolSpecs} from './catalogue';
 import {classifyNative,nativePath,nativeSummary,authority} from './risk';
 import {nativeRecord} from './records';
+import {nativeEffect} from './native-events';
 import type {NativeRequest} from './native';
 import {runNativeAgent,nativeAgent} from './native-context';
 import {recordActivity} from '../auth/activity-record';
@@ -12,7 +13,15 @@ import {hasPermission,type ProductRole} from '../auth/permissions';
 
 async function nativeRevision(spec:NativeToolSpec,args:Record<string,unknown>,ctx:ToolContext):Promise<string|null>{
  const id=String(args.id??args.revisionId??args.proposalId??'');
- if(!id)return null;
+ if(!id){
+  const settings:Record<string,string>={sender:'sender_settings',connections:'sending_connection',signup:'signup_settings'};
+  const table=settings[spec.entity];
+  return table?sha256(JSON.stringify((await ctx.db.prepare(`SELECT * FROM ${table}`).all()).results)):null;
+ }
+ if(spec.entity==='reports')return sha256(JSON.stringify({
+  delivery:await ctx.db.prepare('SELECT * FROM insight_report_deliveries WHERE id=?').bind(id).first(),
+  schedule:await ctx.db.prepare('SELECT * FROM insight_report_schedules WHERE id=? OR id=(SELECT schedule_id FROM insight_report_deliveries WHERE id=?)').bind(id,id).first(),
+ }));
  const tables:Record<string,string>={campaigns:'campaign_revisions',contacts:'contacts',segments:'audience_segments',designs:'design_jobs',flows:'woocommerce_flows',access:'oa_operators',blocks:'reusable_email_blocks',proposals:'proposals'};
  const table=tables[spec.entity];if(!table)return null;
  let record:unknown;
@@ -38,7 +47,7 @@ export function mangoTools(native:NativeRequest,dispatch:(id:string)=>Promise<vo
    const execute=async()=>{
    await currentAuthority(ctx,toolPermission(spec));
    let result:unknown;
-   if(['native:design-advance','native:source-advance','native:report-dispatch'].includes(spec.path)){
+   if(['native:design-advance','native:source-advance','native:report-dispatch','native:flow-enroll'].includes(spec.path)){
     result=await advance(spec.path.slice(7),args,ctx);
    }else if(spec.path==='native:draft-update'){
     const {id,...body}=args;result=await update(String(id),body,ctx.person.id);
@@ -48,7 +57,9 @@ export function mangoTools(native:NativeRequest,dispatch:(id:string)=>Promise<vo
     result=await prepare(String(args.id),String(args.revisionId));
    }else if(spec.path==='native:dispatch'){
     await runNativeAgent(ctx,()=>dispatch(String(args.id)));
-    result={status:'admitted',recipientStepId:String(args.id)};
+    const recipient=await ctx.db.prepare('SELECT id,campaign_id,transport_disposition,skip_reason,attempt_count,provider_message_id FROM recipient_steps WHERE id=?').bind(String(args.id)).first();
+    if(!recipient)throw new ToolRefusal('not_found');
+    result={recipient};
    }else if(spec.path.startsWith('native:')&&spec.path!=='native:asset'){
     result=await nativeRecord(spec.path.slice(7),String(args.id??''),ctx,native);
    }else{
@@ -57,8 +68,7 @@ export function mangoTools(native:NativeRequest,dispatch:(id:string)=>Promise<vo
     result=await native(path,spec.method,body,ctx);
    }
    if(spec.readOnly)return {result};
-   const data=result as Record<string,unknown>,target=String((data.job as {id?:string}|undefined)?.id??(data.segment as {id?:string}|undefined)?.id??data.campaignId??data.revisionId??data.id??args.id??spec.entity);
-   const uri=`mango://${spec.entity}/${encodeURIComponent(target)}`;
+   const {entity,target,uri,visible}=nativeEffect(spec,args,result);
    const operationId=nativeAgent.getStore()!.executionId,at=Date.now();
    await runNativeAgent(ctx,async()=>{
     await ctx.db.prepare(`INSERT INTO mango_agent_operations(id,tool,target_uri,agent_id,sponsor_id,attribution_json,result_json,created_at) VALUES(?,?,?,?,?,?,?,?)`)
@@ -66,9 +76,10 @@ export function mangoTools(native:NativeRequest,dispatch:(id:string)=>Promise<vo
     await recordActivity(ctx.db,{key:operationId,action:spec.name,entityType:spec.entity,entityId:target,actorId:ctx.person.id,
      detail:{operationId,preparedBy:ctx.actor,approvers:ctx.approvers}});
    });
-   ctx.emit(`${spec.entity}.changed`,uri,{operationId,tool:spec.name});
+   ctx.emit(`${entity}.changed`,uri,{operationId,tool:spec.name});
    ctx.emit('operation.recorded',`mango://operations/${operationId}`,{target:uri});
-   return {result,resources:[{uri:`mango://operations/${operationId}`,name:ctx.actor.label}]};
+   const primary=visible?uri:null;
+   return {result,resources:[{uri:`mango://operations/${operationId}`,name:ctx.actor.label},...(primary?[{uri:primary,name:spec.title}]:[])]};
    };
    return spec.readOnly?execute():runNativeAgent(ctx,execute);
   },

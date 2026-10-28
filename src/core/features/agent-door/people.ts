@@ -7,7 +7,7 @@ export function mangoPeople(db: D1Database, auth: ReturnType<typeof createAuthSe
   async function read(id:string):Promise<Person|null> {
     const row=await db.prepare('SELECT id,email,display_name AS displayName,role,status FROM oa_operators WHERE id=?').bind(id).first<Operator>();
     if(!row||!isActiveOperator(row))return null;
-    await auth.operatorById(id);
+    if(!await auth.operatorById(id))return null;
     const product=await productAuthority(db,id);
     return product?{id:row.id,email:row.email,name:row.displayName,role:product.role,active:true}:null;
   }

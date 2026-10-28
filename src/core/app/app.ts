@@ -1,6 +1,8 @@
 import {createMangoDoor} from '@/core/features/agent-door/index.server';
 import {nativeRequests} from '@/core/features/agent-door/native';
 import {nativeAgent} from '@/core/features/agent-door/native-context';
+import {nativeEffect,nativePersonEffect} from '@/core/features/agent-door/native-events';
+import {mangoPeople} from '@/core/features/agent-door/people';
 import {admitRetainedDispatch,admitRetainedStep} from '@/core/features/agent-door/custody';
 import {createLifecycleServices} from '@/core/features/lifecycle';
 import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
@@ -371,7 +373,15 @@ export function createApp(
     const required=requiredPermission(context.req.method,context.req.url);
     if(!hasPermission(operator.role,required))return context.json({error:'role_forbidden',requiredPermission:required},403);
     if(!context.req.path.startsWith('/api/audience/erasures/')&&!/^\/api\/contacts\/[^/]+$/.test(context.req.path)&&context.req.path!=='/api/operator'&&await initialReadOnce('pending-erasure', () => pendingErasure(environment.DB)))return context.json({error:'contact_erasure_in_progress'},503);
+    const changed=!nativePrincipals.has(context.req.raw)&&!isSafeMethod(context.req.method)?nativePersonEffect(context.req.method,context.req.path):null;
+    const input=changed?await context.req.raw.clone().json().catch(()=>({})):{};
     await next();
+    if(changed&&context.res.ok){
+      const value=await context.res.clone().json().catch(()=>null);
+      const effect=nativeEffect(changed.spec,{...input,...changed.args},value);
+      const person=await mangoPeople(environment.DB,authService).person(operator.id);
+      if(person)await agent.door.emit({type:`${effect.entity}.changed`,uri:effect.uri,person,data:{tool:changed.spec.name}});
+    }
     if(['GET','HEAD'].includes(context.req.method)&&context.res.ok&&context.res.headers.get('Content-Type')?.includes('application/json')) {
       const value=await context.res.json();
       const projected=projectPrivateResponse(contactPrivacyRole(operator),context.req.url,value);
