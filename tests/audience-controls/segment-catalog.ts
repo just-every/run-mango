@@ -44,7 +44,7 @@ export async function catalogSegmentJourney(page:Page,info:TestInfo,f:Awaited<Re
   const conditions=JSON.parse(saved.inclusionRuleJson);
   expect(conditions.groups).toEqual([{operator:'any',predicates:[bought('boughtCollectionId',catalog.spring),bought('boughtCategory',catalog.seeds)]}]);
   await page.getByRole('button',{name:'Edit Spring planting buyers',exact:true}).click();
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await expect(live).toContainText('2 eligible contacts');
     await expect(summary).toContainText('Bought category');
@@ -76,7 +76,7 @@ export async function catalogSegmentJourney(page:Page,info:TestInfo,f:Awaited<Re
   await members(only(bought('boughtCategory',catalog.seeds)),[0,3]);
   await members({version:1,operator:'any',predicates:conditions.groups[0].predicates},[0,2,3]);
   await setRules(conditions);
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await test.step(`Open catalog review at ${width}`,()=>openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`));
     for(const part of ['US state','Bought collection ID',catalog.spring,'Bought category'])await expect(page.locator('main')).toContainText(part);

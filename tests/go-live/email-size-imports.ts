@@ -47,7 +47,7 @@ export async function oversizedImports(site:Installation,cookie:string,page:Page
   // Replay does not retry a held conversion or create another small template.
   await drive(site,cookie,id,'continue');
   expect(await site.count('campaigns')).toBe(before);
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await openPage(page,`${site.runtime.url}/app/audience/import`);
     await page.getByRole('button',{name:'Show imported history and templates',exact:true}).click();

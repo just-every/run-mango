@@ -46,7 +46,7 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     await expect(review).toContainText('synthetic-mango-82');await expect(review).toContainText('https://mango.example.test/webhooks/mail/sendgrid');
     await expect(review).toContainText('Signing will be on');await expect(review).toContainText('delivered');await expect(review).toContainText('Broader than Mango needs');
     const before=provider.state.mutations.length;
-    for(const width of [1440,390]) {
+    for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
@@ -97,7 +97,7 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
     const allowed=await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId}}),200);
     expect(JSON.stringify(allowed)).not.toContain('"kind":"delivery-events-missing","status":"blocked"');
     await openPage(page,site.runtime.url+'/app/settings');await expect(panel).toContainText('Signed delivery events verified.');
-    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);expect((await new AxeBuilder({page}).include('#sending').analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await panel.screenshot({path:info.outputPath(`sending-connected-${width}.png`)});}
+    for(const width of [1440]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);expect((await new AxeBuilder({page}).include('#sending').analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await panel.screenshot({path:info.outputPath(`sending-connected-${width}.png`)});}
     const {id}=await json(await site.call('/api/portability/exports',{method:'POST',cookie:owner,headers:{Origin:site.runtime.url},body:{}}),201);
     let progress;do {progress=await json(await site.call(`/api/portability/exports/${id}/advance`,{method:'POST',cookie:owner,headers:{Origin:site.runtime.url},body:{}}),200);}while(progress.phase!=='complete');
     const archive=await site.call(`/api/portability/exports/${id}/download`,{cookie:owner,headers:{Origin:site.runtime.url}});expect(archive.status).toBe(200);

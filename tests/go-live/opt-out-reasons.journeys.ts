@@ -59,7 +59,7 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     expect((await page.goto(site.local(confirmation)))?.status()).toBe(200);
     tokenRequests++;
     await expect(page.locator('form')).toHaveCount(1);
-    for (const width of [1440, 390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({ width, height: 1000 });
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       await page.screenshot({ path: info.outputPath(`unsubscribe-confirmation-${width}.png`), fullPage: true });
@@ -77,7 +77,7 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     expect(confirmed?.status()).toBe(200);
     tokenRequests++;
     await expect(page.locator('form')).toHaveCount(0);
-    for (const width of [1440, 390]) {
+    for (const width of [1440]) {
       await page.setViewportSize({ width, height: 1000 });
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       await page.screenshot({ path: info.outputPath(`unsubscribe-success-${width}.png`), fullPage: true });

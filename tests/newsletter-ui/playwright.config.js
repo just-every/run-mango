@@ -1,3 +1,4 @@
+import {launchOptions} from '../support/browser.mjs';
 import { evidenceDirectory } from '../support/artifacts.mjs';
 import { defineConfig } from '@playwright/test';
 
@@ -15,7 +16,7 @@ export default defineConfig({
   reporter: 'list',
   outputDir: evidenceDirectory('newsletter-ui'),
   use: {
-    launchOptions: {args: ['--use-mock-keychain', '--password-store=basic']},
+    launchOptions,
     baseURL,
     viewport: { width: 1440, height: 1000 },
     screenshot: 'only-on-failure',

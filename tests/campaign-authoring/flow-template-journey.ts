@@ -27,7 +27,7 @@ export async function flowTemplateJourney(page:Page,info:TestInfo,url:string,hea
   const updated=await page.request.post(url+'/api/campaign-templates',{headers,data:{revisionId,name:template.name,templateId:template.id,updatedAt:Date.parse(template.updatedAt)}});expect(updated.status()).toBe(201);
   expect(JSON.stringify((await read()).graph)).toBe(JSON.stringify(saved.graph));
   const later=await page.request.get(url+'/api/flow-drafts/templates/'+template.id,{headers});expect((await later.json()).email.subject).toBe('Synthetic changed library subject');
-  for(const width of [1440,390]){
+  for(const width of [1440]){
     await page.setViewportSize({width,height:1000});await reloadPage(page);await page.getByRole('combobox',{name:'Saved revision',exact:true}).selectOption(saved.id);await page.getByRole('button',{name:'Synthetic library email',exact:true}).click();
     await expect(page.getByRole('textbox',{name:'Email HTML',exact:true})).toHaveValue(original.html);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);

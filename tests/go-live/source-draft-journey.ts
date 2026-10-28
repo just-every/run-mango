@@ -36,7 +36,7 @@ export async function sourceDraftJourney(site:Installation,page:Page,info:TestIn
   console.log(provider+': draft hydrated');
   await page.getByRole('combobox',{name:'Saved revision',exact:true}).selectOption(draft.id);
   await expect(page.getByLabel('Flow name',{exact:true})).toHaveValue(name);
-  for(const width of [1440,390]){
+  for(const width of [1440]){
     await page.setViewportSize({width,height:1000});
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);

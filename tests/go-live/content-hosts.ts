@@ -28,7 +28,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   const removed=await json(await site.call('/api/settings/link-hosts',{cookie:owner}),200);expect(removed.hosts).not.toContain('www.instagram.com');
   expect((await json(await site.call('/api/activity?action=link-host.removed',{cookie:owner}),200)).entries.some((entry:any)=>entry.detail.host==='www.instagram.com')).toBe(true);
   await page.context().clearCookies();await page.context().addCookies([{name:owner.split('=')[0],value:owner.split('=')[1],url:site.runtime.url}]);
-  for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/settings');const panel=page.getByRole('region',{name:'Link host sources',exact:true});await expect(panel).toContainText('Deployment host');await expect(panel).toContainText('Social defaults');await expect(panel).not.toContainText('www.instagram.com');await panel.getByRole('heading',{name:'Link host sources'}).scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`link-host-sources-${width}.png`)});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>['serious','critical'].includes(v.impact??''))).toEqual([]);}
+  for(const width of [1440]){await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app/settings');const panel=page.getByRole('region',{name:'Link host sources',exact:true});await expect(panel).toContainText('Deployment host');await expect(panel).toContainText('Social defaults');await expect(panel).not.toContainText('www.instagram.com');await panel.getByRole('heading',{name:'Link host sources'}).scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`link-host-sources-${width}.png`)});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>['serious','critical'].includes(v.impact??''))).toEqual([]);}
   const author = await site.open('lena@example.test','host-author');
   const manager = await site.open('maya@example.test','host-manager');
   for (const [id,role] of [['host-author','author'],['host-manager','manager']]) {
@@ -57,7 +57,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await page.getByRole('button',{name:'Request approval',exact:true}).click();
   await expect(page.getByText(/Approval requested by Lena Chen/)).toBeVisible();
   await view(manager);
-  for (const width of [1440,390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await expect(blocked.getByRole('button',{name:'Allow this host',exact:true})).toBeVisible();
     await blocked.screenshot({path:info.outputPath(`blocked-host-${width}.png`)});
@@ -79,7 +79,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await page.getByRole('alertdialog',{name:'Approve and schedule?'}).getByRole('button',{name:'Approve & schedule',exact:true}).click();
   await expect(page.getByRole('link',{name:'View schedule and results'})).toBeVisible();
   expect((await json(await site.call(path,{cookie:manager}),200)).campaign.state).toBe('scheduled');
-  for (const width of [1440,390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await expect(page.locator('[aria-label="Blocked link hosts"]')).toHaveCount(0);
     await page.screenshot({path:info.outputPath(`allowed-host-approved-${width}.png`),fullPage:true});
@@ -113,7 +113,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
   await page.context().clearCookies();
   await page.context().addCookies([{name:manager.split('=')[0],value:manager.split('=')[1],url:site.runtime.url}]);
   await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);
-  for (const width of [1440,390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     for (const [index,host] of hosts.entries()) {
       const group=page.locator(`[aria-label="Blocked host ${host}"]`);

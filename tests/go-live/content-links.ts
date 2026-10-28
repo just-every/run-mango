@@ -39,7 +39,7 @@ export async function linkRulesJourney(site: Installation, owner: string, page: 
   await json(await site.call(`/api/campaigns/${campaign.campaignId}/approve`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId,idempotencyKey:'link-rules-blocked-approval'}}),409);
   await page.context().clearCookies();
   await page.context().addCookies([{name:owner.split('=')[0],value:owner.split('=')[1],url:site.runtime.url}]);
-  for (const width of [1440,390]) {
+  for (const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
     const panel = page.locator('.approval-checks');

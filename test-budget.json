@@ -1,5 +1,0 @@
-{
-  "schemaVersion": 1,
-  "maxTests": 200,
-  "reason": "The sx-mango-tprune-1 round consolidates signup security journeys and removes repeated campaign viewport runs to restore the 200-test seed budget."
-}

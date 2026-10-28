@@ -59,7 +59,7 @@ export const {install}=lifecycle;
 export const commandAdapter=commands(lifecycle,{dev:development,preview:previewTarget,verify:['pnpm',['run','verify:app']],deploy:deploy(),portability,setup:{manifestFile:'scripts/installer/local-setup.json'},browserModule:'scripts/installer/ui/seed.mjs',
  // Generated configs are outputs rather than inputs to preview's fixed-build receipt.
  // Local dev identity: the local-only Worker entry, the build output rer build scans for the dev layer, and the kept end-to-end email-link test.
- devIdentity:{entry:'src/core/app/worker.dev.ts',output:['dist'],emailLinkTest:'operations/invitation-cancellation.test.mjs'},localOnlyKeys:['RER_DEV_ORIGIN','RER_DEV_IDENTITY'],
+ devIdentity:{entry:'src/core/app/worker.dev.ts',output:['dist'],emailLinkTest:'tests/go-live/roles.journeys.ts'},localOnlyKeys:['RER_DEV_ORIGIN','RER_DEV_IDENTITY'],
  generatedOutputs:['wrangler.toml','wrangler.production.toml'],product:'Mango',
  // The run site (run-mango.com): the approved landing, the Run page and the docs, built by rer build --site.
  site:{entry:'src/site/pages.tsx',output:'dist/site',declaration:'deploy-site.json',config:'vite.site.config.ts'},input:{names:{email:'OWNER_EMAIL'}}});

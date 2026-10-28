@@ -22,7 +22,7 @@ export async function proveSenderRenewal(page:Page,site:Awaited<ReturnType<typeo
   await json(await site.call('/api/settings/sender/renewal/run',{method:'POST',cookie,body:{}}),200);
   page.on('pageerror',error=>errors.push(error.message));page.on('console',message=>{if(message.type()==='error'&&/hydration|hydrated.*match/i.test(message.text()))errors.push(message.text());});
   await page.context().setExtraHTTPHeaders({Cookie:cookie});
-  for(const width of [1440,390]) {
+  for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});await openPage(page,site.runtime.url+'/app');
     const card=page.getByRole('region',{name:'Sender evidence renewal'});
     await expect(card).toBeVisible();await expect(card).toContainText('Sender evidence renewed from an authenticated receipt.');

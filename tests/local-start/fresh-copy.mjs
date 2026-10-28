@@ -13,7 +13,7 @@ export async function freshCopy() {
   const scratch = scratchDirectory('local-start'); await mkdir(scratch, {recursive:true});
   const directory = await mkdtemp(join(scratch, 'copy-'));
   const checkout = join(directory, 'mango');
-  const env = {...process.env, CI:'1', RER_SERVER_JOURNEY:'1', WRANGLER_SEND_METRICS:'false', CLOUDFLARE_INCLUDE_PROCESS_ENV:'false'};
+  const env = {...process.env, CI:'true', RER_SERVER_JOURNEY:'1', WRANGLER_SEND_METRICS:'false', CLOUDFLARE_INCLUDE_PROCESS_ENV:'false'};
   for (const key of Object.keys(env)) if (key !== 'MANGO_TEST_WORK_DIR' && /^(MANGO_|PLAYWRIGHT_PORT|MAIL_|AUTH_|INITIAL_OPERATOR|SESSION_|CONTACT_)/.test(key)) delete env[key];
   delete env.RER_LOCAL_OPERATION;
   let log=''; const write=text=>{log+=text;};
