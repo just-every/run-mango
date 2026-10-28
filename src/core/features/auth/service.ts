@@ -59,12 +59,12 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     MAIL_FROM: config.mailAuthFrom || undefined, local,
     branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
   });
-  function core(request: Request) {
+  function core(request: Request, businessRoster = false) {
     return createOperatorAuth({ db, config: authConfig(request), mailSender: local || config.demo ? { async send() { return { status: 'accepted' as const, provider: 'development', providerMessageId: null }; } } : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
         const profile = await project(actor);
-        if (action === 'operators:role') return false;
+        if (action === 'operators:role') return businessRoster && profile.role === 'owner';
         if (['providers:manage','domains:manage'].includes(action)) return profile.role === 'owner';
         if (action.startsWith('operators:') && !hasPermission(profile.role,'operators.manage')) return false;
         // Browser invitations still request their existing role. The signed
@@ -82,6 +82,9 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     });
   }
   return {
+    // This adapter is used only after the signed Business receiver validates
+    // its envelope. It shares native config, mail, and current owner policy.
+    businessTeam(request: Request) { return core(normalize(request), true).businessTeam; },
     async handle(request: Request) {
       if (new URL(request.url).pathname === '/auth/environment') return Response.json({ local });
       // Administrative APIs are mediated by Mango's operator policy.

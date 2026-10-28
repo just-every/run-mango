@@ -1,3 +1,4 @@
+import {assertAgentHandoff} from '../settings/sender-authority';
 import {agentAttribution} from '../agent-door/context';
 import type {Platform} from '@/core/shared/platform';
 import {activityStatement} from '../auth/activity-record';
@@ -12,7 +13,7 @@ export function resendConnectionService(platform:Platform){
   return {
     async prepare(apiKey:string,operatorId:string){
       const previous=await read();if(previous&&previous.account_id!=='resend'&&previous.state!=='disconnected')throw new SendingConnectionError('Disconnect the existing provider before changing providers.');
-      const hooks=await resendAccount(apiKey).inspect();if(hooks.some(hook=>hook.endpoint===url&&hook.id!==previous?.webhook_id))throw new SendingConnectionError('A webhook already uses this installation’s address without Mango’s saved ownership. Review it in Resend before connecting.');const id=crypto.randomUUID(),now=Date.now();
+      const hooks=await resendAccount(apiKey,()=>assertAgentHandoff(platform)).inspect();if(hooks.some(hook=>hook.endpoint===url&&hook.id!==previous?.webhook_id))throw new SendingConnectionError('A webhook already uses this installation’s address without Mango’s saved ownership. Review it in Resend before connecting.');const id=crypto.randomUUID(),now=Date.now();
       await db.batch([db.prepare('DELETE FROM sending_proposals WHERE expires_at<=? OR operator_id=?').bind(now,operatorId),db.prepare('INSERT INTO sending_proposals(id,operator_id,secret_cipher,account_id,account_name,broader,created_at,expires_at) VALUES(?,?,?,?,?,1,?,?)').bind(id,operatorId,await sealSendingSecret({apiKey,provider:'resend'},key),'resend','Account identity not verified',now,now+600000)]);
       return {...disclosure,proposalId:id,account:'Account identity not verified',lastFour:apiKey.slice(-4),broader:true};
     },
@@ -20,7 +21,7 @@ export function resendConnectionService(platform:Platform){
       const proposal=await db.prepare('DELETE FROM sending_proposals WHERE id=? AND operator_id=? AND expires_at>? RETURNING secret_cipher').bind(proposalId,operator.id,Date.now()).first<{secret_cipher:string}>();
       if(!proposal)throw new SendingConnectionError('The connection review expired or was already used. Review the key again.');
       const secret=await openSendingSecret(proposal.secret_cipher,key);if(secret.provider!=='resend')throw new SendingConnectionError('Review the Resend key again.');
-      const api=resendAccount(secret.apiKey),hooks=await api.inspect(),previous=await read();
+      const api=resendAccount(secret.apiKey,()=>assertAgentHandoff(platform)),hooks=await api.inspect(),previous=await read();
       if(previous&&previous.account_id!=='resend'&&previous.state!=='disconnected')throw new SendingConnectionError('Disconnect the existing provider before changing providers.');
       let webhookId=previous?.account_id==='resend'?previous.webhook_id:null;
       let webhookSecret=previous?.account_id==='resend'?(await openSendingSecret(previous.secret_cipher,key)).publicKey:undefined;
@@ -49,7 +50,7 @@ export function resendConnectionService(platform:Platform){
       }
     },
     async disconnect(operatorId:string){const row=await read();if(!row)return {disconnected:true};if(row.state==='connecting')throw new SendingConnectionError('Wait for the connection to finish before disconnecting.');
-      if(row.webhook_id){const secret=await openSendingSecret(row.secret_cipher,key);try{await resendAccount(secret.apiKey).request('/webhooks/'+encodeURIComponent(row.webhook_id),'DELETE');}catch(error){if(!(error instanceof ResendConnectionError&&error.status===404))throw error;}}
+      if(row.webhook_id){const secret=await openSendingSecret(row.secret_cipher,key);try{await resendAccount(secret.apiKey,()=>assertAgentHandoff(platform)).request('/webhooks/'+encodeURIComponent(row.webhook_id),'DELETE');}catch(error){if(!(error instanceof ResendConnectionError&&error.status===404))throw error;}}
       await db.batch([db.prepare("UPDATE sending_connection SET state='disconnected',generation=?,secret_cipher=?,webhook_id=NULL,delivery_proved_at=NULL,last_error=NULL WHERE id=1 AND generation=?").bind(crypto.randomUUID(),await sealSendingSecret({apiKey:'',provider:'resend'},key),row.generation),activityStatement(db,{key:crypto.randomUUID(),action:'sending-disconnected',entityType:'integration',entityId:'resend',actorId:operatorId})]);return {disconnected:true};},
   };
 }

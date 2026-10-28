@@ -75,7 +75,10 @@ function scope(required: IntegrationScope): MiddlewareHandler<Environment> {
 }
 function routes() {
   const router = new Hono<Environment>();
-  router.onError((error, context) => context.json({error: error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof IntegrationError ? error.status : 503));
+  router.onError((error, context) => {
+    if(error instanceof IntegrationError&&error.status===429)context.header('Retry-After',String(60-Math.floor(Date.now()/1000)%60));
+    return context.json({error: error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof IntegrationError ? error.status : 503);
+  });
   return router;
 }
 const boundedBody = () => bodyLimit({maxSize: 64 * 1024, onError: context => context.json({error: 'request_too_large'}, 413)});

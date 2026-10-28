@@ -4,7 +4,8 @@ import { AuthError } from '@/vendor/base/operator-auth/index.mjs';
 import { senderWriteAuthority, senderWriteGuard } from '@/core/features/settings/sender-authority';
 import type { Platform } from '@/core/shared/platform';
 
-export const effectiveRole = "COALESCE(r.role,CASE WHEN n.role='member' THEN 'author' WHEN n.id=(SELECT owner_id FROM operator_role_settings WHERE singleton=1) THEN 'owner' ELSE 'admin' END)";
+import {effectiveRole} from './role-sql';
+export {effectiveRole} from './role-sql';
 
 export async function productAuthority(db: D1Database, operatorId: string) {
   const row=await db.prepare(`SELECT ${effectiveRole} AS role,COALESCE(r.unmasked_contacts,0) AS unmaskedContacts

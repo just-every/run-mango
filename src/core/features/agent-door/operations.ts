@@ -1251,7 +1251,6 @@ export default [
     },
     "readOnly": false,
     "classes": [
-      "standard",
       "external"
     ],
     "clauses": [

@@ -11,7 +11,7 @@ import {mangoResources} from './resources';
 import operations from './operations.ts';
 import { ToolRefusal, type ToolDefinition, type ToolContext, type ClassAndFacts, type ClassId, type JsonSchemaObject } from '@/vendor/base/agent-door/index.ts';
 import type { Platform } from '@/core/shared/platform';
-import { hasPermission, productRoles } from '../auth/permissions';
+import { hasPermission, requiredPermission, productRoles } from '../auth/permissions';
 import { nativeOperator } from './native';
 import { activityStatement } from '../auth/activity-record';
 import { agentAction } from './context';
@@ -36,7 +36,12 @@ async function authority(platform: Platform, kind: string, args: Args) {
       || args.unmaskedContacts === true && !before.unmaskedContacts && before.role==='analyst';
     return {subject:target.id, widens};
   }
-  if (kind === 'connections.update') return {subject: 'installation:sending', widens: true};
+  if (kind === 'connections.update') {
+    const proposal=await db.prepare('SELECT account_id,broader FROM sending_proposals WHERE id=? AND expires_at>?').bind(args.proposalId,Date.now()).first<{account_id:string;broader:number}>();
+    if(!proposal)throw new ToolRefusal('not_found');
+    const current=await db.prepare('SELECT account_id,broader,state FROM sending_connection WHERE id=1').first<{account_id:string;broader:number;state:string}>();
+    return {subject:'installation:sending',widens:!current||current.state!=='connected'||current.account_id!==proposal.account_id||proposal.broader>current.broader};
+  }
   if (kind === 'signup.update') {
     const before=await db.prepare("SELECT embed_origins,challenge_enabled FROM signup_settings WHERE id='newsletter'").first<{embed_origins:string;challenge_enabled:number}>();
     const next=object(args.settings),origins=JSON.parse(before?.embed_origins??'[]') as string[];
@@ -69,7 +74,7 @@ async function classes(platform: Platform, kind: string, args: Args, ctx: ToolCo
     return [{class:'access',facts:{measure:1,direction:target?.widens?'widens':'narrows'}}];
   }
   if (kind === 'connections.update') return [
-    {class:'access',facts:{measure:1,direction:'widens'}},
+    {class:'access',facts:{measure:1,direction:(await authority(platform,kind,args))?.widens?'widens':'narrows'}},
     {class:'security',facts:{measure:1,setting:'marketing-provider-connection'}},
     {class:'external',facts:{measure:1,counterparty:'known'}},
   ];
@@ -78,7 +83,8 @@ async function classes(platform: Platform, kind: string, args: Args, ctx: ToolCo
     // This only records real supplied permission. The native service still
     // requires evidence, refuses existing restrictions, and applies opt-in mode.
     const mode = await db.prepare("SELECT mode FROM opt_in_modes WHERE point='manual'").first<{mode:string}>();
-    return args.channel === 'sms' || mode?.mode !== 'single' ? [{class:'external',facts:{measure:1,counterparty:'known'}}] : standard();
+    if(args.channel==='email'&&mode?.mode==='single')throw new ToolRefusal('native_consent_proof_required');
+    return [{class:'external',facts:{measure:1,counterparty:'known'}}];
   }
   if (['campaigns.pause','campaigns.resume','campaigns.cancel'].includes(kind)) {
     const record = await db.prepare('SELECT state FROM campaigns WHERE id=?').bind(args.id).first<{state:string}>();
@@ -118,6 +124,7 @@ async function revision(platform: Platform, kind: string, args: Args) {
     : args.id ? await db.prepare('SELECT id,state,active_revision_id,updated_at FROM campaigns WHERE id=?').bind(args.id).first() : null;
   else if (kind.startsWith('segments.') && args.id) record = await db.prepare('SELECT * FROM audience_segments WHERE id=?').bind(args.id).first();
   else if (kind.startsWith('designs.') && args.id) record = await db.prepare('SELECT id,state,chosen_slot,updated_at FROM design_jobs WHERE id=?').bind(args.id).first();
+  else if (kind === 'connections.update') record = {proposal:await db.prepare('SELECT id,operator_id,account_id,account_name,broader,expires_at FROM sending_proposals WHERE id=?').bind(args.proposalId).first(),current:await db.prepare('SELECT generation,state,account_id,broader,webhook_id FROM sending_connection WHERE id=1').first()};
   else if (kind === 'access.update') record = await db.prepare('SELECT n.id,n.version,n.role,r.role product_role,r.unmasked_contacts FROM oa_operators n LEFT JOIN operator_product_roles r ON r.operator_id=n.id WHERE n.id=?').bind(args.id).first();
   if(record&&['campaigns.authorize','campaigns.reauthorize','campaigns.test_send'].includes(kind)){
     const evidence=await db.batch([db.prepare('SELECT generation FROM audience_source_authority WHERE id=1'),db.prepare('SELECT id,generation,binding_digest,configuration_digest,observation_id,revoked_at FROM sender_verification_state ORDER BY id')]);
@@ -135,6 +142,8 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
       inputSchema:operation.inputSchema as unknown as JsonSchemaObject, outputSchema:{type:'object'},
       classes:operation.classes as ClassId[], clauses:operation.clauses, untrusted:true,
       classify:async(args,ctx)=>{
+        const operator=await nativeOperator(platform,ctx.person.id);
+        if(!hasPermission(operator.role,requiredPermission(operation.method,operation.path))||kind==='access.update'&&operator.role!=='owner')throw new ToolRefusal('role_forbidden');
         if(['campaigns.authorize','campaigns.reauthorize'].includes(kind)){
           const effect=await campaignEffect(runtime,args);
           return [{class:'external',facts:{measure:effect.recipients.length,counterparty:'known'}}];
@@ -149,6 +158,11 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
             return {target:{id:snapshot.campaign.id,name:snapshot.revision.name},recipients,
               items:[snapshot.revision.id,snapshot.revision.emailSubject,snapshot.revision.emailBody,snapshot.revision.emailText,JSON.stringify(snapshot.steps)]};
           }
+          if(kind==='connections.update'){
+            const proposal=await platform.database.$client.prepare('SELECT account_id,account_name,broader FROM sending_proposals WHERE id=?').bind(args.proposalId).first<{account_id:string;account_name:string;broader:number}>();
+            if(!proposal)throw new ToolRefusal('not_found');
+            return {target:{id:'installation:sending',name:proposal.account_name},items:[proposal.account_id,proposal.broader?'Provider key includes broader permissions':'Provider key is limited to required permissions','Configure this installation’s signed delivery-event webhook']};
+          }
           const current = args.revisionId ? await platform.database.$client.prepare('SELECT name,email_subject FROM campaign_revisions WHERE id=?').bind(args.revisionId).first<{name:string;email_subject:string}>() : null;
           return {target:{...(args.id ? {id:String(args.id)} : {}),name:current?.name ?? operation.title},
             items:[...(current?[current.email_subject]:[]),JSON.stringify(args)],
@@ -157,7 +171,11 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
             ...(args.role?{role:String(args.role)}:{})};
         },
       } : {}),
-      ...(operation.classes.some(cls=>cls==='access'||cls==='security') ? {authority:(args: Args)=>authority(platform,kind,args)} : {}),
+      ...(operation.classes.some(cls=>cls==='access'||cls==='security') ? {authority:async(args: Args,ctx:ToolContext)=>{
+        const operator=await nativeOperator(platform,ctx.person.id);
+        if(!hasPermission(operator.role,requiredPermission(operation.method,operation.path))||kind==='access.update'&&operator.role!=='owner')throw new ToolRefusal('role_forbidden');
+        return authority(platform,kind,args);
+      }} : {}),
       async run(args,ctx) {
         if(ctx.agent.id==='integration:'+ctx.clientId&&['audience.read','segments.read'].includes(kind)){
           const operator=await nativeOperator(platform,ctx.person.id);

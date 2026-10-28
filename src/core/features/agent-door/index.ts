@@ -5,8 +5,6 @@ import {workerTools} from './worker-tools';
 import type {LifecycleRuntime} from '../lifecycle/types';
 import { createAgentDoor, type Trust } from '@/vendor/base/agent-door/index.ts';
 import { createBusinessSettings } from '@/vendor/base/business-settings/index.ts';
-import { createOperatorAuth } from '@/vendor/base/operator-auth/index.mjs';
-import { createBaseMailSender } from '@/core/platform/adapters/base-mail';
 import type { AppBindings, Platform } from '@/core/shared/platform';
 import type { createAuthService } from '../auth/service';
 import type { Hono } from 'hono';
@@ -41,14 +39,11 @@ export function mangoAgentDoor(environment: AppBindings, platform: Platform, aut
         text: 'Read mango.store.read, mango.sender.read and mango.audience.read. Create a private newsletter draft; save its canonical content and structured audience. Refresh checks. Authorize only that exact revision under company policy. Read results and distinguish provider acceptance, delivery and imported history. Generic flow drafts never send; design purchases do not schedule mail. Spend caps are not enforced.'}}]}],
   });
   platform.agentDoor = door;
-  const teamAuth = createOperatorAuth({db, config: {origin, OWNER_EMAIL: platform.config.initialOperatorEmails[0] ?? 'local@example.test',
-    SESSION_SECRET: platform.config.sessionSigningKey, local: platform.config.local === true,
-    MAIL_FROM: platform.config.mailAuthFrom || undefined},
-    mailSender: createBaseMailSender(platform.config, platform.database),
-    clientIp: request => platform.config.local ? new URL(request.url).hostname : request.headers.get('CF-Connecting-IP') ?? '',
-  });
-  const settings = createBusinessSettings({db, trust: environment.RER_BUSINESS_TRUST,
-    business: {settings: 1, values: ['display_name'], team: {roles: {admin: 'admin', member: 'member'}}},
-    team: teamAuth.businessTeam});
+  const settings = {async handle(request: Request) {
+    if (!['/api/rer/business-settings', '/rer-business-logo', '/rer-business.css'].includes(new URL(request.url).pathname)) return null;
+    return createBusinessSettings({db, trust: environment.RER_BUSINESS_TRUST,
+      business: {settings: 1, values: ['display_name'], team: {roles: {admin: 'admin', member: 'member'}}},
+      team: auth.businessTeam(request)}).handle(request);
+  }};
   return {door, settings};
 }

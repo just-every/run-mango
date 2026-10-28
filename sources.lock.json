@@ -1283,7 +1283,7 @@
       "executable": false
     },
     "agent-surface.json": {
-      "sha256": "b1284ec350db525ba5dd97e8e8a260ef6a246c3de231110255bc193a079292e8",
+      "sha256": "5f98d33d1f0b7edf58cb8054166c242ff707b7c375900510298d560220865ffc",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1347,7 +1347,7 @@
       "executable": false
     },
     "docs/agents.md": {
-      "sha256": "50612d3c268a51e441854215ad1d2a448a12bd9db50c4ae28312a4d712947616",
+      "sha256": "899bf93d47b64a3587a9107ee92e1416a486b97f3158aaaa4bf5e6a85a7538d6",
       "executable": false
     },
     "docs/approval-and-sending.md": {
@@ -1387,7 +1387,7 @@
       "executable": false
     },
     "docs/integrations.md": {
-      "sha256": "c291aadb5ec3f00da8895e37fa262207975db9a2fd117eea3565addb3301b0e9",
+      "sha256": "5b58381ef6282c9456b0e8dda2429fbbbe8c67034e01631d6af8558497792439",
       "executable": false
     },
     "docs/introduction.md": {
@@ -1907,7 +1907,7 @@
       "executable": false
     },
     "operations/agent-door.test.mjs": {
-      "sha256": "b0f588c9f83c58604e8d91550cb397dbe4b9d7c0ca27b966592c79abecc622ac",
+      "sha256": "a56b0b03107192481404f81a163bfbe20a7953700799be9ab48ffdd66a8e2f95",
       "executable": false
     },
     "operations/base-integration.test.mjs": {
@@ -2043,7 +2043,7 @@
       "executable": false
     },
     "RELEASE.json": {
-      "sha256": "6455bb9cf9f627762ec988dd40608c4d9ae674b46a2543e6ce457d2fb5ca1907",
+      "sha256": "1b4daf5a543235b85ae4412c08f8021e458c3c4fbff94c7462808213c9e63aff",
       "executable": false
     },
     "RENDERING.md": {
@@ -3139,7 +3139,7 @@
       "executable": false
     },
     "src/core/app/app.ts": {
-      "sha256": "72e604bbbeb333a38aec7b284495ddd6065fc613f6a777fb72c3bcb613eeacd7",
+      "sha256": "fe9300317a245033122b9dbfdfcaefd3a42e7ed527db4f1a314692f67a7134a3",
       "executable": false
     },
     "src/core/app/client/lib/api.ts": {
@@ -3383,7 +3383,7 @@
       "executable": false
     },
     "src/core/features/agent-door/index.ts": {
-      "sha256": "4e6e5583abe556f5920eb28aa36196f5e9e26201d792205ceba0b9a1e9f6cbc9",
+      "sha256": "38c52f8ac39f033eb2760eeaf8812674290aec3b922b27ea044aeba7fc16da49",
       "executable": false
     },
     "src/core/features/agent-door/integration-tools.ts": {
@@ -3395,7 +3395,7 @@
       "executable": false
     },
     "src/core/features/agent-door/operations.ts": {
-      "sha256": "76aaa9fea908922b5ef4ae2810ffab2d42ae2112d98f6314ffd93f1e67651bb1",
+      "sha256": "ec8904d4baae55a032423220e4e91c92cebfaaca8233b8aa8b99b5ca9fb3d8bb",
       "executable": false
     },
     "src/core/features/agent-door/people.ts": {
@@ -3411,7 +3411,7 @@
       "executable": false
     },
     "src/core/features/agent-door/tools.ts": {
-      "sha256": "50d21a1edb4875c586730d38464efe8dce660766d1e83fa967f911338ffb4034",
+      "sha256": "52f8d84f46c3bc49192df560977dfd7b3db9c92e8789ac300e576fec36d7f46b",
       "executable": false
     },
     "src/core/features/agent-door/witness.ts": {
@@ -3763,7 +3763,7 @@
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
-      "sha256": "917c194367dcd4aa139264d80810da4a3a2cc48993fa45c407a523001f5d657e",
+      "sha256": "d55f96acad23a42a3facb7162fa9a65a11f9e82c1afeeb9fb25da6db47037809",
       "executable": false
     },
     "src/core/features/audience/rule-matcher.ts": {
@@ -4019,7 +4019,7 @@
       "executable": false
     },
     "src/core/features/auth/product-roles.ts": {
-      "sha256": "4e80479547e496d3927a66f32ff884db763623b4a68f039d4f3095d65a9de26f",
+      "sha256": "90ac0c84abc2d20b143370377dfe313c711a59853fe2d2a7843f8fe78c44e253",
       "executable": false
     },
     "src/core/features/auth/repository.ts": {
@@ -4028,6 +4028,10 @@
     },
     "src/core/features/auth/response-privacy.ts": {
       "sha256": "d6dea0f1d94309d9d4ab20507219301606fbd61eb48ed8f292b59b9433d7049b",
+      "executable": false
+    },
+    "src/core/features/auth/role-sql.ts": {
+      "sha256": "2c704f8750adf9132da38955bcfe6c82026f658ca805527300d7fd0ace1c45c8",
       "executable": false
     },
     "src/core/features/auth/routes.ts": {
@@ -4039,7 +4043,7 @@
       "executable": false
     },
     "src/core/features/auth/service.ts": {
-      "sha256": "e5b066c3cdb000ee0911c69e316feadf080c650c6814f3c230a814012ed366f5",
+      "sha256": "c3016f77c820a0cc2c6f039355b12c5126984d339e45ade001581f402d4cb0e3",
       "executable": false
     },
     "src/core/features/auth/setup-complete.ts": {
@@ -5199,7 +5203,7 @@
       "executable": false
     },
     "src/core/features/integrations/routes.ts": {
-      "sha256": "6560de0c66af68fb3dff2624eea7af8e342597abc2f73e2a925e96804a76b561",
+      "sha256": "b6bcd7a816c880b4740b379b3d2cc8a39ce6c2083d24f1e3fb260eebfd4a8df9",
       "executable": false
     },
     "src/core/features/integrations/schema.ts": {
@@ -5795,7 +5799,7 @@
       "executable": false
     },
     "src/core/features/sending/connection-service.ts": {
-      "sha256": "1c139b66414a1311ec4a5572f30314de5f3e9a9177f247925f9ccd850fbc6fed",
+      "sha256": "e0bfd68626d76be2ec29a00040ab43de03e82d8a872f4d0d0d318c596b355bf5",
       "executable": false
     },
     "src/core/features/sending/load-connection.ts": {
@@ -5807,11 +5811,11 @@
       "executable": false
     },
     "src/core/features/sending/resend-account.ts": {
-      "sha256": "0024769fe842614c8d375245e04537241114089da264d9a318ea3571af9ae211",
+      "sha256": "5156e31b43863557749a743820ca0224dbbfa148e5c209096be2de38cce771e2",
       "executable": false
     },
     "src/core/features/sending/resend-connection.ts": {
-      "sha256": "f306302d2c05bcc75c13151512c3d7b89256ac011250bf333a1d44df2cfc0eb8",
+      "sha256": "44cd82fa87f330d425414b251c7b5a9945779e8b098b4dab942c343651d68b9f",
       "executable": false
     },
     "src/core/features/sending/routes.ts": {
@@ -5823,7 +5827,7 @@
       "executable": false
     },
     "src/core/features/sending/sendgrid-account.ts": {
-      "sha256": "89ca8e92e66af92dd3c20d054f61829ee4c84856217e19b6602edc4626ffcde8",
+      "sha256": "9ab66145bda5537512bd4c3e7b74d45587c79e9c4f4eaf027aa795a367c4e31b",
       "executable": false
     },
     "src/core/features/sending/webhook-error.ts": {
@@ -5871,7 +5875,7 @@
       "executable": false
     },
     "src/core/features/settings/sender-authority.ts": {
-      "sha256": "dd455686f5c15699f9dfa28cf52a73dd6cf9ee02cce5d76189d592f5f5391181",
+      "sha256": "612f8c21228f863cb61bf586afd781a475c2d1245e1b2cdaaa9c1a28a6f9be42",
       "executable": false
     },
     "src/core/features/settings/sender-check-routes.ts": {
@@ -9315,7 +9319,7 @@
       "executable": false
     },
     "tests/agent-door/pending.json": {
-      "sha256": "9e564aa3e763a2357daed9a00e3081890f06bf34c2875ecfe435a9e34c3c5c9f",
+      "sha256": "78069cf6bb55287fe488a984160e3f3d6cf0ed6c76c12107662ce78f72d79b4f",
       "executable": false
     },
     "tests/approval-binding/config.js": {

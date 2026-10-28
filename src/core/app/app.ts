@@ -1,3 +1,4 @@
+import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
 import agentOperations from '@/core/features/agent-door/operations.ts';
 import {resourceLink} from '@/core/features/agent-door/resource-links';
 import {credentialScopes} from '@/core/features/agent-door/credentials';
@@ -98,6 +99,16 @@ import type { AppBindings, Platform } from '@/core/shared/platform';
 import { initialReads, initialReadOnce } from './request-platform';
 
 export type AppEnvironment = { Bindings: AppBindings; Variables: AuthVariables };
+
+async function integrationOperator(platform:Platform,id:string){
+  try{return await nativeOperator(platform,id);}
+  catch(error){if(error instanceof ToolRefusal&&error.code==='unauthenticated')throw new IntegrationError('credential_sponsor_inactive',401);throw error;}
+}
+
+function integrationRefusal(code:string|undefined,status:unknown,fallback:string){
+  // Shared decision capacity has no effect; retain the public API's 429 contract.
+  return code==='decision_busy'?new IntegrationError('rate_limited',429):new IntegrationError(code??fallback,integrationRefusalStatus(status));
+}
 
 function integrationRefusalStatus(value:unknown):400|401|403|404|409|429|503 {
   return [400,401,403,404,409,429,503].includes(Number(value))?Number(value) as 400|401|403|404|409|429|503:409;
@@ -374,16 +385,16 @@ export function createApp(
   const reviewLoyalty=reviewLoyaltyRoutes(platform,environment.MANGO_RESTORE_MODE==='1');
   app.route('/',reviewLoyalty.webhooks);
   app.route('/api/integrations/v1', createIntegrationApiRoutes(integrations, platform,async(credential,campaignId,input)=>{
-    const operator=await nativeOperator(platform,credential.createdBy);
+    const operator=await integrationOperator(platform,credential.createdBy);
     const result=await door.invoke('mango.campaigns.enqueue',{id:campaignId,...input,idempotency_key:'integration-send:'+await sha256(JSON.stringify([credential.id,campaignId,input]))},
       {person:{id:operator.id},agent:{id:'integration:'+credential.id,name:credential.name,specialist:'marketer'},clientId:credential.id,scopes:credentialScopes(credential.scopes)});
-    if(result.outcome==='refused')throw new IntegrationError(result.code??'send_refused',integrationRefusalStatus(result.fields?.status));
+    if(result.outcome==='refused')throw integrationRefusal(result.code,result.fields?.status,'send_refused');
     return result.outcome==='pending'?{status:'approval_required',approval:result.approval}:result.result;
   },async(credential,kind,args)=>{
-    const operator=await nativeOperator(platform,credential.createdBy);
+    const operator=await integrationOperator(platform,credential.createdBy);
     const result=await door.invoke('mango.integrations.'+kind,args,
       {person:{id:operator.id},agent:{id:'integration:'+credential.id,name:credential.name,specialist:'marketer'},clientId:credential.id,scopes:credentialScopes(credential.scopes)});
-    if(result.outcome==='refused')throw new IntegrationError(result.code??'read_refused',integrationRefusalStatus(result.fields?.status));
+    if(result.outcome==='refused')throw integrationRefusal(result.code,result.fields?.status,'read_refused');
     return result.outcome==='pending'?{status:'approval_required',approval:result.approval}:result.result;
   }));
   mountBeforeAuthentication?.(app, services);

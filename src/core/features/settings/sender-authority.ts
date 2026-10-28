@@ -1,6 +1,7 @@
 import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
 import {agentAction,agentWriteAdmission} from '../agent-door/context';
-import {productAuthority,effectiveRole} from '../auth/product-roles';
+import {productAuthority} from '../auth/product-roles';
+import {effectiveRole} from '../auth/role-sql';
 // @ts-expect-error Portable Base ESM has no separate declaration for this helper.
 import { localCookieName } from '@/vendor/base/operator-auth/http.mjs';
 import { hmacSha256Hex } from '@/core/platform/crypto';

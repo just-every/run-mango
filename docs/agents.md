@@ -8,7 +8,7 @@ An agent acts for a current native person. Business supplies signed settings wit
 
 The company chooses autonomous, review, approval or blocked dispositions. Unanswered or expired policy refuses work. Open /agents to see policy status, recorded activity, reviews, approvals and Pause. Agent credentials cannot save policy, approve their own requests or impersonate a person.
 
-An approval binds the policy revision and server summary. People review the exact saved action, recipients and content. Changed evidence refuses execution. Native consent, suppression, dormancy, frequency, sender evidence, immutable revisions and provider admission remain required.
+An approval binds the policy revision and server summary. People review the exact saved action, recipients and content. Changed evidence refuses execution. Manual single opt-in does not turn an agent assertion into recipient permission: that case requires a native consent proof and refuses through MCP. Confirmed opt-in keeps its recipient confirmation. Native consent, suppression, dormancy, frequency, sender evidence, immutable revisions and provider admission remain required.
 
 Agent activity names the agent and sponsoring person. A campaign's agent authorization is separate from a person's approval. Queued work retains the original sponsor ID, agent, scopes and consent, and asks the door again before executing. Pause or revoked authority stops the next admission. A provider handoff already in progress cannot be recalled.
 

@@ -1532,7 +1532,6 @@
       "scope": "mango.contacts.consent",
       "readOnly": false,
       "classes": [
-        "standard",
         "external"
       ],
       "clauses": [
@@ -3702,6 +3701,11 @@
       "id": "PENDING-BASE-2026-10-28-native-client-and-phase-fixtures",
       "assertion": "Generic journeys need native API-client invocations and fresh per-policy native fixture preparation for destructive consent/custody operations; the bootstrap runs once and the native journey only follows generic policy phases. No fabricated native state or fake widening is permitted.",
       "source": "cli/agent-door.mjs and modules/agent-door/conformance/protocol.mjs"
+    },
+    {
+      "id": "PENDING-CT-2026-10-28-agent-surface",
+      "assertion": "The landed Agent surface must reconcile Mango Agent/FLOW-008/AGENT-002/003/004/010/011 approval presets with company policy while retaining consent, native roles, exact revisions and sender evidence. Built-in BASE-AGENT-010 clause inheritance must also pass the unchanged conformance checker.",
+      "source": "CONTRACT.md and modules/agent-door/conformance/surface.mjs"
     }
   ]
 }
