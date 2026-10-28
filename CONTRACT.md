@@ -3610,76 +3610,82 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 **How Mango computes each class.**
 - **standard:** reversible internal campaign, template, form, audience, import-plan and routine-memory changes use their changed-item count; a private marketing read uses its returned record count.
 - **external:** delivery, publication, audience upload, scheduled outside reporting or a selected model request uses its actual recipients or public visibility, their count and the server-known known, new or public counterparty; live flow execution is included when it creates that exposure.
-- **money:** paid-tier prices, coupon values, sponsorship charges and provider-spending commitments use the saved amount, currency and customer or provider counterparty.
-- **commitment:** campaign and flow sign-offs and binding sponsorship terms use the exact saved revision, counterparty and recorded value when present.
+- **money:** paid-tier prices, coupon values, sponsorship charges, provider-spending commitments, paid design or model requests, sender purchases and fees, and metered message handoffs use the saved or estimated amount, currency and customer or provider counterparty; preparing a cost estimate without buying or committing spend remains standard.
+- **commitment:** campaign, flow and form sign-offs, source-consent and carrier attestations, binding reward or sponsorship terms and cutover sign-offs use the exact saved revision, counterparty and recorded value when present.
 - **accounts:** creating a provider account, verifying a sending domain or registering a sender uses the named outside provider and resource.
 - **gated:** provider authorization consent, identity or carrier verification and hosted payment entry use the provider and personal step its route or response requires; the permitted provider API route keeps its own actual classes.
 - **access:** operator membership and roles, integration credentials’ scopes and routine grants use the people or grants changed and whether authority widens or narrows.
-- **security:** provider secrets, sender authentication and protective capture or tracking settings use the changed protective setting.
-- **destructive:** irreversible contact erasure and permanent retained-data removal use their affected-item count; reversible draft removal remains standard.
+- **security:** provider secrets, sender authentication, webhook signing, allowed-host protections and protective capture or tracking settings use the changed protective setting.
+- **destructive:** irreversible contact erasure, including selected bulk erasure and contact-owned custom objects, and permanent retained-data removal use their affected-item count; reversible draft removal remains standard.
+- **sensitive:** reading or handling CONT-029’s retained portable restriction mappings or carrier-registration identity data uses the record count and data kind; a masked summary that contains none of that data does not carry sensitive.
 - **live:** changes to active flows, campaign schedules, capture forms, tracking switches, connector behavior or sending routes use the affected running service.
 
 | Tool | Does | Core clauses | Risk class | Today |
 | --- | --- | --- | --- | --- |
-| `mango.operators.manage` | Configure operator membership and roles | OPER-001, OPER-002, OPER-003, OPER-004, OPER-005, OPER-006 | access (+ security) | Not implemented |
+| `mango.operators.manage` | Configure membership, roles and separation policy | OPER-001, OPER-002, OPER-003, OPER-004, OPER-005, OPER-006 | access (+ security) (+ live) (+ external) (+ money) | Not implemented |
 | `mango.activity.read` | Inspect and export marketing activity | OPER-007 | standard | Not implemented |
-| `mango.sources.connect` | Configure a commerce source | STORE-001 | accounts · security (+ gated) | Not implemented |
+| `mango.sources.connect` | Configure a commerce source | STORE-001 | accounts · security (+ gated) (+ live) (+ external) | Not implemented |
 | `mango.sources.sync` | Sync and reconcile source records | STORE-002, STORE-003, STORE-004, STORE-005, STORE-006, STORE-007 | standard or live | Not implemented |
 | `mango.contacts.read` | Read contact identity, channel state and history | CONT-001, CONT-002, CONT-003, CONT-008, CONT-014, CONT-017, CONT-022 | standard | Scoped profile API; no MCP adapter |
-| `mango.contacts.update` | Manage reversible profile, topic and consent evidence | CONT-004, CONT-005, CONT-028, CONT-006, CONT-007, CONT-009, CONT-011, CONT-012, CONT-015, CONT-016, CONT-019, CONT-020, CONT-023, CONT-024, CONT-038, CONT-039, CONT-040, CONT-025, CONT-026, CONT-027, CONT-041, CONT-042, CONT-043 | standard or external | Scoped contact and suppression APIs; no MCP adapter |
+| `mango.contacts.update` | Manage profiles, properties, bulk tags, topics and consent evidence | CONT-004, CONT-005, CONT-028, CONT-006, CONT-007, CONT-009, CONT-011, CONT-012, CONT-014, CONT-015, CONT-016, CONT-019, CONT-020, CONT-022, CONT-023, CONT-024, CONT-038, CONT-039, CONT-040, CONT-026, CONT-027, CONT-041, CONT-042, CONT-043 | standard or external (+ money) (+ commitment) (+ live) | Scoped contact and suppression APIs; no MCP adapter |
 | `mango.contacts.import` | Prepare and apply a contact import plan | CONT-010 | standard | Not implemented |
-| `mango.contacts.erase` | Erase contact data and exercise privacy requests | CONT-013, CONT-029, CONT-030, CONT-021 | destructive | Not implemented |
-| `mango.tracking.configure` | Configure permitted onsite behavior capture | CONT-018, CONT-031, CONT-032, CONT-033, CONT-034, CONT-035, CONT-036, CONT-037 | live · security | Not implemented |
-| `mango.proposals.prepare` | Prepare grounded observations, forecasts and content | PROP-001, PROP-002, PROP-003, PROP-004, PROP-005, PROP-006, PROP-007, PROP-008, PROP-009 | standard or external | Proposal service; no MCP adapter |
+| `mango.contacts.erase` | Erase contact data and exercise privacy requests | CONT-013, CONT-029, CONT-030, CONT-021, CONT-022, CONT-023 | standard or destructive (+ sensitive) (+ external) | Not implemented |
+| `mango.tracking.configure` | Configure permitted onsite behavior capture | CONT-018, CONT-031, CONT-032, CONT-033, CONT-034, CONT-035, CONT-036, CONT-037 | live · security (+ destructive) | Not implemented |
+| `mango.proposals.prepare` | Prepare grounded proposals and record draft-level decisions | PROP-001, PROP-002, PROP-003, PROP-004, PROP-005, PROP-006, PROP-007, PROP-008, PROP-009 | standard or external (+ money) | Proposal service; no MCP adapter |
 | `mango.audiences.evaluate` | Inspect eligibility, counts and exclusions | AUD-001, AUD-010, AUD-002, AUD-003, AUD-004, AUD-005, AUD-006, AUD-007, AUD-008, AUD-009, AUD-011 | standard | Not implemented |
+| `mango.audiences.configure` | Change inactivity and frequency policy or overrides | AUD-008, AUD-009 | standard or live (+ commitment) | Not implemented |
 | `mango.campaigns.read` | Inspect campaign state, history and preview | CAMP-001, CAMP-003, CAMP-022 | standard | Not implemented |
-| `mango.campaigns.draft` | Edit, duplicate and prepare campaigns or images | CAMP-002, AUD-010, CAMP-020, CAMP-021, CAMP-007, CAMP-012, CAMP-023, CAMP-018 | standard | Not implemented |
-| `mango.campaigns.signoff` | Sign off the exact campaign revision | CAMP-004, CAMP-005 | commitment | Not implemented |
-| `mango.campaigns.schedule` | Schedule, cancel, pause or resume campaigns | CAMP-006, CAMP-009, CAMP-010, CAMP-011, CAMP-013, CAMP-014, CAMP-015, CAMP-016, CAMP-017 | live (+ external) | Not implemented |
-| `mango.campaigns.test` | Send a campaign test to chosen recipients | CAMP-008, CAMP-019, CAMP-024 | external | Not implemented |
-| `mango.designs.prepare` | Generate or import editable designs | DESIGN-001, DESIGN-005, DESIGN-006, DESIGN-002, DESIGN-007, DESIGN-008, DESIGN-009, DESIGN-010, DESIGN-003, DESIGN-011, DESIGN-004, DESIGN-012, DESIGN-013, DESIGN-014 | standard or external | Not implemented |
-| `mango.messages.check` | Check message identity, safety and rendering | MSG-001, MSG-002, MSG-003, MSG-004, MSG-005, MSG-006, MSG-007, MSG-008, MSG-009, MSG-016, MSG-010, MSG-011, MSG-012, MSG-013, MSG-014, MSG-015 | standard (+ security) | Not implemented |
-| `mango.delivery.dispatch` | Dispatch eligible messages and reconcile outcomes | SEND-001, SEND-002, SEND-003, SEND-004, SEND-005, SEND-006, SEND-007, SEND-008, SEND-009 | external | Scoped campaign-send API; no MCP adapter |
+| `mango.campaigns.draft` | Edit, duplicate and prepare campaigns or images | CAMP-002, AUD-010, CAMP-020, CAMP-021, CAMP-007, CAMP-012, CAMP-023, CAMP-018 | standard or external (+ money) | Not implemented |
+| `mango.campaigns.signoff` | Sign off the exact campaign revision | CAMP-004, CAMP-005, CAMP-007, PROP-009, OPER-005 | commitment (+ external) (+ live) (+ money) | Not implemented |
+| `mango.campaigns.schedule` | Schedule, cancel, pause or resume campaigns | CAMP-006, CAMP-009, CAMP-010, CAMP-011, CAMP-013, CAMP-014, CAMP-015, CAMP-016, CAMP-017 | standard or live (+ external) (+ money) | Not implemented |
+| `mango.campaigns.test` | Send a campaign test to chosen recipients | CAMP-008, CAMP-019, CAMP-024 | external (+ money) | Not implemented |
+| `mango.designs.prepare` | Generate or import editable designs | DESIGN-001, DESIGN-005, DESIGN-002, DESIGN-007, DESIGN-008, DESIGN-009, DESIGN-010, DESIGN-003, DESIGN-011, DESIGN-004, DESIGN-012, DESIGN-013, DESIGN-014 | standard or external (+ money) | Not implemented |
+| `mango.messages.check` | Check message identity, safety and rendering | MSG-001, MSG-002, MSG-003, MSG-004, MSG-005, MSG-006, MSG-007, MSG-008, MSG-009, MSG-016, MSG-010, MSG-011, MSG-012, MSG-013, MSG-014, MSG-015 | standard or external (+ security) (+ live) | Not implemented |
+| `mango.delivery.dispatch` | Dispatch eligible messages and reconcile outcomes | SEND-001, SEND-002, SEND-003, SEND-004, SEND-005, SEND-006, SEND-007, SEND-008, SEND-009 | external (+ money) | Scoped campaign-send API; no MCP adapter |
 | `mango.results.read` | Inspect marketing results, links, revenue and cost | RESULT-001, RESULT-002, RESULT-003, RESULT-004, RESULT-005, RESULT-009, RESULT-010, RESULT-006, RESULT-007, RESULT-008 | standard | Not implemented |
-| `mango.data.export` | Prepare a portable account export | DATA-001, DATA-002 | standard | Not implemented |
-| `mango.forms.publish` | Prepare and publish signup forms and landing pages | FORM-001, FORM-002, FORM-003, FORM-004, FORM-009 | standard or external (+ live) | Not implemented |
-| `mango.forms.measure` | Inspect form performance, referrals and refusal reports | FORM-005, FORM-006, FORM-010 | standard | Not implemented |
-| `mango.forms.configure` | Configure abuse controls and intake capacity | FORM-007, FORM-008, FORM-011, FORM-012, FORM-013 | security · live | Not implemented |
-| `mango.segments.manage` | Prepare and evaluate segments, predictions and scores | SEG-001, SEG-002, SEG-003, SEG-004, SEG-005, SEG-006 | standard | Not implemented |
-| `mango.content.edit` | Prepare templates, blocks, product and channel content | BUILD-001, BUILD-002, BUILD-003, BUILD-004, BUILD-005, BUILD-006, BUILD-008, BUILD-009, BUILD-010, BUILD-013, BUILD-014, BUILD-011, BUILD-012 | standard | Not implemented |
+| `mango.data.export` | Prepare a portable account export | DATA-001 | standard (+ sensitive) | Not implemented |
+| `mango.forms.publish` | Prepare, activate and publish forms, pages and test variants | FORM-001, FORM-002, FORM-003, FORM-004, FORM-005, FORM-009 | standard or external (+ live) (+ commitment) (+ money) | Not implemented |
+| `mango.forms.measure` | Inspect form performance, referral counts and refusal reports | FORM-005, FORM-006, FORM-010 | standard | Not implemented |
+| `mango.forms.referrals` | Configure milestones and fulfill referral rewards | FORM-006 | standard or external (+ money) (+ live) (+ commitment) | Not implemented |
+| `mango.forms.configure` | Configure opt-in modes, abuse controls and intake capacity | FORM-007, FORM-008, FORM-011, FORM-012, FORM-013, CONT-025 | security · live | Not implemented |
+| `mango.segments.manage` | Prepare and evaluate segments, predictions and scores | SEG-001, SEG-002, SEG-003, SEG-004, SEG-005, SEG-006 | standard (+ live) | Not implemented |
+| `mango.content.edit` | Prepare templates, blocks, product and channel content | BUILD-001, BUILD-002, BUILD-003, BUILD-004, BUILD-005, BUILD-006, BUILD-008, BUILD-009, BUILD-010, BUILD-013, BUILD-014, BUILD-011, BUILD-012 | standard or external | Not implemented |
 | `mango.coupons.prepare` | Prepare and issue catalog-grounded coupons | BUILD-007 | standard or money (+ external) | Not implemented |
 | `mango.flows.draft` | Prepare triggers, filters, waits, branches and goals | FLOW-001, FLOW-002, FLOW-003, FLOW-004, FLOW-005, FLOW-006, FLOW-007, FLOW-012, FLOW-015, FLOW-016 | standard | Not implemented |
-| `mango.flows.activate` | Sign off and activate a saved flow revision | FLOW-008 | commitment · live (+ external) | Not implemented |
-| `mango.flows.run` | Inspect, pause, resume and repair running flows | FLOW-009, FLOW-010, FLOW-011, FLOW-013, FLOW-014 | standard or live (+ external) | Not implemented |
-| `mango.experiments.manage` | Prepare experiments, holdouts and optimization | EXP-001, EXP-002, EXP-003, EXP-004, EXP-005, EXP-006 | standard or live (+ external) | Not implemented |
-| `mango.sms.connect` | Configure SMS sender and carrier registration | SMS-001, SMS-002, SMS-008 | accounts · security (+ gated) | Not implemented |
-| `mango.sms.compose` | Inspect quiet hours, two-way messages, links and MMS | SMS-003, SMS-004, SMS-005, SMS-007 | standard or external | Not implemented |
-| `mango.sms.budget` | Change the business’s SMS spending commitment | SMS-006 | money | Not implemented |
-| `mango.push.publish` | Configure and deliver web and app notifications | PUSH-001, PUSH-002 | external · live | Not implemented |
-| `mango.deliverability.configure` | Configure sender providers, domains and warm-up | DELIV-001, DELIV-002, DELIV-003, DELIV-004, DELIV-007, DELIV-008, DELIV-009, DELIV-010 | accounts or security (+ live) (+ gated) | Not implemented |
+| `mango.flows.activate` | Sign off and activate a saved flow revision | FLOW-008, OPER-005, AGENT-002, AGENT-007 | commitment · live (+ external) (+ money) (+ security) | Not implemented |
+| `mango.flows.run` | Inspect, pause, resume and repair running flows | FLOW-002, FLOW-006, FLOW-009, FLOW-010, FLOW-011, FLOW-013, FLOW-014, FLOW-015, FLOW-016 | standard or live (+ external) (+ money) (+ commitment) | Not implemented |
+| `mango.experiments.manage` | Prepare experiments, holdouts and optimization | EXP-001, EXP-002, EXP-003, EXP-004, EXP-005, EXP-006 | standard or live (+ external) (+ money) | Not implemented |
+| `mango.sms.connect` | Configure SMS sender and carrier registration | SMS-001, SMS-002, SMS-008 | accounts · security (+ gated) (+ live) (+ external) (+ money) (+ commitment) (+ sensitive) | Not implemented |
+| `mango.sms.compose` | Prepare messages, configure quiet hours and send replies or templates | SMS-003, SMS-004, SMS-005, SMS-007 | standard or external (+ live) (+ money) | Not implemented |
+| `mango.sms.budget` | Change the business’s SMS spending commitment | SMS-006 | money (+ live) | Not implemented |
+| `mango.push.publish` | Configure and deliver web and app notifications | PUSH-001, PUSH-002 | standard or external (+ live) (+ security) (+ money) | Not implemented |
+| `mango.deliverability.configure` | Configure sender providers, domains and warm-up | DELIV-001, DELIV-002, DELIV-003, DELIV-004, DELIV-007, DELIV-008, DELIV-009, DELIV-010 | accounts or security (+ live) (+ gated) (+ external) (+ money) | Not implemented |
 | `mango.deliverability.read` | Inspect mailbox-provider outcomes and address quality | DELIV-005, DELIV-006 | standard | Not implemented |
 | `mango.reports.read` | Inspect marketing and retention reports | REPORT-001, REPORT-002, REPORT-003, REPORT-004, REPORT-005, REPORT-007 | standard | Not implemented |
-| `mango.reports.schedule` | Schedule delivery of a custom report | REPORT-006 | external · live | Not implemented |
-| `mango.connections.configure` | Configure commerce, CRM and marketing connectors | INT-001, INT-002, INT-003, INT-004, INT-005, INT-006, INT-009, INT-010, INT-011, INT-014, INT-015, INT-016, INT-017, INT-018, INT-019, INT-020 | accounts · security (+ access) (+ gated) | Not implemented |
-| `mango.events.manage` | Record source events and configure outbound subscriptions | INT-007, INT-008 | standard or external (+ access) | Scoped custom-event API; no MCP adapter |
-| `mango.ad-audiences.sync` | Publish consented ad audiences | INT-012 | external | Not implemented |
+| `mango.reports.configure` | Change the saved attribution metric and window | REPORT-003 | standard or live | Not implemented |
+| `mango.reports.schedule` | Schedule delivery of a custom report | REPORT-006 | standard or live (+ external) (+ money) | Not implemented |
+| `mango.connections.configure` | Configure commerce, CRM and marketing connectors | INT-001, INT-002, INT-003, INT-004, INT-005, INT-006, INT-009, INT-010, INT-011, INT-014, INT-015, INT-016, INT-017, INT-018, INT-019, INT-020 | accounts · security (+ access) (+ gated) (+ live) (+ external) (+ money) (+ commitment) (+ destructive) | Not implemented |
+| `mango.events.manage` | Record source events and configure outbound subscriptions | INT-007, INT-008 | standard or external (+ access) (+ security) (+ live) (+ money) | Scoped custom-event API; no MCP adapter |
+| `mango.ad-audiences.sync` | Publish consented ad audiences | INT-012 | external (+ live) | Not implemented |
 | `mango.links.tag` | Prepare static campaign analytics tags | INT-013 | standard | Not implemented |
-| `mango.move.plan` | Prepare an incumbent move-in with mapping and reconciliation | MOVE-001, MOVE-002, MOVE-003, MOVE-004, MOVE-005, MOVE-006, MOVE-016, MOVE-007, MOVE-008, MOVE-017, MOVE-009, MOVE-010, MOVE-011, MOVE-018, MOVE-019, MOVE-012, MOVE-020, MOVE-021, MOVE-013, MOVE-022, MOVE-023, MOVE-024, MOVE-025, MOVE-026, MOVE-014, MOVE-015 | standard or accounts (+ security) (+ gated) | Not implemented |
+| `mango.move.plan` | Prepare an incumbent move-in with mapping and reconciliation | MOVE-001, MOVE-002, MOVE-003, MOVE-004, MOVE-005, MOVE-006, MOVE-016, MOVE-007, MOVE-008, MOVE-017, MOVE-009, MOVE-010, MOVE-011, MOVE-018, MOVE-019, MOVE-012, MOVE-020, MOVE-021, MOVE-013, MOVE-022, MOVE-023, MOVE-024, MOVE-025, MOVE-026, MOVE-014, MOVE-015 | standard or accounts (+ security) (+ gated) (+ live) (+ external) (+ commitment) | Not implemented |
 | `mango.archive.publish` | Publish a campaign in the public archive | PUB-001 | external · live | Not implemented |
-| `mango.paid.configure` | Configure a paid tier and payer signup | PUB-002, PUB-005, PUB-006 | money · commitment (+ accounts) (+ gated) | Not implemented |
+| `mango.paid.configure` | Configure a paid tier and payer signup | PUB-002, PUB-005, PUB-006 | money · commitment (+ accounts) (+ gated) (+ external) (+ live) (+ security) | Not implemented |
 | `mango.recommendations.publish` | Publish newsletter recommendations | PUB-003 | external | Not implemented |
 | `mango.sponsorships.manage` | Prepare and accept direct sponsorship terms | PUB-004 | standard or commitment (+ money) (+ external) | Not implemented |
-| `mango.retention.find` | Find retention gaps and supporting cohorts | AGENT-001 | standard | Not implemented |
-| `mango.retention.propose` | Prepare a powered retention journey | AGENT-002 | standard or external | Not implemented |
-| `mango.retention.judge` | Measure lift and apply declared stop rules | AGENT-003 | standard or live (+ external) | Not implemented |
-| `mango.lifecycle.repair` | Diagnose and repair lifecycle delivery gaps | AGENT-004 | standard or live (+ external) | Not implemented |
-| `mango.deliverability.diagnose` | Explain deliverability changes and prepare fixes | AGENT-005 | standard or security (+ live) | Not implemented |
-| `mango.account.audit` | Audit marketing practice and prepare draft fixes | AGENT-006 | standard | Not implemented |
-| `mango.content.draft` | Draft grounded campaign and flow content | AGENT-007 | standard or external | Not implemented |
-| `mango.questions.answer` | Prepare natural-language segments and cited answers | AGENT-008 | standard | Not implemented |
-| `mango.routines.manage` | Set schedules, thresholds and editable routine memory | AGENT-009 | standard (+ live) | Not implemented |
+| `mango.retention.find` | Find retention gaps and supporting cohorts | AGENT-001 | standard or external (+ money) | Not implemented |
+| `mango.retention.propose` | Prepare a powered retention journey | AGENT-002 | standard or external (+ money) | Not implemented |
+| `mango.retention.judge` | Measure lift and apply declared stop rules | AGENT-003 | standard or live (+ external) (+ money) | Not implemented |
+| `mango.lifecycle.repair` | Diagnose and repair lifecycle delivery gaps | AGENT-004 | standard or live (+ external) (+ money) | Not implemented |
+| `mango.deliverability.diagnose` | Explain deliverability changes and prepare fixes | AGENT-005 | standard or security (+ live) (+ external) (+ money) | Not implemented |
+| `mango.account.audit` | Audit marketing practice and prepare draft fixes | AGENT-006 | standard or external (+ money) | Not implemented |
+| `mango.content.draft` | Draft grounded campaign and flow content | AGENT-007 | standard or external (+ money) | Not implemented |
+| `mango.questions.answer` | Prepare natural-language segments and cited answers | AGENT-008 | standard or external (+ money) | Not implemented |
+| `mango.routines.manage` | Set schedules, thresholds and editable routine memory | AGENT-009 | standard (+ live) (+ external) (+ money) | Not implemented |
 | `mango.routines.authority` | Configure routine jobs, budget and disabling | AGENT-010 | access (+ money) (+ security) | Not implemented |
-| `mango.move.assist` | Explain incumbent mappings and import anomalies | AGENT-011 | standard or live | Not implemented |
+| `mango.move.assist` | Explain incumbent mappings and import anomalies | AGENT-011 | standard or live (+ external) (+ money) | Not implemented |
+
+**Tool scope.** A clause may name both a read and a write: contact search uses `mango.contacts.read`, bulk tags and topic changes use `mango.contacts.update`, bulk erasure uses `mango.contacts.erase`, and bulk export uses `mango.data.export`. Reading a record or preparing a draft does not perform its later sign-off, activation or delivery. Proposal adoption that binds a campaign uses `mango.campaigns.signoff`; retention and content specialists activate through `mango.flows.activate` and send through `mango.delivery.dispatch`. Running non-message flow actions use `mango.flows.run`. Each call computes every class of the effects it actually performs, including selected model work, public asset exposure, provider purchases and paid handoffs; a draft with none of those effects stays standard.
 
 **Resources.** `mango://contacts/{id}`, `mango://consent/{id}`, `mango://sources/{connection}/{record}`, `mango://segments/{id}`, `mango://proposals/{id}`, `mango://campaigns/{id}`, `mango://flows/{id}`, `mango://enrollments/{id}`, `mango://forms/{id}`, `mango://templates/{id}`, `mango://experiments/{id}`, `mango://messages/{id}`, `mango://imports/{id}`, `mango://reports/{id}`, `mango://routines/{id}` and `mango://paid-tiers/{id}`.
 
@@ -3697,6 +3703,8 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 - HEALTH-001: Dependency readiness is an installation fact; the check itself reads no marketing record.
 - MAIL-001: Selection of Managed transactional-mail service is an installation fact; marketing-provider jobs use the tools above.
 - MOBILE-002: The iOS and Android apps’ notification and device interfaces run on the device; their server jobs use the same tools.
+- DESIGN-001’s enablement inputs and DESIGN-006’s private local settings, hosted secret upload and design-only queue wiring are installation and connector facts, configured through the owner’s deployment tools; commissioning and resuming design work uses `mango.designs.prepare`.
+- DATA-002: Complete archive restoration belongs to the destination’s native-authenticated maintenance/import door, including its matching private backup keys. It is not an account-export operation; `mango.data.export` only prepares exports.
 
 **Limits.** Mango’s declared capacity limits bound request rate, input size, import size, recipient batch size and retained file bytes; the marketing installation publishes those capacities alongside its existing scale and intake limits. Business thresholds and provider-spend caps are the company’s policy.
 
@@ -3737,10 +3745,11 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 **Acceptance.**
 1. Creating or verifying a sending domain, provider account or SMS sender registration carries accounts with its named provider.
-2. Storing or rotating a marketing-provider credential or changing protective sender-authentication settings carries security with the changed setting.
+2. Storing or rotating a marketing-provider credential, including owner-held push credentials, or changing protective sender-authentication settings carries security with the changed setting.
 3. A Shopify or other provider authorization consent, identity verification, carrier-registration attestation or hosted payment entry that the provider reserves for a person carries gated with that provider and step.
 4. An API or broker credential route that the provider permits takes the company’s decision for its actual classes; its facts never claim a person completed a hosted step.
 5. A completed setup returns the particular sender, shop or carrier-registration resource and leaves other connections unchanged.
+6. Submitting carrier-registration identity data carries sensitive with its record count and data kind; its binding attestation carries commitment, and number purchases or registration fees add money with amount, currency and provider.
 
 #### SURFACE-004 — Marketing authority and irreversible privacy operations
 
@@ -3750,10 +3759,11 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 **Acceptance.**
 1. Inviting an operator or enlarging another integration grant is access with the number of people or grants and widening direction; removing membership or narrowing a grant records narrowing.
-2. Changing a sender secret or an authentication protection is security with its setting name.
-3. Erasing a contact or permanently purging retained marketing data is destructive with its affected-item count; a reversible draft removal stays standard.
+2. Changing a sender secret, webhook-signing secret, allowed-host protection or capture-mode setting under CONT-025 is security with its setting name; changing running capture also adds live.
+3. Erasing one contact or a selected bulk set under CONT-022, removing contact-owned custom objects or permanently purging retained marketing data is destructive with its affected-item count; a reversible draft removal stays standard.
 4. The contact-erasure fixture removes that contact’s Mango data while retaining the particular surviving opt-out custody CONT-013 requires.
 5. A routine disable changes access for that routine and prevents its next scheduled run.
+6. Reading or exporting CONT-029’s retained portable restriction mappings carries sensitive with the mapping-record count and data kind; the same classification applies when erasure handles those retained mappings.
 
 #### SURFACE-005 — Paid marketing and exact-revision commitments
 
@@ -3764,10 +3774,12 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 **Acceptance.**
 1. Changing a paid-newsletter recurring price or a coupon’s monetary value carries money with amount, currency and the customer or provider counterparty.
 2. Changing a provider spending commitment or sponsorship charge carries money with the value the saved operation changes.
-3. A campaign or flow sign-off carries commitment with its exact revision and the value or counterparty where the record has one.
+3. A campaign or flow sign-off, form activation under OPER-005 or source-consent attestation under CONT-038 carries commitment with its exact revision and the value or counterparty where the record has one; scheduling delivery adds external and live for its exposure and running schedule.
 4. A binding sponsorship acceptance carries commitment and money for its terms, while drafting those terms is standard.
 5. A paid offer exposed to readers adds external without creating or widening any reader’s channel consent.
 6. Under both company policies, the computed classes remain equal for the same saved price, coupon and revision.
+7. A send’s metered provider spend and each paid design or model request carry money with amount, currency and provider; this includes test and confirmation messages, SMS replies, scheduled reports, resumed flow sends, candidate purchases and newly paid layout retries. A free handoff or reuse that purchases nothing adds no money.
+8. Publishing a binding referral reward or signing off cutover adds commitment for the saved terms or checklist; a draft-only reward or checklist remains standard.
 
 #### SURFACE-006 — Live marketing changes
 
@@ -3778,7 +3790,7 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 **Acceptance.**
 1. Activating, pausing, resuming, archiving or changing a running flow carries live with the flow service identity.
 2. Changing a running campaign schedule, active intake setting or onsite-tracking switch carries live with the affected campaign or site.
-3. Changing an active sending route or connector behavior carries live in addition to any accounts, security, access or external class that the same operation meets.
+3. Changing an active sending route or connector behavior, including ending a parallel incumbent sync under MOVE-025, carries live in addition to any other class that the same operation meets.
 4. The same flow draft before activation stays standard, and its activation adds live without losing the exact-revision checks in FLOW-008.
 5. The company-policy fixture’s repair replay changes only the declared source window and eligible enrollments, leaving previously delivered messages intact.
 

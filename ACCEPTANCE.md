@@ -4743,10 +4743,11 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-004, BASE
 
 **Acceptance.**
 1. Creating or verifying a sending domain, provider account or SMS sender registration carries accounts with its named provider.
-2. Storing or rotating a marketing-provider credential or changing protective sender-authentication settings carries security with the changed setting.
+2. Storing or rotating a marketing-provider credential, including owner-held push credentials, or changing protective sender-authentication settings carries security with the changed setting.
 3. A Shopify or other provider authorization consent, identity verification, carrier-registration attestation or hosted payment entry that the provider reserves for a person carries gated with that provider and step.
 4. An API or broker credential route that the provider permits takes the company’s decision for its actual classes; its facts never claim a person completed a hosted step.
 5. A completed setup returns the particular sender, shop or carrier-registration resource and leaves other connections unchanged.
+6. Submitting carrier-registration identity data carries sensitive with its record count and data kind; its binding attestation carries commitment, and number purchases or registration fees add money with amount, currency and provider.
 
 **Evidence.** None.
 **Gap.** The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented.
@@ -4759,10 +4760,11 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-005, BASE
 
 **Acceptance.**
 1. Inviting an operator or enlarging another integration grant is access with the number of people or grants and widening direction; removing membership or narrowing a grant records narrowing.
-2. Changing a sender secret or an authentication protection is security with its setting name.
-3. Erasing a contact or permanently purging retained marketing data is destructive with its affected-item count; a reversible draft removal stays standard.
+2. Changing a sender secret, webhook-signing secret, allowed-host protection or capture-mode setting under CONT-025 is security with its setting name; changing running capture also adds live.
+3. Erasing one contact or a selected bulk set under CONT-022, removing contact-owned custom objects or permanently purging retained marketing data is destructive with its affected-item count; a reversible draft removal stays standard.
 4. The contact-erasure fixture removes that contact’s Mango data while retaining the particular surviving opt-out custody CONT-013 requires.
 5. A routine disable changes access for that routine and prevents its next scheduled run.
+6. Reading or exporting CONT-029’s retained portable restriction mappings carries sensitive with the mapping-record count and data kind; the same classification applies when erasure handles those retained mappings.
 
 **Evidence.** None.
 **Gap.** The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented.
@@ -4776,10 +4778,12 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-006, BASE
 **Acceptance.**
 1. Changing a paid-newsletter recurring price or a coupon’s monetary value carries money with amount, currency and the customer or provider counterparty.
 2. Changing a provider spending commitment or sponsorship charge carries money with the value the saved operation changes.
-3. A campaign or flow sign-off carries commitment with its exact revision and the value or counterparty where the record has one.
+3. A campaign or flow sign-off, form activation under OPER-005 or source-consent attestation under CONT-038 carries commitment with its exact revision and the value or counterparty where the record has one; scheduling delivery adds external and live for its exposure and running schedule.
 4. A binding sponsorship acceptance carries commitment and money for its terms, while drafting those terms is standard.
 5. A paid offer exposed to readers adds external without creating or widening any reader’s channel consent.
 6. Under both company policies, the computed classes remain equal for the same saved price, coupon and revision.
+7. A send’s metered provider spend and each paid design or model request carry money with amount, currency and provider; this includes test and confirmation messages, SMS replies, scheduled reports, resumed flow sends, candidate purchases and newly paid layout retries. A free handoff or reuse that purchases nothing adds no money.
+8. Publishing a binding referral reward or signing off cutover adds commitment for the saved terms or checklist; a draft-only reward or checklist remains standard.
 
 **Evidence.** None.
 **Gap.** The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented.
@@ -4793,7 +4797,7 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-006, BASE
 **Acceptance.**
 1. Activating, pausing, resuming, archiving or changing a running flow carries live with the flow service identity.
 2. Changing a running campaign schedule, active intake setting or onsite-tracking switch carries live with the affected campaign or site.
-3. Changing an active sending route or connector behavior carries live in addition to any accounts, security, access or external class that the same operation meets.
+3. Changing an active sending route or connector behavior, including ending a parallel incumbent sync under MOVE-025, carries live in addition to any other class that the same operation meets.
 4. The same flow draft before activation stays standard, and its activation adds live without losing the exact-revision checks in FLOW-008.
 5. The company-policy fixture’s repair replay changes only the declared source window and eligible enrollments, leaving previously delivered messages intact.
 
