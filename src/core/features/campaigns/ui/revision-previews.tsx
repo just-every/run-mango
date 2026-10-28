@@ -123,7 +123,7 @@ function PreviewContact({selected, onSelect}: {selected?: Contact; onSelect: (co
       <button type="submit" className="secondary-action" disabled={busy || address.trim().length < 2}>{busy ? 'Searching…' : 'Find preview contact'}</button>
     </form>
     {notice ? <p role="status">{notice}</p> : null}
-    {contacts.length ? <label>Preview contact<select style={{width: '100%', minWidth: 0}} value={selected?.id ?? ''} onChange={event => onSelect(contacts.find(contact => contact.id === event.target.value))}>
+    {contacts.length ? <label>Preview contact<select aria-label="Preview contact" style={{width: '100%', minWidth: 0}} value={selected?.id ?? ''} onChange={event => onSelect(contacts.find(contact => contact.id === event.target.value))}>
       <option value="">Example: Alex Example</option>
       {contacts.map(contact => <option key={contact.id} value={contact.id}>{contact.displayName}{contact.email ? ` (${contact.email})` : ''}</option>)}
     </select></label> : null}

@@ -383,7 +383,7 @@
       "required": false,
       "why": "On an explicit Owner/Admin import action, reads an ActiveCampaign account under *.api-us1.com, *.api-us2.com, *.api-eu1.com or *.activehosted.com, or Klaviyo at a.klaviyo.com. HTTPS only; no redirects or cross-origin pagination. No live sync or outbound marketing.",
       "data": [
-        "The source API key, only in that read\u2019s authentication header; never stored or logged by Mango",
+        "The source API key, only in that read’s authentication header; never stored or logged by Mango",
         "Account-relative pagination and source record identifiers for requested contacts, lists, tags, fields, segments, templates, events and flow outlines"
       ],
       "adapters": [
@@ -556,7 +556,7 @@
       "name": "MANGO_ALLOWED_LINK_HOSTS",
       "required": false,
       "secret": false,
-      "why": "Optional initial comma-separated destination hosts; defaults to the app\u2019s own host and remains editable in Mango Settings. Checked before an approved revision can send."
+      "why": "Optional initial comma-separated destination hosts; defaults to the app’s own host and remains editable in Mango Settings. Checked before an approved revision can send."
     },
     {
       "name": "MANGO_TEST_EMAIL_ALLOWLIST",

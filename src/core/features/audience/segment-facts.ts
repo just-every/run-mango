@@ -4,7 +4,8 @@ import { readContactRfm } from '@/core/features/insights/retention';
 /** Real local facts shared by the rule resolver, with no provider inference. */
 export function createSegmentFacts(db:D1Database) {
   return {
-    async propertyPersonalisation(contactId:string){const profile=await this.segmentProfile(contactId);return propertyPersonalisation(profile.definitions,profile.fields);},
+    async propertyPersonalisation(contactId:string){if(!(await propertyDefinitions(db)).length)return {};const profile=await this.segmentProfile(contactId);return propertyPersonalisation(profile.definitions,profile.fields);},
+    segmentPropertyDefinitions:()=>propertyDefinitions(db),
     segmentRfm:(now:Date)=>readContactRfm(db,now),
     async segmentProfile(contactId:string) {
       const row=await db.prepare('SELECT fields_json fields,tags_json tags FROM integration_contact_profiles WHERE contact_id=?').bind(contactId).first<{fields:string;tags:string}>();

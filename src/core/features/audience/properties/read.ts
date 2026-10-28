@@ -7,7 +7,9 @@ export async function propertyDefinitions(db:D1Database):Promise<PropertyDefinit
 /** The native contact ledger is the value journal. Import snapshots already carry
  * and reverse these rows atomically; legacy scoped fields remain the opening value. */
 export function propertyFields(fields:Record<string,unknown>,history:Array<{kind?:string;detail:string}>) {
-  const values:Record<string,unknown>=Object.assign(Object.create(null),fields);
+  const values:Record<string,unknown>=Object.create(null);
+  for(const row of history)if(row.kind==='incumbent-profile')Object.assign(values,JSON.parse(row.detail).fields);
+  Object.assign(values,fields);
   for(const row of history)if(row.kind===undefined||row.kind==='property-change'){
     const change=JSON.parse(row.detail) as PropertyChange;values[change.key]=change.newValue;
   }
@@ -16,7 +18,7 @@ export function propertyFields(fields:Record<string,unknown>,history:Array<{kind
 export async function readPropertyFields(db:D1Database,contactId:string) {
   const [profile,history]=await Promise.all([
     db.prepare('SELECT fields_json FROM integration_contact_profiles WHERE contact_id=?').bind(contactId).first<{fields_json:string}>(),
-    db.prepare("SELECT detail FROM contact_history WHERE contact_id=? AND kind='property-change' ORDER BY occurred_at,id").bind(contactId).all<{detail:string}>(),
+    db.prepare("SELECT kind,detail FROM contact_history WHERE contact_id=? AND kind IN ('property-change','incumbent-profile') ORDER BY occurred_at,id").bind(contactId).all<{kind:string;detail:string}>(),
   ]);
   return propertyFields(profile?JSON.parse(profile.fields_json):{},history.results);
 }

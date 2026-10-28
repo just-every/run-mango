@@ -17,6 +17,7 @@ export function importPropertyValues(row:NormalizedImportRow,definitions:Propert
   return fields;
 }
 export function appendImportProperties(snapshot:AudienceSnapshot,row:NormalizedImportRow,definitions:PropertyDefinition[],opening:Record<string,unknown>,reference:string,now:number) {
+  now=snapshot.tables.contact_history.filter(row=>row.kind==='property-change').reduce((at,row)=>Math.max(at,Number(row.occurred_at)+1),now);
   const before=propertyFields(opening,snapshot.tables.contact_history.map(r=>({kind:String(r.kind),detail:String(r.detail)}))),fields=importPropertyValues(row,definitions);
   const mapping=row.propertyColumns??{};
   for(const change of changedProperties(definitions,before,fields,{kind:'import',label:`CSV import: ${row.file}`,reference})){

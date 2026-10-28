@@ -1,5 +1,5 @@
 import {ulid,stableJson} from '@/core/shared/ids';
-import {propertyDefinitions,readPropertyFields,readTypedProperty} from './read';
+import {propertyFields,readTypedProperty} from './read';
 import {validateProperty} from './validation';
 import {PropertyError,type PropertyDefinition,type PropertySource,type PropertyChange} from './types';
 export function validatePropertyFields(definitions:PropertyDefinition[],fields:Record<string,unknown>) {
@@ -19,20 +19,36 @@ export function changeRow(contactId:string,change:PropertyChange,now:number) {
   return {id:ulid(now),contact_id:contactId,kind:'property-change',detail:stableJson(change),occurred_at:now,created_at:now,updated_at:now};
 }
 export async function propertyWriteStatements(db:D1Database,contactId:string,fields:Record<string,unknown>,source:PropertySource,now=Date.now(),replace=false,guard?:{sql:string;params:unknown[]}) {
-  const definitions=await propertyDefinitions(db),before=await readPropertyFields(db,contactId);
-  const latest=await db.prepare("SELECT max(occurred_at) at FROM contact_history WHERE contact_id=? AND kind='property-change'").bind(contactId).first<{at:number|null}>();
-  now=Math.max(now,(latest?.at??0)+1);
+  const snapshots=await db.batch<Record<string,unknown>>([
+    db.prepare('SELECT key,label,type,options_json FROM contact_property_definitions ORDER BY key'),
+    db.prepare('SELECT fields_json FROM integration_contact_profiles WHERE contact_id=?').bind(contactId),
+    db.prepare("SELECT kind,detail,occurred_at FROM contact_history WHERE contact_id=? AND kind IN ('property-change','incumbent-profile') ORDER BY occurred_at,id").bind(contactId),
+  ]);
+  const definitions=snapshots[0].results.map(row=>({key:row.key,label:row.label,type:row.type,options:JSON.parse(String(row.options_json))})) as PropertyDefinition[];
+  const profile=String(snapshots[1].results[0]?.fields_json??'{}'),history=snapshots[2].results as Array<{kind:string;detail:string;occurred_at:number}>,before=propertyFields(JSON.parse(profile),history);
+  now=history.reduce((at,row)=>Math.max(at,row.occurred_at+1),now);
   const validated=validatePropertyFields(definitions,fields),changes=changedProperties(definitions,before,validated,source,replace);
   const statements=changes.map(change=>{
     const row=changeRow(contactId,change,now);
     return db.prepare(`INSERT INTO contact_history(id,contact_id,kind,detail,occurred_at,created_at,updated_at) SELECT ?,?,?,?,?,?,?${guard?' WHERE '+guard.sql:''}`).bind(...Object.values(row),...(guard?.params??[]));
   });
-  return {validated,statements};
+  const expected=definitions.map(d=>({key:d.key,type:d.type,options:JSON.stringify(d.options)}));
+  // Optimistic concurrency refuses a stale old-value read, including a definition
+  // change, a concurrent profile update or a merge. D1 rolls the whole batch back.
+  const fence=db.prepare(`INSERT INTO ik_d1_assertions(ok) SELECT CASE WHEN
+    EXISTS(SELECT 1 FROM contacts WHERE id=? AND merge_lock IS NULL)
+    AND COALESCE((SELECT fields_json FROM integration_contact_profiles WHERE contact_id=?),'{}')=?
+    AND (SELECT count(*) FROM contact_history WHERE contact_id=? AND kind IN ('property-change','incumbent-profile'))=?
+    AND (SELECT count(*) FROM contact_property_definitions)=?
+    AND NOT EXISTS(SELECT 1 FROM json_each(?) e WHERE NOT EXISTS(SELECT 1 FROM contact_property_definitions d
+      WHERE d.key=json_extract(e.value,'$.key') AND d.type=json_extract(e.value,'$.type') AND d.options_json=json_extract(e.value,'$.options')))
+    THEN 1 ELSE 0 END`).bind(contactId,contactId,profile,contactId,history.length,definitions.length,JSON.stringify(expected));
+  return {validated,statements:changes.length?[fence,...statements]:statements};
 }
 export async function editContactProperties(db:D1Database,contactId:string,fields:Record<string,unknown>,source:PropertySource) {
   if(!await db.prepare('SELECT id FROM contacts WHERE id=? AND merge_lock IS NULL').bind(contactId).first())throw new PropertyError('contact_not_found',contactId,404);
   const {validated,statements}=await propertyWriteStatements(db,contactId,fields,source);
   const current=await db.prepare('SELECT fields_json FROM integration_contact_profiles WHERE contact_id=?').bind(contactId).first<{fields_json:string}>();
   const merged={...(current?JSON.parse(current.fields_json):{}),...validated};
-  await db.batch([...statements,db.prepare(`INSERT INTO integration_contact_profiles(contact_id,fields_json,tags_json) VALUES(?,?,'[]') ON CONFLICT(contact_id) DO UPDATE SET fields_json=excluded.fields_json`).bind(contactId,JSON.stringify(merged))]);
+  try{await db.batch([...statements,db.prepare(`INSERT INTO integration_contact_profiles(contact_id,fields_json,tags_json) VALUES(?,?,'[]') ON CONFLICT(contact_id) DO UPDATE SET fields_json=excluded.fields_json`).bind(contactId,JSON.stringify(merged))]);}catch(error){if(String(error).includes('ik_d1_assertions'))throw new PropertyError('property_write_conflict',contactId,409);throw error;}
 }

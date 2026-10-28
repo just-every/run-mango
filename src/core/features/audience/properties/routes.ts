@@ -1,3 +1,4 @@
+import {recordActivity} from '@/core/features/auth/activity-record';
 import {Hono} from 'hono';
 import {z} from 'zod';
 import type {AuthVariables} from '@/core/features/auth/routes';
@@ -18,9 +19,11 @@ export function createPropertyRoutes(db:D1Database) {
   for(const method of ['post','put'] as const)routes[method]('/settings/properties',async c=>{
     const parsed=definitionInput.safeParse(await c.req.json().catch(()=>null));
     if(!parsed.success)return c.json({error:'property_definition_invalid'},400);
-    return c.json({definition:await saveDefinition(db,parsed.data,method==='put')},method==='post'?201:200);
+    const definition=await saveDefinition(db,parsed.data,method==='put');
+    await recordActivity(db,{key:'property-definition:'+crypto.randomUUID(),action:method==='post'?'property.defined':'property.definition-updated',entityType:'contact-property',entityId:definition.key,actorId:c.get('operator').id});
+    return c.json({definition},method==='post'?201:200);
   });
-  routes.delete('/settings/properties/:key',async c=>{await deleteDefinition(db,c.req.param('key'));return c.json({kind:'deleted'});});
+  routes.delete('/settings/properties/:key',async c=>{await deleteDefinition(db,c.req.param('key'));await recordActivity(db,{key:'property-deletion:'+crypto.randomUUID(),action:'property.deleted',entityType:'contact-property',entityId:c.req.param('key'),actorId:c.get('operator').id,detail:{removed:'Definition, current values, legacy fields and property-change history'}});return c.json({kind:'deleted'});});
   routes.put('/contacts/:id/properties',async c=>{
     const parsed=values.safeParse(await c.req.json().catch(()=>null));if(!parsed.success)return c.json({error:'property_values_invalid'},400);
     const operator=c.get('operator');await editContactProperties(db,c.req.param('id'),parsed.data.fields,{kind:'operator',label:operator.displayName||operator.email,reference:operator.id});

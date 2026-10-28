@@ -1,3 +1,4 @@
+import {propertyRuleIssue} from './properties/rule-validation';
 import {readTypedProperty} from './properties/read';
 import type { Platform } from '@/core/shared/platform';
 import { sha256 } from '@/core/shared/ids';
@@ -31,7 +32,7 @@ export async function readContactProfile(platform:Platform, contactId:string):Pr
   const segments:ContactProfile['segments']=[];
   if(contact)for(const segment of saved.results) {
     const rules=parseStructuredRules(segment.inclusion,segment.exclusions);
-    if(!rules.ok || (await segmentAvailability(repository,rules.inclusion,rules.exclusions)).length ||
+    if(!rules.ok || propertyRuleIssue(profile.definitions,rules.inclusion,rules.exclusions) || (await segmentAvailability(repository,rules.inclusion,rules.exclusions)).length ||
       (await store.freshness(rules.sourceTypes.filter(type=>type!=='contact'&&type!=='campaign').map(type=>type==='browsing'?'browsing-event':type) as Parameters<typeof store.freshness>[0],now)).length) {
       segments.push({id:segment.id,name:segment.name,state:'unavailable'});continue;
     }

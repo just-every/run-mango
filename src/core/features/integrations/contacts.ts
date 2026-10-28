@@ -1,3 +1,4 @@
+import {PropertyError} from '@/core/features/audience/properties/types';
 import {propertyDefinitions,readPropertyFields} from '@/core/features/audience/properties/read';
 import {propertyWriteStatements,validatePropertyFields} from '@/core/features/audience/properties/write';
 import {ProviderDeferredError} from '@/core/shared/provider-deferred-error';
@@ -63,7 +64,7 @@ export function createIntegrationContacts(db: D1Database, audience: ReturnType<t
         db.prepare(`INSERT INTO integration_contact_profiles(contact_id,fields_json,tags_json) VALUES(?,?,?) ON CONFLICT(contact_id)
           DO UPDATE SET fields_json=CASE WHEN ? THEN excluded.fields_json ELSE fields_json END,tags_json=CASE WHEN ? THEN excluded.tags_json ELSE tags_json END`)
           .bind(contact.id, JSON.stringify(input.fields ?? {}), JSON.stringify(input.tags ?? []), input.fields !== undefined ? 1 : 0, input.tags !== undefined ? 1 : 0));
-      await db.batch(statements);
+      try{await db.batch(statements);}catch(error){if(String(error).includes('ik_d1_assertions'))throw new PropertyError('property_write_conflict',contact.id,409);throw error;}
       if(input.subscribe&&input.consent){
         const consent=input.consent,evidenceId=`integration-consent:${await sha256(stableJson({credentialId,email:input.email,consent}))}`;
         try{await audience.capturePublicSignup({contact:{email:input.email,displayName:input.displayName},channel:'email',

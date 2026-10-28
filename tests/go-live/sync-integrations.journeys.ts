@@ -1,3 +1,4 @@
+import {proveCustomProperties} from './custom-property-journey';
 import AxeBuilder from '@axe-core/playwright';
 import {openPage} from '../support/navigation';
 import {manualEntryJourney} from './manual-entry-journey';
@@ -9,7 +10,7 @@ import { event, eventSigner } from './sendgrid-events';
 import { activityJourney } from './activity-log';
 import { installation, json, sender, availableTransport, draftCampaign, approve, dispatch, signedPost } from './harness';
 
-test('[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
+test('[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression', async ({page: browserPage}, info) => {
   const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer,{sms:true});
   try {
     const cookie = await site.open();
@@ -121,6 +122,7 @@ test('[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-
     await activityJourney(site, edge, cookie, browserPage, info, {sent});
     await manualEntryJourney(site,edge,cookie,browserPage,info);
     await proveReviewLoyalty(site,cookie,browserPage,info,edge);
+    await proveCustomProperties(site,cookie,browserPage,info,edge);
     expect(edge.unexpected).toEqual([]);
   } finally {await site.runtime.close(); await edge.close();}
   const managedEdge = await providerEdge(), managed = await installation(managedEdge, eventSigner(), {managed: 'none'});
