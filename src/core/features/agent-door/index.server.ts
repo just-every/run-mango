@@ -55,7 +55,16 @@ export function createMangoDoor(environment:AppBindings,platform:Platform,auth:R
   prompts:[{name:'newsletter',title:'Prepare and deliver a newsletter',description:'Read current store, sender and audience evidence, create an exact newsletter revision, follow company policy, inspect native delivery results.',
    clauses:['CAMP-003','CAMP-004','SEND-005','SEND-006'],messages:()=>[{role:'user',content:{type:'text',text:'Read store, sender and audience evidence. Prepare a canonical newsletter draft and structured audience. Refresh native checks, authorize its exact revision under company policy and inspect recipient outcomes. Opt-outs, sender lapse and changed content block sending. Keep provider uncertainty and imported engagement separate from delivery. Designs remain draft artifacts until explicitly saved. Generic flow graphs cannot send; only the WooCommerce tag-and-exit starter can run. Spend caps are not enforced.'}}]}],
  });
- const settings=createBusinessSettings({db,trust:environment.RER_BUSINESS_TRUST??null,
-  business:{settings:1,values:['display_name'],team:{roles:{admin:'admin',member:'member'}}},team:auth.businessTeam()});
+ const settings={handle(request:Request){
+  // Shared settings validates its route, signed audience and body before the
+  // native team adapter is needed. Local auth keeps this request's loopback
+  // origin even when a draft's public links use the canonical HTTPS origin.
+  let team:ReturnType<typeof auth.businessTeam>|undefined;
+  const nativeTeam=()=>team??=auth.businessTeam(request);
+  return createBusinessSettings({db,trust:environment.RER_BUSINESS_TRUST??null,
+   business:{settings:1,values:['display_name'],team:{roles:{admin:'admin',member:'member'}}},
+   team:{ownerEmail:async()=>await nativeTeam().ownerEmail?.()??null,prepare:input=>nativeTeam().prepare(input)},
+  }).handle(request);
+ }};
  return {door,settings};
 }

@@ -87,7 +87,7 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       if(!row)return undefined;
       return project({id:String(row.id),email:String(row.email),displayName:String(row.display_name),role:String(row.role),status:String(row.status)} as Operator);
     },
-    businessTeam() { return core(new Request(config.publicBaseUrl),true).businessTeam; },
+    businessTeam(request: Request) { return core(request,true).businessTeam!; },
     async handle(request: Request) {
       if (new URL(request.url).pathname === '/auth/environment') return Response.json({ local });
       // Administrative APIs are mediated by Mango's operator policy.

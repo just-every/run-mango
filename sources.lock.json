@@ -3158,7 +3158,7 @@
       "executable": false
     },
     "src/core/features/agent-door/index.server.ts": {
-      "sha256": "f890207ddd9b5c8ea0b29be525316c048bc0e2faaa37843e224edb905a3fdd25",
+      "sha256": "d26fa177a44e757e9e4e6e00ee33966daafa284faa0f3f6f0ab5e3c2c1a0f752",
       "executable": false
     },
     "src/core/features/agent-door/native-context.ts": {
@@ -3810,7 +3810,7 @@
       "executable": false
     },
     "src/core/features/auth/service.ts": {
-      "sha256": "32ee2f834a384df9590040695ab646574dfefd69db348591c5120799cb253c31",
+      "sha256": "36fdc3f1956c4fa7093878c31971f687b834b98fa3bf7a33bc7404b99c6cae82",
       "executable": false
     },
     "src/core/features/auth/setup-complete.ts": {
