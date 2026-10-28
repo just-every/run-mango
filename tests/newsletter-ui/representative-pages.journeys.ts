@@ -14,11 +14,14 @@ test('[BASE-ACCESS-002][MOBILE-001] phone visitors reach public docs and operato
     expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
     await page.screenshot({path:info.outputPath(name+'-390.png'),fullPage:true});
   };
-  await openPage(page,'/docs');
-  const contents=page.locator('summary').filter({hasText:'Contents'}).first();
-  await expect(contents).toBeVisible();await contents.click();
+  await openPage(page,'/docs/getting-started');
+  const contents=page.getByRole('navigation',{name:'Documentation'}).locator('summary').filter({visible:true});
+  await expect(contents).toBeVisible();await contents.focus();await contents.press('Enter');
   await expect(page.locator('details[open] [aria-current="page"]')).toHaveCount(1);
   await audit('public-docs');
+  const command=page.locator('.docs-prose pre').first();
+  await expect(command).toBeVisible();
+  expect(await command.evaluate(node=>node.scrollWidth<=node.clientWidth)).toBe(true);
   expect((await request.get('/app',{maxRedirects:0})).status()).toBe(303);
   await signInAsLocalOperator(page,request);
   await openPage(page,'/app');

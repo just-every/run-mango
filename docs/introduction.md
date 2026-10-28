@@ -22,7 +22,7 @@ Mango 0.2.0 is a newsletter release candidate. This documentation describes what
 
 ## What you need
 
-To try it locally, run the one-line start in [Getting started](./getting-started.md) (`curl -fsSL https://runeditrun.com/install.sh | sh -s -- dev just-every/run-mango`; Git is required, and rer brings Node and pnpm). Pinned rer 0.2.76 then manages this project's exact Node, pnpm and the locked dependencies. Open the private `RER_OPEN` development entry in your browser to start a native local owner session without email. This entry carries a private dev key; it is not an emailed one-use sign-in link. No captured-mail page is exposed. A local copy can write drafts, import contacts and show the signup page, but confirmation email requires a hosted installation with configured mail and local copies cannot send real newsletters.
+To try it locally, run the one-line start in [Getting started](./getting-started.md) (`curl -fsSL https://runeditrun.com/install.sh | sh -s -- dev just-every/run-mango`; Git is required, and rer brings Node and pnpm). Pinned rer 0.2.85 then manages this project's exact Node, pnpm and the locked dependencies. Open the private `RER_OPEN` development entry in your browser to start a native local owner session without email. This entry carries a private dev key; it is not an emailed one-use sign-in link. No captured-mail page is exposed. A local copy can write drafts, import contacts and show the signup page, but confirmation email requires a hosted installation with configured mail and local copies cannot send real newsletters.
 
 To send real newsletters you need:
 
@@ -43,6 +43,6 @@ The repository records local tests and some earlier checks on disposable install
 
 ## Where to go next
 
-Start with [Install and deploy](./install.md). Then [write your first newsletter](./first-newsletter.md), and read [Backup and export](./backup-and-export.md) before you rely on Mango with real subscribers.
+Start with [Getting started](./getting-started.md). Then [write your first newsletter](./first-newsletter.md), and read [Backup and export](./backup-and-export.md) before you rely on Mango with real subscribers.
 
 > **Tip:** Run Mango locally first. You can write a draft, try the signup page and rehearse a contact import before you touch Cloudflare or a mail provider.

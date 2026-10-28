@@ -1,14 +1,17 @@
 import type { D1Database } from '../d1/types.ts';
 import type { DoorRequest, ImportDoorRuntimeOptions } from './types.ts';
-import { DoorError, type DoorAction } from './protocol.ts';
+import { DoorError, GRANT_ONLY_ACTIONS, type DoorAction } from './protocol.ts';
 import { authorized, erasedSince } from './store.ts';
 import { sizeLimitError } from './limits.ts';
 import { requestDatabase } from '../d1/budget.ts';
 import { uploads } from './uploads.ts';
 import { plan } from './planning.ts';
 import { apply, status, reconcile, undo } from './jobs.ts';
+import { archive, restoreCheck } from './archive.ts';
+import { streamUpload } from './intake-upload.ts';
+import { intakeIdentity } from './intake-policy.ts';
 
-const routes = {uploads,plan,apply,status,reconcile,undo};
+const routes = {uploads,plan,apply,status,reconcile,undo,archive,'restore-check':restoreCheck};
 const headers = {'Cache-Control':'no-store','Content-Type':'application/json','X-Content-Type-Options':'nosniff'};
 async function readInput(request: Request): Promise<Record<string,unknown>> {
   if (request.headers.get('Content-Type')?.split(';')[0] !== 'application/json' || !request.body) throw new DoorError('json_body_required',400);
@@ -28,9 +31,15 @@ async function readInput(request: Request): Promise<Record<string,unknown>> {
   if (!value || typeof value!=='object' || Array.isArray(value)) throw new DoorError('invalid_input',400);
   return value;
 }
+/** The settings every mount needs whatever its source: a preserving undo policy needs the adapter's preserved undo. */
+export function mountValid(options: Partial<ImportDoorRuntimeOptions>): boolean {
+  return !!options.ownerPrincipalId?.trim() && !!options.destination?.trim() && [undefined,'strict','preserve-conflicts'].includes(options.reversalPolicy)
+    && (options.reversalPolicy!=='preserve-conflicts' || typeof options.targets?.preparePreservedUndo==='function');
+}
 /** Refuses a mount, or a resolved source, missing what the pipeline needs. */
 export function runtimeOptions<T extends Partial<ImportDoorRuntimeOptions>>(options: T): T & ImportDoorRuntimeOptions {
-  if (!options.ownerPrincipalId?.trim() || !options.destination?.trim() || !options.mapping?.version || typeof options.parse!=='function') throw new DoorError('invalid_configuration',503);
+  if (!options.mapping?.version || typeof options.parse!=='function' || !mountValid(options)) throw new DoorError('invalid_configuration',503);
+  if (options.intake !== undefined) intakeIdentity(options.intake);
   return options as T & ImportDoorRuntimeOptions;
 }
 /** Server-side mount only. A null response belongs to another dispatcher. Every
@@ -50,11 +59,16 @@ export function createDoorHandler(prefix: string, database: D1Database,
       const budgeted = requestDatabase(database);
       if (!await available(budgeted)) return Response.json({error:'not_found'},{status:404,headers});
       const action = url.pathname.slice(prefix.length) as DoorAction;
-      if (!Object.hasOwn(routes,action)) return Response.json({error:'not_found'},{status:404,headers});
+      if (!Object.hasOwn(routes,action) || (prefix !== '/api/rer/import/' && GRANT_ONLY_ACTIONS.includes(action))) return Response.json({error:'not_found'},{status:404,headers});
       if (request.method!=='POST') return Response.json({error:'method_not_allowed'},{status:405,headers:{...headers,Allow:'POST'}});
       if (url.search || url.hash) throw new DoorError('query_transport_forbidden',400);
       admitted = await admit(request,action,budgeted);
       if (!admitted) return Response.json({error:'not_found'},{status:404,headers});
+      if (action === 'uploads' && admitted.options.intake && request.headers.get('Content-Type')?.split(';')[0] === 'application/octet-stream') {
+        const result = await streamUpload(admitted,request);
+        await authorized(admitted);
+        return Response.json(result,{headers});
+      }
       const input = await readInput(request);
       admitted = await review(admitted,input);
       if (['status','reconcile','undo'].includes(action) && Object.keys(input).some(k=>k!=='planId')) throw new DoorError('invalid_input',400);
