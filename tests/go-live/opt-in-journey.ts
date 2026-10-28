@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import {expect,type Page,type TestInfo} from '@playwright/test';
-import type {kioskInstallation} from './kiosk-harness';
+import {signupCounterWindow,type kioskInstallation} from './kiosk-harness';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage} from '../support/navigation';
 export async function optInJourney(site:Awaited<ReturnType<typeof kioskInstallation>>,page:Page,info:TestInfo){
@@ -21,10 +21,11 @@ export async function optInJourney(site:Awaited<ReturnType<typeof kioskInstallat
  }
  expect((await setMode('hosted','single',admin)).status).toBe(200); // no duplicate audit
  const single='synthetic-mango-mode-single@example.test',retained='synthetic-mango-mode-retained@example.test';
- const before=(await site.rows("SELECT count FROM oa_limits WHERE key='signup-challenged-global'"))[0].count;
+ const counter=await signupCounterWindow(site,'signup-challenged-global');
+ const before=await counter();
  for(const email of [single,retained]){expect((await capture(email)).status).toBe(202);expect((await status(email)).email_status).toBe('subscribed');expect((await messages()).filter(m=>m.to===email)).toHaveLength(0);}
  expect((await capture(single)).status).toBe(202);
- expect((await site.rows("SELECT count FROM oa_limits WHERE key='signup-challenged-global'"))[0].count).toBe(before+2);
+ expect(await counter()).toBe(before+2);
  const evidence=(await site.rows(`SELECT e.*,m.capture_ip FROM consent_evidence e JOIN consent_capture_metadata m ON m.id=e.id WHERE e.destination='${single}'`))[0];
  expect(evidence).toMatchObject({confirmation_required:0,capture_method:'hosted-signup-form',capture_source:site.runtime.url+'/subscribe',capture_ip:'198.51.100.224',message_category:'newsletter',frequency_disclosure:'Monthly newsletter'});
  expect(evidence.consent_text).toContain('I agree');expect(evidence.confirmed_at).toBe(evidence.occurred_at);

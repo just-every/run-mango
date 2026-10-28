@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import {expect,type Page,type TestInfo} from '@playwright/test';
-import type {kioskInstallation} from './kiosk-harness';
+import {signupCounterWindow,type kioskInstallation} from './kiosk-harness';
 import {localSessionCookieName} from '../support/local-session';
 import {openPage} from '../support/navigation';
 
@@ -17,10 +17,10 @@ export async function capacityJourney(site:Awaited<ReturnType<typeof kioskInstal
     for(let index=0;index<entries.length;index+=10)statuses.push(...(await site.control('/_kiosk/captures',{entries:entries.slice(index,index+10)})).statuses);
     return statuses;
   };
-  const counter=async(key:string)=>(await site.rows(`SELECT COALESCE((SELECT count FROM oa_limits WHERE key='${key}'),0) AS n`))[0].n;
+  let counter=await signupCounterWindow(site,'signup-challenged-global');
   const minute=()=>site.control('/_kiosk/window',{kind:'minute'});
   await minute();
-  const before=await counter('signup-challenged-global');
+  const before=await counter();
   // One volume matrix through the public Worker door: 600 on 200 networks,
   // with every complete minute accepting its full 100-request burst.
   for(let minuteIndex=0;minuteIndex<6;minuteIndex++){
@@ -28,16 +28,17 @@ export async function capacityJourney(site:Awaited<ReturnType<typeof kioskInstal
     const entries=Array.from({length:100},(_,offset)=>{const index=minuteIndex*100+offset;return {email:`synthetic-mango-volume-${index}@example.test`,ip:`198.51.100.${1+index%200}`,token:`kiosk-token-${crypto.randomUUID()}`};});
     expect(await batch(entries)).toEqual(Array(100).fill(202));
   }
-  expect(await counter('signup-challenged-global')).toBe(before+600);
+  expect(await counter()).toBe(before+600);
   expect((await site.rows("SELECT count(*) AS n FROM contacts WHERE email LIKE 'synthetic-mango-volume-%' AND email_status='pending'"))[0].n).toBe(600);
   const bots=Array.from({length:200},(_,index)=>({email:`synthetic-mango-bot-${index}@example.test`,ip:`203.0.113.${1+index%200}`,token:index%2?`kiosk-token-${crypto.randomUUID()}`:`invalid-${index}`,...(index%2?{website:'robot'}:{})}));
   expect(await batch(bots)).toEqual(bots.map((_,index)=>index%2?202:400));
-  expect(await counter('signup-challenged-global')).toBe(before+600);
+  expect(await counter()).toBe(before+600);
   await minute();
   expect((await capture('synthetic-mango-after-bots@example.test','198.51.100.220')).status).toBe(202);
-  const duplicateBefore=await counter('signup-challenged-global');
+  counter=await signupCounterWindow(site,'signup-challenged-global');
+  const duplicateBefore=await counter();
   expect((await Promise.all([0,1].map(()=>capture('synthetic-mango-duplicate@example.test','198.51.100.221')))).map(r=>r.status)).toEqual([202,202]);
-  expect(await counter('signup-challenged-global')).toBe(duplicateBefore+1);
+  expect(await counter()).toBe(duplicateBefore+1);
   expect((await site.control('/_kiosk/messages')).filter((m:any)=>m.to==='synthetic-mango-duplicate@example.test')).toHaveLength(1);
   // Unchallenged captures spend their own pool and the same network count.
   expect((await site.settings({...setting,challengeEnabled:false})).status).toBe(200);

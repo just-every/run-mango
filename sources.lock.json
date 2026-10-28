@@ -8054,7 +8054,7 @@
       "executable": false
     },
     "tests/go-live/kiosk-harness.ts": {
-      "sha256": "de57a31d61a0a30fdaf9d27da04e1b4222fedf2caac53ec7b93daea83ddcdc71",
+      "sha256": "4844e0c5d7103b6675e6b8b61d7e785857ec7753581265b92cd3c9d97b172589",
       "executable": false
     },
     "tests/go-live/kiosk-worker.ts": {
@@ -8094,7 +8094,7 @@
       "executable": false
     },
     "tests/go-live/opt-in-journey.ts": {
-      "sha256": "e89d50a4852be095dc871549f21969d9d260808477c5f1ed18821ce5269c7ef4",
+      "sha256": "fc0aed98ce7e3406eebb1dd8e9e5a8e16c57db4e393d53d85f51d4f46cd0bfa0",
       "executable": false
     },
     "tests/go-live/opt-out-reasons.journeys.ts": {
@@ -8198,7 +8198,7 @@
       "executable": false
     },
     "tests/go-live/signup-capacity-journey.ts": {
-      "sha256": "7d2f59ebc0b36f0fefb65c09486535a9b14678426672bc36a92b3b34610dc905",
+      "sha256": "6010d2b8f56dadadd083c27f74834ae2f090a9735a3bc804b718c7fd4a25cdf3",
       "executable": false
     },
     "tests/go-live/signup-refusal-screens.ts": {
