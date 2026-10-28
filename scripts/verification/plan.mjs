@@ -16,8 +16,8 @@ const member = (stage, files) => ({name: stage, stage, files});
 // migrations and commands inside each installation remain ordered.
 export const packs = [
   // Keep main's newer safety journeys without extending the candidate's slow packs.
-  {name:'retained-authoring',members:[member('main',['campaign-authoring/canonical-save.spec.ts','campaign-authoring/local-images.spec.ts'])]},
-  {name:'retained-data',members:[member('main',['audience-import/erasure.spec.ts','audience-import/privacy-portability.spec.ts','portability/privacy.spec.ts']),member('local-start',['retained-archive.journey.ts'])]},
+  {name:'retained-authoring',members:[member('main',['campaign-authoring/canonical-save.spec.ts','campaign-authoring/local-images.spec.ts','campaign-assets.spec.ts'])]},
+  {name:'retained-data',members:[member('main',['audience-import/erasure.spec.ts','audience-import/privacy-portability.spec.ts','audience-import/signup-security.spec.ts','audience-import/signup-reservation-clock.spec.ts','portability/privacy.spec.ts']),member('local-start',['retained-archive.journey.ts'])]},
   {name:'phone',members:[member('newsletter-ui')]},
   {name:'authoring',members:[member('main',['campaign-authoring/browser.spec.ts','campaign-authoring/design-import.spec.ts','campaign-authoring/design-generation.spec.ts']),member('go-live',['content-checks.journeys.ts','woocommerce.journeys.ts','resend-delivery.journeys.ts','scheduler.journeys.ts'])]},
   {name:'identity-data',members:[member('main',['audience-controls/segments.spec.ts','audience-import/signup.spec.ts','docs.spec.ts','rendering.spec.ts','portability.spec.ts','production-entry.spec.ts','shopify/connection.spec.ts','proposals-decision/decision-routes.spec.ts']),member('local-start',['editor.journey.ts'])]},
