@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { existsSync } from 'node:fs';
+import {dirname,join} from 'node:path';
 import { defineConfig, type UserConfig } from 'vite';
 import { archiveOutputGuard } from '@runeditrun/rer/archive-output';
 import { docsSite } from './src/core/features/docs/build/plugin.ts';
@@ -15,6 +16,8 @@ import { privatePreloads } from './vite/private-preloads.ts';
 const local = (name: string) => process.env[name] ? {[name]: process.env[name]} : {};
 export default defineConfig(async ({command, isPreview}): Promise<UserConfig> => {
  const authoringConfig = process.env.MANGO_AUTHORING_TEST_CONFIG;
+ // Concurrent fixture installations must not replace each other's optimized dependencies.
+ const cacheDir = authoringConfig ? join(dirname(authoringConfig),'vite-cache') : fileURLToPath(new URL('./.cache/vite',import.meta.url));
  const runtime = authoringConfig !== undefined ? 'authoring' : process.env.MANGO_SYNTHETIC_REVIEW === '1' ? 'review' : 'app';
  const appDev = runtime === 'app' && command === 'serve' && !isPreview;
  // The installer preview builds the local Worker into its own output folder.
@@ -32,7 +35,7 @@ export default defineConfig(async ({command, isPreview}): Promise<UserConfig> =>
  // JSON; normal app serving keeps both fixture sources closed.
  const fixtureSources = runtime === 'app' ? (process.env.RER_DEMO === '1' ? ['sample-data/initial.json'] : []) : ['tests', 'sample-data/initial.json'];
  return {
- cacheDir: fileURLToPath(new URL('./.cache/vite', import.meta.url)),
+ cacheDir,
  plugins: [demoSockets(), cloudflare({
   inspectorPort: false,
   configPath: authoringConfig ?? (runtime === 'review' ? 'wrangler.review.toml' : productionBuild ? 'wrangler.production.toml' : 'wrangler.toml'),
@@ -47,7 +50,7 @@ export default defineConfig(async ({command, isPreview}): Promise<UserConfig> =>
   // watcher events from checkout creation. Actual source edits still reload.
   ...(runtime === 'authoring' ? {watch: {usePolling: true}} : {}),
   fs: {
-  allow: ['src', 'public', 'node_modules', 'seed.json', ...fixtureSources],
+  allow: ['src', 'public', 'node_modules', 'seed.json', ...fixtureSources, ...(authoringConfig ? [cacheDir] : [])],
   // An explicit deny list replaces Vite's defaults; retain its sensitive-file
   // patterns as well as the checkout's private state and exports.
   deny: ['.env', '.env.*', '*.{crt,pem,key,p12,pfx,cer,der}', '.npmrc', '.yarnrc.yml', '**/.git/**', '**/.rer/**', '**/.seed/**', '**/exports/**', '**/*.rer'],
