@@ -1770,7 +1770,7 @@
       "executable": false
     },
     "scripts/ci/mango-plan.mjs": {
-      "sha256": "1c1483c441b61daa4501f2d7e10c71093eb62374ace3f6198aab8b1686933ac2",
+      "sha256": "c3ad52ffa51bc9da474fa7d0949b6bc4f7fe18e243e3abcf4aba022be100a892",
       "executable": false
     },
     "scripts/ci/verify-app.mjs": {
@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "77c83720878f1c7a3029cd0b75f6de68a04bedbdee72e9d00e74727db98f18d0",
+      "sha256": "d3c9dccfd24eb96b26cb520e052260db74dd0c080aa93f0008b8bfb03aa73fd8",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8321,6 +8321,10 @@
       "sha256": "70206b91d1359d69a46c7fb7e1ff4af5f74135f2130cd04169be734826b8c889",
       "executable": false
     },
+    "tests/campaign-authoring/block-builder-journey.ts": {
+      "sha256": "93c6d004abe1a1863f4e2dbf19999539fcb5172e5eda1f7277b40ebf72148752",
+      "executable": false
+    },
     "tests/campaign-authoring/browser-runtime.mjs": {
       "sha256": "1235904759a16f2996cbdc7257cdcf20319ad29b61b2889837d54a468f892d1b",
       "executable": false
@@ -8383,6 +8387,10 @@
     },
     "tests/campaign-authoring/local-images.spec.ts": {
       "sha256": "3b20989ab62960e13ac171e210aa9bf5943da825707cfcb06b7298ff66259ddc",
+      "executable": false
+    },
+    "tests/campaign-authoring/mobile-presentation-journey.ts": {
+      "sha256": "b03a70c6b5f2d9c063a02709a5de07a5acbcc618563f8bc4dd97ae33b388ea46",
       "executable": false
     },
     "tests/campaign-authoring/reusable-block-journey.ts": {
@@ -9034,7 +9042,7 @@
       "executable": false
     },
     "tests/local-start/retained-backup-flow.ts": {
-      "sha256": "3467e029d105989336889efe3dbf5986ef6e828429ff27a5b2e19191fbca49f6",
+      "sha256": "aee13c36a45c6842d43118ed93f15bfeeedbf970902f71dcc1a59486a3bf722f",
       "executable": false
     },
     "tests/move-in/archive.flow.ts": {
