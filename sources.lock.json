@@ -2526,7 +2526,7 @@
       "executable": false
     },
     "scripts/installer/portability.mjs": {
-      "sha256": "3c4530671bdea1babe874e1316d1c453ef1338305c9f67c715125e663d27c9f9",
+      "sha256": "b83a1b0abae76761ef1c9b6af2c0e1c05041616c5bb6fc7a0170511f37195fe8",
       "executable": false
     },
     "scripts/installer/preview-runtime.mjs": {
@@ -2550,7 +2550,7 @@
       "executable": false
     },
     "scripts/installer/transfer-archive.mjs": {
-      "sha256": "07b7044f14667df3236344ba9af67854dcd56778147b3434cbce5ac39b68c4e0",
+      "sha256": "10575bf1c7a02e2c73398c4ab1e57e613c7de5d52f5b2d4fc51ee38ed6a5691d",
       "executable": false
     },
     "scripts/installer/ui/background.svg": {
