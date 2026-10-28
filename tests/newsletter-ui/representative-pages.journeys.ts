@@ -18,6 +18,7 @@ async function audit(page: Page, name: string) {
   if (await page.getByRole('region', { name: 'Activity entries', exact: true }).count()) {
     await expect(page.getByRole('region', { name: 'Activity entries', exact: true })).toHaveAttribute('aria-busy', 'false');
   }
+  if (await page.locator('.flow-page').count()) await expect(page.getByRole('status')).toHaveCount(1);
   const outcome = page.locator('.page-head__lead, .page-head__meta, .flow-page .page-head [role="status"], .load-state[role="alert"]').first();
   if (await outcome.count()) {
     await page.evaluate(() => window.scrollTo(0, 0));
@@ -213,11 +214,12 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
       } },
       { name: 'flow empty draft', visit: () => openPage(page, '/app/flows'), check: async () => {
         await expect(page.getByRole('combobox', { name: 'Saved revision', exact: true }).locator('option[value]:not([value=""])')).toHaveCount(0);
-        await expectOutcomeInView(page.locator('.flow-page .page-head p[role="status"]'));
+        await expectOutcomeInView(page.locator('.flow-page .page-head p'));
       } },
       { name: 'flow validation refusal', visit: async () => {
         await page.getByRole('button', { name: 'Save draft revision', exact: true }).click();
         await expectReason(page.getByRole('alert'));
+        await expectOutcomeInView(page.getByRole('alert'));
       } },
       { name: 'flow populated keyboard canvas and details', visit: async () => {
         const graph = { name: 'synthetic-mango-171', trigger: 'Subscription confirmed', nodes: [
@@ -255,7 +257,19 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
         await expectReason(details.locator(':scope > p').first());
         await expect(details.getByLabel('Node name', { exact: true })).toBeInViewport({ ratio: 1 });
         await expect(details.locator(':scope > p').first()).toBeInViewport({ ratio: 1 });
-        await expectReason(page.getByRole('status').last());
+        await expectReason(page.getByRole('status'));
+      } },
+      { name: 'flow saved draft clears an obsolete refusal', visit: async () => {
+        await page.getByRole('button', { name: 'Add node', exact: true }).click();
+        await page.getByRole('button', { name: 'Save draft revision', exact: true }).click();
+        await expectReason(page.getByRole('alert'));
+        const response = await page.request.get('/api/flow-drafts', { headers });
+        await expect(response).toBeOK();
+        const { revisions } = await response.json();
+        await page.getByRole('combobox', { name: 'Saved revision', exact: true }).selectOption(revisions[0].id);
+        await expect(page.getByLabel('Flow name', { exact: true })).toHaveValue(revisions[0].graph.name);
+        await expect(page.getByRole('alert')).toHaveCount(0);
+        await expectReason(page.getByRole('status'));
       } },
       { name: 'activity populated', visit: () => openPage(page, '/app/settings/activity'), check: async () => {
         await expect(page.getByRole('region', { name: 'Activity entries' })).toHaveAttribute('aria-busy', 'false');
@@ -315,7 +329,7 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
         await expect(page.getByRole('group', { name: 'Node details', exact: true }).getByLabel('Node name', { exact: true })).toHaveAttribute('readonly', '');
         await expect(page.getByLabel('Flow name', { exact: true })).toHaveAttribute('readonly', '');
         await expect(page.getByRole('button', { name: 'Save draft revision', exact: true })).toBeDisabled();
-        await expectOutcomeInView(page.locator('.flow-page .page-head p[role="status"]'));
+        await expectOutcomeInView(page.locator('.flow-page .page-head p'));
       } },
       { name: 'insights read only', visit: () => openPage(page, '/app/insights'), check: async () => {
         await expect(page.getByRole('button', { name: 'Save attribution and recalculate', exact: true })).toHaveCount(0);

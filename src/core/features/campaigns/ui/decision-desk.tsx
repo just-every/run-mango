@@ -70,7 +70,7 @@ export function DecisionDeskPage() {
       <header className="page-head desk-head">
         <div className="page-head__text">
           <h1>Decision Desk</h1>
-          <h2 className="page-head__lead"><span role="status">Nothing sends until you approve it.</span></h2>
+          <h2 className="page-head__lead">Nothing sends until you approve it.</h2>
         </div>
         <div className="page-head__actions">
           {/* Sun once per view: while a suggestion is open, its "Use this" is the sun button and generating steps back. */}

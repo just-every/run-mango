@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "d63598dbad33ac3922bc70afa5e7a2fdae7fb5e01b5fcd6f5461672e92329243",
+      "sha256": "46a2d78457eae7ab18a6680375aeaf858a3d8d67c6d10df2d24d23e7ad9379e4",
       "executable": false
     },
     "DEMO.md": {
@@ -3518,7 +3518,7 @@
       "executable": false
     },
     "src/core/features/campaigns/ui/decision-desk.tsx": {
-      "sha256": "36eac47db29f19cb1f0d565e7218a7ff1c8ef30cbf6f765982655380e126e769",
+      "sha256": "5861c6a4163ed80fd5383755933b1cab2d40de07a8437e777c317432633b2946",
       "executable": false
     },
     "src/core/features/campaigns/ui/delivery-plan.tsx": {
@@ -3898,7 +3898,7 @@
       "executable": false
     },
     "src/core/features/flows/page.tsx": {
-      "sha256": "fc33c404032e88bb26da069a1bfe945537b4b90ffb89cef79b3e3350a50b99ed",
+      "sha256": "8d152e5d57aa4c60767d31704758d6be0f06d0f4d4abe41b4d6d96ae600ae34e",
       "executable": false
     },
     "src/core/features/flows/routes.ts": {
@@ -8430,7 +8430,7 @@
       "executable": false
     },
     "tests/newsletter-ui/representative-pages.journeys.ts": {
-      "sha256": "d020fe094765129cc8a725df4286545c2631164879949a493edd1e35baaff6a4",
+      "sha256": "3d505b79b4270285779343ce918efc763cbb3c4520e15d4e81d5519f926311a2",
       "executable": false
     },
     "tests/newsletter-ui/review-layout-support.ts": {
