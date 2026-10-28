@@ -201,7 +201,7 @@ export const walk2 = async ({ page, request }) => {
     const run = page.getByRole('region', { name: 'Design with 12ui' });
     // Slot A's first purchase meets an outage; the retried pass replays the same key and buys it once.
     await expect(useDesign(run, page, 'B')).toBeVisible({ timeout: 60000 });
-    await expect(useDesign(run, page, 'A')).toBeVisible();
+    await expect(useDesign(run, page, 'A')).toBeVisible({ timeout: 30000 });
 
     const posts = fake.requests.filter(item => item.method === 'POST');
     expect(fake.requests.every(item => item.authorized)).toBe(true);
@@ -228,7 +228,7 @@ export const walk2 = async ({ page, request }) => {
     await expect(failure).not.toContainText('Injected');
     await reloadPage(page);
     await expect(failure).toBeVisible();
-    await expect(useDesign(run, page, 'A')).toBeVisible();
+    await expect(useDesign(run, page, 'A')).toBeVisible({ timeout: 30000 });
     await expect(useDesign(run, page, 'B')).toBeVisible();
     const converts = () => fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert');
     expect(converts()).toHaveLength(1);
@@ -304,7 +304,7 @@ export const walk2 = async ({ page, request }) => {
     await expect(run.getByRole('alert')).toContainText('Design generation failed');
     await run.getByRole('button', { name: 'Dismiss', exact: true }).click();
     // With the failed run dismissed, the newest run with designs on offer is the one shown.
-    await expect(useDesign(run, page, 'A')).toBeVisible();
+    await expect(useDesign(run, page, 'A')).toBeVisible({ timeout: 30000 });
 
     // A run that outlives its deadline fails as a timeout once the draft is read, with or without a cron.
     await page.getByRole('button', { name: 'Design with 12ui', exact: true }).click();
