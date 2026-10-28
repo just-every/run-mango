@@ -1,6 +1,7 @@
 import type { Hono } from 'hono';
 import { ToolRefusal, type ResourceContext, type ToolContext } from '@/vendor/base/agent-door/index.ts';
-import { agentAction } from './context';
+import {senderWriteAuthority} from '../settings/sender-authority';
+import { agentAction,agentWriteAdmission } from './context';
 import { hasPermission, requiredPermission } from '../auth/permissions';
 import { createAuthRepository } from '../auth/repository';
 import { productAuthority } from '../auth/product-roles';
@@ -35,9 +36,12 @@ export function nativeGateway(platform: Platform, native: Hono<any>) {
       form.set('file',new Blob([bytes],{type:value.contentType}),'campaign-image');
       payload=form;delete headers['Content-Type'];
     }
-    const response = await agentAction.run(ctx, () => native.fetch(new Request(new URL(path, ctx.origin), {
-      method, headers, ...(payload===undefined?{}:{body:payload}),
-    })));
+    const request=new Request(new URL(path, ctx.origin),{method,headers,...(payload===undefined?{}:{body:payload})});
+    const response = await agentAction.run(ctx, async () => {
+      if (['GET','HEAD','OPTIONS'].includes(method)) return native.fetch(request);
+      const admission=await senderWriteAuthority(platform,request,ctx.person.id);
+      return agentWriteAdmission.run(admission,()=>native.fetch(request));
+    });
     const value = await response.json().catch(()=>({error:'native_unavailable'})) as Record<string, unknown>;
     if (!response.ok) throw new ToolRefusal(typeof value.error === 'string' ? value.error
       : typeof value.kind === 'string' ? value.kind : 'native_refused', 'Native action refused', {status: response.status});

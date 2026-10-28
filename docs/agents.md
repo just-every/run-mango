@@ -20,9 +20,11 @@ These tools call Mango's existing native services. An optional provider or job m
 - **Activity**: mango.activity.read.
 - **Assets**: mango.assets.attach.
 - **Audience**: mango.audience.read.
-- **Blocks**: mango.blocks.read, mango.blocks.update.
+- **Blocks**: mango.blocks.create, mango.blocks.detach, mango.blocks.place, mango.blocks.read, mango.blocks.update.
 - **Campaigns**: mango.campaigns.authorize, mango.campaigns.cancel, mango.campaigns.check, mango.campaigns.create, mango.campaigns.duplicate, mango.campaigns.edit_schedule, mango.campaigns.enqueue, mango.campaigns.followup, mango.campaigns.list, mango.campaigns.pause, mango.campaigns.read, mango.campaigns.reauthorize, mango.campaigns.refresh_checks, mango.campaigns.resume, mango.campaigns.test_send, mango.campaigns.update.
 - **Connections**: mango.connections.read, mango.connections.update.
+- **Consent worker**: mango.consent.dispatch.
+- **Integrations**: mango.integrations.contacts, mango.integrations.events, mango.integrations.memberships, mango.integrations.segments.
 - **Contacts**: mango.contacts.consent, mango.contacts.erase, mango.contacts.merge, mango.contacts.optout, mango.contacts.read.
 - **Delivery**: mango.delivery.dispatch.
 - **Designs**: mango.designs.advance, mango.designs.choose, mango.designs.close, mango.designs.read, mango.designs.start.
@@ -40,7 +42,7 @@ These tools call Mango's existing native services. An optional provider or job m
 
 Primary records are read through classified resources. Campaigns include saved revisions, review and results; other resources cover contacts, segments, designs, stored sender evidence, import reports, supported flow state and native activity. Missing and restricted records are withheld alike. Imported and external text remains untrusted. Resources expose no signing keys, provider credentials or receipt tokens.
 
-Existing integration credentials retain their original scopes and their creating sponsor. Read credentials cannot authorize a campaign. The integration send operation still requires the exact natively authorized revision and matching integration segment, then enters company policy through the shared door. Import, public signup/unsubscribe, signed provider callbacks and installation operations retain their own admission.
+Existing integration credentials retain their original scopes and their creating sponsor. Read credentials cannot authorize a campaign. Private integration reads also enter company policy and retain native pagination and contact visibility. SDK intake and signed source events retain their credential purpose. The integration send operation still requires the exact natively authorized revision and matching integration segment, then enters company policy through the shared door. Import, public signup/unsubscribe, signed provider callbacks and installation operations retain their own admission.
 
 ## Limits
 

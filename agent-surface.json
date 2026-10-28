@@ -151,6 +151,212 @@
       }
     },
     {
+      "name": "mango.blocks.create",
+      "title": "Reusable blocks create",
+      "scope": "mango.blocks.create",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "block": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "html": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 102400
+              },
+              "mobile": {
+                "type": "object",
+                "properties": {
+                  "hideOnMobile": {
+                    "type": "boolean"
+                  },
+                  "hideOnDesktop": {
+                    "type": "boolean"
+                  },
+                  "orientation": {
+                    "type": "string",
+                    "enum": [
+                      "stack",
+                      "stack-columns"
+                    ]
+                  },
+                  "contentCell": {
+                    "type": "boolean",
+                    "const": true
+                  },
+                  "fontSize": {
+                    "type": "integer",
+                    "minimum": 10,
+                    "maximum": 72
+                  },
+                  "lineHeight": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 3,
+                    "multipleOf": 0.01
+                  },
+                  "padding": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 64
+                  },
+                  "alignment": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "center",
+                      "right"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "html"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "name",
+          "block"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.blocks.detach",
+      "title": "Reusable blocks detach",
+      "scope": "mango.blocks.detach",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "target": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "campaign",
+                  "template",
+                  "flow"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "nodeId": {
+                "type": "string",
+                "maxLength": 64
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "target"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.blocks.place",
+      "title": "Reusable blocks place",
+      "scope": "mango.blocks.place",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "target": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "campaign",
+                  "template",
+                  "flow"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "nodeId": {
+                "type": "string",
+                "maxLength": 64
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "emailBody": {
+            "type": "string",
+            "maxLength": 500000
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "target"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
       "name": "mango.blocks.read",
       "title": "Blocks read",
       "scope": "mango.blocks.read",
@@ -1296,6 +1502,31 @@
       }
     },
     {
+      "name": "mango.consent.dispatch",
+      "title": "Admit consent.dispatch",
+      "scope": "mango.consent.dispatch",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CONT-004",
+        "AUD-005"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
       "name": "mango.contacts.consent",
       "title": "Contacts consent",
       "scope": "mango.contacts.consent",
@@ -2089,6 +2320,118 @@
       }
     },
     {
+      "name": "mango.integrations.contacts",
+      "title": "Read scoped integration contacts",
+      "scope": "mango.integrations.contacts",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "INT-007",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 320
+          },
+          "segmentId": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.integrations.events",
+      "title": "Read scoped integration events",
+      "scope": "mango.integrations.events",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "INT-007",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "pattern": "^[0-9]+$"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.integrations.memberships",
+      "title": "Read scoped integration memberships",
+      "scope": "mango.integrations.memberships",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "INT-007",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 160
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.integrations.segments",
+      "title": "Read scoped integration segments",
+      "scope": "mango.integrations.segments",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "INT-007",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
       "name": "mango.proposals.adopt",
       "title": "Proposals adopt",
       "scope": "mango.proposals.adopt",
@@ -2809,6 +3152,7 @@
     "mango://connections/sending",
     "mango://contacts/{id}",
     "mango://designs/{id}",
+    "mango://erasures/{id}",
     "mango://flows/{id}",
     "mango://imports/{id}/report",
     "mango://proposals/{id}",
@@ -2945,6 +3289,219 @@
         "confirm": true,
         "policy": "autonomous"
       }
+    },
+    {
+      "id": "stored-checks",
+      "tool": "mango.campaigns.check",
+      "args": {
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "duplicate",
+      "tool": "mango.campaigns.duplicate",
+      "args": {
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "save-template",
+      "tool": "mango.templates.update",
+      "args": {
+        "revisionId": {
+          "$from": "create",
+          "pointer": "/revisionId"
+        },
+        "name": "Orchard draft template"
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "template-draft",
+      "tool": "mango.templates.start",
+      "args": {
+        "id": {
+          "$from": "save-template",
+          "pointer": "/id"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "design-status",
+      "tool": "mango.designs.read",
+      "args": {
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "signup",
+      "tool": "mango.signup.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "connection",
+      "tool": "mango.connections.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "flow-draft",
+      "tool": "mango.flows.update",
+      "args": {
+        "graph": {
+          "name": "Inert orchard draft",
+          "trigger": "A saved design only",
+          "nodes": [
+            {
+              "id": "start",
+              "kind": "trigger",
+              "label": "Draft trigger",
+              "next": [
+                "exit"
+              ]
+            },
+            {
+              "id": "exit",
+              "kind": "exit",
+              "label": "Exit",
+              "next": []
+            }
+          ]
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "reusable-block",
+      "tool": "mango.blocks.create",
+      "args": {
+        "name": "Orchard introduction",
+        "block": {
+          "html": "<p>News from our orchard.</p>"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "place-block",
+      "tool": "mango.blocks.place",
+      "args": {
+        "id": {
+          "$from": "reusable-block",
+          "pointer": "/id"
+        },
+        "version": {
+          "$from": "reusable-block",
+          "pointer": "/version"
+        },
+        "target": {
+          "kind": "campaign",
+          "id": {
+            "$from": "create",
+            "pointer": "/revisionId"
+          }
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "update-block",
+      "tool": "mango.blocks.update",
+      "args": {
+        "id": {
+          "$from": "reusable-block",
+          "pointer": "/id"
+        },
+        "version": {
+          "$from": "reusable-block",
+          "pointer": "/version"
+        },
+        "name": "Orchard introduction revised",
+        "block": {
+          "html": "<p>Fresh news from our orchard.</p>"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "detach-block",
+      "tool": "mango.blocks.detach",
+      "args": {
+        "id": {
+          "$from": "reusable-block",
+          "pointer": "/id"
+        },
+        "target": {
+          "kind": "campaign",
+          "id": {
+            "$from": "create",
+            "pointer": "/revisionId"
+          }
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
     },
     {
       "id": "campaigns",
@@ -3094,7 +3651,9 @@
     "owner": {
       "bindings": {
         "RER_MANAGEMENT_ORIGIN": "issuer",
-        "RER_INSTALLATION_ID": "installationId"
+        "RER_INSTALLATION_ID": "installationId",
+        "DESIGN_PROVIDER_API_KEY": "token",
+        "DESIGN_PROVIDER_ORIGIN": "appOrigin"
       },
       "initializer": "tests/agent-door/owner.mjs"
     },
@@ -3103,7 +3662,8 @@
       "origins": [
         "https://api.sendgrid.com",
         "https://api.resend.com",
-        "https://cloudflare-dns.com"
+        "https://cloudflare-dns.com",
+        "https://rer-hosted-check.invalid"
       ]
     }
   },
@@ -3136,6 +3696,11 @@
     {
       "id": "PENDING-SEED-2026-10-28-complete-class-journey",
       "assertion": "Every registered tool/class pair and the three specialist probes have real disposable native fixtures; uncovered pairs must remain failures."
+    },
+    {
+      "id": "PENDING-BASE-2026-10-28-native-client-and-phase-fixtures",
+      "assertion": "Generic journeys need native API-client invocations and fresh per-policy native fixture preparation for destructive consent/custody operations; the bootstrap runs once and the native journey only follows generic policy phases. No fabricated native state or fake widening is permitted.",
+      "source": "cli/agent-door.mjs and modules/agent-door/conformance/protocol.mjs"
     }
   ]
 }

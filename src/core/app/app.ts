@@ -4,7 +4,8 @@ import {credentialScopes} from '@/core/features/agent-door/credentials';
 import {IntegrationError} from '@/core/features/integrations/schema';
 import {sha256} from '@/core/shared/ids';
 import {mangoAgentDoor} from '@/core/features/agent-door';
-import {agentAction} from '@/core/features/agent-door/context';
+import {assertAgentHandoff} from '@/core/features/settings/sender-authority';
+import {agentAction,agentAttribution} from '@/core/features/agent-door/context';
 import {nativeOperator} from '@/core/features/agent-door/native';
 import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
 import {registerCatalogReader,configuredCatalogValues} from '@/core/features/campaigns/catalog-values';
@@ -98,6 +99,10 @@ import { initialReads, initialReadOnce } from './request-platform';
 
 export type AppEnvironment = { Bindings: AppBindings; Variables: AuthVariables };
 
+function integrationRefusalStatus(value:unknown):400|401|403|404|409|429|503 {
+  return [400,401,403,404,409,429,503].includes(Number(value))?Number(value) as 400|401|403|404|409|429|503:409;
+}
+
 function isSafeMethod(method: string) {
   return method === 'GET' || method === 'HEAD' || method === 'OPTIONS';
 }
@@ -155,6 +160,8 @@ function audienceDependencies(
               },
           callbackUrl: new URL('/webhooks/mail/resend', platform.config.publicBaseUrl).toString(),
         };
+        const attribution=agentAttribution();
+        if(attribution){request.content.text+='\n\nPrepared by '+attribution.label;request.content.html+='<p>Prepared by '+escape(attribution.label)+'</p>';}
         const adapter = platform.confirmationMailer ?? platform.mailer;
         const provider = (await adapter.capabilities()).provider ?? (platform.config.mailProvider ?? 'unreported');
         const costContext = {
@@ -164,6 +171,7 @@ function audienceDependencies(
         // No asynchronous preparation may occur between this D1 authorization
         // and adapter invocation. A provider handoff already in progress cannot
         // be recalled by a later database transition.
+        await assertAgentHandoff(platform);
         if (!await authorizeHandoff()) {
           await cancelHandoffCost(platform.database, costContext.key);
           return false;
@@ -226,7 +234,7 @@ export function createAppServices(platform: Platform, queueIdentity: object = pl
     platform,
     audience: createLifecycleAudience(audienceService),
     synchronizeCommerce: platform.commerce
-      ? createCommerceSynchronizer(platform.commerce, storeService, audienceService)
+      ? createCommerceSynchronizer(platform.commerce, storeService, audienceService,{admit:()=>assertAgentHandoff(platform)})
       : undefined,
   };
   const campaignService = createCampaignService(
@@ -369,7 +377,13 @@ export function createApp(
     const operator=await nativeOperator(platform,credential.createdBy);
     const result=await door.invoke('mango.campaigns.enqueue',{id:campaignId,...input,idempotency_key:'integration-send:'+await sha256(JSON.stringify([credential.id,campaignId,input]))},
       {person:{id:operator.id},agent:{id:'integration:'+credential.id,name:credential.name,specialist:'marketer'},clientId:credential.id,scopes:credentialScopes(credential.scopes)});
-    if(result.outcome==='refused')throw new IntegrationError(result.code??'send_refused',409);
+    if(result.outcome==='refused')throw new IntegrationError(result.code??'send_refused',integrationRefusalStatus(result.fields?.status));
+    return result.outcome==='pending'?{status:'approval_required',approval:result.approval}:result.result;
+  },async(credential,kind,args)=>{
+    const operator=await nativeOperator(platform,credential.createdBy);
+    const result=await door.invoke('mango.integrations.'+kind,args,
+      {person:{id:operator.id},agent:{id:'integration:'+credential.id,name:credential.name,specialist:'marketer'},clientId:credential.id,scopes:credentialScopes(credential.scopes)});
+    if(result.outcome==='refused')throw new IntegrationError(result.code??'read_refused',integrationRefusalStatus(result.fields?.status));
     return result.outcome==='pending'?{status:'approval_required',approval:result.approval}:result.result;
   }));
   mountBeforeAuthentication?.(app, services);

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {randomUUID,webcrypto} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
 import operations from '../src/core/features/agent-door/operations.ts';
 import {runtime,setup} from './base-runtime.mjs';
 import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../src/vendor/base/agent-door/conformance/crypto.mjs';
@@ -56,7 +57,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   for(const version of ['2026-07-28','2025-11-25']){
    const listed=await mcp('tools/list',{}, {},version);
    assert.equal(listed.response.status,200);
-   assert.equal(listed.message.result.tools.length,operations.length+8);
+   assert.equal(listed.message.result.tools.length,operations.length+13);
   }
   const tokenEmail=await call('mango.campaigns.create',{idempotency_key:'foreign'},{sub:'unmapped-person',email:c.person.email});
   assert.equal(tokenEmail.response.status,401);
@@ -80,11 +81,29 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.ok(resource.message.result.contents[0].text.includes(ids.revisionId),JSON.stringify(resource.message));
   const audit=await app.db.prepare("SELECT actor_type,actor_id,detail_json FROM lifecycle_audit_entries WHERE action='mango.campaigns.create'").first();
   assert.equal(audit.actor_type,'agent');assert.equal(audit.actor_id,c.agentId);assert.ok(audit.detail_json.includes('Morgan Owner'));
+  // Exercise the declared native draft/segment journey before company-policy negatives.
+  const journey=JSON.parse(await readFile('tests/agent-door/journey.json','utf8'));
+  const outputs=new Map();
+  function resolve(value){
+   if(Array.isArray(value))return value.map(resolve);
+   if(value&&typeof value==='object'){
+    if(value.$from){let found=outputs.get(value.$from);for(const part of value.pointer.split('/').slice(1))found=found?.[part];return found;}
+    return Object.fromEntries(Object.entries(value).map(([key,item])=>[key,resolve(item)]));
+   }
+   return value;
+  }
+  for(const step of journey){
+   const args=resolve(step.args),definition=operations.find(operation=>operation.name===step.tool);
+   const response=await call(step.tool,{...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+step.id}:{})});
+   assert.equal(response.message.result?.isError,false,step.id+': '+JSON.stringify(response.message));
+   outputs.set(step.id,response.message.result.structuredContent);
+  }
+  const nativeCount=(await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count;
   const blockedPolicy={...autonomousPolicy(),rules:[{id:'block',class:'*',do:'blocked'}]};
   assert.equal((await adopt(blockedPolicy)).response.status,200);
   const blocked=await call('mango.campaigns.create',{idempotency_key:'blocked'});
   assert.equal(blocked.message.result._meta['com.runeditrun/error'].code,'policy_blocked');
-  assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,1);
+  assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,nativeCount);
   assert.equal((await adopt(autonomousPolicy(),{paused:true})).response.status,200);
   const paused=await call('mango.campaigns.create',{idempotency_key:'paused'});
   assert.equal(paused.message.result._meta['com.runeditrun/error'].code,'agents_paused');
@@ -107,7 +126,22 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   const denied=await call('mango.campaigns.create',{idempotency_key:'member-draft'},{sub:memberSub,email:c.person.email,act:{sub:randomUUID(),name:'Casey assistant',specialist:'marketer'}});
   assert.ok(denied.message.result,JSON.stringify(denied.message));
   assert.equal(denied.message.result._meta['com.runeditrun/error'].code,'role_forbidden',JSON.stringify(denied.message));
-  assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,1);
+  assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,nativeCount);
+  const keyResponse=await app.call('/api/settings/integrations',{method:'POST',cookie,body:{name:'Scoped orchard reader',scopes:['contacts:read']}});
+  assert.equal(keyResponse.status,201,await keyResponse.clone().text());
+  const key=await keyResponse.json(),keyHeaders={Authorization:'Bearer '+key.token};
+  const clientRead=await app.call('/api/integrations/v1/contacts',{headers:keyHeaders});
+  assert.equal(clientRead.status,200,await clientRead.clone().text());
+  assert.ok(await app.db.prepare("SELECT 1 FROM agent_door_audit WHERE agent=? AND json_extract(row,'$.tool')='mango.integrations.contacts'").bind('integration:'+key.credential.id).first());
+  assert.equal((await app.call('/api/integrations/v1/events',{headers:keyHeaders})).status,403,'A read credential keeps its original contacts-only scope');
+  assert.equal((await adopt(blockedPolicy)).response.status,200);
+  const clientBlocked=await app.call('/api/integrations/v1/contacts',{headers:keyHeaders});
+  assert.equal(clientBlocked.status,409);assert.equal((await clientBlocked.json()).error,'policy_blocked');
+  assert.equal((await adopt(autonomousPolicy(),{paused:true})).response.status,200);
+  const clientPaused=await app.call('/api/integrations/v1/contacts',{headers:keyHeaders});
+  assert.equal((await clientPaused.json()).error,'agents_paused');
+  assert.equal((await app.call('/api/settings/integrations/'+key.credential.id,{method:'DELETE',cookie})).status,200);
+  assert.equal((await app.call('/api/integrations/v1/contacts',{headers:keyHeaders})).status,401);
   assert.equal(owner.role,'owner');
  }finally{await app.close();}
 });

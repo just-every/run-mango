@@ -1,3 +1,4 @@
+import {actorType,actorId as nativeActorId} from '../agent-door/custody';
 import type { ProductRole } from './permissions';
 import { AuthError } from '@/vendor/base/operator-auth/index.mjs';
 import { senderWriteAuthority, senderWriteGuard } from '@/core/features/settings/sender-authority';
@@ -26,10 +27,10 @@ export async function assignProductRole(platform: Pick<Platform,'config'|'databa
   try {
     const [audit]=await db.batch([
       db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at)
-        SELECT ?,?,'operator',?,'operator.role-changed','operator',?,json_object('role',?,'unmaskedContacts',?),?,?
+        SELECT ?,?,'${actorType()}',?,'operator.role-changed','operator',?,json_object('role',?,'unmaskedContacts',?),?,?
         WHERE ${senderWriteGuard} AND ${ownerGuard}
           AND NOT EXISTS(SELECT 1 FROM operator_product_roles WHERE operator_id=? AND role=? AND unmasked_contacts=?)`)
-        .bind(operation,operation,actorId,targetId,role,unmaskedContacts?1:0,now,now,
+        .bind(operation,operation,nativeActorId(actorId),targetId,role,unmaskedContacts?1:0,now,now,
           authority.sessionId,authority.operatorId,authority.version,now,actorId,targetId,role,unmaskedContacts?1:0),
       db.prepare(`INSERT INTO operator_product_roles(operator_id,role,unmasked_contacts,updated_by,updated_at)
         SELECT ?,?,?,?,? WHERE EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE operation_key=?)

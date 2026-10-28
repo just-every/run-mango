@@ -6,6 +6,11 @@ export async function resourceLink(platform:Platform,kind:string,args:Record<str
   if(family==='campaigns'&&args.revisionId&&!args.id){
     const row=await platform.database.$client.prepare('SELECT campaign_id FROM campaign_revisions WHERE id=?').bind(args.revisionId).first<{campaign_id:string}>();target=row?.campaign_id??target;
   }
+  if(kind==='segments.delete'){
+    const audit=await platform.database.$client.prepare("SELECT id FROM lifecycle_audit_entries WHERE entity_type='audience-segment' AND entity_id=? AND action='segment.deleted' ORDER BY occurred_at DESC,id DESC LIMIT 1").bind(args.id).first<{id:string}>();
+    return audit?'mango://activity/'+enc(audit.id):null;
+  }
+  if(kind==='contacts.erase')return object(value.receipt).reference?'mango://erasures/'+enc(object(value.receipt).reference):null;
   if(family==='publications')return 'mango://campaigns/'+enc(args.id);
   if(family==='sender')return 'mango://sender/readiness';
   if(family==='store')return 'mango://store/readiness';

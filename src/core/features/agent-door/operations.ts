@@ -2683,5 +2683,217 @@ export default [
     ],
     "kind": "activity.read",
     "query": true
+  },
+  {
+    "name": "mango.blocks.create",
+    "title": "Reusable blocks create",
+    "method": "POST",
+    "path": "/api/reusable-email-blocks",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "block": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "html": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 102400
+            },
+            "mobile": {
+              "type": "object",
+              "properties": {
+                "hideOnMobile": {
+                  "type": "boolean"
+                },
+                "hideOnDesktop": {
+                  "type": "boolean"
+                },
+                "orientation": {
+                  "type": "string",
+                  "enum": [
+                    "stack",
+                    "stack-columns"
+                  ]
+                },
+                "contentCell": {
+                  "type": "boolean",
+                  "const": true
+                },
+                "fontSize": {
+                  "type": "integer",
+                  "minimum": 10,
+                  "maximum": 72
+                },
+                "lineHeight": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 3,
+                  "multipleOf": 0.01
+                },
+                "padding": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 64
+                },
+                "alignment": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "center",
+                    "right"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "html"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "name",
+        "block"
+      ],
+      "additionalProperties": false
+    },
+    "readOnly": false,
+    "classes": [
+      "standard"
+    ],
+    "clauses": [
+      "BUILD-004"
+    ],
+    "kind": "blocks.create"
+  },
+  {
+    "name": "mango.blocks.place",
+    "title": "Reusable blocks place",
+    "method": "POST",
+    "path": "/api/reusable-email-blocks/{id}/place",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "campaign",
+                "template",
+                "flow"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "nodeId": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ],
+          "additionalProperties": false
+        },
+        "emailBody": {
+          "type": "string",
+          "maxLength": 500000
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "readOnly": false,
+    "classes": [
+      "standard"
+    ],
+    "clauses": [
+      "BUILD-004"
+    ],
+    "kind": "blocks.place"
+  },
+  {
+    "name": "mango.blocks.detach",
+    "title": "Reusable blocks detach",
+    "method": "DELETE",
+    "path": "/api/reusable-email-blocks/{id}/placements",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "target": {
+          "type": "object",
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": [
+                "campaign",
+                "template",
+                "flow"
+              ]
+            },
+            "id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "nodeId": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "target"
+      ],
+      "additionalProperties": false
+    },
+    "readOnly": false,
+    "classes": [
+      "standard"
+    ],
+    "clauses": [
+      "BUILD-004"
+    ],
+    "kind": "blocks.detach"
   }
 ];

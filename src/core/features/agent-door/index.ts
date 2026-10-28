@@ -1,3 +1,4 @@
+import {integrationTools} from './integration-tools';
 import {mangoCredentials} from './credentials';
 import type {createIntegrationService} from '../integrations/service';
 import {workerTools} from './worker-tools';
@@ -27,7 +28,7 @@ export function installationTrust(environment: AppBindings, origin: string): Tru
 export function mangoAgentDoor(environment: AppBindings, platform: Platform, auth: ReturnType<typeof createAuthService>, native: Hono<any>, runtime: LifecycleRuntime, integrations: ReturnType<typeof createIntegrationService>) {
   const origin = platform.config.publicBaseUrl.origin, db = platform.database.$client;
   const people = mangoPeople(platform, auth);
-  const tools = [...mangoTools(platform, nativeGateway(platform, native),integrations,runtime),...workerTools(runtime)];
+  const tools = [...mangoTools(platform, nativeGateway(platform, native),integrations,runtime),...workerTools(runtime),...integrationTools(platform,integrations)];
   const door = createAgentDoor({seed: 'mango', name: 'Mango', specialist: 'marketer', origin, db,
     trust: installationTrust(environment, origin), people, ...mangoCredentials(integrations), tools, resources: mangoResources(platform),
     notTools: [

@@ -50,6 +50,10 @@ export function mangoResources(platform: Platform): ResourceDefinition[] {
     const projected=projectPrivateResponse(contactPrivacyRole(operator),'/api/contacts/'+encodeURIComponent(contactId),{contact,consent:metadata}) as Record<string,unknown>;
     return {...projected,protected:projected.masked!==true&&metadata.some(item=>item.captureIp||item.confirmationIp)};
   },true);
+  define('mango://erasures/{id}','contact.erase',async ([reference],ctx)=>{
+    if((await resourcePermission(platform,ctx,'contact.erase'))?.role!=='owner')return null;
+    return db.prepare('SELECT reference,state,requested_at requestedAt,completed_at completedAt,counts_json removed FROM audience_erasures WHERE reference=?').bind(reference).first();
+  });
   define('mango://segments/{id}','segment.read',async ([segmentId])=>db.prepare('SELECT id,name,inclusion_rule_json inclusionRuleJson,exclusion_rules_json exclusionRulesJson,updated_at updatedAt FROM audience_segments WHERE id=?').bind(segmentId).first());
   define('mango://designs/{id}','draft.write',async ([jobId])=>{
     const job=await db.prepare('SELECT id,campaign_id campaignId,state,brief,chosen_slot chosenSlot,layerdoc_sha256 layerDocSha256,error_code errorCode,updated_at updatedAt FROM design_jobs WHERE id=?').bind(jobId).first();

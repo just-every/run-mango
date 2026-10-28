@@ -8,7 +8,7 @@ import { fingerprint } from './digest';
 // door's own decision bookkeeping must not make a refused call look effective.
 const omittedTables = new Set([
   'operator_sessions','operator_magic_links','operator_bootstraps','auth_rate_limits',
-  'public_token_rate_limits','mango_agent_write_admissions','d1_migrations',
+  'public_token_rate_limits','mango_agent_write_admissions','d1_migrations','integration_audit',
 ]);
 function nativeTable(name: string) {
   if (!/^[a-z][a-z0-9_]*$/.test(name) || omittedTables.has(name)) return false;
@@ -19,7 +19,7 @@ function stableRow(table: string, row: Record<string, unknown>) {
   // Credential use is authentication bookkeeping; revocation and scope changes
   // remain in the witness. No row or credential is returned to the caller.
   return JSON.stringify(Object.fromEntries(Object.entries(row).filter(([key]) =>
-    table !== 'integration_credentials' || key !== 'last_used_at').sort(([a],[b])=>a.localeCompare(b))));
+    table !== 'integration_credentials' || !['last_used_at','rate_window','rate_count'].includes(key)).sort(([a],[b])=>a.localeCompare(b))));
 }
 export function witnessTool(platform: Platform): ToolDefinition {
   return {name:'mango.witness.read',title:'Read native change witness',description:'Read native object counts and digests without network effects or credential disclosure.',

@@ -1,3 +1,5 @@
+import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
+import {assertAgentHandoff} from '../settings/sender-authority';
 import {admitWork} from '../agent-door/custody';
 import {agentAction,agentAttribution} from '../agent-door/context';
 import type {Platform,DeliveryRequest} from '@/core/shared/platform';
@@ -35,12 +37,14 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
       if(!live?.enabled||(await reportAuthority(platform.database,live.created_by))?.binding!==live.authority_binding){await cancelHandoffCost(platform.database,cost.key);await finish('refused','schedule-authority-changed');return;}
       const currentRecipient=await db.prepare("SELECT email FROM oa_operators WHERE id=? AND status='active'").bind(delivery.recipient_id).first<{email:string}>();
       if(currentRecipient?.email!==recipient!.email){await cancelHandoffCost(platform.database,cost.key);await finish('refused','recipient-no-longer-active');return;}
+      await assertAgentHandoff(platform);
       const sent=await platform.mailer.send(request);await settleHandoffCost(platform.database,platform.mailer,request,cost,sent).catch(()=>{});
       if(sent.disposition!=='accepted'){await finish('uncertain','handoff-unconfirmed');return;}
       await db.prepare("UPDATE insight_report_deliveries SET state='accepted',provider_message_id=?,updated_at=? WHERE id=?").bind(sent.providerMessageId,clock(),delivery.id).run();
       await audit('accepted');
     } catch(error) {
-      if(error instanceof ProviderDeferredError){await cancelHandoffCost(platform.database,cost.key);await db.prepare("UPDATE insight_report_deliveries SET state='deferred',reason=?,next_at=?,updated_at=? WHERE id=?").bind(error.code,error.retryAt.getTime(),clock(),delivery.id).run();await audit('deferred',error.code);}
+      if(error instanceof ToolRefusal){await cancelHandoffCost(platform.database,cost.key);await finish('refused',error.code);}
+      else if(error instanceof ProviderDeferredError){await cancelHandoffCost(platform.database,cost.key);await db.prepare("UPDATE insight_report_deliveries SET state='deferred',reason=?,next_at=?,updated_at=? WHERE id=?").bind(error.code,error.retryAt.getTime(),clock(),delivery.id).run();await audit('deferred',error.code);}
       else {await settleHandoffFailure(platform.database,platform.mailer,request,cost,error).catch(()=>{});await finish(error instanceof ProviderTransportError?'refused':'uncertain',error instanceof ProviderTransportError?'provider-refused':'handoff-unconfirmed');}
     }
     async function audit(state:string,detail?:string){await recordActivity(db,{key:`report-delivery:${delivery.id}:${state}`,action:`report-delivery.${state}`,entityType:'report-schedule',entityId:schedule.id,actorId:'scheduled-reports',actorType:'system',at:clock(),detail:{dueAt:delivery.due_at,recipientId:delivery.recipient_id,...(detail?{reason:detail}:{})}});}

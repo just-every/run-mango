@@ -1,3 +1,6 @@
+import {deliverSmsService} from '../sms/service-delivery';
+import {nativeOperator} from './native';
+import {hasPermission,type Capability} from '../auth/permissions';
 import {createReportScheduler} from '../insights/report-scheduler';
 import {enrollWooFlows} from '../store/woocommerce/flows';
 import {readWooConnection} from '../store/woocommerce/connection';
@@ -11,7 +14,7 @@ import {fingerprint} from './digest';
 
 export function workerTools(runtime: LifecycleRuntime): ToolDefinition[] {
   const db=runtime.platform.database.$client;
-  function define(name:string,properties:Record<string,{type:string}>,clauses:string[],run:(args:Record<string,unknown>,ctx:ToolContext)=>Promise<unknown>):ToolDefinition{
+  function define(name:string,capability:Capability,properties:Record<string,{type:string}>,clauses:string[],run:(args:Record<string,unknown>,ctx:ToolContext)=>Promise<unknown>):ToolDefinition{
     return {name:'mango.'+name,title:'Admit '+name,description:'Admit saved native work under current sponsor authority, consent and company policy.',
       scope:'mango.'+name,readOnly:false,classes:['external'],clauses,
       inputSchema:{type:'object',properties:{...properties,...(name==='delivery.dispatch'?{segmentId:{type:'string'}}:{})},required:Object.keys(properties),additionalProperties:false},outputSchema:{type:'object'},
@@ -22,10 +25,14 @@ export function workerTools(runtime: LifecycleRuntime): ToolDefinition[] {
         return null;
       },
       async run(args,ctx){
+        const operator=await nativeOperator(runtime.platform,ctx.person.id);
+        if(!hasPermission(operator.role,capability))throw new ToolRefusal('role_forbidden');
         const result=await agentAction.run(ctx,async()=>{
           const authority=await senderWriteAuthority(runtime.platform,new Request(ctx.origin),ctx.person.id);
           return agentWriteAdmission.run(authority,()=>run(args,ctx));
         });
+        const target=name==='delivery.dispatch'?'mango://campaigns/'+encodeURIComponent(String(args.campaignId)):name==='designs.advance'?'mango://designs/'+encodeURIComponent(String(args.jobId)):name==='store.advance'?'mango://store/readiness':null;
+        if(target)ctx.emit(name.split('.')[0]+'.changed',target);
         return {result:result??{status:'processed'}};
       },
     };
@@ -36,7 +43,7 @@ export function workerTools(runtime: LifecycleRuntime): ToolDefinition[] {
     inputSchema:{type:'object',properties:{id:{type:'string'},eventId:{type:'string'}},required:['id','eventId'],additionalProperties:false},outputSchema:{type:'object'},
     classify:()=>[{class:'standard',facts:{measure:1}}],summary:args=>({target:{id:String(args.id)},items:[String(args.eventId)]}),
     async run(args,ctx){
-      if(!['owner','admin','manager'].includes(ctx.person.role))throw new ToolRefusal('role_forbidden');
+      if(!hasPermission((await nativeOperator(runtime.platform,ctx.person.id)).role,'flow.activate'))throw new ToolRefusal('role_forbidden');
       const connection=await readWooConnection(runtime.platform);if(!connection?.pluginEnabled)throw new ToolRefusal('trigger_source_unavailable');
       const source=await db.prepare("SELECT payload,occurred_at FROM source_records WHERE provider=? AND source_type='cart' AND json_extract(payload,'$.eventId')=? AND json_extract(payload,'$.identity')='woocommerce-signed-logged-in-customer'").bind('woocommerce:'+connection.id,args.eventId).first<{payload:string;occurred_at:number}>();
       if(!source||source.occurred_at<Date.now()-7*86400000)throw new ToolRefusal('source_unavailable');
@@ -46,11 +53,12 @@ export function workerTools(runtime: LifecycleRuntime): ToolDefinition[] {
       return {result:{status:'processed',id:args.id}};
     }};
   return [flowTool,
-    define('reports.dispatch',{deliveryId:{type:'string'}},['REPORT-001'],async(args,ctx)=>{
+    define('consent.dispatch','contact.subscribe',{id:{type:'string'}},['CONT-004','AUD-005'],async args=>({state:await deliverSmsService(runtime.platform,String(args.id))})),
+    define('reports.dispatch','settings.manage',{deliveryId:{type:'string'}},['REPORT-001'],async(args,ctx)=>{
       if(!['owner','admin'].includes(ctx.person.role))throw new ToolRefusal('role_forbidden');
       return createReportScheduler(runtime.platform).sendPrepared(String(args.deliveryId));
     }),
-    define('delivery.dispatch',{campaignId:{type:'string'},revisionId:{type:'string'},stepId:{type:'string'},channel:{type:'string'}},['SEND-001','AUD-005'],async (args,ctx)=>{
+    define('delivery.dispatch','campaign.send',{campaignId:{type:'string'},revisionId:{type:'string'},stepId:{type:'string'},channel:{type:'string'}},['SEND-001','AUD-005'],async (args,ctx)=>{
       const current=await db.prepare('SELECT state,active_revision_id FROM campaigns WHERE id=?').bind(args.campaignId).first<{state:string;active_revision_id:string}>();
       if(!current||current.active_revision_id!==args.revisionId)throw new ToolRefusal('not_found');
       if(ctx.agent.id==='integration:'+ctx.clientId){
@@ -64,12 +72,12 @@ export function workerTools(runtime: LifecycleRuntime): ToolDefinition[] {
       await createLifecycleServices(runtime).delivery.dispatchStep(args);
       return {status:'processed',revisionId:args.revisionId};
     }),
-    define('designs.advance',{kind:{type:'string'},jobId:{type:'string'}},['DESIGN-001','DESIGN-002','DESIGN-003'],async args=>{
+    define('designs.advance','draft.write',{kind:{type:'string'},jobId:{type:'string'}},['DESIGN-001','DESIGN-002','DESIGN-003'],async args=>{
       if(!['design.draft','design.layout'].includes(String(args.kind)))throw new ToolRefusal('invalid_arguments');
       await advanceDesignJob(runtime.platform,{kind:args.kind as 'design.draft'|'design.layout',idempotencyKey:String(args.kind)+':'+String(args.jobId),payload:{jobId:args.jobId}});
       return {status:'processed',jobId:args.jobId};
     }),
-    define('store.advance',{sourceType:{type:'string'},provider:{type:'string'},runId:{type:'string'}},['STORE-004'],async args=>{
+    define('store.advance','integration.manage',{sourceType:{type:'string'},provider:{type:'string'},runId:{type:'string'}},['STORE-004'],async args=>{
       if(!runtime.synchronizeCommerce)throw new ToolRefusal('source_unavailable');
       return await runtime.synchronizeCommerce(args);
     }),

@@ -2,7 +2,8 @@ import type {createIntegrationService} from '../integrations/service';
 import type {Principal} from '@/vendor/base/agent-door/index.ts';
 type Integrations=ReturnType<typeof createIntegrationService>;
 export function credentialScopes(scopes: string[]){
-  return [...(scopes.includes('contacts:read')?['mango.audience.read','mango.segments.read']:[]),
+  return [...(scopes.includes('contacts:read')?['mango.audience.read','mango.segments.read','mango.integrations.contacts','mango.integrations.segments','mango.integrations.memberships']:[]),
+    ...(scopes.includes('events:read')?['mango.integrations.events']:[]),
     ...(scopes.includes('campaigns:send')?['mango.campaigns.enqueue','mango.delivery.dispatch']:[])];
 }
 export function mangoCredentials(service:Integrations){

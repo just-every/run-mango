@@ -1,4 +1,5 @@
-import {agentAction} from '../agent-door/context';
+import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
+import {agentAction,agentWriteAdmission} from '../agent-door/context';
 import {productAuthority,effectiveRole} from '../auth/product-roles';
 // @ts-expect-error Portable Base ESM has no separate declaration for this helper.
 import { localCookieName } from '@/vendor/base/operator-auth/http.mjs';
@@ -50,3 +51,17 @@ export const senderWriteGuard = `EXISTS (SELECT 1 FROM (
   ) s JOIN oa_operators o ON o.id=s.operator_id
   WHERE s.id=? AND o.id=? AND o.version=? AND s.operator_version=o.version AND o.status='active'
     AND s.expires_at > MAX(?,CAST((julianday('now')-2440587.5)*86400000 AS INTEGER)))`;
+
+/** Recheck saved native agent authority at each paid/network handoff. */
+export async function assertAgentHandoff(platform: Pick<Platform,'database'>) {
+  if (!agentAction.getStore()) return;
+  const admission=agentWriteAdmission.getStore();
+  if (!admission || !await platform.database.$client.prepare(`SELECT 1 WHERE ${senderWriteGuard}`)
+    .bind(admission.sessionId,admission.operatorId,admission.version,Date.now()).first())
+    throw new ToolRefusal('authority_changed');
+}
+
+export async function agentHandoff<T>(platform: Pick<Platform,'database'>, effect:()=>Promise<T>): Promise<T> {
+  await assertAgentHandoff(platform);
+  return effect();
+}

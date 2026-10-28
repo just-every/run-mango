@@ -1,3 +1,4 @@
+import {IntegrationError} from '../integrations/schema';
 import type {LifecycleRuntime} from '../lifecycle/types';
 import {evaluateAudience} from '../lifecycle/evaluate-audience';
 import {createLifecycleRepository} from '../lifecycle/repository';
@@ -177,7 +178,7 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
         if(kind==='designs.read'&&!design)return {result:{enabled:Boolean(platform.design),earlier:[]}};
         const pureResource = kind === 'sender.read' ? 'mango://sender/readiness' : design?'mango://designs/'+encodeURIComponent(design.id):null;
         const read = pureResource ? await mangoResources(platform).find(resource=>resource.uriTemplate===(design?'mango://designs/{id}':pureResource))?.read(pureResource,{...ctx,clientId:ctx.clientId}) : null;
-        const result = read ? object(read.json) : await call(ctx,operation.method,path,operation.readOnly||operation.method==='DELETE'?undefined:option.unwrap?body[option.unwrap]:body);
+        const result = read ? object(read.json) : await call(ctx,operation.method,path,operation.readOnly?undefined:option.unwrap?body[option.unwrap]:body);
         if (!operation.readOnly) {
           const uri=await resourceLink(platform,kind,args,result);
           const family=kind.split('.')[0];
@@ -201,8 +202,10 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
       if(!ctx.clientId||ctx.agent.id!=='integration:'+ctx.clientId)throw new ToolRefusal('native_client_required');
       const operator=await nativeOperator(platform,ctx.person.id);
       if(!hasPermission(operator.role,'campaign.send'))throw new ToolRefusal('role_forbidden');
-      const result=await agentAction.run(ctx,()=>integrations.send(ctx.clientId!,String(args.id),{revisionId:String(args.revisionId),segmentId:String(args.segmentId)}));
-      return {result};
+      try{
+        const result=await agentAction.run(ctx,()=>integrations.send(ctx.clientId!,String(args.id),{revisionId:String(args.revisionId),segmentId:String(args.segmentId)}));
+        return {result};
+      }catch(error){if(error instanceof IntegrationError)throw new ToolRefusal(error.code,'Native integration refused',{status:error.status});throw error;}
     },
   }];
 
