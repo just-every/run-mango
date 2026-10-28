@@ -18,7 +18,7 @@ export async function provePropertyRulesAndPreview(site:Installation,cookie:stri
   const campaign=await draftCampaign(site,cookie,'synthetic-mango-1408',emails,due);
   await json(await site.call('/api/campaign-revisions/'+campaign.revisionId,{method:'PATCH',cookie,body:{inclusionRuleJson:segment.inclusionRuleJson,emailSubject:'Your budget',emailBody:`<p>Budget {{${moneyKey} | fallback: "No budget"}}; date {{${dateKey} | fallback: "No date"}}.</p>`}}),200);
   const review=await json(await site.call('/api/campaigns/'+campaign.campaignId+'/checks',{method:'POST',cookie,body:{revisionId:campaign.revisionId}}),200);
-  expect(review.eligibleCount).toBe(contacts.length);expect(review.channelCounts).toEqual([{channel:'email',eligibleContactCount:contacts.length,fallbackContactCount:1,recipientStepCount:contacts.length}]);
+  expect(review.candidateCount).toBe(contacts.length);expect(review.eligibleCount).toBe(contacts.length);expect(review.channelCounts).toEqual([{channel:'email',eligibleContactCount:contacts.length,fallbackContactCount:1,recipientStepCount:contacts.length}]);
   await openPage(page,site.runtime.url+'/app/campaigns/'+campaign.campaignId+'/review');
   await page.getByText('Preview as a contact',{exact:true}).click();await page.getByLabel('Contact email or phone',{exact:true}).fill(emails[0]);await page.getByRole('button',{name:'Find preview contact',exact:true}).click();await page.getByLabel('Preview contact',{exact:true}).selectOption(contacts[0].id);
   await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('Budget $2,345.67; date 2026-04-15.');

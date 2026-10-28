@@ -38,7 +38,7 @@ export async function proveCustomProperties(site:Installation,cookie:string,page
   await expect(page.getByRole('status',{name:'Import warnings'})).toContainText(`property_invalid_money: ${moneyKey}`);
   await expect(page.getByRole('status',{name:'Import warnings'})).toContainText(`property_invalid_date: ${dateKey}`);
   
-  await capturePropertyScreen(page,info,'import-mapping',page.getByLabel('Audience import mapping'));
+  await capturePropertyScreen(page,info,'import-mapping',page.locator('[aria-labelledby="import-mapping-title"]'));
   await page.getByRole('button',{name:'Start import',exact:true}).click();
   await expect(page.getByRole('status').filter({hasText:'Import completed:'})).toBeVisible();
   expect(await ledger()).toEqual(before);expect(await statuses()).toEqual(beforeStates);
