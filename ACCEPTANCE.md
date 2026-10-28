@@ -286,18 +286,16 @@ Core · published · **partial** · Rules D-2
 
 Core · published · **partial** · Rules D-2
 
-**Requirement.** A restricted channel returns to subscribed only through fresh recipient consent and the required confirmation. Suppression additionally needs its cause resolved.
+**Requirement.** A restricted channel returns to subscribed only through fresh recipient consent and the required confirmation. Suppression additionally needs its cause resolved. CONT-027 owns public-form resubscription, protected-destination acknowledgments, confirmation allowance, suppression and never-downgrade rules; CONT-028 owns guarded capture.
 
 **Acceptance.**
 1. Fresh affirmative evidence is later than the opt-out and is confirmed under CONT-009 before resubscription.
 2. An operator edit alone never resubscribes an unsubscribed or suppressed channel.
 3. A suppression cause must be resolved before that channel becomes subscribed.
-4. A recipient’s own public-form resubscribe follows CONT-027.
-5. Public capture follows CONT-027’s protected-destination acknowledgement, confirmation allowance, suppression and never-downgrade rules; guarded capture follows CONT-028.
-6. During parallel run, a confirmed resubscribe writes subscribed state back where the incumbent API allows; otherwise the cutover report lists it.
+4. During parallel run, a confirmed resubscribe writes subscribed state back where the incumbent API allows; otherwise the cutover report lists it.
 
 **Evidence.** `tests/provider-suppression-ingress.spec.ts` · `tests/go-live/opt-out-reasons.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Fresh affirmative evidence is later than the opt-out and is confirmed under CONT-009 before resubscription.; An operator edit alone never resubscribes an unsubscribed or suppressed channel.; A recipient’s own public-form resubscribe follows CONT-027.; During parallel run, a confirmed resubscribe writes subscribed state back where the incumbent API allows; otherwise the cutover report lists it..
+**Gap.** Fresh-recipient consent and suppression resolution remain the required resubscription route. Unasserted in the cited evidence: confirmation later than the opt-out, refusal of an operator-only resubscription, and parallel-run subscribed-state writeback or its named fallback. Public-form and guarded-capture proof belongs to CONT-027 and CONT-028.
 
 #### CONT-006 — Email suppression
 
@@ -977,7 +975,7 @@ Core · published · **partial** · From DESIGN-001 · Cites BASE-DATA-004, BASE
 **Acceptance.**
 1. With the module absent no request goes to 12ui; enabled requests occur only for an operator’s design run, never at startup, on an independent schedule or for unrelated deployment activity.
 2. A provider refusal or outage fails only that run.
-3. An operator with design-authoring rights may commission within the provider wallet and allowance; Mango shows each paid-step estimate and records the request. Business limits and spend caps follow the company’s policy.
+3. An operator with design-authoring rights may commission within the provider wallet and allowance; Mango shows each paid-step estimate and records the request.
 4. The owner is told that the brief and selected image reach 12ui and its declared subprocessors, may remain in its evaluation corpus until owner-requested deletion, and reveal when this installation designs email.
 
 **Evidence.** `tests/campaign-authoring/design-generation.spec.ts`
@@ -4138,7 +4136,7 @@ Core · target · **missing** · From MOVE-008 · Rules D-2
 
 Core · target · **partial** · Rules D-2
 
-**Requirement.** Mailchimp export engagement becomes historical imported facts, separate from native sending and consent.
+**Requirement.** Mailchimp export engagement becomes historical imported facts, separate from native sending and consent. MOVE-015 owns API-key activity, other incumbents and the remaining engagement uses.
 
 **Acceptance.**
 1. Granular-activity clicks and opens for three known contacts and one unknown address produce one fact per accepted row on the matching contact at its original time.
@@ -4146,7 +4144,6 @@ Core · target · **partial** · Rules D-2
 3. The reconciliation report counts imported and dropped rows, including unknown addresses.
 4. Imported clicks count for CONT-012 and AUD-008 dormancy; imported opens remain estimates and never count as engagement.
 5. Importing facts creates no Mango send facts, results or attribution and changes no consent; existing populated campaign results remain identical.
-6. MOVE-015 owns API-key activity, other incumbents and the remaining engagement uses.
 
 **Evidence.** `tests/move-in/archive.journeys.ts` · `tests/move-in/hostile.journeys.ts` · `tests/portability.spec.ts`
 **Gap.** Historical contact/time/campaign/link facts, imported/dropped reconciliation, dormancy distinctions and populated native result preservation are asserted. The cited evidence does not compare consent state and consent-evidence rows before and after the initial historical-event import; its after-import status snapshot cannot prove that import changes no consent.

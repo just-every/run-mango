@@ -122,8 +122,8 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | CONT-005 | 1 | Fresh affirmative evidence is later than the opt-out and is confirmed under CONT-009 before resubscription. | none | none |
 | CONT-005 | 2 | An operator edit alone never resubscribes an unsubscribed or suppressed channel. | none | none |
 | CONT-005 | 3 | Suppression blocks fresh capture and handoff | `tests/provider-suppression-ingress.spec.ts:93` | asserted |
-| CONT-005 | 4 | A recipient’s own public-form resubscribe follows CONT-027. | none | none |
-| CONT-005 | 6 | During parallel run, a confirmed resubscribe writes subscribed state back where the incumbent API allows; otherwise the cutover report lists it. | none | none |
+| CONT-005 | Requirement | A recipient’s own public-form resubscribe follows CONT-027. | moved | moved |
+| CONT-005 | 4 | During parallel run, a confirmed resubscribe writes subscribed state back where the incumbent API allows; otherwise the cutover report lists it. | none | none |
 | CONT-006 | 1 | Provider suppression retained before handoff eligibility | `tests/provider-suppression-ingress.spec.ts:83` | asserted |
 | CONT-006 | 1 | Hard bounce and complaint both suppress | `tests/go-live/go-live.journeys.ts:142` | asserted |
 | CONT-006 | 2 | Soft-bounce recorded and visible | none | none |
@@ -203,7 +203,7 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | CONT-030 | 2 | Nonempty legacy row journals are refused before staging. | none | none |
 | CONT-030 | 3 | Upgrade retires legacy journals and transfers only after advancing every known source floor. | none | none |
 | CONT-030 | 4 | An offline copy without current authority makes no claim to detect later erasure. | none | none |
-| CONT-005 | 5 | Public-form proof boundary and guarded-capture pointer moved to their owning clauses. | `CONT-027; CONT-028` | moved |
+| CONT-005 | Requirement | Public-form proof boundary and guarded-capture pointer moved to their owning clauses. | moved | moved |
 | CONT-009 | 6 | Email confirmation GET leaves state unchanged | `tests/go-live/go-live.journeys.ts:215` | asserted |
 | CONT-009 | 6 | SMS confirmation GET leaves pending state unchanged | `tests/audience-import/signup.spec.ts:79` | asserted |
 | CONT-009 | 6 | Explicit affirmative confirmation POST | `tests/audience-import/signup.spec.ts:81` | asserted |
@@ -1423,7 +1423,7 @@ Old reference: `6d9fc12eeae3b7ae661508996201cb8d008895af`.
 | MOVE-009 | 5 | No native send facts or attribution are created | `tests/move-in/archive.journeys.ts:180` | asserted |
 | MOVE-009 | 5 | Populated campaign result remains unchanged | `tests/move-in/archive.journeys.ts:399` | asserted |
 | MOVE-009 | 5 | Consent unchanged by historical-event import | none | none |
-| MOVE-009 | 6 | Pointer to MOVE-015 owns additional import uses | moved | moved |
+| MOVE-009 | Requirement | Pointer to MOVE-015 owns additional import uses | moved | moved |
 | PUB-001 | 1 | Sent issue public page | `tests/campaign-results/archive.journeys.ts:31` | asserted |
 | PUB-001 | 1 | Archive index entry | `tests/campaign-results/archive.journeys.ts:31` | asserted |
 | PUB-001 | 2 | RSS item | `tests/campaign-results/archive.journeys.ts:39` | asserted |

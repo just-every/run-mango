@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "313d2f2378c2cfbe3b9e13beeed1830dc71dd1d63d1a8b581708e95fd166d54d",
+      "sha256": "f6ed4172048711d52cd394dade66429358513b3ba65c66689954048793ed905c",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "653eaf7d32b4d92162c59acac823a16ad938c46e2160ca476fac9ccd5b53803a",
+      "sha256": "c975de4190f0c082f695470646789e551d4d53fd77bbcc179def59a7b2a67484",
       "executable": false
     },
     "DEMO.md": {
@@ -1074,7 +1074,7 @@
       "executable": false
     },
     "docs/contract/DONE-AUDIT.md": {
-      "sha256": "d2b6fc626a4ecad4ed8c9c7b7217829a09b96873f932cf6d35a5d7a9db8c199a",
+      "sha256": "ba5ae21f5b7444d0507e902e3649dcef0abb7ace7df256fc79437209e5e62de8",
       "executable": false
     },
     "docs/contract/health-readiness.md": {
