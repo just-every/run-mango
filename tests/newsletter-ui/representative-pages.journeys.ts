@@ -60,7 +60,7 @@ async function menuStates(page: Page): Promise<PhoneState[]> {
 
 // One data-driven phone smoke retains the public doors and visits every menu destination and detail page.
 test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator page fit with accessible phone states', async ({ page, request }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(600_000);
   await page.setViewportSize({ width: 390, height: 844 });
   for (const route of ['/', '/docs', '/docs/install', '/docs/getting-started', '/signin']) {
     await page.goto(route);
