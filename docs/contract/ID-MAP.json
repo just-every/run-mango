@@ -3,9 +3,10 @@
   "old": "6d9fc12eeae3b7ae661508996201cb8d008895af",
   "ids": {
     "HOME-001": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "HOME-001"
+        "HOME-001",
+        "HOME-002"
       ]
     },
     "DOCS-001": {
@@ -123,9 +124,10 @@
       ]
     },
     "CONT-005": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CONT-005"
+        "CONT-005",
+        "CONT-028"
       ]
     },
     "CONT-006": {
@@ -147,9 +149,10 @@
       ]
     },
     "CONT-009": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CONT-009"
+        "CONT-009",
+        "CONT-028"
       ]
     },
     "CONT-010": {
@@ -171,9 +174,11 @@
       ]
     },
     "CONT-013": {
-      "how": "kept",
+      "how": "split",
       "to": [
-        "CONT-013"
+        "CONT-013",
+        "CONT-029",
+        "CONT-030"
       ]
     },
     "CONT-014": {

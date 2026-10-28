@@ -978,7 +978,7 @@
       "executable": false
     },
     ".github/workflows/verify.yml": {
-      "sha256": "15e76fc6923ed8560f770efdb22ec938ba050f0c04d6db31735424277d965fc1",
+      "sha256": "df177acfea3a7534b8875a949a4fb6ac3e59bcbae60a8ac8bf660991409e8034",
       "executable": false
     },
     ".gitignore": {
@@ -994,7 +994,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "92d561a8d092e57aac1e6d8f462fed5b6b4ba0c675e7c3c80fefafa1f2ee475d",
+      "sha256": "a24f31df154f5f3932d12296dde4c3344859f782e3a27ed1353c6fe386bef077",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1002,7 +1002,7 @@
       "executable": false
     },
     "AGENTS.md": {
-      "sha256": "454610738b41937f2e70b994cf94e1b23efabfa96d74a2dd65f37fc76b42af8b",
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
       "executable": false
     },
     "base-copies.json": {
@@ -1014,7 +1014,7 @@
       "executable": false
     },
     "CHANGELOG.md": {
-      "sha256": "f79842cf68ea1d7f36b23a1a3127873f4afcdfeb5c9e8d8f8171508a337ff31e",
+      "sha256": "508a5af0a6e2098d3618a18e6081a3d345a0f83715c1c95307d443943f3c7b1e",
       "executable": false
     },
     "CLAUDE.md": {
@@ -1026,7 +1026,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "cc681b067ff18cc546ef04d6f409a41f58f79277aceb9f29e3e22104a1e68033",
+      "sha256": "9a3b6d4cff60b7626acf054e9183c46fef5c7bc2d532fcbb89639576d6e00b24",
       "executable": false
     },
     "DEMO.md": {
@@ -1070,11 +1070,19 @@
       "executable": false
     },
     "docs/contract/COVERAGE.json": {
-      "sha256": "9407d5213a00b9da26c25b648c3f26b203b461445643ca88114466ce7732fe3b",
+      "sha256": "269145564d89843f5c4b08450205034ac068a0f32e1bf9f96dab917b2cd9b014",
+      "executable": false
+    },
+    "docs/contract/DONE-AUDIT.md": {
+      "sha256": "9f353ae519962fde9fbf7a9b24df1d9cec468f83430d5cf8b4b36cb12d45c32c",
       "executable": false
     },
     "docs/contract/ID-MAP.json": {
-      "sha256": "0bf483dad1c666e0ca772a978d2531dc4655dd64e6b5abb37f2513e923c0d659",
+      "sha256": "86f93df388b71c24ccd637f00155ddc39f1155b307cd8c070c8f2b4762a206c2",
+      "executable": false
+    },
+    "docs/contract/mechanism.md": {
+      "sha256": "6df493a4f5123db3f1cfe1e83f5881eeac497fb725cddbbb9c56981133d900f3",
       "executable": false
     },
     "docs/delivery-reports.md": {
@@ -1118,7 +1126,7 @@
       "executable": false
     },
     "docs/site.json": {
-      "sha256": "41b746cdedfdf932e08fee4bdbff4262d5f33be304624df346e54863ee93ced0",
+      "sha256": "f1a2ee77be4c15b455b947454974d79cbae9d95839d1e578ad41b09bdf5fa83c",
       "executable": false
     },
     "docs/team-and-settings.md": {
@@ -1751,6 +1759,10 @@
     },
     "rer-setup.json": {
       "sha256": "9ad36d2d237c8f98cc53ad27e68d77f28d8c09f5f612663e2db80e273758c348",
+      "executable": false
+    },
+    "RULINGS.md": {
+      "sha256": "5d0c25325f8c57f6e807c7820ff16aee6fd701d733aaa86df81d5390bcbd37fe",
       "executable": false
     },
     "RUN-LOCALLY.md": {
