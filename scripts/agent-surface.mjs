@@ -14,8 +14,11 @@ try{
  import {mangoResources} from './src/core/features/agent-door/resources';
  import {eventsTool} from './src/vendor/base/agent-door/events.ts';
  const platform={database:{$client:{}},config:{}},runtime={platform};
+ // Only an owner can edit Mango roles, and owner is already the maximum native role.
+ // The other two authority subjects are this installation and public signup, never a sponsor.
+ // Their real authority() checks still run; no fabricated widening mode is added.
  export const tools=[...mangoTools(platform,()=>{throw Error('Declaration may not execute native actions')},{},runtime),...workerTools(runtime),...integrationTools(platform,{}),eventsTool({options:{seed:'mango'}})]
-   .map(({name,title,scope,readOnly,classes,clauses,inputSchema})=>({name,title,scope,readOnly,classes,clauses,inputSchema})).sort((a,b)=>a.name.localeCompare(b.name));
+   .map(({name,title,scope,readOnly,classes,clauses,inputSchema})=>({name,title,scope,readOnly,classes,clauses,inputSchema,...(['mango.access.update','mango.connections.update','mango.signup.update'].includes(name)?{sponsorEscalation:false}:{})})).sort((a,b)=>a.name.localeCompare(b.name));
  export const resources=mangoResources(platform).map(resource=>resource.uriTemplate).sort();
  `;
  const bundled=await build({stdin:{contents:source,resolveDir:root,loader:'ts'},bundle:true,write:false,format:'esm',platform:'node',alias:{'@':resolve('src')},external:['node:*']});
@@ -25,7 +28,7 @@ try{
  const surface={schema:'rer-agent-surface/1',seed:'mango',specialist:'marketer',tools:declaration.tools,resources:declaration.resources,
   notTools:[{clauses:['DATA-001','MOVE-001'],reason:'import-door'},{clauses:['OPER-001'],reason:'screen'},{clauses:['DATA-001'],reason:'installation'}],
   witness:{tool:'mango.witness.read',args:{}},journey,escalations:[],
-  verification:{journey:'tests/agent-door/native-journey.mjs',owner:{bindings:{RER_MANAGEMENT_ORIGIN:'issuer',RER_INSTALLATION_ID:'installationId',DESIGN_PROVIDER_API_KEY:'token',DESIGN_PROVIDER_ORIGIN:'appOrigin'},initializer:'tests/agent-door/owner.mjs'},network:{module:'tests/agent-door/network.mjs',origins:['https://api.sendgrid.com','https://api.resend.com','https://cloudflare-dns.com','https://rer-hosted-check.invalid']}},
+  verification:{replayAdmission:{prepare:['create']},journey:'tests/agent-door/native-journey.mjs',owner:{email:'owner@example.test',bindings:{RER_MANAGEMENT_ORIGIN:'issuer',RER_INSTALLATION_ID:'installationId',DESIGN_PROVIDER_API_KEY:'token',DESIGN_PROVIDER_ORIGIN:'appOrigin'},initializer:'tests/agent-door/owner.mjs'},network:{module:'tests/agent-door/network.mjs',origins:['https://api.sendgrid.com','https://api.resend.com','https://cloudflare-dns.com','https://rer-hosted-check.invalid']}},
   pending:JSON.parse(await readFile('tests/agent-door/pending.json','utf8'))};
  const text=JSON.stringify(surface,null,2)+'\n';
  if(process.argv.includes('--check')){

@@ -61,7 +61,8 @@
           "unmaskedContacts"
         ],
         "additionalProperties": false
-      }
+      },
+      "sponsorEscalation": false
     },
     {
       "name": "mango.activity.read",
@@ -1499,7 +1500,8 @@
           "proposalId"
         ],
         "additionalProperties": false
-      }
+      },
+      "sponsorEscalation": false
     },
     {
       "name": "mango.consent.dispatch",
@@ -2951,7 +2953,8 @@
           "settings"
         ],
         "additionalProperties": false
-      }
+      },
+      "sponsorEscalation": false
     },
     {
       "name": "mango.store.advance",
@@ -3262,7 +3265,14 @@
         {
           "class": "standard"
         }
-      ]
+      ],
+      "target": {
+        "kind": "campaign",
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      }
     },
     {
       "id": "update",
@@ -3287,6 +3297,13 @@
       "inject": {
         "confirm": true,
         "policy": "autonomous"
+      },
+      "target": {
+        "kind": "campaign-revision",
+        "id": {
+          "$from": "create",
+          "pointer": "/revisionId"
+        }
       }
     },
     {
@@ -3647,8 +3664,14 @@
   ],
   "escalations": [],
   "verification": {
+    "replayAdmission": {
+      "prepare": [
+        "create"
+      ]
+    },
     "journey": "tests/agent-door/native-journey.mjs",
     "owner": {
+      "email": "owner@example.test",
       "bindings": {
         "RER_MANAGEMENT_ORIGIN": "issuer",
         "RER_INSTALLATION_ID": "installationId",
@@ -3671,27 +3694,14 @@
     {
       "id": "PENDING-BASE-2026-10-28-target-attribution",
       "assertion": "Native targets are present in every audit outcome.",
-      "source": "modules/agent-door/audit.ts"
+      "source": "modules/agent-door/target.ts:5; modules/agent-door/pipeline.ts:71",
+      "detail": "The new target hook is exercised for existing native records, including blocked and approved outcomes. It runs before creation and receives no result; auto-generated campaign IDs cannot yet be backfilled into a creation audit. No invented target is supplied."
     },
     {
-      "id": "PENDING-BASE-2026-10-28-resource-code",
-      "assertion": "Missing and restricted resource refusals include JSON-RPC error.data.code.",
-      "source": "modules/agent-door/transport.ts"
-    },
-    {
-      "id": "PENDING-BASE-2026-10-28-replay-authority",
-      "assertion": "Mutation replay rechecks current native authorization.",
-      "source": "modules/agent-door/pipeline.ts"
-    },
-    {
-      "id": "PENDING-BASE-2026-10-28-applicable-escalations",
-      "assertion": "Installation-only access tools do not need fabricated sponsor-widening fixtures; real subject escalation remains required.",
-      "source": "modules/agent-door/conformance/surface.mjs"
-    },
-    {
-      "id": "PENDING-BASE-2026-10-28-reviewer-lifecycle",
+      "id": "PENDING-SEED-2026-10-28-reviewer-lifecycle",
       "assertion": "Native reviewer lifecycle and custody are exercised through normal conformance.",
-      "source": "modules/agent-door/conformance"
+      "source": "cli/agent-door.mjs:50,87-88; operations/agent-door.test.mjs",
+      "detail": "0.2.86 has the native lifecycle hook. Separate invited native-person review, summary-bound approval and linked execution pass the touched test. The normal runner still stops at incomplete tool/class fixtures, so normal-conformance proof remains pending."
     },
     {
       "id": "PENDING-SEED-2026-10-28-complete-class-journey",
@@ -3700,12 +3710,8 @@
     {
       "id": "PENDING-BASE-2026-10-28-native-client-and-phase-fixtures",
       "assertion": "Generic journeys need native API-client invocations and fresh per-policy native fixture preparation for destructive consent/custody operations; the bootstrap runs once and the native journey only follows generic policy phases. No fabricated native state or fake widening is permitted.",
-      "source": "cli/agent-door.mjs and modules/agent-door/conformance/protocol.mjs"
-    },
-    {
-      "id": "PENDING-CT-2026-10-28-agent-surface",
-      "assertion": "The landed Agent surface must reconcile Mango Agent/FLOW-008/AGENT-002/003/004/010/011 approval presets with company policy while retaining consent, native roles, exact revisions and sender evidence. Built-in BASE-AGENT-010 clause inheritance must also pass the unchanged conformance checker.",
-      "source": "CONTRACT.md and modules/agent-door/conformance/surface.mjs"
+      "source": "cli/agent-door.mjs:124-138; modules/agent-door/conformance/journey.mjs:42; modules/agent-door/conformance/policy-phases.mjs:30",
+      "detail": "Generic journey phases still invoke the Business-token tool helper only. There is no step-scoped native credential or per-phase native preparation hook; the paid-edge fixture control does not grant either. Existing client-only tools and confirmation/destructive custody fixtures remain real failing coverage points."
     }
   ]
 }

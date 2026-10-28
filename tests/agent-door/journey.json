@@ -73,7 +73,14 @@
       {
         "class": "standard"
       }
-    ]
+    ],
+    "target": {
+      "kind": "campaign",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    }
   },
   {
     "id": "update",
@@ -98,6 +105,13 @@
     "inject": {
       "confirm": true,
       "policy": "autonomous"
+    },
+    "target": {
+      "kind": "campaign-revision",
+      "id": {
+        "$from": "create",
+        "pointer": "/revisionId"
+      }
     }
   },
   {

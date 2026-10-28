@@ -4,6 +4,7 @@ import {randomUUID,webcrypto} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import operations from '../src/core/features/agent-door/operations.ts';
 import {runtime,setup} from './base-runtime.mjs';
+import initializeOwner from '../tests/agent-door/owner.mjs';
 import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../src/vendor/base/agent-door/conformance/crypto.mjs';
 
 test('Mango shared door: signed native owner, durable Business people, native draft custody, policy, replay and role narrowing',async()=>{
@@ -47,7 +48,13 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.call('/auth/owner-claim',{method:'POST',body:{token:setup}})).status,403);
   const now=seconds(),claim=await signJws(pair.privateKey,kid,'rer-owner-claim+jwt',{
    v:1,iss:issuer,aud:origin,installationId,email:c.person.email,iat:now,exp:now+300,jti:randomUUID()});
-  const claimed=await app.call('/auth/owner-claim',{method:'POST',body:{token:claim,displayName:'Morgan Owner'}});
+  const claimed=await initializeOwner({origin,email:c.person.email,displayName:'Morgan Owner',returnTo:'/app',
+   claim:{mode:'signed',path:'/auth/owner-claim',token:claim},
+   request:(absolute,init={})=>{
+    const headers=new Headers(init.headers),requestOrigin=headers.get('origin')??origin,cookie=headers.get('cookie')??undefined;
+    for(const name of ['origin','cookie','content-type'])headers.delete(name);
+    return app.call(new URL(absolute).pathname,{method:init.method,origin:requestOrigin,cookie,headers:Object.fromEntries(headers),...(init.body?{body:JSON.parse(init.body)}:{})});
+   }});
   assert.equal(claimed.status,303,await claimed.clone().text());
   const cookie=claimed.headers.get('set-cookie').split(';')[0];
   const owner=(await (await app.call('/api/operator',{cookie})).json()).operator;
@@ -83,6 +90,10 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.db.prepare('SELECT actor_type,actor_id FROM campaign_state_transitions WHERE campaign_id=?').bind(ids.campaignId).first()).actor_type,'agent');
   const resource=await mcp('resources/read',{uri:'mango://campaigns/'+ids.campaignId});
   assert.ok(resource.message.result.contents[0].text.includes(ids.revisionId),JSON.stringify(resource.message));
+  const targeted=await call('mango.campaigns.read',{id:ids.campaignId});
+  const targetDecision=targeted.message.result._meta['com.runeditrun/decision'];
+  const targetAudit=JSON.parse((await app.db.prepare('SELECT row FROM agent_door_audit WHERE id=?').bind(targetDecision.id).first()).row);
+  assert.deepEqual(targetAudit.resource,{kind:'campaign',id:ids.campaignId});
   const audit=await app.db.prepare("SELECT actor_type,actor_id,detail_json FROM lifecycle_audit_entries WHERE action='mango.campaigns.create'").first();
   assert.equal(audit.actor_type,'agent');assert.equal(audit.actor_id,c.agentId);assert.ok(audit.detail_json.includes('Morgan Owner'));
   // Exercise the declared native draft/segment journey before company-policy negatives.
@@ -102,11 +113,16 @@ test('Mango shared door: signed native owner, durable Business people, native dr
    assert.equal(response.message.result?.isError,false,step.id+': '+JSON.stringify(response.message));
    outputs.set(step.id,response.message.result.structuredContent);
   }
-  const nativeCount=(await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count;
+  let nativeCount=(await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count;
   const blockedPolicy={...autonomousPolicy(),rules:[{id:'block',class:'*',do:'blocked'}]};
   assert.equal((await adopt(blockedPolicy)).response.status,200);
   const blocked=await call('mango.campaigns.create',{idempotency_key:'blocked'});
   assert.equal(blocked.message.result._meta['com.runeditrun/error'].code,'policy_blocked');
+  const blockedReplay=await call('mango.campaigns.create',{idempotency_key:'draft-one'});
+  assert.equal(blockedReplay.message.result._meta['com.runeditrun/error'].code,'policy_blocked','Cached success cannot bypass current company policy');
+  const blockedTarget=await call('mango.campaigns.read',{id:ids.campaignId});
+  const blockedTargetRow=JSON.parse((await app.db.prepare('SELECT row FROM agent_door_audit WHERE id=?').bind(blockedTarget.message.result._meta['com.runeditrun/decision'].id).first()).row);
+  assert.deepEqual(blockedTargetRow.resource,{kind:'campaign',id:ids.campaignId});
   assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,nativeCount);
   assert.equal((await adopt(autonomousPolicy(),{paused:true})).response.status,200);
   const paused=await call('mango.campaigns.create',{idempotency_key:'paused'});
@@ -120,9 +136,49 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal(invited.status,303,await invited.clone().text());
   let memberCookie=invited.headers.get('set-cookie').split(';')[0];
   const member=(await (await app.call('/api/operator',{cookie:memberCookie})).json()).operator;
+  const memberIdentity={sub:memberSub,act:{sub:randomUUID(),name:'Casey assistant',specialist:'marketer'}};
+  const memberDraft=await call('mango.campaigns.create',{idempotency_key:'member-replay'},memberIdentity);
+  assert.equal(memberDraft.message.result.isError,false,JSON.stringify(memberDraft.message));
+  nativeCount++;
+  const restricted=await mcp('resources/read',{uri:'mango://access/'+owner.id},memberIdentity);
+  const absent=await mcp('resources/read',{uri:'mango://access/'+randomUUID()},memberIdentity);
+  assert.equal(restricted.message.error.data.code,'resource_unavailable');
+  assert.deepEqual(restricted.message.error,absent.message.error,'Restricted and absent records use the same refusal');
+  // A real invited person, with a separate native session and Business ID,
+  // reviews and approves; the agent never supplies a human confirmation.
+  const heldPolicy={...autonomousPolicy(),rules:[{id:'hold',class:'*',do:'approval',approver:['person:'+memberSub],wait:'PT1H'}]};
+  assert.equal((await adopt(heldPolicy)).response.status,200);
+  const held=await call('mango.campaigns.update',{revisionId:ids.revisionId,composition:{name:'Reviewed orchard draft'},idempotency_key:'named-approval'});
+  const handle=held.message.result._meta['com.runeditrun/approval'];assert.ok(handle?.id,JSON.stringify(held.message));
+  const approvalPath='/agents/api/approvals/'+handle.id;
+  const pending=(await (await app.call(approvalPath,{cookie:memberCookie})).json()).approval;
+  assert.deepEqual(pending.summary.nativeTarget,{kind:'campaign-revision',id:ids.revisionId});
+  assert.equal((await app.call(approvalPath+'/approve',{cookie:memberCookie,method:'POST',body:{revision:pending.revision,summary_sha256:'stale'}})).status,409);
+  const approved=await app.call(approvalPath+'/approve',{cookie:memberCookie,method:'POST',body:{revision:pending.revision,summary_sha256:pending.summary_sha256}});
+  assert.equal(approved.status,200,await approved.clone().text());
+  const final=(await approved.json()).approval;
+  assert.equal(final.state,'executed',JSON.stringify(final));
+  assert.equal(final.approvals[0].person,member.id);
+  assert.equal(final.prepared_by.agent.name,'Agent door conformance');
+  const execution=JSON.parse((await app.db.prepare("SELECT row FROM agent_door_audit WHERE json_extract(row,'$.decision_id')=? ORDER BY sequence DESC LIMIT 1").bind(pending.decision_id).first()).row);
+  assert.deepEqual(execution.resource,{kind:'campaign-revision',id:ids.revisionId});
+  assert.ok(execution.approval.by.includes(member.id));
+  assert.equal((await adopt({...autonomousPolicy(),rules:[{id:'review',class:'*',do:'review'}],reviewers:['person:'+memberSub]})).response.status,200);
+  const reviewed=await call('mango.campaigns.update',{revisionId:ids.revisionId,composition:{name:'Second reviewed orchard draft'},idempotency_key:'named-review'});
+  const reviewId=reviewed.message.result._meta['com.runeditrun/review'].id;
+  const marked=await app.call('/agents/api/reviews/'+reviewId+'/reviewed',{cookie:memberCookie,method:'POST',body:{}});
+  assert.equal(marked.status,200,await marked.clone().text());
+  assert.equal((await app.db.prepare('SELECT marked_by FROM agent_door_reviews WHERE id=?').bind(reviewId).first()).marked_by,member.id);
+  assert.equal((await adopt(autonomousPolicy())).response.status,200);
   const narrowing=await call('mango.access.update',{id:member.id,role:'support',unmaskedContacts:false,idempotency_key:'narrow-teammate'});
   assert.equal(narrowing.message.result.isError,false,JSON.stringify(narrowing.message));
   assert.equal((await app.db.prepare('SELECT role FROM operator_product_roles WHERE operator_id=?').bind(member.id).first()).role,'support');
+  const staleAuthorityReplay=await call('mango.campaigns.create',{idempotency_key:'member-replay'},memberIdentity);
+  assert.equal(staleAuthorityReplay.message.result._meta['com.runeditrun/error'].code,'role_forbidden','Replay rechecks the current native sponsor role before returning cached data');
+  const selfWidening=await call('mango.access.update',{id:member.id,role:'owner',unmaskedContacts:true,idempotency_key:'native-self-widening'},memberIdentity);
+  assert.equal(selfWidening.message.result._meta['com.runeditrun/error'].code,'role_forbidden','A non-owner sponsor cannot enter owner-only role management under autonomous policy');
+  assert.equal((await app.db.prepare('SELECT role FROM operator_product_roles WHERE operator_id=?').bind(member.id).first()).role,'support');
+  assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,nativeCount);
   const renamed=await app.call('/auth/email',{method:'POST',cookie:memberCookie,body:{email:'casey-renamed@example.test'}});
   assert.equal(renamed.status,200,await renamed.clone().text());
   await mailBudget();
@@ -209,6 +265,8 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.call('/api/operators/'+member.id,{method:'DELETE',cookie})).status,204);
   assert.equal((await app.call('/api/integrations/v1/contacts',{headers:{Authorization:'Bearer '+sponsoredKey.token}})).status,401);
   const inactive=await call('mango.campaigns.list',{},analyst);assert.equal(inactive.response.status,401);
+  const auditPage=await app.call('/agents/api/audit',{cookie});assert.equal(auditPage.status,200);
+  assert.equal((await auditPage.json()).differs_from_policy,0,'Recorded decisions agree with the exact adopted company policy');
   assert.equal(owner.role,'owner');
  }finally{await app.close();}
 });
