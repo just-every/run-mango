@@ -4342,7 +4342,7 @@
       "executable": false
     },
     "src/core/features/docs/DocsArticle.tsx": {
-      "sha256": "c4eac89b1f3cbfd7f842e40b7d6e0d991c741106a886d51cd872b619f656f709",
+      "sha256": "b1561a1f1741e59397b365b7ed509882f7b37bde43829cf987290e9180745613",
       "executable": false
     },
     "src/core/features/docs/DocsLink.tsx": {
@@ -4394,7 +4394,7 @@
       "executable": false
     },
     "src/core/features/docs/styles/code.css": {
-      "sha256": "a74e7687766e096fba232927952050687411acd55c3852b7d14cd6cc8817d9d9",
+      "sha256": "90811bca70f04dc417d339761466b1a82ff42eb138249907e63e86426897537b",
       "executable": false
     },
     "src/core/features/docs/styles/disclosure.css": {

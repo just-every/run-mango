@@ -14,6 +14,10 @@
 .mango-docs .docs-code :is(.hljs-comment, .hljs-quote) { color: #6f675a; font-style: italic; }
 .mango-docs .docs-code code:is(.language-bash, .language-sh, .language-zsh, .language-shell) [class*="hljs-"]:not(.hljs-comment) { font-weight: inherit; }
 
+/* Keep the primary start recipe visible in full, including on a phone. */
+.mango-docs [data-doc="getting-started"] .docs-prose > .docs-code:first-of-type pre { white-space: pre-wrap; overflow-x: visible; }
+.mango-docs [data-doc="getting-started"] .docs-prose > .docs-code:first-of-type pre code { width: auto; min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+
 /* A line too long for the sheet fades into the paper at the sheet's edge while there is more of it to scroll to, and
    at the start once scrolled, so a cut line reads as scrolling rather than broken; the code is one block as wide as
    its longest line, so the sheet's padding follows that line's last character. Without scroll-driven animation the
