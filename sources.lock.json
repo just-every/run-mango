@@ -8358,7 +8358,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
-      "sha256": "4a7d57b48f5072f29098043f82731af55419cb30fa5ade7ffa88e9830ecd3ec9",
+      "sha256": "042d2ffc67435f6d9f3635a728785fcd6367fdd8b2f44de791ae1b355e4f1d34",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
