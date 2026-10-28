@@ -391,7 +391,7 @@ Core · published · **partial** · Cites BASE-INPUT-001 · Rules D-2
 5. A named incumbent export may use incumbent-held consent only under the owner’s once-per-source attestation; an unnamed file remains under the per-row consent rule.
 6. Import undo preserves restrictions and the reviewed capacity meets SCALE-001.
 
-**Evidence.** `tests/audience-import/routes.spec.ts` · `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
+**Evidence.** `tests/move-in/archive.journeys.ts` · `tests/move-in/archive.journeys.ts` — “[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely”
 **Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Phone-only CSV validated; Each rejected row reason read back; Unnamed-file per-row rule; Full review capacity. Missing public-door journey: “Import — complete acceptance”, covering the unasserted outcomes above.
 
 #### CONT-011 — Merge
@@ -814,7 +814,7 @@ Core · published · **partial** · Rules D-1, D-3
 4. Any failed check leaves the campaign a draft and names every blocking check.
 5. Missing subject, body, preheader or sender remains a named blocker; optional AI or commerce absence does not block manually authored mail-only rules, while required source dependencies still block.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px” · `tests/campaign-authoring/create-api.spec.ts`
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px” · `tests/campaign-authoring/browser.spec.ts`
 **Gap.** Asserted: Refusal leaves campaign in draft; Every blocking check named; Missing subject named; Missing body named; Missing preheader named; Optional AI or commerce absence permits manual mail-only draft; Required source dependency blocks. Unasserted: Atomic audience validation; Atomic consent validation; Source freshness including parallel incumbent sync; Sender registration; Email authentication; Sending reputation; Compliance content; Personalization; All named link rules; Schedule; Provider configuration; Effective deduplication; Provider reconciliation; Missing sender named. Missing public-door journey: “Approval checks — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-005 — Idempotent approval
@@ -2903,7 +2903,7 @@ Core · target · **partial** · Rules D-1
 4. Acknowledging advisories does not bypass a contrast blocker; correcting the blocker and acknowledging the current revision permits approval.
 5. A 110 KB body is refused at save under BUILD-012.
 
-**Evidence.** `tests/go-live/presend-checks.journeys.ts` — “[BUILD-008] saved contact previews and located advisories remain separate from contrast blockers” · `tests/go-live/email-size.journeys.ts` — “[BUILD-012] large newsletters save by transmitted bytes, retain refused edits and recheck expansion at handoff”
+**Evidence.** `tests/go-live/presend-checks.journeys.ts` — “[BUILD-008] saved contact previews and located advisories remain separate from contrast blockers” · `tests/go-live/presend-checks.journeys.ts` — “[BUILD-012] large newsletters save by transmitted bytes, retain refused edits and recheck expansion at handoff”
 **Gap.** The cited journeys assert safe contact/fallback previews, each located advisory, size detail and largest blocks, contrast refusal, no recipient effect on refusal and oversized save rejection. Gap: after correcting and acknowledging findings, approval is called and returns success but the cited files do not assert the persisted approval state or saved approval record; rendering a preview region is not that assertion. Missing public-door journey: “Previews and pre-send checks — complete acceptance”, covering the unasserted outcomes above.
 
 #### BUILD-009 — SMS and MMS composer
@@ -2976,7 +2976,7 @@ Core · target · **partial** · Rules D-1
 4. An empty result applies the chosen hide-or-skip behavior; an unavailable catalog read skips with a named cause and never sends stale values.
 5. Save retains selected identifiers, including selections that become unavailable, and names current publication or removal work without losing unsaved edits.
 
-**Evidence.** `tests/go-live/multistep.journeys.ts` · `tests/go-live/chosen-catalog-journey.ts` · `tests/go-live/chosen-catalog-edge.ts` · `tests/local-start/signin-hydration.journey.ts` · `tests/campaign-authoring/chosen-size-journey.ts` · `tests/campaign-authoring/catalog-guard-journey.ts`
+**Evidence.** `tests/go-live/multistep.journeys.ts` · `tests/go-live/chosen-catalog-journey.ts` · `tests/go-live/chosen-catalog-edge.ts` · `tests/local-start/editor.journey.ts` · `tests/campaign-authoring/chosen-size-journey.ts` · `tests/campaign-authoring/catalog-guard-journey.ts`
 **Gap.** Gap: WooCommerce catalog picking and hand-off are unimplemented. Imported and flow authoring doors remain unproved; native imported history and MOVE-011 conversion do not create catalog choices. Unavailable hand-off reads skip the recipient-step with catalog-unavailable, counted on campaign detail; stale values never send (ct ruling 25 October).
 
 #### BUILD-012 — Email size the builder and imported templates fit in
@@ -2993,7 +2993,7 @@ Core · target · **partial** · Rules D-1
 5. Every listed reuse and generation door applies the same bound, including the configured maximum dynamic or selected products and audience-derived personalization.
 6. Approval, test send and hand-off remeasure; a later expansion over the limit sends nothing for that recipient and is counted on campaign or flow detail.
 
-**Evidence.** `tests/go-live/email-size.journeys.ts` · `tests/go-live/email-size-imports.ts` · `tests/go-live/email-size-reuse.ts` · `tests/campaign-authoring/create-api.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/email-size-adoption.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/reusable-size-journey.ts` · `tests/campaign-authoring/audience-size-journey.ts` · `tests/campaign-authoring/full-promotional-email-journey.ts` · `tests/local-start/signin-hydration.journey.ts` · `tests/campaign-authoring/chosen-size-journey.ts` · `tests/go-live/chosen-catalog-edge.ts` · `tests/campaign-authoring/catalog-riders-journey.ts`
+**Evidence.** `tests/go-live/presend-checks.journeys.ts` · `tests/go-live/email-size-imports.ts` · `tests/go-live/email-size-reuse.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/email-size-adoption.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/proposals-decision/decision-routes.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/browser.spec.ts` · `tests/campaign-authoring/audience-size-journey.ts` · `tests/campaign-authoring/full-promotional-email-journey.ts` · `tests/local-start/editor.journey.ts` · `tests/campaign-authoring/chosen-size-journey.ts` · `tests/go-live/chosen-catalog-edge.ts` · `tests/campaign-authoring/catalog-riders-journey.ts`
 **Gap.** Today's draft/create, store-signal starter, template save/replace/start, duplication, replacement-schedule copy, follow-up, imported-history copy and proposal-adoption doors use measured sent-size refusals with the limit and largest available HTML sections, comparing fallback and expanded saved-name renderings. Browser edits, selected design files and saved source snapshots survive refusal at 1440 and 390. Oversized archive template conversions are held with their measured diagnostic and original archive custody; the import continues, reconciliation distinguishes held conversions from created library templates, and undo removes unchanged held copies. In-limit content saves, reopens, approves and reaches the provider edge within its bound; a later oversized hand-off skips with email-too-large. Saved rule and exclusion membership now bounds displayName through the shared audience evaluator; approval measures its frozen email candidates. Separate raw and escaped maxima stay in D1. Only displayName currently supplies recipient values; other valid keys render their authored fallback. An unresolved new follow-up cohort retains the conservative deployment-wide bound until its membership authority exists. Size advisories retain saved audience and analytics context and recheck the eligible email identities used by approval. Gap: configured dynamic product maxima (BUILD-006), flow messages (FLOW-008), and the Mailchimp `base_boxed_3column_query.html` blueprint acceptance through MOVE-011 remain unproved. Mailchimp blueprint is CC BY-SA 3.0; vendoring waits on an owner licence decision. Existing LayerDoc application shares the design-import compiler; no real design or proposal generation/provider acceptance is claimed.
 
 ### Automated flows
@@ -3669,7 +3669,7 @@ Core · target · **partial**
 4. Anonymous counts survive erasure while links to erased evidence do not.
 5. The source reconciliation includes the dedicated forms, landing pages and kiosks of FORM-002, FORM-004 and FORM-009 and the full CONT-027 resubscription journey.
 
-**Evidence.** `tests/go-live/list-growth.journeys.ts` · `src/core/features/insights/list-growth.ts` · `migrations/core/0074_list_growth_retained_history.sql`
+**Evidence.** `tests/go-live/mailbox-provider.journeys.ts` · `src/core/features/insights/list-growth.ts` · `migrations/core/0074_list_growth_retained_history.sql`
 **Gap.** Insights reconciles opening/net/closing subscribed membership by UTC day and separates captures/confirmations, opt-outs, suppression and removal, retaining source/version disclosures and anonymous counts after erasure. Real hosted and embedded form capture/confirmation journeys reconcile. Upgrade recovers retained pre-baseline consent captures/confirmations, explicitly labeled with zero inferred membership change; imported dates do not invent earlier local growth. Unavailable pre-baseline membership history is outside the amended history requirement; kiosk capture and confirmation are exercised by tests/go-live/shared-kiosk.journeys.ts. Hosted/kiosk public resubscribe confirmation and separate growth counts are exercised by tests/go-live/shared-kiosk.journeys.ts. Remaining: dedicated popup/landing-page attribution (FORM-002/004) and the full CONT-027 incentive/topic/flow and erasure-expiry acceptance.
 
 #### REPORT-006 — Scheduled and custom reports
@@ -4423,7 +4423,7 @@ Core · target · **partial** · Cites BASE-PUBLIC-001 · Rules D-2
 2. The RSS feed includes the published issue and the public page carries search-engine metadata.
 3. Personalization becomes neutral text; public output contains no recipient token or personal value, unsubscribe link or private tracking link.
 
-**Evidence.** `tests/campaign-results/archive.journeys.ts` — “[PUB-001] publish, read and withdraw a neutral sent newsletter at 1440” · `tests/audience-import/erasure.spec.ts`
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[PUB-001] publish, read and withdraw a neutral sent newsletter at 1440” · `tests/audience-import/erasure.spec.ts`
 **Gap.** Publication, index navigation, RSS, metadata, neutral personalization and removal of representative private/tracking values are asserted. The cited evidence checks absence of the unsubscribe template token, but does not assert that the actual unsubscribe anchor is absent from the public page. Missing public-door journey: “Web archive — complete acceptance”, covering the unasserted outcomes above.
 
 #### PUB-002 — Paid newsletters
