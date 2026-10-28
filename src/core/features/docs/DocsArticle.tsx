@@ -9,7 +9,7 @@ import type { DocsPageData } from './types';
  */
 export function DocsArticle({ page, section, welcome }: { page: DocsPageData; section: string; welcome: boolean }) {
   return (
-    <article className="docs-article" aria-labelledby={page.titleId}>
+    <article className="docs-article" data-doc={page.slug} aria-labelledby={page.titleId}>
       <header className={welcome ? 'docs-page-head docs-page-head--welcome' : 'docs-page-head'}>
         <div className="docs-page-head-text">
           <p className="docs-eyebrow">{section}</p>

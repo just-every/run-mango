@@ -4,6 +4,7 @@ import { tokens, identifier, folded } from './generated.mjs';
 import { laterData } from './backfills.mjs';
 import { destinationLedger, matchMigrationLedger } from './ledgers.mjs';
 import { checkRebuild } from './rebuilds.mjs';
+import { schemaSQL } from './schema-identity.mjs';
 
 // Applied product migrations in the ledger's own order (ledgers.mjs). A
 // state-bearing ledger may hold an unacknowledged migration whose effects are
@@ -21,7 +22,7 @@ export async function appliedMigrations(db) {
 // Restored rows never pass through a later migration, so one that writes or
 // rewrites restorable data is refused, whether or not it changes the schema,
 // unless its statement is replayed at finalize (backfills.mjs).
-async function placement(db,manifest,cat,replay,ledger,history) {
+async function placement(db,manifest,cat,replay,ledger,history,legacyRecovery,unverified=false) {
   const files=replay.names.map(name=>({name,sha256:replay.sha256?.(name),aliases:replay.aliases?.(name)}));
   // An aligned replayer keeps its existing contract: hashes are optional.
   // Resolve destination aliases only when its ledger uses different names.
@@ -31,18 +32,25 @@ async function placement(db,manifest,cat,replay,ledger,history) {
   const archived=history?.();
   const historyEntries=manifest.migrations?.map(name=>archived?.find(entry=>entry.name===name) ?? {name}) ?? archived;
   const recorded=historyEntries && matchMigrationLedger(historyEntries,files,replay);
+  // Only explicitly acknowledged v1 recovery may use the old projection for
+  // archive placement. The live destination check above remains complete, and
+  // ordinary v2 imports still require their authenticated object inventory;
+  // acknowledged v2 recovery without that inventory places by tables only.
+  const schemaAfter=names=>replay.schemaAfter(names,legacyRecovery && manifest.schemaObjects===undefined?{legacyExcludedObjects:true}:unverified?{tablesOnly:true}:undefined);
+  if(unverified && archived && manifest.migrations)insist(canonicalJson(matchMigrationLedger(archived,files,replay))===canonicalJson(recorded),'schema_mismatch:migration_history',409);
   let earlier,unapplied;
   if(recorded) {
+    if(unverified)insist(recorded.every((name,i)=>applied.indexOf(name)>(i?applied.indexOf(recorded[i-1]):-1)),'schema_mismatch:migration_history',409);
     earlier=applied.filter(name=>recorded.includes(name));
-    insist(await replay.schemaAfter(earlier)===manifest.schema,'schema_mismatch');
+    insist(await schemaAfter(earlier)===manifest.schema,'schema_mismatch');
     unapplied=applied.filter(name=>!earlier.includes(name));
   }else{
     // Unrecorded: the latest matching prefix. Migrations that change no archived
-    // table (indexes, excluded tables, data-only changes) cannot be told apart
+    // definition (excluded tables or data-only changes) cannot be told apart
     // and count as later. The source may have stopped at any matching prefix,
     // so every migration after the earliest one may be missing from its rows.
     const matching=[];
-    for(let k=0;k<=applied.length;k++)if(await replay.schemaAfter(applied.slice(0,k))===manifest.schema)matching.push(k);
+    for(let k=0;k<=applied.length;k++)if(await schemaAfter(applied.slice(0,k))===manifest.schema)matching.push(k);
     insist(matching.length,'schema_mismatch');
     earlier=applied.slice(0,matching.at(-1));
     unapplied=applied.slice(matching[0]);
@@ -62,7 +70,7 @@ async function placement(db,manifest,cat,replay,ledger,history) {
   return {applied,earlier,replays,rebuilt};
 }
 // An archive with the destination's schema identity can still predate later
-// migrations that changed only data (a purge or a backfill) or added an index.
+// migrations that changed only data (a purge or a backfill).
 // Those that change restorable data are refused like any other. Without a
 // replayer the statements cannot be read, so an archive whose recorded
 // migrations the destination's ledger has outgrown is refused. An archive that
@@ -82,12 +90,12 @@ export async function sameSchemaMigrations(db,manifest,cat,migrations,history) {
 }
 // An archive made before later migrations restores only when those migrations
 // are additive, or a proven row-preserving CHECK rebuild: new tables, new
-// columns that take a default, or indexes (which archives never carry).
+// columns that take a default, or later schema objects established by replay.
 // Anything else stays a schema_mismatch refusal.
-export async function additiveBridge(db,manifest,cat,migrations,history) {
+export async function additiveBridge(db,manifest,cat,migrations,history,legacyRecovery,unverified=false) {
   insist(migrations,'schema_mismatch');
   const replay=await migrations(),ledger=await destinationLedger(db)??[];
-  const {applied,earlier,replays,rebuilt}=await placement(db,manifest,cat,replay,ledger,history);
+  const {applied,earlier,replays,rebuilt}=await placement(db,manifest,cat,replay,ledger,history,legacyRecovery,unverified);
   const columns={};
   for(const table of manifest.tables) {
     const target=cat.tables.find(t=>t.name===table.name),label=':'+table.name;
@@ -95,7 +103,7 @@ export async function additiveBridge(db,manifest,cat,migrations,history) {
     const kept=target.columns.slice(0,table.columns.length),added=target.columns.slice(table.columns.length);
     insist(canonicalJson(kept)===canonicalJson(table.columns) && table.rowidAlias===target.rowidAlias && table.dependencies.every(d=>target.dependencies.includes(d)),'schema_mismatch:columns'+label);
     const rebuiltChecks=rebuilt.has(folded(table.name)) && checkRebuild(table.sql,target.sql);
-    if(!added.length){insist(table.sql===target.sql || rebuiltChecks,'schema_mismatch:definition'+label);continue;}
+    if(!added.length){insist(schemaSQL(table.sql)===schemaSQL(target.sql) || rebuiltChecks,'schema_mismatch:definition'+label);continue;}
     const declared=await all(db,`PRAGMA table_xinfo(${quote(table.name)})`);
     insist(added.every(c=>!c.pk && !c.generated && (!c.notnull || declared.find(d=>d.name===c.name)?.dflt_value!=null)),'schema_mismatch:column_default'+label);
     insist(appended(table.sql,target.sql,added.map(c=>c.name)),'schema_mismatch:definition'+label);

@@ -1,8 +1,14 @@
 # Run it locally
 
-Start Mango with one line, `npx -y @runeditrun/rer dev just-every/run-mango`
-(without Node: `curl -fsSL https://runeditrun.com/install.sh | sh -s -- dev just-every/run-mango`);
-to only set it up, run `npx -y @runeditrun/rer setup just-every/run-mango`.
+Start Mango with one line:
+
+```sh
+curl -fsSL https://runeditrun.com/install.sh | sh -s -- dev just-every/run-mango
+```
+
+git is required; rer brings Node and pnpm. Already have Node 22 or later? `npx -y @runeditrun/rer dev just-every/run-mango` does the same. See [Getting started](https://run-mango.com/docs/getting-started) and [Hosting](https://run-mango.com/docs/hosting).
+
+To only set it up, run `npx -y @runeditrun/rer setup just-every/run-mango`.
 `rer` runs every verb with the checkout's own pinned copy: a vendored
 `scripts/rer.mjs`, or in package mode the exact `@runeditrun/rer` devDependency in
 `node_modules`. The `OPERATIONS.json` argv and the `package.json` aliases are the
@@ -54,7 +60,7 @@ failure; check the command result and wait for `RER_READY` when starting dev.
 ## Install for a real owner
 
 rer itself needs Node 22 or later already installed (nodejs.org, `brew install node` or nvm).
-Pinned rer 0.2.76 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
+Pinned rer 0.2.85 selects and acquires Node 22.20.0 and pnpm 10.12.4 for this
 checkout; neither needs a separate manual install. To install with a real owner
 mailbox, run the verbs yourself from the runnable
 edition's root: install locked dependencies, prepare its local owner, then start
@@ -213,7 +219,7 @@ then commit locally with `git add src/ext/config.ts` and
 needed; deploy refuses uncommitted tracked changes.
 `rer deploy --dry-run` validates and builds locally without a
 provider request. The default environment is `production`; select another with
-`--environment NAME`. Pinned rer 0.2.76 claims the first hosted owner after the
+`--environment NAME`. Pinned rer 0.2.85 claims the first hosted owner after the
 health check and removes the one-time setup token. Repeated deployments retain
 the existing owner. Preserve your private inputs, receipt, backups and local
 customizations when updating: run `git pull --ff-only`, then
