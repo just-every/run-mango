@@ -144,7 +144,11 @@ export function createAudienceImportService(platform: Platform) {
       const previewDb = budget.db;
       // Review normalizes first, so an over-cap or malformed input is refused before any query.
       const {normalized,effects,source,plan,now}=await this.review(input,context,previewDb,options);
-      const sourceDigest=await sha256(canonicalJson({input,incumbentSources:options.incumbentSources??null,propertyDefinitions:await propertyDefinitions(previewDb)}));
+      // Preserve released cache keys for ordinary imports. Only mapped property
+      // semantics affect a typed review; labels and unrelated definitions do not.
+      const mappedKeys=new Set(input.files.flatMap(file=>Object.entries(file.mapping??{}).filter(([key,header])=>key.startsWith('property:')&&header).map(([key])=>key.slice(9))));
+      const definitions=mappedKeys.size?(await propertyDefinitions(previewDb)).filter(d=>mappedKeys.has(d.key)).map(({key,type,options})=>({key,type,options})).sort((a,b)=>a.key.localeCompare(b.key)):undefined;
+      const sourceDigest=await sha256(canonicalJson({input,incumbentSources:options.incumbentSources??null,...(definitions?{propertyDefinitions:definitions}:{})}));
       const existing=await previewDb.prepare('SELECT fingerprint,plan_json FROM audience_import_plans WHERE source_digest=? AND principal_id=?').bind(sourceDigest,context.authorization.principalId).first<{fingerprint:string;plan_json:string}>();
       if(existing){
         // Reuse a review while every row still targets the same contact revision, or

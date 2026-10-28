@@ -46,7 +46,8 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
       const values = { ...original };
       for (const [field, header] of Object.entries(mapping)) if(!field.startsWith('property:')||header)values[field] = original[header.trim().toLowerCase()] ?? '';
       let sourceRow:ReturnType<typeof csvSourceRow>|undefined;
-      const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',phone:'',smsStatus:'non-subscribed',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values,propertyColumns:Object.fromEntries(Object.entries(mapping).filter(([key,header])=>key.startsWith('property:')&&header).map(([key,header])=>[key.slice(9),header]))};
+      const propertyColumns=Object.fromEntries(Object.entries(mapping).filter(([key,header])=>key.startsWith('property:')&&header).map(([key,header])=>[key.slice(9),header]));
+      const row: NormalizedImportRow = {file:file.name,row:index+2,email:'',phone:'',smsStatus:'non-subscribed',displayName:'',status:file.preset==='mango'?(values.email_status || 'non-subscribed'):presetStatuses[file.preset],warnings:[],values,...(Object.keys(propertyColumns).length?{propertyColumns}:{})};
       try {
         if (original.__parse_error) throw new Error(original.__parse_error);
         // An opt-out whose address no contact holds carries only its portable identity (import-opt-out-lines).

@@ -1,3 +1,5 @@
+import {canonicalJson} from '../../src/vendor/base/import-kit/src/d1/index';
+import {sha256} from '../../src/core/shared/ids';
 import {eraseHttp} from './erase';
 import {test,expect} from '@playwright/test';
 import {invitationRuntime} from '../../operations/fixtures/invitation-runtime.mjs';
@@ -8,6 +10,11 @@ test('CONT-010 real Worker audience routes enforce session/origin and persist re
   expect((await f.call('/api/audience/import-preview',{cookie,method:'POST',body:input,origin:'https://foreign.test'})).status).toBe(403);
   const previewResponse=await f.call('/api/audience/import-preview',{cookie,method:'POST',body:input});expect(previewResponse.status).toBe(200);const preview=await previewResponse.json();expect(preview.counts).toMatchObject({created:4,updated:0,rejected:0,unsubscribed:2,suppressed:1});
   const response=await f.call('/api/audience/imports',{cookie,method:'POST',body:{fingerprint:preview.fingerprint}});expect(response.status).toBe(200);expect((await response.json()).job.state).toBe('completed');
+  expect(preview.rows.every((row:object)=>!Object.hasOwn(row,'propertyColumns'))).toBe(true);
+  expect(await f.db.prepare('SELECT source_digest FROM audience_import_plans WHERE fingerprint=?').bind(preview.fingerprint).first()).toEqual({source_digest:await sha256(canonicalJson({input,incumbentSources:null}))});
+  expect((await f.call('/api/settings/properties',{cookie,method:'POST',body:{key:'synthetic_mango_1510',label:'synthetic-mango-1510',type:'date',options:[]}})).status).toBe(201);
+  const repeat=await f.call('/api/audience/import-preview',{cookie,method:'POST',body:input});expect(repeat.status).toBe(200);expect((await repeat.json()).fingerprint).toBe(preview.fingerprint);
+  const replay=await f.call('/api/audience/imports',{cookie,method:'POST',body:{fingerprint:preview.fingerprint}});expect(replay.status).toBe(200);expect((await replay.json()).job.state).toBe('completed');
   const exported=await f.call('/api/audience/export',{cookie});expect(exported.status).toBe(200);expect(exported.headers.get('content-type')).toContain('text/csv');expect(await exported.text()).toContain('ledger_json');
   const list=await f.call('/api/audience/imports',{cookie});expect(list.status).toBe(200);expect((await list.json()).jobs).toHaveLength(1);
   const signup=await f.call('/api/audience/signup',{cookie});expect((await signup.json()).embed).toContain('https://mango.example.test/subscribe');

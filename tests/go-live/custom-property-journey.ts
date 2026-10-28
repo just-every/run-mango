@@ -47,9 +47,11 @@ export async function proveCustomProperties(site:Installation,cookie:string,page
   const imported=initial.history.filter((h:any)=>h.kind==='property-change');expect(imported).toHaveLength(2);
   expect(imported.map((h:any)=>JSON.parse(h.detail).source.column).sort()).toEqual(['anniversary','budget']);
   expect(initial.timeline.filter((h:any)=>h.kind==='property-change').every((h:any)=>h.source.includes('CSV import: synthetic-mango-1401.csv')&&h.source.includes(' · import '))).toBe(true);
+  await json(await site.call('/api/settings/properties',{method:'PUT',cookie,body:{key:dateKey,label:'synthetic-mango-1401 calendar date',type:'date',options:[]}}),200);
   const repeated=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie,body:mappedInput}),200);
   await json(await site.call('/api/audience/imports',{method:'POST',cookie,body:{fingerprint:repeated.fingerprint}}),200);
   expect((await profile(contacts[0].id)).history.filter((h:any)=>h.kind==='property-change')).toEqual(imported);
+  await json(await site.call('/api/settings/properties',{method:'PUT',cookie,body:{key:dateKey,label:'synthetic-mango-1401 date',type:'date',options:[]}}),200);
   const key=await json(await site.call('/api/settings/integrations',{method:'POST',cookie,body:{name:'synthetic-mango-1404 API',scopes:['contacts:read','contacts:write','events:write']}}),201);
   const headers={Authorization:`Bearer ${key.token}`};
   const event={name:'synthetic.updated',contactId:contacts[0].id,idempotencyKey:'synthetic-mango-1404',occurredAt:new Date((await site.control('/_golive/clock')).now-1000).toISOString(),contactProperties:{[dateKey]:'2026-04-15'}};
