@@ -207,3 +207,83 @@ The incumbent contract records the owner’s direction allowing the selected Man
 **Sources:** [Mailchimp connects Shopify store data through an installed integration.](https://mailchimp.com/help/mailchimp-shopify-syncing/); [Shopify requires authenticated compliance webhooks, including delayed shop redaction.](https://shopify.dev/docs/apps/build/compliance/privacy-law-compliance).
 
 **Main read:** `c85462b43ac4de1828da915177c30a62f238a4bf`, `CONTRACT.md:1224`. No status change; all unfinished acceptance and proof remain owed.
+
+### RL-5 — Activity obligations follow their feature
+
+**Date:** 2026-10-28 (migration record; original ruling date not recorded)
+
+**Ruled by:** ct (incumbent “pattern 1” attribution)
+
+**Governs:** OPER-007, FLOW-008, AGENT-010
+
+FLOW-008 activation, pause and archive and AGENT-010 agent actions and agent-filter values inherit the Activity obligation in their own acceptance. Restore completion remains owed. This records the incumbent routing decision without changing a status.
+
+### RL-6 — Sender renewal reminders and evidence
+
+**Date:** 2026-10-28 (migration record; original decision undated)
+
+**Ruled by:** Incumbent adopted default (original ruler not recorded)
+
+**Governs:** DELIV-007
+
+The last confirmer and every Owner receive reminders once per evidence period. Renewal never confirms on their behalf; a configured connector renews only from authenticated diagnostic results. This preserves the already adopted default; it does not supply the missing lifecycle or flow proof.
+
+### RL-7 — Unavailable overview figures remain honest
+
+**Date:** 2026-10-28 (migration record; original decision undated)
+
+**Ruled by:** Incumbent adopted default (original ruler not recorded)
+
+**Governs:** REPORT-001
+
+Holdout-measured incremental revenue says no holdout configured until EXP-003/004; flows and top flows say no flows yet. No forecast is presented as a result. The period/accounting basis is retained in docs/contract/mechanism.md, and flow and holdout acceptance remain open.
+
+### RL-8 — Scheduled report recipients and privacy
+
+**Date:** 2026-10-28 (migration record; original decision undated)
+
+**Ruled by:** Incumbent adopted default (original ruler not recorded)
+
+**Governs:** REPORT-006
+
+Owners/Admins only; existing active operator IDs only; email only; no contact identities or per-contact rows; no currency conversion. The weekly/monthly schedule and replay/authority mechanics are retained in docs/contract/mechanism.md. Slack and the unbuilt report families and dimensions remain owed.
+
+### RL-9 — Projected cost accounting
+
+**Date:** 2026-10-28 (migration record; original decision undated)
+
+**Ruled by:** Incumbent adopted default (original ruler not recorded)
+
+**Governs:** REPORT-007
+
+Projected month is the priced month-to-date UTC run rate extended linearly. Each reported currency stays separate with no conversion, and unpriced facts are counted rather than zero. Flow cost grouping remains unfinished.
+
+### RL-10 — Loyalty observation authority and data minimization
+
+**Date:** 2026-10-28 (migration record; original decision undated)
+
+**Ruled by:** Incumbent adopted default (original ruler not recorded)
+
+**Governs:** INT-014
+
+Owners/Admins use the existing integration-management authority and encrypted credential custody. Observations create no contact, consent or send; unknown addresses are counted without storage. Provider protocol and live payload confirmation remain owed. The mechanism is retained in docs/contract/mechanism.md.
+
+### RL-11 — Payment never widens marketing consent
+
+**Date:** 2026-10-22 20:05Z
+
+**Ruled by:** ct
+
+**Governs:** PUB-002
+
+Payment never creates or widens consent. A paid topic needs the reader’s own confirmed channel consent; opt-out and suppression win. A payer without it is counted as paid, consent missing and never mailed. The fresh-read membership and event accounting mechanism is retained in docs/contract/mechanism.md.
+
+### RL-12 — Payer capture remains its own obligation
+
+**Date:** 2026-10-23 04:38Z
+
+**Ruled by:** ct
+
+**Governs:** PUB-002, PUB-005
+
+Payer signup and consent capture is PUB-005’s separate obligation under the already approved defaults. Its implementation status belongs to PUB-005’s own row; payment connection work supplies no consent by itself. This migration records the incumbent clause association and makes no new ruling.

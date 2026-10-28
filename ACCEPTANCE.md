@@ -1772,7 +1772,7 @@ Core · target · **partial** · Cites BASE-AUDIT-001, BASE-DATA-003, BASE-AGENT
 5. Flow activation, pause and archive and agent actions join the same trail when their owning workflows operate.
 
 **Evidence.** `tests/go-live/sync-integrations.journeys.ts` · `src/core/features/auth/activity.ts` · `src/core/features/auth/activity-query.ts` · `src/core/features/auth/ui/activity-page.tsx` · `src/core/features/auth/activity-record.ts`
-**Gap.** Owner and Admin read Activity under Settings (Authors and signed-out requests are refused on both doors): every `lifecycle_audit_entries` row and every integration-audit call, newest first, filtered by operator, agent, action, object and date, with older pages and a CSV of the filtered view that keeps a formula-like cell as text. One journey performs drafts saved, approval requests and approvals, pause, resume and cancel, an import, an audience export, an account export, a consent hand entry, an opt-out, an erasure (anonymised afterwards), signup-allowance and kiosk-form changes, role changes and an hourly signup-refusal summary (counts by form and reason, no addresses), then checks each appears once with actor and time, every filter and the export, at 1440 and 390 with axe. Each action's record is written with the action it records: in its own batch where the action is one (draft save, signup settings), otherwise immediately after it succeeds. FLOW-008 (activation, pause and archive of flows) and AGENT-010 (agent actions and the agent filter's values) inherit the obligation in their text (ct pattern 1). The product has no approval-rejection operation, so none is recorded. Gap: actual restore completion must be recorded with actor and time and visible, filterable and exportable in Activity.
+**Gap.** Owners and Admins can read, filter, page and export Activity; Authors and signed-out callers are refused. Saved drafts, approval requests and approvals, campaign pause/resume/cancel, imports and exports, consent entries, opt-outs, anonymised erasures, signup settings, role changes and refusal summaries appear once with actor and time at desktop and phone widths. Flow and agent activity remain obligations of FLOW-008 and AGENT-010. Remaining: completed restore must appear with actor and time and be filterable and exportable.
 
 ### Target: Contacts and consent
 
@@ -2359,7 +2359,7 @@ Core · target · **partial** · Cites BASE-ROLE-001, BASE-OPS-005 · Rules D-1,
 4. A Manager’s two typed addresses receive marked tests, while a third unsubscribed address is refused and named.
 
 **Evidence.** `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts`
-**Gap.** Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the default 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity lists each typed destination with actor and time, action/object filters and CSV export; contact erasure redacts the destination while retaining the receipt (`tests/go-live/typed-tests.journeys.ts`, push Verify go-live 8/9, 1440/390). Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004).
+**Gap.** Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance and whole-request quota refusal are visible; configured and typed attempts share 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset. Authors see configured destinations only and cannot send typed tests; assigned Managers can send typed tests. Activity includes destinations, actor/time, action/object filters and CSV, with erased destinations redacted while receipts remain. Remaining: typed SMS consent and transport (SMS-001, CONT-019), and full role acceptance (OPER-004).
 
 #### CAMP-024 — Shared daily test allowance
 
@@ -2375,7 +2375,7 @@ Core · target · **partial** · From CAMP-019 · Rules D-1, D-3
 5. With one unit remaining a two-recipient test is refused before either hand-off; configured and typed tests draw from that same count.
 
 **Evidence.** `tests/go-live/typed-tests.journeys.ts` · `src/core/features/lifecycle/test-send-allowance.ts` · `src/core/features/lifecycle/test-destinations.ts`
-**Gap.** Up to five typed email recipients receive marked saved-draft tests with opt-out/suppression refusal and destination/actor history. Remaining allowance is visible; whole-request quota admission is atomic and names the remaining count on refusal. Configured and typed attempts share the default 100 attempted hand-offs per UTC day, including uncertain outcomes, with midnight reset exercised. Authors see configured destinations only and typed requests receive 403; assigned Manager typed tests and Author configured tests are exercised by `tests/go-live/roles.journeys.ts`. Activity lists each typed destination with actor and time, action/object filters and CSV export; contact erasure redacts the destination while retaining the receipt (`tests/go-live/typed-tests.journeys.ts`, push Verify go-live 8/9, 1440/390). Remaining: typed SMS consent/transport (SMS-001, CONT-019), full role acceptance (OPER-004).
+**Gap.** Configured and typed email tests share 100 attempted hand-offs per UTC day, including uncertain outcomes; remaining allowance, whole-request refusal and midnight reset are delivered. Typed destinations and their actor history appear in Activity and its filtered CSV, and erasure retains a redacted receipt. Remaining: typed SMS consent and transport (SMS-001, CONT-019), and full role acceptance (OPER-004).
 
 ### Target: Message safety
 
@@ -2931,7 +2931,7 @@ Core · target · **partial** · Cites BASE-INPUT-002 · Rules D-1
 4. Preview names the mobile settings that depend on stylesheet support.
 
 **Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised.
+**Gap.** Per-block mobile controls are available. Preview names the style-dependent hide, font-size, line-height, padding and alignment choices. Remaining: nested and horizontal orientation and the complete responsive editor acceptance are unbuilt or unproved.
 
 #### BUILD-013 — Mobile and desktop message checks
 
@@ -2945,7 +2945,7 @@ Core · target · **partial** · From BUILD-010 · Cites BASE-INPUT-002 · Rules
 3. Every other hidden block is visible and checked at the other width and retained in plain text.
 
 **Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised.
+**Gap.** Per-block responsive choices save and Preview names their style dependence. Remaining: nested and horizontal orientation and complete responsive generation through the editor are unbuilt or unproved.
 
 #### BUILD-014 — Generated mobile presentation
 
@@ -2961,7 +2961,7 @@ Core · target · **partial** · From BUILD-010 · Cites BASE-INPUT-002 · Rules
 5. Generated selectors and declarations introduce no remote load or author-controlled tracking channel.
 
 **Evidence.** `tests/campaign-authoring/canonical-save.spec.ts` · `tests/campaign-authoring/mobile-presentation-journey.ts` · `tests/support/adversarial-email.mjs` · `tests/campaign-authoring/block-builder-journey.ts` · `tests/campaign-authoring/design-import.spec.ts` · `tests/proposals-decision/decision-routes.spec.ts`
-**Gap.** Per-block controls now use BUILD-001's block model and the existing generated-only style authority. Gap: nested/horizontal orientation and the complete editor acceptance remain unbuilt or unproved. Preview names hide on mobile/desktop, font size, line height, padding and alignment as dependent on the generated block. Conservative generated-only head style, 8192-byte bound and fail-visible desktop hiding defaults ADOPTED. No registration, timeout, shard count or cap was added or raised.
+**Gap.** Generated and authored presentation checks and style-dependent Preview are delivered for the existing block controls. Remaining: complete editor acceptance, including nested and horizontal orientation, is unbuilt or unproved.
 
 #### BUILD-011 — Chosen catalog products
 
@@ -3477,7 +3477,7 @@ Core · target · **partial** · Register R-502
 2. On a provider edge with no domain authentication for the From domain, Mango creates it at the edge and shows the edge's records.
 
 **Evidence.** `src/core/features/sender-verification/domain-setup.ts` · `src/core/features/sender-verification/setup-routes.ts` · `tests/go-live/contact-links.journeys.ts`
-**Gap.** SendGrid create-if-missing, returned records, public-DNS pass/fail, DMARC/BIMI guidance and CNAME+HTTPS-gated branded links are implemented. Two real proofs each validated an authentication and all four DNS records, then deleted two authentications and ten DNS records in total with zero remaining after each run. Gap: the throwaway tracking CNAME passed but HTTPS transport failed, so real branded-host TLS/rewrite acceptance is unproved. Read-only Cloudflare diagnosis on 22 October found active wildcard certificates and no zone Worker routes: a DNS CNAME alone does not attach the branded hostname to Mango’s redirect handler. Live hosted branded-link proof pending a disposable deployment. Main declined account-wide Worker/D1 credentials; a separately reviewed proof workflow must use the repository’s existing deploy secret and always clean up; no new provider objects were created in c11; the setup guide currently operates on SendGrid, with Resend retaining its existing verification path.
+**Gap.** SendGrid domain setup, returned DNS records, public-DNS pass/fail, DMARC/BIMI guidance and HTTPS-gated branded links are delivered. Real branded-host TLS and rewritten-link acceptance remain unproved and need a disposable hosted deployment. The setup guide covers SendGrid; Resend retains its existing verification path.
 
 #### DELIV-003 — Bulk-sender compliance dashboard
 
@@ -3543,7 +3543,7 @@ Core · target · **partial** · Cites BASE-MAIL-001, BASE-OPS-003
 5. With an authenticated receipt-connector fixture, day-23 renewal requires no click.
 
 **Evidence.** `tests/sender-verification/worker.spec.ts` · `tests/go-live/managed-mail.journeys.ts`
-**Gap.** PARTIAL: lifecycle approval/hand-off, deadline skip and ordered resume hooks remain in concurrent writers’ lifecycle files; `sender-evidence-lapsed`/`sender-evidence-deadline` are named by the renewal read only, not installed dispatch hooks. Live welcome-flow history waits on FLOW-*. Home/public renewal and the existing minute Cron share the same durable claims. Automatic renewal/reminders require the confirming native operator authority; legacy or restored confirmations need a fresh diagnostic before outbound renewal resumes. Default ADOPTED: last confirmer and every Owner receive reminders, once per evidence period; renewal never confirms on their behalf; configured connector renews only from authenticated diagnostic results. No provider account was used.
+**Gap.** Home renewal status and reminder/diagnostic preparation are delivered. Renewal failures are named by readiness checks. Remaining: lifecycle approval and hand-off enforcement, deadline skips and ordered resumption; the dispatch hooks are not installed. Live welcome-flow wait/resume history also requires FLOW-*.
 
 #### DELIV-008 — Sending connection an owner makes in Settings
 
@@ -3559,7 +3559,7 @@ Core · target · **partial** · Cites BASE-SECRET-001, BASE-ROLE-001 · Registe
 5. Admin, Manager and Author cannot connect, replace or disconnect.
 
 **Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
-**Gap.** SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending.
+**Gap.** Settings connections for SendGrid and Resend are exercised at the provider and mail edges; Settings labels the active configuration route and the developer route. Remaining: a fresh installation without deployment mail inputs, Free sign-in through the connection, replacement after an unknown hand-off, full developer-route authority coverage, read-only developer operation without a Settings connection, domain creation through this connection (DELIV-002), and provider sandbox proof.
 
 #### DELIV-009 — Sending-connection watch and replacement
 
@@ -3576,7 +3576,7 @@ Core · target · **partial** · From DELIV-008 · Cites BASE-SECRET-001, BASE-M
 6. Settings shows which configuration route applies, reads the developer route only without a Settings connection and applies equivalent event checks.
 
 **Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
-**Gap.** SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending.
+**Gap.** Request-driven connection health detects revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners and Admins; unknown hand-offs are not replayed. Remaining: silent delivery-event detection, scheduled daily read-back, replacement after an unknown hand-off, full developer-route authority checks and provider sandbox proof. The related fresh-install, Free sign-in and domain-creation journeys remain open under DELIV-008 and DELIV-002.
 
 #### DELIV-010 — Signed delivery-event connection
 
@@ -3594,7 +3594,7 @@ Core · target · **partial** · From DELIV-008 · Cites BASE-SECRET-001, BASE-O
 7. Settings shows each permission, domain, DNS, webhook, signing, first-event and sender-check step with its state and fix; Home shows failed steps and reports distinguish unconnected events from zero outcomes.
 
 **Evidence.** `tests/go-live/delivery.journeys.ts` · `tests/go-live/sending-connection-journey.ts` · `tests/audience-controls/sendgrid-forwarding.spec.ts` · `tests/portability.spec.ts` · `tests/go-live/resend-connection-journey.ts`
-**Gap.** SendGrid and Resend installation-side connections are exercised against synthetic provider and mail network edges; no real provider call, account or consent was used. A fresh installation without deployment mail inputs, Free sign-in through the connection, `delivery-events-silent`, scheduled daily read-back, handoff-unknown key replacement, complete developer-route authority coverage and DELIV-002 domain creation through this connection remain unproved. Request-driven five-minute read-back names revoked keys and missing owned webhooks, fences approval, shows Home alerts and notifies current Owners/Admins; unknown mail handoffs are not replayed. Settings names the route in use and places the labelled developer route after the owner connection form. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unbuilt. Restricted scope CRUD behavior is inferred from provider documentation, not real-provider evidence. Conservative disclosed-before-create Owner authorization, signed-or-delete, five-minute timestamp window and id-only ownership defaults are adopted; Default ADOPTED; sandbox proof pending.
+**Gap.** SendGrid and Resend event connections are exercised at synthetic provider and mail edges. Remaining: silent delivery-event detection, scheduled daily connection read-back, replacement after an unknown hand-off, full developer-route authority coverage and provider sandbox proof. Fresh-install and Free sign-in journeys, read-only developer operation without a Settings connection and domain creation remain open under DELIV-008 and DELIV-002.
 
 ### Reporting and attribution
 
@@ -3610,7 +3610,7 @@ Core · target · **partial**
 3. The page also compares list growth by source, clicks, conversions, deliverability health, provider cost and top campaigns and flows; PROP-008 forecasts are never results.
 
 **Evidence.** `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/overview-journey.ts`
-**Gap.** Default ADOPTED: holdout-measured incremental revenue says no holdout configured until EXP-003/004; flows and top flows say no flows yet. No forecast is presented as a result. Campaign attribution/engagement use the detailed performance table’s scheduled-step period; costs, growth and provider facts use occurrence days, with each basis disclosed. Flow and holdout acceptance remains open.
+**Gap.** The overview separates forecasts from recorded results and shows campaign engagement, attribution, growth, provider facts and costs. Flow and holdout figures are visibly unavailable. Remaining: flow and holdout acceptance, including measured incremental revenue and top-flow comparisons.
 
 #### REPORT-002 — Campaign and flow performance tables
 
@@ -3683,7 +3683,7 @@ Core · target · **partial** · Cites BASE-MAIL-001
 2. A weekly report reaches the mail provider once at its scheduled time with the same figures as the saved report.
 
 **Evidence.** `tests/go-live/managed-mail.journeys.ts` · `tests/campaign-results/results.journeys.ts` · `tests/campaign-results/saved-report-metric-journey.ts` · `tests/sender-verification/worker.spec.ts`
-**Gap.** PARTIAL: Slack requires an unavailable webhook; scheduling currently covers saved provider cost/units and campaign click/conversion/USD attribution reports plus the built-in cost and engagement reports, not every report family or dimension. Default ADOPTED: Owner/Admin only, existing active operator IDs only, email only, no contact identities or per-contact rows, no currency conversion; weekly Monday 09:00 UTC / monthly first-day 09:00 UTC. Delivery refusals and sends are durable/audited; authorization/input refusals intercepted by the existing shared middleware are not yet activity records. Restored or revoked native authority requires explicit enable; uncertain provider outcomes never automatically resend.
+**Gap.** Email scheduling covers saved provider cost/units and campaign click/conversion/USD attribution reports, plus built-in cost and engagement reports; sends and delivery refusals are durable and audited. Remaining: Slack delivery, every other report family and dimension, and Activity records for authorization/input refusals.
 
 #### REPORT-007 — Usage and cost transparency
 
@@ -3698,7 +3698,7 @@ Core · target · **partial**
 4. The projected month uses the disclosed priced month-to-date UTC run rate, keeps each reported currency separate without conversion and counts unpriced facts rather than treating them as zero.
 
 **Evidence.** `tests/campaign-results/costs.journeys.ts`
-**Gap.** Flow cost grouping waits on flows. Default ADOPTED: projected month is the priced month-to-date UTC run rate extended linearly; each reported currency stays separate with no conversion, and unpriced facts are counted rather than zero.
+**Gap.** Provider cost facts, separately reported currencies and unpriced-fact counts are available. Remaining: flow cost grouping and its report proof depend on flows.
 
 ### Integrations
 
@@ -3883,7 +3883,7 @@ Core · target · **partial**
 1. a review-submitted fixture exits the contact from the review-request flow as converted.
 
 **Evidence.** `tests/go-live/sync-integrations.journeys.ts` · `tests/go-live/review-loyalty-journey.ts` · `tests/sender-verification/worker.spec.ts`
-**Gap.** PARTIAL: Yotpo stays disabled with adapter_signature_protocol_unverified because its signing protocol could not be verified from this VM; Smile customer/updated supports profile/balance observations, not inferred points earned or tier transitions. Live provider payload confirmation remains open. Review-request flow conversion/exit waits on FLOW-*. Default ADOPTED: Owner/Admin under integration.manage, existing encrypted credential custody, no new contact/consent/send, unknown addresses counted without storage. No provider account was used.
+**Gap.** Smile exposes customer profile and balance observations; earned-points and tier-transition observations are not inferred. Yotpo remains disabled pending a verified signing protocol. Remaining: live provider payload confirmation and review-request flow conversion/exit through FLOW-*.
 
 #### INT-015 — Shopify connection a merchant installs
 
@@ -4440,7 +4440,7 @@ Core · target · **partial** · Cites BASE-SECRET-001 · Rules D-2
 5. Provider uncertainty removes paid eligibility and remains a visible failed operation; card details and funds stay with the payment provider.
 
 **Evidence.** `tests/go-live/roles.journeys.ts` · `tests/go-live/stripe-journey.ts` · `tests/go-live/paid-tier-journey.ts` · `tests/portability.spec.ts` · `tests/local-start/retained-archive.journey.ts`
-**Gap.** Sandbox proof pending: the acceptance's Stripe test-mode checkout needs a held restricted test key (rk_test_) for Mango's Owner connection; the held test keys are unrestricted (sk_test_), which the connection refuses by design. Stripe Tax's test-account state is ct's 23 October source read, not a live-provider receipt from this round. The Nectar rail is not connected (INT-004). Policy ruled by ct (22 October 20:05Z): payment never creates or widens consent; a paid topic needs the reader's own confirmed channel consent, opt-out and suppression win, and a payer without it is counted as paid, consent missing and never mailed. Paid membership follows a fresh Stripe read for checkout completed, customer.subscription.* including paused/resumed, invoice.payment_failed and invoice.paid: active/trialing is paid; past_due, unpaid, paused, incomplete, incomplete_expired and canceled leave; a later active/trialing read rejoins. Read-start time orders overlapping reads, never the event's created second; equally fresh conflicting reads leave the paid topic. Failed Stripe reads remove paid eligibility, move the source-authority fence, record a failed operation and return a retryable refusal; the same event can recover after a successful fresh read. Cancellation ends paid membership only, while consent withdrawal stops every send on the channel. Immediate-confirmation card methods only; delayed methods are not supported. Paid writes move the source-authority fence, including a change after the final recheck. Mango stores Stripe ids, states and Stripe-reported tax, never card data or funds. Payer signup/consent capture is PUB-005's separate obligation under ct's approved 23 October 04:38Z defaults; its implementation status is PUB-005's own row. No real provider call, store, account or consent was used.
+**Gap.** Stripe test-mode checkout through the Owner connection with a restricted test key remains unproved; the Nectar rail is not connected (INT-004). Payer signup and consent capture remain PUB-005’s separate obligation, with its own unfinished acceptance. A Stripe Tax source read is not provider proof.
 
 #### PUB-003 — Recommendations
 

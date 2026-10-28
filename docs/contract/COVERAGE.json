@@ -7588,6 +7588,21 @@
       "to": "gap",
       "ids": [
         "OPER-007"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-5"
+          ]
+        },
+        {
+          "to": "changelog"
+        }
       ]
     },
     {
@@ -7855,6 +7870,11 @@
       "ids": [
         "CAMP-019",
         "CAMP-024"
+      ],
+      "also": [
+        {
+          "to": "changelog"
+        }
       ]
     },
     {
@@ -8181,6 +8201,21 @@
         "BUILD-010",
         "BUILD-014",
         "BUILD-013"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-81"
+          ]
+        },
+        {
+          "to": "changelog"
+        }
       ]
     },
     {
@@ -8541,6 +8576,15 @@
       "to": "gap",
       "ids": [
         "DELIV-002"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "changelog"
+        }
       ]
     },
     {
@@ -8581,6 +8625,21 @@
       "to": "gap",
       "ids": [
         "DELIV-007"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-6"
+          ]
+        },
+        {
+          "to": "changelog"
+        }
       ]
     },
     {
@@ -8593,6 +8652,21 @@
         "DELIV-008",
         "DELIV-010",
         "DELIV-009"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-82"
+          ]
+        },
+        {
+          "to": "changelog"
+        }
       ]
     },
     {
@@ -8603,6 +8677,18 @@
       "to": "gap",
       "ids": [
         "REPORT-001"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-7"
+          ]
+        }
       ]
     },
     {
@@ -8641,6 +8727,18 @@
       "to": "gap",
       "ids": [
         "REPORT-006"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-8"
+          ]
+        }
       ]
     },
     {
@@ -8651,6 +8749,18 @@
       "to": "gap",
       "ids": [
         "REPORT-007"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-9"
+          ]
+        }
       ]
     },
     {
@@ -8781,6 +8891,21 @@
       "to": "gap",
       "ids": [
         "INT-014"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-10"
+          ]
+        },
+        {
+          "to": "changelog"
+        }
       ]
     },
     {
@@ -8975,6 +9100,22 @@
       "to": "gap",
       "ids": [
         "PUB-002"
+      ],
+      "also": [
+        {
+          "to": "docs",
+          "path": "docs/contract/mechanism.md"
+        },
+        {
+          "to": "rulings",
+          "ids": [
+            "RL-11",
+            "RL-12"
+          ]
+        },
+        {
+          "to": "changelog"
+        }
       ]
     },
     {

@@ -1762,3 +1762,35 @@ These are the incumbent descriptions, retained verbatim as historical evidence d
 ### MGMT-002
 
 `tests/local-start/editor.journey.ts`
+
+## Activity write custody — OPER-007
+
+Each lifecycle audit row and integration audit call is read newest first. An action's record is written with the action it records: in its own batch where the action is one (draft save, signup settings), otherwise immediately after it succeeds. The product has no approval-rejection operation, so none is recorded. The inherited FLOW-008/AGENT-010 activity obligation is recorded in RL-5; restore completion remains unfinished.
+
+## Responsive compiler bounds — BUILD-010, BUILD-013 and BUILD-014
+
+The per-block controls use BUILD-001's block model and generated-only style authority. The closed generated head style has an 8,192-byte bound and fail-visible desktop hiding; the byte bound is compiler mechanism, not a reduced responsive-editor requirement. RL-81 retains the Owner's 19 October conservative generated-only policy. Nested/horizontal orientation and complete editor acceptance remain owed.
+
+## Renewal claims and authority — DELIV-007
+
+Home/public renewal and the existing minute Cron share durable claims. Automatic renewal and reminders require the confirming native operator authority; legacy or restored confirmations need a fresh diagnostic before outbound renewal resumes. The renewal read names `sender-evidence-lapsed` and `sender-evidence-deadline`; these labels are not installed dispatch hooks. RL-6 records who receives reminders and what can renew evidence.
+
+## Sending-connection custody — DELIV-008, DELIV-009 and DELIV-010
+
+Request-driven read-back runs on a five-minute interval. The connection defaults disclose the account, destination, event list and signing before Owner-authorized creation, delete a newly created webhook if signing cannot be enabled, accept signed events within the five-minute timestamp window, and identify ownership only by the stored provider identifier. RL-82 retains the Owner's authorization decision. Developer-only deployment inputs retain their legacy transport authority; read-only operation without a Settings connection remains unfinished. Restricted-scope CRUD behavior is inferred from provider documentation and is not a real-provider receipt. The full fresh-install, sign-in, silent-events, daily-read-back, key-replacement, developer-authority, domain-creation and sandbox journeys remain owed.
+
+## Branded-link proof custody — DELIV-002
+
+A DNS CNAME does not by itself attach a branded hostname to Mango's redirect handler; branded links need both HTTPS and routing. The separately reviewed proof workflow must use the repository's existing deploy secret and always clean up; account-wide Worker/D1 credentials were declined. No credential value is recorded here. Resend retains its existing verification path.
+
+## Reporting period and scheduling mechanism — REPORT-001, REPORT-006 and REPORT-007
+
+Campaign attribution and engagement use the detailed performance table's scheduled-step period; costs, growth and provider facts use occurrence days, with each basis disclosed. Scheduled weekly email runs Monday at 09:00 UTC and monthly email on the first day at 09:00 UTC. Restored or revoked native authority requires explicit enable; uncertain provider outcomes never automatically resend. Projected month is the priced month-to-date UTC run rate extended linearly; currencies remain separate without conversion, and unpriced facts count rather than becoming zero. RL-7, RL-8 and RL-9 retain the adopted reporting policies. Flow and holdout work is not removed by the unavailable placeholders.
+
+## Loyalty observation custody — INT-014
+
+Owners/Admins use `integration.manage` with the existing encrypted credential custody. Unknown addresses are counted without storage, and this observation path creates no contact, consent or send. Yotpo's unresolved signing protocol produces `adapter_signature_protocol_unverified`. Smile `customer/updated` supplies profile/balance observations, not inferred earned-points or tier transitions. RL-10 retains the adopted authority/data-minimization policy. Review-request flow conversion and exit remain owed.
+
+## Paid membership event accounting — PUB-002
+
+Paid membership follows a fresh Stripe read for checkout completed, `customer.subscription.*` including paused/resumed, `invoice.payment_failed` and `invoice.paid`: active/trialing is paid; past_due, unpaid, paused, incomplete, incomplete_expired and canceled leave; a later active/trialing read rejoins. Read-start time orders overlapping reads, never the event's created second; equally fresh conflicting reads leave the paid topic. Failed Stripe reads remove paid eligibility, move the source-authority fence, record a failed operation and return a retryable refusal; the same event can recover after a successful fresh read. Cancellation ends paid membership only, while consent withdrawal stops every send on the channel. Immediate-confirmation card methods only; delayed methods are not supported. Paid writes move the source-authority fence, including a change after the final recheck. Mango stores Stripe ids, states and Stripe-reported tax, never card data or funds. The Owner connection requires a restricted test key (`rk_test_`), refusing an unrestricted key (`sk_test_`). RL-11 retains the consent decision; RL-12 preserves PUB-005's separate payer-capture obligation.
