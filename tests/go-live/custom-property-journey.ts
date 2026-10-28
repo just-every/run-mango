@@ -68,6 +68,8 @@ export async function proveCustomProperties(site:Installation,cookie:string,page
   await panel.getByRole('button',{name:'Edit properties',exact:true}).click();await panel.getByLabel('synthetic-mango-1402 money',{exact:true}).fill('$2,345.67');await panel.getByRole('button',{name:'Save properties',exact:true}).click();await expect(panel).toContainText('$2,345.67');
   await capturePropertyScreen(page,info,'contact-values-history',page.locator('.contact-layout'));
   const edited=await profile(contacts[0].id);expect(edited.profile.properties[moneyKey]).toBe(234567);
+  await json(await site.call('/api/integrations/v1/contacts',{method:'PUT',headers,body:{email:emails[0],segmentName:'synthetic-mango-1416',fields:{[dateKey]:'2026-04-16'}}}),200);
+  expect((await profile(contacts[0].id)).profile.properties).toMatchObject({[dateKey]:'2026-04-16',[moneyKey]:234567});
   expect(edited.timeline.filter((h:any)=>h.kind==='property-change').map((h:any)=>h.source).join('\n')).toMatch(/api · synthetic-mango-1404 API/);
   expect(edited.timeline.filter((h:any)=>h.kind==='property-change').map((h:any)=>h.source).join('\n')).toMatch(/operator · /);
   // Replaying an already-recorded event must not restore an older value after an edit.

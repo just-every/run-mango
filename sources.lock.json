@@ -4246,7 +4246,7 @@
       "executable": false
     },
     "src/core/features/integrations/contacts.ts": {
-      "sha256": "79bcf102b6cb154e7a7d762b8849649a01ab52b172364f9b76670f6f9554d667",
+      "sha256": "a154853254e9a9a1f7559ac85b55296e3072b395fcb2b86eeedc30d5434ff1c9",
       "executable": false
     },
     "src/core/features/integrations/credentials.ts": {
@@ -7994,7 +7994,7 @@
       "executable": false
     },
     "tests/go-live/custom-property-journey.ts": {
-      "sha256": "6035c0790b43d1173eb393bdff6afea86a91ed73a3479352577ed3e5b280ceb5",
+      "sha256": "caeb261eaf63fda0a4e04101280bdab9ef7fbdd6d89f18a58bf32e8364a6168a",
       "executable": false
     },
     "tests/go-live/custom-property-preview.ts": {

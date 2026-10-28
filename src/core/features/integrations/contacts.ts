@@ -49,7 +49,7 @@ export function createIntegrationContacts(db: D1Database, audience: ReturnType<t
       const statements: D1PreparedStatement[] = [];
       if(input.fields){
         const credential=await db.prepare('SELECT name FROM integration_credentials WHERE id=?').bind(credentialId).first<{name:string}>();
-        statements.push(...(await propertyWriteStatements(db,contact.id,input.fields,{kind:'api',label:credential?.name??credentialId,reference:credentialId},now,true)).statements);
+        statements.push(...(await propertyWriteStatements(db,contact.id,input.fields,{kind:'api',label:credential?.name??credentialId,reference:credentialId},now,false)).statements);
       }
       if (input.segmentName) {
         const emptyRule = JSON.stringify({version: 1, operator: 'all', predicates: [{sourceType: 'contact', field: 'id', comparator: 'in', value: [contact.id]}]});
