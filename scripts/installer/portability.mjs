@@ -14,7 +14,7 @@ import { platformLedger, restoreMigrations } from './migration-replay.mjs';
 const refused=error=>new RerError('restore_refused',`Mango transfer refused (${error.code.startsWith('migration_ledger:')?error.code:error.code.split(':')[0]}).`,error.status===409?4:1);
 
 // Mango supplies its private-authority policy and source-wide erasure floors over the adapted Base engine.
-async function run(direction,{root,path,store,signal,operationToken}) {
+async function run(direction,{root,path,store,signal,operationToken,acknowledgeUnverifiedSchemaObjects}) {
   const env={...process.env,RER_LOCAL_OPERATION:operationToken};
   // Refuse before any write: migrations would otherwise leave a database that setup must then protect.
   const settings=await readSettings(root,{}), vars=localBindings(settings.values);
@@ -35,7 +35,7 @@ async function run(direction,{root,path,store,signal,operationToken}) {
     const policy=portabilityPolicy({contactHashSalt:localContactHashSalt(vars),sessionSigningKey:vars.SESSION_SIGNING_KEY});
     const service=await createPortability({db:proxy.env.DB,buckets:{ASSETS_BUCKET:proxy.env.ASSETS_BUCKET},policy,
       migrations:()=>restoreMigrations(proxy.env.DB,root,policy,split)});
-    return await transferArchive(service,direction,path,signal);
+    return await transferArchive(service,direction,path,signal,{acknowledgeUnverifiedSchemaObjects:acknowledgeUnverifiedSchemaObjects===true});
   } catch(error) {
     if(error instanceof PortabilityError)throw refused(error);
     if(error.code==='EEXIST')throw refuse('Export requires a new archive path.');
