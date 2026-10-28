@@ -3,6 +3,7 @@ import type {LifecycleRuntime} from '../lifecycle/types';
 import {evaluateAudience} from '../lifecycle/evaluate-audience';
 import {createLifecycleRepository} from '../lifecycle/repository';
 import {resourceLink} from './resource-links';
+import {nativeTarget} from './target';
 import type {createIntegrationService} from '../integrations/service';
 import {projectPrivateResponse,contactPrivacyRole} from '../auth/response-privacy';
 import {fingerprint} from './digest';
@@ -141,6 +142,7 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
       scope:operation.name, readOnly:operation.readOnly,
       inputSchema:operation.inputSchema as unknown as JsonSchemaObject, outputSchema:{type:'object'},
       classes:operation.classes as ClassId[], clauses:operation.clauses, untrusted:true,
+      target:(args,ctx)=>nativeTarget(platform,kind,args,ctx),
       classify:async(args,ctx)=>{
         const operator=await nativeOperator(platform,ctx.person.id);
         if(!hasPermission(operator.role,requiredPermission(operation.method,operation.path))||kind==='access.update'&&operator.role!=='owner')throw new ToolRefusal('role_forbidden');
@@ -195,7 +197,7 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
         const design=kind==='designs.read'?await platform.database.$client.prepare('SELECT id FROM design_jobs WHERE campaign_id=? ORDER BY created_at DESC LIMIT 1').bind(args.id).first<{id:string}>():null;
         if(kind==='designs.read'&&!design)return {result:{enabled:Boolean(platform.design),earlier:[]}};
         const pureResource = kind === 'sender.read' ? 'mango://sender/readiness' : design?'mango://designs/'+encodeURIComponent(design.id):null;
-        const read = pureResource ? await mangoResources(platform).find(resource=>resource.uriTemplate===(design?'mango://designs/{id}':pureResource))?.read(pureResource,{...ctx,clientId:ctx.clientId}) : null;
+        const read = pureResource ? await mangoResources(platform).find(resource=>resource.uriTemplate===(design?'mango://designs/{id}':pureResource))?.read(pureResource,{...ctx,scopes:[...ctx.scopes]}) : null;
         const result = read ? object(read.json) : await call(ctx,operation.method,path,operation.readOnly?undefined:option.unwrap?body[option.unwrap]:body);
         if (!operation.readOnly) {
           const uri=await resourceLink(platform,kind,args,result);
@@ -215,6 +217,7 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
     scope:'mango.campaigns.enqueue',readOnly:false,classes:['external'],clauses:['CAMP-004','AUD-005','SEND-001'],
     inputSchema:{type:'object',properties:{id:{type:'string'},revisionId:{type:'string'},segmentId:{type:'string'}},required:['id','revisionId','segmentId'],additionalProperties:false},
     outputSchema:{type:'object'},classify:(args,ctx)=>classes(platform,'delivery.dispatch',args,ctx),
+    target:(args,ctx)=>nativeTarget(platform,'campaigns.enqueue',args,ctx),
     summary:args=>({target:{id:String(args.id)},items:[String(args.revisionId),String(args.segmentId)]}),
     async run(args,ctx){
       if(!ctx.clientId||ctx.agent.id!=='integration:'+ctx.clientId)throw new ToolRefusal('native_client_required');

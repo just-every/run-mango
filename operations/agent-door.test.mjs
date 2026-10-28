@@ -5,6 +5,7 @@ import {readFile} from 'node:fs/promises';
 import operations from '../src/core/features/agent-door/operations.ts';
 import {runtime,setup} from './base-runtime.mjs';
 import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../src/vendor/base/agent-door/conformance/crypto.mjs';
+import {validateAgentSurface} from '../src/vendor/base/agent-door/conformance/surface.mjs';
 
 test('Mango shared door: signed native owner, durable Business people, native draft custody, policy, replay and role narrowing',async()=>{
  const origin='https://mango.example.test',issuer='https://business.example.test',installationId=randomUUID(),kid=randomUUID(),sub=randomUUID();
@@ -83,6 +84,10 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.db.prepare('SELECT actor_type,actor_id FROM campaign_state_transitions WHERE campaign_id=?').bind(ids.campaignId).first()).actor_type,'agent');
   const resource=await mcp('resources/read',{uri:'mango://campaigns/'+ids.campaignId});
   assert.ok(resource.message.result.contents[0].text.includes(ids.revisionId),JSON.stringify(resource.message));
+  for(const [uri,code] of [['mango://campaigns/absent','resource_unavailable'],['mango://unregistered/absent','tool_not_found']]){
+   const refused=await mcp('resources/read',{uri});
+   assert.equal(refused.message.error.data.code,code);assert.equal(refused.message.result,undefined);
+  }
   const audit=await app.db.prepare("SELECT actor_type,actor_id,detail_json FROM lifecycle_audit_entries WHERE action='mango.campaigns.create'").first();
   assert.equal(audit.actor_type,'agent');assert.equal(audit.actor_id,c.agentId);assert.ok(audit.detail_json.includes('Morgan Owner'));
   // Exercise the declared native draft/segment journey before company-policy negatives.
@@ -100,17 +105,34 @@ test('Mango shared door: signed native owner, durable Business people, native dr
    const args=resolve(step.args),definition=operations.find(operation=>operation.name===step.tool);
    const response=await call(step.tool,{...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+step.id}:{})});
    assert.equal(response.message.result?.isError,false,step.id+': '+JSON.stringify(response.message));
+   if(step.target){
+    const audit=await (await app.call('/agents/api/audit',{cookie})).json();
+    const decision=response.message.result._meta['com.runeditrun/decision'];
+    assert.deepEqual(audit.rows.find(row=>row.id===decision.id)?.resource,resolve(step.target),step.id+' native target');
+   }
    outputs.set(step.id,response.message.result.structuredContent);
   }
-  const nativeCount=(await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count;
+  const surface=JSON.parse(await readFile('agent-surface.json','utf8'));
+  const declaration=validateAgentSurface(surface,{contract:await readFile('CONTRACT.md','utf8')});
+  for(const name of ['mango.access.update','mango.connections.update','mango.signup.update']){
+   assert.equal(surface.tools.find(tool=>tool.name===name).sponsorEscalation,false);
+   assert.equal(declaration.points.find(point=>point.id==='BASE-AGENT-005.surface.'+name+'.coverage')?.ok,true);
+  }
+  let nativeCount=(await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count;
   const blockedPolicy={...autonomousPolicy(),rules:[{id:'block',class:'*',do:'blocked'}]};
   assert.equal((await adopt(blockedPolicy)).response.status,200);
   const blocked=await call('mango.campaigns.create',{idempotency_key:'blocked'});
   assert.equal(blocked.message.result._meta['com.runeditrun/error'].code,'policy_blocked');
+  const blockedReplay=await call('mango.campaigns.create',{idempotency_key:'draft-one'});
+  assert.equal(blockedReplay.message.result._meta['com.runeditrun/error'].code,'policy_blocked');
+  assert.equal(blockedReplay.message.result.structuredContent,undefined);
   assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,nativeCount);
   assert.equal((await adopt(autonomousPolicy(),{paused:true})).response.status,200);
   const paused=await call('mango.campaigns.create',{idempotency_key:'paused'});
   assert.equal(paused.message.result._meta['com.runeditrun/error'].code,'agents_paused');
+  const pausedReplay=await call('mango.campaigns.create',{idempotency_key:'draft-one'});
+  assert.equal(pausedReplay.message.result._meta['com.runeditrun/error'].code,'agents_paused');
+  assert.equal(pausedReplay.message.result.structuredContent,undefined);
   assert.equal((await app.call('/api/campaigns',{cookie})).status,200);
   assert.equal((await adopt(autonomousPolicy())).response.status,200);
   const memberSub=randomUUID();
@@ -120,9 +142,22 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal(invited.status,303,await invited.clone().text());
   let memberCookie=invited.headers.get('set-cookie').split(';')[0];
   const member=(await (await app.call('/api/operator',{cookie:memberCookie})).json()).operator;
+  const mapped=await settings(3,[{id:memberSub,email:'teammate@example.test',name:'Casey Marketer',role:'member',invite:1}]);
+  assert.equal(mapped.status,200,await mapped.clone().text());
+  const memberAgent={sub:randomUUID(),name:'Casey assistant',specialist:'marketer'};
+  const memberDraft=await call('mango.campaigns.create',{idempotency_key:'member-before-narrowing'},{sub:memberSub,act:memberAgent});
+  assert.equal(memberDraft.message.result?.isError,false,JSON.stringify(memberDraft.message));
+  nativeCount=(await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count;
   const narrowing=await call('mango.access.update',{id:member.id,role:'support',unmaskedContacts:false,idempotency_key:'narrow-teammate'});
   assert.equal(narrowing.message.result.isError,false,JSON.stringify(narrowing.message));
   assert.equal((await app.db.prepare('SELECT role FROM operator_product_roles WHERE operator_id=?').bind(member.id).first()).role,'support');
+  const narrowedReplay=await call('mango.campaigns.create',{idempotency_key:'member-before-narrowing'},{sub:memberSub,act:memberAgent});
+  assert.equal(narrowedReplay.message.result._meta['com.runeditrun/error'].code,'role_forbidden');
+  assert.equal(narrowedReplay.message.result.structuredContent,undefined);
+  for(const id of [ids.campaignId,'absent']){
+   const hidden=await mcp('resources/read',{uri:'mango://campaigns/'+id},{sub:memberSub,act:memberAgent});
+   assert.equal(hidden.message.error.data.code,'resource_unavailable');assert.equal(hidden.message.result,undefined);
+  }
   const renamed=await app.call('/auth/email',{method:'POST',cookie:memberCookie,body:{email:'casey-renamed@example.test'}});
   assert.equal(renamed.status,200,await renamed.clone().text());
   await mailBudget();
@@ -136,7 +171,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   const replacementCookie=replacementConfirmed.headers.get('set-cookie').split(';')[0];
   const replacement=(await (await app.call('/api/operator',{cookie:replacementCookie})).json()).operator;
   assert.notEqual(replacement.id,member.id);
-  const promotedRoster=await settings(3,[{id:memberSub,email:'teammate@example.test',name:'Casey Marketer',role:'admin',invite:1}]);
+  const promotedRoster=await settings(4,[{id:memberSub,email:'teammate@example.test',name:'Casey Marketer',role:'admin',invite:1}]);
   assert.equal(promotedRoster.status,200,await promotedRoster.clone().text());
   assert.equal((await app.db.prepare('SELECT role FROM oa_operators WHERE id=?').bind(member.id).first()).role,'admin');
   assert.equal((await app.db.prepare('SELECT operator_id FROM bs_team WHERE business_id=?').bind(memberSub).first()).operator_id,member.id);
@@ -151,6 +186,9 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal(denied.message.result._meta['com.runeditrun/error'].code,'role_forbidden',JSON.stringify(denied.message));
   assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,nativeCount);
   assert.equal((await adopt({...autonomousPolicy(),rules:[{id:'hold',class:'*',do:'approval',approver:['sponsor'],wait:'PT1H'}]})).response.status,200);
+  const heldReplay=await call('mango.campaigns.create',{idempotency_key:'draft-one'});
+  assert.equal(heldReplay.message.result._meta['com.runeditrun/error'].code,'approval_required');
+  assert.equal(heldReplay.message.result.structuredContent,undefined);
   const heldCount=(await app.db.prepare('SELECT count(*) count FROM agent_door_approvals').first()).count;
   const forbiddenHeld=await call('mango.campaigns.create',{idempotency_key:'no-unauthorized-approval'},{sub:memberSub,act:{sub:randomUUID(),name:'Casey assistant',specialist:'marketer'}});
   assert.equal(forbiddenHeld.message.result._meta['com.runeditrun/error'].code,'role_forbidden');

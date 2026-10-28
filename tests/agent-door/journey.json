@@ -73,7 +73,14 @@
       {
         "class": "standard"
       }
-    ]
+    ],
+    "target": {
+      "kind": "campaigns",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    }
   },
   {
     "id": "update",
@@ -98,6 +105,13 @@
     "inject": {
       "confirm": true,
       "policy": "autonomous"
+    },
+    "target": {
+      "kind": "campaigns",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
     }
   },
   {
@@ -113,7 +127,14 @@
       {
         "class": "standard"
       }
-    ]
+    ],
+    "target": {
+      "kind": "campaigns",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    }
   },
   {
     "id": "duplicate",
@@ -128,7 +149,14 @@
       {
         "class": "standard"
       }
-    ]
+    ],
+    "target": {
+      "kind": "campaigns",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    }
   },
   {
     "id": "save-template",
@@ -363,7 +391,14 @@
       {
         "class": "standard"
       }
-    ]
+    ],
+    "target": {
+      "kind": "segments",
+      "id": {
+        "$from": "segment",
+        "pointer": "/segment/id"
+      }
+    }
   },
   {
     "id": "templates",
@@ -441,7 +476,14 @@
           "measure": 1
         }
       }
-    ]
+    ],
+    "target": {
+      "kind": "segments",
+      "id": {
+        "$from": "segment",
+        "pointer": "/segment/id"
+      }
+    }
   },
   {
     "id": "events",
