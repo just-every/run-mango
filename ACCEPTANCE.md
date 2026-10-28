@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 9 | 209 | 89 | 307 |
+| Core | 8 | 210 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 9 | 209 | 98 | 316 |
+| Full target | 8 | 210 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -2276,7 +2276,7 @@ Core · target · **missing** · Rules D-1, D-3
 
 #### CAMP-014 — Pause and resume
 
-Core · target · **done** · Cites BASE-OPS-005 · Rules D-1, D-3
+Core · target · **partial** · Cites BASE-OPS-005 · Rules D-1, D-3
 
 **Requirement.** An operator can pause and resume campaign work without duplicating hand-offs.
 
@@ -2286,7 +2286,7 @@ Core · target · **done** · Cites BASE-OPS-005 · Rules D-1, D-3
 3. Pause and resume each record their actor.
 
 **Evidence.** `tests/go-live/pause.journeys.ts` — “[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at 1440”
-**Gap.** None.
+**Gap.** The 1440 pause/resume journey asserts fencing of new hand-offs within 30 seconds, retained handed-off dispositions, resumption of remaining recipients with current consent and deadlines, once-only eligible steps, and pause/resume actor history. Missing public-door journey: “Pause and resume — complete acceptance at 390”, including the same pause/resume flow and retained outcomes in a phone browser. No 390 execution is recorded in the old evidence.
 
 #### CAMP-015 — Marketing calendar
 

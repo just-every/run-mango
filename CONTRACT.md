@@ -4038,8 +4038,8 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 7 | 103 | 0 | 110 |
-| Target and push further | 2 | 106 | 98 | 206 |
-| All | 9 | 209 | 98 | 316 |
+| Target and push further | 1 | 107 | 98 | 206 |
+| All | 8 | 210 | 98 | 316 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -4188,7 +4188,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `AUD-009` | Frequency protection: one policy and a recorded override | target | partial | `src/core/features/lifecycle/policies.ts` · `src/core/features/audience/eligibility.ts` | acceptance not yet met: Two campaigns to the same audience are approved four hours apart. With the default, the second excludes everyone the first emailed, with `frequency-window`. With the override recorded at the second's approval, it hands off to them, the override and its approver appear in the activity log, and a contact who unsubscribed between the two sends is still excluded. A contact emailed a campaign in the morning still receives that afternoon's abandoned-cart message from the library flow, a draft flow made from a Mailchimp journey fixture carries the same setting, and its activation shows the 30-day skip count from seeded sends. |
 | `AUD-011` | Cart-flow frequency and impact | target | missing | `src/core/features/lifecycle/policies.ts` · `src/core/features/audience/eligibility.ts` | No delivered flow-message frequency workflow is proved: cart/library and moved-in-flow counting, visible changeable settings and the 30-day activation impact comparison are wholly absent in the old gap. |
 | `CAMP-013` | Recipient-local send time | target | missing |  | not implemented |
-| `CAMP-014` | Pause and resume | target | done | `tests/go-live/pause.journeys.ts` — “[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at 1440” |  |
+| `CAMP-014` | Pause and resume | target | partial | `tests/go-live/pause.journeys.ts` — “[CAMP-014] operator pause fences queued handoffs and resumes two steps with current consent at 1440” | The 1440 pause/resume journey asserts fencing of new hand-offs within 30 seconds, retained handed-off dispositions, resumption of remaining recipients with current consent and deadlines, once-only eligible steps, and pause/resume actor history. Missing public-door journey: “Pause and resume — complete acceptance at 390”, including the same pause/resume flow and retained outcomes in a phone browser. No 390 execution is recorded in the old evidence. |
 | `CAMP-015` | Marketing calendar | target | missing |  | not implemented |
 | `CAMP-016` | Follow-up to non-engaged recipients | target | partial | `tests/campaign-results/followup.journeys.ts` — “[CAMP-016] non-clicker follow-up keeps scanner-only readers, current exclusions and independent approval at 1440” · `tests/portability.spec.ts` | Asserted: Linked follow-up and selected delay; New subject; Non-opener estimate label; 48-hour non-clicker candidates; Current exclusions including frequency; Independent approval; Independent frequency check. Unasserted: Exact non-clicker recipient identities after current exclusions. Missing public-door journey: “Follow-up to non-engaged recipients — complete acceptance”, covering the unasserted outcomes above. |
 | `CAMP-017` | Recurring and RSS-to-email campaigns | target | missing |  | not implemented |
