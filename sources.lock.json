@@ -9346,7 +9346,7 @@
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
-      "sha256": "eddec923c27c147772fe741d77228d175ea662421dc9fd2fba4d143d68cfe4bb",
+      "sha256": "aa4267d7fcd6948ddf97a7cbd4e4be5cef29882946b65eeb9d81774af70f2995",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {

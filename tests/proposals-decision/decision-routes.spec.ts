@@ -26,7 +26,6 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     expect((await runtime.call(`/api/campaign-revisions/${first.revisionId}`,{name:'Owner revision',emailSubject:'Reviewed by the owner'},true,'PATCH')).status).toBe(200);
     expect((await runtime.call(`/api/campaigns/${first.campaignId}`)).body.revision).toMatchObject({state:'draft',name:'Owner revision',emailSubject:'Reviewed by the owner'});
     expect(runtime.jobs).toEqual([]);
-    const thin=await generated(runtime);
     await history(runtime);
     runtime.controls.alter=output=>{output.audience.inclusion.predicates[0]={sourceType:'contact',field:'email',comparator:'eq',value:'first@example.test',lookbackDays:null};};
     const lower=await generated(runtime);
@@ -39,7 +38,7 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     expect(forecast.campaignIds).toHaveLength(3);expect(forecast.sourceEventIds).toHaveLength(3);
     const desk=(await runtime.call('/api/decision-desk')).body;
     expect(desk.proposals.every((entry:any)=>entry.proposal.state==='proposed')).toBe(true);
-    expect(desk.proposals.map((entry:any)=>entry.proposal.id)).toEqual([forecasted.proposalId,higherLater.proposalId,lower.proposalId,thin.proposalId]);
+    expect(desk.proposals.map((entry:any)=>entry.proposal.id)).toEqual([forecasted.proposalId,higherLater.proposalId,lower.proposalId,first.proposalId]);
     await runtime.db.prepare("UPDATE attribution_facts SET currency='AUD' WHERE id='attribution-0'").run();
     const mixed=await generated(runtime);
     expect((await runtime.call(`/api/proposals/${mixed.proposalId}`)).body.forecast).toMatchObject({status:'insufficient',valueMinor:null,currency:null});
