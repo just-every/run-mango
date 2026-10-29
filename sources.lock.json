@@ -2634,7 +2634,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "6396dbee1e003793d2b442ec14c2f0aa3aa852a5291fe7678b17ad6e7ecc5d45",
+      "sha256": "a11d3d87af2f436a3bc45de8853a818894fa7180239f24f9416aaf8ef048b163",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -9450,7 +9450,7 @@
       "executable": false
     },
     "VERIFYING.md": {
-      "sha256": "5f773d34986d2ef91fc0eb8392be962f24c59f71cec74b0c0cf19fcd07a4723d",
+      "sha256": "cd30c883243fce6883e8ef6af52812b14fc97f5964b6123b73f1a6417c0f30a9",
       "executable": false
     },
     "vite.config.ts": {
