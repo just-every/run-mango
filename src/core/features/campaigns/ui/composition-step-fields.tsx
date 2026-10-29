@@ -1,11 +1,11 @@
 import { Field } from '@/core/app/client/ui/validation-form';
 import { useLoaderData } from '@tanstack/react-router';
 import { resolveLocalInstant } from '@/core/features/lifecycle/schedule';
-import { localDateTime, useTimeZone, zoneChoices } from '@/core/app/client/lib/time-zone';
+import { localDateTime, useHydrated, useTimeZone, zoneList } from '@/core/app/client/lib/time-zone';
 import type { DraftComposition, DraftStep } from './draft-composition';
 
 export function CompositionStepFields({steps, setSteps}: {steps:DraftComposition['steps'];setSteps:(steps:DraftStep[])=>void}) {
-  const viewerZone = useTimeZone();
+  const viewerZone = useTimeZone(), hydrated = useHydrated();
   const { modules } = useLoaderData({ from: '/app' });
   const update = (index:number, changes:Partial<DraftStep>) => setSteps(steps.map((step,i)=>i===index?{...step,...changes}:step));
   const localChange = (index:number, step:DraftStep, local:string, deadline=false) => {
@@ -25,7 +25,7 @@ export function CompositionStepFields({steps, setSteps}: {steps:DraftComposition
       const resolution = resolveLocalInstant(local,step.timezone), end = resolveLocalInstant(deadline,step.timezone);
       return <div className="composition-step" key={index}><p>Step {index+1}</p>
         <label>Channel<select value={step.channel} onChange={event=>update(index,{channel:event.target.value as 'email'|'sms'})}><option value="email">Email</option>{modules.sms || step.channel === 'sms' ? <option value="sms" disabled={!modules.sms}>{modules.sms ? 'SMS' : 'SMS (disabled)'}</option> : null}</select></label>
-        <label>Time zone<Field name={`steps.${index}.timezone`} label={`Step ${index+1} time zone`} required live validate={() => {try {new Intl.DateTimeFormat("en", {timeZone:step.timezone});return undefined;} catch {return "Choose a time zone.";}}}><select aria-label="Time zone" value={step.timezone} onChange={event=>{const timezone=event.target.value; const send=resolveLocalInstant(local,timezone),until=resolveLocalInstant(deadline,timezone);update(index,{timezone,localScheduledAt:local,localSendByAt:deadline,scheduledAt:send.status==='resolved'?send.instant:'',sendByAt:until.status==='resolved'?until.instant:''});}}>{zoneChoices(step.timezone).map(name=><option key={name} value={name}>{name.replaceAll('_',' ')}</option>)}</select></Field></label>
+        <label>Time zone<Field name={`steps.${index}.timezone`} label={`Step ${index+1} time zone`} required live validate={() => {try {new Intl.DateTimeFormat("en", {timeZone:step.timezone});return undefined;} catch {return "Choose a time zone.";}}}><select aria-label="Time zone" value={step.timezone} onChange={event=>{const timezone=event.target.value; const send=resolveLocalInstant(local,timezone),until=resolveLocalInstant(deadline,timezone);update(index,{timezone,localScheduledAt:local,localSendByAt:deadline,scheduledAt:send.status==='resolved'?send.instant:'',sendByAt:until.status==='resolved'?until.instant:''});}}>{zoneList(hydrated,step.timezone).map(name=><option key={name} value={name}>{name.replaceAll('_',' ')}</option>)}</select></Field></label>
         <label>Local send date and time (required)<Field name={`steps.${index}.scheduledAt`} label={`Step ${index+1} send time`} required live validate={() => resolution.status === "resolved" ? undefined : `${resolution.detail} Choose another local time.`}><input aria-label="Local send date and time" type="datetime-local" value={local} onChange={event=>localChange(index,step,event.target.value)} required /></Field></label>
         <label>Local send-by date and time (required)<Field name={`steps.${index}.sendByAt`} label={`Step ${index+1} deadline`} required live validate={() => end.status !== "resolved" ? `${end.detail} Choose another local time.` : Date.parse(step.sendByAt) <= Date.parse(step.scheduledAt) ? "Choose a deadline after the send time." : undefined}><input aria-label="Local send-by date and time" type="datetime-local" value={deadline} onChange={event=>localChange(index,step,event.target.value,true)} required /></Field></label>
         <label>Why this time (required)<Field name={`steps.${index}.whyThisTime`} label={`Step ${index+1} timing reason`} required><textarea aria-label="Why this time" value={step.whyThisTime} onChange={event=>update(index,{whyThisTime:event.target.value})} rows={2}/></Field></label>

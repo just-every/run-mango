@@ -1,11 +1,11 @@
 import './manual-entry-form.css';
 import {useState,type FormEvent} from 'react';
 import {useResource} from '@/core/app/client/lib/use-resource';
-import {localDateTime,useTimeZone,zoneChoices} from '@/core/app/client/lib/time-zone';
+import {localDateTime,useTimeZone,useZoneChoices} from '@/core/app/client/lib/time-zone';
 import {resolveLocalInstant} from '@/core/features/lifecycle/schedule';
 type Options={sender:string;frequencyDisclosure:string;mode:{mode:'double'|'single'};sms:{available:boolean;detail?:string;brand?:string;programme?:string;category?:string;frequency?:string;jurisdiction?:string;consentText?:string;consentVersion?:string}};
 export function ManualEntryForm(){
- const zone=useTimeZone();
+ const zone=useTimeZone(),zones=useZoneChoices(zone);
  const {data,error}=useResource<Options>('/api/contacts/consent'),[emailOn,setEmail]=useState(true),[smsOn,setSms]=useState(false),[busy,setBusy]=useState(false),[notice,setNotice]=useState(''),[contactId,setContactId]=useState(''),[properties,setProperties]=useState<Array<{name:string;value:string}>>([]);
  if(!data)return <section className="panel"><h2>Add a contact by hand</h2><p role={error?'alert':undefined}>{error||'Loading consent settings…'}</p></section>;
  async function submit(event:FormEvent<HTMLFormElement>){
@@ -41,7 +41,7 @@ export function ManualEntryForm(){
    <label>How {channel==='email'?'email':'SMS'} permission was given<select name={channel+'Method'}><option value="in-person">In person</option><option value="event">At an event</option><option value="phone">By phone</option><option value="written">In writing</option></select></label>
    <label>When {channel==='email'?'email':'SMS'} permission was given<input name={channel+'When'} type="datetime-local" required defaultValue={when()}/></label>
    <label>{channel==='email'?'Email':'SMS'} consent wording shown<textarea name={channel+'Text'} required maxLength={2000} rows={3} defaultValue={channel==='sms'?data.sms.consentText:''}/></label>
-   {channel==='email'?<label>Destination jurisdiction<input name="jurisdiction" required placeholder="AU"/></label>:<><label>Recipient time zone<select name="timeZone" defaultValue={zone}>{zoneChoices(zone).map(name=><option key={name} value={name}>{name.replaceAll('_',' ')}</option>)}</select></label><label>How the recipient’s location was established<input name="locationSource" required/></label></>}
+   {channel==='email'?<label>Destination jurisdiction<input name="jurisdiction" required placeholder="AU"/></label>:<><label>Recipient time zone<select name="timeZone" defaultValue={zone}>{zones.map(name=><option key={name} value={name}>{name.replaceAll('_',' ')}</option>)}</select></label><label>How the recipient’s location was established<input name="locationSource" required/></label></>}
    <label><input name={channel+'Affirmed'} type="checkbox" required/>I record that this person gave the {channel==='email'?'email permission':'express written SMS permission'} above.</label>
   </fieldset>)}
   <button className="primary-action" type="submit" disabled={busy}>{busy?'Saving permission…':'Add contact with permission'}</button>

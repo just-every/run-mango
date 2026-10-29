@@ -38,9 +38,24 @@ export function useTimeZone() {
   return useSyncExternalStore(subscribe, chosenZone, () => 'UTC');
 }
 
-export function zoneChoices(current: string) {
-  const all = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
+const never = () => () => {};
+
+/** True once the page has hydrated: server and first client render agree, then the browser's own knowledge applies. */
+export function useHydrated() {
+  return useSyncExternalStore(never, () => true, () => false);
+}
+
+/**
+ * The zones to pick from. The browser's list can differ from the server's, so until hydration only the current zone is
+ * offered; that keeps the server HTML and the first client render identical.
+ */
+export function zoneList(hydrated: boolean, current: string) {
+  const all = hydrated && typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
   return all.includes(current) ? all : [current, ...all];
+}
+
+export function useZoneChoices(current: string) {
+  return zoneList(useHydrated(), current);
 }
 
 /** An instant as the value of a datetime-local field in a zone: 2026-10-29T17:51. */
