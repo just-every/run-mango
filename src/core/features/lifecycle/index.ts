@@ -1,3 +1,4 @@
+import {admitWork} from '../agent-door/custody';
 import {advisorySizeOptions} from './advisory-size-options';
 import {expireAttestations} from '../move-in/incumbent-attestation';
 import { resumeSmsServices } from '@/core/features/sms/service-delivery';
@@ -43,24 +44,26 @@ export async function consumeLifecycleQueue(batch: LifecycleQueueBatch, runtime:
       if(message.body.kind==='contact.erase'){await continueErasure(runtime.platform,String(message.body.payload.reference??''));message.ack();continue;}
       if(await pendingErasure(runtime.platform.database.$client)){message.retry({delaySeconds:30});continue;}
       await withErasureWriteFence(runtime.platform.database.$client,async()=>{
-      if (isDesignCommand(message.body)) {await advanceDesignJob(runtime.platform, message.body); message.ack(); return;}
+      if (isDesignCommand(message.body)) {const command=message.body;await admitWork(runtime.platform.database.$client,runtime.platform.agentDoor,'design',String(message.body.payload.jobId),{kind:message.body.kind,jobId:message.body.payload.jobId},()=>advanceDesignJob(runtime.platform,command)); message.ack(); return;}
       if (!['source.sync', 'campaign.dispatch', 'delivery.reconcile', 'provider.outage-probe'].includes(message.body.kind)) throw new Error('Unknown queue command.');
       if (message.body.kind === 'source.sync') {
         if (!runtime.synchronizeCommerce) throw new Error('Commerce synchronization is not composed.');
-        const result = await runtime.synchronizeCommerce({...message.body.payload, runId: message.body.payload.runId ?? message.body.idempotencyKey});
-        if (result && typeof result === 'object' && 'status' in result) {
-          if (result.status === 'pending') {
-            if (!('runId' in result) || typeof result.runId !== 'string' || !('pages' in result) || !Number.isInteger(result.pages) || Number(result.pages) < 1) throw new Error('Invalid sync continuation result.');
+        const payload={...message.body.payload, runId: message.body.payload.runId ?? message.body.idempotencyKey};
+        const result = await admitWork(runtime.platform.database.$client,runtime.platform.agentDoor,'sync',String(payload.runId),payload,()=>runtime.synchronizeCommerce!(payload));
+        const nativeResult=result && typeof result==='object' && 'outcome' in result && 'result' in result ? result.result : result;
+        if (nativeResult && typeof nativeResult === 'object' && 'status' in nativeResult) {
+          if (nativeResult.status === 'pending') {
+            if (!('runId' in nativeResult) || typeof nativeResult.runId !== 'string' || !('pages' in nativeResult) || !Number.isInteger(nativeResult.pages) || Number(nativeResult.pages) < 1) throw new Error('Invalid sync continuation result.');
             // Transfer the saved remainder only after durable queue acceptance.
             // Successful chunks must not consume the failure retry allowance.
-            await runtime.platform.jobs.enqueue({kind: 'source.sync', idempotencyKey: `source-sync:${result.runId}:page:${result.pages}`,
-              payload: {...message.body.payload, runId: result.runId}});
+            await runtime.platform.jobs.enqueue({kind: 'source.sync', idempotencyKey: `source-sync:${nativeResult.runId}:page:${nativeResult.pages}`,
+              payload: {...message.body.payload, runId: nativeResult.runId}});
             message.ack();
             return;
           }
-          if (result.status === 'busy') {message.retry({delaySeconds: 30}); return}
+          if (nativeResult.status === 'busy') {message.retry({delaySeconds: 30}); return}
         }
-        if (!result || typeof result !== 'object' || !('status' in result) || !['completed', 'superseded'].includes(String(result.status))) throw new Error('Commerce synchronization returned no terminal outcome.');
+        if (!nativeResult || typeof nativeResult !== 'object' || !('status' in nativeResult) || !['completed', 'superseded'].includes(String(nativeResult.status))) throw new Error('Commerce synchronization returned no terminal outcome.');
         message.ack();
         return;
       }
