@@ -39,6 +39,7 @@ function localSender(database: Database, config: AppConfig): SenderAdapter {
     async capabilities() {
       return {
         configured: true,
+        provider: 'local',
         canSendMarketing: true,
         effectiveDeduplication: true,
         effectiveReconciliation: true,
