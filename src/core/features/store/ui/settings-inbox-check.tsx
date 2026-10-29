@@ -26,7 +26,7 @@ export function InboxCheck({ status, operatorEmail }: { status: SenderStatus; op
         <button type="button" className={confirmed ? 'secondary-action' : 'primary-action'} disabled={busy} onClick={() => void send()}>
           {busy ? 'Sending…' : confirmed ? 'Send a new check' : `Send the check to ${operatorEmail}`}
         </button>
-      </> : <p>Finish the From domain’s authentication with your mail provider first. When Provider domain and DNS records both pass, you can send the check here.</p>}
+      </> : confirmed ? null : <p>Finish the From domain’s authentication with your mail provider first. When Provider domain and DNS records both pass, you can send the check here.</p>}
       {notice ? <p className={notice.kind === 'success' ? 'action-notice' : 'inline-error'} role={notice.kind === 'success' ? 'status' : 'alert'}>{notice.text}</p> : null}
     </div>
   );

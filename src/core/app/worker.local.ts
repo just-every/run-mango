@@ -8,7 +8,6 @@ import { createLocalApp } from './local-app';
 import type { LocalAppBindings } from './local-app';
 import { consumeLifecycleQueue, type LifecycleQueueBatch } from '@/core/features/lifecycle';
 import { runScheduled } from './scheduled';
-import { designCommandKinds } from '@/core/features/design-generation/advance';
 import { acknowledgeHealthProbe } from '@/core/features/health/queue-probe';
 
 const worker = {
@@ -18,7 +17,7 @@ const worker = {
     if (new URL(request.url).pathname !== '/health') await loadWooCommerce(platform);
     return dispatchDocuments(request, bindings, executionContext, platform, createLocalApp(bindings, platform));
   },
-  // Ordinary local development consumes design jobs; demos exercise all jobs through mocked effects.
+  // A copy running on a computer consumes every job, as a demo does: its mail is suppressed, so an approved campaign sends quietly.
   async queue(batch, environment) {
     const messages = (batch as unknown as LifecycleQueueBatch).messages.filter(message => !acknowledgeHealthProbe(message));
     if (!messages.length) return;
@@ -26,9 +25,9 @@ const worker = {
     const platform = createLocalPlatform(bindings, bindings.SESSION_SIGNING_KEY);
     await loadWooCommerce(platform);
     const runtime = createAppServices(platform).lifecycleRuntime;
-    await consumeLifecycleQueue({ messages }, runtime, bindings.RER_DEMO === '1' ? undefined : [...designCommandKinds, 'source.sync']);
+    await consumeLifecycleQueue({ messages }, runtime);
   },
-  // rer dev fires the Cron Trigger every minute: record the tick and run the same lifecycle work, which sends nothing here.
+  // rer dev fires the Cron Trigger every minute: record the tick and run the same lifecycle work; its mail never leaves this computer.
   scheduled(controller, environment, executionContext) {
     const bindings = environment as LocalAppBindings;
     executionContext.waitUntil(runScheduled(controller, bindings,

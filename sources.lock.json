@@ -3042,7 +3042,7 @@
       "executable": false
     },
     "src/core/app/worker.local.ts": {
-      "sha256": "b35d64c2a652928dcc2d0509f70b7022f1a235455fdcfcbc30016750075e8ffb",
+      "sha256": "05a38e6e5c57fb6dd4f989ca0dbbe08e4a9c2536ecf64f6483167c22ece6106e",
       "executable": false
     },
     "src/core/app/worker.ts": {
@@ -5858,7 +5858,7 @@
       "executable": false
     },
     "src/core/features/store/ui/settings-inbox-check.tsx": {
-      "sha256": "0c105441f9077495b5c92a01048e97c1b13b457fd50f1b702e6109d142301846",
+      "sha256": "b4ad4e634c8dce37ff2fc7e19920e70d13bd1a42a9f4286bf2abc166da64882f",
       "executable": false
     },
     "src/core/features/store/ui/settings-integration-audit.tsx": {
@@ -6102,7 +6102,7 @@
       "executable": false
     },
     "src/core/platform/demo/verification.ts": {
-      "sha256": "4b5f8462faa67cab18620e30086898f8d2b27c1da657cb14bdc3e1c88436f45d",
+      "sha256": "14df2b603a536c91c8af1fca06b4366afced4b024257551613ae69759bd290d7",
       "executable": false
     },
     "src/core/platform/jobs.ts": {
@@ -6126,7 +6126,11 @@
       "executable": false
     },
     "src/core/platform/runtime.ts": {
-      "sha256": "5455ec43a0762b678557e1e8bd9fc9a497aa9b416b4d1cb0769a6bc183574bc1",
+      "sha256": "4b5e817b569ebb34bed5fc56371b8854c594c2eebbe0ff06398352d4f38cf083",
+      "executable": false
+    },
+    "src/core/platform/suppressed-inspection.ts": {
+      "sha256": "0f2e6cb92b287c5f990e95c393c3bb95c275ff9b0349c7c0d2920324b46605b7",
       "executable": false
     },
     "src/core/platform/worker-runtime.ts": {

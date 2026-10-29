@@ -2,7 +2,7 @@ import { pacedAdapter } from '@/core/features/lifecycle/transport-pacing';
 import { readDeliveryPolicies } from '@/core/features/lifecycle/transport-policy';
 import { createReceiptConnector } from '@/core/features/sender-verification/qa-inbox';
 import { createSendgridAdapter } from './adapters/sendgrid';
-import { createDatabase } from '@/core/platform/db/client';
+import { createDatabase, type Database } from '@/core/platform/db/client';
 import { localBindings } from './local-bindings';
 import { createSenderVerification } from '@/core/features/sender-verification/service';
 import type {
@@ -24,11 +24,12 @@ import { createJobDispatcher } from './jobs';
 import { createLinkInspector } from './link-inspector';
 import { createPublicTokenSigner } from './public-tokens';
 import { localContactHashSalt } from './local-contact-authority';
+import { suppressedSenderInspection } from './suppressed-inspection';
 import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
 import { sha256 } from '@/core/shared/ids';
 
 /** Local mail is silently suppressed: a send, a test or an approved campaign succeeds quietly and nothing leaves this computer. */
-function localSender(): SenderAdapter {
+function localSender(database: Database, config: AppConfig): SenderAdapter {
   const unavailable = () => {
     throw new Error('A copy running on your computer receives no provider events.');
   };
@@ -46,9 +47,13 @@ function localSender(): SenderAdapter {
         detail: 'Mail is suppressed on this computer.',
       };
     },
+    async probeHealth() {
+      return { reachable: true, code: 'ok', observedAt: new Date(), evidence: 'local' };
+    },
     async validateSender() {
       return { ready: true, detail: 'Sender is ready.' };
     },
+    inspectSender: sender => suppressedSenderInspection(database, config, sender, 'local'),
     async send(request) {
       return { providerMessageId: `local-suppressed:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
     },
@@ -130,7 +135,7 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
   if (environment.MANGO_LOCAL_CONFIG_VERSION === '2') localSigningKey = environment.SESSION_SIGNING_KEY;
   // A copy running on a computer may try design generation with the owner's own key in .dev.vars (decision D8a).
   const design = readDesignModule(environment, { local: true });
-  return compose(environment, {
+  const config: AppConfig = {
     sessionSigningKey: localSigningKey,
     initialOperatorEmails: (environment.INITIAL_OPERATOR_EMAILS ?? "").split(",").filter(Boolean),
     authSetupToken: environment.AUTH_SETUP_TOKEN,
@@ -161,8 +166,9 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
       replyToEmail: '',
       physicalAddress: '',
     },
-  }, {
+  };
+  return compose(environment, config, {
     ...designAdapter(design),
-    mailer: localSender(),
+    mailer: localSender(createDatabase(environment.DB), config),
   });
 }
