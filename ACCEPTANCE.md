@@ -483,7 +483,7 @@ Core · published · **done** · Rules D-1
 1. The Decision Desk lists only proposed proposals.
 2. The ordering policy ranks by expected revenue when this deployment has enough of its own attribution history (RESULT-003), then by the earliest send-by instant; proposals with neither rank last.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001] Decision Desk returns only proposed suggestions in revenue then deadline order”
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”
 **Gap.** None.
 
 #### PROP-002 — Evidence

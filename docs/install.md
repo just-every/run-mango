@@ -158,7 +158,7 @@ Operators with draft-editing access can then spend from your 12ui account; Mango
 
 Local checks and a deploy do not prove that mail works. Continue with [Team and settings](./team-and-settings.md) and [Approval and sending](./approval-and-sending.md).
 
-> **Tip:** Want sample data? `pnpm run review:synthetic` starts a separate, isolated synthetic workspace on port 15662. Open the link written to `.seed/review-access`. It never sends anything.
+> **Tip:** Want to look around with sample contacts and campaigns first? Try the demo at [demo.run-mango.com](https://demo.run-mango.com): a private copy that sends nothing.
 
 ## Add a SendGrid event webhook
 

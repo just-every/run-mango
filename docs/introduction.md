@@ -2,7 +2,7 @@
 
 Mango is a self-hosted newsletter desk. You run it yourself: on your own computer to look around, and on your own Cloudflare account to send real mail. A person on your team writes each issue, a person approves one exact saved version of it, and only then does Mango send anything.
 
-Mango 0.2.0 is a newsletter release candidate. This documentation describes what the code does today, including the parts that are not finished (see "What Mango does not claim" below).
+This documentation describes what Mango does today, including the parts that are not finished (see "What Mango does not claim" below).
 
 ## How a newsletter moves through Mango
 
