@@ -2882,7 +2882,7 @@
       "executable": false
     },
     "src/core/app/client/styles/forms.css": {
-      "sha256": "4bc4e3f7d8a33c7afcc7a7ff408eec0a5b5ec908fcbcc4c5986721e5986479d5",
+      "sha256": "f31dc40ca27c2e51188c5b0f2337d5d230a06789b25e3035f0dbce71a84bd0e9",
       "executable": false
     },
     "src/core/app/client/styles/icons.css": {
@@ -2934,7 +2934,7 @@
       "executable": false
     },
     "src/core/app/client/styles/pages/public.css": {
-      "sha256": "34eb87b96647fa9a5966a8136507183279c25df8374ad3049198ceadb527bba6",
+      "sha256": "b241cb37cb90f4b7f48e4485e04a08be84cf4b87fd3f82d9c069e106cd08f0e8",
       "executable": false
     },
     "src/core/app/client/styles/pages/review.css": {
@@ -3554,7 +3554,7 @@
       "executable": false
     },
     "src/core/features/audience/ui/contact-detail.tsx": {
-      "sha256": "abfa6ffe833619c0d7293b3328906c0f7fef51053b6067ba4ba68d1b30da2808",
+      "sha256": "c97e55aa735a0cb163349dcc32d5230a125293174083a9e7c603af560b8b75d8",
       "executable": false
     },
     "src/core/features/audience/ui/contact-merge.tsx": {
