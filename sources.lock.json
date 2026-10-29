@@ -9154,7 +9154,7 @@
       "executable": false
     },
     "tests/local-start/local.journey.ts": {
-      "sha256": "fcfa87bf5cc98cadf590127667ff298c14652c2bc13a483376c99489c76b5fcc",
+      "sha256": "2bd7e8acf2d30efd56f17542d743adadfe90479554fc9be91f9b329ca0cc0ccd",
       "executable": false
     },
     "tests/local-start/native-dev.mjs": {

@@ -75,6 +75,14 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     await page.goto(runtime.url+'/app/campaigns');
     expect((await (await page.request.get(runtime.url+'/api/campaigns')).json()).campaigns).toEqual([]);
     await expect(page.getByRole('button',{name:'Blank newsletter',exact:true})).toBeVisible();
+    // Local mail is suppressed and succeeds quietly, so a draft's email step meets no sender or authentication blocker.
+    const headers={Origin:runtime.url};
+    const draft=await (await page.request.post(runtime.url+'/api/campaigns',{headers,data:{}})).json();
+    expect((await page.request.patch(runtime.url+`/api/campaign-revisions/${draft.revisionId}`,{headers,data:{emailSubject:'Local letter',emailBody:'<p>Local letter</p>',
+      steps:[{channel:'email',timezone:'UTC',scheduledAt:'2031-10-28T10:00:00.000Z',sendByAt:'2031-10-28T12:00:00.000Z',whyThisTime:'Owner chose this time'}]}})).status()).toBe(200);
+    const checks=await (await page.request.post(runtime.url+`/api/campaigns/${draft.campaignId}/checks`,{headers,data:{revisionId:draft.revisionId}})).json();
+    expect(checks.checks.map((check:{kind:string})=>check.kind)).toContain('message.email-sender');
+    expect(checks.blockers.map((check:{kind:string})=>check.kind).filter((kind:string)=>/^mail\.|sender|authentication/.test(kind))).toEqual([]);
     expect((await page.request.post(runtime.url+'/api/_local/bootstrap',{data:{testSession:true}})).status()).toBe(404);
     await page.goto(runtime.url+'/auth/confirm?token='+'x'.repeat(43));
     await expect(page.getByRole('link',{name:'Request a new link'})).toHaveAttribute('href','/signin');
