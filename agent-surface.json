@@ -3688,11 +3688,63 @@
           "class": "standard"
         }
       ]
+    },
+    {
+      "id": "native-contacts",
+      "tool": "mango.integrations.contacts",
+      "client": "reader",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "native-segments",
+      "tool": "mango.integrations.segments",
+      "client": "reader",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "native-memberships",
+      "tool": "mango.integrations.memberships",
+      "client": "reader",
+      "args": {
+        "id": {
+          "$fixture": "contact",
+          "pointer": "/id"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "native-events",
+      "tool": "mango.integrations.events",
+      "client": "reader",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
     }
   ],
   "escalations": [],
   "verification": {
     "journey": "tests/agent-door/native-journey.mjs",
+    "fixtures": {
+      "module": "tests/agent-door/fixtures.mjs"
+    },
     "replayAdmission": {
       "prepare": [
         "create"
@@ -3706,9 +3758,12 @@
       }
     ],
     "owner": {
+      "email": "synthetic-mango-owner@example.test",
       "bindings": {
         "RER_MANAGEMENT_ORIGIN": "issuer",
         "RER_INSTALLATION_ID": "installationId",
+        "MAIL_FROM": "email",
+        "MAIL_AUTH_FROM": "email",
         "DESIGN_PROVIDER_API_KEY": "token",
         "DESIGN_PROVIDER_ORIGIN": "appOrigin"
       },
@@ -3728,11 +3783,6 @@
     {
       "id": "PENDING-SEED-2026-10-28-complete-class-journey",
       "assertion": "Every registered tool/class pair and the three specialist probes have real disposable native fixtures; uncovered pairs must remain failures."
-    },
-    {
-      "id": "PENDING-BASE-2026-10-28-native-client-and-phase-fixtures",
-      "assertion": "Generic journeys need native API-client invocations and fresh per-policy native fixture preparation for destructive consent/custody operations; the bootstrap runs once and the native journey only follows generic policy phases. No fabricated native state or fake widening is permitted.",
-      "source": "cli/agent-door.mjs:41-42,90-92,133-141 and modules/agent-door/conformance/index.mjs:26-34; modules/agent-door/conformance/protocol.mjs:86-118 (rer 0.2.86, checked 2026-10-29)"
     }
   ]
 }

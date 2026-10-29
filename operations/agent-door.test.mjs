@@ -6,6 +6,7 @@ import operations from '../src/core/features/agent-door/operations.ts';
 import {runtime,setup} from './base-runtime.mjs';
 import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../src/vendor/base/agent-door/conformance/crypto.mjs';
 import {validateAgentSurface} from '../src/vendor/base/agent-door/conformance/surface.mjs';
+import prepareNativePhase from '../tests/agent-door/fixtures.mjs';
 
 test('Mango shared door: signed native owner, durable Business people, native draft custody, policy, replay and role narrowing',async()=>{
  const editor=await runtime(undefined,false,{RER_MANAGEMENT_ORIGIN:'https://editor.example.test',RER_INSTALLATION_ID:'native-editor'});
@@ -100,19 +101,41 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   const audit=await app.db.prepare("SELECT actor_type,actor_id,detail_json FROM lifecycle_audit_entries WHERE action='mango.campaigns.create'").first();
   assert.equal(audit.actor_type,'agent');assert.equal(audit.actor_id,c.agentId);assert.ok(audit.detail_json.includes('Morgan Owner'));
   // Exercise the declared native draft/segment journey before company-policy negatives.
+  await mailBudget();
+  assert.equal((await app.call('/auth/step-up',{method:'POST',cookie,body:{action:'credentials:mint'}})).status,202);
+  assert.equal((await app.call('/auth/confirm',{method:'POST',cookie,body:{token:await app.token()}})).status,303);
+  const fixtureRequest=(absolute,init={})=>app.call(new URL(absolute).pathname+new URL(absolute).search,{
+   method:init.method,headers:init.headers,...(init.body?{body:JSON.parse(init.body)}:{}),
+  });
+  const phase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'autonomous'});
+  const secondPhase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'held'});
+  assert.notEqual(phase.values.contact.id,secondPhase.values.contact.id,'Policy phases receive fresh native contacts');
+  assert.notEqual(phase.clients.reader.clientId,secondPhase.clients.reader.clientId,'Policy phases receive distinct live native clients');
   const journey=JSON.parse(await readFile('tests/agent-door/journey.json','utf8'));
   const outputs=new Map();
   function resolve(value){
    if(Array.isArray(value))return value.map(resolve);
    if(value&&typeof value==='object'){
     if(value.$from){let found=outputs.get(value.$from);for(const part of value.pointer.split('/').slice(1))found=found?.[part];return found;}
+    if(value.$fixture){let found=phase.values[value.$fixture];for(const part of value.pointer.split('/').slice(1))found=found?.[part];return found;}
     return Object.fromEntries(Object.entries(value).map(([key,item])=>[key,resolve(item)]));
    }
    return value;
   }
   for(const step of journey){
    const args=resolve(step.args),definition=operations.find(operation=>operation.name===step.tool);
-   const response=await call(step.tool,{...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+step.id}:{})});
+   const inputs={...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+step.id}:{})};
+   let response;
+   if(step.client){
+    const client=phase.clients[step.client];
+    const answer=await app.call('/mcp',{method:'POST',headers:{Authorization:'Bearer '+client.token,
+     'MCP-Protocol-Version':'2026-07-28','Mcp-Method':'tools/call','Mcp-Name':step.tool},
+     body:{jsonrpc:'2.0',id:++sequence,method:'tools/call',params:{name:step.tool,arguments:inputs,_meta:{'io.modelcontextprotocol/protocolVersion':'2026-07-28'}}}});
+    response={response:answer,message:await answer.json()};
+    const decision=response.message.result?._meta?.['com.runeditrun/decision'];
+    const nativeAudit=await app.db.prepare('SELECT row FROM agent_door_audit WHERE id=?').bind(decision?.id).first();
+    assert.equal(JSON.parse(nativeAudit.row).agent.id,client.agent.id,'Native client retains its sender identity');
+   }else response=await call(step.tool,inputs);
    assert.equal(response.message.result?.isError,false,step.id+': '+JSON.stringify(response.message));
    if(step.target){
     const audit=await (await app.call('/agents/api/audit',{cookie})).json();
@@ -146,6 +169,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.call('/api/campaigns',{cookie})).status,200);
   assert.equal((await adopt(autonomousPolicy())).response.status,200);
   const memberSub=randomUUID();
+  await mailBudget();
   const team=await settings(2,[{id:memberSub,email:'teammate@example.test',name:'Casey Marketer',role:'member',invite:1}]);
   assert.equal(team.status,200,await team.clone().text());
   const invited=await app.call('/auth/confirm',{method:'POST',body:{token:await app.token()}});

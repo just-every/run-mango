@@ -29,9 +29,9 @@ try{
  const surface={schema:'rer-agent-surface/1',seed:'mango',specialist:'marketer',tools:declaration.tools,resources:declaration.resources,
   notTools:[{clauses:['DATA-001','MOVE-001'],reason:'import-door'},{clauses:['OPER-001'],reason:'screen'},{clauses:['DATA-001'],reason:'installation'}],
   witness:{tool:'mango.witness.read',args:{}},journey,escalations:[],
-  verification:{journey:'tests/agent-door/native-journey.mjs',replayAdmission:{prepare:['create']},
+  verification:{journey:'tests/agent-door/native-journey.mjs',fixtures:{module:'tests/agent-door/fixtures.mjs'},replayAdmission:{prepare:['create']},
    reviewers:[{label:'quality',email:'synthetic-mango-reviewer@example.test',initializer:'tests/agent-door/reviewer.mjs'}],
-   owner:{bindings:{RER_MANAGEMENT_ORIGIN:'issuer',RER_INSTALLATION_ID:'installationId',DESIGN_PROVIDER_API_KEY:'token',DESIGN_PROVIDER_ORIGIN:'appOrigin'},initializer:'tests/agent-door/owner.mjs'},network:{module:'tests/agent-door/network.mjs',origins:['https://api.sendgrid.com','https://api.resend.com','https://cloudflare-dns.com','https://rer-hosted-check.invalid']}},
+   owner:{email:'synthetic-mango-owner@example.test',bindings:{RER_MANAGEMENT_ORIGIN:'issuer',RER_INSTALLATION_ID:'installationId',MAIL_FROM:'email',MAIL_AUTH_FROM:'email',DESIGN_PROVIDER_API_KEY:'token',DESIGN_PROVIDER_ORIGIN:'appOrigin'},initializer:'tests/agent-door/owner.mjs'},network:{module:'tests/agent-door/network.mjs',origins:['https://api.sendgrid.com','https://api.resend.com','https://cloudflare-dns.com','https://rer-hosted-check.invalid']}},
   pending:JSON.parse(await readFile('tests/agent-door/pending.json','utf8'))};
  const text=JSON.stringify(surface,null,2)+'\n';
  if(process.argv.includes('--check')){

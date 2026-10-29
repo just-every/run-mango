@@ -1300,7 +1300,7 @@
       "executable": false
     },
     "agent-surface.json": {
-      "sha256": "5d040ffa50e6ed5b7ef1c210e7d2980b41145995a24f604076d56fbda7960166",
+      "sha256": "bc7394f1ed16e50470bf3406728e6d1f7b51075375391bd51f0ede10c920edc1",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1308,7 +1308,7 @@
       "executable": false
     },
     "AGENTS.md": {
-      "sha256": "e87fb7ad55ad61a22458f998285131378422ea4c652d87bfee79528fdf130b55",
+      "sha256": "ca5f4ca16ada204c16770f3be7ab0456c025ad80db646dc3780ae3b7c8a721ad",
       "executable": false
     },
     "base-copies.json": {
@@ -1364,7 +1364,7 @@
       "executable": false
     },
     "docs/agents.md": {
-      "sha256": "899bf93d47b64a3587a9107ee92e1416a486b97f3158aaaa4bf5e6a85a7538d6",
+      "sha256": "00f2496c5cb7eeb60bd43a02f193e71292f5056c6d1f33cc27d388059735a763",
       "executable": false
     },
     "docs/approval-and-sending.md": {
@@ -1412,7 +1412,7 @@
       "executable": false
     },
     "docs/getting-started.md": {
-      "sha256": "93f08883d19fca982f41554837448635c8414675cdc8cc9a491ed8a63262f72e",
+      "sha256": "bc01cf6977f2146aa1cf084745c606ba7186008fcd3b1783e8a8e794a96f5557",
       "executable": false
     },
     "docs/going-live.md": {
@@ -1432,7 +1432,7 @@
       "executable": false
     },
     "docs/introduction.md": {
-      "sha256": "a13752d750a39002c56785391401220dc755d8e41faa80e5789e44ede5b45ead",
+      "sha256": "0600f61da5544a2efae000cc36d38093c54b2347fa05507a87cab4cfc33a40b9",
       "executable": false
     },
     "docs/moving-in.md": {
@@ -1952,7 +1952,7 @@
       "executable": false
     },
     "operations/agent-door.test.mjs": {
-      "sha256": "7a4e1659ae16cab9074c5ac4dbc9918d3738be3a943c345d5de1feb140d07d25",
+      "sha256": "38cf86e8d12b512d2163bd41670bb33381cf115878bcb2e5d994a4bc6a5ac236",
       "executable": false
     },
     "operations/base-runtime.mjs": {
@@ -2052,7 +2052,7 @@
       "executable": false
     },
     "README.md": {
-      "sha256": "c453ed4f6e07f5a101d3f93a74141d55225224b88068e665616b09ee848fa6ef",
+      "sha256": "26e7e5d1f3ec798d5af77938bd9b38d5b910caffa97ac9d856087d3a38bbcea8",
       "executable": false
     },
     "RELEASE-STATUS.md": {
@@ -2060,7 +2060,7 @@
       "executable": false
     },
     "RELEASE.json": {
-      "sha256": "cb08bc09c50f66966d8f453fedbf8373abf8b84e9c0ad775f38ee5b8a14c3076",
+      "sha256": "596f88627342cf2db9b491f33f1c04da5425e8bcd708df79c2ad7b6e6a0c3d0a",
       "executable": false
     },
     "RENDERING.md": {
@@ -2080,7 +2080,7 @@
       "executable": false
     },
     "RUN-LOCALLY.md": {
-      "sha256": "59bdd036565b2948ac7377ce4e179125ce64f1549c230f47f72340edaa6fa673",
+      "sha256": "680ccf45a03520f96189ddbc6c5e322ea3f2e6c1f2673e3ea8fe804fdd558eda",
       "executable": false
     },
     "sample-data/initial.json": {
@@ -2088,7 +2088,7 @@
       "executable": false
     },
     "scripts/agent-surface.mjs": {
-      "sha256": "5d74cf47cd8e139121088419eb2089fd23e79448b38b5acf83281931c392ace3",
+      "sha256": "9403e101f31bfb428b60840cd9a1e33bcb802157ad1737961f3a404f7013cf3c",
       "executable": false
     },
     "scripts/build-delivery-artifact.mjs": {
@@ -2968,7 +2968,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "6396dbee1e003793d2b442ec14c2f0aa3aa852a5291fe7678b17ad6e7ecc5d45",
+      "sha256": "f83648077196c49f7212b226a626d68bd0056242314978ece15abc32b736e805",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -9475,8 +9475,12 @@
       "sha256": "02784d09951f00d7a6ad2c5d4971dc7c8dbb45a7988dfa4ca70631976d5663c5",
       "executable": false
     },
+    "tests/agent-door/fixtures.mjs": {
+      "sha256": "cb8bba8724a43383ec56a9747c1006eeeba494b864ea2a271da97788c2bfba56",
+      "executable": false
+    },
     "tests/agent-door/journey.json": {
-      "sha256": "34e610532d123392e62eeb5b8af73106b64b3d0fcf66f0401e26e5a73c3f8ca3",
+      "sha256": "c5851b1a32da757e3096cf763c2ef4969849104c3c4137c5cf79e9ab0d5a04be",
       "executable": false
     },
     "tests/agent-door/mail-edge.mjs": {
@@ -9496,7 +9500,7 @@
       "executable": false
     },
     "tests/agent-door/pending.json": {
-      "sha256": "8e9d8c15fcf19b23cd50d62ddcb1a1c891c1941d2c7d8b9269a2dd2318cc3d68",
+      "sha256": "c1a86c88bdd7b449b20ccfae3f8fac853bb11e343699794e4f84b43aa0728071",
       "executable": false
     },
     "tests/agent-door/reviewer.mjs": {
