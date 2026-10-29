@@ -7,7 +7,7 @@ import { CampaignRecipients } from '@/core/features/insights/ui/campaign-recipie
 import {CommerceResults} from '@/core/features/insights/ui/commerce-results';
 import { SchedulerReadiness } from './scheduler-readiness';
 import { CampaignCosts } from '@/core/features/insights/ui/cost-totals';
-import { productConfig } from '@/ext/config';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { Link, useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
@@ -23,6 +23,7 @@ import { ScheduledEnvelopeArt } from './scheduled-envelope-art';
 
 export function CampaignScheduledPage() {
   const {can}=usePermissions();
+  const formatDate = useDateFormatter();
   const { id } = useParams({ from: '/app/campaigns_/$id_/scheduled' });
   const { data, error, loading, reload } = useResource<CampaignDetail>(`/api/campaigns/${id}`);
   const [notice, setNotice] = useState<{message:string;error:boolean}>();
@@ -59,7 +60,7 @@ export function CampaignScheduledPage() {
         <Link className="back-link" to="/app/campaigns/$id" params={{ id }}>← Back to campaign</Link>
         <p className="eyebrow">Campaign schedule</p><h1>{data.revision.name}</h1>
         <p className="page-head__meta scheduled-head__state">State: <CampaignStatusPill state={data.campaign.state} results={results} /></p>
-        <p className="overall-result">{overallResult(results,data.steps,productConfig.storeTimezone)}</p>
+        <p className="overall-result">{overallResult(results,data.steps,formatDate)}</p>
         <p className="scheduled-head__recall">Messages already handed to a provider cannot be recalled.</p>
       </div>
       {waiting ? <ScheduledEnvelopeArt /> : null}
@@ -73,10 +74,10 @@ export function CampaignScheduledPage() {
         <CampaignSendControls campaignId={id} state={data.campaign.state}
           operatorPaused={data.campaign.state === 'paused' && results.steps.some(step => step.pauses?.some(pause => pause.reason === 'operator-pause' && pause.resumedAt === null))}
           reload={reload} />
-        <StepResults awaitingFirstTick={data.scheduler?.state==='not-observed'} timezone={productConfig.storeTimezone} steps={data.steps} results={results} now={Math.max(now,Date.parse(results.asOf))} />
+        <StepResults awaitingFirstTick={data.scheduler?.state==='not-observed'} steps={data.steps} results={results} now={Math.max(now,Date.parse(results.asOf))} />
         {results.cancellable && can('campaign.send') ? <section className="panel cancellation-panel">
           <h2>Cancel remaining sends</h2>
-          <p>Cancellation stops queued recipient-steps that have not begun handoff. It cannot recall messages already handed to a provider. Unknown handoffs remain visible for confirmation.</p>
+          <p>Cancelling stops every message that has not started sending. Messages already with the provider cannot be recalled.</p>
           <button className="danger-action--line" type="button" onClick={() => setConfirmCancel(true)} disabled={cancelling}>Cancel campaign</button>
         </section> : <p className="notice-note">{results.cancellable?'Your role can read this campaign. A Manager, Admin or Owner manages sending.':'No remaining sends can be stopped. Provider outcomes may still arrive.'}</p>}
       </div>

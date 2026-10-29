@@ -7,6 +7,7 @@ import { MangoMark } from '@/core/features/site/brand/MangoMark';
 import { SkipLink } from '@/core/features/site/SkipLink';
 import './materials';
 import { ResourceSnapshot } from '../lib/resource-snapshot';
+import { TimeZonePicker } from './time-zone-picker';
 
 /** The lockup: Mango's mark and the product name. Its link (and that link's name) belongs to the caller. */
 export function Brand() {
@@ -47,7 +48,7 @@ export function OperatorLayout() {
       {destinations.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}
       <form method="post" action="/auth/signout" className="operator-signout"><input type="hidden" name="returnTo" value="/signin" /><span>{operator.displayName}</span><button type="submit" className="operator-nav__link">Sign out</button></form>
     </nav>
-  </header><main id="main" tabIndex={-1} className="operator-main">{operator.locationKey === locationKey ? operator.snapshot === undefined ? <Await key={locationKey} promise={operator.resources} fallback={null}>{content}</Await> : content(operator.snapshot) : null}</main></div>;
+  </header><main id="main" tabIndex={-1} className="operator-main">{operator.locationKey === locationKey ? operator.snapshot === undefined ? <Await key={locationKey} promise={operator.resources} fallback={null}>{content}</Await> : content(operator.snapshot) : null}</main><footer className="operator-footer"><TimeZonePicker /></footer></div>;
 }
 
 export function LoadState({ error, children }: { error?: string; children?: ReactNode }) {

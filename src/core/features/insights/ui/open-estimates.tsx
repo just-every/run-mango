@@ -20,7 +20,7 @@ export function OpenEstimates({onSettingsChanged}:{onSettingsChanged?:()=>void}=
     <h2 id="open-estimates-title">Privacy-sensitive open estimates</h2>
     <p>Off by default. Enabling adds a recipient-specific image to future marketing emails. Disabling stops recording from all existing images; re-enabling only tracks newly prepared messages.</p>
     {data?<><label><input type="checkbox" checked={pending??data.enabled} disabled={busy} onChange={event=>void change(event.target.checked)}/> Enable privacy-sensitive open estimates</label>
-      <p>{data.estimatedRecipients} recipient-step estimates retained.</p><p>{data.note}</p></>:<p>{loading?'Loading open tracking setting…':error}</p>}
+      <p>{data.estimatedRecipients} recipient estimates kept.</p><p>{data.note}</p></>:<p>{loading?'Loading open tracking setting…':error}</p>}
     {failure?<p role="alert">{failure}</p>:null}
   </section>;
 }

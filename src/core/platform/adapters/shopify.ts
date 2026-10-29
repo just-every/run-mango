@@ -37,7 +37,7 @@ export function createShopifyAdapter(options:{storeUrl:URL;accessToken:string;we
     checked = true;
   }
   return {
-    capabilities(){return {provider:'shopify',sourceTypes:[...Object.keys(querySpecs),...(log?['cart','browsing-event']:[])],detail:log?'Shopify Admin snapshots and bounded first-party observation replay. Installation/scopes are verified before synchronization. Observations cannot prove absence or abandonment.':'Shopify Admin snapshots. Cart/browsing ingestion needs the installed Mango Web Pixel and signed app proxy configuration.'};},
+    capabilities(){return {provider:'shopify',sourceTypes:[...Object.keys(querySpecs),...(log?['cart','browsing-event']:[])],detail:log?'Shopify store records, with cart and browsing events.':'Shopify store records. Cart and browsing events are off.'};},
     async refreshHealth(progress){await verifyAccess(progress);if(health)await health(progress);},
     collectObservation:collector,
     recordObservation:log?async(record,eventId,digest)=>log.append(record,eventId,digest):undefined,

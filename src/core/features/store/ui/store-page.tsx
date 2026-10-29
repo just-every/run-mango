@@ -1,5 +1,5 @@
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
-import { capabilityName, capabilityNextStep, plainServiceText } from '@/core/app/client/ui/product-copy';
+import { capabilityName, capabilityNextStep, plainServiceText, providerName } from '@/core/app/client/ui/product-copy';
 import { useEffect, useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
 import { titleCase } from '@/core/app/client/lib/format';
@@ -34,12 +34,14 @@ export function StorePage() {
   };
   if (loading && !data) return <LoadState />;
   if (!data) return <LoadState error={error} />;
+  const canRun = (sourceType: string) => data.sourceCapabilities.find(item => item.sourceType === sourceType)?.available === true;
+  const runnable = data.sourceSyncs.filter(source => canRun(source.sourceType));
+  const off = data.sourceSyncs.filter(source => !canRun(source.sourceType)).map(source => titleCase(source.sourceType).toLowerCase());
   return (
     <div className="page-flow store-page">
       <header className="page-head">
         <div className="page-head__text">
           <h1>Store</h1>
-          <p className="page-head__lead">Any failed or stale source remains visible and blocks approval when a campaign depends on it.</p>
         </div>
       </header>
       <section className="panel store-sync" aria-labelledby="source-sync-title">
@@ -49,11 +51,10 @@ export function StorePage() {
         </div>
         {error ? <p className="inline-error" role="alert">{error} Displayed status may be out of date.</p> : null}
         {notice ? <p className={noticeKind === 'success' ? 'action-notice' : 'inline-error'} role={noticeKind === 'success' ? 'status' : 'alert'}>{plainServiceText(notice)}</p> : null}
-        {data.sourceSyncs.length ? (
+        {runnable.length ? (
           <div className="source-status__grid store-sources">
-            {data.sourceSyncs.map(source => {
+            {runnable.map(source => {
               const run = data.syncRuns.find(item => item.sourceType === source.sourceType && item.operation === 'sync');
-              const capability = data.sourceCapabilities.find(item => item.sourceType === source.sourceType);
               const stale = !source.lastSuccessfulAt || Date.parse(source.lastSuccessfulAt) < Date.now() - 86400000;
               const resumable = run && ['queued', 'running', 'failed'].includes(run.state);
               return <article key={source.id} className="store-source" aria-label={`${titleCase(source.sourceType)} sync`}>
@@ -65,22 +66,22 @@ export function StorePage() {
                 {source.lastError && source.lastError !== run?.lastError ? <small className="store-source__error">{source.lastError}</small> : null}
                 {run ? <div className="store-source__run">
                   <p className="store-source__state">Latest run: <StatusPill value={run.state} /></p>
-                  <p>{run.pages} pages saved · {run.records} records processed</p>
-                  <small>{plainServiceText(run.provider)}</small>
+                  <p>{run.pages} {run.pages === 1 ? 'page' : 'pages'} · {run.records} {run.records === 1 ? 'record' : 'records'}</p>
+                  <small>{providerName(run.provider)}</small>
                   {run.lastError ? <p className="store-source__error">{plainServiceText(run.lastError)}</p> : null}
                 </div> : null}
                 <div className="store-source__actions">
-                  <button className="secondary-action" type="button" disabled={!capability?.available || busy === source.sourceType}
+                  <button className="secondary-action" type="button" disabled={busy === source.sourceType}
                     onClick={() => void synchronize(source.sourceType, resumable ? run.id : undefined)}>
                     {busy === source.sourceType ? 'Requesting…' : resumable ? 'Resume sync' : 'Sync now'}
                   </button>
                   {run?.state === 'failed' && run.pages > 0 ? <button className="secondary-action" type="button" disabled={busy === source.sourceType} onClick={() => void synchronize(source.sourceType)}>Restart from first page</button> : null}
                 </div>
-                {!capability?.available ? <small>{capability?.detail ?? 'The configured adapter does not supply this source.'}</small> : null}
               </article>;
             })}
           </div>
-        ) : <p className="notice-note" role="status">No commerce source types have been declared by the server.</p>}
+        ) : <p className="notice-note" role="status">No store has been connected yet.</p>}
+        {off.length ? <p className="muted-copy">Not available in this setup: {off.join(', ')}. <a href="/docs/going-live">How to turn on</a></p> : null}
       </section>
       <StoreOperations operations={data.syncRuns.filter((run): run is SyncRun & OperationRun => run.operation !== 'sync')} />
       {data.channels?.map(channel => <section className="panel" key={channel.id}>

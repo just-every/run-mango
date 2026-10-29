@@ -1,4 +1,5 @@
 import {Can} from '@/core/features/auth/ui/permissions';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { useState } from 'react';
 import { requestJson } from '@/core/app/client/lib/api';
 import { useResource } from '@/core/app/client/lib/use-resource';
@@ -14,6 +15,7 @@ const choices = [
 ] as const;
 
 export function SettingsIntegrations() {
+  const formatDate = useDateFormatter();
   const resource = useResource<{credentials: Credential[]}>('/api/settings/integrations');
   const [name, setName] = useState(''), [scopes, setScopes] = useState<string[]>([]);
   const [token, setToken] = useState(''), [busy, setBusy] = useState(false), [error, setError] = useState('');
@@ -37,7 +39,7 @@ export function SettingsIntegrations() {
     finally {setBusy(false);}
   }
   return <section id="integrations" className="panel settings-integrations" aria-labelledby="integrations-title">
-    <p className="eyebrow">Connect another seed</p><h2 id="integrations-title">Integration credentials</h2>
+    <h2 id="integrations-title">Integration credentials</h2>
     <p>Give Coffer or another application only the access it needs to keep subscribers and consent in sync. These credentials cannot sign in as an operator or approve campaigns.</p>
     <p><a href="/docs/integrations">Integrator guide and curl examples</a>. Every API request appears in the activity below. An Owner, Admin or Manager can create or revoke credentials.</p>
     {resource.loading ? <p role="status">Loading credentials…</p> : null}
@@ -56,7 +58,7 @@ export function SettingsIntegrations() {
       </form>}
       <ul className="integration-credentials">{resource.data.credentials.map(credential => <li key={credential.id}>
         <div className="settings-operator"><p className="settings-operator__name"><strong>{credential.name}</strong><span>{credential.revokedAt ? 'Revoked' : 'Active'}</span></p>
-          <small>{credential.scopes.join(' · ')}</small><small>Created {new Date(credential.createdAt).toLocaleDateString()} · {credential.lastUsedAt ? `Last used ${new Date(credential.lastUsedAt).toLocaleString()}` : 'No API requests yet'}</small>
+          <small>{credential.scopes.join(' · ')}</small><small>Created {formatDate(credential.createdAt)} · {credential.lastUsedAt ? `Last used ${formatDate(credential.lastUsedAt)}` : 'No API requests yet'}</small>
           {revoke === credential.id ? <div className="settings-removal notice-warning"><p>Stop this application’s access now? Its synced contacts and consent history stay in Mango.</p><div className="settings-actions"><button className="danger-action" disabled={busy} onClick={() => void remove(credential.id)}>Confirm revocation</button><button className="secondary-action" onClick={() => setRevoke(null)}>Keep credential</button></div></div> : null}
         </div>{!credential.revokedAt && revoke !== credential.id ? <button className="secondary-action" disabled={busy} onClick={() => setRevoke(credential.id)}>Revoke {credential.name}</button> : null}
       </li>)}</ul>
