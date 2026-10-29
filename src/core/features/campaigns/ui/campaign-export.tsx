@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { Can } from '@/core/features/auth/ui/permissions';
+import { ExportRefusal } from '@/core/features/audience/ui/audience-export';
+import { useMenuNotice } from '@/core/app/client/ui/action-menu';
 
 export function CampaignExport() {
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string>();
+  const report = useMenuNotice();
+  const setError = (message?: string) => report(message ? <ExportRefusal message={message} /> : null);
   async function download() {
-    setBusy(true); setError(undefined);
+    setBusy(true); setError();
     try {
       const response = await fetch('/api/campaigns/export', { credentials: 'same-origin' });
       if (!response.ok) {
@@ -22,8 +25,5 @@ export function CampaignExport() {
       setError('The campaigns CSV could not be downloaded. Try again when the connection is available.');
     } finally { setBusy(false); }
   }
-  return <Can permission="audience.export"><div className={error ? 'audience-export audience-export--error' : 'audience-export'}>
-    <button className="secondary-action" type="button" disabled={busy} onClick={() => void download()}>{busy ? 'Preparing CSV…' : 'Export campaigns CSV'}</button>
-    {error ? <div className="notice-warning audience-export__notice" role="alert"><p>{error}</p><a href="/docs/backup-and-export#export-and-restore-a-local-copy">Local backup and restore instructions</a></div> : null}
-  </div></Can>;
+  return <Can permission="audience.export"><button className="secondary-action" type="button" disabled={busy} onClick={() => void download()}>{busy ? 'Preparing CSV…' : 'Export campaigns CSV'}</button></Can>;
 }

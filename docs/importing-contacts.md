@@ -7,7 +7,7 @@ You can bring existing contacts into Mango with a CSV file. The import is built 
 Mango has exactly two kinds of import:
 
 - **Generic CSV.** You map your file's columns to Mango's fields. The presets are **CSV: subscribed**, **CSV: unsubscribed**, **CSV: cleaned**, **CSV: non-subscribed**, and the status each represents applies to the file's rows.
-- **Mango audience export.** A file you downloaded from Mango's own **Download contacts CSV** button. See [Backup and export](./backup-and-export.md).
+- **Mango audience export.** A file you downloaded from Mango's own **Download contacts CSV** action (Audience, **More actions**). See [Backup and export](./backup-and-export.md).
 
 There are no named importers for other email services. Mango does not claim compatibility with any particular vendor's export; if your file is a CSV with an email column, use the generic import and review the suggested columns. The [move-in guide](./moving-in.md) explains documented file shapes tested with synthetic examples.
 

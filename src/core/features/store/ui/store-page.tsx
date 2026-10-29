@@ -59,17 +59,13 @@ export function StorePage() {
               return <article key={source.id} className="store-source" aria-label={`${titleCase(source.sourceType)} sync`}>
                 <div className="store-source__head">
                   <strong>{titleCase(source.sourceType)}</strong>
-                  <span role="status"><StatusPill value={source.lastError || stale ? 'needs-sync' : 'fresh'} /></span>
+                  {source.lastError || stale ? <span role="status"><StatusPill value="needs-sync" /></span> : null}
                 </div>
-                <p className="store-source__meta">{source.lastSuccessfulAt ? `Last completed ${formatDate(source.lastSuccessfulAt)}` : 'No successful sync'}</p>
+                <p className="store-source__meta" title={run ? plainServiceText(run.provider) : undefined}>{[source.lastSuccessfulAt ? `Last completed ${formatDate(source.lastSuccessfulAt)}` : 'No successful sync', run ? `${run.pages} pages · ${run.records} records` : null].filter(Boolean).join(' · ')}</p>
+                {run && run.state !== 'completed' ? <p className="store-source__state">Latest run: <StatusPill value={run.state} /></p> : null}
                 {source.lastError && source.lastError !== run?.lastError ? <small className="store-source__error">{source.lastError}</small> : null}
-                {run ? <div className="store-source__run">
-                  <p className="store-source__state">Latest run: <StatusPill value={run.state} /></p>
-                  <p>{run.pages} pages saved · {run.records} records processed</p>
-                  <small>{plainServiceText(run.provider)}</small>
-                  {run.lastError ? <p className="store-source__error">{plainServiceText(run.lastError)}</p> : null}
-                </div> : null}
-                <div className="store-source__actions">
+                {run?.lastError ? <p className="store-source__error">{plainServiceText(run.lastError)}</p> : null}
+                <div className={`store-source__actions row-actions${source.lastError || stale || run?.state === 'failed' ? ' row-actions--shown' : ''}`}>
                   <button className="secondary-action" type="button" disabled={!capability?.available || busy === source.sourceType}
                     onClick={() => void synchronize(source.sourceType, resumable ? run.id : undefined)}>
                     {busy === source.sourceType ? 'Requesting…' : resumable ? 'Resume sync' : 'Sync now'}
@@ -104,8 +100,8 @@ export function ProviderStatus({ providers }: { providers: Provider[] }) {
         <div className="provider-status__rows">
           {providers.map((provider) => (
             <article key={provider.id}>
-              <div><strong>{capabilityName(provider.adapter)}</strong><p>{plainServiceText(provider.detail)}</p>{!provider.configured ? <p className="provider-status__next">{capabilityNextStep(provider.adapter)}</p> : null}</div>
-              <StatusPill value={provider.status} />
+              <div><strong>{capabilityName(provider.adapter)}</strong>{provider.status === 'ready' ? null : <p>{plainServiceText(provider.detail)}</p>}{!provider.configured ? <p className="provider-status__next">{capabilityNextStep(provider.adapter)}</p> : null}</div>
+              {provider.status === 'ready' ? null : <StatusPill value={provider.status} />}
             </article>
           ))}
         </div>

@@ -68,6 +68,7 @@ test('[CAMP-019 CAMP-024] typed email tests enforce restrictions, daily allowanc
     for(const width of [1440]) {
       await page.setViewportSize({width,height:1000});
       await openPage(page,site.runtime.url+'/app/settings/activity');
+      await page.getByRole('button',{name:/^Filters/}).click();
       await page.getByLabel('Action',{exact:true}).fill('test-send');
       await page.getByLabel('Object',{exact:true}).fill(campaign.revisionId);
       await page.getByRole('button',{name:'Apply filters',exact:true}).click();

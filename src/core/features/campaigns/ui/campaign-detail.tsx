@@ -1,6 +1,7 @@
 import {CatalogCounts} from './catalog-counts';
 import { CampaignAttributionSummary } from './campaign-attribution';
 import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
+import { ActionMenu } from '@/core/app/client/ui/action-menu';
 import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {requestJson} from '@/core/app/client/lib/api';
 import {useState} from 'react';
@@ -48,7 +49,6 @@ export function CampaignDetailPage() {
           </div>
         </div>
         <div className="page-head__actions">
-          <DuplicateCampaign campaignId={id}/>
           {hasResults?<button type="button" className="secondary-action" onClick={()=>void edit()}>{data.campaign.state==='scheduled'?'Edit replacement schedule':'Create a new campaign from this revision'}</button>:null}
           <Link className={hasResults ? 'secondary-action' : 'primary-action'} to="/app/campaigns/$id/review" params={{ id }}>
             {data.campaign.state === 'draft' ? 'Review and approve' : 'Review saved revision'}
@@ -58,6 +58,7 @@ export function CampaignDetailPage() {
               View schedule and results
             </Link>
           ) : null}
+          <ActionMenu><DuplicateCampaign campaignId={id}/><SaveCampaignTemplate revisionId={data.revision.id} name={data.revision.name} disabled={false}/></ActionMenu>
         </div>
       </header>
       <CampaignAttributionSummary attribution={data.attribution} version={data.revision.version}/>
@@ -70,7 +71,6 @@ export function CampaignDetailPage() {
           {message.destination} · {message.providerMessageId ?? 'Provider message ID unavailable'} · {message.detail}
         </li>)}</ul>
       </section> : null}
-      <SaveCampaignTemplate revisionId={data.revision.id} name={data.revision.name} disabled={false}/>
       <div className="two-column-detail">
         <AudienceSnapshot revision={data.revision} audience={data.audience} channelCounts={data.audienceChannelCounts} {...savedAudienceExclusions(data.audience)} />
         <DeliveryPlan steps={data.steps} />

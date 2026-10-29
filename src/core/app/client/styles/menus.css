@@ -1,0 +1,31 @@
+/* The quiet controls shared by the lists: the one action menu a page keeps beside its main button, the filter fold with
+   its applied chips, and row actions that appear on hover and focus. */
+.action-menu { position: relative; display: inline-flex; }
+.action-menu[hidden], .action-menu__popover[hidden], .filter-fold__panel[hidden] { display: none; }
+.action-menu__popover { position: absolute; z-index: 20; top: calc(100% + 6px); right: 0; display: grid; gap: var(--sp-2); width: max-content; min-width: 100%; max-width: min(24rem, calc(100vw - 32px)); padding: var(--sp-2); border: 1px solid var(--ms-line); border-radius: var(--ms-radius); background: var(--ms-paper); box-shadow: var(--ms-shadow-pop); }
+.action-menu__list { display: grid; }
+.action-menu__list > :is(button, a, p) { margin: 0; }
+.action-menu__list :is(.secondary-action, .danger-action--line) { justify-content: flex-start; min-height: 40px; border-color: transparent; background: transparent; text-align: left; white-space: normal; box-shadow: none; }
+.action-menu__list .secondary-action:hover:not(:disabled) { background: var(--ms-paper); box-shadow: none; }
+.action-menu__list p { padding: var(--sp-2) var(--sp-4); color: var(--ms-muted); font-size: 13px; }
+.action-menu__notice { padding: var(--sp-2) var(--sp-3); border-top: 1px solid var(--ms-hairline); font-size: 14px; }
+.action-menu__notice p { margin: 0 0 var(--sp-2); overflow-wrap: anywhere; }
+@media (max-width: 680px) { .action-menu { flex: 1 1 auto; } .action-menu__toggle { width: 100%; } }
+
+.filter-fold { display: grid; gap: var(--sp-4); }
+.filter-fold__bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); }
+.filter-fold__toggle { min-height: 36px; padding-inline: var(--sp-3); font-size: 14px; }
+.filter-fold__count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--ms-sun); font-size: 12px; font-weight: 600; }
+.filter-chips { display: flex; flex-wrap: wrap; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
+.filter-chip { display: inline-flex; align-items: center; gap: 2px; min-height: 28px; padding: 0 2px 0 var(--sp-3); border: 1px solid var(--ms-sun-line); border-radius: 999px; background: var(--ms-sun-wash); color: var(--ms-ink); font-size: 13px; font-weight: 500; }
+.filter-chip button { display: inline-grid; place-items: center; width: 24px; height: 24px; border: 0; border-radius: 50%; background: transparent; color: inherit; cursor: pointer; font-size: 16px; line-height: 1; }
+.filter-chip button:hover { background: rgb(255 207 71 / .35); }
+.filter-fold__panel { padding: var(--sp-4); border: 1px solid var(--ms-hairline); border-radius: var(--ms-radius); background: rgb(255 253 248 / .6); }
+
+/* Row actions rest hidden where a pointer can hover, and come back on hover or focus. They are never display:none,
+   so keyboard focus reaches them; a touch screen has no hover and keeps them in view. */
+@media (hover: hover) {
+  .row-actions:not(.row-actions--shown) { opacity: 0; transition: opacity .15s; }
+  :is(tr, li, article):is(:hover, :focus-within) .row-actions { opacity: 1; }
+}
+.row-actions { display: inline-flex; flex-wrap: wrap; gap: var(--sp-3); }

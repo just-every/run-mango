@@ -1,6 +1,7 @@
 import {ManualEntryForm} from './manual-entry-form';
 import {Can} from '@/core/features/auth/ui/permissions';
 import { AudienceExport } from './audience-export';
+import { ActionMenu } from '@/core/app/client/ui/action-menu';
 import { SavedSegments } from './saved-segments';
 import { Link } from '@tanstack/react-router';
 
@@ -9,6 +10,9 @@ import type { Contact } from '@/core/app/client/lib/types';
 import { useResource } from '@/core/app/client/lib/use-resource';
 import { EmptyState } from '@/core/app/client/ui/empty-state';
 import { LoadState, StatusPill } from '@/core/app/client/ui/layout';
+
+/** A channel's resting state is not drawn on a row: email is subscribed, SMS is not set up. Anything else is. */
+const restingStatus = {emailStatus: 'subscribed', smsStatus: 'non-subscribed'} as const;
 
 import { AudienceEmptyArt } from './audience-empty-art';
 import { AudienceSignupTools } from './audience-signup-tools';
@@ -35,7 +39,7 @@ export function AudiencePage() {
         </div>
         <div className="page-head__actions">
           <Can permission="audience.import"><Link className="primary-action" to="/app/audience/import">Import contacts</Link></Can>
-          <AudienceExport />
+          <ActionMenu><AudienceExport /></ActionMenu>
         </div>
       </header>
       <Can permission="contact.subscribe"><ManualEntryForm/></Can>
@@ -50,36 +54,20 @@ export function AudiencePage() {
             <p className="eyebrow">Contact ledger</p>
             <h2>{data.contacts.length} saved contacts</h2>
           </div>
-          <p className="muted-copy">Statuses are channel-specific.</p>
+          <p className="muted-copy">Only unusual consent states show on a row.</p>
         </div>
         {data.contacts.length ? (
-          <div className="table-scroll" tabIndex={0} role="region" aria-label="Saved contact ledger">
-            <table className="responsive-table audience-ledger__table" aria-label="Saved contact ledger">
-              <thead>
-                <tr>
-                  <th scope="col">Contact</th>
-                  <th scope="col">Email consent</th>
-                  <th scope="col">SMS consent</th>
-                  <th scope="col">Last activity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.contacts.map((contact) => (
-                  <tr key={contact.id}>
-                    <th scope="row">
-                      <Link to="/app/audience/$id" params={{ id: contact.id }}>
-                        {contact.displayName}
-                      </Link>
-                      <small>{contact.email}</small>
-                    </th>
-                    <td data-label="Email consent"><StatusPill value={contact.emailStatus} /></td>
-                    <td data-label="SMS consent"><StatusPill value={contact.smsStatus} /></td>
-                    <td data-label="Last activity">{formatDate(contact.lastActivityAt)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <ul className="contact-list" aria-label="Saved contact ledger">
+            {data.contacts.map((contact) => (
+              <li key={contact.id} className="contact-row">
+                <Link to="/app/audience/$id" params={{ id: contact.id }}>{contact.displayName}</Link>
+                <p className="contact-row__meta">
+                  <span>{[contact.email, contact.lastActivityAt ? `Active ${formatDate(contact.lastActivityAt)}` : 'No activity yet'].filter(Boolean).join(' · ')}</span>
+                  {(['emailStatus', 'smsStatus'] as const).filter(channel => contact[channel] !== restingStatus[channel]).map(channel => <span key={channel} className="contact-row__flag">{channel === 'emailStatus' ? 'Email' : 'SMS'} <StatusPill value={contact[channel]} /></span>)}
+                </p>
+              </li>
+            ))}
+          </ul>
         ) : (
           <EmptyState id="audience-empty-title" title="The ledger is empty" level={3} inPanel art={<AudienceEmptyArt />}>
             <p>No contacts have been imported into the persisted ledger.</p>

@@ -4,27 +4,28 @@ import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { requestJson } from '@/core/app/client/lib/api';
 import { useResource } from '@/core/app/client/lib/use-resource';
-import { Disclosure } from '@/core/app/client/ui/disclosure';
+import { useMenuNotice } from '@/core/app/client/ui/action-menu';
+import { Modal } from '@/core/app/client/ui/modal';
 
 type Template = { id:string;name:string;kind:'starter'|'saved';updatedAt:string|null };
 type Library = {templates:Template[]};
 
 function DuplicateCampaignContent({campaignId,disabled=false}:{campaignId:string;disabled?:boolean}) {
-  const navigate=useNavigate(),[busy,setBusy]=useState(false),[error,setError]=useState('');
+  const navigate=useNavigate(),report=useMenuNotice(),[busy,setBusy]=useState(false);
   const duplicate=async()=>{
-    setBusy(true);setError('');
+    setBusy(true);report(null);
     try {
       const response=await requestJson<{campaignId:string;detail?:string}>(`/api/campaigns/${campaignId}/duplicate`,{method:'POST'});
       if(response.status!==201)throw new Error(response.data.detail ?? 'The copy could not be confirmed. Check campaign history before trying again.');
       await navigate({to:'/app/campaigns/$id/review',params:{id:response.data.campaignId},reloadDocument:true});
-    } catch(error) {setError(error instanceof Error?error.message:'The copy could not be confirmed. Check campaign history before trying again.');setBusy(false);}
+    } catch(error) {report(<p className="inline-error" role="alert">{error instanceof Error?error.message:'The copy could not be confirmed. Check campaign history before trying again.'}</p>);setBusy(false);}
   };
-  return <div className={`campaign-reuse-action${error?' campaign-reuse-action--error':''}`}><button type="button" className="secondary-action" disabled={disabled||busy} onClick={()=>void duplicate()}>{busy?'Copying…':'Duplicate'}</button>{error?<p className="inline-error" role="alert">{error}</p>:null}</div>;
+  return <button type="button" className="secondary-action" disabled={disabled||busy} onClick={()=>void duplicate()}>{busy?'Copying…':'Duplicate'}</button>;
 }
 
 function SaveCampaignTemplateContent({revisionId,name,disabled}:{revisionId:string;name:string;disabled:boolean}) {
   const library=useResource<Library>('/api/campaign-templates');
-  const [templateName,setTemplateName]=useState(name),[templateId,setTemplateId]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
+  const [open,setOpen]=useState(false),[templateName,setTemplateName]=useState(name),[templateId,setTemplateId]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[failed,setFailed]=useState(false);
   const save=async()=>{
     setBusy(true);setNotice('');setFailed(false);
     try {
@@ -35,15 +36,15 @@ function SaveCampaignTemplateContent({revisionId,name,disabled}:{revisionId:stri
     } catch(error) {setFailed(true);setNotice(error instanceof Error?error.message:'Template could not be saved.');}
     finally {setBusy(false);}
   };
-  return <Disclosure className="panel" title="Save as a template">
-    <p>Reuse this saved revision’s content and audience. New campaigns need their own dates and approval.</p>
-    {disabled?<p>Save your draft changes before saving a template.</p>:null}
-    <div className="draft-fields"><label>Template name<input aria-label="Template name" value={templateName} maxLength={160} onChange={event=>setTemplateName(event.target.value)}/></label>
-      <label>Save to<select aria-label="Save to template" value={templateId} onChange={event=>setTemplateId(event.target.value)}><option value="">New template</option>{library.data?.templates.filter(item=>item.kind==='saved').map(item=><option key={item.id} value={item.id}>Replace: {item.name}</option>)}</select></label>
-      <button type="button" className="secondary-action" disabled={disabled||busy||!templateName.trim()} onClick={()=>void save()}>{busy?'Saving template…':templateId?'Update template':'Save template'}</button>
-    </div>
-    {notice?<p role={failed?'alert':'status'}>{notice}</p>:null}
-  </Disclosure>;
+  return <><button type="button" className="secondary-action" onClick={()=>setOpen(true)}>Save as a template</button>
+    <Modal open={open} onClose={()=>setOpen(false)} role="dialog" title="Save as a template" description="Reuse this saved revision’s content and audience. New campaigns need their own dates and approval.">
+      {disabled?<p>Save your draft changes before saving a template.</p>:null}
+      <div className="draft-fields"><label>Template name<input aria-label="Template name" value={templateName} maxLength={160} onChange={event=>setTemplateName(event.target.value)}/></label>
+        <label>Save to<select aria-label="Save to template" value={templateId} onChange={event=>setTemplateId(event.target.value)}><option value="">New template</option>{library.data?.templates.filter(item=>item.kind==='saved').map(item=><option key={item.id} value={item.id}>Replace: {item.name}</option>)}</select></label>
+        <div className="edit-actions"><button type="button" className="secondary-action" onClick={()=>setOpen(false)}>Close</button><button type="button" className="primary-action" disabled={disabled||busy||!templateName.trim()} onClick={()=>void save()}>{busy?'Saving template…':templateId?'Update template':'Save template'}</button></div>
+      </div>
+      {notice?<p role={failed?'alert':'status'}>{notice}</p>:null}
+    </Modal></>;
 }
 
 export function TemplateLibrary() {

@@ -122,6 +122,7 @@ test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004
       await expect(page.locator('main')).not.toContainText('riley@example.test');
       await page.screenshot({path:info.outputPath(`roles-analyst-campaigns-${width}.png`),fullPage:true});
       await view(cookies.support!,`/app/audience/${contact}`);
+      await page.getByRole('button',{name:'More actions',exact:true}).click();
       await expect(page.getByRole('button',{name:'Record erasure request',exact:true})).toBeVisible();
       await expect(page.locator('main')).not.toContainText('riley@example.test');
       await expect(page.locator('section[aria-labelledby="import-observations-title"]')).toContainText('restricted by your role');

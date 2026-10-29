@@ -1,12 +1,19 @@
 import {Can} from '@/core/features/auth/ui/permissions';
 import { useState } from 'react';
+import { useMenuNotice } from '@/core/app/client/ui/action-menu';
+
+/** A refused export stays in the page's action menu, with the way to take a local copy instead. */
+export function ExportRefusal({message}: {message: string}) {
+  return <div className="notice-warning audience-export__notice" role="alert"><p>{message}</p><a href="/docs/backup-and-export#export-and-restore-a-local-copy">Local backup and restore instructions</a></div>;
+}
 
 /** Only a successful CSV becomes a download; refusal stays visible on Audience. */
 function AudienceExportContent() {
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string>();
+  const report = useMenuNotice();
+  const setError = (message?: string) => report(message ? <ExportRefusal message={message} /> : null);
   async function download() {
-    setBusy(true); setError(undefined);
+    setBusy(true); setError();
     try {
       const response = await fetch('/api/audience/export', { credentials: 'same-origin' });
       if (!response.ok) {
@@ -23,10 +30,7 @@ function AudienceExportContent() {
       setError('The contacts CSV could not be downloaded. Try again when the connection is available.');
     } finally { setBusy(false); }
   }
-  return <div className={error ? 'audience-export audience-export--error' : 'audience-export'}>
-    <button className="secondary-action" type="button" disabled={busy} onClick={() => void download()}>{busy ? 'Preparing CSV…' : 'Download contacts CSV'}</button>
-    {error ? <div className="notice-warning audience-export__notice" role="alert"><p>{error}</p><a href="/docs/backup-and-export#export-and-restore-a-local-copy">Local backup and restore instructions</a></div> : null}
-  </div>;
+  return <button className="secondary-action" type="button" disabled={busy} onClick={() => void download()}>{busy ? 'Preparing CSV…' : 'Download contacts CSV'}</button>;
 }
 
 export function AudienceExport() {return <Can permission="audience.export"><AudienceExportContent/></Can>;}

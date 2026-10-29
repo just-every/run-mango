@@ -7,6 +7,7 @@ import {usePermissions} from '@/core/features/auth/ui/permissions';
 import {TestSendHistory,type TestSendAccess} from './test-send-history';
 import {FollowupParent} from './campaign-followup';
 import { DuplicateCampaign, SaveCampaignTemplate } from './campaign-reuse';
+import { ActionMenu } from '@/core/app/client/ui/action-menu';
 import { Modal } from '@/core/app/client/ui/modal';
 import { Disclosure } from '@/core/app/client/ui/disclosure';
 import { Field, ValidationForm } from '@/core/app/client/ui/validation-form';
@@ -251,12 +252,12 @@ export function CampaignReviewPage() {
           <p className="page-head__meta review-heading__meta"><span>Revision {revision.version}</span> · <CampaignStatusPill state={data.campaign.state} results={data.results} /></p>
         </div>
         {<div className="page-head__actions review-heading__actions">
-          <DuplicateCampaign campaignId={id} disabled={dirty||Boolean(busy)}/>
           {editable && sourceBlocked ? <button className="secondary-action" type="button" disabled={Boolean(busy) || dirty || needsCanonicalRead} onClick={() => void recheckSources()}>{busy === 'reload' ? 'Checking…' : 'Recheck sources'}</button> : null}
           {editable ? <button className="primary-action" type="button" aria-describedby={!dirty && blockingFindings.length ? 'approval-blocked-reason' : undefined} onClick={() => dirty ? (document.getElementById('campaign-composer') as HTMLFormElement | null)?.requestSubmit() : setConfirmingApproval(true)} disabled={Boolean(busy) || (!dirty && (approvalBlocked || !can('campaign.approve')))}>
             {busy === 'save' ? 'Saving…' : busy === 'approve' ? 'Checking…' : dirty ? 'Save changes' : can('campaign.approve') ? 'Approve & schedule' : 'Save changes'}
           </button> : null}
           {data.results ? <Link className="primary-action" to="/app/campaigns/$id/scheduled" params={{id}}>View schedule and results</Link> : null}
+          <ActionMenu><DuplicateCampaign campaignId={id} disabled={dirty||Boolean(busy)}/><SaveCampaignTemplate key={revision.id} revisionId={revision.id} name={revision.name} disabled={dirty||needsCanonicalRead||Boolean(busy)}/></ActionMenu>
         </div>}
       </header>
       <CampaignAttributionSummary attribution={data.attribution} version={revision.version}/>
@@ -272,7 +273,6 @@ export function CampaignReviewPage() {
       <ApprovalCheckList checks={findings} onAcknowledge={can('campaign.approve') ? check => void acknowledge(check) : undefined} acknowledgementDisabled={Boolean(busy) || dirty || needsCanonicalRead} title="Approval checks" eyebrow="Saved revision" emptyMessage="Approval will check this saved revision and current consent." />
       <BlockedLinkHosts campaignId={id} blockedHosts={data.blockedHosts} findings={findings} links={data.links} canAllow={can('campaign.approve')} disabled={Boolean(busy) || dirty || needsCanonicalRead} onAllowed={async () => {await reload(); setActionBlockers(undefined);}} />
       <p className="saved-audience-summary notice-note"><strong>Saved audience:</strong> {revision.audienceMasked?'Audience conditions are restricted by your role.':summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p>
-      <SaveCampaignTemplate key={revision.id} revisionId={revision.id} name={revision.name} disabled={dirty||needsCanonicalRead||Boolean(busy)}/>
       <CatalogCounts summary={data.catalogSummary}/>
       <div className="review-layout">
         {editable ? authoring.loading ? <LoadState /> : authoring.error || !authoring.data?.timezone
