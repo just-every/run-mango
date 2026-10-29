@@ -1,6 +1,7 @@
 // Test-only SendGrid domain/DNS edge. Native sender observations remain in Mango.
 const key="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA00g1RVukt3Gf4NFnH+Wb3vuWm8gmb+U7Iaq+5XnWc/qKrDa2glZ6HMQ7f/Mtv5tdABZNyuxEudnozg4ULa+hu/PArpbC+h1kvYO8LPKiHcyNMn2BJz6yBE9wL5UCQlfeWa3YgqlDI1ypu/oDZxEcc9SzGxcitWBKcQRa7adFwW8sV1RtQ0h+LxXr7zZqy2chCkhaI+Dbr6lfR1xq2ldHWFgrP8kDD66ZWFRamkXFBRaTvWU70C9FgHpJvVK4z8TBAnYAGcgr4Mv37KKpEi5pr3j4U59chrJPMlmgt0oz4DY4KO9qeQV8PlAzgG/MZlusiJ6C4034qBDMMD+/Jx1V1wIDAQAB",domain='example.test';
 const zone={
+ 'woo.example.test':[{type:1,data:'93.184.216.34'}],
  ['em123.'+domain]:[{type:5,data:'u99.wl.sendgrid.net.'}],
  'u99.wl.sendgrid.net':[{type:16,data:'"v=spf1 ip4:192.0.2.1 -all"'}],
  ['s1._domainkey.'+domain]:[{type:5,data:'s1.domainkey.u99.wl.sendgrid.net.'}],

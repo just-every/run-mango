@@ -42,3 +42,82 @@ export default async function({tool,request,origin,cookie}){
  const reopened=await request(new URL('/api/design-jobs/'+started.job.id+'/layerdoc',origin),{headers});assert.equal(await reopened.text(),bytes);
  const campaign=await request(new URL('/api/campaigns/'+draft.campaignId,origin),{headers});assert.equal((await campaign.json()).revision.state,'draft');
 }
+
+/** Assert the native effects as well as Base's class, policy and replay checks. */
+export async function afterStep({request,origin,cookie,mail,step,args,result}){
+ const {nativeHttp}=await import('./native-http.mjs');
+ const http=nativeHttp({request,origin,cookie});
+ switch(step.id){
+  case 'native-teammate-narrow': {
+   const people=await http('/api/operators');
+   assert.equal(people.operators.find(person=>person.id===args.id)?.role,'author');break;
+  }
+  case 'native-contact-read':assert.equal(result.contact.emailStatus,'non-subscribed');break;
+  case 'native-protected-read':assert.ok(result.consent.some(item=>item.captureIp==='192.0.2.44'));break;
+  case 'native-contact-consent':assert.equal(result.contact.emailStatus,'pending');assert.equal(result.confirmationRequired,true);break;
+  case 'native-contact-optout':assert.equal((await http('/api/contacts/'+args.id)).contact.emailStatus,'unsubscribed');break;
+  case 'native-contact-merge':assert.equal(result.contact.id,args.survivorContactId);break;
+  case 'native-contact-erasure': {
+   let receipt=result.receipt;
+   for(let count=0;receipt.state!=='complete'&&count<100;count++)receipt=(await http('/api/audience/erasures/'+receipt.reference+'/resume',{})).receipt;
+   assert.equal(receipt.state,'complete','Native erasure completes');
+   const erased=await request(new URL('/api/contacts/'+args.id,origin),{headers:{Cookie:cookie}});
+   assert.equal(erased.status,404);await erased.body?.cancel();break;
+  }
+  case 'native-image':assert.ok(result.asset?.id);assert.ok(result.asset.bytes>0);break;
+  case 'native-signup-authority': {
+   const signup=await http('/api/audience/signup');
+   assert.deepEqual(signup.embedOrigins,[]);assert.equal(signup.challengeEnabled,true);break;
+  }
+  case 'native-report-pause': {
+   const reports=await http('/api/settings/reports');
+   assert.equal(reports.schedules.find(schedule=>schedule.id===args.id)?.enabled,0);break;
+  }
+  case 'native-design-candidates': {
+   // The worker outcome is wrapped; the mandatory choice next proves the
+   // actual candidate is on offer rather than accepting a queued-only result.
+   assert.equal(result.status,'processed');break;
+  }
+  case 'native-store-advance':
+  case 'native-observations-advance': {
+   let current;
+   for(let count=0;count<120;count++){
+    const store=await http('/api/store');current=store.syncRuns.find(run=>run.id===args.runId);
+    if(current?.state==='completed'||current?.state==='failed')break;
+    await new Promise(resolve=>setTimeout(resolve,250));
+   }
+   assert.equal(current?.state,'completed','Native source sync completes');break;
+  }
+  case 'native-flow-enroll': {
+   const flows=await http('/api/flows');
+   assert.equal(flows.flows.find(flow=>flow.id===args.id)?.enrollments,1,'The signed checkout produces one native enrollment');break;
+  }
+  case 'native-sms-dispatch': {
+   assert.equal(result.state,'deferred');
+   const {messages}=await http('/api/audience/sms-services'),message=messages.find(message=>message.id===args.id);
+   assert.equal(message.state,'queued');assert.equal(message.reason,'sms-quiet-window');assert.equal(message.provider_message_id,null);break;
+  }
+  case 'native-proposal-adopt':assert.equal(result.kind,'draft');break;
+  case 'native-archive-publish': {
+   const published=await request(new URL('/archive/'+result.id,origin));assert.equal(published.status,200);await published.body?.cancel();break;
+  }
+  case 'native-archive-withdraw': {
+   const withdrawn=await request(new URL('/archive/'+args.publication,origin));assert.equal(withdrawn.status,404);await withdrawn.body?.cancel();break;
+  }
+  case 'native-proposal-dismiss':assert.equal(result.kind,'dismissed');break;
+  case 'native-design-close':assert.equal(result.job.state,'discarded');break;
+  case 'native-sender-check': {
+   const link=mail.read().flatMap(message=>message.text.match(/https:\/\/[^\s<>]+/g)??[])
+    .map(value=>new URL(value)).findLast(url=>url.origin===origin&&url.pathname.startsWith('/sender-check/'));
+   assert.ok(link,'Native sender receipt comes from the accepted owner-mail edge');
+   const confirmed=await request(link,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'});
+   assert.equal(confirmed.status,200,'The owner confirms the actual sender check');await confirmed.body?.cancel();break;
+  }
+ }
+}
+
+export async function beforeStep({step}){
+ if(['mango.sender.verify','mango.contacts.consent','mango.campaigns.test_send'].includes(step.tool)){
+  const {mailAllowance}=await import('./native-http.mjs');await mailAllowance();
+ }
+}

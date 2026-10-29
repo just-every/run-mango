@@ -1300,7 +1300,7 @@
       "executable": false
     },
     "agent-surface.json": {
-      "sha256": "bc7394f1ed16e50470bf3406728e6d1f7b51075375391bd51f0ede10c920edc1",
+      "sha256": "9e91183948d7912383268afb842cb99ffbc2f7e1515c8a13153ca6393e32c450",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -2088,7 +2088,7 @@
       "executable": false
     },
     "scripts/agent-surface.mjs": {
-      "sha256": "9403e101f31bfb428b60840cd9a1e33bcb802157ad1737961f3a404f7013cf3c",
+      "sha256": "2248ca207bfd3fa53277f549bda16e980a03e0cd56830bdbfb16cc0780a1c71a",
       "executable": false
     },
     "scripts/build-delivery-artifact.mjs": {
@@ -3412,7 +3412,7 @@
       "executable": false
     },
     "src/core/features/agent-door/resource-links.ts": {
-      "sha256": "901ce79755d4143f508c573853174c9183e311812ec82d2dd64039d4bbb137fe",
+      "sha256": "07faec2f7239a03b4307a1e6e0e89d93e1af4db3c0b2545669a7afdd7c1a7ed6",
       "executable": false
     },
     "src/core/features/agent-door/resources.ts": {
@@ -9471,28 +9471,44 @@
       "sha256": "70d2024eae2a29772e577924dc2542e33685ef25b4f99d32aa12b6f8540dce0b",
       "executable": false
     },
+    "tests/agent-door/commerce-edge.mjs": {
+      "sha256": "ff24a828327968ebda44bd2ae856bab49dcd5473ae185df58d922b3cbafc5da4",
+      "executable": false
+    },
     "tests/agent-door/design-edge.mjs": {
       "sha256": "02784d09951f00d7a6ad2c5d4971dc7c8dbb45a7988dfa4ca70631976d5663c5",
       "executable": false
     },
     "tests/agent-door/fixtures.mjs": {
-      "sha256": "cb8bba8724a43383ec56a9747c1006eeeba494b864ea2a271da97788c2bfba56",
+      "sha256": "3b7c90a5e0af44edb77ea30ec77c08dd389cadfd9b5a100b0a4c54cc6c1f6e50",
       "executable": false
     },
     "tests/agent-door/journey.json": {
-      "sha256": "c5851b1a32da757e3096cf763c2ef4969849104c3c4137c5cf79e9ab0d5a04be",
+      "sha256": "ed3858338369bfd0581d28740a3a6e9636b4779856947890b921f254acefc7aa",
       "executable": false
     },
     "tests/agent-door/mail-edge.mjs": {
-      "sha256": "37e5162f0b4aa76a0585c52e4aa047f9690f52ab117346b783a6286be0dd9aa1",
+      "sha256": "5151436da5e9148ec411fcdd360f26f69fa797f77e5eef178ccc924debb43249",
+      "executable": false
+    },
+    "tests/agent-door/mail-rate.mjs": {
+      "sha256": "151551670b2ab6a7f5030d5374753158e5e5a3133059e72cac4ec0d7f49c33b1",
+      "executable": false
+    },
+    "tests/agent-door/model.mjs": {
+      "sha256": "22e8ddd135909d8c892949c897b48f26482868633d54a542e92866c56440620d",
+      "executable": false
+    },
+    "tests/agent-door/native-http.mjs": {
+      "sha256": "ceef2c994fb4d31d23c9ed7177e52456a61030ae1cbbe398d97415bac05dec41",
       "executable": false
     },
     "tests/agent-door/native-journey.mjs": {
-      "sha256": "59d70c05a9fca0bd2ba73be2c866e01994e39079a12401043a9e29971806f00a",
+      "sha256": "f97fb443391629a557b62e2656e09029e8183bebc3841612eba7467460cef8a5",
       "executable": false
     },
     "tests/agent-door/network.mjs": {
-      "sha256": "4c93d68a0b0ba4809847645cafb9948bed9a4a7ea6dfa4bad0481dbca0e1d566",
+      "sha256": "603b72404f6f33682bdffb58d57babca8689961c9c87962884acd76dc54b72ff",
       "executable": false
     },
     "tests/agent-door/owner.mjs": {
@@ -9503,8 +9519,44 @@
       "sha256": "c1a86c88bdd7b449b20ccfae3f8fac853bb11e343699794e4f84b43aa0728071",
       "executable": false
     },
+    "tests/agent-door/proposal-edge.mjs": {
+      "sha256": "cc74c465aaf201d4229e9a5e19181f281c9e90a6e0aa23f9c85ea80864685400",
+      "executable": false
+    },
+    "tests/agent-door/recipient-fixtures.mjs": {
+      "sha256": "de762637b292a9641d8be9480828e70192317cf8b2007cc2c71f36308c77c3d0",
+      "executable": false
+    },
     "tests/agent-door/reviewer.mjs": {
       "sha256": "83211668cb4769104cc09590bace310ef48f06b5453c92de11c46c27cc1ec781",
+      "executable": false
+    },
+    "tests/agent-door/sending-edge.mjs": {
+      "sha256": "7c35e114f8593012e62b5830f1685e482b1603391a2d08aace43166576e65dd1",
+      "executable": false
+    },
+    "tests/agent-door/sending-key.mjs": {
+      "sha256": "7c05b075f9fd83b72230b1266e40c11e65e34ee8dbaa72ab4481d8f3d00f4abb",
+      "executable": false
+    },
+    "tests/agent-door/sms/allowlist.mjs": {
+      "sha256": "e8c6f9db54caa78435dfc909f3a6ae72402a57dcaf6b2daa805dc900fd2d74a0",
+      "executable": false
+    },
+    "tests/agent-door/sms/key.mjs": {
+      "sha256": "89b47c60492a9f7d35f686dea1dcabfa891443b146e9823f1ac592c4a5cc41b4",
+      "executable": false
+    },
+    "tests/agent-door/sms/policy.mjs": {
+      "sha256": "64a17432b1c44ea8cea64d07b6ed6b58d6f48a32ded1a27c8226d6a7d9adf5fe",
+      "executable": false
+    },
+    "tests/agent-door/sms/sender.mjs": {
+      "sha256": "9b5abd1fb484284d93c31162a51f0ababe107685f8cf6484993676b4e787272d",
+      "executable": false
+    },
+    "tests/agent-door/unconfigured.mjs": {
+      "sha256": "db08958512cd5c78e46ea8980971a52a6999d8fda2e3e513f67a1ca62c5c86b7",
       "executable": false
     },
     "tests/approval-binding/config.js": {
