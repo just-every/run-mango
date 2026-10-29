@@ -34,6 +34,7 @@
 @media (max-width: 680px) {
   .audience-signup-details { grid-template-columns: minmax(0, 1fr); gap: var(--sp-5); }
   .audience-signup-details > div + div { padding-left: 0; border-left: 0; }
+  .audience-signup-url a { padding-block: 11px; }
   .audience-signup-actions > .secondary-action, .signup-settings-form__row .secondary-action { width: 100%; }
   .signup-settings-form__row { flex-direction: column; align-items: stretch; }
   .signup-settings-form__row > button { margin-top: 0; }

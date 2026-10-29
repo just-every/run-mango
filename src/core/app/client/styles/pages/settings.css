@@ -96,7 +96,8 @@
 .settings-operator__name strong { font-weight: 500; }
 .settings-operator .settings-operator__email { margin-top: 2px; color: var(--ms-muted); font-size: 14px; }
 .settings-operator small { display: block; margin-top: var(--sp-1); }
-.settings-removal.notice-warning { margin-top: var(--sp-2); padding: var(--sp-4) var(--sp-5); font-weight: 400; }
+.settings-removal.notice-warning { margin-top: var(--sp-2); padding-block: var(--sp-4); padding-right: var(--sp-5); font-weight: 400; }
+.settings-removal.notice-warning::before { top: 18px; }
 .mango-app .settings-removal h3 { margin: 0 0 var(--sp-1); }
 .settings-removal p { max-width: 68ch; margin: 0 0 var(--sp-3); color: var(--ms-ink-soft); }
 

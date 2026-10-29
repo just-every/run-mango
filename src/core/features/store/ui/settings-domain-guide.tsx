@@ -17,7 +17,7 @@ export function SettingsDomainGuide() {
     <p className="eyebrow">Domain setup</p><h2 id="domain-guide-title">Authenticate your sending domain</h2>
     <p>Read records from the connected SendGrid account, add them at your DNS provider, then check public DNS. Passing these checks does not replace the sender’s inbox check. <a href="/docs/going-live#domain-setup">Domain setup guide</a>.</p>
     {resource.loading ? <p role="status">Reading domain records…</p> : null}
-    {resource.error ? <p role="status">Connect SendGrid in your installation configuration and save the From address to read its domain records. <button type="button" onClick={() => void resource.reload()}>Check again</button></p> : null}
+    {resource.error ? <p role="status">Connect SendGrid in your installation configuration and save the From address to read its domain records. <button type="button" className="secondary-action" onClick={() => void resource.reload()}>Check again</button></p> : null}
     {resource.data ? <>
       <p>From domain: <strong>{resource.data.setup.domain}</strong>. SendGrid authentication: {resource.data.setup.exists ? resource.data.setup.providerValid ? 'Validated' : 'Not validated' : 'Not created'}.</p>
       <Can permission="provider.connect"><div className="settings-actions"><button type="button" className="primary-action" disabled={busy} onClick={() => void action('/api/settings/sender/domain-authentication', 'POST', {action: resource.data!.setup.exists ? 'validate' : 'create'})}>{resource.data.setup.exists ? 'Validate domain at SendGrid' : 'Create domain authentication'}</button></div></Can>

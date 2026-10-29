@@ -59,7 +59,7 @@ export function SettingsSender({ operatorEmail }: { operatorEmail: string }) {
                 <span>{item.detail}</span>
               </dd></div>)}
             </dl>
-            <p className="muted-copy"><a href="/docs/going-live">What each item means and what you supply</a></p>
+            <p className="muted-copy"><a className="text-link" href="/docs/going-live">What each item means and what you supply</a></p>
           </div>
         </div>
       </div> : null}

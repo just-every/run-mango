@@ -44,6 +44,10 @@
 .test-send-fields { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--sp-3); }
 .test-send-fields label { display: grid; flex: 1 1 12rem; gap: 6px; }
 .test-send-fields label:first-of-type { flex: 0 1 9rem; }
+/* A from and through date are the same size. */
+.period-fields label, .period-fields label:first-of-type { flex: 0 1 14rem; }
+/* The inactivity controls sit apart from the editor: the checkbox row, then its button below with a gap. */
+.dormancy-controls { display: grid; gap: var(--sp-3); justify-items: start; }
 
 /* The editor: groups divided by hairlines inside one sheet. */
 .editor-panel__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sp-1) var(--sp-3); margin-bottom: var(--sp-5); }
@@ -78,14 +82,15 @@
 .rich-email-link__fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto; align-items: end; gap: var(--sp-3); margin-top: var(--sp-2); }
 .rich-email-link summary { min-height: 40px; font-size: 14px; }
 
-/* Segmented toggles: the preview width and the editor mode. */
-.preview-controls, .editor-mode { display: inline-flex; flex-wrap: nowrap; gap: 0; width: fit-content; border: 1px solid var(--ms-control); border-radius: var(--ms-radius-control); background: var(--ms-paper); }
-:is(.preview-controls, .editor-mode) > .secondary-action { position: relative; min-height: 36px; padding: 0 14px; border: 0; border-radius: 0; background: transparent; color: var(--ms-ink-soft); font-size: 14px; }
-:is(.preview-controls, .editor-mode) > .secondary-action + .secondary-action { border-left: 1px solid var(--ms-control); }
-:is(.preview-controls, .editor-mode) > .secondary-action:first-child { border-radius: 3px 0 0 3px; }
-:is(.preview-controls, .editor-mode) > .secondary-action:last-child { border-radius: 0 3px 3px 0; }
+/* Segmented toggles: the preview width and appearance and the editor mode. Each half has its whole border and the two
+   share the middle line; the chosen half is the highlighted one (sun wash, heavier text), never a bar on one edge. */
+.preview-controls, .editor-mode { display: inline-flex; flex-wrap: nowrap; gap: 0; width: fit-content; }
+:is(.preview-controls, .editor-mode) > .secondary-action { position: relative; min-height: 36px; padding: 0 14px; border: 1px solid var(--ms-control); border-radius: 0; background: var(--ms-paper); color: var(--ms-ink-soft); font-size: 14px; }
+:is(.preview-controls, .editor-mode) > .secondary-action + .secondary-action { margin-left: -1px; }
+:is(.preview-controls, .editor-mode) > .secondary-action:first-child { border-radius: var(--ms-radius-control) 0 0 var(--ms-radius-control); }
+:is(.preview-controls, .editor-mode) > .secondary-action:last-child { border-radius: 0 var(--ms-radius-control) var(--ms-radius-control) 0; }
 :is(.preview-controls, .editor-mode) > .secondary-action:hover:not(:disabled, [aria-pressed="true"]) { background: var(--ms-paper-deep); box-shadow: none; }
-:is(.preview-controls, .editor-mode) > .secondary-action[aria-pressed="true"] { background: var(--ms-sun-wash); box-shadow: inset 0 -2px 0 var(--ms-sun-hover); color: var(--ms-ink); font-weight: 600; }
+:is(.preview-controls, .editor-mode) > .secondary-action[aria-pressed="true"] { background: var(--ms-sun-wash); box-shadow: none; color: var(--ms-ink); font-weight: 600; }
 :is(.preview-controls, .editor-mode) > .secondary-action:focus-visible { z-index: 1; }
 
 /* Saved links, audience conditions and channel steps. */
@@ -188,7 +193,7 @@
   .metric-row { gap: var(--sp-2); }
   .metric-row > div { padding: 10px; }
   .test-send-fields { align-items: stretch; flex-direction: column; }
-  .test-send-fields label, .test-send-fields label:first-of-type { flex: none; }
+  .test-send-fields label, .test-send-fields label:first-of-type, .period-fields label:first-of-type { flex: none; }
   .editor-panel__actions > * { flex: 1 1 auto; }
 }
 @media (max-width: 400px) {
@@ -202,4 +207,9 @@
   .metric-row > div + div { border-top: 1px solid var(--ms-line); }
   .metric-row dt { font-size: 14px; }
   .metric-row dd { margin: 0; font-size: 24px; }
+}
+
+/* Tap targets in the editor: the segmented toggles, the formatting bar and the link disclosure are 44px at phone width. */
+@media (pointer: coarse), (max-width: 680px) {
+  :is(.preview-controls, .editor-mode) > .secondary-action, .rich-email-toolbar > .secondary-action, .rich-email-link summary, .approval-checks h2 .disclosure-toggle { min-height: 44px; }
 }

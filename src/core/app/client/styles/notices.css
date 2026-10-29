@@ -1,19 +1,30 @@
-/* Notices. The 3px left bar and the role keep each kind visible without colour.
-   Success (role=status), error (role=alert), warning (attention) and note (guidance). */
-.action-notice, .subscribe-confirmation, .inline-error, .unsaved-notice, .notice-warning {
+/* Notices. A whole 1px border, a tinted ground and a leading glyph keep each kind visible without colour; the role
+   carries it to a screen reader. Success (role=status), error (role=alert), warning (attention) and note (guidance). */
+.action-notice, .subscribe-confirmation, .inline-error, .unsaved-notice, .notice-warning, .validation-summary {
+  position: relative;
   min-width: 0;
-  padding: 12px 14px 12px 16px;
+  padding: 12px 14px 12px 40px;
   border: 1px solid;
-  border-left-width: 3px;
   border-radius: var(--ms-radius-control);
   font-size: 15px;
   font-weight: 500;
   line-height: 1.5;
   overflow-wrap: anywhere;
 }
-.action-notice, .subscribe-confirmation { border-color: var(--ms-leaf-line); border-left-color: var(--ms-leaf); background: var(--ms-leaf-wash); color: var(--ms-leaf-deep); }
-.inline-error { border-color: var(--ms-tomato-line); border-left-color: var(--ms-tomato); background: var(--ms-tomato-wash); color: var(--ms-tomato-deep); }
-.unsaved-notice, .notice-warning { border-color: var(--ms-sun-line); border-left-color: var(--ms-sun-hover); background: #fff7e0; color: var(--ms-ink); }
+:is(.action-notice, .subscribe-confirmation, .inline-error, .unsaved-notice, .notice-warning, .validation-summary)::before {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  content: '';
+  -webkit-mask: var(--notice-icon, var(--icon-alert)) center / contain no-repeat;
+  mask: var(--notice-icon, var(--icon-alert)) center / contain no-repeat;
+}
+.action-notice, .subscribe-confirmation { --notice-icon: var(--icon-check); border-color: var(--ms-leaf-line); background: var(--ms-leaf-wash); color: var(--ms-leaf-deep); }
+.inline-error, .validation-summary { border-color: var(--ms-tomato-line); background: var(--ms-tomato-wash); color: var(--ms-tomato-deep); }
+.unsaved-notice, .notice-warning { border-color: var(--ms-sun-line); background: #fff7e0; color: var(--ms-ink); }
 .notice-warning .eyebrow, .unsaved-notice .eyebrow { color: var(--ms-wait); }
 
 /* A notice with an action: the action sits at its right, and below it on a phone. */
