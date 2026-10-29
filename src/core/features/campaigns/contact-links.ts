@@ -31,9 +31,10 @@ export function contactLink(value: string): ContactLink | undefined {
   } catch { return; }
 }
 
-export function safeEmailLink(value: string, managed = false) {
+/** `demoOrigin` is passed only in a demo: its letters may also link to its own pages at its own origin (demo-links.ts). */
+export function safeEmailLink(value: string, managed = false, demoOrigin?: string) {
   if (managed && value === '{{unsubscribe_url}}') return true;
   if (contactLink(value)) return true;
   if (/[\u0000- \u007f-\u00a0{}"<>]/.test(value)) return false;
-  try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password; } catch { return false; }
+  try { const url = new URL(value); return (url.protocol === 'https:' || url.origin === demoOrigin) && !url.username && !url.password; } catch { return false; }
 }

@@ -7,6 +7,7 @@ import { formatEmailSize } from '@/core/features/campaigns/email-size';
 import { contactLink } from '@/core/features/campaigns/contact-links';
 import { blockedLinkHosts } from './link-checks';
 import { blockedImage, blockedLink } from '@/core/features/campaigns/link-reasons';
+import { demoLinkOrigin } from '@/core/features/bootstrap/demo-links';
 import { textLinkDestinations } from '@/core/features/campaigns/message-links';
 import { managedSmsText, smsComplianceBlock } from '@/core/features/sms/content';
 import {activeProviderHolds} from './provider-holds';
@@ -39,7 +40,7 @@ function validIanaTimeZone(value: string) {
   }
 }
 
-function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[], ownOrigin: URL) {
+function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[], ownOrigin: URL, demoOrigin?: string) {
   const { revision, links, steps } = snapshot;
   const selected = new Set(steps.map((step) => step.channel));
   const findings: ApprovalCheck[] = [];
@@ -51,13 +52,13 @@ function contentChecks(snapshot: CampaignRevisionSnapshot, allowedHosts: string[
   findings.push(check('schedule.timezone', steps.every((step) => validIanaTimeZone(step.timezone)),
     'Each step requires a valid IANA time zone.'));
 
-  const htmlPolicy = inspectEmailHtml(revision.emailBody);
+  const htmlPolicy = inspectEmailHtml(revision.emailBody, undefined, demoOrigin);
   const blockedLinks = [...new Set([...links.map((link) => link.destinationUrl), ...htmlPolicy.rejectedLinks])]
-    .flatMap((destination) => { const blocked = blockedLink(destination, allowedHosts); return blocked ? [{destination, ...blocked}] : []; });
+    .flatMap((destination) => { const blocked = blockedLink(destination, allowedHosts, demoOrigin); return blocked ? [{destination, ...blocked}] : []; });
   const blockedImages = htmlPolicy.images.flatMap((source) => { const blocked = blockedImage(source, allowedHosts, ownOrigin); return blocked ? [{destination: source, ...blocked}] : []; });
   const directHosts = [...blockedLinks, ...blockedImages].flatMap(({destination, host}) => host ? [{destination, inspection: {ok: false, detail: '', blockedHost: host}}] : []);
   findings.push({...check('message.links', blockedLinks.length + blockedImages.length === 0,
-    blockedLinks.length + blockedImages.length ? `Blocked links: ${blockedLinks.map((item) => `${item.destination} (${item.reason})`).join('; ')}${blockedImages.length ? `${blockedLinks.length ? '; ' : ''}Blocked images: ${blockedImages.map((item) => `${item.destination} (${item.reason})`).join('; ')}` : ''}` : 'Every destination is an allowed HTTPS or contact link.'),
+    blockedLinks.length + blockedImages.length ? `Blocked links: ${blockedLinks.map((item) => `${item.destination} (${item.reason})`).join('; ')}${blockedImages.length ? `${blockedLinks.length ? '; ' : ''}Blocked images: ${blockedImages.map((item) => `${item.destination} (${item.reason})`).join('; ')}` : ''}` : `Every destination is an allowed HTTPS or contact link${demoOrigin ? ', or a page of this demo' : ''}.`),
     blockedHosts: blockedLinkHosts(directHosts)});
 
   findings.push(check('message.content', htmlPolicy.issues.length === 0, htmlPolicy.issues.length
@@ -154,7 +155,8 @@ export async function runApprovalChecks(input: {
   const smsResult = smsResults[0];
   const [mailResult, linkResult] = results;
   const [mailCapabilities, mailInspection] = value(mailResult);
-  const checks = contentChecks(snapshot, platform.config.allowedLinkHosts.map((host) => host.toLowerCase()), platform.config.publicBaseUrl);
+  const demoOrigin = demoLinkOrigin(platform.config);
+  const checks = contentChecks(snapshot, platform.config.allowedLinkHosts.map((host) => host.toLowerCase()), platform.config.publicBaseUrl, demoOrigin);
   const sms = value(smsResult);
   const smsCapabilities = sms?.[0];
   const smsValidations = sms?.[1] ?? [];
@@ -169,7 +171,7 @@ export async function runApprovalChecks(input: {
   checks.push({...check('message.links.resolved', blockedDestinations.length === 0,
     blockedDestinations.length
       ? `Blocked transmitted links: ${blockedDestinations.map(({ destination, inspection }) => `${destination} (${inspection.detail})`).join('; ')}`
-      : `${linkInspections.length} transmitted destinations passed HTTPS or contact-link checks.`),
+      : `${linkInspections.length} transmitted destinations passed HTTPS or contact-link checks${demoOrigin ? ' or are pages of this demo' : ''}.`),
     blockedHosts: blockedLinkHosts(blockedDestinations)});
   const configured = platform.config.mailSender;
   if (selected.has('email')) {

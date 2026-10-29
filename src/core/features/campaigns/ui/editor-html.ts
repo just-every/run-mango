@@ -7,8 +7,9 @@ export function authoredHtmlTemplate(html: string) {
   template.innerHTML = tokens.restore(tokens.html, escapeHtml);
   return template;
 }
-/** Editor retains allowed authored structure and hrefs; unsafe input remains visible in HTML mode. */
-export function editorHtml(html: string) {
+/** Editor retains allowed authored structure and hrefs; unsafe input remains visible in HTML mode.
+ * `demoOrigin` keeps a demo's links to its own pages (demo-links.ts). */
+export function editorHtml(html: string, demoOrigin?: string) {
   const tokens = protectAuthoringTokens(html);
   const template = document.createElement('template'); template.innerHTML = tokens.html;
   const clean = (root: DocumentFragment | Element) => {
@@ -17,7 +18,7 @@ export function editorHtml(html: string) {
       for (const attribute of [...element.attributes]) {
         // DOM attributes are entity-decoded, as the policy reads them.
         const value = tokens.restore(attribute.value);
-        if (!allowedEmailAttribute(element.localName, attribute.name, value)) element.removeAttribute(attribute.name);
+        if (!allowedEmailAttribute(element.localName, attribute.name, value, undefined, demoOrigin)) element.removeAttribute(attribute.name);
       }
       clean(element);
     }

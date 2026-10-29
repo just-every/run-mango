@@ -1,15 +1,13 @@
-const hostedDemo = new URL('https://demo.run-mango.com');
+import type { AppConfig } from '@/core/shared/platform';
 
-/** Letters may only carry HTTPS links, so a plain-HTTP local demo points at the hosted demo, whose pages answer. */
-const linkBase = (origin: URL) => origin.protocol === 'https:' ? origin : hostedDemo;
-
-/** Host names the sample letters link to; the demo allows exactly these. */
-export const demoLinkHosts = (origin: URL) => [...new Set([origin.hostname, linkBase(origin).hostname])];
+/** A demo sends nothing, so its letters may link to its own pages at the origin it is served from: plain HTTP for
+ * `rer demo` on a computer. Undefined outside a demo, where every link stays HTTPS (MSG-006). */
+export const demoLinkOrigin = (config: Pick<AppConfig, 'demo' | 'publicBaseUrl'>) => config.demo ? config.publicBaseUrl.origin : undefined;
 
 /** Sample letters link to the demo's own public pages. */
 export function demoLetterLinks(origin: URL) {
   return [
-    { label: 'Read past letters', destinationUrl: new URL('/archive', linkBase(origin)).href },
-    { label: 'Subscribe to the newsletter', destinationUrl: new URL('/subscribe', linkBase(origin)).href },
+    { label: 'Read past letters', destinationUrl: new URL('/archive', origin).href },
+    { label: 'Subscribe to the newsletter', destinationUrl: new URL('/subscribe', origin).href },
   ];
 }

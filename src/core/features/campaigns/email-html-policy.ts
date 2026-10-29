@@ -28,11 +28,12 @@ export function localMediaUrl(value: string, mediaOrigin?: string) {
   return Boolean(mediaOrigin?.startsWith('http://')) && value.startsWith(`${mediaOrigin}/`) && mediaPath.test(value.slice(mediaOrigin!.length));
 }
 const insecureMedia = (value: string) => { try { const url = new URL(value); return url.protocol === 'http:' && mediaPath.test(url.pathname) && !url.search && !url.hash; } catch { return false; } };
-/** `mediaOrigin` is this deployment's own origin, passed only where a draft is saved or previewed. */
-export function allowedEmailAttribute(tag: string, name: string, value: string, mediaOrigin?: string) {
+/** `mediaOrigin` is this deployment's own origin, passed only where a draft is saved or previewed.
+ * `demoOrigin` is a demo's own origin, whose pages its links may use (demo-links.ts). */
+export function allowedEmailAttribute(tag: string, name: string, value: string, mediaOrigin?: string, demoOrigin?: string) {
   if (tag === 'div' && name === 'data-mango-catalog') return Boolean(decodeCatalogBlock(value));
   if (name === 'title' || (tag === 'img' && name === 'alt')) return !value.includes('{{');
-  if (tag === 'a' && name === 'href') return safeEmailLink(value, true);
+  if (tag === 'a' && name === 'href') return safeEmailLink(value, true, demoOrigin);
   if (tag === 'img' && name === 'src') return safeEmailUrl(value) || localMediaUrl(value, mediaOrigin);
   if (['width', 'height'].includes(name) && tag === 'img') return /^\d{1,4}$/.test(value) && Number(value) >= 2;
   if (['colspan', 'rowspan'].includes(name) && ['td', 'th'].includes(tag)) return /^[1-9]\d?$/.test(value);
@@ -43,7 +44,7 @@ export function allowedEmailAttribute(tag: string, name: string, value: string, 
 const writtenWithReferences = (name: string, written: string) => !['alt', 'title'].includes(name) && written.replaceAll('&amp;', '').replaceAll('&quot;', '').includes('&');
 const textOf = (nodes: EmailNode[]): string => nodes.map(node => node.kind === 'text' ? node.text : node.kind === 'element' ? node.tag === 'img' ? node.attributes.get('alt') ?? '' : textOf(node.children) : '').join('');
 
-export function inspectEmailHtml(source: string, mediaOrigin?: string) {
+export function inspectEmailHtml(source: string, mediaOrigin?: string, demoOrigin?: string) {
   const parsed = parseEmailHtml(source);
   const issues = new Set<string>([...parsed.malformed, ...parsed.lost]);
   for (const tag of parsed.tags) if (!emailTags.has(tag)) issues.add(`Tag <${tag}> is not allowed.`);
@@ -68,13 +69,13 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string) {
     for (const [name, value] of attributes) {
       const written = node.written.get(name);
       if (written !== undefined && writtenWithReferences(name, written)) issues.add(`Attribute ${name} on <${tag}> is written with a character reference; write the character itself.`);
-      if (!presentation.attribute(tag, name, value) && !allowedEmailAttribute(tag, name, value, mediaOrigin)) {
+      if (!presentation.attribute(tag, name, value) && !allowedEmailAttribute(tag, name, value, mediaOrigin, demoOrigin)) {
         if (tag === 'img' && name === 'src' && insecureMedia(value)) localImages.add(value);
         else if (tag === 'a' && name === 'href') { issues.add(`Link ${value} ${linkProblem(value) ?? 'is not allowed'}.`); rejectedLinks.add(value); }
         else if (tag === 'img' && name === 'src') issues.add(`Image source ${value} ${linkProblem(value, 'image') ?? 'is not allowed'}.`);
         else issues.add(`Attribute ${name} on <${tag}> is not allowed or has an unsafe value.`);
       }
-      if (name === 'href' && value !== '{{unsubscribe_url}}' && safeEmailLink(value)) destinations.add(value);
+      if (name === 'href' && value !== '{{unsubscribe_url}}' && safeEmailLink(value, false, demoOrigin)) destinations.add(value);
       if (tag === 'img' && name === 'src' && safeEmailUrl(value)) images.add(value);
     }
     if (tag === 'img' && (!attributes.has('src') || !attributes.has('width') || !attributes.has('height'))) issues.add('Images require HTTPS src and explicit width and height of at least 2 pixels.');

@@ -65,6 +65,7 @@ import { createAuthService } from '@/core/features/auth/service';
 import { createCampaignRepository } from '@/core/features/campaigns/repository';
 import { createCampaignCompositionRepository } from '@/core/features/campaigns/composition-repository';
 import { createCampaignRoutes } from '@/core/features/campaigns/routes';
+import { demoLinkOrigin } from '@/core/features/bootstrap/demo-links';
 import { createCampaignService } from '@/core/features/campaigns/service';
 import { createHealthRepository } from '@/core/features/health/repository';
 import { createHealthRoutes } from '@/core/features/health/routes';
@@ -307,7 +308,7 @@ export function createApp(
     context.header('Cache-Control', 'no-store');
     let editorConfigured = false;
     try { editorConfigured = configuredEditor(environment)?.enabled === true; } catch { /* Invalid configuration grants no editor. */ }
-    return context.json({local: platform.config.local === true,
+    return context.json({local: platform.config.local === true, demoOrigin: demoLinkOrigin(platform.config),
       editorEligible: editorConfigured && await authService.isNativeOwner(context.req.raw)});
   });
   app.route('/', createPublicAuthRoutes(authService, { secureCookie }));

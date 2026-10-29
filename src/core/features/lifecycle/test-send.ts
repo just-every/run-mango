@@ -10,6 +10,7 @@ import { loadSenderSettings } from '@/core/features/settings/sender-persistence'
 import { revisionMatchesSender } from '@/core/features/settings/sender-validation';
 import { messageRendererVersion, renderMessageContent, invalidMessagePersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
+import { demoLinkOrigin } from '@/core/features/bootstrap/demo-links';
 import { digestJson, sha256 } from './digest';
 import type { LifecycleRepository } from './repository';
 import type { Channel, LifecycleRuntime } from './types';
@@ -68,7 +69,7 @@ export function createTestSender(runtime: LifecycleRuntime, repository: Lifecycl
       }
       const capabilities = await sender.capabilities();
       if (!capabilities.configured || !capabilities.canSendMarketing) return { kind: 'blocked' as const, detail: capabilities.detail };
-      const issues = input.channel === 'email' ? inspectEmailHtml(snapshot.revision.emailBody).issues : [];
+      const issues = input.channel === 'email' ? inspectEmailHtml(snapshot.revision.emailBody, undefined, demoLinkOrigin(runtime.platform.config)).issues : [];
       issues.push(...invalidMessagePersonalisation(snapshot.revision));
       if (issues.length) return {kind: 'blocked' as const, detail: issues.join(' ')};
       const smsPolicy=input.channel==='sms'?await smsPolicyAuthority(runtime.platform.config):undefined;

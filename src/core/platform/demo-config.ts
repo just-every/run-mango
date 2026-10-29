@@ -1,6 +1,5 @@
 import type { AppBindings, AppConfig } from '@/core/shared/platform';
 import { demoModules } from './demo/modules';
-import { demoLinkHosts } from '@/core/features/bootstrap/demo-links';
 
 /** Demo configuration never consumes the installation's provider credentials. */
 export function demoConfig(env: AppBindings): AppConfig {
@@ -12,7 +11,8 @@ export function demoConfig(env: AppBindings): AppConfig {
     initialOperatorEmails: [env.OWNER_EMAIL], contactHashSalt: env.SESSION_SECRET,
     modules: demoModules(),
     mailProvider: 'resend', mailProviderApiKey: 'demo-only', mailAuthFrom: 'hello@example.test', mailWebhookSecret: '', mailWebhookId: '',
-    publicBaseUrl: origin, appVersion: 'demo', allowedLinkHosts: demoLinkHosts(origin),
+    // The sample letters link to the demo's own pages (demo-links.ts).
+    publicBaseUrl: origin, appVersion: 'demo', allowedLinkHosts: [origin.hostname],
     testEmailAllowlist: [env.OWNER_EMAIL], providerReconciliationIntervalMinutes: 15,
     unresolvedProviderOutcomeHours: 1, emailHandoffsPerMinute: 10, deliverabilityReportingWindowDays: 30,
     mailSender: { displayName: 'Mango Sample Store', fromEmail: 'hello@example.test', replyToEmail: 'hello@example.test',

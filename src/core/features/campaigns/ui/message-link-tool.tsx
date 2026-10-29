@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { escapeHtml } from '../email-html-policy';
 import { safeEmailLink } from '../contact-links';
+import { useDemoOrigin } from '@/core/app/client/lib/demo-origin';
 
 export function MessageLinkTool({onInsert, disabled}: {onInsert: (html: string) => void; disabled: boolean}) {
+  const demoOrigin = useDemoOrigin();
   const [kind, setKind] = useState('web'), [label, setLabel] = useState(''), [destination, setDestination] = useState('');
   const [subject, setSubject] = useState(''), [body, setBody] = useState('');
   const params = new URLSearchParams();
@@ -18,7 +20,7 @@ export function MessageLinkTool({onInsert, disabled}: {onInsert: (html: string) 
       <label>{kind === 'web' ? 'Link URL' : kind === 'email' ? 'Email address' : 'Phone number'}<input type="text" value={destination} onChange={event => setDestination(event.target.value)} /></label>
       {kind === 'email' ? <label>Email link subject<input value={subject} onChange={event => setSubject(event.target.value)} /></label> : null}
       {['email', 'text'].includes(kind) ? <label>Link message<input value={body} onChange={event => setBody(event.target.value)} /></label> : null}
-      <button type="button" className="secondary-action" disabled={disabled || !label.trim() || !safeEmailLink(uri)} onClick={() => {
+      <button type="button" className="secondary-action" disabled={disabled || !label.trim() || !safeEmailLink(uri, false, demoOrigin)} onClick={() => {
         onInsert(`<p><a href="${escapeHtml(uri)}">${escapeHtml(label)}</a></p>`);
         setLabel(''); setDestination(''); setSubject(''); setBody('');
       }}>Insert link</button>

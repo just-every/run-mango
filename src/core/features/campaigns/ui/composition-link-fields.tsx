@@ -1,4 +1,5 @@
 import { safeEmailLink } from '../contact-links';
+import { useDemoOrigin } from '@/core/app/client/lib/demo-origin';
 import { Field } from '@/core/app/client/ui/validation-form';
 import type { DraftComposition, DraftLink } from './draft-composition';
 
@@ -15,6 +16,7 @@ export function CompositionLinkFields({
   links: DraftComposition['links'];
   setLink: (index: number, field: keyof DraftLink, value: string) => void;
 }) {
+  const demoOrigin = useDemoOrigin();
   return (
     <fieldset className="composition-fieldset">
       <legend>Saved links</legend>
@@ -27,7 +29,7 @@ export function CompositionLinkFields({
             </label>
             <label>
               Link {index + 1} destination (required)
-              <Field name={`links.${index}.destinationUrl`} label={`Link ${index+1} destination`} required validate={() => safeEmailLink(link.destinationUrl) ? undefined : 'Enter a valid HTTPS, email, phone or text destination.'}><input value={link.destinationUrl} onChange={(event) => setLink(index, 'destinationUrl', event.target.value)} type="text" /></Field>
+              <Field name={`links.${index}.destinationUrl`} label={`Link ${index+1} destination`} required validate={() => safeEmailLink(link.destinationUrl, false, demoOrigin) ? undefined : 'Enter a valid HTTPS, email, phone or text destination.'}><input value={link.destinationUrl} onChange={(event) => setLink(index, 'destinationUrl', event.target.value)} type="text" /></Field>
             </label>
             <button className="text-link edit-action" type="button" disabled={busy} onClick={() => removeLink(index)}>Remove link {index + 1}</button>
           </div>

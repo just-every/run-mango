@@ -58,7 +58,8 @@ function savedBody(source: string, links: NonNullable<DraftComposition['links']>
   const envelope=mobileEnvelope(source);
   let body = canonicalBody(mobileEnvelope(authoredBody(source)).body);
   if (links.length) {
-    const present = inspectEmailHtml(body).destinations;
+    // Any anchor counts, approvable or not, so a save never repeats a link the body already carries.
+    const present = inspectEmailHtml(body).anchors.map(anchor => anchor.href);
     const missing = links.filter(link => !present.includes(link.destinationUrl));
     if (missing.length) body = canonicalBody(body + missing.map(link => `<p><a href="${escapeHtml(link.destinationUrl)}">${escapeHtml(link.label)}</a></p>`).join(''));
   }

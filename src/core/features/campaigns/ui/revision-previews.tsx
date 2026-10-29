@@ -1,5 +1,6 @@
 import {catalogBlocks,type CatalogRenderings} from '../catalog-blocks';
 import {requestJson} from '@/core/app/client/lib/api';
+import {useDemoOrigin} from '@/core/app/client/lib/demo-origin';
 import {analyticsContext} from '@/core/features/settings/analytics-policy';
 import {mobileEnvelope} from '../email-mobile';
 import { contactLink } from '../contact-links';
@@ -36,7 +37,8 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const dependent=[responsive.settings.some(row=>row.hideOnMobile)?'hide on mobile':'',responsive.settings.some(row=>row.hideOnDesktop)?'hide on desktop':'',responsive.settings.some(row=>row.orientation)?'mobile orientation':'',responsive.settings.some(row=>row.fontSize!==undefined)?'mobile font size':'',responsive.settings.some(row=>row.lineHeight!==undefined)?'mobile line height':'',responsive.settings.some(row=>row.padding!==undefined)?'mobile padding':'',responsive.settings.some(row=>row.alignment)?'mobile alignment':''].filter(Boolean);
   const showEmail = selectedChannels?.includes('email') ?? true;
   const showSms = selectedChannels?.includes('sms') ?? Boolean(rendered.sms.trim() || revision.smsSender.trim());
-  const issues = useMemo(() => inspectEmailHtml(revision.emailBody, mediaOrigin).issues, [revision.emailBody, mediaOrigin]);
+  const demoOrigin = useDemoOrigin();
+  const issues = useMemo(() => inspectEmailHtml(revision.emailBody, mediaOrigin, demoOrigin).issues, [revision.emailBody, mediaOrigin, demoOrigin]);
   useEffect(() => {setLoadImages(false)}, [revision.id, revision.updatedAt]);
   // Approval remounts this preview outside the editor. Supply its complete document on that first render.
   const preview = useMemo(() => sanitizeEmailPreview(rendered.html, loadImages, issues.length === 0, mediaOrigin), [rendered.html, loadImages, issues, mediaOrigin]);

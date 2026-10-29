@@ -1,7 +1,8 @@
 import {liveCatalogValues} from '@/core/features/campaigns/catalog-values';
 import {catalogBlocks,insertCatalogHtml,catalogTextValues} from '@/core/features/campaigns/catalog-blocks';
 import { textLinkDestinations } from '@/core/features/campaigns/message-links';
-import { contactLink } from '@/core/features/campaigns/contact-links';
+import { contactLink, safeEmailLink } from '@/core/features/campaigns/contact-links';
+import { demoLinkOrigin } from '@/core/features/bootstrap/demo-links';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
 import { inspectOwnMedia, ownMediaName } from '@/core/features/campaign-assets/own-media';
 import { loadLinkHosts } from '@/core/features/settings/link-hosts';
@@ -26,9 +27,12 @@ export function blockedLinkHosts(destinations: Array<{destination: string; inspe
 /** Review, approval and test-send inspect the same transmitted destinations. */
 export async function inspectRevisionLinks(snapshot: LinkCheckInput, platform: LifecyclePlatform) {
   await loadLinkHosts(platform);
-  if(catalogBlocks(snapshot.revision.emailBody).length){try{const values=await liveCatalogValues(platform,snapshot.revision.emailBody);snapshot={...snapshot,revision:{...snapshot.revision,emailBody:insertCatalogHtml(snapshot.revision.emailBody,values),emailText:catalogTextValues(snapshot.revision.emailText,values)}};const issues=inspectEmailHtml(snapshot.revision.emailBody).issues;if(issues.length)return [{destination:'Chosen catalog presentation',inspection:{ok:false,detail:issues.join(' ')}}];}catch{return [{destination:'Chosen catalog products',inspection:{ok:false,detail:'The chosen catalog values could not be read.'}}];}}
+  const demoOrigin = demoLinkOrigin(platform.config);
+  // A demo serves its own pages and sends nothing, so they need no network inspection (demo-links.ts).
+  const demoPage = (destination: string) => safeEmailLink(destination, false, demoOrigin) && new URL(destination).origin === demoOrigin;
+  if(catalogBlocks(snapshot.revision.emailBody).length){try{const values=await liveCatalogValues(platform,snapshot.revision.emailBody);snapshot={...snapshot,revision:{...snapshot.revision,emailBody:insertCatalogHtml(snapshot.revision.emailBody,values),emailText:catalogTextValues(snapshot.revision.emailText,values)}};const issues=inspectEmailHtml(snapshot.revision.emailBody,undefined,demoOrigin).issues;if(issues.length)return [{destination:'Chosen catalog presentation',inspection:{ok:false,detail:issues.join(' ')}}];}catch{return [{destination:'Chosen catalog products',inspection:{ok:false,detail:'The chosen catalog values could not be read.'}}];}}
   const destinations = new Set(snapshot.links.map(link => link.destinationUrl));
-  for (const destination of inspectEmailHtml(snapshot.revision.emailBody).destinations) destinations.add(destination);
+  for (const destination of inspectEmailHtml(snapshot.revision.emailBody, undefined, demoOrigin).destinations) destinations.add(destination);
   const authored = `${snapshot.revision.emailBody}\n${snapshot.revision.emailText}\n${snapshot.revision.smsBody}`;
   for (const destination of textLinkDestinations(authored)) destinations.add(destination);
   return Promise.all([...destinations].map(async destination => {
@@ -37,6 +41,8 @@ export async function inspectRevisionLinks(snapshot: LinkCheckInput, platform: L
       ? {ok: true, detail: 'Validated contact link; no host or network inspection required.'}
       : ownMedia
       ? await inspectOwnMedia(platform.database.$client, platform.blobs, ownMedia)
+      : demoPage(destination)
+      ? {ok: true, detail: 'A page of this demo; no network inspection required.'}
       : await platform.linkInspector.inspect(destination)};
   }));
 }

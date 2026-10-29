@@ -9,6 +9,7 @@ import { smsProgrammeSchema } from '@/core/features/sms/policy';
 import {renderTracking} from './message-tracking';
 import { renderMessageContent, invalidMessagePersonalisation } from '@/core/features/campaigns/message-content';
 import { inspectEmailHtml } from '@/core/features/campaigns/email-html-policy';
+import { demoLinkOrigin } from '@/core/features/bootstrap/demo-links';
 import { confirmationUnsubscribePath, oneClickUnsubscribePath } from '@/core/features/audience/unsubscribe-paths';
 import type { DeliveryRequest, EligibilityResult, LifecycleRuntime } from './types';
 import type { LifecycleRepository } from './repository';
@@ -38,13 +39,14 @@ export async function prepareDeliveryRequest(
     return { request, trackedLinks: [] };
   }
   let catalog:CatalogRenderings|undefined;
+  const demoOrigin=demoLinkOrigin(runtime.platform.config);
   if(catalogBlocks(envelope.revision.emailBody).length){
     try{catalog=await liveCatalogValues(runtime.platform,envelope.revision.emailBody);}catch(error){throw new CatalogDeliverySkip(error instanceof CatalogBlocked?'catalog-blocked':'catalog-unavailable');}
     if(Object.values(catalog).some(value=>value.skip))throw new CatalogDeliverySkip('catalog-empty');
     const expanded={emailBody:insertCatalogHtml(envelope.revision.emailBody,catalog),emailText:catalogTextValues(envelope.revision.emailText,catalog),smsBody:envelope.revision.smsBody};
-    if(inspectEmailHtml(expanded.emailBody).issues.length||(await inspectRevisionLinks({revision:expanded,links:[]},runtime.platform)).some(row=>!row.inspection.ok))throw new CatalogDeliverySkip('catalog-blocked');
+    if(inspectEmailHtml(expanded.emailBody,undefined,demoOrigin).issues.length||(await inspectRevisionLinks({revision:expanded,links:[]},runtime.platform)).some(row=>!row.inspection.ok))throw new CatalogDeliverySkip('catalog-blocked');
   }
-  const htmlPolicy = inspectEmailHtml(envelope.revision.emailBody);
+  const htmlPolicy = inspectEmailHtml(envelope.revision.emailBody, undefined, demoOrigin);
   const invalidTokens = invalidMessagePersonalisation(envelope.revision);
   if (invalidTokens.length || (envelope.recipient.channel === 'email' && htmlPolicy.issues.length)) {
     throw new Error(`Saved content is outside the allowed authoring set: ${[...htmlPolicy.issues, ...invalidTokens].join(' ')}`);

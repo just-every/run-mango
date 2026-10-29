@@ -5,6 +5,7 @@ import {readEmailBlocks,writeEmailBlocks} from './email-blocks';
 import {blockKey,reusableBlock,replacePlacedBlocks,ReusableBlockError,type PlacementTarget,type ReusableBlock} from './reusable-block-model';
 import {checkReusableSize,readReusableTarget,targetSnapshot,targetSnapshotGuard,targetWrites,type ReusableTarget} from './reusable-block-targets';
 import {copyReusableRevision} from './reusable-block-copy';
+import {demoLinkOrigin} from '@/core/features/bootstrap/demo-links';
 type LibraryRow={id:string;name:string;block_json:string;version:number};
 type Use={id:string;block_id:string;target_kind:PlacementTarget['kind'];target_id:string;node_id:string;position:number;block_json:string;replacement_revision_id:string|null};
 const entry=(row:LibraryRow)=>({id:row.id,name:row.name,version:row.version,block:JSON.parse(row.block_json) as ReusableBlock});
@@ -16,7 +17,7 @@ export function reusableBlockService(platform:Platform){
   return {
     async list(){return {blocks:(await db.prepare('SELECT id,name,block_json,version FROM reusable_email_blocks ORDER BY name,id').all<LibraryRow>()).results.map(entry)};},
     async create(name:string,value:unknown,actor:string){
-      const block=reusableBlock(value),id=crypto.randomUUID(),now=Date.now();
+      const block=reusableBlock(value,demoLinkOrigin(platform.config)),id=crypto.randomUUID(),now=Date.now();
       await db.batch([db.prepare('INSERT INTO reusable_email_blocks(id,name,block_json,version,edit_token,created_by,updated_by,created_at,updated_at) VALUES(?,?,?,1,?,?,?,?,?)').bind(id,name,blockKey(block),crypto.randomUUID(),actor,actor,now,now),
         db.prepare("INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) VALUES(?,?,'reusable-email-block',?,'reusable-block.created','operator',?,'{}',?,?)").bind(crypto.randomUUID(),crypto.randomUUID(),id,actor,now,now)]);
       return entry((await read(id))!);
@@ -45,7 +46,7 @@ export function reusableBlockService(platform:Platform){
     },
     async update(id:string,version:number,name:string,value:unknown,actor:string){
       const source=await read(id);if(!source||source.version!==version)throw new ReusableBlockError('This reusable block changed. Reload the library before editing it.');
-      const next=reusableBlock(value),json=blockKey(next),uses=(await db.prepare('SELECT * FROM reusable_email_block_placements WHERE block_id=? ORDER BY target_kind,target_id,node_id,position').bind(id).all<Use>()).results;
+      const next=reusableBlock(value,demoLinkOrigin(platform.config)),json=blockKey(next),uses=(await db.prepare('SELECT * FROM reusable_email_block_placements WHERE block_id=? ORDER BY target_kind,target_id,node_id,position').bind(id).all<Use>()).results;
       const groups=new Map<string,Use[]>();
       for(const use of uses){const key=JSON.stringify([use.target_kind,use.target_id,use.node_id]);groups.set(key,[...(groups.get(key)??[]),use]);}
       const targets=await Promise.all([...groups.values()].map(async uses=>({uses,value:await readReusableTarget(platform,{kind:uses[0].target_kind,id:uses[0].target_id,nodeId:uses[0].node_id})})));

@@ -8,9 +8,10 @@ export const reusableBlockSchema=z.object({html:z.string().min(1).max(102400),mo
 export type ReusableBlock=z.infer<typeof reusableBlockSchema>;
 export const placementTargetSchema=z.object({kind:z.enum(['campaign','template','flow']),id:z.string().min(1).max(200),nodeId:z.string().max(64).default('')}).strict().refine(target=>target.kind==='flow'?Boolean(target.nodeId):target.nodeId==='', 'Only flow placements name an email node.');
 export type PlacementTarget=z.infer<typeof placementTargetSchema>;
-export function reusableBlock(value:unknown):ReusableBlock {
+/** `demoOrigin` is a demo's own origin, whose pages its blocks may link to (demo-links.ts). */
+export function reusableBlock(value:unknown,demoOrigin?:string):ReusableBlock {
   const parsed=reusableBlockSchema.parse(value),source=writeEmailBlocks([{id:'reusable',...parsed}]);
-  const issues=inspectEmailHtml(source).issues;
+  const issues=inspectEmailHtml(source,undefined,demoOrigin).issues;
   if(issues.length)throw new ReusableBlockError(issues.join(' '));
   const blocks=readEmailBlocks(authoredBody(normalizeAuthoredContent({emailBody:source}).emailBody!));
   if(blocks.length!==1)throw new ReusableBlockError('Save one complete block at a time.');

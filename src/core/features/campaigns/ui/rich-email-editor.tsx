@@ -6,19 +6,21 @@ import { requiresHtmlEditing } from '../email-presentation';
 import { authoredBody, htmlToText } from '../authoring-content';
 import { authoredEditorHtml, editorHtml } from './editor-html';
 import { InsertImage } from '@/core/features/campaign-assets/ui/insert-image';
+import { useDemoOrigin } from '@/core/app/client/lib/demo-origin';
 
 export function RichEmailEditor({value, onChange, busy, designImport,campaignId}: {campaignId?:string;value:string; busy:boolean; onChange:(value:string)=>void; designImport?: ReactNode}) {
   const [mode,setMode] = useState<'rich'|'html'|'blocks'>('rich');
   const editor = useRef<HTMLDivElement>(null), caret = useRef<number>(undefined);
+  const demoOrigin = useDemoOrigin();
   const body = authoredBody(value);
   const htmlOnly = requiresHtmlEditing(body);
   const htmlMode = mode==='html' || htmlOnly;
-  useEffect(() => { if (editor.current && authoredEditorHtml(editor.current) !== body) editor.current.innerHTML = editorHtml(body); }, [body,mode]);
+  useEffect(() => { if (editor.current && authoredEditorHtml(editor.current) !== body) editor.current.innerHTML = editorHtml(body, demoOrigin); }, [body,mode,demoOrigin]);
   const paste = (event: React.ClipboardEvent<HTMLDivElement>) => {
     event.preventDefault();
     const html=event.clipboardData.getData('text/html');
     if (requiresHtmlEditing(html)) {setMode('html');onChange(body+html);return;}
-    if(html) document.execCommand('insertHTML',false,editorHtml(html));
+    if(html) document.execCommand('insertHTML',false,editorHtml(html,demoOrigin));
     else document.execCommand('insertText',false,event.clipboardData.getData('text/plain'));
     if(editor.current)onChange(authoredEditorHtml(editor.current));
   };
