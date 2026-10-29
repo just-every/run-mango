@@ -3730,7 +3730,7 @@
       "executable": false
     },
     "src/core/features/auth/ui/activity-page.tsx": {
-      "sha256": "8bacb74dba792c72035599b22564b726b3d5732917120e8d8fd27a038aef8f81",
+      "sha256": "e21d6ff8a8898d57cac09967e720d464f3aaf8ed1b39b6b5bce239a15613e22a",
       "executable": false
     },
     "src/core/features/auth/ui/activity-wording.ts": {
@@ -9302,7 +9302,7 @@
       "executable": false
     },
     "tests/newsletter-ui/representative-pages.journeys.ts": {
-      "sha256": "3123dbfb890562e704df69464cb00d263e9b90b03c232bac17005f326839ed9f",
+      "sha256": "33fbf8b6c93911bcccc883a756723385d6ec74f5de8d639709de9d5921a14de0",
       "executable": false
     },
     "tests/newsletter-ui/sender-playwright.config.js": {
@@ -9374,7 +9374,7 @@
       "executable": false
     },
     "tests/rendering.spec.ts": {
-      "sha256": "46208fd18688ee67e3f1894b2ecefca2742f215fbae2825ceb53a8c3ebdf1773",
+      "sha256": "884e703c4a2aae34aee20dc7a94b2b3e0d8581bce093eb44c78f8bbd793ca89d",
       "executable": false
     },
     "tests/review/platform.ts": {
