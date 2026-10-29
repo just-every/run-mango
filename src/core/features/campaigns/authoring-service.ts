@@ -1,3 +1,4 @@
+import {assertAgentHandoff} from '../settings/sender-authority';
 import {loadAnalyticsPolicy} from '@/core/features/settings/analytics-settings';
 import { savedEmailSize } from './saved-email-size';
 import { normalizeAuthoredContent } from './authoring-content';
@@ -82,6 +83,7 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
           sourceType:failed[0].sourceType, error:failed.map(issue => issue.detail).join(' '), now:new Date()});
         return {kind:'unavailable', detail:authoringSourceIssues(issues)};
       }
+      await assertAgentHandoff(platform);
       return createProposalService(createProposalRepository(platform.database), platform.ai).generate({
         evidence:rows.results.map(row => ({key:row.id, sourceRecordId:row.id, sourceType:row.source_type, observedValue:JSON.parse(row.payload), occurredAt:new Date(row.occurred_at)})),
         actorId:operatorId,

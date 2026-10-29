@@ -5,8 +5,9 @@ export const sendingEvents=['delivered','bounce','dropped','deferred','spam_repo
 export class SendingConnectionError extends Error {
   constructor(readonly reason:string,readonly missing:string[]=[],readonly status?:number) {super(reason);}
 }
-export function sendgridAccount(apiKey:string) {
+export function sendgridAccount(apiKey:string,beforeRequest?:()=>Promise<void>) {
   async function request(path:string,method='GET',body?:unknown) {
+    await beforeRequest?.();
     const response=await fetch('https://api.sendgrid.com/v3'+path,{method,redirect:'manual',headers:{Authorization:'Bearer '+apiKey,
       ...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(15000)});
     if(!response.ok)throw new SendingConnectionError(response.status===401||response.status===403?'SendGrid refused this key or its permission.':`SendGrid request failed (${response.status}).`,[],response.status);

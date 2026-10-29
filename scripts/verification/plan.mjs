@@ -51,6 +51,7 @@ export function verificationGroups({stage,shard,files,testsOnly}, cpuBudget) {
     [{name:'command-contract',command:process.execPath,args:['node_modules/@runeditrun/rer/bin/rer.mjs','check','--profile','first-party']},pnpm('source',['run','source:check'])],
     [pnpm('typecheck',['run','typecheck']),pnpm('build',['run','build'])],
     [pnpm('integration',['run','integration:check']),{name:'deploy-optional-secrets',command:process.execPath,args:['--test','operations/deploy-optional-secrets.test.mjs']}],
+    [{name:'agent-door',command:process.execPath,args:['--test','operations/agent-door.test.mjs']}],
   ];
   if(stage==='static')return staticGroups;
   if(stage)return [[browser(stage,files??(stage==='local-start-slow'?['local.journey.ts']:undefined),shard)]];

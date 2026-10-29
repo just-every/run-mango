@@ -7,9 +7,11 @@ An integration credential lets an application such as Coffer keep contacts and e
 | `contacts:read` | Read contacts, fields, tags and integration lists. |
 | `contacts:write` | Upsert contacts into its lists and suppress email. |
 | `events:read` | Read unsubscribe, bounce, complaint and suppression changes. |
-| `campaigns:send` | Dispatch a due campaign already approved by a person for the credential's exact saved segment. |
+| `campaigns:send` | Dispatch a due campaign already authorized under current company policy for the credential's exact saved segment. |
 
 A credential grants no operator sign-in, campaign editing or approval. Every request is recorded in **Settings → Integration activity**, including refused requests. Revocation stops the next request. Create a replacement and update the client before revoking an old credential when rotating access.
+
+Before a key reads private contacts, lists, memberships or events, or queues an authorized campaign, the Owner must choose an explicit company policy in **Agents**. A paired installation receives that policy from Business. Unset policy, a blocked action or Pause refuses the request. The key keeps its creating sponsor and original scopes; current native role and contact-visibility restrictions still apply. Public SDK intake retains its separate admission and requires real consent evidence.
 
 ## Send a contact to Mango
 
@@ -57,7 +59,7 @@ This feed includes confirmed unsubscribe clicks, mailbox one-click unsubscribes 
 
 ## Dispatch an approved segment campaign
 
-First a Mango operator saves the campaign against the integration's segment, reviews its exact content and approves its schedule. Then a credential with `campaigns:send` can request dispatch of a due step:
+First save the campaign against the integration's segment. Its exact content and schedule must pass native checks and receive authorization under company policy, with a real person's approval when policy requires it. Then a credential with `campaigns:send` can request dispatch of a due step:
 
 ```sh
 curl --fail-with-body "$MANGO_URL/api/integrations/v1/campaigns/CAMPAIGN_ID/send" \
