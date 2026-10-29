@@ -61,16 +61,16 @@ BIMI needs enforced DMARC (`p=quarantine` or `p=reject`, full enforcement includ
 
 Mango sends text messages through Mobile Message, to Australian mobile numbers. They run on a deployment; a copy on your computer keeps them off.
 
-1. In Mobile Message, get API credentials and a dedicated two-way number, and add a signed inbound webhook to `https://<your-deployment>/webhooks/sms/mobile-message`.
+1. In Mobile Message, get API credentials and a dedicated two-way number, then add a signed inbound webhook to `https://<your-deployment>/webhooks/sms/mobile-message` and keep its signing secret.
 2. In your Mango checkout, write the six settings to a private file, `.rer/sms.env`:
 
    ```bash
    SMS_PROVIDER_API_KEY='<API username>:<API password>'
    SMS_WEBHOOK_SECRET='<the webhook signing secret>'
-   SMS_CONFIRMATION_SENDER='<the dedicated number, such as +61400000000>'
-   SMS_PROGRAMME_POLICY='<your programme, as JSON on one line>'
-   MANGO_TEST_SMS_ALLOWLIST='<numbers that may receive test messages, separated by commas>'
-   MANGO_SMS_HANDOFFS_PER_MINUTE='<most messages Mango hands to Mobile Message each minute>'
+   SMS_CONFIRMATION_SENDER='<the dedicated number, +61…>'
+   SMS_PROGRAMME_POLICY='<your programme, as one line of JSON>'
+   MANGO_TEST_SMS_ALLOWLIST='<test numbers, separated by commas>'
+   MANGO_SMS_HANDOFFS_PER_MINUTE='<most messages per minute>'
    ```
 
    The programme names your brand, help contact and sending hours; [SMS signup and compliance](./signup-and-consent.md#sms-signup-and-compliance) lists its fields.
@@ -102,14 +102,14 @@ Cart and browsing events come from your Shopify store through the Mango Web Pixe
    subpath = "mango-signals"
    ```
 
-3. Copy `extensions/mango-pixel` from your Mango checkout into the app's Shopify CLI project and release it. Then activate it with the Admin API's `webPixelCreate` and the settings `{"channel":"<a new name for this installation>","proxyPath":"/apps/mango-signals"}`.
+3. Copy `extensions/mango-pixel` from your Mango checkout into the app's Shopify CLI project and release it. Then activate it with the Admin API's `webPixelCreate` and the settings `{"channel":"<a new name for this installation>","proxyPath":"/apps/mango-signals"}`, and keep the pixel ID it returns.
 4. Subscribe `carts/create` and `carts/update` to `https://<your-deployment>/webhooks/commerce/shopify` with the Admin API's `webhookSubscriptionCreate`: JSON, API version 2026-07, no filter.
 5. Write the four pixel settings to a private file, `.rer/shopify.env`:
 
    ```bash
    COMMERCE_OBSERVATION_CHANNEL='<the channel name from step 3>'
-   COMMERCE_APP_INSTALLATION_ID='<the app installation ID, gid://shopify/AppInstallation/…>'
-   COMMERCE_PIXEL_ID='<the ID webPixelCreate returned, gid://shopify/WebPixel/…>'
+   COMMERCE_APP_INSTALLATION_ID='<the currentAppInstallation ID>'
+   COMMERCE_PIXEL_ID='<the pixel ID from step 3>'
    COMMERCE_PROXY_PATH='/apps/mango-signals'
    ```
 
