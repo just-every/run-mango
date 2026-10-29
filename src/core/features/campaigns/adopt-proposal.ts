@@ -1,3 +1,4 @@
+import {actorType,actorId as nativeActorId} from '../agent-door/custody';
 import {eq} from 'drizzle-orm';
 import {campaignRevisions} from './campaign-schema';
 import {savedEmailSize} from './saved-email-size';
@@ -40,7 +41,7 @@ export async function adoptProposal(database: Database, proposalId: string, oper
       SELECT ?, ?, 1, 'draft', title, '', ?, ?, '', '', ?, ?, ?, '', ?, 'newsletter', ?, inclusion_rule_json, exclusion_rules_json, ?, 0, ?, ?, COALESCE((SELECT policy_json FROM audience_exclusion_settings WHERE id=1),'{"enabled":true,"windowDays":365,"includeOpenOnly":false}'), COALESCE((SELECT policy_json FROM analytics_settings WHERE id=1),?) FROM proposals WHERE id = ? AND campaign_id = ?`).bind(revisionId,campaignId,managedFooter,htmlToText(managedFooter),sender.senderName,sender.fromEmail,sender.replyToEmail,sender.physicalAddress,audienceRule,sourceTypesJson,now,now,JSON.stringify(defaultAnalyticsPolicy),proposalId,campaignId),
     ...savedSteps.map((step,index)=>db.prepare(`INSERT INTO campaign_steps (id,revision_id,sequence,channel,timezone,scheduled_at,send_by_at,why_this_time,created_at,updated_at)
       SELECT ?, ?, sequence, channel, timezone, scheduled_at, send_by_at, ?, ?, ? FROM proposal_steps WHERE id = ? AND proposal_id = ? AND ${guard}`).bind(ulid(),revisionId,claims.timing[index],now,now,step.id,proposalId,proposalId,campaignId)),
-    db.prepare(`INSERT INTO campaign_state_transitions (id,campaign_id,from_state,to_state,actor_type,actor_id,reason,occurred_at,created_at) SELECT ?, ?, 'draft', 'draft', 'operator', ?, 'proposal-adopted', ?, ? WHERE ${guard}`).bind(ulid(),campaignId,operatorId,now,now,proposalId,campaignId),
+    db.prepare(`INSERT INTO campaign_state_transitions (id,campaign_id,from_state,to_state,actor_type,actor_id,reason,occurred_at,created_at) SELECT ?, ?, 'draft', 'draft', '${actorType()}', ?, 'proposal-adopted', ?, ? WHERE ${guard}`).bind(ulid(),campaignId,nativeActorId(operatorId),now,now,proposalId,campaignId),
   ]);
   const row = await db.prepare('SELECT campaign_id, state FROM proposals WHERE id = ?').bind(proposalId).first<{state:string;campaign_id:string|null}>();
   if (!row) return {kind:'not_found' as const};

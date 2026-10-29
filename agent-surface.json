@@ -1,0 +1,3788 @@
+{
+  "schema": "rer-agent-surface/1",
+  "seed": "mango",
+  "specialist": "marketer",
+  "tools": [
+    {
+      "name": "mango.access.read",
+      "title": "Access read",
+      "scope": "mango.access.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "OPER-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.access.update",
+      "title": "Access update",
+      "scope": "mango.access.update",
+      "readOnly": false,
+      "classes": [
+        "access"
+      ],
+      "clauses": [
+        "OPER-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "admin",
+              "manager",
+              "author",
+              "analyst",
+              "support"
+            ]
+          },
+          "unmaskedContacts": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "unmaskedContacts"
+        ],
+        "additionalProperties": false
+      },
+      "sponsorEscalation": false
+    },
+    {
+      "name": "mango.activity.read",
+      "title": "Activity read",
+      "scope": "mango.activity.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "OPER-007"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agent": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "operator": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "object": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.assets.attach",
+      "title": "Assets attach",
+      "scope": "mango.assets.attach",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CAMP-012"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "contentType": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/gif",
+              "image/webp"
+            ]
+          },
+          "base64": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "contentType",
+          "base64"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.audience.read",
+      "title": "Audience read",
+      "scope": "mango.audience.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CONT-001",
+        "AUD-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.blocks.create",
+      "title": "Reusable blocks create",
+      "scope": "mango.blocks.create",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "block": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "html": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 102400
+              },
+              "mobile": {
+                "type": "object",
+                "properties": {
+                  "hideOnMobile": {
+                    "type": "boolean"
+                  },
+                  "hideOnDesktop": {
+                    "type": "boolean"
+                  },
+                  "orientation": {
+                    "type": "string",
+                    "enum": [
+                      "stack",
+                      "stack-columns"
+                    ]
+                  },
+                  "contentCell": {
+                    "type": "boolean",
+                    "const": true
+                  },
+                  "fontSize": {
+                    "type": "integer",
+                    "minimum": 10,
+                    "maximum": 72
+                  },
+                  "lineHeight": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 3,
+                    "multipleOf": 0.01
+                  },
+                  "padding": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 64
+                  },
+                  "alignment": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "center",
+                      "right"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "html"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "name",
+          "block"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.blocks.detach",
+      "title": "Reusable blocks detach",
+      "scope": "mango.blocks.detach",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "target": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "campaign",
+                  "template",
+                  "flow"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "nodeId": {
+                "type": "string",
+                "maxLength": 64
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "target"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.blocks.place",
+      "title": "Reusable blocks place",
+      "scope": "mango.blocks.place",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "target": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "campaign",
+                  "template",
+                  "flow"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "nodeId": {
+                "type": "string",
+                "maxLength": 64
+              }
+            },
+            "required": [
+              "kind",
+              "id"
+            ],
+            "additionalProperties": false
+          },
+          "emailBody": {
+            "type": "string",
+            "maxLength": 500000
+          }
+        },
+        "required": [
+          "id",
+          "version",
+          "target"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.blocks.read",
+      "title": "Blocks read",
+      "scope": "mango.blocks.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.blocks.update",
+      "title": "Blocks update",
+      "scope": "mango.blocks.update",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "block": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "html": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 102400
+              },
+              "mobile": {
+                "type": "object",
+                "properties": {
+                  "hideOnMobile": {
+                    "type": "boolean"
+                  },
+                  "hideOnDesktop": {
+                    "type": "boolean"
+                  },
+                  "orientation": {
+                    "type": "string",
+                    "enum": [
+                      "stack",
+                      "stack-columns"
+                    ]
+                  },
+                  "contentCell": {
+                    "type": "boolean",
+                    "const": true
+                  },
+                  "fontSize": {
+                    "type": "integer",
+                    "minimum": 10,
+                    "maximum": 72
+                  },
+                  "lineHeight": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 3,
+                    "multipleOf": 0.01
+                  },
+                  "padding": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 64
+                  },
+                  "alignment": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "center",
+                      "right"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "html"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "version",
+          "block"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.authorize",
+      "title": "Campaigns authorize",
+      "scope": "mango.campaigns.authorize",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CAMP-004",
+        "AUD-005",
+        "SEND-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "revisionId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.cancel",
+      "title": "Campaigns cancel",
+      "scope": "mango.campaigns.cancel",
+      "readOnly": false,
+      "classes": [
+        "standard",
+        "live"
+      ],
+      "clauses": [
+        "CAMP-005",
+        "CAMP-011"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.check",
+      "title": "Campaigns check",
+      "scope": "mango.campaigns.check",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CAMP-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.create",
+      "title": "Campaigns create",
+      "scope": "mango.campaigns.create",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CAMP-001",
+        "CAMP-003"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "composition": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "designTemplateKey": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "audienceRule": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "emailSubject": {
+                "type": "string",
+                "maxLength": 250
+              },
+              "emailBody": {
+                "type": "string"
+              },
+              "emailMobile": {
+                "maxItems": 128,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "block": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 127
+                    },
+                    "hideOnMobile": {
+                      "type": "boolean"
+                    },
+                    "hideOnDesktop": {
+                      "type": "boolean"
+                    },
+                    "orientation": {
+                      "type": "string",
+                      "enum": [
+                        "stack",
+                        "stack-columns"
+                      ]
+                    },
+                    "contentCell": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "fontSize": {
+                      "type": "integer",
+                      "minimum": 10,
+                      "maximum": 72
+                    },
+                    "lineHeight": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 3,
+                      "multipleOf": 0.01
+                    },
+                    "padding": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 64
+                    },
+                    "alignment": {
+                      "type": "string",
+                      "enum": [
+                        "left",
+                        "center",
+                        "right"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "block"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "emailText": {
+                "type": "string"
+              },
+              "preheader": {
+                "type": "string",
+                "maxLength": 250
+              },
+              "smsBody": {
+                "type": "string",
+                "maxLength": 1600
+              },
+              "senderName": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "fromEmail": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "replyToEmail": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "smsSender": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "physicalAddress": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "messageCategory": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "inclusionRuleJson": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "exclusionRulesJson": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 20000
+              },
+              "sourceTypesJson": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 2000
+              },
+              "trackingEnabled": {
+                "type": "boolean"
+              },
+              "utmPolicyJson": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "links": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 160
+                    },
+                    "destinationUrl": {
+                      "type": "string",
+                      "maxLength": 2000,
+                      "format": "uri"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "destinationUrl"
+                  ]
+                }
+              },
+              "steps": {
+                "maxItems": 25,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "type": "string",
+                      "enum": [
+                        "email",
+                        "sms"
+                      ]
+                    },
+                    "timezone": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "scheduledAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "localScheduledAt": {
+                      "type": "string"
+                    },
+                    "sendByAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "localSendByAt": {
+                      "type": "string"
+                    },
+                    "whyThisTime": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                    }
+                  },
+                  "required": [
+                    "channel",
+                    "timezone",
+                    "whyThisTime"
+                  ]
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.duplicate",
+      "title": "Campaigns duplicate",
+      "scope": "mango.campaigns.duplicate",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CAMP-018"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.edit_schedule",
+      "title": "Campaigns edit schedule",
+      "scope": "mango.campaigns.edit_schedule",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CAMP-005",
+        "CAMP-007"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.enqueue",
+      "title": "Queue an authorized campaign",
+      "scope": "mango.campaigns.enqueue",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CAMP-004",
+        "AUD-005",
+        "SEND-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "revisionId": {
+            "type": "string"
+          },
+          "segmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "revisionId",
+          "segmentId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.followup",
+      "title": "Campaigns followup",
+      "scope": "mango.campaigns.followup",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CAMP-019"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "subject": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "delayHours": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 720
+          },
+          "metric": {
+            "type": "string",
+            "enum": [
+              "click",
+              "open-estimate"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "subject",
+          "delayHours",
+          "metric"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.list",
+      "title": "Campaigns list",
+      "scope": "mango.campaigns.list",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CAMP-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "scheduled",
+              "dispatching",
+              "paused",
+              "completed",
+              "cancelled"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "email",
+              "sms"
+            ]
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.pause",
+      "title": "Campaigns pause",
+      "scope": "mango.campaigns.pause",
+      "readOnly": false,
+      "classes": [
+        "live"
+      ],
+      "clauses": [
+        "CAMP-005",
+        "CAMP-011"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.read",
+      "title": "Campaigns read",
+      "scope": "mango.campaigns.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CAMP-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.reauthorize",
+      "title": "Campaigns reauthorize",
+      "scope": "mango.campaigns.reauthorize",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CAMP-004",
+        "MSG-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "revisionId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.refresh_checks",
+      "title": "Campaigns refresh checks",
+      "scope": "mango.campaigns.refresh_checks",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CAMP-004",
+        "MSG-006"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "revisionId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.resume",
+      "title": "Campaigns resume",
+      "scope": "mango.campaigns.resume",
+      "readOnly": false,
+      "classes": [
+        "live"
+      ],
+      "clauses": [
+        "CAMP-005",
+        "CAMP-011"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.test_send",
+      "title": "Campaigns test send",
+      "scope": "mango.campaigns.test_send",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CAMP-006",
+        "MSG-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "email",
+              "sms"
+            ]
+          },
+          "to": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        },
+        "required": [
+          "id",
+          "revisionId",
+          "channel",
+          "to"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.campaigns.update",
+      "title": "Campaigns update",
+      "scope": "mango.campaigns.update",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CAMP-003",
+        "CAMP-007"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "composition": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "designTemplateKey": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "audienceRule": {
+                "type": "string",
+                "maxLength": 4000
+              },
+              "emailSubject": {
+                "type": "string",
+                "maxLength": 250
+              },
+              "emailBody": {
+                "type": "string"
+              },
+              "emailMobile": {
+                "maxItems": 128,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "block": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 127
+                    },
+                    "hideOnMobile": {
+                      "type": "boolean"
+                    },
+                    "hideOnDesktop": {
+                      "type": "boolean"
+                    },
+                    "orientation": {
+                      "type": "string",
+                      "enum": [
+                        "stack",
+                        "stack-columns"
+                      ]
+                    },
+                    "contentCell": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "fontSize": {
+                      "type": "integer",
+                      "minimum": 10,
+                      "maximum": 72
+                    },
+                    "lineHeight": {
+                      "type": "number",
+                      "minimum": 1,
+                      "maximum": 3,
+                      "multipleOf": 0.01
+                    },
+                    "padding": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 64
+                    },
+                    "alignment": {
+                      "type": "string",
+                      "enum": [
+                        "left",
+                        "center",
+                        "right"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "block"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "emailText": {
+                "type": "string"
+              },
+              "preheader": {
+                "type": "string",
+                "maxLength": 250
+              },
+              "smsBody": {
+                "type": "string",
+                "maxLength": 1600
+              },
+              "senderName": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "fromEmail": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "replyToEmail": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "format": "email",
+                    "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+                  },
+                  {
+                    "type": "string",
+                    "const": ""
+                  }
+                ]
+              },
+              "smsSender": {
+                "type": "string",
+                "maxLength": 160
+              },
+              "physicalAddress": {
+                "type": "string",
+                "maxLength": 500
+              },
+              "messageCategory": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 160
+              },
+              "inclusionRuleJson": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "exclusionRulesJson": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 20000
+              },
+              "sourceTypesJson": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 2000
+              },
+              "trackingEnabled": {
+                "type": "boolean"
+              },
+              "utmPolicyJson": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "links": {
+                "maxItems": 50,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 160
+                    },
+                    "destinationUrl": {
+                      "type": "string",
+                      "maxLength": 2000,
+                      "format": "uri"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "destinationUrl"
+                  ]
+                }
+              },
+              "steps": {
+                "maxItems": 25,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "channel": {
+                      "type": "string",
+                      "enum": [
+                        "email",
+                        "sms"
+                      ]
+                    },
+                    "timezone": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 100
+                    },
+                    "scheduledAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "localScheduledAt": {
+                      "type": "string"
+                    },
+                    "sendByAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "localSendByAt": {
+                      "type": "string"
+                    },
+                    "whyThisTime": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
+                    }
+                  },
+                  "required": [
+                    "channel",
+                    "timezone",
+                    "whyThisTime"
+                  ]
+                }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "revisionId",
+          "composition"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.connections.read",
+      "title": "Connections read",
+      "scope": "mango.connections.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "MSG-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.connections.update",
+      "title": "Connections update",
+      "scope": "mango.connections.update",
+      "readOnly": false,
+      "classes": [
+        "access",
+        "security",
+        "external"
+      ],
+      "clauses": [
+        "MSG-001",
+        "OPER-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "proposalId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "proposalId"
+        ],
+        "additionalProperties": false
+      },
+      "sponsorEscalation": false
+    },
+    {
+      "name": "mango.consent.dispatch",
+      "title": "Admit consent.dispatch",
+      "scope": "mango.consent.dispatch",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CONT-004",
+        "AUD-005"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.contacts.consent",
+      "title": "Contacts consent",
+      "scope": "mango.contacts.consent",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "CONT-003",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "contact": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "pattern": "^(?!\\.)(?!.*\\.\\.)([A-Za-z0-9_'+\\-\\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\\-]*\\.)+[A-Za-z]{2,}$"
+              },
+              "phone": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "displayName": {
+                "type": "string",
+                "maxLength": 200
+              }
+            }
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "email",
+              "sms"
+            ]
+          },
+          "brandOrLegalSender": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "smsProgram": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "timeZone": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "locationSource": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "locationRecordedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "messageCategory": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "frequencyDisclosure": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "destinationJurisdiction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "captureMethod": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "captureSource": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "consentText": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "consentVersion": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "expressWrittenConsent": {
+            "type": "boolean",
+            "const": true
+          },
+          "permissionMethod": {
+            "type": "string",
+            "enum": [
+              "in-person",
+              "event",
+              "phone",
+              "written"
+            ]
+          },
+          "affirmed": {
+            "type": "boolean",
+            "const": true
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 2000
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "maxProperties": 50
+          }
+        },
+        "required": [
+          "contact",
+          "channel",
+          "brandOrLegalSender",
+          "messageCategory",
+          "frequencyDisclosure",
+          "destinationJurisdiction",
+          "captureMethod",
+          "captureSource",
+          "consentText",
+          "consentVersion",
+          "occurredAt"
+        ]
+      }
+    },
+    {
+      "name": "mango.contacts.erase",
+      "title": "Contacts erase",
+      "scope": "mango.contacts.erase",
+      "readOnly": false,
+      "classes": [
+        "destructive"
+      ],
+      "clauses": [
+        "CONT-013",
+        "BASE-DATA-003"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.contacts.merge",
+      "title": "Contacts merge",
+      "scope": "mango.contacts.merge",
+      "readOnly": false,
+      "classes": [
+        "destructive"
+      ],
+      "clauses": [
+        "CONT-008"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "survivorContactId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "mergedContactId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "survivorContactId",
+          "mergedContactId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.contacts.optout",
+      "title": "Contacts optout",
+      "scope": "mango.contacts.optout",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "email",
+              "sms"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "channel"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.contacts.read",
+      "title": "Contacts read",
+      "scope": "mango.contacts.read",
+      "readOnly": true,
+      "classes": [
+        "standard",
+        "sensitive"
+      ],
+      "clauses": [
+        "CONT-001",
+        "OPER-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.delivery.dispatch",
+      "title": "Admit delivery.dispatch",
+      "scope": "mango.delivery.dispatch",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "SEND-001",
+        "AUD-005"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "campaignId": {
+            "type": "string"
+          },
+          "revisionId": {
+            "type": "string"
+          },
+          "stepId": {
+            "type": "string"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "segmentId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "campaignId",
+          "revisionId",
+          "stepId",
+          "channel"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.designs.advance",
+      "title": "Admit designs.advance",
+      "scope": "mango.designs.advance",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "DESIGN-001",
+        "DESIGN-002",
+        "DESIGN-003"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "jobId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "jobId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.designs.choose",
+      "title": "Designs choose",
+      "scope": "mango.designs.choose",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "DESIGN-002",
+        "DESIGN-003"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "slot": {
+            "type": "string",
+            "enum": [
+              "a",
+              "b",
+              "c",
+              "d"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "slot"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.designs.close",
+      "title": "Designs close",
+      "scope": "mango.designs.close",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "DESIGN-002"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "applied",
+              "discarded"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "outcome"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.designs.read",
+      "title": "Designs read",
+      "scope": "mango.designs.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "DESIGN-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.designs.start",
+      "title": "Designs start",
+      "scope": "mango.designs.start",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "DESIGN-001",
+        "DESIGN-003"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "brief": {
+            "type": "string"
+          },
+          "candidates": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 4
+          }
+        },
+        "required": [
+          "id",
+          "brief",
+          "candidates"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.events.list",
+      "title": "List events",
+      "scope": "events:read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BASE-AGENT-010"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "after": {
+            "type": "string"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.flows.activate",
+      "title": "Flows activate",
+      "scope": "mango.flows.activate",
+      "readOnly": false,
+      "classes": [
+        "live"
+      ],
+      "clauses": [
+        "FLOW-008"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "revisionId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.flows.create",
+      "title": "Flows create",
+      "scope": "mango.flows.create",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "FLOW-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "woocommerce-abandoned-checkout"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "tag": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "tag"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.flows.enroll",
+      "title": "Run a supported tag-and-exit step",
+      "scope": "mango.flows.enroll",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "FLOW-008",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "eventId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.flows.pause",
+      "title": "Flows pause",
+      "scope": "mango.flows.pause",
+      "readOnly": false,
+      "classes": [
+        "live"
+      ],
+      "clauses": [
+        "FLOW-008"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "revisionId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.flows.read",
+      "title": "Flows read",
+      "scope": "mango.flows.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "FLOW-001",
+        "FLOW-008"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.flows.update",
+      "title": "Flows update",
+      "scope": "mango.flows.update",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "FLOW-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "graph": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "trigger": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "nodes": {
+                "minItems": 2,
+                "maxItems": 100,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[a-zA-Z0-9-]{1,64}$"
+                    },
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "unavailable",
+                        "trigger",
+                        "delay",
+                        "wait-until",
+                        "condition",
+                        "trigger-split",
+                        "random",
+                        "email",
+                        "sms",
+                        "push",
+                        "property",
+                        "tag",
+                        "webhook",
+                        "notify",
+                        "task",
+                        "exit"
+                      ]
+                    },
+                    "email": {
+                      "type": "object",
+                      "properties": {
+                        "templateId": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 200
+                        },
+                        "subject": {
+                          "type": "string",
+                          "maxLength": 250
+                        },
+                        "preheader": {
+                          "type": "string",
+                          "maxLength": 500
+                        },
+                        "html": {
+                          "type": "string",
+                          "maxLength": 500000
+                        },
+                        "text": {
+                          "type": "string",
+                          "maxLength": 500000
+                        }
+                      },
+                      "required": [
+                        "templateId",
+                        "subject",
+                        "preheader",
+                        "html",
+                        "text"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "label": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 300
+                    },
+                    "next": {
+                      "maxItems": 100,
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "kind",
+                    "label",
+                    "next"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "name",
+              "trigger",
+              "nodes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "graph"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.integrations.contacts",
+      "title": "Read scoped integration contacts",
+      "scope": "mango.integrations.contacts",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "INT-007",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 320
+          },
+          "segmentId": {
+            "type": "string",
+            "maxLength": 160
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.integrations.events",
+      "title": "Read scoped integration events",
+      "scope": "mango.integrations.events",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "INT-007",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "pattern": "^[0-9]+$"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.integrations.memberships",
+      "title": "Read scoped integration memberships",
+      "scope": "mango.integrations.memberships",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "INT-007",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 160
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.integrations.segments",
+      "title": "Read scoped integration segments",
+      "scope": "mango.integrations.segments",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "INT-007",
+        "CONT-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.proposals.adopt",
+      "title": "Proposals adopt",
+      "scope": "mango.proposals.adopt",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "PROP-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.proposals.dismiss",
+      "title": "Proposals dismiss",
+      "scope": "mango.proposals.dismiss",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "PROP-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.proposals.generate",
+      "title": "Proposals generate",
+      "scope": "mango.proposals.generate",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "PROP-001",
+        "PROP-006"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.proposals.read",
+      "title": "Proposals read",
+      "scope": "mango.proposals.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "PROP-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.publications.publish",
+      "title": "Publications publish",
+      "scope": "mango.publications.publish",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "PUB-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "revisionId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.publications.withdraw",
+      "title": "Publications withdraw",
+      "scope": "mango.publications.withdraw",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "PUB-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "publication": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "publication"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.reports.dispatch",
+      "title": "Admit reports.dispatch",
+      "scope": "mango.reports.dispatch",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "REPORT-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "deliveryId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "deliveryId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.reports.policy",
+      "title": "Reports policy",
+      "scope": "mango.reports.policy",
+      "readOnly": false,
+      "classes": [
+        "live"
+      ],
+      "clauses": [
+        "REPORT-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "enabled"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.reports.read",
+      "title": "Reports read",
+      "scope": "mango.reports.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "RESULT-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.reports.schedule",
+      "title": "Reports schedule",
+      "scope": "mango.reports.schedule",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "REPORT-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "cadence": {
+            "type": "string",
+            "enum": [
+              "weekly",
+              "monthly"
+            ]
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        },
+        "required": [
+          "reportId",
+          "cadence",
+          "recipients"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.segments.create",
+      "title": "Segments create",
+      "scope": "mango.segments.create",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "AUD-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "inclusionRuleJson": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "exclusionRulesJson": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "name",
+          "inclusionRuleJson",
+          "exclusionRulesJson"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.segments.delete",
+      "title": "Segments delete",
+      "scope": "mango.segments.delete",
+      "readOnly": false,
+      "classes": [
+        "destructive"
+      ],
+      "clauses": [
+        "AUD-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.segments.read",
+      "title": "Segments read",
+      "scope": "mango.segments.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "AUD-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.segments.update",
+      "title": "Segments update",
+      "scope": "mango.segments.update",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "AUD-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "inclusionRuleJson": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "exclusionRulesJson": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "inclusionRuleJson",
+          "exclusionRulesJson"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.sender.read",
+      "title": "Sender read",
+      "scope": "mango.sender.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "MSG-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.sender.verify",
+      "title": "Sender verify",
+      "scope": "mango.sender.verify",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "MSG-001",
+        "MSG-002"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.signup.read",
+      "title": "Signup read",
+      "scope": "mango.signup.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "FORM-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.signup.update",
+      "title": "Signup update",
+      "scope": "mango.signup.update",
+      "readOnly": false,
+      "classes": [
+        "live",
+        "access",
+        "security"
+      ],
+      "clauses": [
+        "FORM-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "frequencyDisclosure": {
+                "type": "string",
+                "minLength": 3,
+                "maxLength": 200
+              },
+              "embedOrigins": {
+                "default": [],
+                "maxItems": 30,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "maxLength": 300
+                }
+              },
+              "challengeEnabled": {
+                "default": true,
+                "type": "boolean"
+              },
+              "kioskEnabled": {
+                "default": false,
+                "type": "boolean"
+              },
+              "kioskDeviceLabel": {
+                "default": "",
+                "type": "string",
+                "maxLength": 100
+              }
+            },
+            "required": [
+              "frequencyDisclosure"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "settings"
+        ],
+        "additionalProperties": false
+      },
+      "sponsorEscalation": false
+    },
+    {
+      "name": "mango.store.advance",
+      "title": "Admit store.advance",
+      "scope": "mango.store.advance",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "STORE-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sourceType": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceType",
+          "provider",
+          "runId"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.store.read",
+      "title": "Store read",
+      "scope": "mango.store.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "STORE-001"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.store.sync",
+      "title": "Store sync",
+      "scope": "mango.store.sync",
+      "readOnly": false,
+      "classes": [
+        "external"
+      ],
+      "clauses": [
+        "STORE-004"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sourceType": {
+            "type": "string",
+            "enum": [
+              "customer",
+              "product",
+              "order",
+              "refund",
+              "cart",
+              "browsing-event"
+            ]
+          }
+        },
+        "required": [
+          "sourceType"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.templates.read",
+      "title": "Templates read",
+      "scope": "mango.templates.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-002"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.templates.start",
+      "title": "Templates start",
+      "scope": "mango.templates.start",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-002"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.templates.update",
+      "title": "Templates update",
+      "scope": "mango.templates.update",
+      "readOnly": false,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "BUILD-002"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "revisionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "templateId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "updatedAt": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "revisionId",
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mango.witness.read",
+      "title": "Read native change witness",
+      "scope": "mango.witness.read",
+      "readOnly": true,
+      "classes": [
+        "standard"
+      ],
+      "clauses": [
+        "OPER-007",
+        "BASE-OPS-003"
+      ],
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "resources": [
+    "mango://access/{id}",
+    "mango://activity/{id}",
+    "mango://assets/{id}",
+    "mango://blocks/{id}",
+    "mango://campaigns/{id}",
+    "mango://campaigns/{id}/results",
+    "mango://campaigns/{id}/review",
+    "mango://campaigns/{id}/revisions/{revision}",
+    "mango://connections/sending",
+    "mango://contacts/{id}",
+    "mango://designs/{id}",
+    "mango://erasures/{id}",
+    "mango://flows/{id}",
+    "mango://imports/{id}/report",
+    "mango://proposals/{id}",
+    "mango://reports/schedules/{id}",
+    "mango://segments/{id}",
+    "mango://sender/readiness",
+    "mango://signup/newsletter",
+    "mango://store/readiness",
+    "mango://templates/{id}"
+  ],
+  "notTools": [
+    {
+      "clauses": [
+        "DATA-001",
+        "MOVE-001"
+      ],
+      "reason": "import-door"
+    },
+    {
+      "clauses": [
+        "OPER-001"
+      ],
+      "reason": "screen"
+    },
+    {
+      "clauses": [
+        "DATA-001"
+      ],
+      "reason": "installation"
+    }
+  ],
+  "witness": {
+    "tool": "mango.witness.read",
+    "args": {}
+  },
+  "journey": [
+    {
+      "id": "witness",
+      "tool": "mango.witness.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard",
+          "facts": {
+            "measure": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "tool": "mango.store.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "sender",
+      "tool": "mango.sender.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "audience",
+      "tool": "mango.audience.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "create",
+      "tool": "mango.campaigns.create",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard",
+          "facts": {
+            "measure": 1
+          }
+        }
+      ],
+      "inject": {
+        "confirmExternal": true,
+        "class": "standard",
+        "approve": true
+      }
+    },
+    {
+      "id": "campaign",
+      "tool": "mango.campaigns.read",
+      "args": {
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ],
+      "target": {
+        "kind": "campaigns",
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      }
+    },
+    {
+      "id": "update",
+      "tool": "mango.campaigns.update",
+      "args": {
+        "revisionId": {
+          "$from": "create",
+          "pointer": "/revisionId"
+        },
+        "composition": {
+          "name": "Orchard newsletter",
+          "emailSubject": "This week's orchard news",
+          "emailBody": "<p>This week's orchard news.</p>",
+          "emailText": "This week's orchard news."
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ],
+      "inject": {
+        "confirm": true,
+        "policy": "autonomous"
+      },
+      "target": {
+        "kind": "campaigns",
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      }
+    },
+    {
+      "id": "stored-checks",
+      "tool": "mango.campaigns.check",
+      "args": {
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ],
+      "target": {
+        "kind": "campaigns",
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      }
+    },
+    {
+      "id": "duplicate",
+      "tool": "mango.campaigns.duplicate",
+      "args": {
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ],
+      "target": {
+        "kind": "campaigns",
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      }
+    },
+    {
+      "id": "save-template",
+      "tool": "mango.templates.update",
+      "args": {
+        "revisionId": {
+          "$from": "create",
+          "pointer": "/revisionId"
+        },
+        "name": "Orchard draft template"
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "template-draft",
+      "tool": "mango.templates.start",
+      "args": {
+        "id": {
+          "$from": "save-template",
+          "pointer": "/id"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "design-status",
+      "tool": "mango.designs.read",
+      "args": {
+        "id": {
+          "$from": "create",
+          "pointer": "/campaignId"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "signup",
+      "tool": "mango.signup.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "connection",
+      "tool": "mango.connections.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "flow-draft",
+      "tool": "mango.flows.update",
+      "args": {
+        "graph": {
+          "name": "Inert orchard draft",
+          "trigger": "A saved design only",
+          "nodes": [
+            {
+              "id": "start",
+              "kind": "trigger",
+              "label": "Draft trigger",
+              "next": [
+                "exit"
+              ]
+            },
+            {
+              "id": "exit",
+              "kind": "exit",
+              "label": "Exit",
+              "next": []
+            }
+          ]
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "reusable-block",
+      "tool": "mango.blocks.create",
+      "args": {
+        "name": "Orchard introduction",
+        "block": {
+          "html": "<p>News from our orchard.</p>"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "place-block",
+      "tool": "mango.blocks.place",
+      "args": {
+        "id": {
+          "$from": "reusable-block",
+          "pointer": "/id"
+        },
+        "version": {
+          "$from": "reusable-block",
+          "pointer": "/version"
+        },
+        "target": {
+          "kind": "campaign",
+          "id": {
+            "$from": "create",
+            "pointer": "/revisionId"
+          }
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "update-block",
+      "tool": "mango.blocks.update",
+      "args": {
+        "id": {
+          "$from": "reusable-block",
+          "pointer": "/id"
+        },
+        "version": {
+          "$from": "reusable-block",
+          "pointer": "/version"
+        },
+        "name": "Orchard introduction revised",
+        "block": {
+          "html": "<p>Fresh news from our orchard.</p>"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "detach-block",
+      "tool": "mango.blocks.detach",
+      "args": {
+        "id": {
+          "$from": "reusable-block",
+          "pointer": "/id"
+        },
+        "target": {
+          "kind": "campaign",
+          "id": {
+            "$from": "create",
+            "pointer": "/revisionId"
+          }
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "campaigns",
+      "tool": "mango.campaigns.list",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "segment",
+      "tool": "mango.segments.create",
+      "args": {
+        "name": "Recorded subscribers",
+        "inclusionRuleJson": "{\"version\":1,\"operator\":\"all\",\"predicates\":[{\"sourceType\":\"contact\",\"field\":\"emailStatus\",\"comparator\":\"eq\",\"value\":\"subscribed\"}]}",
+        "exclusionRulesJson": "[]"
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "segments",
+      "tool": "mango.segments.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "segment-update",
+      "tool": "mango.segments.update",
+      "args": {
+        "id": {
+          "$from": "segment",
+          "pointer": "/segment/id"
+        },
+        "name": "Current recorded subscribers",
+        "inclusionRuleJson": "{\"version\":1,\"operator\":\"all\",\"predicates\":[{\"sourceType\":\"contact\",\"field\":\"emailStatus\",\"comparator\":\"eq\",\"value\":\"subscribed\"}]}",
+        "exclusionRulesJson": "[]"
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ],
+      "target": {
+        "kind": "segments",
+        "id": {
+          "$from": "segment",
+          "pointer": "/segment/id"
+        }
+      }
+    },
+    {
+      "id": "templates",
+      "tool": "mango.templates.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "blocks",
+      "tool": "mango.blocks.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "flows",
+      "tool": "mango.flows.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "reports",
+      "tool": "mango.reports.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "access",
+      "tool": "mango.access.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "activity",
+      "tool": "mango.activity.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "delete-segment",
+      "tool": "mango.segments.delete",
+      "args": {
+        "id": {
+          "$from": "segment",
+          "pointer": "/segment/id"
+        }
+      },
+      "expect": [
+        {
+          "class": "destructive",
+          "facts": {
+            "measure": 1
+          }
+        }
+      ],
+      "target": {
+        "kind": "segments",
+        "id": {
+          "$from": "segment",
+          "pointer": "/segment/id"
+        }
+      }
+    },
+    {
+      "id": "events",
+      "tool": "mango.events.list",
+      "args": {
+        "limit": 100
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "native-contacts",
+      "tool": "mango.integrations.contacts",
+      "client": "reader",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "native-segments",
+      "tool": "mango.integrations.segments",
+      "client": "reader",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "native-memberships",
+      "tool": "mango.integrations.memberships",
+      "client": "reader",
+      "args": {
+        "id": {
+          "$fixture": "contact",
+          "pointer": "/id"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "native-events",
+      "tool": "mango.integrations.events",
+      "client": "reader",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    }
+  ],
+  "escalations": [],
+  "verification": {
+    "journey": "tests/agent-door/native-journey.mjs",
+    "fixtures": {
+      "module": "tests/agent-door/fixtures.mjs"
+    },
+    "replayAdmission": {
+      "prepare": [
+        "create"
+      ]
+    },
+    "reviewers": [
+      {
+        "label": "quality",
+        "email": "synthetic-mango-reviewer@example.test",
+        "initializer": "tests/agent-door/reviewer.mjs"
+      }
+    ],
+    "owner": {
+      "email": "synthetic-mango-owner@example.test",
+      "bindings": {
+        "RER_MANAGEMENT_ORIGIN": "issuer",
+        "RER_INSTALLATION_ID": "installationId",
+        "MAIL_FROM": "email",
+        "MAIL_AUTH_FROM": "email",
+        "DESIGN_PROVIDER_API_KEY": "token",
+        "DESIGN_PROVIDER_ORIGIN": "appOrigin"
+      },
+      "initializer": "tests/agent-door/owner.mjs"
+    },
+    "network": {
+      "module": "tests/agent-door/network.mjs",
+      "origins": [
+        "https://api.sendgrid.com",
+        "https://api.resend.com",
+        "https://cloudflare-dns.com",
+        "https://rer-hosted-check.invalid"
+      ]
+    }
+  },
+  "pending": [
+    {
+      "id": "PENDING-SEED-2026-10-28-complete-class-journey",
+      "assertion": "Every registered tool/class pair and the three specialist probes have real disposable native fixtures; uncovered pairs must remain failures."
+    }
+  ]
+}

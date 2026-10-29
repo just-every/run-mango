@@ -1,3 +1,4 @@
+import {activityStatement} from './activity-record';
 import {Hono} from 'hono';
 import {z} from 'zod';
 import type {AuthVariables} from './routes';
@@ -32,7 +33,7 @@ export function contactSupportRoutes(db:D1Database, audience:ReturnType<typeof c
     if(!destination)return context.json({error:'channel_destination_missing'},409);
     try {await audience.recordChannelOptOut({contactId,channel:body.data.channel,reason:'operator-recorded-opt-out',occurredAt:now,stableId:id});}
     catch{return context.json({error:'opt_out_unavailable'},503);}
-    await db.prepare("INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) VALUES(?,?,'operator',?,'contact.opt-out-recorded','contact',?,json_object('channel',?),?,?)").bind(id,id,actor,contactId,body.data.channel,now.getTime(),now.getTime()).run();
+    await activityStatement(db,{key:id,actorId:actor,action:'contact.opt-out-recorded',entityType:'contact',entityId:contactId,detail:{channel:body.data.channel},at:now.getTime()}).run();
     return context.json({status:'unsubscribed'});
   });
   return routes;
