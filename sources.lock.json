@@ -2870,7 +2870,7 @@
       "executable": false
     },
     "src/core/app/client/styles/base.css": {
-      "sha256": "cb19ba272e8ad20cac15cfe32640bf45dd565c9b0f216b2973d31188c8b99bbb",
+      "sha256": "9fc2efa962cc71a40c5acb587b741aab3ea377718e0ec6b62f634d0aa40a5bd1",
       "executable": false
     },
     "src/core/app/client/styles/buttons.css": {
@@ -2954,7 +2954,7 @@
       "executable": false
     },
     "src/core/app/client/styles/shell.css": {
-      "sha256": "f2aafb9d4d5ea2271c3687636b612116b031bf267fdb94f447b7ce87323366c5",
+      "sha256": "3b6268b22938198d6d92054e4e7174116031a82fe0b9ecd66178eb93371d100b",
       "executable": false
     },
     "src/core/app/client/styles/surfaces.css": {

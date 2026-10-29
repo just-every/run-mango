@@ -11,6 +11,7 @@ body:has(.mango-app) { min-width: 320px; min-height: 100vh; }
   --sp-6: 24px; --sp-7: 32px; --sp-8: 40px; --sp-9: 56px; --sp-10: 72px;
   --app-gutter: clamp(16px, 3.5vw, 48px);
   --app-max: 1232px;
+  --app-column: #fff;
   --ms-caption-size: 13px;
   color: var(--ms-ink);
   color-scheme: light;
