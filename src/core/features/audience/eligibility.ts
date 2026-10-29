@@ -1,3 +1,4 @@
+import {propertyRuleIssue} from './properties/rule-validation';
 import {flattenPredicates,predicateSourceTypes} from '@/core/features/lifecycle/rules';
 import {createRuleMatcher} from './rule-matcher';
 import {segmentAvailability} from './segment-availability';
@@ -107,6 +108,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     const now = input.now ?? new Date();
     const matcher=createRuleMatcher(repository,store,now,(id,channel)=>selectedChannel(repository,id,channel,now,isSuppressed));
     const sourceGeneration=await repository.sourceGeneration();
+    if(input.inclusionRule){const issue=propertyRuleIssue(await repository.segmentPropertyDefinitions(),input.inclusionRule,input.exclusionRules??[]);if(issue)return {eligible:false as const,reason:issue.error,detail:issue.error+': '+issue.property};}
     const products = input.productIds ?? (input.productId ? [input.productId] : []);
     const ruleSources=input.inclusionRule?[...flattenPredicates(input.inclusionRule),...(input.exclusionRules??[]).map(rule=>rule.predicate)].flatMap(predicateSourceTypes):[];
     const sourceTypes = [...new Set([...[...input.sourceTypes,...ruleSources].map(storeSourceType), ...(products.length ? ['order','refund'] as const : [])])];
@@ -140,6 +142,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
     const included = !input.inclusionRule || await matcher.groupMatches(contact.id,input.inclusionRule,contact);
     const exclusions:string[]=[];
     for(const rule of input.exclusionRules??[])if(await matcher.predicateMatches(contact.id,rule.predicate,contact))exclusions.push(rule.reason);
+    const personalisation={...await repository.propertyPersonalisation(contact.id),...contactPersonalisation(contact,channelData.destination)};
     if(sourceGeneration!==await repository.sourceGeneration()) return {eligible:false as const,reason:'source-authority-changed',detail:'Store authority changed while eligibility was being checked.',retryAt:new Date(now.getTime()+60_000)};
     if (!included) return {
       eligible: false as const,
@@ -157,7 +160,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
         timeZone: channelData.timeZone,
         timeZoneEvidenceAt: channelData.timeZoneEvidenceAt,
         timeZoneEvidenceSource: channelData.timeZoneEvidenceSource,
-        personalisation: contactPersonalisation(contact, channelData.destination),
+        personalisation,
       },
     };
   }
@@ -172,6 +175,7 @@ export function createAudienceEligibility(repository: AudienceRepository, store:
   }) {
     const parsed = parseStructuredRules(JSON.stringify(input.inclusionRule), JSON.stringify(input.exclusionRules));
     if (!parsed.ok) return { status: 'unavailable' as const, sourceTypes: [], detail: parsed.detail };
+    const propertyIssue=propertyRuleIssue(await repository.segmentPropertyDefinitions(),parsed.inclusion,parsed.exclusions);if(propertyIssue)return {status:'unavailable' as const,sourceTypes:[],detail:propertyIssue.error+': '+propertyIssue.property};
     for(const predicate of [...flattenPredicates(parsed.inclusion),...parsed.exclusions.map(rule=>rule.predicate)].filter(p=>p.sourceType==='campaign')) {
       if(!await repository.followupExists(String(predicate.value)))return {status:'unavailable' as const,sourceTypes:[],detail:'The saved follow-up audience is unavailable. Choose an existing source before review.'};
     }

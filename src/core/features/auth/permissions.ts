@@ -59,6 +59,10 @@ export function requiredPermission(method: string, path: string): Capability {
   if (/^\/api\/settings\/integrations(?:\/[^/]+)?$/.test(p)
     || /^\/api\/settings\/integrations\/reviews-loyalty\/[^/]+$/.test(p)
     || /^\/api\/store(?:\/(?:sync|observations))?$/.test(p)) return 'integration.manage';
+  if (p==='/api/contact-properties')return 'contact.unmasked';
+  if (/^\/api\/settings\/properties(?:\/|$)/.test(p))return 'integration.manage';
+  if (/^\/api\/contacts\/[^/]+\/properties$/.test(p))return 'integration.manage';
+  if (read&&/^\/api\/contacts\/[^/]+\/personalisation$/.test(p))return 'contact.unmasked';
   if (p === '/api/settings/link-hosts') return 'campaign.approve';
   if(p==='/api/editor/config')return 'provider.connect';
   if (/^\/api\/settings(?:\/|$)/.test(p)) return 'settings.manage';

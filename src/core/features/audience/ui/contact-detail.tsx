@@ -1,3 +1,4 @@
+import {ContactProperties} from './contact-properties';
 import {Can} from '@/core/features/auth/ui/permissions';
 import {ContactSupport} from '@/core/features/auth/ui/contact-support';
 import {useState} from 'react';
@@ -70,7 +71,7 @@ function ContactPage() {
       </section>
       <div className="contact-layout">
         <div className="contact-layout__records">
-          <ContactProfilePanels data={data}/>
+          <ContactProfilePanels data={data} reload={reload}/>
           <Can permission="report.read"><ContactRetention contactId={id} /></Can>
           <Can permission="contact.privacy-request"><ContactSupport contactId={id} reload={reload}/></Can>
           <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} restricted={data.masked} />
@@ -98,7 +99,7 @@ function ContactPage() {
   );
 }
 
-function ContactProfilePanels({data}:{data:ContactDetail}) {
+function ContactProfilePanels({data,reload}:{data:ContactDetail;reload:()=>Promise<unknown>}) {
   const formatDate=useDateFormatter(),profile=data.profile;
   return <>
     <section className="panel" aria-label="Contact identities" style={{overflowWrap:'anywhere',minWidth:0}}><h2>Identities</h2>
@@ -114,10 +115,7 @@ function ContactProfilePanels({data}:{data:ContactDetail}) {
         </article>):<p>No topic consent recorded.</p>}
       </div>)}<p className="muted-copy">Topic evidence never overrides a channel opt-out or suppression. Full evidence is shown below.</p>
     </section>
-    <section className="panel" aria-label="Contact properties" style={{overflowWrap:'anywhere',minWidth:0}}><h2>Properties</h2>
-      {data.masked?<p>Properties restricted for this role.</p>:profile&&Object.keys(profile.properties).length?<dl>{Object.entries(profile.properties).map(([key,value])=><div key={key}><dt>{key}</dt><dd>{typeof value==='string'?value:JSON.stringify(value)}</dd></div>)}</dl>:<p>No properties recorded.</p>}
-      {!data.masked&&profile?.tags.length?<p>Tags: {profile.tags.join(' · ')}</p>:null}
-    </section>
+    {data.masked?<section className="panel" aria-label="Contact properties"><h2>Properties</h2><p>Properties restricted for this role.</p></section>:<ContactProperties id={data.contact.id} profile={profile} reload={reload}/>}
     <section className="panel" aria-label="Segment membership"><h2>Segment membership</h2>
       {data.masked?<p>Segment details restricted for this role.</p>:profile?.segments.length?profile.segments.map(segment=><p key={segment.id}>{segment.name} · {segment.state==='member'?'Member':'Membership unavailable: required evidence is unavailable'}</p>):<p>No segment membership.</p>}
       <p className="muted-copy">Calculated from current recorded facts using saved audience rules.</p>

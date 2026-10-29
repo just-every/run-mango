@@ -90,4 +90,5 @@ export const contactErasureTables:ErasureTable[]=[
   ...['sending_connection','sending_proposals'].map(table=>({table,where:()=>({sql:'0',params:[]})})),
   {...contact('incumbent_consent_links'),literal:true,mode:'contact-data'},
   {table:'flow_draft_revisions',literal:true,mode:'redact'},
+  {table:'contact_property_definitions',literal:true,mode:'redact'},
 ];

@@ -63,6 +63,17 @@ export const walk0 = async () => {
     expect(await source.db.prepare("SELECT message_unsubscribed_at,unsubscribe_method FROM recipient_steps WHERE id='synthetic-mango-historic-recipient'").first()).toEqual({message_unsubscribed_at:2,unsubscribe_method:null});
     expect(await source.db.prepare("SELECT display_name FROM contacts WHERE id='prior-upgrade'").first()).toEqual({display_name:'Prior data'});
     expect((await source.db.prepare('SELECT count(*) n FROM imported_engagement_facts').first()).n).toBe(0);
+    const openingProperties=JSON.stringify({synthetic_mango_1491_date:'2026-04-15',synthetic_mango_1492_money:'$1,234.56',synthetic_mango_1493_date:'yesterday'});
+    await source.db.prepare("INSERT INTO integration_contact_profiles(contact_id,fields_json,tags_json) VALUES('prior-upgrade',?,'[]')").bind(openingProperties).run();
+    expect(await source.db.prepare("SELECT fields_json FROM integration_contact_profiles WHERE contact_id='prior-upgrade'").first()).toEqual({fields_json:openingProperties});
+    for(const [key,type] of [['synthetic_mango_1491_date','date'],['synthetic_mango_1492_money','money'],['synthetic_mango_1493_date','date']])expect((await source.call('/api/settings/properties',{method:'POST',cookie:source.cookie,body:{key,label:key,type,options:[]}})).status).toBe(201);
+    const definitions=await(await source.call('/api/settings/properties',{cookie:source.cookie})).json();
+    expect(definitions.definitions.find((d:any)=>d.key==='synthetic_mango_1493_date').invalidLegacyValues).toBe(1);
+    expect(await source.db.prepare("SELECT fields_json FROM integration_contact_profiles WHERE contact_id='prior-upgrade'").first()).toEqual({fields_json:openingProperties});
+    expect((await source.call('/api/contacts/prior-upgrade/properties',{method:'PUT',cookie:source.cookie,body:{fields:{synthetic_mango_1492_money:'$2,345.67'}}})).status).toBe(200);
+    const propertyDefinitions=(await source.db.prepare('SELECT * FROM contact_property_definitions ORDER BY key').all()).results;
+    const propertyHistory=(await source.db.prepare("SELECT * FROM contact_history WHERE kind='property-change' ORDER BY id").all()).results;
+
     expect(await source.db.prepare("SELECT state,tax_amount,read_started_at FROM paid_subscriptions WHERE subscription_id='synthetic-mango-21'").first()).toEqual({state:'active',tax_amount:80,read_started_at:0});
     expect(await source.db.prepare("SELECT stripe_applied_at FROM commerce_receipts WHERE id='synthetic-mango-24'").first()).toEqual({stripe_applied_at:null});
     expect(await source.db.prepare("SELECT challenge_enabled,frequency_disclosure FROM signup_settings WHERE id='newsletter'").first()).toEqual({challenge_enabled:1,frequency_disclosure:'Monthly'});
@@ -176,6 +187,9 @@ export const walk0 = async () => {
     expect(await target.db.prepare("SELECT challenge_enabled,frequency_disclosure FROM signup_settings WHERE id='newsletter'").first()).toEqual({challenge_enabled:1,frequency_disclosure:'Monthly'});
     expect((await target.db.prepare('SELECT * FROM imported_engagement_facts ORDER BY id').all()).results).toEqual(importedFacts);
     expect((await target.db.prepare('SELECT * FROM move_in_contact_history ORDER BY id').all()).results).toEqual(importedCoverage);
+    expect((await target.db.prepare('SELECT * FROM contact_property_definitions ORDER BY key').all()).results).toEqual(propertyDefinitions);
+    expect((await target.db.prepare("SELECT * FROM contact_history WHERE kind='property-change' ORDER BY id").all()).results).toEqual(propertyHistory);
+    expect(await target.db.prepare("SELECT fields_json FROM integration_contact_profiles WHERE contact_id='prior-upgrade'").first()).toEqual(await source.db.prepare("SELECT fields_json FROM integration_contact_profiles WHERE contact_id='prior-upgrade'").first());
     expect(await target.db.prepare("SELECT message_unsubscribed_at,unsubscribe_method FROM recipient_steps WHERE id='synthetic-mango-historic-recipient'").first()).toEqual({message_unsubscribed_at:2,unsubscribe_method:null});
     await target.resume();
     expect((await(await target.call('/api/settings/link-hosts',{cookie:target.cookie})).json()).hosts).toEqual(['portable.example.test']);
@@ -233,6 +247,8 @@ export const walk1 = async () => {
     expect(job.state).toBe('completed');
     const contact=await source.db.prepare('SELECT id FROM contacts WHERE email=?').bind(email).first();
     await source.db.prepare("INSERT INTO paid_subscriptions(subscription_id,customer_id,contact_id,state,stripe_status,state_event_id,state_at,created_at,updated_at) VALUES('synthetic-mango-31','synthetic-mango-32',?,'active','active','synthetic-mango-33',1,1,1)").bind(contact.id).run();
+    expect((await source.call('/api/settings/properties',{method:'POST',cookie:source.cookie,body:{key:'synthetic_mango_1494',label:'synthetic-mango-1494',type:'text',options:[]}})).status).toBe(201);
+    expect((await source.call('/api/contacts/'+contact.id+'/properties',{method:'PUT',cookie:source.cookie,body:{fields:{synthetic_mango_1494:email}}})).status).toBe(200);
     // A failed private-authority restore must also refuse a real R2 object.
     await source.bucket.put('synthetic-mango-171-original.png', png(5, 4), {httpMetadata:{contentType:'image/png'}});
     const before=await archive();expect(before[0].objects.length).toBeGreaterThan(0);expect(JSON.stringify(before)).toContain(email);

@@ -44,4 +44,5 @@ export const audienceRuleComparisons = [
   ['eq', 'is'], ['neq', 'is not'], ['contains', 'contains'],
   ['gt', 'is greater than'], ['gte', 'is at least'], ['lt', 'is less than'],
   ['lte', 'is at most'], ['in', 'is one of'],
+  ['on','is on'],['before','is before'],['after','is after'],['within_last','is within the last days'],['not_within_last','is not within the last days'],
 ] as const satisfies ReadonlyArray<readonly [Predicate['comparator'], string]>;

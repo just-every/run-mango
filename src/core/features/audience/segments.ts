@@ -1,3 +1,5 @@
+import {propertyDefinitions} from './properties/read';
+import {propertyRuleIssue} from './properties/rule-validation';
 import { Hono } from 'hono';
 import { ulid } from '@/core/shared/ids';
 import { z } from 'zod';
@@ -23,6 +25,8 @@ export function createSegmentRoutes(database:D1Database) {
   routes.get('/audience/segments',async context=>context.json({segments:(await database.prepare(`SELECT ${columns} FROM audience_segments ORDER BY name,id`).all<SavedSegment>()).results}));
   routes.post('/audience/segments',async context=>{
     const body=await readJson(context,bodySchema);if('error' in body)return body.error;
+    const issue=propertyRuleIssue(await propertyDefinitions(database),completeInclusionRuleSchema.parse(JSON.parse(body.data.inclusionRuleJson)),z.array(completeExclusionRuleSchema).parse(JSON.parse(body.data.exclusionRulesJson)));if(issue)return context.json(issue,400);
+
     const id=ulid(),now=Date.now(),value=body.data;
     await database.prepare('INSERT INTO audience_segments (id,name,inclusion_rule_json,exclusion_rules_json,created_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?)').bind(id,value.name,value.inclusionRuleJson,value.exclusionRulesJson,context.get('operator').id,now,now).run();
     return context.json({segment:{id,...value,createdAt:now,updatedAt:now}},201);
@@ -30,6 +34,7 @@ export function createSegmentRoutes(database:D1Database) {
   routes.put('/audience/segments/:id',async context=>{
     const params=readParams(context,identifier);if('error'in params)return params.error;
     const body=await readJson(context,bodySchema);if('error'in body)return body.error;
+    const issue=propertyRuleIssue(await propertyDefinitions(database),completeInclusionRuleSchema.parse(JSON.parse(body.data.inclusionRuleJson)),z.array(completeExclusionRuleSchema).parse(JSON.parse(body.data.exclusionRulesJson)));if(issue)return context.json(issue,400);
     const value=body.data,now=Date.now();
     const result=await database.prepare('UPDATE audience_segments SET name=?,inclusion_rule_json=?,exclusion_rules_json=?,updated_at=? WHERE id=?').bind(value.name,value.inclusionRuleJson,value.exclusionRulesJson,now,params.data.id).run();
     if(!result.meta.changes)return context.json({error:'not_found'},404);

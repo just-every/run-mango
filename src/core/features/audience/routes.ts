@@ -1,3 +1,6 @@
+import {propertyDefinitions} from './properties/read';
+import {validatePropertyFields,editContactProperties} from './properties/write';
+import {PropertyError} from './properties/types';
 import {programme} from '@/core/features/sms/policy';
 import {manualEntrySchema as consentCapture} from './manual-entry-schema';
 import {loadSignupDescription} from './signup-routes';
@@ -60,6 +63,7 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
     const parsed = await readJson(context, consentCapture);
     if ('error' in parsed) return parsed.error;
     try {
+      if(parsed.data.properties)validatePropertyFields(await propertyDefinitions(database),parsed.data.properties);
       const operator=context.get('operator'),mode=await loadOptInMode(database,'manual');
       const authority=await senderWriteAuthority(platform,context.req.raw,operator.id);
       const input={...parsed.data,captureMethod:'operator-recorded',captureSource:`Operator:${operator.displayName || operator.email} (${operator.id})|${parsed.data.permissionMethod ?? parsed.data.captureMethod}|${parsed.data.channel==='sms'?'express-written|':''}${parsed.data.captureSource}`};
@@ -70,11 +74,12 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
         result=await service.capturePublicSignup({...input,confirmationRequired:mode.mode==='double',optInPolicy:{mode,allowResubscribe:false,operator:authority}});
         if(!result)return context.json({error:'manual_entry_state_changed',detail:'The address or opt-in mode changed. Review it before trying again.'},409);
       }else result=await service.captureConsent({...input,confirmationRequired:true,optInPolicy:{operator:authority,allowResubscribe:false}});
-      if(parsed.data.properties)await database.prepare(`INSERT INTO integration_contact_profiles(contact_id,fields_json,tags_json) VALUES(?,?,'[]') ON CONFLICT(contact_id) DO UPDATE SET fields_json=excluded.fields_json`).bind(result.contact.id,JSON.stringify(parsed.data.properties)).run();
+      if(parsed.data.properties)await editContactProperties(database,result.contact.id,parsed.data.properties,{kind:'operator',label:operator.displayName||operator.email,reference:operator.id});
       await recordActivity(database, {key: `consent-entered:${result.evidence.id}`, action: 'consent.entered', entityType: 'contact', entityId: result.contact.id, actorId: context.get('operator').id,
         detail: {channel: parsed.data.channel, captureMethod: input.captureMethod, captureSource: input.captureSource, messageCategory: parsed.data.messageCategory}});
       return context.json({ contact: result.contact, evidence: result.evidence, confirmationRequired: Boolean(result.confirmation) }, 201);
     } catch (error) {
+      if(error instanceof PropertyError)return context.json({error:error.code,property:error.key},error.status);
       return context.json({ error: 'consent_capture_failed', detail: error instanceof Error ? error.message : 'Consent capture failed.' }, 409);
     }
   });
