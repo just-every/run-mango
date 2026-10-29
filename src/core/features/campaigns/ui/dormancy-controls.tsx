@@ -13,7 +13,7 @@ export function DormancyControls({campaignId,revisionId,policyJson,disabled,onSa
       await onSaved();
     }catch{setError('Dormancy policy could not be confirmed. Reload before approving.');}finally{setPending(null);setBusy(false);}
   };
-  return <fieldset className="composition-fieldset"><legend>Inactivity for this campaign</legend>
+  return <fieldset className="composition-fieldset dormancy-controls"><legend>Inactivity for this campaign</legend>
     <p>Dormancy window: {policy.windowDays} days. Consent, topics, suppression and opt-outs still apply.</p>
     <label><input type="checkbox" checked={policy.enabled} disabled={disabled||busy} onChange={e=>void save({...policy,enabled:e.target.checked})}/> Exclude dormant contacts</label>
     <button className="secondary-action" type="button" disabled={disabled||busy||!policy.enabled||policy.includeOpenOnly} onClick={()=>void save({...policy,includeOpenOnly:true})}>{policy.includeOpenOnly?'Open-only contacts included':'Include open-only contacts'}</button>

@@ -1,4 +1,4 @@
-/* Buttons: square-cornered like the site's, Outfit, one line, at least 40px (44px on touch).
+/* Buttons: square-cornered like the site's, Outfit, one line, at least 40px (44px on touch and at phone width).
    Sun is the one main action per view; the line button is everything else; tomato is a final destructive confirmation. */
 .primary-action, .secondary-action, .danger-action, .danger-action--line, .audience-import-upload {
   display: inline-flex;
@@ -20,7 +20,7 @@
   white-space: nowrap;
   transition: background-color .18s, border-color .18s, box-shadow .18s;
 }
-@media (pointer: coarse) { .primary-action, .secondary-action, .danger-action, .danger-action--line, .audience-import-upload { min-height: 44px; } }
+@media (pointer: coarse), (max-width: 680px) { .primary-action, .secondary-action, .danger-action, .danger-action--line, .audience-import-upload { min-height: 44px; } }
 
 .primary-action { border-color: var(--ms-sun); background: var(--ms-sun); }
 .primary-action:hover:not(:disabled) { border-color: var(--ms-sun-hover); background: var(--ms-sun-hover); }
@@ -47,3 +47,9 @@ button:is(.text-link, .audience-import-file__remove) { padding: 0; border: 0; ba
 .edit-action { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; font-size: 14px; }
 .edit-action--add::before { flex: none; width: 12px; height: 12px; background: currentColor; content: ''; -webkit-mask: var(--icon-plus) center / contain no-repeat; mask: var(--icon-plus) center / contain no-repeat; }
 .edit-actions { display: flex; flex-wrap: wrap; gap: 0 var(--sp-6); }
+
+/* A lone link or text button is a 44px row at phone width and on touch; a link inside a sentence stays on its line. */
+@media (pointer: coarse), (max-width: 680px) {
+  .text-link, .secondary-link, .audience-import-file__remove, .edit-action, .back-link, .mango-app :is(td, th) > a:where(:not([class])) { display: inline-flex; align-items: center; min-height: 44px; }
+  .mango-app summary:where(:not([class])) { padding-block: 11px; }
+}
