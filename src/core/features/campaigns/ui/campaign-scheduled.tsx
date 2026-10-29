@@ -46,7 +46,7 @@ export function CampaignScheduledPage() {
     try {
       const response = await requestJson<{ status?: string; error?: string }>(`/api/campaigns/${id}/cancel`, { method: 'POST' });
       if (response.status < 300 && response.data.status === 'cancelled') {
-        setNotice({message:'Campaign cancelled. Messages already handed to a provider cannot be recalled.',error:false});
+        setNotice({message:'Campaign cancelled. Messages already with the provider cannot be recalled.',error:false});
         setConfirmCancel(false);
         await reload();
       } else setNotice({message:response.data.error === 'campaign_not_cancellable' ? 'This campaign can no longer be cancelled.' : 'Cancellation was not saved.',error:true});
@@ -61,7 +61,7 @@ export function CampaignScheduledPage() {
         <p className="eyebrow">Campaign schedule</p><h1>{data.revision.name}</h1>
         <p className="page-head__meta scheduled-head__state">State: <CampaignStatusPill state={data.campaign.state} results={results} /></p>
         <p className="overall-result">{overallResult(results,data.steps,formatDate)}</p>
-        <p className="scheduled-head__recall">Messages already handed to a provider cannot be recalled.</p>
+        <p className="scheduled-head__recall">Messages already with the provider cannot be recalled.</p>
       </div>
       {waiting ? <ScheduledEnvelopeArt /> : null}
     </header>
@@ -92,7 +92,7 @@ export function CampaignScheduledPage() {
     <CampaignPublication campaignId={id} revisionId={data.revision.id} completed={data.campaign.state==='completed'} />
     <CampaignFollowup campaignId={id} />
     <FollowupParent campaignId={id} />
-    <Modal open={confirmCancel} onClose={() => setConfirmCancel(false)} title="Cancel this campaign?" description="Recipient-steps not yet handed to a provider will be stopped. Messages already handed to a provider cannot be recalled.">
+    <Modal open={confirmCancel} onClose={() => setConfirmCancel(false)} title="Cancel this campaign?" description="Messages that have not started sending will be stopped. Messages already with the provider cannot be recalled.">
       <div className="detail-actions"><button className="secondary-action" type="button" disabled={cancelling} onClick={() => setConfirmCancel(false)}>Keep campaign</button><button className="danger-action" type="button" disabled={cancelling} onClick={() => void cancel()}>{cancelling ? 'Cancelling…' : 'Confirm cancellation'}</button></div>
     </Modal>
   </div>;
