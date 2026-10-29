@@ -8,7 +8,6 @@ test('[SEND-003][SEND-004] shared provider pacing survives a native restart and 
   await walk2({page});
 });
 test('[MSG-011][RESULT-006] an owner connects delivery, account restrictions stop sending and signed facts update reputation',async({page},info)=>{
-  test.setTimeout(300000);
   await walk3({page},info);
 });
 test('[CONT-013][CAMP-007][SEND-003] current authority fences replacement, suppression and erasure before dispatch',async()=>{
