@@ -59,9 +59,9 @@ export async function sitePages({ styles, contract, hosting }: SiteContext): Pro
       { path: '/', html: document(copy.meta.title, copy.meta.description, <Landing />) },
       { path: '/run', html: runPageHtml(identity, run, contract, homepageHeader('other')) },
       ...(hosting !== undefined ? [{ path: '/docs/hosting', html: hostingPageHtml(identity, run, hosting, contract, homepageHeader('docs')) }] : []),
-      ...(contract ? [{ path: '/contract', html: contractPageHtml(identity, run, contract) }] : []),
+      ...(contract ? [{ path: '/contract', html: contractPageHtml(identity, run, contract, homepageHeader('other')) }] : []),
       ...docs,
-      { path: '/404', html: siteNotFoundHtml(identity, run, contract) },
+      { path: '/404', html: siteNotFoundHtml(identity, run, contract, homepageHeader('other')) },
     ],
     assets: ['rer-theme.css', 'fonts', 'brand', ...icons],
   };

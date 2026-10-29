@@ -17,7 +17,7 @@ The Owner selects each operator's role under **Settings → Operators**. Changes
 
 Only Owner and Admin can export contacts or erase them. Support's erasure request waits for an Owner or Admin to fulfil it. Role assignments are authentication authority and are excluded from portable data archives; a restored installation retains its own native owner. Historical operator profiles and role-change audit entries remain attribution only.
 
-Flow activation, sending-provider connection controls and installation erasure are still wider target work. Their complete role journeys are not claimed by this newsletter release. CSV exports are currently restricted to Owner and Admin.
+Flow activation, sending-provider connection controls and installation erasure are not yet available to every role. CSV exports are currently restricted to Owner and Admin.
 
 ## Activity log
 
@@ -38,7 +38,7 @@ Two protections apply:
 - The owner created at setup, the address in `OWNER_EMAIL`, is marked "Setup operator". Only they can remove their own access.
 - Mango will not remove the last active Owner. Assign another active operator the Owner role before removing or downgrading that Owner.
 
-Removing an operator revokes their open sessions and unused invitation and sign-in links. Campaigns, saved revisions, approvals and audit entries retain their attribution. These invitation and removal controls are covered by local native authentication journeys; that proof does not establish hosted mail delivery.
+Removing an operator revokes their open sessions and unused invitation and sign-in links. Campaigns, saved revisions, approvals and audit entries retain their attribution. On your own computer no invitation or sign-in email is sent; deploy Mango to send them.
 
 ## Sign in with an email link
 
