@@ -137,6 +137,11 @@ test('Mango shared door: signed native owner, durable Business people, native dr
     assert.equal(JSON.parse(nativeAudit.row).agent.id,client.agent.id,'Native client retains its sender identity');
    }else response=await call(step.tool,inputs);
    assert.equal(response.message.result?.isError,false,step.id+': '+JSON.stringify(response.message));
+   const classified=response.message.result._meta['com.runeditrun/decision'].classes;
+   assert.deepEqual(classified.map(item=>item.class).sort(),step.expect.map(item=>item.class).sort(),step.id+' server classes');
+   for(const expected of step.expect)for(const [key,value] of Object.entries(expected.facts??{}))
+    assert.deepEqual(classified.find(item=>item.class===expected.class)?.facts[key],value,step.id+' server fact '+key);
+
    if(step.target){
     const audit=await (await app.call('/agents/api/audit',{cookie})).json();
     const decision=response.message.result._meta['com.runeditrun/decision'];

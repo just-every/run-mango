@@ -2,5 +2,11 @@
   {
     "id": "PENDING-SEED-2026-10-28-complete-class-journey",
     "assertion": "Every registered tool/class pair and the three specialist probes have real disposable native fixtures; uncovered pairs must remain failures."
+  },
+  {
+    "id": "PENDING-SEED-2026-10-29-erasure-audit-fence",
+    "assertion": "A native agent contact erasure must preserve the privacy write fence and finish its door audit without HTTP 500. The disposable native probe starts erasure, then agent_door audit persistence fails the audience_erasure_guard value=1 check.",
+    "source": "src/core/features/audience/erasure/write-fence.ts:31",
+    "dependency": "Retained agent call/audit/approval data custody must be reconciled with contact erasure; Base modules/agent-door/ADOPTING.md:331 excludes that custody agreement from its queue proof."
   }
 ]

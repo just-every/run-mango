@@ -3737,6 +3737,204 @@
           "class": "standard"
         }
       ]
+    },
+    {
+      "id": "contact-standard",
+      "tool": "mango.contacts.read",
+      "args": {
+        "id": {
+          "$fixture": "contact",
+          "pointer": "/id"
+        }
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "contact-network-evidence",
+      "tool": "mango.contacts.read",
+      "args": {
+        "id": {
+          "$fixture": "protected",
+          "pointer": "/id"
+        }
+      },
+      "expect": [
+        {
+          "class": "sensitive",
+          "facts": {
+            "measure": 1,
+            "kind": "consent-network-evidence"
+          }
+        }
+      ]
+    },
+    {
+      "id": "merge-phase-contact",
+      "tool": "mango.contacts.merge",
+      "args": {
+        "survivorContactId": {
+          "$fixture": "contact",
+          "pointer": "/id"
+        },
+        "mergedContactId": {
+          "$fixture": "merge",
+          "pointer": "/id"
+        }
+      },
+      "expect": [
+        {
+          "class": "destructive"
+        }
+      ]
+    },
+    {
+      "id": "opt-out-phase-contact",
+      "tool": "mango.contacts.optout",
+      "args": {
+        "id": {
+          "$fixture": "contact",
+          "pointer": "/id"
+        },
+        "channel": "email"
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "attach-native-image",
+      "tool": "mango.assets.attach",
+      "args": {
+        "contentType": "image/png",
+        "base64": "iVBORw0KGgoAAAANSUhEUgAAAEAAAAAwCAIAAAAuKetIAAACLklEQVR4nM3Td1cPAACF4RsZWaEis8w0tOxZZggZSUiSZGTvXfYemVFGUpml7OyyCtkje++9N5/hnvM7ul/g/vHc86JIzW5hsRlvzev4T9149kPx+j1nbDn/uaRb0OyES9/KNO4zL+nqT+tm/RfuzPpTocXAxXtuGVX2HLIs5a6xbdvhEQcf5HFoPyryyON8Tt5j16Q9K+jaeUL0iZeFa3QN3ZD+xqx29ynxZ94XqxcwffO5TyUa9pq17eLX0o2C526/8sOqab8FO67/Lu8xIHz3TVRqNXjpvjs5q7QZtuLA/dz27UauOvzIxLHjmNWpTwu4+Ixfd/yFafUuk2JOvS5ay29y3Ol3FnV7TNuU+dGyQeDMrTD44oUvpdx7z0m8/L1sk77zk6/9Ktc8ZNGuG38rthy0ZO/tHDathy7ffy+XndeIlYce5q3aYXTU0Sf5nTuNW3vseaFqvhPXn3xFisLgi//5I2TD6wb9CNnwukE/gmSZhCgkyyREIVkmIQrJMglRSJZJiEKyTEIUkmUSopAskxCFZJmEKCTLJEQhWSYhCskyCVFIlkmIQrJMQhSSZRKikCyTEIVkmYQoJMskRCFZJiEKyTIJUUiWSYhCskxCFJJlEqKQLJMQhWSZhCgkyyREIVkmIQrJMglRSJZJiEKyTEIUkmUSopAskxCFZJmEKCTLJEQhWSYhCskyCVFIlkmIQrJMQhSSZRKikCyTEIVkmYQoJMskRCFZJiH6D8Nz7QCnOEkiAAAAAElFTkSuQmCC"
+      },
+      "expect": [
+        {
+          "class": "external",
+          "facts": {
+            "measure": 1,
+            "counterparty": "public"
+          }
+        }
+      ]
+    },
+    {
+      "id": "narrow-signup-audience",
+      "tool": "mango.signup.update",
+      "args": {
+        "settings": {
+          "frequencyDisclosure": "Monthly orchard news",
+          "embedOrigins": [],
+          "challengeEnabled": true
+        }
+      },
+      "expect": [
+        {
+          "class": "live",
+          "facts": {
+            "service": "newsletter-signup"
+          }
+        },
+        {
+          "class": "access",
+          "facts": {
+            "direction": "narrows"
+          }
+        }
+      ]
+    },
+    {
+      "id": "change-signup-challenge",
+      "tool": "mango.signup.update",
+      "args": {
+        "settings": {
+          "frequencyDisclosure": "Monthly orchard news",
+          "embedOrigins": [],
+          "challengeEnabled": false
+        }
+      },
+      "expect": [
+        {
+          "class": "live",
+          "facts": {
+            "service": "newsletter-signup"
+          }
+        },
+        {
+          "class": "security",
+          "facts": {
+            "setting": "newsletter-signup-challenge"
+          }
+        }
+      ]
+    },
+    {
+      "id": "schedule-operator-report",
+      "tool": "mango.reports.schedule",
+      "args": {
+        "reportId": "builtin-costs",
+        "cadence": "monthly",
+        "recipients": [
+          {
+            "$fixture": "owner",
+            "pointer": "/id"
+          }
+        ]
+      },
+      "expect": [
+        {
+          "class": "external",
+          "facts": {
+            "measure": 1,
+            "counterparty": "internal"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pause-operator-report",
+      "tool": "mango.reports.policy",
+      "args": {
+        "id": {
+          "$from": "schedule-operator-report",
+          "pointer": "/id"
+        },
+        "enabled": false
+      },
+      "expect": [
+        {
+          "class": "live",
+          "facts": {
+            "service": "report-mail-schedule"
+          }
+        }
+      ]
+    },
+    {
+      "id": "retain-owner-authority",
+      "tool": "mango.access.update",
+      "args": {
+        "id": {
+          "$fixture": "owner",
+          "pointer": "/id"
+        },
+        "role": "owner",
+        "unmaskedContacts": false
+      },
+      "expect": [
+        {
+          "class": "access",
+          "facts": {
+            "direction": "narrows"
+          }
+        }
+      ]
     }
   ],
   "escalations": [],
@@ -3783,6 +3981,12 @@
     {
       "id": "PENDING-SEED-2026-10-28-complete-class-journey",
       "assertion": "Every registered tool/class pair and the three specialist probes have real disposable native fixtures; uncovered pairs must remain failures."
+    },
+    {
+      "id": "PENDING-SEED-2026-10-29-erasure-audit-fence",
+      "assertion": "A native agent contact erasure must preserve the privacy write fence and finish its door audit without HTTP 500. The disposable native probe starts erasure, then agent_door audit persistence fails the audience_erasure_guard value=1 check.",
+      "source": "src/core/features/audience/erasure/write-fence.ts:31",
+      "dependency": "Retained agent call/audit/approval data custody must be reconciled with contact erasure; Base modules/agent-door/ADOPTING.md:331 excludes that custody agreement from its queue proof."
     }
   ]
 }
