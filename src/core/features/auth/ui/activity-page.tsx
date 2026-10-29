@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ApiError, getJson } from '@/core/app/client/lib/api';
 import { LoadState } from '@/core/app/client/ui/layout';
+import { FilterFold } from '@/core/app/client/ui/filter-fold';
 
 type Entry = {id: string; operatorId: string; operatorName: string | null; actorType: string; action: string; objectType: string; objectId: string; detail: unknown; occurredAt: number};
 type Page = {entries: Entry[]; nextCursor: string | null};
@@ -44,15 +45,16 @@ export function ActivityPage() {
       </div>
       <div className="page-head__actions"><a className="secondary-action" href={`/api/activity/export?${query(applied)}`} download="mango-activity.csv">Export CSV</a></div>
     </header>
-    <form className="panel activity-filters" aria-label="Activity filters" onSubmit={event => {event.preventDefault(); setApplied({...draft});}}>
-      {fields.map(([name, label]) => <label key={name}>{label}
-        <input name={name} type={name === 'from' || name === 'to' ? 'date' : 'text'} value={draft[name]} onChange={event => set(name, event.target.value)} maxLength={200} />
-      </label>)}
-      <div className="detail-actions">
-        <button className="primary-action" type="submit">Apply filters</button>
-        <button className="secondary-action" type="button" onClick={() => {setDraft(blank); setApplied(blank);}}>Clear</button>
-      </div>
-    </form>
+    <FilterFold applied={fields.filter(([name]) => applied[name].trim()).map(([name, label]) => ({key: name, label: `${label}: ${applied[name].trim()}`}))} onRemove={name => {const next = {...applied, [name]: ''}; setDraft(next); setApplied(next);}}>{close =>
+      <form className="activity-filters" aria-label="Activity filters" onSubmit={event => {event.preventDefault(); setApplied({...draft}); close();}}>
+        {fields.map(([name, label]) => <label key={name}>{label}
+          <input name={name} type={name === 'from' || name === 'to' ? 'date' : 'text'} value={draft[name]} onChange={event => set(name, event.target.value)} maxLength={200} />
+        </label>)}
+        <div className="detail-actions">
+          <button className="primary-action" type="submit">Apply filters</button>
+          <button className="secondary-action" type="button" onClick={() => {setDraft(blank); setApplied(blank); close();}}>Clear</button>
+        </div>
+      </form>}</FilterFold>
     {error ? <LoadState error={error} /> : null}
     <section className="panel" aria-label="Activity entries" aria-busy={loading}>
       {entries.length ? <div className="table-scroll" tabIndex={0} role="region" aria-label="Activity log table">

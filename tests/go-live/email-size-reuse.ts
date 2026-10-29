@@ -30,19 +30,20 @@ export async function oversizedReuse(site:Installation,cookie:string,page:Page,i
   for(const width of [1440]) {
     await page.setViewportSize({width,height:1000});
     await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}`);
+    const refusal=page.getByRole('alert').filter({hasText:'Email is too large.'});
+    const shot=async(index:number)=>{await expect(refusal).toHaveCount(1);await expect(refusal).toContainText('Largest blocks:');await refusal.screenshot({path:info.outputPath(`reuse-refused-${index}-${width}.png`)});};
+    await page.getByRole('button',{name:'More actions',exact:true}).click();
     await page.getByRole('button',{name:'Duplicate',exact:true}).click();
-    await expect(page.getByRole('alert').filter({hasText:'Email is too large.'})).toBeVisible();
-    await page.getByText('Save as a template',{exact:true}).click();
+    await expect(refusal).toBeVisible();await shot(0);
+    await page.getByRole('button',{name:'Save as a template',exact:true}).click();
     await page.getByLabel('Template name',{exact:true}).fill('Refused garden template');
     await page.getByRole('button',{name:'Save template',exact:true}).click();
-    await expect(page.getByRole('alert').filter({hasText:'Email is too large.'})).toHaveCount(2);
+    await expect(refusal).toBeVisible();
     await expect(page.getByLabel('Template name',{exact:true})).toHaveValue('Refused garden template');
+    await shot(1);
+    await page.getByRole('button',{name:'Close',exact:true}).click();
     await page.getByRole('button',{name:'Create a new campaign from this revision',exact:true}).click();
-    await expect(page.getByRole('alert').filter({hasText:'Email is too large.'})).toHaveCount(3);
-    for(const [index,alert] of (await page.getByRole('alert').filter({hasText:'Email is too large.'}).all()).entries()) {
-      await expect(alert).toContainText('Largest blocks:');
-      await alert.screenshot({path:info.outputPath(`reuse-refused-${index}-${width}.png`)});
-    }
+    await expect(refusal).toBeVisible();await shot(2);
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await page.getByText('Follow up with non-engaged readers',{exact:true}).click();

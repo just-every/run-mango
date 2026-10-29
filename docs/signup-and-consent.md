@@ -67,14 +67,14 @@ Choose **Save segment**. **Edit** lets you rename it or change its conditions. *
 
 ## Merge duplicate contacts
 
-Open a contact and choose **Merge into another contact**. Search by the email address of the contact to keep, select it and inspect the resulting Email and SMS states before choosing **Confirm merge**. The order is suppressed, unsubscribed, non-subscribed, pending, then subscribed: the more restrictive state wins independently on each channel.
+Open a contact, choose **More actions**, then **Merge into another contact**. Search by the email address of the contact to keep, select it and inspect the resulting Email and SMS states before choosing **Confirm merge**. The order is suppressed, unsubscribed, non-subscribed, pending, then subscribed: the more restrictive state wins independently on each channel.
 
 Mango opens the survivor and records the merge in its history. Both records' consent evidence, source activity, import observations, suppressions and campaign history remain visible there. Existing confirmation and unsubscribe links follow the survivor and retain their consent protections. An unsubscribe stops the channel on its merged address aliases. A queued campaign recipient for the removed identity is excluded at dispatch as `contact-merged`; the merge never transfers an approval to the survivor.
 
 
 ## Delete a contact
 
-Open the contact and choose **Delete contact**. The confirmation explains the addresses, consent evidence, history, source records, delivery details and import copies that will be removed. Deletion includes known merged identities. Other contacts from an affected import keep their current consent and records, but the whole original file and its import undo history are withdrawn. Surviving records keep their filenames, capture descriptions and notes; only the deleted contact's exact address, phone, ID or IP is redacted from them.
+Open the contact, choose **More actions**, then **Delete contact**. The confirmation explains the addresses, consent evidence, history, source records, delivery details and import copies that will be removed. Deletion includes known merged identities. Other contacts from an affected import keep their current consent and records, but the whole original file and its import undo history are withdrawn. Surviving records keep their filenames, capture descriptions and notes; only the deleted contact's exact address, phone, ID or IP is redacted from them.
 
 If any known channel identity has opted out or been suppressed, Mango retains an opt-out record for that identity and channel, including opted-out aliases. Its local destination hash is keyed with your installation's private contact secret. Mango also retains a mapping from that local hash to an unsalted portable SHA-256 hash of the destination with the fixed prefix `mango-audience-export-v1:`. Contacts CSV exports use that portable hash to carry the restriction to another installation, including after the contact has been deleted.
 

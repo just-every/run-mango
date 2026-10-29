@@ -10,7 +10,6 @@
 .store-source__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-2) var(--sp-3); }
 .store-source__head strong { margin: 0; color: var(--ms-ink); font-size: 16px; font-weight: 600; }
 .store-source .store-source__meta { color: var(--ms-muted); font-size: 14px; }
-.store-source__run { display: grid; gap: 2px; margin-top: var(--sp-1); padding-top: var(--sp-3); border-top: 1px solid rgb(165 156 138 / .4); color: var(--ms-ink-soft); font-size: 14px; }
 .store-source__state { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
 .store-source small { margin: 0; color: var(--ms-muted); font-size: 13px; line-height: 1.45; }
 .store-source .store-source__error { color: var(--ms-tomato-deep); font-weight: 500; }

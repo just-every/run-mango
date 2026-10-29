@@ -92,10 +92,12 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
       } },
       { name: 'draft detail', visit: () => openPage(page, draft) },
       { name: 'draft template panel open', visit: async () => {
+        await page.getByRole('button', { name: 'More actions', exact: true }).click();
         await page.getByRole('button', { name: 'Save as a template', exact: true }).click();
         await expect(page.getByLabel('Template name', { exact: true })).toBeVisible();
       } },
       { name: 'draft mobile email preview', visit: async () => {
+        await page.keyboard.press('Escape');
         await page.getByRole('button', { name: 'Mobile email', exact: true }).click();
         await expect(page.getByRole('button', { name: 'Mobile email', exact: true })).toHaveAttribute('aria-pressed', 'true');
       } },
@@ -117,6 +119,7 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
       } },
       { name: 'contact detail', visit: () => openPage(page, contact) },
       { name: 'contact merge dialog', visit: async () => {
+        await page.getByRole('button', { name: 'More actions', exact: true }).click();
         await page.getByRole('button', { name: 'Merge into another contact', exact: true }).click();
         await expect(page.getByRole('dialog')).toBeVisible();
       } },
@@ -276,6 +279,7 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
         await expect(page.getByRole('region', { name: 'Activity log table' })).toBeVisible();
       } },
       { name: 'activity empty filter', visit: async () => {
+        await page.getByRole('button', { name: /^Filters/ }).click();
         await page.getByRole('textbox', { name: 'Action', exact: true }).fill('synthetic-mango-174');
         await page.getByRole('button', { name: 'Apply filters', exact: true }).click();
         await expect(page.getByRole('region', { name: 'Activity entries' })).toHaveAttribute('aria-busy', 'false');
@@ -342,7 +346,7 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
       } },
       { name: 'reader campaign schedule', visit: () => openPage(page, '/app/campaigns/' + approvedCampaign.campaignId + '/scheduled') },
       { name: 'reader masked contact', visit: () => openPage(page, '/app/audience/' + contactRecord.id), check: async () => {
-        await expect(page.getByRole('button', { name: 'Merge into another contact', exact: true })).toHaveCount(0);
+        await expect(page.getByRole('button', { name: 'More actions', exact: true })).toHaveCount(0);
       } },
       ...['/app/store', '/app/settings/activity', '/app/audience/import'].map(route => ({ name: `role refusal ${route}`, visit: async () => {
         await openPage(page, route);

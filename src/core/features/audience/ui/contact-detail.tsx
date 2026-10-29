@@ -1,6 +1,7 @@
 import {ContactProperties} from './contact-properties';
 import {Can} from '@/core/features/auth/ui/permissions';
 import {ContactSupport} from '@/core/features/auth/ui/contact-support';
+import {ActionMenu} from '@/core/app/client/ui/action-menu';
 import {useState} from 'react';
 import {ContactDelete,ContactErasureReceipt} from './contact-delete';
 import type {ErasureReceipt} from '../erasure/types';
@@ -62,7 +63,7 @@ function ContactPage() {
             </div>
           </div>
         </div>
-        <div className="page-head__actions"><ContactMerge key={data.contact.id} contact={data.contact}/><ContactDelete id={data.contact.id} onReceipt={setReceipt}/></div>
+        <div className="page-head__actions"><ActionMenu><ContactMerge key={data.contact.id} contact={data.contact}/><Can permission="contact.privacy-request"><ContactSupport contactId={id} reload={reload}/></Can><ContactDelete id={data.contact.id} onReceipt={setReceipt}/></ActionMenu></div>
       </header>
       <section className="contact-status-grid">
         <article className="contact-status-tile"><p className="contact-status-tile__label">Email</p><StatusPill value={data.contact.emailStatus} /><p>Updated {formatDate(data.contact.updatedAt)}</p></article>
@@ -73,7 +74,6 @@ function ContactPage() {
         <div className="contact-layout__records">
           <ContactProfilePanels data={data} reload={reload}/>
           <Can permission="report.read"><ContactRetention contactId={id} /></Can>
-          <Can permission="contact.privacy-request"><ContactSupport contactId={id} reload={reload}/></Can>
           <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} restricted={data.masked} />
           {data.smsServices?.length?<section className="panel"><h2>SMS confirmations and service replies</h2><p className="muted-copy">Queued messages wait for permitted windows. Unconfirmed handoffs are never repeated automatically.</p>{data.smsServices.map(message=><article key={message.id}><strong>{titleCase(message.purpose)}</strong><p>{titleCase(message.state)}{message.reason?` · ${titleCase(message.reason)}`:''}</p><small>{formatDate(new Date(message.created_at).toISOString())}{message.provider_message_id?` · Provider receipt ${message.provider_message_id}`:''}</small></article>)}</section>:null}
         </div>

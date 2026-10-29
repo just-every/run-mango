@@ -97,6 +97,7 @@ export const walk1 = async({page,request})=>{
   expect(JSON.stringify(log)).not.toContain('private body marker');
    {
     await page.setViewportSize({width,height:1000});await openPage(page,runtime.url+'/app/campaigns');
+    await page.getByRole('button',{name:'More actions',exact:true}).click();
     await expect(page.getByRole('button',{name:'Export campaigns CSV'})).toBeVisible();
     const [file]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export campaigns CSV'}).click()]);
     expect(file.suggestedFilename()).toBe('campaigns.csv');
@@ -133,6 +134,7 @@ export const walk1 = async({page,request})=>{
   await runtime.sql(`INSERT INTO campaign_revisions (${columns.join(',')}) WITH RECURSIVE numbers(n) AS (SELECT 1 UNION ALL SELECT n+1 FROM numbers WHERE n<50001) SELECT ${projections} FROM numbers,campaign_revisions r WHERE r.id='${second.revisionId}'`);
   expect((await download()).status()).toBe(422);
   await openPage(page,runtime.url+'/app/campaigns');
+  await page.getByRole('button',{name:'More actions',exact:true}).click();
   await page.getByRole('button',{name:'Export campaigns CSV'}).click();
   await expect(page.getByRole('alert')).toContainText('No file was downloaded');
    {

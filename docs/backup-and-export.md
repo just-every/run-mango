@@ -4,7 +4,7 @@ Mango can export your contacts in a form that preserves their consent evidence a
 
 ## What you can export today
 
-Open **Audience** and choose **Download contacts CSV**. You get a file named `audience.csv` with one row per contact and these columns:
+Open **Audience**, choose **More actions**, then **Download contacts CSV**. You get a file named `audience.csv` with one row per contact and these columns:
 
 `email`, `phone`, `display_name`, `email_status`, `sms_status`, `consent_source`, `consent_timestamp`, `consent_method`, `consent_ip`, `confirmation_timestamp`, `confirmation_ip`, `ledger_json`, and a final marker column, `__mango_csv_encoding`.
 
@@ -20,7 +20,7 @@ To keep spreadsheets from running cell contents as formulas, any value that star
 
 ## Campaigns CSV
 
-On **Campaigns**, Owners and Admins can choose **Export campaigns CSV**. The `campaigns.csv` file contains every saved campaign revision, including drafts with no scheduled steps, with columns `campaign_id`, `name`, `revision`, `state`, `subject` and `updated` (UTC). Revision and state describe the saved revision; saving an existing editable draft updates that revision, while a replacement revision gets its own row. The export includes all campaigns, regardless of the screen filters. An empty export contains only the header.
+On **Campaigns**, Owners and Admins can choose **More actions**, then **Export campaigns CSV**. The `campaigns.csv` file contains every saved campaign revision, including drafts with no scheduled steps, with columns `campaign_id`, `name`, `revision`, `state`, `subject` and `updated` (UTC). Revision and state describe the saved revision; saving an existing editable draft updates that revision, while a replacement revision gets its own row. The export includes all campaigns, regardless of the screen filters. An empty export contains only the header.
 
 Cells beginning with `=`, `+`, `-`, `@`, a tab or a return get a leading apostrophe so spreadsheets treat them as text. Commas, quotes and line breaks are quoted as CSV. The export refuses more than 50,000 revisions or 10 MB (10,000,000 bytes), displays the reason and downloads no partial file. Use the complete local archive for larger backups. This CSV contains campaign names and subjects, not message bodies, assets, schedules, approvals or delivery results, and is not a campaign restore format. Activity records successful campaign exports with the revision count and shows the current saved revision name for draft saves, without copying names or body text into audit custody. If erasure redacts the revision, Activity reflects that redaction.
 
