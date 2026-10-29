@@ -1,5 +1,5 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
-import {openPage} from '../support/navigation';
+import {openCampaignStarters,openPage} from '../support/navigation';
 
 /** Adoption rechecks a saved suggestion after recipient data increases its bound. */
 export async function oversizedAdoption(page:Page,baseURL:string,proposalId:string,width:number,info:TestInfo,sql:(command:string)=>Promise<any>) {
@@ -56,7 +56,7 @@ export async function oversizedSignalStarter(page:Page,baseURL:string,width:numb
     expect(refused.size.htmlBytes).toBeGreaterThan(refused.size.limitBytes);
     expect(refused.size.largestBlocks[0].bytes).toBeGreaterThan(refused.size.limitBytes);
     await openPage(page,baseURL+'/app/campaigns');
-    await page.getByRole('button',{name:'New campaign',exact:true}).click();
+    await openCampaignStarters(page);
     await page.getByRole('button',{name:/^Product newsletter:/}).click();
     const alert=page.getByRole('alert').filter({hasText:'Email is too large.'});
     await expect(alert).toContainText(refused.detail);

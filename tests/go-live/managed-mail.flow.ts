@@ -1,7 +1,7 @@
 const width = 1440;
 import {proveSavedReports} from './saved-report-journey';
 import {proveSenderRenewal} from './sender-renewal-journey';
-import { openPage } from '../support/navigation';
+import { openCampaignStarters, openPage } from '../support/navigation';
 import { test, expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -46,7 +46,7 @@ export const walk0 = async ({browser},info) => {
           await page.setViewportSize({width,height:1000});
           await openPage(page, site.runtime.url+'/app/campaigns');
           await expect(page.getByRole('heading',{name:'Connect a newsletter provider'})).toBeVisible();
-          await page.getByRole('button',{name:'New campaign',exact:true}).click();
+          await openCampaignStarters(page);
           await expect(page.getByRole('button',{name:'Blank newsletter'})).toBeVisible();
           await expect(page.getByRole('heading',{name:'From store signals'})).toHaveCount(0);
           await expect(page.getByRole('heading',{name:'Saved suggestions'})).toHaveCount(0);

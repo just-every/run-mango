@@ -1,5 +1,6 @@
 import { Brand } from './Brand';
 import { siteCopy } from './copy';
+import { OperatorLink } from './OperatorLink';
 import { SectionLink, SiteLink } from './SiteLink';
 import { sitePaths } from './links';
 import { useRunSite } from './run-site';
@@ -8,7 +9,8 @@ import { useRunSite } from './run-site';
 export type SitePage = 'home' | 'docs' | 'other';
 
 /**
- * The shared header: the lockup, then How it works, Docs and the page's one link named exactly "Sign in". On a docs page
+ * The shared header: the lockup, then How it works, Docs and the page's one link named exactly "Sign in" ("Open app" once
+ * the browser holds an open session). On a docs page
  * the Docs link is marked as the current section (`aria-current="page"` on the docs home itself). The run site has no sign-in,
  * so it leaves that link and its slash out and links Contract (/contract) in their place.
  */
@@ -23,7 +25,7 @@ export function SiteHeader({ current }: { current: SitePage }) {
         <SiteLink to={sitePaths.docs} aria-current={current === 'docs' ? 'true' : undefined}>{nav.docs}</SiteLink>
         {runSite ? <SiteLink to={sitePaths.contract}>{nav.contract}</SiteLink> : <>
           <span className="site-nav-slash" aria-hidden="true">/</span>
-          <SiteLink to={sitePaths.signIn}>{nav.signIn}</SiteLink>
+          <OperatorLink signIn={nav.signIn} openApp={nav.openApp} />
         </>}
       </nav>
     </header>

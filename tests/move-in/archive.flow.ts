@@ -2,7 +2,7 @@ const width = 1440;
 import {installation} from './support';
 import {incumbentJourney} from './incumbent-journey';
 import {setArchiveAttestations} from './support';
-import { openPage } from '../support/navigation';
+import { openCampaignStarters, openPage } from '../support/navigation';
 import { createHash } from 'node:crypto';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
@@ -118,7 +118,7 @@ export const walk0 = async ({ page }, info) => {
      {
       await page.setViewportSize({width,height:1000});
       await openPage(page,site.runtime.url+'/app/campaigns');
-      await page.getByRole('button',{name:'New campaign',exact:true}).click();
+      await openCampaignStarters(page);
       await expect(page.getByRole('button',{name:'Use Welcome letter',exact:true})).toBeVisible();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);

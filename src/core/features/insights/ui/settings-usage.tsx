@@ -1,7 +1,8 @@
 import {ReviewLoyaltySettings} from '@/core/features/integrations/reviews-loyalty/settings';
 import { SettingsPage } from '@/core/features/store/ui/settings-page';
 import { useResource } from '@/core/app/client/lib/use-resource';
-import { Can } from '@/core/features/auth/ui/permissions';
+import { Link, useLoaderData } from '@tanstack/react-router';
+import { Can, usePermissions } from '@/core/features/auth/ui/permissions';
 import { CostTotals } from './cost-totals';
 import type { CostReport } from '../cost-report';
 import type { UsageReport } from '../usage-report';
@@ -33,4 +34,12 @@ function UsagePanel() {
   </section>;
 }
 
-export function SettingsWithUsage(){return <div className="page-flow"><nav aria-label="Settings reports"><a href="#usage">Usage and costs</a></nav><SettingsPage/><ReviewLoyaltySettings/><SettingsUsage/></div>;}
+/** Activity and the store connection are configuration, so Settings leads to them and the main menu does not. */
+function SettingsLinks() {
+  const {can}=usePermissions(), {modules}=useLoaderData({from:'/app'});
+  return <nav className="settings-links" aria-label="Settings reports"><a className="text-link" href="#usage">Usage and costs</a>
+    {can('activity.read')?<Link className="text-link" to="/app/settings/activity">Activity</Link>:null}
+    {modules.store&&can('integration.manage')?<Link className="text-link" to="/app/store">Store</Link>:null}</nav>;
+}
+
+export function SettingsWithUsage(){return <div className="page-flow"><SettingsLinks/><SettingsPage/><ReviewLoyaltySettings/><SettingsUsage/></div>;}

@@ -7,7 +7,6 @@
 .setup-page .standalone-title::after { display: none; }
 .setup-page .setup-lede { max-width: 36em; margin: var(--sp-5) 0 0; color: var(--ms-ink-soft); font-size: 19px; line-height: 1.55; }
 .setup-page .settings-sender-form { margin-top: var(--sp-6); }
-.setup-page .settings-sender-form__intro { margin-bottom: var(--sp-5); color: var(--ms-muted); font-size: 16px; }
 .setup-page .settings-sender-form fieldset { gap: var(--sp-4) var(--sp-5); }
 .setup-page .settings-sender-form fieldset > .settings-field--displayName { grid-column: auto; }
 .setup-page .settings-sender-form fieldset > .settings-postal-field { grid-column: 2; grid-row: 2 / span 2; }
@@ -15,7 +14,6 @@
 .setup-page .settings-sender-form input { min-height: 48px; }
 .setup-page .settings-sender-form button { min-height: 52px; padding: 0 var(--sp-6); font-size: 17px; }
 .setup-page .settings-sender-form button::after { margin-left: 12px; content: '\2192' / ''; }
-.setup-page .setup-copy > .standalone-note { max-width: 42em; margin-top: var(--sp-5); color: var(--ms-muted); font-size: 15px; }
 
 .setup-page .setup-art { width: 100%; aspect-ratio: 520 / 560; }
 .setup-page .setup-art .art-inner > * { top: var(--y); left: var(--x); width: var(--w); height: var(--h, auto); rotate: var(--r, 0deg); }

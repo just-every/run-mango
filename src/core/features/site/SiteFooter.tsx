@@ -3,6 +3,7 @@ import { Brand } from './Brand';
 import { siteCopy } from './copy';
 import { creditUrl, landingSectionIds, sitePaths } from './links';
 import type { SitePage } from './SiteHeader';
+import { OperatorLink } from './OperatorLink';
 import { SectionLink, SiteLink } from './SiteLink';
 import { useRunSite } from './run-site';
 
@@ -23,7 +24,7 @@ export function SiteFooter({ current }: { current: SitePage }) {
               <li key={id}><SectionLink id={id} onLanding={current === 'home'}>{sections[id]}</SectionLink></li>
             ))}
             <li><SiteLink to={sitePaths.docs}>{footer.docs}</SiteLink></li>
-            {runSite ? null : <li><SiteLink to={sitePaths.signIn}>{footer.signIn}</SiteLink></li>}
+            {runSite ? null : <li><OperatorLink signIn={footer.signIn} openApp={footer.openApp} /></li>}
           </ul>
         </nav>
       </div>

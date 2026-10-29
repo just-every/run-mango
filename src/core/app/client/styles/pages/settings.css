@@ -125,3 +125,6 @@
 }
 
 #domain-guide td[data-label="Type"] { white-space: nowrap; }
+
+/* Where Settings leads: usage, activity and the store connection, one quiet row. */
+.settings-links { display: flex; flex-wrap: wrap; gap: var(--sp-3) var(--sp-6); }

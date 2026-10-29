@@ -1,6 +1,6 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {json,type Installation} from './harness';
-import {openPage} from '../support/navigation';
+import {openCampaignStarters,openPage} from '../support/navigation';
 
 /** All existing reuse writes share the sent-size refusal and leave snapshots intact. */
 export async function oversizedReuse(site:Installation,cookie:string,page:Page,info:TestInfo,campaign:{campaignId:string;revisionId:string},templateId:string) {
@@ -71,7 +71,7 @@ export async function oversizedReuse(site:Installation,cookie:string,page:Page,i
     }
     expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await openPage(page,`${site.runtime.url}/app/campaigns`);
-    await page.getByRole('button',{name:'New campaign',exact:true}).click();
+    await openCampaignStarters(page);
     await page.getByRole('button',{name:'Use Large garden letter',exact:true}).click();
     const alert=page.getByRole('alert').filter({hasText:'Email is too large.'});
     await expect(alert).toContainText('Largest blocks:');

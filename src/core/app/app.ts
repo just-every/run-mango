@@ -308,6 +308,7 @@ export function createApp(
     let editorConfigured = false;
     try { editorConfigured = configuredEditor(environment)?.enabled === true; } catch { /* Invalid configuration grants no editor. */ }
     return context.json({local: platform.config.local === true,
+      signedIn: Boolean(await authService.authenticate(context.req.raw)),
       editorEligible: editorConfigured && await authService.isNativeOwner(context.req.raw)});
   });
   app.route('/', createPublicAuthRoutes(authService, { secureCookie }));

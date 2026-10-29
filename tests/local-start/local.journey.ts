@@ -58,7 +58,7 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
       await expect(field).toHaveAttribute('aria-invalid','true');
       await expect(field).toHaveAccessibleDescription(/\S/);
     }
-    await expect(page.getByRole('alert')).toBeVisible();
+    await expect(page.getByText('Enter your business name.',{exact:true})).toBeVisible();
     await expect(page.getByLabel('Business display name',{exact:true})).toBeFocused();
     expect(senderWrites).toBe(0);
     await finishSetup(page);
@@ -73,7 +73,7 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     await page.reload(); await expect(page).toHaveURL(runtime.url+'/app');
     await page.goto(runtime.url+'/app/campaigns');
     expect((await (await page.request.get(runtime.url+'/api/campaigns')).json()).campaigns).toEqual([]);
-    await expect(page.getByRole('button',{name:'New campaign',exact:true})).toBeVisible();
+    await expect(page.getByRole('button',{name:'Blank newsletter',exact:true})).toBeVisible();
     expect((await page.request.post(runtime.url+'/api/_local/bootstrap',{data:{testSession:true}})).status()).toBe(404);
     await page.goto(runtime.url+'/auth/confirm?token='+'x'.repeat(43));
     await expect(page.getByRole('link',{name:'Request a new link'})).toHaveAttribute('href','/signin');

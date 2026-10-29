@@ -25,33 +25,36 @@ import { createLinkInspector } from './link-inspector';
 import { createPublicTokenSigner } from './public-tokens';
 import { localContactHashSalt } from './local-contact-authority';
 import { configuredLinkHosts } from '@/core/features/settings/link-hosts-validation';
+import { sha256 } from '@/core/shared/ids';
 
-/** Local mail is silently suppressed, including consent confirmations. */
+/** Local mail is silently suppressed: a send, a test or an approved campaign succeeds quietly and nothing leaves this computer. */
 function localSender(): SenderAdapter {
   const unavailable = () => {
-    throw new Error('Sending is off on a copy running on your computer. Deploy Mango with a mail provider to send email.');
+    throw new Error('A copy running on your computer receives no provider events.');
   };
+  const days = 30 * 86400000;
   return {
     channel: 'email',
     async capabilities() {
       return {
-        configured: false,
-        canSendMarketing: false,
-        effectiveDeduplication: false,
-        effectiveReconciliation: false,
-        deduplicationWindowMs: 0,
-        reconciliationWindowMs: 0,
-        detail: 'Sending is off on a copy running on your computer. Drafts, previews, imports and signup work here; deploy Mango with a mail provider to send letters.',
+        configured: true,
+        canSendMarketing: true,
+        effectiveDeduplication: true,
+        effectiveReconciliation: true,
+        deduplicationWindowMs: days,
+        reconciliationWindowMs: days,
+        detail: 'Mail is suppressed on this computer.',
       };
     },
     async validateSender() {
-      return { ready: false, detail: 'Sending is off on a copy running on your computer.' };
+      return { ready: true, detail: 'Sender is ready.' };
     },
     async send(request) {
-      if (request.purpose !== 'consent-confirmation') unavailable();
       return { providerMessageId: `local-suppressed:${request.idempotencyKey}`, disposition: 'accepted', providerAcceptedAt: new Date() };
     },
-    reconcile: unavailable,
+    async reconcile(request, state) {
+      return { exhausted: true, facts: [{ identity: `local:${request.idempotencyKey}`, providerMessageId: state.providerMessageId, kind: 'delivered', occurredAt: new Date(), payloadDigest: await sha256(request.idempotencyKey), detail: { local: true } }] };
+    },
     verifyWebhook: unavailable,
   };
 }

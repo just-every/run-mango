@@ -5,7 +5,7 @@ type Entry = {id: string; label: string; check: () => string | undefined; adviso
 type Validation = {errors: FieldErrors; register: (name: string, entry: Entry) => () => void; touch: (name: string) => void; change: (name: string) => void};
 const NO_ERRORS: FieldErrors = {};
 const Context = createContext<Validation | null>(null);
-export function ValidationForm({children, onValidSubmit, serverErrors = NO_ERRORS, validationRequest = 0, ...props}: Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> & {children: ReactNode; onValidSubmit: () => void; serverErrors?: FieldErrors; validationRequest?: number}) {
+export function ValidationForm({children, onValidSubmit, serverErrors = NO_ERRORS, validationRequest = 0, summary = true, ...props}: Omit<FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> & {children: ReactNode; onValidSubmit: () => void; /** False on a short form whose fields each show their own message. */ summary?: boolean; serverErrors?: FieldErrors; validationRequest?: number}) {
   const entries = useRef(new Map<string, Entry>());
   const [clientErrors, setClientErrors] = useState<FieldErrors>({});
   const [reportedErrors, setReportedErrors] = useState(serverErrors);
@@ -62,7 +62,7 @@ export function ValidationForm({children, onValidSubmit, serverErrors = NO_ERROR
     event.preventDefault(); event.stopPropagation();
     setReportedErrors(NO_ERRORS);
     if (!validate()) onValidSubmit();
-  }}>{visible.length ? <div className="validation-summary" role="alert"><p>{visible.length} {visible.length === 1 ? 'field needs' : 'fields need'} attention.</p><ul>{visible.map(([name, message]) => {const entry = entries.current.get(name)!; return <li key={name}><a href={`#${entry.id}`} onClick={event => {event.preventDefault(); document.getElementById(entry.id)?.focus();}}>{entry.label}: {message}</a></li>;})}</ul></div> : null}{children}</form></Context.Provider>;
+  }}>{summary && visible.length ? <div className="validation-summary" role="alert"><p>{visible.length} {visible.length === 1 ? 'field needs' : 'fields need'} attention.</p><ul>{visible.map(([name, message]) => {const entry = entries.current.get(name)!; return <li key={name}><a href={`#${entry.id}`} onClick={event => {event.preventDefault(); document.getElementById(entry.id)?.focus();}}>{entry.label}: {message}</a></li>;})}</ul></div> : null}{children}</form></Context.Provider>;
 }
 
 type Control = ReactElement<{id?: string; required?: boolean; onBlur?: (event: unknown) => void; onChange?: (event: unknown) => void; onInput?: (event: unknown) => void; 'aria-describedby'?: string; 'aria-label'?: string}>;

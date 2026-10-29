@@ -9,6 +9,7 @@ import {configuredEditor} from '@/core/features/editor/config';
 import { lobbyResponse } from '@/base/lobby';
 import { claimedWhen, setupStateResponse } from '@/base/setup-state';
 import { identity } from '@/identity';
+import { aliasTarget } from './route-aliases';
 
 const honoPrefixes = ['/api', '/auth', '/unsubscribe', '/consent', '/sender-check', '/l', '/o', '/links', '/media', '/webhooks', '/signin/verify', '/__dev'];
 export async function dispatchDocuments(
@@ -47,7 +48,7 @@ export async function dispatchDocuments(
     : claimedWhen('SELECT singleton FROM oa_bootstrap WHERE singleton = 1');
   const state = await setupStateResponse(request, claim, claimed);
   if (state) return state;
-  const lobby = await lobbyResponse(request, claim, identity, claimed);
+  const lobby = await lobbyResponse(request, claim, identity, claimed, incoming => createAppServices(platform).authService.authenticate(incoming));
   if (lobby) return lobby;
   const path = url.pathname;
   // Start decodes URI letters and accepts case/trailing-slash aliases. Only a
@@ -70,6 +71,8 @@ export async function dispatchDocuments(
     const target = safeReturnTo(url.searchParams.get('returnTo'), '/app');
     return new Response(null, {status:303,headers:{Location:new URL(target,url).pathname === '/signin' ? '/app' : target,'Cache-Control':'no-store'}});
   }
+  const alias = ['GET','HEAD'].includes(request.method) ? aliasTarget(path) : undefined;
+  if (alias) return new Response(null, {status: 303, headers: {Location: alias, 'Cache-Control': 'no-store'}});
   let admission: ReturnType<typeof documentAdmission.getStore>;
   if (path === '/setup' || path === '/app' || path.startsWith('/app/')) {
     const operator = await createAppServices(platform).authService.authenticate(request);

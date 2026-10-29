@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const header = z.string().refine(value => !/[\u0000-\u001f\u007f<>"\\{}]/u.test(value), 'Use plain text without control characters or markup.').trim().min(1).max(200);
+const header = z.string().refine(value => !/[\u0000-\u001f\u007f<>"\\{}]/u.test(value), 'Use plain text without control characters or markup.').trim().min(1, 'Enter your business name.').max(200);
 const email = z.string().refine(value => !/[\u0000-\u001f\u007f]/u.test(value), 'Email addresses cannot contain control characters.').trim().max(254).email('Enter a valid email address.');
 export const senderIdentitySchema = z.object({
   displayName: header,
