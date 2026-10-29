@@ -81,7 +81,7 @@ export function StorePage() {
             })}
           </div>
         ) : <p className="notice-note" role="status">No store has been connected yet.</p>}
-        {off.length ? <p className="muted-copy">Not available in this setup: {off.join(', ')}. <a href="/docs/going-live">How to turn on</a></p> : null}
+        {off.length ? <p className="muted-copy">Not available in this setup: {off.join(', ')}. <a href="/docs/going-live#turn-on-cart-and-browsing-events">How to turn on</a></p> : null}
       </section>
       <StoreOperations operations={data.syncRuns.filter((run): run is SyncRun & OperationRun => run.operation !== 'sync')} />
       {data.channels?.map(channel => <section className="panel" key={channel.id}>
