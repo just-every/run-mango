@@ -1,3 +1,4 @@
+import {propertyDefinitions} from './properties/read';
 import type {D1Database} from '@/vendor/base/import-kit/src/d1/index';
 import {sha256} from '@/core/shared/ids';
 import type {NativeRow} from './import-types';
@@ -25,6 +26,9 @@ export async function readImportState(db:D1Database,rows:NormalizedImportRow[],s
  const attestationIds=[...new Set([...rows.flatMap(row=>row.incumbent?[row.incumbent.id]:[]),...rows.flatMap(row=>(row.ledger?.tables.incumbent_consent_links??[]).map(link=>String(link.attestation_id))),...[...snapshots.values()].flatMap(snapshot=>snapshot.tables.incumbent_consent_links.map(link=>String(link.attestation_id)))])];
  const activeAttestations=new Set((await db.prepare('SELECT id FROM consent_attestations WHERE revoked_at IS NULL AND id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(attestationIds)).all<{id:string}>()).results.map(row=>row.id));
  const incumbentLinks=new Map((await db.prepare('SELECT * FROM incumbent_consent_links WHERE id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(rows.flatMap(row=>(row.ledger?.tables.incumbent_consent_links??[]).map(link=>link.id)))).all<NativeRow>()).results.map(row=>[String(row.id),row]));
- return {byIdentity,snapshots,targets,existingIds,optOuts,suppressions,activeAttestations,incumbentLinks};
+ const definitions=await propertyDefinitions(db as unknown as globalThis.D1Database);
+ const profiles=(await db.prepare('SELECT contact_id,fields_json FROM integration_contact_profiles WHERE contact_id IN (SELECT value FROM json_each(?))').bind(JSON.stringify([...snapshots.keys()])).all<{contact_id:string;fields_json:string}>()).results;
+ const propertyOpening=new Map(profiles.map(row=>[row.contact_id,JSON.parse(row.fields_json) as Record<string,unknown>]));
+ return {definitions,propertyOpening,byIdentity,snapshots,targets,existingIds,optOuts,suppressions,activeAttestations,incumbentLinks};
 }
 export type ImportState=Awaited<ReturnType<typeof readImportState>>;

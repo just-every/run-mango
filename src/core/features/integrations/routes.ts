@@ -1,3 +1,4 @@
+import {PropertyError} from '@/core/features/audience/properties/types';
 import type {Platform} from '@/core/shared/platform';
 import {readProfileMemberships} from './profile-memberships';
 import {customEventInput,recordCustomEvent} from './custom-events';
@@ -59,7 +60,7 @@ function audited(service: Service, settings: boolean): MiddlewareHandler<Environ
       await next();
     } catch (error) {
       if (error instanceof IntegrationError && error.status === 429) context.header('Retry-After', String(60 - Math.floor(Date.now() / 1000) % 60));
-      context.res = context.json({error: error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof IntegrationError ? error.status : 503);
+      context.res = context.json({...(error instanceof PropertyError?{property:error.key}:{}),error: error instanceof PropertyError ? error.code : error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof PropertyError || error instanceof IntegrationError ? error.status : 503);
     }
     if (!auditId) return context.json({error: 'audit_unavailable'}, 503);
     const status = context.res.status;
@@ -76,7 +77,7 @@ function scope(required: IntegrationScope): MiddlewareHandler<Environment> {
 }
 function routes() {
   const router = new Hono<Environment>();
-  router.onError((error, context) => context.json({error: error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof IntegrationError ? error.status : 503));
+  router.onError((error, context) => context.json({...(error instanceof PropertyError?{property:error.key}:{}),error: error instanceof PropertyError ? error.code : error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof PropertyError || error instanceof IntegrationError ? error.status : 503));
   return router;
 }
 const boundedBody = () => bodyLimit({maxSize: 64 * 1024, onError: context => context.json({error: 'request_too_large'}, 413)});

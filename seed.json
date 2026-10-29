@@ -832,7 +832,8 @@
     "providerWebhooksPerMinute": 5000,
     "providerReconciliationIntervalMinutes": 15,
     "unresolvedProviderOutcomeHours": 1,
-    "maxTestSendsPerDay": 100
+    "maxTestSendsPerDay": 100,
+    "maxContactProperties": 100
   },
   "accessibility": {
     "level": "WCAG 2.2 AA",

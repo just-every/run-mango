@@ -1,3 +1,4 @@
+import {matchesProperty} from './properties/comparison';
 import {rfmRuleValue} from '@/core/features/insights/retention';
 import type {AudiencePredicate, InclusionGroup} from '@/core/features/lifecycle/rules';
 import type {createAudienceRepository} from './repository';
@@ -69,6 +70,7 @@ export function createRuleMatcher(repository:Repository,store:Store,now:Date,cha
   async function predicateMatches(id:string,p:AudiencePredicate,contact:Record<string,unknown>):Promise<boolean> {
     if(p.sourceType==='campaign')return repository.followupMember(String(p.value),id);
     if(p.sourceType==='contact') {
+      if(p.field==='property'){const profile=await repository.segmentProfile(id),definition=profile.definitions.find(d=>d.key===p.property);if(definition)return matchesProperty(definition,profile.fields,p,now);}
       const value=await contactValue(id,p,contact);
       return p.field==='tags'?memberMatch(value as unknown[],p):matchesComparator(value,p.comparator,p.value);
     }

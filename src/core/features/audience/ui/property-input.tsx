@@ -1,0 +1,6 @@
+import type {PropertyDefinition,PropertyValue} from '../properties/types';
+export function PropertyInput({definition,value,onChange}:{definition:PropertyDefinition;value:unknown;onChange:(value:PropertyValue)=>void}) {
+  if(definition.type==='boolean')return <select aria-label={definition.label} value={value===null||value===undefined?'':String(value)} onChange={e=>onChange(e.target.value===''?null:e.target.value==='true')}><option value="">No value</option><option value="true">Yes</option><option value="false">No</option></select>;
+  if(definition.type==='list')return <select multiple aria-label={definition.label} value={Array.isArray(value)?value:typeof value==='string'?[value]:[]} onChange={e=>onChange(Array.from(e.currentTarget.selectedOptions,o=>o.value))}>{definition.options.map(option=><option key={option}>{option}</option>)}</select>;
+  return <input aria-label={definition.label} type={definition.type==='date'?'date':definition.type==='number'?'number':'text'} step={definition.type==='number'?'any':undefined} inputMode={definition.type==='money'?'decimal':undefined} value={value===null||value===undefined?'':String(value)} onChange={e=>onChange(e.target.value===''?null:definition.type==='number'?Number(e.target.value):e.target.value)}/>;
+}

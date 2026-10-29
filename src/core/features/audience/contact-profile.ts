@@ -1,3 +1,5 @@
+import {propertyRuleIssue} from './properties/rule-validation';
+import {readTypedProperty} from './properties/read';
 import type { Platform } from '@/core/shared/platform';
 import { sha256 } from '@/core/shared/ids';
 import { createAudienceRepository } from './repository';
@@ -10,7 +12,7 @@ import { segmentAvailability } from './segment-availability';
 import { parseStructuredRules } from '@/core/features/lifecycle/rules';
 
 export type ContactProfile = {
-  properties: Record<string, unknown>; tags: string[];
+  properties: Record<string, unknown>; tags: string[]; definitions: import('./properties/types').PropertyDefinition[]; propertyErrors:Record<string,string>;
   mergedIdentities: Array<{id:string;occurredAt:number}>;
   segments: Array<{id:string;name:string;state:'member'|'unavailable'}>;
 };
@@ -30,7 +32,7 @@ export async function readContactProfile(platform:Platform, contactId:string):Pr
   const segments:ContactProfile['segments']=[];
   if(contact)for(const segment of saved.results) {
     const rules=parseStructuredRules(segment.inclusion,segment.exclusions);
-    if(!rules.ok || (await segmentAvailability(repository,rules.inclusion,rules.exclusions)).length ||
+    if(!rules.ok || propertyRuleIssue(profile.definitions,rules.inclusion,rules.exclusions) || (await segmentAvailability(repository,rules.inclusion,rules.exclusions)).length ||
       (await store.freshness(rules.sourceTypes.filter(type=>type!=='contact'&&type!=='campaign').map(type=>type==='browsing'?'browsing-event':type) as Parameters<typeof store.freshness>[0],now)).length) {
       segments.push({id:segment.id,name:segment.name,state:'unavailable'});continue;
     }
@@ -38,5 +40,6 @@ export async function readContactProfile(platform:Platform, contactId:string):Pr
       !(await Promise.all(rules.exclusions.map(rule=>matcher.predicateMatches(contactId,rule.predicate,contact)))).some(Boolean))
       segments.push({id:segment.id,name:segment.name,state:'member'});
   }
-  return {properties:profile.fields,tags:profile.tags,mergedIdentities:merged.results,segments};
+  const propertyErrors=Object.fromEntries(profile.definitions.flatMap(d=>{const read=readTypedProperty(d,profile.fields);return read.error?[[d.key,read.error]]:[];}));
+  return {definitions:profile.definitions,propertyErrors,properties:profile.fields,tags:profile.tags,mergedIdentities:merged.results,segments};
 }

@@ -1,3 +1,5 @@
+import { canonicalJson } from '../../src/vendor/base/import-kit/src/d1/index';
+import { sha256 } from '../../src/core/shared/ids';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 import { json, draftCampaign, approve, confirmedContact, type Installation } from './harness';
@@ -26,9 +28,17 @@ export async function activityJourney(site: Installation, edge: Awaited<ReturnTy
   await json(await post(`/api/campaigns/${extra.campaignId}/resume`, owner), 200);
   await json(await post(`/api/campaigns/${extra.campaignId}/cancel`, admin), 200);
 
-  const preview = await json(await post('/api/audience/import-preview', owner, {files: [{name: 'people.csv', preset: 'csv-non-subscribed', csv: 'Email Address\nimported@example.test'}]}), 200);
+  const input = {files: [{name: 'people.csv', preset: 'csv-non-subscribed', csv: 'Email Address\nimported@example.test'}]};
+  const preview = await json(await post('/api/audience/import-preview', owner, input), 200);
+  expect(preview.rows.every((row:any)=>!Object.hasOwn(row,'propertyColumns'))).toBe(true);
   let {job} = await json(await post('/api/audience/imports', owner, {fingerprint: preview.fingerprint}), 200);
   for (let step = 0; ['queued', 'applying'].includes(job.state) && step < 10; step++) ({job} = await json(await post(`/api/audience/imports/${job.id}/resume`, owner), 200));
+  expect((await site.rows(`SELECT source_digest FROM audience_import_plans WHERE fingerprint='${preview.fingerprint}'`))[0].source_digest).toBe(await sha256(canonicalJson({input,incumbentSources:null})));
+  await json(await post('/api/settings/properties', owner, {key:'synthetic_mango_1510',label:'synthetic-mango-1510',type:'date',options:[]}), 201);
+  const repeated = await json(await post('/api/audience/import-preview', owner, input), 200);
+  expect(repeated.fingerprint).toBe(preview.fingerprint);
+  const replay = await json(await post('/api/audience/imports', owner, {fingerprint:preview.fingerprint}), 200);
+  expect(replay.job.state).toBe('completed');
   await json(await post(`/api/contacts/${handContact}/opt-out`, owner, {channel: 'email'}), 200);
   const exported = await json(await site.call('/api/portability/exports', {method: 'POST', cookie: owner, body: {}, headers: {Origin: site.runtime.url}}), 201);
   // Public signup refusals are counted by hour and form, never by address, and summarised once the hour closes.

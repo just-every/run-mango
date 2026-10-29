@@ -21,7 +21,7 @@ function pathsFor(pathname: string, search: string) {
     case '/app/insights': return ['/api/insights', '/api/insights/open-tracking', '/api/insights/deliverability'];
     case '/app/flows': return ['/api/flow-drafts'];
     case '/app/store': return ['/api/store'];
-    case '/app/settings': return ['/api/operator', '/api/settings/providers', '/api/settings/sender', '/api/settings/link-hosts', '/api/operators'];
+    case '/app/settings': return ['/api/operator', '/api/settings/providers', '/api/settings/sender', '/api/settings/link-hosts', '/api/operators', '/api/settings/audience-exclusions', '/api/settings/properties', '/api/settings/woocommerce', '/api/settings/integrations/reviews-loyalty', '/api/audience/signup-allowance', '/api/audience/signup', '/api/audience/signup/refusals', '/api/settings/opt-in', '/api/settings/analytics', '/api/settings/analytics/campaigns', '/api/settings/integrations/audit?limit=50&cursor=0'];
   }
   const campaign = /^\/app\/campaigns\/([^/]+)(?:\/(review|scheduled))?$/.exec(pathname);
   if (campaign) {

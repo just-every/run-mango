@@ -1,3 +1,4 @@
+import {createPropertyRoutes} from '@/core/features/audience/properties/routes';
 import {createCatalogRoutes} from '@/core/features/campaigns/catalog-routes';
 import {registerCatalogReader,configuredCatalogValues} from '@/core/features/campaigns/catalog-values';
 import {catalogSummary} from '@/core/features/campaigns/catalog-outcomes';
@@ -379,6 +380,7 @@ export function createApp(
   app.route('/api', domainSetupRoutes(platform));
   app.route('/api', createStoreRoutes(storeService,platform.commerce));
   app.route('/api', createSyncRoutes(platform, services.storeService));
+  app.route('/api', createPropertyRoutes(environment.DB));
   app.route('/api', createSegmentRoutes(environment.DB));
   app.route('/api', createAudienceRoutes(audienceService,environment.DB,platform,environment));
   app.route('/api', createAudienceImportRoutes(platform));

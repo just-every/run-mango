@@ -3,6 +3,7 @@ import {mkdtemp,rm} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {providerEdge} from './edge';
+import {openPage} from '../support/navigation';
 import {eventSigner} from './sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,approve,availableTransport,consent} from './harness';
 
@@ -48,13 +49,17 @@ export const walk0 = async()=>{
 export const walk1 = async({page})=>{
   const edge=await providerEdge(),signer=eventSigner(),directory=await mkdtemp(join(tmpdir(),'mango-outage-'));
   const options={token:crypto.randomUUID(),stateDirectory:join(directory,'state')};
-  let site=await installation(edge,signer,options);
+  const began=Date.now();let phase=Date.now();
+  const mark=(name:string)=>{console.log(`SEND005 ${name} phase=${Date.now()-phase}ms total=${Date.now()-began}ms`);phase=Date.now();};
+  let site=await installation(edge,signer,options);mark('initial installation');
   try {
     await site.open();await site.open('second-owner@example.test','second-owner');
     edge.behavior.setHealthStatus(503);
     await site.control('/_golive/barrier',{action:'arm',point:'outage-pause',identity:'mail.sender.v1'});
     const failingProbe=site.control('/_golive/cron');
+    mark('outage probe started');
     await expect.poll(async()=> (await site.control('/_golive/barrier',{action:'status'}))?.waiting,{timeout:60000}).toBe(true);
+    mark('barrier wait');
     const [probe]=await site.rows("SELECT next_probe_at FROM provider_health WHERE adapter='mail.sender.v1' AND channel='email'");
     const beforeRecovery=await site.control('/_golive/clock');
     await site.control('/_golive/clock',{advanceMs:Math.max(0,probe.next_probe_at-beforeRecovery.now)+1});
@@ -67,7 +72,7 @@ export const walk1 = async({page})=>{
     await Promise.all([site.control('/_golive/cron'),site.control('/_golive/cron')]);expect(reads()).toHaveLength(2);
     expect(await site.rows(`SELECT count(*) AS n FROM provider_outage_notifications WHERE outage_id='${outage.id}'`)).toEqual([{n:2}]);
     const clock=await site.control('/_golive/clock');
-    await site.runtime.close();site=await installation(edge,signer,options);
+    mark('before restart 1');await site.runtime.close();mark('close 1');site=await installation(edge,signer,options);mark('installation 2');
     if(clock.offset)await site.control('/_golive/clock',{advanceMs:clock.offset});
     await site.control('/_golive/cron');expect(reads()).toHaveLength(2);
     edge.behavior.setHealthStatus(200);edge.loseResponseFor('owner@example.test');
@@ -80,7 +85,7 @@ export const walk1 = async({page})=>{
     const notices=()=>edge.sends.filter(s=>s.body.subject==='Mango provider outage');
     expect(notices().map(n=>n.to).sort()).toEqual(['owner@example.test','second-owner@example.test']);
     expect(await site.rows(`SELECT state FROM provider_outage_notifications WHERE outage_id='${outage.id}' AND operator_id='go-live-owner'`)).toEqual([{state:'handoff-unknown'}]);
-    const later=await site.control('/_golive/clock');await site.runtime.close();site=await installation(edge,signer,options);
+    const later=await site.control('/_golive/clock');mark('before restart 2');await site.runtime.close();mark('close 2');site=await installation(edge,signer,options);mark('installation 3');
     await site.control('/_golive/clock',{advanceMs:later.offset});
     await Promise.all([site.control('/_golive/cron'),site.control('/_golive/cron')]);
     expect(notices()).toHaveLength(2);expect(reads()).toHaveLength(3);
@@ -110,30 +115,47 @@ export const walk1 = async({page})=>{
     const beforeDue=await site.control('/_golive/clock');
     await site.control('/_golive/clock',{advanceMs:Math.max(0,scheduled-beforeDue.now)+1,hold:true});
     await site.control('/_golive/cron');
+    mark('dispatch queued');
     await expect.poll(async()=> (await site.control('/_golive/emissions')).find((item:any)=>item.command.kind==='campaign.dispatch'&&item.command.payload.revisionId===campaign.revisionId)?.completedQueues.length??0,{timeout:60000}).toBeGreaterThan(0);
+    mark('dispatch wait');
     expect(await site.rows(`SELECT transport_disposition,attempt_count FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`)).toEqual([{transport_disposition:'queued',attempt_count:0}]);
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
-    await page.goto(`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
+    // Server deadlines use the go-live clock; drive the browser's periodic
+    // status refresh with its own clock rather than waiting on wall time.
+    await page.clock.install();
+    mark('browser clock installed');
+    await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await expect(page.locator('.step-result-state.status-pill--paused')).toBeVisible();
     await expect(page.locator('[data-disposition=queued] dd')).toHaveText('1');
     await page.screenshot({path:test.info().outputPath('outage-paused-pending-probe.png'),fullPage:true});
+    mark('deadline campaign and browser ready');
     const beforeDeadline=await site.control('/_golive/clock');await site.control('/_golive/clock',{advanceMs:deadline-beforeDeadline.now+1});await site.control('/_golive/cron');
     expect(await site.rows(`SELECT transport_disposition,skip_reason,attempt_count FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`)).toEqual([{transport_disposition:'skipped',skip_reason:'send-window-expired',attempt_count:0}]);
     expect(await site.rows(`SELECT state FROM campaigns WHERE id='${campaign.campaignId}'`)).toEqual([{state:'completed'}]);
     const emitted=await site.control('/_golive/emissions'),lateIndex=emitted.findIndex((item:any)=>item.command.kind==='campaign.dispatch'&&item.command.payload.revisionId===campaign.revisionId);
     expect(lateIndex).toBeGreaterThanOrEqual(0);await site.control('/_golive/replay',{index:lateIndex});
+    mark('late replay queued');
     await expect.poll(async()=> (await site.control('/_golive/emissions'))[lateIndex].completedQueues.length,{timeout:60000}).toBeGreaterThan(emitted[lateIndex].completedQueues.length);
+    mark('late replay wait');
+    await page.clock.fastForward(20_000);
+    mark('expired browser clock advanced');
     await expect(page.locator('[data-disposition=skipped] dd')).toHaveText('1',{timeout:30000});
     await expect(page.locator('[data-disposition=queued]')).toHaveCount(0);
     await expect(page.locator('.step-result__notes time')).toHaveCount(0);
+    mark('expired browser settled');
     expect(edge.sends.filter(send=>send.to===expiryEmail&&send.body.headers?.['List-Unsubscribe'])).toEqual([]);
     edge.behavior.setHealthStatus(200);
     const beforeSecondRecovery=await site.control('/_golive/clock');await site.control('/_golive/clock',{advanceMs:Math.max(0,activeOutage.next_probe_at-beforeSecondRecovery.now)+1});await site.control('/_golive/cron');
+    mark('recovery probe complete');
     await expect.poll(async()=> (await site.rows(`SELECT resumed_at FROM campaign_channel_pauses WHERE campaign_id='${campaign.campaignId}' AND reason='provider-outage'`))[0]?.resumed_at,{timeout:60000}).toBeTruthy();
+    mark('recovery wait');
+    await page.clock.fastForward(20_000);
+    mark('recovery browser clock advanced');
     await expect(page.locator('[data-disposition=skipped] dd')).toHaveText('1');
     await expect(page.locator('[data-pause-reason=provider-outage][data-pause-state=recovered]')).toBeVisible({timeout:30000});
+    mark('recovered browser settled');
     await page.screenshot({path:test.info().outputPath('outage-recovered-expired-recipient.png'),fullPage:true});
 
-    expect(edge.unexpected).toEqual([]);
+    mark('all assertions complete');expect(edge.unexpected).toEqual([]);
   } finally {await page.close();await site.control('/_golive/barrier',{action:'release'}).catch(()=>{});await site.runtime.close();await edge.close();await rm(directory,{recursive:true,force:true});}
 };

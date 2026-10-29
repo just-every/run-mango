@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const comparator = z.enum(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'contains', 'in']);
+const comparator = z.enum(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'contains', 'in', 'on', 'before', 'after', 'within_last', 'not_within_last']);
 const sourceType = z.enum(['campaign', 'contact', 'customer', 'product', 'variant', 'inventory', 'order', 'refund', 'cart', 'browsing']);
 const ruleValue = z.union([z.string(), z.number(), z.boolean(), z.array(z.string().min(1)).min(1)]);
 export const eventFilterSchema = z.object({field:z.string().min(1).max(160),comparator,value:ruleValue});
@@ -20,6 +20,7 @@ const predicate = z.object({
   currency:z.string().regex(/^[A-Z]{3}$/).optional(),
 }).superRefine((value, context) => {
   const issue=(message:string)=>context.addIssue({code:'custom',message});
+  if(['on','before','after','within_last','not_within_last'].includes(value.comparator)&&!(value.sourceType==='contact'&&value.field==='property'))issue('Date comparisons require a defined contact property.');
   if(value.sourceType==='campaign'&&(value.field!=='followup'||value.comparator!=='eq'||typeof value.value!=='string'||!value.value.trim()||value.value.length>160||value.lookbackDays!==undefined))issue('Use a valid saved follow-up audience.');
   if (value.sourceType === 'contact') {
     if (!(contactRuleFields as readonly string[]).includes(value.field) || (value.lookbackDays !== undefined && value.field!=='clicked')) issue('Use a recorded contact field; only clicks have a contact time window.');

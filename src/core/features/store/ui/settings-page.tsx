@@ -1,3 +1,4 @@
+import {SettingsProperties} from './settings-properties';
 import {SettingsSending} from './settings-sending';
 import {SettingsWooCommerce} from './settings-woocommerce';
 import {SettingsAudienceExclusions} from './settings-audience-exclusions';
@@ -36,6 +37,7 @@ export function SettingsPage() {
       <Can permission="settings.manage"><SettingsLinkHosts /></Can>
       <Can permission="settings.manage"><SettingsAudienceExclusions /></Can>
       <Can permission="integration.manage"><SettingsIntegrations /></Can>
+      <Can permission="integration.manage"><SettingsProperties /></Can>
       <Can permission="settings.manage"><SettingsStripe /></Can>
       <Can permission="settings.manage"><SettingsWooCommerce /></Can>
       <Can permission="settings.manage"><SettingsDomainGuide /></Can>
