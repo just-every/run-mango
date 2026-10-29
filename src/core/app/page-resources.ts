@@ -26,7 +26,7 @@ function pathsFor(pathname: string, search: string) {
   const campaign = /^\/app\/campaigns\/([^/]+)(?:\/(review|scheduled))?$/.exec(pathname);
   if (campaign) {
     const base = `/api/campaigns/${encodeURIComponent(decodeURIComponent(campaign[1]))}`;
-    return campaign[2] === 'review' ? [`${base}/review`, '/api/campaign-authoring', '/api/audience/segments', `${base}/design-jobs`] : [base];
+    return campaign[2] === 'review' ? [`${base}/review`, '/api/audience/segments', `${base}/design-jobs`] : [base];
   }
   const contact = /^\/app\/audience\/([^/]+)$/.exec(pathname);
   return contact ? [`/api/contacts/${encodeURIComponent(decodeURIComponent(contact[1]))}`] : [];

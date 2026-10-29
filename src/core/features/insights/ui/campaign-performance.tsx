@@ -32,7 +32,7 @@ export function CampaignPerformance({ settingsVersion }: { settingsVersion: numb
   return <>
     <section className="panel data-table-panel" aria-labelledby="campaign-performance-title">
       <h2 id="campaign-performance-title">Campaign performance</h2>
-      <p>Saved revisions and channels are separate rows. Recipients and unique clicks count recipient-steps; click rate uses recipients. Revenue is attributed, with refunds and cancellations deducted in each recorded currency.</p>
+      <p>One row for each saved version and channel. Revenue is attributed to the campaign, minus refunds and cancellations, in each currency.</p>
       <div className="draft-fields">
         <label>Performance channel<select aria-label="Performance channel" value={filter.channel ?? ''} onChange={event => update({ channel: event.target.value as CampaignPerformanceFilter['channel'] || undefined })}><option value="">All channels</option><option value="email">Email</option><option value="sms">SMS</option></select></label>
         <label>Performance topic<select aria-label="Performance topic" value={filter.topic ?? ''} onChange={event => update({ topic: event.target.value || undefined })}><option value="">All topics</option>{(data?.topics ?? (filter.topic ? [filter.topic] : [])).map(topic => <option key={topic} value={topic}>{topic}</option>)}</select></label>

@@ -93,7 +93,6 @@ export function AudienceImportSourceForm({
             <h2 id="import-files-title">Select files and presets</h2>
           </div>
         </div>
-        <p className="muted-copy">Choose the preset that matches each CSV export, or one whole account export (.zip). Suppression and opt-out rows are applied before any subscription data.</p>
         <ul className="audience-import-files" aria-label="Selected CSV files">
           {archive ? (
             <li className="audience-import-file">
@@ -148,7 +147,6 @@ export function AudienceImportSourceForm({
           <Field name="files" label="CSV files" validate={() => fileError || (files.length || archive ? undefined : "Choose at least one CSV file or one .zip account export.")}><input aria-label="Choose CSV files" aria-required="true" type="file" accept=".csv,text/csv,.zip,application/zip" multiple onChange={onChooseFiles} disabled={!ready || busy || Boolean(archive)} /></Field>
         </label>
         <p className="quiet-caption">Up to 10 files, 10 MB total, and {maxContactImportRows.toLocaleString('en-US')} rows per review. An account export may be up to {Math.round(archiveLimits.archiveBytes / 1048576)} MB.</p>
-        <p className="quiet-caption">Large consent or ledger payloads may require smaller files to fit one durable review.</p>
         {fileError ? <p className="inline-error" role="alert">{fileError}</p> : null}
       </section>
 
@@ -161,7 +159,7 @@ export function AudienceImportSourceForm({
               <h2 id="import-mapping-title">Field mapping</h2>
             </div>
           </div>
-          <p className="muted-copy">Map email, E.164 phone, or both. SMS columns carry independent consent; email consent and file presets never subscribe SMS. Missing original evidence keeps that channel non-subscribed.</p>
+          <p className="muted-copy">Map email, phone, or both. A row without its original consent evidence stays unsubscribed.</p>
           <div className="audience-import-mappings">
             {mappingColumns.map((column) => {
               const preset = files.find((file) => file.name === column.name)?.preset;
@@ -206,7 +204,7 @@ export function AudienceImportSourceForm({
             <h2 id="import-consent-title">Email consent evidence</h2>
           </div>
         </div>
-        <p className="muted-copy">These details must match what each person actually saw when they opted in. Adding them here cannot create consent or reverse an opt-out.</p>
+        <p className="muted-copy">These must match what each person saw when they opted in.</p>
         <div className="audience-import-consent-grid">
           <label>
             <span>Brand or legal sender</span>
@@ -241,7 +239,6 @@ export function AudienceImportSourceForm({
       </section>
 
       <div className="audience-import-preview-action">
-        <p className="muted-copy">Review counts, consent status, and row warnings before starting the import.</p>
         <button className="primary-action" type="submit" disabled={busy}>
           {busy ? 'Reviewing…' : previewIsCurrent ? 'Refresh preview' : 'Preview import'}
         </button>

@@ -1,4 +1,5 @@
 import {SignupSettingsForm} from './signup-settings-form';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {useState} from 'react';
 import {useResource} from '@/core/app/client/lib/use-resource';
 import {requestJson} from '@/core/app/client/lib/api';
@@ -22,11 +23,12 @@ export function SignupCapacitySettings() {
   </section>;
 }
 function Allowance({level,save}:{level:Level;save:(name:string,value:number)=>Promise<void>}) {
+  const formatDate = useDateFormatter();
   const [value,setValue]=useState(level.value),[busy,setBusy]=useState(false);
   return <form className="signup-settings-form" onSubmit={async event=>{event.preventDefault();setBusy(true);try{await save(level.name,value);}finally{setBusy(false);}}}>
     <label>{level.label}<input type="number" min={level.floor} max={level.ceiling} value={value} onChange={e=>setValue(Number(e.target.value))} required/></label>
     <p>Floor {level.floor.toLocaleString('en-US')} · Ceiling {level.ceiling.toLocaleString('en-US')} · Active {level.value.toLocaleString('en-US')}</p>
-    {level.scheduled?<p>Next window: {level.scheduled.value.toLocaleString('en-US')} from {new Date(level.scheduled.effective_at).toISOString()}.</p>:null}
+    {level.scheduled?<p>Next window: {level.scheduled.value.toLocaleString('en-US')} from {formatDate(new Date(level.scheduled.effective_at).toISOString())}.</p>:null}
     <button className="secondary-action" type="submit" disabled={busy}>Save {level.label.toLowerCase()}</button>
   </form>;
 }

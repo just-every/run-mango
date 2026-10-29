@@ -19,7 +19,7 @@ Before the first real send to a real list, a sender needs a few things in place.
 
 Run the sender check from **Settings** on your deployment: no command line is needed. [Getting started](./getting-started.md#verify-your-sender) walks through it.
 
-Text messages, AI writing and a store connection are optional modules, off unless you configure them; a newsletter needs none of them. [Getting started](./getting-started.md) and the repository's `OPERATIONS.md` describe their settings.
+Text messages, AI writing and a store connection are optional modules, off unless you configure them; a newsletter needs none of them. To [turn on text messages](#turn-on-text-messages) or a store's [cart and browsing events](#turn-on-cart-and-browsing-events), follow the steps at the end of this page.
 
 ## What Gmail requires
 
@@ -56,3 +56,86 @@ For branded links, provision a hostname, CNAME it to the Mango installation’s 
 The branded hostname exposes only public GET/HEAD `/l/<token>` redirects and a cookie-free HEAD `/` HTTPS probe; app, sign-in and private APIs remain on the installation origin. Tokens, approved destinations, contact links, consent precedence, scanner exclusion and click counting keep their existing rules. No new sending permission follows from a tracking host.
 
 BIMI needs enforced DMARC (`p=quarantine` or `p=reject`, full enforcement including `pct=100` where used), aligned mail, a compliant publicly served SVG logo and the certificate required by participating receivers. A monitoring `p=none` policy is insufficient. BIMI never guarantees inbox placement. Resend retains its existing verification path; this setup panel currently operates on SendGrid.
+
+## Turn on text messages
+
+Mango sends text messages through Mobile Message, to Australian mobile numbers. They run on a deployment; a copy on your computer keeps them off.
+
+1. In Mobile Message, get API credentials and a dedicated two-way number, then add a signed inbound webhook to `https://<your-deployment>/webhooks/sms/mobile-message` and keep its signing secret.
+2. In your Mango checkout, write the six settings to a private file, `.rer/sms.env`:
+
+   ```bash
+   SMS_PROVIDER_API_KEY='<API username>:<API password>'
+   SMS_WEBHOOK_SECRET='<the webhook signing secret>'
+   SMS_CONFIRMATION_SENDER='<the dedicated number, +61…>'
+   SMS_PROGRAMME_POLICY='<your programme, as one line of JSON>'
+   MANGO_TEST_SMS_ALLOWLIST='<test numbers, separated by commas>'
+   MANGO_SMS_HANDOFFS_PER_MINUTE='<most messages per minute>'
+   ```
+
+   The programme names your brand, help contact and sending hours; [SMS signup and compliance](./signup-and-consent.md#sms-signup-and-compliance) lists its fields.
+3. Store all six on the deployment at once, then delete the file:
+
+   ```bash
+   set -a
+   . ./.rer/hosted.env
+   set +a
+   npx wrangler secret bulk .rer/sms.env --name "mango-$MANGO_DEPLOY_ENV"
+   rm .rer/sms.env
+   ```
+
+   Later deploys keep them. With only some of the six, Mango stops and names the missing ones.
+
+Audience then offers **Record SMS permission**, and your signup page offers text messages.
+
+## Turn on cart and browsing events
+
+Cart and browsing events come from your Shopify store through the Mango Web Pixel and a signed app proxy, both in a custom-distribution Shopify app for this one store. Like text messages, they run on a deployment.
+
+1. Give the app these scopes:
+
+   ```text
+   read_customers, read_products, read_inventory, read_locations,
+   read_orders, read_all_orders, read_returns, read_pixels,
+   write_pixels, read_customer_events, write_app_proxy
+   ```
+
+2. Add the app proxy to the app's `shopify.app.toml`:
+
+   ```toml
+   [app_proxy]
+   url="https://<your-deployment>/webhooks/commerce/shopify/observations"
+   prefix="apps"
+   subpath="mango-signals"
+   ```
+
+3. Copy `extensions/mango-pixel` from your Mango checkout into the app's Shopify CLI project and release it. Then activate it with the Admin API's `webPixelCreate` and these settings, and keep the pixel ID it returns:
+
+   ```json
+   {
+     "channel": "<a new name for this installation>",
+     "proxyPath": "/apps/mango-signals"
+   }
+   ```
+
+4. Subscribe `carts/create` and `carts/update` to `https://<your-deployment>/webhooks/commerce/shopify` with the Admin API's `webhookSubscriptionCreate`: JSON, API version 2026-07, no filter.
+5. Write the four pixel settings to a private file, `.rer/shopify.env`:
+
+   ```bash
+   COMMERCE_OBSERVATION_CHANNEL='<the channel name from step 3>'
+   COMMERCE_APP_INSTALLATION_ID='<the currentAppInstallation ID>'
+   COMMERCE_PIXEL_ID='<the pixel ID from step 3>'
+   COMMERCE_PROXY_PATH='/apps/mango-signals'
+   ```
+
+   If Store shows no Shopify records yet, connect the store in the same file:
+
+   ```bash
+   COMMERCE_STORE_URL='https://<your-store>.myshopify.com'
+   COMMERCE_API_TOKEN='<the app Admin API access token>'
+   COMMERCE_WEBHOOK_SECRET='<the app client secret>'
+   COMMERCE_EXCLUSIVE_SHOP='<your-store>.myshopify.com'
+   ```
+
+6. Store the file as in step 3 of [Turn on text messages](#turn-on-text-messages), with `.rer/shopify.env` in place of `.rer/sms.env`.
+7. In **Store**, sync customers, products and variants. Each sync also checks the app, the pixel and the cart subscriptions.

@@ -1,4 +1,3 @@
-import { formatDateInTimeZone } from '@/core/app/client/lib/format';
 import type { Step } from '@/core/app/client/lib/types';
 import type { CampaignResults, DispositionCount } from '../result-model';
 
@@ -21,7 +20,7 @@ export function dispositionLabel(bucket: DispositionCount) {
   if (bucket.disposition === 'skipped') return `Skipped — ${bucket.reason ? reasons[bucket.reason] ?? bucket.reason.replaceAll('-', ' ') : 'reason not recorded'}`;
   return ({queued:'Queued','handed-off':'Handed off',accepted:'Accepted',delivered:'Delivered',bounced:'Bounced',failed:'Failed','handoff-unknown':'Waiting for confirmation'} as Record<string,string>)[bucket.disposition] ?? bucket.disposition;
 }
-export function overallResult(results:CampaignResults, steps:Step[], timezone:string) {
+export function overallResult(results:CampaignResults, steps:Step[], formatDate:(value:string)=>string) {
   const sent = results.steps.filter(step => step.state === 'Sent').length;
   const parts = [`${sent} of ${results.steps.length} steps sent.`];
   for (const outcome of results.steps) {
@@ -29,10 +28,10 @@ export function overallResult(results:CampaignResults, steps:Step[], timezone:st
     if (!step) continue;
     if (outcome.state === 'Missed') {
       const unsent = outcome.expiredQueuedCount + outcome.counts.filter(row => row.disposition === 'skipped' && row.reason === 'deadline-passed').reduce((sum,row) => sum+row.count,0);
-      parts.push(`Step ${step.sequence} missed its send window (closed ${formatDateInTimeZone(step.sendByAt,timezone)}); ${unsent} recipient-steps were not sent.`);
+      parts.push(`Step ${step.sequence} missed its send window (closed ${formatDate(step.sendByAt)}); ${unsent} ${unsent === 1 ? 'message was' : 'messages were'} not sent.`);
     } else {
       const expired = outcome.expiredQueuedCount + outcome.counts.filter(row => row.disposition === 'skipped' && row.reason === 'deadline-passed').reduce((sum,row) => sum + row.count,0);
-      if (expired) parts.push(`Step ${step.sequence} left ${expired} recipient-steps unsent when its send window closed (${formatDateInTimeZone(step.sendByAt,timezone)}).`);
+      if (expired) parts.push(`Step ${step.sequence} left ${expired} ${expired === 1 ? 'message' : 'messages'} unsent when its send window closed (${formatDate(step.sendByAt)}).`);
       if (outcome.state !== 'Sent') parts.push(`Step ${step.sequence} ${outcome.state === 'Scheduled' ? 'is scheduled' : outcome.state === 'Sending' ? 'is sending or awaiting confirmation' : outcome.state === 'Completed' ? 'completed without a provider handoff' : `is ${outcome.state.toLowerCase()}`}.`);
     }
   }
