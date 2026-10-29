@@ -3745,6 +3745,10 @@
       "sha256": "b606012e18821196b2b1368aaee9b9b01b4b141077157c7f59ae3dfc57ffdc92",
       "executable": false
     },
+    "src/core/features/bootstrap/demo-links.ts": {
+      "sha256": "8b5210678bd10881bbd62000ed3d89cf402a2e7ad9937d9a794c0c6a1326040b",
+      "executable": false
+    },
     "src/core/features/bootstrap/repository.ts": {
       "sha256": "5283519ebf9e42a8725f29a156ab6b442ca4d061544d7f05748e7bfa65d082fb",
       "executable": false
