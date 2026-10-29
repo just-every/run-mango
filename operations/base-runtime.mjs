@@ -58,7 +58,7 @@ export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy =
     name: 'base-adoption-test', type: 'worker', compatibilityDate: '2026-09-01',
     compatibilityFlags: ['nodejs_compat'],
     manifest: {mainModule:'worker.js',modules:{'worker.js':{type:'esm',contents:bundled.outputFiles[0].text}}},
-    env: { ...Object.fromEntries(Object.entries(bindings).map(([key,value]) => [key,{type:'json',value}])), DB: {type:'d1',id:crypto.randomUUID()} },
+    env: { ...Object.fromEntries(Object.entries(bindings).map(([key,value]) => [key,{type:'json',value}])), DB: {type:'d1',id:crypto.randomUUID()}, ASSETS_BUCKET:{type:'r2',name:'native-test-assets-'+crypto.randomUUID()}, MANGO_JOBS:{type:'queue',name:'native-test-jobs-'+crypto.randomUUID()} },
   } }] });
   try {
     const db = await mf.getD1Database('DB');

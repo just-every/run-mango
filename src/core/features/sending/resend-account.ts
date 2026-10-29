@@ -3,8 +3,9 @@ export const resendEvents=['email.sent','email.delivered','email.delivery_delaye
 export class ResendConnectionError extends SendingConnectionError {
   constructor(reason:string,status:number,missing:string[]=[]){super(reason,missing,status);}
 }
-export function resendAccount(apiKey:string){
+export function resendAccount(apiKey:string,beforeRequest?:()=>Promise<void>){
   async function request(path:string,method='GET',body?:unknown):Promise<any>{
+    await beforeRequest?.();
     const response=await fetch('https://api.resend.com'+path,{method,redirect:'manual',headers:{Authorization:'Bearer '+apiKey,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(15000)});
     if(!response.ok)throw new ResendConnectionError(response.status===401||response.status===403?'Resend refused this key or its permission.':`Resend request failed (${response.status}).`,response.status);
     if(response.status===204)return null;
