@@ -61,7 +61,7 @@ Core · published · **partial** · Cites BASE-DOCS-001, BASE-PUBLIC-001, BASE-A
 **Acceptance.**
 1. Every published page is reachable from the docs home in manifest section and page order, with only that navigation.
 2. Each page has one top-level title, the current page marked in the sidebar, links to its sections and adjacent pages, and a phone Contents disclosure.
-3. The shared header marks Docs current and offers the sole Sign in link; the shared footer and landing palette, faces and drawings frame every page.
+3. The shared header marks Docs current and offers the sole Sign in link, which reads Open app once a separate request after load finds an open session; the shared footer and landing palette, faces and drawings frame every page.
 4. Every root, docs and top-level readme Markdown file is published or explicitly excluded with a reason; undeclared files, broken links or anchors, links to unpublished pages, raw HTML, forbidden images and absolute build-machine paths fail validation.
 5. Published pages describe the default newsletter profile, expose no maintainer material and have no source-repository or edit link.
 6. No documentation request reads workspace, session or database records.
