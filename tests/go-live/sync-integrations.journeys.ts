@@ -14,6 +14,7 @@ test('[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-
   const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer,{sms:true});
   try {
     const cookie = await site.open();
+    await json(await site.call('/agents/api/policy',{method:'PUT',cookie,body:{document:{schema:'rer-agent-policy/1',catalogue:'rer-agent-classes/1',rules:[{id:'test-company-choice',class:'*',do:'autonomous'}],spend:{none:true}}}}),200);
     await browserPage.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await json(await site.call('/api/settings/sender', {method: 'PUT', cookie, body: sender}), 200);
     const signedInEntry=await site.call('/signin',{cookie});
@@ -128,6 +129,7 @@ test('[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-
   const managedEdge = await providerEdge(), managed = await installation(managedEdge, eventSigner(), {managed: 'none'});
   try {
     const cookie = await managed.open();
+    await json(await managed.call('/agents/api/policy',{method:'PUT',cookie,body:{document:{schema:'rer-agent-policy/1',catalogue:'rer-agent-classes/1',rules:[{id:'test-company-choice',class:'*',do:'autonomous'}],spend:{none:true}}}}),200);
     const key = await json(await managed.call('/api/settings/integrations', {method: 'POST', cookie, body: {name: 'Managed segment sender', scopes: ['campaigns:send']}}), 201);
     expect((await managed.call('/api/integrations/v1/campaigns/unapproved/send', {method: 'POST', headers: {Authorization: `Bearer ${key.token}`},
       body: {revisionId: 'unapproved', segmentId: 'unavailable-segment'}})).status).toBe(503);

@@ -15,6 +15,7 @@ function query(filters: Filters, extra: Record<string, string> = {}) {
 }
 
 function actor(entry: Entry) {
+  if (entry.actorType === 'agent') return entry.operatorName ?? 'Removed agent';
   if (entry.actorType === 'operator') return entry.operatorName ?? 'Removed operator';
   return entry.actorType === 'system' ? 'Mango' : `${entry.actorType} ${entry.operatorId}`;
 }

@@ -1,3 +1,4 @@
+import {actorType,actorId as nativeActorId} from '../agent-door/custody';
 import {graphSchema} from '../flows/graph';
 import type {Platform} from '@/core/shared/platform';
 import {authoredBody,normalizeAuthoredContent} from './authoring-content';
@@ -18,7 +19,7 @@ export function reusableBlockService(platform:Platform){
     async create(name:string,value:unknown,actor:string){
       const block=reusableBlock(value),id=crypto.randomUUID(),now=Date.now();
       await db.batch([db.prepare('INSERT INTO reusable_email_blocks(id,name,block_json,version,edit_token,created_by,updated_by,created_at,updated_at) VALUES(?,?,?,1,?,?,?,?,?)').bind(id,name,blockKey(block),crypto.randomUUID(),actor,actor,now,now),
-        db.prepare("INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) VALUES(?,?,'reusable-email-block',?,'reusable-block.created','operator',?,'{}',?,?)").bind(crypto.randomUUID(),crypto.randomUUID(),id,actor,now,now)]);
+        db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) VALUES(?,?,'reusable-email-block',?,'reusable-block.created','${actorType()}',?,'{}',?,?)`).bind(crypto.randomUUID(),crypto.randomUUID(),id,nativeActorId(actor),now,now)]);
       return entry((await read(id))!);
     },
     async place(id:string,version:number,target:PlacementTarget,actor:string,body?:string){
@@ -39,7 +40,7 @@ export function reusableBlockService(platform:Platform){
         const value=await readReusableTarget(platform,target);if(value.row.state!=='draft')throw new ReusableBlockError('Only editable drafts can detach a reusable block.');
       }
       const now=Date.now(),editable=target.kind==='campaign'?`EXISTS(SELECT 1 FROM campaign_revisions WHERE id=${quote(target.id)} AND state='draft')`:'1';
-      await db.batch([db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'reusable-email-block',?,'reusable-block.detached','operator',?,?,?,? WHERE ${editable}`).bind(crypto.randomUUID(),crypto.randomUUID(),id,actor,JSON.stringify(target),now,now),
+      await db.batch([db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'reusable-email-block',?,'reusable-block.detached','${actorType()}',?,?,?,? WHERE ${editable}`).bind(crypto.randomUUID(),crypto.randomUUID(),id,nativeActorId(actor),JSON.stringify(target),now,now),
         db.prepare(`DELETE FROM reusable_email_block_placements WHERE block_id=? AND target_kind=? AND target_id=? AND node_id=? AND ${editable}`).bind(id,target.kind,target.id,target.nodeId)]);
       return {kind:'independent-copy'};
     },
@@ -76,7 +77,7 @@ export function reusableBlockService(platform:Platform){
       // the source CAS. D1 executes this and every dependent write atomically.
       const useGuard=`(SELECT COUNT(*) FROM reusable_email_block_placements WHERE block_id=?)=? AND NOT EXISTS(SELECT 1 FROM json_each(?) p WHERE NOT EXISTS(SELECT 1 FROM reusable_email_block_placements u WHERE u.id=json_extract(p.value,'$.id') AND u.block_json=json_extract(p.value,'$.block_json') AND u.position=json_extract(p.value,'$.position'))) `;
       const first=db.prepare(`UPDATE reusable_email_blocks SET name=?,block_json=?,version=version+1,edit_token=?,updated_by=?,updated_at=MAX(updated_at+1,?) WHERE id=? AND version=? AND ${targetSnapshotGuard} AND ${useGuard}`).bind(name,json,operation,actor,now,id,version,JSON.stringify(targets.map(group=>targetSnapshot(group.value))),id,uses.length,JSON.stringify(uses));
-      writes.push(db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'reusable-email-block',?,'reusable-block.updated','operator',?,?,?,? WHERE ${guard}`).bind(operation,operation,id,actor,JSON.stringify({placements:uses.length,draftRevisions:created}),now,now));
+      writes.push(db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'reusable-email-block',?,'reusable-block.updated','${actorType()}',?,?,?,? WHERE ${guard}`).bind(operation,operation,id,nativeActorId(actor),JSON.stringify({placements:uses.length,draftRevisions:created}),now,now));
       const result=await db.batch([first,...writes]);if(!result[0].meta.changes)throw new ReusableBlockError('A linked draft or reusable block changed. Reload and review it before editing the reusable source.');
       return {...entry((await read(id))!),draftRevisions:created,updatedTargets:targets.length};
     },
