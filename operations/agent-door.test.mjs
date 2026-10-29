@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {randomUUID,webcrypto} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
+import prepareFixtures from '../tests/agent-door/fixtures.mjs';
 import operations from '../src/core/features/agent-door/operations.ts';
 import {runtime,setup} from './base-runtime.mjs';
 import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../src/vendor/base/agent-door/conformance/crypto.mjs';
@@ -35,8 +36,8 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   const budget=await app.db.prepare('SELECT MAX(next_at) next FROM provider_pacing').first();
   if(Number(budget?.next)>Date.now())await new Promise(resolve=>setTimeout(resolve,Number(budget.next)-Date.now()+1));
  }
- async function mcp(method,params={},overrides={},version='2026-07-28'){
-  const token=await accessToken(c,overrides),name=params.name??params.uri;
+ async function mcp(method,params={},overrides={},version='2026-07-28',nativeToken){
+  const token=nativeToken??await accessToken(c,overrides),name=params.name??params.uri;
   const response=await app.call('/mcp',{method:'POST',headers:{Authorization:'Bearer '+token,
    'MCP-Protocol-Version':version,'Mcp-Method':method,...(name?{'Mcp-Name':name}:{})},
    body:{jsonrpc:'2.0',id:++sequence,method,params:{...params,_meta:{"io.modelcontextprotocol/protocolVersion":version}}}});
@@ -101,6 +102,10 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal(audit.actor_type,'agent');assert.equal(audit.actor_id,c.agentId);assert.ok(audit.detail_json.includes('Morgan Owner'));
   // Exercise the declared native draft/segment journey before company-policy negatives.
   const journey=JSON.parse(await readFile('tests/agent-door/journey.json','utf8'));
+  const fixtureContext={origin,cookie,request:(url,init={})=>app.call(new URL(url).pathname,{
+   method:init.method??'GET',headers:init.headers??{},body:init.body?JSON.parse(init.body):undefined,
+  })};
+  const journeyFixtures=await prepareFixtures({...fixtureContext,phase:'native-journey'});
   const outputs=new Map();
   function resolve(value){
    if(Array.isArray(value))return value.map(resolve);
@@ -112,7 +117,8 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   }
   for(const step of journey){
    const args=resolve(step.args),definition=operations.find(operation=>operation.name===step.tool);
-   const response=await call(step.tool,{...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+step.id}:{})});
+   const input={...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+step.id}:{})};
+   const response=step.client?await mcp('tools/call',{name:step.tool,arguments:input},{},'2026-07-28',journeyFixtures.clients[step.client].token):await call(step.tool,input);
    assert.equal(response.message.result?.isError,false,step.id+': '+JSON.stringify(response.message));
    if(step.target){
     const audit=await (await app.call('/agents/api/audit',{cookie})).json();
@@ -123,6 +129,9 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   }
   const surface=JSON.parse(await readFile('agent-surface.json','utf8'));
   const declaration=validateAgentSurface(surface,{contract:await readFile('CONTRACT.md','utf8')});
+  const discovery=await mcp('server/discover');
+  assert.deepEqual(discovery.message.result._meta['com.runeditrun/capabilities'].declared,surface.capabilities);
+  assert.deepEqual(discovery.message.result._meta['com.runeditrun/capabilities'].refused,[]);
   assert.deepEqual(declaration.points.filter(point=>!point.ok&&point.id.includes('.clause.')),[], 'The landed contract resolves every declared tool and inherited Base clause');
   for(const name of ['mango.access.update','mango.connections.update','mango.signup.update']){
    assert.equal(surface.tools.find(tool=>tool.name===name).sponsorEscalation,false);
@@ -204,6 +213,23 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal(forbiddenHeld.message.result._meta['com.runeditrun/error'].code,'role_forbidden');
   assert.equal((await app.db.prepare('SELECT count(*) count FROM agent_door_approvals').first()).count,heldCount);
   assert.equal((await adopt(autonomousPolicy())).response.status,200);
+  const phaseReaders=[];
+  for(const phase of ['autonomous','held']){
+   const fixture=await prepareFixtures({...fixtureContext,phase});
+   const reader=fixture.clients.reader;phaseReaders.push(reader);
+   assert.deepEqual(fixture.values,{});
+   const response=await app.call('/mcp',{method:'POST',headers:{Authorization:'Bearer '+reader.token,
+    'MCP-Protocol-Version':'2026-07-28','Mcp-Method':'tools/call','Mcp-Name':'mango.integrations.contacts'},
+    body:{jsonrpc:'2.0',id:'phase-'+phase,method:'tools/call',params:{name:'mango.integrations.contacts',arguments:{},_meta:{'io.modelcontextprotocol/protocolVersion':'2026-07-28'}}}});
+   assert.equal(response.status,200);const result=await response.json();
+   assert.equal(result.result.isError,false,JSON.stringify(result));
+   const row=await app.db.prepare('SELECT row FROM agent_door_audit WHERE agent=? ORDER BY sequence DESC LIMIT 1').bind(reader.agent.id).first();
+   const audit=JSON.parse(row.row);assert.equal(audit.client_id,reader.clientId);assert.equal(audit.sponsor.id,owner.id);assert.equal(audit.consent,null);
+   assert.equal((await app.call('/api/settings/integrations/'+reader.clientId,{method:'DELETE',cookie})).status,200);
+   assert.equal((await app.call('/api/integrations/v1/contacts',{headers:{Authorization:'Bearer '+reader.token}})).status,401);
+  }
+  assert.notEqual(phaseReaders[0].clientId,phaseReaders[1].clientId,'Each policy phase has a new native credential');
+  assert.notEqual(phaseReaders[0].token,phaseReaders[1].token);
   const keyResponse=await app.call('/api/settings/integrations',{method:'POST',cookie,body:{name:'Scoped orchard reader',scopes:['contacts:read']}});
   assert.equal(keyResponse.status,201,await keyResponse.clone().text());
   const key=await keyResponse.json(),keyHeaders={Authorization:'Bearer '+key.token};

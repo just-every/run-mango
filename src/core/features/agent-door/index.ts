@@ -1,3 +1,4 @@
+import {mangoCapabilities} from './capabilities';
 import {integrationTools} from './integration-tools';
 import {mangoCredentials} from './credentials';
 import type {createIntegrationService} from '../integrations/service';
@@ -30,7 +31,7 @@ export function mangoAgentDoor(environment: AppBindings, platform: Platform, aut
   const origin = platform.config.publicBaseUrl.origin, db = platform.database.$client;
   const people = mangoPeople(platform, auth);
   const tools = [...mangoTools(platform, nativeGateway(platform, native),integrations,runtime),...workerTools(runtime),...integrationTools(platform,integrations)];
-  const door = createAgentDoor({seed: 'mango', name: 'Mango', specialist: 'marketer', origin, db,
+  const door = createAgentDoor({seed: 'mango', name: 'Mango', specialist: 'marketer', capabilities:mangoCapabilities, origin, db,
     trust: installationTrust(environment, origin), people, ...mangoCredentials(integrations), tools, resources: mangoResources(platform),
     notTools: [
       {clauses: ['DATA-001', 'MOVE-001'], reason: 'import-door'},

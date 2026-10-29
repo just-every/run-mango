@@ -52,6 +52,8 @@ Design generation and conversion require the configured provider. They retain re
 
 ## Verification
 
-The agent-surface.json declaration is generated from the runtime registry with node scripts/agent-surface.mjs; --check verifies parity. It declares the read-only native witness and conformance journey. Pending assertions remain explicit failures rather than accepted coverage. The native verification hook checks a paid design artifact and its saved, unscheduled custody. Full tool/class coverage, specialist delivery/archive probes and the shared CLI conformance round are required before this adoption is accepted.
+The door explicitly declares tools, policy, Pause, audit, idempotency, events, resources, prompts and subscriptions. The CLI reports other lifecycle families as unscoped; this declaration makes no additional lifecycle claim.
+
+The agent-surface.json declaration is generated from the runtime registry with node scripts/agent-surface.mjs; --check verifies parity. It declares the read-only native witness and conformance journey. Pending seed assertions remain explicit failures rather than accepted coverage. Published rer 0.2.88 supports fresh per-policy fixtures and native API clients; Mango's fixture module mints a separate scoped reader through the native settings route for each phase. The native verification hook checks a paid design artifact and its saved, unscheduled custody. Full tool/class coverage, specialist delivery/archive probes and the shared CLI conformance round are required before this adoption is accepted.
 
 The runtime source pin is recorded separately from the installed CLI pin. A runtime copy does not prove that an older CLI runs the matching conformance harness.

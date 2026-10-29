@@ -496,5 +496,47 @@
         "class": "standard"
       }
     ]
+  },
+  {
+    "id": "client-contacts",
+    "tool": "mango.integrations.contacts",
+    "client": "reader",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard",
+        "facts": {
+          "measure": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "client-events",
+    "tool": "mango.integrations.events",
+    "client": "reader",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard",
+        "facts": {
+          "measure": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "client-segments",
+    "tool": "mango.integrations.segments",
+    "client": "reader",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard",
+        "facts": {
+          "measure": 1
+        }
+      }
+    ]
   }
 ]

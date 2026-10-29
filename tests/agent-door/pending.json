@@ -4,8 +4,8 @@
     "assertion": "Every registered tool/class pair and the three specialist probes have real disposable native fixtures; uncovered pairs must remain failures."
   },
   {
-    "id": "PENDING-BASE-2026-10-28-native-client-and-phase-fixtures",
-    "assertion": "Generic journeys need native API-client invocations and fresh per-policy native fixture preparation for destructive consent/custody operations; the bootstrap runs once and the native journey only follows generic policy phases. No fabricated native state or fake widening is permitted.",
-    "source": "cli/agent-door.mjs:41-42,90-92,133-141 and modules/agent-door/conformance/index.mjs:26-34; modules/agent-door/conformance/protocol.mjs:86-118 (rer 0.2.86, checked 2026-10-29)"
+    "id": "PENDING-SEED-2026-10-29-destructive-phase-fixtures",
+    "assertion": "Native API-client calls and fresh per-policy clients are implemented. Fresh native record fixtures for destructive consent/custody operations are still required in every policy phase; bootstrap state may not stand in for them. No fabricated native state or fake widening is permitted.",
+    "source": "rer 0.2.88 cli/agent-journey-fixtures.mjs:7-17 and modules/agent-door/conformance/fixtures.mjs:7-44 provide the supported hooks; the remaining work is in this seed."
   }
 ]
