@@ -44,10 +44,11 @@
 :where(.mango-app) select:not([multiple],[size]:not([size="1"])):disabled { --rer-select-ink: color-mix(in srgb, var(--rer-muted) 55%, transparent); }
 :where(.mango-app) :is(input[type="checkbox"], input[type="radio"]) { flex: none; width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--ms-leaf-deep); }
 /* A label that holds a checkbox or radio is one row: the box beside its text, the whole row the tap target (44px tall on
-   a phone and on touch), whichever layout rule the page gives its other labels. */
-.mango-app label:has(> input:is([type="checkbox"], [type="radio"])) { display: flex; align-items: flex-start; gap: var(--sp-2); width: fit-content; max-width: 100%; }
+   a phone and on touch), whichever layout rule the page gives its other labels. The signup consent row keeps its own
+   grid (pages/public.css), which puts its error under the sentence rather than between the box and the sentence. */
+.mango-app label:where(:not(.subscribe-consent)):has(> input:is([type="checkbox"], [type="radio"])) { display: flex; align-items: flex-start; gap: var(--sp-2); width: fit-content; max-width: 100%; }
 @media (pointer: coarse), (max-width: 680px) {
-  .mango-app label:has(> input:is([type="checkbox"], [type="radio"])) { width: 100%; min-height: 44px; padding-block: 12px; }
+  .mango-app label:where(:not(.subscribe-consent)):has(> input:is([type="checkbox"], [type="radio"])) { width: 100%; min-height: 44px; padding-block: 12px; }
 }
 
 :where(.mango-app) label { color: var(--ms-ink-soft); font-size: 14px; font-weight: 500; line-height: 1.35; }

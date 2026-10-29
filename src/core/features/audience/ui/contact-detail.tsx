@@ -86,7 +86,7 @@ function ContactPage() {
               {data.timeline.slice(0,visibleEvents).map((event) => (
                 <article key={event.id} className="timeline__event" data-timeline-id={event.id} data-timeline-kind={event.kind} style={{minWidth:0,overflowWrap:'anywhere'}}>
                   <span aria-hidden="true" />
-                  <div><strong>{titleCase(event.kind)}</strong><p>{event.detail}</p><small>Source: {event.source}</small>{event.campaignId?<p><Link to="/app/campaigns/$id" params={{id:event.campaignId}}>View campaign</Link></p>:null}</div>
+                  <div><strong>{titleCase(event.kind)}</strong><p>{event.detail}</p><small>Source: {event.source}</small>{event.campaignId?<p><Link className="text-link" to="/app/campaigns/$id" params={{id:event.campaignId}}>View campaign</Link></p>:null}</div>
                   <time dateTime={event.occurredAt} title={event.occurredAt}>{formatDate(event.occurredAt)}</time>
                 </article>
               ))}
