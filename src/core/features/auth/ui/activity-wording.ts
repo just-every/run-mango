@@ -32,10 +32,10 @@ export function activityWords(action: string) {
 
 const refusals: Record<string, string> = {denied: 'Refused', rate_limited: 'Slowed down', error: 'Failed'};
 
-/** The one thing worth saying beside the action: a name, a host, or that a request was turned away. */
+/** The one thing worth saying beside the action: a name, an address, a host, or that a request was turned away. */
 export function activityDetail(detail: unknown) {
   const value = (detail && typeof detail === 'object' ? detail : {}) as Record<string, unknown>;
   if (typeof value.outcome === 'string') return refusals[value.outcome] ?? '';
-  for (const key of ['name', 'host', 'subject']) if (typeof value[key] === 'string' && value[key]) return value[key] as string;
+  for (const key of ['name', 'destination', 'host', 'subject']) if (typeof value[key] === 'string' && value[key]) return value[key] as string;
   return '';
 }
