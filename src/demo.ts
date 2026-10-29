@@ -4,6 +4,7 @@ import { createAppServices } from './core/app/app';
 import { createCampaignDemoImportRepository } from './core/features/campaigns/demo-import-repository';
 import { commerceSourceTypes } from './core/features/store/service';
 import { normalizeAuthoredContent } from './core/features/campaigns/authoring-content';
+import { demoLetterLinks } from './core/features/bootstrap/demo-links';
 import { createCampaignDemoImportService } from './core/features/campaigns/demo-import-service';
 
 /** Real editable sample records; admission remains the native owner/session flow. */
@@ -25,19 +26,12 @@ export async function seedDemo(env: AppBindings, { ownerEmail, now }: { ownerEma
   const seededSample = await seedDemoAudience(platform, audienceService, sampleData, now);
   const contacts = await audienceService.localDemoContacts(seededSample.contacts.map(contact => contact.id));
   const importer = createCampaignDemoImportService(createCampaignDemoImportRepository(platform.database));
-  const drafts = [
-    ['October arrivals', 'Meet the newest pieces in store', 'Our October collection is here. Find thoughtful pieces for the everyday, selected by the Mango Sample Store team.'],
-    ['A thank-you for our subscribers', 'A little thank-you from us', 'Thanks for being part of our community. Here is a first look at what we have been working on this month.'],
-    ['The weekend edit', 'Make a little room for the weekend', 'Three ideas for a slower weekend: revisit a favourite, try something new, and share a little inspiration with a friend.'],
-    ['Behind the scenes', 'A note from the Mango team', 'Come behind the scenes with us. This month we are sharing the stories and details behind our latest arrivals.'],
-  ];
-  await importer.importLocalDemo({ ...sampleData, proposals: [], campaigns: sampleData.campaigns.map((campaign, index) => {
-    const [name, emailSubject, copy] = drafts[index % drafts.length];
-    return { ...campaign, proposalId: undefined, state: 'draft' as const, revision: { ...campaign.revision, name, emailSubject,
-      ...normalizeAuthoredContent({ emailBody: `<h1>${emailSubject}</h1><p>Hello {{displayName|fallback:friend}},</p><p>${copy}</p>`, links: [{ label: 'Explore the collection', destinationUrl: 'https://example.com/' }] }),
-      smsBody: `${emailSubject}. Reply STOP to unsubscribe.`, smsSender: 'MangoSample',
-      links: [{ label: 'Explore the collection', destinationUrl: 'https://example.com/' }],
-      steps: campaign.revision.steps.map(step => ({ ...step, schedule: { ...step.schedule, whyThisTime: 'Planned for the next newsletter. Review and approve the saved revision before it can send.' } })) } };
+  const links = demoLetterLinks(platform.config.publicBaseUrl);
+  await importer.importLocalDemo({ ...sampleData, proposals: [], campaigns: sampleData.campaigns.map(campaign => {
+    const { emailSubject, emailText } = campaign.revision;
+    return { ...campaign, proposalId: undefined, state: 'draft' as const, revision: { ...campaign.revision, links,
+      ...normalizeAuthoredContent({ emailBody: `<h1>${emailSubject}</h1><p>Hello {{displayName|fallback:friend}},</p><p>${emailText}</p>`, links }),
+      steps: campaign.revision.steps } };
   }) }, contacts, now);
   await seedDemoHistory(platform, owner.id, now, seededSample);
   await db.prepare('INSERT OR IGNORE INTO seed_runs(id,applied_at) VALUES (?,?)').bind('mango-visitor-demo-v1', now.getTime()).run();

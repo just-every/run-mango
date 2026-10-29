@@ -81,8 +81,8 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
     await signInAsLocalOperator(page, request);
     await openPage(page, '/app');
     const states = await menuStates(page);
-    const draft = '/app/campaigns/campaign_table_runner_draft_v4';
-    const contact = '/app/audience/contact_alex_v4';
+    const draft = '/app/campaigns/linen-table-runner-follow-up';
+    const contact = '/app/audience/contact_alex_morgan';
     states.push(
       { name: 'subscribe', visit: () => openPage(page, '/subscribe') },
       { name: 'campaign starters open', visit: async () => {
@@ -109,7 +109,7 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
         await expect(disclosure).toHaveAttribute('aria-expanded', 'true');
         await expect(page.getByRole('form', { name: 'Send a test', exact: true })).toBeVisible();
       } },
-      { name: 'scheduled view', visit: () => openPage(page, '/app/campaigns/campaign_sample_scheduled_v4/scheduled') },
+      { name: 'scheduled view', visit: () => openPage(page, '/app/campaigns/october-arrivals/scheduled') },
       { name: 'audience property fields', visit: async () => {
         await openPage(page, '/app/audience');
         await page.getByRole('button', { name: 'Add property', exact: true }).click();

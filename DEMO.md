@@ -12,7 +12,7 @@ ordinary `.wrangler/state` and private settings are retained. Base's `withDemo`
 is the first Worker import; Vite passes demo vars, uses `RER_STATE_DIR`, and
 places `demoSockets()` first. Upstream module origins are in `edition.json`.
 
-Public internet reads run for real. Newsletter links use example.com; signup
+Public internet reads run for real. Newsletter links point at the demo's own public pages; signup
 Turnstile verification declares its POST as a public read using `fetchDemoRead`.
 Email, SMS and third-party account operations complete with demo-only provider
 success responses. Base mocks email HTTP; Mango uses `demoEffect` for SMS and

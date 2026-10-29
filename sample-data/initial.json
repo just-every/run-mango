@@ -35,39 +35,62 @@
       "detail": "No SMS sender is configured. SMS approval and test sends remain blocked."
     }
   ],
-  "sourceSyncs": ["customers", "products", "carts", "orders"],
+  "sourceSyncs": [
+    "customers",
+    "products",
+    "carts",
+    "orders"
+  ],
   "contacts": [
     {
-      "id": "contact_alex_v4",
-      "email": "alex-v4@example.test",
+      "id": "contact_alex_morgan",
+      "email": "alex.morgan@example.test",
       "displayName": "Alex Morgan",
       "emailStatus": "subscribed",
       "smsStatus": "non-subscribed",
       "history": [
-        { "kind": "consent-recorded", "detail": "Email consent captured from the sample import." },
-        { "kind": "product-saved", "detail": "Saved a linen table runner in the sample store data." }
+        {
+          "kind": "consent-recorded",
+          "detail": "Email consent captured from the sample import."
+        },
+        {
+          "kind": "product-saved",
+          "detail": "Saved a linen table runner in the sample store data."
+        }
       ]
     },
     {
-      "id": "contact_jamie_v4",
-      "email": "jamie-v4@example.test",
+      "id": "contact_jamie_lee",
+      "email": "jamie.lee@example.test",
       "displayName": "Jamie Lee",
       "emailStatus": "unsubscribed",
       "smsStatus": "unsubscribed",
       "history": [
-        { "kind": "product-saved", "detail": "Saved a linen table runner before opting out of both channels." },
-        { "kind": "unsubscribe", "detail": "Email and SMS opt-outs are retained by the sample consent ledger." }
+        {
+          "kind": "product-saved",
+          "detail": "Saved a linen table runner before opting out of both channels."
+        },
+        {
+          "kind": "unsubscribe",
+          "detail": "Email and SMS opt-outs are retained by the sample consent ledger."
+        }
       ]
     },
     {
-      "id": "contact_casey_v4",
-      "email": "casey-v4@example.test",
+      "id": "contact_casey_rivers",
+      "email": "casey.rivers@example.test",
       "displayName": "Casey Rivers",
       "emailStatus": "subscribed",
       "smsStatus": "subscribed",
       "history": [
-        { "kind": "consent-recorded", "detail": "Email and SMS consent captured from the sample import." },
-        { "kind": "product-saved", "detail": "Saved a linen table runner in the sample store data." }
+        {
+          "kind": "consent-recorded",
+          "detail": "Email and SMS consent captured from the sample import."
+        },
+        {
+          "kind": "product-saved",
+          "detail": "Saved a linen table runner in the sample store data."
+        }
       ]
     }
   ],
@@ -77,14 +100,14 @@
   },
   "proposals": [
     {
-      "id": "proposal_table_runner_v4",
-      "campaignId": "campaign_table_runner_draft_v4",
+      "id": "saved-linen-table-runners",
+      "campaignId": "linen-table-runner-follow-up",
       "title": "Saved linen table runners need review",
       "summary": "A sample proposal seeded from local demonstration records. It does not claim a forecast or initiate a send.",
       "evidence": "The persisted sample saved-product records identify contacts who engaged with linen table runners.",
       "steps": [
         {
-          "id": "proposal_step_email_v4",
+          "id": "saved-linen-table-runners-email",
           "sequence": 1,
           "channel": "email",
           "schedule": {
@@ -95,7 +118,7 @@
           }
         },
         {
-          "id": "proposal_step_sms_v4",
+          "id": "saved-linen-table-runners-sms",
           "sequence": 2,
           "channel": "sms",
           "schedule": {
@@ -108,13 +131,13 @@
       ]
     },
     {
-      "id": "proposal_snapshot_only_v4",
+      "id": "audience-snapshot-only",
       "title": "Standalone audience snapshot",
       "summary": "A proposal-owned review snapshot remains readable before a campaign exists.",
       "evidence": "The same persisted sample saved-product records are used without attaching a campaign.",
       "steps": [
         {
-          "id": "proposal_snapshot_email_v4",
+          "id": "audience-snapshot-only-email",
           "sequence": 1,
           "channel": "email",
           "schedule": {
@@ -125,7 +148,7 @@
           }
         },
         {
-          "id": "proposal_snapshot_sms_v4",
+          "id": "audience-snapshot-only-sms",
           "sequence": 2,
           "channel": "sms",
           "schedule": {
@@ -140,144 +163,156 @@
   ],
   "campaigns": [
     {
-      "id": "campaign_table_runner_draft_v4",
-      "proposalId": "proposal_table_runner_v4",
+      "id": "linen-table-runner-follow-up",
+      "proposalId": "saved-linen-table-runners",
       "state": "draft",
       "revision": {
-        "id": "revision_table_runner_draft_v4",
+        "id": "linen-table-runner-follow-up-revision-1",
         "version": 1,
         "name": "Linen table runner follow-up",
         "emailSubject": "Your saved linen table runner is waiting",
-        "emailBody": "Hello {{first_name}},\n\nYour saved linen table runner is still available in the sample catalogue.",
-        "emailText": "Your saved linen table runner is still available in the sample catalogue.",
+        "emailBody": "Hello {{displayName|fallback:friend}},\n\nYour saved linen table runner is still available in our shop. Come back and take another look whenever you are ready.",
+        "emailText": "Your saved linen table runner is still available in our shop. Come back and take another look whenever you are ready.",
         "smsBody": "Your saved linen table runner is still available. Reply STOP to unsubscribe.",
-        "senderName": "Your store",
+        "senderName": "Mango Sample Store",
         "fromEmail": "hello@example.test",
         "replyToEmail": "help@example.test",
-        "smsSender": "YourStore",
+        "smsSender": "MangoStore",
         "links": [
-          { "label": "View saved table runner", "destinationUrl": "https://store.example.test/linen-table-runner" }
+          {
+            "label": "View saved table runner",
+            "destinationUrl": "https://store.example.test/products/linen-table-runner"
+          }
         ],
         "steps": [
           {
-            "id": "campaign_step_draft_email_v4",
+            "id": "linen-table-runner-follow-up-email",
             "sequence": 1,
             "channel": "email",
             "schedule": {
               "timezone": "Australia/Brisbane",
               "scheduledOffsetDays": 1,
               "sendByOffsetDays": 2,
-              "whyThisTime": "The sample plan gives the owner a full day to review before an email step."
+              "whyThisTime": "The plan gives the owner a full day to review before the email goes out."
             }
           },
           {
-            "id": "campaign_step_draft_sms_v4",
+            "id": "linen-table-runner-follow-up-sms",
             "sequence": 2,
             "channel": "sms",
             "schedule": {
               "timezone": "Australia/Brisbane",
               "scheduledOffsetDays": 2,
               "sendByOffsetDays": 3,
-              "whyThisTime": "The sample SMS step follows the email by one day for review only."
+              "whyThisTime": "The text follows the email by one day."
             }
           }
         ]
       }
     },
     {
-      "id": "campaign_sample_scheduled_v4",
+      "id": "october-arrivals",
       "state": "scheduled",
       "revision": {
-        "id": "revision_sample_scheduled_v4",
+        "id": "october-arrivals-revision-1",
         "version": 1,
-        "name": "Sample scheduled campaign",
-        "emailSubject": "A sample scheduled revision",
-        "emailBody": "This imported scheduled record can be cancelled locally. It does not dispatch because no sender is configured.",
-        "emailText": "This imported scheduled record can be cancelled locally.",
-        "smsBody": "This record cannot dispatch without a configured sender. Reply STOP to unsubscribe.",
-        "senderName": "Your store",
+        "name": "October arrivals",
+        "emailSubject": "Meet the newest pieces in store",
+        "emailBody": "Hello {{displayName|fallback:friend}},\n\nOur October collection is here. Find thoughtful pieces for the everyday, selected by the Mango Sample Store team.",
+        "emailText": "Our October collection is here. Find thoughtful pieces for the everyday, selected by the Mango Sample Store team.",
+        "smsBody": "Our October collection is here. Reply STOP to unsubscribe.",
+        "senderName": "Mango Sample Store",
         "fromEmail": "hello@example.test",
         "replyToEmail": "help@example.test",
-        "smsSender": "YourStore",
+        "smsSender": "MangoStore",
         "links": [
-          { "label": "View campaign details", "destinationUrl": "https://store.example.test/campaign-details" }
+          {
+            "label": "See the October arrivals",
+            "destinationUrl": "https://store.example.test/collections/october-arrivals"
+          }
         ],
         "steps": [
           {
-            "id": "campaign_step_scheduled_email_v4",
+            "id": "october-arrivals-email",
             "sequence": 1,
             "channel": "email",
             "schedule": {
               "timezone": "Australia/Brisbane",
               "scheduledOffsetDays": 2,
               "sendByOffsetDays": 3,
-              "whyThisTime": "The sample scheduled revision stores a resolved review instant but has no configured sender."
+              "whyThisTime": "Scheduled for the start of the week, when the October collection is in store."
             }
           }
         ]
       }
     },
     {
-      "id": "campaign_composition_fixture_v4",
+      "id": "the-weekend-edit",
       "state": "draft",
       "revision": {
-        "id": "revision_composition_fixture_v4",
+        "id": "the-weekend-edit-revision-1",
         "version": 1,
-        "name": "Composition test fixture",
-        "emailSubject": "A durable draft composition",
-        "emailBody": "This local fixture verifies persisted composition fields.",
-        "emailText": "This local fixture verifies persisted composition fields.",
-        "smsBody": "This local fixture verifies persisted composition fields. Reply STOP to unsubscribe.",
-        "senderName": "Your store",
+        "name": "The weekend edit",
+        "emailSubject": "Make a little room for the weekend",
+        "emailBody": "Hello {{displayName|fallback:friend}},\n\nThree ideas for a slower weekend: revisit a favourite, try something new, and share a little inspiration with a friend.",
+        "emailText": "Three ideas for a slower weekend: revisit a favourite, try something new, and share a little inspiration with a friend.",
+        "smsBody": "Three ideas for a slower weekend. Reply STOP to unsubscribe.",
+        "senderName": "Mango Sample Store",
         "fromEmail": "hello@example.test",
         "replyToEmail": "help@example.test",
-        "smsSender": "YourStore",
+        "smsSender": "MangoStore",
         "links": [
-          { "label": "Fixture link", "destinationUrl": "https://store.example.test/composition-fixture" }
+          {
+            "label": "Read the weekend edit",
+            "destinationUrl": "https://store.example.test/journal/the-weekend-edit"
+          }
         ],
         "steps": [
           {
-            "id": "campaign_step_composition_fixture_email_v4",
+            "id": "the-weekend-edit-email",
             "sequence": 1,
             "channel": "email",
             "schedule": {
               "timezone": "Australia/Brisbane",
               "scheduledOffsetDays": 1,
               "sendByOffsetDays": 2,
-              "whyThisTime": "The local fixture starts with one email step before the composition test replaces it."
+              "whyThisTime": "Planned for the next newsletter, after the owner has reviewed it."
             }
           }
         ]
       }
     },
     {
-      "id": "campaign_ui_composition_fixture_v4",
+      "id": "behind-the-scenes",
       "state": "draft",
       "revision": {
-        "id": "revision_ui_composition_fixture_v4",
+        "id": "behind-the-scenes-revision-1",
         "version": 1,
-        "name": "UI composition test fixture",
-        "emailSubject": "A browser draft composition",
-        "emailBody": "This local fixture verifies browser-persisted composition fields.",
-        "emailText": "This local fixture verifies browser-persisted composition fields.",
-        "smsBody": "This local fixture verifies browser-persisted composition fields. Reply STOP to unsubscribe.",
-        "senderName": "Your store",
+        "name": "Behind the scenes",
+        "emailSubject": "A note from the Mango team",
+        "emailBody": "Hello {{displayName|fallback:friend}},\n\nCome behind the scenes with us. This month we are sharing the stories and details behind our latest arrivals.",
+        "emailText": "Come behind the scenes with us. This month we are sharing the stories and details behind our latest arrivals.",
+        "smsBody": "Behind the scenes at Mango Sample Store. Reply STOP to unsubscribe.",
+        "senderName": "Mango Sample Store",
         "fromEmail": "hello@example.test",
         "replyToEmail": "help@example.test",
-        "smsSender": "YourStore",
+        "smsSender": "MangoStore",
         "links": [
-          { "label": "UI fixture link", "destinationUrl": "https://store.example.test/ui-composition-fixture" }
+          {
+            "label": "Read the story",
+            "destinationUrl": "https://store.example.test/journal/behind-the-scenes"
+          }
         ],
         "steps": [
           {
-            "id": "campaign_step_ui_composition_fixture_email_v4",
+            "id": "behind-the-scenes-email",
             "sequence": 1,
             "channel": "email",
             "schedule": {
               "timezone": "Australia/Brisbane",
               "scheduledOffsetDays": 1,
               "sendByOffsetDays": 2,
-              "whyThisTime": "The browser fixture starts with one email step before its isolated UI test replaces it."
+              "whyThisTime": "Planned for the next newsletter, after the owner has reviewed it."
             }
           }
         ]

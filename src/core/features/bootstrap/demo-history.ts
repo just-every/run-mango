@@ -1,5 +1,6 @@
 import type { Platform } from '@/core/shared/platform';
 import type { SampleData } from './sample-data';
+import { demoLetterLinks } from './demo-links';
 import { createCampaignDemoImportRepository } from '../campaigns/demo-import-repository';
 
 export async function seedDemoHistory(platform: Platform, ownerId: string, now: Date, sampleData: SampleData) {
@@ -30,7 +31,7 @@ export async function seedDemoHistory(platform: Platform, ownerId: string, now: 
       emailBody: '<h1>September store notes</h1><p>Hello {{displayName|fallback:friend}},</p><p>Meet our new collection and the people behind it. Thank you for being part of our community.</p>',
       emailText: 'Meet our new collection and the people behind it. Thank you for being part of our community.',
       smsBody: 'Our September collection is here. Reply STOP to unsubscribe.',
-      links: [{ label: 'Explore the collection', destinationUrl: 'https://example.com/' }], senderName: identity.displayName,
+      links: demoLetterLinks(platform.config.publicBaseUrl), senderName: identity.displayName,
       fromEmail: identity.fromEmail, replyToEmail: identity.replyToEmail,
       steps: [{ ...original.revision.steps[0], id: 'demo-sent-step', channel: 'email' as const, schedule: { ...original.revision.steps[0].schedule, whyThisTime: 'Sample newsletter sent last week.' } }] } };
   const recipients = sampleData.contacts.filter(contact => contact.emailStatus === 'subscribed');
