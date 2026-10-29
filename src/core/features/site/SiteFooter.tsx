@@ -1,17 +1,17 @@
 import { productConfig } from '@/ext/config';
 import { Brand } from './Brand';
 import { siteCopy } from './copy';
-import { creditUrl, landingSectionIds, sitePaths } from './links';
-import type { SitePage } from './SiteHeader';
-import { SectionLink, SiteLink } from './SiteLink';
+import { creditUrl, sitePaths } from './links';
+import { SiteLink } from './SiteLink';
 import { useRunSite } from './run-site';
 
 /**
- * The shared footer: the lockup, the landing's sections, Docs and operator sign-in, then the deployment owner's name and
+ * The shared footer: the lockup, Docs and operator sign-in (the run site's Contract instead), never a link to a section of
+ * the page being viewed, then the deployment owner's name and
  * one-line summary. The credit shows only while the owner keeps `showPoweredByCredit` on. The run site has no sign-in.
  */
-export function SiteFooter({ current }: { current: SitePage }) {
-  const { footer, sections } = siteCopy;
+export function SiteFooter() {
+  const { footer } = siteCopy;
   const runSite = useRunSite();
   return (
     <footer className="site-footer">
@@ -19,11 +19,8 @@ export function SiteFooter({ current }: { current: SitePage }) {
         <Brand />
         <nav aria-label={footer.label}>
           <ul className="site-footer-links">
-            {landingSectionIds.map((id) => (
-              <li key={id}><SectionLink id={id} onLanding={current === 'home'}>{sections[id]}</SectionLink></li>
-            ))}
             <li><SiteLink to={sitePaths.docs}>{footer.docs}</SiteLink></li>
-            {runSite ? null : <li><SiteLink to={sitePaths.signIn}>{footer.signIn}</SiteLink></li>}
+            {runSite ? <li><SiteLink to={sitePaths.contract}>{footer.contract}</SiteLink></li> : <li><SiteLink to={sitePaths.signIn}>{footer.signIn}</SiteLink></li>}
           </ul>
         </nav>
       </div>
