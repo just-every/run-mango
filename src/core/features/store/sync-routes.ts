@@ -1,3 +1,4 @@
+import {saveWork} from '../agent-door/custody';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { Platform } from '@/core/shared/platform';
@@ -33,6 +34,7 @@ export function createSyncRoutes(platform: Platform, store: ReturnType<typeof cr
     }
     if (run.state === 'superseded') return context.json({error: 'sync_superseded', detail: 'A newer run replaced this interrupted sync. Refresh the source status before retrying.', runId: run.id}, 409);
     if (run.state === 'completed') return context.json({status: 'completed', runId: run.id});
+    await saveWork(platform.database.$client,'sync',run.id,'mango.store.advance',{});
     try {
       await platform.jobs.enqueue({kind: 'source.sync', idempotencyKey: `source-sync:${run.id}`, payload: {sourceType: run.sourceType, provider: run.provider, runId: run.id}});
     } catch (error) {
