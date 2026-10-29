@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "625c781e81e83a8a0cbbed2578ed2745f4e5ea8ec74abf02d0182f08e4c6db77",
+      "sha256": "2a035a2c30f3bf0b01db3d4b622601515145c86576f21b2ebd4fe31dd077e64f",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "fb06d2e33c87f9a97205cd7081c2901ad1a35c02c40ea2ee8792554c1bd21a76",
+      "sha256": "51a84c44b9ce8bde87a4a62bd1004c2835eaa92e7759e6116a9dff3bc8bdd3b9",
       "executable": false
     },
     "DEMO.md": {
@@ -9346,7 +9346,7 @@
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
-      "sha256": "6d5d3ffee3bc49156fccf9c40ac3cc77e9e372dbe24227947dee8bef183a6b9c",
+      "sha256": "eddec923c27c147772fe741d77228d175ea662421dc9fd2fba4d143d68cfe4bb",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {

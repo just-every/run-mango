@@ -3,7 +3,7 @@ import {decisionRuntime,generated} from './runtime';
 import {history} from './history';
 import {reusableRoleProof} from '../campaign-authoring/reusable-block-journey';
 
-test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs, become editable drafts only by owner decision, and fail without substitutes',async()=>{
+test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes',async()=>{
   test.setTimeout(300000);
   const runtime=await decisionRuntime();
   try {
@@ -26,14 +26,20 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     expect((await runtime.call(`/api/campaign-revisions/${first.revisionId}`,{name:'Owner revision',emailSubject:'Reviewed by the owner'},true,'PATCH')).status).toBe(200);
     expect((await runtime.call(`/api/campaigns/${first.campaignId}`)).body.revision).toMatchObject({state:'draft',name:'Owner revision',emailSubject:'Reviewed by the owner'});
     expect(runtime.jobs).toEqual([]);
+    const thin=await generated(runtime);
     await history(runtime);
+    runtime.controls.alter=output=>{output.audience.inclusion.predicates[0]={sourceType:'contact',field:'email',comparator:'eq',value:'first@example.test',lookbackDays:null};};
+    const lower=await generated(runtime);
+    runtime.controls.alter=output=>{output.steps[0].sendByAt=new Date(Date.now()+4*3600000).toISOString();};
+    const higherLater=await generated(runtime);
+    runtime.controls.alter=undefined;
     const forecasted=await generated(runtime);
     const forecast=(await runtime.call(`/api/proposals/${forecasted.proposalId}`)).body.forecast;
     expect(forecast).toMatchObject({status:'available',currency:'USD',historicalNetRevenueMinor:2400,proposedRecipientSteps:2,sampleSize:24});
     expect(forecast.campaignIds).toHaveLength(3);expect(forecast.sourceEventIds).toHaveLength(3);
     const desk=(await runtime.call('/api/decision-desk')).body;
     expect(desk.proposals.every((entry:any)=>entry.proposal.state==='proposed')).toBe(true);
-    expect(desk.proposals[0].proposal.id).toBe(forecasted.proposalId);
+    expect(desk.proposals.map((entry:any)=>entry.proposal.id)).toEqual([forecasted.proposalId,higherLater.proposalId,lower.proposalId,thin.proposalId]);
     await runtime.db.prepare("UPDATE attribution_facts SET currency='AUD' WHERE id='attribution-0'").run();
     const mixed=await generated(runtime);
     expect((await runtime.call(`/api/proposals/${mixed.proposalId}`)).body.forecast).toMatchObject({status:'insufficient',valueMinor:null,currency:null});
@@ -57,6 +63,9 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     const decided=(await runtime.call(`/api/proposals/${dismissed.proposalId}`)).body;
     expect(decided.proposal.state).toBe('dismissed');
     expect(decided.history).toContainEqual(expect.objectContaining({toState:'dismissed',actorId:'proposal-operator',reason:expect.any(String)}));
+    const remaining=(await runtime.call('/api/decision-desk')).body.proposals;
+    expect(remaining.every((entry:any)=>entry.proposal.state==='proposed')).toBe(true);
+    expect(remaining.map((entry:any)=>entry.proposal.id)).not.toContain(dismissed.proposalId);
     expect((await runtime.call(`/api/proposals/${dismissed.proposalId}/adopt`,{})).status).toBe(409);
     expect(runtime.jobs).toEqual([]);
     await reusableRoleProof(runtime);
