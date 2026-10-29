@@ -1,6 +1,5 @@
 import {PropertyError} from '@/core/features/audience/properties/types';
 import type {Platform} from '@/core/shared/platform';
-import {readProfileMemberships} from './profile-memberships';
 import {customEventInput,recordCustomEvent} from './custom-events';
 import {integrationOpenApi} from './openapi';
 import {clientSource} from './client-source';
@@ -77,24 +76,27 @@ function scope(required: IntegrationScope): MiddlewareHandler<Environment> {
 }
 function routes() {
   const router = new Hono<Environment>();
-  router.onError((error, context) => context.json({...(error instanceof PropertyError?{property:error.key}:{}),error: error instanceof PropertyError ? error.code : error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof PropertyError || error instanceof IntegrationError ? error.status : 503));
+  router.onError((error, context) => {
+    if(error instanceof IntegrationError&&error.status===429)context.header('Retry-After',String(60-Math.floor(Date.now()/1000)%60));
+    return context.json({...(error instanceof PropertyError?{property:error.key}:{}),error: error instanceof PropertyError ? error.code : error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof PropertyError || error instanceof IntegrationError ? error.status : 503);
+  });
   return router;
 }
 const boundedBody = () => bodyLimit({maxSize: 64 * 1024, onError: context => context.json({error: 'request_too_large'}, 413)});
 
 /** Mount /api/integrations/v1 before operator-session middleware. Never sets an operator. */
-export function createIntegrationApiRoutes(service: Service, platform: Platform) {
+export function createIntegrationApiRoutes(service: Service, platform: Platform, enqueue: (credential: Credential,campaignId:string,input:z.infer<typeof sendInput>)=>Promise<unknown>, read:(credential:Credential,kind:'contacts'|'segments'|'memberships'|'events',args:Record<string,unknown>)=>Promise<unknown>) {
   const router = routes();
   router.get('/openapi.json', context => context.json(integrationOpenApi));
   router.get('/client.mjs', context => {context.header('Content-Type','text/javascript; charset=utf-8');return context.body(clientSource);});
   router.use('*', audited(service, false));
   router.use('*', boundedBody());
-  router.get('/segments', scope('contacts:read'), async context => context.json(await service.contacts.segments(context.get('integrationCredential').id)));
-  router.get('/contacts/:id/segments', scope('contacts:read'), async context => context.json(await readProfileMemberships(platform,context.req.param('id'))));
+  router.get('/segments', scope('contacts:read'), async context => context.json(await read(context.get('integrationCredential'),'segments',{})));
+  router.get('/contacts/:id/segments', scope('contacts:read'), async context => context.json(await read(context.get('integrationCredential'),'memberships',{id:context.req.param('id')})));
   router.get('/contacts', scope('contacts:read'), async context => {
     const input = query(context, z.object({cursor: z.string().max(160).optional(), email: z.string().trim().toLowerCase().email().max(320).optional(),
       segmentId: z.string().max(160).optional(), limit: z.coerce.number().int().min(1).max(100).default(50)}).strict());
-    return context.json(await service.contacts.list(context.get('integrationCredential').id, input));
+    return context.json(await read(context.get('integrationCredential'),'contacts',input));
   });
   router.put('/contacts', scope('contacts:write'), async context => {
     const input = await body(context, contactInput, true);
@@ -111,12 +113,12 @@ export function createIntegrationApiRoutes(service: Service, platform: Platform)
   });
   router.get('/events', scope('events:read'), async context => {
     const input = query(context, pageInput.strict());
-    return context.json(await service.events(input.cursor, input.limit));
+    return context.json(await read(context.get('integrationCredential'),'events',input));
   });
   router.post('/campaigns/:id/send', scope('campaigns:send'), async context => {
     if (context.req.param('id').length > 160) throw new IntegrationError('invalid_request', 400);
     const input = await body(context, sendInput);
-    return context.json(await service.send(context.get('integrationCredential').id, context.req.param('id'), input), 202);
+    return context.json(await enqueue(context.get('integrationCredential'), context.req.param('id'), input), 202);
   });
   router.all('*', context => context.json({error: 'not_found'}, 404));
   return router;

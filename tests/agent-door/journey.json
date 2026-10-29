@@ -1,0 +1,549 @@
+[
+  {
+    "id": "witness",
+    "tool": "mango.witness.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard",
+        "facts": {
+          "measure": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "store",
+    "tool": "mango.store.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "sender",
+    "tool": "mango.sender.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "audience",
+    "tool": "mango.audience.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "create",
+    "tool": "mango.campaigns.create",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard",
+        "facts": {
+          "measure": 1
+        }
+      }
+    ],
+    "inject": {
+      "confirmExternal": true,
+      "class": "standard",
+      "approve": true
+    }
+  },
+  {
+    "id": "campaign",
+    "tool": "mango.campaigns.read",
+    "args": {
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ],
+    "target": {
+      "kind": "campaigns",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    }
+  },
+  {
+    "id": "update",
+    "tool": "mango.campaigns.update",
+    "args": {
+      "revisionId": {
+        "$from": "create",
+        "pointer": "/revisionId"
+      },
+      "composition": {
+        "name": "Orchard newsletter",
+        "emailSubject": "This week's orchard news",
+        "emailBody": "<p>This week's orchard news.</p>",
+        "emailText": "This week's orchard news."
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ],
+    "inject": {
+      "confirm": true,
+      "policy": "autonomous"
+    },
+    "target": {
+      "kind": "campaigns",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    }
+  },
+  {
+    "id": "stored-checks",
+    "tool": "mango.campaigns.check",
+    "args": {
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ],
+    "target": {
+      "kind": "campaigns",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    }
+  },
+  {
+    "id": "duplicate",
+    "tool": "mango.campaigns.duplicate",
+    "args": {
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ],
+    "target": {
+      "kind": "campaigns",
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    }
+  },
+  {
+    "id": "save-template",
+    "tool": "mango.templates.update",
+    "args": {
+      "revisionId": {
+        "$from": "create",
+        "pointer": "/revisionId"
+      },
+      "name": "Orchard draft template"
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "template-draft",
+    "tool": "mango.templates.start",
+    "args": {
+      "id": {
+        "$from": "save-template",
+        "pointer": "/id"
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "design-status",
+    "tool": "mango.designs.read",
+    "args": {
+      "id": {
+        "$from": "create",
+        "pointer": "/campaignId"
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "signup",
+    "tool": "mango.signup.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "connection",
+    "tool": "mango.connections.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "flow-draft",
+    "tool": "mango.flows.update",
+    "args": {
+      "graph": {
+        "name": "Inert orchard draft",
+        "trigger": "A saved design only",
+        "nodes": [
+          {
+            "id": "start",
+            "kind": "trigger",
+            "label": "Draft trigger",
+            "next": [
+              "exit"
+            ]
+          },
+          {
+            "id": "exit",
+            "kind": "exit",
+            "label": "Exit",
+            "next": []
+          }
+        ]
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "reusable-block",
+    "tool": "mango.blocks.create",
+    "args": {
+      "name": "Orchard introduction",
+      "block": {
+        "html": "<p>News from our orchard.</p>"
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "place-block",
+    "tool": "mango.blocks.place",
+    "args": {
+      "id": {
+        "$from": "reusable-block",
+        "pointer": "/id"
+      },
+      "version": {
+        "$from": "reusable-block",
+        "pointer": "/version"
+      },
+      "target": {
+        "kind": "campaign",
+        "id": {
+          "$from": "create",
+          "pointer": "/revisionId"
+        }
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "update-block",
+    "tool": "mango.blocks.update",
+    "args": {
+      "id": {
+        "$from": "reusable-block",
+        "pointer": "/id"
+      },
+      "version": {
+        "$from": "reusable-block",
+        "pointer": "/version"
+      },
+      "name": "Orchard introduction revised",
+      "block": {
+        "html": "<p>Fresh news from our orchard.</p>"
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "detach-block",
+    "tool": "mango.blocks.detach",
+    "args": {
+      "id": {
+        "$from": "reusable-block",
+        "pointer": "/id"
+      },
+      "target": {
+        "kind": "campaign",
+        "id": {
+          "$from": "create",
+          "pointer": "/revisionId"
+        }
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "campaigns",
+    "tool": "mango.campaigns.list",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "segment",
+    "tool": "mango.segments.create",
+    "args": {
+      "name": "Recorded subscribers",
+      "inclusionRuleJson": "{\"version\":1,\"operator\":\"all\",\"predicates\":[{\"sourceType\":\"contact\",\"field\":\"emailStatus\",\"comparator\":\"eq\",\"value\":\"subscribed\"}]}",
+      "exclusionRulesJson": "[]"
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "segments",
+    "tool": "mango.segments.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "segment-update",
+    "tool": "mango.segments.update",
+    "args": {
+      "id": {
+        "$from": "segment",
+        "pointer": "/segment/id"
+      },
+      "name": "Current recorded subscribers",
+      "inclusionRuleJson": "{\"version\":1,\"operator\":\"all\",\"predicates\":[{\"sourceType\":\"contact\",\"field\":\"emailStatus\",\"comparator\":\"eq\",\"value\":\"subscribed\"}]}",
+      "exclusionRulesJson": "[]"
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ],
+    "target": {
+      "kind": "segments",
+      "id": {
+        "$from": "segment",
+        "pointer": "/segment/id"
+      }
+    }
+  },
+  {
+    "id": "templates",
+    "tool": "mango.templates.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "blocks",
+    "tool": "mango.blocks.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "flows",
+    "tool": "mango.flows.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "reports",
+    "tool": "mango.reports.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "access",
+    "tool": "mango.access.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "activity",
+    "tool": "mango.activity.read",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "delete-segment",
+    "tool": "mango.segments.delete",
+    "args": {
+      "id": {
+        "$from": "segment",
+        "pointer": "/segment/id"
+      }
+    },
+    "expect": [
+      {
+        "class": "destructive",
+        "facts": {
+          "measure": 1
+        }
+      }
+    ],
+    "target": {
+      "kind": "segments",
+      "id": {
+        "$from": "segment",
+        "pointer": "/segment/id"
+      }
+    }
+  },
+  {
+    "id": "events",
+    "tool": "mango.events.list",
+    "args": {
+      "limit": 100
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "native-contacts",
+    "tool": "mango.integrations.contacts",
+    "client": "reader",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "native-segments",
+    "tool": "mango.integrations.segments",
+    "client": "reader",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "native-memberships",
+    "tool": "mango.integrations.memberships",
+    "client": "reader",
+    "args": {
+      "id": {
+        "$fixture": "contact",
+        "pointer": "/id"
+      }
+    },
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  },
+  {
+    "id": "native-events",
+    "tool": "mango.integrations.events",
+    "client": "reader",
+    "args": {},
+    "expect": [
+      {
+        "class": "standard"
+      }
+    ]
+  }
+]
