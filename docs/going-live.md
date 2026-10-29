@@ -90,19 +90,34 @@ Audience then offers **Record SMS permission**, and your signup page offers text
 
 ## Turn on cart and browsing events
 
-Cart and browsing events come from your Shopify store through the Mango Web Pixel and a signed app proxy, both in a Shopify app made for this one store. Like text messages, they run on a deployment.
+Cart and browsing events come from your Shopify store through the Mango Web Pixel and a signed app proxy, both in a custom-distribution Shopify app for this one store. Like text messages, they run on a deployment.
 
-1. Give the app these scopes: `read_customers`, `read_products`, `read_inventory`, `read_locations`, `read_orders`, `read_all_orders`, `read_returns`, `read_pixels`, `write_pixels`, `read_customer_events` and `write_app_proxy`.
+1. Give the app these scopes:
+
+   ```text
+   read_customers, read_products, read_inventory, read_locations,
+   read_orders, read_all_orders, read_returns, read_pixels,
+   write_pixels, read_customer_events, write_app_proxy
+   ```
+
 2. Add the app proxy to the app's `shopify.app.toml`:
 
    ```toml
    [app_proxy]
-   url = "https://<your-deployment>/webhooks/commerce/shopify/observations"
-   prefix = "apps"
-   subpath = "mango-signals"
+   url="https://<your-deployment>/webhooks/commerce/shopify/observations"
+   prefix="apps"
+   subpath="mango-signals"
    ```
 
-3. Copy `extensions/mango-pixel` from your Mango checkout into the app's Shopify CLI project and release it. Then activate it with the Admin API's `webPixelCreate` and the settings `{"channel":"<a new name for this installation>","proxyPath":"/apps/mango-signals"}`, and keep the pixel ID it returns.
+3. Copy `extensions/mango-pixel` from your Mango checkout into the app's Shopify CLI project and release it. Then activate it with the Admin API's `webPixelCreate` and these settings, and keep the pixel ID it returns:
+
+   ```json
+   {
+     "channel": "<a new name for this installation>",
+     "proxyPath": "/apps/mango-signals"
+   }
+   ```
+
 4. Subscribe `carts/create` and `carts/update` to `https://<your-deployment>/webhooks/commerce/shopify` with the Admin API's `webhookSubscriptionCreate`: JSON, API version 2026-07, no filter.
 5. Write the four pixel settings to a private file, `.rer/shopify.env`:
 
