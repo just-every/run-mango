@@ -63,10 +63,11 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
     expect(senderWrites).toBe(0);
     await finishSetup(page);
     expect(senderWrites).toBe(1);
-    // Once setup is saved the installation is claimed, and the Lobby's one action is Sign in.
+    // Once setup is saved the installation is claimed, and for the signed-in owner the Lobby's one action is Open app, never Sign in.
     expect(await (await page.request.get(runtime.url+'/setup/state')).json()).toEqual({state:'claimed'});
     await page.goto(runtime.url+'/');
-    await expect(page.getByRole('link',{name:'Sign in'})).toHaveAttribute('href','/signin');
+    await expect(page.getByRole('link',{name:'Open app'})).toHaveAttribute('href','/app');
+    await expect(page.getByRole('link',{name:'Sign in'})).toHaveCount(0);
     await page.goto(runtime.url+'/setup');
     await expect(page).toHaveURL(runtime.url+'/app');
     // A reload reads the persisted sender identity and preserves access.
