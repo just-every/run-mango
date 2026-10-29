@@ -13,6 +13,7 @@ try{
  import {workerTools} from './src/core/features/agent-door/worker-tools';
  import {mangoResources} from './src/core/features/agent-door/resources';
  import {eventsTool} from './src/vendor/base/agent-door/events.ts';
+ import {CORE_CAPABILITIES} from './src/vendor/base/agent-door/index.ts';
  const platform={database:{$client:{}},config:{}},runtime={platform};
  export const tools=[...mangoTools(platform,()=>{throw Error('Declaration may not execute native actions')},{},runtime),...workerTools(runtime),...integrationTools(platform,{}),eventsTool({options:{seed:'mango'}})]
    // Owner-only teammate edits cannot widen the already fully privileged sponsor.
@@ -20,13 +21,14 @@ try{
    // never sponsor or agent grants. Runtime self-widening admission still runs.
    .map(({name,title,scope,readOnly,classes,clauses,inputSchema})=>({name,title,scope,readOnly,classes,clauses,inputSchema,
     ...(['mango.access.update','mango.connections.update','mango.signup.update'].includes(name)?{sponsorEscalation:false}:{})})).sort((a,b)=>a.name.localeCompare(b.name));
+ export {CORE_CAPABILITIES};
  export const resources=mangoResources(platform).map(resource=>resource.uriTemplate).sort();
  `;
  const bundled=await build({stdin:{contents:source,resolveDir:root,loader:'ts'},bundle:true,write:false,format:'esm',platform:'node',alias:{'@':resolve('src')},external:['node:*']});
  const output=join(directory,'declaration.mjs');await writeFile(output,bundled.outputFiles[0].text);
  const declaration=await import(pathToFileURL(output));
  const journey=JSON.parse(await readFile('tests/agent-door/journey.json','utf8'));
- const surface={schema:'rer-agent-surface/1',seed:'mango',specialist:'marketer',tools:declaration.tools,resources:declaration.resources,
+ const surface={schema:'rer-agent-surface/1',seed:'mango',specialist:'marketer',capabilities:declaration.CORE_CAPABILITIES,tools:declaration.tools,resources:declaration.resources,
   notTools:[{clauses:['DATA-001','MOVE-001'],reason:'import-door'},{clauses:['OPER-001'],reason:'screen'},{clauses:['DATA-001'],reason:'installation'}],
   witness:{tool:'mango.witness.read',args:{}},journey,escalations:[],
   verification:{journey:'tests/agent-door/native-journey.mjs',fixtures:{module:'tests/agent-door/fixtures.mjs'},replayAdmission:{prepare:['create']},

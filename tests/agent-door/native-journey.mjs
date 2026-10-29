@@ -52,6 +52,12 @@ export async function afterStep({request,origin,cookie,mail,step,args,result}){
    const people=await http('/api/operators');
    assert.equal(people.operators.find(person=>person.id===args.id)?.role,'author');break;
   }
+  case 'native-campaign-reauthorize': {
+   assert.equal(result.status,'reapproved');
+   const campaign=await http('/api/campaigns/'+args.id);
+   assert.equal(campaign.revision.id,args.revisionId);assert.equal(campaign.revision.state,'approved');
+   assert.equal(campaign.campaign.state,'scheduled');break;
+  }
   case 'native-contact-read':assert.equal(result.contact.emailStatus,'non-subscribed');break;
   case 'native-protected-read':assert.ok(result.consent.some(item=>item.captureIp==='192.0.2.44'));break;
   case 'native-contact-consent':assert.equal(result.contact.emailStatus,'pending');assert.equal(result.confirmationRequired,true);break;

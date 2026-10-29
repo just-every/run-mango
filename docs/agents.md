@@ -1,6 +1,6 @@
 # Agents in Mango
 
-Mango has one MCP endpoint at /mcp. Discovery describes the marketer tools, their scopes and action classes. It supports the 2026-07-28 and 2025-11-25 protocols. Protected-resource metadata is at /.well-known/oauth-protected-resource/mcp.
+Mango has one MCP endpoint at /mcp. This adoption declares the mandatory tools, policy, pause, audit and idempotency capabilities. Events, resources, prompts and subscriptions are not publicly offered by this candidate; discovery omits them and direct requests return capability_not_declared. Internal resource and event adapters remain for native audit and visibility. Discovery describes the marketer tools, their scopes and action classes. It supports the 2026-07-28 and 2025-11-25 protocols. Protected-resource metadata is at /.well-known/oauth-protected-resource/mcp.
 
 An agent acts for a current native person. Business supplies signed settings with the owner's Business ID and teammate IDs; those IDs bind to native accounts. A token's email address does not select an account. Current product roles and contact visibility still apply. A Business editor cannot perform an Owner-only connection or erasure operation.
 
@@ -40,7 +40,7 @@ These tools call Mango's existing native services. An optional provider or job m
 - **Templates**: mango.templates.read, mango.templates.start, mango.templates.update.
 - **Witness**: mango.witness.read.
 
-Primary records are read through classified resources. Campaigns include saved revisions, review and results; other resources cover contacts, segments, designs, stored sender evidence, import reports, supported flow state and native activity. Missing and restricted records are withheld alike. Imported and external text remains untrusted. Resources expose no signing keys, provider credentials or receipt tokens.
+The retained internal resource adapters cover classified primary records. Public MCP resource reads are not declared by this candidate. Campaigns include saved revisions, review and results; other resources cover contacts, segments, designs, stored sender evidence, import reports, supported flow state and native activity. Missing and restricted records are withheld alike. Imported and external text remains untrusted. Resources expose no signing keys, provider credentials or receipt tokens.
 
 Existing integration credentials retain their original scopes and their creating sponsor. Read credentials cannot authorize a campaign. Private integration reads also enter company policy and retain native pagination and contact visibility. SDK intake and signed source events retain their credential purpose. The integration send operation still requires the exact natively authorized revision and matching integration segment, then enters company policy through the shared door. Import, public signup/unsubscribe, signed provider callbacks and installation operations retain their own admission.
 
@@ -52,8 +52,8 @@ Design generation and conversion require the configured provider. They retain re
 
 ## Verification
 
-The agent-surface.json declaration is generated from the runtime registry with node scripts/agent-surface.mjs; --check verifies parity. It declares the read-only native witness and conformance journey. Pending assertions remain explicit failures rather than accepted coverage. The native verification hook checks a paid design artifact and its saved, unscheduled custody. Full tool/class coverage, specialist delivery/archive probes and the shared CLI conformance round are required before this adoption is accepted.
+The agent-surface.json declaration is generated from the runtime registry with node scripts/agent-surface.mjs; --check verifies parity. It declares the read-only native witness and conformance journey. Pending assertions remain explicit failures rather than accepted coverage. The remaining class fixtures are enqueue, follow-up, delivery dispatch and report dispatch; reauthorization now runs against the same frozen native revision. Approved retry/replay, erasure audit custody and supported timed native fixture preparation remain dated Base dependencies in tests/agent-door/pending.json. The native verification hook checks a paid design artifact and its saved, unscheduled custody. Full tool/class coverage, specialist delivery/archive probes and the shared CLI conformance round are required before this adoption is accepted.
 
-The 0.2.87 verifier declares fresh native intake and API clients for each policy phase. The four integration read tools use those clients with their original read scopes and native sender identity; source intake does not grant recipient permission. The existing native door test also verifies fresh contact/client identities across phases.
+The 0.2.88 verifier declares fresh native intake and API clients for each policy phase. The four integration read tools use those clients with their original read scopes and native sender identity; source intake does not grant recipient permission. The existing native door test also verifies fresh contact/client identities across phases.
 
 The runtime source pin is recorded separately from the installed CLI pin. A runtime copy does not prove that an older CLI runs the matching conformance harness.

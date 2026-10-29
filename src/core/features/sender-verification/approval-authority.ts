@@ -1,3 +1,5 @@
+import {actorType,actorId} from '../agent-door/custody';
+import {agentAttribution} from '../agent-door/context';
 import type { Database } from '@/core/platform/db/client';
 import type { CampaignRevisionSnapshot } from '@/core/features/lifecycle/types';
 import { associationStatement, leaseGuard, leaseValues } from './repository';
@@ -104,7 +106,9 @@ export function createApprovalAuthorityRepository(database: Database) {
         WHERE ar.campaign_id = ? AND ar.revision_id = ?
           AND ${identityColumns.map(column => `ar.${column} = ?`).join(' AND ')}
           AND r.state = 'approved' AND r.content_digest = ar.revision_digest AND r.updated_at = ?
-          AND r.approved_at = ar.approved_at AND r.updated_at = ar.approved_at AND r.approved_by_operator_id = ar.operator_id
+          AND r.approved_at = ar.approved_at AND r.updated_at = ar.approved_at
+          AND (r.approved_by_operator_id = ar.operator_id OR (r.approved_by_operator_id IS NULL
+            AND r.agent_sponsor_id = ar.operator_id AND r.authorized_by_agent_id IS NOT NULL))
           AND r.sender_name || ' <' || r.from_email || '>' = ?
           AND c.updated_at = ? AND c.state IN ('scheduled', 'dispatching', 'paused')
           AND EXISTS (SELECT 1 FROM recipient_steps pending WHERE pending.campaign_id = c.id
@@ -114,14 +118,14 @@ export function createApprovalAuthorityRepository(database: Database) {
       const values = [snapshot.campaign.id, snapshot.revision.id, ...identityColumns.map(column => approval[column]),
         snapshot.revision.updatedAt.getTime(), approvedFrom, snapshot.campaign.updatedAt.getTime(), now,
         ...leaseValues(senderLease, now), senderLease.id, approvedFrom];
-      const detail = JSON.stringify({campaignId: snapshot.campaign.id, approvalKey: approval.idempotency_key,
+      const detail = JSON.stringify({preparedBy:agentAttribution(),campaignId: snapshot.campaign.id, approvalKey: approval.idempotency_key,
         revisionDigest, approval, approvedFrom, senderEvidence: senderLease});
       const inserted = `EXISTS (SELECT 1 FROM lifecycle_audit_entries WHERE id = ? AND operation_key = ?)`;
       const statements = [client.prepare(`INSERT INTO lifecycle_audit_entries
         (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-        SELECT ?,?,'campaign-revision',?,'sender-reapproved','operator',?,${senderEvidenceDetail},?,?
+        SELECT ?,?,'campaign-revision',?,'sender-reapproved','${actorType()}',?,${senderEvidenceDetail},?,?
         WHERE ${guard} ON CONFLICT(operation_key) DO NOTHING`)
-        .bind(id, operationKey, snapshot.revision.id, operatorId, detail, senderLease.id, now, now, ...values),
+        .bind(id, operationKey, snapshot.revision.id, actorId(operatorId), detail, senderLease.id, now, now, ...values),
       associationStatement(client, senderLease, 'approval', snapshot.revision.id, operationKey, now, inserted, [id, operationKey])];
       statements.push(client.prepare(`SELECT ra.id FROM lifecycle_audit_entries ra
         WHERE ra.operation_key = ? AND ra.entity_id = ? AND ra.action = 'sender-reapproved'

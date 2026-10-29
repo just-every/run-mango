@@ -1061,6 +1061,28 @@
     ]
   },
   {
+    "id": "native-campaign-reauthorize",
+    "tool": "mango.campaigns.reauthorize",
+    "args": {
+      "id": {
+        "$from": "native-scheduled-draft",
+        "pointer": "/campaignId"
+      },
+      "revisionId": {
+        "$from": "native-scheduled-draft",
+        "pointer": "/revisionId"
+      }
+    },
+    "expect": [
+      {
+        "class": "external",
+        "facts": {
+          "counterparty": "known"
+        }
+      }
+    ]
+  },
+  {
     "id": "native-schedule-edit",
     "tool": "mango.campaigns.edit_schedule",
     "args": {
