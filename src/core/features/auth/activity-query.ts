@@ -45,16 +45,18 @@ export function activitySelect(filters: ActivityFilters, before?: string) {
     const [at, ...id] = before.split(':');
     where.push('(e.occurred_at<? OR (e.occurred_at=? AND e.id<?))'); bindings.push(Number(at), Number(at), id.join(':'));
   }
-  return {bindings, sql: `SELECT e.id,e.actor_id AS operatorId,p.display_name AS operatorName,e.actor_type AS actorType,e.action,
+  return {bindings, sql: `SELECT e.id,e.actor_id AS operatorId,CASE WHEN e.actor_type='agent' THEN g.name||' for '||g.sponsor_name ELSE p.display_name END AS operatorName,e.actor_type AS actorType,e.action,
     e.entity_type AS objectType,e.entity_id AS objectId,
     CASE WHEN v.id IS NOT NULL THEN json_set(e.detail_json,'$.name',v.name) ELSE e.detail_json END AS detailJson,e.occurred_at AS occurredAt
     FROM (${entries}) e LEFT JOIN operators p ON p.id=e.actor_id AND e.actor_type='operator'
+    LEFT JOIN agent_door_agents g ON e.actor_type='agent' AND g.id=e.actor_id
     LEFT JOIN campaign_revisions v ON e.action='draft.saved' AND e.entity_type='campaign-revision' AND v.id=e.entity_id
     ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY e.occurred_at DESC,e.id DESC`};
 }
 
 export function readEntry({detailJson, ...entry}: Omit<ActivityEntry, 'detail'> & {detailJson: string}): ActivityEntry {
-  return {...entry, detail: JSON.parse(detailJson)};
+  const detail=JSON.parse(detailJson);
+  return {...entry,operatorName:entry.actorType==='agent'&&typeof detail?.preparedBy?.label==='string'?detail.preparedBy.label:entry.operatorName, detail};
 }
 
 /** A cell that begins like a formula is read by a spreadsheet as one; the leading quote keeps it text. */

@@ -26,6 +26,12 @@
 @import "./styles/pages/audience.css";
 @import "./styles/pages/settings.css";
 
+/* Native records and activity expose the agent's work to people on either input device. */
+.mango-app:has(.campaign-detail-page, .activity-page) :is(button, .primary-action, .secondary-action, input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select) {
+  min-height: 44px;
+  min-width: 44px;
+}
+
 /* Any Tailwind or shadcn utility draws from the same palette. */
 @theme inline {
   --color-ink: var(--ms-ink);

@@ -1,3 +1,5 @@
+import {agentAttribution} from '../agent-door/context';
+import {escapeHtml} from '../campaigns/email-html-policy';
 import {liveCatalogValues} from '@/core/features/campaigns/catalog-values';
 import {analyticsContext} from '@/core/features/settings/analytics-policy';
 import { testDestination, testDestinationBlock, waitForTestSlot, testSendAccess } from './test-destinations';
@@ -80,6 +82,11 @@ export function createTestSender(runtime: LifecycleRuntime, repository: Lifecycl
           from: {name: snapshot.revision.senderName, email: snapshot.revision.fromEmail}, replyTo: snapshot.revision.replyToEmail}
         : {text: managedSmsText(`${marker} ${rendered.sms}`,smsPolicy!.policy,smsPolicy!.sender), test: true};
       if(input.channel==='email' && ('html' in content) && (utf8Bytes(content.html ?? '')>emailByteLimit||utf8Bytes(content.text)>emailByteLimit)) return {kind:'blocked' as const,detail:`Email test exceeds the ${emailByteLimit}-byte per-part limit.`};
+      const attribution=agentAttribution();
+      if(attribution){
+        content.text+='\n\nPrepared by '+attribution.label;
+        if('html' in content)content.html+='<p>Prepared by '+escapeHtml(attribution.label)+'</p>';
+      }
       const [revisionDigest, destinationDigest] = await Promise.all([
         digestJson({
           rendererVersion: messageRendererVersion,

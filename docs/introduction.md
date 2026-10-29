@@ -22,7 +22,7 @@ Mango 0.2.0 is a newsletter release candidate. This documentation describes what
 
 ## What you need
 
-To try it locally, run the one-line start in [Getting started](./getting-started.md) (`curl -fsSL https://runeditrun.com/install.sh | sh -s -- dev just-every/run-mango`; Git is required, and rer brings Node and pnpm). Pinned rer 0.2.85 then manages this project's exact Node, pnpm and the locked dependencies. Open the private `RER_OPEN` development entry in your browser to start a native local owner session without email. This entry carries a private dev key; it is not an emailed one-use sign-in link. No captured-mail page is exposed. A local copy can write drafts, import contacts and show the signup page, but confirmation email requires a hosted installation with configured mail and local copies cannot send real newsletters.
+To try it locally, run the one-line start in [Getting started](./getting-started.md) (`curl -fsSL https://runeditrun.com/install.sh | sh -s -- dev just-every/run-mango`; Git is required, and rer brings Node and pnpm). Pinned rer 0.2.87 then manages this project's exact Node, pnpm and the locked dependencies. Open the private `RER_OPEN` development entry in your browser to start a native local owner session without email. This entry carries a private dev key; it is not an emailed one-use sign-in link. No captured-mail page is exposed. A local copy can write drafts, import contacts and show the signup page, but confirmation email requires a hosted installation with configured mail and local copies cannot send real newsletters.
 
 To send real newsletters you need:
 
