@@ -47,6 +47,7 @@ export function ActivityPage() {
       </div>
       <div className="page-head__actions"><a className="secondary-action" href={`/api/activity/export?${query(applied)}`} download="mango-activity.csv">Export CSV</a></div>
     </header>
+    {error ? <LoadState error={error} /> : null}
     <form className="panel activity-filters" aria-label="Activity filters" onSubmit={event => {event.preventDefault(); setApplied({...draft});}}>
       {fields.map(([name, label]) => <label key={name}>{label}
         <input name={name} type={name === 'from' || name === 'to' ? 'date' : 'text'} value={draft[name]} onChange={event => set(name, event.target.value)} maxLength={200} />
@@ -56,7 +57,6 @@ export function ActivityPage() {
         <button className="secondary-action" type="button" onClick={() => {setDraft(blank); setApplied(blank);}}>Clear</button>
       </div>
     </form>
-    {error ? <LoadState error={error} /> : null}
     <section className="panel" aria-label="Activity entries" aria-busy={loading}>
       {entries.length ? <div className="table-scroll" tabIndex={0} role="region" aria-label="Activity log table">
         <table className="responsive-table">
