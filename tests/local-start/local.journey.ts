@@ -58,22 +58,31 @@ test('[OPER-001] fresh install completes sender setup after one-click owner sign
       await expect(field).toHaveAttribute('aria-invalid','true');
       await expect(field).toHaveAccessibleDescription(/\S/);
     }
-    await expect(page.getByRole('alert')).toBeVisible();
+    await expect(page.getByText('Enter your business name.',{exact:true})).toBeVisible();
     await expect(page.getByLabel('Business display name',{exact:true})).toBeFocused();
     expect(senderWrites).toBe(0);
     await finishSetup(page);
     expect(senderWrites).toBe(1);
-    // Once setup is saved the installation is claimed, and the Lobby's one action is Sign in.
+    // Once setup is saved the installation is claimed, and for the signed-in owner the Lobby's one action is Open app, never Sign in.
     expect(await (await page.request.get(runtime.url+'/setup/state')).json()).toEqual({state:'claimed'});
     await page.goto(runtime.url+'/');
-    await expect(page.getByRole('link',{name:'Sign in'})).toHaveAttribute('href','/signin');
+    await expect(page.getByRole('link',{name:'Open app'})).toHaveAttribute('href','/app');
+    await expect(page.getByRole('link',{name:'Sign in'})).toHaveCount(0);
     await page.goto(runtime.url+'/setup');
     await expect(page).toHaveURL(runtime.url+'/app');
     // A reload reads the persisted sender identity and preserves access.
     await page.reload(); await expect(page).toHaveURL(runtime.url+'/app');
     await page.goto(runtime.url+'/app/campaigns');
     expect((await (await page.request.get(runtime.url+'/api/campaigns')).json()).campaigns).toEqual([]);
-    await expect(page.getByRole('button',{name:'New campaign',exact:true})).toBeVisible();
+    await expect(page.getByRole('button',{name:'Blank newsletter',exact:true})).toBeVisible();
+    // Local mail is suppressed and succeeds quietly, so a draft's email step meets no sender or authentication blocker.
+    const headers={Origin:runtime.url};
+    const draft=await (await page.request.post(runtime.url+'/api/campaigns',{headers,data:{}})).json();
+    expect((await page.request.patch(runtime.url+`/api/campaign-revisions/${draft.revisionId}`,{headers,data:{emailSubject:'Local letter',emailBody:'<p>Local letter</p>',
+      steps:[{channel:'email',timezone:'UTC',scheduledAt:'2031-10-28T10:00:00.000Z',sendByAt:'2031-10-28T12:00:00.000Z',whyThisTime:'Owner chose this time'}]}})).status()).toBe(200);
+    const checks=await (await page.request.post(runtime.url+`/api/campaigns/${draft.campaignId}/checks`,{headers,data:{revisionId:draft.revisionId}})).json();
+    expect(checks.checks.map((check:{kind:string})=>check.kind)).toContain('message.email-sender');
+    expect(checks.blockers.map((check:{kind:string})=>check.kind).filter((kind:string)=>/^mail\.|sender|authentication/.test(kind))).toEqual([]);
     expect((await page.request.post(runtime.url+'/api/_local/bootstrap',{data:{testSession:true}})).status()).toBe(404);
     await page.goto(runtime.url+'/auth/confirm?token='+'x'.repeat(43));
     await expect(page.getByRole('link',{name:'Request a new link'})).toHaveAttribute('href','/signin');

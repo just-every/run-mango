@@ -2,7 +2,7 @@ const width = 1440;
 import {installation} from './support';
 import {incumbentJourney} from './incumbent-journey';
 import {setArchiveAttestations} from './support';
-import { openPage } from '../support/navigation';
+import { openCampaignStarters, openPage } from '../support/navigation';
 import { createHash } from 'node:crypto';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
@@ -118,7 +118,7 @@ export const walk0 = async ({ page }, info) => {
      {
       await page.setViewportSize({width,height:1000});
       await openPage(page,site.runtime.url+'/app/campaigns');
-      await page.getByRole('button',{name:'New campaign',exact:true}).click();
+      await openCampaignStarters(page);
       await expect(page.getByRole('button',{name:'Use Welcome letter',exact:true})).toBeVisible();
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);
@@ -364,7 +364,7 @@ export const walk1 = async({page},info)=>{
     const invalidDefault=await site.call('/api/settings/audience-exclusions',{method:'PUT',cookie,body:{policy:{enabled:true,windowDays:0}}});expect(invalidDefault.status).toBe(400);
     const blank=await json(await site.call('/api/campaigns',{method:'POST',cookie,body:{mode:'blank'}}),201);
     await openPage(page,`${site.runtime.url}/app/campaigns/${blank.campaignId}/review`);await expect(page.getByText('No saved audience snapshot')).toBeVisible();await screens(page,'empty-audience-review',info);
-    await openPage(page,`${site.runtime.url}/app/audience/missing-contact`);await expect(page.getByRole('alert')).toBeVisible();await screens(page,'missing-contact-failure',info);
+    await openPage(page,`${site.runtime.url}/app/audience/missing-contact`);await expect(page.getByRole('heading',{name:'Not found',exact:true})).toBeVisible();await expect(page.getByRole('link',{name:'Back to Audience'})).toBeVisible();await screens(page,'missing-contact-failure',info);
     const next=await draftCampaign(site,cookie,'Default policy copy',emails,new Date(clock.now+7200000));
     const nextDetail=await json(await site.call(`/api/campaigns/${next.campaignId}`,{cookie}),200);
     expect(JSON.parse(nextDetail.revision.dormancyPolicyJson).enabled).toBe(false);

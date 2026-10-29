@@ -1,7 +1,7 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { ResourceSnapshot } from './resource-snapshot';
 
-import { ApiError, getJson } from './api';
+import { ApiError, getJson, NOT_FOUND } from './api';
 
 export function useResource<T>(path: string) {
   const snapshot = useContext(ResourceSnapshot);
@@ -33,7 +33,7 @@ export function useResource<T>(path: string) {
         window.location.assign('/signin?reason=session-ended');
         return;
       }
-      setError('Unable to load this record.');
+      setError(cause instanceof ApiError && cause.status === 404 ? NOT_FOUND : 'Unable to load this record.');
     } finally {
       if (accepts()) setLoading(false);
     }

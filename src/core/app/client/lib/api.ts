@@ -3,6 +3,9 @@ export type ApiResponse<T> = {
   data: T;
 };
 
+/** The one line a read that answered 404 leaves in a page's error state; LoadState turns it into Not found. */
+export const NOT_FOUND = 'Not found';
+
 export class ApiError extends Error {
   constructor(
     message: string,

@@ -3,7 +3,7 @@ import { signInAsLocalOperator, expectDocumentToFit, expectNoSeriousAxeViolation
 import { expectCampaignAxe } from './campaign-axe';
 import { localBootstrapToken } from '../local-bootstrap.js';
 import { localSessionCookieName } from '../support/local-session';
-import { openPage } from '../support/navigation';
+import { openCampaignStarters, openPage } from '../support/navigation';
 
 type PhoneState = { name: string; visit: () => Promise<unknown>; check?: () => Promise<void> };
 
@@ -87,7 +87,7 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
       { name: 'subscribe', visit: () => openPage(page, '/subscribe') },
       { name: 'campaign starters open', visit: async () => {
         await openPage(page, '/app/campaigns');
-        await page.getByRole('button', { name: 'New campaign', exact: true }).click();
+        await openCampaignStarters(page);
         await expect(page.getByRole('region', { name: 'Choose a campaign starter' })).toBeVisible();
       } },
       { name: 'draft detail', visit: () => openPage(page, draft) },

@@ -1,7 +1,7 @@
 import { CampaignExport } from './campaign-export';
 import { ActionMenu } from '@/core/app/client/ui/action-menu';
 import { FilterFold } from '@/core/app/client/ui/filter-fold';
-import {Can} from '@/core/features/auth/ui/permissions';
+import {Can, usePermissions} from '@/core/features/auth/ui/permissions';
 import { useState } from 'react';
 import { CampaignsEmptyArt } from './campaigns-empty-art';
 import { NewCampaign } from './new-campaign';
@@ -19,19 +19,23 @@ export function CampaignsPage() {
   const filters = useSearch({from:'/app/campaigns'});
   const navigate = useNavigate({from:'/app/campaigns'});
   const { data, error, loading } = useCampaignCollection(filters);
-  const [starting, setStarting] = useState(false);
+  const [started, setStarted] = useState<boolean>();
+  const {can} = usePermissions();
   if (loading) return <LoadState />;
   if (!data) return <LoadState error={error} />;
+  // With nothing drafted the starters are the page: they open at once, and there is no list to export.
+  const empty = !data.total && can('draft.write');
+  const starting = empty || (started ?? false);
   const change = (key:'state'|'channel',value:string) => void navigate({search:previous => ({...previous,[key]:value || undefined})});
   return <div className="page-flow campaigns-page">
     <header className="page-head page-head--actions">
       <div className="page-head__text"><h1>Campaigns</h1><p className="page-head__lead">Review drafts and follow approved campaigns.</p></div>
-      <div className="page-head__actions"><Can permission="draft.write"><button type="button" className="primary-action" aria-expanded={starting} aria-controls="campaign-starters" onClick={() => setStarting(!starting)}>New campaign</button></Can><ActionMenu><CampaignExport /></ActionMenu></div>
+      {empty ? null : <div className="page-head__actions"><Can permission="draft.write"><button type="button" className="primary-action" aria-expanded={starting} aria-controls="campaign-starters" onClick={() => setStarted(!starting)}>New campaign</button></Can><ActionMenu><CampaignExport /></ActionMenu></div>}
     </header>
     {data.marketingConnectionRequired ? <aside className="panel" role="status"><h2>Connect a newsletter provider</h2><p>Newsletters need your own SendGrid or Resend connection. Add the optional marketing connection in RER Configure, then verify your business sender in Settings. Managed mail handles sign-in and subscription confirmations.</p></aside> : null}
     <Can permission="draft.write"><NewCampaign open={starting} commerceEnabled={data.commerceEnabled} aiEnabled={data.aiEnabled} /></Can>
-    <section className="campaigns-history" aria-label="Campaign history">
-      {!data.total ? <EmptyState id="campaigns-empty-title" title="Nothing drafted yet" art={<CampaignsEmptyArt />}><p>No campaigns yet. Start with New campaign.</p></EmptyState> : <div className="panel campaign-list">
+    {empty ? null : <section className="campaigns-history" aria-label="Campaign history">
+      {!data.total ? <EmptyState id="campaigns-empty-title" title="Nothing drafted yet" art={<CampaignsEmptyArt />}><p>No campaigns yet.</p></EmptyState> : <div className="panel campaign-list">
         <div className="campaign-list__bar">
           <FilterFold applied={[...(filters.state ? [{key:'state',label:`State: ${campaignStateLabel(filters.state as typeof campaignStates[number])}`}] : []),...(filters.channel ? [{key:'channel',label:`Channel: ${filters.channel === 'sms' ? 'SMS' : 'Email'}`}] : [])]} onRemove={key => change(key as 'state'|'channel','')}>{() => <div className="campaign-filters">
             <div className="campaign-filter"><label htmlFor="campaign-state-filter">State</label><select id="campaign-state-filter" value={filters.state ?? ''} onChange={event => change('state',event.target.value)}>
@@ -54,6 +58,6 @@ export function CampaignsPage() {
           </Link>;
         })}</div>
       </div>}
-    </section>
+    </section>}
   </div>;
 }

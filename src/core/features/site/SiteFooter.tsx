@@ -1,6 +1,7 @@
 import { productConfig } from '@/ext/config';
 import { Brand } from './Brand';
 import { siteCopy } from './copy';
+import { OperatorLink } from './OperatorLink';
 import { creditUrl, sitePaths } from './links';
 import { SiteLink } from './SiteLink';
 import { useRunSite } from './run-site';
@@ -20,7 +21,7 @@ export function SiteFooter() {
         <nav aria-label={footer.label}>
           <ul className="site-footer-links">
             <li><SiteLink to={sitePaths.docs}>{footer.docs}</SiteLink></li>
-            {runSite ? <li><SiteLink to={sitePaths.contract}>{footer.contract}</SiteLink></li> : <li><SiteLink to={sitePaths.signIn}>{footer.signIn}</SiteLink></li>}
+            {runSite ? <li><SiteLink to={sitePaths.contract}>{footer.contract}</SiteLink></li> : <li><OperatorLink signIn={footer.signIn} openApp={footer.openApp} /></li>}
           </ul>
         </nav>
       </div>

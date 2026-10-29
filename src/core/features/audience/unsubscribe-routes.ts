@@ -64,6 +64,8 @@ export function registerUnsubscribeRoutes(routes: Hono, service: ReturnType<type
     return messagePage(context, 200, confirmationPage(parsed.data.token));
   }
 
+  // The bare address, with no link code: a plain Not found with the way back.
+  routes.get('/unsubscribe', context => messagePage(context, 404, { title: 'Not found', heading: 'Not found', text: 'Use the unsubscribe link in the letter you received.', links: [{ href: '/', label: 'Back to the home page' }] }));
   routes.get('/unsubscribe/:token', preview);
   routes.get('/unsubscribe/one-click/:token', preview);
 
