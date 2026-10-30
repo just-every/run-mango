@@ -1296,11 +1296,11 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "d58493510a5fbaa4c80fe6bc5ab0b5fda612df628dbf42a957deea6cdaf4f7f1",
+      "sha256": "b4265e04499b953ce0b4de19dc1d9c7c5cd5f04683272f8c17042d3addb956ab",
       "executable": false
     },
     "agent-surface.json": {
-      "sha256": "8723244bf13dd9778d39a5394a97bb6e92870db1a8fc9c06c23fe3dccb75d8c3",
+      "sha256": "e21ef3e186c76e0135da0cbe9cf7c909e9d0dc4420af18b1d210c3f6d4d705a4",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1332,7 +1332,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "826f2990342b1ca4e26a1cea28995d761621857e69d3350056f8479e8f2f996e",
+      "sha256": "87b1b621f27328bad35a519f2b668e6292209cf8e030320179ab21af6d3bf030",
       "executable": false
     },
     "DEMO.md": {
@@ -1512,7 +1512,7 @@
       "executable": false
     },
     "management/integration/deployment-spec.json": {
-      "sha256": "b558e68b135169b6080a10840eb34a9df9f02f62c8f2287aa6bf637560cdfb80",
+      "sha256": "b8a9c5feb6eb62decbde30fb89b94be5e6b16f7b52382c15fb10ca325173d1f8",
       "executable": false
     },
     "migrations/core/0000_source_syncs.sql": {
@@ -1956,7 +1956,7 @@
       "executable": false
     },
     "operations/agent-door.test.mjs": {
-      "sha256": "767aa831ac223b6a98f1ea8a07003946135e1d184136b81ced7e984e3aafec66",
+      "sha256": "5a6b02f043164f55ca5ead6abbb3126e1a24a5a75b160262c1e63c8d9cec92d5",
       "executable": false
     },
     "operations/agent-runtime.mjs": {
@@ -3424,7 +3424,7 @@
       "executable": false
     },
     "src/core/features/agent-door/custody.ts": {
-      "sha256": "f2d1fcc4aa23a92f97979cbd4ce06235581688a777f897fb7310dc4e42d94e31",
+      "sha256": "ccf5a9c086cc52638d67d181774b9ab8a7cb3f47e7db3a04c5eaabaa11fb232c",
       "executable": false
     },
     "src/core/features/agent-door/digest.ts": {
@@ -5128,7 +5128,7 @@
       "executable": false
     },
     "src/core/features/insights/report-scheduler.ts": {
-      "sha256": "1a09cc4811bc1ac28069a682a437c33ec8848834c4e63df1a4678cae7ea5f326",
+      "sha256": "170ff9081a73f7075a718972d5d3dd4fc2f0d51f2ed1f7865c4b3fa0c379d976",
       "executable": false
     },
     "src/core/features/insights/repository.ts": {
@@ -9648,7 +9648,7 @@
       "executable": false
     },
     "tests/agent-door/native-journey.mjs": {
-      "sha256": "f38444f56cb2c159c158bbefdc2d309d049a457290a5656a7257d9f359cb42ce",
+      "sha256": "a29e2aaa5b54c473eb654b0659037a1228a9caf4628ef469e0a7d7fc52a25f0c",
       "executable": false
     },
     "tests/agent-door/network.mjs": {
@@ -9660,7 +9660,7 @@
       "executable": false
     },
     "tests/agent-door/pending.json": {
-      "sha256": "cdcc34ffab43e939dcbb33233dd038e0b4a4c3f9d68245a650f6e5284183bf8d",
+      "sha256": "f32623ffdd06aea3442020577e9646b35e9d0b835d92832a0f7396a4775df936",
       "executable": false
     },
     "tests/agent-door/proposal-edge.mjs": {
@@ -9669,6 +9669,10 @@
     },
     "tests/agent-door/recipient-fixtures.mjs": {
       "sha256": "b39860a2a990f52bc066a5a88c05a0329444bf7f50e1528e193f28071e94a2f9",
+      "executable": false
+    },
+    "tests/agent-door/report-recovery.mjs": {
+      "sha256": "932bc06c8e6b7103459e80754e99107de8950602c16e5264c932f201d5a7a338",
       "executable": false
     },
     "tests/agent-door/reviewer.mjs": {

@@ -1,21 +1,7 @@
 [
   {
-    "id": "PENDING-SEED-2026-10-28-complete-class-journey",
-    "assertion": "Every registered tool/class pair and the specialist probes must have real disposable native fixtures. Remaining: mango.campaigns.enqueue/external, mango.campaigns.followup/standard, mango.delivery.dispatch/external and mango.reports.dispatch/external; none is credited by a no-op or fabricated native record."
-  },
-  {
-    "id": "PENDING-BASE-2026-10-29-approved-retry-replay",
-    "assertion": "Approved native mutations must retry once with their saved result after execution consumes preparation, preserving current authorization, policy and Pause. Native target/classification callbacks still run again before saved outcomes; Base documents that consumed native preparation needs an explicit replay-admission contract.",
-    "source": "Base modules/agent-door/pipeline.ts:78; modules/agent-door/approval-execution.ts:44; modules/agent-door/ADOPTING.md:1025"
-  },
-  {
-    "id": "PENDING-BASE-2026-10-29-erasure-audit-fence",
-    "assertion": "A contact erasure must retain Mango\u2019s privacy write fence and persist its final door audit without HTTP 500. Retained door call, approval and audit custody needs a supported erasure agreement.",
-    "source": "Base modules/agent-door/audit.ts:31; modules/agent-door/ADOPTING.md:853; Mango src/core/features/audience/erasure/write-fence.ts:31"
-  },
-  {
-    "id": "PENDING-BASE-2026-10-29-timed-native-fixtures",
-    "assertion": "Fresh public-door preparation cannot produce a completed send aged at least one hour or a due weekly report without advancing native time or fabricating state. A supported disposable native-clock/cron fixture boundary is needed; timedLifecycle and queuedLifecycle are explicitly unscoped.",
-    "source": "Base modules/agent-door/ADOPTING.md:1080; cli/agent-verifier.mjs:7; cli/hosted-output.mjs:113; Mango src/core/features/campaigns/followup-service.ts:28; src/core/features/insights/report-scheduler.ts:58"
+    "id": "PENDING-BASE-2026-10-30-erasure-custody-fence",
+    "assertion": "The native-contact-erasure fixture returns HTTP 500 after native erasure admission because final door custody writes encounter Mango\u2019s privacy fence. Keep that fence intact. Base requires a native mapping for retained outcomes, approval arguments, review summaries, audit and events, permitted decision-evidence redaction, and an atomic execution/capture fence before enabling a client-custody exception. The pending erasure also prevents subsequent held-policy, replay, subset and audit phases from completing.",
+    "source": "Base modules/agent-door/ADOPTING.md:1164-1174; modules/agent-door/audit.ts:44-46; Mango src/core/features/audience/erasure/write-fence.ts:31-35; operations/agent-door.test.mjs native-contact-erasure"
   }
 ]

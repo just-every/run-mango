@@ -4941,8 +4941,8 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-001, BASE
 3. The public discovery instructions link the marketing records, tool table and non-tool reasons used by a stranger starting with only the Mango URL.
 4. The Base conformance harness runs Mango’s tool fixtures and every SURFACE acceptance point under the all-autonomous and held company policies, including the marketing specialist week in SURFACE-008.
 
-**Evidence.** None.
-**Gap.** The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented.
+**Evidence.** `tests/agent-door/journey.json` · `operations/agent-door.test.mjs`
+**Gap.** The native registry exposes 76 tools and 21 resources with fixtures for 82/82 declared tool/class pairs. Complete conformance is blocked by native-contact-erasure HTTP 500 at the retained door custody/privacy fence. Complete Core-table coverage and the marketing specialist week remain unproved.
 
 #### SURFACE-002 — Drafts and outside marketing exposure
 
@@ -4992,8 +4992,8 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-005, BASE
 5. A routine disable changes access for that routine and adds live for stopping its scheduled job, preventing its next scheduled run.
 6. Reading or exporting CONT-029’s retained portable restriction mappings carries sensitive with the mapping-record count and data kind; the same classification applies when erasure handles those retained mappings.
 
-**Evidence.** None.
-**Gap.** The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented.
+**Evidence.** `tests/agent-door/journey.json` · `operations/agent-door.test.mjs`
+**Gap.** Native authority and privacy class fixtures are present. Contact erasure starts its native privacy fence, then final door custody writes return HTTP 500. Retained outcome, approval, review, audit and event mapping and permitted redaction need the Base client-custody agreement; the complete acceptance remains unproved.
 
 #### SURFACE-005 — Paid marketing and exact-revision commitments
 
@@ -5061,8 +5061,8 @@ Agent surface · target · **missing** · From new · Cites BASE-AGENT-002, BASE
 7. A seeded complaint breach triggers the declared stop rule and operator notice, and the checkpoint report explains whether measured repeat-purchase lift supports keeping or retiring the flow.
 8. The end-of-week report reconciles tool outcomes, affected recipients, flow state, source recovery and measured costs to Mango’s stored records, without counting opens as incremental purchases.
 
-**Evidence.** None.
-**Gap.** The Mango MCP adapter and the seed-specific company-policy conformance journey are not implemented.
+**Evidence.** `tests/agent-door/journey.json` · `operations/agent-door.test.mjs`
+**Gap.** The disposable journey exercises native campaign enqueue, delivery dispatch, follow-up and scheduled-report dispatch. The complete retention week remains unproved, and contact-erasure custody blocks completion of both-policy conformance.
 
 #### SURFACE-009 — Specialist handoffs keep marketing context
 

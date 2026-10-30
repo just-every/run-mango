@@ -50,8 +50,8 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
       if(!sending.meta.changes)return false;
       const sent=await platform.mailer.send(request);await settleHandoffCost(platform.database,platform.mailer,request,cost,sent).catch(()=>{});
       if(sent.disposition!=='accepted'){await finish('uncertain','handoff-unconfirmed');return;}
-      await db.prepare("UPDATE insight_report_deliveries SET state='accepted',reason=NULL,provider_message_id=?,updated_at=? WHERE id=? AND claim_token=?").bind(sent.providerMessageId,clock(),delivery.id,claimToken).run();
-      await audit('accepted');
+      const accepted=await db.prepare("UPDATE insight_report_deliveries SET state='accepted',reason=NULL,provider_message_id=?,updated_at=? WHERE id=? AND claim_token=?").bind(sent.providerMessageId,clock(),delivery.id,claimToken).run();
+      if(accepted.meta.changes)await audit('accepted');
     } catch(error) {
       if(error instanceof ToolRefusal){await cancelHandoffCost(platform.database,cost.key);await finish('refused',error.code);}
       else if(error instanceof ProviderDeferredError){await cancelHandoffCost(platform.database,cost.key);await db.prepare("UPDATE insight_report_deliveries SET state='deferred',reason=?,next_at=?,updated_at=? WHERE id=? AND claim_token=?").bind(error.code,error.retryAt.getTime(),clock(),delivery.id,claimToken).run();await audit('deferred',error.code);}
@@ -59,7 +59,7 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
     }
     return true;
     async function audit(state:string,detail?:string){await recordActivity(db,{key:`report-delivery:${delivery.id}:${state}`,action:`report-delivery.${state}`,entityType:'report-schedule',entityId:schedule.id,actorId:'scheduled-reports',actorType:'system',at:clock(),detail:{dueAt:delivery.due_at,recipientId:delivery.recipient_id,...(detail?{reason:detail}:{})}});}
-    async function finish(state:'refused'|'uncertain',reason:string){await db.prepare('UPDATE insight_report_deliveries SET state=?,reason=?,updated_at=? WHERE id=? AND claim_token=?').bind(state,reason,clock(),delivery.id,claimToken).run();await audit(state,reason);}
+    async function finish(state:'refused'|'uncertain',reason:string){const finished=await db.prepare('UPDATE insight_report_deliveries SET state=?,reason=?,updated_at=? WHERE id=? AND claim_token=?').bind(state,reason,clock(),delivery.id,claimToken).run();if(finished.meta.changes)await audit(state,reason);}
   }
   async function run(scheduledTime=clock()) {
     const now=clock(),tick=Math.min(scheduledTime,now);

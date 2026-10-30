@@ -7,8 +7,8 @@ import {runtime,setup} from './base-runtime.mjs';
 import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../src/vendor/base/agent-door/conformance/crypto.mjs';
 import {validateAgentSurface} from '../src/vendor/base/agent-door/conformance/surface.mjs';
 import prepareNativePhase from '../tests/agent-door/fixtures.mjs';
-import {proveReportRecovery} from '../tests/agent-door/report-recovery.mjs';
-import nativeJourney,{beforeStep,afterStep} from '../tests/agent-door/native-journey.mjs';
+import {proveIsolatedDoorRecovery} from '../tests/agent-door/report-recovery.mjs';
+import {beforeStep,afterStep} from '../tests/agent-door/native-journey.mjs';
 import {agentRuntime} from './agent-runtime.mjs';
 
 test('Mango shared door: signed native owner, durable Business people, native draft custody, policy, replay and role narrowing',async()=>{
@@ -29,11 +29,12 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   resourceScopes:['mango.resources.read','mango.witness.read','events:read'],seq:0,revision:0};
  // Trust requires the same public ring as ordinary production settings.
  const trust=JSON.stringify({v:1,issuer,audience:origin,subject:installationId,keys:publicKeys});
- const app=await agentRuntime({
+ const bindings={
   RER_OWNER_CLAIM_ISSUER:issuer,RER_MANAGEMENT_ORIGIN:issuer,RER_INSTALLATION_ID:installationId,
   RER_OWNER_CLAIM_INSTALLATION_ID:installationId,RER_OWNER_CLAIM_APP_ORIGIN:origin,
   RER_OWNER_CLAIM_PUBLIC_KEYS:JSON.stringify(publicKeys),RER_BUSINESS_TRUST:trust,
- });
+ };
+ const app=await agentRuntime(bindings);
  let sequence=0;
  async function mailBudget(){
   const budget=await app.db.prepare('SELECT MAX(next_at) next FROM provider_pacing').first();
@@ -111,6 +112,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.call('/auth/confirm',{method:'POST',cookie,body:{token:await app.token()}})).status,303);
   const fixtureRequest=app.request;
   await app.prepareOwner(cookie);
+  await proveIsolatedDoorRecovery({bindings,context:c});
   const firstPhase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'autonomous',database:app.database,queues:app.queues,now:Date.now(),fixtures:app.fixtures,mail:app.mail});
   const phase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'held',database:app.database,queues:app.queues,now:Date.now(),fixtures:app.fixtures,mail:app.mail});
   assert.notEqual(firstPhase.values.contact.id,phase.values.contact.id,'Policy phases receive fresh native contacts');
@@ -296,10 +298,6 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.call('/api/operators/'+member.id,{method:'DELETE',cookie})).status,204);
   assert.equal((await app.call('/api/integrations/v1/contacts',{headers:{Authorization:'Bearer '+sponsoredKey.token}})).status,401);
   const inactive=await call('mango.campaigns.list',{},analyst);assert.equal(inactive.response.status,401);
-  await nativeJourney({request:app.request,origin,cookie,queues:app.queues,tool:async(name,args)=>{
-   const answer=await call(name,args);return {status:answer.response.status,result:answer.message.result,decision:answer.message.result?._meta?.['com.runeditrun/decision']};
-  }});
-  await proveReportRecovery({app,cookie,owner,call});
   assert.equal(owner.role,'owner');
  }finally{await app.close();}
 });

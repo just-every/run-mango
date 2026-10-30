@@ -23,7 +23,8 @@ export async function admitWork(db:D1Database,door:AgentDoor|undefined,kind:stri
   args={...JSON.parse(work.args_json),...args};
   const progress=kind==='campaign'?(await db.prepare('SELECT id,transport_disposition,attempt_count,next_attempt_at FROM recipient_steps WHERE revision_id=? ORDER BY id').bind(targetId).all()).results
     :kind==='design'?await db.prepare('SELECT state,provider_run_id,provider_layout_id,chosen_slot,layout_round,attempts,updated_at FROM design_jobs WHERE id=?').bind(targetId).first()
-    :kind==='sync'?await db.prepare('SELECT * FROM source_sync_runs WHERE id=?').bind(targetId).first():null;
+    :kind==='sync'?await db.prepare('SELECT * FROM source_sync_runs WHERE id=?').bind(targetId).first()
+    :kind==='report'?await db.prepare('SELECT id,state,next_at,updated_at,claim_token FROM insight_report_deliveries WHERE id=?').bind(args.deliveryId).first():null;
   const key=kind+':'+targetId+':'+work.operation+':'+(await fingerprint({args,progress})).slice(0,32);
   const result=await door.invoke(work.tool,{...args,idempotency_key:key},principal);
   await db.prepare('UPDATE mango_agent_work SET last_outcome=? WHERE kind=? AND target_id=? AND operation=?')

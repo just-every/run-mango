@@ -43,6 +43,7 @@ export default async function({tool,request,origin,cookie,queues}){
  assert.equal(artifact.status,200);const bytes=await artifact.text();assert.equal(JSON.parse(bytes).version,'2');
  const reopened=await request(new URL('/api/design-jobs/'+started.job.id+'/layerdoc',origin),{headers});assert.equal(await reopened.text(),bytes);
  const campaign=await request(new URL('/api/campaigns/'+draft.campaignId,origin),{headers});assert.equal((await campaign.json()).revision.state,'draft');
+ }finally{queues.release();}
 }
 
 /** Assert the native effects as well as Base's class, policy and replay checks. */
