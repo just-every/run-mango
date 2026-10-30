@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 9 | 210 | 88 | 307 |
+| Core | 8 | 211 | 88 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 9 | 210 | 97 | 316 |
+| Full target | 8 | 211 | 97 | 316 |
 
 Judged from the code and tests at commit `6bd9d70cea65aa50d0ff98b47d86faa7cd8d2d51` (30 October 2026). Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -2195,7 +2195,7 @@ Core · target · **partial** · From CONT-027 · Rules D-2
 
 #### CONT-043 — Resubscription after erasure
 
-Core · target · **done** · From CONT-027 · Rules D-2
+Core · target · **partial** · From CONT-027 · Rules D-2
 
 **Requirement.** An erased person may give new consent without reviving their former history.
 
@@ -2207,7 +2207,7 @@ Core · target · **done** · From CONT-027 · Rules D-2
 5. The erased-contact journey reads both the newly subscribed empty-history profile and expired-request cleanup.
 
 **Evidence.** `tests/audience-import/signup-security.spec.ts` — “CONT-043 erased recipients confirm only new evidence; expiry removes recreated data and surviving suppression stays refused” (points 1–4, including legacy refusal and stale-token refusal); `tests/go-live/shared-kiosk.journeys.ts` — “[FORM-009][CONT-005][CONT-027][CONT-043] shared signup clears each visitor and resubscribes only after their affirmative confirmation” (points 1–5: authenticated erasure, public signup, empty-history profile, supersession audit and scheduled expiry cleanup)
-**Gap.** None.
+**Gap.** All five acceptance outcomes pass the native public-door and erased-contact browser journeys locally. Exact-SHA Verify 40993368423 failed at e941ee8ec759177a88ca1e1c767cb21dd5f77743 after the reproduced deployment-specification repair; its new failure needs diagnosis and exact-command reproduction. This run exhausted its ten-call GitHub diagnostic budget. Ambiguous legacy erasure-only restrictions remain refused.
 
 ### Target: Audiences
 
