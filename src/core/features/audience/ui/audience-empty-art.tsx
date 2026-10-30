@@ -2,7 +2,7 @@ import '@/core/app/client/ui/materials';
 import { Paper } from '@/core/features/site/paper/Paper';
 import { Stamp } from '@/core/features/site/paper/Stamp';
 
-/** Beside "The ledger is empty": a blank address card with its stamp waiting on it. Decorative; the text says it. */
+/** Beside "No contacts yet": a blank address card with its stamp waiting on it. Decorative; the text says it. */
 export function AudienceEmptyArt() {
   return (
     <div className="art empty-art audience-empty-art" aria-hidden="true">

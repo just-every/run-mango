@@ -24,7 +24,7 @@ export async function manualEntryJourney(site:Installation,edge:Awaited<ReturnTy
   const form=page.getByRole('region',{name:'Add a contact by hand'});
   await expect(form).toContainText('Email uses single opt-in');
   await form.getByLabel('Name',{exact:true}).fill('Synthetic Mango market visitor');await form.getByLabel('Email',{exact:true}).fill(email);
-  await form.getByLabel('Phone (E.164)',{exact:true}).fill('+61411111111');await form.getByRole('button',{name:'Add property',exact:true}).click();await form.getByLabel('Property 1 name').fill('interest');await form.getByLabel('Property 1 value').fill('Seedlings');
+  await form.getByLabel('Phone',{exact:true}).fill('+61411111111');await form.getByRole('button',{name:'Add property',exact:true}).click();await form.getByLabel('Property 1 name').fill('interest');await form.getByLabel('Property 1 value').fill('Seedlings');
   await form.getByLabel('Where permission was recorded').fill('Saturday market, signed permission card');
   await form.getByLabel('Email consent wording shown').fill('Please send me the monthly garden newsletter.');await form.getByLabel('Destination jurisdiction',{exact:true}).fill('AU');
   await form.getByLabel('I record that this person gave the email permission above.').check();

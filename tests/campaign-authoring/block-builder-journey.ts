@@ -49,7 +49,7 @@ export async function blockBuilderJourney(page:Page,info:TestInfo,runtime:{url:s
     await reloadPage(page);await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 1: columns',exact:true}).click();await expect(page.getByRole('combobox',{name:'Column count',exact:true})).toHaveValue('2');await expect(page.getByRole('combobox',{name:'Mobile column orientation',exact:true})).toHaveValue('stack-columns');
     await page.getByRole('button',{name:'HTML mode',exact:true}).click();await expect(page.getByLabel('Email body',{exact:true})).toHaveValue(authoredBody(saved.emailBody));await page.getByRole('button',{name:'Block builder',exact:true}).click();
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();expect((await read()).emailBody).toBe(saved.emailBody);
-    await expect(page.getByRole('status',{name:'Email sent size',exact:true})).toContainText('Sent size upper bound:');
+    await expect(page.getByRole('status',{name:'Email sent size',exact:true})).toContainText('Email size:');
     await page.getByRole('button',{name:'Block 1: columns',exact:true}).click();
     console.log('Block proof: screens');
     let reusable:any,proof:Awaited<ReturnType<typeof prepareReusableProof>>|undefined;

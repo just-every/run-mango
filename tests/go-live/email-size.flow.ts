@@ -54,7 +54,7 @@ export const walk0 = async({page},info)=>{
       expect(measuredResponse.request().postDataJSON().emailBody).toBe(detail.revision.emailBody);
       expect(measuredResponse.status()).toBe(200);
       expect(await measuredResponse.json()).toMatchObject({exceedsLimit:false});
-      await expect(page.getByRole('status',{name:'Email sent size'})).toContainText('Sent size upper bound');
+      await expect(page.getByRole('status',{name:'Email sent size'})).toContainText('Email size');
       await page.locator('.editor-panel').screenshot({path:info.outputPath(`large-email-${width}.png`)});
       await page.getByRole('status',{name:'Email sent size'}).screenshot({path:info.outputPath(`email-size-meter-${width}.png`)});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);

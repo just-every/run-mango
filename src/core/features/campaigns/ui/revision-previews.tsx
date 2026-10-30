@@ -1,4 +1,5 @@
 import {catalogBlocks,type CatalogRenderings} from '../catalog-blocks';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {requestJson} from '@/core/app/client/lib/api';
 import {useDemoOrigin} from '@/core/app/client/lib/demo-origin';
 import {analyticsContext} from '@/core/features/settings/analytics-policy';
@@ -16,6 +17,7 @@ import { Paper } from '@/core/features/site/paper/Paper';
 
 /** `mediaOrigin` is the deployment's own origin, where its campaign images are served (CAMP-012). */
 export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannels, smsPreview, preflightTools = true }: { revision: Revision; links: RevisionLink[]; mediaOrigin?: string; selectedChannels?: readonly Channel[]; smsPreview?:SmsReviewPreview; preflightTools?:boolean }) {
+  const formatDate = useDateFormatter();
   const [width, setWidth] = useState<'desktop' | 'mobile'>('desktop');
   const [appearance, setAppearance] = useState<'light' | 'dark'>('light');
   const [contact, setContact] = useState<Contact>();
@@ -45,7 +47,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   return (
     <section className="preview-grid" aria-label="Saved revision previews">
       {propertyError?<p role="alert">{propertyError}</p>:contact&&propertyValues?.id!==contact.id?<p role="status">Reading contact property values…</p>:null}
-      {needsCatalog?<p role={catalogError?'alert':'status'}>{catalogError||(!catalogValues?'Reading current catalog values…':'Catalog read at '+new Date(Object.values(catalogValues)[0]?.readAt).toLocaleString())}</p>:null}
+      {needsCatalog?<p role={catalogError?'alert':'status'}>{catalogError||(!catalogValues?'Reading current catalog values…':'Catalog read at '+formatDate(Object.values(catalogValues)[0]?.readAt))}</p>:null}
       {showEmail ? <article className="message-preview message-preview--email">
         <Paper w={640} h={760} seed={41} className="app-sheet email-sheet">
           <p className="eyebrow">Email · saved revision</p>

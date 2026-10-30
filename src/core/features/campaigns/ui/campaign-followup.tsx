@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {Link,useNavigate} from '@tanstack/react-router';
 import {useResource} from '@/core/app/client/lib/use-resource';
 import {requestJson} from '@/core/app/client/lib/api';
@@ -17,7 +18,7 @@ export function CampaignFollowup({campaignId}:{campaignId:string}) {
     } catch(cause){setError(cause instanceof Error?cause.message:'Follow-up could not be created.');setBusy(false);}
   };
   return <Disclosure className="panel" title="Follow up with non-engaged readers">
-    <p>Create an unscheduled email draft for recipients who had no {metric==='click'?'human click':'recorded open estimate'} by the chosen delay after the last email hand-off. {metric==='click'?'Known scanners do not count. ':''}Current consent, suppression and frequency checks still apply at review and sending.</p>
+    <p>Create an unscheduled email draft for recipients who had no {metric==='click'?'human click':'recorded open estimate'} by the chosen delay after the last email was sent. {metric==='click'?'Known scanners do not count. ':''}Current consent, suppression and frequency checks still apply at review and sending.</p>
     <div className="draft-fields">
       <label>New follow-up subject<input aria-label="New follow-up subject" maxLength={250} value={subject} onChange={event=>setSubject(event.target.value)}/></label>
       <label>Wait after sending (hours)<input aria-label="Follow-up delay hours" type="number" min="1" max="720" value={hours} onChange={event=>setHours(event.target.value)}/></label>
@@ -28,8 +29,9 @@ export function CampaignFollowup({campaignId}:{campaignId:string}) {
   </Disclosure>;
 }
 export function FollowupParent({campaignId}:{campaignId:string}) {
+  const formatDate = useDateFormatter();
   const {data}=useResource<{followup:{sourceCampaignId:string;name:string;metric:string;cutoffAt:number;delayHours:number}|null}>(`/api/campaigns/${campaignId}/followup-parent`);
   if(!data?.followup)return null;
   const f=data.followup;
-  return <aside className="notice-note" aria-label="Follow-up source"><p>Follow-up to <Link to="/app/campaigns/$id/scheduled" params={{id:f.sourceCampaignId}}>{f.name}</Link>: no {f.metric==='click'?'human click':'open estimate'} by {new Date(f.cutoffAt).toISOString()} ({f.delayHours} hours after the last email hand-off). This campaign needs its own dates, review and approval.</p></aside>;
+  return <aside className="notice-note" aria-label="Follow-up source"><p>Follow-up to <Link to="/app/campaigns/$id/scheduled" params={{id:f.sourceCampaignId}}>{f.name}</Link>: no {f.metric==='click'?'human click':'open estimate'} by {formatDate(f.cutoffAt)} ({f.delayHours} hours after the last email was sent). This campaign needs its own dates, review and approval.</p></aside>;
 }
