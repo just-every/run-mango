@@ -48,7 +48,7 @@ export function ApprovalCheckList({
   eyebrow?: string;
   emptyMessage?: string;
 }) {
-  const dateTime=useDateFormatter({locale:undefined,options:{year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'}});
+  const dateTime=useDateFormatter();
   const titleId = useId();
   const [expanded, setExpanded] = useState(true);
   const findings = checks ?? [];

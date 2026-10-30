@@ -11,6 +11,7 @@
 .mango-site .site-nav { display: flex; align-items: center; flex-wrap: wrap; justify-content: flex-end; gap: 6px max(18px, calc(30 * var(--u))); font-size: max(16px, calc(19 * var(--u))); line-height: 1.2; }
 .mango-site .site-nav a { padding: 6px 0; text-decoration: underline; text-decoration-color: transparent; text-decoration-thickness: 2px; text-underline-offset: 7px; transition: text-decoration-color 0.18s; }
 .mango-site .site-nav a:hover, .mango-site .site-nav a[aria-current] { text-decoration-color: var(--ms-sun); }
+.mango-site .site-nav .site-button { min-height: 44px; gap: 12px; padding: 0 20px; border-radius: 999px; text-decoration: none; }
 .mango-site .site-nav-slash { color: var(--ms-faint); font-weight: 300; }
 
 .mango-site .site-footer { width: 100%; max-width: var(--ms-max); margin: 0 auto; padding: 0 var(--ms-gutter) max(48px, calc(64 * var(--u))); }
@@ -42,7 +43,9 @@
   .mango-site .site-header { gap: 10px; }
   .mango-site .site-brand-mark { width: 28px; }
   .mango-site .site-brand-name { font-size: 25px; }
-  .mango-site .site-nav { gap: 4px 13px; font-size: 15px; }
+  .mango-site .site-nav { flex-wrap: nowrap; gap: 4px 13px; font-size: 15px; white-space: nowrap; }
+  .mango-site .site-nav .site-button { padding: 0 14px; }
+  .mango-site .site-nav .site-button-arrow { display: none; }
 }
 
 /* The narrowest phones keep the header on one line: the slash steps aside and the links and lockup close up a little. */
@@ -57,5 +60,5 @@
 @media (max-width: 340px) {
   .mango-site .site-brand-mark { width: 23px; }
   .mango-site .site-brand-name { font-size: 22px; }
-  .mango-site .site-nav { column-gap: 10px; }
+  .mango-site .site-nav { flex-wrap: wrap; column-gap: 10px; }
 }

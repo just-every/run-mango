@@ -1,22 +1,13 @@
-import type { LandingSectionId } from './links';
-
 // The words in the shared header and footer. The owner's name, summary and credit toggle come from src/ext/config.ts.
 export const siteCopy = {
   skip: 'Skip to content',
-  nav: { label: 'Main', how: 'How it works', docs: 'Docs', contract: 'Contract', signIn: 'Sign in' },
+  nav: { label: 'Main', docs: 'Docs', source: 'GitHub', run: 'Run Mango', signIn: 'Sign in' },
   footer: {
     label: 'Footer',
     docs: 'Docs',
+    contract: 'Contract',
     signIn: 'Operator sign-in',
     poweredBy: 'Powered by',
     creditLabel: 'runeditrun.com',
   },
-  sections: {
-    how: 'How it works',
-    consent: 'Consent',
-    approval: 'Approval',
-    schedule: 'Schedule',
-    delivery: 'Delivery',
-    own: 'Ownership',
-  } satisfies Record<LandingSectionId, string>,
 } as const;

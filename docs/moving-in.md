@@ -37,7 +37,7 @@ The export help lists audience fields and the four opt-in/confirmation columns b
 
 Leave unrelated fields unmapped. These exports need not contain an email status column: the separate file and its preset carry the restriction. Optional marketing-permission fields and signup timestamps alone do not establish all the original consent scope Mango requires.
 
-The synthetic examples cover all four files. The three existing subscribed, unsubscribed and cleaned examples retain their original bytes; the non-subscribed example is `source-a-non-subscribed.csv` in the repository's audience-import fixtures. These examples are a **documented format, tested on synthetic files shaped from the published help page, not on a real export**.
+The synthetic examples cover all four files. The three existing subscribed, unsubscribed and cleaned examples retain their original bytes; the non-subscribed example is `source-a-non-subscribed.csv` in the repository's audience-import test files. These examples are a **documented format, tested on synthetic files shaped from the published help page, not on a real export**.
 
 ## Mailchimp full account export
 
@@ -105,7 +105,7 @@ One archive is read inside a single Worker request (128 MB memory). These limits
 
 Mango refuses an archive, saving nothing and naming the reason, when it is not a ZIP or is truncated, split or ZIP64, or when an entry has an absolute or `..` path, a duplicate name, a symbolic link or encryption. Entries that overlap, use an unknown compression method, fail their CRC, disagree with their header or exceed a limit are refused the same way. Archives nested inside the export are never opened: they are skipped and counted as kept as raw source. A larger export gets a plain message: unzip it and import the audience CSV files individually above, or export again with a shorter time frame and without the gallery.
 
-The synthetic archive is built by `tests/move-in/archive.ts` from the files in `tests/move-in/fixtures/account-export`, which use reserved addresses only.
+The sample archive is built by `tests/move-in/archive.ts` from sample files under `tests/move-in`, which use reserved addresses only.
 
 ## Kit
 
@@ -169,8 +169,7 @@ statement and the typed source name; “Not sure” keeps the source non-subscri
 Preview again after changing answers. Preview and the downloadable reconciliation
 report count incumbent-held, confirmed and absent evidence separately. Apply only
 starts the reviewed contact import: it creates no campaign, flow or delivery.
-These presets read CSV files; they do not pull APIs or run parallel synchronization
-(MOVE-013). SMS still requires its independent original evidence and never inherits
+These presets read CSV files; they do not pull APIs or run parallel synchronization. SMS still requires its independent original evidence and never inherits
 an email subscription.
 
 ## Read an ActiveCampaign or Klaviyo API export
@@ -203,10 +202,10 @@ cart flow. CSV exports can use the Klaviyo preset too.
 Conservative SMS default: the API export preserves source SMS evidence for
 review but leaves the phone non-subscribed. A missing per-row time or collection
 point never becomes positive SMS consent. Positive incumbent SMS activation
-remains held under CONT-024/A2P; independently complete original native SMS
+remains held until carrier registration (A2P) is in place; independently complete original native SMS
 confirmation columns can use the existing CSV path. Review snapshot topics do
 not create additional category-specific consent. APIs read at most 5,000 records
 per collection, 50 pages per collection and 100 templates per export. Each page is bounded to 2 MB, all provider reads together to 8 MB, and the reviewed template/history payload to 1 MB. These
-are reviewed one-time imports, not a parallel-run synchronization (MOVE-013).
+are reviewed one-time imports, not a parallel-run synchronization.
 
 API source reads stop at 100 requests for one reviewed export. An incomplete or oversized read is refused as a whole; it does not import a partial audience.

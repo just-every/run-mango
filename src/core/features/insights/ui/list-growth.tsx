@@ -24,7 +24,7 @@ export function ListGrowth() {
   return <section className="panel page-flow" aria-labelledby="list-growth-title">
     <header><p className="eyebrow">Audience</p><h2 id="list-growth-title">List growth and consent sources</h2>
       <p>Subscribed contacts per channel, counted when membership changes in this installation. Captures and confirmations are separate events and do not add subscribers twice.</p></header>
-    <form onSubmit={submit} className="test-send-fields" aria-label="List growth period">
+    <form onSubmit={submit} className="test-send-fields period-fields" aria-label="List growth period">
       <label>From (UTC)<input type="date" required value={period.from} onChange={event=>setPeriod({...period,from:event.target.value})}/></label>
       <label>Through (UTC)<input type="date" required value={period.to} onChange={event=>setPeriod({...period,to:event.target.value})}/></label>
       <button type="submit" className="secondary-action">Apply dates</button>

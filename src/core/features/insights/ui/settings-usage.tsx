@@ -33,4 +33,4 @@ function UsagePanel() {
   </section>;
 }
 
-export function SettingsWithUsage(){return <div className="page-flow"><nav aria-label="Settings reports"><a href="#usage">Usage and costs</a></nav><SettingsPage/><ReviewLoyaltySettings/><SettingsUsage/></div>;}
+export function SettingsWithUsage(){return <div className="page-flow"><nav aria-label="Settings reports"><a className="text-link" href="#usage">Usage and costs</a></nav><SettingsPage/><ReviewLoyaltySettings/><SettingsUsage/></div>;}

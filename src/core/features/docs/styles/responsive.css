@@ -11,6 +11,7 @@
   .mango-docs { display: block; }
   .mango-docs .docs-sidebar { display: none; }
   .mango-docs .docs-menu { display: block; padding-top: 6px; }
+  .mango-docs .docs-menu .docs-nav-group a { display: flex; align-items: center; min-height: 44px; }
   .mango-docs .docs-main { padding-top: 26px; }
   .mango-docs .docs-page-head--welcome { grid-template-columns: minmax(0, 1fr) minmax(0, 210px); }
 }

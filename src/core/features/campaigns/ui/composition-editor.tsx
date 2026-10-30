@@ -18,7 +18,6 @@ export function CampaignCompositionEditor({
   busy,
   onChange,
   onSave,
-  storeTimezone,
   serverErrors,
   validationRequest,
 }: {
@@ -31,7 +30,6 @@ export function CampaignCompositionEditor({
   busy: boolean;
   onChange: (draft: DraftComposition) => void;
   onSave: () => void;
-  storeTimezone: string;
   serverErrors?: FieldErrors;
   validationRequest?: number;
 }) {
@@ -74,7 +72,7 @@ export function CampaignCompositionEditor({
       <SegmentPicker draft={draft} onChange={onChange} />
       <AudienceRuleEditor draft={draft} onChange={onChange} />
       <CompositionLinkFields links={draft.links} setLink={setLink} busy={busy} addLink={() => onChange({...draft, links: [...draft.links, {label: '', destinationUrl: ''}]})} removeLink={index => {const template=authoredHtmlTemplate(draft.emailBody);for(const anchor of template.content.querySelectorAll('a')) if(anchor.getAttribute('href')===draft.links[index].destinationUrl) anchor.replaceWith(document.createTextNode(anchor.textContent??''));onChange({...draft,emailBody:authoredEditorHtml(template), links: draft.links.filter((_link, itemIndex) => itemIndex !== index)});}} />
-      <CompositionStepFields steps={draft.steps} storeTimezone={storeTimezone} setSteps={steps=>onChange({...draft,steps})} />
+      <CompositionStepFields steps={draft.steps} setSteps={steps=>onChange({...draft,steps})} />
       </fieldset>
       <div className="editor-panel__actions">
         <button className="secondary-action" type="submit" disabled={busy}>

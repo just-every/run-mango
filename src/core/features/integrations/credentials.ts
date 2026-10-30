@@ -39,6 +39,9 @@ export function createCredentialStore(db: D1Database) {
   };
 }
 
+/** Settings page views were logged until they were left out; rows already stored stay hidden from every list. */
+export const visibleOperation = (column: string) => `${column} NOT IN ('settings.credentials.get','settings.audit.get')`;
+
 export function createIntegrationAudit(db: D1Database) {
   return {
     async begin(operation: string, credentialId: string | null, actorId: string | null) {
@@ -54,8 +57,9 @@ export function createIntegrationAudit(db: D1Database) {
       await db.prepare('UPDATE integration_audit SET credential_id=? WHERE id=?').bind(credentialId, id).run();
     },
     async list(cursor: string, limit: number) {
-      const audit = (await db.prepare(`SELECT id,sequence,credential_id AS credentialId,actor_id AS actorId,operation,status,outcome,occurred_at AS occurredAt
-        FROM integration_audit WHERE (?=0 OR sequence<?) ORDER BY sequence DESC LIMIT ?`).bind(Number(cursor), Number(cursor), limit).all<{sequence: number}>()).results;
+      const audit = (await db.prepare(`SELECT a.id,a.sequence,a.credential_id AS credentialId,c.name AS credentialName,a.actor_id AS actorId,o.display_name AS operatorName,a.operation,a.status,a.outcome,a.occurred_at AS occurredAt
+        FROM integration_audit a LEFT JOIN integration_credentials c ON c.id=a.credential_id LEFT JOIN operators o ON o.id=a.actor_id
+        WHERE (?=0 OR a.sequence<?) AND ${visibleOperation('a.operation')} ORDER BY a.sequence DESC LIMIT ?`).bind(Number(cursor), Number(cursor), limit).all<{sequence: number}>()).results;
       return {audit, nextCursor: String(audit.at(-1)?.sequence ?? cursor)};
     },
   };

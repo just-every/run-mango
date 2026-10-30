@@ -1,9 +1,11 @@
 import {useState} from 'react';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {useResource} from '@/core/app/client/lib/use-resource';
 import {requestJson} from '@/core/app/client/lib/api';
 type Review={proposalId:string;provider:string;account:string;lastFour:string;broader:boolean;webhookUrl:string;events:string[];requiredScopes:string[]};
 type Status={developerRoute:boolean;connection:null|{provider:string;state:string;account:string;lastFour:string;connectedBy:string;connectedAt:number;broader:boolean;deliveryEventsVerified:boolean;error:string|null}};
 export function SettingsSending() {
+  const formatDate = useDateFormatter();
   const status=useResource<Status>('/api/settings/sending');
   const [chosenProvider,setProvider]=useState<string|null>(null);
   const provider=chosenProvider??(status.data?.connection?.provider==='Resend'?'resend':'sendgrid');
@@ -25,7 +27,7 @@ export function SettingsSending() {
     {status.loading?<p role="status">Loading sending connection…</p>:null}
     {status.error?<p role="alert">Sending status is unavailable. <button onClick={()=>void status.reload()}>Try again</button></p>:null}
     {connection?<div role="status"><p>{connection.provider} account <strong>{connection.account}</strong> · key ending <code>{connection.lastFour}</code> · {connection.state}</p>
-      <p>Connected by {connection.connectedBy} on {new Date(connection.connectedAt).toLocaleString()}.</p>
+      <p>Connected by {connection.connectedBy} on {formatDate(connection.connectedAt)}.</p>
       {connection.broader?<p>{connection.provider==='Resend'?'Resend requires Full access for webhook management. Use a dedicated key for Mango.':'Broader than Mango needs. Use a restricted key with the permissions listed in the connection review.'}</p>:null}
       {connection.deliveryEventsVerified?<p>Signed delivery events verified.</p>:<p>delivery-events-missing: send the Owner sender check in Settings. Campaign approval and flow activation stay blocked until its signed delivered event arrives.</p>}
       {connection.error?<p role="alert">{connection.error}</p>:null}

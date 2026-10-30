@@ -20,7 +20,7 @@ export function PublicPage({ current, className, children }: { current: SitePage
         <SkipLink />
         <SiteHeader current={current} />
         <main id="main" tabIndex={-1}>{children}</main>
-        <SiteFooter current={current} />
+        <SiteFooter />
       </div>
     </InsideFrame.Provider>
   );

@@ -1,9 +1,11 @@
 import {useEffect,useRef,useState} from 'react';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import {getJson,requestJson} from '@/core/app/client/lib/api';
 import {catalogBlocks,catalogBlockContent,type CatalogBlock,type CatalogRenderings} from '../catalog-blocks';
 import {blockContent} from '../email-blocks';
 type Product={id:string;title:string;vendor:string|null;collections:Array<string|null>;readAt:string;variants:Array<{id:string;title:string;sku:string|null;price:string;compareAtPrice:string|null}>};
 export function CatalogPicker({kind,html,busy,onChange}:{kind:'product'|'product-grid';html:string;busy:boolean;onChange:(value:string)=>void}){
+  const formatDate = useDateFormatter();
  const state=catalogBlocks(html)[0]?.state;
  const [query,setQuery]=useState(''),[products,setProducts]=useState<Product[]>([]),[variants,setVariants]=useState<Record<string,string>>({}),[working,setWorking]=useState(false),[error,setError]=useState(''),[values,setValues]=useState<CatalogRenderings>();
  const current=useRef({html,onChange});current.current={html,onChange};
@@ -22,7 +24,7 @@ export function CatalogPicker({kind,html,busy,onChange}:{kind:'product'|'product
      <button className="secondary-action" type="button" disabled={!product.variants.length||kind==='product-grid'&&(state?.items.length??0)>=6} onClick={()=>choose(product)}>Choose {product.title}</button>
    </li>)}</ul>:null}
    {state?<><h4>Chosen products</h4><ol>{state.items.map((item,index)=>{const value=rendered?.items.find(row=>row.productId===item.productId&&row.variantId===item.variantId),hidden=rendered?.hidden.find(row=>row.productId===item.productId&&row.variantId===item.variantId);return <li key={item.productId+item.variantId}><strong>{value?.title??'Selected product '+(index+1)}</strong><p data-catalog-state={hidden?.reason}>{value?value.price:hidden?.reason==='deleted'?'Removed from the store':hidden?.reason==='unpublished'?'Not published in the store':hidden?.reason==='out-of-stock'?'Out of stock':'Current values unavailable'}</p><button className="secondary-action" type="button" onClick={()=>state.items.length===1?onChange(blockContent(kind)):update({...state,items:state.items.filter((_,i)=>i!==index)})}>Remove chosen product {index+1}</button></li>;})}</ol>
-     {rendered?<p>Catalog read at {new Date(rendered.readAt).toLocaleString()}</p>:null}
+     {rendered?<p>Catalog read at {formatDate(rendered.readAt)}</p>:null}
      <label>When no products remain<select value={state.empty} onChange={event=>update({...state,empty:event.target.value as 'hide'|'skip'})}><option value="hide">Hide the block</option><option value="skip">Skip the message</option></select></label>
      <button type="button" className="secondary-action" onClick={()=>onChange(blockContent(kind))}>Use manual content</button>
    </>:null}

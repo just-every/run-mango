@@ -37,10 +37,11 @@ body:has(.mango-app) { min-width: 320px; min-height: 100vh; }
 :where(.mango-app) small { font-size: 13px; }
 @media (max-width: 680px) { :where(.mango-app) h2 { font-size: 22px; } }
 
-/* One focus ring everywhere: ink, 16:1 on the ground and clear on a sun button. The plain :focus keeps it for controls
-   focused from script (validation summaries, dialogs). Programmatic targets (main, a dialog panel) show none. */
-.mango-app :where(a, button, input, select, textarea, summary, [tabindex], [contenteditable]):is(:focus, :focus-visible) { outline: 3px solid var(--ms-ink); outline-offset: 3px; }
-.mango-app :where(input, select, textarea, .rich-email-editor):is(:focus, :focus-visible) { outline-offset: 2px; }
+/* One focus mark everywhere: a link, button or disclosure draws an ink ring, 16:1 on the ground and clear on a sun button.
+   The plain :focus keeps it for controls focused from script (validation summaries, dialogs). A field draws its focus on
+   its own border instead (forms.css), so it never carries a second one. Programmatic targets (main, a dialog panel)
+   show none. */
+.mango-app :where(a, button, summary, [tabindex], [contenteditable]:not(.rich-email-editor), input:is([type="checkbox"], [type="radio"], [type="file"])):is(:focus, :focus-visible) { outline: 3px solid var(--ms-ink); outline-offset: 3px; }
 /* A link, button or disclosure focused by a pointer press (lib/pointer-focus.ts) shows no ring until a key is pressed. */
 .mango-app [data-pointer-focus]:focus:not(:focus-visible) { outline: none; }
 .mango-app :where(main, [tabindex="-1"]):focus { outline: none; }

@@ -14,7 +14,7 @@ export function OverviewDashboard() {
     if(!Number.isInteger(days)||days<1||days>366){setInvalid(true);return;}setInvalid(false);setQuery(`?${new URLSearchParams(period)}`);}
   return <section className="panel page-flow" aria-labelledby="overview-title" style={{minWidth:0,overflowWrap:'anywhere'}}>
     <header><p className="eyebrow">Overview</p><h2 id="overview-title">Marketing overview</h2><p>Observed results compared with the previous period of equal length.</p></header>
-    <form className="test-send-fields" aria-label="Overview period" onSubmit={submit}>
+    <form className="test-send-fields period-fields" aria-label="Overview period" onSubmit={submit}>
       <label>Overview from (UTC)<input type="date" disabled={!ready} required value={period.from} onChange={event=>{const value=event.target.value;setPeriod(current=>({...current,from:value}));}}/></label>
       <label>Overview through (UTC)<input type="date" disabled={!ready} required value={period.to} onChange={event=>{const value=event.target.value;setPeriod(current=>({...current,to:value}));}}/></label>
       <button className="secondary-action" type="submit" disabled={!ready}>Apply overview dates</button>

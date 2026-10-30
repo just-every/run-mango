@@ -52,6 +52,8 @@
 .subscribe-consent > input[type="checkbox"] { grid-column: 1; grid-row: 1; }
 .subscribe-consent > span:not(.field-error) { grid-column: 2; grid-row: 1; }
 .subscribe-consent > .field-error { grid-column: 2; grid-row: 2; margin-top: 0; }
+/* The whole consent row is the tap target: 44px tall on a phone and on touch. */
+@media (pointer: coarse), (max-width: 680px) { .subscribe-consent { min-height: 44px; } }
 .subscribe-form > .validation-summary { margin-bottom: 0; }
 .subscribe-form > .inline-error { margin: 0; }
 /* Request received: the notice beside an envelope postmarked YES. */

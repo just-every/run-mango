@@ -40,13 +40,15 @@ function operation(context: IntegrationContext, settings: boolean) {
 function audited(service: Service, settings: boolean): MiddlewareHandler<Environment> {
   return async (context, next) => {
     context.header('Cache-Control', 'no-store');
+    // Opening Settings is a page view, not something an operator did: only changes and integration requests are logged.
+    const logged = !(settings && context.req.method === 'GET');
     let auditId: string | undefined;
     try {
-      auditId = await service.audit.begin(operation(context, settings), null, settings ? context.get('operator')?.id ?? null : null);
+      if (logged) auditId = await service.audit.begin(operation(context, settings), null, settings ? context.get('operator')?.id ?? null : null);
       const credential = settings ? null : await service.credentials.identify(context.req.raw);
       if (credential) {
         context.set('integrationTarget', credential.id);
-        await service.audit.attribute(auditId, credential.id);
+        await service.audit.attribute(auditId!, credential.id);
       }
       if (settings) {
         if (!hasPermission(context.get('operator').role,'integration.manage')) throw new IntegrationError('owner_required', 403);
@@ -61,6 +63,7 @@ function audited(service: Service, settings: boolean): MiddlewareHandler<Environ
       if (error instanceof IntegrationError && error.status === 429) context.header('Retry-After', String(60 - Math.floor(Date.now() / 1000) % 60));
       context.res = context.json({...(error instanceof PropertyError?{property:error.key}:{}),error: error instanceof PropertyError ? error.code : error instanceof IntegrationError ? error.code : 'integration_unavailable'}, error instanceof PropertyError || error instanceof IntegrationError ? error.status : 503);
     }
+    if (!logged) return;
     if (!auditId) return context.json({error: 'audit_unavailable'}, 503);
     const status = context.res.status;
     const outcome = status < 400 ? 'allowed' : status === 429 ? 'rate_limited' : status >= 500 ? 'error' : 'denied';

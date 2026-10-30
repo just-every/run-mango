@@ -12,7 +12,7 @@
 .design-import-form > .inline-error, .design-import-form > [role="status"] { margin: var(--sp-4) 0 0; }
 
 /* The summary reads as a paper note pinned under the editor controls; highlights are the sun wash. */
-.design-import-summary { display: grid; gap: var(--sp-4); padding: var(--sp-5); border: 1px solid var(--ms-sun-line); border-left: 3px solid var(--ms-sun); border-radius: var(--ms-radius); background: var(--ms-paper-warm); }
+.design-import-summary { display: grid; gap: var(--sp-4); padding: var(--sp-5); border: 1px solid var(--ms-sun-line); border-radius: var(--ms-radius); background: var(--ms-paper-warm); }
 .design-import-summary__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-3); }
 .design-import-summary__head .eyebrow { margin: 0 0 var(--sp-1); }
 .mango-app .design-import-summary h3 { margin: 0; font-family: var(--ms-serif); font-size: 22px; font-weight: 400; letter-spacing: -0.01em; }
