@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 8 | 210 | 89 | 307 |
+| Core | 8 | 211 | 88 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 8 | 210 | 98 | 316 |
+| Full target | 8 | 211 | 97 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -2195,7 +2195,7 @@ Core · target · **partial** · From CONT-027 · Rules D-2
 
 #### CONT-043 — Resubscription after erasure
 
-Core · target · **missing** · From CONT-027 · Rules D-2
+Core · target · **partial** · From CONT-027 · Rules D-2
 
 **Requirement.** An erased person may give new consent without reviving their former history.
 
@@ -2206,8 +2206,8 @@ Core · target · **missing** · From CONT-027 · Rules D-2
 4. If no confirmation arrives before expiry, the recreated contact and request are removed and the surviving opt-out is unchanged.
 5. The erased-contact journey reads both the newly subscribed empty-history profile and expired-request cleanup.
 
-**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` · `src/core/features/audience/public-capture-writer.ts` · `src/core/features/audience/confirmation-handoff.ts`
-**Gap.** Hosted/kiosk confirmed resubscription is exercised. Erasure reason preservation, supersession and expired recreated-contact cleanup remain unbuilt/unproved; ambiguous legacy erasure-only restrictions remain refused.
+**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` — “[FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation” · `tests/audience-import/signup-security.spec.ts`
+**Gap.** Original restriction reasons, separate supersession audit and recreated-request expiry are implemented. Complete erased-contact journey proof is in progress; ambiguous legacy erasure-only restrictions remain refused.
 
 ### Target: Audiences
 

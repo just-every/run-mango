@@ -1,3 +1,4 @@
+import {expireRecreatedContacts} from '@/core/features/audience/resubscription-expiry';
 import { runLifecycleCron, type LifecycleRuntime } from '@/core/features/lifecycle';
 import { summariseSignupRefusals } from '@/core/features/audience/signup-refusals';
 import { schedulerObservation } from '@/core/features/lifecycle/scheduler-observation';
@@ -10,6 +11,7 @@ export async function runScheduled<Environment extends {DB:D1Database; MANGO_RES
   const runId=await observations.enter(controller.scheduledTime);
   try {
     if(environment.MANGO_RESTORE_MODE==='1') {await observations.finish(runId,'blocked-restore');return;}
+    await expireRecreatedContacts(environment.DB,controller.scheduledTime);
     const outcome=await runLifecycleCron(controller,await runtime(environment));
     await summariseSignupRefusals(environment.DB,controller.scheduledTime);
     await observations.finish(runId,outcome);

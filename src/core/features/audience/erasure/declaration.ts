@@ -91,4 +91,7 @@ export const contactErasureTables:ErasureTable[]=[
   {...contact('incumbent_consent_links'),literal:true,mode:'contact-data'},
   {table:'flow_draft_revisions',literal:true,mode:'redact'},
   {table:'contact_property_definitions',literal:true,mode:'redact'},
+  contact('audience_reconsent_contacts'),
+  // Remove the link to erased evidence; the address-free restriction remains.
+  {table:'audience_opt_out_supersessions',where:()=>({sql:'NOT EXISTS(SELECT 1 FROM consent_evidence e WHERE e.id=evidence_id)',params:[]})},
 ];

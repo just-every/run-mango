@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "2a035a2c30f3bf0b01db3d4b622601515145c86576f21b2ebd4fe31dd077e64f",
+      "sha256": "5b365a701f8e09bcda792b98f9b2f1b5493bf9633445f39dda2e549bc69f8382",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "51a84c44b9ce8bde87a4a62bd1004c2835eaa92e7759e6116a9dff3bc8bdd3b9",
+      "sha256": "cd632974b2b4c5a99466b93da8fdd39cc196293f379d80ef2d39f95cf1b49c61",
       "executable": false
     },
     "DEMO.md": {
@@ -3030,7 +3030,7 @@
       "executable": false
     },
     "src/core/app/scheduled.ts": {
-      "sha256": "846de48aabbfb0fd2aa2a80d325bbc392d15ce1361818456625a110ac8e0723a",
+      "sha256": "a4e2dde51548781df9f7faac537a4babf829e670fc7e5b603b2d7e221882c425",
       "executable": false
     },
     "src/core/app/worker.dev.ts": {
@@ -3134,7 +3134,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "22d3a1d72a91a044f9eb5902ad15f161ca6b3281858bd48b8a117dac7291eff8",
+      "sha256": "76b8145b71420fd9c128e804874d4ec1e8f51bea2f060be4a3ad2693fd018b6d",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -3178,7 +3178,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/service.ts": {
-      "sha256": "08bc152f6886552620561b81311c6b7aebaf3c76004b3a2c6af1f3cb5a8d8f49",
+      "sha256": "bf28fcf6b2780f60843830d946d24277b2bbc983136c0b30ac01aa129dfc771a",
       "executable": false
     },
     "src/core/features/audience/erasure/source-literals.ts": {
@@ -3410,11 +3410,11 @@
       "executable": false
     },
     "src/core/features/audience/public-capture-writer.ts": {
-      "sha256": "875650c7089bab6bd0a952477d2eb0da2293c013fc2ed7fbd5b597aa29961952",
+      "sha256": "d157ce124a3cedf5b885ff85405d76481a4b1f78d7b42cb633cd28c369be561a",
       "executable": false
     },
     "src/core/features/audience/public-resubscribe-policy.ts": {
-      "sha256": "d0dbbc9a69fddb131ecc185311c4fa9a2a025a7f6d3d6c732377882845b1dc44",
+      "sha256": "d03c901e62808362e775a589ff0b02c8841199313e2f90ecd00494dfb5cf42af",
       "executable": false
     },
     "src/core/features/audience/public-routes.ts": {
@@ -3422,7 +3422,7 @@
       "executable": false
     },
     "src/core/features/audience/repository.ts": {
-      "sha256": "86f680b8ad69c24b453ed2b31ef9fa19489d2e77f5050f922e9d56e55d70396a",
+      "sha256": "40f7eabb70df3f2568a181524413229a565629973a3b7032ff4eba7d491159a6",
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
@@ -3438,7 +3438,7 @@
       "executable": false
     },
     "src/core/features/audience/schema.ts": {
-      "sha256": "b4c943c5ab9afc9867003f48986eebd781f6b24808f55eff0f93f9231e6db0be",
+      "sha256": "852c5aaa121eaa807182472c0653133eb31b8acefda08b900202dbb19eea6a6b",
       "executable": false
     },
     "src/core/features/audience/segment-availability.ts": {
@@ -3454,7 +3454,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "b6e6a3fb8a1ba251c9b9da5627953acbe45cbfe9d3166b499a6beca67ac7c4b0",
+      "sha256": "df8b04e42d8e13fc0a50abade48eb10357371fc4fde2659eb100ea14bbd9c468",
       "executable": false
     },
     "src/core/features/audience/signup-admission.ts": {
@@ -3474,7 +3474,7 @@
       "executable": false
     },
     "src/core/features/audience/signup-routes.ts": {
-      "sha256": "fd2a736fb52fda76ee157edc0d7e671957833ae4068b0a2dd734dc7e91775837",
+      "sha256": "9ceeb82f66d913a8ecd01bf9f5ba3479670c0b9b43def031905af6d211c3be79",
       "executable": false
     },
     "src/core/features/audience/signup-security.ts": {
@@ -8398,7 +8398,7 @@
       "executable": false
     },
     "tests/audience-import/signup-security.spec.ts": {
-      "sha256": "2dd14eb5f387de74a637dab685557ea02beababbe8e6ce481d8b5e14bf1db8bb",
+      "sha256": "3ba20214318c65ff3c87935be4c533c29696be3b290ac504147cb28e8767349f",
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {
@@ -8998,7 +8998,7 @@
       "executable": false
     },
     "tests/go-live/shared-kiosk.journeys.ts": {
-      "sha256": "40daa31601dd88750fa15dcd96091790a616c982136d51e8d0f7fbf07c99f290",
+      "sha256": "a5bc2f728f8a6c20f24377044919b746fa60efb267d8125aa9ce30841a82fc26",
       "executable": false
     },
     "tests/go-live/signup-capacity-journey.ts": {

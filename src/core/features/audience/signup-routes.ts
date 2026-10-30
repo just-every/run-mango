@@ -1,3 +1,4 @@
+import {expireRecreatedContacts} from './resubscription-expiry';
 import {loadOptInMode} from './opt-in-modes';
 import {signupCapacity} from './signup-capacity';
 import {admitSignup,refundSignup,signupCapacityRefusal} from './signup-admission';
@@ -36,6 +37,7 @@ export async function limitedBody(request: Request) {
 }
 export function createSignupRoutes(service: ReturnType<typeof createAudienceService>, platform: Platform, db: D1Database) {
   const routes = new Hono();
+  routes.use('*',async(_context,next)=>{await expireRecreatedContacts(db);await next();});
   routes.get('/subscribe/info', async context => context.json(await loadSignupDescription(platform)));
   routes.post('/subscribe', async context => {
     const isJson = (context.req.header('content-type') ?? '').includes('application/json');

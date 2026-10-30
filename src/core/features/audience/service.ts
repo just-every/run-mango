@@ -10,7 +10,7 @@ import { destinationForChannel, canonicalEmail, canonicalPhone } from './identit
 import type { createAudienceRepository } from './repository';
 
 const dayMs = 24 * 60 * 60 * 1000;
-const confirmationLifetimeMs = 30 * dayMs;
+import {confirmationLifetimeMs} from './resubscription-expiry';
 const dormancyMs = 365 * dayMs;
 const publicTokenAllowance = 10;
 
@@ -246,7 +246,6 @@ export function createAudienceService(
     ]);
     const address = contact && (await repository.listEmails(contact.id)).find(row=>row.email===destination);
     const blocks = suppressions.filter(row=>row.channel==='email');
-    if (!contact && optOuts.length) await ensureContact({email:destination},new Date());
     if (blocks.some(row=>!recipientSuppression(row)) || optOuts.some(row=>!recipientOptOut(row.reason))) return 'refused' as const;
     if (contact?.mergeLock || contact?.emailStatus==='subscribed' || address?.channelStatus==='subscribed') return 'refused' as const;
     if (contact?.emailStatus==='suppressed' || address?.channelStatus==='suppressed') {

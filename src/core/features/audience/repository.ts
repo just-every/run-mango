@@ -16,6 +16,8 @@ import { and, asc, desc, eq, inArray, isNull, lt, lte, or, sql } from 'drizzle-o
 import type { Database } from '@/core/platform/db/client';
 
 import {
+  reconsentContacts,
+  optOutSupersessions,
   contactBounceStates,
   contactBounceFacts,
   contactEmailAddresses,
@@ -289,6 +291,12 @@ export function createAudienceRepository(database: Database) {
         database.insert(contactHistory).select(sql`SELECT ${`${evidence.id}_confirmed`},${confirmation.contactId},'consent-confirmed',${`${confirmation.channel} confirmation completed.`},${now.getTime()},${now.getTime()},${now.getTime()} WHERE ${eligible}`).onConflictDoNothing(),
         database.insert(contactHistory).select(sql`SELECT ${`${evidence.id}_resubscribed`},${confirmation.contactId},'resubscribed',${`${confirmation.channel} subscription restored by the recipient's confirmation.`},${now.getTime()},${now.getTime()},${now.getTime()} WHERE ${eligible} AND ${publicResubscribe}`).onConflictDoNothing(),
         database.update(consentConfirmations).set({confirmedAt:now,updatedAt:now}).where(and(eq(consentConfirmations.id,confirmation.id),eligible)),
+        database.insert(optOutSupersessions).select(sql`SELECT id,${evidence.id},${now.getTime()} FROM surviving_opt_outs
+          WHERE destination_hash=${destinationHash} AND channel=${confirmation.channel}
+            AND occurred_at<${evidence.occurredAt.getTime()} AND ${sql.raw(recipientOptOutSql)}
+            AND EXISTS(SELECT 1 FROM consent_confirmations WHERE id=${confirmation.id} AND confirmed_at=${now.getTime()})
+          `).onConflictDoUpdate({target:optOutSupersessions.optOutId,set:{evidenceId:evidence.id,confirmedAt:now}}),
+        database.delete(reconsentContacts).where(and(eq(reconsentContacts.contactId,confirmation.contactId),sql`EXISTS(SELECT 1 FROM consent_confirmations WHERE id=${confirmation.id} AND confirmed_at=${now.getTime()})`)),
         database.delete(contactSuppressions).where(and(eq(contactSuppressions.destinationHash,destinationHash),eq(contactSuppressions.channel,confirmation.channel),sql.raw(recipientSuppressionSql),publicResubscribe,sql`EXISTS(SELECT 1 FROM consent_confirmations WHERE id=${confirmation.id} AND confirmed_at=${now.getTime()})`)),
       ]);
       return results[0][0];

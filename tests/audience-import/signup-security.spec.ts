@@ -38,12 +38,14 @@ test('security: public capture preserves subscribed, suppressed and erased-optou
     await call('synthetic-mango-bot@example.test','192.0.2.44',{website:'robot'});
     expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBeGreaterThan(0);
     await eraseFixture(h.f,contact!.id);
+    // An already-ambiguous legacy marker must not acquire new recipient authority.
+    await h.f.db.prepare("UPDATE surviving_opt_outs SET reason='erasure-opt-out'").run();
     expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBe(0);
   }
   const before=await snapshot(h.f.db);const sent=h.f.outbound.length;
   expect((await call('existing@example.test','192.0.2.45')).status).toBe(202);expect(h.f.outbound).toHaveLength(sent);
   const after=await snapshot(h.f.db);
-  if(state==='erased-optout'){expect(after[0]).toHaveLength(1);expect(after[0][0]).toMatchObject({email_status:'unsubscribed'});expect(after.slice(1,4)).toEqual(before.slice(1,4));expect(after[5]).toEqual(before[5]);expect(after[4]).toEqual([expect.objectContaining({kind:'resubscribe-refused'})]);}
+  if(state==='erased-optout'){expect(after.slice(0,6)).toEqual(before.slice(0,6));}
   else {expect(after.slice(0,4)).toEqual(before.slice(0,4));expect(after[5]).toEqual(before[5]);
     if(state==='suppressed'){expect(after[4]).toHaveLength(before[4].length+1);expect(after[4]).toContainEqual(expect.objectContaining({kind:'resubscribe-refused'}));}
     else expect(after[4]).toEqual(before[4]);}

@@ -1,3 +1,4 @@
+import {recipientSuppressionSql} from '../public-resubscribe-policy';
 import {invalidateRevisions} from './campaigns';
 import {invalidateTransfers} from './transfers';
 import {scanObject} from './objects';
@@ -69,9 +70,18 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         .bind(reference,id,JSON.stringify(scope),now,...unchanged.map(([,value])=>value),id,JSON.stringify(scope.ids),JSON.stringify(scope.ids))];
       for(const channel of scope.channels)for(const destination of channel==='email'?scope.emails:scope.phones){
         const hash=await sha256(`${salt}:${destination}`);
-        // An erased destination keeps one block that names no other reason.
-        statements.push(db.prepare(`DELETE FROM surviving_opt_outs WHERE destination_hash=? AND channel=? AND reason<>'erasure-opt-out' AND ${admitted}`).bind(hash,channel,reference));
-        statements.push(db.prepare(`INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE ${admitted} ON CONFLICT(destination_hash,channel,reason) DO UPDATE SET updated_at=excluded.updated_at`).bind(crypto.randomUUID(),hash,channel,now,now,now,reference));
+        // Preserve each original reason and time. A new erasure floor is
+        // explicitly classified; the old erasure-only marker stays ambiguous.
+        // Integration-labelled recipient reasons never become recipient authority
+        // when the provider row is removed with the person's history.
+        const unsafe=`EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel=? AND NOT (${recipientSuppressionSql}))
+          OR (EXISTS(SELECT 1 FROM contacts WHERE id=? AND ${channel==='email'?'email_status':'sms_status'}='suppressed')
+            AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel=? AND ${recipientSuppressionSql}))`;
+        statements.push(db.prepare(`INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at)
+          SELECT ?,?,?,CASE WHEN ${unsafe} THEN 'erasure-suppression' ELSE 'erasure-request' END,?,?,?
+          WHERE ${admitted} AND (NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel=?) OR (${unsafe}))
+          ON CONFLICT(destination_hash,channel,reason) DO NOTHING`)
+          .bind(crypto.randomUUID(),hash,channel,hash,channel,id,hash,channel,now,now,now,reference,hash,channel,hash,channel,id,hash,channel));
         // The block leaves an export by the address's portable identity only (import-opt-out-lines).
         statements.push(recordPortableHash(db,hash,destination));
       }
@@ -133,7 +143,7 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         for(const key of ['ips','freeText','unsafeText'] as const)refreshed[key]=[...new Set([...refreshed[key],...discovered[key]])];
         const statements=[db.prepare('UPDATE audience_erasures SET scope_json=?,stage=0 WHERE reference=? AND stage=-1').bind(JSON.stringify(refreshed),reference)];
         const now=Date.now();
-        for(const channel of refreshed.channels)for(const destination of channel==='email'?refreshed.emails:refreshed.phones){const hash=await sha256(`${salt}:${destination}`);statements.push(db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel=?)").bind(crypto.randomUUID(),hash,channel,now,now,now,hash,channel),recordPortableHash(db,hash,destination));}
+        for(const channel of refreshed.channels)for(const destination of channel==='email'?refreshed.emails:refreshed.phones){const hash=await sha256(`${salt}:${destination}`);statements.push(db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-request',?,?,? WHERE NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel=?)").bind(crypto.randomUUID(),hash,channel,now,now,now,hash,channel),recordPortableHash(db,hash,destination));}
         statements.push(db.prepare("UPDATE ik_jobs SET state='invalid',fence=fence+1,lease_token=NULL,lease_expires=NULL WHERE id IN (SELECT value FROM json_each(?))").bind(JSON.stringify(refreshed.jobs)));
         statements.push(db.prepare('UPDATE ik_d1_creation_plans SET released=1 WHERE job_id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(refreshed.jobs)));
         await progress(statements);return receipt((await read(reference))!);
