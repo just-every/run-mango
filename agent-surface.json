@@ -3947,6 +3947,35 @@
       ]
     },
     {
+      "id": "native-report-ready",
+      "tool": "mango.reports.read",
+      "args": {},
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
+      "id": "native-report-dispatch",
+      "tool": "mango.reports.dispatch",
+      "args": {
+        "deliveryId": {
+          "$from": "native-report-ready",
+          "pointer": "/deliveries/0/deliveryIds/0"
+        }
+      },
+      "expect": [
+        {
+          "class": "external",
+          "facts": {
+            "measure": 1,
+            "counterparty": "known"
+          }
+        }
+      ]
+    },
+    {
       "id": "native-report-pause",
       "tool": "mango.reports.policy",
       "args": {
@@ -4588,6 +4617,88 @@
         },
         {
           "class": "external"
+        }
+      ]
+    },
+    {
+      "id": "native-enqueue",
+      "tool": "mango.campaigns.enqueue",
+      "client": "sender",
+      "args": {
+        "id": {
+          "$fixture": "dispatch",
+          "pointer": "/campaignId"
+        },
+        "revisionId": {
+          "$fixture": "dispatch",
+          "pointer": "/revisionId"
+        },
+        "segmentId": {
+          "$fixture": "dispatch",
+          "pointer": "/segmentId"
+        }
+      },
+      "expect": [
+        {
+          "class": "external",
+          "facts": {
+            "measure": 1,
+            "counterparty": "known"
+          }
+        }
+      ]
+    },
+    {
+      "id": "native-delivery-dispatch",
+      "tool": "mango.delivery.dispatch",
+      "client": "sender",
+      "args": {
+        "campaignId": {
+          "$fixture": "dispatch",
+          "pointer": "/campaignId"
+        },
+        "revisionId": {
+          "$fixture": "dispatch",
+          "pointer": "/revisionId"
+        },
+        "stepId": {
+          "$fixture": "dispatch",
+          "pointer": "/stepId"
+        },
+        "channel": {
+          "$fixture": "dispatch",
+          "pointer": "/channel"
+        },
+        "segmentId": {
+          "$fixture": "dispatch",
+          "pointer": "/segmentId"
+        }
+      },
+      "expect": [
+        {
+          "class": "external",
+          "facts": {
+            "measure": 1,
+            "counterparty": "known"
+          }
+        }
+      ]
+    },
+    {
+      "id": "native-followup",
+      "tool": "mango.campaigns.followup",
+      "args": {
+        "id": {
+          "$fixture": "delivered",
+          "pointer": "/campaignId"
+        },
+        "subject": "Orchard follow-up",
+        "delayHours": 1,
+        "metric": "click"
+      },
+      "expect": [
+        {
+          "class": "standard"
         }
       ]
     },

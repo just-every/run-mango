@@ -13,12 +13,18 @@ import {reportAuthority} from './report-authority';
 import {followingReportTime,reportSchedulePeriod,reportTitle,type SavedReportData} from './saved-report-model';
 type Schedule={id:string;report_id:string;cadence:'weekly'|'monthly';recipients_json:string;next_at:number;enabled:number;authority_binding:string;created_by:string};
 type Delivery={id:string;schedule_id:string;due_at:number;recipient_id:string;report_json:string};
+const claimLeaseMs=5*60*1000;
 export function createReportScheduler(platform:Platform,clock=Date.now) {
   const db=platform.database.$client;
   async function send(schedule:Schedule,delivery:Delivery) {
     if(!agentAction.getStore()&&await db.prepare("SELECT 1 FROM mango_agent_work WHERE kind='report' AND target_id=?").bind(schedule.id).first()){
       await admitWork(db,platform.agentDoor,'report',schedule.id,{deliveryId:delivery.id},()=>send(schedule,delivery));return;
     }
+    // A recoverable claim precedes provider work. Only its token may cross
+    // the sending boundary; an expired claimant cannot resume and send.
+    const claimToken=crypto.randomUUID();
+    const claim=await db.prepare("UPDATE insight_report_deliveries SET state='claimed',claim_token=?,updated_at=? WHERE id=? AND state='prepared'").bind(claimToken,clock(),delivery.id).run();
+    if(!claim.meta.changes)return false;
     const now=clock(),authority=await reportAuthority(platform.database,schedule.created_by);
     let reason=!schedule.enabled?'schedule-paused':authority?.binding!==schedule.authority_binding?'schedule-authority-changed':undefined;
     const recipient=await db.prepare("SELECT email FROM oa_operators WHERE id=? AND status='active'").bind(delivery.recipient_id).first<{email:string}>();
@@ -38,20 +44,30 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
       const currentRecipient=await db.prepare("SELECT email FROM oa_operators WHERE id=? AND status='active'").bind(delivery.recipient_id).first<{email:string}>();
       if(currentRecipient?.email!==recipient!.email){await cancelHandoffCost(platform.database,cost.key);await finish('refused','recipient-no-longer-active');return;}
       await assertAgentHandoff(platform);
+      const sending=await db.prepare("UPDATE insight_report_deliveries SET state='sending',updated_at=? WHERE id=? AND state='claimed' AND claim_token=?").bind(clock(),delivery.id,claimToken).run();
+      if(!sending.meta.changes)return false;
       const sent=await platform.mailer.send(request);await settleHandoffCost(platform.database,platform.mailer,request,cost,sent).catch(()=>{});
       if(sent.disposition!=='accepted'){await finish('uncertain','handoff-unconfirmed');return;}
-      await db.prepare("UPDATE insight_report_deliveries SET state='accepted',provider_message_id=?,updated_at=? WHERE id=?").bind(sent.providerMessageId,clock(),delivery.id).run();
+      await db.prepare("UPDATE insight_report_deliveries SET state='accepted',reason=NULL,provider_message_id=?,updated_at=? WHERE id=? AND claim_token=?").bind(sent.providerMessageId,clock(),delivery.id,claimToken).run();
       await audit('accepted');
     } catch(error) {
       if(error instanceof ToolRefusal){await cancelHandoffCost(platform.database,cost.key);await finish('refused',error.code);}
-      else if(error instanceof ProviderDeferredError){await cancelHandoffCost(platform.database,cost.key);await db.prepare("UPDATE insight_report_deliveries SET state='deferred',reason=?,next_at=?,updated_at=? WHERE id=?").bind(error.code,error.retryAt.getTime(),clock(),delivery.id).run();await audit('deferred',error.code);}
+      else if(error instanceof ProviderDeferredError){await cancelHandoffCost(platform.database,cost.key);await db.prepare("UPDATE insight_report_deliveries SET state='deferred',reason=?,next_at=?,updated_at=? WHERE id=? AND claim_token=?").bind(error.code,error.retryAt.getTime(),clock(),delivery.id,claimToken).run();await audit('deferred',error.code);}
       else {await settleHandoffFailure(platform.database,platform.mailer,request,cost,error).catch(()=>{});await finish(error instanceof ProviderTransportError?'refused':'uncertain',error instanceof ProviderTransportError?'provider-refused':'handoff-unconfirmed');}
     }
+    return true;
     async function audit(state:string,detail?:string){await recordActivity(db,{key:`report-delivery:${delivery.id}:${state}`,action:`report-delivery.${state}`,entityType:'report-schedule',entityId:schedule.id,actorId:'scheduled-reports',actorType:'system',at:clock(),detail:{dueAt:delivery.due_at,recipientId:delivery.recipient_id,...(detail?{reason:detail}:{})}});}
-    async function finish(state:'refused'|'uncertain',reason:string){await db.prepare('UPDATE insight_report_deliveries SET state=?,reason=?,updated_at=? WHERE id=?').bind(state,reason,clock(),delivery.id).run();await audit(state,reason);}
+    async function finish(state:'refused'|'uncertain',reason:string){await db.prepare('UPDATE insight_report_deliveries SET state=?,reason=?,updated_at=? WHERE id=? AND claim_token=?').bind(state,reason,clock(),delivery.id,claimToken).run();await audit(state,reason);}
   }
   async function run(scheduledTime=clock()) {
     const now=clock(),tick=Math.min(scheduledTime,now);
+    // A crash before the provider boundary is safe to recover. Once sending
+    // began its outcome is unknown: retain it visibly for review, never resend.
+    await db.prepare("UPDATE insight_report_deliveries SET state='prepared',claim_token=NULL,updated_at=? WHERE state='claimed' AND updated_at<=?").bind(now,now-claimLeaseMs).run();
+    const interrupted=(await db.prepare("UPDATE insight_report_deliveries SET state='uncertain',reason='handoff-unconfirmed',updated_at=? WHERE state='sending' AND updated_at<=? RETURNING id,schedule_id,due_at,recipient_id").bind(now,now-claimLeaseMs).all<Delivery>()).results;
+    for(const delivery of interrupted)await recordActivity(db,{key:`report-delivery:${delivery.id}:uncertain`,action:'report-delivery.uncertain',entityType:'report-schedule',entityId:delivery.schedule_id,actorId:'scheduled-reports',actorType:'system',at:now,detail:{dueAt:delivery.due_at,recipientId:delivery.recipient_id,reason:'handoff-unconfirmed'}});
+    const prepared=(await db.prepare("SELECT * FROM insight_report_deliveries WHERE state='prepared' ORDER BY due_at,id LIMIT 20").all<Delivery>()).results;
+    for(const delivery of prepared){const schedule=await db.prepare('SELECT * FROM insight_report_schedules WHERE id=?').bind(delivery.schedule_id).first<Schedule>();if(schedule)await send(schedule,delivery);}
     const deferred=(await db.prepare("SELECT * FROM insight_report_deliveries WHERE state='deferred' AND next_at<=? ORDER BY next_at,id LIMIT 20").bind(now).all<Delivery>()).results;
     for(const delivery of deferred){const schedule=await db.prepare('SELECT * FROM insight_report_schedules WHERE id=?').bind(delivery.schedule_id).first<Schedule>();if(!schedule)continue;
       const claim=await db.prepare("UPDATE insight_report_deliveries SET state='prepared',next_at=NULL,reason=NULL,updated_at=? WHERE id=? AND state='deferred' AND next_at<=? RETURNING id").bind(now,delivery.id,now).first();if(claim)await send(schedule,delivery);}
@@ -74,9 +90,7 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
     if(!delivery)return {status:'unavailable'};
     const schedule=await db.prepare('SELECT * FROM insight_report_schedules WHERE id=?').bind(delivery.schedule_id).first<Schedule>();
     if(!schedule)return {status:'unavailable'};
-    const claim=await db.prepare("UPDATE insight_report_deliveries SET state='sending',updated_at=? WHERE id=? AND state='prepared'").bind(clock(),deliveryId).run();
-    if(!claim.meta.changes)return {status:'unavailable'};
-    await send(schedule,delivery);
-    return {status:'processed'};
+    const sent=await send(schedule,delivery);
+    return {status:sent===false?'unavailable':'processed'};
   }};
 }

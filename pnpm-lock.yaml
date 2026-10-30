@@ -78,9 +78,15 @@ importers:
       drizzle-kit:
         specifier: ^0.31.10
         version: 0.31.10
+      esbuild:
+        specifier: 0.28.2
+        version: 0.28.2
       highlight.js:
         specifier: 10.7.3
         version: 10.7.3
+      miniflare:
+        specifier: 5.20260907.0-alpha
+        version: 5.20260907.0-alpha(@types/node@24.13.3)
       react-markdown:
         specifier: 6.0.3
         version: 6.0.3(@types/react@19.2.18)(react@19.2.8)

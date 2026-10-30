@@ -16,7 +16,8 @@ export function savedReportRoutes(database:Database) {
     const schedules=(await db.prepare('SELECT id,report_id reportId,cadence,recipients_json recipients,next_at nextAt,enabled,authority_binding binding,created_by creator FROM insight_report_schedules ORDER BY next_at,id').all<any>()).results;
     for(const schedule of schedules){schedule.active=Boolean(schedule.enabled&&(await reportAuthority(database,schedule.creator))?.binding===schedule.binding);schedule.recipients=JSON.parse(schedule.recipients);delete schedule.binding;delete schedule.creator;}
     const operators=(await db.prepare(`SELECT n.id,n.email ${reportOperators} WHERE n.status='active' ORDER BY n.email`).all<{id:string;email:string}>()).results;
-    const deliveries=(await db.prepare('SELECT schedule_id scheduleId,due_at dueAt,state,reason,count(*) count FROM insight_report_deliveries GROUP BY schedule_id,due_at,state,reason ORDER BY due_at DESC LIMIT 100').all()).results;
+    const deliveries=(await db.prepare('SELECT schedule_id scheduleId,due_at dueAt,state,reason,count(*) count,json_group_array(id) deliveryIds FROM insight_report_deliveries GROUP BY schedule_id,due_at,state,reason ORDER BY due_at DESC LIMIT 100').all()).results;
+    for(const delivery of deliveries)delivery.deliveryIds=JSON.parse(String(delivery.deliveryIds));
     return context.json({reports:[...builtInReports,...saved].map(report=>({...report,title:reportTitle(report)})),operators,schedules,deliveries});
   });
   routes.post('/settings/reports',async context=>{

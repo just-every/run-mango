@@ -44,7 +44,7 @@ export default async function({tool,request,origin,cookie}){
 }
 
 /** Assert the native effects as well as Base's class, policy and replay checks. */
-export async function afterStep({request,origin,cookie,mail,step,args,result}){
+export async function afterStep({request,origin,cookie,mail,step,args,result,queues,database}){
  const {nativeHttp}=await import('./native-http.mjs');
  const http=nativeHttp({request,origin,cookie});
  switch(step.id){
@@ -74,6 +74,25 @@ export async function afterStep({request,origin,cookie,mail,step,args,result}){
   case 'native-signup-authority': {
    const signup=await http('/api/audience/signup');
    assert.deepEqual(signup.embedOrigins,[]);assert.equal(signup.challengeEnabled,true);break;
+  }
+  case 'native-enqueue':assert.equal(result.status,'queued');assert.ok(result.steps.length);break;
+  case 'native-delivery-dispatch': {
+   assert.equal(result.status,'processed');
+   const db=await database('DB');
+   const receipt=await db.prepare('SELECT provider_message_id,transport_disposition FROM recipient_steps WHERE campaign_id=? AND revision_id=?').bind(args.campaignId,args.revisionId).first();
+   assert.ok(receipt?.provider_message_id,'The native dispatch handed off an actual recipient');
+   assert.equal(receipt.transport_disposition,'provider-accepted');
+   queues.release();break;
+  }
+  case 'native-followup': {
+   assert.equal(result.kind,'draft');assert.equal(result.sourceCampaignId,args.id);
+   const draft=await http('/api/campaigns/'+result.campaignId);assert.equal(draft.revision.state,'draft');break;
+  }
+  case 'native-report-dispatch': {
+   assert.equal(result.status,'processed');
+   const db=await database('DB');
+   const delivery=await db.prepare('SELECT state,provider_message_id FROM insight_report_deliveries WHERE id=?').bind(args.deliveryId).first();
+   assert.equal(delivery.state,'accepted');assert.ok(delivery.provider_message_id);break;
   }
   case 'native-report-pause': {
    const reports=await http('/api/settings/reports');
@@ -122,7 +141,19 @@ export async function afterStep({request,origin,cookie,mail,step,args,result}){
  }
 }
 
-export async function beforeStep({step}){
+export async function beforeStep({step,outputs,request,origin,cookie,database,scheduled,now}){
+ if(step.id==='native-report-ready'){
+  const {nativeHttp}=await import('./native-http.mjs');
+  const http=nativeHttp({request,origin,cookie}),schedule=outputs['native-report-schedule'];
+  const db=await database('DB');
+  await http('/agents/api/pause',{paused:true});
+  try{
+   await db.prepare('UPDATE insight_report_schedules SET next_at=? WHERE id=?').bind(now-60000,schedule.id).run();
+   await assert.rejects(scheduled({scheduledTime:now}),'Paused agent work cannot cross the native Cron handoff');
+  }finally{await http('/agents/api/pause',{paused:false});}
+  const prepared=await db.prepare('SELECT state FROM insight_report_deliveries WHERE schedule_id=?').bind(schedule.id).first();
+  assert.equal(prepared?.state,'prepared','Cron retains a real report for the admitted dispatch');
+ }
  if(['mango.sender.verify','mango.contacts.consent','mango.campaigns.test_send'].includes(step.tool)){
   const {mailAllowance}=await import('./native-http.mjs');await mailAllowance();
  }

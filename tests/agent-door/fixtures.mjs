@@ -9,7 +9,7 @@ let smsSequence=0;
  * Only public production doors prepare data; no database rows or authority are
  * fabricated. Source intake retains its separate contacts:write credential.
  */
-export default async function({request,origin,cookie,phase,fixtures,mail}) {
+export default async function({request,origin,cookie,phase,fixtures,mail,database,queues,now}) {
  const headers={Origin:origin,Cookie:cookie,'Content-Type':'application/json'};
  async function credential(name,scopes) {
   const response=await request(new URL('/api/settings/integrations',origin),{
@@ -21,6 +21,7 @@ export default async function({request,origin,cookie,phase,fixtures,mail}) {
  const http=nativeHttp({request,origin,cookie});
  const suffix=randomUUID();
  const intake=await credential('Orchard intake '+suffix,['contacts:write']);
+ const sender=await credential('Orchard sender '+suffix,['contacts:write','campaigns:send']);
  const reader=await credential('Orchard reader '+suffix,['contacts:read','events:read']);
  const imported=await request(new URL('/api/integrations/v1/contacts',origin),{
   method:'PUT',headers:{Origin:origin,Authorization:'Bearer '+intake.token,'Content-Type':'application/json'},
@@ -98,6 +99,20 @@ export default async function({request,origin,cookie,phase,fixtures,mail}) {
   }
   assert.equal(delivered.campaign.state,'completed','The actual native queue completes a provider handoff');
   values.delivered=issued;
+  const db=await database('DB');
+  await db.prepare('UPDATE recipient_steps SET handed_off_at=?,provider_accepted_at=?,handoff_started_at=? WHERE campaign_id=?')
+   .bind(now-7200000,now-7200000,now-7200000,issued.campaignId).run();
+  const intakeRecipient=await http('/api/integrations/v1/contacts',{email:recipient.marketing,segmentName:'Orchard dispatch '+suffix},'PUT',{Authorization:'Bearer '+sender.token});
+  const segmentId=intakeRecipient.contact.segmentIds.at(-1);
+  const segment=await db.prepare('SELECT inclusion_rule_json,exclusion_rules_json FROM audience_segments WHERE id=?').bind(segmentId).first();
+  const dispatch=await http('/api/campaigns',{});
+  await http('/api/campaign-revisions/'+dispatch.revisionId,{...values.composition,name:'Native dispatched orchard letter',
+   inclusionRuleJson:segment.inclusion_rule_json,exclusionRulesJson:segment.exclusion_rules_json,
+   steps:[{channel:'email',timezone:'Etc/UTC',scheduledAt:new Date(Date.now()-1000).toISOString(),sendByAt:new Date(Date.now()+3600000).toISOString(),whyThisTime:'A disposable due native dispatch'}]},'PATCH');
+  queues.hold();
+  await http('/api/campaigns/'+dispatch.campaignId+'/approve',{revisionId:dispatch.revisionId,idempotencyKey:randomUUID()});
+  const step=await db.prepare('SELECT id FROM campaign_steps WHERE revision_id=?').bind(dispatch.revisionId).first();
+  values.dispatch={...dispatch,segmentId,stepId:step.id,channel:'email'};
   fixtures.set('https://woo.example.test',{email:recipient.marketing});
   const signingSecret=randomUUID();
   await http('/api/settings/woocommerce',{url:'https://woo.example.test/',key:randomUUID(),secret:randomUUID(),signingSecret,exclusiveSecret:true,pluginEnabled:true},'PUT');
@@ -115,6 +130,6 @@ export default async function({request,origin,cookie,phase,fixtures,mail}) {
   // declared classes in each independent policy phase.
   await http('/api/audience/signup',{settings:undefined,frequencyDisclosure:'Weekly',embedOrigins:['https://orchard.example.test'],challengeEnabled:false,kioskEnabled:false,kioskDeviceLabel:''},'PUT');
  }
- return {values,clients:{reader:{token:reader.token,clientId:reader.credential.id,
+ return {values,clients:{sender:{token:sender.token,clientId:sender.credential.id,agent:{id:'integration:'+sender.credential.id,name:sender.credential.name,specialist:'marketer'}},reader:{token:reader.token,clientId:reader.credential.id,
   agent:{id:'integration:'+reader.credential.id,name:reader.credential.name,specialist:'marketer'}}}};
 }
