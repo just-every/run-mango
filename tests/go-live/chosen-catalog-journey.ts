@@ -19,7 +19,7 @@ export async function chosenCatalogJourney(page:Page,info:TestInfo){
  const edge=await step('provider setup','160',()=>providerEdge({commerce:request=>catalog.commerce(request),links:catalog.links}));
  try {
  site=await step('installation','160',()=>installation(edge,eventSigner(),{commerce:true,networkHosts:['myshop.com','cdn.shopify.com']}));
- const current=site;
+ const current=step.watch(site);
  const marketing=()=>edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);
   const {cookie,campaign,due}=await step('setup and open builder','160',async()=>{
   const cookie=await current.open();await json(await current.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);await current.control('/_golive/sender-evidence');await confirmedContact(current,edge,cookie,'synthetic-mango-160@example.test','Synthetic reader');

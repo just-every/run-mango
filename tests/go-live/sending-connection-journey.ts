@@ -18,7 +18,7 @@ export async function sendingConnectionJourney(page:Page,info:TestInfo) {
   const edge=await step('provider setup','walk3',()=>providerEdge({sending:provider.handle,woo:woo.handle,links:{'https://woo.example.test/':{}}}));
   try {
     site=await step('installation','walk3',()=>installation(edge,signer,{networkHosts:['woo.example.test']}));
-    const current=site;
+    const current=step.watch(site);
     const {owner,admin,apiKey,prepare,connect,transportReady}=await step('owner and admin authority','walk3',async()=>{
     const owner=await current.open(),apiKey='synthetic-mango-84';
     await json(await current.call('/api/settings/sender',{method:'PUT',cookie:owner,body:sender}),200);

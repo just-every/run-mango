@@ -10,9 +10,14 @@ export function journeySteps(journey:string,getSite:()=>Installation|undefined) 
   const state:Record<string,unknown>={installation:'not started'};
   let sampling:AbortController|undefined;
   let active=0;
+  let currentLabel='';
+  const pending=new Map<number,string>();
+  let requestId=0;
+  const record=(name:string,value:unknown)=>{state[name]={observedAt:new Date().toISOString(),value};};
   async function observe(signal:AbortSignal) {
     const site=getSite();
     if(!site)return;
+    state.installation='ready';
     const controls=[
       ['clock','/_golive/clock',{}],
       ['barrier','/_golive/barrier',{action:'status'}],
@@ -25,7 +30,7 @@ export function journeySteps(journey:string,getSite:()=>Installation|undefined) 
         if(!response.ok)throw new Error(`HTTP ${response.status}`);
         const value=await response.json();
         if(signal.aborted)return;
-        state[name]={observedAt:new Date().toISOString(),value};
+        record(name,name==='queue'?value.map((entry:any)=>({kind:entry.command.kind,...entry.command.payload,delaySeconds:entry.delaySeconds,completedCount:entry.completedQueues.length})):value);
         delete state[name+'Error'];
       } catch(error) {
         if(!signal.aborted)state[name+'Error']=String(error);
@@ -43,8 +48,9 @@ export function journeySteps(journey:string,getSite:()=>Installation|undefined) 
       });
     }
   }
-  return async function step<T>(name:string,caseId:string,work:()=>Promise<T>,timeoutMs=stepTimeoutMs):Promise<T> {
+  async function step<T>(name:string,caseId:string,work:()=>Promise<T>,timeoutMs=stepTimeoutMs):Promise<T> {
     const label=`${journey} / ${name} / case=${caseId}`;
+    currentLabel=label;
     const started=performance.now();
     console.log(`JOURNEY_STEP START ${label}`);
     if(active++===0) {
@@ -56,18 +62,44 @@ export function journeySteps(journey:string,getSite:()=>Installation|undefined) 
       return await test.step(label,async()=>{
         try {
           const result=await Promise.race([Promise.resolve().then(work),new Promise<never>((_,reject)=>{
-            timer=setTimeout(()=>reject(new Error(`Journey step timed out after ${timeoutMs}ms: ${label}; last observed state=${JSON.stringify(state)}`)),timeoutMs);
+            timer=setTimeout(()=>reject(new Error(`Journey step timed out after ${timeoutMs}ms: ${label}; last observed state=${snapshot()}`)),timeoutMs);
           })]);
           console.log(`JOURNEY_STEP FINISH ${label} durationMs=${Math.round(performance.now()-started)}`);
           return result;
         } catch(error) {
-          console.error(`JOURNEY_STEP FAIL ${label} durationMs=${Math.round(performance.now()-started)} last observed state=${JSON.stringify(state)}`);
-          throw new Error(`Journey step failed: ${label}; last observed state=${JSON.stringify(state)}`,{cause:error});
+          console.error(`JOURNEY_STEP FAIL ${label} durationMs=${Math.round(performance.now()-started)} last observed state=${snapshot()}`);
+          throw new Error(`Journey step failed: ${label}; last observed state=${snapshot()}`,{cause:error});
         }
       });
     } finally {
       clearTimeout(timer);
       if(--active===0)sampling?.abort();
     }
-  };
+  }
+  function snapshot() {return JSON.stringify({...state,pendingRequests:[...pending.values()]});}
+  // Record the real awaited door as well as the enclosing business stage.
+  // Await logs contain labels only: no bodies, headers or session tokens.
+  function watch(site:Installation):Installation {
+    state.installation='ready';
+    return new Proxy(site,{get(target,key,receiver){
+      const value=Reflect.get(target,key,receiver);
+      if(!['control','rows','call','open'].includes(String(key)))return value;
+      return async(...args:unknown[])=>{
+        const name=`${currentLabel} / ${String(key)} ${key==='call'||key==='control'?String(args[0]):''}`.trim();
+        const id=++requestId,started=performance.now();
+        pending.set(id,name);
+        console.log(`JOURNEY_AWAIT START ${name}`);
+        try {
+          const result=await Reflect.apply(value,target,args);
+          if(key==='control'&&args[0]==='/_golive/clock')record('clock',result);
+          console.log(`JOURNEY_AWAIT FINISH ${name} durationMs=${Math.round(performance.now()-started)}`);
+          return result;
+        } catch(error) {
+          console.error(`JOURNEY_AWAIT FAIL ${name}`);
+          throw error;
+        } finally {pending.delete(id);}
+      };
+    }});
+  }
+  return Object.assign(step,{watch});
 }

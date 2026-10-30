@@ -205,7 +205,7 @@ export const walk3 = async({page},info)=>{
   const edge=await step('provider setup','walk3',()=>providerEdge()),signer=eventSigner();
   try {
     site=await step('installation','walk3',()=>installation(edge,signer));
-    const current=site;
+    const current=step.watch(site);
     const {cookie,email,bouncedEmail,time,campaign,contender,recipient}=await step('prepare account-hold campaigns','walk3',async()=>{
     const cookie=await setup(current),email='account-hold@example.test';
     await confirmedContact(current,edge,cookie,email,'Account reader');
