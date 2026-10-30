@@ -331,7 +331,7 @@ export const walk1 = async({page},info)=>{
     expect(await checks()).toMatchObject({candidateCount:4,eligibleCount:2,noHistoryCount:1,openOnlyCount:1,exclusions:[{reason:'dormant',count:2}]});
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
-    await expect(page.locator('.audience-snapshot')).toContainText('No-history among included contacts: 1');
+    await expect(page.locator('.audience-snapshot')).toContainText('Contacts with no past activity: 1');
     await expect(page.locator('.audience-snapshot')).toContainText('Open-only: 1');
     await screens(page,'imported-dormancy-review',info);
     await page.getByRole('button',{name:'Include open-only contacts',exact:true}).click();

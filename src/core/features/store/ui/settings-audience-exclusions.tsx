@@ -9,7 +9,7 @@ export function SettingsAudienceExclusions() {
   if(!resource.data)return <LoadState error={resource.error}/>;
   const policy=resource.data.policy;
   return <section className="panel"><h2>Audience inactivity default</h2><p>New campaigns copy this default. Each saved campaign keeps its own reviewed policy.</p>
-    <form key={JSON.stringify(policy)} onSubmit={async e=>{
+    <form className="draft-fields" key={JSON.stringify(policy)} onSubmit={async e=>{
       e.preventDefault();const form=new FormData(e.currentTarget);setBusy(true);setError('');
       try{const result=await requestJson('/api/settings/audience-exclusions',{method:'PUT',body:JSON.stringify({policy:{enabled:form.get('enabled')==='on',windowDays:Number(form.get('days'))}})});
         if(result.status>=300){setError('The default could not be saved. Check the window and try again.');return;}await resource.reload();

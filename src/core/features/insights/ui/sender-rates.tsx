@@ -7,7 +7,7 @@ import {useDateFormatter} from '@/core/app/client/lib/use-date-formatter';
 import {useResource} from '@/core/app/client/lib/use-resource';
 type Rate={channel:string;providers:string[];sender:string;windowStart:string;delivered:number;complained:number;hardBounced:number;attempted:number;complaintRate:number|null;hardBounceRate:number|null};
 export function SenderRates() {
-  const dateTime=useDateFormatter({locale:undefined,options:{year:'numeric',month:'numeric',day:'numeric',hour:'numeric',minute:'numeric',second:'numeric'}});
+  const dateTime=useDateFormatter();
   const {data,error,reload}=useResource<{windowDays:number;senders:Rate[];mailboxes:MailboxReport;compliance:DomainCompliance[]}>('/api/insights/deliverability');
   useEffect(()=>{const timer=setInterval(()=>void reload(),20000);return()=>clearInterval(timer);},[reload]);
   return <><ComplianceDashboard domains={data?.compliance} error={error}/><section className="panel"><h2>Sender reputation</h2>
