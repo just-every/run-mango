@@ -198,7 +198,8 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
         if(kind==='designs.read'&&!design)return {result:{enabled:Boolean(platform.design),earlier:[]}};
         const pureResource = kind === 'sender.read' ? 'mango://sender/readiness' : design?'mango://designs/'+encodeURIComponent(design.id):null;
         const read = pureResource ? await mangoResources(platform).find(resource=>resource.uriTemplate===(design?'mango://designs/{id}':pureResource))?.read(pureResource,{...ctx,scopes:[...ctx.scopes]}) : null;
-        const result = read ? object(read.json) : await call(ctx,operation.method,path,operation.readOnly?undefined:option.unwrap?body[option.unwrap]:body);
+        let result = read ? object(read.json) : await call(ctx,operation.method,path,operation.readOnly?undefined:option.unwrap?body[option.unwrap]:body);
+        if(kind==='reports.read'&&['owner','admin'].includes((await nativeOperator(platform,ctx.person.id)).role))result={...object(result),scheduledReports:await call(ctx,'GET','/api/settings/reports')};
         if (!operation.readOnly) {
           const uri=await resourceLink(platform,kind,args,result);
           const family=kind.split('.')[0];

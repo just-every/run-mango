@@ -3928,6 +3928,88 @@
       ]
     },
     {
+      "id": "native-enqueue",
+      "tool": "mango.campaigns.enqueue",
+      "client": "sender",
+      "args": {
+        "id": {
+          "$fixture": "dispatch",
+          "pointer": "/campaignId"
+        },
+        "revisionId": {
+          "$fixture": "dispatch",
+          "pointer": "/revisionId"
+        },
+        "segmentId": {
+          "$fixture": "dispatch",
+          "pointer": "/segmentId"
+        }
+      },
+      "expect": [
+        {
+          "class": "external",
+          "facts": {
+            "measure": 1,
+            "counterparty": "known"
+          }
+        }
+      ]
+    },
+    {
+      "id": "native-delivery-dispatch",
+      "tool": "mango.delivery.dispatch",
+      "client": "sender",
+      "args": {
+        "campaignId": {
+          "$fixture": "dispatch",
+          "pointer": "/campaignId"
+        },
+        "revisionId": {
+          "$fixture": "dispatch",
+          "pointer": "/revisionId"
+        },
+        "stepId": {
+          "$fixture": "dispatch",
+          "pointer": "/stepId"
+        },
+        "channel": {
+          "$fixture": "dispatch",
+          "pointer": "/channel"
+        },
+        "segmentId": {
+          "$fixture": "dispatch",
+          "pointer": "/segmentId"
+        }
+      },
+      "expect": [
+        {
+          "class": "external",
+          "facts": {
+            "measure": 1,
+            "counterparty": "known"
+          }
+        }
+      ]
+    },
+    {
+      "id": "native-followup",
+      "tool": "mango.campaigns.followup",
+      "args": {
+        "id": {
+          "$fixture": "delivered",
+          "pointer": "/campaignId"
+        },
+        "subject": "Orchard follow-up",
+        "delayHours": 1,
+        "metric": "click"
+      },
+      "expect": [
+        {
+          "class": "standard"
+        }
+      ]
+    },
+    {
       "id": "native-report-schedule",
       "tool": "mango.reports.schedule",
       "args": {
@@ -3962,7 +4044,7 @@
       "args": {
         "deliveryId": {
           "$from": "native-report-ready",
-          "pointer": "/deliveries/0/deliveryIds/0"
+          "pointer": "/scheduledReports/deliveries/0/deliveryIds/0"
         }
       },
       "expect": [
@@ -4621,88 +4703,6 @@
       ]
     },
     {
-      "id": "native-enqueue",
-      "tool": "mango.campaigns.enqueue",
-      "client": "sender",
-      "args": {
-        "id": {
-          "$fixture": "dispatch",
-          "pointer": "/campaignId"
-        },
-        "revisionId": {
-          "$fixture": "dispatch",
-          "pointer": "/revisionId"
-        },
-        "segmentId": {
-          "$fixture": "dispatch",
-          "pointer": "/segmentId"
-        }
-      },
-      "expect": [
-        {
-          "class": "external",
-          "facts": {
-            "measure": 1,
-            "counterparty": "known"
-          }
-        }
-      ]
-    },
-    {
-      "id": "native-delivery-dispatch",
-      "tool": "mango.delivery.dispatch",
-      "client": "sender",
-      "args": {
-        "campaignId": {
-          "$fixture": "dispatch",
-          "pointer": "/campaignId"
-        },
-        "revisionId": {
-          "$fixture": "dispatch",
-          "pointer": "/revisionId"
-        },
-        "stepId": {
-          "$fixture": "dispatch",
-          "pointer": "/stepId"
-        },
-        "channel": {
-          "$fixture": "dispatch",
-          "pointer": "/channel"
-        },
-        "segmentId": {
-          "$fixture": "dispatch",
-          "pointer": "/segmentId"
-        }
-      },
-      "expect": [
-        {
-          "class": "external",
-          "facts": {
-            "measure": 1,
-            "counterparty": "known"
-          }
-        }
-      ]
-    },
-    {
-      "id": "native-followup",
-      "tool": "mango.campaigns.followup",
-      "args": {
-        "id": {
-          "$fixture": "delivered",
-          "pointer": "/campaignId"
-        },
-        "subject": "Orchard follow-up",
-        "delayHours": 1,
-        "metric": "click"
-      },
-      "expect": [
-        {
-          "class": "standard"
-        }
-      ]
-    },
-    {
       "id": "native-contact-erasure",
       "tool": "mango.contacts.erase",
       "args": {
@@ -4771,6 +4771,7 @@
         },
         "RER_MANAGEMENT_ORIGIN": "issuer",
         "RER_INSTALLATION_ID": "installationId",
+        "MAIL_PROVIDER_API_KEY": "token",
         "MAIL_FROM": "email",
         "MAIL_AUTH_FROM": "email",
         "SMS_PROVIDER_API_KEY": {

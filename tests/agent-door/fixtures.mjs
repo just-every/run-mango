@@ -10,6 +10,7 @@ let smsSequence=0;
  * fabricated. Source intake retains its separate contacts:write credential.
  */
 export default async function({request,origin,cookie,phase,fixtures,mail,database,queues,now}) {
+ queues.release();
  const headers={Origin:origin,Cookie:cookie,'Content-Type':'application/json'};
  async function credential(name,scopes) {
   const response=await request(new URL('/api/settings/integrations',origin),{
@@ -19,6 +20,17 @@ export default async function({request,origin,cookie,phase,fixtures,mail,databas
   return response.json();
  }
  const http=nativeHttp({request,origin,cookie});
+ // Drain work released from the preceding phase before replacing its sender.
+ // The new phase then holds only its own due campaign.
+ if(phase!=='initial'){
+  const db=await database('DB');
+  for(let count=0;count<240;count++){
+   const active=await db.prepare("SELECT 1 FROM campaigns c JOIN campaign_steps s ON s.revision_id=c.active_revision_id WHERE c.state IN ('scheduled','dispatching') AND s.scheduled_at<=? AND s.send_by_at>? LIMIT 1").bind(Date.now(),Date.now()).first();
+   if(!active)break;
+   if(count===239)throw Error('Prior native dispatch did not drain before replacing sender settings');
+   await new Promise(resolve=>setTimeout(resolve,250));
+  }
+ }
  const suffix=randomUUID();
  const intake=await credential('Orchard intake '+suffix,['contacts:write']);
  const sender=await credential('Orchard sender '+suffix,['contacts:write','campaigns:send']);
@@ -102,7 +114,7 @@ export default async function({request,origin,cookie,phase,fixtures,mail,databas
   const db=await database('DB');
   await db.prepare('UPDATE recipient_steps SET handed_off_at=?,provider_accepted_at=?,handoff_started_at=? WHERE campaign_id=?')
    .bind(now-7200000,now-7200000,now-7200000,issued.campaignId).run();
-  const intakeRecipient=await http('/api/integrations/v1/contacts',{email:recipient.marketing,segmentName:'Orchard dispatch '+suffix},'PUT',{Authorization:'Bearer '+sender.token});
+  const intakeRecipient=await http('/api/integrations/v1/contacts',{email:recipient.dispatch,segmentName:'Orchard dispatch '+suffix},'PUT',{Authorization:'Bearer '+sender.token});
   const segmentId=intakeRecipient.contact.segmentIds.at(-1);
   const segment=await db.prepare('SELECT inclusion_rule_json,exclusion_rules_json FROM audience_segments WHERE id=?').bind(segmentId).first();
   const dispatch=await http('/api/campaigns',{});

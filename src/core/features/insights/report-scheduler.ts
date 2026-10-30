@@ -18,6 +18,8 @@ export function createReportScheduler(platform:Platform,clock=Date.now) {
   const db=platform.database.$client;
   async function send(schedule:Schedule,delivery:Delivery) {
     if(!agentAction.getStore()&&await db.prepare("SELECT 1 FROM mango_agent_work WHERE kind='report' AND target_id=?").bind(schedule.id).first()){
+      // Pause leaves queued report custody intact for a later admitted run.
+      if((await db.prepare('SELECT local_paused FROM agent_door_state WHERE id=1').first<{local_paused:number}>())?.local_paused)return;
       await admitWork(db,platform.agentDoor,'report',schedule.id,{deliveryId:delivery.id},()=>send(schedule,delivery));return;
     }
     // A recoverable claim precedes provider work. Only its token may cross

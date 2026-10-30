@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 
 /** Normal rer verify hook: paid network responses only; all native custody is real. */
-export default async function({tool,request,origin,cookie}){
+export default async function({tool,request,origin,cookie,queues}){
+ queues.hold();
+ try{
  async function call(name,args={},readOnly=false){
   const answer=await tool(name,{...args,...(readOnly?{}:{idempotency_key:args.idempotency_key??randomUUID()})});
   assert.equal(answer.status,200);assert.equal(answer.result?.isError,false,name);
@@ -81,7 +83,7 @@ export async function afterStep({request,origin,cookie,mail,step,args,result,que
    const db=await database('DB');
    const receipt=await db.prepare('SELECT provider_message_id,transport_disposition FROM recipient_steps WHERE campaign_id=? AND revision_id=?').bind(args.campaignId,args.revisionId).first();
    assert.ok(receipt?.provider_message_id,'The native dispatch handed off an actual recipient');
-   assert.equal(receipt.transport_disposition,'provider-accepted');
+   assert.equal(receipt.transport_disposition,'accepted');
    queues.release();break;
   }
   case 'native-followup': {
@@ -149,12 +151,12 @@ export async function beforeStep({step,outputs,request,origin,cookie,database,sc
   await http('/agents/api/pause',{paused:true});
   try{
    await db.prepare('UPDATE insight_report_schedules SET next_at=? WHERE id=?').bind(now-60000,schedule.id).run();
-   await assert.rejects(scheduled({scheduledTime:now}),'Paused agent work cannot cross the native Cron handoff');
+   await scheduled({scheduledTime:now});
   }finally{await http('/agents/api/pause',{paused:false});}
   const prepared=await db.prepare('SELECT state FROM insight_report_deliveries WHERE schedule_id=?').bind(schedule.id).first();
   assert.equal(prepared?.state,'prepared','Cron retains a real report for the admitted dispatch');
  }
- if(['mango.sender.verify','mango.contacts.consent','mango.campaigns.test_send'].includes(step.tool)){
+ if(['mango.sender.verify','mango.contacts.consent','mango.campaigns.test_send','mango.reports.dispatch','mango.delivery.dispatch'].includes(step.tool)){
   const {mailAllowance}=await import('./native-http.mjs');await mailAllowance();
  }
 }

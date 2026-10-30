@@ -18,7 +18,7 @@ export async function agentRuntime(bindings){
  },{email});
  let hosted;
  try{
-  hosted=await serveHosted(process.cwd(),{declaration:resolveDeclaration(process.cwd(),'verify'),bindings:Object.fromEntries(Object.entries({
+  hosted=await serveHosted(process.cwd(),{declaration:resolveDeclaration(process.cwd(),'verify'),fixturePreparation:true,bindings:Object.fromEntries(Object.entries({
    ...bindings,OWNER_EMAIL:email,MAIL_PROVIDER:'sendgrid',MAIL_PROVIDER_API_KEY:'disposable-mail-key',MAIL_AUTH_FROM:email,
    MAIL_SENDER_NAME:'Example',MAIL_REPLY_TO:email,MAIL_PHYSICAL_ADDRESS:'Test address',MANGO_ALLOWED_LINK_HOSTS:'example.test',
    MANGO_TEST_EMAIL_ALLOWLIST:email,MARKETING_MAIL_API_KEY:undefined,MARKETING_MAIL_WEBHOOK_SECRET:undefined,
@@ -38,7 +38,7 @@ export async function agentRuntime(bindings){
    return response;
   }});
   const request=(absolute,init={})=>hosted.fetch(new URL(absolute).pathname.slice(1)+new URL(absolute).search,init);
-  return {db:await hosted.database('DB'),fixtures:network.fixtures,mail:network.mail,request,
+  return {db:await hosted.database('DB'),...await hosted.preparation(),fixtures:network.fixtures,mail:network.mail,request,
    call(path,{method='GET',cookie,body,headers={},origin=HOSTED_ORIGIN,form=false}={}){
     return request(new URL(path,HOSTED_ORIGIN),{method,headers:{Origin:origin,'CF-Connecting-IP':'192.0.2.1',
      'Content-Type':form?'application/x-www-form-urlencoded':'application/json',...(cookie?{Cookie:cookie}:{}),...headers},

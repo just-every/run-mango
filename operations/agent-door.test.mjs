@@ -7,7 +7,8 @@ import {runtime,setup} from './base-runtime.mjs';
 import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../src/vendor/base/agent-door/conformance/crypto.mjs';
 import {validateAgentSurface} from '../src/vendor/base/agent-door/conformance/surface.mjs';
 import prepareNativePhase from '../tests/agent-door/fixtures.mjs';
-import {beforeStep,afterStep} from '../tests/agent-door/native-journey.mjs';
+import {proveReportRecovery} from '../tests/agent-door/report-recovery.mjs';
+import nativeJourney,{beforeStep,afterStep} from '../tests/agent-door/native-journey.mjs';
 import {agentRuntime} from './agent-runtime.mjs';
 
 test('Mango shared door: signed native owner, durable Business people, native draft custody, policy, replay and role narrowing',async()=>{
@@ -110,8 +111,8 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.call('/auth/confirm',{method:'POST',cookie,body:{token:await app.token()}})).status,303);
   const fixtureRequest=app.request;
   await app.prepareOwner(cookie);
-  const firstPhase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'autonomous',fixtures:app.fixtures,mail:app.mail});
-  const phase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'held',fixtures:app.fixtures,mail:app.mail});
+  const firstPhase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'autonomous',database:app.database,queues:app.queues,now:Date.now(),fixtures:app.fixtures,mail:app.mail});
+  const phase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'held',database:app.database,queues:app.queues,now:Date.now(),fixtures:app.fixtures,mail:app.mail});
   assert.notEqual(firstPhase.values.contact.id,phase.values.contact.id,'Policy phases receive fresh native contacts');
   assert.notEqual(firstPhase.clients.reader.clientId,phase.clients.reader.clientId,'Policy phases receive distinct live native clients');
   const journey=JSON.parse(await readFile('tests/agent-door/journey.json','utf8'));
@@ -128,7 +129,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   for(const step of journey.filter(step=>step.tool!=='mango.events.list')){
    const args=resolve(step.args),definition=c.surface.tools.find(operation=>operation.name===step.tool);
    const inputs={...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+step.id}:{})};
-   await beforeStep({step});
+   await beforeStep({step,outputs:Object.fromEntries(outputs),request:fixtureRequest,origin,cookie,database:app.database,scheduled:app.scheduled,now:Date.now()});
    let response;
    if(step.client){
     const client=phase.clients[step.client];
@@ -148,7 +149,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
     assert.deepEqual(audit.rows.find(row=>row.id===decision.id)?.resource,resolve(step.target),step.id+' native target');
    }
    outputs.set(step.id,response.message.result.structuredContent);
-   await afterStep({request:fixtureRequest,origin,cookie,mail:app.mail,step,args,result:response.message.result.structuredContent});
+   await afterStep({request:fixtureRequest,origin,cookie,mail:app.mail,database:app.database,queues:app.queues,step,args,result:response.message.result.structuredContent});
    console.log('PASS native journey '+step.id);
    if(step.id==='native-campaign-reauthorize'){
     const reapproval=await app.db.prepare("SELECT actor_type,actor_id,detail_json FROM lifecycle_audit_entries WHERE entity_id=? AND action='sender-reapproved' ORDER BY occurred_at DESC LIMIT 1").bind(args.revisionId).first();
@@ -295,6 +296,10 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.call('/api/operators/'+member.id,{method:'DELETE',cookie})).status,204);
   assert.equal((await app.call('/api/integrations/v1/contacts',{headers:{Authorization:'Bearer '+sponsoredKey.token}})).status,401);
   const inactive=await call('mango.campaigns.list',{},analyst);assert.equal(inactive.response.status,401);
+  await nativeJourney({request:app.request,origin,cookie,queues:app.queues,tool:async(name,args)=>{
+   const answer=await call(name,args);return {status:answer.response.status,result:answer.message.result,decision:answer.message.result?._meta?.['com.runeditrun/decision']};
+  }});
+  await proveReportRecovery({app,cookie,owner,call});
   assert.equal(owner.role,'owner');
  }finally{await app.close();}
 });
