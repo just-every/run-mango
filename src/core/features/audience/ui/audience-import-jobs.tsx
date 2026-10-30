@@ -53,7 +53,7 @@ export function abandonOutcome(job: ImportJob) {
 export const abandonNotice = (job: ImportJob) => ['undone', 'rolled_back'].includes(job.state) ? `Import abandoned: ${abandonOutcome(job)}` : abandonOutcome(job);
 
 export function AudienceImportJobs({ jobs, loading, error, busyJobId, actionsBusy = false, onRefresh, onResume, onUndo, onAbandon, onStop }: AudienceImportJobsProps) {
-  const dateTime = useDateFormatter({ locale: undefined, options: { dateStyle: 'medium', timeStyle: 'short' } });
+  const dateTime = useDateFormatter();
   const [confirming, setConfirming] = useState<{ id: string; action: 'undo' | 'abandon' }>();
 
   return (

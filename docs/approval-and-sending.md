@@ -38,7 +38,7 @@ An installation can instead trust a receipt connector that reports the receiving
 
 ## Inactivity in review
 
-Review counts **No-history** among included contacts and **Open-only** within **Dormant**. Imported clicks count at their original times; opens never count as engagement. A move-in contact with no supplied engagement history starts their dormancy window when that move-in completes. Re-importing does not restart an earlier active window. Contacts never moved in retain the existing dormancy rule.
+Review counts the included contacts with no past activity and the **Open-only** contacts within **Dormant**. Imported clicks count at their original times; opens never count as engagement. A move-in contact with no supplied engagement history starts their dormancy window when that move-in completes. Re-importing does not restart an earlier active window. Contacts never moved in retain the existing dormancy rule.
 
 An Owner, Admin or Manager can use **Include open-only contacts** or clear **Exclude dormant contacts** for the draft. The saved audience shows the resulting eligible count; consent, topics, suppression and opt-outs still apply. Approval retains the exact policy and its approver in the activity log, and dispatch rechecks that approved policy. Later default changes do not alter an approved campaign.
 

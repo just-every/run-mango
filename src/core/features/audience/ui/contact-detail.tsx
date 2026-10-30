@@ -75,7 +75,7 @@ function ContactPage() {
           <Can permission="report.read"><ContactRetention contactId={id} /></Can>
           <Can permission="contact.privacy-request"><ContactSupport contactId={id} reload={reload}/></Can>
           <ContactConsentEvidencePanel consent={data.consent} observations={data.importObservations} restricted={data.masked} />
-          {data.smsServices?.length?<section className="panel"><h2>SMS confirmations and service replies</h2><p className="muted-copy">Queued messages wait for permitted windows. Unconfirmed handoffs are never repeated automatically.</p>{data.smsServices.map(message=><article key={message.id}><strong>{titleCase(message.purpose)}</strong><p>{titleCase(message.state)}{message.reason?` · ${titleCase(message.reason)}`:''}</p><small>{formatDate(new Date(message.created_at).toISOString())}{message.provider_message_id?` · Provider receipt ${message.provider_message_id}`:''}</small></article>)}</section>:null}
+          {data.smsServices?.length?<section className="panel"><h2>SMS confirmations and service replies</h2><p className="muted-copy">Queued messages wait for permitted windows. A message the provider has not confirmed is never sent twice.</p>{data.smsServices.map(message=><article key={message.id}><strong>{titleCase(message.purpose)}</strong><p>{titleCase(message.state)}{message.reason?` · ${titleCase(message.reason)}`:''}</p><small>{formatDate(new Date(message.created_at).toISOString())}{message.provider_message_id?` · Provider receipt ${message.provider_message_id}`:''}</small></article>)}</section>:null}
         </div>
         <section className="panel timeline" aria-labelledby="timeline-title">
           <p className="eyebrow">History</p>
