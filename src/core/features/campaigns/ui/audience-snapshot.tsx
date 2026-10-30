@@ -1,8 +1,8 @@
 import { summarizeAudienceRules } from '../audience-summary';
-import { productConfig } from '@/ext/config';
 import { Link } from '@tanstack/react-router';
 
-import { formatDateInTimeZone, titleCase } from '@/core/app/client/lib/format';
+import { titleCase } from '@/core/app/client/lib/format';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { KeepTogether } from '@/core/features/site/BodyText';
 import type { Audience, CampaignAudience, AudienceChannelCount, Exclusion } from '@/core/app/client/lib/types';
 
@@ -24,6 +24,7 @@ export function savedAudienceExclusions(audience: CampaignAudience | undefined):
 }
 
 export function AudienceSnapshot({ audience, revision, channelCounts, exclusions = [], exclusionNotice }: AudienceSnapshotProps) {
+  const formatDate = useDateFormatter();
   if (!audience) {
     return (
       <section className="panel audience-snapshot" aria-labelledby="audience-snapshot-title">
@@ -34,7 +35,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
           </div>
         </div>
         {revision ? <p aria-label="Saved audience rule">{revision.audienceMasked?'Audience conditions are restricted by your role.':summarizeAudienceRules(revision.inclusionRuleJson, revision.exclusionRulesJson)}</p> : null}
-        <p className="muted-copy">The server has not saved audience and recipient-step counts for this composition.</p>
+        <p className="muted-copy">No audience or message counts were saved for this draft.</p>
       </section>
     );
   }
@@ -44,7 +45,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
       <div className="section-heading">
         <div>
           <p className="eyebrow">Audience snapshot</p>
-          <h2 id="audience-snapshot-title"><KeepTogether text={`Saved at ${formatDateInTimeZone(audience.asOfAt, productConfig.storeTimezone)} (${productConfig.storeTimezone})`} /></h2>
+          <h2 id="audience-snapshot-title"><KeepTogether text={`Saved ${formatDate(audience.asOfAt)}`} /></h2>
         </div>
         <Link className="text-link" to="/app/audience">
           View audience
@@ -75,7 +76,7 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
             </p>
           ))
         ) : (
-          <p className="muted-copy">No recipient-step counts were saved with this audience snapshot.</p>
+          <p className="muted-copy">No message counts were saved with this audience.</p>
         )}
       </div>
       <div className="fallback-counts" aria-label="Personalisation fallback counts">
@@ -85,8 +86,8 @@ export function AudienceSnapshot({ audience, revision, channelCounts, exclusions
         {channelCounts.some(count => count.eligibleContactCount == null || count.fallbackContactCount == null) ? <p className="muted-copy">Fallback usage was not recorded for this snapshot.</p> : null}
       </div>
       <p>Included by this campaign’s inactivity choice: <strong>{audience.dormancyIncludedCount??0}</strong></p>
-      <p>Eligible contacts relying on incumbent-held consent: <strong>{audience.incumbentHeldCount??"Not recorded for this review"}</strong></p>
-      <p>No-history among included contacts: <strong>{audience.noHistoryCount??0}</strong></p>
+      <p>Contacts relying on consent from your previous provider: <strong>{audience.incumbentHeldCount??"Not recorded for this review"}</strong></p>
+      <p>Contacts with no past activity: <strong>{audience.noHistoryCount??0}</strong></p>
       {exclusionNotice ? <p className="notice-note">{exclusionNotice}</p> : null}
       {exclusions.length ? (
         <div className="exclusion-list" aria-label="Saved audience exclusions">

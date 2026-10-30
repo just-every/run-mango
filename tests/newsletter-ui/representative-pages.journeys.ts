@@ -143,12 +143,9 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
     await page.context().addCookies([{ name: localSessionCookieName(open.url()), value: session.token, domain: '127.0.0.1', path: '/' }]);
     yield { name: 'store without synced records', visit: async () => {
       await openPage(page, '/app/store');
-      await expect(page.locator('.store-source').first()).toBeVisible();
-      for (const card of await page.locator('.store-source').all()) {
-        await expectReason(card.getByRole('status'));
-        await expectReason(card.locator('.store-source__meta'));
-        await expect(card.locator('.status-pill--needs-sync')).toBeVisible();
-      }
+      // A source this install cannot run is left out, with one line saying so.
+      await expect(page.locator('.store-source')).toHaveCount(0);
+      await expectReason(page.getByText('Not available in this setup'));
     } };
     const source = await page.request.get('/_authoring/source', { headers });
     await expect(source).toBeOK();

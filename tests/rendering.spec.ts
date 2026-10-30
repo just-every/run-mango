@@ -30,7 +30,7 @@ test('[BASE-ACCESS-002] Start renders owner HTML, hydrates navigation, and authe
   await expect(page.getByRole('heading', {name: 'Nothing sends until you approve it.'})).toBeVisible();
   const privateOrigin = await page.evaluate(() => performance.timeOrigin);
   await page.getByRole('link', {name: 'Audience', exact: true}).click();
-  await expect(page.getByRole('heading', {name: 'Consent stays visible at every decision.'})).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Audience', level: 1})).toBeVisible();
   expect(await page.evaluate(() => performance.timeOrigin)).toBe(privateOrigin);
   const wire = page.waitForRequest(request => new URL(request.url()).pathname.startsWith('/_serverFn/'));
   // Invoke the Vite-transformed wrapper itself. This exercises the installed

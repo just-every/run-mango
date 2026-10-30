@@ -22,7 +22,7 @@ function CampaignSendControlsContent({ campaignId, state, operatorPaused, reload
     <h2>{operatorPaused ? 'Sending paused by an operator' : 'Pause sending'}</h2>
     <p>{operatorPaused
       ? 'Remaining sends stay on hold until you resume. Consent, suppression, frequency protection and send-by deadlines are checked again. Other provider or source holds still apply.'
-      : 'Put all remaining steps on hold. Messages whose handoff has already begun keep their provider outcomes. Pausing does not extend send-by deadlines.'}</p>
+      : 'Put all remaining steps on hold. Messages already with the provider keep their outcomes. Pausing does not extend send-by deadlines.'}</p>
     <button type="button" className="secondary-action" disabled={busy} onClick={() => void apply()}>
       {busy ? 'Saving…' : operatorPaused ? 'Resume campaign' : 'Pause campaign'}
     </button>

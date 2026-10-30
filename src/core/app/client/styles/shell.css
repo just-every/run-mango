@@ -58,6 +58,10 @@
 
 .operator-menu-toggle { display: none; }
 
+.operator-footer { width: min(100% - 2 * var(--app-gutter), var(--app-max)); margin: 0 auto; padding: 0 0 var(--sp-8); }
+.time-zone-picker { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-3); color: var(--ms-muted); font-size: 14px; }
+.time-zone-picker select { width: auto; max-width: 100%; }
+
 .operator-main { flex: 1 0 auto; box-sizing: border-box; width: 100%; min-width: 0; padding: var(--sp-8) max(var(--app-gutter), (100% - var(--app-max)) / 2) var(--sp-10); background: var(--app-column); }
 
 @media (max-width: 1100px) {

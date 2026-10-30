@@ -270,9 +270,7 @@ export function AudienceImportPage() {
       <header className="page-head audience-import-intro">
         <div className="page-head__text">
           <Link className="back-link" to="/app/audience">← Back to audience</Link>
-          <p className="eyebrow">Audience</p>
           <h1>Import contacts</h1>
-          <p className="page-head__lead">Suppression and opt-out records are applied first and can never be reversed by an import. CSV consent fields must describe the original disclosure and cannot create consent. Any row missing its original scope, opt-in time, or confirmation time stays non-subscribed.</p>
         </div>
       </header>
 

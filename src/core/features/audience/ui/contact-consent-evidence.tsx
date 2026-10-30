@@ -36,7 +36,7 @@ export type ContactImportObservation = {
 };
 
 function ConfirmationState({ evidence }: { evidence: ContactConsentEvidence }) {
-  const value = evidence.captureMethod==='incumbent-held'?'Incumbent-held':!evidence.confirmationRequired ? (evidence.captureMethod==='operator-recorded'?'Operator-recorded single opt-in':'Single opt-in') : evidence.confirmedAt
+  const value = evidence.captureMethod==='incumbent-held'?'From your previous provider':!evidence.confirmationRequired ? (evidence.captureMethod==='operator-recorded'?'Operator-recorded single opt-in':'Single opt-in') : evidence.confirmedAt
     ? 'Confirmed'
     : evidence.confirmationRequired ? 'Awaiting confirmation' : 'Confirmation not required';
   const style = evidence.confirmedAt ? 'good' : evidence.confirmationRequired ? 'pending' : 'neutral';

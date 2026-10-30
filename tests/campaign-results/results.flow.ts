@@ -18,9 +18,9 @@ async function textContrast(element:any) {
 }
 // Check the settled page: a fresh-data reload briefly replaces the document between rendered states.
 async function accessible(page:any,width:number) {await page.waitForLoadState('networkidle');await expect(page.locator('main').first()).toBeVisible();await expect(page.getByRole('heading',{level:1}).first()).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);}
-function expectedLocalClockAndZone(value:string,timeZone:string) {
-  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-AU',{hour:'numeric',minute:'2-digit',timeZone,timeZoneName:'short'}).formatToParts(new Date(value)).map(({type,value})=>[type,value]));
-  return `${parts.hour}:${parts.minute} ${parts.dayPeriod} ${parts.timeZoneName}`;
+function expectedLocalClock(value:string,timeZone:string) {
+  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-AU',{hour:'numeric',minute:'2-digit',timeZone}).formatToParts(new Date(value)).map(({type,value})=>[type,value]));
+  return `${parts.hour}:${parts.minute} ${parts.dayPeriod}`;
 }
  {
 
@@ -47,8 +47,7 @@ export const walk1 = async({page,request})=>{
         const row=page.locator(`[data-step-id="${step.id}"]`);
         const channelName=({email:'Email',sms:'SMS'} as Record<string,string>)[step.channel];
         await expect(row.locator('h3')).toHaveText(`Step ${step.sequence} · ${channelName}`);
-        await expect(row.locator('time').first()).toContainText(expectedLocalClockAndZone(step.scheduledAt,'Australia/Brisbane'));
-        await expect(row).toContainText('Australia/Brisbane');await expect(row).toContainText('Resolved UTC:');await expect(row).toContainText('Resolved UTC deadline:');
+        await expect(row.locator('time').first()).toContainText(expectedLocalClock(step.scheduledAt,'Australia/Brisbane'));
         const expected=raw.filter((entry:any)=>entry.campaign_id===id&&entry.revision_id===`${id}-revision`&&entry.step_id===step.id);
         await expect(row.locator('.disposition-counts > div')).toHaveCount(expected.length);
         for(const bucket of expected) {
@@ -59,16 +58,16 @@ export const walk1 = async({page,request})=>{
       await expect(page.getByRole('button',{name:'Cancel campaign',exact:true})).toHaveCount(['scheduled','sending','dst'].includes(id)?1:0);
       if(id==='scheduled') await expect(page.locator('.step-results').getByText(/Dispatches in/)).toHaveCount(3);
       if(id==='mixed') {await expect(page.getByText('Handed off',{exact:true})).toBeVisible();await expect(page.getByText('Accepted',{exact:true})).toBeVisible();await expect(page.getByText('Delivered',{exact:true})).toBeVisible();}
-      if(id==='missed') {await expect(page.locator('.overall-result')).toContainText('1 recipient-steps were not sent');await expect(page.locator('.step-results')).toContainText('Send window closed at');await expect(page.locator('.step-results')).toContainText('Queued records remain unsent');}
+      if(id==='missed') {await expect(page.locator('.overall-result')).toContainText('1 message was not sent');await expect(page.locator('.step-results')).toContainText('Send window closed at');await expect(page.locator('.step-results')).toContainText('Queued records remain unsent');}
       if(id==='failed-before') {await expect(page.locator('.step-result-state')).toHaveText(['Failed','Sent','Sending']);await expect(page.locator('[data-step-id="failed-before-step-1"]')).toContainText('The email adapter is unavailable.');}
-      if(id==='closed-partial') {await expect(page.locator('.overall-result')).toContainText('5 recipient-steps unsent');expect(detail.results.steps[0].expiredQueuedCount).toBe(4);expect(detail.results.steps[0].inFlightCount).toBe(0);}
-      if(id==='closed-fence') {await expect(page.locator('.step-results')).toContainText('1 queued recipient-steps have begun provider handoff');await expect(page.locator('.step-results')).not.toContainText('Queued records remain unsent');expect(detail.results.steps[0].inFlightCount).toBe(1);expect(detail.results.steps[0].expiredQueuedCount).toBe(0);await expect(page.locator('.overall-result')).not.toContainText('unsent');}
-      if(id==='scheduled') {await expect(page.locator('.action-notice[role="status"]')).toHaveText('Campaign approved and scheduled.');await expect(page.locator('#audience-snapshot-title')).toContainText('AEST');await expect(page.locator('#audience-snapshot-title')).toContainText('Australia/Brisbane');}
+      if(id==='closed-partial') {await expect(page.locator('.overall-result')).toContainText('5 messages unsent');expect(detail.results.steps[0].expiredQueuedCount).toBe(4);expect(detail.results.steps[0].inFlightCount).toBe(0);}
+      if(id==='closed-fence') {await expect(page.locator('.step-results')).toContainText('1 queued messages are with the provider');await expect(page.locator('.step-results')).not.toContainText('Queued records remain unsent');expect(detail.results.steps[0].inFlightCount).toBe(1);expect(detail.results.steps[0].expiredQueuedCount).toBe(0);await expect(page.locator('.overall-result')).not.toContainText('unsent');}
+      if(id==='scheduled') {await expect(page.locator('.action-notice[role="status"]')).toHaveText('Campaign approved and scheduled.');await expect(page.locator('#audience-snapshot-title')).toContainText('Saved');}
       await expect(page.getByLabel('Saved audience rule',{exact:true})).toHaveText(detail.revision.audienceRule);
       if(id==='partial') await expect(page.getByText('Skipped — send window closed',{exact:true})).toBeVisible();
       if(id==='cancelled') await expect(page.getByText('Waiting for confirmation',{exact:true})).toBeVisible();
       if(id==='failed') await expect(page.locator('.step-results')).toContainText('The email adapter is unavailable.');
-      if(id==='dst') {await expect(page.locator('.step-results')).toContainText('10:00 am AEST');await expect(page.locator('.step-results')).toContainText('Australia/Brisbane');}
+      if(id==='dst') {await expect(page.locator('.step-results')).toContainText('10:00 am');}
       await accessible(page,width);
     }
     expect(await seed(request,'counts')).toEqual(raw);

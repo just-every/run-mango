@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { visibleOperation } from '@/core/features/integrations/credentials';
 
 const day = /^\d{4}-\d{2}-\d{2}$/;
 const instant = (end: boolean) => z.string().min(8).max(40).transform((value, context) => {
@@ -24,7 +25,7 @@ export type ActivityFilters = z.infer<typeof activityFilters>;
 /** Operator and integration-audit entries as one newest-first sequence (OPER-007). */
 const entries = `SELECT id,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at FROM lifecycle_audit_entries
   UNION ALL SELECT 'integration:'||id,CASE WHEN actor_id IS NULL THEN 'integration' ELSE 'operator' END,COALESCE(actor_id,credential_id,''),'integration.'||operation,
-    'integration',COALESCE(credential_id,''),json_object('status',status,'outcome',outcome),occurred_at FROM integration_audit`;
+    'integration',COALESCE(credential_id,''),json_object('status',status,'outcome',outcome),occurred_at FROM integration_audit WHERE ${visibleOperation('operation')}`;
 
 export type ActivityEntry = {
   id: string; operatorId: string; operatorName: string | null; actorType: string; action: string;
@@ -45,10 +46,11 @@ export function activitySelect(filters: ActivityFilters, before?: string) {
     const [at, ...id] = before.split(':');
     where.push('(e.occurred_at<? OR (e.occurred_at=? AND e.id<?))'); bindings.push(Number(at), Number(at), id.join(':'));
   }
-  return {bindings, sql: `SELECT e.id,e.actor_id AS operatorId,p.display_name AS operatorName,e.actor_type AS actorType,e.action,
+  return {bindings, sql: `SELECT e.id,e.actor_id AS operatorId,COALESCE(p.display_name,ic.name) AS operatorName,e.actor_type AS actorType,e.action,
     e.entity_type AS objectType,e.entity_id AS objectId,
     CASE WHEN v.id IS NOT NULL THEN json_set(e.detail_json,'$.name',v.name) ELSE e.detail_json END AS detailJson,e.occurred_at AS occurredAt
     FROM (${entries}) e LEFT JOIN operators p ON p.id=e.actor_id AND e.actor_type='operator'
+    LEFT JOIN integration_credentials ic ON ic.id=e.actor_id AND e.actor_type='integration'
     LEFT JOIN campaign_revisions v ON e.action='draft.saved' AND e.entity_type='campaign-revision' AND v.id=e.entity_id
     ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY e.occurred_at DESC,e.id DESC`};
 }

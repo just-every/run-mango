@@ -42,9 +42,7 @@ export function InsightsPage() {
     <div className="page-flow insights-page">
       <header className="page-head">
         <div className="page-head__text">
-          <p className="eyebrow">Insights</p>
-          <h1>Observed outcomes, never invented forecasts.</h1>
-          <p className="page-head__lead" role="status">{data.note}</p>
+          <h1>Insights</h1>
         </div>
       </header>
       <OverviewDashboard/>

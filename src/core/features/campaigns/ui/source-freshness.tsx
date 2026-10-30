@@ -11,7 +11,6 @@ export function SourceFreshness({sources}: {sources: SourceSync[]}) {
       <h2 id="source-status-title">Store data</h2>
       <Link className="text-link" to="/app/store">Manage sync</Link>
     </div>
-    <p className="muted-copy">Sources older than 24 hours, or with a later failed sync, block campaigns that use them. Only a completed sync refreshes the data.</p>
     <div className="source-status__grid">
       {sources.map(source => {
         const stale = !source.lastSuccessfulAt || Date.parse(source.lastSuccessfulAt) < Date.now() - 86400000;
