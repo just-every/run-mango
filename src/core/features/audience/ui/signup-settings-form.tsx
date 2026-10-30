@@ -26,7 +26,7 @@ export function SignupSettingsForm({frequencyDisclosure, embedOrigins, kioskEnab
       </div>
       <label><input type="checkbox" checked={challenge} onChange={event=>setChallenge(event.target.checked)} disabled={busy||kiosk}/> Require verification (Owner or Admin changes this)</label>
       <label><input type="checkbox" checked={kiosk} onChange={event=>{setKiosk(event.target.checked);if(event.target.checked)setChallenge(true);}} disabled={busy}/> Kiosk or event form</label>
-      <p className="muted-copy">Use the hosted form on a shared tablet. Every visitor completes verification, and the form clears after success. Configure Turnstile before opening the kiosk.</p>
+      <p className="muted-copy">For a shared tablet: every visitor is verified and the form clears after each signup.</p>
       <label>Device or event label<Field name="kioskDeviceLabel" label="Device or event label" required={kiosk}><input value={deviceLabel} onChange={event=>setDeviceLabel(event.target.value)} maxLength={100} disabled={busy} placeholder="Market stall tablet" /></Field></label>
       <label>Allowed embed origins<Field name="embedOrigins" label="Allowed embed origins"><textarea rows={3} value={origins} onChange={event=>setOrigins(event.target.value)} disabled={busy} placeholder="https://www.example.com" /></Field></label>
       <p className="muted-copy">One exact HTTP or HTTPS origin per line, without a path or wildcard. Leave empty to refuse outside framing. Removing an origin blocks new loads there.</p>

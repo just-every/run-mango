@@ -29,9 +29,7 @@ export function AudiencePage() {
     <div className="page-flow audience-page">
       <header className="page-head">
         <div className="page-head__text">
-          <p className="eyebrow">Audience</p>
-          <h1>Consent stays visible at every decision.</h1>
-          <p className="page-head__lead">Each person keeps an independent Email and SMS status in the persisted contact ledger.</p>
+          <h1>Audience</h1>
         </div>
         <div className="page-head__actions">
           <Can permission="audience.import"><Link className="primary-action" to="/app/audience/import">Import contacts</Link></Can>
@@ -47,14 +45,12 @@ export function AudiencePage() {
       <section className="panel data-table-panel audience-ledger">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">Contact ledger</p>
-            <h2>{data.contacts.length} saved contacts</h2>
+            <h2>{data.contacts.length} {data.contacts.length === 1 ? 'contact' : 'contacts'}</h2>
           </div>
-          <p className="muted-copy">Statuses are channel-specific.</p>
         </div>
         {data.contacts.length ? (
-          <div className="table-scroll" tabIndex={0} role="region" aria-label="Saved contact ledger">
-            <table className="responsive-table audience-ledger__table" aria-label="Saved contact ledger">
+          <div className="table-scroll" tabIndex={0} role="region" aria-label="Contacts">
+            <table className="responsive-table audience-ledger__table" aria-label="Contacts">
               <thead>
                 <tr>
                   <th scope="col">Contact</th>
@@ -81,8 +77,8 @@ export function AudiencePage() {
             </table>
           </div>
         ) : (
-          <EmptyState id="audience-empty-title" title="The ledger is empty" level={3} inPanel art={<AudienceEmptyArt />}>
-            <p>No contacts have been imported into the persisted ledger.</p>
+          <EmptyState id="audience-empty-title" title="No contacts yet" level={3} inPanel art={<AudienceEmptyArt />}>
+            <p>Import a list or add a contact by hand.</p>
           </EmptyState>
         )}
       </section>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { CampaignsEmptyArt } from './campaigns-empty-art';
 import { NewCampaign } from './new-campaign';
 import { Link, useNavigate, useSearch } from '@tanstack/react-router';
-import { formatDateInTimeZone } from '@/core/app/client/lib/format';
+import { useDateFormatter } from '@/core/app/client/lib/use-date-formatter';
 import { KeepTogether } from '@/core/features/site/BodyText';
 import { EmptyState } from '@/core/app/client/ui/empty-state';
 import { LoadState } from '@/core/app/client/ui/layout';
@@ -18,6 +18,7 @@ export function CampaignsPage() {
   const navigate = useNavigate({from:'/app/campaigns'});
   const { data, error, loading } = useCampaignCollection(filters);
   const [starting, setStarting] = useState(false);
+  const formatDate = useDateFormatter();
   if (loading) return <LoadState />;
   if (!data) return <LoadState error={error} />;
   const change = (key:'state'|'channel',value:string) => void navigate({search:previous => ({...previous,[key]:value || undefined})});
@@ -49,7 +50,7 @@ export function CampaignsPage() {
               <p className="campaign-row__audience">{campaign.audienceSummary}</p>
             </div>
             <div className="campaign-row__meta"><CampaignStatusPill state={campaign.state} lastOutcome={campaign.lastOutcome} />
-              <small><KeepTogether text={`${campaign.nextScheduledAt ? `Next: ${formatDateInTimeZone(campaign.nextScheduledAt,data.timezone)}` : `${campaign.lastOutcome ? dispositionLabel({disposition:campaign.lastOutcome,reason:campaign.lastSkipReason,count:1}) : campaignStateLabel(campaign.state)}: ${formatDateInTimeZone(campaign.lastOutcomeAt ?? campaign.updatedAt,data.timezone)}`} (${data.timezone})`} /></small>
+              <small><KeepTogether text={`${campaign.nextScheduledAt ? `Next: ${formatDate(campaign.nextScheduledAt)}` : `${campaign.lastOutcome ? dispositionLabel({disposition:campaign.lastOutcome,reason:campaign.lastSkipReason,count:1}) : campaignStateLabel(campaign.state)}: ${formatDate(campaign.lastOutcomeAt ?? campaign.updatedAt)}`}`} /></small>
             </div>
           </Link>;
         })}</div>

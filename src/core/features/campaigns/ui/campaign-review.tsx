@@ -38,7 +38,6 @@ export function CampaignReviewPage() {
   const { modules } = useLoaderData({ from: '/app' });
   const { data, error, loading, reload, replace } = useResource<ReviewData>(`/api/campaigns/${id}/review`);
   const testAccess=useResource<TestSendAccess>(`/api/campaigns/${id}/test-sends`);
-  const authoring = useResource<{timezone:string}>('/api/campaign-authoring');
   const [draft, setDraft] = useState<DraftComposition | undefined>(() => data?.revision ? toDraftComposition(data.revision, data.links, data.steps) : undefined);
   const [notice, setNotice] = useState<string>();
   const noticeRef = useRef<HTMLParagraphElement>(null);
@@ -275,9 +274,8 @@ export function CampaignReviewPage() {
       <SaveCampaignTemplate key={revision.id} revisionId={revision.id} name={revision.name} disabled={dirty||needsCanonicalRead||Boolean(busy)}/>
       <CatalogCounts summary={data.catalogSummary}/>
       <div className="review-layout">
-        {editable ? authoring.loading ? <LoadState /> : authoring.error || !authoring.data?.timezone
-          ? <LoadState error="Campaign authoring is unavailable: the configured store time zone could not be loaded." />
-          : <CampaignCompositionEditor campaignId={id} draft={draft} savedEmailBody={revision.emailBody} mediaOrigin={data.mediaOrigin} busy={Boolean(busy)} storeTimezone={authoring.data.timezone} onChange={setDraft} serverErrors={fieldErrors} validationRequest={validationRequest} onSave={() => void save()} />
+        {editable
+          ? <CampaignCompositionEditor campaignId={id} draft={draft} savedEmailBody={revision.emailBody} mediaOrigin={data.mediaOrigin} busy={Boolean(busy)} onChange={setDraft} serverErrors={fieldErrors} validationRequest={validationRequest} onSave={() => void save()} />
           : <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} smsPreview={data.smsPreview} />}
         <div className="review-facts">
           {editable ? <section className="review-previews">
@@ -290,8 +288,8 @@ export function CampaignReviewPage() {
             <RevisionPreviews revision={revision} links={data.links} mediaOrigin={data.mediaOrigin} smsPreview={data.smsPreview} />
           </section> : null}
           {editable && can('campaign.test') ? <Disclosure className="panel test-send-panel" title="Send a test">
-            <p className="muted-copy">Uses the saved revision. {testAccess.data?.canType ? 'Enter up to five email addresses, separated by commas.' : 'Choose a configured test destination.'} Unsubscribed and suppressed addresses are refused. SMS tests use the configured test destinations.</p>
-            {testAccess.data ? <p role="status" aria-label="Daily test allowance">{testAccess.data.allowance.remaining} of {testAccess.data.allowance.limit} test recipient hand-offs remaining today. Resets at 00:00 UTC. Uncertain outcomes count.</p> : <LoadState error={testAccess.error} />}
+            <p className="muted-copy">{testAccess.data?.canType ? 'Up to five email addresses, separated by commas.' : 'Choose a test destination.'}</p>
+            {testAccess.data ? <p role="status" aria-label="Daily test allowance">{testAccess.data.allowance.remaining} of {testAccess.data.allowance.limit} test messages left today.</p> : <LoadState error={testAccess.error} />}
 
             {!testDestination.trim() ? <p>Enter a test destination to send a test.</p> : null}
             {!revision.fromEmail || !revision.senderName ? <p>Email tests are unavailable until you save a sender identity in Settings and update this draft.</p> : null}

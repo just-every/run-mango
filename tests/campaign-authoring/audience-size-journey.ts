@@ -45,7 +45,7 @@ export async function audienceSizeJourney(page:Page,info:TestInfo){
       const response=page.waitForResponse(savedMeter);
       await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);
       expect(await (await response).json()).toMatchObject({htmlBytes:measured.htmlBytes,exceedsLimit:false});
-      await expect(page.getByRole('status',{name:'Email sent size'})).toContainText('Sent size upper bound');
+      await expect(page.getByRole('status',{name:'Email sent size'})).toContainText('Email size');
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
       await page.evaluate(axeSource);const audit=await page.evaluate(async()=>(window as any).axe.run(document,{iframes:false}));
       expect(audit.violations.filter((v:any)=>['serious','critical'].includes(v.impact??''))).toEqual([]);

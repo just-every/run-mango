@@ -128,7 +128,7 @@ export async function activityJourney(site: Installation, edge: Awaited<ReturnTy
     await page.setViewportSize({width, height: 1000});
     await openPage(page, `${site.runtime.url}/app/settings/activity`);
     await expect(page.getByRole('heading', {name: 'Activity', level: 1})).toBeVisible();
-    await expect(page.getByRole('region', {name: 'Activity log table'})).toContainText('draft.saved');
+    await expect(page.getByRole('region', {name: 'Activity log table'})).toContainText('Saved a draft');
     await page.getByLabel('Action', {exact: true}).fill('cancelled');
     await page.getByRole('button', {name: 'Apply filters'}).click();
     await expect(page.getByRole('region', {name: 'Activity log table'}).locator('tbody tr')).toHaveCount(1);

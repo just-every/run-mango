@@ -7,3 +7,5 @@ export function capabilityNextStep(adapter: string) {
   if (adapter.startsWith('sms.')) return 'Enable text messages and configure a sending service in the operations guide.';
   return 'Configure AI writing in the operations guide to generate campaign suggestions.';
 }
+const providers: Record<string, string> = {shopify: 'Shopify', woocommerce: 'WooCommerce', stripe: 'Stripe', sendgrid: 'SendGrid', resend: 'Resend', twilio: 'Twilio'};
+export function providerName(provider: string) {return providers[provider] ?? plainServiceText(provider.charAt(0).toUpperCase() + provider.slice(1));}
