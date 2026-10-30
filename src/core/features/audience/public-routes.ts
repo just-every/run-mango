@@ -41,7 +41,7 @@ export function createAudiencePublicRoutes(service: ReturnType<typeof createAudi
       ? await context.req.json().catch(() => undefined)
       : await context.req.parseBody().catch(() => undefined);
     if (!confirmation.safeParse(body).success) return context.json({ error: 'invalid_request' }, 400);
-    const result = await service.confirmConsent(params.data.token, new Date(), context.req.header('CF-Connecting-IP'));
+    const result = await service.confirmConsent(params.data.token, new Date(Date.now()), context.req.header('CF-Connecting-IP'));
     if (result.kind === 'already-confirmed') return messagePage(context, 410, { ...alreadyUsed, text: 'It cannot change your current subscription status.' });
     if (result.kind === 'confirmed') {
       return messagePage(context, 200, { title: 'Subscription confirmed', heading: 'Subscription confirmed', text: 'Your consent has been recorded.', mark: 'posted' });

@@ -54,9 +54,11 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
     const importObservations=(await database.prepare('SELECT * FROM audience_import_observations WHERE contact_id=? ORDER BY created_at').bind(parsed.data.id).all()).results;
     const campaignHistory=(await database.prepare(`WITH RECURSIVE identities(id) AS (SELECT ? UNION SELECT m.merged_contact_id FROM contact_merges m JOIN identities i ON m.survivor_contact_id=i.id) SELECT r.id,r.campaign_id AS campaignId,v.name,r.channel,r.transport_disposition AS disposition,r.skip_reason AS skipReason,r.created_at AS createdAt FROM recipient_steps r JOIN campaign_revisions v ON v.id=r.revision_id WHERE r.contact_id IN (SELECT id FROM identities) ORDER BY r.created_at DESC`).bind(parsed.data.id).all()).results;
     const smsServices=(await database.prepare('SELECT id,purpose,state,reason,provider_message_id,created_at,updated_at FROM sms_service_messages WHERE contact_id=? ORDER BY created_at DESC LIMIT 100').bind(parsed.data.id).all()).results;
+    const supersededOptOuts=(await database.prepare(`SELECT o.reason,o.occurred_at AS occurredAt,s.evidence_id AS evidenceId,s.confirmed_at AS confirmedAt
+      FROM audience_opt_out_supersessions s JOIN surviving_opt_outs o ON o.id=s.opt_out_id WHERE s.contact_id=?`).bind(parsed.data.id).all()).results;
     const timeline=await readContactTimeline(database,parsed.data.id,detail);
     const profile=await (await import('./contact-profile')).readContactProfile(platform,parsed.data.id);
-    return context.json({...detail,profile,timeline,campaignHistory,importObservations,smsServices,consent:detail.consent.map(evidence=>({...evidence,captureIp:metadata.find(row=>row.id===evidence.id)?.capture_ip ?? null,confirmationIp:metadata.find(row=>row.id===evidence.id)?.confirmation_ip ?? null}))});
+    return context.json({...detail,profile,timeline,supersededOptOuts,campaignHistory,importObservations,smsServices,consent:detail.consent.map(evidence=>({...evidence,captureIp:metadata.find(row=>row.id===evidence.id)?.capture_ip ?? null,confirmationIp:metadata.find(row=>row.id===evidence.id)?.confirmation_ip ?? null}))});
   });
   routes.get('/audience/sms-services',async context=>context.json({messages:(await database.prepare('SELECT id,contact_id,purpose,state,reason,provider_message_id,expires_at,next_at,created_at,updated_at FROM sms_service_messages ORDER BY created_at DESC LIMIT 100').all()).results}));
   routes.post('/contacts/consent', async (context) => {

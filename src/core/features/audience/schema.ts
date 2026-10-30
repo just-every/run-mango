@@ -272,3 +272,15 @@ export const smsComplianceReplies = sqliteTable(
   },
   (table) => [uniqueIndex('sms_compliance_replies_event_idx').on(table.providerEventId)],
 );
+
+export const audienceResubscriptions = sqliteTable('audience_resubscriptions', {
+  contactId: text('contact_id').primaryKey().notNull(),
+  expiresAt: integer('expires_at', {mode:'timestamp_ms'}).notNull(),
+});
+
+export const audienceOptOutSupersessions = sqliteTable('audience_opt_out_supersessions', {
+  optOutId: text('opt_out_id').primaryKey().notNull(),
+  contactId: text('contact_id').notNull(),
+  evidenceId: text('evidence_id').notNull(),
+  confirmedAt: integer('confirmed_at', {mode:'timestamp_ms'}).notNull(),
+});

@@ -1,3 +1,5 @@
+import {runScheduled} from '../../src/core/app/scheduled';
+import {consumeLifecycleQueue} from '../../src/core/features/lifecycle';
 import {loadSignupDescription} from '../../src/core/features/audience/signup-routes';
 // Isolated native Worker for FORM-009. Only the paid mail and challenge HTTP
 // edges are doubled; product routing, sessions, D1, consent and SSR are real.
@@ -66,6 +68,17 @@ export default {
         await bindings.DB.prepare(body.kind==='minute'?"UPDATE oa_limits SET window=window-1 WHERE key IN ('signup-global-minute','signup-challenged-minute')":"UPDATE oa_limits SET window=window-1 WHERE key LIKE 'signup%' AND key NOT LIKE 'signup-challenge:%' AND key NOT LIKE 'signup-refusal-alert:%'").run();
         await bindings.DB.prepare(`UPDATE signup_allowance_levels SET effective_at=effective_at-? WHERE effective_at>CAST(strftime('%s','now') AS INTEGER)*1000`).bind(body.kind==='minute'?60000:3600000).run();
         return Response.json({advanced:true});
+      }
+      if(path==='/_kiosk/cron') {
+        const commands:unknown[]=[];
+        platform.jobs.enqueue=async command=>{commands.push(command);};
+        const runtime=createAppServices(platform).lifecycleRuntime;
+        await runScheduled({scheduledTime:Date.now()} as ScheduledController,bindings,async()=>runtime);
+        for(let step=0;commands.length&&step<500;step++){
+          await consumeLifecycleQueue({messages:[{body:commands.shift() as never,ack(){},retry(){throw new Error('Erasure queue retry');}}]},runtime);
+        }
+        if(commands.length)throw new Error('Erasure queue did not drain');
+        return Response.json({completed:true});
       }
       if(path==='/_kiosk/clock') {clockOffset+=(await request.json() as {advanceMs:number}).advanceMs;return Response.json({now:Date.now()});}
       if(path==='/_kiosk/challenge') {challengeConnected=(await request.json() as {connected:boolean}).connected;return Response.json({connected:challengeConnected});}

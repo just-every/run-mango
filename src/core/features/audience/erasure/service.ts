@@ -2,8 +2,7 @@ import {invalidateRevisions} from './campaigns';
 import {invalidateTransfers} from './transfers';
 import {scanObject} from './objects';
 import type {BlobStore} from '@/core/shared/platform';
-import {sha256} from '@/core/shared/ids';
-import {recordPortableHash} from '../portable-hashes';
+import {retainRestrictions} from './restrictions';
 import type {D1ImportContext,D1Sql} from '@/vendor/base/import-kit/src/d1/index';
 import {contactErasureTables,importJobCascadeChildren} from './declaration';
 import {discoverPlan} from './discovery';
@@ -67,14 +66,7 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
           SELECT id FROM identities WHERE id NOT IN (SELECT value FROM json_each(?))
           UNION ALL SELECT value FROM json_each(?) WHERE value NOT IN (SELECT id FROM identities))`)
         .bind(reference,id,JSON.stringify(scope),now,...unchanged.map(([,value])=>value),id,JSON.stringify(scope.ids),JSON.stringify(scope.ids))];
-      for(const channel of scope.channels)for(const destination of channel==='email'?scope.emails:scope.phones){
-        const hash=await sha256(`${salt}:${destination}`);
-        // An erased destination keeps one block that names no other reason.
-        statements.push(db.prepare(`DELETE FROM surviving_opt_outs WHERE destination_hash=? AND channel=? AND reason<>'erasure-opt-out' AND ${admitted}`).bind(hash,channel,reference));
-        statements.push(db.prepare(`INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE ${admitted} ON CONFLICT(destination_hash,channel,reason) DO UPDATE SET updated_at=excluded.updated_at`).bind(crypto.randomUUID(),hash,channel,now,now,now,reference));
-        // The block leaves an export by the address's portable identity only (import-opt-out-lines).
-        statements.push(recordPortableHash(db,hash,destination));
-      }
+      statements.push(...await retainRestrictions(db,salt,scope,reference,now));
       // Capture staged blob ownership before invalidating transfer manifests.
       statements.push(db.prepare(`INSERT INTO audience_erasure_blobs SELECT ?,o.bucket,o.key FROM rer_portability_owned o JOIN rer_portability_jobs j ON j.id=o.job WHERE j.phase<>'complete' AND ${admitted}`).bind(reference,reference));
       statements.push(db.prepare(`UPDATE ik_jobs SET state='invalid',fence=fence+1,lease_token=NULL,lease_expires=NULL WHERE id IN (SELECT value FROM json_each(?)) AND ${admitted}`).bind(JSON.stringify(scope.jobs),reference));
@@ -133,7 +125,7 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         for(const key of ['ips','freeText','unsafeText'] as const)refreshed[key]=[...new Set([...refreshed[key],...discovered[key]])];
         const statements=[db.prepare('UPDATE audience_erasures SET scope_json=?,stage=0 WHERE reference=? AND stage=-1').bind(JSON.stringify(refreshed),reference)];
         const now=Date.now();
-        for(const channel of refreshed.channels)for(const destination of channel==='email'?refreshed.emails:refreshed.phones){const hash=await sha256(`${salt}:${destination}`);statements.push(db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel=?)").bind(crypto.randomUUID(),hash,channel,now,now,now,hash,channel),recordPortableHash(db,hash,destination));}
+        statements.push(...await retainRestrictions(db,salt,refreshed,reference,now));
         statements.push(db.prepare("UPDATE ik_jobs SET state='invalid',fence=fence+1,lease_token=NULL,lease_expires=NULL WHERE id IN (SELECT value FROM json_each(?))").bind(JSON.stringify(refreshed.jobs)));
         statements.push(db.prepare('UPDATE ik_d1_creation_plans SET released=1 WHERE job_id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(refreshed.jobs)));
         await progress(statements);return receipt((await read(reference))!);

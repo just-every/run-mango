@@ -7,7 +7,7 @@ import type {Database} from '@/core/platform/db/client';
 import type {consentEvidence} from './schema';
 import {manualEmailEligibility} from './manual-email-policy';
 
-/** Public capture records confirmed-only reconsent. All identity/profile/evidence
+/** Public capture records confirmed-only reconsent. All identity, profile and evidence
  * writes share the D1 transaction that checks the destination's current state. */
 export function createPublicCaptureWriter(database: Database) {
   const db = database.$client;
@@ -52,16 +52,21 @@ export function createPublicCaptureWriter(database: Database) {
       OR EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel='email')
       OR EXISTS(SELECT 1 FROM contacts WHERE id=${owner} AND email_status IN ('unsubscribed','suppressed'))`;
     const resubscribeValues = manual ? [] : [destinationHash,destinationHash,...ownerValues];
+    const restrictionTime=`COALESCE((SELECT MAX(occurred_at) FROM surviving_opt_outs WHERE destination_hash=? AND channel='email'),?)`;
     const statements = [
+      db.prepare(`INSERT INTO audience_resubscriptions(contact_id,expires_at)
+        SELECT ?,? WHERE ${eligible} AND NOT EXISTS(SELECT 1 FROM contacts WHERE id=${owner})
+        AND EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel='email')`)
+        .bind(contactId,now+30*24*60*60*1000,...guard,...ownerValues,destinationHash),
       db.prepare(`INSERT INTO contacts(id,email,display_name,email_status,sms_status,email_status_at,sms_status_at,last_activity_at,created_at,updated_at)
-        SELECT ?,?,?,CASE WHEN ${isResubscribe} THEN 'unsubscribed' ELSE 'pending' END,'non-subscribed',?,?,?,?,? WHERE ${eligible}
+        SELECT ?,?,?,CASE WHEN ${isResubscribe} THEN 'unsubscribed' ELSE 'pending' END,'non-subscribed',${restrictionTime},?,?,?,? WHERE ${eligible}
         AND NOT EXISTS(SELECT 1 FROM contacts WHERE email=?)
         AND NOT EXISTS(SELECT 1 FROM contact_email_addresses WHERE email=?) ON CONFLICT DO NOTHING`)
-        .bind(contactId, destination, displayName?.trim() || destination, ...resubscribeValues, occurred, now, occurred, now, now, ...guard, destination, destination),
+        .bind(contactId, destination, displayName?.trim() || destination, ...resubscribeValues, destinationHash, occurred, now, occurred, now, now, ...guard, destination, destination),
       db.prepare(`INSERT INTO contact_email_addresses(id,contact_id,email,channel_status,channel_status_at,created_at,updated_at)
-        SELECT ?,${owner},?,CASE WHEN ${isResubscribe} THEN 'unsubscribed' ELSE 'pending' END,?,?,? WHERE ${eligible}
+        SELECT ?,${owner},?,CASE WHEN ${isResubscribe} THEN 'unsubscribed' ELSE 'pending' END,${restrictionTime},?,? WHERE ${eligible}
         AND EXISTS(SELECT 1 FROM contacts WHERE id=${owner}) ON CONFLICT(email) DO NOTHING`)
-        .bind(`${id}_email`, ...ownerValues, destination, ...resubscribeValues, occurred, now, now, ...guard, ...ownerValues),
+        .bind(`${id}_email`, ...ownerValues, destination, ...resubscribeValues, destinationHash, occurred, now, now, ...guard, ...ownerValues),
       db.prepare(`UPDATE contacts SET display_name=COALESCE(NULLIF(?,''),display_name),email_status=CASE WHEN email_status IN ('subscribed','unsubscribed','suppressed') THEN email_status ELSE 'pending' END,email_status_at=CASE WHEN email_status IN ('subscribed','unsubscribed','suppressed') THEN email_status_at ELSE ? END,
         last_activity_at=MAX(COALESCE(last_activity_at,?),?),updated_at=? WHERE id=${owner} AND ${eligible}`)
         .bind(displayName?.trim() ?? '', occurred, occurred, occurred, now, ...ownerValues, ...guard),
@@ -92,6 +97,8 @@ export function createPublicCaptureWriter(database: Database) {
       db.prepare(`UPDATE contact_email_addresses SET channel_status='subscribed',channel_status_at=CASE WHEN channel_status='subscribed' THEN channel_status_at ELSE ? END,updated_at=?
         WHERE changes()=1 AND email=? AND contact_id=(SELECT contact_id FROM consent_evidence WHERE id=? AND confirmation_required=0) AND channel_status NOT IN ('unsubscribed','suppressed')`).bind(occurred,now,destination,id)
     );
+    statements.push(db.prepare(`UPDATE audience_resubscriptions SET expires_at=MAX(expires_at,?)
+      WHERE contact_id=(SELECT contact_id FROM consent_evidence WHERE id=?)`).bind(now+30*24*60*60*1000,id));
     const result = await db.batch(statements);
     // D1's change count includes reporting triggers; only the evidence row
     // returned by this guarded insert authorizes confirmation delivery.

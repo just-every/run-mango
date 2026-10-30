@@ -38,12 +38,14 @@ test('security: public capture preserves subscribed, suppressed and erased-optou
     await call('synthetic-mango-bot@example.test','192.0.2.44',{website:'robot'});
     expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBeGreaterThan(0);
     await eraseFixture(h.f,contact!.id);
+    // Legacy erasure discarded the reason: upgrading must never guess it was safe.
+    await h.f.db.prepare("UPDATE surviving_opt_outs SET reason='erasure-opt-out'").run();
     expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBe(0);
   }
   const before=await snapshot(h.f.db);const sent=h.f.outbound.length;
   expect((await call('existing@example.test','192.0.2.45')).status).toBe(202);expect(h.f.outbound).toHaveLength(sent);
   const after=await snapshot(h.f.db);
-  if(state==='erased-optout'){expect(after[0]).toHaveLength(1);expect(after[0][0]).toMatchObject({email_status:'unsubscribed'});expect(after.slice(1,4)).toEqual(before.slice(1,4));expect(after[5]).toEqual(before[5]);expect(after[4]).toEqual([expect.objectContaining({kind:'resubscribe-refused'})]);}
+  if(state==='erased-optout'){expect(after[0]).toHaveLength(0);expect(after.slice(0,6)).toEqual(before.slice(0,6));}
   else {expect(after.slice(0,4)).toEqual(before.slice(0,4));expect(after[5]).toEqual(before[5]);
     if(state==='suppressed'){expect(after[4]).toHaveLength(before[4].length+1);expect(after[4]).toContainEqual(expect.objectContaining({kind:'resubscribe-refused'}));}
     else expect(after[4]).toEqual(before[4]);}
@@ -189,4 +191,97 @@ test('[CONT-027] repeated public requests share the durable UTC destination allo
   expect(await restarted.db.prepare("SELECT window,count FROM oa_limits WHERE key LIKE 'signup-email:%'").first()).toEqual({window:current!.day,count:1});
   expect(await restarted.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'unsubscribed'});
  }finally{await h.close();}
+});
+
+
+test('CONT-043 erased recipients confirm only new evidence; expiry removes recreated data and surviving suppression stays refused',async()=>{
+ const h=await native(),realNow=Date.now;
+ const {createRequire}=await import('node:module'),require=createRequire(import.meta.url);
+ const {Miniflare}=createRequire(require.resolve('wrangler/package.json'))('miniflare');
+ const blobs=new Miniflare({host:'127.0.0.1',port:0,cf:false,telemetry:{enabled:false},workers:[{
+  config:{name:'synthetic-mango-430',type:'worker',compatibilityDate:'2026-08-31',
+   manifest:{mainModule:'worker.js',modules:{'worker.js':{type:'esm',contents:'export default {fetch(){return new Response("R2");}}'}}},
+  env:{BUCKET:{type:'r2',name:'synthetic-mango-430'}}},
+ }]});
+ try {
+  const {createBlobStore}=await import('../../src/core/platform/blobs');
+  h.f.platform.blobs=createBlobStore(await blobs.getR2Bucket('BUCKET'));
+
+  const call=client(h.f),app=createAudiencePublicRoutes(h.f.services.audienceService);
+  const email=['synthetic-mango-430','example.test'].join('@');
+  await call(email);const oldLink=confirmationUrl(h.f);
+  expect((await app.request(oldLink,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(200);
+  const old=await h.f.db.prepare('SELECT id FROM contacts WHERE email=?').bind(email).first<{id:string}>();
+  await h.f.services.audienceService.recordChannelOptOut({contactId:old!.id,channel:'email',reason:'recipient-unsubscribe',occurredAt:new Date(realNow()-1000)});
+  const restrictions=async()=>(await h.f.db.prepare('SELECT * FROM surviving_opt_outs ORDER BY id').all()).results;
+  const retained=await restrictions();expect(retained).toHaveLength(1);
+  await eraseFixture(h.f,old!.id);
+  expect(await restrictions()).toEqual(retained);
+  expect(await h.f.db.prepare('SELECT id FROM contacts WHERE id=?').bind(old!.id).first()).toBeNull();
+  const sent=h.f.outbound.length;
+  expect((await call(email)).status).toBe(202);expect(h.f.outbound).toHaveLength(sent+1);
+  const fresh=await h.f.db.prepare('SELECT * FROM contacts WHERE email=?').bind(email).first<{id:string;email_status:string}>();
+  expect(fresh!.id).not.toBe(old!.id);expect(fresh!.email_status).toBe('unsubscribed');
+  const consent=await h.f.db.prepare('SELECT id,contact_id,confirmed_at FROM consent_evidence').all();
+  expect(consent.results).toEqual([expect.objectContaining({contact_id:fresh!.id,confirmed_at:null})]);
+  expect(await h.f.db.prepare('SELECT count(*) n FROM contact_history WHERE contact_id=?').bind(old!.id).first()).toEqual({n:0});
+  const newLink=confirmationUrl(h.f),pending=await snapshot(h.f.db);
+  expect((await app.request(oldLink,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(404);
+  expect(await snapshot(h.f.db)).toEqual(pending);
+  expect((await app.request(newLink)).status).toBe(200);expect(await snapshot(h.f.db)).toEqual(pending);
+  expect((await app.request(newLink,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(200);
+  expect(await h.f.db.prepare('SELECT email_status FROM contacts WHERE id=?').bind(fresh!.id).first()).toEqual({email_status:'subscribed'});
+  expect(await h.f.db.prepare('SELECT contact_id,evidence_id FROM audience_opt_out_supersessions').all().then(r=>r.results)).toEqual([{contact_id:fresh!.id,evidence_id:consent.results[0].id}]);
+  expect(await restrictions()).toEqual(retained);
+  expect(await h.f.db.prepare('SELECT count(*) n FROM audience_resubscriptions').first()).toEqual({n:0});
+  const confirmed=await snapshot(h.f.db);
+  expect((await app.request(newLink,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(410);
+  expect(await snapshot(h.f.db)).toEqual(confirmed);
+
+  // A second erased request expires on the persisted deadline, independent of UTC rollover.
+  await h.f.services.audienceService.recordChannelOptOut({contactId:fresh!.id,channel:'email',reason:'recipient-unsubscribe',occurredAt:new Date()});
+  await eraseFixture(h.f,fresh!.id);
+  const beforeExpiry=await restrictions();
+  expect((await call(email,'192.0.2.45')).status).toBe(202);
+  const expiredLink=confirmationUrl(h.f);
+  const expiry=await h.f.db.prepare('SELECT contact_id,expires_at FROM audience_resubscriptions').first<{contact_id:string;expires_at:number}>();
+  expect(expiry).toBeTruthy();
+  Date.now=()=>expiry!.expires_at+1;
+  expect((await app.request(expiredLink,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(404);
+  const {runLifecycleCron,consumeLifecycleQueue}=await import('../../src/core/features/lifecycle');
+  expect(await runLifecycleCron({},h.f.services.lifecycleRuntime)).toBe('blocked-erasure');
+  // Queue transport delivers only commands actually emitted by the production Cron and continuation.
+  for(let step=0;step<500;step++){
+   const job=h.f.jobs.shift();if(!job)break;
+   await consumeLifecycleQueue({messages:[{body:job,ack(){},retry(){throw new Error('Erasure continuation failed');}}]},h.f.services.lifecycleRuntime);
+  }
+  expect(await h.f.db.prepare('SELECT id FROM contacts WHERE id=?').bind(expiry!.contact_id).first()).toBeNull();
+  for(const table of ['consent_evidence','consent_confirmations','consent_capture_metadata','contact_history','audience_signup_requests','audience_resubscriptions'])expect(await h.f.db.prepare(`SELECT count(*) n FROM ${table}`).first(),table).toEqual({n:0});
+  expect(await restrictions()).toEqual(beforeExpiry);
+  Date.now=realNow;
+
+  // A prior installation may have the explicit unsubscribe state without a ledger row.
+  const legacyEmail=['synthetic-mango-433','example.test'].join('@');
+  const legacy=await h.f.services.audienceService.ensureContact({email:legacyEmail},new Date(realNow()-2000));
+  await h.f.db.batch([
+   h.f.db.prepare("UPDATE contacts SET email_status='unsubscribed' WHERE id=?").bind(legacy.contact.id),
+   h.f.db.prepare("UPDATE contact_email_addresses SET channel_status='unsubscribed' WHERE contact_id=?").bind(legacy.contact.id),
+  ]);
+  await eraseFixture(h.f,legacy.contact.id);
+  expect(await h.f.db.prepare("SELECT reason FROM surviving_opt_outs WHERE reason='erasure-unsubscribe'").all().then(r=>r.results)).toEqual([{reason:'erasure-unsubscribe'}]);
+  const beforeErasureConsent=h.f.outbound.length;
+  expect((await call(legacyEmail,'192.0.2.47')).status).toBe(202);expect(h.f.outbound).toHaveLength(beforeErasureConsent+1);
+  expect((await app.request(confirmationUrl(h.f),{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(200);
+
+  for(const cause of ['hard-bounce','complaint','recipient-unsubscribe']){
+   const blocked=['synthetic-mango-431-'+cause,'example.test'].join('@');
+   const {contact}=await h.f.services.audienceService.ensureContact({email:blocked},new Date());
+   await h.f.services.audienceService.recordProviderSuppression({destination:blocked,channel:'email',cause,occurredAt:new Date(),providerEventId:`integration:synthetic-mango-431:${cause}`});
+   await eraseFixture(h.f,contact.id);
+   const before=await snapshot(h.f.db),mail=h.f.outbound.length,blocks=await restrictions();
+   expect((await call(blocked,'192.0.2.46')).status).toBe(202);
+   expect(h.f.outbound).toHaveLength(mail);expect((await snapshot(h.f.db)).slice(0,6)).toEqual(before.slice(0,6));
+   expect(await restrictions()).toEqual(blocks);
+  }
+ }finally{Date.now=realNow;await blobs.dispose();await h.close();}
 });

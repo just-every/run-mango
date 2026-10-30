@@ -246,7 +246,6 @@ export function createAudienceService(
     ]);
     const address = contact && (await repository.listEmails(contact.id)).find(row=>row.email===destination);
     const blocks = suppressions.filter(row=>row.channel==='email');
-    if (!contact && optOuts.length) await ensureContact({email:destination},new Date());
     if (blocks.some(row=>!recipientSuppression(row)) || optOuts.some(row=>!recipientOptOut(row.reason))) return 'refused' as const;
     if (contact?.mergeLock || contact?.emailStatus==='subscribed' || address?.channelStatus==='subscribed') return 'refused' as const;
     if (contact?.emailStatus==='suppressed' || address?.channelStatus==='suppressed') {
@@ -386,7 +385,7 @@ export function createAudienceService(
     return { contact, evidence, confirmation: { token, expiresAt } };
   }
 
-  async function previewConsentConfirmation(token: string, now = new Date()) {
+  async function previewConsentConfirmation(token: string, now = new Date(Date.now())) {
     const verified = await requiredDependencies().publicTokens.verifyPublicToken(token, 'consent-confirmation');
     if (!verified) return { kind: 'invalid' as const };
     const confirmation = await repository.getConfirmationByTokenDigest(await sha256(token));
@@ -410,7 +409,7 @@ export function createAudienceService(
     return { kind: 'confirmation-required' as const };
   }
 
-  async function confirmConsent(token: string, now = new Date(), confirmationIp?: string) {
+  async function confirmConsent(token: string, now = new Date(Date.now()), confirmationIp?: string) {
     const verified = await requiredDependencies().publicTokens.verifyPublicToken(token, 'consent-confirmation');
     if (!verified) return { kind: 'invalid' as const };
     const confirmation = await repository.getConfirmationByTokenDigest(await sha256(token));

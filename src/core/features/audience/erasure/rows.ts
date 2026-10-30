@@ -14,6 +14,7 @@ export function rowChanges(table:ErasureTable,row:ErasureRow,scope:ErasureScope,
   if(direct&&(!table.mode||table.mode==='contact-data'))return 'delete';
   const changes:Record<string,unknown>={},needles=scopedNeedles(scope);
   for(const [column,value]of Object.entries(row))if(column!=='_cursor' && typeof value==='string'){const next=redactLiteral(value,needles);if(next!==value)changes[column]=next;}
+  if(direct&&table.mode==='suppression')Object.assign(changes,{contact_id:null,provider_event_id:String(row.provider_event_id??'').startsWith('integration:')?`integration:erased:${crypto.randomUUID()}`:null});
   if(direct&&table.mode==='audit'){
     changes.detail_json='{}';if(scope.ids.includes(String(row.entity_id)))changes.entity_id=reference;
     if(scope.ids.includes(String(row.actor_id)))changes.actor_id=reference;

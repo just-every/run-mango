@@ -1,6 +1,6 @@
 import {portableHash} from '../portable-hashes';
 import type {ErasureScope} from './types';
-export type ErasureTable={table:string;where?:(s:ErasureScope)=>{sql:string;params:unknown[]};literal?:boolean;mode?:'audit'|'recipient'|'redact'|'contact-data'|'invalidate-campaign'|'invalidate-recipient'};
+export type ErasureTable={table:string;where?:(s:ErasureScope)=>{sql:string;params:unknown[]};literal?:boolean;mode?:'audit'|'recipient'|'redact'|'contact-data'|'invalidate-campaign'|'invalidate-recipient'|'suppression'};
 const set=(column:string,values:string[])=>({sql:`${column} IN (SELECT value FROM json_each(?))`,params:[JSON.stringify(values)]});
 const contact=(table:string,column='contact_id'):ErasureTable=>({table,where:s=>set(column,s.ids)});
 const recipient=(table:string):ErasureTable=>({table,where:s=>({sql:'recipient_step_id IN (SELECT id FROM recipient_steps WHERE contact_id IN (SELECT value FROM json_each(?)))',params:[JSON.stringify(s.ids)]}),literal:true});
@@ -59,7 +59,7 @@ export const contactErasureTables:ErasureTable[]=[
   // Shared file names, capture descriptions and historical prose can name a
   // different erased contact. Keep surviving consent, redact only its literals.
   ...['audience_import_observations','consent_capture_metadata','consent_evidence','contact_history'].map(table=>({...contact(table),literal:true,mode:'contact-data' as const})),
-  {table:'contact_suppressions',where:s=>({sql:'contact_id IN (SELECT value FROM json_each(?)) OR destination_hash IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.hashes)]})},
+  {table:'contact_suppressions',mode:'suppression',where:s=>({sql:'contact_id IN (SELECT value FROM json_each(?)) OR destination_hash IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.hashes)]})},
   // An address's portable identity stays while an opt-out or detached suppression
   // survives, so that restriction still leaves through the export (import-opt-out-lines).
   // Match the portable value too: prior mappings may use another installation's
@@ -91,4 +91,7 @@ export const contactErasureTables:ErasureTable[]=[
   {...contact('incumbent_consent_links'),literal:true,mode:'contact-data'},
   {table:'flow_draft_revisions',literal:true,mode:'redact'},
   {table:'contact_property_definitions',literal:true,mode:'redact'},
+  contact('audience_resubscriptions'),
+  contact('audience_opt_out_supersessions'),
+  {table:'surviving_opt_outs',mode:'redact',where:s=>set('destination_hash',s.hashes)},
 ];
