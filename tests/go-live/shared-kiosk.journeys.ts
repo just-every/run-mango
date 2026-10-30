@@ -37,21 +37,26 @@ async function erasedResubscription(operator,browser,info) {
   try {
     expect((await site.settings({frequencyDisclosure:'Monthly newsletter',embedOrigins:[],kioskEnabled:false,kioskDeviceLabel:''})).status).toBe(200);
     await operator.context().addCookies([{name:site.cookie.split('=')[0],value:site.cookie.split('=')[1],url:site.runtime.url}]);
+    let confirmedId='',confirmedProfile;
     for(const [index,restriction] of [[1,'unsubscribe'],[2,'suppression'],[3,'expiry']] as const) {
-      const email=address(index),oldId=await subscribedContact(site,email),oldMessages=await messagesFor(site,email);
-      const staleLink=confirmationLink(site,oldMessages[0]);
+      const email=address(index),oldId=await subscribedContact(site,email);
+      const unsubscribe=await site.control('/_kiosk/unsubscribe',{contactId:oldId});
+      expect((await fetch(unsubscribe.url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
+      // Keep a genuinely unconsumed confirmation from before erasure, rather
+      // than relying only on replaying the original already-used signup link.
+      expect((await publicCapture(site,email,`198.51.100.${100+index}`)).status).toBe(202);
+      const staleLink=confirmationLink(site,(await messagesFor(site,email)).at(-1)!);
       if(restriction==='suppression')await site.control('/_kiosk/provider-fact',{email,kind:'hard'});
-      else {
-        const link=await site.control('/_kiosk/unsubscribe',{contactId:oldId});
-        expect((await fetch(link.url,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'unsubscribe=true'})).status).toBe(200);
-      }
       const oldProfile=await contactDetail(site,oldId);
       expect(oldProfile.history.length).toBeGreaterThan(0);expect(oldProfile.consent.length).toBeGreaterThan(0);
       const oldEvidence=oldProfile.consent.map(item=>item.id);
+      const beforeErasure=await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id');
       await erase(oldId);
       expect(await site.rows(`SELECT id FROM contacts WHERE id='${oldId}'`)).toEqual([]);
       const retained=await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id');
-      expect(retained.some(row=>row.reason===(restriction==='suppression'?'hard-bounce':'recipient-unsubscribe'))).toBe(true);
+      expect(retained).toEqual(expect.arrayContaining(beforeErasure));
+      expect(retained.some(row=>row.reason===(restriction==='suppression'?'hard':'recipient-unsubscribe'))).toBe(true);
+      expect(retained.some(row=>row.reason===(restriction==='suppression'?'erasure-suppression':'erasure-request'))).toBe(true);
       const before=(await messagesFor(site,email)).length;
       expect((await publicCapture(site,email,`192.0.2.${100+index}`)).status).toBe(202);
       const sent=await messagesFor(site,email);
@@ -60,6 +65,8 @@ async function erasedResubscription(operator,browser,info) {
         expect(await site.rows(`SELECT id FROM contacts WHERE email='${email}'`)).toEqual([]);
         expect(await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id')).toEqual(retained);
         expect((await confirm(staleLink)).status).toBe(404);
+        expect(await site.rows(`SELECT id FROM contacts WHERE email='${email}'`)).toEqual([]);
+        expect(await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id')).toEqual(retained);
         continue;
       }
       expect(sent).toHaveLength(before+1);
@@ -69,20 +76,32 @@ async function erasedResubscription(operator,browser,info) {
       expect(pending.consent).toHaveLength(1);expect(oldEvidence).not.toContain(pending.consent[0].id);
       expect(pending.consent[0]).toMatchObject({confirmedAt:null,captureMethod:'hosted-signup-form'});
       expect(pending.campaignHistory).toEqual([]);expect(pending.importObservations).toEqual([]);
+      expect(pending.profile).toMatchObject({properties:{},tags:[],mergedIdentities:[]});
       expect(await site.rows(`SELECT id FROM contact_history WHERE contact_id='${oldId}'`)).toEqual([]);
       const link=confirmationLink(site,sent.at(-1)!);
       if(restriction==='expiry') {
         const [{expires_at}]=await site.rows(`SELECT expires_at FROM audience_reconsent_contacts WHERE contact_id='${fresh.id}'`);
+        expect(await site.rows(`SELECT expires_at FROM consent_confirmations WHERE contact_id='${fresh.id}'`)).toEqual([{expires_at}]);
         const {now}=await site.control('/_kiosk/clock',{advanceMs:0});
-        // Advance to the persisted deadline, independent of a UTC date boundary.
-        await site.control('/_kiosk/clock',{advanceMs:expires_at-now+1});
+        // Drive cleanup on either side of the persisted deadline, independent
+        // of a UTC boundary. Restore the authentication clock before private
+        // reads: the owner's seven-day session is shorter than this request.
+        const beforeExpiry=expires_at-now-60000;
+        await site.control('/_kiosk/clock',{advanceMs:beforeExpiry});
         expect((await site.call('/subscribe/info')).status).toBe(200);
+        await site.control('/_kiosk/clock',{advanceMs:-beforeExpiry});
+        expect(await contactDetail(site,fresh.id)).toEqual(pending);
+        const afterExpiry=expires_at-now+1;
+        await site.control('/_kiosk/clock',{advanceMs:afterExpiry});
+        expect((await site.call('/subscribe/info')).status).toBe(200);
+        await site.control('/_kiosk/clock',{advanceMs:-afterExpiry});
         for(const table of ['contacts','consent_evidence','consent_confirmations','consent_capture_metadata','consent_handoff_claims','contact_history','contact_email_addresses','audience_reconsent_contacts']) {
           expect(await site.rows(`SELECT * FROM ${table} WHERE ${table==='contacts'?'id':'contact_id'}='${fresh.id}'`)).toEqual([]);
         }
         expect(await site.rows(`SELECT id FROM audience_signup_requests WHERE id='${pending.consent[0].id}'`)).toEqual([]);
         expect(await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id')).toEqual(retained);
         expect((await confirm(link)).status).toBe(404);
+        expect(await contactDetail(site,confirmedId)).toEqual(confirmedProfile);
         continue;
       }
       expect((await page.goto(link))!.status()).toBe(200);
@@ -90,14 +109,15 @@ async function erasedResubscription(operator,browser,info) {
       await page.getByRole('button',{name:'Confirm subscription',exact:true}).click();
       await expect(page.getByRole('heading',{name:'Subscription confirmed',exact:true})).toBeVisible();await proof('confirmed');
       const freshProfile=await contactDetail(site,fresh.id);
+      confirmedId=fresh.id;confirmedProfile=freshProfile;
       expect(freshProfile.contact.emailStatus).toBe('subscribed');expect(freshProfile.consent).toHaveLength(1);
       expect(freshProfile.consent[0].confirmedAt).not.toBeNull();
       expect(freshProfile.campaignHistory).toEqual([]);expect(freshProfile.importObservations).toEqual([]);
       expect(freshProfile.history.every(item=>item.occurredAt>=pending.consent[0].occurredAt)).toBe(true);
       expect(freshProfile.history.some(item=>item.kind==='opt-out'||item.kind==='suppression')).toBe(false);
       expect(await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id')).toEqual(retained);
-      const markers=await site.rows(`SELECT s.opt_out_id,s.evidence_id FROM audience_opt_out_supersessions s JOIN surviving_opt_outs o ON o.id=s.opt_out_id WHERE s.evidence_id='${pending.consent[0].id}'`);
-      expect(markers).toEqual(retained.filter(row=>row.reason==='recipient-unsubscribe').map(row=>({opt_out_id:row.id,evidence_id:pending.consent[0].id})));
+      const markers=await site.rows(`SELECT s.opt_out_id,s.evidence_id FROM audience_opt_out_supersessions s JOIN surviving_opt_outs o ON o.id=s.opt_out_id WHERE s.evidence_id='${pending.consent[0].id}' ORDER BY s.opt_out_id`);
+      expect(markers).toEqual(retained.filter(row=>['recipient-unsubscribe','erasure-request'].includes(row.reason)).map(row=>({opt_out_id:row.id,evidence_id:pending.consent[0].id})));
       expect((await confirm(staleLink)).status).toBe(404);expect((await confirm(link)).status).toBe(410);
       expect(await contactDetail(site,fresh.id)).toEqual(freshProfile);
       await operator.goto(`${site.runtime.url}/app/audience/${fresh.id}`);

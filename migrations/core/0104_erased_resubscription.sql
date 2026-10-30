@@ -22,3 +22,7 @@ BEGIN SELECT RAISE(ABORT,'CONTACT_ERASURE_PENDING'); END;
 CREATE TRIGGER audience_supersessions_pending_update BEFORE UPDATE ON audience_opt_out_supersessions
 WHEN EXISTS(SELECT 1 FROM audience_erasures WHERE state='pending') AND NOT EXISTS(SELECT 1 FROM audience_erasure_guard WHERE value=1)
 BEGIN SELECT RAISE(ABORT,'CONTACT_ERASURE_PENDING'); END;
+-- A later opt-out is current authority, never a superseded historical request.
+CREATE TRIGGER audience_supersession_new_opt_out AFTER UPDATE OF occurred_at ON surviving_opt_outs
+WHEN NEW.occurred_at>OLD.occurred_at
+BEGIN DELETE FROM audience_opt_out_supersessions WHERE opt_out_id=NEW.id; END;

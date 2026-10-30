@@ -9,8 +9,9 @@ import { createAudienceEligibility, selectedChannel } from './eligibility';
 import { destinationForChannel, canonicalEmail, canonicalPhone } from './identity';
 import type { createAudienceRepository } from './repository';
 
-const dayMs = 24 * 60 * 60 * 1000;
 import {confirmationLifetimeMs} from './resubscription-expiry';
+
+const dayMs = 24 * 60 * 60 * 1000;
 const dormancyMs = 365 * dayMs;
 const publicTokenAllowance = 10;
 

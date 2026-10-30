@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 8 | 211 | 88 | 307 |
+| Core | 9 | 210 | 88 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 8 | 211 | 97 | 316 |
+| Full target | 9 | 210 | 97 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -2195,7 +2195,7 @@ Core · target · **partial** · From CONT-027 · Rules D-2
 
 #### CONT-043 — Resubscription after erasure
 
-Core · target · **partial** · From CONT-027 · Rules D-2
+Core · target · **done** · From CONT-027 · Rules D-2
 
 **Requirement.** An erased person may give new consent without reviving their former history.
 
@@ -2206,8 +2206,8 @@ Core · target · **partial** · From CONT-027 · Rules D-2
 4. If no confirmation arrives before expiry, the recreated contact and request are removed and the surviving opt-out is unchanged.
 5. The erased-contact journey reads both the newly subscribed empty-history profile and expired-request cleanup.
 
-**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` — “[FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation” · `tests/audience-import/signup-security.spec.ts`
-**Gap.** Original restriction reasons, separate supersession audit and recreated-request expiry are implemented. Complete erased-contact journey proof is in progress; ambiguous legacy erasure-only restrictions remain refused.
+**Evidence.** `tests/go-live/shared-kiosk.journeys.ts` — “[FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation” proves acceptance 1–5: preserved reasons, fresh request and mail, confirmed empty prior history with supersession audit, and deadline cleanup without changing opt-outs. `tests/audience-import/signup-security.spec.ts` — “security: public capture preserves subscribed, suppressed and erased-optout states without mail or evidence” and “[CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot” prove legacy and suppression refusal, including owner-labelled restrictions after erasure.
+**Gap.** None.
 
 ### Target: Audiences
 

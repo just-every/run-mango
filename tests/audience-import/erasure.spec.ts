@@ -55,7 +55,7 @@ test('CONT-013 public erasure resumes, withdraws complete source custody, redact
   expect((await f.call('/api/audience/import-preview',{cookie,method:'POST',body:input})).status).toBe(503);
   // A distinct request resumes persisted progress; no caller-local scope is needed.
   expect((await(await f.call(`/api/audience/erasures/${pending.reference}`,{cookie})).json()).receipt.state).toBe('pending');
-  const receipt=await eraseHttp(f,cookie,contact.id);expect(receipt.state).toBe('complete');expect(receipt.reference).toBe(pending.reference);expect(receipt.retainedChannels).toEqual(['email']);expect((await f.db.prepare('SELECT count(*) AS n FROM surviving_opt_outs').first()).n).toBe(3);
+  const receipt=await eraseHttp(f,cookie,contact.id);expect(receipt.state).toBe('complete');expect(receipt.reference).toBe(pending.reference);expect(receipt.retainedChannels).toEqual(['email']);expect((await f.db.prepare('SELECT count(*) AS n FROM surviving_opt_outs').first()).n).toBe(5);expect((await f.db.prepare("SELECT count(*) AS n FROM surviving_opt_outs WHERE reason GLOB 'import-unsubscribed*'").first()).n).toBe(3);
   await f.db.prepare("UPDATE test_barriers SET released=1 WHERE id='erasure-preview-race'").run();
   expect((await concurrent).status).toBeGreaterThanOrEqual(400);
   const tables=(await f.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name <> '_cf_METADATA'").all()).results;

@@ -39,6 +39,7 @@ test('security: public capture preserves subscribed, suppressed and erased-optou
     expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBeGreaterThan(0);
     await eraseFixture(h.f,contact!.id);
     // An already-ambiguous legacy marker must not acquire new recipient authority.
+    await h.f.db.prepare("DELETE FROM surviving_opt_outs WHERE reason<>'erasure-request'").run();
     await h.f.db.prepare("UPDATE surviving_opt_outs SET reason='erasure-opt-out'").run();
     expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBe(0);
   }
@@ -170,6 +171,15 @@ test('[CONT-027] a recipient-only unsubscribe suppression can confirm again whil
   await h.f.services.audienceService.recordProviderSuppression({destination:'owner-labelled-unsubscribe@example.test',channel:'email',cause:'recipient-unsubscribe',occurredAt:new Date(),providerEventId:'integration:test-owner:unsubscribe'});
   expect(await (await call('owner-labelled-unsubscribe@example.test','198.51.100.20')).json()).toEqual({status:'confirmation-required'});
   expect(h.f.outbound).toHaveLength(sent+1);
+  const ownerDestination=['owner-labelled-unsubscribe','example.test'].join(String.fromCharCode(64));
+  const {contact:ownerBlocked}=await h.f.services.audienceService.ensureContact({email:ownerDestination},new Date());
+  await eraseFixture(h.f,ownerBlocked.id);
+  const restrictionRows=await h.f.db.prepare('SELECT * FROM surviving_opt_outs ORDER BY id').all();
+  expect(restrictionRows.results).toContainEqual(expect.objectContaining({reason:'erasure-suppression'}));
+  expect((await call(ownerDestination,'198.51.100.21')).status).toBe(202);
+  expect(h.f.outbound).toHaveLength(sent+1);
+  expect(await h.f.db.prepare('SELECT id FROM contacts WHERE email=?').bind(ownerDestination).first()).toBeNull();
+  expect((await h.f.db.prepare('SELECT * FROM surviving_opt_outs ORDER BY id').all()).results).toEqual(restrictionRows.results);
  }finally{await h.close();}
 });
 

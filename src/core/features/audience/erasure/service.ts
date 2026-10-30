@@ -79,9 +79,9 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
             AND NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE destination_hash=? AND channel=? AND ${recipientSuppressionSql}))`;
         statements.push(db.prepare(`INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at)
           SELECT ?,?,?,CASE WHEN ${unsafe} THEN 'erasure-suppression' ELSE 'erasure-request' END,?,?,?
-          WHERE ${admitted} AND (NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel=?) OR (${unsafe}))
+          WHERE ${admitted}
           ON CONFLICT(destination_hash,channel,reason) DO NOTHING`)
-          .bind(crypto.randomUUID(),hash,channel,hash,channel,id,hash,channel,now,now,now,reference,hash,channel,hash,channel,id,hash,channel));
+          .bind(crypto.randomUUID(),hash,channel,hash,channel,id,hash,channel,now,now,now,reference));
         // The block leaves an export by the address's portable identity only (import-opt-out-lines).
         statements.push(recordPortableHash(db,hash,destination));
       }
