@@ -1,5 +1,6 @@
 const width = 1440;
 import {sendingConnectionJourney} from './sending-connection-journey';
+import {journeySteps} from './journey-steps';
 import {test,expect} from '@playwright/test';
 import {mkdtemp,rm} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -199,51 +200,78 @@ export const walk2 = async({page})=>{
 };
 export const walk3 = async({page},info)=>{
   await sendingConnectionJourney(page,info);
-  const edge=await providerEdge(),signer=eventSigner(),site=await installation(edge,signer);
+  let site:Installation|undefined;
+  const step=journeySteps('Account restrictions/reputation (walk3)',()=>site);
+  const edge=await step('provider setup','walk3',()=>providerEdge()),signer=eventSigner();
   try {
-    const cookie=await setup(site),email='account-hold@example.test';
-    await confirmedContact(site,edge,cookie,email,'Account reader');
-    const bouncedEmail='account-bounce@example.test';await confirmedContact(site,edge,cookie,bouncedEmail,'Bounce reader');
-    const time=new Date(Date.now()+12000),campaign=await draftCampaign(site,cookie,'Held account',[email],time);
-    await approve(site,cookie,campaign);
-    const contender=await draftCampaign(site,cookie,'Approval held',[bouncedEmail],new Date(Date.now()-1000));
-    const [recipient]=await site.rows(`SELECT id FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`);
-    await barrier(site,'handoff',recipient.id);await due(time);await site.control('/_golive/cron');await waiting(site);
-    const clock=await site.control('/_golive/clock'),occurred=Math.floor(clock.now/1000);
+    site=await step('installation','walk3',()=>installation(edge,signer));
+    const current=site;
+    const {cookie,email,bouncedEmail,time,campaign,contender,recipient}=await step('prepare account-hold campaigns','walk3',async()=>{
+    const cookie=await setup(current),email='account-hold@example.test';
+    await confirmedContact(current,edge,cookie,email,'Account reader');
+    const bouncedEmail='account-bounce@example.test';await confirmedContact(current,edge,cookie,bouncedEmail,'Bounce reader');
+    const time=new Date(Date.now()+12000),campaign=await draftCampaign(current,cookie,'Held account',[email],time);
+    await approve(current,cookie,campaign);
+    const contender=await draftCampaign(current,cookie,'Approval held',[bouncedEmail],new Date(Date.now()-1000));
+    const [recipient]=await current.rows(`SELECT id FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`);
+    return {cookie,email,bouncedEmail,time,campaign,contender,recipient};
+    });
+    await step('wait at queued handoff barrier','walk3',async()=>{
+    await barrier(current,'handoff',recipient.id);await due(time);await current.control('/_golive/cron');await waiting(current);
+    });
+    const {occurred,post}=await step('suspend account and refuse approval','walk3',async()=>{
+    const clock=await current.control('/_golive/clock'),occurred=Math.floor(clock.now/1000);
     const post=async(type:string,timestamp:number,id:string)=>{
       const body=Buffer.from(JSON.stringify([{event:'account_status_change',type,timestamp,sg_event_id:id}]));
-      const now=await site.control('/_golive/clock');
-      return signedPost(site,'/webhooks/mail/sendgrid',body,signer.headers(body,String(Math.floor(now.now/1000))));
+      const now=await current.control('/_golive/clock');
+      return signedPost(current,'/webhooks/mail/sendgrid',body,signer.headers(body,String(Math.floor(now.now/1000))));
     };
     expect(await post('compliance_suspend',occurred,'account-hold-event')).toBe(204);
-    expect((await site.call(`/api/campaigns/${contender.campaignId}/approve`,{method:'POST',cookie,body:{revisionId:contender.revisionId,idempotencyKey:`approve-${contender.revisionId}`}})).status).toBe(409);
-    await release(site);
-    await expect.poll(async()=> (await site.rows(`SELECT lease_token FROM recipient_steps WHERE id='${recipient.id}'`))[0].lease_token,{timeout:60000}).toBeNull();
-    expect(await site.rows(`SELECT attempt_count,handoff_started_at FROM recipient_steps WHERE id='${recipient.id}'`)).toEqual([{attempt_count:0,handoff_started_at:null}]);
+    expect((await current.call(`/api/campaigns/${contender.campaignId}/approve`,{method:'POST',cookie,body:{revisionId:contender.revisionId,idempotencyKey:`approve-${contender.revisionId}`}})).status).toBe(409);
+    return {occurred,post};
+    });
+    await step('release restricted handoff and settle lease','walk3',async()=>{
+    await release(current);
+    await expect.poll(async()=> (await current.rows(`SELECT lease_token FROM recipient_steps WHERE id='${recipient.id}'`))[0].lease_token,{timeout:60000}).toBeNull();
+    expect(await current.rows(`SELECT attempt_count,handoff_started_at FROM recipient_steps WHERE id='${recipient.id}'`)).toEqual([{attempt_count:0,handoff_started_at:null}]);
+    });
+    await step('reject stale restoration and refresh account','walk3',async()=>{
     expect(await post('reactivate',occurred-1,'old-restoration')).toBe(204);
-    await site.control('/_golive/clock',{advanceMs:15*60000+1000});await site.control('/_golive/cron');
+    await current.control('/_golive/clock',{advanceMs:15*60000+1000});await current.control('/_golive/cron');
     expect(edge.behavior.requests.filter(r=>r.path==='/v3/scopes').length).toBeGreaterThan(1);
-    expect(await site.rows("SELECT held FROM provider_holds WHERE provider='sendgrid' AND scope='account' AND reason='compliance'")).toEqual([{held:1}]);
+    expect(await current.rows("SELECT held FROM provider_holds WHERE provider='sendgrid' AND scope='account' AND reason='compliance'")).toEqual([{held:1}]);
     expect(edge.sends.filter(s=>s.to===email&&s.body.headers?.['List-Unsubscribe'])).toEqual([]);
+    });
+    await step('restore account and deliver held campaign','walk3',async()=>{
     expect(await post('reactivate',occurred+1,'new-restoration')).toBe(204);
     expect(await post('compliance_suspend',occurred,'account-hold-event')).toBe(204);
-    expect(await site.rows("SELECT held FROM provider_holds WHERE provider='sendgrid' AND scope='account' AND reason='compliance'")).toEqual([{held:0}]);
-    await site.control('/_golive/clock',{advanceMs:60001});await site.control('/_golive/cron');
+    expect(await current.rows("SELECT held FROM provider_holds WHERE provider='sendgrid' AND scope='account' AND reason='compliance'")).toEqual([{held:0}]);
+    await current.control('/_golive/clock',{advanceMs:60001});await current.control('/_golive/cron');
     await expect.poll(()=>Promise.resolve(edge.sends.filter(s=>s.to===email&&s.body.headers?.['List-Unsubscribe']).length),{timeout:60000}).toBe(1);
-    await approve(site,cookie,contender);
+    });
+    await step('approve and deliver contender','walk3',async()=>{
+    await approve(current,cookie,contender);
     await expect.poll(()=>Promise.resolve(edge.sends.filter(s=>s.to===bouncedEmail&&s.body.headers?.['List-Unsubscribe']).length),{timeout:60000}).toBe(1);
-    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
-    await page.goto(`${site.runtime.url}/app/insights`);
+    });
+    const reputation=await step('open reputation before signed facts','walk3',async()=>{
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:current.runtime.url}]);
+    await page.goto(`${current.runtime.url}/app/insights`);
     const reputation=page.getByRole('row').filter({has:page.getByRole('rowheader',{name:'example.test (email)',exact:true})});
     await expect(reputation.locator('td').nth(1)).toHaveText(/^0 \/ 0 /);
     await expect(reputation.locator('td').nth(2)).toHaveText(/^0 \/ 2 /);
+    return reputation;
+    });
+    const {sent,eventClock,signedFacts}=await step('apply delivery and bounce facts','walk3',async()=>{
     const sent=(to:string)=>edge.sends.find(s=>s.to===to&&s.body.headers?.['List-Unsubscribe'])!;
-    const eventClock=await site.control('/_golive/clock',{advanceMs:2000});
-    const signedFacts=async(items:unknown[])=>{const raw=Buffer.from(JSON.stringify(items));return signedPost(site,'/webhooks/mail/sendgrid',raw,signer.headers(raw,String(Math.floor(eventClock.now/1000))));};
+    const eventClock=await current.control('/_golive/clock',{advanceMs:2000});
+    const signedFacts=async(items:unknown[])=>{const raw=Buffer.from(JSON.stringify(items));return signedPost(current,'/webhooks/mail/sendgrid',raw,signer.headers(raw,String(Math.floor(eventClock.now/1000))));};
     expect(await signedFacts([event('delivered',email,eventClock.now-1000,sent(email).messageId,sent(email).body.personalizations[0].custom_args),
       event('bounce',bouncedEmail,eventClock.now-1000,sent(bouncedEmail).messageId,sent(bouncedEmail).body.personalizations[0].custom_args,{type:'bounce',bounce_classification:'Invalid Address'})])).toBe(204);
     await expect(reputation.locator('td').nth(1)).toHaveText(/^0 \/ 1 /,{timeout:30000});
     await expect(reputation.locator('td').nth(2)).toHaveText(/^1 \/ 2 /,{timeout:30000});
+    return {sent,eventClock,signedFacts};
+    });
+    await step('apply late complaint and show rates','walk3',async()=>{
     // A late complaint updates the already completed marketing history, while
     // the accepted diagnostic/confirmation messages never enter denominators.
     expect(await signedFacts([event('spamreport',email,eventClock.now-500,sent(email).messageId,sent(email).body.personalizations[0].custom_args)])).toBe(204);
@@ -252,28 +280,40 @@ export const walk3 = async({page},info)=>{
     await page.screenshot({path:test.info().outputPath('email-domain-rates-desktop.png'),fullPage:true});
     const window=page.locator('section').filter({has:reputation}).locator('time');
     await expect(window).toBeVisible();expect(Date.parse((await window.getAttribute('datetime'))!)).toBeLessThan(eventClock.now);
+    });
+    await step('facts beyond reporting window','walk3',async()=>{
     // Fresh signed facts can arrive after the original attempts have left the
     // configured reporting window. Keep the actual recipient/message identities.
-    const reporting=await json(await site.call('/api/insights/deliverability',{cookie}),200);
+    const reporting=await json(await current.call('/api/insights/deliverability',{cookie}),200);
     const sendsBeforeLateFacts=edge.sends.length;
-    const lateClock=await site.control('/_golive/clock',{advanceMs:reporting.windowDays*86400000+2000});
-    const renewedCookie=await site.open();
-    await page.context().addCookies([{name:renewedCookie.split('=')[0],value:renewedCookie.split('=')[1],url:site.runtime.url}]);
+    const lateClock=await current.control('/_golive/clock',{advanceMs:reporting.windowDays*86400000+2000});
+    const renewedCookie=await current.open();
+    await page.context().addCookies([{name:renewedCookie.split('=')[0],value:renewedCookie.split('=')[1],url:current.runtime.url}]);
     const lateFacts=Buffer.from(JSON.stringify([
       event('delivered',email,lateClock.now-1000,sent(email).messageId,sent(email).body.personalizations[0].custom_args),
       event('bounce',bouncedEmail,lateClock.now-1000,sent(bouncedEmail).messageId,sent(bouncedEmail).body.personalizations[0].custom_args,{type:'bounce',bounce_classification:'Invalid Address'}),
     ]));
-    expect(await signedPost(site,'/webhooks/mail/sendgrid',lateFacts,signer.headers(lateFacts,String(Math.floor(lateClock.now/1000))))).toBe(204);
-    const lateReporting=await json(await site.call('/api/insights/deliverability',{cookie:renewedCookie}),200);
+    expect(await signedPost(current,'/webhooks/mail/sendgrid',lateFacts,signer.headers(lateFacts,String(Math.floor(lateClock.now/1000))))).toBe(204);
+    const lateReporting=await json(await current.call('/api/insights/deliverability',{cookie:renewedCookie}),200);
     expect(lateReporting.senders.find((row:any)=>row.channel==='email'&&row.sender==='example.test')).toMatchObject({
       delivered:1,complained:0,hardBounced:1,attempted:0,complaintRate:0,hardBounceRate:null,
     });
-    await page.goto(`${site.runtime.url}/app/insights`);
+    await page.goto(`${current.runtime.url}/app/insights`);
     await expect(reputation.locator('td').nth(1)).toHaveText(/^0 \/ 1 /,{timeout:30000});
     await expect(reputation.locator('td').nth(2)).toHaveText(/^1 \/ 0 /,{timeout:30000});
     await expect(reputation.locator('td').nth(2)).not.toHaveText(/%/);
     await page.screenshot({path:test.info().outputPath('email-late-facts-unavailable-rate-desktop.png'),fullPage:true});
     expect(edge.sends).toHaveLength(sendsBeforeLateFacts);
     expect(edge.unexpected).toEqual([]);
-  } finally {await page.close();await release(site).catch(()=>{});await site.runtime.close();await edge.close();}
+    });
+  } finally {
+    try {await step('close page','walk3',()=>page.close(),10_000);}
+    finally {
+      try {if(site)await step('release barrier','walk3',()=>release(site!),10_000);}
+      finally {
+        try {if(site)await step('close installation','walk3',()=>site!.runtime.close(),10_000);}
+        finally {await step('close provider','walk3',()=>edge.close(),10_000);}
+      }
+    }
+  }
 };
