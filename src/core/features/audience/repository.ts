@@ -452,6 +452,7 @@ export function createAudienceRepository(database: Database) {
         WHERE id IN (${survivorContactId}, ${mergedContactId})
           AND (SELECT count(*) FROM contacts WHERE id IN (${survivorContactId}, ${mergedContactId})) = 2
           AND merge_lock IS NULL
+          AND NOT EXISTS(SELECT 1 FROM audience_resubscriptions WHERE contact_id IN (${survivorContactId},${mergedContactId}))
           AND NOT EXISTS (
             SELECT 1 FROM contacts
             WHERE id IN (${survivorContactId}, ${mergedContactId}) AND merge_lock IS NOT NULL
@@ -520,7 +521,7 @@ export function createAudienceRepository(database: Database) {
         database.$client.prepare('UPDATE move_in_contact_history SET contact_id=? WHERE contact_id=?').bind(survivorContactId,mergedContactId),
       ]);
       await Promise.all([
-        database.$client.batch(['incumbent_consent_links','sms_frequency_claims','sms_service_messages','sms_inbound_receipts','consent_handoff_claims','imported_engagement_facts'].map(table=>
+        database.$client.batch(['incumbent_consent_links','sms_frequency_claims','sms_service_messages','sms_inbound_receipts','consent_handoff_claims','imported_engagement_facts','audience_opt_out_supersessions'].map(table=>
           database.$client.prepare(`UPDATE ${table} SET contact_id=? WHERE contact_id=?`).bind(survivorContactId,mergedContactId))),
         database.update(contactImportRows).set({contactId:survivorContactId}).where(eq(contactImportRows.contactId,mergedContactId)),
         database.update(contactBounceFacts).set({contactId:survivorContactId}).where(eq(contactBounceFacts.contactId,mergedContactId)),

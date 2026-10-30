@@ -1621,6 +1621,10 @@
       "sha256": "5bc9ce76e1efac1985f0826a2863ec939dad9aa55e8bd0150d9ae2b1c9a6d129",
       "executable": false
     },
+    "migrations/core/0104_erased_resubscription.sql": {
+      "sha256": "9998ca850018cad51230dc04270da9fcc6a6bff878c4842a1e8038e63a3efb28",
+      "executable": false
+    },
     "OPERATIONS.json": {
       "sha256": "8029760365a7124b086861181227d902195bc4eea38b25308fffa691d834f1ed",
       "executable": false
@@ -3145,6 +3149,10 @@
       "sha256": "7a716c6f97e61f4a6b2e56c7fc184329ee1483a70326646fab46da9d241ae444",
       "executable": false
     },
+    "src/core/features/audience/erasure/expired-resubscriptions.ts": {
+      "sha256": "c27103b8604d499d3afbef9e22b2185a79dd26cdcc322e7f3976e7f81c89e844",
+      "executable": false
+    },
     "src/core/features/audience/erasure/free-text-admission.ts": {
       "sha256": "53c140d0cf2434d0e38c09b290705b44646673000a1361395a768e70c991c9d5",
       "executable": false
@@ -3167,6 +3175,10 @@
     },
     "src/core/features/audience/erasure/portability.ts": {
       "sha256": "c917c0d7b8c9d8cc4f1b59a1c69d4cd22e4281c0cccb3cf126a7b22ac6148d4f",
+      "executable": false
+    },
+    "src/core/features/audience/erasure/restrictions.ts": {
+      "sha256": "78e2ac23399ac31c87322fa215376858f3891a1b584142d2b450bb8868a20c25",
       "executable": false
     },
     "src/core/features/audience/erasure/rows.ts": {
@@ -3422,7 +3434,7 @@
       "executable": false
     },
     "src/core/features/audience/repository.ts": {
-      "sha256": "f1740009eaf17ea3aedc8a32d2accc24a050d31e29d1059e24e5e14530ac3711",
+      "sha256": "4ae8c347d6b7c27abd5da1a493200acea5eebf31be7b5b22bfa9686a231b3650",
       "executable": false
     },
     "src/core/features/audience/routes.ts": {
@@ -3454,7 +3466,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "011e1ddf0f8579ee939759e29e11ff32cf254a8fde45fe6f0b6746321f65a1ac",
+      "sha256": "c329d471ba58d30c036e1834f8f0539a3369c819923210d8acdee3d44abbbd02",
       "executable": false
     },
     "src/core/features/audience/signup-admission.ts": {
@@ -8998,7 +9010,7 @@
       "executable": false
     },
     "tests/go-live/shared-kiosk.journeys.ts": {
-      "sha256": "f4182b77f67348fe70362196ccb8d1499e2c3292b3eca4e3ef0374b1f378975c",
+      "sha256": "fea5fc1f03f19d99d229bb5497d991a81e5539fad8135e30ebd75547def671ff",
       "executable": false
     },
     "tests/go-live/signup-capacity-journey.ts": {

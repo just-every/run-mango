@@ -7,7 +7,8 @@ import {createContactErasure,ErasureAdmissionConflict} from './service';
 export async function beginExpiredResubscription(platform:Platform,now=Date.now()){
   const db=platform.database.$client;
   const due=await db.prepare(`SELECT contact_id FROM audience_resubscriptions
-    WHERE expires_at<=? AND NOT EXISTS(SELECT 1 FROM audience_erasures WHERE state='pending')
+    WHERE expires_at<=? AND EXISTS(SELECT 1 FROM contacts WHERE id=contact_id)
+    AND NOT EXISTS(SELECT 1 FROM audience_erasures WHERE state='pending')
     ORDER BY expires_at LIMIT 1`).bind(now).first<{contact_id:string}>();
   if(!due)return;
   const predicate={sql:`EXISTS(SELECT 1 FROM audience_resubscriptions WHERE contact_id=? AND expires_at<=?)

@@ -571,7 +571,7 @@ export function createAudienceService(
     const now = new Date();
     const mergeLock = ulid(now.getTime());
     if (!await repository.acquireMergeLocks(survivorContactId, mergedContactId, mergeLock, now)) {
-      throw new Error('One of these contacts is already being merged; retry after that merge completes.');
+      throw new Error('A contact is being merged or awaits confirmation after erasure. Retry after that operation completes.');
     }
     try {
       const [survivor, merged] = await Promise.all([repository.getContact(survivorContactId), repository.getContact(mergedContactId)]);

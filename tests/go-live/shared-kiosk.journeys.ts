@@ -60,6 +60,14 @@ async function erasedContactJourney({page,browser},info){
     await signup.getByRole('button',{name:'Request confirmation',exact:true}).click();expect((await posting).status()).toBe(202);
     const fresh=(await site.rows(`SELECT id,email_status FROM contacts WHERE email='${email}'`))[0];
     expect(fresh.id).not.toBe(oldId);expect(fresh.email_status).toBe('unsubscribed');
+    const otherId=await subscribedContact(site,address('synthetic-mango-434'));
+    const otherBefore=await contactDetail(site,otherId),freshBefore=await contactDetail(site,fresh.id);
+    for(const [survivorContactId,mergedContactId] of [[otherId,fresh.id],[fresh.id,otherId]]){
+      const merged=await fetch(`${site.runtime.url}/api/contacts/merge`,{method:'POST',headers:{Cookie:site.cookie,Origin:site.runtime.url,'Content-Type':'application/json'},body:JSON.stringify({survivorContactId,mergedContactId})});
+      expect(merged.status).toBe(409);
+      expect(await contactDetail(site,otherId)).toEqual(otherBefore);expect(await contactDetail(site,fresh.id)).toEqual(freshBefore);
+    }
+    await erase(otherId);
     const pending=await contactDetail(site,fresh.id);
     expect(pending.consent).toHaveLength(1);expect(pending.consent[0]).toMatchObject({confirmedAt:null,captureMethod:'hosted-signup-form'});
     expect(pending.campaignHistory).toEqual([]);expect(pending.importObservations).toEqual([]);
