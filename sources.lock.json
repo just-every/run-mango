@@ -8742,7 +8742,7 @@
       "executable": false
     },
     "tests/go-live/chosen-catalog-journey.ts": {
-      "sha256": "83bef5a029a25a08a80c189773510f6ff0bd10d5012797f32e894677e57dbf3a",
+      "sha256": "74a337dec0ab0d4bea836aca82c94d587cb2ba7ae0421bad62d22c0100333642",
       "executable": false
     },
     "tests/go-live/clock.ts": {
@@ -8806,7 +8806,7 @@
       "executable": false
     },
     "tests/go-live/delivery.flow.ts": {
-      "sha256": "2f706542c7621bd0fa858e37caa12237cc16c32f1e5187e516af2532fb7aba10",
+      "sha256": "21cc8118948c1e62501227f1e00afc3bd867f30af344881311bfb60e409c2f4a",
       "executable": false
     },
     "tests/go-live/delivery.journeys.ts": {
@@ -8847,6 +8847,10 @@
     },
     "tests/go-live/incumbent-image-journey.ts": {
       "sha256": "c2a5a03b71740472c8f742544181cf9356e4c52f3447e02308773e946de360e9",
+      "executable": false
+    },
+    "tests/go-live/journey-steps.ts": {
+      "sha256": "958f0330dda1ca5aea6dbd28be5f270faabef982c4d2dea764a218421a246089",
       "executable": false
     },
     "tests/go-live/kiosk-harness.ts": {
@@ -9010,7 +9014,7 @@
       "executable": false
     },
     "tests/go-live/sending-connection-journey.ts": {
-      "sha256": "23826281c0d5f4636659af28757b4c9faa5188d419b1f7c96f18d74f8e05fdce",
+      "sha256": "726b723f30138e4f6443014e98c1650914739d64c54399c86975e699ad5b5ec2",
       "executable": false
     },
     "tests/go-live/shared-kiosk.flow.ts": {
