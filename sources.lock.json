@@ -8806,7 +8806,7 @@
       "executable": false
     },
     "tests/go-live/delivery.flow.ts": {
-      "sha256": "2f706542c7621bd0fa858e37caa12237cc16c32f1e5187e516af2532fb7aba10",
+      "sha256": "a0f932c5f44868c67b05b6d2699fc0da73ffe729b37a2124220194d742b8b0d7",
       "executable": false
     },
     "tests/go-live/delivery.journeys.ts": {
@@ -8818,7 +8818,7 @@
       "executable": false
     },
     "tests/go-live/edge.ts": {
-      "sha256": "e474fc3006ebce77a06210f691ec4ddf04894b0006562c870f660fd6b40549cd",
+      "sha256": "2daff28da4776154df16bcb71668ddb348f3afa66672350e0d8c75aa8b5d8270",
       "executable": false
     },
     "tests/go-live/email-size-imports.ts": {
@@ -8883,6 +8883,10 @@
     },
     "tests/go-live/manual-entry-journey.ts": {
       "sha256": "b180a937f7bb6d06d9c3e61afcd9a18097d805649f268736378c1e0f8bc0f3f7",
+      "executable": false
+    },
+    "tests/go-live/marketing-admission.ts": {
+      "sha256": "e882e1bef4fa03f9d03a77751012562a64e6dfbc3761cdc984652948b3fad704",
       "executable": false
     },
     "tests/go-live/multistep.flow.ts": {
@@ -9054,7 +9058,7 @@
       "executable": false
     },
     "tests/go-live/source-csv-journey.ts": {
-      "sha256": "b0aab1ae771ecdd9d6169d0b191990fa56b2dad5d3b4b687a7461feb184cc436",
+      "sha256": "8fa58824b285e5e566b484a39fc5770b4a1fdd7e57e16e41e3f2ef6d9b6652d1",
       "executable": false
     },
     "tests/go-live/source-draft-journey.ts": {

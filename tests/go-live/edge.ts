@@ -1,4 +1,5 @@
 import {providerBehavior} from './provider-behavior';
+import {marketingAdmission} from './marketing-admission';
 import {smsProviderEdge} from './sms-provider-edge';
 import {resendProviderEdge} from './resend-provider-edge';
 import { generateKeyPairSync, randomBytes } from 'node:crypto';
@@ -17,6 +18,7 @@ const dkimKey = () => generateKeyPairSync('rsa', { modulusLength: 2048 }).public
 
 export async function providerEdge(options:{incumbent?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>;commerce?:(request:Record<string,unknown>)=>unknown; links?:Record<string,{status?:number;location?:string}>; woo?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>;sending?:(url:URL,request:IncomingMessage,response:ServerResponse)=>Promise<boolean>}={}) {
   const behavior=providerBehavior();
+  const admission=marketingAdmission();
   const sms=smsProviderEdge();
   const keys = [dkimKey(), dkimKey()];
   const resend=resendProviderEdge(keys[0]);
@@ -108,13 +110,17 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
       if (original.pathname.startsWith('/v3/messages')) return json(response, 403, { errors: [{ message: 'access forbidden' }] });
       if (original.pathname === '/v3/mail/send' && request.method === 'POST') {
         const sent = JSON.parse(await body(request)), to = String(sent.personalizations?.[0]?.to?.[0]?.email ?? '');
+        // Timestamp the real request arrival even when provider admission is held.
+        const at=Date.now(),marketing=Boolean(sent.headers?.['List-Unsubscribe']);
+        if(marketing)await admission.admit();
         const refusal=behavior.nextRefusal(to);
-        behavior.attempts.push({to,status:refusal?.status??202,at:Date.now()});
+        behavior.attempts.push({to,status:refusal?.status??202,at});
         if(refusal)return json(response,refusal.status,{errors:[{message:'Synthetic provider rejection with private detail'}]},refusal.retryAfter===undefined?{}:{'Retry-After':String(refusal.retryAfter)});
         const messageId = randomBytes(11).toString('base64url');
         // SendGrid accepted it either way; a lost response leaves Mango uncertain.
-        sends.push({ at:Date.now(),to, messageId, outcome: lost.has(to) ? 'lost' : 'accepted', body: sent });
-        await behavior.responseDelay(Boolean(sent.headers?.['List-Unsubscribe']));
+        sends.push({ at,to, messageId, outcome: lost.has(to) ? 'lost' : 'accepted', body: sent });
+        if(marketing)admission.accepted(to);
+        await behavior.responseDelay(marketing);
         if (lost.has(to)) return response.destroy();
         response.writeHead(202, { 'X-Message-Id': messageId }); return response.end();
       }
@@ -126,6 +132,7 @@ export async function providerEdge(options:{incumbent?:(url:URL,request:Incoming
   const address = server.address();
   if (!address || typeof address === 'string') throw new Error('Edge server has no port.');
   return { origin: `http://127.0.0.1:${address.port}`, dkimKey: keys[0], sends, relaySends, unexpected,behavior,sms,resend,domainSetup,stripe,
+    marketingGate:admission.create,
     loseResponseFor: (address: string) => lost.add(address),
-    close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
+    close: () => new Promise<void>(resolve => { admission.release(); server.closeAllConnections(); server.close(() => resolve()); }) };
 }

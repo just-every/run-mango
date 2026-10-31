@@ -1,4 +1,4 @@
-import {expect,type Page,type TestInfo} from '@playwright/test';
+import {test,expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {openPage} from '../support/navigation';
 import {json,type Installation} from './harness';
@@ -10,8 +10,11 @@ export async function sourceCsvJourney(site:Installation,page:Page,info:TestInfo
     console.log(`Source CSV ${preset}: upload`);
     const name=`synthetic-mango-${110+index}.csv`,prefix=`synthetic-mango-${110+index}`,csv='email,status,subscription_tier,unsubscribed,bounced,subscribed_at,tags\n'+[`${prefix}-active@example.test,active,premium,false,false,${recentSourceTime},garden`,`${prefix}-out@example.test,active,free,true,false,${recentSourceTime},garden`,`${prefix}-bounce@example.test,active,free,false,true,${recentSourceTime},garden`].join('\n');
     await openPage(page,site.runtime.url+'/app/audience/import');
-    await page.getByLabel('Choose CSV files',{exact:true}).setInputFiles({name,mimeType:'text/csv',buffer:Buffer.from(csv)});
-    await page.getByRole('combobox',{name:'Preset for '+name,exact:true}).selectOption(preset);
+    // setInputFiles can bypass a disabled input. Wait for the streamed form's
+    // own readiness signal so its change handler retains the selection.
+    await expect(page.getByLabel('Choose CSV files',{exact:true})).toBeEnabled();
+    await test.step(`Source CSV ${preset}: choose file`,()=>page.getByLabel('Choose CSV files',{exact:true}).setInputFiles({name,mimeType:'text/csv',buffer:Buffer.from(csv)}),{timeout:90000});
+    await test.step(`Source CSV ${preset}: select preset`,()=>page.getByRole('combobox',{name:'Preset for '+name,exact:true}).selectOption(preset),{timeout:90000});
     for(const [label,value] of [['Brand or legal sender','Mango Garden'],['Disclosed frequency','Monthly'],['Destination jurisdiction','AU'],['Consent version','synthetic-mango-v1'],['Original consent text','Send the monthly garden letter.']])await page.getByRole('textbox',{name:new RegExp('^'+label)}).fill(value);
     await page.getByRole('combobox',{name:'Message category',exact:true}).selectOption('newsletter');
     await page.getByRole('button',{name:'Preview import',exact:true}).click();await expect(page.getByRole('heading',{name:'Source-held consent',exact:true})).toBeVisible();
@@ -20,7 +23,7 @@ export async function sourceCsvJourney(site:Installation,page:Page,info:TestInfo
     const identity=sourceIdentity(preset,name);await page.getByRole('textbox',{name:'Type the source name to confirm: '+identity.sourceName,exact:true}).fill(identity.sourceName);
     await page.getByRole('button',{name:'Preview import',exact:true}).click();await expect(page.getByLabel('Consent evidence counts')).toContainText('Incumbent Held evidence: 1');
     console.log(`Source CSV ${preset}: review`);
-    for(const width of [1440]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);expect((await new AxeBuilder({page}).include('main').options({iframes:false}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.evaluate(()=>{(document.activeElement as HTMLElement)?.blur();window.scrollTo(0,0);});await page.screenshot({path:info.outputPath(`${preset}-csv-${width}.png`),fullPage:true});}
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect(await page.evaluate(()=>window.__rerHydration?.count??0)).toBe(0);expect((await new AxeBuilder({page}).include('main').options({iframes:false}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);await page.evaluate(()=>{(document.activeElement as HTMLElement)?.blur();window.scrollTo(0,0);});await page.screenshot({path:info.outputPath(`${preset}-csv-${width}.png`),fullPage:true});}
     await page.getByRole('button',{name:/^Start import/}).click();await expect(page.getByRole('button',{name:'Import started',exact:true})).toBeVisible();await expect(page.getByText('completed',{exact:true}).last()).toBeVisible();
     console.log(`Source CSV ${preset}: applied`);
     const rows=await site.rows(`SELECT email,email_status,id FROM contacts WHERE email LIKE '${prefix}-%' ORDER BY email`);

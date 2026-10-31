@@ -1,7 +1,7 @@
 const width = 1440;
 import {sendingConnectionJourney} from './sending-connection-journey';
 import {test,expect} from '@playwright/test';
-import {mkdtemp,rm} from 'node:fs/promises';
+import {mkdtemp,rm,writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
 import {providerEdge} from './edge';
@@ -126,22 +126,26 @@ export const walk2 = async({page})=>{
   const edge=await providerEdge(),signer=eventSigner(),directory=await mkdtemp(join(tmpdir(),'mango-pacing-'));
   const options={token:crypto.randomUUID(),stateDirectory:join(directory,'state')};
   let site=await installation(edge,signer,options);
+  let releaseMarketing=()=>{};
   const observations:Array<Record<string,unknown>>=[];
-  const observe=async(label:string)=>observations.push({label,at:Date.now(),
+  const observe=async(label:string)=>{console.log('Shared pacing step:',label,'marketing=',edge.sends.filter(s=>s.body.headers?.['List-Unsubscribe']).length);observations.push({label,at:Date.now(),
     recipients:await site.rows('SELECT id,revision_id,destination,transport_disposition,attempt_count,first_attempt_at,handoff_started_at,updated_at FROM recipient_steps'),
     dispatches:await site.rows('SELECT step_id,state,started_at,updated_at,estimated_completion_at FROM step_dispatches'),
     emissions:await site.control('/_golive/emissions'),
-    provider:edge.sends.map(({to,messageId,at,outcome})=>({to,messageId,at,outcome}))});
+    provider:edge.sends.map(({to,messageId,at,outcome})=>({to,messageId,at,outcome}))});};
   try {
     let cookie=await setup(site);
     const emails=Array.from({length:10},(_,i)=>`paced-${i}@example.test`);
     for(const email of emails)await confirmedContact(site,edge,cookie,email,email);
-    const time=new Date(Date.now()+12000);
+    // Hold only the initial dispatch clock: one real pacing slot can be used,
+    // leaving both campaigns with queued work regardless of runner speed.
+    const clock=await site.control('/_golive/clock',{hold:true});
+    const time=new Date(clock.now+12000);
     const a=await draftCampaign(site,cookie,'Shared A',emails.slice(0,5),time),b=await draftCampaign(site,cookie,'Shared B',emails.slice(5),time);
     await Promise.all([approve(site,cookie,a),approve(site,cookie,b)]);
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${b.campaignId}/scheduled`);
-    await due(time);await site.control('/_golive/cron');
+    await due(time);await site.control('/_golive/clock',{advanceMs:time.getTime()-clock.now+1});await site.control('/_golive/cron');
     const marketing=()=>edge.sends.filter(s=>s.body.headers?.['List-Unsubscribe']);
     await expect.poll(()=>Promise.resolve(marketing().length),{timeout:60000}).toBeGreaterThan(0);
     // The restart is after a recorded receipt, not during an unacknowledged
@@ -153,7 +157,13 @@ export const walk2 = async({page})=>{
     const deferred=await site.rows("SELECT attempt_count,first_attempt_at FROM recipient_steps WHERE transport_disposition='queued'");
     expect(deferred.length).toBeGreaterThan(0);for(const row of deferred)expect(row).toEqual({attempt_count:0,first_attempt_at:null});
     const budget=await site.rows('SELECT scope,next_at,updated_at FROM provider_pacing');expect(budget).toHaveLength(1);
-    await site.runtime.close();edge.behavior.delayMarketingResponses(8000);site=await installation(edge,signer,options);cookie=await site.open();
+    await site.runtime.close();
+    // Admit a new B receipt, then hold later marketing requests at the provider
+    // edge until the open screen has shown it. A fixed response delay could
+    // expire before the screen's next refresh and drain all ten sends.
+    const marketingGate=edge.marketingGate(to=>emails.slice(5).includes(to));
+    releaseMarketing=marketingGate.release;
+    site=await installation(edge,signer,options);cookie=await site.open();
     expect((await site.rows('SELECT scope,next_at,updated_at FROM provider_pacing'))[0].next_at).toBeGreaterThanOrEqual(budget[0].next_at);
     await page.context().clearCookies();await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     await page.goto(`${site.runtime.url}/app/campaigns/${b.campaignId}/scheduled`);
@@ -166,20 +176,24 @@ export const walk2 = async({page})=>{
     expect(estimatedAt).toBeGreaterThan(initialProgress.started_at);
     await page.screenshot({path:test.info().outputPath('dispatch-shared-backlog-eta.png'),fullPage:true});
     await observe('screen-open-with-shared-backlog');
-    // Queue batches may spend several slow provider responses on A before B.
+    await expect.poll(async()=>Number((await page.locator('[data-disposition=accepted] dd').allTextContents())[0]??0),{timeout:30000}).toBe(acceptedBeforeRestart);
+    marketingGate.start();
+    // Queue batches may process A before B.
     // Measure screen freshness from B's actual durable receipt, not its time
     // waiting behind another campaign in the same shared provider backlog.
     await expect.poll(async()=> (await site.rows(`SELECT count(*) AS n FROM recipient_steps WHERE revision_id='${b.revisionId}' AND transport_disposition='accepted'`))[0].n,{timeout:60000}).toBeGreaterThan(acceptedBeforeRestart);
     await observe('b-acceptance-recorded');
     await expect.poll(async()=>Number((await page.locator('[data-disposition=accepted] dd').allTextContents())[0]??0),{timeout:30000}).toBeGreaterThan(acceptedBeforeRestart);
     await observe('b-acceptance-visible-without-navigation');
+    await page.screenshot({path:test.info().outputPath('dispatch-shared-backlog-1440.png'),fullPage:true});
+    await page.setViewportSize({width:390,height:1000});
+    await page.screenshot({path:test.info().outputPath('dispatch-shared-backlog-390.png'),fullPage:true});
+    await page.setViewportSize({width:1440,height:1000});
     expect(marketing().length).toBeLessThan(emails.length);
     const [liveProgress]=await site.rows(`SELECT updated_at FROM step_dispatches WHERE revision_id='${b.revisionId}'`);
     expect(liveProgress.updated_at).toBeGreaterThan(initialProgress.started_at);
-    // Slow replies have proved that the open screen refreshes during a backlog.
-    // Release that edge delay before draining: if B wins the shared queue early,
-    // eight remaining 8-second replies alone exceed the completion wait.
-    edge.behavior.delayMarketingResponses(0);
+    // The open screen has refreshed while later handoffs remain pending.
+    releaseMarketing();
     await expect.poll(()=>Promise.resolve(marketing().length),{timeout:60000}).toBe(emails.length);
     const sends=edge.sends.slice().sort((a,b)=>a.at-b.at);
     // Compare measured handoffs to the installation's actual configured spacing,
@@ -190,10 +204,13 @@ export const walk2 = async({page})=>{
     await expect(page.locator('[data-disposition=queued]')).toHaveCount(0);
     await expect(page.locator('.step-result__countdown')).toHaveCount(0);
     for(const email of emails)expect(marketing().filter(s=>s.to===email)).toHaveLength(1);
+    for(const width of [1440,390]){await page.setViewportSize({width,height:1000});await page.screenshot({path:test.info().outputPath(`dispatch-shared-completed-${width}.png`),fullPage:true});}
     expect(edge.unexpected).toEqual([]);
   } finally {
     await observe('terminal').catch(()=>{});
+    await writeFile(test.info().outputPath('shared-budget-native-observations.json'),JSON.stringify(observations,null,2));
     await test.info().attach('shared-budget-native-observations',{body:Buffer.from(JSON.stringify(observations,null,2)),contentType:'application/json'});
+    releaseMarketing();
     await page.close();await site.runtime.close();await edge.close();await rm(directory,{recursive:true,force:true});
   }
 };
