@@ -117,6 +117,12 @@ test('[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004
       await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('The spring beds are in.');
       await expect(page.getByRole('button',{name:'Approve & schedule',exact:true})).toHaveCount(0);
       await page.screenshot({path:info.outputPath(`roles-author-${width}.png`),fullPage:true});
+      await view(cookies.author!,'/app');
+      await expect(page.getByRole('region',{name:'Waiting for approval',exact:true}).getByRole('link',{name:/Weekend planting letter/})).toHaveAttribute('href',`/app/campaigns/${campaign.campaignId}/review`);
+      await expect(page.getByRole('region',{name:'Sender evidence renewal',exact:true})).toHaveCount(0);
+      await expect(page.getByRole('button',{name:'Approve & schedule',exact:true})).toHaveCount(0);
+      expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      await page.screenshot({path:info.outputPath(`roles-author-desk-${width}.png`),fullPage:true});
       await view(cookies.analyst!,'/app/campaigns');
       await expect(page.getByRole('button',{name:'New campaign',exact:true})).toHaveCount(0);
       await expect(page.locator('main')).not.toContainText('riley@example.test');

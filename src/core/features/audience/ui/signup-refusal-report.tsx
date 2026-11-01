@@ -6,9 +6,11 @@ type Report={refusedLastHour:number;challengeConfigured:boolean;hours:Array<{hou
 export function SignupRefusalAlert() {
   const {data}=useResource<Report>('/api/audience/signup/refusals');
   if(!data)return null;
-  return <>{data.refusedLastHour?<section className="panel" role="alert" aria-label="Signup rate limit">
-    <p>{data.refusedLastHour} signups refused by rate limit in the last hour</p>
-    <a href="/subscribe">Open form</a> · <a href="/app/settings#signup-allowances">Signup allowances</a>
+  return <>{data.refusedLastHour?<section className="notice-warning desk-attention__line" role="alert" aria-label="Signup rate limit">
+    <div className="desk-attention__row">
+      <span>{data.refusedLastHour} signups refused by rate limit in the last hour</span>
+      <span className="desk-attention__actions"><a className="text-link" href="/subscribe">Open form</a><a className="text-link" href="/app/settings#signup-allowances">Signup allowances</a></span>
+    </div>
   </section>:null}</>;
 }
 

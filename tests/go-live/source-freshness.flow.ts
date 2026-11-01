@@ -8,6 +8,7 @@ import {eventSigner} from './sendgrid-events';
 import {installation, json, sender, confirmedContact, draftCampaign, approve, dispatch} from './harness';
 import {sourceEdge, syncSource} from './source-edge';
 import {openPage, reloadPage} from '../support/navigation';
+import {authorDesk, deskWidths, failedDesk, recoveredDesk, type DeskFixture} from './desk-section';
 
 
 
@@ -40,6 +41,13 @@ export const walk0 = async ({page}, info) => {
     const planned = await draftCampaign(site, cookie, 'Scheduled garden letter', ['synthetic-mango-5@example.test'], future);
     await approve(site, cookie, planned);
     const draft = await draftCampaign(site, cookie, 'Saved garden draft', ['synthetic-mango-4@example.test'], future);
+    const later = await draftCampaign(site, cookie, 'Later garden draft', ['synthetic-mango-5@example.test'], new Date(future.getTime() + 86400000));
+    // plannedAt is the earliest saved step of a draft, and null for every other state.
+    const listed = (await json(await site.call('/api/campaigns', {cookie}), 200)).campaigns;
+    const plannedAt = (campaign: {campaignId: string}) => listed.find((row: any) => row.id === campaign.campaignId).plannedAt;
+    expect(plannedAt(draft)).toBe(future.toISOString());
+    expect(plannedAt(later)).toBe(new Date(future.getTime() + 86400000).toISOString());
+    expect(plannedAt(planned)).toBeNull();
     const history = await json(await site.call(`/api/campaigns/${sent.campaignId}/results`, {cookie}), 200);
     const handoffs = edge.sends.length;
     const costsBefore = await site.count('external_cost_facts');
@@ -82,17 +90,11 @@ export const walk0 = async ({page}, info) => {
     const stored = await site.rows("SELECT last_successful_at,last_error FROM source_syncs WHERE source_type='product'");
     expect(stored[0]).toMatchObject({last_successful_at: Date.parse(product.lastSuccessfulAt), last_error: expect.stringContaining('GraphQL')});
     await page.context().addCookies([{name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url}]);
-    const cards = page.getByRole('region', {name: 'Store data'});
+    const fixture: DeskFixture = {site, cookie, draft, later, planned, sent, future, retainedSuccess: product.lastSuccessfulAt};
+    for (const size of deskWidths) await failedDesk(page, info, site.runtime.url, fixture, size);
+    await authorDesk(page, info, site.runtime.url, fixture);
      {
       await page.setViewportSize({width, height: 1000});
-      await openPage(page, `${site.runtime.url}/app`);
-      const source = page.getByRole('article', {name: 'Product source', exact: true});
-      await expect(source).toContainText(/needs sync/i);
-      await expect(source).toContainText('sync failed');
-      await expect(source.locator('time').first()).toHaveAttribute('datetime', product.lastSuccessfulAt);
-      await expect(page.getByRole('article', {name: 'Order source', exact: true})).toContainText(/fresh/i);
-      await expect(page.getByRole('article', {name: 'Cart source', exact: true})).toContainText('No successful sync');
-      await cards.screenshot({path: info.outputPath(`source-failed-${width}.png`)});
       await openPage(page, `${site.runtime.url}/app/store`);
       const sync = page.getByRole('article', {name: 'Product sync', exact: true});
       await expect(sync).toContainText(/failed/i);
@@ -123,14 +125,7 @@ export const walk0 = async ({page}, info) => {
     const recovered = (await desk()).sourceStatus.sourceSyncs.find((source: any) => source.sourceType === 'product');
     expect(Date.parse(recovered.lastSuccessfulAt)).toBeGreaterThan(Date.parse(product.lastSuccessfulAt));
     expect(recovered.lastError).toBeNull();
-     {
-      await page.setViewportSize({width, height: 1000});
-      await openPage(page, `${site.runtime.url}/app`);
-      const source = page.getByRole('article', {name: 'Product source', exact: true});
-      await expect(source).toContainText(/fresh/i);
-      await expect(source).not.toContainText('sync failed');
-      await cards.screenshot({path: info.outputPath(`source-recovered-${width}.png`)});
-    }
+    for (const size of deskWidths) await recoveredDesk(page, info, site.runtime.url, size);
     expect(await site.count('recipient_steps')).toBe(2);
     expect(edge.sends).toHaveLength(handoffs);
     expect(edge.unexpected).toEqual([]);
