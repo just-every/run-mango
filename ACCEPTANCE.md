@@ -1428,7 +1428,7 @@ Core · published · **partial** · Rules D-2, D-3
 3. Handed-off, delivered, skipped and failed counts refresh within 30 seconds of each change.
 
 **Evidence.** `tests/go-live/delivery.journeys.ts` — “[SEND-003][SEND-006] concurrent campaigns and HTTP confirmation share the durable budget across restart; the open screen refreshes”
-**Gap.** Old evidence asserts Provider pacing; Estimated completion; Accepted count refresh within 30 seconds. Unasserted: Carrier pacing; Delivered count refresh; Skipped count refresh; Failed count refresh. Missing public-door journey: “Throttling and progress — complete acceptance”, covering the unasserted outcomes above.
+**Gap.** Old evidence asserts Provider pacing; Estimated completion; Accepted count refresh within 30 seconds. Unasserted: Carrier pacing; Delivered count refresh; Skipped count refresh; Failed count refresh. Missing public-door journey: “Throttling and progress — complete acceptance”, covering the unasserted outcomes above. 2026-11-01: main fails the shared-budget accepted-count outcome in tests/go-live/delivery.flow.ts:203 (accepted count 4 not 5; Verify 41170055220 and every candidate built on it); repair is owned by the fv landing ruling and sd.
 
 #### SEND-004 — Transport failure
 
