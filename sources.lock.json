@@ -8442,7 +8442,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser-runtime.mjs": {
-      "sha256": "727cf67c2a4e67063d6322fe88940576259586d89f6fa952452e272f13294f39",
+      "sha256": "0542609977c08a8a88149388d5dc548b76b3bba0bf55e4b844b28601ac1be9df",
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
