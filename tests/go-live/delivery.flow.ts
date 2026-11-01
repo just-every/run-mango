@@ -144,6 +144,10 @@ export const walk2 = async({page})=>{
     const a=await draftCampaign(site,cookie,'Shared A',emails.slice(0,5),time),b=await draftCampaign(site,cookie,'Shared B',emails.slice(5),time);
     await Promise.all([approve(site,cookie,a),approve(site,cookie,b)]);
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+    // The open screen reloads on its own 20-second timer. Let that timer be
+    // advanced on demand: a provider request held until the next real tick would
+    // outlive the 15-second hand-off bound and correctly become uncertain.
+    await page.clock.install();
     await page.goto(`${site.runtime.url}/app/campaigns/${b.campaignId}/scheduled`);
     await due(time);await site.control('/_golive/clock',{advanceMs:time.getTime()-clock.now+1});await site.control('/_golive/cron');
     const marketing=()=>edge.sends.filter(s=>s.body.headers?.['List-Unsubscribe']);
@@ -183,6 +187,7 @@ export const walk2 = async({page})=>{
     // waiting behind another campaign in the same shared provider backlog.
     await expect.poll(async()=> (await site.rows(`SELECT count(*) AS n FROM recipient_steps WHERE revision_id='${b.revisionId}' AND transport_disposition='accepted'`))[0].n,{timeout:60000}).toBeGreaterThan(acceptedBeforeRestart);
     await observe('b-acceptance-recorded');
+    await page.clock.fastForward(20000);
     await expect.poll(async()=>Number((await page.locator('[data-disposition=accepted] dd').allTextContents())[0]??0),{timeout:30000}).toBeGreaterThan(acceptedBeforeRestart);
     await observe('b-acceptance-visible-without-navigation');
     await page.screenshot({path:test.info().outputPath('dispatch-shared-backlog-1440.png'),fullPage:true});
@@ -195,6 +200,8 @@ export const walk2 = async({page})=>{
     // The open screen has refreshed while later handoffs remain pending.
     releaseMarketing();
     await expect.poll(()=>Promise.resolve(marketing().length),{timeout:60000}).toBe(emails.length);
+    await expect.poll(async()=> (await site.rows(`SELECT count(*) AS n FROM recipient_steps WHERE revision_id='${b.revisionId}' AND transport_disposition='accepted'`))[0].n,{timeout:60000}).toBe(emails.length/2);
+    await page.clock.fastForward(20000);
     const sends=edge.sends.slice().sort((a,b)=>a.at-b.at);
     // Compare measured handoffs to the installation's actual configured spacing,
     // not a literal rate or a per-campaign allowance.
