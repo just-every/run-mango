@@ -97,23 +97,36 @@ max_retries = 5
       } else await cp(await schema, state, {recursive:true});
     } else await migrate();
     const dev = commands.spawn('Starting authoring fixture', 'pnpm', ['exec', 'vite', 'dev', '--port', String(port), '--strictPort'], options);
+    // Wrangler opens the same SQLite file as the running worker. When both touch it at once, D1 answers a statement
+    // that did not run with an opaque "internal error; reference = ..." and exit 1. That answer alone is retried;
+    // any other failure is reported at once with Wrangler's own words.
+    const transientSqlFailure = /Failed to parse body as JSON, got: Error: internal error; reference = /;
+    const execute = async command => {
+      // Keep the event loop serving HTTP socket events while Wrangler reads D1.
+      const child = commands.spawn('Executing authoring fixture SQL', 'pnpm', ['exec', 'wrangler', 'd1', 'execute', 'mango-local', '--command', command,
+        '--json', '--local', '--config', config, '--persist-to', state], options);
+      let output = '', errors = '';
+      child.stdout.setEncoding('utf8');
+      child.stdout.on('data', chunk => { output += chunk; });
+      child.stderr.setEncoding('utf8');
+      child.stderr.on('data', chunk => { errors += chunk; });
+      let result;
+      try { result = await once(child, 'exit'); }
+      // Retire descendants at exit: inherited pipes can delay close forever.
+      finally { await commands.stop(child); }
+      const [code, signal] = result;
+      if (code !== 0 || signal) throw Object.assign(new Error(`exit ${code}${signal ? ` signal ${signal}` : ''}: ${(errors + output).slice(-1500)}`), { transient: transientSqlFailure.test(output) });
+      return JSON.parse(output)[0].results;
+    };
     const sql = async command => {
-      if (closing) throw new Error('Authoring fixture SQL failed: runtime is closing.');
-      try {
-        // Keep the event loop serving HTTP socket events while Wrangler reads D1.
-        const child = commands.spawn('Executing authoring fixture SQL', 'pnpm', ['exec', 'wrangler', 'd1', 'execute', 'mango-local', '--command', command,
-          '--json', '--local', '--config', config, '--persist-to', state], options);
-        let output = '';
-        child.stdout.setEncoding('utf8');
-        child.stdout.on('data', chunk => { output += chunk; });
-        let result;
-        try { result = await once(child, 'exit'); }
-        // Retire descendants at exit: inherited pipes can delay close forever.
-        finally { await commands.stop(child); }
-        const [code, signal] = result;
-        if (code !== 0 || signal) throw new Error('SQL command failed.');
-        return JSON.parse(output)[0].results;
-      } catch { throw new Error('Authoring fixture SQL failed.'); }
+      for (let attempt = 1; ; attempt++) {
+        if (closing) throw new Error('Authoring fixture SQL failed: runtime is closing.');
+        try { return await execute(command); }
+        catch (error) {
+          if (!error.transient || attempt === 5) throw new Error(`Authoring fixture SQL failed: ${error.message}`, { cause: error });
+          await new Promise(resolve => setTimeout(resolve, 250 * attempt));
+        }
+      }
     };
     await commands.waitForReady('Starting authoring fixture', dev, async signal =>
       (await fetch(`${url}/health`, { headers: { Connection: 'close' }, signal })).status === 200,
