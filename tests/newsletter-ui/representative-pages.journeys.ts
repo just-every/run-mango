@@ -153,13 +153,18 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
     const fixtureStates = await menuStates(page);
     let approvedCampaign: { campaignId: string; revisionId: string };
     fixtureStates.push(
-      { name: 'dashboard empty', visit: () => openPage(page, '/app'), check: async () => {
+      { name: 'dashboard new install', visit: () => openPage(page, '/app'), check: async () => {
+        // No campaigns yet: one empty state in place of the work. This fixture binds no AI, so there is no suggestions section either.
         await expect(page.locator('.desk-empty')).toBeVisible();
+        await expect(page.getByRole('region', { name: 'Waiting for approval', exact: true })).toHaveCount(0);
+        await expect(page.getByRole('region', { name: 'Suggestions', exact: true })).toHaveCount(0);
+        await expect(page.getByRole('button', { name: 'Generate suggestion', exact: true })).toHaveCount(0);
       } },
       { name: 'dashboard populated', visit: async () => {
         await expect(await page.request.get('/_authoring/proposal', { headers })).toBeOK();
         await openPage(page, '/app');
         await expect(page.locator('.decision-desk__proposals')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Use this', exact: true })).toBeVisible();
       } },
       { name: 'review approval dialog', visit: async () => {
         const defaults = await page.request.get('/api/campaign-authoring', { headers });
@@ -180,6 +185,15 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
         await approve.click();
         await expect(page.getByRole('alertdialog')).toBeVisible();
         await expectWithinViewportWidth(page.getByRole('alertdialog'));
+      } },
+      { name: 'dashboard work first', visit: async () => {
+        await page.keyboard.press('Escape');
+        await openPage(page, '/app');
+      }, check: async () => {
+        // The saved draft waits for approval and opens its review; the new-install state is gone.
+        const waiting = page.getByRole('region', { name: 'Waiting for approval', exact: true });
+        await expect(waiting.getByRole('link', { name: /synthetic-mango-175/ })).toHaveAttribute('href', `/app/campaigns/${approvedCampaign.campaignId}/review`);
+        await expect(page.locator('.desk-empty')).toHaveCount(0);
       } },
       { name: 'scheduled cancellation dialog', visit: async () => {
         await page.keyboard.press('Escape');
@@ -289,6 +303,7 @@ test('[BASE-ACCESS-002] [MOBILE-001] representative public and every operator pa
       await expectReason(page.getByRole('alert').first());
     } });
     const unavailableDetails: Array<[string, () => string, () => string]> = [
+      ['desk campaigns', () => '/app', () => '/api/campaigns'],
       ['campaign list', () => '/app/campaigns', () => '/api/campaigns'],
       ['campaign detail', () => '/app/campaigns/' + approvedCampaign.campaignId, () => '/api/campaigns/' + approvedCampaign.campaignId],
       ['campaign review', () => '/app/campaigns/' + approvedCampaign.campaignId + '/review', () => '/api/campaigns/' + approvedCampaign.campaignId + '/review'],
