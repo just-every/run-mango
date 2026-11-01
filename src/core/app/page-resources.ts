@@ -4,13 +4,16 @@ import { currentPlatform, initialReads, initialReadOnce, requestApi } from './re
 import { retireTransfers } from '@/core/features/portability/retire-transfers';
 import { loadLinkHosts } from '@/core/features/settings/link-hosts';
 import { pendingErasure } from '@/core/features/audience/erasure/maintenance';
+import { hasPermission, requiredPermission } from '@/core/features/auth/permissions';
 type Json = null | boolean | number | string | Json[] | {[key: string]: Json};
 
 // Only the resources mounted by this page travel with its fresh server render.
 // This is a request snapshot, never a cross-navigation or cross-session cache.
-function pathsFor(pathname: string, search: string) {
+function pathsFor(pathname: string, search: string, role: AuthenticatedOperator['role']) {
   switch (pathname) {
-    case '/app': return ['/api/decision-desk'];
+    // The Desk's work and urgent lines arrive in the first render; a read the role may not make is left out.
+    case '/app': return ['/api/decision-desk', '/api/campaigns', '/api/sending-alert', '/api/settings/sender/renewal', '/api/audience/signup/refusals']
+      .filter(path => hasPermission(role, requiredPermission('GET', path)));
     case '/app/campaigns': {
       const input = new URLSearchParams(search), filters = new URLSearchParams();
       for (const key of ['state', 'channel']) if (input.get(key)) filters.set(key, input.get(key)!);
@@ -47,7 +50,7 @@ export async function readPageResources(data: {pathname: string; search: string}
       ]);
       return withErasureWriteFence(platform.database.$client, async () => {
         await preparation;
-        const entries = await Promise.all([...pathsFor(data.pathname, data.search), '/auth/environment'].map(async path => {
+        const entries = await Promise.all([...pathsFor(data.pathname, data.search, operator.role), '/auth/environment'].map(async path => {
           const response = await read(path);
           // Existing resource error handling remains authoritative on failed reads.
           return response.ok ? [path, await response.json() as Json] as const : undefined;

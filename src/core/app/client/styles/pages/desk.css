@@ -1,9 +1,41 @@
-/* Desk page group: the Decision Desk (head, proposal queue, the proposal letter, its evidence, the empty state and the
-   store data sheet). It also owns .source-status__grid, which Store uses. */
+/* Desk page group: the Decision Desk (head, urgent lines, the work, suggestions, the proposal letter, its evidence, the
+   new-install empty state and the store data sheet). It also owns .source-status__grid, which Store uses. */
 
 /* Head: the second line is a lead (it stays an h2 for the page's outline). */
 .mango-app .desk-head .page-head__lead { font-family: var(--ms-sans); font-size: 17px; font-weight: 400; letter-spacing: 0; line-height: 1.55; }
 .desk-page > :is(.action-notice, .inline-error) { margin: 0; }
+
+/* Urgent lines: one notice each above the work (notices.css supplies the box, tint and glyph). The sentence is on the
+   left and its actions on the right; on a phone the actions follow the sentence. Nothing urgent, nothing rendered. */
+.desk-attention { display: grid; gap: var(--sp-2); }
+.desk-attention:empty { display: none; }
+.desk-attention__line { margin: 0; }
+.desk-attention__row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-1) var(--sp-5); }
+.desk-attention__row > :is(span:first-child, p) { flex: 1 1 auto; min-width: 0; margin: 0; }
+.desk-attention__actions { display: flex; flex: none; gap: var(--sp-3); white-space: nowrap; }
+.desk-attention__line .text-link { font-size: inherit; }
+.desk-attention__details { margin-top: var(--sp-2); }
+.desk-attention__details p { margin: var(--sp-1) 0 0; font-weight: 400; }
+.desk-attention__failure { margin: var(--sp-1) 0 0; }
+
+/* The work: what waits for the owner in the main column, what is scheduled and sent in the rail. */
+.desk-work { display: grid; grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr); gap: var(--sp-6); align-items: start; }
+.desk-rail { display: grid; gap: var(--sp-6); align-content: start; min-width: 0; }
+.desk-group__count { color: var(--ms-muted); }
+.desk-group__empty { margin: 0; color: var(--ms-ink-soft); font-size: 15px; }
+.desk-rows { display: grid; margin: 0 -12px; padding: 0; list-style: none; }
+.desk-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 10px; align-items: center; gap: 4px var(--sp-4); min-height: 44px; padding: 14px 12px; border-top: 1px solid var(--ms-hairline); color: var(--ms-ink); text-decoration: none; transition: background-color .18s; }
+.desk-rows > li:first-child .desk-row { border-top: 0; }
+.desk-row:hover { background: rgb(255 207 71 / 0.08); }
+.desk-row:hover .desk-row__name { text-decoration: underline 2px var(--ms-mango); text-underline-offset: 5px; }
+.mango-app .desk-row:is(:focus, :focus-visible) { outline-offset: -3px; }
+.desk-row::after { grid-column: 3; width: 8px; height: 8px; border-top: 1.5px solid var(--ms-muted); border-right: 1.5px solid var(--ms-muted); content: ''; rotate: 45deg; }
+.desk-row:hover::after { border-color: var(--ms-ink); }
+.desk-row__text { grid-column: 1; grid-row: 1; min-width: 0; }
+.desk-row > .status-pill { grid-column: 2; }
+.desk-row__name { display: block; font-family: var(--ms-serif); font-size: 20px; font-weight: 400; letter-spacing: -0.015em; line-height: 1.25; overflow-wrap: anywhere; }
+.desk-rail .desk-row__name { font-size: 17px; }
+.desk-row__meta { display: block; margin-top: 2px; color: var(--ms-muted); font-size: 14px; line-height: 1.45; }
 
 /* Queue beside the proposal; the proposal and its evidence side by side while there is room. */
 .decision-desk__proposals { display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: var(--sp-6); align-items: start; }
@@ -39,28 +71,36 @@
 .proposal-focus__actions .quiet-caption { flex: 1 1 14rem; margin: 0; }
 .proposal-focus .inline-error { margin: var(--sp-4) 0 0; }
 
-/* No suggestions (the empty state, surfaces.css): a stamped envelope not yet posted. When connections need attention,
-   the line introduces a short list of them. */
+/* Suggestions below the work. With none (AI on) it is one quiet line, then a line per missing connection. The
+   new-install empty state keeps the stamped envelope. */
 .desk-empty .empty-art .art-inner > .desk-empty__envelope { top: 15%; left: 4%; width: 92%; height: 68%; rotate: -4deg; }
-.capability-list { display: grid; padding: 0; list-style: none; }
-.capability-list li { display: grid; gap: 2px; padding: var(--sp-3) 0; border-top: 1px solid var(--ms-hairline); }
+.desk-suggestions { display: grid; gap: var(--sp-3); }
+.desk-suggestions__line { margin: 0; color: var(--ms-ink-soft); font-size: 15px; }
+.capability-list { display: grid; margin: 0; padding: 0; list-style: none; }
+.capability-list li { padding: var(--sp-2) 0; border-top: 1px solid var(--ms-hairline); color: var(--ms-muted); font-size: 14px; line-height: 1.45; }
 .capability-list li:last-child { border-bottom: 1px solid var(--ms-hairline); }
-.capability-list strong { color: var(--ms-ink); font-size: 15px; font-weight: 500; }
-.capability-list span { color: var(--ms-muted); font-size: 14px; line-height: 1.45; }
+.capability-list strong { color: var(--ms-ink); font-weight: 500; }
 
-/* Store data: a sheet of inset tiles (surfaces.css). Store lays its own source cards on the same grid. */
+/* Store data: one line per source, two columns on a wide screen. Store lays its own source cards on .source-status__grid. */
 .source-status__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--sp-3); }
-.source-status article { overflow-wrap: anywhere; }
-.source-status article > :is(strong, span, small) { display: block; }
+.source-status__rows { display: grid; gap: 4px var(--sp-3); align-items: start; }
+.source-status article { display: grid; grid-template-columns: 7rem 9rem minmax(0, 1fr); align-items: baseline; gap: 2px var(--sp-3); padding: 9px 12px; border-radius: var(--ms-radius-control); background: var(--ms-paper-deep); overflow-wrap: anywhere; }
+.source-status article.source-status__row--unavailable { grid-template-columns: 7rem auto minmax(0, 1fr); }
 .source-status article > strong { color: var(--ms-ink); font-size: 15px; font-weight: 500; line-height: 1.35; }
-.source-status article > span { margin-top: 4px; color: var(--ms-muted); font-size: 14px; line-height: 1.45; }
-.source-status article > small { margin-top: 6px; color: var(--ms-tomato-deep); font-size: 13px; line-height: 1.45; }
+.source-status article > span { color: var(--ms-muted); font-size: 14px; line-height: 1.45; }
+.source-status article > .source-status__unavailable { color: var(--ms-ink-soft); }
+.source-status article > small { grid-column: 2 / -1; color: var(--ms-tomato-deep); font-size: 13px; line-height: 1.45; }
+.source-status__note { margin: var(--sp-3) 0 0; }
 
+@media (min-width: 1200px) {
+  .source-status__rows { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 @media (max-width: 1200px) {
   .proposal-layout { grid-template-columns: minmax(0, 1fr); }
   .proposal-evidence { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
 }
 @media (max-width: 900px) {
+  .desk-work { grid-template-columns: minmax(0, 1fr); }
   .decision-desk__proposals { grid-template-columns: minmax(0, 1fr); }
   .proposal-queue { position: static; }
 }
@@ -70,7 +110,17 @@
   .mango-app .proposal-focus .app-sheet .paper-face { padding: 24px 22px 22px; }
   .proposal-evidence { grid-template-columns: minmax(0, 1fr); }
   .proposal-focus__actions .primary-action { flex: 1 1 100%; }
-  .capability-list { text-align: left; }
+  .desk-attention__row { display: block; }
+  .desk-attention__row > :is(span:first-child, p) { display: inline; }
+  .desk-attention__actions { display: inline-flex; gap: var(--sp-3); margin-left: var(--sp-1); }
+  /* Each action keeps a 44px target while the line keeps its own height. */
+  .desk-attention__actions .text-link { margin-block: -11px; }
+  .desk-row { grid-template-columns: minmax(0, 1fr) 10px; }
+  .desk-row > .status-pill { grid-column: 1; grid-row: 2; margin-top: var(--sp-1); }
+  .desk-row::after { grid-column: 2; grid-row: 1 / span 2; }
+  .desk-group .section-heading .text-link, .source-status .section-heading .text-link, .source-status__note .text-link { display: inline-flex; align-items: center; min-height: 44px; }
+  .source-status article, .source-status article.source-status__row--unavailable { grid-template-columns: auto minmax(0, 1fr); }
+  .source-status article > span:nth-of-type(2), .source-status article > small { grid-column: 1 / -1; }
 }
 @media (max-width: 400px) {
   .proposal-queue__items { margin-inline: calc(-1 * var(--sp-4)); }
