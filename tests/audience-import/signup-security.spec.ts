@@ -27,23 +27,37 @@ test('security: confirmation scanner GET and HEAD write nothing; affirmative POS
   expect((await app.request(url,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(410);
  }finally{await h.close();}
 });
-test('security: public capture preserves subscribed, suppressed and erased-optout states without mail or evidence',async()=>{
- for(const state of ['subscribed','suppressed','erased-optout'])await test.step(`public capture preserves ${state}`,async()=>{
+test('security: public capture preserves subscribed, suppressed and erased suppressed states without mail or evidence; an erased unsubscriber returns only through their own confirmation',async()=>{
+ for(const state of ['subscribed','suppressed','erased-suppressed','erased-optout'])await test.step(`public capture after ${state}`,async()=>{
  const h=await native();try{
   const call=client(h.f);await call('existing@example.test');const token=confirmationUrl(h.f).split('/').at(-1)!;await h.f.services.audienceService.confirmConsent(token);
   const contact=await h.f.db.prepare('SELECT id FROM contacts').first<{id:string}>();
   if(state==='erased-optout'){const action=await h.f.services.audienceService.issueUnsubscribeToken(contact!.id,'email');await h.f.services.audienceService.unsubscribeWithToken(action.token);}
-  if(state==='suppressed')await h.f.services.audienceService.recordBounce({providerEventId:'hard-bounce',destination:'existing@example.test',kind:'hard',occurredAt:new Date()});
+  if(state.endsWith('suppressed'))await h.f.services.audienceService.recordBounce({providerEventId:'hard-bounce',destination:'existing@example.test',kind:'hard',occurredAt:new Date()});
   if(state==='erased-optout'){
     await call('synthetic-mango-bot@example.test','192.0.2.44',{website:'robot'});
     expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBeGreaterThan(0);
-    await eraseFixture(h.f,contact!.id);
-    expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBe(0);
   }
+  if(state.startsWith('erased'))await eraseFixture(h.f,contact!.id);
+  if(state==='erased-optout')expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBe(0);
   const before=await snapshot(h.f.db);const sent=h.f.outbound.length;
-  expect((await call('existing@example.test','192.0.2.45')).status).toBe(202);expect(h.f.outbound).toHaveLength(sent);
+  expect((await call('existing@example.test','192.0.2.45')).status).toBe(202);
   const after=await snapshot(h.f.db);
-  if(state==='erased-optout'){expect(after[0]).toHaveLength(1);expect(after[0][0]).toMatchObject({email_status:'unsubscribed'});expect(after.slice(1,4)).toEqual(before.slice(1,4));expect(after[5]).toEqual(before[5]);expect(after[4]).toEqual([expect.objectContaining({kind:'resubscribe-refused'})]);}
+  if(state==='erased-optout'){
+    // The erased unsubscriber's own request recreates an unsubscribed profile holding only that
+    // request's evidence, and one confirmation; only their affirmative POST subscribes it (CONT-013, CONT-027).
+    expect(h.f.outbound).toHaveLength(sent+1);
+    expect(after[0]).toEqual([expect.objectContaining({email_status:'unsubscribed'})]);
+    expect(after[1]).toEqual([expect.objectContaining({capture_method:'hosted-signup-form',confirmed_at:null})]);
+    expect(after[4].map((row:any)=>row.kind).sort()).toEqual(['confirmation-attempted','confirmation-handed-off','consent-captured','resubscribe-request']);
+    const link=confirmationUrl(h.f),app=createAudiencePublicRoutes(h.f.services.audienceService);
+    expect((await app.request(link)).status).toBe(200);expect(await snapshot(h.f.db)).toEqual(after);
+    expect((await app.request(link,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(200);
+    expect(await h.f.db.prepare('SELECT email_status FROM contacts').first()).toEqual({email_status:'subscribed'});
+    return;
+  }
+  expect(h.f.outbound).toHaveLength(sent);
+  if(state==='erased-suppressed'){expect(after[0]).toEqual([expect.objectContaining({email_status:'suppressed'})]);expect(after.slice(1,4)).toEqual(before.slice(1,4));expect(after[5]).toEqual(before[5]);expect(after[4]).toEqual([expect.objectContaining({kind:'resubscribe-refused'})]);}
   else {expect(after.slice(0,4)).toEqual(before.slice(0,4));expect(after[5]).toEqual(before[5]);
     if(state==='suppressed'){expect(after[4]).toHaveLength(before[4].length+1);expect(after[4]).toContainEqual(expect.objectContaining({kind:'resubscribe-refused'}));}
     else expect(after[4]).toEqual(before[4]);}

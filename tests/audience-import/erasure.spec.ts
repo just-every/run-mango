@@ -21,13 +21,19 @@ async function importFile(f:any,cookie:string,input:unknown){
  while(['queued','applying'].includes(job.state)){const next=await f.call(`/api/audience/imports/${job.id}/resume`,{cookie,method:'POST',body:{}});expect(next.status).toBe(200);({job}=await next.json());}
  expect(job.state).toBe('completed');return job;
 }
-test('CONT-013 public erasure resumes, withdraws complete source custody, redacts attributed copies, leaves shared text and keeps reimport unsendable',async()=>{
- test.setTimeout(180000);const f=await invitationRuntime();try{
-  const cookie=await f.bootstrap(),email='privacy-cascade-canary@example.test',name='Canary Privacyperson';
-  const input={files:[{name:`${name} (${email}).csv`,preset:'csv-unsubscribed',csv:`Email Address,First Name,OPTIN_IP,NOTES\n${email},${name},198.51.100.189,OriginalPrivateMessage\n${email},DuplicatePrivatePerson,198.51.100.189,DuplicatePrivateMessage\nprivacy-alias@example.test,Ann,,AliasPrivateMessage\nsurvivor@example.test,Annual survivor,,Safe original`}]};
+test('CONT-013 public erasure resumes, keeps each restriction, withdraws complete source custody, redacts attributed copies, leaves shared text and keeps reimport unsendable',async()=>{
+ const salt='synthetic-mango-erasure-contact-salt-more-than-thirty-two-bytes',local=(address:string)=>createHash('sha256').update(`${salt}:${address}`).digest('hex');
+ test.setTimeout(180000);const f=await invitationRuntime({contactHashSalt:salt});try{
+  const cookie=await f.bootstrap(),email='privacy-cascade-canary@example.test',name='Canary Privacyperson',cleaned='privacy-cleaned@example.test';
+  const input={files:[{name:`${name} (${email}).csv`,preset:'csv-unsubscribed',csv:`Email Address,First Name,OPTIN_IP,NOTES\n${email},${name},198.51.100.189,OriginalPrivateMessage\n${email},DuplicatePrivatePerson,198.51.100.189,DuplicatePrivateMessage\nprivacy-alias@example.test,Ann,,AliasPrivateMessage\nsurvivor@example.test,Annual survivor,,Safe original`},{name:`cleaned (${cleaned}).csv`,preset:'csv-cleaned',csv:`Email Address\n${cleaned}`}]};
   const job=await importFile(f,cookie,input);const contact=await f.db.prepare('SELECT id FROM contacts WHERE email=?').bind(email).first();
-  const alias=await f.db.prepare("SELECT id FROM contacts WHERE email='privacy-alias@example.test'").first();
-  expect((await f.call('/api/contacts/merge',{cookie,method:'POST',body:{survivorContactId:contact.id,mergedContactId:alias.id}})).status).toBe(200);
+  // An opted-out alias and a suppressed (cleaned) contact both merge into the erased contact.
+  for(const address of ['privacy-alias@example.test',cleaned]){const merged=await f.db.prepare('SELECT id FROM contacts WHERE email=?').bind(address).first();
+   expect((await f.call('/api/contacts/merge',{cookie,method:'POST',body:{survivorContactId:contact.id,mergedContactId:merged.id}})).status).toBe(200);}
+  const restrictions=async()=>Promise.all(['SELECT destination_hash,channel,reason,occurred_at FROM surviving_opt_outs ORDER BY destination_hash,reason','SELECT destination_hash,channel,cause,occurred_at,contact_id FROM contact_suppressions ORDER BY destination_hash,cause'].map(async sql=>(await f.db.prepare(sql).all()).results));
+  const [optOuts,suppressions]=await restrictions();
+  expect(optOuts.map((row:any)=>[row.destination_hash,row.reason])).toEqual(expect.arrayContaining([[local(email),'import-unsubscribed'],[local('privacy-alias@example.test'),'import-unsubscribed'],[local(cleaned),'import-suppressed']]));
+  expect(suppressions).toEqual([expect.objectContaining({destination_hash:local(cleaned),channel:'email',cause:'import-cleaned-or-bounced',contact_id:expect.any(String)})]);
   const rule=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'email',comparator:'eq',value:email}]});
   expect((await f.call('/api/audience/segments',{cookie,method:'POST',body:{name:'Saved private rule',inclusionRuleJson:rule,exclusionRulesJson:'[]'}})).status).toBe(201);
   const draft=await(await f.call('/api/campaigns',{cookie,method:'POST',body:{mode:'blank'}})).json();
@@ -55,7 +61,13 @@ test('CONT-013 public erasure resumes, withdraws complete source custody, redact
   expect((await f.call('/api/audience/import-preview',{cookie,method:'POST',body:input})).status).toBe(503);
   // A distinct request resumes persisted progress; no caller-local scope is needed.
   expect((await(await f.call(`/api/audience/erasures/${pending.reference}`,{cookie})).json()).receipt.state).toBe('pending');
-  const receipt=await eraseHttp(f,cookie,contact.id);expect(receipt.state).toBe('complete');expect(receipt.reference).toBe(pending.reference);expect(receipt.retainedChannels).toEqual(['email']);expect((await f.db.prepare('SELECT count(*) AS n FROM surviving_opt_outs').first()).n).toBe(3);
+  const receipt=await eraseHttp(f,cookie,contact.id);expect(receipt.state).toBe('complete');expect(receipt.reference).toBe(pending.reference);expect(receipt.retainedChannels).toEqual(['email']);
+  // Each restricted identity, opted-out and suppressed aliases included, keeps its own hash, channel,
+  // reason and occurrence time and gains an erasure opt-out; the suppression stays a detached suppression.
+  const [keptOptOuts,keptSuppressions]=await restrictions();
+  expect(keptOptOuts.filter((row:any)=>row.reason!=='erasure-opt-out')).toEqual(optOuts);
+  expect(keptOptOuts.filter((row:any)=>row.reason==='erasure-opt-out').map((row:any)=>row.destination_hash).sort()).toEqual([email,'privacy-alias@example.test',cleaned].map(local).sort());
+  expect(keptSuppressions).toEqual(suppressions.map((row:any)=>({...row,contact_id:null})));
   await f.db.prepare("UPDATE test_barriers SET released=1 WHERE id='erasure-preview-race'").run();
   expect((await concurrent).status).toBeGreaterThanOrEqual(400);
   const tables=(await f.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name <> '_cf_METADATA'").all()).results;
@@ -63,7 +75,7 @@ test('CONT-013 public erasure resumes, withdraws complete source custody, redact
   expect(await f.bucket.get('private-note.json')).toBeNull();expect(await(await f.bucket.get('unrelated-asset.txt'))!.text()).toBe('An annual letter survives.');
   expect(await sharedRows()).toEqual(sharedBefore);const letter=await f.bucket.get('shared/ann-letter.txt');expect(await letter!.text()).toBe('Ann wrote: mark your calendar.');expect(letter!.customMetadata).toEqual({label:'Ann'});
   expect(JSON.stringify(dump)).not.toContain(Buffer.from(email).toString('base64'));
-  const all=decoded(dump);for(const canary of [email,name,'DuplicatePrivatePerson','OriginalPrivateMessage','DuplicatePrivateMessage','198.51.100.189','privacy-alias@example.test','AliasPrivateMessage'])expect(all).not.toContain(canary);
+  const all=decoded(dump);for(const canary of [email,name,'DuplicatePrivatePerson','OriginalPrivateMessage','DuplicatePrivateMessage','198.51.100.189','privacy-alias@example.test','AliasPrivateMessage',cleaned,contact.id])expect(all).not.toContain(canary);
   expect(await f.db.prepare("SELECT email_status,display_name FROM contacts WHERE email='survivor@example.test'").first()).toEqual({email_status:'unsubscribed',display_name:'Annual survivor'});
   expect((await f.db.prepare("SELECT count(*) AS n FROM lifecycle_audit_entries WHERE action='erased'").first()).n).toBe(1);
   expect((await f.db.prepare('SELECT state FROM campaign_revisions WHERE id=?').bind(draft.revisionId).first()).state).toBe('erasure-invalidated');
@@ -71,6 +83,7 @@ test('CONT-013 public erasure resumes, withdraws complete source custody, redact
   expect(await(await f.call('/api/audience/export',{cookie})).text()).not.toContain(email);
   await importFile(f,cookie,input);expect(await f.db.prepare('SELECT email_status FROM contacts WHERE email=?').bind(email).first()).toEqual({email_status:'unsubscribed'});
   expect(await f.db.prepare("SELECT email_status FROM contacts WHERE email='privacy-alias@example.test'").first()).toEqual({email_status:'unsubscribed'});
+  expect(await f.db.prepare('SELECT email_status FROM contacts WHERE email=?').bind(cleaned).first()).toEqual({email_status:'suppressed'});
   const audience=await(await f.call('/api/campaign-authoring/audience',{cookie,method:'POST',body:{inclusionRuleJson:rule,exclusionRulesJson:'[]',channels:['email']}})).json();expect(audience.eligibleCount).toBe(0);
   expect((await f.db.prepare('SELECT count(*) AS n FROM test_mail').first()).n).toBe(0);
  }finally{await f.close();}

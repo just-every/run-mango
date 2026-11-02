@@ -3146,7 +3146,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "22d3a1d72a91a044f9eb5902ad15f161ca6b3281858bd48b8a117dac7291eff8",
+      "sha256": "b7821ea5d7d307cd04b58b5ce349889d2b330cfe88ed35609649c9fe46aee328",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -3190,7 +3190,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/service.ts": {
-      "sha256": "08bc152f6886552620561b81311c6b7aebaf3c76004b3a2c6af1f3cb5a8d8f49",
+      "sha256": "0106ab9f5cc697bab35f5713c1886d6e8afb24ee1996e9e12ca33724fde3c22f",
       "executable": false
     },
     "src/core/features/audience/erasure/source-literals.ts": {
@@ -3426,7 +3426,7 @@
       "executable": false
     },
     "src/core/features/audience/public-resubscribe-policy.ts": {
-      "sha256": "d0dbbc9a69fddb131ecc185311c4fa9a2a025a7f6d3d6c732377882845b1dc44",
+      "sha256": "dc497a01c58bcec2511415a4c6b8e4d10b73fd3afafcf4a566a4ead7453841cb",
       "executable": false
     },
     "src/core/features/audience/public-routes.ts": {
@@ -3466,7 +3466,7 @@
       "executable": false
     },
     "src/core/features/audience/service.ts": {
-      "sha256": "b6e6a3fb8a1ba251c9b9da5627953acbe45cbfe9d3166b499a6beca67ac7c4b0",
+      "sha256": "70425c030625aea8ae70536c8b99a2dffbd335418fee28a6908b76f5e9dcfe0e",
       "executable": false
     },
     "src/core/features/audience/signup-admission.ts": {
@@ -8374,7 +8374,7 @@
       "executable": false
     },
     "tests/audience-import/erasure.spec.ts": {
-      "sha256": "e1f75c7ee6d15b62977d508a6a60268457afebc2eaa9849cb03a84514f53d886",
+      "sha256": "53fc3d11507d4daa144362d093d030452929e66dca58bb9486a3985ad15d32fe",
       "executable": false
     },
     "tests/audience-import/fixtures/mailchimp-cleaned.csv": {
@@ -8434,7 +8434,7 @@
       "executable": false
     },
     "tests/audience-import/signup-security.spec.ts": {
-      "sha256": "2dd14eb5f387de74a637dab685557ea02beababbe8e6ce481d8b5e14bf1db8bb",
+      "sha256": "9e18468c717239b063ffc0e1edbc90398e59a098f2bf29158ca95dffefd1ee76",
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {

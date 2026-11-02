@@ -69,10 +69,10 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         .bind(reference,id,JSON.stringify(scope),now,...unchanged.map(([,value])=>value),id,JSON.stringify(scope.ids),JSON.stringify(scope.ids))];
       for(const channel of scope.channels)for(const destination of channel==='email'?scope.emails:scope.phones){
         const hash=await sha256(`${salt}:${destination}`);
-        // An erased destination keeps one block that names no other reason.
-        statements.push(db.prepare(`DELETE FROM surviving_opt_outs WHERE destination_hash=? AND channel=? AND reason<>'erasure-opt-out' AND ${admitted}`).bind(hash,channel,reference));
+        // A restricted destination keeps its own opt-outs and suppressions, each with its reason and
+        // time, and gains an erasure opt-out beside them (CONT-013).
         statements.push(db.prepare(`INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE ${admitted} ON CONFLICT(destination_hash,channel,reason) DO UPDATE SET updated_at=excluded.updated_at`).bind(crypto.randomUUID(),hash,channel,now,now,now,reference));
-        // The block leaves an export by the address's portable identity only (import-opt-out-lines).
+        // These blocks leave an export by the address's portable identity only (import-opt-out-lines).
         statements.push(recordPortableHash(db,hash,destination));
       }
       // Capture staged blob ownership before invalidating transfer manifests.
@@ -133,7 +133,7 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         for(const key of ['ips','freeText','unsafeText'] as const)refreshed[key]=[...new Set([...refreshed[key],...discovered[key]])];
         const statements=[db.prepare('UPDATE audience_erasures SET scope_json=?,stage=0 WHERE reference=? AND stage=-1').bind(JSON.stringify(refreshed),reference)];
         const now=Date.now();
-        for(const channel of refreshed.channels)for(const destination of channel==='email'?refreshed.emails:refreshed.phones){const hash=await sha256(`${salt}:${destination}`);statements.push(db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel=?)").bind(crypto.randomUUID(),hash,channel,now,now,now,hash,channel),recordPortableHash(db,hash,destination));}
+        for(const channel of refreshed.channels)for(const destination of channel==='email'?refreshed.emails:refreshed.phones){const hash=await sha256(`${salt}:${destination}`);statements.push(db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES(?,?,?,'erasure-opt-out',?,?,?) ON CONFLICT(destination_hash,channel,reason) DO NOTHING").bind(crypto.randomUUID(),hash,channel,now,now,now),recordPortableHash(db,hash,destination));}
         statements.push(db.prepare("UPDATE ik_jobs SET state='invalid',fence=fence+1,lease_token=NULL,lease_expires=NULL WHERE id IN (SELECT value FROM json_each(?))").bind(JSON.stringify(refreshed.jobs)));
         statements.push(db.prepare('UPDATE ik_d1_creation_plans SET released=1 WHERE job_id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(refreshed.jobs)));
         await progress(statements);return receipt((await read(reference))!);
@@ -168,9 +168,10 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         }
         statements.push(...await invalidateRevisions(db,transfer,table,matches,reference));
         for(const [index,row] of matches.entries()){
-          statements.push(...fences[index],...eraseRow(table,row,scope,reference,direct.has(Number(row._cursor))).map(prepare));
+          const changes=table.retain?[{sql:`UPDATE ${quote(table.table)} SET ${table.retain} WHERE rowid=?`,params:[row._cursor]}]:eraseRow(table,row,scope,reference,direct.has(Number(row._cursor)));
+          statements.push(...fences[index],...changes.map(prepare));
         }
-        if(!table.mode?.startsWith('invalidate-'))counts[table.table]=(counts[table.table]??0)+matches.length;
+        if(!table.mode?.startsWith('invalidate-')&&!table.retain)counts[table.table]=(counts[table.table]??0)+matches.length;
         const stage=rows.length?job.stage:job.stage+1,cursor=rows.length?rows.at(-1)!._cursor:0;
         statements.push(db.prepare('UPDATE audience_erasures SET counts_json=?,stage=?,cursor=? WHERE reference=? AND stage=? AND cursor=?').bind(JSON.stringify(counts),stage,cursor,reference,job.stage,job.cursor));
         // Optimistic cursor assertion also serializes concurrent resume requests.
