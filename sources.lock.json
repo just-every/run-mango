@@ -6,7 +6,7 @@
   "toolchain": {
     "id": "runeditrun/edition-authoring",
     "version": "1.1.0",
-    "sha256": "abf7237e9313adfc739e3b9d77cfde98253aba5094193a22a77abd2866bd511a"
+    "sha256": "8d25b7528ba7c5301de349b51b7e6ca44d6b87478f27b5685a5c07b567612e13"
   },
   "components": [
     {
@@ -1312,7 +1312,7 @@
       "executable": false
     },
     "base-copies.json": {
-      "sha256": "d5d68bcbb90781bc21237c2c16294774d5799bd60e8b1b6399e476d0b677369a",
+      "sha256": "6ea7a5b0ff5dcb709c1f900518fe2184454f547453c143d42ffb11577083cb77",
       "executable": false
     },
     "BASELINE.md": {
@@ -1364,7 +1364,7 @@
       "executable": false
     },
     "docs/agents.md": {
-      "sha256": "6ed841ffa00627a354dcbfebce892bdf3defc874a177c00f1812a819849ab0ae",
+      "sha256": "fa588ab1320afa3bb118219d593aca6eab10862c43a369bcb88196d1f6674edf",
       "executable": false
     },
     "docs/approval-and-sending.md": {
@@ -1964,7 +1964,7 @@
       "executable": false
     },
     "operations/agent-door.test.mjs": {
-      "sha256": "a03de8ff31d5970978b38274ccfb62013ad778baf660c53185a45028b84bdede",
+      "sha256": "28d5e9f5d4ef6a45fa5a4122f277125712b0be7e810b004a385808fe85f6d1f6",
       "executable": false
     },
     "operations/agent-runtime.mjs": {
@@ -2256,7 +2256,7 @@
       "executable": false
     },
     "scripts/edition-authoring/archive-source.mjs": {
-      "sha256": "c59a6a97abfdf80b2874a461ba7800e8604a3141db4594a584d6a0cfedac5f46",
+      "sha256": "27ff7efbed5ef18dd5eaa2c03abe8c72a6f1a132105380b13448939bc1dde139",
       "executable": false
     },
     "scripts/edition-authoring/base-acknowledgements.mjs": {
@@ -2264,11 +2264,11 @@
       "executable": false
     },
     "scripts/edition-authoring/base-copies.mjs": {
-      "sha256": "4cac17e531310ab14df07139156c2b4fae5f7ab03097c7f8374c09a3d050dc8b",
+      "sha256": "abef957622ffa65fc34db24e46270773896deeac6f6635a2b071f97f1d4fa1e0",
       "executable": false
     },
     "scripts/edition-authoring/cli.mjs": {
-      "sha256": "d4302ecd51794bbf9d92ea08c23fc1447f043088952c53689418c03e8750bb7f",
+      "sha256": "b60b229542574459e46f33f48412ab775d298b21ab8e6a8ecf5dad46efb5589f",
       "executable": false
     },
     "scripts/edition-authoring/copy-checkout.mjs": {
@@ -2280,7 +2280,7 @@
       "executable": false
     },
     "scripts/edition-authoring/edition-migrations.mjs": {
-      "sha256": "7e9837c9a373cf7f394a575230c9f386a289786a15cc9685e4f11911e9a84e88",
+      "sha256": "1fb7945a0c58ee8d28fb4868599cf904c2cd7057ca62622aa02390c33a5973bb",
       "executable": false
     },
     "scripts/edition-authoring/files.mjs": {
@@ -2300,7 +2300,7 @@
       "executable": false
     },
     "scripts/edition-authoring/module-closure.mjs": {
-      "sha256": "9b097df912e489d19756e15615ab5b05f4fa3405a6ec3eaf07d1b31c6d2a4ae8",
+      "sha256": "010976b55998157d80eb3567e47d46545e7031dd5c2777519bb88754431bb43c",
       "executable": false
     },
     "scripts/edition-authoring/module-edges.mjs": {
@@ -2308,7 +2308,7 @@
       "executable": false
     },
     "scripts/edition-authoring/module-packages.mjs": {
-      "sha256": "cca255ac3a7538916169af5bf53f99704f79fc3fc9c11fbdddb60cb4bec8afbd",
+      "sha256": "ecdf5b12dee847c1b97537aaca20aefb9677aac6ec38b29fab50d66fc16c046f",
       "executable": false
     },
     "scripts/edition-authoring/module-resolution.mjs": {
@@ -2316,7 +2316,7 @@
       "executable": false
     },
     "scripts/edition-authoring/module-syntax.mjs": {
-      "sha256": "eb5a1d2da81c2cfde8587ecf395c4543bcb97b8f293946e73ee5a73b4d7e50fb",
+      "sha256": "956587f198f639ded20628182b2bc33ec429cbef6b7b73c685eaa7b216f477a1",
       "executable": false
     },
     "scripts/edition-authoring/offline-git.mjs": {
@@ -2340,7 +2340,7 @@
       "executable": false
     },
     "scripts/edition-authoring/runtime-dependencies.mjs": {
-      "sha256": "f80f59284b27a9610a96baa6b0f1d0f59f68e075a3c4ae20e85fb153d7def4f3",
+      "sha256": "96a9b7201392377ef5d5c0195b1f96bfea616f6a47349704798d7cd1c485f730",
       "executable": false
     },
     "scripts/edition-authoring/sources.mjs": {
@@ -3436,7 +3436,7 @@
       "executable": false
     },
     "src/core/features/agent-door/custody.ts": {
-      "sha256": "4aa7b819d637fa3517a9cecc8c69d0d0716058315044c76b28484a8bba47ce8c",
+      "sha256": "4658674855d2bcd87992fc466a678748470a83498683a1bcb1a83b387b7c0fd8",
       "executable": false
     },
     "src/core/features/agent-door/digest.ts": {

@@ -61,7 +61,7 @@ The runtime source pin is recorded separately from the installed CLI pin. A runt
 
 ## Native custody and runtime provenance
 
-The complete agent-door and Business-settings source is copied from Base commit `8b925fa5ffaa577df9f2e4ebab6ede8af5155baa`; `base-copies.json` records the exact bytes and the declared archive authoring path. The CLI is pinned to 0.2.96. Other recorded Base copies retain their pins and native adaptations; portability's bookkeeping inventory adopts the matching private replay-alias exclusion.
+The complete agent-door and Business-settings source is copied from Base commit `8b925fa5ffaa577df9f2e4ebab6ede8af5155baa`; `base-copies.json` records the exact bytes and the declared archive authoring path. The CLI is pinned to 0.2.96, and the source-lock toolchain in `scripts/edition-authoring` carries the same release's bytes, so the vendored and installed lock checks agree. Other recorded Base copies retain their pins and native adaptations; portability's bookkeeping inventory adopts the matching private replay-alias exclusion.
 
 Migration 0109 follows the recovered 0104–0108 ledger, preserving the report-claim recovery in 0108 and all applied bodies. It adds agent tombstones, nullable call expiry with completed calls backfilled from their original creation time, replay aliases and their expiry/deletion index and trigger, the decision relay, and a trusted link from the native erasure receipt to its originating door operation. Existing earlier call expiry is never extended. Idle Cron cleanup uses the same fixed Base replay window and stays paused during restore maintenance.
 

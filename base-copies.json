@@ -755,9 +755,9 @@
     {
       "path": "scripts/edition-authoring/archive-source.mjs",
       "originPath": "edition-authoring/archive-source.mjs",
-      "revision": "e881e6f66ce7cd737d17dbeb945995aab83c30d8",
+      "revision": "8b925fa5ffaa577df9f2e4ebab6ede8af5155baa",
       "files": {
-        "scripts/edition-authoring/archive-source.mjs": "c59a6a97abfdf80b2874a461ba7800e8604a3141db4594a584d6a0cfedac5f46"
+        "scripts/edition-authoring/archive-source.mjs": "27ff7efbed5ef18dd5eaa2c03abe8c72a6f1a132105380b13448939bc1dde139"
       },
       "modes": {
         "scripts/edition-authoring/archive-source.mjs": "100644"
@@ -783,9 +783,9 @@
     {
       "path": "scripts/edition-authoring/base-copies.mjs",
       "originPath": "edition-authoring/base-copies.mjs",
-      "revision": "e881e6f66ce7cd737d17dbeb945995aab83c30d8",
+      "revision": "8b925fa5ffaa577df9f2e4ebab6ede8af5155baa",
       "files": {
-        "scripts/edition-authoring/base-copies.mjs": "4cac17e531310ab14df07139156c2b4fae5f7ab03097c7f8374c09a3d050dc8b"
+        "scripts/edition-authoring/base-copies.mjs": "abef957622ffa65fc34db24e46270773896deeac6f6635a2b071f97f1d4fa1e0"
       },
       "modes": {
         "scripts/edition-authoring/base-copies.mjs": "100644"
@@ -797,9 +797,9 @@
     {
       "path": "scripts/edition-authoring/cli.mjs",
       "originPath": "edition-authoring/cli.mjs",
-      "revision": "e881e6f66ce7cd737d17dbeb945995aab83c30d8",
+      "revision": "8b925fa5ffaa577df9f2e4ebab6ede8af5155baa",
       "files": {
-        "scripts/edition-authoring/cli.mjs": "d4302ecd51794bbf9d92ea08c23fc1447f043088952c53689418c03e8750bb7f"
+        "scripts/edition-authoring/cli.mjs": "b60b229542574459e46f33f48412ab775d298b21ab8e6a8ecf5dad46efb5589f"
       },
       "modes": {
         "scripts/edition-authoring/cli.mjs": "100644"
@@ -839,9 +839,9 @@
     {
       "path": "scripts/edition-authoring/edition-migrations.mjs",
       "originPath": "edition-authoring/edition-migrations.mjs",
-      "revision": "e881e6f66ce7cd737d17dbeb945995aab83c30d8",
+      "revision": "8b925fa5ffaa577df9f2e4ebab6ede8af5155baa",
       "files": {
-        "scripts/edition-authoring/edition-migrations.mjs": "7e9837c9a373cf7f394a575230c9f386a289786a15cc9685e4f11911e9a84e88"
+        "scripts/edition-authoring/edition-migrations.mjs": "1fb7945a0c58ee8d28fb4868599cf904c2cd7057ca62622aa02390c33a5973bb"
       },
       "modes": {
         "scripts/edition-authoring/edition-migrations.mjs": "100644"
@@ -909,9 +909,9 @@
     {
       "path": "scripts/edition-authoring/module-closure.mjs",
       "originPath": "edition-authoring/module-closure.mjs",
-      "revision": "e881e6f66ce7cd737d17dbeb945995aab83c30d8",
+      "revision": "8b925fa5ffaa577df9f2e4ebab6ede8af5155baa",
       "files": {
-        "scripts/edition-authoring/module-closure.mjs": "9b097df912e489d19756e15615ab5b05f4fa3405a6ec3eaf07d1b31c6d2a4ae8"
+        "scripts/edition-authoring/module-closure.mjs": "010976b55998157d80eb3567e47d46545e7031dd5c2777519bb88754431bb43c"
       },
       "modes": {
         "scripts/edition-authoring/module-closure.mjs": "100644"
@@ -937,9 +937,9 @@
     {
       "path": "scripts/edition-authoring/module-packages.mjs",
       "originPath": "edition-authoring/module-packages.mjs",
-      "revision": "e881e6f66ce7cd737d17dbeb945995aab83c30d8",
+      "revision": "8b925fa5ffaa577df9f2e4ebab6ede8af5155baa",
       "files": {
-        "scripts/edition-authoring/module-packages.mjs": "cca255ac3a7538916169af5bf53f99704f79fc3fc9c11fbdddb60cb4bec8afbd"
+        "scripts/edition-authoring/module-packages.mjs": "ecdf5b12dee847c1b97537aaca20aefb9677aac6ec38b29fab50d66fc16c046f"
       },
       "modes": {
         "scripts/edition-authoring/module-packages.mjs": "100644"
@@ -965,9 +965,9 @@
     {
       "path": "scripts/edition-authoring/module-syntax.mjs",
       "originPath": "edition-authoring/module-syntax.mjs",
-      "revision": "e881e6f66ce7cd737d17dbeb945995aab83c30d8",
+      "revision": "8b925fa5ffaa577df9f2e4ebab6ede8af5155baa",
       "files": {
-        "scripts/edition-authoring/module-syntax.mjs": "eb5a1d2da81c2cfde8587ecf395c4543bcb97b8f293946e73ee5a73b4d7e50fb"
+        "scripts/edition-authoring/module-syntax.mjs": "956587f198f639ded20628182b2bc33ec429cbef6b7b73c685eaa7b216f477a1"
       },
       "modes": {
         "scripts/edition-authoring/module-syntax.mjs": "100644"
@@ -1049,9 +1049,9 @@
     {
       "path": "scripts/edition-authoring/runtime-dependencies.mjs",
       "originPath": "edition-authoring/runtime-dependencies.mjs",
-      "revision": "e881e6f66ce7cd737d17dbeb945995aab83c30d8",
+      "revision": "8b925fa5ffaa577df9f2e4ebab6ede8af5155baa",
       "files": {
-        "scripts/edition-authoring/runtime-dependencies.mjs": "f80f59284b27a9610a96baa6b0f1d0f59f68e075a3c4ae20e85fb153d7def4f3"
+        "scripts/edition-authoring/runtime-dependencies.mjs": "96a9b7201392377ef5d5c0195b1f96bfea616f6a47349704798d7cd1c485f730"
       },
       "modes": {
         "scripts/edition-authoring/runtime-dependencies.mjs": "100644"
