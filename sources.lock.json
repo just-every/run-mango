@@ -3146,7 +3146,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/declaration.ts": {
-      "sha256": "b7821ea5d7d307cd04b58b5ce349889d2b330cfe88ed35609649c9fe46aee328",
+      "sha256": "97bc83fccb5acda5c1b61559ed44667ccc6b3f631cf4234e6f76430593f9f1c2",
       "executable": false
     },
     "src/core/features/audience/erasure/discovery.ts": {
@@ -3190,7 +3190,7 @@
       "executable": false
     },
     "src/core/features/audience/erasure/service.ts": {
-      "sha256": "0106ab9f5cc697bab35f5713c1886d6e8afb24ee1996e9e12ca33724fde3c22f",
+      "sha256": "760143bf34fd387656bff3e0f2e394f1982180848d3fcb3bd0edc3f745de40a9",
       "executable": false
     },
     "src/core/features/audience/erasure/source-literals.ts": {
@@ -3426,7 +3426,7 @@
       "executable": false
     },
     "src/core/features/audience/public-resubscribe-policy.ts": {
-      "sha256": "dc497a01c58bcec2511415a4c6b8e4d10b73fd3afafcf4a566a4ead7453841cb",
+      "sha256": "d9c293702af7a5d43ff22b0457605620e59f709e2e0033089439a6a9bb2f25bb",
       "executable": false
     },
     "src/core/features/audience/public-routes.ts": {
@@ -8374,7 +8374,7 @@
       "executable": false
     },
     "tests/audience-import/erasure.spec.ts": {
-      "sha256": "53fc3d11507d4daa144362d093d030452929e66dca58bb9486a3985ad15d32fe",
+      "sha256": "29e2d5d1fe69e0b623751037d1b4d4088514dcfbe4dbfe2f78afd7f000afbccc",
       "executable": false
     },
     "tests/audience-import/fixtures/mailchimp-cleaned.csv": {
@@ -8434,7 +8434,7 @@
       "executable": false
     },
     "tests/audience-import/signup-security.spec.ts": {
-      "sha256": "9e18468c717239b063ffc0e1edbc90398e59a098f2bf29158ca95dffefd1ee76",
+      "sha256": "9facf35759224be8e3207209da1d5d5c51fd9cf89b32bd86d44c03f9e26da80e",
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {
