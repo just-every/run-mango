@@ -1,12 +1,14 @@
 import {portableHash} from '../portable-hashes';
 import type {ErasureScope} from './types';
-export type ErasureTable={table:string;where?:(s:ErasureScope)=>{sql:string;params:unknown[]};literal?:boolean;mode?:'audit'|'recipient'|'redact'|'contact-data'|'invalidate-campaign'|'invalidate-recipient'};
+export type ErasureTable={table:string;where?:(s:ErasureScope)=>{sql:string;params:unknown[]};literal?:boolean;mode?:'audit'|'recipient'|'redact'|'contact-data'|'invalidate-campaign'|'invalidate-recipient';
+  /** A restriction erasure keeps: the assignments that detach each selected row instead of deleting it. */
+  retain?:string};
 const set=(column:string,values:string[])=>({sql:`${column} IN (SELECT value FROM json_each(?))`,params:[JSON.stringify(values)]});
 const contact=(table:string,column='contact_id'):ErasureTable=>({table,where:s=>set(column,s.ids)});
 const recipient=(table:string):ErasureTable=>({table,where:s=>({sql:'recipient_step_id IN (SELECT id FROM recipient_steps WHERE contact_id IN (SELECT value FROM json_each(?)))',params:[JSON.stringify(s.ids)]}),literal:true});
 /** Mango's complete contact cascade, in dependency order. Base import custody is
  * withdrawn as whole jobs because the shared helper cannot select source-only rows.
- * Independent operator identities/authentication and hash-only opt-outs are kept. */
+ * Independent operator identities/authentication, hash-only opt-outs and suppressions are kept. */
 // An unmatched provider fact belongs to the contact when its destination is one
 // of the contact's own addresses or phones, as stored or in older phone formatting.
 const destination="(CASE WHEN instr(json_extract(detail_json,'$.destination'),'@')>0 THEN lower(json_extract(detail_json,'$.destination')) ELSE replace(replace(replace(replace(replace(json_extract(detail_json,'$.destination'),' ',''),'(',''),')',''),'-',''),'.','') END)";
@@ -59,7 +61,11 @@ export const contactErasureTables:ErasureTable[]=[
   // Shared file names, capture descriptions and historical prose can name a
   // different erased contact. Keep surviving consent, redact only its literals.
   ...['audience_import_observations','consent_capture_metadata','consent_evidence','contact_history'].map(table=>({...contact(table),literal:true,mode:'contact-data' as const})),
-  {table:'contact_suppressions',where:s=>({sql:'contact_id IN (SELECT value FROM json_each(?)) OR destination_hash IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.hashes)]})},
+  // A suppression stays a suppression (CONT-013): its hash, channel, cause and time remain, detached
+  // from the contact. Its event identity can name an import file, so it keeps only whether an
+  // integration's owner recorded it, which no recipient can clear (recipientSuppression).
+  {table:'contact_suppressions',where:s=>({sql:'contact_id IN (SELECT value FROM json_each(?)) OR destination_hash IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.hashes)]}),
+    retain:"contact_id=NULL,provider_event_id=CASE WHEN provider_event_id LIKE 'integration:%' THEN 'integration:erased:'||id END"},
   // An address's portable identity stays while an opt-out or detached suppression
   // survives, so that restriction still leaves through the export (import-opt-out-lines).
   // Match the portable value too: prior mappings may use another installation's

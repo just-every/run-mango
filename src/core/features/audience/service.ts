@@ -1,6 +1,6 @@
 import type {SenderWriteAuthority} from '@/core/features/settings/sender-authority';
 import type {OptInMode} from './opt-in-modes';
-import {recipientOptOut, recipientSuppression} from './public-resubscribe-policy';
+import {recipientOptOuts, recipientSuppression} from './public-resubscribe-policy';
 import type { SyncWriteFence } from '@/core/features/store/sync-write-fence';
 import type { CommerceSourceType, NormalizedCommerceRecord, createStoreService } from '@/core/features/store/service';
 import { sha256, ulid } from '@/core/shared/ids';
@@ -247,7 +247,7 @@ export function createAudienceService(
     const address = contact && (await repository.listEmails(contact.id)).find(row=>row.email===destination);
     const blocks = suppressions.filter(row=>row.channel==='email');
     if (!contact && optOuts.length) await ensureContact({email:destination},new Date());
-    if (blocks.some(row=>!recipientSuppression(row)) || optOuts.some(row=>!recipientOptOut(row.reason))) return 'refused' as const;
+    if (blocks.some(row=>!recipientSuppression(row)) || !recipientOptOuts(optOuts)) return 'refused' as const;
     if (contact?.mergeLock || contact?.emailStatus==='subscribed' || address?.channelStatus==='subscribed') return 'refused' as const;
     if (contact?.emailStatus==='suppressed' || address?.channelStatus==='suppressed') {
       if (!blocks.length) return 'refused' as const;
