@@ -317,7 +317,16 @@ test('Mango shared door: signed native owner, durable Business people, native dr
    assert.equal(row.client_id,origin.client_id);assert.equal(row.consent,origin.consent);
    assert.ok(['done','replayed','refused'].includes(row.outcome),'Native retry outcomes retain the released runtime semantics');
    assert.equal(row.outcome==='refused'?typeof row.code:row.code,row.outcome==='refused'?'string':null);
+   // Each delivered step (a design run's draft or layout pass) is its own item: never a changed request on an earlier claim.
+   assert.notEqual(row.code,'idempotency_conflict',row.tool+' delivered a step on an earlier step\'s continuation claim');
+   if(row.outcome==='replayed'){
+    const claimed=nativeAudit.find(original=>original.id===row.replay_of);
+    assert.ok(claimed?.outcome==='done','A redelivered native step replays its completed claim');
+    for(const field of ['operation_id','tool','continuation_item_id','idempotency_key'])assert.equal(row[field],claimed[field],'A redelivered native step keeps its claim '+field);
+   }
   }
+  const designSteps=nativeAudit.filter(row=>row.tool==='mango.continuation.designs.advance');
+  assert.ok(designSteps.some(row=>row.outcome==='done'),'Queued design steps of an agent-started run complete through their own continuation items');
   assert.equal(owner.role,'owner');
   assert.equal((await adopt({...autonomousPolicy(),rules:[{id:'hold',class:'*',do:'approval',approver:['sponsor'],wait:'PT1H'}]})).response.status,200);
   const heldStop=await call('mango.campaigns.create',{idempotency_key:'held-before-business-stop'});

@@ -39,7 +39,12 @@ export function actorType(){return agentAction.getStore()?'agent':'operator';}
 export function actorId(operatorId:string){return agentAction.getStore()?.agent.id??operatorId;}
 
 /** A continuation item is derived from persisted native queue state, never a
- * caller's replay suffix. The original public key and admission stay unchanged.
+ * caller's replay suffix: the custody operation, the delivered step (the queued
+ * command's declared arguments, such as a design run's draft or layout pass) and
+ * the native progress that step finds. Each delivered step is its own item with
+ * its own once-only claim, so a different step is never a changed request on an
+ * earlier step's claim; the same step delivered again at the same progress is the
+ * same item and replays. The original public key and admission stay unchanged.
  */
 export async function nativeWorkItem(db:D1Database,tool:string,args:Record<string,unknown>){
  const name=tool.replace('mango.continuation.','mango.');
@@ -57,5 +62,6 @@ export async function nativeWorkItem(db:D1Database,tool:string,args:Record<strin
   :kind==='report'?delivery:kind==='sms-service'?await db.prepare('SELECT id,state,next_at FROM sms_service_messages WHERE id=?').bind(target).first()
   :await db.prepare("SELECT id,payload_digest FROM source_records WHERE json_extract(payload,'$.eventId')=?").bind(args.eventId).first();
  if(!progress)return null;
- return {id:kind+':'+target+':'+work.operation+':'+(await fingerprint(progress)).slice(0,32),operationId:identity.operationId};
+ const step=Object.entries(args).sort(([a],[b])=>a<b?-1:a>b?1:0);
+ return {id:kind+':'+target+':'+work.operation+':'+(await fingerprint({step,progress})).slice(0,32),operationId:identity.operationId};
 }
