@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 8 | 210 | 89 | 307 |
+| Core | 13 | 205 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 8 | 210 | 98 | 316 |
+| Full target | 13 | 205 | 98 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -197,7 +197,7 @@ Core · published · **done** · Rules D-1
 
 #### STORE-006 — Declared adapter capability
 
-Core · published · **partial** · Rules D-1
+Core · published · **done** · Rules D-1
 
 **Requirement.** Mango refuses to turn unsupported source requirements into an apparently empty or partial audience.
 
@@ -207,8 +207,8 @@ Core · published · **partial** · Rules D-1
 3. Inclusion and exclusion reviews name the missing source, keep counts unknown and save no approval authority, snapshot or recipients.
 4. The AI proposal-generation door names the missing source and saves neither campaign nor partial audience.
 
-**Evidence.** `tests/go-live/source-freshness.journeys.ts` · `src/core/features/audience/source-coverage.ts` · `src/core/features/campaigns/authoring-service.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Source capability declared unavailable; Unsupported requirement refused; Reviews name missing source and leave no snapshots; Generation source refusal without campaign or audience. Assertions for the unsupported-source journey are in tests/go-live/declared-capability.ts outside the old Evidence set. Missing public-door journey: “Declared adapter capability — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/source-freshness.journeys.ts` — “[STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority” · `tests/go-live/woocommerce.journeys.ts` — “[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery”
+**Gap.** None.
 
 #### STORE-007 — Ingestion latency
 
@@ -437,8 +437,8 @@ Core · published · **partial** · Cites BASE-DATA-003, BASE-INPUT-001 · Rules
 4. An import, sync or capture matching a retained local or portable identity preserves its restriction; an erasure opt-out means unsubscribed.
 5. Only the recipient’s own confirmed public-form resubscribe can clear an unsubscribe or erasure restriction under CONT-027; it cannot clear suppression.
 
-**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/move-in/archive.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: All listed hash/channel/reason/time fields and opted-out aliases retained; Installation-keyed one-way destination hash; Subscribed identity has no row tombstone; An import, sync or capture matching a retained local or portable identity preserves its restriction; an erasure opt-out means unsubscribed.; Only the recipient’s own confirmed public-form resubscribe can clear an unsubscribe or erasure restriction under CONT-027; it cannot clear suppression.. Missing public-door journey: “Erasure and surviving opt-out — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-import/erasure.spec.ts` — “CONT-013 public erasure resumes, withdraws complete source custody, redacts attributed copies, leaves shared text and keeps reimport unsendable” · `tests/audience-import/privacy-portability.spec.ts` — “CONT-013 CONT-029 different-salt imported subscribed erasure removes every mapping alias and source custody”; “CONT-004/010 legacy detached opt-outs and suppressions refuse a lossy CSV and still exclude later imports” · `tests/shopify/connection.spec.ts` — “[STORE-002][STORE-004] native authenticated Shopify sync retains source identity and purchase time through paged failure and retry” · `tests/audience-import/signup-security.spec.ts` — “security: public capture preserves subscribed, suppressed and erased-optout states without mail or evidence”; “[CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot”
+**Gap.** Asserted: no readable destination and a one-way installation-keyed hash after erasure; a subscribed identity leaves no mapping alias or tombstone; import, store sync and public capture keep a retained restriction, which reads unsubscribed; resubscribe never clears suppression on a live contact. Not met: erasure replaces each restricted identity's opt-out reasons and suppressions with one erasure-opt-out row dated at erasure, so the restriction's reason and occurrence time are not retained; and public signup refuses every erasure restriction without a confirmation, so the recipient's own confirmed resubscribe can never clear one as acceptance 5 and CONT-027 require.
 
 #### CONT-029 — Portable surviving restrictions
 
@@ -458,7 +458,7 @@ Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-D
 
 #### CONT-030 — Erasure-safe restore authority
 
-Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-DATA-001 · Rules D-2
+Core · published · **done** · From CONT-013 · Cites BASE-DATA-003, BASE-DATA-001 · Rules D-2
 
 **Requirement.** Restore refuses stale archive authority rather than reviving erased contacts. The [erasure-authority specification](docs/contract/mechanism.md) records epoch floors and legacy migration behavior.
 
@@ -468,8 +468,8 @@ Core · published · **partial** · From CONT-013 · Cites BASE-DATA-003, BASE-D
 3. Upgrade retires legacy journals and transfers only after advancing every known source floor.
 4. An offline copy without current authority makes no claim to detect later erasure.
 
-**Evidence.** `tests/portability.spec.ts` — “[CONT-030] current erasure authority refuses an old archive on an empty restore target” · `tests/move-in/archive.journeys.ts`
-**Gap.** Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Nonempty legacy row journals are refused before staging.; Upgrade retires legacy journals and transfers only after advancing every known source floor.; An offline copy without current authority makes no claim to detect later erasure.. Missing public-door journey: “Erasure-safe restore authority — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/portability/privacy.spec.ts` — “CONT-030/DATA-001 populated upgrade retires legacy custody and resumes a pending old erasure cursor”; “CONT-030/DATA-001 invalid archive authority is refused before any durable admission mutation”; “CONT-030/DATA-001 restore refuses a tampered or stale archive by name with no persistent effect, then restores a current one”; “CONT-030/DATA-001 atomic epoch race refuses stale readmission and current archive recovery preserves rows” · `docs/contract/mechanism.md`
+**Gap.** None.
 
 ### Proposals
 
@@ -616,15 +616,15 @@ Core · published · **partial** · Rules D-2
 
 #### AUD-002 — Consent and suppression
 
-Core · published · **partial** · Rules D-2
+Core · published · **done** · Rules D-2
 
 **Requirement.** Channel consent and suppression take precedence over any audience inclusion.
 
 **Acceptance.**
 1. Pending, non-subscribed, unsubscribed and suppressed contacts are excluded on that channel, regardless of segment membership or an operator-authored inclusion rule.
 
-**Evidence.** `src/core/features/audience/eligibility.ts` · `tests/go-live/delivery.journeys.ts`
-**Gap.** Asserted: related implementation or scenario coverage, with no complete assertion of the outcomes below. Unasserted: Pending channel exclusion; Non-subscribed channel exclusion; Unsubscribed channel exclusion; Suppressed channel exclusion; Segment or explicit inclusion cannot override channel exclusion. Missing public-door journey: “Consent and suppression — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/audience-controls/segments.spec.ts` — “[CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, freeze recipients and merge identities without widening consent”
+**Gap.** None.
 
 #### AUD-003 — Commerce and dormancy exclusions
 
@@ -678,8 +678,8 @@ Core · published · **partial** · Rules D-2
 2. After the first send, changes to inclusion, a custom exclusion and consent yield named skips at the second step, with only the still-eligible control sent.
 3. A contact newly matching the rule remains outside the frozen audience.
 
-**Evidence.** `tests/go-live/multistep.journeys.ts` — “[AUD-006] later steps reapply ordinary inclusion, custom exclusions and consent without adding new candidates”
-**Gap.** Asserted: Changed eligibility prevents later step; Changed inclusion yields named skip; Custom exclusion yields named skip; Consent change yields named skip; Only eligible control receives second step; Newly matching contact never added. Unasserted: Conversion prevents later step. Missing public-door journey: “Multi-step exit — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/multistep.journeys.ts` — “[AUD-006][CAMP-014] an approved multistep campaign can pause, recheck current inclusion and consent, and resume”
+**Gap.** Asserted: after the first send, changed inclusion, a custom exclusion and an opt-out are named skips at the second step, only the still-eligible control is sent, and a newly matching contact stays outside the frozen audience. Unasserted: a conversion after an earlier step prevents later steps; no journey records a purchase of the campaign's product between steps and shows the next step skipped (recent-product-purchase is asserted only at review).
 
 #### AUD-007 — Frozen candidate set
 
@@ -819,15 +819,15 @@ Core · published · **partial** · Rules D-1, D-3
 
 #### CAMP-005 — Idempotent approval
 
-Core · published · **partial** · Rules D-1, D-3
+Core · published · **done** · Rules D-1, D-3
 
 **Requirement.** Approval retries do not duplicate scheduled work.
 
 **Acceptance.**
 1. Repeated requests for the same campaign and revision produce one scheduled campaign, one set of steps and one set of recipient-steps regardless of request count.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px”
-**Gap.** Asserted: One scheduled campaign; One recipient-step set; One approval after repeat. Unasserted: One set of steps. Missing public-door journey: “Idempotent approval — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-012][CAMP-018][MSG-009][MSG-012] build and preview a newsletter, save canonical content, approve its exact revision, send and reuse it as a fresh draft”
+**Gap.** None.
 
 #### CAMP-006 — Schedule
 
@@ -1119,8 +1119,8 @@ Core · published · **partial** · Rules D-1 · Register R-201
 6. Each HTML and plain-text part is at most 102,400 UTF-8 bytes under BUILD-012’s measured per-part check.
 7. Import makes no request to 12ui; generation is DESIGN-001, DESIGN-002 and DESIGN-010 to DESIGN-008.
 
-**Evidence.** `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440/390px”
-**Gap.** Asserted: Version-2 LayerDoc and PNG imported; Hosted photos; Operator HTTPS button; Managed unsubscribe footer; Saved postal-address footer; Unsupported layer text listed; Novel design line highlighted; Brief line not falsely highlighted; Unsupported version visibly refused; Non-HTTPS button visibly refused; Saved body unchanged after refusal; Unsaved edit leaves saved revision intact; No import save; Ordinary exact-revision approval succeeds; Measured HTML-part size refusal; No request to 12ui. Unasserted: Browser compiles email grammar; Unrepresentable grammar refused; Nothing outside grammar saved; No import approval; No import schedule; No import send; Measured plain-text-part size refusal. Missing public-door journey: “Design import — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-authoring/design-import.spec.ts` — “[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] a 12ui LayerDoc imports as an unsaved draft body that passes every approval check at 1440px”
+**Gap.** Asserted: browser compile into the approval grammar, hosted photos, HTTPS button, managed footer and postal address, unsupported-layer listing and novel-line highlight, version and non-HTTPS refusals with the saved body unchanged, unsaved edit then ordinary exact-revision approval, measured per-part size refusal and no request to 12ui. Unasserted: an unrepresentable design (reserved braces, a layout the approval checker rejects, an image with no area) is refused visibly with the saved body unchanged.
 
 #### DESIGN-012 — Compile the imported layout
 
@@ -1658,8 +1658,8 @@ Core · published · **partial** · Cites BASE-DATA-001
 2. Each uploaded campaign asset is retained as its original file.
 3. Signed first-owner admission authority, authentication credentials, sessions and transfer bookkeeping are excluded; operator profiles retain attribution only.
 
-**Evidence.** `tests/portability.spec.ts` — “[DATA-001] complete native records and uploaded assets round-trip without restoring login authority” · `tests/go-live/go-live.journeys.ts` — “[DATA-001][CONT-004][SEND-005] an installation with real history restores into an empty one without its sending authority” · `tests/local-start/command-data.journey.ts`
-**Gap.** Old evidence asserts Archive includes contacts; Archive includes consent; Archive includes suppressions; Archive includes surviving opt-outs; Archive includes recipient-step outcomes. Unasserted: Archive includes source records; Archive includes proposals; Archive includes campaigns; Archive includes revisions; Archive includes audience decisions; Archive includes messages; Archive includes attribution events; Archive includes settings; Archive includes audit entries; Signed first-owner authority excluded; Authentication credentials excluded; Sessions excluded; Transfer bookkeeping excluded; Operator profiles attribution-only. Missing public-door journey: “Export contents — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/portability.spec.ts` — “[DATA-001][CONT-013] upgrade and restore populated records and assets, then enforce the current erasure fence” · `tests/go-live/go-live.journeys.ts` — “[SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore” · `tests/go-live/woocommerce.journeys.ts` — “[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery”
+**Gap.** Asserted: contacts, source records, consent, suppressions, surviving opt-outs, recipient-step outcomes and settings travel and restore, and campaigns, revisions, audience decisions, messages and audit entries travel inside the row-for-row restore round trip; uploaded assets restore as original files; credentials, sessions and connection secrets are excluded and the source session is refused on the destination. Unasserted: proposals and attribution events in an archive (no exported installation in a push journey holds a proposal or an attribution fact, so their inclusion is never shown); exclusion of a signed first-owner claim (no exported installation holds one).
 
 #### DATA-002 — Marketing restore custody
 
@@ -3795,8 +3795,8 @@ Core · target · **partial** · Cites BASE-ACCESS-004, BASE-INPUT-001, BASE-OPS
 5. Exhausting one key returns a named rate-limit refusal with retry guidance while another key remains usable.
 6. Writes retain their integration-key attribution, and the public API description declares their scopes.
 
-**Evidence.** `tests/go-live/sync-integrations.journeys.ts` — “[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression” · `tests/go-live/custom-event-journey.ts` — “[CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression” · `src/core/features/integrations/openapi.ts` · `src/core/features/integrations/client-source.ts`
-**Gap.** The cited journeys assert profile properties, contact identity, event idempotency and key attribution, membership reads, consent refusal and independent per-key rate limits. Gap: the cited files do not assert integration-key attribution on contact/property/subscription writes or full public-description coverage for all named contact and membership operations; event-write scope and event attribution alone do not prove those outcomes. Website keys remain server-held behind an authenticated same-origin proxy; no automatic collection or consent inference is authorized. Missing public-door journey: “Events and profiles API — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/sync-integrations.journeys.ts` — “[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression”
+**Gap.** Asserted: a scoped key identifies and updates a contact and keeps its properties; the shipped client's concurrent repeat stores one event and conflicting content is refused with the one stored event unchanged; the API and client return segment memberships; one key's exhausted allowance returns a named rate-limit refusal with retry guidance while another key stays usable; event and property writes keep their key attribution and the event write declares its scope. Unasserted: a subscription refused for missing consent evidence changes nothing; the journey checks only the 400 consent_evidence_required and never reads back that no contact, consent or confirmation followed for that address.
 
 #### INT-008 — Outbound webhooks
 
@@ -4414,7 +4414,7 @@ Core · target · **missing** · Cites BASE-ROLE-001 · Register R-703
 
 #### PUB-001 — Web archive
 
-Core · target · **partial** · Cites BASE-PUBLIC-001 · Rules D-2
+Core · target · **done** · Cites BASE-PUBLIC-001 · Rules D-2
 
 **Requirement.** A sent newsletter can be shared as a neutral public web version.
 
@@ -4423,8 +4423,8 @@ Core · target · **partial** · Cites BASE-PUBLIC-001 · Rules D-2
 2. The RSS feed includes the published issue and the public page carries search-engine metadata.
 3. Personalization becomes neutral text; public output contains no recipient token or personal value, unsubscribe link or private tracking link.
 
-**Evidence.** `tests/campaign-results/results.journeys.ts` — “[PUB-001] publish, read and withdraw a neutral sent newsletter at 1440” · `tests/audience-import/erasure.spec.ts`
-**Gap.** Publication, index navigation, RSS, metadata, neutral personalization and removal of representative private/tracking values are asserted. The cited evidence checks absence of the unsubscribe template token, but does not assert that the actual unsubscribe anchor is absent from the public page. Missing public-door journey: “Web archive — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/campaign-results/results.journeys.ts` — “[CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement”
+**Gap.** None.
 
 #### PUB-002 — Paid newsletters
 
@@ -4496,8 +4496,8 @@ Core · target · **partial** · From PUB-005 · Cites BASE-DATA-003 · Rules D-
 4. An already confirmed subscriber needs no second confirmation; payment events alone never create or widen permission.
 5. Contact erasure removes the paid-signup address and consent evidence under CONT-013.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
-**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: No free newsletters before confirmation. Missing public-door journey: “Paid-reader consent and restrictions — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
+**Gap.** Asserted in its paid-signup leg: paid-checkout evidence and one confirmation for a first-time payer, consent missing until confirmed; no paid-only send before and exactly the payer after the confirmation; an unsubscribed payer stays unsubscribed until their own POST; a suppressed payer gets no confirmation; payment never widens permission; erasure removes the address and evidence. Unasserted: no free newsletter reaches a pending payer before confirmation, and a suppressed payer receives no newsletter (none is reviewed or sent to either).
 
 ### Installation services
 
