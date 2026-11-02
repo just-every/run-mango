@@ -8,6 +8,7 @@ export async function nativeTarget(platform:Platform,kind:string,args:Record<str
   let uri=await resourceLink(platform,kind,args,null);
   // Deletion's result links to retained activity; admission targets the still
   // present native segment before the deletion runs.
+  if(kind==='contacts.erase')uri='mango://contacts/'+encodeURIComponent(String(args.id));
   if(kind==='segments.delete')uri='mango://segments/'+encodeURIComponent(String(args.id));
   if(kind==='designs.read'){
     const job=await platform.database.$client.prepare('SELECT id FROM design_jobs WHERE campaign_id=? ORDER BY created_at DESC LIMIT 1').bind(args.id).first<{id:string}>();

@@ -8,8 +8,9 @@ export function nativeHttp({request, origin, cookie}) {
    ...(body === undefined ? {} : {body: JSON.stringify(body)})});
   const failure=response.ok?null:await response.clone().json().catch(()=>null);
   const reasons=['provider-rejected','verification-unavailable','dns-malformed','dns-ttl-unknown','domain-missing','domain-records-missing','domain-unverified','provider-pacing','authentication-failed','domain-sending-disabled'];
+  const codes=[failure?.error,failure?.kind,...(failure?.blockers??[]).map(item=>item.kind)].filter(value=>typeof value==='string'&&/^[a-z][a-z0-9_-]{0,80}$/.test(value)).join(',');
   const reason=reasons.find(value=>failure?.reason===value||failure?.detail?.includes(value));
-  assert.ok(response.ok, `Native fixture ${method} ${path.split('?')[0]} returned ${response.status}${reason?' ('+reason+')':''}`);
+  assert.ok(response.ok, `Native fixture ${method} ${path.split('?')[0]} returned ${response.status}${codes?' ['+codes+']':''}${reason?' ('+reason+')':''}`);
   return response.json();
  };
 }

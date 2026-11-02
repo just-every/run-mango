@@ -258,6 +258,7 @@ export type AppConfig = {
   mailProvider?: 'rer' | 'resend' | 'sendgrid';
   /** Managed transactional connection, independent of the owner's marketing credentials. */
   authMail?: { provider: 'rer'; apiKey: string; relayUrl: string };
+  authenticationMail?: {provider:'rer'|'sendgrid'|'resend';apiKey:string;relayUrl?:string};
   mailRelayUrl?: string;
   initialOperatorEmails: string[];
   contactHashSalt: string;

@@ -1,3 +1,5 @@
+import {agentAction} from '../../agent-door/context';
+import {eraseContactAgentArtifacts} from '../../agent-door/erasure';
 import {actorType,actorId} from '../../agent-door/custody';
 import {invalidateRevisions} from './campaigns';
 import {invalidateTransfers} from './transfers';
@@ -33,7 +35,7 @@ function receipt(job:ErasureJob):ErasureReceipt {
   const scope=JSON.parse(job.scope_json);
   return {reference:job.reference,state:job.state as 'pending'|'complete',requestedAt:new Date(job.requested_at).toISOString(),completedAt:job.completed_at?new Date(job.completed_at).toISOString():null,removed:JSON.parse(job.counts_json),retainedChannels:scope.channels};
 }
-export function createContactErasure(db:D1Database,salt:string,buckets:Record<string,BlobStore>={}){
+export function createContactErasure(db:D1Database,salt:string,buckets:Record<string,BlobStore>={},agentSecret?:string){
   // Initialize the public helper once per service, rather than repeating its
   // schema discovery and lease setup for every durable erasure stage. Its
   // methods still read current source fences and transfer tables on every call.
@@ -60,14 +62,14 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
       // that request must retain its generation until both locks are released.
       const unchanged=Object.entries(scope.subject);
       const admitted="EXISTS(SELECT 1 FROM audience_erasures WHERE reference=?)";
-      const statements=[db.prepare(`INSERT INTO audience_erasures(reference,subject_id,state,scope_json,requested_at)
-        SELECT ?,?,'pending',?,? WHERE NOT EXISTS(SELECT 1 FROM audience_erasures WHERE state='pending')
+      const statements=[db.prepare(`INSERT INTO audience_erasures(reference,subject_id,state,scope_json,requested_at,agent_operation_id)
+        SELECT ?,?,'pending',?,?,? WHERE NOT EXISTS(SELECT 1 FROM audience_erasures WHERE state='pending')
         AND NOT EXISTS(SELECT 1 FROM contacts WHERE merge_lock IS NOT NULL)
         AND EXISTS(SELECT 1 FROM contacts WHERE ${unchanged.map(([column])=>`${quote(column)} IS ?`).join(' AND ')})
         AND NOT EXISTS(WITH RECURSIVE identities(id) AS (SELECT ? UNION SELECT m.merged_contact_id FROM contact_merges m JOIN identities i ON m.survivor_contact_id=i.id)
           SELECT id FROM identities WHERE id NOT IN (SELECT value FROM json_each(?))
           UNION ALL SELECT value FROM json_each(?) WHERE value NOT IN (SELECT id FROM identities))`)
-        .bind(reference,id,JSON.stringify(scope),now,...unchanged.map(([,value])=>value),id,JSON.stringify(scope.ids),JSON.stringify(scope.ids))];
+        .bind(reference,id,JSON.stringify(scope),now,agentAction.getStore()?.operationId??null,...unchanged.map(([,value])=>value),id,JSON.stringify(scope.ids),JSON.stringify(scope.ids))];
       for(const channel of scope.channels)for(const destination of channel==='email'?scope.emails:scope.phones){
         const hash=await sha256(`${salt}:${destination}`);
         // An erased destination keeps one block that names no other reason.
@@ -84,6 +86,7 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
       statements.push(db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
         SELECT ?,?,'contact',?,'contact.erasure-started','${actorType()}',?,'{}',?,? WHERE ${admitted} ON CONFLICT(operation_key) DO NOTHING`)
         .bind(crypto.randomUUID(),`erasure-started:${reference}`,id,actorId(context.authorization.principalId),now,now,reference));
+      if(actorType()==='agent')statements.push(db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'contacts',?,'mango.contacts.erase','agent',?,'{}',?,? WHERE ${admitted}`).bind(crypto.randomUUID(),crypto.randomUUID(),reference,actorId(context.authorization.principalId),now,now,reference));
       await commit(context,statements);
       const accepted=await read(reference);
       if(!accepted){
@@ -132,7 +135,9 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         const refreshed=await readScope(db,job.subject_id!,salt,(JSON.parse(job.scope_json) as ErasureScope).plans);if(!refreshed)throw new Error('Erasure subject disappeared before scope capture.');
         const discovered=JSON.parse(job.scope_json) as ErasureScope;
         for(const key of ['ips','freeText','unsafeText'] as const)refreshed[key]=[...new Set([...refreshed[key],...discovered[key]])];
-        const statements=[db.prepare('UPDATE audience_erasures SET scope_json=?,stage=0 WHERE reference=? AND stage=-1').bind(JSON.stringify(refreshed),reference)];
+        if(!agentSecret)throw new Error('Agent erasure requires the installation session setting');
+        const artifacts=await eraseContactAgentArtifacts(db,agentSecret,refreshed,{erasure_id:reference,at:new Date(job.requested_at).toISOString()},async()=>{const transfer=await loadPortability();return transfer.service.erasureStatements('contacts',{id:job.subject_id!});},job.agent_operation_id);
+        const statements=[...artifacts,db.prepare('UPDATE audience_erasures SET scope_json=?,stage=0 WHERE reference=? AND stage=-1').bind(JSON.stringify(refreshed),reference)];
         const now=Date.now();
         for(const channel of refreshed.channels)for(const destination of channel==='email'?refreshed.emails:refreshed.phones){const hash=await sha256(`${salt}:${destination}`);statements.push(db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE NOT EXISTS(SELECT 1 FROM surviving_opt_outs WHERE destination_hash=? AND channel=?)").bind(crypto.randomUUID(),hash,channel,now,now,now,hash,channel),recordPortableHash(db,hash,destination));}
         statements.push(db.prepare("UPDATE ik_jobs SET state='invalid',fence=fence+1,lease_token=NULL,lease_expires=NULL WHERE id IN (SELECT value FROM json_each(?))").bind(JSON.stringify(refreshed.jobs)));

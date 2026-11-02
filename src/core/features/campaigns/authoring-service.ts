@@ -73,7 +73,11 @@ export function createAuthoringService(platform: Platform, runtime: LifecycleRun
     async generate(operatorId: string) {
       if (!platform.ai) return {kind:'unavailable', detail:'AI suggestions are unavailable. You can create a campaign manually.'};
       if (!platform.commerce) return {kind:'unavailable', detail:'Connect commerce and sync store evidence before generating a suggestion. Manual authoring is available.'};
-      const rows = await platform.database.$client.prepare('SELECT id, source_type, payload, occurred_at FROM source_records ORDER BY occurred_at DESC LIMIT 30').all<{id:string;source_type:string;payload:string;occurred_at:number}>();
+      const provider=platform.commerce.capabilities().provider;
+      if(!provider)return {kind:'unavailable',detail:'The current commerce connection has no source authority.'};
+      // Historical sources remain available as history, but do not supply a
+      // current connection's proposal grounding or its freshness requirements.
+      const rows = await platform.database.$client.prepare('SELECT id, source_type, payload, occurred_at FROM source_records WHERE provider=? ORDER BY occurred_at DESC LIMIT 30').bind(provider).all<{id:string;source_type:string;payload:string;occurred_at:number}>();
       if (!rows.results.length) return {kind:'unavailable', detail:'Sync store evidence before generating a suggestion. Manual authoring is available.'};
       const issues = await store.freshness([...new Set(rows.results.map(row => row.source_type))] as CommerceSourceType[], new Date());
       if (issues.length) {

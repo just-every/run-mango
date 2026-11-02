@@ -15,7 +15,7 @@ export async function agentRuntime(bindings){
  const reviewers=await verificationReviewers(process.cwd(),[{label:'quality',email:reviewer,initializer:'tests/agent-door/reviewer.mjs'}],email);
  const network=await createAgentConformanceNetwork(process.cwd(),{
   module:'tests/agent-door/network.mjs',origins:['https://api.openai.com','https://woo.example.test','https://api.sendgrid.com','https://api.resend.com','https://cloudflare-dns.com',HOSTED_ORIGIN],
- },{email});
+ },{email,sponsorEmails:['teammate@example.test','casey-renamed@example.test']});
  let hosted;
  try{
   hosted=await serveHosted(process.cwd(),{declaration:resolveDeclaration(process.cwd(),'verify'),fixturePreparation:true,bindings:Object.fromEntries(Object.entries({
@@ -50,8 +50,8 @@ export async function agentRuntime(bindings){
     await mailAllowance();
     await reviewers.initialize('quality',{cookie},{request,origin:HOSTED_ORIGIN});
    },
-   async token(){
-    const links=network.mail.read().flatMap(message=>message.text.match(/https:\/\/[^\s<>]+/g)??[]).map(value=>new URL(value));
+   async token(address=email){
+    const links=network.mailFor(address).read().flatMap(message=>message.text.match(/https:\/\/[^\s<>]+/g)??[]).map(value=>new URL(value));
     return links.findLast(link=>link.pathname==='/auth/confirm')?.searchParams.get('token');
    },
    async close(){reviewers.close();try{await hosted.close();}finally{await network.close();}},

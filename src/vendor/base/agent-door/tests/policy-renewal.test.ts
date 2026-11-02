@@ -79,8 +79,10 @@ test('a long held conformance phase renews policy without changing approval evid
   assert.ok(pendingAcrossRenewal, 'A held approval must execute after its pending evidence crosses a renewal')
   console.log(`HELD-RENEWAL approval=${pendingAcrossRenewal.pending} outcome=executed elapsed-ms=${r.c.now - heldStart}`)
   for (const id of ['send', 'access', 'erase']) assert.ok(result.points.some((point: any) => point.id === `BASE-AGENT-007.5.receipt.${id}` && point.ok))
-  const identities = (await r.person('/agents/api/agents')).body.agents.filter((agent: any) => agent.id.startsWith('rer-conformance-'))
+  const conformance = (await r.person('/agents/api/agents')).body.agents.filter((agent: any) => agent.id.startsWith('rer-conformance-'))
+  const identities = conformance.filter((agent: any) => !agent.revoked)
   assert.equal(identities.length, 1)
+  assert.ok(conformance.some((agent: any) => agent.revoked), 'The revocation phase leaves its revoked throwaway agent listed')
   assert.ok((await r.person('/agents/api/audit')).body.rows.some((row: any) => row.consent && row.agent.id === identities[0].id))
  } finally { await r.close() }
 })

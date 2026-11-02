@@ -6,7 +6,7 @@ export async function pendingErasure(db:D1Database){return db.prepare("SELECT re
 export async function continueErasure(platform:Platform,reference:string){
   const db=platform.database.$client;
   const context={destination:'mango',authorization:{principalId:'erasure-maintenance',predicate:()=>({sql:"EXISTS(SELECT 1 FROM audience_erasures WHERE reference=?)",params:[reference]})}};
-  const service=createContactErasure(db,platform.config.contactHashSalt,{ASSETS_BUCKET:platform.blobs});
+  const service=createContactErasure(db,platform.config.contactHashSalt,{ASSETS_BUCKET:platform.blobs},platform.config.sessionSigningKey);
   const prior=await service.read(reference);if(!prior||prior.state==='complete')return;
   const receipt=await service.advance(reference,context);
   if(receipt?.state==='pending')await platform.jobs.enqueue({kind:'contact.erase',idempotencyKey:`erasure:${reference}:${crypto.randomUUID()}`,payload:{reference}});

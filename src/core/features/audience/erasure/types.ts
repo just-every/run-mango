@@ -14,5 +14,5 @@ export type ErasureScope = {
   channels: string[]; jobs: string[]; plans: string[]; streams: string[]; stages: string[];
 };
 export type ErasureReceipt = { reference: string; state: 'pending'|'complete'; requestedAt: string; completedAt: string|null; removed: Record<string,number>; retainedChannels: string[] };
-export type ErasureJob = { reference:string; subject_id:string|null; state:string; scope_json:string; counts_json:string; revision:number; stage:number; cursor:number; blob_scan_json:string; requested_at:number; completed_at:number|null };
+export type ErasureJob = { reference:string; subject_id:string|null;agent_operation_id:string|null; state:string; scope_json:string; counts_json:string; revision:number; stage:number; cursor:number; blob_scan_json:string; requested_at:number; completed_at:number|null };
 export type ErasureRow = Record<string,string|number|null>;

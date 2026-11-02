@@ -1,3 +1,4 @@
+import {nativeWorkItem} from './custody';
 import {deliverSmsService} from '../sms/service-delivery';
 import {nativeOperator} from './native';
 import {hasPermission,type Capability} from '../auth/permissions';
@@ -52,7 +53,7 @@ export function workerTools(runtime: LifecycleRuntime): ToolDefinition[] {
       ctx.emit('flows.changed','mango://flows/'+encodeURIComponent(String(args.id)));
       return {result:{status:'processed',id:args.id}};
     }};
-  return [flowTool,
+  const publicTools:ToolDefinition[]=[flowTool,
     define('consent.dispatch','contact.subscribe',{id:{type:'string'}},['CONT-004','AUD-005'],async args=>({state:await deliverSmsService(runtime.platform,String(args.id))})),
     define('reports.dispatch','settings.manage',{deliveryId:{type:'string'}},['REPORT-001'],async(args,ctx)=>{
       if(!['owner','admin'].includes(ctx.person.role))throw new ToolRefusal('role_forbidden');
@@ -82,4 +83,5 @@ export function workerTools(runtime: LifecycleRuntime): ToolDefinition[] {
       return await runtime.synchronizeCommerce(args);
     }),
   ];
+  return [...publicTools,...publicTools.map(tool=>({...tool,name:tool.name.replace('mango.','mango.continuation.'),exposure:'invoke' as const,continuationItem:(args:Record<string,unknown>)=>nativeWorkItem(db,tool.name,args)}))];
 }

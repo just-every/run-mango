@@ -1,3 +1,5 @@
+import {pendingErasure} from '../audience/erasure/maintenance';
+import {withErasureWriteFence} from '../audience/erasure/write-fence';
 import {integrationTools} from './integration-tools';
 import {mangoCredentials} from './credentials';
 import type {createIntegrationService} from '../integrations/service';
@@ -31,7 +33,13 @@ export function mangoAgentDoor(environment: AppBindings, platform: Platform, aut
   const people = mangoPeople(platform, auth);
   const tools = [...mangoTools(platform, nativeGateway(platform, native),integrations,runtime),...workerTools(runtime),...integrationTools(platform,integrations)];
   const door = createAgentDoor({seed: 'mango', name: 'Mango', specialist: 'marketer', origin, db, capabilities: CORE_CAPABILITIES,
-    trust: installationTrust(environment, origin), people, ...mangoCredentials(integrations), tools, resources: mangoResources(platform),
+    trust: installationTrust(environment, origin), people, ...mangoCredentials(integrations),
+    erasure: {secret:platform.config.sessionSigningKey,fenced:async()=>Boolean(await pendingErasure(db))},
+    // Native effects retain their transaction generation. Erasure uses its own
+    // authorized journal transaction, as the person door does. Door bookkeeping
+    // uses Base's snapshot/tombstone guards rather than a stale product lease.
+    tools:tools.map(tool=>({...tool,run:(args,ctx)=>tool.name==='mango.contacts.erase'
+      ?tool.run(args,ctx):withErasureWriteFence(db,()=>tool.run(args,ctx))})), resources: mangoResources(platform),
     notTools: [
       {clauses: ['DATA-001', 'MOVE-001'], reason: 'import-door'},
       {clauses: ['OPER-001'], reason: 'screen'},

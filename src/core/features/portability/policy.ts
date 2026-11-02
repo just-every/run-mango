@@ -8,7 +8,7 @@ export function portabilityPolicy(config: Pick<Platform['config'], 'contactHashS
   ])));
   return {
     product: 'just-every/mango',
-    excludeTables: ['sending_connection','sending_proposals','review_loyalty_connections','link_host_sources','link_host_source_versions','woocommerce_connection','stripe_connection','operator_product_roles','operator_role_settings','audience_source_authority','scheduler_observation','audience_erasures','audience_erasure_blobs','audience_erasure_guard','oc_owner_claims', 'operator_sessions', 'operator_magic_links', 'operator_bootstraps', 'auth_rate_limits'],
+    excludeTables: ['agent_door_replay_aliases','agent_door_relay','sending_connection','sending_proposals','review_loyalty_connections','link_host_sources','link_host_source_versions','woocommerce_connection','stripe_connection','operator_product_roles','operator_role_settings','audience_source_authority','scheduler_observation','audience_erasures','audience_erasure_blobs','audience_erasure_guard','oc_owner_claims', 'operator_sessions', 'operator_magic_links', 'operator_bootstraps', 'auth_rate_limits'],
     // Fresh authentication projects its owner here. Historical profiles carry no login authority.
     // Migration 0073 also initializes an empty installation's growth baseline;
     // validateStaged distinguishes those bootstrap rows from real opening counts.
@@ -26,6 +26,7 @@ export function portabilityPolicy(config: Pick<Platform['config'], 'contactHashS
       },
     },
     async validateStaged({ db, manifest }) {
+      if(manifest.tables.some(table=>['agent_door_replay_aliases','agent_door_relay'].includes(table.name)&&table.count>0))throw new PortabilityError('installation_private_agent_rows',409);
       const binding = manifest.payloads.find(value => value.name === 'mango-private-authority');
       if (binding?.sha256 !== await sha256(await identity())) throw new PortabilityError('private_authority_mismatch', 409);
       const { results: baseline } = await db.prepare('SELECT channel,covered_from,subscribed FROM list_growth_baseline ORDER BY channel')

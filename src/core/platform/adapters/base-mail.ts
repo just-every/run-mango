@@ -9,8 +9,9 @@ import type { AppConfig } from '@/core/shared/platform';
 import type { Database } from '@/core/platform/db/client';
 import { prepareAuthMailCost } from '@/core/features/auth/mail-cost';
 
-export function createBaseMailSender(config: Pick<AppConfig, 'authMail' | 'mailProvider' | 'mailProviderApiKey' | 'mailRelayUrl' | 'emailHandoffsPerMinute' | 'deliveryPolicies'>, database: Pick<Database, '$client'>): MailSender {
-  if (config.authMail) config = {...config, mailProvider: config.authMail.provider, mailProviderApiKey: config.authMail.apiKey, mailRelayUrl: config.authMail.relayUrl};
+export function createBaseMailSender(config: Pick<AppConfig, 'authMail' | 'authenticationMail' | 'mailProvider' | 'mailProviderApiKey' | 'mailRelayUrl' | 'emailHandoffsPerMinute' | 'deliveryPolicies'>, database: Pick<Database, '$client'>): MailSender {
+  const authentication=config.authMail??config.authenticationMail;
+  if (authentication) config = {...config, mailProvider: authentication.provider, mailProviderApiKey: authentication.apiKey, mailRelayUrl: authentication.relayUrl};
   let retryAfterSeconds = 0;
   const sender = createMailSender({ provider: config.mailProvider, mode: 'production', apiKey: config.mailProviderApiKey,
     ...(config.mailProvider === 'rer' ? { relayUrl: config.mailRelayUrl } : {}) }, {

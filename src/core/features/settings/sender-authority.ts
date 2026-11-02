@@ -48,6 +48,7 @@ export const senderWriteGuard = `EXISTS (SELECT 1 FROM (
       WHERE ${effectiveRole}=a.product_role
         AND a.policy_state=(SELECT json_array(envelope,local_document,local_paused) FROM agent_door_state WHERE id=1 AND local_paused=0)
         AND NOT EXISTS(SELECT 1 FROM agent_door_agents g WHERE g.id=a.agent_id AND g.revoked=1)
+        AND (a.consent IS NULL OR NOT EXISTS(SELECT 1 FROM bs_settings WHERE singleton=1 AND stopped=1))
         AND (a.client_id IS NULL OR EXISTS(SELECT 1 FROM integration_credentials c WHERE c.id=a.client_id AND c.revoked_at IS NULL))
   ) s JOIN oa_operators o ON o.id=s.operator_id
   WHERE s.id=? AND o.id=? AND o.version=? AND s.operator_version=o.version AND o.status='active'

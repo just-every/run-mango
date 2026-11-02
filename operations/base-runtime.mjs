@@ -7,8 +7,9 @@ const { Miniflare } = createRequire(require.resolve('wrangler/package.json'))('m
 const { build } = createRequire(require.resolve('vite/package.json'))('esbuild');
 export const secret = 'synthetic-integration-test-secret-more-than-thirty-two-bytes';
 export const setup = 'integration-test-setup-more-than-thirty-two-bytes';
-export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy = false, admission = {}) {
+export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy = false, admission = {}, resources = {}) {
   const source = `
+    import {advanceClock} from './tests/go-live/clock';
     import { testIdentity } from './tests/support/test-identity';
     import { localSessionCookieName } from './tests/support/local-session';
     import { createApp } from './src/core/app/app';
@@ -16,6 +17,7 @@ export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy =
     import { createAppServices } from './src/core/app/app';
     export default { async fetch(envelope, env) {
       const input = await envelope.json();
+      if(input.url.endsWith('/__test/clock'))return Response.json(advanceClock(input.body?JSON.parse(input.body).advanceMs:0));
       globalThis.fetch = async (url, options) => {
         if (env.MAIL_PROVIDER === 'rer') {
           if (url !== env.MAIL_RELAY_URL) throw new Error('Unexpected relay transport');
@@ -58,7 +60,7 @@ export async function runtime(webhookPublicKey = 'test-public-key', seedLegacy =
     name: 'base-adoption-test', type: 'worker', compatibilityDate: '2026-09-01',
     compatibilityFlags: ['nodejs_compat'],
     manifest: {mainModule:'worker.js',modules:{'worker.js':{type:'esm',contents:bundled.outputFiles[0].text}}},
-    env: { ...Object.fromEntries(Object.entries(bindings).map(([key,value]) => [key,{type:'json',value}])), DB: {type:'d1',id:crypto.randomUUID()} },
+    env: { ...Object.fromEntries(Object.entries(bindings).map(([key,value]) => [key,{type:'json',value}])), DB: {type:'d1',id:crypto.randomUUID()},...(resources.custody?{MANGO_JOBS:{type:'queue',name:'native-custody'},ASSETS_BUCKET:{type:'r2',name:crypto.randomUUID()}}:{}) },
   } }] });
   try {
     const db = await mf.getD1Database('DB');

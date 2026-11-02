@@ -741,7 +741,16 @@
       "/o/",
       "/archive",
       "/archive-paper.png",
-      "/archive/"
+      "/archive/",
+      "/.well-known/oauth-protected-resource",
+      "/.well-known/oauth-protected-resource/mcp",
+      "/mcp",
+      "/api/rer/agent-policy",
+      "/api/rer/agent-decisions",
+      "/api/rer/business-settings",
+      "/rer-business-logo",
+      "/rer-business.css",
+      "/auth/owner-claim"
     ]
   },
   "customFields": [

@@ -1,3 +1,4 @@
+import {expireReplayCalls} from '@/vendor/base/agent-door/index.ts';
 import {runScheduledReports} from '@/core/features/insights/scheduled-reports';
 import {loadSendingConnection} from '@/core/features/sending/load-connection';
 import {loadWooCommerce} from '@/core/features/store/woocommerce/connection';
@@ -44,7 +45,12 @@ return {
     // Admit the host and reject local-only routes before reading connection
     // authority. Construct services only after that authority has been loaded.
     const transport = {fetch: (incoming: Request, env: AppBindings, context: ExecutionContext) => createApp(bindings, platform).fetch(incoming, env, context)};
-    return dispatchDocuments(request, bindings, executionContext, platform, transport, async () => {await loadWooCommerce(platform);await loadSendingConnection(platform);});
+    // Agent discovery, policy, pulls and calls reach their own authority gate
+    // before any native effect. Background provider polling/notice delivery
+    // remains on native person requests, queue and Cron, never before this gate.
+    const path=new URL(request.url).pathname;
+    const agentRequest=path==='/mcp'||path==='/agents'||path.startsWith('/agents/')||path.startsWith('/api/rer/agent-')||path.startsWith('/.well-known/oauth-');
+    return dispatchDocuments(request, bindings, executionContext, platform, transport, async () => {await loadWooCommerce(platform);await loadSendingConnection(platform,{maintenance:!agentRequest});});
   },
   async queue(batch, environment) {
     const messages = (batch as unknown as LifecycleQueueBatch).messages.filter(message => !acknowledgeHealthProbe(message));
@@ -57,6 +63,7 @@ return {
     // rejects. A fast report configuration failure must not cut off the
     // lifecycle consumer while it is still recording scheduler failure.
     executionContext.waitUntil(Promise.allSettled([
+      environment.MANGO_RESTORE_MODE==='1'?Promise.resolve():expireReplayCalls({options:{db:environment.DB},now:Date.now}),
       runScheduled(controller, environment, lifecycleRuntime),
       runScheduledReports(controller, environment, platformFor),
     ]).then(results => {

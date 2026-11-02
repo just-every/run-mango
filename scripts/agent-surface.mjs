@@ -19,6 +19,7 @@ try{
    // Owner-only teammate edits cannot widen the already fully privileged sponsor.
    // Sending connection and public signup subjects are installation authority,
    // never sponsor or agent grants. Runtime self-widening admission still runs.
+   .filter(tool=>tool.exposure!=='invoke')
    .map(({name,title,scope,readOnly,classes,clauses,inputSchema})=>({name,title,scope,readOnly,classes,clauses,inputSchema,
     ...(['mango.access.update','mango.connections.update','mango.signup.update'].includes(name)?{sponsorEscalation:false}:{})})).sort((a,b)=>a.name.localeCompare(b.name));
  export {CORE_CAPABILITIES};

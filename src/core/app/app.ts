@@ -295,6 +295,7 @@ export function createApp(
     const path=context.req.path;
     const erasure=path.startsWith('/api/audience/erasures/')||(context.req.method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path));
     // Campaign images write only a per-image request counter, never personal data (CAMP-012).
+    if(path==='/mcp'&&await pendingErasure(environment.DB))return context.json({error:'subject_erasure_in_progress'},409);
     if(initialReads.getStore()||erasure||path.startsWith('/auth/')||path.startsWith('/media/')||path==='/health')return next();
     return withErasureWriteFence(environment.DB,next);
   });
@@ -314,7 +315,10 @@ export function createApp(
     const principal = agentAction.getStore();
     if (principal) {
       if (environment.MANGO_RESTORE_MODE === '1') return context.json({error:'restore_in_progress'},503);
-      if (await pendingErasure(environment.DB)) return context.json({error:'contact_erasure_in_progress'},503);
+      const pending=await pendingErasure(environment.DB);
+      // Only this trusted operation may advance the journal it just admitted.
+      const continuation=/^\/api\/audience\/erasures\/([^/]+)\/resume$/.exec(context.req.path);
+      if(pending&&!(continuation&&continuation[1]===pending.reference&&await environment.DB.prepare('SELECT 1 FROM audience_erasures WHERE reference=? AND agent_operation_id=?').bind(pending.reference,principal.operationId).first()))return context.json({error:'contact_erasure_in_progress'},503);
       const operator = await nativeOperator(platform, principal.person.id);
       const required = requiredPermission(context.req.method, context.req.url);
       if (!hasPermission(operator.role, required)) return context.json({error:'role_forbidden'},403);
@@ -345,7 +349,7 @@ export function createApp(
       && !['/health', '/api/operator', '/api/auth/magic-link'].includes(path)) {
       return context.json({ error: 'restore_in_progress' }, 503);
     }
-    if(!path.startsWith('/api/')&&!path.startsWith('/auth/')&&!path.startsWith('/app')&&!['/health','/signin','/__dev/key'].includes(path)&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
+    if(!path.startsWith('/api/')&&!path.startsWith('/auth/')&&!path.startsWith('/app')&&!['/health','/signin','/__dev/key','/mcp','/agents'].includes(path)&&!path.startsWith('/agents/')&&await pendingErasure(environment.DB))return context.json({error:'contact_erasure_in_progress'},503);
     await next();
   });
   app.use('*', async (context, next) => {
@@ -359,6 +363,7 @@ export function createApp(
     await next();
   });
   app.use('*', async (context, next) => {
+    if((context.req.path.startsWith('/agents')||context.req.path==='/api/rer/agent-decisions')&&await pendingErasure(environment.DB))return context.json({code:'subject_erasure_in_progress'},409);
     const response = await businessSettings.handle(context.req.raw) ?? await door.handle(context.req.raw);
     if (response) return response;
     await next();

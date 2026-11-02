@@ -20,6 +20,7 @@ export function rowChanges(table:ErasureTable,row:ErasureRow,scope:ErasureScope,
     changes.operation_key=`erased-audit:${crypto.randomUUID()}`;
   }
   if(direct&&table.mode==='recipient')Object.assign(changes,{contact_id:reference,contact_identity_key:reference,destination:'',provider_message_id:null,outbound_request_json:null,last_error_detail:null,reconcile_cursor:null,idempotency_key:`erased:${crypto.randomUUID()}`,lease_token:null,lease_expires_at:null,...(['queued','handoff-unknown'].includes(String(row.transport_disposition))?{transport_disposition:'skipped',skip_reason:'contact-erased',terminal_at:Date.now()}:{} )});
+  if(Object.keys(changes).length&&table.mode==='agent-work')Object.assign(changes,{args_json:'{}',last_outcome:JSON.stringify({outcome:'refused',code:'subject_erased'})});
   if(Object.keys(changes).length&&table.table==='campaign_revisions')Object.assign(changes,{state:'erasure-invalidated'});
   if(Object.keys(changes).length&&table.table==='proposals')Object.assign(changes,{state:'draft'});
   return changes;

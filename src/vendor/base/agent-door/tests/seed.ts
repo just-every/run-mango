@@ -112,6 +112,9 @@ export default {
         if (row?.answer === 'throw') throw new Error('private native diagnostic')
         return row ? JSON.parse(row.answer) : { decision: 'allow', rule: 'native-default', revision: '1' }
       } } : undefined,
+      erasure: config.erasure ? { secret: config.SESSION_SECRET, async fenced(_name, args) {
+        return typeof args.id === 'string' && !!await env.DB.prepare("SELECT 1 FROM rer_erasure_operations WHERE entity='record' AND phase='deleting' AND json_extract(subject,'$.id')=?").bind(args.id).first()
+      } } : undefined,
       currentScopes: async principal => { const grant = await env.DB.prepare('SELECT scopes FROM test_grants WHERE agent=?').bind(principal.agent.id).first<{ scopes: string }>(); return grant ? JSON.parse(grant.scopes) : principal.scopes },
       tools: config.nativePeople ? tools.filter(tool => tool.name === 'base.people.create') : config.toolNames ? config.toolNames.map((name: string) => ({ ...tools[0], name })) : tools, limits: config.limits, people: operatorAuthPeople({ db: env.DB, allowList, session: request => auth.getSession(request) }),
       localCredentials: async request => request.headers.get('authorization') === `Bearer ${env.LOCAL_TOKEN}` ? { sponsor: { id: (await env.DB.prepare('SELECT claim_id FROM oa_bootstrap WHERE singleton=1').first<{claim_id:string}>())!.claim_id }, agent: { id: 'synthetic-base-local', name: 'Synthetic Local' }, scopes: ['records:read','records:write','events:read'] } : null,
@@ -125,6 +128,12 @@ export default {
       if (!job) return new Response(null, { status: 404 })
       const saved = JSON.parse(job.saved)
       return Response.json(await door.invoke('synthetic.queue.execute', { id: input.id, ...input.args, idempotency_key: saved.idempotencyKey }, { ...saved, ...input.override }))
+    }
+    if (path === '/__stop') {
+      const person = await doorPerson(auth, request)
+      if (!person) return new Response(null, { status: 401 })
+      await settings.stop(person.id)
+      return Response.json({ ok: true })
     }
     if (path === '/__embedded') {
       const person = await doorPerson(auth, request)

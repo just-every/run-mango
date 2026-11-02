@@ -1,3 +1,4 @@
+import {withNativeErasureControl} from '../audience/erasure/write-fence';
 import type { Hono } from 'hono';
 import { ToolRefusal, type ResourceContext, type ToolContext } from '@/vendor/base/agent-door/index.ts';
 import {senderWriteAuthority} from '../settings/sender-authority';
@@ -37,14 +38,17 @@ export function nativeGateway(platform: Platform, native: Hono<any>) {
       payload=form;delete headers['Content-Type'];
     }
     const request=new Request(new URL(path, ctx.origin),{method,headers,...(payload===undefined?{}:{body:payload})});
-    const response = await agentAction.run(ctx, async () => {
+    const nativeRequest = async () => agentAction.run(ctx, async () => {
       if (['GET','HEAD','OPTIONS'].includes(method)) return native.fetch(request);
       const admission=await senderWriteAuthority(platform,request,ctx.person.id);
       return agentWriteAdmission.run(admission,()=>native.fetch(request));
     });
+    const erasure=method==='DELETE'&&/^\/api\/contacts\/[^/]+$/.test(path)||method==='POST'&&/^\/api\/audience\/erasures\/[^/]+\/resume$/.test(path);
+    const response=erasure?await withNativeErasureControl(platform.database.$client,{operationId:ctx.operationId,agentId:ctx.agent.id,key:ctx.idempotencyKey},nativeRequest):await nativeRequest();
     const value = await response.json().catch(()=>({error:'native_unavailable'})) as Record<string, unknown>;
     if (!response.ok) throw new ToolRefusal(typeof value.error === 'string' ? value.error
       : typeof value.kind === 'string' ? value.kind : value.status==='blocked'?'native_blocked':'native_refused', 'Native action refused', {status: response.status,
+        ...(value.kind==='unavailable'&&typeof value.detail==='string'?{reason:value.detail}:{}),
         ...(Array.isArray(value.blockers)?{blockers:value.blockers.map(item=>{const finding=item as Record<string,unknown>;return {kind:finding.kind,detail:finding.detail,blocking:finding.blocking};})}:{})});
     if(path==='/api/settings/sending'&&value.connection&&typeof value.connection==='object')delete (value.connection as Record<string,unknown>).lastFour;
     return method === 'GET' ? projectPrivateResponse(contactPrivacyRole(operator), path, value) : value;

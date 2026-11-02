@@ -168,6 +168,9 @@ export function readProductionConfig(environment: AppBindings): AppConfig {
     sessionSigningKey: required(environment, 'SESSION_SIGNING_KEY'),
     authSetupToken: environment.AUTH_SETUP_TOKEN,
     mailProvider: effectiveMailProvider as 'rer' | 'resend' | 'sendgrid',
+    // Authentication keeps its declared installation connection when a native
+    // marketing connection is changed or disconnected.
+    authenticationMail: {provider: mailProvider as 'rer' | 'sendgrid' | 'resend', apiKey: required(environment, mailKeyEnvironment), ...(mailRelayUrl ? {relayUrl:mailRelayUrl} : {})},
     ...(mailProvider === 'rer' ? {authMail: {provider: 'rer' as const, apiKey: required(environment, mailKeyEnvironment), relayUrl: mailRelayUrl!}} : {}),
     mailRelayUrl,
     mailboxReceiptUrl,

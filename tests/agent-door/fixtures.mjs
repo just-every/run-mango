@@ -1,9 +1,21 @@
 import assert from 'node:assert/strict';
 import {randomUUID,createHmac} from 'node:crypto';
 import {recipients} from './recipient-fixtures.mjs';
-import {publicKey} from './sending-key.mjs';
+import {publicKey,signEvent} from './sending-key.mjs';
 import {nativeHttp,mailAllowance} from './native-http.mjs';
 let smsSequence=0;
+const pendingCheckouts=new Map();
+
+/** Deliver a new signed source event after the exact flow is live. Historical
+ * checkout observations never acquire permission to enroll a later activation. */
+export async function deliverCheckout({request,origin,eventId}){
+ const pending=pendingCheckouts.get(eventId);assert.ok(pending,'Native checkout fixture is available');
+ const event={...pending.event,occurredAt:new Date().toISOString()},raw=JSON.stringify(event),timestamp=String(Math.floor(Date.now()/1000));
+ const observed=await request(new URL(pending.webhookUrl+'/plugin',origin),{method:'POST',headers:{'Content-Type':'application/json',
+  'X-Mango-Timestamp':timestamp,'X-Mango-Signature':createHmac('sha256',pending.signingSecret).update('mango-plugin-v1\n'+timestamp+'.'+raw).digest('base64')},body:raw});
+ assert.equal(observed.status,204,'Native signed checkout intake after activation');await observed.body?.cancel();
+ pendingCheckouts.delete(eventId);
+}
 
 /** Fresh native intake and scoped API clients for each conformance phase.
  * Only public production doors prepare data; no database rows or authority are
@@ -47,6 +59,13 @@ export default async function({request,origin,cookie,phase,fixtures,mail,databas
  if(phase!=='initial'){
   fixtures.set('https://api.sendgrid.com',{publicKey});
   await http('/api/settings/sending',undefined,'DELETE');
+  // A disconnected native connection deliberately never resumes the developer
+  // key. Prepare the next phase through the same owner review/connect doors.
+  const connectionDb=await database('DB');
+  if(await connectionDb.prepare('SELECT 1 FROM sending_connection WHERE id=1').first()){
+   const reviewed=await http('/api/settings/sending/review',{apiKey:randomUUID()});
+   await http('/api/settings/sending/connect',{proposalId:reviewed.proposalId});
+  }
   async function sourceContact(label){
    return (await http('/api/integrations/v1/contacts',{email:label+'-'+suffix+'@example.test',displayName:'Orchard '+label,segmentName:'Orchard '+label+' '+suffix},'PUT',
     {Authorization:'Bearer '+intake.token})).contact;
@@ -79,6 +98,16 @@ export default async function({request,origin,cookie,phase,fixtures,mail,databas
   assert.ok(senderLink,'Native sender probe reaches the owner');
   const senderConfirmed=await request(senderLink,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'});
   assert.equal(senderConfirmed.status,200);await senderConfirmed.body?.cancel();
+  // A newly connected account needs its real signed delivered-event proof too.
+  if(await connectionDb.prepare('SELECT 1 FROM sending_connection WHERE id=1').first()){
+   const challenge=await connectionDb.prepare('SELECT provider_message_id,recipient FROM sender_verification_challenges WHERE provider_message_id IS NOT NULL ORDER BY created_at DESC LIMIT 1').first();
+   assert.ok(challenge,'Native sender probe retained its provider message id');
+   const timestamp=String(Math.floor(Date.now()/1000)),body=JSON.stringify([{event:'delivered',email:challenge.recipient,sg_message_id:challenge.provider_message_id,sg_event_id:randomUUID(),timestamp:Number(timestamp)}]);
+   const delivered=await request(new URL('/webhooks/mail/sendgrid',origin),{method:'POST',headers:{'Content-Type':'application/json','X-Twilio-Email-Event-Webhook-Timestamp':timestamp,'X-Twilio-Email-Event-Webhook-Signature':signEvent(timestamp,body)},body});
+   assert.equal(delivered.status,204,await delivered.clone().text());await delivered.body?.cancel();
+   const proved=await connectionDb.prepare('SELECT delivery_proved_at FROM sending_connection WHERE id=1').first();
+   assert.ok(proved.delivery_proved_at,'The signed event proves the current native sending connection');
+  }
   values.connection=await http('/api/settings/sending/review',{apiKey:randomUUID()});
   const sms=await http('/api/contacts/consent',{...values.consent,contact:{email:'sms-'+suffix+'@example.test',phone:'+614'+String(10000000+(++smsSequence))},
    channel:'sms',smsProgram:'News',expressWrittenConsent:true,timeZone:'Australia/Brisbane',
@@ -89,6 +118,27 @@ export default async function({request,origin,cookie,phase,fixtures,mail,databas
   assert.equal(message.state,'queued');assert.equal(message.reason,'sms-quiet-window');
   values.sms={id:message.id};
   const recipient=await recipients(http,suffix,values.consent);
+  fixtures.set('https://woo.example.test',{email:recipient.marketing});
+  const signingSecret=randomUUID();
+  await http('/api/settings/woocommerce',{url:'https://woo.example.test/',key:randomUUID(),secret:randomUUID(),signingSecret,exclusiveSecret:true,pluginEnabled:true},'PUT');
+  const connection=await http('/api/settings/woocommerce');
+  values.commerce={provider:'woocommerce:'+connection.connection.id};
+  const event={version:1,id:randomUUID(),kind:'abandoned_checkout',occurredAt:new Date().toISOString(),
+   customerId:'11',checkoutId:randomUUID(),checkoutStartedAt:new Date(Date.now()-3600000).toISOString(),products:['21'],
+   consent:{analytics:true,marketing:true},gpc:false};
+  pendingCheckouts.set(event.id,{event,signingSecret,webhookUrl:connection.webhookUrl});
+  values.checkout={eventId:event.id};
+  // A new native source configuration keeps old records as history and clears
+  // its freshness authority. Complete the customer's real current sync before
+  // the journey asks generation to use those records as current evidence.
+  const customerSync=await http('/api/store/sync',{sourceType:'customer'}),sourceDb=await database('DB');
+  let customerState;
+  for(let count=0;count<1000;count++){
+   customerState=await sourceDb.prepare('SELECT state FROM source_sync_runs WHERE id=?').bind(customerSync.runId).first();
+   if(['completed','failed','superseded'].includes(customerState?.state))break;
+   await new Promise(resolve=>setTimeout(resolve,20));
+  }
+  assert.equal(customerState?.state,'completed','Current native customer evidence is freshly synced, independently of retained history');
   const identity=(await http('/api/settings/sender')).identity;
   fixtures.set('https://api.openai.com',{email:recipient.marketing,sender:identity});
   const body='<p>Fresh orchard news for the coming week.</p><p>{{physical_address}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>';
@@ -125,19 +175,6 @@ export default async function({request,origin,cookie,phase,fixtures,mail,databas
   await http('/api/campaigns/'+dispatch.campaignId+'/approve',{revisionId:dispatch.revisionId,idempotencyKey:randomUUID()});
   const step=await db.prepare('SELECT id FROM campaign_steps WHERE revision_id=?').bind(dispatch.revisionId).first();
   values.dispatch={...dispatch,segmentId,stepId:step.id,channel:'email'};
-  fixtures.set('https://woo.example.test',{email:recipient.marketing});
-  const signingSecret=randomUUID();
-  await http('/api/settings/woocommerce',{url:'https://woo.example.test/',key:randomUUID(),secret:randomUUID(),signingSecret,exclusiveSecret:true,pluginEnabled:true},'PUT');
-  const connection=await http('/api/settings/woocommerce');
-  values.commerce={provider:'woocommerce:'+connection.connection.id};
-  const event={version:1,id:randomUUID(),kind:'abandoned_checkout',occurredAt:new Date(Date.now()+30000).toISOString(),
-   customerId:'11',checkoutId:randomUUID(),checkoutStartedAt:new Date(Date.now()-3600000).toISOString(),products:['21'],
-   consent:{analytics:true,marketing:true},gpc:false};
-  const raw=JSON.stringify(event),timestamp=String(Math.floor(Date.now()/1000));
-  const observed=await request(new URL(connection.webhookUrl+'/plugin'),{method:'POST',headers:{'Content-Type':'application/json',
-   'X-Mango-Timestamp':timestamp,'X-Mango-Signature':createHmac('sha256',signingSecret).update('mango-plugin-v1\n'+timestamp+'.'+raw).digest('base64')},body:raw});
-  assert.equal(observed.status,204,'Native signed checkout intake');await observed.body?.cancel();
-  values.checkout={eventId:event.id};
   // Reset through the native settings door so the journey changes all three
   // declared classes in each independent policy phase.
   await http('/api/audience/signup',{settings:undefined,frequencyDisclosure:'Weekly',embedOrigins:['https://orchard.example.test'],challengeEnabled:false,kioskEnabled:false,kioskDeviceLabel:''},'PUT');

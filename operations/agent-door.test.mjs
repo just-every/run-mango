@@ -8,7 +8,7 @@ import {signJws,accessToken,autonomousPolicy,policyEnvelope,seconds} from '../sr
 import {validateAgentSurface} from '../src/vendor/base/agent-door/conformance/surface.mjs';
 import prepareNativePhase from '../tests/agent-door/fixtures.mjs';
 import {proveIsolatedDoorRecovery} from '../tests/agent-door/report-recovery.mjs';
-import {beforeStep,afterStep} from '../tests/agent-door/native-journey.mjs';
+import nativeJourney,{beforeStep,afterStep} from '../tests/agent-door/native-journey.mjs';
 import {agentRuntime} from './agent-runtime.mjs';
 
 test('Mango shared door: signed native owner, durable Business people, native draft custody, policy, replay and role narrowing',async()=>{
@@ -53,9 +53,9 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   if(response.ok){c.seq=envelope.payload.seq;c.revision=envelope.payload.revision;}
   return {response,value:await response.json()};
  }
- async function settings(rev,team=null){
+ async function settings(rev,team=null,extra={}){
   const now=seconds(),document={v:1,iss:issuer,aud:origin,sub:installationId,business:c.business,email:c.person.email,
-   jti:randomUUID(),iat:now,exp:now+300,rev,owner_id:sub,values:{},logo:null,team};
+   jti:randomUUID(),iat:now,exp:now+300,rev,owner_id:sub,values:{},logo:null,team,...extra};
   return app.call('/api/rer/business-settings',{method:'POST',body:{settings:await signJws(pair.privateKey,kid,'rer-business-settings+jwt',document)}});
  }
  try{
@@ -114,7 +114,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   await app.prepareOwner(cookie);
   await proveIsolatedDoorRecovery({bindings,context:c});
   const firstPhase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'autonomous',database:app.database,queues:app.queues,now:Date.now(),fixtures:app.fixtures,mail:app.mail});
-  const phase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'held',database:app.database,queues:app.queues,now:Date.now(),fixtures:app.fixtures,mail:app.mail});
+  let phase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'held',database:app.database,queues:app.queues,now:Date.now(),fixtures:app.fixtures,mail:app.mail});
   assert.notEqual(firstPhase.values.contact.id,phase.values.contact.id,'Policy phases receive fresh native contacts');
   assert.notEqual(firstPhase.clients.reader.clientId,phase.clients.reader.clientId,'Policy phases receive distinct live native clients');
   const journey=JSON.parse(await readFile('tests/agent-door/journey.json','utf8'));
@@ -128,10 +128,12 @@ test('Mango shared door: signed native owner, durable Business people, native dr
    }
    return value;
   }
+  for(const pass of ['first','second']){
+  if(pass==='second'){phase=await prepareNativePhase({request:fixtureRequest,origin,cookie,phase:'post-native-erasure',database:app.database,queues:app.queues,now:Date.now(),fixtures:app.fixtures,mail:app.mail});outputs.clear();}
   for(const step of journey.filter(step=>step.tool!=='mango.events.list')){
    const args=resolve(step.args),definition=c.surface.tools.find(operation=>operation.name===step.tool);
-   const inputs={...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+step.id}:{})};
-   await beforeStep({step,outputs:Object.fromEntries(outputs),request:fixtureRequest,origin,cookie,database:app.database,scheduled:app.scheduled,now:Date.now()});
+   const inputs={...args,...(definition&&!definition.readOnly?{idempotency_key:'native-journey:'+pass+':'+step.id}:{})};
+   await beforeStep({step,args,outputs:Object.fromEntries(outputs),request:fixtureRequest,origin,cookie,database:app.database,scheduled:app.scheduled,now:Date.now()});
    let response;
    if(step.client){
     const client=phase.clients[step.client];
@@ -144,14 +146,18 @@ test('Mango shared door: signed native owner, durable Business people, native dr
     assert.equal(JSON.parse(nativeAudit.row).agent.id,client.agent.id,'Native client retains its sender identity');
    }else response=await call(step.tool,inputs);
    assert.equal(response.response.status,200,step.id+': MCP HTTP '+response.response.status);
-   assert.equal(response.message?.result?.isError,false,step.id+': '+JSON.stringify(response.message));
+   assert.equal(response.message?.result?.isError,step.tool==='mango.contacts.erase',step.id+': '+JSON.stringify(response.message));
+   if(step.tool==='mango.contacts.erase'){
+    assert.equal(response.message.result._meta['com.runeditrun/error'].code,'subject_erased');
+    assert.equal(response.message.result.structuredContent,undefined);
+   }
    if(step.target){
     const audit=await (await app.call('/agents/api/audit',{cookie})).json();
     const decision=response.message.result._meta['com.runeditrun/decision'];
     assert.deepEqual(audit.rows.find(row=>row.id===decision.id)?.resource,resolve(step.target),step.id+' native target');
    }
    outputs.set(step.id,response.message.result.structuredContent);
-   await afterStep({request:fixtureRequest,origin,cookie,mail:app.mail,database:app.database,queues:app.queues,step,args,result:response.message.result.structuredContent});
+   await afterStep({request:fixtureRequest,origin,cookie,mail:app.mail,database:app.database,queues:app.queues,step,args,result:response.message.result.structuredContent??{tombstone:response.message.result._meta?.['com.runeditrun/error']?.tombstone}});
    console.log('PASS native journey '+step.id);
    if(step.id==='native-campaign-reauthorize'){
     const reapproval=await app.db.prepare("SELECT actor_type,actor_id,detail_json FROM lifecycle_audit_entries WHERE entity_id=? AND action='sender-reapproved' ORDER BY occurred_at DESC LIMIT 1").bind(args.revisionId).first();
@@ -161,6 +167,11 @@ test('Mango shared door: signed native owner, durable Business people, native dr
     assert.equal(frozen.approved_by_operator_id,null);assert.equal(frozen.authorized_by_agent_id,c.agentId);assert.equal(frozen.agent_sponsor_id,owner.id);
    }
   }
+  }
+  await nativeJourney({request:fixtureRequest,origin,cookie,queues:app.queues,tool:async(name,args)=>{
+   const answer=await call(name,args);
+   return {status:answer.response.status,result:answer.message.result,decision:answer.message.result?._meta?.['com.runeditrun/decision']};
+  }});
   const surface=JSON.parse(await readFile('agent-surface.json','utf8'));
   const declaration=validateAgentSurface(surface,{contract:await readFile('CONTRACT.md','utf8')});
   assert.deepEqual(declaration.points.filter(point=>!point.ok&&point.id.includes('.clause.')),[], 'The landed contract resolves every declared tool and inherited Base clause');
@@ -189,24 +200,24 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   await mailBudget();
   const team=await settings(2,[{id:memberSub,email:'teammate@example.test',name:'Casey Marketer',role:'member',invite:1}]);
   assert.equal(team.status,200,await team.clone().text());
-  const invited=await app.call('/auth/confirm',{method:'POST',body:{token:await app.token()}});
+  const invited=await app.call('/auth/confirm',{method:'POST',body:{token:await app.token('teammate@example.test')}});
   assert.equal(invited.status,303,await invited.clone().text());
   let memberCookie=invited.headers.get('set-cookie').split(';')[0];
   const member=(await (await app.call('/api/operator',{cookie:memberCookie})).json()).operator;
   const mapped=await settings(3,[{id:memberSub,email:'teammate@example.test',name:'Casey Marketer',role:'member',invite:1}]);
   assert.equal(mapped.status,200,await mapped.clone().text());
   const memberAgent={sub:randomUUID(),name:'Casey assistant',specialist:'marketer'};
-  const memberDraft=await call('mango.campaigns.create',{idempotency_key:'member-before-narrowing'},{sub:memberSub,act:memberAgent});
+  const memberDraft=await call('mango.campaigns.create',{idempotency_key:'member-before-narrowing'},{sub:memberSub,email:'teammate@example.test',act:memberAgent});
   assert.equal(memberDraft.message.result?.isError,false,JSON.stringify(memberDraft.message));
   nativeCount=(await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count;
   const narrowing=await call('mango.access.update',{id:member.id,role:'support',unmaskedContacts:false,idempotency_key:'narrow-teammate'});
   assert.equal(narrowing.message.result.isError,false,JSON.stringify(narrowing.message));
   assert.equal((await app.db.prepare('SELECT role FROM operator_product_roles WHERE operator_id=?').bind(member.id).first()).role,'support');
-  const narrowedReplay=await call('mango.campaigns.create',{idempotency_key:'member-before-narrowing'},{sub:memberSub,act:memberAgent});
+  const narrowedReplay=await call('mango.campaigns.create',{idempotency_key:'member-before-narrowing'},{sub:memberSub,email:'teammate@example.test',act:memberAgent});
   assert.equal(narrowedReplay.message.result._meta['com.runeditrun/error'].code,'role_forbidden');
   assert.equal(narrowedReplay.message.result.structuredContent,undefined);
   for(const id of [ids.campaignId,'absent']){
-   const hidden=await mcp('resources/read',{uri:'mango://campaigns/'+id},{sub:memberSub,act:memberAgent});
+   const hidden=await mcp('resources/read',{uri:'mango://campaigns/'+id},{sub:memberSub,email:'teammate@example.test',act:memberAgent});
    assert.equal(hidden.message.error.data.code,'capability_not_declared');assert.equal(hidden.message.result,undefined);
   }
   const renamed=await app.call('/auth/email',{method:'POST',cookie:memberCookie,body:{email:'casey-renamed@example.test'}});
@@ -217,7 +228,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   await mailBudget();
   const replacementInvite=await app.call('/api/operators',{method:'POST',cookie,body:{email:'teammate@example.test'}});
   assert.equal(replacementInvite.status,201,await replacementInvite.clone().text());
-  const replacementConfirmed=await app.call('/auth/confirm',{method:'POST',body:{token:await app.token()}});
+  const replacementConfirmed=await app.call('/auth/confirm',{method:'POST',body:{token:await app.token('teammate@example.test')}});
   assert.equal(replacementConfirmed.status,303,await replacementConfirmed.clone().text());
   const replacementCookie=replacementConfirmed.headers.get('set-cookie').split(';')[0];
   const replacement=(await (await app.call('/api/operator',{cookie:replacementCookie})).json()).operator;
@@ -233,15 +244,15 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.ok(witness.message.result.structuredContent.objects.campaign_revisions);
   assert.ok(witness.message.result.structuredContent.objects.campaign_revision_candidates,'Frozen audience custody belongs in the witness');
   const denied=await call('mango.campaigns.create',{idempotency_key:'member-draft'},{sub:memberSub,email:c.person.email,act:{sub:randomUUID(),name:'Casey assistant',specialist:'marketer'}});
-  assert.ok(denied.message.result,JSON.stringify(denied.message));
-  assert.equal(denied.message.result._meta['com.runeditrun/error'].code,'role_forbidden',JSON.stringify(denied.message));
+  assert.equal(denied.response.status,401,'A valid Business subject with another person’s email is refused');
+  assert.equal(denied.message.result,undefined);
   assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,nativeCount);
   assert.equal((await adopt({...autonomousPolicy(),rules:[{id:'hold',class:'*',do:'approval',approver:['sponsor'],wait:'PT1H'}]})).response.status,200);
   const heldReplay=await call('mango.campaigns.create',{idempotency_key:'draft-one'});
   assert.equal(heldReplay.message.result._meta['com.runeditrun/error'].code,'approval_required');
   assert.equal(heldReplay.message.result.structuredContent,undefined);
   const heldCount=(await app.db.prepare('SELECT count(*) count FROM agent_door_approvals').first()).count;
-  const forbiddenHeld=await call('mango.campaigns.create',{idempotency_key:'no-unauthorized-approval'},{sub:memberSub,act:{sub:randomUUID(),name:'Casey assistant',specialist:'marketer'}});
+  const forbiddenHeld=await call('mango.campaigns.create',{idempotency_key:'no-unauthorized-approval'},{sub:memberSub,email:'casey-renamed@example.test',act:{sub:randomUUID(),name:'Casey assistant',specialist:'marketer'}});
   assert.equal(forbiddenHeld.message.result._meta['com.runeditrun/error'].code,'role_forbidden');
   assert.equal((await app.db.prepare('SELECT count(*) count FROM agent_door_approvals').first()).count,heldCount);
   assert.equal((await adopt(autonomousPolicy())).response.status,200);
@@ -267,7 +278,7 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal(signup.status,202,await signup.clone().text());
   const protectedContact=await app.db.prepare("SELECT id FROM contacts WHERE email='protected@example.test'").first();assert.ok(protectedContact);
   assert.equal((await app.call('/api/operators/'+member.id+'/role',{method:'PUT',cookie,body:{role:'analyst',unmaskedContacts:true}})).status,200);
-  const analyst={sub:memberSub,act:{sub:randomUUID(),name:'Evidence assistant',specialist:'marketer'}};
+  const analyst={sub:memberSub,email:'casey-renamed@example.test',act:{sub:randomUUID(),name:'Evidence assistant',specialist:'marketer'}};
   const protectedRead=await call('mango.contacts.read',{id:protectedContact.id},analyst);
   assert.equal(protectedRead.message.result.isError,false,JSON.stringify(protectedRead.message));
   assert.deepEqual(protectedRead.message.result._meta['com.runeditrun/decision'].classes.map(item=>item.class),['sensitive']);
@@ -291,13 +302,38 @@ test('Mango shared door: signed native owner, durable Business people, native dr
   assert.equal((await app.call('/api/operators/'+member.id+'/role',{method:'PUT',cookie,body:{role:'admin',unmaskedContacts:false}})).status,200);
   await mailBudget();
   assert.equal((await app.call('/auth/magic-link',{method:'POST',body:{email:'casey-renamed@example.test'}})).status,202);
-  const renewed=await app.call('/auth/confirm',{method:'POST',body:{token:await app.token()}});assert.equal(renewed.status,303);
+  const renewed=await app.call('/auth/confirm',{method:'POST',body:{token:await app.token('casey-renamed@example.test')}});assert.equal(renewed.status,303);
   memberCookie=renewed.headers.get('set-cookie').split(';')[0];
   const sponsoredKeyResponse=await app.call('/api/settings/integrations',{method:'POST',cookie:memberCookie,body:{name:'Casey scoped reader',scopes:['contacts:read']}});
   assert.equal(sponsoredKeyResponse.status,201);const sponsoredKey=await sponsoredKeyResponse.json();
   assert.equal((await app.call('/api/operators/'+member.id,{method:'DELETE',cookie})).status,204);
   assert.equal((await app.call('/api/integrations/v1/contacts',{headers:{Authorization:'Bearer '+sponsoredKey.token}})).status,401);
   const inactive=await call('mango.campaigns.list',{},analyst);assert.equal(inactive.response.status,401);
+  const nativeAudit=(await app.db.prepare('SELECT row FROM agent_door_audit ORDER BY sequence').all()).results.map(record=>JSON.parse(record.row));
+  for(const row of nativeAudit.filter(row=>row.continuation_item_id)){
+   const origin=nativeAudit.find(original=>original.id===row.operation_id);
+   assert.ok(origin,'A native continuation retains its original admission');
+   assert.deepEqual(row.agent,origin.agent);assert.deepEqual(row.sponsor,origin.sponsor);
+   assert.equal(row.client_id,origin.client_id);assert.equal(row.consent,origin.consent);
+   assert.ok(['done','replayed','refused'].includes(row.outcome),'Native retry outcomes retain the released runtime semantics');
+   assert.equal(row.outcome==='refused'?typeof row.code:row.code,row.outcome==='refused'?'string':null);
+  }
   assert.equal(owner.role,'owner');
+  assert.equal((await adopt({...autonomousPolicy(),rules:[{id:'hold',class:'*',do:'approval',approver:['sponsor'],wait:'PT1H'}]})).response.status,200);
+  const heldStop=await call('mango.campaigns.create',{idempotency_key:'held-before-business-stop'});
+  const approval=heldStop.message.result._meta['com.runeditrun/approval'];assert.ok(approval?.id);
+  const heldDetail=await (await app.call('/agents/api/approvals/'+approval.id,{cookie})).json();
+  const beforeStop=(await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count;
+  const detached=await settings(5,null,{detached:true});assert.equal(detached.status,200,await detached.clone().text());
+  assert.equal((await call('mango.campaigns.create',{idempotency_key:'stopped-business'})).response.status,401);
+  const stoppedApproval=await app.call('/agents/api/approvals/'+approval.id+'/approve',{method:'POST',cookie,body:{summary_sha256:heldDetail.approval.summary_sha256,revision:heldDetail.approval.revision}});
+  assert.equal(stoppedApproval.status,200,await stoppedApproval.clone().text());
+  const stoppedResult=await stoppedApproval.json();assert.equal(stoppedResult.approval.state,'refused');assert.equal(stoppedResult.approval.code,'sponsor_unavailable');
+  assert.equal((await app.db.prepare('SELECT count(*) count FROM campaigns').first()).count,beforeStop,'Held Business authority cannot execute after detachment');
+  assert.equal((await app.call('/api/campaigns',{cookie})).status,200,'Native owner remains active after Business stop');
+  const pullAt=seconds(),stoppedPull=await signJws(pair.privateKey,kid,'rer-agent-decisions+jwt',{v:1,iss:issuer,aud:origin,sub:installationId,business:c.business,after:0,limit:200,iat:pullAt,exp:pullAt+60,jti:randomUUID()});
+  const stoppedRelay=await app.call('/api/rer/agent-decisions',{method:'POST',body:{pull:stoppedPull}});
+  assert.equal(stoppedRelay.status,404);assert.equal(await stoppedRelay.text(),'');
+  console.log('PASS Business stop: signed detachment denies tokens and held execution; native owner retained');
  }finally{await app.close();}
 });

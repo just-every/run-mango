@@ -28,7 +28,7 @@ const contactParams = z.object({ id: z.string().min(1) });
 const merge = z.object({ survivorContactId: z.string().min(1), mergedContactId: z.string().min(1) });
 
 export function createAudienceRoutes(service: ReturnType<typeof createAudienceService>, database: D1Database, platform:Platform, environment:AppBindings) {
-  const erasure=createContactErasure(database,platform.config.contactHashSalt,{ASSETS_BUCKET:environment.ASSETS_BUCKET});
+  const erasure=createContactErasure(database,platform.config.contactHashSalt,{ASSETS_BUCKET:environment.ASSETS_BUCKET},platform.config.sessionSigningKey);
   const routes = new Hono<{Variables:AuthVariables}>();
 
   routes.get('/audience', async (context) => context.json({ contacts: await service.list() }));

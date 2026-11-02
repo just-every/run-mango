@@ -10,13 +10,15 @@ import {openSendingSecret} from './secrets';
 
 /** Called at the installation's existing request/queue/cron composition seams.
  * An explicit disconnected/failed connection never resumes the developer key. */
-export async function loadSendingConnection(platform:Platform) {
+export async function loadSendingConnection(platform:Platform,{maintenance=true}:{maintenance?:boolean}={}) {
   const db=platform.database.$client;
   const row=await db.prepare('SELECT generation,state,secret_cipher,account_id,webhook_id,connected_at,delivery_proved_at FROM sending_connection WHERE id=1')
     .first<{generation:string;state:string;secret_cipher:string;account_id:string;webhook_id:string|null;connected_at:number;delivery_proved_at:number|null}>();
   if(!row)return; // The declared developer connection retains its existing authority.
-  await monitorSendingConnection(platform,row);
-  await notifySendingAlerts(platform,row.generation);
+  if(maintenance){
+    await monitorSendingConnection(platform,row);
+    await notifySendingAlerts(platform,row.generation);
+  }
   const secret=await openSendingSecret(row.secret_cipher,platform.config.sessionSigningKey);
   const provider=row.account_id==='resend'?'resend':'sendgrid';
   Object.assign(platform.config,{mailProvider:provider,mailProviderApiKey:secret.apiKey,mailWebhookSecret:secret.publicKey??'',mailWebhookId:row.webhook_id??''});
@@ -46,9 +48,14 @@ export async function loadSendingConnection(platform:Platform) {
       const resend=provider==='resend'?JSON.parse(verified.rawBody):null;
       const facts=resend?(resend.type==='email.delivered'?[{kind:'delivered',providerMessageId:resend.data?.email_id,detail:{destination:resend.data?.to?.[0]}}]:[]):await parseSendgridFacts(verified);
       const delivered=facts.filter(fact=>fact.kind==='delivered'&&fact.providerMessageId);
+      // Confirming this exact probe advances the native generation. Its signed
+      // delivery may arrive afterward; only the same current observation and
+      // unchanged, unrevoked binding/configuration may prove the connection.
       if(delivered.length)await db.batch(delivered.map(fact=>db.prepare(`UPDATE sending_connection SET delivery_proved_at=? WHERE id=1 AND generation=? AND state='connected'
-        AND EXISTS(SELECT 1 FROM sender_verification_challenges c JOIN sender_verification_state s ON s.id=c.state_id AND s.generation=c.generation
-          WHERE c.provider_message_id=? AND c.recipient=? AND c.connector_id=? AND c.created_at>=? AND c.sent_at IS NOT NULL AND c.expires_at>?)`)
+        AND EXISTS(SELECT 1 FROM sender_verification_challenges c JOIN sender_verification_state s ON s.id=c.state_id
+          WHERE s.binding_digest=c.binding_digest AND s.configuration_digest=c.configuration_digest AND s.revoked_at IS NULL
+            AND (s.generation=c.generation OR EXISTS(SELECT 1 FROM sender_verification_observations o WHERE o.id=s.observation_id AND o.challenge_id=c.id))
+            AND c.provider_message_id=? AND c.recipient=? AND c.connector_id=? AND c.created_at>=? AND c.sent_at IS NOT NULL AND c.expires_at>?)`)
         .bind(verified.receivedAt.getTime(),row.generation,fact.providerMessageId,fact.detail.destination,ownerConnectorId,row.connected_at,verified.receivedAt.getTime())));
       return verified;
     },

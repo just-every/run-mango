@@ -4,6 +4,7 @@ import {randomUUID} from 'node:crypto';
 /** Normal rer verify hook: paid network responses only; all native custody is real. */
 export default async function({tool,request,origin,cookie,queues}){
  queues.hold();
+ let stage='create';
  try{
  async function call(name,args={},readOnly=false){
   const answer=await tool(name,{...args,...(readOnly?{}:{idempotency_key:args.idempotency_key??randomUUID()})});
@@ -12,18 +13,27 @@ export default async function({tool,request,origin,cookie,queues}){
  }
  const createKey=randomUUID();
  const draft=(await call('mango.campaigns.create',{idempotency_key:createKey})).result.structuredContent;
+ stage='replay';
  const beforeReplay=(await call('mango.witness.read',{},true)).result.structuredContent;
  assert.deepEqual((await call('mango.campaigns.create',{idempotency_key:createKey})).result.structuredContent,draft);
  assert.deepEqual((await call('mango.witness.read',{},true)).result.structuredContent,beforeReplay);
+ stage='native-target';
  const read=await call('mango.campaigns.read',{id:draft.campaignId},true);
- const audit=await request(new URL('/agents/api/audit',origin),{headers:{Cookie:cookie}});
- assert.equal(audit.status,200);
- const target=(await audit.json()).rows.find(row=>row.id===read.decision.id);
+ let target,cursor=null;
+ for(let page=0;page<100;page++){
+  const url=new URL('/agents/api/audit',origin);if(cursor)url.searchParams.set('after',cursor);
+  const audit=await request(url,{headers:{Cookie:cookie}});assert.equal(audit.status,200);
+  const value=await audit.json();target=value.rows.find(row=>row.id===read.decision.id);
+  if(target||value.cursor===null||value.cursor===cursor)break;
+  cursor=value.cursor;
+ }
+ assert.ok(target,'The native read has its retained ordered audit row across all pages');
  assert.deepEqual(target.resource,{kind:'campaigns',id:draft.campaignId});
  const pause=async paused=>{
   const response=await request(new URL('/agents/api/pause',origin),{method:'POST',headers:{Cookie:cookie,Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({paused})});
   assert.equal(response.status,200);await response.body?.cancel();
  };
+ stage='pause';
  await pause(true);
  try{
   const refused=await tool('mango.campaigns.create',{idempotency_key:createKey});
@@ -31,19 +41,25 @@ export default async function({tool,request,origin,cookie,queues}){
   assert.equal(refused.result?.structuredContent,undefined);
  }finally{await pause(false);}
  assert.deepEqual((await call('mango.witness.read',{},true)).result.structuredContent,beforeReplay);
+ stage='design-start';
  const started=(await call('mango.designs.start',{id:draft.campaignId,brief:'An orchard letter {{first_name|friend}} {{unsubscribe_url}}',candidates:2})).result.structuredContent;
+ stage='design-candidates';
  await call('mango.designs.advance',{kind:'design.draft',jobId:started.job.id});
+ stage='design-choice';
  const chosen=await call('mango.designs.choose',{id:started.job.id,slot:'a'});
  assert.deepEqual(chosen.decision.classes.map(item=>item.class),['external']);
+ stage='design-layout';
  await call('mango.designs.advance',{kind:'design.layout',jobId:started.job.id});
+ stage='design-ready';
  const ready=(await call('mango.designs.read',{id:draft.campaignId},true)).result.structuredContent;
  assert.equal(ready.job.state,'ready');assert.match(ready.job.layerDocSha256,/^[a-f0-9]{64}$/);
  const headers={Cookie:cookie,Origin:origin};
+ stage='artifact';
  const artifact=await request(new URL('/api/design-jobs/'+started.job.id+'/layerdoc',origin),{headers});
  assert.equal(artifact.status,200);const bytes=await artifact.text();assert.equal(JSON.parse(bytes).version,'2');
  const reopened=await request(new URL('/api/design-jobs/'+started.job.id+'/layerdoc',origin),{headers});assert.equal(await reopened.text(),bytes);
  const campaign=await request(new URL('/api/campaigns/'+draft.campaignId,origin),{headers});assert.equal((await campaign.json()).revision.state,'draft');
- }finally{queues.release();}
+ }catch(error){console.error('Native verification journey failed at '+stage);throw error;}finally{queues.release();}
 }
 
 /** Assert the native effects as well as Base's class, policy and replay checks. */
@@ -68,6 +84,7 @@ export async function afterStep({request,origin,cookie,mail,step,args,result,que
   case 'native-contact-merge':assert.equal(result.contact.id,args.survivorContactId);break;
   case 'native-contact-erasure': {
    let receipt=result.receipt;
+   if(result.tombstone)receipt={reference:result.tombstone.erasure_id,state:'complete'};
    for(let count=0;receipt.state!=='complete'&&count<100;count++)receipt=(await http('/api/audience/erasures/'+receipt.reference+'/resume',{})).receipt;
    assert.equal(receipt.state,'complete','Native erasure completes');
    const erased=await request(new URL('/api/contacts/'+args.id,origin),{headers:{Cookie:cookie}});
@@ -85,7 +102,7 @@ export async function afterStep({request,origin,cookie,mail,step,args,result,que
    const receipt=await db.prepare('SELECT provider_message_id,transport_disposition FROM recipient_steps WHERE campaign_id=? AND revision_id=?').bind(args.campaignId,args.revisionId).first();
    assert.ok(receipt?.provider_message_id,'The native dispatch handed off an actual recipient');
    assert.equal(receipt.transport_disposition,'accepted');
-   queues.release();break;
+   queues.hold();break;
   }
   case 'native-followup': {
    assert.equal(result.kind,'draft');assert.equal(result.sourceCampaignId,args.id);
@@ -125,6 +142,14 @@ export async function afterStep({request,origin,cookie,mail,step,args,result,que
    const {messages}=await http('/api/audience/sms-services'),message=messages.find(message=>message.id===args.id);
    assert.equal(message.state,'queued');assert.equal(message.reason,'sms-quiet-window');assert.equal(message.provider_message_id,null);break;
   }
+  case 'native-proposal-generate': {
+   assert.equal(result.kind,'proposed');
+   const current=await http('/api/settings/woocommerce'),db=await database('DB');
+   const evidence=(await db.prepare('SELECT s.provider FROM proposal_evidence_items e JOIN source_records s ON s.id=e.source_record_id WHERE e.proposal_id=?').bind(result.proposalId).all()).results;
+   assert.ok(evidence.length,'Native generation retains its actual source evidence');
+   assert.ok(evidence.every(row=>row.provider==='woocommerce:'+current.connection.id),'Retired connections never supply current proposal grounding');
+   break;
+  }
   case 'native-proposal-adopt':assert.equal(result.kind,'draft');break;
   case 'native-archive-publish': {
    const published=await request(new URL('/archive/'+result.id,origin));assert.equal(published.status,200);await published.body?.cancel();break;
@@ -144,7 +169,11 @@ export async function afterStep({request,origin,cookie,mail,step,args,result,que
  }
 }
 
-export async function beforeStep({step,outputs,request,origin,cookie,database,scheduled,now}){
+export async function beforeStep({step,args,outputs,request,origin,cookie,database,scheduled,now}){
+ if(step.id==='native-flow-enroll'){
+  const {deliverCheckout}=await import('./fixtures.mjs');
+  await deliverCheckout({request,origin,eventId:args.eventId});
+ }
  if(step.id==='native-report-ready'){
   const {nativeHttp}=await import('./native-http.mjs');
   const http=nativeHttp({request,origin,cookie}),schedule=outputs['native-report-schedule'];

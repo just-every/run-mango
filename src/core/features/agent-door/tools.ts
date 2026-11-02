@@ -143,9 +143,12 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
       inputSchema:operation.inputSchema as unknown as JsonSchemaObject, outputSchema:{type:'object'},
       classes:operation.classes as ClassId[], clauses:operation.clauses, untrusted:true,
       target:(args,ctx)=>nativeTarget(platform,kind,args,ctx),
-      classify:async(args,ctx)=>{
+      classify:async(args,ctx,completed)=>{
         const operator=await nativeOperator(platform,ctx.person.id);
         if(!hasPermission(operator.role,requiredPermission(operation.method,operation.path))||kind==='access.update'&&operator.role!=='owner')throw new ToolRefusal('role_forbidden');
+        // Base supplies these facts only for a completed, digest-matched replay.
+        // Current native role admission above still runs after preparation is consumed.
+        if(completed)return structuredClone([...completed]);
         if(['campaigns.authorize','campaigns.reauthorize'].includes(kind)){
           const effect=await campaignEffect(runtime,args);
           return [{class:'external',facts:{measure:effect.recipients.length,counterparty:'known'}}];
@@ -199,12 +202,23 @@ export function mangoTools(platform: Platform, call: Gateway, integrations: Retu
         const pureResource = kind === 'sender.read' ? 'mango://sender/readiness' : design?'mango://designs/'+encodeURIComponent(design.id):null;
         const read = pureResource ? await mangoResources(platform).find(resource=>resource.uriTemplate===(design?'mango://designs/{id}':pureResource))?.read(pureResource,{...ctx,scopes:[...ctx.scopes]}) : null;
         let result = read ? object(read.json) : await call(ctx,operation.method,path,operation.readOnly?undefined:option.unwrap?body[option.unwrap]:body);
+        if(kind==='contacts.erase'){
+          // Drive the existing authorized journal, including native checkpoints,
+          // to completion. Base replaces this call's payload with its tombstone.
+          let receipt=object(object(result).receipt);
+          for(let page=0;receipt.state==='pending'&&page<1000;page++){
+            result=await call(ctx,'POST','/api/audience/erasures/'+id(receipt.reference)+'/resume',{});
+            receipt=object(object(result).receipt);
+          }
+          if(receipt.state!=='complete')throw new ToolRefusal('subject_erasure_in_progress');
+        }
         if(kind==='reports.read'&&['owner','admin'].includes((await nativeOperator(platform,ctx.person.id)).role))result={...object(result),scheduledReports:await call(ctx,'GET','/api/settings/reports')};
         if (!operation.readOnly) {
           const uri=await resourceLink(platform,kind,args,result);
           const family=kind.split('.')[0];
           const target=uri?.split('/').at(-1)??'installation';
-          await agentAction.run(ctx,()=>activityStatement(platform.database.$client,{key:crypto.randomUUID(),action:operation.name,entityType:family,entityId:target,actorId:ctx.person.id}).run());
+          // Erasure's activity is committed under its native journal guard at admission.
+          if(kind!=='contacts.erase')await agentAction.run(ctx,()=>activityStatement(platform.database.$client,{key:crypto.randomUUID(),action:operation.name,entityType:family,entityId:target,actorId:ctx.person.id}).run());
           if(uri)ctx.emit(family+'.changed',uri,{tool:operation.name});
           return {result,...(uri?{resources:[{uri,name:operation.title}]}:{})};
         }
