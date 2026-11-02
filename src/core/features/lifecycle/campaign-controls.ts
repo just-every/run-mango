@@ -1,3 +1,4 @@
+import {actorType as nativeActorType,actorId as nativeActorId} from '../agent-door/custody';
 import type { Database } from '@/core/platform/db/client';
 import { ulid } from '@/core/shared/ids';
 
@@ -10,9 +11,9 @@ export function createCampaignControls(database: Database) {
       const [audit] = await db.batch([
         db.prepare(`INSERT INTO lifecycle_audit_entries
           (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-          SELECT ?,?,'campaign',id,'paused','operator',?,json_object('revisionId',active_revision_id),?,?
+          SELECT ?,?,'campaign',id,'paused','${nativeActorType()}',?,json_object('revisionId',active_revision_id),?,?
           FROM campaigns WHERE id=? AND state IN ('scheduled','dispatching')`)
-          .bind(operation,operation,actorId,time,time,campaignId),
+          .bind(operation,operation,nativeActorId(actorId),time,time,campaignId),
         db.prepare(`INSERT INTO campaign_channel_pauses
           (id,campaign_id,revision_id,channel,reason,detail,paused_at,resume_check_at,created_at,updated_at)
           SELECT c.id||':'||c.active_revision_id||':'||s.channel||':operator-pause',c.id,c.active_revision_id,s.channel,
@@ -49,11 +50,11 @@ export function createCampaignControls(database: Database) {
       const [audit] = await db.batch([
         db.prepare(`INSERT INTO lifecycle_audit_entries
           (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-          SELECT ?,?,'campaign',id,'resumed','operator',?,json_object('revisionId',active_revision_id),?,?
+          SELECT ?,?,'campaign',id,'resumed','${nativeActorType()}',?,json_object('revisionId',active_revision_id),?,?
           FROM campaigns c WHERE id=? AND state='paused' AND EXISTS(
             SELECT 1 FROM campaign_channel_pauses p WHERE p.campaign_id=c.id AND p.revision_id=c.active_revision_id
             AND p.reason='operator-pause' AND p.resumed_at IS NULL)`)
-          .bind(operation,operation,actorId,time,time,campaignId),
+          .bind(operation,operation,nativeActorId(actorId),time,time,campaignId),
         db.prepare(`UPDATE campaign_channel_pauses SET resumed_at=?,updated_at=?
           WHERE campaign_id=? AND reason='operator-pause' AND resumed_at IS NULL
           AND EXISTS(SELECT 1 FROM lifecycle_audit_entries WHERE operation_key=?)`)

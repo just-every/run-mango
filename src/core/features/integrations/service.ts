@@ -1,3 +1,4 @@
+import {saveWork} from '../agent-door/custody';
 import { recordConversionEvent } from '@/core/features/insights/conversion-events';
 import type { createAudienceService } from '@/core/features/audience/service';
 import type { Platform } from '@/core/shared/platform';
@@ -45,7 +46,7 @@ export function createIntegrationService(platform: Platform, audience: ReturnTyp
       const revision = await db.prepare(`SELECT r.inclusion_rule_json AS inclusion,r.exclusion_rules_json AS exclusions
         FROM campaign_revisions r JOIN campaigns c ON c.id=r.campaign_id
         WHERE c.id=? AND r.id=? AND c.active_revision_id=r.id AND r.state='approved'
-        AND r.approved_at IS NOT NULL AND r.approved_by_operator_id IS NOT NULL AND c.state IN ('scheduled','dispatching')`)
+        AND r.approved_at IS NOT NULL AND (r.approved_by_operator_id IS NOT NULL OR (r.authorized_by_agent_id IS NOT NULL AND r.agent_sponsor_id IS NOT NULL)) AND c.state IN ('scheduled','dispatching')`)
         .bind(campaignId, input.revisionId).first<{inclusion: string; exclusions: string}>();
       if (!revision) throw new IntegrationError('owner_approved_revision_required', 409);
       const segment = await db.prepare('SELECT inclusion_rule_json AS inclusion,exclusion_rules_json AS exclusions FROM audience_segments WHERE id=?').bind(input.segmentId).first<{inclusion: string; exclusions: string}>();
@@ -54,6 +55,7 @@ export function createIntegrationService(platform: Platform, audience: ReturnTyp
       const steps = (await db.prepare('SELECT id,channel,scheduled_at AS scheduledAt FROM campaign_steps WHERE revision_id=? AND scheduled_at<=? AND send_by_at>? ORDER BY sequence')
         .bind(input.revisionId, now, now).all<{id: string; channel: string; scheduledAt: number}>()).results;
       if (!steps.length) throw new IntegrationError('no_approved_step_due', 409);
+      await saveWork(db,'campaign',input.revisionId,'mango.delivery.dispatch',{segmentId:input.segmentId});
       // Existing dispatch enforces revision, sender, frozen recipients, opt-out,
       // provider capability and timing again at handoff. This grants no approval.
       for (const step of steps) await platform.jobs.enqueue({kind: 'campaign.dispatch', idempotencyKey: `dispatch:${step.id}:${new Date(step.scheduledAt).toISOString()}`,

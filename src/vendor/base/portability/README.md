@@ -67,8 +67,11 @@ belong to the current runtime or environment and never travel:
 | `rer_erasure_blobs`, `rer_erasure_guard`, `rer_erasure_scope`, `rer_erasure_rates` | Erasure work queues, transaction guards, working scope and local rate limits. |
 | `rer_demo` | Local demo setup markers. |
 
-`excludedTables` combines this list with the default identity exclusions `oa_%`
-and `oc_%`. Policy may override those identity exclusions through `includeTables`,
+`excludedTables` combines this list with `oa_%` and the exact Base owner-claim
+identities `oc_owner_claims` and `oc_idp_grants`. Other `oc_` names must be
+explicitly declared in `includeTables` or `excludeTables`; transfers refuse
+`identity_table_undeclared:<name>` rather than silently dropping product rows.
+Policy may override identity exclusions through `includeTables`,
 but naming a mandatory platform table there refuses construction with
 `platform_table:<name>` and a message identifying the table.
 `excludedTable(name, policy)` always returns true for mandatory platform tables,
@@ -237,15 +240,24 @@ provider operation.
 | Compatible `d1_migrations`, every recorded name exactly equal to its checkout filename | `{nativeApply:true}`; Wrangler may apply its pending files. Plain Wrangler names remain supported; tracked history must also match hashes and applied states. |
 | Native alias-only or hash-only relocation, or an unmapped native data-only row | `migration_ledger:incompatible`; restore the matching checkout or reconcile through the owning runner before native apply. |
 | Sole, fully applied matching `rer_migrations` | `{nativeApply:false}`; preserve Platform's ledger and skip Wrangler. |
-| Any pending checkout file with Platform history | `migration_ledger:unapplied`, naming the file (`error.migration`); apply it through the owning runner first. |
-| Multiple ledgers, even empty | `migration_ledger:multiple`; reconcile history through its owning runner. |
+| Fully applied matching `_rer_deploy_migrations` plus plain Wrangler `d1_migrations` bookkeeping | `{nativeApply:false}`; preserve the deploy history and skip Wrangler. Bookkeeping names must belong to that history. A tracked D1 ledger must match the deploy history's names, hashes and order. |
+| Any pending checkout file with Platform history or the legacy pair | `migration_ledger:unapplied`, naming the file (`error.migration`); apply it through the owning runner first. |
+| Other multiple ledgers, or disagreeing tracked native histories | `migration_ledger:multiple`; reconcile history through its owning runner. |
 | Legacy `_rer_deploy_migrations` alone | `migration_ledger:runner`; use its owning runner, which can adopt the history. |
 | Invalid ledger shape, row or binding | `migration_ledger:incompatible` or `migration_ledger:binding`. |
-| Partial Platform batch or non-applied tracked row | `migration_ledger:uncertain`; resolve the incomplete operation first. |
+| Partial Platform batch or non-applied tracked or legacy row | `migration_ledger:uncertain`; resolve the incomplete operation first. |
 | Unknown hash/name, ambiguous hash/alias or conflicting name/hash | `migration_ledger:unknown`, `:ambiguous` or `:conflict`; use the matching checkout and declaration. |
 
 Refusals throw `PortabilityError` with status 409 and a constant `code`;
-ledger values never enter these diagnostics. Propagate failures and stop before
+ledger values never enter these diagnostics. `migration` names a pending
+checkout file, and `identity` may name a checkout
+file, a declared alias or the known `rer_migrations` table. The worker appends
+these safe identities to its public refusal token, retaining
+`migration_ledger:unapplied:<file>`, `migration_ledger:multiple:rer_migrations`
+and named `unknown`, `ambiguous` or `conflict` tokens only when the name exactly
+equals a checkout filename or declared alias. Historical
+`migration_ledger:unknown:initial-page.sql` stays category-only without that
+provenance. Propagate failures and stop before
 native apply. IO and provider failures also propagate. A successful check
 creates no ledger, changes no row and does not attest unrecorded historical
 bytes in a plain Wrangler ledger. It never silently skips pending migrations.
@@ -275,8 +287,10 @@ owner claim. Such a destination keeps that claim and recovers access through
 ordinary native sign-in; setup does not grant another owner. Other tables are
 discovered automatically. Exclusion rules follow SQLite's ASCII identifier case matching.
 Unlisted virtual tables, hidden virtual-table columns and foreign keys into
-excluded tables fail by name. The product must explicitly regenerate derived
-data. A schema upgrade may change columns but cannot silently omit tables.
+excluded tables fail by name. Restore rebuilds policy-declared external-content
+FTS5 indexes from their content tables in the same transaction as the restored
+rows. The product must explicitly regenerate other derived data. A schema
+upgrade may change columns but cannot silently omit tables.
 
 Provider link keys and transient provider sessions never travel. Export marks
 retained dependency links as needing re-link and turns provider sign-in and
@@ -361,7 +375,7 @@ extra-payload recovery responsibilities and transfer erasure behavior still appl
 The UTF-8 JSON-lines archive has a manifest, indexed checksummed parts and a
 closing record. `readArchive(stream)` uses the shared bounded, fatal UTF-8 line
 reader. The default maximum line size is 24 MiB; callers can set a smaller bound.
-No runtime or CLI materializes the whole archive. The manifest opens the archive and holds the final part count and payload hashes, so an export builds all its parts in the job before any byte is written; `exportArchive` and `importArchive` take an optional `progress` callback (`progress.mjs` turns its events into throttled lines with a time-left estimate). Readers enforce a 16 MiB
+Current-archive paths do not materialize the whole archive; the legacy ledger collector described below buffers its initial upload. The manifest opens the archive and holds the final part count and payload hashes, so an export builds all its parts in the job before any byte is written; `exportArchive` and `importArchive` take an optional `progress` callback (`progress.mjs` turns its events into throttled lines with a time-left estimate). Readers enforce a 16 MiB
 canonical UTF-8 part limit; `readArchive(stream,{partBytes})` can lower it.
 Import uploads enforce the policy's part limit before any staging write.
 A part has at most 1,000 rows;
@@ -393,6 +407,14 @@ joined stream is tokenized again and must reproduce those same tokens.
 Comments and harmless inter-token whitespace therefore compare equally, while
 `x '31'` and `x'31'`, separated minus signs, numbers and combined operators stay
 distinct. No regular expression rewrites SQL.
+
+Restore may omit an archived schema object from its compatibility comparison
+only when its table is in the archive's excluded inventory, the destination
+policy also excludes it, neither side restores it, and the destination lacks
+it. This permits transient export snapshots without installing source SQL.
+Objects on restorable tables and excluded tables present at the destination
+remain verified against the unchanged live and migration-replay catalogues;
+the original manifest and parts still supply the archive digest.
 
 Quoted identifiers (double quotes, backticks, brackets, or a single-quoted string
 used as a name), strings, blobs, numbers, variables and ordinary identifiers keep
@@ -433,7 +455,7 @@ Re-export from the original installation to carry the complete definitions.
 A new archive explicitly records even an empty object inventory, so later
 additive migrations can still be placed normally. The separate acknowledged
 v1 recovery path remains an explicitly unverified recovery, as documented below.
-Version 2 backups without that inventory have their own acknowledged recovery below.
+Version 2 backups without that inventory use recorded migration replay when it proves the complete destination schema, or the acknowledged recovery below.
 
 New exports use archive version 2. The closing `archiveHash` is SHA-256 of
 canonical JSON `{manifest,parts}`, where `manifest` is the complete manifest
@@ -468,20 +490,40 @@ authenticate it. If the original installation is unavailable, use the explicit
 [backup-only v1 recovery](#backup-only-v1-recovery) below. Normal import still
 requires version 2 integrity.
 
-## Acknowledged recovery of older version 2 backups
+## Older version 2 backups and acknowledged recovery
 
 A fresh export from a current rer is preferred whenever the original installation
 is available. Current archives carry the complete schema inventory and restore
 without any acknowledgment. Version 2 backups written by rer 0.2.79 or earlier
-can lack `schemaObjects`. If only such a backup remains, the owner can explicitly
-accept that its schema objects are unverified:
+can lack `schemaObjects`. Ordinary import verifies such a backup without an
+acknowledgment when its nonempty recorded migration history, resolved against the
+destination's own applied files in order, reproduces the archive's table
+definitions. Replay reconstructs that recorded schema's complete identity,
+including indexes, views and triggers, before the ordinary additive bridge checks
+later migrations. A seed's explicit `acceptedSchemas` row upgrade remains
+available for its declared archive identity. The complete applied replay must
+also match the live destination. The archive's ledger, when present,
+must agree with its recorded names, and available hashes must match. Missing
+history, failed replay, table drift or a different complete destination identity
+still refuses `schema_mismatch:legacy_schema` before staging. Source SQL is never
+installed. This verified path records no `schemaUnverified` receipt.
+
+Some later v2 writers carried `schemaObjects` but omitted indexes and triggers
+attached to excluded tables. Their historical table/object projection must match
+the recorded replay exactly before its complete identity can be used for bridge
+placement. An excluded-table object absent from the destination's migration
+replay still refuses before staging. Original archive bytes and digests remain
+unchanged in both paths.
+
+When that proof is unavailable, the owner can explicitly accept that its schema
+objects are unverified:
 
 ```sh
 rer import --input exports/retained.rer --yes --acknowledge-unverified-schema-objects
 ```
 
-This accepts only the missing inventory. Ordinary import still refuses
-`schema_mismatch:legacy_schema` before staging. The acknowledgment never accepts
+This accepts only the missing inventory and preserves the existing recovery path,
+even when ordinary import could verify the backup. The acknowledgment never accepts
 version 1 metadata; that separate recovery still needs both v1 flags below.
 The destination must be empty under the existing product emptiness rule:
 non-migration rows in product tables refuse `target_not_empty:<table>` before
@@ -521,6 +563,68 @@ preserving CHECK rebuild described below. The
 archive's tables restore with their archived columns, later columns take their
 defaults, and later tables stay empty unless their eligible seed or backfill is
 replayed below. This applies to normal v2 import and to backup-only v1 recovery.
+
+The Node in-process library door also verifies old v2 archives carrying a
+hash-bearing migration ledger without caller-supplied replay or ledger rows.
+`createPortability({db,policy})` reads the checkout's single D1 migration directory
+from `wrangler.jsonc` (or use `migrationRoot` to name the checkout), matches its
+files to the destination ledger, and collects the original parts in memory until
+finalize authenticates their hashes and closing binding. The archived ledger must
+be a hash-matched prefix; recorded replay must reproduce the archived tables and
+full replay the complete destination identity before any durable import job is
+created. Keep the same service instance through this initial upload; restarting
+it requires uploading again. Acknowledged recovery and runner-supplied evidence
+retain their existing paths.
+
+Workers can opt into seed-owned build evidence. Add `legacyMigrationEvidence()`
+from `@runeditrun/rer/portability-evidence` to the seed's existing Vite plugins.
+It reads the declared D1 binding's `migrations_dir` through the same accessor
+used by native migration checks and deployment packaging; pass `{binding:'DB'}`
+to select a different binding. It never reads the live installation or an archive.
+Import its generated module only in the archive's server adapter:
+
+```js
+import evidence from 'virtual:rer-legacy-migration-evidence';
+import { workerMigrations } from '@runeditrun/rer/modules/portability/worker-history';
+
+const service = await createPortability({
+ db, policy,
+ migrations: () => workerMigrations(db, policy, evidence),
+});
+```
+
+For TypeScript, declare the virtual module in the seed's server declarations:
+
+```ts
+declare module 'virtual:rer-legacy-migration-evidence' {
+ const evidence: import('@runeditrun/rer/modules/portability/worker-history').MigrationEvidence;
+ export default evidence;
+}
+```
+
+The generated JavaScript contains ordered checkout file hashes and statements,
+deduplicated complete schema inventories for every prefix, and hashed identities
+of bounded deterministic seeded rows. Volatile seeded rows cannot be vouched for;
+their values are never bundled. Runtime policy projects each inventory through
+the same schema identity code as live SQLite. The Worker adapter binds evidence
+to the live hashed ledger and complete schema, then supplies the existing legacy
+collector, archived-ledger validation, bridge and restore guards. Archive SQL is
+never executed as evidence. Unsupported migration selections and missing evidence
+fail closed with `schema_mismatch:legacy_evidence` (the public HTTP vocabulary
+reports `schema_mismatch`). The ordinary automatic Node library path is unchanged.
+
+The plugin runs for direct Vite builds and managed builds, rejects client imports,
+and puts its module in the existing Worker bundle/package path. Seeds that do not
+declare it generate no evidence module and need no migration or configuration
+change. Keep the same service instance throughout the initial legacy upload.
+
+Later data statements also qualify when a surviving trigger from that same
+migration repeats the complete statement block, in order, on Base's restore
+commit transition. Those statements run through that destination-owned trigger,
+not a second finalize replay.
+Absent tables count as empty only with an empty full replay and proof that every
+later insert and possible trigger writer preserves emptiness; a bounded empty
+copy/drop/rename rebuild and a SELECT from such an empty source carry no row.
 
 The Base CLI runners (local Workers and container) pass `createPortability` a
 `migrations` replayer (`migration-history.mjs`, Node only) built from the
@@ -992,14 +1096,19 @@ modules/portability/schema-identity.mjs
 modules/portability/schema-legacy.mjs
 modules/portability/sqlite-tokens.mjs
 modules/portability/bookkeeping.mjs
+modules/portability/snapshot-objects.mjs
 modules/portability/storage.mjs
 modules/portability/copies.mjs
+modules/portability/derived.mjs
 modules/portability/dev-data.mjs
 modules/portability/provider-data.mjs
 modules/portability/policy-data.mjs
 modules/portability/generated.mjs
 modules/portability/restore-safety.mjs
 modules/portability/bridge.mjs
+modules/portability/library-history.mjs
+modules/portability/checkout-history.mjs
+modules/portability/migration-history.mjs
 modules/portability/ledgers.mjs
 modules/portability/migration-statements.mjs
 modules/portability/sql-text.mjs
@@ -1108,6 +1217,13 @@ source table, index, trigger and view against native schema or a named retiremen
 in destination migrations, including objects attached to excluded tables. Internal
 prefixes are compared literally. A scratch native import preflight checks the
 projected archive before native restore can open the destination.
+
+Policy-declared derived virtual tables omitted from a Managed dump are created
+in the sandbox from the destination's migrated definitions. Their triggers must
+still be present and compatible; omitting those triggers remains a schema
+refusal. The dump statement allowlist still refuses all `CREATE VIRTUAL TABLE`
+statements, including declared names. A native copy-normalization SQLite failure
+is reported as `copy_normalization_failed`, without SQL diagnostics or row values.
 
 The current intake supports one database and declared buckets, local Workers
 transport, stored ZIP members, at most 10,000 entries and statements, a 128 MiB

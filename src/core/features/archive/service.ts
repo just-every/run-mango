@@ -1,3 +1,5 @@
+import {agentAttribution} from '../agent-door/context';
+import {actorType,actorId} from '../agent-door/custody';
 import { neutralText, publicBody } from './public-content';
 export type PublicIssue = { id: string; title: string; description: string; sender: string; body: string; sentAt: number; publishedAt: number };
 type StoredIssue = {id:string;title:string;description:string;sender:string;body:string;sent_at:number;published_at:number};
@@ -21,16 +23,16 @@ export function archiveService(db: D1Database, origin: string) {
       const body=publicBody(revision.email_body,origin);
       await db.batch([
         db.prepare('INSERT OR IGNORE INTO newsletter_archive(id,campaign_id,revision_id,title,description,sender,body,sent_at,published_at) VALUES(?,?,?,?,?,?,?,?,?)')
-          .bind(id,campaignId,revisionId,neutralText(revision.email_subject),neutralText(revision.preheader),neutralText(revision.sender_name),body,revision.sent_at,now),
-        db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) SELECT ?,?,'operator',?,'newsletter.published','campaign',?,json_object('revisionId',?,'archiveId',?),?,? WHERE EXISTS(SELECT 1 FROM newsletter_archive WHERE id=?)`)
-          .bind(crypto.randomUUID(),crypto.randomUUID(),actor,campaignId,revisionId,id,now,now,id),
+          .bind(id,campaignId,revisionId,neutralText(revision.email_subject),neutralText(revision.preheader),neutralText(revision.sender_name+(agentAttribution()?' · '+agentAttribution()!.label:'')),body,revision.sent_at,now),
+        db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) SELECT ?,?,'${actorType()}',?,'newsletter.published','campaign',?,json_object('revisionId',?,'archiveId',?),?,? WHERE EXISTS(SELECT 1 FROM newsletter_archive WHERE id=?)`)
+          .bind(crypto.randomUUID(),crypto.randomUUID(),actorId(actor),campaignId,revisionId,id,now,now,id),
       ]);
       return db.prepare('SELECT id FROM newsletter_archive WHERE revision_id=?').bind(revisionId).first<{id:string}>();
     },
     async remove(campaignId:string,id:string,actor:string) {
       const now=Date.now();
       await db.batch([
-        db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) SELECT ?,?,'operator',?,'newsletter.unpublished','campaign',?,json_object('archiveId',id),?,? FROM newsletter_archive WHERE id=? AND campaign_id=?`).bind(crypto.randomUUID(),crypto.randomUUID(),actor,campaignId,now,now,id,campaignId),
+        db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,actor_type,actor_id,action,entity_type,entity_id,detail_json,occurred_at,created_at) SELECT ?,?,'${actorType()}',?,'newsletter.unpublished','campaign',?,json_object('archiveId',id),?,? FROM newsletter_archive WHERE id=? AND campaign_id=?`).bind(crypto.randomUUID(),crypto.randomUUID(),actorId(actor),campaignId,now,now,id,campaignId),
         db.prepare('DELETE FROM newsletter_archive WHERE id=? AND campaign_id=?').bind(id,campaignId),
       ]);
     },

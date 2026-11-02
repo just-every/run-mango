@@ -1,3 +1,4 @@
+import {saveWork} from '../agent-door/custody';
 import {Hono} from 'hono';
 import {z} from 'zod';
 import type {Database} from '@/core/platform/db/client';
@@ -15,7 +16,8 @@ export function savedReportRoutes(database:Database) {
     const schedules=(await db.prepare('SELECT id,report_id reportId,cadence,recipients_json recipients,next_at nextAt,enabled,authority_binding binding,created_by creator FROM insight_report_schedules ORDER BY next_at,id').all<any>()).results;
     for(const schedule of schedules){schedule.active=Boolean(schedule.enabled&&(await reportAuthority(database,schedule.creator))?.binding===schedule.binding);schedule.recipients=JSON.parse(schedule.recipients);delete schedule.binding;delete schedule.creator;}
     const operators=(await db.prepare(`SELECT n.id,n.email ${reportOperators} WHERE n.status='active' ORDER BY n.email`).all<{id:string;email:string}>()).results;
-    const deliveries=(await db.prepare('SELECT schedule_id scheduleId,due_at dueAt,state,reason,count(*) count FROM insight_report_deliveries GROUP BY schedule_id,due_at,state,reason ORDER BY due_at DESC LIMIT 100').all()).results;
+    const deliveries=(await db.prepare('SELECT schedule_id scheduleId,due_at dueAt,state,reason,count(*) count,json_group_array(id) deliveryIds FROM insight_report_deliveries GROUP BY schedule_id,due_at,state,reason ORDER BY due_at DESC LIMIT 100').all()).results;
+    for(const delivery of deliveries)delivery.deliveryIds=JSON.parse(String(delivery.deliveryIds));
     return context.json({reports:[...builtInReports,...saved].map(report=>({...report,title:reportTitle(report)})),operators,schedules,deliveries});
   });
   routes.post('/settings/reports',async context=>{
@@ -39,6 +41,7 @@ export function savedReportRoutes(database:Database) {
     if(active.length!==parsed.data.recipients.length)return context.json({error:'existing_operators_only'},400);
     const id=crypto.randomUUID(),now=Date.now(),nextAt=nextReportTime(parsed.data.cadence,now);
     await db.prepare('INSERT INTO insight_report_schedules(id,report_id,cadence,recipients_json,next_at,enabled,authority_binding,created_by,created_at,updated_at) VALUES(?,?,?,?,?,1,?,?,?,?)').bind(id,parsed.data.reportId,parsed.data.cadence,JSON.stringify(parsed.data.recipients),nextAt,authority.binding,actor.id,now,now).run();
+    await saveWork(db,'report',id,'mango.reports.dispatch',{});
     await recordActivity(db,{key:`report-schedule:${id}`,action:'report.scheduled',entityType:'report-schedule',entityId:id,actorId:actor.id,detail:{cadence:parsed.data.cadence,reportId:parsed.data.reportId,recipientCount:active.length}});
     return context.json({id,nextAt,period:reportSchedulePeriod(parsed.data.cadence,nextAt)},201);
   });

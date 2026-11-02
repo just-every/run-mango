@@ -9656,8 +9656,8 @@
       "file": "ACCEPTANCE.md",
       "line": 105,
       "text": "**CONT-014 — Custom properties** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9679,8 +9679,8 @@
       "file": "ACCEPTANCE.md",
       "line": 106,
       "text": "**CONT-015 — Topics and tags** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9702,8 +9702,8 @@
       "file": "ACCEPTANCE.md",
       "line": 107,
       "text": "**CONT-016 — Preference center** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9718,8 +9718,8 @@
       "file": "ACCEPTANCE.md",
       "line": 108,
       "text": "**CONT-017 — Contact profile and event timeline** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9732,8 +9732,8 @@
       "file": "ACCEPTANCE.md",
       "line": 109,
       "text": "**CONT-018 — Onsite behavior** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9755,8 +9755,8 @@
       "file": "ACCEPTANCE.md",
       "line": 110,
       "text": "**CONT-019 — US SMS consent capture** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9778,8 +9778,8 @@
       "file": "ACCEPTANCE.md",
       "line": 111,
       "text": "**CONT-020 — Engagement-based sunsetting** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9794,8 +9794,8 @@
       "file": "ACCEPTANCE.md",
       "line": 112,
       "text": "**CONT-021 — US privacy requests** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9817,8 +9817,8 @@
       "file": "ACCEPTANCE.md",
       "line": 113,
       "text": "**CONT-022 — Contact search and bulk actions** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9840,8 +9840,8 @@
       "file": "ACCEPTANCE.md",
       "line": 114,
       "text": "**CONT-023 — Custom objects** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9856,8 +9856,8 @@
       "file": "ACCEPTANCE.md",
       "line": 115,
       "text": "**CONT-024 — Incumbent-held consent** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9879,8 +9879,8 @@
       "file": "ACCEPTANCE.md",
       "line": 116,
       "text": "**CONT-025 — Opt-in mode per form and source** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9893,8 +9893,8 @@
       "file": "ACCEPTANCE.md",
       "line": 117,
       "text": "**CONT-026 — Contact added by hand** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -9907,8 +9907,8 @@
       "file": "ACCEPTANCE.md",
       "line": 118,
       "text": "**CONT-027 — Resubscribe through a public form** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -10969,8 +10969,8 @@
       "file": "ACCEPTANCE.md",
       "line": 220,
       "text": "**SCALE-001 — Capacity for the first buyer** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -10991,8 +10991,8 @@
       "file": "ACCEPTANCE.md",
       "line": 224,
       "text": "**FORM-001 — Hosted and embedded signup** (done).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11005,8 +11005,8 @@
       "file": "ACCEPTANCE.md",
       "line": 225,
       "text": "**FORM-002 — Popups, flyouts and full-page forms** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11021,8 +11021,8 @@
       "file": "ACCEPTANCE.md",
       "line": 226,
       "text": "**FORM-003 — Multi-step capture and incentives** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11037,8 +11037,8 @@
       "file": "ACCEPTANCE.md",
       "line": 227,
       "text": "**FORM-004 — Landing pages** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11053,8 +11053,8 @@
       "file": "ACCEPTANCE.md",
       "line": 228,
       "text": "**FORM-005 — Form performance and tests** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11069,8 +11069,8 @@
       "file": "ACCEPTANCE.md",
       "line": 229,
       "text": "**FORM-006 — Referral program** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11085,8 +11085,8 @@
       "file": "ACCEPTANCE.md",
       "line": 230,
       "text": "**FORM-007 — Abuse resistance** (done).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11099,8 +11099,8 @@
       "file": "ACCEPTANCE.md",
       "line": 231,
       "text": "**FORM-008 — Signup intake capacity** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11113,8 +11113,8 @@
       "file": "ACCEPTANCE.md",
       "line": 232,
       "text": "**FORM-009 — Kiosk and event forms** (done).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11136,8 +11136,8 @@
       "file": "ACCEPTANCE.md",
       "line": 233,
       "text": "**FORM-010 — Refused signups are never silent** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11159,8 +11159,8 @@
       "file": "ACCEPTANCE.md",
       "line": 237,
       "text": "**SEG-001 — Segment builder** (done).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11182,8 +11182,8 @@
       "file": "ACCEPTANCE.md",
       "line": 238,
       "text": "**SEG-002 — Live membership** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11198,8 +11198,8 @@
       "file": "ACCEPTANCE.md",
       "line": 239,
       "text": "**SEG-003 — RFM and lifecycle stages** (done).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11221,8 +11221,8 @@
       "file": "ACCEPTANCE.md",
       "line": 240,
       "text": "**SEG-004 — Predictions** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11237,8 +11237,8 @@
       "file": "ACCEPTANCE.md",
       "line": 241,
       "text": "**SEG-005 — Engagement and lead scoring** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11253,8 +11253,8 @@
       "file": "ACCEPTANCE.md",
       "line": 242,
       "text": "**SEG-006 — Campaign and flow activity conditions** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11269,8 +11269,8 @@
       "file": "ACCEPTANCE.md",
       "line": 246,
       "text": "**BUILD-001 — Drag-and-drop email builder** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11291,8 +11291,8 @@
       "file": "ACCEPTANCE.md",
       "line": 247,
       "text": "**BUILD-002 — Template library** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11313,8 +11313,8 @@
       "file": "ACCEPTANCE.md",
       "line": 248,
       "text": "**BUILD-003 — Brand kit** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11329,8 +11329,8 @@
       "file": "ACCEPTANCE.md",
       "line": 249,
       "text": "**BUILD-004 — Reusable blocks** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11351,8 +11351,8 @@
       "file": "ACCEPTANCE.md",
       "line": 250,
       "text": "**BUILD-005 — Conditional content** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11367,8 +11367,8 @@
       "file": "ACCEPTANCE.md",
       "line": 251,
       "text": "**BUILD-006 — Dynamic product content** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11383,8 +11383,8 @@
       "file": "ACCEPTANCE.md",
       "line": 252,
       "text": "**BUILD-007 — Coupons** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11399,8 +11399,8 @@
       "file": "ACCEPTANCE.md",
       "line": 253,
       "text": "**BUILD-008 — Previews and pre-send checks** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11421,8 +11421,8 @@
       "file": "ACCEPTANCE.md",
       "line": 254,
       "text": "**BUILD-009 — SMS and MMS composer** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11443,8 +11443,8 @@
       "file": "ACCEPTANCE.md",
       "line": 255,
       "text": "**BUILD-010 — Mobile layout the checker can prove** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11467,8 +11467,8 @@
       "file": "ACCEPTANCE.md",
       "line": 256,
       "text": "**BUILD-011 — Chosen catalog products** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11489,8 +11489,8 @@
       "file": "ACCEPTANCE.md",
       "line": 257,
       "text": "**BUILD-012 — Email size the builder and imported templates fit in** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11511,8 +11511,8 @@
       "file": "ACCEPTANCE.md",
       "line": 261,
       "text": "**FLOW-001 — Visual flow builder** (partial).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11534,8 +11534,8 @@
       "file": "ACCEPTANCE.md",
       "line": 262,
       "text": "**FLOW-002 — Triggers** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11550,8 +11550,8 @@
       "file": "ACCEPTANCE.md",
       "line": 263,
       "text": "**FLOW-003 — Entry filters and re-entry** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11566,8 +11566,8 @@
       "file": "ACCEPTANCE.md",
       "line": 264,
       "text": "**FLOW-004 — Delays and waits** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11582,8 +11582,8 @@
       "file": "ACCEPTANCE.md",
       "line": 265,
       "text": "**FLOW-005 — Splits** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11598,8 +11598,8 @@
       "file": "ACCEPTANCE.md",
       "line": 266,
       "text": "**FLOW-006 — Actions** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11614,8 +11614,8 @@
       "file": "ACCEPTANCE.md",
       "line": 267,
       "text": "**FLOW-007 — Exits and goals** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11630,8 +11630,8 @@
       "file": "ACCEPTANCE.md",
       "line": 268,
       "text": "**FLOW-008 — Reviewed activation** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11646,8 +11646,8 @@
       "file": "ACCEPTANCE.md",
       "line": 269,
       "text": "**FLOW-009 — Per-send rechecks** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11662,8 +11662,8 @@
       "file": "ACCEPTANCE.md",
       "line": 270,
       "text": "**FLOW-010 — Exactly-once execution** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11678,8 +11678,8 @@
       "file": "ACCEPTANCE.md",
       "line": 271,
       "text": "**FLOW-011 — Pause, manual review and stop** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11694,8 +11694,8 @@
       "file": "ACCEPTANCE.md",
       "line": 272,
       "text": "**FLOW-012 — Flow library** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11710,8 +11710,8 @@
       "file": "ACCEPTANCE.md",
       "line": 273,
       "text": "**FLOW-013 — Flow analytics and path inspection** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11726,8 +11726,8 @@
       "file": "ACCEPTANCE.md",
       "line": 274,
       "text": "**FLOW-014 — Priority and cross-message frequency** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11742,8 +11742,8 @@
       "file": "ACCEPTANCE.md",
       "line": 275,
       "text": "**FLOW-015 — Sequences** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11758,8 +11758,8 @@
       "file": "ACCEPTANCE.md",
       "line": 276,
       "text": "**FLOW-016 — Flow portability** (missing).",
-      "to": "generated",
-      "note": "The generated acceptance entry carries the old clause label and status."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11774,8 +11774,8 @@
       "file": "ACCEPTANCE.md",
       "line": 280,
       "text": "**EXP-001 — Campaign A/B tests** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11790,8 +11790,8 @@
       "file": "ACCEPTANCE.md",
       "line": 281,
       "text": "**EXP-002 — Multivariate tests** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11806,8 +11806,8 @@
       "file": "ACCEPTANCE.md",
       "line": 282,
       "text": "**EXP-003 — Flow splits and flow holdouts** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11822,8 +11822,8 @@
       "file": "ACCEPTANCE.md",
       "line": 283,
       "text": "**EXP-004 — Global holdout** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11838,8 +11838,8 @@
       "file": "ACCEPTANCE.md",
       "line": 284,
       "text": "**EXP-005 — Honest test statistics** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11854,8 +11854,8 @@
       "file": "ACCEPTANCE.md",
       "line": 285,
       "text": "**EXP-006 — Send-time optimization** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11870,8 +11870,8 @@
       "file": "ACCEPTANCE.md",
       "line": 289,
       "text": "**SMS-001 — US SMS through Twilio** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11892,8 +11892,8 @@
       "file": "ACCEPTANCE.md",
       "line": 290,
       "text": "**SMS-002 — Carrier registration status** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11908,8 +11908,8 @@
       "file": "ACCEPTANCE.md",
       "line": 291,
       "text": "**SMS-003 — US quiet hours and state rules** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11930,8 +11930,8 @@
       "file": "ACCEPTANCE.md",
       "line": 292,
       "text": "**SMS-004 — Two-way SMS inbox** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11952,8 +11952,8 @@
       "file": "ACCEPTANCE.md",
       "line": 293,
       "text": "**SMS-005 — Branded short links and MMS** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11968,8 +11968,8 @@
       "file": "ACCEPTANCE.md",
       "line": 294,
       "text": "**SMS-006 — SMS cost control** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -11984,8 +11984,8 @@
       "file": "ACCEPTANCE.md",
       "line": 295,
       "text": "**SMS-007 — WhatsApp marketing messages** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12000,8 +12000,8 @@
       "file": "ACCEPTANCE.md",
       "line": 296,
       "text": "**SMS-008 — Twilio connection an owner makes in Settings** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12016,8 +12016,8 @@
       "file": "ACCEPTANCE.md",
       "line": 297,
       "text": "**PUSH-001 — Web push** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12032,8 +12032,8 @@
       "file": "ACCEPTANCE.md",
       "line": 298,
       "text": "**PUSH-002 — Mobile app push and in-app messages** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12048,8 +12048,8 @@
       "file": "ACCEPTANCE.md",
       "line": 302,
       "text": "**DELIV-001 — Sending providers** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12070,8 +12070,8 @@
       "file": "ACCEPTANCE.md",
       "line": 303,
       "text": "**DELIV-002 — Domain setup** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12092,8 +12092,8 @@
       "file": "ACCEPTANCE.md",
       "line": 304,
       "text": "**DELIV-003 — Bulk-sender compliance dashboard** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12114,8 +12114,8 @@
       "file": "ACCEPTANCE.md",
       "line": 305,
       "text": "**DELIV-004 — Domain warm-up** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12130,8 +12130,8 @@
       "file": "ACCEPTANCE.md",
       "line": 306,
       "text": "**DELIV-005 — Mailbox-provider breakdown** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12152,8 +12152,8 @@
       "file": "ACCEPTANCE.md",
       "line": 307,
       "text": "**DELIV-006 — Address quality at intake** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12168,8 +12168,8 @@
       "file": "ACCEPTANCE.md",
       "line": 308,
       "text": "**DELIV-007 — Sender evidence renewal without stopping live flows** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12184,8 +12184,8 @@
       "file": "ACCEPTANCE.md",
       "line": 309,
       "text": "**DELIV-008 — Sending connection an owner makes in Settings** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12208,8 +12208,8 @@
       "file": "ACCEPTANCE.md",
       "line": 313,
       "text": "**REPORT-001 — Overview dashboard** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12224,8 +12224,8 @@
       "file": "ACCEPTANCE.md",
       "line": 314,
       "text": "**REPORT-002 — Campaign and flow performance tables** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12246,8 +12246,8 @@
       "file": "ACCEPTANCE.md",
       "line": 315,
       "text": "**REPORT-003 — Attribution for campaigns, flows and SMS** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12268,8 +12268,8 @@
       "file": "ACCEPTANCE.md",
       "line": 316,
       "text": "**REPORT-004 — Customer and retention analytics** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12290,8 +12290,8 @@
       "file": "ACCEPTANCE.md",
       "line": 317,
       "text": "**REPORT-005 — List growth and consent sources** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12306,8 +12306,8 @@
       "file": "ACCEPTANCE.md",
       "line": 318,
       "text": "**REPORT-006 — Scheduled and custom reports** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12322,8 +12322,8 @@
       "file": "ACCEPTANCE.md",
       "line": 319,
       "text": "**REPORT-007 — Usage and cost transparency** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12338,8 +12338,8 @@
       "file": "ACCEPTANCE.md",
       "line": 323,
       "text": "**INT-001 — Shopify** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12360,8 +12360,8 @@
       "file": "ACCEPTANCE.md",
       "line": 324,
       "text": "**INT-002 — WooCommerce** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12373,8 +12373,8 @@
       "file": "ACCEPTANCE.md",
       "line": 325,
       "text": "**INT-003 — BigCommerce** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12389,8 +12389,8 @@
       "file": "ACCEPTANCE.md",
       "line": 326,
       "text": "**INT-004 — Stripe** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12411,8 +12411,8 @@
       "file": "ACCEPTANCE.md",
       "line": 327,
       "text": "**INT-005 — Square** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12427,8 +12427,8 @@
       "file": "ACCEPTANCE.md",
       "line": 328,
       "text": "**INT-006 — Stall and Orbit** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12443,8 +12443,8 @@
       "file": "ACCEPTANCE.md",
       "line": 329,
       "text": "**INT-007 — Events and profiles API** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12465,8 +12465,8 @@
       "file": "ACCEPTANCE.md",
       "line": 330,
       "text": "**INT-008 — Outbound webhooks** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12481,8 +12481,8 @@
       "file": "ACCEPTANCE.md",
       "line": 331,
       "text": "**INT-009 — Zapier and Crank** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12497,8 +12497,8 @@
       "file": "ACCEPTANCE.md",
       "line": 332,
       "text": "**INT-010 — Segment** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12513,8 +12513,8 @@
       "file": "ACCEPTANCE.md",
       "line": 333,
       "text": "**INT-011 — CRM sync** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12529,8 +12529,8 @@
       "file": "ACCEPTANCE.md",
       "line": 334,
       "text": "**INT-012 — Ad audiences** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12545,8 +12545,8 @@
       "file": "ACCEPTANCE.md",
       "line": 335,
       "text": "**INT-013 — Web analytics tagging** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12561,8 +12561,8 @@
       "file": "ACCEPTANCE.md",
       "line": 336,
       "text": "**INT-014 — Reviews and loyalty apps** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12583,8 +12583,8 @@
       "file": "ACCEPTANCE.md",
       "line": 337,
       "text": "**INT-015 — Shopify connection a merchant installs** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12610,8 +12610,8 @@
       "file": "ACCEPTANCE.md",
       "line": 341,
       "text": "**MOVE-001 — From Mailchimp** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12632,8 +12632,8 @@
       "file": "ACCEPTANCE.md",
       "line": 342,
       "text": "**MOVE-002 — From Klaviyo** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12654,8 +12654,8 @@
       "file": "ACCEPTANCE.md",
       "line": 343,
       "text": "**MOVE-003 — From ActiveCampaign** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12676,8 +12676,8 @@
       "file": "ACCEPTANCE.md",
       "line": 344,
       "text": "**MOVE-004 — From Kit (ConvertKit)** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12698,8 +12698,8 @@
       "file": "ACCEPTANCE.md",
       "line": 345,
       "text": "**MOVE-005 — From beehiiv, Omnisend and Customer.io** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12720,8 +12720,8 @@
       "file": "ACCEPTANCE.md",
       "line": 346,
       "text": "**MOVE-006 — Reconciliation and cutover** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12743,8 +12743,8 @@
       "file": "ACCEPTANCE.md",
       "line": 347,
       "text": "**MOVE-007 — Mailchimp saved segments** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12759,8 +12759,8 @@
       "file": "ACCEPTANCE.md",
       "line": 348,
       "text": "**MOVE-008 — Mailchimp automations and Customer Journeys** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12776,8 +12776,8 @@
       "file": "ACCEPTANCE.md",
       "line": 349,
       "text": "**MOVE-009 — Incumbent engagement history** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12792,8 +12792,8 @@
       "file": "ACCEPTANCE.md",
       "line": 350,
       "text": "**MOVE-010 — Several audiences** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12814,8 +12814,8 @@
       "file": "ACCEPTANCE.md",
       "line": 351,
       "text": "**MOVE-011 — Incumbent template conversion** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12838,8 +12838,8 @@
       "file": "ACCEPTANCE.md",
       "line": 352,
       "text": "**MOVE-012 — Move-in at the buyer's scale** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12862,8 +12862,8 @@
       "file": "ACCEPTANCE.md",
       "line": 353,
       "text": "**MOVE-013 — Two-way sync during the parallel run** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12883,8 +12883,8 @@
       "file": "ACCEPTANCE.md",
       "line": 354,
       "text": "**MOVE-014 — Incumbent images brought home** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12905,8 +12905,8 @@
       "file": "ACCEPTANCE.md",
       "line": 355,
       "text": "**MOVE-015 — Incumbent engagement history beyond the Mailchimp export** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12921,8 +12921,8 @@
       "file": "ACCEPTANCE.md",
       "line": 359,
       "text": "**MOBILE-001 — Responsive operator app** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12943,8 +12943,8 @@
       "file": "ACCEPTANCE.md",
       "line": 360,
       "text": "**MOBILE-002 — Native iOS and Android app** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12959,8 +12959,8 @@
       "file": "ACCEPTANCE.md",
       "line": 364,
       "text": "**PUB-001 — Web archive** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -12981,8 +12981,8 @@
       "file": "ACCEPTANCE.md",
       "line": 365,
       "text": "**PUB-002 — Paid newsletters** (partial).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -13003,8 +13003,8 @@
       "file": "ACCEPTANCE.md",
       "line": 366,
       "text": "**PUB-003 — Recommendations** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -13019,8 +13019,8 @@
       "file": "ACCEPTANCE.md",
       "line": 367,
       "text": "**PUB-004 — Direct sponsorships** (missing).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",
@@ -13035,8 +13035,8 @@
       "file": "ACCEPTANCE.md",
       "line": 368,
       "text": "**PUB-005 — Paid signup page and payer consent** (done).",
-      "to": "generated",
-      "note": "The contract generator writes this status or count."
+      "to": "changelog",
+      "note": "Historical clause label and status retained in the changelog; its acceptance prose is mapped separately."
     },
     {
       "file": "ACCEPTANCE.md",

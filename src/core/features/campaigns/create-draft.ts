@@ -1,3 +1,4 @@
+import {actorType,actorId} from '../agent-door/custody';
 import {loadAnalyticsPolicy} from '@/core/features/settings/analytics-settings';
 import {installationDormancyPolicy} from '@/core/features/audience/dormancy-policy';
 import { savedEmailSize } from './saved-email-size';
@@ -57,7 +58,7 @@ export async function createDraft(database: Database, composition: DraftComposit
   await savedEmailSize(database, revision, sizeOptions);
   const statements = [database.insert(campaigns).values({id:campaignId,state:'draft',activeRevisionId:revisionId,createdAt:now,updatedAt:now}),
     database.insert(campaignRevisions).values(revision),
-    database.insert(campaignStateTransitions).values({id:ulid(),campaignId,fromState:'draft',toState:'draft',actorType:'operator',actorId:operatorId,reason:'draft-created',occurredAt:now,createdAt:now}),
+    database.insert(campaignStateTransitions).values({id:ulid(),campaignId,fromState:'draft',toState:'draft',actorType:actorType(),actorId:actorId(operatorId),reason:'draft-created',occurredAt:now,createdAt:now}),
     ...(parsed.steps ?? []).map((step,index) => database.insert(campaignSteps).values({id:ulid(),revisionId,sequence:index+1,channel:step.channel,
       timezone:step.timezone,scheduledAt:new Date(step.scheduledAt),sendByAt:new Date(step.sendByAt),whyThisTime:step.whyThisTime,timingOrigin:'operator',createdAt:now,updatedAt:now})),
     ...(parsed.links ?? []).map((link,index) => database.insert(campaignRevisionLinks).values({id:ulid(),revisionId,sequence:index+1,...link,createdAt:now,updatedAt:now})),

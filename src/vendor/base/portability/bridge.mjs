@@ -34,8 +34,8 @@ async function placement(db,manifest,cat,replay,ledger,history,legacyRecovery,un
   const recorded=historyEntries && matchMigrationLedger(historyEntries,files,replay);
   // Only explicitly acknowledged v1 recovery may use the old projection for
   // archive placement. The live destination check above remains complete, and
-  // ordinary v2 imports still require their authenticated object inventory;
-  // acknowledged v2 recovery without that inventory places by tables only.
+  // current v2 imports use their authenticated object inventory. Verified legacy
+  // v2 uses the replayed complete identity; acknowledged recovery places by tables only.
   const schemaAfter=names=>replay.schemaAfter(names,legacyRecovery && manifest.schemaObjects===undefined?{legacyExcludedObjects:true}:unverified?{tablesOnly:true}:undefined);
   if(unverified && archived && manifest.migrations)insist(canonicalJson(matchMigrationLedger(archived,files,replay))===canonicalJson(recorded),'schema_mismatch:migration_history',409);
   let earlier,unapplied;
@@ -66,8 +66,31 @@ async function placement(db,manifest,cat,replay,ledger,history,legacyRecovery,un
   const catalogue=cat.tables.map(t=>t.name),archivedTables=catalogue.filter(name=>manifest.tables.some(t=>t.name===name));
   const empty=archivedTables.filter(name=>!manifest.tables.find(t=>t.name===name).count);
   const tables=(await all(db,"SELECT name FROM sqlite_master WHERE type IN ('table','view')")).map(t=>t.name);
-  const {replays,rebuilt}=laterData({applied,unapplied,replay,catalogue,archived:archivedTables,empty,tables,secrets:manifest.excludedColumns??{},manifest:manifest.tables});
+  const baseline=await replay.rowImages?.(cat.tables.filter(t=>!archivedTables.includes(t.name)).map(t=>({name:t.name,columns:t.columns.map(c=>c.name)})),0);
+  const replayEmpty=baseline?[...baseline].filter(([,rows])=>!rows.length).map(([name])=>name):[];
+  const {replays,rebuilt}=laterData({applied,unapplied,replay,catalogue,archived:archivedTables,empty,tables,secrets:manifest.excludedColumns??{},manifest:manifest.tables,replayEmpty});
   return {applied,earlier,replays,rebuilt};
+}
+// Old v2 writers recorded tables and applied migration names, but no behavioral
+// object inventory (later writers omitted objects attached to excluded tables).
+// Verify the archive's historical projection and the complete live replay, then
+// return the recorded schema's complete identity for ordinary bridge placement.
+// Never guess an unrecorded prefix or install source SQL to fill missing evidence.
+export async function verifiedLegacySchema(db,manifest,cat,migrations,history) {
+  if(!migrations)return false;
+  const replay=await migrations(),ledger=await destinationLedger(db)??[];
+  try {
+    const files=replay.names.map(name=>({name,sha256:replay.sha256?.(name),aliases:replay.aliases?.(name)}));
+    const archived=history(),entries=manifest.migrations?.map(name=>archived?.find(entry=>entry.name===name)??{name})??archived;
+    if(!entries?.length)return false;
+    const applied=matchMigrationLedger(ledger,files,replay),recorded=matchMigrationLedger(entries,files,replay);
+    if(!recorded.length || canonicalJson(applied)!==canonicalJson(replay.names)
+      || !recorded.every((name,i)=>applied.indexOf(name)>(i?applied.indexOf(recorded[i-1]):-1)))return false;
+    if(archived && manifest.migrations && canonicalJson(matchMigrationLedger(archived,files,replay))!==canonicalJson(recorded))return false;
+    if(await replay.schemaAfter(applied)!==cat.identity
+      || await replay.schemaAfter(recorded,manifest.schemaObjects===undefined?{tablesOnly:true}:{legacyExcludedObjects:true})!==manifest.schema)return false;
+    return await replay.schemaAfter(recorded);
+  }catch{return false;} // Unknown history or a failed replay is not verification.
 }
 // An archive with the destination's schema identity can still predate later
 // migrations that changed only data (a purge or a backfill).

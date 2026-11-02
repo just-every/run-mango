@@ -1,3 +1,4 @@
+import {actorType,actorId as nativeActorId} from '../agent-door/custody';
 import { savedEmailSize } from './saved-email-size';
 import type { EmailSizeOptions } from './email-size';
 import { createFollowupService } from './followup-service';
@@ -51,7 +52,7 @@ export function createCampaignReuseService(database: Database, defaults: () => D
       if (input.templateId) {
         if (input.updatedAt === undefined) return {kind:'conflict' as const};
         const updated = await db.batch([
-          db.prepare("INSERT INTO lifecycle_audit_entries (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'campaign-template',id,'template.updated','operator',?,?,?,? FROM campaign_templates WHERE id=? AND updated_at=?").bind(ulid(),ulid(),operatorId,JSON.stringify({sourceRevisionId:input.revisionId}),now,now,input.templateId,input.updatedAt),
+          db.prepare(`INSERT INTO lifecycle_audit_entries (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) SELECT ?,?,'campaign-template',id,'template.updated','${actorType()}',?,?,?,? FROM campaign_templates WHERE id=? AND updated_at=?`).bind(ulid(),ulid(),nativeActorId(operatorId),JSON.stringify({sourceRevisionId:input.revisionId}),now,now,input.templateId,input.updatedAt),
           db.prepare('UPDATE campaign_templates SET name=?,composition_json=?,updated_by=?,updated_at=MAX(updated_at+1,?) WHERE id=? AND updated_at=?').bind(input.name,JSON.stringify(value),operatorId,now,input.templateId,input.updatedAt),
         ]);
         return updated[1].meta.changes ? {kind:'saved' as const,id:input.templateId} : {kind:'conflict' as const};
@@ -59,7 +60,7 @@ export function createCampaignReuseService(database: Database, defaults: () => D
       const id=ulid();
       await db.batch([
         db.prepare('INSERT INTO campaign_templates (id,name,composition_json,created_by,updated_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?)').bind(id,input.name,JSON.stringify(value),operatorId,operatorId,now,now),
-        db.prepare("INSERT INTO lifecycle_audit_entries (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) VALUES (?,?,'campaign-template',?,'template.created','operator',?,?,?,?)").bind(ulid(),ulid(),id,operatorId,JSON.stringify({sourceRevisionId:input.revisionId}),now,now),
+        db.prepare(`INSERT INTO lifecycle_audit_entries (id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at) VALUES (?,?,'campaign-template',?,'template.created','${actorType()}',?,?,?,?)`).bind(ulid(),ulid(),id,nativeActorId(operatorId),JSON.stringify({sourceRevisionId:input.revisionId}),now,now),
       ]);
       return {kind:'saved' as const,id};
     },

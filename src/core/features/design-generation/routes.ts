@@ -1,3 +1,4 @@
+import {saveWork} from '../agent-door/custody';
 import { Hono, type Context } from 'hono';
 import { z } from 'zod';
 import { readJson, readParams } from '@/core/api/input';
@@ -67,6 +68,7 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
     const created = await repository.create({ id, campaignId: params.data.id, provider: platform.design.provider, brief, candidateCount: body.data.candidates,
       deadlineAt: now + designDeadlineMs, createdBy: context.get('operator').id, createdAt: now });
     if (!created) return context.json({ error: 'design_job_active', detail: 'A design for this draft is still being made.' }, 409);
+    await saveWork(db,'design',id,'mango.designs.advance',{});
     await platform.jobs.enqueue(designCommand('design.draft', id));
     return context.json({ job: await view((await repository.get(id))!) }, 201);
   });
@@ -90,6 +92,7 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
     const moved = await repository.update(record.id, [record.state], { state: 'preparing', chosenSlot: chosen.slot, providerLayoutId: null, layerdocSha256: null,
       errorCode: null, attempts: 0, waitCode: null, retryAt: null, deadlineAt: now + designDeadlineMs, layoutRound: record.layoutRound + (record.state === 'failed' ? 1 : 0) }, now);
     if (!moved) return context.json({ error: 'design_job_state', detail: 'This design is not waiting for a choice.' }, 409);
+    await saveWork(db,'design',record.id,'mango.designs.advance',{});
     await platform.jobs.enqueue(designCommand('design.layout', record.id));
     return context.json({ job: await view((await repository.get(record.id))!) });
   });

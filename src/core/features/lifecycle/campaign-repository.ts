@@ -1,3 +1,5 @@
+import {agentAction,agentAttribution} from '../agent-door/context';
+import {workStatement,actorType,actorId} from '../agent-door/custody';
 import {reputationGuard} from './reputation-guard';
 import {providerHoldGuard} from './provider-holds';
 import { leaseGuard, leaseValues, associationStatement } from '@/core/features/sender-verification/repository';
@@ -147,11 +149,11 @@ export function createCampaignLifecycleRepository(database: Database) {
       await client.prepare(
         `INSERT INTO lifecycle_audit_entries
          (id, operation_key, entity_type, entity_id, action, actor_type, actor_id, detail_json, occurred_at, created_at)
-         VALUES (?, ?, 'campaign-revision', ?, 'test-send', 'operator', ?, ?, ?, ?)
+         VALUES (?, ?, 'campaign-revision', ?, 'test-send', '${actorType()}', ?, ?, ?, ?)
          ON CONFLICT(operation_key) DO NOTHING`,
       ).bind(
-        ulid(now.getTime()), operationKey, revisionId, operatorId,
-        JSON.stringify({ channel, destination, destinationDigest, revisionDigest, test: true }), now.getTime(), now.getTime(),
+        ulid(now.getTime()), operationKey, revisionId, actorId(operatorId),
+        JSON.stringify({ preparedBy:agentAttribution(), channel, destination, destinationDigest, revisionDigest, test: true }), now.getTime(), now.getTime(),
       ).run();
     },
 
@@ -308,13 +310,16 @@ export function createCampaignLifecycleRepository(database: Database) {
       statements.push(
         client.prepare(
           `UPDATE campaign_revisions SET state = 'approved', content_digest = ?, approved_at = ?,
-             approved_by_operator_id = ?, source_types_json = ?, updated_at = ?
+             approved_by_operator_id = ?, authorized_by_agent_id=?, agent_sponsor_id=?, agent_approvers_json=?, source_types_json = ?, updated_at = ?
            WHERE id = ? AND state = 'draft' AND updated_at = ?
              AND ${approvalGuard}`,
         ).bind(
           revisionDigest,
           nowMs,
-          operatorId,
+          agentAction.getStore()?null:operatorId,
+          agentAction.getStore()?.agent.id??null,
+          agentAction.getStore()?.person.id??null,
+          agentAction.getStore()?JSON.stringify(agentAction.getStore()!.approvers):null,
           snapshot.revision.sourceTypesJson,
           nowMs,
           snapshot.revision.id,
@@ -449,12 +454,12 @@ export function createCampaignLifecycleRepository(database: Database) {
         client.prepare(
           `INSERT INTO campaign_state_transitions
            (id, campaign_id, from_state, to_state, actor_type, actor_id, reason, occurred_at, created_at)
-           SELECT ?, ?, ?, 'scheduled', 'operator', ?, ?, ?, ?
+           SELECT ?, ?, ?, 'scheduled', '${actorType()}', ?, ?, ?, ?
            WHERE ${approvalGuard}
              AND NOT EXISTS (SELECT 1 FROM campaign_state_transitions WHERE campaign_id = ? AND reason = ?)
           `,
         ).bind(
-          ulid(nowMs), snapshot.campaign.id, snapshot.campaign.state, operatorId,
+          ulid(nowMs), snapshot.campaign.id, snapshot.campaign.state, actorId(operatorId),
           `approval:${snapshot.revision.id}`, nowMs, nowMs,
           ...approvalGuardValues(), snapshot.campaign.id, `approval:${snapshot.revision.id}`,
         ),
@@ -463,18 +468,20 @@ export function createCampaignLifecycleRepository(database: Database) {
         client.prepare(
           `INSERT INTO lifecycle_audit_entries
            (id, operation_key, entity_type, entity_id, action, actor_type, actor_id, detail_json, occurred_at, created_at)
-           SELECT ?, ?, 'campaign-revision', ?, 'approved', 'operator', ?, ${needsSender ? senderEvidenceDetail : '?'}, ?, ?
+           SELECT ?, ?, 'campaign-revision', ?, '${agentAction.getStore()?'authorized':'approved'}', '${actorType()}', ?, ${needsSender ? senderEvidenceDetail : '?'}, ?, ?
            WHERE ${approvalGuard}
            ON CONFLICT(operation_key) DO NOTHING`,
         ).bind(
-          ulid(nowMs), `approval:${idempotencyKey}`, snapshot.revision.id, operatorId,
-          JSON.stringify({ revisionDigest, previousRevision, dormancyPolicy:snapshot.revision.dormancyPolicyJson?JSON.parse(snapshot.revision.dormancyPolicyJson):undefined,
+          ulid(nowMs), `approval:${idempotencyKey}`, snapshot.revision.id, actorId(operatorId),
+          JSON.stringify({ preparedBy:agentAttribution(), revisionDigest, previousRevision, dormancyPolicy:snapshot.revision.dormancyPolicyJson?JSON.parse(snapshot.revision.dormancyPolicyJson):undefined,
             approval: {idempotency_key: idempotencyKey, campaign_id: snapshot.campaign.id, revision_id: snapshot.revision.id,
               revision_digest: revisionDigest, write_token: writeToken, operator_id: operatorId, approved_at: nowMs, created_at: nowMs},
             ...(needsSender ? {approvedFrom, senderEvidence: input.senderLease} : {}),
           }), ...(needsSender ? [input.senderLease!.id] : []), authorityTime, authorityTime, ...approvalGuardValues(),
         ),
       );
+      const savedWork=workStatement(client,'campaign',snapshot.revision.id,'mango.delivery.dispatch',{},approvalGuard,[...approvalGuardValues()]);
+      if(savedWork)statements.push(savedWork);
       await client.batch(statements);
       const approval = await client.prepare(
         `SELECT * FROM campaign_approval_requests

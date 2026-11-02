@@ -1,3 +1,4 @@
+import {actorType,actorId} from '../../agent-door/custody';
 import {invalidateRevisions} from './campaigns';
 import {invalidateTransfers} from './transfers';
 import {scanObject} from './objects';
@@ -81,8 +82,8 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
       statements.push(db.prepare(`UPDATE ik_d1_creation_plans SET released=1 WHERE job_id IN (SELECT value FROM json_each(?)) AND ${admitted}`).bind(JSON.stringify(scope.jobs),reference));
       // OPER-007: recorded with the admission it describes, and anonymised with the contact (CONT-013).
       statements.push(db.prepare(`INSERT INTO lifecycle_audit_entries(id,operation_key,entity_type,entity_id,action,actor_type,actor_id,detail_json,occurred_at,created_at)
-        SELECT ?,?,'contact',?,'contact.erasure-started','operator',?,'{}',?,? WHERE ${admitted} ON CONFLICT(operation_key) DO NOTHING`)
-        .bind(crypto.randomUUID(),`erasure-started:${reference}`,id,context.authorization.principalId,now,now,reference));
+        SELECT ?,?,'contact',?,'contact.erasure-started','${actorType()}',?,'{}',?,? WHERE ${admitted} ON CONFLICT(operation_key) DO NOTHING`)
+        .bind(crypto.randomUUID(),`erasure-started:${reference}`,id,actorId(context.authorization.principalId),now,now,reference));
       await commit(context,statements);
       const accepted=await read(reference);
       if(!accepted){

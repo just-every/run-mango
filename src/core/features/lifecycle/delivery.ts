@@ -1,3 +1,5 @@
+import {admitWork} from '../agent-door/custody';
+import {agentAction} from '../agent-door/context';
 import {CatalogDeliverySkip} from '@/core/features/campaigns/catalog-outcomes';
 import { utf8Bytes, emailByteLimit } from '@/core/features/campaigns/email-size';
 import {aggregateMobileMessageParts,matchesMobileMessagePart} from './mobile-message-status';
@@ -270,6 +272,10 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
   }
 
   async function dispatchStep(payload: Record<string, unknown>) {
+    if(!agentAction.getStore()) return admitWork(runtime.platform.database.$client,runtime.platform.agentDoor,'campaign',String(payload.revisionId??''),payload,()=>dispatchStepNative(payload));
+    return dispatchStepNative(payload);
+  }
+  async function dispatchStepNative(payload: Record<string,unknown>) {
     const stepId = String(payload.stepId ?? '');
     const revisionId = String(payload.revisionId ?? '');
     if (!stepId || !revisionId) throw new Error('Dispatch command requires stepId and revisionId.');

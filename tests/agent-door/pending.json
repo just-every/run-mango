@@ -1,0 +1,7 @@
+[
+  {
+    "id": "PENDING-BASE-2026-10-30-erasure-custody-fence",
+    "assertion": "The native-contact-erasure fixture returns HTTP 500 after native erasure admission because final door custody writes encounter Mango\u2019s privacy fence. Keep that fence intact. Base requires a native mapping for retained outcomes, approval arguments, review summaries, audit and events, permitted decision-evidence redaction, and an atomic execution/capture fence before enabling a client-custody exception. The pending erasure also prevents subsequent held-policy, replay, subset and audit phases from completing.",
+    "source": "Base modules/agent-door/ADOPTING.md:1164-1174; modules/agent-door/audit.ts:44-46; Mango src/core/features/audience/erasure/write-fence.ts:31-35; operations/agent-door.test.mjs native-contact-erasure"
+  }
+]

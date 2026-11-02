@@ -1,3 +1,5 @@
+import {agentAction} from '../agent-door/context';
+import {nativeOperator} from '../agent-door/native';
 import type { InferSelectModel } from 'drizzle-orm';
 import { createOperatorAuth, createAuthHandler, AuthError, securityHeaders, type Operator } from '@/vendor/base/operator-auth/index.mjs';
 // @ts-expect-error Base's shared wire parser is portable ESM without declarations.
@@ -57,15 +59,18 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     MAIL_FROM: config.mailAuthFrom || undefined, local,
     branding: { productName: 'Mango', accentColor: '#ffcf47', signInPath: '/signin', theme: '/rer-theme.css' },
   });
-  function core(request: Request) {
+  function core(request: Request, businessRoster = false) {
     return createOperatorAuth({ db, config: authConfig(request), mailSender: local || config.demo ? { async send() { return { status: 'accepted' as const, provider: 'development', providerMessageId: null }; } } : createBaseMailSender(config, repository.database),
       clientIp: req => local ? new URL(req.url).hostname : req.headers.get('CF-Connecting-IP') ?? '',
       rolePolicy: async ({ actor, action, target, role }) => {
         const profile = await project(actor);
-        if (action === 'operators:role') return false;
+        if (action === 'operators:role') return businessRoster && profile.role === 'owner';
         if (['providers:manage','domains:manage'].includes(action)) return profile.role === 'owner';
         if (action.startsWith('operators:') && !hasPermission(profile.role,'operators.manage')) return false;
-        if (action === 'operators:invite') return role === 'owner';
+        // Browser invitations still request their existing role. The signed
+        // Business roster also issues native admin/member invitations; their
+        // confirmation must use the same live inviter permission.
+        if (action === 'operators:invite') return role === 'owner' || role === 'admin' || role === 'member';
         if (action === 'operators:deactivate' && target) {
           const original = await repository.getOperator(target.id);
           if (original?.isInitial && target.id !== actor.id) return false;
@@ -77,6 +82,9 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
     });
   }
   return {
+    // This adapter is used only after the signed Business receiver validates
+    // its envelope. It shares native config, mail, and current owner policy.
+    businessTeam(request: Request) { return core(normalize(request), true).businessTeam; },
     async handle(request: Request) {
       if (new URL(request.url).pathname === '/auth/environment') return Response.json({ local });
       // Administrative APIs are mediated by Mango's operator policy.
@@ -126,11 +134,19 @@ export function createAuthService(repository: ReturnType<typeof createAuthReposi
       return session ? session.operator.role === 'owner' && (await project(session.operator)).role === 'owner' && session.operator.status === 'active' : false;
     },
     async setProductRole(request: Request,targetId: string,role: ProductRole,unmaskedContacts: boolean) {
-      const actor=await this.authenticate(request);
+      const agent=agentAction.getStore();
+      const actor=agent?await nativeOperator({...platform,database:repository.database} as Platform,agent.person.id):await this.authenticate(request);
       if(!actor)throw new AuthError('unauthenticated',401);
       await assignProductRole({config,database:repository.database},request,actor.id,targetId,role,unmaskedContacts);
     },
     async listOperators(request: Request) {
+      const agent=agentAction.getStore();
+      if(agent){
+        const actor=await nativeOperator({...platform,database:repository.database} as Platform,agent.person.id);
+        if(!hasPermission(actor.role,'operators.manage'))throw new AuthError('role_forbidden',403);
+        const rows=(await db.prepare("SELECT id FROM oa_operators WHERE status!='inactive'").all<{id:string}>()).results;
+        return Promise.all(rows.map(row=>nativeOperator({...platform,database:repository.database} as Platform,row.id)));
+      }
       const normalized = normalize(request);
       const auth = core(normalized);
       return Promise.all((await auth.listOperators(normalized)).filter(row => row.status !== 'inactive')

@@ -16,7 +16,7 @@ const recordSchema = z.object({
  * resume from the last fully imported page. Replayed partial pages use identity upserts. */
 export function createCommerceSynchronizer(
   commerce: CommerceStore, store: ReturnType<typeof createStoreService>, audience: ReturnType<typeof createAudienceService>,
-  options: {pageLimit?: number; leaseMs?: number; now?: () => Date} = {},
+  options: {pageLimit?: number; leaseMs?: number; now?: () => Date; admit?:()=>Promise<void>} = {},
 ) {
   return async (payload: Record<string, unknown>) => {
     const {sourceType, provider, runId = crypto.randomUUID()} = commandSchema.parse(payload);
@@ -29,15 +29,18 @@ export function createCommerceSynchronizer(
     let run = await store.syncRuns.claim(runId, clock(), leaseMs);
     if (!run) return {status: 'busy' as const, runId, sourceType, pages: existing.pages};
     const token = run.leaseToken!;
-    const progress=()=>store.syncRuns.renew(runId,token,clock(),leaseMs);
+    const progress=async()=>{await options.admit?.();await store.syncRuns.renew(runId,token,clock(),leaseMs);};
     try {
+      await options.admit?.();
       if (commerce.refreshHealth) await commerce.refreshHealth(progress);
       const capability = commerce.capabilities();
       await store.recordSourceCapabilities(commerceSourceTypes.map(type => ({sourceType: type, available: capability.sourceTypes.includes(type), detail: capability.detail})), clock(), {runId, token, now: clock});
       if (!capability.sourceTypes.includes(sourceType)) throw new Error(`Commerce adapter does not supply ${sourceType}.`);
       if (capability.provider && capability.provider !== provider) throw new Error('The queued sync provider no longer matches the configured adapter.');
       for (let pageNumber = 0; pageNumber < pageLimit; pageNumber++) {
+        await options.admit?.();
         const page = await commerce.synchronize(sourceType, run.nextCursor ?? undefined, progress);
+        await options.admit?.();
         if (!await store.syncRuns.owns(runId, token, clock())) throw new SourceSyncBusyError('Sync lease changed while awaiting the adapter.');
         const records = z.array(recordSchema).parse(page.records);
         if (records.some(record => record.sourceType !== sourceType)) throw new Error(`Commerce returned a different source type during ${sourceType} sync.`);

@@ -10,7 +10,7 @@ import { lobbyResponse } from '@/base/lobby';
 import { claimedWhen, setupStateResponse } from '@/base/setup-state';
 import { identity } from '@/identity';
 
-const honoPrefixes = ['/api', '/auth', '/unsubscribe', '/consent', '/sender-check', '/l', '/o', '/links', '/media', '/webhooks', '/signin/verify', '/__dev'];
+const honoPrefixes = ['/mcp', '/agents', '/.well-known/oauth-protected-resource', '/rer-business-logo', '/rer-business.css', '/api', '/auth', '/unsubscribe', '/consent', '/sender-check', '/l', '/o', '/links', '/media', '/webhooks', '/signin/verify', '/__dev'];
 export async function dispatchDocuments(
   request: Request, environment: AppBindings, executionContext: ExecutionContext,
   platform: Platform, hono: {fetch: (request: Request, environment: AppBindings, executionContext: ExecutionContext) => Response | Promise<Response>},

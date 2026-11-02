@@ -1,3 +1,5 @@
+import {assertAgentHandoff} from '../settings/sender-authority';
+import {agentAttribution} from '../agent-door/context';
 import {resendEvents} from './resend-account';
 import {resendConnectionService} from './resend-connection';
 import type {Platform} from '@/core/shared/platform';
@@ -27,7 +29,7 @@ export function sendingConnectionService(platform:Platform) {
     },
     async prepare(apiKey:string,operatorId:string,provider='sendgrid') {
       if(provider==='resend')return resendConnectionService(platform).prepare(apiKey,operatorId);
-      const api=sendgridAccount(apiKey),account=await api.inspect();
+      const api=sendgridAccount(apiKey,()=>assertAgentHandoff(platform)),account=await api.inspect();
       await inspectCapacity(api,await read(),account.accountId);
       const id=crypto.randomUUID(),now=Date.now();
       await db.batch([db.prepare('DELETE FROM sending_proposals WHERE expires_at<=? OR operator_id=?').bind(now,operatorId),
@@ -40,14 +42,14 @@ export function sendingConnectionService(platform:Platform) {
       if(selected?.account_id==='resend')return resendConnectionService(platform).connect(proposalId,operator);
       const proposal=await db.prepare('DELETE FROM sending_proposals WHERE id=? AND operator_id=? AND expires_at>? RETURNING *').bind(proposalId,operator.id,Date.now()).first<{secret_cipher:string;account_id:string;account_name:string;broader:number}>();
       if(!proposal)throw new SendingConnectionError('The connection review expired or was already used. Review the key again.');
-      const secret=await openSendingSecret(proposal.secret_cipher,key),api=sendgridAccount(secret.apiKey),identity=await api.inspect();
+      const secret=await openSendingSecret(proposal.secret_cipher,key),api=sendgridAccount(secret.apiKey,()=>assertAgentHandoff(platform)),identity=await api.inspect();
       if(identity.accountId!==proposal.account_id)throw new SendingConnectionError('The SendGrid account changed. Review the key again.');
       const previous=await read(),reuse=await inspectCapacity(api,previous,identity.accountId),generation=crypto.randomUUID(),now=Date.now();
       const reserved=await db.prepare(`INSERT INTO sending_connection(id,generation,state,account_id,account_name,secret_cipher,last_four,broader,connected_by,connected_at,webhook_id)
         VALUES(1,?,'connecting',?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET generation=excluded.generation,state='connecting',account_id=excluded.account_id,
         account_name=excluded.account_name,secret_cipher=excluded.secret_cipher,last_four=excluded.last_four,broader=excluded.broader,connected_by=excluded.connected_by,
         connected_at=excluded.connected_at,webhook_id=excluded.webhook_id,delivery_proved_at=NULL,last_error=NULL WHERE sending_connection.state<>'connecting' RETURNING id`)
-        .bind(generation,identity.accountId,identity.accountName,proposal.secret_cipher,secret.apiKey.slice(-4),identity.broader?1:0,operator.email,now,reuse).first();
+        .bind(generation,identity.accountId,identity.accountName,proposal.secret_cipher,secret.apiKey.slice(-4),identity.broader?1:0,agentAttribution()?.label??operator.email,now,reuse).first();
       if(!reserved)throw new SendingConnectionError('Another connection is in progress. Complete or disconnect it first.');
       await activityStatement(db,{key:crypto.randomUUID(),action:'sending-connect-authorized',entityType:'integration',entityId:'sendgrid',actorId:operator.id,
         detail:{provider:'sendgrid',account:identity.accountName,lastFour:secret.apiKey.slice(-4),webhookUrl:url,events:sendingEvents,signing:true},at:now}).run();
@@ -96,7 +98,7 @@ export function sendingConnectionService(platform:Platform) {
       if(row.state==='connecting')throw new SendingConnectionError('The connection is still in progress. Wait for its result before disconnecting.');
       if(row.webhook_id) {
         const secret=await openSendingSecret(row.secret_cipher,key);
-        try{await sendgridAccount(secret.apiKey).request('/user/webhooks/event/settings/'+encodeURIComponent(row.webhook_id),'DELETE');}catch(error){if(!(error instanceof SendingConnectionError&&error.status===404))throw error;}
+        try{await sendgridAccount(secret.apiKey,()=>assertAgentHandoff(platform)).request('/user/webhooks/event/settings/'+encodeURIComponent(row.webhook_id),'DELETE');}catch(error){if(!(error instanceof SendingConnectionError&&error.status===404))throw error;}
       }
       await db.batch([db.prepare("UPDATE sending_connection SET state='disconnected',generation=?,secret_cipher=?,webhook_id=NULL,delivery_proved_at=NULL,last_error=NULL WHERE id=1 AND generation=?")
         .bind(crypto.randomUUID(),await sealSendingSecret({apiKey:''},key),row.generation),

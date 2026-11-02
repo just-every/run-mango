@@ -1,6 +1,7 @@
 import {propertyDefinitions} from './properties/read';
 import {validatePropertyFields,editContactProperties} from './properties/write';
 import {PropertyError} from './properties/types';
+import {agentAction,agentAttribution} from '../agent-door/context';
 import {programme} from '@/core/features/sms/policy';
 import {manualEntrySchema as consentCapture} from './manual-entry-schema';
 import {loadSignupDescription} from './signup-routes';
@@ -65,8 +66,10 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
     try {
       if(parsed.data.properties)validatePropertyFields(await propertyDefinitions(database),parsed.data.properties);
       const operator=context.get('operator'),mode=await loadOptInMode(database,'manual');
+      if(agentAction.getStore()&&parsed.data.channel==='email'&&mode.mode==='single')return context.json({error:'native_consent_proof_required',detail:'An agent cannot attest recipient permission through manual single opt-in. Use destination confirmation or an authenticated native source.'},409);
       const authority=await senderWriteAuthority(platform,context.req.raw,operator.id);
-      const input={...parsed.data,captureMethod:'operator-recorded',captureSource:`Operator:${operator.displayName || operator.email} (${operator.id})|${parsed.data.permissionMethod ?? parsed.data.captureMethod}|${parsed.data.channel==='sms'?'express-written|':''}${parsed.data.captureSource}`};
+      const recorder=agentAttribution()?.label??`Operator:${operator.displayName || operator.email} (${operator.id})`;
+      const input={...parsed.data,captureMethod:'operator-recorded',captureSource:`${recorder}|${parsed.data.permissionMethod ?? parsed.data.captureMethod}|${parsed.data.channel==='sms'?'express-written|':''}${parsed.data.captureSource}`};
       let result;
       if(input.channel==='email'){
         if(!input.contact.email||!await service.canCaptureManualEmail(input.contact.email))return context.json({error:'manual_entry_existing_restriction',detail:'This address is already subscribed, unsubscribed or suppressed. Hand entry cannot change that state.'},409);

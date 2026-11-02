@@ -1,0 +1,20 @@
+{
+  "key": "9cd66b88e0a132dd9e0f39b522e2c1fbe3bcaced246890346b90f1f797609e52",
+  "origin": {
+    "repository": "https://github.com/runeditrun/base.git",
+    "revision": "7ce44fa5b70b68b21d270ba54760dae28b4a37a7",
+    "path": ".",
+    "paths": [
+      "foundation/runtime/icon-head.ts"
+    ],
+    "excludeSnapshots": false
+  },
+  "digest": "8116f17ee9e035d91045a5bf2aca2f269d6a9626b601fc8ef7ca42215daaf733",
+  "files": {
+    "foundation/runtime/icon-head.ts": {
+      "data": "Ly8gc2VlZEljb25zKCkgZnJlZXplcyB0aGUgZXhpc3RpbmcgcHVibGljIGZpbGVzIGludG8gdGhlIGFwcC9zaXRlIGJ1aWxkLgovLyBBIHJlbmRlcmVyIHVzZWQgd2l0aG91dCBhIGJ1aWxkIGhhcyBubyBrbm93biBwdWJsaWMgZGlyZWN0b3J5IHRvIGxpbmsuCmRlY2xhcmUgY29uc3QgX19SRVJfSUNPTl9IRUFEX186IHN0cmluZyB8IHVuZGVmaW5lZApleHBvcnQgY29uc3QgaWNvbkhlYWQgPSB0eXBlb2YgX19SRVJfSUNPTl9IRUFEX18gPT09ICd1bmRlZmluZWQnID8gJycgOiBfX1JFUl9JQ09OX0hFQURfXwo=",
+      "executable": false
+    }
+  },
+  "dependencies": []
+}

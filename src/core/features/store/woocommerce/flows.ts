@@ -1,3 +1,6 @@
+import {ToolRefusal} from '@/vendor/base/agent-door/index.ts';
+import {workStatement,admitWork} from '../../agent-door/custody';
+import {agentAction} from '../../agent-door/context';
 import {Hono} from 'hono';
 import {z} from 'zod';
 import type {AuthVariables} from '@/core/features/auth/routes';
@@ -36,14 +39,15 @@ export function wooFlowRoutes(platform: Platform) {
     if(action==='activate'&&(await platform.mailer.capabilities()).deliveryEventsVerified===false)return context.json({error:'delivery-events-missing'},409);
     const actor = context.get('operator').id, now = Date.now();
     // Only the exact saved tag action is activated; a new draft has a new id.
-    await db.batch([db.prepare('UPDATE woocommerce_flows SET state=?,activated_by=?,activated_at=? WHERE id=?').bind(action === 'activate' ? 'live' : 'paused', actor, now, flow.id),
+    const custody=workStatement(db,'flow',flow.id,'mango.flows.enroll',{});
+    await db.batch([...(custody?[custody]:[]),db.prepare('UPDATE woocommerce_flows SET state=?,activated_by=?,activated_at=? WHERE id=?').bind(action === 'activate' ? 'live' : 'paused', actor, now, flow.id),
       activityStatement(db, {key: crypto.randomUUID(), action: 'flow-' + action, entityType: 'flow', entityId: flow.id, actorId: actor, detail: {revisionId: flow.id}, at: now})]);
     return context.json({revisionId: flow.id, state: action === 'activate' ? 'live' : 'paused'});
   });
   return routes;
 }
 
-export async function enrollWooFlows(platform: Platform, connection: WooConnection, event: PluginEvent) {
+export async function enrollWooFlows(platform: Platform, connection: WooConnection, event: Pick<PluginEvent,'id'|'kind'|'occurredAt'|'checkoutId'|'checkoutStartedAt'>, onlyFlow?:string) {
   if (event.kind !== 'abandoned_checkout') return;
   const db = platform.database.$client, now = Date.now();
   const sourceId = `woocommerce:${connection.id}:cart:${event.checkoutId}`;
@@ -51,8 +55,12 @@ export async function enrollWooFlows(platform: Platform, connection: WooConnecti
   if (!contact?.email) return;
   const destinationHash = await sha256(platform.config.contactHashSalt + ':' + contact.email);
 
-  const flows = (await db.prepare("SELECT id,tag FROM woocommerce_flows WHERE connection_id=? AND state='live'").bind(connection.id).all<{id: string; tag: string}>()).results;
+  const flows = (await db.prepare("SELECT id,tag FROM woocommerce_flows WHERE connection_id=? AND state='live' AND (? IS NULL OR id=?)").bind(connection.id,onlyFlow??null,onlyFlow??null).all<{id: string; tag: string}>()).results;
   for (const flow of flows) {
+    if(!agentAction.getStore()&&await db.prepare("SELECT 1 FROM mango_agent_work WHERE kind='flow' AND target_id=?").bind(flow.id).first()){
+      await admitWork(db,platform.agentDoor,'flow',flow.id,{id:flow.id,eventId:event.id},()=>enrollWooFlows(platform,connection,event,flow.id)).catch(error=>{if(!(error instanceof ToolRefusal))throw error;});
+      continue;
+    }
     const id = await sha256(flow.id + ':' + event.id);
     const eligible = `SELECT s.id AS source_id,s.contact_id FROM source_records s JOIN contacts c ON c.id=s.contact_id
       WHERE s.provider=? AND s.source_type='cart' AND s.provider_source_id=? AND json_extract(s.payload,'$.eventId')=?

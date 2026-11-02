@@ -62,6 +62,12 @@
           "source": "docs/going-live.md",
           "label": "Going live",
           "description": "What a sender needs before the first real send, which items Mango checks itself, and what you supply."
+        },
+        {
+          "slug": "agents",
+          "source": "docs/agents.md",
+          "label": "Agents and company policy",
+          "description": "Agent tools, native authority, company policy, approvals and current limits."
         }
       ]
     },

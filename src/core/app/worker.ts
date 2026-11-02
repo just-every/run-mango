@@ -19,7 +19,9 @@ async function lifecycleRuntime(environment: AppBindings) {
   await loadWooCommerce(platform);
   await loadSendingConnection(platform);
   await loadLinkHosts(platform);
-  return createAppServices(platform).lifecycleRuntime;
+  const services=createAppServices(platform);
+  createApp(environment,platform);
+  return services.lifecycleRuntime;
 }
 
 return {

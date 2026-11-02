@@ -1,3 +1,5 @@
+import {agentWriteAdmission} from '../agent-door/context';
+import {senderWriteGuard} from '../settings/sender-authority';
 import {recipientHandoffGuard} from './recipient-handoff-guard';
 import { leaseGuard, leaseValues, associationStatement } from '@/core/features/sender-verification/repository';
 import type { SenderLease } from '@/core/features/sender-verification/types';
@@ -219,13 +221,14 @@ export function createRecipientLifecycleRepository(database: Database) {
 
     async markHandoffUnknown(id: string, leaseToken: string, now: Date, senderLease?: SenderLease, requestJson?: string, provider?: string, lookupWindowMs?:number, reputationSince=now.getTime()-30*86400000,destinationHash='',sourceGeneration?:number,providerCredentialDigest?:string) {
       const senderGuard = senderLease ? leaseGuard : '0';
+      const admission=agentWriteAdmission.getStore();
       const statements = [client.prepare(
         `UPDATE recipient_steps SET transport_disposition = 'handoff-unknown', provider = COALESCE(?, provider), provider_credential_digest=?,
            handoff_started_at = ?, first_attempt_at=COALESCE(first_attempt_at,?), attempt_count=attempt_count+1,
            reconcile_until=CASE WHEN ?>0 THEN MIN(COALESCE(reconcile_until,?),?) ELSE reconcile_until END,
            last_error_code = CASE WHEN ? = 'sendgrid' THEN 'uncertain' ELSE last_error_code END, updated_at = ?
-         WHERE ${recipientHandoffGuard(senderGuard, provider ?? 'unreported', reputationSince)}`,
-      ).bind(provider ?? null, providerCredentialDigest??null, now.getTime(),now.getTime(),lookupWindowMs??0,now.getTime()+(lookupWindowMs??0),now.getTime()+(lookupWindowMs??0),provider ?? null, now.getTime(), id, leaseToken, now.getTime(), now.getTime(), requestJson ?? null, ...(senderLease ? leaseValues(senderLease, Date.now()) : []),sourceGeneration??null,destinationHash)];
+         WHERE ${recipientHandoffGuard(senderGuard, provider ?? 'unreported', reputationSince)} ${admission?'AND '+senderWriteGuard:''}`,
+      ).bind(provider ?? null, providerCredentialDigest??null, now.getTime(),now.getTime(),lookupWindowMs??0,now.getTime()+(lookupWindowMs??0),now.getTime()+(lookupWindowMs??0),provider ?? null, now.getTime(), id, leaseToken, now.getTime(), now.getTime(), requestJson ?? null, ...(senderLease ? leaseValues(senderLease, Date.now()) : []),sourceGeneration??null,destinationHash,...(admission?[admission.sessionId,admission.operatorId,admission.version,Date.now()]:[]))];
       if (senderLease) statements.push(associationStatement(client, senderLease, 'handoff', id, leaseToken, now.getTime(),
         'changes() = 1', []));
       const results = await client.batch(statements);

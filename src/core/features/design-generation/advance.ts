@@ -1,3 +1,4 @@
+import {agentHandoff} from '../settings/sender-authority';
 import { readImageHeader } from '@/core/features/campaign-assets/image-header';
 import { campaignAssetLimits } from '@/core/features/campaign-assets/limits';
 import { DesignImportError, parseLayerDoc } from '@/core/features/design-import/layerdoc';
@@ -48,7 +49,7 @@ async function draftPass(platform: Platform, design: DesignProvider, job: Design
   const slots = candidateSlots.slice(0, job.candidateCount);
   let runId = job.providerRunId;
   if (!runId) {
-    const claimed = await design.startDraft({ concept: designConcept(job.brief), slots: [...slots] }, `mango-design-${job.id}-draft`);
+    const claimed = await agentHandoff(platform,()=>design.startDraft({ concept: designConcept(job.brief), slots: [...slots] }, `mango-design-${job.id}-draft`));
     if (claimed.candidates.length !== slots.length || claimed.candidates.some(candidate => !slots.includes(candidate.slot as typeof slots[number]))) throw new DesignProviderError('provider_invalid', 0);
     runId = claimed.runId;
     await repository.update(job.id, ['drafting'], { providerRunId: runId, waitCode: null, retryAt: null }, Date.now());
@@ -57,7 +58,7 @@ async function draftPass(platform: Platform, design: DesignProvider, job: Design
   // Each candidate is stored as soon as it lands, so the editor shows it while the others are still drawing.
   const storing = new Map<string, Promise<void>>();
   const store = async () => {
-    const current = await design.readDraft(runId!);
+    const current = await agentHandoff(platform,()=>design.readDraft(runId!));
     await recordPurchases(platform, design, job, current);
     const stored = new Set((await repository.candidates(job.id)).map(candidate => candidate.slot));
     await Promise.all(current.candidates.filter(candidate => !stored.has(candidate.slot) && slots.includes(candidate.slot as typeof slots[number])).map(candidate => {
@@ -67,13 +68,13 @@ async function draftPass(platform: Platform, design: DesignProvider, job: Design
     }));
     return current;
   };
-  const before = await design.readDraft(runId);
+  const before = await agentHandoff(platform,()=>design.readDraft(runId));
   await answered(platform, job, 'drafting');
   await recordPurchases(platform, design, job, before);
   const pending = before.candidates.filter(candidate => candidate.status === 'pending');
   // Every purchase is recorded even when another slot's request fails; the first failure is raised afterwards.
   const dispatched = await Promise.allSettled(pending.map(async candidate => {
-    const outcome = await design.dispatchCandidate(runId!, candidate.slot, `mango-design-${job.id}-draft-${candidate.slot}`);
+    const outcome = await agentHandoff(platform,()=>design.dispatchCandidate(runId!, candidate.slot, `mango-design-${job.id}-draft-${candidate.slot}`));
     if (outcome === 'dispatched') await recordPurchases(platform, design, job, { runId: runId!, candidates: [{ slot: candidate.slot, status: 'dispatched' }] });
     await store();
   }));
@@ -91,7 +92,7 @@ async function storeCandidate(platform: Platform, design: DesignProvider, jobId:
   const repository = createDesignRepository(platform.database.$client);
   if (status === 'failed') return repository.recordCandidate({ jobId, slot, state: 'failed', sha256: null, bytes: null, width: null, height: null }, Date.now());
   // The adapter caps the download; the browser decodes the image to crop it, so its pixel size is bounded as uploads are.
-  const bytes = await design.candidateImage(runId, slot);
+  const bytes = await agentHandoff(platform,()=>design.candidateImage(runId, slot));
   const header = readImageHeader(bytes), side = campaignAssetLimits.maxPixelsPerSide;
   if (header?.contentType !== 'image/png' || header.width < 1 || header.height < 1 || header.width > side || header.height > side) throw new DesignProviderError('provider_invalid', 0);
   await platform.blobs.put(designCandidateKey(jobId, slot), bytes, { httpMetadata: { contentType: 'image/png' } });
@@ -108,17 +109,17 @@ async function layoutPass(platform: Platform, design: DesignProvider, job: Desig
     if (!image) throw new Error('The chosen candidate image is missing from storage.');
     // A try after a failed layout step is a new purchase with its own keys; round 0 keeps the run's first keys.
     const round = job.layoutRound ? `-${job.layoutRound}` : '';
-    layout = await design.startLayout(new Blob([await image.arrayBuffer()], { type: 'image/png' }), `mango-design-${job.id}-layout-${slot}${round}`);
+    layout = await agentHandoff(platform,async()=>design.startLayout(new Blob([await image.arrayBuffer()], { type: 'image/png' }), `mango-design-${job.id}-layout-${slot}${round}`));
     await repository.recordCost({ key: `design:${job.id}:layout:${slot}${round}`, campaignId: job.campaignId, provider: design.provider, operation: 'design-layout', tier: 'fast', units: 1 }, Date.now());
     await repository.update(job.id, ['preparing'], { providerLayoutId: layout.layoutId, waitCode: null, retryAt: null }, Date.now());
     job.waitCode = null; job.retryAt = null;
   } else {
-    layout = await design.readLayout(job.providerLayoutId);
+    layout = await agentHandoff(platform,()=>design.readLayout(job.providerLayoutId!));
     await answered(platform, job, 'preparing');
   }
   if (layout.status === 'queued' || layout.status === 'running') return { again: pollSeconds };
   if (layout.status !== 'succeeded') { await repository.fail(job.id, layout.status === 'expired' ? 'provider_timeout' : 'provider_failed', Date.now()); return {}; }
-  const text = await design.layoutDocument(layout);
+  const text = await agentHandoff(platform,()=>design.layoutDocument(layout));
   parseLayerDoc(text);
   const bytes = new TextEncoder().encode(text);
   await platform.blobs.put(designLayoutKey(job.id), bytes, { httpMetadata: { contentType: 'application/json' } });
