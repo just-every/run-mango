@@ -30,10 +30,13 @@ test('CONT-013 public erasure resumes, keeps each restriction, withdraws complet
   // An opted-out alias and a suppressed (cleaned) contact both merge into the erased contact.
   for(const address of ['privacy-alias@example.test',cleaned]){const merged=await f.db.prepare('SELECT id FROM contacts WHERE email=?').bind(address).first();
    expect((await f.call('/api/contacts/merge',{cookie,method:'POST',body:{survivorContactId:contact.id,mergedContactId:merged.id}})).status).toBe(200);}
-  const restrictions=async()=>Promise.all(['SELECT destination_hash,channel,reason,occurred_at FROM surviving_opt_outs ORDER BY destination_hash,reason','SELECT destination_hash,channel,cause,occurred_at,contact_id FROM contact_suppressions ORDER BY destination_hash,cause'].map(async sql=>(await f.db.prepare(sql).all()).results));
+  // The owner's integration records a block in its own words, which name the person.
+  const integration=await(await f.call('/api/settings/integrations',{cookie,method:'POST',body:{name:'Synthetic donor sync',scopes:['contacts:write']}})).json(),note=`${name} <${cleaned}> phoned: OwnerBlockPrivateNote`;
+  expect((await f.call('/api/integrations/v1/suppressions',{method:'POST',headers:{Authorization:`Bearer ${integration.token}`},body:{email:cleaned,reason:note,idempotencyKey:'synthetic-mango-owner-block'}})).status).toBe(200);
+  const restrictions=async()=>Promise.all(['SELECT destination_hash,channel,reason,occurred_at FROM surviving_opt_outs ORDER BY destination_hash,id','SELECT destination_hash,channel,cause,occurred_at,contact_id,provider_event_id FROM contact_suppressions ORDER BY destination_hash,id'].map(async sql=>(await f.db.prepare(sql).all()).results));
   const [optOuts,suppressions]=await restrictions();
-  expect(optOuts.map((row:any)=>[row.destination_hash,row.reason])).toEqual(expect.arrayContaining([[local(email),'import-unsubscribed'],[local('privacy-alias@example.test'),'import-unsubscribed'],[local(cleaned),'import-suppressed']]));
-  expect(suppressions).toEqual([expect.objectContaining({destination_hash:local(cleaned),channel:'email',cause:'import-cleaned-or-bounced',contact_id:expect.any(String)})]);
+  expect(optOuts.map((row:any)=>[row.destination_hash,row.reason])).toEqual(expect.arrayContaining([[local(email),'import-unsubscribed'],[local('privacy-alias@example.test'),'import-unsubscribed'],[local(cleaned),'import-suppressed'],[local(cleaned),note]]));
+  expect(suppressions).toEqual([expect.objectContaining({destination_hash:local(cleaned),channel:'email',cause:'import-cleaned-or-bounced',contact_id:expect.any(String)}),expect.objectContaining({destination_hash:local(cleaned),channel:'email',cause:note,contact_id:expect.any(String),provider_event_id:expect.stringMatching(/^integration:/)})]);
   const rule=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'email',comparator:'eq',value:email}]});
   expect((await f.call('/api/audience/segments',{cookie,method:'POST',body:{name:'Saved private rule',inclusionRuleJson:rule,exclusionRulesJson:'[]'}})).status).toBe(201);
   const draft=await(await f.call('/api/campaigns',{cookie,method:'POST',body:{mode:'blank'}})).json();
@@ -63,11 +66,12 @@ test('CONT-013 public erasure resumes, keeps each restriction, withdraws complet
   expect((await(await f.call(`/api/audience/erasures/${pending.reference}`,{cookie})).json()).receipt.state).toBe('pending');
   const receipt=await eraseHttp(f,cookie,contact.id);expect(receipt.state).toBe('complete');expect(receipt.reference).toBe(pending.reference);expect(receipt.retainedChannels).toEqual(['email']);
   // Each restricted identity, opted-out and suppressed aliases included, keeps its own hash, channel,
-  // reason and occurrence time and gains an erasure opt-out; the suppression stays a detached suppression.
-  const [keptOptOuts,keptSuppressions]=await restrictions();
-  expect(keptOptOuts.filter((row:any)=>row.reason!=='erasure-opt-out')).toEqual(optOuts);
+  // reason and occurrence time and gains an erasure opt-out; each suppression stays a detached suppression.
+  // The owner's words become the fixed owner-block code, and that suppression stays the owner's block.
+  const [keptOptOuts,keptSuppressions]=await restrictions(),coded=(row:any)=>({...row,...row.reason===note?{reason:'owner-block'}:{},...row.cause===note?{cause:'owner-block'}:{}});
+  expect(keptOptOuts.filter((row:any)=>row.reason!=='erasure-opt-out')).toEqual(optOuts.map(coded));
   expect(keptOptOuts.filter((row:any)=>row.reason==='erasure-opt-out').map((row:any)=>row.destination_hash).sort()).toEqual([email,'privacy-alias@example.test',cleaned].map(local).sort());
-  expect(keptSuppressions).toEqual(suppressions.map((row:any)=>({...row,contact_id:null})));
+  expect(keptSuppressions).toEqual(suppressions.map((row:any)=>({...coded(row),contact_id:null,provider_event_id:row.cause===note?expect.stringMatching(/^integration:erased:/):null})));
   await f.db.prepare("UPDATE test_barriers SET released=1 WHERE id='erasure-preview-race'").run();
   expect((await concurrent).status).toBeGreaterThanOrEqual(400);
   const tables=(await f.db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name <> '_cf_METADATA'").all()).results;
@@ -75,12 +79,12 @@ test('CONT-013 public erasure resumes, keeps each restriction, withdraws complet
   expect(await f.bucket.get('private-note.json')).toBeNull();expect(await(await f.bucket.get('unrelated-asset.txt'))!.text()).toBe('An annual letter survives.');
   expect(await sharedRows()).toEqual(sharedBefore);const letter=await f.bucket.get('shared/ann-letter.txt');expect(await letter!.text()).toBe('Ann wrote: mark your calendar.');expect(letter!.customMetadata).toEqual({label:'Ann'});
   expect(JSON.stringify(dump)).not.toContain(Buffer.from(email).toString('base64'));
-  const all=decoded(dump);for(const canary of [email,name,'DuplicatePrivatePerson','OriginalPrivateMessage','DuplicatePrivateMessage','198.51.100.189','privacy-alias@example.test','AliasPrivateMessage',cleaned,contact.id])expect(all).not.toContain(canary);
+  const all=decoded(dump);for(const canary of [email,name,'DuplicatePrivatePerson','OriginalPrivateMessage','DuplicatePrivateMessage','198.51.100.189','privacy-alias@example.test','AliasPrivateMessage',cleaned,'OwnerBlockPrivateNote',contact.id])expect(all).not.toContain(canary);
   expect(await f.db.prepare("SELECT email_status,display_name FROM contacts WHERE email='survivor@example.test'").first()).toEqual({email_status:'unsubscribed',display_name:'Annual survivor'});
   expect((await f.db.prepare("SELECT count(*) AS n FROM lifecycle_audit_entries WHERE action='erased'").first()).n).toBe(1);
   expect((await f.db.prepare('SELECT state FROM campaign_revisions WHERE id=?').bind(draft.revisionId).first()).state).toBe('erasure-invalidated');
   expect((await f.call(`/api/audience/imports/${job.id}/undo`,{cookie,method:'POST',body:{}})).status).toBeGreaterThanOrEqual(400);
-  expect(await(await f.call('/api/audience/export',{cookie})).text()).not.toContain(email);
+  const exported=await(await f.call('/api/audience/export',{cookie})).text();for(const canary of [email,name,cleaned,'OwnerBlockPrivateNote'])expect(exported).not.toContain(canary);
   await importFile(f,cookie,input);expect(await f.db.prepare('SELECT email_status FROM contacts WHERE email=?').bind(email).first()).toEqual({email_status:'unsubscribed'});
   expect(await f.db.prepare("SELECT email_status FROM contacts WHERE email='privacy-alias@example.test'").first()).toEqual({email_status:'unsubscribed'});
   expect(await f.db.prepare('SELECT email_status FROM contacts WHERE email=?').bind(cleaned).first()).toEqual({email_status:'suppressed'});

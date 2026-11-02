@@ -5,7 +5,8 @@ import type {BlobStore} from '@/core/shared/platform';
 import {sha256} from '@/core/shared/ids';
 import {recordPortableHash} from '../portable-hashes';
 import type {D1ImportContext,D1Sql} from '@/vendor/base/import-kit/src/d1/index';
-import {contactErasureTables,importJobCascadeChildren} from './declaration';
+import {retainingErasureId} from '../public-resubscribe-policy';
+import {contactErasureTables,importJobCascadeChildren,ownerBlock,restrictionCodeSql} from './declaration';
 import {discoverPlan} from './discovery';
 import {readScope} from './scope';
 import {hasLiteral} from './literals';
@@ -28,6 +29,21 @@ class ErasureProgressConflict extends Error {
 }
 
 type ErasureAuthority=Pick<D1ImportContext,'destination'|'authorization'>;
+/** A kept opt-out holds no free text (CONT-013): a reason that is not one of Mango's codes, such as the
+ * owner's integration words naming the person, becomes one owner block per address and channel, at
+ * the latest time of the reasons it replaces. It covers the addresses whose suppressions erasure keeps. */
+function codedOptOuts(db:D1Database,scope:ErasureScope,now:number){
+  const kept=[JSON.stringify(scope.hashes),JSON.stringify(scope.ids)];
+  const other=(row:string)=>`(${row}.destination_hash IN (SELECT value FROM json_each(?)) OR ${row}.destination_hash IN (SELECT destination_hash FROM contact_suppressions WHERE contact_id IN (SELECT value FROM json_each(?))))
+    AND NOT ${restrictionCodeSql(`${row}.reason`)}`;
+  const sibling=(row:string)=>`${row}.destination_hash=surviving_opt_outs.destination_hash AND ${row}.channel=surviving_opt_outs.channel`;
+  return [
+    db.prepare(`UPDATE OR IGNORE surviving_opt_outs SET reason='${ownerBlock}',updated_at=? WHERE ${other('surviving_opt_outs')}`).bind(now,...kept),
+    db.prepare(`UPDATE surviving_opt_outs SET occurred_at=(SELECT max(o.occurred_at) FROM surviving_opt_outs o WHERE ${sibling('o')} AND (o.reason='${ownerBlock}' OR NOT ${restrictionCodeSql('o.reason')})),updated_at=?
+      WHERE reason='${ownerBlock}' AND EXISTS(SELECT 1 FROM surviving_opt_outs o WHERE ${sibling('o')} AND ${other('o')})`).bind(now,...kept),
+    db.prepare(`DELETE FROM surviving_opt_outs WHERE ${other('surviving_opt_outs')}`).bind(...kept),
+  ];
+}
 function receipt(job:ErasureJob):ErasureReceipt {
   const scope=JSON.parse(job.scope_json);
   return {reference:job.reference,state:job.state as 'pending'|'complete',requestedAt:new Date(job.requested_at).toISOString(),completedAt:job.completed_at?new Date(job.completed_at).toISOString():null,removed:JSON.parse(job.counts_json),retainedChannels:scope.channels};
@@ -69,9 +85,9 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         .bind(reference,id,JSON.stringify(scope),now,...unchanged.map(([,value])=>value),id,JSON.stringify(scope.ids),JSON.stringify(scope.ids))];
       for(const channel of scope.channels)for(const destination of channel==='email'?scope.emails:scope.phones){
         const hash=await sha256(`${salt}:${destination}`);
-        // A restricted destination keeps its own opt-outs and suppressions, each with its reason and
-        // time, and gains an erasure opt-out beside them (CONT-013).
-        statements.push(db.prepare(`INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE ${admitted} ON CONFLICT(destination_hash,channel,reason) DO UPDATE SET updated_at=excluded.updated_at`).bind(crypto.randomUUID(),hash,channel,now,now,now,reference));
+        // A restricted destination keeps its own opt-outs and suppressions, each with its reason (as
+        // one of Mango's codes, codedOptOuts) and time, and gains an erasure opt-out beside them (CONT-013).
+        statements.push(db.prepare(`INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) SELECT ?,?,?,'erasure-opt-out',?,?,? WHERE ${admitted} ON CONFLICT(destination_hash,channel,reason) DO UPDATE SET updated_at=excluded.updated_at`).bind(retainingErasureId+crypto.randomUUID(),hash,channel,now,now,now,reference));
         // These blocks leave an export by the address's portable identity only (import-opt-out-lines).
         statements.push(recordPortableHash(db,hash,destination));
       }
@@ -133,7 +149,9 @@ export function createContactErasure(db:D1Database,salt:string,buckets:Record<st
         for(const key of ['ips','freeText','unsafeText'] as const)refreshed[key]=[...new Set([...refreshed[key],...discovered[key]])];
         const statements=[db.prepare('UPDATE audience_erasures SET scope_json=?,stage=0 WHERE reference=? AND stage=-1').bind(JSON.stringify(refreshed),reference)];
         const now=Date.now();
-        for(const channel of refreshed.channels)for(const destination of channel==='email'?refreshed.emails:refreshed.phones){const hash=await sha256(`${salt}:${destination}`);statements.push(db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES(?,?,?,'erasure-opt-out',?,?,?) ON CONFLICT(destination_hash,channel,reason) DO NOTHING").bind(crypto.randomUUID(),hash,channel,now,now,now),recordPortableHash(db,hash,destination));}
+        for(const channel of refreshed.channels)for(const destination of channel==='email'?refreshed.emails:refreshed.phones){const hash=await sha256(`${salt}:${destination}`);statements.push(db.prepare("INSERT INTO surviving_opt_outs(id,destination_hash,channel,reason,occurred_at,created_at,updated_at) VALUES(?,?,?,'erasure-opt-out',?,?,?) ON CONFLICT(destination_hash,channel,reason) DO NOTHING").bind(retainingErasureId+crypto.randomUUID(),hash,channel,now,now,now),recordPortableHash(db,hash,destination));}
+        // Every restriction write is fenced from here until completion, so no later reason escapes this.
+        statements.push(...codedOptOuts(db,refreshed,now));
         statements.push(db.prepare("UPDATE ik_jobs SET state='invalid',fence=fence+1,lease_token=NULL,lease_expires=NULL WHERE id IN (SELECT value FROM json_each(?))").bind(JSON.stringify(refreshed.jobs)));
         statements.push(db.prepare('UPDATE ik_d1_creation_plans SET released=1 WHERE job_id IN (SELECT value FROM json_each(?))').bind(JSON.stringify(refreshed.jobs)));
         await progress(statements);return receipt((await read(reference))!);

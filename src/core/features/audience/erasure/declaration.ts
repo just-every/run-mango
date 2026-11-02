@@ -1,8 +1,21 @@
 import {portableHash} from '../portable-hashes';
+import {recipientReasons} from '../public-resubscribe-policy';
 import type {ErasureScope} from './types';
 export type ErasureTable={table:string;where?:(s:ErasureScope)=>{sql:string;params:unknown[]};literal?:boolean;mode?:'audit'|'recipient'|'redact'|'contact-data'|'invalidate-campaign'|'invalidate-recipient';
   /** A restriction erasure keeps: the assignments that detach each selected row instead of deleting it. */
   retain?:string};
+/** A restriction erasure keeps holds no free text (CONT-013): its reason or cause stays only when it is
+ * one of Mango's own codes. The owner's integration door takes any reason, which can name the person,
+ * so any other reason becomes this owner block, still a restriction no recipient can clear (CONT-027). */
+export const ownerBlock='owner-block';
+const codes=[...recipientReasons,'erasure-opt-out',ownerBlock,'unsubscribed','sample-import','import-suppressed','import-cleaned-or-bounced','import-sms-suppression','import-source-suppression',
+  'hard','hard-bounce','complaint','complained','suppressed','provider-suppression','three-consecutive-soft-bounces',
+  ...['stop','stopall','end','quit','cancel','unsubscribe','optout','revoke'].map(action=>`sms-reply:${action}`)];
+// Generated suffixes: an import's ULID or plan fingerprint, and an SMS reply's digest. Each is checked
+// by its exact length and characters, since D1 caps a GLOB pattern at 50 bytes.
+const generated:[string,number,string][]=[...['import-unsubscribed:','import-suppressed:'].flatMap((prefix):[string,number,string][]=>[[prefix,26,'0-9A-Z'],[prefix,16,'0-9a-f']]),['sms-inbound:',64,'0-9a-f']];
+export const restrictionCodeSql=(column:string)=>`(${column} IN (${codes.map(code=>`'${code}'`).join(',')}) OR ${generated.map(([prefix,length,characters])=>
+  `(substr(${column},1,${prefix.length})='${prefix}' AND length(${column})=${prefix.length+length} AND substr(${column},${prefix.length+1}) NOT GLOB '*[^${characters}]*')`).join(' OR ')})`;
 const set=(column:string,values:string[])=>({sql:`${column} IN (SELECT value FROM json_each(?))`,params:[JSON.stringify(values)]});
 const contact=(table:string,column='contact_id'):ErasureTable=>({table,where:s=>set(column,s.ids)});
 const recipient=(table:string):ErasureTable=>({table,where:s=>({sql:'recipient_step_id IN (SELECT id FROM recipient_steps WHERE contact_id IN (SELECT value FROM json_each(?)))',params:[JSON.stringify(s.ids)]}),literal:true});
@@ -63,9 +76,10 @@ export const contactErasureTables:ErasureTable[]=[
   ...['audience_import_observations','consent_capture_metadata','consent_evidence','contact_history'].map(table=>({...contact(table),literal:true,mode:'contact-data' as const})),
   // A suppression stays a suppression (CONT-013): its hash, channel, cause and time remain, detached
   // from the contact. Its event identity can name an import file, so it keeps only whether an
-  // integration's owner recorded it, which no recipient can clear (recipientSuppression).
+  // integration's owner recorded it, which no recipient can clear (recipientSuppression). A cause in
+  // the owner's own words becomes the owner block.
   {table:'contact_suppressions',where:s=>({sql:'contact_id IN (SELECT value FROM json_each(?)) OR destination_hash IN (SELECT value FROM json_each(?))',params:[JSON.stringify(s.ids),JSON.stringify(s.hashes)]}),
-    retain:"contact_id=NULL,provider_event_id=CASE WHEN provider_event_id LIKE 'integration:%' THEN 'integration:erased:'||id END"},
+    retain:`contact_id=NULL,provider_event_id=CASE WHEN provider_event_id LIKE 'integration:%' THEN 'integration:erased:'||id END,cause=CASE WHEN ${restrictionCodeSql('cause')} THEN cause ELSE '${ownerBlock}' END`},
   // An address's portable identity stays while an opt-out or detached suppression
   // survives, so that restriction still leaves through the export (import-opt-out-lines).
   // Match the portable value too: prior mappings may use another installation's

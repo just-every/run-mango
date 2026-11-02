@@ -27,19 +27,30 @@ test('security: confirmation scanner GET and HEAD write nothing; affirmative POS
   expect((await app.request(url,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"confirm":true}'})).status).toBe(410);
  }finally{await h.close();}
 });
-test('security: public capture preserves subscribed, suppressed and erased suppressed states without mail or evidence; an erased unsubscriber returns only through their own confirmation',async()=>{
- for(const state of ['subscribed','suppressed','erased-suppressed','erased-optout'])await test.step(`public capture after ${state}`,async()=>{
+test('security: public capture preserves subscribed, suppressed, erased suppression, complaint and owner blocks and a pre-fix erasure without mail or evidence; an erased unsubscriber returns only through their own confirmation',async()=>{
+ test.setTimeout(180000);
+ for(const state of ['subscribed','suppressed','erased-suppressed','erased-complaint','erased-owner-block','pre-fix-erasure','erased-optout'])await test.step(`public capture after ${state}`,async()=>{
  const h=await native();try{
-  const call=client(h.f);await call('existing@example.test');const token=confirmationUrl(h.f).split('/').at(-1)!;await h.f.services.audienceService.confirmConsent(token);
+  const audience=h.f.services.audienceService,call=client(h.f);await call('existing@example.test');const token=confirmationUrl(h.f).split('/').at(-1)!;await audience.confirmConsent(token);
   const contact=await h.f.db.prepare('SELECT id FROM contacts').first<{id:string}>();
-  if(state==='erased-optout'){const action=await h.f.services.audienceService.issueUnsubscribeToken(contact!.id,'email');await h.f.services.audienceService.unsubscribeWithToken(action.token);}
-  if(state.endsWith('suppressed'))await h.f.services.audienceService.recordBounce({providerEventId:'hard-bounce',destination:'existing@example.test',kind:'hard',occurredAt:new Date()});
+  if(state==='erased-optout'){const action=await audience.issueUnsubscribeToken(contact!.id,'email');await audience.unsubscribeWithToken(action.token);}
+  if(state.endsWith('suppressed'))await audience.recordBounce({providerEventId:'hard-bounce',destination:'existing@example.test',kind:'hard',occurredAt:new Date()});
+  if(['erased-complaint','pre-fix-erasure'].includes(state))await audience.recordBounce({providerEventId:'complaint',destination:'existing@example.test',kind:'complaint',occurredAt:new Date()});
+  // The owner's integration calls its block an unsubscribe; only its owner marker keeps the recipient from clearing it.
+  if(state==='erased-owner-block')await audience.recordProviderSuppression({destination:'existing@example.test',channel:'email',cause:'recipient-unsubscribe',occurredAt:new Date(),providerEventId:'integration:synthetic-owner:block'});
   if(state==='erased-optout'){
     await call('synthetic-mango-bot@example.test','192.0.2.44',{website:'robot'});
     expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBeGreaterThan(0);
   }
-  if(state.startsWith('erased'))await eraseFixture(h.f,contact!.id);
+  if(state.startsWith('erased')||state==='pre-fix-erasure')await eraseFixture(h.f,contact!.id);
   if(state==='erased-optout')expect((await h.f.db.prepare("SELECT count(*) AS n FROM oa_limits WHERE key LIKE 'signup-refused:%'").first())!.n).toBe(0);
+  if(state==='pre-fix-erasure'){
+    // Prior data: an erasure before this fix replaced the complaint with one erasure opt-out under a plain id.
+    const erased=await h.f.db.prepare("SELECT created_at FROM surviving_opt_outs WHERE reason='erasure-opt-out'").first<{created_at:number}>();
+    await h.f.db.batch([h.f.db.prepare('DELETE FROM contact_suppressions'),h.f.db.prepare("DELETE FROM surviving_opt_outs WHERE reason<>'erasure-opt-out'"),h.f.db.prepare('UPDATE surviving_opt_outs SET id=?').bind(crypto.randomUUID())]);
+    // A provider unsubscribe that arrives later, stamped before that erasure, leaves that lone opt-out refused.
+    await audience.recordChannelOptOut({destination:'existing@example.test',channel:'email',reason:'provider-unsubscribe',occurredAt:new Date(erased!.created_at-60000)});
+  }
   const before=await snapshot(h.f.db);const sent=h.f.outbound.length;
   expect((await call('existing@example.test','192.0.2.45')).status).toBe(202);
   const after=await snapshot(h.f.db);
@@ -57,7 +68,8 @@ test('security: public capture preserves subscribed, suppressed and erased suppr
     return;
   }
   expect(h.f.outbound).toHaveLength(sent);
-  if(state==='erased-suppressed'){expect(after[0]).toEqual([expect.objectContaining({email_status:'suppressed'})]);expect(after.slice(1,4)).toEqual(before.slice(1,4));expect(after[5]).toEqual(before[5]);expect(after[4]).toEqual([expect.objectContaining({kind:'resubscribe-refused'})]);}
+  // An erased suppression, complaint or owner block stays suppressed; a pre-fix erasure stays unsubscribed.
+  if(state.startsWith('erased')||state==='pre-fix-erasure'){expect(after[0]).toEqual([expect.objectContaining({email_status:state==='pre-fix-erasure'?'unsubscribed':'suppressed'})]);expect(after.slice(1,4)).toEqual(before.slice(1,4));expect(after[5]).toEqual(before[5]);expect(after[4]).toEqual([expect.objectContaining({kind:'resubscribe-refused'})]);}
   else {expect(after.slice(0,4)).toEqual(before.slice(0,4));expect(after[5]).toEqual(before[5]);
     if(state==='suppressed'){expect(after[4]).toHaveLength(before[4].length+1);expect(after[4]).toContainEqual(expect.objectContaining({kind:'resubscribe-refused'}));}
     else expect(after[4]).toEqual(before[4]);}
