@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 13 | 205 | 89 | 307 |
+| Core | 14 | 204 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 13 | 205 | 98 | 316 |
+| Full target | 14 | 204 | 98 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -2892,7 +2892,7 @@ Core · target · **missing** · Rules D-1
 
 #### BUILD-008 — Previews and pre-send checks
 
-Core · target · **partial** · Rules D-1
+Core · target · **done** · Rules D-1
 
 **Requirement.** Previews show desktop, mobile, dark-mode approximation and plain text as a chosen contact under CAMP-003. Review locates advisory findings for missing image alt text, heading order, link text, likely spam triggers and sent size at or above 90 percent of BUILD-012’s limit, alongside MSG-006 to MSG-012’s blocking checks. A size advisory identifies measured size, limit and the three largest blocks.
 
@@ -2903,8 +2903,8 @@ Core · target · **partial** · Rules D-1
 4. Acknowledging advisories does not bypass a contrast blocker; correcting the blocker and acknowledging the current revision permits approval.
 5. A 110 KB body is refused at save under BUILD-012.
 
-**Evidence.** `tests/go-live/presend-checks.journeys.ts` — “[BUILD-008] saved contact previews and located advisories remain separate from contrast blockers” · `tests/go-live/presend-checks.journeys.ts` — “[BUILD-012] large newsletters save by transmitted bytes, retain refused edits and recheck expansion at handoff”
-**Gap.** The cited journeys assert safe contact/fallback previews, each located advisory, size detail and largest blocks, contrast refusal, no recipient effect on refusal and oversized save rejection. Gap: after correcting and acknowledging findings, approval is called and returns success but the cited files do not assert the persisted approval state or saved approval record; rendering a preview region is not that assertion. Missing public-door journey: “Previews and pre-send checks — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/presend-checks.journeys.ts` — “[BUILD-008][BUILD-012] preview a saved newsletter, resolve pre-send blockers and refuse unsafe handoff expansion”: `tests/go-live/presend-checks.flow.ts` proves chosen-contact and fallback previews, located advisories and size detail, contrast and stale-acknowledgement refusals, then the scheduled campaign, approved exact revision, operator and matching immutable approval digest; replay and refused edits preserve that record. `tests/go-live/email-size.flow.ts` proves the oversized save refusal with the saved revision and unsaved editor content retained.
+**Gap.** None.
 
 #### BUILD-009 — SMS and MMS composer
 
