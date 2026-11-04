@@ -325,12 +325,12 @@ export const walk1 = async({page},info)=>{
     const started=await startArchive(site,cookie,bytes);
     let staged=started.archive;
     // Stop after audience and content, before the first engagement-writing request.
-    for(let steps=0;steps<50&&(staged.progress.audience?.state!=='applied'||staged.progress.contentDone<staged.progress.contentTotal);steps++){
+    for(let steps=0;steps<50&&(staged.progress.audience?.state!=='completed'||staged.progress.contentDone<staged.progress.contentTotal);steps++){
       expect(staged.state).toBe('applying');
       ({archive:staged}=await json(await site.call(`/api/audience/archives/${staged.id}/continue`,{method:'POST',cookie}),200));
     }
     expect(staged.state).toBe('applying');
-    expect(staged.progress.audience.state).toBe('applied');
+    expect(staged.progress.audience.state).toBe('completed');
     expect(staged.progress.audience.checkpoint).toBe(staged.progress.audience.total);
     expect(staged.progress.contentTotal).toBeGreaterThan(0);
     expect(staged.progress.contentDone).toBe(staged.progress.contentTotal);
