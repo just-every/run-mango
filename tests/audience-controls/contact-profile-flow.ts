@@ -28,9 +28,16 @@ export const contactProfileJourney = async ({page,request},testInfo)=>{
     expect(detail.profile.mergedIdentities).toEqual(expect.arrayContaining([expect.objectContaining({id:fixture.mergedId})]));
     expect(detail.history.some((entry:{kind:string})=>entry.kind==='opt-out')).toBe(true);
     expect(detail.sourceActivity.length).toBeGreaterThan(0);
-    expect(detail.campaignHistory).toHaveLength(2);
+    expect(detail.campaignHistory).toHaveLength(3);
     const kinds=new Set(timeline.map(row=>row.kind));
     for(const kind of ['conversion','form-submitted','sms-reply','message-clicked','order','consent-captured','consent-confirmed','channel-suppressed','campaign-eligible','campaign-skipped','message-handed-off','message-delivered','operator-action','opt-out'])expect(kinds.has(kind),kind).toBe(true);
+    const expectedFacts:Pick<ContactTimelineEntry,'id'|'kind'|'source'|'occurredAt'>[]=fixture.expectedFacts;
+    expect(expectedFacts.length).toBeGreaterThan(40);
+    // Exact coverage prevents a source family silently disappearing or falling
+    // back to a generic label. Expectations never come from the API response.
+    expect(timeline.map(({id,kind,source,occurredAt})=>({id,kind,source,occurredAt})).sort((a,b)=>a.id.localeCompare(b.id)))
+      .toEqual([...expectedFacts].sort((a,b)=>a.id.localeCompare(b.id)));
+    await testInfo.attach('contact-history-provenance',{body:JSON.stringify({factCount:expectedFacts.length,kinds:[...new Set(expectedFacts.map(fact=>fact.kind))],facts:expectedFacts},null,2),contentType:'application/json'});
     expect(timeline.map(row=>Date.parse(row.occurredAt))).toEqual(timeline.map(row=>Date.parse(row.occurredAt)).sort((a,b)=>b-a));
     expect(new Set(timeline.map(row=>row.id)).size).toBe(timeline.length);
     expect(timeline.find(row=>row.kind==='form-submitted')).toMatchObject({source:'hosted-signup-form · https://harvest.example.test/signup'});
@@ -56,8 +63,16 @@ export const contactProfileJourney = async ({page,request},testInfo)=>{
       const region=page.locator('section[aria-labelledby="timeline-title"]');
       await expect(region.locator('[data-timeline-kind="message-delivered"]')).toBeVisible();
       // Older facts stay reachable rather than being silently truncated.
+      await expect(region.getByRole('button',{name:/Show more activity/})).toBeVisible();
       while(await region.getByRole('button',{name:/Show more activity/}).count())await region.getByRole('button',{name:/Show more activity/}).click();
       await expect(region.locator('[data-timeline-id]')).toHaveCount(timeline.length);
+      for(const fact of expectedFacts) {
+        const entry=region.locator(`[data-timeline-id="${fact.id}"]`);
+        await expect(entry.locator('small')).toHaveText(`Source: ${fact.source}`);
+        await expect(entry.locator('time')).toHaveAttribute('datetime',fact.occurredAt);
+      }
+      for(const marker of ['source-marker','source-payload-marker','provider-payload-marker','audit-payload-marker','other-contact-marker'])
+        await expect(region).not.toContainText(marker);
       expect(await region.locator('time').evaluateAll(elements=>elements.map(element=>element.getAttribute('datetime')))).toEqual(timeline.map(row=>row.occurredAt));
       expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
       await expect(region.getByRole('link',{name:'View campaign'}).first()).toHaveAttribute('href',/\/app\/campaigns\//);
@@ -67,6 +82,13 @@ export const contactProfileJourney = async ({page,request},testInfo)=>{
       await page.screenshot({path:screenshot,fullPage:true});
       await testInfo.attach(`contact-history-${width}`,{path:screenshot,contentType:'image/png'});
     }
+    // The journey asserts at one width; capture the same paged screen once on
+    // a phone as the landing's second browser proof.
+    await page.setViewportSize({width:390,height:1000});
+    await page.evaluate(()=>window.scrollTo(0,0));
+    const phoneScreenshot=testInfo.outputPath('contact-history-390.png');
+    await page.screenshot({path:phoneScreenshot,fullPage:true});
+    await testInfo.attach('contact-history-390',{path:phoneScreenshot,contentType:'image/png'});
     for(const identity of fixture.restricted) {
       await page.context().clearCookies();
       await page.context().addCookies([{name:localSessionCookieName(runtime.url),value:identity.token,url:runtime.url}]);
