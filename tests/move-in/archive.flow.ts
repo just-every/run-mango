@@ -343,7 +343,7 @@ export const walk1 = async({page},info)=>{
     expect(consentBefore.addresses).toHaveLength(5);
     expect(consentBefore.addresses.every(row=>row.channel_status==='subscribed')).toBe(true);
     expect(consentBefore.evidence).toHaveLength(5);
-    expect(consentBefore.evidence.map(row=>row.capture_method).sort()).toEqual(['incumbent-held','incumbent-held','incumbent-held','incumbent-held','operator-entry']);
+    expect(consentBefore.evidence.map(row=>row.capture_method).sort()).toEqual(['incumbent-held','incumbent-held','incumbent-held','incumbent-held','operator-recorded']);
     const moved=await drive(site,cookie,staged.id,'continue');
     expect(moved.archive.state).toBe('applied');
     const consentAfter=await consentSnapshot(site);
