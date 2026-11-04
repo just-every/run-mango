@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "31e86af31c42d40ac5ec6980aea11a09740ea9cc0fb2b61e32284bbfc9e8027f",
+      "sha256": "2aa824015964cd0202ed166758f2b12d3ccc8efb97c459f0bb0d7f20d142fa28",
       "executable": false
     },
     "DEMO.md": {
@@ -8634,11 +8634,11 @@
       "executable": false
     },
     "tests/campaign-results/retention-fixture.ts": {
-      "sha256": "0bdbdf5d183d2115a33c7ccd2860d947f0ead51ff465d8d10c6c1c37cafda0b8",
+      "sha256": "7cc1a4c109244713fb366a5f4e5c72e5a156e6f33fa18bf99c05e13ef6e48eb7",
       "executable": false
     },
     "tests/campaign-results/retention-journey.ts": {
-      "sha256": "7ad765f928e057a86a26b0e1dd7c1e57b95b3f1ed06e07c7f697aa15f4711703",
+      "sha256": "7d739736265c504edc15ee3ce4ce81add298ee770c61e3bebe0069edf1e1517b",
       "executable": false
     },
     "tests/campaign-results/runtime-fixture.ts": {
