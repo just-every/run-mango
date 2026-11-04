@@ -63,7 +63,30 @@ test('[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-
       expect((await fetch(site.local(link),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
       expect((await json(await api('/contacts?email='+encodeURIComponent(email)),200)).contacts[0].emailStatus).toBe('subscribed');
     }
-    expect(await json(await api('/contacts', 'PUT', {...contact, email: 'missing-evidence@example.test', consent: undefined}),400)).toEqual({error:'consent_evidence_required'});
+    const refusedAddress = ['synthetic-mango-2001', 'example.test'].join('@');
+    const destinationRecords = (email: string) => site.rows(`SELECT kind,id FROM (WITH destination_contacts AS (
+      SELECT id FROM contacts WHERE email='${email}'
+      UNION SELECT contact_id FROM contact_email_addresses WHERE email='${email}'
+    ), destination_evidence AS (
+      SELECT id FROM consent_evidence WHERE destination='${email}' OR contact_id IN (SELECT id FROM destination_contacts)
+    )
+      SELECT 'contact' AS kind,id FROM contacts WHERE id IN (SELECT id FROM destination_contacts)
+      UNION ALL SELECT 'address',id FROM contact_email_addresses WHERE email='${email}'
+      UNION ALL SELECT 'profile',contact_id FROM integration_contact_profiles WHERE contact_id IN (SELECT id FROM destination_contacts)
+      UNION ALL SELECT 'consent',id FROM consent_evidence WHERE id IN (SELECT id FROM destination_evidence)
+      UNION ALL SELECT 'confirmation',id FROM consent_confirmations
+        WHERE contact_id IN (SELECT id FROM destination_contacts) OR consent_evidence_id IN (SELECT id FROM destination_evidence)) ORDER BY kind,id`);
+    // The same read sees the supported subscription's durable records.
+    expect((await destinationRecords(contact.email)).map(row => row.kind)).toEqual(expect.arrayContaining(['contact', 'address', 'profile', 'consent', 'confirmation']));
+    expect((await json(await api('/contacts?email=' + encodeURIComponent(refusedAddress)), 200)).contacts).toEqual([]);
+    expect(await destinationRecords(refusedAddress)).toEqual([]);
+    expect(await json(await api('/contacts', 'PUT', {...contact, email: refusedAddress, consent: undefined}), 400)).toEqual({error: 'consent_evidence_required'});
+    expect((await json(await api('/contacts?email=' + encodeURIComponent(refusedAddress)), 200)).contacts).toEqual([]);
+    expect(await destinationRecords(refusedAddress)).toEqual([]);
+    expect(edge.sends.filter(send => send.to === refusedAddress)).toEqual([]);
+    expect(JSON.stringify(edge.relaySends)).not.toContain(refusedAddress);
+    const refusedAudit = await json(await site.call('/api/settings/integrations/audit?limit=100', {cookie}), 200);
+    expect(refusedAudit.audit).toContainEqual(expect.objectContaining({credentialId: created.credential.id, operation: 'api.contacts.put', status: 400, outcome: 'denied'}));
     await proveCustomEvents(site,cookie,first.contact.id,first.contact.segmentIds[0],browserPage,info);
     const reader = await json(await site.call('/api/settings/integrations', {method: 'POST', cookie, body: {name: 'Read only', scopes: ['contacts:read']}}), 201);
     expect((await site.call('/api/integrations/v1/contacts', {method: 'PUT', headers: {Authorization: `Bearer ${reader.token}`}, body: contact})).status).toBe(403);
