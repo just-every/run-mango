@@ -9202,7 +9202,7 @@
       "executable": false
     },
     "tests/move-in/archive.flow.ts": {
-      "sha256": "d6e09004017a9b431a0a2ace349610a3f601932edc925aea357ed91b80205f1e",
+      "sha256": "7a37dce9e32f46fb313f89154c6eba48b4e880f0d084d2f573c9641c2ebc3a30",
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
@@ -9318,7 +9318,7 @@
       "executable": false
     },
     "tests/move-in/support.ts": {
-      "sha256": "e11411f52edda6a31449b0fb0d7a9c57a878533907c8c32b24450897c4e090cd",
+      "sha256": "ba4564a817ac0ded8e080322770339f454bd42f55f7d8fb721da65089193b84f",
       "executable": false
     },
     "tests/newsletter-ui/browser-checks.ts": {
