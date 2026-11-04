@@ -71,6 +71,8 @@ export const walk0 = async ({page}, info) => {
     await json(await site.call(`/api/campaigns/${campaign.campaignId}/approve`, {method: 'POST', cookie,
       body: {revisionId: campaign.revisionId, idempotencyKey: 'contrast-still-blocks'}}), 409);
     expect(await site.count('recipient_steps')).toBe(0);
+    expect(await site.count('campaign_approval_requests')).toBe(0);
+    expect((await read()).revision.state).toBe('draft');
 
     // Correcting a blocker changes the exact saved revision and invalidates every prior acknowledgement.
     await patch({emailBody: saved.emailBody.replace('#bbbbbb', '#242821')});
@@ -79,12 +81,15 @@ export const walk0 = async ({page}, info) => {
     expect(currentAdvisories.every((check: any) => !check.acknowledgement)).toBe(true);
     expect(corrected.checks.filter((check: any) => check.blocking)).toEqual([]);
     const currentAlt = currentAdvisories.find((check: any) => check.kind === alt.kind);
-    await acknowledge({...currentAlt, findingIdentity: alt.findingIdentity}, 409);
+    expect(await acknowledge({...currentAlt, findingIdentity: alt.findingIdentity}, 409)).toMatchObject({error: 'stale_finding'});
 
      {
       await page.setViewportSize({width, height: 1000});
       await reloadPage(page);
       await page.locator('.approval-checks').screenshot({path:info.outputPath(`presend-findings-${width}.png`)});
+      await page.setViewportSize({width: 390, height: 1000});
+      await page.locator('.approval-checks').screenshot({path:info.outputPath('presend-findings-390.png')});
+      await page.setViewportSize({width, height: 1000});
       const email = page.locator('.message-preview--email');
       await email.getByText('Preview as a contact', {exact: true}).click();
       await email.getByLabel('Contact email or phone', {exact: true}).fill(named);
@@ -114,7 +119,24 @@ export const walk0 = async ({page}, info) => {
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
     for (const check of currentAdvisories) await acknowledge(check);
-    await approve(site, cookie, campaign);
+    const approval = await approve(site, cookie, campaign);
+    expect(approval).toMatchObject({status: 'scheduled', idempotent: false, revisionDigest: expect.stringMatching(/^[a-f0-9]{64}$/)});
+    const approved = await read();
+    expect(approved.campaign).toMatchObject({id: campaign.campaignId, state: 'scheduled', activeRevisionId: campaign.revisionId});
+    expect(approved.revision).toMatchObject({id: campaign.revisionId, state: 'approved',
+      emailBody: corrected.revision.emailBody, contentDigest: approval.revisionDigest, approvedByOperatorId: 'go-live-owner'});
+    expect(approved.revision.approvedAt).toBe(new Date(clock.now).toISOString());
+    const approvalRecords = () => site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`);
+    const records = await approvalRecords();
+    expect(records).toEqual([expect.objectContaining({idempotency_key: `approve-${campaign.revisionId}`,
+      campaign_id: campaign.campaignId, revision_id: campaign.revisionId, revision_digest: approval.revisionDigest,
+      operator_id: 'go-live-owner', approved_at: clock.now, created_at: clock.now})]);
+    // Replaying approval and attempting an edit cannot replace the approved revision or its authority record.
+    expect(await approve(site, cookie, campaign)).toEqual({...approval, idempotent: true});
+    expect(await json(await site.call(path, {method: 'PATCH', cookie, body: {emailSubject: 'Changed after approval'}}), 409))
+      .toMatchObject({error: 'revision_not_draft'});
+    expect((await read()).revision).toEqual(approved.revision);
+    expect(await approvalRecords()).toEqual(records);
      {
       await page.setViewportSize({width,height:1000});
       await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}`);
@@ -124,6 +146,9 @@ export const walk0 = async ({page}, info) => {
       await expect(email.getByRole('button',{name:'Dark approximation',exact:true})).toBeVisible();
       await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('Hello Alex Example.');
       await email.screenshot({path:info.outputPath(`approved-preview-${width}.png`)});
+      await page.setViewportSize({width: 390, height: 1000});
+      await email.screenshot({path:info.outputPath('approved-preview-390.png')});
+      await page.setViewportSize({width, height: 1000});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
   } finally { await site.runtime.close(); await edge.close(); }
