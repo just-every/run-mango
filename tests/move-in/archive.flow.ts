@@ -11,7 +11,7 @@ import { eventSigner } from '../go-live/sendgrid-events';
 import { json, sender, confirmedContact, draftCampaign, approve, dispatch, type Installation } from '../go-live/harness';
 import { accountExport } from './archive';
 import { archiveRecords } from '../portability/flows';
-import { consentEvidence, drive, importArchive, postArchive, record, screenshotPath, tableCounts } from './support';
+import { consentEvidence, consentSnapshot, drive, importArchive, postArchive, record, screenshotPath, startArchive, tableCounts } from './support';
 
 // One account export through the running Import page and routes: preview writes nothing,
 // statuses keep consent, content carries no authority, and undo keeps what people changed.
@@ -322,8 +322,40 @@ export const walk1 = async({page},info)=>{
     const resultBefore=await nativeResults();
     expect(await site.rows(`SELECT count(*) n FROM recipient_steps WHERE campaign_id='${nativeCampaign.campaignId}' AND transport_disposition='accepted'`)).toEqual([{n:1}]);
     const before=await site.rows('SELECT * FROM campaign_results');
-    const moved=await importArchive(site,cookie,bytes);
+    const started=await startArchive(site,cookie,bytes);
+    let staged=started.archive;
+    // Stop after audience and content, before the first engagement-writing request.
+    for(let steps=0;steps<50&&(staged.progress.audience?.state!=='applied'||staged.progress.contentDone<staged.progress.contentTotal);steps++){
+      expect(staged.state).toBe('applying');
+      ({archive:staged}=await json(await site.call(`/api/audience/archives/${staged.id}/continue`,{method:'POST',cookie}),200));
+    }
+    expect(staged.state).toBe('applying');
+    expect(staged.progress.audience.state).toBe('applied');
+    expect(staged.progress.audience.checkpoint).toBe(staged.progress.audience.total);
+    expect(staged.progress.contentTotal).toBeGreaterThan(0);
+    expect(staged.progress.contentDone).toBe(staged.progress.contentTotal);
+    expect(await site.rows(`SELECT engagement_done FROM move_in_archives WHERE id='${staged.id}'`)).toEqual([{engagement_done:0}]);
+    expect(await site.count('imported_engagement_facts')).toBe(0);
+    expect(await site.count('move_in_contact_history')).toBe(0);
+    const consentBefore=await consentSnapshot(site);
+    expect(consentBefore.contacts).toHaveLength(5);
+    expect(consentBefore.contacts.map(row=>[row.email_status,row.sms_status])).toEqual(Array.from({length:5},()=>['subscribed','non-subscribed']));
+    expect(consentBefore.addresses).toHaveLength(5);
+    expect(consentBefore.addresses.every(row=>row.channel_status==='subscribed')).toBe(true);
+    expect(consentBefore.evidence).toHaveLength(5);
+    expect(consentBefore.evidence.map(row=>row.capture_method).sort()).toEqual(['incumbent-held','incumbent-held','incumbent-held','incumbent-held','operator-entry']);
+    const moved=await drive(site,cookie,staged.id,'continue');
+    expect(moved.archive.state).toBe('applied');
+    const consentAfter=await consentSnapshot(site);
+    expect(consentAfter).toEqual(consentBefore);
+    expect(await site.rows(`SELECT c.email,f.kind,f.occurred_at FROM imported_engagement_facts f JOIN contacts c ON c.id=f.contact_id WHERE f.archive_id='${staged.id}' ORDER BY c.email`)).toEqual([
+      {email:emails[0],kind:'click',occurred_at:Date.parse(ago(3))},
+      {email:emails[1],kind:'click',occurred_at:Date.parse(ago(13))},
+      {email:emails[2],kind:'open',occurred_at:Date.parse(ago(3))},
+    ]);
+    expect(await site.rows(`SELECT engagement_done FROM move_in_archives WHERE id='${staged.id}'`)).toEqual([{engagement_done:7}]);
     expect(moved.archive.summary.engagement).toEqual({rows:7,imported:3,dropped:4,reasons:{'address-not-in-move-in':1,'invalid-timestamp':3}});
+    await record('initial-engagement-consent-invariance.json',{phase:staged.progress,before:consentBefore,after:consentAfter,engagement:moved.archive.summary.engagement});
     expect(JSON.stringify(await site.rows('SELECT * FROM campaign_results'))).toBe(JSON.stringify(before));
     expect(JSON.stringify(await nativeResults())).toBe(JSON.stringify(resultBefore));
     const campaign=await draftCampaign(site,cookie,'Imported garden engagement',emails,new Date(clock.now+3600000));

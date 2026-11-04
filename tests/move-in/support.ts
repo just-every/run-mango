@@ -33,13 +33,31 @@ export async function postArchive(site: Installation, cookie: string, path: stri
   const response = await site.call(path, { method: 'POST', cookie, raw: form });
   return { status: response.status, body: await response.json() };
 }
-/** Apply a reviewed archive and drive its bounded steps to the end. */
-export async function importArchive(site: Installation, cookie: string, bytes: Uint8Array) {
+/** Apply a reviewed archive, leaving continuation under the caller's control. */
+export async function startArchive(site: Installation, cookie: string, bytes: Uint8Array) {
   const preview = await postArchive(site, cookie, '/api/audience/archive-preview', bytes);
   expect(preview.status, JSON.stringify(preview.body)).toBe(200);
   const applied = await postArchive(site, cookie, '/api/audience/archives', bytes, preview.body.fingerprint);
   expect(applied.status, JSON.stringify(applied.body)).toBe(200);
-  return { preview: preview.body, ...(await drive(site, cookie, applied.body.archive.id, 'continue')), repeated: applied.body.repeated as boolean };
+  return { preview: preview.body, archive: applied.body.archive, repeated: applied.body.repeated as boolean };
+}
+/** Apply a reviewed archive and drive its bounded steps to the end. */
+export async function importArchive(site: Installation, cookie: string, bytes: Uint8Array) {
+  const started = await startArchive(site, cookie, bytes);
+  return { ...started, ...(await drive(site, cookie, started.archive.id, 'continue')) };
+}
+/** Consent custody in stable order, including every evidence field and timestamp. */
+export async function consentSnapshot(site: Installation) {
+  return {
+    contacts: await site.rows('SELECT id,email,email_status,sms_status,email_status_at,sms_status_at FROM contacts ORDER BY id'),
+    addresses: await site.rows('SELECT * FROM contact_email_addresses ORDER BY id'),
+    phones: await site.rows('SELECT * FROM contact_phones ORDER BY id'),
+    evidence: await site.rows('SELECT * FROM consent_evidence ORDER BY id'),
+    confirmations: await site.rows('SELECT * FROM consent_confirmations ORDER BY id'),
+    captureMetadata: await site.rows('SELECT * FROM consent_capture_metadata ORDER BY id'),
+    incumbentLinks: await site.rows('SELECT * FROM incumbent_consent_links ORDER BY id'),
+    attestations: await site.rows('SELECT * FROM consent_attestations ORDER BY id'),
+  };
 }
 export async function drive(site: Installation, cookie: string, id: string, first: 'continue' | 'undo') {
   let action = first, archive: any, steps = 0;
