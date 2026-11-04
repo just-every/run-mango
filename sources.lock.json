@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "58f5706114cfc99b02f6495efb908feb96db11dca166d2c6a1e231b0d614bfe3",
+      "sha256": "ea55aa79ab3fc7fc3b921dd5d8b0d8dd3a6e91895ad4f285673847caf46f58d2",
       "executable": false
     },
     "DEMO.md": {
@@ -8514,7 +8514,7 @@
       "executable": false
     },
     "tests/campaign-authoring/full-promotional-email-journey.ts": {
-      "sha256": "27122e88a987b9718031f03e7edd05f0921c784841f74f80600afd8ad6aab7b2",
+      "sha256": "45ff988a176faf4a43564a959d647e64fb9d6256605f0b0e85b6d4ed823cb87e",
       "executable": false
     },
     "tests/campaign-authoring/local-images.spec.ts": {

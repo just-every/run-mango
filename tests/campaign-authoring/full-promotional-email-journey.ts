@@ -84,6 +84,9 @@ export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
     const disagree=await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{steps:[{channel:'email',timezone:authoring.timezone,localScheduledAt:'2030-01-15T10:00',scheduledAt:'2030-01-15T01:00:00.000Z',localSendByAt:'2030-01-15T23:59',whyThisTime:'Owner chose this time'}]}}),400);
     expect(JSON.stringify(disagree)).toContain('Local time and resolved UTC instant disagree.');
     expect(await readSchedule()).toEqual(unambiguous);
+    const lateDeadline=await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{steps:[{channel:'email',timezone:authoring.timezone,localScheduledAt:'2030-01-15T10:00',scheduledAt:'2030-01-15T00:00:00.000Z',localSendByAt:'2030-01-15T23:59',sendByAt:'2030-01-15T12:59:00.000Z',whyThisTime:'Owner chose this time'}]}}),400);
+    expect(JSON.stringify(lateDeadline)).toContain('Local time and resolved UTC instant disagree.');
+    expect(await readSchedule()).toEqual(unambiguous);
     for(const width of [1440,390]){
       await page.setViewportSize({width,height:1000});
       await page.locator('.composition-step').screenshot({path:info.outputPath(`schedule-${width}.png`)});
