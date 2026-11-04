@@ -9114,7 +9114,7 @@
       "executable": false
     },
     "tests/go-live/sync-integrations.journeys.ts": {
-      "sha256": "d1ce65ae434bc715c86b13895019bb9d52e74725ea90b2d39ecd3c243a983a0d",
+      "sha256": "426f0c3c159b5f2e3f9aec44d205f0e6d96ef4a83271c6ad921173e900a5edd2",
       "executable": false
     },
     "tests/go-live/template-conversion.ts": {
