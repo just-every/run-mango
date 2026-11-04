@@ -37,7 +37,63 @@ export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
     await page.route(new URL(asset.url).origin+'/media/**',async route=>{const response=await page.request.get(site.runtime.url+new URL(route.request().url()).pathname,{headers});expect(response.status()).toBe(200);await route.fulfill({response});});
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
-    await page.setViewportSize({width:1440,height:1000});await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);await page.getByRole('button',{name:'Block builder',exact:true}).click();
+    await page.setViewportSize({width:1440,height:1000});await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);// The editor must use the installation zone even when the operator's browser is elsewhere.
+    const authoring=await json(await site.call('/api/campaign-authoring',{cookie}),200);
+    expect(await page.evaluate(()=>Intl.DateTimeFormat().resolvedOptions().timeZone)).toBe('America/Los_Angeles');
+    expect(authoring.timezone).not.toBe('America/Los_Angeles');
+    const readSchedule=async()=>await json(await site.call(`/api/campaigns/${draft.campaignId}`,{cookie}),200);
+    const original=(await readSchedule()).steps;
+    expect(original[0]).toMatchObject({timezone:'Australia/Brisbane',scheduledAt:due.toISOString()});
+    await page.getByRole('button',{name:'Remove step 1',exact:true}).click();
+    await page.getByRole('button',{name:'Add email step',exact:true}).click();
+    await expect(page.getByRole('combobox',{name:'Time zone',exact:true})).toHaveValue(authoring.timezone);
+    const localSend=page.getByLabel('Local send date and time',{exact:true});
+    const localEnd=page.getByLabel('Local send-by date and time',{exact:true});
+    await localSend.fill('2030-01-15T10:00');
+    await expect(localEnd).toHaveValue('2030-01-15T23:59');
+    await expect(page.getByLabel('Resolved UTC send',{exact:true})).toHaveValue('2030-01-15T00:00:00.000Z');
+    await expect(page.getByLabel('Resolved UTC send-by',{exact:true})).toHaveValue('2030-01-15T13:59:00.000Z');
+    await expect(page.getByLabel('Resolved UTC send',{exact:true})).toHaveJSProperty('readOnly',true);
+    await expect(page.getByLabel('Resolved UTC send-by',{exact:true})).toHaveJSProperty('readOnly',true);
+    const unchanged=await readSchedule();
+    let patches=0;const countPatch=(request:any)=>{if(request.method()==='PATCH'&&request.url().includes('/api/campaign-revisions/'))patches++;};page.on('request',countPatch);
+    for(const [timezone,local,message] of [
+      ['America/Los_Angeles','2030-03-10T02:30','does not exist'],
+      ['Australia/Lord_Howe','2030-04-07T01:45','occurs more than once'],
+    ]){
+      await page.getByRole('combobox',{name:'Time zone',exact:true}).selectOption(timezone);
+      await localSend.fill(local);
+      await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+      await expect(localSend).toHaveAttribute('aria-invalid','true');
+      await expect(page.locator('.validation-summary')).toContainText(message);
+      expect(patches).toBe(0);
+      const step={channel:'email',timezone,localScheduledAt:local,localSendByAt:local.slice(0,10)+'T23:59',whyThisTime:'Selected by the operator.'};
+      const refused=await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{steps:[step]}}),400);
+      expect(JSON.stringify(refused)).toContain(message);
+      expect(await readSchedule()).toEqual(unchanged);
+    }
+    page.off('request',countPatch);
+    await page.getByRole('combobox',{name:'Time zone',exact:true}).selectOption(authoring.timezone);
+    await localSend.fill('2030-01-15T10:00');
+    await localEnd.fill('2030-01-15T23:59');
+    await page.getByRole('button',{name:'Save full draft',exact:true}).click();
+    await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+    const unambiguous=await readSchedule();
+    expect(unambiguous.steps[0]).toMatchObject({timezone:authoring.timezone,scheduledAt:'2030-01-15T00:00:00.000Z',sendByAt:'2030-01-15T13:59:00.000Z'});
+    // Explicit instants remain supported, but a client cannot pair one with a different local time.
+    const disagree=await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{steps:[{channel:'email',timezone:authoring.timezone,localScheduledAt:'2030-01-15T10:00',scheduledAt:'2030-01-15T01:00:00.000Z',localSendByAt:'2030-01-15T23:59',whyThisTime:'Owner chose this time'}]}}),400);
+    expect(JSON.stringify(disagree)).toContain('Local time and resolved UTC instant disagree.');
+    expect(await readSchedule()).toEqual(unambiguous);
+    for(const width of [1440,390]){
+      await page.setViewportSize({width,height:1000});
+      await page.locator('.composition-step').screenshot({path:info.outputPath(`schedule-${width}.png`)});
+    }
+    await page.setViewportSize({width:1440,height:1000});
+    const explicit=original.map(({channel,timezone,scheduledAt,sendByAt,whyThisTime}:any)=>({channel,timezone,scheduledAt,sendByAt,whyThisTime}));
+    await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{steps:explicit}}),200);
+    expect((await readSchedule()).steps[0]).toMatchObject(explicit[0]);
+    await reloadPage(page);
+    await page.getByRole('button',{name:'Block builder',exact:true}).click();
     const add=async(kind:string)=>{await page.getByRole('combobox',{name:'Block kind',exact:true}).selectOption(kind);await page.getByRole('button',{name:'Add block',exact:true}).click();};
     const image=async(alt:string)=>{for(const [name,value] of [['Image URL',asset.url],['Image description',alt]])await page.getByRole('textbox',{name,exact:true}).fill(value);for(const [name,value] of [['Image width','200'],['Image height','160']])await page.getByRole('spinbutton',{name,exact:true}).fill(value);};
     await add('header');await page.getByRole('textbox',{name:'Block text',exact:true}).fill('Synthetic spring letter');
