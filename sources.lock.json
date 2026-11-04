@@ -8514,7 +8514,7 @@
       "executable": false
     },
     "tests/campaign-authoring/full-promotional-email-journey.ts": {
-      "sha256": "3896f903be355152f387dce3a839e83c8998f3f56ad738fc6aeef1fe6d02ff80",
+      "sha256": "93ab2829e7f3bcb6549e8f54a74380ff35edc64e72b26a636e3ab6b6c157a305",
       "executable": false
     },
     "tests/campaign-authoring/local-images.spec.ts": {

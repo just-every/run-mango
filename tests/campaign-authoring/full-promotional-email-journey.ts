@@ -23,6 +23,47 @@ export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
     const email='synthetic-mango-180@example.test';await confirmedContact(site,edge,cookie,email,'synthetic-mango-180');
     const clock=await site.control('/_golive/clock',{hold:true}),due=new Date(clock.now+3600000);
     const draft=await draftCampaign(site,cookie,'synthetic-mango-181',[email],due);
+    mark('explicit and local schedule compatibility');
+    const schedulePath=`/api/campaign-revisions/${draft.revisionId}`;
+    const readSchedule=async()=>{
+      const {campaign,revision,steps}=await json(await site.call(`/api/campaigns/${draft.campaignId}`,{cookie}),200);
+      return {campaign,revision,steps};
+    };
+    const originalSchedule=(await readSchedule()).steps.map(({channel,timezone,scheduledAt,sendByAt,whyThisTime}:any)=>({channel,timezone,scheduledAt,sendByAt,whyThisTime}));
+    // The explicit-only client can choose either instant of a daylight-saving fold.
+    const explicit={channel:'email',timezone:'America/New_York',scheduledAt:'2031-11-02T06:30:00.000Z',sendByAt:'2031-11-02T08:30:00.000Z',whyThisTime:'Owner chose an explicit instant'};
+    await json(await site.call(schedulePath,{method:'PATCH',cookie,body:{steps:[explicit]}}),200);
+    expect((await readSchedule()).steps).toEqual([expect.objectContaining(explicit)]);
+    console.log('PROBE CAMP-006 explicit-only: native draft PATCH and GET -> America/New_York, send 2031-11-02T06:30:00.000Z, deadline 2031-11-02T08:30:00.000Z');
+    const agreeing={...explicit,localScheduledAt:'2031-11-02T03:30',scheduledAt:'2031-11-02T08:30:00.000Z',localSendByAt:'2031-11-02T04:30',sendByAt:'2031-11-02T09:30:00.000Z'};
+    await json(await site.call(schedulePath,{method:'PATCH',cookie,body:{steps:[agreeing]}}),200);
+    const accepted=await readSchedule();
+    expect(accepted.steps).toEqual([expect.objectContaining({channel:'email',timezone:'America/New_York',scheduledAt:'2031-11-02T08:30:00.000Z',sendByAt:'2031-11-02T09:30:00.000Z'})]);
+    expect(accepted.campaign.state).toBe('draft');expect(accepted.revision.approvedAt).toBeNull();
+    console.log('PROBE CAMP-006 agreeing local and UTC: native draft PATCH and GET -> America/New_York, send 2031-11-02T08:30:00.000Z, deadline 2031-11-02T09:30:00.000Z');
+    for(const [field,changed] of [
+      ['localScheduledAt',{scheduledAt:'2031-11-02T07:30:00.000Z'}],
+      ['localSendByAt',{sendByAt:'2031-11-02T10:30:00.000Z'}],
+    ] as const){
+      const refused=await json(await site.call(schedulePath,{method:'PATCH',cookie,body:{name:'synthetic-mango-189',steps:[{...agreeing,...changed}]}}),400);
+      expect(refused.error).toBe('invalid_request');
+      expect(refused.issues.properties.steps.items[0].properties[field].errors).toEqual(['Local time and resolved UTC instant disagree.']);
+      expect(await readSchedule()).toEqual(accepted);
+      expect(await site.count('campaign_approval_requests')).toBe(0);
+      expect(await site.count('recipient_steps')).toBe(0);
+      console.log(`PROBE CAMP-006 ${field} disagreement: native draft PATCH -> 400 invalid_request, named field; persisted draft and steps unchanged; approvals=0, recipients=0`);
+    }
+    await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
+    await openPage(page,`${site.runtime.url}/app/campaigns/${draft.campaignId}/review`);
+    await expect(page.getByRole('combobox',{name:'Time zone',exact:true})).toHaveValue('America/New_York');
+    await expect(page.getByLabel('Local send date and time',{exact:true})).toHaveValue('2031-11-02T03:30');
+    await expect(page.getByLabel('Local send-by date and time',{exact:true})).toHaveValue('2031-11-02T04:30');
+    for(const width of [1440,390]){
+      await page.setViewportSize({width,height:1000});
+      await page.locator('.composition-fieldset').filter({has:page.getByRole('combobox',{name:'Time zone',exact:true})}).screenshot({path:info.outputPath(`schedule-${width}.png`)});
+    }
+    await page.setViewportSize({width:1440,height:1000});
+    await json(await site.call(schedulePath,{method:'PATCH',cookie,body:{steps:originalSchedule}}),200);
     await json(await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{emailBody:''}}),200);
     // Malformed markup cannot make a hidden claim approvable. These are inputs
     // to the same public save/review door, not parser implementation tests.
