@@ -13,12 +13,14 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,controls
   const confirmations=(email:string)=>edge.sends.filter(send=>send.to===email&&send.body.subject==='Confirm your Mango Garden subscription');
   const contact=async(email:string)=>(await site.rows(`SELECT id,email_status FROM contacts WHERE email='${email}'`))[0];
   let payerIndex=51;
+  let payerPayment:unknown;
   async function complete(email:string) {
     const n=payerIndex++,customer=`cus_syntheticMango${n}`,subscription=`sub_syntheticMango${n}`;
     edge.stripe.customers[customer]={email,name:'Garden paid reader'};
     edge.stripe.subscriptions[subscription]={customer,status:'active',metadata:{mango_paid_tier:'1'}};
     const event={id:`evt_syntheticMango${n}`,type:'checkout.session.completed',created:Math.floor((await site.control('/_golive/clock')).now/1000),livemode:false,
       data:{object:{id:`cs_synthetic_${edge.stripe.sessions.length}`,mode:'subscription',customer,subscription,customer_details:{email},currency:'usd',amount_total:1080,total_details:{amount_tax:80}}}};
+    if(email===payer)payerPayment=event;
     for(let i=0;i<2;i++)expect((await post(event)).status).toBe(204);
   }
   // Real approvals and dispatches must serve a confirmed control while refusing
@@ -159,6 +161,11 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,controls
   expect(erasure.status).toBe(200);expect(receipt.receipt.state).toBe('complete');
   expect(await site.rows(`SELECT id FROM contacts WHERE email='${payer}'`)).toEqual([]);
   expect(await site.rows(`SELECT id FROM consent_evidence WHERE destination='${payer}'`)).toEqual([]);
+  const sendsBeforeReplay=edge.sends.length;
+  expect((await post(payerPayment)).status).toBe(204);
+  expect(await site.rows(`SELECT id FROM contacts WHERE email='${payer}'`)).toEqual([]);
+  expect(await site.rows(`SELECT id FROM consent_evidence WHERE destination='${payer}'`)).toEqual([]);
+  expect(edge.sends).toHaveLength(sendsBeforeReplay);
   // Paid and free capture consume the same accepted network allowance. Fill it
   // through public doors, then both refuse without another Stripe hand-off.
   const capacityIp='198.51.100.153';
