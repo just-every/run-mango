@@ -8,12 +8,12 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 14 | 204 | 89 | 307 |
+| Core | 15 | 203 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 14 | 204 | 98 | 316 |
+| Full target | 15 | 203 | 98 | 316 |
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
 ## Core
 
@@ -3783,7 +3783,7 @@ Core · target · **missing**
 
 #### INT-007 — Events and profiles API
 
-Core · target · **partial** · Cites BASE-ACCESS-004, BASE-INPUT-001, BASE-OPS-003
+Core · target · **done** · Cites BASE-ACCESS-004, BASE-INPUT-001, BASE-OPS-003
 
 **Requirement.** The public versioned REST API and JavaScript client let external systems identify contacts, set properties, track events, read rule-derived segment membership and submit subscriptions with consent evidence. Credentials are scoped, each key has its own rate limit, writes retain key attribution and event writes retain idempotent outcomes. The public API description matches these operations. Website keys remain on a website server behind its authenticated same-origin proxy; this does not authorize automatic visitor collection or consent inference.
 
@@ -3795,8 +3795,8 @@ Core · target · **partial** · Cites BASE-ACCESS-004, BASE-INPUT-001, BASE-OPS
 5. Exhausting one key returns a named rate-limit refusal with retry guidance while another key remains usable.
 6. Writes retain their integration-key attribution, and the public API description declares their scopes.
 
-**Evidence.** `tests/go-live/sync-integrations.journeys.ts` — “[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression”
-**Gap.** Asserted: a scoped key identifies and updates a contact and keeps its properties; the shipped client's concurrent repeat stores one event and conflicting content is refused with the one stored event unchanged; the API and client return segment memberships; one key's exhausted allowance returns a named rate-limit refusal with retry guidance while another key stays usable; event and property writes keep their key attribution and the event write declares its scope. Unasserted: a subscription refused for missing consent evidence changes nothing; the journey checks only the 400 consent_evidence_required and never reads back that no contact, consent or confirmation followed for that address.
+**Evidence.** `tests/go-live/sync-integrations.journeys.ts` — “[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression”; allowed subscription confirmation; missing consent refuses without a contact, address, profile, consent record, confirmation record or handoff. `tests/go-live/custom-event-journey.ts` — “proveCustomEvents”: concurrent idempotent client events, conflict refusal, rule-derived memberships, independent per-key allowances, event attribution and declared write scope. `tests/go-live/custom-property-journey.ts` — “proveCustomProperties”: attributed API property writes.
+**Gap.** None.
 
 #### INT-008 — Outbound webhooks
 
