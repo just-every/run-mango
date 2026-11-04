@@ -30,6 +30,7 @@ export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
       return {campaign,revision,steps};
     };
     const originalSchedule=(await readSchedule()).steps.map(({channel,timezone,scheduledAt,sendByAt,whyThisTime}:any)=>({channel,timezone,scheduledAt,sendByAt,whyThisTime}));
+    const providerHandoffs=edge.sends.length;
     // The explicit-only client can choose either instant of a daylight-saving fold.
     const explicit={channel:'email',timezone:'America/New_York',scheduledAt:'2031-11-02T06:30:00.000Z',sendByAt:'2031-11-02T08:30:00.000Z',whyThisTime:'Owner chose an explicit instant'};
     await json(await site.call(schedulePath,{method:'PATCH',cookie,body:{steps:[explicit]}}),200);
@@ -51,6 +52,7 @@ export async function fullPromotionalEmailJourney(page:Page,info:TestInfo){
       expect(await readSchedule()).toEqual(accepted);
       expect(await site.count('campaign_approval_requests')).toBe(0);
       expect(await site.count('recipient_steps')).toBe(0);
+      expect(edge.sends).toHaveLength(providerHandoffs);
       console.log(`PROBE CAMP-006 ${field} disagreement: native draft PATCH -> 400 invalid_request, named field; persisted draft and steps unchanged; approvals=0, recipients=0`);
     }
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
