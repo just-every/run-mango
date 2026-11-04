@@ -4,12 +4,27 @@ import {type Installation,json,confirmedContact,draftCampaign,approve,dispatch} 
 import {signupCounterWindow} from './kiosk-harness';
 import type {providerEdge} from './edge';
 import {openPage} from '../support/navigation';
+import type {PaidTier} from '../../src/core/features/store/stripe/paid-tier';
 
 /** [PUB-005][FORM-008][FORM-010] Hosted page and real Worker doors; only Stripe and mail are network fakes. */
-export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:Installation;page:Page;info:TestInfo;owner:string;edge:Awaited<ReturnType<typeof providerEdge>>;post:(event:unknown)=>Promise<Response>}) {
+export async function paidSignupJourney({site,page,info,owner,edge,post,replacement}:{site:Installation;page:Page;info:TestInfo;owner:string;edge:Awaited<ReturnType<typeof providerEdge>>;post:(event:unknown)=>Promise<Response>;replacement:PaidTier}) {
   const payer='synthetic-mango-51@example.test',unsubscribed='synthetic-mango-52@example.test',suppressed='synthetic-mango-53@example.test';
   const url=site.runtime.url+'/subscribe?paid=1';
-  const description=await json(await site.call('/paid/info'),200);
+  const oldDescription=await json(await site.call('/paid/info'),200);
+  expect(await json(await site.call('/api/settings/stripe/paid-tier',{method:'PUT',cookie:owner,body:replacement}),200)).toEqual({paidTier:replacement});
+  const beforeStale={requests:edge.stripe.requests.length,sessions:edge.stripe.sessions.length,evidence:await site.count('consent_evidence'),sends:edge.sends.length};
+  expect(await json(await site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':'198.51.100.151'},body:{email:payer,consent:true,disclosure:oldDescription.disclosure,requestId:crypto.randomUUID()}}),400)).toMatchObject({error:'signup_refused'});
+  expect(edge.stripe.requests).toHaveLength(beforeStale.requests);
+  expect(edge.stripe.sessions).toHaveLength(beforeStale.sessions);
+  expect(await site.count('consent_evidence')).toBe(beforeStale.evidence);
+  expect(edge.sends).toHaveLength(beforeStale.sends);
+  const oldSelectors=new URLSearchParams({priceId:'price_synthetic',tier:oldDescription.paidTopic}).toString();
+  const freshInfo=await site.call('/paid/info?'+oldSelectors);
+  expect(freshInfo.headers.get('cache-control')).toBe('no-store');
+  const description=await json(freshInfo,200);
+  expect(description).toMatchObject({paidTopic:replacement.paidTopic,price:'$27.00 every 3 weeks'});
+  expect(description.disclosure).not.toBe(oldDescription.disclosure);
+  expect(await json(await site.call('/paid/info'),200)).toEqual(description);
   const confirmations=(email:string)=>edge.sends.filter(send=>send.to===email&&send.body.subject==='Confirm your Mango Garden subscription');
   const contact=async(email:string)=>(await site.rows(`SELECT id,email_status FROM contacts WHERE email='${email}'`))[0];
   let payerIndex=51;
@@ -18,7 +33,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
     edge.stripe.customers[customer]={email,name:'Garden paid reader'};
     edge.stripe.subscriptions[subscription]={customer,status:'active',metadata:{mango_paid_tier:'1'}};
     const event={id:`evt_syntheticMango${n}`,type:'checkout.session.completed',created:Math.floor((await site.control('/_golive/clock')).now/1000),livemode:false,
-      data:{object:{id:`cs_synthetic_${edge.stripe.sessions.length}`,mode:'subscription',customer,subscription,customer_details:{email},currency:'usd',amount_total:1080,total_details:{amount_tax:80}}}};
+      data:{object:{id:`cs_synthetic_${edge.stripe.sessions.length}`,mode:'subscription',customer,subscription,customer_details:{email},currency:'usd',amount_total:2916,total_details:{amount_tax:216}}}};
     for(let i=0;i<2;i++)expect((await post(event)).status).toBe(204);
   }
   await page.context().setExtraHTTPHeaders({'CF-Connecting-IP':'198.51.100.151'});
@@ -31,10 +46,11 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
     }else await route.fulfill({contentType:'text/html',body:'<!doctype html><html lang="en"><title>Synthetic checkout</title><h1>Stripe Checkout test edge</h1><form method="post"><button>Complete checkout</button></form></html>'});
   });
   for(const width of [1440]) {
-    await page.setViewportSize({width,height:1000});await openPage(page,url);
-    await expect(page.getByRole('heading',{name:'Members',exact:true})).toBeVisible();
+    await page.setViewportSize({width,height:1000});await openPage(page,url+'&'+oldSelectors);
+    await expect(page.getByRole('heading',{name:replacement.paidTopic,exact:true})).toBeVisible();
     await expect(page.locator('main')).toContainText(description.price);
     await expect(page.locator('main')).toContainText('Stripe Tax');
+    await expect(page.getByRole('checkbox')).toHaveAccessibleName(description.consentText+' (required)');
     await expect(page.getByRole('checkbox')).not.toBeChecked();
     expect(await page.locator('input').evaluateAll(inputs=>inputs.some(input=>/card|payment/i.test((input as HTMLInputElement).name)))).toBe(false);
     expect(await page.evaluate(() => window.__rerHydration?.count ?? 0)).toBe(0);
@@ -42,10 +58,14 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
     expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
     await page.screenshot({path:info.outputPath(`paid-signup-${width}.png`),fullPage:true});
   }
+  await page.setViewportSize({width:390,height:1000});
+  await page.screenshot({path:info.outputPath('paid-signup-390.png'),fullPage:true});
+  await page.setViewportSize({width:1440,height:1000});
   await page.getByLabel('Email address',{exact:true}).fill(payer);
   await page.getByRole('checkbox').check();
   await page.getByRole('button',{name:'Continue to Stripe Checkout',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Stripe Checkout test edge',exact:true})).toBeVisible();
+  expect(Object.fromEntries(edge.stripe.sessions.at(-1)!.form)).toMatchObject({'line_items[0][price]':replacement.priceId,'automatic_tax[enabled]':'true','customer_email':payer});
   await page.getByRole('button',{name:'Complete checkout',exact:true}).click();
   await expect(page.getByRole('heading',{name:'What happens next',exact:true})).toBeVisible();
   for(const width of [1440]) {
@@ -56,6 +76,9 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
     expect((await new AxeBuilder({page}).analyze()).violations.filter(v=>v.impact==='serious'||v.impact==='critical')).toEqual([]);
     await page.screenshot({path:info.outputPath(`paid-signup-return-${width}.png`),fullPage:true});
   }
+  await page.setViewportSize({width:390,height:1000});
+  await page.screenshot({path:info.outputPath('paid-signup-return-390.png'),fullPage:true});
+  await page.setViewportSize({width:1440,height:1000});
   expect(confirmations(payer)).toHaveLength(1);
   expect((await contact(payer)).email_status).toBe('pending');
   expect((await site.rows(`SELECT capture_method,confirmed_at FROM consent_evidence WHERE destination='${payer}'`))).toEqual([{capture_method:'paid-checkout',confirmed_at:null}]);
