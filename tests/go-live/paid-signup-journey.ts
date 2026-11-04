@@ -6,7 +6,7 @@ import type {providerEdge} from './edge';
 import {openPage} from '../support/navigation';
 
 /** [PUB-005][FORM-008][FORM-010] Hosted page and real Worker doors; only Stripe and mail are network fakes. */
-export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:Installation;page:Page;info:TestInfo;owner:string;edge:Awaited<ReturnType<typeof providerEdge>>;post:(event:unknown)=>Promise<Response>}) {
+export async function paidSignupJourney({site,page,info,owner,edge,post,controls}:{site:Installation;page:Page;info:TestInfo;owner:string;edge:Awaited<ReturnType<typeof providerEdge>>;post:(event:unknown)=>Promise<Response>;controls:{paid:string;free:string;setPaidActive:(active:boolean)=>Promise<void>}}) {
   const payer='synthetic-mango-51@example.test',unsubscribed='synthetic-mango-52@example.test',suppressed='synthetic-mango-53@example.test';
   const url=site.runtime.url+'/subscribe?paid=1';
   const description=await json(await site.call('/paid/info'),200);
@@ -21,6 +21,41 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
       data:{object:{id:`cs_synthetic_${edge.stripe.sessions.length}`,mode:'subscription',customer,subscription,customer_details:{email},currency:'usd',amount_total:1080,total_details:{amount_tax:80}}}};
     for(let i=0;i<2;i++)expect((await post(event)).status).toBe(204);
   }
+  // Real approvals and dispatches must serve a confirmed control while refusing
+  // the paying reader. An empty review alone cannot establish that boundary.
+  async function restrictedIssues(email:string,state:'pending'|'suppressed') {
+    await controls.setPaidActive(true);
+    for(const audience of ['paid','free'] as const) {
+      const permitted=controls[audience],name=`${state} payer ${audience} issue`;
+      const due=new Date((await site.control('/_golive/clock')).now+3600000);
+      const issue=await draftCampaign(site,owner,name,[email,permitted],due);
+      if(audience==='paid')await json(await site.call(`/api/campaign-revisions/${issue.revisionId}`,{method:'PATCH',cookie:owner,body:{inclusionRuleJson:JSON.stringify({
+        version:1,operator:'all',predicates:[
+          {sourceType:'contact',field:'email',comparator:'in',value:[email,permitted]},
+          {sourceType:'contact',field:'paidMember',channel:'email',comparator:'eq',value:true},
+        ],
+      })}}),200);
+      const review=await json(await site.call(`/api/campaigns/${issue.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:issue.revisionId}}),200);
+      expect(review).toMatchObject({candidateCount:audience==='paid'?1:2,eligibleCount:1});
+      if(audience==='free')expect(review.exclusions).toContainEqual({reason:`email-${state}`,count:1});
+      await approve(site,owner,issue);
+      const report=()=>site.call(`/api/campaigns/${issue.campaignId}/recipients`,{cookie:owner}).then(response=>json(response,200));
+      expect((await report()).rows.map((row:any)=>row.destination)).toEqual([permitted]);
+      await site.control('/_golive/clock',{advanceMs:3600001});
+      expect(await dispatch(site,issue.campaignId,due)).toEqual([expect.objectContaining({email:permitted,transport_disposition:'accepted'})]);
+      expect(edge.sends.filter(send=>String(send.body.subject).startsWith(name+':')).map(send=>send.to)).toEqual([permitted]);
+      const outcomes=await report();
+      expect(outcomes.total).toBe(1);
+      expect(outcomes.rows).toEqual([expect.objectContaining({destination:permitted,disposition:'accepted'})]);
+      expect(await site.rows(`SELECT id FROM recipient_steps WHERE campaign_id='${issue.campaignId}' AND destination='${email}'
+        AND (provider_accepted_at IS NOT NULL OR handed_off_at IS NOT NULL OR delivered_at IS NOT NULL)`)).toEqual([]);
+      expect((await contact(email)).email_status).toBe(state);
+    }
+    await controls.setPaidActive(false);
+  }
+  // Keep the controls beyond the previous issues' ordinary frequency window.
+  await site.control('/_golive/clock',{advanceMs:86400001});
+  await site.control('/_golive/sender-evidence');
   await page.context().setExtraHTTPHeaders({'CF-Connecting-IP':'198.51.100.151'});
   // A synthetic Stripe-hosted Checkout at the browser network edge. Its explicit
   // Complete checkout POST emits the signed notification, then returns to Mango.
@@ -66,6 +101,7 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   expect(evidence.consent_text).toBe(description.consentText);
   const before=(await json(await site.call('/api/settings/stripe',{cookie:owner}),200)).paidReaders;
   expect(before.consentMissing).toBeGreaterThan(0);
+  await restrictedIssues(payer,'pending');
   const due=new Date((await site.control('/_golive/clock')).now+3600000);
   const campaign=await draftCampaign(site,owner,'Paid signup first issue',[payer,'free-reader@example.test'],due);
   const rule={version:1,operator:'all',predicates:[{sourceType:'contact',field:'paidMember',channel:'email',comparator:'eq',value:true}]};
@@ -105,6 +141,11 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   await site.control('/_golive/clock',{advanceMs:2001});
   await start(suppressed);await complete(suppressed);
   expect((await contact(suppressed)).email_status).toBe('suppressed');expect(confirmations(suppressed)).toHaveLength(0);
+  expect(edge.sends.filter(send=>send.to===suppressed)).toHaveLength(0);
+  await site.control('/_golive/clock',{advanceMs:86400001});
+  await site.control('/_golive/sender-evidence');
+  await restrictedIssues(suppressed,'suppressed');
+  expect(confirmations(suppressed)).toHaveLength(0);
   expect(edge.sends.filter(send=>send.to===suppressed)).toHaveLength(0);
   // ct 23 October: erasure also removes the paid-signup address and evidence.
   const erasedPayer = await contact(payer);

@@ -8938,11 +8938,11 @@
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
-      "sha256": "210d564f2b290f2b072dec01bcb0b00e41d8252b9389aef74431d13674ddd951",
+      "sha256": "05984d1c085bc20414dfd3f54aad221eaeaea47a51abdb7b3b0b36cf29c225a5",
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
-      "sha256": "6e0327d82a10b666e1b069ca2535fed325dbb0ed3dd6dfa8277d3ea290c4095f",
+      "sha256": "2af977fcdc98aefaeac1ee037ff4cdc40479734d598a5d42b56083beb24c9ad4",
       "executable": false
     },
     "tests/go-live/pause.flow.ts": {

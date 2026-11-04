@@ -184,5 +184,11 @@ export async function paidTierJourney(input: {site: Installation; page: Page; in
     await page.locator('.timeline').screenshot({path: info.outputPath(`paid-tier-timeline-${width}.png`)});
     await throttle.send('Emulation.setCPUThrottlingRate',{rate:1});await throttle.detach();
   }
-  await paidSignupJourney({site,page,info,owner,edge,post});
+  let controlEvent=0;
+  await paidSignupJourney({site,page,info,owner,edge,post,controls:{paid:people.paid,free:people.free,setPaidActive:async active=>{
+    // Recover and cancel the confirmed control through signed provider events,
+    // retaining the original paid-only audience for the confirmation journey.
+    edge.stripe.subscriptions.sub_paid.status=active?'active':'canceled';
+    await deliver(event(`evt_signup_control_${++controlEvent}`,'customer.subscription.updated',subscription('paid')));
+  }}});
 }
