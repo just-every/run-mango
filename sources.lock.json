@@ -8449,6 +8449,10 @@
       "sha256": "daa38dcdae51f8860bfb759397adde2be2f6d46cf823df1e69112206db4452ae",
       "executable": false
     },
+    "tests/campaign-authoring/audience-exclusions-journey.ts": {
+      "sha256": "0b82062cb1d93f08bd5b230bde5f55b1c99f297f695a8f8e8950b616c0f38cd4",
+      "executable": false
+    },
     "tests/campaign-authoring/audience-size-journey.ts": {
       "sha256": "08833cac189a776cb40ef9845c73d0fedfd2ec6ce99d921010b2aaee18dccd2e",
       "executable": false
@@ -8462,7 +8466,7 @@
       "executable": false
     },
     "tests/campaign-authoring/browser.spec.ts": {
-      "sha256": "a3513d076ed10f6960e51e5ab23f2781d18d3bb8bcbc3c04b0158210fda346c7",
+      "sha256": "de3c4836ad1b78fe34e41e9f746168d238f2833ce6f13618c0faa96213f2079e",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
@@ -8530,7 +8534,7 @@
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
-      "sha256": "37afa4608daa5e6a645602e5da437d5785be9b030fc2966516d7bef1672022c2",
+      "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1",
       "executable": false
     },
     "tests/campaign-results/archive-fixture.ts": {
