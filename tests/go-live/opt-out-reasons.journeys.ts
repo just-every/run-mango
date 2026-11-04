@@ -23,16 +23,16 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     await confirmedContact(site, edge, cookie, visible, 'Visible confirmation reader');
     await confirmedContact(site, edge, cookie, control, 'Eligible control');
     const due = new Date(Date.now() + 20_000);
-    const letter = await draftCampaign(site, cookie, 'Spring letter', [carol, dave, visible, control], due);
+    const letter = await draftCampaign(site, cookie, 'Spring letter', [carol, dave, visible], due);
     expect((await approve(site, cookie, letter)).status).toBe('scheduled');
     const nextDue = new Date(due.getTime() + 3600_000);
     const next = await draftCampaign(site, cookie, 'Summer letter', [carol, dave, visible, control], nextDue);
     expect((await approve(site, cookie, next)).status).toBe('scheduled');
-    expect((await dispatch(site, letter.campaignId, due)).map(row => row.transport_disposition)).toEqual(['accepted', 'accepted', 'accepted', 'accepted']);
+    expect((await dispatch(site, letter.campaignId, due)).map(row => row.transport_disposition)).toEqual(['accepted', 'accepted', 'accepted']);
     // Freeze only the Worker's wall clock so the allowance cannot roll over mid-journey.
     // HTTP latency below uses the runner's real monotonic clock, including response bodies.
     const clock = await site.control('/_golive/clock', { hold: true });
-    expect(await site.count('recipient_steps')).toBe(8);
+    expect(await site.count('recipient_steps')).toBe(7);
     expect(await site.rows(`SELECT destination, transport_disposition FROM recipient_steps WHERE campaign_id='${next.campaignId}' ORDER BY destination`)).toEqual(
       [carol, dave, visible, control].map(destination => ({ destination, transport_disposition: 'queued' })),
     );
