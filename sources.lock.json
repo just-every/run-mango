@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "a75e60e8893cb020500f19b04d72461dde7c6226c44683c3bbbbfd7f334645ca",
+      "sha256": "69d1614d814c5e4314c25a2accddbed19767fcc5f9c0c930d7e613b896b1842b",
       "executable": false
     },
     "DEMO.md": {
@@ -8938,7 +8938,7 @@
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
-      "sha256": "19905791da02d8894686a454bbfba4658e3ac2d3e399b6a699996b3eb7a68313",
+      "sha256": "bdb510612eb2799af3fd93750bf17439c7a45b8f2f1a8b0743681bd3142dc52e",
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
