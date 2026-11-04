@@ -87,11 +87,51 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
   expect(evidence.capture_source).toBe(site.origin+'/subscribe?paid=1');
   expect(evidence.consent_version.length).toBeGreaterThan(0);
   expect(evidence.consent_text).toBe(description.consentText);
+  const paidControl=['synthetic-mango-54','example.test'].join('@'),freeControl=['free-reader','example.test'].join('@');
+  await confirmedContact(site,edge,owner,paidControl,'Confirmed garden supporter');
+  await start(paidControl);await complete(paidControl);
+  const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie:owner,body:{files:[{name:'synthetic-mango-53.csv',preset:'csv-cleaned',csv:`Email Address,First Name\n${suppressed},Suppressed reader`}]}}),200);
+  let {job}=await json(await site.call('/api/audience/imports',{method:'POST',cookie:owner,body:{fingerprint:preview.fingerprint}}),200);
+  while(['queued','applying'].includes(job.state))({job}=await json(await site.call(`/api/audience/imports/${job.id}/resume`,{method:'POST',cookie:owner,body:{}}),200));
+  await site.control('/_golive/clock',{advanceMs:2001});
+  await start(suppressed);await complete(suppressed);
+  expect((await contact(suppressed)).email_status).toBe('suppressed');expect(confirmations(suppressed)).toHaveLength(0);
+  expect(edge.sends.filter(send=>send.to===suppressed)).toHaveLength(0);
+  for(const email of [payer,suppressed,paidControl]) {
+    const reader=await contact(email);
+    expect(await site.rows(`SELECT state FROM paid_subscriptions WHERE contact_id='${reader.id}'`)).toEqual([{state:'active'}]);
+  }
+  // Real review, approval and queue handoffs with eligible controls prove that
+  // neither pending consent nor suppression is bypassed by either issue type.
+  for(const kind of ['paid','free'] as const) {
+    await site.control('/_golive/clock',{advanceMs:86400001});
+    await site.control('/_golive/sender-evidence');
+    const sendAt=new Date((await site.control('/_golive/clock')).now+3600000);
+    const name=`Paid signup ${kind} consent boundary`;
+    const issue=await draftCampaign(site,owner,name,[payer,suppressed,paidControl,freeControl],sendAt);
+    if(kind==='paid')await json(await site.call(`/api/campaign-revisions/${issue.revisionId}`,{method:'PATCH',cookie:owner,body:{inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[
+      {sourceType:'contact',field:'email',comparator:'in',value:[payer,suppressed,paidControl,freeControl]},
+      {sourceType:'contact',field:'paidMember',channel:'email',comparator:'eq',value:true},
+    ]})}}),200);
+    const expected=kind==='paid'?[paidControl]:[paidControl,freeControl].sort();
+    expect(await json(await site.call(`/api/campaigns/${issue.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:issue.revisionId}}),200))
+      .toMatchObject({candidateCount:kind==='paid'?1:4,eligibleCount:expected.length});
+    await approve(site,owner,issue);await site.control('/_golive/clock',{advanceMs:3600001});
+    const recipients=await dispatch(site,issue.campaignId,sendAt);
+    expect(recipients.map(row=>row.email).sort()).toEqual(expected);
+    expect(recipients.filter(row=>row.transport_disposition==='accepted').map(row=>row.email).sort()).toEqual(expected);
+    expect(edge.sends.filter(send=>String(send.body.subject).startsWith(name)).map(send=>send.to).sort()).toEqual(expected);
+    expect(await site.rows(`SELECT f.id FROM delivery_facts f JOIN recipient_steps r ON r.id=f.recipient_step_id WHERE r.campaign_id='${issue.campaignId}' AND r.destination IN ('${payer}','${suppressed}')`)).toEqual([]);
+  }
+  expect((await contact(payer)).email_status).toBe('pending');expect(confirmations(payer)).toHaveLength(1);
+  expect((await contact(suppressed)).email_status).toBe('suppressed');expect(confirmations(suppressed)).toHaveLength(0);
+  expect(edge.sends.filter(send=>send.to===suppressed)).toHaveLength(0);
   const before=(await json(await site.call('/api/settings/stripe',{cookie:owner}),200)).paidReaders;
   expect(before.consentMissing).toBeGreaterThan(0);
   const due=new Date((await site.control('/_golive/clock')).now+3600000);
   const campaign=await draftCampaign(site,owner,'Paid signup first issue',[payer,'free-reader@example.test'],due);
-  const rule={version:1,operator:'all',predicates:[{sourceType:'contact',field:'paidMember',channel:'email',comparator:'eq',value:true}]};
+  const rule={version:1,operator:'all',predicates:[{sourceType:'contact',field:'paidMember',channel:'email',comparator:'eq',value:true},
+    {sourceType:'contact',field:'email',comparator:'in',value:[payer,freeControl]}]};
   await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`,{method:'PATCH',cookie:owner,body:{inclusionRuleJson:JSON.stringify(rule)}}),200);
   expect(await json(await site.call(`/api/campaigns/${campaign.campaignId}/checks`,{method:'POST',cookie:owner,body:{revisionId:campaign.revisionId}}),200)).toMatchObject({candidateCount:0,eligibleCount:0});
   const confirmation=confirmations(payer)[0];
@@ -102,7 +142,9 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
   expect((await dispatch(site,campaign.campaignId,due)).filter(row=>row.transport_disposition==='accepted').map(row=>row.email)).toEqual([payer]);
   expect(edge.sends.filter(send=>String(send.body.subject).startsWith('Paid signup first issue')).map(send=>send.to)).toEqual([payer]);
   // A subscribed and confirmed reader needs no second confirmation.
-  const start=async(email:string,requestId=crypto.randomUUID())=>json(await site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':'198.51.100.152'},body:{email,consent:true,disclosure:description.disclosure,requestId}}),200);
+  async function start(email:string,requestId=crypto.randomUUID()) {
+    return json(await site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':'198.51.100.152'},body:{email,consent:true,disclosure:description.disclosure,requestId}}),200);
+  }
   await site.control('/_golive/clock',{advanceMs:2001});
   const acceptedCount=async()=>(await site.rows("SELECT COALESCE(SUM(count),0) AS n FROM oa_limits WHERE key='signup-global'"))[0].n;
   const beforeSubscribed=await acceptedCount();
@@ -122,13 +164,6 @@ export async function paidSignupJourney({site,page,info,owner,edge,post,replacem
   expect((await fetch(site.local(returningLink))).status).toBe(200);expect((await contact(unsubscribed)).email_status).toBe('unsubscribed');
   expect((await fetch(site.local(returningLink),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'confirm=true'})).status).toBe(200);
   expect((await contact(unsubscribed)).email_status).toBe('subscribed');
-  const preview=await json(await site.call('/api/audience/import-preview',{method:'POST',cookie:owner,body:{files:[{name:'synthetic-mango-53.csv',preset:'csv-cleaned',csv:`Email Address,First Name\n${suppressed},Suppressed reader`}]}}),200);
-  let {job}=await json(await site.call('/api/audience/imports',{method:'POST',cookie:owner,body:{fingerprint:preview.fingerprint}}),200);
-  while(['queued','applying'].includes(job.state))({job}=await json(await site.call(`/api/audience/imports/${job.id}/resume`,{method:'POST',cookie:owner,body:{}}),200));
-  await site.control('/_golive/clock',{advanceMs:2001});
-  await start(suppressed);await complete(suppressed);
-  expect((await contact(suppressed)).email_status).toBe('suppressed');expect(confirmations(suppressed)).toHaveLength(0);
-  expect(edge.sends.filter(send=>send.to===suppressed)).toHaveLength(0);
   // ct 23 October: erasure also removes the paid-signup address and evidence.
   const erasedPayer = await contact(payer);
   const freshOwner = await site.open();
