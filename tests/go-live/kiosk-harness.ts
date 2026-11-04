@@ -15,7 +15,7 @@ export async function kioskInstallation(challenge=true) {
   const settings=async(value:unknown)=>fetch(runtime.url+'/api/audience/signup',{method:'PUT',headers:{Cookie:cookie,Origin:runtime.url,'Content-Type':'application/json'},body:JSON.stringify(value)});
   return {runtime,cookie,call,settings,control,rows:(sql:string)=>control('/_kiosk/rows',{sql}) as Promise<Array<Record<string,any>>>};
 }
-export async function signupCounterWindow(site:Awaited<ReturnType<typeof kioskInstallation>>,key:string) {
+export async function signupCounterWindow(site:{rows:(sql:string)=>Promise<Array<Record<string,any>>>},key:string) {
   const read=async()=>(await site.rows(`SELECT CAST(strftime('%s','now') AS INTEGER)/3600 AS hour,
     3600-CAST(strftime('%s','now') AS INTEGER)%3600 AS remaining,
     COALESCE((SELECT count FROM oa_limits WHERE key='${key}'),0) AS n,

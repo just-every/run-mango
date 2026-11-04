@@ -8870,7 +8870,7 @@
       "executable": false
     },
     "tests/go-live/kiosk-harness.ts": {
-      "sha256": "e14abdfbc124f55e33e0899d6cc92de687edc5ad971e64d3c99c70c5f1d75e3c",
+      "sha256": "152fc2c0bf53bb142caf1874b1e2b6c25909903b296a0e423655f94c55511e48",
       "executable": false
     },
     "tests/go-live/kiosk-worker.ts": {
@@ -8938,7 +8938,7 @@
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
-      "sha256": "1110a9ae2bc126d0f11cc3552a1471e1b09c8a79571834aa86dc2ef2010c043b",
+      "sha256": "210d564f2b290f2b072dec01bcb0b00e41d8252b9389aef74431d13674ddd951",
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {

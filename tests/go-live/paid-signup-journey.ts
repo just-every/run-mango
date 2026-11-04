@@ -1,6 +1,7 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import {type Installation,json,confirmedContact,draftCampaign,approve,dispatch} from './harness';
+import {signupCounterWindow} from './kiosk-harness';
 import type {providerEdge} from './edge';
 import {openPage} from '../support/navigation';
 
@@ -121,23 +122,26 @@ export async function paidSignupJourney({site,page,info,owner,edge,post}:{site:I
   // through public doors, then both refuse without another Stripe hand-off.
   const capacityIp='198.51.100.153';
   const checkout=(email:string)=>site.call('/paid/checkout',{method:'POST',headers:{'CF-Connecting-IP':capacityIp},body:{email,consent:true,disclosure:description.disclosure,requestId:crypto.randomUUID()}});
-  const beforeCapacity=await acceptedCount();
+  // The product window is the real SQLite hour; the Worker clock offset does not move it. Start the
+  // read-fill-read block only with more than 180 s left in the real hour, as the opt-in journey does.
+  const counter=await signupCounterWindow(site,'signup-global');
+  const beforeCapacity=counter.before;
   await json(await checkout('synthetic-mango-capacity-paid@example.test'),200);
-  expect(await acceptedCount()).toBe(beforeCapacity+1);
+  expect(await counter.count()).toBe(beforeCapacity+1);
   const levels=await json(await site.call('/api/audience/signup-allowance',{cookie:owner}),200);
   const freeDescription=await json(await site.call('/subscribe/info'),200);
   const freeSignup=(email:string)=>site.call('/subscribe',{method:'POST',headers:{'CF-Connecting-IP':capacityIp},body:{email,consent:true,disclosure:freeDescription.disclosure}});
   for(let index=1;index<levels.levels.networkUnchallenged;index++) {
     await json(await freeSignup(`synthetic-mango-capacity-free-${index}@example.test`),202);
   }
-  expect(await acceptedCount()).toBe(beforeCapacity+levels.levels.networkUnchallenged);
+  expect(await counter.count()).toBe(beforeCapacity+levels.levels.networkUnchallenged);
   const sessionsBeforeRefusal=edge.stripe.sessions.length;
   const refused=await checkout('synthetic-mango-capacity-over@example.test');
   expect(refused.status).toBe(429);expect(Number(refused.headers.get('Retry-After'))).toBeGreaterThan(0);
   expect(await refused.json()).toMatchObject({error:'rate_limited',reason:'network-rate-limit'});
   expect(edge.stripe.sessions).toHaveLength(sessionsBeforeRefusal);
   expect((await freeSignup('synthetic-mango-capacity-free-over@example.test')).status).toBe(429);
-  expect(await acceptedCount()).toBe(beforeCapacity+levels.levels.networkUnchallenged);
+  expect(await counter.count()).toBe(beforeCapacity+levels.levels.networkUnchallenged);
   expect(await site.rows("SELECT id FROM contacts WHERE email='synthetic-mango-capacity-over@example.test'")).toEqual([]);
   expect((await site.rows("SELECT SUM(refusals) AS n FROM signup_refusal_hours WHERE form='hosted' AND reason='network-rate-limit'"))[0].n).toBeGreaterThanOrEqual(2);
   await page.unroute('https://checkout.stripe.com/**');await page.context().setExtraHTTPHeaders({});
