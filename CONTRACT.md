@@ -4048,13 +4048,13 @@ Inherits BASE-AGENT-001 to BASE-AGENT-013. The company’s policy decides every 
 
 ## Status
 
-Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383.
+Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. The INT-007 row records the extended consent-refusal journey at commit `3fe1f4f38b72f64aae3e4cdd0f6da682968f8c72` (4 November 2026); exact-candidate Verify and guarded landing remain required.
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 11 | 99 | 0 | 110 |
-| Target and push further | 2 | 106 | 98 | 206 |
-| All | 13 | 205 | 98 | 316 |
+| Target and push further | 3 | 105 | 98 | 206 |
+| All | 14 | 204 | 98 | 316 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
@@ -4304,7 +4304,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | `INT-004` | Stripe | target | partial | `tests/go-live/roles.journeys.ts` · `tests/portability.spec.ts` | Owner-only encrypted connection and signed once-only commerce event ingestion. Gap: required real-provider lifecycle proof cannot start as written: Stripe rejects metadata on a test clock (HTTP 400 parameter_unknown, metadata). No real lifecycle events or cleanup search proof claimed. FLOW-001/FLOW-002 inherit renewal-reminder enrolment without status changes. |
 | `INT-005` | Square | target | missing |  | not implemented |
 | `INT-006` | Stall and Orbit | target | missing |  | not implemented |
-| `INT-007` | Events and profiles API | target | partial | `tests/go-live/sync-integrations.journeys.ts` — “[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression” | Asserted: a scoped key identifies and updates a contact and keeps its properties; the shipped client's concurrent repeat stores one event and conflicting content is refused with the one stored event unchanged; the API and client return segment memberships; one key's exhausted allowance returns a named rate-limit refusal with retry guidance while another key stays usable; event and property writes keep their key attribution and the event write declares its scope. Unasserted: a subscription refused for missing consent evidence changes nothing; the journey checks only the 400 consent_evidence_required and never reads back that no contact, consent or confirmation followed for that address. |
+| `INT-007` | Events and profiles API | target | done | `tests/go-live/sync-integrations.journeys.ts` — “[CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression”: scoped contact identification and retained properties; allowed subscription confirmation; missing consent refuses without a contact, address, profile, consent record, confirmation record or handoff. `tests/go-live/custom-event-journey.ts` — “proveCustomEvents”: concurrent idempotent client events, conflict refusal, rule-derived memberships, independent per-key allowances, event attribution and declared write scope. `tests/go-live/custom-property-journey.ts` — “proveCustomProperties”: attributed API property writes. | |
 | `INT-008` | Outbound webhooks | target | missing |  | not implemented |
 | `INT-009` | Zapier and Crank | target | missing |  | not implemented |
 | `INT-010` | Segment | target | missing |  | not implemented |
