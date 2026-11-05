@@ -419,14 +419,22 @@ export function createAudienceRepository(database: Database) {
 
     /** A lifted suppression leaves the address subscribed, or unsubscribed while an opt-out remains. */
     async settleLiftedSuppression(destination: string, status: 'subscribed' | 'unsubscribed', occurredAt: Date) {
-      await database.update(contactEmailAddresses).set({
-        channelStatus: status,
-        channelStatusAt: occurredAt,
-        updatedAt: occurredAt,
-      }).where(and(
-        eq(contactEmailAddresses.email, destination),
-        eq(contactEmailAddresses.channelStatus, 'suppressed'),
-      ));
+      await database.batch([
+        database.update(contactEmailAddresses).set({channelStatus: status, channelStatusAt: occurredAt, updatedAt: occurredAt})
+          .where(and(eq(contactEmailAddresses.email, destination), eq(contactEmailAddresses.channelStatus, 'suppressed'))),
+        // The profile must agree with the lifted primary address. Keep any more
+        // restrictive alias state rather than granting permission across a merge.
+        database.update(contacts).set({
+          emailStatus: sql`CASE
+            WHEN EXISTS(SELECT 1 FROM contact_email_addresses WHERE contact_id=${contacts.id} AND channel_status='unsubscribed') THEN 'unsubscribed'
+            WHEN EXISTS(SELECT 1 FROM contact_email_addresses WHERE contact_id=${contacts.id} AND channel_status='non-subscribed') THEN 'non-subscribed'
+            WHEN EXISTS(SELECT 1 FROM contact_email_addresses WHERE contact_id=${contacts.id} AND channel_status='pending') THEN 'pending'
+            ELSE ${status} END`,
+          emailStatusAt: occurredAt, updatedAt: occurredAt,
+        }).where(and(eq(contacts.email, destination), eq(contacts.emailStatus, 'suppressed'),
+          sql`NOT EXISTS(SELECT 1 FROM contact_email_addresses WHERE contact_id=${contacts.id} AND channel_status='suppressed')`,
+          sql`NOT EXISTS(SELECT 1 FROM contact_suppressions WHERE contact_id=${contacts.id} AND channel='email')`)),
+      ]);
     },
 
     async recordBounceFact(values: typeof contactBounceFacts.$inferInsert) {
