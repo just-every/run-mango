@@ -3,9 +3,9 @@ import {walk0 as section0} from "./archive.flow";
 import {walk1 as section1} from "./archive.flow";
 import {dormancySourceJourney} from './dormancy-source-journey';
 
-test('[CONT-012] imported orders and consent retain original dormancy times without changing permission', async () => {
+test('[CONT-012] imported orders and consent retain original dormancy times without changing permission', async ({page}, info) => {
   test.setTimeout(300000);
-  await dormancySourceJourney();
+  await dormancySourceJourney(page, info);
 });
 
 test("[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients", async ({page}, info) => {

@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "2aa824015964cd0202ed166758f2b12d3ccc8efb97c459f0bb0d7f20d142fa28",
+      "sha256": "2d71b54767b6048dda72da425f464f11a34221456e6b9a974d258f13a10256d7",
       "executable": false
     },
     "DEMO.md": {
@@ -9206,11 +9206,15 @@
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
-      "sha256": "a2c061a8c947ea5e7905b2ce9451be97991e1618bab0acdd2e142e8c36b51079",
+      "sha256": "6977b14ac804bde0e00c9014b2d3b13a06d495dec547d3647885501efc8abcfb",
       "executable": false
     },
     "tests/move-in/archive.ts": {
       "sha256": "6410befa07ee72f37f9d831c6a62ee48a8c761f0d12394ac9dfc1ef68a606df5",
+      "executable": false
+    },
+    "tests/move-in/dormancy-source-journey.ts": {
+      "sha256": "7d3b4cafee837ef9f3876817a08c76d2c76a2fdf3d70aead81cc1170926ed910",
       "executable": false
     },
     "tests/move-in/fixtures/account-export/appointments/appointments.csv": {

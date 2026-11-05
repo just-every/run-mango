@@ -1,8 +1,9 @@
-import {expect} from '@playwright/test';
+import {expect, type Page, type TestInfo} from '@playwright/test';
+import {openPage} from '../support/navigation';
 import {providerEdge} from '../go-live/edge';
 import {eventSigner} from '../go-live/sendgrid-events';
 import {draftCampaign, json, rule, type Installation} from '../go-live/harness';
-import {consentEvidence, installation, record} from './support';
+import {consentEvidence, installation, record, screenshotPath} from './support';
 import type {ImportInput} from '../../src/core/features/audience/import-types';
 
 const day = 86400000;
@@ -24,7 +25,7 @@ async function importSource(site: Installation, cookie: string, input: ImportInp
   return {preview, job};
 }
 
-export async function dormancySourceJourney() {
+export async function dormancySourceJourney(page: Page, info: TestInfo) {
   const edge = await providerEdge(), signer = eventSigner();
   const site = await installation(edge, signer);
   try {
@@ -132,6 +133,15 @@ export async function dormancySourceJourney() {
     expect(await site.count('campaign_approval_requests')).toBe(0);
     expect(await site.count('recipient_steps')).toBe(0);
     expect(edge.sends).toEqual([]);
+    await page.context().addCookies([{
+      name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url,
+    }]);
+    await openPage(page, site.runtime.url + '/app/campaigns/' + campaign.campaignId + '/review');
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({width, height: 1000});
+      await page.screenshot({path: screenshotPath('original-source-review-' + width + '.png',
+        info.outputPath('original-source-review-' + width + '.png')), fullPage: true});
+    }
     await record('original-source-dormancy.json', {observed, windows: {30: 0, 90: 3, 365: 3},
       originalTimesRetained: true, permissionUnchanged: true});
   } finally {
