@@ -6,18 +6,13 @@ import type { LocalAppBindings } from '../../src/core/app/local-app';
 import { recordExternalCost } from '../../src/core/features/insights/cost-recording';
 import { cancelHandoffCost, prepareHandoffCost } from '../../src/core/features/insights/cost-handoff';
 import { createDesignRepository } from '../../src/core/features/design-generation/repository';
+import { costAiEdge } from './cost-ai-edge';
 
 // Actual app routes, D1 and SSR. Only external AI, commerce and mail providers are doubles.
 export default { async fetch(request: Request, bindings: LocalAppBindings, context: ExecutionContext) {
   const platform = createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
   platform.config.testEmailAllowlist = ['costs@example.test'];
-  platform.ai = { costIdentity: {provider:'openai',model:'cost-requested'}, async generateGroundedJson() {
-    const mode = await bindings.DB.prepare('SELECT mode FROM cost_test_control').first<{mode:string}>();
-    const model=mode?.mode==='failed'?'cost-requested':`cost-${mode?.mode}`;
-    await bindings.DB.prepare('INSERT INTO cost_test_ai_calls (mode,provider,model) VALUES (?,?,?)').bind(mode?.mode,'openai',model).run();
-    if (mode?.mode === 'failed') throw new Error('Provider connection interrupted');
-    return {provider:'openai',model,output:null,billableUnits:mode?.mode==='unknown'?null:17,unitKind:'tokens'};
-  } };
+  platform.ai = costAiEdge(bindings.DB, platform.config.mailSender);
   platform.commerce = {capabilities:()=>({provider:'cost-test',sourceTypes:['product'],detail:'Fixture provider'}),async synchronize(){return {records:[]};},async verifyWebhook(){throw new Error('No webhook');}};
   platform.mailer = {...platform.mailer,
     async capabilities(){return {provider:'cost-mail',configured:true,canSendMarketing:true,effectiveDeduplication:false,effectiveReconciliation:true,deduplicationWindowMs:0,reconciliationWindowMs:86400000,detail:'Test provider'};},
@@ -32,9 +27,10 @@ export default { async fetch(request: Request, bindings: LocalAppBindings, conte
   if (path.startsWith('/_costs/')) {
     if(request.headers.get('X-Test-Token')!==bindings.LOCAL_BOOTSTRAP_TOKEN) return new Response('Forbidden',{status:403});
     if(path==='/_costs/open') {
-      await bindings.DB.batch([bindings.DB.prepare('CREATE TABLE cost_test_control (mode TEXT)'),bindings.DB.prepare('CREATE TABLE cost_test_sends (key TEXT,provider TEXT,channel TEXT,receipt TEXT)'),bindings.DB.prepare('CREATE TABLE cost_test_ai_calls (sequence INTEGER PRIMARY KEY,mode TEXT,provider TEXT,model TEXT)'),bindings.DB.prepare("INSERT INTO cost_test_control VALUES ('invalid')")]);
+      await bindings.DB.batch([bindings.DB.prepare('CREATE TABLE cost_test_control (mode TEXT)'),bindings.DB.prepare('CREATE TABLE cost_test_sends (key TEXT,provider TEXT,channel TEXT,receipt TEXT)'),bindings.DB.prepare('CREATE TABLE cost_test_ai_calls (sequence INTEGER PRIMARY KEY,mode TEXT,provider TEXT,requested_model TEXT,response_model TEXT)'),bindings.DB.prepare("INSERT INTO cost_test_control VALUES ('invalid')")]);
       await testIdentity(platform).importLocalDemoOperator({id:'cost-operator',email:'costs@example.test',displayName:'Costs operator'},new Date());
       const session=await testIdentity(platform).createTestSession('cost-operator');
+      await services.audienceService.captureConsent({idempotencyKey:'synthetic-mango-50',contact:{email:platform.config.testEmailAllowlist[0]},channel:'email',brandOrLegalSender:platform.config.mailSender.displayName,messageCategory:'newsletter',destinationJurisdiction:'AU',frequencyDisclosure:'Weekly',captureMethod:'test',captureSource:'cost-test',consentText:'Receive this newsletter',consentVersion:'v1',occurredAt:new Date(),confirmationRequired:false});
       await services.storeService.recordSourceCapabilities([{sourceType:'product',available:true,detail:'Fixture product source'}]);
       await services.storeService.ingestSuccessfulCommerceBatch('cost-test',[{sourceType:'product',providerSourceId:'product-1',payload:{id:'product-1',title:'Garden linen',status:'ACTIVE'},occurredAt:new Date()}],'full',['product'],true,new Date());
       return Response.json({token:session.token});
@@ -44,7 +40,7 @@ export default { async fetch(request: Request, bindings: LocalAppBindings, conte
       await services.audienceService.captureConsent({idempotencyKey:'cost-confirmation',contact:{email:'confirm-costs@example.test'},channel:'email',brandOrLegalSender:'Mango local',messageCategory:'newsletter',destinationJurisdiction:'AU',frequencyDisclosure:'Weekly',captureMethod:'test',captureSource:'cost-test',consentText:'Receive this newsletter',consentVersion:'v1',occurredAt:new Date('2026-01-01T00:00:00Z'),confirmationRequired:true});
       return Response.json({ok:true});
     }
-    if(path==='/_costs/records') return Response.json({costs:(await bindings.DB.prepare('SELECT * FROM external_cost_facts').all()).results,sends:(await bindings.DB.prepare('SELECT * FROM cost_test_sends ORDER BY rowid').all()).results,aiCalls:(await bindings.DB.prepare('SELECT mode,provider,model FROM cost_test_ai_calls ORDER BY sequence').all()).results});
+    if(path==='/_costs/records') return Response.json({costs:(await bindings.DB.prepare('SELECT * FROM external_cost_facts').all()).results,sends:(await bindings.DB.prepare('SELECT * FROM cost_test_sends ORDER BY rowid').all()).results,aiCalls:(await bindings.DB.prepare('SELECT mode,provider,requested_model,response_model FROM cost_test_ai_calls ORDER BY sequence').all()).results});
     if(path==='/_costs/usage') {
       const now=new Date(),start=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1));
       for(const fact of [

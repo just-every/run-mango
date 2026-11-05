@@ -54,13 +54,29 @@ export const walk0 = async ({page,request}) => {
       const result=await generated.json();
       expect(result).toMatchObject({kind:'failed',error});
       const observed=await records();
-      expect(observed.aiCalls).toEqual(cases.slice(0,identities.length+1).map(item=>({mode:item.mode,provider:'openai',model:item.model})));
+      expect(observed.aiCalls).toEqual(cases.slice(0,identities.length+1).map(item=>({mode:item.mode,provider:'openai',
+        requested_model:'cost-requested',response_model:item.mode==='failed'?null:item.model})));
       const facts=observed.costs.filter((row:any)=>row.proposal_id===result.proposalId);
       expect(facts).toHaveLength(1);
       expect(facts[0].id).toBe(`ai:${result.proposalId}`);
       identities.push(rememberCost(facts[0],{campaignId:null,provider:'openai',operation:'ai-proposal-generation',modelOrChannel:model,
         billableUnits:units,unitKind:'tokens',reportedCostMicros:null,currency:null,outcome:mode==='failed'?'unknown':'reported'}));
     }
+    // A successful native generation assigns the same reported model to its new campaign's cost.
+    expect((await request.post(`${runtime.url}/_costs/mode`,{headers:control,data:{mode:'success'}})).ok()).toBe(true);
+    const generated=await api.post(`${runtime.url}/api/proposals/generate`,{headers});
+    expect(generated.status(),await generated.text()).toBe(201);
+    const proposal=await generated.json(),afterGeneration=await records();
+    expect(proposal).toMatchObject({kind:'proposed',provider:'openai',model:'cost-success',
+      cost:{billableUnits:23,reportedCostMicros:null,currency:null}});
+    expect(afterGeneration.aiCalls).toEqual([...cases.map(item=>({mode:item.mode,provider:'openai',
+      requested_model:'cost-requested',response_model:item.mode==='failed'?null:item.model})),
+      {mode:'success',provider:'openai',requested_model:'cost-requested',response_model:'cost-success'}]);
+    const generatedFacts=afterGeneration.costs.filter((row:any)=>row.proposal_id===proposal.proposalId);
+    expect(generatedFacts).toHaveLength(1);
+    expect(generatedFacts[0].id).toBe(`ai:${proposal.proposalId}`);
+    identities.push(rememberCost(generatedFacts[0],{campaignId:proposal.campaignId,provider:'openai',operation:'ai-proposal-generation',
+      modelOrChannel:'cost-success',billableUnits:23,unitKind:'tokens',reportedCostMicros:null,currency:null,outcome:'reported'}));
     const created=await api.post(`${runtime.url}/api/campaigns`,{headers,data:{}});expect(created.status()).toBe(201);
     const {campaignId,revisionId}=await created.json();
     expect((await api.patch(`${runtime.url}/api/campaign-revisions/${revisionId}`,{headers,data:{name:'Cost evidence',emailSubject:'Garden news',emailBody:'<p>Garden news</p>'}})).status()).toBe(200);
@@ -96,8 +112,8 @@ export const walk0 = async ({page,request}) => {
     expect(raw.sends).toHaveLength(3);
     expect(raw.costs.filter((row:any)=>row.operation==='confirmation-handoff')).toHaveLength(1);
     expect(raw.costs.filter((row:any)=>row.operation==='test-handoff'&&row.outcome==='accepted')).toHaveLength(2);
-    expect(raw.costs.filter((row:any)=>row.operation==='ai-proposal-generation')).toHaveLength(3);
-    expect(raw.costs.filter((row:any)=>row.operation==='ai-proposal-generation'&&row.units_known===1).map((row:any)=>row.billable_units)).toEqual([17]);
+    expect(raw.costs.filter((row:any)=>row.operation==='ai-proposal-generation')).toHaveLength(4);
+    expect(raw.costs.filter((row:any)=>row.operation==='ai-proposal-generation'&&row.units_known===1).map((row:any)=>row.billable_units)).toEqual([17,23]);
     expect(raw.costs.filter((row:any)=>row.operation==='design-draft')).toHaveLength(1);
     const response=await api.get(`${runtime.url}/api/insights`);expect(response.status()).toBe(200);
     const {costs}=await response.json();
@@ -138,7 +154,15 @@ export const walk0 = async ({page,request}) => {
       const campaignReloaded=await campaignResponse.json();
       expect(campaignReloaded.costs).toEqual(campaign.costs);
       assertCostIdentities(persisted.costs,identities.filter(row=>row.campaignId===campaignId),{byCampaign:campaignReloaded.costs,byDay:reloaded.byDay});
+      const generatedCampaign=await api.get(`${runtime.url}/api/campaigns/${proposal.campaignId}/results`);
+      expect(generatedCampaign.status()).toBe(200);
+      assertCostIdentities(persisted.costs,identities.filter(row=>row.campaignId===proposal.campaignId),
+        {byCampaign:(await generatedCampaign.json()).costs,byDay:reloaded.byDay});
     }
+    await test.info().attach('cost-identity-receipt', {contentType:'application/json',body:JSON.stringify({
+      boundaryCalls:raw.aiCalls,handoffs:raw.sends,expectedFacts:identities,projections:costs,
+      repeatedAuthenticatedReads:2,reloaded:true,
+    },null,2)});
     const fixture=await (await request.post(`${runtime.url}/_costs/usage`,{headers:control})).json();
     const report=await (await api.get(`${runtime.url}/api/insights`)).json(),usage=report.usage;
     expect(usage.totalContacts).toBe(fixture.contacts.length);
