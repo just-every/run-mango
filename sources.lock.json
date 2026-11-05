@@ -8549,6 +8549,10 @@
       "sha256": "8baa7f152a66051454ec3dde31ffeed5e7d77c578188723026325b533e2a20b0",
       "executable": false
     },
+    "tests/campaign-results/cost-ai-edge.ts": {
+      "sha256": "cf830ef7bcb66c86a4688caa495b320ab0c133b0c66e495d83fe27a2eef3c3cd",
+      "executable": false
+    },
     "tests/campaign-results/cost-base-mail-proof.ts": {
       "sha256": "7835d32107f2f46ed8aa8c3395b9dea7829e976071a7b3218aafeefa05d5bcb9",
       "executable": false
