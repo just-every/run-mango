@@ -1,0 +1,13 @@
+Exact candidate dbd058a5567d5a60f1a1b56596f8d36d0485c622
+gh run view 42128336016 --repo just-every/run-mango --job 127598280808 --log-failed: exit 0
+Build and public command checks / Check generated contract documents
+Command: node src/base/contract-docs.mjs check
+ACCEPTANCE.md: generated content differs; run contract-docs write.
+Process completed with exit code 1.
+
+gh run view 42128336016 --repo just-every/run-mango --job 127598406891 --log-failed: exit 0
+Aggregate verify / Require the selected coverage and its proof
+The required build failed at the generated-view check; downstream shards were skipped.
+Process completed with exit code 1.
+
+No failed archive download; no CI repair or rerun attempted.

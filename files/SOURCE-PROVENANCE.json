@@ -1,0 +1,16 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f54",
+  "head": "dbd058a5567d5a60f1a1b56596f8d36d0485c622",
+  "blobs": {
+    "tests/go-live/delivery-recovery.flow.ts": "67a293b09e61ebcdd3637479a6e5c0a8546f047d",
+    "tests/go-live/delivery-recovery.journeys.ts": "444a9ca9efbfed173764a98ce6fd7588cc763a33",
+    "src/core/features/lifecycle/delivery.ts": "03d8d695949f5e26aee260478db3d9185e0b79d9",
+    "src/core/features/lifecycle/provider-outages.ts": "a99c43dd850ccc36cb19593627c50404d8cc2e87",
+    "src/core/features/campaigns/result-repository.ts": "7a5245d249dadd1f454b2fbddeff1ddd73530856",
+    "src/core/features/campaigns/ui/step-results.tsx": "63f44d65d328a0bb90d2d7c2bd6f98de5d57ed2f"
+  },
+  "production_bytes_changed": false,
+  "registrations_before": 1,
+  "registrations_after": 1
+}

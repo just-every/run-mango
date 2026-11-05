@@ -1,0 +1,59 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f54",
+  "head": "dbd058a5567d5a60f1a1b56596f8d36d0485c622",
+  "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=/home/agent/rer-consolidation/work/sd-mango-c-f54 timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js delivery-recovery.journeys.ts",
+  "runner": "cloud_run child subreaper; system Chromium with --no-sandbox",
+  "exit": 0,
+  "registrations": 1,
+  "passed": 1,
+  "reported_duration": "2.1m",
+  "log": "RECOVERY.log",
+  "log_sha256": "96bc8babd7d98a0e79106616402a805fab7b90569c90645387460ee58b58dd27",
+  "source_provenance": "SOURCE-PROVENANCE.json",
+  "working_tree_clean_after": true,
+  "asserted_observations": {
+    "provider_health": {
+      "reachable": 0,
+      "code": "provider-read-http-503"
+    },
+    "outage_last_error": "provider-read-http-503",
+    "pause_detail": "provider-read-http-503",
+    "authenticated_step_state": "Paused",
+    "queued_recipients": 1,
+    "attempt_count": 0,
+    "handoff_started_at": null,
+    "marketing_handoffs": 0,
+    "same_recipient_identity_after_reads_and_reopen": true,
+    "visible_code_after_reopen": true,
+    "late_replay_skips_expired_without_handoff": true,
+    "provider_recovery_visible": true
+  },
+  "screenshots": [
+    {
+      "file": "PAUSED-1440.png",
+      "width": 1440,
+      "height": 2620,
+      "sha256": "f68f92146b8f7efbe343e9689110368a50a12535f9a76639f5584207f78bd8e9"
+    },
+    {
+      "file": "PAUSED-390.png",
+      "width": 390,
+      "height": 3819,
+      "sha256": "b6db607af34c30e79213a092be581f031c3f47e6254cb29fefb85cbfaab1db2a"
+    },
+    {
+      "file": "RECOVERED-1440.png",
+      "width": 1440,
+      "height": 2562,
+      "sha256": "15b6bd04a7956eb7192f19d73dcc6cbb60ae678edb0073e80b012dd003b5edfe"
+    }
+  ],
+  "limitations": [
+    "Network-edge provider only",
+    "1440 assertions; 390 capture",
+    "No continuous-five-minute trigger proof",
+    "No recovery audience-recheck proof",
+    "No live SMS qualification"
+  ]
+}

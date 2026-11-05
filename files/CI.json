@@ -1,0 +1,226 @@
+{
+  "id": 42128336016,
+  "name": "Verify",
+  "event": "push",
+  "conclusion": "failure",
+  "head_sha": "dbd058a5567d5a60f1a1b56596f8d36d0485c622",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42128336016",
+  "status": "completed",
+  "classification": "expected-generated-view-only",
+  "ready_exception_applies": true,
+  "failed_build_job": 127598280808,
+  "failed_aggregate_job": 127598406891,
+  "failure_command": "node src/base/contract-docs.mjs check",
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "local_candidate_check_exit": 1,
+  "local_write_then_check_exit": 0,
+  "downstream_shards": "skipped after generated-view failure",
+  "jobs": [
+    {
+      "conclusion": "success",
+      "id": 127598205864,
+      "name": "plan",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check reusable workflow permissions",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Look up complete nightly marker",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run node scripts/ci/mango-plan.mjs",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "id": 127598280808,
+      "name": "Build and public command checks",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Set runner-owned browser cache",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Check generated contract documents",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Check edition source lock freshness",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run npm install --global pnpm@10.12.4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Set runner-owned pnpm store",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Prepare runner-owned browser and apt caches",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Cache frozen dependencies and Chromium",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Install frozen dependencies and reserve native runtime disk",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run pnpm run deps",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Install and probe Chromium before system dependencies",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Build and check the public command once",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Share the verified production build",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127598282446,
+      "name": "light",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "failure",
+      "id": 127598406891,
+      "name": "verify",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Require the selected coverage and its proof",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127598408460,
+      "name": "nightly-proof",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127598408854,
+      "name": "shards (${{ matrix.name }})",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127598409125,
+      "name": "full-push-proof",
+      "status": "completed",
+      "steps": []
+    }
+  ],
+  "github_calls": 6,
+  "call_breakdown": {
+    "main_discovery": 1,
+    "candidate_discovery": 1,
+    "candidate_status_poll": 1,
+    "completed_run_jobs": 1,
+    "failed_job_archives": 2
+  },
+  "status_poll_times_utc": [
+    "2026-11-05T23:16:23Z",
+    "2026-11-05T23:21:24Z"
+  ],
+  "reruns_or_dispatches": 0,
+  "publication_scan": "Not run in cloud; required from Mac lander"
+}

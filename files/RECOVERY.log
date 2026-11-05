@@ -1,0 +1,30 @@
+
+Running 1 test using 1 worker
+
+(node:3804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+SEND005 initial installation phase=50312ms total=50312ms
+SEND005 outage probe started phase=110ms total=50422ms
+SEND005 barrier wait phase=193ms total=50615ms
+SEND005 before restart 1 phase=303ms total=50919ms
+SEND005 close 1 phase=125ms total=51044ms
+SEND005 installation 2 phase=18468ms total=69512ms
+SEND005 before restart 2 phase=446ms total=69959ms
+SEND005 close 2 phase=117ms total=70076ms
+SEND005 installation 3 phase=17902ms total=87978ms
+SEND005 dispatch queued phase=1063ms total=89041ms
+SEND005 dispatch wait phase=52ms total=89093ms
+SEND005 browser clock installed phase=181ms total=89274ms
+SEND005 deadline campaign and browser ready phase=6351ms total=95625ms
+SEND005 late replay queued phase=111ms total=95736ms
+SEND005 late replay wait phase=21ms total=95757ms
+SEND005 expired browser clock advanced phase=8ms total=95765ms
+SEND005 expired browser settled phase=102ms total=95867ms
+SEND005 recovery probe complete phase=80ms total=95947ms
+SEND005 recovery wait phase=13ms total=95961ms
+SEND005 recovery browser clock advanced phase=4ms total=95965ms
+SEND005 recovered browser settled phase=124ms total=96089ms
+SEND005 all assertions complete phase=195ms total=96285ms
+  ✓  1 tests/go-live/delivery-recovery.journeys.ts:3:1 › [SEND-004][SEND-005][SEND-009] recover refused handoffs and provider outages without duplicating uncertain sends (2.1m)
+
+  1 passed (2.1m)

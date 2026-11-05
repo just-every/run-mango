@@ -1,0 +1,11 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f54",
+  "head": "dbd058a5567d5a60f1a1b56596f8d36d0485c622",
+  "guard": "cloud-push.py",
+  "attempt": 1,
+  "status": "PUSH_OK",
+  "history_rewritten": false,
+  "main_pushed": false,
+  "author_and_committer_check": "All origin/main..HEAD candidates checked; fleet identities; no trailers"
+}
