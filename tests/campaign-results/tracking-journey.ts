@@ -148,6 +148,18 @@ export async function trackingJourney(page: Page, info: TestInfo, prepared: Awai
       expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
       await page.screenshot({path: info.outputPath(`tracking-${width}.png`), fullPage: true});
       await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
+      const observed = page.locator('section[aria-labelledby="commerce-results-title"]');
+      const recordedClicks = await site.rows('SELECT * FROM link_click_facts ORDER BY id');
+      await expect(observed.locator('p').first()).toHaveText('1 observed clicks · 1 automated requests retained and excluded.');
+      await openPage(page, site.runtime.url + '/app/insights');
+      await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
+      await expect(observed.locator('p').first()).toHaveText('1 observed clicks · 1 automated requests retained and excluded.');
+      expect((await result()).engagement).toEqual(before.engagement);
+      expect(await site.rows('SELECT * FROM link_click_facts ORDER BY id')).toEqual(recordedClicks);
+      await observed.screenshot({path: info.outputPath('observed-clicks-1440.png')});
+      await page.setViewportSize({width: 390, height: 1000});
+      await observed.screenshot({path: info.outputPath('observed-clicks-390.png')});
+      await page.setViewportSize({width, height: 1000});
       const clickMap = page.frameLocator('iframe[title="Campaign click map"]');
       await expect(clickMap.locator('mark')).toHaveText(['[1 clicks · 1 people]', ...contactLinks.map(() => '[0 clicks · 0 people]')]);
       await page.locator('iframe[title="Campaign click map"]').scrollIntoViewIfNeeded();

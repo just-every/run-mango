@@ -8598,7 +8598,7 @@
       "executable": false
     },
     "tests/campaign-results/performance-fixture.ts": {
-      "sha256": "ee0a247f57c0a8d3d730ca0dcae6681358e2f92f11ca6557a70e9fd23ec5cdd5",
+      "sha256": "783fe8799501ac9ace8c25943ef2d4544f02d0b532b4c9d55ac1c32383b76000",
       "executable": false
     },
     "tests/campaign-results/performance.flow.ts": {
@@ -8654,7 +8654,7 @@
       "executable": false
     },
     "tests/campaign-results/tracking-journey.ts": {
-      "sha256": "50cf9a184c6eb03ea8c3607d598fee940f5c0b60b53eec7104d848858c9126cf",
+      "sha256": "a41615d0cf7175e8d1aaba78a73a5309d5c1c95347a00fa3938ad007aef35043",
       "executable": false
     },
     "tests/campaign-results/worker.ts": {

@@ -116,6 +116,15 @@ export async function attributionJourney(input: {
   const csv = parseCsv(await (await site.call('/api/insights/campaign-performance?format=csv', {cookie})).text());
   expect(csv.find(row => row['campaign id'] === latest.campaignId)).toMatchObject({'attributed conversions': '4', 'net attributed revenue by currency': 'JPY 1000; USD 80.00'});
   expect(csv.find(row => row['campaign id'] === campaign.campaignId)).toMatchObject({'human clicks': '1', 'unique clicked recipient-steps': '1', 'attributed conversions': '1'});
+  const recordedFacts = () => Promise.all([
+    site.rows('SELECT * FROM link_click_facts ORDER BY id'),
+    site.rows('SELECT * FROM source_records ORDER BY id'),
+    site.rows('SELECT * FROM attribution_facts ORDER BY id'),
+  ]);
+  const factsBeforeReading = await recordedFacts();
+  const resultsBeforeReading = await result(latest.campaignId);
+  expect(resultsBeforeReading.engagement).toMatchObject({observedClicks: 1, automatedRequestsRetainedButExcluded: 0});
+  expect(resultsBeforeReading.attribution).toMatchObject({conversions: 4, status: 'observed-store-events'});
   await openPage(page, site.runtime.url + '/app/insights');
   const row = page.getByRole('table', {name: 'Campaign performance', exact: true}).locator('tbody tr').filter({hasText: 'Latest garden letter'});
   for (const width of [1440]) {
@@ -130,8 +139,16 @@ export async function attributionJourney(input: {
   await row.getByRole('link', {name: 'Latest garden letter', exact: true}).click();
   await page.getByRole('link', {name: 'View schedule and results', exact: true}).click();
   const panel = page.locator('section').filter({has: page.getByRole('heading', {name: 'Clicks and attributed conversions', exact: true})});
+  const observedResults = async () => {
+    await expect(panel.locator('p').first()).toHaveText('1 observed clicks · 0 automated requests retained and excluded.');
+    await expect(panel).toContainText('These are observed events, separate from forecasts.');
+    const conversions = panel.getByRole('table', {name: 'Attributed conversions by currency', exact: true});
+    await expect(conversions.locator('tbody th')).toHaveText(['JPY', 'USD']);
+    await expect(conversions.locator('[data-label="Conversions"]')).toHaveText(['1', '3']);
+  };
   for (const width of [1440]) {
     await page.setViewportSize({width, height: 1000});
+    await observedResults();
     await expect(panel.locator('p').filter({hasText: 'Current report policy'})).toContainText('Placed Order · Email 7 days · SMS 7 days · click windows');
     await expect(panel).toContainText('These are observed events, separate from forecasts.');
     await expect(panel).toContainText('Attribution assigns recorded results and does not measure incremental lift.');
@@ -146,5 +163,13 @@ export async function attributionJourney(input: {
     // here and the complete Insights page above, without disabling any axe rules.
     expect((await new AxeBuilder({page}).include('section[aria-labelledby="commerce-results-title"]').analyze()).violations).toEqual([]);
     await page.screenshot({path: info.outputPath(`attribution-events-${width}.png`), fullPage: true});
+    await page.setViewportSize({width: 390, height: 1000});
+    await panel.screenshot({path: info.outputPath('observed-conversions-390.png')});
+    await page.setViewportSize({width, height: 1000});
+    await openPage(page, site.runtime.url + '/app/insights');
+    await openPage(page, `${site.runtime.url}/app/campaigns/${latest.campaignId}/scheduled`);
+    await observedResults();
   }
+  expect(await result(latest.campaignId)).toEqual(resultsBeforeReading);
+  expect(await recordedFacts()).toEqual(factsBeforeReading);
 }
