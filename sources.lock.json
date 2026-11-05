@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "43e724aecc60b76196a8cd1dbff1a53b3db5cbba6159f4e539bef13631153cef",
+      "sha256": "88ce95a16d0cb0a0300342e126e31a03f0ebc1311d322eb52fa9417548c5fca3",
       "executable": false
     },
     "DEMO.md": {
@@ -8354,7 +8354,7 @@
       "executable": false
     },
     "tests/audience-controls/segment-journey.ts": {
-      "sha256": "9984ab62c66e56ac9c6230eebd2e93bcb3d69580f760b542ad78ffa50e5cc8cf",
+      "sha256": "81013128ae11aa2377cf60a81f554b7356cc393482f04047818ab9af7f0b5cf4",
       "executable": false
     },
     "tests/audience-controls/segments.flow.ts": {
@@ -8362,7 +8362,7 @@
       "executable": false
     },
     "tests/audience-controls/segments.spec.ts": {
-      "sha256": "7685051053c30f587058092e06e4ee4252603a43bf07ec0d790d31c37adba810",
+      "sha256": "eaf91d6b2cd2942885ebb510d40b5b67a02e3f3f6aab80f3ae5a7cc08d9700f0",
       "executable": false
     },
     "tests/audience-import/config.js": {
