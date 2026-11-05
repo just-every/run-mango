@@ -8945,8 +8945,12 @@
       "sha256": "e882e1bef4fa03f9d03a77751012562a64e6dfbc3761cdc984652948b3fad704",
       "executable": false
     },
+    "tests/go-live/multistep-commerce-edge.ts": {
+      "sha256": "83505ec5ee949ad51bbc5b50204fbff4888328aa4293f5cae45314f08fd6e4f9",
+      "executable": false
+    },
     "tests/go-live/multistep.flow.ts": {
-      "sha256": "426fd90d8d6069d3fcf598eb0cd124d46eac66967ad82e034ad3a31bb0bb66ac",
+      "sha256": "6b146f2659a3cf150b2f48b06c2fbfd3da0e2d992b411bd4464d189d56450e93",
       "executable": false
     },
     "tests/go-live/multistep.journeys.ts": {
