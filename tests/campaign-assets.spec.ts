@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { createHash, randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
-import { contract } from './contract';
 import { portabilityRuntime } from './portability/runtime.mjs';
+import { durableRows } from './portability/flows';
 import { png, pngHeaderOnly } from './support/images';
 import { createDatabase } from '../src/core/platform/db/client';
 import { createBlobStore } from '../src/core/platform/blobs';
@@ -26,7 +26,7 @@ function upload(bytes: Uint8Array, contentType: string, { cookie = runtime.cooki
 }
 const assetCount = async () => (await runtime.db.prepare('SELECT count(*) AS n FROM campaign_assets').first()).n as number;
 
-contract('CAMP-012', 'an uploaded image is stored once by content hash and served publicly, immutable and cookie-free', async () => {
+test('[CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free', async ({ page }) => {
   const image = png(4, 3), hash = sha(image), before = await assetCount();
   const first = await upload(image, 'image/png');
   expect(first.status).toBe(201);
@@ -44,6 +44,7 @@ contract('CAMP-012', 'an uploaded image is stored once by content hash and serve
   expect(served.headers.get('x-content-type-options')).toBe('nosniff');
   expect(served.headers.get('cache-control')).toContain('immutable');
   expect(served.headers.get('set-cookie')).toBeNull();
+  expect(served.headers.get('content-security-policy')).toBe("default-src 'none'; sandbox");
   const head = await fetch(asset.url, { method: 'HEAD' });
   expect(head.status).toBe(200);
   expect(head.headers.get('content-type')).toBe('image/png');
@@ -58,12 +59,61 @@ contract('CAMP-012', 'an uploaded image is stored once by content hash and serve
 
   expect((await fetch(`${runtime.origin}/media/${sha(randomBytes(16))}`)).status).toBe(404);
   expect((await fetch(`${runtime.origin}/media/${hash.toUpperCase()}`)).status).toBe(404);
+  // Complete files encoded independently with Pillow, with deliberately misleading part types.
+  // Expected dimensions describe the source raster, independent of Mango's header reader.
+  for (const fixture of [
+    { name: 'synthetic-mango-1.jpg', contentType: 'image/jpeg', declaredType: 'image/png', width: 7, height: 5 },
+    { name: 'synthetic-mango-2.gif', contentType: 'image/gif', declaredType: 'text/html', width: 9, height: 6 },
+    { name: 'synthetic-mango-3.webp', contentType: 'image/webp', declaredType: 'application/octet-stream', width: 11, height: 7 },
+  ]) {
+    const bytes = new Uint8Array(readFileSync(new URL(`./support/campaign-asset-images/${fixture.name}`, import.meta.url)));
+    const digest = sha(bytes), count = await assetCount();
+    const response = await upload(bytes, fixture.declaredType);
+    expect(response.status).toBe(201);
+    const stored = (await response.json()).asset;
+    const expected = { sha256: digest, contentType: fixture.contentType, bytes: bytes.byteLength, width: fixture.width, height: fixture.height };
+    expect(stored).toMatchObject({ ...expected, url: `${runtime.origin}/media/${digest}` });
+    expect(await runtime.db.prepare('SELECT sha256,content_type AS contentType,bytes,width,height FROM campaign_assets WHERE id=?').bind(stored.id).first()).toEqual(expected);
+    const object = await runtime.bucket.get(`campaign-assets/${digest}`);
+    expect(object!.httpMetadata!.contentType).toBe(fixture.contentType);
+    expect(new Uint8Array(await object!.arrayBuffer())).toEqual(bytes);
+    expect(await assetCount()).toBe(count + 1);
+    const publicImage = await fetch(stored.url);
+    expect(publicImage.status).toBe(200);
+    expect(publicImage.headers.get('content-type')).toBe(fixture.contentType);
+    expect(publicImage.headers.get('content-length')).toBe(String(bytes.byteLength));
+    expect(new Uint8Array(await publicImage.arrayBuffer())).toEqual(bytes);
+    // Chromium must decode the bytes actually served by the public image door.
+    await page.goto(stored.url);
+    await expect.poll(() => page.locator('img').evaluate(image => ({ width: (image as HTMLImageElement).naturalWidth, height: (image as HTMLImageElement).naturalHeight })))
+      .toEqual({ width: fixture.width, height: fixture.height });
+    const repeated = await upload(bytes, fixture.declaredType);
+    expect(repeated.status).toBe(200);
+    expect((await repeated.json()).asset).toEqual(stored);
+    expect(await assetCount()).toBe(count + 1);
+    await expect(runtime.db.prepare('UPDATE campaign_assets SET width=width+1 WHERE sha256=?').bind(digest).run()).rejects.toThrow(/CAMPAIGN_ASSET_IMMUTABLE/);
+  }
+
+  // Fetching an ordinary image writes only its shared allowance, never an open or requester fact.
+  const productRows = async () => JSON.parse(await durableRows(runtime.db)).filter((table: { name: string }) => table.name !== 'oa_limits');
+  const prior = await productRows();
+  for (const method of ['GET', 'HEAD']) {
+    const response = await fetch(asset.url, { method, headers: {
+      'CF-Connecting-IP': '192.0.2.156', 'X-Forwarded-For': '192.0.2.157',
+      'User-Agent': 'synthetic-mango-156-requester', Cookie: 'synthetic-mango-156=private-request',
+    } });
+    expect(response.status).toBe(200);
+    expect(response.headers.get('set-cookie')).toBeNull();
+    await response.arrayBuffer();
+  }
+  expect(await productRows()).toEqual(prior);
+
   // Bytes under an approved letter can never change: the record refuses edits and deletion.
   await expect(runtime.db.prepare("UPDATE campaign_assets SET content_type='image/gif' WHERE sha256=?").bind(hash).run()).rejects.toThrow(/CAMPAIGN_ASSET_IMMUTABLE/);
   await expect(runtime.db.prepare('DELETE FROM campaign_assets WHERE sha256=?').bind(hash).run()).rejects.toThrow(/CAMPAIGN_ASSET_IMMUTABLE/);
 });
 
-contract('CAMP-012', 'uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing', async () => {
+test('[CAMP-012] uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing', async () => {
   const before = await assetCount(), objects = (await runtime.bucket.list()).objects.length;
   const image = png(2, 2, 7);
   expect((await upload(image, 'image/png', { cookie: null })).status).toBe(401);
@@ -84,7 +134,7 @@ contract('CAMP-012', 'uploads without a session, from another origin, of the wro
   expect((await runtime.bucket.list()).objects.length).toBe(objects);
 });
 
-contract('CAMP-012', 'an image past its per-minute allowance answers 429 without affecting other images', async () => {
+test('[CAMP-012] an image past its per-minute allowance answers 429 without affecting other images', async () => {
   const spent = png(3, 3, 1), other = png(3, 3, 2);
   const [a, b] = [await (await upload(spent, 'image/png')).json(), await (await upload(other, 'image/png')).json()];
   // Keep the seeded counter and the request inside one database-clock minute.
@@ -95,7 +145,7 @@ contract('CAMP-012', 'an image past its per-minute allowance answers 429 without
   expect((await fetch(b.asset.url)).status).toBe(200);
 });
 
-contract('CAMP-012', 'approval verifies this deployment\'s own images in storage, never through a network inspection', async () => {
+test('[CAMP-012] approval verifies this deployment\'s own images in storage, never through a network inspection', async () => {
   const image = png(6, 4, 3), { asset } = await (await upload(image, 'image/png')).json();
   const publicBaseUrl = new URL('https://mango.example.test');
   const now = new Date();
