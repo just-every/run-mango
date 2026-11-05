@@ -8,10 +8,10 @@ The primary journey: Connect the business’s sources and sender, grow a consent
 
 | Tier | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Core | 15 | 203 | 89 | 307 |
+| Core | 16 | 202 | 89 | 307 |
 | Agent surface | 0 | 0 | 9 | 9 |
 | Later | 0 | 0 | 0 | 0 |
-| Full target | 15 | 203 | 98 | 316 |
+| Full target | 16 | 202 | 98 | 316 |
 
 Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. Field proof register: 13 rows; 0 passed, 0 failed, 13 not run.
 
@@ -4470,7 +4470,7 @@ Core · target · **missing** · Rules D-2
 
 #### PUB-005 — Paid signup page and payer consent
 
-Core · target · **partial** · Rules D-2
+Core · target · **done** · Rules D-2
 
 **Requirement.** A hosted paid signup leads from a saved tier to provider checkout and tells the reader what happens next.
 
@@ -4480,8 +4480,8 @@ Core · target · **partial** · Rules D-2
 3. Checkout returns the reader to a Mango explanation of the next step.
 4. Opening checkout records permission timestamp, source and wording version; only one confirmation per payer address per checkout session is authorized.
 
-**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”
-**Gap.** Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. Missing public-door journey: “Paid signup page and payer consent — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”, via `tests/go-live/paid-tier-journey.ts` — `paidTierJourney`: absent-tier and non-Owner refusals leave the saved tier unchanged, public selectors offer only its price, and checkout-body overrides reach no Stripe request; `tests/go-live/paid-signup-journey.ts` — `paidSignupJourney`: Owner replacement invalidates old disclosure and fresh information and Checkout use the replacement, exact recurring price, tax notice and consent wording precede checkout, consent starts unchecked with no Mango card fields, provider return explains the next step, timestamp, source and wording version are recorded with one confirmation despite replay. Stripe and mail are network-edge fixtures.
+**Gap.** None.
 
 #### PUB-006 — Paid-reader consent and restrictions
 
