@@ -8914,7 +8914,7 @@
       "executable": false
     },
     "tests/go-live/multistep.journeys.ts": {
-      "sha256": "158e0b9326eb3cb48b50ab724618d656c11b39aab21b8593d1f642ea73da3f17",
+      "sha256": "d1f15a0e5de18aaba126a4bb3891758c96cb1363baccedf89a51092135f9bab2",
       "executable": false
     },
     "tests/go-live/open-estimates-restore.ts": {
@@ -8946,7 +8946,7 @@
       "executable": false
     },
     "tests/go-live/pause.flow.ts": {
-      "sha256": "4655bcfdc2805fb0101fc9a0ef08b960081d3ea192d1b0a0deaa5bf02c16e109",
+      "sha256": "44b305d75fa3fd79c1fe6b0470e742dddaa88aeaa999d76127d979d621c1dbe9",
       "executable": false
     },
     "tests/go-live/personalisation.journeys.ts": {

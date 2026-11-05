@@ -9,3 +9,8 @@ test("[AUD-006][CAMP-014] an approved multistep campaign can pause, recheck curr
   if(page.isClosed()) page=await page.context().newPage();
   await section1({page} as any, info);
 });
+
+test("[CAMP-014] scheduled and mid-dispatch pause retains handoffs and resumes with current consent and deadlines at 390", async ({page}, info) => {
+  test.setTimeout(900000);
+  await section1({page} as any, info, 390);
+});

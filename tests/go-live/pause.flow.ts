@@ -1,5 +1,4 @@
-const width = 1440;
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { providerEdge } from './edge';
 import { eventSigner } from './sendgrid-events';
 import { installation, json, sender, confirmedContact, draftCampaign, approve } from './harness';
@@ -8,7 +7,7 @@ import { openPage, reloadPage } from '../support/navigation';
 
 
 
-export const walk0 = async ({page}, info) => {
+export const walk0 = async ({page}, info, width = 1440) => {
   const edge = await providerEdge(), signer = eventSigner(), site = await installation(edge, signer);
   const marketing = () => edge.sends.filter(send => send.body.headers?.['List-Unsubscribe']);
   try {
@@ -32,15 +31,25 @@ export const walk0 = async ({page}, info) => {
     await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await page.getByRole('button',{name:'Pause campaign',exact:true}).click();
     await expect(page.getByRole('button',{name:'Resume campaign',exact:true})).toBeVisible();
+    await site.control('/_golive/clock',{advanceMs:3600001});
+    await site.control('/_golive/cron');
+    expect(marketing()).toHaveLength(0);
+    expect((await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200)).campaign.state).toBe('paused');
+    expect(await site.rows(`SELECT transport_disposition,attempt_count FROM recipient_steps WHERE campaign_id='${campaign.campaignId}'`)).toEqual(
+      Array.from({length:6},()=>({transport_disposition:'queued',attempt_count:0})),
+    );
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     await page.screenshot({path:info.outputPath(`scheduled-pause-${width}.png`),fullPage:true});
     await page.getByRole('button',{name:'Resume campaign',exact:true}).click();
     await expect(page.getByRole('button',{name:'Pause campaign',exact:true})).toBeVisible();
     const recipients = await site.rows(`SELECT r.id,r.destination FROM recipient_steps r JOIN campaign_steps s ON s.id=r.step_id WHERE r.revision_id='${campaign.revisionId}' AND s.sequence=1 ORDER BY r.created_at,r.rowid`);
     await site.control('/_golive/barrier',{action:'arm',point:'handoff',identity:recipients[1].id});
-    await site.control('/_golive/clock',{advanceMs:3600001});
     await site.control('/_golive/cron');
     await expect.poll(async () => (await site.control('/_golive/barrier',{action:'status'}))?.waiting,{timeout:60000}).toBe(true);
     expect(marketing()).toHaveLength(1);
+    const accepted = () => site.rows(`SELECT id,transport_disposition,provider_message_id,attempt_count,handoff_started_at FROM recipient_steps WHERE campaign_id='${campaign.campaignId}' AND transport_disposition='accepted' ORDER BY id`);
+    const handedOff = await accepted();
+    expect(handedOff).toEqual([expect.objectContaining({id:recipients[0].id,transport_disposition:'accepted',provider_message_id:expect.any(String),attempt_count:1,handoff_started_at:expect.any(Number)})]);
     await reloadPage(page);
     await page.getByRole('button',{name:'Pause campaign',exact:true}).click();
     await expect(page.getByRole('heading',{name:'Sending paused by an operator'})).toBeVisible();
@@ -51,6 +60,7 @@ export const walk0 = async ({page}, info) => {
     await site.control('/_golive/clock',{advanceMs:31000});
     await site.control('/_golive/cron');
     expect(marketing()).toHaveLength(before);
+    expect(await accepted()).toEqual(handedOff);
     const optedOut = recipients[2].destination;
     const [contact] = await site.rows(`SELECT id FROM contacts WHERE email='${optedOut}'`);
     const unsubscribe = await site.control('/_golive/unsubscribe-link',{contactId:contact.id});
@@ -78,6 +88,14 @@ export const walk0 = async ({page}, info) => {
     const sent = marketing().map(send => send.to);
     expect(sent.filter(email => email===optedOut)).toHaveLength(0);
     for(const email of emails.filter(email=>email!==optedOut)) expect(sent.filter(value=>value===email)).toHaveLength(2);
+    expect(await site.rows(`SELECT r.destination,s.sequence,r.transport_disposition,r.skip_reason,r.attempt_count FROM recipient_steps r JOIN campaign_steps s ON s.id=r.step_id WHERE r.campaign_id='${campaign.campaignId}' ORDER BY r.destination,s.sequence`)).toEqual(
+      [...emails].sort().flatMap(destination=>[1,2].map(sequence=>({destination,sequence,
+        transport_disposition:destination===optedOut?'skipped':'accepted',
+        skip_reason:destination===optedOut?'channel-not-subscribed':null,attempt_count:destination===optedOut?0:1}))),
+    );
+    expect((await accepted()).find(row=>row.id===handedOff[0].id)).toEqual(handedOff[0]);
+    await site.control('/_golive/cron');
+    expect(marketing()).toHaveLength(4);
     expect(await site.rows(`SELECT actor_id,action FROM lifecycle_audit_entries WHERE entity_id='${campaign.campaignId}' AND action IN ('paused','resumed') ORDER BY occurred_at,rowid`)).toEqual([
       {actor_id:'go-live-owner',action:'paused'},{actor_id:'go-live-owner',action:'resumed'},
       {actor_id:'go-live-owner',action:'paused'},{actor_id:'go-live-owner',action:'resumed'},
@@ -91,11 +109,18 @@ export const walk0 = async ({page}, info) => {
     const now = (await site.control('/_golive/clock')).now;
     const expired = await draftCampaign(site,cookie,'Window closes during pause',['expiry@example.test'],new Date(now+3600000));
     await approve(site,cookie,expired);
-    await json(await site.call(`/api/campaigns/${expired.campaignId}/pause`,{method:'POST',cookie}),200);
+    await openPage(page,`${site.runtime.url}/app/campaigns/${expired.campaignId}/scheduled`);
+    await page.getByRole('button',{name:'Pause campaign',exact:true}).click();
+    await expect(page.getByRole('button',{name:'Resume campaign',exact:true})).toBeVisible();
     await site.control('/_golive/clock',{advanceMs:4*3600000});
-    await json(await site.call(`/api/campaigns/${expired.campaignId}/resume`,{method:'POST',cookie}),200);
+    await page.getByRole('button',{name:'Resume campaign',exact:true}).click();
     await site.control('/_golive/cron');
-    expect(await site.rows(`SELECT transport_disposition,skip_reason FROM recipient_steps WHERE campaign_id='${expired.campaignId}'`)).toEqual([{transport_disposition:'skipped',skip_reason:'send-window-expired'}]);
+    expect(await site.rows(`SELECT transport_disposition,skip_reason,attempt_count FROM recipient_steps WHERE campaign_id='${expired.campaignId}'`)).toEqual([{transport_disposition:'skipped',skip_reason:'send-window-expired',attempt_count:0}]);
+    await reloadPage(page);
+    await expect(page.locator('[data-skip-reason="send-window-expired"] dd')).toHaveText('1');
+    expect(await site.rows(`SELECT actor_id,action FROM lifecycle_audit_entries WHERE entity_id='${expired.campaignId}' AND action IN ('paused','resumed') ORDER BY occurred_at,rowid`)).toEqual([
+      {actor_id:'go-live-owner',action:'paused'},{actor_id:'go-live-owner',action:'resumed'},
+    ]);
     expect(marketing()).toHaveLength(4);
     expect(edge.unexpected).toEqual([]);
   } catch (error) {
