@@ -1,0 +1,13 @@
+
+Running 1 test using 1 worker
+
+(node:7508) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-018 acceptance-1: duplicate native saved campaigns in all eight states -> independent drafts named Copy of the source, original state retained.
+PROBE CAMP-018 acceptance-2: native save, duplicate, duplicate again and repeated detail and review reads -> exact chosen email fields, canonical body and derived text, ordered unscheduled email settings, three independent drafts and unchanged source; zero approvals, recipients or jobs; mixed-channel copy also retains exact SMS body, sender and channel settings without a transport.
+PROBE CAMP-018 acceptance-3: duplicate a completed source with real native approval, snapshot, test and accepted marketing results -> fresh draft with none of that authority, history or schedule; populated source records retained.
+PROBE CAMP-018 acceptance-4: changed sender refuses copy approval without authority; after a fresh preview, native opt-out and new confirmation change exact approved recipients from the source pair to the current pair; editing, approval and replay leave source approved bytes, receipt, snapshot, tests and populated results unchanged.
+PROBE CAMP-018 erased-source boundary: native contact erasure invalidates the source; duplication refuses source_revision_unavailable and creates no draft. Any-state wording remains partial at this conservative privacy boundary.
+  ✓  1 tests/campaign-authoring/duplicate-settings.spec.ts:8:1 › [CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval (1.3m)
+
+  1 passed (1.4m)

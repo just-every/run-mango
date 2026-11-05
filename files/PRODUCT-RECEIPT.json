@@ -1,0 +1,204 @@
+{
+  "base_pin_changed": false,
+  "branch": "cloud/sd-mango-c-f52",
+  "browser_test_registrations": {
+    "after": 83,
+    "before": 82,
+    "configs": {
+      "campaign-results": 2,
+      "go-live": 22,
+      "local-start": 7,
+      "main": 49,
+      "move-in": 2,
+      "newsletter-ui": 1
+    }
+  },
+  "candidate_generated_view_check": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1,
+    "expected": true,
+    "reason": "Generated views deliberately retained from main; lander regenerates them."
+  },
+  "candidate_identity_audit": {
+    "all_side_parents_included": true,
+    "authors_and_committers": "fleet identity",
+    "trailers": []
+  },
+  "checks": [
+    {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium cloud_run timeout 1200 pnpm exec playwright test --config playwright.config.js tests/campaign-authoring/duplicate-settings.spec.ts --workers=1 --reporter=list",
+      "exit": 0,
+      "head": "4790a516fe4a502bc324d4586fa7aea7dd879d88",
+      "result": "1 passed; 1.4 minutes"
+    },
+    {
+      "binding": "final TypeScript and test bytes unchanged at candidate commit",
+      "command": "cloud_run pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "head": "4790a516fe4a502bc324d4586fa7aea7dd879d88"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write && node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "generated_views_restored": true
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock && node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "head": "4790a516fe4a502bc324d4586fa7aea7dd879d88"
+    },
+    {
+      "command": "migration-ledger check",
+      "exit": 0,
+      "result": "not applicable; no migration changed"
+    }
+  ],
+  "ci_disposition": "permitted generated-view-only failure; build stops at contract docs, final verify aggregates it; no production test failure observed",
+  "ci_final": {
+    "conclusion": "failure",
+    "head_sha": "4790a516fe4a502bc324d4586fa7aea7dd879d88",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42123095229",
+    "status": "completed"
+  },
+  "ci_jobs": [
+    {
+      "conclusion": "success",
+      "failed_steps": [],
+      "id": 127580236063,
+      "name": "plan",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Check generated contract documents",
+          "number": 5
+        }
+      ],
+      "id": 127580313130,
+      "name": "Build and public command checks",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failed_steps": [],
+      "id": 127580314874,
+      "name": "light",
+      "status": "completed"
+    },
+    {
+      "conclusion": "failure",
+      "failed_steps": [
+        {
+          "name": "Require the selected coverage and its proof",
+          "number": 2
+        }
+      ],
+      "id": 127580434414,
+      "name": "verify",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failed_steps": [],
+      "id": 127580435558,
+      "name": "shards (${{ matrix.name }})",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failed_steps": [],
+      "id": 127580436685,
+      "name": "full-push-proof",
+      "status": "completed"
+    },
+    {
+      "conclusion": "skipped",
+      "failed_steps": [],
+      "id": 127580436838,
+      "name": "nightly-proof",
+      "status": "completed"
+    }
+  ],
+  "ci_runs": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_sha": "4790a516fe4a502bc324d4586fa7aea7dd879d88",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42123095229",
+      "id": 42123095229,
+      "name": "Verify",
+      "status": "in_progress"
+    }
+  ],
+  "clause": {
+    "after": "partial",
+    "before": "partial",
+    "id": "CAMP-018",
+    "remaining_native_boundary": "erasure-invalidated source refuses duplication; broad any-state wording unchanged"
+  },
+  "contract_status_table_rows": {
+    "candidate": 490,
+    "dropped_ids": [],
+    "parent": 490
+  },
+  "counts_after": {
+    "done": 18,
+    "missing": 98,
+    "partial": 200
+  },
+  "counts_before": {
+    "done": 18,
+    "missing": 98,
+    "partial": 200
+  },
+  "failed_job_log_reads": [
+    {
+      "bytes": 1457,
+      "command": "gh run view 42123095229 --repo just-every/run-mango --job 127580313130 --log-failed",
+      "exit": 0,
+      "job": 127580313130
+    },
+    {
+      "bytes": 2937,
+      "command": "gh run view 42123095229 --repo just-every/run-mango --job 127580434414 --log-failed",
+      "exit": 0,
+      "job": 127580434414
+    }
+  ],
+  "generated_views_committed": false,
+  "github_calls": 9,
+  "head": "4790a516fe4a502bc324d4586fa7aea7dd879d88",
+  "integration": "fetch origin main followed by merge origin/main; already up to date",
+  "main_at_integration": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "predecessor_reapplied": "63f9e61bb849a5c1ee62858ef241479f4caa7ab8",
+  "product_push": {
+    "attempts": 1,
+    "remote_head_verified": "4790a516fe4a502bc324d4586fa7aea7dd879d88",
+    "status": "pushed"
+  },
+  "production_behavior_changed": false,
+  "proof_blobs": {
+    "CONTRACT.md": "80faa647e959cdae836e7860e8011be49e575e40",
+    "scripts/verification/plan.mjs": "1d68025ff2f41d78224d64a6764ae5e913ef5420",
+    "sources.lock.json": "0cdee7aa34fe7d25808131d6127a09efb0a8ff94",
+    "tests/campaign-authoring/duplicate-authority-journey.ts": "02f2feb645f3aa70e87bfee0ffc7d3c3b79c84f5",
+    "tests/campaign-authoring/duplicate-settings.spec.ts": "6cd3828bff56e465d33ba942eefa1c4015827a75"
+  },
+  "publication_scan": {
+    "cloud_scan_claimed": false,
+    "status": "fleet lander required"
+  },
+  "published_save": "8206de69c751acae8d6431dddbe7bd932c43e7cc",
+  "repository": "just-every/run-mango",
+  "run_site": {
+    "status": "fleet landing required"
+  },
+  "tag": "sd-mango-c-f52",
+  "workflow_changed": false
+}

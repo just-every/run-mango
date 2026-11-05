@@ -1,0 +1,11 @@
+Build and public command checks	Check generated contract documents	﻿2026-11-05T22:38:07.5874585Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.5875132Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.5892960Z shell: /usr/bin/bash -e {0}
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.5893331Z env:
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.5893771Z   CI: true
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.5894108Z   WRANGLER_SEND_METRICS: false
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.5894504Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.5894937Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.5895511Z ##[endgroup]
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.7477746Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-05T22:38:07.7550750Z ##[error]Process completed with exit code 1.
