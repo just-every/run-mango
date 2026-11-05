@@ -1,0 +1,16 @@
+GitHub failed-step log; printed environment block omitted.
+verify	Require the selected coverage and its proof	﻿2026-11-05T23:20:35.4858713Z ##[group]Run set -euo pipefail
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4859391Z [36;1mset -euo pipefail[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4859970Z [36;1mtest "$PLAN" = success[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4860708Z [36;1mcase "$PUSH_PROOF:$NIGHTLY_PROOF" in[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4861372Z [36;1m  *failure*|*cancelled*) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4861998Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4862511Z [36;1mcase "$COVERAGE" in[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4863280Z [36;1m  reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4864223Z [36;1m  light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4865533Z [36;1m  full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4866843Z [36;1m  *) exit 1 ;;[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.4867336Z [36;1mesac[0m
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.5356222Z shell: /usr/bin/bash -e {0}
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.5362241Z ##[endgroup]
+verify	Require the selected coverage and its proof	2026-11-05T23:20:35.5602151Z ##[error]Process completed with exit code 1.

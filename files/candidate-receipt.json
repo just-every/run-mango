@@ -1,0 +1,57 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f55",
+  "head": "697525917a55c6da6bb8612640b864a258586721",
+  "files": {
+    "src/core/features/audience/signup-routes.ts": "fc71fb93bc1ae0560323e11996d6c5e143ee003c53fd1bab6495dbfca8de3382",
+    "tests/audience-import/signup.spec.ts": "179e2df1b981695e1f32ac4917296bf78e7220062dd0a082781c365de6e87d6a",
+    "CONTRACT.md": "7961899d229f619259b95c45ed884e79bd86c16e92100a4df3cbaeb44a496c1d",
+    "sources.lock.json": "5ec343250122c922ac7fce6a0d9deb5254f6bbe065837f32a9eef894d2ecdc45"
+  },
+  "local_proofs": {
+    "signup": {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 pnpm exec playwright test tests/audience-import/signup.spec.ts --workers=1",
+      "passed": 1,
+      "exit": 0
+    },
+    "security": {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 pnpm exec playwright test tests/audience-import/signup-security.spec.ts --workers=1",
+      "passed": 11,
+      "exit": 0
+    },
+    "typecheck": {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    "first_party": {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "exact_committed_head_exit": 0
+    },
+    "build": {
+      "command": "npx -y @runeditrun/rer build",
+      "exit": 0
+    }
+  },
+  "browser_relevant_source_unchanged_since_proof": true,
+  "product_push": "PUSH_OK branch=cloud/sd-mango-c-f55",
+  "verify": {
+    "conclusion": "failure",
+    "head_sha": "697525917a55c6da6bb8612640b864a258586721",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42128823026",
+    "status": "completed",
+    "run_id": 42128823026,
+    "event": "push",
+    "permitted_generated_view_exception": true,
+    "test_shards": "skipped"
+  },
+  "github_api_calls": 6,
+  "pr_url": null,
+  "publication_scan": {
+    "status": "not_run_in_cloud",
+    "owner": "fleet lander"
+  },
+  "run_site": {
+    "status": "pending_landing"
+  }
+}

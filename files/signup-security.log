@@ -1,0 +1,60 @@
+
+Running 11 tests using 1 worker
+
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 tests/audience-import/signup-security.spec.ts:19:1 › security: confirmation scanner GET and HEAD write nothing; affirmative POST alone consumes token (3.6s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   2 tests/audience-import/signup-security.spec.ts:30:1 › security: public capture preserves subscribed, suppressed, erased suppression, complaint and owner blocks and a pre-fix erasure without mail or evidence; an erased unsubscriber returns only through their own confirmation (1.1m)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 tests/audience-import/signup-security.spec.ts:79:1 › security: IPv6 equivalent addresses and interface rotation share a /64 budget; invalid IP fails closed (15.6s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   4 tests/audience-import/signup-security.spec.ts:86:1 › security: durable global allowance advances monotonically, reserves its last slot atomically and survives restart (4.3s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   5 tests/audience-import/signup-security.spec.ts:102:1 › security: sender and Turnstile preflight fail closed before contact storage; valid challenge is single use (3.3s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   6 tests/audience-import/signup-security.spec.ts:122:1 › security: IPv4 mapped IPv6 shares the IPv4 budget (18.2s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   7 tests/audience-import/signup-security.spec.ts:126:1 › security: production rejects one-sided Turnstile and publishes only the public widget key and action (2.8s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 tests/audience-import/signup-security.spec.ts:144:1 › security: confirmation POST preserves expiry, optout and suppression guards (11.2s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 tests/audience-import/signup-security.spec.ts:159:1 › security: explicit ledger reconsent remains logged and confirmable after optout, but suppression never dispatches (4.4s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  10 tests/audience-import/signup-security.spec.ts:170:1 › [CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot (4.4s)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2383) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 tests/audience-import/signup-security.spec.ts:200:1 › [CONT-027] repeated public requests share the durable UTC destination allowance across restart and reopen on a new database day (5.2s)
+
+  11 passed (2.3m)

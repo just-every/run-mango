@@ -1,0 +1,32 @@
+{
+  "base": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "views": {
+    "write": {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    "check": {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0
+    },
+    "restored": [
+      "ACCEPTANCE.md",
+      "docs/CLAIMS.md"
+    ]
+  },
+  "lock": {
+    "write": {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    "check": {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  },
+  "ledger": {
+    "command": null,
+    "reason": "No migrations changed",
+    "exit": 0
+  }
+}

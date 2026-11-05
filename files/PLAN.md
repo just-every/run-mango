@@ -1,0 +1,12 @@
+# sd-mango-c-f55 plan
+
+Target: CONT-001. Declared repository: just-every/run-mango. Product branch: cloud/sd-mango-c-f55.
+
+1. Read the current contract, its carried evidence, launcher and repository rules, and the supplied rulings. Map the selected hosted email point to the existing registered signup journey. Preserve the clause's three acceptance sentences and all parent Status rows.
+2. Extend that journey with an independently chosen synthetic identity. Obtain the current disclosure from the public information route. Refuse malformed input, missing consent and obsolete disclosure before storage. Submit concurrent mixed-case and surrounding-whitespace variants through the native signup route; reconcile one canonical contact, address, evidence row, confirmation record and confirmation handoff.
+3. Read the same identity through authenticated search and contact detail while pending, after affirmative confirmation and after opt-out. Retain scanner, duplicate and replay protections. Check no campaigns, approvals, recipient steps or dispatch commands result.
+4. Demonstrate failure before the production fix. Normalize the hosted route's email before its existing validator. Run the registered focused signup journey, related signup security journeys, typecheck and the first-party command check. Observe the existing signup page at 1440 and 390 without visual changes.
+5. Update only CONT-001's Status evidence and honest remaining Gap. Prove contract generation with write and check, restore both generated views from main, regenerate and check the source lock last. Retain main's newer work when synchronizing, verify staged row preservation, and commit with the fleet identity and active hooks.
+6. Push only the named product branch through the fleet guard, discover exact-head Verify through REST within the shared budget, and report its actual result. Publish this plan, report and actual non-secret receipts separately to the evidence ref. Leave landing, publication scan and Run site to the fleet.
+
+The selected POINT is acceptance 1's hosted email signup comparison. The planner explicitly omits other capture and API doors, CSV comparison, phone canonicalization and complete uniqueness proof. These remain named native proof gaps, not externally blocked work or DONE claims. Existing owner-held SMS, provider, device, account, Base and cross-seed prerequisites remain unchanged. CONT-013 holds remain unchanged. No next clause touching the selected files is authorized by this extract.

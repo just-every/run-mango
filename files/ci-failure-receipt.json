@@ -1,0 +1,30 @@
+{
+  "head": "697525917a55c6da6bb8612640b864a258586721",
+  "run_id": 42128823026,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "failure",
+  "root_failure": {
+    "job": 127599950610,
+    "step": "Check generated contract documents",
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1,
+    "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  },
+  "dependent_failure": {
+    "job": 127600058721,
+    "step": "Require the selected coverage and its proof",
+    "reason": "Build failed on generated views; test shards skipped"
+  },
+  "classification": "permitted generated-view freshness exception",
+  "product_test_shards": "skipped, not claimed green",
+  "local_committed_view_check": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1,
+    "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  },
+  "github_api_calls": 6,
+  "failed_log_invocations": 2,
+  "dispatches": 0,
+  "reruns": 0
+}

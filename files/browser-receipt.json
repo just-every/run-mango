@@ -1,0 +1,23 @@
+{
+  "screens": [
+    {
+      "width": 1440,
+      "door": "/subscribe",
+      "whitespaceStatus": 202,
+      "formStatus": 202,
+      "confirmationVisible": true,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 390,
+      "door": "/subscribe",
+      "whitespaceStatus": 202,
+      "formStatus": 202,
+      "confirmationVisible": true,
+      "horizontalOverflow": false
+    }
+  ],
+  "serverPid": 2798,
+  "productionMocks": false,
+  "providerBoundary": "synthetic mail HTTP edge only"
+}

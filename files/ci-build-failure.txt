@@ -1,0 +1,7 @@
+GitHub failed-step log; printed environment block omitted.
+Build and public command checks	Check generated contract documents	﻿2026-11-05T23:20:29.5376510Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-05T23:20:29.5377054Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-05T23:20:29.5395120Z shell: /usr/bin/bash -e {0}
+Build and public command checks	Check generated contract documents	2026-11-05T23:20:29.5397657Z ##[endgroup]
+Build and public command checks	Check generated contract documents	2026-11-05T23:20:29.6946318Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-05T23:20:29.7024693Z ##[error]Process completed with exit code 1.

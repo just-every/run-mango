@@ -1,0 +1,30 @@
+
+Running 1 test using 1 worker
+
+(node:1968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out (3.7s)
+
+
+  1) tests/audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      32 |     expect(f.outbound).toHaveLength(0);
+      33 |     const results=await Promise.all([signup(` \t${mixedCase}\r\n`),signup(mixedCase)]);
+    > 34 |     expect(results.every(response=>response.status===202)).toBe(true);expect(f.outbound).toHaveLength(1);
+         |                                                            ^
+      35 |     expect((await signup(email)).status).toBe(202);
+      36 |     const contacts=(await f.db.prepare('SELECT id,email,email_status FROM contacts').all()).results;
+      37 |     expect(contacts).toEqual([{id:expect.any(String),email,email_status:'pending'}]);
+        at /home/agent/rer-consolidation/work/sd-mango-c-f55/run-mango/tests/audience-import/signup.spec.ts:34:60
+
+    Error Context: ../evidence/9e9550477d4e/main/audience-import-signup--CO-7bc3f-er-reverses-a-later-opt-out/error-context.md
+
+  1 failed
+    tests/audience-import/signup.spec.ts:7:1 › [CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out 
