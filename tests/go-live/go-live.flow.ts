@@ -125,7 +125,7 @@ export const walkTestIsolation = async () => {
     expect(decodeProviderReference(testMessages[0].body.custom_args.mango_recipient_step)).toBe(`test:${campaign.revisionId}`);
     expect(await allowance()).toBe(allowanceBefore - 1);
     expect((await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-sends`, { cookie: owner }), 200)).tests)
-      .toEqual([expect.objectContaining({ destination: tested })]);
+      .toEqual([expect.objectContaining({ destination: tested, test: true, channel: 'email', operatorId: 'go-live-owner' })]);
     // Test audit, allowance and cost accounting are allowed; none is marketing.
     expect(await stored()).toEqual(beforeStored);
     expect(await results()).toEqual(beforeResults);
@@ -164,10 +164,11 @@ export const walkTestIsolation = async () => {
       .toMatchObject({ handedOff: 2, accepted: 2, skipped: 0 });
     expect(await isolated.rows('SELECT * FROM attribution_facts ORDER BY id')).toEqual(beforeStored.attribution);
     expect(await audience([recent])).toEqual(beforeMembership[2]);
-    const afterMarketingStored = await stored(), afterMarketingResults = await results();
+    const afterMarketingStored = await stored(), afterMarketingResults = await results(), afterMarketingMembership = await memberships();
     await reconcileTest();
     expect(await stored()).toEqual(afterMarketingStored);
     expect(await results()).toEqual(afterMarketingResults);
+    expect(await memberships()).toEqual(afterMarketingMembership);
     expect(await audience([recent])).toEqual(beforeMembership[2]);
     await record('test-isolation.json', { beforeMembership, afterMembership, beforeResults, afterTestResults, afterMarketingResults, recipients });
   } finally { await isolated.runtime.close(); }
