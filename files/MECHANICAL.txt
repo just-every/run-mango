@@ -1,0 +1,4 @@
+MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock then check exit=0; views=node src/base/contract-docs.mjs write then check exit=0; ledger=none exit=0
+Generated ACCEPTANCE.md and docs/CLAIMS.md restored whole from origin/main before commit. Restored-view check exit=1 is expected and differs only in the updated Evidence cell. No migrations changed.
+Status rows: parent=316 candidate=316; pipe rows: parent=490 candidate=490. All parent Status identifiers retained.
+Candidate: 2e7830a9aef03b1a03058d21c857a04838fd99f0

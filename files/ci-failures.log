@@ -1,0 +1,12 @@
+Run 42121535137; head 2e7830a9aef03b1a03058d21c857a04838fd99f0
+Job 127574941935: Build and public command checks
+Command: node src/base/contract-docs.mjs check
+ACCEPTANCE.md: generated content differs; run contract-docs write.
+Process completed with exit code 1.
+
+Job 127575067080: verify
+Require the selected coverage and its proof
+The full-coverage aggregate requires successful Build; Build failed and shards were skipped.
+Process completed with exit code 1.
+
+Both actual completed-job archives were read once with gh run view --log-failed. Only command and error output is included here; runner environment context is excluded from this public packet.

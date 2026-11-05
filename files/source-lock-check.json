@@ -1,0 +1,7 @@
+{
+  "head": "2e7830a9aef03b1a03058d21c857a04838fd99f0",
+  "command": "node scripts/edition-authoring/cli.mjs check",
+  "exit": 0,
+  "ok": true,
+  "lock_sha256": "6bdf94b52d84f1ddee931be9e40cf9f101fe8a3120f9fd99f633e73bceb2a6b3"
+}

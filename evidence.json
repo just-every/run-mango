@@ -1,0 +1,178 @@
+{
+  "files": [
+    {
+      "blob": "94d862d3565c6e7e91db9a9ca36b3acae21c6348",
+      "bytes": 1003,
+      "path": "CI-RECEIPT.json",
+      "sha256": "a9f6535c57ca60efea2a7f536ffe0366c53d29edf37a6086dd2d3147859ef904"
+    },
+    {
+      "blob": "b24522609ce45f5ff54663759d72e8bacbfd216a",
+      "bytes": 500,
+      "path": "LOCAL-CUSTODY.json",
+      "sha256": "cf71f44a3aa3ae8a8fbcb787937d8a056c32a01aa40454f7f0faac2eec5e4a82"
+    },
+    {
+      "blob": "dbea0547325b6356f8c943c343a31af8918b7c15",
+      "bytes": 528,
+      "path": "MECHANICAL.txt",
+      "sha256": "faf1bf80b1b0ddcb8666eb2f4dbbc90208d19a0b4b68731cdd9457c0f1000534"
+    },
+    {
+      "blob": "73549c40e6f87235b34123d1879688305bbb2eec",
+      "bytes": 2741,
+      "path": "PLAN.md",
+      "sha256": "bef4177fae85dc99f99a6b129af143edfebcb8301f194f3aae0a63bbfcf96dba"
+    },
+    {
+      "blob": "26146584e83e2062f1eadf02fc00f359e64f1266",
+      "bytes": 1908,
+      "path": "PROBES.txt",
+      "sha256": "9e18025f192f746527e62028ec6ef214ca73fc7286d24e81648d36eced331390"
+    },
+    {
+      "blob": "aa39aeb5a30cfbbf3ff8add27b13850125eee041",
+      "bytes": 4190,
+      "path": "RECEIPT.json",
+      "sha256": "2da7271b8d8a5e78fb110e28391dc55697a5ed6d01fe445c918b7f57cddb3ec3"
+    },
+    {
+      "blob": "4a5696ebbd6043ee5dbf8e106f97455dcfad3bc6",
+      "bytes": 11343,
+      "path": "REPORT.md",
+      "sha256": "915497d146a143a4c22cfe46e384361403ffc5f0201ee6efcd8f3cf8431c64a8"
+    },
+    {
+      "blob": "d0a06d751adda0287498cc9ad3b3e07c025eeffa",
+      "bytes": 220,
+      "path": "candidate-ci-discovery.json",
+      "sha256": "28465c3cd2e61f50a5bd8523e55099c3aa73f82b42dd736addadee6298033a47"
+    },
+    {
+      "blob": "aa66acd9a45ae2adf4a35db4f0c6a45d9b34734b",
+      "bytes": 195,
+      "path": "candidate-ci-final.json",
+      "sha256": "505f188af48f748eb15e78a09b833535d1b047e7ad865c018ac4d5b78a8216a2"
+    },
+    {
+      "blob": "3f684243058385410486dfca5304adb74d58e5a1",
+      "bytes": 4804,
+      "path": "candidate-ci-jobs.json",
+      "sha256": "389d0ba924d0048a3415cb0feaf7bf0de7ad1e6a48f11d43a9b3ee817afd9c25"
+    },
+    {
+      "blob": "51ea2ec6a1b771746369d3ac87a05677d4dc3b28",
+      "bytes": 396,
+      "path": "candidate-file-results.json",
+      "sha256": "d8eaf2d9b1de9975d982f40390f8759c6f6ae47e4cc59db1445ccb280f5bf2cd"
+    },
+    {
+      "blob": "c8c28f329ab82929ea05848b24e1f670ba6fc301",
+      "bytes": 3641,
+      "path": "candidate-tests.log",
+      "sha256": "0961e44e81cf0d04fcb3cf5949bd5773bed1b2f01c4d99f34d98a2b45dadab77"
+    },
+    {
+      "blob": "2d2e79cf7dd4c753cc7e4e550ef76e8f64c58194",
+      "bytes": 992,
+      "path": "candidate-timings.json",
+      "sha256": "ff7fc8b565526a332d708c1a31239b8122d52d1666ef113fec79cbb7ddb8ec46"
+    },
+    {
+      "blob": "f3c3c21cdb6916e55211733956f0862e47141d88",
+      "bytes": 656,
+      "path": "ci-failures.log",
+      "sha256": "27bc091e86033f43468cb80870557d2275e9363eefd816dcd1c7189a5af8df8d"
+    },
+    {
+      "blob": "55bfeff023c4ae17dc59e12f86f446b1960e6b53",
+      "bytes": 85,
+      "path": "commit-identity.txt",
+      "sha256": "148bad84b5b174568017df50d58e073566703d43c6c9fe7fa6f1af04420adf55"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "first-party-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "bdd1c7a211d58475ce6d6e7dccbcadc5c769e19c",
+      "bytes": 2993,
+      "path": "focused-tests.log",
+      "sha256": "768ac8ed4e2bdb35d251f032a53133fe95b581a15c2e5a16f61987332d4eb7c6"
+    },
+    {
+      "blob": "43ae200351220a84e4cb6e1158ad1682116b50bc",
+      "bytes": 1145,
+      "path": "main-ci.json",
+      "sha256": "3f1f45e399875dd2984812a740bd9f703197849a0e759522ca6003ce8cf9f2ee"
+    },
+    {
+      "blob": "57a55e577ae73e9c6b326ceaf0645c14557839dd",
+      "bytes": 558,
+      "path": "product-commit.txt",
+      "sha256": "cfed17b7fc9134b5f9742cef7b9298f028896705e2441f0c86908a67db1e609e"
+    },
+    {
+      "blob": "355889d386cb3bae3248458d1d6acd495ca8fafb",
+      "bytes": 891,
+      "path": "product-push.log",
+      "sha256": "7e5739125aacefab5a8cdb2e941c66e1114035d20652b57628de76818f99c41e"
+    },
+    {
+      "blob": "65f12b274926d26c7b95635d5f63b81c225abb10",
+      "bytes": 73,
+      "path": "product-remote.txt",
+      "sha256": "fd40142494397b9f9538a23fb39a1b658440a0aa952a3339d4e8b34be6a2bf49"
+    },
+    {
+      "blob": "2b2ae370218ee5177a7349fcf16323ee7cf5f938",
+      "bytes": 12583,
+      "path": "product.patch",
+      "sha256": "80af703117fd93afd11b45f6a4a04a4fc60f688b5f6a4001fd3afc631c7775b2"
+    },
+    {
+      "blob": "fba560db7c48416c914446f2a1e319a79104d105",
+      "bytes": 67,
+      "path": "restored-views-check.log",
+      "sha256": "183372998615cc516043a5f66404b300281009a84349eda72da66d79fe542603"
+    },
+    {
+      "blob": "6d234d12746dd7551fdebee6514b46de3e04b06b",
+      "bytes": 1212,
+      "path": "retained-tests.log",
+      "sha256": "31539a981552d72623e0d9cc9fa63ed89ac5529664a9b713bd6c334efbadd566"
+    },
+    {
+      "blob": "e43f016ee5b30cd82c57b6a09a763d64873f5ff2",
+      "bytes": 230,
+      "path": "source-lock-check.json",
+      "sha256": "3d5e8af2b6e6c9634b87b9ec3062f6c05e213f68fa5e41633f87ee78373bbae4"
+    },
+    {
+      "blob": "a66d1ee631f60d794903361da64ad2005a5940b8",
+      "bytes": 207,
+      "path": "typecheck.log",
+      "sha256": "4467d8f911c334ef6f6a58df3021ee818be97b3bb701ea33dc0189968bfd72c6"
+    },
+    {
+      "blob": "ae869b2fafd3acf46a2dc6ce35ec869497ae9cfb",
+      "bytes": 32,
+      "path": "views-check.log",
+      "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+    },
+    {
+      "blob": "d4d1e60ea7fdc565c576421664992b40e47a816e",
+      "bytes": 28,
+      "path": "views-write.log",
+      "sha256": "df91012bf66fb476e9cd1a30c002829398beb55f869e07cc7be477197fa5a276"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f51",
+  "product_head": "2e7830a9aef03b1a03058d21c857a04838fd99f0",
+  "ref": "refs/heads/evidence/sd-mango-c-f51",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f51"
+}

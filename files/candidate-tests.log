@@ -1,0 +1,28 @@
+VERIFY_SCHEDULE {"selection":"main","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f51/evidence/cd276649b32c/verify/main-s3fkIP
+VERIFY_STAGE {"name":"main","event":"start","at":"2026-11-05T22:27:06.071Z"}
+main
+
+Running 2 tests using 2 workers
+
+(node:2698) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2698) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE PROP-008 acceptance-2 summary: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 acceptance-2 audience explanation: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 acceptance-2 timing explanation: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 acceptance-2 provider forecast: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+  ✓  1 tests/proposals-decision/decision-routes.spec.ts:6:1 › [PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes (12.5s)
+PROBE PROP-008 acceptance-2 provider benchmark with owned history identifiers: native generation with a foreign-store benchmark -> HTTP 409 invalid_ai_output; failed proposal, no linked campaign or accepted forecast, absent from actionable desk, adoption refused, unchanged recipients and no dispatch authority
+PROBE PROP-008 recovery control: valid native generation after all benchmark refusals -> HTTP 201, independently expected owned revenue forecast, draft only, original forecast unchanged, no recipient or dispatch authority
+PROBE PROP-008 own-history control: native generation and repeated authenticated proposal and desk reads -> USD 200 minor units from 3 owned campaigns, 24 recipient steps and 3 events netting 2400 minor units; stable forecast and draft with no approval or dispatch
+  ✓  2 tests/proposals-decision/forecast-provenance.spec.ts:6:1 › [PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads (14.8s)
+
+  2 passed (17.4s)
+VERIFY_STAGE {"name":"main","status":"PASS","startedAt":"2026-11-05T22:27:06.071Z","durationMs":18091,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":18104,"boundary":"coordinator"}

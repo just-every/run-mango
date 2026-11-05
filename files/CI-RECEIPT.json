@@ -1,0 +1,31 @@
+{
+  "classification": "expected_generated_view_only",
+  "cloud_ready_exception": true,
+  "command": "node src/base/contract-docs.mjs check",
+  "conclusion": "failure",
+  "dependent_failed_job": 127575067080,
+  "dependent_failure": "aggregate requires successful BUILD; BUILD=failure and SHARDS=skipped",
+  "dispatches": 0,
+  "exit": 1,
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "github_budget_calls_used": 6,
+  "head": "2e7830a9aef03b1a03058d21c857a04838fd99f0",
+  "log_commands": [
+    {
+      "calls": 1,
+      "command": "gh run view 42121535137 --repo just-every/run-mango --job 127574941935 --log-failed",
+      "exit": 0
+    },
+    {
+      "calls": 1,
+      "command": "gh run view 42121535137 --repo just-every/run-mango --job 127575067080 --log-failed",
+      "exit": 0
+    }
+  ],
+  "primary_failed_job": 127574941935,
+  "raw_environment_context_included": false,
+  "repair_rounds": 0,
+  "reruns": 0,
+  "run_id": 42121535137,
+  "status": "completed"
+}

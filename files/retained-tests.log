@@ -1,0 +1,16 @@
+VERIFY_SCHEDULE {"selection":"main","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f51/evidence/cd276649b32c/verify/main-WankUa
+VERIFY_STAGE {"name":"main","event":"start","at":"2026-11-05T22:24:15.403Z"}
+main
+
+Running 1 test using 1 worker
+
+(node:2287) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2287) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/proposals-decision/decision-routes.spec.ts:6:1 › [PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes (11.2s)
+
+  1 passed (14.1s)
+VERIFY_STAGE {"name":"main","status":"PASS","startedAt":"2026-11-05T22:24:15.403Z","durationMs":15018,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":15031,"boundary":"coordinator"}

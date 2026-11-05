@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "files": [
+    {
+      "file": "tests/proposals-decision/forecast-provenance.spec.ts",
+      "attempts": 1,
+      "durationMs": 14825,
+      "statuses": {
+        "passed": 1
+      }
+    },
+    {
+      "file": "tests/proposals-decision/decision-routes.spec.ts",
+      "attempts": 1,
+      "durationMs": 12479,
+      "statuses": {
+        "passed": 1
+      }
+    }
+  ]
+}

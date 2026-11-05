@@ -1,0 +1,12 @@
+commit 2e7830a9aef03b1a03058d21c857a04838fd99f0
+Author:     Run Edit Run fleet <fleet@runeditrun.com>
+AuthorDate: Thu Nov 5 22:26:34 2026 +0000
+Commit:     Run Edit Run fleet <fleet@runeditrun.com>
+CommitDate: Thu Nov 5 22:26:34 2026 +0000
+
+    Prove benchmark refusals preserve owned forecast authority
+
+ CONTRACT.md                                        |  2 +-
+ sources.lock.json                                  |  4 ++--
+ .../proposals-decision/forecast-provenance.spec.ts | 25 ++++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 3 deletions(-)

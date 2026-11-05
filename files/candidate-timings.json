@@ -1,0 +1,44 @@
+{
+  "startedAt": "2026-11-05T22:27:06.061Z",
+  "finishedAt": "2026-11-05T22:27:24.164Z",
+  "durationMs": 18103,
+  "status": "PASS",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "main",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "main",
+      "status": "PASS",
+      "startedAt": "2026-11-05T22:27:06.071Z",
+      "durationMs": 18091,
+      "exitCode": 0,
+      "signal": null,
+      "files": {
+        "status": "passed",
+        "files": [
+          {
+            "file": "tests/proposals-decision/forecast-provenance.spec.ts",
+            "attempts": 1,
+            "durationMs": 14825,
+            "statuses": {
+              "passed": 1
+            }
+          },
+          {
+            "file": "tests/proposals-decision/decision-routes.spec.ts",
+            "attempts": 1,
+            "durationMs": 12479,
+            "statuses": {
+              "passed": 1
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "api_calls_used": 6,
+  "branch": "cloud/sd-mango-c-f51",
+  "checks": [
+    {
+      "actual_coordinator_receipt": "candidate-timings.json",
+      "actual_file_receipt": "candidate-file-results.json",
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_VERIFY_FILES='[\"proposals-decision/forecast-provenance.spec.ts\",\"proposals-decision/decision-routes.spec.ts\"]' cloud_run perl -e 'alarm 1200; exec @ARGV' -- node scripts/verification/run.mjs --stage main",
+      "exit": 0,
+      "head": "2e7830a9aef03b1a03058d21c857a04838fd99f0",
+      "receipt": "candidate-tests.log",
+      "result": "2 passed"
+    },
+    {
+      "command": "cloud_run pnpm run typecheck",
+      "exit": 0,
+      "receipt": "typecheck.log",
+      "tree_equals_candidate": true
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "receipt": "first-party-check.log",
+      "tree_equals_candidate": true
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "receipt": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check (before restoring generated views)",
+      "exit": 0,
+      "receipt": "views-check.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check (after restoring main views)",
+      "exit": 1,
+      "expected": true,
+      "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+      "receipt": "restored-views-check.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    }
+  ],
+  "ci_classification": "expected_generated_view_only",
+  "ci_discovery": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_sha": "2e7830a9aef03b1a03058d21c857a04838fd99f0",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42121535137",
+      "id": 42121535137,
+      "name": "Verify",
+      "status": "queued"
+    }
+  ],
+  "ci_final": {
+    "conclusion": "failure",
+    "head_sha": "2e7830a9aef03b1a03058d21c857a04838fd99f0",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42121535137",
+    "status": "completed"
+  },
+  "ci_receipt": "CI-RECEIPT.json",
+  "clause": {
+    "acceptance_changed": false,
+    "after": "partial",
+    "before": "partial",
+    "id": "PROP-008"
+  },
+  "counts_after": {
+    "done": 18,
+    "missing": 98,
+    "partial": 200
+  },
+  "counts_before": {
+    "done": 18,
+    "missing": 98,
+    "partial": 200
+  },
+  "exact_candidate_lock_check": {
+    "exit": 0,
+    "receipt": "source-lock-check.json"
+  },
+  "head": "2e7830a9aef03b1a03058d21c857a04838fd99f0",
+  "migrations_changed": false,
+  "parent": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "pipe_rows_candidate": 490,
+  "pipe_rows_parent": 490,
+  "product_push": {
+    "attempt": 1,
+    "exit": 0,
+    "receipt": "product-push.log"
+  },
+  "publication_scan": {
+    "custodian": "Mac lander",
+    "status": "not_run_in_cloud"
+  },
+  "recorded_at": "2026-11-05T22:28:35.120911+00:00",
+  "remote_product_verified": true,
+  "repository": "just-every/run-mango",
+  "run_site_candidate": {
+    "custodian": "Mac lander",
+    "status": "not_run"
+  },
+  "schema": 1,
+  "source_digests": {
+    "CONTRACT.md": "d4d4b99068b65f76b47a1a09a7d11eab365d113b4cf2152cb33e3f62c5a1f809",
+    "src/core/features/proposals/forecast.ts": "e36e0660a7523f41f8ae40613d9a984d973aca65ecc254c4eaabfdf4387679a6",
+    "src/core/features/proposals/generation.ts": "492566d51e2a42fdf4a0b09b5c59c0681a30164040876efd03556478e91c43fc",
+    "src/core/features/proposals/service.ts": "3a7115a09417ee3e1eaa2b6fda92cc645ad9d98dcda6ea53dab08c5d6535ba00",
+    "tests/proposals-decision/decision-routes.spec.ts": "aa4267d7fcd6948ddf97a7cbd4e4be5cef29882946b65eeb9d81774af70f2995",
+    "tests/proposals-decision/forecast-provenance.spec.ts": "4b208dde75c6d90ef7f83478b4d6fbaa77b245d4a5b6b5d22fbe8cf1f0934b33"
+  },
+  "status_rows_candidate": 316,
+  "status_rows_parent": 316,
+  "tag": "sd-mango-c-f51",
+  "test_registrations_added": 0,
+  "test_registrations_removed": 0,
+  "ui_changed": false
+}
