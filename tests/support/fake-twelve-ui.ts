@@ -26,10 +26,17 @@ export type FakeOptions = {
 };
 /** A refusal the next request to a path suffix gets: a status, and for 429 the Retry-After 12ui names, if any. */
 export type Refusal = { status: number; retryAfter?: number };
+export type IssuedDesign = { kind: 'run' | 'layout'; id: string; at: number };
 
 export async function startFakeTwelveUi(options: FakeOptions) {
   const requests: FakeRequest[] = [];
   const purchases: string[] = [];
+  // Observe identifiers at issuance, independently of Mango's stored values or purchase keys.
+  const issued: IssuedDesign[] = [];
+  const noteIssued = (kind: IssuedDesign['kind'], id: string) => {
+    issued.push({ kind, id, at: Date.now() });
+    if (issued.length > 32) issued.shift();
+  };
   const replies = new Map<string, unknown>();
   const runs = new Map<string, { slots: { slot: string; status: string; settles?: number }[] }>();
   const layouts = new Map<string, { settles: number; status: 'succeeded' | 'failed' }>();
@@ -88,6 +95,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
       entry.json = JSON.parse(body.toString('utf8'));
       const id = `crt-${createHash('sha256').update(key ?? String(Math.random())).digest('hex').slice(0, 16)}`;
       runs.set(id, { slots: (entry.json as { candidates: { slot: string }[] }).candidates.map(({ slot }) => ({ slot, status: 'pending' })) });
+      noteIssued('run', id);
       if (key) replies.set(`POST ${path} ${key}`, () => runView(id));
       return send(201, runView(id));
     }
@@ -113,6 +121,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
       const id = `cnv-${createHash('sha256').update(key ?? String(Math.random())).digest('hex').slice(0, 16)}`;
       purchases.push(`layout:${key ?? ''}`);
       layouts.set(id, { settles: now() + (options.layoutMs ?? 0), status: layoutStatus });
+      noteIssued('layout', id);
       if (key) replies.set(`POST ${path} ${key}`, () => layoutView(id));
       return send(202, layoutView(id));
     }
@@ -125,7 +134,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
   });
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  return { origin, requests, purchases, refuseNext: (suffix: string, refusal: Refusal) => refusals.set(suffix, refusal),
+  return { origin, requests, purchases, issued, refuseNext: (suffix: string, refusal: Refusal) => refusals.set(suffix, refusal),
     /** Pads the next JSON answer to a path suffix with at least `bytes` of padding. */
     inflateNext: (suffix: string, bytes: number) => inflations.set(suffix, bytes),
     setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; }, close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
