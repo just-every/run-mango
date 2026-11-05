@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "71b489d1c776a03539d9a090e223f64a19c3fdda24f4e7e48a1904c71efa7596",
+      "sha256": "e4eebe306d2a458cb84d6f1c0697dd0c645b1aad70209b80c271e064f8bbad5d",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "8431000fe00a0d2a91a8b9f0a6255885e0e72894aea16f1a6430399e786d2bef",
+      "sha256": "c8649deb5f9eb370c1c0751f63bc111fd76761422ffda59a92693d306e901b24",
       "executable": false
     },
     "DEMO.md": {
@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "6fb79aed44d2687e2346394a5a7838339e111a3a1dcaefb637ee6c0221ecbd95",
+      "sha256": "6330ffb0fd3e3ae8734884b76c0e68b4d518563fef3af5fe67925d9f96ceb569",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -4314,7 +4314,7 @@
       "executable": false
     },
     "src/core/features/design-generation/model.ts": {
-      "sha256": "b32252108d1faccb3dac5c4802936e6148a6983bca4ffa8c2c92eb5115560c91",
+      "sha256": "e9e79da38da91aa4e5c2d48904f6dd3a8eb1782336003f367b1de3af54a836a5",
       "executable": false
     },
     "src/core/features/design-generation/repository.ts": {
@@ -8494,7 +8494,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
-      "sha256": "b9a257d08cdf88b52de13a5736f9f5aaa0c639113fdd941ea48976f2cd2604f5",
+      "sha256": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
@@ -9407,6 +9407,10 @@
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
       "sha256": "aa4267d7fcd6948ddf97a7cbd4e4be5cef29882946b65eeb9d81774af70f2995",
+      "executable": false
+    },
+    "tests/proposals-decision/forecast-provenance.spec.ts": {
+      "sha256": "04831a09ae32f053f0bcd7f3e19cad53dee65855138226fb78cc22900eb8b6ed",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {

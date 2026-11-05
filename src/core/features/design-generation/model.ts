@@ -63,7 +63,8 @@ export const draftEstimate = (candidates: number) =>
 export const layoutEstimate = () =>
   `About ${dollars(designPrices.layoutUsd)} on your 12ui account for the layout, or free within 12ui's daily allowance of ${designPrices.freeLayoutsPerDay} layouts.`;
 
-/** Removes `{{…}}` personalisation and managed tokens: a brief never carries one to the design service (DESIGN-003). */
+/** Removes `{{…}}` personalisation and managed tokens, using the renderer's delimiters so quoted fallback braces
+ * stay inside the removed token (DESIGN-003). */
 export function briefWithoutTokens(text: string) {
-  return text.replace(/\{\{[^{}]*\}\}/g, ' ').replace(/[{}]/g, '').replace(/[ \t]+/g, ' ').replace(/ ([,.;:!?])/g, '$1').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  return text.replace(/\{\{([\s\S]*?)\}\}/g, ' ').replace(/[{}]/g, '').replace(/[ \t]+/g, ' ').replace(/ ([,.;:!?])/g, '$1').replace(/ *\n */g, '\n').replace(/\n{3,}/g, '\n\n').trim();
 }
