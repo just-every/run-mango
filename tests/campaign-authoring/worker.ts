@@ -88,6 +88,28 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       await recordProposalClaims(bindings.DB,id,now);
       return Response.json({id});
     }
+    if(path==='/_authoring/proposal-counts'&&request.method==='POST') {
+      const body:unknown=await request.json().catch(()=>null);
+      if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).some(key=>key!=='snapshot'))return new Response('Invalid fixture snapshot',{status:400});
+      const snapshot=(body as {snapshot?:unknown}).snapshot;
+      if(typeof snapshot!=='string'||!['complete','missing-audience','missing-channel-counts'].includes(snapshot))return new Response('Invalid fixture snapshot',{status:400});
+      const id=crypto.randomUUID(),now=Date.now(),audienceId=`${id}-audience`;
+      const rules=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'}]});
+      await bindings.DB.prepare("INSERT INTO proposals (id,state,title,summary,evidence,audience_rule,source_data_as_of,send_by_at,inclusion_rule_json,exclusion_rules_json,created_at,updated_at) VALUES (?,'proposed','synthetic-mango-301','Saved count fixture','','Subscribed email contacts',?, ?,?,'[]',?,?)").bind(id,now,now+86400000,rules,now,now).run();
+      await recordProposalClaims(bindings.DB,id,now);
+      // Five eligible contacts over two email steps imply ten recipient-steps;
+      // neither the nine candidates nor the four exclusions are recipients.
+      await bindings.DB.batch([
+        bindings.DB.prepare("UPDATE proposals SET decision_context_json=? WHERE id=?").bind(JSON.stringify({explanation:'Observed evidence: "value".',timing:['Observed evidence: "value".','Observed evidence: "value".']}),id),
+        bindings.DB.prepare("INSERT INTO proposal_steps (id,proposal_id,sequence,channel,scheduled_at,timezone,send_by_at,created_at,updated_at) VALUES (?,?,2,'email',?,'Etc/UTC',?,?,?)").bind(`${id}-step-2`,id,now+7200000,now+86400000,now,now),
+        bindings.DB.prepare("INSERT INTO proposal_exclusions (id,proposal_id,reason,count,created_at,updated_at) VALUES (?,?,'unsubscribed',4,?,?)").bind(`${id}-excluded`,id,now,now),
+      ]);
+      if(snapshot!=='missing-audience') {
+        await bindings.DB.prepare('INSERT INTO proposal_audiences (id,proposal_id,as_of_at,candidate_count,excluded_count,eligible_count,created_at,updated_at) VALUES (?,?,?,9,4,5,?,?)').bind(audienceId,id,now,now,now).run();
+        if(snapshot==='complete')await bindings.DB.prepare("INSERT INTO proposal_audience_channel_counts (id,audience_id,channel,recipient_step_count,created_at,updated_at) VALUES (?,?,'email',10,?,?)").bind(`${id}-email-count`,audienceId,now,now).run();
+      }
+      return Response.json({id});
+    }
     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});
   }
   const app=createApp(bindings,platform,undefined,true);
