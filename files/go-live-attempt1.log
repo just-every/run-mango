@@ -1,0 +1,47 @@
+
+Running 1 test using 1 worker
+
+(node:2237) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/go-live.journeys.ts:6:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore (59.4s)
+
+
+  1) tests/go-live/go-live.journeys.ts:6:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+    @@ -1286,11 +1286,11 @@
+            "transport_disposition": "handoff-unknown",
+            "unsubscribe_method": null,
+          },
+        ],
+        "results": Object {
+    -     "asOf": "2026-11-05T23:17:47.287Z",
+    +     "asOf": "2026-11-05T23:17:47.920Z",
+          "cancellable": false,
+          "steps": Array [
+            Object {
+              "complainedCount": 0,
+              "completedAt": null,
+
+       at go-live.flow.ts:165
+
+      163 |   ]));
+      164 |   expect(await post('identical evidence with the explicit provider identity', delivered)).toBe(204);
+    > 165 |   expect(await identityState()).toEqual(originalIdentityState);
+          |                                 ^
+      166 |   for (const [name, changes] of [
+      167 |     ['changed payload', { response: 'synthetic-mango-5703' }],
+      168 |     ['changed kind with restrictive contact effects', { event: 'spamreport' }],
+        at walk0 (/home/agent/rer-consolidation/work/sd-mango-c-f57/run-mango/tests/go-live/go-live.flow.ts:165:33)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f57/run-mango/tests/go-live/go-live.journeys.ts:8:3
+
+    Error Context: ../runtime-proof/evidence/7da7a1ff89bc/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md
+
+    Error Context: ../runtime-proof/evidence/7da7a1ff89bc/go-live/go-live.journeys.ts--SEND--08ea2-elivery-opt-out-and-restore/error-context.md
+
+  1 failed
+    tests/go-live/go-live.journeys.ts:6:1 › [SEND-001][SEND-005][SEND-006][SEND-007][SEND-008][CONT-004][CONT-006][CONT-009][MSG-002][MSG-003][CAMP-008][DATA-001] confirm readers, approve a letter, reconcile delivery, opt out and restore 

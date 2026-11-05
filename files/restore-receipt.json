@@ -1,0 +1,139 @@
+{
+  "wrongKey": {
+    "contacts": 0,
+    "deliveryFacts": 0,
+    "suppressions": 0
+  },
+  "duringRestore": {
+    "campaigns": 503,
+    "webhook": 503
+  },
+  "restoredTables": {
+    "audience_portable_hashes": 3,
+    "campaign_approval_requests": 3,
+    "campaign_audience_channel_counts": 4,
+    "campaign_audiences": 4,
+    "campaign_checks": 100,
+    "campaign_revision_candidates": 6,
+    "campaign_revisions": 4,
+    "campaign_state_transitions": 7,
+    "campaign_steps": 4,
+    "campaigns": 4,
+    "consent_confirmations": 5,
+    "consent_evidence": 5,
+    "consent_handoff_claims": 5,
+    "contact_bounce_facts": 2,
+    "contact_bounce_states": 2,
+    "contact_email_addresses": 5,
+    "contact_history": 27,
+    "contact_suppressions": 2,
+    "contacts": 5,
+    "delivery_facts": 6,
+    "external_cost_facts": 12,
+    "integration_events": 6,
+    "lifecycle_audit_entries": 13,
+    "list_growth_attribution": 18,
+    "list_growth_baseline": 2,
+    "list_growth_events": 18,
+    "operators": 2,
+    "provider_fact_inbox": 7,
+    "provider_health": 1,
+    "provider_pacing": 1,
+    "provider_pacing_reservations": 3,
+    "public_action_tokens": 5,
+    "public_token_rate_limits": 2,
+    "recipient_steps": 6,
+    "sender_settings": 1,
+    "sender_verification_associations": 10,
+    "sender_verification_challenges": 1,
+    "sender_verification_inspections": 22,
+    "sender_verification_observations": 1,
+    "sender_verification_state": 1,
+    "step_dispatches": 3,
+    "surviving_opt_outs": 5,
+    "test_send_allowances": 1
+  },
+  "approvalDigests": [
+    {
+      "revision_id": "01M6Q046YTJYD3QW2AH2P5HJBR",
+      "revision_digest": "f547ec498d0fa8c05892727974200a4bc29e20f1e904e167ecf4862eeba22af8"
+    },
+    {
+      "revision_id": "01M6Q05942WX2EJ3HA795V3REM",
+      "revision_digest": "704d92d286105fde4063cd0b98b0f5d73611338eb3d31629ea009c5a8982e7b2"
+    },
+    {
+      "revision_id": "01M6Q059KDAA7R0BYTRN7YTSFK",
+      "revision_digest": "befe13aed2749472f2b2e3f5ef8fbce7c801a2dd02101af3bbf81f58cca1c14a"
+    }
+  ],
+  "signIn": {
+    "sourceCookie": 401,
+    "destinationCookie": 200
+  },
+  "destinationSender": {
+    "before": {
+      "state": "blocked",
+      "ready": false,
+      "detail": "No inbox check yet. In Settings, send a check to your own inbox and press “Yes, it reached my inbox” in that email.",
+      "checkedAt": "2026-11-05T23:23:18.960Z"
+    },
+    "authentication": {
+      "kind": "message.email-authentication",
+      "status": "blocked",
+      "detail": "SPF, DKIM, DMARC, and visible From-domain alignment must all pass.",
+      "blocking": true
+    },
+    "exclusions": [
+      {
+        "reason": "email-unsubscribed",
+        "count": 1
+      },
+      {
+        "reason": "frequency-window",
+        "count": 2
+      }
+    ],
+    "after": {
+      "state": "ready",
+      "ready": true,
+      "detail": "A receiving mailbox reported SPF, DKIM and DMARC passing for a test message.",
+      "checkedAt": "2026-11-05T23:23:19.054Z"
+    },
+    "authenticationAfter": {
+      "kind": "message.email-authentication",
+      "status": "passed",
+      "detail": "SPF, DKIM, DMARC, and visible From-domain alignment must all pass.",
+      "blocking": false
+    }
+  },
+  "replayAfterRestore": {
+    "statuses": [
+      204,
+      204,
+      204,
+      204,
+      204,
+      204,
+      204,
+      204,
+      204,
+      204
+    ],
+    "before": {
+      "inbox": 7,
+      "delivery": 6,
+      "suppressions": 2
+    },
+    "after": {
+      "inbox": 7,
+      "delivery": 6,
+      "suppressions": 2
+    }
+  },
+  "timing": {
+    "contacts": 5,
+    "exportMs": 8688,
+    "importMs": 26845
+  }
+}

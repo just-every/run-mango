@@ -1,0 +1,10 @@
+Verify 42129131488, push, head 12a1472ec8577ac328b63434ff000a177b25fd52
+Failed build job 127601155668; generated contract document check.
+Exact failed command: node src/base/contract-docs.mjs check
+Archive read once: gh run view 42129131488 --repo just-every/run-mango --job 127601155668 --log-failed (exit 0)
+Build and public command checks	Check generated contract documents	﻿2026-11-05T23:26:18.7182024Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-05T23:26:18.8455996Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-05T23:26:18.8520964Z ##[error]Process completed with exit code 1.
+
+Aggregate job 127601290109 failed because BUILD was failure and SHARDS were skipped. Its archive was read once with the same command and that job id (exit 0). No independent product test failure was reported.
+Local exact-candidate command reproduced exit 1 with the same generated ACCEPTANCE.md mismatch. This is the explicitly permitted generated-view exception. No repair, workflow edit, dispatch or rerun was performed.

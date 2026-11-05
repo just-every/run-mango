@@ -1,0 +1,14 @@
+[
+  {
+    "path": "/home/agent/rer-consolidation/work/push-rescue/cloud_sd-mango-c-f57-20261105T232337Z-12a1472ec857.bundle",
+    "head": "12a1472ec8577ac328b63434ff000a177b25fd52",
+    "sha256": "f9e6754368c4f5c93231fe9fe6a65911f9f351c412020efc81b89e0198a01745",
+    "verified": true
+  },
+  {
+    "path": "/home/agent/rer-consolidation/work/push-rescue/cloud_sd-mango-c-f57-20261105T232417Z-12a1472ec857.bundle",
+    "head": "12a1472ec8577ac328b63434ff000a177b25fd52",
+    "sha256": "10e2a84a23a3f0ce8b100290ec3e0e727222f175c349b473cbca6fd74504bf31",
+    "verified": true
+  }
+]

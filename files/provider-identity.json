@@ -1,0 +1,47 @@
+{
+  "identity": "sendgrid:synthetic-mango-5701",
+  "expectedEvidence": {
+    "identity_key": "sendgrid:synthetic-mango-5701",
+    "provider": "sendgrid",
+    "provider_message_id": "QfDeep2e1GJST2Y",
+    "kind": "delivered",
+    "provider_occurred_at": 1793920778000,
+    "payload_digest": "f3f2d1256d5a62ed4c522d692336b099feed676d4dcdea969417b6729cc99145"
+  },
+  "identicalReplay": 204,
+  "conflicts": 4,
+  "conflictStatus": 500,
+  "originalInbox": [
+    {
+      "identity_key": "sendgrid:synthetic-mango-5701",
+      "provider": "sendgrid",
+      "provider_message_id": "QfDeep2e1GJST2Y",
+      "mango_reference": "01M6Q046YTJMCZ1FEVDM8ERWCK:01M6Q046YTJYD3QW2AH2P5HJBR:ea5636ec-3a55-4e00-b13c-a137c2f04d82:01M6Q041NG8M5AHFHJQM5YEM8W",
+      "kind": "delivered",
+      "provider_occurred_at": 1793920778000,
+      "payload_digest": "f3f2d1256d5a62ed4c522d692336b099feed676d4dcdea969417b6729cc99145",
+      "detail_json": "{\"destination\":\"alice@example.test\",\"providerEvent\":\"delivered\",\"hard\":false,\"response\":\"250 synthetic-mango-5702\",\"status\":\"2.0.0\",\"mangoReference\":\"01M6Q046YTJMCZ1FEVDM8ERWCK:01M6Q046YTJYD3QW2AH2P5HJBR:ea5636ec-3a55-4e00-b13c-a137c2f04d82:01M6Q041NG8M5AHFHJQM5YEM8W\",\"destinationHash\":\"0486e148d7a8da98a3269faf9f8dd0acd5614b8f69a42a15167273a4263eb865\"}",
+      "created_at": 1793920760296
+    }
+  ],
+  "originalFact": [
+    {
+      "id": "01M6Q04YFEF13Q60F79QX6MPC7",
+      "identity_key": "sendgrid:synthetic-mango-5701",
+      "recipient_step_id": "01M6Q048AJD3D03A3KMZRBV2TE",
+      "provider": "sendgrid",
+      "provider_event_id": "sendgrid:synthetic-mango-5701",
+      "provider_message_id": "QfDeep2e1GJST2Y",
+      "kind": "delivered",
+      "provider_occurred_at": 1793920778000,
+      "provider_version": "",
+      "payload_digest": "f3f2d1256d5a62ed4c522d692336b099feed676d4dcdea969417b6729cc99145",
+      "detail_json": "{\"destination\":\"alice@example.test\",\"providerEvent\":\"delivered\",\"hard\":false,\"response\":\"250 synthetic-mango-5702\",\"status\":\"2.0.0\",\"mangoReference\":\"01M6Q046YTJMCZ1FEVDM8ERWCK:01M6Q046YTJYD3QW2AH2P5HJBR:ea5636ec-3a55-4e00-b13c-a137c2f04d82:01M6Q041NG8M5AHFHJQM5YEM8W\",\"destinationHash\":\"0486e148d7a8da98a3269faf9f8dd0acd5614b8f69a42a15167273a4263eb865\"}",
+      "billable_units": null,
+      "reported_cost_micros": null,
+      "currency": null,
+      "created_at": 1793920760302
+    }
+  ],
+  "unchangedProjections": true
+}

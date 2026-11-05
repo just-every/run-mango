@@ -1,0 +1,14 @@
+fleet Git: removed 0 credential-bearing GitHub URL rewrite sections
+PUSH attempt=1/5 command=git push --porcelain origin HEAD:refs/heads/cloud/sd-mango-c-f57
+PUSH_CREDENTIAL sha256_16=8addacf6ac95b0bc bundle_file_age_seconds=1 token_issue_age=unknown
+fleet Git: removed 0 credential-bearing GitHub URL rewrite sections
+To https://github.com/just-every/run-mango.git
+!	HEAD:refs/heads/cloud/sd-mango-c-f57	[remote rejected] (fatal error in commit_refs_rules
+)
+Done
+remote: fatal error in commit_refs_rules        
+error: failed to push some refs to 'https://github.com/just-every/run-mango.git'
+PUSH_REJECTED attempt=1 exit=1 HTTP=unknown (not supplied by Git) command=git push --porcelain origin HEAD:refs/heads/cloud/sd-mango-c-f57
+BUNDLE path=/home/agent/rer-consolidation/work/push-rescue/cloud_sd-mango-c-f57-20261105T232417Z-12a1472ec857.bundle head=12a1472ec8577ac328b63434ff000a177b25fd52 sha256=10e2a84a23a3f0ce8b100290ec3e0e727222f175c349b473cbca6fd74504bf31 verified=true
+Preserve this VM/clone and retrieve the bundle before ending its retention period.
+BLOCKED command=git push --porcelain origin HEAD:refs/heads/cloud/sd-mango-c-f57 HTTP=unknown (not supplied by Git); retain verified bundle and clone

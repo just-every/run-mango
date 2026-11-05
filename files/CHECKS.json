@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f57",
+  "repository": "just-every/run-mango",
+  "head": "12a1472ec8577ac328b63434ff000a177b25fd52",
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0,
+    "log": "typecheck.log"
+  },
+  "first_party": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "log": "first-party.log"
+  },
+  "views_write": {
+    "command": "node src/base/contract-docs.mjs write",
+    "exit": 0,
+    "log": "views-write.log"
+  },
+  "views_check_after_write": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 0,
+    "log": "views-check.log"
+  },
+  "views_restored": {
+    "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+    "exit": 0,
+    "generated_views_committed": false
+  },
+  "lock_write": {
+    "command": "node scripts/edition-authoring/cli.mjs lock",
+    "exit": 0
+  },
+  "lock_check": {
+    "command": "node scripts/edition-authoring/cli.mjs check",
+    "exit": 0,
+    "ok": true
+  },
+  "migration_ledger": {
+    "command": "none",
+    "exit": 0,
+    "reason": "No migration changed."
+  },
+  "registrations": {
+    "focused_before": 1,
+    "focused_after": 1,
+    "added": 0,
+    "deleted": 0
+  },
+  "full_history": true,
+  "no_removed_existing_assertions": true,
+  "no_acceptance_changes": true,
+  "publication_scan": {
+    "status": "deferred to maintained Mac lander",
+    "complete": false
+  },
+  "focused_journey": {
+    "command": "timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js go-live.journeys.ts --workers=1",
+    "exit": 0,
+    "tests": 1,
+    "result": "1 passed (5.0m)",
+    "log": "go-live.log",
+    "head": "12a1472ec8577ac328b63434ff000a177b25fd52",
+    "chromium": "/usr/bin/chromium",
+    "width": 1440
+  },
+  "mechanical_after_final_integration": {
+    "main": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+    "rebase": "up to date",
+    "views_write_exit": 0,
+    "views_check_exit": 0,
+    "generated_outputs_restored": true,
+    "lock_write_exit": 0,
+    "lock_check_exit": 0
+  },
+  "product_transport": {
+    "status": "pushed",
+    "head": "12a1472ec8577ac328b63434ff000a177b25fd52",
+    "ref": "refs/heads/cloud/sd-mango-c-f57",
+    "total_attempts": 3,
+    "recovered_diagnostic": "two remote rejections: fatal error in commit_refs_rules; no HTTP status supplied; third guarded push succeeded after launcher refresh and shared helper setup",
+    "remote_receipt": "product-remote.txt",
+    "log": "push-recovery.log"
+  },
+  "ci_discovery": {
+    "id": 42129131488,
+    "event": "push",
+    "status": "in_progress",
+    "conclusion": null,
+    "head": "12a1472ec8577ac328b63434ff000a177b25fd52",
+    "calls_used_before_polling": 3,
+    "watcher": "one watcher, at least 300 seconds between calls"
+  },
+  "ci": {
+    "id": 42129131488,
+    "event": "push",
+    "observed_at": "2026-11-05T23:32:01.398752+00:00",
+    "conclusion": "failure",
+    "head_sha": "12a1472ec8577ac328b63434ff000a177b25fd52",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42129131488",
+    "status": "completed",
+    "classification": "expected-generated-views-only",
+    "root_failed_job": 127601155668,
+    "aggregate_failed_job": 127601290109,
+    "root_failed_command": "node src/base/contract-docs.mjs check",
+    "root_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "shards": "skipped",
+    "local_reproduction_exit": 1,
+    "cloud_ready_exception": true,
+    "actual_verify_success": false,
+    "github_calls_used": 7,
+    "reruns": 0,
+    "dispatches": 0
+  },
+  "product_diff": [
+    "CONTRACT.md",
+    "tests/go-live/go-live.flow.ts",
+    "sources.lock.json"
+  ]
+}

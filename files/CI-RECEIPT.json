@@ -1,0 +1,21 @@
+{
+  "id": 42129131488,
+  "event": "push",
+  "observed_at": "2026-11-05T23:32:01.398752+00:00",
+  "conclusion": "failure",
+  "head_sha": "12a1472ec8577ac328b63434ff000a177b25fd52",
+  "html_url": "https://github.com/just-every/run-mango/actions/runs/42129131488",
+  "status": "completed",
+  "classification": "expected-generated-views-only",
+  "root_failed_job": 127601155668,
+  "aggregate_failed_job": 127601290109,
+  "root_failed_command": "node src/base/contract-docs.mjs check",
+  "root_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "shards": "skipped",
+  "local_reproduction_exit": 1,
+  "cloud_ready_exception": true,
+  "actual_verify_success": false,
+  "github_calls_used": 7,
+  "reruns": 0,
+  "dispatches": 0
+}
