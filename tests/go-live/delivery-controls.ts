@@ -2,8 +2,9 @@ import type {QueueCommand} from '../../src/core/shared/platform';
 
 // Test-only scheduling barriers around real D1 calls. They never supply query
 // results or alter SQL: after release the original statement/transaction runs.
-type Point='step-start'|'approval'|'handoff'|'click-index'|'outage-pause'|'sms-frequency';
+type Point='step-start'|'approval'|'handoff'|'click-index'|'outage-pause'|'sms-frequency'|'revision-create';
 const patterns:Record<Point,RegExp>={
+  'revision-create':/^\s*INSERT INTO "?campaign_revisions\b/i,
   'step-start':/^\s*INSERT INTO step_dispatches\b/,
   'sms-frequency':/^\s*INSERT INTO sms_frequency_claims\b/,
   'outage-pause':/^\s*(?:INSERT INTO provider_outages\b|UPDATE provider_outages SET state=CASE WHEN)/,

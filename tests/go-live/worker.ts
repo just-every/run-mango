@@ -104,7 +104,7 @@ async function control(request: Request, bindings: Bindings) {
     return Response.json(advanceClock(body.advanceMs,body.hold));
   }
   if(path==='/_golive/barrier') {
-    const body=await request.json() as {action:'arm'|'release'|'status';point:'step-start'|'approval'|'handoff'|'click-index'|'outage-pause'|'sms-frequency';identity:string};
+    const body=await request.json() as {action:'arm'|'release'|'status';point:'step-start'|'approval'|'handoff'|'click-index'|'outage-pause'|'sms-frequency'|'revision-create';identity:string};
     if(body.action==='arm')arm(body.point,body.identity);
     if(body.action==='release')release();
     return Response.json(status());

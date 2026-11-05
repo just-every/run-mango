@@ -4046,7 +4046,7 @@
       "executable": false
     },
     "src/core/features/campaigns/reuse-service.ts": {
-      "sha256": "fd7db874f28404d58799b416feb8e354bc32e78259e4a828f7b63779c785efb7",
+      "sha256": "4ee8b36e1305e3395f326984576526289c74a4863a0edec00ff937fca583efd9",
       "executable": false
     },
     "src/core/features/campaigns/review-snapshot.ts": {
@@ -8501,8 +8501,12 @@
       "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
       "executable": false
     },
+    "tests/campaign-authoring/duplicate-authority-journey.ts": {
+      "sha256": "42d8b8b990d224fd7b8af55cf1975b9edf830335734a0030538f858abd836e5b",
+      "executable": false
+    },
     "tests/campaign-authoring/duplicate-settings.spec.ts": {
-      "sha256": "e10366cf62f6a997415e207fe5d753a90c70123bc9711189cee806fda369a442",
+      "sha256": "be0903362d32717a3c56ae7b53b3a518f04c0ab58da3ed88b21dc4e7e99ee68a",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
@@ -8818,7 +8822,7 @@
       "executable": false
     },
     "tests/go-live/delivery-controls.ts": {
-      "sha256": "9000fb8cebd755e49961a5d76b75105b44e7a42de5ae54b8101de222fd8ae27e",
+      "sha256": "707129f59b348bc00600a2da5c31dbd108d7c0f8fc157c76d90b379efe5b8c17",
       "executable": false
     },
     "tests/go-live/delivery-recovery.flow.ts": {
@@ -9146,7 +9150,7 @@
       "executable": false
     },
     "tests/go-live/worker.ts": {
-      "sha256": "79a99a67b11638d5664e1bf47b423a4ffcdb51c7abf9f2d7be37883980e548be",
+      "sha256": "63f5d7d90f906f8c7c18649bd574be70b8157234c81ea24f43ba6fd08fc27e35",
       "executable": false
     },
     "tests/health-lifetime.ts": {

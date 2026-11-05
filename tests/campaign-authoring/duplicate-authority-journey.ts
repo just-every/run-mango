@@ -1,12 +1,12 @@
-import {expect} from '@playwright/test';
-import {eraseHttp} from '../audience-import/erase';
+import {expect,type Page,type TestInfo} from '@playwright/test';
 import {providerEdge} from '../go-live/edge';
 import {eventSigner} from '../go-live/sendgrid-events';
 import {installation,json,sender,confirmedContact,draftCampaign,approve,dispatch,availableTransport} from '../go-live/harness';
+import {duplicateErasedSourceJourney} from './duplicate-erased-source-journey';
 
 const address = (name:string) => [name,'example.test'].join('@');
 
-export async function duplicateAuthorityJourney() {
+export async function duplicateAuthorityJourney(page:Page,info:TestInfo) {
   const edge = await providerEdge(), site = await installation(edge,eventSigner(),{reuseEmptySchema:true});
   try {
     let cookie = await site.open();
@@ -19,6 +19,7 @@ export async function duplicateAuthorityJourney() {
     const source = await draftCampaign(site,cookie,'synthetic-mango-504 source',[withdrawn,retained,joined],due);
     const get = async (id:string) => json(await site.call(`/api/campaigns/${id}`,{cookie}),200);
     const patch = async (id:string,body:unknown) => json(await site.call(`/api/campaign-revisions/${id}`,{method:'PATCH',cookie,body}),200);
+    await patch(source.revisionId,{emailBody:`<p>synthetic-mango-509 editorial contact ${withdrawn}.</p>`});
     await availableTransport(site);
     expect(await json(await site.call(`/api/campaigns/${source.campaignId}/test-send`,{method:'POST',cookie,
       body:{revisionId:source.revisionId,channel:'email',to:address('tester')}}),200)).toMatchObject({status:'test-sent',disposition:'accepted'});
@@ -118,14 +119,7 @@ export async function duplicateAuthorityJourney() {
     expect(edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe'])).toHaveLength(2);
     console.log('PROBE CAMP-018 acceptance-4: changed sender refuses copy approval without authority; after a fresh preview, native opt-out and new confirmation change exact approved recipients from the source pair to the current pair; editing, approval and replay leave source approved bytes, receipt, snapshot, tests and populated results unchanged.');
     const erasedId = (await site.rows(`SELECT contact_id FROM contact_email_addresses WHERE email='${withdrawn}'`))[0].contact_id;
-    const erased = await eraseHttp(site,cookie,erasedId);
-    expect(erased.state).toBe('complete');
-    expect((await site.rows(`SELECT state FROM campaign_revisions WHERE id='${source.revisionId}'`))[0].state).toBe('erasure-invalidated');
-    const beforeRefusal = await site.count('campaigns');
-    expect(await json(await site.call(`/api/campaigns/${source.campaignId}/duplicate`,{method:'POST',cookie,body:{}}),404))
-      .toEqual({error:'source_revision_unavailable'});
-    expect(await site.count('campaigns')).toBe(beforeRefusal);
-    console.log('PROBE CAMP-018 erased-source boundary: native contact erasure invalidates the source; duplication refuses source_revision_unavailable and creates no draft. Any-state wording remains partial at this conservative privacy boundary.');
+    await duplicateErasedSourceJourney(site,cookie,source,erasedId,withdrawn,page,info);
     expect(edge.unexpected).toEqual([]);
   } finally {
     await site.runtime.close();

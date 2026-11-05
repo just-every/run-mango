@@ -5,7 +5,7 @@ import {localSessionCookieName} from '../support/local-session';
 
 const address = (name: string) => [name, 'example.test'].join('@');
 
-test('[CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval', async ({request,playwright}) => {
+test('[CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval', async ({request,playwright,page},info) => {
   test.setTimeout(600000);
   const runtime = await authoringRuntime({suite:'campaign-duplicate-settings'});
   let reopenedClient: Awaited<ReturnType<typeof playwright.request.newContext>> | undefined;
@@ -150,5 +150,5 @@ test('[CAMP-018] duplication retains saved settings, isolates history and rechec
     await reopenedClient?.dispose();
     await runtime.close();
   }
-  await duplicateAuthorityJourney();
+  await duplicateAuthorityJourney(page,info);
 });

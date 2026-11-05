@@ -17,9 +17,9 @@ const contentFields = ['emailSubject','emailBody','emailText','preheader','smsBo
 
 export function createCampaignReuseService(database: Database, defaults: () => DraftComposition, timezone: string, sizeOptions: EmailSizeOptions = {}) {
   const db = database.$client;
-  async function snapshot(revisionId: string): Promise<Snapshot | undefined> {
+  async function snapshot(revisionId: string, redactedDraft = false): Promise<Snapshot | undefined> {
     const revision = await database.query.campaignRevisions.findFirst({where:eq(campaignRevisions.id,revisionId)});
-    if (!revision || revision.state === 'erasure-invalidated') return undefined;
+    if (!revision || (revision.state === 'erasure-invalidated' && !redactedDraft)) return undefined;
     const [steps, pending] = await Promise.all([
       db.prepare('SELECT channel, timezone, why_this_time FROM campaign_steps WHERE revision_id=? ORDER BY sequence').bind(revisionId).all<{channel:'email'|'sms';timezone:string;why_this_time:string}>(),
       db.prepare('SELECT settings_json FROM campaign_draft_step_settings WHERE revision_id=?').bind(revisionId).first<{settings_json:string}>(),
@@ -40,7 +40,12 @@ export function createCampaignReuseService(database: Database, defaults: () => D
     },
     async duplicate(campaignId: string, operatorId: string) {
       const source = await db.prepare('SELECT active_revision_id FROM campaigns WHERE id=?').bind(campaignId).first<{active_revision_id:string}>();
-      const value = source && await snapshot(source.active_revision_id);
+      // Duplication reads only the current, redacted composition into a new
+      // unscheduled draft. It carries no historical approval or recipients.
+      // The request's native erasure write fence rejects a snapshot overtaken
+      // by another erasure before createDraft commits. Templates and followups
+      // still require an unaffected source revision.
+      const value = source && await snapshot(source.active_revision_id, true);
       return value ? start(value,operatorId,`Copy of ${value.composition.name}`.slice(0,160)) : undefined;
     },
     async save(input:{revisionId:string;name:string;templateId?:string;updatedAt?:number}, operatorId:string) {
