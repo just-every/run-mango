@@ -9130,7 +9130,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce-edge.ts": {
-      "sha256": "980777414553f392eb0c4d43d1dc864ea296cb40d280506563355c8f80ccca07",
+      "sha256": "ecea572190a91816f6c7b762a51af3165abe31d46ce7370ac0071ced59c5ee97",
       "executable": false
     },
     "tests/go-live/woocommerce-plugin-journey.ts": {
@@ -9138,7 +9138,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "4f52e79737ee441ee5e146bb0a9788365d62ab269897456eb7f58d990df78192",
+      "sha256": "8ccfd07a93b8953c418c6dd54325052183a30740d10ceb6ee86ceebb96c8ee7c",
       "executable": false
     },
     "tests/go-live/worker.ts": {
