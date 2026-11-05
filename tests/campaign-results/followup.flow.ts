@@ -22,6 +22,34 @@ export const walk0 = async({page,request})=>{
   const actual=await post('/api/campaign-authoring/audience',{inclusionRuleJson:review.revision.inclusionRuleJson,exclusionRulesJson:review.revision.exclusionRulesJson,channels:['email']});
   expect(actual.ok(),await actual.text()).toBe(true);const audience=await actual.json();expect(audience.candidateCount).toBe(fixture.expectedCandidateIds.length);expect(audience.eligibleCount).toBe(fixture.expectedEligibleIds.length);
   expect(audience.exclusions).toEqual(expect.arrayContaining([{reason:'email-unsubscribed',count:1},{reason:'email-suppressed',count:1},{reason:'frequency-window',count:1}]));
+  // Identify membership through the same native review door, independently of
+  // aggregate totals: each saved cohort is intersected with one known contact.
+  const savedRule=JSON.parse(review.revision.inclusionRuleJson);
+  const candidateIds:string[]=[],eligibleIds:string[]=[];
+  for(const contactId of fixture.contactIds as string[]) {
+    const identity={sourceType:'contact',field:'id',comparator:'eq',value:contactId};
+    const response=await post('/api/campaign-authoring/audience',{
+      inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[identity],groups:[savedRule]}),
+      exclusionRulesJson:review.revision.exclusionRulesJson,channels:['email'],
+    });
+    expect(response.ok(),await response.text()).toBe(true);
+    const member=await response.json();
+    expect(member.status,contactId).toBe('ok');
+    expect(member.candidateCount,`${contactId} original non-clicker membership`).toBe(Number(fixture.expectedCandidateIds.includes(contactId)));
+    expect(member.eligibleCount,`${contactId} current review eligibility`).toBe(Number(fixture.expectedEligibleIds.includes(contactId)));
+    if(member.candidateCount===1)candidateIds.push(contactId);
+    if(member.eligibleCount===1)eligibleIds.push(contactId);
+  }
+  expect(candidateIds.sort()).toEqual([...fixture.expectedCandidateIds].sort());
+  expect(eligibleIds.sort()).toEqual([...fixture.expectedEligibleIds].sort());
+  // The unrelated negative control exists and could receive ordinary email;
+  // only absence from the original campaign keeps it out of this follow-up.
+  const unrelated=await post('/api/campaign-authoring/audience',{
+    inclusionRuleJson:JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'id',comparator:'eq',value:'followup-unrelated'}]}),
+    exclusionRulesJson:'[]',channels:['email'],
+  });
+  expect(unrelated.ok(),await unrelated.text()).toBe(true);
+  expect(await unrelated.json()).toMatchObject({status:'ok',candidateCount:1,eligibleCount:1});
   const approval=await post(`/api/campaigns/${created}/approve`,{revisionId:review.revision.id,idempotencyKey:crypto.randomUUID()});expect(approval.status()).toBe(409);expect((await approval.json()).status).toBe('blocked');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);await page.screenshot({path:test.info().outputPath(`followup-review-${width}.png`),fullPage:true});
   const copied=await post(`/api/campaigns/${created}/duplicate`,{});expect(copied.status()).toBe(201);const copy=await copied.json();

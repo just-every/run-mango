@@ -7,7 +7,7 @@ export async function seedFollowup(db:D1Database,platform:Platform) {
   await seedCampaign(db,id,'completed');await seedCampaign(db,'studio-recent-send','completed');
   await db.prepare('UPDATE campaign_revisions SET name=?,email_subject=?,sender_name=?,message_category=? WHERE id=?').bind('The October studio letter','New ceramics from the studio',platform.config.mailSender.displayName,'newsletter',`${id}-revision`).run();
   await db.prepare('UPDATE campaign_steps SET scheduled_at=?,send_by_at=? WHERE revision_id=?').bind(sent,sent+3600000,`${id}-revision`).run();
-  const people=['clicker','scanner','reader','unsubscribed','suppressed','frequent'];
+  const people=['clicker','scanner','reader','unsubscribed','suppressed','frequent','unrelated'];
   const database=createDatabase(db),recipientIds:Record<string,string>={};
   for(const person of people) {
     const contactId=`followup-${person}`,email=`${contactId}@example.test`,status=person==='unsubscribed'||person==='suppressed'?person:'subscribed';
@@ -16,11 +16,13 @@ export async function seedFollowup(db:D1Database,platform:Platform) {
     await database.insert(contactEmailAddresses).values({id:contactId+'-address',contactId,email,channelStatus:status,channelStatusAt:new Date(now-86400000),createdAt:new Date(now),updatedAt:new Date(now)});
     await db.prepare('DELETE FROM consent_evidence WHERE id=?').bind(contactId+'-consent').run();
     await database.insert(consentEvidence).values({id:contactId+'-consent',contactId,channel:'email',destination:email,brandOrLegalSender:platform.config.mailSender.displayName,messageCategory:'newsletter',frequencyDisclosure:'Weekly studio letters',destinationJurisdiction:'US',captureMethod:'hosted-signup-form',captureSource:'Studio newsletter',consentText:'Send me studio newsletters.',consentVersion:'v1',occurredAt:new Date(now-86400000),confirmationRequired:true,confirmedAt:new Date(now-86000000),createdAt:new Date(now-86400000),updatedAt:new Date(now-86000000)});
-    recipientIds[person]=await recipient(db,id,1,'accepted',null,{contactId,destination:email,handedOffAt:new Date(sent),providerAcceptedAt:new Date(sent),handoffStartedAt:new Date(sent),createdAt:new Date(sent),updatedAt:new Date(sent)});
+    if(person!=='unrelated')recipientIds[person]=await recipient(db,id,1,'accepted',null,{contactId,destination:email,handedOffAt:new Date(sent),providerAcceptedAt:new Date(sent),handoffStartedAt:new Date(sent),createdAt:new Date(sent),updatedAt:new Date(sent)});
   }
   await recipient(db,'studio-recent-send',1,'accepted',null,{contactId:'followup-frequent',destination:'followup-frequent@example.test',handedOffAt:new Date(now-3600000),providerAcceptedAt:new Date(now-3600000)});
   for(const person of ['clicker','scanner'])await db.prepare('INSERT INTO link_click_facts(id,recipient_step_id,request_digest,destination_url,occurred_at,automated,created_at) VALUES(?,?,?,?,?,?,?)').bind(crypto.randomUUID(),recipientIds[person],person,'https://studio.example.test',sent+3600000,Number(person==='scanner'),now).run();
-  return {campaignId:id,sent,expectedCandidateIds:people.filter(p=>p!=='clicker').map(p=>`followup-${p}`),expectedEligibleIds:['followup-scanner','followup-reader']};
+  return {campaignId:id,sent,contactIds:people.map(person=>`followup-${person}`),
+    expectedCandidateIds:['followup-scanner','followup-reader','followup-unsubscribed','followup-suppressed','followup-frequent'],
+    expectedEligibleIds:['followup-scanner','followup-reader']};
 }
 
 /** Historical sent-message pixel records use the production token preparer. */
