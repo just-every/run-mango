@@ -1,0 +1,7 @@
+{
+  "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+  "command": "cloud_run timeout 1200 pnpm exec playwright test --config playwright.config.js --grep 'an uploaded image is stored once|uploads without a session|an image past its per-minute|approval verifies this deployment' --workers=1 --reporter=list --output ../evidence/assets",
+  "exit": 0,
+  "log": "campaign-assets-retained.log",
+  "selection": "Existing contract wrappers register at contract.js; select their full unique test names."
+}

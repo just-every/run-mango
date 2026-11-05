@@ -1,0 +1,36 @@
+
+Running 1 test using 1 worker
+
+(node:2770) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/campaign-authoring/local-images.spec.ts:12:1 › [CAMP-023] Insert image requires a description, previews only own HTTP media and requires HTTPS for every sending door (39.1s)
+
+
+  1) tests/campaign-authoring/local-images.spec.ts:12:1 › [CAMP-023] Insert image requires a description, previews only own HTTP media and requires HTTPS for every sending door 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 0
+    + Received  + 1
+
+      Array [
+        "message.content",
+    +   "message.links.resolved",
+      ]
+
+       at campaign-authoring/image-sending-journey.ts:30
+
+      28 |       body: { revisionId: refused.revisionId, idempotencyKey: 'synthetic-mango-490' } }), 409);
+      29 |     expect(approval.blockers).toContainEqual(expect.objectContaining({ kind: 'message.content', detail: expect.stringContaining('images at an HTTPS address') }));
+    > 30 |     expect(approval.blockers.map((item: any) => item.kind)).toEqual(['message.content']);
+         |                                                             ^
+      31 |     const testSend = await json(await site.call(`/api/campaigns/${refused.campaignId}/test-send`, { method: 'POST', cookie,
+      32 |       body: { revisionId: refused.revisionId, channel: 'email', to: ['tester', 'example.test'].join('@') } }), 409);
+      33 |     expect(testSend.blockers).toContainEqual(expect.objectContaining({ kind: 'test-send', detail: expect.stringContaining('images at an HTTPS address') }));
+        at imageSendingJourney (/home/agent/rer-consolidation/work/sd-mango-c-f49/run-mango/tests/campaign-authoring/image-sending-journey.ts:30:61)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f49/run-mango/tests/campaign-authoring/local-images.spec.ts:129:3
+
+    Error Context: ../evidence/288782d55556/main/campaign-authoring-local-i-02adf-TTPS-for-every-sending-door/error-context.md
+
+  1 failed
+    tests/campaign-authoring/local-images.spec.ts:12:1 › [CAMP-023] Insert image requires a description, previews only own HTTP media and requires HTTPS for every sending door 

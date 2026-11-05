@@ -1,0 +1,7 @@
+{
+  "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+  "command": "cloud_run timeout 1200 pnpm exec playwright test --config playwright.config.js campaign-authoring/local-images.spec.ts --workers=1 --reporter=list",
+  "viewport": 1440,
+  "exit": 0,
+  "log": "final-1440.log"
+}

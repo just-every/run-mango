@@ -1,0 +1,34 @@
+
+Running 1 test using 1 worker
+
+(node:3185) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/campaign-authoring/local-images.spec.ts:12:1 › [CAMP-023] Insert image requires a description, previews only own HTTP media and requires HTTPS for every sending door (44.4s)
+
+
+  1) tests/campaign-authoring/local-images.spec.ts:12:1 › [CAMP-023] Insert image requires a description, previews only own HTTP media and requires HTTPS for every sending door 
+
+    Error: {"status":"blocked","results":[],"blockers":[{"kind":"test-send","detail":"Send deferred by provider-pacing; available after 2026-11-05T21:39:45.398Z.","blocking":true}]}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 200
+    Received: 409
+
+       at go-live/harness.ts:44
+
+      42 | export async function json(response: Response, status: number) {
+      43 |   const text = await response.text();
+    > 44 |   expect(response.status, text).toBe(status);
+         |                                 ^
+      45 |   return text ? JSON.parse(text) : null;
+      46 | }
+      47 |
+        at json (/home/agent/rer-consolidation/work/sd-mango-c-f49/run-mango/tests/go-live/harness.ts:44:33)
+        at imageSendingJourney (/home/agent/rer-consolidation/work/sd-mango-c-f49/run-mango/tests/campaign-authoring/image-sending-journey.ts:44:5)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f49/run-mango/tests/campaign-authoring/local-images.spec.ts:145:3
+
+    Error Context: ../evidence/288782d55556/main/campaign-authoring-local-i-02adf-TTPS-for-every-sending-door/error-context.md
+
+  1 failed
+    tests/campaign-authoring/local-images.spec.ts:12:1 › [CAMP-023] Insert image requires a description, previews only own HTTP media and requires HTTPS for every sending door 

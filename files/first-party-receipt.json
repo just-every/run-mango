@@ -1,0 +1,5 @@
+{
+  "head": "353e7070632f096c809cca78b85d66289523df0e",
+  "command": "npx -y @runeditrun/rer check --profile first-party",
+  "exit": 0
+}

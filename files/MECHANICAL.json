@@ -1,0 +1,26 @@
+{
+  "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+  "origin_main": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "view_write": {
+    "command": "node src/base/contract-docs.mjs write",
+    "exit": 0
+  },
+  "view_check": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 0
+  },
+  "view_restore": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+  "lock": {
+    "command": "node scripts/edition-authoring/cli.mjs lock",
+    "exit": 0
+  },
+  "lock_check": {
+    "command": "node scripts/edition-authoring/cli.mjs check",
+    "exit": 0
+  },
+  "ledger": {
+    "command": "none; no migration changed",
+    "exit": 0
+  },
+  "generated_views_equal_origin_main": true
+}

@@ -1,0 +1,7 @@
+{
+  "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+  "command": "node src/base/contract-docs.mjs check",
+  "exit": 1,
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "classification": "Expected generated-view freshness only; no repair and no generated-view commit."
+}

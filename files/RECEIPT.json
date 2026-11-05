@@ -1,0 +1,135 @@
+{
+  "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+  "origin_main": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "typecheck": {
+    "command": "cloud_run pnpm run typecheck",
+    "exit": 0,
+    "log": "merged-typecheck.log"
+  },
+  "view_write": {
+    "command": "node src/base/contract-docs.mjs write",
+    "exit": 0
+  },
+  "view_check": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 0
+  },
+  "view_restore": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+  "lock": {
+    "command": "node scripts/edition-authoring/cli.mjs lock",
+    "exit": 0
+  },
+  "lock_check": {
+    "command": "node scripts/edition-authoring/cli.mjs check",
+    "exit": 0
+  },
+  "ledger": {
+    "command": "none; no migration changed",
+    "exit": 0
+  },
+  "clause": "CAMP-023",
+  "before": "partial",
+  "after": "done",
+  "counts_before": {
+    "done": 18,
+    "partial": 200,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 19,
+    "partial": 199,
+    "missing": 98
+  },
+  "local_image_registrations_before": 1,
+  "local_image_registrations_after": 1,
+  "generated_views_equal_origin_main": true,
+  "first_party": {
+    "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0,
+    "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+    "log": "final-first-party.log"
+  },
+  "runtime_1440": {
+    "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+    "command": "cloud_run timeout 1200 pnpm exec playwright test --config playwright.config.js campaign-authoring/local-images.spec.ts --workers=1 --reporter=list",
+    "viewport": 1440,
+    "exit": 0,
+    "log": "final-1440.log"
+  },
+  "runtime_390": {
+    "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+    "command": "cloud_run timeout 1200 pnpm exec playwright test --config /tmp/mango-phone.config.mjs campaign-authoring/local-images.spec.ts --workers=1 --reporter=list --output ../evidence/final-390",
+    "viewport": 390,
+    "exit": 0,
+    "log": "final-390-capture.log"
+  },
+  "retained_asset_tests": {
+    "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+    "command": "cloud_run timeout 1200 pnpm exec playwright test --config playwright.config.js --grep 'an uploaded image is stored once|uploads without a session|an image past its per-minute|approval verifies this deployment' --workers=1 --reporter=list --output ../evidence/assets",
+    "exit": 0,
+    "log": "campaign-assets-retained.log",
+    "selection": "Existing contract wrappers register at contract.js; select their full unique test names."
+  },
+  "screenshots": [
+    {
+      "path": "screens/foreign-image-refused-1440.png",
+      "sha256": "b7276cf48740fda87a1a5e9aeaef628d4f7dd0ad70138394d30da1306593d3ac"
+    },
+    {
+      "path": "screens/foreign-image-refused-390.png",
+      "sha256": "a7dc0868e7646cdc6dfa46237e38a13901a7dfa344517385c86e1a6c2cb9c854"
+    },
+    {
+      "path": "screens/image-description-required-1440.png",
+      "sha256": "1a41554c4bc22bfb8ce59a43382fbc61dfab8cc99183902e6daf435b3c907362"
+    },
+    {
+      "path": "screens/image-description-required-390.png",
+      "sha256": "40ef7de8adc0b07b624eaad7badba3193556ad3cf556519fdd07c1d1557e9ae4"
+    },
+    {
+      "path": "screens/local-image-preview-1440.png",
+      "sha256": "661406a4020850e0fbd899623eb94517ece9014488831b7059bdb266dfbc0d8b"
+    },
+    {
+      "path": "screens/local-image-preview-390.png",
+      "sha256": "eb7187935dd29b253e33b330c9cd3056f9d4a5feb572787197beb69e2d04d666"
+    }
+  ],
+  "product_push": {
+    "branch": "cloud/sd-mango-c-f49",
+    "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+    "status": "pushed",
+    "log": "push-candidate.log"
+  },
+  "publication_scan": {
+    "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+    "complete": false,
+    "historyScanned": false,
+    "findings": null,
+    "reason": "Cloud delegation to the maintained Mac lander"
+  },
+  "pr": null,
+  "verify": {
+    "id": 42116771178,
+    "event": "push",
+    "head": "2beb5ed987bece4b87ec0c93048761d6a7d2e6cd",
+    "status": "completed",
+    "conclusion": "failure",
+    "exception": "Only ACCEPTANCE.md generation freshness and its dependent aggregate guard; explicitly permitted READY exception.",
+    "failed_jobs": [
+      127558452668,
+      127558556085
+    ],
+    "browser_shards": "skipped",
+    "reruns": 0
+  },
+  "github_calls": 6,
+  "f45_base_hold": "Retained requested base; fleet lane hold until f45 is on main. Last-fetched main did not contain it.",
+  "evidence_review": {
+    "regular_files_only": true,
+    "credentials_and_injected_values": "redacted if present",
+    "runner_environment_blocks": "omitted",
+    "private_gate_material": false
+  }
+}
