@@ -1,0 +1,75 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/v1/create",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6PVCNVZE3YDRQJBKYG5H6DR-draft",
+    "contentType": "application/json",
+    "json": {
+      "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nGood Things Are Ripening\nHello first_name | fallback: \"friend\" and",
+      "aspect": "portrait",
+      "mode": "inspiration",
+      "candidates": [
+        {
+          "slot": "a"
+        },
+        {
+          "slot": "b"
+        }
+      ]
+    }
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1/candidates/a",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6PVCNVZE3YDRQJBKYG5H6DR-draft-a"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1/candidates/b",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6PVCNVZE3YDRQJBKYG5H6DR-draft-b"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1/candidates/b/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1",
+    "authorized": true
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1/candidates/a",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6PVCNVZE3YDRQJBKYG5H6DR-draft-a"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1/candidates/a/image",
+    "authorized": true
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/create/crt-9e9336609b18a8e1",
+    "authorized": true
+  }
+]

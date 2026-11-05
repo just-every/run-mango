@@ -1,0 +1,32 @@
+{
+  "command": [
+    "env",
+    "MANGO_NO_FIXTURE_SERVER=1",
+    "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium",
+    "MANGO_TEST_WORK_DIR=/home/agent/rer-consolidation/work/sd-mango-c-f42-fix-1",
+    "WRANGLER_SEND_METRICS=false",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "tests/campaign-authoring/design-generation.spec.ts",
+    "--workers=1",
+    "--output=../packet/before-native",
+    "--reporter=list"
+  ],
+  "cwd": "/home/agent/rer-consolidation/work/sd-mango-c-f42-fix-1/run-mango",
+  "head": "9b9f3867af955c390b39b740b89f96b4ef929ed1",
+  "working_diff_sha256": "59820d34dffff906a0bbcbd352087c694d4d6e7280783635641201a1f4f036d1",
+  "file_sha256": {
+    "src/core/features/design-generation/model.ts": "b32252108d1faccb3dac5c4802936e6148a6983bca4ffa8c2c92eb5115560c91",
+    "tests/campaign-authoring/design-generation.flow.ts": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
+    "CONTRACT.md": "8431000fe00a0d2a91a8b9f0a6255885e0e72894aea16f1a6430399e786d2bef",
+    "sources.lock.json": "d1d5d50bd5395a4683be7a01b5941354f31781de0e7b6f8cc254e5b537922083"
+  },
+  "started_at": "2026-11-05T21:54:03.263763+00:00",
+  "finished_at": "2026-11-05T21:56:17.591861+00:00",
+  "duration_seconds": 134.328,
+  "exit_code": 1,
+  "log": "/home/agent/rer-consolidation/work/sd-mango-c-f42-fix-1/packet/before.log",
+  "log_sha256": "1e11ac165d893f2a405d071029ab4dfee3ce8595fe2e036d41e0082a1ca36e38"
+}

@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "source": "9b9f3867af955c390b39b740b89f96b4ef929ed1",
+  "main": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "status_rows": 316,
+  "changed_rows_from_main": [
+    "DESIGN-003"
+  ],
+  "changed_rows_from_original": [
+    "PROP-008",
+    "DESIGN-003"
+  ],
+  "newer_PROP008_retained": true,
+  "DESIGN003_full_clause_unchanged": true,
+  "R2_R5_original_judgment_frozen": true,
+  "registration_and_deadline_unchanged": true,
+  "retention_and_fake_unchanged_from_original": true,
+  "views_equal_main": true,
+  "counts": {
+    "original": {
+      "published": {
+        "done": 14,
+        "partial": 96,
+        "missing": 0
+      },
+      "all": {
+        "done": 19,
+        "partial": 199,
+        "missing": 98
+      }
+    },
+    "main": {
+      "published": {
+        "done": 13,
+        "partial": 97,
+        "missing": 0
+      },
+      "all": {
+        "done": 18,
+        "partial": 200,
+        "missing": 98
+      }
+    },
+    "candidate": {
+      "published": {
+        "done": 13,
+        "partial": 97,
+        "missing": 0
+      },
+      "all": {
+        "done": 18,
+        "partial": 200,
+        "missing": 98
+      }
+    }
+  },
+  "files": {
+    "src/core/features/design-generation/model.ts": "e9e79da38da91aa4e5c2d48904f6dd3a8eb1782336003f367b1de3af54a836a5",
+    "tests/campaign-authoring/design-generation.flow.ts": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
+    "CONTRACT.md": "c8649deb5f9eb370c1c0751f63bc111fd76761422ffda59a92693d306e901b24",
+    "sources.lock.json": "51ae24521162f595845c569fe0410168c46d780de1e9228a05009e892ab36b17"
+  }
+}

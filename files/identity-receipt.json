@@ -1,0 +1,33 @@
+{
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "command": "git log origin/main..HEAD --format=\"%an <%ae>%n%cn <%ce>%n%(trailers:only,unfold)\"",
+  "candidate_count": 4,
+  "candidates": [
+    {
+      "sha": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+      "author": "Run Edit Run fleet <fleet@runeditrun.com>",
+      "committer": "Run Edit Run fleet <fleet@runeditrun.com>",
+      "trailers": ""
+    },
+    {
+      "sha": "9b9f3867af955c390b39b740b89f96b4ef929ed1",
+      "author": "Run Edit Run fleet <fleet@runeditrun.com>",
+      "committer": "Run Edit Run fleet <fleet@runeditrun.com>",
+      "trailers": ""
+    },
+    {
+      "sha": "1a33e7d835720bce9889966897fd7d0ade0a0da3",
+      "author": "Run Edit Run fleet <fleet@runeditrun.com>",
+      "committer": "Run Edit Run fleet <fleet@runeditrun.com>",
+      "trailers": ""
+    },
+    {
+      "sha": "bd0718bf10dd26cd24c127edc6b6dbe89f3f0c83",
+      "author": "Run Edit Run fleet <fleet@runeditrun.com>",
+      "committer": "Run Edit Run fleet <fleet@runeditrun.com>",
+      "trailers": ""
+    }
+  ],
+  "hook": "/home/agent/rer-consolidation/work/sd-mango-c-f42-fix-1/run-mango/.git/fleet-cloud-hooks",
+  "passed": true
+}

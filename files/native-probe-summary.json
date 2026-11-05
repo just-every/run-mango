@@ -1,0 +1,79 @@
+{
+  "case": "Good Things Are Ripening\nHello {{first_name | fallback: \"{friend}\"}} and {{unsubscribe_url}}",
+  "before": {
+    "submittedBrief": "Good Things Are Ripening\nHello {{first_name | fallback: \"{friend}\"}} and {{unsubscribe_url}}",
+    "expectedRetainedBrief": "Good Things Are Ripening\nHello and",
+    "retainedBrief": "Good Things Are Ripening\nHello first_name | fallback: \"friend\" and",
+    "outbound": {
+      "method": "POST",
+      "path": "/api/v1/create",
+      "authorized": true,
+      "idempotencyKey": "mango-design-01M6PVCNVZE3YDRQJBKYG5H6DR-draft",
+      "contentType": "application/json",
+      "json": {
+        "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nGood Things Are Ripening\nHello first_name | fallback: \"friend\" and",
+        "aspect": "portrait",
+        "mode": "inspiration",
+        "candidates": [
+          {
+            "slot": "a"
+          },
+          {
+            "slot": "b"
+          }
+        ]
+      }
+    }
+  },
+  "after": {
+    "submittedBrief": "Good Things Are Ripening\nHello {{first_name | fallback: \"{friend}\"}} and {{unsubscribe_url}}",
+    "expectedRetainedBrief": "Good Things Are Ripening\nHello and",
+    "retainedBrief": "Good Things Are Ripening\nHello and",
+    "outbound": {
+      "method": "POST",
+      "path": "/api/v1/create",
+      "authorized": true,
+      "idempotencyKey": "mango-design-01M6PVJNCYWKZPHYXKJ8N2FY34-draft",
+      "contentType": "application/json",
+      "json": {
+        "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nGood Things Are Ripening\nHello and",
+        "aspect": "portrait",
+        "mode": "inspiration",
+        "candidates": [
+          {
+            "slot": "a"
+          },
+          {
+            "slot": "b"
+          }
+        ]
+      }
+    }
+  },
+  "same_journey_sha256": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
+  "before_exit": 1,
+  "after_exit": 0,
+  "after_post_counts": {
+    "/api/v1/create": 6,
+    "/api/v1/create/crt-9bc3f2b7d49bdf56/candidates/a": 2,
+    "/api/v1/create/crt-9bc3f2b7d49bdf56/candidates/b": 1,
+    "/api/v1/convert": 4,
+    "/api/v1/create/crt-f1810d3a3741b67d/candidates/a": 1,
+    "/api/v1/create/crt-f1810d3a3741b67d/candidates/b": 1,
+    "/api/v1/create/crt-e82e8cb9f2292f8a/candidates/a": 1,
+    "/api/v1/create/crt-e82e8cb9f2292f8a/candidates/b": 1,
+    "/api/v1/create/crt-e82e8cb9f2292f8a/candidates/c": 1,
+    "/api/v1/create/crt-c9e2edfe99767a3d/candidates/a": 1,
+    "/api/v1/create/crt-c9e2edfe99767a3d/candidates/b": 1,
+    "/api/v1/create/crt-c9e2edfe99767a3d/candidates/c": 1,
+    "/api/v1/create/crt-c9e2edfe99767a3d/candidates/d": 1
+  },
+  "conversion_file_sha256": [
+    "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a",
+    null,
+    "01790123278698b5b66a9b96a695f7472e99ca02a4c54e0ffa5e9c4d0b44c75f",
+    "d7cca3fa95a4173145baa4ef4abe2284ff02c1e622ff2935e45f0c6a38a6b97a"
+  ],
+  "no_live_provider_calls": true,
+  "existing_chosen_bytes_idempotency_retention_export_restore_and_cost_assertions": "completed in the one passing registered journey"
+}

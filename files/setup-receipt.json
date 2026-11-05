@@ -1,0 +1,16 @@
+{
+  "command": [
+    "npx",
+    "-y",
+    "@runeditrun/rer",
+    "setup",
+    "--owner-email",
+    "fleet@runeditrun.com",
+    "--non-interactive"
+  ],
+  "runner": "cloud_run",
+  "exit_code": 0,
+  "log": "setup.log",
+  "log_sha256": "50d2af1c48c98b767d5068adeef025ae99a35bcb48427269d0296dfa87b44ee5",
+  "source": "observed setup terminal completion; log retained"
+}

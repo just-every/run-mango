@@ -1,0 +1,10 @@
+Fix DESIGN-003 R1 quoted fallback sanitization
+
+Strip tokens with the message renderer's existing delimiter grammar before
+stray-brace cleanup, so quoted fallback braces cannot leak token interiors.
+Extend the existing native design-generation journey with the quoted-brace
+case and retain its actual outbound request before asserting sanitization.
+
+Preserve the published original-family source and merge main's newer work.
+Keep DESIGN-003 partial, frozen R2–R5 judgments intact, and R1 pending
+independent new-SHA acceptance. Original family lifetime FIX1 of 2.

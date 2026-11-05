@@ -1,0 +1,25 @@
+{
+  "submittedBrief": "Good Things Are Ripening\nHello {{first_name | fallback: \"{friend}\"}} and {{unsubscribe_url}}",
+  "expectedRetainedBrief": "Good Things Are Ripening\nHello and",
+  "retainedBrief": "Good Things Are Ripening\nHello and",
+  "outbound": {
+    "method": "POST",
+    "path": "/api/v1/create",
+    "authorized": true,
+    "idempotencyKey": "mango-design-01M6PVJNCYWKZPHYXKJ8N2FY34-draft",
+    "contentType": "application/json",
+    "json": {
+      "concept": "A marketing email newsletter design: one column about 600 pixels wide on a tall portrait page, with a header, photos, short text sections, one call-to-action button and a footer with an unsubscribe link. No navigation bar and no web app chrome. Use these words where they fit:\nGood Things Are Ripening\nHello and",
+      "aspect": "portrait",
+      "mode": "inspiration",
+      "candidates": [
+        {
+          "slot": "a"
+        },
+        {
+          "slot": "b"
+        }
+      ]
+    }
+  }
+}

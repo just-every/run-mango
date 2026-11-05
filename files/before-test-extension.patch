@@ -1,0 +1,66 @@
+diff --git a/tests/campaign-authoring/design-generation.flow.ts b/tests/campaign-authoring/design-generation.flow.ts
+index d882407..474b324 100644
+--- a/tests/campaign-authoring/design-generation.flow.ts
++++ b/tests/campaign-authoring/design-generation.flow.ts
+@@ -3,7 +3,7 @@ import { openPage, reloadPage } from '../support/navigation';
+ import { localSessionCookieName } from '../support/local-session';
+ import { test, expect, type Page, type APIRequestContext } from '@playwright/test';
+ import { createHash } from 'node:crypto';
+-import { readFileSync } from 'node:fs';
++import { readFileSync, writeFileSync } from 'node:fs';
+ import { authoredBody } from '../../src/core/features/campaigns/authoring-content';
+ import { parseEmailHtml } from '../../src/core/features/campaigns/email-html-parse';
+ import { authoringRuntime } from './browser-runtime.mjs';
+@@ -196,7 +196,7 @@ export const walk1 = async ({ page, request }, testInfo) => {
+     expect(fake.requests.length).toBeGreaterThan(0);
+   } finally { await runtime.close(); await fake.close(); }
+ };
+-export const walk2 = async ({ page, request }) => {
++export const walk2 = async ({ page, request }, testInfo) => {
+   const candidateB = png(canvas.width, canvas.height, 17);
+   const imageFor = (slot: string) => slot === 'b' ? candidateB : candidateImage;
+   const fake = await startFakeTwelveUi({ key: designKey, candidateImage, slotImages: { b: candidateB }, layerDoc, drawMs: { c: 3_600_000 }, failedSlots: ['d'], holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
+@@ -219,7 +219,7 @@ export const walk2 = async ({ page, request }) => {
+     const dialog = page.getByRole('dialog', { name: 'Design this email with 12ui' });
+     // The prefilled brief already went without the draft's token; one typed in goes too.
+     await expect(dialog.getByLabel('Brief')).not.toHaveValue(/\{\{/);
+-    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: friend}} and {{unsubscribe_url}}';
++    const submittedBrief = 'Good Things Are Ripening\nHello {{first_name | fallback: "{friend}"}} and {{unsubscribe_url}}';
+     await dialog.getByLabel('Brief').fill(submittedBrief);
+     const retainedBrief = 'Good Things Are Ripening\nHello and';
+     const creationResponse = page.waitForResponse(response => response.request().method() === 'POST'
+@@ -230,7 +230,6 @@ export const walk2 = async ({ page, request }) => {
+     expect(started.status()).toBe(201);
+     expect(started.request().postDataJSON()).toMatchObject({ brief: submittedBrief });
+     const startedJob = (await started.json()).job;
+-    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+     expect(startedJob.createdAt).toBeGreaterThanOrEqual(creationBefore);
+     expect(startedJob.createdAt).toBeLessThanOrEqual(creationAfter);
+     const run = page.getByRole('region', { name: 'Design with 12ui' });
+@@ -244,10 +243,15 @@ export const walk2 = async ({ page, request }) => {
+     expect(posts.every(item => item.idempotencyKey)).toBe(true);
+     const created = posts.filter(item => item.path === '/api/v1/create');
+     expect(created).toHaveLength(1);
++    // Preserve the native door and actual provider-edge request before asserting token removal.
++    writeFileSync(testInfo.outputPath('design-generation-r1-probe.json'), JSON.stringify({
++      submittedBrief, expectedRetainedBrief: retainedBrief, retainedBrief: startedJob.brief, outbound: created[0],
++    }, null, 2));
++    expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+     const concept = (created[0].json as { concept: string }).concept;
+     expect(concept).toContain('Good Things Are Ripening');
+     // Tokens never leave, and nothing from the audience is added: the request carries the brief and Mango's own words only.
+-    expect(concept).not.toMatch(/\{|\}|first_name|unsubscribe_url/);
++    expect(concept).not.toMatch(/\{|\}|first_name|fallback|friend|unsubscribe_url/);
+     expect(JSON.stringify(created[0].json)).not.toMatch(/@example\.test|An earlier draft|Seasonal news/);
+     const slotA = posts.filter(item => item.path.endsWith('/candidates/a'));
+     expect(slotA).toHaveLength(2);
+@@ -464,5 +468,8 @@ export const walk2 = async ({ page, request }) => {
+       { path: nextLayoutUrl, key: `design-jobs/${startedJob.id}/layout-${latestHash}.layerdoc.json`, bytes: Buffer.from(nextLayerDoc) },
+     ]);
+     expect(fake.purchases).toEqual(purchasesBeforeExport);
+-  } finally { await runtime.close(); await fake.close(); }
++  } finally {
++    writeFileSync(testInfo.outputPath('design-generation-provider-requests.json'), JSON.stringify(fake.requests, null, 2));
++    await runtime.close(); await fake.close();
++  }
+ };

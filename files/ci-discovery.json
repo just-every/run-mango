@@ -1,0 +1,17 @@
+{
+  "workflow_runs": [
+    {
+      "id": 42117902278,
+      "name": "Verify",
+      "head_branch": "cloud/sd-mango-c-f42-fix-1",
+      "head_sha": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+      "path": ".github/workflows/verify.yml",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42117902278",
+      "created_at": "2026-11-05T22:01:44Z",
+      "updated_at": "2026-11-05T22:02:12Z"
+    }
+  ],
+  "capture_note": "The initial URL-query scrubber damaged later JSON; these actual run fields precede that damage. Raw sanitized output retained; scrubber corrected without another discovery call."
+}

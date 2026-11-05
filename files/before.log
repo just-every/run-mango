@@ -1,0 +1,39 @@
+
+Running 1 test using 1 worker
+
+(node:2057) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal (2.2m)
+
+
+  1) tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "brief": "Good Things Are Ripening
+    - Hello and",
+    + Hello first_name | fallback: \"friend\" and",
+        "campaignId": "01M6PVCEH2HRAZZ28YZNQWK0XV",
+        "state": "drafting",
+      }
+
+       at campaign-authoring/design-generation.flow.ts:250
+
+      248 |       submittedBrief, expectedRetainedBrief: retainedBrief, retainedBrief: startedJob.brief, outbound: created[0],
+      249 |     }, null, 2));
+    > 250 |     expect(startedJob).toMatchObject({ brief: retainedBrief, campaignId, state: 'drafting' });
+          |                        ^
+      251 |     const concept = (created[0].json as { concept: string }).concept;
+      252 |     expect(concept).toContain('Good Things Are Ripening');
+      253 |     // Tokens never leave, and nothing from the audience is added: the request carries the brief and Mango's own words only.
+        at walk2 (/home/agent/rer-consolidation/work/sd-mango-c-f42-fix-1/run-mango/tests/campaign-authoring/design-generation.flow.ts:250:24)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f42-fix-1/run-mango/tests/campaign-authoring/design-generation.spec.ts:10:10
+
+    Error Context: ../packet/before-native/campaign-authoring-design--bfe9c-and-expose-provider-refusal/error-context.md
+
+  1 failed
+    tests/campaign-authoring/design-generation.spec.ts:4:1 › [DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal 

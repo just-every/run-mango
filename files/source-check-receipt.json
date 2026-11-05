@@ -1,0 +1,22 @@
+{
+  "command": [
+    "pnpm",
+    "run",
+    "source:check"
+  ],
+  "cwd": "/home/agent/rer-consolidation/work/sd-mango-c-f42-fix-1/run-mango",
+  "head": "9b9f3867af955c390b39b740b89f96b4ef929ed1",
+  "working_diff_sha256": "9e1c2ab49641ef9eebfc23e6b63040c7720e95649a8ff453d643231162160f58",
+  "file_sha256": {
+    "src/core/features/design-generation/model.ts": "e9e79da38da91aa4e5c2d48904f6dd3a8eb1782336003f367b1de3af54a836a5",
+    "tests/campaign-authoring/design-generation.flow.ts": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
+    "CONTRACT.md": "c8649deb5f9eb370c1c0751f63bc111fd76761422ffda59a92693d306e901b24",
+    "sources.lock.json": "51ae24521162f595845c569fe0410168c46d780de1e9228a05009e892ab36b17"
+  },
+  "started_at": "2026-11-05T21:58:14.454538+00:00",
+  "finished_at": "2026-11-05T21:58:15.343286+00:00",
+  "duration_seconds": 0.889,
+  "exit_code": 0,
+  "log": "/home/agent/rer-consolidation/work/sd-mango-c-f42-fix-1/packet/source-check.log",
+  "log_sha256": "3e5d0d385a0d5bc00e23bc33d5c5174d760c22772e2689e86e210c8e6e926bf3"
+}

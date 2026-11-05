@@ -1,0 +1,13 @@
+{
+  "node": "22.20.0",
+  "rer": "0.2.85",
+  "declaredRer": "0.2.85",
+  "packageManager": "pnpm@10.12.4",
+  "chromium": "/usr/bin/chromium",
+  "browserFlags": [
+    "--use-mock-keychain",
+    "--password-store=basic",
+    "--no-sandbox"
+  ],
+  "homeIsReal": true
+}

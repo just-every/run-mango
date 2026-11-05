@@ -1,0 +1,54 @@
+[
+  {
+    "call": 1,
+    "time": "2026-11-05T22:02:20.944450+00:00",
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs?head_sha=b2c7ffad18b02d90d15d293e023e607171bf3e9d&per_page=100"
+    ],
+    "exit_code": 0
+  },
+  {
+    "call": 2,
+    "time": "2026-11-05T22:03:24.384115+00:00",
+    "command": [
+      "gh",
+      "api",
+      "repos/just-every/run-mango/actions/runs/42117902278/jobs?per_page=100"
+    ],
+    "exit_code": 0
+  },
+  {
+    "call": 3,
+    "time": "2026-11-05T22:03:34.793013+00:00",
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42117902278",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "127562373516",
+      "--log-failed"
+    ],
+    "exit_code": 0
+  },
+  {
+    "call": 4,
+    "time": "2026-11-05T22:03:41.585049+00:00",
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42117902278",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "127562479234",
+      "--log-failed"
+    ],
+    "exit_code": 0
+  }
+]

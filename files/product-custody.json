@@ -1,0 +1,20 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f42-fix-1",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "parents": [
+    "9b9f3867af955c390b39b740b89f96b4ef929ed1",
+    "955785c08ed00910bc83e3aa3bbb0a54703f6f71"
+  ],
+  "remote_advertised_head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "push_exit": 0,
+  "push_log": "product-push.log",
+  "clean_worktree": true,
+  "created_at": "2026-11-05T22:02:15.230695+00:00",
+  "files": {
+    "src/core/features/design-generation/model.ts": "e9e79da38da91aa4e5c2d48904f6dd3a8eb1782336003f367b1de3af54a836a5",
+    "tests/campaign-authoring/design-generation.flow.ts": "e4ebc665f60385b16727f8786597ba06ae2c39de339c12cdea4ed9a897aa04aa",
+    "CONTRACT.md": "c8649deb5f9eb370c1c0751f63bc111fd76761422ffda59a92693d306e901b24",
+    "sources.lock.json": "51ae24521162f595845c569fe0410168c46d780de1e9228a05009e892ab36b17"
+  }
+}

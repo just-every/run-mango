@@ -1,0 +1,9 @@
+{
+  "head": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "published_counts": {
+    "done": 13,
+    "partial": 97,
+    "missing": 0
+  },
+  "design003_row": "| `DESIGN-003` | Design data and records | published | partial | `tests/campaign-authoring/design-generation.spec.ts` \u2014 \u201c[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal\u201d: native generation and choice, failed and successful completion, authenticated status and persisted rows after reload and repeated reads | Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request; Exact sanitized brief retained; Issued provider run and layout identifiers; Candidate byte size; Authenticated operator; Independently bounded creation, candidate and completion times retained through reload. Unasserted: Run never deleted beyond existing terminal-state checks; Candidate originals retained; Layout retained; Candidate and layout export. Missing public-door journey: \u201cDesign data and records \u2014 complete acceptance\u201d, covering the unasserted outcomes above. |"
+}

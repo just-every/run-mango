@@ -1,0 +1,31 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f42-fix-1",
+  "head": "b2c7ffad18b02d90d15d293e023e607171bf3e9d",
+  "run_id": 42117902278,
+  "status": "completed",
+  "conclusion": "failure",
+  "failed_jobs": [
+    {
+      "id": 127562373516,
+      "name": "Build and public command checks",
+      "failed_steps": [
+        "Check generated contract documents"
+      ]
+    },
+    {
+      "id": 127562479234,
+      "name": "verify",
+      "failed_steps": [
+        "Require the selected coverage and its proof"
+      ]
+    }
+  ],
+  "runtime_shards": "skipped because build failed at the generated contract view check",
+  "classification": "generated-view-only failure plus dependent coverage gate failure",
+  "ready_contract_exception_applies": true,
+  "executed_green_runtime_verify": false,
+  "github_invocation_count": 4,
+  "logs_retrieved_once_per_failed_job": true,
+  "no_additional_verify_dispatched": true
+}
