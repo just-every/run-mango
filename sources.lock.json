@@ -9397,8 +9397,16 @@
       "sha256": "1506500dbe13542ff9c9976e1b2232cd85380abd620af2c24803f1dca1384683",
       "executable": false
     },
+    "tests/proposals-decision/content-worker.ts": {
+      "sha256": "ea8e25607337554b255e53bd05101a56504eed944e022ba6a71f432c255877c2",
+      "executable": false
+    },
     "tests/proposals-decision/decision-routes.spec.ts": {
       "sha256": "aa4267d7fcd6948ddf97a7cbd4e4be5cef29882946b65eeb9d81774af70f2995",
+      "executable": false
+    },
+    "tests/proposals-decision/generation-edge.ts": {
+      "sha256": "70271ed24587a1991a1aa1441a2965398d02db11cabaa9d18fb05a396a59f05d",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
@@ -9411,6 +9419,10 @@
     },
     "tests/proposals-decision/shopify-edge.ts": {
       "sha256": "550386040254622c9e7e513b90aee8731140b8f12492dce2a5ff52733f97216b",
+      "executable": false
+    },
+    "tests/proposals-decision/sms-content-editing.ts": {
+      "sha256": "a1326e2660c225bbfed1650efe13409b6e2884dd7a515f089e982bc68ce2c755",
       "executable": false
     },
     "tests/rendering.spec.ts": {
