@@ -1,0 +1,83 @@
+{
+  "head": "ff6a58ce877c9414ee1b0ec8c8dd408224d93e68",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f50",
+  "started": "2026-11-05T22:02:01.164817+00:00",
+  "commands": [
+    {
+      "name": "lock",
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "seconds": 0.281,
+      "log": "lock-check-exact.log"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "seconds": 14.509,
+      "log": "typecheck-exact.log"
+    },
+    {
+      "name": "first-party",
+      "command": [
+        "npx",
+        "-y",
+        "@runeditrun/rer",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "seconds": 0.974,
+      "log": "first-party-exact.log"
+    },
+    {
+      "name": "registered-results",
+      "command": [
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "--config",
+        "tests/campaign-results/playwright.config.js",
+        "results.journeys.ts",
+        "--grep",
+        "RESULT-004",
+        "--reporter=list,json"
+      ],
+      "exit": 0,
+      "seconds": 134.574,
+      "log": "exact-journey.log"
+    }
+  ],
+  "finished": "2026-11-05T22:04:31.511242+00:00",
+  "cleanProductTree": true,
+  "costReceipt": {
+    "path": "cost-identity-receipt.json",
+    "sha256": "2045c1b388961e0f0201278ae6ab808535e128cefad91dbd0043f88493ad2295",
+    "boundaryCalls": 4,
+    "handoffs": 3,
+    "expectedFacts": 7
+  },
+  "screenshots": [
+    {
+      "path": "cost-identities-1440.png",
+      "width": 1440,
+      "sha256": "273f8352ac65b88b46a8e0a22df6f1e19fe39428f4994a5f004a9342b7fd2694"
+    },
+    {
+      "path": "cost-identities-390.png",
+      "width": 390,
+      "sha256": "0af010b3794f54f479600d8d1de224183cc2a24eb0689f994cd07d05303f1a22"
+    }
+  ]
+}

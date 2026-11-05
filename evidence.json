@@ -1,0 +1,124 @@
+{
+  "files": [
+    {
+      "blob": "b3b9b526ffd79d78bf9be50422fe9c0166ce9790",
+      "bytes": 2550,
+      "path": "PLAN.md",
+      "sha256": "1ff1b1b1c8716d64d9f2991993d9c4ab1bb8948eb68f21786361da17adfdc948"
+    },
+    {
+      "blob": "8124ffa1eac57c1f8ad05e76dd1681f9654f8cf3",
+      "bytes": 7773,
+      "path": "REPORT.md",
+      "sha256": "469d334054da87e6640dc0ad57ce0920e51871a27a932859b2ab7e28e796b0ca"
+    },
+    {
+      "blob": "f04861aecdf88b1cd5d2236e346c85ff3ca8dab5",
+      "bytes": 259,
+      "path": "ci-final-discovery.json",
+      "sha256": "975f3a9d80b8cd145ada88d0ef763c9313ab7296f728156bed659b5ba77caee2"
+    },
+    {
+      "blob": "5c8fa36001ff39dcaa8814eb61f7528e088cbe2a",
+      "bytes": 178,
+      "path": "ci-final-status.json",
+      "sha256": "53e2d79fb0171b2f48c20c5e98f51e53077ab41d3f6286c85ab81b137f05e6c5"
+    },
+    {
+      "blob": "9cd4af78a3364efcfa05b2453415a6048278eced",
+      "bytes": 836413,
+      "path": "cost-identities-1440.png",
+      "sha256": "273f8352ac65b88b46a8e0a22df6f1e19fe39428f4994a5f004a9342b7fd2694"
+    },
+    {
+      "blob": "08f97f89ba34ba3bccddb096dc1f3ae317c35052",
+      "bytes": 725295,
+      "path": "cost-identities-390.png",
+      "sha256": "0af010b3794f54f479600d8d1de224183cc2a24eb0689f994cd07d05303f1a22"
+    },
+    {
+      "blob": "115a1faf1e5402ac066fdd6e886599a262009bcb",
+      "bytes": 13711,
+      "path": "cost-identity-receipt.json",
+      "sha256": "2045c1b388961e0f0201278ae6ab808535e128cefad91dbd0043f88493ad2295"
+    },
+    {
+      "blob": "8310274a98cd8397a37fc50727e83539afc84a18",
+      "bytes": 949,
+      "path": "exact-journey.log",
+      "sha256": "22c7f513e28088c69b7f4ca21a13d29dd475a132bb83365262daf7c207d73441"
+    },
+    {
+      "blob": "0bdf8de6fd75f621dfa1fb2874d4907239559e87",
+      "bytes": 60,
+      "path": "final-views.log",
+      "sha256": "a0dc3e5a57608862eebb5d81291a8613096d4984f76019b102a0ac55b950fe97"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "first-party-exact.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "a95c7aba4197d0b5d115dcf45e1d91f39274bc92",
+      "bytes": 344,
+      "path": "generated-view-status.json",
+      "sha256": "2ff95f83d17fbdfac76cecf782dadfc023b0e8a1033a241151f044eb3d10e389"
+    },
+    {
+      "blob": "ed6a45ab2d7ac557e218af0b2aca6bd67eeec6f6",
+      "bytes": 450,
+      "path": "identity-audit.log",
+      "sha256": "34173bc5cd8d54443378c681840cf78975e7d07aca3499b521188d38a6151a34"
+    },
+    {
+      "blob": "1c5e4c3051f8ced029c8878fece7feb36c5b2e1f",
+      "bytes": 1910,
+      "path": "local-proof.json",
+      "sha256": "38d7d68dcc3db72c4aca3c4b936d9cdd0404d7857e2d2c94b306232939bdba76"
+    },
+    {
+      "blob": "6fe6c849830fecd78a613085d2a2c68860016fa1",
+      "bytes": 628,
+      "path": "mechanical.json",
+      "sha256": "cc2d9f36cc7184d6073562c415ef2fc54378dc8d47e30b1ee9c045373afa41f4"
+    },
+    {
+      "blob": "4ac1248e9063b02d7f9775e881df4e66d8f5df14",
+      "bytes": 34460,
+      "path": "product.diff",
+      "sha256": "bb42582f539ae5ffdf4e86332d537c565ff7b37544c014805b89fcd31522d062"
+    },
+    {
+      "blob": "d3646774990dcd0e333f9f560e960356bbcff7f3",
+      "bytes": 462,
+      "path": "provenance.json",
+      "sha256": "97eb7a11ad254a44242d820cbea7b783961ce283d7740c4a0d93c75e88467b02"
+    },
+    {
+      "blob": "702254af96cbfeb2c2dc51594cc5b926d957807d",
+      "bytes": 73,
+      "path": "remote-product-ref.txt",
+      "sha256": "3912dff903cc041446b9a73546fd816a3c6c42c3dd3f858f2ca0cc3526d34c26"
+    },
+    {
+      "blob": "7e565971f48a37778a9c367fc302c37112d9d7a1",
+      "bytes": 1003,
+      "path": "status-row-history.json",
+      "sha256": "098e2b3445b93aece436d36418ec2494e443be4818fdb41ad54e15a47db1a3f1"
+    },
+    {
+      "blob": "1513b287cf68a0316a5a1327891f6b31b85a1b36",
+      "bytes": 207,
+      "path": "typecheck-exact.log",
+      "sha256": "4a3e254677d2e22efe622844f826089d0d154ec719f22a152c72a9694455b972"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f50",
+  "product_head": "ff6a58ce877c9414ee1b0ec8c8dd408224d93e68",
+  "ref": "refs/heads/evidence/sd-mango-c-f50",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f50"
+}

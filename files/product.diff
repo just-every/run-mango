@@ -1,0 +1,371 @@
+diff --git a/CONTRACT.md b/CONTRACT.md
+index 09e64f6..5efb56e 100644
+--- a/CONTRACT.md
++++ b/CONTRACT.md
+@@ -4159,7 +4159,7 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
+ | `RESULT-001` | Campaign history | published | partial | `tests/campaign-results/results.journeys.ts` — “[RESULT-001] every combined campaign state/channel filter, counts, history and empty state at 1440”; “[CAMP-009] cancel dialog contains focus, Escape cancels and returns focus; confirmed cancel retains uncertain handoffs”; “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440” | Old evidence asserts State and channel filters; Cancellation outcome; Delivery schedule/timeline; Per-channel disposition totals. Unasserted: The opened body is the approved revision; Full audience snapshot is inspectable. Missing public-door journey: “Campaign history — complete acceptance”, covering the unasserted outcomes above. |
+ | `RESULT-002` | Engagement | published | partial | `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” | Old evidence asserts Default off and explicit enablement; Privacy-sensitive estimate label; Other result fields unchanged after pixel fetch. Unasserted: Observed click labels; Observed conversion labels. Missing public-door journey: “Engagement — complete acceptance”, covering the unasserted outcomes above. |
+ | `RESULT-003` | Attribution | published | done | `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/campaign-results/performance-fixture.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” |  |
+-| `RESULT-004` | Cost | published | partial | `tests/campaign-results/results.journeys.ts` — “[RESULT-004][REPORT-007] Settings consent counts, currency-separated projection and rejected AI spend, distinct handoffs and replayed purchases retain truthful campaign and UTC-day totals” | Old evidence asserts AI billable units; Provider units, currency and cost; Campaign totals; UTC day boundary; Day/currency/unknown-price groups. Unasserted: Model or channel on each fact; Timed-out purchase proven before counting; Layout unit once. Missing public-door journey: “Cost — complete acceptance”, covering the unasserted outcomes above. |
++| `RESULT-004` | Cost | published | partial | `tests/campaign-results/results.journeys.ts` — “[CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement”, cost leg in `tests/campaign-results/costs.flow.ts`: HTTP-edge observations in `tests/campaign-results/cost-ai-edge.ts` execute the production OpenAI adapter and independently retain requested and returned models for invalid-output, unknown-usage, failed and successful native generations. Those operations, distinct email tests and one replayed confirmation correlate with each persisted provider and model or channel, then authenticated campaign and UTC-day groups and rendered identities after repeated reads and reload. Successful generation retains one 23-token fact on its generated campaign; interrupted generation retains the requested model and unknown usage. Operational email identity remains covered by `tests/campaign-results/cost-mail-proof.ts`; known and unknown units, currencies, reported and missing prices, campaign reconciliation and UTC-day boundaries remain asserted. | Acceptance 1 still lacks per-fact model or channel proof for marketing, SMS and design operations beyond the carried evidence. Acceptance 4 still lacks a provider-proven timed-out purchase and once-only layout-unit proof. Twilio A2P and US carrier registration are owner-held; SMS transport and qualification, and real AI, sending-provider and design-provider qualification remain unproved. Existing provider, device, account and cross-seed or Base prerequisites, rer adoption requirements and CONT-013 SPLIT and NEW-1 disposition with the original fix-1 hold remain unchanged. |
+ | `RESULT-005` | Link tracking | published | partial | `tests/campaign-results/performance.journeys.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/campaign-results/tracking-journey.ts` — “[REPORT-002] [RESULT-008][INT-013][RESULT-005][RESULT-003][REPORT-003] campaign filters, exact CSV rows and optional open estimates at 1440; native commerce and cross-channel attribution at 1440 and 390” · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts` | Old evidence asserts Opaque first-party redirect; Distinct recipient-step redirect; Original destination forwarding; No cookie; No loaded body. Unasserted: CONT-018 token not yet built; Scanner excluded from attribution. Missing public-door journey: “Link tracking — complete acceptance”, covering the unasserted outcomes above. |
+ | `RESULT-009` | Open-estimate lifecycle | published | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts` — “[RESULT-002][CONT-013] explicit open estimates are isolated, revocable, replay safe and erased” | Old evidence asserts Unique first-party pixels after opt-in; Pixel changes only estimate results; Disable revokes issued pixels; Reenable does not readmit old pixels; One estimate after repeated requests. Unasserted: Ordinary images remain untracked; No IP retained; No user agent retained. Missing public-door journey: “Open-estimate lifecycle — complete acceptance”, covering the unasserted outcomes above. |
+ | `RESULT-010` | Ordinary campaign images are untracked | published | partial | `tests/campaign-results/performance.journeys.ts` · `tests/campaign-results/tracking-journey.ts` · `tests/go-live/contact-links.journeys.ts` · `tests/go-live/open-estimates.journeys.ts` | Old evidence asserts no complete acceptance outcome at an asserting line. Unasserted: Every recipient receives the same campaign-image URL.; No address retained; No user agent retained; No cookie retained; No recipient retained; No request time retained; Only current-minute image rate counter retained; Ordinary image not counted as open; Ordinary image not shown as open. Missing public-door journey: “Ordinary campaign images are untracked — complete acceptance”, covering the unasserted outcomes above. |
+diff --git a/sources.lock.json b/sources.lock.json
+index 158128c..ef94dac 100644
+--- a/sources.lock.json
++++ b/sources.lock.json
+@@ -1030,7 +1030,7 @@
+       "executable": false
+     },
+     "CONTRACT.md": {
+-      "sha256": "af117f7dde4b8b798c1ee14c76901abdeb3ece3b5f8592abf17d5eece3793a05",
++      "sha256": "93f81dcbeb484a4712e3b7cea65992fe03ae7fec0b150cb21a1e10ec16b0284f",
+       "executable": false
+     },
+     "DEMO.md": {
+@@ -8549,6 +8549,10 @@
+       "sha256": "8baa7f152a66051454ec3dde31ffeed5e7d77c578188723026325b533e2a20b0",
+       "executable": false
+     },
++    "tests/campaign-results/cost-ai-edge.ts": {
++      "sha256": "caf84abce14b9059847fcafe6f6d0e0d357b9b39c45c3c1345831ace65eeef98",
++      "executable": false
++    },
+     "tests/campaign-results/cost-base-mail-proof.ts": {
+       "sha256": "7835d32107f2f46ed8aa8c3395b9dea7829e976071a7b3218aafeefa05d5bcb9",
+       "executable": false
+@@ -8557,16 +8561,20 @@
+       "sha256": "128e1e2125b235cb91bb749fb6826820a6c9f8c115f56b1ec2cf709a45557f4d",
+       "executable": false
+     },
++    "tests/campaign-results/cost-identity-proof.ts": {
++      "sha256": "1b09a4da4198a6b88acef1c2db371a9e598be70bd8a381e806f36a0fbb910d3a",
++      "executable": false
++    },
+     "tests/campaign-results/cost-mail-proof.ts": {
+       "sha256": "d768eb5ca97414dfaa9a579ace6d4a125127d087ac91c42f1b3a201b669a3f2c",
+       "executable": false
+     },
+     "tests/campaign-results/cost-worker.ts": {
+-      "sha256": "4313c7576fa568a0eb9ff35872c402e8be8157f2591e0cc7c94675d8d15072bf",
++      "sha256": "e8227bbecfc2e61b685dfed21ffc67f1420bf12e144b57f22155f375b1920454",
+       "executable": false
+     },
+     "tests/campaign-results/costs.flow.ts": {
+-      "sha256": "696f7c1e2c8701e0348b5a36719ecacb32d4727b759d80423e9c51aecaff4f43",
++      "sha256": "648c04e1f4f572fd962e0f791a3f40faeea1f8d30b320fda3a3bc80513656f17",
+       "executable": false
+     },
+     "tests/campaign-results/cross-channel-attribution.ts": {
+diff --git a/tests/campaign-results/cost-ai-edge.ts b/tests/campaign-results/cost-ai-edge.ts
+new file mode 100644
+index 0000000..0c5c6f9
+--- /dev/null
++++ b/tests/campaign-results/cost-ai-edge.ts
+@@ -0,0 +1,45 @@
++import { createOpenAiAdapter } from '../../src/core/platform/adapters/openai';
++import type { AppConfig } from '../../src/core/shared/platform';
++import type { GeneratedProposalWire } from '../../src/core/features/proposals/generation';
++
++/** Only the HTTP edge is synthetic; native generation uses the production adapter. */
++export function costAiEdge(db: D1Database, sender: AppConfig['mailSender']) {
++  const adapter = createOpenAiAdapter({ apiKey: 'synthetic-mango-50', model: 'cost-requested' });
++  return { ...adapter, async generateGroundedJson(input: Parameters<typeof adapter.generateGroundedJson>[0]) {
++    const control = await db.prepare('SELECT mode FROM cost_test_control').first<{ mode: string }>();
++    const mode = control!.mode, originalFetch = globalThis.fetch;
++    globalThis.fetch = async (resource, init) => {
++      if (String(resource) !== 'https://api.openai.com/v1/responses') return originalFetch(resource, init);
++      if (init?.method !== 'POST') throw new Error('Expected a generation POST');
++      const request = JSON.parse(String(init.body));
++      const model = mode === 'failed' ? null : `cost-${mode}`;
++      await db.prepare('INSERT INTO cost_test_ai_calls (mode,provider,requested_model,response_model) VALUES (?,?,?,?)')
++        .bind(mode, 'openai', request.model, model).run();
++      if (mode === 'failed') throw new TypeError('Synthetic provider connection interrupted');
++      let output = 'not JSON';
++      if (mode === 'success') {
++        const evidence = JSON.parse(request.input) as {
++          items: Array<{ key: string; observedValueJson: string; allowedClaim: string }>; now: string;
++        };
++        const item = evidence.items[0], at = Date.parse(evidence.now);
++        const claim = { text: item.allowedClaim, citations: [{ key: item.key, observedValueJson: item.observedValueJson }] };
++        const proposal: GeneratedProposalWire = {
++          summary: claim,
++          audience: { inclusion: { version: 1, operator: 'all', predicates: [
++            { sourceType: 'contact', field: 'email', comparator: 'contains', value: 'costs', lookbackDays: null },
++          ] }, exclusions: [], explanation: claim },
++          email: { subject: 'Garden news', html: '<p>Garden news.</p>', text: 'Garden news.', preheader: 'From the garden' },
++          sms: null, sender: { ...sender, smsSender: 'MANGO' }, messageCategory: 'newsletter', links: [],
++          steps: [{ channel: 'email', scheduledAt: new Date(at + 3_600_000).toISOString(),
++            sendByAt: new Date(at + 7_200_000).toISOString(), timezone: 'UTC', whyThisTime: claim }], forecast: null,
++        };
++        output = JSON.stringify(proposal);
++      }
++      return Response.json({ model, output_text: output, ...(mode === 'unknown' ? {} : {
++        usage: { input_tokens: 11, output_tokens: mode === 'success' ? 12 : 6 },
++      }) });
++    };
++    try { return await adapter.generateGroundedJson(input); }
++    finally { globalThis.fetch = originalFetch; }
++  } };
++}
+diff --git a/tests/campaign-results/cost-identity-proof.ts b/tests/campaign-results/cost-identity-proof.ts
+new file mode 100644
+index 0000000..d98604c
+--- /dev/null
++++ b/tests/campaign-results/cost-identity-proof.ts
+@@ -0,0 +1,56 @@
++import { expect, type Page } from '@playwright/test';
++import type { CostGroup, CostReport } from '../../src/core/features/insights/cost-report';
++
++type Identity = {
++  campaignId: string | null; provider: string; operation: string; modelOrChannel: string;
++  billableUnits: number | null; unitKind: string; reportedCostMicros: number | null;
++  currency: string | null; outcome: string;
++};
++export type ExpectedCost = Identity & {id: string; day: string};
++
++// Identity and usage expectations come from the called boundary, never the stored fact.
++// Keep its native identifier and UTC bucket to reconcile later authenticated projections.
++export function rememberCost(fact: any, expected: Identity): ExpectedCost {
++  expect(fact).toMatchObject({campaign_id:expected.campaignId,provider:expected.provider,operation:expected.operation,
++    model_or_channel:expected.modelOrChannel,billable_units:expected.billableUnits??0,units_known:expected.billableUnits===null?0:1,
++    unit_kind:expected.unitKind,reported_cost_micros:expected.reportedCostMicros,currency:expected.currency,outcome:expected.outcome});
++  return {...expected,id:fact.id,day:new Date(fact.occurred_at).toISOString().slice(0,10)};
++}
++
++export function assertCostIdentities(facts: any[], expected: ExpectedCost[], report: CostReport) {
++  for(const item of expected) {
++    const matches=facts.filter(fact=>fact.id===item.id);
++    expect(matches).toHaveLength(1);
++    rememberCost(matches[0],item);
++  }
++  for(const [dimension,rows] of [['campaign',report.byCampaign],['day',report.byDay]] as const) {
++    const groups=new Map<string,ExpectedCost[]>();
++    const key=(item:ExpectedCost)=>JSON.stringify([dimension==='campaign'?item.campaignId:item.day,
++      item.provider,item.operation,item.modelOrChannel,item.unitKind,item.currency]);
++    for(const item of expected) groups.set(key(item),[...(groups.get(key(item))??[]),item]);
++    for(const items of groups.values()) {
++      const item=items[0];
++      const matches=rows.filter(row=>(dimension==='campaign'?row.campaignId===item.campaignId:row.day===item.day)
++        &&row.provider===item.provider&&row.operation===item.operation&&row.modelOrChannel===item.modelOrChannel
++        &&row.unitKind===item.unitKind&&row.currency===item.currency);
++      expect(matches,`${dimension}: ${item.operation} from ${item.provider} using ${item.modelOrChannel}`).toHaveLength(1);
++      const known=items.filter(row=>row.billableUnits!==null),priced=items.filter(row=>row.reportedCostMicros!==null);
++      expect(matches[0]).toMatchObject({facts:items.length,
++        billableUnits:known.length?known.reduce((sum,row)=>sum+row.billableUnits!,0):null,
++        unknownUsageFacts:items.length-known.length,unpricedFacts:items.length-priced.length,
++        reportedCostMicros:priced.length?priced.reduce((sum,row)=>sum+row.reportedCostMicros!,0):null,
++        uncertainFacts:items.filter(row=>row.outcome==='unknown').length,preparedFacts:0} satisfies Partial<CostGroup>);
++    }
++  }
++}
++
++export async function assertVisibleCostIdentities(page: Page, expected: ExpectedCost[]) {
++  for(const item of expected) {
++    const campaign=item.campaignId?`Costs for campaign ${item.campaignId}`:'Costs without an assigned campaign';
++    for(const region of [campaign,`Costs on ${item.day} UTC`]) {
++      await expect(page.getByRole('region',{name:region,exact:true}).getByRole('row')
++        .filter({has:page.getByRole('cell',{name:item.operation,exact:true})})
++        .getByRole('rowheader',{name:`${item.provider} / ${item.modelOrChannel}`,exact:true})).toBeVisible();
++    }
++  }
++}
+diff --git a/tests/campaign-results/cost-worker.ts b/tests/campaign-results/cost-worker.ts
+index 82ea830..ca8cd7b 100644
+--- a/tests/campaign-results/cost-worker.ts
++++ b/tests/campaign-results/cost-worker.ts
+@@ -6,22 +6,20 @@ import type { LocalAppBindings } from '../../src/core/app/local-app';
+ import { recordExternalCost } from '../../src/core/features/insights/cost-recording';
+ import { cancelHandoffCost, prepareHandoffCost } from '../../src/core/features/insights/cost-handoff';
+ import { createDesignRepository } from '../../src/core/features/design-generation/repository';
++import { costAiEdge } from './cost-ai-edge';
+ 
+ // Actual app routes, D1 and SSR. Only external AI, commerce and mail providers are doubles.
+ export default { async fetch(request: Request, bindings: LocalAppBindings, context: ExecutionContext) {
+   const platform = createFixturePlatform(bindings, bindings.LOCAL_BOOTSTRAP_TOKEN);
+   platform.config.testEmailAllowlist = ['costs@example.test'];
+-  platform.ai = { costIdentity: {provider:'openai',model:'cost-test'}, async generateGroundedJson() {
+-    const mode = await bindings.DB.prepare('SELECT mode FROM cost_test_control').first<{mode:string}>();
+-    if (mode?.mode === 'failed') throw new Error('Provider connection interrupted');
+-    return {provider:'openai',model:'cost-test',output:null,billableUnits:mode?.mode==='unknown'?null:17,unitKind:'tokens'};
+-  } };
++  platform.ai = costAiEdge(bindings.DB, platform.config.mailSender);
+   platform.commerce = {capabilities:()=>({provider:'cost-test',sourceTypes:['product'],detail:'Fixture provider'}),async synchronize(){return {records:[]};},async verifyWebhook(){throw new Error('No webhook');}};
+   platform.mailer = {...platform.mailer,
+     async capabilities(){return {provider:'cost-mail',configured:true,canSendMarketing:true,effectiveDeduplication:false,effectiveReconciliation:true,deduplicationWindowMs:0,reconciliationWindowMs:86400000,detail:'Test provider'};},
+     async send(delivery){
+-      await bindings.DB.prepare('INSERT INTO cost_test_sends (key) VALUES (?)').bind(delivery.idempotencyKey).run();
+-      return {providerMessageId:crypto.randomUUID(),disposition:'accepted',providerAcceptedAt:new Date(),cost:{billableUnits:1,unitKind:'messages',reportedCostMicros:1250,currency:'USD'}};
++      const receipt=crypto.randomUUID();
++      await bindings.DB.prepare('INSERT INTO cost_test_sends (key,provider,channel,receipt) VALUES (?,?,?,?)').bind(delivery.idempotencyKey,'cost-mail','email',receipt).run();
++      return {providerMessageId:receipt,disposition:'accepted',providerAcceptedAt:new Date(),cost:{billableUnits:1,unitKind:'messages',reportedCostMicros:1250,currency:'USD'}};
+     },
+   };
+   const services = createAppServices(platform);
+@@ -29,9 +27,10 @@ export default { async fetch(request: Request, bindings: LocalAppBindings, conte
+   if (path.startsWith('/_costs/')) {
+     if(request.headers.get('X-Test-Token')!==bindings.LOCAL_BOOTSTRAP_TOKEN) return new Response('Forbidden',{status:403});
+     if(path==='/_costs/open') {
+-      await bindings.DB.batch([bindings.DB.prepare('CREATE TABLE cost_test_control (mode TEXT)'),bindings.DB.prepare('CREATE TABLE cost_test_sends (key TEXT)'),bindings.DB.prepare("INSERT INTO cost_test_control VALUES ('invalid')")]);
++      await bindings.DB.batch([bindings.DB.prepare('CREATE TABLE cost_test_control (mode TEXT)'),bindings.DB.prepare('CREATE TABLE cost_test_sends (key TEXT,provider TEXT,channel TEXT,receipt TEXT)'),bindings.DB.prepare('CREATE TABLE cost_test_ai_calls (sequence INTEGER PRIMARY KEY,mode TEXT,provider TEXT,requested_model TEXT,response_model TEXT)'),bindings.DB.prepare("INSERT INTO cost_test_control VALUES ('invalid')")]);
+       await testIdentity(platform).importLocalDemoOperator({id:'cost-operator',email:'costs@example.test',displayName:'Costs operator'},new Date());
+       const session=await testIdentity(platform).createTestSession('cost-operator');
++      await services.audienceService.captureConsent({idempotencyKey:'synthetic-mango-50',contact:{email:platform.config.testEmailAllowlist[0]},channel:'email',brandOrLegalSender:platform.config.mailSender.displayName,messageCategory:'newsletter',destinationJurisdiction:'AU',frequencyDisclosure:'Weekly',captureMethod:'test',captureSource:'cost-test',consentText:'Receive this newsletter',consentVersion:'v1',occurredAt:new Date(),confirmationRequired:false});
+       await services.storeService.recordSourceCapabilities([{sourceType:'product',available:true,detail:'Fixture product source'}]);
+       await services.storeService.ingestSuccessfulCommerceBatch('cost-test',[{sourceType:'product',providerSourceId:'product-1',payload:{id:'product-1',title:'Garden linen',status:'ACTIVE'},occurredAt:new Date()}],'full',['product'],true,new Date());
+       return Response.json({token:session.token});
+@@ -41,7 +40,7 @@ export default { async fetch(request: Request, bindings: LocalAppBindings, conte
+       await services.audienceService.captureConsent({idempotencyKey:'cost-confirmation',contact:{email:'confirm-costs@example.test'},channel:'email',brandOrLegalSender:'Mango local',messageCategory:'newsletter',destinationJurisdiction:'AU',frequencyDisclosure:'Weekly',captureMethod:'test',captureSource:'cost-test',consentText:'Receive this newsletter',consentVersion:'v1',occurredAt:new Date('2026-01-01T00:00:00Z'),confirmationRequired:true});
+       return Response.json({ok:true});
+     }
+-    if(path==='/_costs/records') return Response.json({costs:(await bindings.DB.prepare('SELECT * FROM external_cost_facts').all()).results,sends:(await bindings.DB.prepare('SELECT * FROM cost_test_sends').all()).results});
++    if(path==='/_costs/records') return Response.json({costs:(await bindings.DB.prepare('SELECT * FROM external_cost_facts').all()).results,sends:(await bindings.DB.prepare('SELECT * FROM cost_test_sends ORDER BY rowid').all()).results,aiCalls:(await bindings.DB.prepare('SELECT mode,provider,requested_model,response_model FROM cost_test_ai_calls ORDER BY sequence').all()).results});
+     if(path==='/_costs/usage') {
+       const now=new Date(),start=new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),1));
+       for(const fact of [
+diff --git a/tests/campaign-results/costs.flow.ts b/tests/campaign-results/costs.flow.ts
+index 7318a60..dad7647 100644
+--- a/tests/campaign-results/costs.flow.ts
++++ b/tests/campaign-results/costs.flow.ts
+@@ -6,6 +6,7 @@ import { expect, test } from '@playwright/test';
+ import { authoringRuntime } from '../campaign-authoring/browser-runtime.mjs';
+ import { proveCampaignCostFailure } from './cost-campaign-proof';
+ import { proveOperationalMailCosts } from './cost-mail-proof';
++import { rememberCost, assertCostIdentities, assertVisibleCostIdentities, type ExpectedCost } from './cost-identity-proof';
+ import { createOpenAiAdapter } from '../../src/core/platform/adapters/openai';
+ 
+ // One RESULT-004 journey covers parser/provider boundaries, real routes, persisted facts and reloadable totals.
+@@ -41,30 +42,82 @@ export const walk0 = async ({page,request}) => {
+     expect(localSignin.status()).toBe(202);
+     expect(await localSignin.json()).toMatchObject({status:'accepted'});
+     expect(await (await request.post(`${runtime.url}/_costs/records`,{headers:control})).json()).toMatchObject({costs:[],sends:[]});
+-    for(const mode of ['invalid','unknown','failed']) {
++    const identities:ExpectedCost[]=[];
++    const records=async()=>{const response=await request.post(`${runtime.url}/_costs/records`,{headers:control});expect(response.status()).toBe(200);return response.json();};
++    const cases=[{mode:'invalid',model:'cost-invalid',units:17,error:'invalid_ai_output'},
++      {mode:'unknown',model:'cost-unknown',units:null,error:'invalid_ai_output'},
++      {mode:'failed',model:'cost-requested',units:null,error:'ai_provider_failed'}];
++    for(const {mode,model,units,error} of cases) {
+       expect((await request.post(`${runtime.url}/_costs/mode`,{headers:control,data:{mode}})).ok()).toBe(true);
+       const generated=await api.post(`${runtime.url}/api/proposals/generate`,{headers});
+       expect(generated.status()).toBe(409);
+-      expect((await generated.json()).kind).toBe('failed');
++      const result=await generated.json();
++      expect(result).toMatchObject({kind:'failed',error});
++      const observed=await records();
++      expect(observed.aiCalls).toEqual(cases.slice(0,identities.length+1).map(item=>({mode:item.mode,provider:'openai',
++        requested_model:'cost-requested',response_model:item.mode==='failed'?null:item.model})));
++      const facts=observed.costs.filter((row:any)=>row.proposal_id===result.proposalId);
++      expect(facts).toHaveLength(1);
++      expect(facts[0].id).toBe(`ai:${result.proposalId}`);
++      identities.push(rememberCost(facts[0],{campaignId:null,provider:'openai',operation:'ai-proposal-generation',modelOrChannel:model,
++        billableUnits:units,unitKind:'tokens',reportedCostMicros:null,currency:null,outcome:mode==='failed'?'unknown':'reported'}));
+     }
++    // A successful native generation assigns the same reported model to its new campaign's cost.
++    expect((await request.post(`${runtime.url}/_costs/mode`,{headers:control,data:{mode:'success'}})).ok()).toBe(true);
++    const generated=await api.post(`${runtime.url}/api/proposals/generate`,{headers});
++    expect(generated.status(),await generated.text()).toBe(201);
++    const proposal=await generated.json(),afterGeneration=await records();
++    expect(proposal).toMatchObject({kind:'proposed',provider:'openai',model:'cost-success',
++      cost:{billableUnits:23,reportedCostMicros:null,currency:null}});
++    expect(afterGeneration.aiCalls).toEqual([...cases.map(item=>({mode:item.mode,provider:'openai',
++      requested_model:'cost-requested',response_model:item.mode==='failed'?null:item.model})),
++      {mode:'success',provider:'openai',requested_model:'cost-requested',response_model:'cost-success'}]);
++    const generatedFacts=afterGeneration.costs.filter((row:any)=>row.proposal_id===proposal.proposalId);
++    expect(generatedFacts).toHaveLength(1);
++    expect(generatedFacts[0].id).toBe(`ai:${proposal.proposalId}`);
++    identities.push(rememberCost(generatedFacts[0],{campaignId:proposal.campaignId,provider:'openai',operation:'ai-proposal-generation',
++      modelOrChannel:'cost-success',billableUnits:23,unitKind:'tokens',reportedCostMicros:null,currency:null,outcome:'reported'}));
+     const created=await api.post(`${runtime.url}/api/campaigns`,{headers,data:{}});expect(created.status()).toBe(201);
+     const {campaignId,revisionId}=await created.json();
+     expect((await api.patch(`${runtime.url}/api/campaign-revisions/${revisionId}`,{headers,data:{name:'Cost evidence',emailSubject:'Garden news',emailBody:'<p>Garden news</p>'}})).status()).toBe(200);
+     for(let attempt=0;attempt<2;attempt++) {
++      const before=await records();
+       const sent=await api.post(`${runtime.url}/api/campaigns/${campaignId}/test-send`,{headers,data:{revisionId,channel:'email',to:'costs@example.test'}});
+       expect(sent.status(),await sent.text()).toBe(200);
++      const result=await sent.json(),observed=await records();
++      expect(result.results).toHaveLength(1);
++      const sends=observed.sends.slice(before.sends.length);
++      expect(sends).toHaveLength(1);
++      expect(sends[0]).toMatchObject({provider:'cost-mail',channel:'email',receipt:result.results[0].providerMessageId});
++      const facts=observed.costs.filter((row:any)=>!before.costs.some((prior:any)=>prior.id===row.id));
++      expect(facts).toHaveLength(1);
++      expect(facts[0].id.startsWith(`test-handoff:${sends[0].key}:attempt:`)).toBe(true);
++      identities.push(rememberCost(facts[0],{campaignId,provider:'cost-mail',operation:'test-handoff',modelOrChannel:'email',
++        billableUnits:1,unitKind:'messages',reportedCostMicros:1250,currency:'USD',outcome:'accepted'}));
+     }
+-    for(let replay=0;replay<2;replay++) expect((await request.post(`${runtime.url}/_costs/confirmation`,{headers:control})).ok()).toBe(true);
++    const beforeConfirmation=await records();
++    expect((await request.post(`${runtime.url}/_costs/confirmation`,{headers:control})).ok()).toBe(true);
++    const confirmed=await records(),confirmationSends=confirmed.sends.slice(beforeConfirmation.sends.length);
++    expect(confirmationSends).toHaveLength(1);
++    expect(confirmationSends[0]).toMatchObject({provider:'cost-mail',channel:'email'});
++    const confirmationFacts=confirmed.costs.filter((row:any)=>!beforeConfirmation.costs.some((prior:any)=>prior.id===row.id));
++    expect(confirmationFacts).toHaveLength(1);
++    expect(confirmationFacts[0].id.startsWith(`handoff:cost-mail:${confirmationSends[0].key}:attempt:`)).toBe(true);
++    identities.push(rememberCost(confirmationFacts[0],{campaignId:null,provider:'cost-mail',operation:'confirmation-handoff',modelOrChannel:'email',
++      billableUnits:1,unitKind:'messages',reportedCostMicros:1250,currency:'USD',outcome:'accepted'}));
++    expect((await request.post(`${runtime.url}/_costs/confirmation`,{headers:control})).ok()).toBe(true);
++    expect(await records()).toEqual(confirmed);
+     expect((await request.post(`${runtime.url}/_costs/reports`,{headers:control,data:{campaignId}})).ok()).toBe(true);
+     const raw=await (await request.post(`${runtime.url}/_costs/records`,{headers:control})).json();
+     expect(raw.sends).toHaveLength(3);
+     expect(raw.costs.filter((row:any)=>row.operation==='confirmation-handoff')).toHaveLength(1);
+     expect(raw.costs.filter((row:any)=>row.operation==='test-handoff'&&row.outcome==='accepted')).toHaveLength(2);
+-    expect(raw.costs.filter((row:any)=>row.operation==='ai-proposal-generation')).toHaveLength(3);
+-    expect(raw.costs.filter((row:any)=>row.operation==='ai-proposal-generation'&&row.units_known===1).map((row:any)=>row.billable_units)).toEqual([17]);
++    expect(raw.costs.filter((row:any)=>row.operation==='ai-proposal-generation')).toHaveLength(4);
++    expect(raw.costs.filter((row:any)=>row.operation==='ai-proposal-generation'&&row.units_known===1).map((row:any)=>row.billable_units)).toEqual([17,23]);
+     expect(raw.costs.filter((row:any)=>row.operation==='design-draft')).toHaveLength(1);
+     const response=await api.get(`${runtime.url}/api/insights`);expect(response.status()).toBe(200);
+     const {costs}=await response.json();
++    assertCostIdentities(raw.costs,identities,costs);
+     expect(costs.dayBoundary).toBe('UTC');
+     expect(costs.byCampaign.filter((row:any)=>row.campaignId===null).reduce((sum:number,row:any)=>sum+row.facts,0)).toBe(4);
+     expect(costs.byDay).toEqual(expect.arrayContaining([
+@@ -73,16 +126,43 @@ export const walk0 = async ({page,request}) => {
+       expect.objectContaining({day:'2031-10-05',provider:'reported-mail',currency:'EUR',unitKind:'messages',billableUnits:3,reportedCostMicros:6000,facts:1}),
+     ]));
+     const campaign=await (await api.get(`${runtime.url}/api/campaigns/${campaignId}/results`)).json();
++    assertCostIdentities(raw.costs,identities.filter(row=>row.campaignId===campaignId),{byCampaign:campaign.costs,byDay:costs.byDay});
+     expect(campaign.costs.reduce((sum:number,row:any)=>sum+row.facts,0)).toBe(7);
+     expect(campaign.costs.filter((row:any)=>row.operation==='test-handoff').reduce((sum:number,row:any)=>sum+row.facts,0)).toBe(2);
+     await page.goto(`${runtime.url}/app/insights`);
+     await expect(page.getByRole('heading',{name:'Reported spend and usage'})).toBeVisible();
+     await expect(page.getByRole('heading',{name:'No campaign assigned'})).toBeVisible();
++    await assertVisibleCostIdentities(page,identities);
+     const daily=page.getByRole('region',{name:'Costs on 2031-10-04 UTC'});
+     await expect(daily).toContainText('6 messages');await expect(daily).toContainText('5 segments');await expect(daily).toContainText('priced subtotal');
++    for(const proofWidth of [1440,390]) {
++      await page.setViewportSize({width:proofWidth,height:1000});
++      await page.screenshot({path:test.info().outputPath(`cost-identities-${proofWidth}.png`),fullPage:true});
++    }
++    await page.setViewportSize({width,height:1000});
+     await page.reload();await expect(daily).toContainText('6 messages');
++    await assertVisibleCostIdentities(page,identities);
+     await expect(page.getByRole('region',{name:'Costs on 2031-10-05 UTC'})).toContainText('EUR');
+-    expect((await (await api.get(`${runtime.url}/api/insights`)).json()).costs).toEqual(costs);
++    for(let read=0;read<2;read++) {
++      const reportResponse=await api.get(`${runtime.url}/api/insights`);expect(reportResponse.status()).toBe(200);
++      const reloaded=(await reportResponse.json()).costs;
++      expect(reloaded).toEqual(costs);
++      const persisted=await records();
++      expect(persisted).toEqual(raw);
++      assertCostIdentities(persisted.costs,identities,reloaded);
++      const campaignResponse=await api.get(`${runtime.url}/api/campaigns/${campaignId}/results`);expect(campaignResponse.status()).toBe(200);
++      const campaignReloaded=await campaignResponse.json();
++      expect(campaignReloaded.costs).toEqual(campaign.costs);
++      assertCostIdentities(persisted.costs,identities.filter(row=>row.campaignId===campaignId),{byCampaign:campaignReloaded.costs,byDay:reloaded.byDay});
++      const generatedCampaign=await api.get(`${runtime.url}/api/campaigns/${proposal.campaignId}/results`);
++      expect(generatedCampaign.status()).toBe(200);
++      assertCostIdentities(persisted.costs,identities.filter(row=>row.campaignId===proposal.campaignId),
++        {byCampaign:(await generatedCampaign.json()).costs,byDay:reloaded.byDay});
++    }
++    await test.info().attach('cost-identity-receipt', {contentType:'application/json',body:JSON.stringify({
++      boundaryCalls:raw.aiCalls,handoffs:raw.sends,expectedFacts:identities,projections:costs,
++      repeatedAuthenticatedReads:2,reloaded:true,
++    },null,2)});
+     const fixture=await (await request.post(`${runtime.url}/_costs/usage`,{headers:control})).json();
+     const report=await (await api.get(`${runtime.url}/api/insights`)).json(),usage=report.usage;
+     expect(usage.totalContacts).toBe(fixture.contacts.length);

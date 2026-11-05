@@ -1,0 +1,20 @@
+{
+  "head": "ff6a58ce877c9414ee1b0ec8c8dd408224d93e68",
+  "branch": "cloud/sd-mango-c-f50",
+  "integratedMain": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "fullHistory": true,
+  "repository": "just-every/run-mango",
+  "clean": true,
+  "acceptanceUnchanged": true,
+  "generatedViewsInProductDiff": [],
+  "countsBefore": {
+    "done": 18,
+    "partial": 200,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 18,
+    "partial": 200,
+    "missing": 98
+  }
+}

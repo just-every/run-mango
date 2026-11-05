@@ -1,0 +1,24 @@
+{
+  "lock": {
+    "command": "node scripts/edition-authoring/cli.mjs lock; node scripts/edition-authoring/cli.mjs check",
+    "exit": 0
+  },
+  "views": {
+    "command": "node src/base/contract-docs.mjs write; node src/base/contract-docs.mjs check",
+    "exit": 0,
+    "restored": [
+      "ACCEPTANCE.md",
+      "docs/CLAIMS.md"
+    ],
+    "committed": false
+  },
+  "ledger": {
+    "command": "none; no migration changed",
+    "exit": 0
+  },
+  "statusRowsBefore": 316,
+  "statusRowsAfter": 316,
+  "head": "ff6a58ce877c9414ee1b0ec8c8dd408224d93e68",
+  "trackedFixtureBeforeFinalLock": true,
+  "expectedRestoredViewCheckExit": 1
+}

@@ -1,0 +1,8 @@
+{
+  "head": "ff6a58ce877c9414ee1b0ec8c8dd408224d93e68",
+  "command": "node src/base/contract-docs.mjs check",
+  "exit": 1,
+  "output": "ACCEPTANCE.md: generated content differs; run contract-docs write.\n",
+  "expected": true,
+  "reason": "Generated views are restored from main and excluded from cloud commits; the lander regenerates them."
+}
