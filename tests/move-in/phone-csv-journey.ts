@@ -34,10 +34,10 @@ export async function phoneCsvJourney() {
     const cookie = await site.open();
     const rows = byRow([...valid, ...rejected]);
     const csv = ['Destination digits,Source label', ...rows.map(row=>`${row.supplied},${row.name}`)].join('\n')+'\n';
-    const preview = await json(await site.call('/api/audience/import-preview', {method:'POST', cookie, body:{
-      files:[{name:filename, preset:'csv-non-subscribed', csv,
-        mapping:{email:'', phone:'Destination digits', display_name:'Source label'}}],
-    }}), 200);
+    const input = {files:[{name:filename, preset:'csv-non-subscribed', csv,
+        mapping:{email:'', phone:'Destination digits', display_name:'Source label'}}]};
+    expect((await site.call('/api/audience/import-preview', {method:'POST', body:input})).status).toBe(401);
+    const preview = await json(await site.call('/api/audience/import-preview', {method:'POST', cookie, body:input}), 200);
     expect(preview.columns).toMatchObject([{name:filename, mapping:{email:'', phone:'Destination digits', display_name:'Source label'}}]);
     expect(preview.counts).toMatchObject({input:14, created:12, updated:0, rejected:2});
     expect(preview.counts.input).toBe(preview.counts.created+preview.counts.updated+preview.counts.rejected);
@@ -54,6 +54,8 @@ export async function phoneCsvJourney() {
     expect(await site.count('contacts')).toBe(0);
     expect(await site.count('contact_phones')).toBe(0);
 
+    expect((await site.call('/api/audience/imports', {method:'POST', body:{fingerprint:preview.fingerprint}})).status).toBe(401);
+    expect(await site.count('contacts')).toBe(0);
     let {job} = await json(await site.call('/api/audience/imports', {method:'POST', cookie, body:{fingerprint:preview.fingerprint}}), 200);
     expect(job.state).toBe('applying');
     expect(job.checkpoint).toBeGreaterThan(0);
@@ -91,6 +93,21 @@ export async function phoneCsvJourney() {
       expect(contacts.contacts.some((contact:any)=>contact.displayName===expected.name)).toBe(false);
     }
 
+    // A retry of the same reviewed file retains the original job and exact saved identities.
+    const persisted = () => site.rows('SELECT * FROM contacts ORDER BY id');
+    const beforeRetry = await persisted();
+    const phonesBeforeRetry = await site.rows('SELECT * FROM contact_phones ORDER BY id');
+    const retriedPreview = await json(await site.call('/api/audience/import-preview', {method:'POST', cookie, body:input}), 200);
+    expect(retriedPreview.fingerprint).toBe(preview.fingerprint);
+    const retried = await json(await site.call('/api/audience/imports', {method:'POST', cookie, body:{fingerprint:retriedPreview.fingerprint}}), 200);
+    expect(retried.job).toMatchObject({id:job.id, state:'completed', checkpoint:14, total:14});
+    expect(await persisted()).toEqual(beforeRetry);
+    expect(await site.rows('SELECT * FROM contact_phones ORDER BY id')).toEqual(phonesBeforeRetry);
+    const deniedReport = await site.call(`/api/audience/imports/${job.id}/report`);
+    expect(deniedReport.status).toBe(401);
+    const deniedBody = await deniedReport.text();
+    for (const row of valid) {expect(deniedBody).not.toContain(row.phone);expect(deniedBody).not.toContain(row.name);}
+
     const reports:string[] = [];
     for (let read=0; read<2; read++) {
       const response = await site.call(`/api/audience/imports/${job.id}/report`, {cookie});
@@ -121,7 +138,7 @@ export async function phoneCsvJourney() {
     expect(edge.unexpected).toEqual([]);
     await record('phone-csv-reconciliation.md', reports[0]);
     await record('phone-csv-probe.json', {counts:preview.counts, rows:preview.rows, job:readback.job, resumes, contacts:contacts.contacts,
-      reportReads:2, confirmationHandoffs:0, marketingHandoffs:0, smsHandoffs:0});
+      reportReads:2, sameFileRetryJobId:retried.job.id, signedOutRefusals:3, confirmationHandoffs:0, marketingHandoffs:0, smsHandoffs:0});
   } finally {
     await site.runtime.close();
     await edge.close();
