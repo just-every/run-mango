@@ -7,13 +7,19 @@ import { stageArchive, transferRequest } from '../portability/flows';
 type Original = { path: string; key: string; bytes: Uint8Array };
 const digest = (bytes: Uint8Array) => createHash('sha256').update(bytes).digest('hex');
 
+/** Read the fixture's real D1 tables without launching a new Wrangler process
+ * for every observation. This door changes no domain or provider behavior. */
+export async function readDesignRecords(api: APIRequestContext, runtime: any) {
+  const response = await api.get(runtime.url + '/_authoring/design-records', { headers: { 'X-Test-Token': runtime.token } });
+  expect(response.status()).toBe(200);
+  return await response.json() as { jobs: any[]; candidates: any[]; costs: any[] };
+}
+
 /** Open original evidence through the authenticated door, then export and restore
  * the real native run rows and R2 bytes. No provider answer is reconstructed. */
 export async function exportRetainedDesigns(api: APIRequestContext, runtime: any, originals: Original[]) {
-  const snapshots = {
-    design_jobs: await runtime.sql('SELECT * FROM design_jobs ORDER BY id'),
-    design_candidates: await runtime.sql('SELECT * FROM design_candidates ORDER BY job_id, slot'),
-  };
+  const opening = await readDesignRecords(api, runtime);
+  const snapshots = { design_jobs: opening.jobs, design_candidates: opening.candidates };
   for (const original of originals) {
     const response = await api.get(runtime.url + original.path);
     expect(response.status()).toBe(200);
@@ -36,7 +42,8 @@ export async function exportRetainedDesigns(api: APIRequestContext, runtime: any
   const items = records.filter(record => record.kind === 'part').flatMap(part => part.items);
   for (const [table, rows] of Object.entries(snapshots)) {
     expect(items.filter(item => item.kind === 'row' && item.table === table).map(item => item.row)).toEqual(rows);
-    expect(await runtime.sql(`SELECT * FROM ${table} ORDER BY ${table === 'design_jobs' ? 'id' : 'job_id, slot'}`)).toEqual(rows);
+    const persisted = await readDesignRecords(api, runtime);
+    expect(table === 'design_jobs' ? persisted.jobs : persisted.candidates).toEqual(rows);
   }
   for (const original of originals) {
     const descriptor = records[0].objects.find(object => object.bucket === 'ASSETS_BUCKET' && object.key === original.key);

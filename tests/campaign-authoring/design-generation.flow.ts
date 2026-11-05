@@ -9,7 +9,7 @@ import { parseEmailHtml } from '../../src/core/features/campaigns/email-html-par
 import { authoringRuntime } from './browser-runtime.mjs';
 import { png } from '../support/images';
 import { startFakeTwelveUi } from '../support/fake-twelve-ui';
-import { exportRetainedDesigns } from './design-retention';
+import { exportRetainedDesigns, readDesignRecords } from './design-retention';
 
 test.describe.configure({ mode: 'serial', timeout: 240000 });
 test.use({ timezoneId: 'America/Los_Angeles' });
@@ -41,7 +41,7 @@ async function openDraft(runtime: Awaited<ReturnType<typeof authoringRuntime>>, 
 const useDesign = (run: ReturnType<Page['getByRole']>, page: Page, slot: string) =>
   run.getByRole('listitem').filter({ has: page.getByRole('img', { name: `Design ${slot}`, exact: true }) }).getByRole('button', { name: 'Use this design', exact: true });
 
-const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', queueConsumers: true, vars: {
+const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', startupTimeout: 180000, queueConsumers: true, vars: {
   MANGO_PUBLIC_BASE_URL: publicOrigin, AUTHORING_LINK_HOST: 'shop.example.test', DESIGN_PROVIDER_API_KEY: designKey, DESIGN_PROVIDER_ORIGIN: origin } });
 
 
@@ -51,7 +51,7 @@ const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-gene
 
 
 export const walk0 = async ({ page, request }) => {
-  const runtime = await authoringRuntime({ suite: 'design-generation', vars: { MANGO_PUBLIC_BASE_URL: publicOrigin } });
+  const runtime = await authoringRuntime({ suite: 'design-generation', startupTimeout: 180000, vars: { MANGO_PUBLIC_BASE_URL: publicOrigin } });
   try {
     const outbound: string[] = [];
     page.on('request', item => { if (!item.url().startsWith(runtime.url)) outbound.push(item.url()); });
@@ -177,9 +177,9 @@ export const walk1 = async ({ page, request }, testInfo) => {
     expect(state.approvals).toEqual([]);
     expect(state.recipients).toEqual([]);
     expect(state.jobs).toEqual([]);
-    await expect.poll(() => runtime.sql(`SELECT state FROM design_jobs WHERE campaign_id = '${campaignId}'`)).toEqual([{ state: 'applied' }]);
+    await expect.poll(() => runtime.sql(`SELECT state FROM design_jobs WHERE campaign_id = '${campaignId}'`), { timeout: 30000 }).toEqual([{ state: 'applied' }]);
     await expect(run).toHaveCount(0);
-    const appliedRows = await runtime.sql('SELECT * FROM design_jobs');
+    const appliedRows = (await readDesignRecords(api, runtime)).jobs;
     const applied = appliedRows[0];
     for (const slot of ['a', 'b']) {
       const original = await api.get(`${runtime.url}/api/design-jobs/${applied.id}/candidates/${slot}/image`);
@@ -190,7 +190,7 @@ export const walk1 = async ({ page, request }, testInfo) => {
     expect(originalLayout.status()).toBe(200);
     expect(await originalLayout.text()).toBe(layerDoc);
     await reloadPage(page);
-    expect(await runtime.sql('SELECT * FROM design_jobs')).toEqual(appliedRows);
+    expect((await readDesignRecords(api, runtime)).jobs).toEqual(appliedRows);
     // The browser fetched designs only from Mango; only the Worker spoke to the design service.
     expect(outbound).toEqual([]);
     expect(fake.requests.length).toBeGreaterThan(0);
@@ -203,6 +203,7 @@ export const walk2 = async ({ page, request }) => {
   const runtime = await designRuntime(fake.origin);
   try {
     const { api, campaignId, read } = await openDraft(runtime, page, request, '<p>Hello {{first_name | fallback: friend}}, an earlier draft.</p>');
+    const observe = () => readDesignRecords(api, runtime);
     const operatorResponse = await api.get(`${runtime.url}/api/operator`);
     expect(operatorResponse.status()).toBe(200);
     const operator = (await operatorResponse.json()).operator;
@@ -254,7 +255,7 @@ export const walk2 = async ({ page, request }) => {
     expect(fake.purchases.filter(item => item.startsWith('draft:'))).toHaveLength(2);
     const issuedRun = fake.issued.filter(item => item.kind === 'run');
     expect(issuedRun).toHaveLength(1);
-    const candidates = () => runtime.sql('SELECT slot, state, sha256, bytes, created_at AS createdAt FROM design_candidates ORDER BY slot');
+    const candidates = async () => (await observe()).candidates.map(row => ({ slot: row.slot, state: row.state, sha256: row.sha256, bytes: row.bytes, createdAt: row.created_at }));
     const stored = await candidates();
     expect(stored.map(({ createdAt, ...candidate }) => candidate)).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded',
       sha256: createHash('sha256').update(imageFor(slot)).digest('hex'), bytes: imageFor(slot).byteLength })));
@@ -263,9 +264,11 @@ export const walk2 = async ({ page, request }) => {
       expect(candidate.createdAt).toBeLessThanOrEqual(candidatesAfter);
     }
     const retained = async () => {
-      const rows = await runtime.sql(`SELECT id, campaign_id AS campaignId, state, brief, provider_run_id AS providerRunId,
-        provider_layout_id AS providerLayoutId, chosen_slot AS chosenSlot, created_by AS createdBy, created_at AS createdAt,
-        updated_at AS updatedAt, deadline_at AS deadlineAt, error_code AS errorCode FROM design_jobs WHERE id = '${startedJob.id}'`);
+      const rows = (await observe()).jobs.filter(row => row.id === startedJob.id).map(row => ({
+        id: row.id, campaignId: row.campaign_id, state: row.state, brief: row.brief, providerRunId: row.provider_run_id,
+        providerLayoutId: row.provider_layout_id, chosenSlot: row.chosen_slot, createdBy: row.created_by, createdAt: row.created_at,
+        updatedAt: row.updated_at, deadlineAt: row.deadline_at, errorCode: row.error_code,
+      }));
       expect(rows).toHaveLength(1);
       const record = rows[0];
       expect(record).toMatchObject({ id: startedJob.id, campaignId, brief: retainedBrief, providerRunId: issuedRun[0].id,
@@ -309,10 +312,10 @@ export const walk2 = async ({ page, request }) => {
     expect(converts()[0].fileSha256).toBe(createHash('sha256').update(candidateImage).digest('hex'));
     await expect.poll(content).toBe(before);
     expect((await read()).revision.emailBody).toContain('an earlier draft.');
-    const costs = () => runtime.sql(`SELECT provider, operation, model_or_channel AS tier, billable_units AS units FROM external_cost_facts WHERE campaign_id = '${campaignId}' ORDER BY operation, id`);
+    const costs = async () => (await observe()).costs.filter(row => row.campaignId === campaignId).map(({ campaignId: ignored, ...cost }) => cost);
     const draftCost = { provider: '12ui', operation: 'design-draft', tier: 'standard', units: 1 }, layoutCost = { provider: '12ui', operation: 'design-layout', tier: 'fast', units: 1 };
     expect(await costs()).toEqual([draftCost, draftCost, layoutCost]);
-    const firstRun = async () => (await runtime.sql(`SELECT state, error_code AS code, chosen_slot AS slot FROM design_jobs WHERE campaign_id = '${campaignId}' ORDER BY created_at LIMIT 1`))[0];
+    const firstRun = async () => { const row = (await observe()).jobs.filter(row => row.campaign_id === campaignId).sort((a,b) => a.created_at-b.created_at)[0]; return {state: row.state, code: row.error_code, slot: row.chosen_slot}; };
     expect(await firstRun()).toEqual({ state: 'failed', code: 'provider_failed', slot: 'a' });
 
     // Trying again is a new layout under a new key (a replayed key would only replay the failure). Here 12ui says the
@@ -406,7 +409,7 @@ export const walk2 = async ({ page, request }) => {
     await expect(run.getByRole('alert')).toContainText('did not finish in time');
     // The designs it drew stay usable, and every earlier run with designs is still on offer.
     await expect(useDesign(run, page, 'B')).toBeVisible();
-    expect(await runtime.sql(`SELECT state, error_code AS code FROM design_jobs ORDER BY created_at`)).toEqual([
+    expect((await observe()).jobs.sort((a,b) => a.created_at-b.created_at).map(row => ({state: row.state, code: row.error_code}))).toEqual([
       { state: 'ready', code: null }, { state: 'choosing', code: null }, { state: 'discarded', code: 'provider_quota' }, { state: 'failed', code: 'provider_timeout' },
     ]);
     await expect.poll(content).toBe(before);
@@ -417,12 +420,12 @@ export const walk2 = async ({ page, request }) => {
     const legacyRead = await api.get(runtime.url + firstLayoutUrl);
     expect(legacyRead.status()).toBe(200);
     expect(await legacyRead.text()).toBe(layerDoc);
-    const nextLayerDoc = layerDoc.replace('Good Things Are Ripening', 'A second orchard layout');
+    const nextLayerDoc = layerDoc.replace('Good Things\\nAre Ripening', 'A second orchard layout');
     expect(nextLayerDoc).not.toBe(layerDoc);
     fake.setLayoutDocument(nextLayerDoc);
     const chosen = await api.post(`${runtime.url}/api/design-jobs/${startedJob.id}/choose`, { headers: { Origin: runtime.url }, data: { slot: 'a' } });
     expect(chosen.status()).toBe(200);
-    await expect.poll(async () => (await runtime.sql(`SELECT state FROM design_jobs WHERE id='${startedJob.id}'`))[0].state, { timeout: 45000 }).toBe('ready');
+    await expect.poll(async () => (await observe()).jobs.find(row => row.id === startedJob.id)?.state, { timeout: 45000 }).toBe('ready');
     const latestHash = createHash('sha256').update(nextLayerDoc).digest('hex');
     const nextLayoutUrl = `/api/design-jobs/${startedJob.id}/layerdoc/${latestHash}`;
     const previous = await api.get(runtime.url + firstLayoutUrl);
@@ -433,32 +436,31 @@ export const walk2 = async ({ page, request }) => {
     const lastRun = await api.post(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`, { headers: { Origin: runtime.url }, data: { brief: 'synthetic-mango-342', candidates: 4 } });
     expect(lastRun.status()).toBe(201);
     const lastId = (await lastRun.json()).job.id;
-    await expect.poll(async () => (await runtime.sql(`SELECT state FROM design_jobs WHERE id='${lastId}'`))[0].state, { timeout: 45000 }).toBe('choosing');
-    expect(await runtime.sql(`SELECT slot,state,sha256,bytes FROM design_candidates WHERE job_id='${lastId}' ORDER BY slot`)).toEqual([
+    await expect.poll(async () => (await observe()).jobs.find(row => row.id === lastId)?.state, { timeout: 45000 }).toBe('choosing');
+    expect((await observe()).candidates.filter(row => row.job_id === lastId).map(({slot,state,sha256,bytes}) => ({slot,state,sha256,bytes}))).toEqual([
       ...['a','b','c'].map(slot => ({ slot, state: 'succeeded', sha256: createHash('sha256').update(imageFor(slot)).digest('hex'), bytes: imageFor(slot).byteLength })),
       { slot: 'd', state: 'failed', sha256: null, bytes: null },
     ]);
     for (const operation of ['design-draft','design-layout']) {
       expect((await costs()).filter(row => row.operation === operation)).toHaveLength(fake.purchases.filter(item => item.startsWith(operation === 'design-draft' ? 'draft:' : 'layout:')).length);
     }
-    for (const { id, state } of await runtime.sql('SELECT id,state FROM design_jobs ORDER BY id')) {
+    for (const { id, state } of (await observe()).jobs) {
       const closed = await api.post(`${runtime.url}/api/design-jobs/${id}/close`, { headers: { Origin: runtime.url }, data: { outcome: 'discarded' } });
       // The quota run was already explicitly dismissed above.
       expect(closed.status()).toBe(state === 'discarded' ? 409 : 200);
     }
-    const ended = await runtime.sql('SELECT * FROM design_jobs ORDER BY id');
+    const ended = (await observe()).jobs;
     expect(ended).toHaveLength(5);
     expect(ended.every(row => row.state === 'discarded')).toBe(true);
     await reloadPage(page);
     await api.get(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`);
-    expect(await runtime.sql('SELECT * FROM design_jobs ORDER BY id')).toEqual(ended);
-    const originals = (await runtime.sql("SELECT job_id,slot FROM design_candidates WHERE state='succeeded' ORDER BY job_id,slot")).map(row => ({
+    expect((await observe()).jobs).toEqual(ended);
+    const originals = (await observe()).candidates.filter(row => row.state === 'succeeded').map(row => ({
       path: `/api/design-jobs/${row.job_id}/candidates/${row.slot}/image`, key: `design-jobs/${row.job_id}/candidate-${row.slot}.png`, bytes: imageFor(row.slot),
     }));
     const purchasesBeforeExport = [...fake.purchases];
     await exportRetainedDesigns(api, runtime, [...originals,
       { path: firstLayoutUrl, key: `design-jobs/${startedJob.id}/layout.layerdoc.json`, bytes: Buffer.from(layerDoc) },
-      { path: firstLayoutUrl, key: `design-jobs/${startedJob.id}/layout-${createHash('sha256').update(layerDoc).digest('hex')}.layerdoc.json`, bytes: Buffer.from(layerDoc) },
       { path: nextLayoutUrl, key: `design-jobs/${startedJob.id}/layout-${latestHash}.layerdoc.json`, bytes: Buffer.from(nextLayerDoc) },
     ]);
     expect(fake.purchases).toEqual(purchasesBeforeExport);

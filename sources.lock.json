@@ -4309,6 +4309,10 @@
       "sha256": "42d0a27a99ce53fe0faf1feb125ca5d4e0608668a230ef2fc44489ab294d592e",
       "executable": false
     },
+    "src/core/features/design-generation/layout-evidence.ts": {
+      "sha256": "ac2a72385fad55234723d6cfa38510ed523e605b9b576a17889fb0f05c9f0dbc",
+      "executable": false
+    },
     "src/core/features/design-generation/model.ts": {
       "sha256": "b32252108d1faccb3dac5c4802936e6148a6983bca4ffa8c2c92eb5115560c91",
       "executable": false
@@ -4318,7 +4322,7 @@
       "executable": false
     },
     "src/core/features/design-generation/routes.ts": {
-      "sha256": "72255105c604c389af92224c8765c1cc4c38d84baf1f6118a798b489837e44bf",
+      "sha256": "46c3f4c144d015a34f20202d964cbcef0235099dd10b99f35ebb9f4643de34ea",
       "executable": false
     },
     "src/core/features/design-generation/sweep.ts": {
@@ -8490,7 +8494,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
-      "sha256": "be95b14237fb40c53a8412e2abbf475b2693340cc2323c4978cf77da462992f1",
+      "sha256": "b9a257d08cdf88b52de13a5736f9f5aaa0c639113fdd941ea48976f2cd2604f5",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
@@ -8499,6 +8503,10 @@
     },
     "tests/campaign-authoring/design-import.spec.ts": {
       "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
+      "executable": false
+    },
+    "tests/campaign-authoring/design-retention.ts": {
+      "sha256": "5673026012a34f3220947d7d7d39fc57ba2cd63d581cda7d042cf5d1b4f602b1",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
@@ -8534,7 +8542,7 @@
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
-      "sha256": "e55528b111efb128fddcae8a4a2e48c601acbf084ff10f3169790b17612e9af1",
+      "sha256": "1ade2167215999cbd01fd14a45524ac40e155bf13f316e1792bf7513c66bef29",
       "executable": false
     },
     "tests/campaign-results/archive-fixture.ts": {

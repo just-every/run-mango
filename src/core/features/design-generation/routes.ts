@@ -7,7 +7,7 @@ import type { Platform } from '@/core/shared/platform';
 import { designCommand } from './advance';
 import { briefWithoutTokens, candidateSlots, maxBriefCharacters, maxCandidates, minCandidates, workingStates, type DesignGenerationStatus, type DesignJobView } from './model';
 import { createDesignRepository, designCandidateKey, type DesignJob } from './repository';
-import { readLayoutEvidence, retainLegacyLayout } from './layout-evidence';
+import { readLayoutEvidence } from './layout-evidence';
 
 /** A run that has not settled this long after it started (or after a candidate was chosen) fails visibly. */
 export const designDeadlineMs = 15 * 60_000;
@@ -88,7 +88,6 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
     // new layout round with its own purchase key; choosing among a working run's prepared layouts reuses their keys.
     const choosable = ['choosing', 'ready', 'failed'] as const;
     if (!(choosable as readonly string[]).includes(record.state)) return context.json({ error: 'design_job_state', detail: 'This design is not waiting for a choice.' }, 409);
-    await retainLegacyLayout(platform, record);
     const now = Date.now();
     const moved = await repository.update(record.id, [record.state], { state: 'preparing', chosenSlot: chosen.slot, providerLayoutId: null, layerdocSha256: null,
       errorCode: null, attempts: 0, waitCode: null, retryAt: null, deadlineAt: now + designDeadlineMs, layoutRound: record.layoutRound + (record.state === 'failed' ? 1 : 0) }, now);
@@ -124,7 +123,7 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
     const record = await repository.get(params.data.id);
     const object = record?.layerdocSha256 ? await readLayoutEvidence(platform, record, record.layerdocSha256) : null;
     if (!object) return context.json({ error: 'not_found' }, 404);
-    return new Response((object as R2ObjectBody).body, { headers: { 'Content-Type': 'application/vnd.12ui.layerdoc+json;version=2', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
+    return new Response(object, { headers: { 'Content-Type': 'application/vnd.12ui.layerdoc+json;version=2', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
   });
 
   routes.get('/design-jobs/:id/layerdoc/:sha256', async context => {
@@ -133,7 +132,7 @@ export function createDesignGenerationRoutes(db: D1Database, platform: Platform)
     const record = await repository.get(params.data.id);
     const object = record ? await readLayoutEvidence(platform, record, params.data.sha256) : null;
     if (!object) return context.json({ error: 'not_found' }, 404);
-    return new Response((object as R2ObjectBody).body, { headers: { 'Content-Type': 'application/vnd.12ui.layerdoc+json;version=2', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
+    return new Response(object, { headers: { 'Content-Type': 'application/vnd.12ui.layerdoc+json;version=2', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' } });
   });
 
   return routes;

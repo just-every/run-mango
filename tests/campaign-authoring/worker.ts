@@ -101,6 +101,11 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       await recordProposalClaims(bindings.DB,id,now);
       return Response.json({id});
     }
+    if(path==='/_authoring/design-records') return Response.json({
+      jobs:(await bindings.DB.prepare('SELECT * FROM design_jobs ORDER BY id').all()).results,
+      candidates:(await bindings.DB.prepare('SELECT * FROM design_candidates ORDER BY job_id,slot').all()).results,
+      costs:(await bindings.DB.prepare('SELECT campaign_id AS campaignId,provider,operation,model_or_channel AS tier,billable_units AS units FROM external_cost_facts ORDER BY operation,id').all()).results,
+    });
     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});
   }
   const app=createApp(bindings,platform,undefined,true);
