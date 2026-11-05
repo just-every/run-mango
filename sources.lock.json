@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "60b9f06cad7a55c54485f6c59cf92c008aba29b835c268daf0200b6feee92cb3",
+      "sha256": "d2f458b3ecbac529cf3361d0bad0a7caca42a3c894ca68ce819276d82d7cce5e",
       "executable": false
     },
     "DEMO.md": {
@@ -8470,7 +8470,7 @@
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
-      "sha256": "f1394e6f7382132c88805404746d708b1808e1b4435127a52b6f5b37689b20cc",
+      "sha256": "716d558382384425042c8d00b0e13f96c52480eb7e0db4b588404733816cf7a8",
       "executable": false
     },
     "tests/campaign-authoring/catalog-guard-journey.ts": {
