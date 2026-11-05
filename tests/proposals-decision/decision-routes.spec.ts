@@ -2,6 +2,7 @@ import {expect,test} from '@playwright/test';
 import {decisionRuntime,generated} from './runtime';
 import {history} from './history';
 import {reusableRoleProof} from '../campaign-authoring/reusable-block-journey';
+import {failurePreservation} from './failure-preservation';
 
 test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes',async()=>{
   test.setTimeout(300000);
@@ -42,19 +43,7 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     await runtime.db.prepare("UPDATE attribution_facts SET currency='AUD' WHERE id='attribution-0'").run();
     const mixed=await generated(runtime);
     expect((await runtime.call(`/api/proposals/${mixed.proposalId}`)).body.forecast).toMatchObject({status:'insufficient',valueMinor:null,currency:null});
-    runtime.controls.alter=output=>{output.summary.text='This store has a fabricated recovery rate.';};
-    const invalid=await runtime.call('/api/proposals/generate',{});
-    expect(invalid).toMatchObject({status:409,body:{kind:'failed',error:'invalid_ai_output'}});
-    expect((await runtime.call(`/api/proposals/${invalid.body.proposalId}`)).body.proposal).toMatchObject({state:'failed',campaignId:null});
-    runtime.controls.alter=undefined;
-    runtime.controls.failure=new Error('private provider diagnostic');
-    const failed=await runtime.call('/api/proposals/generate',{});
-    expect(failed).toMatchObject({status:409,body:{kind:'failed',error:'ai_provider_failed'}});
-    const failure=(await runtime.call(`/api/proposals/${failed.body.proposalId}`)).body;
-    expect(failure.proposal).toMatchObject({state:'failed',campaignId:null});
-    expect(JSON.stringify(failure)).not.toContain('private provider diagnostic');
-    expect(await runtime.db.prepare('SELECT units_known,reported_cost_micros,outcome FROM external_cost_facts WHERE proposal_id=?').bind(failed.body.proposalId).first()).toEqual({units_known:0,reported_cost_micros:null,outcome:'unknown'});
-    runtime.controls.failure=undefined;
+    await failurePreservation(runtime);
     const dismissed=await generated(runtime);
     expect((await runtime.call(`/api/proposals/${dismissed.proposalId}/dismiss`,{reason:''})).status).toBe(400);
     const decisions=await Promise.all(['No longer needed','Already planned'].map(reason=>runtime.call(`/api/proposals/${dismissed.proposalId}/dismiss`,{reason})));
