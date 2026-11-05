@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "f10e598a4457be2a587b3b189a480e5a4d7be77f80b84819a9b254b875b19b03",
+      "sha256": "1700d97e7ee268aba4871460a107b6cd1172c2f0c87a9b5a4f93d378c9e65203",
       "executable": false
     },
     "DEMO.md": {
@@ -8522,7 +8522,7 @@
       "executable": false
     },
     "tests/campaign-authoring/local-images.spec.ts": {
-      "sha256": "3b20989ab62960e13ac171e210aa9bf5943da825707cfcb06b7298ff66259ddc",
+      "sha256": "1fbfea1fbd9eac0987c37535f1c9f3f03d097279f9b4a73a1aae772d6ce74cfe",
       "executable": false
     },
     "tests/campaign-authoring/mobile-presentation-journey.ts": {
