@@ -88,6 +88,21 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       await recordProposalClaims(bindings.DB,id,now);
       return Response.json({id});
     }
+    // Arrange only a saved proposal's past deadline; native adoption performs
+    // the expiry transition and decides whether any draft can be returned.
+    if(path==='/_authoring/proposal-expiry'&&request.method==='POST') {
+      const body:unknown=await request.json().catch(()=>null);
+      if(!body||typeof body!=='object'||Array.isArray(body)||Object.keys(body).some(key=>key!=='id')
+        ||!('id' in body)||typeof body.id!=='string'||! /^[0-9a-f-]{36}$/.test(body.id))return new Response('Invalid proposal fixture',{status:400});
+      const result=await bindings.DB.prepare("UPDATE proposals SET send_by_at=? WHERE id=? AND state='proposed'").bind(Date.now()-86400000,body.id).run();
+      return Response.json({changed:result.meta.changes});
+    }
+    if(path==='/_authoring/adoption-state') {
+      const tables=['campaigns','campaign_revisions','campaign_steps','campaign_state_transitions','campaign_approval_requests','recipient_steps','task_authoring_jobs'] as const;
+      const records=await Promise.all(tables.map(async table=>[table,(await bindings.DB.prepare(`SELECT * FROM ${table} ORDER BY rowid`).all()).results]));
+      const links=(await bindings.DB.prepare('SELECT id,campaign_id FROM proposals ORDER BY id').all()).results;
+      return Response.json({...Object.fromEntries(records),links});
+    }
     if(path==='/_authoring/state') return Response.json({jobs:(await bindings.DB.prepare('SELECT * FROM task_authoring_jobs').all()).results,recipients:(await bindings.DB.prepare('SELECT * FROM recipient_steps').all()).results,approvals:(await bindings.DB.prepare('SELECT * FROM campaign_approval_requests').all()).results});
   }
   const app=createApp(bindings,platform,undefined,true);

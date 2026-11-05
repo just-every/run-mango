@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "6396dbee1e003793d2b442ec14c2f0aa3aa852a5291fe7678b17ad6e7ecc5d45",
+      "sha256": "bdaa1b7f813f2baa387fc533ab503e5710fb3220816fd54c9d4eda940f97b454",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8533,8 +8533,12 @@
       "sha256": "d62074ba7d51511f57b63dd76a99bc449a560b20665005089d711159bd7082ca",
       "executable": false
     },
+    "tests/campaign-authoring/start-adopt.spec.ts": {
+      "sha256": "a0b86b7d0dc9bfbd09419a6e442a674827474227bf401923e11bdc433129c914",
+      "executable": false
+    },
     "tests/campaign-authoring/worker.ts": {
-      "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1",
+      "sha256": "a3f7891d8c31a3f187574a8ff9115ca4fed503cbd5c02b9975a1fd3d30db9717",
       "executable": false
     },
     "tests/campaign-results/archive-fixture.ts": {
