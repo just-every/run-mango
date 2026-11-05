@@ -43,6 +43,8 @@ export async function startFakeTwelveUi(options: FakeOptions) {
   let layoutStatus = options.layoutStatus ?? 'succeeded';
   const failed = new Set<string>();
   const refusals = new Map<string, Refusal>();
+  const held = new Map<string, { entered: () => void; released: Promise<void> }>();
+  const releases = new Set<() => void>();
   const inflations = new Map<string, number>();
   const drawMs = { ...options.drawMs };
   const layerDocSha = createHash('sha256').update(options.layerDoc).digest('hex');
@@ -65,6 +67,12 @@ export async function startFakeTwelveUi(options: FakeOptions) {
     const key = request.headers['idempotency-key'] as string | undefined;
     const entry: FakeRequest = { method: request.method ?? 'GET', path, authorized: request.headers.authorization === `Bearer ${options.key}`, ...(key ? { idempotencyKey: key } : {}), ...(request.headers['content-type'] ? { contentType: request.headers['content-type'] } : {}) };
     requests.push(entry);
+    const barrier = [...held].find(([suffix]) => `${entry.method} ${path}`.endsWith(suffix));
+    if (barrier) {
+      held.delete(barrier[0]);
+      barrier[1].entered();
+      await barrier[1].released;
+    }
     const send = (status: number, value: unknown, type = 'application/json', headers: Record<string, string> = {}) => {
       const inflation = type === 'application/json' && [...inflations].find(([suffix]) => `${entry.method} ${path}`.endsWith(suffix));
       if (inflation) {
@@ -135,7 +143,17 @@ export async function startFakeTwelveUi(options: FakeOptions) {
   await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
   const origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   return { origin, requests, purchases, issued, refuseNext: (suffix: string, refusal: Refusal) => refusals.set(suffix, refusal),
+    /** Observe a request in flight without manufacturing Mango's persisted state or clock. */
+    holdNext: (suffix: string) => {
+      let entered!: () => void, unblock!: () => void;
+      const requested = new Promise<void>(resolve => { entered = resolve; });
+      const released = new Promise<void>(resolve => { unblock = resolve; });
+      const release = () => { releases.delete(release); unblock(); };
+      releases.add(release);
+      held.set(suffix, { entered, released });
+      return { requested, release };
+    },
     /** Pads the next JSON answer to a path suffix with at least `bytes` of padding. */
     inflateNext: (suffix: string, bytes: number) => inflations.set(suffix, bytes),
-    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; }, close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
+    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; }, close: () => new Promise<void>(resolve => { for (const release of releases) release(); server.closeAllConnections(); server.close(() => resolve()); }) };
 }
