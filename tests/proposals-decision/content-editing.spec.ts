@@ -1,7 +1,8 @@
 import {expect,test} from '@playwright/test';
 import {decisionRuntime,generated} from './runtime';
+import {smsContentEditing} from './sms-content-editing';
 
-test('[PROP-004] adopted email content, sender identity and destinations remain independently editable without sending authority',async()=>{
+test('[PROP-004] adopted email and SMS content, sender identities and destinations remain editable without sending authority',async({page},info)=>{
   test.setTimeout(300000);
   const runtime=await decisionRuntime();
   try {
@@ -83,4 +84,5 @@ test('[PROP-004] adopted email content, sender identity and destinations remain 
     console.log('PROBE PROP-004 acceptance-3 destination links: authenticated PATCH and repeated campaign and review GET -> replacement destination and label only, stable persisted link row');
     console.log('PROBE PROP-004 draft safety: unauthenticated PATCH refused; authorized edits and reads -> unchanged original proposal evidence, draft only, no approval, recipients, dispatch rows or commands');
   } finally {await runtime.close();}
+  await smsContentEditing(page,info);
 });

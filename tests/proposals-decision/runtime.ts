@@ -7,8 +7,8 @@ import {testIdentity} from '../support/test-identity';
 import {fixtureVerification} from '../support/sender-verification';
 import {proposalCommerce,synchronizeProposalSource} from './shopify-edge';
 import {sqlStatements} from '../../operations/sql-statements.mjs';
-import type {AppBindings, GroundedGenerationRequest} from '../../src/core/shared/platform';
-import type {GeneratedProposalWire} from '../../src/core/features/proposals/generation';
+import type {AppBindings} from '../../src/core/shared/platform';
+import {proposalGenerationEdge} from './generation-edge';
 
 const require = createRequire(import.meta.url);
 const {Miniflare} = createRequire(require.resolve('wrangler/package.json'))('miniflare');
@@ -30,27 +30,8 @@ export async function decisionRuntime() {
     platform.commerce=proposalCommerce();
     const verification=fixtureVerification(db,platform.config);
     platform.mailer={channel:'email',async capabilities(){return {configured:true,canSendMarketing:true,effectiveDeduplication:true,effectiveReconciliation:true,deduplicationWindowMs:86400000,reconciliationWindowMs:86400000,detail:'Test transport'}},inspectSender:sender=>verification.inspect(sender),async validateSender(){return {ready:true,detail:'Test transport'}},async send(){throw new Error('No proposal test sends')},async reconcile(){return {facts:[],exhausted:true}},async verifyWebhook(){throw new Error('No webhook')}};
-    const controls:{alter?:(output:GeneratedProposalWire)=>void;failure?:Error;lastRequest?:GroundedGenerationRequest}={};
-    platform.ai={costIdentity:{provider:'openai',model:'fixture-model'},async generateGroundedJson(request){
-      controls.lastRequest=request;
-      const acceptsStrictSchema=(schema:Record<string,any>)=>{
-        if(schema.type==='object') {
-          if(schema.additionalProperties!==false||!Array.isArray(schema.required)||Object.keys(schema.properties).some(key=>!schema.required.includes(key)))throw new Error('Provider rejected an open or optional object field');
-          Object.values(schema.properties).forEach(child=>acceptsStrictSchema(child as Record<string,any>));
-        }
-        if(schema.items)acceptsStrictSchema(schema.items);
-        for(const child of schema.anyOf??[])acceptsStrictSchema(child);
-        if(schema.format==='uri')throw new Error('Provider does not support URI format');
-      };
-      acceptsStrictSchema(request.schema);
-      if(controls.failure)throw controls.failure;
-      const evidence=request.evidence as {items:Array<{key:string;observedValueJson:string;allowedClaim:string}>;now:string};
-      const item=evidence.items[0],at=Date.parse(evidence.now);
-      const claim={text:item.allowedClaim,citations:[{key:item.key,observedValueJson:item.observedValueJson}]};
-      const output:GeneratedProposalWire={summary:structuredClone(claim),audience:{inclusion:{version:1,operator:'all',predicates:[{sourceType:'contact',field:'email',comparator:'contains',value:'@example.test',lookbackDays:null}]},exclusions:[],explanation:structuredClone(claim)},email:{subject:'From the garden',html:'<p>Garden news for you.</p>',text:'Garden news for you.',preheader:'Garden update'},sms:null,sender:{...{displayName:platform.config.mailSender.displayName,fromEmail:platform.config.mailSender.fromEmail,replyToEmail:platform.config.mailSender.replyToEmail,physicalAddress:platform.config.mailSender.physicalAddress},smsSender:'MANGO'},messageCategory:'newsletter',links:[],steps:[{channel:'email',scheduledAt:new Date(at+3600000).toISOString(),sendByAt:new Date(at+7200000).toISOString(),timezone:'Etc/UTC',whyThisTime:structuredClone(claim)}],forecast:null};
-      controls.alter?.(output);
-      return {output,provider:'openai',model:'fixture-model',billableUnits:100,reportedCostMicros:25,currency:'USD'};
-    }};
+    const {ai,controls}=proposalGenerationEdge(platform.config.mailSender);
+    platform.ai=ai;
     const services=createAppServices(platform);
     const identity=testIdentity(platform);
     await identity.importLocalDemoOperator({id:'proposal-operator',email:'owner@example.test',displayName:'Owner'},new Date());
