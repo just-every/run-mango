@@ -1,4 +1,4 @@
-import {expect, type Page} from '@playwright/test';
+import {expect, type Page, type Route, type TestInfo} from '@playwright/test';
 import {createHmac, randomUUID} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 import {installation, json} from './harness';
@@ -45,23 +45,122 @@ export async function wooPluginJourney(site: Site, page: Page, cookie: string, w
 }
 
 /** WordPress is the network edge here. Run the shipped browser script, not a copy. */
-export async function wooBrowserConsent(page: Page) {
-  const observations: URLSearchParams[] = [];
-  await page.route('https://store.example.test/**', async route => {
-    if (route.request().url().endsWith('/ajax')) {observations.push(new URLSearchParams(route.request().postData() ?? '')); await route.fulfill({status: 200, body: '{}'});}
-    else await route.fulfill({status: 200, contentType: 'text/html', body: '<!doctype html><html><body>Harvest checkout</body></html>'});
+export async function wooBrowserConsent(page: Page, info: TestInfo) {
+  const context = page.context(), other = await context.newPage(), unrelated = await context.newPage();
+  const stores = [
+    {page, origin: 'https://orchard.example.test', nonce: 'synthetic-mango-101', login: 'synthetic-mango-102', session: randomUUID(), productId: '21'},
+    {page: other, origin: 'https://market.example.invalid', nonce: 'synthetic-mango-103', login: 'synthetic-mango-104', session: randomUUID(), productId: '22'},
+  ];
+  const unrelatedOrigin = 'https://unrelated.example.test';
+  type Traffic = {source: string; url: string; method: string; navigation: boolean; headers: Record<string, string>; body: string};
+  const traffic: Traffic[] = [];
+  // Capture every host, including unexpected egress, independently of the AJAX stub.
+  const boundary = async (route: Route) => {
+    const request = route.request(), url = new URL(request.url());
+    const entry = {source: new URL(request.frame().url()).origin, url: request.url(), method: request.method(), navigation: request.isNavigationRequest(), headers: await request.allHeaders(), body: request.postData() ?? ''};
+    traffic.push(entry);
+    const store = stores.find(value => value.origin === url.origin);
+    if (store && url.pathname === '/wp-admin/admin-ajax.php') {
+      const body = new URLSearchParams(entry.body);
+      const granted = body.get('analytics') === 'true' && body.get('marketing') === 'true' && body.get('gpc') === 'false';
+      // WordPress is the network edge: its response sets or expires the host-only cookie.
+      await route.fulfill({status: granted ? 200 : 403, contentType: 'application/json', body: '{}', headers: {
+        'Set-Cookie': `mango_session=${granted ? store.session : ''}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${granted ? 2592000 : 0}`,
+      }});
+    } else await route.fulfill({status: 200, contentType: 'text/html', body: '<!doctype html><html><body>Harvest checkout</body></html>'});
+  };
+  const observations = (origin: string) => traffic.filter(value => value.source === origin && value.method === 'POST');
+  const kinds = (origin: string) => observations(origin).map(value => new URLSearchParams(value.body).get('kind'));
+  const activity = (target: Page) => target.evaluate(() => {
+    document.dispatchEvent(new Event('wc-blocks_added_to_cart'));
+    document.dispatchEvent(new Event('change'));
   });
-  await page.goto('https://store.example.test/checkout');
-  await page.evaluate(() => {Object.assign(window, {mangoPlugin: {ajaxUrl: '/ajax', nonce: 'synthetic-mango-8', checkout: true, productId: '21'}});});
-  await page.addScriptTag({content: readFileSync('extensions/mango-woocommerce/observations.js', 'utf8')});
-  await expect.poll(() => observations.length).toBe(1);
-  expect(observations[0].get('kind')).toBe('privacy_withdrawal');
-  await page.evaluate(() => window.dispatchEvent(new CustomEvent('mango:consent', {detail: {analytics: true, marketing: true}})));
-  await expect.poll(() => observations.length).toBe(4);
-  expect(observations.slice(1).map(value => value.get('kind')).sort()).toEqual(['active_on_site','started_checkout','viewed_product']);
-  expect(observations.every(value => !value.has('customerId') && !value.has('email'))).toBe(true);
-  await page.evaluate(() => {Object.defineProperty(navigator, 'globalPrivacyControl', {value: true, configurable: true}); window.dispatchEvent(new CustomEvent('mango:consent', {detail: {analytics: true, marketing: true}})); document.dispatchEvent(new Event('wc-blocks_added_to_cart'));});
-  await expect.poll(() => observations.length).toBe(5);
-  expect(observations[4].get('kind')).toBe('privacy_withdrawal'); expect(observations[4].get('gpc')).toBe('true');
-  await page.unroute('https://store.example.test/**');
+  const grant = (target: Page) => target.evaluate(() => window.dispatchEvent(new CustomEvent('mango:consent', {detail: {analytics: true, marketing: true}})));
+  const withdraw = (target: Page) => target.evaluate(() => {
+    Object.defineProperty(navigator, 'globalPrivacyControl', {value: true, configurable: true});
+    window.dispatchEvent(new CustomEvent('mango:consent', {detail: {analytics: true, marketing: true}}));
+    document.dispatchEvent(new Event('wc-blocks_added_to_cart'));
+    document.dispatchEvent(new Event('change'));
+  });
+  const assertIsolation = () => {
+    for (const entry of traffic) {
+      const destination = new URL(entry.url);
+      expect([stores[0].origin, stores[1].origin, unrelatedOrigin]).toContain(destination.origin);
+      const store = stores.find(value => value.origin === entry.source);
+      if (!entry.navigation) {
+        expect(store, 'every observation originates in a storefront').toBeDefined();
+        expect(entry.method).toBe('POST');
+        expect(entry.url).toBe(store!.origin + '/wp-admin/admin-ajax.php');
+        expect(entry.headers.origin).toBe(store!.origin);
+        const body = new URLSearchParams(entry.body);
+        expect(body.get('action')).toBe('mango_observation');
+        expect(body.get('nonce')).toBe(store!.nonce);
+        expect(body.has('customerId') || body.has('email')).toBe(false);
+        expect(entry.headers.cookie).toContain('wordpress_logged_in_mango=' + store!.login);
+      } else expect(entry.method).toBe('GET');
+      for (const foreign of stores.filter(value => value.origin !== destination.origin)) {
+        const outbound = JSON.stringify(entry);
+        for (const identity of [foreign.login, foreign.session, foreign.nonce]) expect(outbound).not.toContain(identity);
+      }
+    }
+  };
+  await context.route('**/*', boundary);
+  try {
+    await context.addCookies(stores.map(store => ({name: 'wordpress_logged_in_mango', value: store.login, url: store.origin, secure: true, httpOnly: true, sameSite: 'Lax' as const})));
+    for (const store of stores) {
+      await store.page.goto(store.origin + '/checkout');
+      await store.page.evaluate(config => {Object.assign(window, {mangoPlugin: config});}, {ajaxUrl: store.origin + '/wp-admin/admin-ajax.php', nonce: store.nonce, checkout: true, productId: store.productId});
+      await store.page.addScriptTag({content: readFileSync('extensions/mango-woocommerce/observations.js', 'utf8')});
+      await expect.poll(() => kinds(store.origin)).toEqual(['privacy_withdrawal']);
+      expect((await context.cookies(store.origin)).some(value => value.name === 'mango_session')).toBe(false);
+      await activity(store.page);
+    }
+    await page.waitForTimeout(3200); // Include the checkout change debounce, if wrongly enabled.
+    for (const store of stores) expect(kinds(store.origin)).toEqual(['privacy_withdrawal']);
+    assertIsolation();
+
+    await grant(page);
+    await expect.poll(() => kinds(stores[0].origin).slice(1).sort()).toEqual(['active_on_site', 'started_checkout', 'viewed_product']);
+    await expect.poll(async () => (await context.cookies(stores[0].origin)).find(value => value.name === 'mango_session')?.value).toBe(stores[0].session);
+    await page.evaluate(() => document.dispatchEvent(new Event('wc-blocks_added_to_cart')));
+    await expect.poll(() => kinds(stores[0].origin)).toHaveLength(5);
+    expect(observations(stores[0].origin).at(-1)!.headers.cookie).toContain('mango_session=' + stores[0].session);
+    await activity(other);
+    await unrelated.goto(unrelatedOrigin + '/');
+    await page.waitForTimeout(3200);
+    expect(kinds(stores[1].origin)).toEqual(['privacy_withdrawal']);
+    expect((await context.cookies(stores[1].origin)).some(value => value.name === 'mango_session')).toBe(false);
+    expect(traffic.find(value => value.url === unrelatedOrigin + '/')!.headers.cookie).toBeUndefined();
+    assertIsolation();
+
+    await grant(other);
+    await expect.poll(() => kinds(stores[1].origin).slice(1).sort()).toEqual(['active_on_site', 'started_checkout', 'viewed_product']);
+    await expect.poll(async () => (await context.cookies(stores[1].origin)).find(value => value.name === 'mango_session')?.value).toBe(stores[1].session);
+    await other.evaluate(() => document.dispatchEvent(new Event('wc-blocks_added_to_cart')));
+    await expect.poll(() => kinds(stores[1].origin)).toHaveLength(5);
+    expect(observations(stores[1].origin).at(-1)!.headers.cookie).toContain('mango_session=' + stores[1].session);
+    assertIsolation();
+
+    await withdraw(page);
+    await expect.poll(() => kinds(stores[0].origin)).toHaveLength(6);
+    // The other store retains only its own grant while the first refuses cart activity.
+    await other.evaluate(() => document.dispatchEvent(new Event('wc-blocks_added_to_cart')));
+    await expect.poll(() => kinds(stores[1].origin)).toHaveLength(6);
+    await withdraw(other);
+    await expect.poll(() => kinds(stores[1].origin)).toHaveLength(7);
+    await Promise.all(stores.map(store => activity(store.page)));
+    await page.waitForTimeout(3200);
+    for (const [index, store] of stores.entries()) {
+      expect(kinds(store.origin)).toHaveLength(index === 0 ? 6 : 7);
+      const withdrawal = new URLSearchParams(observations(store.origin).at(-1)!.body);
+      expect(withdrawal.get('kind')).toBe('privacy_withdrawal');
+      expect(withdrawal.get('gpc')).toBe('true');
+      expect((await context.cookies(store.origin)).some(value => value.name === 'mango_session')).toBe(false);
+    }
+    assertIsolation();
+  } finally {
+    await info.attach('woocommerce-observation-traffic', {body: JSON.stringify(traffic, null, 2), contentType: 'application/json'});
+    await context.unroute('**/*', boundary);
+    await other.close(); await unrelated.close();
+  }
 }

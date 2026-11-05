@@ -9130,11 +9130,11 @@
       "executable": false
     },
     "tests/go-live/woocommerce-plugin-journey.ts": {
-      "sha256": "d42a17e255154c7ee7991b0a02131ed442d2f8c9b0da89ad15de590382db5779",
+      "sha256": "7b2a34cc0c06ff8eeaa655d6ded55d39c7a8fa1f056152640da85c7dc42b394e",
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "4f52e79737ee441ee5e146bb0a9788365d62ab269897456eb7f58d990df78192",
+      "sha256": "4f3ea8d76a5b8491eebd97a7991cc9891a22ccb4586c18a2ec97deb03b88e577",
       "executable": false
     },
     "tests/go-live/worker.ts": {

@@ -109,7 +109,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     woo.state.secondPageFailure = false;
     await queue('product', failed.runId); await finished(failed.runId);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='product'`))).toHaveLength(2);
-    for (const width of [1440]) {
+    for (const width of [1440, 390]) {
       await page.setViewportSize({width, height: 1000});
       await openPage(page, site.runtime.url + '/app/settings');
       await expect(page.locator('#woocommerce')).toContainText(connection.url);
@@ -131,7 +131,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(5);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(6);
     expect((await site.rows('SELECT state FROM woocommerce_flows'))).toEqual([{state: 'paused'}]);
-    await wooBrowserConsent(page);
+    await wooBrowserConsent(page, info);
     expect(woo.state.authorizations.every(value => value === 'Basic ' + Buffer.from(connection.key + ':' + connection.secret).toString('base64'))).toBe(true);
     expect(edge.unexpected).toEqual([]);
     // The cross-connection owner-export proof owns a separate native runtime.
