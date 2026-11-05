@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "af117f7dde4b8b798c1ee14c76901abdeb3ece3b5f8592abf17d5eece3793a05",
+      "sha256": "d4d4b99068b65f76b47a1a09a7d11eab365d113b4cf2152cb33e3f62c5a1f809",
       "executable": false
     },
     "DEMO.md": {
@@ -9402,7 +9402,7 @@
       "executable": false
     },
     "tests/proposals-decision/forecast-provenance.spec.ts": {
-      "sha256": "04831a09ae32f053f0bcd7f3e19cad53dee65855138226fb78cc22900eb8b6ed",
+      "sha256": "4b208dde75c6d90ef7f83478b4d6fbaa77b245d4a5b6b5d22fbe8cf1f0934b33",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
