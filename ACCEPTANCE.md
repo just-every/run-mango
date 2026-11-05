@@ -752,7 +752,7 @@ Core · published · **partial** · From CAMP-002 · Rules D-1, D-3
 2. Missing or stale required commerce shows unavailable counts.
 3. An older in-flight count request cannot replace the result for a newer rule.
 
-**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px”
+**Evidence.** `tests/campaign-authoring/browser.spec.ts` — “[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px”; `tests/campaign-authoring/audience-exclusions-journey.ts`; independently reconciled candidate, eligible, excluded and two-step email counts; saved rules, controls and counts survive reopening without approval, recipients or jobs; (2) a recorded order changes exclusion counts while missing and stale required evidence returns unavailable counts; (3) an older actual response is released after newer counts render and cannot replace them.
 **Gap.** Asserted: Structured inclusion updates; Real source counts; Unavailable missing source counts; Unavailable stale counts; Late old request cannot replace new count. Unasserted: Structured exclusion updates. Missing public-door journey: “Live audience authoring counts — complete acceptance”, covering the unasserted outcomes above.
 
 #### CAMP-021 — Start and adopt newsletters
