@@ -18,17 +18,24 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     const carol = 'carol@example.test', dave = 'dave@example.test';
     await confirmedContact(site, edge, cookie, carol, 'carol');
     await confirmedContact(site, edge, cookie, dave, 'dave');
+    const visible = ['synthetic-mango-1', 'example.test'].join('@');
+    const control = ['synthetic-mango-2', 'example.test'].join('@');
+    await confirmedContact(site, edge, cookie, visible, 'Visible confirmation reader');
+    await confirmedContact(site, edge, cookie, control, 'Eligible control');
     const due = new Date(Date.now() + 20_000);
-    const letter = await draftCampaign(site, cookie, 'Spring letter', [carol, dave], due);
+    const letter = await draftCampaign(site, cookie, 'Spring letter', [carol, dave, visible], due);
     expect((await approve(site, cookie, letter)).status).toBe('scheduled');
     const nextDue = new Date(due.getTime() + 3600_000);
-    const next = await draftCampaign(site, cookie, 'Summer letter', [carol, dave], nextDue);
+    const next = await draftCampaign(site, cookie, 'Summer letter', [carol, dave, visible, control], nextDue);
     expect((await approve(site, cookie, next)).status).toBe('scheduled');
-    expect((await dispatch(site, letter.campaignId, due)).map(row => row.transport_disposition)).toEqual(['accepted', 'accepted']);
+    expect((await dispatch(site, letter.campaignId, due)).map(row => row.transport_disposition)).toEqual(['accepted', 'accepted', 'accepted']);
     // Freeze only the Worker's wall clock so the allowance cannot roll over mid-journey.
     // HTTP latency below uses the runner's real monotonic clock, including response bodies.
     const clock = await site.control('/_golive/clock', { hold: true });
-    expect(await site.count('recipient_steps')).toBe(4);
+    expect(await site.count('recipient_steps')).toBe(7);
+    expect(await site.rows(`SELECT destination, transport_disposition FROM recipient_steps WHERE campaign_id='${next.campaignId}' ORDER BY destination`)).toEqual(
+      [carol, dave, visible, control].map(destination => ({ destination, transport_disposition: 'queued' })),
+    );
     const sent = edge.sends.findLast(send => send.to === carol && send.body.headers?.['List-Unsubscribe'])!;
     const { mango_recipient_step, mango_handoff_key } = sent.body.custom_args;
     const post = (...events: unknown[]) => { const body = Buffer.from(JSON.stringify(events)); return signedPost(site, '/webhooks/mail/sendgrid', body, signer.headers(body)); };
@@ -116,6 +123,66 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     expect(await request('distinct token POST from same IP', otherOneClick, 'POST')).toMatchObject({ status: 200, location: null });
     expect(await site.rows('SELECT email, channel_status FROM contact_email_addresses ORDER BY email')).toEqual([
       { email: carol, channel_status: 'unsubscribed' }, { email: dave, channel_status: 'unsubscribed' },
+      { email: visible, channel_status: 'subscribed' }, { email: control, channel_status: 'subscribed' },
+    ]);
+
+    // This reader has never used the one-click POST. Their already-approved work is
+    // still queued when the visible confirmation alone records their withdrawal.
+    const visibleSent = edge.sends.findLast(send => send.to === visible && send.body.headers?.['List-Unsubscribe'])!;
+    const visibleOneClick = /^<(https:\/\/[^>]+)>$/.exec(visibleSent.body.headers['List-Unsubscribe'])![1];
+    const visibleConfirmation = visibleOneClick.replace('/unsubscribe/one-click/', '/unsubscribe/');
+    expect(visibleOneClick).not.toBe(oneClick);
+    expect(visibleOneClick).not.toBe(otherOneClick);
+    const previousOptOuts = await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id');
+    expect((await request('independent visible confirmation GET', visibleConfirmation)).status).toBe(200);
+    expect((await page.goto(site.local(visibleConfirmation)))?.status()).toBe(200);
+    await expect(page.locator('form')).toHaveCount(1);
+    expect((await site.rows(`SELECT channel_status FROM contact_email_addresses WHERE email='${visible}'`))[0].channel_status).toBe('subscribed');
+    expect(await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id')).toEqual(previousOptOuts);
+    expect(await site.rows(`SELECT transport_disposition FROM recipient_steps WHERE campaign_id='${next.campaignId}' AND destination='${visible}'`)).toEqual([{ transport_disposition: 'queued' }]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
+    await page.screenshot({ path: info.outputPath('independent-confirmation-1440.png'), fullPage: true });
+    // Capture phone proof of the same public page; behavioural assertions run at 1440.
+    await page.setViewportSize({ width: 390, height: 1000 });
+    await page.screenshot({ path: info.outputPath('independent-confirmation-390.png'), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    const confirmStart = performance.now();
+    const [visibleConfirmed] = await Promise.all([
+      page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
+      page.locator('form').getByRole('button').click(),
+    ]);
+    expect(visibleConfirmed?.status()).toBe(200);
+    await visibleConfirmed!.body();
+    const confirmElapsed = performance.now() - confirmStart;
+    timings.push({ name: 'independent visible confirmation POST', method: 'POST', status: visibleConfirmed!.status(), elapsedMs: confirmElapsed });
+    expect(confirmElapsed, 'visible confirmation: full HTTP response in milliseconds').toBeLessThan(2000);
+    expect(visibleConfirmed!.request().url()).toBe(site.local(visibleConfirmation));
+    expect(new URLSearchParams(visibleConfirmed!.request().postData()!).get('confirm')).toBe('true');
+    expect(new URLSearchParams(visibleConfirmed!.request().postData()!).has('List-Unsubscribe')).toBe(false);
+    await expect(page.locator('form')).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1440);
+    await page.screenshot({ path: info.outputPath('independent-success-1440.png'), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 1000 });
+    await page.screenshot({ path: info.outputPath('independent-success-390.png'), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    const recordedOptOuts = await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id');
+    expect(recordedOptOuts).toEqual(expect.arrayContaining(previousOptOuts));
+    const visibleOptOuts = recordedOptOuts.filter(row => !previousOptOuts.some(previous => previous.id === row.id));
+    expect(visibleOptOuts).toEqual([expect.objectContaining({ channel: 'email', reason: 'recipient-unsubscribe' })]);
+    expect(previousOptOuts.map(row => row.destination_hash)).not.toContain(visibleOptOuts[0].destination_hash);
+    const visibleSteps: unknown[] = [];
+    const visibleStep = async (name: string, status: number) => visibleSteps.push({ name, status,
+      address: (await site.rows(`SELECT channel_status FROM contact_email_addresses WHERE email='${visible}'`))[0].channel_status,
+      records: (await site.rows(`SELECT reason FROM surviving_opt_outs WHERE destination_hash='${visibleOptOuts[0].destination_hash}' ORDER BY reason`)).map(row => row.reason) });
+    await visibleStep('visible confirmation', visibleConfirmed!.status());
+    for (const n of [1, 2, 3]) await visibleStep(`soft bounce ${n}`, await post(event('bounce', visible, start + n * 1000, `visible${n}`, {}, { type: 'blocked', reason: '452 mailbox full' })));
+    await visibleStep('delivered', await post(event('delivered', visible, start + 5000, visibleSent.messageId, visibleSent.body.custom_args)));
+    expect(visibleSteps).toEqual([
+      { name: 'visible confirmation', status: 200, address: 'unsubscribed', records: ['recipient-unsubscribe'] },
+      { name: 'soft bounce 1', status: 204, address: 'unsubscribed', records: ['recipient-unsubscribe'] },
+      { name: 'soft bounce 2', status: 204, address: 'unsubscribed', records: ['recipient-unsubscribe'] },
+      { name: 'soft bounce 3', status: 204, address: 'suppressed', records: ['recipient-unsubscribe', 'three-consecutive-soft-bounces'] },
+      { name: 'delivered', status: 204, address: 'unsubscribed', records: ['recipient-unsubscribe'] },
     ]);
 
     // Opt-outs stop hand-off even for recipients frozen by approval before either POST.
@@ -127,9 +194,14 @@ test('[MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs surv
     expect(outcomes).toEqual([
       { email: carol, disposition: 'skipped', reason: 'channel-not-subscribed' },
       { email: dave, disposition: 'skipped', reason: 'channel-not-subscribed' },
+      { email: visible, disposition: 'skipped', reason: 'channel-not-subscribed' },
+      { email: control, disposition: 'accepted', reason: null },
     ]);
-    expect(edge.sends).toHaveLength(sendsBefore);
-    const evidence = JSON.stringify({ allowance, timings, outcomes }, null, 2) + '\n';
+    expect(edge.sends.slice(sendsBefore).map(send => send.to)).toEqual([control]);
+    expect(edge.sends).toHaveLength(sendsBefore + 1);
+    expect((await site.rows(`SELECT channel_status FROM contact_email_addresses WHERE email='${visible}'`))[0].channel_status).toBe('unsubscribed');
+    expect(await site.rows(`SELECT reason FROM surviving_opt_outs WHERE destination_hash='${visibleOptOuts[0].destination_hash}'`)).toEqual([{ reason: 'recipient-unsubscribe' }]);
+    const evidence = JSON.stringify({ allowance, timings, outcomes, visibleSteps }, null, 2) + '\n';
     await test.info().attach('unsubscribe-availability', { body: evidence, contentType: 'application/json' });
     if (process.env.GO_LIVE_EVIDENCE) {
       await writeFile(join(process.env.GO_LIVE_EVIDENCE, 'unsubscribe-availability.json'), evidence);
