@@ -4053,8 +4053,8 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
 | Published | 13 | 97 | 0 | 110 |
-| Target and push further | 5 | 103 | 98 | 206 |
-| All | 18 | 200 | 98 | 316 |
+| Target and push further | 7 | 101 | 98 | 206 |
+| All | 20 | 198 | 98 | 316 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
