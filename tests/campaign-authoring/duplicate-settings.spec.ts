@@ -1,12 +1,14 @@
+import {duplicateAuthorityJourney} from './duplicate-authority-journey';
 import {expect, test} from '@playwright/test';
 import {authoringRuntime} from './browser-runtime.mjs';
 import {localSessionCookieName} from '../support/local-session';
 
 const address = (name: string) => [name, 'example.test'].join('@');
 
-test('[CAMP-018] duplicated email drafts retain saved content and ordered settings without acquiring send authority', async ({request}) => {
-  test.setTimeout(240000);
+test('[CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval', async ({request,playwright}) => {
+  test.setTimeout(600000);
   const runtime = await authoringRuntime({suite:'campaign-duplicate-settings'});
+  let reopenedClient: Awaited<ReturnType<typeof playwright.request.newContext>> | undefined;
   try {
     const open = await request.post(runtime.url + '/_authoring/open', {headers:{'X-Test-Token':runtime.token}});
     expect(open.status()).toBe(200);
@@ -47,8 +49,9 @@ test('[CAMP-018] duplicated email drafts retain saved content and ordered settin
       emailText:'synthetic-mango-495 caller text must be derived from the saved body', steps,
     }});
     expect(saved.status(), await saved.text()).toBe(200);
+    reopenedClient = await playwright.request.newContext({extraHTTPHeaders:headers});
     const read = async (campaignId: string) => {
-      const response = await request.get(`${runtime.url}/api/campaigns/${campaignId}`, {headers});
+      const response = await reopenedClient!.get(`${runtime.url}/api/campaigns/${campaignId}`);
       expect(response.status(), await response.text()).toBe(200);
       return response.json();
     };
@@ -78,7 +81,7 @@ test('[CAMP-018] duplicated email drafts retain saved content and ordered settin
     for (const draft of [copy, reopenedCopy]) {
       for (let readNumber = 0; readNumber < 2; readNumber++) {
         const detail = await read(draft.campaignId);
-        const reviewResponse = await request.get(`${runtime.url}/api/campaigns/${draft.campaignId}/review`, {headers});
+        const reviewResponse = await reopenedClient!.get(`${runtime.url}/api/campaigns/${draft.campaignId}/review`);
         expect(reviewResponse.status(), await reviewResponse.text()).toBe(200);
         const review = await reviewResponse.json();
         for (const result of [detail, review]) {
@@ -88,6 +91,8 @@ test('[CAMP-018] duplicated email drafts retain saved content and ordered settin
           expect(result.revision.emailBody).toBe(original.revision.emailBody);
           expect(result.revision.emailText).toBe(original.revision.emailText);
           expect(result.steps).toEqual([]);
+          expect(result.links.map(({label,destinationUrl}: {label:string;destinationUrl:string}) => ({label,destinationUrl})))
+            .toEqual([{label:'the summer letter',destinationUrl:'https://shop.example.test/synthetic-mango-481'}]);
         }
       }
       const [row] = await runtime.sql(`SELECT * FROM campaign_revisions WHERE id='${draft.revisionId}'`);
@@ -105,8 +110,45 @@ test('[CAMP-018] duplicated email drafts retain saved content and ordered settin
     expect(await authority()).toEqual({jobs:[], recipients:[], approvals:[]});
     expect(await runtime.sql(`SELECT * FROM campaign_revisions WHERE id='${source.revisionId}'`)).toEqual(originalRows);
     expect(await runtime.sql(`SELECT * FROM campaign_steps WHERE revision_id='${source.revisionId}' ORDER BY sequence`)).toEqual(originalSteps);
-    console.log('PROBE CAMP-018 acceptance-2: native save, duplicate, duplicate again and repeated detail and review reads -> exact chosen email fields, canonical body and derived text, ordered unscheduled email settings, three independent drafts and unchanged source; zero approvals, recipients or jobs.');
+    const identities = new Set([source.campaignId, copy.campaignId, reopenedCopy.campaignId]);
+    for (const state of ['draft','approved','scheduled','completed','cancelled','dispatching','paused','failed']) {
+      const arranged = await request.post(runtime.url + '/_authoring/campaign-state', {
+        headers:{'X-Test-Token':runtime.token}, data:{id:source.campaignId,state},
+      });
+      expect(arranged.status()).toBe(200);
+      expect((await read(source.campaignId)).campaign.state).toBe(state);
+      const draft = await duplicate(source.campaignId), detail = await read(draft.campaignId);
+      expect(identities.has(draft.campaignId)).toBe(false);
+      identities.add(draft.campaignId);
+      expect(detail.campaign).toMatchObject({id:draft.campaignId,state:'draft',activeRevisionId:draft.revisionId});
+      expect(detail.revision).toMatchObject({...fields,name:'Copy of synthetic-mango-494 source',state:'draft',
+        emailBody:expectedBody,emailText:expectedText,stepSettings:settings,approvedAt:null,approvedByOperatorId:null});
+      expect(detail.steps).toEqual([]);
+      expect((await read(source.campaignId)).campaign.state).toBe(state);
+    }
+    // Copying stored SMS content and settings does not require a transport or
+    // grant permission to send: both channels remain unscheduled draft choices.
+    const smsBody = 'synthetic-mango-496 chosen SMS body', smsSender = 'Synthetic496';
+    const mixed = await request.patch(`${runtime.url}/api/campaign-revisions/${source.revisionId}`, {headers,data:{
+      smsBody,smsSender,steps:[steps[0],{...steps[1],channel:'sms'}],
+    }});
+    expect(mixed.status(),await mixed.text()).toBe(200);
+    const mixedSource = await read(source.campaignId);
+    expect(mixedSource.steps.map((step:{channel:string})=>step.channel)).toEqual(['email','sms']);
+    const mixedCopy = await duplicate(source.campaignId), mixedRead = await read(mixedCopy.campaignId);
+    expect(mixedRead.revision).toMatchObject({...fields,smsBody,smsSender,emailBody:expectedBody,emailText:expectedText,
+      stepSettings:[settings[0],{...settings[1],channel:'sms'}]});
+    expect(mixedRead.steps).toEqual([]);
+    const [mixedRow] = await runtime.sql(`SELECT sms_body,sms_sender FROM campaign_revisions WHERE id='${mixedCopy.revisionId}'`);
+    expect(mixedRow).toEqual({sms_body:smsBody,sms_sender:smsSender});
+    const [mixedSettings] = await runtime.sql(`SELECT settings_json FROM campaign_draft_step_settings WHERE revision_id='${mixedCopy.revisionId}'`);
+    expect(JSON.parse(mixedSettings.settings_json)).toEqual([settings[0],{...settings[1],channel:'sms'}]);
+    expect(await authority()).toEqual({jobs:[],recipients:[],approvals:[]});
+    console.log('PROBE CAMP-018 acceptance-1: duplicate native saved campaigns in all eight states -> independent drafts named Copy of the source, original state retained.');
+    console.log('PROBE CAMP-018 acceptance-2: native save, duplicate, duplicate again and repeated detail and review reads -> exact chosen email fields, canonical body and derived text, ordered unscheduled email settings, three independent drafts and unchanged source; zero approvals, recipients or jobs; mixed-channel copy also retains exact SMS body, sender and channel settings without a transport.');
   } finally {
+    await reopenedClient?.dispose();
     await runtime.close();
   }
+  await duplicateAuthorityJourney();
 });

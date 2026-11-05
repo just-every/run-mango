@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "1f0cb06af5ce5bbb146157e9c14328338be9a5d8f478f0f2efb6c61a6056053f",
+      "sha256": "9833ec96ce5c8852381033b0b99417cb510f081f68da41cc71ee08bbb954a36c",
       "executable": false
     },
     "DEMO.md": {
@@ -8502,7 +8502,7 @@
       "executable": false
     },
     "tests/campaign-authoring/duplicate-settings.spec.ts": {
-      "sha256": "220d8119f79328f4dca76104f96f5dd4363102fa10cc20b8309d571ad4d5fcec",
+      "sha256": "e10366cf62f6a997415e207fe5d753a90c70123bc9711189cee806fda369a442",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
