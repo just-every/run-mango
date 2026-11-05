@@ -11,15 +11,6 @@ verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0422274Z 
 verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0423514Z [36;1m  *) exit 1 ;;[0m
 verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0424045Z [36;1mesac[0m
 verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0674250Z shell: /usr/bin/bash -e {0}
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0675241Z env:
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0675777Z   PLAN: success
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0676353Z   BUILD: failure
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0676896Z   SHARDS: skipped
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0677511Z   LIGHT: skipped
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0678006Z   PUSH_PROOF: skipped
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0678564Z   NIGHTLY_PROOF: skipped
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0679294Z   COVERAGE: full
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0680081Z   HAS_SHARDS: true
-verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0680631Z   SKIP: false
+[Job environment section omitted from this public log excerpt.]
 verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0681161Z ##[endgroup]
 verify	Require the selected coverage and its proof	2026-11-05T22:38:13.0867972Z ##[error]Process completed with exit code 1.

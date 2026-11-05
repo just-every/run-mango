@@ -17,6 +17,7 @@
     "command": "node src/base/contract-docs.mjs check",
     "exit": 1,
     "expected": true,
+    "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
     "reason": "Generated views deliberately retained from main; lander regenerates them."
   },
   "candidate_identity_audit": {
@@ -159,22 +160,25 @@
   },
   "failed_job_log_reads": [
     {
-      "bytes": 1457,
+      "archive_output_bytes": 1457,
       "command": "gh run view 42123095229 --repo just-every/run-mango --job 127580313130 --log-failed",
       "exit": 0,
-      "job": 127580313130
+      "job": 127580313130,
+      "published_excerpt_bytes": 896
     },
     {
-      "bytes": 2937,
+      "archive_output_bytes": 2937,
       "command": "gh run view 42123095229 --repo just-every/run-mango --job 127580434414 --log-failed",
       "exit": 0,
-      "job": 127580434414
+      "job": 127580434414,
+      "published_excerpt_bytes": 2031
     }
   ],
   "generated_views_committed": false,
   "github_calls": 9,
   "head": "4790a516fe4a502bc324d4586fa7aea7dd879d88",
   "integration": "fetch origin main followed by merge origin/main; already up to date",
+  "log_excerpt_policy": "Job environment sections omitted; exact commands and terminal errors retained.",
   "main_at_integration": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
   "predecessor_reapplied": "63f9e61bb849a5c1ee62858ef241479f4caa7ab8",
   "product_push": {
