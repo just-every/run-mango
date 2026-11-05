@@ -54,6 +54,10 @@ export const walkTestIsolation = async () => {
     expect(priorRecipients.map(row => [row.email, row.transport_disposition])).toEqual([[recent, 'accepted']]);
     const prior = (await isolated.rows(`SELECT * FROM recipient_steps WHERE id='${priorRecipients[0].id}'`))[0];
     expect(prior.handed_off_at).toBeGreaterThanOrEqual(previousDue.getTime());
+    const priorMessage = edge.sends.findLast(message => message.to === recent
+      && decodeProviderReference(message.body.custom_args?.mango_recipient_step ?? '') === prior.id)!;
+    const delivered = Buffer.from(JSON.stringify([event('delivered', recent, prior.handed_off_at, priorMessage.messageId, priorMessage.body.custom_args)]));
+    expect(await signedPost(isolated, '/webhooks/mail/sendgrid', delivered, signer.headers(delivered))).toBe(204);
     // Independently valued historical attribution, as in the report fixtures:
     // this is retained input, not a substitute for any application result read.
     const attributedAt = prior.handed_off_at + 1, attributionId = 'synthetic-mango-804';
@@ -92,8 +96,12 @@ export const walkTestIsolation = async () => {
     const beforeResults = await results(), beforeStored = await stored();
     expect(beforeStored.attribution).toEqual([expect.objectContaining({ id: attributionId, campaign_id: previous.campaignId,
       recipient_step_id: prior.id, gross_amount_minor: 4200, refund_amount_minor: 200, currency: 'USD' })]);
-    expect(beforeResults.marketing).toEqual([expect.objectContaining({ campaignId: previous.campaignId, metric: 'accepted', value: 1 })]);
-    expect(beforeResults.campaigns[0]).toMatchObject({ outcomes: { handedOff: 1, accepted: 1 }, attribution: {
+    expect(beforeStored.delivery).toEqual([expect.objectContaining({ recipient_step_id: prior.id, kind: 'delivered', provider_message_id: priorMessage.messageId })]);
+    expect(beforeResults.marketing).toEqual([
+      expect.objectContaining({ campaignId: previous.campaignId, metric: 'accepted', value: 1 }),
+      expect.objectContaining({ campaignId: previous.campaignId, metric: 'delivered', value: 1 }),
+    ]);
+    expect(beforeResults.campaigns[0]).toMatchObject({ outcomes: { handedOff: 1, accepted: 1, delivered: 1 }, attribution: {
       orders: 1, revenueByCurrency: [{ currency: 'USD', orders: 1, grossAmountMinor: 4200, reversedAmountMinor: 200, amountMinor: 4000 }],
       events: [expect.objectContaining({ orderSourceRecordId: 'synthetic-mango-805', recipientStepId: prior.id })] } });
     const noAuthority = async () => {
@@ -114,12 +122,29 @@ export const walkTestIsolation = async () => {
     const testMessages = edge.sends.slice(sendCount);
     expect(testMessages.map(message => message.to)).toEqual([tested]);
     expect(testMessages[0].body.subject).toContain('MANGO TEST');
+    expect(decodeProviderReference(testMessages[0].body.custom_args.mango_recipient_step)).toBe(`test:${campaign.revisionId}`);
     expect(await allowance()).toBe(allowanceBefore - 1);
     expect((await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-sends`, { cookie: owner }), 200)).tests)
       .toEqual([expect.objectContaining({ destination: tested })]);
     // Test audit, allowance and cost accounting are allowed; none is marketing.
     expect(await stored()).toEqual(beforeStored);
     expect(await results()).toEqual(beforeResults);
+    // The same signed delivery door accepted the ordinary control above. Test
+    // callbacks and their replays must never become marketing delivery facts.
+    const testMessage = testMessages[0], testOccurredAt = await now();
+    const testEvents = Buffer.from(JSON.stringify(['processed', 'delivered'].map(kind =>
+      event(kind, tested, testOccurredAt, testMessage.messageId, testMessage.body.custom_args))));
+    const reconcileTest = async () => {
+      expect(await signedPost(isolated, '/webhooks/mail/sendgrid', testEvents, signer.headers(testEvents))).toBe(204);
+    };
+    await reconcileTest();
+    await reconcileTest();
+    expect(await isolated.rows(`SELECT kind, provider_message_id, mango_reference FROM provider_fact_inbox WHERE provider_message_id='${testMessage.messageId}' ORDER BY kind`))
+      .toEqual(['accepted', 'delivered'].map(kind => ({ kind, provider_message_id: testMessage.messageId,
+        mango_reference: decodeProviderReference(testMessage.body.custom_args.mango_handoff_key) })));
+    expect(await stored()).toEqual(beforeStored);
+    const afterTestResults = await results();
+    expect(afterTestResults).toEqual(beforeResults);
     const afterMembership = await memberships();
     expect(afterMembership).toEqual(beforeMembership);
     await noAuthority();
@@ -139,7 +164,12 @@ export const walkTestIsolation = async () => {
       .toMatchObject({ handedOff: 2, accepted: 2, skipped: 0 });
     expect(await isolated.rows('SELECT * FROM attribution_facts ORDER BY id')).toEqual(beforeStored.attribution);
     expect(await audience([recent])).toEqual(beforeMembership[2]);
-    await record('test-isolation.json', { beforeMembership, afterMembership, beforeResults, afterResults: await results(), recipients });
+    const afterMarketingStored = await stored(), afterMarketingResults = await results();
+    await reconcileTest();
+    expect(await stored()).toEqual(afterMarketingStored);
+    expect(await results()).toEqual(afterMarketingResults);
+    expect(await audience([recent])).toEqual(beforeMembership[2]);
+    await record('test-isolation.json', { beforeMembership, afterMembership, beforeResults, afterTestResults, afterMarketingResults, recipients });
   } finally { await isolated.runtime.close(); }
 };
 
