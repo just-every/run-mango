@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:5699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5699) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-012 acceptance-3 {"imageHoldsIdentifier":true,"complete":"complete","status":200,"unchangedBytes":true,"removedStoredObjects":0}
+  ✘  1 tests/camp012-erasure-probe.spec.ts:7:1 › CAMP-012 diagnostic: a complete PNG holding an exact contact identifier is gone after erasure (6.1s)
+
+
+  1) tests/camp012-erasure-probe.spec.ts:7:1 › CAMP-012 diagnostic: a complete PNG holding an exact contact identifier is gone after erasure 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 410
+    Received: 200
+
+      29 |     const remaining = new Uint8Array(await response.arrayBuffer());
+      30 |     console.log('PROBE CAMP-012 acceptance-3 ' + JSON.stringify({ imageHoldsIdentifier: Buffer.from(bytes).includes(id), complete: receipt.state, status: response.status, unchangedBytes: Buffer.from(remaining).equals(Buffer.from(bytes)), removedStoredObjects: receipt.removed.stored_objects ?? 0 }));
+    > 31 |     expect(response.status).toBe(410);
+         |                             ^
+      32 |   } finally { await runtime.close(); }
+      33 | });
+      34 |
+        at /workspace/run-mango-main-probe/tests/camp012-erasure-probe.spec.ts:31:29
+
+    Error Context: ../evidence/cf8993395461/main/camp012-erasure-probe-CAMP-9ca10-ifier-is-gone-after-erasure/error-context.md
+
+  1 failed
+    tests/camp012-erasure-probe.spec.ts:7:1 › CAMP-012 diagnostic: a complete PNG holding an exact contact identifier is gone after erasure 

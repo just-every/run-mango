@@ -1,0 +1,13 @@
+
+Running 4 tests using 1 worker
+
+(node:2566) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2566) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/campaign-assets.spec.ts:29:1 › [CAMP-012] an uploaded image is stored once by content hash and served publicly, immutable and cookie-free (1.5s)
+  ✓  2 tests/campaign-assets.spec.ts:116:1 › [CAMP-012] uploads without a session, from another origin, of the wrong type, oversize or out of bounds store nothing (200ms)
+  ✓  3 tests/campaign-assets.spec.ts:137:1 › [CAMP-012] an image past its per-minute allowance answers 429 without affecting other images (63ms)
+  ✓  4 tests/campaign-assets.spec.ts:148:1 › [CAMP-012] approval verifies this deployment's own images in storage, never through a network inspection (167ms)
+
+  4 passed (9.3s)

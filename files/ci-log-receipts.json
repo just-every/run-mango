@@ -1,0 +1,38 @@
+[
+  {
+    "job": 127603783593,
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42129943656",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "127603783593",
+      "--log-failed"
+    ],
+    "exit": 0,
+    "raw_sha256": "683abaeda746cc0721a306ae5acbbff484016406a9148d34afadcb91ef8c25e0",
+    "published_log": "verify-build-failure.log",
+    "omission": "workflow environment block omitted; all command and error lines retained"
+  },
+  {
+    "job": 127603886694,
+    "command": [
+      "gh",
+      "run",
+      "view",
+      "42129943656",
+      "--repo",
+      "just-every/run-mango",
+      "--job",
+      "127603886694",
+      "--log-failed"
+    ],
+    "exit": 0,
+    "raw_sha256": "cf6c6844e850913e92e1666ba8b9717bd3d488c3a288813f71c015278fa4df6f",
+    "published_log": "verify-summary-failure.log",
+    "omission": "workflow environment block omitted; all command and error lines retained"
+  }
+]

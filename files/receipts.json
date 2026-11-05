@@ -1,0 +1,229 @@
+[
+  {
+    "label": "erasure-probe",
+    "command": [
+      "env",
+      "MANGO_NO_FIXTURE_SERVER=1",
+      "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium",
+      "timeout",
+      "1200",
+      "pnpm",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "playwright.config.js",
+      "tests/camp012-erasure-probe.spec.ts",
+      "--workers=1",
+      "--reporter=list"
+    ],
+    "head": "a54a53943e3ba76ca69aeb15dbeaa5041636afee",
+    "exit": 1,
+    "started": "2026-11-05T23:26:45.843104+00:00",
+    "ended": "2026-11-05T23:26:53.088648+00:00",
+    "log": "erasure-probe.log",
+    "bytes": 1832,
+    "sha256": "2836d237b1192bcf31a3b6d70a42518f4d0e3d553f3755f89b4a17a961893341"
+  },
+  {
+    "label": "erasure-probe-main",
+    "command": [
+      "env",
+      "MANGO_NO_FIXTURE_SERVER=1",
+      "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium",
+      "timeout",
+      "1200",
+      "pnpm",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "playwright.config.js",
+      "tests/camp012-erasure-probe.spec.ts",
+      "--workers=1",
+      "--reporter=list"
+    ],
+    "head": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+    "exit": 1,
+    "started": "2026-11-05T23:27:37.871289+00:00",
+    "ended": "2026-11-05T23:27:47.905795+00:00",
+    "log": "erasure-probe-main.log",
+    "bytes": 1828,
+    "sha256": "d9277f00e447416d2e3bc58f66ad10954235001197048e692957aca9e41d65cc"
+  },
+  {
+    "label": "first-party",
+    "command": [
+      "npx",
+      "-y",
+      "@runeditrun/rer",
+      "check",
+      "--profile",
+      "first-party"
+    ],
+    "head": "a54a53943e3ba76ca69aeb15dbeaa5041636afee",
+    "exit": 0,
+    "started": "2026-11-05T23:29:23.939616+00:00",
+    "ended": "2026-11-05T23:29:25.336353+00:00",
+    "log": "first-party.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "label": "typecheck",
+    "command": [
+      "pnpm",
+      "run",
+      "typecheck"
+    ],
+    "head": "a54a53943e3ba76ca69aeb15dbeaa5041636afee",
+    "exit": 0,
+    "started": "2026-11-05T23:29:10.717980+00:00",
+    "ended": "2026-11-05T23:29:29.957590+00:00",
+    "log": "typecheck.log",
+    "bytes": 183,
+    "sha256": "b3b3532c392c7acd1b6d7e18fa059d0876ac696daee604b13b4320518d08e9ed"
+  },
+  {
+    "label": "focused-native",
+    "command": [
+      "env",
+      "MANGO_NO_FIXTURE_SERVER=1",
+      "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium",
+      "timeout",
+      "1200",
+      "pnpm",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "playwright.config.js",
+      "tests/campaign-assets.spec.ts",
+      "--workers=1",
+      "--reporter=list"
+    ],
+    "head": "a54a53943e3ba76ca69aeb15dbeaa5041636afee",
+    "exit": 0,
+    "started": "2026-11-05T23:26:55.419125+00:00",
+    "ended": "2026-11-05T23:29:30.726009+00:00",
+    "log": "focused-native.log",
+    "bytes": 1186,
+    "sha256": "443dad1924c4ba131dfdd6a0fbad9ae590eddb4bdd14456dff489b83395940d6"
+  },
+  {
+    "label": "views-write",
+    "command": [
+      "node",
+      "src/base/contract-docs.mjs",
+      "write"
+    ],
+    "head": "a54a53943e3ba76ca69aeb15dbeaa5041636afee",
+    "exit": 0,
+    "started": "2026-11-05T23:30:22.181406+00:00",
+    "ended": "2026-11-05T23:30:22.414076+00:00",
+    "log": "views-write.log",
+    "bytes": 28,
+    "sha256": "df91012bf66fb476e9cd1a30c002829398beb55f869e07cc7be477197fa5a276"
+  },
+  {
+    "label": "views-check",
+    "command": [
+      "node",
+      "src/base/contract-docs.mjs",
+      "check"
+    ],
+    "head": "a54a53943e3ba76ca69aeb15dbeaa5041636afee",
+    "exit": 0,
+    "started": "2026-11-05T23:30:22.457579+00:00",
+    "ended": "2026-11-05T23:30:22.642668+00:00",
+    "log": "views-check.log",
+    "bytes": 32,
+    "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+  },
+  {
+    "label": "source-lock",
+    "command": [
+      "node",
+      "scripts/edition-authoring/cli.mjs",
+      "lock"
+    ],
+    "head": "a54a53943e3ba76ca69aeb15dbeaa5041636afee",
+    "exit": 0,
+    "started": "2026-11-05T23:30:22.693034+00:00",
+    "ended": "2026-11-05T23:30:23.320480+00:00",
+    "log": "source-lock.log",
+    "bytes": 411970,
+    "sha256": "03a67b7c4d508bf5709f88d034e861cb5a4e7da0e9da0af581e485f06eb8942b"
+  },
+  {
+    "label": "source-check",
+    "command": [
+      "node",
+      "scripts/edition-authoring/cli.mjs",
+      "check"
+    ],
+    "head": "a54a53943e3ba76ca69aeb15dbeaa5041636afee",
+    "exit": 0,
+    "started": "2026-11-05T23:30:23.361151+00:00",
+    "ended": "2026-11-05T23:30:23.804484+00:00",
+    "log": "source-check.log",
+    "bytes": 411984,
+    "sha256": "a318cdf27fd052a49297aa25186d0abfb70262fd6f2c898e7c8e3230584365dd"
+  },
+  {
+    "label": "source-check-exact",
+    "command": [
+      "node",
+      "scripts/edition-authoring/cli.mjs",
+      "check"
+    ],
+    "head": "9f5128e6da762065dbf8b79ddbe3f37a0e95efef",
+    "exit": 0,
+    "started": "2026-11-05T23:32:50.367852+00:00",
+    "ended": "2026-11-05T23:32:50.739295+00:00",
+    "log": "source-check-exact.log",
+    "bytes": 411984,
+    "sha256": "a318cdf27fd052a49297aa25186d0abfb70262fd6f2c898e7c8e3230584365dd"
+  },
+  {
+    "label": "focused-exact",
+    "command": [
+      "env",
+      "MANGO_NO_FIXTURE_SERVER=1",
+      "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium",
+      "timeout",
+      "1200",
+      "pnpm",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "playwright.config.js",
+      "tests/campaign-assets.spec.ts",
+      "--workers=1",
+      "--reporter=list"
+    ],
+    "head": "9f5128e6da762065dbf8b79ddbe3f37a0e95efef",
+    "exit": 0,
+    "started": "2026-11-05T23:30:23.981198+00:00",
+    "ended": "2026-11-05T23:33:07.764818+00:00",
+    "log": "focused-exact.log",
+    "bytes": 1186,
+    "sha256": "ebb56195f3ba30d5b7888894467953b0448524d6c277a3c76fafc195a069f5e0"
+  },
+  {
+    "label": "restored-view-check",
+    "command": [
+      "node",
+      "src/base/contract-docs.mjs",
+      "check"
+    ],
+    "head": "9f5128e6da762065dbf8b79ddbe3f37a0e95efef",
+    "exit": 1,
+    "started": "2026-11-05T23:34:52.480298+00:00",
+    "ended": "2026-11-05T23:34:52.660787+00:00",
+    "log": "restored-view-check.log",
+    "bytes": 67,
+    "sha256": "183372998615cc516043a5f66404b300281009a84349eda72da66d79fe542603"
+  }
+]

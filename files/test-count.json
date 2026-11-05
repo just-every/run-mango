@@ -1,0 +1,41 @@
+{
+  "configurations": [
+    {
+      "config": "playwright.config.js",
+      "exit": 0,
+      "tests": 49
+    },
+    {
+      "config": "scripts/verification/local-start.config.mjs",
+      "exit": 0,
+      "tests": 5
+    },
+    {
+      "config": "tests/local-start/config.js",
+      "exit": 0,
+      "tests": 7
+    },
+    {
+      "config": "tests/newsletter-ui/playwright.config.js",
+      "exit": 0,
+      "tests": 1
+    },
+    {
+      "config": "tests/campaign-results/playwright.config.js",
+      "exit": 0,
+      "tests": 2
+    },
+    {
+      "config": "tests/go-live/playwright.config.js",
+      "exit": 0,
+      "tests": 22
+    },
+    {
+      "config": "tests/move-in/playwright.config.js",
+      "exit": 0,
+      "tests": 2
+    }
+  ],
+  "total": 88,
+  "cap": 200
+}

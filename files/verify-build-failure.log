@@ -1,0 +1,6 @@
+Build and public command checks	Check generated contract documents	﻿2026-11-05T23:31:20.9226567Z ##[group]Run node src/base/contract-docs.mjs check
+Build and public command checks	Check generated contract documents	2026-11-05T23:31:20.9226821Z [36;1mnode src/base/contract-docs.mjs check[0m
+Build and public command checks	Check generated contract documents	2026-11-05T23:31:20.9244330Z shell: /usr/bin/bash -e {0}
+Build and public command checks	Check generated contract documents	2026-11-05T23:31:20.9245314Z ##[endgroup]
+Build and public command checks	Check generated contract documents	2026-11-05T23:31:21.0128719Z ACCEPTANCE.md: generated content differs; run contract-docs write.
+Build and public command checks	Check generated contract documents	2026-11-05T23:31:21.0195271Z ##[error]Process completed with exit code 1.

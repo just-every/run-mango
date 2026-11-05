@@ -1,0 +1,43 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f56",
+  "head": "9f5128e6da762065dbf8b79ddbe3f37a0e95efef",
+  "base_main": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "product_push": "success",
+  "contract_status": {
+    "CAMP-012": {
+      "before": "partial",
+      "after": "partial"
+    }
+  },
+  "counts_before": {
+    "done": 18,
+    "partial": 200,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 18,
+    "partial": 200,
+    "missing": 98
+  },
+  "verify": {
+    "id": 42129943656,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "head_sha": "9f5128e6da762065dbf8b79ddbe3f37a0e95efef",
+    "accepted_exception": "only generated ACCEPTANCE.md freshness and its dependent summary failure",
+    "jobs": [
+      127603783593,
+      127603886694
+    ]
+  },
+  "github_calls": 6,
+  "exact_local_focused_tests": {
+    "passed": 5,
+    "failed": 0
+  },
+  "test_registrations": 88,
+  "publication_scan": "not run in cloud; fleet lander owns it",
+  "product_ready": "generated-view exception applies; clause remains partial"
+}
