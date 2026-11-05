@@ -3,6 +3,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { portabilityRuntime } from './portability/runtime.mjs';
 import { durableRows } from './portability/flows';
+import { campaignAssetLifecycle } from './support/campaign-asset-lifecycle';
 import { png, pngHeaderOnly } from './support/images';
 import { createDatabase } from '../src/core/platform/db/client';
 import { createBlobStore } from '../src/core/platform/blobs';
@@ -143,6 +144,14 @@ test('[CAMP-012] an image past its per-minute allowance answers 429 without affe
     .bind(`media:${a.asset.sha256}`, limits.mediaRequestsPerMinutePerAsset).run();
   expect((await fetch(a.asset.url)).status).toBe(429);
   expect((await fetch(b.asset.url)).status).toBe(200);
+  for (const address of ['192.0.2.158', '192.0.2.159']) {
+    const headers = { 'CF-Connecting-IP': address, 'X-Forwarded-For': address };
+    const refused = await fetch(a.asset.url, { headers });
+    expect(refused.status).toBe(429);
+    expect(Number(refused.headers.get('retry-after'))).toBeGreaterThan(0);
+    expect((await fetch(b.asset.url, { headers })).status).toBe(200);
+  }
+
 });
 
 test('[CAMP-012] approval verifies this deployment\'s own images in storage, never through a network inspection', async () => {
@@ -188,4 +197,9 @@ test('[CAMP-012] approval verifies this deployment\'s own images in storage, nev
   expect(unknown.checks.get('message.links.resolved')).toMatchObject({ status: 'blocked', blocking: true });
   expect(unknown.checks.get('message.links.resolved')!.detail).toContain(unknown.src);
   expect(inspected).not.toContain(unknown.src);
+});
+
+test('[CAMP-012] original image files survive export and a changed origin and are unavailable during erasure', async () => {
+  test.setTimeout(360000);
+  await campaignAssetLifecycle();
 });

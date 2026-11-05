@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "90f8adbae21bcda2ffc79ebda8b41bd2d73313a6c20be51790ce648ca77ebab5",
+      "sha256": "2b166ce76031d1550432effdafb98d1fde979d376bfa93d23813ba60b980acc1",
       "executable": false
     },
     "DEMO.md": {
@@ -8442,7 +8442,7 @@
       "executable": false
     },
     "tests/campaign-assets.spec.ts": {
-      "sha256": "c9d3fa55b465a39bc2f92f26a666a1e9f896b6de5759412c34ebc63e34ae0162",
+      "sha256": "6d5c24191c413a0b0fb164c2f3645b0131d34ab112fa3807385b001766c6d010",
       "executable": false
     },
     "tests/campaign-authoring/advisory-worker.ts": {
@@ -9509,6 +9509,10 @@
       "sha256": "ceedbc883fa4bc5cf7437e688d7b4ac838c574ac7624e3d13b1849820f651c04",
       "executable": false
     },
+    "tests/support/campaign-asset-lifecycle.ts": {
+      "sha256": "1e038bc3d0983cb6e6ef4870fa8af844c919a045a920ca3f4e6231fb6a69d53b",
+      "executable": false
+    },
     "tests/support/designed-email.html": {
       "sha256": "52e5c9a8045d19e1a8b1accba388eed53cde37c04cd6c6b83ed1b2c8dfd53b25",
       "executable": false
@@ -9530,7 +9534,7 @@
       "executable": false
     },
     "tests/support/images.ts": {
-      "sha256": "e64393e6b5c34dc6448929acb74d9ef0423ee8bab12255579dae84ba80541c04",
+      "sha256": "0dc52ea2877acd658832aeee63d918d75cec0d94667e0e96c8c64aa26091dd82",
       "executable": false
     },
     "tests/support/local-platform.ts": {
