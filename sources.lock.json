@@ -8770,7 +8770,7 @@
       "executable": false
     },
     "tests/go-live/contact-links.journeys.ts": {
-      "sha256": "b244774071928ec7da53033c979dddaca26b22dc81cb89e29576170e67b28fee",
+      "sha256": "ba157809fd7e93115cf4b5001d2889d338a7dc8b278f2a433a87dff94759167e",
       "executable": false
     },
     "tests/go-live/content-checks.journeys.ts": {
