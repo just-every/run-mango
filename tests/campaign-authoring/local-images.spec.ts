@@ -8,7 +8,7 @@ import { png } from '../support/images';
 test.describe.configure({ timeout: 180000 });
 
 // A copy running on a computer, as `rer dev` starts it: the public origin is the runtime's own http address.
-test('[CAMP-023] on a local copy, Insert image adds an own-origin image that saves, previews after opt-in and blocks only approval', async ({ page, request }) => {
+test('[CAMP-023] on a local copy, Insert image adds an own-origin image that saves, previews after opt-in and blocks only approval', async ({ page, request }, info) => {
   const runtime = await authoringRuntime({ suite: 'local-images', vars: (url: string) => ({ MANGO_PUBLIC_BASE_URL: url }) });
   try {
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
@@ -25,18 +25,65 @@ test('[CAMP-023] on a local copy, Insert image adds an own-origin image that sav
     // A photo wider than the email is shown at the email's width, keeping its proportions.
     const image = png(800, 400, 3), hash = createHash('sha256').update(image).digest('hex');
     await page.getByRole('button', { name: 'HTML mode', exact: true }).click();
+    const body = page.getByLabel('Email body', { exact: true });
+    const beforeImage = '<p>Harvest news.</p>', afterImage = '<p>Until next time.</p>';
+    await body.fill(beforeImage + afterImage);
+    await body.press('ControlOrMeta+Home');
+    for (let at = 0; at < beforeImage.length; at++) await body.press('ArrowRight');
+    const readDraft = async () => {
+      const response = await api.get(`${runtime.url}/api/campaigns/${created.campaignId}`, { headers });
+      expect(response.status(), await response.text()).toBe(200);
+      const { campaign, revision, steps, links } = await response.json();
+      return { campaign, revision, steps, links };
+    };
+    const persisted = await readDraft();
+    expect(persisted.revision.emailBody).toContain('<p>Harvest news.</p>');
+    expect(persisted.revision.emailBody).not.toContain(afterImage);
+    const uploads: string[] = [];
+    page.on('request', item => {
+      if (item.method() === 'POST' && new URL(item.url()).pathname === '/api/campaign-assets') uploads.push(item.url());
+    });
     await page.getByRole('button', { name: 'Insert image', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Insert an image' });
-    await dialog.getByLabel('Image file', { exact: true }).setInputFiles({ name: 'orchard.png', mimeType: 'image/png', buffer: Buffer.from(image) });
-    await dialog.getByLabel('Image description', { exact: true }).fill('Orchard rows');
+    const file = dialog.getByLabel('Image file', { exact: true });
+    const description = dialog.getByLabel('Image description', { exact: true });
+    await file.setInputFiles({ name: 'orchard.png', mimeType: 'image/png', buffer: Buffer.from(image) });
+    for (const missing of ['', '   ']) {
+      await description.fill(missing);
+      await dialog.getByRole('button', { name: 'Upload and insert', exact: true }).click();
+      await expect(dialog).toBeVisible();
+      await expect(description).toHaveAttribute('aria-invalid', 'true');
+      await expect(description).toBeFocused();
+      const errorId = await description.getAttribute('aria-describedby');
+      expect(errorId).toBeTruthy();
+      await expect(dialog.locator(`[id="${errorId}"]`)).toHaveText('Complete image description.');
+      const errorLink = dialog.getByRole('link', { name: 'Image description: Complete image description.', exact: true });
+      await expect(errorLink).toHaveAttribute('href', `#${await description.getAttribute('id')}`);
+      await file.focus();
+      await errorLink.click();
+      await expect(description).toBeFocused();
+      expect(await file.evaluate(element => Array.from((element as HTMLInputElement).files ?? [], selected => ({ name: selected.name, size: selected.size, type: selected.type })))).toEqual([{ name: 'orchard.png', size: image.byteLength, type: 'image/png' }]);
+      await expect(body).toHaveValue(beforeImage + afterImage);
+      expect(await readDraft()).toEqual(persisted);
+      expect(uploads).toEqual([]);
+    }
+    await dialog.screenshot({ path: info.outputPath(`image-description-required-${page.viewportSize()!.width}.png`) });
+    await description.fill('Orchard rows');
+    const uploaded = page.waitForResponse(response => new URL(response.url()).pathname === '/api/campaign-assets' && response.request().method() === 'POST');
     await dialog.getByRole('button', { name: 'Upload and insert', exact: true }).click();
+    const response = await uploaded;
+    expect(response.status(), await response.text()).toBe(201);
+    expect((await response.json()).asset).toMatchObject({ sha256: hash, url: `${runtime.url}/media/${hash}`, width: 800, height: 400 });
     await expect(dialog).toHaveCount(0);
-    const body = page.getByLabel('Email body', { exact: true });
+    expect(uploads).toEqual([`${runtime.url}/api/campaign-assets`]);
     const tag = `<img src="${runtime.url}/media/${hash}" width="600" height="300" alt="Orchard rows">`;
     await expect(body).toHaveValue(new RegExp(tag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+    await expect(body).toHaveValue(beforeImage + tag + afterImage);
+    expect(await readDraft()).toEqual(persisted);
 
     await page.getByRole('button', { name: 'Save full draft', exact: true }).click();
     await expect(page.getByRole('status').filter({ hasText: 'Draft saved.' })).toBeVisible();
+    expect((await readDraft()).revision.emailBody).toContain(beforeImage + tag + afterImage);
     const preview = page.getByRole('region', { name: 'Saved revision previews' });
     await expect(preview.getByRole('alert')).toHaveCount(0);
     const frame = page.frameLocator('iframe[title="Saved email preview"]');
@@ -44,6 +91,8 @@ test('[CAMP-023] on a local copy, Insert image adds an own-origin image that sav
     await preview.getByRole('button', { name: 'Load 1 remote image', exact: true }).click();
     // The preview's policy admits the deployment's own http origin once the operator opts in.
     await expect.poll(() => frame.locator('img').evaluate(element => (element as HTMLImageElement).naturalWidth)).toBe(800);
+    await expect(frame.locator('img')).toHaveAttribute('alt', 'Orchard rows');
+    await preview.screenshot({ path: info.outputPath(`local-image-preview-${page.viewportSize()!.width}.png`) });
 
     const checks = await (await api.post(`${runtime.url}/api/campaigns/${created.campaignId}/checks`, { headers, data: { revisionId: created.revisionId } })).json();
     const kinds = checks.blockers.map((blocker: { kind: string }) => blocker.kind);
