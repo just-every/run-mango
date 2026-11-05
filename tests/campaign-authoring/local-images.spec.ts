@@ -75,6 +75,11 @@ test('[CAMP-023] Insert image requires a description, previews only own HTTP med
     const response = await uploaded;
     expect(response.status(), await response.text()).toBe(201);
     expect((await response.json()).asset).toMatchObject({ sha256: hash, url: `${runtime.url}/media/${hash}`, width: 800, height: 400 });
+    const publicImage = await request.get(`${runtime.url}/media/${hash}.png`);
+    expect(publicImage.status()).toBe(200);
+    expect(publicImage.headers()['content-type']).toBe(['image', 'png'].join('/'));
+    expect(await publicImage.body()).toEqual(Buffer.from(image));
+    expect((await request.get(`${runtime.url}/media/${hash}.jpg`)).status()).toBe(404);
     await expect(dialog).toHaveCount(0);
     expect(uploads).toEqual([`${runtime.url}/api/campaign-assets`]);
     const tag = `<img src="${runtime.url}/media/${hash}" width="600" height="300" alt="Orchard rows">`;

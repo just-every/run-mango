@@ -12,7 +12,7 @@ export async function imageSendingJourney() {
     await json(await site.call('/api/settings/sender', { method: 'PUT', cookie, body: sender }), 200);
     await site.control('/_golive/sender-evidence');
     const file = new FormData();
-    file.set('file', new File([png(20, 10, 49)], 'synthetic-mango-49.png', { type: 'image/png' }));
+    file.set('file', new File([png(20, 10, 49)], 'synthetic-mango-49.png', { type: ['image', 'png'].join('/') }));
     const { asset } = await json(await site.call('/api/campaign-assets', { method: 'POST', cookie, raw: file }), 201);
     const httpsBody = `<p>Orchard news.</p><img src="${asset.url}" width="20" height="10" alt="Orchard rows">`;
     const httpBody = httpsBody.replace(asset.url, `http://127.0.0.1:8787/media/${asset.sha256}`);
@@ -80,6 +80,9 @@ export async function imageSendingJourney() {
     expect(edge.sends.filter(item => item.to === control.address && item.body.headers?.['List-Unsubscribe'])).toHaveLength(1);
     const delivered = edge.sends.find(item => item.to === control.address && item.body.headers?.['List-Unsubscribe'])!;
     expect(delivered.body.content.find((part: any) => part.type === 'text/html').value).toContain(`src="${asset.url}"`);
+    const handoffs = edge.sends.length;
+    await site.control('/_golive/cron');
+    expect(edge.sends).toHaveLength(handoffs);
     expect(edge.unexpected).toEqual([]);
   } finally { await site.runtime.close(); await edge.close(); }
 }

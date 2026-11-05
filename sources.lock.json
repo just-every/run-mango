@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "1700d97e7ee268aba4871460a107b6cd1172c2f0c87a9b5a4f93d378c9e65203",
+      "sha256": "525d23920bc8de92b412dc3169673c588e8bfc40b01eea12778eb0c05cbee6b4",
       "executable": false
     },
     "DEMO.md": {
@@ -8522,11 +8522,11 @@
       "executable": false
     },
     "tests/campaign-authoring/image-sending-journey.ts": {
-      "sha256": "14519595538f140697072068d89a203d7f166a19885b0301d53752d707e88aa9",
+      "sha256": "0d75aeb70b0930daf22872e893cfac0f5646d1f636e52bda1e7c083d2042ad50",
       "executable": false
     },
     "tests/campaign-authoring/local-images.spec.ts": {
-      "sha256": "a0bf9aced93aacfa5d1939ae40577015594f24e048aeda94d9dde52194687999",
+      "sha256": "962493fa427308b1154c4b35620dfce51ce10dbe3cc0ac8c2c8b71388af99afd",
       "executable": false
     },
     "tests/campaign-authoring/mobile-presentation-journey.ts": {
