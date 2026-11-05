@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
 import {writeFile,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
-import {runtime,rule,importContacts,createCampaign} from './runtime';
+import {runtime,rule,importContacts,createCampaign,recordedMergeContact} from './runtime';
 import {rows} from '../approval-binding/native';
 
 
@@ -24,6 +24,52 @@ export const walk0 = async()=>{
       const estimate=await h.json('/api/campaign-authoring/audience',{inclusionRuleJson:rule('email',survivor.email,'eq'),exclusionRulesJson:'[]',channels:['email']});
       expect(estimate.eligibleCount).toBe(0);
     }
+    await test.step('Merge — complete acceptance',async()=>{
+      const states=['suppressed','unsubscribed','non-subscribed','pending','subscribed'] as const;
+      // Explicit contract outcomes, including every tie and both survivor directions.
+      // SMS inputs run in the opposite order so the channels have independent winners.
+      const outcomes=[
+        ['suppressed','suppressed','suppressed','suppressed','suppressed'],
+        ['suppressed','unsubscribed','unsubscribed','unsubscribed','unsubscribed'],
+        ['suppressed','unsubscribed','non-subscribed','non-subscribed','non-subscribed'],
+        ['suppressed','unsubscribed','non-subscribed','pending','pending'],
+        ['suppressed','unsubscribed','non-subscribed','pending','subscribed'],
+      ];
+      const audience=(id:string,channel:'email'|'sms')=>h.json('/api/campaign-authoring/audience',{
+        inclusionRuleJson:rule('id',id,'eq'),exclusionRulesJson:'[]',channels:[channel],
+      });
+      for(let left=0;left<states.length;left++)for(let right=0;right<states.length;right++) {
+        const label=`email ${states[left]} + ${states[right]}; SMS ${states[4-left]} + ${states[4-right]}`;
+        const survivor=await recordedMergeContact(h,(left*5+right)*2,states[left],states[4-left]);
+        const merged=await recordedMergeContact(h,(left*5+right)*2+1,states[right],states[4-right]);
+        // Positive controls prove recorded subscribed aliases have usable consent.
+        for(const contact of [survivor,merged])for(const channel of ['email','sms'] as const) {
+          if(contact[`${channel}Status`]==='subscribed')expect(await audience(contact.id,channel),label).toMatchObject({status:'ok',candidateCount:1,eligibleCount:1});
+        }
+        const body={survivorContactId:survivor.id,mergedContactId:merged.id};
+        const expected={emailStatus:outcomes[left][right],smsStatus:outcomes[4-left][4-right]};
+        const preview=await h.json('/api/contacts/merge-preview',body);
+        expect(preview,label).toMatchObject(expected);
+        expect(preview.survivor,label).toMatchObject({id:survivor.id,emailStatus:survivor.emailStatus,smsStatus:survivor.smsStatus});
+        expect(preview.merged,label).toMatchObject({id:merged.id,emailStatus:merged.emailStatus,smsStatus:merged.smsStatus});
+        expect((await h.json('/api/contacts/merge',body)).contact,label).toMatchObject({id:survivor.id,...expected});
+        const detail=await h.json(`/api/contacts/${survivor.id}`);
+        expect(detail.contact,label).toMatchObject({id:survivor.id,...expected});
+        expect(detail.emails.map((entry:any)=>({email:entry.email,status:entry.channelStatus})),label).toEqual(expect.arrayContaining(
+          [survivor,merged].map(contact=>({email:contact.email,status:contact.emailStatus}))));
+        expect(detail.phones.map((entry:any)=>({phone:entry.phoneE164,status:entry.channelStatus})),label).toEqual(expect.arrayContaining(
+          [survivor,merged].map(contact=>({phone:contact.phone,status:contact.smsStatus}))));
+        expect(detail.emails,label).toHaveLength(2);expect(detail.phones,label).toHaveLength(2);
+        for(const channel of ['email','sms'] as const) {
+          const eligible=expected[`${channel}Status`]==='subscribed'?1:0;
+          const estimate=await audience(survivor.id,channel);
+          expect(estimate,label).toMatchObject({status:'ok',candidateCount:1,eligibleCount:eligible,excludedCount:1-eligible});
+          expect(estimate.channelCounts,label).toEqual([{channel,stepCount:1,eligibleContactCount:eligible,recipientStepCount:eligible}]);
+          if(!eligible)expect(estimate.exclusions,label).toContainEqual({reason:`${channel}-${expected[`${channel}Status`]}`,count:1});
+        }
+        for(const alias of [merged.email,merged.phone])expect((await h.json(`/api/contacts/search?address=${encodeURIComponent(alias)}`)).contacts.map((contact:any)=>contact.id),label).toEqual([survivor.id]);
+      }
+    });
     const pair=await importContacts(h,['subscribed','subscribed'],'merge-links');
     const [survivor,merged]=pair;
     const unsubscribe=await h.f.services.audienceService.issueUnsubscribeToken(merged.id,'email');
