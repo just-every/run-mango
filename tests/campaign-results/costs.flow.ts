@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
 import { authoringRuntime } from '../campaign-authoring/browser-runtime.mjs';
 import { proveCampaignCostFailure } from './cost-campaign-proof';
 import { proveOperationalMailCosts } from './cost-mail-proof';
-import { rememberCost, assertCostIdentities, type ExpectedCost } from './cost-identity-proof';
+import { rememberCost, assertCostIdentities, assertVisibleCostIdentities, type ExpectedCost } from './cost-identity-proof';
 import { createOpenAiAdapter } from '../../src/core/platform/adapters/openai';
 
 // One RESULT-004 journey covers parser/provider boundaries, real routes, persisted facts and reloadable totals.
@@ -69,9 +69,10 @@ export const walk0 = async ({page,request}) => {
       const sent=await api.post(`${runtime.url}/api/campaigns/${campaignId}/test-send`,{headers,data:{revisionId,channel:'email',to:'costs@example.test'}});
       expect(sent.status(),await sent.text()).toBe(200);
       const result=await sent.json(),observed=await records();
+      expect(result.results).toHaveLength(1);
       const sends=observed.sends.slice(before.sends.length);
       expect(sends).toHaveLength(1);
-      expect(sends[0]).toMatchObject({provider:'cost-mail',channel:'email',receipt:result.providerMessageId});
+      expect(sends[0]).toMatchObject({provider:'cost-mail',channel:'email',receipt:result.results[0].providerMessageId});
       const facts=observed.costs.filter((row:any)=>!before.costs.some((prior:any)=>prior.id===row.id));
       expect(facts).toHaveLength(1);
       expect(facts[0].id.startsWith(`test-handoff:${sends[0].key}:attempt:`)).toBe(true);
@@ -115,6 +116,7 @@ export const walk0 = async ({page,request}) => {
     await page.goto(`${runtime.url}/app/insights`);
     await expect(page.getByRole('heading',{name:'Reported spend and usage'})).toBeVisible();
     await expect(page.getByRole('heading',{name:'No campaign assigned'})).toBeVisible();
+    await assertVisibleCostIdentities(page,identities);
     const daily=page.getByRole('region',{name:'Costs on 2031-10-04 UTC'});
     await expect(daily).toContainText('6 messages');await expect(daily).toContainText('5 segments');await expect(daily).toContainText('priced subtotal');
     for(const proofWidth of [1440,390]) {
@@ -123,6 +125,7 @@ export const walk0 = async ({page,request}) => {
     }
     await page.setViewportSize({width,height:1000});
     await page.reload();await expect(daily).toContainText('6 messages');
+    await assertVisibleCostIdentities(page,identities);
     await expect(page.getByRole('region',{name:'Costs on 2031-10-05 UTC'})).toContainText('EUR');
     for(let read=0;read<2;read++) {
       const reportResponse=await api.get(`${runtime.url}/api/insights`);expect(reportResponse.status()).toBe(200);

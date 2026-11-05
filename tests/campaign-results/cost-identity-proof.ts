@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import type { CostGroup, CostReport } from '../../src/core/features/insights/cost-report';
 
 type Identity = {
@@ -40,6 +40,17 @@ export function assertCostIdentities(facts: any[], expected: ExpectedCost[], rep
         unknownUsageFacts:items.length-known.length,unpricedFacts:items.length-priced.length,
         reportedCostMicros:priced.length?priced.reduce((sum,row)=>sum+row.reportedCostMicros!,0):null,
         uncertainFacts:items.filter(row=>row.outcome==='unknown').length,preparedFacts:0} satisfies Partial<CostGroup>);
+    }
+  }
+}
+
+export async function assertVisibleCostIdentities(page: Page, expected: ExpectedCost[]) {
+  for(const item of expected) {
+    const campaign=item.campaignId?`Costs for campaign ${item.campaignId}`:'Costs without an assigned campaign';
+    for(const region of [campaign,`Costs on ${item.day} UTC`]) {
+      await expect(page.getByRole('region',{name:region,exact:true}).getByRole('row')
+        .filter({has:page.getByRole('cell',{name:item.operation,exact:true})})
+        .getByRole('rowheader',{name:`${item.provider} / ${item.modelOrChannel}`,exact:true})).toBeVisible();
     }
   }
 }
