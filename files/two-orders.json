@@ -1,0 +1,71 @@
+{
+  "forward": {
+    "ada@example.test": "subscribed",
+    "ben@example.test": "subscribed",
+    "both@example.test": "unsubscribed",
+    "cleo@example.test": "suppressed",
+    "cy@example.test": "subscribed",
+    "dup@example.test": "subscribed",
+    "optedout@example.test": "unsubscribed",
+    "tess@example.test": "non-subscribed",
+    "uma@example.test": "unsubscribed"
+  },
+  "reverse": {
+    "ada@example.test": "subscribed",
+    "ben@example.test": "subscribed",
+    "both@example.test": "unsubscribed",
+    "cleo@example.test": "suppressed",
+    "cy@example.test": "subscribed",
+    "dup@example.test": "subscribed",
+    "optedout@example.test": "unsubscribed",
+    "tess@example.test": "non-subscribed",
+    "uma@example.test": "unsubscribed"
+  },
+  "reverseNames": [
+    {
+      "email": "ada@example.test",
+      "email_status": "subscribed",
+      "display_name": "Ada Grower"
+    },
+    {
+      "email": "ben@example.test",
+      "email_status": "subscribed",
+      "display_name": "Ben Grower"
+    },
+    {
+      "email": "both@example.test",
+      "email_status": "unsubscribed",
+      "display_name": "Bo Twofiles"
+    },
+    {
+      "email": "cleo@example.test",
+      "email_status": "suppressed",
+      "display_name": "Cleo Bounced"
+    },
+    {
+      "email": "cy@example.test",
+      "email_status": "subscribed",
+      "display_name": "Cy Noconfirm"
+    },
+    {
+      "email": "dup@example.test",
+      "email_status": "subscribed",
+      "display_name": "Dee Second"
+    },
+    {
+      "email": "optedout@example.test",
+      "email_status": "unsubscribed",
+      "display_name": "optedout@example.test"
+    },
+    {
+      "email": "tess@example.test",
+      "email_status": "non-subscribed",
+      "display_name": "Tess Receipts"
+    },
+    {
+      "email": "uma@example.test",
+      "email_status": "unsubscribed",
+      "display_name": "Uma Leaver"
+    }
+  ]
+}

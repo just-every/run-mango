@@ -1,0 +1,195 @@
+{
+  "factTables": {
+    "delivery_facts": 0,
+    "campaign_results": 0,
+    "attribution_facts": 0,
+    "external_cost_facts": 0,
+    "recipient_steps": 0,
+    "step_dispatches": 0,
+    "link_click_facts": 0,
+    "provider_fact_inbox": 0
+  },
+  "campaigns": {
+    "campaigns": [],
+    "total": 0,
+    "counts": {
+      "allStates": 0,
+      "allChannels": 0,
+      "states": {
+        "draft": 0,
+        "erasure-invalidated": 0,
+        "scheduled": 0,
+        "dispatching": 0,
+        "paused": 0,
+        "completed": 0,
+        "cancelled": 0,
+        "failed": 0
+      },
+      "channels": {
+        "email": 0,
+        "sms": 0
+      }
+    },
+    "smsEnabled": false,
+    "commerceEnabled": false,
+    "aiEnabled": false,
+    "marketingConnectionRequired": false,
+    "timezone": "Australia/Brisbane"
+  },
+  "results": {
+    "campaignId": "01M6Q0ZJ46DSF2N81HC5GCXFP3",
+    "outcomes": {
+      "handedOff": 0,
+      "accepted": 0,
+      "delivered": 0,
+      "bounced": 0,
+      "skipped": 0,
+      "failed": 0,
+      "complained": 0,
+      "suppressed": 0
+    },
+    "engagement": {
+      "observedClicks": 0,
+      "automatedRequestsRetainedButExcluded": 0,
+      "opens": {
+        "enabled": false,
+        "estimatedRecipients": 0,
+        "label": "Privacy-sensitive open estimates",
+        "note": "Image loads can come from proxies and automation. These estimates do not establish that anyone read a message and never affect clicks, conversions, delivery, confidence, deliverability or attribution."
+      }
+    },
+    "attribution": {
+      "method": "most-recent-non-automated-click-within-channel-window",
+      "attributionPolicy": {
+        "policy": "campaign.attribution.v1",
+        "metric": "placed-order",
+        "metricLabel": "Placed Order",
+        "clickWindowDays": {
+          "email": 7,
+          "sms": 7
+        }
+      },
+      "orders": 0,
+      "conversions": 0,
+      "status": "observed-store-events",
+      "revenueByCurrency": [],
+      "events": []
+    },
+    "costs": [],
+    "timeline": [
+      {
+        "kind": "draft",
+        "occurred_at": 1793921632390,
+        "provider": "operator",
+        "recipient_step_id": "01M6Q0ZJ46DSF2N81HC5GCXFP3",
+        "payload_digest": ""
+      }
+    ]
+  },
+  "insights": {
+    "results": [],
+    "costs": {
+      "dayBoundary": "UTC",
+      "byCampaign": [],
+      "byDay": []
+    },
+    "usage": {
+      "asOf": "2026-11-05T23:33:54.526Z",
+      "monthStart": "2026-11-01T00:00:00.000Z",
+      "monthEnd": "2026-12-01T00:00:00.000Z",
+      "elapsedMs": 430434526,
+      "monthMs": 2592000000,
+      "totalContacts": 9,
+      "consent": [
+        {
+          "channel": "email",
+          "state": "non-subscribed",
+          "contacts": 1
+        },
+        {
+          "channel": "email",
+          "state": "subscribed",
+          "contacts": 4
+        },
+        {
+          "channel": "email",
+          "state": "suppressed",
+          "contacts": 1
+        },
+        {
+          "channel": "email",
+          "state": "unsubscribed",
+          "contacts": 3
+        },
+        {
+          "channel": "sms",
+          "state": "non-subscribed",
+          "contacts": 9
+        }
+      ],
+      "projection": []
+    },
+    "overview": {
+      "days": 30,
+      "current": {
+        "from": "2026-10-07",
+        "to": "2026-11-05",
+        "attributionPolicy": {
+          "policy": "campaign.attribution.v1",
+          "metric": "placed-order",
+          "metricLabel": "Placed Order",
+          "clickWindowDays": {
+            "email": 7,
+            "sms": 7
+          }
+        },
+        "campaignRevenueUsdMinor": "0",
+        "clicks": 0,
+        "conversions": 0,
+        "growth": {
+          "coveredFrom": "2026-11-05T23:27:55.000Z",
+          "net": 4,
+          "sources": [
+            {
+              "source": "Mango Garden Letter; attestation 24bb416eee7bfb0e6dab43d022a01716c75059728bdd9db3d83c1b23477a2961",
+              "method": "incumbent-held",
+              "channel": "email",
+              "net": 4
+            }
+          ]
+        },
+        "costs": [],
+        "health": [],
+        "topCampaigns": []
+      },
+      "previous": {
+        "from": "2026-09-07",
+        "to": "2026-10-06",
+        "attributionPolicy": {
+          "policy": "campaign.attribution.v1",
+          "metric": "placed-order",
+          "metricLabel": "Placed Order",
+          "clickWindowDays": {
+            "email": 7,
+            "sms": 7
+          }
+        },
+        "campaignRevenueUsdMinor": "0",
+        "clicks": 0,
+        "conversions": 0,
+        "growth": {
+          "coveredFrom": "2026-11-05T23:27:55.000Z",
+          "net": null,
+          "sources": []
+        },
+        "costs": [],
+        "health": [],
+        "topCampaigns": []
+      },
+      "flows": null,
+      "incrementalRevenue": null,
+      "note": "Campaign revenue and engagement use the performance table’s scheduled-step UTC period and all recorded outcomes for those steps. Costs, membership changes and provider evidence use their own occurrence times in the selected UTC days. Only USD attribution is totaled; other currencies are not converted. Financial corrections use the latest recorded state. Prior periods have the same number of UTC days."
+    },
+    "note": "Each count comes from the provider: its acceptance of a hand-off or a signed event about a recipient. Acceptance is not delivery, outcomes are never added together, and optional open estimates are kept separate."
+  }
+}

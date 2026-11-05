@@ -1,0 +1,192 @@
+{
+  "branch": "cloud/sd-mango-c-f58",
+  "candidate": "13d24cacb2dffefdfd6cc13a95bac221ee65bc12",
+  "ci": {
+    "api_calls_so_far": 4,
+    "candidate_runs": [
+      {
+        "conclusion": "failure",
+        "event": "push",
+        "exception_classification": "expected generated contract view check and dependent aggregate gate only",
+        "failed_jobs": [
+          {
+            "failed_steps": [
+              "Check generated contract documents"
+            ],
+            "id": 127602057858,
+            "name": "Build and public command checks"
+          },
+          {
+            "failed_steps": [
+              "Require the selected coverage and its proof"
+            ],
+            "id": 127602193824,
+            "name": "verify"
+          }
+        ],
+        "head_sha": "13d24cacb2dffefdfd6cc13a95bac221ee65bc12",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42129426543",
+        "id": 42129426543,
+        "status": "completed"
+      }
+    ],
+    "cloud_handoff_rule": "READY under the explicit generated-view exception; actual GitHub conclusion is failure, not ordinary green",
+    "main_run_site": 42115822121,
+    "main_verify": [
+      42115822313,
+      42112962771
+    ]
+  },
+  "clause": {
+    "after": "partial",
+    "before": "partial",
+    "closed_selected_points": [
+      "acceptance 1 independent phone-only CSV validation",
+      "acceptance 3 per-rejected-row semantic reason readback"
+    ],
+    "id": "CONT-010"
+  },
+  "commands": [
+    {
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0
+    },
+    {
+      "command": "cloud_run timeout 1200 pnpm exec playwright test --config tests/move-in/playwright.config.js archive.journeys.ts",
+      "duration_minutes": 9.0,
+      "exit": 0,
+      "head": "13d24cacb2dffefdfd6cc13a95bac221ee65bc12",
+      "receipt": "archive-journey.log"
+    },
+    {
+      "command": "cloud_run timeout 1200 pnpm exec playwright test --config tests/move-in/playwright.config.js phone-probe.journeys.ts",
+      "duration_seconds": 50.0,
+      "exit": 0,
+      "receipt": "phone-probe.log",
+      "temporary_registration_removed": true
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "receipt": "typecheck.log"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "receipt": "first-party.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "receipt": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "generated_views_then_restored_from_main": [
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "receipt": "views-check.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "receipt": "lock-write.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "receipt": "lock-check.log"
+    },
+    {
+      "command": "cloud_run timeout 1200 pnpm exec playwright test --config tests/move-in/playwright.config.js archive.journeys.ts",
+      "duration_minutes": 9.0,
+      "exit": 0,
+      "note": "registered archive including initial phone proof, before added retry and signed-out assertions",
+      "receipt": "archive-before-candidate.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check (after restoring main generated views)",
+      "exit": 1,
+      "expected": "ACCEPTANCE.md generated content differs; the lander writes it",
+      "receipt": "candidate-restored-views-check.log"
+    }
+  ],
+  "counts_after": {
+    "done": 18,
+    "missing": 98,
+    "partial": 200,
+    "total": 316
+  },
+  "counts_before": {
+    "done": 18,
+    "missing": 98,
+    "partial": 200,
+    "total": 316
+  },
+  "exact_candidate_archive_exit": {
+    "exit": 0,
+    "finished_at": "2026-11-05T23:36:46.999894+00:00",
+    "head": "13d24cacb2dffefdfd6cc13a95bac221ee65bc12"
+  },
+  "full_history": true,
+  "generated_at": "2026-11-05T23:39:41.981695+00:00",
+  "identity_and_trailer_audit": "all candidate commits including all parents checked; fleet identity; no trailers",
+  "initial_main": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "landing": {
+    "custody": "READY branch-only candidate; guarded Mac lander owns regenerated views, scan, exact-head checks and main landing",
+    "main_write": false,
+    "status": "branch only"
+  },
+  "local_tested_files": {
+    "CONTRACT.md": "52438e0868ddbf2e4269f4c639bf8990c3db99c354db61b4398971992ad75904",
+    "sources.lock.json": "1adc49a9fc59ba0f92a3e3d3d4786f70a6ffef79f94e76c7c95d9388f7c8f158",
+    "tests/move-in/archive.journeys.ts": "d44d9fb59b10624a805ac727980f6be420aecde0b4aafb6ccf2c06d3d1bcb497",
+    "tests/move-in/phone-csv-journey.ts": "d9a8c8b7ae40e758ddb9a035ca1c6e6489c1b9c11a5c1cd46de1b65591790923"
+  },
+  "mechanical": {
+    "lock_exit": 0,
+    "migration_ledger": "not applicable; no migration changed",
+    "views_check_before_restore_exit": 0,
+    "views_write_exit": 0
+  },
+  "product_pr": null,
+  "provider_boundary": {
+    "fixtures": "existing native network-edge harness",
+    "held_secret_used": false,
+    "live_provider_qualified": false,
+    "sms_transport_qualified": false
+  },
+  "publication_scan": {
+    "owner": "guarded Mac lander",
+    "status": "not run in cloud"
+  },
+  "published_save": "22ff5e40f453626c740f55f0f402e4d90f899589",
+  "push_receipt": "candidate-push.log",
+  "pushed": true,
+  "remote_product_ref": "13d24cacb2dffefdfd6cc13a95bac221ee65bc12\trefs/heads/cloud/sd-mango-c-f58",
+  "repository": "just-every/run-mango",
+  "status_row_preservation": [
+    {
+      "candidate_status_rows": 316,
+      "commit": "13d24cacb2dffefdfd6cc13a95bac221ee65bc12",
+      "missing": [],
+      "parent": "22ff5e40f453626c740f55f0f402e4d90f899589",
+      "parent_status_rows": 316
+    },
+    {
+      "candidate_status_rows": 316,
+      "commit": "22ff5e40f453626c740f55f0f402e4d90f899589",
+      "missing": [],
+      "parent": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+      "parent_status_rows": 316
+    }
+  ],
+  "tag": "sd-mango-c-f58",
+  "test_registrations": {
+    "archive_after": 1,
+    "archive_before": 1,
+    "removed_existing_assertions": false
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "initial": {
+    "candidates": 4,
+    "included": 2,
+    "noHistory": 1,
+    "dormant": 2,
+    "openOnly": 1
+  },
+  "includeOpenOnly": 3,
+  "dormancyOff": 4,
+  "afterGrace": 0
+}
