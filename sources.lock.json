@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "af117f7dde4b8b798c1ee14c76901abdeb3ece3b5f8592abf17d5eece3793a05",
+      "sha256": "1f0cb06af5ce5bbb146157e9c14328338be9a5d8f478f0f2efb6c61a6056053f",
       "executable": false
     },
     "DEMO.md": {
@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "6330ffb0fd3e3ae8734884b76c0e68b4d518563fef3af5fe67925d9f96ceb569",
+      "sha256": "79fc0d24af8d9d4b4001dedfa42f39e37a2507e01c1aa4a265eb58076a01a755",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8499,6 +8499,10 @@
     },
     "tests/campaign-authoring/design-import.spec.ts": {
       "sha256": "c7f7fbe0c870fa8891f0ea358658d96a7edfcbaa35fd89e754fcc43ae4178eaf",
+      "executable": false
+    },
+    "tests/campaign-authoring/duplicate-settings.spec.ts": {
+      "sha256": "220d8119f79328f4dca76104f96f5dd4363102fa10cc20b8309d571ad4d5fcec",
       "executable": false
     },
     "tests/campaign-authoring/email-size-adoption.ts": {
