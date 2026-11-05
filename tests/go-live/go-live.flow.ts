@@ -1,5 +1,6 @@
 const width = 1440;
 import { expect, test, type Page } from '@playwright/test';
+import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -331,9 +332,71 @@ export const walk0 = async ({ page }, info) => {
     log.push({ name, status, ...await snapshot() });
     return status;
   };
-  const delivered = batch(event('delivered', alice, t + 2 * minute, message(alice).messageId, args(alice)));
+  // Choose the strongest provider identity independently of kind, address,
+  // message and time, rather than accepting the event helper's derived id.
+  const originalEvent = event('delivered', alice, t + 2 * minute, message(alice).messageId, args(alice), {
+    sg_event_id: 'synthetic-mango-5701', response: '250 synthetic-mango-5702', status: '2.0.0',
+  });
+  const delivered = batch(originalEvent);
   const deliveredHeaders = signer.headers(delivered);
   expect(await post('delivered (alice)', delivered, deliveredHeaders)).toBe(204);
+  const identity = 'sendgrid:synthetic-mango-5701';
+  const payloadDigest = createHash('sha256').update(JSON.stringify(originalEvent)).digest('hex');
+  const evidenceFields = 'identity_key, provider, provider_message_id, kind, provider_occurred_at, payload_digest';
+  const expectedEvidence = { identity_key: identity, provider: 'sendgrid', provider_message_id: message(alice).messageId,
+    kind: 'delivered', provider_occurred_at: Math.floor((t + 2 * minute) / 1000) * 1000, payload_digest: payloadDigest };
+  expect(await site.rows(`SELECT ${evidenceFields} FROM provider_fact_inbox`)).toEqual([expectedEvidence]);
+  expect(await site.rows(`SELECT ${evidenceFields}, provider_event_id, recipient_step_id FROM delivery_facts`))
+    .toEqual([{ ...expectedEvidence, provider_event_id: identity, recipient_step_id: handedOff.find(row => row.email === alice)!.id }]);
+  for (const table of ['provider_fact_inbox', 'delivery_facts']) {
+    const [stored] = await site.rows(`SELECT detail_json FROM ${table} WHERE identity_key='${identity}'`);
+    expect(JSON.parse(stored.detail_json)).toMatchObject({ destination: alice, providerEvent: 'delivered', hard: false,
+      response: '250 synthetic-mango-5702', status: '2.0.0', mangoReference: decodeProviderReference(args(alice).mango_handoff_key) });
+  }
+  const contactIds = (await site.rows('SELECT contact_id FROM contact_email_addresses ORDER BY email')).map(row => row.contact_id);
+  const identityState = async () => {
+    // asOf describes the read request, rather than a persisted provider fact.
+    const { asOf, ...results } = (await json(await site.call(`/api/campaigns/${first.campaignId}`, { cookie }), 200)).results;
+    return {
+    inbox: await site.rows('SELECT * FROM provider_fact_inbox ORDER BY identity_key'),
+    facts: await site.rows('SELECT * FROM delivery_facts ORDER BY identity_key'),
+    contacts: await site.rows('SELECT * FROM contacts ORDER BY id'),
+    addresses: await site.rows('SELECT * FROM contact_email_addresses ORDER BY email'),
+    suppressions: await site.rows('SELECT * FROM contact_suppressions ORDER BY id'),
+    optOuts: await site.rows('SELECT * FROM surviving_opt_outs ORDER BY id'),
+    bounces: await site.rows('SELECT * FROM contact_bounce_facts ORDER BY provider_event_id'),
+    history: await site.rows('SELECT * FROM contact_history ORDER BY id'),
+    // Rebinding an identical message may refresh updated_at; the projection's
+    // authority, attempts and original outcome times must stay unchanged.
+    recipients: (await site.rows('SELECT * FROM recipient_steps ORDER BY id')).map(({ updated_at, ...row }) => row),
+    contactReadback: await Promise.all(contactIds.map(async id => json(await site.call(`/api/contacts/${id}`, { cookie }), 200))),
+    results,
+    handoffs: edge.sends.length,
+    };
+  };
+  const originalIdentityState = await identityState();
+  expect(originalIdentityState.facts).toHaveLength(1);
+  expect(originalIdentityState.recipients.find(row => row.destination === alice)!.transport_disposition).toBe('delivered');
+  expect(originalIdentityState.contactReadback[0].timeline).toEqual(expect.arrayContaining([
+    expect.objectContaining({ kind: 'message-delivered', source: 'sendgrid', occurredAt: new Date(expectedEvidence.provider_occurred_at).toISOString() }),
+  ]));
+  expect(await post('identical evidence with the explicit provider identity', delivered)).toBe(204);
+  expect(await identityState()).toEqual(originalIdentityState);
+  for (const [name, changes] of [
+    ['changed payload', { response: 'synthetic-mango-5703' }],
+    ['changed kind with restrictive contact effects', { event: 'spamreport' }],
+    ['changed message', { sg_message_id: `${message(bob).messageId}.recvd-5f8c-1-0` }],
+    ['changed occurrence time', { timestamp: originalEvent.timestamp + 60 }],
+  ] as const) {
+    const changed = batch({ ...originalEvent, ...changes });
+    // Sign the changed bytes afresh: this reaches the immutable evidence guard,
+    // independently of the invalid-signature cases below.
+    expect(await post(`reused provider identity: ${name}`, changed, signer.headers(changed))).toBe(500);
+    expect(await identityState()).toEqual(originalIdentityState);
+  }
+  state.providerIdentity = { identity, expectedEvidence, identicalReplay: 204, conflicts: 4, conflictStatus: 500,
+    originalInbox: originalIdentityState.inbox, originalFact: originalIdentityState.facts, unchangedProjections: true };
+  await record('provider-identity.json', state.providerIdentity);
   expect(await post('deferred (bob, uncertain hand-off)', batch(event('deferred', bob, t + 2 * minute, message(bob).messageId, args(bob), { response: '421 try again later', attempt: '1' })))).toBe(204);
   expect(log.at(-1)!.recipients).toMatchObject({ [bob]: 'handoff-unknown' });
   expect(await post('soft bounce (bob)', batch(event('bounce', bob, t + 3 * minute, message(bob).messageId, args(bob), { type: 'blocked', reason: '452 mailbox full' })))).toBe(204);
