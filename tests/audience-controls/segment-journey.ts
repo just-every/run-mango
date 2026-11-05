@@ -4,6 +4,7 @@ import {segmentFixture} from './segment-fixture';
 import {json,draftCampaign,approve} from '../go-live/harness';
 import {openPage,reloadPage} from '../support/navigation';
 import {catalogSegmentJourney} from './segment-catalog';
+import {channelSnapshotJourney} from './channel-snapshot-journey';
 
 export async function segmentJourney(page:Page,info:TestInfo) {
   page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(30000);
@@ -189,6 +190,7 @@ export async function segmentJourney(page:Page,info:TestInfo) {
     expect(selected.map(r=>r.contact_id)).toEqual([people[0].id,people[4].id].sort());
     expect((await json(await site.call('/api/audience/segments',{cookie}),200)).segments.find((s:any)=>s.id===saved.id)).toEqual(saved);
     await catalogSegmentJourney(page,info,f);
+    await test.step('Review snapshot — separate email and SMS recipient-step counts',()=>channelSnapshotJourney(page,info));
     expect(f.edge.unexpected).toEqual([]);
   }finally{await f.close();}
 }

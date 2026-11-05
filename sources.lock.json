@@ -8329,6 +8329,10 @@
       "sha256": "11676b25e05cd94d1b3595fccf46355b8d0e3d380dfed78fb84a485316ffe180",
       "executable": false
     },
+    "tests/audience-controls/channel-snapshot-journey.ts": {
+      "sha256": "67945c5f2425696e57f42eba760534620b3aad775ee31e18c0e26dd2d9894303",
+      "executable": false
+    },
     "tests/audience-controls/contact-profile-flow.ts": {
       "sha256": "9baf5540d9fc5fff8da762c4fcca1db0495fa345a55719379fc48c877cc7b58e",
       "executable": false
@@ -8354,7 +8358,7 @@
       "executable": false
     },
     "tests/audience-controls/segment-journey.ts": {
-      "sha256": "81013128ae11aa2377cf60a81f554b7356cc393482f04047818ab9af7f0b5cf4",
+      "sha256": "ef1d001530f299ae59b98ecacda3444696b312e1702eb81ff96032e6a8b49942",
       "executable": false
     },
     "tests/audience-controls/segments.flow.ts": {
@@ -8362,7 +8366,7 @@
       "executable": false
     },
     "tests/audience-controls/segments.spec.ts": {
-      "sha256": "eaf91d6b2cd2942885ebb510d40b5b67a02e3f3f6aab80f3ae5a7cc08d9700f0",
+      "sha256": "fa46e0510b070f030e8e4a6e4e44b3c10a0cb3ae238136b114539686bfee568b",
       "executable": false
     },
     "tests/audience-import/config.js": {
