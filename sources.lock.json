@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "4b5b75831ce6a8cb421a1ed069789ae812674ed47d40703edd5101d5a2ce296d",
+      "sha256": "67830a0bd6aa86e19288eca7ae5c160969890ee8568d2c483cc5c667c7b2a644",
       "executable": false
     },
     "DEMO.md": {
@@ -8954,7 +8954,7 @@
       "executable": false
     },
     "tests/go-live/personalisation.journeys.ts": {
-      "sha256": "550c58fba3de745b95efa732f8b09ba8b788381ca5c410ac78b96b967da0978f",
+      "sha256": "bfa00084f6f054dfe6ca291bcdccd3d9245c8e76f0c0e63e0c0c3e045e62418a",
       "executable": false
     },
     "tests/go-live/playwright.config.js": {
