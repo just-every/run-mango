@@ -9,6 +9,7 @@ import { openPage, reloadPage } from '../support/navigation';
 test("[MSG-008] saved review counts fallback recipients and delivery uses the same escaped personalisation",async ({page}, info) => {
   const edge = await providerEdge(), site = await installation(edge,eventSigner());
   try {
+    await page.setViewportSize({width:390,height:1000});
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);
     await site.control('/_golive/sender-evidence');
@@ -39,8 +40,12 @@ test("[MSG-008] saved review counts fallback recipients and delivery uses the sa
     expect(checked.candidateCount).toBe(3);
     expect(checked.eligibleCount).toBe(2);
     expect(checked.channelCounts).toEqual([{channel:'email',eligibleContactCount:2,fallbackContactCount:1,recipientStepCount:2}]);
-    for(const width of [1440]) {
+    for(const width of [390]) {
       await page.setViewportSize({width,height:1000});await reloadPage(page);
+      await expect(page.getByLabel('Email subject',{exact:true})).toHaveValue('For {{displayName | fallback: Garden friend}}');
+      await expect(page.getByLabel('Email preheader',{exact:true})).toHaveValue('A note for {{displayName | fallback: Garden friend}}');
+      await page.getByRole('button',{name:'HTML mode',exact:true}).click();
+      await expect(page.getByLabel('Email body',{exact:true})).toHaveValue('<p>Hello {{displayName | fallback: Garden friend}}.</p><p>Thank you, {{displayName | fallback: Garden friend}}.</p>');
       await expect(page.getByLabel('Personalisation fallback counts')).toContainText('1 of 2');
       await expect(page.frameLocator('iframe[title="Saved email preview"]').locator('body')).toContainText('Hello Alex Example.');
       await expect(page.locator('.message-preview--plain')).toContainText('Thank you, Alex Example.');
@@ -48,16 +53,26 @@ test("[MSG-008] saved review counts fallback recipients and delivery uses the sa
       await page.locator('.audience-snapshot').screenshot({path:info.outputPath(`fallback-counts-${width}.png`)});
       await page.locator('.message-preview--email').screenshot({path:info.outputPath(`personalised-preview-${width}.png`)});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      await page.screenshot({path:info.outputPath(`personalisation-review-${width}.png`),fullPage:true});
+      await page.setViewportSize({width:1440,height:1000});await reloadPage(page);
+      await page.locator('.rich-email-fieldset').screenshot({path:info.outputPath('personalisation-editor-1440.png')});
+      await page.locator('.audience-snapshot').screenshot({path:info.outputPath('fallback-counts-1440.png')});
+      await page.locator('.message-preview--email').screenshot({path:info.outputPath('personalised-preview-1440.png')});
+      await page.screenshot({path:info.outputPath('personalisation-review-1440.png'),fullPage:true});
+      await page.setViewportSize({width,height:1000});
     }
     // Unknown properties use their saved fallback in both the illustrative preview and real delivery.
     await patch({preheader:'Your {{first_name | fallback: garden}} update'});
     const changed = await review();
     expect(changed.channelCounts[0].fallbackContactCount).toBe(2);
-    for (const width of [1440]) {
+    for (const width of [390]) {
       await page.setViewportSize({width,height:1000});await reloadPage(page);
       await expect(page.locator('.message-preview--email')).toContainText('Preheader: Your garden update');
       await expect(page.getByLabel('Personalisation fallback counts')).toContainText('2 of 2');
       await page.locator('.message-preview--email').screenshot({path:info.outputPath(`property-fallback-preview-${width}.png`)});
+      await page.setViewportSize({width:1440,height:1000});await reloadPage(page);
+      await page.locator('.message-preview--email').screenshot({path:info.outputPath('property-fallback-preview-1440.png')});
+      await page.setViewportSize({width,height:1000});
     }
     await approve(site,cookie,campaign);
     await site.control('/_golive/clock',{advanceMs:3600001,hold:false});
