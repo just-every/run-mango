@@ -1,0 +1,21 @@
+{
+  "repository": "just-every/run-mango",
+  "ref": "refs/heads/evidence/sd-mango-c-f54",
+  "product_head": "dbd058a5567d5a60f1a1b56596f8d36d0485c622",
+  "initial_packet_head": "2fad930addbfd063ec2464f4a9edf4e2732eee6d",
+  "initial_manifest_sha256": "e8b56a76bc1ec0e6576c0592f47494207a027ad510f64eb185a53f955a4c7be9",
+  "publish_attempts": 4,
+  "publish_status": "succeeded",
+  "initial_packet_file_count": 17,
+  "readback_status": "restored",
+  "all_manifest_file_hashes_verified": true,
+  "readback_attempts": 2,
+  "readback_first_rejection_http": 503,
+  "recovery": "Only the launcher-injected bundle and shared fleet Git helper were used. Refresh and reinstallation preceded each retry.",
+  "first_publish_errors": [
+    "Git push exit=1; no detailed HTTP status",
+    "fatal error in commit_refs_rules; HTTP unknown",
+    "fatal error in commit_refs_rules; HTTP unknown"
+  ],
+  "final_packet_note": "This receipt is included in a subsequent ordinary fast-forward report-only commit; its terminal EVIDENCE line names that final packet."
+}

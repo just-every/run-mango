@@ -67,10 +67,10 @@
       "sha256": "96bc8babd7d98a0e79106616402a805fab7b90569c90645387460ee58b58dd27"
     },
     {
-      "blob": "0ea03b6229c912634d6632c0b3962dbdaf9ec3e4",
-      "bytes": 9782,
+      "blob": "902225d7f183dc4e6f1b3828659b7cc209c2e2fe",
+      "bytes": 9915,
       "path": "REPORT.md",
-      "sha256": "5a52ebc70302b26a5ba27dd93b1b7b4d906d6489e3a0843b0c4e52ec64e65aa1"
+      "sha256": "f1e4d8a57933f6c2f2db108cdab95d49f766a9e76318aa2ed05ef1788c18086b"
     },
     {
       "blob": "f64e68bc7d14ee7030daa91e682ef270a6438285",
@@ -83,6 +83,12 @@
       "bytes": 2053,
       "path": "TEST-RECEIPT.json",
       "sha256": "8eea1d7778facefcfc76f5c75a8e377156f6bb89d8576c1b2c02c59f6061a64b"
+    },
+    {
+      "blob": "251c7e3389fc3713d6b9eb9871bd34238fecef37",
+      "bytes": 1042,
+      "path": "TRANSFER-RECEIPT.json",
+      "sha256": "0f0c9d912274c6d13dfe958954989d6be44115e7d33f7d9f0c1061e0beb7625d"
     },
     {
       "blob": "505d9879da7cc17d34a632d9e4b046caa05262b6",
