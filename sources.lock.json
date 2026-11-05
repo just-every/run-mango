@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "543ba6e8837dc716bfa5d7d92ddd06dbacc565cdd1eec2078758f1a977ee7fc6",
+      "sha256": "b6fa8fadc6b245f61bcbc6d7a112d3ced9324c56f6132ef91bb6b4d10e9c7f49",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "d29126072104018a0b037d6662329dcf43a4fa83ea6f85e0b1a27872016978f9",
+      "sha256": "31e86af31c42d40ac5ec6980aea11a09740ea9cc0fb2b61e32284bbfc9e8027f",
       "executable": false
     },
     "DEMO.md": {
@@ -8330,11 +8330,11 @@
       "executable": false
     },
     "tests/audience-controls/contact-profile-flow.ts": {
-      "sha256": "146fbbfa467687cb64280dd46f3c07c03bb725d9f3a13915e9c11ca870edfefa",
+      "sha256": "9baf5540d9fc5fff8da762c4fcca1db0495fa345a55719379fc48c877cc7b58e",
       "executable": false
     },
     "tests/audience-controls/history-worker.ts": {
-      "sha256": "3939fa1ac2d5b32f6ec87865b5cd4f0f736db8a2d435ef0acaa8b886b892fe70",
+      "sha256": "62eb1f08efb5c4cdcebb4b96274f00c40f378e2ffc53251c0c93441b46b413e1",
       "executable": false
     },
     "tests/audience-controls/merge.flow.ts": {
@@ -8362,7 +8362,7 @@
       "executable": false
     },
     "tests/audience-controls/segments.spec.ts": {
-      "sha256": "959131f45e6ef13cbe845a1bafcf97c6c6837eb1a4a41fc7a0388f7496f2d754",
+      "sha256": "7685051053c30f587058092e06e4ee4252603a43bf07ec0d790d31c37adba810",
       "executable": false
     },
     "tests/audience-import/config.js": {

@@ -4052,9 +4052,9 @@ Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542
 
 | Clauses | Done | Partial | Missing | Total |
 | --- | ---: | ---: | ---: | ---: |
-| Published | 11 | 99 | 0 | 110 |
+| Published | 12 | 98 | 0 | 110 |
 | Target and push further | 4 | 104 | 98 | 206 |
-| All | 15 | 203 | 98 | 316 |
+| All | 16 | 202 | 98 | 316 |
 
 | Clause | Title | Kind | Status | Evidence | Gap |
 | --- | --- | --- | --- | --- | --- |
