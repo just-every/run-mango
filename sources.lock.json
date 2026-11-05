@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "60b9f06cad7a55c54485f6c59cf92c008aba29b835c268daf0200b6feee92cb3",
+      "sha256": "9be52d7193fda91916ff68af077117003d09f3e6804feb768d28c4ef6f623f4d",
       "executable": false
     },
     "DEMO.md": {
@@ -9401,6 +9401,10 @@
       "sha256": "74ae3a8a300acc1eb5a5c1f663a5bfcea006c336061b232de116b7f68399110f",
       "executable": false
     },
+    "tests/proposals-decision/failure-preservation.ts": {
+      "sha256": "38d90a3bad60506f95076de449ee0842a4a3e97619e46bde04cb36ea8197d2b4",
+      "executable": false
+    },
     "tests/proposals-decision/history.ts": {
       "sha256": "f0722dd20719119914d1f1cae40f879085ec092924d6cfe8731afbc1d4d874ba",
       "executable": false
@@ -9411,6 +9415,10 @@
     },
     "tests/proposals-decision/shopify-edge.ts": {
       "sha256": "550386040254622c9e7e513b90aee8731140b8f12492dce2a5ff52733f97216b",
+      "executable": false
+    },
+    "tests/proposals-decision/unanswered-ai.ts": {
+      "sha256": "0987a41d306b1f6118ea9262c28803270554f52fb0d4a70f0279d9f5acdfc5f7",
       "executable": false
     },
     "tests/rendering.spec.ts": {
