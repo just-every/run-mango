@@ -7,6 +7,7 @@ import { providerEdge } from './edge';
 import { event, eventSigner } from './sendgrid-events';
 import { decodeProviderReference } from '../../src/core/shared/provider-reference';
 import { localSessionCookieName } from '../support/local-session';
+import { openPage, reloadPage } from '../support/navigation';
 import { archiveRows, importContacts, transfer } from './restore';
 import { approve, availableTransport, confirmedContact, dispatch, draftCampaign, installation, json, rule, sender, signedPost, type Installation } from './harness';
 
@@ -37,9 +38,12 @@ test.afterAll(async () => { await site?.runtime.close(); await (await edgeServer
 
 /** A populated marketing history stays unchanged by an authorized test, while
  * the same subscribed destination remains available for ordinary approval. */
-export const walkTestIsolation = async () => {
+export const walkTestIsolation = async ({ page }: { page: Page }, info: { outputPath(name: string): string }) => {
   const edge = await edgeServer, isolated = await installation(edge, signer);
   try {
+    const clock = await isolated.control('/_golive/clock');
+    const todayNoon = Date.parse(new Date(clock.now).toISOString().slice(0, 10)) + 12 * 3600_000;
+    await isolated.control('/_golive/clock', { advanceMs: (todayNoon > clock.now ? todayNoon : todayNoon + 86400000) - clock.now });
     const owner = await isolated.open();
     await json(await isolated.call('/api/settings/sender', { method: 'PUT', cookie: owner, body: sender }), 200);
     await isolated.control('/_golive/sender-evidence');
@@ -57,7 +61,7 @@ export const walkTestIsolation = async () => {
     const priorMessage = edge.sends.findLast(message => message.to === recent
       && decodeProviderReference(message.body.custom_args?.mango_recipient_step ?? '') === prior.id)!;
     const delivered = Buffer.from(JSON.stringify([event('delivered', recent, prior.handed_off_at, priorMessage.messageId, priorMessage.body.custom_args)]));
-    expect(await signedPost(isolated, '/webhooks/mail/sendgrid', delivered, signer.headers(delivered))).toBe(204);
+    expect(await signedPost(isolated, '/webhooks/mail/sendgrid', delivered, signer.headers(delivered, String(Math.floor(await now() / 1000))))).toBe(204);
     // Independently valued historical attribution, as in the report fixtures:
     // this is retained input, not a substitute for any application result read.
     const attributedAt = prior.handed_off_at + 1, attributionId = 'synthetic-mango-804';
@@ -135,7 +139,7 @@ export const walkTestIsolation = async () => {
     const testEvents = Buffer.from(JSON.stringify(['processed', 'delivered'].map(kind =>
       event(kind, tested, testOccurredAt, testMessage.messageId, testMessage.body.custom_args))));
     const reconcileTest = async () => {
-      expect(await signedPost(isolated, '/webhooks/mail/sendgrid', testEvents, signer.headers(testEvents))).toBe(204);
+      expect(await signedPost(isolated, '/webhooks/mail/sendgrid', testEvents, signer.headers(testEvents, String(Math.floor(await now() / 1000))))).toBe(204);
     };
     await reconcileTest();
     await reconcileTest();
@@ -147,6 +151,79 @@ export const walkTestIsolation = async () => {
     expect(afterTestResults).toEqual(beforeResults);
     const afterMembership = await memberships();
     expect(afterMembership).toEqual(beforeMembership);
+    await noAuthority();
+
+    // Authors can use configured operator destinations without gaining the
+    // Owner's authority to type arbitrary email destinations.
+    const authorId = 'synthetic-mango-807', authorDestination = `synthetic-mango-808${sender.fromEmail.slice(sender.fromEmail.indexOf('@'))}`;
+    const author = await isolated.open(authorDestination, authorId);
+    await json(await isolated.call(`/api/operators/${authorId}/role`, { method: 'PUT', cookie: owner, body: { role: 'author' } }), 200);
+    expect((await json(await isolated.call('/api/operator', { cookie: author }), 200)).operator.role).toBe('author');
+    const testHistory = async () => json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-sends`, { cookie: author }), 200);
+    const configuredAccess = await testHistory();
+    expect(configuredAccess.canType).toBe(false);
+    expect(configuredAccess.destinations.email).toContain(authorDestination);
+    expect(configuredAccess.destinations.email).not.toContain(tested);
+    const beforeRefusal = edge.sends.length, allowanceAfterTyped = await allowance();
+    const costsBeforeRefusal = await isolated.rows(`SELECT * FROM external_cost_facts WHERE campaign_id='${campaign.campaignId}' ORDER BY id`);
+    expect(await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-send`, { method: 'POST', cookie: author,
+      body: { revisionId: campaign.revisionId, channel: 'email', to: tested } }), 403))
+      .toMatchObject({ status: 'blocked', results: [], blockers: [{ detail: expect.stringContaining('Approval rights are required for a typed destination') }] });
+    expect(edge.sends).toHaveLength(beforeRefusal);
+    expect(await testHistory()).toEqual(configuredAccess);
+    expect(await allowance()).toBe(allowanceAfterTyped);
+    expect(await isolated.rows(`SELECT * FROM external_cost_facts WHERE campaign_id='${campaign.campaignId}' ORDER BY id`)).toEqual(costsBeforeRefusal);
+    await noAuthority();
+
+    await page.context().addCookies([{ name: author.split('=')[0], value: author.split('=')[1], url: isolated.runtime.url }]);
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    const reviewUrl = `${isolated.runtime.url}/app/campaigns/${campaign.campaignId}/review`;
+    await openPage(page, reviewUrl);
+    const panel = page.locator('.test-send-panel');
+    await panel.getByRole('button', { name: 'Send a test', exact: true }).click();
+    await expect(panel.getByLabel('Test destination', { exact: true })).toHaveCount(0);
+    await panel.getByLabel('Configured test destination', { exact: true }).selectOption(authorDestination);
+    await availableTransport(isolated);
+    const configuredResponse = page.waitForResponse(response => response.url().endsWith(`/api/campaigns/${campaign.campaignId}/test-send`) && response.request().method() === 'POST');
+    await panel.getByRole('button', { name: 'Send test', exact: true }).click();
+    const response = await configuredResponse;
+    expect(response.request().postDataJSON()).toEqual({ revisionId: campaign.revisionId, channel: 'email', to: authorDestination });
+    expect(response.status()).toBe(200);
+    expect(await response.json()).toMatchObject({ status: 'test-sent', disposition: 'accepted', results: [{ to: authorDestination }] });
+    const configuredMessages = edge.sends.slice(beforeRefusal);
+    expect(configuredMessages.map(message => message.to)).toEqual([authorDestination]);
+    for (const message of [testMessages[0], configuredMessages[0]]) {
+      expect(message.body.subject).toContain('MANGO TEST');
+      for (const format of ['html', 'plain']) expect(message.body.content.find((part: any) => part.type === `text/${format}`).value).toContain('MANGO TEST');
+    }
+    const history = panel.getByRole('region', { name: 'Test send history' });
+    await expect(history.getByRole('heading', { name: 'Recent test sends' })).toBeVisible();
+    await expect(history.getByRole('listitem')).toHaveCount(2);
+    const receipts = (await testHistory()).tests;
+    expect(receipts).toEqual(expect.arrayContaining([
+      expect.objectContaining({ destination: tested, test: true, channel: 'email', operatorId: 'go-live-owner' }),
+      expect.objectContaining({ destination: authorDestination, test: true, channel: 'email', operatorId: authorId }),
+    ]));
+    for (const receipt of receipts) {
+      const item = history.getByRole('listitem').filter({ hasText: receipt.destination });
+      await expect(item).toContainText(receipt.operatorName);
+      await expect(item).toContainText('email');
+    }
+    await reloadPage(page);
+    await panel.getByRole('button', { name: 'Send a test', exact: true }).click();
+    await expect(history.getByRole('listitem')).toHaveCount(2);
+    await expect(history).toContainText(authorDestination);
+    await expect(history).toContainText(tested);
+    await panel.screenshot({ path: info.outputPath('test-isolation-history-1440.png') });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await panel.screenshot({ path: info.outputPath('test-isolation-history-390.png') });
+    expect((await testHistory()).tests).toEqual(receipts);
+    expect(await allowance()).toBe(allowanceAfterTyped - 1);
+    expect(await isolated.rows(`SELECT operation,recipient_step_id,outcome FROM external_cost_facts WHERE campaign_id='${campaign.campaignId}' ORDER BY id`))
+      .toEqual([1, 2].map(() => ({ operation: 'test-handoff', recipient_step_id: null, outcome: 'accepted' })));
+    expect(await stored()).toEqual(beforeStored);
+    expect(await results()).toEqual(beforeResults);
+    expect(await memberships()).toEqual(beforeMembership);
     await noAuthority();
     const review = await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/checks`, { method: 'POST', cookie: owner,
       body: { revisionId: campaign.revisionId } }), 200);
