@@ -131,6 +131,11 @@ async function laterStepsContinue(page:Page,info:TestInfo,site:Installation,edge
     const now=await site.control('/_golive/clock');
     await site.control('/_golive/clock',{advanceMs:time.getTime()-now.now+1});
     await site.control('/_golive/sender-evidence');
+    // Sender diagnostics share the real transport budget. Let its reserved
+    // slot elapse on the held clock before admitting the campaign handoff.
+    const [budget]=await site.rows('SELECT MAX(next_at) AS due FROM provider_pacing');
+    const current=await site.control('/_golive/clock');
+    await site.control('/_golive/clock',{advanceMs:Math.max(1,Math.ceil(budget.due-current.now)+1)});
     await site.control('/_golive/cron');
   };
   const recipients=(stepId:string)=>site.rows(`SELECT id,revision_id,step_id,transport_disposition,skip_reason,attempt_count,handoff_started_at,provider_message_id
