@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "24c571474f552f9f827a44b15d76467cf1bbe68fa0e343293cea440fb58aed83",
+      "sha256": "0ab1f515a5d71f5d5cc698d8656dd8ee2edbd9165d1e970b4e40d770dd960f8e",
       "executable": false
     },
     "DEMO.md": {
@@ -9318,7 +9318,7 @@
       "executable": false
     },
     "tests/move-in/phone-csv-journey.ts": {
-      "sha256": "f737de1a1c60bedb94358065f1f0808bfb461b55caeab5bce9f99a4b882e28b0",
+      "sha256": "d9a8c8b7ae40e758ddb9a035ca1c6e6489c1b9c11a5c1cd46de1b65591790923",
       "executable": false
     },
     "tests/move-in/playwright.config.js": {
