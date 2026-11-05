@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "af117f7dde4b8b798c1ee14c76901abdeb3ece3b5f8592abf17d5eece3793a05",
+      "sha256": "7961899d229f619259b95c45ed884e79bd86c16e92100a4df3cbaeb44a496c1d",
       "executable": false
     },
     "DEMO.md": {
@@ -3486,7 +3486,7 @@
       "executable": false
     },
     "src/core/features/audience/signup-routes.ts": {
-      "sha256": "fd2a736fb52fda76ee157edc0d7e671957833ae4068b0a2dd734dc7e91775837",
+      "sha256": "fc71fb93bc1ae0560323e11996d6c5e143ee003c53fd1bab6495dbfca8de3382",
       "executable": false
     },
     "src/core/features/audience/signup-security.ts": {
@@ -8438,7 +8438,7 @@
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {
-      "sha256": "1982743cf19ecb78d5ca7eb15e1ca78c376644f0e78fa89f35a82e4a46953c9f",
+      "sha256": "179e2df1b981695e1f32ac4917296bf78e7220062dd0a082781c365de6e87d6a",
       "executable": false
     },
     "tests/campaign-assets.spec.ts": {
