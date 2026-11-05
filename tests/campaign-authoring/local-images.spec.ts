@@ -4,11 +4,12 @@ import { test, expect } from '@playwright/test';
 import { createHash } from 'node:crypto';
 import { authoringRuntime } from './browser-runtime.mjs';
 import { png } from '../support/images';
+import { imageSendingJourney } from './image-sending-journey';
 
-test.describe.configure({ timeout: 180000 });
+test.describe.configure({ timeout: 360000 });
 
 // A copy running on a computer, as `rer dev` starts it: the public origin is the runtime's own http address.
-test('[CAMP-023] on a local copy, Insert image adds an own-origin image that saves, previews after opt-in and blocks only approval', async ({ page, request }, info) => {
+test('[CAMP-023] Insert image requires a description, previews only own HTTP media and requires HTTPS for every sending door', async ({ page, request }, info) => {
   const runtime = await authoringRuntime({ suite: 'local-images', vars: (url: string) => ({ MANGO_PUBLIC_BASE_URL: url }) });
   try {
     const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
@@ -92,13 +93,55 @@ test('[CAMP-023] on a local copy, Insert image adds an own-origin image that sav
     // The preview's policy admits the deployment's own http origin once the operator opts in.
     await expect.poll(() => frame.locator('img').evaluate(element => (element as HTMLImageElement).naturalWidth)).toBe(800);
     await expect(frame.locator('img')).toHaveAttribute('alt', 'Orchard rows');
+    // Validated presentation survives the local image exception.
+    const styled = `<p style="color:#242821;font-size:16px">Harvest news.</p>${tag}${afterImage}`;
+    await body.fill(styled);
+    await page.getByRole('button', { name: 'Save full draft', exact: true }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Draft saved.' })).toBeVisible();
+    await expect(frame.locator('p').filter({ hasText: 'Harvest news.' })).toHaveCSS('font-size', '16px');
+    await expect(frame.locator('p').filter({ hasText: 'Harvest news.' })).toHaveCSS('color', 'rgb(36, 40, 33)');
     await preview.screenshot({ path: info.outputPath(`local-image-preview-${page.viewportSize()!.width}.png`) });
+
+    // The same media path on another HTTP origin is never an authoring exception.
+    const otherOrigin = new URL(runtime.url); otherOrigin.hostname = 'localhost';
+    const foreignTag = tag.replace(runtime.url, otherOrigin.origin);
+    await body.fill(styled + foreignTag);
+    await page.getByRole('button', { name: 'Save full draft', exact: true }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Draft saved.' })).toBeVisible();
+    await expect(preview.getByRole('alert')).toContainText('images at an HTTPS address');
+    // The safe own image remains available; the foreign one is removed even after opt-in.
+    const load = preview.getByRole('button', { name: 'Load 1 remote image', exact: true });
+    if (await load.isVisible()) await load.click();
+    await expect(frame.locator('img')).toHaveCount(1);
+    await expect(frame.locator('img')).toHaveAttribute('src', `${runtime.url}/media/${hash}`);
+    await preview.screenshot({ path: info.outputPath(`foreign-image-refused-${page.viewportSize()!.width}.png`) });
+    expect(outbound).toEqual([]);
+    await body.fill(styled);
+    await page.getByRole('button', { name: 'Save full draft', exact: true }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'Draft saved.' })).toBeVisible();
 
     const checks = await (await api.post(`${runtime.url}/api/campaigns/${created.campaignId}/checks`, { headers, data: { revisionId: created.revisionId } })).json();
     const kinds = checks.blockers.map((blocker: { kind: string }) => blocker.kind);
     expect(kinds).toContain('message.content');
     // The own image is verified from storage, without a request to the deployment's own host.
     expect(kinds).not.toContain('message.links.resolved');
+    const saved = (await readDraft()).revision;
+    const approval = await api.post(`${runtime.url}/api/campaigns/${created.campaignId}/approve`, {
+      headers, data: { revisionId: created.revisionId, idempotencyKey: 'synthetic-mango-494' },
+    });
+    expect(approval.status(), await approval.text()).toBe(409);
+    expect((await approval.json()).blockers).toContainEqual(expect.objectContaining({ kind: 'message.content', detail: expect.stringContaining('images at an HTTPS address') }));
+    const testSend = await api.post(`${runtime.url}/api/campaigns/${created.campaignId}/test-send`, {
+      headers, data: { revisionId: created.revisionId, channel: 'email', to: ['author', 'example.test'].join('@') },
+    });
+    expect(testSend.status(), await testSend.text()).toBe(409);
+    expect((await testSend.json()).blockers).toContainEqual(expect.objectContaining({ kind: 'test-send', detail: expect.stringContaining('images at an HTTPS address') }));
+    expect((await readDraft()).revision).toEqual(saved);
+    const authority = await (await api.get(`${runtime.url}/_authoring/state`, { headers: { 'X-Test-Token': runtime.token } })).json();
+    expect(authority.approvals).toEqual([]);
+    expect(authority.recipients).toEqual([]);
+    expect(authority.jobs.filter((job: {kind: string}) => job.kind === 'campaign.dispatch')).toEqual([]);
     expect(outbound).toEqual([]);
   } finally { await runtime.close(); }
+  await imageSendingJourney();
 });

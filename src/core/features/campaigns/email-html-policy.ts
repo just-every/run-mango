@@ -94,5 +94,5 @@ export function inspectEmailHtml(source: string, mediaOrigin?: string, demoOrigi
   // Styled markup is judged by the cell around each text run, so it must be written the way every parser builds it.
   if (presentation.presented && parsed.rewritten) issues.add(`Styled markup must be well-formed: mail clients build ${JSON.stringify(parsed.rewritten.parsed)} from ${JSON.stringify(parsed.rewritten.written)}; write every element closed, in order, where HTML parsers keep it.`);
   for (const issue of presentation.finish()) issues.add(issue);
-  return {issues: [...issues], destinations: [...destinations], rejectedLinks: [...rejectedLinks], images: [...images], anchors};
+  return {issues: [...issues], insecureMedia: [...localImages], destinations: [...destinations], rejectedLinks: [...rejectedLinks], images: [...images], anchors};
 }

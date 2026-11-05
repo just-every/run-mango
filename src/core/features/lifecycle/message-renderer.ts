@@ -17,6 +17,13 @@ import type { LifecycleRepository } from './repository';
 type DeliveryEnvelope = NonNullable<Awaited<ReturnType<LifecycleRepository['getDeliveryEnvelope']>>>;
 type EligibleContact = Extract<EligibilityResult, { eligible: true }>;
 
+export class ImageHttpsRequired extends Error {}
+
+function requireHttpsImages(html: string) {
+  const policy = inspectEmailHtml(html);
+  if (policy.insecureMedia.length) throw new ImageHttpsRequired(policy.issues.join(' '));
+}
+
 export function serializeDeliveryRequest(request: DeliveryRequest) {
   return JSON.stringify({ ...request, handoffStartedAt: request.handoffStartedAt.toISOString() });
 }
@@ -34,6 +41,7 @@ export async function prepareDeliveryRequest(
 ) {
   if (envelope.recipient.outboundRequestJson && (!envelope.recipient.outboundRequestJson.includes('\"catalog\":') || envelope.recipient.attemptCount>0)) {
     const request=parseDeliveryRequest(envelope.recipient.outboundRequestJson);
+    if (envelope.recipient.channel === 'email') requireHttpsImages(request.content.html ?? '');
     // Keep the provider's idempotent request byte-for-byte stable. Revocation is
     // enforced when an existing pixel is fetched, without changing saved mail.
     return { request, trackedLinks: [] };
@@ -47,6 +55,7 @@ export async function prepareDeliveryRequest(
     if(inspectEmailHtml(expanded.emailBody,undefined,demoOrigin).issues.length||(await inspectRevisionLinks({revision:expanded,links:[]},runtime.platform)).some(row=>!row.inspection.ok))throw new CatalogDeliverySkip('catalog-blocked');
   }
   const htmlPolicy = inspectEmailHtml(envelope.revision.emailBody, undefined, demoOrigin);
+  if (envelope.recipient.channel === 'email' && htmlPolicy.insecureMedia.length) throw new ImageHttpsRequired(htmlPolicy.issues.join(' '));
   const invalidTokens = invalidMessagePersonalisation(envelope.revision);
   if (invalidTokens.length || (envelope.recipient.channel === 'email' && htmlPolicy.issues.length)) {
     throw new Error(`Saved content is outside the allowed authoring set: ${[...htmlPolicy.issues, ...invalidTokens].join(' ')}`);
