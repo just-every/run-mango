@@ -1,0 +1,70 @@
+{
+  "after": {
+    "done": 19,
+    "missing": 98,
+    "partial": 199,
+    "total": 316
+  },
+  "base": "4790a516fe4a502bc324d4586fa7aea7dd879d88",
+  "before": {
+    "done": 18,
+    "missing": 98,
+    "partial": 200,
+    "total": 316
+  },
+  "branch": "cloud/sd-mango-c-f53",
+  "clause": {
+    "acceptance_changed": false,
+    "after": "done",
+    "before": "partial",
+    "id": "CAMP-018",
+    "landing": "pending fleet gates"
+  },
+  "code_save": "0a862b88dcc9f757e75b6fc54812fedf84a1aed8",
+  "created": "2026-11-05T23:41:53.505598+00:00",
+  "failed_steps": [
+    {
+      "job": 127605440579,
+      "name": "Build and public command checks",
+      "step": "Check generated contract documents"
+    },
+    {
+      "job": 127605541742,
+      "name": "verify",
+      "step": "Require the selected coverage and its proof"
+    }
+  ],
+  "head": "a42d93dda07504379674a52c5031a3b349a41367",
+  "local": {
+    "command_check": "COMMAND-CHECK.json",
+    "duplication": "DUPLICATION.json",
+    "mechanical": "MECHANICAL.json",
+    "typecheck": "TYPECHECK-FINAL.json"
+  },
+  "mutations": {
+    "refused_redacted_copy": "killed: expected 201, received 404",
+    "removed_async_fence": "not established: sender verification precondition timed out"
+  },
+  "observed_remote_main": "4d12f9dea9a4a866334e361714e5d16a3ff6fe79",
+  "origin_main": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "repository": "just-every/run-mango",
+  "scan": {
+    "commit": "a42d93dda07504379674a52c5031a3b349a41367",
+    "complete": false,
+    "findings": null,
+    "historyScanned": false,
+    "reason": "Cloud branch push is exempt from local scanning; the Mac lander must run the full-history publication scan."
+  },
+  "tag": "sd-mango-c-f53",
+  "verify": {
+    "conclusion": "failure",
+    "event": "push",
+    "head_sha": "a42d93dda07504379674a52c5031a3b349a41367",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42130437068",
+    "id": 42130437068,
+    "name": "Verify",
+    "permitted_generated_view_failure": true,
+    "run_attempt": 1,
+    "status": "completed"
+  }
+}

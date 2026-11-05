@@ -1,0 +1,33 @@
+{
+  "calls": 4,
+  "last_read": {
+    "42130437068": 1793922063.2540903
+  },
+  "prior_calls": 2,
+  "requests": [
+    {
+      "command": [
+        "gh",
+        "api",
+        "repos/just-every/run-mango/actions/runs?head_sha=a42d93dda07504379674a52c5031a3b349a41367&per_page=100",
+        "--jq",
+        ".workflow_runs[] | {id,name,status,conclusion,head_sha,event,html_url,run_attempt}"
+      ],
+      "exit": 0,
+      "output": "CI-DISCOVERY.jsonl",
+      "time": "2026-11-05T23:35:39.438219+00:00"
+    },
+    {
+      "command": [
+        "gh",
+        "api",
+        "repos/just-every/run-mango/actions/runs/42130437068/jobs?per_page=100",
+        "--jq",
+        ".jobs[] | {id,name,status,conclusion,head_sha,steps:[.steps[] | {name,status,conclusion}]}"
+      ],
+      "exit": 0,
+      "output": "CI-JOBS.jsonl",
+      "time": "2026-11-05T23:41:03.958354+00:00"
+    }
+  ]
+}

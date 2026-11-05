@@ -1,0 +1,65 @@
+{
+  "finished": "2026-11-05T23:34:36.997222+00:00",
+  "ledger": {
+    "reason": "No migration added or edited",
+    "status": "not applicable"
+  },
+  "steps": [
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "output": "Wrote 1 contract documents.\n",
+      "output_bytes": 28,
+      "output_sha256": "df91012bf66fb476e9cd1a30c002829398beb55f869e07cc7be477197fa5a276"
+    },
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "output": "Contract documents are current.\n",
+      "output_bytes": 32,
+      "output_sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+    },
+    {
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0,
+      "output": "",
+      "output_bytes": 0,
+      "output_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0,
+      "output_bytes": 411795,
+      "output_sha256": "aab01d0beb994154240a92b682ea7ea29d31adbb3fbcb16ae80c8cd21ecd7932"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "output_bytes": 411809,
+      "output_sha256": "d01426e566ae65679c9a9e5df449e6bc7a23f5130e1cb9784ad6fe1efc3d51b6"
+    }
+  ]
+}

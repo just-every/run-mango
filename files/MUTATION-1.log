@@ -1,0 +1,36 @@
+
+Running 1 test using 1 worker
+
+(node:7661) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-018 acceptance-1: duplicate native saved campaigns in all eight states -> independent drafts named Copy of the source, original state retained.
+PROBE CAMP-018 acceptance-2: native save, duplicate, duplicate again and repeated detail and review reads -> exact chosen email fields, canonical body and derived text, ordered unscheduled email settings, three independent drafts and unchanged source; zero approvals, recipients or jobs; mixed-channel copy also retains exact SMS body, sender and channel settings without a transport.
+PROBE CAMP-018 acceptance-3: duplicate a completed source with real native approval, snapshot, test and accepted marketing results -> fresh draft with none of that authority, history or schedule; populated source records retained.
+PROBE CAMP-018 acceptance-4: changed sender refuses copy approval without authority; after a fresh preview, native opt-out and new confirmation change exact approved recipients from the source pair to the current pair; editing, approval and replay leave source approved bytes, receipt, snapshot, tests and populated results unchanged.
+  ✘  1 tests/campaign-authoring/duplicate-settings.spec.ts:8:1 › [CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval (2.4m)
+
+
+  1) tests/campaign-authoring/duplicate-settings.spec.ts:8:1 › [CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 404
+
+       at campaign-authoring/duplicate-erased-source-journey.ts:45
+
+      43 |       const response=page.waitForResponse(response=>response.url()===site.runtime.url+path&&response.request().method()==='POST');
+      44 |       await page.getByRole('button',{name:'Duplicate',exact:true}).click();
+    > 45 |       expect((await response).status()).toBe(201);
+         |                                         ^
+      46 |       await page.waitForURL(url=>url.pathname.startsWith('/app/campaigns/')&&url.pathname.endsWith('/review'));
+      47 |       const campaignId=new URL(page.url()).pathname.split('/')[3];
+      48 |       copy={campaignId,revisionId:(await get(campaignId)).revision.id};
+        at duplicateErasedSourceJourney (/home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/campaign-authoring/duplicate-erased-source-journey.ts:45:41)
+        at duplicateAuthorityJourney (/home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/campaign-authoring/duplicate-authority-journey.ts:122:5)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/campaign-authoring/duplicate-settings.spec.ts:153:3
+
+    Error Context: ../mutations/refused-copy/evidence/c963afae3889/main/campaign-authoring-duplica-81791-t-authority-before-approval/error-context.md
+
+  1 failed
+    tests/campaign-authoring/duplicate-settings.spec.ts:8:1 › [CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval 

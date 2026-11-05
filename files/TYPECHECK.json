@@ -1,0 +1,25 @@
+{
+  "command": [
+    "pnpm",
+    "run",
+    "typecheck"
+  ],
+  "exit": 0,
+  "files": {
+    "src/core/features/audience/erasure/write-fence.ts": "635282696d2b1b0b8d13ac88dfe265e638e73352541bdf76b6714791be0fde33",
+    "src/core/features/campaigns/reuse-service.ts": "4ee8b36e1305e3395f326984576526289c74a4863a0edec00ff937fca583efd9",
+    "tests/campaign-authoring/duplicate-authority-journey.ts": "42d8b8b990d224fd7b8af55cf1975b9edf830335734a0030538f858abd836e5b",
+    "tests/campaign-authoring/duplicate-erased-source-journey.ts": "517518c24c14ea82362ff0faef70bcd82f04410c952e62bd15433330029b3cd8",
+    "tests/campaign-authoring/duplicate-settings.spec.ts": "be0903362d32717a3c56ae7b53b3a518f04c0ab58da3ed88b21dc4e7e99ee68a",
+    "tests/go-live/delivery-controls.ts": "707129f59b348bc00600a2da5c31dbd108d7c0f8fc157c76d90b379efe5b8c17",
+    "tests/go-live/worker.ts": "63f5d7d90f906f8c7c18649bd574be70b8157234c81ea24f43ba6fd08fc27e35"
+  },
+  "finished": "2026-11-05T23:32:01.800343+00:00",
+  "head": "0a862b88dcc9f757e75b6fc54812fedf84a1aed8",
+  "started": "2026-11-05T23:31:22Z",
+  "tracked_changes": [
+    " M CONTRACT.md",
+    " M sources.lock.json",
+    " M tests/campaign-authoring/duplicate-erased-source-journey.ts"
+  ]
+}

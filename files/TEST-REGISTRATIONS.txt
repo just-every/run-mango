@@ -1,0 +1,3 @@
+Listing tests:
+  campaign-authoring/duplicate-settings.spec.ts:8:1 › [CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval
+Total: 1 test in 1 file

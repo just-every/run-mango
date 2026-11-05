@@ -1,0 +1,41 @@
+
+Running 1 test using 1 worker
+
+(node:8801) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-018 acceptance-1: duplicate native saved campaigns in all eight states -> independent drafts named Copy of the source, original state retained.
+PROBE CAMP-018 acceptance-2: native save, duplicate, duplicate again and repeated detail and review reads -> exact chosen email fields, canonical body and derived text, ordered unscheduled email settings, three independent drafts and unchanged source; zero approvals, recipients or jobs; mixed-channel copy also retains exact SMS body, sender and channel settings without a transport.
+  ✘  1 tests/campaign-authoring/duplicate-settings.spec.ts:8:1 › [CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval (4.8m)
+
+
+  1) tests/campaign-authoring/duplicate-settings.spec.ts:8:1 › [CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval 
+
+    Error: Native delivery did not settle: [{"id":"01M6Q0J4W2F5YB1TMXZKVEMWHA","transport_disposition":"accepted","skip_reason":null,"last_error_code":null,"last_error_detail":null,"next_attempt_at":1793924776826,"lease_expires_at":null},{"id":"01M6Q0J4W25T23FRZ5BVGFPMC8","transport_disposition":"queued","skip_reason":null,"last_error_code":"sender-verification:verification-unavailable","last_error_detail":null,"next_attempt_at":1793925700868,"lease_expires_at":null}]
+
+       at go-live/harness.ts:91
+
+      89 |       return rows.filter(row=>row.transport_disposition==='queued').length;
+      90 |     },{ timeout: 60000, intervals: [250] }).toBe(0);
+    > 91 |   } catch(error) {throw new Error(`Native delivery did not settle: ${JSON.stringify(deliveryState)}`,{cause:error});}
+         |                         ^
+      92 |   return site.rows(`SELECT id, destination AS email, transport_disposition, skip_reason, provider_message_id FROM recipient_steps
+      93 |     WHERE campaign_id='${campaignId}'${step} ORDER BY destination`);
+      94 | }
+        at dispatch (/home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/go-live/harness.ts:91:25)
+        at duplicateAuthorityJourney (/home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/campaign-authoring/duplicate-authority-journey.ts:30:23)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/campaign-authoring/duplicate-settings.spec.ts:153:3
+    [cause]: Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 0
+    Received: 1
+
+    Call Log:
+    - Timeout 60000ms exceeded while waiting on the predicate
+        at dispatch (/home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/go-live/harness.ts:90:45)
+        at duplicateAuthorityJourney (/home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/campaign-authoring/duplicate-authority-journey.ts:30:23)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f53/run-mango/tests/campaign-authoring/duplicate-settings.spec.ts:153:3
+
+    Error Context: ../mutations/unfenced-copy/evidence/c963afae3889/main/campaign-authoring-duplica-81791-t-authority-before-approval/error-context.md
+
+  1 failed
+    tests/campaign-authoring/duplicate-settings.spec.ts:8:1 › [CAMP-018] duplication retains saved settings, isolates history and rechecks current authority before approval 

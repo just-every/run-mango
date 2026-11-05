@@ -1,0 +1,19 @@
+{
+  "added_email_literals": [],
+  "changed_files": [
+    "CONTRACT.md",
+    "scripts/verification/plan.mjs",
+    "sources.lock.json",
+    "src/core/features/campaigns/reuse-service.ts",
+    "tests/campaign-authoring/duplicate-authority-journey.ts",
+    "tests/campaign-authoring/duplicate-erased-source-journey.ts",
+    "tests/campaign-authoring/duplicate-settings.spec.ts",
+    "tests/go-live/delivery-controls.ts",
+    "tests/go-live/worker.ts"
+  ],
+  "full_history": true,
+  "generated_views_changed": false,
+  "head": "a42d93dda07504379674a52c5031a3b349a41367",
+  "scope": "Added lines only; unrelated legacy text retained",
+  "workflow_changed": false
+}

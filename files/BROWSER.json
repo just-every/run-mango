@@ -1,0 +1,31 @@
+{
+  "assertion_width": 1440,
+  "capture_widths": [
+    1440,
+    390
+  ],
+  "files": [
+    {
+      "bytes": 285654,
+      "path": "erased-source-1440.png",
+      "sha256": "f399de46a77a5484346d143356250eb08bf6c33719292a1a44709d77a67f467b"
+    },
+    {
+      "bytes": 239937,
+      "path": "erased-source-390.png",
+      "sha256": "aec88f23002f14a768a7c44602b418087bd67b6deb48e4ece2316b40148753be"
+    },
+    {
+      "bytes": 545737,
+      "path": "redacted-copy-1440.png",
+      "sha256": "a52ed8231ce695eef290a1dd0b3396feac190046c3e9661a99e05027aac63142"
+    },
+    {
+      "bytes": 488168,
+      "path": "redacted-copy-390.png",
+      "sha256": "369b8062d1cba41f78bb2db3634f65f41614c29a60c64986f181f8d9256f6309"
+    }
+  ],
+  "head": "a42d93dda07504379674a52c5031a3b349a41367",
+  "proof": "DUPLICATION.json"
+}

@@ -1,0 +1,10 @@
+# CAMP-018 completion plan
+
+Start from the assigned f52 commit 4790a516fe4a502bc324d4586fa7aea7dd879d88. Preserve its existing settings, ordinary-state, mixed-channel, history-isolation and current-approval proof. Read the inline campaign extract and ct riders; no acceptance sentence will change.
+
+1. Map all four acceptance sentences to the registered duplication journey and retained promotional journey. The remaining native failure is an erasure-invalidated source being refused by duplication.
+2. Permit only a fresh unscheduled draft from the current redacted composition. Retain the native erasure generation fence and the refusal of invalidated sources for templates and followups. Copy no historical authority or contact rows.
+3. Extend the existing registered journey, without adding a test registration, to exercise a real erasure, an overlapping in-flight duplicate, fresh redacted duplication, independent authenticated reads, persisted bytes, no new authority, revoked-session refusal and unchanged source history. Preserve the existing promotional body, schedule and approval assertions.
+4. Run the focused duplication journey, typecheck and the first-party command check. Exercise the changed native action through the browser at 1440 and capture its source and draft at 1440 and 390. Record actual receipts outside the product repository.
+5. Resolve the assigned base against current main without losing source Status rows. Generate contract views locally and check them, restore main's generated views whole, regenerate the source lock last and check it. Publish the named product branch with fleet identity and preserved hooks.
+6. Discover exact-head Verify through REST within the ten-call budget, publish the report packet to the evidence ref and hand product custody to the fleet. Publication scanning and landing remain with the Mac lander. Real provider qualification, owner-held SMS registration, CONT-013 disposition and release prerequisites are not claimed by local copying proof.
