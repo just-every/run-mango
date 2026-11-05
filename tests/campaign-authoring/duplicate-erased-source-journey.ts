@@ -1,7 +1,7 @@
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {eraseHttp} from '../audience-import/erase';
 import {json,type Installation} from '../go-live/harness';
-import {openPage} from '../support/navigation';
+import {openPage,hydrated} from '../support/navigation';
 
 /** Only the persisted post-erasure composition may become a fresh draft. */
 export async function duplicateErasedSourceJourney(site:Installation,cookie:string,
@@ -33,6 +33,7 @@ export async function duplicateErasedSourceJourney(site:Installation,cookie:stri
   await page.setViewportSize({width:1440,height:1000});
   await openPage(page,`${site.runtime.url}/app/campaigns/${source.campaignId}`);
   await expect(page.getByRole('heading',{name:'Review required after contact erasure',exact:true})).toBeVisible();
+  await expect(page.frameLocator('iframe[title="Saved email preview"]').getByText('synthetic-mango-509 editorial contact [erased].',{exact:true})).toBeVisible();
   await page.screenshot({path:info.outputPath('erased-source-1440.png'),fullPage:true});
   await page.setViewportSize({width:390,height:844});
   await page.screenshot({path:info.outputPath('erased-source-390.png'),fullPage:true});
@@ -44,9 +45,12 @@ export async function duplicateErasedSourceJourney(site:Installation,cookie:stri
       await page.getByRole('button',{name:'Duplicate',exact:true}).click();
       expect((await response).status()).toBe(201);
       await page.waitForURL(url=>url.pathname.startsWith('/app/campaigns/')&&url.pathname.endsWith('/review'));
+      await hydrated(page);
       const campaignId=new URL(page.url()).pathname.split('/')[3];
       copy={campaignId,revisionId:(await get(campaignId)).revision.id};
       await expect(page.getByRole('heading',{name:'Copy of synthetic-mango-504 source',exact:true})).toBeVisible();
+      await expect(page.getByRole('textbox',{name:'Email body',exact:true})).toContainText('synthetic-mango-509 editorial contact [erased].');
+      await expect(page.frameLocator('iframe[title="Saved email preview"]').getByText('synthetic-mango-509 editorial contact [erased].',{exact:true})).toBeVisible();
       await page.screenshot({path:info.outputPath('redacted-copy-1440.png'),fullPage:true});
       await page.setViewportSize({width:390,height:844});
       await page.screenshot({path:info.outputPath('redacted-copy-390.png'),fullPage:true});

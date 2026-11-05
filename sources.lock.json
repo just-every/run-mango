@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "9833ec96ce5c8852381033b0b99417cb510f081f68da41cc71ee08bbb954a36c",
+      "sha256": "5cf74af87d27bc8799c3052e22477e8c0c42ca00b0121d95a1b33dfa3afc9b60",
       "executable": false
     },
     "DEMO.md": {
@@ -8503,6 +8503,10 @@
     },
     "tests/campaign-authoring/duplicate-authority-journey.ts": {
       "sha256": "42d8b8b990d224fd7b8af55cf1975b9edf830335734a0030538f858abd836e5b",
+      "executable": false
+    },
+    "tests/campaign-authoring/duplicate-erased-source-journey.ts": {
+      "sha256": "517518c24c14ea82362ff0faef70bcd82f04410c952e62bd15433330029b3cd8",
       "executable": false
     },
     "tests/campaign-authoring/duplicate-settings.spec.ts": {
