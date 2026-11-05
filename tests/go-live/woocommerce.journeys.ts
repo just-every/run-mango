@@ -73,6 +73,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     const originalOrder = originalIdentities.find(row => row.source_type === 'order')!;
     const contactStates = () => site.rows(`SELECT id,email,email_status,sms_status,email_status_at,sms_status_at FROM contacts WHERE id='${originalCustomer.contact_id}'`);
     const originalContact = await contactStates();
+    const originalContactCount = await site.count('contacts');
     // Only the authenticated provider read carries changes; notifications carry the original identity.
     Object.assign(woo.state.customer, {first_name: 'Morgan', last_name: 'Grove', date_modified_gmt: '2026-10-22T11:30:00'});
     const customerUpdate = () => webhook({id: 11}, 'synthetic-mango-10', {'X-WC-Webhook-Topic': 'customer.updated'});
@@ -84,6 +85,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       expect(customer.provider_updated_at).toBe(Date.parse('2026-10-22T11:30:00Z'));
       expect(await site.rows(`SELECT display_name FROM contacts WHERE id='${originalCustomer.contact_id}'`)).toEqual([{display_name: 'Morgan Grove'}]);
       expect(await contactStates()).toEqual(originalContact);
+      expect(await site.count('contacts')).toBe(originalContactCount);
       expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
     }
     Object.assign(woo.state.refund, {amount: '18.50', refunded_payment: false, date_modified_gmt: '2026-10-23T12:45:00'});
@@ -110,6 +112,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
         reported_refund_minor: 1850, currency: 'AUD', purchased_at: Date.parse('2026-10-20T10:00:00Z'),
       }]);
       expect(await contactStates()).toEqual(originalContact);
+      expect(await site.count('contacts')).toBe(originalContactCount);
       expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
     }
     expect(await site.count('commerce_receipts')).toBe(3);
@@ -131,8 +134,27 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     await json(await plugin.send({...plugin.event, id: crypto.randomUUID(), checkoutId: crypto.randomUUID()}), 204);
     expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
     woo.state.observations.push(plugin.event);
+    const browsing = {version: 1, id: crypto.randomUUID(), kind: 'viewed_product', occurredAt: new Date(Date.now()-60000).toISOString(),
+      customerId: '11', products: ['21'], consent: {analytics: true, marketing: true}, gpc: false};
+    await json(await plugin.send(browsing), 204);
+    const observationRecords = () => site.rows(`SELECT id,source_type,provider_source_id,contact_id,occurred_at,payload FROM source_records WHERE provider='${provider}' AND source_type IN ('cart','browsing-event') ORDER BY source_type,provider_source_id`);
+    const originalObservations = await observationRecords();
+    expect(originalObservations.filter(row => row.source_type === 'browsing-event')).toEqual([expect.objectContaining({
+      provider_source_id: provider + ':browsing-event:' + browsing.id, contact_id: originalCustomer.contact_id,
+      occurred_at: Date.parse(browsing.occurredAt),
+    })]);
+    expect(JSON.parse(originalObservations.find(row => row.source_type === 'browsing-event')!.payload)).toMatchObject({
+      eventId: browsing.id, observation: 'viewed_product', lines: [{productId: provider + ':product:21'}],
+    });
+    await json(await plugin.send(browsing), 204);
+    expect(await observationRecords()).toEqual(originalObservations);
+    woo.state.observations.push(browsing);
     const cartSync = await queue('cart'); await finished(cartSync.runId);
     const browsingSync = await queue('browsing-event'); await finished(browsingSync.runId);
+    expect(await observationRecords()).toEqual(originalObservations);
+    for (const sourceType of ['cart', 'browsing-event']) {const run = await queue(sourceType); await finished(run.runId);}
+    expect(await observationRecords()).toEqual(originalObservations);
+    expect(await site.rows('SELECT * FROM consent_evidence ORDER BY id')).toEqual(consentBefore);
     expect(await site.count('woocommerce_flow_enrollments')).toBe(1);
     // Later store reads cannot undo Mango's native opt-out.
     const contactId = records.find(row => row.source_type === 'customer')!.contact_id;
@@ -168,6 +190,11 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       await page.screenshot({path: info.outputPath(`woocommerce-store-${width}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
+    await page.setViewportSize({width: 390, height: 1000});
+    await page.screenshot({path: info.outputPath('woocommerce-store-390.png'), fullPage: true});
+    await openPage(page, site.runtime.url + '/app/settings');
+    await page.screenshot({path: info.outputPath('woocommerce-settings-390.png'), fullPage: true});
+    await page.setViewportSize({width: 1440, height: 1000});
     await openPage(page, site.runtime.url + '/app/settings');
     await page.getByRole('button', {name: 'Disconnect WooCommerce', exact: true}).click();
     await expect(page.locator('#woocommerce [role=status]').filter({hasText: 'No WooCommerce connection.'})).toBeVisible();
@@ -175,7 +202,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect((await webhook()).status).toBe(409);
     expect((await site.call('/api/store/sync', {method: 'POST', cookie, body: {sourceType: 'order'}})).status).toBe(409);
     expect(await site.count('woocommerce_connection')).toBe(0);
-    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(5);
+    expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(6);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(6);
     expect((await site.rows('SELECT state FROM woocommerce_flows'))).toEqual([{state: 'paused'}]);
     await wooBrowserConsent(page);
