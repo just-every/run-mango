@@ -22,7 +22,9 @@ const list = (states: readonly DesignJobState[]) => states.map(state => `'${stat
 
 /** Each design run's evidence in R2, beside the campaign images. */
 export const designCandidateKey = (jobId: string, slot: string) => `design-jobs/${jobId}/candidate-${slot}.png`;
-export const designLayoutKey = (jobId: string) => `design-jobs/${jobId}/layout.layerdoc.json`;
+export const designLayoutKey = (jobId: string, sha256?: string) => sha256
+  ? `design-jobs/${jobId}/layout-${sha256}.layerdoc.json`
+  : `design-jobs/${jobId}/layout.layerdoc.json`;
 
 export function createDesignRepository(db: D1Database) {
   const columns: Record<string, string> = { state: 'state', providerRunId: 'provider_run_id', chosenSlot: 'chosen_slot', providerLayoutId: 'provider_layout_id',

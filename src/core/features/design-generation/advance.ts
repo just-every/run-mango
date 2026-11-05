@@ -121,8 +121,9 @@ async function layoutPass(platform: Platform, design: DesignProvider, job: Desig
   const text = await design.layoutDocument(layout);
   parseLayerDoc(text);
   const bytes = new TextEncoder().encode(text);
-  await platform.blobs.put(designLayoutKey(job.id), bytes, { httpMetadata: { contentType: 'application/json' } });
-  await repository.update(job.id, ['preparing'], { state: 'ready', layerdocSha256: await hex(bytes), attempts: 0, waitCode: null, retryAt: null }, Date.now());
+  const sha256 = await hex(bytes);
+  await platform.blobs.put(designLayoutKey(job.id, sha256), bytes, { httpMetadata: { contentType: 'application/json' } });
+  await repository.update(job.id, ['preparing'], { state: 'ready', layerdocSha256: sha256, attempts: 0, waitCode: null, retryAt: null }, Date.now());
   return {};
 }
 

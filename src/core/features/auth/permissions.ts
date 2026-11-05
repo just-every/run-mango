@@ -101,7 +101,7 @@ export function requiredPermission(method: string, path: string): Capability {
   if(read&&/^\/api\/campaigns\/[^/]+\/approval-requests$/.test(p))return 'campaign.read';
   if (/^\/api\/campaigns\/[^/]+\/request-approval$/.test(p)) return 'draft.write';
   if (/^\/api\/campaigns\/[^/]+\/design-jobs$/.test(p)
-    || /^\/api\/design-jobs\/[^/]+\/(?:choose|close|layerdoc|candidates\/[^/]+\/image)$/.test(p)
+    || /^\/api\/design-jobs\/[^/]+\/(?:choose|close|layerdoc(?:\/[0-9a-f]{64})?|candidates\/[^/]+\/image)$/.test(p)
     || /^\/api\/(?:campaign-assets|campaign-templates(?:\/[^/]+\/start)?|campaign-authoring(?:\/(?:audience|email-size))?|campaign-starters|campaign-revisions\/[^/]+)$/.test(p)) return 'draft.write';
   if(p==='/api/decision-desk')return 'draft.write';
   if (read && (['/api/campaigns'].includes(p)

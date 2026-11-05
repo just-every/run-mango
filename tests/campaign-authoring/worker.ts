@@ -82,6 +82,19 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       return Response.json({ok:true});
     }
     if(path==='/_authoring/stale') {await bindings.DB.prepare("UPDATE source_syncs SET last_successful_at=? WHERE source_type='product'").bind(Date.now()-25*3600000).run();return Response.json({ok:true});}
+    // Arrange the prior release's single-object layout storage. All later
+    // choices, downloads and exports still use the ordinary product routes.
+    if(path==='/_authoring/legacy-layout'&&request.method==='POST') {
+      const {id}=await request.json() as {id:string};
+      const job=await bindings.DB.prepare("SELECT id,layerdoc_sha256 AS sha FROM design_jobs WHERE id=? AND state='ready'").bind(id).first<{id:string;sha:string}>();
+      if(!job?.sha)return new Response('Missing ready fixture',{status:409});
+      const key=`design-jobs/${job.id}/layout-${job.sha}.layerdoc.json`;
+      const original=await platform.blobs.get(key);
+      if(!original)return new Response('Missing original fixture',{status:409});
+      await platform.blobs.put(`design-jobs/${job.id}/layout.layerdoc.json`,await original.arrayBuffer(),{httpMetadata:{contentType:'application/json'}});
+      await platform.blobs.delete(key);
+      return Response.json({ok:true});
+    }
     if(path==='/_authoring/proposal') {
       const id=crypto.randomUUID(),now=Date.now(),rules=JSON.stringify({version:1,operator:'all',predicates:[{sourceType:'contact',field:'emailStatus',comparator:'eq',value:'subscribed'}]});
       await bindings.DB.prepare("INSERT INTO proposals (id,state,title,summary,evidence,audience_rule,source_data_as_of,send_by_at,inclusion_rule_json,exclusion_rules_json,created_at,updated_at) VALUES (?, 'proposed', 'Recorded suggestion', 'A recorded suggestion', 'Test source evidence', 'Subscribed email contacts', ?, ?, ?, '[]', ?, ?)").bind(id,now,now+86400000,rules,now,now).run();

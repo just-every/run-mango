@@ -9,6 +9,7 @@ import { parseEmailHtml } from '../../src/core/features/campaigns/email-html-par
 import { authoringRuntime } from './browser-runtime.mjs';
 import { png } from '../support/images';
 import { startFakeTwelveUi } from '../support/fake-twelve-ui';
+import { exportRetainedDesigns } from './design-retention';
 
 test.describe.configure({ mode: 'serial', timeout: 240000 });
 test.use({ timezoneId: 'America/Los_Angeles' });
@@ -101,6 +102,9 @@ export const walk1 = async ({ page, request }, testInfo) => {
     await expect(run.getByRole('img', { name: 'Design A' })).toBeVisible();
     await expect(run.getByRole('img', { name: 'Design B' })).toBeVisible({ timeout: 45000 });
     await page.screenshot({ path: testInfo.outputPath('design-generation-candidates.png'), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: testInfo.outputPath('design-generation-candidates-phone.png'), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 1000 });
 
     // Choosing prepares the layout in the background, across a reload. The operator keeps typing in the body: when the
     // layout is ready the run says so with a notice, and nothing opens or takes focus until the operator asks.
@@ -175,13 +179,27 @@ export const walk1 = async ({ page, request }, testInfo) => {
     expect(state.jobs).toEqual([]);
     await expect.poll(() => runtime.sql(`SELECT state FROM design_jobs WHERE campaign_id = '${campaignId}'`)).toEqual([{ state: 'applied' }]);
     await expect(run).toHaveCount(0);
+    const appliedRows = await runtime.sql('SELECT * FROM design_jobs');
+    const applied = appliedRows[0];
+    for (const slot of ['a', 'b']) {
+      const original = await api.get(`${runtime.url}/api/design-jobs/${applied.id}/candidates/${slot}/image`);
+      expect(original.status()).toBe(200);
+      expect(await original.body()).toEqual(Buffer.from(candidateImage));
+    }
+    const originalLayout = await api.get(`${runtime.url}/api/design-jobs/${applied.id}/layerdoc`);
+    expect(originalLayout.status()).toBe(200);
+    expect(await originalLayout.text()).toBe(layerDoc);
+    await reloadPage(page);
+    expect(await runtime.sql('SELECT * FROM design_jobs')).toEqual(appliedRows);
     // The browser fetched designs only from Mango; only the Worker spoke to the design service.
     expect(outbound).toEqual([]);
     expect(fake.requests.length).toBeGreaterThan(0);
   } finally { await runtime.close(); await fake.close(); }
 };
 export const walk2 = async ({ page, request }) => {
-  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
+  const candidateB = png(canvas.width, canvas.height, 17);
+  const imageFor = (slot: string) => slot === 'b' ? candidateB : candidateImage;
+  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, slotImages: { b: candidateB }, layerDoc, drawMs: { c: 3_600_000 }, failedSlots: ['d'], holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
   const runtime = await designRuntime(fake.origin);
   try {
     const { api, campaignId, read } = await openDraft(runtime, page, request, '<p>Hello {{first_name | fallback: friend}}, an earlier draft.</p>');
@@ -239,7 +257,7 @@ export const walk2 = async ({ page, request }) => {
     const candidates = () => runtime.sql('SELECT slot, state, sha256, bytes, created_at AS createdAt FROM design_candidates ORDER BY slot');
     const stored = await candidates();
     expect(stored.map(({ createdAt, ...candidate }) => candidate)).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded',
-      sha256: createHash('sha256').update(candidateImage).digest('hex'), bytes: candidateImage.byteLength })));
+      sha256: createHash('sha256').update(imageFor(slot)).digest('hex'), bytes: imageFor(slot).byteLength })));
     for (const candidate of stored) {
       expect(candidate.createdAt).toBeGreaterThanOrEqual(issuedRun[0].at);
       expect(candidate.createdAt).toBeLessThanOrEqual(candidatesAfter);
@@ -259,7 +277,7 @@ export const walk2 = async ({ page, request }) => {
         createdAt: record.createdAt, updatedAt: record.updatedAt, deadlineAt: record.deadlineAt, chosenSlot: record.chosenSlot,
         ...(record.errorCode ? { errorCode: record.errorCode } : {}) });
       expect(status.candidates).toEqual(['a', 'b'].map(slot => ({ slot, state: 'succeeded', width: canvas.width, height: canvas.height,
-        bytes: candidateImage.byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
+        bytes: imageFor(slot).byteLength, imageUrl: `/api/design-jobs/${startedJob.id}/candidates/${slot}/image` })));
       expect(await candidates()).toEqual(stored);
       return { record, status };
     };
@@ -332,6 +350,10 @@ export const walk2 = async ({ page, request }) => {
     await reloadPage(page);
     expect(await retained()).toEqual(readyRecord);
     expect(await retained()).toEqual(readyRecord);
+    const firstLayoutUrl = readyRecord.status.layerDocUrl;
+    const firstLayout = await api.get(runtime.url + firstLayoutUrl);
+    expect(firstLayout.status()).toBe(200);
+    expect(await firstLayout.text()).toBe(layerDoc);
 
     // A new run while a prepared design is on offer: the brief says the designs stay, and they do, under Earlier designs.
     // 12ui names a time to ask again: the run says it is waiting, then continues with the same purchase key.
@@ -388,5 +410,57 @@ export const walk2 = async ({ page, request }) => {
       { state: 'ready', code: null }, { state: 'choosing', code: null }, { state: 'discarded', code: 'provider_quota' }, { state: 'failed', code: 'provider_timeout' },
     ]);
     await expect.poll(content).toBe(before);
+    // Preparing another candidate of an older run must not replace its earlier
+    // layout. Both byte-distinct originals survive closing, newer runs and export.
+    const legacy = await request.post(runtime.url + '/_authoring/legacy-layout', { headers: { 'X-Test-Token': runtime.token }, data: { id: startedJob.id } });
+    expect(legacy.status()).toBe(200);
+    const legacyRead = await api.get(runtime.url + firstLayoutUrl);
+    expect(legacyRead.status()).toBe(200);
+    expect(await legacyRead.text()).toBe(layerDoc);
+    const nextLayerDoc = layerDoc.replace('Good Things Are Ripening', 'A second orchard layout');
+    expect(nextLayerDoc).not.toBe(layerDoc);
+    fake.setLayoutDocument(nextLayerDoc);
+    const chosen = await api.post(`${runtime.url}/api/design-jobs/${startedJob.id}/choose`, { headers: { Origin: runtime.url }, data: { slot: 'a' } });
+    expect(chosen.status()).toBe(200);
+    await expect.poll(async () => (await runtime.sql(`SELECT state FROM design_jobs WHERE id='${startedJob.id}'`))[0].state, { timeout: 45000 }).toBe('ready');
+    const latestHash = createHash('sha256').update(nextLayerDoc).digest('hex');
+    const nextLayoutUrl = `/api/design-jobs/${startedJob.id}/layerdoc/${latestHash}`;
+    const previous = await api.get(runtime.url + firstLayoutUrl);
+    expect(previous.status()).toBe(200);
+    expect(await previous.text()).toBe(layerDoc);
+    // Record a real failed candidate outcome beside successful paid originals.
+    fake.setDraw('c', 0);
+    const lastRun = await api.post(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`, { headers: { Origin: runtime.url }, data: { brief: 'synthetic-mango-342', candidates: 4 } });
+    expect(lastRun.status()).toBe(201);
+    const lastId = (await lastRun.json()).job.id;
+    await expect.poll(async () => (await runtime.sql(`SELECT state FROM design_jobs WHERE id='${lastId}'`))[0].state, { timeout: 45000 }).toBe('choosing');
+    expect(await runtime.sql(`SELECT slot,state,sha256,bytes FROM design_candidates WHERE job_id='${lastId}' ORDER BY slot`)).toEqual([
+      ...['a','b','c'].map(slot => ({ slot, state: 'succeeded', sha256: createHash('sha256').update(imageFor(slot)).digest('hex'), bytes: imageFor(slot).byteLength })),
+      { slot: 'd', state: 'failed', sha256: null, bytes: null },
+    ]);
+    for (const operation of ['design-draft','design-layout']) {
+      expect((await costs()).filter(row => row.operation === operation)).toHaveLength(fake.purchases.filter(item => item.startsWith(operation === 'design-draft' ? 'draft:' : 'layout:')).length);
+    }
+    for (const { id, state } of await runtime.sql('SELECT id,state FROM design_jobs ORDER BY id')) {
+      const closed = await api.post(`${runtime.url}/api/design-jobs/${id}/close`, { headers: { Origin: runtime.url }, data: { outcome: 'discarded' } });
+      // The quota run was already explicitly dismissed above.
+      expect(closed.status()).toBe(state === 'discarded' ? 409 : 200);
+    }
+    const ended = await runtime.sql('SELECT * FROM design_jobs ORDER BY id');
+    expect(ended).toHaveLength(5);
+    expect(ended.every(row => row.state === 'discarded')).toBe(true);
+    await reloadPage(page);
+    await api.get(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`);
+    expect(await runtime.sql('SELECT * FROM design_jobs ORDER BY id')).toEqual(ended);
+    const originals = (await runtime.sql("SELECT job_id,slot FROM design_candidates WHERE state='succeeded' ORDER BY job_id,slot")).map(row => ({
+      path: `/api/design-jobs/${row.job_id}/candidates/${row.slot}/image`, key: `design-jobs/${row.job_id}/candidate-${row.slot}.png`, bytes: imageFor(row.slot),
+    }));
+    const purchasesBeforeExport = [...fake.purchases];
+    await exportRetainedDesigns(api, runtime, [...originals,
+      { path: firstLayoutUrl, key: `design-jobs/${startedJob.id}/layout.layerdoc.json`, bytes: Buffer.from(layerDoc) },
+      { path: firstLayoutUrl, key: `design-jobs/${startedJob.id}/layout-${createHash('sha256').update(layerDoc).digest('hex')}.layerdoc.json`, bytes: Buffer.from(layerDoc) },
+      { path: nextLayoutUrl, key: `design-jobs/${startedJob.id}/layout-${latestHash}.layerdoc.json`, bytes: Buffer.from(nextLayerDoc) },
+    ]);
+    expect(fake.purchases).toEqual(purchasesBeforeExport);
   } finally { await runtime.close(); await fake.close(); }
 };

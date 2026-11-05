@@ -39,13 +39,13 @@ export async function startFakeTwelveUi(options: FakeOptions) {
   };
   const replies = new Map<string, unknown>();
   const runs = new Map<string, { slots: { slot: string; status: string; settles?: number }[] }>();
-  const layouts = new Map<string, { settles: number; status: 'succeeded' | 'failed' }>();
+  const layouts = new Map<string, { settles: number; status: 'succeeded' | 'failed'; document: string }>();
   let layoutStatus = options.layoutStatus ?? 'succeeded';
+  let layoutDocument = options.layerDoc;
   const failed = new Set<string>();
   const refusals = new Map<string, Refusal>();
   const inflations = new Map<string, number>();
   const drawMs = { ...options.drawMs };
-  const layerDocSha = createHash('sha256').update(options.layerDoc).digest('hex');
   const now = () => Date.now();
   const runView = (id: string) => {
     const run = runs.get(id)!;
@@ -55,7 +55,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
   const layoutView = (id: string) => {
     const layout = layouts.get(id)!;
     const status = layout.settles <= now() ? layout.status : 'running';
-    return { id, status, output: 'layerdoc', model: 'fast', ...(status === 'succeeded' ? { result: { kind: 'layerdoc', media_type: 'application/vnd.12ui.layerdoc+json;version=2', sha256: layerDocSha, size_bytes: Buffer.byteLength(options.layerDoc) } } : {}) };
+    return { id, status, output: 'layerdoc', model: 'fast', ...(status === 'succeeded' ? { result: { kind: 'layerdoc', media_type: 'application/vnd.12ui.layerdoc+json;version=2', sha256: createHash('sha256').update(layout.document).digest('hex'), size_bytes: Buffer.byteLength(layout.document) } } : {}) };
   };
   const server = http.createServer(async (request, response) => {
     const chunks: Buffer[] = [];
@@ -120,14 +120,14 @@ export async function startFakeTwelveUi(options: FakeOptions) {
       entry.fileSha256 = createHash('sha256').update(Buffer.from(await file.arrayBuffer())).digest('hex');
       const id = `cnv-${createHash('sha256').update(key ?? String(Math.random())).digest('hex').slice(0, 16)}`;
       purchases.push(`layout:${key ?? ''}`);
-      layouts.set(id, { settles: now() + (options.layoutMs ?? 0), status: layoutStatus });
+      layouts.set(id, { settles: now() + (options.layoutMs ?? 0), status: layoutStatus, document: layoutDocument });
       noteIssued('layout', id);
       if (key) replies.set(`POST ${path} ${key}`, () => layoutView(id));
       return send(202, layoutView(id));
     }
     const layout = /^\/api\/v1\/convert\/([^/]+)$/.exec(path);
     if (layout && layouts.has(layout[1])) {
-      if (request.headers.accept === 'application/octet-stream') return send(200, Buffer.from(options.layerDoc), 'application/vnd.12ui.layerdoc+json;version=2');
+      if (request.headers.accept === 'application/octet-stream') return send(200, Buffer.from(layouts.get(layout[1])!.document), 'application/vnd.12ui.layerdoc+json;version=2');
       return send(200, layoutView(layout[1]));
     }
     return send(404, { error: 'not_found' });
@@ -137,5 +137,7 @@ export async function startFakeTwelveUi(options: FakeOptions) {
   return { origin, requests, purchases, issued, refuseNext: (suffix: string, refusal: Refusal) => refusals.set(suffix, refusal),
     /** Pads the next JSON answer to a path suffix with at least `bytes` of padding. */
     inflateNext: (suffix: string, bytes: number) => inflations.set(suffix, bytes),
-    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; }, close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
+    setDraw: (slot: string, ms: number) => { drawMs[slot] = ms; }, setLayoutStatus: (status: 'succeeded' | 'failed') => { layoutStatus = status; },
+    setLayoutDocument: (document: string) => { layoutDocument = document; },
+    close: () => new Promise<void>(resolve => { server.closeAllConnections(); server.close(() => resolve()); }) };
 }
