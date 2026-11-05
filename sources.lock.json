@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "4b5b75831ce6a8cb421a1ed069789ae812674ed47d40703edd5101d5a2ce296d",
+      "sha256": "85e3e26db766c9d9f48d7ca8995432efa99a724cb70fe456e0160bb7b73b09a7",
       "executable": false
     },
     "DEMO.md": {
@@ -9394,7 +9394,7 @@
       "executable": false
     },
     "tests/proposals-decision/decision-routes.spec.ts": {
-      "sha256": "38ed6f804a69c2d5b5c431ca83b526d23fcf9cbbefd35bae6dcf037b5a97f327",
+      "sha256": "4c3977a22f0317ccaf2e2d61d3f15ae9b8a04b68904f1a4c16b513d22f3b705b",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
