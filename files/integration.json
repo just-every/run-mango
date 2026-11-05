@@ -1,0 +1,12 @@
+{
+  "originalBase": "0f23a204200df3aa4ce67f74c1acb3c9e116cba3",
+  "integratedMain": "955785c08ed00910bc83e3aa3bbb0a54703f6f71",
+  "inheritedReplayedHead": "1c8ba5965fd9ecccd99371b463c52b2e5937b239",
+  "conflicts": [
+    "sources.lock.json regenerated after each inherited commit"
+  ],
+  "views": "generated and checked, restored from origin main; none committed",
+  "statusRows": 316,
+  "tableLines": 490,
+  "invalidatedRun": "changed-journey.log mixed a loaded new test with a rebased old fixture; rerun stable tree"
+}

@@ -1,0 +1,26 @@
+{
+  "head": "ff6a58ce877c9414ee1b0ec8c8dd408224d93e68",
+  "run": 42117817279,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "failure",
+  "url": "https://github.com/just-every/run-mango/actions/runs/42117817279",
+  "failedJobs": [
+    {
+      "id": 127562084334,
+      "name": "Build and public command checks",
+      "failedSteps": [
+        "Check generated contract documents"
+      ]
+    },
+    {
+      "id": 127562592762,
+      "name": "verify",
+      "failedSteps": [
+        "Require the selected coverage and its proof"
+      ]
+    }
+  ],
+  "classification": "expected-generated-view-only",
+  "githubCalls": 6
+}

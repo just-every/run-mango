@@ -1,6 +1,6 @@
 # RESULT-004 continuation
 
-RESULT-004 remains PARTIAL. Counts remain 18 DONE, 200 PARTIAL and 98 MISSING. No acceptance sentence changed. The selected failure and email-handoff identity points are covered, and successful native AI generation now also has independent provider-model proof. No homepage, logo, product UI, production provider, Base pin, workflow or migration was changed.
+RESULT-004 remains PARTIAL. Counts remain 18 DONE, 200 PARTIAL and 98 MISSING. No acceptance sentence changed. The selected failure and email-handoff identity points are covered, and successful native AI generation now also has independent provider and model proof. No homepage, logo, product UI, production provider, Base pin, workflow or migration was changed.
 
 ## Work and proof
 
@@ -55,3 +55,15 @@ The supplied-base registered journey passed. An intermediate local run was inval
 Final head: ff6a58ce877c9414ee1b0ec8c8dd408224d93e68.
 
 MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock then check exit=0; views=node src/base/contract-docs.mjs write then check exit=0, restored from main and not committed; ledger=none exit=0.
+
+## Exact-head branch CI
+
+Push Verify 42117817279 is bound to ff6a58ce877c9414ee1b0ec8c8dd408224d93e68. Its plan succeeded. Build job 127562084334 failed only at Check generated contract documents; final guard job 127562592762 failed on the required coverage guard, and the dependent shards were skipped. The local restored-view check reproduces ACCEPTANCE.md: generated content differs; run contract-docs write. The task explicitly permits this generated-view failure for READY because the lander regenerates the views and runs Verify again before landing. The archived failed-step receipt was collected exactly once with gh run view 42117817279 --repo just-every/run-mango --job 127562084334 --log-failed and confirms the generated ACCEPTANCE.md mismatch. No other direct failure was reported. The final classification is expected-generated-view-only; six GitHub invocations were used across all heads and failure reads.
+
+The candidate's exact-head local commands all passed: committed source lock check, typecheck, first-party command check, and the registered results journey in 2.2 minutes. The actual cost receipt records four AI boundary calls, three email handoffs and seven independently expected native cost facts. Both requested-model fallback on interruption and returned-model preservation on success were observed. The final fixture uses the valid UTC timezone alias, avoiding a newly introduced ambiguous slash token.
+
+Pre-ready scope check: no assertion was removed, narrowed or hidden; no production authority, erasure or replay implementation changed; confirmation replay remains asserted; no product screen implementation changed. The cost screen's proof at both required widths is in this packet. The source lock is fresh and the product ref was independently read back at the same head. Publication scan and main-only Run site are not claimed from this cloud; the Mac lander still enforces those gates. No DONE status is claimed.
+
+READY custody: cloud/sd-mango-c-f50 at ff6a58ce877c9414ee1b0ec8c8dd408224d93e68 is pushed. The generated-view exception is the sole basis for allowing the red branch Verify as instructed; it is not reported as a successful CI test run. The Mac lander owns the required regeneration, publication scan, final Verify and Run site. Evidence publication is a separate report transfer and does not land or accept the product.
+
+The published CI error receipt contains the checker command, its complete generated-file error and exit status. GitHub runner environment boilerplate is excluded from publication.

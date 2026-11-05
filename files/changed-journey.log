@@ -1,0 +1,47 @@
+
+Running 1 test using 1 worker
+
+(node:3196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/campaign-results/results.journeys.ts:7:1 › [CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement (1.6m)
+
+
+  1) tests/campaign-results/results.journeys.ts:7:1 › [CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 2
+    + Received  + 1
+
+      Array [
+        Object {
+          "mode": "invalid",
+    +     "model": "cost-invalid",
+          "provider": "openai",
+    -     "requested_model": "cost-requested",
+    -     "response_model": "cost-invalid",
+        },
+      ]
+
+       at costs.flow.ts:57
+
+      55 |       expect(result).toMatchObject({kind:'failed',error});
+      56 |       const observed=await records();
+    > 57 |       expect(observed.aiCalls).toEqual(cases.slice(0,identities.length+1).map(item=>({mode:item.mode,provider:'openai',model:item.model})));
+         |                                ^
+      58 |       const facts=observed.costs.filter((row:any)=>row.proposal_id===result.proposalId);
+      59 |       expect(facts).toHaveLength(1);
+      60 |       expect(facts[0].id).toBe(`ai:${result.proposalId}`);
+        at walk0 (/home/agent/rer-consolidation/work/sd-mango-c-f50/run-mango/tests/campaign-results/costs.flow.ts:57:32)
+        at /home/agent/rer-consolidation/work/sd-mango-c-f50/run-mango/tests/campaign-results/results.journeys.ts:11:10
+
+    Error Context: ../evidence/ab0e21e744e9/campaign-results/results.journeys.ts--CAMP--f8e96-up-from-recorded-engagement/error-context.md
+
+  1 failed
+    tests/campaign-results/results.journeys.ts:7:1 › [CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement 
