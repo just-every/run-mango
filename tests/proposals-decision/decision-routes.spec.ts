@@ -80,10 +80,15 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     const failedByColleague=await colleague.call('/api/proposals/generate',{});
     expect(failedByColleague).toMatchObject({status:409,body:{kind:'failed',error:'ai_provider_failed'}});
     runtime.controls.failure=undefined;
+    runtime.controls.alter=output=>{output.summary.text='Synthetic unsupported claim';};
+    const rejectedByColleague=await colleague.call('/api/proposals/generate',{});
+    expect(rejectedByColleague).toMatchObject({status:409,body:{kind:'failed',error:'invalid_ai_output'}});
+    runtime.controls.alter=undefined;
     const cases=[
       {id:retained.body.proposalId,state:'proposed',transitions:[{fromState:'generating',toState:'proposed',actorId:colleague.id,reason:'grounded-generation'}]},
       {id:dismissedByColleague.body.proposalId,state:'dismissed',transitions:[{fromState:'generating',toState:'proposed',actorId:colleague.id,reason:'grounded-generation'},{fromState:'proposed',toState:'dismissed',actorId:colleague.id,reason:'Synthetic colleague decision'}]},
       {id:failedByColleague.body.proposalId,state:'failed',transitions:[{fromState:'generating',toState:'failed',actorId:colleague.id,reason:'ai_provider_failed'}]},
+      {id:rejectedByColleague.body.proposalId,state:'failed',transitions:[{fromState:'generating',toState:'failed',actorId:colleague.id,reason:'invalid_ai_output'}]},
     ];
     const readRetained=async()=>Promise.all(cases.map(async expected=>{
       const response=await runtime.call(`/api/proposals/${expected.id}`);
@@ -107,7 +112,7 @@ test('[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PRO
     expect(await runtime.db.prepare('SELECT display_name,removed_at FROM operators WHERE id=?').bind(colleague.id).first()).toEqual({display_name:colleague.name,removed_at:expect.any(Number)});
     for(let read=0;read<2;read++) {
       expect(await readRetained()).toEqual(originals);
-      for(const expected of cases)expect((await colleague.call(`/api/proposals/${expected.id}`)).status).toBe(401);
+      for(const expected of cases)expect(await colleague.call(`/api/proposals/${expected.id}`)).toEqual({status:401,body:{error:'unauthenticated'}});
     }
     expect((await colleague.call('/api/operator')).status).toBe(401);
     expect((await colleague.call('/api/proposals/generate',{})).status).toBe(401);
