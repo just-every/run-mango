@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "af117f7dde4b8b798c1ee14c76901abdeb3ece3b5f8592abf17d5eece3793a05",
+      "sha256": "41822fe556639adeb7c0e0659467320cc650b9db61cd81b241a634b906898873",
       "executable": false
     },
     "DEMO.md": {
@@ -9210,7 +9210,7 @@
       "executable": false
     },
     "tests/move-in/archive.journeys.ts": {
-      "sha256": "5eb4110776a3688cfc889c3c6dd51fd42e8aed84a07b3e8e23398ae2c9dabe59",
+      "sha256": "d44d9fb59b10624a805ac727980f6be420aecde0b4aafb6ccf2c06d3d1bcb497",
       "executable": false
     },
     "tests/move-in/archive.ts": {
