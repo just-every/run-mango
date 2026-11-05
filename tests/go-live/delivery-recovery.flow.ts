@@ -118,7 +118,30 @@ export const walk1 = async({page})=>{
     mark('dispatch queued');
     await expect.poll(async()=> (await site.control('/_golive/emissions')).find((item:any)=>item.command.kind==='campaign.dispatch'&&item.command.payload.revisionId===campaign.revisionId)?.completedQueues.length??0,{timeout:60000}).toBeGreaterThan(0);
     mark('dispatch wait');
-    expect(await site.rows(`SELECT transport_disposition,attempt_count FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`)).toEqual([{transport_disposition:'queued',attempt_count:0}]);
+    const recipients=()=>site.rows(`SELECT id,contact_id,channel,step_id,destination,transport_disposition,attempt_count,handoff_started_at FROM recipient_steps WHERE revision_id='${campaign.revisionId}' ORDER BY id`);
+    const queued=await recipients();
+    expect(queued).toHaveLength(1);
+    expect(queued[0]).toMatchObject({channel:'email',destination:expiryEmail,transport_disposition:'queued',attempt_count:0,handoff_started_at:null});
+    const marketing=()=>edge.sends.filter(send=>send.body.headers?.['List-Unsubscribe']);
+    const handoffs=[...marketing()];expect(handoffs).toEqual([]);
+    const providerCode='provider-read-http-503';
+    expect(await site.rows("SELECT reachable,code FROM provider_health WHERE adapter='mail.sender.v1' AND channel='email'"))
+      .toEqual([{reachable:0,code:providerCode}]);
+    const [persistedOutage]=await site.rows(`SELECT last_error,next_probe_at FROM provider_outages WHERE id='${activeOutage.id}' AND state='paused'`);
+    expect(persistedOutage.last_error).toBe(providerCode);
+    const pauseRows=()=>site.rows(`SELECT channel,reason,detail,resumed_at FROM campaign_channel_pauses WHERE campaign_id='${campaign.campaignId}' AND revision_id='${campaign.revisionId}' AND reason='provider-outage'`);
+    const paused=await pauseRows();
+    expect(paused).toEqual([{channel:'email',reason:'provider-outage',detail:providerCode,resumed_at:null}]);
+    const readPaused=async()=>{
+      const detail=await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
+      expect(detail.results.steps).toHaveLength(1);
+      expect(detail.results.steps[0]).toMatchObject({state:'Paused',counts:[{disposition:'queued',reason:null,count:1}],
+        pauses:[{reason:'provider-outage',detail:providerCode,resumedAt:null,nextProbeAt:new Date(persistedOutage.next_probe_at).toISOString()}]});
+      expect(await pauseRows()).toEqual(paused);
+      expect(await recipients()).toEqual(queued);
+      expect(marketing()).toEqual(handoffs);
+    };
+    await readPaused();
     await page.context().addCookies([{name:cookie.split('=')[0],value:cookie.split('=')[1],url:site.runtime.url}]);
     // Server deadlines use the go-live clock; drive the browser's periodic
     // status refresh with its own clock rather than waiting on wall time.
@@ -127,7 +150,19 @@ export const walk1 = async({page})=>{
     await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
     await expect(page.locator('.step-result-state.status-pill--paused')).toBeVisible();
     await expect(page.locator('[data-disposition=queued] dd')).toHaveText('1');
+    const explanation=page.locator('[data-pause-reason=provider-outage][data-pause-state=paused]');
+    await expect(explanation).toBeVisible();
+    await expect(explanation).toContainText(providerCode);
+    await readPaused();
+    await openPage(page,`${site.runtime.url}/app/campaigns/${campaign.campaignId}/scheduled`);
+    await expect(explanation).toBeVisible();
+    await expect(explanation).toContainText(providerCode);
+    await readPaused();
     await page.screenshot({path:test.info().outputPath('outage-paused-pending-probe.png'),fullPage:true});
+    await page.setViewportSize({width:390,height:844});
+    await page.screenshot({path:test.info().outputPath('outage-paused-pending-probe-390.png'),fullPage:true});
+    await page.setViewportSize({width:1440,height:1000});
+    await readPaused();
     mark('deadline campaign and browser ready');
     const beforeDeadline=await site.control('/_golive/clock');await site.control('/_golive/clock',{advanceMs:deadline-beforeDeadline.now+1});await site.control('/_golive/cron');
     expect(await site.rows(`SELECT transport_disposition,skip_reason,attempt_count FROM recipient_steps WHERE revision_id='${campaign.revisionId}'`)).toEqual([{transport_disposition:'skipped',skip_reason:'send-window-expired',attempt_count:0}]);
