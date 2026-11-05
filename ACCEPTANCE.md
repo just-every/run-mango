@@ -526,8 +526,8 @@ Core · published · **partial** · Rules D-1
 3. The sender identity and destination links are editable.
 4. Each selected channel has a preview of its saved content.
 
-**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”
-**Gap.** Asserted: Editable campaign name; Editable email subject; Saved email preview; Saved SMS preview. Unasserted: Editable email body; Editable proposed SMS body; Editable sender identity; Editable destination links. Missing public-door journey: “Content — complete acceptance”, covering the unasserted outcomes above.
+**Evidence.** `tests/proposals-decision/decision-routes.spec.ts` — “[PROP-004][BUILD-001][BUILD-002] accepted content and sender are previewable and editable as a saved draft”; `tests/proposals-decision/content-editing.spec.ts` — “[PROP-004] adopted email content, sender identity and destinations remain independently editable without sending authority”: native generation and adoption, independently chosen email body, sender name, From, Reply-to, postal address and replacement destination; repeated campaign and review readback, persisted revision and link rows, retained proposal evidence and no approval, recipients or dispatch authority.
+**Gap.** Asserted: Editable campaign name; Editable email subject; Editable email body; Editable email sender identity and destination links; Saved email preview; Saved SMS preview. Unasserted: Editable proposed SMS body and SMS sender identity. Twilio A2P and US carrier registration remain owner-held; SMS transport and qualification and real AI, commerce and provider qualification are not established. Carried provider, device, account and cross-seed or Base prerequisites, rer 0.2.95 adoption and account and acceptance requirements remain binding. CONT-013 retains the ct SPLIT and NEW-1 disposition and original fix-1 hold.
 
 #### PROP-005 — Owner control
 
