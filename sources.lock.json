@@ -3826,7 +3826,7 @@
       "executable": false
     },
     "src/core/features/campaigns/authoring-content.ts": {
-      "sha256": "a470bfd555627c5574e3bc0a197d7a6b4a95b3bd18a101210d99b59540368022",
+      "sha256": "a5c31e91e7eb8787bc9aba3370ff640c39d6ff3bcb0db0468178b63278c4a508",
       "executable": false
     },
     "src/core/features/campaigns/authoring-rules.ts": {
@@ -4054,7 +4054,7 @@
       "executable": false
     },
     "src/core/features/campaigns/routes.ts": {
-      "sha256": "ca20d882a52c692cc591c85f58879a7780521f17f62834af01ac86337fb19d5b",
+      "sha256": "734ddc4adc954667db548c0276ad2a5ae5ba0af92a57ea226b6823a84e5c3b77",
       "executable": false
     },
     "src/core/features/campaigns/saved-email-size.ts": {
@@ -8470,7 +8470,7 @@
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {
-      "sha256": "716d558382384425042c8d00b0e13f96c52480eb7e0db4b588404733816cf7a8",
+      "sha256": "8854edc76efc83f3e0c1a23a6883ec51cadf2a162e56e833bbc6607ee42388a2",
       "executable": false
     },
     "tests/campaign-authoring/catalog-guard-journey.ts": {
