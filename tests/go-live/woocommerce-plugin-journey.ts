@@ -1,6 +1,6 @@
 import {expect, type Page, type Route, type TestInfo} from '@playwright/test';
 import {createHmac, randomUUID} from 'node:crypto';
-import {readFileSync} from 'node:fs';
+import {readFileSync, writeFileSync} from 'node:fs';
 import {installation, json} from './harness';
 import {openPage} from '../support/navigation';
 type Site = Awaited<ReturnType<typeof installation>>;
@@ -159,7 +159,9 @@ export async function wooBrowserConsent(page: Page, info: TestInfo) {
     }
     assertIsolation();
   } finally {
-    await info.attach('woocommerce-observation-traffic', {body: JSON.stringify(traffic, null, 2), contentType: 'application/json'});
+    const path = info.outputPath('woocommerce-observation-traffic.json');
+    writeFileSync(path, JSON.stringify(traffic, null, 2));
+    await info.attach('woocommerce-observation-traffic', {path, contentType: 'application/json'});
     await context.unroute('**/*', boundary);
     await other.close(); await unrelated.close();
   }

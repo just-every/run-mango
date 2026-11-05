@@ -113,8 +113,7 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       await page.setViewportSize({width, height: 1000});
       await openPage(page, site.runtime.url + '/app/settings');
       await expect(page.locator('#woocommerce')).toContainText(connection.url);
-      await page.evaluate(() => {window.scrollTo(0, 0); (document.activeElement as HTMLElement)?.blur();});
-      await page.screenshot({path: info.outputPath(`woocommerce-settings-${width}.png`), fullPage: true});
+      await page.locator('#woocommerce').screenshot({path: info.outputPath(`woocommerce-settings-${width}.png`)});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await openPage(page, site.runtime.url + '/app/store');
       await expect(page.getByRole('article', {name: 'Order sync', exact: true})).toContainText('completed');
