@@ -8,7 +8,7 @@ import { event, eventSigner } from './sendgrid-events';
 import { decodeProviderReference } from '../../src/core/shared/provider-reference';
 import { localSessionCookieName } from '../support/local-session';
 import { archiveRows, importContacts, transfer } from './restore';
-import { approve, availableTransport, confirmedContact, dispatch, draftCampaign, installation, json, sender, signedPost, type Installation } from './harness';
+import { approve, availableTransport, confirmedContact, dispatch, draftCampaign, installation, json, rule, sender, signedPost, type Installation } from './harness';
 
 // One installation runs the whole go-live sequence: confirmed contacts, an
 // approved campaign handed to SendGrid, signed delivery facts, one-click
@@ -35,6 +35,113 @@ const state: Record<string, any> = {};
 
 test.afterAll(async () => { await site?.runtime.close(); await (await edgeServer).close(); });
 
+/** A populated marketing history stays unchanged by an authorized test, while
+ * the same subscribed destination remains available for ordinary approval. */
+export const walkTestIsolation = async () => {
+  const edge = await edgeServer, isolated = await installation(edge, signer);
+  try {
+    const owner = await isolated.open();
+    await json(await isolated.call('/api/settings/sender', { method: 'PUT', cookie: owner, body: sender }), 200);
+    await isolated.control('/_golive/sender-evidence');
+    const [tested, eligible, recent] = [801, 802, 803].map(id => `synthetic-mango-${id}${sender.fromEmail.slice(sender.fromEmail.indexOf('@'))}`);
+    for (const destination of [tested, eligible, recent]) await confirmedContact(isolated, edge, owner, destination, destination.split('@')[0]);
+    const now = async () => (await isolated.control('/_golive/clock')).now;
+    const previousDue = new Date(await now() + 60_000);
+    const previous = await draftCampaign(isolated, owner, 'Earlier garden letter', [recent], previousDue);
+    expect((await approve(isolated, owner, previous)).status).toBe('scheduled');
+    await isolated.control('/_golive/clock', { advanceMs: 60_001 });
+    const priorRecipients = await dispatch(isolated, previous.campaignId, previousDue);
+    expect(priorRecipients.map(row => [row.email, row.transport_disposition])).toEqual([[recent, 'accepted']]);
+    const prior = (await isolated.rows(`SELECT * FROM recipient_steps WHERE id='${priorRecipients[0].id}'`))[0];
+    expect(prior.handed_off_at).toBeGreaterThanOrEqual(previousDue.getTime());
+    // Independently valued historical attribution, as in the report fixtures:
+    // this is retained input, not a substitute for any application result read.
+    const attributedAt = prior.handed_off_at + 1, attributionId = 'synthetic-mango-804';
+    await isolated.runtime.sql(`INSERT INTO attribution_facts
+      (id,order_source_record_id,campaign_id,recipient_step_id,click_fact_id,attribution_window_days,gross_amount_minor,refund_amount_minor,currency,attributed_at,updated_at,created_at)
+      VALUES('${attributionId}','synthetic-mango-805','${previous.campaignId}','${prior.id}','synthetic-mango-806',7,4200,200,'USD',${attributedAt},${attributedAt},${attributedAt})`);
+    const due = new Date(await now() + 60_000);
+    const campaign = await draftCampaign(isolated, owner, 'Test isolation letter', [tested, eligible, recent], due);
+    const audience = async (destinations: string[]) => {
+      const { asOf, ...counts } = await json(await isolated.call('/api/campaign-authoring/audience', { method: 'POST', cookie: owner,
+        body: { inclusionRuleJson: rule(destinations), exclusionRulesJson: '[]', channels: ['email'] } }), 200);
+      return counts;
+    };
+    const memberships = async () => Promise.all([tested, eligible, recent].map(destination => audience([destination])));
+    const beforeMembership = await memberships();
+    for (const counts of beforeMembership.slice(0, 2)) expect(counts).toEqual({ status: 'ok', candidateCount: 1, excludedCount: 0, eligibleCount: 1,
+      channelCounts: [{ channel: 'email', stepCount: 1, eligibleContactCount: 1, recipientStepCount: 1 }], exclusions: [] });
+    expect(beforeMembership[2]).toEqual({ status: 'ok', candidateCount: 1, excludedCount: 1, eligibleCount: 0,
+      channelCounts: [{ channel: 'email', stepCount: 1, eligibleContactCount: 0, recipientStepCount: 0 }], exclusions: [{ reason: 'frequency-window', count: 1 }] });
+    const results = async () => {
+      const marketing = await json(await isolated.call('/api/insights', { cookie: owner }), 200);
+      const campaigns = await Promise.all([previous, campaign].map(async item => {
+        const { costs, ...result } = await json(await isolated.call(`/api/campaigns/${item.campaignId}/results`, { cookie: owner }), 200);
+        return result;
+      }));
+      return { marketing: marketing.results, campaigns };
+    };
+    const stored = async () => ({
+      attribution: await isolated.rows('SELECT * FROM attribution_facts ORDER BY id'),
+      recipients: await isolated.rows('SELECT * FROM recipient_steps ORDER BY id'),
+      delivery: await isolated.rows('SELECT * FROM delivery_facts ORDER BY id'),
+      contacts: await isolated.rows('SELECT * FROM contacts ORDER BY id'),
+      addresses: await isolated.rows('SELECT * FROM contact_email_addresses ORDER BY id'),
+      activity: await isolated.rows('SELECT * FROM contact_history ORDER BY id'),
+    });
+    const beforeResults = await results(), beforeStored = await stored();
+    expect(beforeStored.attribution).toEqual([expect.objectContaining({ id: attributionId, campaign_id: previous.campaignId,
+      recipient_step_id: prior.id, gross_amount_minor: 4200, refund_amount_minor: 200, currency: 'USD' })]);
+    expect(beforeResults.marketing).toEqual([expect.objectContaining({ campaignId: previous.campaignId, metric: 'accepted', value: 1 })]);
+    expect(beforeResults.campaigns[0]).toMatchObject({ outcomes: { handedOff: 1, accepted: 1 }, attribution: {
+      orders: 1, revenueByCurrency: [{ currency: 'USD', orders: 1, grossAmountMinor: 4200, reversedAmountMinor: 200, amountMinor: 4000 }],
+      events: [expect.objectContaining({ orderSourceRecordId: 'synthetic-mango-805', recipientStepId: prior.id })] } });
+    const noAuthority = async () => {
+      expect(await isolated.rows(`SELECT id FROM recipient_steps WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
+      expect(await isolated.rows(`SELECT idempotency_key FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
+      const detail = await json(await isolated.call(`/api/campaigns/${campaign.campaignId}`, { cookie: owner }), 200);
+      expect(detail.campaign).toMatchObject({ state: 'draft', activeRevisionId: campaign.revisionId });
+      expect(detail.revision).toMatchObject({ id: campaign.revisionId, state: 'draft' });
+      expect((await isolated.control('/_golive/emissions')).filter((item: any) => item.command.campaignId === campaign.campaignId)).toEqual([]);
+    };
+    await noAuthority();
+    const sendCount = edge.sends.length;
+    const allowance = async () => (await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-sends`, { cookie: owner }), 200)).allowance.remaining;
+    const allowanceBefore = await allowance();
+    await availableTransport(isolated);
+    expect(await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-send`, { method: 'POST', cookie: owner,
+      body: { revisionId: campaign.revisionId, channel: 'email', to: tested } }), 200)).toMatchObject({ disposition: 'accepted' });
+    const testMessages = edge.sends.slice(sendCount);
+    expect(testMessages.map(message => message.to)).toEqual([tested]);
+    expect(testMessages[0].body.subject).toContain('MANGO TEST');
+    expect(await allowance()).toBe(allowanceBefore - 1);
+    expect((await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/test-sends`, { cookie: owner }), 200)).tests)
+      .toEqual([expect.objectContaining({ destination: tested })]);
+    // Test audit, allowance and cost accounting are allowed; none is marketing.
+    expect(await stored()).toEqual(beforeStored);
+    expect(await results()).toEqual(beforeResults);
+    const afterMembership = await memberships();
+    expect(afterMembership).toEqual(beforeMembership);
+    await noAuthority();
+    const review = await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/checks`, { method: 'POST', cookie: owner,
+      body: { revisionId: campaign.revisionId } }), 200);
+    expect(review).toMatchObject({ candidateCount: 3, eligibleCount: 2, exclusions: [{ reason: 'frequency-window', count: 1 }] });
+    await noAuthority();
+    expect((await approve(isolated, owner, campaign)).status).toBe('scheduled');
+    expect((await isolated.rows(`SELECT destination FROM recipient_steps WHERE campaign_id='${campaign.campaignId}' ORDER BY destination`))
+      .map(row => row.destination)).toEqual([tested, eligible]);
+    await isolated.control('/_golive/clock', { advanceMs: 60_001 });
+    const recipients = await dispatch(isolated, campaign.campaignId, due);
+    expect(recipients.map(row => [row.email, row.transport_disposition])).toEqual([[tested, 'accepted'], [eligible, 'accepted']]);
+    const marketingMessages = edge.sends.slice(sendCount).filter(message => !message.body.subject.includes('MANGO TEST'));
+    expect(marketingMessages.map(message => message.to).sort()).toEqual([tested, eligible]);
+    expect((await json(await isolated.call(`/api/campaigns/${campaign.campaignId}/results`, { cookie: owner }), 200)).outcomes)
+      .toMatchObject({ handedOff: 2, accepted: 2, skipped: 0 });
+    expect(await isolated.rows('SELECT * FROM attribution_facts ORDER BY id')).toEqual(beforeStored.attribution);
+    expect(await audience([recent])).toEqual(beforeMembership[2]);
+    await record('test-isolation.json', { beforeMembership, afterMembership, beforeResults, afterResults: await results(), recipients });
+  } finally { await isolated.runtime.close(); }
+};
 
 
 
