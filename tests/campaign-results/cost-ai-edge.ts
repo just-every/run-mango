@@ -31,7 +31,7 @@ export function costAiEdge(db: D1Database, sender: AppConfig['mailSender']) {
           email: { subject: 'Garden news', html: '<p>Garden news.</p>', text: 'Garden news.', preheader: 'From the garden' },
           sms: null, sender: { ...sender, smsSender: 'MANGO' }, messageCategory: 'newsletter', links: [],
           steps: [{ channel: 'email', scheduledAt: new Date(at + 3_600_000).toISOString(),
-            sendByAt: new Date(at + 7_200_000).toISOString(), timezone: 'Etc/UTC', whyThisTime: claim }], forecast: null,
+            sendByAt: new Date(at + 7_200_000).toISOString(), timezone: 'UTC', whyThisTime: claim }], forecast: null,
         };
         output = JSON.stringify(proposal);
       }
