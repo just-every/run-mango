@@ -96,6 +96,53 @@ test('[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as
       if (approvable) expect(blockers, body).not.toContain('message.content');
       else expect(blockers, body).toContain('message.content');
     }
+
+    // Arrange an older draft directly in D1: a normal body save would already
+    // canonicalize it and could not prove that editing another field upgrades it.
+    const historical = await request.post(runtime.url + '/api/campaigns', { headers, data: {} });
+    expect(historical.status()).toBe(201);
+    const older = await historical.json();
+    const raw = '<P>synthetic-mango-351 &amp; {{displayName | fallback:"Reader"}}<BR><A HREF=\'https://shop.example.test/season?x=1&amp;y=2\' HREF="https://ignored.example.test/">Season &amp; news</A></P><TABLE><TR><TD>Cell <B>offer</TD></TR></TABLE><NOSCRIPT><P>Fallback <A HREF=https://shop.example.test/fallback>Visit</A></P></NOSCRIPT>';
+    // These expectations specify the recipient tree independently of Mango's
+    // parser, text derivation and footer helpers, including scripting-off content.
+    const expectedBody = '<p>synthetic-mango-351 &amp; {{displayName | fallback:"Reader"}}<br><a href="https://shop.example.test/season?x=1&amp;y=2">Season &amp; news</a></p><table><tbody><tr><td>Cell <b>offer</b></td></tr></tbody></table><noscript><p>Fallback <a href="https://shop.example.test/fallback">Visit</a></p></noscript><p><a href="https://shop.example.test/retained?campaign=351&amp;part=2">Retained destination</a></p><hr><p>{{physical_address}}</p><p><a href="{{unsubscribe_url}}">Unsubscribe</a></p>';
+    const expectedText = 'synthetic-mango-351 & {{displayName | fallback:"Reader"}}\nSeason & news (https://shop.example.test/season?x=1&y=2)\nCell offer\nFallback Visit (https://shop.example.test/fallback)\nRetained destination (https://shop.example.test/retained?campaign=351&part=2)\n\n{{physical_address}}\nUnsubscribe ({{unsubscribe_url}})';
+    const expectedLinks = [
+      {sequence:1,label:'Season & news',destinationUrl:'https://shop.example.test/season?x=1&y=2'},
+      {sequence:2,label:'Visit',destinationUrl:'https://shop.example.test/fallback'},
+      {sequence:3,label:'Retained destination',destinationUrl:'https://shop.example.test/retained?campaign=351&part=2'},
+    ];
+    const quoted = (value:string) => "'" + value.replaceAll("'", "''") + "'";
+    await runtime.sql(`UPDATE campaign_revisions SET email_body=${quoted(raw)},email_text='synthetic-mango-351 stale text' WHERE id=${quoted(older.revisionId)}`);
+    await runtime.sql(`INSERT INTO campaign_revision_links (id,revision_id,sequence,label,destination_url,created_at,updated_at) VALUES ('synthetic-mango-351',${quoted(older.revisionId)},1,'Retained destination','https://shop.example.test/retained?campaign=351&part=2',1,1)`);
+    const readOlder = async () => {
+      const response = await request.get(`${runtime.url}/api/campaigns/${older.campaignId}`, {headers});
+      expect(response.status()).toBe(200);
+      return response.json();
+    };
+    expect((await readOlder()).revision).toMatchObject({emailBody:raw,emailText:'synthetic-mango-351 stale text'});
+    const assertOlder = async (name:string,emailSubject:string) => {
+      const detail = await readOlder();
+      expect(detail.campaign).toMatchObject({state:'draft',activeRevisionId:older.revisionId});
+      expect(detail.revision).toMatchObject({name,emailSubject,state:'draft',emailBody:expectedBody,emailText:expectedText,approvedAt:null,approvedByOperatorId:null,contentDigest:null});
+      expect(detail.links.map(({sequence,label,destinationUrl}:{sequence:number;label:string;destinationUrl:string}) => ({sequence,label,destinationUrl}))).toEqual(expectedLinks);
+      expect(await runtime.sql(`SELECT email_body,email_text FROM campaign_revisions WHERE id=${quoted(older.revisionId)}`)).toEqual([{email_body:expectedBody,email_text:expectedText}]);
+      expect(await runtime.sql(`SELECT sequence,label,destination_url AS destinationUrl FROM campaign_revision_links WHERE revision_id=${quoted(older.revisionId)} ORDER BY sequence`)).toEqual(expectedLinks);
+      const state = await request.get(runtime.url + '/_authoring/state', {headers:{'X-Test-Token':runtime.token}});
+      expect(state.status()).toBe(200);
+      expect(await state.json()).toEqual({jobs:[],recipients:[],approvals:[]});
+    };
+    const beforeOlder = await readOlder();
+    const renamed = await request.patch(`${runtime.url}/api/campaign-revisions/${older.revisionId}`, {headers,data:{name:'synthetic-mango-351 renamed'}});
+    expect(renamed.status(),await renamed.text()).toBe(200);
+    await assertOlder('synthetic-mango-351 renamed',beforeOlder.revision.emailSubject);
+    console.log('PROBE CAMP-022 acceptance-6 older draft: name-only native PATCH -> canonical persisted body, independently expected text and three retained destinations; no approval, recipients or jobs');
+    const resubjected = await request.patch(`${runtime.url}/api/campaign-revisions/${older.revisionId}`, {headers,data:{emailSubject:'synthetic-mango-351 subject'}});
+    expect(resubjected.status(),await resubjected.text()).toBe(200);
+    await assertOlder('synthetic-mango-351 renamed','synthetic-mango-351 subject');
+    await assertOlder('synthetic-mango-351 renamed','synthetic-mango-351 subject');
+    console.log('PROBE CAMP-022 acceptance-6 same parse: subject-only native PATCH and repeated authenticated GET -> identical HTML and text bytes, decoded destinations and no sending authority');
+
     await save('<p>synthetic-mango-125 library copy</p>');
     const named=await request.patch(`${runtime.url}/api/campaign-revisions/${revisionId}`,{headers,data:{name:'synthetic-mango-125',emailSubject:'Synthetic library copy',preheader:'Synthetic flow copy'}});expect(named.status()).toBe(200);
     const template=await request.post(runtime.url+'/api/campaign-templates',{headers,data:{revisionId,name:'synthetic-mango-125-template'}});expect(template.status()).toBe(201);
