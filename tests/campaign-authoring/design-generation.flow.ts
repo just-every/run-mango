@@ -21,19 +21,28 @@ const candidateImage = png(canvas.width, canvas.height, 9);
 const designKey = 'test-design-key';
 const publicOrigin = 'https://mango.example.test', destination = 'https://shop.example.test/season';
 
-async function openDraft(runtime: Awaited<ReturnType<typeof authoringRuntime>>, page: Page, request: APIRequestContext, emailBody = '<p>An earlier draft.</p>') {
+async function openSession(runtime: Awaited<ReturnType<typeof authoringRuntime>>, page: Page, request: APIRequestContext) {
   const open = await request.post(runtime.url + '/_authoring/open', { headers: { 'X-Test-Token': runtime.token } });
   expect(open.status(), await open.text()).toBe(200);
   await page.context().addCookies([{ name: localSessionCookieName(runtime.url), value: (await open.json()).token, url: runtime.url }]);
   const api = page.context().request, headers = { Origin: runtime.url };
+  return { api, headers };
+}
+
+async function seedDraft(runtime: Awaited<ReturnType<typeof authoringRuntime>>, api: APIRequestContext, headers: { Origin: string }, emailBody = '<p>An earlier draft.</p>', fields: { name?: string; preheader?: string; senderName?: string } = {}) {
   const created = await (await api.post(runtime.url + '/api/campaigns', { headers, data: {} })).json();
   const seeded = await api.patch(`${runtime.url}/api/campaign-revisions/${created.revisionId}`, { headers, data: {
-    name: 'Orchard letter', emailSubject: 'Good Things Are Ripening', preheader: 'Seasonal news from the orchard', emailBody,
+    name: 'Orchard letter', emailSubject: 'Good Things Are Ripening', preheader: 'Seasonal news from the orchard', emailBody, ...fields,
     inclusionRuleJson: JSON.stringify({ version: 1, operator: 'all', predicates: [{ sourceType: 'contact', field: 'email', comparator: 'contains', value: '@example.test' }] }),
     steps: [{ channel: 'email', timezone: 'Australia/Brisbane', localScheduledAt: '2031-04-07T10:00', whyThisTime: 'Operator time' }] } });
   expect(seeded.status(), await seeded.text()).toBe(200);
   const read = async () => (await api.get(`${runtime.url}/api/campaigns/${created.campaignId}`)).json();
   return { api, headers, campaignId: created.campaignId as string, read };
+}
+
+async function openDraft(runtime: Awaited<ReturnType<typeof authoringRuntime>>, page: Page, request: APIRequestContext, emailBody = '<p>An earlier draft.</p>') {
+  const { api, headers } = await openSession(runtime, page, request);
+  return seedDraft(runtime, api, headers, emailBody);
 }
 
 /** The candidate's own control: "Use this design" beside its image. */
@@ -43,6 +52,74 @@ const useDesign = (run: ReturnType<Page['getByRole']>, page: Page, slot: string)
 const designRuntime = (origin: string) => authoringRuntime({ suite: 'design-generation', queueConsumers: true, vars: {
   MANGO_PUBLIC_BASE_URL: publicOrigin, AUTHORING_LINK_HOST: 'shop.example.test', DESIGN_PROVIDER_API_KEY: designKey, DESIGN_PROVIDER_ORIGIN: origin } });
 
+// Exercise every offered count through the editor, then reconcile independent slot expectations at the native and
+// provider doors. Each run has a separate draft, so an earlier run cannot supply a missing candidate.
+export const walkBriefChoices = async ({ page, request }, testInfo) => {
+  const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc });
+  const runtime = await designRuntime(fake.origin);
+  try {
+    const session = await openSession(runtime, page, request);
+    for (const slots of [['a', 'b'], ['a', 'b', 'c'], ['a', 'b', 'c', 'd']]) {
+      const fields = { name: `Synthetic mango ${slots.length} dispatch`, preheader: `A preview for edition ${slots.length}`, senderName: `Mango editor ${slots.length}` };
+      const { api, campaignId, read } = await seedDraft(runtime, session.api, session.headers, '<p>An earlier draft.</p>', fields);
+      await openPage(page, `${runtime.url}/app/campaigns/${campaignId}/review`);
+      await page.getByRole('button', { name: 'Design with 12ui', exact: true }).click();
+      const dialog = page.getByRole('dialog', { name: 'Design this email with 12ui' });
+      const brief = dialog.getByLabel('Brief');
+      const initial = await brief.inputValue();
+      for (const value of [fields.name, 'Good Things Are Ripening', fields.preheader, fields.senderName, 'An earlier draft.']) {
+        expect(initial).toContain(value);
+      }
+      const edited = `${initial}\nUse a quiet orchard illustration.`;
+      await brief.fill(edited);
+      await expect(brief).toHaveValue(edited);
+      await dialog.getByLabel('Designs').selectOption(String(slots.length));
+      const estimate = dialog.getByRole('note');
+      await expect(estimate).toBeVisible();
+      await expect(estimate).toContainText(/\$\d+\.\d{2}/);
+      expect(Number((await estimate.innerText()).match(/\$(\d+\.\d{2})/)![1])).toBeGreaterThan(0);
+      await expect(estimate).toContainText(`${slots.length} designs`);
+      expect(fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert')).toEqual([]);
+      if (slots.length === 4) {
+        await page.screenshot({ path: testInfo.outputPath('design-generation-brief.png'), fullPage: true });
+        await page.setViewportSize({ width: 390, height: 844 });
+        await page.screenshot({ path: testInfo.outputPath('design-generation-brief-phone.png'), fullPage: true });
+        await page.setViewportSize({ width: 1440, height: 1000 });
+      }
+      const edgeStart = fake.requests.length, purchaseStart = fake.purchases.length;
+      const [started] = await Promise.all([
+        page.waitForResponse(response => response.request().method() === 'POST' && response.url() === `${runtime.url}/api/campaigns/${campaignId}/design-jobs`),
+        dialog.getByRole('button', { name: 'Generate designs', exact: true }).click(),
+      ]);
+      expect(started.status()).toBe(201);
+      const { job } = await started.json();
+      expect(job).toMatchObject({ campaignId, candidateCount: slots.length, brief: edited });
+      const status = async () => (await (await api.get(`${runtime.url}/api/campaigns/${campaignId}/design-jobs`)).json()).job;
+      await expect.poll(async () => (await status()).state, { timeout: 45000 }).toBe('choosing');
+      const native = await status();
+      expect(native).toMatchObject({ id: job.id, campaignId, candidateCount: slots.length, brief: edited });
+      expect(native.candidates.map(candidate => ({ slot: candidate.slot, state: candidate.state }))).toEqual(slots.map(slot => ({ slot, state: 'succeeded' })));
+      const stored = await runtime.sql(`SELECT campaign_id, candidate_count, brief, provider_run_id FROM design_jobs WHERE id = '${job.id}'`);
+      expect(stored).toEqual([{ campaign_id: campaignId, candidate_count: slots.length, brief: edited, provider_run_id: expect.any(String) }]);
+      expect(await runtime.sql(`SELECT slot, state FROM design_candidates WHERE job_id = '${job.id}' ORDER BY slot`)).toEqual(slots.map(slot => ({ slot, state: 'succeeded' })));
+      const edge = fake.requests.slice(edgeStart).filter(item => item.method === 'POST');
+      const creates = edge.filter(item => item.path === '/api/v1/create');
+      expect(creates).toHaveLength(1);
+      expect(creates[0].json).toMatchObject({ concept: expect.stringContaining(edited), candidates: slots.map(slot => ({ slot })) });
+      expect(edge.filter(item => item.path !== '/api/v1/create').map(item => item.path).sort()).toEqual(slots.map(slot => `/api/v1/create/${stored[0].provider_run_id}/candidates/${slot}`));
+      expect(fake.purchases.slice(purchaseStart).map(item => item.split(':')[1]).sort()).toEqual(slots);
+      const run = page.getByRole('region', { name: 'Design with 12ui' });
+      await expect(run.getByRole('img')).toHaveCount(slots.length);
+      for (const slot of slots) await expect(useDesign(run, page, slot.toUpperCase())).toBeVisible();
+      expect((await read()).revision.emailBody).toContain('An earlier draft.');
+    }
+    expect(fake.requests.filter(item => item.path === '/api/v1/convert')).toEqual([]);
+    const state = await (await request.post(runtime.url + '/_authoring/state', { headers: { 'X-Test-Token': runtime.token } })).json();
+    expect(state.approvals).toEqual([]);
+    expect(state.recipients).toEqual([]);
+    expect(state.jobs).toEqual([]);
+  } finally { await runtime.close(); await fake.close(); }
+};
 
 
 
@@ -100,12 +177,24 @@ export const walk1 = async ({ page, request }, testInfo) => {
     await reloadPage(page);
     await expect(run.getByRole('img', { name: 'Design A' })).toBeVisible();
     await expect(run.getByRole('img', { name: 'Design B' })).toBeVisible({ timeout: 45000 });
+    // This estimate must be visible before the operator commits a layout purchase, including after reopening the draft.
+    const layoutEstimate = run.getByText(/on your 12ui account for the layout/);
+    await expect(layoutEstimate).toBeVisible();
+    await expect(layoutEstimate).toContainText(/\$\d+\.\d{2}/);
+    expect(Number((await layoutEstimate.innerText()).match(/\$(\d+\.\d{2})/)![1])).toBeGreaterThan(0);
+    expect(fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert')).toEqual([]);
+    expect(fake.purchases.filter(item => item.startsWith('layout:'))).toEqual([]);
     await page.screenshot({ path: testInfo.outputPath('design-generation-candidates.png'), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: testInfo.outputPath('design-generation-candidates-phone.png'), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 1000 });
 
     // Choosing prepares the layout in the background, across a reload. The operator keeps typing in the body: when the
     // layout is ready the run says so with a notice, and nothing opens or takes focus until the operator asks.
     await useDesign(run, page, 'B').click();
     await expect(run.getByRole('status')).toBeVisible();
+    await expect.poll(() => fake.purchases.filter(item => item.startsWith('layout:')).length).toBe(1);
+    expect(fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert')).toHaveLength(1);
     await reloadPage(page);
     const apply = page.getByRole('dialog', { name: 'Use this design in the email' });
     const ready = run.getByRole('button', { name: 'Use design B in the email', exact: true });

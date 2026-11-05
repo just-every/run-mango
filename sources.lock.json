@@ -8490,11 +8490,11 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
-      "sha256": "042d2ffc67435f6d9f3635a728785fcd6367fdd8b2f44de791ae1b355e4f1d34",
+      "sha256": "3c5353157fb73ceae3c636051974408930b46883af89d3bedaa4dc0d647bcab8",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
-      "sha256": "00835a3edef9571ade4de0db160e588b6988f1ddeb6caf73b47f8bc538dc365c",
+      "sha256": "332e55d31a7d71f7863d57bc220ec687de692c3c494f7104b0dd7e25ebddb1d8",
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
