@@ -73,6 +73,28 @@ export async function decisionRuntime() {
 
 export type DecisionRuntime=Awaited<ReturnType<typeof decisionRuntime>>;
 
+/** Bracket the public request independently of response and persistence timestamps. */
+export async function timed<T>(operation:()=>Promise<T>) {
+  const before=Date.now();
+  const value=await operation();
+  return {before,after:Date.now(),value};
+}
+
+export async function persistedTransitions(runtime:DecisionRuntime,proposalId:string) {
+  const rows=await runtime.db.prepare(`SELECT id,from_state AS fromState,to_state AS toState,
+    actor_id AS actorId,reason,occurred_at AS occurredAt,created_at AS createdAt
+    FROM proposal_transitions WHERE proposal_id=? ORDER BY occurred_at,id`)
+    .bind(proposalId).all<{id:string;fromState:string;toState:string;actorId:string;reason:string|null;occurredAt:number;createdAt:number}>();
+  return rows.results;
+}
+
+/** Seed only the elapsed deadline; the authenticated read must perform expiry and its audit. */
+export async function dueProposal(runtime:DecisionRuntime,proposalId:string) {
+  const deadline=Date.now()-60_000;
+  await runtime.db.prepare('UPDATE proposals SET send_by_at=? WHERE id=?').bind(deadline,proposalId).run();
+  return deadline;
+}
+
 export async function generated(runtime:DecisionRuntime) {
   const result=await runtime.call('/api/proposals/generate',{});
   if(result.status!==201)throw new Error(`Generation did not succeed: ${JSON.stringify(result.body)}`);
