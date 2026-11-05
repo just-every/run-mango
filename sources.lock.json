@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "b4d4b5a80d7cf0e47da31ec844ac62d60cb9377432979b7e525ce880cb4c54f5",
+      "sha256": "6218bbbfeb867b0b63489e059f0bac635adc9db85b0366d3ba95077fe4eacbda",
       "executable": false
     },
     "DEMO.md": {
@@ -8467,6 +8467,10 @@
     },
     "tests/campaign-authoring/browser.spec.ts": {
       "sha256": "de3c4836ad1b78fe34e41e9f746168d238f2833ce6f13618c0faa96213f2079e",
+      "executable": false
+    },
+    "tests/campaign-authoring/canonical-content-journey.ts": {
+      "sha256": "888ce6dbb56ed626426bdd50f4f6fd2b7d718531de9e1ac2f7500a6dae4378db",
       "executable": false
     },
     "tests/campaign-authoring/canonical-save.spec.ts": {

@@ -56,6 +56,7 @@ export async function canonicalContentJourney(request: APIRequestContext, runtim
   expect(initial.links.map((link: {destinationUrl:string}) => link.destinationUrl)).toEqual(['https://shop.example.test/offer?x=1&y=2']);
   expect((await checks()).blockers.map((row: {kind:string}) => row.kind)).not.toContain('message.content');
   await save(expected,expected,expectedText);
+  await save(expected+footer,expected,expectedText);
   await save(expected.slice(0,-footer.length),expected,expectedText);
   console.log('PROBE CAMP-022 acceptance-1: explicit native create and repeat saves -> one postal and unsubscribe footer, exact independent HTML and destination-bearing text');
   console.log('PROBE CAMP-022 acceptance-3: noncanonical case, quotes and unquoted destination -> accepted save preserving kept title, inline style and personalization token');
