@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "3756eee9bf0383642103d23be5bea5f8065abfe0dd7b0148d641e8a5654894b8",
+      "sha256": "76e333238b582f19af2929e6a468509ef9a069ce50809b4deb42bbf1140a01bb",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "00cba214097b3c3efb2f86458a7eb006eade723d8b7dfa28c8e7d41b9e388992",
+      "sha256": "b99fdf4711b8b28402f63ecf6402ce9f5ef53596e3cc1fab780b8ba6d0f02266",
       "executable": false
     },
     "DEMO.md": {
@@ -8938,7 +8938,7 @@
       "executable": false
     },
     "tests/go-live/paid-signup-journey.ts": {
-      "sha256": "19905791da02d8894686a454bbfba4658e3ac2d3e399b6a699996b3eb7a68313",
+      "sha256": "bdb510612eb2799af3fd93750bf17439c7a45b8f2f1a8b0743681bd3142dc52e",
       "executable": false
     },
     "tests/go-live/paid-tier-journey.ts": {
