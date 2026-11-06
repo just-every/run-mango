@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f126",
+  "head": "80bf3b386a946b6635c99513735b08aff4804e99",
+  "runtime": {
+    "node": "22.20.0",
+    "pnpm": "10.12.4",
+    "browser": "/usr/bin/chromium",
+    "browserArgs": [
+      "--no-sandbox",
+      "--use-mock-keychain",
+      "--password-store=basic"
+    ]
+  },
+  "checks": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "views-check.log"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0,
+      "note": "Generated files restored, none committed."
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "lock-write.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "lock-check.log"
+    },
+    {
+      "command": "pnpm exec rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    {
+      "command": "node scripts/sync-integration.mjs --check",
+      "exit": 0,
+      "log": "integration-check.log"
+    },
+    {
+      "command": "node /tmp/mango-migration-proof.mjs",
+      "exit": 0,
+      "log": "migration-proof.json",
+      "note": "One-off, non-committed check. All earlier SQL applied before the new additive migration; deployed SQL and digest match."
+    },
+    {
+      "command": "npx -y @runeditrun/rer build",
+      "exit": 0,
+      "log": "build.log",
+      "sourceHead": "b8aa7197494c7aa1941ee9744a23698ab8ce1cf7",
+      "note": "Product tree identical to final candidate; only commit ancestry differs."
+    }
+  ],
+  "focusedJourney": {
+    "command": "timeout 1200 pnpm exec playwright test --config tests/go-live/playwright.config.js delivery.journeys.ts --grep 'owner connects delivery'",
+    "head": "80bf3b386a946b6635c99513735b08aff4804e99",
+    "status": "passed",
+    "exit": 0,
+    "playwrightSummary": "1 passed (5.2m)",
+    "log": "candidate-focused.log",
+    "note": "Confirmation run kept identical source and tests and recorded shell exit explicitly. The first invocation printed one pass but the enclosing tool reported exit 1 without a failure; its actual output is retained separately.",
+    "testCount": 1,
+    "summary": "1 passed (5.0m)",
+    "exitReceipt": "candidate-focused-exit.txt",
+    "observedCompleteAt": "2026-11-06T15:51:37.071115+00:00",
+    "firstInvocation": {
+      "toolExit": 1,
+      "summary": "1 passed (5.2m)",
+      "log": "candidate-focused-first.log",
+      "testFailureReported": false
+    }
+  },
+  "mechanical": "MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock and check exit=0; views=node src/base/contract-docs.mjs write and check, restored from main exit=0; ledger=node scripts/sync-integration.mjs --check and migration replay proof exit=0"
+}

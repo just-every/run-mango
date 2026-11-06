@@ -1,0 +1,114 @@
+shards (connections)	Run this shard	﻿2026-11-06T14:26:14.4348165Z ##[group]Run node scripts/verification/ci.mjs "$SHARD"
+shards (connections)	Run this shard	2026-11-06T14:26:14.4348527Z [36;1mnode scripts/verification/ci.mjs "$SHARD"[0m
+shards (connections)	Run this shard	2026-11-06T14:26:14.4366433Z shell: /usr/bin/bash -e {0}
+shards (connections)	Run this shard	2026-11-06T14:26:14.4366658Z env:
+shards (connections)	Run this shard	2026-11-06T14:26:14.4366825Z   CI: true
+shards (connections)	Run this shard	2026-11-06T14:26:14.4366998Z   WRANGLER_SEND_METRICS: false
+shards (connections)	Run this shard	2026-11-06T14:26:14.4367227Z   PLAYWRIGHT_SKIP_BROWSER_GC: 1
+shards (connections)	Run this shard	2026-11-06T14:26:14.4367510Z   PLAYWRIGHT_BROWSERS_PATH: /home/runner/work/_temp/ms-playwright
+shards (connections)	Run this shard	2026-11-06T14:26:14.4368168Z   SHARD: connections
+shards (connections)	Run this shard	2026-11-06T14:26:14.4368685Z   MANGO_VERIFY_MEMBERS: [
+shards (connections)	Run this shard	  {
+shards (connections)	Run this shard	    "name": "go-live",
+shards (connections)	Run this shard	    "stage": "go-live",
+shards (connections)	Run this shard	    "files": [
+shards (connections)	Run this shard	      "source-freshness.journeys.ts",
+shards (connections)	Run this shard	      "roles.journeys.ts",
+shards (connections)	Run this shard	      "sync-integrations.journeys.ts"
+shards (connections)	Run this shard	    ]
+shards (connections)	Run this shard	  }
+shards (connections)	Run this shard	]
+shards (connections)	Run this shard	2026-11-06T14:26:14.4369327Z   MANGO_TEST_WORK_DIR: /home/runner/work/_temp/mango-verification/connections
+shards (connections)	Run this shard	2026-11-06T14:26:14.4369645Z ##[endgroup]
+shards (connections)	Run this shard	2026-11-06T14:26:14.4625367Z VERIFY_MEMBER go-live
+shards (connections)	Run this shard	2026-11-06T14:26:14.5092463Z VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+shards (connections)	Run this shard	2026-11-06T14:26:14.5095617Z Verification timing and diagnostics: /home/runner/work/_temp/mango-verification/connections/members/go-live/evidence/4b3746152534/verify/go-live-q35GTD
+shards (connections)	Run this shard	2026-11-06T14:26:14.5252251Z VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-06T14:26:14.509Z"}
+shards (connections)	Run this shard	2026-11-06T14:26:14.5300760Z go-live
+shards (connections)	Run this shard	2026-11-06T14:26:21.0771257Z 
+shards (connections)	Run this shard	2026-11-06T14:26:21.0772063Z Running 3 tests using 2 workers
+shards (connections)	Run this shard	2026-11-06T14:26:21.0783685Z 
+shards (connections)	Run this shard	2026-11-06T14:26:21.9999062Z Operator access: start native HTTP installation
+shards (connections)	Run this shard	2026-11-06T14:26:25.1677138Z Operator access: claim owner
+shards (connections)	Run this shard	2026-11-06T14:26:25.2747016Z Operator access: confirm teammate
+shards (connections)	Run this shard	2026-11-06T14:26:25.3650311Z Operator access: cancel pending invitation
+shards (connections)	Run this shard	2026-11-06T14:26:25.5623730Z Operator access: confirm while removal is pending
+shards (connections)	Run this shard	2026-11-06T14:26:25.8097037Z Operator access: revoke active sessions
+shards (connections)	Run this shard	2026-11-06T14:26:51.6684153Z Flow proof 1440: open
+shards (connections)	Run this shard	2026-11-06T14:26:56.9489686Z Flow proof 1440: build
+shards (connections)	Run this shard	2026-11-06T14:26:57.4648324Z Flow proof 1440: connect
+shards (connections)	Run this shard	2026-11-06T14:27:00.1040739Z Flow proof 1440: saved, inspect reload
+shards (connections)	Run this shard	2026-11-06T14:28:28.7558847Z   ✓  2 tests/go-live/source-freshness.journeys.ts:5:1 › [STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority (2.1m)
+shards (connections)	Run this shard	2026-11-06T14:28:55.2491123Z   ✓  1 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (2.6m)
+shards (connections)	Run this shard	2026-11-06T14:29:00.5155093Z   ✘  3 tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression (31.7s)
+shards (connections)	Run this shard	2026-11-06T14:29:00.5476221Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5481951Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5497693Z   1) tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5508461Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5508766Z     Error: expect(received).toBeGreaterThan(expected)
+shards (connections)	Run this shard	2026-11-06T14:29:00.5508998Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5509112Z     Expected: > 0
+shards (connections)	Run this shard	2026-11-06T14:29:00.5509338Z     Received:   0
+shards (connections)	Run this shard	2026-11-06T14:29:00.5509443Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5509594Z        at custom-event-journey.ts:40
+shards (connections)	Run this shard	2026-11-06T14:29:00.5509761Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5509999Z       38 |   // Exhaust this key's own public read allowance; no database counter is edited.
+shards (connections)	Run this shard	2026-11-06T14:29:00.5513035Z       39 |   const requests=await Promise.all(Array.from({length:65},()=>site.call('/api/integrations/v1/segments',{headers:{Authorization:`***;
+shards (connections)	Run this shard	2026-11-06T14:29:00.5514310Z     > 40 |   const limited=requests.filter(r=>r.status===429);expect(limited.length).toBeGreaterThan(0);expect(requests.every(r=>[200,429].includes(r.status))).toBe(true);
+shards (connections)	Run this shard	2026-11-06T14:29:00.5515702Z          |                                                                           ^
+shards (connections)	Run this shard	2026-11-06T14:29:00.5516653Z       41 |   expect(await limited[0].json()).toEqual({error:'rate_limited'});expect(Number(limited[0].headers.get('Retry-After'))).toBeGreaterThan(0);
+shards (connections)	Run this shard	2026-11-06T14:29:00.5518094Z       42 |   const other=await json(await site.call('/api/settings/integrations',{method:'POST',cookie,body:{name:'Independent reader',scopes:['contacts:read']}}),201);
+shards (connections)	Run this shard	2026-11-06T14:29:00.5519484Z       43 |   expect((await site.call('/api/integrations/v1/segments',{headers:{Authorization:`***;
+shards (connections)	Run this shard	2026-11-06T14:29:00.5520240Z         at proveCustomEvents ([REDACTED]/tests/go-live/custom-event-journey.ts:40:75)
+shards (connections)	Run this shard	2026-11-06T14:29:00.5520927Z         at [REDACTED]/tests/go-live/sync-integrations.journeys.ts:90:5
+shards (connections)	Run this shard	2026-11-06T14:29:00.5521262Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5522190Z     Error Context: ../../_temp/mango-verification/connections/members/go-live/evidence/4b3746152534/go-live/sync-integrations.journeys-cd2c8-ast-moment-send-suppression/error-context.md
+shards (connections)	Run this shard	2026-11-06T14:29:00.5523068Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5523187Z   1 failed
+shards (connections)	Run this shard	2026-11-06T14:29:00.5524721Z     tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression 
+shards (connections)	Run this shard	2026-11-06T14:29:00.5525782Z   2 passed (2.8m)
+shards (connections)	Run this shard	2026-11-06T14:29:00.6457067Z Verification failed: go-live: exit 1, signal none.
+shards (connections)	Run this shard	2026-11-06T14:29:00.6457524Z Command: pnpm
+shards (connections)	Run this shard	2026-11-06T14:29:00.6457907Z Last output (up to 40 lines):
+shards (connections)	Run this shard	2026-11-06T14:29:00.6458147Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6458381Z Operator access: start native HTTP installation
+shards (connections)	Run this shard	2026-11-06T14:29:00.6458854Z Operator access: claim owner
+shards (connections)	Run this shard	2026-11-06T14:29:00.6459263Z Operator access: confirm teammate
+shards (connections)	Run this shard	2026-11-06T14:29:00.6459717Z Operator access: cancel pending invitation
+shards (connections)	Run this shard	2026-11-06T14:29:00.6460069Z Operator access: confirm while removal is pending
+shards (connections)	Run this shard	2026-11-06T14:29:00.6460477Z Operator access: revoke active sessions
+shards (connections)	Run this shard	2026-11-06T14:29:00.6460758Z Flow proof 1440: open
+shards (connections)	Run this shard	2026-11-06T14:29:00.6460973Z Flow proof 1440: build
+shards (connections)	Run this shard	2026-11-06T14:29:00.6461196Z Flow proof 1440: connect
+shards (connections)	Run this shard	2026-11-06T14:29:00.6461442Z Flow proof 1440: saved, inspect reload
+shards (connections)	Run this shard	2026-11-06T14:29:00.6462581Z   ✓  2 tests/go-live/source-freshness.journeys.ts:5:1 › [STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority (2.1m)
+shards (connections)	Run this shard	2026-11-06T14:29:00.6463937Z   ✓  1 tests/go-live/roles.journeys.ts:12:1 › [BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history (2.6m)
+shards (connections)	Run this shard	2026-11-06T14:29:00.6465370Z   ✘  3 tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression (31.7s)
+shards (connections)	Run this shard	2026-11-06T14:29:00.6466309Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6466317Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6467114Z   1) tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6467921Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6468097Z     Error: expect(received).toBeGreaterThan(expected)
+shards (connections)	Run this shard	2026-11-06T14:29:00.6468313Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6468408Z     Expected: > 0
+shards (connections)	Run this shard	2026-11-06T14:29:00.6468606Z     Received:   0
+shards (connections)	Run this shard	2026-11-06T14:29:00.6468724Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6468846Z        at custom-event-journey.ts:40
+shards (connections)	Run this shard	2026-11-06T14:29:00.6469002Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6469254Z       38 |   // Exhaust this key's own public read allowance; no database counter is edited.
+shards (connections)	Run this shard	2026-11-06T14:29:00.6470207Z       39 |   const requests=await Promise.all(Array.from({length:65},()=>site.call('/api/integrations/v1/segments',{headers:{Authorization:`***;
+shards (connections)	Run this shard	2026-11-06T14:29:00.6471270Z     > 40 |   const limited=requests.filter(r=>r.status===429);expect(limited.length).toBeGreaterThan(0);expect(requests.every(r=>[200,429].includes(r.status))).toBe(true);
+shards (connections)	Run this shard	2026-11-06T14:29:00.6471908Z          |                                                                           ^
+shards (connections)	Run this shard	2026-11-06T14:29:00.6472512Z       41 |   expect(await limited[0].json()).toEqual({error:'rate_limited'});expect(Number(limited[0].headers.get('Retry-After'))).toBeGreaterThan(0);
+shards (connections)	Run this shard	2026-11-06T14:29:00.6473367Z       42 |   const other=await json(await site.call('/api/settings/integrations',{method:'POST',cookie,body:{name:'Independent reader',scopes:['contacts:read']}}),201);
+shards (connections)	Run this shard	2026-11-06T14:29:00.6474217Z       43 |   expect((await site.call('/api/integrations/v1/segments',{headers:{Authorization:`***;
+shards (connections)	Run this shard	2026-11-06T14:29:00.6474753Z         at proveCustomEvents ([REDACTED]/tests/go-live/custom-event-journey.ts:40:75)
+shards (connections)	Run this shard	2026-11-06T14:29:00.6475217Z         at [REDACTED]/tests/go-live/sync-integrations.journeys.ts:90:5
+shards (connections)	Run this shard	2026-11-06T14:29:00.6475448Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6476039Z     Error Context: ../../_temp/mango-verification/connections/members/go-live/evidence/4b3746152534/go-live/sync-integrations.journeys-cd2c8-ast-moment-send-suppression/error-context.md
+shards (connections)	Run this shard	2026-11-06T14:29:00.6476593Z 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6476675Z   1 failed
+shards (connections)	Run this shard	2026-11-06T14:29:00.6477619Z     tests/go-live/sync-integrations.journeys.ts:13:1 › [CONT-014][CONT-026][CONT-025] [INT-007][INT-014][INT-011][OPER-007][CONT-004][CONT-006] scoped custom events and client sync, replayable refusals and last-moment send suppression 
+shards (connections)	Run this shard	2026-11-06T14:29:00.6478968Z   2 passed (2.8m)
+shards (connections)	Run this shard	2026-11-06T14:29:00.6479780Z Log: /home/runner/work/_temp/mango-verification/connections/members/go-live/evidence/4b3746152534/verify/go-live-q35GTD/go-live/install.log
+shards (connections)	Run this shard	2026-11-06T14:29:00.6545687Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,24 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "source": "GitHub REST discovery before candidate push",
+  "verify": [
+    {
+      "id": 42217811205,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 42214350885,
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "runSite": {
+    "id": 42217811413,
+    "status": "completed",
+    "conclusion": "success"
+  },
+  "candidateEqualsMain": false,
+  "publicationScan": "not run in cloud; fleet lander must produce its own complete scan receipt"
+}

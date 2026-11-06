@@ -1,0 +1,49 @@
+{
+  "idle": {
+    "error": null,
+    "marketing": 0
+  },
+  "validEvent": {
+    "receipt": "01M6VB3GHQCYJM0VXABT4CJ6JS",
+    "eventAt": 1794149265335,
+    "error": null
+  },
+  "silence": {
+    "generation": "62467e22-e41a-4571-9fe3-1fec4094e9f0",
+    "accepted": "01M6Y0Y5GT7PMRY3JB6D11RFTJ",
+    "reason": "delivery-events-silent",
+    "noticeOperators": [
+      "go-live-owner",
+      "synthetic-mango-145"
+    ],
+    "pendingBefore": {
+      "id": "01M6Y0Y5GT26AE0Y9V5E7C92XM",
+      "destination": "synthetic-mango-143@example.test",
+      "transport_disposition": "queued",
+      "skip_reason": null,
+      "attempt_count": 0,
+      "send_by_at": 1794250967738,
+      "last_error_code": null,
+      "sending_generation": null,
+      "sending_accepted_at": null,
+      "sending_signed_event_at": null,
+      "provider_message_id": null
+    },
+    "pendingAfter": {
+      "id": "01M6Y0Y5GT26AE0Y9V5E7C92XM",
+      "destination": "synthetic-mango-143@example.test",
+      "transport_disposition": "skipped",
+      "skip_reason": "send-window-expired",
+      "attempt_count": 0,
+      "send_by_at": 1794250967738,
+      "last_error_code": "provider-authority-unavailable",
+      "sending_generation": null,
+      "sending_accepted_at": null,
+      "sending_signed_event_at": null,
+      "provider_message_id": null
+    },
+    "marketingHandoffs": 2,
+    "restarted": true,
+    "recoveredOnlyWithCurrentSignedMarketing": true
+  }
+}
