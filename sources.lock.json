@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "7a61fcec5393735e4302ca8c93efc064ee172766f4ccb2069d88a350b764681e",
+      "sha256": "e19d1da8c281baf2ed0ad069a51be0e9081a647be11b60520033380ac194f003",
       "executable": false
     },
     "DEMO.md": {
@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "6330ffb0fd3e3ae8734884b76c0e68b4d518563fef3af5fe67925d9f96ceb569",
+      "sha256": "103e938f65f655477598cf98252612176141450b056f796f0e4ebf992547b7b3",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -9403,6 +9403,10 @@
     },
     "tests/proposals-decision/forecast-provenance.spec.ts": {
       "sha256": "4b208dde75c6d90ef7f83478b4d6fbaa77b245d4a5b6b5d22fbe8cf1f0934b33",
+      "executable": false
+    },
+    "tests/proposals-decision/grounding-citations.spec.ts": {
+      "sha256": "8d3d6ac203c6b010715119c51e361809bc964244e065ad3289a9f3f7e6469d48",
       "executable": false
     },
     "tests/proposals-decision/history.ts": {
