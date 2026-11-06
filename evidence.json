@@ -7,10 +7,10 @@
       "sha256": "74c0f350a28c056814a33494aef0f1d7ec3a2777a77c7411da8e518661755b88"
     },
     {
-      "blob": "e52bac3909bebe88316000c5307ba3e568907d0a",
-      "bytes": 4160,
+      "blob": "fd81178a58a93cb075f0f3cf066011d5baa8a431",
+      "bytes": 4579,
       "path": "REPORT.md",
-      "sha256": "1beab4f3dacce36a204b0a63a570c2538954c613d759104972d7ff0a915e9afa"
+      "sha256": "fdeeb3133f9f8e79de7b499484e111145002ceb2a789a1c41419c43cd643a156"
     },
     {
       "blob": "ab89bfacb61db171147233cd6672f06657b02915",
@@ -65,6 +65,12 @@
       "bytes": 1548,
       "path": "contract-inventory.json",
       "sha256": "ad1dc935546222295a1a81dac24ee08e8618ddf323d2bd496d2f939fbc35a137"
+    },
+    {
+      "blob": "43233284edeb54aef49ef8d0643b731b2297e41e",
+      "bytes": 4875,
+      "path": "evidence-readback-receipt.json",
+      "sha256": "2d66443485868efa3c941e54e7a49a1eee62177b88dee4d53e19527d0251a53c"
     },
     {
       "blob": "253eebf2611ce5e8a8b564f161428ce21cf650ef",

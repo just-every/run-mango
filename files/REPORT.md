@@ -22,3 +22,5 @@ Missing source AND exact-chain protection remains with the SAME installed MAIN/F
 ## Packet
 
 VERDICT.md is the complete judgment, verbatim frozen rubric, rider scores, exact original Gap, all NOT RUN reasons and contingent flip disposition. PLAN.md is the initial plan. Actual receipts and command logs are selected by name; screenshots contain synthetic data only. Private setup and runtime state, credentials, secret/environment dumps, symlinks and held-out gate material are excluded. The source checkout and its dependencies are disposable; packet and publication evidence remain outside it.
+
+The first evidence publication, 8344610446511d56fa709d9fab40aeffe37f107b, was fetched through the supplied evidence reader with its exact expected head. Manifest identity, all 24 selected files, blob identities, byte counts and SHA-256 hashes verified; the actual evidence-readback-receipt.json is included in the terminal packet publication. Evidence publication remains separate from product acceptance and landing.
