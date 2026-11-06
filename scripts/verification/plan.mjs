@@ -21,7 +21,7 @@ export const packs = [
   {name:'phone',members:[member('newsletter-ui')]},
   {name:'authoring',members:[member('main',['campaign-authoring/browser.spec.ts','campaign-authoring/design-import.spec.ts','campaign-authoring/design-generation.spec.ts']),member('go-live',['content-checks.journeys.ts','woocommerce.journeys.ts','resend-delivery.journeys.ts','scheduler.journeys.ts'])]},
   {name:'identity-data',members:[member('main',['audience-controls/segments.spec.ts','audience-import/signup.spec.ts','docs.spec.ts','rendering.spec.ts','portability.spec.ts','production-entry.spec.ts','shopify/connection.spec.ts','proposals-decision/decision-routes.spec.ts','proposals-decision/content-editing.spec.ts','proposals-decision/forecast-provenance.spec.ts']),member('local-start',['editor.journey.ts'])]},
-  {name:'native',members:[member('local-start',['authority.journey.ts','command-data.journey.ts']),member('go-live',['mailbox-provider.journeys.ts'])]},
+  {name:'native',members:[member('local-start',['authority.journey.ts','command-data.journey.ts','sender-setup.journey.ts']),member('go-live',['mailbox-provider.journeys.ts'])]},
   {name:'reports',members:[member('campaign-results'),member('go-live',['managed-mail.journeys.ts','shared-kiosk.journeys.ts','opt-out-reasons.journeys.ts'])]},
   {name:'move-in',members:[member('move-in'),member('go-live',['personalisation.journeys.ts','open-estimates.journeys.ts'])]},
   {name:'campaigns',members:[member('go-live',['go-live.journeys.ts','contact-links.journeys.ts','presend-checks.journeys.ts','typed-tests.journeys.ts'])]},
