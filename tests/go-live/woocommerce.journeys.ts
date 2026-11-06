@@ -5,12 +5,14 @@ import {createHmac} from 'node:crypto';
 import {providerEdge} from './edge';
 import {wooCommerceEdge} from './woocommerce-edge';
 import {eventSigner} from './sendgrid-events';
-import {installation, json, sender, confirmedContact} from './harness';
+import {installation, json, sender, confirmedContact, draftCampaign} from './harness';
 import {openPage} from '../support/navigation';
 
 test('[INT-002] WooCommerce owner connection syncs store facts and signed replay preserves identity, consent and failed-operation recovery', async ({page}, info) => {
-  const woo = wooCommerceEdge(), edge = await providerEdge({woo: woo.handle, links: {'https://woo.example.test/': {}}});
-  const site = await installation(edge, eventSigner(), {networkHosts: ['woo.example.test']});
+  const catalogUrl = 'https://catalog.woo.example.test/harvest', operatorUrl = 'https://operator.example.test/offer';
+  const catalogHost = new URL(catalogUrl).hostname, operatorHost = new URL(operatorUrl).hostname;
+  const woo = wooCommerceEdge({catalogUrl}), edge = await providerEdge({woo: woo.handle, links: {'https://woo.example.test/': {}, [catalogUrl]: {}, [operatorUrl]: {}}});
+  const site = await installation(edge, eventSigner(), {networkHosts: ['woo.example.test', catalogHost, operatorHost]});
   try {
     const cookie = await site.open();
     const connection = {url: 'https://woo.example.test/', key: 'synthetic-mango-1', secret: 'synthetic-mango-2', signingSecret: 'synthetic-mango-3', exclusiveSecret: true, pluginEnabled: true};
@@ -121,6 +123,41 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
       await page.screenshot({path: info.outputPath(`woocommerce-store-${width}.png`), fullPage: true});
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
+    // MSG-014: the catalog allowance belongs to the live source, not its retained rows.
+    const hostsBefore = await json(await site.call('/api/settings/link-hosts', {cookie}), 200);
+    expect(hostsBefore.sources).toContainEqual({host: catalogHost, source: 'WooCommerce catalog'});
+    await json(await site.call('/api/settings/link-hosts', {method: 'PUT', cookie, body: {hosts: [...hostsBefore.hosts, operatorHost].join(',')}}), 200);
+    const hostDraft = await draftCampaign(site, cookie, 'Synthetic Mango disconnected catalog', [woo.state.customer.email], new Date(Date.now() + 7200000));
+    await json(await site.call(`/api/campaign-revisions/${hostDraft.revisionId}`, {method: 'PATCH', cookie, body: {
+      emailBody: `<p><a href="${catalogUrl}">Catalog harvest</a> and <a href="${operatorUrl}">Operator offer</a></p>`,
+    }}), 200);
+    const reviewPath = `/api/campaigns/${hostDraft.campaignId}/review`;
+    const inspectHosts = async () => {
+      await json(await site.call(`/api/campaigns/${hostDraft.campaignId}/checks`, {method: 'POST', cookie, body: {revisionId: hostDraft.revisionId}}), 200);
+      return json(await site.call(reviewPath, {cookie}), 200);
+    };
+    const connectedReview = await inspectHosts();
+    expect(connectedReview.links.map((link: any) => link.destinationUrl).sort()).toEqual([catalogUrl, operatorUrl].sort());
+    for (const kind of ['message.links', 'message.links.resolved']) expect(connectedReview.checks).toContainEqual(expect.objectContaining({kind, status: 'passed', blocking: false}));
+    expect(connectedReview.blockedHosts).toEqual([]);
+    const catalogRows = await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='product' ORDER BY provider_source_id`);
+    expect(catalogRows).toHaveLength(2);
+    expect(catalogRows.map(row => JSON.parse(row.payload).url)).toEqual([catalogUrl, catalogUrl]);
+    expect(await site.rows(`SELECT host,source_id,source FROM link_host_sources WHERE host='${catalogHost}'`)).toEqual([{host: catalogHost, source_id: provider + ':catalog', source: 'WooCommerce catalog'}]);
+    const authority = async () => ({
+      campaign: await site.rows(`SELECT * FROM campaigns WHERE id='${hostDraft.campaignId}'`),
+      revision: await site.rows(`SELECT * FROM campaign_revisions WHERE id='${hostDraft.revisionId}'`),
+      approvals: await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${hostDraft.campaignId}'`),
+      recipients: await site.rows(`SELECT * FROM recipient_steps WHERE campaign_id='${hostDraft.campaignId}'`),
+      dispatch: (await site.control('/_golive/emissions')).filter((entry: any) => entry.command.kind === 'campaign.dispatch'),
+      marketing: edge.sends.filter(send => send.body.headers?.['List-Unsubscribe']),
+    });
+    const unapproved = await authority();
+    expect(unapproved.campaign).toEqual([expect.objectContaining({state: 'draft'})]);
+    expect(unapproved.revision).toEqual([expect.objectContaining({approved_at: null, approved_by_operator_id: null})]);
+    for (const rows of [unapproved.approvals, unapproved.recipients, unapproved.dispatch, unapproved.marketing]) expect(rows).toEqual([]);
+    await page.context().clearCookies();
+    await page.context().addCookies([{name: cookie.split('=')[0], value: cookie.split('=')[1], url: site.runtime.url}]);
     await openPage(page, site.runtime.url + '/app/settings');
     await page.getByRole('button', {name: 'Disconnect WooCommerce', exact: true}).click();
     await expect(page.locator('#woocommerce [role=status]').filter({hasText: 'No WooCommerce connection.'})).toBeVisible();
@@ -131,6 +168,50 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type<>'cart'`))).toHaveLength(5);
     expect((await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='cart'`))).toHaveLength(6);
     expect((await site.rows('SELECT state FROM woocommerce_flows'))).toEqual([{state: 'paused'}]);
+    const disconnectedReview = await inspectHosts();
+    expect(disconnectedReview.blockedHosts).toEqual([{host: catalogHost, links: [catalogUrl]}]);
+    for (const kind of ['message.links', 'message.links.resolved']) {
+      const check = disconnectedReview.checks.find((entry: any) => entry.kind === kind);
+      expect(check).toMatchObject({status: 'blocked', blocking: true});
+      expect(check.detail).toContain(catalogUrl);
+      expect(check.detail).not.toContain(operatorUrl);
+    }
+    const disconnectedHosts = await json(await site.call('/api/settings/link-hosts', {cookie}), 200);
+    expect(disconnectedHosts.hosts).not.toContain(catalogHost);
+    expect(disconnectedHosts.sources.some((entry: any) => entry.host === catalogHost)).toBe(false);
+    expect(disconnectedHosts.sources).toContainEqual({host: operatorHost, source: 'Operator entry'});
+    expect(disconnectedHosts.hosts).toContain(operatorHost);
+    expect(await site.rows(`SELECT * FROM link_host_sources WHERE host='${catalogHost}'`)).toEqual([]);
+    const removals = await json(await site.call('/api/activity?action=link-host.source-removed', {cookie}), 200);
+    const catalogRemoval = removals.entries.filter((entry: any) => entry.objectId === catalogHost);
+    expect(catalogRemoval).toEqual([expect.objectContaining({action: 'link-host.source-removed', actorType: 'system', operatorId: 'link-host-sources', detail: {host: catalogHost, source: 'WooCommerce catalog'}})]);
+    // Repeated public reads and checks cannot resurrect the disconnected allowance.
+    await inspectHosts();
+    expect(await site.rows(`SELECT * FROM source_records WHERE provider='${provider}' AND source_type='product' ORDER BY provider_source_id`)).toEqual(catalogRows);
+    expect((await json(await site.call('/api/settings/link-hosts', {cookie}), 200)).hosts).not.toContain(catalogHost);
+    await page.setViewportSize({width: 1440, height: 1000});
+    await openPage(page, site.runtime.url + '/app/settings');
+    const sources = page.getByRole('region', {name: 'Link host sources', exact: true});
+    await expect(sources).not.toContainText(catalogHost);
+    await expect(sources).toContainText(operatorHost);
+    await openPage(page, site.runtime.url + `/app/campaigns/${hostDraft.campaignId}/review`);
+    const blocked = page.locator(`[aria-label="Blocked host ${catalogHost}"]`);
+    await expect(blocked).toContainText('Catalog harvest');
+    await expect(page.locator('[aria-label^="Blocked host "]')).toHaveCount(1);
+    await expect(page.locator(`[aria-label="Blocked host ${operatorHost}"]`)).toHaveCount(0);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    // The same saved draft is captured at both release widths; assertions run at 1440.
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({width, height: 1000});
+      await openPage(page, site.runtime.url + '/app/settings');
+      await sources.screenshot({path: info.outputPath(`woocommerce-disconnected-hosts-${width}.png`)});
+      await openPage(page, site.runtime.url + `/app/campaigns/${hostDraft.campaignId}/review`);
+      await blocked.waitFor({state: 'visible'});
+      await page.screenshot({path: info.outputPath(`woocommerce-disconnected-review-${width}.png`), fullPage: true});
+    }
+    const refused = await json(await site.call(`/api/campaigns/${hostDraft.campaignId}/approve`, {method: 'POST', cookie, body: {revisionId: hostDraft.revisionId, idempotencyKey: 'synthetic-mango-disconnected-catalog'}}), 409);
+    expect(refused.blockers).toContainEqual(expect.objectContaining({kind: 'message.links.resolved', detail: expect.stringContaining(catalogHost)}));
+    expect(await authority()).toEqual(unapproved);
     await wooBrowserConsent(page);
     expect(woo.state.authorizations.every(value => value === 'Basic ' + Buffer.from(connection.key + ':' + connection.secret).toString('base64'))).toBe(true);
     expect(edge.unexpected).toEqual([]);
