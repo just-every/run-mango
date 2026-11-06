@@ -1,0 +1,40 @@
+{
+  "acceptance_points_completed": [
+    4
+  ],
+  "after": "partial",
+  "base": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "before": "partial",
+  "branch": "cloud/sd-mango-c-f85",
+  "counts": {
+    "done": 20,
+    "missing": 98,
+    "partial": 198
+  },
+  "generated_views_equal_main": true,
+  "head": "2d7bd007d1118b8337a55c1f0a98505722e84c36",
+  "main_at_integration": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "new_registrations_relative_to_base": 0,
+  "publication_scan": "deferred to fleet; not run in cloud",
+  "remaining_native_points": [
+    1,
+    3
+  ],
+  "repository": "just-every/run-mango",
+  "run_site": "not run; product branch only",
+  "source_sha256": {
+    "scripts/verification/plan.mjs": "4971b40307e68a63196282834335ebd8740caa71840cdc0b8c8543090fe420a1",
+    "sources.lock.json": "c51773ac72c57ccf4f191f026663f135234b9de175eaf59611f156d42c958518",
+    "src/core/app/document-dispatch.ts": "f9ec10740e65806251090b7bf6d6f185c8a06ab0b335e1eb99fbf7fbef62745f",
+    "src/core/features/settings/routes.ts": "9ea1c33c19e423976f2b70bcb824a25a0d4bceebec12e731c9dadd8b6169eae9",
+    "src/core/features/settings/service.ts": "59583f46a29f0b7959f5350f56d712e78c0f3cba48ca8a18815b6cc7a008faa2",
+    "tests/local-start/local.journey.ts": "1a0f15887482b056e9134982d1f93e7aca37b89ff0dc87412e10b163f163d74c",
+    "tests/local-start/sender-setup.flow.ts": "620a44e903c1006f3833fb6656f071433a104628dee700d78b4dd3472e631acd",
+    "tests/local-start/sender-setup.journey.ts": "b17fee10e69656181dff8b4b3a694d46d6b95ee7faf2e18002578106b9cc7209"
+  },
+  "status_row_count": 316,
+  "table_row_count": 490,
+  "target": "OPER-001",
+  "targeted_registration_count": 1,
+  "worktree_clean": true
+}

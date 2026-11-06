@@ -1,0 +1,241 @@
+{
+  "base": "c7cb348d2dc77e34b774456f3a4936a29a6148de",
+  "branch": "cloud/sd-mango-c-f85",
+  "captures": [
+    {
+      "bytes": 270939,
+      "file": "setup-1440.png",
+      "sha256": "a7134b020386f1e23cd481223029f6a2a1ffe9253dea4cb7ffd55515c3a155ec"
+    },
+    {
+      "bytes": 148158,
+      "file": "setup-390.png",
+      "sha256": "edd335a1b9513071e448222c4dd12f12b9ee69ed3b70d58f2c13f9d78f7ac18c"
+    },
+    {
+      "bytes": 57092,
+      "file": "configured-app-1440.png",
+      "sha256": "03a0e5443170d420e4ca925fa0403d0937c3f0a6bacc510a9a3c497043fc46ea"
+    },
+    {
+      "bytes": 40480,
+      "file": "configured-app-390.png",
+      "sha256": "7185fd719cfa609944f0c4b58b2b704f753c337840a3f19323db09fb3ae8f70d"
+    },
+    {
+      "bytes": 1052899,
+      "file": "reopened-settings-1440.png",
+      "sha256": "29c89c8cec91f959d66075655b38571a8871c61a92730cc47faba9575911867e"
+    },
+    {
+      "bytes": 940058,
+      "file": "reopened-settings-390.png",
+      "sha256": "8b16d5b1199a4d3765a240e6b1b5d723511c7a349f010260a2659296fe2e046c"
+    }
+  ],
+  "checks": [
+    {
+      "browser": {
+        "args": [
+          "--use-mock-keychain",
+          "--password-store=basic",
+          "--no-sandbox"
+        ],
+        "assertion_width": 1440,
+        "capture_widths": [
+          1440,
+          390
+        ],
+        "executable": "/usr/bin/chromium",
+        "headless": true
+      },
+      "command": "pnpm exec playwright test --config scripts/verification/local-start.config.mjs sender-setup.journey.ts",
+      "duration": "2.8m",
+      "exit": 0,
+      "head": "2d7bd007d1118b8337a55c1f0a98505722e84c36",
+      "output": "CANDIDATE-NATIVE-JOURNEY.txt",
+      "tests": 1,
+      "wrapper": "cloud_run perl -e alarm-1200"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "output": "TYPECHECK-MERGED.txt",
+      "tree": "merged candidate before commit; no subsequent source edits"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "output": "FIRST-PARTY.txt"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "generated_views_restored_from_main": true,
+      "output": "VIEWS-WRITE.txt"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "output": "VIEWS-CHECK.txt",
+      "phase": "after write before restoring views"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "output": "LOCK.txt"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "output": "LOCK-CHECK.txt"
+    },
+    {
+      "command": "migration-ledger check",
+      "reason": "no migration changed",
+      "status": "not applicable"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "head": "2d7bd007d1118b8337a55c1f0a98505722e84c36",
+      "output": "CANDIDATE-FIRST-PARTY.txt"
+    }
+  ],
+  "ci": {
+    "api_calls_for_task": 6,
+    "conclusion": "failure",
+    "diagnostic_utc": "2026-11-06T07:45:48Z",
+    "discovery_utc": "2026-11-06T07:40:13Z",
+    "event": "push",
+    "failure": "generated contract documents only, aggregate consequently fails; shards skipped",
+    "generated_view_exception": true,
+    "head": "2d7bd007d1118b8337a55c1f0a98505722e84c36",
+    "jobs": [
+      {
+        "conclusion": "success",
+        "failed_steps": [],
+        "id": 127774562297,
+        "name": "plan",
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "failed_steps": [
+          {
+            "name": "Check generated contract documents",
+            "number": 5
+          }
+        ],
+        "id": 127774612264,
+        "name": "Build and public command checks",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failed_steps": [],
+        "id": 127774613875,
+        "name": "light",
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "failed_steps": [
+          {
+            "name": "Require the selected coverage and its proof",
+            "number": 2
+          }
+        ],
+        "id": 127774718492,
+        "name": "verify",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failed_steps": [],
+        "id": 127774719582,
+        "name": "shards (${{ matrix.name }})",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failed_steps": [],
+        "id": 127774719995,
+        "name": "nightly-proof",
+        "status": "completed"
+      },
+      {
+        "conclusion": "skipped",
+        "failed_steps": [],
+        "id": 127774720341,
+        "name": "full-push-proof",
+        "status": "completed"
+      }
+    ],
+    "run_id": 42182324739,
+    "status": "completed",
+    "url": "https://github.com/just-every/run-mango/actions/runs/42182324739"
+  },
+  "ci_discovery": [
+    {
+      "conclusion": "failure",
+      "event": "push",
+      "head_sha": "2d7bd007d1118b8337a55c1f0a98505722e84c36",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42182324739",
+      "id": 42182324739,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ],
+  "clause": {
+    "after": "partial",
+    "before": "partial",
+    "carried_points": [
+      2
+    ],
+    "closed_points": [
+      4
+    ],
+    "id": "OPER-001",
+    "remaining_points": [
+      1,
+      3
+    ]
+  },
+  "counts": {
+    "after": {
+      "done": 20,
+      "missing": 98,
+      "partial": 198
+    },
+    "before": {
+      "done": 20,
+      "missing": 98,
+      "partial": 198
+    }
+  },
+  "head": "2d7bd007d1118b8337a55c1f0a98505722e84c36",
+  "main_at_merge": "5f740dc8cd6624d68df11cd55e56e317e5f6bc96",
+  "new_native_test_registrations_relative_to_supplied_base": 0,
+  "pr": null,
+  "product_push": {
+    "output": "CANDIDATE-PUSH.txt",
+    "status": "pushed"
+  },
+  "publication_scan": {
+    "authority": "fleet lander",
+    "status": "not run in cloud"
+  },
+  "repository": "just-every/run-mango",
+  "run_site": {
+    "status": "not run; branch only"
+  },
+  "runtime": {
+    "node": "24.19.0",
+    "package_manager_pin": "10.12.4",
+    "package_node_pin": "22.20.0",
+    "pnpm": "10.12.4"
+  },
+  "save_head": "1da01a162e3de6bf938df22b010dba66802a073b",
+  "schema": 1
+}

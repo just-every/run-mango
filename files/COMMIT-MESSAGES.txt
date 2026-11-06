@@ -1,0 +1,15 @@
+2d7bd007d1118b8337a55c1f0a98505722e84c36
+Integrate main and retain sender setup proof in native Verify
+
+1da01a162e3de6bf938df22b010dba66802a073b
+Prove sender non-readiness in a fresh native session [skip ci]
+
+c7cb348d2dc77e34b774456f3a4936a29a6148de
+Verify sender setup configuration access on current main
+
+76f50dfc2b63436658d8af3bcaa01990b5e8c0a2
+Run sender setup proof in native Verify journey [skip ci]
+
+9e7bf0127c20bca03fed884083c3d716d0336110
+Prove settings access and unavailable readiness across sender setup
+
