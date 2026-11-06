@@ -1,0 +1,4 @@
+MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock then node scripts/edition-authoring/cli.mjs check exit=0; views=node src/base/contract-docs.mjs write then node src/base/contract-docs.mjs check exit=0; ledger=none exit=0
+Generated views were restored from origin/main before the commit. Their stale check is expected on the branch candidate; the Mac lander generates them at landing.
+No migrations changed.
+Both merge parents have 316 Status rows and 490 total pipe-prefixed rows. The merge candidate retains all 316 and all 490.

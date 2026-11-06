@@ -1,0 +1,10 @@
+Call 1: discover workflow runs for the initial origin/main exact SHA (main-ci.json).
+Call 2: inspect the failed initial main Run site jobs.
+Call 3: gh run view 42195975538 --repo just-every/run-mango --job 127819202563 --log-failed (once).
+Call 4: request the one permitted failed-job retry for proven Cloudflare provider-http-503; HTTP 403 stated "This workflow is already running" because the existing retry was underway. No second retry was started and no product deployment ran from this VM.
+Call 5: inspect the existing retry of main Run site 42195975538; more than 300 seconds after its discovery. The prior POST was refused with HTTP 403 because another watcher had already started the retry.
+Call 6: discover exact candidate SHA workflow runs 3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0 (candidate-ci.json).
+Call 7: read completed candidate run 42199102464 jobs once to identify every failure (diagnostic, not a status poll).
+Call 8: gh run view 42199102464 --repo just-every/run-mango --job 127829741420 --log-failed (once).
+Call 9: gh run view 42199102464 --repo just-every/run-mango --job 127829850921 --log-failed (once).
+Nine of the ten-call budget used. No status polling loop, workflow dispatch, or candidate rerun.

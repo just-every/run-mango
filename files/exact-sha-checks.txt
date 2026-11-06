@@ -1,0 +1,7 @@
+head=3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0
+journey_exit=0
+typecheck_exit=0
+source_lock_check_exit=0
+first_party_check_exit=0
+restored_main_views_check=expected_stale
+product_tree_clean=true

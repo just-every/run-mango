@@ -1,0 +1,144 @@
+{
+  "firstReceipt": {
+    "transport_disposition": "accepted",
+    "attempt_count": 1,
+    "provider_accepted_at": 1793962792449
+  },
+  "terminal": [
+    {
+      "id": "01M6R4SSW0JG2GDXCP2PZPG70A",
+      "destination": "synthetic-mango-971@example.test",
+      "transport_disposition": "skipped",
+      "skip_reason": "frequency-window",
+      "attempt_count": 0,
+      "terminal_at": 1793977192449,
+      "next_attempt_at": 1793977192448,
+      "provider_message_id": null,
+      "handoff_started_at": null,
+      "send_by_at": 1794149992448
+    },
+    {
+      "id": "01M6R4SSW02SN9W48T65B6J66S",
+      "destination": "synthetic-mango-972@example.test",
+      "transport_disposition": "accepted",
+      "skip_reason": null,
+      "attempt_count": 1,
+      "terminal_at": null,
+      "next_attempt_at": 1793977192448,
+      "provider_message_id": "aVNDUfs2rPPy5Os",
+      "handoff_started_at": 1793977192449,
+      "send_by_at": 1794149992448
+    }
+  ],
+  "windowFirstReceipt": {
+    "id": "01M6R4SSW08F2TT27N842QPM7G",
+    "destination": "synthetic-mango-973@example.test",
+    "transport_disposition": "accepted",
+    "skip_reason": null,
+    "attempt_count": 1,
+    "terminal_at": null,
+    "provider_accepted_at": 1794063592449,
+    "provider_message_id": "MSx66u_ok-XKNPU",
+    "handoff_started_at": 1794063592449
+  },
+  "insideReceipt": {
+    "id": "01M6R4SSW0CBKCCVSC6SYFGZK7",
+    "destination": "synthetic-mango-973@example.test",
+    "transport_disposition": "skipped",
+    "skip_reason": "frequency-window",
+    "attempt_count": 0,
+    "terminal_at": 1794149992448,
+    "provider_accepted_at": null,
+    "provider_message_id": null,
+    "handoff_started_at": null
+  },
+  "boundaryReceipt": {
+    "id": "01M6R4SSW0Y01S6NDBXW8F1NDH",
+    "destination": "synthetic-mango-973@example.test",
+    "transport_disposition": "accepted",
+    "skip_reason": null,
+    "attempt_count": 1,
+    "terminal_at": null,
+    "provider_accepted_at": 1794149992449,
+    "provider_message_id": "nByzLGDNRj4b2R4",
+    "handoff_started_at": 1794149992449
+  },
+  "replayAt": 1794056392449,
+  "afterReplay": [
+    {
+      "id": "01M6R4SSW0JG2GDXCP2PZPG70A",
+      "destination": "synthetic-mango-971@example.test",
+      "transport_disposition": "skipped",
+      "skip_reason": "frequency-window",
+      "attempt_count": 0,
+      "terminal_at": 1793977192449,
+      "next_attempt_at": 1793977192448,
+      "provider_message_id": null,
+      "handoff_started_at": null,
+      "send_by_at": 1794149992448
+    },
+    {
+      "id": "01M6R4SSW02SN9W48T65B6J66S",
+      "destination": "synthetic-mango-972@example.test",
+      "transport_disposition": "accepted",
+      "skip_reason": null,
+      "attempt_count": 1,
+      "terminal_at": null,
+      "next_attempt_at": 1793977192448,
+      "provider_message_id": "aVNDUfs2rPPy5Os",
+      "handoff_started_at": 1793977192449,
+      "send_by_at": 1794149992448
+    }
+  ],
+  "results": {
+    "asOf": "2026-11-08T14:59:52.449Z",
+    "steps": [
+      {
+        "stepId": "a78858d7-a797-476f-98ba-0c6718c19316",
+        "outageNotices": [],
+        "estimatedCompletionAt": null,
+        "pauses": [],
+        "state": "Sent",
+        "startedAt": "2026-11-06T14:59:52.449Z",
+        "completedAt": "2026-11-06T14:59:52.449Z",
+        "counts": [
+          {
+            "disposition": "accepted",
+            "reason": null,
+            "count": 1
+          },
+          {
+            "disposition": "skipped",
+            "reason": "frequency-window",
+            "count": 1
+          }
+        ],
+        "failures": [],
+        "stoppableCount": 0,
+        "expiredQueuedCount": 0,
+        "inFlightCount": 0,
+        "complainedCount": 0,
+        "suppressedCount": 0
+      }
+    ],
+    "cancellable": false
+  },
+  "marketing": [
+    {
+      "to": "synthetic-mango-971@example.test",
+      "messageId": "wnNU5D9v38hg2R8"
+    },
+    {
+      "to": "synthetic-mango-972@example.test",
+      "messageId": "aVNDUfs2rPPy5Os"
+    },
+    {
+      "to": "synthetic-mango-973@example.test",
+      "messageId": "MSx66u_ok-XKNPU"
+    },
+    {
+      "to": "synthetic-mango-973@example.test",
+      "messageId": "nByzLGDNRj4b2R4"
+    }
+  ]
+}

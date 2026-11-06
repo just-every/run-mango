@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:1974) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE AUD-004 acceptance-1: two preapproved email campaigns -> repeat skipped with frequency-window, zero attempts; fresh control accepted
+PROBE AUD-004 no-deferral: native dispatch replay and Cron after 26 hours with renewed sender evidence and open deadline -> identical terminal row, no delayed handoff
+  ✓  1 tests/go-live/frequency-protection.journeys.ts:8:1 › [AUD-004] an email frequency exclusion is terminal even after its window expires (29.6s)
+
+  1 passed (31.1s)

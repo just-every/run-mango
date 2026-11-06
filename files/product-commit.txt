@@ -1,0 +1,16 @@
+commit 3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0
+Merge: d0b4463 01f6310
+Author:     Run Edit Run fleet <fleet@runeditrun.com>
+AuthorDate: Fri Nov 6 09:58:51 2026 +0000
+Commit:     Run Edit Run fleet <fleet@runeditrun.com>
+CommitDate: Fri Nov 6 09:58:51 2026 +0000
+
+    Prove exact email frequency boundary through native dispatch
+
+ ACCEPTANCE.md                                  |  4 +-
+ CONTRACT.md                                    |  4 +-
+ scripts/verification/plan.mjs                  |  2 +-
+ sources.lock.json                              | 12 ++--
+ tests/campaign-authoring/step-deadline.spec.ts | 90 ++++++++++++++++++++++++++
+ tests/go-live/frequency-protection.journeys.ts | 74 +++++++++++++++++----
+ 6 files changed, 164 insertions(+), 22 deletions(-)

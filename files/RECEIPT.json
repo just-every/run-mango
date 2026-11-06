@@ -1,0 +1,122 @@
+{
+  "tag": "sd-mango-c-f101",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f101",
+  "head": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0",
+  "tree": "7dd2d79237b9d3cb5c1c478eff97bdc7ef226303",
+  "parents": [
+    "d0b4463beb507932b050b26d23e7585bd9139eab",
+    "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e"
+  ],
+  "requestedBase": "d0b4463beb507932b050b26d23e7585bd9139eab",
+  "integratedMain": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "remoteProductHead": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0",
+  "productPush": "success",
+  "productTreeClean": true,
+  "createdAt": "2026-11-06T10:03:38.188953+00:00",
+  "countsBefore": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "countsAfter": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "clauseStatus": {
+    "AUD-004": {
+      "before": "partial",
+      "after": "partial"
+    }
+  },
+  "checks": [
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js frequency-protection.journeys.ts --workers=1",
+      "head": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0",
+      "exit": 0,
+      "tests": 1,
+      "durationSeconds": 30.1,
+      "browser": "/usr/bin/chromium",
+      "widthAssertions": 1440,
+      "screenshots": [
+        1440,
+        390
+      ]
+    },
+    {
+      "command": "pnpm run typecheck",
+      "head": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0",
+      "exit": 0
+    },
+    {
+      "command": "pnpm exec rer check --profile first-party",
+      "head": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "head": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write then node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "viewsRestoredFrom": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "head": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0",
+      "exit": 1,
+      "expected": "Restored main views; ACCEPTANCE.md generated content differs"
+    }
+  ],
+  "runtime": {
+    "unchangedTerminalRows": true,
+    "replayElapsedMs": 93600000,
+    "deadlineOpenDuringReplay": true,
+    "insideWindowElapsedMs": 86399999,
+    "atBoundaryElapsedMs": 86400000,
+    "insideWindowDisposition": "skipped",
+    "atBoundaryDisposition": "accepted",
+    "marketingHandoffs": 4
+  },
+  "ci": {
+    "id": 42199102464,
+    "event": "push",
+    "head": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0",
+    "conclusion": "failure",
+    "exception": "Generated contract views only; build fails generated-document check, aggregate Verify fails because build failed; shards skipped",
+    "failedBuildJob": 127829741420,
+    "dependentFailedVerifyJob": 127829850921
+  },
+  "mainCi": {
+    "head": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+    "verifyRun": 42195975560,
+    "verifyConclusion": "success",
+    "runSiteRun": 42195975538,
+    "runSiteAttempt": 2,
+    "runSiteConclusion": "success"
+  },
+  "identityAndTrailers": {
+    "candidateCommits": 2,
+    "allIncludingSideParents": "pass",
+    "coauthorTrailers": 0
+  },
+  "statusRows": {
+    "firstParent": 316,
+    "mainParent": 316,
+    "candidate": 316,
+    "allParentsRetained": true
+  },
+  "publicationScan": {
+    "status": "deferred",
+    "owner": "Mac guarded lander",
+    "head": "3dcbbd8fc958dd89b801b5f71e8b6c64516a31c0"
+  },
+  "remaining": [
+    "SMS terminal frequency exclusion and no-deferral proof",
+    "SMS exact default-window boundary proof",
+    "Owner Twilio A2P and US carrier registration, SMS transport and provider qualification"
+  ]
+}
