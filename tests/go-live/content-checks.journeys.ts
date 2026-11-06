@@ -108,8 +108,8 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     expect(replayAt).toBeGreaterThan(acknowledgedAt);
     await reloadPage(page);
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
-    // Replay the exact original request before checks replace their transient row IDs.
-    expect(await json(await site.call(ackPath(advisory),{method:'POST',cookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
+    // Replay the exact original request as another operator before checks replace their transient row IDs.
+    expect(await json(await site.call(ackPath(advisory),{method:'POST',cookie:replayCookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
     await review();
     const refreshed = await retainedFinding();
     expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
