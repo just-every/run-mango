@@ -71,9 +71,18 @@ export async function prepareCsv(input:ImportInput,raw:D1ImportContext,review:Re
     // The erasure index is registered before Base can retain this window's values.
     const identities=records.flatMap(record=>{
       const row=record.payload as unknown as NormalizedImportRow,entry=effects.get(record.sourceId)!;
-      return [row.email,row.phone].filter(Boolean).map(email=>({email,id:entry.effects[0]?.targetId??''}));
+      const id=entry.effects[0]?.targetId??row.held?.contactId;
+      return id?[row.email,row.phone].filter(Boolean).map(email=>({email,id})):[];
     });
-    for(let offset=0;offset<identities.length;offset+=1000)await db.batch([db.prepare("INSERT INTO audience_import_plan_contacts(fingerprint,contact_id,email) SELECT ?,json_extract(value,'$.id'),json_extract(value,'$.email') FROM json_each(?) WHERE 1 ON CONFLICT DO NOTHING").bind(key,JSON.stringify(identities.slice(offset,offset+1000)))]);
+    for(let offset=0;offset<identities.length;offset+=1000){
+      const chunk=JSON.stringify(identities.slice(offset,offset+1000));
+      // Replace the unassigned lookup atomically; prior mapped bindings stay
+      // indexed when an interrupted preparation has retained an older target.
+      await db.batch([
+        db.prepare("DELETE FROM audience_import_plan_contacts WHERE fingerprint=? AND contact_id='' AND email IN (SELECT json_extract(value,'$.email') FROM json_each(?))").bind(key,chunk),
+        db.prepare("INSERT INTO audience_import_plan_contacts(fingerprint,contact_id,email) SELECT ?,json_extract(value,'$.id'),json_extract(value,'$.email') FROM json_each(?) WHERE 1 ON CONFLICT DO NOTHING").bind(key,chunk),
+      ]);
+    }
   }
   const source:SourceBundle={artifacts,diagnostics:[],records:new Proxy([] as SourceBundle['records'],{get(target,property,receiver){
     if(property==='length')return selected.total;

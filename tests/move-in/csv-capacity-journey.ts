@@ -32,6 +32,8 @@ export async function csvCapacityJourney(page:Page,info:TestInfo){
     expect(requests).toBeGreaterThan(1);
     expect(preview.counts).toMatchObject({input:total,created:total-3,updated:0,rejected:2,suppressed:1});
     expect(preview.counts.input-preview.counts.created-preview.counts.updated-preview.counts.rejected).toBe(1);
+    expect((await site.call('/api/audience/import-preparations/not-reviewed/rows',{cookie})).status).toBe(400);
+    expect((await site.call(`/api/audience/import-preparations/${preview.fingerprint}/rows?offset=-1`,{cookie})).status).toBe(400);
     expect((await site.call(`/api/audience/import-preparations/${preview.fingerprint}/rows?offset=${total-25}`)).status).toBe(401);
     const last=await json(await site.call(`/api/audience/import-preparations/${preview.fingerprint}/rows?offset=${total-25}`,{cookie}),200);
     expect(last).toMatchObject({total,offset:total-25});expect(last.rows).toHaveLength(25);
@@ -107,6 +109,7 @@ export async function csvCapacityJourney(page:Page,info:TestInfo){
     while(receipt.state==='pending'){const response=await site.call(`/api/audience/erasures/${receipt.reference}/resume`,{method:'POST',cookie});expect([200,202]).toContain(response.status);({receipt}=await response.json());}
     expect(receipt.state).toBe('complete');
     expect(await site.rows(`SELECT ordinal FROM audience_import_plan_chunks WHERE fingerprint='${preview.fingerprint}'`)).toEqual([]);
+    expect(await site.rows(`SELECT contact_id FROM audience_import_plan_contacts WHERE fingerprint='${preview.fingerprint}'`)).toEqual([]);
     const afterErasure=await site.rows('SELECT * FROM contacts ORDER BY id');
     const replay=await json(await site.call('/api/audience/import-preparations',{method:'POST',cookie,body:input}),400);
     expect(replay.detail).toMatch(/erasure retired/);

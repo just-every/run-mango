@@ -34,7 +34,7 @@ export function timestamp(value: string | undefined) {
 }
 export function importColumns(input: ImportInput) {
   return input.files.map(file=>{
-    const headers = iterateCsvRows(file.csv).next().value ?? [];
+    const headers: string[] = iterateCsvRows(file.csv).next().value ?? [];
     return {name:file.name,headers,mapping:file.preset==='mango'?{}:resolveHeaderMapping(headers,file.mapping)};
   });
 }
@@ -48,7 +48,7 @@ export function* normalizedImportRows(input: ImportInput, incumbentSources:Recor
   if (input.files.reduce((sum, file) => sum + new TextEncoder().encode(file.csv).length, 0) > 10_000_000) throw new Error('Audience import is limited to 10 MB.');
   for (const file of input.files) {
     if (!(file.preset in presetStatuses)) throw new Error(`Unknown CSV preset: ${file.preset}`);
-    const headers = iterateCsvRows(file.csv).next().value ?? [];
+    const headers: string[] = iterateCsvRows(file.csv).next().value ?? [];
     const mapping = file.preset === 'mango' ? {} : resolveHeaderMapping(headers, file.mapping);
     const mappingEntries=Object.entries(mapping);
     const originalHeaders=headers.map(header=>header.trim().toLowerCase());

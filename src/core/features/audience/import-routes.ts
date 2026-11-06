@@ -63,9 +63,10 @@ export function createAudienceImportRoutes(platform: Platform) {
     }
   });
   routes.get('/audience/import-preparations/:id/rows',async context=>{
+    const id=z.string().regex(/^[a-f0-9]{64}$/).safeParse(context.req.param('id'));
     const offset=z.coerce.number().int().min(0).max(250000).safeParse(context.req.query('offset')??0);
-    if(!offset.success)return context.json({error:'invalid_row_offset'},400);
-    try{return context.json(await preparedCsvRows(context.req.param('id'),offset.data,await audienceImportContext(platform,context.get('operator').id,context.req.raw)));}
+    if(!id.success||!offset.success)return context.json({error:'invalid_review_query'},400);
+    try{return context.json(await preparedCsvRows(id.data,offset.data,await audienceImportContext(platform,context.get('operator').id,context.req.raw)));}
     catch{return context.json({error:'review_unavailable'},409);}
   });
   routes.post('/audience/import-preparations',async context=>{
