@@ -1,0 +1,39 @@
+{
+  "kind": "read-only analysis of an actual registered-journey artifact; no new runtime test or corpus",
+  "file": "actual/csv-capacity-report-250000.md",
+  "bytes": 17889520,
+  "sha256": "64bcdf3cd19bf2dd0ebabdacd380f90dfbd95a4c039508b8c43dc457e5739fbb",
+  "rows": 250000,
+  "outcomes": {
+    "created": 249997,
+    "rejected": 2,
+    "skipped": 1
+  },
+  "first_file_row": 2,
+  "last_file_row": 250001,
+  "all_file_rows_exactly_once": true,
+  "rejected": [
+    {
+      "file_row": 3,
+      "status": "non-subscribed",
+      "reason": "Phone numbers must be supplied in E.164 form, including the country calling code."
+    },
+    {
+      "file_row": 5,
+      "status": "non-subscribed",
+      "reason": "An email address or E.164 phone number is required."
+    }
+  ],
+  "skipped": [
+    {
+      "file_row": 250001,
+      "status": "non-subscribed",
+      "reason": "Duplicate destination combined with its most restrictive channel statuses in this import.; Duplicate destination combined with its most restrictive channel statuses in this import."
+    }
+  ],
+  "report_reads": {
+    "saved_full_bytes": 1,
+    "registered_native_reads": 2,
+    "second_read": "same-byte equality asserted by the existing journey; no second artifact manufactured"
+  }
+}

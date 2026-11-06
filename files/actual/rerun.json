@@ -1,0 +1,15 @@
+{
+  "rerunStatuses": {
+    "ada@example.test": "subscribed",
+    "ben@example.test": "unsubscribed",
+    "both@example.test": "unsubscribed",
+    "cleo@example.test": "suppressed",
+    "cy@example.test": "subscribed",
+    "dup@example.test": "subscribed",
+    "optedout@example.test": "unsubscribed",
+    "tess@example.test": "non-subscribed",
+    "uma@example.test": "unsubscribed"
+  },
+  "repeated": true,
+  "archive": true
+}

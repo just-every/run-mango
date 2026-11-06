@@ -1,0 +1,14 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f64",
+  "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "shallow": true,
+  "clone_mode": "--depth 1 --filter=blob:none --branch cloud/sd-mango-c-f64",
+  "clean": true,
+  "product_commits": 0,
+  "product_pushes": 0,
+  "product_pr": null,
+  "workflows_queried": 0,
+  "registered_runtime_invocations": 1,
+  "recorded_at": "2026-11-06T04:29:17.735844+00:00"
+}

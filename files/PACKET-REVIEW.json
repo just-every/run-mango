@@ -1,0 +1,133 @@
+{
+  "scope": "Explicit actual report, receipt, log and synthetic native output selections; no credentials, environment dump, browser storage-state, private held-out material or symlinks. This packet screening is not the guarded lander full-history publication scan.",
+  "files_reviewed": 59,
+  "credential_pattern_findings": [],
+  "screenshots": [
+    {
+      "path": "actual/empty-audience-review-1440.png",
+      "width": 1440,
+      "height": 3755
+    },
+    {
+      "path": "actual/empty-import-1440.png",
+      "width": 1440,
+      "height": 1663
+    },
+    {
+      "path": "actual/imported-1440.png",
+      "width": 1440,
+      "height": 4602
+    },
+    {
+      "path": "actual/imported-contact-timeline-1440.png",
+      "width": 1440,
+      "height": 2732
+    },
+    {
+      "path": "actual/imported-dormancy-included-1440.png",
+      "width": 1440,
+      "height": 4939
+    },
+    {
+      "path": "actual/imported-dormancy-review-1440.png",
+      "width": 1440,
+      "height": 4845
+    },
+    {
+      "path": "actual/inactivity-default-1440.png",
+      "width": 1440,
+      "height": 14780
+    },
+    {
+      "path": "actual/locked-policy-refused-1440.png",
+      "width": 1440,
+      "height": 4939
+    },
+    {
+      "path": "actual/missing-contact-failure-1440.png",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "path": "actual/no-imported-history-timeline-1440.png",
+      "width": 1440,
+      "height": 2732
+    },
+    {
+      "path": "actual/preview-1440.png",
+      "width": 1440,
+      "height": 4335
+    },
+    {
+      "path": "actual/report-1440.png",
+      "width": 1440,
+      "height": 2999
+    },
+    {
+      "path": "actual/surviving-archive-after-erasure-1440.png",
+      "width": 1440,
+      "height": 1929
+    },
+    {
+      "path": "actual/undo-1440.png",
+      "width": 1440,
+      "height": 2252
+    },
+    {
+      "path": "actual/upload-1440.png",
+      "width": 1440,
+      "height": 1798
+    },
+    {
+      "path": "actual/withdrawn-report-1440.png",
+      "width": 1440,
+      "height": 2563
+    },
+    {
+      "path": "browser/archive-library-1440.png",
+      "width": 1440,
+      "height": 1126
+    },
+    {
+      "path": "browser/csv-capacity-1440.png",
+      "width": 1440,
+      "height": 5294
+    },
+    {
+      "path": "browser/csv-capacity-390.png",
+      "width": 390,
+      "height": 13570
+    },
+    {
+      "path": "browser/csv-report-1440.png",
+      "width": 1440,
+      "height": 2176
+    },
+    {
+      "path": "browser/csv-report-390.png",
+      "width": 390,
+      "height": 3142
+    },
+    {
+      "path": "browser/incumbent-attestation-1440.png",
+      "width": 1232,
+      "height": 841
+    },
+    {
+      "path": "browser/incumbent-review-1440.png",
+      "width": 1440,
+      "height": 4216
+    }
+  ],
+  "required_changed_screen_proof": {
+    "capacity": [
+      1440,
+      390
+    ],
+    "report_download_activity": [
+      1440,
+      390
+    ]
+  },
+  "source_unchanged": true
+}

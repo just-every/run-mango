@@ -1,0 +1,14 @@
+{
+  "recorded_at": "2026-11-06T04:15:37Z",
+  "capture_phase": "during independent runtime",
+  "cpu_count": 5,
+  "available_memory": "               total        used        free      shared  buff/cache   available\nMem:           18007        3481       13479          32        1427       14525\nSwap:              0           0           0\n",
+  "disk": "Filesystem      Size  Used Avail Use% Mounted on\noverlay          32G  1.3G   29G   5% /\n",
+  "chromium": "Chromium 154.0.8037.57 built on Debian GNU/Linux 13 (trixie)",
+  "driver_node": "v24.19.0",
+  "initial_observation": {
+    "available_memory_MiB": 17218,
+    "disk_available": "30G",
+    "meaning": "Observed before registered execution; no Mac admission or slot override used."
+  }
+}

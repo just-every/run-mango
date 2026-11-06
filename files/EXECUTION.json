@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "run_id": "ct-judge-mango-cont010-20261106-0400-native-archive",
+  "repository": "just-every/run-mango",
+  "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "branch": "cloud/sd-mango-c-f64",
+  "command": [
+    "python3",
+    "/tmp/rer-reap.py",
+    "timeout",
+    "2280",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "tests/move-in/playwright.config.js",
+    "archive.journeys.ts"
+  ],
+  "configuration": {
+    "MANGO_CSV_SCALE_ROWS": 250000,
+    "MANGO_CHROMIUM_EXECUTABLE": "/usr/bin/chromium",
+    "workers": 1,
+    "retries": 0,
+    "browser": "headless Chromium; real HOME; private context; mock keychain; basic password store; no sandbox"
+  },
+  "started_at": "2026-11-06T04:07:58.069615+00:00",
+  "worktree_clean_before": true,
+  "status": "completed",
+  "exit": 0,
+  "finished_at": "2026-11-06T04:25:44.801750+00:00",
+  "wall_seconds": 1066.732093312,
+  "head_after": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "worktree_clean_after": true
+}

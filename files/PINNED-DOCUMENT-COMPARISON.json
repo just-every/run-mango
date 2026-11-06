@@ -1,0 +1,692 @@
+{
+  "method": "Full-file read and lossless per-clause duplicate comparison; all requirements and numbered acceptance paragraphs compared, plus every status evidence and gap. Differences shown in full for independent reading.",
+  "files": {
+    "CONTRACT.md": {
+      "bytes": 491230,
+      "sha256": "e0422ea1ef472ff4bf1bc3ee03253791a370b0cdd8b17e173fff5774c635c9e2"
+    },
+    "ACCEPTANCE.md": {
+      "bytes": 443948,
+      "sha256": "d08e551ab2d69f883a2355c871f146fe6c1878fc072ae4145064802bc8f042ab"
+    },
+    "AGENTS.md": {
+      "bytes": 9726,
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8"
+    },
+    "RULINGS.md": {
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2"
+    }
+  },
+  "contract_clauses": 316,
+  "acceptance_clauses": 316,
+  "status_rows": 316,
+  "counts_source": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "unmatched_ids": [],
+  "differences": [
+    {
+      "id": "STORE-003",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "STORE-004",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "STORE-005",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "STORE-006",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CONT-008",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CONT-010",
+      "field": "evidence",
+      "contract": "`tests/move-in/archive.journeys.ts` \u2014 \u201c[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients\u201d, invoking `tests/move-in/phone-csv-journey.ts` \u2014 \u201cphoneCsvJourney\u201d for independently mapped phone-only rows, exact contact readback, two rejected-row report reads, stable retry and signed-out refusals; `tests/move-in/csv-rules-journey.ts` \u2014 \u201ccsvRulesJourney\u201d for canonical email and phone updates, unchanged same-file replay, mixed created and updated and rejected report totals, unnamed per-row consent, both recorded channels against every incoming state, and undo retaining restrictions; `tests/move-in/incumbent-journey.ts` \u2014 \u201cincumbentJourney\u201d for missing and uncertain source attestation, affirmative original-time incumbent consent, retained audit, restore and revocation. `tests/move-in/csv-capacity-journey.ts` \u2014 \u201ccsvCapacityJourney\u201d exercises bounded review, native row paging, a cross-window restrictive duplicate, exact reconciliation, Start and Resume, retained original custody and erasure replay refusal; its bounded case is invoked by the registered archive journey. Carried archive and held-import evidence remains unchanged. The 250,000-row case of \u201ccsvCapacityJourney\u201d passes the full registered archive journey at code commit 49ddd9346369c45a6e5bc8a11230e04835376b06, run \u201ccloud-sd-mango-c-f64-scale-optimized\u201d; every reviewed row and both reports reconcile, native continuation and exact original custody are exercised, and erasure withdraws custody and refuses replay. Recorded phone consent and restriction tests do not qualify SMS delivery; owner-held Twilio A2P and US carrier registration, SMS transport and qualification remain held. CONT-013's SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged, as do provider, device, account, cross-seed and Base prerequisites and the existing rer 0.2.95 adoption and release requirements.",
+      "acceptance_view": "`tests/move-in/archive.journeys.ts` \u00b7 `tests/move-in/archive.journeys.ts` \u2014 \u201c[MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CAMP-002][CAMP-004][SEND-006][DATA-001] an account export moves in by status, keeps consent, carries no authority and undoes safely\u201d"
+    },
+    {
+      "id": "CONT-010",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Phone-only CSV validated; Each rejected row reason read back; Unnamed-file per-row rule; Full review capacity. Missing public-door journey: \u201cImport \u2014 complete acceptance\u201d, covering the unasserted outcomes above."
+    },
+    {
+      "id": "CONT-010",
+      "field": "state",
+      "contract": "done",
+      "acceptance_view": "partial"
+    },
+    {
+      "id": "CONT-011",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CONT-030",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "PROP-001",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AUD-002",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AUD-003",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CAMP-005",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CAMP-011",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "RESULT-003",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "OPER-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "OPER-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CONT-016",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CONT-020",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CONT-023",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CAMP-013",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CAMP-015",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "CAMP-017",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FORM-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FORM-003",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FORM-004",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FORM-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FORM-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SEG-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SEG-004",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SEG-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SEG-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "BUILD-003",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "BUILD-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "BUILD-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "BUILD-007",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "BUILD-008",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-003",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-004",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-007",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-008",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-009",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-010",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-011",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-012",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-013",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-014",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-015",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "FLOW-016",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "EXP-001",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "EXP-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "EXP-003",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "EXP-004",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "EXP-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "EXP-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SMS-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SMS-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SMS-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SMS-007",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SMS-008",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "PUSH-001",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "PUSH-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "DELIV-004",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "DELIV-005",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "DELIV-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "REPORT-004",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "INT-003",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "INT-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "INT-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "INT-007",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "INT-008",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "INT-009",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "INT-010",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "INT-012",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-007",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-008",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-017",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-013",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-022",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-023",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-024",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-025",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-026",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOVE-015",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "MOBILE-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "PUB-001",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "PUB-003",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "PUB-004",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "PUB-005",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "PUB-006",
+      "field": "gap",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AGENT-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AGENT-003",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AGENT-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AGENT-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AGENT-008",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AGENT-009",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "AGENT-011",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-001",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-002",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-003",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-004",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-005",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-006",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-007",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-008",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    },
+    {
+      "id": "SURFACE-009",
+      "field": "evidence",
+      "contract": "",
+      "acceptance_view": "None."
+    }
+  ]
+}

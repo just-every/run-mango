@@ -1,0 +1,10 @@
+{
+  "provenance": "Immutable original inputs supplied inline by the commission; no CI query, rerun, dispatch or original affected-gate query performed by this judge",
+  "source": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "verify": {"id": 42153721516, "event": "push", "status": "completed", "conclusion": "failure", "root_job": 127682852524, "root_step": "Check generated contract documents", "command": "node src/base/contract-docs.mjs check", "reason": "ACCEPTANCE.md and docs/CLAIMS.md generated content differs; run contract-docs write.", "aggregate_job": 127682912271, "dependent_runtime": "skipped", "raw_green": false, "candidate_exception": "Explicit generated-view-only exception applies; no skipped job supplies runtime green"},
+  "original_affected_gate": {"name": "sd-mango-c-f64-gate-1", "started_at": "2026-11-06T03:36:43Z", "last_supplied_state": "LIVE at input capture", "current_state": "unestablished; not queried or duplicated", "numeric_run_id": null},
+  "prior_main": {"sha": "cc6321c2372d631d9607df9af8ad1dd9f7878e84", "verify": 42137089578, "run_site": 42137089740, "qualification": "Prior main only; not source or final integration green"},
+  "builder_scale": {"id": "cloud-sd-mango-c-f64-scale-candidate", "sha": "c0e6fc6380af7c9c4fa6247698839918d93089c2", "exit": 0, "seconds": 1556.537766071, "qualification": "Supplied builder receipt only; not this judge's execution"},
+  "root_packet_verification": {"files": 74, "scope": "Root's supplied SHA256 and length verification; not independently fetched by this judge"},
+  "final_gates": "Original qualified affected gate; fresh-main complete Status, Gap, Evidence and newer provenance; merged generator write/check and current counts; source lock LAST/check; actually executed full-green exact-FINAL runtime Verify loading relied-on journeys; COMPLETE full-history publication scan NEW 0; guarded main equality; exact-main Run site; existing source, stack, review, provider, release and owner-cutover holds"
+}

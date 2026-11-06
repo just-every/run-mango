@@ -1,0 +1,16 @@
+{
+  "source_head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "setup": {
+    "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+    "exit": 0,
+    "log": "setup.log",
+    "timing": "not captured"
+  },
+  "build": {
+    "command": "cloud_run timeout 900 npx -y @runeditrun/rer build",
+    "exit": 0,
+    "log": "build.log",
+    "timing": "not captured"
+  },
+  "product_worktree_clean_after": "true; also recorded before and after registered execution"
+}

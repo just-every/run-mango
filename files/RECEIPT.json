@@ -1,0 +1,191 @@
+{
+  "schema": 1,
+  "tag": "ct-judge-mango-cont010-20261106-0400",
+  "repository": "just-every/run-mango",
+  "source_branch": "cloud/sd-mango-c-f64",
+  "source_head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+  "verdict": "CONT-010 ACCEPT ON LANDING",
+  "award": "UNAWARDED",
+  "rows": {
+    "R1": "MET",
+    "R2": "MET",
+    "R3": "MET",
+    "R4": "MET",
+    "R5": "MET",
+    "R6": "MET"
+  },
+  "unmet_frozen_outcomes": [],
+  "new_findings": [],
+  "new_fix_verdicts": 0,
+  "lifetime_fix_counts": "unchanged",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_proposed": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "product_changes": 0,
+  "product_commits": 0,
+  "product_pushes": 0,
+  "pr": null,
+  "github_ci_api_calls": 0,
+  "execution": {
+    "schema": 1,
+    "run_id": "ct-judge-mango-cont010-20261106-0400-native-archive",
+    "repository": "just-every/run-mango",
+    "head": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+    "branch": "cloud/sd-mango-c-f64",
+    "command": [
+      "python3",
+      "/tmp/rer-reap.py",
+      "timeout",
+      "2280",
+      "pnpm",
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "tests/move-in/playwright.config.js",
+      "archive.journeys.ts"
+    ],
+    "configuration": {
+      "MANGO_CSV_SCALE_ROWS": 250000,
+      "MANGO_CHROMIUM_EXECUTABLE": "/usr/bin/chromium",
+      "workers": 1,
+      "retries": 0,
+      "browser": "headless Chromium; real HOME; private context; mock keychain; basic password store; no sandbox"
+    },
+    "started_at": "2026-11-06T04:07:58.069615+00:00",
+    "worktree_clean_before": true,
+    "status": "completed",
+    "exit": 0,
+    "finished_at": "2026-11-06T04:25:44.801750+00:00",
+    "wall_seconds": 1066.732093312,
+    "head_after": "c0e6fc6380af7c9c4fa6247698839918d93089c2",
+    "worktree_clean_after": true
+  },
+  "capacity": {
+    "rows": 250000,
+    "previewRequests": 92,
+    "startRequests": 1,
+    "counts": {
+      "byKind": {
+        "created;non-subscribed;non-subscribed;none;ordinary": 249996,
+        "created;non-subscribed;suppressed;none;ordinary": 1,
+        "other;non-subscribed;suppressed;none;ordinary": 1,
+        "rejected;non-subscribed;non-subscribed;rejected;ordinary": 2
+      },
+      "duplicates": 0,
+      "effects": 249997,
+      "input": 250000,
+      "mapped": 249997,
+      "rejected": 2,
+      "unique": 250000,
+      "unmapped": 1,
+      "created": 249997,
+      "updated": 0,
+      "unsubscribed": 0,
+      "suppressed": 1
+    },
+    "job": {
+      "id": "56028f3d-fef4-4d30-b9b2-141e0d36a759",
+      "destination": "mango",
+      "namespace": "mango-audience-v1",
+      "mappingVersion": "mango-audience-v1",
+      "principalId": "go-live-owner",
+      "fingerprint": "573d670394d66b5437738e62e934d56ec811061e628b3138d175177d8344fb8c",
+      "total": 250000,
+      "checkpoint": 20,
+      "fence": 2,
+      "state": "applying",
+      "error": null,
+      "erasedRecords": 0
+    },
+    "reportReads": 2,
+    "wallMs": 614173.814513,
+    "treePeakRssKiB": 3504148,
+    "workerPeakRssKiB": 1086208,
+    "driverPeakRssKiB": 487376,
+    "nativeContactsWritten": 18,
+    "handoffs": 0
+  },
+  "erasure": {
+    "reference": "4d2c38ed-6bd9-4488-8a97-7180f298d611",
+    "state": "complete",
+    "replayStatus": 400,
+    "reportStatus": 409,
+    "resumeStatus": 409,
+    "remainingContacts": 17
+  },
+  "phone": {
+    "counts": {
+      "byKind": {
+        "contact": 14
+      },
+      "duplicates": 0,
+      "effects": 12,
+      "input": 14,
+      "mapped": 12,
+      "rejected": 2,
+      "unique": 14,
+      "unmapped": 0,
+      "created": 12,
+      "updated": 0,
+      "unsubscribed": 0,
+      "suppressed": 0
+    },
+    "reportReads": 2,
+    "resumes": 1
+  },
+  "rules": {
+    "updateCounts": {
+      "byKind": {
+        "contact": 5
+      },
+      "duplicates": 0,
+      "effects": 2,
+      "input": 5,
+      "mapped": 2,
+      "rejected": 2,
+      "unique": 5,
+      "unmapped": 1,
+      "created": 1,
+      "updated": 1,
+      "unsubscribed": 0,
+      "suppressed": 0
+    },
+    "consentCounts": {
+      "byKind": {
+        "contact": 5
+      },
+      "duplicates": 0,
+      "effects": 4,
+      "input": 5,
+      "mapped": 4,
+      "rejected": 1,
+      "unique": 5,
+      "unmapped": 0,
+      "created": 4,
+      "updated": 0,
+      "unsubscribed": 0,
+      "suppressed": 0
+    },
+    "restrictionCases": 20,
+    "restrictionUndo": "undone"
+  },
+  "supplied_verify": {
+    "id": 42153721516,
+    "event": "push",
+    "conclusion": "failure",
+    "generated_view_exception": true,
+    "runtime": "skipped"
+  },
+  "original_affected_gate": "sd-mango-c-f64-gate-1; latest supplied LIVE at input capture, not queried",
+  "final_guards": "pending; see VERDICT.md",
+  "completed_at": "2026-11-06T04:27:48.243773+00:00",
+  "readiness": "report only"
+}

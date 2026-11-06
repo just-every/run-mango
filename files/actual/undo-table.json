@@ -1,0 +1,76 @@
+{
+  "importedStatuses": {
+    "ada@example.test": "subscribed",
+    "ben@example.test": "subscribed",
+    "both@example.test": "unsubscribed",
+    "cleo@example.test": "suppressed",
+    "cy@example.test": "subscribed",
+    "dup@example.test": "subscribed",
+    "optedout@example.test": "unsubscribed",
+    "tess@example.test": "non-subscribed",
+    "uma@example.test": "unsubscribed"
+  },
+  "afterUndo": {
+    "ben@example.test": "unsubscribed",
+    "cy@example.test": "subscribed",
+    "optedout@example.test": "unsubscribed"
+  },
+  "keptContacts": [
+    {
+      "contactId": "01M6QHKP1D3EM63KZCMG2Z0YK2",
+      "reason": "Existed before this import; left as it is now."
+    },
+    {
+      "contactId": "01M6QHKVDJCH2DR3VK3KSJV7B0",
+      "reason": "Edited after the import."
+    },
+    {
+      "contactId": "01M6QHKVDJ97MJK1W9NZB44SDQ",
+      "reason": "Unsubscribed after the import."
+    }
+  ],
+  "removedContacts": 6,
+  "content": [
+    {
+      "kind": "history",
+      "title": "Spring letter",
+      "subject": "What is growing this spring",
+      "sent_at_source": "2026-09-01 09:00:00 +1000",
+      "state": "removed",
+      "outcome": "Removed: unchanged since the import."
+    },
+    {
+      "kind": "history",
+      "title": "Winter letter",
+      "subject": "Winter beds and soup",
+      "sent_at_source": "Jun 1, 2026 9:00 am",
+      "state": "removed",
+      "outcome": "Removed: unchanged since the import."
+    },
+    {
+      "kind": "draft",
+      "title": "Welcome letter",
+      "subject": "",
+      "sent_at_source": "",
+      "state": "kept",
+      "outcome": "Kept: template edited after the import."
+    }
+  ],
+  "optOuts": [
+    {
+      "reason": "import-suppressed"
+    },
+    {
+      "reason": "import-unsubscribed"
+    },
+    {
+      "reason": "import-unsubscribed"
+    },
+    {
+      "reason": "import-unsubscribed"
+    },
+    {
+      "reason": "recipient-unsubscribe"
+    }
+  ]
+}
