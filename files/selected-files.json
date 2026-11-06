@@ -23,5 +23,8 @@
   "screens/custom-properties-typed-controls-1440.png",
   "screens/custom-properties-typed-controls-390.png",
   "screens/custom-properties-typed-readback-1440.png",
-  "screens/custom-properties-typed-readback-390.png"
+  "screens/custom-properties-typed-readback-390.png",
+  "evidence-validation.json",
+  "ci-status.jsonl",
+  "ci-jobs.jsonl"
 ]

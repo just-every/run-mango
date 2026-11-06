@@ -23,7 +23,7 @@ CONT-014 remains PARTIAL. This round closes the selected native text, number, bo
 | 3. Segment, personalization, conditional content and flow splits with unchanged consent. | Existing date segment and money personalization pass in `tests/go-live/custom-property-preview.ts:7` to `:32`, `provePropertyRulesAndPreview`; consent and channel invariance additionally pass in the new helper at 69 and 82. General conditional-content and flow-split matrix is not claimed. |
 | 4. Date and money scenario with import, API change, date segment, personalized money and source history. | PASS, carried evidence rerun: `tests/go-live/custom-property-journey.ts:15` to `:84`, `proveCustomProperties`, plus `tests/go-live/custom-property-preview.ts:7` to `:32`, `provePropertyRulesAndPreview`. |
 
-All rows use the registered sync journey. Local outcome: one test passed in 4.0 minutes, exit 0. Invocation began at 1bd8b6a7cb9bdea5689e2824a8d3a6219a62aac5; its relevant code and test bytes equal the final candidate. The only later change is the generated source-lock entry for the newly tracked helper. `RECEIPT.json` records that exact diff. Exact candidate Verify is push run 42229120427; its terminal status is recorded in the CI receipt and final update below.
+All rows use the registered sync journey. Local outcome: one test passed in 4.0 minutes, exit 0. Invocation began at 1bd8b6a7cb9bdea5689e2824a8d3a6219a62aac5; its relevant code and test bytes equal the final candidate. The only later change is the generated source-lock entry for the newly tracked helper. `RECEIPT.json` records that exact diff. Exact candidate Verify push run 42229120427 completed SUCCESS. The connections job 127930915176 also completed SUCCESS, confirming the registered journey pack ran. This Verify event and conclusion apply to every proven row above.
 
 ## Frozen selected rubric
 
@@ -41,7 +41,7 @@ This is a PARTIAL claim, not a DONE request. Every rider is still recorded so th
 | --- | --- | --- |
 | 1 | FAIL for full DONE; selected slice PASS | Acceptance 1 count boundary and the acceptance 2 and 3 matrices remain unproved. Selected proof is `provePropertyTypes`, lines 19–82. |
 | 2 | PASS selected slice | Seeded confirmed contact; true to false, one to multiple list choices, stored readback and five unsafe mixed writes with unchanged data, lines 28–82. |
-| 3 | PENDING recorded candidate Verify | The registered connections journey is invoked by push Verify run 42229120427 on the full candidate SHA. Terminal conclusion is in the final CI receipt. |
+| 3 | PASS | Exact candidate push Verify 42229120427 SUCCESS; connections job 127930915176 SUCCESS. The registered sync journey is included in that pack. |
 | 4 | PASS | Browser and runtime proof execute the identical relevant bytes. The later candidate differs only in sources.lock.json; receipt records both SHAs. |
 | 5 | PASS, INSPECTED | CONT-014 already cites D-2, and its requirement explicitly retains consent. No new Base inheritance or acceptance duty is claimed. |
 | 6 | PASS mechanical; status authority retained | Generator write and check exit 0; views restored from origin/main. No clause row or generated view committed. Existing main's Status cells are retained whole as instructed. |
@@ -70,11 +70,11 @@ Publication scan receipt: commit=1f7408aa79736babc12783c0b46eb4105d0648ad comple
 
 ## Pre-READY self-check
 
-1. Selected behavior is reached through native routes and actual controls, with typed readback, reopened values and atomic refusal checks. The full clause remains PARTIAL for the named unproved outcomes. Exact candidate Verify is recorded separately.
+1. Selected behavior is reached through native routes and actual controls, with typed readback, reopened values and atomic refusal checks. The full clause remains PARTIAL for the named unproved outcomes. Exact candidate push Verify 42229120427 is completed SUCCESS.
 2. No existing assertion was removed, narrowed, skipped or moved behind a width or environment condition.
 3. Existing revocation and event-replay cases remain in the registered journey. The new refusals preserve consent and channel authority. Erasure and the original CONT-013 hold are unchanged, not repaired or newly qualified.
 4. No production screen changed. Existing components and Settings placement are retained. Both viewport proofs show labelled native controls, full field borders and readable text; no new icon-only control exists.
-5. Source lock is fresh; candidate push is proven. Exact candidate Verify is recorded separately. Exact-main Run site and complete publication scan remain lander duties.
+5. Source lock is fresh; candidate push is proven. Exact candidate push Verify 42229120427 is completed SUCCESS. Exact-main Run site and complete publication scan remain lander duties.
 
 ## Remaining scope and plan return
 
@@ -83,3 +83,13 @@ GAP CONT-014: Acceptance 1's complete property-count boundary, acceptance 2's re
 Plan return: CONT-014 PARTIAL to PARTIAL. Record the selected four-type proof as complete; retain all remainders and existing campaign holds. No lane plan file was read or written in the cloud. Full executed plan is in PLAN.md. No other target was selected.
 
 The public report packet contains this report, plan, actual receipts, check logs and only the 14 relevant custom-property screenshots. It excludes credentials, environment dumps, private sessions, runtime state and held-out material. Evidence publication is separate from product custody and cannot grant READY or DONE.
+
+## Terminal CI and custody
+
+Exact candidate 1f7408aa79736babc12783c0b46eb4105d0648ad: push Verify 42229120427 completed SUCCESS, observed 2026-11-06T14:08:25Z. Connections job 127930915176 completed SUCCESS. GitHub API calls used: 6 of 10, with one watcher and five-minute spacing for the run. No dispatch, rerun, failed repair, failed-job log read or PR was needed.
+
+The initial report-only evidence ref was fetched back and validated: all 27 file hashes, manifest identity and exact product SHA passed. The actual validation receipt is evidence-validation.json. This terminal packet supersedes that earlier report version, retaining the same product SHA and adding completed CI evidence. No product checkout, HEAD or index is modified by evidence transport.
+
+CLAIM CONT-014 PARTIAL points=4 tests=tests/go-live/custom-property-journey.ts#proveCustomProperties; tests/go-live/custom-property-preview.ts#provePropertyRulesAndPreview
+
+The newly closed acceptance 1 slice is explicitly partial: the complete property-count boundary remains. No full acceptance 1, 2 or 3 promotion is requested. The original counts and contract Status cells remain unchanged.

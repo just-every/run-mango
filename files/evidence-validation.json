@@ -1,0 +1,174 @@
+{
+  "destination": "/tmp/mango-evidence-return-check/work/sd-mango-c-f118/reports/just-every/run-mango",
+  "files": [
+    {
+      "blob": "062cb37a364001915effe4356dd0a3e4cfb79dec",
+      "bytes": 1933,
+      "path": "PLAN.md",
+      "sha256": "e1e747acc71666bf0b0a94bead52b293a48c4097b19277f8b75099e9b79d5668"
+    },
+    {
+      "blob": "5a2b56bad1963b19087d04e72fc6f2c5799d9825",
+      "bytes": 6300,
+      "path": "RECEIPT.json",
+      "sha256": "c19dfa70c6682a68746c1ff1e06594966cec64367dee9bf68fcb548af224b3eb"
+    },
+    {
+      "blob": "409e7d9a7198e1cca92f0e483c9a3b6b07c65eab",
+      "bytes": 11492,
+      "path": "REPORT.md",
+      "sha256": "fde53d9a092c3e71eedf86c8590505e62c6ed9754e8250339d716a0c56f77980"
+    },
+    {
+      "blob": "7686aeee693362e0f6203c5c4e5736093853dc81",
+      "bytes": 361,
+      "path": "baseline.json",
+      "sha256": "1b277e7e106ce1daa4e338ab5af148b66c02fb6e69e79866f99e37052655ad91"
+    },
+    {
+      "blob": "df521d3a6fb73dea833c9bec32ddf86852c0ef60",
+      "bytes": 36607,
+      "path": "build.log",
+      "sha256": "9c2fc397429f95cf6f61c6fc292c946d391e711f483881c06138ac81a320af47"
+    },
+    {
+      "blob": "ddb4d941d618a593e77e49348e341e849cbb3771",
+      "bytes": 223,
+      "path": "ci-discovery.jsonl",
+      "sha256": "7d8b043dfa423d6451aeaec1ee95cf5efde1d59d0da42847c64da2dfe6d99f97"
+    },
+    {
+      "blob": "87068d99c9d759eec4f4bae11ea7e43ca1178352",
+      "bytes": 440,
+      "path": "ci-status.jsonl",
+      "sha256": "1a4d1c29f0b7d229e0b231e4dae167cbd846e70bc9d0d035469c692084c5a9c9"
+    },
+    {
+      "blob": "119b8da3858e35d152e73c8a30b4c6ac1c1115ea",
+      "bytes": 463,
+      "path": "journey.log",
+      "sha256": "8a2edba46276530d29b47ce35869c70f0f9b9cbeda3e0eb73586a022b292444c"
+    },
+    {
+      "blob": "d395a426204a7a4ad4ccb0ad3ca3d7a78a8cad63",
+      "bytes": 824238,
+      "path": "lock.log",
+      "sha256": "cbe9d9358e3d5df151f9902bbe31dc333a915f1ee8c61343a795b735b00f7bd4"
+    },
+    {
+      "blob": "615a73494e757a91efbde7420a782468c52397f0",
+      "bytes": 710,
+      "path": "push.log",
+      "sha256": "4296ad92fc01fbc30f5d7799bba9041813f5c9323b016afad0cf813b9da87847"
+    },
+    {
+      "blob": "76c5a3570a571d2fb48a437e37a961fd924a07ed",
+      "bytes": 336855,
+      "path": "screens/custom-properties-contact-values-history-1440.png",
+      "sha256": "df64f4ae308b9d6aa533339a37f34c20e2cb0dce9e8d8ce6f48bb95472d9109d"
+    },
+    {
+      "blob": "717a50a56ba4a886ed6366b0a21d18ef223174fa",
+      "bytes": 315910,
+      "path": "screens/custom-properties-contact-values-history-390.png",
+      "sha256": "f0105815289684958a80717ac548358234c76df7b9ea5a65a1632a5682ae65db"
+    },
+    {
+      "blob": "9fe65cf5bd622fc4095ccdd29a91813e79b53826",
+      "bytes": 145653,
+      "path": "screens/custom-properties-date-segment-1440.png",
+      "sha256": "39a4a60a89b6efdaffe4cd3566b856e2ae9b47fe5c46396e43bef09304fc678b"
+    },
+    {
+      "blob": "11601e808506d0d748f05ee2bbe31dbd593dd618",
+      "bytes": 155062,
+      "path": "screens/custom-properties-date-segment-390.png",
+      "sha256": "5a6e44f10d6eb9414a503de661405ebc3b62ecc9dbe36bfbf941e1d5a4cd2074"
+    },
+    {
+      "blob": "db6e14120754473a574a21bd0b2831536fcd9eec",
+      "bytes": 81947,
+      "path": "screens/custom-properties-import-mapping-1440.png",
+      "sha256": "b18a1beaf858250786c98e566f9f1fe415d7e15fb440e454cf8b6c290107ab20"
+    },
+    {
+      "blob": "30f40573c89d4978c4dadcfbac681d41175d3fcb",
+      "bytes": 126796,
+      "path": "screens/custom-properties-import-mapping-390.png",
+      "sha256": "6b1dd4b654a40ae2ade4dc2ba77149c8d467f8140e82072a1a4753376a5f79b8"
+    },
+    {
+      "blob": "aef203ead0cb8eeb1cf33f2a006866a1050dd494",
+      "bytes": 136895,
+      "path": "screens/custom-properties-money-preview-1440.png",
+      "sha256": "405d93f94d126598b50dd3cb6eb6cd6be6805ea45a56afaa68b725c20d481f11"
+    },
+    {
+      "blob": "55c2810af6ead4a71bf4f02283360364c084ab00",
+      "bytes": 119377,
+      "path": "screens/custom-properties-money-preview-390.png",
+      "sha256": "afe62c7831370ace73f6745ce104fb67029425d9f1a89bcfc53a715d9069ce34"
+    },
+    {
+      "blob": "c2b84507b012f7389003416063f9ab9fb8571b9d",
+      "bytes": 70665,
+      "path": "screens/custom-properties-settings-1440.png",
+      "sha256": "5c49cfe2bbe62a352adc9e6c3ab374b163a58f58709a8c279d49382305682fc4"
+    },
+    {
+      "blob": "0483fa56869e1dc5311cc838cc0e79bc4b551e26",
+      "bytes": 68536,
+      "path": "screens/custom-properties-settings-390.png",
+      "sha256": "a174097b43bd31f91efc05d4a24ebe008a12b211b2913dcf390afcfb908bf8bf"
+    },
+    {
+      "blob": "1d4093ed91a6cbb0332724c6c55ec1f28a26bd97",
+      "bytes": 74026,
+      "path": "screens/custom-properties-typed-controls-1440.png",
+      "sha256": "0b070368b5898e64b5936802f56ac46ce8c2a3323103ab98ca2a28a02c5424f3"
+    },
+    {
+      "blob": "68e6c219170fe80cce5af64381dd748b68693293",
+      "bytes": 63037,
+      "path": "screens/custom-properties-typed-controls-390.png",
+      "sha256": "4b2ad2f9caa7291017e28439b204334ab0c75cc96cc5c39bd999ab40a7fc994c"
+    },
+    {
+      "blob": "aec2748c5a10966c5b62e2643c077f0f77b3912a",
+      "bytes": 33457,
+      "path": "screens/custom-properties-typed-readback-1440.png",
+      "sha256": "e5c791328290ff1a22ca430cd48497fea0aaed272fe09db440561bb3191a9860"
+    },
+    {
+      "blob": "bed02f539eb62b12ae9f9a85801e27ba01a0390b",
+      "bytes": 24123,
+      "path": "screens/custom-properties-typed-readback-390.png",
+      "sha256": "13ba9a8c857ab6f05bf0fabe755c217dca961fa9588f67d51810a9db226cc30c"
+    },
+    {
+      "blob": "66d07ea46dd198f7f3af9ebedab02e40d0e72c7c",
+      "bytes": 947,
+      "path": "selected-files.json",
+      "sha256": "ae73bf98cc956b3f9a99cc819394c95966e55e480d65394dd874f1f87f47953a"
+    },
+    {
+      "blob": "40c16f5d1be5519e52b9dbd9fe2f2fb66abd2367",
+      "bytes": 208,
+      "path": "typecheck.log",
+      "sha256": "61b274e93cf4c59fceb6429bb26d3518b01c9226316edf8e665abce289e9147e"
+    },
+    {
+      "blob": "7f08ad713eb644515ca188ca96c07a87314528b5",
+      "bytes": 60,
+      "path": "views.log",
+      "sha256": "cdada4f46860989b6e41904b5bffd1be7976cfde8b8dba1b4a7dcf41c522fcda"
+    }
+  ],
+  "head": "4e579ad71cac39e49b46eb89d314f220e99b9268",
+  "manifest_sha256": "c95077891936be998535c9bc38be0003058515abf01994e945a1e37c15b5fa6c",
+  "product_branch": "cloud/sd-mango-c-f118",
+  "product_head": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+  "ref": "refs/heads/evidence/sd-mango-c-f118",
+  "repository": "just-every/run-mango",
+  "status": "restored"
+}

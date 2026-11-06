@@ -106,8 +106,18 @@
     "verifyRun": 42229120427,
     "event": "push",
     "head": "1f7408aa79736babc12783c0b46eb4105d0648ad",
-    "status": "in_progress",
-    "conclusion": null
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42229120427",
+    "observedAt": "2026-11-06T14:08:25Z",
+    "connectionsJob": {
+      "conclusion": "success",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42229120427/job/127930915176",
+      "id": 127930915176,
+      "name": "shards (connections)",
+      "status": "completed"
+    }
   },
   "productPush": {
     "status": "pushed",
@@ -185,5 +195,14 @@
       "bytes": 24123,
       "sha256": "13ba9a8c857ab6f05bf0fabe755c217dca961fa9588f67d51810a9db226cc30c"
     }
-  ]
+  ],
+  "githubApiCallsUsed": 6,
+  "preReady": {
+    "localChecks": "pass",
+    "exactShaVerify": "success",
+    "noWeakenedAssertions": true,
+    "sourceLock": "fresh",
+    "fullHistoryPublicationScan": "guarded lander pending",
+    "mainRunSite": "guarded lander pending"
+  }
 }
