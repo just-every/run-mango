@@ -998,7 +998,7 @@
       "executable": false
     },
     "ACCEPTANCE.md": {
-      "sha256": "ee7ad2f89ec42af7fb69f14e6b0fc0e957c08163278b262ad4fcc5afaa470a41",
+      "sha256": "4df7b8d994726bb2513eb2cba947d8ffde1c74e496e810dcda33c7e99ca8f4bd",
       "executable": false
     },
     "AGENTS.consumer.md": {
@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "38965b2555ebb629050176140836671d149cb97d6d33efabda89bbc93601bfbe",
+      "sha256": "d1c453a77ff6b68535bbf0896308cc8f999447695ceee3c03f2484cd73591574",
       "executable": false
     },
     "DEMO.md": {
@@ -8513,12 +8513,16 @@
       "sha256": "1d34ecd251df7d842c2ca2b11bfca0ed6dc78d78c5d137e760e785c27ad985e1",
       "executable": false
     },
+    "tests/campaign-authoring/design-concurrency-journey.ts": {
+      "sha256": "f2b6760a64e6700d13dc190c5d63770301b878b2215ff086d60750db26767563",
+      "executable": false
+    },
     "tests/campaign-authoring/design-generation.flow.ts": {
       "sha256": "b26646b91ac6edbaad07d18c02bf9e11d7129756c01b776616e2420a3f52b152",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
-      "sha256": "00835a3edef9571ade4de0db160e588b6988f1ddeb6caf73b47f8bc538dc365c",
+      "sha256": "90e28887f59702b49a461e38b2e648692fc0f271fc0977aef2588326352528b6",
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
@@ -8562,7 +8566,7 @@
       "executable": false
     },
     "tests/campaign-authoring/worker.ts": {
-      "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1",
+      "sha256": "a6f9874007f76250aef953ce20d114651c121bad0f443e83e72410d7018512da",
       "executable": false
     },
     "tests/campaign-results/archive-fixture.ts": {
@@ -9534,7 +9538,7 @@
       "executable": false
     },
     "tests/support/fake-twelve-ui.ts": {
-      "sha256": "28774c76e616b636432141a870cad8bd48b85b3c2105303bcc3a3afda0d7885c",
+      "sha256": "f77fa41f12deb2d8c9c895483dfbba7255aaaff399d06394b205753fbb5c9925",
       "executable": false
     },
     "tests/support/fixture-app.ts": {
