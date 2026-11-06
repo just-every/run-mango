@@ -13,7 +13,7 @@ import { openPage, reloadPage } from '../support/navigation';
 
 test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",async ({page}, info) => {
   const commerce=sourceEdge();
-  const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:imageHosts});
+  const edge = await providerEdge({incumbent:async(url,request,response)=>(await imageApi(url,request,response)) || (await imageBytes(url,request,response)),commerce:request=>commerce.commerce(request),links:{...hostNetwork,...linkNetwork,...imageNetwork}}), site = await installation(edge, eventSigner(), {commerce:true,sms:true,networkHosts:[...imageHosts,...Object.keys({...hostNetwork,...linkNetwork}).map(address=>new URL(address).hostname)]});
   try {
     const cookie = await site.open();
     await json(await site.call('/api/settings/sender', {method:'PUT', cookie, body:sender}), 200);
@@ -67,12 +67,66 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     expect((await site.call(ackPath(advisory),{method:'POST',body:ackBody(advisory)})).status).toBe(401);
     await json(await site.call(ackPath(advisory),{method:'POST',cookie,headers:{Origin:'https://foreign.example'},body:ackBody(advisory)}),403);
     await reloadPage(page);
+    const startedAt = (await site.control('/_golive/clock',{advanceMs:60000})).now;
+    const acknowledgementResponse = page.waitForResponse(response =>
+      new URL(response.url()).pathname === ackPath(advisory) && response.request().method() === 'POST');
     await page.getByRole('button',{name:'Acknowledge advisory',exact:true}).click();
+    const response = await acknowledgementResponse;
+    expect(response.status()).toBe(200);
+    const acknowledged = await response.json();
+    const finishedAt = (await site.control('/_golive/clock')).now;
+    expect(acknowledged).toMatchObject({status:'acknowledged',acknowledgement:{operatorId:'go-live-owner'}});
+    const acknowledgedAt = Date.parse(acknowledged.acknowledgement.acknowledgedAt);
+    expect(acknowledgedAt).toBeGreaterThanOrEqual(startedAt);
+    expect(acknowledgedAt).toBeLessThanOrEqual(finishedAt);
+    const audit = () => site.rows(`SELECT * FROM lifecycle_audit_entries
+      WHERE action='acknowledge-advisory' AND operation_key='advisory-acknowledgement:${advisory.findingIdentity}'`);
+    const originalAudit = await audit();
+    expect(originalAudit).toEqual([expect.objectContaining({entity_type:'campaign-revision',entity_id:campaign.revisionId,
+      actor_type:'operator',actor_id:'go-live-owner',occurred_at:acknowledgedAt,created_at:acknowledgedAt})]);
+    expect(JSON.parse(originalAudit[0].detail_json)).toMatchObject({campaignId:campaign.campaignId,
+      revisionId:campaign.revisionId,findingIdentity:advisory.findingIdentity,kind:advisory.kind,detail:advisory.detail});
+    const retainedFinding = async () => {
+      const saved = await json(await site.call(`/api/campaigns/${campaign.campaignId}/review`,{cookie}),200);
+      const finding = saved.checks.find((check:any) => check.kind === advisory.kind);
+      expect(finding).toMatchObject({findingIdentity:advisory.findingIdentity,acknowledgement:acknowledged.acknowledgement});
+      return finding;
+    };
+    const noAuthority = async () => {
+      const saved = await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
+      expect(saved.campaign).toMatchObject({state:'draft',activeRevisionId:campaign.revisionId});
+      expect(saved.revision).toMatchObject({state:'draft'});
+      for (const table of ['campaign_approval_requests','campaign_revision_candidates','recipient_steps','step_dispatches']) expect(await site.count(table)).toBe(0);
+      expect((await site.control('/_golive/emissions')).filter((item:any) => item.command.kind === 'campaign.dispatch')).toEqual([]);
+      expect(edge.sends.filter(send => send.body.headers?.['List-Unsubscribe'])).toEqual([]);
+    };
+    await retainedFinding();
+    await noAuthority();
     await expect(page.locator('.approval-checks')).toContainText('Acknowledged by');
-    for (const width of [1440]) {
+    await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
+    const replayAt = (await site.control('/_golive/clock',{advanceMs:120000})).now;
+    expect(replayAt).toBeGreaterThan(acknowledgedAt);
+    await reloadPage(page);
+    await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
+    // Replay the exact original request before checks replace their transient row IDs.
+    expect(await json(await site.call(ackPath(advisory),{method:'POST',cookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
+    await review();
+    const refreshed = await retainedFinding();
+    expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
+    await reloadPage(page);
+    await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
+    await retainedFinding();
+    expect(await audit()).toEqual(originalAudit);
+    await noAuthority();
+    await info.attach('msg-007-acknowledgement-retention',{contentType:'application/json',body:JSON.stringify({
+      startedAt,finishedAt,replayAt,acknowledged,findingIdentity:advisory.findingIdentity,
+      refreshedFindingIdentity:refreshed.findingIdentity,audit:originalAudit,noAuthorityAsserted:true,
+    },null,2)});
+    for (const width of [1440,390]) {
       await page.setViewportSize({width,height:1000});
       await page.locator('.approval-checks').screenshot({path:info.outputPath(`acknowledged-advisory-${width}.png`)});
     }
+    await page.setViewportSize({width:1440,height:1000});
     await approve(site,cookie,campaign);
     const records = await site.rows("SELECT actor_id,occurred_at FROM lifecycle_audit_entries WHERE action='acknowledge-advisory'");
     expect(records).toHaveLength(2);
