@@ -1,0 +1,124 @@
+{
+  "files": [
+    {
+      "blob": "9f7dcddb06b05df311124d355f0af59a9d439568",
+      "bytes": 1678,
+      "path": "PLAN.md",
+      "sha256": "c1137dec2060c7e29113e8b463f1c0903be46617ec7d59131132b47ac2f57b10"
+    },
+    {
+      "blob": "c709e156fd8ef6560feaea4058f1fe1e573b21e4",
+      "bytes": 11905,
+      "path": "REPORT.md",
+      "sha256": "ebffda10c2c8a076191beb2d600ddc6a084686d19e70ec631b582f094934df0b"
+    },
+    {
+      "blob": "5c653b1c6c9b57d601361cb4422dffb813ff4003",
+      "bytes": 281,
+      "path": "branch-ci-receipt.json",
+      "sha256": "ece2bc17e82962afb753d4d2854f8cf25b03df5e1e2c9c729e395b9007e2d471"
+    },
+    {
+      "blob": "4febedb568e6d17e1276b09885ad0a14c99de806",
+      "bytes": 1007,
+      "path": "ci-receipt.json",
+      "sha256": "26955ec5e159cacd9f4fef5c3b96942a634233c7a5a15c60ed90fd52f1a1a4ec"
+    },
+    {
+      "blob": "905fd34e7c889f25bbdfee3b4345b8d6502ad42d",
+      "bytes": 710545,
+      "path": "design-concurrency-1440.png",
+      "sha256": "abf883e35c919c48efda655396450431fa3294dc6f4a35c9224d6abfcc4c5cef"
+    },
+    {
+      "blob": "3c095b5294c68449d78c6c6e13977a15b6aea6fb",
+      "bytes": 568167,
+      "path": "design-concurrency-390.png",
+      "sha256": "1ce6f3442e175a11309d5cc2fe966b1f64d15c08bbc79d5dbc296ed064ee067b"
+    },
+    {
+      "blob": "fe3decf09ce58b3c1c7227ae31f4b82893190f21",
+      "bytes": 695792,
+      "path": "design-concurrency-preparing-1440.png",
+      "sha256": "592c99f2332b41088035e42b410bb212b93e4ac8dcbf344165bdbeec9afee1b4"
+    },
+    {
+      "blob": "34d7f3f757c72636a3e0be00d586fc201be055fd",
+      "bytes": 552915,
+      "path": "design-concurrency-preparing-390.png",
+      "sha256": "6b4253ef8ec63391adee4afc24e719f98aefadce49c6753d91386316f1e3d62a"
+    },
+    {
+      "blob": "eb3602830788bf735afb7fef90ff2d9c9d335be9",
+      "bytes": 3809,
+      "path": "design-concurrency-receipt.json",
+      "sha256": "cb643dc7d3f2b12f375c1dee945e7756f8fa77a87b7502801d8fd0e334a663a2"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "first-party.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "789201754948ac21c7bc354f229a60009c882281",
+      "bytes": 810,
+      "path": "generation.log",
+      "sha256": "b61d0363f03561acf9452832223af0d738f599c79cc78c27f3d37a5a7d66d641"
+    },
+    {
+      "blob": "9a741194afc31403eb83750c62b837c166137da8",
+      "bytes": 91,
+      "path": "mechanical-receipt.json",
+      "sha256": "c8cba353b1da449262b366dedddafe6586ed9f1bc79af366e278ccd7d709bb9d"
+    },
+    {
+      "blob": "4045c823de0741d4258690324c1b72462c07c71b",
+      "bytes": 896,
+      "path": "product-push-receipt.txt",
+      "sha256": "5c7fcb7044065851d719bdef352b3ce4b6f211897c24a1fcf0b3b075d71f708e"
+    },
+    {
+      "blob": "a32774022b2505c842c22e7162e8952348880b52",
+      "bytes": 131,
+      "path": "remote-refs-receipt.txt",
+      "sha256": "8edab0c05a69727891ceb2acf2f732649842c184e8a99065c6619a7f1dc8f11e"
+    },
+    {
+      "blob": "a7ff7c2b8e1e8b424ca5d85fd557cf761a83e938",
+      "bytes": 1086,
+      "path": "source-receipt.json",
+      "sha256": "e95b6b809c5638a477f52674de58fce2ab8d09d8849ed0e4438530fb361433df"
+    },
+    {
+      "blob": "473a66ac680fb5ad1811fbd28a7cbddfa4819495",
+      "bytes": 1156,
+      "path": "test-receipt.json",
+      "sha256": "8c6d0499429b768998033f00091ea641d07aa5775c0f7a614130c34578f5eb5f"
+    },
+    {
+      "blob": "58ac9280e7644c8c3a0aa49e797e2dcc960fb33c",
+      "bytes": 168,
+      "path": "typecheck.log",
+      "sha256": "37dc7bb443a34dda15cf70e5286200eadcb931b3cc5b73bd3ff57f91cb0a98ca"
+    },
+    {
+      "blob": "ae869b2fafd3acf46a2dc6ce35ec869497ae9cfb",
+      "bytes": 32,
+      "path": "views-check.log",
+      "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+    },
+    {
+      "blob": "58dd21c218846e90dd798f1845377f7422e45cac",
+      "bytes": 28,
+      "path": "views-write.log",
+      "sha256": "14cee29b7bd19487e15f4013d4fb85016e022ef21d230676971a6490c88436d2"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f114",
+  "product_head": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+  "ref": "refs/heads/evidence/sd-mango-c-f114",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f114"
+}

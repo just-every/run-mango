@@ -1,0 +1,33 @@
+{
+  "repository": "just-every/run-mango",
+  "query": "repos/just-every/run-mango/actions/runs?head_sha=3adffb27a2b153edfe784251bf61acee45ea9ca4&per_page=100",
+  "head": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+  "observedRuns": [
+    {
+      "id": 42212846652,
+      "name": "Verify",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "3adffb27a2b153edfe784251bf61acee45ea9ca4"
+    },
+    {
+      "id": 42211055162,
+      "name": "Verify",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "3adffb27a2b153edfe784251bf61acee45ea9ca4"
+    },
+    {
+      "id": 42212846650,
+      "name": "Run site",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "3adffb27a2b153edfe784251bf61acee45ea9ca4"
+    }
+  ],
+  "apiCallsUsed": 3,
+  "notes": "First discovery used an abbreviated SHA and returned no runs; second used the complete SHA. No dispatch or rerun."
+}

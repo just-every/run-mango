@@ -1,0 +1,23 @@
+{
+  "head": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+  "sourceChangesSinceRun": false,
+  "registeredTest": "tests/campaign-authoring/design-generation.spec.ts:5",
+  "testName": "[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal",
+  "command": "cloud_run perl -e 'alarm 1200; exec @ARGV' -- pnpm exec playwright test --config playwright.config.js tests/campaign-authoring/design-generation.spec.ts --workers=1",
+  "exit": 0,
+  "result": "1 passed (3.9m)",
+  "browser": "/usr/bin/chromium with --no-sandbox",
+  "behavioralWidth": 1440,
+  "screenshots": [
+    1440,
+    390
+  ],
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0
+  },
+  "probes": [
+    "PROBE DESIGN-007 acceptance-6-start: native start during provider 429 wait -> 409 design_job_active; no new job, command, creation request or purchase",
+    "PROBE DESIGN-007 acceptance-6-choice: earlier design B control during latest wait -> earlier layout ready, one matching purchase and cost; latest wait and draft authority unchanged after reload"
+  ]
+}

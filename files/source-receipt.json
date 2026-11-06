@@ -1,0 +1,23 @@
+{
+  "head": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+  "branch": "cloud/sd-mango-c-f114",
+  "predecessor": "7b84054fa0973a54dcc8189b44f6a35f8e9a065e",
+  "predecessorAlreadyAncestor": true,
+  "counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "clause": "DESIGN-007",
+  "statusBefore": "partial",
+  "statusAfter": "partial",
+  "productChanges": [],
+  "files": {
+    "CONTRACT.md": "d1c453a77ff6b68535bbf0896308cc8f999447695ceee3c03f2484cd73591574",
+    "tests/campaign-authoring/design-concurrency-journey.ts": "f2b6760a64e6700d13dc190c5d63770301b878b2215ff086d60750db26767563",
+    "tests/campaign-authoring/design-generation.spec.ts": "90e28887f59702b49a461e38b2e648692fc0f271fc0977aef2588326352528b6",
+    "tests/support/fake-twelve-ui.ts": "f77fa41f12deb2d8c9c895483dfbba7255aaaff399d06394b205753fbb5c9925",
+    "src/core/features/design-generation/routes.ts": "d24993e69ed5c0c68f0e454a3d26fa5b0f162e62c647a58cd54dd45093bfc4d5",
+    "src/core/features/design-generation/repository.ts": "4344a03b49d5c28bebee0c288d1608e8464ea8cb5aaa9d716d0f1e1e2fb35c5f"
+  }
+}

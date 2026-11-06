@@ -1,0 +1,134 @@
+{
+  "clause": "DESIGN-007",
+  "acceptance": 6,
+  "campaignId": "01M6RCCFFD4PGD0SXWPHR1KKWP",
+  "revisionId": "01M6RCCFFD0T6J6CNTJR53TQM7",
+  "concurrentStart": {
+    "status": 409,
+    "error": "design_job_active",
+    "beforeJobCount": 2,
+    "afterJobCount": 2,
+    "unchangedCommands": [
+      {
+        "kind": "design.draft",
+        "payload": "{\"jobId\":\"01M6RCCFM2GSS8031MG11HYPHS\"}"
+      },
+      {
+        "kind": "design.draft",
+        "payload": "{\"jobId\":\"01M6RCCFRWS9DPKPYAT7DS51ER\"}"
+      }
+    ],
+    "unchangedCreationCount": 2,
+    "unchangedPurchases": [
+      "draft:a:mango-design-01M6RCCFM2GSS8031MG11HYPHS-draft-a",
+      "draft:b:mango-design-01M6RCCFM2GSS8031MG11HYPHS-draft-b",
+      "draft:a:mango-design-01M6RCCFRWS9DPKPYAT7DS51ER-draft-a"
+    ]
+  },
+  "laterRun": {
+    "id": "01M6RCCFRWS9DPKPYAT7DS51ER",
+    "providerRunId": "crt-10e6d1af3e024fb2",
+    "state": "drafting",
+    "waiting": {
+      "reason": "provider_quota",
+      "retryAt": 1793967744772
+    }
+  },
+  "earlierRun": {
+    "id": "01M6RCCFM2GSS8031MG11HYPHS",
+    "providerRunId": "crt-603557fb6bb874f1",
+    "providerLayoutId": "cnv-ffbe3406836a6ab1",
+    "preparingState": "preparing",
+    "latestWaitDuringPreparation": {
+      "reason": "provider_quota",
+      "retryAt": 1793967744772
+    },
+    "state": "ready",
+    "chosenSlot": "b",
+    "candidateSha256": "6bb3226581f62bf3493dd88afdd5b33048220cdb4cd4e1c5c3f1ce4e8370ad11",
+    "layoutPurchase": "mango-design-01M6RCCFM2GSS8031MG11HYPHS-layout-b"
+  },
+  "costs": [
+    {
+      "id": "design:01M6RCCFM2GSS8031MG11HYPHS:draft:a",
+      "campaign_id": "01M6RCCFFD4PGD0SXWPHR1KKWP",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6RCCFM2GSS8031MG11HYPHS:draft:b",
+      "campaign_id": "01M6RCCFFD4PGD0SXWPHR1KKWP",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6RCCFM2GSS8031MG11HYPHS:layout:b",
+      "campaign_id": "01M6RCCFFD4PGD0SXWPHR1KKWP",
+      "provider": "12ui",
+      "operation": "design-layout",
+      "model_or_channel": "fast",
+      "billable_units": 1
+    },
+    {
+      "id": "design:01M6RCCFRWS9DPKPYAT7DS51ER:draft:a",
+      "campaign_id": "01M6RCCFFD4PGD0SXWPHR1KKWP",
+      "provider": "12ui",
+      "operation": "design-draft",
+      "model_or_channel": "standard",
+      "billable_units": 1
+    }
+  ],
+  "authority": {
+    "campaignState": "draft",
+    "approvals": [],
+    "recipients": [],
+    "dispatch": []
+  },
+  "unansweredConversion": {
+    "purchases": [
+      "draft:a:mango-design-01M6RCCFM2GSS8031MG11HYPHS-draft-a",
+      "draft:b:mango-design-01M6RCCFM2GSS8031MG11HYPHS-draft-b",
+      "draft:a:mango-design-01M6RCCFRWS9DPKPYAT7DS51ER-draft-a"
+    ],
+    "costFacts": [
+      {
+        "id": "design:01M6RCCFM2GSS8031MG11HYPHS:draft:a",
+        "campaign_id": "01M6RCCFFD4PGD0SXWPHR1KKWP",
+        "provider": "12ui",
+        "operation": "design-draft",
+        "model_or_channel": "standard",
+        "billable_units": 1
+      },
+      {
+        "id": "design:01M6RCCFM2GSS8031MG11HYPHS:draft:b",
+        "campaign_id": "01M6RCCFFD4PGD0SXWPHR1KKWP",
+        "provider": "12ui",
+        "operation": "design-draft",
+        "model_or_channel": "standard",
+        "billable_units": 1
+      },
+      {
+        "id": "design:01M6RCCFRWS9DPKPYAT7DS51ER:draft:a",
+        "campaign_id": "01M6RCCFFD4PGD0SXWPHR1KKWP",
+        "provider": "12ui",
+        "operation": "design-draft",
+        "model_or_channel": "standard",
+        "billable_units": 1
+      }
+    ]
+  },
+  "screenshots": {
+    "preparing": [
+      1440,
+      390
+    ],
+    "ready": [
+      1440,
+      390
+    ]
+  }
+}
