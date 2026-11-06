@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "tag": "ct-judge-mango-seg003-20261106-0330",
+  "repository": "just-every/run-mango",
+  "source": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "source_branch": "cloud/sd-mango-c-f66",
+  "judge_product_branch": null,
+  "product_changes": false,
+  "product_commits": 0,
+  "product_pushes": 0,
+  "pr": null,
+  "command": "cloud_run timeout 1200 nice -n 15 env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=\"$HOME/rer-consolidation/work/ct-judge-mango-seg003-20261106-0330\" pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts",
+  "command_core": "pnpm exec playwright test --config tests/campaign-results/playwright.config.js results.journeys.ts",
+  "started": "2026-11-06T03:40:15.678382+00:00",
+  "finished": "2026-11-06T03:43:15.970095+00:00",
+  "exit": 0,
+  "result": "1 passed (3.0m)",
+  "registered_test_duration": "2.5m",
+  "attempts": 1,
+  "workers": 1,
+  "retries": 0,
+  "timeout_seconds": 1200,
+  "head_before": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "head_after": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "tracked_status_after": "",
+  "browser": {
+    "executable": "/usr/bin/chromium",
+    "version": "154.0.8037.57",
+    "headless": true,
+    "real_home": true,
+    "private_new_contexts": true,
+    "flags": [
+      "--no-sandbox",
+      "--use-mock-keychain",
+      "--password-store=basic"
+    ],
+    "assertion_width": 1440,
+    "proof_widths": [
+      1440,
+      390
+    ],
+    "visual_quality_criterion": false,
+    "profile_or_session_exported": false
+  },
+  "toolchain": {
+    "node_actual": "24.19.0",
+    "node_repository_pin": "22.20.0",
+    "node_policy": "Supplied cloud shim retains an already newer host Node; this is a disclosed local runtime difference, not exact CI-runtime equivalence.",
+    "pnpm_actual": "10.12.4",
+    "pnpm_repository_pin": "10.12.4",
+    "rer_package_installed": "0.2.85",
+    "setup_command": "cloud_run timeout 900 nice -n 15 npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+    "setup_exit": 0
+  },
+  "admission": {
+    "host": "dedicated cloud VM",
+    "load_at_journey_start": [
+      "0.41",
+      "0.36",
+      "0.15"
+    ],
+    "memory_available_before_setup": "16 GiB",
+    "filesystem_available_before_setup": "30 GiB",
+    "cloud_mac_disk_floor_not_applied": true,
+    "one_heavy_job_at_a_time": true,
+    "nice": 15
+  },
+  "rows": {
+    "R1": "MET by independent exact-source local execution",
+    "R2": "MET by independent exact-source local execution",
+    "R3": "MET by independent exact-source local execution",
+    "R4": "MET by independent exact-source local execution"
+  },
+  "clock": {
+    "before": "2031-10-05T23:59:59.900Z",
+    "after": "2031-10-06T00:00:00.100Z",
+    "elapsed_ms": 200,
+    "reset_in_finally": true,
+    "distribution_before": {
+      "new": 1,
+      "active": 1,
+      "at-risk": 1,
+      "lapsed": 1,
+      "champion": 1
+    },
+    "distribution_after": {
+      "new": 0,
+      "active": 2,
+      "at-risk": 1,
+      "lapsed": 1,
+      "champion": 1
+    },
+    "luis_recency_before": 29,
+    "luis_recency_after": 30,
+    "luis_stage_before": "new",
+    "luis_stage_after": "active"
+  },
+  "financial": {
+    "qualifying_orders": 14,
+    "excluded_orders": 2,
+    "partial_refund_minor": 2000,
+    "iris_net_usd_minor": 48000,
+    "unpaid_excluded": true,
+    "fully_refunded_excluded": true,
+    "currencies": [
+      "USD",
+      "JPY"
+    ],
+    "live_provider_qualification": "UNMET-EXTERNAL; not claimed"
+  },
+  "screenshots": [
+    {
+      "file": "retention-1440.png",
+      "sha256": "258ffbee889dc682d35234fbc0f1361386cf7b86b58d21dd72c326005ad471c7",
+      "bytes": 31396,
+      "image_width": 1182,
+      "image_height": 276,
+      "viewport_width": 1440,
+      "source": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "inspected": true,
+      "synthetic": true
+    },
+    {
+      "file": "retention-390.png",
+      "sha256": "1021d5d1836564586ae9ff4acda4b2b6460bd2ceba2a4265bd9fc3b5b098b5a1",
+      "bytes": 37128,
+      "image_width": 390,
+      "image_height": 844,
+      "viewport_width": 390,
+      "source": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "inspected": true,
+      "synthetic": true
+    },
+    {
+      "file": "contact-rfm-1440.png",
+      "sha256": "3fe4c3b10c4134cae725b801f129edd1c223fbfd7519f416f3cac641482f7e6e",
+      "bytes": 140953,
+      "image_width": 1440,
+      "image_height": 900,
+      "viewport_width": 1440,
+      "source": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "inspected": true,
+      "synthetic": true
+    },
+    {
+      "file": "contact-rfm-390.png",
+      "sha256": "461e005d62509234e900196f53cb9ba8e9473603d62800728f2dd2e4cbe9da48",
+      "bytes": 58952,
+      "image_width": 390,
+      "image_height": 844,
+      "viewport_width": 390,
+      "source": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+      "inspected": true,
+      "synthetic": true
+    }
+  ],
+  "execution_log": {
+    "file": "results-execution.txt",
+    "sha256": "a6aef60fa6c8d125b3186bfbdce29abb7cae09bc2f196ad644f0659bce91d29f"
+  },
+  "supplied_ci": {
+    "run": 42151674128,
+    "event": "push",
+    "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+    "conclusion": "failure",
+    "failure": "generated contract document check; dependent aggregate failure",
+    "runtime_shards": "SKIPPED",
+    "permitted_candidate_exception": true,
+    "independently_queried": false,
+    "source": "immutable inline builder report and CI receipt"
+  },
+  "original_affected_gate": {
+    "name": "sd-mango-c-f66-gate-1",
+    "started": "2026-11-06T03:04:21Z",
+    "state": "LIVE at input capture; current result unestablished",
+    "queried": false,
+    "waited": false
+  },
+  "checks_not_run": [
+    "baseline or full suite",
+    "second results journey execution",
+    "agent-applied source mutations",
+    "typecheck independently (read-only judgment; builder receipt retained as supplied only)",
+    "contract generator write or check independently",
+    "source lock write or check independently",
+    "live commerce provider or production action",
+    "CI query, rerun or dispatch",
+    "COMPLETE full-history publication scan",
+    "main landing or Run site"
+  ],
+  "github_cli_api_calls": 0,
+  "verdict": "SEG-003 ACCEPT ON LANDING",
+  "unawarded": true,
+  "final_guards_pending": true,
+  "cleanup_at_receipt": {
+    "registered_runtimes": "closed by original finally handlers and subreaper",
+    "browser_workerd_vite_processes_after_run": 0,
+    "disposable_clone": "retained until report transfer succeeds; then removed",
+    "retained_artifacts": "explicit packet only; no browser profile or runtime state selected"
+  }
+}

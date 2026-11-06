@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "selection": [
+    "REPORT.md",
+    "VERDICT.md",
+    "PLAN.md",
+    "RECEIPT.json",
+    "SOURCE-RECEIPT.json",
+    "EXECUTION-START.json",
+    "INDEPENDENT-ARITHMETIC.md",
+    "MAIN-STATUS.snapshot.md",
+    "results-execution.txt",
+    "retention-1440.png",
+    "retention-390.png",
+    "contact-rfm-1440.png",
+    "contact-rfm-390.png"
+  ],
+  "files": [
+    {
+      "file": "REPORT.md",
+      "bytes": 3291,
+      "sha256": "5c88ba197d9669660d7fc24d60a4c1ac55435e09a0c681da67db2f219fe28595"
+    },
+    {
+      "file": "VERDICT.md",
+      "bytes": 23152,
+      "sha256": "78768224ddf9c4b6c49e6421aebc818b52b2ec78e4c8666de65aeebe723bf0af"
+    },
+    {
+      "file": "PLAN.md",
+      "bytes": 3134,
+      "sha256": "45cf7385c420e76134b78c1cb2f0ca969031fcad55a541d75a23dc6cbbb94a68"
+    },
+    {
+      "file": "RECEIPT.json",
+      "bytes": 6692,
+      "sha256": "0b9836e80d2f0876e5e41f8fabbbb1650cfff2f3c8e6b9e11667d4c188876ead"
+    },
+    {
+      "file": "SOURCE-RECEIPT.json",
+      "bytes": 4820,
+      "sha256": "ec613733b9bc0f1784ab4be1cf0c49a4d1942034dcd70c373d1a4af3ab5a4a6a"
+    },
+    {
+      "file": "EXECUTION-START.json",
+      "bytes": 293,
+      "sha256": "009c0df7b6ecc772e9a583507dc97aab4a2725f56537df61daaff94f8d2a2466"
+    },
+    {
+      "file": "INDEPENDENT-ARITHMETIC.md",
+      "bytes": 3473,
+      "sha256": "4cf573c0aa950f7e3c229f705f95060f4697742ae68f0d3739f943155df9df77"
+    },
+    {
+      "file": "MAIN-STATUS.snapshot.md",
+      "bytes": 175425,
+      "sha256": "56e15337d66096679c7fcc5bf3144bd59c8112bcffd7f7d6e4e9f65874aad3e6"
+    },
+    {
+      "file": "results-execution.txt",
+      "bytes": 1431,
+      "sha256": "a6aef60fa6c8d125b3186bfbdce29abb7cae09bc2f196ad644f0659bce91d29f"
+    },
+    {
+      "file": "retention-1440.png",
+      "bytes": 31396,
+      "sha256": "258ffbee889dc682d35234fbc0f1361386cf7b86b58d21dd72c326005ad471c7"
+    },
+    {
+      "file": "retention-390.png",
+      "bytes": 37128,
+      "sha256": "1021d5d1836564586ae9ff4acda4b2b6460bd2ceba2a4265bd9fc3b5b098b5a1"
+    },
+    {
+      "file": "contact-rfm-1440.png",
+      "bytes": 140953,
+      "sha256": "3fe4c3b10c4134cae725b801f129edd1c223fbfd7519f416f3cac641482f7e6e"
+    },
+    {
+      "file": "contact-rfm-390.png",
+      "bytes": 58952,
+      "sha256": "461e005d62509234e900196f53cb9ba8e9473603d62800728f2dd2e4cbe9da48"
+    }
+  ],
+  "symlinks": 0,
+  "credential_pattern_findings": [],
+  "manual_review": "Passed: report and command metadata, public pinned-contract Status snapshot, exact-source native journey output, synthetic functional screenshots only. No credentials, environment dump, signed URL, browser session or private held-out gate data selected. This is a packet review, not the required full-history publication scan.",
+  "cleanup": "Original browser and fixture processes ended normally; no Chromium, workerd or Vite process remained on post-run inspection. Clone and disposable runtime artifacts will be removed after transfer verification."
+}

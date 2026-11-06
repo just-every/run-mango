@@ -1,0 +1,14 @@
+{
+  "head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "started": "2026-11-06T03:40:15.678382+00:00",
+  "journey_attempts_authorized": 1,
+  "timeout_seconds": 1200,
+  "workers": 1,
+  "retries": 0,
+  "chromium": "/usr/bin/chromium",
+  "host_load": [
+    "0.41",
+    "0.36",
+    "0.15"
+  ]
+}

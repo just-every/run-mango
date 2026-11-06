@@ -1,0 +1,15 @@
+# Independent SEG-003 review plan
+
+Tag: ct-judge-mango-seg003-20261106-0330. Repository: just-every/run-mango. Immutable source: bf6793b03233958a813e75e754b7e6d34b0abb0d, builder branch cloud/sd-mango-c-f66. Read-only review; no product changes, commits, push, PR, CI query or dispatch.
+
+1. Establish exact source custody in a disposable shallow filtered clone. Read pinned AGENTS.md, full immutable CONTRACT.md and ACCEPTANCE.md, rulings, the registered results journey and relied-on helpers. Record document hashes and preserve all existing source assertions, holds and historical reports.
+2. Freeze the supplied four rows: R1 population-relative own-order RFM quintiles; R2 visible lifecycle stage and documented method and thresholds; R3 daily recomputation; R4 seeded distribution and scores reconciled independently. No extra rubric rows or acceptance edits.
+3. Trace native authenticated routes, persistence, per-currency arithmetic, tie ranks, stage precedence and server clock. Independently hand-calculate fixture outcomes. Distinguish source inspection from actual execution.
+4. Admit one bounded heavy job on the dedicated cloud host. Run the existing registered results journey exactly once at the immutable SHA, one worker, no retry, current headless Chromium, real HOME and private contexts. Retain its functional retention and contact captures at 1440 and 390. No baseline, full suite, mutations, replacement tests, production/provider calls or paid model usage.
+5. Score R1-R4 and all eleven DONE riders in one verdict. Record every unmet outcome, external boundary and NOT RUN limitation. Keep supplied CI 42151674128 failure/runtime skip distinct from local proof and keep original affected gate pending without querying it.
+6. Propose only the justified conditional SEG-003 status and exact Gap/Evidence/provenance change. Historical candidate 20/198/98 to 21/197/98 is individual and UNAWARDED. Preserve the complete fresh-main status source and all other rows; no source edit here.
+7. Save complete actual non-secret logs, screenshots, receipt, reading record, REPORT.md and VERDICT.md outside the product clone. Review explicit selections for secrets and symlinks. Publish only evidence/ct-judge-mango-seg003-20261106-0330 through cloud_evidence.py, then remove owned disposable checkout/dependencies and runtime artifacts. READY means report complete only.
+
+| Clause | Frozen rows | Public doors | Registered journey | Exact-source CI custody |
+| --- | --- | --- | --- | --- |
+| SEG-003 | R1 and AP1, R2 and AP2, R3 and AP3, R4 and AP4; all listed riders and inherited duties retained | Authenticated /api/insights/retention, /api/contacts/:id/rfm, built /app/insights and /app/audience/:id | tests/campaign-results/results.journeys.ts, inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement; invokes exerciseRetention in tests/campaign-results/retention-journey.ts | Push Verify 42151674128 supplied as failure solely generated-view check with dependent aggregate failure and runtime skipped; no green runtime claimed. Original affected sd-mango-c-f66-gate-1 pending. |

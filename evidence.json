@@ -1,0 +1,94 @@
+{
+  "files": [
+    {
+      "blob": "7013060e10eb8510515290d088c4a402ad2ab8fe",
+      "bytes": 293,
+      "path": "EXECUTION-START.json",
+      "sha256": "009c0df7b6ecc772e9a583507dc97aab4a2725f56537df61daaff94f8d2a2466"
+    },
+    {
+      "blob": "c45ed47c07f41d61e14ec61281f6890643f0267e",
+      "bytes": 3473,
+      "path": "INDEPENDENT-ARITHMETIC.md",
+      "sha256": "4cf573c0aa950f7e3c229f705f95060f4697742ae68f0d3739f943155df9df77"
+    },
+    {
+      "blob": "3e6be29f6bdee318bb80864660cc739d355a86d6",
+      "bytes": 175425,
+      "path": "MAIN-STATUS.snapshot.md",
+      "sha256": "56e15337d66096679c7fcc5bf3144bd59c8112bcffd7f7d6e4e9f65874aad3e6"
+    },
+    {
+      "blob": "b0cbfd4fc0bcc004f44e3746ae27dec7338821cd",
+      "bytes": 2990,
+      "path": "PACKET-REVIEW.json",
+      "sha256": "afdf6cbc517055191bc75dfd44f54988d4670dd3547b6432ae07662af72e516b"
+    },
+    {
+      "blob": "1d140f8ec71a84c8860852693711feb26e8a9e0b",
+      "bytes": 3134,
+      "path": "PLAN.md",
+      "sha256": "45cf7385c420e76134b78c1cb2f0ca969031fcad55a541d75a23dc6cbbb94a68"
+    },
+    {
+      "blob": "af7c6b445ab7078a8b51b2cf9996d1543b39b6ce",
+      "bytes": 6692,
+      "path": "RECEIPT.json",
+      "sha256": "0b9836e80d2f0876e5e41f8fabbbb1650cfff2f3c8e6b9e11667d4c188876ead"
+    },
+    {
+      "blob": "aaa9698c466ce2a925998bf8d38664aeebbb2e90",
+      "bytes": 3291,
+      "path": "REPORT.md",
+      "sha256": "5c88ba197d9669660d7fc24d60a4c1ac55435e09a0c681da67db2f219fe28595"
+    },
+    {
+      "blob": "84defc9088d3a45d3d9e770192fade0920da0ba5",
+      "bytes": 4820,
+      "path": "SOURCE-RECEIPT.json",
+      "sha256": "ec613733b9bc0f1784ab4be1cf0c49a4d1942034dcd70c373d1a4af3ab5a4a6a"
+    },
+    {
+      "blob": "cc454c5042a349a348ffc88a49eaed7d3ba4509b",
+      "bytes": 23152,
+      "path": "VERDICT.md",
+      "sha256": "78768224ddf9c4b6c49e6421aebc818b52b2ec78e4c8666de65aeebe723bf0af"
+    },
+    {
+      "blob": "958a03c97ba773e8c02da58627c2eaa08474c82c",
+      "bytes": 140953,
+      "path": "contact-rfm-1440.png",
+      "sha256": "3fe4c3b10c4134cae725b801f129edd1c223fbfd7519f416f3cac641482f7e6e"
+    },
+    {
+      "blob": "7f06298805139e1c93d057b6e22ae0cd1360b845",
+      "bytes": 58952,
+      "path": "contact-rfm-390.png",
+      "sha256": "461e005d62509234e900196f53cb9ba8e9473603d62800728f2dd2e4cbe9da48"
+    },
+    {
+      "blob": "008101c5234ffb4aad4e8734c71d3a079898aaa3",
+      "bytes": 1431,
+      "path": "results-execution.txt",
+      "sha256": "a6aef60fa6c8d125b3186bfbdce29abb7cae09bc2f196ad644f0659bce91d29f"
+    },
+    {
+      "blob": "92d34eb5bf4b77d8f29fecded2e5398b04eb5c1a",
+      "bytes": 31396,
+      "path": "retention-1440.png",
+      "sha256": "258ffbee889dc682d35234fbc0f1361386cf7b86b58d21dd72c326005ad471c7"
+    },
+    {
+      "blob": "03d3a98174974965e203927752a5402b98eb980b",
+      "bytes": 37128,
+      "path": "retention-390.png",
+      "sha256": "1021d5d1836564586ae9ff4acda4b2b6460bd2ceba2a4265bd9fc3b5b098b5a1"
+    }
+  ],
+  "product_branch": "",
+  "product_head": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "ref": "refs/heads/evidence/ct-judge-mango-seg003-20261106-0330",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "ct-judge-mango-seg003-20261106-0330"
+}

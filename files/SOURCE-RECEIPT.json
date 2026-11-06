@@ -1,0 +1,79 @@
+{
+  "repository": "just-every/run-mango",
+  "source": "bf6793b03233958a813e75e754b7e6d34b0abb0d",
+  "source_branch": "cloud/sd-mango-c-f66",
+  "review_checkout": "detached; no product branch created",
+  "main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "observed_remote_refs": [
+    "bf6793b03233958a813e75e754b7e6d34b0abb0d\trefs/heads/cloud/sd-mango-c-f66",
+    "cc6321c2372d631d9607df9af8ad1dd9f7878e84\trefs/heads/main"
+  ],
+  "shallow": true,
+  "diff_files": [
+    "CONTRACT.md",
+    "sources.lock.json",
+    "tests/campaign-results/retention-clock.ts",
+    "tests/campaign-results/retention-fixture.ts",
+    "tests/campaign-results/retention-journey.ts",
+    "tests/campaign-results/worker.ts"
+  ],
+  "tracked_status_before_review": "",
+  "status_rows": 316,
+  "all_parent_row_ids_retained": true,
+  "changed_status_rows": [
+    "SEG-003"
+  ],
+  "other_status_rows_identical": true,
+  "counts_main": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "counts_candidate": {
+    "partial": 197,
+    "done": 21,
+    "missing": 98
+  },
+  "acceptance_bodies_identical_between_main_source_and_generated_view": true,
+  "clause_bodies": 316,
+  "seg003_full_pinned_clause": "**Requirement.** Purchase history produces customer-relative RFM scores and a visible lifecycle stage.\n\n**Acceptance.**\n1. Recency, frequency and monetary scores use quintiles across this deployment’s customers and each contact’s own orders.\n2. Each contact has new, active, at-risk, lapsed or champion stage, with method and thresholds visible.\n3. Scores and stages are recomputed daily.\n4. On seeded order history, the stage distribution and a contact’s scores match an independent calculation of the documented method.",
+  "seg003_main_row": "| `SEG-003` | RFM and lifecycle stages | target | partial | `tests/campaign-results/results.journeys.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440” · `tests/campaign-results/retention-journey.ts` — “[CAMP-001] [CAMP-009][CAMP-010][SEND-006][SEND-007][RESULT-001][RESULT-007][RESULT-008][SEG-003][REPORT-004] stored step results and deadline/DST truth at 1440” | The old retention journey asserts the five-stage distribution, a customer’s order/recency/frequency/monetary scores and displayed method. It does not advance a daily boundary or assert daily recomputation; the fixed fixture also does not independently recalculate every quintile boundary. Missing public-door journey: “RFM and lifecycle stages — complete acceptance”, covering the unasserted outcomes above. |",
+  "seg003_candidate_row": "| `SEG-003` | RFM and lifecycle stages | target | done | `tests/campaign-results/results.journeys.ts` — “[CAMP-001][CAMP-009][RESULT-001][RESULT-004][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement”: `tests/campaign-results/retention-journey.ts` independently derives every customer’s UTC-day recency, frequency, per-currency net value, tied midrank quintiles and stage from recorded order facts; reconciles every authenticated retention and contact score row and the operator table; retains refunded and unpaid exclusions, all five stages and visible methods. Native server reads across UTC midnight advance every recency and change a new buyer to active. Retention and contact screens are captured at 1440 and 390. |  |",
+  "main_status_sha256": "56e15337d66096679c7fcc5bf3144bd59c8112bcffd7f7d6e4e9f65874aad3e6",
+  "documents": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 9726,
+      "lines": 69,
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
+      "unique_lines": 42
+    },
+    {
+      "path": "CONTRACT.md",
+      "bytes": 489741,
+      "lines": 4376,
+      "sha256": "f819fbc3655235014b4c59270f5b95fbfa1692773b9dad5cf5f2f0c95a998ac1",
+      "unique_lines": 2725
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "bytes": 443948,
+      "lines": 4876,
+      "sha256": "d08e551ab2d69f883a2355c871f146fe6c1878fc072ae4145064802bc8f042ab",
+      "unique_lines": 574
+    },
+    {
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "lines": 289,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2",
+      "unique_lines": 131
+    }
+  ],
+  "reading_method": "All full files read end-to-end. Identical lines read once with source locations; generated Evidence and Gap text already present verbatim in the read Status rows cross-matched rather than duplicated. Full documents byte-hashed; all 316 Requirement and Acceptance bodies compared without changes.",
+  "ci_queries": 0,
+  "product_commits": 0,
+  "product_pushes": 0,
+  "prs": 0,
+  "source_mutations": 0
+}
