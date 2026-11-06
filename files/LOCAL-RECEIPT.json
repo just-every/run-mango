@@ -1,0 +1,62 @@
+{
+  "head": "80bf3b386a946b6635c99513735b08aff4804e99",
+  "branch": "cloud/sd-mango-c-f131",
+  "localChanges": false,
+  "testsAdded": 0,
+  "testsRemoved": 0,
+  "setup": {
+    "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+    "exit": 0
+  },
+  "typecheck": {
+    "command": "cloud_run pnpm run typecheck",
+    "exit": 0,
+    "log": "typecheck.log"
+  },
+  "journey": {
+    "command": "cloud_run perl -e 'alarm 1200; exec @ARGV' -- pnpm exec playwright test --config tests/go-live/playwright.config.js delivery.journeys.ts --grep 'an owner connects delivery' --workers=1",
+    "exit": 0,
+    "passed": 1,
+    "duration": "4.3m",
+    "log": "journey.log",
+    "browser": "/usr/bin/chromium",
+    "viewportAssertions": 1440,
+    "screenshotWidths": [
+      1440,
+      390
+    ]
+  },
+  "integration": {
+    "command": "node scripts/sync-integration.mjs --check",
+    "exit": 0
+  },
+  "firstParty": {
+    "command": "cloud_run pnpm exec rer check --profile first-party",
+    "exit": 0,
+    "log": "command-contract.log"
+  },
+  "existingExactShaVerify": [
+    {
+      "id": 42250379072,
+      "event": "push",
+      "conclusion": "success",
+      "head": "80bf3b386a946b6635c99513735b08aff4804e99"
+    },
+    {
+      "id": 42245094360,
+      "event": "push",
+      "conclusion": "success",
+      "head": "80bf3b386a946b6635c99513735b08aff4804e99"
+    }
+  ],
+  "countsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  }
+}

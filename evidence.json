@@ -1,0 +1,172 @@
+{
+  "files": [
+    {
+      "blob": "c0086b51f2b95452a0212c25b6003cf3f8bc4ae7",
+      "bytes": 1568,
+      "path": "LOCAL-RECEIPT.json",
+      "sha256": "a182c5c22f853ff71a98ee9de64c63c8e040c8c28ff027b8e65906aeb72eeda3"
+    },
+    {
+      "blob": "e2df749046dda49525fae5a44bb488fd53d32cdc",
+      "bytes": 1688,
+      "path": "MECHANICAL.json",
+      "sha256": "1d4bc4c51c00b6315064b6345451119baab9e39840bb12700fa289c515becd3b"
+    },
+    {
+      "blob": "d36d4ec2f3547d373e1d9ddf453470f3e998c596",
+      "bytes": 1877,
+      "path": "PLAN.md",
+      "sha256": "7a44d0db403b13715fda25282f1d3b030b418115cc739fd1947caa5ab0ed1297"
+    },
+    {
+      "blob": "f7de1077b84364fd1d8e9cd1d54c1507e867f5d5",
+      "bytes": 15838,
+      "path": "REPORT.md",
+      "sha256": "918bfbd6958bc4aad62f173b49a33d54b1ca2660f91ca3eb08fbbad717650292"
+    },
+    {
+      "blob": "5140371e8212b12a5de498022f388013b8187bfc",
+      "bytes": 1075,
+      "path": "TRANSPORT.json",
+      "sha256": "8b17884d9d7b46108a5e4285787fde6f060beca922ce29cfc1c8468be25e8cdb"
+    },
+    {
+      "blob": "809125a4bb04bee50d6e3afe25f64699eb1ed10a",
+      "bytes": 954,
+      "path": "candidate-ci.json",
+      "sha256": "69ae0c22c13d8d15172e43cc9dc86b257ebeb59ca99dfe32f894b0044df9b9d8"
+    },
+    {
+      "blob": "55bfeff023c4ae17dc59e12f86f446b1960e6b53",
+      "bytes": 85,
+      "path": "candidate-identities.txt",
+      "sha256": "148bad84b5b174568017df50d58e073566703d43c6c9fe7fa6f1af04420adf55"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "command-contract.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "55c42bb0ec91d4ed13d56d37f9f80199fec6b9b8",
+      "bytes": 176,
+      "path": "fetch-attempt-2.log",
+      "sha256": "8c88ccb58ed972f9415c05b5c835fcb736af0396401a80b2b1e699c1bffe5678"
+    },
+    {
+      "blob": "55c42bb0ec91d4ed13d56d37f9f80199fec6b9b8",
+      "bytes": 176,
+      "path": "fetch-attempt-3.log",
+      "sha256": "8c88ccb58ed972f9415c05b5c835fcb736af0396401a80b2b1e699c1bffe5678"
+    },
+    {
+      "blob": "b29662d1dc1b859c68c7235fa7fc8bfe7b78c8ae",
+      "bytes": 91,
+      "path": "fetch-attempt-4.log",
+      "sha256": "0908137119f51fba7a098669873666efb334504f8b8ff461ed75f3a3adc19c6c"
+    },
+    {
+      "blob": "172cf4d4df94ea29246c02ae161ae5a9baf66af5",
+      "bytes": 52,
+      "path": "final-mechanical-1.log",
+      "sha256": "06a5514cbefa17bdb3abd7362b6757e55f9168ebc0772fbe0a0ea4bf6c0875a6"
+    },
+    {
+      "blob": "58dd21c218846e90dd798f1845377f7422e45cac",
+      "bytes": 28,
+      "path": "final-mechanical-2.log",
+      "sha256": "14cee29b7bd19487e15f4013d4fb85016e022ef21d230676971a6490c88436d2"
+    },
+    {
+      "blob": "ae869b2fafd3acf46a2dc6ce35ec869497ae9cfb",
+      "bytes": 32,
+      "path": "final-mechanical-3.log",
+      "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab"
+    },
+    {
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "path": "final-mechanical-4.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "blob": "b996333e604eb9c1803ecfa0be98f32f031a9c0d",
+      "bytes": 412456,
+      "path": "final-mechanical-5.log",
+      "sha256": "3bae940bb601c41babf69f2df8a97b26ffbe7bdd3729d3ef772f6b111f9e572e"
+    },
+    {
+      "blob": "ca3b2cd7da699ed0fc1f11b225a8d8ba05896f16",
+      "bytes": 412470,
+      "path": "final-mechanical-6.log",
+      "sha256": "5735486988c614601e3f17770a8829f880a0f75613d236b20f6e72839129fa9b"
+    },
+    {
+      "blob": "3dc2f727a3ebaaf6e749c5b64eef0220881e852a",
+      "bytes": 393,
+      "path": "journey.log",
+      "sha256": "1e9fa031a108796a5d6c601b15eb9a43bc36a17ac99d7d1814e45f9ade258881"
+    },
+    {
+      "blob": "46376bf40bdea99daa268edfa9f88ed6eace72bf",
+      "bytes": 1143,
+      "path": "main-ci.jsonl",
+      "sha256": "447634268f1bd27309f7182499e8eb63dd5be201f7c04f56ff806781aeb9e57c"
+    },
+    {
+      "blob": "55c42bb0ec91d4ed13d56d37f9f80199fec6b9b8",
+      "bytes": 176,
+      "path": "mechanical-1.log",
+      "sha256": "8c88ccb58ed972f9415c05b5c835fcb736af0396401a80b2b1e699c1bffe5678"
+    },
+    {
+      "blob": "1c8edd04952aeaa5135334ee499047c8bf02104b",
+      "bytes": 895,
+      "path": "product-push.log",
+      "sha256": "64523488b92fa0692c4f7869c86c3f06524a69c61103acba398c5357af42dc1a"
+    },
+    {
+      "blob": "a1759fcbee75f00aa2d0ea93ecb134e8647570d2",
+      "bytes": 73654,
+      "path": "sending-silence-home-1440.png",
+      "sha256": "b4effce7a074ddac579a5f6843c9bd73a1fd521bf3541f96435f9403c6219a1e"
+    },
+    {
+      "blob": "8343cbf947ada9480535f81d509263959162bc17",
+      "bytes": 59538,
+      "path": "sending-silence-home-390.png",
+      "sha256": "a8994c88a740d0abe9ec2577adccc3c83b04e7312f1c8436237e57109a26a47c"
+    },
+    {
+      "blob": "779fcc4bf8273523cad9df09cde2e8699fde648c",
+      "bytes": 1431,
+      "path": "sending-silence-observations.json",
+      "sha256": "244b9a2a700915b5685510f3cb6f47b3a4b002a8a22d25eebe998b4558837a35"
+    },
+    {
+      "blob": "783f78823a9629d67b7d950d46401dd5a247aef4",
+      "bytes": 54738,
+      "path": "sending-silence-settings-1440.png",
+      "sha256": "db45edc807ae41c6c084c1457d49ea5fb9b4d6ab3796637145bbcad76637b4fd"
+    },
+    {
+      "blob": "2dc945c3a859ffa538b41d3dd5d94826e5185892",
+      "bytes": 50034,
+      "path": "sending-silence-settings-390.png",
+      "sha256": "83528f5d26b1d54dbd222781fc8f607a080c38b8b51cb92df7bc80507fc95b01"
+    },
+    {
+      "blob": "58ac9280e7644c8c3a0aa49e797e2dcc960fb33c",
+      "bytes": 168,
+      "path": "typecheck.log",
+      "sha256": "37dc7bb443a34dda15cf70e5286200eadcb931b3cc5b73bd3ff57f91cb0a98ca"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f131",
+  "product_head": "80bf3b386a946b6635c99513735b08aff4804e99",
+  "ref": "refs/heads/evidence/sd-mango-c-f131",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f131"
+}

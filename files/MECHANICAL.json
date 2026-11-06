@@ -1,0 +1,95 @@
+{
+  "head": "80bf3b386a946b6635c99513735b08aff4804e99",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "fetch",
+        "origin",
+        "main"
+      ],
+      "attempt": 2,
+      "exit": 128,
+      "output": "fetch-attempt-2.log"
+    },
+    {
+      "command": [
+        "git",
+        "fetch",
+        "origin",
+        "main"
+      ],
+      "attempt": 3,
+      "exit": 128,
+      "output": "fetch-attempt-3.log"
+    },
+    {
+      "command": [
+        "git",
+        "fetch",
+        "origin",
+        "main"
+      ],
+      "attempt": 4,
+      "exit": 0,
+      "output": "fetch-attempt-4.log"
+    },
+    {
+      "command": [
+        "git",
+        "rebase",
+        "origin/main"
+      ],
+      "exit": 0,
+      "output": "final-mechanical-1.log"
+    },
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "write"
+      ],
+      "exit": 0,
+      "output": "final-mechanical-2.log"
+    },
+    {
+      "command": [
+        "node",
+        "src/base/contract-docs.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "output": "final-mechanical-3.log"
+    },
+    {
+      "command": [
+        "git",
+        "checkout",
+        "origin/main",
+        "--",
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "exit": 0,
+      "output": "final-mechanical-4.log"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "lock"
+      ],
+      "exit": 0,
+      "output": "final-mechanical-5.log"
+    },
+    {
+      "command": [
+        "node",
+        "scripts/edition-authoring/cli.mjs",
+        "check"
+      ],
+      "exit": 0,
+      "output": "final-mechanical-6.log"
+    }
+  ]
+}

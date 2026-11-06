@@ -1,0 +1,33 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f131",
+  "head": "80bf3b386a946b6635c99513735b08aff4804e99",
+  "productPush": {
+    "command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f131",
+    "exit": 0,
+    "attempts": 1,
+    "log": "product-push.log"
+  },
+  "finalFetch": {
+    "command": "git fetch origin main",
+    "exit": 0,
+    "successfulAttempt": 4,
+    "failedAttempts": [
+      1,
+      2,
+      3
+    ],
+    "failure": "Invalid username or token. Password authentication is not supported for Git operations.",
+    "http": "unknown (not supplied by Git)",
+    "recovery": "Launcher refresh and exact bundle helper reinstallation between bounded backoff attempts"
+  },
+  "rebase": {
+    "command": "git rebase origin/main",
+    "exit": 0,
+    "headUnchanged": true
+  },
+  "commitIdentity": "Every candidate author and committer is Run Edit Run fleet with the fleet email; no trailers; no new commits in this task.",
+  "main": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "pr": null,
+  "apiCalls": 3
+}
