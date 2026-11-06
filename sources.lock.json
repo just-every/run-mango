@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "7a61fcec5393735e4302ca8c93efc064ee172766f4ccb2069d88a350b764681e",
+      "sha256": "25e6a9fca5326f0bc86ec644254a2bfb9206beead55c213224fabc2c7e77ad70",
       "executable": false
     },
     "DEMO.md": {
@@ -9006,7 +9006,7 @@
       "executable": false
     },
     "tests/go-live/resubscribe.flow.ts": {
-      "sha256": "94500a596db8ee10f4f56030e79648da50dfe6f2d2f4c52ad53e9908cf526303",
+      "sha256": "eb3313590d79db58841d0af2fd10de92c724edef95258f6dc9ae8c54ed53b36e",
       "executable": false
     },
     "tests/go-live/review-loyalty-journey.ts": {

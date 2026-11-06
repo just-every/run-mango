@@ -74,10 +74,19 @@ export const walk0 = async({page:operator,browser},info)=>{
       await screenshots(page,info,`resubscribe-${mode}-confirmation`);
       expect(await contactDetail(site,id)).toEqual(pending);
       await expectEmailStatus(site,email,'unsubscribed');
+      let confirmationStartedAt=0;
+      await page.route(link,async route=>{
+        expect(route.request().method()).toBe('POST');
+        expect(new URLSearchParams(route.request().postData()??'').get('confirm')).toBe('true');
+        confirmationStartedAt=Date.now();
+        await route.continue();
+      });
       const confirming=page.waitForResponse(response=>response.url()===link&&response.request().method()==='POST');
-      const confirmationStartedAt=Date.now();
       await page.getByRole('button',{name:'Confirm subscription',exact:true}).click();
-      const confirmationResponse=await confirming,confirmationFinishedAt=Date.now();
+      const confirmationResponse=await confirming;
+      await confirmationResponse.finished();
+      const confirmationFinishedAt=Date.now();
+      await page.unroute(link);
       expect(confirmationResponse.status()).toBe(200);
       await expect(page.getByRole('heading',{name:'Subscription confirmed',exact:true})).toBeVisible();
       await screenshots(page,info,`resubscribe-${mode}-success`);
@@ -109,14 +118,23 @@ export const walk0 = async({page:operator,browser},info)=>{
         source:evidence.captureSource,consentText:description.consentText,count:1,net:1}));
       const beforeTotal=beforeGrowth.channels.find((row:any)=>row.channel==='email').closing;
       expect(afterGrowth.channels.find((row:any)=>row.channel==='email').closing).toBe(beforeTotal+1);
+      const replays:Array<{startedAt:number;getStatus:number;postStatus:number}>=[];
       for(let replay=0;replay<2;replay++) {
-        expect((await fetch(link)).status).toBe(410);
-        expect((await confirm(link)).status).toBe(410);
+        const startedAt=Date.now();
+        expect(startedAt).toBeGreaterThan(confirmedAt);
+        const getStatus=(await fetch(link)).status,postStatus=(await confirm(link)).status;
+        expect(getStatus).toBe(410);
+        expect(postStatus).toBe(410);
         expect(await confirmationRecords()).toEqual(recordedConfirmation);
+        replays.push({startedAt,getStatus,postStatus});
       }
       expect(await contactDetail(site,id)).toEqual(confirmed);
       expect((await growth(site)).channels).toEqual(afterGrowth.channels);
       expect(await messagesFor(site,email)).toHaveLength(2);
+      await info.attach(`confirmation-time-${mode}`,{contentType:'application/json',body:JSON.stringify({
+        mode,capturedAt:Date.parse(evidence.occurredAt),confirmationStartedAt,confirmationFinishedAt,
+        confirmedAt,recordedConfirmation,replays,
+      },null,2)});
 
       await openPage(operator,`${site.runtime.url}/app/audience/${id}`);
       const history=operator.locator('section[aria-labelledby="timeline-title"]');
