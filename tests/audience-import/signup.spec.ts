@@ -2,8 +2,10 @@ import {expect,test} from '@playwright/test';
 import {native} from './native';
 import {createApp} from '../../src/core/app/app';
 import {requests} from '../audience-controls/runtime';
+import {identityDoors} from './identity-doors';
 
 test('[CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms once, resists duplicate capture and scanners, and never reverses a later opt-out',async()=>{
+  test.setTimeout(90000);
   const h=await native();
   try {
     const f=h.f,app=createApp(f.bindings,f.platform,undefined,true),origin=f.platform.config.publicBaseUrl.origin;
@@ -91,5 +93,6 @@ test('[CONT-003][CONT-004][CONT-009][FORM-001][FORM-007] public signup confirms 
       expect((await f.db.prepare(`SELECT * FROM ${table}`).all()).results).toEqual([]);
     }
     expect(f.jobs).toEqual([]);
+    await identityDoors(h,api,{id:contactId,email});
   } finally {await h.close();}
 });

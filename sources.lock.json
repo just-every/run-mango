@@ -3362,7 +3362,7 @@
       "executable": false
     },
     "src/core/features/audience/manual-entry-schema.ts": {
-      "sha256": "e8804e91703e1b6a2eea12b744d713fb12e1b30588d601057fa3657762f05f2a",
+      "sha256": "51377a9c979967334ba3cb0d8feb27f028569facb4f1ba3fc332bcb745b8dfff",
       "executable": false
     },
     "src/core/features/audience/manual-sms-capture.ts": {
@@ -8421,6 +8421,10 @@
       "sha256": "621925dd294535a8f2c9583e8a3b7d3c823fcf372b1e895c6b794f1af517f009",
       "executable": false
     },
+    "tests/audience-import/identity-doors.ts": {
+      "sha256": "9419370c97ee43a476280ef6f70dfaa2ef802c0fc8918eb9da64466cc69ca57a",
+      "executable": false
+    },
     "tests/audience-import/native.ts": {
       "sha256": "78ecb8d73f664905aa85305d530ec8180e3c60fa1c46dbf98faf7eaa041e904a",
       "executable": false
@@ -8438,7 +8442,7 @@
       "executable": false
     },
     "tests/audience-import/signup.spec.ts": {
-      "sha256": "1a1d22025c9d9459cc4d5953abc8dfaef96206908e8e2522e293fc81e8f77027",
+      "sha256": "7e09db9d67d5a0cc912733b3ed809f60487274d683e94eadcf3cdaf982bce811",
       "executable": false
     },
     "tests/campaign-assets.spec.ts": {
