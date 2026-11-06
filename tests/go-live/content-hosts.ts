@@ -33,7 +33,7 @@ async function adminHostAllowance(site: Installation, owner: string, page: Page,
   expect((await json(await site.call('/api/settings/link-hosts', {cookie:admin}), 200)).hosts).not.toContain(host);
   const noAuthority = async () => {
     expect(await site.rows(`SELECT state,active_revision_id FROM campaigns WHERE id='${campaign.campaignId}'`))
-      .toEqual([{state:'draft', active_revision_id:null}]);
+      .toEqual([{state:'draft', active_revision_id:campaign.revisionId}]);
     expect(await site.rows(`SELECT state,approved_at,approved_by_operator_id FROM campaign_revisions WHERE id='${campaign.revisionId}'`))
       .toEqual([{state:'draft', approved_at:null, approved_by_operator_id:null}]);
     expect(await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
@@ -66,11 +66,13 @@ async function adminHostAllowance(site: Installation, owner: string, page: Page,
   expect(allowance.host).toBe(host);
   expect(allowance.review.kind).toBe('preview');
   expect(allowance.review.checks.find((check:any) => check.kind === 'message.links')).toMatchObject({blocking:false});
+  expect(allowance.review.checks.find((check:any) => check.kind === 'message.links.resolved')).toMatchObject({blocking:false});
   await expect(blocked).toHaveCount(0);
   await reloadPage(page);
   await expect(blocked).toHaveCount(0);
-  expect((await json(await site.call(`${path}/review`, {cookie:admin}), 200)).blockedHosts)
-    .not.toContainEqual(expect.objectContaining({host}));
+  const reloaded = await json(await site.call(`${path}/review`, {cookie:admin}), 200);
+  expect(reloaded.blockedHosts).not.toContainEqual(expect.objectContaining({host}));
+  expect(reloaded.checks.find((check:any) => check.kind === 'message.links.resolved')).toMatchObject({blocking:false});
   const settings = await json(await site.call('/api/settings/link-hosts', {cookie:admin}), 200);
   expect(settings.hosts).toContain(host);
   expect(settings.hosts).not.toContain('*.example.test');
