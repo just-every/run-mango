@@ -1,0 +1,35 @@
+{
+  "source": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+  "commands": [
+    {
+      "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "result": "RER_SETUP_READY; locked dependencies installed and setup production build completed; no tracked changes"
+    },
+    {
+      "command": "cloud_run timeout 1200 pnpm exec playwright test --config tests/move-in/playwright.config.js archive.journeys.ts --workers=1 --retries=0",
+      "started_at": "2026-11-06T02:11:20.547120+00:00",
+      "status": "completed",
+      "execution_count": 1,
+      "exit": 0,
+      "finished_at": "2026-11-06T02:20:06.612299+00:00"
+    },
+    {
+      "command": "cloud_run timeout 900 pnpm exec playwright test --config tests/go-live/playwright.config.js source-freshness.journeys.ts --workers=1 --retries=0",
+      "started_at": "2026-11-06T02:20:49.992363+00:00",
+      "status": "completed",
+      "execution_count": 1,
+      "exit": 0,
+      "finished_at": "2026-11-06T02:23:33.163024+00:00"
+    }
+  ],
+  "launch_configuration": {
+    "browser": "/usr/bin/chromium",
+    "browser_args": "--no-sandbox from the unchanged tests/support/browser.mjs",
+    "home": "normal inherited real HOME; no scratch-HOME substitution",
+    "test_work": "external task-owned runtime directory",
+    "archive_evidence": "task packet/archive directory",
+    "workers": 1,
+    "retries": 0
+  }
+}

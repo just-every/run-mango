@@ -1,0 +1,12 @@
+{
+  "selected_file_count": 73,
+  "selected_symlinks": 0,
+  "credential_values_published": false,
+  "environment_dump_selected": false,
+  "private_held_out_material_read_or_selected": false,
+  "synthetic_fixture_data_only": true,
+  "text_files_redacted_by_fleet_guard": [],
+  "identity_guard": "At actual evidence commit creation, git log origin/main..HEAD checks every evidence candidate including side parents; fleet identity and trailer policy are enforced before push. The identity audit file is overwritten with that actual validated output.",
+  "product_source_untouched": true,
+  "CI_API_calls": 0
+}

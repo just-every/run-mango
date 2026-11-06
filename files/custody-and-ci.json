@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "review_tag": "ct-judge-mango-cont012-20261105-1130-sol1",
+  "source_repository": "just-every/run-mango",
+  "source_branch": "cloud/sd-mango-c-f21",
+  "source_head": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+  "original_comparison_main": "33112b06882e646adb3cc79e42af4a7dd9d4550a",
+  "supplied_historical_evidence": [
+    {
+      "kind": "affected gate",
+      "head": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+      "conclusion": "GATE PASS",
+      "ended_at": "2026-11-05T11:09:11Z",
+      "exit": 0,
+      "source": "inline affected-gate.md; not reopened from Mac"
+    },
+    {
+      "kind": "focused native archive journeys",
+      "job": "20261105T110451003606Z-heavy-slot-892c3ac0",
+      "head": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+      "passed": 2,
+      "exit": 0,
+      "source": "inline affected-gate.md; distinct from this independent execution"
+    },
+    {
+      "kind": "Verify",
+      "run_id": 42014083307,
+      "event": "push",
+      "head": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+      "conclusion": "failure",
+      "failure": "permitted generated views and dependent aggregate",
+      "runtime_shards": "skipped",
+      "full_runtime_green": false,
+      "source": "inline request and affected-gate.md; not queried by this review"
+    },
+    {
+      "kind": "reviewer-induced scratch-HOME attempt",
+      "exit": 1,
+      "disposition": "superseded by same-source real-HOME pass in the original gate; no rerun or reinterpretation by this review",
+      "source": "inline affected-gate.md"
+    }
+  ],
+  "ci_reads": 0,
+  "ci_mutations": 0,
+  "product_commits": 0,
+  "product_pushes": 0,
+  "product_PRs": 0,
+  "gate_custody": "Existing sd-mango-c-f21 and sd-mango-c-f21-land remain HELD; this is the authorized replacement judgment on the existing request, no second claim or writer.",
+  "pending_final_receipts": [
+    "merged CONTRACT.md generator write and check, recomputed counts",
+    "source lock regenerated last and checked",
+    "actually executed full-green exact FINAL runtime Verify",
+    "complete full-history publication scan NEW 0",
+    "guarded landing, remote main equality and exact-main green Run site",
+    "fresh-main Status AND Gap/Evidence/provenance and newer assertions preserved"
+  ],
+  "external_boundary": "Local native D1/R2/Queue application with fixture DNS, mailbox and provider edges. No live provider, carrier, real device, legal conclusion, hosted deployment, owner request or paid model API."
+}

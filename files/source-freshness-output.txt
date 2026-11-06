@@ -1,0 +1,10 @@
+
+Running 1 test using 1 worker
+
+(node:3255) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3255) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/source-freshness.journeys.ts:5:1 › [STORE-003][STORE-004][STORE-005][STORE-006][AUD-003] synchronize a store, retain failed-page diagnostics and require fresh source authority (2.5m)
+
+  1 passed (2.7m)

@@ -1,0 +1,279 @@
+{
+  "fingerprint": "b65af37ab546236c6b4524f14fc57bfca890f157684ffeaa052aa8eea35232b9",
+  "summary": {
+    "archive": {
+      "name": "account-export.zip",
+      "size": 5886,
+      "sha256": "8f33e5a521a8f6e87bb1016ea213ba22a95af89839df8ef4858f0866a0ea7b41",
+      "entries": 21,
+      "folders": 0
+    },
+    "attestationSources": [
+      {
+        "id": "2e94347a2ebad97f2f2cfb429be4dc7e77ba11d85a51bbaf5f33b32ab46a898c",
+        "sourceKey": "audiences/Mango Garden Letter",
+        "sourceName": "Mango Garden Letter",
+        "accepted": true
+      }
+    ],
+    "audience": [
+      {
+        "path": "audiences/Mango Garden Letter/cleaned.csv",
+        "status": "cleaned",
+        "rows": 1,
+        "created": 1,
+        "updated": 0,
+        "duplicatesWithin": 0,
+        "duplicatesAcross": 0,
+        "rejected": 0,
+        "skipped": 0,
+        "unknownConsent": 0,
+        "rejectedRows": [],
+        "outcomes": {
+          "subscribed": 0,
+          "pending": 0,
+          "non-subscribed": 0,
+          "unsubscribed": 0,
+          "suppressed": 1
+        },
+        "evidenceKinds": {
+          "none": 1
+        }
+      },
+      {
+        "path": "audiences/Mango Garden Letter/subscribed.csv",
+        "status": "subscribed",
+        "rows": 8,
+        "created": 4,
+        "updated": 1,
+        "duplicatesWithin": 1,
+        "duplicatesAcross": 1,
+        "rejected": 1,
+        "skipped": 0,
+        "unknownConsent": 0,
+        "rejectedRows": [
+          {
+            "row": 9,
+            "reason": "Email must be a valid address."
+          }
+        ],
+        "outcomes": {
+          "subscribed": 4,
+          "pending": 0,
+          "non-subscribed": 0,
+          "unsubscribed": 1,
+          "suppressed": 0
+        },
+        "evidenceKinds": {
+          "incumbent-held": 7,
+          "confirmed": 1
+        },
+        "reasons": {
+          "Duplicate destination combined with its most restrictive channel statuses in this import.": 2
+        }
+      },
+      {
+        "path": "audiences/Mango Garden Letter/transactional.csv",
+        "status": "non-subscribed",
+        "rows": 1,
+        "created": 1,
+        "updated": 0,
+        "duplicatesWithin": 0,
+        "duplicatesAcross": 0,
+        "rejected": 0,
+        "skipped": 0,
+        "unknownConsent": 0,
+        "rejectedRows": [],
+        "outcomes": {
+          "subscribed": 0,
+          "pending": 0,
+          "non-subscribed": 1,
+          "unsubscribed": 0,
+          "suppressed": 0
+        },
+        "evidenceKinds": {
+          "none": 1
+        }
+      },
+      {
+        "path": "audiences/Mango Garden Letter/unsubscribed.csv",
+        "status": "unsubscribed",
+        "rows": 2,
+        "created": 2,
+        "updated": 0,
+        "duplicatesWithin": 0,
+        "duplicatesAcross": 0,
+        "rejected": 0,
+        "skipped": 0,
+        "unknownConsent": 0,
+        "rejectedRows": [],
+        "outcomes": {
+          "subscribed": 0,
+          "pending": 0,
+          "non-subscribed": 0,
+          "unsubscribed": 2,
+          "suppressed": 0
+        },
+        "evidenceKinds": {
+          "none": 2
+        }
+      }
+    ],
+    "content": [
+      {
+        "path": "emails/campaigns.csv",
+        "kind": "emails",
+        "rows": 4,
+        "created": 2,
+        "duplicates": 1,
+        "skipped": 0,
+        "rejected": 1,
+        "rejectedRows": [
+          {
+            "row": 5,
+            "reason": "The row has no title, subject or matching content file."
+          }
+        ]
+      },
+      {
+        "path": "templates",
+        "kind": "templates",
+        "rows": 2,
+        "created": 1,
+        "duplicates": 0,
+        "skipped": 0,
+        "rejected": 1,
+        "rejectedRows": [
+          {
+            "row": 1,
+            "reason": "templates/StylesOnly.html: no content remains after removing unsupported markup."
+          }
+        ]
+      }
+    ],
+    "engagement": {
+      "rows": 5,
+      "imported": 3,
+      "dropped": 2,
+      "reasons": {
+        "address-not-in-move-in": 1,
+        "invalid-timestamp": 1
+      }
+    },
+    "records": [
+      {
+        "sourceCampaignId": "c0spring1",
+        "ordinal": 0,
+        "kind": "history",
+        "sourcePath": "emails/campaigns.csv",
+        "sourceRow": 2,
+        "title": "Spring letter",
+        "subject": "What is growing this spring",
+        "sentAt": "2026-09-01 09:00:00 +1000",
+        "removed": [
+          "Mapped *|FNAME|* to {{displayName | fallback: \"there\"}} at source character 217",
+          "Mapped *|UNSUB|* to {{unsubscribe_url}} at source character 627",
+          "Unmapped *|FOO|* at source character 228",
+          "Dropped background:#fff at <table> source line 3: Style property background is not allowed.",
+          "Removed class body at <td> source line 3",
+          "Dropped color:green at style 1:1: Style value \"green\" is not allowed for color. (4)",
+          "HTML comment",
+          "onclick attribute",
+          "Link with an address that is not HTTPS (its text is kept)",
+          "Image without an HTTPS address and explicit width and height",
+          "<center> tag (its text is kept)",
+          "Outside host garden.example.test: 2 uses",
+          "Sent size: HTML 1.1 KB (1106 bytes); plain text 0.5 KB (482 bytes); limit 100.0 KB (102400 bytes) per part. Largest blocks: body/img[4]: 327 bytes; body/table[2]/tbody[1]/tr[1]/td[1]/p[10]: 285 bytes; body/table[2]/tbody[1]/tr[1]/td[1]/p[4]: 99 bytes.",
+          "MSG-012 checker: pass; personalization: blocked"
+        ],
+        "flagged": [
+          "Unrecognised merge tag *|FOO|*"
+        ],
+        "mergeTags": [
+          "*|FOO|*"
+        ]
+      },
+      {
+        "sourceCampaignId": "c0winter2",
+        "ordinal": 1,
+        "kind": "history",
+        "sourcePath": "emails/campaigns.csv",
+        "sourceRow": 3,
+        "title": "Winter letter",
+        "subject": "Winter beds and soup",
+        "sentAt": "Jun 1, 2026 9:00 am",
+        "removed": [
+          "Outside host garden.example.test: 1 uses",
+          "Sent size: HTML 0.8 KB (870 bytes); plain text 0.4 KB (399 bytes); limit 100.0 KB (102400 bytes) per part. Largest blocks: body/img[7]: 327 bytes; body/p[6]: 285 bytes; body/div[1]: 90 bytes.",
+          "MSG-012 checker: pass; personalization: pass"
+        ],
+        "flagged": [],
+        "mergeTags": []
+      },
+      {
+        "ordinal": 2,
+        "kind": "draft",
+        "sourcePath": "templates/Welcome.html",
+        "sourceRow": null,
+        "title": "Welcome letter",
+        "subject": "",
+        "sentAt": "",
+        "removed": [
+          "Outside host garden.example.test: 1 uses",
+          "Sent size: HTML 0.9 KB (929 bytes); plain text 0.4 KB (408 bytes); limit 100.0 KB (102400 bytes) per part. Largest blocks: body/img[6]: 327 bytes; body/p[5]: 285 bytes; body/table[2]/tbody[1]/tr[1]/td[1]/p[2]: 91 bytes.",
+          "MSG-012 checker: pass; personalization: pass"
+        ],
+        "flagged": [],
+        "mergeTags": []
+      }
+    ],
+    "kept": [
+      {
+        "kind": "appointments",
+        "label": "Appointments",
+        "files": 1,
+        "bytes": 92
+      },
+      {
+        "kind": "ecommerce",
+        "label": "Ecommerce products and orders",
+        "files": 2,
+        "bytes": 123
+      },
+      {
+        "kind": "events",
+        "label": "Custom events",
+        "files": 1,
+        "bytes": 87
+      },
+      {
+        "kind": "gallery",
+        "label": "Gallery images and files",
+        "files": 2,
+        "bytes": 172
+      },
+      {
+        "kind": "reports",
+        "label": "Reports (opens, clicks, geography, activity)",
+        "files": 2,
+        "bytes": 119
+      },
+      {
+        "kind": "sms",
+        "label": "SMS contacts",
+        "files": 1,
+        "bytes": 155
+      },
+      {
+        "kind": "unmatched-content",
+        "label": "Email content with no matching row in the emails CSV",
+        "files": 1,
+        "bytes": 82
+      }
+    ],
+    "unmatchedContent": [
+      "emails/campaigns_content/c0orphan9.html"
+    ]
+  },
+  "alreadyImported": null
+}

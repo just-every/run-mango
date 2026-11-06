@@ -1,0 +1,87 @@
+{
+  "frozen_at": "2026-11-06T02:10:33Z",
+  "source": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+  "clause": "CONT-012",
+  "verdict": "ACCEPT ON LANDING",
+  "rows": {
+    "R1": {
+      "score": "MET",
+      "evidence": "B passed default review 4 candidates, 2 eligible and 2 dormant exclusions; C passed native thirteen-month dormancy and eleven-month order inclusion."
+    },
+    "R2": {
+      "score": "MET",
+      "evidence": "A passed exact source timestamps and each of six identities independently, then windows 30/90/365 gave 0/3/3; creation time and opens did not refresh activity."
+    },
+    "R3": {
+      "score": "MET",
+      "evidence": "B passed no-history label and initial inclusion; after 366 elapsed days the no-history contact remained stored but was dormant and excluded. The complete relied-on source uses move-in applied_at."
+    },
+    "R4": {
+      "score": "MET",
+      "evidence": "B passed visible Open-only: 1, default exclusion, explicit Include open-only contacts yielding 3 eligible, then operator policy-off yielding 4."
+    },
+    "R5": {
+      "score": "MET",
+      "evidence": "A passed full permission-snapshot equality on replay. B passed unchanged statuses through policy changes and four accepted dispatches; undo preserves later opt-outs and operator erasure withdraws source custody."
+    },
+    "R6": {
+      "score": "MET",
+      "evidence": "The one changed production statement is SELECT-only. B passed retained contacts after elapsed dormancy and operator-driven deletion or undo; inactivity itself deletes, unsubscribes and suppresses nothing. This scores the original dormancy retention duty, with no new broader archive obligation."
+    },
+    "R7": {
+      "score": "MET",
+      "evidence": "A, B and C executed the relevant allowed and unsafe paths. Consent-missing import cannot create subscribed contacts; current opt-outs and suppression remain. Locked approved policy refuses with 409. Archive support reads refuse with 403 and signed-out reads with 401 before and after erasure; stale and unavailable source approval refuses with no audience, approval or recipient effects; recovered supported approval succeeds."
+    },
+    "R8": {
+      "score": "MET, LOCAL",
+      "evidence": "A+B+C passed through the named public doors on the pin. All AP1\u20135 outcomes are reached; the remaining recorded full-runtime Verify requirement is explicitly R10."
+    },
+    "R9": {
+      "score": "MET",
+      "evidence": "Independent identity expectations and populated native results prevent empty-result proof. B executes owner import/undo/erasure and permission refusals; C executes stale/missing-source refusal and supported recovery."
+    },
+    "R10": {
+      "score": "PENDING",
+      "evidence": "Verify registration is INSPECTED: push, pull_request and workflow_dispatch are supported. plan.mjs includes the move-in archive tests and source-freshness in connections. Supplied push Verify 42014083307 failed generated views and its runtime shards were SKIPPED. There is no actually executed full-green exact FINAL runtime Verify; the lander still owes it."
+    },
+    "R11": {
+      "score": "MET",
+      "evidence": "Every focused execution used 565aab4da4a8f33e28efd6eae47246259f1b75b5; final source hash and Git integrity checks show unchanged tracked bytes."
+    },
+    "R12": {
+      "score": "MET",
+      "evidence": "Pinned CONT-012 meta explicitly cites BASE-DATA-002 and Rules D-2; both original duties were read and retained."
+    },
+    "R13": {
+      "score": "INSPECTED, F",
+      "evidence": "Source lock check passed. Generated contract check failed only with ACCEPTANCE.md: generated content differs. The candidate provenance still cites 91c8584761db668cffa4b318489089df23a9e225. Generator write/check, fresh counts and clause-specific exact-source provenance belong to the existing lander; no view or source was edited here."
+    },
+    "R14": {
+      "score": "MET",
+      "evidence": "AP1\u20135 are byte-identical between original main, exact source and observed fresh main. No acceptance, baseline or policy default was changed; production routes and UI are unchanged. Historical audit rows are retained verbatim as context."
+    },
+    "R15": {
+      "score": "MET",
+      "evidence": "B executed allowed operator import, undo, erasure and approved dispatch; missing attestation, support/signed-out reads and locked policy changes were refused. C executed source-authority refusals with no marketing effects and supported recovered approval."
+    },
+    "R16": {
+      "score": "MET, BOUNDED",
+      "evidence": "All assertions concern native local application behavior with the existing network/provider fixtures. Live provider, real device and legal facts are UNMET-EXTERNAL where applicable, not claimed or added as blocking rows. No SMS carrier or hosted deployment conclusion is made."
+    },
+    "R17": {
+      "score": "MET",
+      "evidence": "The original permission precedence, approval authority and explicit open-only inclusion remain. The only production diff adds imported order and click kinds to the existing occurrence-time SELECT. No new custody, consent, spending or authority default was adopted."
+    },
+    "R18": {
+      "score": "PENDING",
+      "evidence": "No landing, main-equality, exact-main green Run site, complete full-history publication scan NEW 0 or final runtime Verify receipt is established by this review. Existing guarded lander retains all final duties and custody."
+    }
+  },
+  "counts": {
+    "met": 15,
+    "inspected_mechanical": 1,
+    "pending_final_guards": 2
+  },
+  "NEW": [],
+  "substantive_blockers": []
+}

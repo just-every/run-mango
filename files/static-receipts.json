@@ -1,0 +1,21 @@
+{
+  "source": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+  "commands": [
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "started_at": "2026-11-06T02:16:19.777955+00:00",
+      "finished_at": "2026-11-06T02:16:20.614462+00:00",
+      "log": "source-lock-check.txt"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "started_at": "2026-11-06T02:16:20.614518+00:00",
+      "finished_at": "2026-11-06T02:16:20.965260+00:00",
+      "log": "contract-views-check.txt"
+    }
+  ],
+  "generator_write_executed": false,
+  "reason": "read-only reviewer; regeneration is the existing lander duty"
+}

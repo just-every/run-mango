@@ -1,0 +1,32 @@
+{
+  "source_sha": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+  "compared_base": "33112b06882e646adb3cc79e42af4a7dd9d4550a",
+  "changed_files": [
+    "CONTRACT.md",
+    "sources.lock.json",
+    "src/core/features/audience/repository.ts",
+    "tests/move-in/archive.journeys.ts",
+    "tests/move-in/dormancy-source-journey.ts"
+  ],
+  "unchanged_production_routes_and_ui": true,
+  "original_AP1_to_AP5_identical": true,
+  "clause_comparisons": {
+    "33112b06882e646adb3cc79e42af4a7dd9d4550a": {
+      "clause_sha256": "ff9b63cb18f88f39f6c76d98a7e9a0a42e2c8695e2127bfdb2dde7e6c132254b",
+      "clause": "**Requirement.** Dormancy is an audience label and exclusion based on original meaningful activity times. Imported-history gaps and open-only histories are explicit labels, never hidden assumptions.\n\n**Acceptance.**\n1. No click, order or consent change in the dormancy window makes a contact dormant and excluded under AUD-003 and AUD-008.\n2. Imported clicks, orders and consent changes use the incumbent\u2019s original occurrence times; opens never qualify as meaningful activity.\n3. A move-in contact with no engagement history is no-history rather than dormant, and its dormancy window begins at move-in completion.\n4. An otherwise dormant contact with only imported opens inside the window is labeled open-only.\n5. Inactivity never unsubscribes or suppresses a contact; clearing a dormant list is an operator action.",
+      "meta": "- `CONT-012`: *Tier:* Core \u00b7 *Cites:* BASE-DATA-002 \u00b7 *Rules:* D-2"
+    },
+    "HEAD": {
+      "clause_sha256": "ff9b63cb18f88f39f6c76d98a7e9a0a42e2c8695e2127bfdb2dde7e6c132254b",
+      "clause": "**Requirement.** Dormancy is an audience label and exclusion based on original meaningful activity times. Imported-history gaps and open-only histories are explicit labels, never hidden assumptions.\n\n**Acceptance.**\n1. No click, order or consent change in the dormancy window makes a contact dormant and excluded under AUD-003 and AUD-008.\n2. Imported clicks, orders and consent changes use the incumbent\u2019s original occurrence times; opens never qualify as meaningful activity.\n3. A move-in contact with no engagement history is no-history rather than dormant, and its dormancy window begins at move-in completion.\n4. An otherwise dormant contact with only imported opens inside the window is labeled open-only.\n5. Inactivity never unsubscribes or suppresses a contact; clearing a dormant list is an operator action.",
+      "meta": "- `CONT-012`: *Tier:* Core \u00b7 *Cites:* BASE-DATA-002 \u00b7 *Rules:* D-2"
+    },
+    "origin/main": {
+      "clause_sha256": "ff9b63cb18f88f39f6c76d98a7e9a0a42e2c8695e2127bfdb2dde7e6c132254b",
+      "clause": "**Requirement.** Dormancy is an audience label and exclusion based on original meaningful activity times. Imported-history gaps and open-only histories are explicit labels, never hidden assumptions.\n\n**Acceptance.**\n1. No click, order or consent change in the dormancy window makes a contact dormant and excluded under AUD-003 and AUD-008.\n2. Imported clicks, orders and consent changes use the incumbent\u2019s original occurrence times; opens never qualify as meaningful activity.\n3. A move-in contact with no engagement history is no-history rather than dormant, and its dormancy window begins at move-in completion.\n4. An otherwise dormant contact with only imported opens inside the window is labeled open-only.\n5. Inactivity never unsubscribes or suppresses a contact; clearing a dormant list is an operator action.",
+      "meta": "- `CONT-012`: *Tier:* Core \u00b7 *Cites:* BASE-DATA-002 \u00b7 *Rules:* D-2"
+    }
+  },
+  "prior_exact_source_CT_report": "none in supplied request, pinned contract provenance, RULINGS.md or repository verdict/rubric filenames; unavailable fleet paths were not searched",
+  "ci_API_calls": 0
+}

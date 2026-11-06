@@ -1,0 +1,56 @@
+{
+  "observed": [
+    {
+      "email": "synthetic-mango-1@example.test",
+      "eligible": 1,
+      "exclusions": []
+    },
+    {
+      "email": "synthetic-mango-2@example.test",
+      "eligible": 0,
+      "exclusions": [
+        {
+          "reason": "dormant",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "email": "synthetic-mango-3@example.test",
+      "eligible": 1,
+      "exclusions": []
+    },
+    {
+      "email": "synthetic-mango-4@example.test",
+      "eligible": 0,
+      "exclusions": [
+        {
+          "reason": "dormant",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "email": "synthetic-mango-5@example.test",
+      "eligible": 0,
+      "exclusions": [
+        {
+          "reason": "dormant",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "email": "synthetic-mango-6@example.test",
+      "eligible": 1,
+      "exclusions": []
+    }
+  ],
+  "windows": {
+    "30": 0,
+    "90": 3,
+    "365": 3
+  },
+  "originalTimesRetained": true,
+  "permissionUnchanged": true
+}

@@ -1,0 +1,19 @@
+{
+  "source": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+  "classification": "NON-UI/NONVISUAL product judgment; functional browser proof only",
+  "captures_inspected": [
+    "archive/original-source-review-1440.png",
+    "archive/original-source-review-390.png",
+    "archive/imported-dormancy-review-1440.png"
+  ],
+  "observations": [
+    "Native campaign review is populated with six synthetic imported identities.",
+    "Both captures display 6 candidates, 3 excluded and 3 eligible under the saved 365-day policy.",
+    "Exclude dormant contacts is selected; Include open-only contacts remains an explicit operator action.",
+    "Sender and sender-scope approval blockers are visible and expected in this first journey; the test does not establish delivery authority or claim an approved send.",
+    "The carried archive journey passed in full: sender evidence, approved dispatch, immutable policy refusal, unchanged subscription states, undo and erasure all executed.",
+    "The carried default review displays 4 candidates, 2 excluded, 2 eligible, 1 contact with no past activity and Open-only: 1; Include open-only contacts is an explicit action."
+  ],
+  "visual_design_judgment": false,
+  "provider_delivery_claim": false
+}

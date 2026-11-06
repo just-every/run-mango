@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+(node:2065) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/move-in/archive.journeys.ts:6:1 › [CONT-012] imported orders and consent retain original dormancy times without changing permission (39.0s)
+  ✓  2 tests/move-in/archive.journeys.ts:11:1 › [MOVE-009][CONT-001][CONT-002][CONT-003][CONT-010][CONT-012][CONT-013][DATA-001] move an incumbent archive in, reconcile its history, undo and erase without resurrecting recipients (8.0m)
+
+  Slow test file: tests/move-in/archive.journeys.ts (8.7m)
+  Consider running tests from slow files in parallel. See: https://playwright.dev/docs/test-parallel
+  2 passed (8.7m)

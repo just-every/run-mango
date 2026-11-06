@@ -1,0 +1,31 @@
+{
+  "checked_at": "2026-11-06T02:25:35.449581+00:00",
+  "head": "565aab4da4a8f33e28efd6eae47246259f1b75b5",
+  "status_porcelain": "",
+  "tracked_diff_exit": 0,
+  "index_diff_exit": 0,
+  "relied_on_hashes_unchanged": true,
+  "files": {
+    "AGENTS.md": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
+    "BASELINE.md": "fd937425932d01516ae3c9df672eb8273a6c30b90df453d02f3df1715010a206",
+    "CONTRACT.md": "2d71b54767b6048dda72da425f464f11a34221456e6b9a974d258f13a10256d7",
+    "ACCEPTANCE.md": "d247e209a9a4674b822403a6a45b94438e6acded11720d45ac868bc774ef53d4",
+    "RULINGS.md": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2",
+    "tests/move-in/archive.journeys.ts": "6977b14ac804bde0e00c9014b2d3b13a06d495dec547d3647885501efc8abcfb",
+    "tests/move-in/archive.flow.ts": "d6e09004017a9b431a0a2ace349610a3f601932edc925aea357ed91b80205f1e",
+    "tests/move-in/dormancy-source-journey.ts": "7d3b4cafee837ef9f3876817a08c76d2c76a2fdf3d70aead81cc1170926ed910",
+    "tests/move-in/support.ts": "e11411f52edda6a31449b0fb0d7a9c57a878533907c8c32b24450897c4e090cd",
+    "tests/move-in/incumbent-journey.ts": "4a0653226d1b6d86336fcd2419bd9b3b81315f918e6dbf3868428ced0461d4a2",
+    "tests/move-in/archive.ts": "6410befa07ee72f37f9d831c6a62ee48a8c761f0d12394ac9dfc1ef68a606df5",
+    "tests/go-live/source-freshness.journeys.ts": "c5037474bd980ef8f1f2744b02cf5e980e32c942d9ec91b4717139d2a062bac9",
+    "tests/go-live/source-freshness.flow.ts": "233f8f24ba3ce7503a478d79e87606efa9d2e56caa64cfdf2dd47d9671e37bda",
+    "tests/go-live/stale-sources.flow.ts": "76b816f8f29fc0c2dbbbf679bb08e6cbd1550b8ac1d391abbfebd34f949532e0",
+    "tests/go-live/harness.ts": "3816a3b05f06d1e322ea1c00ba4cad0d14db19f5f4ca7c9c86d04b7fdca4460e",
+    "tests/go-live/edge.ts": "2daff28da4776154df16bcb71668ddb348f3afa66672350e0d8c75aa8b5d8270",
+    "tests/campaign-authoring/browser-runtime.mjs": "0542609977c08a8a88149388d5dc548b76b3bba0bf55e4b844b28601ac1be9df",
+    "src/core/features/audience/repository.ts": "621ac352c005424b2f674526909fe3423967e937c0e0e6a5210277a1a1702214"
+  },
+  "product_commits_created": 0,
+  "product_pushes": 0,
+  "PR_created": null
+}
