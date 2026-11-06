@@ -1,0 +1,9 @@
+# CAMP-010 continuation plan
+
+1. Preserve current main, including predecessor 686a91bec82afcbbeba3f54b7dad1b0afa81d7f4, already in main ancestry at task start. No replay or duplicate commit is needed.
+2. Map all three existing acceptance outcomes against native scheduling, approval, Cron and Queue doors. Keep CAMP-006 explicit-instant mismatch coverage and carried expiry terminology.
+3. Extend the existing registered deadline authoring journey for native email and SMS scheduling inputs: local and explicit UTC, ordinary and daylight-saving dates, complete draft creation and PATCH, explicit overrides, saved UI edits and repeated readback. Expectations must come from independent calendar values.
+4. Exercise deadlines through real native approval, production Cron and Queue consumption against controlled network edges. Include a positive pre-deadline handoff, missed first and later steps, partial dispatch, delayed work, exact deadline, replay and preserved accepted or uncertain handoffs. Do not gain authority by reading or editing drafts.
+5. Fix only acceptance-breaking behavior found by those probes. Preserve acceptance text, unrelated rows, existing provider boundaries and CONT-013 holds. Keep SMS carrier and live-provider qualification honest.
+6. Run touched registered journeys and typecheck, capture existing screens at 1440 and 390, regenerate and check contract views then restore them, regenerate the source lock last, and run its check plus first-party command checks.
+7. Save meaningful work on cloud/sd-mango-c-f99 with the fleet identity and active hooks. Integrate latest main without rewriting a published save. Push the exact final candidate using the supplied guard, discover exact-SHA Verify through the budgeted REST door, and publish the actual packet only to the evidence ref.

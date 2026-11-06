@@ -1,0 +1,31 @@
+
+Running 1 test using 1 worker
+
+(node:3823) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Native deadline matrix passed: local
+  ✘  1 tests/campaign-authoring/step-deadline.spec.ts:15:1 › [CAMP-010] native email steps without send-by fields retain local day-end deadlines across daylight saving (28.7s)
+
+
+  1) tests/campaign-authoring/step-deadline.spec.ts:15:1 › [CAMP-010] native email steps without send-by fields retain local day-end deadlines across daylight saving 
+
+    Error: instant: {"error":"invalid_request","issues":{"errors":["Unrecognized key: \"composition\""]}}
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 201
+    Received: 400
+
+      102 |         inclusionRuleJson:base.inclusionRuleJson, steps:selected,
+      103 |       }}});
+    > 104 |       expect(complete.status(), mode+': '+await complete.text()).toBe(201);
+          |                                                                  ^
+      105 |       const draft = await complete.json();
+      106 |       const checkMatrix = async () => {
+      107 |         for (const suffix of ['', '/review']) {
+        at /home/agent/rer-consolidation/work/sd-mango-c-f99/run-mango/tests/campaign-authoring/step-deadline.spec.ts:104:66
+
+    Error Context: ../evidence/94b0b8b4e84d/main/campaign-authoring-step-de-40516-ines-across-daylight-saving/error-context.md
+
+  1 failed
+    tests/campaign-authoring/step-deadline.spec.ts:15:1 › [CAMP-010] native email steps without send-by fields retain local day-end deadlines across daylight saving 

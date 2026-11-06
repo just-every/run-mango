@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "tag": "sd-mango-c-f99",
+  "branch": "cloud/sd-mango-c-f99",
+  "head": "0acfc77e9b20718a284b6a9bb580cc717be79d43",
+  "base_main": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "product_pushed": true,
+  "pr": null,
+  "clause_changes": {
+    "CAMP-010": {
+      "before": "partial",
+      "after": "done",
+      "closed_acceptances": [
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  "counts": {
+    "before": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    },
+    "after": {
+      "done": 21,
+      "partial": 197,
+      "missing": 98
+    }
+  },
+  "checks": [
+    {
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_VERIFY_FILES='[\"campaign-authoring/step-deadline.spec.ts\"]' cloud_run perl -e 'alarm 1200; exec @ARGV' -- node scripts/verification/run.mjs --stage main",
+      "exit": 0,
+      "head": "0acfc77e9b20718a284b6a9bb580cc717be79d43",
+      "log": "exact-head-deadline.log",
+      "tests": 1
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "head": "0acfc77e9b20718a284b6a9bb580cc717be79d43",
+      "log": "exact-head-typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party.log",
+      "head": "0acfc77e9b20718a284b6a9bb580cc717be79d43"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "views-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "before_restoring_generated_views": true,
+      "log": "views-check.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "after_restoring_generated_views": true,
+      "expected_generated_view_exception": true,
+      "log": "candidate-view-check.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "head": "0acfc77e9b20718a284b6a9bb580cc717be79d43"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs verify-base --offline",
+      "exit": 0,
+      "head": "0acfc77e9b20718a284b6a9bb580cc717be79d43",
+      "drift": 0,
+      "unrecorded_copies": 0
+    },
+    {
+      "command": "migration ledger check",
+      "exit": 0,
+      "status": "not needed; no migration changed"
+    }
+  ],
+  "ci": [
+    {
+      "id": 42201171130,
+      "name": "Verify",
+      "event": "push",
+      "status": "in_progress",
+      "conclusion": null,
+      "head_sha": "0acfc77e9b20718a284b6a9bb580cc717be79d43",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42201171130"
+    }
+  ],
+  "github_calls_used": 3,
+  "publication_scan": {
+    "status": "not run in cloud; guarded Mac lander required",
+    "complete": false,
+    "historyScanned": null,
+    "findings": null
+  },
+  "run_site": {
+    "status": "candidate not landed; guarded Mac lander required"
+  },
+  "unchanged_boundaries": [
+    "Live provider qualification",
+    "Owner Twilio A2P and US carrier registration",
+    "SMS transport qualification",
+    "CONT-013 disposition and repair hold",
+    "Base adoption and release requirements"
+  ],
+  "source_file_sha256": {
+    "CONTRACT.md": "df49a624322bf269e28085fb2c3ebab37f9c052a8a44b10eaaf271d0e2348e12",
+    "sources.lock.json": "c301cb6ed44b3fb34fc292bccffedaf2ea99031a4bac98a65488883bc267abf0",
+    "src/core/features/campaigns/draft-composition.ts": "5c4872c85ca60c9df7917dc8ddb08c7cc7bac260d07a5b60e98c3a2cdc1e6ce7",
+    "src/core/features/lifecycle/schedule.ts": "3f933f42a429fe0743bc1185d45cdb59f779099909b3b7159499f39a82e6f8d6",
+    "tests/campaign-authoring/step-deadline-dispatch-journey.ts": "8a9283d6ecbd6125e976cf6afb9ccfb2465980eacf0b6cf2dd5e8ef93bda12fd",
+    "tests/campaign-authoring/step-deadline.spec.ts": "c3e2ba352c1bd18621643369971f6b4ac65bd480aa83ea851cdb43c8395eee62"
+  },
+  "artifacts": {
+    "step-deadline-1440.png": "f645bccd8b333cef331345be0cd14cfcc260ef7720eaa0bf4bde71ea001c4b8b",
+    "step-deadline-390.png": "6172d24d237efef3f65591e6121f12c119ed62d1bb02b544428f1bfe1181237a",
+    "deadline-results-email-1440.png": "2ca3eaef7deeb145c5ddd70ed9b6bf8986be6c340a96a972e4fdb6d7062345ff",
+    "deadline-results-email-390.png": "2562901e653ee29f585bed6b9071ec98d1ada975f9ae2ca1769373c0b8ce9736",
+    "deadline-results-sms-1440.png": "4a330e80edffb239e1021797a784793083c1fe6294e3954fd96d965cc964c06b",
+    "deadline-results-sms-390.png": "29204172a4616bd5cbb5ba404ebdba6307dfa92ede8886abb8ac0dd5ed1f6d17",
+    "exact-head-deadline.log": "78db62129600b4b92a2eb7c704176dfea64817993e2a3e46e008e992b7294cf8",
+    "exact-head-typecheck.log": "b1cab5278d7fd95ec8843a95d90dcb574cabf788ccc3e56203de3afc01cbd041",
+    "PROBES.log": "84eebecbf85589d90f77a507736fcb35346941ffc665bc2ee0597be9d2b79343"
+  },
+  "diff_hygiene": {
+    "exit": 0,
+    "changed_files": [
+      "CONTRACT.md",
+      "sources.lock.json",
+      "src/core/features/campaigns/draft-composition.ts",
+      "src/core/features/lifecycle/schedule.ts",
+      "tests/campaign-authoring/step-deadline-dispatch-journey.ts",
+      "tests/campaign-authoring/step-deadline.spec.ts"
+    ],
+    "generated_views_committed": false,
+    "workflow_changed": false,
+    "literal_email_shaped_strings_in_changed_source_and_tests": 0,
+    "test_registrations_before": 1,
+    "test_registrations_after": 1
+  },
+  "evidence_transport_recovery": {
+    "initial": "Git ls-remote failed exit=128; invalid username or token; HTTP status not supplied",
+    "fleet_bundle_refreshed": true,
+    "fleet_git_setup_repeated": true,
+    "command_scope_auth_reset": true,
+    "recovery_read_exit": 0,
+    "product_branch_head_verified": "0acfc77e9b20718a284b6a9bb580cc717be79d43"
+  }
+}

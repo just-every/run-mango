@@ -1,0 +1,6 @@
+PROBE CAMP-010 acceptance-1 additional doors: complete-create and PATCH, email and SMS, local and UTC-only inputs -> independently specified ordinary and DST local-day-end deadlines; no approval, recipients or dispatch jobs.
+PROBE CAMP-010 acceptance-1: authenticated native PATCH with local times and IANA zone, both send-by fields omitted -> ordinary and both DST day-end instants persisted; reopened controls; draft with no approval, recipients or dispatch jobs.
+PROBE CAMP-010 acceptance-2 email: approved native work reaches expiry at equality -> queued and prepared recipients skipped with send-window-expired, zero attempts; prior handoffs retained.
+PROBE CAMP-010 acceptance-3 email: missed first and later steps, delayed native queue command, paused window and replay after expiry -> no late marketing handoff.
+PROBE CAMP-010 acceptance-2 sms: approved native work reaches expiry at equality -> queued and prepared recipients skipped with send-window-expired, zero attempts; prior handoffs retained.
+PROBE CAMP-010 acceptance-3 sms: missed first and later steps, delayed native queue command, paused window and replay after expiry -> no late marketing handoff.
