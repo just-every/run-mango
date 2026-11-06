@@ -86,6 +86,10 @@ test('[FORM-001] configured origins admit signup while unlisted ancestors and re
       expect(captured[0]).toMatchObject({email_status:'pending',channel:'email',capture_source:site.runtime.url+'/subscribe',
         capture_method:'hosted-signup-form',confirmation_required:1,consent_text:settings.consentText,confirmed_at:null});
       expect(edge.sends.filter(send=>send.to===email)).toHaveLength(1);
+      const message=edge.sends.find(send=>send.to===email)!;
+      const confirmation=/https:\/\/\S+\/consent\/confirm\/\S+/.exec(message.body.content.find((part:any)=>part.type==='text/plain').value);
+      expect(confirmation).not.toBeNull();
+      expect(new URL(confirmation![0]).origin).toBe(site.origin);
       observations.push({width,case:'allowed',captured,counts:await snapshot()});
       await page.screenshot({path:info.outputPath(`embed-allowed-${width}.png`),fullPage:true});
       await denied('unlisted',width,unlisted.url);
