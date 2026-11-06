@@ -2638,7 +2638,7 @@
       "executable": false
     },
     "scripts/verification/plan.mjs": {
-      "sha256": "2d521cb69ee87732336580c85fb00473dfa68673e90af188104d0f574a82f4a8",
+      "sha256": "f4c9cef44d796d08ea2539dbc2ac39e8c918800295dd07e169688b81d5c95a64",
       "executable": false
     },
     "scripts/verification/public-timing.mjs": {
@@ -8859,6 +8859,10 @@
     },
     "tests/go-live/email-size.flow.ts": {
       "sha256": "32a1f3ff7ce7597043ae550d8aefdb7a978c02a47694423a5eb17f7fd4d1af2c",
+      "executable": false
+    },
+    "tests/go-live/embed-origin.journeys.ts": {
+      "sha256": "c80a1cfdf1d1c13eebb4c9e76ef272cb30ce1cc69eac489bef3febc1d2253aeb",
       "executable": false
     },
     "tests/go-live/go-live.flow.ts": {
