@@ -42,7 +42,7 @@ export default {async fetch(request:Request,bindings:LocalAppBindings,context:Ex
       if(action==='overview')return context.json(await seedOverview(bindings.DB));
       if(action==='followup')return context.json(await seedFollowup(bindings.DB,platform));
       if(action==='retention') return context.json(await seedRetention(bindings.DB));
-      if(action==='reporting') return context.json(await seedReporting(bindings.DB,platform));
+      if(action==='reporting') return context.json(await seedReporting(bindings.DB,platform,context.req.query('clickControls')==='true'));
       if(action==='archive')return context.json(await seedArchive(bindings.DB,new URL(request.url).origin));
       if(action==='outcomes') await seedOutcomes(bindings.DB);
       if(action==='filters') for(const state of states) for(const channels of [['email'],['sms'],['email','sms']]) await seedCampaign(bindings.DB,`${state}-${channels.join('-')}`,state,channels);

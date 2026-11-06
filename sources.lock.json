@@ -8630,11 +8630,11 @@
       "executable": false
     },
     "tests/campaign-results/reporting-fixture.ts": {
-      "sha256": "3a64ce9b2bec031ff4cc93fc0ea67b6248160bfa17cd661c5cce00843b014240",
+      "sha256": "5f64248671dbc2e78cf3a8943b320d230b720aa69428f619769a31e3ab6d0208",
       "executable": false
     },
     "tests/campaign-results/reporting-journey.ts": {
-      "sha256": "774588278a7c7615ca20b2956856df5d9c528005cc8ae6df237f25bdf08e1125",
+      "sha256": "b963cb5b72373e75e05d476287364f67a0e1a79fc8d2666069eb18dd0949a925",
       "executable": false
     },
     "tests/campaign-results/results.flow.ts": {
@@ -8666,7 +8666,7 @@
       "executable": false
     },
     "tests/campaign-results/worker.ts": {
-      "sha256": "186719216d5f2d912dcb4ee4453c8b3147feaaabfc1c9215378f6a959aee5948",
+      "sha256": "7cd342f75c3677eaadbbed330a0e32a6ef8059fd4391d0d366d00cf4be9c8ec3",
       "executable": false
     },
     "tests/contract.js": {
