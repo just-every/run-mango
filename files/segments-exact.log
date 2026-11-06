@@ -1,0 +1,18 @@
+
+Running 2 tests using 1 worker
+
+(node:8917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8917) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/audience-controls/segments.spec.ts:7:1 › [CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, freeze recipients and merge identities without widening consent (2.4m)
+PROBE AUD-010 acceptance-1: saved nested rules -> authenticated collection and campaign row retain all conditions; one eligible customer 5, no delivery authority
+PROBE AUD-010 acceptance-2: edited numeric predicate and custom exclusion -> saved reload retains all and any, editor labels, values, comparison and 90-day window; sole eligible identity changes to customer 1
+PROBE AUD-010 condition-matrix: native draft saves and editor -> 39 condition cases preserve every chosen field, comparison, typed value, scope and lookback
+PROBE AUD-010 display-doors: checks, review, detail, scheduled page, campaign list and saved audience snapshots -> independently reconciled saved meaning, unchanged approval and exact recipient identity after repeated reads
+PROBE AUD-010 followup-condition: completed native source and 48-hour follow-up -> summary retains saved cohort value alongside original source and cutoff; follow-up remains unapproved
+  ✓  2 tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion (40.9s)
+
+  2 passed (3.1m)

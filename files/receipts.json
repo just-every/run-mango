@@ -1,0 +1,214 @@
+{
+  "schema": 1,
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f116",
+  "head": "beca9fe86f7fe2bb36d1ed6ab858be260fb53c13",
+  "base": "6f009180967489c041cf69166ca3b9b0eb2f9278",
+  "merged_main": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "clause": {
+    "id": "AUD-010",
+    "before": "partial",
+    "after": "done",
+    "acceptance_changes": 0,
+    "before_counts": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    },
+    "after_counts": {
+      "done": 21,
+      "partial": 197,
+      "missing": 98
+    }
+  },
+  "commands": [
+    {
+      "command": "pnpm exec playwright test tests/audience-controls/segments.spec.ts --workers=1",
+      "head": "beca9fe86f7fe2bb36d1ed6ab858be260fb53c13",
+      "exit": 0,
+      "tests_passed": 2,
+      "duration": "3.1m",
+      "log": "segments-exact.log"
+    },
+    {
+      "command": "pnpm run typecheck",
+      "head": "beca9fe86f7fe2bb36d1ed6ab858be260fb53c13",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "head": "beca9fe86f7fe2bb36d1ed6ab858be260fb53c13",
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write then check",
+      "exit": 0,
+      "generated_views_restored_from": "origin/main",
+      "logs": [
+        "views-write.log",
+        "views-check.log"
+      ]
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check after restoring views",
+      "head": "beca9fe86f7fe2bb36d1ed6ab858be260fb53c13",
+      "exit": 1,
+      "expected": true,
+      "only_differences": [
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ],
+      "log": "expected-stale-views.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock then check",
+      "head": "beca9fe86f7fe2bb36d1ed6ab858be260fb53c13",
+      "exit": 0,
+      "lock_sha256": "1c13aa4111d9a692cf55eda6bc9910e850f336015ee75c94f94e274337160d89"
+    },
+    {
+      "command": "migration ledger",
+      "exit": 0,
+      "status": "not applicable; no migrations changed"
+    }
+  ],
+  "images": [
+    {
+      "path": "screens/audience-summary-editor-1440.png",
+      "width": 1440,
+      "bytes": 626056,
+      "sha256": "17eed33cdf403954829d135a3804f4a25a729fa8fc6be1c53b47f82d39370d3d"
+    },
+    {
+      "path": "screens/audience-summary-editor-390.png",
+      "width": 390,
+      "bytes": 569638,
+      "sha256": "dd9039448dc1aefba0bc608baf687f92c77ae09caa1cdda2843ac5cf1397f7ad"
+    },
+    {
+      "path": "screens/audience-summary-list-1440.png",
+      "width": 1440,
+      "bytes": 26980,
+      "sha256": "56d1f6f02a361b33ffb643a4339abfd353e016b9344275bdaced7b8a9fa3f3db"
+    },
+    {
+      "path": "screens/audience-summary-list-390.png",
+      "width": 390,
+      "bytes": 23705,
+      "sha256": "8082599e3792f7a7cdf118eda62a6785e3e897b211fceccbcbc3bef557c6bb1a"
+    },
+    {
+      "path": "screens/audience-summary-review-1440.png",
+      "width": 1440,
+      "bytes": 277924,
+      "sha256": "db939dc1027745a3f289c5b9cbafdcb9c6bb9b88f5acae0abe6456151be2f407"
+    },
+    {
+      "path": "screens/audience-summary-review-390.png",
+      "width": 390,
+      "bytes": 235793,
+      "sha256": "2fcb835c4506c56a7146cffec0ac61a51e62916b3d4e6235e7ad29b5b6a4a2aa"
+    },
+    {
+      "path": "screens/audience-summary-detail-1440.png",
+      "width": 1440,
+      "bytes": 270736,
+      "sha256": "e13f1de53f653f55c601b041e15484d8318bb03ae421a98a2cea8a2c4ef23a79"
+    },
+    {
+      "path": "screens/audience-summary-detail-390.png",
+      "width": 390,
+      "bytes": 224346,
+      "sha256": "de14814bd3ee5612e481c2136ed3c6e488aad17d36ec3bb4c9162499dd23aca5"
+    },
+    {
+      "path": "screens/audience-summary-scheduled-1440.png",
+      "width": 1440,
+      "bytes": 228525,
+      "sha256": "16a05b16eb121c136c62c4fcfebca4d35687524a7743a6e8d7e89d9f2c9dc25c"
+    },
+    {
+      "path": "screens/audience-summary-scheduled-390.png",
+      "width": 390,
+      "bytes": 248490,
+      "sha256": "4acfe2aca16dab460339993de6bede1fd0ea14ae69c7c045a268836c921149ed"
+    }
+  ],
+  "temporary_faults": [
+    {
+      "name": "approval-summary",
+      "exit": 1,
+      "log": "mutation-approval-summary.log"
+    },
+    {
+      "name": "nested-group",
+      "exit": 1,
+      "log": "mutation-nested-group.log"
+    },
+    {
+      "name": "restricted-check",
+      "exit": 1,
+      "log": "mutation-restricted-check.log"
+    }
+  ],
+  "pre_push": {
+    "identity": "all candidate commits and side parents audited",
+    "openai_coauthors": 0,
+    "table_rows_from_each_parent": 490,
+    "dropped_status_ids": [],
+    "generated_views_committed": false,
+    "new_audience_fixture_email_strings": 0,
+    "candidate_commit_count": 4,
+    "full_history": true
+  },
+  "publication_scan": {
+    "status": "not run in cloud; guarded lander required",
+    "complete": false,
+    "historyScanned": false,
+    "findings": null
+  },
+  "product_landing": {
+    "main_pushed": false,
+    "pr": null,
+    "status": "branch candidate",
+    "pushed_head": "beca9fe86f7fe2bb36d1ed6ab858be260fb53c13"
+  },
+  "evidence_publication": "separate evidence ref only",
+  "ci": {
+    "workflow_runs": [
+      {
+        "conclusion": "failure",
+        "event": "push",
+        "head_sha": "beca9fe86f7fe2bb36d1ed6ab858be260fb53c13",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42224696615",
+        "id": 42224696615,
+        "name": "Verify",
+        "status": "completed"
+      }
+    ],
+    "classification": "expected generated-view freshness failure; aggregate verify fails because build cannot produce shard proof",
+    "root_failure": {
+      "run": 42224696615,
+      "job": 127915183420,
+      "step": "Check generated contract documents",
+      "command": "node src/base/contract-docs.mjs check",
+      "local_exact_sha_exit": 1,
+      "local_exact_sha_differences": [
+        "ACCEPTANCE.md",
+        "docs/CLAIMS.md"
+      ]
+    },
+    "aggregate_failure": {
+      "job": 127915294890,
+      "step": "Require the selected coverage and its proof"
+    },
+    "browser_shards": "skipped after generated-view build failure; no remote browser result claimed",
+    "cloud_generated_view_exception": true,
+    "github_calls_used": 3
+  },
+  "process_cleanup": {
+    "browser_and_workerd_processes_remaining": 0
+  }
+}

@@ -1,0 +1,33 @@
+
+Running 1 test using 1 worker
+
+(node:5656) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion (23.9s)
+
+
+  1) tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion 
+
+    Error: expect(received).toMatch(expected)
+
+    Expected pattern: /\(any of:\s*Contact property\s*\(property "interest"\)\s+is\s+"vegetables";\s*US ZIP code\s+is\s+"94103"\)/i
+    Received string:  "Contacts matching all of these conditions: Placed Order count is at least 2 in the last 90 days; (all of: Contact property (property \"interest\") is \"vegetables\"; US ZIP code is \"94103\"). "
+
+       at audience-controls/audience-summary-journey.ts:38
+
+      36 |       expect(included).toMatch(/\bmatching all\b/i);
+      37 |       expect(included).toMatch(new RegExp(`Placed Order count\\s+is at least\\s+${minimum}\\b\\s+in the last\\s+90\\s+days\\b`,'i'));
+    > 38 |       expect(included).toMatch(/\(any of:\s*Contact property\s*\(property "interest"\)\s+is\s+"vegetables";\s*US ZIP code\s+is\s+"94103"\)/i);
+         |                        ^
+      39 |       expect(excluded).toMatch(new RegExp(`\\bmatching any\\b[^:]*:\\s*US ZIP code\\s+is\\s+"${excludedZip}"`,'i'));
+      40 |     };
+      41 |     const saved=async(expectedInclusion:InclusionRule,expectedExclusions:ExclusionRule[])=>{
+        at meaning (/home/agent/run-mango/tests/audience-controls/audience-summary-journey.ts:38:24)
+        at editor (/home/agent/run-mango/tests/audience-controls/audience-summary-journey.ts:73:7)
+        at audienceSummaryJourney (/home/agent/run-mango/tests/audience-controls/audience-summary-journey.ts:90:92)
+        at /home/agent/run-mango/tests/audience-controls/segments.spec.ts:21:3
+
+    Error Context: ../rer-consolidation/work/sd-mango-c-f116/evidence/d46e8fe70fdf/main/audience-controls-segments-ad74d-lusion-and-custom-exclusion/error-context.md
+
+  1 failed
+    tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion 

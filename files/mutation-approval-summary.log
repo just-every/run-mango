@@ -1,0 +1,36 @@
+
+Running 1 test using 1 worker
+
+(node:5231) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE AUD-010 acceptance-1: saved nested rules -> authenticated collection and campaign row retain all conditions; one eligible customer 5, no delivery authority
+PROBE AUD-010 acceptance-2: edited numeric predicate and custom exclusion -> saved reload retains all and any, editor labels, values, comparison and 90-day window; sole eligible identity changes to customer 1
+PROBE AUD-010 condition-matrix: native draft saves and editor -> 34 condition cases preserve every chosen field, comparison, typed value, scope and lookback
+  ✘  1 tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion (33.0s)
+
+
+  1) tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion 
+
+    Error: expect(received).toHaveLength(expected)
+
+    Expected length: 2
+    Received length: 1
+    Received array:  ["Structured conditions are valid."]
+
+       at audience-controls/audience-summary-journey.ts:34
+
+      32 |       expect(summary).not.toContain('Named contacts');
+      33 |       const sections=summary.split(/\bexclude contacts\b/i);
+    > 34 |       expect(sections).toHaveLength(2);
+         |                        ^
+      35 |       const [included,excluded]=sections;
+      36 |       expect(included).toMatch(/\bmatching all\b/i);
+      37 |       expect(included).toMatch(new RegExp(`Placed Order count\\s+is at least\\s+${minimum}\\b\\s+in the last\\s+90\\s+days\\b`,'i'));
+        at meaning (/home/agent/run-mango/tests/audience-controls/audience-summary-journey.ts:34:24)
+        at audienceSummaryJourney (/home/agent/run-mango/tests/audience-controls/audience-summary-journey.ts:121:75)
+        at /home/agent/run-mango/tests/audience-controls/segments.spec.ts:21:3
+
+    Error Context: ../rer-consolidation/work/sd-mango-c-f116/evidence/d46e8fe70fdf/main/audience-controls-segments-ad74d-lusion-and-custom-exclusion/error-context.md
+
+  1 failed
+    tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion 
