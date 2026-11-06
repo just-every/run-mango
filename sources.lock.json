@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "80275c15015c0a38c1f27494f275cbb38bb27a3067f2549b982202655fc4dd4a",
+      "sha256": "0819c76bc33e38d31ec4f23822c45edd736f7ab536aa2d825531f0e798535441",
       "executable": false
     },
     "DEMO.md": {
@@ -6154,7 +6154,7 @@
       "executable": false
     },
     "src/core/platform/runtime.ts": {
-      "sha256": "f39c0b872b3de43fd261b18fa7f6542a7ce800f8975a83c532d2b148507b474c",
+      "sha256": "6bba0e2fc84664e8e938ee88836b9b30585f66adae92642b67081dc4d73f7df1",
       "executable": false
     },
     "src/core/platform/worker-runtime.ts": {
@@ -9173,6 +9173,10 @@
       "sha256": "66395aaa322ce77ab1c4cd26cd868bab2faaff1d00dece9859c7387d7c6620c1",
       "executable": false
     },
+    "tests/local-start/default-admin.flow.ts": {
+      "sha256": "460d5993cf0680797decde34aa4882264e4a6924c635af172553f0fed1cf6039",
+      "executable": false
+    },
     "tests/local-start/dev-gate.mjs": {
       "sha256": "597c463c27d9efee9ca67e06fccfe328063953c0b05f61a6d914c44b8f7850e4",
       "executable": false
@@ -9195,6 +9199,10 @@
     },
     "tests/local-start/native-dev.mjs": {
       "sha256": "b6f279aaca9e057dc1a20dffe7f6a49a54a7e36271bca7a7662e408ac52a3097",
+      "executable": false
+    },
+    "tests/local-start/preconfigured-sender.flow.ts": {
+      "sha256": "ca273d709b4040df6909f59367e582eeeaa3f01eb424579ebff546536ddf2299",
       "executable": false
     },
     "tests/local-start/retained-archive.journey.ts": {

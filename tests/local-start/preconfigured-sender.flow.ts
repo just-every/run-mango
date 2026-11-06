@@ -16,7 +16,7 @@ export async function preconfiguredSenderJourney(browser: Browser) {
     await runtime.setup(false);
     const path=join(runtime.checkout,'.dev.vars');
     const settings=await readFile(path,'utf8');
-    const fields={MAIL_SENDER_NAME:identity.displayName,MAIL_AUTH_FROM:identity.fromEmail,
+    const fields={MAIL_SENDER_NAME:identity.displayName,MAIL_FROM:identity.fromEmail,
       MAIL_REPLY_TO:identity.replyToEmail,MAIL_PHYSICAL_ADDRESS:identity.physicalAddress};
     const retained=settings.split('\n').filter(line=>!Object.keys(fields).some(key=>line.startsWith(key+'=')));
     await writeFile(path,retained.join('\n')+'\n'+Object.entries(fields).map(([key,value])=>key+'='+JSON.stringify(value)).join('\n')+'\n',{mode:0o600});

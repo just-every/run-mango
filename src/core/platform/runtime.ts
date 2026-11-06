@@ -152,11 +152,12 @@ export function createLocalPlatform(environment: AppBindings, localSigningKey: s
     emailHandoffsPerMinute: 1,
     deliverabilityReportingWindowDays: 30,
     mailSender: {
-      // Local installations start with no sender identity; /setup collects the real one.
-      displayName: '',
-      fromEmail: '',
-      replyToEmail: '',
-      physicalAddress: '',
+      // An installation may already carry a business identity. The document
+      // gate validates it; configuring identity never enables local sending.
+      displayName: environment.MAIL_SENDER_NAME?.trim() ?? '',
+      fromEmail: environment.MAIL_FROM?.trim() || environment.MAIL_AUTH_FROM?.trim() || '',
+      replyToEmail: environment.MAIL_REPLY_TO?.trim() ?? '',
+      physicalAddress: environment.MAIL_PHYSICAL_ADDRESS?.trim() ?? '',
     },
   }, {
     ...designAdapter(design),
