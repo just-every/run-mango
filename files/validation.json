@@ -1,0 +1,98 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f111",
+  "head": "5abc7bc7eaf211cbb408fb501808aebdafb18ad3",
+  "working_tree_clean": true,
+  "checks": [
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js ordinary-images.journeys.ts --reporter=list",
+      "exit": 0,
+      "candidate": "5abc7bc7eaf211cbb408fb501808aebdafb18ad3",
+      "result": "1 passed (37.2s)",
+      "runtime": "Native Vite Worker, real local D1 and R2, native Queue, mail and DNS network-edge fixtures",
+      "assertions_width": 1440,
+      "proof_widths": [
+        1440,
+        390
+      ]
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "candidate": "5abc7bc7eaf211cbb408fb501808aebdafb18ad3"
+    },
+    {
+      "command": "npx -y @runeditrun/rer build",
+      "exit": 0,
+      "same_production_bytes": true
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "same_contract_bytes": true
+    }
+  ],
+  "files": [
+    {
+      "path": "src/core/features/campaign-assets/media-routes.ts",
+      "sha256": "37dfd9ec85f97b1c817ed0ad7f393fc059ac77c074fd0df988c51be93806df2d"
+    },
+    {
+      "path": "src/core/features/campaign-assets/repository.ts",
+      "sha256": "4dd7d49ba6ab2e66f36d0eb3cac8c88e3af3cec15f4177dc33ec43b0bd23e55b"
+    },
+    {
+      "path": "src/core/features/lifecycle/message-renderer.ts",
+      "sha256": "fc14df26cbcb97945f9508c6119021b60fdcce37da804eb29f177b832808dbf4"
+    },
+    {
+      "path": "tests/go-live/ordinary-images.journeys.ts",
+      "sha256": "56ededf5a4ff3bb904c75e78319f4c027319805fd37d4ca051e95e457d37dd06"
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "sha256": "e7d3c34056ccc7667fd38c237a8ee251155e216567cd3f491d703f887da07453"
+    },
+    {
+      "path": "CONTRACT.md",
+      "sha256": "69e99e874279a7c49c9c9b6fbf4e4c13ff270e1da4b59b59bd65d55bd428bcd2"
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "4bfe491270215af6349e68decbf26ce03c5e7590bde02ff3aabfa3ca3747541b"
+    }
+  ],
+  "proof_files": [
+    {
+      "path": "ordinary-images-receipt.json",
+      "sha256": "959adac6eb87894769b30d384f5192ec906983f25517a556fd2e58fda52c883b"
+    },
+    {
+      "path": "ordinary-images-1440.png",
+      "sha256": "b6077ed50d81c509ca00375204bf0c83b279b81cf3a46041ef1b2bbbc321eb92"
+    },
+    {
+      "path": "ordinary-images-390.png",
+      "sha256": "e1bd78ee4850530380dfc6514e2f5e676c2158f705220a793dbe9edc08602a96"
+    },
+    {
+      "path": "journey.txt",
+      "sha256": "f4761f5b036a9ab2ca9db5284092d08ceeb84609c6c98a7ffe27f32fa3699133"
+    },
+    {
+      "path": "typecheck.txt",
+      "sha256": "d95a8655bba8542c319d2ef6957100875fe30981b6d08ab97bc34db880143a99"
+    }
+  ],
+  "initial_fixture_failure": "The initial test held the application clock during dispatch, preventing the second provider-paced handoff. The test now advances normally until dispatch settles, then holds the clock for comparison. No product code changed.",
+  "mutations_restored": true,
+  "github_calls_so_far": 6,
+  "publication_scan": {
+    "commit": "5abc7bc7eaf211cbb408fb501808aebdafb18ad3",
+    "complete": false,
+    "historyScanned": false,
+    "findings": null,
+    "reason": "Cloud adaptation assigns the complete full-history publication scan to the maintained Mac lander."
+  },
+  "ci_disposition": "completed/failure only from expected stale ACCEPTANCE.md; all dependent shards skipped; permitted cloud handoff exception"
+}

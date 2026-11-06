@@ -1,0 +1,40 @@
+{
+  "head": "5abc7bc7eaf211cbb408fb501808aebdafb18ad3",
+  "branch": "cloud/sd-mango-c-f111",
+  "commands": [
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "stdout": "Wrote 1 contract documents.\n"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "stdout": "Contract documents are current.\n"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "ok": true
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "migration-ledger check",
+      "exit": 0,
+      "applicable": false,
+      "reason": "No migration changes."
+    }
+  ],
+  "generated_views_committed": false
+}

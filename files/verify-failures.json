@@ -1,0 +1,39 @@
+{
+  "head": "5abc7bc7eaf211cbb408fb501808aebdafb18ad3",
+  "run_id": 42209592866,
+  "event": "push",
+  "status": "completed",
+  "conclusion": "failure",
+  "allowed_generated_view_exception": true,
+  "jobs": [
+    {
+      "id": 127864708942,
+      "name": "Build and public command checks",
+      "failed_step": "Check generated contract documents",
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+      "log_read_command": "gh run view 42209592866 --repo just-every/run-mango --job 127864708942 --log-failed",
+      "log_read_exit": 0
+    },
+    {
+      "id": 127864801985,
+      "name": "verify",
+      "failed_step": "Require the selected coverage and its proof",
+      "exit": 1,
+      "failure": "Required build did not succeed after the generated-view check; dependent test shards were skipped.",
+      "log_read_command": "gh run view 42209592866 --repo just-every/run-mango --job 127864801985 --log-failed",
+      "log_read_exit": 0
+    }
+  ],
+  "local_exact_command": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1,
+    "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  },
+  "product_assertion_failures": 0,
+  "candidate_test_shards_ran": false,
+  "github_budget_calls": 6,
+  "reruns_or_dispatches": 0,
+  "note": "Raw workflow logs were read once per failed job. This receipt retains complete failure facts and omits the workflow environment listings; those listings are not selected for evidence."
+}

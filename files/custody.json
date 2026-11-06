@@ -1,0 +1,17 @@
+{
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f111",
+  "head": "5abc7bc7eaf211cbb408fb501808aebdafb18ad3",
+  "remote_head": "5abc7bc7eaf211cbb408fb501808aebdafb18ad3",
+  "product_ref_verified": true,
+  "product_worktree_clean": true,
+  "no_product_evidence_files": true,
+  "generated_views_equal_origin_main": true,
+  "commit_ids": [
+    "380fb1ada5d36f96d78c6003976cade1ea9facb7",
+    "5abc7bc7eaf211cbb408fb501808aebdafb18ad3"
+  ],
+  "main_at_integration": "01f63103b73722c32e0c6cc13f7b9c2eacb4c59e",
+  "main_was_not_pushed": true,
+  "pr": null
+}

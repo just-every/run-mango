@@ -1,0 +1,45 @@
+{
+  "configurations": [
+    {
+      "config": "tests-move-in-playwright.config.js",
+      "tests": 2,
+      "files": 2
+    },
+    {
+      "config": "tests-go-live-playwright.config.js",
+      "tests": 23,
+      "files": 21
+    },
+    {
+      "config": "tests-campaign-results-playwright.config.js",
+      "tests": 2,
+      "files": 2
+    },
+    {
+      "config": "tests-newsletter-ui-playwright.config.js",
+      "tests": 1,
+      "files": 1
+    },
+    {
+      "config": "tests-local-start-config.js",
+      "tests": 7,
+      "files": 5
+    },
+    {
+      "config": "scripts-verification-local-start.config.mjs",
+      "tests": 5,
+      "files": 4
+    },
+    {
+      "config": "playwright.config.js",
+      "tests": 50,
+      "files": 22
+    }
+  ],
+  "unique_playwright_before": 84,
+  "unique_playwright_after": 85,
+  "new_registrations": 1,
+  "removed_assertions": 0,
+  "cap": 200,
+  "note": "The local-start configuration lists five of the seven tests in its slow configuration; those five are counted once. Static assertion scripts are additional and remain below the cap."
+}

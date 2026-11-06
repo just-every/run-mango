@@ -1,0 +1,35 @@
+[
+  {
+    "point": "acceptance-1",
+    "mutation": "html: await appendOpenPixel(runtime.platform,envelope.recipient.id,rendered.html.replace(/(\\/media\\/[a-f0-9]{64})/g, \"$1?recipient=\" + envelope.recipient.id),",
+    "file": "src/core/features/lifecycle/message-renderer.ts",
+    "exit": 1,
+    "assertion": "Error: expect(received).toEqual(expected) // deep equality",
+    "location": [
+      "at /home/agent/rer-consolidation/work/sd-mango-c-f111/run-mango/tests/go-live/ordinary-images.journeys.ts:52:29"
+    ],
+    "expected_failure": true
+  },
+  {
+    "point": "acceptance-2",
+    "mutation": "await db.prepare('INSERT OR REPLACE INTO oa_limits(key,window,count) VALUES(?,0,1)').bind('synthetic-mango-requester:' + context.req.header('CF-Connecting-IP') + ':' + context.req.header('User-Agent') + ':' + context.req.header('Cookie') + ':' + Date.now()).run();",
+    "file": "src/core/features/campaign-assets/media-routes.ts",
+    "exit": 1,
+    "assertion": "Error: expect(received).toEqual(expected) // deep equality",
+    "location": [
+      "at /home/agent/rer-consolidation/work/sd-mango-c-f111/run-mango/tests/go-live/ordinary-images.journeys.ts:98:67"
+    ],
+    "expected_failure": true
+  },
+  {
+    "point": "acceptance-3",
+    "mutation": "await db.prepare('INSERT OR IGNORE INTO open_estimate_facts(recipient_step_id,occurred_at) SELECT id,? FROM recipient_steps LIMIT 1').bind(Date.now()).run();",
+    "file": "src/core/features/campaign-assets/media-routes.ts",
+    "exit": 1,
+    "assertion": "Error: expect(received).toBe(expected) // Object.is equality",
+    "location": [
+      "at /home/agent/rer-consolidation/work/sd-mango-c-f111/run-mango/tests/go-live/ordinary-images.journeys.ts:97:68"
+    ],
+    "expected_failure": true
+  }
+]

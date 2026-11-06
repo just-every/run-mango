@@ -1,0 +1,3 @@
+STATUS_ROWS parent=HEAD before=316 staged=316 missing=0
+IDENTITY candidate_commits=2 all_fleet=true trailers=clean
+CHANGED_FIXTURES email_shaped_literals=0
