@@ -1,3 +1,4 @@
+import {conditionalSourcesJourney} from './conditional-sources-journey';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {providerEdge} from '../go-live/edge';
 import {eventSigner} from '../go-live/sendgrid-events';
@@ -66,6 +67,7 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
     await select.selectOption(regularId);await expect(html.getByText('Explore the garden collection',{exact:true})).toBeVisible();await expect(html.getByText('VIP shipping included',{exact:true})).toHaveCount(0);await expect(plain).not.toContainText('VIP shipping included');
     await select.selectOption(vipId);await expect(html.getByText('VIP shipping included',{exact:true})).toBeVisible();await expect(plain).toContainText('VIP shipping included');
+    await conditionalSourcesJourney(page,site,cookie,draft,vipId,regularId);
     mark('previews complete; approve and deliver');
     await approve(site,cookie,draft);
     await site.control('/_golive/clock',{advanceMs:due.getTime()-clock.now+1000});await dispatch(site,draft.campaignId,due);
@@ -73,7 +75,14 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
     for(const [email,shown,hidden] of [[vip,'VIP early access to the garden','Explore the garden collection'],[regular,'Explore the garden collection','VIP early access to the garden']]) {
       const send=sends.find(s=>s.to===email)!;expect(send).toBeTruthy();
       for(const part of send.body.content){expect(part.value).toContain(shown);expect(part.value).not.toContain(hidden);expect(part.value).not.toContain('data-mango-condition');expect(part.value).not.toContain('data-mango-branch');}
-      expect(send.body.content.find((p:any)=>p.type==='text/plain').value.includes('VIP shipping included')).toBe(email===vip);
+      for(const part of send.body.content){
+        expect(part.value.includes('VIP shipping included')).toBe(email===vip);
+        expect(part.value).toContain('Newsletter growing tips');
+        expect(part.value).toContain(email===vip?'Champion garden preview':'First season garden notes');
+        expect(part.value).toContain(email===vip?'Order bonus: seed packet':'Browse seed packets');
+        expect(part.value).not.toContain(email===vip?'First season garden notes':'Champion garden preview');
+        expect(part.value).not.toContain(email===vip?'Browse seed packets':'Order bonus: seed packet');
+      }
     }
     console.log('PROBE BUILD-005 1: saved block, chosen VIP and ordinary contact previews, branch previews, and native delivery -> matching HTML and plain text; hidden block omitted for ordinary recipient');
   } finally {await site.runtime.close();await edge.close();}
