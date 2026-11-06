@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "38965b2555ebb629050176140836671d149cb97d6d33efabda89bbc93601bfbe",
+      "sha256": "b433959534ac7927f6d2b34b37eb4dddd9ffa2e862454a7782cbb71ea02f5cae",
       "executable": false
     },
     "DEMO.md": {
@@ -8862,7 +8862,7 @@
       "executable": false
     },
     "tests/go-live/embed-origin.journeys.ts": {
-      "sha256": "c80a1cfdf1d1c13eebb4c9e76ef272cb30ce1cc69eac489bef3febc1d2253aeb",
+      "sha256": "f6b843289b32f75c285d936871bec5e923773d6af0276ee7cd5729af9cbc6f1a",
       "executable": false
     },
     "tests/go-live/go-live.flow.ts": {
