@@ -5,7 +5,7 @@ import {fieldValue,matchesComparator} from '@/core/features/audience/rule-values
 
 export const contentConditionSchema=z.object({source:z.enum(['segment','property','topic','predicted-stage','event']),key:z.string().trim().min(1).max(160),comparator:z.enum(['eq','neq','contains','gt','gte','lt','lte']),value:z.union([z.string().max(2000),z.number().finite(),z.boolean()])}).strict();
 export type ContentCondition=z.infer<typeof contentConditionSchema>;
-export type ContentContext={properties:Record<string,unknown>;segments:string[];unavailableSegments:string[];topics:string[];event?:Record<string,unknown>};
+export type ContentContext={properties:Record<string,unknown>;segments:string[];knownSegments:string[];unavailableSegments:string[];topics:string[];event?:Record<string,unknown>};
 export type BranchChoice={block:number;matches:boolean};
 const attribute=(node:Tree.Element,name:string)=>node.attrs.find(a=>a.name===name)?.value;
 const escapeAttribute=(value:string)=>value.replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');
@@ -24,7 +24,7 @@ export function readConditional(node:Tree.ChildNode) {
 export function conditionMatches(condition:ContentCondition,context?:ContentContext) {
   if(!context)return false;
   const {source,key,comparator,value}=condition;
-  if(source==='segment'&&context.unavailableSegments.includes(key))return false;
+  if(source==='segment'&&(!context.knownSegments.includes(key)||context.unavailableSegments.includes(key)))return false;
   const actual=source==='segment'?context.segments.includes(key):source==='topic'?context.topics.includes(key):source==='event'?context.event?fieldValue(context.event,key):undefined:context.properties[key];
   return matchesComparator(actual,comparator,value);
 }

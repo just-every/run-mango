@@ -5,8 +5,12 @@ import {installation,json,sender,confirmedContact,draftCampaign,approve,dispatch
 import {openPage,reloadPage} from '../support/navigation';
 
 export async function conditionalContentJourney(page:Page,info:TestInfo) {
+  page.setDefaultTimeout(15000);
+  const mark=(phase:string)=>console.log('Conditional content: '+phase);
+  mark('start');
   const edge=await providerEdge(),site=await installation(edge,eventSigner(),{reuseEmptySchema:true});
   try {
+    mark('native runtime ready');
     const cookie=await site.open(),address=(n:number)=>['synthetic-mango-'+n,'example.test'].join('@');
     await json(await site.call('/api/settings/sender',{method:'PUT',cookie,body:sender}),200);await site.control('/_golive/sender-evidence');
     const vip=address(501),regular=address(502);
@@ -24,13 +28,15 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
     await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Add block',exact:true}).click();
     await page.getByRole('textbox',{name:'Block text',exact:true}).fill('VIP early access to the garden');
     await page.getByRole('combobox',{name:'Show block',exact:true}).selectOption('conditional');
-    await page.getByRole('textbox',{name:'Condition key',exact:true}).fill(segment.id);
+    await page.getByLabel('Condition key',{exact:true}).fill(segment.id);
     await page.getByRole('textbox',{name:'Otherwise text',exact:true}).fill('Explore the garden collection');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
+    mark('saved conditional block');
     const saved=(await json(await site.call(`/api/campaigns/${draft.campaignId}`,{cookie}),200)).revision;
     await reloadPage(page);await page.getByRole('button',{name:'Block builder',exact:true}).click();await page.getByRole('button',{name:'Block 1: text',exact:true}).click();
-    await expect(page.getByRole('textbox',{name:'Condition key',exact:true})).toHaveValue(segment.id);
+    await expect(page.getByLabel('Condition key',{exact:true})).toHaveValue(segment.id);
     await expect(page.getByRole('textbox',{name:'Otherwise text',exact:true})).toHaveValue('Explore the garden collection');
+    mark('reopened conditional block');
     const previews=page.getByRole('region',{name:'Saved revision previews',exact:true}),html=page.frameLocator('iframe[title="Saved email preview"]'),plain=previews.locator('.message-preview--plain');
     await previews.getByText('Preview as a contact',{exact:true}).click();await previews.getByLabel('Contact email or phone',{exact:true}).fill('synthetic-mango-50');await previews.getByRole('button',{name:'Find preview contact',exact:true}).click();
     const select=previews.getByRole('combobox',{name:'Preview contact',exact:true});await expect(select.getByRole('option')).toHaveCount(3);
@@ -56,12 +62,12 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
       expect((await site.call(`/api/campaign-revisions/${draft.revisionId}`,{method:'PATCH',cookie,body:{emailBody:body}})).status).toBe(400);
     }
     // Save a second, property-based block without an otherwise alternative.
-    await page.setViewportSize({width:1440,height:1000});await page.getByRole('button',{name:'Add block',exact:true}).click();await page.getByRole('textbox',{name:'Block text',exact:true}).fill('VIP shipping included');await page.getByRole('combobox',{name:'Show block',exact:true}).selectOption('conditional');await page.getByRole('combobox',{name:'Condition source',exact:true}).selectOption('property');await page.getByRole('textbox',{name:'Condition key',exact:true}).fill('vip');
+    await page.setViewportSize({width:1440,height:1000});await page.getByRole('button',{name:'Add block',exact:true}).click();await page.getByRole('textbox',{name:'Block text',exact:true}).fill('VIP shipping included');await page.getByRole('combobox',{name:'Show block',exact:true}).selectOption('conditional');await page.getByRole('combobox',{name:'Condition source',exact:true}).selectOption('property');await page.getByLabel('Condition key',{exact:true}).fill('vip');
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
     await select.selectOption(regularId);await expect(html.getByText('Explore the garden collection',{exact:true})).toBeVisible();await expect(html.getByText('VIP shipping included',{exact:true})).toHaveCount(0);await expect(plain).not.toContainText('VIP shipping included');
     await select.selectOption(vipId);await expect(html.getByText('VIP shipping included',{exact:true})).toBeVisible();await expect(plain).toContainText('VIP shipping included');
+    mark('previews complete; approve and deliver');
     await approve(site,cookie,draft);
-    await json(await site.call(`/api/campaigns/${draft.campaignId}/send`,{method:'POST',cookie,body:{revisionId:draft.revisionId}}),200);
     await site.control('/_golive/clock',{advanceMs:due.getTime()-clock.now+1000});await dispatch(site,draft.campaignId,due);
     const sends=edge.sends.filter(send=>send.body.subject==='Synthetic conditional letter: what is growing this month');expect(sends).toHaveLength(2);
     for(const [email,shown,hidden] of [[vip,'VIP early access to the garden','Explore the garden collection'],[regular,'Explore the garden collection','VIP early access to the garden']]) {

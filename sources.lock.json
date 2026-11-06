@@ -3877,6 +3877,14 @@
       "sha256": "626c9927ab6a89b75f42671152107d1d90a254baaec6c12e0f1fe952a5849715",
       "executable": false
     },
+    "src/core/features/campaigns/conditional-content.ts": {
+      "sha256": "120727e48a1a9e5becb23d97e381da1b7c4a810e2698dceb99ea5f462d48abac",
+      "executable": false
+    },
+    "src/core/features/campaigns/conditional-context.ts": {
+      "sha256": "44466fc5559cc82eac743d546a162994a3efffcbc1e625adf17a3b8600fa8280",
+      "executable": false
+    },
     "src/core/features/campaigns/contact-links.ts": {
       "sha256": "edb67fc70f329b69b0803507f72c26961768fe0f61f57989b798992974a88115",
       "executable": false
@@ -4223,6 +4231,10 @@
     },
     "src/core/features/campaigns/ui/email-block-fields.tsx": {
       "sha256": "0af2172c6c13f0524022491fa9e984e1bc3df78ab745a10fa452496614e71741",
+      "executable": false
+    },
+    "src/core/features/campaigns/ui/email-condition-fields.tsx": {
+      "sha256": "c6f7c121394647a5f42f675816973f403226c442016a51c869d0caef66230c9d",
       "executable": false
     },
     "src/core/features/campaigns/ui/email-promo-fields.tsx": {
@@ -8483,6 +8495,10 @@
     },
     "tests/campaign-authoring/chosen-size-journey.ts": {
       "sha256": "456f8f32e086cdbd02beed5ba4f4a289a550fa6b4eb47f193250180cd59bbc17",
+      "executable": false
+    },
+    "tests/campaign-authoring/conditional-content-journey.ts": {
+      "sha256": "46a3708b87ccae154aabf75728eac1a9aadb515274580b8dbcb3bf08c8674ace",
       "executable": false
     },
     "tests/campaign-authoring/config.js": {

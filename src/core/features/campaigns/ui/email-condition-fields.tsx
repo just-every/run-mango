@@ -47,13 +47,13 @@ export function EmailConditionFields({condition, otherwise, busy, onChange}: Pro
     {condition?<>
       <label>Condition source<select value={condition.source} onChange={event=>{
         const source = event.target.value as ContentCondition['source'];
-        change({source,key:source==='predicted-stage'?'predictedStage':''});
+        change({source,key:source==='predicted-stage'?'predicted_stage':''});
       }}>
         <option value="segment">Segment</option><option value="property">Contact property</option><option value="topic">Consent topic</option><option value="predicted-stage">Predicted stage</option><option value="event">Trigger event property</option>
       </select></label>
       {condition.source==='segment'?<SegmentKey value={condition.key} busy={busy} onChange={key=>change({key})}/>:<>
         <label>Condition key<input value={condition.key} onChange={event=>change({key:event.target.value})}/></label>
-        <p className="muted-copy">{condition.source==='topic'?'Use the topic category.':'Use the property key.'}</p>
+        <p className="muted-copy">{condition.source==='topic'?'Use the confirmed email topic category.':condition.source==='predicted-stage'?'Use the key of a recorded prediction property. Mango does not invent a stage when no prediction is recorded.':condition.source==='event'?'Use a property path from the single recorded trigger event. Newsletters without a trigger use otherwise.':'Use the property key.'}</p>
       </>}
       <label>Condition comparison<select value={condition.comparator} onChange={event=>change({comparator:event.target.value as ContentCondition['comparator']})}>
         <option value="eq">Equals</option><option value="neq">Does not equal</option><option value="contains">Contains</option><option value="gt">Greater than</option><option value="gte">Greater than or equal to</option><option value="lt">Less than</option><option value="lte">Less than or equal to</option>
