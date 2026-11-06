@@ -1,0 +1,75 @@
+{
+  "head": "6f009180967489c041cf69166ca3b9b0eb2f9278",
+  "observedAt": "2026-11-06T11:56:23Z",
+  "githubApiCallsUsed": 8,
+  "runs": [
+    {
+      "id": 42213830361,
+      "name": "Verify",
+      "head_sha": "6f009180967489c041cf69166ca3b9b0eb2f9278",
+      "status": "completed",
+      "conclusion": "failure",
+      "event": "push",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42213830361"
+    }
+  ],
+  "expectedGeneratedViewFailureOnly": true,
+  "failedJob": 127878828605,
+  "skippedShards": true,
+  "localReproduction": {
+    "command": "node src/base/contract-docs.mjs check",
+    "head": "6f009180967489c041cf69166ca3b9b0eb2f9278",
+    "exit": 1,
+    "error": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+  },
+  "main": {
+    "head": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+    "runs": [
+      {
+        "id": 42212846693,
+        "name": "Run demo",
+        "status": "completed",
+        "conclusion": "skipped",
+        "event": "push",
+        "head_sha": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42212846693"
+      },
+      {
+        "id": 42212846652,
+        "name": "Verify",
+        "status": "completed",
+        "conclusion": "success",
+        "event": "push",
+        "head_sha": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42212846652"
+      },
+      {
+        "id": 42212846650,
+        "name": "Run site",
+        "status": "completed",
+        "conclusion": "success",
+        "event": "push",
+        "head_sha": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42212846650"
+      },
+      {
+        "id": 42212846506,
+        "name": "Push on main",
+        "status": "completed",
+        "conclusion": "success",
+        "event": "dynamic",
+        "head_sha": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42212846506"
+      },
+      {
+        "id": 42211055162,
+        "name": "Verify",
+        "status": "completed",
+        "conclusion": "success",
+        "event": "push",
+        "head_sha": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+        "html_url": "https://github.com/just-every/run-mango/actions/runs/42211055162"
+      }
+    ]
+  }
+}

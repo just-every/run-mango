@@ -1,0 +1,25 @@
+{
+  "tag": "sd-mango-c-f113",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f113",
+  "head": "6f009180967489c041cf69166ca3b9b0eb2f9278",
+  "suppliedBase": "248d34085ad753dd3f1c9a9f25f2d45f45a123fe",
+  "mainMerged": "3adffb27a2b153edfe784251bf61acee45ea9ca4",
+  "countsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "clause": "AUD-010",
+  "statusBefore": "partial",
+  "statusAfter": "partial",
+  "newAcceptancePoints": 0,
+  "newTestRegistrations": 0,
+  "productWork": "No new behavior; merge main while preserving the already published selected-point implementation",
+  "pr": null
+}

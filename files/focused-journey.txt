@@ -1,0 +1,11 @@
+rer toolchain: node v24.19.0 pnpm 10.12.4 (pins 22.20.0 / 10.12.4)
+
+Running 1 test using 1 worker
+
+(node:2952) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE AUD-010 acceptance-1: saved nested rules -> authenticated collection and campaign row retain all conditions; one eligible customer 5, no delivery authority
+PROBE AUD-010 acceptance-2: edited numeric predicate and custom exclusion -> saved reload retains all and any, editor labels, values, comparison and 90-day window; sole eligible identity changes to customer 1
+  ✓  1 tests/audience-controls/segments.spec.ts:19:1 › [AUD-010] campaign list and editor explain the saved nested inclusion and custom exclusion (33.6s)
+
+  1 passed (37.7s)

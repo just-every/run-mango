@@ -1,0 +1,47 @@
+{
+  "head": "6f009180967489c041cf69166ca3b9b0eb2f9278",
+  "checks": [
+    {
+      "name": "focused-journey",
+      "command": [
+        "timeout",
+        "1200",
+        "pnpm",
+        "exec",
+        "playwright",
+        "test",
+        "tests/audience-controls/segments.spec.ts",
+        "--grep",
+        "\\[AUD-010\\]",
+        "--workers=1"
+      ],
+      "exit": 0,
+      "seconds": 39.73,
+      "head": "6f009180967489c041cf69166ca3b9b0eb2f9278"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "pnpm",
+        "run",
+        "typecheck"
+      ],
+      "exit": 0,
+      "seconds": 16.89,
+      "head": "6f009180967489c041cf69166ca3b9b0eb2f9278"
+    },
+    {
+      "name": "first-party",
+      "command": [
+        "node",
+        "node_modules/@runeditrun/rer/bin/rer.mjs",
+        "check",
+        "--profile",
+        "first-party"
+      ],
+      "exit": 0,
+      "seconds": 1.06,
+      "head": "6f009180967489c041cf69166ca3b9b0eb2f9278"
+    }
+  ]
+}
