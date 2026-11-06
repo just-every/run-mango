@@ -1,3 +1,4 @@
+import {conditionalPrivacyJourney} from './conditional-privacy-journey';
 import {conditionalSourcesJourney} from './conditional-sources-journey';
 import {expect,type Page,type TestInfo} from '@playwright/test';
 import {providerEdge} from '../go-live/edge';
@@ -67,7 +68,7 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
     await page.getByRole('button',{name:'Save full draft',exact:true}).click();await expect(page.getByRole('status').filter({hasText:'Draft saved.'})).toBeVisible();
     await select.selectOption(regularId);await expect(html.getByText('Explore the garden collection',{exact:true})).toBeVisible();await expect(html.getByText('VIP shipping included',{exact:true})).toHaveCount(0);await expect(plain).not.toContainText('VIP shipping included');
     await select.selectOption(vipId);await expect(html.getByText('VIP shipping included',{exact:true})).toBeVisible();await expect(plain).toContainText('VIP shipping included');
-    await conditionalSourcesJourney(page,site,cookie,draft,vipId,regularId);
+    const source=await conditionalSourcesJourney(page,site,cookie,draft,vipId,regularId);
     mark('previews complete; approve and deliver');
     await approve(site,cookie,draft);
     await site.control('/_golive/clock',{advanceMs:due.getTime()-clock.now+1000,hold:false});await dispatch(site,draft.campaignId,due);
@@ -84,6 +85,7 @@ export async function conditionalContentJourney(page:Page,info:TestInfo) {
         expect(part.value).not.toContain(email===vip?'Browse seed packets':'Order bonus: seed packet');
       }
     }
+    await conditionalPrivacyJourney(site,cookie,draft,vipId,regularId,source);
     console.log('PROBE BUILD-005 1: saved block, chosen VIP and ordinary contact previews, branch previews, and native delivery -> matching HTML and plain text; hidden block omitted for ordinary recipient');
   } finally {await site.runtime.close();await edge.close();}
 }

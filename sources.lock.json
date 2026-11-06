@@ -8498,7 +8498,11 @@
       "executable": false
     },
     "tests/campaign-authoring/conditional-content-journey.ts": {
-      "sha256": "56f667e87d854e8bb2750aad30f1173472b14d01fa1ce3bb3a96b5acb082691a",
+      "sha256": "2ec13755dab666176b230f63f2f7dd427ff1011789d3b553e8f17ebb8b07d5d6",
+      "executable": false
+    },
+    "tests/campaign-authoring/conditional-privacy-journey.ts": {
+      "sha256": "fb3c64646e89f37c63f78262aa635205c642ee48ee187624dba60c49b7e2db5f",
       "executable": false
     },
     "tests/campaign-authoring/conditional-sources-journey.ts": {
