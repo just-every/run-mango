@@ -1,0 +1,11 @@
+{
+  "head": "62a3621e2f17facaa076ff1a88afa9e7ee34f810",
+  "files": {
+    "src/core/features/insights/campaign-engagement.ts": "50dff8cdce5db31460cf269bbf1b63f84e98fa4d60366f9691c2be3707f66838",
+    "src/core/features/insights/ui/campaign-engagement.tsx": "a580cc0fad3cf9d1601f6e81f41055286573e15ea6b9ec78e53908e74aa75f93",
+    "tests/campaign-results/performance.flow.ts": "4ace5ff4ef3b0e61d4c1bd45b1fb1f6829a7b169a208101186d54c52d54d7ca5",
+    "tests/campaign-results/performance.journeys.ts": "982c3c7bff9f059090986cdf40da6e26a786a43a6a2c15a0f5a4c7b61042e42f",
+    "tests/campaign-results/reporting-journey.ts": "774588278a7c7615ca20b2956856df5d9c528005cc8ae6df237f25bdf08e1125",
+    "tests/campaign-results/results.journeys.ts": "5100bb73c7eae7b1cfae41c9be62eda2ecf1f007d523a9279b564bdbe5111aee"
+  }
+}

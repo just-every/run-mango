@@ -1,0 +1,2 @@
+Candidate identities and trailers accepted; commits=2
+Added text credential-shape review accepted

@@ -1,0 +1,13 @@
+commit b586ec73be7b04dd1e06d72029fc37c7011a2b35
+Author:     Run Edit Run fleet <fleet@runeditrun.com>
+AuthorDate: Fri Nov 6 14:40:55 2026 +0000
+Commit:     Run Edit Run fleet <fleet@runeditrun.com>
+CommitDate: Fri Nov 6 14:40:55 2026 +0000
+
+    Isolate engagement controls from the performance fixture
+
+ sources.lock.json                           |  6 ++--
+ tests/campaign-results/reporting-fixture.ts | 47 ++++++++++++++++-------------
+ tests/campaign-results/reporting-journey.ts |  2 +-
+ tests/campaign-results/worker.ts            |  2 +-
+ 4 files changed, 31 insertions(+), 26 deletions(-)

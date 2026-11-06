@@ -1,0 +1,12 @@
+{
+  "head": "62a3621e2f17facaa076ff1a88afa9e7ee34f810",
+  "job": "127931756780",
+  "run": "42229362900",
+  "command": "node scripts/verification/ci.mjs \"$SHARD\"",
+  "shard": "reports",
+  "test": "tests/campaign-results/performance.journeys.ts#trace delivered links through commerce attribution, privacy settings and authorized CSV export",
+  "exit": 1,
+  "failure": "expect(received).toHaveLength(expected): Expected length: 1; Received length: 3",
+  "node": "22.20.0",
+  "browser": "/usr/bin/chromium"
+}

@@ -1,0 +1,15 @@
+{
+  "failed_head": "62a3621e2f17facaa076ff1a88afa9e7ee34f810",
+  "workflow": "Verify",
+  "event": "push",
+  "conclusion": "failure",
+  "run_id": 42229362900,
+  "job_id": 127931756780,
+  "job_name": "shards (reports)",
+  "log_command": "gh run view 42229362900 --repo just-every/run-mango --job 127931756780 --log-failed",
+  "assertion": "tests/campaign-results/performance.flow.ts:29: expect(report.rows).toHaveLength(1)",
+  "expected_length": 1,
+  "received_length": 3,
+  "main_control_head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "github_calls_used": 3
+}

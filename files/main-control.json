@@ -1,0 +1,10 @@
+{
+  "head": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "command": "pnpm exec playwright test --config tests/campaign-results/playwright.config.js performance.journeys.ts --workers=1",
+  "exit": 0,
+  "tests": 1,
+  "passed": 1,
+  "runner": "same cloud VM as refused-head reproduction",
+  "node": "22.20.0",
+  "browser": "/usr/bin/chromium"
+}

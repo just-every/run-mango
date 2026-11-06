@@ -1,0 +1,110 @@
+VERIFY_MEMBER campaign-results
+VERIFY_SCHEDULE {"selection":"campaign-results","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f124/reproduce/members/campaign-results/evidence/7f523b30a6bf/verify/campaign-results-cA5CkA
+VERIFY_STAGE {"name":"campaign-results","event":"start","at":"2026-11-06T14:29:06.558Z"}
+campaign-results
+
+Running 2 tests using 2 workers
+
+(node:2374) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2375) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/campaign-results/performance.journeys.ts:5:1 › [REPORT-002][REPORT-003][RESULT-002][RESULT-003][RESULT-005] trace delivered links through commerce attribution, privacy settings and authorized CSV export (27.8s)
+(node:2375) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2375) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2375) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/campaign-results/results.journeys.ts:7:1 › [CAMP-001][CAMP-009][RESULT-001][RESULT-004][RESULT-007][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement (2.9m)
+
+
+  1) tests/campaign-results/performance.journeys.ts:5:1 › [REPORT-002][REPORT-003][RESULT-002][RESULT-003][RESULT-005] trace delivered links through commerce attribution, privacy settings and authorized CSV export 
+
+    Error: expect(received).toHaveLength(expected)
+
+    Expected length: 1
+    Received length: 3
+    Received array:  [{"activeRevision": true, "campaignId": "orchard-letter", "channel": "email", "clickRate": 0.3333333333333333, "complaints": 1, "conversions": 0, "delivered": 4, "lastScheduledAt": "2026-10-30T14:29:55.569Z", "name": "October studio letter", "recipients": 6, "revenueByCurrency": [], "revision": 1, "revisionId": "orchard-letter-revision", "scheduledAt": "2026-10-30T14:29:55.569Z", "state": "approved", "topic": "newsletter", "totalClicks": 2, "uniqueClicks": 2, "unsubscribes": 1}, {"activeRevision": true, "campaignId": "orchard-control", "channel": "email", "clickRate": 0, "complaints": 0, "conversions": 0, "delivered": 1, "lastScheduledAt": "2031-10-05T04:00:00.000Z", "name": "Campaign orchard-control", "recipients": 1, "revenueByCurrency": [], "revision": 1, "revisionId": "orchard-control-revision", "scheduledAt": "2031-10-05T04:00:00.000Z", "state": "approved", "topic": "newsletter", "totalClicks": 0, "uniqueClicks": 0, "unsubscribes": 0}, {"activeRevision": false, "campaignId": "orchard-letter", "channel": "email", "clickRate": 0, "complaints": 0, "conversions": 0, "delivered": 1, "lastScheduledAt": "2026-10-30T14:29:55.569Z", "name": "October studio letter", "recipients": 1, "revenueByCurrency": [], "revision": 2, "revisionId": "orchard-letter-history", "scheduledAt": "2026-10-30T14:29:55.569Z", "state": "approved", "topic": "newsletter", "totalClicks": 0, "uniqueClicks": 0, "unsubscribes": 0}]
+
+       at performance.flow.ts:29
+
+      27 |   }
+      28 |   const api='/api/insights/campaign-performance?channel=email&topic=newsletter&sort=totalClicks&direction=desc';
+    > 29 |   const report=await (await page.request.get(runtime.url+api)).json();expect(report.rows).toHaveLength(1);expect(report.rows[0]).toMatchObject({recipients:5,delivered:3,totalClicks:2,uniqueClicks:2,clickRate:0.4,unsubscribes:1,complaints:1,conversions:0,revenueByCurrency:[]});expect(report.rows[0]).not.toHaveProperty('openRateEstimate');
+         |                                                                                           ^
+      30 |   await openPage(page,`${runtime.url}/app/insights`);await expect(page.getByRole('table',{name:'Campaign performance',exact:true}).locator('tbody tr')).toHaveCount(2);await page.getByLabel('Performance channel',{exact:true}).selectOption('email');await expect(page.getByRole('table',{name:'Campaign performance',exact:true}).locator('tbody tr')).toHaveCount(1);await page.getByLabel('Performance topic',{exact:true}).selectOption('newsletter');
+      31 |   const table=page.getByRole('table',{name:'Campaign performance',exact:true});await expect(table.locator('tbody tr')).toHaveCount(1);
+      32 |   const row=table.locator('tbody tr').first();await expect(row.locator('[data-label="Recipients"]')).toHaveText('5');await expect(row.locator('[data-label="Delivered"]')).toHaveText('3');await expect(row.locator('[data-label="Human clicks"]')).toHaveText('2');await expect(row.locator('[data-label="Unique clicks"]')).toHaveText('2');await expect(row.locator('[data-label="Click rate"]')).toHaveText('40.00%');
+        at walk0 ([REDACTED]/tests/campaign-results/performance.flow.ts:29:91)
+        at [REDACTED]/tests/campaign-results/performance.journeys.ts:7:3
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f124/reproduce/members/campaign-results/evidence/7f523b30a6bf/campaign-results/performance.journeys.ts--R-be6fc-s-and-authorized-CSV-export/error-context.md
+
+  1 failed
+    tests/campaign-results/performance.journeys.ts:5:1 › [REPORT-002][REPORT-003][RESULT-002][RESULT-003][RESULT-005] trace delivered links through commerce attribution, privacy settings and authorized CSV export 
+  1 passed (3.8m)
+Verification failed: campaign-results: exit 1, signal none.
+Command: pnpm
+Last output (up to 40 lines):
+
+(node:2374) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2375) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/campaign-results/performance.journeys.ts:5:1 › [REPORT-002][REPORT-003][RESULT-002][RESULT-003][RESULT-005] trace delivered links through commerce attribution, privacy settings and authorized CSV export (27.8s)
+(node:2375) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2375) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2375) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  2 tests/campaign-results/results.journeys.ts:7:1 › [CAMP-001][CAMP-009][RESULT-001][RESULT-004][RESULT-007][CAMP-016][PUB-001][SEG-003][REPORT-004] inspect outcomes, cancel queued work, publish archives and follow up from recorded engagement (2.9m)
+
+
+  1) tests/campaign-results/performance.journeys.ts:5:1 › [REPORT-002][REPORT-003][RESULT-002][RESULT-003][RESULT-005] trace delivered links through commerce attribution, privacy settings and authorized CSV export 
+
+    Error: expect(received).toHaveLength(expected)
+
+    Expected length: 1
+    Received length: 3
+    Received array:  [{"activeRevision": true, "campaignId": "orchard-letter", "channel": "email", "clickRate": 0.3333333333333333, "complaints": 1, "conversions": 0, "delivered": 4, "lastScheduledAt": "2026-10-30T14:29:55.569Z", "name": "October studio letter", "recipients": 6, "revenueByCurrency": [], "revision": 1, "revisionId": "orchard-letter-revision", "scheduledAt": "2026-10-30T14:29:55.569Z", "state": "approved", "topic": "newsletter", "totalClicks": 2, "uniqueClicks": 2, "unsubscribes": 1}, {"activeRevision": true, "campaignId": "orchard-control", "channel": "email", "clickRate": 0, "complaints": 0, "conversions": 0, "delivered": 1, "lastScheduledAt": "2031-10-05T04:00:00.000Z", "name": "Campaign orchard-control", "recipients": 1, "revenueByCurrency": [], "revision": 1, "revisionId": "orchard-control-revision", "scheduledAt": "2031-10-05T04:00:00.000Z", "state": "approved", "topic": "newsletter", "totalClicks": 0, "uniqueClicks": 0, "unsubscribes": 0}, {"activeRevision": false, "campaignId": "orchard-letter", "channel": "email", "clickRate": 0, "complaints": 0, "conversions": 0, "delivered": 1, "lastScheduledAt": "2026-10-30T14:29:55.569Z", "name": "October studio letter", "recipients": 1, "revenueByCurrency": [], "revision": 2, "revisionId": "orchard-letter-history", "scheduledAt": "2026-10-30T14:29:55.569Z", "state": "approved", "topic": "newsletter", "totalClicks": 0, "uniqueClicks": 0, "unsubscribes": 0}]
+
+       at performance.flow.ts:29
+
+      27 |   }
+      28 |   const api='/api/insights/campaign-performance?channel=email&topic=newsletter&sort=totalClicks&direction=desc';
+    > 29 |   const report=await (await page.request.get(runtime.url+api)).json();expect(report.rows).toHaveLength(1);expect(report.rows[0]).toMatchObject({recipients:5,delivered:3,totalClicks:2,uniqueClicks:2,clickRate:0.4,unsubscribes:1,complaints:1,conversions:0,revenueByCurrency:[]});expect(report.rows[0]).not.toHaveProperty('openRateEstimate');
+         |                                                                                           ^
+      30 |   await openPage(page,`${runtime.url}/app/insights`);await expect(page.getByRole('table',{name:'Campaign performance',exact:true}).locator('tbody tr')).toHaveCount(2);await page.getByLabel('Performance channel',{exact:true}).selectOption('email');await expect(page.getByRole('table',{name:'Campaign performance',exact:true}).locator('tbody tr')).toHaveCount(1);await page.getByLabel('Performance topic',{exact:true}).selectOption('newsletter');
+      31 |   const table=page.getByRole('table',{name:'Campaign performance',exact:true});await expect(table.locator('tbody tr')).toHaveCount(1);
+      32 |   const row=table.locator('tbody tr').first();await expect(row.locator('[data-label="Recipients"]')).toHaveText('5');await expect(row.locator('[data-label="Delivered"]')).toHaveText('3');await expect(row.locator('[data-label="Human clicks"]')).toHaveText('2');await expect(row.locator('[data-label="Unique clicks"]')).toHaveText('2');await expect(row.locator('[data-label="Click rate"]')).toHaveText('40.00%');
+        at walk0 ([REDACTED]/tests/campaign-results/performance.flow.ts:29:91)
+        at [REDACTED]/tests/campaign-results/performance.journeys.ts:7:3
+
+    Error Context: ../../home/agent/rer-consolidation/work/sd-mango-c-f124/reproduce/members/campaign-results/evidence/7f523b30a6bf/campaign-results/performance.journeys.ts--R-be6fc-s-and-authorized-CSV-export/error-context.md
+
+  1 failed
+    tests/campaign-results/performance.journeys.ts:5:1 › [REPORT-002][REPORT-003][RESULT-002][RESULT-003][RESULT-005] trace delivered links through commerce attribution, privacy settings and authorized CSV export 
+  1 passed (3.8m)
+Log: /home/agent/rer-consolidation/work/sd-mango-c-f124/reproduce/members/campaign-results/evidence/7f523b30a6bf/verify/campaign-results-cA5CkA/campaign-results/install.log
+VERIFY_MEMBER go-live
+VERIFY_SCHEDULE {"selection":"go-live","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f124/reproduce/members/go-live/evidence/7f523b30a6bf/verify/go-live-ZffQSm
+VERIFY_STAGE {"name":"go-live","event":"start","at":"2026-11-06T14:32:54.259Z"}
+go-live
+
+Running 3 tests using 2 workers
+
+(node:4483) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4482) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/go-live/opt-out-reasons.journeys.ts:11:1 › [MSG-010][CONT-005][CONT-006] fast, token-isolated one-click opt-outs survive three signed soft bounces and a signed delivery (59.2s)
+  ✓  3 tests/go-live/shared-kiosk.journeys.ts:5:1 › [FORM-009][CONT-005][CONT-027] shared signup clears each visitor and resubscribes only after their affirmative confirmation (1.6m)
+  ✓  2 tests/go-live/managed-mail.journeys.ts:4:1 › [SEND-001][SEND-008][OPER-001] managed access mail and owner marketing mail preserve handoff and reconciliation authority (3.4m)
+
+  3 passed (3.4m)
+VERIFY_STAGE {"name":"go-live","status":"PASS","startedAt":"2026-11-06T14:32:54.259Z","durationMs":206264,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":206281,"boundary":"coordinator"}

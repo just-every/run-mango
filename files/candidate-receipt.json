@@ -1,0 +1,89 @@
+{
+  "head": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+  "branch": "cloud/sd-mango-c-f124",
+  "main_at_reconciliation": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "main_equals_candidate": false,
+  "ancestor_main": true,
+  "worktree_clean": true,
+  "full_history": true,
+  "focused": {
+    "command": "pnpm exec playwright test --config tests/campaign-results/playwright.config.js performance.journeys.ts results.journeys.ts --workers=2",
+    "exit": 0,
+    "passed": 2,
+    "failed": 0
+  },
+  "typecheck": {
+    "command": "pnpm run typecheck",
+    "exit": 0
+  },
+  "first_party": {
+    "command": "npx -y @runeditrun/rer check --profile first-party",
+    "exit": 0
+  },
+  "assertions_removed": 0,
+  "test_registrations_added": 0,
+  "test_registrations_removed": 0,
+  "contract_diff": "none",
+  "generated_views_committed": false,
+  "riders_claim": "PARTIAL",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "public_probe": {
+    "performance": {
+      "email_rows": 1,
+      "recipient_steps": 5,
+      "delivered": 3,
+      "human_clicks": 2,
+      "unique_clicked_recipient_steps": 2,
+      "csv_matches_ui": true
+    },
+    "engagement": {
+      "human_clicks": 8,
+      "identified_people": 2,
+      "automated_requests": 3,
+      "performance_unique_clicked_recipient_steps": 3,
+      "reload": true,
+      "capture_widths": [
+        1440,
+        390
+      ]
+    }
+  },
+  "repair_rounds": 1,
+  "publication_scan": {
+    "commit": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+    "complete": false,
+    "historyScanned": false,
+    "findings": null,
+    "reason": "Mac lander owns the required publication scan; not run in cloud"
+  },
+  "run_site": {
+    "status": "not run",
+    "reason": "main-only workflow; this task never pushes main"
+  },
+  "verify": {
+    "id": 42236124344,
+    "event": "push",
+    "conclusion": "success",
+    "head_sha": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+    "html_url": "https://github.com/just-every/run-mango/actions/runs/42236124344",
+    "status": "completed"
+  },
+  "pr": null,
+  "github_calls_used": 6,
+  "product_push": {
+    "repository": "just-every/run-mango",
+    "ref": "refs/heads/cloud/sd-mango-c-f124",
+    "head": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+    "success": true,
+    "attempts": 1
+  }
+}

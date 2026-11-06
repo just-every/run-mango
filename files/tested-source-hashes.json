@@ -1,0 +1,15 @@
+{
+  "files": {
+    "src/core/features/insights/campaign-engagement.ts": "50dff8cdce5db31460cf269bbf1b63f84e98fa4d60366f9691c2be3707f66838",
+    "src/core/features/insights/ui/campaign-engagement.tsx": "a580cc0fad3cf9d1601f6e81f41055286573e15ea6b9ec78e53908e74aa75f93",
+    "tests/campaign-results/reporting-fixture.ts": "7e0362ac5685851c76a314761f7e36248dd4e51b38834d0e35b77aa5d574cf55",
+    "tests/campaign-results/worker.ts": "14af96b32db7c77b35a5afdd414888f191b6bbf8b6cb4961bb1c5697179714eb",
+    "tests/campaign-results/performance.flow.ts": "4ace5ff4ef3b0e61d4c1bd45b1fb1f6829a7b169a208101186d54c52d54d7ca5",
+    "tests/campaign-results/performance.journeys.ts": "982c3c7bff9f059090986cdf40da6e26a786a43a6a2c15a0f5a4c7b61042e42f",
+    "tests/campaign-results/reporting-journey.ts": "6b138d448428a93904d7938edb407d3f4e72812d1844a474c22c574cf170fe85",
+    "tests/campaign-results/results.journeys.ts": "5100bb73c7eae7b1cfae41c9be62eda2ecf1f007d523a9279b564bdbe5111aee",
+    "sources.lock.json": "c4c2769bda04eb470cba8c1827a59e43b563966c723493100373257117e0e915"
+  },
+  "head": "b586ec73be7b04dd1e06d72029fc37c7011a2b35",
+  "branch": "cloud/sd-mango-c-f124"
+}
