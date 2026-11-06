@@ -94,6 +94,7 @@ test('[RESULT-010] delivered ordinary images share one URL, retain only a minute
       probes.push({method, status: response.status, window: counter.window, count: counter.count});
       prior = counter as typeof prior;
     }
+    expect((await results()).engagement.opens.estimatedRecipients).toBe(0);
     const after = await records(site);
     expect(after.oa_limits.filter((row: any) => row.key !== key)).toEqual(priorLimits.filter(row => row.key !== key));
     expect({...after, oa_limits: undefined}).toEqual({...before, oa_limits: undefined});
