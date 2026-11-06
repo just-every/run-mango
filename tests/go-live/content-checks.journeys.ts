@@ -69,7 +69,11 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     await reloadPage(page);
     const acknowledgingOperator = await json(await site.call('/api/operator',{cookie}),200);
     expect(acknowledgingOperator.operator.id).toBe('go-live-owner');
-    const startedAt = (await site.control('/_golive/clock',{advanceMs:60000})).now;
+    const acknowledgementClock = await site.control('/_golive/clock',{advanceMs:60000});
+    expect(acknowledgementClock.held).toBe(true);
+    const startedAt = acknowledgementClock.now;
+    const expectedAcknowledgement = {operatorId:acknowledgingOperator.operator.id,
+      acknowledgedAt:new Date(startedAt).toISOString()};
     const acknowledgementResponse = page.waitForResponse(response =>
       new URL(response.url()).pathname === ackPath(advisory) && response.request().method() === 'POST');
     await page.getByRole('button',{name:'Acknowledge advisory',exact:true}).click();
@@ -81,6 +85,7 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     const acknowledged = await response.json();
     const finishedAt = (await site.control('/_golive/clock')).now;
     expect(acknowledged).toMatchObject({status:'acknowledged',acknowledgement:{operatorId:'go-live-owner'}});
+    expect(acknowledged.acknowledgement).toEqual(expectedAcknowledgement);
     const acknowledgedAt = Date.parse(acknowledged.acknowledgement.acknowledgedAt);
     expect(acknowledgedAt).toBeGreaterThanOrEqual(startedAt);
     expect(acknowledgedAt).toBeLessThanOrEqual(finishedAt);
@@ -91,11 +96,18 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
       actor_type:'operator',actor_id:'go-live-owner',occurred_at:acknowledgedAt,created_at:acknowledgedAt})]);
     expect(JSON.parse(originalAudit[0].detail_json)).toMatchObject({campaignId:campaign.campaignId,
       revisionId:campaign.revisionId,findingIdentity:advisory.findingIdentity,kind:advisory.kind,detail:advisory.detail});
-    const retainedFinding = async () => {
-      const saved = await json(await site.call(`/api/campaigns/${campaign.campaignId}/review`,{cookie}),200);
+    const retainedFinding = async (reviewer = cookie) => {
+      const saved = await json(await site.call(`/api/campaigns/${campaign.campaignId}/review`,{cookie:reviewer}),200);
       const finding = saved.checks.find((check:any) => check.kind === advisory.kind);
-      expect(finding).toMatchObject({findingIdentity:advisory.findingIdentity,acknowledgement:acknowledged.acknowledgement});
+      expect(finding).toMatchObject({kind:advisory.kind,status:'advisory',blocking:false,detail:advisory.detail,
+        findingIdentity:advisory.findingIdentity,acknowledgement:expectedAcknowledgement});
       return finding;
+    };
+    const visibleAcknowledgement = async () => {
+      const panel = page.locator('.approval-checks');
+      await expect(panel).toContainText(`Acknowledged by ${expectedAcknowledgement.operatorId}`);
+      await expect(panel.locator('time')).toHaveAttribute('datetime',expectedAcknowledgement.acknowledgedAt);
+      await expect(panel.getByRole('button',{name:'Acknowledge advisory',exact:true})).toHaveCount(0);
     };
     const noAuthority = async () => {
       const saved = await json(await site.call(`/api/campaigns/${campaign.campaignId}`,{cookie}),200);
@@ -109,6 +121,7 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     await noAuthority();
     await expect(page.locator('.approval-checks')).toContainText('Acknowledged by');
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
+    await visibleAcknowledgement();
     const replayAt = (await site.control('/_golive/clock',{advanceMs:120000})).now;
     expect(replayAt).toBeGreaterThan(acknowledgedAt);
     const replayOperatorId = 'synthetic-mango-2';
@@ -116,8 +129,12 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     const replayOperator = await json(await site.call('/api/operator',{cookie:replayCookie}),200);
     expect(replayOperator.operator.id).toBe(replayOperatorId);
     expect(replayOperator.operator.id).not.toBe(acknowledged.acknowledgement.operatorId);
+    await page.context().clearCookies();
+    await page.context().addCookies([{name:replayCookie.split('=')[0],value:replayCookie.split('=')[1],url:site.runtime.url}]);
     await reloadPage(page);
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
+    await visibleAcknowledgement();
+    await retainedFinding(replayCookie);
     // Replay the exact original request as another operator before checks replace their transient row IDs.
     expect(await json(await site.call(ackPath(advisory),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),200)).toEqual(acknowledged);
     await review();
@@ -125,18 +142,23 @@ test("[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names block
     expect(refreshed.id).not.toBe(originalFinding.id);
     // Expired check row IDs cannot grant authority, even with the exact original payload.
     await json(await site.call(ackPath(advisory),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),409);
+    expect(await audit()).toEqual(originalAudit);
+    await noAuthority();
     // Another authenticated operator cannot replace the original actor or time.
     expect(await json(await site.call(ackPath(refreshed),{method:originalRequest.method(),cookie:replayCookie,body:originalAcknowledgement}),200)).toEqual(acknowledged);
     await reloadPage(page);
     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
+    await visibleAcknowledgement();
     await retainedFinding();
+    await retainedFinding(replayCookie);
     expect(await audit()).toEqual(originalAudit);
     await noAuthority();
     await info.attach('msg-007-acknowledgement-retention',{contentType:'application/json',body:JSON.stringify({
       startedAt,finishedAt,replayAt,acknowledged,findingIdentity:advisory.findingIdentity,
       refreshedFindingIdentity:refreshed.findingIdentity,originalAcknowledgement,
       originalCheckId:originalFinding.id,refreshedCheckId:refreshed.id,
-      acknowledgingOperatorId:acknowledgingOperator.operator.id,replayOperatorId,
+      acknowledgingOperatorId:acknowledgingOperator.operator.id,replayOperatorId,expectedAcknowledgement,
+      visibleAttributionRetainedForReplayOperator:true,
       staleCheckStatus:409,audit:originalAudit,noAuthorityAsserted:true,
     },null,2)});
     for (const width of [1440,390]) {
