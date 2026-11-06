@@ -1,0 +1,5 @@
+{
+  "head": "f2d5ba4ebee63dd5e7eab4be2817c04d1b1168b8",
+  "command": "cloud_run timeout 1200 env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test --config tests/go-live/playwright.config.js content-checks.journeys.ts --reporter=list,json",
+  "exit": 0
+}

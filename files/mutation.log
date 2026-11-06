@@ -1,0 +1,37 @@
+
+Running 1 test using 1 worker
+
+(node:3159) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out (19.8s)
+
+
+  1) tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out 
+
+    Error: expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "acknowledgement": Object {
+          "acknowledgedAt": "2026-11-06T06:43:23.208Z",
+    -     "operatorId": "go-live-owner",
+    +     "operatorId": "synthetic-mango-2",
+        },
+        "status": "acknowledged",
+      }
+
+      119 |     const refreshed = await retainedFinding();
+      120 |     // Another authenticated operator cannot replace the original actor or time.
+    > 121 |     expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie:replayCookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);
+          |                                                                                                                            ^
+      122 |     await reloadPage(page);
+      123 |     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);
+      124 |     await retainedFinding();
+        at /home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live/content-checks.journeys.ts:121:124
+
+    Error Context: ../mutation/evidence/b193bf77b10b/go-live/content-checks.journeys.ts-32575-s-each-SMS-with-its-opt-out/error-context.md
+
+  1 failed
+    tests/go-live/content-checks.journeys.ts:14:1 › [MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out 

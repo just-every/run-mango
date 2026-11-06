@@ -1,0 +1,186 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "tests/go-live/playwright.config.js",
+      "content-checks.journeys.ts",
+      "--reporter=list,json"
+    ],
+    "configFile": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live/playwright.config.js",
+    "rootDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/mutation/evidence/b193bf77b10b/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": [
+          "*.journeys.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/mutation/evidence/b193bf77b10b/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live",
+        "snapshotDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": "*.journeys.ts",
+        "timeout": 900000,
+        "use": {
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--use-mock-keychain",
+              "--password-store=basic",
+              "--no-sandbox"
+            ]
+          },
+          "headless": true,
+          "trace": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "content-checks.journeys.ts",
+      "file": "content-checks.journeys.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 19779,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"acknowledgement\": Object {\u001b[22m\n\u001b[2m      \"acknowledgedAt\": \"2026-11-06T06:43:23.208Z\",\u001b[22m\n\u001b[32m-     \"operatorId\": \"go-live-owner\",\u001b[39m\n\u001b[31m+     \"operatorId\": \"synthetic-mango-2\",\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"status\": \"acknowledged\",\u001b[22m\n\u001b[2m  }\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"acknowledgement\": Object {\u001b[22m\n\u001b[2m      \"acknowledgedAt\": \"2026-11-06T06:43:23.208Z\",\u001b[22m\n\u001b[32m-     \"operatorId\": \"go-live-owner\",\u001b[39m\n\u001b[31m+     \"operatorId\": \"synthetic-mango-2\",\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"status\": \"acknowledged\",\u001b[22m\n\u001b[2m  }\u001b[22m\n    at /home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live/content-checks.journeys.ts:121:124",
+                    "location": {
+                      "file": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live/content-checks.journeys.ts",
+                      "column": 124,
+                      "line": 121
+                    },
+                    "snippet": "  119 |     const refreshed = await retainedFinding();\n  120 |     // Another authenticated operator cannot replace the original actor or time.\n> 121 |     expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie:replayCookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);\n      |                                                                                                                            ^\n  122 |     await reloadPage(page);\n  123 |     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);\n  124 |     await retainedFinding();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live/content-checks.journeys.ts",
+                        "column": 124,
+                        "line": 121
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"acknowledgement\": Object {\u001b[22m\n\u001b[2m      \"acknowledgedAt\": \"2026-11-06T06:43:23.208Z\",\u001b[22m\n\u001b[32m-     \"operatorId\": \"go-live-owner\",\u001b[39m\n\u001b[31m+     \"operatorId\": \"synthetic-mango-2\",\u001b[39m\n\u001b[2m    },\u001b[22m\n\u001b[2m    \"status\": \"acknowledged\",\u001b[22m\n\u001b[2m  }\u001b[22m\n\n  119 |     const refreshed = await retainedFinding();\n  120 |     // Another authenticated operator cannot replace the original actor or time.\n> 121 |     expect(await json(await site.call(ackPath(refreshed),{method:'POST',cookie:replayCookie,body:ackBody(advisory)}),200)).toEqual(acknowledged);\n      |                                                                                                                            ^\n  122 |     await reloadPage(page);\n  123 |     await expect(page.locator('.approval-checks time')).toHaveAttribute('datetime',acknowledged.acknowledgement.acknowledgedAt);\n  124 |     await retainedFinding();\n    at /home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live/content-checks.journeys.ts:121:124"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T06:42:10.710Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/home/agent/rer-consolidation/work/sd-mango-c-f79/mutation/evidence/b193bf77b10b/go-live/content-checks.journeys.ts-32575-s-each-SMS-with-its-opt-out/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live/content-checks.journeys.ts",
+                    "column": 124,
+                    "line": 121
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b21ec75a24ddcd7116df-e5d960a12421276b3643",
+          "file": "content-checks.journeys.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T06:42:10.352Z",
+    "duration": 20348.444,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

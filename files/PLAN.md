@@ -1,0 +1,14 @@
+# sd-mango-c-f79 plan
+
+Scope: just-every/run-mango, MSG-007 acceptance 2 email acknowledgment retention. Base: 5afd4c606e7fc4d3beee51c054f35a0530a6b27b. Product branch: cloud/sd-mango-c-f79. No clause acceptance, homepage, provider configuration or production UI changes are authorized by this slice.
+
+1. Read the inline plan, rulings, DONE riders, launcher instructions, current contract, acknowledgment implementation and registered content-check journey.
+2. Retain the base's timing proof and merge current main without replacing newer judgments. Resolve CONTRACT.md first, take main's generated views whole and regenerate the source lock last.
+3. Close the remaining actor-retention blind spot within the existing registration: replay after elapsed time and checks refresh as a distinct authenticated operator. Assert the response, authenticated review and single persisted audit retain the original actor, time and exact finding identity. Preserve edited-revision and safety refusals and no authority before explicit approval.
+4. Commit and push a save with fleet identity and hooks; run the focused registered journey at 1440 with the existing 390 browser captures, typecheck and first-party command check. Keep actual non-secret reports outside the product tree.
+5. Update only MSG-007's Evidence wording after successful proof, retaining its partial status and all gaps. Fetch and merge main before the final candidate; generate and check contract views, restore those views from main, regenerate and check the lock. Check parent row retention, identities, trailers and changed text before each push.
+6. Push the candidate through the fleet guard, discover and follow its exact-SHA Verify within the GitHub budget. Publish reports and receipts through the separate evidence branch. Main, publication scan and landing remain with the Mac fleet.
+
+Initial map: the pinned base already brackets the email acknowledgment with installation time and reconciles persisted audit with authenticated review through reload, exact request replay and checks refresh. Its replay caller was always the original operator, so overwriting actor attribution with the replayer could escape detection. The added cross-operator replay covers that outcome without another test registration.
+
+Acceptance 1 every-channel coverage, acceptance 2 SMS qualification and acceptances 4–5's complete safety-finding refusal and correction matrix are explicit held remainders in the selected POINTS. Existing acceptance 3 and email safety evidence remain. Twilio A2P and US carrier registration, SMS transport and qualification, CONT-013's original fix-1 hold and SPLIT and NEW-1 disposition, provider, device, account and cross-seed or Base prerequisites, and rer adoption and release requirements stay unchanged. No DONE claim is supported by this bounded task.

@@ -1,0 +1,200 @@
+{
+  "tag": "sd-mango-c-f79",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f79",
+  "head": "f2d5ba4ebee63dd5e7eab4be2817c04d1b1168b8",
+  "base": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+  "merged_main": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+  "counts_before": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "counts_after": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "clause": {
+    "id": "MSG-007",
+    "before": "partial",
+    "after": "partial"
+  },
+  "checks": [
+    {
+      "command": "npx -y @runeditrun/rer setup --owner-email <fleet-address> --non-interactive",
+      "exit": 0,
+      "head": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "note": "Cloud subreaper; setup also built the preview; actual email input was the authorized fleet address."
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "head": "f2d5ba4ebee63dd5e7eab4be2817c04d1b1168b8"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "head": "168232b040acb57546e435ba53cd62f7622511bb",
+      "unchanged_command_sources": true
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "when": "after write, before restoring generated views"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1,
+      "when": "after restoring generated views",
+      "expected": "ACCEPTANCE.md generated content differs"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "head": "f2d5ba4ebee63dd5e7eab4be2817c04d1b1168b8"
+    },
+    {
+      "command": "migration ledger",
+      "status": "not applicable; no migration change"
+    }
+  ],
+  "journey_stats": {
+    "startTime": "2026-11-06T06:44:50.611Z",
+    "duration": 38415.832,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "journey_exit": 0,
+  "mutation": {
+    "head": "168232b040acb57546e435ba53cd62f7622511bb",
+    "change": "On duplicate advisory acknowledgment update actor_id to the replaying actor",
+    "exit": 1,
+    "outcome": "Expected go-live-owner, received synthetic-mango-2 at the cross-operator replay assertion",
+    "restored": true,
+    "final_head_difference": "The final candidate additionally exercises the earlier exact-request replay as the second operator; no production byte changed."
+  },
+  "logs": {
+    "contract-write": {
+      "sha256": "df91012bf66fb476e9cd1a30c002829398beb55f869e07cc7be477197fa5a276",
+      "bytes": 28
+    },
+    "contract-check": {
+      "sha256": "c21aae40192141751d6d5c7a3a1d0eb701a6852f305d592d77b4dcab9c2536ab",
+      "bytes": 32
+    },
+    "lock": {
+      "sha256": "76e3ad2a954682d28a51e758b3a05e122bd56a71fbff2942871f2f770143368f",
+      "bytes": 411249
+    },
+    "lock-check": {
+      "sha256": "b87721221f8f0c0736ca240f36a524b41ac262c6b489b139f71fdfeaacaad9a4",
+      "bytes": 411263
+    },
+    "first-party": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    }
+  },
+  "new_test_registrations": 0,
+  "existing_test_registrations_removed_or_weakened": 0,
+  "publication_scan": {
+    "status": "not run in cloud; Mac lander owns full-history scan"
+  },
+  "main_equality": false,
+  "product_pushed": true,
+  "pr": null,
+  "ci": {
+    "run": {
+      "id": 42176528602,
+      "name": "Verify",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "f2d5ba4ebee63dd5e7eab4be2817c04d1b1168b8",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42176528602"
+    },
+    "jobs": [
+      {
+        "id": 127756150977,
+        "name": "plan",
+        "status": "completed",
+        "conclusion": "success",
+        "failed_steps": []
+      },
+      {
+        "id": 127756209221,
+        "name": "Build and public command checks",
+        "status": "completed",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Check generated contract documents"
+        ]
+      },
+      {
+        "id": 127756211456,
+        "name": "light",
+        "status": "completed",
+        "conclusion": "skipped",
+        "failed_steps": []
+      },
+      {
+        "id": 127756294093,
+        "name": "verify",
+        "status": "completed",
+        "conclusion": "failure",
+        "failed_steps": [
+          "Require the selected coverage and its proof"
+        ]
+      },
+      {
+        "id": 127756294645,
+        "name": "shards (${{ matrix.name }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "failed_steps": []
+      },
+      {
+        "id": 127756295207,
+        "name": "full-push-proof",
+        "status": "completed",
+        "conclusion": "skipped",
+        "failed_steps": []
+      },
+      {
+        "id": 127756295467,
+        "name": "nightly-proof",
+        "status": "completed",
+        "conclusion": "skipped",
+        "failed_steps": []
+      }
+    ],
+    "generated_views_exception": true,
+    "test_shards_executed": false,
+    "candidate_real_test_failure": false,
+    "main_before": {
+      "head": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+      "verify_run_ids": [
+        42175196568,
+        42173637117
+      ],
+      "run_site_id": 42175196561,
+      "conclusion": "success"
+    }
+  },
+  "github_invocations": 5
+}

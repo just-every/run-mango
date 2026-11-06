@@ -1,0 +1,69 @@
+{
+  "runs": [
+    {
+      "id": 42176528602,
+      "name": "Verify",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "failure",
+      "head_sha": "f2d5ba4ebee63dd5e7eab4be2817c04d1b1168b8",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42176528602"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 127756150977,
+      "name": "plan",
+      "status": "completed",
+      "conclusion": "success",
+      "failed_steps": []
+    },
+    {
+      "id": 127756209221,
+      "name": "Build and public command checks",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Check generated contract documents"
+      ]
+    },
+    {
+      "id": 127756211456,
+      "name": "light",
+      "status": "completed",
+      "conclusion": "skipped",
+      "failed_steps": []
+    },
+    {
+      "id": 127756294093,
+      "name": "verify",
+      "status": "completed",
+      "conclusion": "failure",
+      "failed_steps": [
+        "Require the selected coverage and its proof"
+      ]
+    },
+    {
+      "id": 127756294645,
+      "name": "shards (${{ matrix.name }})",
+      "status": "completed",
+      "conclusion": "skipped",
+      "failed_steps": []
+    },
+    {
+      "id": 127756295207,
+      "name": "full-push-proof",
+      "status": "completed",
+      "conclusion": "skipped",
+      "failed_steps": []
+    },
+    {
+      "id": 127756295467,
+      "name": "nightly-proof",
+      "status": "completed",
+      "conclusion": "skipped",
+      "failed_steps": []
+    }
+  ],
+  "interpretation": "Only generated-view freshness and its dependent aggregate fail; permitted cloud exception. No candidate test shard ran in Verify."
+}

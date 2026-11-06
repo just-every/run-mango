@@ -1,0 +1,6 @@
+verify	Require the selected coverage and its proof	﻿2026-11-06T06:46:32.6515255Z ##[group]Run set -euo pipefail
+verify	Require the selected coverage and its proof	2026-11-06T06:46:32.6516926Z [36;1mtest "$PLAN" = success[0m
+verify	Require the selected coverage and its proof	2026-11-06T06:46:32.6521249Z [36;1m  reuse) test "$SKIP" = true && test "$SHARDS" = skipped && test "$LIGHT" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T06:46:32.6522471Z [36;1m  light) test "$SKIP" = false && test "$LIGHT" = success && test "$SHARDS" = skipped ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T06:46:32.6524123Z [36;1m  full) test "$LIGHT" = skipped && { test "$BUILD" = success || test "$HAS_SHARDS" = false; } && { test "$SHARDS" = success || { test "$HAS_SHARDS" = false && test "$SHARDS" = skipped; }; } ;;[0m
+verify	Require the selected coverage and its proof	2026-11-06T06:46:32.7076890Z ##[error]Process completed with exit code 1.

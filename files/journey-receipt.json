@@ -1,0 +1,190 @@
+{
+  "config": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin/node",
+      "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "tests/go-live/playwright.config.js",
+      "content-checks.journeys.ts",
+      "--reporter=list,json"
+    ],
+    "configFile": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live/playwright.config.js",
+    "rootDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/final/evidence/b193bf77b10b/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": [
+          "*.journeys.ts"
+        ],
+        "timeout": 900000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/final/evidence/b193bf77b10b/go-live",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live",
+        "snapshotDir": "/home/agent/rer-consolidation/work/sd-mango-c-f79/run-mango/tests/go-live",
+        "testIgnore": [],
+        "testMatch": "*.journeys.ts",
+        "timeout": 900000,
+        "use": {
+          "viewport": {
+            "width": 1440,
+            "height": 1000
+          },
+          "launchOptions": {
+            "executablePath": "/usr/bin/chromium",
+            "args": [
+              "--use-mock-keychain",
+              "--password-store=basic",
+              "--no-sandbox"
+            ]
+          },
+          "headless": true,
+          "trace": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "content-checks.journeys.ts",
+      "file": "content-checks.journeys.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 900000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 37837,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "Conversion proof: apply archive\n"
+                    },
+                    {
+                      "text": "Conversion proof: read archive\n"
+                    },
+                    {
+                      "text": "Conversion proof: start template 151\n"
+                    },
+                    {
+                      "text": "Conversion proof: inspect mapped body\n"
+                    },
+                    {
+                      "text": "Conversion proof: run mapped checks\n"
+                    },
+                    {
+                      "text": "Conversion proof: open mapped preview\n"
+                    },
+                    {
+                      "text": "Conversion proof: mapped preview 1440\n"
+                    },
+                    {
+                      "text": "Conversion proof: corrected footer\n"
+                    },
+                    {
+                      "text": "Conversion proof: start template 152\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-06T06:44:50.957Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "msg-007-acknowledgement-retention",
+                      "contentType": "application/json",
+                      "body": "ewogICJzdGFydGVkQXQiOiAxNzkzOTQ3NTYzNTk2LAogICJmaW5pc2hlZEF0IjogMTc5Mzk0NzU2MzU5NiwKICAicmVwbGF5QXQiOiAxNzkzOTQ3NjgzNTk2LAogICJhY2tub3dsZWRnZWQiOiB7CiAgICAic3RhdHVzIjogImFja25vd2xlZGdlZCIsCiAgICAiYWNrbm93bGVkZ2VtZW50IjogewogICAgICAib3BlcmF0b3JJZCI6ICJnby1saXZlLW93bmVyIiwKICAgICAgImFja25vd2xlZGdlZEF0IjogIjIwMjYtMTEtMDZUMDY6NDY6MDMuNTk2WiIKICAgIH0KICB9LAogICJmaW5kaW5nSWRlbnRpdHkiOiAiYTBhZDM2ZThmNWUwNGU0NzAxN2RlOTMwZmE0Mzk2N2QxMjI0NDU2Y2NhZTUyMTRkOTM5ZmNlODRhZTU3ZTcwMSIsCiAgInJlZnJlc2hlZEZpbmRpbmdJZGVudGl0eSI6ICJhMGFkMzZlOGY1ZTA0ZTQ3MDE3ZGU5MzBmYTQzOTY3ZDEyMjQ0NTZjY2FlNTIxNGQ5MzlmY2U4NGFlNTdlNzAxIiwKICAicmVwbGF5T3BlcmF0b3JJZCI6ICJzeW50aGV0aWMtbWFuZ28tMiIsCiAgImF1ZGl0IjogWwogICAgewogICAgICAiaWQiOiAiMDFNNlFTUFhKQ1hRVFYzRTVKUkdOVE43MkIiLAogICAgICAib3BlcmF0aW9uX2tleSI6ICJhZHZpc29yeS1hY2tub3dsZWRnZW1lbnQ6YTBhZDM2ZThmNWUwNGU0NzAxN2RlOTMwZmE0Mzk2N2QxMjI0NDU2Y2NhZTUyMTRkOTM5ZmNlODRhZTU3ZTcwMSIsCiAgICAgICJlbnRpdHlfdHlwZSI6ICJjYW1wYWlnbi1yZXZpc2lvbiIsCiAgICAgICJlbnRpdHlfaWQiOiAiMDFNNlFTTjJaQzRYMTNZSjlNUTFUMkYzQ1YiLAogICAgICAiYWN0aW9uIjogImFja25vd2xlZGdlLWFkdmlzb3J5IiwKICAgICAgImFjdG9yX3R5cGUiOiAib3BlcmF0b3IiLAogICAgICAiYWN0b3JfaWQiOiAiZ28tbGl2ZS1vd25lciIsCiAgICAgICJkZXRhaWxfanNvbiI6ICJ7XCJjYW1wYWlnbklkXCI6XCIwMU02UVNOMlpDRkYwVzFIRVRYUkswQ1lIVlwiLFwicmV2aXNpb25JZFwiOlwiMDFNNlFTTjJaQzRYMTNZSjlNUTFUMkYzQ1ZcIixcInJldmlzaW9uRGlnZXN0XCI6XCI5MWUwMzNkY2E3MzIwYzBlMTE3MmEzM2Q3OTRmN2VkZmYwYmIzMGIyNmRlNmMzZjNkNWVlOTNlZDZmOTA0MDI4XCIsXCJmaW5kaW5nSWRlbnRpdHlcIjpcImEwYWQzNmU4ZjVlMDRlNDcwMTdkZTkzMGZhNDM5NjdkMTIyNDQ1NmNjYWU1MjE0ZDkzOWZjZTg0YWU1N2U3MDFcIixcImtpbmRcIjpcIm1lc3NhZ2UuZW1haWwtc3ViamVjdC1sZW5ndGhcIixcImRldGFpbFwiOlwiRW1haWwgc3ViamVjdCBpcyAxMDQgY2hhcmFjdGVycy4gU29tZSBpbmJveGVzIG1heSB0cnVuY2F0ZSBpdDsgcmV2aWV3IHRoZSBvcGVuaW5nIHdvcmRzLlwifSIsCiAgICAgICJvY2N1cnJlZF9hdCI6IDE3OTM5NDc1NjM1OTYsCiAgICAgICJjcmVhdGVkX2F0IjogMTc5Mzk0NzU2MzU5NgogICAgfQogIF0sCiAgIm5vQXV0aG9yaXR5QXNzZXJ0ZWQiOiB0cnVlCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b21ec75a24ddcd7116df-e5d960a12421276b3643",
+          "file": "content-checks.journeys.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-06T06:44:50.611Z",
+    "duration": 38415.832,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
