@@ -58,16 +58,16 @@ There is no substantive failing row, no introduced exposure, data loss, plausibl
 
 ## Actual execution and NOT RUN items
 
-`command-receipts.jsonl` contains actual start and end times, commands, elapsed seconds, exit codes and the full source SHA. Both named test files were executed once, one test each, with no retry or mutation. The command shell sourced `/tmp/rer-cloud-toolchain.sh`; cloud_run uses `/tmp/rer-reap.py` as a child subreaper. Headless Chromium used `/usr/bin/chromium` with `--no-sandbox`. The supplied toolchain kept Node 24.19.0, which is newer than the 22.20.0 minimum it selects, and pnpm 10.12.4. pnpm reports the exact-engine warning; all recorded command outcomes below are actual exits.
+command-receipts.jsonl contains actual start and end times, commands, elapsed seconds, exit codes and the full source SHA. Both named test files were executed once, one test each, with no retry or mutation. The command shell sourced /tmp/rer-cloud-toolchain.sh; cloud_run uses /tmp/rer-reap.py as a child subreaper. Headless Chromium used /usr/bin/chromium with --no-sandbox. The supplied toolchain kept Node 24.19.0, which is newer than the 22.20.0 minimum it selects, and pnpm 10.12.4. pnpm reports the exact-engine warning; all recorded command outcomes below are actual exits.
 
 | Actual command, from checkout root | Exit | Result |
 | --- | ---: | --- |
-| `python3 /tmp/rer-reap.py npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive` | 0 | Local dependencies, migrations, preview build and owner setup; 113.594 seconds. This is the same subreaper used by cloud_run. No provider or deployment operation. |
-| `cloud_run pnpm exec playwright test --config playwright.config.js tests/proposals-decision/decision-routes.spec.ts --workers=1 --reporter=list` | 0 | One passed; outer 74.569 seconds. Existing unused fixture server disabled with MANGO_NO_FIXTURE_SERVER=1. |
-| `cloud_run pnpm exec playwright test --config tests/go-live/playwright.config.js roles.journeys.ts --workers=1 --reporter=list` | 0 | One passed; outer 358.545 seconds. All six retained-attribution captures produced. |
-| `node src/base/contract-docs.mjs check` | 1 | Exact output: “ACCEPTANCE.md: generated content differs; run contract-docs write.” Expected mechanical candidate exception. No write was run. |
-| `node scripts/edition-authoring/cli.mjs check` | 0 | Pinned source lock check passes; 0.716 seconds. This is not a full history publication scan. |
-| `pnpm run typecheck` | 0 | 34.802 seconds. |
+| python3 /tmp/rer-reap.py npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive | 0 | Local dependencies, migrations, preview build and owner setup; 113.594 seconds. This is the same subreaper used by cloud_run. No provider or deployment operation. |
+| cloud_run pnpm exec playwright test --config playwright.config.js tests/proposals-decision/decision-routes.spec.ts --workers=1 --reporter=list | 0 | One passed; outer 74.569 seconds. Existing unused fixture server disabled with MANGO_NO_FIXTURE_SERVER=1. |
+| cloud_run pnpm exec playwright test --config tests/go-live/playwright.config.js roles.journeys.ts --workers=1 --reporter=list | 0 | One passed; outer 358.545 seconds. All six retained-attribution captures produced. |
+| node src/base/contract-docs.mjs check | 1 | Exact output: “ACCEPTANCE.md: generated content differs; run contract-docs write.” Expected mechanical candidate exception. No write was run. |
+| node scripts/edition-authoring/cli.mjs check | 0 | Pinned source lock check passes; 0.716 seconds. This is not a full history publication scan. |
+| pnpm run typecheck | 0 | 34.802 seconds. |
 
 The initial tooling invocation containing the literal placeholder cloud_run_placeholder failed before any test could launch; it was corrected before the sole proposal test run. It supplies no product evidence. A here-document installation quoting error and an indentation error while preparing the external report transporter were corrected and syntax-checked before transport. No product source was touched by those tooling corrections.
 
@@ -101,7 +101,7 @@ Exact eventual flip, conditional on all guards: only OPER-003 partial → done, 
 All remaining guards are explicit:
 
 1. The supplied 15:45 tooling restriction and 15:54:12 original installer block remain in force. Required source and exact-chain review holds were missing at the finite root read; only the existing main installer and CT custodian may establish and read them back after an actual guarded-installation receipt, before later acceptance, disposition or admission. All older source and stack holds survive. This verdict makes no protected call and did not wait for authority to collect independent product evidence.
-2. Resolve the final merged CONTRACT.md first, preserving every newer main Status **and** Gap, Evidence, provenance and assertion. Generate and check views and counts with the documented `node src/base/contract-docs.mjs write` and `node src/base/contract-docs.mjs check`; the cloud never commits the generated views. Regenerate `node scripts/edition-authoring/cli.mjs lock` last and check the resulting source lock. These final merged operations were not performed here.
+2. Resolve the final merged CONTRACT.md first, preserving every newer main Status **and** Gap, Evidence, provenance and assertion. Generate and check views and counts with the documented node src/base/contract-docs.mjs write and node src/base/contract-docs.mjs check; the cloud never commits the generated views. Regenerate node scripts/edition-authoring/cli.mjs lock last and check the resulting source lock. These final merged operations were not performed here.
 3. Actually execute the full green runtime Verify on the exact final merged SHA, including the relied-on proposal and roles journeys. The supplied generated-view exception is candidate-only; skipped jobs and the local passes never substitute for that final runtime run.
 4. Obtain COMPLETE full-history publication scan NEW 0, the authorized guarded landing receipt, exact final main equality and the green Run site at that exact main. Preserve the original scope and lifecycle until those guards and protected custody requirements pass.
 

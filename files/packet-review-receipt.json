@@ -1,19 +1,19 @@
 {
   "schema": 1,
-  "utc": "2026-11-06T02:19:47.881806+00:00",
+  "utc": "2026-11-06T02:21:26.666894+00:00",
   "task": "ct-judge-mango-oper003-20261105-1615-sol1",
   "repository": "just-every/run-mango",
   "source_sha": "52b87dfa879bcb6752afa9c926fdc57de82c8e2a",
   "selected_files": [
     {
       "path": "REPORT.md",
-      "bytes": 24805,
-      "sha256": "ec2f8b771b0d893fb72c775eec407103fdc79f9b60e72098fa9c8990660b29b8"
+      "bytes": 24781,
+      "sha256": "3203be6b40e4a4559caefd0b4736110f1df4456cad8a13c6f013ac19bd3446ef"
     },
     {
       "path": "VERDICT.md",
-      "bytes": 20249,
-      "sha256": "e87ab9f05107e0e686b7a02a094b8af0ae55b2315783d25b5e5d68e0a9a1dac9"
+      "bytes": 20221,
+      "sha256": "b974c1c83c9b164fc20df378f146c351109fd7b8a0acbe23e39cf10f5ecfa2eb"
     },
     {
       "path": "PLAN.md",
