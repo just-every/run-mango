@@ -151,5 +151,83 @@ export const walk0 = async ({page}, info) => {
       await page.setViewportSize({width, height: 1000});
       expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
     }
+
+    // Separate saved drafts exercise presentation without changing the approved letter above.
+    const styled = await draftCampaign(site, cookie, 'synthetic-mango-503 preview styles', [named], new Date(clock.now + 7200000));
+    const stylePath = `/api/campaign-revisions/${styled.revisionId}`;
+    const readStyled = () => site.call(`/api/campaigns/${styled.campaignId}`, {cookie}).then(response => json(response, 200));
+    const authority = async () => ({
+      approvals: await site.rows('SELECT * FROM campaign_approval_requests ORDER BY idempotency_key'),
+      recipients: await site.rows('SELECT * FROM recipient_steps ORDER BY id'),
+      emissions: await site.control('/_golive/emissions'),
+      handoffs: structuredClone(edge.sends),
+    });
+    const authorityBefore = await authority();
+    const presentations = [
+      {name: 'valid', body: '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tbody><tr>'
+        + '<td bgcolor="#e7f3df" align="right" style="padding:18px"><p style="color:#183c2c;font-family:Georgia,serif;font-size:21px;font-weight:700">'
+        + 'synthetic-mango-503 garden invitation</p></td></tr></tbody></table>', text: 'synthetic-mango-503 garden invitation'},
+      {name: 'refused', body: '<table role="presentation" width="90%" cellpadding="12" cellspacing="4" border="0"><tbody><tr>'
+        + '<td bgcolor="#efe4cc" align="center" style="padding:24px"><p style="display:none;color:#ffffff;font-family:Georgia,serif;font-size:27px">'
+        + 'synthetic-mango-504 essential garden terms</p></td></tr></tbody></table>', text: 'synthetic-mango-504 essential garden terms'},
+    ];
+    for (const presentation of presentations) {
+      await json(await site.call(stylePath, {method: 'PATCH', cookie, body: {emailBody: presentation.body}}), 200);
+      const beforeChecks = (await readStyled()).revision;
+      expect(beforeChecks.emailBody).toContain(presentation.body);
+      await json(await site.call(`/api/campaigns/${styled.campaignId}/checks`, {method: 'POST', cookie, body: {revisionId: styled.revisionId}}), 200);
+      const checkedStyle = await readStyled();
+      const content = checkedStyle.checks.find((check: any) => check.kind === 'message.content');
+      expect(checkedStyle.revision).toEqual(beforeChecks);
+      if (presentation.name === 'valid') expect(checkedStyle.checks.filter((check: any) => check.blocking)).toEqual([]);
+      else {
+        expect(content).toMatchObject({blocking: true});
+        expect(content.detail).toContain('display');
+      }
+      await page.setViewportSize({width: 390, height: 1000});
+      await openPage(page, `${site.runtime.url}/app/campaigns/${styled.campaignId}/review`);
+      const email = page.locator('.message-preview--email');
+      const frame = email.locator('iframe[title="Saved email preview"]');
+      const body = page.frameLocator('iframe[title="Saved email preview"]').locator('body');
+      const text = body.getByText(presentation.text, {exact: true});
+      // Both the initial read and a new document must show the saved checker decision.
+      for (const reload of [false, true]) {
+        if (reload) await reloadPage(page);
+        await expect(frame).toHaveAttribute('sandbox', '');
+        await expect(frame).toHaveAttribute('referrerpolicy', 'no-referrer');
+        for (const mode of ['Desktop', 'Mobile']) {
+          await email.getByRole('button', {name: `${mode} email`, exact: true}).click();
+          await expect(email.locator('.email-preview-frame')).toHaveClass(new RegExp(`--${mode.toLowerCase()}`));
+          await expect(text).toBeVisible();
+          if (presentation.name === 'valid') {
+            await expect(email.getByRole('alert')).toHaveCount(0);
+            await expect(text).toHaveCSS('color', 'rgb(24, 60, 44)');
+            await expect(text).toHaveCSS('font-family', 'Georgia, serif');
+            await expect(text).toHaveCSS('font-size', '21px');
+            await expect(text).toHaveCSS('font-weight', '700');
+            await expect(body.locator('td')).toHaveCSS('background-color', 'rgb(231, 243, 223)');
+            await expect(body.locator('td')).toHaveCSS('padding-top', '18px');
+            await expect(body.locator('td')).toHaveAttribute('align', 'right');
+          } else {
+            await expect(email.getByRole('alert')).toContainText('shows no styling');
+            await expect(email.getByRole('alert')).toContainText('Style property display is not allowed.');
+            await expect(body.locator('[style], [bgcolor], [align], [width], [cellpadding], [cellspacing], [border], [role]')).toHaveCount(0);
+            await expect(text).toHaveCSS('display', 'block');
+            await expect(text).toHaveCSS('font-size', '16px');
+            await expect(text).not.toHaveCSS('color', 'rgb(255, 255, 255)');
+            await expect(body.locator('td')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+          }
+        }
+      }
+      await email.screenshot({path: info.outputPath(`saved-styles-${presentation.name}-390.png`)});
+      // Browser proof at the second width; behavioural assertions above run only at 390.
+      await page.setViewportSize({width: 1440, height: 1000});
+      await email.screenshot({path: info.outputPath(`saved-styles-${presentation.name}-1440.png`)});
+      const afterPreview = await readStyled();
+      expect(afterPreview.revision).toEqual(checkedStyle.revision);
+      expect(afterPreview.campaign).toEqual(checkedStyle.campaign);
+      expect(afterPreview.campaign).toMatchObject({state: 'draft', activeRevisionId: styled.revisionId});
+      expect(await authority()).toEqual(authorityBefore);
+    }
   } finally { await site.runtime.close(); await edge.close(); }
 };
