@@ -1,0 +1,14 @@
+{
+  "setup_command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+  "setup_exit_code": 0,
+  "setup_result": "RER_SETUP_READY; local first owner claimed; setup built local preview; no remote deployment",
+  "source": "8929460e6c1be689f4f206fb6c49b6a5462c67ca",
+  "node_actual": "v24.19.0",
+  "node_repository_pin": "22.20.0",
+  "pnpm_actual": "10.12.4",
+  "pnpm_repository_pin": "pnpm@10.12.4",
+  "rer_installed": "0.2.85",
+  "rer_package_dependency": "0.2.85",
+  "separate_build": "NOT RUN; setup already compiled and built local preview; no product changed",
+  "runtime_adoption": "No runtime pin edited and no rer 0.2.95 adoption claimed. Final runtime must use repository CI pin."
+}

@@ -1,0 +1,11 @@
+# CT original-source judgment plan
+
+Task ct-judge-mango-aud001-20261105-1842-sol1. Read-only product judgment; declared repository just-every/run-mango; exact original source 8929460e6c1be689f4f206fb6c49b6a5462c67ca, original branch cloud/sd-mango-c-f34, original gate sd-mango-c-f34-gate-1. Actual execution model gpt-6.1-sol, reasoning effort xhigh, under the 2026-11-06T01:26Z replacement authority. No additional agent or model session.
+
+1. Install fleet identity and launcher credential helper without logging secrets. Read launcher AGENTS.md and runtime networking instructions.
+2. Use one disposable shallow filtered clone of the declared product only. Confirm the exact source. Read its contract, acceptance view, rules, original three acceptance points, D-2 duty, registered test and relied-on helpers; keep existing scope, policy and provider boundaries.
+3. Preserve the original AP and inherited-outcome mapping and DONE-RIDERS 1–11. Create no new rubric checklist and do not access private held-outs.
+4. Run the registered tests/audience-controls/segments.spec.ts sanity journey once at the pin, with Chromium /usr/bin/chromium and --no-sandbox, assertions at 1440 and real browser capture at 1440 and 390. Read the source-to-public-door-to-persistence chain. Record commands, exits, every NOT RUN reason, and inspect actual captures. Do not mutate source, run a full suite, or commission provider work.
+5. Score all original outcomes and all requested riders in one VERDICT.md. Keep source acceptance, review protection, full final runtime Verify, publication scan, guarded landing and Run site as independent duties. Record counts as unawarded and do not combine concurrent deltas.
+6. Save actual non-secret reports and receipts in this packet. Explicitly publish only these evidence files to evidence/ct-judge-mango-aud001-20261105-1842-sol1 using the provided report-only transport; no product commits, product pushes, PRs or CI operations. Confirm product HEAD and tracked bytes unchanged, close started processes, then delete the disposable clone and dependencies.
+7. Return the exact evidence custody line and CT-only POST, ending READY as the report-completion marker. It is not product READY, acceptance, landing, release or status credit.

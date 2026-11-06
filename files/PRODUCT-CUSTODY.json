@@ -1,0 +1,22 @@
+{
+  "repository": "just-every/run-mango",
+  "reviewed_source": "8929460e6c1be689f4f206fb6c49b6a5462c67ca",
+  "product_branch": "cloud/sd-mango-c-f34",
+  "checked_at": "2026-11-06T02:22:01.177976+00:00",
+  "tracked_changes": [],
+  "index_changes": [],
+  "product_commits_created": 0,
+  "product_pushes": 0,
+  "prs_created": 0,
+  "ci_reads_polls_reruns_dispatches": 0,
+  "github_api_calls": 1,
+  "source_acceptance_changes": 0,
+  "status_awards": 0,
+  "count_delta": {
+    "done": 0,
+    "partial": 0,
+    "missing": 0
+  },
+  "owned_browser_and_runtime_processes": "closed by completed subreaper",
+  "cleanup": "disposable clone and dependencies removed after report evidence publication; final terminal confirms"
+}

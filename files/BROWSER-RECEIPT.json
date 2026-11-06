@@ -1,0 +1,41 @@
+{
+  "source": "8929460e6c1be689f4f206fb6c49b6a5462c67ca",
+  "screens": [
+    {
+      "file": "screens/segment-review-1440.png",
+      "width": 1440,
+      "height": 6215,
+      "bytes": 685141,
+      "sha256": "2dc7c0ce35f82ed5d649f8ef039b3e3ef003f0aa04bd4b9501c196c92fbaea6f",
+      "inspected": true,
+      "scope": "functional saved-audience proof only; no design-quality judgment"
+    },
+    {
+      "file": "screens/segment-review-390.png",
+      "width": 390,
+      "height": 10031,
+      "bytes": 608845,
+      "sha256": "152ead027a30dd93f2037f0dffb5eeb550ce8d6722a7a5e1cfa4a0994deb44a9",
+      "inspected": true,
+      "scope": "functional saved-audience proof only; no design-quality judgment"
+    },
+    {
+      "file": "screens/channel-review-1440.png",
+      "width": 1440,
+      "height": 6779,
+      "bytes": 786419,
+      "sha256": "7fbc4abf18686aff583eadb6cf05631f8db17cda833dfd4360facf48e35d2729",
+      "inspected": true,
+      "scope": "functional saved-audience proof only; no design-quality judgment"
+    },
+    {
+      "file": "screens/channel-review-390.png",
+      "width": 390,
+      "height": 11815,
+      "bytes": 697096,
+      "sha256": "d4d0bc340a8f64682668d7880e432f88471617fed08a5c3977e2b7aa59b353ce",
+      "inspected": true,
+      "scope": "functional saved-audience proof only; no design-quality judgment"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "command": "cloud_run pnpm exec playwright test --config playwright.config.js tests/audience-controls/segments.spec.ts --workers=1 --reporter=list,json",
+  "source": "8929460e6c1be689f4f206fb6c49b6a5462c67ca",
+  "started_at": "2026-11-06T02:09:39.294754+00:00",
+  "environment": {
+    "MANGO_CHROMIUM_EXECUTABLE": "/usr/bin/chromium",
+    "MANGO_NO_FIXTURE_SERVER": "1",
+    "width_assertions": 1440,
+    "proof_widths": [
+      1440,
+      390
+    ]
+  },
+  "purpose": "one registered public-door journey at pinned original source; retries=0",
+  "exit_code": 0,
+  "finished_at": "2026-11-06T02:13:36.334111+00:00",
+  "launched_argv": [
+    "python3",
+    "/tmp/rer-reap.py",
+    "pnpm",
+    "exec",
+    "playwright",
+    "test",
+    "--config",
+    "playwright.config.js",
+    "tests/audience-controls/segments.spec.ts",
+    "--workers=1",
+    "--reporter=list,json"
+  ],
+  "retries": 0,
+  "test_duration_ms": 226784,
+  "playwright_duration_ms": 236105.261,
+  "expected": 1,
+  "unexpected": 0,
+  "skipped": 0
+}

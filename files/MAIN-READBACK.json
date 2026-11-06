@@ -1,0 +1,105 @@
+{
+  "fresh_main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "candidate": "8929460e6c1be689f4f206fb6c49b6a5462c67ca",
+  "fresh_main_counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "candidate_counts": {
+    "partial": 199,
+    "done": 19,
+    "missing": 98
+  },
+  "full_status_gap_evidence_comparison": [
+    {
+      "id": "AUD-001",
+      "source": {
+        "title": "Review snapshot",
+        "kind": "published",
+        "status": "done",
+        "evidence": "`tests/audience-controls/segments.spec.ts` — “[CONT-008][CONT-017][AUD-001][AUD-002][AUD-005][AUD-007][SEG-001][CONT-011] build and copy a saved segment, inspect its saved audience time and separate channel step counts, freeze recipients and merge identities without widening consent”. Acceptance 1: step “Review snapshot — saved as-of time and email recipient-step counts” in `tests/audience-controls/segment-journey.ts` brackets checks independently, reconciles the exact saved time with native and persisted readback, and renders the saved rule and time after reload and reopen. Acceptances 2 and 3: step “Review snapshot — separate email and SMS recipient-step counts” in `tests/audience-controls/channel-snapshot-journey.ts` uses three natively confirmed email contacts, one explicitly excluded contact, one confirmed SMS destination and one pending SMS destination: three candidates, one excluded, two eligible contacts, every saved exclusion reason and count, four email recipient steps over two steps and three SMS recipient steps over three steps. Native readback, persisted rows and labeled review counts agree after reload and reopen, with unchanged draft, approval, recipient and dispatch authority; browser proof at 1440 and 390. Existing rule, email permission and exclusion assertions remain. Native AU SMS confirmation uses the Mobile Message network edge; this proves review counts, not live SMS qualification. Owner-held Twilio A2P and US carrier registration, SMS transport and qualification remain held under SMS-001, SMS-002 and SMS-008. Provider, device, account, cross-seed and Base prerequisites, rer 0.2.95 adoption, CONT-013’s SPLIT and NEW-1 disposition and original fix-1 hold, and all release prerequisites remain unchanged.",
+        "gap": ""
+      },
+      "fresh_main": {
+        "title": "Review snapshot",
+        "kind": "published",
+        "status": "partial",
+        "evidence": "`tests/audience-controls/segments.spec.ts` — “[SEG-001] AUD-001 AUD-002 AUD-007 CAMP-004 nested saved segments select exact contacts by count, event value, window and state at 1440/390; copied rules remain immutable”",
+        "gap": "Asserted: Candidate count; Eligible contact count; Every exclusion reason and count. Unasserted: Audience rule; Audience as-of time; Per-channel recipient-step count. Missing public-door journey: “Review snapshot — complete acceptance”, covering the unasserted outcomes above."
+      }
+    },
+    {
+      "id": "DESIGN-003",
+      "source": {
+        "title": "Design data and records",
+        "kind": "published",
+        "status": "partial",
+        "evidence": "`tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-003 DESIGN-007 DESIGN-008 DESIGN-010] a run sends only the brief, never buys twice, records its costs, waits out 12ui and fails visibly without changing the draft”",
+        "gap": "Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request. Unasserted: Brief retained; Provider run identifier; Provider layout identifier; Candidate size; Operator; Times; Run never deleted; Candidate originals retained; Layout retained; Candidate and layout export. Missing public-door journey: “Design data and records — complete acceptance”, covering the unasserted outcomes above."
+      },
+      "fresh_main": {
+        "title": "Design data and records",
+        "kind": "published",
+        "status": "partial",
+        "evidence": "`tests/campaign-authoring/design-generation.spec.ts` — “[DESIGN-001][DESIGN-002][DESIGN-003][DESIGN-007][DESIGN-008][DESIGN-009][DESIGN-010] generate and select a design without saving or spending twice, and expose provider refusal”: native generation and choice, failed and successful completion, authenticated status and persisted rows after reload and repeated reads",
+        "gap": "Asserted: Only layout description and brief; All personalization tokens removed; Only chosen candidate sent for layout; No contact or audience values; Each purchase has idempotency key; Retried purchase buys once; Candidate outcomes; Candidate SHA-256; Chosen candidate; Safe failure code; Cost fact for every paid request; Exact sanitized brief retained; Issued provider run and layout identifiers; Candidate byte size; Authenticated operator; Independently bounded creation, candidate and completion times retained through reload. Unasserted: Run never deleted beyond existing terminal-state checks; Candidate originals retained; Layout retained; Candidate and layout export. Missing public-door journey: “Design data and records — complete acceptance”, covering the unasserted outcomes above."
+      }
+    },
+    {
+      "id": "PROP-008",
+      "source": {
+        "title": "Forecast provenance",
+        "kind": "published",
+        "status": "partial",
+        "evidence": "`tests/proposals-decision/decision-routes.spec.ts` — “[PROP-008] forecasts use owned mature history including failed and zero-revenue recipients, and refuse thin or mixed-currency history”",
+        "gap": "Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range. Unasserted: Every recovery-rate and confidence figure identifies source history; Other-store benchmark rejected. Missing public-door journey: “Forecast provenance — complete acceptance”, covering the unasserted outcomes above."
+      },
+      "fresh_main": {
+        "title": "Forecast provenance",
+        "kind": "published",
+        "status": "partial",
+        "evidence": "`tests/proposals-decision/decision-routes.spec.ts` — “[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes”: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` — “[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads”: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.; provider benchmarks with owned history identifiers are also refused without changing existing forecast records, and valid own-history generation succeeds again after those refusals with draft-only authority.",
+        "gap": "Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged."
+      }
+    },
+    {
+      "id": "PUB-005",
+      "source": {
+        "title": "Paid signup page and payer consent",
+        "kind": "target",
+        "status": "partial",
+        "evidence": "`tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”",
+        "gap": "Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. Missing public-door journey: “Paid signup page and payer consent — complete acceptance”, covering the unasserted outcomes above."
+      },
+      "fresh_main": {
+        "title": "Paid signup page and payer consent",
+        "kind": "target",
+        "status": "done",
+        "evidence": "`tests/go-live/roles.journeys.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history” · `tests/go-live/paid-signup-journey.ts` — “[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-tier-journey.ts`",
+        "gap": ""
+      }
+    },
+    {
+      "id": "PUB-006",
+      "source": {
+        "title": "Paid-reader consent and restrictions",
+        "kind": "target",
+        "status": "partial",
+        "evidence": "`tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”",
+        "gap": "Asserted in its paid-signup leg: paid-checkout evidence and one confirmation for a first-time payer, consent missing until confirmed; no paid-only send before and exactly the payer after the confirmation; an unsubscribed payer stays unsubscribed until their own POST; a suppressed payer gets no confirmation; payment never widens permission; erasure removes the address and evidence. Unasserted: no free newsletter reaches a pending payer before confirmation, and a suppressed payer receives no newsletter (none is reviewed or sent to either)."
+      },
+      "fresh_main": {
+        "title": "Paid-reader consent and restrictions",
+        "kind": "target",
+        "status": "done",
+        "evidence": "`tests/go-live/roles.journeys.ts` — “[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history”; `tests/go-live/paid-signup-journey.ts`; reviewed, approved and dispatched paid and free issues exclude pending and suppressed active payers while exact confirmed controls receive native recipient handoffs and mail-edge sends, with no barred delivery credit; the confirmed payer receives the next paid-only issue; an unsubscribed payer stays unsubscribed through payment and GET until their own POST, suppression gets no confirmation, an already confirmed subscriber gets no second confirmation, and erasure removes the address and consent evidence. Stripe and mail are network-edge fixtures.",
+        "gap": ""
+      }
+    }
+  ],
+  "clause_body_differences": [],
+  "source_provenance": "Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration. AUD-001 was exercised through its registered native segment and mixed-channel review journeys from the code and tests at commit `650e7ab7e6f6aaccc2d6f625a915dc6d71103df8` (5 November 2026); this status candidate retains those source and test bytes. Native SMS snapshot evidence establishes review counts without claiming live transport or carrier registration.",
+  "fresh_main_provenance": "Judged from the code and tests at commit `144c1db1d10d6578a3f6c4134a7d5cea655542bc` (25 October 2026). STORE-006, AUD-002, CAMP-005, CONT-030 and PUB-001 were restored to done, and the AUD-006, CONT-013, DATA-001, DESIGN-004, INT-007 and PUB-006 rows rechecked, from the code and tests at commit `5562157b3f0d16fa007d9853ef957262ffe6d19f` (2 November 2026) by ct judge ct-judge-mango-restore-20261102-0845 against push Verify 41350719203. The CONT-013 row was rechecked from the code and tests at commit `041c8774846492d19701f319d5ba0d1ccfbc8020` (2 November 2026) by ct judge ct-judge-mango-cont013-fix2-20261102-1710 against push Verify 41483647383. BUILD-008 was rechecked from the code and tests at commit `188b2fc8ccc0e6d889873cd34432dd25241e86ff` (4 November 2026), with all five acceptance outcomes exercised by its focused native journey; the status candidate retains those source and test bytes. The INT-007 row was judged done from the code and tests at commit `8d0dd13a2484cc2d4d1fbbfba9a94c11772657fd` (4 November 2026) by ct judge ct-judge-mango-int007-20261104-1930, accepted on landing behind the guarded lander's exact-SHA push Verify. REPORT-004 was exercised through its registered native results journey from the code and tests at commit `797f9ba04919493fb2c5418609243400882f96f8` (4 November 2026); this status candidate retains those source and test bytes. CONT-011 was exercised through its registered segments journey and authenticated merge routes from the code and tests at commit `004a433fa788698e3fb07d64af1a69f78a521a97` (5 November 2026); this status candidate retains those source and test bytes. Recorded SMS states establish merge ordering without claiming SMS transport or carrier registration.",
+  "integration_instruction": "Preserve every newer main Status and full Gap/Evidence, provenance and assertion; reconcile original lineage, regenerate merged views and counts, source lock LAST. This readback neither merges nor accepts source."
+}

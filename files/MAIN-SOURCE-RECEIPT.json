@@ -1,0 +1,10 @@
+{
+  "command": "gh api repos/just-every/run-mango/commits/main --jq .sha",
+  "exit_code": 0,
+  "read_at": "2026-11-06T02:15:22.689606+00:00",
+  "head": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "contract_bytes": 489381,
+  "contract_sha256": "dda23bce41a7c5aff174096d4434a64d044a521add79c16bfb9291b7599b509d",
+  "purpose": "read-only fresh-main preservation snapshot; not source acceptance or judgment of other clauses",
+  "ci_polls": 0
+}

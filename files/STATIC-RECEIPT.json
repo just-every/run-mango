@@ -1,0 +1,23 @@
+[
+  {
+    "command": "node src/base/contract-docs.mjs check",
+    "started_at": "2026-11-06T02:11:05.966875+00:00",
+    "finished_at": "2026-11-06T02:11:06.211515+00:00",
+    "exit_code": 1,
+    "log": "contract-check.log"
+  },
+  {
+    "command": "node scripts/edition-authoring/cli.mjs check",
+    "started_at": "2026-11-06T02:11:06.211576+00:00",
+    "finished_at": "2026-11-06T02:11:06.625995+00:00",
+    "exit_code": 0,
+    "log": "source-lock-check.log"
+  },
+  {
+    "command": "pnpm run typecheck",
+    "started_at": "2026-11-06T02:11:06.626050+00:00",
+    "finished_at": "2026-11-06T02:11:30.363567+00:00",
+    "exit_code": 0,
+    "log": "typecheck.log"
+  }
+]
