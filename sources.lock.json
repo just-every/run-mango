@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "5b2bc563adb2f711d81c92a5f00bdd5983adab5545e43a0d1e636d2a46afdf04",
+      "sha256": "30c0d95621d231c35a0b0d4d43bb46b0eea589f5733831e30d6aef3adb0db0d0",
       "executable": false
     },
     "DEMO.md": {
@@ -9006,7 +9006,7 @@
       "executable": false
     },
     "tests/go-live/resubscribe.flow.ts": {
-      "sha256": "94500a596db8ee10f4f56030e79648da50dfe6f2d2f4c52ad53e9908cf526303",
+      "sha256": "eb3313590d79db58841d0af2fd10de92c724edef95258f6dc9ae8c54ed53b36e",
       "executable": false
     },
     "tests/go-live/review-loyalty-journey.ts": {
@@ -9203,6 +9203,14 @@
     },
     "tests/local-start/retained-backup-flow.ts": {
       "sha256": "aee13c36a45c6842d43118ed93f15bfeeedbf970902f71dcc1a59486a3bf722f",
+      "executable": false
+    },
+    "tests/local-start/sender-setup.flow.ts": {
+      "sha256": "d0845e244479fde993b08d86e0fb46892cf47bf92d9c44817739ec599e391066",
+      "executable": false
+    },
+    "tests/local-start/sender-setup.journey.ts": {
+      "sha256": "b17fee10e69656181dff8b4b3a694d46d6b95ee7faf2e18002578106b9cc7209",
       "executable": false
     },
     "tests/move-in/archive.flow.ts": {
