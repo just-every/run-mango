@@ -1,4 +1,5 @@
 import {decodeCatalogBlock} from './catalog-blocks';
+import {decodeCondition} from './conditional-blocks';
 import {mobileClass} from './email-mobile';
 import { safeEmailLink } from './contact-links';
 import { linkProblem } from './link-reasons';
@@ -32,6 +33,7 @@ const insecureMedia = (value: string) => { try { const url = new URL(value); ret
  * `demoOrigin` is a demo's own origin, whose pages its links may use (demo-links.ts). */
 export function allowedEmailAttribute(tag: string, name: string, value: string, mediaOrigin?: string, demoOrigin?: string) {
   if (tag === 'div' && name === 'data-mango-catalog') return Boolean(decodeCatalogBlock(value));
+  if (tag === 'div' && (name === 'data-mango-when' || name === 'data-mango-otherwise')) return Boolean(decodeCondition(value));
   if (name === 'title' || (tag === 'img' && name === 'alt')) return !value.includes('{{');
   if (tag === 'a' && name === 'href') return safeEmailLink(value, true, demoOrigin);
   if (tag === 'img' && name === 'src') return safeEmailUrl(value) || localMediaUrl(value, mediaOrigin);

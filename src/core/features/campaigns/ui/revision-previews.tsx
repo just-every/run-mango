@@ -8,6 +8,7 @@ import { contactLink } from '../contact-links';
 import type {SmsReviewPreview} from '@/core/features/sms/review-preview';
 import { useEffect, useMemo, useState } from 'react';
 import { renderMessageContent } from '../message-content';
+import {conditionalBlocks,type ConditionOutcomes} from '../conditional-blocks';
 import { contactPersonalisation } from '@/core/features/audience/contact-personalisation';
 import { getJson } from '@/core/app/client/lib/api';
 import { inspectEmailHtml } from '../email-html-policy';
@@ -23,18 +24,25 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   const [contact, setContact] = useState<Contact>();
   const [propertyValues,setPropertyValues]=useState<{id:string;values:Record<string,string|undefined>}>(),[propertyError,setPropertyError]=useState('');
   useEffect(()=>{let active=true;setPropertyValues(undefined);setPropertyError('');if(!contact)return;void getJson<{values:Record<string,string|undefined>}>(`/api/contacts/${encodeURIComponent(contact.id)}/personalisation`).then(result=>{if(active)setPropertyValues({id:contact.id,values:result.values});}).catch(()=>{if(active)setPropertyError('Contact property values could not be loaded. Select the contact again.');});return()=>{active=false;};},[contact?.id]);
+  const conditional=useMemo(()=>{try{return conditionalBlocks(revision.emailBody);}catch{return [];}},[revision.emailBody]);
+  const [branch,setBranch]=useState<'contact'|'then'|'otherwise'>('contact');
+  const [conditionResult,setConditionResult]=useState<{key:string;outcomes?:ConditionOutcomes;error?:string}>();
+  const conditionKey=`${contact?.id??''}:${revision.emailBody}`;
+  useEffect(()=>{let current=true;setConditionResult(undefined);if(!contact||!conditional.length)return;void requestJson<{outcomes?:ConditionOutcomes;detail?:string}>(`/api/contacts/${encodeURIComponent(contact.id)}/conditions`,{method:'POST',body:JSON.stringify({emailBody:revision.emailBody})}).then(result=>{if(!current)return;setConditionResult(result.status===200&&result.data.outcomes?{key:conditionKey,outcomes:result.data.outcomes}:{key:conditionKey,error:result.data.detail??'Conditional content could not be evaluated for this contact.'});}).catch(()=>{if(current)setConditionResult({key:conditionKey,error:'Conditional content could not be evaluated for this contact.'});});return()=>{current=false;};},[conditionKey,conditional.length]);
+  const conditionOutcomes=conditionResult?.key===conditionKey?conditionResult:undefined;
+  const asContact=conditional.length>0&&branch==='contact'&&Boolean(contact);
   const [loadImages, setLoadImages] = useState(false);
   const needsCatalog=catalogBlocks(revision.emailBody).length>0;
   const [catalog,setCatalog]=useState<{body:string;values:CatalogRenderings}>(),[catalogError,setCatalogError]=useState('');
   useEffect(()=>{let current=true;setCatalogError('');if(!needsCatalog)return;void requestJson<{renderings?:CatalogRenderings}>('/api/catalog/preview',{method:'POST',body:JSON.stringify({emailBody:revision.emailBody})}).then(result=>{if(!current)return;if(result.status!==200||!result.data.renderings){setCatalogError('Current catalog values are unavailable.');return;}setCatalog({body:revision.emailBody,values:result.data.renderings});}).catch(()=>{if(current)setCatalogError('Current catalog values are unavailable.');});return()=>{current=false;};},[revision.id,revision.updatedAt,revision.emailBody]);
   const catalogValues=catalog?.body===revision.emailBody?catalog.values:undefined;
-  const previewRevision=contact&&propertyError?{...revision,emailSubject:'Contact preview unavailable',emailBody:'<p>Contact preview is unavailable because saved values could not be loaded.</p>',emailText:'Contact preview unavailable.',smsBody:'Contact preview unavailable.'}:needsCatalog&&!catalogValues?{...revision,emailBody:'<p>Catalog preview is unavailable until current values are read.</p>',emailText:'Catalog preview unavailable.'}:revision;
+  const previewRevision=contact&&propertyError?{...revision,emailSubject:'Contact preview unavailable',emailBody:'<p>Contact preview is unavailable because saved values could not be loaded.</p>',emailText:'Contact preview unavailable.',smsBody:'Contact preview unavailable.'}:asContact&&!conditionOutcomes?.outcomes?{...revision,emailBody:'<p>Conditional content preview is unavailable until this contact’s facts are read.</p>',emailText:'Conditional content preview unavailable.'}:needsCatalog&&!catalogValues?{...revision,emailBody:'<p>Catalog preview is unavailable until current values are read.</p>',emailText:'Catalog preview unavailable.'}:revision;
 
   const rendered = useMemo(() => renderMessageContent({...previewRevision, preheader: revision.preheader ?? '', physicalAddress: revision.physicalAddress ?? ''}, {
-    catalog:catalogValues,analytics:analyticsContext(revision),
+    conditions:conditionOutcomes?.outcomes,branch:asContact?undefined:branch==='contact'?'otherwise':branch,catalog:catalogValues,analytics:analyticsContext(revision),
     values: contact ? propertyValues?.id===contact.id?propertyValues.values:contactPersonalisation(contact, contact.email ?? '') : {displayName: 'Alex Example'},
     unsubscribeUrl: 'https://preview.invalid/unsubscribe/example',
-  }), [revision, contact, catalogValues,propertyValues,propertyError]);
+  }), [revision, contact, catalogValues,propertyValues,propertyError,conditionOutcomes,branch,asContact]);
   const responsive=mobileEnvelope(revision.emailBody);
   const dependent=[responsive.settings.some(row=>row.hideOnMobile)?'hide on mobile':'',responsive.settings.some(row=>row.hideOnDesktop)?'hide on desktop':'',responsive.settings.some(row=>row.orientation)?'mobile orientation':'',responsive.settings.some(row=>row.fontSize!==undefined)?'mobile font size':'',responsive.settings.some(row=>row.lineHeight!==undefined)?'mobile line height':'',responsive.settings.some(row=>row.padding!==undefined)?'mobile padding':'',responsive.settings.some(row=>row.alignment)?'mobile alignment':''].filter(Boolean);
   const showEmail = selectedChannels?.includes('email') ?? true;
@@ -47,6 +55,7 @@ export function RevisionPreviews({ revision, links, mediaOrigin, selectedChannel
   return (
     <section className="preview-grid" aria-label="Saved revision previews">
       {propertyError?<p role="alert">{propertyError}</p>:contact&&propertyValues?.id!==contact.id?<p role="status">Reading contact property values…</p>:null}
+      {conditional.length?<ConditionalPreview branch={branch} onBranch={setBranch} contact={contact} error={asContact?conditionOutcomes?.error:undefined} pending={asContact&&!conditionOutcomes}/>:null}
       {needsCatalog?<p role={catalogError?'alert':'status'}>{catalogError||(!catalogValues?'Reading current catalog values…':'Catalog read at '+formatDate(Object.values(catalogValues)[0]?.readAt))}</p>:null}
       {showEmail ? <article className="message-preview message-preview--email">
         <Paper w={640} h={760} seed={41} className="app-sheet email-sheet">
@@ -139,4 +148,16 @@ function PreviewContact({selected, onSelect}: {selected?: Contact; onSelect: (co
 function ContactLinkDetails({destination}: {destination: string}) {
   const link = contactLink(destination)!;
   return <small>{link.kind === 'email' ? 'Email' : link.kind === 'phone' ? 'Phone' : 'Text'}: {link.destination}{link.subject !== undefined ? ` · Subject: ${link.subject}` : ''}{link.body !== undefined ? ` · Body: ${link.body}` : ''} · No click tracking</small>;
+}
+
+function ConditionalPreview({branch,onBranch,contact,error,pending}:{branch:'contact'|'then'|'otherwise';onBranch:(branch:'contact'|'then'|'otherwise')=>void;contact?:Contact;error?:string;pending:boolean}) {
+  return <div className="conditional-preview" role="group" aria-label="Conditional content preview">
+    <p className="muted-copy">This email has conditional blocks. Choose which content to preview.</p>
+    <div className="preview-controls" role="group" aria-label="Conditional branch">
+      <button type="button" className="secondary-action" aria-pressed={branch==='contact'} onClick={()=>onBranch('contact')}>{contact?'As the chosen contact':'As the example contact (conditions not met)'}</button>
+      <button type="button" className="secondary-action" aria-pressed={branch==='then'} onClick={()=>onBranch('then')}>Every condition met</button>
+      <button type="button" className="secondary-action" aria-pressed={branch==='otherwise'} onClick={()=>onBranch('otherwise')}>Otherwise</button>
+    </div>
+    {error?<p role="alert">{error}</p>:pending?<p role="status">Reading this contact’s facts for conditional blocks…</p>:null}
+  </div>;
 }

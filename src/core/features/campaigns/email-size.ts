@@ -59,7 +59,7 @@ export function measureEmailSize(revision: MessageRevision & {trackingEnabled?: 
     const visit = (nodes: EmailNode[]) => nodes.forEach(node=>{if(node.kind==='element') {const url=node.tag==='a'?node.attributes.get('href'):undefined;if(url && url !== '{{unsubscribe_url}}' && !contactLink(url)){const tagged=analyticsUrl(url,analyticsContext(bounded),'email');rewritten.set(url,utf8Bytes(tagged)>utf8Bytes(tracked)?tagged:tracked);}visit(node.children);}});
     visit(parseEmailHtml(options.catalog?insertCatalogHtml(bounded.emailBody,options.catalog):bounded.emailBody).nodes);
   }
-  const renderOptions={catalog:options.catalog,analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten};
+  const renderOptions={branch:'all' as const,catalog:options.catalog,analytics:analyticsContext(bounded),unsubscribeUrl,rewrittenLinks:rewritten};
   const rendered = renderMessageContent(bounded,renderOptions);
   const pixel = options.openTrackingEnabled ? `<img data-mango-open-estimate="1" src="${tokenUrl(origin,'/o/',36,'open-estimate')}" width="1" height="1" alt="" />` : '';
   const html=rendered.html+pixel;

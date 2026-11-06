@@ -4,6 +4,8 @@ import {mobileEnvelope,mobileDocument} from './email-mobile';
 import {rewriteTextLinks,textLinkDestinations} from './message-links';
 import { escapeHtml } from './email-html-policy';
 import { parsePersonalisationToken as parseToken } from './authoring-tokens';
+import {conditionalBlocks,resolveConditionalBlocks,type ConditionOutcomes,type ConditionBranch} from './conditional-blocks';
+import {htmlToText} from './authoring-content';
 export type MessageRevision = {
   utmPolicyJson?:string|null; name?:string; id?:string;
   emailSubject: string; emailBody: string; emailText: string; preheader: string; smsBody: string; physicalAddress: string;
@@ -42,9 +44,11 @@ export function invalidMessagePersonalisation(revision:Pick<MessageRevision,'ema
   return [revision.emailSubject,revision.preheader,mobileEnvelope(revision.emailBody).body,revision.emailText,revision.smsBody].flatMap(invalidPersonalisation);
 }
 /** Pure rendering: no capabilities, writes, contacts or network are acquired here. */
-export function renderMessageContent(revision: MessageRevision, options: {
-  catalog?:CatalogRenderings; catalogDiagnostics?:boolean; analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
+export function renderMessageContent(authored: MessageRevision, options: {
+  conditions?:ConditionOutcomes; branch?:ConditionBranch; catalog?:CatalogRenderings; catalogDiagnostics?:boolean; analytics?:AnalyticsContext; values?: Record<string, string | null | undefined>; unsubscribeUrl: string; rewrittenLinks?: ReadonlyMap<string, string>;
 }) {
+  // BUILD-005: one choice per recipient, made on the saved body; the plain-text part is read from the chosen body, so both parts agree.
+  const revision=conditionalBlocks(authored.emailBody).length?(body=>({...authored,emailBody:body,emailText:htmlToText(body)}))(resolveConditionalBlocks(authored.emailBody,options.conditions??{},options.branch)):authored;
   const chosen=catalogBlocks(revision.emailBody);
   if(chosen.length&&(!options.catalog||chosen.some(row=>!options.catalog![row.key])))throw new CatalogUnavailable();
   const values = options.values ?? {};

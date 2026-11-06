@@ -1,3 +1,5 @@
+import {contentConditionOutcomes} from './condition-outcomes';
+import {ConditionUnavailable} from '@/core/features/campaigns/conditional-blocks';
 import {propertyDefinitions} from './properties/read';
 import {validatePropertyFields,editContactProperties} from './properties/write';
 import {PropertyError} from './properties/types';
@@ -38,6 +40,12 @@ export function createAudienceRoutes(service: ReturnType<typeof createAudienceSe
     // Matches on fragments would reveal destinations a masked role cannot read.
     const exact=!hasPermission(contactPrivacyRole(context.get('operator')),'contact.unmasked');
     return context.json({contacts:await service.search(query.data.address,exact)});
+  });
+  routes.post('/contacts/:id/conditions',async context=>{
+    const parsed=readParams(context,contactParams);if('error' in parsed)return parsed.error;
+    const body=await readJson(context,z.object({emailBody:z.string().max(1_000_000)}));if('error' in body)return body.error;
+    try {return context.json({outcomes:await contentConditionOutcomes(platform,parsed.data.id,body.data.emailBody)});}
+    catch(error) {if(error instanceof ConditionUnavailable)return context.json({error:'condition_unavailable',detail:error.message},409);throw error;}
   });
   routes.post('/contacts/merge-preview',async context=>{
     const parsed=await readJson(context,merge);if('error'in parsed)return parsed.error;

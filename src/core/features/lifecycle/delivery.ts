@@ -17,6 +17,7 @@ import { unavailableInspection } from '@/core/features/sender-verification/servi
 import { ProviderTransportError } from '@/core/shared/platform';
 
 import { sha256 } from './digest';
+import {ConditionUnavailable} from '@/core/features/campaigns/conditional-blocks';
 import { parseDeliveryRequest, prepareDeliveryRequest, serializeDeliveryRequest } from './message-renderer';
 import {recheckDeliveryEligibility} from './delivery-eligibility';
 
@@ -150,7 +151,7 @@ export function createDeliveryService(runtime: LifecycleRuntime, repository: Lif
     }
     let prepared;
     try{prepared=await prepareDeliveryRequest(runtime,{...beforeClaim,recipient:{...beforeClaim.recipient,outboundRequestJson:claimed.outboundRequestJson}},eligibility,now);}
-    catch(error){if(error instanceof CatalogDeliverySkip){await repository.markSkipped(claimed.id,claimed.leaseToken,error.reason,now);return;}throw error;}
+    catch(error){if(error instanceof CatalogDeliverySkip){await repository.markSkipped(claimed.id,claimed.leaseToken,error.reason,now);return;}if(error instanceof ConditionUnavailable){await repository.markSkipped(claimed.id,claimed.leaseToken,'condition-unavailable',now);return;}throw error;}
     // Persisted outbound JSON is authoritative on restart, including content.from.
     const request = prepared.request;
     if(claimed.channel==='email' && 'html' in request.content && (utf8Bytes(request.content.html ?? '')>emailByteLimit||utf8Bytes(request.content.text)>emailByteLimit)) {
