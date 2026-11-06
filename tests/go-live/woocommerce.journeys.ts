@@ -209,9 +209,12 @@ test('[INT-002] WooCommerce owner connection syncs store facts and signed replay
     for (const width of [1440, 390]) {
       await page.setViewportSize({width, height: 1000});
       await openPage(page, site.runtime.url + '/app/settings');
-      await sources.getByText(operatorHost, {exact: true}).scrollIntoViewIfNeeded();
-      await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))));
-      await sources.screenshot({path: info.outputPath(`woocommerce-disconnected-hosts-${width}.png`)});
+      await sources.evaluate(panel => panel.scrollIntoView({block: 'center', behavior: 'instant'}));
+      await page.waitForFunction(() => {
+        const panel = document.getElementById('link-host-sources-title')!.parentElement!.getBoundingClientRect();
+        return panel.top >= 0 && panel.bottom <= innerHeight;
+      });
+      await page.screenshot({path: info.outputPath(`woocommerce-disconnected-hosts-${width}.png`)});
       await openPage(page, site.runtime.url + `/app/campaigns/${hostDraft.campaignId}/review`);
       await blocked.waitFor({state: 'visible'});
       await page.screenshot({path: info.outputPath(`woocommerce-disconnected-review-${width}.png`), fullPage: true});

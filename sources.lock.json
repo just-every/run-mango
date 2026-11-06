@@ -9138,7 +9138,7 @@
       "executable": false
     },
     "tests/go-live/woocommerce.journeys.ts": {
-      "sha256": "07726515fb4b3855bb53eba23d09cc71a3e704672027279d25c7f455b01001f4",
+      "sha256": "69d8b93cca91c8f36e37b4198445172267b94c1db6bb49ff46aea2a8ddb6ebe6",
       "executable": false
     },
     "tests/go-live/worker.ts": {
