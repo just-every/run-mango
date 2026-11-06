@@ -1,0 +1,116 @@
+{
+  "schema": 1,
+  "tag": "sd-mango-c-f75",
+  "repository": "just-every/run-mango",
+  "branch": "cloud/sd-mango-c-f75",
+  "head": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+  "base": "980b25d4b34d19493662d2662ba8f5123c194aef",
+  "clause": "MSG-007",
+  "statusBefore": "partial",
+  "statusAfter": "partial",
+  "countsBefore": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "countsAfter": {
+    "done": 20,
+    "partial": 198,
+    "missing": 98
+  },
+  "testRegistrationsBefore": 1,
+  "testRegistrationsAfter": 1,
+  "assertionsRemoved": 0,
+  "checks": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "TYPECHECK.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "FIRST-PARTY.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "VIEWS-WRITE.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "VIEWS-CHECK.log",
+      "context": "After generation; generated views subsequently restored from origin/main as required."
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs verify-base --offline",
+      "exit": 0
+    },
+    {
+      "command": "MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=<external runtime directory> WRANGLER_SEND_METRICS=false perl -e 'alarm 1200; exec @ARGV' -- pnpm exec playwright test --config tests/go-live/playwright.config.js content-checks.journeys.ts",
+      "exit": 0,
+      "result": "1 passed (2.1m)",
+      "head": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "log": "JOURNEY.log",
+      "runtimeReceipt": "ACKNOWLEDGEMENT-RECEIPT.json"
+    },
+    {
+      "command": "pnpm exec playwright test --config tests/go-live/playwright.config.js content-checks.journeys.ts --reporter=json",
+      "exit": 0,
+      "head": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "result": "1 passed",
+      "durationMs": 140657,
+      "receipt": "JOURNEY-RECEIPT.json"
+    }
+  ],
+  "migrationLedger": "not applicable; no migration changed",
+  "statusRowRetention": {
+    "before": 316,
+    "after": 316,
+    "allTableRowsBefore": 490,
+    "allTableRowsAfter": 490
+  },
+  "publicationScan": {
+    "status": "NOT RUN in cloud; delegated to guarded Mac lander",
+    "findings": null,
+    "historyScanned": null
+  },
+  "landing": "not performed; branch-only candidate",
+  "pr": "none; Verify has a push entry point",
+  "productPush": {
+    "exit": 0,
+    "attempts": 1,
+    "head": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+    "log": "PUSH.log",
+    "remoteHeadVerified": true
+  },
+  "candidateGeneratedViewCheck": {
+    "command": "node src/base/contract-docs.mjs check",
+    "exit": 1,
+    "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "expectedByCloudContract": true,
+    "log": "CANDIDATE-VIEWS-CHECK.log"
+  },
+  "ci": {
+    "runId": 42172301405,
+    "event": "push",
+    "head": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+    "status": "completed",
+    "conclusion": "failure",
+    "classification": "Expected generated-view exception; only build failure is Check generated contract documents; final verify depends on build, shards skip.",
+    "failedBuildJobId": 127742756076,
+    "dependentVerifyJobId": 127742824522,
+    "githubCalls": 3,
+    "actionsReruns": 0,
+    "readyExceptionApplies": true
+  }
+}

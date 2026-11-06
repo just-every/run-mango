@@ -1,0 +1,29 @@
+{
+  "startedAt": 1793945301655,
+  "finishedAt": 1793945301655,
+  "replayAt": 1793945421655,
+  "acknowledged": {
+    "status": "acknowledged",
+    "acknowledgement": {
+      "operatorId": "go-live-owner",
+      "acknowledgedAt": "2026-11-06T06:08:21.655Z"
+    }
+  },
+  "findingIdentity": "d17ee5ae71cbbd19f85e72631c9b38159880da0e0de2f9c74ac7947250eef83a",
+  "refreshedFindingIdentity": "d17ee5ae71cbbd19f85e72631c9b38159880da0e0de2f9c74ac7947250eef83a",
+  "audit": [
+    {
+      "id": "01M6QQHWMQJ0KAQBTW41JEVFMD",
+      "operation_key": "advisory-acknowledgement:d17ee5ae71cbbd19f85e72631c9b38159880da0e0de2f9c74ac7947250eef83a",
+      "entity_type": "campaign-revision",
+      "entity_id": "01M6QQG21Q1ATMJ20CY4PJFPYY",
+      "action": "acknowledge-advisory",
+      "actor_type": "operator",
+      "actor_id": "go-live-owner",
+      "detail_json": "{\"campaignId\":\"01M6QQG21Q8QKJ3ZJV1AE5JS9F\",\"revisionId\":\"01M6QQG21Q1ATMJ20CY4PJFPYY\",\"revisionDigest\":\"30845ef6772b5fbf065ea13048987a4b1fcd8f19c39e5a7d7e7c2d9e9b1d7eda\",\"findingIdentity\":\"d17ee5ae71cbbd19f85e72631c9b38159880da0e0de2f9c74ac7947250eef83a\",\"kind\":\"message.email-subject-length\",\"detail\":\"Email subject is 104 characters. Some inboxes may truncate it; review the opening words.\"}",
+      "occurred_at": 1793945301655,
+      "created_at": 1793945301655
+    }
+  ],
+  "noAuthorityAsserted": true
+}

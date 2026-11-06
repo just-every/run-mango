@@ -1,0 +1,290 @@
+{
+  "observedAt": "2026-11-06T06:11:27.918388+00:00",
+  "githubCalls": 3,
+  "runId": 42172301405,
+  "jobs": [
+    {
+      "id": 127742704116,
+      "name": "plan",
+      "head_sha": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-06T06:05:58Z",
+          "completed_at": "2026-11-06T06:05:59Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-06T06:05:59Z",
+          "completed_at": "2026-11-06T06:06:01Z"
+        },
+        {
+          "name": "Check reusable workflow permissions",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-06T06:06:01Z",
+          "completed_at": "2026-11-06T06:06:01Z"
+        },
+        {
+          "name": "Look up complete nightly marker",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-06T06:06:01Z",
+          "completed_at": "2026-11-06T06:06:01Z"
+        },
+        {
+          "name": "Run node scripts/ci/mango-plan.mjs",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-06T06:06:01Z",
+          "completed_at": "2026-11-06T06:06:03Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-06T06:06:03Z",
+          "completed_at": "2026-11-06T06:06:03Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-06T06:06:03Z",
+          "completed_at": "2026-11-06T06:06:03Z"
+        }
+      ]
+    },
+    {
+      "id": 127742756076,
+      "name": "Build and public command checks",
+      "head_sha": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-06T06:06:07Z",
+          "completed_at": "2026-11-06T06:06:09Z"
+        },
+        {
+          "name": "Set runner-owned browser cache",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-06T06:06:09Z",
+          "completed_at": "2026-11-06T06:06:09Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-06T06:06:09Z",
+          "completed_at": "2026-11-06T06:06:10Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-06T06:06:10Z",
+          "completed_at": "2026-11-06T06:06:15Z"
+        },
+        {
+          "name": "Check generated contract documents",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 5,
+          "started_at": "2026-11-06T06:06:15Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Check edition source lock freshness",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Run npm install --global pnpm@10.12.4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Set runner-owned pnpm store",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Prepare runner-owned browser and apt caches",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Cache frozen dependencies and Chromium",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Install frozen dependencies and reserve native runtime disk",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Run pnpm run deps",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Install and probe Chromium before system dependencies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Build and check the public command once",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 14,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Share the verified production build",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 29,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-11-06T06:06:16Z",
+          "completed_at": "2026-11-06T06:06:16Z"
+        }
+      ]
+    },
+    {
+      "id": 127742757621,
+      "name": "light",
+      "head_sha": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    },
+    {
+      "id": 127742824522,
+      "name": "verify",
+      "head_sha": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-06T06:06:20Z",
+          "completed_at": "2026-11-06T06:06:20Z"
+        },
+        {
+          "name": "Require the selected coverage and its proof",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 2,
+          "started_at": "2026-11-06T06:06:20Z",
+          "completed_at": "2026-11-06T06:06:20Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-06T06:06:20Z",
+          "completed_at": "2026-11-06T06:06:20Z"
+        }
+      ]
+    },
+    {
+      "id": 127742825670,
+      "name": "shards (${{ matrix.name }})",
+      "head_sha": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    },
+    {
+      "id": 127742825757,
+      "name": "full-push-proof",
+      "head_sha": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    },
+    {
+      "id": 127742826074,
+      "name": "nightly-proof",
+      "head_sha": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    }
+  ]
+}

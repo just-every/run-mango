@@ -1,0 +1,16 @@
+{
+  "head": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+  "file": "content-checks.journeys.ts",
+  "title": "[MSG-014][MSG-015][MSG-006][MSG-007][MSG-005][MOVE-014] review names blocked hosts and links, allows an approver to trust them, keeps advisory safety and shows each SMS with its opt-out",
+  "status": "passed",
+  "durationMs": 140657,
+  "stats": {
+    "startTime": "2026-11-06T06:06:31.148Z",
+    "duration": 144760.99899999998,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "reasonForRepeat": "Persist JSON body attachment; the list reporter did not save it as a file."
+}

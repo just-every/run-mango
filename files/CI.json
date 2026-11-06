@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-11-06T06:06:26.064068+00:00",
+  "githubCalls": 2,
+  "runs": [
+    {
+      "id": 42172301405,
+      "name": "Verify",
+      "event": "push",
+      "head_sha": "5afd4c606e7fc4d3beee51c054f35a0530a6b27b",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42172301405"
+    }
+  ]
+}
