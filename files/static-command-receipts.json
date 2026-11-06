@@ -1,0 +1,44 @@
+[
+  {
+    "label": "typecheck",
+    "command": [
+      "pnpm",
+      "run",
+      "typecheck"
+    ],
+    "cwd": "/home/agent/rer-consolidation/work/ct-judge-mango-camp022-20261105-2013-sol1/run-mango",
+    "started_utc": "2026-11-06T02:13:39.402110+00:00",
+    "finished_utc": "2026-11-06T02:14:20.619647+00:00",
+    "elapsed_seconds": 41.218,
+    "exit": 0,
+    "source": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d"
+  },
+  {
+    "label": "source-lock-check",
+    "command": [
+      "node",
+      "scripts/edition-authoring/cli.mjs",
+      "check"
+    ],
+    "cwd": "/home/agent/rer-consolidation/work/ct-judge-mango-camp022-20261105-2013-sol1/run-mango",
+    "started_utc": "2026-11-06T02:14:20.641476+00:00",
+    "finished_utc": "2026-11-06T02:14:21.224033+00:00",
+    "elapsed_seconds": 0.583,
+    "exit": 0,
+    "source": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d"
+  },
+  {
+    "label": "generated-view-check",
+    "command": [
+      "node",
+      "src/base/contract-docs.mjs",
+      "check"
+    ],
+    "cwd": "/home/agent/rer-consolidation/work/ct-judge-mango-camp022-20261105-2013-sol1/run-mango",
+    "started_utc": "2026-11-06T02:14:21.227046+00:00",
+    "finished_utc": "2026-11-06T02:14:21.526293+00:00",
+    "elapsed_seconds": 0.299,
+    "exit": 1,
+    "source": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d"
+  }
+]

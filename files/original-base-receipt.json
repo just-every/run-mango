@@ -1,0 +1,12 @@
+{
+  "original_main": "c69dd5c2f6f75ba010959aa653820860ecd1abbf",
+  "counts": {
+    "done": 18,
+    "partial": 200,
+    "missing": 98
+  },
+  "requirement_acceptance_changes": [],
+  "source": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d",
+  "original_base_diffstat": " CONTRACT.md                                        |   8 +-\n sources.lock.json                                  |  12 +-\n src/core/features/campaigns/authoring-content.ts   |   2 +-\n src/core/features/campaigns/routes.ts              |   2 +-\n .../canonical-content-journey.ts                   | 127 +++++++++++++++++++++\n tests/campaign-authoring/canonical-save.spec.ts    |  50 ++++++++\n 6 files changed, 191 insertions(+), 10 deletions(-)\n",
+  "main_to_source_diffstat": " ACCEPTANCE.md                                      |  20 ++--\n CONTRACT.md                                        |  16 +--\n scripts/verification/plan.mjs                      |   2 +-\n sources.lock.json                                  |  26 ++---\n src/core/features/campaigns/authoring-content.ts   |   2 +-\n src/core/features/campaigns/routes.ts              |   2 +-\n .../canonical-content-journey.ts                   | 127 +++++++++++++++++++++\n tests/campaign-authoring/canonical-save.spec.ts    |  50 ++++++++\n tests/go-live/edge.ts                              |   9 +-\n tests/go-live/paid-signup-journey.ts               |  86 +++-----------\n tests/go-live/paid-tier-journey.ts                 |  38 +-----\n .../proposals-decision/forecast-provenance.spec.ts | 115 -------------------\n 12 files changed, 230 insertions(+), 263 deletions(-)\n"
+}

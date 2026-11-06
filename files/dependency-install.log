@@ -1,0 +1,72 @@
+ WARN  Unsupported engine: wanted: {"node":"22.20.0"} (current: {"node":"v24.19.0","pnpm":"10.12.4"})
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +248
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 248, reused 0, downloaded 0, added 0
+
+   ╭──────────────────────────────────────────╮
+   │                                          │
+   │   Update available! 10.12.4 → 12.18.0.   │
+   │   Changelog: https://pnpm.io/v/12.18.0   │
+   │     To update, run: pnpm add -g pnpm     │
+   │                                          │
+   ╰──────────────────────────────────────────╯
+
+Progress: resolved 248, reused 0, downloaded 1, added 0
+Progress: resolved 248, reused 0, downloaded 19, added 19
+Progress: resolved 248, reused 0, downloaded 40, added 40
+Progress: resolved 248, reused 0, downloaded 63, added 63
+Progress: resolved 248, reused 0, downloaded 77, added 77
+Progress: resolved 248, reused 0, downloaded 87, added 83
+Progress: resolved 248, reused 0, downloaded 110, added 110
+Progress: resolved 248, reused 0, downloaded 129, added 129
+Progress: resolved 248, reused 0, downloaded 140, added 140
+Progress: resolved 248, reused 0, downloaded 153, added 153
+Progress: resolved 248, reused 0, downloaded 163, added 163
+Progress: resolved 248, reused 0, downloaded 191, added 191
+Progress: resolved 248, reused 0, downloaded 213, added 213
+Progress: resolved 248, reused 0, downloaded 238, added 238
+Progress: resolved 248, reused 0, downloaded 248, added 248, done
+.../node_modules/workerd postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.2/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.28.1/node_modules/esbuild postinstall: Done
+.../node_modules/workerd postinstall: Done
+.../esbuild@0.28.2/node_modules/esbuild postinstall: Done
+.../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+
+dependencies:
++ @tanstack/react-router 1.170.41
++ @tanstack/react-start 1.168.60
++ clsx 2.1.1
++ drizzle-orm 0.45.2
++ hono 4.13.7
++ parse5 8.0.1
++ react 19.2.8
++ react-dom 19.2.8
++ tailwind-merge 3.6.0
++ zod 4.5.4
+
+devDependencies:
++ @axe-core/playwright 4.13.0
++ @cloudflare/vite-plugin 1.54.5
++ @cloudflare/workers-types 5.20260831.1
++ @playwright/test 1.64.1
++ @runeditrun/rer 0.2.85
++ @tailwindcss/vite 4.3.3
++ @types/node 24.13.3
++ @types/react 19.2.18
++ @types/react-dom 19.2.5
++ @vitejs/plugin-react 6.1.1
++ drizzle-kit 0.31.10
++ highlight.js 10.7.3
++ react-markdown 6.0.3
++ remark-gfm 1.0.0
++ tailwindcss 4.3.3
++ typescript 5.9.3
++ vite 8.2.2
++ wrangler 4.129.1
+
+Done in 20s using pnpm v10.12.4

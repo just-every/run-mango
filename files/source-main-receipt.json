@@ -1,0 +1,117 @@
+{
+  "observed_utc": "2026-11-06T02:10:52.640061+00:00",
+  "refs": {
+    "candidate": {
+      "sha": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d",
+      "counts": {
+        "partial": 199,
+        "done": 19,
+        "missing": 98
+      },
+      "total": 316,
+      "camp022": {
+        "status": "done",
+        "raw": "| `CAMP-022` | Canonical saved email bytes | published | done | `tests/campaign-authoring/browser.spec.ts` \u2014 \u201c[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px\u201d \u00b7 `tests/campaign-authoring/canonical-save.spec.ts` \u2014 \u201c[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree\u201d; \u201c[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it\u201d \u00b7 `tests/campaign-authoring/canonical-content-journey.ts` \u2014 invoked by the second named canonical-save journey: acceptance 1 exact create and repeated-save HTML, one postal and unsubscribe footer and destination-bearing text; acceptance 2 scripting-off noscript children and fixed-point resaves; acceptance 3 kept attribute values, inline styles and tokens, unrepaired comments and refused markup, accepted noncanonical syntax; acceptance 4 discarded closing-tag attributes, with duplicate and misplaced-tag coverage in the first named journey; acceptance 5 leading newlines, stable plaintext, settling raw-text control and named excessive-nesting refusal with unchanged populated authority; acceptance 6 historical name-only and subject-only saves, independent HTML, text and link expectations, and repeated authenticated reads in the second named journey. |  |"
+      },
+      "cont013": {
+        "status": "partial",
+        "raw": "| `CONT-013` | Erasure and surviving opt-out | published | partial | `tests/audience-import/erasure.spec.ts` \u2014 \u201cCONT-013 public erasure resumes, keeps each restriction, withdraws complete source custody, redacts attributed copies, leaves shared text and keeps reimport unsendable\u201d \u00b7 `tests/audience-import/privacy-portability.spec.ts` \u2014 \u201cCONT-013 CONT-029 different-salt imported subscribed erasure removes every mapping alias and source custody\u201d; \u201cCONT-004/010 legacy detached opt-outs and suppressions refuse a lossy CSV and still exclude later imports\u201d \u00b7 `tests/shopify/connection.spec.ts` \u2014 \u201c[STORE-002][STORE-004] native authenticated Shopify sync retains source identity and purchase time through paged failure and retry\u201d \u00b7 `tests/audience-import/signup-security.spec.ts` \u2014 \u201csecurity: public capture preserves subscribed, suppressed, erased suppression, complaint and owner blocks and a pre-fix erasure without mail or evidence; an erased unsubscriber returns only through their own confirmation\u201d; \u201c[CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot\u201d | Asserted: every restricted identity, opted-out and suppressed aliases included, keeps its hash, channel, reason and occurrence time after erasure, with an owner's own words kept as the owner-block code, and each suppression stays a detached suppression (an owner's still the owner's); no table, read decoded, and no audience export holds the erased address, name or owner note, and the retained hash is one-way and installation-keyed; a subscribed identity leaves no mapping alias or tombstone; import, store sync and public capture keep a retained restriction, which reads unsubscribed; an erased unsubscriber returns only through their own confirmed public-form request, while an erased suppression, complaint, owner block or pre-fix erasure opt-out gets no confirmation. Not met: a pre-fix erasure opt-out restored from another installation's Mango export is dropped when it meets an erasure opt-out this installation's own erasure wrote for the same address, which can then confirm a public-form resubscribe, so acceptance 4 and 5 fail on that path. |"
+      }
+    },
+    "fresh_main": {
+      "sha": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+      "counts": {
+        "partial": 198,
+        "done": 20,
+        "missing": 98
+      },
+      "total": 316,
+      "camp022": {
+        "status": "partial",
+        "raw": "| `CAMP-022` | Canonical saved email bytes | published | partial | `tests/campaign-authoring/browser.spec.ts` \u2014 \u201c[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px\u201d \u00b7 `tests/campaign-authoring/canonical-save.spec.ts` \u2014 \u201c[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree\u201d; \u201c[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it\u201d | Asserted: One managed unsubscribe footer; Derived text contains destination URL; Stored body resaves byte-identically; Editor body resaves byte-identically; First duplicate attribute kept; Ignored misplaced tags absent; Checker judges stored tree. Unasserted: One managed postal footer; HTML-body parse with scripting off; Kept attribute values preserved; Kept styles preserved; Comments preserved but refused; Personalization tokens preserved; Refused markup not repaired; Noncanonical syntax saves; Closing-tag attributes dropped; Leading newline stable; Plaintext stable without footer growth; Sixteen-round instability refusal; Older draft canonicalized on any-field save; Plain text comes from same parse. Missing public-door journey: \u201cCanonical saved email bytes \u2014 complete acceptance\u201d, covering the unasserted outcomes above. |"
+      },
+      "cont013": {
+        "status": "partial",
+        "raw": "| `CONT-013` | Erasure and surviving opt-out | published | partial | `tests/audience-import/erasure.spec.ts` \u2014 \u201cCONT-013 public erasure resumes, keeps each restriction, withdraws complete source custody, redacts attributed copies, leaves shared text and keeps reimport unsendable\u201d \u00b7 `tests/audience-import/privacy-portability.spec.ts` \u2014 \u201cCONT-013 CONT-029 different-salt imported subscribed erasure removes every mapping alias and source custody\u201d; \u201cCONT-004/010 legacy detached opt-outs and suppressions refuse a lossy CSV and still exclude later imports\u201d \u00b7 `tests/shopify/connection.spec.ts` \u2014 \u201c[STORE-002][STORE-004] native authenticated Shopify sync retains source identity and purchase time through paged failure and retry\u201d \u00b7 `tests/audience-import/signup-security.spec.ts` \u2014 \u201csecurity: public capture preserves subscribed, suppressed, erased suppression, complaint and owner blocks and a pre-fix erasure without mail or evidence; an erased unsubscriber returns only through their own confirmation\u201d; \u201c[CONT-027] a recipient-only unsubscribe suppression can confirm again while owner and mixed complaint blocks cannot\u201d | Asserted: every restricted identity, opted-out and suppressed aliases included, keeps its hash, channel, reason and occurrence time after erasure, with an owner's own words kept as the owner-block code, and each suppression stays a detached suppression (an owner's still the owner's); no table, read decoded, and no audience export holds the erased address, name or owner note, and the retained hash is one-way and installation-keyed; a subscribed identity leaves no mapping alias or tombstone; import, store sync and public capture keep a retained restriction, which reads unsubscribed; an erased unsubscriber returns only through their own confirmed public-form request, while an erased suppression, complaint, owner block or pre-fix erasure opt-out gets no confirmation. Not met: a pre-fix erasure opt-out restored from another installation's Mango export is dropped when it meets an erasure opt-out this installation's own erasure wrote for the same address, which can then confirm a public-form resubscribe, so acceptance 4 and 5 fail on that path. |"
+      }
+    }
+  },
+  "documents": [
+    {
+      "path": "AGENTS.md",
+      "bytes": 9726,
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
+      "lines": 69
+    },
+    {
+      "path": "CONTRACT.md",
+      "bytes": 488837,
+      "sha256": "6218bbbfeb867b0b63489e059f0bac635adc9db85b0366d3ba95077fe4eacbda",
+      "lines": 4376
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "bytes": 442972,
+      "sha256": "71b489d1c776a03539d9a090e223f64a19c3fdda24f4e7e48a1904c71efa7596",
+      "lines": 4876
+    },
+    {
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2",
+      "lines": 289
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "bytes": 14451,
+      "sha256": "081018c70e75ee8218b473baac076a57008c7e7e215d97ad049b7616b3dc3ceb",
+      "lines": 333
+    }
+  ],
+  "fresh_main_rows_differing_from_candidate": [
+    {
+      "id": "PROP-008",
+      "main": {
+        "status": "partial",
+        "raw": "| `PROP-008` | Forecast provenance | published | partial | `tests/proposals-decision/decision-routes.spec.ts` \u2014 \u201c[PROP-001][PROP-002][PROP-003][PROP-004][PROP-005][PROP-006][PROP-007][PROP-008][PROP-009] grounded suggestions expose evidence and costs in revenue then deadline order, become editable drafts only by owner decision, and fail without substitutes\u201d: own-history revenue and counts, insufficient and mixed-currency history; `tests/proposals-decision/forecast-provenance.spec.ts` \u2014 \u201c[PROP-008] foreign-store benchmarks fail without authority while own-history forecasts survive authenticated reads\u201d: foreign-store prose with valid owned citations in summary, audience and timing explanations, and a non-null provider forecast, each refused as invalid_ai_output with failed proposal, no linked campaign or accepted forecast, absent from the actionable desk, refused adoption and unchanged recipients with no approval or dispatch authority; independently expected owned forecast persists across authenticated reads.; provider benchmarks with owned history identifiers are also refused without changing existing forecast records, and valid own-history generation succeeds again after those refusals with draft-only authority. | Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range; Other-store benchmark rejected. Unasserted: Every recovery-rate and confidence figure identifies source history; qualification remains unproved without introducing either figure. Real AI and commerce-provider qualification remains unproved. Provider, device, account and cross-seed or Base prerequisites, existing rer 0.2.95 adoption and account acceptance prerequisites remain binding. CONT-013 SPLIT and NEW-1 disposition and original fix-1 hold remain unchanged. |"
+      },
+      "candidate": {
+        "status": "partial",
+        "raw": "| `PROP-008` | Forecast provenance | published | partial | `tests/proposals-decision/decision-routes.spec.ts` \u2014 \u201c[PROP-008] forecasts use owned mature history including failed and zero-revenue recipients, and refuse thin or mixed-currency history\u201d | Asserted: Own campaign identifiers; Own event identifiers; Campaign count; Event count; Thin history has no range. Unasserted: Every recovery-rate and confidence figure identifies source history; Other-store benchmark rejected. Missing public-door journey: \u201cForecast provenance \u2014 complete acceptance\u201d, covering the unasserted outcomes above. |"
+      }
+    },
+    {
+      "id": "CAMP-022",
+      "main": {
+        "status": "partial",
+        "raw": "| `CAMP-022` | Canonical saved email bytes | published | partial | `tests/campaign-authoring/browser.spec.ts` \u2014 \u201c[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px\u201d \u00b7 `tests/campaign-authoring/canonical-save.spec.ts` \u2014 \u201c[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree\u201d; \u201c[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it\u201d | Asserted: One managed unsubscribe footer; Derived text contains destination URL; Stored body resaves byte-identically; Editor body resaves byte-identically; First duplicate attribute kept; Ignored misplaced tags absent; Checker judges stored tree. Unasserted: One managed postal footer; HTML-body parse with scripting off; Kept attribute values preserved; Kept styles preserved; Comments preserved but refused; Personalization tokens preserved; Refused markup not repaired; Noncanonical syntax saves; Closing-tag attributes dropped; Leading newline stable; Plaintext stable without footer growth; Sixteen-round instability refusal; Older draft canonicalized on any-field save; Plain text comes from same parse. Missing public-door journey: \u201cCanonical saved email bytes \u2014 complete acceptance\u201d, covering the unasserted outcomes above. |"
+      },
+      "candidate": {
+        "status": "done",
+        "raw": "| `CAMP-022` | Canonical saved email bytes | published | done | `tests/campaign-authoring/browser.spec.ts` \u2014 \u201c[CAMP-002][CAMP-003][CAMP-004][CAMP-005][CAMP-006][CAMP-018][BUILD-002] fresh authoring through actual Worker and D1 at 1440px\u201d \u00b7 `tests/campaign-authoring/canonical-save.spec.ts` \u2014 \u201c[BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree\u201d; \u201c[CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it\u201d \u00b7 `tests/campaign-authoring/canonical-content-journey.ts` \u2014 invoked by the second named canonical-save journey: acceptance 1 exact create and repeated-save HTML, one postal and unsubscribe footer and destination-bearing text; acceptance 2 scripting-off noscript children and fixed-point resaves; acceptance 3 kept attribute values, inline styles and tokens, unrepaired comments and refused markup, accepted noncanonical syntax; acceptance 4 discarded closing-tag attributes, with duplicate and misplaced-tag coverage in the first named journey; acceptance 5 leading newlines, stable plaintext, settling raw-text control and named excessive-nesting refusal with unchanged populated authority; acceptance 6 historical name-only and subject-only saves, independent HTML, text and link expectations, and repeated authenticated reads in the second named journey. |  |"
+      }
+    },
+    {
+      "id": "PUB-005",
+      "main": {
+        "status": "done",
+        "raw": "| `PUB-005` | Paid signup page and payer consent | target | done | `tests/go-live/roles.journeys.ts` \u2014 \u201c[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history\u201d \u00b7 `tests/go-live/paid-signup-journey.ts` \u2014 \u201c[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history\u201d; `tests/go-live/paid-tier-journey.ts` |  |"
+      },
+      "candidate": {
+        "status": "partial",
+        "raw": "| `PUB-005` | Paid signup page and payer consent | target | partial | `tests/go-live/roles.journeys.ts` \u2014 \u201c[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history\u201d \u00b7 `tests/go-live/paid-signup-journey.ts` \u2014 \u201c[PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history\u201d | Paid signup, provider return, recorded permission and one confirmation, own-confirmation paid-only delivery, opt-out/suppression and erasure are asserted. Unasserted: Only Owner-saved tier can be offered. Missing public-door journey: \u201cPaid signup page and payer consent \u2014 complete acceptance\u201d, covering the unasserted outcomes above. |"
+      }
+    },
+    {
+      "id": "PUB-006",
+      "main": {
+        "status": "done",
+        "raw": "| `PUB-006` | Paid-reader consent and restrictions | target | done | `tests/go-live/roles.journeys.ts` \u2014 \u201c[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history\u201d; `tests/go-live/paid-signup-journey.ts`; reviewed, approved and dispatched paid and free issues exclude pending and suppressed active payers while exact confirmed controls receive native recipient handoffs and mail-edge sends, with no barred delivery credit; the confirmed payer receives the next paid-only issue; an unsubscribed payer stays unsubscribed through payment and GET until their own POST, suppression gets no confirmation, an already confirmed subscriber gets no second confirmation, and erasure removes the address and consent evidence. Stripe and mail are network-edge fixtures. |  |"
+      },
+      "candidate": {
+        "status": "partial",
+        "raw": "| `PUB-006` | Paid-reader consent and restrictions | target | partial | `tests/go-live/roles.journeys.ts` \u2014 \u201c[BASE-ACCESS-001][OPER-001][OPER-002][PUB-005][FORM-008][FORM-010][INT-004][OPER-003][OPER-004] roles govern native requests and removal retains authors, approvers and history\u201d | Asserted in its paid-signup leg: paid-checkout evidence and one confirmation for a first-time payer, consent missing until confirmed; no paid-only send before and exactly the payer after the confirmation; an unsubscribed payer stays unsubscribed until their own POST; a suppressed payer gets no confirmation; payment never widens permission; erasure removes the address and evidence. Unasserted: no free newsletter reaches a pending payer before confirmation, and a suppressed payer receives no newsletter (none is reviewed or sent to either). |"
+      }
+    }
+  ]
+}

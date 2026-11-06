@@ -1,0 +1,49 @@
+{
+  "tag": "ct-judge-mango-camp022-20261105-2013-sol1",
+  "recorded_utc": "2026-11-06T02:20:49.259315+00:00",
+  "verdict": "CAMP-022 ACCEPT ON LANDING",
+  "source": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d",
+  "source_branch": "cloud/sd-mango-c-f41",
+  "product_writes": false,
+  "product_commits": 0,
+  "product_pushes": 0,
+  "pr": null,
+  "focused_tests": 2,
+  "focused_failed": 0,
+  "focused_seconds": 253.903,
+  "typecheck_exit": 0,
+  "source_lock_check_exit": 0,
+  "generated_view_check_exit": 1,
+  "ci_api_calls": 0,
+  "candidate_verify": {
+    "id": 42097418588,
+    "event": "push",
+    "conclusion": "failure",
+    "runtime": "skipped",
+    "basis": "supplied receipt only; generated-view exception"
+  },
+  "source_acceptance_awarded": false,
+  "count_awarded": 0,
+  "fresh_main_sha": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+  "fresh_main_counts": {
+    "partial": 198,
+    "done": 20,
+    "missing": 98
+  },
+  "scan": {
+    "status": "NOT_RUN_CLOUD",
+    "complete": false,
+    "historyScanned": null,
+    "findings": null
+  },
+  "pending": [
+    "distinct original source protection readback",
+    "distinct original exact-chain CT protection creation/readback by existing authorized custodian; absent per brief",
+    "preserve every newer-main complete row and assertion",
+    "merged generation write/check and source lock LAST/check",
+    "full exact-FINAL runtime-green Verify with relied-on journeys",
+    "COMPLETE full-history NEW 0 publication scan",
+    "guarded main equality and exact-main green Run site"
+  ],
+  "cleanup": "pending completion after evidence transport while product clone remains available for required publication"
+}

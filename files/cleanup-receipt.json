@@ -1,0 +1,11 @@
+{
+  "recorded_utc": "2026-11-06T02:22:24.384667+00:00",
+  "source": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d",
+  "branch": "cloud/sd-mango-c-f41",
+  "tracked_worktree_diff": "",
+  "tracked_index_diff": "",
+  "owned_runtime_or_browser_processes_remaining": [],
+  "disposable_clone_exists_for_required_evidence_publication": true,
+  "disposable_clone_and_dependencies_delete_after_publication": true,
+  "private_runtime_logs_and_test_scratch_not_selected_for_publication": true
+}

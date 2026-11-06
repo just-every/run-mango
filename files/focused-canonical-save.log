@@ -1,0 +1,33 @@
+
+Running 2 tests using 2 workers
+
+(node:1030) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1031) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PROBE CAMP-022 acceptance-1: explicit native create and repeat saves -> one postal and unsubscribe footer, exact independent HTML and destination-bearing text
+PROBE CAMP-022 acceptance-3: noncanonical case, quotes and unquoted destination -> accepted save preserving kept title, inline style and personalization token
+PROBE CAMP-022 acceptance-2: native PATCH of noscript content -> scripting-off child tree and text, byte-identical resave
+PROBE CAMP-022 acceptance-4: native PATCH of end-tag attributes -> discarded attributes absent from persisted recipient tree
+PROBE CAMP-022 acceptance-3 refusal: native save and approval -> comment, script and hiding declaration retained exactly, message.content blocks approval
+Canonical proof: start full promotion
+Full promotion proof: start; elapsed=0ms
+PROBE CAMP-022 acceptance-5 stability: native saves of preformatted controls and unclosed plaintext -> stable leading newlines and text, no footer growth or movement, approval refused
+PROBE CAMP-022 acceptance-5 bound: native create and PATCH of sixteen nested raw-text layers -> invalid_email_body, unchanged draft bytes, links, counts and sending authority
+Full promotion proof: runtime ready; elapsed=34336ms
+PROBE CAMP-022 acceptance-6 older draft: name-only native PATCH -> canonical persisted body, independently expected text and three retained destinations; no approval, recipients or jobs
+Full promotion proof: build six products; elapsed=53196ms
+PROBE CAMP-022 acceptance-6 same parse: subject-only native PATCH and repeated authenticated GET -> identical HTML and text bytes, decoded destinations and no sending authority
+Full promotion proof: build social links; elapsed=66960ms
+Full promotion proof: save draft; elapsed=76097ms
+Full promotion proof: reload saved draft; elapsed=78039ms
+Full promotion proof: round trip complete; elapsed=86070ms
+Full promotion proof: screen proofs; elapsed=86297ms
+Full promotion proof: render complete email; elapsed=94850ms
+Full promotion proof: approve and dispatch; elapsed=96258ms
+Full promotional email: storedCharacters=32117; sentBytes=33768; shownBytes=33768; limit=102400
+  ✓  1 tests/campaign-authoring/canonical-save.spec.ts:15:1 › [BUILD-010][CAMP-022][MSG-009][MSG-012] saving stores the body as mail clients parse it, and approval judges that tree (3.5m)
+Audience size proof: bound=5181; deployment=197661; handoffs=1
+  ✓  2 tests/campaign-authoring/canonical-save.spec.ts:77:1 › [CAMP-022][MSG-009] a saved body saves to the same bytes, whether saved as stored or as the editor shows it (4.2m)
+
+  2 passed (4.2m)

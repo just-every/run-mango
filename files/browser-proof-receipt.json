@@ -1,0 +1,169 @@
+{
+  "source": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d",
+  "run_receipt": "command-receipts.json",
+  "inspect_scope": "Nonvisual functional review of saved preview and plain-text/footer content at viewport 1440 and 390; no UI design or visual-quality judgment",
+  "screens": [
+    {
+      "path": "screens/full-promotion-1440.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/full-promotion-1440.png",
+      "bytes": 400153,
+      "image_width": 604,
+      "image_height": 5954,
+      "sha256": "8117a1c945988e93567b008bdd49c8d59fcc02933c8f36019d9c70aa3d7a0805",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/full-promotion-email-1440.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/full-promotion-email-1440.png",
+      "bytes": 1146228,
+      "image_width": 1440,
+      "image_height": 7653,
+      "sha256": "7c3608bc310ea3ea3554c88673962f919500a00d0ed31663e1f99917f0d7c412",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/social-block-1440.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/social-block-1440.png",
+      "bytes": 125259,
+      "image_width": 554,
+      "image_height": 2007,
+      "sha256": "d5ea182b46068615484147988f3347561137f03c21094381c23deb1d89ce78c7",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-block-controls-1440.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-block-controls-1440.png",
+      "bytes": 89727,
+      "image_width": 554,
+      "image_height": 1613,
+      "sha256": "5a67d05d4adee0e1e7b45451539b0aeafe61221c5e8808c75ec02a90979370bf",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-block-controls-390.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-block-controls-390.png",
+      "bytes": 92129,
+      "image_width": 324,
+      "image_height": 2117,
+      "sha256": "33814fc287e3df70f1f34119dc792d6b249e8d5c7d992212cff209c93201fa06",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-preview-1440.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-preview-1440.png",
+      "bytes": 150626,
+      "image_width": 1232,
+      "image_height": 836,
+      "sha256": "e7126664305adeeee6a783f0a2b76c4d2d3f7d9fd1ceea95049f941055a914e9",
+      "inspected_functionally": true
+    },
+    {
+      "path": "screens/mobile-preview-390.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-preview-390.png",
+      "bytes": 126772,
+      "image_width": 358,
+      "image_height": 1445,
+      "sha256": "53bff2d233144ef7ac2cb128a43f9a54557f109b3476c442285006ae6176281e",
+      "inspected_functionally": true
+    },
+    {
+      "path": "screens/mobile-email-375-quirks-generated.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-email-375-quirks-generated.png",
+      "bytes": 13387,
+      "image_width": 375,
+      "image_height": 1000,
+      "sha256": "68327c5438780d469675f9e320a530ffb5597cc37300f65c90a780ef1067bd51",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-email-375-quirks-stripped.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-email-375-quirks-stripped.png",
+      "bytes": 13630,
+      "image_width": 375,
+      "image_height": 1000,
+      "sha256": "2667adf6e91083228423deaa2c0646b703e044d268c144121f0dec115bee1b09",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-email-375-standards-generated.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-email-375-standards-generated.png",
+      "bytes": 13559,
+      "image_width": 375,
+      "image_height": 1000,
+      "sha256": "10cb627d3fd59fd7bffeb93b2f41b3fffd23f588e9c2e507ea5bea3df8bde822",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-email-375-standards-stripped.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-email-375-standards-stripped.png",
+      "bytes": 13806,
+      "image_width": 375,
+      "image_height": 1000,
+      "sha256": "fe1204a4229fe51ccef18bda6b570e9c75aa13b3c4138fdc3fdc959348e091ed",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-email-600-quirks-generated.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-email-600-quirks-generated.png",
+      "bytes": 13153,
+      "image_width": 600,
+      "image_height": 1000,
+      "sha256": "0183547b83eaa607a589e2ddc3432b65808cecadbbc4ef2f03ed754ad713cff0",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-email-600-quirks-stripped.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-email-600-quirks-stripped.png",
+      "bytes": 14472,
+      "image_width": 600,
+      "image_height": 1000,
+      "sha256": "e826839fb9e2ab7e77e521794530e2811a394b6feccbf84ee88a6ce603d5fa19",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-email-600-standards-generated.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-email-600-standards-generated.png",
+      "bytes": 13154,
+      "image_width": 600,
+      "image_height": 1000,
+      "sha256": "d66535e0896ca57be12c9e69a2f68b0447ef392666df138ab814734f0dc6e038",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/mobile-email-600-standards-stripped.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-f33f2-d-approval-judges-that-tree/mobile-email-600-standards-stripped.png",
+      "bytes": 14473,
+      "image_width": 600,
+      "image_height": 1000,
+      "sha256": "2f6d2bff6e7b9bcee465ebf4a288921f7614c9a10bd0d34f1bb0de76a725f04b",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/audience-size-1440.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-e1676-d-or-as-the-editor-shows-it/audience-size-1440.png",
+      "bytes": 853587,
+      "image_width": 604,
+      "image_height": 5781,
+      "sha256": "4af1a01732d42f9c38444b50957cecf524bfbd4b8669c07ca3cf60576d3ad85e",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/audience-size-refused-1440.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-e1676-d-or-as-the-editor-shows-it/audience-size-refused-1440.png",
+      "bytes": 363412,
+      "image_width": 604,
+      "image_height": 3931,
+      "sha256": "ee81ba63dbc66de48d4af9e9abe94552fbfb661483286508b20e619c1d48ee86",
+      "inspected_functionally": false
+    },
+    {
+      "path": "screens/flow-library-copy-1440.png",
+      "source_artifact": "test-work/evidence/b2dccb005459/main/campaign-authoring-canonic-e1676-d-or-as-the-editor-shows-it/flow-library-copy-1440.png",
+      "bytes": 146032,
+      "image_width": 1440,
+      "image_height": 2346,
+      "sha256": "ae3050d62a8e33ad19c3b83567ffa959b1e43157eb63ea684f8a7fe7e2e683fe",
+      "inspected_functionally": false
+    }
+  ]
+}

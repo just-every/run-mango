@@ -1,0 +1,9 @@
+# Read-only CAMP-022 judgment plan
+
+1. Establish fleet identity and bundle-backed Git authentication, read cloud runtime and launcher instructions.
+2. Clone only just-every/run-mango shallow and filtered at the original cloud/sd-mango-c-f41 source; verify exact ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d. Do not create a product branch, commit, push, PR, source mutation or CI operation.
+3. Read the full pinned CONTRACT.md, ACCEPTANCE.md, AGENTS.md, relevant RULINGS and D-1/D-3 and CAMP-003 inheritance; read root Playwright configuration, Verify wiring, both canonical-save journeys and every relied-on helper end to end. Freeze only original requirement, AP1-6, inherited duties and requested riders 1-11 if stable IDs are not supplied.
+4. Install only local test dependencies, without provider credentials or production setup. Run the root-config focused canonical-save suite once on the exact source with few workers, actual Chromium, local Worker and D1. Preserve all commands, exits and any NOT RUN reasons, and inspect functional 1440 and 390 captures without a visual-quality judgment.
+5. Read current main via fetch only; rederive actual status counts and identify newer Status AND Gap/Evidence/provenance/assertions that integration must preserve. Never award a count or alter any source pin, hold or lifetime FIX total.
+6. Write one complete VERDICT.md and REPORT.md with every frozen row scored, honest candidate Verify limitation, source and exact-chain custody gaps and all final integration guards. No CI query, retry, dispatch or provider operation.
+7. Publish explicitly selected non-secret report and receipt files only through evidence/ct-judge-mango-camp022-20261105-2013-sol1. Verify product checkout remains unchanged; delete disposable clone and its dependencies and close only owned processes. Emit exact evidence and CT POST lines, then READY for report completion only.

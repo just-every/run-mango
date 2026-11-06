@@ -1,0 +1,126 @@
+{
+  "recorded_utc": "2026-11-06T02:14:43.820000+00:00",
+  "source": "ea1c15cb9b9904434a513fb135b8fd4c6b4e9b1d",
+  "files": [
+    {
+      "path": "tests/campaign-authoring/canonical-save.spec.ts",
+      "bytes": 13457,
+      "sha256": "8854edc76efc83f3e0c1a23a6883ec51cadf2a162e56e833bbc6607ee42388a2"
+    },
+    {
+      "path": "tests/campaign-authoring/canonical-content-journey.ts",
+      "bytes": 10093,
+      "sha256": "888ce6dbb56ed626426bdd50f4f6fd2b7d718531de9e1ac2f7500a6dae4378db"
+    },
+    {
+      "path": "tests/campaign-authoring/full-promotional-email-journey.ts",
+      "bytes": 15879,
+      "sha256": "3896f903be355152f387dce3a839e83c8998f3f56ad738fc6aeef1fe6d02ff80"
+    },
+    {
+      "path": "tests/campaign-authoring/mobile-presentation-journey.ts",
+      "bytes": 8947,
+      "sha256": "b03a70c6b5f2d9c063a02709a5de07a5acbcc618563f8bc4dd97ae33b388ea46"
+    },
+    {
+      "path": "tests/campaign-authoring/block-builder-journey.ts",
+      "bytes": 16559,
+      "sha256": "bc7c741de95e97fba49adcd517d74f0978bd4915f8854b4aa3a352191e653280"
+    },
+    {
+      "path": "tests/campaign-authoring/flow-template-journey.ts",
+      "bytes": 4370,
+      "sha256": "be0781519d7d7b50786d598e66f554597abffb7db2934641c41e09c7ee6f1f9d"
+    },
+    {
+      "path": "tests/campaign-authoring/audience-size-journey.ts",
+      "bytes": 8421,
+      "sha256": "08833cac189a776cb40ef9845c73d0fedfd2ec6ce99d921010b2aaee18dccd2e"
+    },
+    {
+      "path": "tests/go-live/harness.ts",
+      "bytes": 8783,
+      "sha256": "3816a3b05f06d1e322ea1c00ba4cad0d14db19f5f4ca7c9c86d04b7fdca4460e"
+    },
+    {
+      "path": "tests/go-live/edge.ts",
+      "bytes": 13092,
+      "sha256": "2daff28da4776154df16bcb71668ddb348f3afa66672350e0d8c75aa8b5d8270"
+    },
+    {
+      "path": "tests/campaign-authoring/browser-runtime.mjs",
+      "bytes": 7921,
+      "sha256": "0542609977c08a8a88149388d5dc548b76b3bba0bf55e4b844b28601ac1be9df"
+    },
+    {
+      "path": "tests/campaign-authoring/worker.ts",
+      "bytes": 10732,
+      "sha256": "a82e8a7c205e6e16afea5c2f1d3c98ca31872a7e7f59cfc7431d2ea7190a26f1"
+    },
+    {
+      "path": "tests/go-live/worker.ts",
+      "bytes": 14635,
+      "sha256": "79a99a67b11638d5664e1bf47b423a4ffcdb51c7abf9f2d7be37883980e548be"
+    },
+    {
+      "path": "src/core/features/campaigns/authoring-content.ts",
+      "bytes": 6499,
+      "sha256": "a5c31e91e7eb8787bc9aba3370ff640c39d6ff3bcb0db0468178b63278c4a508"
+    },
+    {
+      "path": "src/core/features/campaigns/email-html-parse.ts",
+      "bytes": 12579,
+      "sha256": "5fe6811c3a188ec29d77ed8aa96aafabe93319c774131cf87f66bd998e4582d6"
+    },
+    {
+      "path": "src/core/features/campaigns/composition-repository.ts",
+      "bytes": 14048,
+      "sha256": "626c9927ab6a89b75f42671152107d1d90a254baaec6c12e0f1fe952a5849715"
+    },
+    {
+      "path": "src/core/features/campaigns/create-draft.ts",
+      "bytes": 5481,
+      "sha256": "1781b704dcc22363c463f18e19d3be9d396604c6b1744d236e7bf858c12b66ac"
+    },
+    {
+      "path": "src/core/features/campaigns/routes.ts",
+      "bytes": 10344,
+      "sha256": "734ddc4adc954667db548c0276ad2a5ae5ba0af92a57ea226b6823a84e5c3b77"
+    },
+    {
+      "path": "playwright.config.js",
+      "bytes": 792,
+      "sha256": "52ea3f0dfd2a8735abe89659455ff89a3c7cf16f4baad4ee101980d3652f974a"
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "bytes": 5659,
+      "sha256": "6fb79aed44d2687e2346394a5a7838339e111a3a1dcaefb637ee6c0221ecbd95"
+    },
+    {
+      "path": "scripts/verification/ci.mjs",
+      "bytes": 2387,
+      "sha256": "f885f38c3d7e2d494ee454f1f0512ffa1e0919e2da775f49108f3c7d1d670317"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 9726,
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8"
+    },
+    {
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2"
+    },
+    {
+      "path": "CONTRACT.md",
+      "bytes": 488837,
+      "sha256": "6218bbbfeb867b0b63489e059f0bac635adc9db85b0366d3ba95077fe4eacbda"
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "bytes": 442972,
+      "sha256": "71b489d1c776a03539d9a090e223f64a19c3fdda24f4e7e48a1904c71efa7596"
+    }
+  ]
+}
