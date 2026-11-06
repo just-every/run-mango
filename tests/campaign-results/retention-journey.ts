@@ -87,7 +87,7 @@ async function inspectRetention(page:Page,request:APIRequestContext,runtime:{url
   await assertAffinityTables(page,expected.affinity);
   await page.getByText('Methods and thresholds',{exact:true}).click();await expect(page.getByText(/Midrank percentile/)).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);
-  await page.locator('#retention-title').scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`retention-${width}.png`)});
+  await page.getByRole('table',{name:'Customer RFM scores',exact:true}).screenshot({path:info.outputPath(`retention-${width}.png`)});
   await openPage(page,`${runtime.url}/app/audience/retention-iris`);await expect(page.getByRole('heading',{name:'Purchase lifecycle and RFM',exact:true})).toBeVisible();await expect(page.getByText('Recency score 5/5 · Frequency score 5/5',{exact:true})).toBeVisible();expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);expect((await new AxeBuilder({page}).analyze()).violations).toEqual([]);await page.getByRole('heading',{name:'Purchase lifecycle and RFM',exact:true}).scrollIntoViewIfNeeded();await page.screenshot({path:info.outputPath(`contact-rfm-${width}.png`)});
   for(const contactId of ['retention-iris','retention-maya']) {
     await openPage(page,`${runtime.url}/app/audience/${contactId}`);
@@ -97,7 +97,7 @@ async function inspectRetention(page:Page,request:APIRequestContext,runtime:{url
   // browser proof without registering a second copy of the journey.
   await page.setViewportSize({width:390,height:844});
   await openPage(page,`${runtime.url}/app/insights`);
-  await page.locator('#retention-title').scrollIntoViewIfNeeded();
+  await page.getByRole('table',{name:'Customer RFM scores',exact:true}).getByRole('row').filter({has:page.getByRole('link',{name:'Maya Chen',exact:true})}).scrollIntoViewIfNeeded();
   await page.screenshot({path:info.outputPath('retention-390.png')});
   await openPage(page,`${runtime.url}/app/audience/retention-maya`);
   await page.getByRole('heading',{name:'Purchase lifecycle and RFM',exact:true}).scrollIntoViewIfNeeded();
