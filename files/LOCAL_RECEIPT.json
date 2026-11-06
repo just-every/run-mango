@@ -1,0 +1,185 @@
+{
+  "base": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+  "branch": "cloud/sd-mango-c-f125",
+  "ci": [
+    {
+      "conclusion": null,
+      "event": "push",
+      "head_branch": "cloud/sd-mango-c-f125",
+      "head_sha": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42237885247",
+      "id": 42237885247,
+      "name": "Verify",
+      "status": "in_progress"
+    },
+    {
+      "conclusion": "success",
+      "event": "push",
+      "head_branch": "cloud/sd-mango-c-f118",
+      "head_sha": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42229120427",
+      "id": 42229120427,
+      "name": "Verify",
+      "status": "completed"
+    }
+  ],
+  "completed_at": "2026-11-06T14:53:58.478176+00:00",
+  "counts_after": {
+    "done": 20,
+    "missing": 98,
+    "partial": 198
+  },
+  "counts_before": {
+    "done": 20,
+    "missing": 98,
+    "partial": 198
+  },
+  "head": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+  "main": "a6ff098f6cdf8b356b76105c726c2561f6051a8d",
+  "main_equals_candidate": false,
+  "new_product_commits": 0,
+  "product_edits": 0,
+  "publication_scan": {
+    "commit": "1f7408aa79736babc12783c0b46eb4105d0648ad",
+    "complete": null,
+    "findings": null,
+    "historyScanned": null,
+    "status": "not run in cloud; guarded lander owns this exact-head scan"
+  },
+  "repository": "just-every/run-mango",
+  "results": [
+    {
+      "command": "npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "runner": "cloud_run"
+    },
+    {
+      "chromium": "/usr/bin/chromium",
+      "command": "perl -e 'alarm 1200; exec @ARGV' -- pnpm exec playwright test --config tests/go-live/playwright.config.js sync-integrations.journeys.ts",
+      "duration_reported": "4.1m",
+      "exit": 0,
+      "log": "journey.log",
+      "runner": "cloud_run",
+      "tests_passed": 1
+    },
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "pnpm exec rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "files_written": 0,
+      "log": "views.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "views.log"
+    },
+    {
+      "changed": false,
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "lock-write.json"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "lock-check.json"
+    },
+    {
+      "command": "migration ledger check",
+      "status": "not applicable; no migrations changed"
+    },
+    {
+      "attempts": 1,
+      "command": "python3 $HOME/rer-consolidation/.tools/cloud-push.py origin cloud/sd-mango-c-f125",
+      "exit": 0,
+      "log": "product-push.log"
+    }
+  ],
+  "schema": 1,
+  "screenshots": [
+    {
+      "bytes": 336883,
+      "file": "screens/custom-properties-contact-values-history-1440.png",
+      "sha256": "78f90624b99c4d62c80a579cc1d0e86e7e527412f1d431f8c5c67b0c19b4fc99"
+    },
+    {
+      "bytes": 315309,
+      "file": "screens/custom-properties-contact-values-history-390.png",
+      "sha256": "6ed04734530de2b5b9d9d84b05fff106b5ac0eb57b170c760e90ec612124c76f"
+    },
+    {
+      "bytes": 145413,
+      "file": "screens/custom-properties-date-segment-1440.png",
+      "sha256": "2e0e40f5e15ce55abb18ccc937f76289f9b987aaa163ad29d0feca64b40ae376"
+    },
+    {
+      "bytes": 164159,
+      "file": "screens/custom-properties-date-segment-390.png",
+      "sha256": "470f890501e62d0119fc472f23210561d9ad84d1d47e890879c72ba35fbf1292"
+    },
+    {
+      "bytes": 81947,
+      "file": "screens/custom-properties-import-mapping-1440.png",
+      "sha256": "b18a1beaf858250786c98e566f9f1fe415d7e15fb440e454cf8b6c290107ab20"
+    },
+    {
+      "bytes": 126796,
+      "file": "screens/custom-properties-import-mapping-390.png",
+      "sha256": "6b1dd4b654a40ae2ade4dc2ba77149c8d467f8140e82072a1a4753376a5f79b8"
+    },
+    {
+      "bytes": 136921,
+      "file": "screens/custom-properties-money-preview-1440.png",
+      "sha256": "6588bda32de9c4b50215597edf03b6ddf7a25dd023638ea84931304d0d3ecd0a"
+    },
+    {
+      "bytes": 118832,
+      "file": "screens/custom-properties-money-preview-390.png",
+      "sha256": "313a28276ca48fed01c2678dd3a1784cabf2b3125aa24abe3b8ee638c7e1b439"
+    },
+    {
+      "bytes": 70665,
+      "file": "screens/custom-properties-settings-1440.png",
+      "sha256": "5c49cfe2bbe62a352adc9e6c3ab374b163a58f58709a8c279d49382305682fc4"
+    },
+    {
+      "bytes": 68536,
+      "file": "screens/custom-properties-settings-390.png",
+      "sha256": "a174097b43bd31f91efc05d4a24ebe008a12b211b2913dcf390afcfb908bf8bf"
+    },
+    {
+      "bytes": 73996,
+      "file": "screens/custom-properties-typed-controls-1440.png",
+      "sha256": "4c28d3c7fdb8fed20302d399865bc9db1d56249cb09f72833b124786b25e2d8c"
+    },
+    {
+      "bytes": 63037,
+      "file": "screens/custom-properties-typed-controls-390.png",
+      "sha256": "4b2ad2f9caa7291017e28439b204334ab0c75cc96cc5c39bd999ab40a7fc994c"
+    },
+    {
+      "bytes": 33457,
+      "file": "screens/custom-properties-typed-readback-1440.png",
+      "sha256": "e5c791328290ff1a22ca430cd48497fea0aaed272fe09db440561bb3191a9860"
+    },
+    {
+      "bytes": 24123,
+      "file": "screens/custom-properties-typed-readback-390.png",
+      "sha256": "13ba9a8c857ab6f05bf0fabe755c217dca961fa9588f67d51810a9db226cc30c"
+    }
+  ],
+  "selected_registration_count_after": 1,
+  "selected_registration_count_before": 1,
+  "tag": "sd-mango-c-f125",
+  "working_tree_clean": true
+}

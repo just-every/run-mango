@@ -1,0 +1,5 @@
+{"conclusion":"skipped","event":"push","head_sha":"a6ff098f6cdf8b356b76105c726c2561f6051a8d","html_url":"https://github.com/just-every/run-mango/actions/runs/42217811175","id":42217811175,"name":"Run demo","status":"completed"}
+{"conclusion":"success","event":"push","head_sha":"a6ff098f6cdf8b356b76105c726c2561f6051a8d","html_url":"https://github.com/just-every/run-mango/actions/runs/42217811205","id":42217811205,"name":"Verify","status":"completed"}
+{"conclusion":"success","event":"push","head_sha":"a6ff098f6cdf8b356b76105c726c2561f6051a8d","html_url":"https://github.com/just-every/run-mango/actions/runs/42217811413","id":42217811413,"name":"Run site","status":"completed"}
+{"conclusion":"success","event":"dynamic","head_sha":"a6ff098f6cdf8b356b76105c726c2561f6051a8d","html_url":"https://github.com/just-every/run-mango/actions/runs/42217809575","id":42217809575,"name":"Push on main","status":"completed"}
+{"conclusion":"success","event":"push","head_sha":"a6ff098f6cdf8b356b76105c726c2561f6051a8d","html_url":"https://github.com/just-every/run-mango/actions/runs/42214350885","id":42214350885,"name":"Verify","status":"completed"}
