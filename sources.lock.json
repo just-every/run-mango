@@ -8806,7 +8806,7 @@
       "executable": false
     },
     "tests/go-live/custom-property-journey.ts": {
-      "sha256": "f1c83318dbd83b99e95ca36a947dda0bd6fbaefc8bab5f8073d1dd538e4aa78b",
+      "sha256": "b1b26e707c00ba6ecdd591eba77a411d5fb3084e1b5c508859e562dd30ba17f4",
       "executable": false
     },
     "tests/go-live/custom-property-preview.ts": {
