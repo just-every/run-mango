@@ -13,7 +13,80 @@ export const hostNetwork = {
   'https://shop.myshop.com/offer': {},
   'https://myshop.com/offer': {},
   'https://myshop.com.evil.example/offer': {},
+  'https://admin-review.example.test/offer': {},
 };
+
+async function adminHostAllowance(site: Installation, owner: string, page: Page, info: TestInfo, now: number) {
+  const operatorId = 'synthetic-mango-167';
+  const admin = await site.open([operatorId, 'example.test'].join('@'), operatorId);
+  await json(await site.call(`/api/operators/${operatorId}/role`, {method:'PUT', cookie:owner, body:{role:'admin'}}), 200);
+  expect((await json(await site.call('/api/operator', {cookie:admin}), 200)).operator.role).toBe('admin');
+  const host = 'admin-review.example.test', destination = `https://${host}/offer`;
+  const readers = await site.rows("SELECT email FROM contacts WHERE display_name='Garden reader'");
+  expect(readers).toHaveLength(1);
+  const campaign = await draftCampaign(site, admin, 'Synthetic Mango Admin review', [readers[0].email], new Date(now + 7200000));
+  const path = `/api/campaigns/${campaign.campaignId}`;
+  await json(await site.call(`/api/campaign-revisions/${campaign.revisionId}`, {method:'PATCH', cookie:admin,
+    body:{emailBody:`<p><a href="${destination}">Admin partner offer</a></p>`}}), 200);
+  const before = await json(await site.call(`${path}/review`, {cookie:admin}), 200);
+  expect(before.blockedHosts).toContainEqual({host, links:[destination]});
+  expect((await json(await site.call('/api/settings/link-hosts', {cookie:admin}), 200)).hosts).not.toContain(host);
+  const noAuthority = async () => {
+    expect(await site.rows(`SELECT state,active_revision_id FROM campaigns WHERE id='${campaign.campaignId}'`))
+      .toEqual([{state:'draft', active_revision_id:null}]);
+    expect(await site.rows(`SELECT state,approved_at,approved_by_operator_id FROM campaign_revisions WHERE id='${campaign.revisionId}'`))
+      .toEqual([{state:'draft', approved_at:null, approved_by_operator_id:null}]);
+    expect(await site.rows(`SELECT * FROM campaign_approval_requests WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
+    expect(await site.rows(`SELECT * FROM recipient_steps WHERE campaign_id='${campaign.campaignId}'`)).toEqual([]);
+    expect(await site.rows(`SELECT * FROM step_dispatches WHERE revision_id='${campaign.revisionId}'`)).toEqual([]);
+    expect((await site.control('/_golive/emissions')).filter((entry:any) =>
+      entry.command.kind === 'campaign.dispatch' && entry.command.payload.revisionId === campaign.revisionId)).toEqual([]);
+  };
+  await noAuthority();
+  await page.context().clearCookies();
+  await page.context().addCookies([{name:admin.split('=')[0], value:admin.split('=')[1], url:site.runtime.url}]);
+  await page.setViewportSize({width:1440, height:1000});
+  await openPage(page, `${site.runtime.url}/app/campaigns/${campaign.campaignId}/review`);
+  const blocked = page.getByRole('region', {name:`Blocked host ${host}`, exact:true});
+  await expect(blocked).toContainText('Admin partner offer');
+  await expect(blocked.getByLabel(`Host entry for ${host}`)).toHaveValue(host);
+  await expect(blocked.getByRole('button', {name:'Allow this host', exact:true})).toBeVisible();
+  // Capture the same saved review on both screens; the behavioural journey runs at desktop width.
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({width, height:1000});
+    await blocked.screenshot({path:info.outputPath(`admin-blocked-host-${width}.png`)});
+  }
+  await page.setViewportSize({width:1440, height:1000});
+  const allowanceResponse = page.waitForResponse(response => response.url().endsWith(`${path}/link-hosts`) && response.request().method() === 'POST');
+  await blocked.getByRole('button', {name:'Allow this host', exact:true}).click();
+  const response = await allowanceResponse;
+  expect(response.status()).toBe(200);
+  expect(response.request().postDataJSON()).toEqual({host});
+  const allowance = await response.json();
+  expect(allowance.host).toBe(host);
+  expect(allowance.review.kind).toBe('preview');
+  expect(allowance.review.checks.find((check:any) => check.kind === 'message.links')).toMatchObject({blocking:false});
+  await expect(blocked).toHaveCount(0);
+  await reloadPage(page);
+  await expect(blocked).toHaveCount(0);
+  expect((await json(await site.call(`${path}/review`, {cookie:admin}), 200)).blockedHosts)
+    .not.toContainEqual(expect.objectContaining({host}));
+  const settings = await json(await site.call('/api/settings/link-hosts', {cookie:admin}), 200);
+  expect(settings.hosts).toContain(host);
+  expect(settings.hosts).not.toContain('*.example.test');
+  expect(settings.sources.filter((source:any) => source.host === host && source.source === 'allowed in review'))
+    .toEqual([expect.objectContaining({host, source:'allowed in review', campaignId:campaign.campaignId, operatorId})]);
+  const activity = await json(await site.call(`/api/activity?operator=${operatorId}&action=link-host.allowed&object=${campaign.campaignId}`, {cookie:admin}), 200);
+  expect(activity.entries).toEqual([expect.objectContaining({operatorId, objectId:campaign.campaignId,
+    action:'link-host.allowed', detail:{host, source:'allowed in review', campaignId:campaign.campaignId, operatorId}})]);
+  const [record] = await site.rows(`SELECT actor_id,entity_id,detail_json FROM lifecycle_audit_entries WHERE id='${activity.entries[0].id}'`);
+  expect(record).toEqual({actor_id:operatorId, entity_id:campaign.campaignId, detail_json:JSON.stringify(activity.entries[0].detail)});
+  await noAuthority();
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({width, height:1000});
+    await page.screenshot({path:info.outputPath(`admin-allowed-host-${width}.png`), fullPage:true});
+  }
+}
 
 export async function blockedHostJourney(site: Installation, owner: string, page: Page, info: TestInfo, now: number) {
   const initial=await json(await site.call('/api/settings/link-hosts',{cookie:owner}),200);
@@ -84,6 +157,7 @@ export async function blockedHostJourney(site: Installation, owner: string, page
     await expect(page.locator('[aria-label="Blocked link hosts"]')).toHaveCount(0);
     await page.screenshot({path:info.outputPath(`allowed-host-approved-${width}.png`),fullPage:true});
   }
+  await adminHostAllowance(site, owner, page, info, now);
   // Exact entries do not authorize subdomains. An explicit wildcard does, without matching a deceptive suffix or its bare domain.
   const domains = await draftCampaign(site,author,'Shop domain review',['garden-reader@example.test'],new Date(now+7200000));
   const domainBody = async (destination:string) => json(await site.call(`/api/campaign-revisions/${domains.revisionId}`,{method:'PATCH',cookie:author,body:{emailBody:`<p><a href="${destination}">Browse seedlings</a></p>`}}),200);
