@@ -1,0 +1,89 @@
+{
+  "utc": "2026-11-06T02:15:43.037087+00:00",
+  "source": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+  "selected": [
+    {
+      "path": "REPORT.md",
+      "bytes": 21433,
+      "sha256": "71ae978f4f12b45af3c28dad8691133db25b5ecbd2698b602b277d9d1b4453df"
+    },
+    {
+      "path": "VERDICT.md",
+      "bytes": 21433,
+      "sha256": "71ae978f4f12b45af3c28dad8691133db25b5ecbd2698b602b277d9d1b4453df"
+    },
+    {
+      "path": "PLAN.md",
+      "bytes": 1839,
+      "sha256": "546e85c1469630c44602e96d956dfb084b1c0338ceee987a44ab52d16582132c"
+    },
+    {
+      "path": "COMMANDS.json",
+      "bytes": 3215,
+      "sha256": "634e2a98fce175bb9a89412cbd3d5806e344849a0077f4a893634913bc7a2fd2"
+    },
+    {
+      "path": "SOURCE-RECEIPT.json",
+      "bytes": 6881,
+      "sha256": "20cf22ef6fa8acdbd605bbcb955ba6988a89c697c1ce5b39cd53d09d526e421e"
+    },
+    {
+      "path": "INTEGRITY-RECEIPT.json",
+      "bytes": 4420,
+      "sha256": "4eb55d79589fb37f7364ca9ffc1cf5c9cebcdb75f7f53c0592eebf4230ede9c5"
+    },
+    {
+      "path": "journey-receipt.json",
+      "bytes": 427,
+      "sha256": "3cb062d28d70efbd4338c7bb9a5aa1fba6e1f367d7b2845591d4108d86c07695"
+    },
+    {
+      "path": "journey-start.json",
+      "bytes": 360,
+      "sha256": "df24dcdf1323b2990432c21fe7b60d88b9ce44adf583b645f1d0f610c5e079af"
+    },
+    {
+      "path": "journey.log",
+      "bytes": 782,
+      "sha256": "972dc44b3ef22a037890fa5b301d67a1e427afd77011cdb2614c3883e61c67a2"
+    },
+    {
+      "path": "browser-command.mjs",
+      "bytes": 5251,
+      "sha256": "5ddfef23de161585cd0fd1f0f90fd926ead27ecb3f3acf8068b4ddf7b7c1bc73"
+    },
+    {
+      "path": "browser-receipt.json",
+      "bytes": 934,
+      "sha256": "3cbb75686baa3b13e387e2dec4e9cc4fa04b06b2434df42828360ef1b9820cf6"
+    },
+    {
+      "path": "screens/subscribe-1440.png",
+      "bytes": 164540,
+      "sha256": "63a093431cc9fa5c3c0d03ec2c6f6c58b2b58b1412db5578c035e1d7d1be79e1"
+    },
+    {
+      "path": "screens/subscribe-390.png",
+      "bytes": 101552,
+      "sha256": "0f3e7ee2c437757875b7f441ca70de5981d65e3c8203da0672367d4c54c7a41e"
+    },
+    {
+      "path": "screens/manual-1440.png",
+      "bytes": 95768,
+      "sha256": "5eaee463f00e2952351294f6830f850699d88573c31c2320c097113fe8c93e8f"
+    },
+    {
+      "path": "screens/manual-390.png",
+      "bytes": 82563,
+      "sha256": "432f67554b553a2883de9fd6d033794152f390fe27a4e6a1d85d85c4f97da5a9"
+    }
+  ],
+  "regularFilesOnly": true,
+  "bundleValueMatches": 0,
+  "privateHeldOutMaterialSelected": false,
+  "environmentDumpsSelected": false,
+  "authenticationMaterialSelected": false,
+  "rawSetupAndFixtureLogsExcluded": true,
+  "screenshotsViewed": 4,
+  "productDiffEmpty": true
+}

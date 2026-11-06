@@ -1,0 +1,184 @@
+{
+  "source": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "bytes": 490081,
+      "sha256": "105e177075539269cfb04cc4b95372f3ba18a9ea86cf0427cf1b0a820f0f927d",
+      "gitBlob": "7ed3d560da57c3d4f5180f9811515ed0db77bcfb"
+    },
+    {
+      "path": "ACCEPTANCE.md",
+      "bytes": 443739,
+      "sha256": "11cb83894be237c93c6929f8c115de469d54ce4d0d2d2270d0cc79e3b0f1207f",
+      "gitBlob": "f59ae08a7761835efc59b2f4b7cd6ac9a15e99e7"
+    },
+    {
+      "path": "RULINGS.md",
+      "bytes": 20494,
+      "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2",
+      "gitBlob": "7b3a449946a7e3fd9a9446e5de7608ae09581638"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 9726,
+      "sha256": "ad131b1bcf2e7e2fd5550a0526f17565d6a9353170b2c404d861b0cc8921b5d8",
+      "gitBlob": "b940bb9301a3913fc25b1e7ffba522942a30f06d"
+    },
+    {
+      "path": "tests/audience-import/signup.spec.ts",
+      "bytes": 7187,
+      "sha256": "7e09db9d67d5a0cc912733b3ed809f60487274d683e94eadcf3cdaf982bce811",
+      "gitBlob": "f56fbf2c673aa472986f177cc976d390071138d0"
+    },
+    {
+      "path": "tests/audience-import/identity-doors.ts",
+      "bytes": 8197,
+      "sha256": "9419370c97ee43a476280ef6f70dfaa2ef802c0fc8918eb9da64466cc69ca57a",
+      "gitBlob": "1de45443d598835b53dc0d844703a9a4d305fbdc"
+    },
+    {
+      "path": "tests/audience-import/native.ts",
+      "bytes": 2014,
+      "sha256": "78ecb8d73f664905aa85305d530ec8180e3c60fa1c46dbf98faf7eaa041e904a",
+      "gitBlob": "d86ea3eab719debe4bf9d04302efd849d30f8a95"
+    },
+    {
+      "path": "tests/prior-approval/fixture.ts",
+      "bytes": 2091,
+      "sha256": "651c2c0a1499e732f7265daaffa24085caf32695159190c5eb4272c7f8bc6296",
+      "gitBlob": "3c5bc670992525a465fc9d290688dea590ede1bb"
+    },
+    {
+      "path": "tests/sender-verification/test-runtime.ts",
+      "bytes": 13007,
+      "sha256": "46596bc02a7c1001ecc1dd943bc463c3291389e228400e550e86daf199507d89",
+      "gitBlob": "107d3b9d1a01089a5b6a9a40d5bbbd11bb4b8354"
+    },
+    {
+      "path": "tests/audience-controls/runtime.ts",
+      "bytes": 5479,
+      "sha256": "58c802d5e93897183e00214075ce92d1c7d84546f1863d6fa6a2212fcbb45695",
+      "gitBlob": "b7ecfed6faaf7e431b8f3f9a1e031dcd796bbcbf"
+    },
+    {
+      "path": "playwright.config.js",
+      "bytes": 792,
+      "sha256": "52ea3f0dfd2a8735abe89659455ff89a3c7cf16f4baad4ee101980d3652f974a",
+      "gitBlob": "fab9ea353b49f3f1f08def8af346d1224b129560"
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "bytes": 5708,
+      "sha256": "6330ffb0fd3e3ae8734884b76c0e68b4d518563fef3af5fe67925d9f96ceb569",
+      "gitBlob": "58c964630deb3ef67fa123ffcc4603c99c91b347"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "bytes": 14451,
+      "sha256": "081018c70e75ee8218b473baac076a57008c7e7e215d97ad049b7616b3dc3ceb",
+      "gitBlob": "209078e589df728d466989d0ff968e1e535ce996"
+    },
+    {
+      "path": "src/core/features/audience/manual-entry-schema.ts",
+      "bytes": 1702,
+      "sha256": "51377a9c979967334ba3cb0d8feb27f028569facb4f1ba3fc332bcb745b8dfff",
+      "gitBlob": "d52e5bdfac724f17e2d20a1f35ea46763aec56d0"
+    },
+    {
+      "path": "src/core/features/audience/routes.ts",
+      "bytes": 10202,
+      "sha256": "673d3adeefa5d2d6a3266a211e9656a80b0910df2a7f805606d0debe23de91d0",
+      "gitBlob": "e59e2dd61ba18bf82261fb762fb9b424ee0070e7"
+    },
+    {
+      "path": "src/core/features/audience/identity.ts",
+      "bytes": 918,
+      "sha256": "e283004f4464df08a64cc2a65ebe04a187f8664ace7973244df7d47e67093032",
+      "gitBlob": "9a0f448239484b27e3327fe6f1c69d014d131ec1"
+    },
+    {
+      "path": "src/core/features/audience/signup-routes.ts",
+      "bytes": 10203,
+      "sha256": "fc71fb93bc1ae0560323e11996d6c5e143ee003c53fd1bab6495dbfca8de3382",
+      "gitBlob": "6678f970f8af0a06e12f3f177fbf09e228d88e85"
+    },
+    {
+      "path": "src/core/features/audience/service.ts",
+      "bytes": 44922,
+      "sha256": "70425c030625aea8ae70536c8b99a2dffbd335418fee28a6908b76f5e9dcfe0e",
+      "gitBlob": "9610b560b86c34b349b236b389acfd9edf686688"
+    },
+    {
+      "path": "src/core/features/audience/import-service.ts",
+      "bytes": 24942,
+      "sha256": "96f3e0d9629d2b58e5e2d988d6fa59f7831c0b8e168ea47f7b77098776b518bb",
+      "gitBlob": "33c009e0a848b6fc90c508bc234f5c15298d4f81"
+    },
+    {
+      "path": "src/core/features/audience/import-normalize.ts",
+      "bytes": 11585,
+      "sha256": "83080feaf151e17119837bf3c78d2f117d58c812fe5df2f79999cf444b3fc553",
+      "gitBlob": "3f621ff29dd8592e98d4713af01215f29bd4894b"
+    },
+    {
+      "path": "docs/importing-contacts.md",
+      "bytes": 11217,
+      "sha256": "ff45881706c8aa1cb8cc9bb99c848cf0871841cd3df32520ab079a532df94331",
+      "gitBlob": "fb5dc1592afceda79aa672f3d69f3d08ac557c6c"
+    }
+  ],
+  "contractClauses": 316,
+  "acceptanceClauses": 316,
+  "pinnedCounts": {
+    "done": 21,
+    "partial": 197,
+    "missing": 98
+  },
+  "freshMain": {
+    "sha": "cc6321c2372d631d9607df9af8ad1dd9f7878e84",
+    "counts": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    }
+  },
+  "selected": {
+    "id": "CONT-001",
+    "title": "Contact identity",
+    "kind": "published",
+    "status": "done",
+    "evidence": [
+      "tests/audience-import/signup.spec.ts",
+      "tests/audience-import/identity-doors.ts",
+      "tests/move-in/archive.journeys.ts"
+    ],
+    "gap": "",
+    "area": "Contacts and consent",
+    "text": "**Requirement.** Canonical email and phone identities identify one Mango contact. **Acceptance.** 1. Email comparison ignores case and surrounding whitespace. 2. Phone identities use the documented international canonical form. 3. Each canonical email or phone identity belongs to at most one contact on capture and import.",
+    "line": 335,
+    "row": 4074
+  },
+  "changedRowsVersusFreshMain": [
+    {
+      "id": "CONT-001",
+      "pinned": {
+        "status": "done",
+        "gap": "",
+        "evidence": [
+          "tests/audience-import/signup.spec.ts",
+          "tests/audience-import/identity-doors.ts",
+          "tests/move-in/archive.journeys.ts"
+        ]
+      },
+      "main": {
+        "status": "partial",
+        "gap": "Carried evidence asserts only the outcomes identified in DONE-AUDIT. Unasserted: Case and whitespace canonicalization; Phone canonicalization; Phone identity uniqueness on capture and import. Missing public-door journey: “Contact identity — complete acceptance”, covering the unasserted outcomes above.",
+        "evidence": [
+          "tests/move-in/archive.journeys.ts"
+        ]
+      }
+    }
+  ],
+  "scopeNote": "Complete files loaded, parsed and indexed. Only CONT-001 is judged. Generated ACCEPTANCE is stale; no generated view rewritten. Fresh-main Status, Gap, Evidence and provenance remain lander guards, never source edits here."
+}

@@ -1,0 +1,7 @@
+{
+  "utc": "2026-11-06T02:07:02.179507+00:00",
+  "command": "cloud_run timeout 240 env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium PLAYWRIGHT_WORKERS=1 WRANGLER_SEND_METRICS=false pnpm exec playwright test --config=playwright.config.js tests/audience-import/signup.spec.ts --workers=1 --reporter=list",
+  "source": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+  "finished_utc": "2026-11-06T02:07:41.951367+00:00",
+  "exit": 0
+}

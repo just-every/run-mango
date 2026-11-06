@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "source": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576",
+  "model": "gpt-6.1-sol",
+  "reasoning_effort": "xhigh",
+  "commands": [
+    {
+      "command": "git clone --depth 1 --filter=blob:none --single-branch --branch cloud/sd-mango-c-f60 https://github.com/just-every/run-mango.git <disposable-clone>",
+      "exit": 0
+    },
+    {
+      "command": "source /tmp/rer-cloud-toolchain.sh; cloud_run timeout 600 npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+      "exit": 0,
+      "log": "private local setup output retained outside public packet; contains local authentication material, never selected"
+    },
+    {
+      "command": "cloud_run timeout 240 env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium PLAYWRIGHT_WORKERS=1 WRANGLER_SEND_METRICS=false pnpm exec playwright test --config=playwright.config.js tests/audience-import/signup.spec.ts --workers=1 --reporter=list",
+      "exit": 0,
+      "receipt": "journey-receipt.json",
+      "log": "journey.log",
+      "invocations": 1,
+      "testsPassed": 1
+    },
+    {
+      "command": "cloud_run timeout 420 env MANGO_FIXTURE_PORT=18371 MANGO_FIXTURE_SIGNUP_MAIL=1 WRANGLER_SEND_METRICS=false node tests/support/start-fixture-runtime.mjs",
+      "exit": 0,
+      "ownedServerPid": 2204,
+      "stop": "kill -TERM 2204",
+      "browserFixtureOnly": true
+    },
+    {
+      "command": "cloud_run timeout 180 node ../packet/browser-command.mjs",
+      "exit": 0,
+      "receipt": "browser-receipt.json",
+      "viewports": [
+        1440,
+        390
+      ]
+    },
+    {
+      "command": "git fetch --depth 1 origin main:refs/remotes/origin/main",
+      "exit": 0,
+      "main": "cc6321c2372d631d9607df9af8ad1dd9f7878e84"
+    },
+    {
+      "command": "Complete-file read, parse, SHA-256 and all 316 acceptance bodies and Status rows comparison (see SOURCE-RECEIPT and INTEGRITY-RECEIPT)",
+      "exit": 0,
+      "bodyDifferences": 0,
+      "unrelatedRawStatusDifferences": [
+        "PROP-008"
+      ]
+    },
+    {
+      "command": "git status --porcelain; git diff --exit-code HEAD; git diff --cached --exit-code",
+      "exit": 0,
+      "stdout": "",
+      "productHead": "1a4f7d299e3c366e6321a8eb4b481a6d2d840576"
+    },
+    {
+      "command": "GitHub Actions REST calls, rerun, dispatch",
+      "status": "NOT RUN",
+      "reason": "reviewer brief prohibits; supplied CI evidence only",
+      "calls": 0
+    },
+    {
+      "command": "full suite, mutations, private held-outs, independent typecheck, generator write/check, lock regeneration",
+      "status": "NOT RUN",
+      "reason": "outside single focused read-only judgment; historical gate receipts distinguished"
+    },
+    {
+      "command": "cloud_evidence.py publish (initial attempt)",
+      "exit": 1,
+      "diagnostic": "EVIDENCE_FAILED Git fetch failed exit=128",
+      "pushAttempted": false,
+      "cause": "local upload-pack cannot lazily fetch missing promisor blobs from the filtered clone",
+      "recovery": "identity audit reads local commit objects through temporary alternates and copies shallow boundaries; full candidate identity/trailer audit still enforced",
+      "httpStatus": "not applicable; local audit fetch"
+    }
+  ]
+}

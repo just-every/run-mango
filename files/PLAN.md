@@ -1,0 +1,9 @@
+# Independent CONT-001 judgment plan
+
+1. Apply fleet identity, launcher and decrypted-bundle authentication; read launcher and product instructions. Keep the product checkout at immutable 1a4f7d299e3c366e6321a8eb4b481a6d2d840576, cloud/sd-mango-c-f60. No product branch, commit, push, PR, CI query or dispatch is authorized by the reviewer brief.
+2. Read pinned contract, acceptance, rulings, the single registered signup journey and relied-on identity helper and fixture paths. Inventory every clause and frozen R1-R4 before scoring. Do not add acceptance requirements or run private held-outs.
+3. Set up the maintained checkout using cloud_run and pinned tooling. Run only tests/audience-import/signup.spec.ts once, root configuration, one worker, bounded timeout, exact source.
+4. Exercise public subscribe and authenticated manual contact capture in headless /usr/bin/chromium new contexts at 1440 and 390, using existing fixture runtime and synthetic inputs. Keep this functional proof separate from design judgment.
+5. Score CONT-001 acceptance 1-3, D-2, frozen R1-R4 and riders 1-11. Treat supplied affected gate and exact-candidate CI as historical evidence, with the expressly allowed generated-view exception. Do not query or rerun CI.
+6. Preserve source-review and stack-f55 holds, accepted source set EMPTY, closed CONT-013 FIX lifetime and all provider/account/owner boundaries. Propose counts only; do not award or change contract/status/source pins.
+7. Save complete non-secret verdict and actual command receipts in packet; inspect selections and publish only evidence/ct-judge-mango-cont001-20261106-0058-sol1 through cloud_evidence.py. Preserve provenance, then delete owned disposable clone/dependencies and stop only owned server/browser processes. Emit CT-only POST and READY (review completion, not product landing).
