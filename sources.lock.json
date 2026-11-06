@@ -1030,7 +1030,7 @@
       "executable": false
     },
     "CONTRACT.md": {
-      "sha256": "5196ebd565e6c99601a3896752266db7abb9b2d9f59c224bba6cf72af9d207b3",
+      "sha256": "6bd5ee4cd08b556d84e69f6c49e5671955bffeaccf1f5c8825eb4d7c6024d861",
       "executable": false
     },
     "DEMO.md": {
@@ -8515,6 +8515,10 @@
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
       "sha256": "0cb3b1c4be5907a03fcc4e24b36c984a3c7156abf120a916dfd885aa34144d3b",
+      "executable": false
+    },
+    "tests/campaign-authoring/design-import-refusals.ts": {
+      "sha256": "bfa7f7f98c32ee04e2c51d45b9cfe93638d74b0041d3a67bd791f042aa3efcba",
       "executable": false
     },
     "tests/campaign-authoring/design-import.spec.ts": {
