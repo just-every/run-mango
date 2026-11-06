@@ -1,0 +1,7 @@
+{
+  "command": "cloud_run env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=<external runtime> WRANGLER_SEND_METRICS=false pnpm exec playwright test --config tests/go-live/playwright.config.js open-estimates.journeys.ts --workers=1 --retries=0",
+  "exit": 0,
+  "source": "f0faa9010d3422f9ff962239f99142dd08299981",
+  "completed_utc": "2026-11-06T02:06:01Z",
+  "attempts": 1
+}

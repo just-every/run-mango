@@ -1,0 +1,57 @@
+{
+  "source": "f0faa9010d3422f9ff962239f99142dd08299981",
+  "parser": "src/base/seed-contract.mjs",
+  "clauses": 316,
+  "sourceDefinitions": 316,
+  "viewDefinitions": 316,
+  "counts": {
+    "done": 19,
+    "partial": 199,
+    "missing": 98
+  },
+  "obligationDifferences": [],
+  "standardPresent": false,
+  "target": {
+    "category": "Email marketing and marketing automation",
+    "incumbents": [
+      "Mailchimp",
+      "Klaviyo",
+      "ActiveCampaign",
+      "Kit (ConvertKit)"
+    ],
+    "replaces": "Mailchimp, Klaviyo, ActiveCampaign, Kit (ConvertKit)",
+    "alsoBeats": "beehiiv, Customer.io, Omnisend",
+    "firstBuyer": "A US ecommerce operator or creator-led business with 1,000–250,000 contacts, one brand and one to ten marketing operators; USD and an operator-selected IANA time zone, with US consent, privacy, carrier and sender rules"
+  },
+  "RESULT009": {
+    "id": "RESULT-009",
+    "title": "Open-estimate lifecycle",
+    "kind": "published",
+    "status": "done",
+    "evidence": [
+      "tests/go-live/open-estimates.journeys.ts"
+    ],
+    "gap": "",
+    "area": "Results",
+    "text": "**Requirement.** Optional first-party open estimates are revocable and isolated from observed marketing outcomes, under RESULT-002. **Acceptance.** 1. Enabling estimates affects newly prepared marketing messages, with a signed recipient-specific first-party pixel; ordinary campaign images remain untracked. 2. Image requests establish only privacy-sensitive estimates, never reads or evidence for clicks, conversions, delivery, confidence, deliverability or attribution. 3. Disabling revokes every issued pixel; enabling again accepts only newly prepared messages. 4. Repeated requests record at most one estimate per recipient-step, without an IP address, user agent or cookie. 5. Private open tokens and facts remain until contact erasure removes them.",
+    "line": 1263,
+    "row": 4164
+  },
+  "retainedCONT013": {
+    "id": "CONT-013",
+    "title": "Erasure and surviving opt-out",
+    "kind": "published",
+    "status": "partial",
+    "evidence": [
+      "tests/audience-import/erasure.spec.ts",
+      "tests/audience-import/privacy-portability.spec.ts",
+      "tests/shopify/connection.spec.ts",
+      "tests/audience-import/signup-security.spec.ts"
+    ],
+    "gap": "Asserted: every restricted identity, opted-out and suppressed aliases included, keeps its hash, channel, reason and occurrence time after erasure, with an owner's own words kept as the owner-block code, and each suppression stays a detached suppression (an owner's still the owner's); no table, read decoded, and no audience export holds the erased address, name or owner note, and the retained hash is one-way and installation-keyed; a subscribed identity leaves no mapping alias or tombstone; import, store sync and public capture keep a retained restriction, which reads unsubscribed; an erased unsubscriber returns only through their own confirmed public-form request, while an erased suppression, complaint, owner block or pre-fix erasure opt-out gets no confirmation. Not met: a pre-fix erasure opt-out restored from another installation's Mango export is dropped when it meets an erasure opt-out this installation's own erasure wrote for the same address, which can then confirm a public-form resubscribe, so acceptance 4 and 5 fail on that path.",
+    "area": "Contacts and consent",
+    "text": "**Requirement.** Contact erasure follows Base except for surviving unsubscribe and suppression restrictions. **Supersedes BASE-DATA-003 only for this opt-out dependency, including its retained portable mapping and exported hashes.** Other personal-data entities retain Base’s guarantees; CONT-029 owns portability and CONT-030 owns restore refusal. **Acceptance.** 1. Every known restricted channel identity, including opted-out aliases, retains its destination hash, channel, reason and occurrence time after erasure. 2. The retained local hash is one-way and installation-keyed; no readable destination remains. 3. For a subscribed identity with no surviving restriction, erasure removes all mapping aliases and leaves no address-derived row tombstone. 4. An import, sync or capture matching a retained local or portable identity preserves its restriction; an erasure opt-out means unsubscribed. 5. Only the recipient’s own confirmed public-form resubscribe can clear an unsubscribe or erasure restriction under CONT-027; it cannot clear suppression.",
+    "line": 470,
+    "row": 4087
+  }
+}

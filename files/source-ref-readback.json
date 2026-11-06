@@ -1,0 +1,7 @@
+{
+  "command": "git ls-remote --heads origin cloud/sd-mango-c-f32",
+  "exit": 0,
+  "stdout": "f0faa9010d3422f9ff962239f99142dd08299981\trefs/heads/cloud/sd-mango-c-f32\n",
+  "source_match": true,
+  "checked_utc": "2026-11-06T02:09:25Z"
+}

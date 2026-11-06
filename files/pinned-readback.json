@@ -1,0 +1,25 @@
+{
+  "CONTRACT.md": {
+    "bytes": 487686,
+    "sha256": "3ae8d78e8879717db349829d0ca70550b5894b17f7c85bfdbf5e9ee3c721d743",
+    "lines": 4376,
+    "clause_sections": 316,
+    "status_counts": {
+      "partial": 199,
+      "done": 19,
+      "missing": 98
+    }
+  },
+  "ACCEPTANCE.md": {
+    "bytes": 441909,
+    "sha256": "7b81ed86667361e769122638d63a4066151a1a44ade8791cba538104b327715e",
+    "lines": 4876,
+    "clause_sections": 316
+  },
+  "RULINGS.md": {
+    "bytes": 20494,
+    "sha256": "7b68313eee96caa54c25aa2a6d27e88078cc7be97bf3cf07a4759914f5b367a2",
+    "lines": 289,
+    "clause_sections": 0
+  }
+}

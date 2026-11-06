@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "tag": "ct-judge-mango-result009-20261105-1741-sol1",
+  "repository": "just-every/run-mango",
+  "source": "f0faa9010d3422f9ff962239f99142dd08299981",
+  "source_branch": "cloud/sd-mango-c-f32",
+  "judge_verdict": "ACCEPT ON LANDING",
+  "APs": {
+    "MET": 5,
+    "total": 5
+  },
+  "inherited_outcomes": {
+    "MET": 2,
+    "total": 2
+  },
+  "NEW": 0,
+  "focused_journey": {
+    "command": "cloud_run env MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium MANGO_TEST_WORK_DIR=<external runtime> WRANGLER_SEND_METRICS=false pnpm exec playwright test --config tests/go-live/playwright.config.js open-estimates.journeys.ts --workers=1 --retries=0",
+    "exit": 0,
+    "source": "f0faa9010d3422f9ff962239f99142dd08299981",
+    "completed_utc": "2026-11-06T02:06:01Z",
+    "attempts": 1
+  },
+  "setup": {
+    "command": "cloud_run npx -y @runeditrun/rer setup --owner-email fleet@runeditrun.com --non-interactive",
+    "exit": 0,
+    "source": "f0faa9010d3422f9ff962239f99142dd08299981",
+    "generated_state_only": true,
+    "tracked_status_after_setup": ""
+  },
+  "checks": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 1
+    }
+  ],
+  "source_remote_readback": {
+    "command": "git ls-remote --heads origin cloud/sd-mango-c-f32",
+    "exit": 0,
+    "stdout": "f0faa9010d3422f9ff962239f99142dd08299981\trefs/heads/cloud/sd-mango-c-f32\n",
+    "source_match": true,
+    "checked_utc": "2026-11-06T02:09:25Z"
+  },
+  "product_custody": {
+    "product_head": "f0faa9010d3422f9ff962239f99142dd08299981",
+    "product_branch": "",
+    "status_porcelain": "",
+    "diff_exit": 0,
+    "cached_diff_exit": 0,
+    "pr": null,
+    "product_commits_created": 0,
+    "product_pushes": 0,
+    "CI_API_calls": 0
+  },
+  "awarded_counts_before": {
+    "DONE": 18,
+    "PARTIAL": 200,
+    "MISSING": 98
+  },
+  "awarded_counts_after": {
+    "DONE": 18,
+    "PARTIAL": 200,
+    "MISSING": 98
+  },
+  "candidate_counts": {
+    "DONE": 19,
+    "PARTIAL": 199,
+    "MISSING": 98
+  },
+  "unawarded_delta": 1,
+  "historical_ci": {
+    "run": 42071210703,
+    "event": "push",
+    "conclusion": "failure",
+    "runtime_shards": "skipped",
+    "failure": "supplied generated ACCEPTANCE.md freshness and derivative aggregate",
+    "build_job": 127399403077,
+    "aggregate_job": 127399555753,
+    "independently_polled": false
+  },
+  "gh_api_calls": 0,
+  "product_pr": null,
+  "source_acceptance_granted": false,
+  "holds_changed": false,
+  "completed_utc": "2026-11-06T02:12:13Z"
+}

@@ -1,0 +1,114 @@
+{
+  "utc": "2026-11-06T02:12:13Z",
+  "selected_files": [
+    "REPORT.md",
+    "VERDICT.md",
+    "PLAN.md",
+    "judge-receipt.json",
+    "journey-exit.json",
+    "journey.log",
+    "checks.json",
+    "setup-exit.json",
+    "setup.log",
+    "pinned-readback.json",
+    "contract-readback.json",
+    "product-custody.json",
+    "source-ref-readback.json",
+    "open-estimates-privacy.json",
+    "open-pixel-rate-limit.json",
+    "open-estimates-enabled-1440.png",
+    "open-estimates-enabled-390.png"
+  ],
+  "regular_files": true,
+  "symlinks": false,
+  "injected_secret_matches": 0,
+  "credential_shape_matches": 0,
+  "excluded": "raw dispatch bearer URLs, session files, local setup credentials, archives, private runtime logs and held-out gate material",
+  "files": [
+    {
+      "path": "REPORT.md",
+      "bytes": 26856,
+      "sha256": "f85fca6a321052ea17d23a06d2f9fd9214de5a1f98e925b05b2a5019c6ec3d9d"
+    },
+    {
+      "path": "VERDICT.md",
+      "bytes": 24807,
+      "sha256": "536966c1fbc03412a61ff25d1616cf2b34fa8c698a739ae1a94d8a020bb08a05"
+    },
+    {
+      "path": "PLAN.md",
+      "bytes": 2030,
+      "sha256": "f99082feaa2c45dffac0cf6b279b9c14fe79487d396c0c09eaf051f95fe425da"
+    },
+    {
+      "path": "judge-receipt.json",
+      "bytes": 2657,
+      "sha256": "1edbd90edc3ab496fc268e99c55b169f724bacb277c2b168e77642466e324ef3"
+    },
+    {
+      "path": "journey-exit.json",
+      "bytes": 394,
+      "sha256": "9f0382a4e4355a254099f0acc090ee3d94c1b247fb3e223c1b08e2702712ce26"
+    },
+    {
+      "path": "journey.log",
+      "bytes": 375,
+      "sha256": "ef18315f7f9e57ee1c9c9f0c40bf20718921c8c2aa634a2f57752d3c7d71ad57"
+    },
+    {
+      "path": "checks.json",
+      "bytes": 440201,
+      "sha256": "2a50c9f53fa9ff76c0e2878048ea34788a8e7836998a4d721528d57482eb3b06"
+    },
+    {
+      "path": "setup-exit.json",
+      "bytes": 248,
+      "sha256": "ef1a77fcff7f8149b4626fa02f5ccea67e2b4df2fcf0ad670cb04743081e6619"
+    },
+    {
+      "path": "setup.log",
+      "bytes": 2957996,
+      "sha256": "842e20e39c0c248848eeb82d70ad1752544359545d78e342c721017a2233e716"
+    },
+    {
+      "path": "pinned-readback.json",
+      "bytes": 609,
+      "sha256": "6f0539bcd7ed9fc8948213c5f689c77795409c170056faa30a589393ead23dd4"
+    },
+    {
+      "path": "contract-readback.json",
+      "bytes": 4492,
+      "sha256": "5143b66ead1a56ec8b4244174de9d7a18a9a7211b09d6dc47970e94f0553a748"
+    },
+    {
+      "path": "product-custody.json",
+      "bytes": 248,
+      "sha256": "f6044bcba9e50353eae973433f3e2d150c1bfba7419bc86bc9f1d7283d6a4f5d"
+    },
+    {
+      "path": "source-ref-readback.json",
+      "bytes": 238,
+      "sha256": "534f3480095af8402b3596fe12ff562e6edf5331f5520b7d0cd076f573a84778"
+    },
+    {
+      "path": "open-estimates-privacy.json",
+      "bytes": 144,
+      "sha256": "314d2af192803962299a3334eccc9100cc3ba4599df0699f31b42060f44ec16e"
+    },
+    {
+      "path": "open-pixel-rate-limit.json",
+      "bytes": 212,
+      "sha256": "5d0945a42a0c0df3165cd4aa817a3c71679611d9957c7c0ee4fd7a95f5fbcdd9"
+    },
+    {
+      "path": "open-estimates-enabled-1440.png",
+      "bytes": 656351,
+      "sha256": "a3a4c8832508c99f0ffcf7db3d8559c6c7defc611351b6309c7953caa679b7ad"
+    },
+    {
+      "path": "open-estimates-enabled-390.png",
+      "bytes": 1011168,
+      "sha256": "3f8002575c3453b5a47d7bf55fbd6f63040a5c8db4378159e7a955d11d88894c"
+    }
+  ]
+}

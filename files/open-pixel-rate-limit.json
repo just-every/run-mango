@@ -1,0 +1,15 @@
+{
+  "admitted": 60,
+  "limitedResults": [
+    {
+      "status": 429,
+      "retryAfter": 60
+    },
+    {
+      "status": 429,
+      "retryAfter": 60
+    }
+  ],
+  "otherIpStatus": 200,
+  "estimatedRecipients": 1
+}
