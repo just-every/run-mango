@@ -2,7 +2,7 @@ import type {SourceExtras} from '../move-in/source-api';
 import {csvSourceRow,sourcePresets} from '../move-in/csv-sources';
 import type {PlannedAttestation} from '../move-in/incumbent-attestation';
 import type {IncumbentFile} from '../move-in/incumbent-policy';
-import { csvRows, parseCsv } from './csv';
+import { iterateCsvRows, iterateCsvRecords } from './csv';
 import { canonicalEmail, canonicalPhone } from './identity';
 import { presetStatuses, type ImportInput, type AudienceSnapshot } from './import-types';
 import { resolveHeaderMapping, isStatusHeader, isSmsStatusHeader } from './import-mapping';
@@ -39,10 +39,11 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
   if (input.files.reduce((sum, file) => sum + new TextEncoder().encode(file.csv).length, 0) > 10_000_000) throw new Error('Audience import is limited to 10 MB.');
   for (const file of input.files) {
     if (!(file.preset in presetStatuses)) throw new Error(`Unknown CSV preset: ${file.preset}`);
-    const headers = csvRows(file.csv)[0] ?? [];
+    const headers = iterateCsvRows(file.csv).next().value ?? [];
     const mapping = file.preset === 'mango' ? {} : resolveHeaderMapping(headers, file.mapping);
     columns.push({name:file.name,headers,mapping});
-    for (const [index, original] of parseCsv(file.csv).entries()) {
+    let index = 0;
+    for (const original of iterateCsvRecords(file.csv)) {
       const values = { ...original };
       for (const [field, header] of Object.entries(mapping)) if(!field.startsWith('property:')||header)values[field] = original[header.trim().toLowerCase()] ?? '';
       let sourceRow:ReturnType<typeof csvSourceRow>|undefined;
@@ -120,6 +121,7 @@ export function normalizeImport(input: ImportInput, incumbentSources:Record<stri
         }
       } catch (error) { row.reason = error instanceof Error ? error.message : 'Invalid CSV row.'; }
       rows.push(row);
+      index++;
       if (rows.length > maxContactImportRows) throw new Error(`Audience import is limited to ${maxContactImportRows} rows per review.`);
     }
   }

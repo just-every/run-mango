@@ -115,16 +115,20 @@ export async function phoneCsvJourney() {
       const report = await response.text();
       reports.push(report);
       const outcomes = report.split('\n').filter(line=>line.startsWith(`| ${filename} |`)).map(line=>{
-        const [,file,row,status,reason] = line.split('|').map(cell=>cell.trim());
-        return {file, row:Number(row), status, reason};
+        const [,file,row,status,reason,outcome] = line.split('|').map(cell=>cell.trim());
+        return {file, row:Number(row), status, reason, outcome};
       });
       expect(outcomes).toHaveLength(14);
+      expect(report).toContain('| 14 | 12 | 0 | 2 | 0 |');
+      expect(outcomes.filter(row=>row.outcome==='created')).toHaveLength(12);
+      expect(outcomes.filter(row=>row.outcome==='rejected')).toHaveLength(2);
       expect(outcomes.map(({file,row,status})=>({file,row,status}))).toEqual(rows.map(({row})=>({file:filename,row,status:'non-subscribed'})));
       expect(outcomes.filter(row=>row.reason)).toHaveLength(2);
       for (const expected of rejected) {
         expect(outcomes.find(row=>row.file===filename&&row.row===expected.row)?.reason).toMatch(expected.reason);
+        expect(outcomes.find(row=>row.row===expected.row)?.outcome).toBe('rejected');
       }
-      for (const expected of valid) expect(outcomes.find(row=>row.row===expected.row)?.reason).toBe('');
+      for (const expected of valid) expect(outcomes.find(row=>row.row===expected.row)).toMatchObject({reason:'',outcome:'created'});
     }
     expect(reports[1]).toBe(reports[0]);
     for (const table of ['consent_evidence','consent_confirmations','campaigns','campaign_approval_requests','recipient_steps']) {

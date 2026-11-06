@@ -1,8 +1,8 @@
 export type CsvRecord = Record<string, string>;
 
 /** RFC 4180 records, including embedded newlines and doubled quotation marks. */
-export function csvRows(csv: string): string[][] {
-  const rows: string[][] = []; let row: string[] = []; let field = ''; let quoted = false; let closed = false;
+export function* iterateCsvRows(csv: string): Generator<string[]> {
+  let row: string[] = []; let field = ''; let quoted = false; let closed = false;
   const input = csv.replace(/^\uFEFF/u, '');
   for (let index = 0; index < input.length; index++) {
     const char = input[index];
@@ -12,31 +12,37 @@ export function csvRows(csv: string): string[][] {
       else field += char;
     } else if (char === ',' || char === '\n' || char === '\r') {
       row.push(field); field = ''; closed = false;
-      if (char !== ',') { if (row.some(Boolean)) rows.push(row); row = []; if (char === '\r' && input[index + 1] === '\n') index++; }
+      if (char !== ',') { if (row.some(Boolean)) yield row; row = []; if (char === '\r' && input[index + 1] === '\n') index++; }
     } else if (char === '"' && !field) quoted = true;
     else { if (closed && char.trim()) throw new Error('CSV contains text after a quoted field.'); field += char; }
   }
   if (quoted) throw new Error('CSV contains an unclosed quoted field.');
-  row.push(field); if (row.some(Boolean)) rows.push(row);
-  return rows;
+  row.push(field); if (row.some(Boolean)) yield row;
 }
-export function parseCsv(csv: string): CsvRecord[] {
-  const rows = csvRows(csv);
-  if (rows.length < 2) throw new Error('CSV must include a header and at least one row.');
-  const headers = rows[0].map(header => header.trim().toLowerCase());
+export const csvRows = (csv: string): string[][] => [...iterateCsvRows(csv)];
+export function* iterateCsvRecords(csv: string): Generator<CsvRecord> {
+  const rows = iterateCsvRows(csv);
+  const first = rows.next(), second = rows.next();
+  if (first.done || second.done) throw new Error('CSV must include a header and at least one row.');
+  const headers = first.value.map(header => header.trim().toLowerCase());
   if (headers.some(header => !header)) throw new Error('CSV has an empty header.');
   if (new Set(headers).size !== headers.length) throw new Error('CSV has duplicate headers.');
   const encodingIndex=headers.indexOf('__mango_csv_encoding');
-  return rows.slice(1).map(fields => fields.length !== headers.length
+  let next: IteratorResult<string[]> = second;
+  while (!next.done) {
+    const fields = next.value;
+    yield fields.length !== headers.length
     ? { __parse_error: 'CSV row does not have the same number of fields as the header.' }
     : Object.fromEntries(headers.flatMap((header, index) => {
       const encoded=encodingIndex>=0&&fields[encodingIndex]==='mango-apostrophe-v1';
       if(index===encodingIndex&&encoded)return [];
       const value=fields[index];
       return [[header,encoded&&value.startsWith("'")?value.slice(1):value]];
-    })));
-
+    }));
+    next = rows.next();
+  }
 }
+export const parseCsv = (csv: string): CsvRecord[] => [...iterateCsvRecords(csv)];
 /** Versioned transport marker makes apostrophe escaping reversible without
  * interpreting an original apostrophe in a foreign CSV as our own escape.
  * Every original field remains available; ledger_json is the lossless ledger.
