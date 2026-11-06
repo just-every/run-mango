@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { authoringRuntime } from './browser-runtime.mjs';
 import { png } from '../support/images';
+import { designInputBounds, designInputRecoveryScreens } from './design-input-bounds';
 
 test.describe.configure({ mode: 'serial', timeout: 180000 });
 test.use({ timezoneId: 'America/Los_Angeles' });
@@ -44,7 +45,8 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await openPage(page, `${runtime.url}/app/campaigns/${created.campaignId}/review`);
     const body = page.getByLabel('Email body', { exact: true });
     await expect(body).toBeVisible();
-    const savedBody = (await read()).revision.emailBody;
+    const savedRevision = (await read()).revision;
+    const savedBody = savedRevision.emailBody;
 
     await page.getByRole('button', { name: 'Import 12ui design', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Import a 12ui design' });
@@ -59,6 +61,9 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     await dialog.getByRole('button', { name: 'Import design', exact: true }).click();
     await expect(dialog.getByRole('alert').first()).toContainText('HTTPS');
     expect(uploads).toEqual([]);
+
+    await dialog.getByLabel('Button destination', { exact: true }).fill(destination);
+    await designInputBounds({ page, info: testInfo, origin: runtime.url, token: runtime.token, candidate, read });
 
     // A legal LayerDoc can compile beyond the delivery limit without any one
     // text layer exceeding the input grammar's bound. Keep both selected files.
@@ -130,6 +135,12 @@ for (const width of [1440]) test(`[DESIGN-004 DESIGN-012 DESIGN-013 DESIGN-014] 
     expect(saves).toEqual([]);
     expect((await read()).revision.emailBody).toBe(savedBody);
     await expect(page.getByRole('status').filter({ hasText: 'Unsaved changes' })).toBeVisible();
+    expect((await read()).revision).toEqual(savedRevision);
+    const importAuthority = await api.get(runtime.url + '/_authoring/state', { headers: { 'X-Test-Token': runtime.token } });
+    expect(importAuthority.status()).toBe(200);
+    expect(await importAuthority.json()).toEqual({ jobs: [], recipients: [], approvals: [] });
+    await designInputRecoveryScreens(page, testInfo);
+    console.log('PROBE DESIGN-014 acceptance-1 recovery: existing valid file pair -> unsaved imported body; saved revision unchanged and no approval, recipients or jobs');
 
     await page.getByRole('button', { name: 'Save full draft', exact: true }).click();
     await expect(page.getByRole('status').filter({ hasText: 'Draft saved.' })).toBeVisible();
