@@ -100,12 +100,20 @@ export const walk1 = async ({ page, request }, testInfo) => {
     await reloadPage(page);
     await expect(run.getByRole('img', { name: 'Design A' })).toBeVisible();
     await expect(run.getByRole('img', { name: 'Design B' })).toBeVisible({ timeout: 45000 });
+    // Keep the original f36 assertion: this run shows its own positive estimate before buying a layout.
+    const layoutEstimate = run.getByText(/on your 12ui account for the layout/);
+    await expect(layoutEstimate).toBeVisible();
+    expect(Number((await layoutEstimate.innerText()).match(/\$(\d+\.\d{2})/)![1])).toBeGreaterThan(0);
+    expect(fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert')).toEqual([]);
+    expect(fake.purchases.filter(item => item.startsWith('layout:'))).toEqual([]);
     await page.screenshot({ path: testInfo.outputPath('design-generation-candidates.png'), fullPage: true });
 
     // Choosing prepares the layout in the background, across a reload. The operator keeps typing in the body: when the
     // layout is ready the run says so with a notice, and nothing opens or takes focus until the operator asks.
     await useDesign(run, page, 'B').click();
     await expect(run.getByRole('status')).toBeVisible();
+    await expect.poll(() => fake.purchases.filter(item => item.startsWith('layout:')).length).toBe(1);
+    expect(fake.requests.filter(item => item.method === 'POST' && item.path === '/api/v1/convert')).toHaveLength(1);
     await reloadPage(page);
     const apply = page.getByRole('dialog', { name: 'Use this design in the email' });
     const ready = run.getByRole('button', { name: 'Use design B in the email', exact: true });
@@ -180,7 +188,7 @@ export const walk1 = async ({ page, request }, testInfo) => {
     expect(fake.requests.length).toBeGreaterThan(0);
   } finally { await runtime.close(); await fake.close(); }
 };
-export const walk2 = async ({ page, request }) => {
+export const walk2 = async ({ page, request }, testInfo) => {
   const fake = await startFakeTwelveUi({ key: designKey, candidateImage, layerDoc, drawMs: { c: 3_600_000 }, holdDispatch: ['b'], layoutStatus: 'failed', failOnce: { '/candidates/a': 503 } });
   const runtime = await designRuntime(fake.origin);
   try {
@@ -387,6 +395,38 @@ export const walk2 = async ({ page, request }) => {
     expect(await runtime.sql(`SELECT state, error_code AS code FROM design_jobs ORDER BY created_at`)).toEqual([
       { state: 'ready', code: null }, { state: 'choosing', code: null }, { state: 'discarded', code: 'provider_quota' }, { state: 'failed', code: 'provider_timeout' },
     ]);
+    await expect.poll(content).toBe(before);
+
+    // The latest failed drawing run must disclose its own layout spend. Earlier runs' estimates cannot satisfy this.
+    const estimate = run.getByText(/on your 12ui account for the layout/);
+    await expect(estimate).toBeVisible();
+    expect(Number((await estimate.innerText()).match(/\$(\d+\.\d{2})/)![1])).toBeGreaterThan(0);
+    const convertsBefore = converts().length, purchasesBefore = fake.purchases.filter(item => item.startsWith('layout:')).length;
+    await reloadPage(page);
+    await expect(run.getByRole('alert')).toContainText('did not finish in time');
+    await expect(useDesign(run, page, 'B')).toBeVisible();
+    await expect(estimate).toBeVisible();
+    expect(Number((await estimate.innerText()).match(/\$(\d+\.\d{2})/)![1])).toBeGreaterThan(0);
+    expect(converts()).toHaveLength(convertsBefore);
+    expect(fake.purchases.filter(item => item.startsWith('layout:'))).toHaveLength(purchasesBefore);
+    await run.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('design-generation-failed-drawing.png'), fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await run.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath('design-generation-failed-drawing-phone.png'), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 1000 });
+
+    // Only the explicit choice buys the retained design's layout; reopening it never buys the same layout twice.
+    await useDesign(run, page, 'B').click();
+    await expect(apply.getByLabel('Button destination')).toBeFocused({ timeout: 45000 });
+    expect(converts()).toHaveLength(convertsBefore + 1);
+    expect(fake.purchases.filter(item => item.startsWith('layout:'))).toHaveLength(purchasesBefore + 1);
+    await apply.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await useDesign(run, page, 'B').click();
+    await expect(apply.getByLabel('Button destination')).toBeFocused();
+    await apply.getByRole('button', { name: 'Cancel', exact: true }).click();
+    expect(converts()).toHaveLength(convertsBefore + 1);
+    expect(fake.purchases.filter(item => item.startsWith('layout:'))).toHaveLength(purchasesBefore + 1);
     await expect.poll(content).toBe(before);
   } finally { await runtime.close(); await fake.close(); }
 };

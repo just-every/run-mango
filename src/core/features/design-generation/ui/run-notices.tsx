@@ -45,9 +45,12 @@ export function Failure({ job, busy, onRetry, onChooseAnother, onDismiss }: {
     <p>Design generation failed: {designFailureReasons[code]} Nothing was changed; your draft is as you left it.</p>
     <div className="detail-actions"><button type="button" className="secondary-action" disabled={busy} onClick={onDismiss}>Dismiss</button></div>
   </div>;
-  if (!job.chosenSlot) return <div className="inline-error design-run__failure" role="alert">
-    <p>12ui stopped before drawing every design: {designFailureReasons[code]} The designs it drew are kept below for you to use; your draft is as you left it.</p>
-  </div>;
+  if (!job.chosenSlot) return <>
+    <div className="inline-error design-run__failure" role="alert">
+      <p>12ui stopped before drawing every design: {designFailureReasons[code]} The designs it drew are kept below for you to use; your draft is as you left it.</p>
+    </div>
+    <p className="muted-copy">{layoutEstimate()}</p>
+  </>;
   return <>
     <div className="inline-error design-run__failure" role="alert">
       <p>The layout step for design {slotName(job.chosenSlot)} failed: {layoutFailureReasons[code]} Your designs are kept and your draft is as you left it.</p>

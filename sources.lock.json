@@ -4354,7 +4354,7 @@
       "executable": false
     },
     "src/core/features/design-generation/ui/run-notices.tsx": {
-      "sha256": "a4812e72557ffefe4f3edee98e92c635b0a4486b001aafc21a614f16d6b1ccd5",
+      "sha256": "ad547ded9076aa0b0e971d95bef8ea3a4acc8272ee9b0b33c61743eaf0fbeb1d",
       "executable": false
     },
     "src/core/features/design-generation/ui/use-design-status.ts": {
@@ -8490,7 +8490,7 @@
       "executable": false
     },
     "tests/campaign-authoring/design-generation.flow.ts": {
-      "sha256": "b26646b91ac6edbaad07d18c02bf9e11d7129756c01b776616e2420a3f52b152",
+      "sha256": "483f80ff761cd7868501a7fc7c65653136c78fdbe8fc4f63b6b3f70e1699f332",
       "executable": false
     },
     "tests/campaign-authoring/design-generation.spec.ts": {
