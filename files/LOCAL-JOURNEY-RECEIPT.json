@@ -1,0 +1,36 @@
+{
+  "startedAt": "2026-11-06T06:01:26.056Z",
+  "finishedAt": "2026-11-06T06:04:44.024Z",
+  "durationMs": 197968,
+  "status": "PASS",
+  "fullCommand": null,
+  "schedule": {
+    "selection": "local-start-slow",
+    "cpuBudget": 4,
+    "mainWorkers": 2,
+    "nativeWorkers": 2
+  },
+  "stages": [
+    {
+      "name": "local-start-slow",
+      "status": "PASS",
+      "startedAt": "2026-11-06T06:01:26.071Z",
+      "durationMs": 197949,
+      "exitCode": 0,
+      "signal": null,
+      "files": {
+        "status": "passed",
+        "files": [
+          {
+            "file": "tests/local-start/local.journey.ts",
+            "attempts": 2,
+            "durationMs": 25149,
+            "statuses": {
+              "passed": 2
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+VERIFY_SCHEDULE {"selection":"local-start-slow","cpuBudget":4,"mainWorkers":2,"nativeWorkers":2}
+Verification timing and diagnostics: /home/agent/rer-consolidation/work/sd-mango-c-f74/evidence/ae5fe941beaa/verify/local-start-slow-uzmgMm
+VERIFY_STAGE {"name":"local-start-slow","event":"start","at":"2026-11-06T06:01:26.071Z"}
+local-start-slow
+
+Running 2 tests using 1 worker
+
+(node:2342) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/local-start/local.journey.ts:12:1 › [OPER-001] fresh install completes sender setup after one-click owner sign-in at 1440 (13.8s)
+  ✓  2 tests/local-start/local.journey.ts:114:1 › [OPER-001] a production build with local credentials present emits no local variable file or secret (11.3s)
+
+  2 passed (3.3m)
+VERIFY_STAGE {"name":"local-start-slow","status":"PASS","startedAt":"2026-11-06T06:01:26.071Z","durationMs":197949,"exitCode":0,"signal":null,"event":"end"}
+VERIFY_TOTAL {"status":"PASS","durationMs":197972,"boundary":"coordinator"}

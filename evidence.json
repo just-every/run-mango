@@ -1,0 +1,130 @@
+{
+  "files": [
+    {
+      "blob": "aac08b1962ecff1350da3ad9c3cacd2ea00e0a6e",
+      "bytes": 5719,
+      "path": "CHECKS.json",
+      "sha256": "07933ff87b7d5dc0d7d4bb7f1ca0ff02680465234352ccf5c66470d8b1915b74"
+    },
+    {
+      "blob": "c3015af0e611c929c5f55c99fcc1dbc40fcbadcb",
+      "bytes": 894,
+      "path": "CI-BUILD-FAILED.log",
+      "sha256": "18a2ebbfb7d47605ec857f5910a13dc5cd6dc3e04bdeac20ed52560a6c39fd1a"
+    },
+    {
+      "blob": "1a17e415b2ec656270d5897f204026a144290692",
+      "bytes": 220,
+      "path": "CI-DISCOVERY.json",
+      "sha256": "55a563b4daa33d5644c5baa433bad8f77a2978fe22cca2704ddfe4f062cde888"
+    },
+    {
+      "blob": "07fcd2bca12d1dcaaac52013edfffe708b233620",
+      "bytes": 890,
+      "path": "CI-JOBS.json",
+      "sha256": "d523ac37c44799f5e5166502a1b949fcbd3b87ba3062572f0a4208ac3f3fd853"
+    },
+    {
+      "blob": "84dd50b8fd560333310310150b526727d236bb5b",
+      "bytes": 178,
+      "path": "CI-STATUS.json",
+      "sha256": "1840d51a7d0b96cf322f3f44785cec3997a00d490170b89e5cff5b0da0b43635"
+    },
+    {
+      "blob": "c93eeb3b1239d53b23e10b56c4c60719187f6d03",
+      "bytes": 2029,
+      "path": "CI-VERIFY-FAILED.log",
+      "sha256": "6cf081a1f7116cdc4fb7d65a02d9481cf2b8bcc70d86f5e3edbcc57ff258307c"
+    },
+    {
+      "blob": "0bdf8de6fd75f621dfa1fb2874d4907239559e87",
+      "bytes": 60,
+      "path": "CONTRACT-VIEWS.log",
+      "sha256": "a0dc3e5a57608862eebb5d81291a8613096d4984f76019b102a0ac55b950fe97"
+    },
+    {
+      "blob": "2a0acacabc68bc08785dd1b9a357332f7bef6504",
+      "bytes": 297,
+      "path": "IDENTITY-CHECK.txt",
+      "sha256": "4037c59e4e34b84e43830f205a2ade6bd32671389049dd67ad633f435c972559"
+    },
+    {
+      "blob": "4c13d1af37422bc703c4c02146e8f58dacbf034e",
+      "bytes": 777,
+      "path": "LOCAL-JOURNEY-RECEIPT.json",
+      "sha256": "b0c806fcf00739a79d8551d96652ca199e9ca897743bdd2153a4b79dfac7f22c"
+    },
+    {
+      "blob": "098c95be1ec3c8d99a6f2c18b18eab1e11e448b5",
+      "bytes": 1100,
+      "path": "LOCAL-JOURNEY.log",
+      "sha256": "0a82995ffcf6f0c2402d1a8080e4e7991e73a25eb67c4924459889d118b9c887"
+    },
+    {
+      "blob": "6d8284dbfac832131487cd4b757a1da138b7d549",
+      "bytes": 2710,
+      "path": "PLAN.md",
+      "sha256": "3e499aac2811a6470126653702ee8d271f1bbaa6bac6d28534924d5dfdf0cc16"
+    },
+    {
+      "blob": "9d202a5dc933b3365f008e4d7508b154ac5f83c0",
+      "bytes": 1287,
+      "path": "PROBES.txt",
+      "sha256": "b1ad731294a015809baa41631cc3d2bfcab8e9eabc27cb9f0870023593e09950"
+    },
+    {
+      "blob": "b5a8d60e9e64c00bc53c1abed2281e96600d8993",
+      "bytes": 891,
+      "path": "PRODUCT-PUSH.txt",
+      "sha256": "a336def0dc9fee49750e63a04f8f5b9d02d5166a0c3ef47c912731b4bd85f863"
+    },
+    {
+      "blob": "36e470e381d8605b1270087754471f5158cc5ced",
+      "bytes": 73,
+      "path": "REMOTE-PRODUCT.txt",
+      "sha256": "9ab09c654742f66d9e823978e9e5cbe7db39c100f73fe5f949b17d46001a5264"
+    },
+    {
+      "blob": "e681bad011bee484e3df49fd8ec326fe612061be",
+      "bytes": 11258,
+      "path": "REPORT.md",
+      "sha256": "1999837421d096fb2dcbee736c0656e638df08165fd90bcbb215b85b8c3a17bc"
+    },
+    {
+      "blob": "1c8395c1e81fd54af79d23077cccdb5f9fc9065e",
+      "bytes": 207,
+      "path": "TYPECHECK.log",
+      "sha256": "c586c08ea9b38968a73b175e89d2f760cd0b24d4a2e7b8604c9e8c8d9776e785"
+    },
+    {
+      "blob": "7407127f6353fe89de6e7c9cffdcad9ae850b5c5",
+      "bytes": 57092,
+      "path": "configured-app-1440.png",
+      "sha256": "03a0e5443170d420e4ca925fa0403d0937c3f0a6bacc510a9a3c497043fc46ea"
+    },
+    {
+      "blob": "14e482c84d1c8f4d64302bdf1ba7b9c42d90bf79",
+      "bytes": 40480,
+      "path": "configured-app-390.png",
+      "sha256": "7185fd719cfa609944f0c4b58b2b704f753c337840a3f19323db09fb3ae8f70d"
+    },
+    {
+      "blob": "d0935bb86123a87c90ac2c18a818ac2f82c13eef",
+      "bytes": 270939,
+      "path": "setup-1440.png",
+      "sha256": "a7134b020386f1e23cd481223029f6a2a1ffe9253dea4cb7ffd55515c3a155ec"
+    },
+    {
+      "blob": "ec84675b7ed449eaf4acade7477852e8852ca61f",
+      "bytes": 148158,
+      "path": "setup-390.png",
+      "sha256": "edd335a1b9513071e448222c4dd12f12b9ee69ed3b70d58f2c13f9d78f7ac18c"
+    }
+  ],
+  "product_branch": "cloud/sd-mango-c-f74",
+  "product_head": "9e7bf0127c20bca03fed884083c3d716d0336110",
+  "ref": "refs/heads/evidence/sd-mango-c-f74",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f74"
+}

@@ -1,0 +1,188 @@
+{
+  "tag": "sd-mango-c-f74",
+  "repository": "just-every/run-mango",
+  "head": "9e7bf0127c20bca03fed884083c3d716d0336110",
+  "branch": "cloud/sd-mango-c-f74",
+  "checks": [
+    {
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "TYPECHECK.log"
+    },
+    {
+      "command": "cloud_run perl -e 'alarm 1200; exec @ARGV' -- node scripts/verification/run.mjs --stage local-start-slow",
+      "exit": 0,
+      "passed": 2,
+      "receipt": "LOCAL-JOURNEY-RECEIPT.json",
+      "log": "LOCAL-JOURNEY.log"
+    },
+    {
+      "command": "cloud_run npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "CONTRACT-VIEWS.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "scope": "immediately after local generation, before restoring generated views",
+      "log": "CONTRACT-VIEWS.log"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    },
+    {
+      "command": "all-parent candidate identity and trailer audit",
+      "exit": 0,
+      "receipt": "IDENTITY-CHECK.txt"
+    },
+    {
+      "command": "parent Status row preservation",
+      "exit": 0,
+      "before": 316,
+      "after": 316,
+      "pipeRowsBefore": 490,
+      "pipeRowsAfter": 490
+    },
+    {
+      "command": "changed-text audit",
+      "exit": 0,
+      "addedEmailLiterals": 0
+    }
+  ],
+  "migrationLedger": {
+    "required": false,
+    "reason": "No migration changed."
+  },
+  "counts": {
+    "before": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    },
+    "after": {
+      "done": 20,
+      "partial": 198,
+      "missing": 98
+    }
+  },
+  "status": {
+    "OPER-001": {
+      "before": "partial",
+      "after": "partial",
+      "closed": [
+        "acceptance 4 native pre-setup authenticated configuration reads",
+        "acceptance 4 non-readiness after persisted setup and app reload"
+      ],
+      "remaining": [
+        "acceptance 1 complete unassigned Admin surface",
+        "acceptance 3 independently preconfigured installation identity",
+        "hosted and live-provider qualification not established"
+      ]
+    }
+  },
+  "runtimeProbes": [
+    {
+      "point": "OPER-001 acceptance 4 configuration access",
+      "door": "Native owner sign-in; GET sender and provider settings before setup; GET operator documents",
+      "observed": "Both APIs return 200; sender is unavailable and mail is unconfigured; each operator document redirects 303 to setup."
+    },
+    {
+      "point": "OPER-001 acceptance 4 no invented readiness",
+      "door": "Existing Save sender details control; reopen setup; app reload; GET sender and provider settings",
+      "observed": "Persisted business identity is read back; app remains accessible; validation stays unavailable with ready false; provider and DNS evidence unknown, observation missing, canSendCheck false; mail remains unavailable."
+    },
+    {
+      "point": "OPER-001 carried acceptance 2",
+      "door": "Server requests and hydrated TanStack navigation before valid identity",
+      "observed": "Both navigation paths retain setup; invalid save sends no PUT; valid save sends one PUT and admits the app."
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "setup-1440.png",
+      "bytes": 270939,
+      "sha256": "a7134b020386f1e23cd481223029f6a2a1ffe9253dea4cb7ffd55515c3a155ec"
+    },
+    {
+      "file": "setup-390.png",
+      "bytes": 148158,
+      "sha256": "edd335a1b9513071e448222c4dd12f12b9ee69ed3b70d58f2c13f9d78f7ac18c"
+    },
+    {
+      "file": "configured-app-1440.png",
+      "bytes": 57092,
+      "sha256": "03a0e5443170d420e4ca925fa0403d0937c3f0a6bacc510a9a3c497043fc46ea"
+    },
+    {
+      "file": "configured-app-390.png",
+      "bytes": 40480,
+      "sha256": "7185fd719cfa609944f0c4b58b2b704f753c337840a3f19323db09fb3ae8f70d"
+    }
+  ],
+  "ci": {
+    "runId": 42172201956,
+    "event": "push",
+    "head": "9e7bf0127c20bca03fed884083c3d716d0336110",
+    "observed": {
+      "conclusion": "failure",
+      "head_sha": "9e7bf0127c20bca03fed884083c3d716d0336110",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42172201956",
+      "status": "completed"
+    },
+    "classification": "generated-view-only failure; permitted fleet READY exception",
+    "failedJobs": [
+      {
+        "id": 127742449526,
+        "name": "Build and public command checks",
+        "step": "Check generated contract documents",
+        "command": "node src/base/contract-docs.mjs check",
+        "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write."
+      },
+      {
+        "id": 127742530348,
+        "name": "verify",
+        "reason": "dependent coverage guard after build failure"
+      }
+    ],
+    "shards": "skipped because the generated-documents build check failed",
+    "repairRounds": 0,
+    "reruns": 0,
+    "dispatches": 0,
+    "githubBudget": {
+      "callsUsed": 7,
+      "limit": 10,
+      "includesMistypedInitialDiscovery": true
+    }
+  },
+  "publicationScan": {
+    "status": "not run in cloud",
+    "responsibility": "guarded Mac lander",
+    "complete": null,
+    "historyScanned": null,
+    "findings": null
+  },
+  "pr": null,
+  "cleanup": {
+    "journeyRuntimeClosed": true,
+    "browserContextsClosed": true,
+    "ownedServersStopped": true,
+    "productCloneDeletion": "after evidence publication"
+  }
+}

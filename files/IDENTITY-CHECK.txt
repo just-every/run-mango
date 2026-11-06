@@ -1,0 +1,5 @@
+Run Edit Run fleet <fleet@runeditrun.com>
+Run Edit Run fleet <fleet@runeditrun.com>
+
+CANDIDATE 9e7bf0127c20bca03fed884083c3d716d0336110 identity=PASS trailers=PASS message=Prove settings access and unavailable readiness across sender setup
+IDENTITY_CHECK candidates=1 all_parents=true result=PASS

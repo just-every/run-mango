@@ -1,0 +1,6 @@
+PROBE OPER-001 acceptance-4 configuration access: native owner sign-in, GET /api/settings/sender and GET /api/settings/providers before setup -> HTTP 200 on both, unavailable sender validation and unconfigured mail; GET /app remains HTTP 303 to /setup.
+PROBE OPER-001 acceptance-4 non-readiness: existing Save sender details control, reopen setup and reload /app -> persisted business identity, admitted app, validation ready=false and state=unavailable, provider and DNS evidence unknown, mailbox observation missing, canSendCheck=false, mail still unavailable.
+PROBE OPER-001 acceptance-2 carried gates: invalid save, server documents and hydrated client navigation -> zero invalid PUTs, setup retained; valid save -> one PUT and app access, preserved after reload.
+PROBE OPER-001 acceptance-1: none, planner explicitly omitted the complete unassigned Admin surface from this selected slice; remains an explicit Gap.
+PROBE OPER-001 acceptance-3: none, planner explicitly omitted independently preconfigured installation identity from this selected slice; remains an explicit Gap.
+MECHANICAL lock=node scripts/edition-authoring/cli.mjs lock then check exit=0; views=node src/base/contract-docs.mjs write then check exit=0, restored generated views from origin/main; ledger=none exit=0.
