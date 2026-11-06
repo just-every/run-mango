@@ -1,0 +1,15 @@
+{
+  "repository": "just-every/run-mango",
+  "head": "7b84054fa0973a54dcc8189b44f6a35f8e9a065e",
+  "run": 42208158123,
+  "job": 127859962352,
+  "archive_command": "gh run view 42208158123 --repo just-every/run-mango --job 127859962352 --log-failed",
+  "command": "node src/base/contract-docs.mjs check",
+  "exit": 1,
+  "failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+  "local_output": "ACCEPTANCE.md: generated content differs; run contract-docs write.\n",
+  "classification": "Expected generated-view freshness failure; no product repair",
+  "downstream_job": 127860051459,
+  "downstream_archive_command": "gh run view 42208158123 --repo just-every/run-mango --job 127860051459 --log-failed",
+  "downstream_result": "Build failure and skipped shards fail the aggregate verification requirement."
+}

@@ -1,17 +1,212 @@
 {
   "repository": "just-every/run-mango",
   "head": "7b84054fa0973a54dcc8189b44f6a35f8e9a065e",
-  "observed_at": "2026-11-06T11:10:42.627873+00:00",
-  "github_calls": 3,
+  "observed_at": "2026-11-06T11:16:32.250782+00:00",
+  "github_calls": 7,
   "runs": [
     {
-      "conclusion": null,
-      "event": "push",
-      "head_sha": "7b84054fa0973a54dcc8189b44f6a35f8e9a065e",
-      "html_url": "https://github.com/just-every/run-mango/actions/runs/42208158123",
       "id": 42208158123,
       "name": "Verify",
-      "status": "in_progress"
+      "event": "push",
+      "conclusion": "failure",
+      "head_sha": "7b84054fa0973a54dcc8189b44f6a35f8e9a065e",
+      "html_url": "https://github.com/just-every/run-mango/actions/runs/42208158123",
+      "status": "completed"
     }
-  ]
+  ],
+  "jobs": [
+    {
+      "conclusion": "success",
+      "id": 127859880549,
+      "name": "plan",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Check reusable workflow permissions",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Look up complete nightly marker",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run node scripts/ci/mango-plan.mjs",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "conclusion": "failure",
+      "id": 127859962352,
+      "name": "Build and public command checks",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Set runner-owned browser cache",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Check generated contract documents",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Check edition source lock freshness",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run npm install --global pnpm@10.12.4",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Set runner-owned pnpm store",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Prepare runner-owned browser and apt caches",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Cache frozen dependencies and Chromium",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Install frozen dependencies and reserve native runtime disk",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Run pnpm run deps",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Install and probe Chromium before system dependencies",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Build and check the public command once",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Share the verified production build",
+          "status": "completed"
+        },
+        {
+          "conclusion": "skipped",
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127859964240,
+      "name": "light",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "failure",
+      "id": 127860051459,
+      "name": "verify",
+      "status": "completed",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job",
+          "status": "completed"
+        },
+        {
+          "conclusion": "failure",
+          "name": "Require the selected coverage and its proof",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127860052768,
+      "name": "shards (${{ matrix.name }})",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127860053791,
+      "name": "full-push-proof",
+      "status": "completed",
+      "steps": []
+    },
+    {
+      "conclusion": "skipped",
+      "id": 127860053879,
+      "name": "nightly-proof",
+      "status": "completed",
+      "steps": []
+    }
+  ],
+  "readiness_exception": "Only generated ACCEPTANCE.md freshness failed; dependent jobs failed or skipped with it."
 }
