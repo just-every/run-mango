@@ -1,0 +1,140 @@
+{
+  "branch": "cloud/sd-mango-c-f83",
+  "checks": [
+    {
+      "cases": 6,
+      "command": "MANGO_NO_FIXTURE_SERVER=1 MANGO_CHROMIUM_EXECUTABLE=/usr/bin/chromium pnpm exec playwright test --config playwright.config.js tests/proposals-decision/grounding-citations.spec.ts --workers=1 --reporter=list",
+      "exit": 0,
+      "head": "9b32e897756337b0a011fa29c726b2254b12fc84",
+      "log": "candidate-focused-test.log",
+      "result": "1 passed (23.1s)",
+      "tests": 1
+    },
+    {
+      "binding": "No product or test bytes changed between this check and the exact candidate; final rebase was up to date.",
+      "command": "pnpm run typecheck",
+      "exit": 0,
+      "log": "typecheck.log"
+    },
+    {
+      "command": "npx -y @runeditrun/rer check --profile first-party",
+      "exit": 0,
+      "log": "first-party-check.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs write",
+      "exit": 0,
+      "log": "contract-write.log"
+    },
+    {
+      "command": "node src/base/contract-docs.mjs check",
+      "exit": 0,
+      "log": "contract-check.log",
+      "timing": "After write and before restoring generated views from origin/main"
+    },
+    {
+      "command": "git checkout origin/main -- ACCEPTANCE.md docs/CLAIMS.md",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs lock",
+      "exit": 0,
+      "log": "source-lock.log"
+    },
+    {
+      "command": "node scripts/edition-authoring/cli.mjs check",
+      "exit": 0,
+      "log": "source-check.log"
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    }
+  ],
+  "ci": {
+    "aggregate_job": 127761113812,
+    "build_job": 127761030811,
+    "conclusion": "failure",
+    "disposition": "Allowed generated-view-only exception. No product test failure and no Verify repair.",
+    "event": "push",
+    "head_sha": "9b32e897756337b0a011fa29c726b2254b12fc84",
+    "id": 42178040697,
+    "only_root_failure": "ACCEPTANCE.md: generated content differs; run contract-docs write.",
+    "shards": "skipped",
+    "status": "completed",
+    "url": "https://github.com/just-every/run-mango/actions/runs/42178040697"
+  },
+  "ci_dispatches": 0,
+  "ci_reruns": 0,
+  "clause": {
+    "after": "partial",
+    "before": "partial",
+    "counts_after": {
+      "done": 20,
+      "missing": 98,
+      "partial": 198
+    },
+    "counts_before": {
+      "done": 20,
+      "missing": 98,
+      "partial": 198
+    },
+    "id": "PROP-006",
+    "pipe_rows_after": 490,
+    "pipe_rows_before": 490,
+    "status_rows_after": 316,
+    "status_rows_before": 316
+  },
+  "files": [
+    {
+      "path": "CONTRACT.md",
+      "sha256": "97838046205b2d1579bb7a62e4cdcbeedf74e23c36f9de83422d19150b3a230e"
+    },
+    {
+      "path": "scripts/verification/plan.mjs",
+      "sha256": "103e938f65f655477598cf98252612176141450b056f796f0e4ebf992547b7b3"
+    },
+    {
+      "path": "sources.lock.json",
+      "sha256": "5a1ad6b2bab6690858e31e189a4d9683ab52582b468ea035b3d730ec8cc4f305"
+    },
+    {
+      "path": "tests/proposals-decision/grounding-citations.spec.ts",
+      "sha256": "8d3d6ac203c6b010715119c51e361809bc964244e065ad3289a9f3f7e6469d48"
+    }
+  ],
+  "github_calls": 9,
+  "head": "9b32e897756337b0a011fa29c726b2254b12fc84",
+  "main_at_final_fetch": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+  "main_ci": {
+    "conclusion": "success",
+    "head": "3e91bce0f414b2a4f1eedb7e381ee75386e17906",
+    "run_site": 42175196561,
+    "verify": [
+      42175196568,
+      42173637117
+    ]
+  },
+  "migrations": "none changed; ledger check not applicable",
+  "predecessor": "654aa7e0ac0e26d2dcdab2a59ec31e017f6064ba",
+  "product_push": {
+    "exit": 0,
+    "log": "product-push.log",
+    "remote_verified_head": "9b32e897756337b0a011fa29c726b2254b12fc84"
+  },
+  "proof_boundary": "Existing production routes, services and real D1. Only AI and commerce network edges are synthetic. No UI, live AI, commerce or mail qualification.",
+  "publication_scan": "Not run in cloud; delegated to maintained Mac lander. No COMPLETE or zero-findings claim.",
+  "registration_change": {
+    "added": 1,
+    "listed_playwright_stages_after": 88,
+    "main_after": 49,
+    "main_before": 48,
+    "removed": 0,
+    "skipped_or_weakened": 0
+  },
+  "repair_rounds": 0,
+  "replay": "Scoped patch replayed onto current main without importing predecessor ancestors; final fetch and rebase were up to date.",
+  "repository": "just-every/run-mango",
+  "schema": 1,
+  "tag": "sd-mango-c-f83"
+}

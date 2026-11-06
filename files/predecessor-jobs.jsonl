@@ -1,0 +1,7 @@
+{"conclusion":"success","id":127742420614,"name":"plan","status":"completed","steps":[]}
+{"conclusion":"failure","id":127742472880,"name":"Build and public command checks","status":"completed","steps":[{"conclusion":"failure","name":"Check generated contract documents"}]}
+{"conclusion":"skipped","id":127742474519,"name":"light","status":"completed","steps":[]}
+{"conclusion":"failure","id":127742539049,"name":"verify","status":"completed","steps":[{"conclusion":"failure","name":"Require the selected coverage and its proof"}]}
+{"conclusion":"skipped","id":127742539570,"name":"full-push-proof","status":"completed","steps":[]}
+{"conclusion":"skipped","id":127742539863,"name":"shards (${{ matrix.name }})","status":"completed","steps":[]}
+{"conclusion":"skipped","id":127742540923,"name":"nightly-proof","status":"completed","steps":[]}
